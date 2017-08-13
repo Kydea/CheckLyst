@@ -7,8 +7,8 @@
     <ProjectGuid>{3802FE62-38E4-4BC6-B28F-0E9288FE846E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AccessControl.Logic</RootNamespace>
-    <AssemblyName>AccessControl.Logic</AssemblyName>
+    <RootNamespace>CheckListManager.AccessControl.Logic</RootNamespace>
+    <AssemblyName>CheckListManager.AccessControl.Logic</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

@@ -7,8 +7,8 @@
     <ProjectGuid>{2CB27F63-6C99-47B5-B595-51A2C08A64E0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AccessControl.Data</RootNamespace>
-    <AssemblyName>AccessControl.Data</AssemblyName>
+    <RootNamespace>CheckListManager.AccessControl.Data</RootNamespace>
+    <AssemblyName>CheckListManager.AccessControl.Data</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

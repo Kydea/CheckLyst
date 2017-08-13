@@ -1,8 +1,6 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using Newtonsoft.Json;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace AccessControl.Models
+namespace CheckListManager.AccessControl.Models
 {
     // Models used as parameters to AccountController actions.
 

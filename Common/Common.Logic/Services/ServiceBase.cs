@@ -1,30 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Web.Http;
-using Common.Core.Services;
+using CheckListManager.Common.Core.Services;
 
-namespace Common.Logic.Services
+namespace CheckListManager.Common.Logic.Services
 {
 	public abstract class ServiceBase : IService
 	{
-		protected virtual object GetService(Type type)
+		protected virtual object GetDependency(Type type)
 		{
 			return GlobalConfiguration.Configuration.DependencyResolver.GetService(type);
 		}
 
-		protected virtual IEnumerable<object> GetServices(Type type)
+		protected virtual IEnumerable<object> GetDependencies(Type type)
 		{
 			return GlobalConfiguration.Configuration.DependencyResolver.GetServices(type);
 		}
 
-		protected virtual T GetService<T>()
+		protected virtual T GetDependency<T>()
 		{
-			return (T)GetService(typeof(T));
+			return (T)GetDependency(typeof(T));
 		}
 
-		protected virtual IEnumerable<T> GetServices<T>()
+		protected virtual IEnumerable<T> GetDependencies<T>()
 		{
-			return (IEnumerable<T>)GetServices(typeof(T));
+			return (IEnumerable<T>)GetDependencies(typeof(T));
 		}
 	}
 }

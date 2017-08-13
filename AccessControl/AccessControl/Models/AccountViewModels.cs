@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace AccessControl.Models
+namespace CheckListManager.AccessControl.Models
 {
     // Models returned by AccountController actions.
 

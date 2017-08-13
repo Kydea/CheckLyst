@@ -7,8 +7,8 @@
     <ProjectGuid>{31DE9C2F-FB9D-472C-B28A-3C1EDEFF10DC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Common.Core</RootNamespace>
-    <AssemblyName>Common.Core</AssemblyName>
+    <RootNamespace>CheckListManager.Common.Core</RootNamespace>
+    <AssemblyName>CheckListManager.Common.Core</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -32,6 +32,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -41,8 +42,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Cache\ICache.cs" />
+    <Compile Include="Cache\IMemoryCache.cs" />
+    <Compile Include="Cache\MemoryCache.cs" />
+    <Compile Include="Network\IServiceClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\IService.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using CheckListManager.AccessControl;
 using Microsoft.Owin;
 using Owin;
 
-[assembly: OwinStartup(typeof(AccessControl.Startup))]
+[assembly: OwinStartup(typeof(Startup))]
 
-namespace AccessControl
+namespace CheckListManager.AccessControl
 {
     public partial class Startup
     {
