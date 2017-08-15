@@ -1,6 +1,4 @@
 ﻿using System;
-using CheckListManager.AccessControl.Models;
-using CheckListManager.AccessControl.Providers;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
@@ -19,8 +17,8 @@ namespace CheckListManager.AccessControl
         public void ConfigureAuth(IAppBuilder app)
         {
             // Configure the db context and user manager to use a single instance per request
-            app.CreatePerOwinContext(ApplicationDbContext.Create);
-            app.CreatePerOwinContext<ApplicationUserManager>(ApplicationUserManager.Create);
+            //app.CreatePerOwinContext(ApplicationDbContext.Create);
+            //app.CreatePerOwinContext<ApplicationUserManager>(ApplicationUserManager.Create);
 
             // Enable the application to use a cookie to store information for the signed in user
             // and to use a cookie to temporarily store information about a user logging in with a third party login provider
@@ -29,18 +27,18 @@ namespace CheckListManager.AccessControl
 
             // Configure the application for OAuth based flow
             PublicClientId = "self";
-            OAuthOptions = new OAuthAuthorizationServerOptions
-            {
-                TokenEndpointPath = new PathString("/Token"),
-                Provider = new ApplicationOAuthProvider(PublicClientId),
-                AuthorizeEndpointPath = new PathString("/api/Account/ExternalLogin"),
-                AccessTokenExpireTimeSpan = TimeSpan.FromDays(14),
-                // In production mode set AllowInsecureHttp = false
-                AllowInsecureHttp = true
-            };
+            //OAuthOptions = new OAuthAuthorizationServerOptions
+            //{
+            //    TokenEndpointPath = new PathString("/Token"),
+            //    Provider = new ApplicationOAuthProvider(PublicClientId),
+            //    AuthorizeEndpointPath = new PathString("/api/Account/ExternalLogin"),
+            //    AccessTokenExpireTimeSpan = TimeSpan.FromDays(14),
+            //    // In production mode set AllowInsecureHttp = false
+            //    AllowInsecureHttp = true
+            //};
 
             // Enable the application to use bearer tokens to authenticate users
-            app.UseOAuthBearerTokens(OAuthOptions);
+            //app.UseOAuthBearerTokens(OAuthOptions);
 
             // Uncomment the following lines to enable logging in with third party login providers
             //app.UseMicrosoftAccountAuthentication(

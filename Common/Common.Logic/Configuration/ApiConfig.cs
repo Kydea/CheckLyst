@@ -8,7 +8,6 @@ using CheckListManager.Common.Core.Cache;
 using CheckListManager.Common.Core.Services;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Cache;
-using StackExchange.Redis;
 
 namespace CheckListManager.Common.Logic.Configuration
 {
@@ -49,12 +48,14 @@ namespace CheckListManager.Common.Logic.Configuration
 
 			registration
 				.AssignableTo<IRedisCache>()
-				.AsImplementedInterfaces()
+				.As<RedisCache>()
 				.InstancePerDependency();
 
 			builder.RegisterApiControllers(assembliesLookup);
 
-			configuration.DependencyResolver = new AutofacWebApiDependencyResolver(builder.Build());
+			GlobalConfiguration.Configuration.DependencyResolver =
+				configuration.DependencyResolver
+					= new AutofacWebApiDependencyResolver(builder.Build());
 		}
 	}
 }
