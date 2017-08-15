@@ -2,5 +2,6 @@
 {
 	public class Repository : IRepository
 	{
+		//TODO: basic data access methods (or EF reference)
 	}
 }

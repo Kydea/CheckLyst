@@ -27,10 +27,10 @@ namespace CheckListManager.Common.Logic.Configuration
 
 			var registration = builder.RegisterAssemblyTypes(assembliesLookup);
 
-			builder
-				.RegisterInstance<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(""))
-				.SingleInstance()
-				.ExternallyOwned();
+			registration
+				.AssignableTo<IRedisSetup>()
+				.AsImplementedInterfaces()
+				.SingleInstance();
 
 			registration
 				.AssignableTo<IService>()

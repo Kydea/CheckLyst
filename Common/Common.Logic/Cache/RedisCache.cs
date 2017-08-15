@@ -7,9 +7,9 @@ namespace CheckListManager.Common.Logic.Cache
 	{
 		protected IDatabase Database { get; }
 
-		public RedisCache(IConnectionMultiplexer connectionMultiplexer)
+		public RedisCache(IRedisSetup redisSetup)
 		{
-			Database = connectionMultiplexer.GetDatabase();
+			Database = redisSetup.Connection.GetDatabase();
 		}
 
 		public object Get(string key, string regionName = null)

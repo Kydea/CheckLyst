@@ -42,6 +42,16 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Common.Logic\Common.Logic.csproj">
+      <Project>{be658746-48a9-4af2-b2b6-a13a7d6de439}</Project>
+      <Name>Common.Logic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AccessControl.Data\AccessControl.Data.csproj">
+      <Project>{2cb27f63-6c99-47b5-b595-51a2c08a64e0}</Project>
+      <Name>AccessControl.Data</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
