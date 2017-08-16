@@ -16,7 +16,14 @@ namespace CheckListManager.Common.Core.Cache
 
 		public object Get(string key, string regionName = null) => _storage.Get(ResolveKey(key, regionName));
 
-		public T Get<T>(string key, string regionName = null) => (T)Get(ResolveKey(key, regionName));
+		public T Get<T>(string key, string regionName = null)
+		{
+			var result = Get(ResolveKey(key, regionName));
+			// ReSharper disable once MergeConditionalExpression
+			return result != null
+				? (T)result
+				: default(T);
+		}
 		public Task<object> GetAsync(string key, string regionName = null) => Task.FromResult(Get(ResolveKey(key, regionName)));
 
 		public Task<T> GetAsync<T>(string key, string regionName = null) => Task.FromResult(Get<T>(ResolveKey(key, regionName)));
@@ -36,7 +43,7 @@ namespace CheckListManager.Common.Core.Cache
 		public T GetOrAdd<T>(string key, Func<string, T> addFunction, string regionName = null)
 		{
 			var result = Get<T>(key, regionName);
-			if (result == null)
+			if (Equals(result, default(T)))
 			{
 				result = addFunction(key);
 				Set(key, result, regionName);

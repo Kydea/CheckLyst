@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using CheckListManager.AccessControl.Models;
 using CheckListManager.Common.Logic.Cache;
 
 namespace CheckListManager.AccessControl.Controllers
@@ -19,7 +20,7 @@ namespace CheckListManager.AccessControl.Controllers
 
 		[HttpGet]
 		[Route("{key}/{regionName?}")]
-		public async Task<HttpResponseMessage> Get(string key, string regionName)
+		public async Task<HttpResponseMessage> Get(string key, string regionName = null)
 		{
 			try
 			{
@@ -35,11 +36,11 @@ namespace CheckListManager.AccessControl.Controllers
 
 		[HttpPost]
 		[Route("{key}/{regionName?}")]
-		public async Task<HttpResponseMessage> Set(string key, string regionName, [FromBody]string value)
+		public async Task<HttpResponseMessage> Set([FromBody]RedisTestModel value, string key, string regionName = null)
 		{
 			try
 			{
-				await _cache.SetAsync(key, value, regionName);
+				await _cache.SetAsync(key, value.Value, regionName);
 				return Request.CreateResponse(HttpStatusCode.OK, "OK");
 			}
 			catch (Exception e)

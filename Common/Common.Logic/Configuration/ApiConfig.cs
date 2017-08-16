@@ -24,31 +24,29 @@ namespace CheckListManager.Common.Logic.Configuration
 
 			var builder = new ContainerBuilder();
 
-			var registration = builder.RegisterAssemblyTypes(assembliesLookup);
-
-			registration
+			builder.RegisterAssemblyTypes(assembliesLookup)
 				.AssignableTo<IRedisSetup>()
 				.AsImplementedInterfaces()
 				.SingleInstance();
 
-			registration
+			builder.RegisterAssemblyTypes(assembliesLookup)
 				.AssignableTo<IService>()
 				.AsImplementedInterfaces()
 				.InstancePerDependency();
 
-			registration
+			builder.RegisterAssemblyTypes(assembliesLookup)
 				.AssignableTo<IRepository>()
 				.AsImplementedInterfaces()
 				.InstancePerDependency();
 
-			registration
+			builder.RegisterAssemblyTypes(assembliesLookup)
 				.AssignableTo<IMemoryCache>()
 				.AsImplementedInterfaces()
 				.SingleInstance();
 
-			registration
+			builder.RegisterAssemblyTypes(assembliesLookup)
 				.AssignableTo<IRedisCache>()
-				.As<RedisCache>()
+				.AsImplementedInterfaces()
 				.InstancePerDependency();
 
 			builder.RegisterApiControllers(assembliesLookup);

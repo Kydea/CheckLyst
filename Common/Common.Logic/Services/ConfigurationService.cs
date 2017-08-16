@@ -14,7 +14,7 @@ namespace CheckListManager.Common.Logic.Services
 			_cache = cache;
 		}
 
-		public string RedisHost => _cache.GetOrAdd("RedisHost", key => "default host" /* USE Repository */, "Configuration");
+		public string RedisHost => _cache.GetOrAdd("RedisHost", key => "redis-01.clm.internal" /* USE Repository */, "Configuration");
 
 		public int RedisPort => _cache.GetOrAdd("RedisPort", key => 6379 /* USE Repository */, "Configuration");
 	}
