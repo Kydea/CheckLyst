@@ -181,6 +181,10 @@
       <Project>{BE658746-48A9-4AF2-B2B6-A13A7D6DE439}</Project>
       <Name>Common.Logic</Name>
     </ProjectReference>
+    <ProjectReference Include="..\AccessControl.Logic\AccessControl.Logic.csproj">
+      <Project>{3802FE62-38E4-4BC6-B28F-0E9288FE846E}</Project>
+      <Name>AccessControl.Logic</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
