@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using NUnit.Framework;
 using TechTalk.SpecFlow;
 
@@ -10,6 +12,11 @@ namespace CheckListManager.AccessControl.Tests
     {
 	    private readonly List<int> _numbers = new List<int>();
 	    private int _result;
+
+	    public SpecFlowFeature1Steps()
+	    {
+		    Assembly.Load("CheckListManager.AccessControl");
+	    }
 
         [Given(@"I have entered (.*) into the calculator")]
         public void GivenIHaveEnteredIntoTheCalculator(int p0)
