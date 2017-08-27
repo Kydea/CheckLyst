@@ -20,7 +20,7 @@ namespace CheckListManager.AccessControl.Tests
         [When(@"I press add")]
         public void WhenIPressAdd()
         {
-	        _result = _numbers.Sum();
+	        _result = _numbers.Sum() * 2;
         }
         
         [Then(@"the result should be (.*) on the screen")]
