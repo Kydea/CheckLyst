@@ -3,7 +3,7 @@ using System.Linq;
 using NUnit.Framework;
 using TechTalk.SpecFlow;
 
-namespace AccessControl.Tests
+namespace CheckListManager.AccessControl.Tests
 {
     [Binding]
     public class SpecFlowFeature1Steps
@@ -20,7 +20,7 @@ namespace AccessControl.Tests
         [When(@"I press add")]
         public void WhenIPressAdd()
         {
-	        _result = _numbers.Sum() + 1;
+	        _result = _numbers.Sum();
         }
         
         [Then(@"the result should be (.*) on the screen")]
