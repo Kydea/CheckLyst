@@ -1,7 +1,0 @@
-Gestire rowversion per le tabelle, on modo da implementare la concorrenza
-
-Rivedere tutte le stored procedure
-
-Lasciare il json di configurazione con i parametri:
-	Develepment Mode
-	Scheduler
