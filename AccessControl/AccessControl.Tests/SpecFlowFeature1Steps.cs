@@ -29,7 +29,13 @@ namespace CheckListManager.AccessControl.Tests
         {
 	        _result = _numbers.Sum();
         }
-        
+
+        [When(@"I press subtract")]
+        public void WhenIPressSubtract()
+        {
+            ScenarioContext.Current.Pending();
+        }
+
         [Then(@"the result should be (.*) on the screen")]
         public void ThenTheResultShouldBeOnTheScreen(int p0)
         {
