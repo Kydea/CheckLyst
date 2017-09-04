@@ -1,0 +1,496 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="RelationalDatabaseModel.Store" Provider="Npgsql" ProviderManifestToken="9.6.2" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Companies">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int8" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="TimeZone" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="SessionTimeout" Type="int4" Nullable="false" />
+          <Property Name="ActivityTimeout" Type="int4" Nullable="false" />
+          <Property Name="MaximumNumberOfPINFailure" Type="int4" Nullable="false" />
+          <Property Name="PINDaysLife" Type="int4" Nullable="false" />
+          <Property Name="MaximumNumberOfPasswordFailure" Type="int4" Nullable="false" />
+          <Property Name="PasswordDaysLife" Type="int4" Nullable="false" />
+          <Property Name="WarningUserInactivityDays" Type="int4" Nullable="false" />
+          <Property Name="MaximumUserInactivityDays" Type="int4" Nullable="false" />
+          <Property Name="AuthenticationServer" Type="text" />
+          <Property Name="CreatedBy" Type="varchar" MaxLength="60" />
+          <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
+          <Property Name="ModifiedBy" Type="varchar" MaxLength="60" />
+          <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
+        </EntityType>
+        <EntityType Name="Departments">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int8" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Company" Type="int8" />
+          <Property Name="CreatedBy" Type="varchar" MaxLength="60" />
+          <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
+          <Property Name="ModifiedBy" Type="varchar" MaxLength="60" />
+          <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
+        </EntityType>
+        <EntityType Name="TimeZones">
+          <Key>
+            <PropertyRef Name="Code" />
+          </Key>
+          <Property Name="Code" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Microsoft Code" Type="varchar" MaxLength="100" Nullable="false" />
+        </EntityType>
+        <EntityType Name="PasswordHistory">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int8" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Company" Type="int8" />
+          <Property Name="User" Type="varchar" MaxLength="60" />
+          <Property Name="Date" Type="timestamptz" Precision="7" Nullable="false" />
+        </EntityType>
+        <EntityType Name="PINHistory">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int8" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Company" Type="int8" />
+          <Property Name="User" Type="varchar" MaxLength="60" />
+          <Property Name="PIN" Type="bytea" />
+          <Property Name="Date" Type="timestamptz" Precision="7" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Users">
+          <Key>
+            <PropertyRef Name="Company" />
+            <PropertyRef Name="Code" />
+          </Key>
+          <Property Name="Company" Type="int8" Nullable="false" />
+          <Property Name="Code" Type="varchar" MaxLength="60" Nullable="false" />
+          <Property Name="Description" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="AuthenticationCode" Type="text" />
+          <Property Name="Email" Type="text" />
+          <Property Name="Enabled" Type="bool" Nullable="false" />
+          <Property Name="Password" Type="bytea" />
+          <Property Name="PasswordChangeDate" Type="timestamptz" Precision="7" />
+          <Property Name="PIN" Type="bytea" />
+          <Property Name="PINChangeDate" Type="timestamptz" Precision="7" />
+          <Property Name="NumberOfAttempts" Type="int4" Nullable="false" />
+          <Property Name="LastLoginOn" Type="timestamptz" Precision="7" />
+          <Property Name="CreatedBy" Type="varchar" MaxLength="60" />
+          <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
+          <Property Name="ModifiedBy" Type="varchar" MaxLength="60" />
+          <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
+        </EntityType>
+        <Association Name="Companies_TimeZone_fkey">
+          <End Role="TimeZones" Type="Self.TimeZones" Multiplicity="1" />
+          <End Role="Companies" Type="Self.Companies" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TimeZones">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="Companies">
+              <PropertyRef Name="TimeZone" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Departments_Company_fkey">
+          <End Role="Companies" Type="Self.Companies" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Departments" Type="Self.Departments" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Companies">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Departments">
+              <PropertyRef Name="Company" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PasswordHistory_User">
+          <End Role="Users" Type="Self.Users" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="PasswordHistory" Type="Self.PasswordHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="PasswordHistory">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="User" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PINHistory_User">
+          <End Role="Users" Type="Self.Users" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="PINHistory" Type="Self.PINHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="PINHistory">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="User" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Users_Company_fkey">
+          <End Role="Companies" Type="Self.Companies" Multiplicity="1" />
+          <End Role="Users" Type="Self.Users" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Companies">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Users">
+              <PropertyRef Name="Company" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="RelationalDatabaseModelStoreContainer">
+          <EntitySet Name="Companies" EntityType="Self.Companies" Schema="Infrastructure" store:Type="Tables" />
+          <EntitySet Name="Departments" EntityType="Self.Departments" Schema="Infrastructure" store:Type="Tables" />
+          <EntitySet Name="TimeZones" EntityType="Self.TimeZones" Schema="Infrastructure" store:Type="Tables" />
+          <EntitySet Name="PasswordHistory" EntityType="Self.PasswordHistory" Schema="Security" store:Type="Tables" />
+          <EntitySet Name="PINHistory" EntityType="Self.PINHistory" Schema="Security" store:Type="Tables" />
+          <EntitySet Name="Users" EntityType="Self.Users" Schema="Security" store:Type="Tables" />
+          <AssociationSet Name="Companies_TimeZone_fkey" Association="Self.Companies_TimeZone_fkey">
+            <End Role="TimeZones" EntitySet="TimeZones" />
+            <End Role="Companies" EntitySet="Companies" />
+          </AssociationSet>
+          <AssociationSet Name="Departments_Company_fkey" Association="Self.Departments_Company_fkey">
+            <End Role="Companies" EntitySet="Companies" />
+            <End Role="Departments" EntitySet="Departments" />
+          </AssociationSet>
+          <AssociationSet Name="PasswordHistory_User" Association="Self.PasswordHistory_User">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="PasswordHistory" EntitySet="PasswordHistory" />
+          </AssociationSet>
+          <AssociationSet Name="PINHistory_User" Association="Self.PINHistory_User">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="PINHistory" EntitySet="PINHistory" />
+          </AssociationSet>
+          <AssociationSet Name="Users_Company_fkey" Association="Self.Users_Company_fkey">
+            <End Role="Companies" EntitySet="Companies" />
+            <End Role="Users" EntitySet="Users" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="RelationalDatabaseModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Companies">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="TimeZone" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="SessionTimeout" Type="Int32" Nullable="false" />
+          <Property Name="ActivityTimeout" Type="Int32" Nullable="false" />
+          <Property Name="MaximumNumberOfPINFailure" Type="Int32" Nullable="false" />
+          <Property Name="PINDaysLife" Type="Int32" Nullable="false" />
+          <Property Name="MaximumNumberOfPasswordFailure" Type="Int32" Nullable="false" />
+          <Property Name="PasswordDaysLife" Type="Int32" Nullable="false" />
+          <Property Name="WarningUserInactivityDays" Type="Int32" Nullable="false" />
+          <Property Name="MaximumUserInactivityDays" Type="Int32" Nullable="false" />
+          <Property Name="AuthenticationServer" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedOn" Type="DateTimeOffset" Precision="7" Nullable="false" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
+          <NavigationProperty Name="TimeZones" Relationship="Self.Companies_TimeZone_fkey" FromRole="Companies" ToRole="TimeZones" />
+          <NavigationProperty Name="Departments" Relationship="Self.Departments_Company_fkey" FromRole="Companies" ToRole="Departments" />
+          <NavigationProperty Name="Users" Relationship="Self.Users_Company_fkey" FromRole="Companies" ToRole="Users" />
+        </EntityType>
+        <EntityType Name="Departments">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Company" Type="Int64" />
+          <Property Name="CreatedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedOn" Type="DateTimeOffset" Precision="7" Nullable="false" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
+          <NavigationProperty Name="Companies" Relationship="Self.Departments_Company_fkey" FromRole="Departments" ToRole="Companies" />
+        </EntityType>
+        <EntityType Name="TimeZones">
+          <Key>
+            <PropertyRef Name="Code" />
+          </Key>
+          <Property Name="Code" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Microsoft_Code" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Companies" Relationship="Self.Companies_TimeZone_fkey" FromRole="TimeZones" ToRole="Companies" />
+        </EntityType>
+        <EntityType Name="PasswordHistory">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Company" Type="Int64" />
+          <Property Name="User" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="Date" Type="DateTimeOffset" Precision="7" Nullable="false" />
+          <NavigationProperty Name="Users" Relationship="Self.PasswordHistory_User" FromRole="PasswordHistory" ToRole="Users" />
+        </EntityType>
+        <EntityType Name="PINHistory">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Company" Type="Int64" />
+          <Property Name="User" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="PIN" Type="Binary" MaxLength="2147483647" FixedLength="false" />
+          <Property Name="Date" Type="DateTimeOffset" Precision="7" Nullable="false" />
+          <NavigationProperty Name="Users" Relationship="Self.PINHistory_User" FromRole="PINHistory" ToRole="Users" />
+        </EntityType>
+        <EntityType Name="Users">
+          <Key>
+            <PropertyRef Name="Company" />
+            <PropertyRef Name="Code" />
+          </Key>
+          <Property Name="Company" Type="Int64" Nullable="false" />
+          <Property Name="Code" Type="String" MaxLength="60" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="AuthenticationCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Enabled" Type="Boolean" Nullable="false" />
+          <Property Name="Password" Type="Binary" MaxLength="2147483647" FixedLength="false" />
+          <Property Name="PasswordChangeDate" Type="DateTimeOffset" Precision="7" />
+          <Property Name="PIN" Type="Binary" MaxLength="2147483647" FixedLength="false" />
+          <Property Name="PINChangeDate" Type="DateTimeOffset" Precision="7" />
+          <Property Name="NumberOfAttempts" Type="Int32" Nullable="false" />
+          <Property Name="LastLoginOn" Type="DateTimeOffset" Precision="7" />
+          <Property Name="CreatedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedOn" Type="DateTimeOffset" Precision="7" Nullable="false" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
+          <NavigationProperty Name="Companies" Relationship="Self.Users_Company_fkey" FromRole="Users" ToRole="Companies" />
+          <NavigationProperty Name="PasswordHistory" Relationship="Self.PasswordHistory_User" FromRole="Users" ToRole="PasswordHistory" />
+          <NavigationProperty Name="PINHistory" Relationship="Self.PINHistory_User" FromRole="Users" ToRole="PINHistory" />
+        </EntityType>
+        <Association Name="Companies_TimeZone_fkey">
+          <End Role="TimeZones" Type="Self.TimeZones" Multiplicity="1" />
+          <End Role="Companies" Type="Self.Companies" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TimeZones">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="Companies">
+              <PropertyRef Name="TimeZone" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Departments_Company_fkey">
+          <End Role="Companies" Type="Self.Companies" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Departments" Type="Self.Departments" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Companies">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Departments">
+              <PropertyRef Name="Company" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Users_Company_fkey">
+          <End Role="Companies" Type="Self.Companies" Multiplicity="1" />
+          <End Role="Users" Type="Self.Users" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Companies">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Users">
+              <PropertyRef Name="Company" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PasswordHistory_User">
+          <End Role="Users" Type="Self.Users" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="PasswordHistory" Type="Self.PasswordHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="PasswordHistory">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="User" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PINHistory_User">
+          <End Role="Users" Type="Self.Users" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="PINHistory" Type="Self.PINHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="PINHistory">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="User" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="RelationalDatabaseEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Companies" EntityType="Self.Companies" />
+          <EntitySet Name="Departments" EntityType="Self.Departments" />
+          <EntitySet Name="TimeZones" EntityType="Self.TimeZones" />
+          <EntitySet Name="PasswordHistory" EntityType="Self.PasswordHistory" />
+          <EntitySet Name="PINHistory" EntityType="Self.PINHistory" />
+          <EntitySet Name="Users" EntityType="Self.Users" />
+          <AssociationSet Name="Companies_TimeZone_fkey" Association="Self.Companies_TimeZone_fkey">
+            <End Role="TimeZones" EntitySet="TimeZones" />
+            <End Role="Companies" EntitySet="Companies" />
+          </AssociationSet>
+          <AssociationSet Name="Departments_Company_fkey" Association="Self.Departments_Company_fkey">
+            <End Role="Companies" EntitySet="Companies" />
+            <End Role="Departments" EntitySet="Departments" />
+          </AssociationSet>
+          <AssociationSet Name="Users_Company_fkey" Association="Self.Users_Company_fkey">
+            <End Role="Companies" EntitySet="Companies" />
+            <End Role="Users" EntitySet="Users" />
+          </AssociationSet>
+          <AssociationSet Name="PasswordHistory_User" Association="Self.PasswordHistory_User">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="PasswordHistory" EntitySet="PasswordHistory" />
+          </AssociationSet>
+          <AssociationSet Name="PINHistory_User" Association="Self.PINHistory_User">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="PINHistory" EntitySet="PINHistory" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="RelationalDatabaseModelStoreContainer" CdmEntityContainer="RelationalDatabaseEntities">
+          <EntitySetMapping Name="Companies">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.Companies">
+              <MappingFragment StoreEntitySet="Companies">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="TimeZone" ColumnName="TimeZone" />
+                <ScalarProperty Name="SessionTimeout" ColumnName="SessionTimeout" />
+                <ScalarProperty Name="ActivityTimeout" ColumnName="ActivityTimeout" />
+                <ScalarProperty Name="MaximumNumberOfPINFailure" ColumnName="MaximumNumberOfPINFailure" />
+                <ScalarProperty Name="PINDaysLife" ColumnName="PINDaysLife" />
+                <ScalarProperty Name="MaximumNumberOfPasswordFailure" ColumnName="MaximumNumberOfPasswordFailure" />
+                <ScalarProperty Name="PasswordDaysLife" ColumnName="PasswordDaysLife" />
+                <ScalarProperty Name="WarningUserInactivityDays" ColumnName="WarningUserInactivityDays" />
+                <ScalarProperty Name="MaximumUserInactivityDays" ColumnName="MaximumUserInactivityDays" />
+                <ScalarProperty Name="AuthenticationServer" ColumnName="AuthenticationServer" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Departments">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.Departments">
+              <MappingFragment StoreEntitySet="Departments">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Company" ColumnName="Company" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TimeZones">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.TimeZones">
+              <MappingFragment StoreEntitySet="TimeZones">
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Microsoft_Code" ColumnName="Microsoft Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PasswordHistory">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.PasswordHistory">
+              <MappingFragment StoreEntitySet="PasswordHistory">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Company" ColumnName="Company" />
+                <ScalarProperty Name="User" ColumnName="User" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PINHistory">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.PINHistory">
+              <MappingFragment StoreEntitySet="PINHistory">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Company" ColumnName="Company" />
+                <ScalarProperty Name="User" ColumnName="User" />
+                <ScalarProperty Name="PIN" ColumnName="PIN" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.Users">
+              <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="Company" ColumnName="Company" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="AuthenticationCode" ColumnName="AuthenticationCode" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Enabled" ColumnName="Enabled" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="PasswordChangeDate" ColumnName="PasswordChangeDate" />
+                <ScalarProperty Name="PIN" ColumnName="PIN" />
+                <ScalarProperty Name="PINChangeDate" ColumnName="PINChangeDate" />
+                <ScalarProperty Name="NumberOfAttempts" ColumnName="NumberOfAttempts" />
+                <ScalarProperty Name="LastLoginOn" ColumnName="LastLoginOn" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Nessuno" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
