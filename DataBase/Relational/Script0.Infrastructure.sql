@@ -3,7 +3,7 @@ create schema "Infrastructure";
 create table "Infrastructure"."TimeZones"
 (
     "Code" varchar (100) primary key,
-    "Microsoft Code" varchar (100) not null
+    "MicrosoftCode" varchar (100) not null
 );
 
 insert into "Infrastructure"."TimeZones" values ('Europe/Rome', 'W. Europe Standard Time');

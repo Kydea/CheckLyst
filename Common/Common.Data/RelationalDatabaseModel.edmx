@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="RelationalDatabaseModel.Store" Provider="Npgsql" ProviderManifestToken="9.6.2" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="RelationalDatabaseModel.Store" Provider="Npgsql" ProviderManifestToken="9.6.2" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Companies">
           <Key>
             <PropertyRef Name="ID" />
@@ -43,7 +43,7 @@
             <PropertyRef Name="Code" />
           </Key>
           <Property Name="Code" Type="varchar" MaxLength="100" Nullable="false" />
-          <Property Name="Microsoft Code" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="MicrosoftCode" Type="varchar" MaxLength="100" Nullable="false" />
         </EntityType>
         <EntityType Name="PasswordHistory">
           <Key>
@@ -184,8 +184,7 @@
             <End Role="Users" EntitySet="Users" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="RelationalDatabaseModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -209,9 +208,9 @@
           <Property Name="CreatedOn" Type="DateTimeOffset" Precision="7" Nullable="false" />
           <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
-          <NavigationProperty Name="TimeZones" Relationship="Self.Companies_TimeZone_fkey" FromRole="Companies" ToRole="TimeZones" />
           <NavigationProperty Name="Departments" Relationship="Self.Departments_Company_fkey" FromRole="Companies" ToRole="Departments" />
           <NavigationProperty Name="Users" Relationship="Self.Users_Company_fkey" FromRole="Companies" ToRole="Users" />
+          <NavigationProperty Name="TimeZones" Relationship="RelationalDatabaseModel.Companies_TimeZone_fkey" FromRole="Companies" ToRole="TimeZones" />
         </EntityType>
         <EntityType Name="Departments">
           <Key>
@@ -225,14 +224,6 @@
           <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
           <NavigationProperty Name="Companies" Relationship="Self.Departments_Company_fkey" FromRole="Departments" ToRole="Companies" />
-        </EntityType>
-        <EntityType Name="TimeZones">
-          <Key>
-            <PropertyRef Name="Code" />
-          </Key>
-          <Property Name="Code" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Microsoft_Code" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="Companies" Relationship="Self.Companies_TimeZone_fkey" FromRole="TimeZones" ToRole="Companies" />
         </EntityType>
         <EntityType Name="PasswordHistory">
           <Key>
@@ -280,18 +271,6 @@
           <NavigationProperty Name="PasswordHistory" Relationship="Self.PasswordHistory_User" FromRole="Users" ToRole="PasswordHistory" />
           <NavigationProperty Name="PINHistory" Relationship="Self.PINHistory_User" FromRole="Users" ToRole="PINHistory" />
         </EntityType>
-        <Association Name="Companies_TimeZone_fkey">
-          <End Role="TimeZones" Type="Self.TimeZones" Multiplicity="1" />
-          <End Role="Companies" Type="Self.Companies" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="TimeZones">
-              <PropertyRef Name="Code" />
-            </Principal>
-            <Dependent Role="Companies">
-              <PropertyRef Name="TimeZone" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="Departments_Company_fkey">
           <End Role="Companies" Type="Self.Companies" Multiplicity="0..1">
             <OnDelete Action="Cascade" />
@@ -353,14 +332,9 @@
         <EntityContainer Name="RelationalDatabaseEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Companies" EntityType="Self.Companies" />
           <EntitySet Name="Departments" EntityType="Self.Departments" />
-          <EntitySet Name="TimeZones" EntityType="Self.TimeZones" />
           <EntitySet Name="PasswordHistory" EntityType="Self.PasswordHistory" />
           <EntitySet Name="PINHistory" EntityType="Self.PINHistory" />
           <EntitySet Name="Users" EntityType="Self.Users" />
-          <AssociationSet Name="Companies_TimeZone_fkey" Association="Self.Companies_TimeZone_fkey">
-            <End Role="TimeZones" EntitySet="TimeZones" />
-            <End Role="Companies" EntitySet="Companies" />
-          </AssociationSet>
           <AssociationSet Name="Departments_Company_fkey" Association="Self.Departments_Company_fkey">
             <End Role="Companies" EntitySet="Companies" />
             <End Role="Departments" EntitySet="Departments" />
@@ -377,7 +351,32 @@
             <End Role="Users" EntitySet="Users" />
             <End Role="PINHistory" EntitySet="PINHistory" />
           </AssociationSet>
+          <EntitySet Name="TimeZones" EntityType="RelationalDatabaseModel.TimeZones" />
+          <AssociationSet Name="Companies_TimeZone_fkey" Association="RelationalDatabaseModel.Companies_TimeZone_fkey">
+            <End Role="TimeZones" EntitySet="TimeZones" />
+            <End Role="Companies" EntitySet="Companies" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="TimeZones">
+          <Key>
+            <PropertyRef Name="Code" />
+          </Key>
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="MicrosoftCode" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Companies" Relationship="RelationalDatabaseModel.Companies_TimeZone_fkey" FromRole="TimeZones" ToRole="Companies" />
+        </EntityType>
+        <Association Name="Companies_TimeZone_fkey">
+          <End Type="RelationalDatabaseModel.TimeZones" Role="TimeZones" Multiplicity="1" />
+          <End Type="RelationalDatabaseModel.Companies" Role="Companies" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TimeZones">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="Companies">
+              <PropertyRef Name="TimeZone" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -416,14 +415,6 @@
                 <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
                 <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
                 <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="TimeZones">
-            <EntityTypeMapping TypeName="RelationalDatabaseModel.TimeZones">
-              <MappingFragment StoreEntitySet="TimeZones">
-                <ScalarProperty Name="Code" ColumnName="Code" />
-                <ScalarProperty Name="Microsoft_Code" ColumnName="Microsoft Code" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -467,6 +458,14 @@
                 <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
                 <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
                 <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TimeZones">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.TimeZones">
+              <MappingFragment StoreEntitySet="TimeZones">
+                <ScalarProperty Name="MicrosoftCode" ColumnName="MicrosoftCode" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
