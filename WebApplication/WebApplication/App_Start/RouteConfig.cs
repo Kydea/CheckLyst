@@ -9,15 +9,11 @@ namespace WebApplication
 {
 	public class RouteConfig
 	{
-		public static void RegisterRoutes(RouteCollection routes)
+		public static void RegisterRoutes(RouteCollection Routes)
 		{
-			routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+            Routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
-			routes.MapRoute(
-				name: "Default",
-				url: "{controller}/{action}/{id}",
-				defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
-			);
-		}
-	}
+            Routes.MapMvcAttributeRoutes();
+        }
+    }
 }
