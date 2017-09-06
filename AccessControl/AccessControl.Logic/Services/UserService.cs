@@ -1,0 +1,52 @@
+﻿using System.Threading.Tasks;
+using CheckListManager.AccessControl.Data;
+using CheckListManager.AccessControl.Logic.Exceptions;
+using CheckListManager.Common.Data;
+using CheckListManager.Common.Logic.Services;
+
+namespace CheckListManager.AccessControl.Logic.Services
+{
+	public class UserService : IUserService
+	{
+		private readonly IUserRepository _userRepository;
+		private readonly IHashService _hashService;
+
+		public UserService(IUserRepository userRepository, IHashService hashService)
+		{
+			_userRepository = userRepository;
+			_hashService = hashService;
+		}
+
+		public async Task<Users> AuthenticateAsync(string code, string password)
+		{
+			if (string.IsNullOrEmpty(code))
+			{
+				throw new AuthenticationException(100, "User code not sent");
+			}
+
+			if (string.IsNullOrEmpty(password))
+			{
+				throw new AuthenticationException(101, "User password not sent");
+			}
+
+			var user = await _userRepository.GetAsync(code);
+
+			if (user == null)
+			{
+				throw new AuthenticationException(102, $"User '{code}' not found");
+			}
+			if (!user.Enabled)
+			{
+				throw new AuthenticationException(103, $"User '{code}' not enabled");
+			}
+			if (!_hashService.ValidateHash(password, user.Password))
+			{
+				throw new AuthenticationException(104, "User password not valid");
+			}
+
+			//TODO: add LDAP / OAUTH SERVER
+
+			return user;
+		}
+	}
+}
