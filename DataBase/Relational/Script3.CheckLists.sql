@@ -1,4 +1,4 @@
-create schema "CheckLists";
+create schema "CheckLists" owner to postgres;
 
 create table "CheckLists"."PrototypeTypes"
 (
@@ -7,6 +7,8 @@ create table "CheckLists"."PrototypeTypes"
 
 	"Company" bigint references "Infrastructure"."Companies",
 	"Department" bigint references "Infrastructure"."Departments",
+	"ApprovationWorkFlow" bigint references "WorkFlows"."WorkFlows",
+	"ObsolescenceWorkFlow" bigint references "WorkFlows"."WorkFlows",
 
 	"CreatedBy" varchar (60),
 	"CreatedOn" timestamptz not null default current_timestamp,
@@ -14,7 +16,7 @@ create table "CheckLists"."PrototypeTypes"
 	"ModifiedOn" timestamptz,
 );
 
-create table CheckLists.Prototypes
+create table "CheckLists"."Prototypes"
 (
 	"ID" bigserial,
 	"Name" varchar (50) primary key,
@@ -59,6 +61,8 @@ create table "CheckLists"."PrototypeVersions"
     "ProposedState" varchar (20) references "CheckLists"."VersionStates",
 	"ProposedDate" timestamptz,
 
+	"InstanceConfirmationWorkFlow" bigint references "WorkFlows"."WorkFlows",	
+
 	"Data" text, --replace with no sql table
 
 	"CreatedBy" varchar (60),
@@ -68,30 +72,9 @@ create table "CheckLists"."PrototypeVersions"
 
 );
 
-create trigger CheckLists.Versions_Validate on CheckLists.Versions for insert, update as
-begin
+create unique index "Index_PrototypeVersions_Drafts" on ("Prototype", "VersionState") where "VersionState" in ("Draft", "In simulation", "Active")
 
-	declare @Count int = -1;
-	declare @Prototype varchar(50) = 'not set';
-
-	select
-		@Count = count(*), @Prototype = v.Prototype
-	from
-		CheckLists.Versions v
-	where
-		v.Prototype in (select i.Prototype from Inserted i)
-		and v.VersionState = 'Draft'
-	group by v.Prototype
-	having count(*) > 1
-
-	if @Count > 1
-	begin
-		raiserror ('A draft version of the prototype %s already exists', 16, 30, @Prototype);
-		rollback tran;
-		return;
-	end
-
-end
+--fino qui
 
 create trigger CheckLists.Versions_Update on CheckLists.Versions for update as
 

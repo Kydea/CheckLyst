@@ -1,4 +1,4 @@
-create schema "Security";
+create schema "Security" owner to postgres;
 
 create table "Security"."Users"
 (
@@ -51,70 +51,113 @@ create table "Security"."PasswordHistory"
     "Company" bigint,
 	"User" varchar (60),
     constraint "PasswordHistory_User" foreign key ("Company", "User") references "Security"."Users" on update cascade on delete cascade,
+	"Password" bytea,
 
     "Date" timestamptz not null default current_timestamp
 );
 
 create index "Index_PasswordHistory_User" on "Security"."PasswordHistory"("Company", "User");
 
-create procedure SetUserPIN 
+create or replace function "Security"."SetUserPIN"
 (
-	@User varchar(60),
-	@PIN varbinary (64)
-) as
-begin try
-	declare @Count int;
+	_company bigint,
+	_user varchar(60),
+	_pin bytea
+) 
+returns void as
+$body$ 
+declare 
+	_count int;
+begin
 
-	delete from Security.PINHistory where dateadd(day, 365, Date) < getutcdate() and [User] = @User;
+	delete from "Security"."PINHistory"
+    where 
+    	ph."Company" = _company 
+        and ph."User" = _user
+        and ph."Date" + interval '1' year < current_timestamp ;
 	
-	select @Count = count(*) 
-	from Security.PINHistory ph 
+	select _count = count(*) 
+	from "Security"."PINHistory" ph 
 	where 
-		ph.[User] = @User 
-		and ph.PIN = @PIN;
+    	ph."Company" = _company 
+        and ph."User" = _user
+		and ph."PIN" = _pin;
 
-	if @Count > 0 raiserror ('This PIN is present in the last 5 PINs history of the past 365 days.', 16, 100);
+	if _count > 0 then
+		raise 'This PIN is present in the last 5 PINs history of the past 365 days.' using errcode = 'Security.SetUserPIN.PINAlreadyUsed';
+	end if;
+    
+	delete from "Security"."PINHistory"
+    where "ID" in (
+        select ph."ID"
+        from "Security"."PINHistory" ph
+        where
+            ph."Company" = _company 
+            and ph."User" = _user
+        order by ph."ID" desc
+        offset 5
+    );
 
-	select @Count = count(*) from Security.PINHistory ph where ph.[User] = @User;
-	if @Count = 5 delete from Security.PINHistory where Id = (select top 1 ph.Id from Security.PINHistory ph where ph.[User] = @User order by ph.Id);
-
-	update Security.Users 
+	update "Security"."Users" u
 	set 
-		PIN = @PIN,
-		PINChangeDate = getutcdate()
-	where Code = @User;
-	insert into Security.PINHistory ([User], PIN, Date) values (@User, @PIN, getutcdate());
-end try
-begin catch
-	declare @Error varchar (500) = error_message();
-	raiserror ('Error %s', 16, 100, @Error);
-end catch	
+		u."PIN" = _pin,
+		u."PINChangeDate" = current_timestamp
+	where 
+            ph2."Company" = _company 
+            and ph2."User" = _user;
 
-create procedure SetUserPassword 
-...
+	insert into "Security"."PINHistory" ("Compnay", "User", "PIN", "Date") values (_company, _user, _pin, current_timestamp);
+end 
+$body$ language plpgsql;
 
-
-go
-
-create table Security.Functions
+create or replace function "Security"."SetUserPassword"
 (
-	Code varchar (20) primary key,
-	Description varchar (100) not null
-);
+	_company bigint,
+	_user varchar(60),
+	_password bytea
+) 
+returns void as
+$body$ 
+declare 
+	_count int;
+begin
 
-go
+	delete from "Security"."PasswordHistory"
+    where 
+    	ph."Company" = _company 
+        and ph."User" = _user
+        and ph."Date" + interval '1' year < current_timestamp ;
+	
+	select _count = count(*) 
+	from "Security"."PasswordHistory" ph 
+	where 
+    	ph."Company" = _company 
+        and ph."User" = _user
+		and ph."Password" = _password;
 
-insert into Security.Functions values
-('Administrator', 'Can define user profile and external sources'),
-('PrototypeApprover', 'Can approve/reject prototype versions'),
-('PrototypeDesigner', 'Can create prototype versions'),
-('InstanceCreator', 'Can create intances'),
-('InstanceOperator', 'Can use intance manager with existing instances'),
-('InstanceApprover', 'Can approve instances'),
-('InstanceViewer', 'Can see instances'),
-('InstanceDeletion', 'Can delete instances'),
-('SignatureLevel', ''),
-('LockManager', ''),
-('SignatureManager', 'Can revert electronic signartures');
+	if _count > 0 then
+		raise 'This password is present in the last 5 passwords history of the past 365 days.' using errcode = 'Security.SetUserPassword.PasswordAlreadyUsed';
+	end if;
+    
+	delete from "Security"."PasswordHistory"
+    where "ID" in (
+        select ph."ID"
+        from "Security"."PasswordHistory" ph
+        where
+            ph."Company" = _company 
+            and ph."User" = _user
+        order by ph."ID" desc
+        offset 5
+    );
 
-go
+	update "Security"."Users" u
+	set 
+		u."Password" = _password,
+		u."PasswordChangeDate" = current_timestamp
+	where 
+            ph2."Company" = _company 
+            and ph2."User" = _user;
+
+	insert into "Security"."PasswordHistory" ("Compnay", "User", "Password", "Date") values (_company, _user, _password, current_timestamp);
+end 
+$body$ language plpgsql;
