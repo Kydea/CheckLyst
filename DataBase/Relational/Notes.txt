@@ -1,7 +1,46 @@
-Gestire rowversion per le tabelle, on modo da implementare la concorrenza
+Gestire rowversion per le tabelle, in modo da implementare la concorrenza
 
 Rivedere tutte le stored procedure
 
 Lasciare il json di configurazione con i parametri:
 	Develepment Mode
 	Scheduler
+
+Testare se funziona rowversion
+
+Gestionamo il tag per ogni item
+In firme mettiamo Tag per issue e Tag per cancel (se cancelable)
+
+fare i test per check, trigger, sp, etc. sul db
+
+
+RILANCIARE TUTTO
+
+
+prototio di trigger
+
+create function "CheckLists"."TF_Versions_Validate"() returns trigger as 
+$body$
+declare
+	_count int = -1;
+begin
+	select
+		_count = count(*)
+	from
+		"CheckLists"."PrototypeVersions" v
+	where
+		v."Prototype" = new."Prototype"
+		and v."VersionState" = 'Draft'
+
+	if _counter > 1 then 
+		raise exception 'A draft version of the prototype % already exists', new."Prototype";
+	end if;
+
+	return new;  
+end;
+$body$ language plpgsql;
+
+create trigger "T_Versions_Validate" 
+	after insert or update
+	on "CheckLists"."PrototypeVersions" 
+	for each row execute procedure "TF_Versions_Validate"();
