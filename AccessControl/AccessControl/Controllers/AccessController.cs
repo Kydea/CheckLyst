@@ -1,24 +1,33 @@
-﻿using System;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http;
-using System.Threading.Tasks;
 using System.Web.Http;
-using CheckListManager.AccessControl.Models;
-using CheckListManager.Common.Logic.Cache;
-using CheckListManager.Common.Data;
-using System.Collections.Generic;
 
 namespace CheckListManager.AccessControl.Controllers
 {
 	[RoutePrefix("Access")]
 	public class AccessController : ApiController
 	{
-        [HttpGet]
-        [Route("Test")]
-        public HttpResponseMessage Test()
-        {
-            return Request.CreateResponse(HttpStatusCode.OK, TimeZones.Get().Select(x => x.Code));
-        }
+		//[AllowAnonymous]
+		//[HttpPost]
+		//[Route("Login")]
+		//public HttpResponseMessage Login()
+		//{
+		//	return Request.CreateResponse(HttpStatusCode.OK, "Test anonymous");
+		//}
+
+		[AllowAnonymous]
+		[HttpGet]
+		[Route("Test")]
+		public HttpResponseMessage Test()
+		{
+			return Request.CreateResponse(HttpStatusCode.OK, "Test anonymous");
+		}
+
+		[HttpGet]
+		[Route("Test2")]
+		public HttpResponseMessage Test2()
+		{
+			return Request.CreateResponse(HttpStatusCode.OK, $"Test authenticated, {User.Identity.IsAuthenticated}, {User.Identity.Name}");
+		}
 	}
 }

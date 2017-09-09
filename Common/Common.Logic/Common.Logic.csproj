@@ -71,7 +71,9 @@
     <Compile Include="Configuration\ApiConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ConfigurationService.cs" />
+    <Compile Include="Services\HashService.cs" />
     <Compile Include="Services\IConfigurationService.cs" />
+    <Compile Include="Services\IHashService.cs" />
     <Compile Include="Services\ServiceBase.cs" />
   </ItemGroup>
   <ItemGroup>

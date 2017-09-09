@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.Web.Compilation;
 using System.Web.Http;
@@ -13,7 +14,7 @@ namespace CheckListManager.Common.Logic.Configuration
 {
 	public static class ApiConfig
 	{
-		public static void Configure(this HttpConfiguration configuration)
+		public static void Configure(this HttpConfiguration configuration, Action<ContainerBuilder, Assembly[]> setupCustomDependencies = null)
 		{
 			var assembliesLookup =
 				BuildManager
@@ -49,7 +50,14 @@ namespace CheckListManager.Common.Logic.Configuration
 				.AsImplementedInterfaces()
 				.InstancePerDependency();
 
+			builder.RegisterAssemblyTypes(assembliesLookup)
+				.AssignableTo<RelationalDatabaseEntities>()
+				.AsSelf()
+				.InstancePerDependency();
+
 			builder.RegisterApiControllers(assembliesLookup);
+
+			setupCustomDependencies?.Invoke(builder, assembliesLookup);
 
 			GlobalConfiguration.Configuration.DependencyResolver =
 				configuration.DependencyResolver
