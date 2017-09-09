@@ -12,10 +12,6 @@ namespace CheckListManager.AccessControl.Logic.Providers
 	{
 		private static readonly ConcurrentDictionary<string, AuthenticationTicket> RefreshTokens = new ConcurrentDictionary<string, AuthenticationTicket>();
 
-		public void Create(AuthenticationTokenCreateContext context)
-		{
-		}
-
 		public async Task CreateAsync(AuthenticationTokenCreateContext context)
 		{
 			if (context.OwinContext.Environment.TryGetValue("Microsoft.Owin.Form#collection", out object inputs))
@@ -44,11 +40,6 @@ namespace CheckListManager.AccessControl.Logic.Providers
 			await Task.FromResult(true);
 		}
 
-		public void Receive(AuthenticationTokenReceiveContext context)
-		{
-			throw new NotImplementedException();
-		}
-
 		public async Task ReceiveAsync(AuthenticationTokenReceiveContext context)
 		{
 			if (RefreshTokens.TryGetValue(context.Token, out AuthenticationTicket ticket))
@@ -58,5 +49,17 @@ namespace CheckListManager.AccessControl.Logic.Providers
 
 			await Task.FromResult(true);
 		}
+
+		#region Not Implemented
+
+		public void Create(AuthenticationTokenCreateContext context)
+		{
+		}
+
+		public void Receive(AuthenticationTokenReceiveContext context)
+		{
+		}
+
+		#endregion
 	}
 }
