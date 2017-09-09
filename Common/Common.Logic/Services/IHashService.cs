@@ -4,7 +4,8 @@ namespace CheckListManager.Common.Logic.Services
 {
 	public interface IHashService : IService
 	{
-		byte[] HashString(string text);
+		byte[] HashStringToBytes(string text);
+		string HashStringToString(string text);
 		bool ValidateHash(string text, byte[] hash);
 	}
 }

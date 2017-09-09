@@ -68,12 +68,6 @@
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="IRepository.cs" />
-    <Compile Include="PasswordHistory.cs">
-      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="PINHistory.cs">
-      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RelatioanalDatabaseModel\TimeZones.cs" />
     <Compile Include="RelationalDatabaseModel.Context.cs">
@@ -96,6 +90,9 @@
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Users.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UserSessions.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>
   </ItemGroup>

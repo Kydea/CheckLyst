@@ -28,9 +28,9 @@ namespace CheckListManager.AccessControl
 			OAuthOptions = new OAuthAuthorizationServerOptions
 			{
 				TokenEndpointPath = new PathString("/Access/Token"),
-				Provider = (ApplicationOAuthProvider)GlobalConfiguration.Configuration.DependencyResolver.GetService(typeof(ApplicationOAuthProvider)),
+				Provider = (AuthTokenProvider)GlobalConfiguration.Configuration.DependencyResolver.GetService(typeof(AuthTokenProvider)),
 				AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(30),
-				RefreshTokenProvider = new RefreshTokenProvider(),
+				RefreshTokenProvider = (RefreshTokenProvider)GlobalConfiguration.Configuration.DependencyResolver.GetService(typeof(RefreshTokenProvider)),
 #if DEBUG
 				// In production mode set AllowInsecureHttp = false
 				AllowInsecureHttp = true

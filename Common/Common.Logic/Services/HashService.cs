@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -6,7 +7,7 @@ namespace CheckListManager.Common.Logic.Services
 {
 	public class HashService : ServiceBase, IHashService
 	{
-		public byte[] HashString(string text)
+		public byte[] HashStringToBytes(string text)
 		{
 			if (text == null)
 			{
@@ -20,6 +21,17 @@ namespace CheckListManager.Common.Logic.Services
 			}
 		}
 
+		public string HashStringToString(string text)
+		{
+			if (text == null)
+			{
+				return null;
+			}
+
+			var hash = HashStringToBytes(text);
+			return Convert.ToBase64String(hash);
+		}
+
 		public bool ValidateHash(string text, byte[] hash)
 		{
 			if (string.IsNullOrEmpty(text) || hash == null)
@@ -27,7 +39,7 @@ namespace CheckListManager.Common.Logic.Services
 				return false;
 			}
 
-			var computed = HashString(text);
+			var computed = HashStringToBytes(text);
 			return hash.SequenceEqual(computed);
 		}
 	}

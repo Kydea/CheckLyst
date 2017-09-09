@@ -1,16 +1,23 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
+using CheckListManager.AccessControl.Data;
+using CheckListManager.Common.Logic.Services;
 using Microsoft.Owin;
-using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Infrastructure;
 
 namespace CheckListManager.AccessControl.Logic.Providers
 {
 	public class RefreshTokenProvider : IAuthenticationTokenProvider
 	{
-		private static readonly ConcurrentDictionary<string, AuthenticationTicket> RefreshTokens = new ConcurrentDictionary<string, AuthenticationTicket>();
+		private readonly IUserSessionRepository _userSessionRepository;
+		private readonly IHashService _hashService;
+
+		public RefreshTokenProvider(IUserSessionRepository userSessionRepository, IHashService hashService)
+		{
+			_userSessionRepository = userSessionRepository;
+			_hashService = hashService;
+		}
 
 		public async Task CreateAsync(AuthenticationTokenCreateContext context)
 		{
@@ -23,31 +30,24 @@ namespace CheckListManager.AccessControl.Logic.Providers
 			}
 
 			var guid = Guid.NewGuid().ToString();
+			var company = long.Parse(context.Ticket.Properties.Dictionary["company"]);
+			var sessionCode = _hashService.HashStringToString($"{company}-{guid}");
+			var expiresOn = DateTimeOffset.UtcNow.AddDays(1); //TODO set right value
+			var user = context.Ticket.Properties.Dictionary["code"];
 
-			// copy all properties and set the desired lifetime of refresh token  
-			var refreshTokenProperties = new AuthenticationProperties(context.Ticket.Properties.Dictionary)
-			{
-				IssuedUtc = context.Ticket.Properties.IssuedUtc,
-				ExpiresUtc = DateTime.UtcNow.AddMinutes(60)//DateTime.UtcNow.AddYears(1)  
-			};
-			var refreshTokenTicket = new AuthenticationTicket(context.Ticket.Identity, refreshTokenProperties);
+			var ticket = context.SerializeTicket();
 
-			RefreshTokens.TryAdd(guid, refreshTokenTicket);
-
-			// consider storing only the hash of the handle  
-			context.SetToken(guid);
-
-			await Task.FromResult(true);
+			await _userSessionRepository.CreateAsync(company, sessionCode, user, ticket, expiresOn);
+			context.SetToken(sessionCode);
 		}
 
 		public async Task ReceiveAsync(AuthenticationTokenReceiveContext context)
 		{
-			if (RefreshTokens.TryGetValue(context.Token, out AuthenticationTicket ticket))
+			var session = await _userSessionRepository.GetAsync(context.Token);
+			if (session != null && DateTimeOffset.UtcNow <= session.ExpiresOn)
 			{
-				context.SetTicket(ticket);
+				context.DeserializeTicket(session.Ticket);
 			}
-
-			await Task.FromResult(true);
 		}
 
 		#region Not Implemented

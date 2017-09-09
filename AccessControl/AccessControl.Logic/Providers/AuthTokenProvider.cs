@@ -11,13 +11,13 @@ using NLog;
 
 namespace CheckListManager.AccessControl.Logic.Providers
 {
-    public class ApplicationOAuthProvider : OAuthAuthorizationServerProvider
+    public class AuthTokenProvider : OAuthAuthorizationServerProvider
     {
 	    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
 	    private readonly IUserService _userService;
 
-	    public ApplicationOAuthProvider(IUserService userService)
+	    public AuthTokenProvider(IUserService userService)
 	    {
 		    _userService = userService;
 	    }
@@ -74,6 +74,7 @@ namespace CheckListManager.AccessControl.Logic.Providers
         {
             IDictionary<string, string> data = new Dictionary<string, string>
             {
+				{ "company", user.Company.ToString() },
                 { "code", user.Code } //TODO: add more
             };
             return new AuthenticationProperties(data);

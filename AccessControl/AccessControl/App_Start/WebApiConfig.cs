@@ -14,7 +14,12 @@ namespace CheckListManager.AccessControl
 	        {
 		        builder
 			        .RegisterAssemblyTypes(assemblies)
-			        .AssignableTo<ApplicationOAuthProvider>()
+			        .AssignableTo<AuthTokenProvider>()
+			        .AsSelf()
+			        .SingleInstance();
+		        builder
+			        .RegisterAssemblyTypes(assemblies)
+			        .AssignableTo<RefreshTokenProvider>()
 			        .AsSelf()
 			        .SingleInstance();
 	        });
