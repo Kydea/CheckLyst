@@ -45,25 +45,6 @@
           <Property Name="Code" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="MicrosoftCode" Type="varchar" MaxLength="100" Nullable="false" />
         </EntityType>
-        <EntityType Name="PasswordHistory">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="int8" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Company" Type="int8" />
-          <Property Name="User" Type="varchar" MaxLength="60" />
-          <Property Name="Date" Type="timestamptz" Precision="7" Nullable="false" />
-        </EntityType>
-        <EntityType Name="PINHistory">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="int8" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Company" Type="int8" />
-          <Property Name="User" Type="varchar" MaxLength="60" />
-          <Property Name="PIN" Type="bytea" />
-          <Property Name="Date" Type="timestamptz" Precision="7" Nullable="false" />
-        </EntityType>
         <EntityType Name="Users">
           <Key>
             <PropertyRef Name="Company" />
@@ -112,38 +93,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="PasswordHistory_User">
-          <End Role="Users" Type="Self.Users" Multiplicity="0..1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="PasswordHistory" Type="Self.PasswordHistory" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Users">
-              <PropertyRef Name="Company" />
-              <PropertyRef Name="Code" />
-            </Principal>
-            <Dependent Role="PasswordHistory">
-              <PropertyRef Name="Company" />
-              <PropertyRef Name="User" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="PINHistory_User">
-          <End Role="Users" Type="Self.Users" Multiplicity="0..1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="PINHistory" Type="Self.PINHistory" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Users">
-              <PropertyRef Name="Company" />
-              <PropertyRef Name="Code" />
-            </Principal>
-            <Dependent Role="PINHistory">
-              <PropertyRef Name="Company" />
-              <PropertyRef Name="User" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="Users_Company_fkey">
           <End Role="Companies" Type="Self.Companies" Multiplicity="1" />
           <End Role="Users" Type="Self.Users" Multiplicity="*" />
@@ -156,12 +105,12 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        
+        
         <EntityContainer Name="RelationalDatabaseModelStoreContainer">
           <EntitySet Name="Companies" EntityType="Self.Companies" Schema="Infrastructure" store:Type="Tables" />
           <EntitySet Name="Departments" EntityType="Self.Departments" Schema="Infrastructure" store:Type="Tables" />
           <EntitySet Name="TimeZones" EntityType="Self.TimeZones" Schema="Infrastructure" store:Type="Tables" />
-          <EntitySet Name="PasswordHistory" EntityType="Self.PasswordHistory" Schema="Security" store:Type="Tables" />
-          <EntitySet Name="PINHistory" EntityType="Self.PINHistory" Schema="Security" store:Type="Tables" />
           <EntitySet Name="Users" EntityType="Self.Users" Schema="Security" store:Type="Tables" />
           <AssociationSet Name="Companies_TimeZone_fkey" Association="Self.Companies_TimeZone_fkey">
             <End Role="TimeZones" EntitySet="TimeZones" />
@@ -170,14 +119,6 @@
           <AssociationSet Name="Departments_Company_fkey" Association="Self.Departments_Company_fkey">
             <End Role="Companies" EntitySet="Companies" />
             <End Role="Departments" EntitySet="Departments" />
-          </AssociationSet>
-          <AssociationSet Name="PasswordHistory_User" Association="Self.PasswordHistory_User">
-            <End Role="Users" EntitySet="Users" />
-            <End Role="PasswordHistory" EntitySet="PasswordHistory" />
-          </AssociationSet>
-          <AssociationSet Name="PINHistory_User" Association="Self.PINHistory_User">
-            <End Role="Users" EntitySet="Users" />
-            <End Role="PINHistory" EntitySet="PINHistory" />
           </AssociationSet>
           <AssociationSet Name="Users_Company_fkey" Association="Self.Users_Company_fkey">
             <End Role="Companies" EntitySet="Companies" />
@@ -225,27 +166,6 @@
           <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
           <NavigationProperty Name="Companies" Relationship="Self.Departments_Company_fkey" FromRole="Departments" ToRole="Companies" />
         </EntityType>
-        <EntityType Name="PasswordHistory">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Company" Type="Int64" />
-          <Property Name="User" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
-          <Property Name="Date" Type="DateTimeOffset" Precision="7" Nullable="false" />
-          <NavigationProperty Name="Users" Relationship="Self.PasswordHistory_User" FromRole="PasswordHistory" ToRole="Users" />
-        </EntityType>
-        <EntityType Name="PINHistory">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Company" Type="Int64" />
-          <Property Name="User" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
-          <Property Name="PIN" Type="Binary" MaxLength="2147483647" FixedLength="false" />
-          <Property Name="Date" Type="DateTimeOffset" Precision="7" Nullable="false" />
-          <NavigationProperty Name="Users" Relationship="Self.PINHistory_User" FromRole="PINHistory" ToRole="Users" />
-        </EntityType>
         <EntityType Name="Users">
           <Key>
             <PropertyRef Name="Company" />
@@ -268,8 +188,6 @@
           <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
           <NavigationProperty Name="Companies" Relationship="Self.Users_Company_fkey" FromRole="Users" ToRole="Companies" />
-          <NavigationProperty Name="PasswordHistory" Relationship="Self.PasswordHistory_User" FromRole="Users" ToRole="PasswordHistory" />
-          <NavigationProperty Name="PINHistory" Relationship="Self.PINHistory_User" FromRole="Users" ToRole="PINHistory" />
         </EntityType>
         <Association Name="Departments_Company_fkey">
           <End Role="Companies" Type="Self.Companies" Multiplicity="0..1">
@@ -297,43 +215,9 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="PasswordHistory_User">
-          <End Role="Users" Type="Self.Users" Multiplicity="0..1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="PasswordHistory" Type="Self.PasswordHistory" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Users">
-              <PropertyRef Name="Company" />
-              <PropertyRef Name="Code" />
-            </Principal>
-            <Dependent Role="PasswordHistory">
-              <PropertyRef Name="Company" />
-              <PropertyRef Name="User" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="PINHistory_User">
-          <End Role="Users" Type="Self.Users" Multiplicity="0..1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="PINHistory" Type="Self.PINHistory" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Users">
-              <PropertyRef Name="Company" />
-              <PropertyRef Name="Code" />
-            </Principal>
-            <Dependent Role="PINHistory">
-              <PropertyRef Name="Company" />
-              <PropertyRef Name="User" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityContainer Name="RelationalDatabaseEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Companies" EntityType="Self.Companies" />
           <EntitySet Name="Departments" EntityType="Self.Departments" />
-          <EntitySet Name="PasswordHistory" EntityType="Self.PasswordHistory" />
-          <EntitySet Name="PINHistory" EntityType="Self.PINHistory" />
           <EntitySet Name="Users" EntityType="Self.Users" />
           <AssociationSet Name="Departments_Company_fkey" Association="Self.Departments_Company_fkey">
             <End Role="Companies" EntitySet="Companies" />
@@ -342,14 +226,6 @@
           <AssociationSet Name="Users_Company_fkey" Association="Self.Users_Company_fkey">
             <End Role="Companies" EntitySet="Companies" />
             <End Role="Users" EntitySet="Users" />
-          </AssociationSet>
-          <AssociationSet Name="PasswordHistory_User" Association="Self.PasswordHistory_User">
-            <End Role="Users" EntitySet="Users" />
-            <End Role="PasswordHistory" EntitySet="PasswordHistory" />
-          </AssociationSet>
-          <AssociationSet Name="PINHistory_User" Association="Self.PINHistory_User">
-            <End Role="Users" EntitySet="Users" />
-            <End Role="PINHistory" EntitySet="PINHistory" />
           </AssociationSet>
           <EntitySet Name="TimeZones" EntityType="RelationalDatabaseModel.TimeZones" />
           <AssociationSet Name="Companies_TimeZone_fkey" Association="RelationalDatabaseModel.Companies_TimeZone_fkey">
@@ -415,27 +291,6 @@
                 <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
                 <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
                 <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="PasswordHistory">
-            <EntityTypeMapping TypeName="RelationalDatabaseModel.PasswordHistory">
-              <MappingFragment StoreEntitySet="PasswordHistory">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="Company" ColumnName="Company" />
-                <ScalarProperty Name="User" ColumnName="User" />
-                <ScalarProperty Name="Date" ColumnName="Date" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="PINHistory">
-            <EntityTypeMapping TypeName="RelationalDatabaseModel.PINHistory">
-              <MappingFragment StoreEntitySet="PINHistory">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="Company" ColumnName="Company" />
-                <ScalarProperty Name="User" ColumnName="User" />
-                <ScalarProperty Name="PIN" ColumnName="PIN" />
-                <ScalarProperty Name="Date" ColumnName="Date" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

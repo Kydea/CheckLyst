@@ -1,4 +1,4 @@
-create schema "Infrastructure";
+create schema "Infrastructure" owner to postgres;
 
 create table "Infrastructure"."TimeZones"
 (

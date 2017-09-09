@@ -27,8 +27,6 @@ namespace CheckListManager.Common.Data
     
         public virtual DbSet<Companies> Companies { get; set; }
         public virtual DbSet<Departments> Departments { get; set; }
-        public virtual DbSet<PasswordHistory> PasswordHistory { get; set; }
-        public virtual DbSet<PINHistory> PINHistory { get; set; }
         public virtual DbSet<Users> Users { get; set; }
         public virtual DbSet<TimeZones> TimeZones { get; set; }
     }
