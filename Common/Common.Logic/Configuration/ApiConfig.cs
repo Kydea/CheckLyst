@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Web.Compilation;
@@ -9,14 +10,42 @@ using CheckListManager.Common.Core.Cache;
 using CheckListManager.Common.Core.Services;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Cache;
+using NLog;
 
 namespace CheckListManager.Common.Logic.Configuration
 {
 	public static class ApiConfig
 	{
-		public static void Configure(this HttpConfiguration configuration, Action<ContainerBuilder, Assembly[]> setupCustomDependencies = null)
+		private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
+		public static void Configure(this HttpConfiguration configuration, ContainerBuilder builder)
 		{
-			var assembliesLookup =
+			ConfigureLog();
+			ConfigureDependencyInjection(configuration, builder);
+		}
+
+		private static void ConfigureLog()
+		{
+			try
+			{
+				EventLog.CreateEventSource(nameof(CheckListManager), "Application");
+			}
+			catch (Exception e)
+			{
+				Logger.Fatal(e, "Impossible to setup log source.");
+			}
+		}
+
+		private static void ConfigureDependencyInjection(HttpConfiguration configuration, ContainerBuilder builder)
+		{
+			GlobalConfiguration.Configuration.DependencyResolver =
+				configuration.DependencyResolver
+					= new AutofacWebApiDependencyResolver(builder.Build());
+		}
+
+		public static ContainerBuilder CreateBuilder(out Assembly[] assembliesLookup)
+		{
+			assembliesLookup =
 				BuildManager
 					.GetReferencedAssemblies()
 					.Cast<Assembly>()
@@ -57,11 +86,7 @@ namespace CheckListManager.Common.Logic.Configuration
 
 			builder.RegisterApiControllers(assembliesLookup);
 
-			setupCustomDependencies?.Invoke(builder, assembliesLookup);
-
-			GlobalConfiguration.Configuration.DependencyResolver =
-				configuration.DependencyResolver
-					= new AutofacWebApiDependencyResolver(builder.Build());
+			return builder;
 		}
 	}
 }

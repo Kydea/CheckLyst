@@ -1,4 +1,5 @@
-﻿using System.Web.Http;
+﻿using System.Reflection;
+using System.Web.Http;
 using Autofac;
 using CheckListManager.AccessControl.Logic.Providers;
 using CheckListManager.Common.Logic.Configuration;
@@ -10,34 +11,29 @@ namespace CheckListManager.AccessControl
     {
         public static void Register(HttpConfiguration config)
         {
-	        config.Configure((builder, assemblies) =>
-	        {
-		        builder
-			        .RegisterAssemblyTypes(assemblies)
-			        .AssignableTo<AuthTokenProvider>()
-			        .AsSelf()
-			        .SingleInstance();
-		        builder
-			        .RegisterAssemblyTypes(assemblies)
-			        .AssignableTo<RefreshTokenProvider>()
-			        .AsSelf()
-			        .SingleInstance();
-	        });
+	        var builder = CreateBuilder();
+	        config.Configure(builder);
 
-            // Web API configuration and services
-            // Configure Web API to use only bearer token authentication.
-            config.SuppressDefaultHostAuthentication();
+	        config.SuppressDefaultHostAuthentication();
 	        config.Filters.Add(new AuthorizeAttribute());
-			config.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
+	        config.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
 
-            // Web API routes
-            config.MapHttpAttributeRoutes();
-
-            //config.Routes.MapHttpRoute(
-            //    "DefaultApi",
-            //    "api/{controller}/{id}",
-            //    new { id = RouteParameter.Optional }
-            //);
+	        config.MapHttpAttributeRoutes();
         }
-    }
+
+		public static ContainerBuilder CreateBuilder()
+	    {
+		    var builder = ApiConfig.CreateBuilder(out Assembly[] assemblies);
+		    builder.RegisterAssemblyTypes(assemblies)
+			    .AssignableTo<AuthTokenProvider>()
+			    .AsSelf()
+			    .SingleInstance();
+		    builder.RegisterAssemblyTypes(assemblies)
+			    .AssignableTo<RefreshTokenProvider>()
+			    .AsSelf()
+			    .SingleInstance();
+
+			return builder;
+	    }
+	}
 }

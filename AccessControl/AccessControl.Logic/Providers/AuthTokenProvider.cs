@@ -28,12 +28,12 @@ namespace CheckListManager.AccessControl.Logic.Providers
 	        {
 		        var user = await _userService.AuthenticateAsync(context.UserName, context.Password);
 
-				var oAuthIdentity = new ClaimsIdentity(context.Options.AuthenticationType);
-		        oAuthIdentity.AddClaim(new Claim(ClaimTypes.Name, user.Code));
-		        oAuthIdentity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Code));
+				var identity = new ClaimsIdentity(context.Options.AuthenticationType);
+		        identity.AddClaim(new Claim(ClaimTypes.Name, user.Code));
+		        identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Code));
 
 		        var properties = CreateProperties(user);
-		        var ticket = new AuthenticationTicket(oAuthIdentity, properties);
+		        var ticket = new AuthenticationTicket(identity, properties);
 		        context.Validated(ticket);
 			}
 	        catch (AuthenticationException exception)

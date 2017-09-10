@@ -8,6 +8,6 @@ namespace CheckListManager.AccessControl.Data
 	{
 		Task<UserSessions> GetAsync(string code);
 
-		Task CreateAsync(long company, string code, string user, string ticket, DateTimeOffset expiresOn);
+		Task CreateAsync(UserSessions session);
 	}
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using CheckListManager.AccessControl.Data;
+using CheckListManager.AccessControl.Logic.Services;
 using CheckListManager.Common.Logic.Services;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Infrastructure;
@@ -10,12 +10,12 @@ namespace CheckListManager.AccessControl.Logic.Providers
 {
 	public class RefreshTokenProvider : IAuthenticationTokenProvider
 	{
-		private readonly IUserSessionRepository _userSessionRepository;
+		private readonly IUserService _userService;
 		private readonly IHashService _hashService;
 
-		public RefreshTokenProvider(IUserSessionRepository userSessionRepository, IHashService hashService)
+		public RefreshTokenProvider(IUserService userService, IHashService hashService)
 		{
-			_userSessionRepository = userSessionRepository;
+			_userService = userService;
 			_hashService = hashService;
 		}
 
@@ -37,14 +37,14 @@ namespace CheckListManager.AccessControl.Logic.Providers
 
 			var ticket = context.SerializeTicket();
 
-			await _userSessionRepository.CreateAsync(company, sessionCode, user, ticket, expiresOn);
+			await _userService.CreateSessionAsync(company, sessionCode, user, ticket, expiresOn);
 			context.SetToken(sessionCode);
 		}
 
 		public async Task ReceiveAsync(AuthenticationTokenReceiveContext context)
 		{
-			var session = await _userSessionRepository.GetAsync(context.Token);
-			if (session != null && DateTimeOffset.UtcNow <= session.ExpiresOn)
+			var session = await _userService.GetSessionAsync(context.Token);
+			if (session != null)
 			{
 				context.DeserializeTicket(session.Ticket);
 			}
