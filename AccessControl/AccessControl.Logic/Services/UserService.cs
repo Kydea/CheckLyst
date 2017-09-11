@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using CheckListManager.AccessControl.Data;
 using CheckListManager.AccessControl.Logic.Exceptions;
 using CheckListManager.Common.Data;
@@ -9,11 +10,13 @@ namespace CheckListManager.AccessControl.Logic.Services
 	public class UserService : IUserService
 	{
 		private readonly IUserRepository _userRepository;
+		private readonly IUserSessionRepository _userSessionRepository;
 		private readonly IHashService _hashService;
 
-		public UserService(IUserRepository userRepository, IHashService hashService)
+		public UserService(IUserRepository userRepository, IUserSessionRepository userSessionRepository, IHashService hashService)
 		{
 			_userRepository = userRepository;
+			_userSessionRepository = userSessionRepository;
 			_hashService = hashService;
 		}
 
@@ -47,6 +50,26 @@ namespace CheckListManager.AccessControl.Logic.Services
 			//TODO: add LDAP / OAUTH SERVER
 
 			return user;
+		}
+
+		public async Task<UserSessions> GetSessionAsync(string code)
+		{
+			var session = await _userSessionRepository.GetAsync(code);
+			return session == null || session.ExpiresOn < DateTimeOffset.UtcNow ? null : session;
+		}
+
+		public async Task CreateSessionAsync(long company, string code, string user, string ticket, DateTimeOffset expiresOn)
+		{
+			var session = new UserSessions
+			{
+				Company = company,
+				Code = code,
+				User = user,
+				Ticket = ticket,
+				CreatedOn = DateTimeOffset.UtcNow,
+				ExpiresOn = expiresOn
+			};
+			await _userSessionRepository.CreateAsync(session);
 		}
 	}
 }

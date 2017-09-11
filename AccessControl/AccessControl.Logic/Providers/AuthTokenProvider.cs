@@ -11,13 +11,13 @@ using NLog;
 
 namespace CheckListManager.AccessControl.Logic.Providers
 {
-    public class ApplicationOAuthProvider : OAuthAuthorizationServerProvider
+    public class AuthTokenProvider : OAuthAuthorizationServerProvider
     {
 	    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
 	    private readonly IUserService _userService;
 
-	    public ApplicationOAuthProvider(IUserService userService)
+	    public AuthTokenProvider(IUserService userService)
 	    {
 		    _userService = userService;
 	    }
@@ -28,12 +28,12 @@ namespace CheckListManager.AccessControl.Logic.Providers
 	        {
 		        var user = await _userService.AuthenticateAsync(context.UserName, context.Password);
 
-				var oAuthIdentity = new ClaimsIdentity(context.Options.AuthenticationType);
-		        oAuthIdentity.AddClaim(new Claim(ClaimTypes.Name, user.Code));
-		        oAuthIdentity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Code));
+				var identity = new ClaimsIdentity(context.Options.AuthenticationType);
+		        identity.AddClaim(new Claim(ClaimTypes.Name, user.Code));
+		        identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Code));
 
 		        var properties = CreateProperties(user);
-		        var ticket = new AuthenticationTicket(oAuthIdentity, properties);
+		        var ticket = new AuthenticationTicket(identity, properties);
 		        context.Validated(ticket);
 			}
 	        catch (AuthenticationException exception)
@@ -74,6 +74,7 @@ namespace CheckListManager.AccessControl.Logic.Providers
         {
             IDictionary<string, string> data = new Dictionary<string, string>
             {
+				{ "company", user.Company.ToString() },
                 { "code", user.Code } //TODO: add more
             };
             return new AuthenticationProperties(data);

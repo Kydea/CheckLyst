@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using CheckListManager.AccessControl.Tests.Contexts;
 using NUnit.Framework;
 using TechTalk.SpecFlow;
 
@@ -10,6 +10,11 @@ namespace CheckListManager.AccessControl.Tests
     [Binding]
     public class SpecFlowFeature1Steps
     {
+	    public SpecFlowFeature1Steps(AuthContext context)
+	    {
+		    context.Test = "test1234";
+	    }
+
 	    private readonly List<int> _numbers = new List<int>();
 	    private int _result;
 

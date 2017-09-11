@@ -28,6 +28,29 @@ create table "Security"."Users"
 	"ModifiedOn" timestamptz
 );
 
+<<<<<<< HEAD
+=======
+insert into "Security"."Users" ("Company", "Code", "Description", "Password", "Enabled") values (1, 'CheckListManager', 'System administrator', decode('5b852905cefc6d59524c45b8f642927b5459c2f622d40002466109e69dbccc36', 'hex'), '1'); --V4sc0 R0ss1, sha256
+
+create table "Security"."UserSessions"
+(
+	"Company" bigint not null references "Infrastructure"."Companies",
+	"Code" varchar (250),
+
+	constraint "UserSessions_PK" primary key ("Code"), --NO PK on Company as we don't have it when querying
+
+	"User" varchar (60),
+	constraint "UserSessions_User" foreign key ("Company", "User") references "Security"."Users" on update cascade on delete cascade,
+
+	"Ticket" text not null,
+
+	"CreatedOn" timestamptz not null default current_timestamp,
+	"ExpiresOn" timestamptz not null
+);
+
+create index "Index_UserSessions_User" on "Security"."UserSessions"("Company", "User");
+
+>>>>>>> 235b3d8008c96677446e1352f96479366bdacdae
 create table "Security"."PINHistory"
 (
     "ID" bigserial primary key,
