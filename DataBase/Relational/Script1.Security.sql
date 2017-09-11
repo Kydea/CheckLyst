@@ -28,8 +28,6 @@ create table "Security"."Users"
 	"ModifiedOn" timestamptz
 );
 
-<<<<<<< HEAD
-=======
 insert into "Security"."Users" ("Company", "Code", "Description", "Password", "Enabled") values (1, 'CheckListManager', 'System administrator', decode('5b852905cefc6d59524c45b8f642927b5459c2f622d40002466109e69dbccc36', 'hex'), '1'); --V4sc0 R0ss1, sha256
 
 create table "Security"."UserSessions"
@@ -50,7 +48,6 @@ create table "Security"."UserSessions"
 
 create index "Index_UserSessions_User" on "Security"."UserSessions"("Company", "User");
 
->>>>>>> 235b3d8008c96677446e1352f96479366bdacdae
 create table "Security"."PINHistory"
 (
     "ID" bigserial primary key,
