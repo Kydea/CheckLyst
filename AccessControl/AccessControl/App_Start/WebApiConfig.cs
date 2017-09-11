@@ -17,13 +17,11 @@ namespace CheckListManager.AccessControl
 	        config.SuppressDefaultHostAuthentication();
 	        config.Filters.Add(new AuthorizeAttribute());
 	        config.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
-
-	        config.MapHttpAttributeRoutes();
         }
 
-		public static ContainerBuilder CreateBuilder()
+		public static ContainerBuilder CreateBuilder(bool loadAssemblies = true)
 	    {
-		    var builder = ApiConfig.CreateBuilder(out Assembly[] assemblies);
+		    var builder = ApiConfig.CreateBuilder(out Assembly[] assemblies, loadAssemblies);
 		    builder.RegisterAssemblyTypes(assemblies)
 			    .AssignableTo<AuthTokenProvider>()
 			    .AsSelf()

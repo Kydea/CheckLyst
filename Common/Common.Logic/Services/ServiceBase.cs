@@ -5,6 +5,7 @@ using CheckListManager.Common.Core.Services;
 
 namespace CheckListManager.Common.Logic.Services
 {
+	//TODO remove dependency to GlobalConfiguration.Configuration
 	public abstract class ServiceBase : IService
 	{
 		protected virtual object GetDependency(Type type)

@@ -2,7 +2,7 @@
 
 namespace CheckListManager.Common.Logic.Services
 {
-	public interface IConfigurationService : IService
+	public interface IConfigurationService : ISingletonService
 	{
 		string RedisHost { get; }
 		int RedisPort { get; }

@@ -22,6 +22,12 @@ namespace CheckListManager.Common.Logic.Configuration
 		{
 			ConfigureLog();
 			ConfigureDependencyInjection(configuration, builder);
+
+			//configuration.SuppressDefaultHostAuthentication();
+			//configuration.Filters.Add(new AuthorizeAttribute());
+			//configuration.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
+
+			configuration.MapHttpAttributeRoutes();
 		}
 
 		private static void ConfigureLog()
@@ -43,14 +49,16 @@ namespace CheckListManager.Common.Logic.Configuration
 					= new AutofacWebApiDependencyResolver(builder.Build());
 		}
 
-		public static ContainerBuilder CreateBuilder(out Assembly[] assembliesLookup)
+		public static ContainerBuilder CreateBuilder(out Assembly[] assembliesLookup, bool loadAssemblies)
 		{
 			assembliesLookup =
-				BuildManager
-					.GetReferencedAssemblies()
-					.Cast<Assembly>()
-					.Where(a => a.FullName.StartsWith($"{nameof(CheckListManager)}."))
-					.ToArray();
+				loadAssemblies
+					? BuildManager
+						.GetReferencedAssemblies()
+						.Cast<Assembly>()
+						.Where(a => a.FullName.StartsWith($"{nameof(CheckListManager)}."))
+						.ToArray()
+					: AppDomain.CurrentDomain.GetAssemblies();
 
 			var builder = new ContainerBuilder();
 
@@ -63,6 +71,11 @@ namespace CheckListManager.Common.Logic.Configuration
 				.AssignableTo<IService>()
 				.AsImplementedInterfaces()
 				.InstancePerDependency();
+
+			builder.RegisterAssemblyTypes(assembliesLookup)
+				.AssignableTo<ISingletonService>()
+				.AsImplementedInterfaces()
+				.SingleInstance();
 
 			builder.RegisterAssemblyTypes(assembliesLookup)
 				.AssignableTo<IRepository>()

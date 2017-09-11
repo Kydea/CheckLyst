@@ -51,6 +51,7 @@
     <Compile Include="Network\IServiceClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\IService.cs" />
+    <Compile Include="Services\ISingletonService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

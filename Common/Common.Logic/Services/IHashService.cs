@@ -2,7 +2,7 @@
 
 namespace CheckListManager.Common.Logic.Services
 {
-	public interface IHashService : IService
+	public interface IHashService : ISingletonService
 	{
 		byte[] HashStringToBytes(string text);
 		string HashStringToString(string text);

@@ -78,6 +78,7 @@
     <Compile Include="Services\IConfigurationService.cs" />
     <Compile Include="Services\IHashService.cs" />
     <Compile Include="Services\ServiceBase.cs" />
+    <Compile Include="Services\SingletonServiceBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common.Core\Common.Core.csproj">
