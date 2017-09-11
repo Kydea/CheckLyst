@@ -13,6 +13,9 @@ In firme mettiamo Tag per issue e Tag per cancel (se cancelable)
 
 fare i test per check, trigger, sp, etc. sul db
 
+la procedura per i cambi di stato va riscritta in c#
+
+il trigger per mettere vecchie versioni a obsolete e creare il log va riscritto in c#
 
 RILANCIARE TUTTO
 

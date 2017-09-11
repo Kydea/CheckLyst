@@ -4,10 +4,10 @@
 );
 
 insert into "Security"."FunctionGroups" values
-	("Platform"),
-	("Company"),
-	("Prototype"),
-	("Instances")
+	('Platform'),
+	('Company'),
+	('Prototype'),
+	('Instances');
 
 create table "Security"."Functions"
 (
@@ -17,7 +17,7 @@ create table "Security"."Functions"
 	constraint "PK_Functions" primary key ("FunctionGroup", "Code")
 );
 
-insert into Security.Functions values
+insert into "Security"."Functions" values
 	('Company', 'Profiles'),
 	('Company', 'Data'),
 
@@ -29,10 +29,10 @@ insert into Security.Functions values
 	('Instance', 'Edit'),
 	('Instance', 'Delete'),
 	('Instance', 'Approve'),
-	('Instance', 'Unlock')
-	('Instance', 'View'),
+	('Instance', 'Unlock'),
+	('Instance', 'View');
 
-create table Security.UserFunctions
+create table "Security"."UserFunctions"
 (
     "Company" bigint,
 	"User" varchar (60),
@@ -43,7 +43,7 @@ create table Security.UserFunctions
 	"FunctionGroup" varchar (20),
 	"Function" varchar (20),
 
-	constraint "PK_Functions" primary key ("Company", "User", "PrototypeType", "FunctionGroup", "Function"),
+	constraint "PK_UserFunctions" primary key ("Company", "User", "PrototypeType", "FunctionGroup", "Function"),
 
 	"Tag" varchar (50),
 
@@ -52,3 +52,5 @@ create table Security.UserFunctions
 	"ModifiedBy" varchar (60),
 	"ModifiedOn" timestamptz
 );
+
+--insert into Security.Users (Code, Description, Password, Enabled, SettingsManager) values ('CheckListManager', 'System administrator', 0x5b852905cefc6d59524c45b8f642927b5459c2f622d40002466109e69dbccc36, 1, 1); --V4sc0 R0ss1, sha256

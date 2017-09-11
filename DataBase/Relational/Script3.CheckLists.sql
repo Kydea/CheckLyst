@@ -1,25 +1,26 @@
-create schema "CheckLists" owner to postgres;
+create schema "CheckLists";
 
 create table "CheckLists"."PrototypeTypes"
 (
-	"ID" bigserial,
+	"ID" bigserial primary key,
 	"Description" varchar (100),
 
 	"Company" bigint references "Infrastructure"."Companies",
 	"Department" bigint references "Infrastructure"."Departments",
+    
 	"ApprovationWorkFlow" bigint references "WorkFlows"."WorkFlows",
 	"ObsolescenceWorkFlow" bigint references "WorkFlows"."WorkFlows",
 
 	"CreatedBy" varchar (60),
 	"CreatedOn" timestamptz not null default current_timestamp,
 	"ModifiedBy" varchar (60),
-	"ModifiedOn" timestamptz,
+	"ModifiedOn" timestamptz
 );
 
 create table "CheckLists"."Prototypes"
 (
-	"ID" bigserial,
-	"Name" varchar (50) primary key,
+	"ID" bigserial primary key,
+	"Name" varchar (50),
 	"Description" varchar (100) not null,
 
 	"Company" bigint references "Infrastructure"."Companies",
@@ -29,7 +30,7 @@ create table "CheckLists"."Prototypes"
 	"CreatedBy" varchar (60),
 	"CreatedOn" timestamptz not null default current_timestamp,
 	"ModifiedBy" varchar (60),
-	"ModifiedOn" timestamptz,
+	"ModifiedOn" timestamptz
 );
 
 create table "CheckLists"."VersionStates"
@@ -44,7 +45,6 @@ values
 	('Approved'),
 	('Active'),
 	('Obsolete');
-
 
 create table "CheckLists"."PrototypeVersions"
 (
@@ -68,143 +68,20 @@ create table "CheckLists"."PrototypeVersions"
 	"CreatedBy" varchar (60),
 	"CreatedOn" timestamptz not null default current_timestamp,
 	"ModifiedBy" varchar (60),
-	"ModifiedOn" timestamptz,
+	"ModifiedOn" timestamptz
 
 );
 
-create unique index "Index_PrototypeVersions_Drafts" on ("Prototype", "VersionState") where "VersionState" in ("Draft", "In simulation", "Active")
+create unique index "Index_PrototypeVersions_Drafts" on "CheckLists"."PrototypeVersions"("Prototype", "VersionState") where "VersionState" in ('Draft', 'In simulation', 'Active');
 
---fino qui
-
-create trigger CheckLists.Versions_Update on CheckLists.Versions for update as
-
-insert into Logs.Events(Action, [User], Date, UTCDate, Information, Checklist)
-select
-	case when isnull(i.ModifiedBy, '(System)') = '(System)' then 'Prototype state auto-changed' else 'Prototype state changed' end,
-	isnull(i.ModifiedBy, '(System)'),
-	i.ModifiedOn,
-	getutcdate(),
-	p.Code + '.' + p.Description + '.' + cast(v.Version as varchar(10)) + ' - State: Obsolete',
-	p.Code + '.' + cast(v.Version as varchar(10))
-from
-	inserted i
-	inner join deleted d on d.Prototype = i.Prototype and d.Version = i.Version
-	inner join CheckLists.Versions v on i.Prototype = v.Prototype and v.Version <> i.Version
-	inner join CheckLists.Prototypes p on v.Prototype = p.Code
-where
-	i.VersionState = 'Active'
-	and i.VersionState <> d.VersionState
-	and v.VersionState = 'Active'
-
-insert into CheckLists.History (Prototype, Version, Date, UTCDate, State, [User]) 
-select v.Prototype, v.Version, v.ModifiedOn, getutcdate(), 'Obsolete', isnull(i.ModifiedBy, '(System)')
-from 
-	inserted i
-	inner join deleted d on d.Prototype = i.Prototype and d.Version = i.Version
-	inner join CheckLists.Versions v on i.Prototype = v.Prototype and v.Version <> i.Version
-where
-	i.VersionState = 'Active'
-	and i.VersionState <> d.VersionState
-	and v.VersionState = 'Active';
-
-update v set 
-	VersionState = 'Obsolete', 
-	v.ValidUntil = isnull(v.ValidUntil, getutcdate()),
-	ModifiedOn = i.ModifiedOn,
-	UTCModifiedOn = getutcdate()
-from
-	inserted i
-	inner join deleted d on d.Prototype = i.Prototype and d.Version = i.Version
-	inner join CheckLists.Versions v on i.Prototype = v.Prototype and v.Version <> i.Version
-where
-	i.VersionState = 'Active'
-	and i.VersionState <> d.VersionState
-	and v.VersionState = 'Active';
-
-create procedure CheckLists.UpdateStates (@Company varchar (50), @LocalDate datetime)
-as
-	-- Approved > Active
-
-	insert into Logs.Events(Action, [User], Date, UTCDate, Information, Checklist) 
-	select 'Prototype state auto-changed', '(System)', @LocalDate, getutcdate(),
-		p.Code + '.' + isnull(v.Description, p.Description) + '.' + cast(v.Version as varchar(10)) + ' - State: Active',
-		p.Code + '.' + cast(v.Version as varchar(10))
-	from 
-		CheckLists.Versions v
-		inner join CheckLists.Prototypes p on v.Prototype = p.Code 
-	where
-		p.Company = @Company
-		and v.VersionState = 'Approved'
-		and v.ValidFrom <= getutcdate();
-
-	insert into CheckLists.History (Prototype, Version, Date, UTCDate, State, [User]) 
-	select v.Prototype, v.Version, @LocalDate, getutcdate(), 'Active', '(System)'
-	from 
-		CheckLists.Versions v
-		inner join CheckLists.Prototypes p on v.Prototype = p.Code 
-	where
-		p.Company = @Company
-		and v.VersionState = 'Approved'
-		and v.ValidFrom <= getutcdate();
-
-	update v 
-	set 
-		VersionState = 'Active',
-		ModifiedOn = @LocalDate,
-		UTCModifiedOn = getutcdate()
-	from 
-		CheckLists.Versions v
-		inner join CheckLists.Prototypes p on v.Prototype = p.Code 
-	where
-		p.Company = @Company
-		and v.VersionState = 'Approved'
-		and v.ValidFrom <= getutcdate();
-
-	-- Active > Obsolete
-
-	insert into Logs.Events(Action, [User], Date, UTCDate, Information, Checklist) 
-	select 'Prototype state auto-changed', '(System)', @LocalDate, getutcdate(),
-		p.Code + '.' + p.Description + '.' + cast(v.Version as varchar(10)) + ' - State: Obsolete',
-		p.Code + '.' + cast(v.Version as varchar(10))
-	from 
-		CheckLists.Versions v
-		inner join CheckLists.Prototypes p on v.Prototype = p.Code 
-	where
-		p.Company = @Company
-		and v.VersionState = 'Active'
-		and v.ValidUntil is not null and v.ValidUntil <= getutcdate();
-
-	insert into CheckLists.History (Prototype, Version, Date, UTCDate, State, [User]) 
-	select v.Prototype, v.Version, @LocalDate, getutcdate(), 'Obsolete', '(System)'
-	from 
-		CheckLists.Versions v
-		inner join CheckLists.Prototypes p on v.Prototype = p.Code 
-	where
-		p.Company = @Company
-		and v.VersionState = 'Active'
-		and v.ValidUntil is not null and v.ValidUntil <= getutcdate();
-
-	update v
-	set 
-		VersionState = 'Obsolete',
-		ModifiedOn = @LocalDate,
-		UTCModifiedOn = getutcdate()
-	from 
-		CheckLists.Versions v
-		inner join CheckLists.Prototypes p on v.Prototype = p.Code 
-	where
-		p.Company = @Company
-		and v.VersionState = 'Active'
-		and v.ValidUntil is not null and v.ValidUntil <= getutcdate();
-
-create table "CheckLists"."VersionTags"
+create table "CheckLists"."PrototypeVersionTags"
 (
 	"Prototype" bigint,
 	"Version" int,
-	constraint "FK_VersionTags_Version" foreign key ("Prototype", "Version") references "CheckLists"."PrototypeVersions",
+	constraint "FK_PrototypeVersionTags_Version" foreign key ("Prototype", "Version") references "CheckLists"."PrototypeVersions",
 
 	"Code" varchar (50),
-	constraint "PK_VersionTags" primary key ("Prototype", "Version", "Code"),
+	constraint "PK_PrototypeVersionTags" primary key ("Prototype", "Version", "Code")
 );
 
 create table "CheckLists"."InstanceNumerators"
@@ -219,44 +96,48 @@ create table "CheckLists"."InstanceNumerators"
 	"Number" int not null default 0	
 );
 
-go
-
-create procedure CheckLists.GetInstanceNumber 
+create or replace function "CheckLists"."GetInstanceNumber"
 (
-	@Prototype varchar (50),
-	@Version int,
-	@Year int,
-	@Number int out 
-) as
-
-	set @Number = 1;
+	_Prototype bigint,
+	_Version int,
+	_Year int
+) 
+returns int as
+$body$ 
+begin
+	set _Number = 1;
 
 	select 
-		@Number = isnull(n.Number, 0) + 1
+		_Number = isnull(n."Number", 0) + 1
 	from 
-		CheckLists.InstanceNumerators n 
+		"CheckLists"."InstanceNumerators" n 
 	where
-		n.Prototype = @Prototype
-		and n.Version = @Version
-		and n.Year = @Year;
+		n."Prototype" = _Prototype
+		and n."Version" = _Version
+		and n."Year" = _Year;
 
-	if @Number = 1
-		insert into CheckLists.InstanceNumerators(Prototype, Version, Year, Number)
-		values (@Prototype, @Version, @Year, @Number);
+	if _Number = 1 then
+		insert into "CheckLists"."InstanceNumerators"("Prototype", "Version", "Year", "Number")
+		values (_Prototype, _Version, _Year, _Number);
 	else
-		update CheckLists.InstanceNumerators
-		set Number = @Number
+		update "CheckLists"."InstanceNumerators"
+		set "Number" = _Number
 		where
-			Prototype = @Prototype
-			and Version = @Version
-			and Year = @Year;
+			"Prototype" = _Prototype
+			and "Version" = _Version
+			and "Year" = _Year;
+	end if;
+    
+    return _Number;
+end 
+$body$ language plpgsql;
 
 create table "CheckLists"."InstanceStates"
 (
 	"Code" varchar (20) primary key
 );
 
-insert into CheckLists.InstanceStates 
+insert into "CheckLists"."InstanceStates" 
 values 
 	('In progress'),
 	('Confirmed'),
@@ -265,7 +146,7 @@ values
 
 create table "CheckLists"."Instances"
 (
-    "ID" bigserial,
+    "ID" bigserial primary key,
     
 	"Prototype" bigint,
 	"Version" int,
@@ -282,28 +163,24 @@ create table "CheckLists"."Instances"
 	"CreatedBy" varchar (60),
 	"CreatedOn" timestamptz not null default current_timestamp,
 	"ModifiedBy" varchar (60),
-	"ModifiedOn" timestamptz,
+	"ModifiedOn" timestamptz
 );
 
 create unique index "Index_InstanceExpressionValues" on "CheckLists"."Instances" ("Prototype", "Version", "Year", "Number");
 
-create table CheckLists.InstanceTags
+create table "CheckLists"."InstanceTags"
 (
 	"ID" bigserial primary key,
-	
-	"Instance" bigint not null references "Checklists"."Instances",
-
+	"Instance" bigint not null references "CheckLists"."Instances",
 	"Tag" varchar (50) not null,
-	constraint "FK_InstanceTags_VersionTag" foreign key ("Prototype", "Version", "Tag") references "CheckLists"."VersionTags",
-
 	"Value" text not null
 );
 
-create index "Index_InstanceTags_Tag" on "CheckLists"."InstanceTags"("Insance", "Tag");
+create index "Index_InstanceTags_Tag" on "CheckLists"."InstanceTags"("Instance", "Tag");
 
 create table "CheckLists"."InstanceExpressionValues"
 (
-	"Instance" bigint not null references "Checklists"."Instances",
+	"Instance" bigint not null references "CheckLists"."Instances",
 	"Code" varchar (50),
 
 	constraint "PK_InstanceExpressionValues" primary key ("Instance", "Code"),

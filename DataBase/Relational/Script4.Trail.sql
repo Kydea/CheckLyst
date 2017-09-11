@@ -1,4 +1,4 @@
-create schema "Trail" owner to postgres;
+create schema "Trail";
 
 create table "Trail"."Actions"
 (

@@ -1,4 +1,4 @@
-create schema "Security" owner to postgres;
+create schema "Security";
 
 create table "Security"."Users"
 (
@@ -28,8 +28,6 @@ create table "Security"."Users"
 	"ModifiedOn" timestamptz
 );
 
-insert into Security.Users (Code, Description, Password, Enabled, SettingsManager) values ('CheckListManager', 'System administrator', 0x5b852905cefc6d59524c45b8f642927b5459c2f622d40002466109e69dbccc36, 1, 1); --V4sc0 R0ss1, sha256
-	
 create table "Security"."PINHistory"
 (
     "ID" bigserial primary key,
