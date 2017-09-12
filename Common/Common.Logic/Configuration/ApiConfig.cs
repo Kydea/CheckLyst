@@ -10,6 +10,7 @@ using CheckListManager.Common.Core.Cache;
 using CheckListManager.Common.Core.Services;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Cache;
+using Microsoft.Owin.Security.OAuth;
 using NLog;
 
 namespace CheckListManager.Common.Logic.Configuration
@@ -23,9 +24,9 @@ namespace CheckListManager.Common.Logic.Configuration
 			ConfigureLog();
 			ConfigureDependencyInjection(configuration, builder);
 
-			//configuration.SuppressDefaultHostAuthentication();
-			//configuration.Filters.Add(new AuthorizeAttribute());
-			//configuration.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
+			configuration.SuppressDefaultHostAuthentication();
+			configuration.Filters.Add(new AuthorizeAttribute());
+			configuration.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
 
 			configuration.MapHttpAttributeRoutes();
 		}

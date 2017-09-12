@@ -6,7 +6,7 @@ using CheckListManager.Common.Logic.Services;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Infrastructure;
 
-namespace CheckListManager.AccessControl.Logic.Providers
+namespace CheckListManager.AccessControl.Logic.Authentication.Providers
 {
 	public class RefreshTokenProvider : IAuthenticationTokenProvider
 	{
@@ -43,10 +43,10 @@ namespace CheckListManager.AccessControl.Logic.Providers
 
 		public async Task ReceiveAsync(AuthenticationTokenReceiveContext context)
 		{
-			var session = await _userService.GetSessionAsync(context.Token);
-			if (session != null)
+			var token = await _userService.GetTokenAsync(context.Token);
+			if (token != null)
 			{
-				context.DeserializeTicket(session.Ticket);
+				context.DeserializeTicket(token.AuthenticationTicket);
 			}
 		}
 

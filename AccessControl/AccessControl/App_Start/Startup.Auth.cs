@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Web.Http;
-using CheckListManager.AccessControl.Logic.Providers;
+using CheckListManager.AccessControl.Logic.Authentication.Providers;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.OAuth;
 using Owin;
