@@ -11,7 +11,7 @@ namespace CheckListManager.AccessControl.Logic.Services
 {
 	public class UserService : IUserService
 	{
-		private static readonly string IdentityCacheRegion = "UserService.IdentityToken";
+		private const string IdentityCacheRegion = "UserService.IdentityToken";
 
 		private readonly IUserRepository _userRepository;
 		private readonly IUserSessionRepository _userSessionRepository;
@@ -42,11 +42,11 @@ namespace CheckListManager.AccessControl.Logic.Services
 
 			if (user == null)
 			{
-				throw new AuthenticationException(102, $"User '{code}' not found");
+				throw new AuthenticationException(102, $"User {code} not found");
 			}
 			if (!user.Enabled)
 			{
-				throw new AuthenticationException(103, $"User '{code}' not enabled");
+				throw new AuthenticationException(103, $"User {code} not enabled");
 			}
 			if (!_hashService.ValidateHash(password, user.Password))
 			{

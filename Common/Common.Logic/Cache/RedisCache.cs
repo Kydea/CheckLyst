@@ -7,24 +7,24 @@ namespace CheckListManager.Common.Logic.Cache
 {
 	public class RedisCache : IRedisCache
 	{
-		protected IDatabase Database { get; }
+		protected Lazy<IDatabase> Database { get; }
 
 		public RedisCache(IRedisSetup redisSetup)
 		{
-			Database = redisSetup.Connection.GetDatabase();
+			Database = new Lazy<IDatabase>(() => redisSetup.Connection.Value.GetDatabase());
 		}
 
 		public object Get(string key, string regionName = null)
-			=> Database.StringGet(ResolveKey(key, regionName)).ToString().ToObject();
+			=> Database.Value.StringGet(ResolveKey(key, regionName)).ToString().ToObject();
 
 		public T Get<T>(string key, string regionName = null)
-			=> Database.StringGet(ResolveKey(key, regionName)).ToString().ToObject<T>();
+			=> Database.Value.StringGet(ResolveKey(key, regionName)).ToString().ToObject<T>();
 
 		public async Task<object> GetAsync(string key, string regionName = null)
-			=> (await Database.StringGetAsync(ResolveKey(key, regionName))).ToString().ToObject();
+			=> (await Database.Value.StringGetAsync(ResolveKey(key, regionName))).ToString().ToObject();
 
 		public async Task<T> GetAsync<T>(string key, string regionName = null)
-			=> (await Database.StringGetAsync(ResolveKey(key, regionName))).ToString().ToObject<T>();
+			=> (await Database.Value.StringGetAsync(ResolveKey(key, regionName))).ToString().ToObject<T>();
 
 		public object GetOrAdd(string key, Func<string, object> addFunction, string regionName = null)
 		{
@@ -78,7 +78,7 @@ namespace CheckListManager.Common.Logic.Cache
 		{
 			if (value != null)
 			{
-				Database.StringSet(ResolveKey(key, regionName), value.ToJson(), flags: CommandFlags.FireAndForget);
+				Database.Value.StringSet(ResolveKey(key, regionName), value.ToJson(), flags: CommandFlags.FireAndForget);
 			}
 		}
 
@@ -86,7 +86,7 @@ namespace CheckListManager.Common.Logic.Cache
 		{
 			if (value != null)
 			{
-				await Database.StringSetAsync(ResolveKey(key, regionName), value.ToJson(), flags: CommandFlags.FireAndForget);
+				await Database.Value.StringSetAsync(ResolveKey(key, regionName), value.ToJson(), flags: CommandFlags.FireAndForget);
 			}
 		}
 

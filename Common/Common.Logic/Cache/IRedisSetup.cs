@@ -1,9 +1,10 @@
-﻿using StackExchange.Redis;
+﻿using System;
+using StackExchange.Redis;
 
 namespace CheckListManager.Common.Logic.Cache
 {
 	public interface IRedisSetup
 	{
-		IConnectionMultiplexer Connection { get; }
+		Lazy<IConnectionMultiplexer> Connection { get; }
 	}
 }

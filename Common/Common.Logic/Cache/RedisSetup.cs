@@ -1,4 +1,5 @@
-﻿using CheckListManager.Common.Logic.Services;
+﻿using System;
+using CheckListManager.Common.Logic.Services;
 using StackExchange.Redis;
 
 namespace CheckListManager.Common.Logic.Cache
@@ -7,9 +8,9 @@ namespace CheckListManager.Common.Logic.Cache
 	{
 		public RedisSetup(IConfigurationService configuration)
 		{
-			Connection = ConnectionMultiplexer.Connect($"{configuration.RedisHost}:{configuration.RedisPort}");
+			Connection = new Lazy<IConnectionMultiplexer>(() => ConnectionMultiplexer.Connect($"{configuration.RedisHost}:{configuration.RedisPort}"));
 		}
 
-		public IConnectionMultiplexer Connection { get; }
+		public Lazy<IConnectionMultiplexer> Connection { get; }
 	}
 }
