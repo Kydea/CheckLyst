@@ -1,9 +1,8 @@
 ﻿using System.Reflection;
 using System.Web.Http;
 using Autofac;
-using CheckListManager.AccessControl.Logic.Providers;
+using CheckListManager.AccessControl.Logic.Authentication.Providers;
 using CheckListManager.Common.Logic.Configuration;
-using Microsoft.Owin.Security.OAuth;
 
 namespace CheckListManager.AccessControl
 {
@@ -13,10 +12,6 @@ namespace CheckListManager.AccessControl
         {
 	        var builder = CreateBuilder();
 	        config.Configure(builder);
-
-	        config.SuppressDefaultHostAuthentication();
-	        config.Filters.Add(new AuthorizeAttribute());
-	        config.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
         }
 
 		public static ContainerBuilder CreateBuilder(bool loadAssemblies = true)

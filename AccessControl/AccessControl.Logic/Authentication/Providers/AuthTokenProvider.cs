@@ -9,7 +9,7 @@ using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.OAuth;
 using NLog;
 
-namespace CheckListManager.AccessControl.Logic.Providers
+namespace CheckListManager.AccessControl.Logic.Authentication.Providers
 {
     public class AuthTokenProvider : OAuthAuthorizationServerProvider
     {
