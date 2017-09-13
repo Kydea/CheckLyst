@@ -1,0 +1,91 @@
+﻿div.CheckListGrid div.Container {
+  background-color: white;
+  border: solid 1px #afb4b5;
+  padding: 20px;
+  box-shadow: rgba(0, 0, 0, 0.75) 5px 5px 5px;
+  overflow: auto; }
+  div.CheckListGrid div.Container div.Parameters {
+    padding-bottom: 10px; }
+    div.CheckListGrid div.Container div.Parameters label {
+      float: left; }
+      div.CheckListGrid div.Container div.Parameters label input {
+        width: 200px;
+        margin: 5px 10px 10px 0; }
+    div.CheckListGrid div.Container div.Parameters a.Button {
+      min-width: 100px;
+      margin-left: 10px; }
+      div.CheckListGrid div.Container div.Parameters a.Button i.fa {
+        margin-right: 10px; }
+    div.CheckListGrid div.Container div.Parameters::after {
+      content: "";
+      display: table;
+      clear: both; }
+  div.CheckListGrid div.Container table.Grid {
+    clear: both; }
+    div.CheckListGrid div.Container table.Grid tr th {
+      text-align: center; }
+    div.CheckListGrid div.Container table.Grid tr.Selected td {
+      font-weight: bold; }
+      div.CheckListGrid div.Container table.Grid tr.Selected td i {
+        display: block; }
+    div.CheckListGrid div.Container table.Grid.ExpressionsList tr td:first-child {
+      width: 30px;
+      text-align: center; }
+      div.CheckListGrid div.Container table.Grid.ExpressionsList tr td:first-child i {
+        display: none;
+        font-size: 16px; }
+    div.CheckListGrid div.Container table.Grid.ExpressionsList tr td.CodeColumn {
+      width: 20%; }
+    div.CheckListGrid div.Container table.Grid.ExpressionsList tr td.ExpressionColumn {
+      width: 80%; }
+    div.CheckListGrid div.Container table.Grid.ExpressionsList tr td:last-child {
+      width: 50px;
+      text-align: center; }
+      div.CheckListGrid div.Container table.Grid.ExpressionsList tr td:last-child i.fa-remove {
+        color: red; }
+    div.CheckListGrid div.Container table.Grid.ExpressionsList tr.Selected td i {
+      display: block; }
+    div.CheckListGrid div.Container table.Grid.SourcesList td {
+      width: 50%; }
+  div.CheckListGrid div.Container div.Buttons {
+    padding-top: 20px; }
+    div.CheckListGrid div.Container div.Buttons a {
+      float: right;
+      min-width: 100px;
+      margin-left: 10px; }
+      div.CheckListGrid div.Container div.Buttons a i.fa {
+        margin-right: 10px; }
+
+@media only screen and (min-width: 760px) {
+  div.CheckListGrid {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 990;
+    background-color: rgba(217, 217, 217, 0.5);
+    -webkit-transform-style: preserve-3d;
+    -moz-transform-style: preserve-3d;
+    transform-style: preserve-3d; }
+    div.CheckListGrid div.Container {
+      position: absolute;
+      width: 90%;
+      max-height: 90%;
+      top: 50%;
+      left: 50%;
+      -moz-transform: translate(-50%, -50%);
+      -ms-transform: translate(-50%, -50%);
+      -o-transform: translate(-50%, -50%);
+      -webkit-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%); } }
+
+@media only screen and (max-width: 759px) {
+  div.CheckListGrid div.Container {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 990; } }
+

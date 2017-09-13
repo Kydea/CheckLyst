@@ -1,0 +1,56 @@
+﻿div.TabContainer {
+  position: relative;
+  overflow: hidden;
+  -moz-transition: height 0.5s;
+  -o-transition: height 0.5s;
+  -webkit-transition: height 0.5s;
+  transition: height 0.5s; }
+  div.TabContainer .TabLabels::after {
+    content: "";
+    position: absolute;
+    height: 2px;
+    width: 100%;
+    top: 38px;
+    background-color: #dcdbe0;
+    clear: both;
+    left: 0; }
+  div.TabContainer .TabLabels a {
+    height: 40px;
+    line-height: 40px;
+    font-weight: bold;
+    font-size: 16px;
+    float: left;
+    background-color: #e8e7ec;
+    border-right: solid 4px white;
+    border-bottom: solid 6px white;
+    color: #6e93a0;
+    text-decoration: none;
+    padding: 0 20px; }
+    div.TabContainer .TabLabels a i.fa {
+      color: #9e9e9e; }
+    div.TabContainer .TabLabels a.Selected {
+      cursor: default;
+      background-color: #dcdbe0;
+      border-top: none;
+      border-bottom: none;
+      color: #086386; }
+      div.TabContainer .TabLabels a.Selected i.fa {
+        color: black; }
+    div.TabContainer .TabLabels a:hover {
+      text-decoration: none !important; }
+      div.TabContainer .TabLabels a:hover:not(.Selected) {
+        color: #086386; }
+  div.TabContainer .Tab {
+    position: absolute;
+    width: 100%;
+    top: 40px;
+    opacity: 0;
+    -moz-transition: opacity 0.5s;
+    -o-transition: opacity 0.5s;
+    -webkit-transition: opacity 0.5s;
+    transition: opacity 0.5s;
+    z-index: 50; }
+    div.TabContainer .Tab.Selected {
+      opacity: 1;
+      z-index: 51; }
+

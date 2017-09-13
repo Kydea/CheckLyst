@@ -12,9 +12,18 @@ namespace WebApplication.Models
 {
     public class IntegratedAuthenticationService
     {
-        public bool IsAuthorised(string UserCode, string Value)
+        public bool IsAuthorised(IHeaderDictionary RequestHeaders)
         {
-            return Value == "Test";
+            return true;
+
+            //if (RequestHeaders.TryGetValue("x-authentication-token", out string[] Values) && Values?.Length == 1)
+            //{
+            //    string[] Tokens = Values[0].Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
+            //    if (Service.IsAuthorised(Tokens[0], Tokens[1]))
+            //        return true;
+            //}
+
+            //return false;
         }
     }
 }

@@ -1,0 +1,156 @@
+﻿@import "_Library.scss";
+
+div.CheckListGrid {
+
+    div.Container {
+        background-color: white;
+        border: solid 1px $Color-Border-Grey;
+        padding: 20px;
+        box-shadow: rgba(0, 0, 0, .75) 5px 5px 5px;
+        overflow: auto;
+
+        div.Parameters {
+            padding-bottom: 10px;
+
+            label {
+                float: left;
+
+                input {
+                    width: 200px;
+                    margin: 5px 10px 10px 0;
+                }
+            }
+
+            a.Button {
+                min-width: 100px;
+                margin-left: 10px;
+
+                i.fa {
+                    margin-right: 10px;
+                }
+            }
+
+            &::after {
+                content: "";
+                display: table;
+                clear: both;
+            }
+        }
+
+        table.Grid {
+            clear: both;
+
+            tr {
+                th {
+                    text-align: center;
+                }
+
+                &.Selected {
+                    td {
+                        font-weight: bold;
+
+                        i {
+                            display: block;
+                        }
+                    }
+                }
+            }
+
+            &.ExpressionsList {
+                tr {
+                    td {
+                        &:first-child {
+                            width: 30px;
+                            text-align: center;
+
+                            i {
+                                display: none;
+                                font-size: 16px;
+                            }
+                        }
+
+                        &.CodeColumn {
+                            width: 20%;
+                        }
+
+                        &.ExpressionColumn {
+                            width: 80%;
+                        }
+
+                        &:last-child {
+                            width: 50px;
+                            text-align: center;
+
+                            i.fa-remove {
+                                color: red;
+                            }
+                        }
+                    }
+
+                    &.Selected {
+                        td {
+                            i {
+                                display: block;
+                            }
+                        }
+                    }
+                }
+            }
+
+            &.SourcesList {
+                td {
+                    width: 50%;
+                }
+            }
+        }
+
+        div.Buttons {
+            padding-top: 20px;
+
+            a {
+                float: right;
+                min-width: 100px;
+                margin-left: 10px;
+
+                i.fa {
+                    margin-right: 10px;
+                }
+            }
+        }
+    }
+
+    @media #{$Media-Extended} {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: $Depth-Dialog;
+        background-color: rgba(217, 217, 217, .5);
+        @include vertically-aligned-container();
+
+        div.Container {
+            position: absolute;
+            width: 90%;
+            max-height: 90%;
+            top: 50%;
+            left: 50%;
+            -moz-transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            -o-transform: translate(-50%, -50%);
+            -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+        }
+    }
+
+    @media #{$Media-Mobile} {
+        div.Container {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: $Depth-Dialog;
+        }
+    }
+}

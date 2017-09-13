@@ -1,0 +1,125 @@
+﻿@import "_Library.scss";
+
+div.Signature {
+    label {
+        margin-bottom: 5px;
+
+		&.Inline {
+			display: inline-block;
+			margin-right: 20px;
+		}
+    }
+
+    input[type=text], input[type=password], textarea {
+        margin-bottom: 10px;
+		outline: none;
+    }
+
+	textarea {
+		height: 80px;
+		font: inherit;
+	}
+
+    div.Simple {
+        h2 {
+            text-transform: none;
+        }
+    }
+
+    div.PinPaddle {
+
+        h2 {
+            text-transform: none;
+            width: 360px;
+            margin: 0 auto;
+            border: none;
+        }
+
+        input {
+            width: 359px;
+            font-size: 50px;
+            text-align: center;
+            background-color: black !important;
+            margin: 0 auto 20px;
+            border: 0 !important;
+            color: white !important;
+            @include border-radius(0);
+        }
+
+        div.Digits {
+            width: 360px;
+            margin: 0 auto;
+
+            a {
+                float: left;
+                width: 120px;
+                height: 80px;
+                text-align: center;
+                font-size: 50px;
+                line-height: 80px;
+                background-color: $Color-Background-Grey1;
+                color: $Color-Font-Blue2;
+                border-right: solid 1px white;
+                border-bottom: solid 1px white;
+
+                &.Digit0 {
+                    width: 240px;
+                }
+
+                &.DigitBack {
+                    color: red;
+                }
+
+                &:hover {
+                    background-color: $Color-Background-Grey2;
+                }
+            }
+        }
+
+        div.User {
+            margin: 20px 0 15px;
+            text-align: center;
+        }
+
+        div.Buttons {
+            width: 360px;
+            margin: 0 auto;
+        }
+    }
+
+    div.Error {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 10px;
+        background: white;
+        display: none;
+
+        @include vertically-aligned-container();
+
+        div {
+            color: red;
+            text-align: center;
+            @include vertically-aligned-content(absolute);
+            font-size: 20px;
+			left: 10px;
+			right: 10px;
+        }
+    }
+
+	hr {
+		margin: 20px 0;
+		border: 1px solid transparent;
+		border-bottom: 1px solid $Color-Background-Blu1;
+	}
+
+	div.ValidityMessage {
+		margin-bottom: 10px;
+		background: $Color-Background-Grey3;
+		border: 1px solid $Color-Background-Grey1;
+		border-radius: 4px;
+		padding: 5px 3px;
+	}
+}

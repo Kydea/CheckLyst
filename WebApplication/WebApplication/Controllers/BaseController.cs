@@ -64,30 +64,5 @@ namespace WebApplication.Controllers
         {
             return Json(Data, ContentType, ContentEncoding, JsonRequestBehavior.DenyGet);
         }
-
-        [AttributeUsage(AttributeTargets.Class)]
-        public class ControllerAuthorization : AuthorizeAttribute
-        {
-            public ControllerAuthorization()
-            {
-            }
-
-            protected override bool AuthorizeCore(HttpContextBase httpContext)
-            {
-                return true;
-            }
-
-            protected override void HandleUnauthorizedRequest(AuthorizationContext filterContext)
-            {
-                filterContext.Result = new RedirectToRouteResult(
-                    new RouteValueDictionary(
-                        new
-                        {
-                            controller = "DefaultController",
-                            action = "DefaultAction"
-                        })
-                    );
-            }
-        }
     }
 }

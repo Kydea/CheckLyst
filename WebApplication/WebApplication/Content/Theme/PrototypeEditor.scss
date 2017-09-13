@@ -1,0 +1,112 @@
+﻿@import "_Library.scss";
+
+body.PrototypeEditor {
+
+    div#Content {
+        h2 {
+            cursor: pointer;
+        }
+
+        div.TabContainer div.TabLabels a {
+            &.Selected {
+                cursor: pointer !important;
+            }
+
+            &.Red {
+                color: red !important;
+            }
+        }
+
+        div.Add {
+            clear: both;
+
+            &.AddGroup {
+                margin: 20px 0;
+            }
+        }
+
+        div.Group {
+            position: relative;
+            cursor: pointer;
+
+            &.Selected {
+
+                &::before {
+                    background-color: $Color-Background-Pink !important;
+                    position: absolute;
+                    z-index: -1;
+                    content: "";
+                    top: -20px;
+                    left: -20px;
+                    bottom: -20px;
+                    right: -20px;
+                }
+            }
+
+            div.Group.Selected {
+                background-color: $Color-Background-Pink !important;
+
+                &::before {
+                    content: none;
+                }
+            }
+        }
+
+        div.Item {
+            cursor: pointer;
+
+            label {
+                cursor: pointer;
+            }
+
+            &.Field {
+            }
+
+            &.Signature {
+                input {
+                    cursor: pointer;
+                }
+
+                a.Button {
+                    cursor: pointer;
+                    background-color: $Color-Background-Blu2;
+                }
+            }
+
+            &.Text {
+            }
+
+            &.Selected {
+                &.Field {
+                    label {
+                        color: red;
+                    }
+
+                    div.Input {
+                        background-color: $Color-Background-Pink;
+                    }
+                }
+
+                &.Signature {
+                    label {
+                        color: red;
+                    }
+
+                    input {
+                        background-color: $Color-Background-Pink;
+                    }
+                }
+
+                &.Text {
+                    background-color: $Color-Background-Pink;
+                }
+            }
+        }
+
+        &.Selected {
+            h2 {
+                color: red;
+            }
+        }
+    }
+}

@@ -1,0 +1,8 @@
+﻿@model HandleErrorInfo
+
+<h1>Error</h1>
+
+@if (ViewBag.Message != null)
+{
+    <strong>@Html.Raw(ViewBag.Message)</strong>
+}

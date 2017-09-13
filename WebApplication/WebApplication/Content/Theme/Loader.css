@@ -1,0 +1,34 @@
+﻿div#Loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 100000; }
+  div#Loader div.Center {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 100001; }
+    div#Loader div.Center div.Background {
+      position: relative;
+      height: 70px;
+      width: 50px;
+      left: -25px;
+      background-color: black;
+      filter: alpha(opacity=50);
+      opacity: .5;
+      border-radius: 10px; }
+      div#Loader div.Center div.Background div.Image {
+        position: absolute;
+        height: 50px;
+        width: 50px; }
+      div#Loader div.Center div.Background div.Percentage {
+        position: absolute;
+        bottom: 0;
+        padding-bottom: 5px;
+        width: 50px;
+        color: white;
+        text-align: center;
+        font-size: 10px; }
+

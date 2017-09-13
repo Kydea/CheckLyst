@@ -1,0 +1,32 @@
+﻿div#Content a {
+  text-decoration: none; }
+  div#Content a:hover {
+    text-decoration: underline; }
+
+div#Content hr {
+  height: 1px;
+  background-color: black;
+  border: 0;
+  width: 100%; }
+
+div#Content h1 {
+  margin: 0 0 25px;
+  font-size: 28px; }
+
+div#Content h2 {
+  margin: 20px 0 30px;
+  font-size: 18px;
+  text-transform: uppercase;
+  color: #086386; }
+
+div#Content h3 {
+  margin: 20px 0;
+  font-size: 16px;
+  color: #086386; }
+
+div#Content p {
+  line-height: 1.4; }
+
+div#Content ul li, div#Content ol li {
+  line-height: 1.4; }
+

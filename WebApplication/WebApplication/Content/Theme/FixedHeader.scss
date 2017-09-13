@@ -1,0 +1,17 @@
+﻿@import "_Library.scss";
+
+div.FixedHeader {
+    position: fixed;
+    display: none;
+    top: 0;
+    border-bottom: solid 1px #afb4b5;
+    background-color: #e8e7ec;
+    z-index: $Depth-Fixed-Header;
+
+    div {
+        display: table-cell;
+        vertical-align: middle;
+        position: relative;
+        padding: 5px 10px;
+    }
+}

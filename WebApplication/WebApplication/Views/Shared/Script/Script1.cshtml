@@ -1,0 +1,78 @@
+﻿<script type="text/javascript">
+	$.datepicker.setDefaults({ dateFormat: 'dd/mm/yy' });
+    $(document).ajaxStart(function () {
+        matematici.loader.show();
+    }).ajaxStop(function () {
+        matematici.loader.hide();
+    });
+
+    if (Modernizr.touch) matematici.touch.init();
+
+    matematici.navigator.setBasePath("@Url.Content("~/")").setLastPath("@Request.RawUrl");
+    matematici.navigator.checkEventHandlers();
+
+    matematici.elements.window = $(window);
+    matematici.elements.body = $("body");
+    matematici.elements.content = $("div#Content");
+    matematici.elements.header = $("header");
+    matematici.elements.footer = $("footer");
+
+    matematici.logo.init();
+
+    matematici.clock = new matematici.Clock(@(ViewBag.AppMode ? "true" : "matematici.isLoginPage"));
+
+    matematici.actions.resize = function () {
+        matematici.elements.content.css("min-height", matematici.elements.window.height() - matematici.elements.header.height() - matematici.elements.footer.height());
+    };
+
+    matematici.elements.window.on("resize", function () {
+        matematici.actions.resize();
+    }).on("beforeunload", function () {
+        if (!matematici.canClose)
+            return "Warning: any unsaved change will be lost.";
+    });
+
+    setTimeout(function () {
+        matematici.actions.resize();
+    });
+
+    matematici.breadcrumbs = new matematici.Breadcrumbs("div#Breadcrumbs");
+    matematici.menu = new matematici.Menu("ul.Menu");
+    matematici.userPanel = new matematici.UserPanel("div#UserPanel");
+    matematici.autoScroller = new matematici.AutoScroller();
+    matematici.help = new matematici.Help();
+
+    matematici.navigator.handlePageLoad(null, function () { });
+
+    matematici.clock.add("span.ServerTime");
+    matematici.clock.add("span.LocalTime");
+
+    matematici.loader.checkInitialCurtain();
+
+    matematici.AnimationManager.toggle(true);
+
+    matematici.elements.body.on("mousedown", function (e) {
+        matematici.activity = true;
+    }).on("keydown", function (e) {
+        var key = e.which;
+        switch (key)
+        {
+            case 13:
+                if ($('.DefaultButton').first().click().size() > 0)
+                    e.preventDefault();
+                break;
+            case 27:
+                $('.CancelButton').first().click();
+                e.preventDefault();
+                break;
+        }
+    });
+
+    var
+        encode = function (param) {
+            var encoded = "";
+            for (var i = 0; i < param.length; i++)
+                encoded += "%" + param.charCodeAt(i).toString(16);
+            return encoded;
+        };
+</script>

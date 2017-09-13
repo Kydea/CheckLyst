@@ -32,11 +32,9 @@ insert into "Security"."Users" ("Company", "Code", "Description", "Password", "E
 
 create table "Security"."UserSessions"
 (
-	"Company" bigint not null references "Infrastructure"."Companies",
-	"Code" varchar (250),
+	"Code" varchar (250) primary key, --refresh token
 
-	constraint "UserSessions_PK" primary key ("Code"), --NO PK on Company as we don't have it when querying
-
+	"Company" bigint,
 	"User" varchar (60),
 	constraint "UserSessions_User" foreign key ("Company", "User") references "Security"."Users" on update cascade on delete cascade,
 

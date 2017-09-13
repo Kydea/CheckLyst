@@ -1,0 +1,148 @@
+﻿* {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  position: absolute;
+  width: 100%;
+  color: black;
+  font-size: 13px; }
+
+ul.Plain {
+  margin: 0;
+  padding: 0;
+  list-style: none outside none; }
+
+a {
+  text-decoration: none;
+  color: black;
+  display: block; }
+  a:hover {
+    text-decoration: none;
+    color: #0099cc; }
+  a.Left {
+    float: right; }
+  a.Right {
+    float: right; }
+
+.LeftFloating {
+  float: left; }
+
+.RightFloating {
+  float: right; }
+
+.Clearing {
+  clear: both; }
+
+.Container::after {
+  content: "";
+  display: table;
+  clear: both; }
+
+@media only screen and (min-width: 760px) {
+  .Padded {
+    padding-left: 30px;
+    padding-right: 30px; } }
+
+@media only screen and (max-width: 759px) {
+  .Padded {
+    padding-left: 10px;
+    padding-right: 10px; } }
+
+.Hidden {
+  display: none; }
+
+div#InitialCurtain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  background: white; }
+
+header div#Logo {
+  background: url(Layout/Header.jpg) black;
+  width: 100%;
+  height: 55px;
+  padding-top: 5px; }
+  header div#Logo img {
+    display: block; }
+
+header a#HelpButton {
+  position: absolute;
+  top: 15px;
+  border-radius: 50%;
+  background-color: #406f81;
+  width: 25px;
+  height: 25px;
+  line-height: 25px;
+  color: white;
+  text-align: center;
+  font-size: 14px; }
+  @media only screen and (min-width: 760px) {
+    header a#HelpButton {
+      right: 30px; } }
+  @media only screen and (max-width: 759px) {
+    header a#HelpButton {
+      right: 10px; } }
+
+header div#UserPanel {
+  background-color: #518ca3;
+  color: white;
+  height: 55px;
+  padding-top: 15px;
+  padding-bottom: 15px; }
+  header div#UserPanel a {
+    color: white !important;
+    line-height: 25px; }
+    header div#UserPanel a:hover {
+      color: black !important; }
+    header div#UserPanel a.LeftFloating {
+      margin-right: 10px; }
+    header div#UserPanel a.RightFloating {
+      margin-left: 10px; }
+    header div#UserPanel a i {
+      -webkit-border-radius: 50%;
+      -moz-border-radius: 50%;
+      -ms-border-radius: 50%;
+      border-radius: 50%;
+      background-color: #406f81;
+      width: 25px;
+      height: 25px;
+      line-height: 25px;
+      text-align: center; }
+
+header a#MenuButton {
+  line-height: 30px;
+  padding: 10px;
+  float: right; }
+
+footer {
+  height: 58px;
+  background: black;
+  width: 100%; }
+  footer div.Information {
+    font-size: 10px;
+    color: white;
+    position: absolute;
+    bottom: 10px; }
+    @media only screen and (min-width: 760px) {
+      footer div.Information {
+        left: 30px; } }
+    @media only screen and (max-width: 759px) {
+      footer div.Information {
+        left: 10px; } }
+
+@media only screen and (min-width: 760px) {
+  .Mobile {
+    display: none !important; } }
+
+@media only screen and (max-width: 759px) {
+  .Extended {
+    display: none !important; } }
+
