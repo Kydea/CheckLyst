@@ -82,8 +82,7 @@
             return date;
         };
 
-    if(!stopped)
-        update();
+    //if(!stopped) update();
 
     return {
         getTime: function () {

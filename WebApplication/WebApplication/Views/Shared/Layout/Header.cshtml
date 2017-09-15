@@ -1,7 +1,7 @@
 ﻿@{ 
     var Security = new
     {
-        CurrentUser = new { Code = "Administrator", SettingsManager = true, Description = "System administrato" }
+        CurrentUser = new { Code = HttpContext.Current.User.Identity.Name /*"Administrator"*/, SettingsManager = true, Description = HttpContext.Current.User.Identity.Name }
     };
 }
 

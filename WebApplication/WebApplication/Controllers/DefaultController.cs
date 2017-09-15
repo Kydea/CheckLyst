@@ -6,9 +6,25 @@ using System.Web.Mvc;
 
 namespace WebApplication.Controllers
 {
-	public class DefaultController : BaseController
+    public class DefaultController : BaseController
 	{
+        [AllowAnonymous]
+        [Route("Error", Order = 1)]
+        public ActionResult Error()
+        {
+            return ConditionalView();
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("{*Url}", Order = 2)]
+        public ActionResult Loader(string Url)
+        {
+            return ConditionalView("Loader", Url);
+        }
+
         [Route]
+        [HttpPost]
         public ActionResult Dashboard(int? PageVersions, int? PageInstances)
         {
             //var Model = new ViewModels.Dashboard.DashboardModel(db);

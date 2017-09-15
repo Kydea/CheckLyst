@@ -1,4 +1,5 @@
 ﻿using Microsoft.Owin;
+using Microsoft.Owin.Infrastructure;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Infrastructure;
 using System;
@@ -8,7 +9,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace WebApplication.Models
+namespace WebApplication.IntegratedAuthentication
 {
     public class IntegratedAuthenticationHandler : AuthenticationHandler<IntegratedAuthenticationOptions>
     {
@@ -42,6 +43,18 @@ namespace WebApplication.Models
             }
     
             return null;
+        }
+
+        protected override Task ApplyResponseChallengeAsync()
+        {
+            if (Response.StatusCode == 401)
+            {
+                var Challenge = Helper.LookupChallenge(Options.AuthenticationType, Options.AuthenticationMode);
+                if (Challenge != null)
+                    Response.Redirect("/AccessControl/Login");
+            }
+
+            return Task.FromResult<object>(null);
         }
 
         private bool IsAuthorized(IHeaderDictionary RequestHeaders)

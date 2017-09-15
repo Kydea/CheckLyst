@@ -8,13 +8,13 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace WebApplication.Models
+namespace WebApplication.IntegratedAuthentication
 {
     public class IntegratedAuthenticationService
     {
         public bool IsAuthorised(IHeaderDictionary RequestHeaders)
         {
-            return true;
+            return false;
 
             //if (RequestHeaders.TryGetValue("x-authentication-token", out string[] Values) && Values?.Length == 1)
             //{

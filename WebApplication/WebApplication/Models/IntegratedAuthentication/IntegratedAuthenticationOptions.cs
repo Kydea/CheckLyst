@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace WebApplication.Models
+namespace WebApplication.IntegratedAuthentication
 {
     public class IntegratedAuthenticationOptions : AuthenticationOptions
     {

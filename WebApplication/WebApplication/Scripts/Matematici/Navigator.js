@@ -6,7 +6,6 @@
         fullSupport = window.history.pushState !== undefined,
         landing = true,
         suspended = false,
-        method = 'GET',
         callData = '';
 
 
@@ -39,14 +38,12 @@
             return this;
         },
 
-        navigate: function (path, relative, nocache) {
+        navigate: function (path, relative) {
             if (relative) path = basePath + path;
-            $.address.value(path + (nocache ? (path.indexOf("?") >= 0 ? "&" : "?") + "d=" + new Date().getTime() : ""));
+            $.address.value(path + (path.indexOf("?") >= 0 ? "&" : "?") + "d=" + new Date().getTime());
         },
 
-        open: function (path, relative, nocache, navigationMethod, data) {
-            if (method != undefined)
-                method = navigationMethod;
+        open: function (path, relative, nocache, data) {
             if(data != undefined)
                 callData = data;
 
@@ -141,11 +138,11 @@
 
                         matematici.elements.content.stop(true).fadeTo(500, 0, function () {
                             $.ajax(e.value, {
-                                type: method,
+                                type: 'POST',
                                 data: callData,
                                 cache: false
-                            }).done(function (result, status, request) {
-                                method = 'GET';
+							}).done(function (result, status, request) {
+								console.log(result);
                                 data = ''
                                 var header = request && $.parseJSON(request.getResponseHeader('X-Responded-JSON'))
                                 if (header && header.status == 401)

@@ -1,0 +1,65 @@
+@model string 
+@*Matematici.ViewModels.Membership.Login*@
+
+<div class="Login">
+    <div class="Box">
+		<form action="@Url.Action("Login", "Security")">
+			<img src="~/Content/Media/Logo.Big.png" />
+
+			@if (Request["m"] != null)
+			{
+			<div class="Message">
+				Your session has expired. Please login again.
+			</div>
+			}
+
+			<label for="Code">User code</label>
+			<input type="text" name="Code" id="Code" />
+			<label for="Password">Password</label>
+			<input type="password" name="Password" />
+			<div class="Errors">
+			</div>
+			<div class="Buttons Container">
+				<a class="Button DefaultButton" href="#" id="Sign"><i class="fa fa-check"></i> Login</a>
+			</div>
+		</form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    matematici.isLoginPage = true;
+
+    matematici.events.onPageLoad = function (callback) {
+        matematici.clock.stop();
+
+		new matematici.Page({
+			name: "Login",
+			initializers: [ ]
+		});
+
+		new matematici.Login("div.Login", function () {
+		    var form = $("form");
+		    $("div.Errors", form).hide();
+		    $.ajax(form.attr("action"), {
+		        data: form.serialize(),
+		        type: "post"
+		    }).done(function (result) {
+		        if (result.ok) {
+		    		matematici.client.createNew(function () { location = "@Model"; });
+		            matematici.clock.resume();
+		        } else 
+		            $("div.Errors", form).html(result.message).show();
+		    }).fail(function (jqXHR, textStatus, errorThrown) {
+		        $("div.Errors", form).html(errorThrown).show();
+		        console.log(jqXHR, textStatus, errorThrown);
+		        matematici.dialog.error("server error", "Can't login");
+		    });
+		});
+		callback.call();
+    };
+
+    matematici.events.onPageUnload = function (callback) {
+        matematici.isLoginPage = false;
+        callback.call();
+    }
+</script>

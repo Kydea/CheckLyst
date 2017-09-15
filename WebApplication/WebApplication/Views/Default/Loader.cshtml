@@ -1,0 +1,19 @@
+@model string
+
+<div id="LoaderPage">
+</div>
+
+<script type="text/javascript">
+    matematici.events.onPageLoad = function (callback) {
+        new matematici.Page({
+            name: "Loader",
+            helpPage: "Dashboard",
+            initializers: [],
+            breadcrumbs: []
+        });
+
+        matematici.navigator.open("@Model");
+
+        callback.call();
+    };
+</script>
