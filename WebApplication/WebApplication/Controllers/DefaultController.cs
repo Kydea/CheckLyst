@@ -16,8 +16,6 @@ namespace WebApplication.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet]
-        [Route("{*Url}", Order = 2)]
         public ActionResult Loader(string Url)
         {
             return ConditionalView("Loader", Url);

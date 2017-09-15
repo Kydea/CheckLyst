@@ -142,27 +142,24 @@
                                 data: callData,
                                 cache: false
 							}).done(function (result, status, request) {
-								console.log(result);
                                 data = ''
-                                var header = request && $.parseJSON(request.getResponseHeader('X-Responded-JSON'))
-                                if (header && header.status == 401)
-                                    location = header.headers.location;
-                                else {
-                                    var appMode = matematici.elements.body.hasClass("AppMode");
-                                    matematici.elements.body.removeClass();
-                                    if (appMode) matematici.elements.body.addClass("AppMode");
-                                    matematici.events.onPageDestroy();
-                                    matematici.navigator.initializeEventHandlers();
-                                    matematici.navigator.handlePageLoad(result, function () {
-                                        matematici.elements.content.stop(true).fadeTo(500, 1);
-                                        matematici.actions.resize()
-                                        matematici.loader.hide();
-                                        matematici.loader.checkCurtain();
-                                    });
-                                }
+                                var appMode = matematici.elements.body.hasClass("AppMode");
+                                matematici.elements.body.removeClass();
+                                if (appMode) matematici.elements.body.addClass("AppMode");
+                                matematici.events.onPageDestroy();
+                                matematici.navigator.initializeEventHandlers();
+                                matematici.navigator.handlePageLoad(result, function () {
+                                    matematici.elements.content.stop(true).fadeTo(500, 1);
+                                    matematici.actions.resize()
+                                    matematici.loader.hide();
+                                    matematici.loader.checkCurtain();
+                                });
                             }).always(function () {
-                            }).fail(function (e) {
-                                window.location = basePath + "Error";
+							}).fail(function (e) {
+								if (e.status == 401)
+									window.location = basePath + "Security/Login"; //add return url
+								else
+									window.location = basePath + "Error";
                             });
                         });
                     });

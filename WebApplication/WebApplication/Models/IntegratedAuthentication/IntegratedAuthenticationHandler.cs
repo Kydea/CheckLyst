@@ -45,18 +45,6 @@ namespace WebApplication.IntegratedAuthentication
             return null;
         }
 
-        protected override Task ApplyResponseChallengeAsync()
-        {
-            if (Response.StatusCode == 401)
-            {
-                var Challenge = Helper.LookupChallenge(Options.AuthenticationType, Options.AuthenticationMode);
-                if (Challenge != null)
-                    Response.Redirect("/AccessControl/Login");
-            }
-
-            return Task.FromResult<object>(null);
-        }
-
         private bool IsAuthorized(IHeaderDictionary RequestHeaders)
         {
             return Service.IsAuthorised(RequestHeaders);
