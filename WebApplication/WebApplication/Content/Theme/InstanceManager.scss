@@ -1,0 +1,473 @@
+﻿@import "_Library.scss";
+@import "FontAwesome/_variables.scss";
+
+body.InstanceManager {
+    h2 {
+        margin-bottom: 5px !important;
+    }
+
+    div.ui-datepicker {
+        z-index: $Depth-CheckList-Date-Picker !important;
+    }
+
+    div#InstanceInformation {
+        margin-bottom: 30px;
+
+        &.Fixed {
+            position: fixed;
+            z-index: $Depth-Fixed-Header;
+            top: 0;
+
+            @media #{$Media-Extended} {
+                left: $Metric-Separator-Extended;
+                right: $Metric-Separator-Extended;
+            }
+
+            @media #{$Media-Mobile} {
+                left: $Metric-Separator-Mobile;
+                right: $Metric-Separator-Mobile;
+            }
+        }
+    }
+
+    .Element {
+        div.Information {
+            content: "";
+            display: block;
+            position: absolute;
+            z-index: $Depth-CheckList-Information;
+            top: 0;
+            right: 0;
+            height: 6px;
+            width: 6px;
+            background: red;
+            border: solid 1px $Color-Border-Grey;
+            cursor: pointer;
+            @include border-radius(50%);
+
+            div.Panel {
+                display: none;
+                position: absolute;
+                background-color: rgba(255, 255, 255, .9);
+                padding: 10px;
+                border: solid 1px $Color-Border-Grey;
+
+                i.fa {
+                    margin-right: 10px;
+
+                    &.fa-thumbs-o-up {
+                        color: green;
+                    }
+
+                    &.fa-thumbs-o-down {
+                        color: red;
+                    }
+                }
+
+                span, a {
+                    display: block;
+                    white-space: nowrap;
+                    padding: 2px;
+                    color: black !important;
+                    float: none;
+                    margin-top: 0;
+                }
+            }
+
+            &.Active {
+                z-index: $Depth-CheckList-Information-Active;
+
+                div.Panel {
+                    display: block;
+                }
+            }
+        }
+
+        &.Valid > div.Information {
+            background-color: green;
+        }
+    }
+
+    div.Page {
+        div.LockInformation {
+            display: none;
+        }
+    }
+
+    .Group {
+        h3 {
+            margin-right: 20px !important;
+        }
+
+        .Iteration {
+            clear: both;
+
+            > .IterationCommands {
+                float: right;
+                position: relative;
+                z-index: $Depth-CheckList-IterationCommands;
+
+                a {
+                    float: left;
+                    display: block;
+                    background: $Color-Background-Grey1;
+                    color: white !important;
+                    text-align: center;
+                    margin-left: 1px;
+                    width: 20px;
+                    line-height: 20px;
+                    @include border-radius(50%);
+
+                    &:hover {
+                        background: $Color-Background-Grey2;
+                    }
+
+                    &.Hidden {
+                        display: none;
+                    }
+                }
+            }
+
+            .Item.Field {
+                :focus ~ .Copy {
+                    display: block;
+                }
+            }
+        }
+
+        div.Iteration {
+            &:nth-of-type(1) {
+                > .IterationCommands a.Up {
+                    display: none;
+                }
+
+                > .Item.Field {
+                    .Copy {
+                        display: none !important;
+                    }
+                }
+            }
+
+            &:nth-last-of-type(3) {
+                > .IterationCommands a.Down {
+                    display: none;
+                }
+            }
+        }
+
+        tr.Iteration {
+            &:first-child {
+                > .IterationCommands a.Up {
+                    display: none;
+                }
+
+                > .Item.Field {
+                    .Copy {
+                        display: none !important;
+                    }
+                }
+            }
+
+            &:last-child {
+                > .IterationCommands a.Down {
+                    display: none;
+                }
+            }
+        }
+
+        div.Group > div.Information {
+            right: 10px;
+            top: 10px;
+        }
+
+        > div.Information {
+
+            div.Panel {
+                right: 0;
+            }
+        }
+    }
+
+    .Item {
+        label {
+            padding-left: 8px;
+        }
+
+        &.Field {
+            div.Input {
+                display: none;
+            }
+
+            select {
+                display: none;
+            }
+
+            &.List {
+                input {
+                    display: none;
+                }
+
+                select {
+                    display: block;
+                }
+            }
+
+            &.ExternalSource {
+                &.Inactive {
+                    i.fa-link {
+                        color: $Color-Font-Grey1;
+                    }
+                }
+
+                &:not(.Inactive) {
+                    div.Input {
+                        cursor: pointer !important;
+                    }
+                }
+            }
+
+
+            &.ReadOnly {
+                input {
+                    display: none;
+                }
+
+                textarea {
+                    display: none;
+                }
+
+                select {
+                    display: none;
+                }
+
+                div.Input {
+                    display: block;
+                    cursor: default;
+                }
+
+                &.Boolean {
+                    input {
+                        display: block;
+                    }
+
+                    div.Input {
+                        display: none;
+                    }
+                }
+            }
+
+            .Copy {
+                position: absolute;
+                top: 0;
+                right: 10px;
+                margin: 0;
+                display: none;
+            }
+        }
+
+        div.Information {
+            top: 3px;
+            left: 0;
+            right: auto;
+        }
+
+        &.Text div.Information {
+            display: none;
+        }
+
+        &.Signature {
+            a.Button {
+                i.fa-exclamation {
+                    position: absolute;
+                    color: red;
+                    margin: 2px 0 0 15px;
+                }
+            }
+
+            i.fa-exclamation {
+                color: red;
+                font-size: 16px;
+                margin-top: 10px;
+            }
+        }
+
+        &.Hidden {
+            display: none;
+        }
+    }
+
+    .Page, .Group {
+        &.ReadOnly {
+            color: $Color-Font-Grey1;
+
+            h3 {
+                color: $Color-Font-Grey1 !important;
+            }
+        }
+
+        &.Hidden {
+            display: none;
+        }
+    }
+
+    div.CountDown {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(255, 255, 255, .85);
+        text-align: center;
+        padding: 10px;
+        z-index: $Depth-CheckList-CountDown;
+        font-weight: bold;
+
+        span.Time {
+            color: red;
+            font-size: 50px;
+        }
+
+        span.Interval {
+            position: absolute;
+            color: #666;
+            left: 10px;
+            top: 0;
+            font-size: 12px;
+            line-height: 1.4;
+
+            i {
+                float: left;
+                color: red;
+                margin: 3px 10px 0 0;
+                font-size: 26px;
+            }
+        }
+
+        a {
+            width: 100px;
+            margin-top: 15px;
+            float: right;
+        }
+    }
+
+    table.Grid {
+        thead {
+            tr {
+                th {
+                    border: solid 1px $Color-Border-Grey !important;
+                }
+            }
+        }
+
+        tbody {
+            tr {
+                td {
+                    position: relative;
+
+                    &.Field {
+                        padding: 0;
+
+                        input[type=checkbox] {
+                            display: block;
+                            margin: 0 auto;
+                        }
+
+                        select {
+                            border: none;
+                            background: none;
+                        }
+
+                        .Copy {
+                            top: 8px;
+                            right: 8px;
+                        }
+
+                        &.DateTime:not(.Inactive) {
+                            white-space: nowrap;
+
+                            input[type=text].Description {
+                                border: none;
+                                display: inline-block;
+                            }
+                        }
+
+                        &.Time {
+                            white-space: nowrap;
+                        }
+
+                        &.List {
+                            .Copy {
+                                right: 15px;
+                            }
+                        }
+
+                        .Input {
+                            border: none !important;
+                            height: 100%;
+                            width: 100%;
+                            background: none;
+                        }
+
+                        &:not(.DateTime) {
+
+                            input[type=text] {
+                                border: none !important;
+                                height: 100%;
+                                width: 100%;
+                                background: none;
+                            }
+
+                            input[type=text]:focus {
+                                padding-right: 28px !important;
+                            }
+                        }
+                    }
+
+                    &.Signature {
+                        text-align: center;
+                        width: 100px;   
+
+                        input {
+                           display: none;
+                        }
+
+                        > i {
+                            display: none;
+                        }
+
+                        a.Button {
+                            float: none;
+                            min-width: unset;
+                            margin-top: 0;
+                        }
+                    }
+
+                    > div.Information {
+                        left: 2px;
+                    }
+
+                    &.IterationCommands {
+                        white-space: nowrap;
+
+                        > a.Up, a.Down, a.Remove {
+                            display: inline-block;
+                            float: none;
+                        }
+                    }
+                }
+
+                &:nth-child(odd) {
+                    td.Inactive {
+                        background-color: $Color-Background-Grey3;
+                    }
+                }
+
+                &:nth-child(even) {
+                    td.Inactive {
+                        background-color: $Color-Background-Grey4;
+                    }
+                }
+            }
+        }
+    }
+}

@@ -9,6 +9,7 @@ using System.Web.Routing;
 
 namespace WebApplication.Controllers
 {
+    [SessionState(System.Web.SessionState.SessionStateBehavior.Disabled)]
     [Authorize]
     public class BaseController : Controller
     {
@@ -23,12 +24,7 @@ namespace WebApplication.Controllers
 
         protected bool IsAppMode()
         {
-            var AppMode = Request["AppMode"] == "1";
-            if (AppMode)
-                Session["AppMode"] = true;
-            else
-                AppMode = Session["AppMode"] as bool? ?? false;
-            return AppMode;
+            return Request["AppMode"] == "1";
         }
 
         private void CheckAppMode()
@@ -63,31 +59,6 @@ namespace WebApplication.Controllers
         protected override JsonResult Json(object Data, string ContentType, Encoding ContentEncoding)
         {
             return Json(Data, ContentType, ContentEncoding, JsonRequestBehavior.DenyGet);
-        }
-
-        [AttributeUsage(AttributeTargets.Class)]
-        public class ControllerAuthorization : AuthorizeAttribute
-        {
-            public ControllerAuthorization()
-            {
-            }
-
-            protected override bool AuthorizeCore(HttpContextBase httpContext)
-            {
-                return true;
-            }
-
-            protected override void HandleUnauthorizedRequest(AuthorizationContext filterContext)
-            {
-                filterContext.Result = new RedirectToRouteResult(
-                    new RouteValueDictionary(
-                        new
-                        {
-                            controller = "DefaultController",
-                            action = "DefaultAction"
-                        })
-                    );
-            }
         }
     }
 }

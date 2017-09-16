@@ -1,0 +1,81 @@
+﻿div.PropertyPanel {
+  position: fixed;
+  z-index: 99;
+  left: 0;
+  bottom: 0;
+  height: 300px;
+  width: 100%;
+  background-color: white; }
+  div.PropertyPanel div.Border {
+    cursor: ns-resize;
+    height: 10px;
+    background-color: #e8e7ec;
+    border-top: solid 1px #afb4b5;
+    border-bottom: solid 1px #afb4b5;
+    box-shadow: rgba(0, 0, 0, 0.3) 0 -3px 3px; }
+  div.PropertyPanel div.NoItem {
+    display: none;
+    font-size: 20px;
+    color: #9e9e9e;
+    text-align: center;
+    padding-top: 10px; }
+  div.PropertyPanel div.PropertyList {
+    position: absolute;
+    overflow: auto;
+    bottom: 0;
+    top: 10px;
+    width: 20%;
+    border-right: solid 1px #afb4b5; }
+    div.PropertyPanel div.PropertyList a {
+      display: block;
+      padding: 4px 10px;
+      text-decoration: none;
+      color: black;
+      border-bottom: dotted 1px #afb4b5; }
+      div.PropertyPanel div.PropertyList a i.fa-caret-right {
+        visibility: hidden;
+        padding-right: 5px; }
+      div.PropertyPanel div.PropertyList a:hover {
+        color: #0099cc;
+        text-decoration: none !important; }
+      div.PropertyPanel div.PropertyList a.Selected i.fa-caret-right {
+        visibility: visible; }
+      div.PropertyPanel div.PropertyList a.Changed {
+        font-weight: bold;
+        color: black !important; }
+  div.PropertyPanel div.PropertyValue {
+    position: absolute;
+    overflow: auto;
+    bottom: 0;
+    top: 10px;
+    width: 40%;
+    left: 20%;
+    border-right: solid 1px #afb4b5;
+    padding: 10px; }
+    div.PropertyPanel div.PropertyValue input[type=text], div.PropertyPanel div.PropertyValue input[type=checkbox], div.PropertyPanel div.PropertyValue select, div.PropertyPanel div.PropertyValue a.Button, div.PropertyPanel div.PropertyValue label {
+      display: block;
+      margin-bottom: 10px; }
+      div.PropertyPanel div.PropertyValue input[type=text][type=checkbox], div.PropertyPanel div.PropertyValue input[type=checkbox][type=checkbox], div.PropertyPanel div.PropertyValue select[type=checkbox], div.PropertyPanel div.PropertyValue a.Button[type=checkbox], div.PropertyPanel div.PropertyValue label[type=checkbox] {
+        width: 100%; }
+    div.PropertyPanel div.PropertyValue textarea {
+      height: 100%; }
+    div.PropertyPanel div.PropertyValue.Value textarea {
+      height: 100px !important; }
+  div.PropertyPanel div.Information {
+    position: absolute;
+    overflow: auto;
+    bottom: 0;
+    top: 10px;
+    width: 40%;
+    left: 60%;
+    padding: 10px;
+    line-height: 1.4; }
+  div.PropertyPanel.NoItem div.NoItem {
+    display: block; }
+  div.PropertyPanel.NoItem div.PropertyList {
+    display: none; }
+  div.PropertyPanel.NoItem div.PropertyValue {
+    display: none; }
+  div.PropertyPanel.NoItem div.Information {
+    display: none; }
+

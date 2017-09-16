@@ -1,0 +1,90 @@
+﻿@import "_Library.scss";
+
+div.ActionBar {
+    margin: 25px 0 35px;
+    position: relative;
+    background-color: $Color-Background-Grey2;
+    padding: 5px 0 0;
+
+    a.Button {
+        float: right;
+        min-width: 120px;
+        margin: 0 10px 5px 0;
+
+        &.Icon{
+            float: left;
+            min-width: 0;
+            margin: 0 0 5px 10px;
+            width: 24px;
+            padding: 5px 0;
+        }
+
+        &.Invalid {
+            color: red;
+        }
+
+		&.Save {
+			position: relative;
+
+			i.fa {
+				position: absolute;
+				top: 6px;
+				right: 6px;
+			}
+		}
+    }
+
+    &::before {
+        height: 1px;
+        width: 100%;
+        top: -5px;
+        position: absolute;
+        content: "";
+        background-color: $Color-Border-Grey;
+    }
+
+    &::after {
+        height: 1px;
+        width: 100%;
+        bottom: -5px;
+        position: absolute;
+        content: "";
+        background-color: $Color-Border-Grey;
+    }
+
+    & + Form {
+        position: relative;
+        top: -35px;
+        padding: 20px 10px;
+
+        label {
+            float: left;
+            margin-right: 20px;
+
+            input {
+                margin-top: 2px;
+                width: 150px;
+            }
+
+            &.Clearing {
+                margin-top: 20px;
+            }
+        }
+
+        &::before {
+            height: 1px;
+            width: 100%;
+            left: 0;
+            bottom: 0px;
+            position: absolute;
+            content: "";
+            background-color: $Color-Border-Grey;
+        }
+
+        &::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+    }
+}

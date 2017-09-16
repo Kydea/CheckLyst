@@ -1,0 +1,55 @@
+﻿div.Errors {
+  color: red;
+  margin-top: 20px;
+  display: none; }
+
+input.Error, input.input-validation-error, select.Error, select.input-validation-error {
+  border: solid 1px red !important;
+  outline-color: #f99; }
+
+label {
+  display: block; }
+
+span.field-validation-error {
+  padding-left: 5px;
+  color: red;
+  font-size: 14px; }
+
+div.Input {
+  overflow: hidden;
+  text-overflow: ellipsis; }
+
+input[type=text], input[type=range], input[type=number], input[type=password], input[type=email], input[type=file], select, textarea, div.Input {
+  display: block;
+  border-radius: 3px;
+  border: solid 1px #afb4b5;
+  background: white;
+  width: 100%;
+  padding: 5px 10px;
+  resize: none;
+  font-size: 12px;
+  min-height: 26px; }
+  input[type=text][readonly], input[type=text].ReadOnly, input[type=range][readonly], input[type=range].ReadOnly, input[type=number][readonly], input[type=number].ReadOnly, input[type=password][readonly], input[type=password].ReadOnly, input[type=email][readonly], input[type=email].ReadOnly, input[type=file][readonly], input[type=file].ReadOnly, select[readonly], select.ReadOnly, textarea[readonly], textarea.ReadOnly, div.Input[readonly], div.Input.ReadOnly {
+    border-color: #999;
+    background-color: #f5f5f5; }
+  input[type=text] + i, input[type=range] + i, input[type=number] + i, input[type=password] + i, input[type=email] + i, input[type=file] + i, select + i, textarea + i, div.Input + i {
+    position: relative;
+    float: left;
+    margin-left: -27px;
+    margin-top: 12px; }
+
+a.Button, input[type=submit] {
+  display: block;
+  padding: 5px 10px;
+  background-color: #406f81;
+  border: none;
+  color: white;
+  text-align: center;
+  cursor: default; }
+  a.Button.ReadOnly, input[type=submit].ReadOnly {
+    background-color: #dcdbe0; }
+  a.Button:hover, a.Button.Selected, input[type=submit]:hover, input[type=submit].Selected {
+    text-decoration: none !important; }
+    a.Button:hover:not(.ReadOnly), a.Button.Selected:not(.ReadOnly), input[type=submit]:hover:not(.ReadOnly), input[type=submit].Selected:not(.ReadOnly) {
+      background-color: #499dbf; }
+

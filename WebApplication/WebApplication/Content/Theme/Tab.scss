@@ -1,0 +1,75 @@
+﻿@import "_Library.scss";
+
+$label-height: 40px;
+
+div.TabContainer {
+    position: relative;
+    overflow: hidden;
+    @include transition(height .5s );
+
+    .TabLabels {
+
+        &::after {
+            content: "";
+            position: absolute;
+            height: 2px;
+            width: 100%;
+            top: $label-height - 2;
+            background-color: $Color-Background-Grey1;
+            clear: both;
+            left: 0;
+        }
+
+        a {
+            height: $label-height;
+            line-height: $label-height;
+            font-weight: bold;
+            font-size: 16px;
+            float: left;
+            background-color: $Color-Background-Grey2;
+            border-right: solid 4px white;
+            border-bottom: solid 6px white;
+            color: $Color-Font-Blue3;
+            text-decoration: none;
+            padding: 0 20px;
+
+            i.fa {
+                color: $Color-Font-Grey1;
+            }
+
+            &.Selected {
+                cursor: default;
+                background-color: $Color-Background-Grey1;
+                border-top: none;
+                border-bottom: none;
+                color: $Color-Font-Blue2;
+
+                i.fa {
+                    color: black;
+                }
+            }
+
+            &:hover {
+                text-decoration: none !important;
+
+                &:not(.Selected) {
+                    color: $Color-Font-Blue2;
+                }
+            }
+        }
+    }
+
+    .Tab {
+        position: absolute;
+        width: 100%;
+        top: $label-height;
+        opacity: 0;
+        @include transition(opacity .5s);
+        z-index: $Depth-Tab;
+
+        &.Selected {
+            opacity: 1;
+            z-index: $Depth-Tab-Selected;
+        }
+    }
+}

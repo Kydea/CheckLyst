@@ -15,6 +15,60 @@
         <EntityTypeShape EntityType="RelationalDatabaseModel.UserSessions" Width="1.5" PointX="7.5" PointY="4.75" />
         <AssociationConnector Association="RelationalDatabaseModel.UserSessions_Company_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.UserSessions_User" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.InstanceExpressionValues" Width="1.5" PointX="19.875" PointY="14.125" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.InstanceNumerators" Width="1.5" PointX="15.375" PointY="11.5" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.Instances" Width="1.5" PointX="17.625" PointY="11.625" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.InstanceStates" Width="1.5" PointX="15.375" PointY="17.875" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.InstanceTags" Width="1.5" PointX="19.875" PointY="11.375" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.Prototypes" Width="1.5" PointX="10.875" PointY="3.125" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.PrototypeTypes" Width="1.5" PointX="10.875" PointY="8" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.PrototypeVersions" Width="1.5" PointX="13.125" PointY="10.5" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.PrototypeVersionTags" Width="1.5" PointX="15.375" PointY="14.5" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.VersionStates" Width="1.5" PointX="10.875" PointY="18.125" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.FunctionGroups" Width="1.5" PointX="0.75" PointY="0.875" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.Functions" Width="1.5" PointX="2.75" PointY="0.875" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.PasswordHistory" Width="1.5" PointX="7.875" PointY="1.875" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.PINHistory" Width="1.5" PointX="7.875" PointY="11.75" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.UserFunctions" Width="1.5" PointX="16.125" PointY="6.75" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.Actions" Width="1.5" PointX="11.625" PointY="0.75" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.Records" Width="1.5" PointX="13.875" PointY="5.875" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.WorkFlowActions" Width="1.5" PointX="5.625" PointY="12.25" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.WorkFlowApplications" Width="1.5" PointX="7.875" PointY="15" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.WorkFlowApplicationsStep" Width="1.5" PointX="10.125" PointY="13.375" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.WorkFlows" Width="1.5" PointX="5.625" PointY="15.125" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.WorkFlowSteps" Width="1.5" PointX="7.875" PointY="20.125" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.WorkFlowStepTags" Width="1.5" PointX="10.125" PointY="20.75" />
+        <AssociationConnector Association="RelationalDatabaseModel.InstanceExpressionValues_Instance_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.FK_Instances_InstanceNumerator" />
+        <AssociationConnector Association="RelationalDatabaseModel.FK_Instances_Version" />
+        <AssociationConnector Association="RelationalDatabaseModel.Instances_InstanceState_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.InstanceTags_Instance_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.Prototypes_Company_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.Prototypes_Department_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.Prototypes_PrototypeType_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.PrototypeVersions_Prototype_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.PrototypeTypes_ApprovationWorkFlow_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.PrototypeTypes_Company_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.PrototypeTypes_Department_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.PrototypeTypes_ObsolescenceWorkFlow_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.UserFunctions_PrototypeType_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.FK_PrototypeVersionTags_Version" />
+        <AssociationConnector Association="RelationalDatabaseModel.PrototypeVersions_InstanceConfirmationWorkFlow_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.PrototypeVersions_ProposedState_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.PrototypeVersions_VersionState_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.WorkFlows_Company_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.PasswordHistory_User" />
+        <AssociationConnector Association="RelationalDatabaseModel.PINHistory_User" />
+        <AssociationConnector Association="RelationalDatabaseModel.PasswordHistory_User1" />
+        <AssociationConnector Association="RelationalDatabaseModel.FK_Records_User" />
+        <AssociationConnector Association="RelationalDatabaseModel.WorkFlowApplications_User" />
+        <AssociationConnector Association="RelationalDatabaseModel.Records_Action_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.WorkFlowApplications_WorkFlowAction_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.WorkFlowApplications_WorkFlow_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.WorkFlowApplicationsStep_WorkFlowApplications_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.WorkFlowApplicationsStep_WorkFlowStep_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.WorkFlowSteps_WorkFlow_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.WorkFlowStepTags_WorkFlowStep_fkey" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

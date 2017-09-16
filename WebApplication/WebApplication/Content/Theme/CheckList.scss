@@ -1,0 +1,205 @@
+﻿@import "_Library.scss";
+@import "FontAwesome/_variables.scss";
+
+$SeparatorY: 5px;
+$SeparatorX: 10px;
+
+body.CheckList {
+    span {
+        &.Error {
+            i.fa {
+                color: red;
+            }
+        }
+
+        &.Null {
+            color: $Color-Font-Grey2;
+        }
+
+        &.Value {
+        }
+    }
+
+    div.TabLabels {
+        a {
+            i.fa {
+                cursor: pointer;
+            }
+        }
+    }
+
+    div.Element {
+        position: relative;
+
+        &::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+    }
+
+    div.Page {
+        div.Group {
+            border-bottom: solid 1px $Color-Border-Blu;
+
+            div.Group {
+                border-bottom: none;
+            }
+        }
+
+        &::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+    }
+
+    div.Group {
+        min-height: 30px;
+        margin-bottom: 30px;
+        clear: both;
+
+        div.Group {
+            padding: 30px;
+            background-color: $Color-Background-Grey3;
+
+            div.Group {
+                background-color: $Color-Background-Grey2;
+
+                div.Group {
+                    background-color: $Color-Background-Grey1;
+                }
+            }
+
+            h3 {
+                margin-top: 0 !important;
+            }
+
+            > div:last-child {
+                margin-bottom: 0 !important;
+            }
+        }
+
+        &::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+    }
+
+    div.Item {
+        margin: 0 0 20px;
+
+        &.MultiLine {
+            clear: both;
+            width: 100%;
+
+            input, div.Input {
+                width: 100%;
+            }
+        }
+
+        &.NewLine {
+            clear: both;
+        }
+
+        label {
+            display: block;
+            min-height: 14px;
+            margin-right: $SeparatorX;
+        }
+
+        input, div.Input, select {
+            float: left;
+            width: 150px;
+            margin-right: $SeparatorX;
+            margin-top: $SeparatorY;
+        }
+
+        &::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        &.Field {
+            float: left;
+
+            &.Boolean {
+                input {
+                    margin-top: 13px;
+                    margin-bottom: 5px;
+                }
+
+                input[value=""] {
+                    opacity: 0.6;
+                }
+            }
+        }
+
+        &.Text {
+            clear: both;
+        }
+
+        &.Signature {
+            clear: both;
+
+            input {
+                padding-right: 20px;
+
+                &.User {
+                    width: 300px;
+                    max-width: 100%;
+                }
+            }
+        }
+    }
+
+    .Item {
+        p.Description {
+            margin: 0;
+        }
+
+        a {
+            float: right;
+            margin-top: $SeparatorY;
+
+            &.Button {
+                min-width: 120px;
+            }
+        }
+
+        &.Field {
+            &.DateTime {
+                input {
+                    width: 80px;
+                    padding: 0 5px;
+                    text-align: center;
+                    margin-right: 5px;
+
+                    & + select {
+                        margin-right: 5px;
+                    }
+                }
+
+                select {
+                    display: inline-block;
+                    width: 50px;
+                    padding: 0 0 0 5px;
+                }
+            }
+
+            &.Time {
+                input {
+                    display: none;
+                }
+
+                select {
+                    display: inline-block;
+                    width: 70px;
+                    padding: 0 0 0 5px;
+                }
+            }
+        }
+    }
+}

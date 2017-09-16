@@ -17,7 +17,7 @@
     <AssemblyName>WebApplication</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
-    <UseIISExpress>true</UseIISExpress>
+    <UseIISExpress>false</UseIISExpress>
     <IISExpressSSLPort>44325</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -164,20 +164,196 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\SecurityController.cs" />
     <Compile Include="Controllers\DefaultController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\IntegratedAuthenticationService.cs" />
-    <Compile Include="Models\IntegratedAuthenticationHandler.cs" />
-    <Compile Include="Models\IntegratedAuthenticationMiddleware.cs" />
-    <Compile Include="Models\IntegratedAuthenticationOptions.cs" />
+    <Compile Include="Models\IntegratedAuthentication\IntegratedAuthenticationService.cs" />
+    <Compile Include="Models\IntegratedAuthentication\IntegratedAuthenticationHandler.cs" />
+    <Compile Include="Models\IntegratedAuthentication\IntegratedAuthenticationMiddleware.cs" />
+    <Compile Include="Models\IntegratedAuthentication\IntegratedAuthenticationOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Media\Logo.Big.png" />
+    <Content Include="Content\Media\Logo.png" />
+    <Content Include="Content\PDF\Janssen.png" />
+    <Content Include="Content\Theme\ActionBar.css">
+      <DependentUpon>ActionBar.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\AppMode.css">
+      <DependentUpon>AppMode.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\AuditTrail.css">
+      <DependentUpon>AuditTrail.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Breadcrumbs.css">
+      <DependentUpon>Breadcrumbs.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\CheckList.css">
+      <DependentUpon>CheckList.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\CheckListGrid.css">
+      <DependentUpon>CheckListGrid.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Content.css">
+      <DependentUpon>Content.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\DataSourcesEditor.css">
+      <DependentUpon>DataSourcesEditor.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Dialog.css">
+      <DependentUpon>Dialog.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\FixedHeader.css">
+      <DependentUpon>FixedHeader.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\FontAwesome.css">
+      <DependentUpon>FontAwesome.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\FontAwesome\fontawesome-webfont.svg" />
+    <Content Include="Content\Theme\Fonts.css">
+      <DependentUpon>Fonts.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Grid.css">
+      <DependentUpon>Grid.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Help.css">
+      <DependentUpon>Help.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\InstanceManager.css">
+      <DependentUpon>InstanceManager.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\jQuery-UI.css">
+      <DependentUpon>jQuery-UI.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\JQuery-UI\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="Content\Theme\JQuery-UI\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="Content\Theme\JQuery-UI\ui-bg_glass_75_dadada_1x400.png" />
+    <Content Include="Content\Theme\JQuery-UI\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <Content Include="Content\Theme\JQuery-UI\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="Content\Theme\JQuery-UI\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="Content\Theme\JQuery-UI\ui-icons_222222_256x240.png" />
+    <Content Include="Content\Theme\JQuery-UI\ui-icons_2e83ff_256x240.png" />
+    <Content Include="Content\Theme\JQuery-UI\ui-icons_454545_256x240.png" />
+    <Content Include="Content\Theme\JQuery-UI\ui-icons_888888_256x240.png" />
+    <Content Include="Content\Theme\JQuery-UI\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="Content\Theme\JQuery-UI\ui-icons_ffffff_256x240.png" />
+    <Content Include="Content\Theme\Layout.css">
+      <DependentUpon>Layout.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Layout\Header.jpg" />
+    <Content Include="Content\Theme\Loader.css">
+      <DependentUpon>Loader.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Login.css">
+      <DependentUpon>Login.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Login\Background.jpg" />
+    <Content Include="Content\Theme\Matematici.css">
+      <DependentUpon>Matematici.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Matematici\Matematici..Black.png" />
+    <Content Include="Content\Theme\Matematici\Matematici.White.png" />
+    <Content Include="Content\Theme\Menu.css">
+      <DependentUpon>Menu.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Module.css">
+      <DependentUpon>Module.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Pager.css">
+      <DependentUpon>Pager.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\PropertyPanel.css">
+      <DependentUpon>PropertyPanel.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\PrototypeEditor.css">
+      <DependentUpon>PrototypeEditor.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Signature.css">
+      <DependentUpon>Signature.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Tab.css">
+      <DependentUpon>Tab.scss</DependentUpon>
+    </Content>
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
+    <Content Include="Scripts\Custom\ActionBar.js" />
+    <Content Include="Scripts\Custom\CheckListGrid.js" />
+    <Content Include="Scripts\Custom\Client.js" />
+    <Content Include="Scripts\Custom\Clock.js" />
+    <Content Include="Scripts\Custom\DateFormatter.js" />
+    <Content Include="Scripts\Custom\FixedHeader.js" />
+    <Content Include="Scripts\Custom\Help.js" />
+    <Content Include="Scripts\Custom\Login.js" />
+    <Content Include="Scripts\Custom\Pager.js" />
+    <Content Include="Scripts\Custom\Scroller.js" />
+    <Content Include="Scripts\Custom\SignatureBook.js" />
+    <Content Include="Scripts\Custom\UserPanel.js" />
+    <Content Include="Scripts\Instances\CountDown.js" />
+    <Content Include="Scripts\Instances\ElementInformation.js" />
+    <Content Include="Scripts\Instances\Event.js" />
+    <Content Include="Scripts\Instances\ExternalSources.js" />
+    <Content Include="Scripts\Instances\Field.js" />
+    <Content Include="Scripts\Instances\Group.js" />
+    <Content Include="Scripts\Instances\Instance.js" />
+    <Content Include="Scripts\Instances\Item.js" />
+    <Content Include="Scripts\Instances\PageLock.js" />
+    <Content Include="Scripts\Instances\Signature.js" />
+    <Content Include="Scripts\Instances\Text.js" />
+    <None Include="Scripts\Libraries\jquery-2.1.4.intellisense.js" />
+    <Content Include="Scripts\Libraries\jquery-2.1.4.js" />
+    <Content Include="Scripts\Libraries\jquery-ui-1.11.4.js" />
+    <Content Include="Scripts\Libraries\jquery.activity-indicator-1.0.0.js" />
+    <Content Include="Scripts\Libraries\jquery.address-1.6.js" />
+    <Content Include="Scripts\Libraries\jquery.cookie.js" />
+    <Content Include="Scripts\Libraries\jquery.keyfilter.js" />
+    <Content Include="Scripts\Libraries\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\Libraries\jquery.unveil.js" />
+    <None Include="Scripts\Libraries\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\Libraries\jquery.validate.js" />
+    <Content Include="Scripts\Libraries\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\Libraries\knockout-3.3.0.js" />
+    <Content Include="Scripts\Libraries\MicrosoftAjax.js" />
+    <Content Include="Scripts\Libraries\modernizr-2.8.3.js" />
+    <Content Include="Scripts\Libraries\SmoothScroll.js" />
+    <Content Include="Scripts\Matematici\AnimationManager.js" />
+    <Content Include="Scripts\Matematici\Breadcrumbs.js" />
+    <Content Include="Scripts\Matematici\Dialog.js" />
+    <Content Include="Scripts\Matematici\Easings.js" />
+    <Content Include="Scripts\Matematici\Extensions.js" />
+    <Content Include="Scripts\Matematici\Loader.js" />
+    <Content Include="Scripts\Matematici\Matematici.js" />
+    <Content Include="Scripts\Matematici\Menu.js" />
+    <Content Include="Scripts\Matematici\Navigator.js" />
+    <Content Include="Scripts\Matematici\Page.js" />
+    <Content Include="Scripts\Matematici\Tab.js" />
+    <Content Include="Scripts\Matematici\Touch.js" />
+    <Content Include="Scripts\Prototypes\ActionsProperty.js" />
+    <Content Include="Scripts\Prototypes\BooleanProperty.js" />
+    <Content Include="Scripts\Prototypes\ChangeStateSignature.js" />
+    <Content Include="Scripts\Prototypes\DateProperty.js" />
+    <Content Include="Scripts\Prototypes\ExpressionProperty.js" />
+    <Content Include="Scripts\Prototypes\ExpressionsList.js" />
+    <Content Include="Scripts\Prototypes\Field.js" />
+    <Content Include="Scripts\Prototypes\Group.js" />
+    <Content Include="Scripts\Prototypes\HiddenProperty.js" />
+    <Content Include="Scripts\Prototypes\Item.js" />
+    <Content Include="Scripts\Prototypes\ListProperty.js" />
+    <Content Include="Scripts\Prototypes\Property.js" />
+    <Content Include="Scripts\Prototypes\PropertyPanel.js" />
+    <Content Include="Scripts\Prototypes\Prototype.js" />
+    <Content Include="Scripts\Prototypes\PrototypeTypeProperty.js" />
+    <Content Include="Scripts\Prototypes\ReadOnlyProperty.js" />
+    <Content Include="Scripts\Prototypes\Signature.js" />
+    <Content Include="Scripts\Prototypes\SignatureProperty.js" />
+    <Content Include="Scripts\Prototypes\SimpleValueProperty.js" />
+    <Content Include="Scripts\Prototypes\SourcesList.js" />
+    <Content Include="Scripts\Prototypes\Text.js" />
+    <Content Include="Scripts\Prototypes\ValidProperty.js" />
+    <Content Include="Scripts\Prototypes\ValueProperty.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -188,16 +364,80 @@
       <DependentUpon>Web.config</DependentUpon>
     </Content>
     <Content Include="Views\Web.config" />
-    <Content Include="Views\Default\About.cshtml" />
-    <Content Include="Views\Default\Contact.cshtml" />
-    <Content Include="Views\Default\Index.cshtml" />
+    <Content Include="Views\Default\Loader.cshtml" />
+    <Content Include="Views\Security\Login.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Scripts\" />
+    <Folder Include="Content\Theme\Fonts\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\Theme\ActionBar.scss" />
+    <Content Include="Content\Theme\AppMode.scss" />
+    <Content Include="Content\Theme\AuditTrail.scss" />
+    <Content Include="Content\Theme\Breadcrumbs.scss" />
+    <Content Include="Content\Theme\CheckList.scss" />
+    <Content Include="Content\Theme\CheckListGrid.scss" />
+    <Content Include="Content\Theme\Content.scss" />
+    <Content Include="Content\Theme\DataSourcesEditor.scss" />
+    <Content Include="Content\Theme\Dialog.scss" />
+    <Content Include="Content\Theme\FixedHeader.scss" />
+    <Content Include="Content\Theme\FontAwesome.scss" />
+    <Content Include="Content\Theme\FontAwesome\fontawesome-webfont.eot" />
+    <Content Include="Content\Theme\FontAwesome\fontawesome-webfont.ttf" />
+    <Content Include="Content\Theme\FontAwesome\fontawesome-webfont.woff" />
+    <Content Include="Content\Theme\FontAwesome\fontawesome-webfont.woff2" />
+    <Content Include="Content\Theme\FontAwesome\FontAwesome.otf" />
+    <Content Include="Content\Theme\FontAwesome\_animated.scss" />
+    <Content Include="Content\Theme\FontAwesome\_bordered-pulled.scss" />
+    <Content Include="Content\Theme\FontAwesome\_core.scss" />
+    <Content Include="Content\Theme\FontAwesome\_fixed-width.scss" />
+    <Content Include="Content\Theme\FontAwesome\_icons.scss" />
+    <Content Include="Content\Theme\FontAwesome\_larger.scss" />
+    <Content Include="Content\Theme\FontAwesome\_list.scss" />
+    <Content Include="Content\Theme\FontAwesome\_mixins.scss" />
+    <Content Include="Content\Theme\FontAwesome\_path.scss" />
+    <Content Include="Content\Theme\FontAwesome\_rotated-flipped.scss" />
+    <Content Include="Content\Theme\FontAwesome\_stacked.scss" />
+    <Content Include="Content\Theme\FontAwesome\_variables.scss" />
+    <Content Include="Content\Theme\Fonts.scss" />
+    <Content Include="Content\Theme\Grid.scss" />
+    <Content Include="Content\Theme\Help.scss" />
+    <Content Include="Content\Theme\InstanceManager.scss" />
+    <Content Include="Content\Theme\jQuery-UI.scss" />
+    <Content Include="Content\Theme\Layout.scss" />
+    <Content Include="Content\Theme\Loader.scss" />
+    <Content Include="Content\Theme\Login.scss" />
+    <Content Include="Content\Theme\Matematici.scss" />
+    <Content Include="Content\Theme\Matematici\Matematici.psd" />
+    <Content Include="Content\Theme\Menu.scss" />
+    <Content Include="Content\Theme\Module.scss" />
+    <Content Include="Content\Theme\Pager.scss" />
+    <Content Include="Content\Theme\PropertyPanel.scss" />
+    <Content Include="Content\Theme\PrototypeEditor.scss" />
+    <Content Include="Content\Theme\Signature.scss" />
+    <Content Include="Content\Theme\Tab.scss" />
+    <Content Include="Content\Theme\_Library.scss" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="compilerconfig.json" />
+    <None Include="compilerconfig.json.defaults">
+      <DependentUpon>compilerconfig.json</DependentUpon>
+    </None>
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Shared\Layout.cshtml" />
+    <Content Include="Views\Shared\Layout\Footer.cshtml" />
+    <Content Include="Views\Shared\Layout\Header.cshtml" />
+    <Content Include="Views\Shared\Layout\Help.cshtml" />
+    <Content Include="Views\Shared\Layout\Matematici.cshtml" />
+    <Content Include="Views\Shared\Script\Script0.cshtml" />
+    <Content Include="Views\Shared\Script\Script1.cshtml" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Default\Dashboard.cshtml" />
+    <Content Include="Scripts\Libraries\jquery-2.1.4.min.map" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -217,7 +457,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>19536</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>https://localhost:44325/</IISUrl>
+          <IISUrl>http://localhost/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

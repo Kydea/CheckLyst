@@ -32,6 +32,8 @@ create table "Infrastructure"."Companies"
 	"ModifiedOn" timestamptz
 );
 
+insert into "Infrastructure"."Companies"("Name", "TimeZone") values ('(CheckListManager)', 'Europe/Rome');
+
 create table "Infrastructure"."Departments"
 (
     "ID" bigserial primary key,

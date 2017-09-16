@@ -1,0 +1,17 @@
+﻿body.DataSourcesEditor.Detail .Time {
+  margin: 5px; }
+
+body.DataSourcesEditor.Detail input.Time {
+  display: inline-block;
+  margin-left: 0; }
+
+body.DataSourcesEditor.Detail input[type='checkbox'].Time {
+  width: auto; }
+
+body.DataSourcesEditor.Detail select.Time {
+  display: inline-block;
+  width: 100px; }
+
+body.DataSourcesEditor.Detail select.Bit {
+  width: 150px; }
+

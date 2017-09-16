@@ -1,0 +1,84 @@
+﻿@import "Library";
+
+div.Errors {
+    color: red;
+    margin-top: 20px;
+    display: none;
+}
+
+input.Error, input.input-validation-error, select.Error, select.input-validation-error {
+    border: solid 1px red !important;
+    outline-color: #f99;
+}
+
+label {
+    display: block;
+}
+
+span.field-validation-error {
+    padding-left: 5px;
+    color: red;
+    font-size: 14px;
+}
+
+div.Input {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+input[type=text], input[type=range], input[type=number], input[type=password], input[type=email], input[type=file], select, textarea, div.Input {
+    display: block;
+    border-radius: 3px;
+    border: solid 1px $Color-Border-Grey;
+    background: white;
+    width: 100%;
+    padding: 5px 10px;
+    resize: none;
+    font-size: 12px;
+    min-height: 26px;
+
+    &[readonly], &.ReadOnly {
+        border-color: $Color-Border-Black;
+        background-color: $Color-Background-Grey3;
+    }
+
+    & + i {
+        position: relative;
+        float: left;
+        margin-left: -27px;
+        margin-top: 12px;
+    }
+}
+
+a.Button, input[type=submit] {
+    display: block;
+    padding: 5px 10px;
+    background-color: $Color-Background-Blu2;
+    border: none;
+    color: white;
+    text-align: center;
+    cursor: default;
+
+    &.ReadOnly {
+        background-color: $Color-Background-Grey1;
+    }
+
+    &:hover, &.Selected {
+        text-decoration: none !important;
+
+        &:not(.ReadOnly) {
+            background-color: $Color-Background-Blu3;
+        }
+    }
+}
+
+div.validation-summary-errors {
+
+    ul {
+        li {
+        }
+    }
+
+    &::before {
+    }
+}

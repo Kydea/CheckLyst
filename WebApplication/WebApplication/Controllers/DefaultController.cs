@@ -6,12 +6,29 @@ using System.Web.Mvc;
 
 namespace WebApplication.Controllers
 {
-	public class DefaultController : BaseController
+    public class DefaultController : BaseController
 	{
+        [AllowAnonymous]
+        [Route("Error", Order = 1)]
+        public ActionResult Error()
+        {
+            return ConditionalView();
+        }
+
+        [AllowAnonymous]
+        public ActionResult Loader(string Url)
+        {
+            return ConditionalView("Loader", Url);
+        }
+
         [Route]
-		public ActionResult Index()
-		{
-			return ConditionalView();
-		}
-	}
+        [HttpPost]
+        public ActionResult Dashboard(int? PageVersions, int? PageInstances)
+        {
+            //var Model = new ViewModels.Dashboard.DashboardModel(db);
+            //Model.PrototypesVersions.Set(PageVersions ?? 1);
+            //Model.Instances.Set(PageInstances ?? 1);
+            return ConditionalView();
+        }
+    }
 }

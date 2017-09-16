@@ -1,0 +1,110 @@
+﻿[
+  {
+    "outputFile": "Content/Theme/FontAwesome.css",
+    "inputFile": "Content/Theme/FontAwesome.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Breadcrumbs.css",
+    "inputFile": "Content/Theme/Breadcrumbs.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Module.css",
+    "inputFile": "Content/Theme/Module.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Content.css",
+    "inputFile": "Content/Theme/Content.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Fonts.css",
+    "inputFile": "Content/Theme/Fonts.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Layout.css",
+    "inputFile": "Content/Theme/Layout.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Loader.css",
+    "inputFile": "Content/Theme/Loader.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Matematici.css",
+    "inputFile": "Content/Theme/Matematici.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Menu.css",
+    "inputFile": "Content/Theme/Menu.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Tab.css",
+    "inputFile": "Content/Theme/Tab.scss"
+  },
+  {
+    "outputFile": "Content/Theme/ActionBar.css",
+    "inputFile": "Content/Theme/ActionBar.scss"
+  },
+  {
+    "outputFile": "Content/Theme/CheckList.css",
+    "inputFile": "Content/Theme/CheckList.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Dialog.css",
+    "inputFile": "Content/Theme/Dialog.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Login.css",
+    "inputFile": "Content/Theme/Login.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Signature.css",
+    "inputFile": "Content/Theme/Signature.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Grid.css",
+    "inputFile": "Content/Theme/Grid.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Pager.css",
+    "inputFile": "Content/Theme/Pager.scss"
+  },
+  {
+    "outputFile": "Content/Theme/PrototypeEditor.css",
+    "inputFile": "Content/Theme/PrototypeEditor.scss"
+  },
+  {
+    "outputFile": "Content/Theme/InstanceManager.css",
+    "inputFile": "Content/Theme/InstanceManager.scss"
+  },
+  {
+    "outputFile": "Content/Theme/PropertyPanel.css",
+    "inputFile": "Content/Theme/PropertyPanel.scss"
+  },
+  {
+    "outputFile": "Content/Theme/jQuery-UI.css",
+    "inputFile": "Content/Theme/jQuery-UI.scss"
+  },
+  {
+    "outputFile": "Content/Theme/AuditTrail.css",
+    "inputFile": "Content/Theme/AuditTrail.scss"
+  },
+  {
+    "outputFile": "Content/Theme/CheckListGrid.css",
+    "inputFile": "Content/Theme/CheckListGrid.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Help.css",
+    "inputFile": "Content/Theme/Help.scss"
+  },
+  {
+    "outputFile": "Content/Theme/FixedHeader.css",
+    "inputFile": "Content/Theme/FixedHeader.scss"
+  },
+  {
+    "outputFile": "Content/Theme/AppMode.css",
+    "inputFile": "Content/Theme/AppMode.scss"
+  },
+  {
+    "outputFile": "Content/Theme/DataSourcesEditor.css",
+    "inputFile": "Content/Theme/DataSourcesEditor.scss"
+  }
+]

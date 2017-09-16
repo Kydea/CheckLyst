@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check-List Manager</title>
+    <link href="~/favicon.ico" rel="icon" type="image/x-icon">
+    <meta name="description" content="[Description]" />
+    <meta name="keywords" content="[Keywords]" />
+    @Html.Partial("Script/Script0")
+    @Styles.Render("~/Content/Theme/Styles")
+</head>
+<body class="@ViewBag.BodyCssClass @(ViewBag.AppMode ? "AppMode" : String.Empty)">
+    <div id="InitialCurtain"></div>
+
+    @Html.Partial("Layout/Header")
+
+    <div id="Content" class="Padded">
+        @RenderBody()
+    </div>
+
+    @Html.Partial("Layout/Help")
+
+    @Html.Partial("Layout/Footer")
+
+    @Scripts.Render("~/Bundles/Libraries")
+    @Scripts.Render("~/Bundles/Matematici")
+    @Html.Partial("Script/Script1")
+</body>
+</html>

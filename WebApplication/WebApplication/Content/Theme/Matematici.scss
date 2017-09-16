@@ -1,0 +1,67 @@
+@import "_Library.scss";
+
+div.Matematici {
+    display: inline-block;
+    position: absolute;
+    height: 8px;
+    cursor: pointer;
+    bottom: $Metric-Separator-Mobile;
+
+    a {
+        height: 0 !important;
+        line-height: 0 !important;
+
+        span {
+            position: absolute;
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: url(Matematici/Matematici.White.png) no-repeat;
+            color: white !important;
+
+            &.ByMatematici {
+                width: 100px;
+            }
+
+            &.By {
+                width: 12px;
+            }
+
+            &.M {
+                background-position: -12px 0;
+            }
+
+            &.A {
+                background-position: -20px 0;
+            }
+
+            &.T {
+                background-position: -28px 0;
+            }
+
+            &.E {
+                background-position: -36px 0;
+            }
+
+            &.I {
+                background-position: -44px 0;
+            }
+
+            &.C {
+                background-position: -52px 0;
+            }
+        }
+    }
+
+    &.White a span {
+        background-image: url(Matematici/Matematici.White.png);
+    }
+
+    @media #{$Media-Extended} {
+        right: $Metric-Separator-Extended;
+    }
+
+    @media #{$Media-Mobile} {
+        right: $Metric-Separator-Mobile;
+    }
+}

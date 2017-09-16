@@ -7,11 +7,18 @@ using System.Web.Routing;
 
 namespace WebApplication
 {
-	public class RouteConfig
-	{
-		public static void RegisterRoutes(RouteCollection Routes)
-		{
+    public class RouteConfig
+    {
+        public static void RegisterRoutes(RouteCollection Routes)
+        {
             Routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+
+            Routes.MapRoute(
+                "Loader",
+                "{*Url}",
+                new { Controller = "Default", Action = "Loader" },
+                new { HTTPMethod = new HttpMethodConstraint("GET") }
+            );
 
             Routes.MapMvcAttributeRoutes();
         }

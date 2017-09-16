@@ -1,0 +1,195 @@
+﻿@import "Library";
+
+* {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: $Font-Base;
+    position: absolute;
+    width: 100%;
+    color: black;
+    font-size: 13px;
+}
+
+ul.Plain {
+    margin: 0;
+    padding: 0;
+    list-style: none outside none;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+    display: block;
+
+    &:hover {
+        text-decoration: none;
+        color: $Color-Font-Blue1;
+    }
+
+    &.Left {
+        float: right;
+    }
+
+    &.Right {
+        float: right;
+    }
+}
+
+.LeftFloating {
+    float: left;
+}
+
+.RightFloating {
+    float: right;
+}
+
+.Clearing {
+    clear: both;
+}
+
+.Container {
+    &::after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+}
+
+.Padded {
+    @media #{$Media-Extended} {
+        padding-left: $Metric-Separator-Extended;
+        padding-right: $Metric-Separator-Extended;
+    }
+
+    @media #{$Media-Mobile} {
+        padding-left: $Metric-Separator-Mobile;
+        padding-right: $Metric-Separator-Mobile;
+    }
+}
+
+.Hidden {
+    display: none;
+}
+
+div#InitialCurtain {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: $Depth-InitialCurtain;
+    background: white;
+}
+
+header {
+    div#Logo {
+        background: url(Layout/Header.jpg) black;
+        width: 100%;
+        height: 55px;
+        padding-top: 5px;
+
+        img {
+            display: block;
+        }
+    }
+
+    a#HelpButton {
+        position: absolute;
+        top: 15px;
+        border-radius: 50%;
+        background-color: #406f81;
+        width: 25px;
+        height: 25px;
+        line-height: 25px;
+        color: white;
+        text-align: center;
+        font-size: 14px;
+
+        @media #{$Media-Extended} {
+            right: $Metric-Separator-Extended;
+        }
+
+        @media #{$Media-Mobile} {
+            right: $Metric-Separator-Mobile;
+        }
+    }
+
+    div#UserPanel {
+        background-color: $Color-Background-Blu1;
+        color: white;
+        height: 55px;
+        padding-top: 15px;
+        padding-bottom: 15px;
+
+        a {
+            color: white !important;
+            line-height: 25px;
+
+            &:hover {
+                color: black !important;
+            }
+
+            &.LeftFloating {
+                margin-right: 10px;
+            }
+
+            &.RightFloating {
+                margin-left: 10px;
+            }
+
+            i {
+                @include border-radius(50%);
+                background-color: $Color-Background-Blu2;
+                width: 25px;
+                height: 25px;
+                line-height: 25px;
+                text-align: center;
+            }
+        }
+    }
+
+    a#MenuButton {
+        line-height: 30px;
+        padding: $Metric-Separator-Mobile;
+        float: right;
+    }
+}
+
+footer {
+    height: 58px;
+    background: black;
+    width: 100%;
+
+    div.Information {
+        font-size: 10px;
+        color: white;
+        position: absolute;
+        bottom: $Metric-Separator-Mobile;
+
+        @media #{$Media-Extended} {
+            left: $Metric-Separator-Extended;
+        }
+
+        @media #{$Media-Mobile} {
+            left: $Metric-Separator-Mobile;
+        }
+    }
+}
+
+@media #{$Media-Extended} {
+    .Mobile {
+        display: none !important;
+    }
+}
+
+@media #{$Media-Mobile} {
+    .Extended {
+        display: none !important;
+    }
+}

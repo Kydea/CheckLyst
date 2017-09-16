@@ -1,0 +1,31 @@
+﻿@import "Library";
+
+.Pager {
+    margin: 20px 0 20px 0;
+    float: right;
+
+    &:after{
+        display: block;
+        content: "";
+        clear: both;
+    }
+
+    a {
+        display: inline-block;
+        cursor: pointer;
+        text-decoration: none;
+
+        &.Current {
+            color: $Color-Font-Blue1;
+        }
+
+        &:not(:last-child) {
+            &:after {
+                display: inline-block;
+                content: "|";
+                color: black;
+                padding: 0 5px 0 5px;
+            }
+        }
+    }
+}
