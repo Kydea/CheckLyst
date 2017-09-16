@@ -39,12 +39,12 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
 	        catch (AuthenticationException exception)
 	        {
 		        Logger.Debug(exception, $"Error during login ({exception.ErrorCode})");
-		        context.SetError("invalid_grant", "The user name or password is incorrect.");
+		        context.SetError("invalid_grant", "The user name or password are incorrect.");
 	        }
 			catch (Exception exception)
 	        {
 		        Logger.Error(exception, "Error during login");
-		        context.SetError("invalid_grant", "The user name or password is incorrect.");
+		        context.SetError("invalid_grant", "The user name or password are incorrect.");
 	        }
         }
 

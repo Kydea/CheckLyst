@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Autofac;
 using CheckListManager.AccessControl.Logic.Exceptions;
 using CheckListManager.AccessControl.Logic.Services;
 using CheckListManager.AccessControl.Tests.Contexts;
@@ -21,7 +22,7 @@ namespace CheckListManager.AccessControl.Tests.Steps.Authentication
 		private readonly ICompanyRepositoryExtended _companyRepository;
 
 		public LoginSteps(LoginContext context, IUserService userService, IUserRepositoryExtended userRepository,
-			IHashService hashService, ICompanyRepositoryExtended companyRepository)
+			IHashService hashService, ICompanyRepositoryExtended companyRepository, ILifetimeScope scope, IComponentContext componentContext)
 		{
 			_context = context;
 			_userService = userService;
@@ -36,6 +37,7 @@ namespace CheckListManager.AccessControl.Tests.Steps.Authentication
 			var user = new Users
 			{
 				Code = username,
+				Description = username,
 				Password = _hashService.HashStringToBytes(password),
 				Company = (await _companyRepository.GetFirstCompanyAsync()).ID,
 				CreatedOn = DateTimeOffset.UtcNow,

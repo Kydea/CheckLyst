@@ -71,7 +71,7 @@ namespace CheckListManager.Common.Logic.Configuration
 			builder.RegisterAssemblyTypes(assembliesLookup)
 				.AssignableTo<IService>()
 				.AsImplementedInterfaces()
-				.InstancePerDependency();
+				.InstancePerRequest();
 
 			builder.RegisterAssemblyTypes(assembliesLookup)
 				.AssignableTo<ISingletonService>()
@@ -81,7 +81,7 @@ namespace CheckListManager.Common.Logic.Configuration
 			builder.RegisterAssemblyTypes(assembliesLookup)
 				.AssignableTo<IRepository>()
 				.AsImplementedInterfaces()
-				.InstancePerDependency();
+				.InstancePerRequest();
 
 			builder.RegisterAssemblyTypes(assembliesLookup)
 				.AssignableTo<IMemoryCache>()
@@ -93,10 +93,9 @@ namespace CheckListManager.Common.Logic.Configuration
 				.AsImplementedInterfaces()
 				.InstancePerDependency();
 
-			builder.RegisterAssemblyTypes(assembliesLookup)
-				.AssignableTo<RelationalDatabaseEntities>()
+			builder.RegisterType<RelationalDatabaseEntities>()
 				.AsSelf()
-				.InstancePerDependency();
+				.InstancePerRequest();
 
 			builder.RegisterApiControllers(assembliesLookup);
 

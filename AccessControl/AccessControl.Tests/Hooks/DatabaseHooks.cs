@@ -1,5 +1,5 @@
-﻿using System;
-using System.Transactions;
+﻿using Autofac;
+using CheckListManager.Common.Data;
 using TechTalk.SpecFlow;
 
 namespace CheckListManager.AccessControl.Tests.Hooks
@@ -10,16 +10,18 @@ namespace CheckListManager.AccessControl.Tests.Hooks
 		[BeforeScenario("WithTransaction")]
 		public static void CreateTransaction()
 		{
-			var transaction = new TransactionScope(TransactionScopeOption.RequiresNew, TimeSpan.FromMinutes(10),
-				TransactionScopeAsyncFlowOption.Enabled);
-			ScenarioContext.Current.Set(transaction);			
+			var context = ScenarioContext.Current.ScenarioContainer.Resolve<IComponentContext>();
+			var dc = context.Resolve<RelationalDatabaseEntities>();
+			dc.Database.BeginTransaction();
 		}
 
 		[AfterScenario("WithTransaction")]
 		public static void RollbackTransaction()
 		{
-			var transaction = ScenarioContext.Current.Get<TransactionScope>();
-			transaction?.Dispose();
+			var context = ScenarioContext.Current.ScenarioContainer.Resolve<IComponentContext>();
+			var dc = context.Resolve<RelationalDatabaseEntities>();
+
+			dc.Database.CurrentTransaction?.Dispose();
 		}
 	}
 }
