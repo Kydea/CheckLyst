@@ -10,7 +10,7 @@
 // ------------------------------------------------------------------------------
 #region Designer generated code
 #pragma warning disable
-namespace CheckListManager.AccessControl.Tests.Features
+namespace CheckListManager.AccessControl.Tests.Features.Authentication
 {
     using TechTalk.SpecFlow;
     
@@ -113,6 +113,29 @@ this.ScenarioSetup(scenarioInfo);
 #line 18
  testRunner.Then("the result should be an exception with error \'102\' and message \'User Not Existing" +
                     " User not found\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Login with a not enabled user")]
+        [NUnit.Framework.CategoryAttribute("WithTransaction")]
+        public virtual void LoginWithANotEnabledUser()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Login with a not enabled user", new string[] {
+                        "WithTransaction"});
+#line 22
+this.ScenarioSetup(scenarioInfo);
+#line 23
+ testRunner.Given("The system contains the user \'TestUser01\' with password \'Test Password\' that is n" +
+                    "ot enabled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 24
+ testRunner.And("I want to login as \'TestUser01\' with password \'Test Password\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 25
+ testRunner.When("I send the login request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 26
+ testRunner.Then("the result should be an exception with error \'103\' and message \'User CheckListMan" +
+                    "ager not enabled\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }

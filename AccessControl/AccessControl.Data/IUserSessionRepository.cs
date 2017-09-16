@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using CheckListManager.Common.Data;
 
 namespace CheckListManager.AccessControl.Data

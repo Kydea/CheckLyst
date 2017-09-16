@@ -1,16 +1,15 @@
 ﻿using CheckListManager.Common.Core.Cache;
-using CheckListManager.Common.Data.Configuration;
 
 namespace CheckListManager.Common.Logic.Services
 {
-	public class ConfigurationService : ServiceBase, IConfigurationService
+	public class ConfigurationService : IConfigurationService
 	{
-		private readonly IConfigurationRepository _repository;
+		//private readonly IConfigurationRepository _repository;
 		private readonly IMemoryCache _cache;
 
-		public ConfigurationService(IConfigurationRepository repository, IMemoryCache cache)
+		public ConfigurationService(/*IConfigurationRepository repository, */IMemoryCache cache)
 		{
-			_repository = repository;
+			//_repository = repository;
 			_cache = cache;
 		}
 

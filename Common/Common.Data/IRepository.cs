@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace CheckListManager.Common.Data
+﻿namespace CheckListManager.Common.Data
 {
-	public interface IRepository : IDisposable
+	public interface IRepository
 	{
 	}
 }

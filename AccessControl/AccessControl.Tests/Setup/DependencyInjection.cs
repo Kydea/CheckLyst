@@ -3,8 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Autofac;
-using CheckListManager.AccessControl.Data;
-using CheckListManager.AccessControl.Tests.Mocks;
 using SpecFlow.Autofac;
 
 namespace CheckListManager.AccessControl.Tests.Setup
@@ -16,11 +14,6 @@ namespace CheckListManager.AccessControl.Tests.Setup
 		{
 			LoadRefencedAssemblies();
 			var builder = WebApiConfig.CreateBuilder(false);
-
-			builder
-				.RegisterType<UserRepositoryMock>()
-				.As<IUserRepository>()
-				.SingleInstance();
 
 			builder
 				.RegisterAssemblyTypes(typeof(DependencyInjection).Assembly)

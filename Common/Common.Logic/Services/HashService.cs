@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CheckListManager.Common.Logic.Services
 {
-	public class HashService : ServiceBase, IHashService
+	public class HashService : IHashService
 	{
 		public byte[] HashStringToBytes(string text)
 		{

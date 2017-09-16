@@ -1,5 +1,4 @@
 ﻿using System.Data.Entity;
-using System.Linq;
 using System.Threading.Tasks;
 using CheckListManager.Common.Data;
 
@@ -9,11 +8,6 @@ namespace CheckListManager.AccessControl.Data
 	{
 		public UserRepository(RelationalDatabaseEntities entities) : base(entities)
 		{			
-		}
-
-		public Users Get(string code)
-		{
-			return Entities.Users.FirstOrDefault(u => u.Code == code);
 		}
 
 		public async Task<Users> GetAsync(string code)

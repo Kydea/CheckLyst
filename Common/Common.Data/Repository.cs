@@ -1,6 +1,8 @@
-﻿namespace CheckListManager.Common.Data
+﻿using System;
+
+namespace CheckListManager.Common.Data
 {
-	public abstract class Repository : IRepository
+	public abstract class Repository : IRepository, IDisposable
 	{
 		protected readonly RelationalDatabaseEntities Entities;
 
@@ -10,6 +12,12 @@
 		}
 
 		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		protected virtual void Dispose(bool disposing)
 		{
 			Entities.Dispose();
 		}

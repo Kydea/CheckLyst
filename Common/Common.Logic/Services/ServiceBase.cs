@@ -1,31 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Web.Http;
+using Autofac;
 using CheckListManager.Common.Core.Services;
 
 namespace CheckListManager.Common.Logic.Services
 {
-	//TODO remove dependency to GlobalConfiguration.Configuration
 	public abstract class ServiceBase : IService
 	{
-		protected virtual object GetDependency(Type type)
+		private readonly IComponentContext _context;
+
+		protected ServiceBase(IComponentContext context)
 		{
-			return GlobalConfiguration.Configuration.DependencyResolver.GetService(type);
+			_context = context;
 		}
 
-		protected virtual IEnumerable<object> GetDependencies(Type type)
-		{
-			return GlobalConfiguration.Configuration.DependencyResolver.GetServices(type);
-		}
+		protected virtual object GetDependency(Type type)
+			=> _context.Resolve(type);
 
 		protected virtual T GetDependency<T>()
-		{
-			return (T)GetDependency(typeof(T));
-		}
-
-		protected virtual IEnumerable<T> GetDependencies<T>()
-		{
-			return (IEnumerable<T>)GetDependencies(typeof(T));
-		}
+			=> _context.Resolve<T>();
 	}
 }
