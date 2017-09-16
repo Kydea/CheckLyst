@@ -4,11 +4,6 @@ namespace CheckListManager.AccessControl.Logic.Authentication
 {
 	public class IdentityToken
 	{
-		public IdentityToken()
-		{
-			
-		}
-
 		public IdentityToken(string authenticationTicket, string refreshToken, DateTimeOffset expiresOn)
 		{
 			AuthenticationTicket = authenticationTicket;
@@ -16,8 +11,8 @@ namespace CheckListManager.AccessControl.Logic.Authentication
 			ExpiresOn = expiresOn;
 		}
 
-		public string AuthenticationTicket { get; set; }
-		public string RefreshToken { get; set; }
-		public DateTimeOffset ExpiresOn { get; set; }
+		public string AuthenticationTicket { get; }
+		public string RefreshToken { get; }
+		public DateTimeOffset ExpiresOn { get; }
 	}
 }

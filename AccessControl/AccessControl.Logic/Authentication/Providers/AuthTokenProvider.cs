@@ -70,7 +70,7 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
             return Task.FromResult<object>(null);
         }
 
-        public static AuthenticationProperties CreateProperties(Users user)
+	    private static AuthenticationProperties CreateProperties(Users user)
         {
             IDictionary<string, string> data = new Dictionary<string, string>
             {

@@ -1,4 +1,5 @@
-﻿namespace CheckListManager.Common.Data.Configuration
+﻿// ReSharper disable UnusedParameter.Global
+namespace CheckListManager.Common.Data.Configuration
 {
 	public interface IConfigurationRepository : IRepository
 	{

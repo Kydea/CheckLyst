@@ -6,6 +6,7 @@ namespace CheckListManager.AccessControl.Data
 {
 	public class UserRepository : Repository, IUserRepository
 	{
+		// ReSharper disable once MemberCanBeProtected.Global
 		public UserRepository(RelationalDatabaseEntities entities) : base(entities)
 		{			
 		}

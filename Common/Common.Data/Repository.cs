@@ -17,9 +17,13 @@ namespace CheckListManager.Common.Data
 			GC.SuppressFinalize(this);
 		}
 
+		// ReSharper disable once VirtualMemberNeverOverridden.Global
 		protected virtual void Dispose(bool disposing)
 		{
-			Entities.Dispose();
+			if (disposing)
+			{
+				Entities.Dispose();
+			}
 		}
 	}
 }

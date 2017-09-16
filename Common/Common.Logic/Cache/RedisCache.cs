@@ -7,7 +7,7 @@ namespace CheckListManager.Common.Logic.Cache
 {
 	public class RedisCache : IRedisCache
 	{
-		protected Lazy<IDatabase> Database { get; }
+		private Lazy<IDatabase> Database { get; }
 
 		public RedisCache(IRedisSetup redisSetup)
 		{
