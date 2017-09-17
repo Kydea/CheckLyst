@@ -7,6 +7,7 @@ namespace CheckListManager.WebApplication.Controllers
     [Authorize]
     public class BaseController : Controller
     {
+	    // ReSharper disable once MemberCanBePrivate.Global
 	    protected bool IsAppMode()
         {
             return Request["AppMode"] == "1";
@@ -23,24 +24,28 @@ namespace CheckListManager.WebApplication.Controllers
             return Request.IsAjaxRequest() ? PartialView() : (ActionResult)View();
         }
 
+	    // ReSharper disable once VirtualMemberNeverOverridden.Global
         protected virtual ActionResult ConditionalView(string viewName)
         {
             CheckAppMode();
             return Request.IsAjaxRequest() ? PartialView(viewName) : (ActionResult)View(viewName);
         }
 
+	    // ReSharper disable once VirtualMemberNeverOverridden.Global
         protected virtual ActionResult ConditionalView(object model)
         {
             CheckAppMode();
             return Request.IsAjaxRequest() ? PartialView(model) : (ActionResult)View(model);
         }
 
+	    // ReSharper disable once VirtualMemberNeverOverridden.Global
         protected virtual ActionResult ConditionalView(string viewName, object model)
         {
             CheckAppMode();
             return Request.IsAjaxRequest() ? PartialView(viewName, model) : (ActionResult)View(viewName, model);
         }
 
+	    // ReSharper disable once VirtualMemberNeverOverridden.Global
         protected override JsonResult Json(object data, string contentType, Encoding contentEncoding)
         {
             return Json(data, contentType, contentEncoding, JsonRequestBehavior.DenyGet);
