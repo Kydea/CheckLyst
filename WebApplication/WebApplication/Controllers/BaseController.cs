@@ -18,7 +18,7 @@ namespace CheckListManager.WebApplication.Controllers
             ViewBag.AppMode = IsAppMode();
         }
 
-        protected virtual ActionResult ConditionalView()
+        protected ActionResult ConditionalView()
         {
             CheckAppMode();
             return Request.IsAjaxRequest() ? PartialView() : (ActionResult)View();
