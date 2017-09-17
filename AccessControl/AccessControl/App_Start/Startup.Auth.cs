@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Web.Http;
+using Autofac;
+using Autofac.Core;
+using Autofac.Core.Lifetime;
 using CheckListManager.AccessControl.Logic.Authentication.Providers;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.OAuth;
@@ -11,20 +14,30 @@ namespace CheckListManager.AccessControl
 	{
 		private static OAuthAuthorizationServerOptions OAuthOptions { get; set; }
 
-		// ReSharper disable once MemberCanBeMadeStatic.Global
-		// ReSharper disable once MemberCanBePrivate.Global
-		public void ConfigureAuth(IAppBuilder app)
+		private static void ConfigureAuth(IAppBuilder app)
 		{
-			OAuthOptions = new OAuthAuthorizationServerOptions
+			var parentScope =
+				(ILifetimeScope)GlobalConfiguration.Configuration.DependencyResolver.GetService(typeof(ILifetimeScope));
+			using (var scope = parentScope.BeginLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag, builder =>
 			{
-				TokenEndpointPath = new PathString("/Access/Token"),
-				Provider = (AuthTokenProvider)GlobalConfiguration.Configuration.DependencyResolver.GetService(typeof(AuthTokenProvider)),
-				AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(30),
-				RefreshTokenProvider = (RefreshTokenProvider)GlobalConfiguration.Configuration.DependencyResolver.GetService(typeof(RefreshTokenProvider)),
-				AllowInsecureHttp = true
-			};
+				builder.RegisterType<AuthTokenProvider>().SingleInstance();
+				builder.RegisterType<RefreshTokenProvider>().SingleInstance();
+				builder.Register(c => (ISharingLifetimeScope)c.Resolve<ILifetimeScope>())
+					.As<ISharingLifetimeScope>()
+					.ExternallyOwned();
+			}))
+			{
+				OAuthOptions = new OAuthAuthorizationServerOptions
+				{
+					TokenEndpointPath = new PathString("/Access/Token"),
+					Provider = scope.Resolve<AuthTokenProvider>(),
+					AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(30),
+					RefreshTokenProvider = scope.Resolve<RefreshTokenProvider>(),
+					AllowInsecureHttp = true
+				};
 
-			app.UseOAuthBearerTokens(OAuthOptions);
+				app.UseOAuthBearerTokens(OAuthOptions);
+			}
 		}
 	}
 }

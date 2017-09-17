@@ -18,5 +18,8 @@ namespace CheckListManager.Common.Core.Cache
 
 		void Set(string key, object value, string regionName = null);
 		Task SetAsync(string key, object value, string regionName = null);
+
+		void Remove(string key, string regionName = null);
+		Task RemoveAsync(string key, string regionName = null);
 	}
 }

@@ -64,17 +64,34 @@ namespace CheckListManager.AccessControl.Tests.Features.Authentication
         }
         
         [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Login without any companySent sent")]
+        public virtual void LoginWithoutAnyCompanySentSent()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Login without any companySent sent", ((string[])(null)));
+#line 5
+this.ScenarioSetup(scenarioInfo);
+#line 6
+ testRunner.Given("I want to login without any company sent", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 7
+ testRunner.When("I send the login request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 8
+ testRunner.Then("the result should be an exception with error \'99\' and message \'Company not sent\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Login without any username sent")]
         public virtual void LoginWithoutAnyUsernameSent()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Login without any username sent", ((string[])(null)));
-#line 5
+#line 10
 this.ScenarioSetup(scenarioInfo);
-#line 6
- testRunner.Given("I want to login as \'\' with password \'\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 7
+#line 11
+ testRunner.Given("I want to login to companyId \'1\' as \'\' with password \'\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 12
  testRunner.When("I send the login request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 8
+#line 13
  testRunner.Then("the result should be an exception with error \'100\' and message \'User code not sen" +
                     "t\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
@@ -86,13 +103,13 @@ this.ScenarioSetup(scenarioInfo);
         public virtual void LoginWithoutAnyPasswordSent()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Login without any password sent", ((string[])(null)));
-#line 10
+#line 15
 this.ScenarioSetup(scenarioInfo);
-#line 11
- testRunner.Given("I want to login as \'CheckListManager\' with password \'\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 12
+#line 16
+ testRunner.Given("I want to login to companyId \'1\' as \'CheckListManager\' with password \'\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 17
  testRunner.When("I send the login request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 13
+#line 18
  testRunner.Then("the result should be an exception with error \'101\' and message \'User password not" +
                     " sent\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
@@ -104,13 +121,13 @@ this.ScenarioSetup(scenarioInfo);
         public virtual void LoginWithANotExistingUser()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Login with a not existing user", ((string[])(null)));
-#line 15
+#line 20
 this.ScenarioSetup(scenarioInfo);
-#line 16
- testRunner.Given("I want to login as \'Not Existing User\' with password \'Test123\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 17
+#line 21
+ testRunner.Given("I want to login to companyId \'1\' as \'Not Existing User\' with password \'Test123\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 22
  testRunner.When("I send the login request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 18
+#line 23
  testRunner.Then("the result should be an exception with error \'102\' and message \'User Not Existing" +
                     " User not found\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
@@ -124,16 +141,16 @@ this.ScenarioSetup(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Login with a not enabled user", new string[] {
                         "WithTransaction"});
-#line 21
+#line 26
 this.ScenarioSetup(scenarioInfo);
-#line 22
+#line 27
  testRunner.Given("The system contains the user \'TestUser01\' with password \'Test Password\' that is n" +
                     "ot enabled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 23
- testRunner.And("I want to login as \'TestUser01\' with password \'Test Password\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 24
+#line 28
+ testRunner.And("I want to login to companyId \'1\' as \'TestUser01\' with password \'Test Password\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 29
  testRunner.When("I send the login request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 25
+#line 30
  testRunner.Then("the result should be an exception with error \'103\' and message \'User TestUser01 n" +
                     "ot enabled\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden

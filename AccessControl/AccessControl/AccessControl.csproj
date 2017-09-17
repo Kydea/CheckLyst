@@ -150,6 +150,7 @@
   <ItemGroup>
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\AccessController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -177,6 +178,10 @@
       <Project>{BE658746-48A9-4AF2-B2B6-A13A7D6DE439}</Project>
       <Name>Common.Logic</Name>
     </ProjectReference>
+    <ProjectReference Include="..\AccessControl.Data\AccessControl.Data.csproj">
+      <Project>{2CB27F63-6C99-47B5-B595-51A2C08A64E0}</Project>
+      <Name>AccessControl.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AccessControl.Logic\AccessControl.Logic.csproj">
       <Project>{3802FE62-38E4-4BC6-B28F-0E9288FE846E}</Project>
       <Name>AccessControl.Logic</Name>
@@ -192,7 +197,6 @@
     <Content Include="AccessControl.snk" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Controllers\" />
     <Folder Include="Models\" />
   </ItemGroup>
   <PropertyGroup>

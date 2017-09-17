@@ -11,9 +11,7 @@ namespace CheckListManager.AccessControl.Data
 		{			
 		}
 
-		public async Task<Users> GetAsync(string code)
-		{
-			return await Entities.Users.FirstOrDefaultAsync(u => u.Code == code);
-		}
+		public Task<Users> GetAsync(long companyId, string code)
+			=> Entities.Users.FirstOrDefaultAsync(u => u.Company == companyId && u.Code == code);
 	}
 }

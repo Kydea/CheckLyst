@@ -45,9 +45,16 @@ namespace CheckListManager.AccessControl.Tests.Steps.Authentication
 			await _userRepository.CreateTestUser(user);
 		}
 
-		[Given(@"I want to login as '(.*)' with password '(.*)'")]
-		public void GivenIWantToLoginAsWithPassword(string username, string password)
+		[Given(@"I want to login without any company sent")]
+		public void GivenIWantToLoginWithoutAnyCompanySent()
 		{
+			_context.CompanyId = null;
+		}
+
+		[Given(@"I want to login to companyId '(.*)' as '(.*)' with password '(.*)'")]
+		public void GivenIWantToLoginToCompanyIdAsWithPassword(long companyId, string username, string password)
+		{
+			_context.CompanyId = companyId;
 			_context.Username = username;
 			_context.Password = password;
 		}
@@ -57,7 +64,7 @@ namespace CheckListManager.AccessControl.Tests.Steps.Authentication
 		{
 			try
 			{
-				await _userService.AuthenticateAsync(_context.Username, _context.Password);
+				await _userService.AuthenticateAsync(_context.CompanyId, _context.Username, _context.Password);
 			}
 			catch (AuthenticationException e)
 			{

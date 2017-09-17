@@ -10,10 +10,10 @@ namespace CheckListManager.AccessControl.Tests.Data
 		{
 		}
 
-		public async Task CreateTestUser(Users user)
+		public Task CreateTestUser(Users user)
 		{
 			Entities.Users.Add(user);
-			await Entities.SaveChangesAsync();
+			return Entities.SaveChangesAsync();
 		}
 	}
 }

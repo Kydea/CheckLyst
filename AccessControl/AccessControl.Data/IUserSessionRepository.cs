@@ -5,8 +5,8 @@ namespace CheckListManager.AccessControl.Data
 {
 	public interface IUserSessionRepository : IRepository
 	{
-		Task<UserSessions> GetAsync(string code);
-
 		Task CreateAsync(UserSessions session);
+		Task<UserSessions> GetAsync(string code);
+		Task MarkAsExpiredAsync(string code);
 	}
 }

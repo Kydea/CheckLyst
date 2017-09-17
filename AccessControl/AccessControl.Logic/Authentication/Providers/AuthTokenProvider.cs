@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Autofac;
+using Autofac.Core;
+using Autofac.Core.Lifetime;
 using CheckListManager.AccessControl.Logic.Exceptions;
 using CheckListManager.AccessControl.Logic.Services;
 using CheckListManager.Common.Data;
@@ -11,73 +14,84 @@ using NLog;
 
 namespace CheckListManager.AccessControl.Logic.Authentication.Providers
 {
-    public class AuthTokenProvider : OAuthAuthorizationServerProvider
-    {
-	    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+	public class AuthTokenProvider : OAuthAuthorizationServerProvider
+	{
+		private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-	    private readonly IUserService _userService;
+		private readonly ILifetimeScope _parentScope;
 
-	    public AuthTokenProvider(IUserService userService)
-	    {
-		    _userService = userService;
-	    }
+		public AuthTokenProvider(ISharingLifetimeScope parentScope)
+		{
+			_parentScope = parentScope.RootLifetimeScope;
+		}
 
-	    public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
-        {
-	        try
-	        {
-		        var user = await _userService.AuthenticateAsync(context.UserName, context.Password);
+		public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
+		{
+			try
+			{
+				using (var scope = _parentScope.BeginLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag))
+				{
+					var form = await context.Request.ReadFormAsync();
+					long? companyId = null;
+					if (long.TryParse(form["companyId"], out var i))
+					{
+						companyId = i;
+					}
 
-				var identity = new ClaimsIdentity(context.Options.AuthenticationType);
-		        identity.AddClaim(new Claim(ClaimTypes.Name, user.Code));
-		        identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Code));
+					var userService = scope.Resolve<IUserService>();
+					var user = await userService.AuthenticateAsync(companyId, context.UserName, context.Password);
 
-		        var properties = CreateProperties(user);
-		        var ticket = new AuthenticationTicket(identity, properties);
-		        context.Validated(ticket);
+					var identity = new ClaimsIdentity(context.Options.AuthenticationType);
+					identity.AddClaim(new Claim(ClaimTypes.Name, user.Code));
+					identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Code));
+
+					var properties = CreateProperties(user);
+					var ticket = new AuthenticationTicket(identity, properties);
+					context.Validated(ticket);
+				}
 			}
-	        catch (AuthenticationException exception)
-	        {
-		        Logger.Debug(exception, $"Error during login ({exception.ErrorCode})");
-		        context.SetError("invalid_grant", "The user name or password are incorrect.");
-	        }
+			catch (AuthenticationException exception)
+			{
+				Logger.Debug(exception, $"Error during login ({exception.ErrorCode})");
+				context.SetError("invalid_grant", "The user name or password are incorrect.");
+			}
 			catch (Exception exception)
-	        {
-		        Logger.Error(exception, "Error during login");
-		        context.SetError("invalid_grant", "The user name or password are incorrect.");
-	        }
-        }
+			{
+				Logger.Error(exception, "Error during login");
+				context.SetError("invalid_grant", "The user name or password are incorrect.");
+			}
+		}
 
 		public override Task TokenEndpoint(OAuthTokenEndpointContext context)
-        {
-            foreach (var property in context.Properties.Dictionary)
-            {
-                context.AdditionalResponseParameters.Add(property.Key, property.Value);
-            }
+		{
+			foreach (var property in context.Properties.Dictionary)
+			{
+				context.AdditionalResponseParameters.Add(property.Key, property.Value);
+			}
 
-            return Task.FromResult<object>(null);
-        }
+			return Task.FromResult<object>(null);
+		}
 
-        public override Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
-        {
-	        context.Validated();
-            return Task.FromResult<object>(null);
-        }
+		public override Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
+		{
+			context.Validated();
+			return Task.FromResult<object>(null);
+		}
 
-        public override Task ValidateClientRedirectUri(OAuthValidateClientRedirectUriContext context)
-        {
-	        context.Validated();
-            return Task.FromResult<object>(null);
-        }
+		public override Task ValidateClientRedirectUri(OAuthValidateClientRedirectUriContext context)
+		{
+			context.Validated();
+			return Task.FromResult<object>(null);
+		}
 
-	    private static AuthenticationProperties CreateProperties(Users user)
-        {
-            IDictionary<string, string> data = new Dictionary<string, string>
-            {
+		private static AuthenticationProperties CreateProperties(Users user)
+		{
+			IDictionary<string, string> data = new Dictionary<string, string>
+			{
 				{ "company", user.Company.ToString() },
-                { "code", user.Code } //TODO: add more
+				{ "code", user.Code } //TODO: add more
             };
-            return new AuthenticationProperties(data);
-        }
-    }
+			return new AuthenticationProperties(data);
+		}
+	}
 }

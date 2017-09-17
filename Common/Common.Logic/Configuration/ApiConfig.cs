@@ -63,8 +63,20 @@ namespace CheckListManager.Common.Logic.Configuration
 
 			var builder = new ContainerBuilder();
 
+			builder.RegisterApiControllers(assembliesLookup);
+
 			builder.RegisterAssemblyTypes(assembliesLookup)
 				.AssignableTo<IRedisSetup>()
+				.AsImplementedInterfaces()
+				.SingleInstance();
+
+			builder.RegisterAssemblyTypes(assembliesLookup)
+				.AssignableTo<ISingletonService>()
+				.AsImplementedInterfaces()
+				.SingleInstance();
+
+			builder.RegisterAssemblyTypes(assembliesLookup)
+				.AssignableTo<IMemoryCache>()
 				.AsImplementedInterfaces()
 				.SingleInstance();
 
@@ -74,30 +86,18 @@ namespace CheckListManager.Common.Logic.Configuration
 				.InstancePerRequest();
 
 			builder.RegisterAssemblyTypes(assembliesLookup)
-				.AssignableTo<ISingletonService>()
-				.AsImplementedInterfaces()
-				.SingleInstance();
-
-			builder.RegisterAssemblyTypes(assembliesLookup)
 				.AssignableTo<IRepository>()
 				.AsImplementedInterfaces()
 				.InstancePerRequest();
-
-			builder.RegisterAssemblyTypes(assembliesLookup)
-				.AssignableTo<IMemoryCache>()
-				.AsImplementedInterfaces()
-				.SingleInstance();
-
-			builder.RegisterAssemblyTypes(assembliesLookup)
-				.AssignableTo<IRedisCache>()
-				.AsImplementedInterfaces()
-				.InstancePerDependency();
 
 			builder.RegisterType<RelationalDatabaseEntities>()
 				.AsSelf()
 				.InstancePerRequest();
 
-			builder.RegisterApiControllers(assembliesLookup);
+			builder.RegisterAssemblyTypes(assembliesLookup)
+				.AssignableTo<IRedisCache>()
+				.AsImplementedInterfaces()
+				.InstancePerDependency();
 
 			return builder;
 		}

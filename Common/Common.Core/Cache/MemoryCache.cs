@@ -66,10 +66,19 @@ namespace CheckListManager.Common.Core.Cache
 			}
 		}
 
-		public Task SetAsync(string key, object value, string regionName = null)
+		public async Task SetAsync(string key, object value, string regionName = null)
 		{
-			Set(key, value, regionName);
-			return Task.FromResult(true);
+			await Task.Run(() => Set(key, value, regionName));
+		}
+
+		public void Remove(string key, string regionName = null)
+		{
+			_storage.Remove(ResolveKey(key, regionName));
+		}
+
+		public async Task RemoveAsync(string key, string regionName = null)
+		{
+			await Task.Run(() => Remove(key, regionName));
 		}
 
 		private static string ResolveKey(string key, string regionName)

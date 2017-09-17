@@ -8,9 +8,10 @@ namespace CheckListManager.AccessControl.Logic.Services
 {
 	public interface IUserService : IService
 	{
-		Task<Users> AuthenticateAsync(string code, string password);
+		Task<Users> AuthenticateAsync(long? companyId, string code, string password);
 
-		Task<IdentityToken> GetTokenAsync(string code);
 		Task CreateSessionAsync(long company, string code, string user, string ticket, DateTimeOffset expiresOn);
+		Task<IdentityToken> GetTokenAsync(string code);
+		Task LogoutAsync(string code);
 	}
 }

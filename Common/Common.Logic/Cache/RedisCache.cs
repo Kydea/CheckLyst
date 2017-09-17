@@ -90,6 +90,16 @@ namespace CheckListManager.Common.Logic.Cache
 			}
 		}
 
+		public void Remove(string key, string regionName = null)
+		{
+			Database.Value.KeyDelete(ResolveKey(key, regionName), CommandFlags.FireAndForget);
+		}
+
+		public Task RemoveAsync(string key, string regionName = null)
+		{
+			return Database.Value.KeyDeleteAsync(ResolveKey(key, regionName), CommandFlags.FireAndForget);
+		}
+
 		private static string ResolveKey(string key, string regionName)
 			=> string.IsNullOrEmpty(regionName) ? key : $"{regionName}.{key}";
 	}

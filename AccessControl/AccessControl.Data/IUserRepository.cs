@@ -5,6 +5,6 @@ namespace CheckListManager.AccessControl.Data
 {
 	public interface IUserRepository : IRepository
 	{
-		Task<Users> GetAsync(string code);
+		Task<Users> GetAsync(long companyId, string code);
 	}
 }

@@ -6,12 +6,15 @@ using CheckListManager.AccessControl.Logic.Exceptions;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Cache;
 using CheckListManager.Common.Logic.Services;
+using NLog;
 
 namespace CheckListManager.AccessControl.Logic.Services
 {
 	public class UserService : IUserService
 	{
 		private const string IdentityCacheRegion = "UserService.IdentityToken";
+
+		private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
 		private readonly IUserRepository _userRepository;
 		private readonly IUserSessionRepository _userSessionRepository;
@@ -26,8 +29,13 @@ namespace CheckListManager.AccessControl.Logic.Services
 			_cache = cache;
 		}
 
-		public async Task<Users> AuthenticateAsync(string code, string password)
+		public async Task<Users> AuthenticateAsync(long? companyId, string code, string password)
 		{
+			if (!companyId.HasValue)
+			{
+				throw new AuthenticationException(99, "Company not sent");
+			}
+
 			if (string.IsNullOrEmpty(code))
 			{
 				throw new AuthenticationException(100, "User code not sent");
@@ -38,7 +46,7 @@ namespace CheckListManager.AccessControl.Logic.Services
 				throw new AuthenticationException(101, "User password not sent");
 			}
 
-			var user = await _userRepository.GetAsync(code);
+			var user = await _userRepository.GetAsync(companyId.Value, code);
 
 			if (user == null)
 			{
@@ -56,6 +64,25 @@ namespace CheckListManager.AccessControl.Logic.Services
 			//TODO: add LDAP / OAUTH SERVER
 
 			return user;
+		}
+
+		public Task CreateSessionAsync(long company, string code, string user, string ticket, DateTimeOffset expiresOn)
+		{
+			var session = new UserSessions
+			{
+				Company = company,
+				Code = code,
+				User = user,
+				Ticket = ticket,
+				CreatedOn = DateTimeOffset.UtcNow,
+				ExpiresOn = expiresOn
+			};
+			var identityToken = new IdentityToken(ticket, code, expiresOn);
+
+			return Task.WhenAll(
+				_userSessionRepository.CreateAsync(session),
+				_cache.SetAsync(identityToken.RefreshToken, identityToken, IdentityCacheRegion)
+			);
 		}
 
 		public async Task<IdentityToken> GetTokenAsync(string code)
@@ -76,21 +103,22 @@ namespace CheckListManager.AccessControl.Logic.Services
 			return token;
 		}
 
-		public async Task CreateSessionAsync(long company, string code, string user, string ticket, DateTimeOffset expiresOn)
+		public async Task LogoutAsync(string code)
 		{
-			var session = new UserSessions
+			if (!string.IsNullOrEmpty(code))
 			{
-				Company = company,
-				Code = code,
-				User = user,
-				Ticket = ticket,
-				CreatedOn = DateTimeOffset.UtcNow,
-				ExpiresOn = expiresOn
-			};
-			await _userSessionRepository.CreateAsync(session);
-
-			var identityToken = new IdentityToken(ticket, code, expiresOn);
-			await _cache.SetAsync(identityToken.RefreshToken, identityToken, IdentityCacheRegion);
+				try
+				{
+					await Task.WhenAll(
+						_cache.RemoveAsync(code, IdentityCacheRegion),
+						_userSessionRepository.MarkAsExpiredAsync(code)
+					);
+				}
+				catch (Exception exception)
+				{
+					Logger.Error(exception, "Error during logout");
+				}
+			}
 		}
 	}
 }

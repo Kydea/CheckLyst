@@ -10,7 +10,7 @@ namespace CheckListManager.AccessControl.Tests.Data
 		{
 		}
 
-		public async Task<Companies> GetFirstCompanyAsync()
-			=> await Entities.Companies.FirstAsync();
+		public Task<Companies> GetFirstCompanyAsync()
+			=> Entities.Companies.FirstAsync();
 	}
 }

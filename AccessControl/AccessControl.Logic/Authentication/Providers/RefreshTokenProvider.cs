@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Autofac;
+using Autofac.Core;
+using Autofac.Core.Lifetime;
 using CheckListManager.AccessControl.Logic.Services;
 using CheckListManager.Common.Logic.Services;
 using Microsoft.Owin;
@@ -10,12 +13,12 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
 {
 	public class RefreshTokenProvider : IAuthenticationTokenProvider
 	{
-		private readonly IUserService _userService;
+		private readonly ILifetimeScope _parentScope;
 		private readonly IHashService _hashService;
 
-		public RefreshTokenProvider(IUserService userService, IHashService hashService)
+		public RefreshTokenProvider(ISharingLifetimeScope parentScope, IHashService hashService)
 		{
-			_userService = userService;
+			_parentScope = parentScope.RootLifetimeScope;
 			_hashService = hashService;
 		}
 
@@ -37,16 +40,24 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
 
 			var ticket = context.SerializeTicket();
 
-			await _userService.CreateSessionAsync(company, sessionCode, user, ticket, expiresOn);
-			context.SetToken(sessionCode);
+			using (var scope = _parentScope.BeginLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag))
+			{
+				var userService = scope.Resolve<IUserService>();
+				await userService.CreateSessionAsync(company, sessionCode, user, ticket, expiresOn);
+				context.SetToken(sessionCode);
+			}
 		}
 
 		public async Task ReceiveAsync(AuthenticationTokenReceiveContext context)
 		{
-			var token = await _userService.GetTokenAsync(context.Token);
-			if (token != null)
+			using (var scope = _parentScope.BeginLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag))
 			{
-				context.DeserializeTicket(token.AuthenticationTicket);
+				var userService = scope.Resolve<IUserService>();
+				var token = await userService.GetTokenAsync(context.Token);
+				if (token != null)
+				{
+					context.DeserializeTicket(token.AuthenticationTicket);
+				}
 			}
 		}
 

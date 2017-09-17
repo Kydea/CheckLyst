@@ -2,24 +2,29 @@
 	In order to protect the system
 	An authentication should be in place
 
+Scenario: Login without any companySent sent
+	Given I want to login without any company sent
+	When I send the login request
+	Then the result should be an exception with error '99' and message 'Company not sent'
+
 Scenario: Login without any username sent
-	Given I want to login as '' with password ''
+	Given I want to login to companyId '1' as '' with password ''
 	When I send the login request
 	Then the result should be an exception with error '100' and message 'User code not sent'
 
 Scenario: Login without any password sent
-	Given I want to login as 'CheckListManager' with password ''
+	Given I want to login to companyId '1' as 'CheckListManager' with password ''
 	When I send the login request
 	Then the result should be an exception with error '101' and message 'User password not sent'
 
 Scenario: Login with a not existing user
-	Given I want to login as 'Not Existing User' with password 'Test123'
+	Given I want to login to companyId '1' as 'Not Existing User' with password 'Test123'
 	When I send the login request
 	Then the result should be an exception with error '102' and message 'User Not Existing User not found'
 
 @WithTransaction
 Scenario: Login with a not enabled user
 	Given The system contains the user 'TestUser01' with password 'Test Password' that is not enabled
-	And I want to login as 'TestUser01' with password 'Test Password'
+	And I want to login to companyId '1' as 'TestUser01' with password 'Test Password'
 	When I send the login request
 	Then the result should be an exception with error '103' and message 'User TestUser01 not enabled'
