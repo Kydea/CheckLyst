@@ -11,7 +11,7 @@ namespace CheckListManager.WebApplication.Models.IntegratedAuthentication
             Service = service ?? throw new NullReferenceException();
         }
 
-        public IntegratedAuthenticationService Service { get; }
+        private IntegratedAuthenticationService Service { get; }
 
         protected override AuthenticationHandler<IntegratedAuthenticationOptions> CreateHandler()
         {

@@ -21,7 +21,7 @@ namespace CheckListManager.WebApplication.Models.IntegratedAuthentication
         {
             if (await Task.Run(() => IsAuthorized(Request.Headers)))
             {
-                AuthenticationProperties properties = new AuthenticationProperties
+                var properties = new AuthenticationProperties
                 {
                     IssuedUtc = DateTime.UtcNow,
                     ExpiresUtc = DateTime.UtcNow.AddDays(1),
@@ -34,8 +34,8 @@ namespace CheckListManager.WebApplication.Models.IntegratedAuthentication
                     new Claim(ClaimTypes.Role, "Administrator"),
                     new Claim("Company", "Janssen")
                 };
-                ClaimsIdentity claimsIdentity = new ClaimsIdentity(claimCollection, "Custom");
-                AuthenticationTicket ticket = new AuthenticationTicket(claimsIdentity, properties);
+                var claimsIdentity = new ClaimsIdentity(claimCollection, "Custom");
+                var ticket = new AuthenticationTicket(claimsIdentity, properties);
                 return ticket;
             }
     

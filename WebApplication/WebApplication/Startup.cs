@@ -22,7 +22,7 @@ namespace CheckListManager.WebApplication
                 token.Register(OnShutdown);
         }
 
-        private void OnStartup(IAppBuilder app)
+        private static void OnStartup(IAppBuilder app)
         {
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
@@ -31,7 +31,7 @@ namespace CheckListManager.WebApplication
             AuthorizationConfig.Setup(app);
         }
 
-        private void OnShutdown()
+        private static void OnShutdown()
         {
         }
     }

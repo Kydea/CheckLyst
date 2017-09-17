@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using System.Web.Http;
+﻿using System.Web.Http;
 using Autofac;
 using CheckListManager.AccessControl.Logic.Authentication.Providers;
 using CheckListManager.Common.Logic.Configuration;
@@ -16,7 +15,7 @@ namespace CheckListManager.AccessControl
 
 		public static ContainerBuilder CreateBuilder(bool loadAssemblies = true)
 	    {
-		    var builder = ApiConfig.CreateBuilder(out Assembly[] assemblies, loadAssemblies);
+		    var builder = ApiConfig.CreateBuilder(out var assemblies, loadAssemblies);
 		    builder.RegisterAssemblyTypes(assemblies)
 			    .AssignableTo<AuthTokenProvider>()
 			    .AsSelf()

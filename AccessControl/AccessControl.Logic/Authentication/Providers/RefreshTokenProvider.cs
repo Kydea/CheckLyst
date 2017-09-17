@@ -21,7 +21,7 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
 
 		public async Task CreateAsync(AuthenticationTokenCreateContext context)
 		{
-			if (context.OwinContext.Environment.TryGetValue("Microsoft.Owin.Form#collection", out object inputs))
+			if (context.OwinContext.Environment.TryGetValue("Microsoft.Owin.Form#collection", out var inputs))
 			{
 				var grantType = ((FormCollection)inputs)?.GetValues("grant_type");
 				var grant = grantType?.FirstOrDefault();
