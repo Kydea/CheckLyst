@@ -1,20 +1,19 @@
-﻿using System.Web;
-using System.Web.Optimization;
+﻿using System.Web.Optimization;
 
-namespace WebApplication
+namespace CheckListManager.WebApplication
 {
 	public class BundleConfig
 	{
-		public static void RegisterBundles(BundleCollection Bundles)
+		public static void RegisterBundles(BundleCollection bundles)
 		{
-            Bundles.Add(new ScriptBundle("~/Bundles/Libraries").Include("~/Scripts/Libraries/*.js"));
-            Bundles.Add(new ScriptBundle("~/Bundles/Matematici")
+            bundles.Add(new ScriptBundle("~/Bundles/Libraries").Include("~/Scripts/Libraries/*.js"));
+            bundles.Add(new ScriptBundle("~/Bundles/Matematici")
                 .Include("~/Scripts/Matematici/*.js")
                 .Include("~/Scripts/Custom/*.js")
                 .Include("~/Scripts/Instances/*.js")
                 .Include("~/Scripts/Prototypes/*.js")
             );
-            Bundles.Add(new StyleBundle("~/Content/Theme/Styles").Include("~/Content/Theme/*.css"));
+            bundles.Add(new StyleBundle("~/Content/Theme/Styles").Include("~/Content/Theme/*.css"));
         }
     }
 }

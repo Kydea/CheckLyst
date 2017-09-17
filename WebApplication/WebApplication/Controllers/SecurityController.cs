@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 
-namespace WebApplication.Controllers
+namespace CheckListManager.WebApplication.Controllers
 {
     [RoutePrefix("Security")]
     public class SecurityController : BaseController
 	{
         [AllowAnonymous]
         [Route("Login")]
-        public ActionResult Login(String ReturnUrl)
+        public ActionResult Login(string returnUrl)
         {
-            return ConditionalView("Login", ReturnUrl ?? Url.Action("Dashboard", "Default"));
+            return ConditionalView("Login", returnUrl ?? Url.Action("Dashboard", "Default"));
         }
 
 

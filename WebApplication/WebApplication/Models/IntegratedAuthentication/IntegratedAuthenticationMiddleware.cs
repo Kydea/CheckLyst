@@ -1,18 +1,14 @@
-﻿using Microsoft.Owin;
-using Microsoft.Owin.Security;
+﻿using System;
+using Microsoft.Owin;
 using Microsoft.Owin.Security.Infrastructure;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
-namespace WebApplication.IntegratedAuthentication
+namespace CheckListManager.WebApplication.Models.IntegratedAuthentication
 {
     public class IntegratedAuthenticationMiddleware : AuthenticationMiddleware<IntegratedAuthenticationOptions>
     {
-        public IntegratedAuthenticationMiddleware(OwinMiddleware NextMiddleware, IntegratedAuthenticationOptions Options, IntegratedAuthenticationService Service) : base(NextMiddleware, Options)
+        public IntegratedAuthenticationMiddleware(OwinMiddleware nextMiddleware, IntegratedAuthenticationOptions options, IntegratedAuthenticationService service) : base(nextMiddleware, options)
         {
-            this.Service = Service ?? throw new NullReferenceException();
+            Service = service ?? throw new NullReferenceException();
         }
 
         public IntegratedAuthenticationService Service { get; }

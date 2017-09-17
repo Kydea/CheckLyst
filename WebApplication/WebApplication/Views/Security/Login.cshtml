@@ -50,9 +50,9 @@
 		            matematici.clock.resume();
 		        } else 
 		            $("div.Errors", form).html(result.message).show();
-		    }).fail(function (jqXHR, textStatus, errorThrown) {
+		    }).fail(function (jqXhr, textStatus, errorThrown) {
 		        $("div.Errors", form).html(errorThrown).show();
-		        console.log(jqXHR, textStatus, errorThrown);
+		        console.log(jqXhr, textStatus, errorThrown);
 		        matematici.dialog.error("server error", "Can't login");
 		    });
 		});

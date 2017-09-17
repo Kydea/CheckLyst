@@ -157,8 +157,8 @@
                 }).done(function (result) {
                     $("#DashboardPage").html(result);
                     matematici.events.onPageLoad(callback);
-                }).fail(function (jqXHR, textStatus, errorThrown) {
-                    console.log("Server error", jqXHR, textStatus, errorThrown);
+                }).fail(function (jqXhr, textStatus, errorThrown) {
+                    console.log("Server error", jqXhr, textStatus, errorThrown);
                     alert("Server error: " + errorThrown);
                 });
             }

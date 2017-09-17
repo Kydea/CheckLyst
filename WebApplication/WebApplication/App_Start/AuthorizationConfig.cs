@@ -1,19 +1,13 @@
-﻿using System;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Owin;
-using Microsoft.Owin.Security.Cookies;
-using Microsoft.Owin.Security.Google;
+﻿using CheckListManager.WebApplication.Models.IntegratedAuthentication;
 using Owin;
-using WebApplication.IntegratedAuthentication;
 
-namespace WebApplication
+namespace CheckListManager.WebApplication
 {
     public class AuthorizationConfig
     {
-        public static void Setup(IAppBuilder App)
+        public static void Setup(IAppBuilder app)
         {
-            App.Use<IntegratedAuthenticationMiddleware>(new IntegratedAuthenticationOptions(), new IntegratedAuthenticationService());
+            app.Use<IntegratedAuthenticationMiddleware>(new IntegratedAuthenticationOptions(), new IntegratedAuthenticationService());
         }
     }
 }

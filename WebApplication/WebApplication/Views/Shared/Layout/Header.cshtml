@@ -1,5 +1,5 @@
 ﻿@{ 
-    var Security = new
+    var security = new
     {
         CurrentUser = new { Code = HttpContext.Current.User.Identity.Name /*"Administrator"*/, SettingsManager = true, Description = HttpContext.Current.User.Identity.Name }
     };
@@ -12,10 +12,10 @@
     </div>
 
     <div id="UserPanel" class="Padded Container">
-        @if (Security.CurrentUser != null)
+        @if (security.CurrentUser != null)
         {
             <a class="User LeftFloating CurrentUser" href="#">
-                <span class="UserName" title="@Security.CurrentUser.Code" data-settingsmanager="@Security.CurrentUser.SettingsManager">@Security.CurrentUser.Description</span> <i class="fa fa-user"></i>
+                <span class="UserName" title="@security.CurrentUser.Code" data-settingsmanager="@security.CurrentUser.SettingsManager">@security.CurrentUser.Description</span> <i class="fa fa-user"></i>
             </a>
         }
 
@@ -38,7 +38,7 @@
         <ul class="Menu Plain">
             <li class="MenuItem"><a class="MenuItem" href="@Url.Action("Dashboard", "Default")">Dashboard</a></li>
 
-            @if (Security.CurrentUser != null && Security.CurrentUser.SettingsManager)
+            @if (security.CurrentUser != null && security.CurrentUser.SettingsManager)
             {
                 <li class="MenuItem">
                     <span class="MenuItem">Settings</span>

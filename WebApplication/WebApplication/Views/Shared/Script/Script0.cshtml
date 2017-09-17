@@ -3,7 +3,7 @@
         matematici = {
         	cacheVersion: 1,
         	canClose: true,
-            appClientId: "@(ViewBag.AppClientId ?? String.Empty)",
+            appClientId: "@(ViewBag.AppClientId ?? string.Empty)",
         	elements: {},
         	events: {},
         	actions: {},
@@ -22,7 +22,7 @@
         			create: "@Url.Action("Create", "InstancesEditor")",
         			preview: "@Url.Action("Preview", "InstancesEditor")",
                     save: "@Url.Action("Save", "CheckList")",
-        		    export: "@Url.Action("Export", "CheckList")",
+        		    "export": "@Url.Action("Export", "CheckList")",
         		    externalSource: "@Url.Action("ExternalSource", "CheckList")",
         		    close: "@Url.Action("Close", "CheckList")",
         			history: "@Url.Action("History", "CheckList")",

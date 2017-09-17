@@ -1,21 +1,18 @@
-﻿using Microsoft.Owin;
-using Microsoft.Owin.Infrastructure;
-using Microsoft.Owin.Security;
-using Microsoft.Owin.Security.Infrastructure;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using System.Web;
+using Microsoft.Owin;
+using Microsoft.Owin.Security;
+using Microsoft.Owin.Security.Infrastructure;
 
-namespace WebApplication.IntegratedAuthentication
+namespace CheckListManager.WebApplication.Models.IntegratedAuthentication
 {
     public class IntegratedAuthenticationHandler : AuthenticationHandler<IntegratedAuthenticationOptions>
     {
-        public IntegratedAuthenticationHandler(IntegratedAuthenticationService Service)
+        public IntegratedAuthenticationHandler(IntegratedAuthenticationService service)
         {
-            this.Service = Service ?? throw new ArgumentNullException();
+            Service = service ?? throw new ArgumentNullException();
         }
 
         private IntegratedAuthenticationService Service { get; }
@@ -24,30 +21,30 @@ namespace WebApplication.IntegratedAuthentication
         {
             if (await Task.Run(() => IsAuthorized(Request.Headers)))
             {
-                AuthenticationProperties Properties = new AuthenticationProperties
+                AuthenticationProperties properties = new AuthenticationProperties
                 {
                     IssuedUtc = DateTime.UtcNow,
                     ExpiresUtc = DateTime.UtcNow.AddDays(1),
                     AllowRefresh = true,
                     IsPersistent = true
                 };
-                IList<Claim> ClaimCollection = new List<Claim>
+                IList<Claim> claimCollection = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, "Massimiliano Carosi"),
                     new Claim(ClaimTypes.Role, "Administrator"),
                     new Claim("Company", "Janssen")
                 };
-                ClaimsIdentity ClaimsIdentity = new ClaimsIdentity(ClaimCollection, "Custom");
-                AuthenticationTicket Ticket = new AuthenticationTicket(ClaimsIdentity, Properties);
-                return Ticket;
+                ClaimsIdentity claimsIdentity = new ClaimsIdentity(claimCollection, "Custom");
+                AuthenticationTicket ticket = new AuthenticationTicket(claimsIdentity, properties);
+                return ticket;
             }
     
             return null;
         }
 
-        private bool IsAuthorized(IHeaderDictionary RequestHeaders)
+        private bool IsAuthorized(IHeaderDictionary requestHeaders)
         {
-            return Service.IsAuthorised(RequestHeaders);
+            return Service.IsAuthorised(requestHeaders);
         }
     }
 }

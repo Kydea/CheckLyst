@@ -1,28 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Web;
+﻿using System.Text;
 using System.Web.Mvc;
-using System.Web.Routing;
 
-namespace WebApplication.Controllers
+namespace CheckListManager.WebApplication.Controllers
 {
     [SessionState(System.Web.SessionState.SessionStateBehavior.Disabled)]
     [Authorize]
     public class BaseController : Controller
     {
-        public BaseController() : base()
-        {
-        }
-
-        protected override void Dispose(bool Disposing)
-        {
-            base.Dispose(Disposing);
-        }
-
-        protected bool IsAppMode()
+	    protected bool IsAppMode()
         {
             return Request["AppMode"] == "1";
         }
@@ -35,30 +20,30 @@ namespace WebApplication.Controllers
         protected virtual ActionResult ConditionalView()
         {
             CheckAppMode();
-            return Request.IsAjaxRequest() ? (ActionResult)PartialView() : (ActionResult)View();
+            return Request.IsAjaxRequest() ? PartialView() : (ActionResult)View();
         }
 
-        protected virtual ActionResult ConditionalView(String ViewName)
+        protected virtual ActionResult ConditionalView(string viewName)
         {
             CheckAppMode();
-            return Request.IsAjaxRequest() ? (ActionResult)PartialView(ViewName) : (ActionResult)View(ViewName);
+            return Request.IsAjaxRequest() ? PartialView(viewName) : (ActionResult)View(viewName);
         }
 
-        protected virtual ActionResult ConditionalView(Object Model)
+        protected virtual ActionResult ConditionalView(object model)
         {
             CheckAppMode();
-            return Request.IsAjaxRequest() ? (ActionResult)PartialView(Model) : (ActionResult)View(Model);
+            return Request.IsAjaxRequest() ? PartialView(model) : (ActionResult)View(model);
         }
 
-        protected virtual ActionResult ConditionalView(String ViewName, Object Model)
+        protected virtual ActionResult ConditionalView(string viewName, object model)
         {
             CheckAppMode();
-            return Request.IsAjaxRequest() ? (ActionResult)PartialView(ViewName, Model) : (ActionResult)View(ViewName, Model);
+            return Request.IsAjaxRequest() ? PartialView(viewName, model) : (ActionResult)View(viewName, model);
         }
 
-        protected override JsonResult Json(object Data, string ContentType, Encoding ContentEncoding)
+        protected override JsonResult Json(object data, string contentType, Encoding contentEncoding)
         {
-            return Json(Data, ContentType, ContentEncoding, JsonRequestBehavior.DenyGet);
+            return Json(data, contentType, contentEncoding, JsonRequestBehavior.DenyGet);
         }
     }
 }

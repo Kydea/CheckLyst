@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 
-namespace WebApplication.Controllers
+namespace CheckListManager.WebApplication.Controllers
 {
     public class DefaultController : BaseController
 	{
@@ -16,14 +12,14 @@ namespace WebApplication.Controllers
         }
 
         [AllowAnonymous]
-        public ActionResult Loader(string Url)
+        public ActionResult Loader(string url)
         {
-            return ConditionalView("Loader", Url);
+            return ConditionalView("Loader", url);
         }
 
         [Route]
         [HttpPost]
-        public ActionResult Dashboard(int? PageVersions, int? PageInstances)
+        public ActionResult Dashboard(int? pageVersions, int? pageInstances)
         {
             //var Model = new ViewModels.Dashboard.DashboardModel(db);
             //Model.PrototypesVersions.Set(PageVersions ?? 1);
