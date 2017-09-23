@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CheckListManager.AccessControl.Data;
 using CheckListManager.AccessControl.Logic.Authentication;
 using CheckListManager.AccessControl.Logic.Exceptions;
+using CheckListManager.AccessControl.Logic.Messages.Users;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Cache;
+using CheckListManager.Common.Logic.Messages;
 using CheckListManager.Common.Logic.Services;
 using NLog;
 
@@ -120,5 +124,37 @@ namespace CheckListManager.AccessControl.Logic.Services
 				}
 			}
 		}
+
+		public async Task<PagingResponse<List<UsersResponse>>> GetUsersAsync(PagingRequest<UsersRequest> request)
+		{
+			var skip = (request.CurrentPage - 1) * request.ItemsPerPage;
+			var take = request.ItemsPerPage;
+			var users = await _userRepository.GetUsersAsync(request.Data.Code, skip, take);
+			var count = await _userRepository.CountUsersAsync(request.Data.Code);
+
+			var response = users.Select(u => new UsersResponse
+			{
+				Code = u.Code,
+				Email = u.Email,
+				Enabled = u.Enabled
+			}).ToList();
+
+			var pageCount = (int)Math.Ceiling(count / (decimal)request.ItemsPerPage);
+
+			return new PagingResponse<List<UsersResponse>>
+			{
+				Data = response,
+				ItemsPerPage = request.ItemsPerPage,
+				Count = count,
+				CurrentPage = request.CurrentPage,
+				PageCount = pageCount
+			};
+		}
+
+		public Task<List<Users>> GetUsersAsync(string code, int skip, int take)
+			=> _userRepository.GetUsersAsync(code, skip, take);
+
+		public Task<int> CountUsersAsync(string code)
+			=> _userRepository.CountUsersAsync(code);
 	}
 }

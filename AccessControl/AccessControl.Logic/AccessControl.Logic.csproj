@@ -72,7 +72,9 @@
   <ItemGroup>
     <Compile Include="Authentication\IdentityToken.cs" />
     <Compile Include="Exceptions\AuthenticationException.cs" />
-    <Compile Include="Messages\Logout\LogoutRequest.cs" />
+    <Compile Include="Messages\Access\LogoutRequest.cs" />
+    <Compile Include="Messages\Users\UsersRequest.cs" />
+    <Compile Include="Messages\Users\UsersResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Authentication\Providers\AuthTokenProvider.cs" />
     <Compile Include="Authentication\Providers\RefreshTokenProvider.cs" />

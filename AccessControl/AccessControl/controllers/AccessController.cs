@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using System.Web.Http;
-using CheckListManager.AccessControl.Logic.Messages.Logout;
+using CheckListManager.AccessControl.Logic.Messages.Access;
 using CheckListManager.AccessControl.Logic.Services;
 using CheckListManager.Common.Logic.Messages;
 

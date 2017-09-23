@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace CheckListManager.AccessControl.Logic.Messages.Logout
+namespace CheckListManager.AccessControl.Logic.Messages.Access
 {
-	public class LogoutRequest
+	public sealed class LogoutRequest
 	{
 		[Required]
 		public string RefreshToken { get; set; }
