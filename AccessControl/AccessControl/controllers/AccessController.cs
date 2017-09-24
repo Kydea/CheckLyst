@@ -2,13 +2,14 @@
 using System.Web.Http;
 using CheckListManager.AccessControl.Logic.Messages.Access;
 using CheckListManager.AccessControl.Logic.Services;
+using CheckListManager.Common.Logic;
 using CheckListManager.Common.Logic.Messages;
 
 namespace CheckListManager.AccessControl.Controllers
 {
 	[RoutePrefix("Access")]
 	[Route("{Action}")]
-    public class AccessController : ApiController
+    public class AccessController : BaseApiController
     {
 	    private readonly IUserService _userService;
 

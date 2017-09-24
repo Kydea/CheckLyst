@@ -8,7 +8,7 @@ namespace CheckListManager.AccessControl.Data
 	{
 		Task<Users> GetAsync(long companyId, string code);
 
-		Task<List<Users>> GetUsersAsync(string code, int skip, int take);
-		Task<int> CountUsersAsync(string code);
+		Task<List<Users>> GetUsersAsync(long companyId, string code, int skip, int take);
+		Task<int> CountUsersAsync(long companyId, string code);
 	}
 }

@@ -9,6 +9,7 @@ using Autofac.Integration.WebApi;
 using CheckListManager.Common.Core.Cache;
 using CheckListManager.Common.Core.Services;
 using CheckListManager.Common.Data;
+using CheckListManager.Common.Logic.Authentication;
 using CheckListManager.Common.Logic.Cache;
 using Microsoft.Owin.Security.OAuth;
 using NLog;
@@ -26,7 +27,7 @@ namespace CheckListManager.Common.Logic.Configuration
 
 			configuration.SuppressDefaultHostAuthentication();
 			configuration.Filters.Add(new AuthorizeAttribute());
-			configuration.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
+			configuration.Filters.Add(new AuthenticationFilter(OAuthDefaults.AuthenticationType));
 
 			configuration.MapHttpAttributeRoutes();
 		}

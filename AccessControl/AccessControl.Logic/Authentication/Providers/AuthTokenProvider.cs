@@ -44,6 +44,7 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
 					var identity = new ClaimsIdentity(context.Options.AuthenticationType);
 					identity.AddClaim(new Claim(ClaimTypes.Name, user.Code));
 					identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Code));
+					identity.AddClaim(new Claim("CompanyId", user.Company.ToString()));
 
 					var properties = CreateProperties(user);
 					var ticket = new AuthenticationTicket(identity, properties);

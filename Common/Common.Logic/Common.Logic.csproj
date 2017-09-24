@@ -96,6 +96,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Authentication\AuthenticationFilter.cs" />
+    <Compile Include="Authentication\Identity.cs" />
+    <Compile Include="BaseApiController.cs" />
     <Compile Include="Cache\IRedisCache.cs" />
     <Compile Include="Cache\IRedisSetup.cs" />
     <Compile Include="Cache\RedisCache.cs" />
