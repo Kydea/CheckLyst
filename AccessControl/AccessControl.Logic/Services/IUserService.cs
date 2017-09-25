@@ -18,5 +18,7 @@ namespace CheckListManager.AccessControl.Logic.Services
 		Task LogoutAsync(string code);
 
 		Task<PagingResponse<List<UsersResponse>>> GetUsersAsync(long companyId, PagingRequest<UsersRequest> request);
+
+		Task<AddUserResponse> AddUserAsync(long companyId, AddUserRequest request);
 	}
 }

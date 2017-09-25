@@ -1,20 +1,33 @@
 ﻿using System.Web.Http;
-using Autofac;
+using AutoMapper;
+using CheckListManager.AccessControl.Logic.Messages.Users;
+using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Configuration;
 
 namespace CheckListManager.AccessControl
 {
-    public static class WebApiConfig
+    public class WebApiConfig : ApiConfig
     {
-        public static void Register(HttpConfiguration config)
-        {
-	        var builder = CreateBuilder();
-	        config.Configure(builder);
-        }
-
-		public static ContainerBuilder CreateBuilder(bool loadAssemblies = true)
+	    protected override void OnCreateMapper(IMapperConfigurationExpression mapperConfig)
 	    {
-		    return ApiConfig.CreateBuilder(out var _, loadAssemblies);
+		    base.OnCreateMapper(mapperConfig);
+
+		    mapperConfig.CreateMap<AddUserRequest, Users>()
+			    .ForMember(m => m.Password, opt => opt.Ignore());
 	    }
+
+		#region Static
+
+	    public static void Register(HttpConfiguration config)
+	    {
+		    var apiConfig = new WebApiConfig
+		    {
+			    LoadAssemblies = true
+		    };
+
+		    config.Configure(apiConfig);
+	    }
+
+		#endregion
 	}
 }

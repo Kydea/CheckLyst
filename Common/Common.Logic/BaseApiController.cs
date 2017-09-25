@@ -5,9 +5,9 @@ namespace CheckListManager.Common.Logic
 {
 	public class BaseApiController : ApiController
 	{
-		private Identity _identity;
+		private DefaultIdentity _identity;
 
-		public Identity Identity
-			=> _identity ?? (_identity = User?.Identity as Identity);
+		public DefaultIdentity Identity
+			=> _identity ?? (_identity = User?.Identity as DefaultIdentity);
 	}
 }

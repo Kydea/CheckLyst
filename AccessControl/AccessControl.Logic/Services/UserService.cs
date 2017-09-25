@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using CheckListManager.AccessControl.Data;
 using CheckListManager.AccessControl.Logic.Authentication;
 using CheckListManager.AccessControl.Logic.Exceptions;
@@ -24,13 +25,16 @@ namespace CheckListManager.AccessControl.Logic.Services
 		private readonly IUserSessionRepository _userSessionRepository;
 		private readonly IHashService _hashService;
 		private readonly IRedisCache _cache;
+		private readonly IMapper _mapper;
 
-		public UserService(IUserRepository userRepository, IUserSessionRepository userSessionRepository, IHashService hashService, IRedisCache cache)
+		public UserService(IUserRepository userRepository, IUserSessionRepository userSessionRepository,
+			IHashService hashService, IRedisCache cache, IMapper mapper)
 		{
 			_userRepository = userRepository;
 			_userSessionRepository = userSessionRepository;
 			_hashService = hashService;
 			_cache = cache;
+			_mapper = mapper;
 		}
 
 		public async Task<Users> AuthenticateAsync(long? companyId, string code, string password)
@@ -148,6 +152,22 @@ namespace CheckListManager.AccessControl.Logic.Services
 				Count = count,
 				CurrentPage = request.CurrentPage,
 				PageCount = pageCount
+			};
+		}
+
+		public async Task<AddUserResponse> AddUserAsync(long companyId, AddUserRequest request)
+		{
+			var user = _mapper.Map<Users>(request);
+
+			user.Company = companyId;
+			user.CreatedOn = DateTimeOffset.UtcNow;
+			user.Password = _hashService.HashStringToBytes(request.Password);
+
+			await _userRepository.AddAsync(user);
+
+			return new AddUserResponse
+			{
+				Code = user.Code
 			};
 		}
 	}

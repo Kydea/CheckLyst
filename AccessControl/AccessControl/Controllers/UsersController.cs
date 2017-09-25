@@ -18,11 +18,19 @@ namespace CheckListManager.AccessControl.Controllers
 		    _userService = userService;
 	    }
 
+	    [HttpPost]
 		[Route]
-		[HttpPost]
 	    public async Task<IHttpActionResult> GetUsers(PagingRequest<UsersRequest> request)
 		{
 			return Ok(await _userService.GetUsersAsync(Identity.CompanyId, request));
+		}
+
+		[HttpPost]
+		[Route("Add")]
+	    public async Task<IHttpActionResult> AddUser(Message<AddUserRequest> request)
+		{
+			var response = await _userService.AddUserAsync(Identity.CompanyId, request.Data);
+			return Ok(Message.Create(response));
 		}
     }
 }

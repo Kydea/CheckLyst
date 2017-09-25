@@ -1,6 +1,6 @@
 ﻿namespace CheckListManager.Common.Logic.Messages
 {
-	public class PagingResponse<T> : Message<T>
+	public class PagingResponse<T> : ResponseMessage<T>
 	{
 		public int Count { get; set; }
 		public int PageCount { get; set; }

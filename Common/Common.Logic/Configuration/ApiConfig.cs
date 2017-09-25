@@ -4,30 +4,117 @@ using System.Linq;
 using System.Reflection;
 using System.Web.Compilation;
 using System.Web.Http;
+using System.Web.Http.ExceptionHandling;
 using Autofac;
 using Autofac.Integration.WebApi;
+using AutoMapper;
 using CheckListManager.Common.Core.Cache;
 using CheckListManager.Common.Core.Services;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Authentication;
 using CheckListManager.Common.Logic.Cache;
+using CheckListManager.Common.Logic.Filters;
 using Microsoft.Owin.Security.OAuth;
 using NLog;
 
 namespace CheckListManager.Common.Logic.Configuration
 {
-	public static class ApiConfig
+	public abstract class ApiConfig
+	{
+		public bool LoadAssemblies { get; set; }
+
+		private Assembly[] _assemblies;
+
+		public Assembly[] Assemblies
+			=> _assemblies ?? (_assemblies = (LoadAssemblies
+								? BuildManager
+									.GetReferencedAssemblies()
+									.Cast<Assembly>()
+								: AppDomain.CurrentDomain.GetAssemblies())
+							.Where(a => a.FullName.StartsWith($"{nameof(CheckListManager)}."))
+							.ToArray());
+
+
+		public ContainerBuilder CreateBuilder()
+		{
+			var builder = new ContainerBuilder();
+
+			builder.RegisterApiControllers(Assemblies);
+
+			builder.RegisterAssemblyTypes(Assemblies)
+				.AssignableTo<IRedisSetup>()
+				.AsImplementedInterfaces()
+				.SingleInstance();
+
+			builder.RegisterAssemblyTypes(Assemblies)
+				.AssignableTo<ISingletonService>()
+				.AsImplementedInterfaces()
+				.SingleInstance();
+
+			builder.RegisterAssemblyTypes(Assemblies)
+				.AssignableTo<IMemoryCache>()
+				.AsImplementedInterfaces()
+				.SingleInstance();
+
+			builder.RegisterAssemblyTypes(Assemblies)
+				.AssignableTo<IService>()
+				.AsImplementedInterfaces()
+				.InstancePerRequest();
+
+			builder.RegisterAssemblyTypes(Assemblies)
+				.AssignableTo<IRepository>()
+				.AsImplementedInterfaces()
+				.InstancePerRequest();
+
+			builder.RegisterType<RelationalDatabaseEntities>()
+				.AsSelf()
+				.InstancePerRequest();
+
+			builder.RegisterAssemblyTypes(Assemblies)
+				.AssignableTo<IRedisCache>()
+				.AsImplementedInterfaces()
+				.InstancePerDependency();
+
+			builder.RegisterInstance(CreateMapper())
+				.SingleInstance();
+
+			OnCreateBuilder(builder);
+
+			return builder;
+		}
+
+		protected virtual void OnCreateBuilder(ContainerBuilder builder)
+		{
+			
+		}
+
+		public IMapper CreateMapper()
+		{
+			return new Mapper(new MapperConfiguration(OnCreateMapper));
+		}
+
+		protected virtual void OnCreateMapper(IMapperConfigurationExpression mapperConfig)
+		{
+			
+		}
+	}
+
+	public static class ApiConfigExtensions
 	{
 		private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-		public static void Configure(this HttpConfiguration configuration, ContainerBuilder builder)
+		public static void Configure(this HttpConfiguration configuration, ApiConfig apiConfig)
 		{
 			ConfigureLog();
-			ConfigureDependencyInjection(configuration, builder);
+			ConfigureDependencyInjection(configuration, apiConfig.CreateBuilder());
+
+			configuration.Services.Replace(typeof(IExceptionHandler), new DefaultExceptionHandler());
 
 			configuration.SuppressDefaultHostAuthentication();
 			configuration.Filters.Add(new AuthorizeAttribute());
-			configuration.Filters.Add(new AuthenticationFilter(OAuthDefaults.AuthenticationType));
+			configuration.Filters.Add(new DefaultAuthenticationFilter(OAuthDefaults.AuthenticationType));
+			configuration.Filters.Add(new ArgumentNullValidationActionFilterAttribute());
+			configuration.Filters.Add(new ModelValidationActionFilterAttribute());
 
 			configuration.MapHttpAttributeRoutes();
 		}
@@ -36,7 +123,10 @@ namespace CheckListManager.Common.Logic.Configuration
 		{
 			try
 			{
-				EventLog.CreateEventSource(nameof(CheckListManager), "Application");
+				if (!EventLog.SourceExists(nameof(CheckListManager), "Application"))
+				{
+					EventLog.CreateEventSource(nameof(CheckListManager), "Application");
+				}
 			}
 			catch (Exception e)
 			{
@@ -49,58 +139,6 @@ namespace CheckListManager.Common.Logic.Configuration
 			GlobalConfiguration.Configuration.DependencyResolver =
 				configuration.DependencyResolver
 					= new AutofacWebApiDependencyResolver(builder.Build());
-		}
-
-		public static ContainerBuilder CreateBuilder(out Assembly[] assembliesLookup, bool loadAssemblies)
-		{
-			assembliesLookup =
-				loadAssemblies
-					? BuildManager
-						.GetReferencedAssemblies()
-						.Cast<Assembly>()
-						.Where(a => a.FullName.StartsWith($"{nameof(CheckListManager)}."))
-						.ToArray()
-					: AppDomain.CurrentDomain.GetAssemblies();
-
-			var builder = new ContainerBuilder();
-
-			builder.RegisterApiControllers(assembliesLookup);
-
-			builder.RegisterAssemblyTypes(assembliesLookup)
-				.AssignableTo<IRedisSetup>()
-				.AsImplementedInterfaces()
-				.SingleInstance();
-
-			builder.RegisterAssemblyTypes(assembliesLookup)
-				.AssignableTo<ISingletonService>()
-				.AsImplementedInterfaces()
-				.SingleInstance();
-
-			builder.RegisterAssemblyTypes(assembliesLookup)
-				.AssignableTo<IMemoryCache>()
-				.AsImplementedInterfaces()
-				.SingleInstance();
-
-			builder.RegisterAssemblyTypes(assembliesLookup)
-				.AssignableTo<IService>()
-				.AsImplementedInterfaces()
-				.InstancePerRequest();
-
-			builder.RegisterAssemblyTypes(assembliesLookup)
-				.AssignableTo<IRepository>()
-				.AsImplementedInterfaces()
-				.InstancePerRequest();
-
-			builder.RegisterType<RelationalDatabaseEntities>()
-				.AsSelf()
-				.InstancePerRequest();
-
-			builder.RegisterAssemblyTypes(assembliesLookup)
-				.AssignableTo<IRedisCache>()
-				.AsImplementedInterfaces()
-				.InstancePerDependency();
-
-			return builder;
 		}
 	}
 }

@@ -16,6 +16,12 @@ namespace CheckListManager.AccessControl.Data
 		public Task<Users> GetAsync(long companyId, string code)
 			=> Entities.Users.FirstOrDefaultAsync(u => u.Company == companyId && u.Code == code);
 
+		public Task AddAsync(Users user)
+		{
+			Entities.Users.Add(user);
+			return Entities.SaveChangesAsync();
+		}
+
 		public Task<List<Users>> GetUsersAsync(long companyId, string code, int skip, int take)
 			=> Entities.Users
 				.Where(u => u.Company == companyId && u.Code.StartsWith(code))

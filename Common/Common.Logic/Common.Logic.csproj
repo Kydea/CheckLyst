@@ -44,6 +44,9 @@
     <Reference Include="Autofac.Integration.WebApi, Version=4.1.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\..\AccessControl\packages\Autofac.WebApi2.4.1.0\lib\net45\Autofac.Integration.WebApi.dll</HintPath>
     </Reference>
+    <Reference Include="AutoMapper, Version=6.1.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\..\AccessControl\packages\AutoMapper.6.1.1\lib\net45\AutoMapper.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\..\AccessControl\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -96,17 +99,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Authentication\AuthenticationFilter.cs" />
-    <Compile Include="Authentication\Identity.cs" />
+    <Compile Include="Authentication\DefaultAuthenticationFilter.cs" />
+    <Compile Include="Authentication\DefaultIdentity.cs" />
     <Compile Include="BaseApiController.cs" />
     <Compile Include="Cache\IRedisCache.cs" />
     <Compile Include="Cache\IRedisSetup.cs" />
     <Compile Include="Cache\RedisCache.cs" />
     <Compile Include="Cache\RedisSetup.cs" />
     <Compile Include="Configuration\ApiConfig.cs" />
+    <Compile Include="Configuration\DefaultExceptionHandler.cs" />
+    <Compile Include="Filters\ArgumentNullValidationActionFilterAttribute.cs" />
+    <Compile Include="Filters\ModelValidationActionFilterAttribute.cs" />
     <Compile Include="Messages\Message.cs" />
     <Compile Include="Messages\PagingRequest.cs" />
     <Compile Include="Messages\PagingResponse.cs" />
+    <Compile Include="Messages\ResponseMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ConfigurationService.cs" />
     <Compile Include="Services\HashService.cs" />
