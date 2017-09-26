@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Autofac;
+using CheckListManager.AccessControl.Api;
 using CheckListManager.Common.Core.Services;
 using CheckListManager.Common.Data;
 using SpecFlow.Autofac;

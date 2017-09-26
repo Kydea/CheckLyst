@@ -128,9 +128,17 @@
       <Project>{91482922-D6BA-4DF1-9A9C-88F3087A7B5D}</Project>
       <Name>Common.Data</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Common\Common.Logic\Common.Logic.csproj">
+    <ProjectReference Include="..\..\Common\Common.Logic.Api\Common.Logic.Api.csproj">
       <Project>{BE658746-48A9-4AF2-B2B6-A13A7D6DE439}</Project>
+      <Name>Common.Logic.Api</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Common.Logic\Common.Logic.csproj">
+      <Project>{351C3388-67B1-46EE-8FD1-5A63277B3C0C}</Project>
       <Name>Common.Logic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AccessControl.Api\AccessControl.Api.csproj">
+      <Project>{6481331c-bf76-4bd5-ae43-5d621419aba1}</Project>
+      <Name>AccessControl.Api</Name>
     </ProjectReference>
     <ProjectReference Include="..\AccessControl.Data\AccessControl.Data.csproj">
       <Project>{2CB27F63-6C99-47B5-B595-51A2C08A64E0}</Project>
@@ -139,10 +147,6 @@
     <ProjectReference Include="..\AccessControl.Logic\AccessControl.Logic.csproj">
       <Project>{3802FE62-38E4-4BC6-B28F-0E9288FE846E}</Project>
       <Name>AccessControl.Logic</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AccessControl\AccessControl.csproj">
-      <Project>{6481331c-bf76-4bd5-ae43-5d621419aba1}</Project>
-      <Name>AccessControl</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

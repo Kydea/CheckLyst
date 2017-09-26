@@ -32,7 +32,7 @@ namespace CheckListManager.Common.Data
 		{
 			if (disposing)
 			{
-				Entities.Dispose();
+				Entities?.Dispose();
 			}
 		}
 
@@ -70,9 +70,9 @@ namespace CheckListManager.Common.Data
 			return new DatabaseAggregateException(exceptions);
 		}
 
-		private static DatabaseException GetUpdateException(DbUpdateException updateException)
+		private static DatabaseException GetUpdateException(Exception updateException)
 		{
-			Exception exception = updateException;
+			var exception = updateException;
 			var type = typeof(PostgresException);
 			while (exception.InnerException != null && exception.GetType() != type)
 				exception = exception.InnerException;

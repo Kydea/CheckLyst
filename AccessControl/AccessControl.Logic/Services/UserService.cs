@@ -8,8 +8,8 @@ using CheckListManager.AccessControl.Logic.Authentication;
 using CheckListManager.AccessControl.Logic.Exceptions;
 using CheckListManager.AccessControl.Logic.Messages.Users;
 using CheckListManager.Common.Data;
+using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Logic.Cache;
-using CheckListManager.Common.Logic.Messages;
 using CheckListManager.Common.Logic.Services;
 using NLog;
 

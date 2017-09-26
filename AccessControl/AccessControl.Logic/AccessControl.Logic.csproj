@@ -95,8 +95,12 @@
       <Project>{91482922-d6ba-4df1-9a9c-88f3087a7b5d}</Project>
       <Name>Common.Data</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Common\Common.Logic.Api\Common.Logic.Api.csproj">
+      <Project>{BE658746-48A9-4AF2-B2B6-A13A7D6DE439}</Project>
+      <Name>Common.Logic.Api</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Common\Common.Logic\Common.Logic.csproj">
-      <Project>{be658746-48a9-4af2-b2b6-a13a7d6de439}</Project>
+      <Project>{351C3388-67B1-46EE-8FD1-5A63277B3C0C}</Project>
       <Name>Common.Logic</Name>
     </ProjectReference>
     <ProjectReference Include="..\AccessControl.Data\AccessControl.Data.csproj">
