@@ -15,6 +15,7 @@ namespace CheckListManager.AccessControl.Logic.Services
 
 		Task CreateSessionAsync(long company, string code, string user, string ticket, DateTimeOffset expiresOn);
 		Task<IdentityToken> GetTokenAsync(string code);
+		Task UpdateTokenAsync(IdentityToken token, DateTimeOffset expiresOn);
 		Task LogoutAsync(string code);
 
 		Task<PagingResponse<List<UsersResponse>>> GetUsersAsync(long companyId, PagingRequest<UsersRequest> request);

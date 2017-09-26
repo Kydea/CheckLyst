@@ -111,6 +111,16 @@ namespace CheckListManager.AccessControl.Logic.Services
 			return token;
 		}
 
+		public Task UpdateTokenAsync(IdentityToken token, DateTimeOffset expiresOn)
+		{
+			token = new IdentityToken(token.AuthenticationTicket, token.RefreshToken, expiresOn);
+
+			return Task.WhenAll(
+				_cache.SetAsync(token.RefreshToken, token, IdentityCacheRegion),
+				_userSessionRepository.SetExpiresOnAsync(token.RefreshToken, DateTimeOffset.UtcNow)
+			);
+		}
+
 		public async Task LogoutAsync(string code)
 		{
 			if (!string.IsNullOrEmpty(code))
@@ -119,7 +129,7 @@ namespace CheckListManager.AccessControl.Logic.Services
 				{
 					await Task.WhenAll(
 						_cache.RemoveAsync(code, IdentityCacheRegion),
-						_userSessionRepository.MarkAsExpiredAsync(code)
+						_userSessionRepository.SetExpiresOnAsync(code, DateTimeOffset.UtcNow)
 					);
 				}
 				catch (Exception exception)

@@ -48,6 +48,7 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
 
 					var properties = CreateProperties(user);
 					var ticket = new AuthenticationTicket(identity, properties);
+
 					context.Validated(ticket);
 				}
 			}
@@ -92,7 +93,10 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
 				{ "company", user.Company.ToString() },
 				{ "code", user.Code } //TODO: add more
             };
-			return new AuthenticationProperties(data);
+			return new AuthenticationProperties(data)
+			{
+				AllowRefresh = true
+			};
 		}
 	}
 }

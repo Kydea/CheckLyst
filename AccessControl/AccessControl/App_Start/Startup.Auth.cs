@@ -31,9 +31,9 @@ namespace CheckListManager.AccessControl
 				{
 					TokenEndpointPath = new PathString("/Access/Token"),
 					Provider = scope.Resolve<AuthTokenProvider>(),
-					AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(30),
+					AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(30), //TODO load from configuration
 					RefreshTokenProvider = scope.Resolve<RefreshTokenProvider>(),
-					AllowInsecureHttp = true
+					AllowInsecureHttp = true					
 				};
 
 				app.UseOAuthBearerTokens(OAuthOptions);

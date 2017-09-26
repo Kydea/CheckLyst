@@ -14,19 +14,19 @@ namespace CheckListManager.AccessControl.Data
 		public Task CreateAsync(UserSessions session)
 		{
 			Entities.UserSessions.Add(session);
-			return Entities.SaveChangesAsync();
+			return SaveChangesAsync();
 		}
 
 		public Task<UserSessions> GetAsync(string code)
 			=> Entities.UserSessions.FirstOrDefaultAsync(s => s.Code == code);
 
-		public async Task MarkAsExpiredAsync(string code)
+		public async Task SetExpiresOnAsync(string code, DateTimeOffset expiresOn)
 		{
 			var session = await GetAsync(code);
 			if (session != null && session.ExpiresOn >= DateTimeOffset.UtcNow)
 			{
-				session.ExpiresOn = DateTimeOffset.UtcNow;
-				await Entities.SaveChangesAsync();
+				session.ExpiresOn = expiresOn;
+				await SaveChangesAsync();
 			}
 		}
 	}

@@ -13,6 +13,8 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
 {
 	public class RefreshTokenProvider : IAuthenticationTokenProvider
 	{
+		private const int RefreshTokenTimeSpan = 1; //TODO set right value
+
 		private readonly ILifetimeScope _parentScope;
 		private readonly IHashService _hashService;
 
@@ -35,7 +37,7 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
 			var guid = Guid.NewGuid().ToString();
 			var company = long.Parse(context.Ticket.Properties.Dictionary["company"]);
 			var sessionCode = _hashService.HashStringToString($"{company}-{guid}");
-			var expiresOn = DateTimeOffset.UtcNow.AddDays(1); //TODO set right value
+			var expiresOn = DateTimeOffset.UtcNow.AddDays(RefreshTokenTimeSpan);
 			var user = context.Ticket.Properties.Dictionary["code"];
 
 			var ticket = context.SerializeTicket();
@@ -56,7 +58,10 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
 				var token = await userService.GetTokenAsync(context.Token);
 				if (token != null)
 				{
+					await userService.UpdateTokenAsync(token, DateTimeOffset.UtcNow.AddDays(RefreshTokenTimeSpan));
 					context.DeserializeTicket(token.AuthenticationTicket);
+
+					context.Ticket.Properties.ExpiresUtc = token.ExpiresOn;
 				}
 			}
 		}

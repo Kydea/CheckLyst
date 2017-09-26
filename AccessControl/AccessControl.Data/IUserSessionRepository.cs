@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using CheckListManager.Common.Data;
 
 namespace CheckListManager.AccessControl.Data
@@ -7,6 +8,6 @@ namespace CheckListManager.AccessControl.Data
 	{
 		Task CreateAsync(UserSessions session);
 		Task<UserSessions> GetAsync(string code);
-		Task MarkAsExpiredAsync(string code);
+		Task SetExpiresOnAsync(string code, DateTimeOffset expiresOn);
 	}
 }

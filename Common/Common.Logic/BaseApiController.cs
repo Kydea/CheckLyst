@@ -1,5 +1,6 @@
 ﻿using System.Web.Http;
 using CheckListManager.Common.Logic.Authentication;
+using CheckListManager.Common.Logic.Messages;
 
 namespace CheckListManager.Common.Logic
 {
@@ -9,5 +10,10 @@ namespace CheckListManager.Common.Logic
 
 		public DefaultIdentity Identity
 			=> _identity ?? (_identity = User?.Identity as DefaultIdentity);
+
+		protected IHttpActionResult Error(ResponseMessage message)
+		{
+			return new ErrorResult(Request, message);
+		}
 	}
 }

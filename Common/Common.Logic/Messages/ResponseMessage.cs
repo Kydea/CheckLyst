@@ -5,6 +5,16 @@ namespace CheckListManager.Common.Logic.Messages
 {
 	public class ResponseMessage
 	{
+		public ResponseMessage()
+		{
+			
+		}
+
+		public ResponseMessage(params string[] messages)
+		{
+			Messages.AddRange(messages);
+		}
+
 		public List<string> Messages { get; } = new List<string>();
 
 		public static ResponseMessage<T> Create<T>(T data)
@@ -15,6 +25,15 @@ namespace CheckListManager.Common.Logic.Messages
 
 	public class ResponseMessage<T> : ResponseMessage
 	{
+		public ResponseMessage()
+		{
+			
+		}
+
+		public ResponseMessage(params string[] messages) : base(messages)
+		{
+		}
+
 		public T Data { get; set; }
 	}
 }

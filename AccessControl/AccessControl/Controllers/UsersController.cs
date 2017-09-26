@@ -1,7 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Http;
 using CheckListManager.AccessControl.Logic.Messages.Users;
 using CheckListManager.AccessControl.Logic.Services;
+using CheckListManager.Common.Data;
+using CheckListManager.Common.Data.Exceptions;
 using CheckListManager.Common.Logic;
 using CheckListManager.Common.Logic.Messages;
 
@@ -29,8 +32,25 @@ namespace CheckListManager.AccessControl.Controllers
 		[Route("Add")]
 	    public async Task<IHttpActionResult> AddUser(Message<AddUserRequest> request)
 		{
-			var response = await _userService.AddUserAsync(Identity.CompanyId, request.Data);
-			return Ok(Message.Create(response));
+			try
+			{
+				var response = await _userService.AddUserAsync(Identity.CompanyId, request.Data);
+				return Ok(Message.Create(response));
+			}
+			catch (DatabaseAggregateException exception)
+			{
+				return Error(new ResponseMessage(exception.InnerExceptions.Select(e => e.Message).ToArray()));
+			}
+			catch (DatabaseException exception)
+			{
+				switch (exception.Error)
+				{
+					case DatabaseError.PrimaryKeyViolation:
+						return Error(new ResponseMessage("An user with the same code already exists."));
+					default:
+						return Error(new ResponseMessage(exception.Message));
+				}
+			}
 		}
     }
 }

@@ -108,6 +108,7 @@
     <Compile Include="Cache\RedisSetup.cs" />
     <Compile Include="Configuration\ApiConfig.cs" />
     <Compile Include="Configuration\DefaultExceptionHandler.cs" />
+    <Compile Include="ErrorResult.cs" />
     <Compile Include="Filters\ArgumentNullValidationActionFilterAttribute.cs" />
     <Compile Include="Filters\ModelValidationActionFilterAttribute.cs" />
     <Compile Include="Messages\Message.cs" />
