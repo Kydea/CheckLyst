@@ -58,6 +58,9 @@
     <Reference Include="Autofac, Version=4.6.1.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Autofac.4.6.1\lib\net45\Autofac.dll</HintPath>
     </Reference>
+    <Reference Include="AutoMapper, Version=6.1.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\AutoMapper.6.1.1\lib\net45\AutoMapper.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -92,6 +95,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AuditTerminalConfig.cs" />
+    <Compile Include="AuditWindowsService.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -121,6 +126,14 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\Common.Core\Common.Core.csproj">
+      <Project>{31DE9C2F-FB9D-472C-B28A-3C1EDEFF10DC}</Project>
+      <Name>Common.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Common.Data\Common.Data.csproj">
+      <Project>{91482922-D6BA-4DF1-9A9C-88F3087A7B5D}</Project>
+      <Name>Common.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Common\Common.Logic.Terminal\Common.Logic.Terminal.csproj">
       <Project>{F42D2988-A390-4BE2-A5A1-58BB34B29BF0}</Project>
       <Name>Common.Logic.Terminal</Name>
@@ -128,6 +141,10 @@
     <ProjectReference Include="..\..\Common\Common.Logic\Common.Logic.csproj">
       <Project>{351C3388-67B1-46EE-8FD1-5A63277B3C0C}</Project>
       <Name>Common.Logic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Audit.Logic\Audit.Logic.csproj">
+      <Project>{5F03EBA2-7FF0-4FE0-9945-58FA5F084563}</Project>
+      <Name>Audit.Logic</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

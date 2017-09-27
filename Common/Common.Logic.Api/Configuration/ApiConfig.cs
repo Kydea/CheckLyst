@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Web.Compilation;
 using System.Web.Http;
 using System.Web.Http.ExceptionHandling;
+using Amazon.SQS;
 using Autofac;
 using Autofac.Integration.WebApi;
 using AutoMapper;
@@ -73,6 +74,16 @@ namespace CheckListManager.Common.Logic.Api.Configuration
 				.AssignableTo<IRedisCache>()
 				.AsImplementedInterfaces()
 				.InstancePerDependency();
+
+			builder.RegisterType<AmazonSQSConfig>()
+				.AsSelf()
+				.SingleInstance()
+				.OnActivating(e => e.Instance.ServiceURL = "https://sqs.eu-west-1.amazonaws.com/"); //TODO resolve dependency and get from config
+
+			builder.RegisterType<AmazonSQSClient>()
+				.As<IAmazonSQS>()
+				.AsSelf()
+				.InstancePerRequest();
 
 			builder.RegisterInstance(CreateMapper())
 				.SingleInstance();

@@ -58,6 +58,18 @@ namespace CheckListManager.Common.Core.Cache
 		public Task<T> GetOrAddAsync<T>(string key, Func<string, T> addFunction, string regionName = null)
 			=> Task.FromResult(GetOrAdd(key, addFunction, regionName));
 
+		public async Task<T> GetOrAddAsync<T>(string key, Func<string, Task<T>> addFunctionAsync, string regionName = null)
+		{
+			var result = Get<T>(key, regionName);
+			if (Equals(result, default(T)))
+			{
+				result = await addFunctionAsync(key);
+				Set(key, result, regionName);
+			}
+
+			return result;
+		}
+
 		public void Set(string key, object value, string regionName = null)
 		{
 			if (value != null)

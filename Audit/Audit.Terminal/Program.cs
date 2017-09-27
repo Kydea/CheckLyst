@@ -1,6 +1,4 @@
-﻿using Autofac;
-using CheckListManager.Common.Logic.Services;
-using CheckListManager.Common.Logic.Terminal.Configuration;
+﻿using Topshelf;
 
 namespace CheckListManager.Audit.Terminal
 {
@@ -8,15 +6,21 @@ namespace CheckListManager.Audit.Terminal
 	{
 		public static void Main(string[] args)
 		{
-			var config = new TerminalConfig();
-			var builder = config.CreateBuilder();
-
-			var container = builder.Build();
-
-			using (var scope = container.BeginLifetimeScope())
+			HostFactory.Run(x =>
 			{
-				var queue = scope.Resolve<IQueueService>();
-			}
+				x.Service(settings => new AuditWindowsService(new AuditTerminalConfig()));
+
+				x.SetDisplayName("CheckListManager - Audit Service");
+				x.SetDescription("CheckListManager - Audit Service");
+				x.SetServiceName("CheckListManager - Audit Service");
+				x.SetInstanceName("CheckListManager - Audit Service");
+
+				x.EnableShutdown();
+
+				x.StartAutomatically();
+
+				x.UseNLog();
+			});
 		}
 	}
 }

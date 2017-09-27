@@ -74,6 +74,18 @@ namespace CheckListManager.Common.Logic.Cache
 			return result;
 		}
 
+		public async Task<T> GetOrAddAsync<T>(string key, Func<string, Task<T>> addFunctionAsync, string regionName = null)
+		{
+			var result = await GetAsync<T>(key, regionName);
+			if (result == null)
+			{
+				result = await addFunctionAsync(key);
+				await SetAsync(key, result, regionName);
+			}
+
+			return result;
+		}
+
 		public void Set(string key, object value, string regionName = null)
 		{
 			if (value != null)

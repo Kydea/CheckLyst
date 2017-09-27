@@ -9,7 +9,9 @@ using CheckListManager.AccessControl.Logic.Exceptions;
 using CheckListManager.AccessControl.Logic.Messages.Users;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Messages;
+using CheckListManager.Common.Logic.Audit;
 using CheckListManager.Common.Logic.Cache;
+using CheckListManager.Common.Logic.Queue;
 using CheckListManager.Common.Logic.Services;
 using NLog;
 
@@ -24,15 +26,17 @@ namespace CheckListManager.AccessControl.Logic.Services
 		private readonly IUserRepository _userRepository;
 		private readonly IUserSessionRepository _userSessionRepository;
 		private readonly IHashService _hashService;
+		private readonly IQueueService _queueService;
 		private readonly IRedisCache _cache;
 		private readonly IMapper _mapper;
 
 		public UserService(IUserRepository userRepository, IUserSessionRepository userSessionRepository,
-			IHashService hashService, IRedisCache cache, IMapper mapper)
+			IHashService hashService, IQueueService queueService, IRedisCache cache, IMapper mapper)
 		{
 			_userRepository = userRepository;
 			_userSessionRepository = userSessionRepository;
 			_hashService = hashService;
+			_queueService = queueService;
 			_cache = cache;
 			_mapper = mapper;
 		}
@@ -68,6 +72,14 @@ namespace CheckListManager.AccessControl.Logic.Services
 			{
 				throw new AuthenticationException(104, "User password not valid");
 			}
+
+			await _queueService.SendObjectAsync(QueueName.Audit, new AuditMessage
+			{
+				Company = user.Company,
+				User = user.Code,
+				Action = AuditAction.Login,
+				Date = DateTimeOffset.UtcNow
+			});
 
 			//TODO: add LDAP / OAUTH SERVER
 

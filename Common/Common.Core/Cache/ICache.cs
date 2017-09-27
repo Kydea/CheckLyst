@@ -15,6 +15,7 @@ namespace CheckListManager.Common.Core.Cache
 		T GetOrAdd<T>(string key, Func<string, T> addFunction, string regionName = null);
 		Task<object> GetOrAddAsync(string key, Func<string, object> addFunction, string regionName = null);
 		Task<T> GetOrAddAsync<T>(string key, Func<string, T> addFunction, string regionName = null);
+		Task<T> GetOrAddAsync<T>(string key, Func<string, Task<T>> addFunctionAsync, string regionName = null);
 
 		void Set(string key, object value, string regionName = null);
 		Task SetAsync(string key, object value, string regionName = null);

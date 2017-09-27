@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Amazon.SQS;
 using Amazon.SQS.Model;
+using CheckListManager.Common.Core.Cache;
 using CheckListManager.Common.Core.Helpers;
 using CheckListManager.Common.Logic.Queue;
 
@@ -10,11 +12,15 @@ namespace CheckListManager.Common.Logic.Services
 {
 	public class QueueService : IQueueService, IDisposable
 	{
-		private readonly IAmazonSQS _client;
+		private const string QueueRegionName = "QueueService";
 
-		public QueueService(IAmazonSQS client)
+		private readonly IAmazonSQS _client;
+		private readonly IMemoryCache _memoryCache;
+
+		public QueueService(IAmazonSQS client, IMemoryCache memoryCache)
 		{
 			_client = client;
+			_memoryCache = memoryCache;
 		}
 
 		public void Dispose()
@@ -32,51 +38,56 @@ namespace CheckListManager.Common.Logic.Services
 			}
 		}
 
-		public async Task<SendMessageResponse> SendMessageAsync(string queueName, string message)
+		public Task SendMessageAsync(string queueName, string message, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			//TODO use cache
-			var queue = await _client.GetQueueUrlAsync(queueName);
-
-			return await _client.SendMessageAsync(new SendMessageRequest
-			{
-				QueueUrl = queue.QueueUrl,
-				MessageGroupId = Guid.NewGuid().ToString(), //TODO only for fifo
-				MessageDeduplicationId = Guid.NewGuid().ToString(), //TODO only for fifo
-				MessageBody = message
-			});
-		}
-
-		public Task<SendMessageResponse> SendObjectAsync<T>(string queueName, T data)
-		{
-			var message = data.ToJson();
-			return SendMessageAsync(queueName, message);
-		}
-
-		public async Task<QueueMessage[]> ReceiveMessagesAsync(string queueName)
-		{
-			//TODO use cache
-			var queue = await _client.GetQueueUrlAsync(queueName);
-
-			var read = await _client.ReceiveMessageAsync(queue.QueueUrl);
-
-			return read.Messages.Select(m => new QueueMessage(m.ReceiptHandle, m.Body)).ToArray();
-		}
-
-		public Task<QueueMessage<T>[]> ReceiveObjectsAsync<T>(string queueName)
-		{
-			return ReceiveMessagesAsync(queueName)
-				.ContinueWith(
-					task => task.Result.Select(m => new QueueMessage<T>(m.MessageHandle, m.Message.ToObject<T>())).ToArray()
+			return
+				GetQueueUrlAsync(queueName, cancellationToken)
+					.ContinueWith(task =>
+						_client.SendMessageAsync(new SendMessageRequest
+						{
+							QueueUrl = task.Result,
+							MessageGroupId = Guid.NewGuid().ToString(),
+							MessageDeduplicationId = Guid.NewGuid().ToString(),
+							MessageBody = message
+						}, cancellationToken), cancellationToken
 				);
 		}
 
-		public Task DeleteMessageAsync(string queueName, string messageHandle)
+		public Task SendObjectAsync<T>(string queueName, T data, CancellationToken cancellationToken = default(CancellationToken))
+			=> SendMessageAsync(queueName, data.ToJson(), cancellationToken);
+
+		public async Task<QueueMessage[]> ReceiveMessagesAsync(string queueName, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			//TODO use cache
-			return _client.GetQueueUrlAsync(queueName)
+			var queueUrl = await GetQueueUrlAsync(queueName, cancellationToken);
+
+			return await _client.ReceiveMessageAsync(queueUrl, cancellationToken)
 				.ContinueWith(
-					task => _client.DeleteMessageAsync(task.Result.QueueUrl, messageHandle)
-				);			
+					task => task.Result.Messages.Select(m => new QueueMessage(m.ReceiptHandle, m.Body)).ToArray(), cancellationToken
+				);
+		}
+
+		public Task<QueueMessage<T>[]> ReceiveObjectsAsync<T>(string queueName, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return ReceiveMessagesAsync(queueName, cancellationToken)
+				.ContinueWith(
+					task => task.Result.Select(m => new QueueMessage<T>(m.MessageHandle, m.Message.ToObject<T>())).ToArray(), cancellationToken
+				);
+		}
+
+		public Task DeleteMessageAsync(string queueName, string messageHandle, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return GetQueueUrlAsync(queueName, cancellationToken)
+				.ContinueWith(
+					task => _client.DeleteMessageAsync(task.Result, messageHandle, cancellationToken), cancellationToken
+				);
+		}
+
+		private async Task<string> GetQueueUrlAsync(string queueName, CancellationToken cancellationToken)
+		{
+			return await _memoryCache.GetOrAddAsync(queueName, k =>
+			{
+				return _client.GetQueueUrlAsync(queueName, cancellationToken).ContinueWith(task => task.Result.QueueUrl, cancellationToken);
+			}, QueueRegionName);
 		}
 	}
 }

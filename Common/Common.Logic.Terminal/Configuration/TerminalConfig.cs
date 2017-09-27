@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using Amazon.SQS;
 using Autofac;
+using AutoMapper;
 using CheckListManager.Common.Core.Cache;
 using CheckListManager.Common.Core.Services;
 using CheckListManager.Common.Data;
@@ -52,7 +53,7 @@ namespace CheckListManager.Common.Logic.Terminal.Configuration
 
 			builder.RegisterType<RelationalDatabaseEntities>()
 				.AsSelf()
-				.InstancePerRequest();
+				.InstancePerLifetimeScope();
 
 			builder.RegisterAssemblyTypes(Assemblies)
 				.AssignableTo<IRedisCache>()
@@ -69,7 +70,20 @@ namespace CheckListManager.Common.Logic.Terminal.Configuration
 				.AsSelf()
 				.InstancePerLifetimeScope();
 
+			builder.RegisterInstance(CreateMapper())
+				.SingleInstance();
+
 			return builder;
+		}
+
+		private IMapper CreateMapper()
+		{
+			return new Mapper(new MapperConfiguration(OnCreateMapper));
+		}
+
+		protected virtual void OnCreateMapper(IMapperConfigurationExpression mapperConfig)
+		{
+
 		}
 
 		private static IEnumerable<Assembly> LoadRefencedAssemblies()
