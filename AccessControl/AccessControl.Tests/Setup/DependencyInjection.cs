@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Amazon.SQS;
 using Autofac;
 using CheckListManager.AccessControl.Api;
 using CheckListManager.Common.Core.Services;
@@ -36,6 +37,11 @@ namespace CheckListManager.AccessControl.Tests.Setup
 			builder
 				.RegisterAssemblyTypes(typeof(DependencyInjection).Assembly)
 				.InstancePerLifetimeScope();
+
+			builder.RegisterType<AmazonSQSClient>()
+				.As<IAmazonSQS>()
+				.AsSelf()
+				.InstancePerRequest();
 
 			return builder;
 		}
