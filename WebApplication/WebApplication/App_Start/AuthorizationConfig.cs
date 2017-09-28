@@ -1,13 +1,26 @@
-﻿using CheckListManager.WebApplication.Models.IntegratedAuthentication;
+﻿using Microsoft.AspNet.Identity;
+using Microsoft.Owin;
+using Microsoft.Owin.Security.Cookies;
+using Microsoft.Owin.Security.OAuth;
 using Owin;
+using System;
 
 namespace CheckListManager.WebApplication
 {
     public class AuthorizationConfig
     {
-        public static void Setup(IAppBuilder app)
+        private static OAuthAuthorizationServerOptions OAuthOptions { get; set; }
+
+        public static void Setup(IAppBuilder App)
         {
-            app.Use<IntegratedAuthenticationMiddleware>(new IntegratedAuthenticationOptions(), new IntegratedAuthenticationService());
+            //app.Use<IntegratedAuthenticationMiddleware>(new IntegratedAuthenticationOptions(), new IntegratedAuthenticationService());
+
+            OAuthOptions = new OAuthAuthorizationServerOptions
+            {
+                AllowInsecureHttp = true
+            };
+
+            App.UseOAuthBearerTokens(OAuthOptions);
         }
     }
 }

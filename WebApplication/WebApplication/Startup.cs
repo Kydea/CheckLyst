@@ -16,10 +16,10 @@ namespace CheckListManager.WebApplication
         {
             OnStartup(app);
 
-            var properties = new AppProperties(app.Properties);
-            var token = properties.OnAppDisposing;
-            if (token != CancellationToken.None)
-                token.Register(OnShutdown);
+            var Properties = new AppProperties(app.Properties);
+            var Token = Properties.OnAppDisposing;
+            if (Token != CancellationToken.None)
+                Token.Register(OnShutdown);
         }
 
         private static void OnStartup(IAppBuilder app)

@@ -146,10 +146,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\IntegratedAuthentication\IntegratedAuthenticationService.cs" />
-    <Compile Include="Models\IntegratedAuthentication\IntegratedAuthenticationHandler.cs" />
-    <Compile Include="Models\IntegratedAuthentication\IntegratedAuthenticationMiddleware.cs" />
-    <Compile Include="Models\IntegratedAuthentication\IntegratedAuthenticationOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -347,6 +343,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\Theme\Fonts\" />
+    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
