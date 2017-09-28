@@ -41,7 +41,7 @@ namespace CheckListManager.AccessControl.Tests.Setup
 			builder.RegisterType<AmazonSQSClient>()
 				.As<IAmazonSQS>()
 				.AsSelf()
-				.InstancePerRequest();
+				.InstancePerLifetimeScope();
 
 			return builder;
 		}
