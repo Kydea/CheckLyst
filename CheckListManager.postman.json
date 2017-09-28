@@ -1,0 +1,208 @@
+{
+	"variables": [],
+	"info": {
+		"name": "CheckListManager",
+		"_postman_id": "0a243117-0612-3d7e-700c-dbc6c8f444ed",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Access",
+			"description": "",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"// Set Token value",
+									"var data = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"access_token\", data.access_token);",
+									"postman.setEnvironmentVariable(\"refresh_token\", data.refresh_token);"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{BaseUrl}}AccessControl/Access/Token",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "password",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "companyId",
+									"value": "1",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "CheckListManager",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "V4sc0 R0ss1",
+									"description": "",
+									"type": "text"
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"// Set Token value",
+									"var data = JSON.parse(responseBody);",
+									"if (data.access_token) {",
+									"    postman.setEnvironmentVariable(\"access_token\", data.access_token);",
+									"}",
+									"if (data.refresh_token) {",
+									"    postman.setEnvironmentVariable(\"refresh_token\", data.refresh_token);",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{BaseUrl}}AccessControl/Access/Token",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "refresh_token",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "refresh_token",
+									"value": "{{refresh_token}}",
+									"type": "text",
+									"description": ""
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"url": "{{BaseUrl}}AccessControl/Access/Logout",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"data\": {\n    \"refreshToken\": \"{{refresh_token}}\"\n  }\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"description": "",
+			"item": [
+				{
+					"name": "Get Users",
+					"request": {
+						"url": "{{BaseUrl}}AccessControl/Users",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"data\": {\n    \"code\": \"C\"\n  }\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Add User",
+					"request": {
+						"url": "{{BaseUrl}}AccessControl/Users/Add",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"data\": {\n\t\t\"enabled\": true,\n\t\t\"code\": \"CheckListManager\",\n\t\t\"password\": \"test1234\",\n\t\t\"description\": \"CheckListManager\"\n\t}\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
