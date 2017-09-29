@@ -143,7 +143,7 @@
 								cache: false,
 								headers: {
 									"Authorization": "Bearer u4JvlYZ9iQm8qVGByIpsNInVdm6e3LdqksvNyouXhi3a08jztQyo_tylkq0oRjWh4wB5hm7qQerBsJJAH32TS4_i23newoFxGysrQwu55nB8nsuO7bpv1keg1Nh6SHBAk2sA-_Hmx1BUn2fMJp4-k5KVBgwM5KFv1SD0wrFe5O4MjWwM51r8ikzJvgGa0GwRWdqEywQsgTqMAvA77fWDE7hWLmPlIXd_7F5lVRcKeWhqkl1gQUOnclEdmKTdeg0TkzghNRs2Xt-9h8g-Y_omo1qwcUC83lDbnAc2Z2nV3a6I80SjVEs7_414FuP2vXQht0QYvPqvXyu8_DtPVzEpFkXSw_SrJEBFMKJHbLuUEzM"
-									}
+								}
 							}).done(function (result, status, request) {
                                 data = ''
                                 var appMode = matematici.elements.body.hasClass("AppMode");

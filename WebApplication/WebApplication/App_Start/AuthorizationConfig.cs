@@ -13,8 +13,6 @@ namespace CheckListManager.WebApplication
 
         public static void Setup(IAppBuilder App)
         {
-            //app.Use<IntegratedAuthenticationMiddleware>(new IntegratedAuthenticationOptions(), new IntegratedAuthenticationService());
-
             OAuthOptions = new OAuthAuthorizationServerOptions
             {
                 AllowInsecureHttp = true
