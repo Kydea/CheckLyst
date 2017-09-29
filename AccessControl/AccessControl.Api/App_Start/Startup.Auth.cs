@@ -33,7 +33,7 @@ namespace CheckListManager.AccessControl.Api
 					Provider = scope.Resolve<AuthTokenProvider>(),
 					AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(30), //TODO load from configuration
 					RefreshTokenProvider = scope.Resolve<RefreshTokenProvider>(),
-					AllowInsecureHttp = true					
+					AllowInsecureHttp = true
 				};
 
 				app.UseOAuthBearerTokens(OAuthOptions);
