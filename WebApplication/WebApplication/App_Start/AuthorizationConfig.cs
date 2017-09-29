@@ -5,9 +5,9 @@ namespace CheckListManager.WebApplication
 {
     public class AuthorizationConfig
     {
-        public static void Setup(IAppBuilder app)
+        public static void Setup(IAppBuilder App)
         {
-            app.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions());
+            App.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions());
 		}
 	}
 }

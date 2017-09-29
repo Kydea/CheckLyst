@@ -1,4 +1,5 @@
-﻿using System.Web.Mvc;
+﻿using System;
+using System.Web.Mvc;
 
 namespace CheckListManager.WebApplication.Controllers
 {
@@ -6,17 +7,9 @@ namespace CheckListManager.WebApplication.Controllers
     public class SecurityController : BaseController
 	{
         [AllowAnonymous]
-        [Route("Login")]
         public ActionResult Login(string returnUrl)
         {
             return ConditionalView("Login", returnUrl ?? Url.Action("Dashboard", "Default"));
-        }
-
-
-        [Route("Logout")]
-        public ActionResult Logout()
-        {
-            return Redirect(Url.Action("Logout"));
         }
     }
 }

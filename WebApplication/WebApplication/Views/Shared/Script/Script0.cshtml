@@ -46,13 +46,16 @@
         		signatureBook: {
 					load: "@Url.Action("Load", "SignatureBook")",
         			validate: "@Url.Action("Validate", "SignatureBook")"
-        		},
+                },
+                accessControl: {
+                    token: "/AccessControl/Access/Token"
+                },
                 help: "@Url.Action("Index", "Help")"
         	},
         	signatureActions: {
         		toApprove: "Prototype – state to Approved/Active",
         		toObsolete: "Prototype – state to Obsolete"
-        	},
+            },
 			activity: true,
             initializers: [],
             codeRegularExpression: /^[$A-Z_][0-9A-Z_$]*$/i,

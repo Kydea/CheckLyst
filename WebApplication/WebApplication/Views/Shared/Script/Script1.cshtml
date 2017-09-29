@@ -1,10 +1,20 @@
 ﻿<script type="text/javascript">
 	$.datepicker.setDefaults({ dateFormat: 'dd/mm/yy' });
+
     $(document).ajaxStart(function () {
         matematici.loader.show();
     }).ajaxStop(function () {
         matematici.loader.hide();
+        });
+
+    $.ajaxSetup({
+        beforeSend: function (xhr) {
+            var token = localStorage.accessToken;
+            if (token)
+                xhr.setRequestHeader("Authorization", "Bearer " + token);
+        }
     });
+
 
     if (Modernizr.touch) matematici.touch.init();
 
@@ -20,6 +30,7 @@
     matematici.logo.init();
 
     matematici.clock = new matematici.Clock(@(ViewBag.AppMode ? "true" : "matematici.isLoginPage"));
+    matematici.client = new matematici.Client();
 
     matematici.actions.resize = function () {
         matematici.elements.content.css("min-height", matematici.elements.window.height() - matematici.elements.header.height() - matematici.elements.footer.height());
@@ -41,6 +52,7 @@
     matematici.userPanel = new matematici.UserPanel("div#UserPanel");
     matematici.autoScroller = new matematici.AutoScroller();
     matematici.help = new matematici.Help();
+    matematici.tokenManager = new matematici.TokenManager();
 
     matematici.navigator.handlePageLoad(null, function () { });
 
@@ -51,9 +63,7 @@
 
     matematici.AnimationManager.toggle(true);
 
-    matematici.elements.body.on("mousedown", function (e) {
-        matematici.activity = true;
-    }).on("keydown", function (e) {
+    matematici.elements.body.on("keydown", function (e) {
         var key = e.which;
         switch (key)
         {

@@ -20,8 +20,8 @@
         },
 
 		check = function () {
-		    var activity = matematici.activity;
-		    matematici.activity = false;
+			var activity = matematici.client.isActive();
+			matematici.client.toggleActivity(false);
 			return $.ajax({
 				url: matematici.urls.clock,
 				type: "post",
@@ -58,8 +58,8 @@
                 if (result.logout) {
                 	logout(result.logout);
                 } else if (result.warning) {
-                    alert("Warning: " + result.warning);
-                    matematici.activity = true;
+					alert("Warning: " + result.warning);
+                    matematici.client.toggleActivity (true);
                 	check().done(function (checkResult) {
                 		if (checkResult.logout) logout(checkResult.logout);
                 	});

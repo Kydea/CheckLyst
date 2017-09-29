@@ -1,30 +1,29 @@
-@model string 
+@model string
 @*Matematici.ViewModels.Membership.Login*@
 
 <div class="Login">
     <div class="Box">
-		<form action="/AccessControl/Access/Token">
-			<img src="~/Content/Media/Logo.Big.png" alt=""/>
+        <form>
+            <img src="~/Content/Media/Logo.Big.png" alt="" />
 
-			@if (Request["m"] != null)
-			{
-			<div class="Message">
-				Your session has expired. Please login again.
-			</div>
-			}
-            
+            @if (Request["m"] != null)
+            {
+                <div class="Message">
+                    Your session has expired. Please login again.
+                </div>}
+
             <input type="hidden" name="grant_type" value="password" />
-            <input type="hidden" name="company" value="1" />
-			<label for="username">User code</label>
-			<input type="text" name="username" />
-			<label for="password">Password</label>
-			<input type="password" name="password" />
-			<div class="Errors">
-			</div>
-			<div class="Buttons Container">
-				<a class="Button DefaultButton" href="#" id="Sign"><i class="fa fa-check"></i> Login</a>
-			</div>
-		</form>
+            <input type="hidden" name="companyId" value="1" />
+            <label for="username">User code</label>
+            <input type="text" name="username" />
+            <label for="password">Password</label>
+            <input type="password" name="password" />
+            <div class="Errors">
+            </div>
+            <div class="Buttons Container">
+                <a class="Button DefaultButton" href="#" id="Sign"><i class="fa fa-check"></i> Login</a>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -34,32 +33,31 @@
     matematici.events.onPageLoad = function (callback) {
         matematici.clock.stop();
 
+        var form = $("form");
+
 		new matematici.Page({
 			name: "Login",
 			initializers: [ ]
 		});
 
 		new matematici.Login("div.Login", function () {
-		    var form = $("form");
-		    $("div.Errors", form).hide();
-		    $.ajax(form.attr("action"), {
+            $("div.Errors", form).hide();
+            $.ajax(matematici.urls.accessControl.token, {
 		        data: form.serialize(),
 		        type: "post"
             }).done(function (result) {
-                console.log(result);
-                return;
-		        if (result.ok) {
-		    		matematici.client.createNew(function () { location = "@Model"; });
-		            matematici.clock.resume();
-		        } else 
-		            $("div.Errors", form).html(result.message).show();
-		    }).fail(function (jqXhr, textStatus, errorThrown) {
-		        $("div.Errors", form).html(errorThrown).show();
-		        console.log(jqXhr, textStatus, errorThrown);
-		        matematici.dialog.error("server error", "Can't login");
-		    });
-		});
-		callback.call();
+                matematici.tokenManager.login(result);
+
+		        matematici.client.createNew(function () { location = "@Model"; });
+                matematici.clock.resume();
+
+                matematici.navigator.open("/Dashboard");
+            }).fail(function (jqXhr, textStatus, errorThrown) {
+                $("div.Errors", form).html(jqXhr.responseJSON.error_description || errorThrown).show();
+                console.log(jqXhr, textStatus, errorThrown);
+            });
+        });
+        callback.call();
     };
 
     matematici.events.onPageUnload = function (callback) {

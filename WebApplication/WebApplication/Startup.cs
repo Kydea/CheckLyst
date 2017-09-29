@@ -22,13 +22,13 @@ namespace CheckListManager.WebApplication
                 Token.Register(OnShutdown);
         }
 
-        private static void OnStartup(IAppBuilder app)
+        private static void OnStartup(IAppBuilder App)
         {
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-            AuthorizationConfig.Setup(app);
+            AuthorizationConfig.Setup(App);
         }
 
         private static void OnShutdown()

@@ -1,0 +1,41 @@
+﻿matematici.TokenManager = function () {
+	var
+		tokenManager = this,
+		cautionTimeOffset = 120000, //ms
+
+		refreshAccessToken = function () {
+			console.log(new Date(), "refreshing access token");
+			localStorage.refreshingToken = true;
+			$.ajax(matematici.urls.accessControl.token, {
+				data: { grant_type: "refresh_token", refresh_token: localStorage.refreshToken },
+				type: "post"
+			}).done(function (result) {
+				parseLoginResult(result);
+			}).fail(function (jqXhr, textStatus, errorThrown) {
+				matematici.dialog.error("system error", "Access token refresh failed, please login again.");
+				console.log(jqXhr, textStatus, errorThrown);
+			}).always(function () {
+				localStorage.refreshingToken = false;
+			});
+		},
+
+		setup = function () {
+			setInterval(function () {
+				//the access token is refreshed by active client, when a refresh token is present, [cautionTimeOffset] milliseconds before the expiration 
+				if (matematici.client.isActive() && localStorage.refreshToken && new Date().getTime() > localStorage.accessTokenExpiration - cautionTimeOffset)
+					refreshAccessToken();
+			}, 60000);
+		},
+
+		parseLoginResult = function (result) {
+			localStorage.accessToken = result.access_token;
+			localStorage.accessTokenExpiration = new Date().getTime() + parseInt(result.expires_in) * 1000; // TODO, use * 1000, * 10 is just for test
+		};
+
+	tokenManager.login = function (result) {
+		localStorage.refreshToken = result.refresh_token;
+		parseLoginResult(result);
+	};
+
+	setup();
+}

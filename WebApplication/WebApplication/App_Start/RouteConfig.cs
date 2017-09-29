@@ -10,6 +10,12 @@ namespace CheckListManager.WebApplication
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(
+                "Login",
+                "Security/Login",
+                new { Controller = "Security", Action = "Login" }
+            );
+
+            routes.MapRoute(
                 "Loader",
                 "{*Url}",
                 new { Controller = "Default", Action = "Loader" },
