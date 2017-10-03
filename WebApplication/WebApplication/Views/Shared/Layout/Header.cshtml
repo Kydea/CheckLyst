@@ -1,21 +1,14 @@
-﻿@{ 
-    var security = new
-    {
-        CurrentUser = new { Code = HttpContext.Current.User.Identity.Name /*"Administrator"*/, SettingsManager = true, Description = HttpContext.Current.User.Identity.Name }
-    };
-}
-
-<header class="Container">
+﻿<header class="Container">
     <div id="Logo" class="Padded">
 	    <img src="~/Content/Media/Logo.png" alt=""/>
 	    <a href="#" id="HelpButton" title="User manual"><i class="fa fa-question"></i></a>
     </div>
 
     <div id="UserPanel" class="Padded Container">
-        @if (security.CurrentUser != null)
+        @if (Security.CurrentUser != null)
         {
             <a class="User LeftFloating CurrentUser" href="#">
-                <span class="UserName" title="@security.CurrentUser.Code" data-settingsmanager="@security.CurrentUser.SettingsManager">@security.CurrentUser.Description</span> <i class="fa fa-user"></i>
+                <span class="UserName" title="@Security.CurrentUser.Code">@Security.CurrentUser.Description</span> <i class="fa fa-user"></i>
             </a>
         }
 
@@ -38,7 +31,7 @@
         <ul class="Menu Plain">
             <li class="MenuItem"><a class="MenuItem" href="@Url.Action("Dashboard", "Default")">Dashboard</a></li>
 
-            @if (security.CurrentUser != null && security.CurrentUser.SettingsManager)
+            @if (Security.CurrentUser != null && Security.CurrentUser.Roles.Any(x => x.Code == "Company#Profiles"))
             {
                 <li class="MenuItem">
                     <span class="MenuItem">Settings</span>

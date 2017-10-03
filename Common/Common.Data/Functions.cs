@@ -14,7 +14,16 @@ namespace CheckListManager.Common.Data
     
     public partial class Functions
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Functions()
+        {
+            this.UserFunctions = new HashSet<UserFunctions>();
+        }
+    
         public string FunctionGroup { get; set; }
         public string Code { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<UserFunctions> UserFunctions { get; set; }
     }
 }

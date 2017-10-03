@@ -14,11 +14,12 @@ namespace CheckListManager.Common.Data
     
     public partial class UserFunctions
     {
+        public long ID { get; set; }
         public long Company { get; set; }
         public string User { get; set; }
-        public long PrototypeType { get; set; }
         public string FunctionGroup { get; set; }
         public string Function { get; set; }
+        public Nullable<long> PrototypeType { get; set; }
         public string Tag { get; set; }
         public string CreatedBy { get; set; }
         public System.DateTimeOffset CreatedOn { get; set; }
@@ -26,6 +27,7 @@ namespace CheckListManager.Common.Data
         public Nullable<System.DateTimeOffset> ModifiedOn { get; set; }
     
         public virtual PrototypeTypes PrototypeTypes { get; set; }
+        public virtual Functions Functions { get; set; }
         public virtual Users Users { get; set; }
     }
 }

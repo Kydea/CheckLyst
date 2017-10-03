@@ -16,4 +16,9 @@
 
         callback.call();
     };
+
+    matematici.events.onPageUnload = function (callback) {
+        matematici.loader.checkInitialCurtain();
+        callback.call();
+    }    
 </script>

@@ -32,19 +32,9 @@
     matematici.clock = new matematici.Clock(@(ViewBag.AppMode ? "true" : "matematici.isLoginPage"));
     matematici.client = new matematici.Client();
 
-    matematici.actions.resize = function () {
-        matematici.elements.content.css("min-height", matematici.elements.window.height() - matematici.elements.header.height() - matematici.elements.footer.height());
-    };
-
-    matematici.elements.window.on("resize", function () {
-        matematici.actions.resize();
-    }).on("beforeunload", function () {
+    matematici.elements.window.on("beforeunload", function () {
         if (!matematici.canClose)
             return "Warning: any unsaved change will be lost.";
-    });
-
-    setTimeout(function () {
-        matematici.actions.resize();
     });
 
     matematici.breadcrumbs = new matematici.Breadcrumbs("div#Breadcrumbs");
@@ -58,8 +48,6 @@
 
     matematici.clock.add("span.ServerTime");
     matematici.clock.add("span.LocalTime");
-
-    matematici.loader.checkInitialCurtain();
 
     matematici.AnimationManager.toggle(true);
 
@@ -77,12 +65,4 @@
                 break;
         }
     });
-
-    var
-        encode = function (param) {
-            var encoded = "";
-            for (var i = 0; i < param.length; i++)
-                encoded += "%" + param.charCodeAt(i).toString(16);
-            return encoded;
-        };
 </script>

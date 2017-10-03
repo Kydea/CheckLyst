@@ -18,7 +18,7 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
 	{
 		private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-		private readonly ILifetimeScope _parentScope;
+        private readonly ILifetimeScope _parentScope;
 
 		public AuthTokenProvider(ISharingLifetimeScope parentScope)
 		{
@@ -41,12 +41,13 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
 					var userService = scope.Resolve<IUserService>();
 					var user = await userService.AuthenticateAsync(companyId, context.UserName, context.Password);
 
-					var identity = new ClaimsIdentity(context.Options.AuthenticationType);
-					identity.AddClaim(new Claim(ClaimTypes.Name, user.Code));
-					identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Code));
-					identity.AddClaim(new Claim("CompanyId", user.Company.ToString()));
+                    var identity = Common.Logic.Security.Token.CraeateIdentity(context.Options.AuthenticationType, user);
 
-					var properties = CreateProperties(user);
+                    var properties = new AuthenticationProperties(Common.Logic.Security.Token.CreateProperties(user))
+                    {
+                        AllowRefresh = true
+                    };
+
 					var ticket = new AuthenticationTicket(identity, properties);
 
 					context.Validated(ticket);
@@ -84,19 +85,6 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
 		{
 			context.Validated();
 			return Task.FromResult<object>(null);
-		}
-
-		private static AuthenticationProperties CreateProperties(Users user)
-		{
-			IDictionary<string, string> data = new Dictionary<string, string>
-			{
-				{ "company", user.Company.ToString() },
-				{ "code", user.Code } //TODO: add more
-            };
-			return new AuthenticationProperties(data)
-			{
-				AllowRefresh = true
-			};
 		}
 	}
 }

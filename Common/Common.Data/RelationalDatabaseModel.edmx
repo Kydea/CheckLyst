@@ -199,17 +199,14 @@
         </EntityType>
         <EntityType Name="UserFunctions">
           <Key>
-            <PropertyRef Name="Company" />
-            <PropertyRef Name="User" />
-            <PropertyRef Name="PrototypeType" />
-            <PropertyRef Name="FunctionGroup" />
-            <PropertyRef Name="Function" />
+            <PropertyRef Name="ID" />
           </Key>
+          <Property Name="ID" Type="int8" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Company" Type="int8" Nullable="false" />
           <Property Name="User" Type="varchar" MaxLength="60" Nullable="false" />
-          <Property Name="PrototypeType" Type="int8" Nullable="false" />
           <Property Name="FunctionGroup" Type="varchar" MaxLength="20" Nullable="false" />
           <Property Name="Function" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="PrototypeType" Type="int8" />
           <Property Name="Tag" Type="varchar" MaxLength="50" />
           <Property Name="CreatedBy" Type="varchar" MaxLength="60" />
           <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
@@ -473,22 +470,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="PasswordHistory_User1">
-          <End Role="Users" Type="Self.Users" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="UserFunctions" Type="Self.UserFunctions" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Users">
-              <PropertyRef Name="Company" />
-              <PropertyRef Name="Code" />
-            </Principal>
-            <Dependent Role="UserFunctions">
-              <PropertyRef Name="Company" />
-              <PropertyRef Name="User" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="PINHistory_User">
           <End Role="Users" Type="Self.Users" Multiplicity="0..1">
             <OnDelete Action="Cascade" />
@@ -649,8 +630,22 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="UserFunctions_Function">
+          <End Role="Functions" Type="Self.Functions" Multiplicity="1" />
+          <End Role="UserFunctions" Type="Self.UserFunctions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Functions">
+              <PropertyRef Name="FunctionGroup" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="UserFunctions">
+              <PropertyRef Name="FunctionGroup" />
+              <PropertyRef Name="Function" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="UserFunctions_PrototypeType_fkey">
-          <End Role="PrototypeTypes" Type="Self.PrototypeTypes" Multiplicity="1" />
+          <End Role="PrototypeTypes" Type="Self.PrototypeTypes" Multiplicity="0..1" />
           <End Role="UserFunctions" Type="Self.UserFunctions" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="PrototypeTypes">
@@ -658,6 +653,22 @@
             </Principal>
             <Dependent Role="UserFunctions">
               <PropertyRef Name="PrototypeType" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserFunctions_User">
+          <End Role="Users" Type="Self.Users" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="UserFunctions" Type="Self.UserFunctions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="UserFunctions">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="User" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -801,9 +812,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        
-        
-        
         <EntityContainer Name="RelationalDatabaseModelStoreContainer">
           <EntitySet Name="InstanceExpressionValues" EntityType="Self.InstanceExpressionValues" Schema="CheckLists" store:Type="Tables" />
           <EntitySet Name="InstanceNumerators" EntityType="Self.InstanceNumerators" Schema="CheckLists" store:Type="Tables" />
@@ -873,10 +881,6 @@
             <End Role="Users" EntitySet="Users" />
             <End Role="PasswordHistory" EntitySet="PasswordHistory" />
           </AssociationSet>
-          <AssociationSet Name="PasswordHistory_User1" Association="Self.PasswordHistory_User1">
-            <End Role="Users" EntitySet="Users" />
-            <End Role="UserFunctions" EntitySet="UserFunctions" />
-          </AssociationSet>
           <AssociationSet Name="PINHistory_User" Association="Self.PINHistory_User">
             <End Role="Users" EntitySet="Users" />
             <End Role="PINHistory" EntitySet="PINHistory" />
@@ -929,8 +933,16 @@
             <End Role="Actions" EntitySet="Actions" />
             <End Role="Records" EntitySet="Records" />
           </AssociationSet>
+          <AssociationSet Name="UserFunctions_Function" Association="Self.UserFunctions_Function">
+            <End Role="Functions" EntitySet="Functions" />
+            <End Role="UserFunctions" EntitySet="UserFunctions" />
+          </AssociationSet>
           <AssociationSet Name="UserFunctions_PrototypeType_fkey" Association="Self.UserFunctions_PrototypeType_fkey">
             <End Role="PrototypeTypes" EntitySet="PrototypeTypes" />
+            <End Role="UserFunctions" EntitySet="UserFunctions" />
+          </AssociationSet>
+          <AssociationSet Name="UserFunctions_User" Association="Self.UserFunctions_User">
+            <End Role="Users" EntitySet="Users" />
             <End Role="UserFunctions" EntitySet="UserFunctions" />
           </AssociationSet>
           <AssociationSet Name="Users_Company_fkey" Association="Self.Users_Company_fkey">
@@ -1050,9 +1062,9 @@
           <NavigationProperty Name="UserSessions" Relationship="RelationalDatabaseModel.UserSessions_User" FromRole="Users" ToRole="UserSessions" />
           <NavigationProperty Name="PasswordHistory" Relationship="RelationalDatabaseModel.PasswordHistory_User" FromRole="Users" ToRole="PasswordHistory" />
           <NavigationProperty Name="PINHistory" Relationship="RelationalDatabaseModel.PINHistory_User" FromRole="Users" ToRole="PINHistory" />
-          <NavigationProperty Name="UserFunctions" Relationship="RelationalDatabaseModel.PasswordHistory_User1" FromRole="Users" ToRole="UserFunctions" />
           <NavigationProperty Name="Records" Relationship="RelationalDatabaseModel.FK_Records_User" FromRole="Users" ToRole="Records" />
           <NavigationProperty Name="WorkFlowApplicationsStep" Relationship="RelationalDatabaseModel.WorkFlowApplications_User" FromRole="Users" ToRole="WorkFlowApplicationsStep" />
+          <NavigationProperty Name="UserFunctions" Relationship="RelationalDatabaseModel.UserFunctions_User" FromRole="Users" ToRole="UserFunctions" />
         </EntityType>
         <Association Name="Departments_Company_fkey">
           <End Role="Companies" Type="Self.Companies" Multiplicity="0..1">
@@ -1120,7 +1132,6 @@
           <EntitySet Name="Functions" EntityType="RelationalDatabaseModel.Functions" />
           <EntitySet Name="PasswordHistory" EntityType="RelationalDatabaseModel.PasswordHistory" />
           <EntitySet Name="PINHistory" EntityType="RelationalDatabaseModel.PINHistory" />
-          <EntitySet Name="UserFunctions" EntityType="RelationalDatabaseModel.UserFunctions" />
           <EntitySet Name="Actions" EntityType="RelationalDatabaseModel.Actions" />
           <EntitySet Name="Records" EntityType="RelationalDatabaseModel.Records" />
           <EntitySet Name="WorkFlowActions" EntityType="RelationalDatabaseModel.WorkFlowActions" />
@@ -1181,10 +1192,6 @@
             <End Role="WorkFlows" EntitySet="WorkFlows" />
             <End Role="PrototypeTypes" EntitySet="PrototypeTypes" />
           </AssociationSet>
-          <AssociationSet Name="UserFunctions_PrototypeType_fkey" Association="RelationalDatabaseModel.UserFunctions_PrototypeType_fkey">
-            <End Role="PrototypeTypes" EntitySet="PrototypeTypes" />
-            <End Role="UserFunctions" EntitySet="UserFunctions" />
-          </AssociationSet>
           <AssociationSet Name="FK_PrototypeVersionTags_Version" Association="RelationalDatabaseModel.FK_PrototypeVersionTags_Version">
             <End Role="PrototypeVersions" EntitySet="PrototypeVersions" />
             <End Role="PrototypeVersionTags" EntitySet="PrototypeVersionTags" />
@@ -1212,10 +1219,6 @@
           <AssociationSet Name="PINHistory_User" Association="RelationalDatabaseModel.PINHistory_User">
             <End Role="Users" EntitySet="Users" />
             <End Role="PINHistory" EntitySet="PINHistory" />
-          </AssociationSet>
-          <AssociationSet Name="PasswordHistory_User1" Association="RelationalDatabaseModel.PasswordHistory_User1">
-            <End Role="Users" EntitySet="Users" />
-            <End Role="UserFunctions" EntitySet="UserFunctions" />
           </AssociationSet>
           <AssociationSet Name="FK_Records_User" Association="RelationalDatabaseModel.FK_Records_User">
             <End Role="Users" EntitySet="Users" />
@@ -1252,6 +1255,19 @@
           <AssociationSet Name="WorkFlowStepTags_WorkFlowStep_fkey" Association="RelationalDatabaseModel.WorkFlowStepTags_WorkFlowStep_fkey">
             <End Role="WorkFlowSteps" EntitySet="WorkFlowSteps" />
             <End Role="WorkFlowStepTags" EntitySet="WorkFlowStepTags" />
+          </AssociationSet>
+          <EntitySet Name="UserFunctions" EntityType="RelationalDatabaseModel.UserFunctions" />
+          <AssociationSet Name="UserFunctions_PrototypeType_fkey" Association="RelationalDatabaseModel.UserFunctions_PrototypeType_fkey">
+            <End Role="PrototypeTypes" EntitySet="PrototypeTypes" />
+            <End Role="UserFunctions" EntitySet="UserFunctions" />
+          </AssociationSet>
+          <AssociationSet Name="UserFunctions_Function" Association="RelationalDatabaseModel.UserFunctions_Function">
+            <End Role="Functions" EntitySet="Functions" />
+            <End Role="UserFunctions" EntitySet="UserFunctions" />
+          </AssociationSet>
+          <AssociationSet Name="UserFunctions_User" Association="RelationalDatabaseModel.UserFunctions_User">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="UserFunctions" EntitySet="UserFunctions" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="TimeZones">
@@ -1474,6 +1490,7 @@
           </Key>
           <Property Name="FunctionGroup" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
           <Property Name="Code" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="UserFunctions" Relationship="RelationalDatabaseModel.UserFunctions_Function" FromRole="Functions" ToRole="UserFunctions" />
         </EntityType>
         <EntityType Name="PasswordHistory">
           <Key>
@@ -1496,27 +1513,6 @@
           <Property Name="PIN" Type="Binary" MaxLength="2147483647" FixedLength="false" />
           <Property Name="Date" Type="DateTimeOffset" Nullable="false" Precision="7" />
           <NavigationProperty Name="Users" Relationship="RelationalDatabaseModel.PINHistory_User" FromRole="PINHistory" ToRole="Users" />
-        </EntityType>
-        <EntityType Name="UserFunctions">
-          <Key>
-            <PropertyRef Name="Company" />
-            <PropertyRef Name="User" />
-            <PropertyRef Name="PrototypeType" />
-            <PropertyRef Name="FunctionGroup" />
-            <PropertyRef Name="Function" />
-          </Key>
-          <Property Name="Company" Type="Int64" Nullable="false" />
-          <Property Name="User" Type="String" Nullable="false" MaxLength="60" FixedLength="false" Unicode="true" />
-          <Property Name="PrototypeType" Type="Int64" Nullable="false" />
-          <Property Name="FunctionGroup" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="Function" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="Tag" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="CreatedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
-          <Property Name="CreatedOn" Type="DateTimeOffset" Nullable="false" Precision="7" />
-          <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
-          <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
-          <NavigationProperty Name="PrototypeTypes" Relationship="RelationalDatabaseModel.UserFunctions_PrototypeType_fkey" FromRole="UserFunctions" ToRole="PrototypeTypes" />
-          <NavigationProperty Name="Users" Relationship="RelationalDatabaseModel.PasswordHistory_User1" FromRole="UserFunctions" ToRole="Users" />
         </EntityType>
         <EntityType Name="Actions">
           <Key>
@@ -1788,18 +1784,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="UserFunctions_PrototypeType_fkey">
-          <End Type="RelationalDatabaseModel.PrototypeTypes" Role="PrototypeTypes" Multiplicity="1" />
-          <End Type="RelationalDatabaseModel.UserFunctions" Role="UserFunctions" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="PrototypeTypes">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="UserFunctions">
-              <PropertyRef Name="PrototypeType" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_PrototypeVersionTags_Version">
           <End Type="RelationalDatabaseModel.PrototypeVersions" Role="PrototypeVersions" Multiplicity="1" />
           <End Type="RelationalDatabaseModel.PrototypeVersionTags" Role="PrototypeVersionTags" Multiplicity="*" />
@@ -1889,22 +1873,6 @@
               <PropertyRef Name="Code" />
             </Principal>
             <Dependent Role="PINHistory">
-              <PropertyRef Name="Company" />
-              <PropertyRef Name="User" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="PasswordHistory_User1">
-          <End Type="RelationalDatabaseModel.Users" Role="Users" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Type="RelationalDatabaseModel.UserFunctions" Role="UserFunctions" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Users">
-              <PropertyRef Name="Company" />
-              <PropertyRef Name="Code" />
-            </Principal>
-            <Dependent Role="UserFunctions">
               <PropertyRef Name="Company" />
               <PropertyRef Name="User" />
             </Dependent>
@@ -2021,6 +1989,67 @@
             </Principal>
             <Dependent Role="WorkFlowStepTags">
               <PropertyRef Name="WorkFlowStep" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="UserFunctions">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Company" Type="Int64" Nullable="false" />
+          <Property Name="User" Type="String" Nullable="false" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="FunctionGroup" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Function" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="PrototypeType" Type="Int64" />
+          <Property Name="Tag" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedOn" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
+          <NavigationProperty Name="PrototypeTypes" Relationship="RelationalDatabaseModel.UserFunctions_PrototypeType_fkey" FromRole="UserFunctions" ToRole="PrototypeTypes" />
+          <NavigationProperty Name="Functions" Relationship="RelationalDatabaseModel.UserFunctions_Function" FromRole="UserFunctions" ToRole="Functions" />
+          <NavigationProperty Name="Users" Relationship="RelationalDatabaseModel.UserFunctions_User" FromRole="UserFunctions" ToRole="Users" />
+        </EntityType>
+        <Association Name="UserFunctions_PrototypeType_fkey">
+          <End Type="RelationalDatabaseModel.PrototypeTypes" Role="PrototypeTypes" Multiplicity="0..1" />
+          <End Type="RelationalDatabaseModel.UserFunctions" Role="UserFunctions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PrototypeTypes">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="UserFunctions">
+              <PropertyRef Name="PrototypeType" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserFunctions_Function">
+          <End Type="RelationalDatabaseModel.Functions" Role="Functions" Multiplicity="1" />
+          <End Type="RelationalDatabaseModel.UserFunctions" Role="UserFunctions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Functions">
+              <PropertyRef Name="FunctionGroup" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="UserFunctions">
+              <PropertyRef Name="FunctionGroup" />
+              <PropertyRef Name="Function" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserFunctions_User">
+          <End Type="RelationalDatabaseModel.Users" Role="Users" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="RelationalDatabaseModel.UserFunctions" Role="UserFunctions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="UserFunctions">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="User" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2266,22 +2295,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="UserFunctions">
-            <EntityTypeMapping TypeName="RelationalDatabaseModel.UserFunctions">
-              <MappingFragment StoreEntitySet="UserFunctions">
-                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
-                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
-                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="Tag" ColumnName="Tag" />
-                <ScalarProperty Name="Function" ColumnName="Function" />
-                <ScalarProperty Name="FunctionGroup" ColumnName="FunctionGroup" />
-                <ScalarProperty Name="PrototypeType" ColumnName="PrototypeType" />
-                <ScalarProperty Name="User" ColumnName="User" />
-                <ScalarProperty Name="Company" ColumnName="Company" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Actions">
             <EntityTypeMapping TypeName="RelationalDatabaseModel.Actions">
               <MappingFragment StoreEntitySet="Actions">
@@ -2374,6 +2387,23 @@
               <MappingFragment StoreEntitySet="WorkFlowStepTags">
                 <ScalarProperty Name="Tag" ColumnName="Tag" />
                 <ScalarProperty Name="WorkFlowStep" ColumnName="WorkFlowStep" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserFunctions">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.UserFunctions">
+              <MappingFragment StoreEntitySet="UserFunctions">
+                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="Tag" ColumnName="Tag" />
+                <ScalarProperty Name="PrototypeType" ColumnName="PrototypeType" />
+                <ScalarProperty Name="Function" ColumnName="Function" />
+                <ScalarProperty Name="FunctionGroup" ColumnName="FunctionGroup" />
+                <ScalarProperty Name="User" ColumnName="User" />
+                <ScalarProperty Name="Company" ColumnName="Company" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

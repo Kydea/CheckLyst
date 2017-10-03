@@ -34,17 +34,17 @@ insert into "Security"."Functions" values
 
 create table "Security"."UserFunctions"
 (
-    "Company" bigint,
-	"User" varchar (60),
-    constraint "PasswordHistory_User" foreign key ("Company", "User") references "Security"."Users" on update cascade on delete cascade,
+	"ID" bigserial primary key,
+
+    "Company" bigint not null,
+	"User" varchar (60) not null,
+    constraint "UserFunctions_User" foreign key ("Company", "User") references "Security"."Users" on update cascade on delete cascade,
+
+	"FunctionGroup" varchar (20) not null,
+	"Function" varchar (20) not null,
+	constraint "UserFunctions_Function" foreign key ("FunctionGroup", "Function") references "Security"."Functions" on update cascade,
 
 	"PrototypeType" bigint references "CheckLists"."PrototypeTypes",
-	
-	"FunctionGroup" varchar (20),
-	"Function" varchar (20),
-
-	constraint "PK_UserFunctions" primary key ("Company", "User", "PrototypeType", "FunctionGroup", "Function"),
-
 	"Tag" varchar (50),
 
 	"CreatedBy" varchar (60),
@@ -52,3 +52,5 @@ create table "Security"."UserFunctions"
 	"ModifiedBy" varchar (60),
 	"ModifiedOn" timestamptz
 );
+
+create unique index "Index_UserFunctions_Function" on "Security"."UserFunctions" ("Company", "User", "FunctionGroup", "Function", "PrototypeType", "Tag");

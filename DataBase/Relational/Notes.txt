@@ -1,12 +1,8 @@
 Gestire rowversion per le tabelle, in modo da implementare la concorrenza
 
-Rivedere tutte le stored procedure
-
 Lasciare il json di configurazione con i parametri:
 	Develepment Mode
 	Scheduler
-
-Testare se funziona rowversion
 
 Gestionamo il tag per ogni item
 In firme mettiamo Tag per issue e Tag per cancel (se cancelable)
@@ -17,10 +13,7 @@ la procedura per i cambi di stato va riscritta in c#
 
 il trigger per mettere vecchie versioni a obsolete e creare il log va riscritto in c#
 
-RILANCIARE TUTTO
-
-
-prototio di trigger
+prototio di trigger:
 
 create function "CheckLists"."TF_Versions_Validate"() returns trigger as 
 $body$

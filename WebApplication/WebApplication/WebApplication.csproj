@@ -140,6 +140,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Code\Security.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\SecurityController.cs" />
     <Compile Include="Controllers\DefaultController.cs" />
@@ -344,7 +345,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\Theme\Fonts\" />
-    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -413,6 +413,12 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Default\Dashboard.cshtml" />
     <Content Include="Scripts\Libraries\jquery-2.1.4.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Common.Logic\Common.Logic.csproj">
+      <Project>{351c3388-67b1-46ee-8fd1-5a63277b3c0c}</Project>
+      <Name>Common.Logic</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

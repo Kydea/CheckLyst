@@ -44,7 +44,6 @@ namespace CheckListManager.Common.Data
         public virtual DbSet<Functions> Functions { get; set; }
         public virtual DbSet<PasswordHistory> PasswordHistory { get; set; }
         public virtual DbSet<PINHistory> PINHistory { get; set; }
-        public virtual DbSet<UserFunctions> UserFunctions { get; set; }
         public virtual DbSet<Actions> Actions { get; set; }
         public virtual DbSet<Records> Records { get; set; }
         public virtual DbSet<WorkFlowActions> WorkFlowActions { get; set; }
@@ -53,5 +52,6 @@ namespace CheckListManager.Common.Data
         public virtual DbSet<WorkFlows> WorkFlows { get; set; }
         public virtual DbSet<WorkFlowSteps> WorkFlowSteps { get; set; }
         public virtual DbSet<WorkFlowStepTags> WorkFlowStepTags { get; set; }
+        public virtual DbSet<UserFunctions> UserFunctions { get; set; }
     }
 }

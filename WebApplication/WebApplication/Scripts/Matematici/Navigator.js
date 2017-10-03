@@ -150,13 +150,12 @@
                                 matematici.navigator.initializeEventHandlers();
                                 matematici.navigator.handlePageLoad(result, function () {
                                     matematici.elements.content.stop(true).fadeTo(500, 1);
-                                    matematici.actions.resize()
                                     matematici.loader.hide();
                                     matematici.loader.checkCurtain();
                                 });
                             }).always(function () {
 							}).fail(function (e) {
-								if (e.status == 401)
+								if (e.status == 401 || e.status == 498) //we use the status 498 to mean invalid token (as arcgis)
 									window.location = basePath + "Security/Login"; //add return url
 								else
 									window.location = basePath + "Error";

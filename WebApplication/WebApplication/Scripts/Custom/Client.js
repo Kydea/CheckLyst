@@ -48,11 +48,9 @@
 				if (prevType != e.type)
 					switch (e.type) {
 						case "blur":
-							console.log("inactive");
 							toggleActivity(false);
 							break;
 						case "focus":
-							console.log("active");
 							toggleActivity(true);
 							break;
 					}

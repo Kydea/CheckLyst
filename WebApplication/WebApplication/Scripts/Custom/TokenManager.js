@@ -29,7 +29,7 @@
 
 		parseLoginResult = function (result) {
 			localStorage.accessToken = result.access_token;
-			localStorage.accessTokenExpiration = new Date().getTime() + parseInt(result.expires_in) * 1000; // TODO, use * 1000, * 10 is just for test
+			localStorage.accessTokenExpiration = new Date().getTime() + parseInt(result.expires_in) * 1000;
 		};
 
 	tokenManager.login = function (result) {
