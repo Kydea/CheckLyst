@@ -19,6 +19,8 @@ create table "Security"."Functions"
 
 insert into "Security"."Functions" values
 	('Company', 'Profiles'),
+	('Company', 'PrototypeTypes'),
+	('Company', 'AuditTrail'),
 	('Company', 'Data'),
 
 	('Prototype', 'Approve'),

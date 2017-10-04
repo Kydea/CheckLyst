@@ -48,10 +48,8 @@
             }).done(function (result) {
                 matematici.tokenManager.login(result);
 
-		        matematici.client.createNew(function () { location = "@Model"; });
-                matematici.clock.resume();
-
-                matematici.navigator.open("/Dashboard");
+                matematici.client.createNew(function () { matematici.navigator.open("@Model"); });
+                //matematici.clock.resume();
             }).fail(function (jqXhr, textStatus, errorThrown) {
                 $("div.Errors", form).html(jqXhr.responseJSON.error_description || errorThrown).show();
                 console.log(jqXhr, textStatus, errorThrown);

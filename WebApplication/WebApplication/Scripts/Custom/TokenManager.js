@@ -2,6 +2,7 @@
 	var
 		tokenManager = this,
 		cautionTimeOffset = 120000, //ms
+		userPanel = $("header #UserPanel"),
 
 		refreshAccessToken = function () {
 			console.log(new Date(), "refreshing access token");
@@ -29,6 +30,9 @@
 
 		parseLoginResult = function (result) {
 			localStorage.accessToken = result.access_token;
+			$(".CurrentUser", userPanel)
+				.attr("title", result.code)
+				.children(".UserName").text(result.name)
 			localStorage.accessTokenExpiration = new Date().getTime() + parseInt(result.expires_in) * 1000;
 		};
 

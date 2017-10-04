@@ -142,6 +142,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Code\Security.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\PrototypesController.cs" />
     <Compile Include="Controllers\SecurityController.cs" />
     <Compile Include="Controllers\DefaultController.cs" />
     <Compile Include="Global.asax.cs">
@@ -341,6 +342,7 @@
     <Content Include="Views\Web.config" />
     <Content Include="Views\Default\Loader.cshtml" />
     <Content Include="Views\Security\Login.cshtml" />
+    <Content Include="Views\Prototypes\List.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

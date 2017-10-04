@@ -1,0 +1,195 @@
+﻿<div id="PrototypesListPage">
+    <h1>Prototypes List</h1>
+
+    <div class="ActionBar"></div>
+
+    @*<form id="List">
+        @Html.HiddenFor(m => m.Page, new { @class = "Page" })
+        @Html.HiddenFor(m => m.PagesCount, new { @class = "PagesCount" })
+
+        <label>
+            Name
+            @Html.TextBoxFor(m => m.Name)
+        </label>
+        <label>
+            Company
+            @Html.DropDownListFor(m => m.Company, Model.Companies.Select(x => new SelectListItem() { Text = x.Code, Value = x.Code, Selected = Model.Company == x.Code }))
+        </label>
+        <label>
+            Department
+            @Html.DropDownListFor(m => m.Department, Model.Departments.Select(x => new SelectListItem() { Text = x.Code, Value = x.Code, Selected = Model.Department == x.Code }), null, String.IsNullOrEmpty(Model.Company) ? new { disabled = "disabled" } : null)
+        </label>
+        <label>
+            Prototype Type
+            @Html.DropDownListFor(m => m.PrototypeType, Model.PrototypeTypes.Select(x => new SelectListItem() { Text = x.Code, Value = x.Code, Selected = Model.PrototypeType == x.Code }), null, String.IsNullOrEmpty(Model.Department) ? new { disabled = "disabled" } : null)
+        </label>
+        <label>
+            State
+            @Html.DropDownListFor(m => m.State, Matematici.Entities.VersionStates.All.Select(x => new SelectListItem() { Text = x.Code, Value = x.Code, Selected = Model.State == x.Code }), "All", null)
+        </label>
+    </form>
+
+    @if (Model.GridRows.Count > 0)
+    {
+        <table class="Grid">
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Description</th>
+                    <th>Version</th>
+                    <th>Validity Start Date (UTC)</th>
+                    <th>Validity End Date (UTC)</th>
+                    <th>Created By</th>
+                    <th>Created On</th>
+                    <th>Modified By</th>
+                    <th>Modified On</th>
+                    <th>State</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var Row in Model.GridRows)
+                {
+                    <tr class="Handler" data-code="@Row.Code" data-version="@Row.Version" data-state="@Row.VersionState" data-open-url="@Url.Action("Detail", new { IsNew = false, Code = Row.Code, Version = Row.Version })" data-template-url="@Url.Action("Detail", new { IsNew = true, Code = Row.Code, Version = Row.Version })">
+                        <td>
+                            @Row.Code
+                        </td>
+                        <td>
+                            @Row.Description
+                        </td>
+                        <td>
+                            @Row.Version
+                        </td>
+                        <td>
+                            @(Row.ValidFrom != null ? Row.ValidFrom.Value.ToString("dd/MM/yyyy HH:mm") : "-")
+                        </td>
+                        <td>
+                            @(Row.ValidUntil != null ? Row.ValidUntil.Value.ToString("dd/MM/yyyy HH:mm") : "-")
+                        </td>
+                        <td>
+                            @(String.IsNullOrEmpty(Row.CreatedBy) ? "-" : Row.CreatedBy)
+                        </td>
+                        <td>
+                            @(Row.CreatedOn != null ? Row.CreatedOn.ToString("dd/MM/yyyy HH:mm") : "-")
+                        </td>
+                        <td>
+                            @(String.IsNullOrEmpty(Row.ModifiedBy) ? "-" : Row.ModifiedBy)
+                        </td>
+                        <td>
+                            @(Row.ModifiedOn != null ? Row.ModifiedOn.Value.ToString("dd/MM/yyyy HH:mm") : "-")
+                        </td>
+                        <td>
+                            @Row.VersionState
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+            <div class="Pager"></div>
+            <div style="clear:both"></div>
+    }
+    else
+    {
+        <label class="Clearing">
+            No records found.
+        </label>
+    }*@
+</div>
+
+if (!Model.IsPostBack)
+{
+    <script type="text/javascript">
+        matematici.events.onPageLoad = function (callback) {
+            var
+                form = $("form#List"),
+
+                handler = function () {
+                    matematici.navigator.open("@Url.Action("List")", false, true);
+                },
+
+                openPrototypeHandler = function (url) {
+                    matematici.navigator.open(url, false, false);
+                },
+
+                useAsTemplateHandler = function (url) {
+                    matematici.navigator.open(url, false, false);
+                },
+
+                createNewVersionHandler = function (data) {
+                    $.ajax({
+                        url: matematici.urls.prototypes.createNewVersion,
+                        type: "post",
+                        data: JSON.stringify(data),
+                        contentType: "application/json"
+
+                    }).done(function (result) {
+                        if (result.error) {
+                            matematici.dialog.error("Error", result.message);
+                        } else if (result.redirect) {
+                            matematici.navigator.open(result.redirect, false, false);
+                        } else {
+                            handler();
+                        }
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                        console.log("Server error", jqXHR, textStatus, errorThrown);
+                        alert("Server error: " + errorThrown);
+                    });
+                },
+
+                submit = function (url) {
+                    if (!url)
+                        handler();
+                    else if (form.valid())
+                        $.ajax({
+                            url: url,
+                            type: "post",
+                            data: form.serialize()
+                        }).done(function (result) {
+                            matematici.events.onPageDestroy();
+                            $("#PrototypesListPage").html(result);
+                            matematici.events.onPageLoad(callback);
+                        }).fail(function (jqXHR, textStatus, errorThrown) {
+                            console.log("Server error", jqXHR, textStatus, errorThrown);
+                            alert("Server error: " + errorThrown);
+                        });
+                };
+
+            new matematici.Page({
+                name: "Prototypes List",
+                initializers: [
+                    new matematici.FixedHeader("div#Content table.Grid")
+                ]
+            });
+
+            new matematici.Pager(function () {
+                submit("@Url.Action("List")");
+            });
+
+            new matematici.ActionBar("div.ActionBar")
+                .add("New Empty Prototype", function () {
+                    matematici.navigator.open("@Url.Action("Detail", new { IsNew = true })");
+                })
+                .add("Search", function () {
+                    submit("@Url.Action("List")");
+                });
+
+            $("table.Grid").on("click", "tr.Handler", function () {
+                var buttons = [];
+                buttons.push({ text: "cancel", icon: "remove", cancelButton: true });
+                if ($(this).data("state") != prototypes.Prototype.states.draft) buttons.push({ text: "new version", icon: "file-o", handler: createNewVersionHandler, data: { code: $(this).data("code"), version: $(this).data("version") } });
+                buttons.push({ text: "use as template", icon: "copy", handler: useAsTemplateHandler, data: $(this).data("template-url") });
+                buttons.push({ text: "open", icon: "folder-open-o", handler: openPrototypeHandler, data: $(this).data("open-url") });
+
+                matematici.dialog.popupMenu(buttons);
+            });
+
+            //Refresh
+            $("select, input[type='text']").unbind().on("change", function (e) {
+                e.preventDefault();
+                submit("@Url.Action("List")");
+            });
+
+            callback.call();
+        };
+    </script>
+}

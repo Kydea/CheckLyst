@@ -23,6 +23,9 @@ namespace CheckListManager.Common.Logic.Security
             foreach (var Function in user.UserFunctions)
                 identity.AddClaim(new Claim(ClaimTypes.Role, $"{Function.FunctionGroup}#{Function.Function}#{Function.PrototypeType?.ToString() ?? string.Empty}#{Function.Tag ?? string.Empty}"));
 
+            foreach (var Function in user.UserFunctions.Select(x => x.FunctionGroup).Distinct())
+                identity.AddClaim(new Claim(ClaimTypes.Role, $"FunctionGroup#{Function}"));
+
             return identity;
         }
 
@@ -31,7 +34,8 @@ namespace CheckListManager.Common.Logic.Security
             return new Dictionary<string, string>
             {
                 { "company", user.Company.ToString() },
-                { "code", user.Code } //TODO: add more
+                { "code", user.Code },
+                { "name", user.Description } 
             };
         }
 

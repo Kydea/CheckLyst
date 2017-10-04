@@ -5,12 +5,9 @@
     </div>
 
     <div id="UserPanel" class="Padded Container">
-        @if (Security.CurrentUser != null)
-        {
-            <a class="User LeftFloating CurrentUser" href="#">
-                <span class="UserName" title="@Security.CurrentUser.Code">@Security.CurrentUser.Description</span> <i class="fa fa-user"></i>
-            </a>
-        }
+        <a class="User LeftFloating CurrentUser" href="#">
+            <span class="UserName"></span> <i class="fa fa-user"></i>
+        </a>
 
         @*@if (Security.Sessions != null)
         {
@@ -31,31 +28,29 @@
         <ul class="Menu Plain">
             <li class="MenuItem"><a class="MenuItem" href="@Url.Action("Dashboard", "Default")">Dashboard</a></li>
 
-            @if (Security.CurrentUser != null && Security.CurrentUser.Roles.Any(x => x.Code == "Company#Profiles"))
-            {
-                <li class="MenuItem">
-                    <span class="MenuItem">Settings</span>
+            <li class="MenuItem CompanyRole">
+                <span class="MenuItem">Settings</span>
 
-                    <ul class="SubMenu">
-                        <li>
-                            <a href="@Url.Action("List", "ProfilesEditor")">Profiles Editor</a>
-                        </li>
-                        <li>
-                            <a href="@Url.Action("List", "PrototypeTypesEditor")">Prototype Types List</a>
-                        </li>
-                        <li>
-                            <a href="@Url.Action("List", "AuditTrail")">Audit Trail</a>
-                        </li>
-                        <li>
-                            <a href="@Url.Action("List", "DataSourcesManager")">Data Sources Manager</a>
-                        </li>
-                    </ul>
-                </li>
-            }
-            <li class="MenuItem">
-                <a href="@Url.Action("List", "PrototypesEditor")" class="MenuItem">Prototypes</a>
+                <ul class="SubMenu">
+                    <li data-role="Company#Profiles">
+                        <a href="@Url.Action("List", "ProfilesEditor")">Profiles Editor</a>
+                    </li>
+                    <li data-role="Company#PrototypeTypes">
+                        <a href="@Url.Action("List", "PrototypeTypesEditor")">Prototype Types List</a>
+                    </li>
+                    <li data-role="Company#AuditTrail">
+                        <a href="@Url.Action("List", "AuditTrail")">Audit Trail</a>
+                    </li>
+                    <li data-role="Company#Data">
+                        <a href="@Url.Action("List", "DataSourcesManager")">Data Sources Manager</a>
+                    </li>
+                </ul>
             </li>
-            <li class="MenuItem">
+
+            <li data-role="FunctionGroup#Prototype" class="MenuItem">
+                <a href="@Url.Action("List", "Prototypes")" class="MenuItem">Prototypes</a>
+            </li>
+            <li data-role="FunctionGroup#Prototype" class="MenuItem">
                 <a href="@Url.Action("List", "InstancesEditor")" class="MenuItem">Instances </a>
             </li>
 
