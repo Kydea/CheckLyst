@@ -1,9 +1,9 @@
-﻿using CheckListManager.Common.Logic.Security;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Web;
+using CheckListManager.Common.Core.Web.Security;
 
 namespace CheckListManager.WebApplication
 {

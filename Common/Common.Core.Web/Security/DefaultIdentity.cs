@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace CheckListManager.Common.Logic.Api.Authentication
+namespace CheckListManager.Common.Core.Web.Security
 {
 	public class DefaultIdentity : ClaimsIdentity
 	{

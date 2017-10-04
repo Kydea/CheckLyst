@@ -1,5 +1,5 @@
 ﻿using System.Web.Http;
-using CheckListManager.Common.Logic.Api.Authentication;
+using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Logic.Api.Messages;
 
 namespace CheckListManager.Common.Logic.Api
@@ -8,7 +8,7 @@ namespace CheckListManager.Common.Logic.Api
 	{
 		private DefaultIdentity _identity;
 
-		public DefaultIdentity Identity
+		protected DefaultIdentity Identity
 			=> _identity ?? (_identity = User?.Identity as DefaultIdentity);
 
 		protected IHttpActionResult Error(ResponseMessage message)
