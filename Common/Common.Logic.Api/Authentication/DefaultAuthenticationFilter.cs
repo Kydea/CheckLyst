@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Filters;
+using CheckListManager.Common.Core.Web.Security;
 
 namespace CheckListManager.Common.Logic.Api.Authentication
 {

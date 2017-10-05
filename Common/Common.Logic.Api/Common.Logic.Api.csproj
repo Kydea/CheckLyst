@@ -106,7 +106,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Authentication\DefaultAuthenticationFilter.cs" />
-    <Compile Include="Authentication\DefaultIdentity.cs" />
     <Compile Include="BaseApiController.cs" />
     <Compile Include="Configuration\ApiConfig.cs" />
     <Compile Include="Configuration\DefaultExceptionHandler.cs" />
@@ -120,6 +119,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common.Core.Web\Common.Core.Web.csproj">
+      <Project>{2FAFFF00-D5EB-4BB0-B70B-38290D88C871}</Project>
+      <Name>Common.Core.Web</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common.Core\Common.Core.csproj">
       <Project>{31DE9C2F-FB9D-472C-B28A-3C1EDEFF10DC}</Project>
       <Name>Common.Core</Name>

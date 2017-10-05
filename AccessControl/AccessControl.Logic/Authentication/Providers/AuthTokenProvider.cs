@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Autofac;
@@ -7,6 +8,7 @@ using Autofac.Core;
 using Autofac.Core.Lifetime;
 using CheckListManager.AccessControl.Logic.Exceptions;
 using CheckListManager.AccessControl.Logic.Services;
+using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Data;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.OAuth;
@@ -41,9 +43,9 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
 					var userService = scope.Resolve<IUserService>();
 					var user = await userService.AuthenticateAsync(companyId, context.UserName, context.Password);
 
-                    var identity = Common.Logic.Security.Token.CraeateIdentity(context.Options.AuthenticationType, user);
+                    var identity = CreateIdentity(context.Options.AuthenticationType, user);
 
-                    var properties = new AuthenticationProperties(Common.Logic.Security.Token.CreateProperties(user))
+                    var properties = new AuthenticationProperties(CreateProperties(user))
                     {
                         AllowRefresh = true
                     };
@@ -85,6 +87,33 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
 		{
 			context.Validated();
 			return Task.FromResult<object>(null);
+		}
+
+		private static ClaimsIdentity CreateIdentity(string authenticationType, Users user)
+		{
+			var identity = new ClaimsIdentity(authenticationType);
+			identity.AddClaim(new Claim(ClaimTypes.Version, Token.Version));
+			identity.AddClaim(new Claim(ClaimTypes.Sid, user.Code));
+			identity.AddClaim(new Claim(ClaimTypes.Name, user.Description));
+			identity.AddClaim(new Claim("CompanyId", user.Company.ToString(), ClaimValueTypes.Integer));
+
+			foreach (var function in user.UserFunctions)
+				identity.AddClaim(new Claim(ClaimTypes.Role, $"{function.FunctionGroup}#{function.Function}#{function.PrototypeType?.ToString() ?? string.Empty}#{function.Tag ?? string.Empty}"));
+
+			foreach (var function in user.UserFunctions.Select(x => x.FunctionGroup).Distinct())
+				identity.AddClaim(new Claim(ClaimTypes.Role, $"FunctionGroup#{function}"));
+
+			return identity;
+		}
+
+		private static Dictionary<string, string> CreateProperties(Users user)
+		{
+			return new Dictionary<string, string>
+			{
+				{ "company", user.Company.ToString() },
+				{ "code", user.Code },
+				{ "name", user.Description }
+			};
 		}
 	}
 }

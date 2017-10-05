@@ -1,6 +1,6 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using System.Web.Mvc;
+using CheckListManager.Common.Core.Web.Security;
 
 namespace CheckListManager.WebApplication.Controllers
 {
@@ -14,14 +14,14 @@ namespace CheckListManager.WebApplication.Controllers
             return Request["AppMode"] == "1";
         }
 
-        protected override void OnException(ExceptionContext FilterContext)
+        protected override void OnException(ExceptionContext filterContext)
         {
-            if (FilterContext.Exception is Common.Logic.Security.InvalidTokenException)
+            if (filterContext.Exception is InvalidTokenException)
             {
-                FilterContext.ExceptionHandled = true;
+                filterContext.ExceptionHandled = true;
                 Response.StatusCode = 498;
             }
-            base.OnException(FilterContext);
+            base.OnException(filterContext);
         }
 
         private void CheckAppMode()
