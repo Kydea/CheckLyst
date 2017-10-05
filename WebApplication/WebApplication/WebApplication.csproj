@@ -255,6 +255,7 @@
     </Content>
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
+    <Content Include="Scripts\Controls\DataPicker.js" />
     <Content Include="Scripts\Custom\TokenManager.js" />
     <Content Include="Scripts\Custom\ActionBar.js" />
     <Content Include="Scripts\Custom\CheckListGrid.js" />
@@ -268,6 +269,8 @@
     <Content Include="Scripts\Custom\Scroller.js" />
     <Content Include="Scripts\Custom\SignatureBook.js" />
     <Content Include="Scripts\Custom\UserPanel.js" />
+    <Content Include="Scripts\Controls\DropDownList.js" />
+    <Content Include="Scripts\Controls\Form.js" />
     <Content Include="Scripts\Instances\CountDown.js" />
     <Content Include="Scripts\Instances\ElementInformation.js" />
     <Content Include="Scripts\Instances\Event.js" />

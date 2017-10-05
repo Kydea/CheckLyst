@@ -3,18 +3,16 @@
 
     <div class="ActionBar"></div>
 
-    @*<form id="List">
-        @Html.HiddenFor(m => m.Page, new { @class = "Page" })
-        @Html.HiddenFor(m => m.PagesCount, new { @class = "PagesCount" })
-
+    <form id="List" action="/Prototypes/List">
         <label>
             Name
-            @Html.TextBoxFor(m => m.Name)
+            <input type="text" name="Name" />
         </label>
         <label>
-            Company
-            @Html.DropDownListFor(m => m.Company, Model.Companies.Select(x => new SelectListItem() { Text = x.Code, Value = x.Code, Selected = Model.Company == x.Code }))
+            Departnment
+            <input type="text" name="Department" class="List" />
         </label>
+        @*
         <label>
             Department
             @Html.DropDownListFor(m => m.Department, Model.Departments.Select(x => new SelectListItem() { Text = x.Code, Value = x.Code, Selected = Model.Department == x.Code }), null, String.IsNullOrEmpty(Model.Company) ? new { disabled = "disabled" } : null)
@@ -26,9 +24,10 @@
         <label>
             State
             @Html.DropDownListFor(m => m.State, Matematici.Entities.VersionStates.All.Select(x => new SelectListItem() { Text = x.Code, Value = x.Code, Selected = Model.State == x.Code }), "All", null)
-        </label>
+        </label>*@
     </form>
 
+    @*
     @if (Model.GridRows.Count > 0)
     {
         <table class="Grid">
