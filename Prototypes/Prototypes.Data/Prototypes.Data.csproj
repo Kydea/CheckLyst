@@ -7,7 +7,7 @@
     <ProjectGuid>{B1773E1A-FDE3-4D1C-BDE0-3C5A6B2B3514}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CheckListManager.Audit.Data</RootNamespace>
+    <RootNamespace>CheckListManager.Prototypes.Data</RootNamespace>
     <AssemblyName>CheckListManager.Audit.Data</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -55,8 +55,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AuditRepository.cs" />
-    <Compile Include="IAuditRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

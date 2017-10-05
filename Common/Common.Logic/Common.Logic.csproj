@@ -70,6 +70,8 @@
     <Compile Include="Cache\IRedisSetup.cs" />
     <Compile Include="Cache\RedisCache.cs" />
     <Compile Include="Cache\RedisSetup.cs" />
+    <Compile Include="DataEngine\FormResponse.cs" />
+    <Compile Include="DataEngine\ValidationMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Queue\QueueMessage.cs" />
     <Compile Include="Queue\QueueName.cs" />
