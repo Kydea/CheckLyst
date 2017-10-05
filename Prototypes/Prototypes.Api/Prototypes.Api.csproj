@@ -13,7 +13,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CheckListManager.Prototypes.Api</RootNamespace>
-    <AssemblyName>CheckListManager.Audit.Api</AssemblyName>
+    <AssemblyName>CheckListManager.Prototypes.Api</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <UseIISExpress>false</UseIISExpress>
     <IISExpressSSLPort />

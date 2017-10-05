@@ -22,7 +22,7 @@ namespace CheckListManager.Common.Logic.Api.Configuration
 {
 	public abstract class ApiConfig
 	{
-		public bool LoadAssemblies { private get; set; }
+		protected bool LoadAssemblies { private get; set; }
 
 		private Assembly[] _assemblies;
 

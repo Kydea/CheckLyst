@@ -1,11 +1,5 @@
 ﻿using CheckListManager.Common.Logic.Api;
-using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Prototypes.Logic.List;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 

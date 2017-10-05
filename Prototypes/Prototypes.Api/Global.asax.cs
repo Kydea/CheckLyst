@@ -1,7 +1,7 @@
 ﻿using System.Web;
 using System.Web.Http;
 
-namespace CheckListManager.Audit.Api
+namespace CheckListManager.Prototypes.Api
 {
     public class WebApiApplication : HttpApplication
     {
