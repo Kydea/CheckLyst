@@ -3,104 +3,111 @@
 
     <div class="ActionBar"></div>
 
-    <form id="List" action="/Prototypes/List">
+    <form id="Filters" action="/API/Prototypes/List/Bind">
         <label>
             Name
             <input type="text" name="Name" />
         </label>
         <label>
             Department
-            <input type="text" name="Department" class="List" />
-        </label>
-        @*
-        <label>
-            Department
-            @Html.DropDownListFor(m => m.Department, Model.Departments.Select(x => new SelectListItem() { Text = x.Code, Value = x.Code, Selected = Model.Department == x.Code }), null, String.IsNullOrEmpty(Model.Company) ? new { disabled = "disabled" } : null)
+            <select name="Department" class="Trigger" />
         </label>
         <label>
             Prototype Type
-            @Html.DropDownListFor(m => m.PrototypeType, Model.PrototypeTypes.Select(x => new SelectListItem() { Text = x.Code, Value = x.Code, Selected = Model.PrototypeType == x.Code }), null, String.IsNullOrEmpty(Model.Department) ? new { disabled = "disabled" } : null)
+            <select name="PrototypeType" />
         </label>
         <label>
             State
-            @Html.DropDownListFor(m => m.State, Matematici.Entities.VersionStates.All.Select(x => new SelectListItem() { Text = x.Code, Value = x.Code, Selected = Model.State == x.Code }), "All", null)
-        </label>*@
+            <select name="State" />
+        </label>
     </form>
 
     @*
-    @if (Model.GridRows.Count > 0)
-    {
-        <table class="Grid">
-            <thead>
-                <tr>
-                    <th>Code</th>
-                    <th>Description</th>
-                    <th>Version</th>
-                    <th>Validity Start Date (UTC)</th>
-                    <th>Validity End Date (UTC)</th>
-                    <th>Created By</th>
-                    <th>Created On</th>
-                    <th>Modified By</th>
-                    <th>Modified On</th>
-                    <th>State</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var Row in Model.GridRows)
-                {
-                    <tr class="Handler" data-code="@Row.Code" data-version="@Row.Version" data-state="@Row.VersionState" data-open-url="@Url.Action("Detail", new { IsNew = false, Code = Row.Code, Version = Row.Version })" data-template-url="@Url.Action("Detail", new { IsNew = true, Code = Row.Code, Version = Row.Version })">
-                        <td>
-                            @Row.Code
-                        </td>
-                        <td>
-                            @Row.Description
-                        </td>
-                        <td>
-                            @Row.Version
-                        </td>
-                        <td>
-                            @(Row.ValidFrom != null ? Row.ValidFrom.Value.ToString("dd/MM/yyyy HH:mm") : "-")
-                        </td>
-                        <td>
-                            @(Row.ValidUntil != null ? Row.ValidUntil.Value.ToString("dd/MM/yyyy HH:mm") : "-")
-                        </td>
-                        <td>
-                            @(String.IsNullOrEmpty(Row.CreatedBy) ? "-" : Row.CreatedBy)
-                        </td>
-                        <td>
-                            @(Row.CreatedOn != null ? Row.CreatedOn.ToString("dd/MM/yyyy HH:mm") : "-")
-                        </td>
-                        <td>
-                            @(String.IsNullOrEmpty(Row.ModifiedBy) ? "-" : Row.ModifiedBy)
-                        </td>
-                        <td>
-                            @(Row.ModifiedOn != null ? Row.ModifiedOn.Value.ToString("dd/MM/yyyy HH:mm") : "-")
-                        </td>
-                        <td>
-                            @Row.VersionState
-                        </td>
+        @if (Model.GridRows.Count > 0)
+        {
+            <table class="Grid">
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Description</th>
+                        <th>Version</th>
+                        <th>Validity Start Date (UTC)</th>
+                        <th>Validity End Date (UTC)</th>
+                        <th>Created By</th>
+                        <th>Created On</th>
+                        <th>Modified By</th>
+                        <th>Modified On</th>
+                        <th>State</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var Row in Model.GridRows)
+                    {
+                        <tr class="Handler" data-code="@Row.Code" data-version="@Row.Version" data-state="@Row.VersionState" data-open-url="@Url.Action("Detail", new { IsNew = false, Code = Row.Code, Version = Row.Version })" data-template-url="@Url.Action("Detail", new { IsNew = true, Code = Row.Code, Version = Row.Version })">
+                            <td>
+                                @Row.Code
+                            </td>
+                            <td>
+                                @Row.Description
+                            </td>
+                            <td>
+                                @Row.Version
+                            </td>
+                            <td>
+                                @(Row.ValidFrom != null ? Row.ValidFrom.Value.ToString("dd/MM/yyyy HH:mm") : "-")
+                            </td>
+                            <td>
+                                @(Row.ValidUntil != null ? Row.ValidUntil.Value.ToString("dd/MM/yyyy HH:mm") : "-")
+                            </td>
+                            <td>
+                                @(String.IsNullOrEmpty(Row.CreatedBy) ? "-" : Row.CreatedBy)
+                            </td>
+                            <td>
+                                @(Row.CreatedOn != null ? Row.CreatedOn.ToString("dd/MM/yyyy HH:mm") : "-")
+                            </td>
+                            <td>
+                                @(String.IsNullOrEmpty(Row.ModifiedBy) ? "-" : Row.ModifiedBy)
+                            </td>
+                            <td>
+                                @(Row.ModifiedOn != null ? Row.ModifiedOn.Value.ToString("dd/MM/yyyy HH:mm") : "-")
+                            </td>
+                            <td>
+                                @Row.VersionState
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
 
-            <div class="Pager"></div>
-            <div style="clear:both"></div>
-    }
-    else
-    {
-        <label class="Clearing">
-            No records found.
-        </label>
-    }*@
+                <div class="Pager"></div>
+                <div style="clear:both"></div>
+        }
+        else
+        {
+            <label class="Clearing">
+                No records found.
+            </label>
+        }*@
 </div>
 
-if (!Model.IsPostBack)
-{
-    <script type="text/javascript">
-        matematici.events.onPageLoad = function (callback) {
+<script type="text/javascript">
+    matematici.events.onPageLoad = function (callback) {
+        new matematici.Page({
+            name: "Prototypes List",
+            initializers: [
+                //new matematici.FixedHeader("div#Content table.Grid")
+                new matematici.Form("form#Filters")
+            ]
+        });
+
+        callback.call();
+    };
+</script>
+
+<script type="text/javascript">
+        matematici.events.NO____onPageLoad = function (callback) {
             var
-                form = $("form#List"),
+                form = $("form#Filters"),
 
                 handler = function () {
                     matematici.navigator.open("@Url.Action("List")", false, true);
@@ -153,13 +160,6 @@ if (!Model.IsPostBack)
                         });
                 };
 
-            new matematici.Page({
-                name: "Prototypes List",
-                initializers: [
-                    new matematici.FixedHeader("div#Content table.Grid")
-                ]
-            });
-
             new matematici.Pager(function () {
                 submit("@Url.Action("List")");
             });
@@ -190,5 +190,4 @@ if (!Model.IsPostBack)
 
             callback.call();
         };
-    </script>
-}
+</script>

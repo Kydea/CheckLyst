@@ -16,7 +16,5 @@ namespace CheckListManager.Common.Logic.DataEngine
         public string Level { get; set; }
 
         public string Message { get; set; }
-
-        public string FieldName { get; set; } //null = form message
     }
 }

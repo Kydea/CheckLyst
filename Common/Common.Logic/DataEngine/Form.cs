@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace CheckListManager.Common.Logic.DataEngine
 {
-    public class FormResponse
+    public class Form
     {
-        public Dictionary<string, Dictionary<string, string>> FieldsValues { get; } = new Dictionary<string, Dictionary<string, string>>();
+        public Dictionary<string, Field> Fields { get; } = new Dictionary<string, Field>();
 
         public List<ValidationMessage> ValidationMessages { get; } = new List<ValidationMessage>();
     }

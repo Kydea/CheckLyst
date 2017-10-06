@@ -99,7 +99,7 @@
 
         resetForm: function () {
             var form = $("form", matematici.elements.content);
-            if (form.size() > 0) {
+			if (form.size() > 0) {
                 form.unbind();
                 form.data('validator', null);
                 $.validator.unobtrusive.parse(matematici.elements.content);

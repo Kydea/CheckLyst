@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace CheckListManager.Prototypes.Logic.List
 {
-    public class ListRequest
+    public class ListRequest : Request
     {
         public string Name { get; set; }
 
-        public int Department { get; set; }
+        public long? Department { get; set; }
 
-        public int PrototypeType { get; set; }
+        public long? PrototypeType { get; set; }
 
         public string State { get; set; }
     }

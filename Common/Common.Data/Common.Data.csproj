@@ -89,9 +89,8 @@
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="Infrastructure\Expression.cs" />
-    <Compile Include="Infrastructure\IInfrastructureRepository.cs" />
-    <Compile Include="Infrastructure\InfrastructureRepository.cs" />
+    <Compile Include="ICommonRepository.cs" />
+    <Compile Include="CommonRepository.cs" />
     <Compile Include="InstanceExpressionValues.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>

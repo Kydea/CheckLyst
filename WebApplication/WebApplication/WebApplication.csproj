@@ -180,7 +180,6 @@
     <Content Include="Scripts\Custom\Scroller.js" />
     <Content Include="Scripts\Custom\SignatureBook.js" />
     <Content Include="Scripts\Custom\UserPanel.js" />
-    <Content Include="Scripts\Controls\DropDownList.js" />
     <Content Include="Scripts\Controls\Form.js" />
     <Content Include="Scripts\Instances\CountDown.js" />
     <Content Include="Scripts\Instances\ElementInformation.js" />

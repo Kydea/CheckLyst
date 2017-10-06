@@ -1,11 +1,22 @@
 ﻿<script type="text/javascript">
 	$.datepicker.setDefaults({ dateFormat: 'dd/mm/yy' });
 
-    $(document).ajaxStart(function () {
-        matematici.loader.show();
-    }).ajaxStop(function () {
-        matematici.loader.hide();
-        });
+    $(document).ajaxStart(
+        function () {
+            matematici.loader.show();
+        }).ajaxStop(function () {
+            matematici.loader.hide();
+        }).ajaxError(function (event, jqxhr, settings, thrownError) {
+            var message = "";
+            if (jqxhr.responseJSON && jqxhr.responseJSON.Messages)
+                for (var index in jqxhr.responseJSON.Messages)
+                    message += jqxhr.responseJSON.Messages[index] + "<br />";
+            else
+                message = thrownError;
+            console.log(event, jqxhr, settings, thrownError);
+            matematici.dialog.error("Error", message);
+        }
+    );
 
     $.ajaxSetup({
         beforeSend: function (xhr) {

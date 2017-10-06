@@ -73,9 +73,7 @@ namespace CheckListManager.Common.Core.Cache
 		public void Set(string key, object value, string regionName = null)
 		{
 			if (value != null)
-			{
 				_storage.Set(ResolveKey(key, regionName), value, DefaultCacheItemPolicy);
-			}
 		}
 
 		public async Task SetAsync(string key, object value, string regionName = null)

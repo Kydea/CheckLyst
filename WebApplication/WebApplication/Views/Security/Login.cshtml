@@ -13,7 +13,7 @@
                 </div>}
 
             <input type="hidden" name="grant_type" value="password" />
-            <input type="hidden" name="companyId" value="2" />
+            <input type="text" name="companyId" value="2" />
             <label for="username">User code</label>
             <input type="text" name="username" />
             <label for="password">Password</label>
@@ -51,7 +51,7 @@
                 matematici.client.createNew(function () { matematici.navigator.open("@Model"); });
                 //matematici.clock.resume();
             }).fail(function (jqXhr, textStatus, errorThrown) {
-                $("div.Errors", form).html(jqXhr.responseJSON.error_description || errorThrown).show();
+                $("div.Errors", form).html(jqXhr.responseJSON && jqXhr.responseJSON.error_description || errorThrown).show();
                 console.log(jqXhr, textStatus, errorThrown);
             });
         });
