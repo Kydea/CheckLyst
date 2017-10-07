@@ -92,7 +92,7 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
 		private static ClaimsIdentity CreateIdentity(string authenticationType, Users user)
 		{
 			var identity = new ClaimsIdentity(authenticationType);
-			identity.AddClaim(new Claim(ClaimTypes.Version, Token.Version));
+			identity.AddClaim(new Claim(ClaimTypes.Version, DefaultIdentity.Version));
 			identity.AddClaim(new Claim(ClaimTypes.Sid, user.Code));
 			identity.AddClaim(new Claim(ClaimTypes.Name, user.Description));
 			identity.AddClaim(new Claim("CompanyId", user.Company.ToString(), ClaimValueTypes.Integer));
