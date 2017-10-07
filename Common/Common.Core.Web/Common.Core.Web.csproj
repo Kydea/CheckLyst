@@ -52,8 +52,6 @@
     <Compile Include="Security\DefaultIdentity.cs" />
     <Compile Include="Security\InvalidTokenException.cs" />
     <Compile Include="Security\Role.cs" />
-    <Compile Include="Security\Token.cs" />
-    <Compile Include="Security\User.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Common.Core.Web.snk" />

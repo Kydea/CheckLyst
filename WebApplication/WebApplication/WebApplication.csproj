@@ -50,8 +50,8 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="Code\AuthenticationFilter.cs" />
-    <Compile Include="Code\Security.cs" />
+    <Compile Include="Code\DefaultAuthorizeAttribute.cs" />
+    <Compile Include="Code\DefaultViewPage.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\PrototypesController.cs" />
     <Compile Include="Controllers\SecurityController.cs" />

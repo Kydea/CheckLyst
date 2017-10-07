@@ -8,8 +8,13 @@ namespace CheckListManager.WebApplication.Controllers
     [Authorize]
     public class BaseController : Controller
     {
+	    private DefaultIdentity _identity;
+
+	    protected DefaultIdentity Identity
+		    => _identity ?? (_identity = User?.Identity as DefaultIdentity);
+
 	    // ReSharper disable once MemberCanBePrivate.Global
-	    protected bool IsAppMode()
+		protected bool IsAppMode()
         {
             return Request["AppMode"] == "1";
         }

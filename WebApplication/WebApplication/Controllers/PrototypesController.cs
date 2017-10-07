@@ -1,5 +1,5 @@
-﻿using System;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
+using CheckListManager.WebApplication.Code;
 
 namespace CheckListManager.WebApplication.Controllers
 {
@@ -7,7 +7,7 @@ namespace CheckListManager.WebApplication.Controllers
     public class PrototypesController : BaseController
 	{
         [Route("List")]
-        [Authorize(Roles = "FunctionGroup#Prototype")]
+        [DefaultAuthorize(Roles = "FunctionGroup#Prototype")]
         public ActionResult List()
         {
             return ConditionalView("List");

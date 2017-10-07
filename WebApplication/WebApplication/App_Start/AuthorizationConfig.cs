@@ -7,7 +7,7 @@ namespace CheckListManager.WebApplication
     {
         public static void Setup(IAppBuilder App)
         {
-            App.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions());
+			App.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions());
 		}
 	}
 }
