@@ -8,7 +8,7 @@ namespace CheckListManager.Audit.Terminal
 {
 	public class AuditWindowsService : TimerWindowsService
 	{
-		public AuditWindowsService(TerminalConfig config) : base(config, 60000)
+		public AuditWindowsService(TerminalConfig config) : base(config, 5000)
 		{
 		}
 

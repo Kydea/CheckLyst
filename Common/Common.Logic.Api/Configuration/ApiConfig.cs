@@ -5,107 +5,31 @@ using System.Reflection;
 using System.Web.Compilation;
 using System.Web.Http;
 using System.Web.Http.ExceptionHandling;
-using Amazon.SQS;
 using Autofac;
 using Autofac.Integration.WebApi;
-using AutoMapper;
-using CheckListManager.Common.Core.Cache;
-using CheckListManager.Common.Core.Services;
-using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Authentication;
 using CheckListManager.Common.Logic.Api.Filters;
-using CheckListManager.Common.Logic.Cache;
+using CheckListManager.Common.Logic.Configuration;
 using Microsoft.Owin.Security.OAuth;
 using NLog;
 
 namespace CheckListManager.Common.Logic.Api.Configuration
 {
-	public abstract class ApiConfig
+	public abstract class ApiConfig : ConfigBase
 	{
-		protected bool LoadAssemblies { private get; set; }
+		public bool LoadAssemblies { private get; set; }
 
-		private Assembly[] _assemblies;
+		protected override bool UseInstancePerRequest => true;
 
-		private Assembly[] Assemblies
-			=> _assemblies ?? (_assemblies = (LoadAssemblies
-								? BuildManager
-									.GetReferencedAssemblies()
-									.Cast<Assembly>()
-								: AppDomain.CurrentDomain.GetAssemblies())
-							.Where(a => a.FullName.StartsWith($"{nameof(CheckListManager)}."))
-							.ToArray());
-
-		public ContainerBuilder CreateBuilder()
+		protected override void OnCreateBuilder(ContainerBuilder builder)
 		{
-			var builder = new ContainerBuilder();
-
+			base.OnCreateBuilder(builder);
 			builder.RegisterApiControllers(Assemblies);
-
-			builder.RegisterAssemblyTypes(Assemblies)
-				.AssignableTo<IRedisSetup>()
-				.AsImplementedInterfaces()
-				.SingleInstance();
-
-			builder.RegisterAssemblyTypes(Assemblies)
-				.AssignableTo<ISingletonService>()
-				.AsImplementedInterfaces()
-				.SingleInstance();
-
-			builder.RegisterAssemblyTypes(Assemblies)
-				.AssignableTo<IMemoryCache>()
-				.AsImplementedInterfaces()
-				.SingleInstance();
-
-			builder.RegisterAssemblyTypes(Assemblies)
-				.AssignableTo<IService>()
-				.AsImplementedInterfaces()
-				.InstancePerRequest();
-
-			builder.RegisterAssemblyTypes(Assemblies)
-				.AssignableTo<IRepository>()
-				.AsImplementedInterfaces()
-				.InstancePerRequest();
-
-			builder.RegisterType<RelationalDatabaseEntities>()
-				.AsSelf()
-				.InstancePerRequest();
-
-			builder.RegisterAssemblyTypes(Assemblies)
-				.AssignableTo<IRedisCache>()
-				.AsImplementedInterfaces()
-				.InstancePerDependency();
-
-			builder.RegisterType<AmazonSQSConfig>()
-				.AsSelf()
-				.SingleInstance()
-				.OnActivating(e => e.Instance.ServiceURL = "https://sqs.eu-west-1.amazonaws.com/"); //TODO resolve dependency and get from config
-
-			builder.RegisterType<AmazonSQSClient>()
-				.As<IAmazonSQS>()
-				.AsSelf()
-				.InstancePerRequest();
-
-			builder.RegisterInstance(CreateMapper())
-				.SingleInstance();
-
-			OnCreateBuilder(builder);
-
-			return builder;
 		}
 
-		protected /*virtual Uncomment when needed*/ void OnCreateBuilder(ContainerBuilder builder)
+		protected override Assembly[] GetAssemblies()
 		{
-			
-		}
-
-		private IMapper CreateMapper()
-		{
-			return new Mapper(new MapperConfiguration(OnCreateMapper));
-		}
-
-		protected virtual void OnCreateMapper(IMapperConfigurationExpression mapperConfig)
-		{
-			
+			return LoadAssemblies ? BuildManager.GetReferencedAssemblies().Cast<Assembly>().ToArray() : base.GetAssemblies();
 		}
 	}
 

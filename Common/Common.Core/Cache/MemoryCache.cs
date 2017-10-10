@@ -28,57 +28,60 @@ namespace CheckListManager.Common.Core.Cache
 
 		public Task<T> GetAsync<T>(string key, string regionName = null) => Task.FromResult(Get<T>(ResolveKey(key, regionName)));
 
-		public object GetOrAdd(string key, Func<string, object> addFunction, string regionName = null)
+		public object GetOrAdd(string key, Func<string, object> addFunction, string regionName = null, TimeSpan? expiry = null)
 		{
 			var result = Get(key, regionName);
 			if (result == null)
 			{
 				result = addFunction(key);
-				Set(key, result, regionName);
+				Set(key, result, regionName, expiry);
 			}
 
 			return result;
 		}
 
-		public T GetOrAdd<T>(string key, Func<string, T> addFunction, string regionName = null)
+		public T GetOrAdd<T>(string key, Func<string, T> addFunction, string regionName = null, TimeSpan? expiry = null)
 		{
 			var result = Get<T>(key, regionName);
 			if (Equals(result, default(T)))
 			{
 				result = addFunction(key);
-				Set(key, result, regionName);
+				Set(key, result, regionName, expiry);
 			}
 
 			return result;
 		}
 
-		public Task<object> GetOrAddAsync(string key, Func<string, object> addFunction, string regionName = null)
-			=> Task.FromResult(GetOrAdd(key, addFunction, regionName));
+		public Task<object> GetOrAddAsync(string key, Func<string, object> addFunction, string regionName = null, TimeSpan? expiry = null)
+			=> Task.FromResult(GetOrAdd(key, addFunction, regionName, expiry));
 
-		public Task<T> GetOrAddAsync<T>(string key, Func<string, T> addFunction, string regionName = null)
-			=> Task.FromResult(GetOrAdd(key, addFunction, regionName));
+		public Task<T> GetOrAddAsync<T>(string key, Func<string, T> addFunction, string regionName = null, TimeSpan? expiry = null)
+			=> Task.FromResult(GetOrAdd(key, addFunction, regionName, expiry));
 
-		public async Task<T> GetOrAddAsync<T>(string key, Func<string, Task<T>> addFunctionAsync, string regionName = null)
+		public async Task<T> GetOrAddAsync<T>(string key, Func<string, Task<T>> addFunctionAsync, string regionName = null, TimeSpan? expiry = null)
 		{
 			var result = Get<T>(key, regionName);
 			if (Equals(result, default(T)))
 			{
 				result = await addFunctionAsync(key);
-				Set(key, result, regionName);
+				Set(key, result, regionName, expiry);
 			}
 
 			return result;
 		}
 
-		public void Set(string key, object value, string regionName = null)
+		public void Set(string key, object value, string regionName = null, TimeSpan? expiry = null)
 		{
 			if (value != null)
-				_storage.Set(ResolveKey(key, regionName), value, DefaultCacheItemPolicy);
+				_storage.Set(ResolveKey(key, regionName), value,
+					expiry == null
+						? DefaultCacheItemPolicy
+						: new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.Add(expiry.Value) });
 		}
 
-		public async Task SetAsync(string key, object value, string regionName = null)
+		public async Task SetAsync(string key, object value, string regionName = null, TimeSpan? expiry = null)
 		{
-			await Task.Run(() => Set(key, value, regionName));
+			await Task.Run(() => Set(key, value, regionName, expiry));
 		}
 
 		public void Remove(string key, string regionName = null)

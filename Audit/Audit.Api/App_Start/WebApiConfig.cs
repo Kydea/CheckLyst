@@ -10,12 +10,7 @@ namespace CheckListManager.Audit.Api
 
 	    public static void Register(HttpConfiguration config)
 	    {
-		    var apiConfig = new WebApiConfig
-		    {
-			    LoadAssemblies = true
-		    };
-
-		    config.Configure(apiConfig);
+		    config.Configure(new WebApiConfig());
 	    }
 
 		#endregion

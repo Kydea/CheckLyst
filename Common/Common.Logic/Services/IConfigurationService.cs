@@ -6,5 +6,7 @@ namespace CheckListManager.Common.Logic.Services
 	{
 		string RedisHost { get; }
 		int RedisPort { get; }
+
+		string SqsBaseUrl { get; }
 	}
 }

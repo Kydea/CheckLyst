@@ -101,7 +101,7 @@ namespace CheckListManager.AccessControl.Logic.Services
 
 			return Task.WhenAll(
 				_userSessionRepository.CreateAsync(session),
-				_cache.SetAsync(identityToken.RefreshToken, identityToken, IdentityCacheRegion)
+				_cache.SetAsync(identityToken.RefreshToken, identityToken, IdentityCacheRegion, expiresOn - DateTimeOffset.UtcNow)
 			);
 		}
 
@@ -117,7 +117,7 @@ namespace CheckListManager.AccessControl.Logic.Services
 			if (session != null && session.ExpiresOn >= DateTimeOffset.UtcNow)
 			{
 				token = new IdentityToken(session.Ticket, session.Code, session.ExpiresOn);
-				await _cache.SetAsync(token.RefreshToken, token, IdentityCacheRegion);
+				await _cache.SetAsync(token.RefreshToken, token, IdentityCacheRegion, session.ExpiresOn - DateTimeOffset.UtcNow);
 			}
 
 			return token;
@@ -128,8 +128,8 @@ namespace CheckListManager.AccessControl.Logic.Services
 			token = new IdentityToken(token.AuthenticationTicket, token.RefreshToken, expiresOn);
 
 			return Task.WhenAll(
-				_cache.SetAsync(token.RefreshToken, token, IdentityCacheRegion),
-				_userSessionRepository.SetExpiresOnAsync(token.RefreshToken, DateTimeOffset.UtcNow)
+				_cache.SetAsync(token.RefreshToken, token, IdentityCacheRegion, expiresOn - DateTimeOffset.UtcNow),
+				_userSessionRepository.SetExpiresOnAsync(token.RefreshToken, expiresOn)
 			);
 		}
 

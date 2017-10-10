@@ -221,6 +221,10 @@
       <Project>{BE658746-48A9-4AF2-B2B6-A13A7D6DE439}</Project>
       <Name>Common.Logic.Api</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Common\Common.Logic\Common.Logic.csproj">
+      <Project>{351c3388-67b1-46ee-8fd1-5a63277b3c0c}</Project>
+      <Name>Common.Logic</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AccessControl.Data\AccessControl.Data.csproj">
       <Project>{2CB27F63-6C99-47B5-B595-51A2C08A64E0}</Project>
       <Name>AccessControl.Data</Name>

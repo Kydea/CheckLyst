@@ -24,5 +24,5 @@ namespace CheckListManager.AccessControl.Api.Controllers
 			await _userService.LogoutAsync(request?.Data?.RefreshToken);
 		    return Ok();
 	    }
-    }
+	}
 }

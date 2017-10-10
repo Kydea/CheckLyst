@@ -15,7 +15,7 @@
     <RootNamespace>CheckListManager.Audit.Api</RootNamespace>
     <AssemblyName>CheckListManager.Audit.Api</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <UseIISExpress>false</UseIISExpress>
+    <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -45,6 +45,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CheckListManager.Common.Logic, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f59642dc3948967f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Bin\CheckListManager.Common.Logic.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -132,6 +136,10 @@
     <ProjectReference Include="..\..\Common\Common.Logic.Api\Common.Logic.Api.csproj">
       <Project>{BE658746-48A9-4AF2-B2B6-A13A7D6DE439}</Project>
       <Name>Common.Logic.Api</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Common.Logic\Common.Logic.csproj">
+      <Project>{351c3388-67b1-46ee-8fd1-5a63277b3c0c}</Project>
+      <Name>Common.Logic</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

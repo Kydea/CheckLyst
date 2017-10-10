@@ -56,19 +56,22 @@ namespace CheckListManager.Common.Logic.Services
 		public Task SendObjectAsync<T>(string queueName, T data, CancellationToken cancellationToken = default(CancellationToken))
 			=> SendMessageAsync(queueName, data.ToJson(), cancellationToken);
 
-		public async Task<QueueMessage[]> ReceiveMessagesAsync(string queueName, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<QueueMessage[]> ReceiveMessagesAsync(string queueName, int maxNumberOfMessages = 10, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var queueUrl = await GetQueueUrlAsync(queueName, cancellationToken);
+			maxNumberOfMessages = Math.Min(Math.Max(maxNumberOfMessages, 1), 10);
 
-			return await _client.ReceiveMessageAsync(queueUrl, cancellationToken)
+			var queueUrl = await GetQueueUrlAsync(queueName, cancellationToken);
+			var request = new ReceiveMessageRequest { QueueUrl = queueUrl, MaxNumberOfMessages = maxNumberOfMessages };
+
+			return await _client.ReceiveMessageAsync(request, cancellationToken)
 				.ContinueWith(
 					task => task.Result.Messages.Select(m => new QueueMessage(m.ReceiptHandle, m.Body)).ToArray(), cancellationToken
 				);
 		}
 
-		public Task<QueueMessage<T>[]> ReceiveObjectsAsync<T>(string queueName, CancellationToken cancellationToken = default(CancellationToken))
+		public Task<QueueMessage<T>[]> ReceiveObjectsAsync<T>(string queueName, int maxNumberOfMessages = 10, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return ReceiveMessagesAsync(queueName, cancellationToken)
+			return ReceiveMessagesAsync(queueName, maxNumberOfMessages, cancellationToken)
 				.ContinueWith(
 					task => task.Result.Select(m => new QueueMessage<T>(m.MessageHandle, m.Message.ToObject<T>())).ToArray(), cancellationToken
 				);

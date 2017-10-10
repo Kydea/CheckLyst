@@ -28,7 +28,7 @@ namespace CheckListManager.Audit.Logic.Services
 
 		public async Task ProcessMessagesAsync(CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var messages = await _queueService.ReceiveObjectsAsync<AuditMessage>(QueueName.Audit, cancellationToken);
+			var messages = await _queueService.ReceiveObjectsAsync<AuditMessage>(QueueName.Audit, cancellationToken: cancellationToken);
 
 			foreach (var message in messages)
 			{

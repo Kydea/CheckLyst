@@ -10,8 +10,8 @@ namespace CheckListManager.Common.Logic.Services
 		Task SendMessageAsync(string queueName, string message, CancellationToken cancellationToken = default(CancellationToken));
 		Task SendObjectAsync<T>(string queueName, T data, CancellationToken cancellationToken = default(CancellationToken));
 
-		Task<QueueMessage[]> ReceiveMessagesAsync(string queueName, CancellationToken cancellationToken = default(CancellationToken));
-		Task<QueueMessage<T>[]> ReceiveObjectsAsync<T>(string queueName, CancellationToken cancellationToken = default(CancellationToken));
+		Task<QueueMessage[]> ReceiveMessagesAsync(string queueName, int maxNumberOfMessages = 10, CancellationToken cancellationToken = default(CancellationToken));
+		Task<QueueMessage<T>[]> ReceiveObjectsAsync<T>(string queueName, int maxNumberOfMessages = 10, CancellationToken cancellationToken = default(CancellationToken));
 
 		Task DeleteMessageAsync(string queueName, string messageHandle, CancellationToken cancellationToken = default(CancellationToken));
 	}

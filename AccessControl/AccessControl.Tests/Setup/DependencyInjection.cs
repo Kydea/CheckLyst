@@ -17,7 +17,7 @@ namespace CheckListManager.AccessControl.Tests.Setup
 		public static ContainerBuilder RegisterTypesWithSpecflowContainer()
 		{
 			var assemblies = LoadRefencedAssemblies();
-			var config = new WebApiConfig();
+			var config = new WebApiConfig { LoadAssemblies = false };
 			var builder = config.CreateBuilder();
 
 			builder.RegisterType<RelationalDatabaseEntities>()

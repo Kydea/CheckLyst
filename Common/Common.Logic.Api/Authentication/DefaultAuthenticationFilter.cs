@@ -22,7 +22,7 @@ namespace CheckListManager.Common.Logic.Api.Authentication
 		{
 			await _baseAuthentication.AuthenticateAsync(context, cancellationToken);
 
-			if (context.Principal != null)
+			if (context.Principal?.Identity != null && context.Principal.Identity.IsAuthenticated)
 			{
 				context.Principal = new ClaimsPrincipal(new DefaultIdentity((ClaimsIdentity)context.Principal.Identity));
 			}
