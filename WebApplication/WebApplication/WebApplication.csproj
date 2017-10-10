@@ -166,7 +166,9 @@
     </Content>
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
+    <Content Include="Scripts\Controls\Controls.js" />
     <Content Include="Scripts\Controls\DataPicker.js" />
+    <Content Include="Scripts\Custom\Grid.js" />
     <Content Include="Scripts\Custom\TokenManager.js" />
     <Content Include="Scripts\Custom\ActionBar.js" />
     <Content Include="Scripts\Custom\CheckListGrid.js" />

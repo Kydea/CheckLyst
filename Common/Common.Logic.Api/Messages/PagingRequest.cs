@@ -15,5 +15,7 @@ namespace CheckListManager.Common.Logic.Api.Messages
 			get => _itemsPerPage;
 			set => _itemsPerPage = value == 0 ? DefaultItemsPerPage : value;
 		}
-	}
+
+        public int Skip => (CurrentPage - 1) * ItemsPerPage;
+    }
 }

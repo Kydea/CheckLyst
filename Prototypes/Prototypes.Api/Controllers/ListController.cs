@@ -22,5 +22,12 @@ namespace CheckListManager.Prototypes.Api.Controllers
         {
             return Ok(await _listService.GetResponse(Identity.CompanyId, request.Data));
         }
+
+        [HttpPost]
+        [Route("GetResults")]
+        public async Task<IHttpActionResult> GetPrototypes(PagingRequest<ListRequest> request)
+        {
+            return Ok(await _listService.GetPrototypes(Identity.CompanyId, request));
+        }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using CheckListManager.Common.Core.Services;
 using CheckListManager.Common.Data;
+using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Logic.DataEngine;
+using CheckListManager.Prototypes.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,10 +14,12 @@ namespace CheckListManager.Prototypes.Logic.List
     public class ListService : IListService
     {
         private readonly ICommonRepository _commonRepository;
+        private readonly IPrototypesRepository _prototypesRepository;
 
-        public ListService(ICommonRepository commonRepository)
+        public ListService(ICommonRepository commonRepository, IPrototypesRepository prototypesRepository)
         {
             _commonRepository = commonRepository;
+            _prototypesRepository = prototypesRepository;
         }
 
         public async Task<ListResponse> GetResponse(long Company, ListRequest Form)
@@ -50,5 +54,32 @@ namespace CheckListManager.Prototypes.Logic.List
             }
             return response;
         }
+
+        public async Task<List<ListRow>> GetPrototypes(long Company, PagingRequest<ListRequest> Form)
+            =>
+                await _prototypesRepository.GetPrototypesAsync(
+                    Company,
+                    p => new ListRow {
+                        ID = p.Prototype,
+                        Name = p.Prototypes.Name,
+                        Description = p.Description,
+                        State = p.VersionState,
+                        Version = p.Version,
+                        ValidityFrom = p.ValidFrom,
+                        ValidityUntil = p.ValidUntil,
+                        CreatedBy = p.CreatedBy,
+                        CreatedOn = p.CreatedOn,
+                        ModifiedBy = p.ModifiedBy,
+                        ModifiedOn = p.ModifiedOn,
+                    },
+                    p =>
+                        p.Prototypes.Department == Form.Data.Department
+                        && p.Prototypes.PrototypeType == Form.Data.PrototypeType
+                        && (Form.Data.State == "All" || p.VersionState == Form.Data.State)
+                        && (Form.Data.Name == string.Empty || p.Description.Contains(Form.Data.Name)),
+                    p => p.Prototype,
+                    Form.Skip,
+                    Form.ItemsPerPage
+                );
     }
 }

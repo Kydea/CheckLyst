@@ -24,7 +24,7 @@ namespace CheckListManager.Common.Core.Web.Security
 			}
 
 			CompanyId = companyId;
-			Roles = identity.FindAll(RoleClaimType)
+			Roles = identity.FindAll(ClaimTypes.Role)
 				.Select(r => ParseRole(r.Value))
 				.ToList();
 		}
@@ -40,15 +40,16 @@ namespace CheckListManager.Common.Core.Web.Security
 		private static Role ParseRole(string value)
 		{
 			var roleTokens = value.Split('#');
-			if (roleTokens.Length != 4)
-				throw new InvalidTokenException();
+			if (roleTokens.Length < 2 || roleTokens.Length > 4)
+                throw new InvalidTokenException();
 
-			return new Role
+            return new Role
 			{
 				Code = roleTokens[0] + '#' + roleTokens[1],
-				PrototypeType = roleTokens[2] == string.Empty ? (int?)null : int.Parse(roleTokens[2]),
-				Tag = roleTokens[3]
+				PrototypeType = roleTokens.Length < 3 || roleTokens[2] == string.Empty ? (int?)null : int.Parse(roleTokens[2]),
+				Tag = roleTokens.Length < 4 ? null : roleTokens[3]
 			};
-		}
-	}
+
+        }
+    }
 }

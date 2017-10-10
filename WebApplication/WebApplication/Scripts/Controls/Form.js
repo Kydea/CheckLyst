@@ -1,22 +1,41 @@
-﻿matematici.Form = function (selector) {
+﻿matematici.Form = function (selector, options) {
 	var
 		form = this,
 		element = $(selector),
-		fields = $("input, select", element),
+		fieldsSelector = "input, select",
+		fields = $(fieldsSelector, element),
 
 		setup = function () {
 			//initial setup
+
+			if (options.applyButton) {
+				var
+					event = options.applyButton.event,
+					handler = options.applyButton.handler;
+				options.applyButton = $(options.applyButton.button || options.applyButton);
+				if (event)
+					options.applyButton.on("click", function () {
+						bind(event, handler, options.applyButton.attr("id"))
+					})
+				else if (handler)
+					options.applyButton.on("click", handler);
+			}
+
 			element
-				.on("change", ".Trigger", function () { 
-					bind($(this).attr("name"));
+				.on("keypress change paste", fieldsSelector, function (e) {
+					if (e.key != "Tab" && e.which !== 0 && !e.ctrlKey && !e.metaKey && !e.altKey && options.applyButton) 
+						matematici.controls.setEditable(options.applyButton, true);
+				})
+				.on("change", ".Trigger", function () {
+					bind("Bind", handleResult, $(this).attr("name"));
 				});
 
 			fields.each(function () {
 				var field = $(this);
 				if (field.hasClass("DatePicker"))
-					new matematici.DatePicker(field);
+					matematici.controls.toggle(field, true);
 			});
-			bind();
+			bind("Bind", handleResult);
 		},
 
 		prepareRequest = function (source) {
@@ -35,6 +54,7 @@
 				var
 					field = $(this),
 					fieldData = data.Fields[field.attr("name")];
+
 				if (fieldData) {
 					if (fieldData.Options !== undefined) {
 						var value = field.val();
@@ -44,20 +64,13 @@
 							field.append($("<option />").attr("value", option.Value).text(option.Text));
 						}
 
-						console.log(field.attr("name"), !!value, $("option", field).val(), value || $("option", field).val());
-
-						if (fieldData.Options.length == 0)
-							field.prop({ readonly: true, disabled: true });
-						else
-							field.val(value || $("option", field).val());
+						matematici.controls.setEditable(field, fieldData.Options.length > 0);
 					}
+
 					/*
 					if (fieldData.Value !== undefined) field.val(fieldData.Value);
 					field.toggle(!fieldData.Visibility);
-					if (fieldData.Editable)
-						field.removeAttr("readonly").removeAttr("disabled");
-					else
-						field.prop({ readonly: true, disabled: true });
+					matematici.controls.setEditable(field, fieldData.Editable);
 					*/
 					//TODO field warnings and errors
 				}
@@ -65,30 +78,48 @@
 			//TODO form warnings and errors
 		},
 
-		bind = function (source, handler) {
+		bind = function (event, handler, source) {
 			//binds with server
 			$.ajax({
 				type: "post",
-				url: element.attr("action"),
+				url: element.attr("action") + "/" + event,
 				dataType: "json",
 				contentType: "application/json; charset=utf-8",
 				data: prepareRequest(source)
 			}).done(function (result) {
-				handleResult(result);
+				if (options.applyButton && source && (source == options.applyButton.attr("name") || source == options.applyButton.attr("id")))
+					matematici.controls.setEditable(options.applyButton, false);
+				if (handler)
+					handler(result);
 			});
 		};
 
 	this.initialize = function () {
 		setup();
 	}
-}
 
+	this.trigger = function (event, handler, source) {
+		//triggers specific events
+		bind(event, handler, source);
+	}
+}
 
 /*
     binds a form with the api in DataEngine
 
     usage: 
-        new matematici.Form(selector)
+        new matematici.Form(selector, options)
 
 		selector - type: String, description: the selector of the html form to bind
+		options - type: object, description: a PlainObjects:
+            applyButton - type: htmlString or Element or Array or jQuery, description: the element(s) to toggle when a field change its value
+		    or:
+            applyButton - type: object, description: the element(s) to toggle when a field change its value
+				button: - type: htmlString or Element or Array or jQuery, description: the element(s) to toggle when a field change its value
+				handler: - type: function, description: the function to call on click
+		    or:
+            applyButton - type: object, description: the element(s) to toggle when a field change its value
+				button: - type: htmlString or Element or Array or jQuery, description: the element(s) to toggle when a field change its value
+				event: - type: string, description: the event to use with bind on click
+				handler: - type: function, description: the function to call on bind result
  */
