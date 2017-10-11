@@ -137,6 +137,9 @@ namespace CheckListManager.Common.Logic.Cache
 				.ContinueWith(t => new LockObject(t.Result), cancellationToken);
 		}
 
+		public Task<long> IncrementAsync(string key, string regionName = null)
+			=> Database.Value.StringIncrementAsync(ResolveKey(key, regionName));
+
 		private static string ResolveKey(string key, string regionName)
 			=> string.IsNullOrEmpty(regionName) ? key : $"{regionName}.{key}";
 	}

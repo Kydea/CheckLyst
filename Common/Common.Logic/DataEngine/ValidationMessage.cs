@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CheckListManager.Common.Logic.DataEngine
+﻿namespace CheckListManager.Common.Logic.DataEngine
 {
     public class ValidationMessage
     {
         public const string
-            LEVEL_ERROR = "ERROR",
-            LEVEL_WARNING = "WARNING",
-            LEVEL_INFORMATION = "INFO";
+            LevelError = "ERROR",
+            LevelWarning = "WARNING",
+            LevelInformation = "INFO";
 
         public string Level { get; set; }
 

@@ -9,5 +9,7 @@ namespace CheckListManager.Common.Logic.Cache
 	{
 		Task<LockObject> LockAsync(string key, string regionName = null, TimeSpan? expiry = null, TimeSpan? wait = null,
 			TimeSpan? retry = null, CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<long> IncrementAsync(string key, string regionName = null);
 	}
 }

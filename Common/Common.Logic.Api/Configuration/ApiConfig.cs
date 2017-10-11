@@ -11,6 +11,7 @@ using CheckListManager.Common.Logic.Api.Authentication;
 using CheckListManager.Common.Logic.Api.Filters;
 using CheckListManager.Common.Logic.Configuration;
 using Microsoft.Owin.Security.OAuth;
+using Newtonsoft.Json.Serialization;
 using NLog;
 
 namespace CheckListManager.Common.Logic.Api.Configuration
@@ -51,6 +52,8 @@ namespace CheckListManager.Common.Logic.Api.Configuration
 			configuration.Filters.Add(new ModelValidationActionFilterAttribute());
 
 			configuration.MapHttpAttributeRoutes();
+
+			configuration.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
 		}
 
 		private static void ConfigureLog()

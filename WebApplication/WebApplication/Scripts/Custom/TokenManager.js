@@ -41,5 +41,13 @@
 		parseLoginResult(result);
 	};
 
+	tokenManager.getAccessToken = function() {
+		return localStorage.accessToken;
+	};
+
+	tokenManager.getRefreshToken = function () {
+		return localStorage.refreshToken;
+	};
+
 	setup();
 }

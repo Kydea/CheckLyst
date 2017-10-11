@@ -22,9 +22,15 @@
 			else
 				$.ajax({
 					url: matematici.urls.client,
-					type: "post"
+					type: "post",
+					data: JSON.stringify({
+						data: {
+							token: matematici.tokenManager.getRefreshToken()
+						}
+					}),
+					contentType: "application/json"
 				}).done(function (result) {
-					set(result.Id);
+					set(result.data.clientId);
 				}).fail(function (jqXHR, textStatus, errorThrown) {
 					console.log(jqXHR, textStatus, errorThrown);
 					matematici.dialog.error("server error", "Client unique identifier unavailable");
@@ -59,10 +65,11 @@
 			});
 		};
 
-	if (matematici.appClientId == "")
-		get();
-	else
-		set(parseInt(matematici.appClientId));
+	//TODO serve ancora?
+	//if (matematici.appClientId == "")
+	//	get();
+	//else
+	//	set(parseInt(matematici.appClientId));
 
 	this.addHandler = function (handler) {
 		var id = window.name;
