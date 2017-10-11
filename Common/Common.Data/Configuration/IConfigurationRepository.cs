@@ -2,7 +2,6 @@
 {
 	public interface IConfigurationRepository : IRepository
 	{
-		object Get(string key);
-		T Get<T>(string key);
+		Configurations Get(string key);
 	}
 }

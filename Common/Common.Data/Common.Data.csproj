@@ -74,6 +74,9 @@
     <Compile Include="Companies.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Configurations.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Configuration\ConfigurationRepository.cs" />
     <Compile Include="Configuration\IConfigurationRepository.cs" />
     <Compile Include="DatabaseError.cs" />

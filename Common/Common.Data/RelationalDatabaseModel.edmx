@@ -123,6 +123,15 @@
           </Key>
           <Property Name="Code" Type="varchar" MaxLength="20" Nullable="false" />
         </EntityType>
+        <EntityType Name="Configurations">
+          <Key>
+            <PropertyRef Name="Code" />
+          </Key>
+          <Property Name="Code" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Value" Type="varchar" MaxLength="500" Nullable="false" />
+          <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
+          <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
+        </EntityType>
         <EntityType Name="Companies">
           <Key>
             <PropertyRef Name="ID" />
@@ -823,6 +832,7 @@
           <EntitySet Name="PrototypeVersions" EntityType="Self.PrototypeVersions" Schema="CheckLists" store:Type="Tables" />
           <EntitySet Name="PrototypeVersionTags" EntityType="Self.PrototypeVersionTags" Schema="CheckLists" store:Type="Tables" />
           <EntitySet Name="VersionStates" EntityType="Self.VersionStates" Schema="CheckLists" store:Type="Tables" />
+          <EntitySet Name="Configurations" EntityType="Self.Configurations" Schema="Configuration" store:Type="Tables" />
           <EntitySet Name="Companies" EntityType="Self.Companies" Schema="Infrastructure" store:Type="Tables" />
           <EntitySet Name="Departments" EntityType="Self.Departments" Schema="Infrastructure" store:Type="Tables" />
           <EntitySet Name="TimeZones" EntityType="Self.TimeZones" Schema="Infrastructure" store:Type="Tables" />
@@ -1269,6 +1279,7 @@
             <End Role="Users" EntitySet="Users" />
             <End Role="UserFunctions" EntitySet="UserFunctions" />
           </AssociationSet>
+          <EntitySet Name="Configurations" EntityType="RelationalDatabaseModel.Configurations" />
           </EntityContainer>
         <EntityType Name="TimeZones">
           <Key>
@@ -2053,6 +2064,15 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Configurations">
+          <Key>
+            <PropertyRef Name="Code" />
+          </Key>
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Value" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedOn" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2404,6 +2424,16 @@
                 <ScalarProperty Name="User" ColumnName="User" />
                 <ScalarProperty Name="Company" ColumnName="Company" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Configurations">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.Configurations">
+              <MappingFragment StoreEntitySet="Configurations">
+                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="Value" ColumnName="Value" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

@@ -1,3 +1,5 @@
+using System.Linq;
+
 namespace CheckListManager.Common.Data.Configuration
 {
 	public class ConfigurationRepository : Repository, IConfigurationRepository
@@ -6,16 +8,7 @@ namespace CheckListManager.Common.Data.Configuration
 		{
 		}
 
-		public object Get(string key)
-		{
-			//TODO: read from DB
-			return null;
-		}
-
-		public T Get<T>(string key)
-		{
-			//TODO: read from DB
-			return default(T);
-		}
+		public Configurations Get(string key)
+			=> Entities.Configurations.FirstOrDefault(c => c.Code == key);
 	}
 }

@@ -70,6 +70,7 @@
         <AssociationConnector Association="RelationalDatabaseModel.UserFunctions_PrototypeType_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.UserFunctions_Function" />
         <AssociationConnector Association="RelationalDatabaseModel.UserFunctions_User" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.Configurations" Width="1.5" PointX="7.375" PointY="8.75" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
