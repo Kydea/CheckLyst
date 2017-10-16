@@ -21,5 +21,13 @@
     offset: function (dateTime, local) {
         var offset = dateTime.getTimezoneOffset() / 60;
         return local ? "UTC " + (offset > 0 ? "-" : "+") + (offset > 9 || offset < -9 ? "" : "0") + Math.abs(offset) + ":00" : "";
-    }
+	},
+
+	format: function (dateTime, local) {
+		return {
+			date: matematici.dateFormatter.date(dateTime, local),
+			time: matematici.dateFormatter.time(dateTime, local),
+			offset: matematici.dateFormatter.offset(dateTime, local)
+		}
+	}
 }

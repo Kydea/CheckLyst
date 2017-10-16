@@ -8,19 +8,19 @@
     <form id="Filters" action="/API/Prototypes/List">
         <label>
             Name
-            <input type="text" name="Name" />
+            <input type="text" name="name" />
         </label>
         <label>
             Department
-            <select name="Department" class="Trigger" />
+            <select name="department" class="Trigger" />
         </label>
         <label>
             Prototype Type
-            <select name="PrototypeType" />
+            <select name="prototypeType" />
         </label>
         <label>
             State
-            <select name="State" />
+            <select name="state" />
         </label>
     </form>
 
@@ -42,17 +42,17 @@
         </thead>
         <tbody>
             <tr>
-                <td data-column="ID"></td>
-                <td data-column="Name"></td>
-                <td data-column="Description"></td>
-                <td data-column="Version"></td>
-                <td data-column="ValidFrom"></td>
-                <td data-column="ValidUntil"></td>
-                <td data-column="CreatedBy"></td>
-                <td data-column="CreatedOn"></td>
-                <td data-column="ModifiedBy"></td>
-                <td data-column="ModifiedOn"></td>
-                <td data-column="VersionState"></td>
+                <td data-column="id"></td>
+                <td data-column="name"></td>
+                <td data-column="description"></td>
+                <td data-column="version"></td>
+                <td data-column="validityFrom" data-type="DateTimeOffset"></td>
+                <td data-column="validityUntil" data-type="DateTimeOffset"></td>
+                <td data-column="createdBy"></td>
+                <td data-column="createdOn" data-type="DateTimeOffset"></td>
+                <td data-column="modifiedBy"></td>
+                <td data-column="modifiedOn" data-type="DateTimeOffset"></td>
+                <td data-column="versionState"></td>
             </tr>
             <tr class="NoRecord"><td>(no record)</td></tr>
         </tbody>

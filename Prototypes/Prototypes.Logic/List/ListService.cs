@@ -36,6 +36,7 @@ namespace CheckListManager.Prototypes.Logic.List
                     Options = Departments.Select(d => new Option(d.ID.ToString(), d.Name))
                 };
                 Department = Departments.FirstOrDefault()?.ID;
+                response.Valid &= Departments.Any();
 
                 var States = new List<Option>() { new Option(null, "All") };
                 States.AddRange((await _commonRepository.GetVersionStatesAsync()).Select(x => new Option(x)));
@@ -46,13 +47,17 @@ namespace CheckListManager.Prototypes.Logic.List
 
             }
 
-            if (Form.Source == null || Form.Source == "Department")
+            if (Form.Source == null || Form.Source == "department")
             {
+                var PrototypeTypes = await _commonRepository.GetPrototypeTypesAsync(Department ?? -1);
                 response.Fields["PrototypeType"] = new Field
                 {
-                    Options = (await _commonRepository.GetPrototypeTypesAsync(Department ?? -1)).Select(d => new Option(d.ID.ToString(), d.Description)) //TODO
+                    Options = PrototypeTypes.Select(d => new Option(d.ID.ToString(), d.Description))
                 };
+                response.Valid &= PrototypeTypes.Any();
+
             }
+
             return response;
         }
 

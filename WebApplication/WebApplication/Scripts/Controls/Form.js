@@ -4,6 +4,7 @@
 		element = $(selector),
 		fieldsSelector = "input, select",
 		fields = $(fieldsSelector, element),
+		valid = false,
 
 		setup = function () {
 			//initial setup
@@ -24,7 +25,7 @@
 			element
 				.on("keypress change paste", fieldsSelector, function (e) {
 					if (e.key != "Tab" && e.which !== 0 && !e.ctrlKey && !e.metaKey && !e.altKey && options.applyButton) 
-						matematici.controls.setEditable(options.applyButton, true);
+						matematici.controls.setEditable(options.applyButton, valid);
 				})
 				.on("change", ".Trigger", function () {
 					bind("Bind", handleResult, $(this).attr("name"));
@@ -35,12 +36,13 @@
 				if (field.hasClass("DatePicker"))
 					matematici.controls.toggle(field, true);
 			});
+
 			bind("Bind", handleResult);
 		},
 
 		prepareRequest = function (source) {
 			//prepares the request
-			var data = { Source: source };
+			var data = { source: source };
 			fields.each(function () {
 				var field = $(this);
 				data[field.attr("name")] = field.val();
@@ -53,18 +55,18 @@
 			fields.each(function () {
 				var
 					field = $(this),
-					fieldData = data.Fields[field.attr("name")];
+					fieldData = data.fields[field.attr("name")];
 
 				if (fieldData) {
-					if (fieldData.Options !== undefined) {
+					if (fieldData.options !== undefined) {
 						var value = field.val();
 						field.empty();
-						for (var index in fieldData.Options) {
-							var option = fieldData.Options[index];
-							field.append($("<option />").attr("value", option.Value).text(option.Text));
+						for (var index in fieldData.options) {
+							var option = fieldData.options[index];
+							field.append($("<option />").attr("value", option.value).text(option.text));
 						}
 
-						matematici.controls.setEditable(field, fieldData.Options.length > 0);
+						matematici.controls.setEditable(field, fieldData.options.length > 0);
 					}
 
 					/*
@@ -75,6 +77,9 @@
 					//TODO field warnings and errors
 				}
 			});
+
+			valid = data.valid;
+			matematici.controls.setEditable(options.applyButton, valid);
 			//TODO form warnings and errors
 		},
 

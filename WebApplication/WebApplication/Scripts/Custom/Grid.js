@@ -11,11 +11,24 @@
 			$("td", noRecordRow).attr("colspan", columnNumber);
 		},
 
+		setCellValue = function (cell, data) {
+			var value = data[cell.data("column")];
+			if (!!value)
+				switch (cell.data("type"))
+				{
+					case "DateTimeOffset":
+						var formattedDate = matematici.dateFormatter.format(new Date(value), true);
+						cell.append($("<span />").html(formattedDate.date + " " + formattedDate.time).attr("title", formattedDate.offset));
+						break;
+					default:
+						cell.html(value);
+				}
+		},
+
 		createRow = function (data) {
 			var row = prototypeRow.clone();
 			$("td", row).each(function () {
-				var cell = $(this);
-				cell.html(data[cell.data("column")]);
+				setCellValue($(this), data);
 			});
 			return row;
 		};
