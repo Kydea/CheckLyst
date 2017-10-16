@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.Entity;
 using System.Linq.Expressions;
+using CheckListManager.Common.Logic.Api.Messages;
 
 namespace CheckListManager.Prototypes.Data
 {
@@ -15,21 +16,33 @@ namespace CheckListManager.Prototypes.Data
 		{
         }
 
-        public Task<List<TResult>> GetPrototypesAsync<TResult, TKey>(
+        public async Task<PagingResponse<List<TResult>>> GetPrototypesAsync<TResult, TKey>(
             long companyId,
             Expression<Func<PrototypeVersions, TResult>> select,
-            Expression<Func<PrototypeVersions, bool>> filters, 
+            Expression<Func<PrototypeVersions, bool>> filters,
             Expression<Func<PrototypeVersions, TKey>> order, 
-            int skip, 
-            int take
-        )
-            => Entities.PrototypeVersions
+            int currentPage, 
+            int itemsPerPage)
+        {
+            var Data = await Entities.PrototypeVersions
                 .Where(filters)
                 .OrderBy(order)
                 .Select(select)
-                .Skip(skip)
-                .Take(take)
+                .Skip((currentPage - 1) * itemsPerPage)
+                .Take(itemsPerPage)
                 .ToListAsync();
 
+            int Count = await Entities.PrototypeVersions
+                .Where(filters)
+                .CountAsync();
+
+            return new PagingResponse<List<TResult>>
+            {
+                Data = Data,
+                Count = Count,
+                ItemsPerPage = itemsPerPage,
+                CurrentPage = currentPage
+            };
+        }
     }
 }

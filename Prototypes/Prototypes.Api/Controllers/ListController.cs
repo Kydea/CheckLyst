@@ -24,7 +24,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
         }
 
         [HttpPost]
-        [Route("GetResults")]
+        [Route("GetPrototypes")]
         public async Task<IHttpActionResult> GetPrototypes(PagingRequest<ListRequest> request)
         {
             return Ok(await _listService.GetPrototypes(Identity.CompanyId, request));

@@ -1,23 +1,25 @@
 ﻿@import "Library";
 
-.Pager {
+.Paginator {
     margin: 20px 0 20px 0;
     float: right;
 
-    &:after{
-        display: block;
-        content: "";
-        clear: both;
-    }
+    cursor: default;
 
     a {
-        display: inline-block;
-        cursor: pointer;
-        text-decoration: none;
+        text-decoration: none !important;
+
+        &:not(.Current) {
+            cursor: pointer;
+        }
 
         &.Current {
             color: $Color-Font-Blue1;
         }
+    }
+
+    a, span {
+        display: inline-block;
 
         &:not(:last-child) {
             &:after {

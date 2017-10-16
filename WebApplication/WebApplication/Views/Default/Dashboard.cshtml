@@ -164,13 +164,13 @@
                 });
             }
 
-            new matematici.Pager(function () {
-                submit($(".PrototypesVersions form"));
-            }, ".PrototypesVersions .Pager", ".PrototypesVersions form");
+            //new matematici.Paginator(function () {
+            //    submit($(".PrototypesVersions form"));
+            //}, ".PrototypesVersions .Paginator", ".PrototypesVersions form");
 
-            new matematici.Pager(function () {
-                submit($(".Instances form"));
-            }, ".Instances .Pager", ".Instances form");
+            //new matematici.Paginator(function () {
+            //    submit($(".Instances form"));
+            //}, ".Instances .Paginator", ".Instances form");
 
             $("table.Grid").on("click", "tr.Handler", function () {
                 matematici.navigator.open($(this).data("open-url"));

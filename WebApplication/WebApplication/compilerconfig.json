@@ -106,5 +106,9 @@
   {
     "outputFile": "Content/Theme/DataSourcesEditor.css",
     "inputFile": "Content/Theme/DataSourcesEditor.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Paginator.css",
+    "inputFile": "Content/Theme/Paginator.scss"
   }
 ]

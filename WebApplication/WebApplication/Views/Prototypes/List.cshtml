@@ -2,7 +2,7 @@
     <h1>Prototypes List</h1>
 
     <div class="ActionBar">
-        <a id="ApplyButton" class="Button"><i class="fa fa-search"></i> search</a>
+        <a id="ApplyButton" class="Button DefaultButton"><i class="fa fa-search"></i> search</a>
     </div>
 
     <form id="Filters" action="/API/Prototypes/List">
@@ -57,14 +57,19 @@
             <tr class="NoRecord"><td>(no record)</td></tr>
         </tbody>
     </table>
-
-    <div class="Pager"></div>
+    <div class="Paginator"></div>
     <div class="Clearing"></div>
 </div>
 
 <script type="text/javascript">
     matematici.events.onPageLoad = function (callback) {
-        var grid;
+        var grid,
+            form,
+            paginator,
+            handler = function (result) {
+                grid.update(result.data);
+                paginator.setPage(result.currentPage, result.pagesCount);
+            };
 
         new matematici.ActionBar("div.ActionBar");
 
@@ -73,14 +78,15 @@
             initializers: [
                 //new matematici.FixedHeader("div#Content table.Grid")
                 grid = new matematici.Grid("div#Content table.Grid"),
-                new matematici.Form("form#Filters", {
+                form = new matematici.Form("form#Filters", {
                     applyButton: {
                         button: "#ApplyButton",
-                        event: "GetResults",
-                        handler: function (result) {
-                            grid.update(result);
-                        }
+                        event: "GetPrototypes",
+                        handler: handler
                     }
+                }),
+                matematici.p = paginator = new matematici.Paginator("div#Content div.Paginator", function (index) {
+                    form.trigger("GetPrototypes", handler, { CurrentPage: index });
                 })
             ]
         });

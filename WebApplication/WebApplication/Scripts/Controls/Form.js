@@ -16,7 +16,7 @@
 				options.applyButton = $(options.applyButton.button || options.applyButton);
 				if (event)
 					options.applyButton.on("click", function () {
-						bind(event, handler, options.applyButton.attr("id"))
+						bind(event, handler, { data: { source: options.applyButton.attr("id") } })
 					})
 				else if (handler)
 					options.applyButton.on("click", handler);
@@ -24,11 +24,11 @@
 
 			element
 				.on("keypress change paste", fieldsSelector, function (e) {
-					if (e.key != "Tab" && e.which !== 0 && !e.ctrlKey && !e.metaKey && !e.altKey && options.applyButton) 
+					if (e.key != "Tab" && e.which !== 0 && !e.ctrlKey && !e.metaKey && !e.altKey && options.applyButton)
 						matematici.controls.setEditable(options.applyButton, valid);
 				})
 				.on("change", ".Trigger", function () {
-					bind("Bind", handleResult, $(this).attr("name"));
+					bind("Bind", handleResult, { data: { source: $(this).attr("name") } });
 				});
 
 			fields.each(function () {
@@ -40,14 +40,15 @@
 			bind("Bind", handleResult);
 		},
 
-		prepareRequest = function (source) {
+		prepareRequest = function (parameters) {
+			if (!parameters.data) parameters.data = {};
+
 			//prepares the request
-			var data = { source: source };
 			fields.each(function () {
 				var field = $(this);
-				data[field.attr("name")] = field.val();
+				parameters.data[field.attr("name")] = field.val();
 			});
-			return JSON.stringify({ data: data });
+			return JSON.stringify(parameters);
 		},
 
 		handleResult = function (data) {
@@ -83,17 +84,17 @@
 			//TODO form warnings and errors
 		},
 
-		bind = function (event, handler, source) {
+		bind = function (event, handler, parameters) {
 			//binds with server
 			$.ajax({
 				type: "post",
 				url: element.attr("action") + "/" + event,
 				dataType: "json",
 				contentType: "application/json; charset=utf-8",
-				data: prepareRequest(source)
+				data: prepareRequest(parameters || {})
 			}).done(function (result) {
-				if (options.applyButton && source && (source == options.applyButton.attr("name") || source == options.applyButton.attr("id")))
-					matematici.controls.setEditable(options.applyButton, false);
+				if (options.applyButton && data && data.source && (data.source == options.applyButton.attr("name") || data.source == options.applyButton.attr("id")))
+					matematici.controls.setEditable(options.applyButton, false); //by deafult, the action button is disabled when clicked with success
 				if (handler)
 					handler(result);
 			});
@@ -103,9 +104,9 @@
 		setup();
 	}
 
-	this.trigger = function (event, handler, source) {
+	this.trigger = function (event, handler, parameters) {
 		//triggers specific events
-		bind(event, handler, source);
+		bind(event, handler, parameters);
 	}
 }
 

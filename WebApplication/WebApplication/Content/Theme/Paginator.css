@@ -1,0 +1,18 @@
+﻿.Paginator {
+  margin: 20px 0 20px 0;
+  float: right;
+  cursor: default; }
+  .Paginator a {
+    text-decoration: none !important; }
+    .Paginator a:not(.Current) {
+      cursor: pointer; }
+    .Paginator a.Current {
+      color: #0099cc; }
+  .Paginator a, .Paginator span {
+    display: inline-block; }
+    .Paginator a:not(:last-child):after, .Paginator span:not(:last-child):after {
+      display: inline-block;
+      content: "|";
+      color: black;
+      padding: 0 5px 0 5px; }
+

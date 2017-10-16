@@ -61,9 +61,9 @@ namespace CheckListManager.Prototypes.Logic.List
             return response;
         }
 
-        public async Task<List<ListRow>> GetPrototypes(long Company, PagingRequest<ListRequest> Form)
+        public async Task<PagingResponse<List<ListRow>>> GetPrototypes(long Company, PagingRequest<ListRequest> Form)
             =>
-                (await _prototypesRepository.GetPrototypesAsync(
+                await _prototypesRepository.GetPrototypesAsync(
                     Company,
                     p => new ListRow
                     {
@@ -86,8 +86,8 @@ namespace CheckListManager.Prototypes.Logic.List
                         && (Form.Data.State == "All" || p.VersionState == Form.Data.State)
                         && (Form.Data.Name == string.Empty || p.Description.Contains(Form.Data.Name)),
                     p => p.Prototype,
-                    Form.Skip,
+                    Form.CurrentPage,
                     Form.ItemsPerPage
-                ));
+                );
     }
 }

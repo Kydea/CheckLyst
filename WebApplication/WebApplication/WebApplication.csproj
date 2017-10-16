@@ -53,6 +53,7 @@
     <Compile Include="Code\DefaultAuthorizeAttribute.cs" />
     <Compile Include="Code\DefaultViewPage.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\ProfilesController.cs" />
     <Compile Include="Controllers\PrototypesController.cs" />
     <Compile Include="Controllers\SecurityController.cs" />
     <Compile Include="Controllers\DefaultController.cs" />
@@ -149,8 +150,8 @@
     <Content Include="Content\Theme\Module.css">
       <DependentUpon>Module.scss</DependentUpon>
     </Content>
-    <Content Include="Content\Theme\Pager.css">
-      <DependentUpon>Pager.scss</DependentUpon>
+    <Content Include="Content\Theme\Paginator.css">
+      <DependentUpon>Paginator.scss</DependentUpon>
     </Content>
     <Content Include="Content\Theme\PropertyPanel.css">
       <DependentUpon>PropertyPanel.scss</DependentUpon>
@@ -178,7 +179,7 @@
     <Content Include="Scripts\Custom\FixedHeader.js" />
     <Content Include="Scripts\Custom\Help.js" />
     <Content Include="Scripts\Custom\Login.js" />
-    <Content Include="Scripts\Custom\Pager.js" />
+    <Content Include="Scripts\Custom\Paginator.js" />
     <Content Include="Scripts\Custom\Scroller.js" />
     <Content Include="Scripts\Custom\SignatureBook.js" />
     <Content Include="Scripts\Custom\UserPanel.js" />
@@ -259,6 +260,7 @@
     <Content Include="Views\Default\Loader.cshtml" />
     <Content Include="Views\Security\Login.cshtml" />
     <Content Include="Views\Prototypes\List.cshtml" />
+    <Content Include="Views\Profiles\List.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -305,7 +307,7 @@
     <Content Include="Content\Theme\Matematici\Matematici.psd" />
     <Content Include="Content\Theme\Menu.scss" />
     <Content Include="Content\Theme\Module.scss" />
-    <Content Include="Content\Theme\Pager.scss" />
+    <Content Include="Content\Theme\Paginator.scss" />
     <Content Include="Content\Theme\PropertyPanel.scss" />
     <Content Include="Content\Theme\PrototypeEditor.scss" />
     <Content Include="Content\Theme\Signature.scss" />

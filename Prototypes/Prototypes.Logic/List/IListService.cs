@@ -12,6 +12,6 @@ namespace CheckListManager.Prototypes.Logic.List
     {
         Task<ListResponse> GetResponse(long Company, ListRequest form);
 
-        Task<List<ListRow>> GetPrototypes(long Company, PagingRequest<ListRequest> form);
+        Task<PagingResponse<List<ListRow>>> GetPrototypes(long Company, PagingRequest<ListRequest> form);
     }
 }

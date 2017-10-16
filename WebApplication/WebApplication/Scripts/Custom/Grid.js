@@ -6,6 +6,7 @@
 		prototypeRow = $("tbody tr", selector).remove(),
 		columnNumber = prototypeRow.children().size(),
 		tableBody = $("tbody", element),
+		paginator,
 
 		setup = function () {
 			$("td", noRecordRow).attr("colspan", columnNumber);
@@ -14,8 +15,7 @@
 		setCellValue = function (cell, data) {
 			var value = data[cell.data("column")];
 			if (!!value)
-				switch (cell.data("type"))
-				{
+				switch (cell.data("type")) {
 					case "DateTimeOffset":
 						var formattedDate = matematici.dateFormatter.format(new Date(value), true);
 						cell.append($("<span />").html(formattedDate.date + " " + formattedDate.time).attr("title", formattedDate.offset));
@@ -35,16 +35,16 @@
 
 	this.initialize = function () {
 		setup();
-	}
+	};
 
-	this.update = function (rows) {
-		console.log(rows);
+	this.update = function (data) {
 		tableBody.empty();
-		if (!rows || rows.length == 0)
+
+		if (!data || data.length == 0)
 			noRecordRow.clone().appendTo(tableBody);
 		else
-			for (var index in rows)
-				tableBody.append(createRow(rows[index]));
+			for (var index in data)
+				tableBody.append(createRow(data[index]));
 		element.show();
-	}
-}
+	};
+};

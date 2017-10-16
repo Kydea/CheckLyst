@@ -164,15 +164,12 @@ namespace CheckListManager.AccessControl.Logic.Services
 				Enabled = u.Enabled
 			}).ToList();
 
-			var pageCount = (int)Math.Ceiling(count / (decimal)request.ItemsPerPage);
-
 			return new PagingResponse<List<UsersResponse>>
 			{
 				Data = response,
 				ItemsPerPage = request.ItemsPerPage,
 				Count = count,
-				CurrentPage = request.CurrentPage,
-				PageCount = pageCount
+				CurrentPage = request.CurrentPage
 			};
 		}
 
