@@ -3,6 +3,7 @@ using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Logic.DataEngine;
 using CheckListManager.Prototypes.Data;
+using CheckListManager.Common.Core.Web.ClassExtensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,9 +58,11 @@ namespace CheckListManager.Prototypes.Logic.List
 
         public async Task<List<ListRow>> GetPrototypes(long Company, PagingRequest<ListRequest> Form)
             =>
-                await _prototypesRepository.GetPrototypesAsync(
+                (await _prototypesRepository.GetPrototypesAsync(
                     Company,
-                    p => new ListRow {
+                    p => new ListRow
+                    {
+                        TimeZone = "W. Europe Standard Time",
                         ID = p.Prototype,
                         Name = p.Prototypes.Name,
                         Description = p.Description,
@@ -70,7 +73,7 @@ namespace CheckListManager.Prototypes.Logic.List
                         CreatedBy = p.CreatedBy,
                         CreatedOn = p.CreatedOn,
                         ModifiedBy = p.ModifiedBy,
-                        ModifiedOn = p.ModifiedOn,
+                        ModifiedOn = p.ModifiedOn
                     },
                     p =>
                         p.Prototypes.Department == Form.Data.Department
@@ -80,6 +83,6 @@ namespace CheckListManager.Prototypes.Logic.List
                     p => p.Prototype,
                     Form.Skip,
                     Form.ItemsPerPage
-                );
+                ));
     }
 }
