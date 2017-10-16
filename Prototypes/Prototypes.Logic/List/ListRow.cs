@@ -1,5 +1,4 @@
-﻿using CheckListManager.Common.Core.Web.ClassExtensions;
-using CheckListManager.Common.Logic.DataEngine;
+﻿using CheckListManager.Common.Logic.DataEngine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,23 +15,12 @@ namespace CheckListManager.Prototypes.Logic.List
         public string Name { get; set; }
         public string Description { get; set; }
         public long Version { get; set; }
-
-        private DateTimeOffset? _ValidityFrom;
-        public DateTimeOffset? ValidityFrom { get { return _ValidityFrom?.ToTimeZone(TimeZone); } set { _ValidityFrom = value; } }
-
-        private DateTimeOffset? _ValidityUntil;
-        public DateTimeOffset? ValidityUntil { get { return _ValidityUntil?.ToTimeZone(TimeZone); } set { _ValidityUntil = value; } }
-
+        public DateTimeOffset? ValidityFrom { get; set; }
+        public DateTimeOffset? ValidityUntil { get; set; }
         public string CreatedBy { get; set; }
-
-        private DateTimeOffset _CreatedOn;
-        public DateTimeOffset CreatedOn { get { return _CreatedOn.ToTimeZone(TimeZone); } set { _CreatedOn = value; } }
-
+        public DateTimeOffset CreatedOn { get; set; }
         public string ModifiedBy { get; set; }
-
-        private DateTimeOffset? _ModifiedOn;
-        public DateTimeOffset? ModifiedOn { get { return _ModifiedOn?.ToTimeZone(TimeZone); } set { _ModifiedOn = value; } }
-
+        public DateTimeOffset? ModifiedOn { get; set; }
         public string State { get; set; }
     }
 }

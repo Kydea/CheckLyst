@@ -11,17 +11,11 @@ namespace CheckListManager.Common.Core.Web.Security
 		public DefaultIdentity(ClaimsIdentity identity) : base(identity)
 		{
 			if (!long.TryParse(identity.FindFirst("CompanyId")?.Value, out var companyId))
-			{
 				throw new InvalidTokenException();
-			}
 			if (identity.FindFirst(ClaimTypes.Version)?.Value != Version)
-			{
 				throw new InvalidTokenException();
-			}
 			if (string.IsNullOrEmpty(Code) || string.IsNullOrEmpty(Description))
-			{
 				throw new InvalidTokenException();
-			}
 
 			CompanyId = companyId;
 			Roles = identity.FindAll(ClaimTypes.Role)

@@ -36,9 +36,7 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
 					var form = await context.Request.ReadFormAsync();
 					long? companyId = null;
 					if (long.TryParse(form["companyId"], out var i))
-					{
 						companyId = i;
-					}
 
 					var userService = scope.Resolve<IUserService>();
 					var user = await userService.AuthenticateAsync(companyId, context.UserName, context.Password);
@@ -97,7 +95,7 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
 			identity.AddClaim(new Claim(ClaimTypes.Name, user.Description));
 			identity.AddClaim(new Claim("CompanyId", user.Company.ToString(), ClaimValueTypes.Integer));
 
-			foreach (var function in user.UserFunctions)
+            foreach (var function in user.UserFunctions)
 				identity.AddClaim(new Claim(ClaimTypes.Role, $"{function.FunctionGroup}#{function.Function}#{function.PrototypeType?.ToString() ?? string.Empty}#{function.Tag ?? string.Empty}"));
 
 			foreach (var function in user.UserFunctions.Select(x => x.FunctionGroup).Distinct())
@@ -112,7 +110,8 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
 			{
 				{ "company", user.Company.ToString() },
 				{ "code", user.Code },
-				{ "name", user.Description }
+				{ "name", user.Description },
+                { "timeZone", user.Companies.TimeZone }
 			};
 		}
 	}

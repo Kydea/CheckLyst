@@ -3,7 +3,6 @@ using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Logic.DataEngine;
 using CheckListManager.Prototypes.Data;
-using CheckListManager.Common.Core.Web.ClassExtensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;

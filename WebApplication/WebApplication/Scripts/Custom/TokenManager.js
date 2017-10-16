@@ -29,11 +29,13 @@
 		},
 
 		parseLoginResult = function (result) {
+			console.log(result);
 			localStorage.accessToken = result.access_token;
 			$(".CurrentUser", userPanel)
 				.attr("title", result.code)
 				.children(".UserName").text(result.name)
 			localStorage.accessTokenExpiration = new Date().getTime() + parseInt(result.expires_in) * 1000;
+			localStorage.timeZone = result.timeZone;
 		};
 
 	tokenManager.login = function (result) {
