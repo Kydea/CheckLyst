@@ -119,7 +119,7 @@ matematici.DatePicker = function (selector) {
 		};
 
 	this.set = function (value) {
-		input.val(matematici.dateFormatter.date(value)).change();
+		input.val(matematici.dateFormatter.date(value, false)).change();
 	};
 
 	this.getDate = function () {

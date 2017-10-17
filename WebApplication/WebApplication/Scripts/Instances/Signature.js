@@ -148,9 +148,10 @@
         if (model.Signed) {
             var zoneIndex = model.SignedOn.indexOf("+");
             var signedOn = new Date(model.SignedOn.endsWith("Z") ? model.SignedOn : (zoneIndex > 0 ? model.SignedOn.substring(0, zoneIndex) : model.SignedOn) + "Z");
-            user.val(model.SignedBy + " - " + model.SignerDescription);
-            date.val(matematici.dateFormatter.date(signedOn, false));
-            time.val(matematici.dateFormatter.time(signedOn, false));
+			user.val(model.SignedBy + " - " + model.SignerDescription);
+			var format = matematici.dateFormatter.date(signedOn, true);
+            date.val(format.date);
+			time.val(format.time);
             element.attr("title", user.val() + " | " + date.val() + " | " + time.val());
             if (cancelButton) {
                 button.hide();
