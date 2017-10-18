@@ -427,6 +427,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="Functions_FunctionGroup_fkey">
+          <End Role="FunctionGroups" Type="Self.FunctionGroups" Multiplicity="1" />
+          <End Role="Functions" Type="Self.Functions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FunctionGroups">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="Functions">
+              <PropertyRef Name="FunctionGroup" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="InstanceExpressionValues_Instance_fkey">
           <End Role="Instances" Type="Self.Instances" Multiplicity="1" />
           <End Role="InstanceExpressionValues" Type="Self.InstanceExpressionValues" Multiplicity="*" />
@@ -875,6 +887,10 @@
             <End Role="Users" EntitySet="Users" />
             <End Role="Records" EntitySet="Records" />
           </AssociationSet>
+          <AssociationSet Name="Functions_FunctionGroup_fkey" Association="Self.Functions_FunctionGroup_fkey">
+            <End Role="FunctionGroups" EntitySet="FunctionGroups" />
+            <End Role="Functions" EntitySet="Functions" />
+          </AssociationSet>
           <AssociationSet Name="InstanceExpressionValues_Instance_fkey" Association="Self.InstanceExpressionValues_Instance_fkey">
             <End Role="Instances" EntitySet="Instances" />
             <End Role="InstanceExpressionValues" EntitySet="InstanceExpressionValues" />
@@ -1138,8 +1154,6 @@
           <EntitySet Name="PrototypeVersions" EntityType="RelationalDatabaseModel.PrototypeVersions" />
           <EntitySet Name="PrototypeVersionTags" EntityType="RelationalDatabaseModel.PrototypeVersionTags" />
           <EntitySet Name="VersionStates" EntityType="RelationalDatabaseModel.VersionStates" />
-          <EntitySet Name="FunctionGroups" EntityType="RelationalDatabaseModel.FunctionGroups" />
-          <EntitySet Name="Functions" EntityType="RelationalDatabaseModel.Functions" />
           <EntitySet Name="PasswordHistory" EntityType="RelationalDatabaseModel.PasswordHistory" />
           <EntitySet Name="PINHistory" EntityType="RelationalDatabaseModel.PINHistory" />
           <EntitySet Name="Actions" EntityType="RelationalDatabaseModel.Actions" />
@@ -1266,10 +1280,17 @@
             <End Role="WorkFlowSteps" EntitySet="WorkFlowSteps" />
             <End Role="WorkFlowStepTags" EntitySet="WorkFlowStepTags" />
           </AssociationSet>
+          <EntitySet Name="Configurations" EntityType="RelationalDatabaseModel.Configurations" />
+          <EntitySet Name="FunctionGroups" EntityType="RelationalDatabaseModel.FunctionGroups" />
+          <EntitySet Name="Functions" EntityType="RelationalDatabaseModel.Functions" />
           <EntitySet Name="UserFunctions" EntityType="RelationalDatabaseModel.UserFunctions" />
           <AssociationSet Name="UserFunctions_PrototypeType_fkey" Association="RelationalDatabaseModel.UserFunctions_PrototypeType_fkey">
             <End Role="PrototypeTypes" EntitySet="PrototypeTypes" />
             <End Role="UserFunctions" EntitySet="UserFunctions" />
+          </AssociationSet>
+          <AssociationSet Name="Functions_FunctionGroup_fkey" Association="RelationalDatabaseModel.Functions_FunctionGroup_fkey">
+            <End Role="FunctionGroups" EntitySet="FunctionGroups" />
+            <End Role="Functions" EntitySet="Functions" />
           </AssociationSet>
           <AssociationSet Name="UserFunctions_Function" Association="RelationalDatabaseModel.UserFunctions_Function">
             <End Role="Functions" EntitySet="Functions" />
@@ -1279,7 +1300,6 @@
             <End Role="Users" EntitySet="Users" />
             <End Role="UserFunctions" EntitySet="UserFunctions" />
           </AssociationSet>
-          <EntitySet Name="Configurations" EntityType="RelationalDatabaseModel.Configurations" />
           </EntityContainer>
         <EntityType Name="TimeZones">
           <Key>
@@ -1487,21 +1507,6 @@
           <Property Name="Code" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="PrototypeVersions" Relationship="RelationalDatabaseModel.PrototypeVersions_ProposedState_fkey" FromRole="VersionStates" ToRole="PrototypeVersions" />
           <NavigationProperty Name="PrototypeVersions1" Relationship="RelationalDatabaseModel.PrototypeVersions_VersionState_fkey" FromRole="VersionStates" ToRole="PrototypeVersions" />
-        </EntityType>
-        <EntityType Name="FunctionGroups">
-          <Key>
-            <PropertyRef Name="Code" />
-          </Key>
-          <Property Name="Code" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="Functions">
-          <Key>
-            <PropertyRef Name="FunctionGroup" />
-            <PropertyRef Name="Code" />
-          </Key>
-          <Property Name="FunctionGroup" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="Code" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="UserFunctions" Relationship="RelationalDatabaseModel.UserFunctions_Function" FromRole="Functions" ToRole="UserFunctions" />
         </EntityType>
         <EntityType Name="PasswordHistory">
           <Key>
@@ -2003,6 +2008,32 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Configurations">
+          <Key>
+            <PropertyRef Name="Code" />
+          </Key>
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Value" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedOn" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
+        </EntityType>
+        <EntityType Name="FunctionGroups">
+          <Key>
+            <PropertyRef Name="Code" />
+          </Key>
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Functions" Relationship="RelationalDatabaseModel.Functions_FunctionGroup_fkey" FromRole="FunctionGroups" ToRole="Functions" />
+        </EntityType>
+        <EntityType Name="Functions">
+          <Key>
+            <PropertyRef Name="FunctionGroup" />
+            <PropertyRef Name="Code" />
+          </Key>
+          <Property Name="FunctionGroup" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="FunctionGroups" Relationship="RelationalDatabaseModel.Functions_FunctionGroup_fkey" FromRole="Functions" ToRole="FunctionGroups" />
+          <NavigationProperty Name="UserFunctions" Relationship="RelationalDatabaseModel.UserFunctions_Function" FromRole="Functions" ToRole="UserFunctions" />
+        </EntityType>
         <EntityType Name="UserFunctions">
           <Key>
             <PropertyRef Name="ID" />
@@ -2031,6 +2062,18 @@
             </Principal>
             <Dependent Role="UserFunctions">
               <PropertyRef Name="PrototypeType" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Functions_FunctionGroup_fkey">
+          <End Type="RelationalDatabaseModel.FunctionGroups" Role="FunctionGroups" Multiplicity="1" />
+          <End Type="RelationalDatabaseModel.Functions" Role="Functions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FunctionGroups">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="Functions">
+              <PropertyRef Name="FunctionGroup" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2064,15 +2107,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="Configurations">
-          <Key>
-            <PropertyRef Name="Code" />
-          </Key>
-          <Property Name="Code" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="Value" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="CreatedOn" Type="DateTimeOffset" Nullable="false" Precision="7" />
-          <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
-        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2278,21 +2312,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="FunctionGroups">
-            <EntityTypeMapping TypeName="RelationalDatabaseModel.FunctionGroups">
-              <MappingFragment StoreEntitySet="FunctionGroups">
-                <ScalarProperty Name="Code" ColumnName="Code" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Functions">
-            <EntityTypeMapping TypeName="RelationalDatabaseModel.Functions">
-              <MappingFragment StoreEntitySet="Functions">
-                <ScalarProperty Name="Code" ColumnName="Code" />
-                <ScalarProperty Name="FunctionGroup" ColumnName="FunctionGroup" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="PasswordHistory">
             <EntityTypeMapping TypeName="RelationalDatabaseModel.PasswordHistory">
               <MappingFragment StoreEntitySet="PasswordHistory">
@@ -2410,6 +2429,31 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Configurations">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.Configurations">
+              <MappingFragment StoreEntitySet="Configurations">
+                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="Value" ColumnName="Value" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FunctionGroups">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.FunctionGroups">
+              <MappingFragment StoreEntitySet="FunctionGroups">
+                <ScalarProperty Name="Code" ColumnName="Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Functions">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.Functions">
+              <MappingFragment StoreEntitySet="Functions">
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="FunctionGroup" ColumnName="FunctionGroup" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="UserFunctions">
             <EntityTypeMapping TypeName="RelationalDatabaseModel.UserFunctions">
               <MappingFragment StoreEntitySet="UserFunctions">
@@ -2424,16 +2468,6 @@
                 <ScalarProperty Name="User" ColumnName="User" />
                 <ScalarProperty Name="Company" ColumnName="Company" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Configurations">
-            <EntityTypeMapping TypeName="RelationalDatabaseModel.Configurations">
-              <MappingFragment StoreEntitySet="Configurations">
-                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
-                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
-                <ScalarProperty Name="Value" ColumnName="Value" />
-                <ScalarProperty Name="Code" ColumnName="Code" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

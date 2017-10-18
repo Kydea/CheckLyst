@@ -20,14 +20,14 @@ namespace CheckListManager.Prototypes.Api.Controllers
         [Route("Bind")]
         public async Task<IHttpActionResult> Bind(Message<ListRequest> request)
         {
-            return Ok(await _listService.GetResponse(Identity.CompanyId, request.Data));
+            return Ok(await _listService.BindAsync(Identity.CompanyId, request.Data));
         }
 
         [HttpPost]
-        [Route("GetPrototypes")]
-        public async Task<IHttpActionResult> GetPrototypes(PagingRequest<ListRequest> request)
+        [Route("GetData")]
+        public async Task<IHttpActionResult> GetData(PagingRequest<ListRequest> request)
         {
-            return Ok(await _listService.GetPrototypes(Identity.CompanyId, request));
+            return Ok(await _listService.GetDataAsync(Identity.CompanyId, request));
         }
     }
 }

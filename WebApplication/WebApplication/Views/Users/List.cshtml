@@ -1,4 +1,4 @@
-﻿<div id="PrototypesListPage">
+﻿<div id="UsersListPage">
     <h1>Users List</h1>
 
     <div class="ActionBar">
@@ -27,7 +27,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
+            <tr class="Handler">
                 <td data-column="code"></td>
                 <td data-column="description"></td>
                 <td data-column="email"></td>
@@ -47,27 +47,30 @@
 
 <script type="text/javascript">
     matematici.events.onPageLoad = function (callback) {
-        var grid, paginator;
+        var grid,
+            form,
+            paginator,
+            handler = function (result) {
+                grid.update(result.data);
+                paginator.setPage(result.currentPage, result.pagesCount);
+            };
 
         new matematici.ActionBar("div.ActionBar");
 
         new matematici.Page({
-            name: "Prototypes List",
+            name: "Users List",
             initializers: [
                 //new matematici.FixedHeader("div#Content table.Grid")
                 grid = new matematici.Grid("div#Content table.Grid"),
-                paginator = new matematici.Paginator("div#Content div.Paginator", function (index) {
-                    alert(index);
-                }),
-                new matematici.Form("form#Filters", {
+                form = new matematici.Form("form#Filters", {
                     applyButton: {
                         button: "#ApplyButton",
-                        event: "GetResults",
-                        handler: function (result) {
-                            grid.update(result.data);
-                            paginator.setPage(result.currentPage, result.pagesCount);
-                        }
+                        event: "List",
+                        handler: handler
                     }
+                }),
+                matematici.p = paginator = new matematici.Paginator("div#Content div.Paginator", function (index) {
+                    form.trigger("List", handler, { CurrentPage: index });
                 })
             ]
         });

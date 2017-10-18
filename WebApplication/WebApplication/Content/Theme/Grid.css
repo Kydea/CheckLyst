@@ -19,6 +19,8 @@
       border-right: solid 1px #afb4b5; }
       table.Grid tbody tr td.Off {
         opacity: .3; }
+      table.Grid tbody tr td.Centered {
+        text-align: center; }
       table.Grid tbody tr td:last-child {
         border-right: none; }
     table.Grid tbody tr.Handler {

@@ -33,6 +33,10 @@ table.Grid {
                     opacity: .3;
                 }
 
+                &.Centered {
+                    text-align: center;
+                }
+
                 &:last-child {
                     border-right: none;
                 }

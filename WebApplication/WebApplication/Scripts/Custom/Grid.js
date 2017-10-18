@@ -20,6 +20,9 @@
 						var formattedDate = matematici.dateFormatter.format(new Date(value), true);
 						cell.append($("<span />").html(formattedDate.date + " " + formattedDate.time).attr("title", formattedDate.offset));
 						break;
+					case "Boolean":
+						cell.addClass("Centered").append($("<i />").addClass("fa").addClass("fa-" + (value || value == true ? "check" : "times")));
+						break;
 					default:
 						cell.html(value);
 				}

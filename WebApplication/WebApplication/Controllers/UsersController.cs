@@ -3,11 +3,11 @@ using CheckListManager.WebApplication.Code;
 
 namespace CheckListManager.WebApplication.Controllers
 {
-    [RoutePrefix("Profiles")]
-    public class ProfilesController : BaseController
+    [RoutePrefix("Users")]
+    public class UsersController : BaseController
 	{
         [Route("List")]
-        [DefaultAuthorize(Roles = "FunctionGroup#Profiles")]
+        [DefaultAuthorize(Roles = "FunctionGroup#Users")]
         public ActionResult List()
         {
             return ConditionalView("List");

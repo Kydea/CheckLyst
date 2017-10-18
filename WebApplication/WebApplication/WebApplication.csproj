@@ -53,7 +53,7 @@
     <Compile Include="Code\DefaultAuthorizeAttribute.cs" />
     <Compile Include="Code\DefaultViewPage.cs" />
     <Compile Include="Controllers\BaseController.cs" />
-    <Compile Include="Controllers\ProfilesController.cs" />
+    <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Controllers\PrototypesController.cs" />
     <Compile Include="Controllers\SecurityController.cs" />
     <Compile Include="Controllers\DefaultController.cs" />
@@ -264,7 +264,7 @@
     <Content Include="Views\Default\Loader.cshtml" />
     <Content Include="Views\Security\Login.cshtml" />
     <Content Include="Views\Prototypes\List.cshtml" />
-    <Content Include="Views\Profiles\List.cshtml" />
+    <Content Include="Views\Users\List.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -4,35 +4,32 @@
 );
 
 insert into "Security"."FunctionGroups" values
-	('Platform'),
-	('Company'),
 	('Prototype'),
-	('Instances');
+	('Instances'),
+	('Users');
 
 create table "Security"."Functions"
 (
-	"FunctionGroup" varchar (20),
+	"FunctionGroup" varchar (20) references "Security"."FunctionGroups",
 	"Code" varchar (20),
 
 	constraint "PK_Functions" primary key ("FunctionGroup", "Code")
 );
 
 insert into "Security"."Functions" values
-	('Company', 'Profiles'),
-	('Company', 'PrototypeTypes'),
-	('Company', 'AuditTrail'),
-	('Company', 'Data'),
+	('Prototypes', 'Approve'),
+	('Prototypes', 'Design'),
+	('Prototypes', 'View'),
 
-	('Prototype', 'Approve'),
-	('Prototype', 'Design'),
-	('Prototype', 'View'),
+	('Instances', 'Create'),
+	('Instances', 'Edit'),
+	('Instances', 'Delete'),
+	('Instances', 'Approve'),
+	('Instances', 'Unlock'),
+	('Instances', 'View'),
 
-	('Instance', 'Create'),
-	('Instance', 'Edit'),
-	('Instance', 'Delete'),
-	('Instance', 'Approve'),
-	('Instance', 'Unlock'),
-	('Instance', 'View');
+	('Users', 'Edit'),
+	('Users', 'View');
 
 create table "Security"."UserFunctions"
 (

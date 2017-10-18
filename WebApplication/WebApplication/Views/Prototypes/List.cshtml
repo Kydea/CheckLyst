@@ -81,12 +81,13 @@
                 form = new matematici.Form("form#Filters", {
                     applyButton: {
                         button: "#ApplyButton",
-                        event: "GetPrototypes",
+                        event: "GetData",
                         handler: handler
-                    }
+                    },
+                    bindEvent: "Bind"
                 }),
                 matematici.p = paginator = new matematici.Paginator("div#Content div.Paginator", function (index) {
-                    form.trigger("GetPrototypes", handler, { CurrentPage: index });
+                    form.trigger("GetData", handler, { CurrentPage: index });
                 })
             ]
         });

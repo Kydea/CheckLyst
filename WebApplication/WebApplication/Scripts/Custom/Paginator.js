@@ -30,7 +30,7 @@
 	this.setPage = function (page, pages) {
 		element.empty();
 
-		if (pages) {
+		if (pages > 1) {
 			var ratio = 3; //3 pages after and 3 pages before the current
 			if (page > ratio + 1) {
 				addPage(1, page);

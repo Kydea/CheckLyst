@@ -22,7 +22,7 @@ namespace CheckListManager.Prototypes.Logic.List
             _prototypesRepository = prototypesRepository;
         }
 
-        public async Task<ListResponse> GetResponse(long Company, ListRequest Form)
+        public async Task<ListResponse> BindAsync(long Company, ListRequest Form)
         {
             ListResponse response = new ListResponse();
             long? Department = Form.Department;
@@ -66,7 +66,7 @@ namespace CheckListManager.Prototypes.Logic.List
             return response;
         }
 
-        public async Task<PagingResponse<List<ListRow>>> GetPrototypes(long Company, PagingRequest<ListRequest> Form)
+        public async Task<PagingResponse<List<ListRow>>> GetDataAsync(long Company, PagingRequest<ListRequest> Form)
             =>
                 await _prototypesRepository.GetPrototypesAsync(
                     Company,
@@ -86,7 +86,8 @@ namespace CheckListManager.Prototypes.Logic.List
                         ModifiedOn = p.ModifiedOn
                     },
                     p =>
-                        p.Prototypes.Department == Form.Data.Department
+                        p.Prototypes.Company == Company
+                        && p.Prototypes.Department == Form.Data.Department
                         && p.Prototypes.PrototypeType == Form.Data.PrototypeType
                         && (Form.Data.State == "All" || p.VersionState == Form.Data.State)
                         && (Form.Data.Name == string.Empty || p.Description != null && p.Description.ToUpper().Contains(Form.Data.Name.ToUpper())),

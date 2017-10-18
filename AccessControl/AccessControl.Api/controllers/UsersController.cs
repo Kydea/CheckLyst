@@ -22,7 +22,7 @@ namespace CheckListManager.AccessControl.Api.Controllers
 	    }
 
 	    [HttpPost]
-		[Route]
+		[Route("List")]
 	    public async Task<IHttpActionResult> GetUsers(PagingRequest<UsersRequest> request)
 		{
 			return Ok(await _userService.GetUsersAsync(Identity.CompanyId, request));

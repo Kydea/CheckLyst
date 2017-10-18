@@ -10,8 +10,8 @@ namespace CheckListManager.Prototypes.Logic.List
 {
     public interface IListService: IService
     {
-        Task<ListResponse> GetResponse(long Company, ListRequest form);
+        Task<ListResponse> BindAsync(long Company, ListRequest form);
 
-        Task<PagingResponse<List<ListRow>>> GetPrototypes(long Company, PagingRequest<ListRequest> form);
+        Task<PagingResponse<List<ListRow>>> GetDataAsync(long Company, PagingRequest<ListRequest> form);
     }
 }

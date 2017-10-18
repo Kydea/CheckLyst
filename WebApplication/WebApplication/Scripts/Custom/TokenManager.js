@@ -11,7 +11,7 @@
 				data: { grant_type: "refresh_token", refresh_token: localStorage.refreshToken },
 				type: "post"
 			}).done(function (result) {
-				parseLoginResult(result);
+				parseResult(result);
 			}).fail(function (jqXhr, textStatus, errorThrown) {
 				matematici.dialog.error("system error", "Access token refresh failed, please login again.");
 				console.log(jqXhr, textStatus, errorThrown);
@@ -28,19 +28,19 @@
 			}, 60000);
 		},
 
-		parseLoginResult = function (result) {
-			console.log(result);
+		parseResult = function (result) {
 			localStorage.accessToken = result.access_token;
 			$(".CurrentUser", userPanel)
 				.attr("title", result.code)
 				.children(".UserName").text(result.name)
 			localStorage.accessTokenExpiration = new Date().getTime() + parseInt(result.expires_in) * 1000;
 			localStorage.timeZone = result.timeZone;
+			localStorage.roles = result.roles;
 		};
 
 	tokenManager.login = function (result) {
 		localStorage.refreshToken = result.refresh_token;
-		parseLoginResult(result);
+		parseResult(result);
 	};
 
 	tokenManager.getAccessToken = function() {
@@ -49,6 +49,15 @@
 
 	tokenManager.getRefreshToken = function () {
 		return localStorage.refreshToken;
+	};
+
+	tokenManager.logout = function () {
+		if (localStorage.accessToken != null)
+			$.ajax(matematici.urls.accessControl.logout, {
+				data: { data: { refreshToken: localStorage.refreshToken } },
+				type: "post"
+			});
+		localStorage.clear();
 	};
 
 	setup();

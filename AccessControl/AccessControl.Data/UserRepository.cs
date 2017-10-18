@@ -22,17 +22,29 @@ namespace CheckListManager.AccessControl.Data
 			return SaveChangesAsync();
 		}
 
-		public Task<List<Users>> GetUsersAsync(long companyId, string code, int skip, int take)
-			=> Entities.Users
-				.Where(u => u.Company == companyId && u.Code.StartsWith(code))
+        private IQueryable<Users> Get(long companyId, string Keyword)
+        {
+            Keyword = Keyword?.ToUpper() ?? "";
+            return Entities.Users
+                .Where(
+                    u => u.Company == companyId && 
+                    (
+                        u.Code.ToUpper().Contains(Keyword)
+                        || u.Description != null && u.Description.ToUpper().Contains(Keyword)
+                        || u.Email != null && u.Email.ToUpper().Contains(Keyword)
+                    )
+                );
+        }
+
+		public Task<List<Users>> GetUsersAsync(long companyId, string keyword, int skip, int take)
+			=> Get(companyId, keyword)
 				.OrderBy(u => u.Code)
 				.Skip(skip)
 				.Take(take)
 				.ToListAsync();
 
-		public Task<int> CountUsersAsync(long companyId, string code)
-			=> Entities.Users
-				.Where(u => u.Company == companyId && u.Code.StartsWith(code))
+		public Task<int> CountUsersAsync(long companyId, string keyword)
+			=> Get(companyId, keyword)
 				.CountAsync();
 	}
 }

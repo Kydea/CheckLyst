@@ -154,15 +154,21 @@ namespace CheckListManager.AccessControl.Logic.Services
 		public async Task<PagingResponse<List<UsersResponse>>> GetUsersAsync(long companyId, PagingRequest<UsersRequest> request)
 		{
 			var take = request.ItemsPerPage;
-			var users = await _userRepository.GetUsersAsync(companyId, request.Data.Code, request.Skip, take);
-			var count = await _userRepository.CountUsersAsync(companyId, request.Data.Code);
+			var users = await _userRepository.GetUsersAsync(companyId, request.Data.Keyword, request.Skip, take);
+			var count = await _userRepository.CountUsersAsync(companyId, request.Data.Keyword);
 
 			var response = users.Select(u => new UsersResponse
 			{
 				Code = u.Code,
-				Email = u.Email,
-				Enabled = u.Enabled
-			}).ToList();
+                Description = u.Description,
+                Email = u.Email,
+				Enabled = u.Enabled,
+                LastLoginOn = u.LastLoginOn,
+                CreatedBy = u.CreatedBy,
+                CreatedOn = u.CreatedOn,
+                ModifiedBy = u.ModifiedBy,
+                ModifiedOn = u.ModifiedOn
+            }).ToList();
 
 			return new PagingResponse<List<UsersResponse>>
 			{

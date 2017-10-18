@@ -29,7 +29,7 @@
 						matematici.controls.setEditable(options.applyButton, valid);
 				})
 				.on("change", ".Trigger", function () {
-					bind("Bind", handleResult, prepareRequest({ data: { source: $(this).attr("name") } }));
+					bind(options.bindEvent, handleResult, prepareRequest({ data: { source: $(this).attr("name") } }));
 				});
 
 			fields.each(function () {
@@ -38,7 +38,10 @@
 					matematici.controls.toggle(field, true);
 			});
 
-			bind("Bind", handleResult, loadForm() || prepareRequest());
+			if (options.bindEvent)
+				bind(options.bindEvent, handleResult, loadForm() || prepareRequest());
+			else
+				valid = true;
 		},
 
 		getStorageName = function () {

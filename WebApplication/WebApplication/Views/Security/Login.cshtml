@@ -35,16 +35,16 @@
 
         var form = $("form");
 
-		new matematici.Page({
-			name: "Login",
-			initializers: [ ]
-		});
+        new matematici.Page({
+            name: "Login",
+            initializers: []
+        });
 
-		new matematici.Login("div.Login", function () {
+        new matematici.Login("div.Login", function () {
             $("div.Errors", form).hide();
             $.ajax(matematici.urls.accessControl.token, {
-		        data: form.serialize(),
-		        type: "post"
+                data: form.serialize(),
+                type: "post"
             }).done(function (result) {
                 matematici.tokenManager.login(result);
 
@@ -55,6 +55,8 @@
                 console.log(jqXhr, textStatus, errorThrown);
             });
         });
+
+        matematici.tokenManager.logout();
         matematici.loader.checkInitialCurtain();
         callback.call();
     };

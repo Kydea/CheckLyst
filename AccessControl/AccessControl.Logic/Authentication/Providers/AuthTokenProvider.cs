@@ -111,8 +111,9 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
 				{ "company", user.Company.ToString() },
 				{ "code", user.Code },
 				{ "name", user.Description },
-                { "timeZone", user.Companies.TimeZone }
-			};
+                { "timeZone", user.Companies.TimeZone },
+                { "roles", String.Join(",", user.UserFunctions.Select(function => $"{function.FunctionGroup}#{function.Function}#{function.PrototypeType?.ToString() ?? string.Empty}#{function.Tag ?? string.Empty}")) }
+            };
 		}
 	}
 }

@@ -2,6 +2,6 @@
 {
 	public sealed class UsersRequest
 	{
-		public string Code { get; set; }
+		public string Keyword { get; set; }
 	}
 }
