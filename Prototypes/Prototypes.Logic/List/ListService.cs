@@ -26,24 +26,29 @@ namespace CheckListManager.Prototypes.Logic.List
         {
             ListResponse response = new ListResponse();
             long? Department = Form.Department;
+
             if (Form.Source == null)
             {
-                var Departments = await _commonRepository.GetDepartmentsAsync(Company);
                 //initial load
+
+                response.Fields["Name"] = new Field { Value = Form.Name };
+
+                var Departments = await _commonRepository.GetDepartmentsAsync(Company);
+                Department = Form.Department.HasValue && Departments.Any(d => d.ID == Form.Department) ? Form.Department.Value : Departments.FirstOrDefault()?.ID;
                 response.Fields["Department"] = new Field
                 {
-                    Options = Departments.Select(d => new Option(d.ID.ToString(), d.Name))
+                    Options = Departments.Select(d => new Option(d.ID.ToString(), d.Name)),
+                    Value = Department?.ToString()
                 };
-                Department = Departments.FirstOrDefault()?.ID;
                 response.Valid &= Departments.Any();
 
                 var States = new List<Option>() { new Option(null, "All") };
                 States.AddRange((await _commonRepository.GetVersionStatesAsync()).Select(x => new Option(x)));
                 response.Fields["State"] = new Field
                 {
-                    Options = States
+                    Options = States,
+                    Value = Form.State
                 };
-
             }
 
             if (Form.Source == null || Form.Source == "department")
@@ -51,7 +56,8 @@ namespace CheckListManager.Prototypes.Logic.List
                 var PrototypeTypes = await _commonRepository.GetPrototypeTypesAsync(Department ?? -1);
                 response.Fields["PrototypeType"] = new Field
                 {
-                    Options = PrototypeTypes.Select(d => new Option(d.ID.ToString(), d.Description))
+                    Options = PrototypeTypes.Select(d => new Option(d.ID.ToString(), d.Description)),
+                    Value = Form.PrototypeType?.ToString()
                 };
                 response.Valid &= PrototypeTypes.Any();
 
@@ -83,7 +89,7 @@ namespace CheckListManager.Prototypes.Logic.List
                         p.Prototypes.Department == Form.Data.Department
                         && p.Prototypes.PrototypeType == Form.Data.PrototypeType
                         && (Form.Data.State == "All" || p.VersionState == Form.Data.State)
-                        && (Form.Data.Name == string.Empty || p.Description.Contains(Form.Data.Name)),
+                        && (Form.Data.Name == string.Empty || p.Description != null && p.Description.ToUpper().Contains(Form.Data.Name.ToUpper())),
                     p => p.Prototype,
                     Form.CurrentPage,
                     Form.ItemsPerPage
