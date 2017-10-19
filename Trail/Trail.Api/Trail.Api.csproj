@@ -15,7 +15,7 @@
     <RootNamespace>CheckListManager.Trail.Api</RootNamespace>
     <AssemblyName>CheckListManager.Trail.Api</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <UseIISExpress>true</UseIISExpress>
+    <UseIISExpress>false</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -112,6 +112,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\ListController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -133,6 +134,14 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\Common.Core.Web\Common.Core.Web.csproj">
+      <Project>{2fafff00-d5eb-4bb0-b70b-38290d88c871}</Project>
+      <Name>Common.Core.Web</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Common.Core\Common.Core.csproj">
+      <Project>{31DE9C2F-FB9D-472C-B28A-3C1EDEFF10DC}</Project>
+      <Name>Common.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Common\Common.Logic.Api\Common.Logic.Api.csproj">
       <Project>{BE658746-48A9-4AF2-B2B6-A13A7D6DE439}</Project>
       <Name>Common.Logic.Api</Name>
@@ -141,7 +150,12 @@
       <Project>{351c3388-67b1-46ee-8fd1-5a63277b3c0c}</Project>
       <Name>Common.Logic</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Trail.Logic\Trail.Logic.csproj">
+      <Project>{5f03eba2-7ff0-4fe0-9945-58fa5f084563}</Project>
+      <Name>Trail.Logic</Name>
+    </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

@@ -3,7 +3,9 @@ Vautare se mettere i token in Redis invece che in Postgres
 Ripristinareo Clock.js, tenere il client "vivo credo non serva più"
 Possiamo pensare di legarci all'id del token e non del client, rimane scoperat la concorrenza browser su browser, ma potremmo risolvere con javascript (in che modo?)
 
-Mostriamo / nascondiamo i sotto-menu in base a data-role, mostriamo e nascondiamo i menu se diretti o se esiste almeno un sottoitem visibile
+mostriamo e nascondiamo i menu se diretti o se esiste almeno un sottoitem visibile
+
+va gestito l'ordine e l'ordine desc, non è chiaro come fare
 
 Gestire rowversion per le tabelle, in modo da implementare la concorrenza
 

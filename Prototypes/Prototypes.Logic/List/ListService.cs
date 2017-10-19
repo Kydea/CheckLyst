@@ -72,7 +72,6 @@ namespace CheckListManager.Prototypes.Logic.List
                     Company,
                     p => new ListRow
                     {
-                        TimeZone = "W. Europe Standard Time",
                         ID = p.Prototype,
                         Name = p.Prototypes.Name,
                         Description = p.Description,

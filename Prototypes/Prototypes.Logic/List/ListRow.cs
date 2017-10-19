@@ -9,8 +9,6 @@ namespace CheckListManager.Prototypes.Logic.List
 {
     public class ListRow
     {
-        public string TimeZone { get; set; }
-
         public long ID { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
