@@ -77,8 +77,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Audit\AuditAction.cs" />
-    <Compile Include="Audit\AuditMessage.cs" />
+    <Compile Include="Trail\TrailAction.cs" />
+    <Compile Include="Trail\TrailMessage.cs" />
     <Compile Include="Cache\IRedisCache.cs" />
     <Compile Include="Cache\IRedisSetup.cs" />
     <Compile Include="Cache\LockObject.cs" />

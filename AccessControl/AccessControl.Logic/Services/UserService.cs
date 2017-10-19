@@ -9,7 +9,7 @@ using CheckListManager.AccessControl.Logic.Exceptions;
 using CheckListManager.AccessControl.Logic.Messages.Users;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Messages;
-using CheckListManager.Common.Logic.Audit;
+using CheckListManager.Common.Logic.Trail;
 using CheckListManager.Common.Logic.Cache;
 using CheckListManager.Common.Logic.Queue;
 using CheckListManager.Common.Logic.Services;
@@ -73,11 +73,11 @@ namespace CheckListManager.AccessControl.Logic.Services
 				throw new AuthenticationException(104, "User password not valid");
 			}
 
-			await _queueService.SendObjectAsync(QueueName.Audit, new AuditMessage
+			await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
 			{
 				Company = user.Company,
 				User = user.Code,
-				Action = AuditAction.Login,
+				Action = TrailAction.Login,
 				Date = DateTimeOffset.UtcNow
 			});
 

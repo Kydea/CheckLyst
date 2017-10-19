@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CheckListManager.Prototypes.Data</RootNamespace>
-    <AssemblyName>CheckListManager.Audit.Data</AssemblyName>
+    <AssemblyName>CheckListManager.Prototypes.Data</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

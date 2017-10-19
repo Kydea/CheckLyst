@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CheckListManager.Prototypes.Logic</RootNamespace>
-    <AssemblyName>CheckListManager.Audit.Logic</AssemblyName>
+    <AssemblyName>CheckListManager.Prototypes.Logic</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -88,7 +88,7 @@
     </ProjectReference>
     <ProjectReference Include="..\Prototypes.Data\Prototypes.Data.csproj">
       <Project>{B1773E1A-FDE3-4D1C-BDE0-3C5A6B2B3514}</Project>
-      <Name>Audit.Data</Name>
+      <Name>Trail.Data</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

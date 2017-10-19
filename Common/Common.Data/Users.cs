@@ -20,7 +20,6 @@ namespace CheckListManager.Common.Data
             this.UserSessions = new HashSet<UserSessions>();
             this.PasswordHistory = new HashSet<PasswordHistory>();
             this.PINHistory = new HashSet<PINHistory>();
-            this.Records = new HashSet<Records>();
             this.WorkFlowApplicationsStep = new HashSet<WorkFlowApplicationsStep>();
             this.UserFunctions = new HashSet<UserFunctions>();
         }
@@ -49,8 +48,6 @@ namespace CheckListManager.Common.Data
         public virtual ICollection<PasswordHistory> PasswordHistory { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PINHistory> PINHistory { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Records> Records { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<WorkFlowApplicationsStep> WorkFlowApplicationsStep { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

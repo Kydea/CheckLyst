@@ -25,8 +25,8 @@ namespace CheckListManager.Common.Data
         public int Year { get; set; }
         public int Number { get; set; }
     
+        public virtual PrototypeVersions PrototypeVersions { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Instances> Instances { get; set; }
-        public virtual PrototypeVersions PrototypeVersions { get; set; }
     }
 }

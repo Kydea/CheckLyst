@@ -20,11 +20,8 @@ namespace CheckListManager.Common.Data
         public System.DateTimeOffset Date { get; set; }
         public string Action { get; set; }
         public string Information { get; set; }
-        public Nullable<long> Prototype { get; set; }
-        public Nullable<int> Version { get; set; }
-        public Nullable<long> Instance { get; set; }
+        public string CheckList { get; set; }
     
-        public virtual Users Users { get; set; }
         public virtual Actions Actions { get; set; }
     }
 }

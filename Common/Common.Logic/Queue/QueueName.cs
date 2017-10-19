@@ -2,6 +2,6 @@
 {
 	public static class QueueName
 	{
-		public const string Audit = "audit.fifo";
+		public const string Trail = "trail.fifo";
 	}
 }

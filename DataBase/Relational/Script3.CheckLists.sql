@@ -153,6 +153,7 @@ create table "CheckLists"."Instances"
 	"Year" int,
 	constraint "FK_Instances_InstanceNumerator" foreign key ("Prototype", "Version", "Year") references "CheckLists"."InstanceNumerators",
 
+	"PrototypeCode" varchar (50),
 	"Number" int,
 
 	"InstanceState" varchar (20) not null references "CheckLists"."InstanceStates",
@@ -166,7 +167,8 @@ create table "CheckLists"."Instances"
 	"ModifiedOn" timestamptz
 );
 
-create unique index "Index_InstanceExpressionValues" on "CheckLists"."Instances" ("Prototype", "Version", "Year", "Number");
+create unique index "Index_Instance_Number" on "CheckLists"."Instances" ("Prototype", "Version", "Year", "Number");
+create unique index "Index_Instance_Code" on "CheckLists"."Instances" ("PrototypeCode", "Version", "Year", "Number");
 
 create table "CheckLists"."InstanceTags"
 (

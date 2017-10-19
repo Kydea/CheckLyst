@@ -84,8 +84,8 @@
     "inputFile": "Content/Theme/jQuery-UI.scss"
   },
   {
-    "outputFile": "Content/Theme/AuditTrail.css",
-    "inputFile": "Content/Theme/AuditTrail.scss"
+    "outputFile": "Content/Theme/Trail.css",
+    "inputFile": "Content/Theme/Trail.scss"
   },
   {
     "outputFile": "Content/Theme/CheckListGrid.css",

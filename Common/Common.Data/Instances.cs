@@ -25,6 +25,7 @@ namespace CheckListManager.Common.Data
         public Nullable<long> Prototype { get; set; }
         public Nullable<int> Version { get; set; }
         public Nullable<int> Year { get; set; }
+        public string PrototypeCode { get; set; }
         public Nullable<int> Number { get; set; }
         public string InstanceState { get; set; }
         public string Description { get; set; }

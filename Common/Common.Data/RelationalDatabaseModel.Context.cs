@@ -32,7 +32,6 @@ namespace CheckListManager.Common.Data
         public virtual DbSet<UserSessions> UserSessions { get; set; }
         public virtual DbSet<InstanceExpressionValues> InstanceExpressionValues { get; set; }
         public virtual DbSet<InstanceNumerators> InstanceNumerators { get; set; }
-        public virtual DbSet<Instances> Instances { get; set; }
         public virtual DbSet<InstanceStates> InstanceStates { get; set; }
         public virtual DbSet<InstanceTags> InstanceTags { get; set; }
         public virtual DbSet<Prototypes> Prototypes { get; set; }
@@ -43,7 +42,6 @@ namespace CheckListManager.Common.Data
         public virtual DbSet<PasswordHistory> PasswordHistory { get; set; }
         public virtual DbSet<PINHistory> PINHistory { get; set; }
         public virtual DbSet<Actions> Actions { get; set; }
-        public virtual DbSet<Records> Records { get; set; }
         public virtual DbSet<WorkFlowActions> WorkFlowActions { get; set; }
         public virtual DbSet<WorkFlowApplications> WorkFlowApplications { get; set; }
         public virtual DbSet<WorkFlowApplicationsStep> WorkFlowApplicationsStep { get; set; }
@@ -54,5 +52,7 @@ namespace CheckListManager.Common.Data
         public virtual DbSet<FunctionGroups> FunctionGroups { get; set; }
         public virtual DbSet<Functions> Functions { get; set; }
         public virtual DbSet<UserFunctions> UserFunctions { get; set; }
+        public virtual DbSet<Instances> Instances { get; set; }
+        public virtual DbSet<Records> Records { get; set; }
     }
 }
