@@ -169,7 +169,7 @@
     <Content Include="Global.asax" />
     <Content Include="Scripts\Controls\Controls.js" />
     <Content Include="Scripts\Controls\DataPicker.js" />
-    <Content Include="Scripts\Custom\Grid.js" />
+    <Content Include="Scripts\Controls\Grid.js" />
     <Content Include="Scripts\Custom\TokenManager.js" />
     <Content Include="Scripts\Custom\ActionBar.js" />
     <Content Include="Scripts\Custom\CheckListGrid.js" />
@@ -265,6 +265,7 @@
     <Content Include="Views\Security\Login.cshtml" />
     <Content Include="Views\Prototypes\List.cshtml" />
     <Content Include="Views\Users\List.cshtml" />
+    <Content Include="Views\Users\Detail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

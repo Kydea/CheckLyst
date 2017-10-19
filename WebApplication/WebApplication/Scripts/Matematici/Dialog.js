@@ -1,7 +1,8 @@
 matematici.dialog = function () {
 
     var
-        element,
+		element,
+		container,
         options = {},
 
         ajax = function () {
@@ -37,12 +38,24 @@ matematici.dialog = function () {
                 });
                 if (button.icon) button.content.prepend($("<i />").addClass("fa fa-" + button.icon));
                 if (button.defaultButton) button.content.addClass("DefaultButton");
-                if (button.cancelButton) button.content.addClass("CancelButton");
+				if (button.cancelButton) button.content.addClass("CancelButton");
+				if (button.id) button.content.attr("id");
             }
 
             buttons.prepend(button.content);
             return matematici.dialog;
-        },
+		},
+
+		setButtons = function (value) {
+			container.children("Buttons").remove();
+			var buttons = $("<div />").addClass("Buttons");
+			if (value.constructor === Array)
+				for (button in value)
+					addButton(buttons, value[button]);
+			else
+				addButton(buttons, value);
+			container.append(buttons);
+		},
 
         show = function () {
         	if (element) {
@@ -51,7 +64,7 @@ matematici.dialog = function () {
         	}
 
             element = $("<div />").addClass("Dialog").appendTo(matematici.elements.body);
-            var container = $("<div />").addClass("Container").appendTo(element);
+            container = $("<div />").addClass("Container").appendTo(element);
 
             if (options.cssClass) {
                 element.addClass(options.cssClass);
@@ -60,16 +73,8 @@ matematici.dialog = function () {
             if (options.title)
                 container.append($("<h2 />").html(options.title));
 
-            if (options.content) container.append(options.content);
-            if (options.buttons) {
-                var buttons = $("<div />").addClass("Buttons");
-                if (options.buttons.constructor === Array)
-                    for (button in options.buttons)
-                        addButton(buttons, options.buttons[button]);
-                else
-                    addButton(buttons, options.buttons);
-                container.append(buttons);
-            }
+			if (options.content) container.append(options.content);
+			if (options.buttons) setButtons(options.buttons);
 
             matematici.elements.body.addClass("Dialog");
             element.show();
@@ -81,9 +86,8 @@ matematici.dialog = function () {
     		if (element) {
     			element.remove();
     			matematici.elements.body.removeClass("Dialog");
-    			if (options.cssClass) {
+    			if (options.cssClass) 
     				matematici.elements.body.removeClass("Dialog-" + options.cssClass);
-    			}
     			element = null;
     			options = {};
     		}
@@ -122,7 +126,11 @@ matematici.dialog = function () {
 
         getElement: function() {
             return element;
-        }
+		},
+
+		setButtons: function (value) {
+			setButtons(value);
+		}
     };
 
 }();
@@ -145,13 +153,14 @@ matematici.dialog = function () {
     or:
         show(settings) 
 
-        settings - tupe: PlainObject, description: a set of key/value pairs that configure the dialog
+        settings - type: PlainObject, description: a set of key/value pairs that configure the dialog
 
     		title - type: htmlString or Element or Array or jQuery, description: the title of the dialog
 	    	content - type: htmlString or Element or Array or jQuery, description: the contente of the dialog
             ajax - type: PlainObject, description: the prameters to use with ajax call, the result will be used to replace content, errors will be handled
             ajaxErrorHandler - type: function, description: is triggered if ajax call fails, if not set an error dialog is shown
             data - type: PlainObject, description: this object will be available as matematici.dialog.getData() while the dialog is showing, use it for example to customize handlers for ajax content
+			cssClass - tpe: String, description: the custom css class of the dialog element and for the body element (with the prefix "Dialog-")
             buttons - type: Array or sigle object, description: an Array of or a single PlainObjects, if null a default "ok" button will be created:
                 content - type: htmlString or Element or Array or jQuery, description: the button
                 - or -

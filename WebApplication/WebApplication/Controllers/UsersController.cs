@@ -4,13 +4,20 @@ using CheckListManager.WebApplication.Code;
 namespace CheckListManager.WebApplication.Controllers
 {
     [RoutePrefix("Users")]
+    [DefaultAuthorize(Roles = "FunctionGroup#Users")]
     public class UsersController : BaseController
 	{
         [Route("List")]
-        [DefaultAuthorize(Roles = "FunctionGroup#Users")]
         public ActionResult List()
         {
-            return ConditionalView("List");
+            return ConditionalView();
+        }
+
+        [HttpPost]
+        [Route("Detail")]
+        public ActionResult Detail()
+        {
+            return PartialView();
         }
     }
 }

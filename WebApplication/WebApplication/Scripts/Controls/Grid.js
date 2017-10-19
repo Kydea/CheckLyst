@@ -1,4 +1,4 @@
-﻿matematici.Grid = function (selector) {
+﻿matematici.Grid = function (selector, options) {
 	var
 		grid = this,
 		element = $(selector).hide(),
@@ -10,6 +10,11 @@
 
 		setup = function () {
 			$("td", noRecordRow).attr("colspan", columnNumber);
+
+			if (options.rowClick)
+				element.on("click", "tr.Handler", function () {
+					options.rowClick($(this));
+				});
 		},
 
 		setCellValue = function (cell, data) {
@@ -30,6 +35,9 @@
 
 		createRow = function (data) {
 			var row = prototypeRow.clone();
+
+			row.data("values", data);
+
 			$("td", row).each(function () {
 				setCellValue($(this), data);
 			});

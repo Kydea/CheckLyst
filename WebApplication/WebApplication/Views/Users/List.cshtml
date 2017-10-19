@@ -49,6 +49,7 @@
     matematici.events.onPageLoad = function (callback) {
         var grid,
             form,
+            formElement = $("form#Filters"),
             paginator,
             handler = function (result) {
                 grid.update(result.data);
@@ -61,8 +62,19 @@
             name: "Users List",
             initializers: [
                 //new matematici.FixedHeader("div#Content table.Grid")
-                grid = new matematici.Grid("div#Content table.Grid"),
-                form = new matematici.Form("form#Filters", {
+                grid = new matematici.Grid("div#Content table.Grid", {
+                    rowClick: function (row) {
+                        matematici.dialog.show({
+                            ajax: {
+                                type: "post",
+                                url: "@Url.Action("Detail")"
+                            },
+                            cssClass: "DetailPage",
+                            data: row.data("values")
+                        });
+                    }
+                }),
+                form = new matematici.Form(formElement, {
                     applyButton: {
                         button: "#ApplyButton",
                         event: "List",

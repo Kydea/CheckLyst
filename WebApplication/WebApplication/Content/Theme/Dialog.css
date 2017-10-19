@@ -86,7 +86,20 @@
         -ms-transform: translate(-50%, -50%);
         -o-transform: translate(-50%, -50%);
         -webkit-transform: translate(-50%, -50%);
-        transform: translate(-50%, -50%); } }
+        transform: translate(-50%, -50%); }
+      div.Dialog.DetailPage div.Container {
+        width: unset;
+        height: unset;
+        top: 20px;
+        bottom: 20px;
+        left: 20px;
+        right: 20px;
+        padding: 20px;
+        -moz-transform: unset;
+        -ms-transform: unset;
+        -o-transform: unset;
+        -webkit-transform: unset;
+        transform: unset; } }
   @media only screen and (max-width: 759px) {
     div.Dialog div.Container {
       position: fixed;

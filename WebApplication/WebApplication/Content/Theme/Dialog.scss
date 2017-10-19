@@ -40,18 +40,18 @@ div.Dialog {
                 }
             }
 
-			textarea {
-				min-height: 60px;
-				resize: vertical;
-			}
+            textarea {
+                min-height: 60px;
+                resize: vertical;
+            }
 
-			&::after {
-				content: "";
-				visibility: hidden;
-				display: block;
-				height: 0;
-				clear: both;
-			}
+            &::after {
+                content: "";
+                visibility: hidden;
+                display: block;
+                height: 0;
+                clear: both;
+            }
         }
     }
 
@@ -130,6 +130,23 @@ div.Dialog {
             -o-transform: translate(-50%, -50%);
             -webkit-transform: translate(-50%, -50%);
             transform: translate(-50%, -50%);
+        }
+
+        &.DetailPage {
+            div.Container {
+                width: unset;
+                height: unset;
+                top: 20px;
+                bottom: 20px;
+                left: 20px;
+                right: 20px;
+                padding: 20px;
+                -moz-transform: unset;
+                -ms-transform: unset;
+                -o-transform: unset;
+                -webkit-transform: unset;
+                transform: unset;
+            }
         }
     }
 
