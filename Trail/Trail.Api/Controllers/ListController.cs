@@ -11,6 +11,7 @@ using System.Web.Http;
 
 namespace CheckListManager.Trail.Api.Controllers
 {
+    [RoutePrefix("List")]
     public class ListController : BaseApiController
     {
         private readonly IListService _listService;

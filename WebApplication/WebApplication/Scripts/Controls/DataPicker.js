@@ -1,6 +1,4 @@
-﻿/// <reference path="../_references.js" />
-
-matematici.DatePicker = function (selector) {
+﻿matematici.DatePicker = function (selector) {
 	var
 		datePicker = this,
 		element = $(selector).data("_datepicker", datePicker),

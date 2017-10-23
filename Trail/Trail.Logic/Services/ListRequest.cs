@@ -9,9 +9,9 @@ namespace CheckListManager.Trail.Logic.List
 {
     public class ListRequest : Request
     {
-        public DateTimeOffset From { get; set; }
+        public DateTimeOffset? From { get; set; }
 
-        public DateTimeOffset To { get; set; }
+        public DateTimeOffset? To { get; set; }
 
         public string User { get; set; }
 

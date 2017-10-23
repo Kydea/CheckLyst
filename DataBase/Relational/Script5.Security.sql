@@ -4,8 +4,9 @@
 );
 
 insert into "Security"."FunctionGroups" values
-	('Prototype'),
 	('Instances'),
+	('Prototype'),
+	('Trail'),
 	('Users');
 
 create table "Security"."Functions"
@@ -17,16 +18,18 @@ create table "Security"."Functions"
 );
 
 insert into "Security"."Functions" values
-	('Prototypes', 'Approve'),
-	('Prototypes', 'Design'),
-	('Prototypes', 'View'),
-
 	('Instances', 'Create'),
 	('Instances', 'Edit'),
 	('Instances', 'Delete'),
 	('Instances', 'Approve'),
 	('Instances', 'Unlock'),
 	('Instances', 'View'),
+
+	('Prototypes', 'Approve'),
+	('Prototypes', 'Design'),
+	('Prototypes', 'View'),
+
+	('Trail', 'View'),
 
 	('Users', 'Edit'),
 	('Users', 'View');
