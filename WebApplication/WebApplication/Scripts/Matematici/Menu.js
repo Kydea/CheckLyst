@@ -33,15 +33,6 @@
 			hideItem();
 		},
 
-		toggleItemsByRole = function () {
-			var roles = "," + localStorage.getItem("roles");
-			$("li[data-role]", menu).each(function () {
-				var item = $(this)
-				if (roles.indexOf("," + item.data("role") + "#") < 0)
-					item.remove();
-			});
-		},
-
 		onClick = function (e) {
 			e.preventDefault();
 
@@ -58,10 +49,9 @@
 				setTimeout(function () { $(document).on(matematici.touch.isEnabled() ? "touchend" : "click", hideItems); }, 0);
 				showItem(item);
 			}
-		}, setup = function () {
+		},
 
-			toggleItemsByRole();
-
+		setup = function () {
 			menu
 				.on("touchstart", function () {
 					moved = false;
@@ -88,7 +78,15 @@
 				else
 					menu.stop(true).slideUp();
 			});
-		}
+		};
+
+	this.toggleItemsByRole = function () {
+		var roles = "," + localStorage.getItem("roles");
+		$("li[data-role]", menu).each(function () {
+			var item = $(this);
+			item.toggle(roles.indexOf("," + item.data("role") + "#") >= 0);
+		});
+	};
 
 	setup();
 };

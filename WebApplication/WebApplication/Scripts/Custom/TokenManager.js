@@ -36,6 +36,7 @@
 			localStorage.accessTokenExpiration = new Date().getTime() + parseInt(result.expires_in) * 1000;
 			localStorage.timeZone = result.timeZone;
 			localStorage.roles = result.roles;
+			matematici.menu.toggleItemsByRole();
 		};
 
 	tokenManager.login = function (result) {
@@ -55,7 +56,8 @@
 		if (localStorage.accessToken != null)
 			$.ajax(matematici.urls.accessControl.logout, {
 				data: { data: { refreshToken: localStorage.refreshToken } },
-				type: "post"
+				type: "post",
+				suppressErrors: true
 			});
 		localStorage.clear();
 	};

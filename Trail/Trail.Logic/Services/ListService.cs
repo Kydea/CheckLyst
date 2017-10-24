@@ -27,6 +27,7 @@ namespace CheckListManager.Trail.Logic.List
                     Company,
                     p => new TrailMessage
                     {
+                        ID = p.ID,
                         Date = p.Date,
                         User = p.User,
                         Action = p.Action,

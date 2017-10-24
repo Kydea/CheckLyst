@@ -13,8 +13,13 @@
                     message += jqxhr.responseJSON.Messages[index] + "<br />";
             else
                 message = thrownError;
-            console.log(event, jqxhr, settings, thrownError);
-            matematici.dialog.error("Error", message);
+
+            if (settings.suppressErrors)
+                console.warn(event, jqxhr, settings, thrownError);
+            else {
+                console.log(event, jqxhr, settings, thrownError);
+                matematici.dialog.error("Error", message);
+            }
         }
     );
 

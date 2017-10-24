@@ -1,46 +1,56 @@
-﻿<div id="UsersListPage">
-    <h1>Users List</h1>
+﻿<div id="AuditTrailPage">
+    <h1>Audit Trail</h1>
 
     <div class="ActionBar">
         <a id="ApplyButton" class="Button"><i class="fa fa-search"></i> search</a>
     </div>
 
-    <form id="Filters" action="/API/AccessControl/Users">
+    <form id="Filters" action="/API/Trail/List">
         <label>
             From
             <input type="text" name="from" class="DatePicker" />
         </label>
         <label>
             To
-            <input type="text" name="from" class="DatePicker" />
+            <input type="text" name="to" class="DatePicker" />
+        </label>
+        <label>
+            User
+            <input type="text" name="user" />
+        </label>
+        <label>
+            Action
+            <input type="text" name="action" />
+        </label>
+        <label>
+            CheckList code
+            <input type="text" name="checklist" />
+        </label>
+        <label>
+            Detail
+            <input type="text" name="information" />
         </label>
     </form>
 
     <table class="Grid">
         <thead>
             <tr>
-                <th>Code</th>
-                <th>Name and surname</th>
-                <th>Email</th>
-                <th>Last login</th>
-                <th>Created By</th>
-                <th>Created On</th>
-                <th>Modified By</th>
-                <th>Modified On</th>
-                <th>Enabled</th>
+                <th>ID</th>
+                <th>Date</th>
+                <th>User</th>
+                <th>Action</th>
+                <th>CheckList Code</th>
+                <th>Detail</th>
             </tr>
         </thead>
         <tbody>
             <tr class="Handler">
-                <td data-column="code"></td>
-                <td data-column="description"></td>
-                <td data-column="email"></td>
-                <td data-column="lastLoginOn" data-type="DateTimeOffset"></td>
-                <td data-column="createdBy"></td>
-                <td data-column="createdOn" data-type="DateTimeOffset"></td>
-                <td data-column="modifiedBy"></td>
-                <td data-column="modifiedOn" data-type="DateTimeOffset"></td>
-                <td data-column="enabled" data-type="Boolean"></td>
+                <td data-column="id"></td>
+                <td data-column="date" data-type="DateTimeOffset"></td>
+                <td data-column="user"></td>
+                <td data-column="action"></td>
+                <td data-column="checklist"></td>
+                <td data-column="information"></td>
             </tr>
             <tr class="NoRecord"><td>(no record)</td></tr>
         </tbody>
@@ -63,7 +73,7 @@
         new matematici.ActionBar("div.ActionBar");
 
         new matematici.Page({
-            name: "Users List",
+            name: "AuditTrail",
             initializers: [
                 //new matematici.FixedHeader("div#Content table.Grid")
                 grid = new matematici.Grid("div#Content table.Grid", {
@@ -81,12 +91,12 @@
                 form = new matematici.Form(formElement, {
                     applyButton: {
                         button: "#ApplyButton",
-                        event: "List",
+                        event: "GetData",
                         handler: handler
                     }
                 }),
                 matematici.p = paginator = new matematici.Paginator("div#Content div.Paginator", function (index) {
-                    form.trigger("List", handler, { CurrentPage: index });
+                    form.trigger("GetData", handler, { CurrentPage: index });
                 })
             ]
         });

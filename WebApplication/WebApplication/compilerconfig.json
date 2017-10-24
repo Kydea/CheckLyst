@@ -110,5 +110,13 @@
   {
     "outputFile": "Content/Theme/Paginator.css",
     "inputFile": "Content/Theme/Paginator.scss"
+  },
+  {
+    "outputFile": "Content/Theme/DatePicker.css",
+    "inputFile": "Content/Theme/DatePicker.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Calendar.css",
+    "inputFile": "Content/Theme/Calendar.scss"
   }
 ]

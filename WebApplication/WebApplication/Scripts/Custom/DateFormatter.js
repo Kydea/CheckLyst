@@ -1,32 +1,27 @@
 ﻿matematici.dateFormatter = {
 	format: function (dateTime, local) {
 		var
-			momentDate = !local ? null : localStorage.timeZone ? moment(dateTime).tz(localStorage.timeZone) : moment(dateTime),
+			momentDate = moment(dateTime).tz(local && localStorage.timeZone || 'UTC'),
+			valid = momentDate.isValid(),
 
 			date = function () {
-				var
-					year = local ? momentDate.year() : dateTime.getUTCFullYear(),
-					month = 1 + (local ? momentDate.month() : dateTime.getUTCMonth()),
-					day = local ? momentDate.date() : dateTime.getUTCDate();
-				return (day < 10 ? "0" : "") + day + "/" + (month < 10 ? "0" : "") + month + "/" + year;
+				return valid ? momentDate.format(matematici.dateFormatter.dateFormat) : null;
 			},
 
 			time = function () {
-				var
-					hours = local ? momentDate.hours() : dateTime.getUTCHours(),
-					minutes = local ? momentDate.minutes() : dateTime.getUTCMinutes();
-				return (hours < 10 ? "0" : "") + hours + ":" + (minutes < 10 ? "0" : "") + minutes;
+				return valid ? momentDate.format(matematici.dateFormatter.timeFormat) : null;
 			},
 
 			offset = function () {
-				var offset = local ? momentDate.utcOffset() / 60 : 0;
-				return local ? "UTC " + (offset > 0 ? "+" : "-") + (offset > 9 || offset < -9 ? "" : "0") + Math.abs(offset) + ":00" : "";
+				var offset = valid && local ? momentDate.utcOffset() / 60 : 0;
+				return valid && local ? "UTC " + (offset > 0 ? "+" : "-") + (offset > 9 || offset < -9 ? "" : "0") + Math.abs(offset) + ":00" : "";
 			};
 
 		return {
 			date: date(),
 			time: time(),
-			offset: offset()
+			offset: offset(),
+			valid: valid
 		}
 	},
 
@@ -41,5 +36,9 @@
 	both: function (dateTime, local) {
 		var format = matematici.dateFormatter.format(dateTime, local);
 		return format.date + " " + format.time + (local ? " " + format.offset : "");
-	}
+	},
+
+	dateFormat: "DD/MM/YYYY",
+
+	timeFormat: "HH:MM"
 }

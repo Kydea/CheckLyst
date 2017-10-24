@@ -77,6 +77,9 @@
     <Content Include="Content\Theme\Breadcrumbs.css">
       <DependentUpon>Breadcrumbs.scss</DependentUpon>
     </Content>
+    <Content Include="Content\Theme\Calendar.css">
+      <DependentUpon>Calendar.scss</DependentUpon>
+    </Content>
     <Content Include="Content\Theme\CheckList.css">
       <DependentUpon>CheckList.scss</DependentUpon>
     </Content>
@@ -88,6 +91,9 @@
     </Content>
     <Content Include="Content\Theme\DataSourcesEditor.css">
       <DependentUpon>DataSourcesEditor.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\DatePicker.css">
+      <DependentUpon>DatePicker.scss</DependentUpon>
     </Content>
     <Content Include="Content\Theme\Dialog.css">
       <DependentUpon>Dialog.scss</DependentUpon>
@@ -168,6 +174,7 @@
     </Content>
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
+    <Content Include="Scripts\Controls\Calendar.js" />
     <Content Include="Scripts\Controls\Controls.js" />
     <Content Include="Scripts\Controls\DataPicker.js" />
     <Content Include="Scripts\Controls\Grid.js" />
@@ -197,6 +204,8 @@
     <Content Include="Scripts\Instances\Signature.js" />
     <Content Include="Scripts\Instances\Text.js" />
     <Content Include="packages.config" />
+    <Content Include="Content\Theme\Calendar.scss" />
+    <Content Include="Content\Theme\DatePicker.scss" />
     <None Include="Scripts\Libraries\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\Libraries\jquery-2.1.4.js" />
     <Content Include="Scripts\Libraries\jquery-ui-1.11.4.js" />

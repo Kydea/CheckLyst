@@ -35,7 +35,7 @@
 			fields.each(function () {
 				var field = $(this);
 				if (field.hasClass("DatePicker"))
-					matematici.controls.toggle(field, true);
+					new matematici.DatePicker(field);
 			});
 
 			if (options.bindEvent)
@@ -80,7 +80,7 @@
 			//prepares the request
 			fields.each(function () {
 				var field = $(this);
-				parameters.data[field.attr("name")] = field.val();
+				parameters.data[field.attr("name")] = field.hasClass("DatePicker") ? field.data("date") : field.val();
 			});
 			return JSON.stringify(parameters);
 		},

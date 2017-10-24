@@ -1,0 +1,106 @@
+﻿@import "_Library.scss";
+
+div.Calendar {
+    padding: 10px;
+    border: 1px solid $Color-Border-Grey;
+    box-shadow: rgba(0, 0, 0, .3) 0 0 4px;
+    text-align: center;
+    font-size: 14px;
+    position: relative;
+
+    &.Popup {
+        position: absolute;
+        z-index: $Depth-Calendar;
+        display: none;
+        background: white;
+    }
+
+    a:hover {
+        text-decoration: none;
+    }
+
+    span.Month {
+        color: black;
+        padding: 0 20px;
+        line-height: 30px;
+    }
+
+    a.Arrow {
+        position: absolute;
+        line-height: 30px;
+        top: 10px;
+        color: $Color-Font-Blue1;
+
+        &.PreviousMonth {
+            left: 10px;
+        }
+
+        &.NextMonth {
+            right: 10px;
+        }
+
+        &:not(.Active) {
+            cursor: default;
+            color: $Color-Font-Grey1;
+        }
+    }
+
+    table {
+        width: 100%;
+        min-width: 190px;
+        border-collapse: collapse;
+        opacity: 0;
+
+        tr {
+            .Holyday {
+                color: $Color-Font-Blue3;
+            }
+
+            th {
+                background-color: $Color-Background-Grey1;
+                padding: 10px 0;
+                width: (100px / 7);
+                text-align: center;
+                text-transform: uppercase;
+                font-size: 12px;
+            }
+
+            td {
+                width: (100px / 7);
+                line-height: 22px;
+                text-align: right;
+                border: solid 1px white;
+                cursor: default;
+                opacity: .4;
+                padding: 0 5px;
+
+                &.Active {
+                    font-weight: 600;
+                    cursor: pointer;
+                    opacity: 1;
+
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }
+
+                &.Today {
+                    background-color: $Color-Background-Grey1;
+                }
+            }
+
+            &:nth-child(2) {
+                td {
+                    padding-top: 5px;
+                }
+            }
+        }
+    }
+
+    span.Month {
+        color: $Color-Background-Blu1;
+        padding: 0 20px;
+        line-height: 30px;
+        text-transform: uppercase;
+    }
+}

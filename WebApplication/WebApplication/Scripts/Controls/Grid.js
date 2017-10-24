@@ -11,6 +11,8 @@
 		setup = function () {
 			$("td", noRecordRow).attr("colspan", columnNumber);
 
+			options = options || {};
+
 			if (options.rowClick)
 				element.on("click", "tr.Handler", function () {
 					options.rowClick($(this));

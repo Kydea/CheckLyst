@@ -47,7 +47,6 @@
                 type: "post"
             }).done(function (result) {
                 matematici.tokenManager.login(result);
-
                 matematici.client.createNew(function () { matematici.navigator.open("@Model"); });
                 //matematici.clock.resume();
             }).fail(function (jqXhr, textStatus, errorThrown) {
