@@ -4,6 +4,7 @@
 );
 
 insert into "Security"."FunctionGroups" values
+	('Infrastructure'),
 	('Instances'),
 	('Prototype'),
 	('Trail'),
@@ -18,6 +19,9 @@ create table "Security"."Functions"
 );
 
 insert into "Security"."Functions" values
+	('Infrastructure', 'Edit'),
+	('Infrastructure', 'View'),
+
 	('Instances', 'Create'),
 	('Instances', 'Edit'),
 	('Instances', 'Delete'),

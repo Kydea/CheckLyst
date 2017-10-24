@@ -1,0 +1,25 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace CheckListManager.Infrastructure.Logic.List
+{
+    public class ListRow
+    {
+        public string Department { get; set; }
+
+        public long ID { get; set; }
+        
+        public string Description { get; set; }
+
+        public long? ApprovationWorkFlow { get; set; }
+
+        public string ApprovationWorkFlowDescription { get; set; }
+
+        public long? ObsolescenceWorkFlow { get; set; }
+
+        public string ObsolescenceWorkFlowDescription { get; set; }
+    }
+}

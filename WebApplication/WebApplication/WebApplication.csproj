@@ -53,6 +53,7 @@
     <Compile Include="Code\DefaultAuthorizeAttribute.cs" />
     <Compile Include="Code\DefaultViewPage.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\Infrastructure.cs" />
     <Compile Include="Controllers\TrailController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Controllers\PrototypesController.cs" />
@@ -278,6 +279,7 @@
     <Content Include="Views\Users\Detail.cshtml" />
     <Content Include="Views\Trail\Detail.cshtml" />
     <Content Include="Views\Trail\List.cshtml" />
+    <Content Include="Views\Infrastructure\List.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
