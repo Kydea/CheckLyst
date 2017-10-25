@@ -57,7 +57,11 @@ namespace CheckListManager.Infrastructure.Logic.List
                         ApprovationWorkFlow = pt.ApprovationWorkFlow,
                         ApprovationWorkFlowDescription = pt.WorkFlows.Description,
                         ObsolescenceWorkFlow = pt.ObsolescenceWorkFlow,
-                        ObsolescenceWorkFlowDescription = pt.WorkFlows1.Description
+                        ObsolescenceWorkFlowDescription = pt.WorkFlows1.Description,
+                        CreatedBy = pt.CreatedBy,
+                        CreatedOn = pt.CreatedOn,
+                        ModifiedBy = pt.ModifiedBy,
+                        ModifiedOn = pt.ModifiedOn
                     },
                     Form.Data.Department, Form.Data.PrototypeType, Form.CurrentPage, Form.ItemsPerPage
                 );

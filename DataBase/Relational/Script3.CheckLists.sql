@@ -69,7 +69,6 @@ create table "CheckLists"."PrototypeVersions"
 	"CreatedOn" timestamptz not null default current_timestamp,
 	"ModifiedBy" varchar (60),
 	"ModifiedOn" timestamptz
-
 );
 
 create unique index "Index_PrototypeVersions_Drafts" on "CheckLists"."PrototypeVersions"("Prototype", "VersionState") where "VersionState" in ('Draft', 'In simulation', 'Active');

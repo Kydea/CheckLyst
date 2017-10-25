@@ -1,5 +1,5 @@
 ﻿<div id="InfrastructurePage">
-    <h1>Infrastructure</h1>
+    <h1>Prototype Types List</h1>
 
     <div class="ActionBar">
         <a id="ApplyButton" class="Button DefaultButton"><i class="fa fa-search"></i> search</a>
@@ -19,20 +19,26 @@
     <table class="Grid">
         <thead>
             <tr>
-                <th>Department</th>
                 <th>ID</th>
                 <th>Description</th>
                 <th>Approvation Workflow</th>
                 <th>Obsolescence Workflow</th>
+                <th>Created By</th>
+                <th>Created On</th>
+                <th>Modified By</th>
+                <th>Modified On</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td data-column="department"></td>
                 <td data-column="id"></td>
                 <td data-column="description"></td>
                 <td data-column="approvationWorkFlowDescription"></td>
                 <td data-column="obsolescenceWorkFlowDescription"></td>
+                <td data-column="createdBy"></td>
+                <td data-column="createdOn" data-type="DateTimeOffset"></td>
+                <td data-column="modifiedBy"></td>
+                <td data-column="modifiedOn" data-type="DateTimeOffset"></td>
             </tr>
             <tr class="NoRecord"><td>(no record)</td></tr>
         </tbody>

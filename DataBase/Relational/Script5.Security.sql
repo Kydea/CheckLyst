@@ -4,11 +4,13 @@
 );
 
 insert into "Security"."FunctionGroups" values
+	('DataSources'),
 	('Infrastructure'),
 	('Instances'),
 	('Prototype'),
 	('Trail'),
-	('Users');
+	('Users'),
+	('WorkFlows');
 
 create table "Security"."Functions"
 (
@@ -19,6 +21,9 @@ create table "Security"."Functions"
 );
 
 insert into "Security"."Functions" values
+	('DataSources', 'Edit'),
+	('DataSources', 'View'),
+
 	('Infrastructure', 'Edit'),
 	('Infrastructure', 'View'),
 
@@ -36,7 +41,10 @@ insert into "Security"."Functions" values
 	('Trail', 'View'),
 
 	('Users', 'Edit'),
-	('Users', 'View');
+	('Users', 'View'),
+
+	('WorkFlows', 'Edit'),
+	('WorkFlows', 'View');
 
 create table "Security"."UserFunctions"
 (

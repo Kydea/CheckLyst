@@ -36,13 +36,16 @@
                         <a href="@Url.Action("List", "Users")">Profiles Editor</a>
                     </li>
                     <li data-role="Infrastructure">
-                        <a href="@Url.Action("List", "Infrastructure")">Infrastructure</a>
+                        <a href="@Url.Action("List", "Infrastructure")">Prototype Types</a>
+                    </li>
+                    <li data-role="WorkFlows">
+                        <a href="@Url.Action("List", "WorkFlows")">Work Flows</a>
                     </li>
                     <li data-role="Trail">
                         <a href="@Url.Action("List", "Trail")">Audit Trail</a>
                     </li>
-                    <li data-role="Data">
-                        <a href="@Url.Action("List", "DataSources")">Data Sources Manager</a>
+                    <li data-role="DataSources">
+                        <a href="@Url.Action("List", "DataSources")">Data Sources</a>
                     </li>
                 </ul>
             </li>
@@ -53,16 +56,7 @@
             <li data-role="Instances" class="MenuItem">
                 <a href="@Url.Action("List", "Instances")" class="MenuItem">Instances </a>
             </li>
-
-            @*@{ var DataSources = Security.CurrentUser == null ? null : Matematici.Entities.DataSources.GetByUser(DbContext, Security.CurrentUser.Code); }
-            @if (DataSources != null && DataSources.Count > 0)
-            {
-                <li class="MenuItem">
-                    <a href="@Url.Action("List", "DataSourcesEditor")" class="MenuItem">Data Sources Editor</a>
-                </li>
-            }*@
         </ul>
-
     </nav>
 
 </header>

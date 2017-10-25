@@ -52,8 +52,12 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Code\DefaultAuthorizeAttribute.cs" />
     <Compile Include="Code\DefaultViewPage.cs" />
+    <Compile Include="Code\Version.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\Infrastructure.cs" />
+    <Compile Include="Controllers\InstancesController.cs" />
+    <Compile Include="Controllers\DataSourcesController.cs" />
+    <Compile Include="Controllers\WorkFlowsController.cs" />
     <Compile Include="Controllers\TrailController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Controllers\PrototypesController.cs" />
@@ -280,6 +284,9 @@
     <Content Include="Views\Trail\Detail.cshtml" />
     <Content Include="Views\Trail\List.cshtml" />
     <Content Include="Views\Infrastructure\List.cshtml" />
+    <Content Include="Views\Instances\List.cshtml" />
+    <Content Include="Views\WorkFlows\List.cshtml" />
+    <Content Include="Views\DataSources\List.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
