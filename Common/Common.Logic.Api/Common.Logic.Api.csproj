@@ -109,12 +109,14 @@
     <Compile Include="BaseApiController.cs" />
     <Compile Include="Configuration\ApiConfig.cs" />
     <Compile Include="Configuration\DefaultExceptionHandler.cs" />
+    <Compile Include="Controllers\ReleaseInfoController.cs" />
     <Compile Include="ErrorResult.cs" />
     <Compile Include="Filters\ArgumentNullValidationActionFilterAttribute.cs" />
     <Compile Include="Filters\ModelValidationActionFilterAttribute.cs" />
     <Compile Include="Messages\Message.cs" />
     <Compile Include="Messages\PagingRequest.cs" />
     <Compile Include="Messages\PagingResponse.cs" />
+    <Compile Include="Messages\ReleaseInfoMessage.cs" />
     <Compile Include="Messages\ResponseMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
