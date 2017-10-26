@@ -17,12 +17,10 @@ namespace CheckListManager.Common.Logic.Api.Messages
 			FileVersion = versionInfo.FileVersion;
 
 			BuildDate = fileInfo.CreationTimeUtc;
-			ReleaseDate = fileInfo.LastWriteTimeUtc;
 		}
 
-		public string Version { get; set; }
-		public string FileVersion { get; set; }
-		public DateTimeOffset BuildDate { get; set; }
-		public DateTimeOffset ReleaseDate { get; set; }
+		public string Version { get; }
+		public string FileVersion { get; }
+		public DateTimeOffset BuildDate { get; }
 	}
 }
