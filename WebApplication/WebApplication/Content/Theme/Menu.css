@@ -1,5 +1,7 @@
 ﻿nav.Menu {
-  position: relative;
+  top: 0px;
+  left: 0;
+  position: fixed;
   text-transform: uppercase; }
   nav.Menu ul.Menu {
     font-size: 14px; }
@@ -18,49 +20,147 @@
         nav.Menu ul.Menu li.MenuItem ul.SubMenu li {
           padding: 0;
           margin: 0;
-          list-style: none;
-          position: relative;
-          border-bottom: solid 1px white; }
-          nav.Menu ul.Menu li.MenuItem ul.SubMenu li:last-child {
-            border-bottom: none; }
+          list-style: none; }
   @media only screen and (min-width: 760px) {
     nav.Menu ul.Menu {
-      float: right;
-      display: block !important;
-      padding: 0 30px; }
+      width: 90px;
+      height: 100vh;
+      z-index: 101;
+      background-color: #000;
+      display: block !important; }
+      nav.Menu ul.Menu:before {
+        content: "";
+        width: 90px;
+        height: 80px;
+        display: block;
+        border-bottom: 1px solid #ccc;
+        background: url(../Media/Sintlogo.png) no-repeat 17.5px 50%; }
       nav.Menu ul.Menu li.MenuItem {
-        height: 50px;
-        line-height: 50px;
-        float: left;
-        padding-left: 20px; }
-        nav.Menu ul.Menu li.MenuItem ul.SubMenu {
-          position: absolute;
-          z-index: 101; }
-          nav.Menu ul.Menu li.MenuItem ul.SubMenu li {
-            background-color: #e8e7ec;
-            line-height: 40px;
-            border-left: solid 1px white;
-            border-right: solid 1px white;
-            border-bottom: solid 1px white; }
-            nav.Menu ul.Menu li.MenuItem ul.SubMenu li a {
-              padding: 0 30px; }
-          nav.Menu ul.Menu li.MenuItem ul.SubMenu::before {
+        height: 90px;
+        line-height: 90px;
+        padding: 20px 20px;
+        border-bottom: 1px solid #333;
+        position: relative;
+        /*&.Current {
+                    background-color: #333;
+
+                    .MenuItem {
+                        border: 1px solid $Color-Font-Green; // borders until no icons!
+                    }
+                }*/
+        /*ul.SubMenu {
+                    position: absolute;
+                    z-index: $Depth-Menu;
+
+                    li {
+                        background-color: $Color-Background-Grey2;
+                        line-height: 40px;
+                        border-left: solid 1px white;
+                        border-right: solid 1px white;
+                        border-bottom: solid 1px white;
+
+                        a {
+                            padding: 0 $Metric-Separator-Extended;
+                        }
+                    }
+
+                    &::before {
+                        content: "";
+                        display: block;
+                        width: 100%;
+                        height: 0;
+                        border-top: solid 1px $Color-Background-Grey2;
+                        top: -10px;
+                    }
+
+                    &::after {
+                        border-bottom: 10px solid $Color-Background-Grey2;
+                        border-left: 10px solid transparent;
+                        border-right: 10px solid transparent;
+                        content: "";
+                        height: 0;
+                        position: absolute;
+                        left: 5px;
+                        top: -9px;
+                        width: 0;
+                    }
+                }*/ }
+        nav.Menu ul.Menu li.MenuItem .MenuItem {
+          width: 50px;
+          height: 50px;
+          box-sizing: border-box;
+          border: 1px solid #999;
+          color: transparent; }
+        nav.Menu ul.Menu li.MenuItem.Selected, nav.Menu ul.Menu li.MenuItem:hover {
+          background-color: #858585;
+          position: relative; }
+          nav.Menu ul.Menu li.MenuItem.Selected .MenuItem, nav.Menu ul.Menu li.MenuItem:hover .MenuItem {
+            border: 1px solid white; }
+          nav.Menu ul.Menu li.MenuItem.Selected:after, nav.Menu ul.Menu li.MenuItem:hover:after {
             content: "";
             display: block;
-            width: 100%;
-            height: 0;
-            border-top: solid 1px #e8e7ec;
-            top: -10px; }
-          nav.Menu ul.Menu li.MenuItem ul.SubMenu::after {
-            border-bottom: 10px solid #e8e7ec;
-            border-left: 10px solid transparent;
-            border-right: 10px solid transparent;
-            content: "";
-            height: 0;
             position: absolute;
-            left: 5px;
-            top: -9px;
-            width: 0; } }
+            top: 50%;
+            right: 0;
+            width: 0;
+            height: 0;
+            transform: translateY(-50%);
+            z-index: 102;
+            border-width: 9px 12px;
+            border-color: transparent #000 transparent transparent;
+            border-style: solid; }
+        nav.Menu ul.Menu li.MenuItem ul.SubMenu {
+          z-index: 101;
+          background-color: black;
+          position: absolute;
+          left: 90px;
+          top: 20px;
+          border-left: 1px solid #333;
+          border-radius: 0 5px 5px 0;
+          box-shadow: rgba(0, 0, 0, 0.35) 0px 0px 7px 3.5px; }
+          nav.Menu ul.Menu li.MenuItem ul.SubMenu:before {
+            content: "";
+            display: block;
+            position: absolute;
+            height: 18px;
+            top: 16px;
+            left: -1px;
+            width: 1px;
+            background-color: black; }
+          nav.Menu ul.Menu li.MenuItem ul.SubMenu li {
+            width: 230px;
+            height: 50px;
+            line-height: 50px;
+            padding-left: 40px; }
+    @keyframes rotation {
+      100% {
+        transform: translateY(-50%) rotate(-45deg) skew(8.16deg, 8.16deg); } }
+            nav.Menu ul.Menu li.MenuItem ul.SubMenu li:hover a {
+              position: relative;
+              color: #03c3b1; }
+              nav.Menu ul.Menu li.MenuItem ul.SubMenu li:hover a:before {
+                content: "";
+                display: block;
+                width: 10px;
+                height: 10px;
+                position: absolute;
+                left: -30px;
+                top: 50%;
+                border: solid #666;
+                border-width: 0 2px 2px 0;
+                -webkit-animation: rotation 1s forwards;
+                -moz-animation: rotation 1s forwards;
+                -o-animation: rotation 1s forwards;
+                animation: rotation 1s forwards;
+                transform: translateY(-50%) rotate(-135deg) skew(8.16deg, 8.16deg); }
+            nav.Menu ul.Menu li.MenuItem ul.SubMenu li a {
+              color: #ccc;
+              display: block;
+              font-size: 18px;
+              text-decoration: none;
+              font-family: "Myriad Pro Regular", Arial, sans-serif; }
+            nav.Menu ul.Menu li.MenuItem ul.SubMenu li + li {
+              border-top: 1px solid #666; } }
   @media only screen and (max-width: 759px) {
     nav.Menu {
       clear: both; }

@@ -1,6 +1,6 @@
 ﻿div.PropertyPanel {
   position: fixed;
-  z-index: 99;
+  z-index: 103;
   left: 0;
   bottom: 0;
   height: 300px;

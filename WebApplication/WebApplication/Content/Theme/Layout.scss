@@ -88,17 +88,21 @@ div#InitialCurtain {
 }
 
 header {
+    position: relative;
+
     div#Logo {
-        background: url(Layout/Header.jpg) black;
+        display: none
+    }
+    /*div#Logo {
         width: 100%;
-        height: 55px;
-        padding-top: 5px;
+        height: 80px;
+        box-sizing: content-box;
+        border-bottom: 1px solid #ccc;
 
         img {
             display: block;
         }
-    }
-
+    }*/
     a#HelpButton {
         position: absolute;
         top: 15px;
@@ -119,39 +123,69 @@ header {
             right: $Metric-Separator-Mobile;
         }
     }
+    // Line after #UserPanel
+    /*&:after {
+        content: "";
+        display: block;
+        width: 100%;
+        position: relative;
+        z-index: $Depth-Header;
+        border-bottom: 1px solid #ccc;
+    }*/
 
     div#UserPanel {
-        background-color: $Color-Background-Blu1;
-        color: white;
-        height: 55px;
-        padding-top: 15px;
-        padding-bottom: 15px;
+        margin-left: $Left-Margin-Width;
+        width: calc(100% - #{$Left-Margin-Width});
+        color: #666;
+        height: 80px;
+        text-align: right;
+        position: relative;
+        background-color: white;
+        border-bottom: 1px solid #ccc;
+        font: normal 18px/80px "Myriad Pro Regular", Arial, sans-serif;
 
         a {
-            color: white !important;
-            line-height: 25px;
-
+            color: inherit;
+            display: inline-block;
+            float: none !important; // @to_do Remove .RightFloating, .LeftFloating from links in html.
             &:hover {
                 color: black !important;
             }
 
-            &.LeftFloating {
-                margin-right: 10px;
-            }
-
-            &.RightFloating {
-                margin-left: 10px;
+            & + a {
+                &:before {
+                    background-color: #666;
+                    display: inline-block;
+                    content: "";
+                    height: 25px;
+                    width: 1px;
+                    margin: 0 10px;
+                    transform: translate(0, 25%);
+                }
             }
 
             i {
                 @include border-radius(50%);
-                background-color: $Color-Background-Blu2;
+                color: white;
+                background-color: $Color-Font-Green;
                 width: 25px;
                 height: 25px;
                 line-height: 25px;
                 text-align: center;
             }
         }
+    }
+    // Logo
+    div#UserPanel::before {
+        top: 0px;
+        left: 0px;
+        content: "";
+        height: 80px;
+        width: 152px; // 20px + 132px
+        z-index: $Depth-Header;
+        position: absolute;
+        display: inline-block;
+        background: url(../Media/Logo.png) no-repeat 20px 50%;
     }
 
     a#MenuButton {
@@ -162,9 +196,14 @@ header {
 }
 
 footer {
-    height: 58px;
+    display: none;
+
+    position: relative;
+    margin-left: $Left-Margin-Width; // 90px = left menu
+    width: calc(100vw - #{$Left-Margin-Width}); // 90px = left menu
+
+    height: $Footer-Height;
     background: black;
-    width: 100%;
 
     div.Information {
         font-size: 10px;

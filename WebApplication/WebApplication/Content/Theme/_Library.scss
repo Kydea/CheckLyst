@@ -1,4 +1,9 @@
-﻿//Fonts
+﻿// Width(s)
+$Left-Margin-Width: 90px;
+$Footer-Height: 58px;
+$Header-Height: 81px; // 80px height + 1px border bottom
+
+//Fonts
 $Font-Base: Arial, sans-serif;
 
 //Colors
@@ -25,6 +30,11 @@ $Color-Font-Blue1: #0099cc;
 $Color-Font-Blue2: #086386;
 $Color-Font-Blue3: #6e93a0;
 
+$Color-Font-Green: #009688;
+$Color-Font-Dark-Green: #00877a;
+$Color-Font-Light-Green: #03c3b1;
+$Color-Font-Yellow: #ffba00;
+
 //Metrics
 $Metric-Max-Width: 1250px;
 $Metric-Separator-Extended: 30px;
@@ -43,9 +53,10 @@ $Depth-Tab-Selected: 51;
 $Depth-Fixed-Header: 60;
 
 $Depth-PropertyPanel: 70;
-$Depth-Header: 99;
+$Depth-Header: 103; // header > menu (border-bottom is OVER the right menu)
 $Depth-Logo: 100;
 $Depth-Menu: 101;
+$Depth-Menu-Indicator: 102;
 $Depth-Calendar: 101;
 
 $Depth-Dialog: 990;
@@ -78,6 +89,13 @@ $Media-0-700: "only screen and (max-width: 699px)";
     -moz-border-radius: $radius;
     -ms-border-radius: $radius;
     border-radius: $radius;
+}
+
+@mixin animation($animation) {
+    -webkit-animation: $animation;
+    -moz-animation: $animation;
+    -o-animation: $animation;
+    animation: $animation;
 }
 
 @mixin transition($arguments) {

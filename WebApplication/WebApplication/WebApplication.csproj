@@ -72,6 +72,7 @@
   <ItemGroup>
     <Content Include="Content\Media\Logo.Big.png" />
     <Content Include="Content\Media\Logo.png" />
+    <Content Include="Content\Media\Sintlogo.png" />
     <Content Include="Content\PDF\Janssen.png" />
     <Content Include="Content\Theme\ActionBar.css">
       <DependentUpon>ActionBar.scss</DependentUpon>
@@ -113,6 +114,11 @@
     <Content Include="Content\Theme\Fonts.css">
       <DependentUpon>Fonts.scss</DependentUpon>
     </Content>
+    <Content Include="Content\Theme\Fonts\MyriadPro\Bold\MyriadPro-Bold.svg" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Cond\MyriadPro-Cond.svg" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\LightCond\MyriadPro-LightCond.svg" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Light\MyriadPro-Light.svg" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Regular\MyriadPro-Regular.svg" />
     <Content Include="Content\Theme\Grid.css">
       <DependentUpon>Grid.scss</DependentUpon>
     </Content>
@@ -177,6 +183,9 @@
     <Content Include="Content\Theme\Trail.css">
       <DependentUpon>Trail.scss</DependentUpon>
     </Content>
+    <Content Include="Content\Theme\UserList.css">
+      <DependentUpon>UserList.scss</DependentUpon>
+    </Content>
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\Controls\Calendar.js" />
@@ -211,6 +220,28 @@
     <Content Include="packages.config" />
     <Content Include="Content\Theme\Calendar.scss" />
     <Content Include="Content\Theme\DatePicker.scss" />
+    <Content Include="Content\Theme\UserList.scss" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Bold\Myriad Pro.scss" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Bold\MyriadPro-Bold.eot" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Bold\MyriadPro-Bold.woff" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Bold\MyriadPro-Bold.woff2" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Cond\Myriad Pro Cond.scss" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Cond\MyriadPro-Cond.eot" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Cond\MyriadPro-Cond.woff" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Cond\MyriadPro-Cond.woff2" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\LightCond\Myriad Pro Light Cond.scss" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\LightCond\MyriadPro-LightCond.eot" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\LightCond\MyriadPro-LightCond.woff" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\LightCond\MyriadPro-LightCond.woff2" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Light\Myriad Pro Light.scss" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Light\MyriadPro-Light.eot" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Light\MyriadPro-Light.woff" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Light\MyriadPro-Light.woff2" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\MyriadPro.scss" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Regular\Myriad Pro.scss" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Regular\MyriadPro-Regular.eot" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Regular\MyriadPro-Regular.woff" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Regular\MyriadPro-Regular.woff2" />
     <None Include="Scripts\Libraries\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\Libraries\jquery-2.1.4.js" />
     <Content Include="Scripts\Libraries\jquery-ui-1.11.4.js" />
@@ -290,7 +321,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Content\Theme\Fonts\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Theme\ActionBar.scss" />

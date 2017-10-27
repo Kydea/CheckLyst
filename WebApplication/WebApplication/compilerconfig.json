@@ -118,5 +118,9 @@
   {
     "outputFile": "Content/Theme/Calendar.css",
     "inputFile": "Content/Theme/Calendar.scss"
+  },
+  {
+    "outputFile": "Content/Theme/UserList.css",
+    "inputFile": "Content/Theme/UserList.scss"
   }
 ]

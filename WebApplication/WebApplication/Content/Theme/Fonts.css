@@ -8,4 +8,48 @@
     font-weight: normal;
     font-style: normal;
 }*/
+@font-face {
+  font-family: 'Myriad Pro Bold';
+  src: url("Fonts/MyriadPro/Bold/MyriadPro-Bold.eot");
+  src: url("Fonts/MyriadPro/Bold/MyriadPro-Bold.eot?#iefix") format("embedded-opentype"), url("Fonts/MyriadPro/Bold/MyriadPro-Bold.woff2") format("woff2"), url("Fonts/MyriadPro/Bold/MyriadPro-Bold.woff") format("woff"), url("Fonts/MyriadPro/Bold/MyriadPro-Bold.svg#MyriadPro-Bold") format("svg");
+  font-weight: 700;
+  font-style: normal;
+  font-stretch: normal;
+  unicode-range: U+0020-00FE; }
+
+@font-face {
+  font-family: 'Myriad Pro Cond';
+  src: url("Fonts/MyriadPro/Cond/MyriadPro-Cond.eot");
+  src: url("Fonts/MyriadPro/Cond/MyriadPro-Cond.eot?#iefix") format("embedded-opentype"), url("Fonts/MyriadPro/Cond/MyriadPro-Cond.woff2") format("woff2"), url("Fonts/MyriadPro/Cond/MyriadPro-Cond.woff") format("woff"), url("Fonts/MyriadPro/Cond/MyriadPro-Cond.svg#MyriadPro-Cond") format("svg");
+  font-weight: 400;
+  font-style: normal;
+  font-stretch: condensed;
+  unicode-range: U+0020-00FE; }
+
+@font-face {
+  font-family: 'Myriad Pro Light';
+  src: url("Fonts/MyriadPro/Light/MyriadPro-Light.eot");
+  src: url("Fonts/MyriadPro/Light/MyriadPro-Light.eot?#iefix") format("embedded-opentype"), url("Fonts/MyriadPro/Light/MyriadPro-Light.woff2") format("woff2"), url("Fonts/MyriadPro/Light/MyriadPro-Light.woff") format("woff"), url("Fonts/MyriadPro/Light/MyriadPro-Light.svg#MyriadPro-Light") format("svg");
+  font-weight: 300;
+  font-style: normal;
+  font-stretch: normal;
+  unicode-range: U+0020-00FE; }
+
+@font-face {
+  font-family: 'Myriad Pro Light Cond';
+  src: url("Fonts/MyriadPro/LightCond/MyriadPro-LightCond.eot");
+  src: url("Fonts/MyriadPro/LightCond/MyriadPro-LightCond.eot?#iefix") format("embedded-opentype"), url("Fonts/MyriadPro/LightCond/MyriadPro-LightCond.woff2") format("woff2"), url("Fonts/MyriadPro/LightCond/MyriadPro-LightCond.woff") format("woff"), url("Fonts/MyriadPro/LightCond/MyriadPro-LightCond.svg#MyriadPro-LightCond") format("svg");
+  font-weight: 300;
+  font-style: normal;
+  font-stretch: condensed;
+  unicode-range: U+0020-00FE; }
+
+@font-face {
+  font-family: 'Myriad Pro Regular';
+  src: url("Fonts/MyriadPro/Regular/MyriadPro-Regular.eot");
+  src: url("Fonts/MyriadPro/Regular/MyriadPro-Regular.eot?#iefix") format("embedded-opentype"), url("Fonts/MyriadPro/Regular/MyriadPro-Regular.woff2") format("woff2"), url("Fonts/MyriadPro/Regular/MyriadPro-Regular.woff") format("woff"), url("Fonts/MyriadPro/Regular/MyriadPro-Regular.svg#MyriadPro-Regular") format("svg");
+  font-weight: 400;
+  font-style: normal;
+  font-stretch: normal;
+  unicode-range: U+0020-00FE; }
 
