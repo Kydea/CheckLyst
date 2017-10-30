@@ -72,8 +72,8 @@
         switch (key)
         {
             case 13:
-                if ($('.DefaultButton').first().click().size() > 0)
-                    e.preventDefault();
+                $('.DefaultButton').first().click();
+                e.preventDefault();
                 break;
             case 27:
                 $('.CancelButton').first().click();

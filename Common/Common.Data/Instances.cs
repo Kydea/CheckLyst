@@ -41,5 +41,6 @@ namespace CheckListManager.Common.Data
         public virtual InstanceStates InstanceStates { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<InstanceTags> InstanceTags { get; set; }
+        public virtual Prototypes Prototypes { get; set; }
     }
 }

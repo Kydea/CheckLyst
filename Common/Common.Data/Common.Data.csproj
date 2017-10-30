@@ -126,6 +126,7 @@
     <Compile Include="PrototypeTypes.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="ListItems\PrototypeVersion.cs" />
     <Compile Include="PrototypeVersions.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>

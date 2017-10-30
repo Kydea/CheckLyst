@@ -17,13 +17,6 @@ namespace CheckListManager.DataSources.Api.Controllers
         }
 
         [HttpPost]
-        [Route("Bind")]
-        public async Task<IHttpActionResult> Bind(Message<ListRequest> request)
-        {
-            return Ok(await _listService.BindAsync(Identity.CompanyId, request.Data));
-        }
-
-        [HttpPost]
         [Route("GetData")]
         public async Task<IHttpActionResult> GetData(PagingRequest<ListRequest> request)
         {

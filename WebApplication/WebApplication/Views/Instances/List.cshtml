@@ -7,16 +7,32 @@
 
     <form id="Filters" action="/API/Instances/List">
         <label>
-            Name
-            <input type="text" name="name" />
-        </label>
-        <label>
             Department
             <select name="department" class="Trigger" />
         </label>
         <label>
             Prototype Type
-            <select name="prototypeType" />
+            <select name="prototypeType" class="Trigger" />
+        </label>
+        <label>
+            Prototype
+            <select name="prototype" class="Trigger" />
+        </label>
+        <label>
+            Version
+            <select name="version" class="Trigger" />
+        </label>
+        <label>
+            Instance Description
+            <input type="text" name="description" />
+        </label>
+        <label>
+            Tags
+            <select name="tabCode" />
+        </label>
+        <label>
+            Tag Value
+            <select name="tabValue" />
         </label>
         <label>
             State

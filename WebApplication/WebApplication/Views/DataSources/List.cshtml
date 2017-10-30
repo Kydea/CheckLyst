@@ -7,52 +7,30 @@
 
     <form id="Filters" action="/API/DataSources/List">
         <label>
-            Name
-            <input type="text" name="name" />
-        </label>
-        <label>
-            Department
-            <select name="department" class="Trigger" />
-        </label>
-        <label>
-            Prototype Type
-            <select name="prototypeType" />
-        </label>
-        <label>
-            State
-            <select name="state" />
+            Code/Description
+            <input type="text" name="keyword" />
         </label>
     </form>
 
     <table class="Grid">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Name</th>
+                <th>Code</th>
                 <th>Description</th>
-                <th>Version</th>
-                <th>Validity Start Date</th>
-                <th>Validity End Date</th>
                 <th>Created By</th>
                 <th>Created On</th>
                 <th>Modified By</th>
                 <th>Modified On</th>
-                <th>State</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td data-column="id"></td>
-                <td data-column="name"></td>
+                <td data-column="code"></td>
                 <td data-column="description"></td>
-                <td data-column="version"></td>
-                <td data-column="validityFrom" data-type="DateTimeOffset"></td>
-                <td data-column="validityUntil" data-type="DateTimeOffset"></td>
                 <td data-column="createdBy"></td>
                 <td data-column="createdOn" data-type="DateTimeOffset"></td>
                 <td data-column="modifiedBy"></td>
                 <td data-column="modifiedOn" data-type="DateTimeOffset"></td>
-                <td data-column="versionState"></td>
             </tr>
             <tr class="NoRecord"><td>(no record)</td></tr>
         </tbody>
@@ -83,8 +61,7 @@
                         button: "#ApplyButton",
                         event: "GetData",
                         handler: handler
-                    },
-                    bindEvent: "Bind"
+                    }
                 }),
                 matematici.p = paginator = new matematici.Paginator("div#Content div.Paginator", function (index) {
                     form.trigger("GetData", handler, { CurrentPage: index });
