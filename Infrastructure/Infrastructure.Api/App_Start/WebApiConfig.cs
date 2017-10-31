@@ -9,7 +9,12 @@ namespace CheckListManager.Infrastructure.Api
 
 	    public static void Register(HttpConfiguration config)
 	    {
-		    config.Configure(new WebApiConfig());
+		    var apiConfig = new WebApiConfig
+		    {
+			    LoadAssemblies = true
+		    };
+
+		    config.Configure(apiConfig);
 	    }
 
 		#endregion
