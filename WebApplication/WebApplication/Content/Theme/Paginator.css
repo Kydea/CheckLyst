@@ -1,18 +1,37 @@
 ﻿.Paginator {
-  margin: 20px 0 20px 0;
   float: right;
-  cursor: default; }
+  cursor: default;
+  font-size: 0; }
+  .Paginator:not(:empty) {
+    margin: 20px 0 0 0; }
   .Paginator a {
-    text-decoration: none !important; }
+    text-align: center;
+    width: 20px;
+    height: 20px;
+    font-size: 16px;
+    line-height: 20px;
+    color: #00877a;
+    text-decoration: none !important;
+    font-family: "Myriad Pro Semibold", Arial, sans-serif; }
     .Paginator a:not(.Current) {
       cursor: pointer; }
     .Paginator a.Current {
-      color: #0099cc; }
+      color: white;
+      background-color: #009688; }
   .Paginator a, .Paginator span {
     display: inline-block; }
-    .Paginator a:not(:last-child):after, .Paginator span:not(:last-child):after {
-      display: inline-block;
-      content: "|";
-      color: black;
-      padding: 0 5px 0 5px; }
+    .Paginator a:not(:first-child), .Paginator span:not(:first-child) {
+      position: relative;
+      margin-left: 20px; }
+      .Paginator a:not(:first-child)::before, .Paginator span:not(:first-child)::before {
+        border-left: 2px solid #ccc;
+        background-color: black;
+        display: inline-block;
+        position: absolute;
+        margin-top: 3px;
+        content: "";
+        color: black;
+        width: 0px;
+        height: 1em;
+        left: -10px; }
 

@@ -1,23 +1,22 @@
 ﻿@import "_Library.scss";
 
+$Button-Height: 30px;
+$Font-Size: 14px;
+
 div.ActionBar {
-    //margin: 25px 0 35px;
-    position: relative;
-    //background-color: $Color-Background-Grey2;
-    //padding: 5px 0 0;
-    margin-bottom: 40px;
+    //position: relative;
+    //margin-bottom: 40px;
+    margin-bottom: 2px;
 
     a.Button {
-        //float: right;
-        display: inline-block;
-        min-width: 120px;
-        //margin: 0 10px 5px 0;
         color: #fff;
-        height: 38px;
         padding: 0 10px;
-        border-radius: 5px 0 0 0;
+        min-width: 120px;
+        display: inline-block;
+        height: $Button-Height;
+        border-radius: 5px 5px 0 0;
         background-color: $Color-Font-Yellow;
-        font: normal 16px/38px "Myriad Pro Regular", Arial, sans-serif;
+        font: normal #{$Font-Size}/#{$Button-Height} "Myriad Pro Regular", Arial, sans-serif;
 
         &.Icon {
             float: left;
@@ -41,48 +40,25 @@ div.ActionBar {
             }
         }
 
-        &#ApplyButton {
-            position: relative;
-
-            i.fa {
-                background-color: $Color-Font-Yellow;
-                border-left: 1px solid #ebebeb;
-                border-radius: 0 5px 0 0;
-                position: absolute;
-                line-height: 38px;
-                right: -38px;
-                height: 38px;
-                width: 38px;
-                top: 0;
-            }
-
-            &:hover i.fa {
-                background: inherit;
-            }
-        }
+        @include accordion-button(#ApplyButton, $Button-Height, $Color-Font-Yellow);
     }
-    /*&::before {
-        height: 1px;
-        width: 100%;
-        top: -5px;
-        position: absolute;
-        content: "";
-        background-color: $Color-Border-Grey;
-    }*/
-    &::after {
+    
+    /*&::after {
         height: 1px;
         width: 100%;
         content: "";
         bottom: -3px;
         position: absolute;
-        background-color: #999;
-    }
+        background-color: $Color-Border-Black;
+    }*/
 
     & + Form {
-        display: none !important; // @test
-        position: relative;
-        top: -35px;
-        padding: 20px 10px;
+        //position: relative;
+        //top: -35px;
+        //padding: 20px 10px;
+
+        padding: 20px;
+        border: 1px solid #999;
 
         label {
             float: left;
@@ -98,20 +74,24 @@ div.ActionBar {
             }
         }
 
-        &::before {
+        /*&::before {
             height: 1px;
             width: 100%;
             left: 0;
             bottom: 0px;
             position: absolute;
             content: "";
-            background-color: $Color-Border-Grey;
-        }
+            background-color: $Color-Border-Black;
+        }*/
 
         &::after {
             content: "";
             display: table;
             clear: both;
+        }
+
+        & + .Grid {
+            margin-top: 40px;
         }
     }
 }

@@ -3,20 +3,40 @@
   border-spacing: 0;
   width: 100%; }
   table.Grid thead {
-    background-color: #e8e7ec; }
+    background-color: #999; }
     table.Grid thead tr {
       border-bottom: solid 1px #afb4b5; }
       table.Grid thead tr th {
+        color: #fff;
+        padding: 0 20px;
         text-align: left;
-        font-weight: normal;
-        height: 40px;
-        padding: 5px 10px; }
+        position: relative;
+        height: 50px;
+        border-left: 1px solid #ccc;
+        font-size: 16px;
+        font-family: "Myriad Pro Semibold", Arial, sans-serif; }
+        table.Grid thead tr th:after {
+          content: "";
+          display: block;
+          position: absolute;
+          top: 50%;
+          right: 20px;
+          width: 0;
+          height: 0;
+          transform: translateY(-50%);
+          border-width: 6px 10px;
+          border-color: transparent #ccc transparent transparent;
+          border-style: solid;
+          transform: rotate(-90deg); }
   table.Grid tbody {
     border-bottom: solid 1px #afb4b5; }
     table.Grid tbody tr td {
-      padding: 5px 10px;
-      height: 30px;
-      border-right: solid 1px #afb4b5; }
+      color: #666;
+      padding: 0 20px;
+      height: 40px;
+      font-size: 14px;
+      border-right: solid 1px #afb4b5;
+      font-family: "Myriad Pro Regular", Arial, sans-serif; }
       table.Grid tbody tr td.Off {
         opacity: .3; }
       table.Grid tbody tr td.Centered {

@@ -67,25 +67,8 @@ div#InitialCurtain {
 
 header {
   position: relative;
-  /*div#Logo {
-        width: 100%;
-        height: 80px;
-        box-sizing: content-box;
-        border-bottom: 1px solid #ccc;
-
-        img {
-            display: block;
-        }
-    }*/
-  /*&:after {
-        content: "";
-        display: block;
-        width: 100%;
-        position: relative;
-        z-index: $Depth-Header;
-        border-bottom: 1px solid #ccc;
-    }*/ }
-  header div#Logo {
+  z-index: 103; }
+  header #Logo {
     display: none; }
   header a#HelpButton {
     position: absolute;
@@ -105,15 +88,29 @@ header {
       header a#HelpButton {
         right: 10px; } }
   header div#UserPanel {
-    margin-left: 90px;
-    width: calc(100% - 90px);
     color: #666;
-    height: 80px;
-    text-align: right;
+    text-align: center;
     position: relative;
+    text-transform: none;
+    height: 70px;
     background-color: white;
-    border-bottom: 1px solid #ccc;
-    font: normal 18px/80px "Myriad Pro Regular", Arial, sans-serif; }
+    font: normal 14px/70px "Myriad Pro Regular", Arial, sans-serif; }
+    @media only screen and (min-width: 760px) {
+      header div#UserPanel {
+        text-align: right;
+        border-bottom: 1px solid #ccc;
+        margin-left: 70px;
+        width: calc(100% - 70px); }
+        header div#UserPanel::before {
+          top: 0px;
+          left: 0px;
+          content: "";
+          height: 70px;
+          width: 148px;
+          z-index: 103;
+          position: absolute;
+          display: inline-block;
+          background: url(../Media/Logo.png) no-repeat 30px 50%; } }
     header div#UserPanel a {
       color: inherit;
       display: inline-block;
@@ -124,7 +121,7 @@ header {
         background-color: #666;
         display: inline-block;
         content: "";
-        height: 25px;
+        height: 1em;
         width: 1px;
         margin: 0 10px;
         transform: translate(0, 25%); }
@@ -137,28 +134,21 @@ header {
         background-color: #009688;
         width: 25px;
         height: 25px;
+        font-size: 12px;
         line-height: 25px;
         text-align: center; }
-  header div#UserPanel::before {
-    top: 0px;
-    left: 0px;
-    content: "";
-    height: 80px;
-    width: 152px;
-    z-index: 103;
-    position: absolute;
-    display: inline-block;
-    background: url(../Media/Logo.png) no-repeat 20px 50%; }
   header a#MenuButton {
-    line-height: 30px;
-    padding: 10px;
-    float: right; }
+    padding: 0 10px;
+    line-height: 70px;
+    display: inline-block;
+    position: relative;
+    color: white; }
 
 footer {
   display: none;
   position: relative;
-  margin-left: 90px;
-  width: calc(100vw - 90px);
+  margin-left: 70px;
+  width: calc(100vw - 70px);
   height: 58px;
   background: black; }
   footer div.Information {

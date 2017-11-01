@@ -89,20 +89,13 @@ div#InitialCurtain {
 
 header {
     position: relative;
+    z-index: $Depth-Header;
 
-    div#Logo {
-        display: none
+    // @to_do: remove.
+    #Logo {
+        display: none;
     }
-    /*div#Logo {
-        width: 100%;
-        height: 80px;
-        box-sizing: content-box;
-        border-bottom: 1px solid #ccc;
-
-        img {
-            display: block;
-        }
-    }*/
+    // @end_to_do
     a#HelpButton {
         position: absolute;
         top: 15px;
@@ -123,31 +116,40 @@ header {
             right: $Metric-Separator-Mobile;
         }
     }
-    // Line after #UserPanel
-    /*&:after {
-        content: "";
-        display: block;
-        width: 100%;
-        position: relative;
-        z-index: $Depth-Header;
-        border-bottom: 1px solid #ccc;
-    }*/
 
     div#UserPanel {
-        margin-left: $Left-Margin-Width;
-        width: calc(100% - #{$Left-Margin-Width});
         color: #666;
-        height: 80px;
-        text-align: right;
+        text-align: center;
         position: relative;
+        text-transform: none;
+        height: $Header-Height;
         background-color: white;
-        border-bottom: 1px solid #ccc;
-        font: normal 18px/80px "Myriad Pro Regular", Arial, sans-serif;
+        font: normal 14px/#{$Header-Height} "Myriad Pro Regular", Arial, sans-serif;
+
+        @media #{$Media-Extended} {
+            text-align: right;
+            border-bottom: 1px solid #ccc;
+            margin-left: $Lateral-Menu-Width;
+            width: calc(100% - #{$Lateral-Menu-Width});
+
+            &::before {
+                top: 0px;
+                left: 0px;
+                content: "";
+                height: $Header-Height;
+                width: 148px; // 30px (margin between logo and menu) + 118px (logo width)
+                z-index: $Depth-Header;
+                position: absolute;
+                display: inline-block;
+                background: url(../Media/Logo.png) no-repeat 30px 50%;
+            }
+        }
 
         a {
             color: inherit;
             display: inline-block;
-            float: none !important; // @to_do Remove .RightFloating, .LeftFloating from links in html.
+            float: none !important;
+
             &:hover {
                 color: black !important;
             }
@@ -157,7 +159,7 @@ header {
                     background-color: #666;
                     display: inline-block;
                     content: "";
-                    height: 25px;
+                    height: 1em;
                     width: 1px;
                     margin: 0 10px;
                     transform: translate(0, 25%);
@@ -170,37 +172,29 @@ header {
                 background-color: $Color-Font-Green;
                 width: 25px;
                 height: 25px;
+                font-size: 12px;
                 line-height: 25px;
                 text-align: center;
             }
         }
     }
-    // Logo
-    div#UserPanel::before {
-        top: 0px;
-        left: 0px;
-        content: "";
-        height: 80px;
-        width: 152px; // 20px + 132px
-        z-index: $Depth-Header;
-        position: absolute;
-        display: inline-block;
-        background: url(../Media/Logo.png) no-repeat 20px 50%;
-    }
 
     a#MenuButton {
-        line-height: 30px;
-        padding: $Metric-Separator-Mobile;
-        float: right;
+        padding: 0 $Metric-Separator-Mobile;
+        line-height: $Mobile-Menu-Height;
+        display: inline-block;
+        position: relative;
+        color: white;
     }
 }
 
+// @to_do: no footer(?)
 footer {
     display: none;
 
     position: relative;
-    margin-left: $Left-Margin-Width; // 90px = left menu
-    width: calc(100vw - #{$Left-Margin-Width}); // 90px = left menu
+    margin-left: $Lateral-Menu-Width;
+    width: calc(100vw - #{$Lateral-Menu-Width});
 
     height: $Footer-Height;
     background: black;

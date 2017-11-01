@@ -1,21 +1,47 @@
 ﻿@import "_Library.scss";
 
+$Header-Height: 50px;
+$Header-Font-Size: 16px;
+
+$Content-Height: 40px;
+$Content-Font-Size: 14px;
+
 table.Grid {
     border-collapse: collapse;
     border-spacing: 0;
     width: 100%;
 
     thead {
-        background-color: $Color-Background-Grey2;
+        background-color: $Color-Border-Black;
 
         tr {
             border-bottom: solid 1px $Color-Border-Grey;
 
             th {
+                color: #fff;
+                padding: 0 20px;
                 text-align: left;
-                font-weight: normal;
-                height: 40px;
-                padding: 5px 10px;
+                position: relative;
+                height: $Header-Height;
+                border-left: 1px solid #ccc;
+                font-size: $Header-Font-Size;
+                font-family: "Myriad Pro Semibold", Arial, sans-serif;
+
+                &:after {
+                    content: "";
+                    display: block;
+                    position: absolute;
+                    top: 50%;
+                    right: 20px;
+                    width: 0;
+                    height: 0;
+                    transform: translateY(-50%);
+                    border-width: 6px 10px;
+                    border-color: transparent #ccc transparent transparent;
+                    border-style: solid;
+                    // rotate the icon.
+                    transform: rotate(-90deg);
+                }
             }
         }
     }
@@ -25,9 +51,12 @@ table.Grid {
 
         tr {
             td {
-                padding: 5px 10px;
-                height: 30px;
+                color: #666;
+                padding: 0 20px;
+                height: $Content-Height;
+                font-size: $Content-Font-Size;
                 border-right: solid 1px $Color-Border-Grey;
+                font-family: "Myriad Pro Regular", Arial, sans-serif;
 
                 &.Off {
                     opacity: .3;

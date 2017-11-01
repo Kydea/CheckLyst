@@ -1,7 +1,16 @@
 ﻿// Width(s)
-$Left-Margin-Width: 90px;
 $Footer-Height: 58px;
-$Header-Height: 81px; // 80px height + 1px border bottom
+$Header-Height: 70px;
+
+// Lateral Menu
+$Lateral-Menu-Width: 70px;
+$Lateral-Menu-Logo-Width: 50px;
+$Lateral-Menu-Item-Height: 70px;
+$Lateral-Menu-Item-Icon-Width: 40px;
+$Lateral-Menu-Submenu-Item-Height: 40px;
+
+// Mobile Menu
+$Mobile-Menu-Height: 70px;
 
 //Fonts
 $Font-Base: Arial, sans-serif;
@@ -119,4 +128,35 @@ $Media-0-700: "only screen and (max-width: 699px)";
     -o-transform: translateY(-50%);
     -webkit-transform: translateY(-50%);
     transform: translateY(-50%);
+}
+
+@mixin accordion-button($class, $size, $background-color, $hover-background-color: none) {
+    border-radius: 5px 0 0 0;
+
+    &#{$class} {
+        position: relative;
+
+        i.fa {
+            background-color: $background-color;
+            border-left: 1px solid #ebebeb;
+            border-radius: 0 5px 0 0;
+            line-height: $size;
+            height: $size;
+            right: -$size;
+            width: $size;
+        
+            position: absolute;
+            top: 0;
+        }
+
+        @if ($hover-background-color == 'none') {
+          &:hover i.fa {
+              background: inherit;
+          }  
+        } @else {
+            &:hover, &:hover i.fa {
+                background: $hover-background-color;
+            }
+        }
+    }
 }

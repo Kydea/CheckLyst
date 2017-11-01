@@ -2,8 +2,12 @@
 
 div#Content {
     background-color: #ebebeb;
-    margin-left: $Left-Margin-Width; // 90px = left menu
-    min-height: calc(100vh - #{$Header-Height}); //viewport - header height
+    min-height: calc(100vh - #{$Header-Height});
+
+    @media #{$Media-Extended} {
+        margin-left: $Lateral-Menu-Width;
+    }
+
     a {
         text-decoration: none;
 
@@ -22,8 +26,8 @@ div#Content {
     h1 {
         margin: 0;
         color: #666;
-        padding: 30px 0 25px 0;
-        font: normal 36px "Myriad Pro Regular", Arial, sans-serif;
+        padding: 30px 0 0 0;
+        font: normal 30px "Myriad Pro Regular", Arial, sans-serif;
     }
 
     h2 {

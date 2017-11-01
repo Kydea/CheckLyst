@@ -1,94 +1,60 @@
-﻿nav.Menu {
-  top: 0px;
-  left: 0;
-  position: fixed;
-  text-transform: uppercase; }
-  nav.Menu ul.Menu {
-    font-size: 14px; }
-    nav.Menu ul.Menu li.MenuItem {
+﻿nav.Menu ul.Menu {
+  background-color: #fff; }
+  nav.Menu ul.Menu li.MenuItem {
+    display: block; }
+    nav.Menu ul.Menu li.MenuItem .MenuItem {
       display: block; }
-      nav.Menu ul.Menu li.MenuItem .MenuItem {
-        display: block; }
-      nav.Menu ul.Menu li.MenuItem span.MenuItem {
-        cursor: default; }
-      nav.Menu ul.Menu li.MenuItem ul.SubMenu {
-        display: none;
-        background: white;
+    nav.Menu ul.Menu li.MenuItem span.MenuItem {
+      cursor: default; }
+    nav.Menu ul.Menu li.MenuItem ul.SubMenu {
+      text-transform: none;
+      background: white;
+      display: none;
+      padding: 0;
+      margin: 0; }
+      nav.Menu ul.Menu li.MenuItem ul.SubMenu li {
+        list-style: none;
         padding: 0;
-        margin: 0;
-        text-transform: none; }
-        nav.Menu ul.Menu li.MenuItem ul.SubMenu li {
-          padding: 0;
-          margin: 0;
-          list-style: none; }
-  @media only screen and (min-width: 760px) {
+        margin: 0; }
+
+@media only screen and (min-width: 760px) {
+  nav.Menu {
+    top: 0px;
+    left: 0;
+    position: fixed;
+    font-size: 14px;
+    font-family: "Myriad Pro Regular", Arial, sans-serif; }
     nav.Menu ul.Menu {
-      width: 90px;
       height: 100vh;
       z-index: 101;
       background-color: #000;
-      display: block !important; }
+      display: block !important;
+      width: 70px; }
       nav.Menu ul.Menu:before {
         content: "";
-        width: 90px;
-        height: 80px;
+        width: 100%;
         display: block;
-        border-bottom: 1px solid #ccc;
-        background: url(../Media/Sintlogo.png) no-repeat 17.5px 50%; }
-      nav.Menu ul.Menu li.MenuItem {
-        height: 90px;
-        line-height: 90px;
-        padding: 20px 20px;
+        height: 70px;
+        box-sizing: border-box;
         border-bottom: 1px solid #333;
+        background: url(../Media/Sintlogo.png) no-repeat 10px 50%; }
+      nav.Menu ul.Menu li.MenuItem {
         position: relative;
+        border-bottom: 1px solid #333;
+        height: 70px;
+        line-height: 70px;
+        padding: 15px;
         /*&.Current {
                     background-color: #333;
 
                     .MenuItem {
                         border: 1px solid $Color-Font-Green; // borders until no icons!
                     }
-                }*/
-        /*ul.SubMenu {
-                    position: absolute;
-                    z-index: $Depth-Menu;
-
-                    li {
-                        background-color: $Color-Background-Grey2;
-                        line-height: 40px;
-                        border-left: solid 1px white;
-                        border-right: solid 1px white;
-                        border-bottom: solid 1px white;
-
-                        a {
-                            padding: 0 $Metric-Separator-Extended;
-                        }
-                    }
-
-                    &::before {
-                        content: "";
-                        display: block;
-                        width: 100%;
-                        height: 0;
-                        border-top: solid 1px $Color-Background-Grey2;
-                        top: -10px;
-                    }
-
-                    &::after {
-                        border-bottom: 10px solid $Color-Background-Grey2;
-                        border-left: 10px solid transparent;
-                        border-right: 10px solid transparent;
-                        content: "";
-                        height: 0;
-                        position: absolute;
-                        left: 5px;
-                        top: -9px;
-                        width: 0;
-                    }
                 }*/ }
         nav.Menu ul.Menu li.MenuItem .MenuItem {
-          width: 50px;
-          height: 50px;
           box-sizing: border-box;
+          width: 40px;
+          height: 40px;
           border: 1px solid #999;
           color: transparent; }
         nav.Menu ul.Menu li.MenuItem.Selected, nav.Menu ul.Menu li.MenuItem:hover {
@@ -113,28 +79,28 @@
           z-index: 101;
           background-color: black;
           position: absolute;
-          left: 90px;
-          top: 20px;
+          left: 70px;
+          top: 15px;
           border-left: 1px solid #333;
           border-radius: 0 5px 5px 0;
           box-shadow: rgba(0, 0, 0, 0.35) 0px 0px 7px 3.5px; }
           nav.Menu ul.Menu li.MenuItem ul.SubMenu:before {
+            left: -1px;
+            width: 1px;
             content: "";
             display: block;
             position: absolute;
             height: 18px;
-            top: 16px;
-            left: -1px;
-            width: 1px;
-            background-color: black; }
+            background-color: black;
+            top: 11px; }
           nav.Menu ul.Menu li.MenuItem ul.SubMenu li {
             width: 230px;
-            height: 50px;
-            line-height: 50px;
+            height: 40px;
+            line-height: 40px;
             padding-left: 40px; }
-    @keyframes rotation {
-      100% {
-        transform: translateY(-50%) rotate(-45deg) skew(8.16deg, 8.16deg); } }
+  @keyframes rotation {
+    100% {
+      transform: translateY(-50%) rotate(-45deg) skew(8.16deg, 8.16deg); } }
             nav.Menu ul.Menu li.MenuItem ul.SubMenu li:hover a {
               position: relative;
               color: #03c3b1; }
@@ -156,29 +122,49 @@
             nav.Menu ul.Menu li.MenuItem ul.SubMenu li a {
               color: #ccc;
               display: block;
-              font-size: 18px;
-              text-decoration: none;
-              font-family: "Myriad Pro Regular", Arial, sans-serif; }
+              text-decoration: none; }
             nav.Menu ul.Menu li.MenuItem ul.SubMenu li + li {
               border-top: 1px solid #666; } }
-  @media only screen and (max-width: 759px) {
-    nav.Menu {
-      clear: both; }
-      nav.Menu ul.Menu {
-        display: none;
-        border-bottom: solid 10px white;
-        margin-bottom: 10px;
-        position: absolute;
-        z-index: 101;
-        width: 100%;
-        background: #e8e7ec; }
-        nav.Menu ul.Menu li.MenuItem {
-          line-height: 40px;
-          border-top: solid 1px white; }
-          nav.Menu ul.Menu li.MenuItem .MenuItem {
-            padding: 0 10px; }
-          nav.Menu ul.Menu li.MenuItem ul.SubMenu li {
-            background: #dcdbe0; }
-            nav.Menu ul.Menu li.MenuItem ul.SubMenu li a {
-              padding: 0 20px; } }
+
+@media only screen and (max-width: 759px) {
+  nav.Menu {
+    clear: both;
+    text-transform: uppercase;
+    background-color: #000;
+    text-align: right;
+    height: 70px;
+    font-size: 18px;
+    font-family: "Myriad Pro Light", Arial, sans-serif; }
+    nav.Menu::before {
+      background: url(../Media/LogoMobile.png) no-repeat 0 50%;
+      transform: translateX(-67px);
+      width: 134px;
+      position: absolute;
+      content: "";
+      height: 100%;
+      left: 50%;
+      top: 0px; }
+    nav.Menu ul.Menu {
+      display: none;
+      border-bottom: solid 10px white;
+      margin-bottom: 10px;
+      position: absolute;
+      z-index: 101;
+      width: 100%;
+      text-align: center; }
+      nav.Menu ul.Menu li.MenuItem {
+        line-height: 40px;
+        border-bottom: 1px solid #ccc; }
+        nav.Menu ul.Menu li.MenuItem .MenuItem {
+          padding: 0 10px; }
+        nav.Menu ul.Menu li.MenuItem ul.SubMenu li {
+          background: #efefef;
+          border-top: 1px solid #ccc; }
+          nav.Menu ul.Menu li.MenuItem ul.SubMenu li a {
+            padding: 0 20px; }
+      nav.Menu ul.Menu::after {
+        content: "";
+        height: 10px;
+        display: block;
+        background-color: #000; } }
 

@@ -72,6 +72,7 @@
   <ItemGroup>
     <Content Include="Content\Media\Logo.Big.png" />
     <Content Include="Content\Media\Logo.png" />
+    <Content Include="Content\Media\LogoMobile.png" />
     <Content Include="Content\Media\Sintlogo.png" />
     <Content Include="Content\PDF\Janssen.png" />
     <Content Include="Content\Theme\ActionBar.css">
@@ -114,11 +115,14 @@
     <Content Include="Content\Theme\Fonts.css">
       <DependentUpon>Fonts.scss</DependentUpon>
     </Content>
+    <Content Include="Content\Theme\Fonts\FlatIcon\flaticon.html" />
+    <Content Include="Content\Theme\Fonts\FlatIcon\Flaticon.svg" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Bold\MyriadPro-Bold.svg" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Cond\MyriadPro-Cond.svg" />
     <Content Include="Content\Theme\Fonts\MyriadPro\LightCond\MyriadPro-LightCond.svg" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Light\MyriadPro-Light.svg" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Regular\MyriadPro-Regular.svg" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Semibold\MyriadPro-SemiboldIt.svg" />
     <Content Include="Content\Theme\Grid.css">
       <DependentUpon>Grid.scss</DependentUpon>
     </Content>
@@ -242,6 +246,15 @@
     <Content Include="Content\Theme\Fonts\MyriadPro\Regular\MyriadPro-Regular.eot" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Regular\MyriadPro-Regular.woff" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Regular\MyriadPro-Regular.woff2" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Semibold\MyriadPro-SemiboldIt.eot" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Semibold\MyriadPro-SemiboldIt.otf" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Semibold\MyriadPro-SemiboldIt.ttf" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Semibold\MyriadPro-SemiboldIt.woff" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Semibold\Myriad Pro Semibold.scss" />
+    <Content Include="Content\Theme\Fonts\FlatIcon\Flaticon.eot" />
+    <Content Include="Content\Theme\Fonts\FlatIcon\Flaticon.ttf" />
+    <Content Include="Content\Theme\Fonts\FlatIcon\Flaticon.woff" />
+    <Content Include="Content\Theme\Fonts\FlatIcon\_flaticon.scss" />
     <None Include="Scripts\Libraries\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\Libraries\jquery-2.1.4.js" />
     <Content Include="Scripts\Libraries\jquery-ui-1.11.4.js" />

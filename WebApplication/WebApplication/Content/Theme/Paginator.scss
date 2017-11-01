@@ -1,32 +1,55 @@
 ﻿@import "Library";
 
-.Paginator {
-    margin: 20px 0 20px 0;
-    float: right;
+$Font-Size: 16px;
+$Page-Width: 20px;
 
+.Paginator {
+    float: right;
     cursor: default;
+    font-size: 0;
+
+    &:not(:empty) {
+        margin: 20px 0 0 0;
+    }
 
     a {
+        text-align: center;
+        width: $Page-Width;
+        height: $Page-Width;
+        font-size: $Font-Size;
+        line-height: $Page-Width;
+        color: $Color-Font-Dark-Green;
         text-decoration: none !important;
+        font-family: "Myriad Pro Semibold", Arial, sans-serif;
 
         &:not(.Current) {
             cursor: pointer;
         }
 
         &.Current {
-            color: $Color-Font-Blue1;
+            color: white;
+            background-color: $Color-Font-Green;
         }
     }
 
     a, span {
         display: inline-block;
 
-        &:not(:last-child) {
-            &:after {
+        &:not(:first-child) {
+            position: relative;
+            margin-left: 20px;
+
+            &::before {
+                border-left: 2px solid #ccc;
+                background-color: black;
                 display: inline-block;
-                content: "|";
+                position: absolute;
+                margin-top: 3px;
+                content: "";
                 color: black;
-                padding: 0 5px 0 5px;
+                width: 0px;
+                height: 1em;
+                left: -10px;
             }
         }
     }
