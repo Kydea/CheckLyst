@@ -398,6 +398,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Instances_Prototype">
+          <End Role="Prototypes" Type="Self.Prototypes" Multiplicity="0..1" />
+          <End Role="Instances" Type="Self.Instances" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Prototypes">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Instances">
+              <PropertyRef Name="Prototype" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Instances_Version">
           <End Role="PrototypeVersions" Type="Self.PrototypeVersions" Multiplicity="1" />
           <End Role="InstanceNumerators" Type="Self.InstanceNumerators" Multiplicity="*" />
@@ -875,6 +887,10 @@
             <End Role="InstanceNumerators" EntitySet="InstanceNumerators" />
             <End Role="Instances" EntitySet="Instances" />
           </AssociationSet>
+          <AssociationSet Name="FK_Instances_Prototype" Association="Self.FK_Instances_Prototype">
+            <End Role="Prototypes" EntitySet="Prototypes" />
+            <End Role="Instances" EntitySet="Instances" />
+          </AssociationSet>
           <AssociationSet Name="FK_Instances_Version" Association="Self.FK_Instances_Version">
             <End Role="PrototypeVersions" EntitySet="PrototypeVersions" />
             <End Role="InstanceNumerators" EntitySet="InstanceNumerators" />
@@ -1292,6 +1308,10 @@
             <End Role="Records" EntitySet="Records" />
           </AssociationSet>
           <EntitySet Name="DataSources" EntityType="RelationalDatabaseModel.DataSources" />
+          <AssociationSet Name="FK_Instances_Prototype" Association="RelationalDatabaseModel.FK_Instances_Prototype">
+            <End Role="Prototypes" EntitySet="Prototypes" />
+            <End Role="Instances" EntitySet="Instances" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="TimeZones">
           <Key>
@@ -1412,6 +1432,7 @@
           <NavigationProperty Name="Departments" Relationship="RelationalDatabaseModel.Prototypes_Department_fkey" FromRole="Prototypes" ToRole="Departments" />
           <NavigationProperty Name="PrototypeTypes" Relationship="RelationalDatabaseModel.Prototypes_PrototypeType_fkey" FromRole="Prototypes" ToRole="PrototypeTypes" />
           <NavigationProperty Name="PrototypeVersions" Relationship="RelationalDatabaseModel.PrototypeVersions_Prototype_fkey" FromRole="Prototypes" ToRole="PrototypeVersions" />
+          <NavigationProperty Name="Instances" Relationship="RelationalDatabaseModel.FK_Instances_Prototype" FromRole="Prototypes" ToRole="Instances" />
         </EntityType>
         <EntityType Name="PrototypeTypes">
           <Key>
@@ -2005,6 +2026,7 @@
           <NavigationProperty Name="InstanceNumerators" Relationship="RelationalDatabaseModel.FK_Instances_InstanceNumerator" FromRole="Instances" ToRole="InstanceNumerators" />
           <NavigationProperty Name="InstanceStates" Relationship="RelationalDatabaseModel.Instances_InstanceState_fkey" FromRole="Instances" ToRole="InstanceStates" />
           <NavigationProperty Name="InstanceTags" Relationship="RelationalDatabaseModel.InstanceTags_Instance_fkey" FromRole="Instances" ToRole="InstanceTags" />
+          <NavigationProperty Name="Prototypes" Relationship="RelationalDatabaseModel.FK_Instances_Prototype" FromRole="Instances" ToRole="Prototypes" />
         </EntityType>
         <Association Name="InstanceExpressionValues_Instance_fkey">
           <End Type="RelationalDatabaseModel.Instances" Role="Instances" Multiplicity="1" />
@@ -2097,6 +2119,18 @@
           <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
         </EntityType>
+        <Association Name="FK_Instances_Prototype">
+          <End Type="RelationalDatabaseModel.Prototypes" Role="Prototypes" Multiplicity="0..1" />
+          <End Type="RelationalDatabaseModel.Instances" Role="Instances" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Prototypes">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Instances">
+              <PropertyRef Name="Prototype" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->

@@ -122,16 +122,16 @@ namespace CheckListManager.Common.Logic.Cache
 		{
 			if (!expiry.HasValue)
 			{
-				expiry = TimeSpan.FromSeconds(5);
+				expiry = TimeSpan.FromSeconds(5); //life time of the lock (it is extended automatically if the program runs)
 			}
 			if (!wait.HasValue)
 			{
-				wait = TimeSpan.FromSeconds(10);
+				wait = TimeSpan.FromSeconds(10); //waits until is released by previous lock
 			}
 			if (!retry.HasValue)
 			{
-				retry = TimeSpan.FromSeconds(1);
-			}
+				retry = TimeSpan.FromSeconds(1); //time between two attempts
+            }
 
 			return _lockFactory.Value.CreateAsync(ResolveKey(key, regionName), expiry.Value, wait.Value, retry.Value, cancellationToken)
 				.ContinueWith(t => new LockObject(t.Result), cancellationToken);

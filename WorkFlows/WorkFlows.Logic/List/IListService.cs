@@ -10,8 +10,6 @@ namespace CheckListManager.WorkFlows.Logic.List
 {
     public interface IListService: IService
     {
-        Task<ListResponse> BindAsync(long Company, ListRequest form);
-
         Task<PagingResponse<List<ListRow>>> GetDataAsync(long Company, PagingRequest<ListRequest> form);
     }
 }

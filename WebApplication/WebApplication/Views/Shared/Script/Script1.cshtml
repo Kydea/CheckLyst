@@ -8,9 +8,9 @@
             matematici.loader.hide();
         }).ajaxError(function (event, jqxhr, settings, thrownError) {
             var message = "";
-            if (jqxhr.responseJSON && jqxhr.responseJSON.Messages)
-                for (var index in jqxhr.responseJSON.Messages)
-                    message += jqxhr.responseJSON.Messages[index] + "<br />";
+            if (jqxhr.responseJSON && jqxhr.responseJSON.messages)
+                for (var index in jqxhr.responseJSON.messages)
+                    message += jqxhr.responseJSON.messages[index] + "<br />";
             else
                 message = thrownError;
 
@@ -72,8 +72,8 @@
         switch (key)
         {
             case 13:
-                if ($('.DefaultButton').first().click().size() > 0)
-                    e.preventDefault();
+                $('.DefaultButton').first().click();
+                e.preventDefault();
                 break;
             case 27:
                 $('.CancelButton').first().click();

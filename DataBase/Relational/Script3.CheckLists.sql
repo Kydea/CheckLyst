@@ -147,7 +147,7 @@ create table "CheckLists"."Instances"
 (
     "ID" bigserial primary key,
     
-	"Prototype" bigint,
+	"Prototype" bigint references "CheckLists"."Prototypes",
 	"Version" int,
 	"Year" int,
 	constraint "FK_Instances_InstanceNumerator" foreign key ("Prototype", "Version", "Year") references "CheckLists"."InstanceNumerators",

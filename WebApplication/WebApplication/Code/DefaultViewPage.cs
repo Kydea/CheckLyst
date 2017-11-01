@@ -1,5 +1,6 @@
 ﻿using System.Web.Mvc;
 using CheckListManager.Common.Core.Web.Security;
+using System.Configuration;
 
 namespace CheckListManager.WebApplication.Code
 {
@@ -9,6 +10,8 @@ namespace CheckListManager.WebApplication.Code
 
 		protected DefaultIdentity Identity
 			=> _identity ?? (_identity = User?.Identity as DefaultIdentity);
+
+        public string BaseUrl => ConfigurationManager.AppSettings["BaseUrl"];
 	}
 
 	public abstract class DefaultViewPage<T> : WebViewPage<T>
@@ -17,5 +20,7 @@ namespace CheckListManager.WebApplication.Code
 
 		protected DefaultIdentity Identity
 			=> _identity ?? (_identity = User?.Identity as DefaultIdentity);
-	}
+
+        public string BaseUrl => ConfigurationManager.AppSettings["BaseUrl"];
+    }
 }

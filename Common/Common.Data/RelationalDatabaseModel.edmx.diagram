@@ -72,6 +72,7 @@
         <EntityTypeShape EntityType="RelationalDatabaseModel.Records" Width="1.5" PointX="15.125" PointY="1.5" />
         <AssociationConnector Association="RelationalDatabaseModel.Records_Action_fkey" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.DataSources" Width="1.5" PointX="0.75" PointY="9.75" />
+        <AssociationConnector Association="RelationalDatabaseModel.FK_Instances_Prototype" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
