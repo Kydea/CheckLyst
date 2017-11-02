@@ -1,8 +1,8 @@
-﻿using CheckListManager.Common.Logic.Api;
+﻿using System.Threading.Tasks;
+using System.Web.Http;
+using CheckListManager.Common.Logic.Api;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Instances.Logic.List;
-using System.Threading.Tasks;
-using System.Web.Http;
 
 namespace CheckListManager.Instances.Api.Controllers
 {

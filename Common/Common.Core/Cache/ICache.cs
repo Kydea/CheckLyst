@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+
 // ReSharper disable UnusedMemberInSuper.Global
 
 namespace CheckListManager.Common.Core.Cache
