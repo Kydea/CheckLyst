@@ -15,6 +15,10 @@ namespace CheckListManager.Common.Data
             _memoryCache = memoryCache;
         }
 
+        public Task<List<ListItems.Company>> GetCompaniesAsync()
+            => _memoryCache.GetOrAddAsync("Companies", key => Entities.Companies.Where(c => c.ID > 1).Select(c => new ListItems.Company { ID = c.ID, Name = c.Name }).ToListAsync(), "CommonRepository");
+
+
         public Task<List<Departments>> GetDepartmentsAsync(long company)
             => Entities.Departments.Where(d => d.Company == company).ToListAsync();
 

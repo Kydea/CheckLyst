@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CheckListManager.Infrastructure.Logic.List
+namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
 {
-    public class ListRequest : Request
+    public class PrototypeTypesRequest : Request
     {
         public long? Department { get; set; }
 

@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CheckListManager.Infrastructure.Logic.List
+namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
 {
-    public class ListResponse : Form
+    public class PrototypeTypesResponse : Form
     {
     }
 }

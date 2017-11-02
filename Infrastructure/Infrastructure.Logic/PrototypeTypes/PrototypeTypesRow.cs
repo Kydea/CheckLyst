@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CheckListManager.Infrastructure.Logic.List
+namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
 {
-    public class ListRow
+    public class PrototypeTypesRow
     {
         public string Department { get; set; }
         public long ID { get; set; }

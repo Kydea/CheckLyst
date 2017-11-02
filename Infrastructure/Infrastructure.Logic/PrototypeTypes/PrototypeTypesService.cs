@@ -10,22 +10,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CheckListManager.Infrastructure.Logic.List
+namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
 {
-    public class ListService : IListService
+    public class PrototypeTypesService : IPrototypeTypesService
     {
         private readonly IInfrastructureRepository _infrastructureRepository;
         private readonly ICommonRepository _commonRepository;
 
-        public ListService(IInfrastructureRepository infrastructureRepository, ICommonRepository commonRepository)
+        public PrototypeTypesService(IInfrastructureRepository infrastructureRepository, ICommonRepository commonRepository)
         {
             _infrastructureRepository = infrastructureRepository;
             _commonRepository = commonRepository;
         }
 
-        public async Task<ListResponse> BindAsync(long Company, ListRequest Form)
+        public async Task<PrototypeTypesResponse> BindAsync(long Company, PrototypeTypesRequest Form)
         {
-            ListResponse response = new ListResponse();
+            PrototypeTypesResponse response = new PrototypeTypesResponse();
             long? Department = Form.Department;
 
             if (Form.Source == null)
@@ -46,11 +46,11 @@ namespace CheckListManager.Infrastructure.Logic.List
             return response;
         }
 
-        public async Task<PagingResponse<List<ListRow>>> GetDataAsync(long Company, PagingRequest<ListRequest> Form)
+        public async Task<PagingResponse<List<PrototypeTypesRow>>> GetDataAsync(long Company, PagingRequest<PrototypeTypesRequest> Form)
             => await _infrastructureRepository
                 .GetPrototypeTypesAsync(
                     Company,
-                    pt => new ListRow {
+                    pt => new PrototypeTypesRow {
                         Department = pt.Departments.Name,
                         ID = pt.ID,
                         Description = pt.Description,
