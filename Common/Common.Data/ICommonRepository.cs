@@ -9,7 +9,7 @@ namespace CheckListManager.Common.Data
         Task<List<PrototypeTypes>> GetPrototypeTypesAsync(long company, long department);
         Task<List<Prototypes>> GetPrototypesAsync(long company, long prototypeType);
         Task<List<ListItems.PrototypeVersion>> GetPrototypeVersionsAsync(long company, long prototype);
-        Task<List<string>> GetPrototypeVersionTagsAsync(long company, long prototype, int? Version);
+        Task<List<string>> GetPrototypeVersionTagsAsync(long company, long prototype, int? version);
         Task<List<string>> GetVersionStatesAsync();
         Task<List<string>> GetInstanceStatesAsync();
     }
