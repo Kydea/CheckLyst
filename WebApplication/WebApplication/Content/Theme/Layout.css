@@ -137,12 +137,6 @@ header {
         font-size: 12px;
         line-height: 25px;
         text-align: center; }
-  header a#MenuButton {
-    padding: 0 10px;
-    line-height: 70px;
-    display: inline-block;
-    position: relative;
-    color: white; }
 
 footer {
   display: none;
