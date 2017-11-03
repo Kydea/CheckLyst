@@ -1,31 +1,57 @@
 ﻿<header class="Container">
     <div id="Logo" class="Padded">
-	    <img src="~/Content/Media/Logo.png" alt=""/>
-	    <a href="#" id="HelpButton" title="User manual"><i class="fa fa-question"></i></a>
+        <img src="~/Content/Media/Logo.png" alt="" />
+        <a href="#" id="HelpButton" title="User manual"><i class="fa fa-question"></i></a>
     </div>
 
-    <div id="UserPanel" class="Padded Container">
+    <div id="UserPanel" class="Padded Container Extended">
         <a class="User LeftFloating CurrentUser" href="#">
             <span class="UserName"></span> <i class="fa fa-user"></i>
         </a>
 
         @*@if (Security.Sessions != null)
-        {
-            foreach (var Session in Security.Sessions)
             {
-                <a class="User LeftFloating" href="#">
-                    <span class="UserName" title="@Session.Code" data-settingsmanager="@Security.CurrentUser.Code">@Session.Description</span> <i class="fa fa-user"></i>
-                </a>
-            }
-        }*@
+                foreach (var Session in Security.Sessions)
+                {
+                    <a class="User LeftFloating" href="#">
+                        <span class="UserName" title="@Session.Code" data-settingsmanager="@Security.CurrentUser.Code">@Session.Description</span> <i class="fa fa-user"></i>
+                    </a>
+                }
+            }*@
 
         <a id="Logout" class="Standard RightFloating" href="@Url.Action("Login", "Security")">Logout <i class="fa fa-sign-out"></i></a>
         <a class="Add RightFloating" href="#">(add signer) <i class="fa fa-plus-circle"></i></a>
     </div>
 
-    <a id="MenuButton" class="Mobile" href="#"><i class="fa fa-bars"></i> MENU</a>
     <nav class="Menu">
+        <button id="MenuButton" class="Mobile hamburger hamburger--spin" type="button">
+            <span class="hamburger-box">
+                <span class="hamburger-inner"></span>
+            </span>
+        </button>
+
         <ul class="Menu Plain">
+            <li class="MenuItem Mobile">
+                <div id="UserPanel" class="Padded Container">
+                    <a class="User LeftFloating CurrentUser" href="#">
+                        <span class="UserName"></span> <i class="fa fa-user"></i>
+                    </a>
+
+                    @*@if (Security.Sessions != null)
+                        {
+                            foreach (var Session in Security.Sessions)
+                            {
+                                <a class="User LeftFloating" href="#">
+                                    <span class="UserName" title="@Session.Code" data-settingsmanager="@Security.CurrentUser.Code">@Session.Description</span> <i class="fa fa-user"></i>
+                                </a>
+                            }
+                        }*@
+
+                    <a id="Logout" class="Standard RightFloating" href="@Url.Action("Login", "Security")">Logout <i class="fa fa-sign-out"></i></a>
+                    <a class="Add RightFloating" href="#">(add signer) <i class="fa fa-plus-circle"></i></a>
+                </div>
+            </li>
+
             <li class="MenuItem"><a class="MenuItem" href="@Url.Action("Dashboard", "Default")">Dashboard</a></li>
 
             <li class="MenuItem CompanyRole">

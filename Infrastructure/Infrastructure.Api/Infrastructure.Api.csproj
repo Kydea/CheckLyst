@@ -146,7 +146,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Controllers\ListController.cs" />
+    <Compile Include="Controllers\CompaniesController.cs" />
+    <Compile Include="Controllers\PrototypeTypesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -176,6 +177,10 @@
     <ProjectReference Include="..\..\Common\Common.Core\Common.Core.csproj">
       <Project>{31DE9C2F-FB9D-472C-B28A-3C1EDEFF10DC}</Project>
       <Name>Common.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Common.Data\Common.Data.csproj">
+      <Project>{91482922-D6BA-4DF1-9A9C-88F3087A7B5D}</Project>
+      <Name>Common.Data</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Common\Common.Logic.Api\Common.Logic.Api.csproj">
       <Project>{BE658746-48A9-4AF2-B2B6-A13A7D6DE439}</Project>

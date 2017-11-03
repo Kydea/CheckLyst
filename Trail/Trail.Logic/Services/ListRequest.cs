@@ -1,11 +1,7 @@
-﻿using CheckListManager.Common.Logic.DataEngine;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
+using CheckListManager.Common.Logic.DataEngine;
 
-namespace CheckListManager.Trail.Logic.List
+namespace CheckListManager.Trail.Logic.Services
 {
     public class ListRequest : Request
     {

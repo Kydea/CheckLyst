@@ -5,7 +5,7 @@ namespace CheckListManager.Common.Logic.Trail
 	public class TrailMessage
 	{
 		public long Company { get; set; }
-        public long ID { get; set; }
+        public long Id { get; set; }
 		public string User { get; set; }
 		public DateTimeOffset Date { get; set; }
 		public string Action { get; set; }

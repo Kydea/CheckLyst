@@ -15,6 +15,10 @@ namespace CheckListManager.Common.Data
             _memoryCache = memoryCache;
         }
 
+        public Task<List<ListItems.Company>> GetCompaniesAsync()
+            => _memoryCache.GetOrAddAsync("Companies", key => Entities.Companies.Where(c => c.ID > 1).Select(c => new ListItems.Company { ID = c.ID, Name = c.Name }).ToListAsync(), "CommonRepository");
+
+
         public Task<List<Departments>> GetDepartmentsAsync(long company)
             => Entities.Departments.Where(d => d.Company == company).ToListAsync();
 
@@ -27,8 +31,8 @@ namespace CheckListManager.Common.Data
         public Task<List<ListItems.PrototypeVersion>> GetPrototypeVersionsAsync(long company, long prototype)
             => Entities.PrototypeVersions.Where(pv => pv.Prototypes.Company == company && pv.Prototype == prototype).Select(pv => new ListItems.PrototypeVersion { Version = pv.Version, VersionState = pv.VersionState }).ToListAsync();
 
-        public Task<List<string>> GetPrototypeVersionTagsAsync(long company, long prototype, int? Version)
-            => Entities.PrototypeVersionTags.Where(pv => pv.PrototypeVersions.Prototypes.Company == company && pv.Prototype == prototype && (Version == null || pv.Version == Version)).Select(pv => pv.Code).ToListAsync();
+        public Task<List<string>> GetPrototypeVersionTagsAsync(long company, long prototype, int? version)
+            => Entities.PrototypeVersionTags.Where(pv => pv.PrototypeVersions.Prototypes.Company == company && pv.Prototype == prototype && (version == null || pv.Version == version)).Select(pv => pv.Code).ToListAsync();
 
         public Task<List<string>> GetVersionStatesAsync()
             => _memoryCache.GetOrAddAsync("VersionStates", key => Entities.VersionStates.Select(s => s.Code).ToListAsync(), "CommonRepository");

@@ -54,11 +54,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="List\IListService.cs" />
-    <Compile Include="List\ListRequest.cs" />
-    <Compile Include="List\ListResponse.cs" />
-    <Compile Include="List\ListRow.cs" />
-    <Compile Include="List\ListService.cs" />
+    <Compile Include="Companies\ICompaniesService.cs" />
+    <Compile Include="Companies\CompaniesService.cs" />
+    <Compile Include="PrototypeTypes\IPrototypeTypesService.cs" />
+    <Compile Include="PrototypeTypes\PrototypeTypesRequest.cs" />
+    <Compile Include="PrototypeTypes\PrototypeTypesResponse.cs" />
+    <Compile Include="PrototypeTypes\PrototypeTypesRow.cs" />
+    <Compile Include="PrototypeTypes\PrototypeTypesService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

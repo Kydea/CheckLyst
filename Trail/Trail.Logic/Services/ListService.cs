@@ -1,16 +1,10 @@
-﻿using CheckListManager.Common.Core.Services;
-using CheckListManager.Common.Data;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using CheckListManager.Common.Logic.Api.Messages;
-using CheckListManager.Common.Logic.DataEngine;
 using CheckListManager.Common.Logic.Trail;
 using CheckListManager.Trail.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace CheckListManager.Trail.Logic.List
+namespace CheckListManager.Trail.Logic.Services
 {
     public class ListService : IListService
     {
@@ -27,7 +21,7 @@ namespace CheckListManager.Trail.Logic.List
                     Company,
                     p => new TrailMessage
                     {
-                        ID = p.ID,
+                        Id = p.ID,
                         Date = p.Date,
                         User = p.User,
                         Action = p.Action,

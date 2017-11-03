@@ -1,11 +1,10 @@
-﻿using CheckListManager.Common.Data;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data.Entity;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
+using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Messages;
 
 namespace CheckListManager.Instances.Data
@@ -24,7 +23,7 @@ namespace CheckListManager.Instances.Data
             int currentPage, 
             int itemsPerPage)
         {
-            var Data = await Entities.Instances
+            var data = await Entities.Instances
                 .Where(filters)
                 .OrderBy(order)
                 .Select(select)
@@ -32,14 +31,14 @@ namespace CheckListManager.Instances.Data
                 .Take(itemsPerPage)
                 .ToListAsync();
 
-            int Count = await Entities.Instances
+            var count = await Entities.Instances
                 .Where(filters)
                 .CountAsync();
 
             return new PagingResponse<List<TResult>>
             {
-                Data = Data,
-                Count = Count,
+                Data = data,
+                Count = count,
                 ItemsPerPage = itemsPerPage,
                 CurrentPage = currentPage
             };

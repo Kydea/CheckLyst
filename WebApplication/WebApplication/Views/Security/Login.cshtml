@@ -13,7 +13,7 @@
                 </div>}
 
             <input type="hidden" name="grant_type" value="password" />
-            <input type="text" name="companyId" value="2" />
+            <select name="companyId"><option value="-1">(select)</option></select>
             <label for="username">User code</label>
             <input type="text" name="username" />
             <label for="password">Password</label>
@@ -34,7 +34,10 @@
     matematici.events.onPageLoad = function (callback) {
         matematici.clock.stop();
 
-        var form = $("form");
+        var
+            form = $("form"),
+            error = $("div.Errors", form),
+            companyList = $("select[name=companyId]", form);
 
         new matematici.Page({
             name: "Login",
@@ -42,23 +45,39 @@
         });
 
         new matematici.Login("div.Login", function () {
-            $("div.Errors", form).hide();
-            $.ajax(matematici.urls.accessControl.token, {
-                data: form.serialize(),
-                type: "post"
-            }).done(function (result) {
-                matematici.tokenManager.login(result);
-                matematici.client.createNew(function () { matematici.navigator.open("@Model"); });
-                //matematici.clock.resume();
-            }).fail(function (jqXhr, textStatus, errorThrown) {
-                $("div.Errors", form).html(jqXhr.responseJSON && jqXhr.responseJSON.error_description || errorThrown).show();
-                console.log(jqXhr, textStatus, errorThrown);
-            });
+            error.empty().hide();
+            if (companyList.val() == -1)
+                error.html("select a company").show()
+            else
+                $.ajax(matematici.urls.accessControl.token, {
+                    data: form.serialize(),
+                    type: "post"
+                }).done(function (result) {
+                    matematici.tokenManager.login(result);
+                    matematici.client.createNew(function () { matematici.navigator.open("@Model"); });
+                    //matematici.clock.resume();
+                }).fail(function (jqXhr, textStatus, errorThrown) {
+                    error.html(jqXhr.responseJSON && jqXhr.responseJSON.error_description || errorThrown).show();
+                    console.log(jqXhr, textStatus, errorThrown);
+                });
         });
 
         matematici.tokenManager.logout();
         matematici.loader.checkInitialCurtain();
-        callback.call();
+
+        //load the companies
+        $.ajax(matematici.urls.infrastructure.companies.getData, {
+            type: "post"
+        }).done(function (result) {
+            for (var index in result) {
+                var company = result[index];
+                companyList.append($("<option />").attr("value", company.id).text(company.name));
+            }
+            callback.call();
+        }).fail(function (jqXhr, textStatus, errorThrown) {
+            error.html(jqXhr.responseJSON && jqXhr.responseJSON.error_description || errorThrown).show();
+            console.log(jqXhr, textStatus, errorThrown);
+        });
     };
 
     matematici.events.onPageUnload = function (callback) {

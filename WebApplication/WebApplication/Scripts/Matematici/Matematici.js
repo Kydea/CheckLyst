@@ -1,6 +1,4 @@
-﻿/// <reference path="./Libraries/JQuery-1.8.1-vsdoc.js"/>
-
-matematici.logo = (function () {
+﻿matematici.logo = (function () {
     var
         _sizes = [13, 10, 10, 10, 10, 10, 10, 10, 8, 10, 8],
         _frames = 3,
