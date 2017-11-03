@@ -3,7 +3,7 @@
 nav.Menu {
     ul.Menu {
         background-color: #fff;
-        
+
         li.MenuItem {
             display: block;
 
@@ -49,7 +49,6 @@ nav.Menu {
             background-color: #000;
             display: block !important;
             width: $Lateral-Menu-Width;
-            
             // Logo
             &:before {
                 content: "";
@@ -117,7 +116,6 @@ nav.Menu {
                     border-left: 1px solid #333;
                     border-radius: 0 5px 5px 0;
                     box-shadow: rgba(0, 0, 0, 0.35) 0px 0px 7px 3.5px;
-
                     // Menu indicator: no border between it and the submenu.
                     &:before {
                         left: -1px;
@@ -184,7 +182,6 @@ nav.Menu {
         background-color: #000;
         text-align: right;
         height: $Mobile-Menu-Height;
-
         font-size: 18px;
         font-family: "Myriad Pro Light", Arial, sans-serif;
 
@@ -202,13 +199,11 @@ nav.Menu {
         }
 
         ul.Menu {
-            display: none;
-            border-bottom: solid 10px white;
-            margin-bottom: 10px;
-            position: absolute;
-            z-index: $Depth-Menu;
             width: 100%;
+            display: none;
+            position: absolute;
             text-align: center;
+            z-index: $Depth-Menu;
 
             li.MenuItem {
                 line-height: 40px;

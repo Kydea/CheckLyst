@@ -1,12 +1,15 @@
 ﻿@import "Library";
 
-div#Content {
+body:not(.Login) div#Content {
     background-color: #ebebeb;
-    min-height: calc(100vh - #{$Header-Height});
 
     @media #{$Media-Extended} {
         margin-left: $Lateral-Menu-Width;
     }
+}
+
+div#Content {
+    min-height: calc(100vh - #{$Header-Height});
 
     a {
         text-decoration: none;

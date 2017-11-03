@@ -145,13 +145,11 @@
       left: 50%;
       top: 0px; }
     nav.Menu ul.Menu {
-      display: none;
-      border-bottom: solid 10px white;
-      margin-bottom: 10px;
-      position: absolute;
-      z-index: 101;
       width: 100%;
-      text-align: center; }
+      display: none;
+      position: absolute;
+      text-align: center;
+      z-index: 101; }
       nav.Menu ul.Menu li.MenuItem {
         line-height: 40px;
         border-bottom: 1px solid #ccc; }
