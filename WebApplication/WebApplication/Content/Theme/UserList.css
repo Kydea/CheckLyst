@@ -1,6 +1,10 @@
-﻿body.UsersList #UsersListPage > .Panel {
+﻿body.UsersList #UsersListPage > .Panel, body.UsersList #InfrastructurePage > .Panel, body.Infrastructure #UsersListPage > .Panel, body.Infrastructure #InfrastructurePage > .Panel {
   padding: 20px;
   border-radius: 15px;
   background-color: white;
   box-shadow: rgba(0, 0, 0, 0.16) 0 0 16px 5px; }
+  body.UsersList #UsersListPage > .Panel .AccordionBar, body.UsersList #InfrastructurePage > .Panel .AccordionBar, body.Infrastructure #UsersListPage > .Panel .AccordionBar, body.Infrastructure #InfrastructurePage > .Panel .AccordionBar {
+    border-bottom: 1px solid #999; }
+    body.UsersList #UsersListPage > .Panel .AccordionBar + form, body.UsersList #InfrastructurePage > .Panel .AccordionBar + form, body.Infrastructure #UsersListPage > .Panel .AccordionBar + form, body.Infrastructure #InfrastructurePage > .Panel .AccordionBar + form {
+      border-top: none !important; }
 

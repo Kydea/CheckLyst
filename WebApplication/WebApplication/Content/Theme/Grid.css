@@ -13,8 +13,9 @@
         position: relative;
         height: 50px;
         border-left: 1px solid #ccc;
+        font-weight: 600;
         font-size: 16px;
-        font-family: "Myriad Pro Semibold", Arial, sans-serif; }
+        font-family: Myriad, Arial, sans-serif; }
         table.Grid thead tr th:after {
           content: "";
           display: block;
@@ -36,7 +37,7 @@
       height: 40px;
       font-size: 14px;
       border-right: solid 1px #afb4b5;
-      font-family: "Myriad Pro Regular", Arial, sans-serif; }
+      font-family: Myriad, Arial, sans-serif; }
       table.Grid tbody tr td.Off {
         opacity: .3; }
       table.Grid tbody tr td.Centered {

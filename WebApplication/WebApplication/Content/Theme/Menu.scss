@@ -41,7 +41,7 @@ nav.Menu {
         left: 0;
         position: fixed;
         font-size: 14px;
-        font-family: "Myriad Pro Regular", Arial, sans-serif;
+        font-family: Myriad, Arial, sans-serif;
 
         ul.Menu {
             height: 100vh;
@@ -183,7 +183,8 @@ nav.Menu {
         text-align: right;
         height: $Mobile-Menu-Height;
         font-size: 18px;
-        font-family: "Myriad Pro Light", Arial, sans-serif;
+        font-weight: 300;
+        font-family: Myriad, Arial, sans-serif;
 
         &::before {
             $Logo-Width: 134px;

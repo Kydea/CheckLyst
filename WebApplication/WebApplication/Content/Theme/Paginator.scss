@@ -16,11 +16,13 @@ $Page-Width: 20px;
         text-align: center;
         width: $Page-Width;
         height: $Page-Width;
-        font-size: $Font-Size;
         line-height: $Page-Width;
         color: $Color-Font-Dark-Green;
         text-decoration: none !important;
-        font-family: "Myriad Pro Semibold", Arial, sans-serif;
+
+        font-weight: 600;
+        font-size: $Font-Size;
+        font-family: Myriad, Arial, sans-serif;
 
         &:not(.Current) {
             cursor: pointer;
