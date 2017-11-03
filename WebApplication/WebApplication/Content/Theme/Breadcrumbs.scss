@@ -3,8 +3,7 @@
 div#Breadcrumbs {
     color: #999;
     padding-top: 20px;
-    background-color: #ebebeb; // same as #Content
-    font: normal 12px "Myriad Pro Regular", Arial, sans-serif;
+    font: normal 12px/11px Myriad, Arial, sans-serif;
 
     @media #{$Media-Extended} {
         margin-left: $Lateral-Menu-Width;
