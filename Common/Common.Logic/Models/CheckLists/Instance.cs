@@ -40,9 +40,9 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
 			ModifiedOn = DateTime.Now;
 		}
 
-		public Group Header { get; set; }
+		public ICheckListGroup Header { get; set; }
 
-		public List<Page> Pages { get; set; }
+		public List<ICheckListPage> Pages { get; set; }
 
 		public string Title { get; set; }
 
@@ -64,10 +64,10 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
 		//public InstanceKey Key { get; set; }
 
 		[JsonIgnore]
-		public Dictionary<int, Item> Items { get; } = new Dictionary<int, Item>(10);
+		public Dictionary<int, ICheckListItem> Items { get; } = new Dictionary<int, ICheckListItem>(10);
 
 		[JsonIgnore]
-		public Dictionary<string, Element> Elements { get; } = new Dictionary<string, Element>();
+		public Dictionary<string, ICheckListElement> Elements { get; } = new Dictionary<string, ICheckListElement>();
 
 		public string PrototypeState { get; set; }
 
@@ -75,7 +75,7 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
 
 		public string Note { get; set; }
 
-		public void AddItem(Item item)
+		public void AddItem(ICheckListItem item)
 		{
 			if (item.Id == 0)
 				item.Id = ++_itemsSequence;

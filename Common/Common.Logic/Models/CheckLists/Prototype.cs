@@ -40,16 +40,16 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
 			//CanApprove = UserFunctions.Contains(Security.CurrentUser.Code, Company, Department, PrototypeType, UserFunctions.PROTOTYPEAPPROVER);
 		}
 
-		public List<Page> Pages { get; } = new List<Page>();
+		public List<ICheckListPage> Pages { get; } = new List<ICheckListPage>();
 
 		[JsonIgnore]
-		public Dictionary<string, Element> Elements { get; } = new Dictionary<string, Element>();
+		public Dictionary<string, ICheckListElement> Elements { get; } = new Dictionary<string, ICheckListElement>();
 
 		public Dictionary<string, Expression> Expressions { get; set; } = new Dictionary<string, Expression>();
 
 		public Dictionary<string, string> ExternalSources { get; set; } = new Dictionary<string, string>();
 
-		public Group Header { get; set; }
+		public ICheckListGroup Header { get; set; }
 
 		public string Code { get; set; }
 
@@ -158,7 +158,7 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
 
 		public static Prototype Deserialize(PrototypeVersions version)
 		{
-			var prototype = JsonConvert.DeserializeObject<Prototype>(version.Data, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All, CheckAdditionalContent = false });
+			var prototype = JsonConvert.DeserializeObject<Prototype>(version.Data, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All, CheckAdditionalContent = false });
 			prototype.State = version.VersionState;
 			prototype.Version = version.Version;
 			prototype.ValidFrom = version.ValidFrom;
@@ -167,7 +167,7 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
 			return prototype;
 		}
 
-		public void AddItem(Item item)
+		public void AddItem(ICheckListItem item)
 		{
 		}
 

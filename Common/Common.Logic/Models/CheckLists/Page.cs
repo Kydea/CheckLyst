@@ -3,8 +3,8 @@ using System.Linq;
 
 namespace CheckListManager.Common.Logic.Models.CheckLists
 {
-    public class Page: Element
-    {
+    public class Page : Element, ICheckListPage
+	{
         //public void ToggleLock(Client client, bool value)
         //{
         //    Lock = value ? new Lock(client) : null;

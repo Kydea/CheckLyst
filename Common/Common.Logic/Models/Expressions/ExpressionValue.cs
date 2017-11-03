@@ -6,12 +6,12 @@ namespace CheckListManager.Common.Logic.Models.Expressions
     {
         private readonly Expression _otherExpression;
 
-        public ExpressionValue(Expression otherExpression, ICheckList checkList)
+        public ExpressionValue(Expression otherExpression)
         {
             _otherExpression = otherExpression;
         }
 
-        public override void Check(Prototype prototype)
+        public override void Check(ICheckList prototype)
         {
             DataType = _otherExpression.DataType;
         }

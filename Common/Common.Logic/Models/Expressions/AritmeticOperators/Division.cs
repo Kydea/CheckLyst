@@ -6,7 +6,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.AritmeticOperators
     public class Division : BinaryAritmeticOperator
     {
 
-        public override void Check(Prototype prototype)
+        public override void Check(ICheckList prototype)
         {
             base.Check(prototype);
 

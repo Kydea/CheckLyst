@@ -18,7 +18,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             set => Left.Expression = Right.Expression = base.Expression = value;
         }
 
-        public override void Check(Prototype prototype)
+        public override void Check(ICheckList prototype)
         {
             Left.Check(prototype);
             Right.Check(prototype);
@@ -41,6 +41,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
 		public static BinaryOperator Parse(BinaryExpression expression, ICheckList checkList)
 		{
+			// ReSharper disable once SwitchStatementMissingSomeCases
 			switch (expression.NodeType)
 			{
 				case ExpressionType.Add:

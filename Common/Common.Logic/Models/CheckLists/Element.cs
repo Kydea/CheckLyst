@@ -6,11 +6,9 @@ using Newtonsoft.Json;
 
 namespace CheckListManager.Common.Logic.Models.CheckLists
 {
-    public abstract class Element
-    {
-        public enum Conditions { Default, True, False, Expression, ExpressionAndDefault, ExpressionOrDefault }
-
-        public static void Copy(Element source, Element destination)
+	public abstract class Element : ICheckListElement
+	{
+        public static void Copy(ICheckListElement source, ICheckListElement destination)
         {
             destination.CheckList = source.CheckList;
             destination.Code = source.Code;
@@ -35,7 +33,7 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
         {
 			//TODO: check if readonly for the client
             //if (Client.Get(clientId).ReadOnlyInstance) return true;
-            bool expressionValue = ReadOnlyExpressionCode != null && CheckList != null && CheckList.Expressions.ContainsKey(ReadOnlyExpressionCode) && CheckList.Expressions[ReadOnlyExpressionCode].Value.Type == DataType.Boolean && CheckList.Expressions[ReadOnlyExpressionCode].Value.BooleanValue;
+            var expressionValue = ReadOnlyExpressionCode != null && CheckList != null && CheckList.Expressions.ContainsKey(ReadOnlyExpressionCode) && CheckList.Expressions[ReadOnlyExpressionCode].Value.Type == DataType.Boolean && CheckList.Expressions[ReadOnlyExpressionCode].Value.BooleanValue;
             return
             (
                 ReadOnlyCondition == Conditions.Default && IsReadOnlyByDefault() ||
@@ -60,7 +58,7 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
         {
             get
             {
-                bool expressionValue = HiddenExpressionCode != null && CheckList != null && CheckList.Expressions.ContainsKey(HiddenExpressionCode) && CheckList.Expressions[HiddenExpressionCode].Value.Type == DataType.Boolean && CheckList.Expressions[HiddenExpressionCode].Value.BooleanValue;
+                var expressionValue = HiddenExpressionCode != null && CheckList != null && CheckList.Expressions.ContainsKey(HiddenExpressionCode) && CheckList.Expressions[HiddenExpressionCode].Value.Type == DataType.Boolean && CheckList.Expressions[HiddenExpressionCode].Value.BooleanValue;
                 return
                     HiddenCondition == Conditions.Expression && expressionValue ||
                     HiddenCondition == Conditions.True;
@@ -88,7 +86,7 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
             {
                 if (Hidden) return true;
 
-                bool expressionValue = ValidExpressionCode != null && CheckList != null && CheckList.Expressions.ContainsKey(ValidExpressionCode) && CheckList.Expressions[ValidExpressionCode].Value.Type == DataType.Boolean && CheckList.Expressions[ValidExpressionCode].Value.BooleanValue;
+                var expressionValue = ValidExpressionCode != null && CheckList != null && CheckList.Expressions.ContainsKey(ValidExpressionCode) && CheckList.Expressions[ValidExpressionCode].Value.Type == DataType.Boolean && CheckList.Expressions[ValidExpressionCode].Value.BooleanValue;
                 return
                     ValidCondition == Conditions.Default && IsValidByDefault() ||
                     ValidCondition == Conditions.Expression && expressionValue ||
@@ -110,7 +108,7 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
 
         public string SignatureCode { get; set; }
 
-        protected virtual Dictionary<string, Element> GetBranchElements()
+        protected virtual Dictionary<string, ICheckListElement> GetBranchElements()
         {
             return CheckList.Elements;
         }

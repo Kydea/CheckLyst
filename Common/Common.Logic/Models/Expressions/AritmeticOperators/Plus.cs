@@ -5,7 +5,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.AritmeticOperators
 {
     public class Plus : BinaryAritmeticOperator
     {
-        public override void Check(Prototype prototype)
+        public override void Check(ICheckList prototype)
         {
             base.Check(prototype);
 
@@ -20,10 +20,13 @@ namespace CheckListManager.Common.Logic.Models.Expressions.AritmeticOperators
 
         protected override TypedValue EvaluateResult(TypedValue leftValue, TypedValue rightValue)
         {
-            if (leftValue.Type == DataType.Number)
-                return new TypedValue(DataType.Number, leftValue.IsNull || rightValue.IsNull ? (decimal?)null : leftValue.NumberValue + rightValue.NumberValue);
-            else
-                return new TypedValue(DataType.DateTime, leftValue.IsNull || rightValue.IsNull ? (DateTime?)null : leftValue.DateTimeValue.AddSeconds((double)rightValue.NumberValue));
+	        return leftValue.Type == DataType.Number
+		        ? new TypedValue(DataType.Number,
+			        leftValue.IsNull || rightValue.IsNull ? (decimal?)null : leftValue.NumberValue + rightValue.NumberValue)
+		        : new TypedValue(DataType.DateTime,
+			        leftValue.IsNull || rightValue.IsNull
+				        ? (DateTime?)null
+				        : leftValue.DateTimeValue.AddSeconds((double)rightValue.NumberValue));
         }
     }
 }

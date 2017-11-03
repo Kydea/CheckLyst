@@ -78,19 +78,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Json\AutofacJsonConverter.cs" />
+    <Compile Include="Json\CheckListJsonConverter.cs" />
+    <Compile Include="Models\CheckLists\Conditions.cs" />
+    <Compile Include="Models\CheckLists\ICheckListField.cs" />
+    <Compile Include="Models\CheckLists\ICheckListGroup.cs" />
+    <Compile Include="Models\CheckLists\ICheckListItem.cs" />
     <Compile Include="Models\CheckLists\ICheckList.cs" />
-    <Compile Include="Models\CheckLists\Element.cs" />
-    <Compile Include="Models\CheckLists\ElementException.cs" />
+    <Compile Include="Models\CheckLists\ICheckListElement.cs" />
+    <Compile Include="Models\CheckLists\ICheckListIteration.cs" />
+    <Compile Include="Models\CheckLists\ICheckListPage.cs" />
+    <Compile Include="Models\CheckLists\ICheckListSignature.cs" />
+    <Compile Include="Models\CheckLists\ICheckListText.cs" />
     <Compile Include="Models\CheckLists\IElementsBranch.cs" />
-    <Compile Include="Models\CheckLists\Field.cs" />
-    <Compile Include="Models\CheckLists\Group.cs" />
-    <Compile Include="Models\CheckLists\Instance.cs" />
-    <Compile Include="Models\CheckLists\Item.cs" />
-    <Compile Include="Models\CheckLists\Iteration.cs" />
-    <Compile Include="Models\CheckLists\Page.cs" />
-    <Compile Include="Models\CheckLists\Prototype.cs" />
-    <Compile Include="Models\CheckLists\Signature.cs" />
-    <Compile Include="Models\CheckLists\Text.cs" />
+    <Compile Include="Models\CheckLists\FieldRecord.cs" />
+    <Compile Include="Models\CheckLists\SignatureRecord.cs" />
     <Compile Include="Models\DataType.cs" />
     <Compile Include="Models\Expressions\AggregationFunctions\AggregateFunction.cs" />
     <Compile Include="Models\Expressions\AggregationFunctions\Sum.cs" />
@@ -166,5 +168,6 @@
   <ItemGroup>
     <Analyzer Include="..\..\packages\AWSSDK.SQS.3.3.3.1\analyzers\dotnet\cs\AWSSDK.SQS.CodeAnalysis.dll" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

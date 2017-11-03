@@ -31,7 +31,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 					   type == DataType.Number && !(value is decimal) ||
                        type == DataType.Text && !(value is string)
                 )
-                    throw new Exception("Invalid class " + value.GetType().Name + " for DataType " + type.ToString());
+                    throw new Exception("Invalid class " + value.GetType().Name + " for DataType " + type);
                 else
                 {
                     Type = type;

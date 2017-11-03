@@ -5,15 +5,15 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ComparisionOperators
 {
     public abstract class BinaryComparisonOperator : BinaryOperator
     {
-        public override void Check(Prototype prototype)
+        public override void Check(ICheckList prototype)
         {
             base.Check(prototype);
 
             if (
 				Left.DataType != Right.DataType
 				&& !(
-						(Left.DataType == DataType.Date && Right.DataType == DataType.DateTime)
-						|| (Left.DataType == DataType.DateTime && Right.DataType == DataType.Date)
+						Left.DataType == DataType.Date && Right.DataType == DataType.DateTime
+						|| Left.DataType == DataType.DateTime && Right.DataType == DataType.Date
 					)
 			)
                 throw new Exception("Comparison operators operands have the same type");

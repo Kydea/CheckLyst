@@ -4,8 +4,8 @@ using Newtonsoft.Json;
 
 namespace CheckListManager.Common.Logic.Models.CheckLists
 {
-    public class Field : Item
-    {
+    public class Field : Item, ICheckListField
+	{
         public override string TypeName => "Field";
 
 	    public int LinesCount { get; set; }
@@ -61,7 +61,7 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
 
         public override Item Clone(Group parent)
         {
-            var field = new Field()
+            var field = new Field
             {
                 Group = parent,
                 LinesCount = LinesCount,
@@ -108,13 +108,5 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
 
 		public List<Record> History { get; } = new List<Record>();
 
-        public struct Record
-        {
-            public string DateTime { get; set; }
-
-            public string User { get; set; }
-
-            public string Value { get; set; }
-        }
     }
 }

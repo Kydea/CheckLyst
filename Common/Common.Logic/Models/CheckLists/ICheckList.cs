@@ -7,10 +7,10 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
     {
         Dictionary<string, Expression> Expressions { get; }
 
-        void AddItem(Item item);
+        void AddItem(ICheckListItem item);
 
-        Group Header { get; }
+        ICheckListGroup Header { get; }
 
-        List<Page> Pages { get; }
+        List<ICheckListPage> Pages { get; }
     }
 }

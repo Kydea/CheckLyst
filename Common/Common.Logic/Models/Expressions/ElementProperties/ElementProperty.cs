@@ -21,18 +21,18 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
 
         protected string Code { get; }
 
-        protected virtual void Check(Element element)
+        protected virtual void Check(ICheckListElement element)
         {
 			if (_property == ElementProperties.Valid)
 				DataType = DataType.Boolean;
 		}
 
-        public override void Check(Prototype prototype)
+        public override void Check(ICheckList prototype)
         {
             Check(prototype.Elements[Code]);
         }
 
-        protected virtual TypedValue GetValue(Element element)
+        protected virtual TypedValue GetValue(ICheckListElement element)
         {
             throw new NotImplementedException("Implement this ethod in the subclasses.");
         }

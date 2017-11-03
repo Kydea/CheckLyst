@@ -12,7 +12,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             set => Argument.Expression = base.Expression = value;
         }
 
-        public override void Check(Prototype prototype)
+        public override void Check(ICheckList prototype)
         {
             Argument.Check(prototype);
             DataType = Argument.DataType;

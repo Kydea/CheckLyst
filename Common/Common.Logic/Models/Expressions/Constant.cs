@@ -11,7 +11,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             _value = value;
         }
 
-        public override void Check(Prototype prototype)
+        public override void Check(ICheckList prototype)
         {
             DataType = _value.Type;
         }

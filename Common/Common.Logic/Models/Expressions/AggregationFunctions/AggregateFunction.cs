@@ -13,13 +13,13 @@ namespace CheckListManager.Common.Logic.Models.Expressions.AggregationFunctions
             IteratorCode = iteratorCode;
         }
 
-        public override void Check(Prototype prototype)
+        public override void Check(ICheckList prototype)
         {
             base.Check(prototype);
 
             var element = prototype.Elements[IteratorCode];
-            if (!(element is Group)) throw new Exception("The element with code " + IteratorCode + " is not a Group");
-            if (!((Group)element).Iterator) throw new Exception("The group " + IteratorCode + " is not defined as Iterator");
+            if (!(element is ICheckListGroup)) throw new Exception("The element with code " + IteratorCode + " is not a Group");
+            if (!((ICheckListGroup)element).Iterator) throw new Exception("The group " + IteratorCode + " is not defined as Iterator");
         }
 
         protected string IteratorCode { get; }
@@ -28,7 +28,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.AggregationFunctions
 
         public override TypedValue GetValue(IElementsBranch elementsBranch)
         {
-            var values = ((Group)elementsBranch.Elements[IteratorCode])
+            var values = ((ICheckListGroup)elementsBranch.Elements[IteratorCode])
 				.Iterations
 				.Select(iteration => Argument.GetValue(iteration))
 				.ToList();

@@ -16,7 +16,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             set => Condition.Expression = TruePart.Expression = FalsePart.Expression = base.Expression = value;
         }
 
-        public override void Check(Prototype prototype)
+        public override void Check(ICheckList prototype)
         {
             Condition.Check(prototype);
             TruePart.Check(prototype);

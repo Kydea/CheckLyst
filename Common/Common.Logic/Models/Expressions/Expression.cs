@@ -38,14 +38,14 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         [JsonIgnore]
         public TypedValue Value { get; private set; }
 
-        public void Evaluate(Instance instance)
+        public void Evaluate(ICheckList instance)
         {
             Value = Root.GetValue(instance);
         }
 
         public DataType DataType => Root?.DataType ?? DataType.Error;
 
-	    public void Check(Prototype prototype)
+	    public void Check(ICheckList prototype)
         {
             try
             {
@@ -82,7 +82,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
             var parameters = new List<ParameterExpression>(checkList.Elements.Count + checkList.Expressions.Count);
             foreach (var element in checkList.Elements)
-                parameters.Add(LinqExpression.Parameter((element.Value as Group)?.Elements.Values.GetType() ?? element.Value.GetType(), element.Key));
+                parameters.Add(LinqExpression.Parameter((element.Value as ICheckListGroup)?.Elements.Values.GetType() ?? element.Value.GetType(), element.Key));
 			foreach (var e in checkList.Expressions)
 				parameters.Add(LinqExpression.Parameter(e.Value.GetType(), e.Key));
 			return DynamicExpression.ParseLambda(parameters.ToArray(), null, expression);

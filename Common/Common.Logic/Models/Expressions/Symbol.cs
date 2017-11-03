@@ -26,7 +26,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
         public abstract TypedValue GetValue(IElementsBranch elementsBranch);
 
-        public abstract void Check(Prototype prototype);
+        public abstract void Check(ICheckList prototype);
 
         public DataType DataType { get; protected set; }
 
@@ -58,7 +58,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                 case ExpressionType.Parameter:
                     var name = ((ParameterExpression)expression).Name;
                     return checkList.Expressions.ContainsKey(name)
-                        ? new ExpressionValue(checkList.Expressions[name], checkList)
+                        ? new ExpressionValue(checkList.Expressions[name])
                         : (Symbol)new FieldProperty(name);
                 case ExpressionType.Call:
                     return AggregateFunction.Parse((MethodCallExpression)expression, checkList);
@@ -74,9 +74,9 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
 					if (memberExpression.Member.Name == ElementProperty.ElementProperties.Valid.ToString())
 						return new ElementProperty(parameterExpression.Name, (ElementProperty.ElementProperties)Enum.Parse(typeof(ElementProperty.ElementProperties), memberExpression.Member.Name));
-					if (typeof(Field).IsAssignableFrom(type))
+					if (typeof(ICheckListField).IsAssignableFrom(type))
                         return new FieldProperty(parameterExpression.Name);
-                    else if (typeof(CheckLists.Signature).IsAssignableFrom(type))
+                    else if (typeof(ICheckListSignature).IsAssignableFrom(type))
                         return new SignatureProperty(parameterExpression.Name, (SignatureProperty.SignatureProperties)Enum.Parse(typeof(SignatureProperty.SignatureProperties), memberExpression.Member.Name));
 						
 					break;

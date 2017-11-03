@@ -4,9 +4,9 @@ using Newtonsoft.Json;
 
 namespace CheckListManager.Common.Logic.Models.CheckLists
 {
-    public abstract class Item : Element
-    {
-        protected static void Copy(Item source, Item destination)
+    public abstract class Item : Element, ICheckListItem
+	{
+        protected static void Copy(ICheckListItem source, ICheckListItem destination)
         {
             Element.Copy(source, destination);
             destination.Page = source.Page;
@@ -36,7 +36,7 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
         public Page Page { get; set; }
 
         [JsonIgnore]
-        public Formula DescriptionFormula { get; private set; }
+        public Formula DescriptionFormula { get; set; }
 
         public string Description
         {

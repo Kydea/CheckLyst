@@ -1,7 +1,7 @@
 ﻿namespace CheckListManager.Common.Logic.Models.CheckLists
 {
-    public class Text : Item
-    {
+    public class Text : Item, ICheckListText
+	{
         public override string TypeName => "Text";
 
 	    public override bool NewLine => true;

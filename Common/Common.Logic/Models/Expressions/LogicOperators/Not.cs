@@ -5,7 +5,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.LogicOperators
 {
     public class Not : UnaryOperator
     {
-        public override void Check(Prototype prototype)
+        public override void Check(ICheckList prototype)
         {
             base.Check(prototype);
 

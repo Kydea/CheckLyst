@@ -1,0 +1,29 @@
+﻿using CheckListManager.Common.Logic.Models.Expressions;
+using Newtonsoft.Json;
+
+namespace CheckListManager.Common.Logic.Models.CheckLists
+{
+	public interface ICheckListElement
+	{
+		[JsonIgnore]
+		ICheckList CheckList { get; set; }
+		string Code { get; set; }
+		[JsonIgnore]
+		Expression CountDownTo { get; }
+		string CountDownToCode { get; set; }
+		[JsonIgnore]
+		bool Hidden { get; }
+		Conditions HiddenCondition { get; set; }
+		string HiddenExpressionCode { get; set; }
+		Conditions ReadOnlyCondition { get; set; }
+		string ReadOnlyExpressionCode { get; set; }
+		[JsonIgnore]
+		ICheckListSignature Signature { get; }
+		string SignatureCode { get; set; }
+		[JsonIgnore]
+		bool Valid { get; }
+		Conditions ValidCondition { get; set; }
+		string ValidExpressionCode { get; set; }
+		string ValidityMessage { get; set; }
+	}
+}

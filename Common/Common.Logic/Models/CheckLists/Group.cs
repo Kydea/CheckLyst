@@ -3,8 +3,8 @@ using System.Linq;
 
 namespace CheckListManager.Common.Logic.Models.CheckLists
 {
-    public class Group : Item, IElementsBranch
-    {
+    public class Group : Item, IElementsBranch, ICheckListGroup
+	{
         public override string TypeName => "Group";
 
 	    public override string CssClass => string.Empty;

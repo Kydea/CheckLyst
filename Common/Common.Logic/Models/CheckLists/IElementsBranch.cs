@@ -6,6 +6,6 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
     public interface IElementsBranch
     {
         [JsonIgnore]
-        Dictionary<string, Element> Elements { get; }
+        Dictionary<string, ICheckListElement> Elements { get; }
     }
 }

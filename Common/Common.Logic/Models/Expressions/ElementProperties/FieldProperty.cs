@@ -9,16 +9,19 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
         {
         }
 
-        protected override void Check(Element element)
+        protected override void Check(ICheckListElement element)
         {
-            if (!(element is Field)) throw new Exception("The element with code " + Code + " is not an Field");
-            DataType = ((Field)element).ValueType;
-        }
+            if (element is ICheckListField field)
+				DataType = field.ValueType;
+			else
+				throw new Exception("The element with code " + Code + " is not an Field");
+		}
 
-        protected override TypedValue GetValue(Element element)
+        protected override TypedValue GetValue(ICheckListElement element)
         {
-            var field = (Field)element;
-            return new TypedValue(field.ValueType, field.GetValue());
-        }
-    }
+	        throw new NotImplementedException();
+	        //var field = (ICheckListField)element;
+            //return new TypedValue(field.ValueType, field.GetValue());
+		}
+	}
 }

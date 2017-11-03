@@ -9,7 +9,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.AggregationFunctions
     {
         public Sum(string iteratorCode) : base(iteratorCode) { }
 
-        public override void Check(Prototype prototype)
+        public override void Check(ICheckList prototype)
         {
             base.Check(prototype);
             if (DataType != DataType.Number)
