@@ -117,7 +117,18 @@ matematici.dialog = function () {
             titleOrSettings.cssClass = "Error";
             titleOrSettings.buttons = { text: "ok", icon: "check", defaultButton: true, cancelButton: true };
             matematici.dialog.show(titleOrSettings);
-        },
+		},
+
+		detail: function (settings) {
+			matematici.dialog.show({
+				ajax: {
+					type: "post",
+					url: settings.url
+				},
+				cssClass: "DetailPage",
+				data: settings.data
+			});
+		},
 
         popupMenu: function (buttons, data) {
             titleOrSettings = { title: "", content: "", cssClass: "PopupMenu", buttons: buttons, data: data };
@@ -175,5 +186,10 @@ matematici.dialog = function () {
     or:
         error(settings)
         see show(...)
+
+	or:
+		detail(settings), shows a dialog which contains the detail of a record for CRUD operations
+            url - type: string, description: the url of the detail page
+            data - type: PlainObject, description: this object will be available as matematici.dialog.getData() while the dialog is showing, use it for example to customize handlers for ajax content
 
  */
