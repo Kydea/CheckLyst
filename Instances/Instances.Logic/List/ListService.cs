@@ -26,6 +26,7 @@ namespace CheckListManager.Instances.Logic.List
             var prototypeType = form.PrototypeType;
             var prototype = form.Prototype;
             var version = form.Version;
+            var tag = form.TagCode;
 
             if (form.Source == null)
             {
@@ -54,10 +55,11 @@ namespace CheckListManager.Instances.Logic.List
             if (form.Source == null || form.Source == "department")
             {
                 var prototypeTypes = await _commonRepository.GetPrototypeTypesAsync(company, department ?? -1);
+                prototypeType = form.PrototypeType.HasValue && prototypeTypes.Any(d => d.ID == form.PrototypeType) ? form.PrototypeType.Value : prototypeTypes.FirstOrDefault()?.ID;
                 response.Fields["PrototypeType"] = new Field
                 {
                     Options = prototypeTypes.Select(pt => new Option(pt.ID.ToString(), pt.Description)),
-                    Value = form.PrototypeType?.ToString()
+                    Value = prototypeType?.ToString()
                 };
                 response.Valid &= prototypeTypes.Any();
             }
@@ -65,10 +67,11 @@ namespace CheckListManager.Instances.Logic.List
             if (form.Source == null || form.Source == "department" || form.Source == "prototypeType")
             {
                 var prototypes = await _commonRepository.GetPrototypesAsync(company, prototypeType ?? -1);
+                prototype = form.Prototype.HasValue && prototypes.Any(d => d.ID == form.Prototype) ? form.Prototype.Value : prototypes.FirstOrDefault()?.ID;
                 response.Fields["Prototype"] = new Field
                 {
                     Options = prototypes.Select(p => new Option(p.ID.ToString(), p.Name)),
-                    Value = form.Prototype?.ToString()
+                    Value = prototype?.ToString()
                 };
                 response.Valid &= prototypes.Any();
             }
@@ -76,10 +79,11 @@ namespace CheckListManager.Instances.Logic.List
             if (form.Source == null || form.Source == "department" || form.Source == "prototypeType" || form.Source == "prototype")
             {
                 var versions = await _commonRepository.GetPrototypeVersionsAsync(company, prototype ?? -1);
+                version = form.Version.HasValue && versions.Any(d => d.Version == form.Version) ? form.Version.Value : versions.FirstOrDefault()?.Version;
                 response.Fields["Version"] = new Field
                 {
                     Options = versions.Any() ? new[] { new Option("0", "All") }.Union(versions.Select(p => new Option(p.Version.ToString(), p.Description))) : new Option[0],
-                    Value = form.Version?.ToString()
+                    Value = version?.ToString()
                 };
                 response.Valid &= versions.Any();
             }
@@ -87,12 +91,17 @@ namespace CheckListManager.Instances.Logic.List
             if (form.Source == null || form.Source == "department" || form.Source == "prototypeType" || form.Source == "prototype" || form.Source == "version")
             {
                 var tags = await _commonRepository.GetPrototypeVersionTagsAsync(company, prototype ?? -1, version);
-                response.Fields["Tags"] = new Field
+                tag = form.TagCode != string.Empty && tags.Any(d => d == form.TagCode) ? form.TagCode : tags.FirstOrDefault();
+                response.Fields["TagCode"] = new Field
                 {
                     Options = tags.Any() ? new[] { new Option("", "All") }.Union(tags.Select(t => new Option(t, t))) : new Option[0],
-                    Value = form.Version?.ToString()
+                    Value = tag,
                 };
-                response.Valid &= tags.Any();
+
+                response.Fields["TagValue"] = new Field
+                {
+                    Editable = tags.Any()
+                };
             }
 
             return response;
@@ -117,8 +126,8 @@ namespace CheckListManager.Instances.Logic.List
                         && (form.Data.Version == 0 || i.Version == form.Data.Version)
                         && (form.Data.Year == null || i.Year == form.Data.Year)
                         && (form.Data.Number == null || i.Year == form.Data.Number)
-                        && (form.Data.TagCode == "" || i.InstanceTags.Any(it => it.Tag == form.Data.TagCode && it.Value.ToUpper().Contains(form.Data.TagValue) ))
-                        && (form.Data.State == null || i.InstanceState == form.Data.State),
+                        && (form.Data.TagCode == string.Empty || i.InstanceTags.Any(it => it.Tag == form.Data.TagCode && it.Value.ToUpper().Contains(form.Data.TagValue) ))
+                        && (form.Data.State == "All" || i.InstanceState == form.Data.State),
                     i => i.ID,
                     form.CurrentPage,
                     form.ItemsPerPage
