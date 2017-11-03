@@ -2,49 +2,54 @@
     <h1>Prototype Types List</h1>
 
     <div class="ActionBar">
-        <a id="ApplyButton" class="Button DefaultButton"><i class="fa fa-search"></i> search</a>
+        <a id="OtherButton" class="Button DefaultButton"><i class="fa fa-question"></i> Just for test</a>
     </div>
 
-    <form id="Filters" action="/API/Infrastructure/PrototypeTypes">
-        <label>
-            Department
-            <select name="department" />
-        </label>
-        <label>
-            Description
-            <input type="text" name="prototypeType" />
-        </label>
-    </form>
+    <div class="Panel">
+        <form id="Filters" action="/API/Infrastructure/PrototypeTypes">
+            <a id="OtherButton" class="Button Accordion">search <i class="fa fa-arrow-circle-o-down"></i></a>
+            <label>
+                Department
+                <select name="department" />
+            </label>
+            <label>
+                Description
+                <input type="text" name="prototypeType" />
+            </label>
 
-    <table class="Grid">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Description</th>
-                <th>Approvation Workflow</th>
-                <th>Obsolescence Workflow</th>
-                <th>Created By</th>
-                <th>Created On</th>
-                <th>Modified By</th>
-                <th>Modified On</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr class="Handler">
-                <td data-column="id"></td>
-                <td data-column="description"></td>
-                <td data-column="approvationWorkFlowDescription"></td>
-                <td data-column="obsolescenceWorkFlowDescription"></td>
-                <td data-column="createdBy"></td>
-                <td data-column="createdOn" data-type="DateTimeOffset"></td>
-                <td data-column="modifiedBy"></td>
-                <td data-column="modifiedOn" data-type="DateTimeOffset"></td>
-            </tr>
-            <tr class="NoRecord"><td>(no record)</td></tr>
-        </tbody>
-    </table>
-    <div class="Paginator"></div>
-    <div class="Clearing"></div>
+            <a id="ApplyButton" class="Button DefaultButton"><i class="fa fa-search"></i> search</a>
+        </form>
+
+        <table class="Grid">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Description</th>
+                    <th>Approvation Workflow</th>
+                    <th>Obsolescence Workflow</th>
+                    <th>Created By</th>
+                    <th>Created On</th>
+                    <th>Modified By</th>
+                    <th>Modified On</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="Handler">
+                    <td data-column="id"></td>
+                    <td data-column="description"></td>
+                    <td data-column="approvationWorkFlowDescription"></td>
+                    <td data-column="obsolescenceWorkFlowDescription"></td>
+                    <td data-column="createdBy"></td>
+                    <td data-column="createdOn" data-type="DateTimeOffset"></td>
+                    <td data-column="modifiedBy"></td>
+                    <td data-column="modifiedOn" data-type="DateTimeOffset"></td>
+                </tr>
+                <tr class="NoRecord"><td>(no record)</td></tr>
+            </tbody>
+        </table>
+        <div class="Paginator"></div>
+        <div class="Clearing"></div>
+    </div>
 </div>
 
 <script type="text/javascript">
