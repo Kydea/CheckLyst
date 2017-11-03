@@ -126,6 +126,9 @@
     <Content Include="Content\Theme\Grid.css">
       <DependentUpon>Grid.scss</DependentUpon>
     </Content>
+    <Content Include="Content\Theme\Hamburger.css">
+      <DependentUpon>Hamburger.scss</DependentUpon>
+    </Content>
     <Content Include="Content\Theme\Help.css">
       <DependentUpon>Help.scss</DependentUpon>
     </Content>
@@ -224,6 +227,8 @@
     <Content Include="packages.config" />
     <Content Include="Content\Theme\Calendar.scss" />
     <Content Include="Content\Theme\DatePicker.scss" />
+    <Content Include="Content\Theme\Hamburger.scss" />
+    <Content Include="Content\Theme\Hamburger\_Spin.scss" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Content\Theme\UserList.scss" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Bold\Myriad Pro.scss" />
@@ -277,6 +282,7 @@
     <Content Include="Scripts\Matematici\Dialog.js" />
     <Content Include="Scripts\Matematici\Easings.js" />
     <Content Include="Scripts\Matematici\Extensions.js" />
+    <Content Include="Scripts\Matematici\Hamburger.js" />
     <Content Include="Scripts\Matematici\Loader.js" />
     <Content Include="Scripts\Matematici\Matematici.js" />
     <Content Include="Scripts\Matematici\Menu.js" />

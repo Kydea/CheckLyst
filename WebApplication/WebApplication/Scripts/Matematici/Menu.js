@@ -3,7 +3,7 @@
 	var
 		menu = $(selector),
 		rollingOver = false,
-		menuButton = $("a#MenuButton"),
+		menuButton = $("#MenuButton"),
 		moved = false,
 
 		isMobileMode = function () {

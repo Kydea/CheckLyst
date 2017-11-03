@@ -178,14 +178,6 @@ header {
             }
         }
     }
-
-    a#MenuButton {
-        padding: 0 $Metric-Separator-Mobile;
-        line-height: $Mobile-Menu-Height;
-        display: inline-block;
-        position: relative;
-        color: white;
-    }
 }
 
 // @to_do: no footer(?)

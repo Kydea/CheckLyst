@@ -24,11 +24,13 @@
     </div>
 
     <nav class="Menu">
-        <a id="MenuButton" class="Mobile" href="#"><i class="fa fa-bars"></i> MENU</a>
+        <button id="MenuButton" class="Mobile hamburger hamburger--spin" type="button">
+            <span class="hamburger-box">
+                <span class="hamburger-inner"></span>
+            </span>
+        </button>
 
         <ul class="Menu Plain">
-            <li class="MenuItem"><a class="MenuItem" href="@Url.Action("Dashboard", "Default")">Dashboard</a></li>
-
             <li class="MenuItem Mobile">
                 <div id="UserPanel" class="Padded Container">
                     <a class="User LeftFloating CurrentUser" href="#">
@@ -49,6 +51,8 @@
                     <a class="Add RightFloating" href="#">(add signer) <i class="fa fa-plus-circle"></i></a>
                 </div>
             </li>
+
+            <li class="MenuItem"><a class="MenuItem" href="@Url.Action("Dashboard", "Default")">Dashboard</a></li>
 
             <li class="MenuItem CompanyRole">
                 <span class="MenuItem">Settings</span>
