@@ -328,10 +328,13 @@
     <Content Include="Views\Users\Detail.cshtml" />
     <Content Include="Views\Trail\Detail.cshtml" />
     <Content Include="Views\Trail\List.cshtml" />
-    <Content Include="Views\Infrastructure\List.cshtml" />
+    <Content Include="Views\Infrastructure\PrototypeTypes\List.cshtml" />
     <Content Include="Views\Instances\List.cshtml" />
     <Content Include="Views\WorkFlows\List.cshtml" />
     <Content Include="Views\DataSources\List.cshtml" />
+    <Content Include="Views\Infrastructure\PrototypeTypes\Detail.cshtml" />
+    <Content Include="Views\Infrastructure\Departments\Detail.cshtml" />
+    <Content Include="Views\Infrastructure\Departments\List.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

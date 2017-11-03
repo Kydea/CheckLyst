@@ -1,0 +1,49 @@
+﻿<div id="UsersDetailPage">
+    <h1>Prototype type</h1>
+
+    <form id="Detail">
+        <div class="Triggers">
+            <label>
+                User code
+                <input type="text" name="code" />
+            </label>
+
+            <label>
+                Name and surname
+                <input type="text" name="description" />
+            </label>
+
+            <label>
+                Authentication code
+                <input type="text" name="authenticationCode" />
+            </label>
+
+            <label>
+                Email
+                <input type="text" name="emaik" />
+            </label>
+
+            <label>
+                Enabled
+                <input type="checkbox" name="enabled" />
+            </label>
+        </div>
+    </form>
+
+    <div class="Clearing"></div>
+</div>
+
+<script type="text/javascript">
+    var data = matematici.dialog.getData();
+
+    matematici.dialog.setButtons([
+        { text: "ok", icon: "check" },
+        { text: "save", icon: "save", id: "SaveButton", handler: function () { alert("OK"); return true; } }
+    ]);
+
+    new matematici.Form("form#Detail", {
+        applyButton: "#SaveButton",
+        ssbindEvent: "Bind"
+    });
+    console.log(data);
+</script>

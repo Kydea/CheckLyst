@@ -5,7 +5,7 @@
         <a id="ApplyButton" class="Button DefaultButton"><i class="fa fa-search"></i> search</a>
     </div>
 
-    <form id="Filters" action="/API/Infrastructure/List">
+    <form id="Filters" action="/API/Infrastructure/PrototypeTypes">
         <label>
             Department
             <select name="department" />
@@ -30,7 +30,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
+            <tr class="Handler">
                 <td data-column="id"></td>
                 <td data-column="description"></td>
                 <td data-column="approvationWorkFlowDescription"></td>
@@ -63,7 +63,14 @@
             name: "Infrastructure",
             initializers: [
                 //new matematici.FixedHeader("div#Content table.Grid")
-                grid = new matematici.Grid("div#Content table.Grid"),
+                grid = new matematici.Grid("div#Content table.Grid", {
+                    rowClick: function (row) {
+                        matematici.dialog.detail({
+                            url: "@Url.Action("Detail")",
+                            data: row.data("values")
+                        });
+                    }
+                }),
                 form = new matematici.Form("form#Filters", {
                     applyButton: {
                         button: "#ApplyButton",
@@ -75,6 +82,9 @@
                 matematici.p = paginator = new matematici.Paginator("div#Content div.Paginator", function (index) {
                     form.trigger("GetData", handler, { CurrentPage: index });
                 })
+            ],
+            breadcrumbs: [
+                { content: "prototype types" }
             ]
         });
 

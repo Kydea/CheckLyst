@@ -7,17 +7,30 @@ namespace CheckListManager.WebApplication.Controllers
     [DefaultAuthorize(Roles = "FunctionGroup#Trail")]
     public class InfrastructureController : BaseController
 	{
-        [Route("List")]
-        public ActionResult List()
+        [Route("Departments/List")]
+        public ActionResult DepartmentsList()
         {
-            return ConditionalView();
+            return ConditionalView("Departments/List");
         }
 
         [HttpPost]
-        [Route("Detail")]
-        public ActionResult Detail()
+        [Route("Departments/Detail")]
+        public ActionResult DepartmentsDetail()
         {
-            return PartialView();
+            return PartialView("Departments/Detail");
+        }
+
+        [Route("PrototypeTypes/List")]
+        public ActionResult PrototypeTypesList()
+        {
+            return ConditionalView("PrototypeTypes/List");
+        }
+
+        [HttpPost]
+        [Route("PrototypeTypes/Detail")]
+        public ActionResult PrototypeTypesDetail()
+        {
+            return PartialView("PrototypeTypes/Detail");
         }
     }
 }

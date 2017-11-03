@@ -1,0 +1,93 @@
+﻿<div id="InfrastructurePage">
+    <h1>Prototype Types List</h1>
+
+    <div class="ActionBar">
+        <a id="ApplyButton" class="Button DefaultButton"><i class="fa fa-search"></i> search</a>
+    </div>
+
+    <form id="Filters" action="/API/Infrastructure/PrototypeTypes">
+        <label>
+            Department
+            <select name="department" />
+        </label>
+        <label>
+            Description
+            <input type="text" name="prototypeType" />
+        </label>
+    </form>
+
+    <table class="Grid">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Description</th>
+                <th>Approvation Workflow</th>
+                <th>Obsolescence Workflow</th>
+                <th>Created By</th>
+                <th>Created On</th>
+                <th>Modified By</th>
+                <th>Modified On</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="Handler">
+                <td data-column="id"></td>
+                <td data-column="description"></td>
+                <td data-column="approvationWorkFlowDescription"></td>
+                <td data-column="obsolescenceWorkFlowDescription"></td>
+                <td data-column="createdBy"></td>
+                <td data-column="createdOn" data-type="DateTimeOffset"></td>
+                <td data-column="modifiedBy"></td>
+                <td data-column="modifiedOn" data-type="DateTimeOffset"></td>
+            </tr>
+            <tr class="NoRecord"><td>(no record)</td></tr>
+        </tbody>
+    </table>
+    <div class="Paginator"></div>
+    <div class="Clearing"></div>
+</div>
+
+<script type="text/javascript">
+    matematici.events.onPageLoad = function (callback) {
+        var grid,
+            form,
+            paginator,
+            handler = function (result) {
+                grid.update(result.data);
+                paginator.setPage(result.currentPage, result.pagesCount);
+            };
+
+        new matematici.ActionBar("div.ActionBar");
+
+        new matematici.Page({
+            name: "Infrastructure",
+            initializers: [
+                //new matematici.FixedHeader("div#Content table.Grid")
+                grid = new matematici.Grid("div#Content table.Grid", {
+                    rowClick: function (row) {
+                        matematici.dialog.detail({
+                            url: "@Url.Action("Detail")",
+                            data: row.data("values")
+                        });
+                    }
+                }),
+                form = new matematici.Form("form#Filters", {
+                    applyButton: {
+                        button: "#ApplyButton",
+                        event: "GetData",
+                        handler: handler
+                    },
+                    bindEvent: "Bind"
+                }),
+                matematici.p = paginator = new matematici.Paginator("div#Content div.Paginator", function (index) {
+                    form.trigger("GetData", handler, { CurrentPage: index });
+                })
+            ],
+            breadcrumbs: [
+                { content: "departments" }
+            ]
+        });
+
+        callback.call();
+    };
+</script>
