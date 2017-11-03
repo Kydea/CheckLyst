@@ -17,7 +17,8 @@
     border-radius: 5px 5px 0 0;
     background-color: #ffba00;
     font: normal 14px/30px "Myriad Pro Regular", Arial, sans-serif;
-    border-radius: 5px 0 0 0; }
+    border-radius: 5px 0 0 0;
+    background-color: #ffba00; }
     div.ActionBar a.Button.Icon {
       float: left;
       min-width: 0;

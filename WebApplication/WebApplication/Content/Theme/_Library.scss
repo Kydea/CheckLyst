@@ -132,6 +132,7 @@ $Media-0-700: "only screen and (max-width: 699px)";
 
 @mixin accordion-button($class, $size, $background-color, $hover-background-color: none) {
     border-radius: 5px 0 0 0;
+    background-color: $background-color;
 
     &#{$class} {
         position: relative;
