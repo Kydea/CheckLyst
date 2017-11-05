@@ -1,6 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Linq;
 using System.Reflection;
 using System.Web.Compilation;
 using System.Web.Http;
@@ -12,7 +10,6 @@ using CheckListManager.Common.Logic.Api.Filters;
 using CheckListManager.Common.Logic.Configuration;
 using Microsoft.Owin.Security.OAuth;
 using Newtonsoft.Json.Serialization;
-using NLog;
 
 namespace CheckListManager.Common.Logic.Api.Configuration
 {
@@ -36,11 +33,8 @@ namespace CheckListManager.Common.Logic.Api.Configuration
 
 	public static class ApiConfigExtensions
 	{
-		private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
 		public static void Configure(this HttpConfiguration configuration, ApiConfig apiConfig)
 		{
-			ConfigureLog();
 			ConfigureDependencyInjection(configuration, apiConfig.CreateBuilder());
 
 			configuration.Services.Replace(typeof(IExceptionHandler), new DefaultExceptionHandler());
@@ -54,21 +48,6 @@ namespace CheckListManager.Common.Logic.Api.Configuration
 			configuration.MapHttpAttributeRoutes();
 
 			configuration.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-		}
-
-		private static void ConfigureLog()
-		{
-			try
-			{
-				if (!EventLog.SourceExists(nameof(CheckListManager), "Application"))
-				{
-					EventLog.CreateEventSource(nameof(CheckListManager), "Application");
-				}
-			}
-			catch (Exception e)
-			{
-				Logger.Fatal(e, "Impossible to setup log source.");
-			}
 		}
 
 		private static void ConfigureDependencyInjection(HttpConfiguration configuration, ContainerBuilder builder)
