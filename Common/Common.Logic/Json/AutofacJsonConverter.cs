@@ -14,7 +14,7 @@ namespace CheckListManager.Common.Logic.Json
 			Scope = scope;
 		}
 
-		protected abstract TBase Create(Type objectType, JObject jObject);
+		protected abstract TBase Create(Type objectType, JObject jsonObject);
 
 		public override bool CanConvert(Type objectType) => typeof(TBase).IsAssignableFrom(objectType);
 
@@ -22,10 +22,10 @@ namespace CheckListManager.Common.Logic.Json
 
 		public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
 		{
-			var jObject = JObject.Load(reader);
-			var target = Create(objectType, jObject);
+			var jsonObject = JObject.Load(reader);
+			var target = Create(objectType, jsonObject);
 
-			serializer.Populate(jObject.CreateReader(), target);
+			serializer.Populate(jsonObject.CreateReader(), target);
 
 			return target;
 		}

@@ -1,0 +1,20 @@
+﻿using System;
+using System.Collections.Generic;
+using CheckListManager.Common.Logic.Models.CheckLists;
+
+namespace CheckListManager.Prototypes.Logic.Models.CheckLists
+{
+	public class Signature : Item, ICheckListSignature
+	{
+		public override string TypeName => "Signature";
+		public bool AcceptsPin { get; set; }
+		public string ButtonLabel { get; set; }
+		public bool Cancelable { get; set; }
+		public List<SignatureRecord> History { get; } = new List<SignatureRecord>();
+		public int? SignatureLevel { get; set; }
+		public bool Signed { get; set; }
+		public string SignedBy { get; set; }
+		public DateTime SignedOn { get; set; }
+		public string SignerDescription { get; set; }
+	}
+}

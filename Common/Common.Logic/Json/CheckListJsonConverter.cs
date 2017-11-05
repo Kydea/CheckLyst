@@ -5,15 +5,16 @@ using Newtonsoft.Json.Linq;
 
 namespace CheckListManager.Common.Logic.Json
 {
-	public class CheckListJsonConverter : AutofacJsonConverter<ICheckListItem>
+	public class CheckListJsonConverter : AutofacJsonConverter<ICheckListElement>
 	{
 		public CheckListJsonConverter(ILifetimeScope scope) : base(scope)
 		{
 		}
 
-		protected override ICheckListItem Create(Type objectType, JObject jObject)
+		protected override ICheckListElement Create(Type objectType, JObject jsonObject)
 		{
-			var type = jObject["typeName"]?.ToString();
+			var type = (jsonObject["typeName"] ?? jsonObject["TypeName"])?.ToString();
+			// ReSharper disable once SwitchStatementMissingSomeCases
 			switch (type)
 			{
 				case "Field":
@@ -26,9 +27,12 @@ namespace CheckListManager.Common.Logic.Json
 					return Scope.Resolve<ICheckListSignature>();
 				case "Text":
 					return Scope.Resolve<ICheckListText>();
-				default:
-					throw new Exception($"Check List Item not supported: {type}");
 			}
+
+			if (Scope.TryResolve(objectType, out var instance))
+				return (ICheckListElement)instance;
+
+			throw new Exception($"Check List Item not supported: {type}");
 		}
 	}
 }

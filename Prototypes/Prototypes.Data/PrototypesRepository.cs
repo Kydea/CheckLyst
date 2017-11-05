@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Data.Entity;
 using System.Linq.Expressions;
@@ -24,7 +23,7 @@ namespace CheckListManager.Prototypes.Data
             int currentPage, 
             int itemsPerPage)
         {
-            var Data = await Entities.PrototypeVersions
+            var data = await Entities.PrototypeVersions
                 .Where(filters)
                 .OrderBy(order)
                 .Select(select)
@@ -32,14 +31,14 @@ namespace CheckListManager.Prototypes.Data
                 .Take(itemsPerPage)
                 .ToListAsync();
 
-            int Count = await Entities.PrototypeVersions
+            var count = await Entities.PrototypeVersions
                 .Where(filters)
                 .CountAsync();
 
             return new PagingResponse<List<TResult>>
             {
-                Data = Data,
-                Count = Count,
+                Data = data,
+                Count = count,
                 ItemsPerPage = itemsPerPage,
                 CurrentPage = currentPage
             };
