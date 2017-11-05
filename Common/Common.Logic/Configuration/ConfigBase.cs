@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -9,6 +10,7 @@ using Autofac.Builder;
 using Autofac.Core;
 using AutoMapper;
 using CheckListManager.Common.Core.Cache;
+using CheckListManager.Common.Core.Network;
 using CheckListManager.Common.Core.Services;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Cache;
@@ -104,6 +106,11 @@ namespace CheckListManager.Common.Logic.Configuration
 				.As<IAmazonSQS>()
 				.AsSelf()
 				.InstancePerScope(UseInstancePerRequest);
+
+			builder.Register(ConfigureServiceClient)
+				.As<IServiceClient>()
+				.As<ServiceClient>()
+				.InstancePerDependency();
 		}
 
 		private static void OnConfiguringRedis(IActivatingEventArgs<RedisLockEndPoint> e)
@@ -116,6 +123,26 @@ namespace CheckListManager.Common.Logic.Configuration
 		{
 			var configuration = e.Context.Resolve<IConfigurationService>();
 			e.Instance.ServiceURL = configuration.SqsBaseUrl;
+		}
+
+		private static ServiceClient ConfigureServiceClient(IComponentContext context, IEnumerable<Parameter> parameters)
+		{
+			string baseUrl = null;
+			try
+			{
+				baseUrl = parameters.Named<string>("baseUrl");
+			}
+			catch (Exception)
+			{
+				// ignored
+			}
+
+			if (baseUrl == null)
+			{
+				var configuration = context.Resolve<IConfigurationService>();
+				baseUrl = configuration.ApiBaseUrl;
+			}
+			return new ServiceClient(baseUrl);
 		}
 
 		private IMapper CreateMapper()

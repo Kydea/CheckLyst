@@ -25,6 +25,8 @@ namespace CheckListManager.Common.Logic.Services
 
 		public string SqsBaseUrl => _cache.GetOrAdd("SqsBaseUrl", Load<string>, RegionName);
 
+		public string ApiBaseUrl => _cache.GetOrAdd("ApiBaseUrl", Load<string>, RegionName);
+
 		private T Load<T>(string key)
 		{
 			using (var scope = _scope.BeginLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag))

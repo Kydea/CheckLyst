@@ -15,4 +15,5 @@ create table "Configuration"."Configurations"
 insert into "Configuration"."Configurations" ("Code", "Value") values
 	('RedisHost', 'redis-01.clm.internal'),
 	('RedisPort', '6379'),
-	('SqsBaseUrl', 'https://sqs.eu-west-1.amazonaws.com/');
+	('SqsBaseUrl', 'https://sqs.eu-west-1.amazonaws.com/'),
+	('ApiBaseUrl', 'http://api.clm.internal/');

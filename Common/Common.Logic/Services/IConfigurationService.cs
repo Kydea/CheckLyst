@@ -8,5 +8,7 @@ namespace CheckListManager.Common.Logic.Services
 		int RedisPort { get; }
 
 		string SqsBaseUrl { get; }
+
+		string ApiBaseUrl { get; }
 	}
 }
