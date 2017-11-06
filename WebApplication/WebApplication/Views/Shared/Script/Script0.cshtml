@@ -9,7 +9,7 @@
         	actions: {},
         	pages: {},
         	urls: {
-        		client: "/API/AccessControl/Client/Create",
+        		client: "@BaseUrl/AccessControl/Client/Create",
         		signature: "@Url.Action("Signature", "Security")",
         	    addSession: "@Url.Action("AddSession", "Security")",
         	    removeSession: "@Url.Action("RemoveSession", "Security")",
@@ -48,12 +48,12 @@
         			validate: "@Url.Action("Validate", "SignatureBook")"
                 },
                 accessControl: {
-                    token: "/API/AccessControl/Access/Token",
-                    logout: "/API/AccessControl/Access/Logout"
+                    token: "@BaseUrl/AccessControl/Access/Token",
+                    logout: "@BaseUrl/AccessControl/Access/Logout"
                 },
                 infrastructure: {
                     companies: {
-                        getData: "/API/Infrastructure/Companies/GetData"
+                        getData: "@BaseUrl/Infrastructure/Companies/GetData"
                     }
                 },
                 help: "@Url.Action("Index", "Help")"
