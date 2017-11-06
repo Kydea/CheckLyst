@@ -1,0 +1,47 @@
+﻿select.AutoComplete {
+  display: none;
+  width: unset; }
+
+input.AutoComplete {
+  padding-right: 30px !important;
+  min-width: unset !important; }
+  input.AutoComplete.Open {
+    border-radius: 5px 5px 0 0; }
+
+input.AutoComplete-Filter {
+  min-width: unset !important;
+  position: absolute;
+  border-radius: 0 !important;
+  margin-top: 0 !important;
+  border-top: none !important;
+  border-bottom: none !important;
+  background-color: #dcdbe0 !important; }
+
+div.AutoComplete-List {
+  position: absolute;
+  display: none;
+  height: unset;
+  z-index: 34;
+  border: solid 1px #afb4b5;
+  margin-top: 2px;
+  background: white;
+  max-height: 150px;
+  overflow: auto;
+  margin-top: 38px; }
+  div.AutoComplete-List a {
+    display: block;
+    text-decoration: none;
+    color: black;
+    font-size: 13px;
+    padding: 6px;
+    overflow: hidden;
+    white-space: nowrap; }
+    div.AutoComplete-List a:hover {
+      background: #f5f5f5 !important; }
+    div.AutoComplete-List a.Selected {
+      background: #ededed; }
+
+i.AutoComplete {
+  position: absolute;
+  margin-top: -27px; }
+

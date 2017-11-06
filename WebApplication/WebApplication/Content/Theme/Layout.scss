@@ -91,11 +91,6 @@ header {
     position: relative;
     z-index: $Depth-Header;
 
-    // @to_do: remove.
-    #Logo {
-        display: none;
-    }
-    // @end_to_do
     a#HelpButton {
         position: absolute;
         top: 15px;

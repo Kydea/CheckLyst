@@ -68,8 +68,6 @@ div#InitialCurtain {
 header {
   position: relative;
   z-index: 103; }
-  header #Logo {
-    display: none; }
   header a#HelpButton {
     position: absolute;
     top: 15px;

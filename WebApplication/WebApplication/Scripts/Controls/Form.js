@@ -93,18 +93,24 @@
 					fieldData = data.fields[field.attr("name")];
 
 				if (fieldData) {
-					if (field[0].tagName == "SELECT" && fieldData.options !== undefined) {
+					var tagName = field[0].tagName;
+					if (tagName == "SELECT" && fieldData.options !== undefined) {
 						var value = field.val();
 						field.empty();
 						for (var index in fieldData.options) {
 							var option = fieldData.options[index];
 							field.append($("<option />").attr("value", option.value).text(option.text));
 						}
+						if (fieldData.value != null) field.val(fieldData.value);
+						var autoComplete = field.data("autoComplete");
+						autoComplete.refresh();
+						autoComplete.getControl().toggle(!fieldData.visibile);
+						matematici.controls.setEditable(autoComplete.getControl(), fieldData.editable && fieldData.options.length > 0);
+					} else {
+						if (fieldData.value != null) field.val(fieldData.value);
+						field.toggle(!fieldData.visibile);
+						matematici.controls.setEditable(field, fieldData.editable);
 					}
-
-					if (fieldData.value != null) field.val(fieldData.value);
-					field.toggle(!fieldData.visibile);
-					matematici.controls.setEditable(field, fieldData.editable && (field[0].tagName != "SELECT" || fieldData.options.length > 0));
 					//TODO field warnings and errors
 				}
 			});

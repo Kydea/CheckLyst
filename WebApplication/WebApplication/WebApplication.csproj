@@ -54,7 +54,7 @@
     <Compile Include="Code\DefaultViewPage.cs" />
     <Compile Include="Code\Version.cs" />
     <Compile Include="Controllers\BaseController.cs" />
-    <Compile Include="Controllers\Infrastructure.cs" />
+    <Compile Include="Controllers\InfrastructureController.cs" />
     <Compile Include="Controllers\InstancesController.cs" />
     <Compile Include="Controllers\DataSourcesController.cs" />
     <Compile Include="Controllers\WorkFlowsController.cs" />
@@ -80,6 +80,9 @@
     </Content>
     <Content Include="Content\Theme\AppMode.css">
       <DependentUpon>AppMode.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\AutoComplete.css">
+      <DependentUpon>AutoComplete.scss</DependentUpon>
     </Content>
     <Content Include="Content\Theme\Breadcrumbs.css">
       <DependentUpon>Breadcrumbs.scss</DependentUpon>
@@ -195,6 +198,7 @@
     </Content>
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
+    <Content Include="Scripts\Controls\AutoComplete.js" />
     <Content Include="Scripts\Controls\Calendar.js" />
     <Content Include="Scripts\Controls\Controls.js" />
     <Content Include="Scripts\Controls\DataPicker.js" />
@@ -233,6 +237,7 @@
     <Content Include="Content\Theme\Fonts\MyriadPro\Semibold\MyriadPro-Semibold.otf" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Semibold\MyriadPro-Semibold.ttf" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Semibold\MyriadPro-Semibold.woff" />
+    <Content Include="Content\Theme\AutoComplete.scss" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Content\Theme\UserList.scss" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Bold\Myriad Pro.scss" />

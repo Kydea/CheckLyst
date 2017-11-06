@@ -126,5 +126,9 @@
   {
     "outputFile": "Content/Theme/Hamburger.css",
     "inputFile": "Content/Theme/Hamburger.scss"
+  },
+  {
+    "outputFile": "Content/Theme/AutoComplete.css",
+    "inputFile": "Content/Theme/AutoComplete.scss"
   }
 ]

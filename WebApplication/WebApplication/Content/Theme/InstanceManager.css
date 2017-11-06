@@ -204,7 +204,7 @@ body.InstanceManager div.CountDown {
   background-color: rgba(255, 255, 255, 0.85);
   text-align: center;
   padding: 10px;
-  z-index: 34;
+  z-index: 35;
   font-weight: bold; }
   body.InstanceManager div.CountDown span.Time {
     color: red;

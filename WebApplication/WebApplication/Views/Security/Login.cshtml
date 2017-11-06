@@ -73,6 +73,7 @@
                 var company = result[index];
                 companyList.append($("<option />").attr("value", company.id).text(company.name));
             }
+            companyList.data("autoComplete").refresh();
             callback.call();
         }).fail(function (jqXhr, textStatus, errorThrown) {
             error.html(jqXhr.responseJSON && jqXhr.responseJSON.error_description || errorThrown).show();
