@@ -24,7 +24,11 @@
     </div>
 
     <nav class="Menu">
-        <a id="MenuButton" class="Mobile" href="#"><i class="fa fa-bars"></i> MENU</a>
+        <button id="MenuButton" class="Mobile hamburger hamburger--spin" type="button">
+            <span class="hamburger-box">
+                <span class="hamburger-inner"></span>
+            </span>
+        </button>
 
         <ul class="Menu Plain">
             <li class="MenuItem Mobile">
@@ -48,15 +52,7 @@
                 </div>
             </li>
 
-            <li class="MenuItem">
-                <a class="MenuItem" href="@Url.Action("Dashboard", "Default")">Dashboard</a>
-
-                <ul class="SubMenu Extended">
-                    <li>
-                        <a href="@Url.Action("Dashboard", "Default")">Dashboard</a>
-                    </li>
-                </ul>
-            </li>
+            <li class="MenuItem"><a class="MenuItem" href="@Url.Action("Dashboard", "Default")">Dashboard</a></li>
 
             <li class="MenuItem CompanyRole">
                 <span class="MenuItem">Settings</span>
@@ -66,10 +62,7 @@
                         <a href="@Url.Action("List", "Users")">Profiles Editor</a>
                     </li>
                     <li data-role="Infrastructure">
-                        <a href="@Url.Action("PrototypeTypesList", "Infrastructure")">Prototype Types</a>
-                    </li>
-                    <li data-role="Infrastructure">
-                        <a href="@Url.Action("DepartmentsList", "Infrastructure")">Departments</a>
+                        <a href="@Url.Action("List", "Infrastructure")">Prototype Types</a>
                     </li>
                     <li data-role="WorkFlows">
                         <a href="@Url.Action("List", "WorkFlows")">Work Flows</a>
@@ -85,21 +78,9 @@
 
             <li data-role="Prototypes" class="MenuItem">
                 <a href="@Url.Action("List", "Prototypes")" class="MenuItem">Prototypes</a>
-
-                <ul class="SubMenu Extended">
-                    <li>
-                        <a href="@Url.Action("List", "Prototypes")">Prototypes</a>
-                    </li>
-                </ul>
             </li>
             <li data-role="Instances" class="MenuItem">
                 <a href="@Url.Action("List", "Instances")" class="MenuItem">Instances </a>
-
-                <ul class="SubMenu Extended">
-                    <li>
-                        <a href="@Url.Action("List", "Instances")">Instances</a>
-                    </li>
-                </ul>
             </li>
         </ul>
     </nav>

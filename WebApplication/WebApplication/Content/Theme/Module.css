@@ -51,5 +51,48 @@ a.Button, input[type=submit] {
   a.Button:hover, a.Button.Selected, input[type=submit]:hover, input[type=submit].Selected {
     text-decoration: none !important; }
     a.Button:hover:not(.ReadOnly), a.Button.Selected:not(.ReadOnly), input[type=submit]:hover:not(.ReadOnly), input[type=submit].Selected:not(.ReadOnly) {
-      background-color: #499dbf; }
+      background-color: #499dbf !important; }
+
+a.Button {
+  color: #fff;
+  padding: 0 10px;
+  min-width: 120px;
+  display: inline-block;
+  height: 30px;
+  background-color: #ffba00;
+  font: normal 14px/30px Myriad, Arial, sans-serif; }
+  a.Button.Icon {
+    float: left;
+    min-width: 0;
+    margin: 0 0 5px 10px;
+    width: 24px;
+    padding: 5px 0; }
+  a.Button.Invalid {
+    color: red; }
+  a.Button.Save {
+    position: relative; }
+    a.Button.Save i.fa {
+      position: absolute;
+      top: 6px;
+      right: 6px; }
+  a.Button.DefaultButton {
+    position: relative;
+    border-radius: 5px 0 0 5px;
+    margin-right: 30px;
+    background-color: #009688; }
+    a.Button.DefaultButton i.fa {
+      border-left: 1px solid #ebebeb;
+      line-height: 30px;
+      height: 30px;
+      right: -30px;
+      width: 30px;
+      background-color: inherit;
+      border-radius: 0 5px 5px 0;
+      position: absolute;
+      top: 0; }
+  a.Button.AccordionButton {
+    background-color: #ffba00;
+    border-radius: 5px 0 0 0; }
+    a.Button.AccordionButton i.fa {
+      border-radius: 0 5px 0 0; }
 

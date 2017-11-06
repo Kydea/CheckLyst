@@ -67,7 +67,73 @@ a.Button, input[type=submit] {
         text-decoration: none !important;
 
         &:not(.ReadOnly) {
-            background-color: $Color-Background-Blu3;
+            background-color: $Color-Background-Blu3 !important;
+        }
+    }
+}
+
+$Font-Size: 14px;
+$Button-Height: 30px;
+$Button-Icon-Size: $Button-Height;
+$Button-Default-Background-Color: $Color-Font-Green;
+
+a.Button {
+    color: #fff;
+    padding: 0 10px;
+    min-width: 120px;
+    display: inline-block;
+    height: $Button-Height;
+    //border-radius: 5px 5px 0 0;
+    background-color: $Color-Font-Yellow;
+    font: normal #{$Font-Size}/#{$Button-Height} Myriad, Arial, sans-serif;
+
+    &.Icon {
+        float: left;
+        min-width: 0;
+        margin: 0 0 5px 10px;
+        width: 24px;
+        padding: 5px 0;
+    }
+
+    &.Invalid {
+        color: red;
+    }
+
+    &.Save {
+        position: relative;
+
+        i.fa {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+        }
+    }
+
+    &.DefaultButton {
+        position: relative;
+        border-radius: 5px 0 0 5px;
+        margin-right: $Button-Height;
+        background-color: $Button-Default-Background-Color;
+
+        i.fa {
+            border-left: 1px solid #ebebeb;
+            line-height: $Button-Icon-Size;
+            height: $Button-Icon-Size;
+            right: -$Button-Icon-Size;
+            width: $Button-Icon-Size;
+            background-color: inherit;
+            border-radius: 0 5px 5px 0;
+            position: absolute;
+            top: 0;
+        }
+    }
+
+    &.AccordionButton {
+        background-color: $Color-Font-Yellow;
+        border-radius: 5px 0 0 0;
+
+        i.fa {
+            border-radius: 0 5px 0 0;
         }
     }
 }

@@ -23,7 +23,7 @@
     left: 0;
     position: fixed;
     font-size: 14px;
-    font-family: "Myriad Pro Regular", Arial, sans-serif; }
+    font-family: Myriad, Arial, sans-serif; }
     nav.Menu ul.Menu {
       height: 100vh;
       z-index: 101;
@@ -134,7 +134,8 @@
     text-align: right;
     height: 70px;
     font-size: 18px;
-    font-family: "Myriad Pro Light", Arial, sans-serif; }
+    font-weight: 300;
+    font-family: Myriad, Arial, sans-serif; }
     nav.Menu::before {
       background: url(../Media/LogoMobile.png) no-repeat 0 50%;
       transform: translateX(-67px);
@@ -145,13 +146,11 @@
       left: 50%;
       top: 0px; }
     nav.Menu ul.Menu {
-      display: none;
-      border-bottom: solid 10px white;
-      margin-bottom: 10px;
-      position: absolute;
-      z-index: 101;
       width: 100%;
-      text-align: center; }
+      display: none;
+      position: absolute;
+      text-align: center;
+      z-index: 101; }
       nav.Menu ul.Menu li.MenuItem {
         line-height: 40px;
         border-bottom: 1px solid #ccc; }

@@ -124,9 +124,12 @@ header {
         text-transform: none;
         height: $Header-Height;
         background-color: white;
-        font: normal 14px/#{$Header-Height} "Myriad Pro Regular", Arial, sans-serif;
+        font: normal 14px/#{$Header-Height} Myriad, Arial, sans-serif;
 
         @media #{$Media-Extended} {
+            top: 0;
+            left: 0;
+            position: fixed;
             text-align: right;
             border-bottom: 1px solid #ccc;
             margin-left: $Lateral-Menu-Width;

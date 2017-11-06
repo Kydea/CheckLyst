@@ -1,97 +1,55 @@
 ﻿@import "_Library.scss";
 
-$Button-Height: 30px;
-$Font-Size: 14px;
+
 
 div.ActionBar {
-    //position: relative;
-    //margin-bottom: 40px;
-    margin-bottom: 2px;
-
-    a.Button {
-        color: #fff;
-        padding: 0 10px;
-        min-width: 120px;
-        display: inline-block;
-        height: $Button-Height;
-        border-radius: 5px 5px 0 0;
-        background-color: $Color-Font-Yellow;
-        font: normal #{$Font-Size}/#{$Button-Height} "Myriad Pro Regular", Arial, sans-serif;
-
-        &.Icon {
-            float: left;
-            min-width: 0;
-            margin: 0 0 5px 10px;
-            width: 24px;
-            padding: 5px 0;
-        }
-
-        &.Invalid {
-            color: red;
-        }
-
-        &.Save {
-            position: relative;
-
-            i.fa {
-                position: absolute;
-                top: 6px;
-                right: 6px;
-            }
-        }
-
-        @include accordion-button(#ApplyButton, $Button-Height, $Color-Font-Yellow);
-    }
+    padding-bottom: 20px;
+    text-align: right;
     
-    /*&::after {
-        height: 1px;
-        width: 100%;
-        content: "";
-        bottom: -3px;
-        position: absolute;
-        background-color: $Color-Border-Black;
-    }*/
-
-    & + Form {
-        //position: relative;
-        //top: -35px;
-        //padding: 20px 10px;
-
-        padding: 20px;
-        border: 1px solid #999;
-
-        label {
-            float: left;
-            margin-right: 20px;
-
-            input {
-                margin-top: 2px;
-                width: 150px;
-            }
-
-            &.Clearing {
-                margin-top: 20px;
-            }
+    & ~ .Panel {
+        & + .Panel {
+            margin-top: 20px;
         }
 
-        /*&::before {
-            height: 1px;
-            width: 100%;
-            left: 0;
-            bottom: 0px;
-            position: absolute;
-            content: "";
-            background-color: $Color-Border-Black;
-        }*/
-
-        &::after {
-            content: "";
-            display: table;
-            clear: both;
+        a.Button:first-child {
+            margin-bottom: 2px;
         }
 
-        & + .Grid {
-            margin-top: 40px;
+        form {
+            padding: 20px;
+            border: 1px solid #999;
+            //border-top: none;
+
+            label {
+                float: left;
+                margin-right: 20px;
+
+                input {
+                    width: 150px;
+                }
+
+                input, select {
+                    margin-top: 5px;
+                }
+
+                &.Clearing {
+                    margin-top: 20px;
+                }
+            }
+
+            a.Button {
+                transform: translateY(55%); // @to_do
+            }
+
+            &::after {
+                content: "";
+                display: table;
+                clear: both;
+            }
+
+            & + .Grid {
+                margin-top: 40px;
+            }
         }
     }
 }

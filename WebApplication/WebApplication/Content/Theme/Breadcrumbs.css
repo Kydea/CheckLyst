@@ -1,7 +1,16 @@
 ﻿div#Breadcrumbs {
   color: #999;
   padding-top: 20px;
-  font: normal 12px "Myriad Pro Regular", Arial, sans-serif; }
+  font: normal 12px/11px Myriad, Arial, sans-serif; }
+  @media only screen and (min-width: 760px) {
+    div#Breadcrumbs {
+      margin-left: 70px;
+      padding-left: 30px;
+      padding-right: 30px; } }
+  @media only screen and (max-width: 759px) {
+    div#Breadcrumbs {
+      padding-left: 10px;
+      padding-right: 10px; } }
   div#Breadcrumbs a, div#Breadcrumbs span {
     color: #999;
     display: inline-block; }

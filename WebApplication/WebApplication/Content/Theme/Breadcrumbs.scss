@@ -3,8 +3,19 @@
 div#Breadcrumbs {
     color: #999;
     padding-top: 20px;
-    font: normal 12px "Myriad Pro Regular", Arial, sans-serif;
-    
+    font: normal 12px/11px Myriad, Arial, sans-serif;
+
+    @media #{$Media-Extended} {
+        margin-left: $Lateral-Menu-Width;
+        padding-left: $Metric-Separator-Extended;
+        padding-right: $Metric-Separator-Extended;
+    }
+
+    @media #{$Media-Mobile} {
+        padding-left: $Metric-Separator-Mobile;
+        padding-right: $Metric-Separator-Mobile;
+    }
+
     a, span {
         color: #999;
         display: inline-block;

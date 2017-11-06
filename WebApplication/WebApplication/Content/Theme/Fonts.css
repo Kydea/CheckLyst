@@ -9,16 +9,16 @@
     font-style: normal;
 }*/
 @font-face {
-  font-family: 'Myriad Pro Bold';
+  font-family: 'Myriad';
   src: url("Fonts/MyriadPro/Bold/MyriadPro-Bold.eot");
   src: url("Fonts/MyriadPro/Bold/MyriadPro-Bold.eot?#iefix") format("embedded-opentype"), url("Fonts/MyriadPro/Bold/MyriadPro-Bold.woff2") format("woff2"), url("Fonts/MyriadPro/Bold/MyriadPro-Bold.woff") format("woff"), url("Fonts/MyriadPro/Bold/MyriadPro-Bold.svg#MyriadPro-Bold") format("svg");
-  font-weight: 700;
+  font-weight: bold;
   font-style: normal;
   font-stretch: normal;
   unicode-range: U+0020-00FE; }
 
 @font-face {
-  font-family: 'Myriad Pro Cond';
+  font-family: 'Myriad';
   src: url("Fonts/MyriadPro/Cond/MyriadPro-Cond.eot");
   src: url("Fonts/MyriadPro/Cond/MyriadPro-Cond.eot?#iefix") format("embedded-opentype"), url("Fonts/MyriadPro/Cond/MyriadPro-Cond.woff2") format("woff2"), url("Fonts/MyriadPro/Cond/MyriadPro-Cond.woff") format("woff"), url("Fonts/MyriadPro/Cond/MyriadPro-Cond.svg#MyriadPro-Cond") format("svg");
   font-weight: 400;
@@ -27,7 +27,7 @@
   unicode-range: U+0020-00FE; }
 
 @font-face {
-  font-family: 'Myriad Pro Light';
+  font-family: 'Myriad';
   src: url("Fonts/MyriadPro/Light/MyriadPro-Light.eot");
   src: url("Fonts/MyriadPro/Light/MyriadPro-Light.eot?#iefix") format("embedded-opentype"), url("Fonts/MyriadPro/Light/MyriadPro-Light.woff2") format("woff2"), url("Fonts/MyriadPro/Light/MyriadPro-Light.woff") format("woff"), url("Fonts/MyriadPro/Light/MyriadPro-Light.svg#MyriadPro-Light") format("svg");
   font-weight: 300;
@@ -36,7 +36,7 @@
   unicode-range: U+0020-00FE; }
 
 @font-face {
-  font-family: 'Myriad Pro Light Cond';
+  font-family: 'Myriad';
   src: url("Fonts/MyriadPro/LightCond/MyriadPro-LightCond.eot");
   src: url("Fonts/MyriadPro/LightCond/MyriadPro-LightCond.eot?#iefix") format("embedded-opentype"), url("Fonts/MyriadPro/LightCond/MyriadPro-LightCond.woff2") format("woff2"), url("Fonts/MyriadPro/LightCond/MyriadPro-LightCond.woff") format("woff"), url("Fonts/MyriadPro/LightCond/MyriadPro-LightCond.svg#MyriadPro-LightCond") format("svg");
   font-weight: 300;
@@ -45,7 +45,7 @@
   unicode-range: U+0020-00FE; }
 
 @font-face {
-  font-family: 'Myriad Pro Regular';
+  font-family: 'Myriad';
   src: url("Fonts/MyriadPro/Regular/MyriadPro-Regular.eot");
   src: url("Fonts/MyriadPro/Regular/MyriadPro-Regular.eot?#iefix") format("embedded-opentype"), url("Fonts/MyriadPro/Regular/MyriadPro-Regular.woff2") format("woff2"), url("Fonts/MyriadPro/Regular/MyriadPro-Regular.woff") format("woff"), url("Fonts/MyriadPro/Regular/MyriadPro-Regular.svg#MyriadPro-Regular") format("svg");
   font-weight: 400;
@@ -54,10 +54,10 @@
   unicode-range: U+0020-00FE; }
 
 @font-face {
-  font-family: 'Myriad Pro Semibold';
-  src: url("Fonts/MyriadPro/Semibold/MyriadPro-SemiboldIt.eot");
-  src: url("Fonts/MyriadPro/Semibold/MyriadPro-SemiboldIt.eot?#iefix") format("embedded-opentype"), url("Fonts/MyriadPro/Semibold/MyriadPro-SemiboldIt.woff2") format("woff2"), url("Fonts/MyriadPro/Semibold/MyriadPro-SemiboldIt.woff") format("woff"), url("Fonts/MyriadPro/Semibold/MyriadPro-SemiboldIt.svg#MyriadPro-Semibold") format("svg");
-  font-weight: 400;
+  font-family: 'Myriad';
+  src: url("Fonts/MyriadPro/Semibold/MyriadPro-Semibold.eot");
+  src: url("Fonts/MyriadPro/Semibold/MyriadPro-Semibold.eot?#iefix") format("embedded-opentype"), url("Fonts/MyriadPro/Semibold/MyriadPro-Semibold.otf") format("opentype"), url("Fonts/MyriadPro/Semibold/MyriadPro-Semibold.woff") format("woff"), url("Fonts/MyriadPro/Semibold/MyriadPro-Semibold.svg#MyriadPro-Semibold") format("svg");
+  font-weight: 600;
   font-style: normal;
   font-stretch: normal;
   unicode-range: U+0020-00FE; }
@@ -92,75 +92,78 @@
   -webkit-font-smoothing: antialiased;
   font-smoothing: antialiased; }
 
-.flaticon-freccia-sinistra:before {
+.flaticon-departments:before {
   content: "\f100"; }
 
-.flaticon-freccia-su:before {
+.flaticon-descriptions:before {
   content: "\f101"; }
 
-.flaticon-freccia-giu:before {
+.flaticon-version:before {
   content: "\f102"; }
 
-.flaticon-frecia-destra:before {
+.flaticon-meno:before {
   content: "\f103"; }
 
-.flaticon-freccia-fina-sinistra:before {
+.flaticon-dashboard:before {
   content: "\f104"; }
 
-.flaticon-freccia-fina-giu:before {
+.flaticon-help:before {
   content: "\f105"; }
 
-.flaticon-freccia-fina-su:before {
+.flaticon-freccia-su:before {
   content: "\f106"; }
 
-.flaticon-freccia-fina-destra:before {
+.flaticon-frecia-destra:before {
   content: "\f107"; }
 
-.flaticon-piu:before {
+.flaticon-freccia-giu:before {
   content: "\f108"; }
 
-.flaticon-meno:before {
+.flaticon-freccia-sinistra:before {
   content: "\f109"; }
 
-.flaticon-help:before {
+.flaticon-states:before {
   content: "\f10a"; }
 
-.flaticon-calendar:before {
+.flaticon-settings:before {
   content: "\f10b"; }
 
-.flaticon-states:before {
+.flaticon-people:before {
   content: "\f10c"; }
 
 .flaticon-tags:before {
   content: "\f10d"; }
 
-.flaticon-descriptions:before {
+.flaticon-freccia-fina-su:before {
   content: "\f10e"; }
 
-.flaticon-version:before {
+.flaticon-freccia-fina-destra:before {
   content: "\f10f"; }
 
-.flaticon-departments:before {
+.flaticon-freccia-fina-sinistra:before {
   content: "\f110"; }
 
-.flaticon-logout:before {
+.flaticon-freccia-fina-giu:before {
   content: "\f111"; }
 
-.flaticon-utente:before {
+.flaticon-piu:before {
   content: "\f112"; }
 
-.flaticon-dashboard:before {
+.flaticon-istance:before {
   content: "\f113"; }
 
-.flaticon-istance:before {
+.flaticon-logout:before {
   content: "\f114"; }
 
 .flaticon-prototypes:before {
   content: "\f115"; }
 
-.flaticon-data:before {
+.flaticon-calendar:before {
   content: "\f116"; }
 
-.flaticon-settings:before {
+.flaticon-data:before {
   content: "\f117"; }
+
+.flaticon-security:before {
+  content: "\f118"; }
 
