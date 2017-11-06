@@ -10,7 +10,7 @@ namespace CheckListManager.AccessControl.Api
     {
         public void Configuration(IAppBuilder app)
         {
-            ConfigureAuth(app);
+			WebApiConfig.Setup(app);
         }
     }
 }

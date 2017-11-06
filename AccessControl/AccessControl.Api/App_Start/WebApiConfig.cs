@@ -1,8 +1,14 @@
 ﻿using System.Web.Http;
+using Autofac;
+using Autofac.Core;
 using AutoMapper;
+using CheckListManager.AccessControl.Logic.Authentication.Providers;
 using CheckListManager.AccessControl.Logic.Messages.Users;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Configuration;
+using Microsoft.Owin.Security.Infrastructure;
+using Microsoft.Owin.Security.OAuth;
+using Owin;
 
 namespace CheckListManager.AccessControl.Api
 {
@@ -16,18 +22,35 @@ namespace CheckListManager.AccessControl.Api
 			    .ForMember(m => m.Password, opt => opt.Ignore());
 	    }
 
-		#region Static
-
-	    public static void Register(HttpConfiguration config)
+	    protected override void OnConfigureAuthProvider(IAppBuilder app, ContainerBuilder builder)
 	    {
-		    var apiConfig = new WebApiConfig
+		    builder.RegisterType<AuthTokenProvider>()
+				.As<OAuthAuthorizationServerProvider>()
+				.AsSelf()
+				.SingleInstance();
+		    builder.RegisterType<RefreshTokenProvider>()
+				.As<IAuthenticationTokenProvider>()
+				.AsSelf()
+				.SingleInstance();
+		    builder.Register(c => (ISharingLifetimeScope)c.Resolve<ILifetimeScope>())
+			    .As<ISharingLifetimeScope>()
+			    .ExternallyOwned();
+	    }
+
+	    #region Static
+
+	    public static void Setup(IAppBuilder app)
+	    {
+		    var apiConfig = new WebApiConfig()
 		    {
-			    LoadAssemblies = true
+			    LoadAssemblies = true,
+			    ConfigureOwinProvider = true
 		    };
 
-		    config.Configure(apiConfig);
+		    apiConfig.Configure(app);
 	    }
 
 		#endregion
-	}
+
+    }
 }

@@ -14,10 +14,10 @@ namespace CheckListManager.AccessControl.Api
 	{
 		private static OAuthAuthorizationServerOptions OAuthOptions { get; set; }
 
-		private static void ConfigureAuth(IAppBuilder app)
+		private static void ConfigureAuth(IAppBuilder app, HttpConfiguration configuration)
 		{
 			var parentScope =
-				(ILifetimeScope)GlobalConfiguration.Configuration.DependencyResolver.GetService(typeof(ILifetimeScope));
+				(ILifetimeScope)configuration.DependencyResolver.GetService(typeof(ILifetimeScope));
 			using (var scope = parentScope.BeginLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag, builder =>
 			{
 				builder.RegisterType<AuthTokenProvider>().SingleInstance();

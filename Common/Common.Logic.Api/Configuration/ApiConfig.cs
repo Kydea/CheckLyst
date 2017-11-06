@@ -1,22 +1,35 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.Web.Compilation;
 using System.Web.Http;
-using System.Web.Http.Cors;
 using System.Web.Http.ExceptionHandling;
 using Autofac;
+using Autofac.Core.Lifetime;
 using Autofac.Integration.WebApi;
 using CheckListManager.Common.Logic.Api.Authentication;
 using CheckListManager.Common.Logic.Api.Filters;
 using CheckListManager.Common.Logic.Configuration;
+using Microsoft.Owin;
+using Microsoft.Owin.Cors;
+using Microsoft.Owin.Security.Infrastructure;
 using Microsoft.Owin.Security.OAuth;
 using Newtonsoft.Json.Serialization;
+using Owin;
 
 namespace CheckListManager.Common.Logic.Api.Configuration
 {
 	public abstract class ApiConfig : ConfigBase
 	{
+		private readonly HttpConfiguration _configuration;
+
+		protected ApiConfig()
+		{
+			_configuration = new HttpConfiguration();
+		}
+
 		public bool LoadAssemblies { private get; set; }
+		protected bool ConfigureOwinProvider { private get; set; }
 
 		protected override bool UseInstancePerRequest => true;
 
@@ -30,34 +43,72 @@ namespace CheckListManager.Common.Logic.Api.Configuration
 		{
 			return LoadAssemblies ? BuildManager.GetReferencedAssemblies().Cast<Assembly>().ToArray() : base.GetAssemblies();
 		}
-	}
 
-	public static class ApiConfigExtensions
-	{
-		public static void Configure(this HttpConfiguration configuration, ApiConfig apiConfig)
+		protected void Configure(IAppBuilder app)
 		{
-			ConfigureDependencyInjection(configuration, apiConfig.CreateBuilder());
-
-			configuration.Services.Replace(typeof(IExceptionHandler), new DefaultExceptionHandler());
-
-			configuration.SuppressDefaultHostAuthentication();
-			configuration.Filters.Add(new AuthorizeAttribute());
-			configuration.Filters.Add(new DefaultAuthenticationFilter(OAuthDefaults.AuthenticationType));
-			configuration.Filters.Add(new ArgumentNullValidationActionFilterAttribute());
-			configuration.Filters.Add(new ModelValidationActionFilterAttribute());
-
-			configuration.MapHttpAttributeRoutes();
-
-			configuration.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-
-			configuration.EnableCors(new EnableCorsAttribute("https://clm.matematici-aws.com", "*", "*"));
+			ConfigureWebApi();
+			ConfigureAuth(app);
+			app.UseCors(CorsOptions.AllowAll);
+			app.UseWebApi(_configuration);
 		}
 
-		private static void ConfigureDependencyInjection(HttpConfiguration configuration, ContainerBuilder builder)
+		private void ConfigureWebApi()
 		{
-			GlobalConfiguration.Configuration.DependencyResolver =
-				configuration.DependencyResolver
-					= new AutofacWebApiDependencyResolver(builder.Build());
+			_configuration.DependencyResolver
+				= new AutofacWebApiDependencyResolver(CreateBuilder().Build());
+
+			_configuration.Services.Replace(typeof(IExceptionHandler), new DefaultExceptionHandler());
+
+			_configuration.SuppressDefaultHostAuthentication();
+			_configuration.Filters.Add(new AuthorizeAttribute());
+			_configuration.Filters.Add(new DefaultAuthenticationFilter(OAuthDefaults.AuthenticationType));
+			_configuration.Filters.Add(new ArgumentNullValidationActionFilterAttribute());
+			_configuration.Filters.Add(new ModelValidationActionFilterAttribute());
+
+			_configuration.MapHttpAttributeRoutes();
+
+			_configuration.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+		}
+
+		private void ConfigureAuth(IAppBuilder app)
+		{
+			if (ConfigureOwinProvider)
+			{
+				ConfigureAuthProvider(app);
+			}
+			else
+			{
+				ConfigureAuthToken(app);
+			}
+		}
+
+		private static void ConfigureAuthToken(IAppBuilder app)
+		{
+			app.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions());
+		}
+
+		private void ConfigureAuthProvider(IAppBuilder app)
+		{
+			var parentScope =
+				(ILifetimeScope)_configuration.DependencyResolver.GetService(typeof(ILifetimeScope));
+			using (var scope = parentScope.BeginLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag, builder => OnConfigureAuthProvider(app, builder)))
+			{
+				var oAuthOptions = new OAuthAuthorizationServerOptions
+				{
+					TokenEndpointPath = new PathString("/Access/Token"),
+					Provider = scope.Resolve<OAuthAuthorizationServerProvider>(),
+					AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(30), //TODO load from configuration
+					RefreshTokenProvider = scope.Resolve<IAuthenticationTokenProvider>(),
+					AllowInsecureHttp = true
+				};
+
+				app.UseOAuthBearerTokens(oAuthOptions);
+			}
+		}
+
+		protected virtual void OnConfigureAuthProvider(IAppBuilder app, ContainerBuilder builder)
+		{
+			
 		}
 	}
 }
