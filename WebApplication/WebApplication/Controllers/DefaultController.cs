@@ -1,4 +1,5 @@
-﻿using System.Web.Mvc;
+﻿using System;
+using System.Web.Mvc;
 
 namespace CheckListManager.WebApplication.Controllers
 {
@@ -14,6 +15,12 @@ namespace CheckListManager.WebApplication.Controllers
         [AllowAnonymous]
         public ActionResult Loader(string url)
         {
+			//Workaround for AWS Load Balancer Healt Check
+	        if ("ping".Equals(url, StringComparison.InvariantCultureIgnoreCase))
+	        {
+		        return Ping();
+	        }
+
             return ConditionalView("Loader", url);
         }
 
@@ -26,5 +33,12 @@ namespace CheckListManager.WebApplication.Controllers
             //Model.Instances.Set(PageInstances ?? 1);
             return ConditionalView();
         }
-    }
+
+		[AllowAnonymous]
+		[Route("Ping")]
+		public ActionResult Ping()
+		{
+			return Json(new { ok = true }, JsonRequestBehavior.AllowGet);
+		}
+	}
 }
