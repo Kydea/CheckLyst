@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Web.Compilation;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using System.Web.Http.ExceptionHandling;
 using Autofac;
 using Autofac.Integration.WebApi;
@@ -48,6 +49,8 @@ namespace CheckListManager.Common.Logic.Api.Configuration
 			configuration.MapHttpAttributeRoutes();
 
 			configuration.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+
+			configuration.EnableCors(new EnableCorsAttribute("https://clm.matematici-aws.com", "*", "*"));
 		}
 
 		private static void ConfigureDependencyInjection(HttpConfiguration configuration, ContainerBuilder builder)
