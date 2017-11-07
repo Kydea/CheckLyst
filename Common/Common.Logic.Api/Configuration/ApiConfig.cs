@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Web.Compilation;
+using System.Web.Cors;
 using System.Web.Http;
 using System.Web.Http.ExceptionHandling;
 using Autofac;
@@ -46,9 +48,32 @@ namespace CheckListManager.Common.Logic.Api.Configuration
 
 		protected void Configure(IAppBuilder app)
 		{
+			app.UseCors(new CorsOptions
+			{
+				PolicyProvider = new CorsPolicyProvider
+				{
+					PolicyResolver = context => Task.FromResult(new CorsPolicy
+					{
+						AllowAnyOrigin = true,
+						AllowAnyHeader = true,
+						AllowAnyMethod = true,
+						PreflightMaxAge = 1000
+					})
+				}
+			});
+
+			app.Use((context, next) =>
+			{
+				if (context.Request.Headers.Any(k => k.Key.Contains("Origin")) && "OPTIONS".Equals(context.Request.Method, StringComparison.InvariantCulture))
+				{
+					context.Response.StatusCode = 200;
+					return context.Response.WriteAsync("handled");
+				}
+
+				return next.Invoke();
+			});
 			ConfigureWebApi();
 			ConfigureAuth(app);
-			app.UseCors(CorsOptions.AllowAll);
 			app.UseWebApi(_configuration);
 		}
 

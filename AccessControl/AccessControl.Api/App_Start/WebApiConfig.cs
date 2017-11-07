@@ -1,5 +1,4 @@
-﻿using System.Web.Http;
-using Autofac;
+﻿using Autofac;
 using Autofac.Core;
 using AutoMapper;
 using CheckListManager.AccessControl.Logic.Authentication.Providers;
@@ -41,7 +40,7 @@ namespace CheckListManager.AccessControl.Api
 
 	    public static void Setup(IAppBuilder app)
 	    {
-		    var apiConfig = new WebApiConfig()
+		    var apiConfig = new WebApiConfig
 		    {
 			    LoadAssemblies = true,
 			    ConfigureOwinProvider = true

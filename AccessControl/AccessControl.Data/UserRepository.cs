@@ -22,16 +22,16 @@ namespace CheckListManager.AccessControl.Data
 			return SaveChangesAsync();
 		}
 
-        private IQueryable<Users> Get(long companyId, string Keyword)
+        private IQueryable<Users> Get(long companyId, string keyword)
         {
-            Keyword = Keyword?.ToUpper() ?? "";
+            keyword = keyword?.ToUpper() ?? "";
             return Entities.Users
                 .Where(
                     u => u.Company == companyId && 
                     (
-                        u.Code.ToUpper().Contains(Keyword)
-                        || u.Description != null && u.Description.ToUpper().Contains(Keyword)
-                        || u.Email != null && u.Email.ToUpper().Contains(Keyword)
+                        u.Code.ToUpper().Contains(keyword)
+                        || u.Description != null && u.Description.ToUpper().Contains(keyword)
+                        || u.Email != null && u.Email.ToUpper().Contains(keyword)
                     )
                 );
         }
