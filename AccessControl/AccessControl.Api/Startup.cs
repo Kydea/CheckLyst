@@ -6,11 +6,11 @@ using Owin;
 
 namespace CheckListManager.AccessControl.Api
 {
-    public partial class Startup
+    public class Startup
     {
         public void Configuration(IAppBuilder app)
         {
-            ConfigureAuth(app);
+			WebApiConfig.Setup(app);
         }
     }
 }

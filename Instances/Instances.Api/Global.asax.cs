@@ -1,5 +1,4 @@
 ﻿using System.Web;
-using System.Web.Http;
 
 namespace CheckListManager.Instances.Api
 {
@@ -7,7 +6,6 @@ namespace CheckListManager.Instances.Api
     {
         protected void Application_Start()
         {
-            GlobalConfiguration.Configure(WebApiConfig.Register);
         }
     }
 }

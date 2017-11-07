@@ -28,7 +28,7 @@ namespace CheckListManager.AccessControl.Api.Controllers
 			return Ok(await _userService.GetUsersAsync(Identity.CompanyId, request));
 		}
 
-		[HttpPost]
+	    [HttpPost]
 		[Route("Add")]
 	    public async Task<IHttpActionResult> AddUser(Message<AddUserRequest> request)
 		{

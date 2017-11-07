@@ -1,5 +1,5 @@
-﻿using System.Web.Http;
-using CheckListManager.Common.Logic.Api.Configuration;
+﻿using CheckListManager.Common.Logic.Api.Configuration;
+using Owin;
 
 namespace CheckListManager.WorkFlows.Api
 {
@@ -7,14 +7,14 @@ namespace CheckListManager.WorkFlows.Api
     {
 		#region Static
 
-	    public static void Register(HttpConfiguration config)
+	    public static void Setup(IAppBuilder app)
 	    {
 		    var apiConfig = new WebApiConfig
 		    {
 			    LoadAssemblies = true
 		    };
 
-		    config.Configure(apiConfig);
+		    apiConfig.Configure(app);
 	    }
 
 		#endregion

@@ -11,7 +11,7 @@ namespace CheckListManager.WebApplication.Code
             if (Cache == null)
             {
                 var Version = typeof(MvcApplication).Assembly.GetName().Version;
-                Cache = String.Format("{0}.{1}.{2}.{3}", Version.Major, Version.Minor, Version.Revision, Version.Build);
+                Cache = String.Format("{0}.{1}.{2}.{3}", Version.Major, Version.Minor, Version.Build, Version.Revision);
             }
             return Cache;
         }
