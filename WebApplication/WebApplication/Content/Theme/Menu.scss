@@ -1,5 +1,8 @@
 ﻿@import "Library";
 
+$Menu-Icon-Width: 40px;
+$Menu-Item-Height: 40px;
+
 nav.Menu {
     ul.Menu {
         background-color: #fff;
@@ -48,29 +51,29 @@ nav.Menu {
             z-index: $Depth-Menu;
             background-color: #000;
             display: block !important;
-            width: $Lateral-Menu-Width;
+            width: $Metric-Header-Height;
             // Logo
             &:before {
                 content: "";
                 width: 100%;
                 display: block;
-                height: $Header-Height;
+                height: $Metric-Header-Height;
                 box-sizing: border-box;
                 border-bottom: 1px solid #333;
-                background: url(../Media/Sintlogo.png) no-repeat ($Lateral-Menu-Width - $Lateral-Menu-Logo-Width)/2 50%;
+                background: url(../Media/Sintlogo.png) no-repeat ($Metric-Header-Height - 50px)/2 50%;
             }
 
             li.MenuItem {
                 position: relative;
                 border-bottom: 1px solid #333;
-                height: $Lateral-Menu-Item-Height;
-                line-height: $Lateral-Menu-Item-Height;
-                padding: ($Lateral-Menu-Width - $Lateral-Menu-Item-Icon-Width)/2;
+                height: $Metric-Header-Height;
+                line-height: $Metric-Header-Height;
+                padding: ($Metric-Header-Height - $Menu-Icon-Width)/2;
 
                 .MenuItem {
                     box-sizing: border-box;
-                    width: $Lateral-Menu-Item-Icon-Width;
-                    height: $Lateral-Menu-Item-Icon-Width;
+                    width: $Menu-Icon-Width;
+                    height: $Menu-Icon-Width;
                     border: 1px solid $Color-Border-Black; // borders until no icons!
                     // @to_do: remove (just a test)
                     color: transparent;
@@ -111,8 +114,8 @@ nav.Menu {
                     z-index: $Depth-Menu;
                     background-color: black;
                     position: absolute;
-                    left: $Lateral-Menu-Width;
-                    top: ($Lateral-Menu-Width - $Lateral-Menu-Item-Icon-Width)/2;
+                    left: $Metric-Header-Height;
+                    top: ($Metric-Header-Height - $Menu-Icon-Width)/2;
                     border-left: 1px solid #333;
                     border-radius: 0 5px 5px 0;
                     box-shadow: rgba(0, 0, 0, 0.35) 0px 0px 7px 3.5px;
@@ -125,13 +128,13 @@ nav.Menu {
                         position: absolute;
                         height: 18px; // same as menu indicator
                         background-color: black; // same as menu indicator
-                        top: ($Lateral-Menu-Submenu-Item-Height - 18px)/2; // 18px = menu indicator's height
+                        top: ($Menu-Item-Height - 18px)/2; // 18px = menu indicator's height
                     }
 
                     li {
                         width: 230px;
-                        height: $Lateral-Menu-Submenu-Item-Height;
-                        line-height: $Lateral-Menu-Submenu-Item-Height;
+                        height: $Menu-Item-Height;
+                        line-height: $Menu-Item-Height;
                         padding-left: 40px;
 
                         &:hover {
@@ -155,7 +158,7 @@ nav.Menu {
                                     top: 50%;
                                     border: solid #666;
                                     border-width: 0 2px 2px 0;
-                                    @include animation(rotation 1s forwards);
+                                    animation: rotation 300ms forwards;
                                     transform: translateY(-50%) rotate(-135deg) skew(8.16deg, 8.16deg);
                                 }
                             }
@@ -181,7 +184,7 @@ nav.Menu {
         text-transform: uppercase;
         background-color: #000;
         text-align: right;
-        height: $Mobile-Menu-Height;
+        height: $Metric-Header-Height;
         font-size: 18px;
         font-weight: 300;
         font-family: Myriad, Arial, sans-serif;

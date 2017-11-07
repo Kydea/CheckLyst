@@ -8,10 +8,6 @@
     "inputFile": "Content/Theme/Breadcrumbs.scss"
   },
   {
-    "outputFile": "Content/Theme/Module.css",
-    "inputFile": "Content/Theme/Module.scss"
-  },
-  {
     "outputFile": "Content/Theme/Content.css",
     "inputFile": "Content/Theme/Content.scss"
   },
@@ -84,10 +80,6 @@
     "inputFile": "Content/Theme/jQuery-UI.scss"
   },
   {
-    "outputFile": "Content/Theme/Trail.css",
-    "inputFile": "Content/Theme/Trail.scss"
-  },
-  {
     "outputFile": "Content/Theme/CheckListGrid.css",
     "inputFile": "Content/Theme/CheckListGrid.scss"
   },
@@ -120,15 +112,23 @@
     "inputFile": "Content/Theme/Calendar.scss"
   },
   {
-    "outputFile": "Content/Theme/UserList.css",
-    "inputFile": "Content/Theme/UserList.scss"
-  },
-  {
     "outputFile": "Content/Theme/Hamburger.css",
     "inputFile": "Content/Theme/Hamburger.scss"
   },
   {
     "outputFile": "Content/Theme/AutoComplete.css",
     "inputFile": "Content/Theme/AutoComplete.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Controls.css",
+    "inputFile": "Content/Theme/Controls.scss"
+  },
+  {
+    "outputFile": "Content/Theme/ShadowPanel.css",
+    "inputFile": "Content/Theme/ShadowPanel.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Accordion.css",
+    "inputFile": "Content/Theme/Accordion.scss"
   }
 ]

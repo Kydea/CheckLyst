@@ -43,7 +43,7 @@ body.InstanceManager {
             background: red;
             border: solid 1px $Color-Border-Grey;
             cursor: pointer;
-            @include border-radius(50%);
+            border-radius: 50%;
 
             div.Panel {
                 display: none;
@@ -116,7 +116,7 @@ body.InstanceManager {
                     margin-left: 1px;
                     width: 20px;
                     line-height: 20px;
-                    @include border-radius(50%);
+                    border-radius: 50%;
 
                     &:hover {
                         background: $Color-Background-Grey2;
@@ -425,10 +425,10 @@ body.InstanceManager {
 
                     &.Signature {
                         text-align: center;
-                        width: 100px;   
+                        width: 100px;
 
                         input {
-                           display: none;
+                            display: none;
                         }
 
                         > i {

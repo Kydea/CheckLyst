@@ -10,6 +10,7 @@ matematici.AutoComplete = function (selector) {
 		label,
 		input,
 		list,
+		icon,
 
 		setValue = function () {
 			var value = element.val();
@@ -22,22 +23,26 @@ matematici.AutoComplete = function (selector) {
 		},
 
 		setWidth = function () {
-			label.width(element.width());
 			var width = label.outerWidth();
-			input.outerWidth(width);
+			input.width(width - parseInt(input.css("padding-left")) - parseInt(input.css("padding-right")) - 2);
+			icon.css("margin-left", width - 20);
+			items.each(function () {
+				var itemWidth = $(this).outerWidth();
+				if (itemWidth > width)
+					width = itemWidth;
+			});
 			list.outerWidth(width);
 		},
 
-		setup = function () {
+		initialize = function () {
 			element.data("autoComplete", autoComplete);
 			label = $("<input />").addClass("AutoComplete").attr({ type: "text" }).insertAfter(element);
 			var width = label.outerWidth();
 			input = $("<input />").addClass("AutoComplete-Filter").attr({ type: "text" }).hide().insertAfter(label);
 			list = $("<div />").addClass("AutoComplete-List").insertAfter(input);
+			icon = $("<i />").addClass("AutoComplete fi flaticon-freccia-giu").insertAfter(input);
 			label
 				.on("focus", function () {
-					if (input.val() == "")
-						updateList();
 					showList();
 					label.select();
 					input.focus();
@@ -67,14 +72,19 @@ matematici.AutoComplete = function (selector) {
 				.on("click", function () {
 					hideList();
 				});
-			$("<i />").addClass("AutoComplete fi flaticon-freccia-giu").insertAfter(input).css("margin-left", width - 20)
+			icon
 				.on("click", function (e) {
 					e.stopPropagation();
 					input.focus();
 				});
 			updateList();
-			setWidth();
 			setValue();
+
+			matematici.elements.window.on("resize", setWidth);
+		},
+
+		destroy = function () {
+			matematici.elements.window.off("resize", setWidth);
 		},
 
 		setCurrentItem = function (value) {
@@ -136,12 +146,12 @@ matematici.AutoComplete = function (selector) {
 				});
 			items = $("a", list);
 			setCurrentItem(0);
+			setWidth();
 		};
 
 	this.refresh = function () {
 		options = $("option", element);
 		updateList();
-		setWidth();
 		setValue();
 	};
 
@@ -149,9 +159,23 @@ matematici.AutoComplete = function (selector) {
 		return label;
 	};
 
-	setup();
+	this.initialize = function () {
+		initialize();
+	};
+
+	this.destroy = function () {
+		destroy();
+	};
 };
 
 matematici.initializers.push(function (context) {
-	$("select", context).each(function () { new matematici.AutoComplete(this); });
+	$("select", context).each(function () {
+		new matematici.AutoComplete(this).initialize();
+	});
+});
+
+matematici.destroyers.push(function (context) {
+	$("select", context).each(function () {
+		$(this).data("autoComplete").destroy();
+	});
 });

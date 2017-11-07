@@ -1,6 +1,8 @@
 ﻿@import "_Library.scss";
 
 body.Login {
+    background: white !important;
+
     header {
         display: none !important;
     }
@@ -19,24 +21,27 @@ body.Login {
         left: 0;
         right: 0;
         bottom: 0;
-        background: url(Login/Background.jpg) no-repeat center;
-        @include vertically-aligned-container;
+        background: url(Login/Background.jpg) no-repeat center white;
 
         div.Box {
             background-color: white;
             padding: 20px;
+            margin: 0 auto;
+            position: relative;
+
+            form {
+                position: relative;
+                border: none;
+                padding: 0;
+            }
 
             img {
                 margin-bottom: 19px;
             }
 
             label {
+                margin-top: 10px;
                 margin-bottom: 5px;
-            }
-
-            input {
-                background-color: transparent;
-                margin-bottom: 10px;
             }
 
             div.Message {
@@ -61,19 +66,12 @@ body.Login {
             }
 
             @media #{$Media-Extended} {
+                width: 460px;
                 box-shadow: rgba(0, 0, 0, .9) 0 0 50px;
-                @include border-radius(10px);
-
-                @include vertically-aligned-content(absolute);
-                left: 50%;
-                -moz-transform: translate(-50%, -50%);
-                -ms-transform: translate(-50%, -50%);
-                -o-transform: translate(-50%, -50%);
-                -webkit-transform: translate(-50%, -50%);
-                transform: translate(-50%, -50%);
+                border-radius: 10px;
 
                 &::after {
-                    @include border-radius(10px);
+                    border-radius: 10px;
                     display: block;
                     content: "";
                     position: absolute;

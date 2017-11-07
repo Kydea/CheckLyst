@@ -3,12 +3,13 @@
 div#Breadcrumbs {
     color: #999;
     padding-top: 20px;
-    font: normal 12px/11px Myriad, Arial, sans-serif;
+    font-size: 12px;
 
     @media #{$Media-Extended} {
-        margin-left: $Lateral-Menu-Width;
+        margin-left: $Metric-Header-Height;
         padding-left: $Metric-Separator-Extended;
         padding-right: $Metric-Separator-Extended;
+        margin-top: $Metric-Header-Height;
     }
 
     @media #{$Media-Mobile} {

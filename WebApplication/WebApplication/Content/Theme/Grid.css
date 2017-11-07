@@ -1,7 +1,8 @@
 ﻿table.Grid {
   border-collapse: collapse;
   border-spacing: 0;
-  width: 100%; }
+  width: 100%;
+  margin-top: 20px; }
   table.Grid thead {
     background-color: #999; }
     table.Grid thead tr {
@@ -14,7 +15,7 @@
         height: 50px;
         border-left: 1px solid #ccc;
         font-weight: 600;
-        font-size: 16px;
+        font-size: 15px;
         font-family: Myriad, Arial, sans-serif; }
         table.Grid thead tr th:after {
           content: "";
@@ -35,7 +36,6 @@
       color: #666;
       padding: 0 20px;
       height: 40px;
-      font-size: 14px;
       border-right: solid 1px #afb4b5;
       font-family: Myriad, Arial, sans-serif; }
       table.Grid tbody tr td.Off {

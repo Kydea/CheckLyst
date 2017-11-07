@@ -1,6 +1,5 @@
 ﻿@import "Library";
 
-$Font-Size: 16px;
 $Page-Width: 20px;
 
 .Paginator {
@@ -21,7 +20,7 @@ $Page-Width: 20px;
         text-decoration: none !important;
 
         font-weight: 600;
-        font-size: $Font-Size;
+        font-size: 16px;
         font-family: Myriad, Arial, sans-serif;
 
         &:not(.Current) {

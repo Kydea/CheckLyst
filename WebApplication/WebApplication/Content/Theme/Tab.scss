@@ -5,7 +5,7 @@ $label-height: 40px;
 div.TabContainer {
     position: relative;
     overflow: hidden;
-    @include transition(height .5s );
+    transition: height .5s;
 
     .TabLabels {
 
@@ -64,7 +64,7 @@ div.TabContainer {
         width: 100%;
         top: $label-height;
         opacity: 0;
-        @include transition(opacity .5s);
+        transition: opacity .5s;
         z-index: $Depth-Tab;
 
         &.Selected {

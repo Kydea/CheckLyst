@@ -118,7 +118,6 @@ div.Dialog {
         left: 0;
         z-index: $Depth-Dialog;
         background-color: rgba(217, 217, 217, .5);
-        @include vertically-aligned-container();
 
         div.Container {
             position: absolute;

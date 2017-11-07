@@ -21,7 +21,7 @@ $hamburger-hover-opacity: 0.7 !default;
 $hamburger-hover-transition-duration: 0.15s !default;
 $hamburger-hover-transition-timing-function: linear !default;
 $hamburger-height: $hamburger-layer-height * 3 + $hamburger-layer-spacing * 2;
-$hamburger-padding-y: ($Mobile-Menu-Height - $hamburger-height - $hamburger-layer-spacing)/2 !default;
+$hamburger-padding-y: ($Metric-Header-Height - $hamburger-height - $hamburger-layer-spacing)/2 !default;
 
 // To use CSS filters as the hover effect instead of opacity,
 // set $hamburger-hover-use-filter as true and

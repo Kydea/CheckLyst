@@ -1,55 +1,6 @@
 ﻿@import "_Library.scss";
 
-
-
 div.ActionBar {
     padding-bottom: 20px;
     text-align: right;
-    
-    & ~ .Panel {
-        & + .Panel {
-            margin-top: 20px;
-        }
-
-        a.Button:first-child {
-            margin-bottom: 2px;
-        }
-
-        form {
-            padding: 20px;
-            border: 1px solid #999;
-            //border-top: none;
-
-            label {
-                float: left;
-                margin-right: 20px;
-
-                input {
-                    width: 150px;
-                }
-
-                input, select {
-                    margin-top: 5px;
-                }
-
-                &.Clearing {
-                    margin-top: 20px;
-                }
-            }
-
-            a.Button {
-                transform: translateY(55%); // @to_do
-            }
-
-            &::after {
-                content: "";
-                display: table;
-                clear: both;
-            }
-
-            & + .Grid {
-                margin-top: 40px;
-            }
-        }
-    }
 }

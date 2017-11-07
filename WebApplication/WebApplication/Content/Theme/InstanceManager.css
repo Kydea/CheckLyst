@@ -31,9 +31,6 @@ body.InstanceManager .Element div.Information {
   background: red;
   border: solid 1px #afb4b5;
   cursor: pointer;
-  -webkit-border-radius: 50%;
-  -moz-border-radius: 50%;
-  -ms-border-radius: 50%;
   border-radius: 50%; }
   body.InstanceManager .Element div.Information div.Panel {
     display: none;
@@ -83,9 +80,6 @@ body.InstanceManager .Group .Iteration {
       margin-left: 1px;
       width: 20px;
       line-height: 20px;
-      -webkit-border-radius: 50%;
-      -moz-border-radius: 50%;
-      -ms-border-radius: 50%;
       border-radius: 50%; }
       body.InstanceManager .Group .Iteration > .IterationCommands a:hover {
         background: #e8e7ec; }
@@ -286,5 +280,5 @@ body.InstanceManager table.Grid tbody tr:nth-child(odd) td.Inactive {
   background-color: #f5f5f5; }
 
 body.InstanceManager table.Grid tbody tr:nth-child(even) td.Inactive {
-  background-color: #ededed; }
+  background-color: #ebebeb; }
 

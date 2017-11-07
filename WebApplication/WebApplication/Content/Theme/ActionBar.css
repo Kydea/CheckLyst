@@ -1,28 +1,4 @@
 ﻿div.ActionBar {
   padding-bottom: 20px;
   text-align: right; }
-  div.ActionBar ~ .Panel + .Panel {
-    margin-top: 20px; }
-  div.ActionBar ~ .Panel a.Button:first-child {
-    margin-bottom: 2px; }
-  div.ActionBar ~ .Panel form {
-    padding: 20px;
-    border: 1px solid #999; }
-    div.ActionBar ~ .Panel form label {
-      float: left;
-      margin-right: 20px; }
-      div.ActionBar ~ .Panel form label input {
-        width: 150px; }
-      div.ActionBar ~ .Panel form label input, div.ActionBar ~ .Panel form label select {
-        margin-top: 5px; }
-      div.ActionBar ~ .Panel form label.Clearing {
-        margin-top: 20px; }
-    div.ActionBar ~ .Panel form a.Button {
-      transform: translateY(55%); }
-    div.ActionBar ~ .Panel form::after {
-      content: "";
-      display: table;
-      clear: both; }
-    div.ActionBar ~ .Panel form + .Grid {
-      margin-top: 40px; }
 

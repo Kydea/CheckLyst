@@ -1,12 +1,13 @@
 ﻿div#Breadcrumbs {
   color: #999;
   padding-top: 20px;
-  font: normal 12px/11px Myriad, Arial, sans-serif; }
+  font-size: 12px; }
   @media only screen and (min-width: 760px) {
     div#Breadcrumbs {
       margin-left: 70px;
       padding-left: 30px;
-      padding-right: 30px; } }
+      padding-right: 30px;
+      margin-top: 70px; } }
   @media only screen and (max-width: 759px) {
     div#Breadcrumbs {
       padding-left: 10px;

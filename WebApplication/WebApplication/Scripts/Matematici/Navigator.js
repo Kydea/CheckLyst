@@ -145,7 +145,9 @@
                                 data = ''
                                 var appMode = matematici.elements.body.hasClass("AppMode");
                                 matematici.elements.body.removeClass();
-                                if (appMode) matematici.elements.body.addClass("AppMode");
+								if (appMode) matematici.elements.body.addClass("AppMode");
+								for (var index in matematici.destroyers)
+									matematici.destroyers[index].call(null, matematici.elements.content);
                                 matematici.events.onPageDestroy();
                                 matematici.navigator.initializeEventHandlers();
                                 matematici.navigator.handlePageLoad(result, function () {

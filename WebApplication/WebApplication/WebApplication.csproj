@@ -75,6 +75,9 @@
     <Content Include="Content\Media\LogoMobile.png" />
     <Content Include="Content\Media\Sintlogo.png" />
     <Content Include="Content\PDF\Janssen.png" />
+    <Content Include="Content\Theme\Accordion.css">
+      <DependentUpon>Accordion.scss</DependentUpon>
+    </Content>
     <Content Include="Content\Theme\ActionBar.css">
       <DependentUpon>ActionBar.scss</DependentUpon>
     </Content>
@@ -98,6 +101,9 @@
     </Content>
     <Content Include="Content\Theme\Content.css">
       <DependentUpon>Content.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Controls.css">
+      <DependentUpon>Controls.scss</DependentUpon>
     </Content>
     <Content Include="Content\Theme\DataSourcesEditor.css">
       <DependentUpon>DataSourcesEditor.scss</DependentUpon>
@@ -172,9 +178,6 @@
     <Content Include="Content\Theme\Menu.css">
       <DependentUpon>Menu.scss</DependentUpon>
     </Content>
-    <Content Include="Content\Theme\Module.css">
-      <DependentUpon>Module.scss</DependentUpon>
-    </Content>
     <Content Include="Content\Theme\Paginator.css">
       <DependentUpon>Paginator.scss</DependentUpon>
     </Content>
@@ -184,17 +187,14 @@
     <Content Include="Content\Theme\PrototypeEditor.css">
       <DependentUpon>PrototypeEditor.scss</DependentUpon>
     </Content>
+    <Content Include="Content\Theme\ShadowPanel.css">
+      <DependentUpon>ShadowPanel.scss</DependentUpon>
+    </Content>
     <Content Include="Content\Theme\Signature.css">
       <DependentUpon>Signature.scss</DependentUpon>
     </Content>
     <Content Include="Content\Theme\Tab.css">
       <DependentUpon>Tab.scss</DependentUpon>
-    </Content>
-    <Content Include="Content\Theme\Trail.css">
-      <DependentUpon>Trail.scss</DependentUpon>
-    </Content>
-    <Content Include="Content\Theme\UserList.css">
-      <DependentUpon>UserList.scss</DependentUpon>
     </Content>
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
@@ -203,6 +203,8 @@
     <Content Include="Scripts\Controls\Controls.js" />
     <Content Include="Scripts\Controls\DataPicker.js" />
     <Content Include="Scripts\Controls\Grid.js" />
+    <Content Include="Scripts\Custom\AutoCenter.js" />
+    <Content Include="Scripts\Custom\Accordion.js" />
     <Content Include="Scripts\Custom\TokenManager.js" />
     <Content Include="Scripts\Custom\ActionBar.js" />
     <Content Include="Scripts\Custom\CheckListGrid.js" />
@@ -238,8 +240,9 @@
     <Content Include="Content\Theme\Fonts\MyriadPro\Semibold\MyriadPro-Semibold.ttf" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Semibold\MyriadPro-Semibold.woff" />
     <Content Include="Content\Theme\AutoComplete.scss" />
+    <Content Include="Content\Theme\ShadowPanel.scss" />
+    <Content Include="Content\Theme\Accordion.scss" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
-    <Content Include="Content\Theme\UserList.scss" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Bold\Myriad Pro.scss" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Bold\MyriadPro-Bold.eot" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Bold\MyriadPro-Bold.woff" />
@@ -353,7 +356,6 @@
   <ItemGroup>
     <Content Include="Content\Theme\ActionBar.scss" />
     <Content Include="Content\Theme\AppMode.scss" />
-    <Content Include="Content\Theme\Trail.scss" />
     <Content Include="Content\Theme\Breadcrumbs.scss" />
     <Content Include="Content\Theme\CheckList.scss" />
     <Content Include="Content\Theme\CheckListGrid.scss" />
@@ -390,7 +392,7 @@
     <Content Include="Content\Theme\Matematici.scss" />
     <Content Include="Content\Theme\Matematici\Matematici.psd" />
     <Content Include="Content\Theme\Menu.scss" />
-    <Content Include="Content\Theme\Module.scss" />
+    <Content Include="Content\Theme\Controls.scss" />
     <Content Include="Content\Theme\Paginator.scss" />
     <Content Include="Content\Theme\PropertyPanel.scss" />
     <Content Include="Content\Theme\PrototypeEditor.scss" />

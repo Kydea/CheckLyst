@@ -114,10 +114,7 @@
                 top: 50%;
                 border: solid #666;
                 border-width: 0 2px 2px 0;
-                -webkit-animation: rotation 1s forwards;
-                -moz-animation: rotation 1s forwards;
-                -o-animation: rotation 1s forwards;
-                animation: rotation 1s forwards;
+                animation: rotation 300ms forwards;
                 transform: translateY(-50%) rotate(-135deg) skew(8.16deg, 8.16deg); }
             nav.Menu ul.Menu li.MenuItem ul.SubMenu li a {
               color: #ccc;

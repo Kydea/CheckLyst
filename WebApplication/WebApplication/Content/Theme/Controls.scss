@@ -1,0 +1,147 @@
+﻿@import "Library";
+
+div.Errors {
+    color: red;
+    margin-top: 20px;
+    display: none;
+}
+
+input.Error, input.input-validation-error, select.Error, select.input-validation-error {
+    border: solid 1px red !important;
+    outline-color: #f99;
+}
+
+label {
+    display: block;
+}
+
+span.field-validation-error {
+    padding-left: 5px;
+    color: red;
+    font-size: 14px;
+}
+
+div.Input {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+input[type=text], input[type=range], input[type=number], input[type=password], input[type=email], input[type=file], select, textarea, div.Input {
+    display: block;
+    border-radius: 3px;
+    border: solid 1px $Color-Border-Grey;
+    background: white;
+    width: 100%;
+    padding: 5px 10px;
+    resize: none;
+    line-height: $Metric-Control-Height;
+    height: $Metric-Control-Height;
+
+    &[readonly], &.ReadOnly {
+        border-color: $Color-Border-Black;
+        background-color: $Color-Background-Grey3;
+    }
+
+    & + i {
+        position: relative;
+        float: left;
+        margin-left: -27px;
+        margin-top: 12px;
+    }
+}
+
+a.Button {
+    text-transform: uppercase;
+    color: white;
+    padding: 0 10px;
+    min-width: 120px;
+    display: inline-block;
+    height: $Metric-Control-Height;
+    line-height: $Metric-Control-Height;
+    border-radius: 5px 0 0 5px;
+    border: none;
+    position: relative;
+    margin-right: $Metric-Control-Height;
+    background-color: $Color-Font-Green;
+    text-align: center;
+    cursor: default;
+
+    i.fa {
+        border-left: 1px solid #ebebeb;
+        line-height: $Metric-Control-Height;
+        height: $Metric-Control-Height;
+        right: -$Metric-Control-Height;
+        width: $Metric-Control-Height;
+        background-color: inherit;
+        border-radius: 0 5px 5px 0;
+        position: absolute;
+        top: 0;
+    }
+
+    &:hover, &.Selected {
+        text-decoration: none !important;
+
+        &:not(.ReadOnly) {
+            background-color: $Color-Font-Yellow !important;
+            color: white;
+        }
+    }
+
+    &.Icon {
+        float: left;
+        min-width: 0;
+        margin: 0 0 5px 10px;
+        width: 24px;
+        padding: 5px 0;
+    }
+
+    &.Invalid {
+        color: red;
+    }
+
+    &.ReadOnly {
+        background-color: $Color-Background-Grey1;
+    }
+}
+
+div.validation-summary-errors {
+
+    ul {
+        li {
+        }
+    }
+
+    &::before {
+    }
+}
+
+form {
+    padding: 20px;
+    border: 1px solid $Color-Border-Grey;
+    position: relative;
+
+    label { //to do
+        float: left;
+        margin-right: 20px;
+        width: 200px;
+
+        input, select {
+            margin-top: 5px;
+        }
+
+        &.Clearing {
+            margin-top: 20px;
+        }
+    }
+
+    a.Button {
+        margin-top: 21px;
+    }
+
+    &::after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+}
+

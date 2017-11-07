@@ -1,10 +1,7 @@
 ﻿div.TabContainer {
   position: relative;
   overflow: hidden;
-  -moz-transition: height 0.5s;
-  -o-transition: height 0.5s;
-  -webkit-transition: height 0.5s;
-  transition: height 0.5s; }
+  transition: height .5s; }
   div.TabContainer .TabLabels::after {
     content: "";
     position: absolute;
@@ -45,10 +42,7 @@
     width: 100%;
     top: 40px;
     opacity: 0;
-    -moz-transition: opacity 0.5s;
-    -o-transition: opacity 0.5s;
-    -webkit-transition: opacity 0.5s;
-    transition: opacity 0.5s;
+    transition: opacity .5s;
     z-index: 50; }
     div.TabContainer .Tab.Selected {
       opacity: 1;

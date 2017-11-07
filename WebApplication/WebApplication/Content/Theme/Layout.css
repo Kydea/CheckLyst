@@ -10,7 +10,8 @@ html, body {
   position: absolute;
   width: 100%;
   color: black;
-  font-size: 13px; }
+  font-size: 14px;
+  background-color: #ebebeb; }
 
 ul.Plain {
   margin: 0;
@@ -92,7 +93,7 @@ header {
     text-transform: none;
     height: 70px;
     background-color: white;
-    font: normal 14px/70px Myriad, Arial, sans-serif; }
+    font: normal 14px/70px Arial, sans-serif; }
     @media only screen and (min-width: 760px) {
       header div#UserPanel {
         top: 0;
@@ -127,9 +128,6 @@ header {
         margin: 0 10px;
         transform: translate(0, 25%); }
       header div#UserPanel a i {
-        -webkit-border-radius: 50%;
-        -moz-border-radius: 50%;
-        -ms-border-radius: 50%;
         border-radius: 50%;
         color: white;
         background-color: #009688;

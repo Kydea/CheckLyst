@@ -27,8 +27,8 @@ input[type=text], input[type=range], input[type=number], input[type=password], i
   width: 100%;
   padding: 5px 10px;
   resize: none;
-  font-size: 12px;
-  min-height: 26px; }
+  line-height: 30px;
+  height: 30px; }
   input[type=text][readonly], input[type=text].ReadOnly, input[type=range][readonly], input[type=range].ReadOnly, input[type=number][readonly], input[type=number].ReadOnly, input[type=password][readonly], input[type=password].ReadOnly, input[type=email][readonly], input[type=email].ReadOnly, input[type=file][readonly], input[type=file].ReadOnly, select[readonly], select.ReadOnly, textarea[readonly], textarea.ReadOnly, div.Input[readonly], div.Input.ReadOnly {
     border-color: #999;
     background-color: #f5f5f5; }
@@ -38,29 +38,36 @@ input[type=text], input[type=range], input[type=number], input[type=password], i
     margin-left: -27px;
     margin-top: 12px; }
 
-a.Button, input[type=submit] {
-  display: block;
-  padding: 5px 10px;
-  background-color: #406f81;
-  border: none;
-  color: white;
-  text-align: center;
-  cursor: default; }
-  a.Button.ReadOnly, input[type=submit].ReadOnly {
-    background-color: #dcdbe0; }
-  a.Button:hover, a.Button.Selected, input[type=submit]:hover, input[type=submit].Selected {
-    text-decoration: none !important; }
-    a.Button:hover:not(.ReadOnly), a.Button.Selected:not(.ReadOnly), input[type=submit]:hover:not(.ReadOnly), input[type=submit].Selected:not(.ReadOnly) {
-      background-color: #499dbf !important; }
-
 a.Button {
-  color: #fff;
+  text-transform: uppercase;
+  color: white;
   padding: 0 10px;
   min-width: 120px;
   display: inline-block;
   height: 30px;
-  background-color: #ffba00;
-  font: normal 14px/30px Myriad, Arial, sans-serif; }
+  line-height: 30px;
+  border-radius: 5px 0 0 5px;
+  border: none;
+  position: relative;
+  margin-right: 30px;
+  background-color: #009688;
+  text-align: center;
+  cursor: default; }
+  a.Button i.fa {
+    border-left: 1px solid #ebebeb;
+    line-height: 30px;
+    height: 30px;
+    right: -30px;
+    width: 30px;
+    background-color: inherit;
+    border-radius: 0 5px 5px 0;
+    position: absolute;
+    top: 0; }
+  a.Button:hover, a.Button.Selected {
+    text-decoration: none !important; }
+    a.Button:hover:not(.ReadOnly), a.Button.Selected:not(.ReadOnly) {
+      background-color: #ffba00 !important;
+      color: white; }
   a.Button.Icon {
     float: left;
     min-width: 0;
@@ -69,30 +76,25 @@ a.Button {
     padding: 5px 0; }
   a.Button.Invalid {
     color: red; }
-  a.Button.Save {
-    position: relative; }
-    a.Button.Save i.fa {
-      position: absolute;
-      top: 6px;
-      right: 6px; }
-  a.Button.DefaultButton {
-    position: relative;
-    border-radius: 5px 0 0 5px;
-    margin-right: 30px;
-    background-color: #009688; }
-    a.Button.DefaultButton i.fa {
-      border-left: 1px solid #ebebeb;
-      line-height: 30px;
-      height: 30px;
-      right: -30px;
-      width: 30px;
-      background-color: inherit;
-      border-radius: 0 5px 5px 0;
-      position: absolute;
-      top: 0; }
-  a.Button.AccordionButton {
-    background-color: #ffba00;
-    border-radius: 5px 0 0 0; }
-    a.Button.AccordionButton i.fa {
-      border-radius: 0 5px 0 0; }
+  a.Button.ReadOnly {
+    background-color: #dcdbe0; }
+
+form {
+  padding: 20px;
+  border: 1px solid #afb4b5;
+  position: relative; }
+  form label {
+    float: left;
+    margin-right: 20px;
+    width: 200px; }
+    form label input, form label select {
+      margin-top: 5px; }
+    form label.Clearing {
+      margin-top: 20px; }
+  form a.Button {
+    margin-top: 21px; }
+  form::after {
+    content: "";
+    display: table;
+    clear: both; }
 
