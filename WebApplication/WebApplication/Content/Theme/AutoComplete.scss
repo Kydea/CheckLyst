@@ -20,6 +20,7 @@ input.AutoComplete-Filter {
     border-top: none !important;
     border-bottom: none !important;
     background-color: $Color-Background-Grey1 !important;
+    z-index: $Depth-AutoComplete;
     outline: none;
 }
 

@@ -14,6 +14,7 @@ input.AutoComplete-Filter {
   border-top: none !important;
   border-bottom: none !important;
   background-color: #dcdbe0 !important;
+  z-index: 34;
   outline: none; }
 
 div.AutoComplete-List {
