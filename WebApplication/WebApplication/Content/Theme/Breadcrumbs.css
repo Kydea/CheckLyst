@@ -14,15 +14,18 @@
       padding-right: 10px; } }
   div#Breadcrumbs a, div#Breadcrumbs span {
     color: #999;
-    display: inline-block; }
-  div#Breadcrumbs a {
+    display: inline-block;
     padding-right: 5px; }
-    div#Breadcrumbs a:hover {
-      text-decoration: none;
-      color: blue; }
-    div#Breadcrumbs a::after {
+    div#Breadcrumbs a::after, div#Breadcrumbs span::after {
       content: "|";
       font-weight: 100;
       padding-left: 5px;
       color: #ccc !important; }
+    div#Breadcrumbs a:last-child, div#Breadcrumbs span:last-child {
+      padding-right: 0; }
+      div#Breadcrumbs a:last-child::after, div#Breadcrumbs span:last-child::after {
+        content: none; }
+  div#Breadcrumbs a:hover {
+    text-decoration: none;
+    color: blue; }
 

@@ -9,9 +9,18 @@ namespace CheckListManager.Infrastructure.Data
 {
 	public interface IInfrastructureRepository : IRepository
 	{
-		Task EditDepartmentAsync(Departments Department);
+		Task<Departments> EditDepartmentAsync(long Company, Departments Department);
 
-        Task EditPrototypeTypeAsync(PrototypeTypes PrototypeType);
+        Task<PrototypeTypes> EditPrototypeTypeAsync(long Company, PrototypeTypes PrototypeType);
+
+        Task<Departments> GetDepartmentAsync(long companyId, long id);
+
+        Task<PagingResponse<List<TResult>>> GetDepartmentsAsync<TResult>(
+            long companyId,
+            Expression<Func<Departments, TResult>> select,
+            string name, int currentPage, int itemsPerPage);
+
+        Task<PrototypeTypes> GetPrototypeTypeAsync(long companyId, long id);
 
         Task<PagingResponse<List<TResult>>> GetPrototypeTypesAsync<TResult>(
             long companyId,

@@ -56,6 +56,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Companies\ICompaniesService.cs" />
     <Compile Include="Companies\CompaniesService.cs" />
+    <Compile Include="Departments\IDepartmentsService.cs" />
+    <Compile Include="Departments\DepartmentsRequest.cs" />
+    <Compile Include="Departments\DepartmentsResponse.cs" />
+    <Compile Include="Departments\DepartmentsRow.cs" />
+    <Compile Include="Departments\DepartmentsService.cs" />
     <Compile Include="PrototypeTypes\IPrototypeTypesService.cs" />
     <Compile Include="PrototypeTypes\PrototypeTypesRequest.cs" />
     <Compile Include="PrototypeTypes\PrototypeTypesResponse.cs" />
