@@ -42,6 +42,11 @@ div.AutoComplete-List {
       text-decoration: none !important; }
     div.AutoComplete-List a.Selected {
       background: #ebebeb; }
+  div.AutoComplete-List i {
+    height: 30px;
+    line-height: 30px;
+    display: block;
+    text-align: center; }
 
 i.AutoComplete {
   position: absolute;

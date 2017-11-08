@@ -1,5 +1,5 @@
-﻿<div id="UsersDetailPage">
-    <h1>Prototype type</h1>
+﻿<div id="UsersDetailPage" style="width: 300px">
+    <h2>Prototype type</h2>
 
     <form id="Detail">
         <div class="Triggers">
@@ -37,9 +37,11 @@
     var data = matematici.dialog.getData();
 
     matematici.dialog.setButtons([
-        { text: "ok", icon: "check" },
+        { cancelButton: true, hidden: true },
         { text: "save", icon: "save", id: "SaveButton", handler: function () { alert("OK"); return true; } }
     ]);
+
+    matematici.dialog.setWidth($("#UsersDetailPage").width());
 
     new matematici.Form("form#Detail", {
         applyButton: "#SaveButton",

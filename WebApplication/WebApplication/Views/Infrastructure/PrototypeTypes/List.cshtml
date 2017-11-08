@@ -12,7 +12,7 @@
         <form id="Filters" action="@BaseUrl/Infrastructure/PrototypeTypes">
             <label>
                 Department
-                <select name="department" />
+                <select name="department" data-watermark="pippo" />
             </label>
             <label>
                 Description
@@ -73,7 +73,7 @@
                 grid = new matematici.Grid("div#Content table.Grid", {
                     rowClick: function (row) {
                         matematici.dialog.detail({
-                            url: "@Url.Action("Detail")",
+                            url: "@Url.Action("PrototypeTypesDetail")",
                             data: row.data("values")
                         });
                     }

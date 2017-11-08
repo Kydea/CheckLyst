@@ -10,11 +10,12 @@
             {
                 <div class="Message">
                     Your session has expired. Please login again.
-                </div>}
+                </div>
+            }
 
             <input type="hidden" name="grant_type" value="password" />
             <label for="companyId">Company</label>
-            <select name="companyId"><option value="-1">(select)</option></select>
+            <select name="companyId"></select>
             <label for="username">User code</label>
             <input type="text" name="username" />
             <label for="password">Password</label>
@@ -47,7 +48,7 @@
 
         new matematici.Login("div.Login", function () {
             error.empty().hide();
-            if (companyList.val() == -1)
+            if (companyList.val() == null)
                 error.html("select a company").show()
             else
                 $.ajax(matematici.urls.accessControl.token, {
@@ -74,6 +75,7 @@
                 var company = result[index];
                 companyList.append($("<option />").attr("value", company.id).text(company.name));
             }
+            companyList.val(null);
             companyList.data("autoComplete").refresh();
             callback.call();
         }).fail(function (jqXhr, textStatus, errorThrown) {

@@ -116,26 +116,23 @@ div.validation-summary-errors {
 }
 
 form {
-    padding: 20px;
+    padding: 0 $Metric-Control-Space $Metric-Control-Space;
     border: 1px solid $Color-Border-Grey;
     position: relative;
 
     label { //to do
         float: left;
-        margin-right: 20px;
+        margin-top: $Metric-Control-Space;
+        margin-right: $Metric-Control-Space;
         width: 200px;
 
         input, select {
             margin-top: 5px;
         }
-
-        &.Clearing {
-            margin-top: 20px;
-        }
     }
 
     a.Button {
-        margin-top: 21px;
+        margin-top: 21px + $Metric-Control-Space;
     }
 
     &::after {

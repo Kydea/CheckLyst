@@ -80,19 +80,18 @@ a.Button {
     background-color: #dcdbe0; }
 
 form {
-  padding: 20px;
+  padding: 0 20px 20px;
   border: 1px solid #afb4b5;
   position: relative; }
   form label {
     float: left;
+    margin-top: 20px;
     margin-right: 20px;
     width: 200px; }
     form label input, form label select {
       margin-top: 5px; }
-    form label.Clearing {
-      margin-top: 20px; }
   form a.Button {
-    margin-top: 21px; }
+    margin-top: 41px; }
   form::after {
     content: "";
     display: table;

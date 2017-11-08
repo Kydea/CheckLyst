@@ -55,6 +55,13 @@ div.AutoComplete-List {
             background: $Color-Background-Grey4;
         }
     }
+
+    i {
+        height: $Metric-Control-Height;
+        line-height: $Metric-Control-Height;
+        display: block;
+        text-align: center;
+    }
 }
 
 i.AutoComplete {

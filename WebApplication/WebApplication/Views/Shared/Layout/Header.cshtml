@@ -49,7 +49,15 @@
                 </div>
             </li>
 
-            <li class="MenuItem"><a class="MenuItem" href="@Url.Action("Dashboard", "Default")">Dashboard</a></li>
+            <li class="MenuItem">
+                <a class="MenuItem" href="@Url.Action("Dashboard", "Default")">Dashboard</a>
+
+                <ul class="SubMenu Extended">
+                    <li>
+                        <a href="@Url.Action("Dashboard", "Default")">Dashboard</a>
+                    </li>
+                </ul>
+            </li>
 
             <li class="MenuItem CompanyRole">
                 <span class="MenuItem">Settings</span>
@@ -78,9 +86,21 @@
 
             <li data-role="Prototypes" class="MenuItem">
                 <a href="@Url.Action("List", "Prototypes")" class="MenuItem">Prototypes</a>
+
+                <ul class="SubMenu Extended">
+                    <li>
+                        <a href="@Url.Action("List", "Prototypes")">Prototypes</a>
+                    </li>
+                </ul>
             </li>
             <li data-role="Instances" class="MenuItem">
                 <a href="@Url.Action("List", "Instances")" class="MenuItem">Instances </a>
+
+                <ul class="SubMenu Extended">
+                    <li>
+                        <a href="@Url.Action("List", "Instances")">Instances</a>
+                    </li>
+                </ul>
             </li>
         </ul>
     </nav>

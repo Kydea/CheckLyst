@@ -1,5 +1,5 @@
 ﻿body:not(.Login) div#Content {
-  min-height: calc(100vh - 70px - 32px); }
+  min-height: calc(100vh - 70px - 34px); }
   @media only screen and (min-width: 760px) {
     body:not(.Login) div#Content {
       margin-left: 70px; } }

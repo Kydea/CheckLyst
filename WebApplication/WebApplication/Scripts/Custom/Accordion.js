@@ -8,7 +8,6 @@
 			panel.addClass("Accordion");
 
 			button.on("click", function () {
-				console.log("OK")
 				click();
 			});
 
