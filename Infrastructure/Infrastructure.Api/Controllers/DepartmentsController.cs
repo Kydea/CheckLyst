@@ -32,7 +32,7 @@ namespace CheckListManager.Infrastructure.Api.Controllers
         [Route("Edit")]
         public async Task<IHttpActionResult> Edit(DepartmentsRow request)
         {
-            return Ok(await _departmentsService.Edit(Identity.CompanyId, request));
+            return Ok(await _departmentsService.Edit(Identity, request));
         }
     }
 }

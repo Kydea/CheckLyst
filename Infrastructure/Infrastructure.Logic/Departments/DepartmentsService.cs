@@ -1,4 +1,5 @@
 ﻿using CheckListManager.Common.Core.Services;
+using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Logic.DataEngine;
@@ -39,12 +40,12 @@ namespace CheckListManager.Infrastructure.Logic.Departments
                     Form.Data.Department, Form.CurrentPage, Form.ItemsPerPage
                 );
 
-        public async Task<DepartmentsResponse> Edit(long Company, DepartmentsRow record)
+        public async Task<DepartmentsResponse> Edit(DefaultIdentity Identity, DepartmentsRow record)
         {
             var response = new DepartmentsResponse();
             Common.Data.Departments Department;
             if (record.ID.HasValue) {
-                Department = await _infrastructureRepository.GetDepartmentAsync(Company, record.ID.Value);
+                Department = await _infrastructureRepository.GetDepartmentAsync(Identity.CompanyId, record.ID.Value);
                 Department.ModifiedOn = DateTimeOffset.UtcNow;
                 //Department.ModifiedBy = //TODO current user
             }
@@ -56,9 +57,9 @@ namespace CheckListManager.Infrastructure.Logic.Departments
                     //CreatedBy = //TODO current user
                 };
             }
-            await _infrastructureRepository.EditDepartmentAsync(Company, new Common.Data.Departments
+            await _infrastructureRepository.EditDepartmentAsync(Identity.CompanyId, new Common.Data.Departments
             {
-                Name = record.Name;
+                Name = record.Name
             });
             return response;
         }

@@ -1,4 +1,5 @@
 ﻿using CheckListManager.Common.Core.Services;
+using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Logic.Trail;
 using System;
@@ -13,6 +14,6 @@ namespace CheckListManager.Infrastructure.Logic.Departments
     {
         Task<PagingResponse<List<DepartmentsRow>>> GetDataAsync(long Company, PagingRequest<DepartmentsRequest> form);
 
-        Task<DepartmentsResponse> Edit(long Company, DepartmentsRow record);
+        Task<DepartmentsResponse> Edit(DefaultIdentity Identity, DepartmentsRow record);
     }
 }
