@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Web.Compilation;
@@ -7,8 +9,10 @@ using System.Web.Cors;
 using System.Web.Http;
 using System.Web.Http.ExceptionHandling;
 using Autofac;
+using Autofac.Core;
 using Autofac.Core.Lifetime;
 using Autofac.Integration.WebApi;
+using CheckListManager.Common.Core.Network;
 using CheckListManager.Common.Logic.Api.Authentication;
 using CheckListManager.Common.Logic.Api.Filters;
 using CheckListManager.Common.Logic.Configuration;
@@ -18,6 +22,8 @@ using Microsoft.Owin.Security.Infrastructure;
 using Microsoft.Owin.Security.OAuth;
 using Newtonsoft.Json.Serialization;
 using Owin;
+
+using ServiceClient = CheckListManager.Common.Core.Web.Network.ServiceClient;
 
 namespace CheckListManager.Common.Logic.Api.Configuration
 {
@@ -39,6 +45,18 @@ namespace CheckListManager.Common.Logic.Api.Configuration
 		{
 			base.OnCreateBuilder(builder);
 			builder.RegisterApiControllers(Assemblies);
+			builder.RegisterHttpRequestMessage(_configuration);
+
+			builder.Register(ConfigureServiceClient)
+				.As<IServiceClient>()
+				.As<ServiceClient>()
+				.InstancePerDependency();
+		}
+
+		private static ServiceClient ConfigureServiceClient(IComponentContext context, IEnumerable<Parameter> parameters)
+		{
+			var baseUrl = GetServiceBaseUrl(context, parameters);
+			return new ServiceClient(baseUrl, context.Resolve<HttpRequestMessage>());
 		}
 
 		protected override Assembly[] GetAssemblies()
