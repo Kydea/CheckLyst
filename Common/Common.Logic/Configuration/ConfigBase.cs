@@ -127,22 +127,20 @@ namespace CheckListManager.Common.Logic.Configuration
 
 		private static ServiceClient ConfigureServiceClient(IComponentContext context, IEnumerable<Parameter> parameters)
 		{
-			string baseUrl = null;
-			try
-			{
-				baseUrl = parameters.Named<string>("baseUrl");
-			}
-			catch (Exception)
-			{
-				// ignored
-			}
+			var baseUrl = GetServiceBaseUrl(context, parameters);
+			return new ServiceClient(baseUrl);
+		}
 
-			if (baseUrl == null)
+		protected static string GetServiceBaseUrl(IComponentContext context, IEnumerable<Parameter> parameters)
+		{
+			if (!(parameters.OfType<NamedParameter>()
+				.FirstOrDefault(p => "BaseUrl".Equals(p.Name, StringComparison.InvariantCultureIgnoreCase))?.Value is string baseUrl))
 			{
 				var configuration = context.Resolve<IConfigurationService>();
 				baseUrl = configuration.ApiBaseUrl;
 			}
-			return new ServiceClient(baseUrl);
+
+			return baseUrl;
 		}
 
 		private IMapper CreateMapper()
