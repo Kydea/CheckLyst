@@ -53,21 +53,21 @@ namespace CheckListManager.Common.Core.Network
 			_configured = true;
 		}
 
-		public Task<HttpResponseMessage> Get(string url)
+		public Task<HttpResponseMessage> GetAsync(string url)
 			=> _client.GetAsync(url);
 
-		public async Task<T> Get<T>(string url)
+		public async Task<T> GetAsync<T>(string url)
 		{
-			var response = await Get(url);
+			var response = await GetAsync(url);
 			return await response.Content.ReadAsAsync<T>();
 		}
 
-		public Task<HttpResponseMessage> Post<T>(string url, T payload)
+		public Task<HttpResponseMessage> PostAsync<T>(string url, T payload)
 			=> _client.PostAsJsonAsync(url, payload);
 
-		public async Task<TU> Post<T, TU>(string url, T payload)
+		public async Task<TU> PostAsync<T, TU>(string url, T payload)
 		{
-			var response = await Post(url, payload);
+			var response = await PostAsync(url, payload);
 			return await response.Content.ReadAsAsync<TU>();
 		}
 	}

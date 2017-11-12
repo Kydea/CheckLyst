@@ -5,10 +5,10 @@ namespace CheckListManager.Common.Core.Network
 {
 	public interface IServiceClient
 	{
-		Task<HttpResponseMessage> Get(string url);
-		Task<T> Get<T>(string url);
+		Task<HttpResponseMessage> GetAsync(string url);
+		Task<T> GetAsync<T>(string url);
 
-		Task<HttpResponseMessage> Post<T>(string url, T payload);
-		Task<TU> Post<T, TU>(string url, T payload);
+		Task<HttpResponseMessage> PostAsync<T>(string url, T payload);
+		Task<TU> PostAsync<T, TU>(string url, T payload);
 	}
 }

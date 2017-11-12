@@ -29,7 +29,7 @@ namespace CheckListManager.Instances.Logic.Services
 			var response = new CreateInstanceResponse
 			{
 				Code = _hashService.HashStringToString($"{prototype}-{version}-{Guid.NewGuid()}"),
-				Instance = instance
+				CheckList = instance
 			};
 
 			return response;
@@ -38,7 +38,7 @@ namespace CheckListManager.Instances.Logic.Services
 		private async Task<Instance> CreateInstanceFromPrototype(int prototype, int version)
 		{
 			//TODO: error handling
-			var httpResponse = await _client.Get($"Prototypes/Prototype/Get/{prototype}/{version}");
+			var httpResponse = await _client.GetAsync($"Prototypes/Prototype/GetAsync/{prototype}/{version}");
 			var responseData = await httpResponse.Content.ReadAsStringAsync();
 
 			var response = JsonConvert.DeserializeObject<ResponseMessage<GetPrototypeResponse>>(responseData, _converter);

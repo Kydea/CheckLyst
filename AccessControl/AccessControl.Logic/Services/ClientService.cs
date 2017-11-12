@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using CheckListManager.AccessControl.Logic.Models;
 using CheckListManager.Common.Logic.Cache;
 using CheckListManager.Common.Logic.Services;
@@ -30,7 +31,7 @@ namespace CheckListManager.AccessControl.Logic.Services
 				UserCode = userCode
 			};
 
-			await _cache.SetAsync($"Client.{clientId}", client, RegionName); //TODO add expiration date based on token expiration
+			await _cache.SetAsync($"Client.{clientId}", client, RegionName, expiry: TimeSpan.FromMinutes(60)); //TODO add expiration date based on token expiration
 																			 //TODO extend expiration when token is refresh (use SQS)
 
 			return clientId;

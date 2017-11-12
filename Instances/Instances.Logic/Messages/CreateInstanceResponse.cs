@@ -7,6 +7,6 @@ namespace CheckListManager.Instances.Logic.Messages
 		public int? Id { get; set; }
 		public string Code { get; set; }
 
-		public Instance Instance { get; set; }
+		public Instance CheckList { get; set; }
 	}
 }
