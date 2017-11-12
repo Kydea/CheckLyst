@@ -41,9 +41,9 @@ namespace CheckListManager.Instances.Logic.Services
 			var httpResponse = await _client.Get($"Prototypes/Prototype/Get/{prototype}/{version}");
 			var responseData = await httpResponse.Content.ReadAsStringAsync();
 
-			var response = JsonConvert.DeserializeObject<ResponseMessage<Instance>>(responseData, _converter);
+			var response = JsonConvert.DeserializeObject<ResponseMessage<GetPrototypeResponse>>(responseData, _converter);
 			
-			return response.Data;
+			return response.Data.CheckList;
 		}
 	}
 }

@@ -63,6 +63,7 @@
     <Compile Include="List\ListRequest.cs" />
     <Compile Include="Messages\CreateInstanceRequest.cs" />
     <Compile Include="Messages\CreateInstanceResponse.cs" />
+    <Compile Include="Messages\GetPrototypeResponse.cs" />
     <Compile Include="Models\CheckLists\Element.cs" />
     <Compile Include="Models\CheckLists\Field.cs" />
     <Compile Include="Models\CheckLists\Group.cs" />
