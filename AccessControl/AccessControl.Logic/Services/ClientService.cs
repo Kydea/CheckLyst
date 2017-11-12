@@ -31,7 +31,7 @@ namespace CheckListManager.AccessControl.Logic.Services
 				UserCode = userCode
 			};
 
-			await _cache.SetAsync($"Client.{clientId}", client, RegionName, expiry: TimeSpan.FromMinutes(60)); //TODO add expiration date based on token expiration
+			await _cache.SetAsync($"Client.{clientId}", client, RegionName, TimeSpan.FromMinutes(60)); //TODO add expiration date based on token expiration
 																			 //TODO extend expiration when token is refresh (use SQS)
 
 			return clientId;
