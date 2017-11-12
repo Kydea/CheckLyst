@@ -9,6 +9,6 @@ namespace CheckListManager.Prototypes.Logic.Messages
 
 		//TODO add properties from DB
 
-		public Prototype Prototype { get; set; }
+		public Prototype CheckList { get; set; }
 	}
 }
