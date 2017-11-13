@@ -109,7 +109,7 @@ namespace CheckListManager.Instances.Logic.List
 
         public async Task<PagingResponse<List<ListRow>>> GetDataAsync(long company, PagingRequest<ListRequest> form)
             =>
-                await _instancesRepository.GetInstancessAsync(
+                await _instancesRepository.GetInstancesAsync(
                     company,
                     i => new ListRow
                     {

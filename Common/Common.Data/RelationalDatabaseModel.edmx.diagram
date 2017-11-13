@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="b7aaff1a649b4135b83e9d51a56f22d7" Name="Diagram1" ZoomLevel="40">
+      <Diagram DiagramId="b7aaff1a649b4135b83e9d51a56f22d7" Name="Diagram1" ZoomLevel="59">
         <EntityTypeShape EntityType="RelationalDatabaseModel.Companies" Width="1.5" PointX="3" PointY="3" IsExpanded="true" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.Departments" Width="1.5" PointX="5.25" PointY="1.25" IsExpanded="true" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.Users" Width="1.5" PointX="5.25" PointY="4.625" IsExpanded="true" />
@@ -64,15 +64,15 @@
         <AssociationConnector Association="RelationalDatabaseModel.Functions_FunctionGroup_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.UserFunctions_Function" />
         <AssociationConnector Association="RelationalDatabaseModel.UserFunctions_User" />
-        <EntityTypeShape EntityType="RelationalDatabaseModel.Instances" Width="1.5" PointX="17.625" PointY="13.25" />
-        <AssociationConnector Association="RelationalDatabaseModel.InstanceExpressionValues_Instance_fkey" />
-        <AssociationConnector Association="RelationalDatabaseModel.FK_Instances_InstanceNumerator" />
-        <AssociationConnector Association="RelationalDatabaseModel.Instances_InstanceState_fkey" />
-        <AssociationConnector Association="RelationalDatabaseModel.InstanceTags_Instance_fkey" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.Records" Width="1.5" PointX="15.125" PointY="1.5" />
         <AssociationConnector Association="RelationalDatabaseModel.Records_Action_fkey" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.DataSources" Width="1.5" PointX="0.75" PointY="9.75" />
-        <AssociationConnector Association="RelationalDatabaseModel.FK_Instances_Prototype" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.Instances" Width="1.5" PointX="17.625" PointY="11.875" />
+        <AssociationConnector Association="RelationalDatabaseModel.InstanceExpressionValues_Instance_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.FK_Instances_InstanceNumerator" />
+        <AssociationConnector Association="RelationalDatabaseModel.Instances_InstanceState_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.Instances_Prototype_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.InstanceTags_Instance_fkey" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -58,7 +58,7 @@ create table "CheckLists"."PrototypeVersions"
 	"ValidFrom" timestamptz,
 	"ValidUntil" timestamptz,
 
-    "ProposedState" varchar (20) references "CheckLists"."VersionStates",
+	"ProposedState" varchar (20) references "CheckLists"."VersionStates",
 	"ProposedDate" timestamptz,
 
 	"InstanceConfirmationWorkFlow" bigint references "WorkFlows"."WorkFlows",	
@@ -145,7 +145,8 @@ values
 
 create table "CheckLists"."Instances"
 (
-    "ID" bigserial primary key,
+	"ID" bigserial primary key,
+	"Code" varchar (50) not null,
     
 	"Prototype" bigint references "CheckLists"."Prototypes",
 	"Version" int,
@@ -167,7 +168,8 @@ create table "CheckLists"."Instances"
 );
 
 create unique index "Index_Instance_Number" on "CheckLists"."Instances" ("Prototype", "Version", "Year", "Number");
-create unique index "Index_Instance_Code" on "CheckLists"."Instances" ("PrototypeCode", "Version", "Year", "Number");
+create unique index "Index_Instance_PrototypeCode" on "CheckLists"."Instances" ("PrototypeCode", "Version", "Year", "Number");
+create unique index "Index_Instance_Code" on "CheckLists"."Instances" ("Code");
 
 create table "CheckLists"."InstanceTags"
 (

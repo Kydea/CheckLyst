@@ -15,7 +15,7 @@ namespace CheckListManager.Instances.Data
 		{
         }
 
-        public async Task<PagingResponse<List<TResult>>> GetInstancessAsync<TResult, TKey>(
+        public async Task<PagingResponse<List<TResult>>> GetInstancesAsync<TResult, TKey>(
             long companyId,
             Expression<Func<Common.Data.Instances, TResult>> select,
             Expression<Func<Common.Data.Instances, bool>> filters,
@@ -43,5 +43,13 @@ namespace CheckListManager.Instances.Data
                 CurrentPage = currentPage
             };
         }
+
+	    public async Task<Common.Data.Instances> SaveInstanceAsync(Common.Data.Instances instance)
+	    {
+		    Entities.Instances.Add(instance);
+		    await SaveChangesAsync();
+
+		    return instance;
+	    }
     }
 }
