@@ -1,5 +1,8 @@
 ﻿@import "_Library.scss";
 
+$Logo-Container-Height: 100px;
+$Input-Control-Height: 45px;
+
 body.Login {
     background: white !important;
 
@@ -26,6 +29,7 @@ body.Login {
         div.Box {
             background-color: white;
             padding: 20px;
+            padding-top: $Logo-Container-Height + 50px; // Logo container's height + Margin-Bottom
             margin: 0 auto;
             position: relative;
 
@@ -44,24 +48,122 @@ body.Login {
                 margin-bottom: 5px;
             }
 
+            input {
+                line-height: $Input-Control-Height;
+                height: $Input-Control-Height;
+            }
+
+            div.Group {
+                width: 100%;
+                clear: both;
+
+                &.LeftIcon {
+                    position: relative;
+
+                    & > i {
+                        line-height: $Input-Control-Height;
+                        width: $Input-Control-Height;
+                        position: absolute;
+                        text-align: center;
+                        font-size: 24px;
+                        float: none;
+                        margin: 0;
+                        top: 0;
+
+                        &:not(.AutoComplete) {
+                            border-right: 1px solid $Color-Border-Grey;
+                            left: 0;
+                        }
+
+                        &.AutoComplete {
+                            margin-top: 0 !important;
+                            margin-left: 0 !important;
+                            font-size: 10px;
+                            right: 0;
+                        }
+                    }
+
+                    input:first-of-type {
+                        padding-left: $Input-Control-Height + 10px; // Left square box. // 45x45 + 10px right margin
+                    }
+                }
+
+                &.User {
+                    display: flex;
+                    flex-wrap: wrap;
+
+                    // Developed to work with 2 /input/ elements in a row. /flex-basis:50
+                    input {
+                        flex-basis: 100%;
+
+                        // more than one /input/ element.
+                        &:not(:only-of-type) {
+                            border-radius: 3px 0 0 3px;
+
+                            &:first-of-type {
+                                border-right: none;
+                                flex-basis: calc(50% + 20px);
+                            }
+
+                            &:last-of-type {
+                                border-radius: 0 3px 3px 0;
+                                flex-basis: calc(50% - 24px);
+                            }
+                        }
+                    }
+                }
+            }
+
+            div.AutoComplete-List {
+                margin-top: 45px;
+            }
+
             div.Message {
                 text-align: center;
                 margin: 0 0 20px 0;
                 color: $Color-Font-Blue1;
             }
 
-            div.Buttons {
-                margin-top: 20px;
-                border-top: solid 1px black;
-                padding-top: 20px;
+            // @to_do: Temporaneo.
+            @mixin button-size($size) {
+                height: $size;
+                line-height: $size;
+                margin-right: $size;
 
+                i.fa {
+                    height: $size;
+                    line-height: $size;
+                    right: -$size;
+                    width: $size;
+                }
+            }
+
+            div.Buttons {
                 a {
                     float: right;
                     background-color: black;
 
+                    @include button-size(45px);
+
                     &:hover {
                         background-color: $Color-Background-Blu4;
                     }
+                }
+            }
+
+            // Logo
+            &::before {
+                background: $Color-Font-Green url(../Media/LogoMobile.png) no-repeat center 50%;
+                height: $Logo-Container-Height;
+                position: absolute;
+                display: block;
+                content: "";
+                width: 100%;
+                left: 0;
+                top: 0;
+
+                @media #{$Media-Extended} {
+                    border-radius: 10px 10px 0 0;
                 }
             }
 
