@@ -13,7 +13,7 @@
         text-align: left;
         position: relative;
         height: 50px;
-        border-left: 1px solid #ccc;
+        border-left: 1px solid #cccccc;
         font-weight: 600;
         font-size: 15px;
         font-family: Myriad, Arial, sans-serif; }
@@ -26,13 +26,13 @@
           height: 0;
           transform: translateY(-50%);
           border-width: 6px 10px;
-          border-color: transparent #ccc transparent transparent;
+          border-color: transparent #cccccc transparent transparent;
           border-style: solid;
           transform: rotate(-90deg); }
   table.Grid tbody {
     border-bottom: solid 1px #afb4b5; }
     table.Grid tbody tr td {
-      color: #666;
+      color: #666666;
       padding: 0 20px;
       height: 40px;
       border-right: solid 1px #afb4b5;

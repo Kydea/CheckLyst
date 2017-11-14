@@ -92,29 +92,8 @@ header {
     position: relative;
     z-index: $Depth-Header;
 
-    a#HelpButton {
-        position: absolute;
-        top: 15px;
-        border-radius: 50%;
-        background-color: #406f81;
-        width: 25px;
-        height: 25px;
-        line-height: 25px;
-        color: white;
-        text-align: center;
-        font-size: 14px;
-
-        @media #{$Media-Extended} {
-            right: $Metric-Separator-Extended;
-        }
-
-        @media #{$Media-Mobile} {
-            right: $Metric-Separator-Mobile;
-        }
-    }
-
     div#UserPanel {
-        color: #666;
+        color: $Color-Font-Grey3;
         text-align: center;
         position: relative;
         text-transform: none;
@@ -127,7 +106,7 @@ header {
             left: 0;
             position: fixed;
             text-align: right;
-            border-bottom: 1px solid #ccc;
+            border-bottom: 1px solid $Color-Border-Silver;
             margin-left: $Metric-Header-Height;
             width: calc(100% - #{$Metric-Header-Height});
 
@@ -155,7 +134,7 @@ header {
 
             & + a {
                 &:before {
-                    background-color: #666;
+                    background-color: $Color-Font-Grey3;
                     display: inline-block;
                     content: "";
                     height: 1em;

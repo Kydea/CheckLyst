@@ -25,7 +25,7 @@
       position: relative;
       margin-left: 20px; }
       .Paginator a:not(:first-child)::before, .Paginator span:not(:first-child)::before {
-        border-left: 2px solid #ccc;
+        border-left: 2px solid #cccccc;
         background-color: black;
         display: inline-block;
         position: absolute;
