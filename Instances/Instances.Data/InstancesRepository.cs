@@ -44,12 +44,51 @@ namespace CheckListManager.Instances.Data
             };
         }
 
-	    public async Task<Common.Data.Instances> SaveInstanceAsync(Common.Data.Instances instance)
+	    public async Task<Common.Data.Instances> CreateInstanceAsync(Common.Data.Instances instance)
 	    {
-		    Entities.Instances.Add(instance);
-		    await SaveChangesAsync();
+		    try
+		    {
+			    if (instance == null)
+			    {
+				    throw new ArgumentNullException(nameof(instance), "Instance must be not null");
+			    }
+			    if (instance.Prototype == null)
+			    {
+				    throw new ArgumentNullException(nameof(instance.Prototype), "Prototype must be not null");
+				}
+			    if (instance.Version == null)
+			    {
+				    throw new ArgumentNullException(nameof(instance.Version), "Version must be not null");
+			    }
+			    if (instance.Year == null)
+			    {
+				    throw new ArgumentNullException(nameof(instance.Year), "Year must be not null");
+			    }
 
-		    return instance;
+
+				Entities.Database.BeginTransaction();
+
+			    instance.Number =
+				    await GetInstanceNumberAsync(instance.Prototype.Value, instance.Version.Value, instance.Year.Value);
+
+				Entities.Instances.Add(instance);
+
+			    await SaveChangesAsync();
+
+			    Entities.Database.CurrentTransaction.Commit();
+
+				return instance;
+		    }
+			finally
+		    {
+			    Entities.Database.CurrentTransaction?.Rollback();
+		    }
+	    }
+
+	    public Task<int> GetInstanceNumberAsync(long prototype, int version, int year)
+	    {
+		    return Entities.Database.SqlQuery<int>("\"CheckLists\".\"GetInstanceNumber\"", prototype, version, year)
+			    .FirstOrDefaultAsync();
 	    }
     }
 }

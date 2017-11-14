@@ -102,18 +102,21 @@ create or replace function "CheckLists"."GetInstanceNumber"
 	_Year int
 ) 
 returns int as
-$body$ 
+$$ 
+declare
+	_Number int;
 begin
-	set _Number = 1;
+	_Number = 1;
 
-	select 
-		_Number = isnull(n."Number", 0) + 1
+	select coalesce(n."Number", 0) + 1 into _Number
 	from 
 		"CheckLists"."InstanceNumerators" n 
 	where
 		n."Prototype" = _Prototype
 		and n."Version" = _Version
 		and n."Year" = _Year;
+
+	_Number = coalesce(_Number, 1);
 
 	if _Number = 1 then
 		insert into "CheckLists"."InstanceNumerators"("Prototype", "Version", "Year", "Number")
@@ -127,9 +130,9 @@ begin
 			and "Year" = _Year;
 	end if;
     
-    return _Number;
+    RETURN _Number;
 end 
-$body$ language plpgsql;
+$$ language plpgsql;
 
 create table "CheckLists"."InstanceStates"
 (

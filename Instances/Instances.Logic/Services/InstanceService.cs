@@ -31,7 +31,7 @@ namespace CheckListManager.Instances.Logic.Services
 		{
 			try
 			{
-				var instance = await CreateInstanceFromPrototype(prototype, version);
+				var instance = await CreateInstanceFromPrototypeAsync(prototype, version);
 				var response = new CreateInstanceResponse
 				{
 					Code = _hashService.HashStringToString($"{prototype}-{version}-{Guid.NewGuid()}"),
@@ -51,7 +51,12 @@ namespace CheckListManager.Instances.Logic.Services
 			}
 		}
 
-		private async Task<Instance> CreateInstanceFromPrototype(int prototype, int version)
+		public Task<SaveInstanceResponse> SaveAsync(string code, Instance instance)
+		{
+			throw new NotImplementedException();
+		}
+
+		private async Task<Instance> CreateInstanceFromPrototypeAsync(int prototype, int version)
 		{
 			try
 			{
