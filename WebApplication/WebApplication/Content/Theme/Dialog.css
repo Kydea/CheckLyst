@@ -2,7 +2,6 @@
   display: none; }
   div.Dialog div.Container {
     padding: 20px;
-    border-radius: 15px;
     background-color: white;
     box-shadow: rgba(0, 0, 0, 0.16) 0 0 16px 5px; }
     div.Dialog div.Container strong {
@@ -13,7 +12,6 @@
       margin: -20px -20px 20px;
       background: #009688;
       border-bottom: solid 1px #499dbf;
-      border-radius: 15px 15px 0 0;
       padding: 20px;
       color: white;
       text-transform: uppercase;
@@ -78,6 +76,10 @@
     border-color: red !important; }
   div.Dialog.Error div.Buttons a {
     background-color: red !important; }
+  div.Dialog.DetailPage form {
+    border: none;
+    padding: 0;
+    margin: -20px 0; }
   @media only screen and (min-width: 760px) {
     div.Dialog {
       position: fixed;
@@ -90,11 +92,10 @@
       div.Dialog div.Container {
         position: relative;
         max-width: calc(100vw - 60px);
-        margin: 0 auto; }
-      div.Dialog.DetailPage form {
-        border: none;
-        padding: 0;
-        margin: -20px 0; } }
+        margin: 0 auto;
+        border-radius: 15px; }
+        div.Dialog div.Container h2 {
+          border-radius: 15px 15px 0 0; } }
   @media only screen and (max-width: 759px) {
     div.Dialog div.Container {
       position: fixed;
@@ -102,5 +103,13 @@
       right: 0;
       bottom: 0;
       left: 0;
-      z-index: 990; } }
+      z-index: 990;
+      width: unset !important; }
+      div.Dialog div.Container h2 {
+        background: #009688;
+        border-bottom: solid 1px #499dbf;
+        padding: 20px;
+        color: white;
+        text-transform: uppercase;
+        font-weight: normal; } }
 

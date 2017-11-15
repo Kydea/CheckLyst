@@ -1,4 +1,4 @@
-﻿<div id="UsersDetailPage" style="width: 420px">
+﻿<div id="UsersDetailPage">
     <h2>Department</h2>
 
     <form id="Detail">
@@ -50,7 +50,7 @@
         { text: "save", icon: "save", id: "SaveButton", handler: function () { alert("OK"); return true; } }
     ]);
 
-    matematici.dialog.setWidth($("#UsersDetailPage").width());
+    matematici.dialog.setWidth(420);
 
     var form = new matematici.Form("form#Detail", {
         applyButton: "#SaveButton"

@@ -4,7 +4,7 @@
 		element = $(selector).data("autoCenter", autoCenter),
 
 		center = function () {
-			element.css("top", parseInt((element.parent().height() - element.outerHeight()) / 2)); 
+			element.css("top", matematici.elements.window.width() < 760 ? 0 : parseInt((element.parent().height() - element.outerHeight()) / 2)); 
 		},
 
 		initialize = function () {
