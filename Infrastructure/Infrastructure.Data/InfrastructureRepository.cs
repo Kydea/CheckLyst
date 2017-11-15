@@ -6,6 +6,8 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Data.Entity;
+using CheckListManager.Common.Core.Web.Security;
+using CheckListManager.Common.Data.Exceptions;
 
 namespace CheckListManager.Infrastructure.Data
 {
@@ -15,24 +17,72 @@ namespace CheckListManager.Infrastructure.Data
 		{
 		}
 
-		public async Task<Departments> EditDepartmentAsync(long Company, Departments Department)
-		{
-            //TODO
-			await SaveChangesAsync();
+        private async Task<Departments> GetDepartment(DefaultIdentity identity, long id)
+        {
+            var Department = await Entities.Departments.SingleOrDefaultAsync(d => d.Company == identity.CompanyId && d.ID == id);
+            if (Department == null) throw new DatabaseException($"Department {id} not found");
             return Department;
+        }
+
+        public async Task<Departments> EditDepartmentAsync(DefaultIdentity identity, Departments department)
+		{
+            var ExistingDepartment = await GetDepartment(identity, department.ID);
+            ExistingDepartment.ModifiedOn = DateTimeOffset.UtcNow;
+            ExistingDepartment.ModifiedBy = identity.Code;
+            ExistingDepartment.Name = department.Name;
+            await SaveChangesAsync();
+            return department;
 		}
 
-        public async Task<PrototypeTypes> EditPrototypeTypeAsync(long Company, PrototypeTypes PrototypeType)
+        public async Task<Departments> AddDepartmentAsync(DefaultIdentity identity, Departments department)
         {
-            //TODO
+            department.Company = identity.CompanyId;
+            department.CreatedOn = DateTimeOffset.UtcNow;
+            department.CreatedBy = identity.Code;
+            Entities.Departments.Add(department);
             await SaveChangesAsync();
+            return department;
+        }
+
+        public async Task DeleteDepartmentAsync(DefaultIdentity identity, long id)
+        {
+            Entities.Departments.Remove(await GetDepartment(identity, id));
+            await SaveChangesAsync();
+        }
+
+        private async Task<PrototypeTypes> GetPrototypeTypeAsync(DefaultIdentity identity, long id)
+        {
+            var PrototypeType = await Entities.PrototypeTypes.SingleOrDefaultAsync(d => d.Company == identity.CompanyId && d.ID == id);
+            if (PrototypeType == null) throw new DatabaseException($"Prototype type {id} not found");
             return PrototypeType;
         }
 
-
-        public async Task<Departments> GetDepartmentAsync(long Company, long ID)
+        public async Task<PrototypeTypes> EditPrototypeTypeAsync(DefaultIdentity identity, PrototypeTypes prototypeType)
         {
-            return await Entities.Departments.SingleOrDefaultAsync(d => d.Company == Company && d.ID == ID);
+            var ExistingPrototypeType = await GetPrototypeTypeAsync(identity, prototypeType.ID);
+            ExistingPrototypeType.ModifiedOn = DateTimeOffset.UtcNow;
+            ExistingPrototypeType.ModifiedBy = identity.Code;
+            ExistingPrototypeType.Description = prototypeType.Description;
+            ExistingPrototypeType.ApprovationWorkFlow = prototypeType.ApprovationWorkFlow;
+            ExistingPrototypeType.ObsolescenceWorkFlow = prototypeType.ObsolescenceWorkFlow;
+            await SaveChangesAsync();
+            return prototypeType;
+        }
+
+        public async Task<PrototypeTypes> AddPrototypeTypeAsync(DefaultIdentity identity, PrototypeTypes prototypeType)
+        {
+            prototypeType.Company = identity.CompanyId;
+            prototypeType.CreatedOn = DateTimeOffset.UtcNow;
+            prototypeType.CreatedBy = identity.Code;
+            Entities.PrototypeTypes.Add(prototypeType);
+            await SaveChangesAsync();
+            return prototypeType;
+        }
+
+        public async Task DeletePrototypeTypeAsync(DefaultIdentity identity, long id)
+        {
+            Entities.PrototypeTypes.Remove(await GetPrototypeTypeAsync(identity, id));
+            await SaveChangesAsync();
         }
 
         public async Task<PagingResponse<List<TResult>>> GetDepartmentsAsync<TResult>(
@@ -62,11 +112,6 @@ namespace CheckListManager.Infrastructure.Data
                 ItemsPerPage = itemsPerPage,
                 CurrentPage = currentPage
             };
-        }
-
-        public async Task<PrototypeTypes> GetPrototypeTypeAsync(long Company, long ID)
-        {
-            return await Entities.PrototypeTypes.SingleOrDefaultAsync(pt => pt.Company == Company && pt.ID == ID);
         }
 
         public async Task<PagingResponse<List<TResult>>> GetPrototypeTypesAsync<TResult>(

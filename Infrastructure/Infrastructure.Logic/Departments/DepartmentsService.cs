@@ -40,27 +40,67 @@ namespace CheckListManager.Infrastructure.Logic.Departments
                     Form.Data.Department, Form.CurrentPage, Form.ItemsPerPage
                 );
 
-        public async Task<DepartmentsResponse> Edit(DefaultIdentity Identity, DepartmentsRow record)
+        private DepartmentsResponse Validate(DepartmentsRow record, bool IsNew)
         {
             var response = new DepartmentsResponse();
-            Common.Data.Departments Department;
-            if (record.ID.HasValue) {
-                Department = await _infrastructureRepository.GetDepartmentAsync(Identity.CompanyId, record.ID.Value);
-                Department.ModifiedOn = DateTimeOffset.UtcNow;
-                //Department.ModifiedBy = //TODO current user
-            }
-            else
-            {
-                Department = new Common.Data.Departments
+            if (string.IsNullOrWhiteSpace(record.Name))
+                response.Fields["Name"] = new Field
                 {
-                    CreatedOn = DateTimeOffset.UtcNow,
-                    //CreatedBy = //TODO current user
+                    ValidationMessages = new List<ValidationMessage> {
+                        new ValidationMessage {
+                            Level = ValidationMessage.LevelError,
+                            Message = "Invalid name"
+                        }
+                    }
                 };
-            }
-            await _infrastructureRepository.EditDepartmentAsync(Identity.CompanyId, new Common.Data.Departments
+            return response;
+        }
+
+        public async Task<DepartmentsResponse> AddOrEdit(DefaultIdentity identity, DepartmentsRow record, bool isNew)
+        {
+            var response = Validate(record, isNew);
+            if (response.Valid)
+                try
+                {
+                    var Department = new Common.Data.Departments
+                    {
+                        Name = record.Name
+                    };
+                    if (isNew)
+                        await _infrastructureRepository.EditDepartmentAsync(identity, Department);
+                    else
+                        await _infrastructureRepository.AddDepartmentAsync(identity, Department);
+                }
+                catch (Exception Exception)
+                {
+                    response.ValidationMessages.Add(new ValidationMessage
+                    {
+                        Level = ValidationMessage.LevelError,
+                        Message = Exception.Message
+                    });
+                    response.Valid = false;
+                }
+
+            return response;
+        }
+
+        public async Task<DepartmentsResponse> Delete(DefaultIdentity identity, long id)
+        {
+            var response = new DepartmentsResponse();
+            try
             {
-                Name = record.Name
-            });
+                await _infrastructureRepository.DeleteDepartmentAsync(identity, id);
+            }
+            catch (Exception Exception)
+            {
+                response.ValidationMessages.Add(new ValidationMessage
+                {
+                    Level = ValidationMessage.LevelError,
+                    Message = Exception.Message
+                });
+                response.Valid = false;
+            }
+
             return response;
         }
     }

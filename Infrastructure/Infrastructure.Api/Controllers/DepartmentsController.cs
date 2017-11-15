@@ -29,10 +29,24 @@ namespace CheckListManager.Infrastructure.Api.Controllers
         }
 
         [HttpPost]
+        [Route("Add")]
+        public async Task<IHttpActionResult> Add(DepartmentsRow request)
+        {
+            return Ok(await _departmentsService.AddOrEdit(Identity, request, true));
+        }
+
+        [HttpPost]
         [Route("Edit")]
         public async Task<IHttpActionResult> Edit(DepartmentsRow request)
         {
-            return Ok(await _departmentsService.Edit(Identity, request));
+            return Ok(await _departmentsService.AddOrEdit(Identity, request, false));
+        }
+
+        [HttpPost]
+        [Route("Delete")]
+        public async Task<IHttpActionResult> Delete(DepartmentsRow request)
+        {
+            return Ok(await _departmentsService.Delete(Identity, request.ID.Value));
         }
     }
 }
