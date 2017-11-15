@@ -53,8 +53,7 @@ input[type=text], input[type=range], input[type=number], input[type=password], i
 }
 
 /**
-    This mixin is a "wrapper" that helps you
-    to define buttons of different sizes.
+    This mixin is a "wrapper" that helps you define buttons of different sizes.
 */
 @mixin button-size($size) {
     height: $size;
@@ -164,12 +163,9 @@ form {
     label {
         float: left;
         margin-top: $Metric-Control-Space;
-<<<<<<< HEAD
         margin-left: $Metric-Control-Space;
         width: 200px;
-=======
         width: $Inline-Form-Label-Width;
->>>>>>> feature/layout
         position: relative;
         color: $Color-Font-Grey3;
 
@@ -197,8 +193,6 @@ form {
                 }
             }
         }
-<<<<<<< HEAD
-=======
 
         & + label {
             margin-left: $Metric-Control-Space;
@@ -262,7 +256,6 @@ form {
                 clear: both;
             }
         }
->>>>>>> feature/layout
     }
 
     a.Button {
