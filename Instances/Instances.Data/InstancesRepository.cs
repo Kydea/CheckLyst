@@ -25,6 +25,7 @@ namespace CheckListManager.Instances.Data
         {
             var data = await Entities.Instances
                 .Where(filters)
+				.Where(i => i.Prototypes.Company == companyId)
                 .OrderBy(order)
                 .Select(select)
                 .Skip((currentPage - 1) * itemsPerPage)
@@ -83,6 +84,19 @@ namespace CheckListManager.Instances.Data
 		    {
 			    Entities.Database.CurrentTransaction?.Rollback();
 		    }
+	    }
+
+	    public Task<Common.Data.Instances> GetByCodeAsync(long companyId, string code)
+		    => Entities.Instances.FirstOrDefaultAsync(i => i.Prototypes.Company == companyId && i.Code == code);
+
+	    public async Task<Common.Data.Instances> UpdateInstanceAsync(string userCode, Common.Data.Instances instance)
+	    {
+		    instance.ModifiedOn = DateTimeOffset.UtcNow;
+		    instance.ModifiedBy = userCode;
+
+		    await SaveChangesAsync();
+
+		    return instance;
 	    }
 
 	    public Task<int> GetInstanceNumberAsync(long prototype, int version, int year)

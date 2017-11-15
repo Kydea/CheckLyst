@@ -8,6 +8,6 @@ namespace CheckListManager.Instances.Logic.Services
 	public interface IInstanceService : IService
 	{
 		Task<CreateInstanceResponse> Create(int prototype, int version);
-		Task<SaveInstanceResponse> Save(string code, Instance instance);
+		Task<SaveInstanceResponse> SaveAsync(long companyId, string userCode, string code, Instance instance);
 	}
 }

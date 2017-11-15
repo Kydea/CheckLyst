@@ -56,6 +56,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exceptions\InstanceException.cs" />
     <Compile Include="List\ListRow.cs" />
     <Compile Include="List\ListService.cs" />
     <Compile Include="List\IListService.cs" />
@@ -64,6 +65,10 @@
     <Compile Include="Messages\CreateInstanceRequest.cs" />
     <Compile Include="Messages\CreateInstanceResponse.cs" />
     <Compile Include="Messages\GetPrototypeResponse.cs" />
+    <Compile Include="Messages\InstanceResponse.cs" />
+    <Compile Include="Messages\SaveInstanceRequest.cs" />
+    <Compile Include="Messages\SaveInstanceResponse.cs" />
+    <Compile Include="Models\CacheObject.cs" />
     <Compile Include="Models\CheckLists\Element.cs" />
     <Compile Include="Models\CheckLists\Field.cs" />
     <Compile Include="Models\CheckLists\Group.cs" />

@@ -6,6 +6,6 @@ namespace CheckListManager.Prototypes.Logic.Services
 {
 	public interface IPrototypeService : IService
 	{
-		Task<GetPrototypeResponse> Get(GetPrototypeRequest request);
+		Task<GetPrototypeResponse> Get(long companyId, GetPrototypeRequest request);
 	}
 }
