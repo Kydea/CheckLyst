@@ -46,6 +46,10 @@
 			return row;
 		};
 
+	this.updateCell = function (row, columnName, value) {
+		setCellValue()
+	};
+
 	this.initialize = function () {
 		setup();
 	};

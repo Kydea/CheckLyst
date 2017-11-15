@@ -67,9 +67,12 @@ namespace CheckListManager.Infrastructure.Logic.Departments
                         Name = record.Name
                     };
                     if (isNew)
-                        await _infrastructureRepository.EditDepartmentAsync(identity, Department);
-                    else
                         await _infrastructureRepository.AddDepartmentAsync(identity, Department);
+                    else
+                    {
+                        Department.ID = record.ID.Value;
+                        await _infrastructureRepository.EditDepartmentAsync(identity, Department);
+                    }
                 }
                 catch (Exception Exception)
                 {

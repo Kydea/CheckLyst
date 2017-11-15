@@ -13,6 +13,10 @@ div.Calendar {
         z-index: $Depth-Calendar;
         display: none;
         background: white;
+
+        &.Calendar {
+            z-index: $Depth-Dialog + 1;
+        }
     }
 
     a:hover {

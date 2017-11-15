@@ -5,6 +5,7 @@ matematici.dialog = function () {
 		container,
 		options = {},
 		autoCenter,
+		closeHandler,
 
 		ajax = function () {
 			$.ajax(options.ajax)
@@ -68,10 +69,7 @@ matematici.dialog = function () {
 		},
 
 		show = function () {
-			if (element) {
-				element.remove();
-				element = null;
-			}
+			if (element) matematici.dialog.close();
 
 			element = $("<div />").addClass("Dialog").appendTo(matematici.elements.body);
 			container = $("<div />").addClass("Container AutoCenter").appendTo(element);
@@ -93,9 +91,9 @@ matematici.dialog = function () {
 		};
 
 	return {
-
 		close: function () {
 			if (element) {
+				if (closeHandler) closeHandler();
 				element.remove();
 				matematici.elements.body.removeClass("Dialog");
 				if (options.cssClass)
@@ -103,11 +101,16 @@ matematici.dialog = function () {
 				element = null;
 				options = {};
 				autoCenter.destroy();
+				closeHandler = null;
 			}
 		},
 
 		getData: function () {
 			return options.data;
+		},
+
+		getSender: function () {
+			return options.sender;
 		},
 
 		show: function (titleOrSettings, content, buttons) {
@@ -139,7 +142,8 @@ matematici.dialog = function () {
 					url: settings.url
 				},
 				cssClass: "DetailPage",
-				data: settings.data
+				data: settings.data, 
+				sender: settings.sender
 			});
 		},
 
@@ -158,6 +162,10 @@ matematici.dialog = function () {
 
 		setWidth: function (value) {
 			container.width(value);
+		},
+
+		setCloseHandler: function (value) {
+			closeHandler = value;
 		}
 	};
 
@@ -188,6 +196,7 @@ matematici.dialog = function () {
             ajax - type: PlainObject, description: the prameters to use with ajax call, the result will be used to replace content, errors will be handled
             ajaxErrorHandler - type: function, description: is triggered if ajax call fails, if not set an error dialog is shown
             data - type: PlainObject, description: this object will be available as matematici.dialog.getData() while the dialog is showing, use it for example to customize handlers for ajax content
+			sender - type: jQuery, description: this object will be available as matematici.dialog.getSender(), e.g. the object of which the click has been made
 			cssClass - tpe: String, description: the custom css class of the dialog element and for the body element (with the prefix "Dialog-")
             buttons - type: Array or sigle object, description: an Array of or a single PlainObjects, if null a default "ok" button will be created:
                 content - type: htmlString or Element or Array or jQuery, description: the button
@@ -211,5 +220,6 @@ matematici.dialog = function () {
 		detail(settings), shows a dialog which contains the detail of a record for CRUD operations
             url - type: string, description: the url of the detail page
             data - type: PlainObject, description: this object will be available as matematici.dialog.getData() while the dialog is showing, use it for example to customize handlers for ajax content
+			sender - type: jQuery, description: this object will be available as matematici.dialog.getSender(), e.g. the object of which the click has been made
 
  */

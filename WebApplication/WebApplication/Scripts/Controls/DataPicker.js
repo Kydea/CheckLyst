@@ -3,7 +3,7 @@
 		datePicker = this,
 		element = $(selector),
 		date,
-		enabled = true,
+		enabled = !element.hasClass("Disabled") && !element.prop("readonly"),
 		calendar = null,
 		min,
 		max,
@@ -80,6 +80,7 @@
 			if (maxAttribute) max = new Date(maxAttribute);
 
 			element
+				.data("datePicker", datePicker)
 				.on("change", parse)
 				.on("click", open);
 

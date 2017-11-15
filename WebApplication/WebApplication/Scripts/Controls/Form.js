@@ -18,7 +18,7 @@
 					options.applyButton.on("click", function () {
 						saveForm();
 						bind(event, handler, prepareRequest({ data: { source: options.applyButton.attr("id") } }));
-					})
+					});
 				else if (handler)
 					options.applyButton.on("click", handler);
 			}
@@ -80,12 +80,31 @@
 			//prepares the request
 			fields.each(function () {
 				var field = $(this);
-				parameters.data[field.attr("name")] = field.hasClass("DatePicker") ? field.data("date") : field.val();
+				parameters.data[field.attr("name")] =
+					field.hasClass("DatePicker") || field.data("type") == "DateTimeOffset" ? field.data("date") :
+					field.val();
 			});
 			return JSON.stringify(parameters);
 		},
 
-		setFieldValue = function () {
+		setFieldValue = function (field, value) {
+			switch (field.data("type")) {
+				case "DateTimeOffset":
+					if (value == null || value == "")
+						field.val("").attr("title", "").data("date", null);
+					else {
+						var
+							date = new Date(value),
+							formattedDate = matematici.dateFormatter.format(date, true);
+						field.val(formattedDate.date + " " + formattedDate.time).attr("title", formattedDate.offset).data("date", date);
+					}
+					break;
+				default:
+					if (field.hasClass("DatePicker"))
+						field.data("datePicker").setDate(value)
+					else
+						field.val(value);
+			}
 
 		},
 
@@ -111,7 +130,7 @@
 						autoComplete.getControl().toggle(!fieldData.visibile);
 						matematici.controls.setEditable(autoComplete.getControl(), fieldData.editable && fieldData.options.length > 0);
 					} else {
-						if (fieldData.value != null) field.val(fieldData.value);
+						if (fieldData.value != null) setFieldValue(field, fieldData.value);
 						field.toggle(!fieldData.visibile);
 						matematici.controls.setEditable(field, fieldData.editable);
 					}
@@ -152,8 +171,12 @@
 	this.setValues = function (values) {
 		fields.each(function () {
 			var field = $(this);
-			field.val(values[field.attr("name")] || "");
+			setFieldValue(field, values[field.attr("name")]);
 		});
+	};
+
+	this.getOptions = function () {
+		return options;
 	};
 };
 

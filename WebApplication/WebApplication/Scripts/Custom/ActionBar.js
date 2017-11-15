@@ -7,8 +7,9 @@
             element.append($("<div />").addClass("Clearing"));
         };
 
-    this.add = function (label, action, cssClass) {
-        $("<a />").addClass("Button " + (cssClass || "")).html(label).prependTo(element).on("click", action);
+    this.add = function (label, action, cssClass, icon) {
+		var button = $("<a />").addClass("Button " + (cssClass || "")).html(label).prependTo(element).on("click", action);
+		if (icon) button.append($("<i />").addClass("fa fa-" + icon));
         return this;
     };
 

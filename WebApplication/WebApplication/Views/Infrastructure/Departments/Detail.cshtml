@@ -1,7 +1,7 @@
 ﻿<div id="UsersDetailPage">
     <h2>Department</h2>
 
-    <form id="Detail">
+    <form id="Detail" action="@BaseUrl/Infrastructure/Departments">
         <div class="Triggers">
             <label>
                 ID
@@ -23,7 +23,7 @@
 
             <label>
                 Created on
-                <input type="text" name="createdOn" readonlya="readonly" class="DatePicker" />
+                <input type="text" name="createdOn" readonly="readonly" data-type="DateTimeOffset" />
             </label>
 
             <label class="Clearing">
@@ -34,7 +34,7 @@
 
             <label>
                 Modified on
-                <input type="text" name="modifiedOn" readonly="readonly" class="DatePicker" />
+                <input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
             </label>
         </div>
     </form>
@@ -43,11 +43,33 @@
 </div>
 
 <script type="text/javascript">
-    var data = matematici.dialog.getData();
+    var
+        data = matematici.dialog.getData(),
+        sender = matematici.dialog.getSender();
+
+    matematici.dialog.setCloseHandler(function () {
+        sender.getOptions().applyButton.click();
+    });
 
     matematici.dialog.setButtons([
         { cancelButton: true, hidden: true },
-        { text: "save", icon: "save", id: "SaveButton", handler: function () { alert("OK"); return true; } }
+        {
+            text: "delete", icon: "delete", handler: function () {
+                form.trigger("Delete", function (result) {
+                    //TODO: handle errors
+                    form.setValues(result);
+                });
+            },
+        },
+        {
+            text: "save", icon: "save", id: "SaveButton", handler: function () {
+                form.trigger("Edit", function (result) {
+                    //TODO: handle errors
+                    form.setValues(result);
+                });
+                return true;
+            }
+        }
     ]);
 
     matematici.dialog.setWidth(420);

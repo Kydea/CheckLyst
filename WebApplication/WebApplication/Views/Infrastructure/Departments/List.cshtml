@@ -57,7 +57,13 @@
                 paginator.setPage(result.currentPage, result.pagesCount);
             };
 
-        new matematici.ActionBar("div.ActionBar");
+        new matematici.ActionBar("div.ActionBar").add("Add", function () {
+            matematici.dialog.detail({
+                url: "@Url.Action("DepartmentsDetail")",
+                data: null,
+                sender: form
+            });
+        }, null, "plus");
 
         new matematici.Page({
             name: "InfrastructureDepartments",
@@ -67,7 +73,8 @@
                     rowClick: function (row) {
                         matematici.dialog.detail({
                             url: "@Url.Action("DepartmentsDetail")",
-                            data: row.data("values")
+                            data: row.data("values"),
+                            sender: form
                         });
                     }
                 }),
