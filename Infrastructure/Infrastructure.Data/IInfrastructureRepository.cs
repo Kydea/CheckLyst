@@ -4,14 +4,28 @@ using System.Collections.Generic;
 using CheckListManager.Common.Logic.Api.Messages;
 using System;
 using System.Linq.Expressions;
+using CheckListManager.Common.Core.Web.Security;
 
 namespace CheckListManager.Infrastructure.Data
 {
 	public interface IInfrastructureRepository : IRepository
 	{
-		Task EditDepartmentAsync(Departments Department);
+		Task<Departments> EditDepartmentAsync(DefaultIdentity identity, Departments department);
 
-        Task EditPrototypeTypeAsync(PrototypeTypes PrototypeType);
+        Task<Departments> AddDepartmentAsync(DefaultIdentity identity, Departments department);
+
+        Task DeleteDepartmentAsync(DefaultIdentity identity, long id);
+
+        Task<PrototypeTypes> EditPrototypeTypeAsync(DefaultIdentity identity, PrototypeTypes prototypeType);
+
+        Task<PrototypeTypes> AddPrototypeTypeAsync(DefaultIdentity identity, PrototypeTypes prototypeType);
+
+        Task DeletePrototypeTypeAsync(DefaultIdentity identity, long id);
+
+        Task<PagingResponse<List<TResult>>> GetDepartmentsAsync<TResult>(
+            long companyId,
+            Expression<Func<Departments, TResult>> select,
+            string name, int currentPage, int itemsPerPage);
 
         Task<PagingResponse<List<TResult>>> GetPrototypeTypesAsync<TResult>(
             long companyId,

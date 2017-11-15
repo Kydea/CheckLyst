@@ -1,20 +1,18 @@
 ﻿<div id="InfrastructurePage">
-    <h1>Prototype Types List</h1>
+    <h1>Departments List</h1>
 
     <div class="ActionBar">
-        <a id="OtherButton" class="Button DefaultButton"><i class="fa fa-question"></i> Just for test</a>
+        <a class="Button">Add <i class="fa fa-plus"></i></a>
     </div>
 
-    <div class="ShodowPanel">
-        <form id="Filters" action="@BaseUrl/Infrastructure/PrototypeTypes">
-            <a id="OtherButton" class="Button Accordion">search <i class="fa fa-arrow-circle-o-down"></i></a>
+    <div class="ShadowPanel">
+        <div class="Accordion-Bar">
+            <a class="Button">search <i class="fa fa-arrow-down"></i></a>
+        </div>
+        <form id="Filters" action="@BaseUrl/Infrastructure/Departments">
             <label>
-                Department
-                <select name="department" />
-            </label>
-            <label>
-                Description
-                <input type="text" name="prototypeType" />
+                Name
+                <input type="text" name="department" />
             </label>
 
             <a id="ApplyButton" class="Button DefaultButton"><i class="fa fa-search"></i> search</a>
@@ -24,9 +22,7 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Description</th>
-                    <th>Approvation Workflow</th>
-                    <th>Obsolescence Workflow</th>
+                    <th>Bame</th>
                     <th>Created By</th>
                     <th>Created On</th>
                     <th>Modified By</th>
@@ -36,9 +32,7 @@
             <tbody>
                 <tr class="Handler">
                     <td data-column="id"></td>
-                    <td data-column="description"></td>
-                    <td data-column="approvationWorkFlowDescription"></td>
-                    <td data-column="obsolescenceWorkFlowDescription"></td>
+                    <td data-column="name"></td>
                     <td data-column="createdBy"></td>
                     <td data-column="createdOn" data-type="DateTimeOffset"></td>
                     <td data-column="modifiedBy"></td>
@@ -65,13 +59,13 @@
         new matematici.ActionBar("div.ActionBar");
 
         new matematici.Page({
-            name: "Infrastructure",
+            name: "InfrastructureDepartments",
             initializers: [
                 //new matematici.FixedHeader("div#Content table.Grid")
                 grid = new matematici.Grid("div#Content table.Grid", {
                     rowClick: function (row) {
                         matematici.dialog.detail({
-                            url: "@Url.Action("Detail")",
+                            url: "@Url.Action("DepartmentsDetail")",
                             data: row.data("values")
                         });
                     }
@@ -81,14 +75,14 @@
                         button: "#ApplyButton",
                         event: "GetData",
                         handler: handler
-                    },
-                    bindEvent: "Bind"
+                    }
                 }),
                 matematici.p = paginator = new matematici.Paginator("div#Content div.Paginator", function (index) {
                     form.trigger("GetData", handler, { CurrentPage: index });
                 })
             ],
             breadcrumbs: [
+                { content: "infrastructure" },
                 { content: "departments" }
             ]
         });

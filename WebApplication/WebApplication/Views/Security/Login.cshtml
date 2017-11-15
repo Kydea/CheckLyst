@@ -4,6 +4,8 @@
 <div class="Login">
     <div class="Box AutoCenter">
         <form>
+            <img src="~/Content/Media/Logo.Big.png" alt="" />
+
             @if (Request["m"] != null)
             {
                 <div class="Message">
@@ -12,24 +14,15 @@
             }
 
             <input type="hidden" name="grant_type" value="password" />
-
-            <label for="companyId">Companies</label>
-            <div class="Group Company LeftIcon">
-                <select name="companyId"></select>
-                <i class="fi flaticon-departments"></i>
-            </div>
-
-            <label for="username">User</label>
-            <div class="Group User LeftIcon">
-                <input type="text" name="username" class="txtUsername" placeholder="User code" />
-                <input type="password" name="password" class="txtPassword" placeholder="Password" />
-                <i class="fa fa-user"></i>
-            </div>
-
+            <label for="companyId">Company</label>
+            <select name="companyId"></select>
+            <label for="username">User code</label>
+            <input type="text" name="username" />
+            <label for="password">Password</label>
+            <input type="password" name="password" />
             <div class="Errors"></div>
-
             <div class="Buttons Container">
-                <a class="Button DefaultButton" href="#" id="Sign"><i class="fa fa-check"></i>INVIO</a>
+                <a class="Button DefaultButton" href="#" id="Sign"><i class="fa fa-check"></i> Login</a>
             </div>
         </form>
     </div>

@@ -2,12 +2,12 @@
     <h1>Prototype Types List</h1>
 
     <div class="ActionBar">
-        <a id="OtherButton" class="Button">Add <i class="fa fa-plus"></i></a>
+        <a class="Button">Add <i class="fa fa-plus"></i></a>
     </div>
 
     <div class="ShadowPanel">
         <div class="Accordion-Bar">
-            <a class="Button">search <i class="fa fa-arrow-circle-o-down"></i></a>
+            <a class="Button">search <i class="fa fa-arrow-down"></i></a>
         </div>
         <form id="Filters" action="@BaseUrl/Infrastructure/PrototypeTypes">
             <label>
@@ -67,7 +67,7 @@
         new matematici.ActionBar("div.ActionBar");
 
         new matematici.Page({
-            name: "Infrastructure",
+            name: "InfrastructurePrototypeTypes",
             initializers: [
                 //new matematici.FixedHeader("div#Content table.Grid")
                 grid = new matematici.Grid("div#Content table.Grid", {
@@ -91,7 +91,8 @@
                 })
             ],
             breadcrumbs: [
-                { content: "departments" }
+                { content: "infrastructure" },
+                { content: "protype types" }
             ]
         });
 
