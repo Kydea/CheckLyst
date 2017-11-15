@@ -123,10 +123,8 @@ form {
     label {
         float: left;
         margin-top: $Metric-Control-Space;
-        margin-right: $Metric-Control-Space;
         width: 200px;
         position: relative;
-
 
         input, select {
             margin-top: 5px;
@@ -151,10 +149,19 @@ form {
                 }
             }
         }
+
+        & + label {
+            margin-left: $Metric-Control-Space;
+        }
+
+        &.Clearing {
+            margin-left: 0;
+        }
     }
 
     a.Button {
         margin-top: 21px + $Metric-Control-Space;
+        margin-left: $Metric-Control-Space;
     }
 
     &::after {

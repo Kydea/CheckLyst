@@ -86,7 +86,6 @@ form {
   form label {
     float: left;
     margin-top: 20px;
-    margin-right: 20px;
     width: 200px;
     position: relative; }
     form label input, form label select {
@@ -102,8 +101,13 @@ form {
       border-right: 1px solid #afb4b5; }
     form label i:not(.AutoComplete) + select.AutoComplete + input, form label i:not(.AutoComplete) + select:not(.AutoComplete), form label i:not(.AutoComplete) + input.AutoComplete + input, form label i:not(.AutoComplete) + input:not(.AutoComplete) {
       padding-left: 35px; }
+    form label + label {
+      margin-left: 20px; }
+    form label.Clearing {
+      margin-left: 0; }
   form a.Button {
-    margin-top: 41px; }
+    margin-top: 41px;
+    margin-left: 20px; }
   form::after {
     content: "";
     display: table;
