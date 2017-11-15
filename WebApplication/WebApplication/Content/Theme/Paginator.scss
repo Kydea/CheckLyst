@@ -41,7 +41,7 @@ $Page-Width: 20px;
             margin-left: 20px;
 
             &::before {
-                border-left: 2px solid #ccc;
+                border-left: 2px solid $Color-Border-Silver;
                 background-color: black;
                 display: inline-block;
                 position: absolute;

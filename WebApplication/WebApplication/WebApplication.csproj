@@ -242,6 +242,7 @@
     <Content Include="Content\Theme\AutoComplete.scss" />
     <Content Include="Content\Theme\ShadowPanel.scss" />
     <Content Include="Content\Theme\Accordion.scss" />
+    <Content Include="Content\Theme\FiltersForm.scss" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Bold\Myriad Pro.scss" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Bold\MyriadPro-Bold.eot" />

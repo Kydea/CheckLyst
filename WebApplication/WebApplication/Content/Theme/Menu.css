@@ -42,26 +42,22 @@
         position: relative;
         border-bottom: 1px solid #333;
         height: 70px;
-        line-height: 70px;
         padding: 15px;
         /*&.Current {
+                    color: #333;
                     background-color: #333;
-
-                    .MenuItem {
-                        border: 1px solid $Color-Font-Green; // borders until no icons!
-                    }
                 }*/ }
         nav.Menu ul.Menu li.MenuItem .MenuItem {
+          font-size: 0;
           box-sizing: border-box;
           width: 40px;
           height: 40px;
-          border: 1px solid #999;
-          color: transparent; }
+          color: #f9f9f9; }
+          nav.Menu ul.Menu li.MenuItem .MenuItem i {
+            font-size: 40px; }
         nav.Menu ul.Menu li.MenuItem.Selected, nav.Menu ul.Menu li.MenuItem:hover {
           background-color: #858585;
           position: relative; }
-          nav.Menu ul.Menu li.MenuItem.Selected .MenuItem, nav.Menu ul.Menu li.MenuItem:hover .MenuItem {
-            border: 1px solid white; }
           nav.Menu ul.Menu li.MenuItem.Selected:after, nav.Menu ul.Menu li.MenuItem:hover:after {
             content: "";
             display: block;
@@ -112,16 +108,16 @@
                 position: absolute;
                 left: -30px;
                 top: 50%;
-                border: solid #666;
+                border: solid #666666;
                 border-width: 0 2px 2px 0;
                 animation: rotation 300ms forwards;
                 transform: translateY(-50%) rotate(-135deg) skew(8.16deg, 8.16deg); }
             nav.Menu ul.Menu li.MenuItem ul.SubMenu li a {
-              color: #ccc;
+              color: #cccccc;
               display: block;
               text-decoration: none; }
             nav.Menu ul.Menu li.MenuItem ul.SubMenu li + li {
-              border-top: 1px solid #666; } }
+              border-top: 1px solid #666666; } }
 
 @media only screen and (max-width: 759px) {
   nav.Menu {
@@ -150,12 +146,12 @@
       z-index: 101; }
       nav.Menu ul.Menu li.MenuItem {
         line-height: 40px;
-        border-bottom: 1px solid #ccc; }
+        border-bottom: 1px solid #cccccc; }
         nav.Menu ul.Menu li.MenuItem .MenuItem {
           padding: 0 10px; }
         nav.Menu ul.Menu li.MenuItem ul.SubMenu li {
           background: #efefef;
-          border-top: 1px solid #ccc; }
+          border-top: 1px solid #cccccc; }
           nav.Menu ul.Menu li.MenuItem ul.SubMenu li a {
             padding: 0 20px; }
       nav.Menu ul.Menu::after {

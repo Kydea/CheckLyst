@@ -1,0 +1,14 @@
+﻿form#Filters label {
+  position: relative; }
+  form#Filters label i:not(.AutoComplete).fi, form#Filters label i:not(.AutoComplete).fa {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    text-align: center;
+    height: 30px;
+    width: 30px;
+    line-height: 30px;
+    border-right: 1px solid #afb4b5; }
+  form#Filters label i:not(.AutoComplete) + select.AutoComplete + input, form#Filters label i:not(.AutoComplete) + select:not(.AutoComplete), form#Filters label i:not(.AutoComplete) + input.AutoComplete + input, form#Filters label i:not(.AutoComplete) + input:not(.AutoComplete) {
+    padding-left: 35px; }
+

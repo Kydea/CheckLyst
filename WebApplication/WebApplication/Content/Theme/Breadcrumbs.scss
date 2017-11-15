@@ -1,7 +1,6 @@
 ﻿@import "_Library.scss";
 
 div#Breadcrumbs {
-    color: #999;
     padding-top: 20px;
     font-size: 12px;
 
@@ -18,7 +17,7 @@ div#Breadcrumbs {
     }
 
     a, span {
-        color: #999;
+        color: $Color-Font-Black;
         display: inline-block;
         padding-right: 5px;
 
@@ -26,7 +25,7 @@ div#Breadcrumbs {
             content: "|";
             font-weight: 100;
             padding-left: 5px;
-            color: #ccc !important;
+            color: $Color-Font-Silver !important;
         }
 
         &:last-child {

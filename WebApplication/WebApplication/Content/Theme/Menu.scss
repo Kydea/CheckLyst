@@ -59,40 +59,35 @@ nav.Menu {
                 display: block;
                 height: $Metric-Header-Height;
                 box-sizing: border-box;
-                border-bottom: 1px solid #333;
+                border-bottom: 1px solid $Color-Border-Grey1;
                 background: url(../Media/Sintlogo.png) no-repeat ($Metric-Header-Height - 50px)/2 50%;
             }
 
             li.MenuItem {
                 position: relative;
-                border-bottom: 1px solid #333;
+                border-bottom: 1px solid $Color-Border-Grey1;
                 height: $Metric-Header-Height;
-                line-height: $Metric-Header-Height;
                 padding: ($Metric-Header-Height - $Menu-Icon-Width)/2;
 
                 .MenuItem {
+                    font-size: 0;
                     box-sizing: border-box;
                     width: $Menu-Icon-Width;
                     height: $Menu-Icon-Width;
-                    border: 1px solid $Color-Border-Black; // borders until no icons!
-                    // @to_do: remove (just a test)
-                    color: transparent;
+                    color: $Color-Background-White;
+
+                    i {
+                        font-size: $Menu-Icon-Width;
+                    }
                 }
                 // @to_do, what is the css class of the current page?
                 /*&.Current {
+                    color: #333;
                     background-color: #333;
-
-                    .MenuItem {
-                        border: 1px solid $Color-Font-Green; // borders until no icons!
-                    }
                 }*/
                 &.Selected, &:hover {
-                    background-color: #858585;
+                    background-color: $Color-Background-Grey5;
                     position: relative;
-
-                    .MenuItem {
-                        border: 1px solid white; // border until no icons!
-                    }
                     // Menu Indicator
                     &:after {
                         content: "";
@@ -116,7 +111,7 @@ nav.Menu {
                     position: absolute;
                     left: $Metric-Header-Height;
                     top: ($Metric-Header-Height - $Menu-Icon-Width)/2;
-                    border-left: 1px solid #333;
+                    border-left: 1px solid $Color-Border-Grey1;
                     border-radius: 0 5px 5px 0;
                     box-shadow: rgba(0, 0, 0, 0.35) 0px 0px 7px 3.5px;
                     // Menu indicator: no border between it and the submenu.
@@ -156,7 +151,7 @@ nav.Menu {
                                     position: absolute;
                                     left: -30px;
                                     top: 50%;
-                                    border: solid #666;
+                                    border: solid $Color-Font-Grey3;
                                     border-width: 0 2px 2px 0;
                                     animation: rotation 300ms forwards;
                                     transform: translateY(-50%) rotate(-135deg) skew(8.16deg, 8.16deg);
@@ -165,13 +160,13 @@ nav.Menu {
                         }
 
                         a {
-                            color: #ccc;
+                            color: $Color-Font-Silver;
                             display: block;
                             text-decoration: none;
                         }
 
                         & + li {
-                            border-top: 1px solid #666;
+                            border-top: 1px solid $Color-Font-Grey3;
                         }
                     }
                 }
@@ -211,7 +206,7 @@ nav.Menu {
 
             li.MenuItem {
                 line-height: 40px;
-                border-bottom: 1px solid #ccc;
+                border-bottom: 1px solid $Color-Border-Silver;
 
                 .MenuItem {
                     padding: 0 $Metric-Separator-Mobile;
@@ -225,7 +220,7 @@ nav.Menu {
                             padding: 0 2*$Metric-Separator-Mobile;
                         }
 
-                        border-top: 1px solid #ccc;
+                        border-top: 1px solid $Color-Border-Silver;
                     }
                 }
             }

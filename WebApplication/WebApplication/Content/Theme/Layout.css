@@ -69,25 +69,8 @@ div#InitialCurtain {
 header {
   position: relative;
   z-index: 103; }
-  header a#HelpButton {
-    position: absolute;
-    top: 15px;
-    border-radius: 50%;
-    background-color: #406f81;
-    width: 25px;
-    height: 25px;
-    line-height: 25px;
-    color: white;
-    text-align: center;
-    font-size: 14px; }
-    @media only screen and (min-width: 760px) {
-      header a#HelpButton {
-        right: 30px; } }
-    @media only screen and (max-width: 759px) {
-      header a#HelpButton {
-        right: 10px; } }
   header div#UserPanel {
-    color: #666;
+    color: #666666;
     text-align: center;
     position: relative;
     text-transform: none;
@@ -100,7 +83,7 @@ header {
         left: 0;
         position: fixed;
         text-align: right;
-        border-bottom: 1px solid #ccc;
+        border-bottom: 1px solid #cccccc;
         margin-left: 70px;
         width: calc(100% - 70px); }
         header div#UserPanel::before {
@@ -120,7 +103,7 @@ header {
       header div#UserPanel a:hover {
         color: black !important; }
       header div#UserPanel a + a:before {
-        background-color: #666;
+        background-color: #666666;
         display: inline-block;
         content: "";
         height: 1em;

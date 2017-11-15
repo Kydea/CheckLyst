@@ -44,13 +44,13 @@
                         }*@
 
                     <a id="Logout" class="Standard RightFloating" href="@Url.Action("Login", "Security")">Logout <i class="fa fa-sign-out"></i></a>
-                    <a class="Add RightFloating" href="#">(add signer) <i class="fa fa-plus-circle"></i></a>
+                    <a class="Add RightFloating" href="#">(add signer) <i class="fa fa-plus"></i></a>
                     <a href="#" id="HelpButton" title="User manual"><i class="fa fa-question"></i></a>
                 </div>
             </li>
 
             <li class="MenuItem">
-                <a class="MenuItem" href="@Url.Action("Dashboard", "Default")">Dashboard</a>
+                <a class="MenuItem" href="@Url.Action("Dashboard", "Default")"><i class="fi flaticon-dashboard Extended"></i>Dashboard</a>
 
                 <ul class="SubMenu Extended">
                     <li>
@@ -60,7 +60,7 @@
             </li>
 
             <li class="MenuItem CompanyRole">
-                <span class="MenuItem">Settings</span>
+                <span class="MenuItem"><i class="fi flaticon-data Extended"></i>Settings</span>
 
                 <ul class="SubMenu">
                     <li data-role="Users">
@@ -85,7 +85,7 @@
             </li>
 
             <li data-role="Prototypes" class="MenuItem">
-                <a href="@Url.Action("List", "Prototypes")" class="MenuItem">Prototypes</a>
+                <a href="@Url.Action("List", "Prototypes")" class="MenuItem"><i class="fi flaticon-prototypes Extended"></i>Prototypes</a>
 
                 <ul class="SubMenu Extended">
                     <li>
@@ -94,7 +94,7 @@
                 </ul>
             </li>
             <li data-role="Instances" class="MenuItem">
-                <a href="@Url.Action("List", "Instances")" class="MenuItem">Instances </a>
+                <a href="@Url.Action("List", "Instances")" class="MenuItem"><i class="fi flaticon-istance Extended"></i>Instances</a>
 
                 <ul class="SubMenu Extended">
                     <li>

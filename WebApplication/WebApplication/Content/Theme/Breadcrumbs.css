@@ -1,5 +1,4 @@
 ﻿div#Breadcrumbs {
-  color: #999;
   padding-top: 20px;
   font-size: 12px; }
   @media only screen and (min-width: 760px) {
@@ -13,19 +12,16 @@
       padding-left: 10px;
       padding-right: 10px; } }
   div#Breadcrumbs a, div#Breadcrumbs span {
-    color: #999;
-    display: inline-block;
+    color: #999999;
+    display: inline-block; }
+  div#Breadcrumbs a {
     padding-right: 5px; }
-    div#Breadcrumbs a::after, div#Breadcrumbs span::after {
+    div#Breadcrumbs a:hover {
+      text-decoration: none;
+      color: blue; }
+    div#Breadcrumbs a::after {
       content: "|";
       font-weight: 100;
       padding-left: 5px;
-      color: #ccc !important; }
-    div#Breadcrumbs a:last-child, div#Breadcrumbs span:last-child {
-      padding-right: 0; }
-      div#Breadcrumbs a:last-child::after, div#Breadcrumbs span:last-child::after {
-        content: none; }
-  div#Breadcrumbs a:hover {
-    text-decoration: none;
-    color: blue; }
+      color: #cccccc !important; }
 
