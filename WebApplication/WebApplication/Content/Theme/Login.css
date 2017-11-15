@@ -16,7 +16,7 @@
     body.Login div.Login div.Box {
       background-color: white;
       padding: 20px;
-      padding-top: 125px;
+      padding-top: 130px;
       margin: 0 auto;
       position: relative; }
       body.Login div.Login div.Box form {
@@ -25,68 +25,17 @@
         padding: 0; }
       body.Login div.Login div.Box img {
         margin-bottom: 19px; }
-      body.Login div.Login div.Box label {
-        margin-top: 10px;
-        margin-bottom: 5px; }
-      body.Login div.Login div.Box div.Group {
-        width: 100%;
-        clear: both; }
-        body.Login div.Login div.Box div.Group.Login {
-          position: relative; }
-          body.Login div.Login div.Box div.Group.Login > i {
-            line-height: 30px;
-            width: 30px;
-            position: absolute;
-            text-align: center;
-            font-size: 24px;
-            float: none;
-            margin: 0;
-            top: 0; }
-            body.Login div.Login div.Box div.Group.Login > i:not(.AutoComplete) {
-              border-right: 1px solid #afb4b5;
-              left: 0; }
-            body.Login div.Login div.Box div.Group.Login > i.AutoComplete {
-              margin-top: 0 !important;
-              margin-left: 0 !important;
-              font-size: 10px;
-              right: 0; }
-          body.Login div.Login div.Box div.Group.Login input:first-of-type {
-            padding-left: 40px; }
-        body.Login div.Login div.Box div.Group.User {
-          display: flex;
-          flex-wrap: wrap; }
-          body.Login div.Login div.Box div.Group.User input {
-            flex-basis: 100%; }
-            body.Login div.Login div.Box div.Group.User input:not(:only-of-type) {
-              border-radius: 3px 0 0 3px; }
-              body.Login div.Login div.Box div.Group.User input:not(:only-of-type):first-of-type {
-                border-right: none;
-                flex-basis: calc(50% + 20px); }
-              body.Login div.Login div.Box div.Group.User input:not(:only-of-type):last-of-type {
-                border-radius: 0 3px 3px 0;
-                flex-basis: calc(50% - 24px); }
-      body.Login div.Login div.Box div.AutoComplete-List {
-        margin-top: 45px; }
       body.Login div.Login div.Box div.Message {
         text-align: center;
         margin: 0 0 20px 0;
         color: #0099cc; }
       body.Login div.Login div.Box div.Buttons a {
-        float: right;
-        background-color: black;
-        height: 45px;
-        line-height: 45px;
-        margin-right: 45px; }
-        body.Login div.Login div.Box div.Buttons a i.fa {
-          height: 45px;
-          line-height: 45px;
-          right: -45px;
-          width: 45px; }
+        float: right; }
         body.Login div.Login div.Box div.Buttons a:hover {
           background-color: #019dda; }
       body.Login div.Login div.Box::before {
         background: #009688 url(../Media/LogoMobile.png) no-repeat center 50%;
-        height: 75px;
+        height: 80px;
         position: absolute;
         display: block;
         content: "";
