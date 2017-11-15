@@ -116,13 +116,15 @@ div.validation-summary-errors {
 }
 
 form {
-    padding: 0 $Metric-Control-Space $Metric-Control-Space;
     border: 1px solid $Color-Border-Grey;
     position: relative;
+    padding-bottom: $Metric-Control-Space;
+    padding-right: $Metric-Control-Space;
 
     label {
         float: left;
         margin-top: $Metric-Control-Space;
+        margin-left: $Metric-Control-Space;
         width: 200px;
         position: relative;
 
@@ -148,14 +150,6 @@ form {
                     padding-left: $Metric-Control-Height + 5px;
                 }
             }
-        }
-
-        & + label {
-            margin-left: $Metric-Control-Space;
-        }
-
-        &.Clearing {
-            margin-left: 0;
         }
     }
 

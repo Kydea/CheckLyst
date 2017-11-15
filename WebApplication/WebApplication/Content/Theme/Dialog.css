@@ -78,8 +78,8 @@
     background-color: red !important; }
   div.Dialog.DetailPage form {
     border: none;
-    padding: 0;
-    margin: -20px 0; }
+    padding-bottom: 0;
+    margin: -20px; }
   @media only screen and (min-width: 760px) {
     div.Dialog {
       position: fixed;
