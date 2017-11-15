@@ -1,5 +1,7 @@
 ﻿@import "Library";
 
+$Inline-Form-Label-Width: 200px;
+
 div.Errors {
     color: red;
     margin-top: 20px;
@@ -50,28 +52,38 @@ input[type=text], input[type=range], input[type=number], input[type=password], i
     }
 }
 
+/**
+    This mixin is a "wrapper" that helps you
+    to define buttons of different sizes.
+*/
+@mixin button-size($size) {
+    height: $size;
+    line-height: $size;
+    margin-right: $size;
+
+    i.fa, i.fi {
+        width: $size;
+        height: $size;
+        right: -$size;
+        line-height: $size;
+    }
+}
+
 a.Button {
     text-transform: uppercase;
     color: white;
     padding: 0 10px;
     min-width: 120px;
     display: inline-block;
-    height: $Metric-Control-Height;
-    line-height: $Metric-Control-Height;
     border-radius: 5px 0 0 5px;
     border: none;
     position: relative;
-    margin-right: $Metric-Control-Height;
     background-color: $Color-Font-Green;
     text-align: center;
     cursor: default;
 
-    i.fa {
+    i.fa, i.fi {
         border-left: 1px solid #ebebeb;
-        line-height: $Metric-Control-Height;
-        height: $Metric-Control-Height;
-        right: -$Metric-Control-Height;
-        width: $Metric-Control-Height;
         background-color: inherit;
         border-radius: 0 5px 5px 0;
         position: absolute;
@@ -102,6 +114,34 @@ a.Button {
     &.ReadOnly {
         background-color: $Color-Background-Grey1;
     }
+
+    @include button-size($Metric-Control-Height);
+
+    &.LargeButton {
+        @include button-size(45px);
+    }
+
+    &.GreyGreenButton {
+        background-color: $Color-Background-Grey5;
+        -webkit-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.5);
+        -moz-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.5);
+        box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.5);
+
+        &:hover {
+            i.fa, i.fi {
+                color: $Color-Font-Yellow;
+            }
+        }
+
+        i.fa, i.fi {
+            color: $Color-Font-Dark-Green;
+            background-color: white;
+            font-size: 30px;
+            -webkit-box-shadow: 5px 0px 30px -5px rgba(0,0,0,0.5);
+            -moz-box-shadow: 5px 0px 30px -5px rgba(0,0,0,0.5);
+            box-shadow: 5px 0px 30px -5px rgba(0,0,0,0.5);
+        }
+    }
 }
 
 div.validation-summary-errors {
@@ -124,9 +164,14 @@ form {
     label {
         float: left;
         margin-top: $Metric-Control-Space;
+<<<<<<< HEAD
         margin-left: $Metric-Control-Space;
         width: 200px;
+=======
+        width: $Inline-Form-Label-Width;
+>>>>>>> feature/layout
         position: relative;
+        color: $Color-Font-Grey3;
 
         input, select {
             margin-top: 5px;
@@ -141,7 +186,8 @@ form {
                 height: $Metric-Control-Height;
                 width: $Metric-Control-Height;
                 line-height: $Metric-Control-Height;
-                border-right: 1px solid $Color-Border-Grey;
+                border: 1px solid $Color-Border-Grey;
+                background-color: $Color-Background-Grey3;
             }
 
             & + select, & + input {
@@ -151,6 +197,72 @@ form {
                 }
             }
         }
+<<<<<<< HEAD
+=======
+
+        & + label {
+            margin-left: $Metric-Control-Space;
+        }
+
+        &.Clearing {
+            margin-left: 0;
+        }
+
+        &.Grouped {
+            width: auto;
+            display: flex;
+            flex-wrap: wrap;
+
+            span {
+                flex-basis: 100%;
+            }
+
+            @each $input in input, select {
+                #{$input} {
+                    border-radius: 3px 0 0 3px;
+                    flex-basis: $Inline-Form-Label-Width + 20px;
+
+                    @each $inner in input, select {
+                        & + #{$inner} {
+                            border-left: none;
+                            flex-basis: $Inline-Form-Label-Width - 20px;
+                            border-radius: 0 3px 3px 0;
+                        }
+                    }
+                }
+            }
+        }
+
+        &.FullWidth {
+            width: 100%;
+            float: none;
+            margin-left: 0;
+
+            & + label {
+                margin-left: 0;
+            }
+
+            &.Grouped {
+                @each $input in input, select {
+                    #{$input} {
+                        flex-basis: calc(50% + 20px);
+
+                        @each $inner in input, select {
+                            & + #{$inner} {
+                                    flex-basis: calc(50% - 20px);
+                            }
+                        }
+                    }
+                }
+            }
+
+            &:after, &:before {
+                content: "";
+                display: table;
+                clear: both;
+            }
+        }
+>>>>>>> feature/layout
     }
 
     a.Button {

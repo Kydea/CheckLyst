@@ -38,27 +38,27 @@ input[type=text], input[type=range], input[type=number], input[type=password], i
     margin-left: -27px;
     margin-top: 12px; }
 
+/**
+    This mixin is a "wrapper" that helps you
+    to define buttons of different sizes.
+*/
 a.Button {
   text-transform: uppercase;
   color: white;
   padding: 0 10px;
   min-width: 120px;
   display: inline-block;
-  height: 30px;
-  line-height: 30px;
   border-radius: 5px 0 0 5px;
   border: none;
   position: relative;
-  margin-right: 30px;
   background-color: #009688;
   text-align: center;
-  cursor: default; }
-  a.Button i.fa {
+  cursor: default;
+  height: 30px;
+  line-height: 30px;
+  margin-right: 30px; }
+  a.Button i.fa, a.Button i.fi {
     border-left: 1px solid #ebebeb;
-    line-height: 30px;
-    height: 30px;
-    right: -30px;
-    width: 30px;
     background-color: inherit;
     border-radius: 0 5px 5px 0;
     position: absolute;
@@ -78,6 +78,34 @@ a.Button {
     color: red; }
   a.Button.ReadOnly {
     background-color: #dcdbe0; }
+  a.Button i.fa, a.Button i.fi {
+    width: 30px;
+    height: 30px;
+    right: -30px;
+    line-height: 30px; }
+  a.Button.LargeButton {
+    height: 45px;
+    line-height: 45px;
+    margin-right: 45px; }
+    a.Button.LargeButton i.fa, a.Button.LargeButton i.fi {
+      width: 45px;
+      height: 45px;
+      right: -45px;
+      line-height: 45px; }
+  a.Button.GreyGreenButton {
+    background-color: #858585;
+    -webkit-box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.5);
+    -moz-box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.5);
+    box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.5); }
+    a.Button.GreyGreenButton:hover i.fa, a.Button.GreyGreenButton:hover i.fi {
+      color: #ffba00; }
+    a.Button.GreyGreenButton i.fa, a.Button.GreyGreenButton i.fi {
+      color: #00877a;
+      background-color: white;
+      font-size: 30px;
+      -webkit-box-shadow: 5px 0px 30px -5px rgba(0, 0, 0, 0.5);
+      -moz-box-shadow: 5px 0px 30px -5px rgba(0, 0, 0, 0.5);
+      box-shadow: 5px 0px 30px -5px rgba(0, 0, 0, 0.5); }
 
 form {
   border: 1px solid #afb4b5;
@@ -89,7 +117,8 @@ form {
     margin-top: 20px;
     margin-left: 20px;
     width: 200px;
-    position: relative; }
+    position: relative;
+    color: #666666; }
     form label input, form label select {
       margin-top: 5px; }
     form label i:not(.AutoComplete).fi, form label i:not(.AutoComplete).fa {
@@ -100,9 +129,67 @@ form {
       height: 30px;
       width: 30px;
       line-height: 30px;
-      border-right: 1px solid #afb4b5; }
+      border: 1px solid #afb4b5;
+      background-color: #f5f5f5; }
     form label i:not(.AutoComplete) + select.AutoComplete + input, form label i:not(.AutoComplete) + select:not(.AutoComplete), form label i:not(.AutoComplete) + input.AutoComplete + input, form label i:not(.AutoComplete) + input:not(.AutoComplete) {
       padding-left: 35px; }
+<<<<<<< HEAD
+=======
+    form label + label {
+      margin-left: 20px; }
+    form label.Clearing {
+      margin-left: 0; }
+    form label.Grouped {
+      width: auto;
+      display: flex;
+      flex-wrap: wrap; }
+      form label.Grouped span {
+        flex-basis: 100%; }
+      form label.Grouped input {
+        border-radius: 3px 0 0 3px;
+        flex-basis: 220px; }
+        form label.Grouped input + input {
+          border-left: none;
+          flex-basis: 180px;
+          border-radius: 0 3px 3px 0; }
+        form label.Grouped input + select {
+          border-left: none;
+          flex-basis: 180px;
+          border-radius: 0 3px 3px 0; }
+      form label.Grouped select {
+        border-radius: 3px 0 0 3px;
+        flex-basis: 220px; }
+        form label.Grouped select + input {
+          border-left: none;
+          flex-basis: 180px;
+          border-radius: 0 3px 3px 0; }
+        form label.Grouped select + select {
+          border-left: none;
+          flex-basis: 180px;
+          border-radius: 0 3px 3px 0; }
+    form label.FullWidth {
+      width: 100%;
+      float: none;
+      margin-left: 0; }
+      form label.FullWidth + label {
+        margin-left: 0; }
+      form label.FullWidth.Grouped input {
+        flex-basis: calc(50% + 20px); }
+        form label.FullWidth.Grouped input + input {
+          flex-basis: calc(50% - 20px); }
+        form label.FullWidth.Grouped input + select {
+          flex-basis: calc(50% - 20px); }
+      form label.FullWidth.Grouped select {
+        flex-basis: calc(50% + 20px); }
+        form label.FullWidth.Grouped select + input {
+          flex-basis: calc(50% - 20px); }
+        form label.FullWidth.Grouped select + select {
+          flex-basis: calc(50% - 20px); }
+      form label.FullWidth:after, form label.FullWidth:before {
+        content: "";
+        display: table;
+        clear: both; }
+>>>>>>> feature/layout
   form a.Button {
     margin-top: 41px;
     margin-left: 20px; }
