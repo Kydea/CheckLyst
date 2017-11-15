@@ -120,14 +120,36 @@ form {
     border: 1px solid $Color-Border-Grey;
     position: relative;
 
-    label { //to do
+    label {
         float: left;
         margin-top: $Metric-Control-Space;
         margin-right: $Metric-Control-Space;
         width: 200px;
+        position: relative;
+
 
         input, select {
             margin-top: 5px;
+        }
+
+        i:not(.AutoComplete) {
+            &.fi, &.fa {
+                position: absolute;
+                left: 0;
+                bottom: 0;
+                text-align: center;
+                height: $Metric-Control-Height;
+                width: $Metric-Control-Height;
+                line-height: $Metric-Control-Height;
+                border-right: 1px solid $Color-Border-Grey;
+            }
+
+            & + select, & + input {
+                // The first input|select element after icon is skipped if AutoComplete is active.
+                &.AutoComplete + input, &:not(.AutoComplete) {
+                    padding-left: $Metric-Control-Height + 5px;
+                }
+            }
         }
     }
 

@@ -5,32 +5,36 @@
         <div class="Triggers">
             <label>
                 ID
+                <i class="fi flaticon-departments" />
                 <input type="text" name="id" readonly="readonly" />
             </label>
 
             <label>
                 Name
+                <i class="fi flaticon-data" />
                 <input type="text" name="name" />
             </label>
 
             <label class="Clearing">
                 Created by
+                <i class="fi flaticon-people" />
                 <input type="text" name="createdBy" readonly="readonly" />
             </label>
 
             <label>
                 Created on
-                <input type="text" name="createdOn" readonly="readonly" />
+                <input type="text" name="createdOn" readonlya="readonly" class="DatePicker" />
             </label>
 
             <label>
                 Modified by
+                <i class="fi flaticon-people" />
                 <input type="text" name="modifiedBy" readonly="readonly" />
             </label>
 
             <label>
                 Modified on
-                <input type="text" name="modifiedOn" readonly="readonly" />
+                <input type="text" name="modifiedOn" readonly="readonly" class="DatePicker" />
             </label>
         </div>
     </form>
@@ -48,9 +52,9 @@
 
     matematici.dialog.setWidth($("#UsersDetailPage").width());
 
-    new matematici.Form("form#Detail", {
-        applyButton: "#SaveButton",
-        bindEvent: "Bind"
+    var form = new matematici.Form("form#Detail", {
+        applyButton: "#SaveButton"
     });
-    console.log(data);
+    form.initialize();
+    form.setValues(data);
 </script>

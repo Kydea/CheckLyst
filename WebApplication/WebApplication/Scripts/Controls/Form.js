@@ -25,7 +25,7 @@
 
 			element
 				.on("keypress change paste", fieldsSelector, function (e) {
-					if (e.key != "Tab" && e.which !== 0 && !e.ctrlKey && !e.metaKey && !e.altKey && options.applyButton) 
+					if (e.key != "Tab" && e.which !== 0 && !e.ctrlKey && !e.metaKey && !e.altKey && options.applyButton)
 						matematici.controls.setEditable(options.applyButton, valid);
 				})
 				.on("change", ".Trigger", function () {
@@ -85,6 +85,10 @@
 			return JSON.stringify(parameters);
 		},
 
+		setFieldValue = function () {
+
+		},
+
 		handleResult = function (data) {
 			//updates the form
 			fields.each(function () {
@@ -130,7 +134,7 @@
 				data: data
 			}).done(function (result) {
 				if (options.applyButton && data && data.source && (data.source == options.applyButton.attr("name") || data.source == options.applyButton.attr("id")))
-					matematici.controls.setEditable(options.applyButton, false); //by deafult, the action button is disabled when clicked with success
+					matematici.controls.setEditable(options.applyButton, false); //by default, the action button is disabled when clicked with success
 				if (handler)
 					handler(result);
 			});
@@ -138,19 +142,26 @@
 
 	this.initialize = function () {
 		setup();
-	}
+	};
 
 	this.trigger = function (event, handler, parameters) {
 		//triggers specific events
 		bind(event, handler, prepareRequest(parameters));
-	}
-}
+	};
+
+	this.setValues = function (values) {
+		fields.each(function () {
+			var field = $(this);
+			field.val(values[field.attr("name")] || "");
+		});
+	};
+};
 
 /*
     binds a form with the api in DataEngine
 
     usage: 
-        new matematici.Form(selector, options)
+        new matematici.Form(selector, options) - note: invoke initialize explicitely or use the construtor in initializers
 
 		selector - type: String, description: the selector of the html form to bind
 		options - type: object, description: a PlainObjects:
@@ -164,4 +175,4 @@
 				button: - type: htmlString or Element or Array or jQuery, description: the element(s) to toggle when a field change its value
 				event: - type: string, description: the event to use with bind on click
 				handler: - type: function, description: the function to call on bind result
- */
+*/

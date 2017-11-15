@@ -85,7 +85,7 @@
 
 			$("<i />")
 				.addClass("fa fa-calendar")
-				.insertAfter(element)
+				.insertBefore(element)
 				.on("click", function (e) {
 					e.preventDefault();
 					if (calendar.isVisible() && calendar.getDatePicker() == datePicker) close();

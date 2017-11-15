@@ -16,7 +16,7 @@
     body.Login div.Login div.Box {
       background-color: white;
       padding: 20px;
-      padding-top: 150px;
+      padding-top: 125px;
       margin: 0 auto;
       position: relative; }
       body.Login div.Login div.Box form {
@@ -28,33 +28,30 @@
       body.Login div.Login div.Box label {
         margin-top: 10px;
         margin-bottom: 5px; }
-      body.Login div.Login div.Box input {
-        line-height: 45px;
-        height: 45px; }
       body.Login div.Login div.Box div.Group {
         width: 100%;
         clear: both; }
-        body.Login div.Login div.Box div.Group.LeftIcon {
+        body.Login div.Login div.Box div.Group.Login {
           position: relative; }
-          body.Login div.Login div.Box div.Group.LeftIcon > i {
-            line-height: 45px;
-            width: 45px;
+          body.Login div.Login div.Box div.Group.Login > i {
+            line-height: 30px;
+            width: 30px;
             position: absolute;
             text-align: center;
             font-size: 24px;
             float: none;
             margin: 0;
             top: 0; }
-            body.Login div.Login div.Box div.Group.LeftIcon > i:not(.AutoComplete) {
+            body.Login div.Login div.Box div.Group.Login > i:not(.AutoComplete) {
               border-right: 1px solid #afb4b5;
               left: 0; }
-            body.Login div.Login div.Box div.Group.LeftIcon > i.AutoComplete {
+            body.Login div.Login div.Box div.Group.Login > i.AutoComplete {
               margin-top: 0 !important;
               margin-left: 0 !important;
               font-size: 10px;
               right: 0; }
-          body.Login div.Login div.Box div.Group.LeftIcon input:first-of-type {
-            padding-left: 55px; }
+          body.Login div.Login div.Box div.Group.Login input:first-of-type {
+            padding-left: 40px; }
         body.Login div.Login div.Box div.Group.User {
           display: flex;
           flex-wrap: wrap; }
@@ -89,7 +86,7 @@
           background-color: #019dda; }
       body.Login div.Login div.Box::before {
         background: #009688 url(../Media/LogoMobile.png) no-repeat center 50%;
-        height: 100px;
+        height: 75px;
         position: absolute;
         display: block;
         content: "";

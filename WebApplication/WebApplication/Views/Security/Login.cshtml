@@ -13,22 +13,22 @@
 
             <input type="hidden" name="grant_type" value="password" />
 
-            <label for="companyId">Departments</label>
-            <div class="Group Company LeftIcon">
-                <select name="companyId"></select>
+            <label>
+                Company
                 <i class="fi flaticon-departments"></i>
-            </div>
+                <select name="companyId"></select>
+            </label>
 
-            <label for="username">User</label>
-            <div class="Group User LeftIcon">
+            <label>
+                Username / Password
+                <i class="fi flaticon-people"></i>
                 <input type="text" name="username" class="txtUsername" placeholder="User code" />
                 <input type="password" name="password" class="txtPassword" placeholder="Password" />
-                <i class="fi flaticon-people"></i>
-            </div>
+            </label>
 
             <div class="Errors"></div>
 
-            <div class="Buttons Container">
+            <div class="Buttons">
                 <a class="Button DefaultButton" href="#" id="Sign"><i class="fa fa-check"></i>INVIO</a>
             </div>
         </form>

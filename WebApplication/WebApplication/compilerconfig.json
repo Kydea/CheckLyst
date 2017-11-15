@@ -130,9 +130,5 @@
   {
     "outputFile": "Content/Theme/Accordion.css",
     "inputFile": "Content/Theme/Accordion.scss"
-  },
-  {
-    "outputFile": "Content/Theme/FiltersForm.css",
-    "inputFile": "Content/Theme/FiltersForm.scss"
   }
 ]
