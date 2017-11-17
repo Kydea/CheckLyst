@@ -80,16 +80,26 @@ nav.Menu {
                         font-size: $Menu-Icon-Width;
                     }
                 }
-                // @to_do, what is the css class of the current page?
-                /*&.Current {
-                    color: #333;
+
+                &.Current {
+                    i {
+                        color: $Color-Font-Light-Green;
+                    }
+
                     background-color: #333;
-                }*/
+                }
+
                 &.Selected, &:hover {
                     background-color: $Color-Background-Grey5;
                     position: relative;
-                    // Menu Indicator
+                    color: white !important;
+
+                    .MenuItem {
+                        color: white;
+                    }
+
                     &:after {
+                        // Menu Indicator
                         content: "";
                         display: block;
                         position: absolute;
@@ -113,7 +123,7 @@ nav.Menu {
                     top: ($Metric-Header-Height - $Menu-Icon-Width)/2;
                     border-left: 1px solid $Color-Border-Grey1;
                     border-radius: 0 5px 5px 0;
-                    box-shadow: rgba(0, 0, 0, 0.35) 0px 0px 7px 3.5px;
+                    box-shadow: rgba(0, 0, 0, .35) 3px 0 15px;
                     // Menu indicator: no border between it and the submenu.
                     &:before {
                         left: -1px;
@@ -124,6 +134,7 @@ nav.Menu {
                         height: 18px; // same as menu indicator
                         background-color: black; // same as menu indicator
                         top: ($Menu-Item-Height - 18px)/2; // 18px = menu indicator's height
+                        opacity: 0;
                     }
 
                     li {
@@ -132,41 +143,46 @@ nav.Menu {
                         line-height: $Menu-Item-Height;
                         padding-left: 40px;
 
-                        &:hover {
-                            @keyframes rotation {
-                                100% {
-                                    transform: translateY(-50%) rotate(-45deg) skew(8.16deg, 8.16deg);
-                                }
-                            }
-
-                            a {
-                                position: relative;
-                                color: $Color-Font-Light-Green;
-
-                                &:before {
-                                    content: "";
-                                    display: block;
-                                    width: 10px;
-                                    height: 10px;
-                                    position: absolute;
-                                    left: -30px;
-                                    top: 50%;
-                                    border: solid $Color-Font-Grey3;
-                                    border-width: 0 2px 2px 0;
-                                    animation: rotation 300ms forwards;
-                                    transform: translateY(-50%) rotate(-135deg) skew(8.16deg, 8.16deg);
-                                }
-                            }
-                        }
-
                         a {
                             color: $Color-Font-Silver;
                             display: block;
                             text-decoration: none;
+                            position: relative;
+
+                            &::before {
+                                content: "";
+                                display: block;
+                                width: 10px;
+                                height: 10px;
+                                position: absolute;
+                                left: -30px;
+                                top: 50%;
+                                border: solid $Color-Font-Grey3;
+                                border-width: 0 2px 2px 0;
+                                opacity: 0;
+                                transition: opacity 300ms ease-in-out;
+                                transform: translateY(-50%) rotate(-45deg) skew(8.16deg, 8.16deg);
+                            }
                         }
 
                         & + li {
                             border-top: 1px solid $Color-Font-Grey3;
+                        }
+
+                        &.Current {
+                            a {
+                                color: $Color-Font-Light-Green !important;
+                            }
+                        }
+
+                        &:hover {
+                            a {
+                                color: white;
+
+                                &::before {
+                                    opacity: 1;
+                                }
+                            }
                         }
                     }
                 }
@@ -183,6 +199,10 @@ nav.Menu {
         font-size: 18px;
         font-weight: 300;
         font-family: Myriad, Arial, sans-serif;
+
+        a:hover {
+            color: $Color-Font-Dark-Green !important;
+        }
 
         &::before {
             $Logo-Width: 134px;
@@ -212,6 +232,10 @@ nav.Menu {
                     padding: 0 $Metric-Separator-Mobile;
                 }
 
+                &.Current {
+                    color: $Color-Font-Green !important;
+                }
+
                 ul.SubMenu {
                     li {
                         background: #efefef;
@@ -221,6 +245,12 @@ nav.Menu {
                         }
 
                         border-top: 1px solid $Color-Border-Silver;
+
+                        &.Current {
+                            a {
+                                color: $Color-Font-Green !important;
+                            }
+                        }
                     }
                 }
             }

@@ -14,7 +14,7 @@
 
 			offset = function () {
 				var offset = valid && local ? momentDate.utcOffset() / 60 : 0;
-				return valid && local ? "UTC " + (offset > 0 ? "+" : "-") + (offset > 9 || offset < -9 ? "" : "0") + Math.abs(offset) + ":00" : "";
+				return valid ? "UTC" + (offset == 0 ? "" : offset >= 0 ? " +" : " -") + (offset > 9 || offset < -9 || offset == 0 ? "" : "0") + (offset == 0 ? "" : Math.abs(offset) + ":00") : "";
 			};
 
 		return {
@@ -35,7 +35,7 @@
 
 	both: function (dateTime, local) {
 		var format = matematici.dateFormatter.format(dateTime, local);
-		return format.date + " " + format.time + (local ? " " + format.offset : "");
+		return format.date + " " + format.time + " " + format.offset;
 	},
 
 	dateFormat: "DD/MM/YYYY",

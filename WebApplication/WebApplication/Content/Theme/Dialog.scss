@@ -123,14 +123,6 @@ div.Dialog {
         }
     }
 
-    &.DetailPage {
-        form {
-            border: none;
-            padding-bottom: 0;
-            margin: -20px;
-        }
-    }
-
     @media #{$Media-Extended} {
         position: fixed;
         top: 0;

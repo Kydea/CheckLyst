@@ -24,10 +24,10 @@
                             if (result.ok) {
                                 console.log(result.user.Description);
                                 button.siblings(".User").last().clone().insertBefore(button).children("span.UserName").attr("title", result.user.Code).text(result.user.Description);
-                                matematici.dialog.close();
+                                matematici.popup.close();
                                 matematici.dialog.show("login", "login done with success.", { text: "ok", icon: "check", defaultButton: true, cancelButton: true });
                             } else {
-                                matematici.dialog.close();
+								matematici.popup.close();
                                 matematici.dialog.error("error", result.error);
                             }
                         }).fail(function (jqXHR, textStatus, errorThrown) {
@@ -39,7 +39,7 @@
             }
 
             options.title = 'login';
-            matematici.dialog.show(options);
+            matematici.popup.show(options);
         },
 
         login = function (user) {
@@ -65,10 +65,10 @@
                                 data: { Code: login.getUserName(), Password: login.getPassword(), PIN: login.getPIN(), ConfirmPIN: login.getConfirmPIN() }
                             }).done(function (result) {
                                 if (result.ok) {
-                                    matematici.dialog.close();
+                                    matematici.popup.close();
                                     matematici.dialog.show("pin", "PIN set successfully.", { text: "ok", icon: "check", defaultButton: true, cancelButton: true });
                                 } else {
-                                    matematici.dialog.close();
+                                    matematici.popup.close();
                                     matematici.dialog.error("error", result.error);
                                 }
                             }).fail(function (jqXHR, textStatus, errorThrown) {
@@ -83,11 +83,11 @@
                             data: { Code: login.getUserName() }
                         }).done(function (result) {
                             if (result.ok) {
-                                element.find('.UserName[title="'+login.getUserName()+'"]').parent().remove();
-                                matematici.dialog.close();
+								element.find('.UserName[title="' + login.getUserName() + '"]').parent().remove();
+								matematici.popup.close();
                                 matematici.dialog.show("session", "user logged out.", { text: "ok", icon: "check", defaultButton: true, cancelButton: true });
                             } else {
-                                matematici.dialog.close();
+                                matematici.popup.close();
                                 matematici.dialog.error("error", result.error);
                             }
                         }).fail(function (jqXHR, textStatus, errorThrown) {
@@ -98,7 +98,7 @@
                 }
             }
             options.title = 'pin';
-            matematici.dialog.show(options);
+            matematici.popup.show(options);
         };
 
     this.getUsers = function () {

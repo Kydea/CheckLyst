@@ -72,7 +72,7 @@
                 //new matematici.FixedHeader("div#Content table.Grid")
                 grid = new matematici.Grid("div#Content table.Grid", {
                     rowClick: function (row) {
-                        matematici.dialog.detail({
+                        matematici.popup.show({
                             url: "@Url.Action("PrototypeTypesDetail")",
                             data: row.data("values")
                         });

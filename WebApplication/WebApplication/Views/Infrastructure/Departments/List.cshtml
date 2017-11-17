@@ -57,11 +57,11 @@
                 filtered = true;
             },
             closeHandler = function () {
-                if (filtered && matematici.dialog.getResult().saved) form.getOptions().applyButton.click();
+                if (filtered && matematici.popup.getResult().saved) form.getOptions().applyButton.click();
             };
 
         new matematici.ActionBar("div.ActionBar").add("Add", function () {
-            matematici.dialog.detail({
+            matematici.popup.show({
                 url: "@Url.Action("DepartmentsDetail")",
                 data: null,
                 sender: form,
@@ -75,7 +75,7 @@
                 //new matematici.FixedHeader("div#Content table.Grid")
                 grid = new matematici.Grid("div#Content table.Grid", {
                     rowClick: function (row) {
-                        matematici.dialog.detail({
+                        matematici.popup.show({
                             url: "@Url.Action("DepartmentsDetail")",
                             data: row.data("values"),
                             sender: form,

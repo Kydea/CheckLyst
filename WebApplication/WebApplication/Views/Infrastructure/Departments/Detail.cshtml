@@ -2,58 +2,56 @@
     <h2>Department</h2>
 
     <form id="Detail" action="@BaseUrl/Infrastructure/Departments">
-        <div class="Triggers">
-            <label>
-                ID
-                <i class="fi flaticon-departments" />
-                <input type="text" name="id" readonly="readonly" placeholder="(new record)" />
-            </label>
+        <label>
+            ID
+            <i class="fi flaticon-departments" />
+            <input type="text" name="id" readonly="readonly" placeholder="(new record)" />
+        </label>
 
-            <label>
-                Name
-                <i class="fi flaticon-data" />
-                <input type="text" name="name" />
-            </label>
+        <label>
+            Name
+            <i class="fi flaticon-data" />
+            <input type="text" name="name" />
+        </label>
 
-            <label class="Clearing">
-                Created by
-                <i class="fi flaticon-people" />
-                <input type="text" name="createdBy" readonly="readonly" />
-            </label>
+        <label class="Clearing">
+            Created by
+            <i class="fi flaticon-people" />
+            <input type="text" name="createdBy" readonly="readonly" />
+        </label>
 
-            <label>
-                Created on
-                <input type="text" name="createdOn" readonly="readonly" data-type="DateTimeOffset" />
-            </label>
+        <label>
+            Created on
+            <input type="text" name="createdOn" readonly="readonly" data-type="DateTimeOffset" />
+        </label>
 
-            <label class="Clearing">
-                Modified by
-                <i class="fi flaticon-people" />
-                <input type="text" name="modifiedBy" readonly="readonly" />
-            </label>
+        <label class="Clearing">
+            Modified by
+            <i class="fi flaticon-people" />
+            <input type="text" name="modifiedBy" readonly="readonly" />
+        </label>
 
-            <label>
-                Modified on
-                <input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
-            </label>
-        </div>
+        <label>
+            Modified on
+            <input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
+        </label>
+        <div class="Clearing"></div>
+
     </form>
-
-    <div class="Clearing"></div>
 </div>
 
 <script type="text/javascript">
     var
-        data = matematici.dialog.getData(),
-        sender = matematici.dialog.getSender(),
+        data = matematici.popup.getData(),
+        sender = matematici.popup.getSender(),
         buttons = [],
 
         clickHandler = function (event) {
             form.trigger(event, function (result) {
                 form.handleResult(result);
                 if (result.valid) {
-                    matematici.dialog.getResult().saved = true;
-                    matematici.dialog.close();
+                    matematici.popup.getResult().saved = true;
+                    matematici.popup.close();
                 }
             });
         };
@@ -62,7 +60,14 @@
     if (data != null)
         buttons.push({
             text: "delete", icon: "delete", handler: function () {
-                clickHandler("Delete");
+                matematici.dialog.show("warning", "The record will be deleted.", [
+                    {
+                        text: "confirm", icon: "check", handler: function () {
+                            clickHandler("Delete");
+                        }
+                    },
+                    { text: "cancel", icon: "remove", cancelButton: true }
+                ]);
                 return true;
             }
         });
@@ -73,9 +78,9 @@
         }
     });
 
-    matematici.dialog.setButtons(buttons);
+    matematici.popup.setButtons(buttons);
 
-    matematici.dialog.setWidth(420);
+    matematici.popup.setWidth(420);
 
     var form = new matematici.Form("form#Detail", {
         applyButton: "#SaveButton"

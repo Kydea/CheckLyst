@@ -1,0 +1,82 @@
+﻿div.Popup {
+  display: none; }
+  div.Popup div.Container {
+    padding: 20px;
+    background-color: white;
+    box-shadow: rgba(0, 0, 0, 0.16) 0 0 16px 5px; }
+    div.Popup div.Container strong {
+      color: #086386; }
+    div.Popup div.Container p {
+      line-height: 1.6; }
+    div.Popup div.Container h2 {
+      margin: -20px -20px 20px;
+      background: #009688;
+      border-bottom: solid 1px #499dbf;
+      padding: 20px;
+      color: white;
+      text-transform: uppercase;
+      font-weight: normal; }
+    div.Popup div.Container div.Buttons {
+      margin-top: 40px; }
+      div.Popup div.Container div.Buttons a {
+        min-width: 100px;
+        float: right;
+        margin-left: 20px;
+        margin-top: 20px; }
+      div.Popup div.Container div.Buttons textarea {
+        min-height: 60px;
+        resize: vertical; }
+      div.Popup div.Container div.Buttons::after {
+        content: "";
+        visibility: hidden;
+        display: block;
+        height: 0;
+        clear: both; }
+    div.Popup div.Container a.CloseButton {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: black;
+      background: white;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      line-height: 30px;
+      text-align: center; }
+    div.Popup div.Container form {
+      border: none;
+      padding-bottom: 0;
+      margin: -20px; }
+  @media only screen and (min-width: 760px) {
+    div.Popup {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 103;
+      background-color: rgba(217, 217, 217, 0.5); }
+      div.Popup div.Container {
+        position: relative;
+        max-width: calc(100vw - 60px);
+        margin: 0 auto;
+        border-radius: 15px; }
+        div.Popup div.Container h2 {
+          border-radius: 15px 15px 0 0; } }
+  @media only screen and (max-width: 759px) {
+    div.Popup div.Container {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 103;
+      width: unset !important; }
+      div.Popup div.Container h2 {
+        background: #009688;
+        border-bottom: solid 1px #499dbf;
+        padding: 20px;
+        color: white;
+        text-transform: uppercase;
+        font-weight: normal; } }
+

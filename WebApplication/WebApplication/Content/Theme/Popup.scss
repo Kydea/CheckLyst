@@ -1,0 +1,114 @@
+﻿@import "_Library.scss";
+
+div.Popup {
+    display: none;
+
+    div.Container {
+        padding: 20px;
+        background-color: white;
+        box-shadow: rgba(0, 0, 0, 0.16) 0 0 16px 5px;
+
+        strong {
+            color: $Color-Font-Blue2;
+        }
+
+        p {
+            line-height: 1.6;
+        }
+
+        h2 {
+            margin: -20px -20px 20px;
+            background: $Color-Font-Green;
+            border-bottom: solid 1px $Color-Border-Blu;
+            padding: 20px;
+            color: white;
+            text-transform: uppercase;
+            font-weight: normal;
+        }
+
+        div.Buttons {
+            margin-top: 2 * $Metric-Control-Space;
+
+            a {
+                min-width: 100px;
+                float: right;
+                margin-left: $Metric-Control-Space;
+                margin-top: $Metric-Control-Space;
+            }
+
+            textarea {
+                min-height: 60px;
+                resize: vertical;
+            }
+
+            &::after {
+                content: "";
+                visibility: hidden;
+                display: block;
+                height: 0;
+                clear: both;
+            }
+        }
+
+        a.CloseButton {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: black;
+            background: white;
+            border-radius: 50%;
+            width: $Metric-Control-Height;
+            height: $Metric-Control-Height;
+            line-height: $Metric-Control-Height;
+            text-align: center;
+        }
+
+        form {
+            border: none;
+            padding-bottom: 0;
+            margin: -20px;
+        }
+    }
+
+    @media #{$Media-Extended} {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: $Depth-Popup;
+        background-color: rgba(217, 217, 217, .5);
+
+        div.Container {
+            position: relative;
+            max-width: calc(100vw - #{2 * $Metric-Separator-Extended});
+            margin: 0 auto;
+            border-radius: 15px;
+
+            h2 {
+                border-radius: 15px 15px 0 0;
+            }
+        }
+    }
+
+    @media #{$Media-Mobile} {
+        div.Container {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: $Depth-Popup;
+            width: unset !important;
+
+            h2 {
+                background: $Color-Font-Green;
+                border-bottom: solid 1px $Color-Border-Blu;
+                padding: 20px;
+                color: white;
+                text-transform: uppercase;
+                font-weight: normal;
+            }
+        }
+    }
+}

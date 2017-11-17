@@ -42,7 +42,7 @@ matematici.AutoComplete = function (selector) {
 			input = $("<input />").addClass("AutoComplete-Filter").attr({ type: "text" }).hide().insertAfter(label);
 			list = $("<div />").addClass("AutoComplete-List").insertAfter(input);
 			icon = $("<i />").addClass("AutoComplete fi flaticon-freccia-giu").insertAfter(input);
-			noRow = $("<i />").addClass("fa fa-minus");
+			noRow = $("<i />").addClass("fi flaticon-meno");
 			label
 				.on("focus", function () {
 					showList();

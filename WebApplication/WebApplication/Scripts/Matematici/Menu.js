@@ -27,28 +27,18 @@
 				ul.fadeTo(300, 0, function () { $(this).hide(); });
 		},
 
-		hideItems = function () {
-			rollingOver = false;
-			$(document).off(matematici.touch.isEnabled() ? "touchend" : "click", hideItems);
-			hideItem();
-		},
-
 		onClick = function (e) {
 			e.preventDefault();
 
 			var
 				item = $(this).parent(),
-				alreadySelected = item.hasClass("Selected");
+				selected = item.hasClass("Selected");
 
-			if (rollingOver && alreadySelected) return;
+			if (rollingOver && selected) return;
 
 			hideItem();
-			$(document).off(matematici.touch.isEnabled() ? "touchend" : "click", hideItems);
-
-			if (!alreadySelected) {
-				setTimeout(function () { $(document).on(matematici.touch.isEnabled() ? "touchend" : "click", hideItems); }, 0);
+			if (!selected) 
 				showItem(item);
-			}
 		},
 
 		setup = function () {
@@ -68,6 +58,11 @@
 				}).on("mouseout", "li.MenuItem", function () {
 					if (!isMobileMode())
 						hideItem($(this));
+				}).on("touchend click", "li.MenuItem a", function () {
+					if (!moved && isMobileMode() && menuButton.hasClass("Selected")) {
+						hideItem();
+						menuButton.trigger("click");
+					}
 				});
 
 			menuButton.on("click", function (e) {

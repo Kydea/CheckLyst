@@ -15,6 +15,7 @@ input.Error, input.input-validation-error, select.Error, select.input-validation
 
 label {
     display: block;
+    font-size: 13px;
 }
 
 span.field-validation-error {
@@ -38,10 +39,10 @@ input[type=text], input[type=range], input[type=number], input[type=password], i
     resize: none;
     line-height: $Metric-Control-Height;
     height: $Metric-Control-Height;
+    font-size: 13px;
 
     &[readonly], &.ReadOnly {
-        border-color: $Color-Border-Black;
-        background-color: $Color-Background-Grey3;
+        background-color: $Color-Background-Grey4;
     }
 
     & + i {
@@ -52,34 +53,27 @@ input[type=text], input[type=range], input[type=number], input[type=password], i
     }
 }
 
-@mixin button-size($size) {
-    /* use to define buttons of different sizes */
-    height: $size;
-    line-height: $size;
-    margin-right: $size;
-
-    i.fa, i.fi {
-        width: $size;
-        height: $size;
-        right: -$size;
-        line-height: $size;
-    }
-}
-
 a.Button {
     text-transform: uppercase;
     color: white;
-    padding: 0 10px;
-    min-width: 120px;
+    padding: 0 $Metric-Control-Space + $Metric-Control-Height 0 $Metric-Control-Space;
+    min-width: 90px;
     display: inline-block;
-    border-radius: 5px 0 0 5px;
+    border-radius: 5px;
     border: none;
     position: relative;
     background-color: $Color-Font-Green;
     text-align: center;
     cursor: default;
+    height: $Metric-Control-Height;
+    line-height: $Metric-Control-Height;
+    box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.5);
 
     i.fa, i.fi {
+        width: $Metric-Control-Height;
+        height: $Metric-Control-Height;
+        right: 0;
+        line-height: $Metric-Control-Height;
         border-left: 1px solid #ebebeb;
         background-color: inherit;
         border-radius: 0 5px 5px 0;
@@ -112,43 +106,19 @@ a.Button {
         background-color: $Color-Background-Grey1;
     }
 
-    @include button-size($Metric-Control-Height);
-
-    &.LargeButton {
-        @include button-size(45px);
-    }
-
     &.GreyGreenButton {
         background-color: $Color-Background-Grey5;
-        -webkit-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.5);
-        -moz-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.5);
-        box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.5);
+
+        i.fa, i.fi {
+            color: $Color-Font-Dark-Green;
+            background-color: white;
+        }
 
         &:hover {
             i.fa, i.fi {
                 color: $Color-Font-Yellow;
             }
         }
-
-        i.fa, i.fi {
-            color: $Color-Font-Dark-Green;
-            background-color: white;
-            font-size: 30px;
-            -webkit-box-shadow: 5px 0px 30px -5px rgba(0,0,0,0.5);
-            -moz-box-shadow: 5px 0px 30px -5px rgba(0,0,0,0.5);
-            box-shadow: 5px 0px 30px -5px rgba(0,0,0,0.5);
-        }
-    }
-}
-
-div.validation-summary-errors {
-
-    ul {
-        li {
-        }
-    }
-
-    &::before {
     }
 }
 
@@ -171,7 +141,7 @@ form {
             margin-top: 5px;
         }
 
-        i:not(.AutoComplete) {
+        i:not(.AutoComplete):not(.ValidationMessagesIcon) {
             &.fi, &.fa {
                 position: absolute;
                 left: 0;
@@ -182,6 +152,7 @@ form {
                 line-height: $Metric-Control-Height;
                 border: 1px solid $Color-Border-Grey;
                 background-color: $Color-Background-Grey3;
+                border-radius: 3px 0 0 3px;
             }
 
             & + select, & + input {
@@ -190,6 +161,11 @@ form {
                     padding-left: $Metric-Control-Height + 5px;
                 }
             }
+        }
+
+        i.ValidationMessagesIcon {
+            color: red;
+            cursor: pointer;
         }
 
         &.Grouped {
@@ -233,7 +209,7 @@ form {
 
                         @each $inner in input, select {
                             & + #{$inner} {
-                                    flex-basis: calc(50% - 20px);
+                                flex-basis: calc(50% - 20px);
                             }
                         }
                     }
@@ -244,6 +220,12 @@ form {
                 content: "";
                 display: table;
                 clear: both;
+            }
+        }
+
+        &.Error {
+            i {
+                color: red;
             }
         }
     }
@@ -257,6 +239,11 @@ form {
         content: "";
         display: table;
         clear: both;
+    }
+
+    div.Errors {
+        margin-top: $Metric-Control-Space;
+        margin-left: $Metric-Control-Space;
     }
 }
 

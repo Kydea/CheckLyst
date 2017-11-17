@@ -162,28 +162,60 @@ header {
     }
 }
 
-// @to_do: no footer(?)
 footer {
-    display: none;
     position: relative;
-    margin-left: $Metric-Header-Height;
-    width: calc(100vw - #{$Metric-Header-Height});
-    height: 58px;
-    background: black;
+    background: white;
+    border-top: solid 1px $Color-Border-Silver;
+    padding: 20px 30px;
+    line-height: 1.4;
 
     div.Information {
-        font-size: 10px;
-        color: white;
-        position: absolute;
+        font-size: 12px;
+        font-weight: bold;
+        color: black;
         bottom: $Metric-Separator-Mobile;
+        color: $Color-Font-Grey3;
+
+        .Item {
+            span.Label {
+                font-weight: normal;
+            }
+        }
+
 
         @media #{$Media-Extended} {
             left: $Metric-Separator-Extended;
+
+            .Item {
+                white-space: nowrap;
+                border-left: solid 1px black;
+                margin-left: 10px;
+                padding-left: 10px;
+                display: block;
+                float: left;
+
+                &:first-child {
+                    border-left: unset;
+                    margin-left: 0;
+                    padding-left: 0;
+                }
+            }
         }
 
         @media #{$Media-Mobile} {
             left: $Metric-Separator-Mobile;
+
+            .Item {
+                display: block;
+            }
         }
+    }
+
+    @media #{$Media-Extended} {
+        margin-left: $Metric-Header-Height;
+    }
+
+    @media #{$Media-Mobile} {
     }
 }
 

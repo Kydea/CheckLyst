@@ -28,7 +28,7 @@ body.Login {
         div.Box {
             background-color: white;
             padding: 20px;
-            padding-top: $Logo-Container-Height + 50px; // Logo container's height + Margin-Bottom
+            padding-top: $Logo-Container-Height + 20px; // Logo container's height + Margin-Bottom
             margin: 0 auto;
             position: relative;
 
@@ -58,6 +58,7 @@ body.Login {
                     }
                 }
             }
+
             // Logo
             &::before {
                 background: $Color-Font-Green url(../Media/LogoMobile.png) no-repeat center 50%;

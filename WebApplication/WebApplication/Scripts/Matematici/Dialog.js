@@ -7,23 +7,6 @@ matematici.dialog = function () {
 		autoCenter,
 		closeHandler,
 
-		ajax = function () {
-			$.ajax(options.ajax)
-				.done(function (result) {
-					options.content = result;
-					show();
-
-					if (options.ajax.callback != undefined)
-						options.ajax.callback.call();
-				})
-				.fail(function (jqXHR, textStatus, errorThrown) {
-					if (options.errorHandler)
-						options.errorHandler.call(matematici.dialog, jqXHR, textStatus, errorThrown);
-					else
-						matematici.dialog.error("Error", errorThrown);
-				});
-		},
-
 		addButton = function (buttons, button) {
 			if (button.textarea) {
 				button.content = $("<div />");
@@ -141,17 +124,6 @@ matematici.dialog = function () {
 			matematici.dialog.show(titleOrSettings);
 		},
 
-		detail: function (settings) {
-			settings = settings || {};
-			settings.ajax = {
-				type: "post",
-				url: settings.url
-			};
-			settings.cssClass = "DetailPage";
-
-			matematici.dialog.show(settings);
-		},
-
 		popupMenu: function (buttons, data) {
 			titleOrSettings = { title: "", content: "", cssClass: "PopupMenu", buttons: buttons, data: data };
 			matematici.dialog.show(titleOrSettings);
@@ -202,9 +174,7 @@ matematici.dialog = function () {
 
     		title - type: htmlString or Element or Array or jQuery, description: the title of the dialog
 	    	content - type: htmlString or Element or Array or jQuery, description: the contente of the dialog
-            ajax - type: PlainObject, description: the prameters to use with ajax call, the result will be used to replace content, errors will be handled
-            ajaxErrorHandler - type: function, description: is triggered if ajax call fails, if not set an error dialog is shown
-            data - type: PlainObject, description: this object will be available as matematici.dialog.getData() while the dialog is showing, use it for example to customize handlers for ajax content
+            data - type: PlainObject, description: this object will be available as matematici.dialog.getData() while the dialog is showing
 			sender - type: jQuery, description: this object will be available as matematici.dialog.getSender(), e.g. the object of which the click has been made
 			cssClass - type: String, description: the custom css class of the dialog element and for the body element (with the prefix "Dialog-")
 			closeHandler - type: function, description: the function passed in invoked when the dialog is closed
@@ -225,11 +195,5 @@ matematici.dialog = function () {
     or:
         error(settings)
         see show(...)
-
-	or:
-		detail(settings), shows a dialog which contains the detail of a record for CRUD operations
-            url - type: string, description: the url of the detail page
-            data - type: PlainObject, description: this object will be available as matematici.dialog.getData() while the dialog is showing, use it for example to customize handlers for ajax content
-			sender - type: jQuery, description: this object will be available as matematici.dialog.getSender(), e.g. the object of which the click has been made
 
  */

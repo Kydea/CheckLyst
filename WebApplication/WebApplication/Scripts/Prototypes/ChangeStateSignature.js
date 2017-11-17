@@ -60,7 +60,7 @@
         		options.completeHandler.call(self, createModel(false));
         })
         .on("click", "a#Cancel", function () {
-        	matematici.dialog.close();
+        	matematici.popup.close();
         })
 		.on("change", "input.ValidityStartType", function (e) {
 			onDateTypeChanged.call(this, e, validityStart, validityStartMessage);

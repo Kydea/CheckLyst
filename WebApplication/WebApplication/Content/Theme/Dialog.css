@@ -76,10 +76,6 @@
     border-color: red !important; }
   div.Dialog.Error div.Buttons a {
     background-color: red !important; }
-  div.Dialog.DetailPage form {
-    border: none;
-    padding-bottom: 0;
-    margin: -20px; }
   @media only screen and (min-width: 760px) {
     div.Dialog {
       position: fixed;

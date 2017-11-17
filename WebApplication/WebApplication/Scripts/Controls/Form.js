@@ -5,6 +5,7 @@
 		fieldsSelector = "input, select",
 		fields = $(fieldsSelector, element),
 		valid = false,
+		errors,
 
 		setup = function () {
 			//initial setup
@@ -25,8 +26,12 @@
 
 			element
 				.on("keypress change paste", fieldsSelector, function (e) {
-					if (e.key != "Tab" && e.which !== 0 && !e.ctrlKey && !e.metaKey && !e.altKey && options.applyButton)
+					if (e.key != "Tab" && e.which !== 0 && !e.ctrlKey && !e.metaKey && !e.altKey && options.applyButton) {
 						matematici.controls.setEditable(options.applyButton, valid);
+						errors.remove();
+						errors = null;
+						matematici.controls.setValidationMessages($(this), []);
+					}
 				})
 				.on("change", ".Trigger", function () {
 					bind(options.bindEvent, handleResult, prepareRequest({ data: { source: $(this).attr("name") } }));
@@ -108,9 +113,27 @@
 
 		},
 
-		handleErrors = function (field, data) {
-			for (var index in data.validationMessages)
-				console.log(field, data.validationMessages[index]);
+		handleValidationMessages = function (field, data) {
+			var validationMessages = data.validationMessages || [];
+			if (field)
+				matematici.controls.setValidationMessages(field, validationMessages);
+
+			if (validationMessages.length > 0) {
+				if (!errors) errors = $("<div />").addClass("Errors").appendTo(element).show();
+				if (field)
+					errors.append(
+						$("<div />").addClass("Error").text(" Some field has errors. Click on error icon of the field for more details.").prepend(
+							$("<i />").addClass("fa fa-warning")
+						)
+					);
+				else
+					for (var index in data.validationMessages)
+						errors.append(
+							$("<div />").addClass("Error").text(" " + data.validationMessages[index].message).prepend(
+								$("<i />").addClass("fa fa-warning")
+							)
+						);
+			} 
 		};
 
 		handleResult = function (data) {
@@ -140,11 +163,11 @@
 						matematici.controls.setEditable(field, fieldData.editable);
 					}
 
-					handleErrors(field, fieldData);
+					handleValidationMessages(field, fieldData);
 				}
 			});
 
-			handleErrors(null, data);
+			handleValidationMessages(null, data);
 			valid = data.valid;
 			matematici.controls.setEditable(options.applyButton, valid);
 		},

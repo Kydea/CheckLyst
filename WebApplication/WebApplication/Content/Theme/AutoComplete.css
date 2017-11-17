@@ -23,7 +23,6 @@ div.AutoComplete-List {
   height: unset;
   z-index: 34;
   border: solid 1px #afb4b5;
-  margin-top: 2px;
   background: white;
   max-height: 150px;
   overflow: auto;
@@ -44,10 +43,12 @@ div.AutoComplete-List {
     div.AutoComplete-List a.Selected {
       background: #ebebeb; }
   div.AutoComplete-List i {
-    height: 30px;
-    line-height: 30px;
     display: block;
-    text-align: center; }
+    text-align: center;
+    width: unset !important;
+    position: relative !important;
+    border: none !important;
+    background: none !important; }
 
 i.AutoComplete {
   position: absolute;
