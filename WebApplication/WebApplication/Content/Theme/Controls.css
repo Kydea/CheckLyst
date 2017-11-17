@@ -1,7 +1,8 @@
 ﻿div.Errors {
   color: red;
   margin-top: 20px;
-  display: none; }
+  display: none;
+  line-height: 1.5; }
 
 input.Error, input.input-validation-error, select.Error, select.input-validation-error {
   border: solid 1px red !important;

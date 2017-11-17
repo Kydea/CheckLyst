@@ -19,7 +19,6 @@ div.Dialog {
         h2 {
             margin: -20px -20px 20px;
             background: $Color-Font-Green;
-            border-bottom: solid 1px $Color-Border-Blu;
             padding: 20px;
             color: white;
             text-transform: uppercase;
@@ -113,7 +112,7 @@ div.Dialog {
     &.Error {
         h2 {
             color: red !important;
-            border-color: red !important;
+            border-bottom: solid 1px red;
         }
 
         div.Buttons {
@@ -156,7 +155,6 @@ div.Dialog {
 
             h2 {
                 background: $Color-Font-Green;
-                border-bottom: solid 1px $Color-Border-Blu;
                 padding: 20px;
                 color: white;
                 text-transform: uppercase;

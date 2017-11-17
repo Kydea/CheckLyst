@@ -28,8 +28,10 @@
 				.on("keypress change paste", fieldsSelector, function (e) {
 					if (e.key != "Tab" && e.which !== 0 && !e.ctrlKey && !e.metaKey && !e.altKey && options.applyButton) {
 						matematici.controls.setEditable(options.applyButton, valid);
-						errors.remove();
-						errors = null;
+						if (errors) {
+							errors.remove();
+							errors = null;
+						}
 						matematici.controls.setValidationMessages($(this), []);
 					}
 				})
