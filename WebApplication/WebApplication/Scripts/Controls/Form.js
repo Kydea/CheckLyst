@@ -82,7 +82,7 @@
 				var field = $(this);
 				parameters.data[field.attr("name")] =
 					field.hasClass("DatePicker") || field.data("type") == "DateTimeOffset" ? field.data("date") :
-					field.val();
+						field.val();
 			});
 			return JSON.stringify(parameters);
 		},
@@ -107,6 +107,11 @@
 			}
 
 		},
+
+		handleErrors = function (field, data) {
+			for (var index in data.validationMessages)
+				console.log(field, data.validationMessages[index]);
+		};
 
 		handleResult = function (data) {
 			//updates the form
@@ -134,13 +139,14 @@
 						field.toggle(!fieldData.visibile);
 						matematici.controls.setEditable(field, fieldData.editable);
 					}
-					//TODO field warnings and errors
+
+					handleErrors(field, fieldData);
 				}
 			});
 
+			handleErrors(null, data);
 			valid = data.valid;
 			matematici.controls.setEditable(options.applyButton, valid);
-			//TODO form warnings and errors
 		},
 
 		bind = function (event, handler, data) {
@@ -165,7 +171,7 @@
 
 	this.trigger = function (event, handler, parameters) {
 		//triggers specific events
-		bind(event, handler, prepareRequest(parameters));
+		bind(event, handler || handleResult, prepareRequest(parameters));
 	};
 
 	this.setValues = function (values) {
@@ -177,6 +183,10 @@
 
 	this.getOptions = function () {
 		return options;
+	};
+
+	this.handleResult = function (result) {
+		handleResult(result);
 	};
 };
 

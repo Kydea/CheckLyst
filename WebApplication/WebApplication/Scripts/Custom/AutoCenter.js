@@ -10,6 +10,7 @@
 		initialize = function () {
 			matematici.elements.window.on("resize", center);
 			center();
+			element.show();
 		},
 
 		destroy = function () {

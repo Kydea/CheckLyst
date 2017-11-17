@@ -6,7 +6,7 @@
             <label>
                 ID
                 <i class="fi flaticon-departments" />
-                <input type="text" name="id" readonly="readonly" />
+                <input type="text" name="id" readonly="readonly" placeholder="(new record)" />
             </label>
 
             <label>
@@ -45,32 +45,35 @@
 <script type="text/javascript">
     var
         data = matematici.dialog.getData(),
-        sender = matematici.dialog.getSender();
+        sender = matematici.dialog.getSender(),
+        buttons = [],
 
-    matematici.dialog.setCloseHandler(function () {
-        sender.getOptions().applyButton.click();
-    });
+        clickHandler = function (event) {
+            form.trigger(event, function (result) {
+                form.handleResult(result);
+                if (result.valid) {
+                    matematici.dialog.getResult().saved = true;
+                    matematici.dialog.close();
+                }
+            });
+        };
 
-    matematici.dialog.setButtons([
-        { cancelButton: true, hidden: true },
-        {
+    buttons.push({ cancelButton: true, hidden: true });
+    if (data != null)
+        buttons.push({
             text: "delete", icon: "delete", handler: function () {
-                form.trigger("Delete", function (result) {
-                    //TODO: handle errors
-                    form.setValues(result);
-                });
-            },
-        },
-        {
-            text: "save", icon: "save", id: "SaveButton", handler: function () {
-                form.trigger("Edit", function (result) {
-                    //TODO: handle errors
-                    form.setValues(result);
-                });
+                clickHandler("Delete");
                 return true;
             }
+        });
+    buttons.push({
+        text: "save", icon: "save", id: "SaveButton", handler: function() {
+            clickHandler(data == null ? "Add" : "Edit");
+            return true;
         }
-    ]);
+    });
+
+    matematici.dialog.setButtons(buttons);
 
     matematici.dialog.setWidth(420);
 
@@ -78,5 +81,5 @@
         applyButton: "#SaveButton"
     });
     form.initialize();
-    form.setValues(data);
+    if (data != null) form.setValues(data);
 </script>

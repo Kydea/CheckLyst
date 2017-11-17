@@ -1,9 +1,7 @@
 ﻿<div id="InfrastructurePage">
     <h1>Departments List</h1>
 
-    <div class="ActionBar">
-        <a class="Button">Add <i class="fa fa-plus"></i></a>
-    </div>
+    <div class="ActionBar"></div>
 
     <div class="ShadowPanel">
         <div class="Accordion-Bar">
@@ -23,7 +21,7 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Bame</th>
+                    <th>Name</th>
                     <th>Created By</th>
                     <th>Created On</th>
                     <th>Modified By</th>
@@ -52,16 +50,22 @@
         var grid,
             form,
             paginator,
-            handler = function (result) {
+            filtered = false,
+            filterHandler = function (result) {
                 grid.update(result.data);
                 paginator.setPage(result.currentPage, result.pagesCount);
+                filtered = true;
+            },
+            closeHandler = function () {
+                if (filtered && matematici.dialog.getResult().saved) form.getOptions().applyButton.click();
             };
 
         new matematici.ActionBar("div.ActionBar").add("Add", function () {
             matematici.dialog.detail({
                 url: "@Url.Action("DepartmentsDetail")",
                 data: null,
-                sender: form
+                sender: form,
+                closeHandler: closeHandler
             });
         }, null, "plus");
 
@@ -74,7 +78,8 @@
                         matematici.dialog.detail({
                             url: "@Url.Action("DepartmentsDetail")",
                             data: row.data("values"),
-                            sender: form
+                            sender: form,
+                            closeHandler: closeHandler
                         });
                     }
                 }),
@@ -82,11 +87,11 @@
                     applyButton: {
                         button: "#ApplyButton",
                         event: "GetData",
-                        handler: handler
+                        handler: filterHandler
                     }
                 }),
-                matematici.p = paginator = new matematici.Paginator("div#Content div.Paginator", function (index) {
-                    form.trigger("GetData", handler, { CurrentPage: index });
+                paginator = new matematici.Paginator("div#Content div.Paginator", function (index) {
+                    form.trigger("GetData", filterHandler, { CurrentPage: index });
                 })
             ],
             breadcrumbs: [

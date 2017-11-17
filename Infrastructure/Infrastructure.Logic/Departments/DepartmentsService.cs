@@ -44,6 +44,7 @@ namespace CheckListManager.Infrastructure.Logic.Departments
         {
             var response = new DepartmentsResponse();
             if (string.IsNullOrWhiteSpace(record.Name))
+            {
                 response.Fields["Name"] = new Field
                 {
                     ValidationMessages = new List<ValidationMessage> {
@@ -53,6 +54,8 @@ namespace CheckListManager.Infrastructure.Logic.Departments
                         }
                     }
                 };
+                response.Valid = false;
+            }
             return response;
         }
 

@@ -40,5 +40,5 @@
 
 	dateFormat: "DD/MM/YYYY",
 
-	timeFormat: "HH:MM"
+	timeFormat: "HH:mm"
 }

@@ -30,6 +30,9 @@ a {
   a.Right {
     float: right; }
 
+.AutoCenter {
+  display: none; }
+
 .LeftFloating {
   float: left; }
 
