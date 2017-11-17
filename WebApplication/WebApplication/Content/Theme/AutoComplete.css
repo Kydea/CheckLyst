@@ -1,5 +1,5 @@
 ﻿select.AutoComplete {
-  display: none; }
+  display: none !important; }
 
 input.AutoComplete {
   padding-right: 30px !important; }
@@ -50,6 +50,8 @@ div.AutoComplete-List {
     text-align: center; }
 
 i.AutoComplete {
-  position: absolute;
-  margin-top: -23px !important; }
+  line-height: 30px;
+  height: 30px;
+  position: absolute !important;
+  margin: 0 !important; }
 

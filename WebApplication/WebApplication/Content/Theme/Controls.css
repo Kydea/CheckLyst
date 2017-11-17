@@ -132,52 +132,34 @@ form {
       background-color: #f5f5f5; }
     form label i:not(.AutoComplete) + select.AutoComplete + input, form label i:not(.AutoComplete) + select:not(.AutoComplete), form label i:not(.AutoComplete) + input.AutoComplete + input, form label i:not(.AutoComplete) + input:not(.AutoComplete) {
       padding-left: 35px; }
-    form label.Grouped {
-      width: auto;
-      display: flex;
-      flex-wrap: wrap; }
-      form label.Grouped span {
-        flex-basis: 100%; }
-      form label.Grouped input {
-        border-radius: 3px 0 0 3px;
-        flex-basis: 220px; }
-        form label.Grouped input + input {
-          border-left: none;
-          flex-basis: 180px;
-          border-radius: 0 3px 3px 0; }
-        form label.Grouped input + select {
-          border-left: none;
-          flex-basis: 180px;
-          border-radius: 0 3px 3px 0; }
-      form label.Grouped select {
-        border-radius: 3px 0 0 3px;
-        flex-basis: 220px; }
-        form label.Grouped select + input {
-          border-left: none;
-          flex-basis: 180px;
-          border-radius: 0 3px 3px 0; }
-        form label.Grouped select + select {
-          border-left: none;
-          flex-basis: 180px;
-          border-radius: 0 3px 3px 0; }
     form label.FullWidth {
       width: 100%;
-      float: none;
-      margin-left: 0; }
+      margin-left: 0;
+      display: block; }
       form label.FullWidth + label {
         margin-left: 0; }
-      form label.FullWidth.Grouped input {
-        flex-basis: calc(50% + 20px); }
-        form label.FullWidth.Grouped input + input {
-          flex-basis: calc(50% - 20px); }
-        form label.FullWidth.Grouped input + select {
-          flex-basis: calc(50% - 20px); }
-      form label.FullWidth.Grouped select {
-        flex-basis: calc(50% + 20px); }
-        form label.FullWidth.Grouped select + input {
-          flex-basis: calc(50% - 20px); }
-        form label.FullWidth.Grouped select + select {
-          flex-basis: calc(50% - 20px); }
+      form label.FullWidth span {
+        width: 100%;
+        display: block; }
+      form label.FullWidth.Controls2 input, form label.FullWidth.Controls2 select {
+        width: calc(50% - 30px/2); }
+      form label.FullWidth.Controls2 i:not(.AutoComplete) + input:not(.AutoComplete), form label.FullWidth.Controls2 i:not(.AutoComplete) + input.AutoComplete + input, form label.FullWidth.Controls2 i:not(.AutoComplete) + input.AutoComplete + select, form label.FullWidth.Controls2 i:not(.AutoComplete) + select:not(.AutoComplete), form label.FullWidth.Controls2 i:not(.AutoComplete) + select.AutoComplete + input, form label.FullWidth.Controls2 i:not(.AutoComplete) + select.AutoComplete + select {
+        width: calc(50% + 30px - 30px/2); }
+      form label.FullWidth.Controls3 input, form label.FullWidth.Controls3 select {
+        width: calc(33.33% - 30px/3); }
+      form label.FullWidth.Controls3 i:not(.AutoComplete) + input:not(.AutoComplete), form label.FullWidth.Controls3 i:not(.AutoComplete) + input.AutoComplete + input, form label.FullWidth.Controls3 i:not(.AutoComplete) + input.AutoComplete + select, form label.FullWidth.Controls3 i:not(.AutoComplete) + select:not(.AutoComplete), form label.FullWidth.Controls3 i:not(.AutoComplete) + select.AutoComplete + input, form label.FullWidth.Controls3 i:not(.AutoComplete) + select.AutoComplete + select {
+        width: calc(33.33% + 30px - 30px/3); }
+      form label.FullWidth.Controls2, form label.FullWidth.Controls3 {
+        font-size: 0;
+        white-space: nowrap; }
+        form label.FullWidth.Controls2 > *, form label.FullWidth.Controls3 > * {
+          font-size: 1rem; }
+        form label.FullWidth.Controls2 input, form label.FullWidth.Controls2 select, form label.FullWidth.Controls3 input, form label.FullWidth.Controls3 select {
+          float: none;
+          border-radius: 0;
+          display: inline-block; }
+          form label.FullWidth.Controls2 input:not(.AutoComplete-Filter), form label.FullWidth.Controls2 select:not(.AutoComplete-Filter), form label.FullWidth.Controls3 input:not(.AutoComplete-Filter), form label.FullWidth.Controls3 select:not(.AutoComplete-Filter) {
+            border-left: none; }
       form label.FullWidth:after, form label.FullWidth:before {
         content: "";
         display: table;
