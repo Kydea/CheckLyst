@@ -27,7 +27,13 @@ namespace CheckListManager.Instances.Api.Controllers
 		{
 			try
 			{
-				return Ok(await _instanceService.Create(request.Prototype, request.Version));
+				var cacheObject = await _instanceService.CreateAsync(request.Prototype, request.Version);
+				var response = new CreateInstanceResponse
+				{
+					Code = cacheObject.Code,
+					CheckList = cacheObject.Instance
+				};
+				return Ok(response);
 			}
 			catch (DatabaseAggregateException exception)
 			{

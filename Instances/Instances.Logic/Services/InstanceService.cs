@@ -20,7 +20,6 @@ namespace CheckListManager.Instances.Logic.Services
 		private const string RegionName = "Instance";
 
 		private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-		private static readonly TimeSpan DefaultInstanceExpiry = TimeSpan.FromMinutes(30); //TODO: add as configuration
 
 		private readonly IServiceClient _client;
 		private readonly IRedisCache _redisCache;
@@ -37,7 +36,7 @@ namespace CheckListManager.Instances.Logic.Services
 			_converter = converter;
 		}
 
-		public async Task<CreateInstanceResponse> Create(int prototype, int version)
+		public async Task<CacheObject> CreateAsync(int prototype, int version)
 		{
 			try
 			{
@@ -51,15 +50,9 @@ namespace CheckListManager.Instances.Logic.Services
 					Version = version
 				};
 
-				await _redisCache.SetAsync($"Instance:{cacheObject.Code}", cacheObject, RegionName, DefaultInstanceExpiry);
+				await _redisCache.SetAsync($"Instance:{cacheObject.Code}", cacheObject, RegionName);
 
-				var response = new CreateInstanceResponse
-				{
-					Code = cacheObject.Code,
-					CheckList = cacheObject.Instance
-				};
-
-				return response;
+				return cacheObject;
 			}
 			catch (InstanceException)
 			{
@@ -72,7 +65,7 @@ namespace CheckListManager.Instances.Logic.Services
 			}
 		}
 
-		public async Task<SaveInstanceResponse> SaveAsync(long companyId, string userCode, string code, Instance instance)
+		public async Task<CacheObject> PersistAsync(long companyId, string userCode, string code, Instance instance)
 		{
 			try
 			{
@@ -94,7 +87,16 @@ namespace CheckListManager.Instances.Logic.Services
 						Code = code,
 					};
 
-					await _instancesRepository.CreateInstanceAsync(row);
+					row = await _instancesRepository.CreateInstanceAsync(row);
+
+					cacheObject.Id = row.ID;
+					cacheObject.Year = row.Year;
+					cacheObject.Number = row.Number;
+					cacheObject.Description = row.Description;
+					cacheObject.PrototypeCode = row.PrototypeCode;
+					cacheObject.InstanceState = row.InstanceState;
+
+					await _redisCache.SetAsync($"Instance:{cacheObject.Code}", cacheObject, RegionName);
 				}
 				else
 				{
@@ -102,11 +104,57 @@ namespace CheckListManager.Instances.Logic.Services
 					//await _instancesRepository.UpdateInstanceAsync(userCode, row);
 				}
 
-				return new SaveInstanceResponse
+				return cacheObject;
+			}
+			catch (InstanceException)
+			{
+				throw;
+			}
+			catch (Exception e)
+			{
+				Logger.Error(e, "Unable to create the instance");
+				throw new InstanceException("Unable to create the instance", e);
+			}
+		}
+
+		public async Task<CacheObject> SaveAsync(string code, Instance instance)
+		{
+			try
+			{
+				var cacheObject = await _redisCache.GetAsync<CacheObject>($"Instance:{code}", RegionName);
+				Common.Data.Instances row;
+
+				if (cacheObject == null)
 				{
-					Code = code,
-					CheckList = instance
-				};
+					throw new InstanceException("Instance not found");
+				}
+
+				if (!cacheObject.Id.HasValue)
+				{
+					row = new Common.Data.Instances
+					{
+						Data = JsonConvert.SerializeObject(instance),
+						Code = code,
+					};
+
+					row = await _instancesRepository.CreateInstanceAsync(row);
+
+					cacheObject.Id = row.ID;
+					cacheObject.Year = row.Year;
+					cacheObject.Number = row.Number;
+					cacheObject.Description = row.Description;
+					cacheObject.PrototypeCode = row.PrototypeCode;
+					cacheObject.InstanceState = row.InstanceState;
+
+					await _redisCache.SetAsync($"Instance:{cacheObject.Code}", cacheObject, RegionName);
+				}
+				else
+				{
+					//row.Data = JsonConvert.SerializeObject(instance);
+					//await _instancesRepository.UpdateInstanceAsync(userCode, row);
+				}
+
+				return cacheObject;
 			}
 			catch (InstanceException)
 			{

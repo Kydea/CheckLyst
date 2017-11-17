@@ -9,7 +9,7 @@ namespace CheckListManager.Instances.Logic.Models
 		public int Version { get; set; }
 		public Instance Instance { get; set; }
 
-		public int? Id { get; set; }
+		public long? Id { get; set; }
 		public int? Year { get; set; }
 		public int? Number { get; set; }
 
