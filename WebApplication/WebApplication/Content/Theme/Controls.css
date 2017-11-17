@@ -4,18 +4,13 @@
   display: none;
   line-height: 1.5; }
 
-input.Error, input.input-validation-error, select.Error, select.input-validation-error {
-  border: solid 1px red !important;
+input.Error, select.Error {
+  border-color: red;
   outline-color: #f99; }
 
 label {
   display: block;
   font-size: 13px; }
-
-span.field-validation-error {
-  padding-left: 5px;
-  color: red;
-  font-size: 14px; }
 
 div.Input {
   overflow: hidden;
@@ -170,7 +165,10 @@ form {
         display: table;
         clear: both; }
     form label.Error i {
-      color: red; }
+      border-color: red; }
+    form label.Error input, form label.Error select {
+      border-color: red;
+      outline-color: red; }
   form a.Button {
     margin-top: 41px;
     margin-left: 20px; }

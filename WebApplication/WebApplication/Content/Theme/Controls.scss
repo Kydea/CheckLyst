@@ -9,20 +9,14 @@ div.Errors {
     line-height: 1.5;
 }
 
-input.Error, input.input-validation-error, select.Error, select.input-validation-error {
-    border: solid 1px red !important;
+input.Error, select.Error {
+    border-color: red;
     outline-color: #f99;
 }
 
 label {
     display: block;
     font-size: 13px;
-}
-
-span.field-validation-error {
-    padding-left: 5px;
-    color: red;
-    font-size: 14px;
 }
 
 div.Input {
@@ -226,7 +220,12 @@ form {
 
         &.Error {
             i {
-                color: red;
+                border-color: red;
+            }
+
+            input, select {
+                border-color: red;
+                outline-color: red;
             }
         }
     }
