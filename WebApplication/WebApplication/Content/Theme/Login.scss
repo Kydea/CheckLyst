@@ -27,7 +27,6 @@ body.Login {
 
         div.Box {
             background-color: white;
-            padding: 20px;
             padding-top: $Logo-Container-Height + 20px; // Logo container's height + Margin-Bottom
             margin: 0 auto;
             position: relative;
@@ -35,7 +34,6 @@ body.Login {
             form {
                 position: relative;
                 border: none;
-                padding: 0;
             }
 
             img {
@@ -47,7 +45,10 @@ body.Login {
                 margin: 0 0 20px 0;
                 color: $Color-Font-Blue1;
             }
-            
+
+            div.Errors {
+                float: left;
+            }
 
             div.Buttons {
                 a {

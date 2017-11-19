@@ -12,6 +12,7 @@ matematici.AutoComplete = function (selector) {
 		list,
 		icon,
 		noRow,
+		oldValue,
 
 		setValue = function () {
 			var value = element.val();
@@ -55,14 +56,15 @@ matematici.AutoComplete = function (selector) {
 			list = $("<div />").addClass("AutoComplete-List").insertAfter(input);
 			icon = $("<i />").addClass("AutoComplete fi flaticon-freccia-giu").insertAfter(input);
 			noRow = $("<i />").addClass("fi flaticon-meno");
+			element.parent("label").on("click", function (e) {
+				label.focus();
+				e.stopPropagation();
+			});
 			label
 				.on("focus", function () {
 					showList();
 					input.focus();
 					input.select();
-				})
-				.on("click", function (e) {
-					e.stopPropagation();
 				});
 			input
 				.on("keydown", function (e) {
@@ -86,16 +88,9 @@ matematici.AutoComplete = function (selector) {
 			list
 				.on("click", "a", function (e) {
 					e.preventDefault();
+					e.stopPropagation();
 					setCurrentItem($(this).prevAll().size());
 					hideList();
-				})
-				.on("click", function () {
-					hideList();
-				});
-			icon
-				.on("click", function (e) {
-					e.stopPropagation();
-					input.focus();
 				});
 			updateList();
 			setValue();
@@ -122,12 +117,13 @@ matematici.AutoComplete = function (selector) {
 				else if (top + itemHeight - listHeight > scroll)
 					list.scrollTop(top + itemHeight - listHeight);
 
-				element.val(item.data("value")).change();
+				element.val(item.data("value"));
 				label.val(item.text());
 			}
 		},
 
 		showList = function () {
+			if (oldValue == null) oldValue = element.val() || "";
 			label.addClass("Open");
 			input.show();
 			list.show();
@@ -149,6 +145,8 @@ matematici.AutoComplete = function (selector) {
 			input.hide();
 			setCurrentItem(null);
 			label.removeClass("Open");
+			if (oldValue != (element.val() || "")) element.change();
+			oldValue = null;
 		},
 
 		updateList = function () {

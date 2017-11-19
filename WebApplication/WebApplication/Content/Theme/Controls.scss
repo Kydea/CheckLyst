@@ -6,21 +6,17 @@ div.Errors {
     color: red;
     margin-top: 20px;
     display: none;
+    line-height: 1.5;
 }
 
-input.Error, input.input-validation-error, select.Error, select.input-validation-error {
-    border: solid 1px red !important;
+input.Error, select.Error {
+    border-color: red;
     outline-color: #f99;
 }
 
 label {
     display: block;
-}
-
-span.field-validation-error {
-    padding-left: 5px;
-    color: red;
-    font-size: 14px;
+    font-size: 13px;
 }
 
 div.Input {
@@ -38,9 +34,9 @@ input[type=text], input[type=range], input[type=number], input[type=password], i
     resize: none;
     line-height: $Metric-Control-Height;
     height: $Metric-Control-Height;
+    font-size: 13px;
 
     &[readonly], &.ReadOnly {
-        border-color: $Color-Border-Black;
         background-color: $Color-Background-Grey3;
     }
 
@@ -52,34 +48,27 @@ input[type=text], input[type=range], input[type=number], input[type=password], i
     }
 }
 
-@mixin button-size($size) {
-    /* use to define buttons of different sizes */
-    height: $size;
-    line-height: $size;
-    margin-right: $size;
-
-    i.fa, i.fi {
-        width: $size;
-        height: $size;
-        right: -$size;
-        line-height: $size;
-    }
-}
-
 a.Button {
     text-transform: uppercase;
     color: white;
-    padding: 0 10px;
-    min-width: 120px;
+    padding: 0 $Metric-Control-Space + $Metric-Control-Height 0 $Metric-Control-Space;
+    min-width: 90px;
     display: inline-block;
-    border-radius: 5px 0 0 5px;
+    border-radius: 5px;
     border: none;
     position: relative;
     background-color: $Color-Font-Green;
     text-align: center;
     cursor: default;
+    height: $Metric-Control-Height;
+    line-height: $Metric-Control-Height;
+    box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.5);
 
     i.fa, i.fi {
+        width: $Metric-Control-Height;
+        height: $Metric-Control-Height;
+        right: 0;
+        line-height: $Metric-Control-Height;
         border-left: 1px solid #ebebeb;
         background-color: inherit;
         border-radius: 0 5px 5px 0;
@@ -112,43 +101,19 @@ a.Button {
         background-color: $Color-Background-Grey1;
     }
 
-    @include button-size($Metric-Control-Height);
-
-    &.LargeButton {
-        @include button-size(45px);
-    }
-
     &.GreyGreenButton {
         background-color: $Color-Background-Grey5;
-        -webkit-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.5);
-        -moz-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.5);
-        box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.5);
+
+        i.fa, i.fi {
+            color: $Color-Font-Dark-Green;
+            background-color: white;
+        }
 
         &:hover {
             i.fa, i.fi {
                 color: $Color-Font-Yellow;
             }
         }
-
-        i.fa, i.fi {
-            color: $Color-Font-Dark-Green;
-            background-color: white;
-            font-size: 30px;
-            -webkit-box-shadow: 5px 0px 30px -5px rgba(0,0,0,0.5);
-            -moz-box-shadow: 5px 0px 30px -5px rgba(0,0,0,0.5);
-            box-shadow: 5px 0px 30px -5px rgba(0,0,0,0.5);
-        }
-    }
-}
-
-div.validation-summary-errors {
-
-    ul {
-        li {
-        }
-    }
-
-    &::before {
     }
 }
 
@@ -171,7 +136,7 @@ form {
             margin-top: 5px;
         }
 
-        i:not(.AutoComplete) {
+        i:not(.AutoComplete):not(.ValidationMessagesIcon) {
             &.fi, &.fa {
                 position: absolute;
                 left: 0;
@@ -182,6 +147,7 @@ form {
                 line-height: $Metric-Control-Height;
                 border: 1px solid $Color-Border-Grey;
                 background-color: $Color-Background-Grey3;
+                border-radius: 3px 0 0 3px;
             }
 
             & + select, & + input {
@@ -192,18 +158,17 @@ form {
             }
         }
 
+        i.ValidationMessagesIcon {
+            color: red;
+            cursor: pointer;
+        }
 
         &.FullWidth {
-            width: 100%;
-            margin-left: 0;
+            width: calc(100% - #{$Metric-Control-Space});
             display: block;
 
-            & + label {
-                margin-left: 0;
-            }
-
             span {
-                width: 100%;
+                width: calc(100% - #{$Metric-Control-Space});
                 display: block;
             }
             // Number of controls | percentage per item.
@@ -255,6 +220,17 @@ form {
                 clear: both;
             }
         }
+
+        &.Error {
+            i {
+                border-color: red;
+            }
+
+            input, select {
+                border-color: red;
+                outline-color: red;
+            }
+        }
     }
 
     a.Button {
@@ -267,5 +243,9 @@ form {
         display: table;
         clear: both;
     }
-}
 
+    div.Errors {
+        margin-top: $Metric-Control-Space;
+        margin-left: $Metric-Control-Space;
+    }
+}

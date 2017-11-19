@@ -15,20 +15,20 @@
     background: url(Login/Background.jpg) no-repeat center white; }
     body.Login div.Login div.Box {
       background-color: white;
-      padding: 20px;
       padding-top: 100px;
       margin: 0 auto;
       position: relative; }
       body.Login div.Login div.Box form {
         position: relative;
-        border: none;
-        padding: 0; }
+        border: none; }
       body.Login div.Login div.Box img {
         margin-bottom: 19px; }
       body.Login div.Login div.Box div.Message {
         text-align: center;
         margin: 0 0 20px 0;
         color: #0099cc; }
+      body.Login div.Login div.Box div.Errors {
+        float: left; }
       body.Login div.Login div.Box div.Buttons a {
         float: right; }
         body.Login div.Login div.Box div.Buttons a:hover {

@@ -1,19 +1,16 @@
 ﻿div.Errors {
   color: red;
   margin-top: 20px;
-  display: none; }
+  display: none;
+  line-height: 1.5; }
 
-input.Error, input.input-validation-error, select.Error, select.input-validation-error {
-  border: solid 1px red !important;
+input.Error, select.Error {
+  border-color: red;
   outline-color: #f99; }
 
 label {
-  display: block; }
-
-span.field-validation-error {
-  padding-left: 5px;
-  color: red;
-  font-size: 14px; }
+  display: block;
+  font-size: 13px; }
 
 div.Input {
   overflow: hidden;
@@ -28,9 +25,9 @@ input[type=text], input[type=range], input[type=number], input[type=password], i
   padding: 5px 10px;
   resize: none;
   line-height: 30px;
-  height: 30px; }
+  height: 30px;
+  font-size: 13px; }
   input[type=text][readonly], input[type=text].ReadOnly, input[type=range][readonly], input[type=range].ReadOnly, input[type=number][readonly], input[type=number].ReadOnly, input[type=password][readonly], input[type=password].ReadOnly, input[type=email][readonly], input[type=email].ReadOnly, input[type=file][readonly], input[type=file].ReadOnly, select[readonly], select.ReadOnly, textarea[readonly], textarea.ReadOnly, div.Input[readonly], div.Input.ReadOnly {
-    border-color: #999;
     background-color: #f5f5f5; }
   input[type=text] + i, input[type=range] + i, input[type=number] + i, input[type=password] + i, input[type=email] + i, input[type=file] + i, select + i, textarea + i, div.Input + i {
     position: relative;
@@ -41,20 +38,23 @@ input[type=text], input[type=range], input[type=number], input[type=password], i
 a.Button {
   text-transform: uppercase;
   color: white;
-  padding: 0 10px;
-  min-width: 120px;
+  padding: 0 50px 0 20px;
+  min-width: 90px;
   display: inline-block;
-  border-radius: 5px 0 0 5px;
+  border-radius: 5px;
   border: none;
   position: relative;
   background-color: #009688;
   text-align: center;
   cursor: default;
-  /* use to define buttons of different sizes */
   height: 30px;
   line-height: 30px;
-  margin-right: 30px; }
+  box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.5); }
   a.Button i.fa, a.Button i.fi {
+    width: 30px;
+    height: 30px;
+    right: 0;
+    line-height: 30px;
     border-left: 1px solid #ebebeb;
     background-color: inherit;
     border-radius: 0 5px 5px 0;
@@ -75,35 +75,13 @@ a.Button {
     color: red; }
   a.Button.ReadOnly {
     background-color: #dcdbe0; }
-  a.Button i.fa, a.Button i.fi {
-    width: 30px;
-    height: 30px;
-    right: -30px;
-    line-height: 30px; }
-  a.Button.LargeButton {
-    /* use to define buttons of different sizes */
-    height: 45px;
-    line-height: 45px;
-    margin-right: 45px; }
-    a.Button.LargeButton i.fa, a.Button.LargeButton i.fi {
-      width: 45px;
-      height: 45px;
-      right: -45px;
-      line-height: 45px; }
   a.Button.GreyGreenButton {
-    background-color: #858585;
-    -webkit-box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.5);
-    -moz-box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.5);
-    box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.5); }
-    a.Button.GreyGreenButton:hover i.fa, a.Button.GreyGreenButton:hover i.fi {
-      color: #ffba00; }
+    background-color: #858585; }
     a.Button.GreyGreenButton i.fa, a.Button.GreyGreenButton i.fi {
       color: #00877a;
-      background-color: white;
-      font-size: 30px;
-      -webkit-box-shadow: 5px 0px 30px -5px rgba(0, 0, 0, 0.5);
-      -moz-box-shadow: 5px 0px 30px -5px rgba(0, 0, 0, 0.5);
-      box-shadow: 5px 0px 30px -5px rgba(0, 0, 0, 0.5); }
+      background-color: white; }
+    a.Button.GreyGreenButton:hover i.fa, a.Button.GreyGreenButton:hover i.fi {
+      color: #ffba00; }
 
 form {
   border: 1px solid #afb4b5;
@@ -120,7 +98,7 @@ form {
     color: #666666; }
     form label input, form label select {
       margin-top: 5px; }
-    form label i:not(.AutoComplete).fi, form label i:not(.AutoComplete).fa {
+    form label i:not(.AutoComplete):not(.ValidationMessagesIcon).fi, form label i:not(.AutoComplete):not(.ValidationMessagesIcon).fa {
       position: absolute;
       left: 0;
       bottom: 0;
@@ -129,17 +107,18 @@ form {
       width: 30px;
       line-height: 30px;
       border: 1px solid #afb4b5;
-      background-color: #f5f5f5; }
-    form label i:not(.AutoComplete) + select.AutoComplete + input, form label i:not(.AutoComplete) + select:not(.AutoComplete), form label i:not(.AutoComplete) + input.AutoComplete + input, form label i:not(.AutoComplete) + input:not(.AutoComplete) {
+      background-color: #f5f5f5;
+      border-radius: 3px 0 0 3px; }
+    form label i:not(.AutoComplete):not(.ValidationMessagesIcon) + select.AutoComplete + input, form label i:not(.AutoComplete):not(.ValidationMessagesIcon) + select:not(.AutoComplete), form label i:not(.AutoComplete):not(.ValidationMessagesIcon) + input.AutoComplete + input, form label i:not(.AutoComplete):not(.ValidationMessagesIcon) + input:not(.AutoComplete) {
       padding-left: 35px; }
+    form label i.ValidationMessagesIcon {
+      color: red;
+      cursor: pointer; }
     form label.FullWidth {
-      width: 100%;
-      margin-left: 0;
+      width: calc(100% - 20px);
       display: block; }
-      form label.FullWidth + label {
-        margin-left: 0; }
       form label.FullWidth span {
-        width: 100%;
+        width: calc(100% - 20px);
         display: block; }
       form label.FullWidth.Controls2 input, form label.FullWidth.Controls2 select {
         width: calc(50% - 30px/2); }
@@ -164,6 +143,11 @@ form {
         content: "";
         display: table;
         clear: both; }
+    form label.Error i {
+      border-color: red; }
+    form label.Error input, form label.Error select {
+      border-color: red;
+      outline-color: red; }
   form a.Button {
     margin-top: 41px;
     margin-left: 20px; }
@@ -171,4 +155,7 @@ form {
     content: "";
     display: table;
     clear: both; }
+  form div.Errors {
+    margin-top: 20px;
+    margin-left: 20px; }
 
