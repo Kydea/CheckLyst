@@ -24,15 +24,27 @@ matematici.AutoComplete = function (selector) {
 		},
 
 		setWidth = function () {
-			var width = label.outerWidth();
+			var width = label.outerWidth(), position = label.position();
 			input.width(width - parseInt(input.css("padding-left")) - parseInt(input.css("padding-right")) - 2);
-			icon.css("margin-left", width - 20);
 			items.each(function () {
 				var itemWidth = $(this).outerWidth();
 				if (itemWidth > width)
 					width = itemWidth;
 			});
 			list.outerWidth(width);
+
+            var labelPos = {
+                'left': position.left + parseInt(label.css('marginLeft'), 10),
+                'top': position.top + label.outerHeight(true)
+            };
+
+            list.css(labelPos);
+            input.css(labelPos);
+
+            icon.css({
+                'left': labelPos.left + width - 20,
+                'top': position.top + parseInt(label.css('marginTop'), 10)
+            });
 		},
 
 		initialize = function () {

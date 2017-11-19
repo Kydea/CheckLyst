@@ -1,16 +1,19 @@
 ﻿div.Errors {
   color: red;
   margin-top: 20px;
-  display: none;
-  line-height: 1.5; }
+  display: none; }
 
-input.Error, select.Error {
-  border-color: red;
+input.Error, input.input-validation-error, select.Error, select.input-validation-error {
+  border: solid 1px red !important;
   outline-color: #f99; }
 
 label {
-  display: block;
-  font-size: 13px; }
+  display: block; }
+
+span.field-validation-error {
+  padding-left: 5px;
+  color: red;
+  font-size: 14px; }
 
 div.Input {
   overflow: hidden;
@@ -25,10 +28,10 @@ input[type=text], input[type=range], input[type=number], input[type=password], i
   padding: 5px 10px;
   resize: none;
   line-height: 30px;
-  height: 30px;
-  font-size: 13px; }
+  height: 30px; }
   input[type=text][readonly], input[type=text].ReadOnly, input[type=range][readonly], input[type=range].ReadOnly, input[type=number][readonly], input[type=number].ReadOnly, input[type=password][readonly], input[type=password].ReadOnly, input[type=email][readonly], input[type=email].ReadOnly, input[type=file][readonly], input[type=file].ReadOnly, select[readonly], select.ReadOnly, textarea[readonly], textarea.ReadOnly, div.Input[readonly], div.Input.ReadOnly {
-    background-color: #ebebeb; }
+    border-color: #999;
+    background-color: #f5f5f5; }
   input[type=text] + i, input[type=range] + i, input[type=number] + i, input[type=password] + i, input[type=email] + i, input[type=file] + i, select + i, textarea + i, div.Input + i {
     position: relative;
     float: left;
@@ -38,23 +41,20 @@ input[type=text], input[type=range], input[type=number], input[type=password], i
 a.Button {
   text-transform: uppercase;
   color: white;
-  padding: 0 50px 0 20px;
-  min-width: 90px;
+  padding: 0 10px;
+  min-width: 120px;
   display: inline-block;
-  border-radius: 5px;
+  border-radius: 5px 0 0 5px;
   border: none;
   position: relative;
   background-color: #009688;
   text-align: center;
   cursor: default;
+  /* use to define buttons of different sizes */
   height: 30px;
   line-height: 30px;
-  box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.5); }
+  margin-right: 30px; }
   a.Button i.fa, a.Button i.fi {
-    width: 30px;
-    height: 30px;
-    right: 0;
-    line-height: 30px;
     border-left: 1px solid #ebebeb;
     background-color: inherit;
     border-radius: 0 5px 5px 0;
@@ -75,13 +75,35 @@ a.Button {
     color: red; }
   a.Button.ReadOnly {
     background-color: #dcdbe0; }
+  a.Button i.fa, a.Button i.fi {
+    width: 30px;
+    height: 30px;
+    right: -30px;
+    line-height: 30px; }
+  a.Button.LargeButton {
+    /* use to define buttons of different sizes */
+    height: 45px;
+    line-height: 45px;
+    margin-right: 45px; }
+    a.Button.LargeButton i.fa, a.Button.LargeButton i.fi {
+      width: 45px;
+      height: 45px;
+      right: -45px;
+      line-height: 45px; }
   a.Button.GreyGreenButton {
-    background-color: #858585; }
-    a.Button.GreyGreenButton i.fa, a.Button.GreyGreenButton i.fi {
-      color: #00877a;
-      background-color: white; }
+    background-color: #858585;
+    -webkit-box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.5);
+    -moz-box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.5);
+    box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.5); }
     a.Button.GreyGreenButton:hover i.fa, a.Button.GreyGreenButton:hover i.fi {
       color: #ffba00; }
+    a.Button.GreyGreenButton i.fa, a.Button.GreyGreenButton i.fi {
+      color: #00877a;
+      background-color: white;
+      font-size: 30px;
+      -webkit-box-shadow: 5px 0px 30px -5px rgba(0, 0, 0, 0.5);
+      -moz-box-shadow: 5px 0px 30px -5px rgba(0, 0, 0, 0.5);
+      box-shadow: 5px 0px 30px -5px rgba(0, 0, 0, 0.5); }
 
 form {
   border: 1px solid #afb4b5;
@@ -98,7 +120,7 @@ form {
     color: #666666; }
     form label input, form label select {
       margin-top: 5px; }
-    form label i:not(.AutoComplete):not(.ValidationMessagesIcon).fi, form label i:not(.AutoComplete):not(.ValidationMessagesIcon).fa {
+    form label i:not(.AutoComplete).fi, form label i:not(.AutoComplete).fa {
       position: absolute;
       left: 0;
       bottom: 0;
@@ -107,68 +129,41 @@ form {
       width: 30px;
       line-height: 30px;
       border: 1px solid #afb4b5;
-      background-color: #f5f5f5;
-      border-radius: 3px 0 0 3px; }
-    form label i:not(.AutoComplete):not(.ValidationMessagesIcon) + select.AutoComplete + input, form label i:not(.AutoComplete):not(.ValidationMessagesIcon) + select:not(.AutoComplete), form label i:not(.AutoComplete):not(.ValidationMessagesIcon) + input.AutoComplete + input, form label i:not(.AutoComplete):not(.ValidationMessagesIcon) + input:not(.AutoComplete) {
+      background-color: #f5f5f5; }
+    form label i:not(.AutoComplete) + select.AutoComplete + input, form label i:not(.AutoComplete) + select:not(.AutoComplete), form label i:not(.AutoComplete) + input.AutoComplete + input, form label i:not(.AutoComplete) + input:not(.AutoComplete) {
       padding-left: 35px; }
-    form label i.ValidationMessagesIcon {
-      color: red;
-      cursor: pointer; }
-    form label.Grouped {
-      width: auto;
-      display: flex;
-      flex-wrap: wrap; }
-      form label.Grouped span {
-        flex-basis: 100%; }
-      form label.Grouped input {
-        border-radius: 3px 0 0 3px;
-        flex-basis: 220px; }
-        form label.Grouped input + input {
-          border-left: none;
-          flex-basis: 180px;
-          border-radius: 0 3px 3px 0; }
-        form label.Grouped input + select {
-          border-left: none;
-          flex-basis: 180px;
-          border-radius: 0 3px 3px 0; }
-      form label.Grouped select {
-        border-radius: 3px 0 0 3px;
-        flex-basis: 220px; }
-        form label.Grouped select + input {
-          border-left: none;
-          flex-basis: 180px;
-          border-radius: 0 3px 3px 0; }
-        form label.Grouped select + select {
-          border-left: none;
-          flex-basis: 180px;
-          border-radius: 0 3px 3px 0; }
     form label.FullWidth {
       width: 100%;
-      float: none;
-      margin-left: 0; }
+      margin-left: 0;
+      display: block; }
       form label.FullWidth + label {
         margin-left: 0; }
-      form label.FullWidth.Grouped input {
-        flex-basis: calc(50% + 20px); }
-        form label.FullWidth.Grouped input + input {
-          flex-basis: calc(50% - 20px); }
-        form label.FullWidth.Grouped input + select {
-          flex-basis: calc(50% - 20px); }
-      form label.FullWidth.Grouped select {
-        flex-basis: calc(50% + 20px); }
-        form label.FullWidth.Grouped select + input {
-          flex-basis: calc(50% - 20px); }
-        form label.FullWidth.Grouped select + select {
-          flex-basis: calc(50% - 20px); }
+      form label.FullWidth span {
+        width: 100%;
+        display: block; }
+      form label.FullWidth.Controls2 input, form label.FullWidth.Controls2 select {
+        width: calc(50% - 30px/2); }
+      form label.FullWidth.Controls2 i:not(.AutoComplete) + input:not(.AutoComplete), form label.FullWidth.Controls2 i:not(.AutoComplete) + input.AutoComplete + input, form label.FullWidth.Controls2 i:not(.AutoComplete) + input.AutoComplete + select, form label.FullWidth.Controls2 i:not(.AutoComplete) + select:not(.AutoComplete), form label.FullWidth.Controls2 i:not(.AutoComplete) + select.AutoComplete + input, form label.FullWidth.Controls2 i:not(.AutoComplete) + select.AutoComplete + select {
+        width: calc(50% + 30px - 30px/2); }
+      form label.FullWidth.Controls3 input, form label.FullWidth.Controls3 select {
+        width: calc(33.33% - 30px/3); }
+      form label.FullWidth.Controls3 i:not(.AutoComplete) + input:not(.AutoComplete), form label.FullWidth.Controls3 i:not(.AutoComplete) + input.AutoComplete + input, form label.FullWidth.Controls3 i:not(.AutoComplete) + input.AutoComplete + select, form label.FullWidth.Controls3 i:not(.AutoComplete) + select:not(.AutoComplete), form label.FullWidth.Controls3 i:not(.AutoComplete) + select.AutoComplete + input, form label.FullWidth.Controls3 i:not(.AutoComplete) + select.AutoComplete + select {
+        width: calc(33.33% + 30px - 30px/3); }
+      form label.FullWidth.Controls2, form label.FullWidth.Controls3 {
+        font-size: 0;
+        white-space: nowrap; }
+        form label.FullWidth.Controls2 > *, form label.FullWidth.Controls3 > * {
+          font-size: 1rem; }
+        form label.FullWidth.Controls2 input, form label.FullWidth.Controls2 select, form label.FullWidth.Controls3 input, form label.FullWidth.Controls3 select {
+          float: none;
+          border-radius: 0;
+          display: inline-block; }
+          form label.FullWidth.Controls2 input:not(.AutoComplete-Filter), form label.FullWidth.Controls2 select:not(.AutoComplete-Filter), form label.FullWidth.Controls3 input:not(.AutoComplete-Filter), form label.FullWidth.Controls3 select:not(.AutoComplete-Filter) {
+            border-left: none; }
       form label.FullWidth:after, form label.FullWidth:before {
         content: "";
         display: table;
         clear: both; }
-    form label.Error i {
-      border-color: red; }
-    form label.Error input, form label.Error select {
-      border-color: red;
-      outline-color: red; }
   form a.Button {
     margin-top: 41px;
     margin-left: 20px; }
@@ -176,7 +171,4 @@ form {
     content: "";
     display: table;
     clear: both; }
-  form div.Errors {
-    margin-top: 20px;
-    margin-left: 20px; }
 

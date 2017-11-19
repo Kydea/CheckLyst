@@ -1,7 +1,7 @@
 ﻿@import "_Library.scss";
 
 select.AutoComplete {
-    display: none;
+    display: none !important;
 }
 
 input.AutoComplete {
@@ -67,6 +67,8 @@ div.AutoComplete-List {
 }
 
 i.AutoComplete {
-    position: absolute;
-    margin-top: -23px !important;
+    line-height: $Metric-Control-Height;
+    height: $Metric-Control-Height;
+    position: absolute !important;
+    margin: 0 !important;
 }
