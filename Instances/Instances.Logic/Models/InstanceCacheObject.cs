@@ -1,12 +1,15 @@
 ﻿using CheckListManager.Instances.Logic.Models.CheckLists;
+using Newtonsoft.Json;
 
 namespace CheckListManager.Instances.Logic.Models
 {
-	public class CacheObject
+	public class InstanceCacheObject
 	{
 		public string Code { get; set; }
 		public int Prototype { get; set; }
 		public int Version { get; set; }
+
+		[JsonIgnore]
 		public Instance Instance { get; set; }
 
 		public long? Id { get; set; }

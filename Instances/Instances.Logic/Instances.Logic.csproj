@@ -68,7 +68,7 @@
     <Compile Include="Messages\InstanceResponse.cs" />
     <Compile Include="Messages\SaveInstanceRequest.cs" />
     <Compile Include="Messages\SaveInstanceResponse.cs" />
-    <Compile Include="Models\CacheObject.cs" />
+    <Compile Include="Models\InstanceCacheObject.cs" />
     <Compile Include="Models\CheckLists\Element.cs" />
     <Compile Include="Models\CheckLists\Field.cs" />
     <Compile Include="Models\CheckLists\Group.cs" />
@@ -79,7 +79,9 @@
     <Compile Include="Models\CheckLists\Signature.cs" />
     <Compile Include="Models\CheckLists\Text.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\IInstanceCacheService.cs" />
     <Compile Include="Services\IInstanceService.cs" />
+    <Compile Include="Services\InstanceCacheService.cs" />
     <Compile Include="Services\InstanceService.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -34,12 +34,11 @@ namespace CheckListManager.Common.Logic.Api.Configuration
 		protected ApiConfig()
 		{
 			_configuration = new HttpConfiguration();
+			UseInstancePerRequest = true;
 		}
 
 		public bool LoadAssemblies { private get; set; }
 		protected bool ConfigureOwinProvider { private get; set; }
-
-		protected override bool UseInstancePerRequest => true;
 
 		protected override void OnCreateBuilder(ContainerBuilder builder)
 		{

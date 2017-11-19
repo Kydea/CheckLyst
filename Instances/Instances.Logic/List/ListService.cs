@@ -91,7 +91,7 @@ namespace CheckListManager.Instances.Logic.List
             if (form.Source == null || form.Source == "department" || form.Source == "prototypeType" || form.Source == "prototype" || form.Source == "version")
             {
                 var tags = await _commonRepository.GetPrototypeVersionTagsAsync(company, prototype ?? -1, version);
-                tag = form.TagCode != string.Empty && tags.Any(d => d == form.TagCode) ? form.TagCode : tags.FirstOrDefault();
+                tag = tag != string.Empty && tags.Any(d => d == tag) ? tag : tags.FirstOrDefault();
                 response.Fields["TagCode"] = new Field
                 {
                     Options = tags.Any() ? new[] { new Option("", "All") }.Union(tags.Select(t => new Option(t, t))) : new Option[0],
@@ -113,6 +113,8 @@ namespace CheckListManager.Instances.Logic.List
                     company,
                     i => new ListRow
                     {
+						Id = i.ID,
+						Code =  i.Code,
                         CreatedBy = i.CreatedBy,
                         CreatedOn = i.CreatedOn,
                         ModifiedBy = i.ModifiedBy,

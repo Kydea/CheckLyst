@@ -7,7 +7,7 @@ namespace CheckListManager.Instances.Logic.Services
 {
 	public interface IInstanceService : IService
 	{
-		Task<CacheObject> CreateAsync(int prototype, int version);
-		Task<CacheObject> PersistAsync(long companyId, string userCode, string code, Instance instance);
+		Task<InstanceCacheObject> CreateAsync(int prototype, int version);
+		Task<InstanceCacheObject> PersistAsync(long companyId, string userCode, string code, Instance instance);
 	}
 }

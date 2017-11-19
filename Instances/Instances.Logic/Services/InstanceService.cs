@@ -36,13 +36,13 @@ namespace CheckListManager.Instances.Logic.Services
 			_converter = converter;
 		}
 
-		public async Task<CacheObject> CreateAsync(int prototype, int version)
+		public async Task<InstanceCacheObject> CreateAsync(int prototype, int version)
 		{
 			try
 			{
 				var instance = await CreateInstanceFromPrototypeAsync(prototype, version);
 
-				var cacheObject = new CacheObject
+				var cacheObject = new InstanceCacheObject
 				{
 					Instance = instance,
 					Code = _hashService.HashStringToString($"{prototype}-{version}-{Guid.NewGuid()}"),
@@ -65,11 +65,11 @@ namespace CheckListManager.Instances.Logic.Services
 			}
 		}
 
-		public async Task<CacheObject> PersistAsync(long companyId, string userCode, string code, Instance instance)
+		public async Task<InstanceCacheObject> PersistAsync(long companyId, string userCode, string code, Instance instance)
 		{
 			try
 			{
-				var cacheObject = await _redisCache.GetAsync<CacheObject>($"Instance:{code}", RegionName);
+				var cacheObject = await _redisCache.GetAsync<InstanceCacheObject>($"Instance:{code}", RegionName);
 				Common.Data.Instances row;
 
 				if (cacheObject == null)
@@ -117,11 +117,11 @@ namespace CheckListManager.Instances.Logic.Services
 			}
 		}
 
-		public async Task<CacheObject> SaveAsync(string code, Instance instance)
+		public async Task<InstanceCacheObject> SaveAsync(string code, Instance instance)
 		{
 			try
 			{
-				var cacheObject = await _redisCache.GetAsync<CacheObject>($"Instance:{code}", RegionName);
+				var cacheObject = await _redisCache.GetAsync<InstanceCacheObject>($"Instance:{code}", RegionName);
 				Common.Data.Instances row;
 
 				if (cacheObject == null)
