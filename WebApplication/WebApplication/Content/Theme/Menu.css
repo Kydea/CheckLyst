@@ -119,10 +119,13 @@
             nav.Menu ul.Menu li.MenuItem ul.SubMenu li + li {
               border-top: 1px solid #666666; }
             nav.Menu ul.Menu li.MenuItem ul.SubMenu li.Current a {
-              color: #03c3b1 !important; }
-            nav.Menu ul.Menu li.MenuItem ul.SubMenu li:hover a {
+              color: #03c3b1 !important;
+              cursor: default !important; }
+              nav.Menu ul.Menu li.MenuItem ul.SubMenu li.Current a::before {
+                content: none !important; }
+            nav.Menu ul.Menu li.MenuItem ul.SubMenu li:hover a, nav.Menu ul.Menu li.MenuItem ul.SubMenu li:only-child a {
               color: white; }
-              nav.Menu ul.Menu li.MenuItem ul.SubMenu li:hover a::before {
+              nav.Menu ul.Menu li.MenuItem ul.SubMenu li:hover a::before, nav.Menu ul.Menu li.MenuItem ul.SubMenu li:only-child a::before {
                 opacity: 1; } }
 
 @media only screen and (max-width: 759px) {

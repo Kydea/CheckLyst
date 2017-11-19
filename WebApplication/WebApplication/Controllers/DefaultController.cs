@@ -21,10 +21,10 @@ namespace CheckListManager.WebApplication.Controllers
 		        return Ping();
 	        }
 
-            return ConditionalView("Loader", url);
+            return ConditionalView("Loader", url ?? "Dashboard");
         }
 
-        [Route]
+        [Route("Dashboard")]
         [HttpPost]
         public ActionResult Dashboard(int? pageVersions, int? pageInstances)
         {

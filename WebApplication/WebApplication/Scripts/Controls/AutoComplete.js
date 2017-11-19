@@ -110,7 +110,7 @@ matematici.AutoComplete = function (selector) {
 				else if (top + itemHeight - listHeight > scroll)
 					list.scrollTop(top + itemHeight - listHeight);
 
-				element.val(item.data("value"));
+				element.val(item.data("value")).change();
 				label.val(item.text());
 			}
 		},

@@ -172,10 +172,15 @@ nav.Menu {
                         &.Current {
                             a {
                                 color: $Color-Font-Light-Green !important;
+                                cursor: default !important;
+
+                                &::before {
+                                    content: none !important;
+                                }
                             }
                         }
 
-                        &:hover {
+                        &:hover, &:only-child {
                             a {
                                 color: white;
 
