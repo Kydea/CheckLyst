@@ -144,7 +144,7 @@ form {
         display: table;
         clear: both; }
     form label.Error i {
-      border-color: red; }
+      border-color: red !important; }
     form label.Error input, form label.Error select {
       border-color: red;
       outline-color: red; }

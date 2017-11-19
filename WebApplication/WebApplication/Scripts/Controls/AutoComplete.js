@@ -34,18 +34,20 @@ matematici.AutoComplete = function (selector) {
 			});
 			list.outerWidth(width);
 
-            var labelPos = {
+            var labelPosition = {
                 'left': position.left + parseInt(label.css('marginLeft'), 10),
                 'top': position.top + label.outerHeight(true)
             };
 
-            list.css(labelPos);
-            input.css(labelPos);
+            list.css(labelPosition);
+            input.css(labelPosition);
 
             icon.css({
-                'left': labelPos.left + width - 20,
+                'left': labelPosition.left + width - 20,
                 'top': position.top + parseInt(label.css('marginTop'), 10)
-            });
+			});
+
+			console.log(labelPosition.left + width - 20, position.top + parseInt(label.css('marginTop'), 10));
 		},
 
 		initialize = function () {

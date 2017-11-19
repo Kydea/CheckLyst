@@ -1,5 +1,5 @@
 ﻿<div id="UsersDetailPage">
-    <h1>User detail</h1>
+    <h2>User detail</h2>
 
     <form id="Detail">
         <div class="Triggers">
@@ -13,20 +13,45 @@
                 <input type="text" name="description" />
             </label>
 
-            <label>
+            <label class="Clearing">
                 Authentication code
                 <input type="text" name="authenticationCode" />
             </label>
 
-            <label>
+            <label class="Clearing">
                 Email
-                <input type="text" name="emaik" />
+                <input type="text" name="email" />
             </label>
 
             <label>
                 Enabled
                 <input type="checkbox" name="enabled" />
             </label>
+
+            <label class="Clearing">
+                Created by
+                <i class="fi flaticon-people" />
+                <input type="text" name="createdBy" readonly="readonly" />
+            </label>
+
+            <label>
+                Created on
+                <i class="fi flaticon-calendar" />
+                <input type="text" name="createdOn" readonly="readonly" data-type="DateTimeOffset" />
+            </label>
+
+            <label class="Clearing">
+                Modified by
+                <i class="fi flaticon-people" />
+                <input type="text" name="modifiedBy" readonly="readonly" />
+            </label>
+
+            <label>
+                Modified on
+                <i class="fi flaticon-calendar" />
+                <input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
+            </label>
+            <div class="Clearing"></div>
         </div>
     </form>
 
@@ -34,16 +59,50 @@
 </div>
 
 <script type="text/javascript">
-    var data = matematici.popup.getData();
+    var
+        data = matematici.popup.getData(),
+        sender = matematici.popup.getSender(),
+        buttons = [],
 
-    matematici.popup.setButtons([
-        { text: "ok", icon: "check" },
-        { text: "save", icon: "save", id: "SaveButton", handler: function () { alert("OK"); return true; } }
-    ]);
+        clickHandler = function (event) {
+            form.trigger(event, function (result) {
+                form.handleResult(result);
+                if (result.valid) {
+                    matematici.popup.getResult().saved = true;
+                    matematici.popup.close();
+                }
+            });
+        };
 
-    new matematici.Form("form#Detail", {
-        applyButton: "#SaveButton",
-        ssbindEvent: "Bind"
+    buttons.push({ cancelButton: true, hidden: true });
+    if (data != null)
+        buttons.push({
+            text: "delete", icon: "delete", handler: function () {
+                matematici.dialog.show("warning", "The record will be deleted.", [
+                    {
+                        text: "confirm", icon: "check", handler: function () {
+                            clickHandler("Delete");
+                        }
+                    },
+                    { text: "cancel", icon: "remove", cancelButton: true }
+                ]);
+                return true;
+            }
+        });
+    buttons.push({
+        text: "save", icon: "save", id: "SaveButton", handler: function () {
+            clickHandler(data == null ? "Add" : "Edit");
+            return true;
+        }
     });
-    console.log(data);
+
+    matematici.popup.setButtons(buttons);
+
+    matematici.popup.setWidth(420);
+
+    var form = new matematici.Form("form#Detail", {
+        applyButton: "#SaveButton"
+    });
+    form.initialize();
+    if (data != null) form.setValues(data);
 </script>

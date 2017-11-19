@@ -94,6 +94,10 @@ matematici.popup = function () {
 			autoCenter = new matematici.AutoCenter(container);
 			autoCenter.initialize();
 			element.show();
+
+			for (var index in matematici.initializers)
+				matematici.initializers[index].call(null, element);
+
 		};
 
 	return {

@@ -223,7 +223,7 @@ form {
 
         &.Error {
             i {
-                border-color: red;
+                border-color: red !important;
             }
 
             input, select {
