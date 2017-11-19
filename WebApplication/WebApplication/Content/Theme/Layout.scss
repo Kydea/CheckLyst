@@ -42,6 +42,10 @@ a {
     }
 }
 
+.AutoCenter {
+    display: none; //shown by js
+}
+
 .LeftFloating {
     float: left;
 }
@@ -92,29 +96,8 @@ header {
     position: relative;
     z-index: $Depth-Header;
 
-    a#HelpButton {
-        position: absolute;
-        top: 15px;
-        border-radius: 50%;
-        background-color: #406f81;
-        width: 25px;
-        height: 25px;
-        line-height: 25px;
-        color: white;
-        text-align: center;
-        font-size: 14px;
-
-        @media #{$Media-Extended} {
-            right: $Metric-Separator-Extended;
-        }
-
-        @media #{$Media-Mobile} {
-            right: $Metric-Separator-Mobile;
-        }
-    }
-
     div#UserPanel {
-        color: #666;
+        color: $Color-Font-Grey3;
         text-align: center;
         position: relative;
         text-transform: none;
@@ -127,7 +110,7 @@ header {
             left: 0;
             position: fixed;
             text-align: right;
-            border-bottom: 1px solid #ccc;
+            border-bottom: 1px solid $Color-Border-Silver;
             margin-left: $Metric-Header-Height;
             width: calc(100% - #{$Metric-Header-Height});
 
@@ -155,7 +138,7 @@ header {
 
             & + a {
                 &:before {
-                    background-color: #666;
+                    background-color: $Color-Font-Grey3;
                     display: inline-block;
                     content: "";
                     height: 1em;
@@ -179,28 +162,60 @@ header {
     }
 }
 
-// @to_do: no footer(?)
 footer {
-    display: none;
     position: relative;
-    margin-left: $Metric-Header-Height;
-    width: calc(100vw - #{$Metric-Header-Height});
-    height: 58px;
-    background: black;
+    background: white;
+    border-top: solid 1px $Color-Border-Silver;
+    padding: 20px 30px;
+    line-height: 1.4;
 
     div.Information {
-        font-size: 10px;
-        color: white;
-        position: absolute;
+        font-size: 12px;
+        font-weight: bold;
+        color: black;
         bottom: $Metric-Separator-Mobile;
+        color: $Color-Font-Grey3;
+
+        .Item {
+            span.Label {
+                font-weight: normal;
+            }
+        }
+
 
         @media #{$Media-Extended} {
             left: $Metric-Separator-Extended;
+
+            .Item {
+                white-space: nowrap;
+                border-left: solid 1px black;
+                margin-left: 10px;
+                padding-left: 10px;
+                display: block;
+                float: left;
+
+                &:first-child {
+                    border-left: unset;
+                    margin-left: 0;
+                    padding-left: 0;
+                }
+            }
         }
 
         @media #{$Media-Mobile} {
             left: $Metric-Separator-Mobile;
+
+            .Item {
+                display: block;
+            }
         }
+    }
+
+    @media #{$Media-Extended} {
+        margin-left: $Metric-Header-Height;
+    }
+
+    @media #{$Media-Mobile} {
     }
 }
 

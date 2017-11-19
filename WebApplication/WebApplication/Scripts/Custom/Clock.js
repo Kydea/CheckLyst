@@ -31,6 +31,7 @@
 
 		logout = function (redirect) {
 			matematici.dialog.close();
+			matematici.popup.close();
 			matematici.canClose = true;
 			matematici.navigator.open(redirect, false, true);
 		},
@@ -102,7 +103,11 @@
             selectors.push(selector);
             elements.push($(selector));
             refresh();
-        },
+		},
+
+		refresh: function () {
+			refresh();
+		},
 
         remove: function (selector) {
             for (var index = 0; index < selectors.length; ++index)

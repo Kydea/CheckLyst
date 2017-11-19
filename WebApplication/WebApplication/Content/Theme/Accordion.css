@@ -4,12 +4,14 @@
   div.Accordion-Bar .Button {
     background-color: #ffba00;
     border-radius: 5px 5px 0 0;
-    padding-right: 30px; }
+    padding-right: 50px;
+    box-shadow: none; }
     div.Accordion-Bar .Button i.fa {
       background: none;
       right: 0;
       border: none;
-      transition: transform 300ms ease; }
+      transition: transform 300ms ease;
+      box-shadow: none; }
     div.Accordion-Bar .Button:hover i.fa {
       transform: rotate(180deg); }
     div.Accordion-Bar .Button.Closed i.fa {
@@ -22,6 +24,7 @@
       height: 100%;
       right: 30px;
       width: 1px;
+      top: 0;
       background: white; }
 
 .Accordion {

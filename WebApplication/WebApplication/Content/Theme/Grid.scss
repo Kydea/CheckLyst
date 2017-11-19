@@ -18,7 +18,7 @@ table.Grid {
                 text-align: left;
                 position: relative;
                 height: 50px;
-                border-left: 1px solid #ccc;
+                border-left: 1px solid $Color-Border-Silver;
                 font-weight: 600;
                 font-size: 15px;
                 font-family: Myriad, Arial, sans-serif;
@@ -33,7 +33,7 @@ table.Grid {
                     height: 0;
                     transform: translateY(-50%);
                     border-width: 6px 10px;
-                    border-color: transparent #ccc transparent transparent;
+                    border-color: transparent $Color-Border-Silver transparent transparent;
                     border-style: solid;
                     // rotate the icon.
                     transform: rotate(-90deg);
@@ -47,7 +47,7 @@ table.Grid {
 
         tr {
             td {
-                color: #666;
+                color: $Color-Font-Grey3;
                 padding: 0 20px;
                 height: 40px;
                 border-right: solid 1px $Color-Border-Grey;

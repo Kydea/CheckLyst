@@ -1,8 +1,3 @@
-    /*
-    Flaticon icon font: Flaticon
-    Creation date: 31/10/2017 13:19
-    */
-
 @font-face {
     font-family: "Flaticon";
     src: url("Fonts/FlatIcon/Flaticon.eot");
@@ -36,106 +31,32 @@
     font-smoothing: antialiased;
 }
 
-.flaticon-departments:before {
-    content: "\f100";
-}
-
-.flaticon-descriptions:before {
-    content: "\f101";
-}
-
-.flaticon-version:before {
-    content: "\f102";
-}
-
-.flaticon-meno:before {
-    content: "\f103";
-}
-
-.flaticon-dashboard:before {
-    content: "\f104";
-}
-
-.flaticon-help:before {
-    content: "\f105";
-}
-
-.flaticon-freccia-su:before {
-    content: "\f106";
-}
-
-.flaticon-frecia-destra:before {
-    content: "\f107";
-}
-
-.flaticon-freccia-giu:before {
-    content: "\f108";
-}
-
-.flaticon-freccia-sinistra:before {
-    content: "\f109";
-}
-
-.flaticon-states:before {
-    content: "\f10a";
-}
-
-.flaticon-settings:before {
-    content: "\f10b";
-}
-
-.flaticon-people:before {
-    content: "\f10c";
-}
-
-.flaticon-tags:before {
-    content: "\f10d";
-}
-
-.flaticon-freccia-fina-su:before {
-    content: "\f10e";
-}
-
-.flaticon-freccia-fina-destra:before {
-    content: "\f10f";
-}
-
-.flaticon-freccia-fina-sinistra:before {
-    content: "\f110";
-}
-
-.flaticon-freccia-fina-giu:before {
-    content: "\f111";
-}
-
-.flaticon-piu:before {
-    content: "\f112";
-}
-
-.flaticon-istance:before {
-    content: "\f113";
-}
-
-.flaticon-logout:before {
-    content: "\f114";
-}
-
-.flaticon-prototypes:before {
-    content: "\f115";
-}
-
-.flaticon-calendar:before {
-    content: "\f116";
-}
-
-.flaticon-data:before {
-    content: "\f117";
-}
-
-.flaticon-security:before {
-    content: "\f118";
-}
-
+.flaticon-departments:before { content: "\f100"; }
+.flaticon-descriptions:before { content: "\f101"; }
+.flaticon-version:before { content: "\f102"; }
+.flaticon-meno:before { content: "\f103"; }
+.flaticon-dashboard:before { content: "\f104"; }
+.flaticon-help:before { content: "\f105"; }
+.flaticon-freccia-su:before { content: "\f106"; }
+.flaticon-freccia-destra:before { content: "\f107"; }
+.flaticon-freccia-giu:before { content: "\f108"; }
+.flaticon-freccia-sinistra:before { content: "\f109"; }
+.flaticon-states:before { content: "\f10a"; }
+.flaticon-settings:before { content: "\f10b"; }
+.flaticon-people:before { content: "\f10c"; }
+.flaticon-tags:before { content: "\f10d"; }
+.flaticon-freccia-fina-su:before { content: "\f10e"; }
+.flaticon-freccia-fina-destra:before { content: "\f10f"; }
+.flaticon-freccia-fina-sinistra:before { content: "\f110"; }
+.flaticon-freccia-fina-giu:before { content: "\f111"; }
+.flaticon-piu:before { content: "\f112"; }
+.flaticon-istance:before { content: "\f113"; }
+.flaticon-logout:before { content: "\f114"; }
+.flaticon-prototypes:before { content: "\f115"; }
+.flaticon-calendar:before { content: "\f116"; }
+.flaticon-data:before { content: "\f117"; }
+.flaticon-security:before { content: "\f118"; }
+    
 $font-Flaticon-departments: "\f100";
 $font-Flaticon-descriptions: "\f101";
 $font-Flaticon-version: "\f102";
@@ -143,7 +64,7 @@ $font-Flaticon-meno: "\f103";
 $font-Flaticon-dashboard: "\f104";
 $font-Flaticon-help: "\f105";
 $font-Flaticon-freccia-su: "\f106";
-$font-Flaticon-frecia-destra: "\f107";
+$font-Flaticon-freccia-destra: "\f107";
 $font-Flaticon-freccia-giu: "\f108";
 $font-Flaticon-freccia-sinistra: "\f109";
 $font-Flaticon-states: "\f10a";

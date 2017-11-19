@@ -5,7 +5,6 @@ div.Dialog {
 
     div.Container {
         padding: 20px;
-        border-radius: 15px;
         background-color: white;
         box-shadow: rgba(0, 0, 0, 0.16) 0 0 16px 5px;
 
@@ -20,8 +19,6 @@ div.Dialog {
         h2 {
             margin: -20px -20px 20px;
             background: $Color-Font-Green;
-            border-bottom: solid 1px $Color-Border-Blu;
-            border-radius: 15px 15px 0 0;
             padding: 20px;
             color: white;
             text-transform: uppercase;
@@ -115,7 +112,7 @@ div.Dialog {
     &.Error {
         h2 {
             color: red !important;
-            border-color: red !important;
+            border-bottom: solid 1px red;
         }
 
         div.Buttons {
@@ -138,13 +135,10 @@ div.Dialog {
             position: relative;
             max-width: calc(100vw - #{2 * $Metric-Separator-Extended});
             margin: 0 auto;
-        }
+            border-radius: 15px;
 
-        &.DetailPage {
-            form {
-                border: none;
-                padding: 0;
-                margin: -20px 0;
+            h2 {
+                border-radius: 15px 15px 0 0;
             }
         }
     }
@@ -157,6 +151,15 @@ div.Dialog {
             bottom: 0;
             left: 0;
             z-index: $Depth-Dialog;
+            width: unset !important;
+
+            h2 {
+                background: $Color-Font-Green;
+                padding: 20px;
+                color: white;
+                text-transform: uppercase;
+                font-weight: normal;
+            }
         }
     }
 }

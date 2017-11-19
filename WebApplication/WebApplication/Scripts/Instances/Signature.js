@@ -53,22 +53,23 @@
                                                 PIN: panel.getPIN(),
                                                 Simple: panel.isSimple()
                                             }).done(function (result) {
-                                                if (result.Error) {
-                                                    var error = $("div.Error", matematici.dialog.getElement());
+												if (result.Error) {
+													//error with dialog
+                                                    var error = $("div.Error", matematici.popup.getElement());
                                                     error.fadeTo(500, .9).children().text(result.Error);
                                                     setTimeout(function () {
                                                         error.fadeTo(500, 0, function () { error.hide(); });
                                                     }, 3000);
                                                 } else {
                                                     instances.instance.update(result);
-                                                    matematici.dialog.close();
+                                                    matematici.popup.close();
                                                 }
                                             }).trigger();
                                         }
                                     }
                                 };
 
-                            matematici.dialog.show(options);
+                            matematici.popup.show(options);
                         },
 
                         trySign = function(username) {
@@ -123,21 +124,21 @@
                                         Note: panel.getNote()
                                     }).done(function (result) {
                                         if (result.Error) {
-                                            var error = $("div.Error", matematici.dialog.getElement());
+                                            var error = $("div.Error", matematici.popup.getElement());
                                             error.fadeTo(500, .9).children().text(result.Error);
                                             setTimeout(function () {
                                                 error.fadeTo(500, 0, function () { error.hide(); });
                                             }, 3000);
                                         } else {
                                             instances.instance.update(result);
-                                            matematici.dialog.close();
+                                            matematici.popup.close();
                                         }
                                     }).trigger();
                                 }
                             }
                         };
 
-                    matematici.dialog.show(options);
+                    matematici.popup.show(options);
                 });
         };
 

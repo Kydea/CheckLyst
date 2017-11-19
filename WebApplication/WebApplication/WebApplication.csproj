@@ -181,6 +181,9 @@
     <Content Include="Content\Theme\Paginator.css">
       <DependentUpon>Paginator.scss</DependentUpon>
     </Content>
+    <Content Include="Content\Theme\Popup.css">
+      <DependentUpon>Popup.scss</DependentUpon>
+    </Content>
     <Content Include="Content\Theme\PropertyPanel.css">
       <DependentUpon>PropertyPanel.scss</DependentUpon>
     </Content>
@@ -242,6 +245,7 @@
     <Content Include="Content\Theme\AutoComplete.scss" />
     <Content Include="Content\Theme\ShadowPanel.scss" />
     <Content Include="Content\Theme\Accordion.scss" />
+    <Content Include="Content\Theme\Popup.scss" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Bold\Myriad Pro.scss" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Bold\MyriadPro-Bold.eot" />
@@ -287,6 +291,7 @@
     <Content Include="Scripts\Libraries\SmoothScroll.js" />
     <Content Include="Scripts\Matematici\AnimationManager.js" />
     <Content Include="Scripts\Matematici\Breadcrumbs.js" />
+    <Content Include="Scripts\Matematici\Popup.js" />
     <Content Include="Scripts\Matematici\Dialog.js" />
     <Content Include="Scripts\Matematici\Easings.js" />
     <Content Include="Scripts\Matematici\Extensions.js" />

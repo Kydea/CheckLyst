@@ -1,5 +1,7 @@
 ﻿@import "_Library.scss";
 
+$Logo-Container-Height: 80px;
+
 body.Login {
     background: white !important;
 
@@ -25,23 +27,17 @@ body.Login {
 
         div.Box {
             background-color: white;
-            padding: 20px;
+            padding-top: $Logo-Container-Height + 20px; // Logo container's height + Margin-Bottom
             margin: 0 auto;
             position: relative;
 
             form {
                 position: relative;
                 border: none;
-                padding: 0;
             }
 
             img {
                 margin-bottom: 19px;
-            }
-
-            label {
-                margin-top: 10px;
-                margin-bottom: 5px;
             }
 
             div.Message {
@@ -50,18 +46,33 @@ body.Login {
                 color: $Color-Font-Blue1;
             }
 
-            div.Buttons {
-                margin-top: 20px;
-                border-top: solid 1px black;
-                padding-top: 20px;
+            div.Errors {
+                float: left;
+            }
 
+            div.Buttons {
                 a {
                     float: right;
-                    background-color: black;
 
                     &:hover {
                         background-color: $Color-Background-Blu4;
                     }
+                }
+            }
+
+            // Logo
+            &::before {
+                background: $Color-Font-Green url(../Media/LogoMobile.png) no-repeat center 50%;
+                height: $Logo-Container-Height;
+                position: absolute;
+                display: block;
+                content: "";
+                width: 100%;
+                left: 0;
+                top: 0;
+
+                @media #{$Media-Extended} {
+                    border-radius: 10px 10px 0 0;
                 }
             }
 

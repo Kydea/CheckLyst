@@ -152,7 +152,7 @@
 
 									signature.showError(result.error);
 								} else {
-									matematici.dialog.close();
+									matematici.popup.close();
 									grid.close();
 								}
 
@@ -180,7 +180,7 @@
 					}
 				};
 
-			matematici.dialog.show(options);
+			matematici.popup.show(options);
 		};
 
     prototype.getElement = function () {

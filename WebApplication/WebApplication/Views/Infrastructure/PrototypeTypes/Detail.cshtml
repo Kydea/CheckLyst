@@ -34,18 +34,17 @@
 </div>
 
 <script type="text/javascript">
-    var data = matematici.dialog.getData();
+    var data = matematici.popup.getData();
 
-    matematici.dialog.setButtons([
+    matematici.popup.setButtons([
         { cancelButton: true, hidden: true },
         { text: "save", icon: "save", id: "SaveButton", handler: function () { alert("OK"); return true; } }
     ]);
 
-    matematici.dialog.setWidth($("#UsersDetailPage").width());
+    matematici.popup.setWidth($("#UsersDetailPage").width());
 
     new matematici.Form("form#Detail", {
         applyButton: "#SaveButton",
         ssbindEvent: "Bind"
     });
-    console.log(data);
 </script>

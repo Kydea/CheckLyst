@@ -4,12 +4,13 @@
 		element = $(selector).data("autoCenter", autoCenter),
 
 		center = function () {
-			element.css("top", parseInt((element.parent().height() - element.outerHeight()) / 2)); 
+			element.css("top", (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) < 760 ? 0 : parseInt((element.parent().height() - element.outerHeight()) / 2)); 
 		},
 
 		initialize = function () {
 			matematici.elements.window.on("resize", center);
 			center();
+			element.show();
 		},
 
 		destroy = function () {

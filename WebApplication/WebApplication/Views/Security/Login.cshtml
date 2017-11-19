@@ -4,8 +4,6 @@
 <div class="Login">
     <div class="Box AutoCenter">
         <form>
-            <img src="~/Content/Media/Logo.Big.png" alt="" />
-
             @if (Request["m"] != null)
             {
                 <div class="Message">
@@ -14,16 +12,24 @@
             }
 
             <input type="hidden" name="grant_type" value="password" />
-            <label for="companyId">Company</label>
-            <select name="companyId"></select>
-            <label for="username">User code</label>
-            <input type="text" name="username" />
-            <label for="password">Password</label>
-            <input type="password" name="password" />
-            <div class="Errors">
-            </div>
-            <div class="Buttons Container">
-                <a class="Button DefaultButton" href="#" id="Sign"><i class="fa fa-check"></i> Login</a>
+
+            <label class="FullWidth">
+                Company
+                <i class="fi flaticon-departments"></i>
+                <select name="companyId"></select>
+            </label>
+            
+            <label class="FullWidth Controls2">
+                <span>Username / Password</span>
+                <i class="fi flaticon-people"></i>
+                <input type="text" name="username" placeholder="username" />
+                <input type="password" name="password" placeholder="password" />
+            </label>
+
+            <div class="Errors"></div>
+
+            <div class="Buttons">
+                <a class="Button DefaultButton GreyGreenButton" href="#" id="Sign"><i class="fi flaticon-freccia-destra fi-circle"></i>INVIO</a>
             </div>
         </form>
     </div>
@@ -39,7 +45,11 @@
         var
             form = $("form"),
             error = $("div.Errors", form),
-            companyList = $("select[name=companyId]", form);
+            companyList = $("select[name=companyId]", form),
+
+            showError = function (message) {
+                error.html(" " + message).prepend($("<i />").addClass("fa fa-warning")).show()
+            };
 
         new matematici.Page({
             name: "Login",
@@ -49,7 +59,7 @@
         new matematici.Login("div.Login", function () {
             error.empty().hide();
             if (companyList.val() == null)
-                error.html("select a company").show()
+                showError("select a company");
             else
                 $.ajax(matematici.urls.accessControl.token, {
                     data: form.serialize(),
@@ -57,9 +67,10 @@
                 }).done(function (result) {
                     matematici.tokenManager.login(result);
                     matematici.client.createNew(function () { matematici.navigator.open("@Model"); });
+                    matematici.clock.refresh();
                     //matematici.clock.resume();
                 }).fail(function (jqXhr, textStatus, errorThrown) {
-                    error.html(jqXhr.responseJSON && jqXhr.responseJSON.error_description || errorThrown).show();
+                    showError(jqXhr.responseJSON && jqXhr.responseJSON.error_description || errorThrown);
                     console.log(jqXhr, textStatus, errorThrown);
                 });
         });
@@ -76,10 +87,12 @@
                 companyList.append($("<option />").attr("value", company.id).text(company.name));
             }
             companyList.val(null);
-            companyList.data("autoComplete").refresh();
+            setTimeout(function () {
+                companyList.data("autoComplete").refresh();
+            }, 0);
             callback.call();
         }).fail(function (jqXhr, textStatus, errorThrown) {
-            error.html(jqXhr.responseJSON && jqXhr.responseJSON.error_description || errorThrown).show();
+            showError(jqXhr.responseJSON && jqXhr.responseJSON.error_description || errorThrown);
             console.log(jqXhr, textStatus, errorThrown);
         });
     };

@@ -28,6 +28,7 @@
 			})
 			.on("click", "a#Cancel", function () {
 				matematici.dialog.close();
+				matematici.popup.close();
 			})
 			.on("click", "div.Digits a", function () {
 				var

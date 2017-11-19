@@ -15,31 +15,36 @@
     background: url(Login/Background.jpg) no-repeat center white; }
     body.Login div.Login div.Box {
       background-color: white;
-      padding: 20px;
+      padding-top: 100px;
       margin: 0 auto;
       position: relative; }
       body.Login div.Login div.Box form {
         position: relative;
-        border: none;
-        padding: 0; }
+        border: none; }
       body.Login div.Login div.Box img {
         margin-bottom: 19px; }
-      body.Login div.Login div.Box label {
-        margin-top: 10px;
-        margin-bottom: 5px; }
       body.Login div.Login div.Box div.Message {
         text-align: center;
         margin: 0 0 20px 0;
         color: #0099cc; }
-      body.Login div.Login div.Box div.Buttons {
-        margin-top: 20px;
-        border-top: solid 1px black;
-        padding-top: 20px; }
-        body.Login div.Login div.Box div.Buttons a {
-          float: right;
-          background-color: black; }
-          body.Login div.Login div.Box div.Buttons a:hover {
-            background-color: #019dda; }
+      body.Login div.Login div.Box div.Errors {
+        float: left; }
+      body.Login div.Login div.Box div.Buttons a {
+        float: right; }
+        body.Login div.Login div.Box div.Buttons a:hover {
+          background-color: #019dda; }
+      body.Login div.Login div.Box::before {
+        background: #009688 url(../Media/LogoMobile.png) no-repeat center 50%;
+        height: 80px;
+        position: absolute;
+        display: block;
+        content: "";
+        width: 100%;
+        left: 0;
+        top: 0; }
+        @media only screen and (min-width: 760px) {
+          body.Login div.Login div.Box::before {
+            border-radius: 10px 10px 0 0; } }
       @media only screen and (min-width: 760px) {
         body.Login div.Login div.Box {
           width: 460px;
