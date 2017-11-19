@@ -68,45 +68,12 @@
 
 <script type="text/javascript">
     matematici.events.onPageLoad = function (callback) {
-        var grid,
-            form,
-            formElement = $("form#Filters"),
-            paginator,
-            handler = function (result) {
-                grid.update(result.data);
-                paginator.setPage(result.currentPage, result.pagesCount);
-            };
-
-        new matematici.ActionBar("div.ActionBar");
-
-        new matematici.Page({
-            name: "AuditTrail",
-            initializers: [
-                //new matematici.FixedHeader("div#Content table.Grid")
-                grid = new matematici.Grid("div#Content table.Grid", {
-                    rowClick: function (row) {
-                        matematici.popup.show({
-                            ajax: {
-                                type: "post",
-                                url: "@Url.Action("Detail")"
-                            },
-                            cssClass: "DetailPage",
-                            data: row.data("values")
-                        });
-                    }
-                }),
-                form = new matematici.Form(formElement, {
-                    applyButton: {
-                        button: "#ApplyButton",
-                        event: "GetData",
-                        handler: handler
-                    }
-                }),
-                matematici.p = paginator = new matematici.Paginator("div#Content div.Paginator", function (index) {
-                    form.trigger("GetData", handler, { CurrentPage: index });
-                })
-            ],
-            breadcrumbs: [
+        new matematici.SearchPage({
+            pageName: "AuditTrail",
+            detailUrl: "@Url.Action("Detail")",
+            filterFormSelector: "form#Filters",
+            resultGridSelector: "div#Content table.Grid",
+            breadCrumbs: [
                 { content: "audit trail" }
             ]
         });

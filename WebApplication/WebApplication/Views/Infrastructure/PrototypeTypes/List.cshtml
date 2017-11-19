@@ -56,41 +56,12 @@
 
 <script type="text/javascript">
     matematici.events.onPageLoad = function (callback) {
-        var grid,
-            form,
-            paginator,
-            handler = function (result) {
-                grid.update(result.data);
-                paginator.setPage(result.currentPage, result.pagesCount);
-            };
-
-        new matematici.ActionBar("div.ActionBar");
-
-        new matematici.Page({
-            name: "InfrastructurePrototypeTypes",
-            initializers: [
-                //new matematici.FixedHeader("div#Content table.Grid")
-                grid = new matematici.Grid("div#Content table.Grid", {
-                    rowClick: function (row) {
-                        matematici.popup.show({
-                            url: "@Url.Action("PrototypeTypesDetail")",
-                            data: row.data("values")
-                        });
-                    }
-                }),
-                form = new matematici.Form("form#Filters", {
-                    applyButton: {
-                        button: "#ApplyButton",
-                        event: "GetData",
-                        handler: handler
-                    },
-                    bindEvent: "Bind"
-                }),
-                matematici.p = paginator = new matematici.Paginator("div#Content div.Paginator", function (index) {
-                    form.trigger("GetData", handler, { CurrentPage: index });
-                })
-            ],
-            breadcrumbs: [
+        new matematici.SearchPage({
+            pageName: "InfrastructurePrototypeTypes",
+            detailUrl: "@Url.Action("PrototypeTypesDetail")",
+            filterFormSelector: "form#Filters",
+            resultGridSelector: "div#Content table.Grid",
+            breadCrumbs: [
                 { content: "infrastructure" },
                 { content: "protype types" }
             ]

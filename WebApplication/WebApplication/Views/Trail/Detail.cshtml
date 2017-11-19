@@ -34,16 +34,7 @@
 </div>
 
 <script type="text/javascript">
-    var data = matematici.popup.getData();
-
-    matematici.popup.setButtons([
-        { text: "ok", icon: "check" },
-        { text: "save", icon: "save", id: "SaveButton", handler: function () { alert("OK"); return true; } }
-    ]);
-
-    new matematici.Form("form#Detail", {
-        applyButton: "#SaveButton",
-        ssbindEvent: "Bind"
+    new matematici.DetailPage({
+        formSelector: "form#Detail"
     });
-    console.log(data);
 </script>
