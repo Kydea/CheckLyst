@@ -47,7 +47,7 @@ namespace CheckListManager.Instances.Tests.Steps.InstanceCache
 		[When(@"I create the instance")]
 		public async Task WhenICreateTheInstance()
 		{
-			await _instanceCache.SetAsync(_context.Code, _context.UserCode, _context.Object);
+			await _instanceCache.SetAsync(_context.Code, _context.Object);
 		}
 
 		[Then(@"I have the instance stored in redis")]

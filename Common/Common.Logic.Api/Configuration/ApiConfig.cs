@@ -31,6 +31,8 @@ namespace CheckListManager.Common.Logic.Api.Configuration
 	{
 		private readonly HttpConfiguration _configuration;
 
+		protected IContainer Container { get; private set; }
+
 		protected ApiConfig()
 		{
 			_configuration = new HttpConfiguration();
@@ -96,8 +98,10 @@ namespace CheckListManager.Common.Logic.Api.Configuration
 
 		private void ConfigureWebApi()
 		{
+			Container = CreateBuilder().Build();
+
 			_configuration.DependencyResolver
-				= new AutofacWebApiDependencyResolver(CreateBuilder().Build());
+				= new AutofacWebApiDependencyResolver(Container);
 
 			_configuration.Services.Replace(typeof(IExceptionHandler), new DefaultExceptionHandler());
 
@@ -110,6 +114,13 @@ namespace CheckListManager.Common.Logic.Api.Configuration
 			_configuration.MapHttpAttributeRoutes();
 
 			_configuration.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+
+			OnConfigureWebApi(_configuration);
+		}
+
+		protected virtual void OnConfigureWebApi(HttpConfiguration configuration)
+		{
+			
 		}
 
 		private void ConfigureAuth(IAppBuilder app)

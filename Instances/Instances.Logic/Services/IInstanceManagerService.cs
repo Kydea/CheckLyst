@@ -5,9 +5,11 @@ using CheckListManager.Instances.Logic.Models.CheckLists;
 
 namespace CheckListManager.Instances.Logic.Services
 {
-	public interface IInstanceService : IService
+	public interface IInstanceManagerService : IService
 	{
-		Task<InstanceCacheObject> CreateAsync(int prototype, int version);
-		Task<InstanceCacheObject> PersistAsync(long companyId, string userCode, string code, Instance instance);
+		Task<InstanceCacheObject> CreateAsync(long companyId, string userCode, int prototype, int version);
+		Task ConfirmAsync(string userCode, string code);
+
+		Instance GetCheckList(Instance instance);
 	}
 }

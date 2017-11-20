@@ -11,12 +11,12 @@ namespace CheckListManager.Instances.Tests.Hooks
 		[AfterScenario("CleanupRedis")]
 		public static void CleanupRedis()
 		{
-			var context = ScenarioContext.Current.ScenarioContainer.Resolve<IComponentContext>();
-			var service = context.Resolve<IInstanceCacheService>();
+			//var context = ScenarioContext.Current.ScenarioContainer.Resolve<IComponentContext>();
+			//var service = context.Resolve<IInstanceCacheService>();
 
-			var testContext = context.Resolve<InstanceCacheContext>();
+			//var testContext = context.Resolve<InstanceCacheContext>();
 
-			service.RemoveAsync(testContext.Code, testContext.UserCode);
+			//service.RemoveAsync(testContext.Code, testContext.UserCode);
 		}
 	}
 }

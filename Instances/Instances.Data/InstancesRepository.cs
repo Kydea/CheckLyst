@@ -19,17 +19,26 @@ namespace CheckListManager.Instances.Data
             long companyId,
             Expression<Func<Common.Data.Instances, TResult>> select,
             Expression<Func<Common.Data.Instances, bool>> filters,
-            Expression<Func<Common.Data.Instances, TKey>> order, 
-            int currentPage, 
-            int itemsPerPage)
+            Expression<Func<Common.Data.Instances, TKey>> order = null, 
+            int? currentPage = null, 
+            int? itemsPerPage = null)
         {
-            var data = await Entities.Instances
-                .Where(filters)
-				.Where(i => i.Prototypes.Company == companyId)
-                .OrderBy(order)
-                .Select(select)
-                .Skip((currentPage - 1) * itemsPerPage)
-                .Take(itemsPerPage)
+	        var query = Entities.Instances
+		        .Where(filters)
+		        .Where(i => i.Prototypes.Company == companyId);
+
+	        if (order != null)
+	        {
+		        query = query.OrderBy(order);
+	        }
+	        if (currentPage.HasValue && itemsPerPage.HasValue)
+	        {
+		        query = query.Skip((currentPage.Value - 1) * itemsPerPage.Value).Take(itemsPerPage.Value);
+	        }
+
+			var data = await
+				query
+				.Select(select)
                 .ToListAsync();
 
             var count = await Entities.Instances
@@ -40,9 +49,9 @@ namespace CheckListManager.Instances.Data
             {
                 Data = data,
                 Count = count,
-                ItemsPerPage = itemsPerPage,
-                CurrentPage = currentPage
-            };
+                ItemsPerPage = itemsPerPage ?? 1,
+                CurrentPage = currentPage ?? -1
+			};
         }
 
 	    public async Task<Common.Data.Instances> CreateInstanceAsync(Common.Data.Instances instance)
@@ -77,6 +86,8 @@ namespace CheckListManager.Instances.Data
 			    await SaveChangesAsync();
 
 			    Entities.Database.CurrentTransaction.Commit();
+
+			    await Entities.Entry(instance).ReloadAsync();
 
 				return instance;
 		    }

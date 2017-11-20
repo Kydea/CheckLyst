@@ -14,11 +14,11 @@ namespace CheckListManager.Instances.Api.Controllers
 	[RoutePrefix("Instance")]
 	public class InstanceController : BaseApiController
 	{
-		private readonly IInstanceService _instanceService;
+		private readonly IInstanceManagerService _instanceManagerService;
 
-		public InstanceController(IInstanceService instanceService)
+		public InstanceController(IInstanceManagerService instanceManagerService)
 		{
-			_instanceService = instanceService;
+			_instanceManagerService = instanceManagerService;
 		}
 
 		[HttpGet]
@@ -27,11 +27,11 @@ namespace CheckListManager.Instances.Api.Controllers
 		{
 			try
 			{
-				var cacheObject = await _instanceService.CreateAsync(request.Prototype, request.Version);
+				var cacheObject = await _instanceManagerService.CreateAsync(Identity.CompanyId, Identity.Code, request.Prototype, request.Version);
 				var response = new CreateInstanceResponse
 				{
 					Code = cacheObject.Code,
-					CheckList = cacheObject.Instance
+					CheckList = _instanceManagerService.GetCheckList(cacheObject.Instance)
 				};
 				return Ok(response);
 			}
@@ -54,6 +54,64 @@ namespace CheckListManager.Instances.Api.Controllers
 			{
 				return Error(new ResponseMessage(e.Message));
 			}
+		}
+
+		[HttpPost]
+		[Route("Confirm")]
+		public async Task<IHttpActionResult> Confirm([FromBody]Message<ConfirmInstanceRequest> request)
+		{
+			try
+			{
+				await _instanceManagerService.ConfirmAsync(Identity.Code, request.Data.Code);
+				return Ok(Message.Create(true));
+			}
+			catch (DatabaseAggregateException exception)
+			{
+				return Error(new ResponseMessage(exception.InnerExceptions.Select(e => e.Message).ToArray()));
+			}
+			catch (DatabaseException exception)
+			{
+				// ReSharper disable once SwitchStatementMissingSomeCases
+				switch (exception.Error)
+				{
+					case DatabaseError.PrimaryKeyViolation:
+						return Error(new ResponseMessage("An user with the same code already exists."));
+					default:
+						return Error(new ResponseMessage(exception.Message));
+				}
+			}
+			catch (Exception e)
+			{
+				return Error(new ResponseMessage(e.Message));
+			}
+		}
+
+		[HttpPost]
+		[Route("Open")]
+		public async Task<IHttpActionResult> Open()
+		{
+			return Ok(await Task.FromResult(true));
+		}
+
+		[HttpPost]
+		[Route("Close")]
+		public async Task<IHttpActionResult> Close()
+		{
+			return Ok(await Task.FromResult(true));
+		}
+
+		[HttpPost]
+		[Route("ChangeState")]
+		public async Task<IHttpActionResult> ChangeState()
+		{
+			return Ok(await Task.FromResult(true));
+		}
+
+		[HttpPost]
+		[Route("Event")]
+		public async Task<IHttpActionResult> Event()
+		{
+			return Ok(await Task.FromResult(true));
 		}
 	}
 }
