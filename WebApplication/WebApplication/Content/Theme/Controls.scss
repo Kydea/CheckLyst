@@ -166,24 +166,70 @@ form {
             color: red;
             cursor: pointer;
         }
+        // Number of controls | percentage per item.
+        $controlsData: 2 50%, 3 33.33%;
+        $controlsList: null;
 
-        &.FullWidth {
-            width: calc(100% - #{$Metric-Control-Space});
-            display: block;
+        // Generate lists -> this avoid repeating css.
+        @each $tuple in $controlsData {
+            &.Controls#{nth($tuple, 1)} {
+                width: $Inline-Form-Label-Width * nth($tuple, 1);
+                $controlsList: append($controlsList, unquote("&.Controls#{nth($tuple, 1)}"), comma);
+
+                input, select {
+                    width: calc(#{$Inline-Form-Label-Width} - #{$Metric-Control-Height}/#{nth($tuple, 1)});
+                }
+
+                i:not(.AutoComplete) {
+                    & + input, & + select {
+                        &:not(.AutoComplete), &.AutoComplete + input, &.AutoComplete + select {
+                            width: calc(#{$Inline-Form-Label-Width} + #{$Metric-Control-Height} - #{$Metric-Control-Height}/#{nth($tuple, 1)});
+                        }
+                    }
+                }
+            }
+        }
+
+        #{$controlsList} {
+            // Collapse white-spaces and use inline-block elements.
+            font-size: 0;
+            white-space: nowrap;
 
             span {
                 width: calc(100% - #{$Metric-Control-Space});
                 display: block;
             }
-            // Number of controls | percentage per item.
-            $controlsData: '2' 50%, '3' 33.33%;
-            $controlsList: null;
+            // Normalize font size
+            & > * {
+                font-size: 1rem;
+            }
 
-            // Generate lists -> this avoid repeating css.
+            input, select {
+                float: none;
+                border-radius: 0;
+                display: inline-block;
+
+                &:not(.AutoComplete-Filter) {
+                    border-left: none;
+                }
+            }
+        }
+
+        #{$controlsList}, &.FullWidth {
+            &::after {
+                content: "";
+                display: table;
+                clear: both;
+            }
+        }
+
+        &.FullWidth {
+            width: calc(100% - #{$Metric-Control-Space});
+            display: block;
+            float: none;
+
             @each $tuple in $controlsData {
                 &.Controls#{nth($tuple, 1)} {
-                    $controlsList: append($controlsList, unquote("&.Controls#{nth($tuple, 1)}"), comma);
-
                     input, select {
                         width: calc(#{nth($tuple, 2)} - #{$Metric-Control-Height}/#{nth($tuple, 1)});
                     }
@@ -196,32 +242,6 @@ form {
                         }
                     }
                 }
-            }
-
-            #{$controlsList} {
-                // Collapse white-spaces and use inline-block elements.
-                font-size: 0;
-                white-space: nowrap;
-                // Normalize font size
-                & > * {
-                    font-size: 1rem;
-                }
-
-                input, select {
-                    float: none;
-                    border-radius: 0;
-                    display: inline-block;
-
-                    &:not(.AutoComplete-Filter) {
-                        border-left: none;
-                    }
-                }
-            }
-
-            &:after, &:before {
-                content: "";
-                display: table;
-                clear: both;
             }
         }
 

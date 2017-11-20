@@ -117,12 +117,40 @@ form {
     form label i.ValidationMessagesIcon {
       color: red;
       cursor: pointer; }
-    form label.FullWidth {
-      width: calc(100% - 20px);
-      display: block; }
-      form label.FullWidth span {
+    form label.Controls2 {
+      width: 400px; }
+      form label.Controls2 input, form label.Controls2 select {
+        width: calc(200px - 30px/2); }
+      form label.Controls2 i:not(.AutoComplete) + input:not(.AutoComplete), form label.Controls2 i:not(.AutoComplete) + input.AutoComplete + input, form label.Controls2 i:not(.AutoComplete) + input.AutoComplete + select, form label.Controls2 i:not(.AutoComplete) + select:not(.AutoComplete), form label.Controls2 i:not(.AutoComplete) + select.AutoComplete + input, form label.Controls2 i:not(.AutoComplete) + select.AutoComplete + select {
+        width: calc(200px + 30px - 30px/2); }
+    form label.Controls3 {
+      width: 600px; }
+      form label.Controls3 input, form label.Controls3 select {
+        width: calc(200px - 30px/3); }
+      form label.Controls3 i:not(.AutoComplete) + input:not(.AutoComplete), form label.Controls3 i:not(.AutoComplete) + input.AutoComplete + input, form label.Controls3 i:not(.AutoComplete) + input.AutoComplete + select, form label.Controls3 i:not(.AutoComplete) + select:not(.AutoComplete), form label.Controls3 i:not(.AutoComplete) + select.AutoComplete + input, form label.Controls3 i:not(.AutoComplete) + select.AutoComplete + select {
+        width: calc(200px + 30px - 30px/3); }
+    form label.Controls2, form label.Controls3 {
+      font-size: 0;
+      white-space: nowrap; }
+      form label.Controls2 span, form label.Controls3 span {
         width: calc(100% - 20px);
         display: block; }
+      form label.Controls2 > *, form label.Controls3 > * {
+        font-size: 1rem; }
+      form label.Controls2 input, form label.Controls2 select, form label.Controls3 input, form label.Controls3 select {
+        float: none;
+        border-radius: 0;
+        display: inline-block; }
+        form label.Controls2 input:not(.AutoComplete-Filter), form label.Controls2 select:not(.AutoComplete-Filter), form label.Controls3 input:not(.AutoComplete-Filter), form label.Controls3 select:not(.AutoComplete-Filter) {
+          border-left: none; }
+    form label.Controls2::after, form label.Controls3::after, form label.FullWidth::after {
+      content: "";
+      display: table;
+      clear: both; }
+    form label.FullWidth {
+      width: calc(100% - 20px);
+      display: block;
+      float: none; }
       form label.FullWidth.Controls2 input, form label.FullWidth.Controls2 select {
         width: calc(50% - 30px/2); }
       form label.FullWidth.Controls2 i:not(.AutoComplete) + input:not(.AutoComplete), form label.FullWidth.Controls2 i:not(.AutoComplete) + input.AutoComplete + input, form label.FullWidth.Controls2 i:not(.AutoComplete) + input.AutoComplete + select, form label.FullWidth.Controls2 i:not(.AutoComplete) + select:not(.AutoComplete), form label.FullWidth.Controls2 i:not(.AutoComplete) + select.AutoComplete + input, form label.FullWidth.Controls2 i:not(.AutoComplete) + select.AutoComplete + select {
@@ -131,21 +159,6 @@ form {
         width: calc(33.33% - 30px/3); }
       form label.FullWidth.Controls3 i:not(.AutoComplete) + input:not(.AutoComplete), form label.FullWidth.Controls3 i:not(.AutoComplete) + input.AutoComplete + input, form label.FullWidth.Controls3 i:not(.AutoComplete) + input.AutoComplete + select, form label.FullWidth.Controls3 i:not(.AutoComplete) + select:not(.AutoComplete), form label.FullWidth.Controls3 i:not(.AutoComplete) + select.AutoComplete + input, form label.FullWidth.Controls3 i:not(.AutoComplete) + select.AutoComplete + select {
         width: calc(33.33% + 30px - 30px/3); }
-      form label.FullWidth.Controls2, form label.FullWidth.Controls3 {
-        font-size: 0;
-        white-space: nowrap; }
-        form label.FullWidth.Controls2 > *, form label.FullWidth.Controls3 > * {
-          font-size: 1rem; }
-        form label.FullWidth.Controls2 input, form label.FullWidth.Controls2 select, form label.FullWidth.Controls3 input, form label.FullWidth.Controls3 select {
-          float: none;
-          border-radius: 0;
-          display: inline-block; }
-          form label.FullWidth.Controls2 input:not(.AutoComplete-Filter), form label.FullWidth.Controls2 select:not(.AutoComplete-Filter), form label.FullWidth.Controls3 input:not(.AutoComplete-Filter), form label.FullWidth.Controls3 select:not(.AutoComplete-Filter) {
-            border-left: none; }
-      form label.FullWidth:after, form label.FullWidth:before {
-        content: "";
-        display: table;
-        clear: both; }
     form label.Error i {
       border-color: red !important; }
     form label.Error input, form label.Error select {
