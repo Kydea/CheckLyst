@@ -13,7 +13,7 @@ body.CheckList {
         }
 
         &.Null {
-            color: $Color-Font-Grey2;
+            color: $Color-Grey-Light;
         }
 
         &.Value {
@@ -40,7 +40,7 @@ body.CheckList {
 
     div.Page {
         div.Group {
-            border-bottom: solid 1px $Color-Border-Blu;
+            border-bottom: solid 1px $Color-Grey-Dark;
 
             div.Group {
                 border-bottom: none;
@@ -61,13 +61,13 @@ body.CheckList {
 
         div.Group {
             padding: 30px;
-            background-color: $Color-Background-Grey3;
+            background-color: $Color-Grey-Light;
 
             div.Group {
-                background-color: $Color-Background-Grey2;
+                background-color: $Color-Grey-Regular;
 
                 div.Group {
-                    background-color: $Color-Background-Grey1;
+                    background-color: $Color-Grey-Dark;
                 }
             }
 

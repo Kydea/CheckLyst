@@ -31,11 +31,6 @@ nav.Menu {
                     margin: 0;
                 }
             }
-
-            &.Selected, &:hover {
-                .MenuItem {
-                }
-            }
         }
     }
 
@@ -44,7 +39,7 @@ nav.Menu {
         left: 0;
         position: fixed;
         font-size: 14px;
-        font-family: Myriad, Arial, sans-serif;
+        font-family: $Font-Myriad;
 
         ul.Menu {
             height: 100vh;
@@ -59,13 +54,13 @@ nav.Menu {
                 display: block;
                 height: $Metric-Header-Height;
                 box-sizing: border-box;
-                border-bottom: 1px solid $Color-Border-Grey1;
+                border-bottom: 1px solid $Color-Grey-Darker;
                 background: url(../Media/Sintlogo.png) no-repeat ($Metric-Header-Height - 50px)/2 50%;
             }
 
             li.MenuItem {
                 position: relative;
-                border-bottom: 1px solid $Color-Border-Grey1;
+                border-bottom: 1px solid $Color-Grey-Darker;
                 height: $Metric-Header-Height;
                 padding: ($Metric-Header-Height - $Menu-Icon-Width)/2;
 
@@ -74,7 +69,7 @@ nav.Menu {
                     box-sizing: border-box;
                     width: $Menu-Icon-Width;
                     height: $Menu-Icon-Width;
-                    color: $Color-Font-Black;
+                    color: $Color-Grey-Regular;
 
                     i {
                         font-size: $Menu-Icon-Width;
@@ -83,14 +78,14 @@ nav.Menu {
 
                 &.Current {
                     i {
-                        color: $Color-Font-Light-Green;
+                        color: $Color-Green-Light;
                     }
 
                     background-color: #333;
                 }
 
                 &.Selected, &:hover {
-                    background-color: $Color-Background-Grey5;
+                    background-color: $Color-Grey-Regular;
                     position: relative;
                     color: white !important;
 
@@ -121,7 +116,7 @@ nav.Menu {
                     position: absolute;
                     left: $Metric-Header-Height;
                     top: ($Metric-Header-Height - $Menu-Icon-Width)/2;
-                    border-left: 1px solid $Color-Border-Grey1;
+                    border-left: 1px solid $Color-Grey-Darker;
                     border-radius: 0 5px 5px 0;
                     box-shadow: rgba(0, 0, 0, .35) 3px 0 15px;
                     // Menu indicator: no border between it and the submenu.
@@ -144,7 +139,7 @@ nav.Menu {
                         padding-left: 40px;
 
                         a {
-                            color: $Color-Font-Silver;
+                            color: $Color-Grey-Light;
                             display: block;
                             text-decoration: none;
                             position: relative;
@@ -157,21 +152,21 @@ nav.Menu {
                                 position: absolute;
                                 left: -30px;
                                 top: 50%;
-                                border: solid $Color-Font-Grey3;
+                                border: solid $Color-Grey-Dark;
                                 border-width: 0 2px 2px 0;
                                 opacity: 0;
-                                transition: opacity 300ms ease-in-out;
+                                //transition: opacity 300ms ease-in-out; //gives a rendering problem on the font for some browsers
                                 transform: translateY(-50%) rotate(-45deg) skew(8.16deg, 8.16deg);
                             }
                         }
 
                         & + li {
-                            border-top: 1px solid $Color-Font-Grey3;
+                            border-top: 1px solid $Color-Grey-Dark;
                         }
 
                         &.Current {
                             a {
-                                color: $Color-Font-Light-Green !important;
+                                color: $Color-Green-Light !important;
                                 cursor: default !important;
 
                                 &::before {
@@ -203,11 +198,7 @@ nav.Menu {
         height: $Metric-Header-Height;
         font-size: 18px;
         font-weight: 300;
-        font-family: Myriad, Arial, sans-serif;
-
-        a:hover {
-            color: $Color-Font-Dark-Green !important;
-        }
+        font-family: $Font-Myriad;
 
         &::before {
             $Logo-Width: 134px;
@@ -231,14 +222,21 @@ nav.Menu {
 
             li.MenuItem {
                 line-height: 40px;
-                border-bottom: 1px solid $Color-Border-Silver;
+                border-bottom: 1px solid $Color-Grey-Regular;
 
                 .MenuItem {
                     padding: 0 $Metric-Separator-Mobile;
+                    color: black;
+
+                    &:hover {
+                        color: $Color-Green-Dark;
+                    }
                 }
 
                 &.Current {
-                    color: $Color-Font-Green !important;
+                    .MenuItem {
+                        color: $Color-Green-Dark !important;
+                    }
                 }
 
                 ul.SubMenu {
@@ -247,13 +245,18 @@ nav.Menu {
 
                         a {
                             padding: 0 2*$Metric-Separator-Mobile;
+                            color: black;
+
+                            &:hover {
+                                color: $Color-Green-Dark;
+                            }
                         }
 
-                        border-top: 1px solid $Color-Border-Silver;
+                        border-top: 1px solid $Color-Grey-Light;
 
                         &.Current {
                             a {
-                                color: $Color-Font-Green !important;
+                                color: $Color-Green-Dark !important;
                             }
                         }
                     }

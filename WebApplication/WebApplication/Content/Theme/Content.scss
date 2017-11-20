@@ -22,7 +22,7 @@ body:not(.Login) div#Content {
     h1 {
         float: left;
         margin: 0 0 20px;
-        color: $Color-Font-Grey3;
+        color: $Color-Grey-Dark;
         font: normal 30px $Font-Myriad;
     }
 
@@ -30,13 +30,13 @@ body:not(.Login) div#Content {
         margin: 20px 0 30px;
         font-size: 18px;
         text-transform: uppercase;
-        color: $Color-Font-Blue2;
+        color: $Color-Green-Dark;
     }
 
     h3 {
         margin: 20px 0;
         font-size: 16px;
-        color: $Color-Font-Blue2;
+        color: $Color-Green-Dark;
     }
 
     p {

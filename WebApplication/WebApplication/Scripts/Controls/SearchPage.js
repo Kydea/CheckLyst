@@ -40,10 +40,11 @@
 						}
 					}),
 					form = new matematici.Form(options.filterFormSelector, {
+						bindEvent: options.bindEvent,
 						applyButton: {
 							button: "#ApplyButton",
 							event: "GetData",
-							handler: filterHandler
+							handler: filterHandler,
 						}
 					}),
 					paginator = new matematici.Paginator("div#Content div.Paginator", function (index) {

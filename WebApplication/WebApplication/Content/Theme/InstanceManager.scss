@@ -41,7 +41,7 @@ body.InstanceManager {
             height: 6px;
             width: 6px;
             background: red;
-            border: solid 1px $Color-Border-Grey;
+            border: solid 1px $Color-Grey-Regular;
             cursor: pointer;
             border-radius: 50%;
 
@@ -50,7 +50,7 @@ body.InstanceManager {
                 position: absolute;
                 background-color: rgba(255, 255, 255, .9);
                 padding: 10px;
-                border: solid 1px $Color-Border-Grey;
+                border: solid 1px $Color-Grey-Regular;
 
                 i.fa {
                     margin-right: 10px;
@@ -110,7 +110,7 @@ body.InstanceManager {
                 a {
                     float: left;
                     display: block;
-                    background: $Color-Background-Grey1;
+                    background: $Color-Silver-Dark;
                     color: white !important;
                     text-align: center;
                     margin-left: 1px;
@@ -119,7 +119,7 @@ body.InstanceManager {
                     border-radius: 50%;
 
                     &:hover {
-                        background: $Color-Background-Grey2;
+                        background: $Color-Silver-Light;
                     }
 
                     &.Hidden {
@@ -215,7 +215,7 @@ body.InstanceManager {
             &.ExternalSource {
                 &.Inactive {
                     i.fa-link {
-                        color: $Color-Font-Grey1;
+                        color: $Color-Grey-Regular;
                     }
                 }
 
@@ -298,10 +298,10 @@ body.InstanceManager {
 
     .Page, .Group {
         &.ReadOnly {
-            color: $Color-Font-Grey1;
+            color: $Color-Grey-Regular;
 
             h3 {
-                color: $Color-Font-Grey1 !important;
+                color: $Color-Grey-Regular !important;
             }
         }
 
@@ -354,7 +354,7 @@ body.InstanceManager {
         thead {
             tr {
                 th {
-                    border: solid 1px $Color-Border-Grey !important;
+                    border: solid 1px $Color-Grey-Light !important;
                 }
             }
         }
@@ -458,13 +458,13 @@ body.InstanceManager {
 
                 &:nth-child(odd) {
                     td.Inactive {
-                        background-color: $Color-Background-Grey3;
+                        background-color: $Color-Silver-Light;
                     }
                 }
 
                 &:nth-child(even) {
                     td.Inactive {
-                        background-color: $Color-Background-Grey4;
+                        background-color: $Color-Silver-Dark;
                     }
                 }
             }

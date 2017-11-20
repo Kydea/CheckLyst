@@ -17,6 +17,7 @@
 				options.applyButton = $(options.applyButton.button || options.applyButton);
 				if (event)
 					options.applyButton.on("click", function () {
+						if (options.applyButton.hasClass("ReadOnly")) return;
 						saveForm();
 						bind(event, handler, prepareRequest({ data: { source: options.applyButton.attr("id") } }));
 					});

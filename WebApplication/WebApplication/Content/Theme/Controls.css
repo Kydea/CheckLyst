@@ -19,7 +19,7 @@ div.Input {
 input[type=text], input[type=range], input[type=number], input[type=password], input[type=email], input[type=file], select, textarea, div.Input {
   display: block;
   border-radius: 3px;
-  border: solid 1px #afb4b5;
+  border: solid 1px #ccc;
   background: white;
   width: 100%;
   padding: 5px 10px;
@@ -66,7 +66,7 @@ a.Button {
   a.Button:hover, a.Button.Selected {
     text-decoration: none !important; }
     a.Button:hover:not(.ReadOnly), a.Button.Selected:not(.ReadOnly) {
-      background-color: #ffba00 !important;
+      background-color: #03c3b1;
       color: white; }
   a.Button.Icon {
     float: left;
@@ -77,20 +77,24 @@ a.Button {
   a.Button.Invalid {
     color: red; }
   a.Button.ReadOnly {
-    background-color: #dcdbe0; }
+    background-color: #ccc;
+    box-shadow: none; }
+    a.Button.ReadOnly:hover {
+      color: white !important; }
   a.Button.GreyGreenButton {
-    background-color: #858585; }
+    background-color: #999; }
     a.Button.GreyGreenButton i.fa, a.Button.GreyGreenButton i.fi {
-      color: #00877a;
+      color: #009688;
       background-color: white; }
-    a.Button.GreyGreenButton:hover i.fa, a.Button.GreyGreenButton:hover i.fi {
-      color: #ffba00; }
+    a.Button.GreyGreenButton:hover {
+      background-color: #009688; }
 
 form {
-  border: 1px solid #afb4b5;
+  border: 1px solid #ccc;
   position: relative;
   padding-bottom: 20px;
-  padding-right: 20px; }
+  padding-right: 20px;
+  background-color: #f5f5f5; }
   form label {
     float: left;
     margin-top: 20px;
@@ -98,9 +102,14 @@ form {
     width: 200px;
     width: 200px;
     position: relative;
-    color: #666666; }
+    color: #666; }
     form label input, form label select, form label textarea {
       margin-top: 5px; }
+    form label input[type=checkbox] {
+      display: block;
+      margin-left: 0;
+      margin-right: 0;
+      margin-bottom: 0; }
     form label i:not(.AutoComplete):not(.ValidationMessagesIcon).fi, form label i:not(.AutoComplete):not(.ValidationMessagesIcon).fa {
       position: absolute;
       left: 0;
@@ -109,8 +118,8 @@ form {
       height: 30px;
       width: 30px;
       line-height: 30px;
-      border: 1px solid #afb4b5;
-      background-color: #f5f5f5;
+      border: 1px solid #ccc;
+      background-color: #ebebeb;
       border-radius: 3px 0 0 3px; }
     form label i:not(.AutoComplete):not(.ValidationMessagesIcon) + select.AutoComplete + input, form label i:not(.AutoComplete):not(.ValidationMessagesIcon) + select:not(.AutoComplete), form label i:not(.AutoComplete):not(.ValidationMessagesIcon) + input.AutoComplete + input, form label i:not(.AutoComplete):not(.ValidationMessagesIcon) + input:not(.AutoComplete) {
       padding-left: 35px; }

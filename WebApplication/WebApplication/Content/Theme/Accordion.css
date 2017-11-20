@@ -1,6 +1,6 @@
 ﻿div.Accordion-Bar {
   padding-bottom: 2px;
-  border-bottom: solid 1px #afb4b5; }
+  border-bottom: solid 1px #ccc; }
   div.Accordion-Bar .Button {
     background-color: #ffba00;
     border-radius: 5px 5px 0 0;
@@ -12,12 +12,10 @@
       border: none;
       transition: transform 300ms ease;
       box-shadow: none; }
-    div.Accordion-Bar .Button:hover i.fa {
-      transform: rotate(180deg); }
+    div.Accordion-Bar .Button:hover {
+      background-color: #ffcc09 !important; }
     div.Accordion-Bar .Button.Closed i.fa {
       transform: rotate(-180deg); }
-    div.Accordion-Bar .Button.Closed:hover i.fa {
-      transform: rotate(0); }
     div.Accordion-Bar .Button::after {
       content: "";
       position: absolute;

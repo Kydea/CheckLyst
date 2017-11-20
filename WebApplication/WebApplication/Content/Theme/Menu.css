@@ -48,7 +48,7 @@
           box-sizing: border-box;
           width: 40px;
           height: 40px;
-          color: #999999; }
+          color: #999; }
           nav.Menu ul.Menu li.MenuItem .MenuItem i {
             font-size: 40px; }
         nav.Menu ul.Menu li.MenuItem.Current {
@@ -56,7 +56,7 @@
           nav.Menu ul.Menu li.MenuItem.Current i {
             color: #03c3b1; }
         nav.Menu ul.Menu li.MenuItem.Selected, nav.Menu ul.Menu li.MenuItem:hover {
-          background-color: #858585;
+          background-color: #999;
           position: relative;
           color: white !important; }
           nav.Menu ul.Menu li.MenuItem.Selected .MenuItem, nav.Menu ul.Menu li.MenuItem:hover .MenuItem {
@@ -99,7 +99,7 @@
             line-height: 40px;
             padding-left: 40px; }
             nav.Menu ul.Menu li.MenuItem ul.SubMenu li a {
-              color: #cccccc;
+              color: #ccc;
               display: block;
               text-decoration: none;
               position: relative; }
@@ -111,13 +111,12 @@
                 position: absolute;
                 left: -30px;
                 top: 50%;
-                border: solid #666666;
+                border: solid #666;
                 border-width: 0 2px 2px 0;
                 opacity: 0;
-                transition: opacity 300ms ease-in-out;
                 transform: translateY(-50%) rotate(-45deg) skew(8.16deg, 8.16deg); }
             nav.Menu ul.Menu li.MenuItem ul.SubMenu li + li {
-              border-top: 1px solid #666666; }
+              border-top: 1px solid #666; }
             nav.Menu ul.Menu li.MenuItem ul.SubMenu li.Current a {
               color: #03c3b1 !important;
               cursor: default !important; }
@@ -138,8 +137,6 @@
     font-size: 18px;
     font-weight: 300;
     font-family: Myriad, Arial, sans-serif; }
-    nav.Menu a:hover {
-      color: #00877a !important; }
     nav.Menu::before {
       background: url(../Media/LogoMobile.png) no-repeat 0 50%;
       transform: translateX(-67px);
@@ -157,18 +154,24 @@
       z-index: 101; }
       nav.Menu ul.Menu li.MenuItem {
         line-height: 40px;
-        border-bottom: 1px solid #cccccc; }
+        border-bottom: 1px solid #999; }
         nav.Menu ul.Menu li.MenuItem .MenuItem {
-          padding: 0 10px; }
-        nav.Menu ul.Menu li.MenuItem.Current {
-          color: #009688 !important; }
+          padding: 0 10px;
+          color: black; }
+          nav.Menu ul.Menu li.MenuItem .MenuItem:hover {
+            color: #00877a; }
+        nav.Menu ul.Menu li.MenuItem.Current .MenuItem {
+          color: #00877a !important; }
         nav.Menu ul.Menu li.MenuItem ul.SubMenu li {
           background: #efefef;
-          border-top: 1px solid #cccccc; }
+          border-top: 1px solid #ccc; }
           nav.Menu ul.Menu li.MenuItem ul.SubMenu li a {
-            padding: 0 20px; }
+            padding: 0 20px;
+            color: black; }
+            nav.Menu ul.Menu li.MenuItem ul.SubMenu li a:hover {
+              color: #00877a; }
           nav.Menu ul.Menu li.MenuItem ul.SubMenu li.Current a {
-            color: #009688 !important; }
+            color: #00877a !important; }
       nav.Menu ul.Menu::after {
         content: "";
         height: 10px;

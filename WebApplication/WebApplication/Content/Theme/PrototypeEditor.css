@@ -35,9 +35,6 @@ body.PrototypeEditor div#Content div.Item {
     cursor: pointer; }
   body.PrototypeEditor div#Content div.Item.Signature input {
     cursor: pointer; }
-  body.PrototypeEditor div#Content div.Item.Signature a.Button {
-    cursor: pointer;
-    background-color: #406f81; }
   body.PrototypeEditor div#Content div.Item.Selected.Field label {
     color: red; }
   body.PrototypeEditor div#Content div.Item.Selected.Field div.Input {

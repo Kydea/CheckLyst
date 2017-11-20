@@ -12,16 +12,16 @@ div.PropertyPanel {
     div.Border {
         cursor: ns-resize;
         height: 10px;
-        background-color: $Color-Background-Grey2;
-        border-top: solid 1px $Color-Border-Grey;
-        border-bottom: solid 1px $Color-Border-Grey;
+        background-color: $Color-Silver-Dark;
+        border-top: solid 1px $Color-Grey-Regular;
+        border-bottom: solid 1px $Color-Grey-Regular;
         box-shadow: rgba(0, 0, 0, .3) 0 -3px 3px;
     }
 
     div.NoItem {
         display: none;
         font-size: 20px;
-        color: $Color-Font-Grey1;
+        color: $Color-Grey-Regular;
         text-align: center;
         padding-top: 10px;
     }
@@ -32,14 +32,13 @@ div.PropertyPanel {
         bottom: 0;
         top: 10px;
         width: 20%;
-        border-right: solid 1px $Color-Border-Grey;
+        border-right: solid 1px $Color-Grey-Regular;
 
         a {
             display: block;
             padding: 4px 10px;
             text-decoration: none;
-            color: black;
-            border-bottom: dotted 1px $Color-Border-Grey;
+            border-bottom: dotted 1px $Color-Grey-Regular;
 
             i.fa-caret-right {
                 visibility: hidden;
@@ -47,7 +46,6 @@ div.PropertyPanel {
             }
 
             &:hover {
-                color: $Color-Font-Blue1;
                 text-decoration: none !important;
             }
 
@@ -71,7 +69,7 @@ div.PropertyPanel {
         top: 10px;
         width: 40%;
         left: 20%;
-        border-right: solid 1px $Color-Border-Grey;
+        border-right: solid 1px $Color-Grey-Regular;
         padding: 10px;
 
         input[type=text], input[type=checkbox], select, a.Button, label {

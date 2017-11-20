@@ -27,7 +27,7 @@ div.Input {
 input[type=text], input[type=range], input[type=number], input[type=password], input[type=email], input[type=file], select, textarea, div.Input {
     display: block;
     border-radius: 3px;
-    border: solid 1px $Color-Border-Grey;
+    border: solid 1px $Color-Grey-Light;
     background: white;
     width: 100%;
     padding: 5px 10px;
@@ -37,7 +37,7 @@ input[type=text], input[type=range], input[type=number], input[type=password], i
     font-size: 13px;
 
     &[readonly], &.ReadOnly {
-        background-color: $Color-Background-Grey3;
+        background-color: $Color-Silver-Light;
     }
 
     & + i {
@@ -61,7 +61,7 @@ a.Button {
     border-radius: 5px;
     border: none;
     position: relative;
-    background-color: $Color-Font-Green;
+    background-color: $Color-Green-Regular;
     text-align: center;
     cursor: default;
     height: $Metric-Control-Height;
@@ -84,7 +84,7 @@ a.Button {
         text-decoration: none !important;
 
         &:not(.ReadOnly) {
-            background-color: $Color-Font-Yellow !important;
+            background-color: $Color-Green-Light;
             color: white;
         }
     }
@@ -102,30 +102,34 @@ a.Button {
     }
 
     &.ReadOnly {
-        background-color: $Color-Background-Grey1;
+        background-color: $Color-Grey-Light;
+        box-shadow: none;
+
+        &:hover {
+            color: white !important;
+        }
     }
 
     &.GreyGreenButton {
-        background-color: $Color-Background-Grey5;
+        background-color: $Color-Grey-Regular;
 
         i.fa, i.fi {
-            color: $Color-Font-Dark-Green;
+            color: $Color-Green-Regular;
             background-color: white;
         }
 
         &:hover {
-            i.fa, i.fi {
-                color: $Color-Font-Yellow;
-            }
+            background-color: $Color-Green-Regular;
         }
     }
 }
 
 form {
-    border: 1px solid $Color-Border-Grey;
+    border: 1px solid $Color-Grey-Light;
     position: relative;
     padding-bottom: $Metric-Control-Space;
     padding-right: $Metric-Control-Space;
+    background-color: $Color-Silver-Light;
 
     label {
         float: left;
@@ -134,10 +138,17 @@ form {
         width: 200px;
         width: $Inline-Form-Label-Width;
         position: relative;
-        color: $Color-Font-Grey3;
+        color: $Color-Grey-Dark;
 
         input, select, textarea {
             margin-top: 5px;
+        }
+
+        input[type=checkbox] {
+            display: block;
+            margin-left: 0;
+            margin-right: 0;
+            margin-bottom: 0;
         }
 
         i:not(.AutoComplete):not(.ValidationMessagesIcon) {
@@ -149,8 +160,8 @@ form {
                 height: $Metric-Control-Height;
                 width: $Metric-Control-Height;
                 line-height: $Metric-Control-Height;
-                border: 1px solid $Color-Border-Grey;
-                background-color: $Color-Background-Grey3;
+                border: 1px solid $Color-Grey-Light;
+                background-color: $Color-Silver-Dark;
                 border-radius: 3px 0 0 3px;
             }
 

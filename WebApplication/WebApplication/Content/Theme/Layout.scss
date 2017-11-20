@@ -14,7 +14,7 @@ html, body {
     width: 100%;
     color: black;
     font-size: 14px;
-    background-color: $Color-Background-Grey4;
+    background-color: $Color-Silver-Dark;
 }
 
 ul.Plain {
@@ -25,12 +25,12 @@ ul.Plain {
 
 a {
     text-decoration: none;
-    color: black;
+    color: $Color-Green-Regular;
     display: block;
 
     &:hover {
         text-decoration: none;
-        color: $Color-Font-Blue1;
+        color: $Color-Green-Light;
     }
 
     &.Left {
@@ -97,7 +97,7 @@ header {
     z-index: $Depth-Header;
 
     div#UserPanel {
-        color: $Color-Font-Grey3;
+        color: $Color-Grey-Dark;
         text-align: center;
         position: relative;
         text-transform: none;
@@ -110,7 +110,7 @@ header {
             left: 0;
             position: fixed;
             text-align: right;
-            border-bottom: 1px solid $Color-Border-Silver;
+            border-bottom: 1px solid $Color-Grey-Light;
             margin-left: $Metric-Header-Height;
             width: calc(100% - #{$Metric-Header-Height});
 
@@ -132,13 +132,9 @@ header {
             display: inline-block;
             float: none !important;
 
-            &:hover {
-                color: black !important;
-            }
-
             & + a {
                 &:before {
-                    background-color: $Color-Font-Grey3;
+                    background-color: $Color-Grey-Light;
                     display: inline-block;
                     content: "";
                     height: 1em;
@@ -151,12 +147,20 @@ header {
             i {
                 border-radius: 50%;
                 color: white;
-                background-color: $Color-Font-Green;
+                background-color: $Color-Green-Regular;
                 width: 25px;
                 height: 25px;
                 font-size: 12px;
                 line-height: 25px;
                 text-align: center;
+            }
+
+            &:hover {
+                color: black !important;
+
+                i {
+                    background-color: $Color-Green-Light;
+                }
             }
         }
     }
@@ -165,7 +169,7 @@ header {
 footer {
     position: relative;
     background: white;
-    border-top: solid 1px $Color-Border-Silver;
+    border-top: solid 1px $Color-Grey-Light;
     padding: 20px 30px;
     line-height: 1.4;
 
@@ -174,7 +178,7 @@ footer {
         font-weight: bold;
         color: black;
         bottom: $Metric-Separator-Mobile;
-        color: $Color-Font-Grey3;
+        color: $Color-Grey-Dark;
 
         .Item {
             span.Label {
