@@ -1,6 +1,6 @@
 ﻿div.CheckListGrid div.Container {
   background-color: white;
-  border: solid 1px #afb4b5;
+  border: solid 1px #ccc;
   padding: 20px;
   box-shadow: rgba(0, 0, 0, 0.75) 5px 5px 5px;
   overflow: auto; }

@@ -57,8 +57,8 @@ div.Signature {
                 text-align: center;
                 font-size: 50px;
                 line-height: 80px;
-                background-color: $Color-Background-Grey1;
-                color: $Color-Font-Blue2;
+                background-color: $Color-Silver-Dark;
+                color: $Color-Green-Regular;
                 border-right: solid 1px white;
                 border-bottom: solid 1px white;
 
@@ -71,7 +71,7 @@ div.Signature {
                 }
 
                 &:hover {
-                    background-color: $Color-Background-Grey2;
+                    background-color: $Color-Green-Light;
                 }
             }
         }
@@ -110,13 +110,13 @@ div.Signature {
     hr {
         margin: 20px 0;
         border: 1px solid transparent;
-        border-bottom: 1px solid $Color-Background-Blu1;
+        border-bottom: 1px solid $Color-Green-Regular;
     }
 
     div.ValidityMessage {
         margin-bottom: 10px;
-        background: $Color-Background-Grey3;
-        border: 1px solid $Color-Background-Grey1;
+        background: $Color-Silver-Light;
+        border: 1px solid $Color-Silver-Dark;
         border-radius: 4px;
         padding: 5px 3px;
     }

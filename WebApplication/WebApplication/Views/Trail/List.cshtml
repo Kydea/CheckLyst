@@ -1,104 +1,84 @@
 ﻿<div id="AuditTrailPage">
     <h1>Audit Trail</h1>
 
-    <div class="ActionBar">
-        <a id="ApplyButton" class="Button"><i class="fa fa-search"></i> search</a>
+    <div class="ActionBar"></div>
+
+    <div class="ShadowPanel">
+        <div class="Accordion-Bar">
+            <a class="Button">search <i class="fa fa-arrow-down"></i></a>
+        </div>
+        <form id="Filters" action="@BaseUrl/Trail/List">
+            <label>
+                From
+                <input type="text" name="from" class="DatePicker" />
+            </label>
+            <label>
+                To
+                <input type="text" name="to" class="DatePicker" />
+            </label>
+            <label>
+                User
+                <i class="fi flaticon-people" />
+                <input type="text" name="user" />
+            </label>
+            <label>
+                Action
+                <i class="fi flaticon-people" />
+                <input type="text" name="action" />
+            </label>
+            <label>
+                CheckList code
+                <i class="fi flaticon-people" />
+                <input type="text" name="checklist" />
+            </label>
+            <label>
+                Detail
+                <i class="fi flaticon-people" />
+                <input type="text" name="information" />
+            </label>
+
+            <a id="ApplyButton" class="Button DefaultButton"><i class="fa fa-search"></i> search</a>
+        </form>
+
+        <table class="Grid">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Date</th>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>CheckList Code</th>
+                    <th>Detail</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="Handler">
+                    <td data-column="id"></td>
+                    <td data-column="date" data-type="DateTimeOffset"></td>
+                    <td data-column="user"></td>
+                    <td data-column="action"></td>
+                    <td data-column="checklist"></td>
+                    <td data-column="information"></td>
+                </tr>
+                <tr class="NoRecord"><td>(no record)</td></tr>
+            </tbody>
+        </table>
+        <div class="Paginator"></div>
+        <div class="Clearing"></div>
     </div>
-
-    <form id="Filters" action="@BaseUrl/Trail/List">
-        <label>
-            From
-            <input type="text" name="from" class="DatePicker" />
-        </label>
-        <label>
-            To
-            <input type="text" name="to" class="DatePicker" />
-        </label>
-        <label>
-            User
-            <input type="text" name="user" />
-        </label>
-        <label>
-            Action
-            <input type="text" name="action" />
-        </label>
-        <label>
-            CheckList code
-            <input type="text" name="checklist" />
-        </label>
-        <label>
-            Detail
-            <input type="text" name="information" />
-        </label>
-    </form>
-
-    <table class="Grid">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Date</th>
-                <th>User</th>
-                <th>Action</th>
-                <th>CheckList Code</th>
-                <th>Detail</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr class="Handler">
-                <td data-column="id"></td>
-                <td data-column="date" data-type="DateTimeOffset"></td>
-                <td data-column="user"></td>
-                <td data-column="action"></td>
-                <td data-column="checklist"></td>
-                <td data-column="information"></td>
-            </tr>
-            <tr class="NoRecord"><td>(no record)</td></tr>
-        </tbody>
-    </table>
-    <div class="Paginator"></div>
-    <div class="Clearing"></div>
 </div>
 
 <script type="text/javascript">
     matematici.events.onPageLoad = function (callback) {
-        var grid,
-            form,
-            formElement = $("form#Filters"),
-            paginator,
-            handler = function (result) {
-                grid.update(result.data);
-                paginator.setPage(result.currentPage, result.pagesCount);
-            };
-
-        new matematici.ActionBar("div.ActionBar");
-
-        new matematici.Page({
-            name: "AuditTrail",
-            initializers: [
-                //new matematici.FixedHeader("div#Content table.Grid")
-                grid = new matematici.Grid("div#Content table.Grid", {
-                    rowClick: function (row) {
-                        matematici.popup.show({
-                            ajax: {
-                                type: "post",
-                                url: "@Url.Action("Detail")"
-                            },
-                            cssClass: "DetailPage",
-                            data: row.data("values")
-                        });
-                    }
-                }),
-                form = new matematici.Form(formElement, {
-                    applyButton: {
-                        button: "#ApplyButton",
-                        event: "GetData",
-                        handler: handler
-                    }
-                }),
-                matematici.p = paginator = new matematici.Paginator("div#Content div.Paginator", function (index) {
-                    form.trigger("GetData", handler, { CurrentPage: index });
-                })
-            ]
+        new matematici.SearchPage({
+            pageName: "AuditTrail",
+            detailUrl: "@Url.Action("Detail")",
+            filterFormSelector: "form#Filters",
+            resultGridSelector: "div#Content table.Grid",
+            breadCrumbs: [
+                { content: "audit trail" }
+            ],
+            NOreadOnly: true
         });
 
         callback.call();

@@ -16,7 +16,6 @@
       width: 50px;
       left: -25px;
       background-color: black;
-      filter: alpha(opacity=50);
       opacity: .5;
       border-radius: 10px; }
       div#Loader div.Center div.Background div.Image {

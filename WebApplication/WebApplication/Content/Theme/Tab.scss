@@ -15,7 +15,7 @@ div.TabContainer {
             height: 2px;
             width: 100%;
             top: $label-height - 2;
-            background-color: $Color-Background-Grey1;
+            background-color: $Color-Grey-Light;
             clear: both;
             left: 0;
         }
@@ -26,26 +26,23 @@ div.TabContainer {
             font-weight: bold;
             font-size: 16px;
             float: left;
-            background-color: $Color-Background-Grey2;
-            border-right: solid 4px white;
-            border-bottom: solid 6px white;
-            color: $Color-Font-Blue3;
+            border-bottom: solid 6px $Color-Yellow-Regular;
+            color: red;
             text-decoration: none;
             padding: 0 20px;
 
             i.fa {
-                color: $Color-Font-Grey1;
+                color: red;
             }
 
             &.Selected {
                 cursor: default;
-                background-color: $Color-Background-Grey1;
                 border-top: none;
                 border-bottom: none;
-                color: $Color-Font-Blue2;
+                color: violet;
 
                 i.fa {
-                    color: black;
+                    color: violet;
                 }
             }
 
@@ -53,7 +50,7 @@ div.TabContainer {
                 text-decoration: none !important;
 
                 &:not(.Selected) {
-                    color: $Color-Font-Blue2;
+                    color: lightcoral;
                 }
             }
         }

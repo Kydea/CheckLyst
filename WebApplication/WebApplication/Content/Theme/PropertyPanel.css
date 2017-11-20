@@ -9,14 +9,14 @@
   div.PropertyPanel div.Border {
     cursor: ns-resize;
     height: 10px;
-    background-color: #e8e7ec;
-    border-top: solid 1px #afb4b5;
-    border-bottom: solid 1px #afb4b5;
+    background-color: #ebebeb;
+    border-top: solid 1px #999;
+    border-bottom: solid 1px #999;
     box-shadow: rgba(0, 0, 0, 0.3) 0 -3px 3px; }
   div.PropertyPanel div.NoItem {
     display: none;
     font-size: 20px;
-    color: #9e9e9e;
+    color: #999;
     text-align: center;
     padding-top: 10px; }
   div.PropertyPanel div.PropertyList {
@@ -25,18 +25,16 @@
     bottom: 0;
     top: 10px;
     width: 20%;
-    border-right: solid 1px #afb4b5; }
+    border-right: solid 1px #999; }
     div.PropertyPanel div.PropertyList a {
       display: block;
       padding: 4px 10px;
       text-decoration: none;
-      color: black;
-      border-bottom: dotted 1px #afb4b5; }
+      border-bottom: dotted 1px #999; }
       div.PropertyPanel div.PropertyList a i.fa-caret-right {
         visibility: hidden;
         padding-right: 5px; }
       div.PropertyPanel div.PropertyList a:hover {
-        color: #0099cc;
         text-decoration: none !important; }
       div.PropertyPanel div.PropertyList a.Selected i.fa-caret-right {
         visibility: visible; }
@@ -50,7 +48,7 @@
     top: 10px;
     width: 40%;
     left: 20%;
-    border-right: solid 1px #afb4b5;
+    border-right: solid 1px #999;
     padding: 10px; }
     div.PropertyPanel div.PropertyValue input[type=text], div.PropertyPanel div.PropertyValue input[type=checkbox], div.PropertyPanel div.PropertyValue select, div.PropertyPanel div.PropertyValue a.Button, div.PropertyPanel div.PropertyValue label {
       display: block;

@@ -20,19 +20,18 @@
       position: relative; }
       body.Login div.Login div.Box form {
         position: relative;
-        border: none; }
+        border: none;
+        background: none; }
       body.Login div.Login div.Box img {
         margin-bottom: 19px; }
       body.Login div.Login div.Box div.Message {
         text-align: center;
         margin: 0 0 20px 0;
-        color: #0099cc; }
+        color: #cc0000; }
       body.Login div.Login div.Box div.Errors {
         float: left; }
       body.Login div.Login div.Box div.Buttons a {
         float: right; }
-        body.Login div.Login div.Box div.Buttons a:hover {
-          background-color: #019dda; }
       body.Login div.Login div.Box::before {
         background: #009688 url(../Media/LogoMobile.png) no-repeat center 50%;
         height: 80px;
@@ -82,7 +81,7 @@
             width: 100%; } }
     body.Login div.Login div.Version {
       font-size: 10px;
-      color: #9e9e9e;
+      color: #999;
       position: absolute;
       right: 10px;
       bottom: 10px; }

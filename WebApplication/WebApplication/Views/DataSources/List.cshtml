@@ -1,74 +1,68 @@
 ﻿<div id="DataSourcesListPage">
     <h1>DataSources List</h1>
 
-    <div class="ActionBar">
-        <a id="ApplyButton" class="Button DefaultButton"><i class="fa fa-search"></i> search</a>
+    <div class="ActionBar"></div>
+
+    <div class="ShadowPanel">
+        <div class="Accordion-Bar">
+            <a class="Button">search <i class="fa fa-arrow-down"></i></a>
+        </div>
+        <form id="Filters" action="@BaseUrl/DataSources/List">
+            <label>
+                Code
+                <i class="fi flaticon-departments" />
+                <input type="text" name="code" />
+            </label>
+
+            <label>
+                Description
+                <i class="fi flaticon-departments" />
+                <input type="text" name="description" />
+            </label>
+
+            <a id="ApplyButton" class="Button DefaultButton"><i class="fa fa-search"></i> search</a>
+        </form>
+
+        <table class="Grid">
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Description</th>
+                    <th>Created By</th>
+                    <th>Created On</th>
+                    <th>Modified By</th>
+                    <th>Modified On</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td data-column="code"></td>
+                    <td data-column="description"></td>
+                    <td data-column="createdBy"></td>
+                    <td data-column="createdOn" data-type="DateTimeOffset"></td>
+                    <td data-column="modifiedBy"></td>
+                    <td data-column="modifiedOn" data-type="DateTimeOffset"></td>
+                </tr>
+                <tr class="NoRecord"><td>(no record)</td></tr>
+            </tbody>
+        </table>
+        <div class="Paginator"></div>
+        <div class="Clearing"></div>
     </div>
 
-    <form id="Filters" action="@BaseUrl/DataSources/List">
-        <label>
-            Code/Description
-            <input type="text" name="keyword" />
-        </label>
-    </form>
 
-    <table class="Grid">
-        <thead>
-            <tr>
-                <th>Code</th>
-                <th>Description</th>
-                <th>Created By</th>
-                <th>Created On</th>
-                <th>Modified By</th>
-                <th>Modified On</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td data-column="code"></td>
-                <td data-column="description"></td>
-                <td data-column="createdBy"></td>
-                <td data-column="createdOn" data-type="DateTimeOffset"></td>
-                <td data-column="modifiedBy"></td>
-                <td data-column="modifiedOn" data-type="DateTimeOffset"></td>
-            </tr>
-            <tr class="NoRecord"><td>(no record)</td></tr>
-        </tbody>
-    </table>
-    <div class="Paginator"></div>
-    <div class="Clearing"></div>
-</div>
-
-<script type="text/javascript">
+    <script type="text/javascript">
     matematici.events.onPageLoad = function (callback) {
-        var grid,
-            form,
-            paginator,
-            handler = function (result) {
-                grid.update(result.data);
-                paginator.setPage(result.currentPage, result.pagesCount);
-            };
-
-        new matematici.ActionBar("div.ActionBar");
-
-        new matematici.Page({
-            name: "DataSourcesList",
-            initializers: [
-                //new matematici.FixedHeader("div#Content table.Grid")
-                grid = new matematici.Grid("div#Content table.Grid"),
-                form = new matematici.Form("form#Filters", {
-                    applyButton: {
-                        button: "#ApplyButton",
-                        event: "GetData",
-                        handler: handler
-                    }
-                }),
-                matematici.p = paginator = new matematici.Paginator("div#Content div.Paginator", function (index) {
-                    form.trigger("GetData", handler, { CurrentPage: index });
-                })
+        new matematici.SearchPage({
+            pageName: "DataSurces",
+            detailUrl: "@Url.Action("Detail")",
+            filterFormSelector: "form#Filters",
+            resultGridSelector: "div#Content table.Grid",
+            breadCrumbs: [
+                { content: "data sources" }
             ]
         });
 
         callback.call();
     };
-</script>
+    </script>

@@ -5,53 +5,46 @@
   margin-top: 20px; }
   table.Grid thead {
     background-color: #999; }
-    table.Grid thead tr {
-      border-bottom: solid 1px #afb4b5; }
-      table.Grid thead tr th {
-        color: #fff;
-        padding: 0 20px;
-        text-align: left;
-        position: relative;
-        height: 50px;
-        border-left: 1px solid #cccccc;
-        font-weight: 600;
-        font-size: 15px;
-        font-family: Myriad, Arial, sans-serif; }
-        table.Grid thead tr th:after {
-          display: block;
-          position: absolute;
-          top: 50%;
-          right: 20px;
-          width: 0;
-          height: 0;
-          transform: translateY(-50%);
-          border-width: 6px 10px;
-          border-color: transparent #cccccc transparent transparent;
-          border-style: solid;
-          transform: rotate(-90deg); }
-  table.Grid tbody {
-    border-bottom: solid 1px #afb4b5; }
-    table.Grid tbody tr td {
-      color: #666666;
+    table.Grid thead tr th {
+      color: #fff;
       padding: 0 20px;
-      height: 40px;
-      border-right: solid 1px #afb4b5;
-      font-family: Myriad, Arial, sans-serif; }
-      table.Grid tbody tr td.Off {
-        opacity: .3; }
-      table.Grid tbody tr td.Centered {
-        text-align: center; }
-      table.Grid tbody tr td:last-child {
-        border-right: none; }
-    table.Grid tbody tr.Handler {
-      cursor: pointer; }
-      table.Grid tbody tr.Handler:hover {
-        background-color: #fce6e8; }
-    table.Grid tbody tr:nth-child(odd) {
-      background-color: white; }
-    table.Grid tbody tr:nth-child(even) {
-      background-color: #e8f7fc; }
-    table.Grid tbody tr.NoRecord td {
-      color: #9e9e9e;
+      text-align: left;
+      position: relative;
+      height: 50px;
+      border-left: 1px solid #ccc;
+      font-weight: 600; }
+      table.Grid thead tr th:after {
+        display: block;
+        position: absolute;
+        top: 50%;
+        right: 20px;
+        width: 0;
+        height: 0;
+        transform: translateY(-50%);
+        border-width: 5px 8px;
+        border-color: transparent #ccc transparent transparent;
+        border-style: solid;
+        transform: rotate(-90deg); }
+  table.Grid tbody tr td {
+    color: #666;
+    padding: 3px 20px;
+    height: 40px;
+    border-right: solid 1px #ccc; }
+    table.Grid tbody tr td.Off {
+      opacity: .3; }
+    table.Grid tbody tr td.Centered {
       text-align: center; }
+    table.Grid tbody tr td:last-child {
+      border-right: none; }
+  table.Grid tbody tr.Handler {
+    cursor: pointer; }
+    table.Grid tbody tr.Handler:hover {
+      background-color: #fce6e8; }
+  table.Grid tbody tr:nth-child(odd) {
+    background-color: white; }
+  table.Grid tbody tr:nth-child(even) {
+    background-color: #e8f7fc; }
+  table.Grid tbody tr.NoRecord td {
+    color: #999;
+    text-align: center; }
 

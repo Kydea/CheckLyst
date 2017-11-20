@@ -41,8 +41,8 @@ div.Signature div.PinPaddle div.Digits {
     text-align: center;
     font-size: 50px;
     line-height: 80px;
-    background-color: #dcdbe0;
-    color: #086386;
+    background-color: #ebebeb;
+    color: #009688;
     border-right: solid 1px white;
     border-bottom: solid 1px white; }
     div.Signature div.PinPaddle div.Digits a.Digit0 {
@@ -50,7 +50,7 @@ div.Signature div.PinPaddle div.Digits {
     div.Signature div.PinPaddle div.Digits a.DigitBack {
       color: red; }
     div.Signature div.PinPaddle div.Digits a:hover {
-      background-color: #e8e7ec; }
+      background-color: #03c3b1; }
 
 div.Signature div.PinPaddle div.User {
   margin: 20px 0 15px;
@@ -80,12 +80,12 @@ div.Signature div.Error {
 div.Signature hr {
   margin: 20px 0;
   border: 1px solid transparent;
-  border-bottom: 1px solid #518ca3; }
+  border-bottom: 1px solid #009688; }
 
 div.Signature div.ValidityMessage {
   margin-bottom: 10px;
   background: #f5f5f5;
-  border: 1px solid #dcdbe0;
+  border: 1px solid #ebebeb;
   border-radius: 4px;
   padding: 5px 3px; }
 

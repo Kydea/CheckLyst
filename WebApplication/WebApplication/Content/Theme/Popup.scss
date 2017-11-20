@@ -8,18 +8,13 @@ div.Popup {
         background-color: white;
         box-shadow: rgba(0, 0, 0, 0.16) 0 0 16px 5px;
 
-        strong {
-            color: $Color-Font-Blue2;
-        }
-
         p {
             line-height: 1.6;
         }
 
         h2 {
             margin: -20px -20px 20px;
-            background: $Color-Font-Green;
-            border-bottom: solid 1px $Color-Border-Blu;
+            background: $Color-Green-Regular;
             padding: 20px;
             color: white;
             text-transform: uppercase;
@@ -67,6 +62,7 @@ div.Popup {
             border: none;
             padding-bottom: 0;
             margin: -20px;
+            background: none;
         }
     }
 
@@ -77,7 +73,7 @@ div.Popup {
         bottom: 0;
         left: 0;
         z-index: $Depth-Popup;
-        background-color: rgba(217, 217, 217, .5);
+        background-color: rgba(102, 102, 102, .7);
 
         div.Container {
             position: relative;
@@ -102,8 +98,7 @@ div.Popup {
             width: unset !important;
 
             h2 {
-                background: $Color-Font-Green;
-                border-bottom: solid 1px $Color-Border-Blu;
+                background: $Color-Green-Regular;
                 padding: 20px;
                 color: white;
                 text-transform: uppercase;

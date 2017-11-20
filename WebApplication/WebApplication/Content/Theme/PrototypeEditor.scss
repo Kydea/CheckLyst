@@ -32,7 +32,7 @@ body.PrototypeEditor {
             &.Selected {
 
                 &::before {
-                    background-color: $Color-Background-Pink !important;
+                    background-color: $Color-Pink !important;
                     position: absolute;
                     z-index: -1;
                     content: "";
@@ -44,7 +44,7 @@ body.PrototypeEditor {
             }
 
             div.Group.Selected {
-                background-color: $Color-Background-Pink !important;
+                background-color: $Color-Pink !important;
 
                 &::before {
                     content: none;
@@ -66,11 +66,6 @@ body.PrototypeEditor {
                 input {
                     cursor: pointer;
                 }
-
-                a.Button {
-                    cursor: pointer;
-                    background-color: $Color-Background-Blu2;
-                }
             }
 
             &.Text {
@@ -83,7 +78,7 @@ body.PrototypeEditor {
                     }
 
                     div.Input {
-                        background-color: $Color-Background-Pink;
+                        background-color: $Color-Pink;
                     }
                 }
 
@@ -93,12 +88,12 @@ body.PrototypeEditor {
                     }
 
                     input {
-                        background-color: $Color-Background-Pink;
+                        background-color: $Color-Pink;
                     }
                 }
 
                 &.Text {
-                    background-color: $Color-Background-Pink;
+                    background-color: $Color-Pink;
                 }
             }
         }

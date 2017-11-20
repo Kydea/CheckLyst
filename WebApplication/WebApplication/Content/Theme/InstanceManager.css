@@ -29,7 +29,7 @@ body.InstanceManager .Element div.Information {
   height: 6px;
   width: 6px;
   background: red;
-  border: solid 1px #afb4b5;
+  border: solid 1px #999;
   cursor: pointer;
   border-radius: 50%; }
   body.InstanceManager .Element div.Information div.Panel {
@@ -37,7 +37,7 @@ body.InstanceManager .Element div.Information {
     position: absolute;
     background-color: rgba(255, 255, 255, 0.9);
     padding: 10px;
-    border: solid 1px #afb4b5; }
+    border: solid 1px #999; }
     body.InstanceManager .Element div.Information div.Panel i.fa {
       margin-right: 10px; }
       body.InstanceManager .Element div.Information div.Panel i.fa.fa-thumbs-o-up {
@@ -74,7 +74,7 @@ body.InstanceManager .Group .Iteration {
     body.InstanceManager .Group .Iteration > .IterationCommands a {
       float: left;
       display: block;
-      background: #dcdbe0;
+      background: #ebebeb;
       color: white !important;
       text-align: center;
       margin-left: 1px;
@@ -82,7 +82,7 @@ body.InstanceManager .Group .Iteration {
       line-height: 20px;
       border-radius: 50%; }
       body.InstanceManager .Group .Iteration > .IterationCommands a:hover {
-        background: #e8e7ec; }
+        background: #f5f5f5; }
       body.InstanceManager .Group .Iteration > .IterationCommands a.Hidden {
         display: none; }
   body.InstanceManager .Group .Iteration .Item.Field :focus ~ .Copy {
@@ -129,7 +129,7 @@ body.InstanceManager .Item.Field.List select {
   display: block; }
 
 body.InstanceManager .Item.Field.ExternalSource.Inactive i.fa-link {
-  color: #9e9e9e; }
+  color: #999; }
 
 body.InstanceManager .Item.Field.ExternalSource:not(.Inactive) div.Input {
   cursor: pointer !important; }
@@ -182,9 +182,9 @@ body.InstanceManager .Item.Hidden {
   display: none; }
 
 body.InstanceManager .Page.ReadOnly, body.InstanceManager .Group.ReadOnly {
-  color: #9e9e9e; }
+  color: #999; }
   body.InstanceManager .Page.ReadOnly h3, body.InstanceManager .Group.ReadOnly h3 {
-    color: #9e9e9e !important; }
+    color: #999 !important; }
 
 body.InstanceManager .Page.Hidden, body.InstanceManager .Group.Hidden {
   display: none; }
@@ -221,7 +221,7 @@ body.InstanceManager div.CountDown {
     float: right; }
 
 body.InstanceManager table.Grid thead tr th {
-  border: solid 1px #afb4b5 !important; }
+  border: solid 1px #ccc !important; }
 
 body.InstanceManager table.Grid tbody tr td {
   position: relative; }

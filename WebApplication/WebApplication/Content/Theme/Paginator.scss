@@ -5,7 +5,6 @@ $Page-Width: 20px;
 .Paginator {
     float: right;
     cursor: default;
-    font-size: 0;
 
     &:not(:empty) {
         margin: 20px 0 0 0;
@@ -16,12 +15,10 @@ $Page-Width: 20px;
         width: $Page-Width;
         height: $Page-Width;
         line-height: $Page-Width;
-        color: $Color-Font-Dark-Green;
+        color: $Color-Green-Dark;
         text-decoration: none !important;
 
-        font-weight: 600;
-        font-size: 16px;
-        font-family: Myriad, Arial, sans-serif;
+        font-weight: bold;
 
         &:not(.Current) {
             cursor: pointer;
@@ -29,7 +26,7 @@ $Page-Width: 20px;
 
         &.Current {
             color: white;
-            background-color: $Color-Font-Green;
+            background-color: $Color-Green-Dark;
         }
     }
 
@@ -38,10 +35,10 @@ $Page-Width: 20px;
 
         &:not(:first-child) {
             position: relative;
-            margin-left: 20px;
+            margin-left: 16px;
 
             &::before {
-                border-left: 2px solid $Color-Border-Silver;
+                border-left: 2px solid $Color-Grey-Light;
                 background-color: black;
                 display: inline-block;
                 position: absolute;
@@ -50,7 +47,7 @@ $Page-Width: 20px;
                 color: black;
                 width: 0px;
                 height: 1em;
-                left: -10px;
+                left: -8px;
             }
         }
     }

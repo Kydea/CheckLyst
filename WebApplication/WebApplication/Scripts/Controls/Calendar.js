@@ -32,7 +32,7 @@
 
         setup = function () {
             if (selector == null) {
-                element = $("<div />").appendTo(matematici.elements.body).addClass("Popup");
+				element = $("<div />").appendTo(matematici.elements.body).addClass("Calendar-Popup");
                 popup = true;
             } else
                 element = $(selector);

@@ -34,6 +34,7 @@ body.Login {
             form {
                 position: relative;
                 border: none;
+                background: none;
             }
 
             img {
@@ -43,7 +44,7 @@ body.Login {
             div.Message {
                 text-align: center;
                 margin: 0 0 20px 0;
-                color: $Color-Font-Blue1;
+                color: $Color-Red-Regular;
             }
 
             div.Errors {
@@ -53,16 +54,12 @@ body.Login {
             div.Buttons {
                 a {
                     float: right;
-
-                    &:hover {
-                        background-color: $Color-Background-Blu4;
-                    }
                 }
             }
 
             // Logo
             &::before {
-                background: $Color-Font-Green url(../Media/LogoMobile.png) no-repeat center 50%;
+                background: $Color-Green-Regular url(../Media/LogoMobile.png) no-repeat center 50%;
                 height: $Logo-Container-Height;
                 position: absolute;
                 display: block;
@@ -113,7 +110,7 @@ body.Login {
 
         div.Version {
             font-size: 10px;
-            color: $Color-Font-Grey1;
+            color: $Color-Grey-Regular;
             position: absolute;
             right: 10px;
             bottom: 10px;

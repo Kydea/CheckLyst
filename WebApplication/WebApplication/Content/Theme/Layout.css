@@ -20,11 +20,11 @@ ul.Plain {
 
 a {
   text-decoration: none;
-  color: black;
+  color: #009688;
   display: block; }
   a:hover {
     text-decoration: none;
-    color: #0099cc; }
+    color: #03c3b1; }
   a.Left {
     float: right; }
   a.Right {
@@ -73,7 +73,7 @@ header {
   position: relative;
   z-index: 103; }
   header div#UserPanel {
-    color: #666666;
+    color: #666;
     text-align: center;
     position: relative;
     text-transform: none;
@@ -86,7 +86,7 @@ header {
         left: 0;
         position: fixed;
         text-align: right;
-        border-bottom: 1px solid #cccccc;
+        border-bottom: 1px solid #ccc;
         margin-left: 70px;
         width: calc(100% - 70px); }
         header div#UserPanel::before {
@@ -103,10 +103,8 @@ header {
       color: inherit;
       display: inline-block;
       float: none !important; }
-      header div#UserPanel a:hover {
-        color: black !important; }
       header div#UserPanel a + a:before {
-        background-color: #666666;
+        background-color: #ccc;
         display: inline-block;
         content: "";
         height: 1em;
@@ -122,11 +120,15 @@ header {
         font-size: 12px;
         line-height: 25px;
         text-align: center; }
+      header div#UserPanel a:hover {
+        color: black !important; }
+        header div#UserPanel a:hover i {
+          background-color: #03c3b1; }
 
 footer {
   position: relative;
   background: white;
-  border-top: solid 1px #cccccc;
+  border-top: solid 1px #ccc;
   padding: 20px 30px;
   line-height: 1.4; }
   footer div.Information {
@@ -134,7 +136,7 @@ footer {
     font-weight: bold;
     color: black;
     bottom: 10px;
-    color: #666666; }
+    color: #666; }
     footer div.Information .Item span.Label {
       font-weight: normal; }
     @media only screen and (min-width: 760px) {

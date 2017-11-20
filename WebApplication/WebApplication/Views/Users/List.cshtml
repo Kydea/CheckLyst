@@ -1,85 +1,71 @@
 ﻿<div id="UsersListPage">
     <h1>Users List</h1>
 
-    <div class="ActionBar">
-        <a id="ApplyButton" class="Button"><i class="fa fa-search"></i> search</a>
+    <div class="ActionBar"></div>
+
+    <div class="ShadowPanel">
+        <div class="Accordion-Bar">
+            <a class="Button">search <i class="fa fa-arrow-down"></i></a>
+        </div>
+        <form id="Filters" action="@BaseUrl/AccessControl/Users">
+            <label>
+                Code
+                <i class="fi flaticon-people" />
+                <input type="text" name="code" />
+            </label>
+
+            <label>
+                Name
+                <i class="fi flaticon-tags" />
+                <input type="text" name="description" />
+            </label>
+
+            <a id="ApplyButton" class="Button DefaultButton"><i class="fa fa-search"></i> search</a>
+        </form>
+
+        <table class="Grid">
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Last login</th>
+                    <th>Created By</th>
+                    <th>Created On</th>
+                    <th>Modified By</th>
+                    <th>Modified On</th>
+                    <th>Enabled</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="Handler">
+                    <td data-column="code"></td>
+                    <td data-column="description"></td>
+                    <td data-column="email"></td>
+                    <td data-column="lastLoginOn" data-type="DateTimeOffset"></td>
+                    <td data-column="createdBy"></td>
+                    <td data-column="createdOn" data-type="DateTimeOffset"></td>
+                    <td data-column="modifiedBy"></td>
+                    <td data-column="modifiedOn" data-type="DateTimeOffset"></td>
+                    <td data-column="enabled" data-type="Boolean"></td>
+                </tr>
+                <tr class="NoRecord"><td>(no record)</td></tr>
+            </tbody>
+        </table>
+        <div class="Paginator"></div>
+        <div class="Clearing"></div>
     </div>
-
-    <form id="Filters" action="@BaseUrl/AccessControl/Users">
-        <label>
-            Code/Name/Surname
-            <input type="text" name="keyword" />
-        </label>
-    </form>
-
-    <table class="Grid">
-        <thead>
-            <tr>
-                <th>Code</th>
-                <th>Name and surname</th>
-                <th>Email</th>
-                <th>Last login</th>
-                <th>Created By</th>
-                <th>Created On</th>
-                <th>Modified By</th>
-                <th>Modified On</th>
-                <th>Enabled</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr class="Handler">
-                <td data-column="code"></td>
-                <td data-column="description"></td>
-                <td data-column="email"></td>
-                <td data-column="lastLoginOn" data-type="DateTimeOffset"></td>
-                <td data-column="createdBy"></td>
-                <td data-column="createdOn" data-type="DateTimeOffset"></td>
-                <td data-column="modifiedBy"></td>
-                <td data-column="modifiedOn" data-type="DateTimeOffset"></td>
-                <td data-column="enabled" data-type="Boolean"></td>
-            </tr>
-            <tr class="NoRecord"><td>(no record)</td></tr>
-        </tbody>
-    </table>
-    <div class="Paginator"></div>
-    <div class="Clearing"></div>
 </div>
 
 <script type="text/javascript">
     matematici.events.onPageLoad = function (callback) {
-        var grid,
-            form,
-            formElement = $("form#Filters"),
-            paginator,
-            handler = function (result) {
-                grid.update(result.data);
-                paginator.setPage(result.currentPage, result.pagesCount);
-            };
-
-        new matematici.ActionBar("div.ActionBar");
-
-        new matematici.Page({
-            name: "UsersList",
-            initializers: [
-                //new matematici.FixedHeader("div#Content table.Grid")
-                grid = new matematici.Grid("div#Content table.Grid", {
-                    rowClick: function (row) {
-                        matematici.popup.detail({
-                            url: "@Url.Action("Detail")",
-                            data: row.data("values")
-                        });
-                    }
-                }),
-                form = new matematici.Form(formElement, {
-                    applyButton: {
-                        button: "#ApplyButton",
-                        event: "List",
-                        handler: handler
-                    }
-                }),
-                matematici.p = paginator = new matematici.Paginator("div#Content div.Paginator", function (index) {
-                    form.trigger("List", handler, { CurrentPage: index });
-                })
+        new matematici.SearchPage({
+            pageName: "Users",
+            detailUrl: "@Url.Action("Detail")",
+            filterFormSelector: "form#Filters",
+            resultGridSelector: "div#Content table.Grid",
+            breadCrumbs: [
+                { content: "users" }
             ]
         });
 

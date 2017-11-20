@@ -14,7 +14,7 @@
 				parseResult(result);
 			}).fail(function (jqXhr, textStatus, errorThrown) {
 				matematici.dialog.error("system error", "Access token refresh failed, please login again.");
-				console.log(jqXhr, textStatus, errorThrown);
+				console.log("Access token refresh failed.", jqXhr, textStatus, errorThrown);
 			}).always(function () {
 				localStorage.refreshingToken = false;
 			});

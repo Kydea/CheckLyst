@@ -47,54 +47,12 @@
 
 <script type="text/javascript">
     matematici.events.onPageLoad = function (callback) {
-        var grid,
-            form,
-            paginator,
-            filtered = false,
-            filterHandler = function (result) {
-                grid.update(result.data);
-                paginator.setPage(result.currentPage, result.pagesCount);
-                filtered = true;
-            },
-            closeHandler = function () {
-                if (filtered && matematici.popup.getResult().saved) form.getOptions().applyButton.click();
-            };
-
-        new matematici.ActionBar("div.ActionBar").add("Add", function () {
-            matematici.popup.show({
-                url: "@Url.Action("DepartmentsDetail")",
-                data: null,
-                sender: form,
-                closeHandler: closeHandler
-            });
-        }, null, "plus");
-
-        new matematici.Page({
-            name: "InfrastructureDepartments",
-            initializers: [
-                //new matematici.FixedHeader("div#Content table.Grid")
-                grid = new matematici.Grid("div#Content table.Grid", {
-                    rowClick: function (row) {
-                        matematici.popup.show({
-                            url: "@Url.Action("DepartmentsDetail")",
-                            data: row.data("values"),
-                            sender: form,
-                            closeHandler: closeHandler
-                        });
-                    }
-                }),
-                form = new matematici.Form("form#Filters", {
-                    applyButton: {
-                        button: "#ApplyButton",
-                        event: "GetData",
-                        handler: filterHandler
-                    }
-                }),
-                paginator = new matematici.Paginator("div#Content div.Paginator", function (index) {
-                    form.trigger("GetData", filterHandler, { CurrentPage: index });
-                })
-            ],
-            breadcrumbs: [
+        new matematici.SearchPage({
+            pageName: "InfrastructureDepartments",
+            detailUrl: "@Url.Action("DepartmentsDetail")",
+            filterFormSelector: "form#Filters",
+            resultGridSelector: "div#Content table.Grid",
+            breadCrumbs: [
                 { content: "infrastructure" },
                 { content: "departments" }
             ]

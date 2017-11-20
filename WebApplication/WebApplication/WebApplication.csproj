@@ -206,6 +206,8 @@
     <Content Include="Scripts\Controls\Controls.js" />
     <Content Include="Scripts\Controls\DataPicker.js" />
     <Content Include="Scripts\Controls\Grid.js" />
+    <Content Include="Scripts\Controls\DetailPage.js" />
+    <Content Include="Scripts\Controls\SearchPage.js" />
     <Content Include="Scripts\Custom\AutoCenter.js" />
     <Content Include="Scripts\Custom\Accordion.js" />
     <Content Include="Scripts\Custom\TokenManager.js" />
