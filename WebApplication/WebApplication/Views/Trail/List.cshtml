@@ -1,9 +1,7 @@
 ﻿<div id="AuditTrailPage">
     <h1>Audit Trail</h1>
 
-    <div class="ActionBar">
-        <a id="ApplyButton" class="Button"><i class="fa fa-search"></i> search</a>
-    </div>
+    <div class="ActionBar"></div>
 
     <div class="ShadowPanel">
         <div class="Accordion-Bar">
@@ -20,18 +18,22 @@
             </label>
             <label>
                 User
+                <i class="fi flaticon-people" />
                 <input type="text" name="user" />
             </label>
             <label>
                 Action
+                <i class="fi flaticon-people" />
                 <input type="text" name="action" />
             </label>
             <label>
                 CheckList code
+                <i class="fi flaticon-people" />
                 <input type="text" name="checklist" />
             </label>
             <label>
                 Detail
+                <i class="fi flaticon-people" />
                 <input type="text" name="information" />
             </label>
 
@@ -75,7 +77,8 @@
             resultGridSelector: "div#Content table.Grid",
             breadCrumbs: [
                 { content: "audit trail" }
-            ]
+            ],
+            NOreadOnly: true
         });
 
         callback.call();

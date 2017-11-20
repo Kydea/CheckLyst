@@ -33,12 +33,13 @@
 					}
 				});
 
-			buttons.push({
-				text: "save", icon: "save", id: "SaveButton", handler: function () {
-					clickHandler(data == null ? "Add" : "Edit");
-					return true;
-				}
-			});
+			if (!options.readOnly)
+				buttons.push({
+					text: "save", icon: "save", id: "SaveButton", handler: function () {
+						clickHandler(data == null ? "Add" : "Edit");
+						return true;
+					}
+				});
 
 			matematici.popup.setButtons(buttons);
 

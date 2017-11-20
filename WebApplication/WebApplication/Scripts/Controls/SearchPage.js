@@ -15,14 +15,15 @@
 		},
 
 		setup = function () {
-			new matematici.ActionBar("div.ActionBar").add("Add", function () {
-				matematici.popup.show({
-					url: options.detailUrl,
-					data: null,
-					sender: form,
-					closeHandler: closeHandler
-				});
-			}, null, "plus");
+			if (!options.readOnly)
+				new matematici.ActionBar("div.ActionBar").add("Add", function () {
+					matematici.popup.show({
+						url: options.detailUrl,
+						data: null,
+						sender: form,
+						closeHandler: closeHandler
+					});
+				}, null, "plus");
 
 			new matematici.Page({
 				name: options.pageName,

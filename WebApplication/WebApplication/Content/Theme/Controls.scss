@@ -48,6 +48,10 @@ input[type=text], input[type=range], input[type=number], input[type=password], i
     }
 }
 
+textarea {
+    height: 88px;
+}
+
 a.Button {
     text-transform: uppercase;
     color: white;
@@ -132,7 +136,7 @@ form {
         position: relative;
         color: $Color-Font-Grey3;
 
-        input, select {
+        input, select, textarea {
             margin-top: 5px;
         }
 

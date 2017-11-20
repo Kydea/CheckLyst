@@ -1,31 +1,41 @@
-﻿<div id="UsersDetailPage">
-    <h1>User detail</h1>
+﻿<div id="TrailDetailPage">
+    <h2>User detail</h2>
 
     <form id="Detail">
         <div class="Triggers">
             <label>
-                From
-                <input type="text" name="from" class="DatePicker" />
+                ID
+                <i class="fi flaticon-departments" />
+                <input type="text" name="id" readonly="readonly" />
             </label>
 
             <label>
-                Until
-                <input type="text" name="from" class="DatePicker" />
+                Date
+                <i class="fi flaticon-data" />
+                <input type="text" name="date" readonly="readonly" data-type="DateTimeOffset" />
             </label>
 
-            <label>
+            <label class="Clearing">
                 User
-                <input type="text" name="user" />
+                <i class="fi flaticon-people" />
+                <input type="text" name="user" readonly="readonly" />
             </label>
 
             <label>
-                CheckList
-                <input type="text" name="user" />
+                Action
+                <i class="fi flaticon-data" />
+                <input type="text" name="action" readonly="readonly" />
             </label>
 
-            <label>
-                Enabled
-                <input type="checkbox" name="enabled" />
+            <label class="Clearing FullWidth">
+                Checklist code
+                <i class="fi flaticon-istance" />
+                <input type="text" name="checklist" readonly="readonly" />
+            </label>
+
+            <label class="Clearing FullWidth">
+                Detail
+                <textarea type="text" name="information" readonly="readonly" />
             </label>
         </div>
     </form>
@@ -35,6 +45,7 @@
 
 <script type="text/javascript">
     new matematici.DetailPage({
-        formSelector: "form#Detail"
+        formSelector: "form#Detail",
+        readOnly: true
     });
 </script>
