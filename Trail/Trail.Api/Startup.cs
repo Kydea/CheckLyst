@@ -11,7 +11,7 @@ namespace CheckListManager.Trail.Api
     {
         public void Configuration(IAppBuilder app)
         {
-            app.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions());
+	        WebApiConfig.Setup(app);
         }
-    }
+	}
 }
