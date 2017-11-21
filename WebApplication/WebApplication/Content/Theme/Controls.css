@@ -158,8 +158,7 @@ form {
       clear: both; }
     form label.FullWidth {
       width: calc(100% - 20px);
-      display: block;
-      float: none; }
+      display: block; }
       form label.FullWidth.Controls2 input, form label.FullWidth.Controls2 select {
         width: calc(50% - 30px/2); }
       form label.FullWidth.Controls2 i:not(.AutoComplete) + input:not(.AutoComplete), form label.FullWidth.Controls2 i:not(.AutoComplete) + input.AutoComplete + input, form label.FullWidth.Controls2 i:not(.AutoComplete) + input.AutoComplete + select, form label.FullWidth.Controls2 i:not(.AutoComplete) + select:not(.AutoComplete), form label.FullWidth.Controls2 i:not(.AutoComplete) + select.AutoComplete + input, form label.FullWidth.Controls2 i:not(.AutoComplete) + select.AutoComplete + select {

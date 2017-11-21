@@ -39,12 +39,12 @@ namespace CheckListManager.Prototypes.Logic.List
                 };
                 response.Valid &= departments.Any();
 
-                var states = new List<Option> { new Option(null, "All") };
+                var states = new List<Option> { new Option("", "All") };
                 states.AddRange((await _commonRepository.GetVersionStatesAsync()).Select(x => new Option(x)));
                 response.Fields["State"] = new Field
                 {
                     Options = states,
-                    Value = form.State
+                    Value = form.State ?? string.Empty
                 };
             }
 

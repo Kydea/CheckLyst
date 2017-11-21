@@ -138,7 +138,6 @@ create table "CheckLists"."InstanceStates"
 
 insert into "CheckLists"."InstanceStates" 
 values 
-	('Draft'),
 	('In progress'),
 	('Confirmed'),
 	('Canceled'),

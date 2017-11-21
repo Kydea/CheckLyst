@@ -5,4 +5,6 @@
   background-color: white;
   box-shadow: rgba(0, 0, 0, 0.16) 0 0 16px 5px;
   margin-bottom: 20px; }
+  .ShadowPanel:last-child {
+    margin-bottom: 0; }
 

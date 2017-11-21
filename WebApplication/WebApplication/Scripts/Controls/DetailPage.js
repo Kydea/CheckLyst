@@ -18,7 +18,7 @@
 		setup = function () {
 			buttons.push({ cancelButton: true, hidden: true });
 
-			if (data != null)
+			if (!options.readOnly && data != null)
 				buttons.push({
 					text: "delete", icon: "delete", handler: function () {
 						matematici.dialog.show("warning", "The record will be deleted.", [

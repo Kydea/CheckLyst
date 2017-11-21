@@ -237,7 +237,6 @@ form {
         &.FullWidth {
             width: calc(100% - #{$Metric-Control-Space});
             display: block;
-            float: none;
 
             @each $tuple in $controlsData {
                 &.Controls#{nth($tuple, 1)} {

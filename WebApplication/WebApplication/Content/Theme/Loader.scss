@@ -1,5 +1,5 @@
 ﻿$width: 50px;
-$height: 70px;
+$height: 50px;
 
 div#Loader {
     position: fixed;
@@ -30,14 +30,18 @@ div#Loader {
                 width: $width;
             }
 
-            div.Percentage {
-                position: absolute;
-                bottom: 0;
-                padding-bottom: 5px;
-                width: $width;
-                color: white;
-                text-align: center;
-                font-size: 10px;
+            &.Percentage {
+                height: $height + 20px;
+
+                div.Percentage {
+                    position: absolute;
+                    bottom: 0;
+                    padding-bottom: 5px;
+                    width: $width;
+                    color: white;
+                    text-align: center;
+                    font-size: 10px;
+                }
             }
         }
     }

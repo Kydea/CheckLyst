@@ -46,8 +46,6 @@ matematici.AutoComplete = function (selector) {
                 'left': labelPosition.left + width - 20,
                 'top': position.top + parseInt(label.css('marginTop'), 10)
 			});
-
-			console.log(labelPosition.left + width - 20, position.top + parseInt(label.css('marginTop'), 10));
 		},
 
 		initialize = function () {
