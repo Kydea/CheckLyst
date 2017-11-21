@@ -21,7 +21,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
 		[Route("Get/{Id}/{Version}")]
 		public async Task<IHttpActionResult> Get([FromUri]GetPrototypeRequest request)
 		{
-			return Ok(Message.Create(await _prototypeService.Get(request)));
+			return Ok(Message.Create(await _prototypeService.GetAsync(Identity.CompanyId, request)));
 		}
 	}
 }

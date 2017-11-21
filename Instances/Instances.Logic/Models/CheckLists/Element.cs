@@ -60,5 +60,27 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 		{
 			return CheckList.Elements;
 		}
+
+		public virtual void Setup()
+		{
+			if (Code != null)
+				CheckList.Elements[Code] = this;
+		}
+
+		public abstract void Update();
+
+		public static void Copy(Element source, Element destination)
+		{
+			destination.CheckList = source.CheckList;
+			destination.Code = source.Code;
+			destination.ReadOnlyExpressionCode = source.ReadOnlyExpressionCode;
+			destination.ReadOnlyCondition = source.ReadOnlyCondition;
+			destination.HiddenExpressionCode = source.HiddenExpressionCode;
+			destination.HiddenCondition = source.HiddenCondition;
+			destination.ValidExpressionCode = source.ValidExpressionCode;
+			destination.ValidCondition = source.ValidCondition;
+			destination.ValidityMessage = source.ValidityMessage;
+			destination.SignatureCode = source.SignatureCode;
+		}
 	}
 }

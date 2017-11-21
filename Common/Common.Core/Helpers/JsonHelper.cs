@@ -18,6 +18,13 @@ namespace CheckListManager.Common.Core.Helpers
 				: default(T);
 		}
 
+		public static T ToObject<T>(this string source, params JsonConverter[] converters)
+		{
+			return !string.IsNullOrEmpty(source)
+				? JsonConvert.DeserializeObject<T>(source, converters)
+				: default(T);
+		}
+
 		public static string ToJson(this object source, JsonSerializerSettings settings = null)
 		{
 			return source != null
@@ -25,10 +32,10 @@ namespace CheckListManager.Common.Core.Helpers
 				: null;
 		}
 
-		public static string ToJson<T>(this T source, JsonSerializerSettings settings = null)
+		public static string ToJson(this object source, params JsonConverter[] converters)
 		{
 			return source != null
-				? JsonConvert.SerializeObject(source, settings ?? new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All })
+				? JsonConvert.SerializeObject(source, converters)
 				: null;
 		}
 	}

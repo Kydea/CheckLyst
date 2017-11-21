@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using System.Web.Http;
+using Autofac;
 using CheckListManager.Common.Logic.Api.Configuration;
 using CheckListManager.Common.Logic.Json;
 using CheckListManager.Common.Logic.Models.CheckLists;
@@ -33,7 +34,14 @@ namespace CheckListManager.Instances.Api
 			    .InstancePerDependency();
 	    }
 
-		#region Static
+	    protected override void OnConfigureWebApi(HttpConfiguration configuration)
+	    {
+		    base.OnConfigureWebApi(configuration);
+
+		    configuration.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new CheckListJsonConverter(Container));
+	    }
+
+	    #region Static
 
 		public static void Setup(IAppBuilder app)
 	    {
