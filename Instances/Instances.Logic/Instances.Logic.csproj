@@ -62,11 +62,12 @@
     <Compile Include="List\IListService.cs" />
     <Compile Include="List\ListResponse.cs" />
     <Compile Include="List\ListRequest.cs" />
-    <Compile Include="Messages\ConfirmInstanceRequest.cs" />
+    <Compile Include="Messages\InstanceRequest.cs" />
     <Compile Include="Messages\CreateInstanceRequest.cs" />
     <Compile Include="Messages\CreateInstanceResponse.cs" />
     <Compile Include="Messages\GetPrototypeResponse.cs" />
     <Compile Include="Messages\InstanceResponse.cs" />
+    <Compile Include="Messages\OpenInstanceResponse.cs" />
     <Compile Include="Messages\SaveInstanceRequest.cs" />
     <Compile Include="Messages\SaveInstanceResponse.cs" />
     <Compile Include="Models\InstanceCacheObject.cs" />

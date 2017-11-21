@@ -7,9 +7,11 @@ namespace CheckListManager.Instances.Logic.Services
 	public interface IInstanceCacheService : IService
 	{
 		Task<InstanceCacheObject> GetAsync(string code, bool includeData = true);
-		//Task<IEnumerable<InstanceCacheObject>> GetByUserAsync(string userCode);
-
 		Task SetAsync(string code, InstanceCacheObject instance);
+
+		Task TouchInstanceAsync(string code);
+
+		//Task<IEnumerable<InstanceCacheObject>> GetByUserAsync(string userCode);
 		//Task RemoveAsync(string code, string userCode);
 	}
 }

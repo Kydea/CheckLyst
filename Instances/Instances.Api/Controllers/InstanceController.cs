@@ -33,22 +33,7 @@ namespace CheckListManager.Instances.Api.Controllers
 					Code = cacheObject.Code,
 					CheckList = _instanceManagerService.GetCheckList(cacheObject.Instance)
 				};
-				return Ok(response);
-			}
-			catch (DatabaseAggregateException exception)
-			{
-				return Error(new ResponseMessage(exception.InnerExceptions.Select(e => e.Message).ToArray()));
-			}
-			catch (DatabaseException exception)
-			{
-				// ReSharper disable once SwitchStatementMissingSomeCases
-				switch (exception.Error)
-				{
-					case DatabaseError.PrimaryKeyViolation:
-						return Error(new ResponseMessage("An user with the same code already exists."));
-					default:
-						return Error(new ResponseMessage(exception.Message));
-				}
+				return Ok(Message.Create(response));
 			}
 			catch (Exception e)
 			{
@@ -58,7 +43,7 @@ namespace CheckListManager.Instances.Api.Controllers
 
 		[HttpPost]
 		[Route("Confirm")]
-		public async Task<IHttpActionResult> Confirm([FromBody]Message<ConfirmInstanceRequest> request)
+		public async Task<IHttpActionResult> Confirm([FromBody]Message<InstanceRequest> request)
 		{
 			try
 			{
@@ -75,22 +60,44 @@ namespace CheckListManager.Instances.Api.Controllers
 				switch (exception.Error)
 				{
 					case DatabaseError.PrimaryKeyViolation:
-						return Error(new ResponseMessage("An user with the same code already exists."));
+						return Error(new ResponseMessage("An instance with the same code already exists."));
 					default:
 						return Error(new ResponseMessage(exception.Message));
 				}
 			}
-			catch (Exception e)
+			catch (Exception exception)
 			{
-				return Error(new ResponseMessage(e.Message));
+				return Error(new ResponseMessage(exception.Message));
 			}
 		}
 
 		[HttpPost]
 		[Route("Open")]
-		public async Task<IHttpActionResult> Open()
+		public async Task<IHttpActionResult> Open([FromBody]Message<InstanceRequest> request)
 		{
-			return Ok(await Task.FromResult(true));
+			try
+			{
+				var cacheObject = await _instanceManagerService.OpenAsync(Identity.CompanyId, request.Data.Code);
+				var response = new OpenInstanceResponse
+				{
+					Id = cacheObject.Id,
+					Code = cacheObject.Code,
+					CheckList = _instanceManagerService.GetCheckList(cacheObject.Instance)
+				};
+				return Ok(Message.Create(response));
+			}
+			catch (DatabaseAggregateException exception)
+			{
+				return Error(new ResponseMessage(exception.InnerExceptions.Select(e => e.Message).ToArray()));
+			}
+			catch (DatabaseException exception)
+			{
+				return Error(new ResponseMessage(exception.Message));
+			}
+			catch (Exception exception)
+			{
+				return Error(new ResponseMessage(exception.Message));
+			}
 		}
 
 		[HttpPost]

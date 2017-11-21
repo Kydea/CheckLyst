@@ -17,6 +17,8 @@ using CheckListManager.Common.Logic.Cache;
 using CheckListManager.Common.Logic.Services;
 using RedLock;
 
+using Parameter = Autofac.Core.Parameter;
+
 namespace CheckListManager.Common.Logic.Configuration
 {
 	public abstract class ConfigBase

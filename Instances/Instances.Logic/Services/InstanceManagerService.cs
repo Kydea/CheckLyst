@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using CheckListManager.Common.Core.Network;
 using CheckListManager.Common.Logic.Api.Messages;
@@ -31,6 +32,30 @@ namespace CheckListManager.Instances.Logic.Services
 			_instancesRepository = instancesRepository;
 			_converter = converter;
 			_instanceCache = instanceCache;
+		}
+
+		public async Task<InstanceCacheObject> OpenAsync(long companyId, string code)
+		{
+			var cacheObject = await _instanceCache.GetAsync(code);
+			if (cacheObject != null)
+			{
+				await _instanceCache.TouchInstanceAsync(code);
+				return cacheObject;
+			}
+
+			var instance = await _instancesRepository.GetByCodeAsync(companyId, code);
+			if (instance == null)
+			{
+				throw new InstanceException("Instance not found");
+			}
+
+			cacheObject = CreateInstanceFromDatabase(companyId, instance);
+			if (cacheObject.InstanceState == InstanceState.Progress)
+			{
+				await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
+			}
+
+			return cacheObject;
 		}
 
 		public async Task<InstanceCacheObject> CreateAsync(long companyId, string userCode, int prototype, int version)
@@ -85,7 +110,9 @@ namespace CheckListManager.Instances.Logic.Services
 					throw new InstanceException("Instance state not valid");
 				}
 
+				cacheObject.InstanceState = InstanceState.Progress;
 				cacheObject.Instance.Update();
+
 				if (!cacheObject.Instance.Header.Valid)
 				{
 					throw new InstanceException("Header not valid");
@@ -115,6 +142,7 @@ namespace CheckListManager.Instances.Logic.Services
 				cacheObject.InstanceState = row.InstanceState;
 				cacheObject.ModifiedOn = row.ModifiedOn;
 				cacheObject.ModifiedBy = row.ModifiedBy;
+				cacheObject.IsDirty = false;
 
 				await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
 			}
@@ -131,7 +159,7 @@ namespace CheckListManager.Instances.Logic.Services
 
 		public Instance GetCheckList(Instance instance)
 		{
-			//prepare model for client if any change is needed
+			instance.Update();
 			return instance;
 		}
 
@@ -139,8 +167,8 @@ namespace CheckListManager.Instances.Logic.Services
 		{
 			try
 			{
-				//TODO: add companyId (modify prototype endpoint)
-				var httpResponse = await _client.GetAsync($"Prototypes/Prototype/GetAsync/{prototype}/{version}");
+				//TODO: add companyId (modify prototype endpoint first)
+				var httpResponse = await _client.GetAsync($"Prototypes/Prototype/Get/{prototype}/{version}");
 				var responseData = await httpResponse.Content.ReadAsStringAsync();
 
 				var response = JsonConvert.DeserializeObject<ResponseMessage<GetPrototypeResponse>>(responseData, _converter);
@@ -156,18 +184,48 @@ namespace CheckListManager.Instances.Logic.Services
 
 		private async Task ValidateExpressionsAsync(InstanceCacheObject cacheObject)
 		{
-			//TODO complete implementation
-			var instances = await _instancesRepository.GetInstancesAsync<Common.Data.Instances, int>(cacheObject.CompanyId,
-				i => i,
-				i =>
-					i.Prototype == cacheObject.Prototype
-					&& i.InstanceState == InstanceState.Progress
-			);
+			var instances = await _instancesRepository.GetInstancesWithExpressions(InstanceState.Progress);
 
-			foreach (var instance in instances.Data)
+			foreach (var instance in instances)
 			{
-				
+				var list = cacheObject.Instance.Expressions.Where(e =>
+					e.Value.Unique
+					&& !e.Value.Value.IsNull
+					&& instance.InstanceExpressionValues.Any(
+						e2 =>
+							e2.Code == e.Key
+							&& e2.Value == e.Value.Value?.SerializedValue
+					)
+				).ToList();
+
+				if (list.Count > 0)
+				{
+					var expression = list.First();
+					throw new Exception(
+						$"The value {expression.Value.Value.SerializedValue} for the expression {expression.Key} has been found in the in progress instance {instance.Year} - {instance.Number}");
+				}
 			}
+		}
+
+		private InstanceCacheObject CreateInstanceFromDatabase(long companyId, Common.Data.Instances instance)
+		{
+			return new InstanceCacheObject
+			{
+				CompanyId = companyId,
+				Instance = JsonConvert.DeserializeObject<Instance>(instance.Data, _converter),
+				Code = instance.Code,
+				Prototype = instance.Prototype ?? -1,
+				Version = instance.Version ?? -1,
+				InstanceState = instance.InstanceState,
+				CreatedBy = instance.CreatedBy,
+				CreatedOn = instance.CreatedOn,
+				Id = instance.ID,
+				Number = instance.Number,
+				Description = instance.Description,
+				PrototypeCode = instance.PrototypeCode,
+				ModifiedOn = instance.ModifiedOn,
+				ModifiedBy = instance.ModifiedBy,
+			};
 		}
 	}
 }

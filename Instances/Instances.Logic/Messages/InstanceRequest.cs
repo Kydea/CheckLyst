@@ -1,6 +1,6 @@
 ﻿namespace CheckListManager.Instances.Logic.Messages
 {
-	public class ConfirmInstanceRequest
+	public class InstanceRequest
 	{
 		public string Code { get; set; }
 	}

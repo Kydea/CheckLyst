@@ -59,5 +59,11 @@ namespace CheckListManager.Instances.Logic.Services
 				throw;
 			}
 		}
+
+		public Task TouchInstanceAsync(string code)
+		{
+			var score = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+			return _redisCache.SortedSetElementUpdateScoreAsync("Instances", code, score, RegionName);
+		}
 	}
 }

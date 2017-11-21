@@ -193,22 +193,8 @@ namespace CheckListManager.Common.Logic.Cache
 			_transaction = null;
 		}
 
-		public async Task SortedSetElementInsertAsync(string key, string value, double score, string regionName = null)
-		{
-			if (string.IsNullOrEmpty(value))
-			{
-				return;
-			}
-
-			if (_transaction == null)
-			{
-				await Database.Value.SortedSetAddAsync(ResolveKey(key, regionName), value, score, CommandFlags.FireAndForget);
-			}
-			else
-			{
-				await _transaction.SortedSetAddAsync(ResolveKey(key, regionName), value, score, CommandFlags.FireAndForget);
-			}
-		}
+		public Task SortedSetElementInsertAsync(string key, string value, double score, string regionName = null)
+			=> SortedSetElementInsertAsync(key, value, score, regionName, When.Always);
 
 		public async Task SortedSetElementRemoveAsync(string key, string value, string regionName = null)
 		{
@@ -223,6 +209,26 @@ namespace CheckListManager.Common.Logic.Cache
 			else
 			{
 				await _transaction.SortedSetRemoveAsync(ResolveKey(key, regionName), value, CommandFlags.FireAndForget);
+			}
+		}
+
+		public Task SortedSetElementUpdateScoreAsync(string key, string value, double score, string regionName = null)
+			=> SortedSetElementInsertAsync(key, value, score, regionName, When.Exists);
+
+		private async Task SortedSetElementInsertAsync(string key, string value, double score, string regionName, When when)
+		{
+			if (string.IsNullOrEmpty(value))
+			{
+				return;
+			}
+
+			if (_transaction == null)
+			{
+				await Database.Value.SortedSetAddAsync(ResolveKey(key, regionName), value, score, when, CommandFlags.FireAndForget);
+			}
+			else
+			{
+				await _transaction.SortedSetAddAsync(ResolveKey(key, regionName), value, score, when, CommandFlags.FireAndForget);
 			}
 		}
 

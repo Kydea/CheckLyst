@@ -15,5 +15,7 @@ namespace CheckListManager.Instances.Data
 	    Task<Common.Data.Instances> UpdateInstanceAsync(string userCode, Common.Data.Instances instance);
 
 		Task<int> GetInstanceNumberAsync(long prototype, int version, int year);
+
+	    Task<List<Common.Data.Instances>> GetInstancesWithExpressions(string state = null);
     }
 }
