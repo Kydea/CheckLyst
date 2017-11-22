@@ -1,12 +1,6 @@
-﻿using CheckListManager.Instances.Logic.Models.CheckLists;
-
-namespace CheckListManager.Instances.Logic.Messages
+﻿namespace CheckListManager.Instances.Logic.Messages
 {
-	public class CreateInstanceResponse
+	public class CreateInstanceResponse : InstanceResponse
 	{
-		public int? Id { get; set; }
-		public string Code { get; set; }
-
-		public Instance CheckList { get; set; }
 	}
 }

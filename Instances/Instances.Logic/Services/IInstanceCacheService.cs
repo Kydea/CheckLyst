@@ -1,0 +1,17 @@
+﻿using System.Threading.Tasks;
+using CheckListManager.Common.Core.Services;
+using CheckListManager.Instances.Logic.Models;
+
+namespace CheckListManager.Instances.Logic.Services
+{
+	public interface IInstanceCacheService : IService
+	{
+		Task<InstanceCacheObject> GetAsync(string code, bool includeData = true);
+		Task SetAsync(string code, InstanceCacheObject instance);
+
+		Task TouchInstanceAsync(string code);
+
+		//Task<IEnumerable<InstanceCacheObject>> GetByUserAsync(string userCode);
+		//Task RemoveAsync(string code, string userCode);
+	}
+}

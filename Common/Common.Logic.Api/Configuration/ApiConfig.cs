@@ -31,15 +31,16 @@ namespace CheckListManager.Common.Logic.Api.Configuration
 	{
 		private readonly HttpConfiguration _configuration;
 
+		protected IContainer Container { get; private set; }
+
 		protected ApiConfig()
 		{
 			_configuration = new HttpConfiguration();
+			UseInstancePerRequest = true;
 		}
 
 		public bool LoadAssemblies { private get; set; }
 		protected bool ConfigureOwinProvider { private get; set; }
-
-		protected override bool UseInstancePerRequest => true;
 
 		protected override void OnCreateBuilder(ContainerBuilder builder)
 		{
@@ -97,8 +98,10 @@ namespace CheckListManager.Common.Logic.Api.Configuration
 
 		private void ConfigureWebApi()
 		{
+			Container = CreateBuilder().Build();
+
 			_configuration.DependencyResolver
-				= new AutofacWebApiDependencyResolver(CreateBuilder().Build());
+				= new AutofacWebApiDependencyResolver(Container);
 
 			_configuration.Services.Replace(typeof(IExceptionHandler), new DefaultExceptionHandler());
 
@@ -111,6 +114,13 @@ namespace CheckListManager.Common.Logic.Api.Configuration
 			_configuration.MapHttpAttributeRoutes();
 
 			_configuration.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+
+			OnConfigureWebApi(_configuration);
+		}
+
+		protected virtual void OnConfigureWebApi(HttpConfiguration configuration)
+		{
+			
 		}
 
 		private void ConfigureAuth(IAppBuilder app)

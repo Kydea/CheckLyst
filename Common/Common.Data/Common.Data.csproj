@@ -114,6 +114,7 @@
     </Compile>
     <Compile Include="IRepository.cs" />
     <Compile Include="ListItems\Company.cs" />
+    <Compile Include="Parameter.cs" />
     <Compile Include="PasswordHistory.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>

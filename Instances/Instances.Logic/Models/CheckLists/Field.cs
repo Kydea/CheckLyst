@@ -26,5 +26,28 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 		public List<string> ValuesList { get; set; }
 		public DataType ValueType { get; } = DataType.Text;
 		public string ValueTypeName { get; set; }
+
+		public override ICheckListItem Clone(ICheckListGroup parent)
+		{
+			var field = new Field
+			{
+				Group = parent,
+				LinesCount = LinesCount,
+				Value = Value,
+				ValueFormula = ValueFormula == null ? null : new Formula(ValueFormula.RawValue),
+				ValueTypeName = ValueTypeName,
+				ValuesList = ValuesList,
+				ExternalSourceName = ExternalSourceName,
+				ExternalSourceColumn = ExternalSourceColumn,
+			};
+			Copy(this, field);
+			return field;
+		}
+
+		public override void Update()
+		{
+			base.Update();
+			ValueFormula?.Update(CheckList.Expressions, RuntimeValues);
+		}
 	}
 }

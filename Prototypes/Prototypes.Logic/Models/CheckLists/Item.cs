@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.Expressions;
 
@@ -19,5 +20,10 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 		public ICheckListItem Previous { get; set; }
 		public Dictionary<string, object> RuntimeValues { get; } = new Dictionary<string, object>();
 		public abstract string TypeName { get; }
+
+		public ICheckListItem Clone(ICheckListGroup parent)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

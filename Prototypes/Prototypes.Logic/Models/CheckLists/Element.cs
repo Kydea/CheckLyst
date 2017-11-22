@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using CheckListManager.Common.Logic.Models;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.Expressions;
@@ -50,6 +51,16 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 		public Conditions ValidCondition { get; set; }
 		public string ValidExpressionCode { get; set; }
 		public string ValidityMessage { get; set; }
+
+		public void Setup()
+		{
+			throw new NotImplementedException();
+		}
+
+		public void Update()
+		{
+			throw new NotImplementedException();
+		}
 
 		public virtual bool IsValidByDefault()
 		{

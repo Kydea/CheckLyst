@@ -61,6 +61,40 @@ namespace CheckListManager.Common.Data
 			}
 		}
 
+		protected async Task<T> Call<T>(string name, params Parameter[] parameters)
+		{
+			if (Entities.Database.Connection.State != ConnectionState.Open)
+			{
+				await Entities.Database.Connection.OpenAsync();
+			}
+
+			using (var command = Entities.Database.Connection.CreateCommand())
+			{
+				command.CommandType = CommandType.StoredProcedure;
+				command.CommandText = name;
+
+				if (parameters != null)
+				{
+					foreach (var parameter in parameters)
+					{
+						var p = command.CreateParameter();
+						p.ParameterName = parameter.Name;
+						if (parameter.DbType.HasValue)
+						{
+							p.DbType = parameter.DbType.Value;
+						}
+						if (parameter.Value != null)
+						{
+							p.Value = parameter.Value;
+						}
+						command.Parameters.Add(p);
+					}
+				}
+
+				return await command.ExecuteScalarAsync().ContinueWith(r => (T)r.Result);
+			}
+		}
+
 		private static DatabaseAggregateException GetValidationErrors(DbEntityValidationException exception)
 		{
 			var exceptions =

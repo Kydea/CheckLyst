@@ -88,78 +88,183 @@
   -webkit-font-smoothing: antialiased;
   font-smoothing: antialiased; }
 
-.flaticon-departments:before {
+.flaticon-chevron-circle-up:before {
   content: "\f100"; }
 
-.flaticon-descriptions:before {
+.flaticon-chevron-circle-down:before {
   content: "\f101"; }
 
-.flaticon-version:before {
+.flaticon-chevron-circle-left:before {
   content: "\f102"; }
 
-.flaticon-meno:before {
+.flaticon-chevron-circle-right:before {
   content: "\f103"; }
 
-.flaticon-dashboard:before {
+.flaticon-arrow-circle-up:before {
   content: "\f104"; }
 
-.flaticon-help:before {
+.flaticon-arrow-circle-down:before {
   content: "\f105"; }
 
-.flaticon-freccia-su:before {
+.flaticon-arrow-circle-left:before {
   content: "\f106"; }
 
-.flaticon-freccia-destra:before {
+.flaticon-arrow-circle-right:before {
   content: "\f107"; }
 
-.flaticon-freccia-giu:before {
+.flaticon-arrow-up:before {
   content: "\f108"; }
 
-.flaticon-freccia-sinistra:before {
+.flaticon-arrow-down:before {
   content: "\f109"; }
 
-.flaticon-states:before {
+.flaticon-arrow-left:before {
   content: "\f10a"; }
 
-.flaticon-settings:before {
+.flaticon-arrow-right:before {
   content: "\f10b"; }
 
-.flaticon-people:before {
+.flaticon-angle-up:before {
   content: "\f10c"; }
 
-.flaticon-tags:before {
+.flaticon-freccia-fina-giu:before {
   content: "\f10d"; }
 
-.flaticon-freccia-fina-su:before {
+.flaticon-angle-left:before {
   content: "\f10e"; }
 
-.flaticon-freccia-fina-destra:before {
+.flaticon-angle-right:before {
   content: "\f10f"; }
 
-.flaticon-freccia-fina-sinistra:before {
+.flaticon-sort:before {
   content: "\f110"; }
 
-.flaticon-freccia-fina-giu:before {
+.flaticon-check-circle:before {
   content: "\f111"; }
 
-.flaticon-piu:before {
+.flaticon-times-circle:before {
   content: "\f112"; }
 
-.flaticon-istance:before {
+.flaticon-times-circle-o:before {
   content: "\f113"; }
 
-.flaticon-logout:before {
+.flaticon-times:before {
   content: "\f114"; }
 
-.flaticon-prototypes:before {
+.flaticon-plus-circle:before {
   content: "\f115"; }
 
-.flaticon-calendar:before {
+.flaticon-minus:before {
   content: "\f116"; }
 
-.flaticon-data:before {
+.flaticon-plus:before {
   content: "\f117"; }
 
-.flaticon-security:before {
+.flaticon-logout:before {
   content: "\f118"; }
+
+.flaticon-user-o:before {
+  content: "\f119"; }
+
+.flaticon-ban:before {
+  content: "\f11a"; }
+
+.flaticon-question:before {
+  content: "\f11b"; }
+
+.flaticon-warning:before {
+  content: "\f11c"; }
+
+.flaticon-lock-o:before {
+  content: "\f11d"; }
+
+.flaticon-trash-o:before {
+  content: "\f11e"; }
+
+.flaticon-floppy-o:before {
+  content: "\f11f"; }
+
+.flaticon-cog:before {
+  content: "\f120"; }
+
+.flaticon-dashboard-o:before {
+  content: "\f121"; }
+
+.flaticon-istance:before {
+  content: "\f122"; }
+
+.flaticon-prototype:before {
+  content: "\f123"; }
+
+.flaticon-edit-o:before {
+  content: "\f124"; }
+
+.flaticon-file-o:before {
+  content: "\f125"; }
+
+.flaticon-buildings-o:before {
+  content: "\f126"; }
+
+.flaticon-building-o:before {
+  content: "\f127"; }
+
+.flaticon-folder-o:before {
+  content: "\f128"; }
+
+.flaticon-folder-open-o:before {
+  content: "\f129"; }
+
+.flaticon-table-o:before {
+  content: "\f12a"; }
+
+.flaticon-id-card-o:before {
+  content: "\f12b"; }
+
+.flaticon-envelope-o:before {
+  content: "\f12c"; }
+
+.flaticon-barcode-o:before {
+  content: "\f12d"; }
+
+.flaticon-search-o:before {
+  content: "\f12e"; }
+
+.flaticon-align-left:before {
+  content: "\f12f"; }
+
+.flaticon-database-o:before {
+  content: "\f130"; }
+
+.flaticon-calendar:before {
+  content: "\f131"; }
+
+.flaticon-workflow:before {
+  content: "\f132"; }
+
+.flaticon-version:before {
+  content: "\f133"; }
+
+.flaticon-ellipsis-h:before {
+  content: "\f134"; }
+
+.flaticon-clone-o:before {
+  content: "\f135"; }
+
+.flaticon-tags-o:before {
+  content: "\f136"; }
+
+.flaticon-battery:before {
+  content: "\f137"; }
+
+.flaticon-connection:before {
+  content: "\f138"; }
+
+.flaticon-bullseye:before {
+  content: "\f139"; }
+
+.flaticon-line-chart:before {
+  content: "\f13a"; }
+
+.flaticon-toggle-off:before {
+  content: "\f13b"; }
 

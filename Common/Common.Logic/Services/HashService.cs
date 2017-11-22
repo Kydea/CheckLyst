@@ -29,7 +29,7 @@ namespace CheckListManager.Common.Logic.Services
 			}
 
 			var hash = HashStringToBytes(text);
-			return Convert.ToBase64String(hash);
+			return Convert.ToBase64String(hash).ToUpperInvariant();
 		}
 
 		public bool ValidateHash(string text, byte[] hash)
