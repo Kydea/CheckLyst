@@ -9,6 +9,7 @@
 		paginator,
 
 		setup = function () {
+			element.appendTo($("<div style='overflow: auto' />").insertBefore(element));
 			$("td", noRecordRow).attr("colspan", columnNumber);
 
 			options = options || {};

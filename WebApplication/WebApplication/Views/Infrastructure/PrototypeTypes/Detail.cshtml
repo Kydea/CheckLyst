@@ -23,13 +23,13 @@
         <label class="Clearing">
             Approvation workflow
             <i class="fi flaticon-departments" />
-            <select type="text" name="approvationWorkFlow" />
+            <select type="text" name="approvationWorkFlow" data-nullable="true" />
         </label>
 
         <label>
             Obslolescence workflow
             <i class="fi flaticon-departments" />
-            <select type="text" name="obsolescenceWorkFlow" />
+            <select type="text" name="obsolescenceWorkFlow" data-nullable="true" />
         </label>
 
         <label class="Clearing">
@@ -64,7 +64,6 @@
     new matematici.DetailPage({
         formSelector: "form#Detail",
         initHandler: function (detailPage) {
-            console.log(detailPage.getSender().getBindResult());
             detailPage.getForm().handleResult(detailPage.getSender().getBindResult());
         }
     });

@@ -62,7 +62,7 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
                 .GetPrototypeTypesAsync(
                     Company,
                     pt => new PrototypeTypesRow {
-                        Department = pt.Departments.Name,
+                        Department = pt.Department.Value,
                         ID = pt.ID,
                         Description = pt.Description,
                         ApprovationWorkFlow = pt.ApprovationWorkFlow,

@@ -10,7 +10,7 @@ div.Accordion-Bar {
         padding-right: 50px;
         box-shadow: none;
 
-        i.fa {
+        i.fi {
             background: none;
             right: 0;
             border: none;
@@ -23,7 +23,7 @@ div.Accordion-Bar {
         }
 
         &.Closed {
-            i.fa {
+            i.fi {
                 transform: rotate(-180deg);
             }
         }

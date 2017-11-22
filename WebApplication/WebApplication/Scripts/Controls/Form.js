@@ -150,14 +150,15 @@
 				if (fieldData) {
 					var tagName = field[0].tagName;
 					if (tagName == "SELECT" && fieldData.options !== undefined) {
-						var value = field.val();
+						var
+							value = field.val(),
+							autoComplete = field.data("autoComplete");
 						field.empty();
 						for (var index in fieldData.options) {
 							var option = fieldData.options[index];
 							field.append($("<option />").attr("value", option.value).text(option.text));
 						}
 						if (fieldData.value != null) field.val(fieldData.value);
-						var autoComplete = field.data("autoComplete");
 						autoComplete.refresh();
 						autoComplete.getControl().toggle(!fieldData.visibile);
 						matematici.controls.setEditable(autoComplete.getControl(), fieldData.editable && fieldData.options.length > 0);
@@ -205,7 +206,7 @@
 	this.setValues = function (values) {
 		fields.each(function () {
 			var field = $(this);
-			setFieldValue(field, values[field.attr("name")]);
+			setFieldValue(field, values && values[field.attr("name")]);
 		});
 	};
 

@@ -53,7 +53,7 @@
 			form.initialize();
 			setTimeout(function () {
 				if (options.initHandler) options.initHandler(detailPage);
-				if (data != null) form.setValues(data);
+				form.setValues(data);
 			}, 0);
 			
 		};

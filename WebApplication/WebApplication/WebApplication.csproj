@@ -126,6 +126,9 @@
     </Content>
     <Content Include="Content\Theme\Fonts\FlatIcon\flaticon.html" />
     <Content Include="Content\Theme\Fonts\FlatIcon\Flaticon.svg" />
+    <Content Include="Content\Theme\Fonts\FlatIcon\_flaticon.css">
+      <DependentUpon>_flaticon.scss</DependentUpon>
+    </Content>
     <Content Include="Content\Theme\Fonts\MyriadPro\Bold\MyriadPro-Bold.svg" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Cond\MyriadPro-Cond.svg" />
     <Content Include="Content\Theme\Fonts\MyriadPro\LightCond\MyriadPro-LightCond.svg" />

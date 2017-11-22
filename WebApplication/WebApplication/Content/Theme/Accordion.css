@@ -6,7 +6,7 @@
     border-radius: 5px 5px 0 0;
     padding-right: 50px;
     box-shadow: none; }
-    div.Accordion-Bar .Button i.fa {
+    div.Accordion-Bar .Button i.fi {
       background: none;
       right: 0;
       border: none;
@@ -14,7 +14,7 @@
       box-shadow: none; }
     div.Accordion-Bar .Button:hover {
       background-color: #ffcc09 !important; }
-    div.Accordion-Bar .Button.Closed i.fa {
+    div.Accordion-Bar .Button.Closed i.fi {
       transform: rotate(-180deg); }
     div.Accordion-Bar .Button::after {
       content: "";

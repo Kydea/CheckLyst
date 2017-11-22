@@ -34,17 +34,17 @@ matematici.AutoComplete = function (selector) {
 			});
 			list.outerWidth(width);
 
-            var labelPosition = {
-                'left': position.left + parseInt(label.css('marginLeft'), 10),
-                'top': position.top + label.outerHeight(true)
-            };
+			var labelPosition = {
+				'left': position.left + parseInt(label.css('marginLeft'), 10),
+				'top': position.top + label.outerHeight(true)
+			};
 
-            list.css(labelPosition);
-            input.css(labelPosition);
+			list.css(labelPosition);
+			input.css(labelPosition);
 
-            icon.css({
-                'left': labelPosition.left + width - 20,
-                'top': position.top + parseInt(label.css('marginTop'), 10)
+			icon.css({
+				'left': labelPosition.left + width - 20,
+				'top': position.top + parseInt(label.css('marginTop'), 10)
 			});
 		},
 
@@ -54,7 +54,7 @@ matematici.AutoComplete = function (selector) {
 			var width = label.outerWidth();
 			input = $("<input />").addClass("AutoComplete-Filter").attr({ type: "text" }).hide().insertAfter(label);
 			list = $("<div />").addClass("AutoComplete-List").insertAfter(input);
-			icon = $("<i />").addClass("AutoComplete fi flaticon-freccia-giu").insertAfter(input);
+			icon = $("<i />").addClass("AutoComplete fi flaticon-arrow-down").insertAfter(input);
 			noRow = $("<i />").addClass("fi flaticon-meno");
 			element.parent("label").on("click", function (e) {
 				label.focus();
@@ -157,6 +157,9 @@ matematici.AutoComplete = function (selector) {
 
 		updateList = function () {
 			list.empty();
+			if (element.data("nullable"))
+				list.append($("<a />").attr("href", "#").append($("<i />").addClass("fi flaticon-times")));
+
 			var count = 0;
 			options
 				.each(function () {
