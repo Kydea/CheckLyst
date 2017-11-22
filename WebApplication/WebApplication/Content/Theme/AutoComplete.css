@@ -54,5 +54,6 @@ i.AutoComplete {
   line-height: 30px;
   height: 30px;
   position: absolute !important;
-  margin: 0 !important; }
+  margin: 0 !important;
+  display: none; }
 

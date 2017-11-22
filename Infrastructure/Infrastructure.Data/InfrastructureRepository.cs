@@ -143,5 +143,14 @@ namespace CheckListManager.Infrastructure.Data
                 CurrentPage = currentPage
             };
         }
+
+        public async Task<List<WorkFlows>> GetWorkFlows(long companyId)
+        {
+            return await Entities.WorkFlows
+                .Where(wf => wf.Company == companyId)
+                .OrderBy(wf => wf.Description).ThenBy(wf => wf.ID)
+                .ToListAsync();
+        }
+
     }
 }

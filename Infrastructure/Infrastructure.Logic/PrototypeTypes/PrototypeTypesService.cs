@@ -40,6 +40,17 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
                 };
                 response.Valid &= Departments.Any();
 
+                var WorkFlows = (await _infrastructureRepository.GetWorkFlows(Company)).Select(wf => new Option(wf.ID.ToString(), wf.Description));
+                response.Fields["ApprovationWorkFlow"] = new Field
+                {
+                    Options = WorkFlows
+                };
+
+                response.Fields["ObsolescenceWorkFlow"] = new Field
+                {
+                    Options = WorkFlows
+                };
+
                 response.Fields["PrototypeType"] = new Field { Value = Form.PrototypeType };
             }
 

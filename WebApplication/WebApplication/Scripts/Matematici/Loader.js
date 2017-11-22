@@ -42,7 +42,9 @@
 		_refreshComponents = function () {
 			setTimeout(function () {
 				$("select.AutoComplete").each(function (index) {
-					$(this).data("autoComplete").refresh();
+					var select = $(this);
+					select.data("autoComplete").refresh();
+					select.siblings("i.AutoComplete").show();
 				});
 			}, 0);
 			return;

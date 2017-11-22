@@ -6,6 +6,7 @@
 		fields = $(fieldsSelector, element),
 		valid = false,
 		errors,
+		bindResult,
 
 		setup = function () {
 			//initial setup
@@ -137,7 +138,7 @@
 							)
 						);
 			} 
-		};
+		},
 
 		handleResult = function (data) {
 			//updates the form
@@ -184,6 +185,7 @@
 				contentType: "application/json; charset=utf-8",
 				data: data
 			}).done(function (result) {
+				if (event == options.bindEvent) bindResult = result;
 				if (options.applyButton && data && data.source && (data.source == options.applyButton.attr("name") || data.source == options.applyButton.attr("id")))
 					matematici.controls.setEditable(options.applyButton, false); //by default, the action button is disabled when clicked with success
 				if (handler)
@@ -213,6 +215,10 @@
 
 	this.handleResult = function (result) {
 		handleResult(result);
+	};
+
+	this.getBindResult = function () {
+		return bindResult;
 	};
 };
 

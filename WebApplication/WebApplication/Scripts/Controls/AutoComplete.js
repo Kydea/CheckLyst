@@ -124,6 +124,11 @@ matematici.AutoComplete = function (selector) {
 
 		showList = function () {
 			if (oldValue == null) oldValue = element.val() || "";
+			$("select.AutoComplete.Open").each(function () {
+				$(this).data("autoComplete").hideList();
+			});
+
+			element.addClass("Open");
 			label.addClass("Open");
 			input.show();
 			list.show();
@@ -145,6 +150,7 @@ matematici.AutoComplete = function (selector) {
 			input.hide();
 			setCurrentItem(null);
 			label.removeClass("Open");
+			element.removeClass("Open");
 			if (oldValue != (element.val() || "")) element.change();
 			oldValue = null;
 		},
@@ -172,6 +178,10 @@ matematici.AutoComplete = function (selector) {
 		options = $("option", element);
 		updateList();
 		setValue();
+	};
+
+	this.hideList = function () {
+		hideList();
 	};
 
 	this.getControl = function () {

@@ -71,4 +71,5 @@ i.AutoComplete {
     height: $Metric-Control-Height;
     position: absolute !important;
     margin: 0 !important;
+    display: none; //shown by matematici.loader
 }

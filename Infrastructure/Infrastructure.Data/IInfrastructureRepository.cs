@@ -31,5 +31,7 @@ namespace CheckListManager.Infrastructure.Data
             long companyId,
             Expression<Func<PrototypeTypes, TResult>> select,
             long? department, string description, int currentPage, int itemsPerPage);
+
+        Task<List<WorkFlows>> GetWorkFlows(long companyId);
     }
 }

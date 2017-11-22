@@ -1,9 +1,7 @@
 ﻿<div id="InfrastructurePage">
     <h1>Prototype Types List</h1>
 
-    <div class="ActionBar">
-        <a class="Button">Add <i class="fa fa-plus"></i></a>
-    </div>
+    <div class="ActionBar"></div>
 
     <div class="ShadowPanel">
         <div class="Accordion-Bar">
@@ -12,10 +10,12 @@
         <form id="Filters" action="@BaseUrl/Infrastructure/PrototypeTypes">
             <label>
                 Department
-                <select name="department" data-watermark="pippo" />
+                <i class="fi flaticon-departments" />
+                <select name="department" />
             </label>
             <label>
                 Description
+                <i class="fi flaticon-departments" />
                 <input type="text" name="prototypeType" />
             </label>
 
@@ -61,6 +61,7 @@
             detailUrl: "@Url.Action("PrototypeTypesDetail")",
             filterFormSelector: "form#Filters",
             resultGridSelector: "div#Content table.Grid",
+            bindEvent: "Bind",
             breadCrumbs: [
                 { content: "infrastructure" },
                 { content: "protype types" }

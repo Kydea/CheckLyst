@@ -15,15 +15,21 @@
         </label>
 
         <label class="Clearing">
+            Department
+            <i class="fi flaticon-departments" />
+            <select name="department" />
+        </label>
+
+        <label class="Clearing">
             Approvation workflow
             <i class="fi flaticon-departments" />
-            <select type="text" name="approvationWorkflow" />
+            <select type="text" name="approvationWorkFlow" />
         </label>
 
         <label>
-            obslolescence workflow
+            Obslolescence workflow
             <i class="fi flaticon-departments" />
-            <select type="text" name="obsolescenceWorkflow" />
+            <select type="text" name="obsolescenceWorkFlow" />
         </label>
 
         <label class="Clearing">
@@ -56,6 +62,10 @@
 
 <script type="text/javascript">
     new matematici.DetailPage({
-        formSelector: "form#Detail"
+        formSelector: "form#Detail",
+        initHandler: function (detailPage) {
+            console.log(detailPage.getSender().getBindResult());
+            detailPage.getForm().handleResult(detailPage.getSender().getBindResult());
+        }
     });
 </script>

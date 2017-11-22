@@ -1,5 +1,6 @@
 ﻿matematici.DetailPage = function (options) {
 	var
+		detailPage = this,
 		data = matematici.popup.getData(),
 		sender = matematici.popup.getSender(),
 		buttons = [],
@@ -46,11 +47,24 @@
 			matematici.popup.setWidth(420);
 
 			form = new matematici.Form(options.formSelector, {
-				applyButton: "#SaveButton"
+				applyButton: "#SaveButton",
+				bindEvent: options.bindEvent
 			});
 			form.initialize();
-			if (data != null) form.setValues(data);
-		}
+			setTimeout(function () {
+				if (options.initHandler) options.initHandler(detailPage);
+				if (data != null) form.setValues(data);
+			}, 0);
+			
+		};
+
+	this.getSender = function () {
+		return sender;
+	};
+
+	this.getForm = function () {
+		return form;
+	};
 
 	setup();
 }
