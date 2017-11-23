@@ -360,6 +360,7 @@
     <Content Include="Views\Infrastructure\Departments\Detail.cshtml" />
     <Content Include="Views\Infrastructure\Departments\List.cshtml" />
     <Content Include="Views\WorkFlows\Detail.cshtml" />
+    <Content Include="Views\DataSources\Detail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
