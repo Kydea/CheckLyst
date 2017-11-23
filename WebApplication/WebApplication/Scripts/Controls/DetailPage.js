@@ -54,7 +54,7 @@
 			setTimeout(function () {
 				if (options.initHandler) options.initHandler(detailPage);
 				form.setValues(data);
-				if (options.initHandler) options.completeHandler(detailPage);
+				if (options.completeHandler) options.completeHandler(detailPage);
 			}, 0);
 			
 		};
@@ -72,7 +72,6 @@
 	};
 
 	this.isNew = function () {
-		console.log(data);
 		return data == null;
 	};
 

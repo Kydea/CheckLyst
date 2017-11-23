@@ -9,6 +9,8 @@ namespace CheckListManager.DataSources.Logic.List
 {
     public class ListRequest : Request
     {
-        public string Keyword { get; set; }
+        public string Code { get; set; }
+
+        public string Description { get; set; }
     }
 }
