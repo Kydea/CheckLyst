@@ -27,7 +27,7 @@ matematici.dialog = function () {
 				if (button.cancelButton) {
 					container
 						.append($("<a />").attr("href", "#").addClass("CloseButton")
-							.append($("<i />").addClass("fa fa-times"))
+							.append($("<i />").addClass("fi flaticon-times-circle"))
 							.on("click", function () {
 								button.content.click();
 							}));
@@ -56,7 +56,7 @@ matematici.dialog = function () {
 		},
 
 		show = function () {
-			if (element) matematici.dialog.close();
+			if (element) element.remove();
 
 			element = $("<div />").addClass("Dialog").appendTo(matematici.elements.body);
 			container = $("<div />").addClass("Container AutoCenter").appendTo(element);
@@ -103,10 +103,10 @@ matematici.dialog = function () {
 		},
 
 		show: function (titleOrSettings, content, buttons) {
-			if (content) {
+			if (content || buttons) {
 				options.title = titleOrSettings;
-				options.content = content;
-				options.buttons = buttons ? buttons : { text: "ok", icon: "check" };
+				options.content = content || "";
+				options.buttons = buttons || { text: "ok", icon: "check" };
 			} else if (titleOrSettings)
 				options = titleOrSettings;
 
@@ -117,7 +117,7 @@ matematici.dialog = function () {
 		},
 
 		error: function (titleOrSettings, content) {
-			if (content)
+			if (typeof (titleOrSettings) == "string")
 				titleOrSettings = { title: titleOrSettings, content: content };
 			titleOrSettings.cssClass = "Error";
 			titleOrSettings.buttons = { text: "ok", icon: "check", defaultButton: true, cancelButton: true };

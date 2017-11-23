@@ -1,4 +1,5 @@
 ﻿using CheckListManager.Common.Core.Services;
+using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Logic.DataEngine;
@@ -51,7 +52,7 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
                     Options = WorkFlows
                 };
 
-                response.Fields["PrototypeType"] = new Field { Value = Form.PrototypeType };
+                response.Fields["PrototypeType"] = new Field { Value = Form.Name };
             }
 
             return response;
@@ -61,10 +62,12 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
             => await _infrastructureRepository
                 .GetPrototypeTypesAsync(
                     Company,
-                    pt => new PrototypeTypesRow {
-                        Department = pt.Department.Value,
+                    pt => new PrototypeTypesRow
+                    {
+                        Department = pt.Department,
+                        DepartmentName = pt.Departments.Name,
                         ID = pt.ID,
-                        Description = pt.Description,
+                        Name = pt.Name,
                         ApprovationWorkFlow = pt.ApprovationWorkFlow,
                         ApprovationWorkFlowDescription = pt.WorkFlows.Description,
                         ObsolescenceWorkFlow = pt.ObsolescenceWorkFlow,
@@ -74,7 +77,99 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
                         ModifiedBy = pt.ModifiedBy,
                         ModifiedOn = pt.ModifiedOn
                     },
-                    Form.Data.Department, Form.Data.PrototypeType, Form.CurrentPage, Form.ItemsPerPage
+                    Form.Data.Department, Form.Data.Name, Form.CurrentPage, Form.ItemsPerPage
                 );
+        private PrototypeTypesResponse Validate(PrototypeTypesRequest record)
+        {
+            var response = new PrototypeTypesResponse();
+            if (string.IsNullOrWhiteSpace(record.Name))
+                response.Fields["Name"] = new Field
+                {
+                    ValidationMessages = new List<ValidationMessage> {
+                        new ValidationMessage {
+                            Level = ValidationMessage.LevelError,
+                            Message = "Invalid name"
+                        }
+                    }
+                };
+
+            response.Valid = response.Fields.Count() == 0;
+            return response;
+        }
+
+        public async Task<PrototypeTypesResponse> Add(DefaultIdentity identity, PrototypeTypesRequest record)
+        {
+            var response = Validate(record);
+            if (response.Valid)
+                try
+                {
+                    await _infrastructureRepository.AddPrototypeTypeAsync(identity, new Common.Data.PrototypeTypes
+                    {
+                        Department = record.Department.Value,
+                        Name = record.Name,
+                        ApprovationWorkFlow = record.ApprovationWorkFlow,
+                        ObsolescenceWorkFlow = record.ObsolescenceWorkFlow
+                    });
+                }
+                catch (Exception Exception)
+                {
+                    response.ValidationMessages.Add(new ValidationMessage
+                    {
+                        Level = ValidationMessage.LevelError,
+                        Message = Exception.Message
+                    });
+                    response.Valid = false;
+                }
+
+            return response;
+        }
+
+        public async Task<PrototypeTypesResponse> Edit(DefaultIdentity identity, PrototypeTypesRequest record)
+        {
+            var response = Validate(record);
+            if (response.Valid)
+                try
+                {
+                    await _infrastructureRepository.EditPrototypeTypeAsync(identity, new Common.Data.PrototypeTypes
+                    {
+                        ID = record.ID.Value,
+                        Department = record.Department.Value,
+                        Name = record.Name,
+                        ApprovationWorkFlow = record.ApprovationWorkFlow,
+                        ObsolescenceWorkFlow = record.ObsolescenceWorkFlow
+                    });
+                }
+                catch (Exception Exception)
+                {
+                    response.ValidationMessages.Add(new ValidationMessage
+                    {
+                        Level = ValidationMessage.LevelError,
+                        Message = Exception.Message
+                    });
+                    response.Valid = false;
+                }
+
+            return response;
+        }
+
+        public async Task<PrototypeTypesResponse> Delete(DefaultIdentity identity, long id)
+        {
+            var response = new PrototypeTypesResponse();
+            try
+            {
+                await _infrastructureRepository.DeletePrototypeTypeAsync(identity, id);
+            }
+            catch (Exception Exception)
+            {
+                response.ValidationMessages.Add(new ValidationMessage
+                {
+                    Level = ValidationMessage.LevelError,
+                    Message = Exception.Message
+                });
+                response.Valid = false;
+            }
+
+            return response;
+        }
     }
 }

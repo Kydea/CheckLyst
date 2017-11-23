@@ -30,7 +30,7 @@ namespace CheckListManager.Infrastructure.Data
         Task<PagingResponse<List<TResult>>> GetPrototypeTypesAsync<TResult>(
             long companyId,
             Expression<Func<PrototypeTypes, TResult>> select,
-            long? department, string description, int currentPage, int itemsPerPage);
+            long? department, string name, int currentPage, int itemsPerPage);
 
         Task<List<WorkFlows>> GetWorkFlows(long companyId);
     }

@@ -1,10 +1,14 @@
-﻿matematici.Accodion = function (bar) {
+﻿matematici.Accordion = function (bar) {
 	var
 		accordion = this,
-		button = $("a.Button", bar),
 		panel = bar.next(),
+		button,
 
 		setup = function () {
+			button = $("<a />").text("filters").addClass("Button").attr("href", "#").append($("<i />").addClass("fi flaticon-arrow-circle-down"));
+			bar.removeClass("Accordion").addClass("Accordion-Bar");
+			bar.append(button);
+
 			panel.addClass("Accordion");
 
 			button.on("click", function () {
@@ -36,7 +40,7 @@
 }
 
 matematici.initializers.push(function (context) {
-	$("div.Accordion-Bar", context).each(function () {
-		new matematici.Accodion($(this));
+	$("div.Accordion", context).each(function () {
+		new matematici.Accordion($(this));
 	});
 });

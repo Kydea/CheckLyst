@@ -12,7 +12,7 @@
 			if (values.length == 0)
 				$(".ValidationMessagesIcon", control.parent().removeClass("Error")).remove();
 			else {
-				errors = $("<div />").addClass("Errors").show();
+				var errors = $("<div />").addClass("Errors").show();
 				for (var index in values)
 					errors.append(
 						$("<div />").addClass("Error").text(" " + values[index].message).prepend(

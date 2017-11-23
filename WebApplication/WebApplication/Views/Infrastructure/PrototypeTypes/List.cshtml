@@ -4,9 +4,7 @@
     <div class="ActionBar"></div>
 
     <div class="ShadowPanel">
-        <div class="Accordion-Bar">
-            <a class="Button">search <i class="fa fa-arrow-down"></i></a>
-        </div>
+        <div class="Accordion"></div>
         <form id="Filters" action="@BaseUrl/Infrastructure/PrototypeTypes">
             <label>
                 Department
@@ -14,19 +12,19 @@
                 <select name="department" />
             </label>
             <label>
-                Description
+                Name
                 <i class="fi flaticon-align-left" />
-                <input type="text" name="prototypeType" />
+                <input type="text" name="name" />
             </label>
 
-            <a id="ApplyButton" class="Button DefaultButton">invio <i class="fa fa-arrow-circle-right"></i></a>
+            <a id="ApplyButton" class="Button DefaultButton">search <i class="fa fa-arrow-circle-right"></i></a>
         </form>
 
         <table class="Grid">
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Description</th>
+                    <th>Name</th>
                     <th>Approvation Workflow</th>
                     <th>Obsolescence Workflow</th>
                     <th>Created By</th>
@@ -38,7 +36,7 @@
             <tbody>
                 <tr class="Handler">
                     <td data-column="id"></td>
-                    <td data-column="description"></td>
+                    <td data-column="name"></td>
                     <td data-column="approvationWorkFlowDescription"></td>
                     <td data-column="obsolescenceWorkFlowDescription"></td>
                     <td data-column="createdBy"></td>

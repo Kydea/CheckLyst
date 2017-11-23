@@ -82,5 +82,7 @@
                 e.preventDefault();
                 break;
         }
+    }).on("click", "label input", function (e) {
+        e.preventDefault(); //in ios two inputs in the same label give problems
     });
 </script>

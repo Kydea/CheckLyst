@@ -3,14 +3,14 @@
 $Inline-Form-Label-Width: 200px;
 
 div.Errors {
-    color: red;
+    color: $Color-Red-Regular;
     margin-top: 20px;
     display: none;
     line-height: 1.5;
 }
 
 input.Error, select.Error {
-    border-color: red;
+    border-color: $Color-Red-Regular;
     outline-color: #f99;
 }
 
@@ -98,7 +98,7 @@ a.Button {
     }
 
     &.Invalid {
-        color: red;
+        color: $Color-Red-Regular;
     }
 
     &.ReadOnly {
@@ -174,7 +174,7 @@ form {
         }
 
         i.ValidationMessagesIcon {
-            color: red;
+            color: $Color-Red-Regular;
             cursor: pointer;
         }
         // Number of controls | percentage per item.
@@ -257,12 +257,12 @@ form {
 
         &.Error {
             i {
-                border-color: red !important;
+                border-color: $Color-Red-Regular !important;
             }
 
             input, select {
-                border-color: red;
-                outline-color: red;
+                border-color: $Color-Red-Regular;
+                outline-color: $Color-Red-Light;
             }
         }
     }

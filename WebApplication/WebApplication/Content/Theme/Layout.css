@@ -30,6 +30,9 @@ a {
   a.Right {
     float: right; }
 
+i.fa, i.fi {
+  font-size: 19px; }
+
 .AutoCenter {
   display: none; }
 

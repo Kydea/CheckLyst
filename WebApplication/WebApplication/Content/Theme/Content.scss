@@ -1,56 +1,60 @@
 ﻿@import "Library";
 
-body:not(.Login) div#Content {
-    margin-top: 30px;
-    min-height: calc(100vh - #{$Metric-Header-Height} - #{$Metric-Breadcrumbs-Height});
-    padding-bottom: 50px;
+body:not(.Login) {
+    div#Content {
+        margin-top: 30px;
+        min-height: calc(100vh - #{$Metric-Header-Height} - #{$Metric-Breadcrumbs-Height});
+        padding-bottom: 50px;
 
-    a {
-        text-decoration: none;
-
-        &:hover {
-            text-decoration: underline;
+        @media #{$Media-Extended} {
+            margin-left: $Metric-Header-Height;
         }
     }
 
-    hr {
-        height: 1px;
-        background-color: black;
-        border: 0;
-        width: 100%;
-    }
+    div#Content, div.Popup, div.Dialog {
+        a {
+            text-decoration: none;
 
-    h1 {
-        float: left;
-        margin: 0 0 20px;
-        color: $Color-Grey-Dark;
-        font: normal 30px $Font-Myriad;
-    }
+            &:hover {
+                text-decoration: underline;
+            }
+        }
 
-    h2 {
-        margin: 20px 0 30px;
-        font-size: 18px;
-        text-transform: uppercase;
-        color: $Color-Green-Dark;
-    }
+        hr {
+            height: 1px;
+            background-color: black;
+            border: 0;
+            width: 100%;
+        }
 
-    h3 {
-        margin: 20px 0;
-        font-size: 16px;
-        color: $Color-Green-Dark;
-    }
+        h1 {
+            float: left;
+            margin: 0 0 20px;
+            color: $Color-Grey-Dark;
+            font: normal 30px $Font-Myriad;
+        }
 
-    p {
-        line-height: 1.4;
-    }
+        h2 {
+            margin: 20px 0 30px;
+            font-size: 18px;
+            text-transform: uppercase;
+            color: $Color-Green-Dark;
+        }
 
-    ul, ol {
-        li {
+        h3 {
+            margin: 20px 0;
+            font-size: 16px;
+            color: $Color-Green-Dark;
+        }
+
+        p {
             line-height: 1.4;
         }
-    }
 
-    @media #{$Media-Extended} {
-        margin-left: $Metric-Header-Height;
+        ul, ol {
+            li {
+                line-height: 1.4;
+            }
+        }
     }
 }

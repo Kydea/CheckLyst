@@ -47,15 +47,21 @@ div.Popup {
 
         a.CloseButton {
             position: absolute;
-            top: 20px;
-            right: 20px;
-            color: black;
-            background: white;
-            border-radius: 50%;
-            width: $Metric-Control-Height;
-            height: $Metric-Control-Height;
-            line-height: $Metric-Control-Height;
+            top: 15px;
+            right: 15px;
+            color: white;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
             text-align: center;
+
+            i {
+                font-size: 30px;
+            }
+
+            &:hover {
+                color: $Color-Grey-Light;
+            }
         }
 
         form {

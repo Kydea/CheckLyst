@@ -33,15 +33,17 @@
         clear: both; }
     div.Dialog div.Container a.CloseButton {
       position: absolute;
-      top: 20px;
-      right: 20px;
-      color: black;
-      background: white;
-      border-radius: 50%;
+      top: 15px;
+      right: 15px;
+      color: white;
       width: 30px;
       height: 30px;
       line-height: 30px;
       text-align: center; }
+      div.Dialog div.Container a.CloseButton i {
+        font-size: 30px; }
+      div.Dialog div.Container a.CloseButton:hover {
+        color: #ccc; }
   div.Dialog.PopupMenu div.Container {
     width: 200px !important;
     padding: 0 !important; }
@@ -69,15 +71,15 @@
         div.Dialog.PopupMenu div.Container div.Buttons a.Button:last-child {
           border-bottom: none; }
   div.Dialog.Error h2 {
-    background-color: red !important; }
+    background-color: #cc0000 !important; }
   div.Dialog.Error div.Error {
     color: black; }
     div.Dialog.Error div.Error i {
-      color: red; }
+      color: #cc0000; }
   div.Dialog.Error div.Buttons a {
-    background-color: red !important; }
+    background-color: #cc0000 !important; }
     div.Dialog.Error div.Buttons a:hover {
-      background-color: #b00 !important; }
+      background-color: #ff3333 !important; }
   @media only screen and (min-width: 760px) {
     div.Dialog {
       position: fixed;

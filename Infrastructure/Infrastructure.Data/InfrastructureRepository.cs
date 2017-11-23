@@ -60,11 +60,11 @@ namespace CheckListManager.Infrastructure.Data
         public async Task<PrototypeTypes> EditPrototypeTypeAsync(DefaultIdentity identity, PrototypeTypes prototypeType)
         {
             var ExistingPrototypeType = await GetPrototypeTypeAsync(identity, prototypeType.ID);
-            ExistingPrototypeType.ModifiedOn = DateTimeOffset.UtcNow;
-            ExistingPrototypeType.ModifiedBy = identity.Code;
-            ExistingPrototypeType.Description = prototypeType.Description;
+            ExistingPrototypeType.Name = prototypeType.Name;
             ExistingPrototypeType.ApprovationWorkFlow = prototypeType.ApprovationWorkFlow;
             ExistingPrototypeType.ObsolescenceWorkFlow = prototypeType.ObsolescenceWorkFlow;
+            ExistingPrototypeType.ModifiedOn = DateTimeOffset.UtcNow;
+            ExistingPrototypeType.ModifiedBy = identity.Code;
             await SaveChangesAsync();
             return prototypeType;
         }
@@ -72,6 +72,10 @@ namespace CheckListManager.Infrastructure.Data
         public async Task<PrototypeTypes> AddPrototypeTypeAsync(DefaultIdentity identity, PrototypeTypes prototypeType)
         {
             prototypeType.Company = identity.CompanyId;
+            prototypeType.Department = prototypeType.Department;
+            prototypeType.Name = prototypeType.Name;
+            prototypeType.ApprovationWorkFlow = prototypeType.ApprovationWorkFlow;
+            prototypeType.ObsolescenceWorkFlow = prototypeType.ObsolescenceWorkFlow;
             prototypeType.CreatedOn = DateTimeOffset.UtcNow;
             prototypeType.CreatedBy = identity.Code;
             Entities.PrototypeTypes.Add(prototypeType);
@@ -117,17 +121,17 @@ namespace CheckListManager.Infrastructure.Data
         public async Task<PagingResponse<List<TResult>>> GetPrototypeTypesAsync<TResult>(
             long companyId, 
             Expression<Func<PrototypeTypes, TResult>> select, 
-            long? department, string description, int currentPage, int itemsPerPage)
+            long? department, string name, int currentPage, int itemsPerPage)
         {
             var Query = Entities.PrototypeTypes
                 .Where(pt =>
                     pt.Company == companyId
                     && (department == null || pt.Department == department)
-                    && (description == "" || pt.Description != null && pt.Description.ToUpper().Contains(description.ToUpper()))
+                    && (name == "" || pt.Name != null && pt.Name.ToUpper().Contains(name.ToUpper()))
                 );
 
             var Data = await Query
-                .OrderBy(pt => pt.Description).ThenBy(pt => pt.ID)
+                .OrderBy(pt => pt.Name).ThenBy(pt => pt.ID)
                 .Select(select)
                 .Skip((currentPage - 1) * itemsPerPage)
                 .Take(itemsPerPage)

@@ -43,7 +43,7 @@ matematici.AutoComplete = function (selector) {
 			input.css(labelPosition);
 
 			icon.css({
-				'left': labelPosition.left + width - 20,
+				'left': labelPosition.left + width - 24,
 				'top': position.top + parseInt(label.css('marginTop'), 10)
 			});
 		},
@@ -118,7 +118,7 @@ matematici.AutoComplete = function (selector) {
 					list.scrollTop(top + itemHeight - listHeight);
 
 				element.val(item.data("value"));
-				label.val(item.text());
+				label.val(item.hasClass("None") ? "" : item.text());
 			}
 		},
 
@@ -158,7 +158,7 @@ matematici.AutoComplete = function (selector) {
 		updateList = function () {
 			list.empty();
 			if (element.data("nullable"))
-				list.append($("<a />").attr("href", "#").append($("<i />").addClass("fi flaticon-times")));
+				list.append($("<a />").addClass("None").attr("href", "#").append($("<i />").text("(none)")));
 
 			var count = 0;
 			options

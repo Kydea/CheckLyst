@@ -31,10 +31,10 @@
           </Key>
           <Property Name="ID" Type="int8" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Code" Type="varchar" MaxLength="50" Nullable="false" />
-          <Property Name="Prototype" Type="int8" />
-          <Property Name="Version" Type="int4" />
-          <Property Name="Year" Type="int4" />
-          <Property Name="PrototypeCode" Type="varchar" MaxLength="50" />
+          <Property Name="Prototype" Type="int8" Nullable="false" />
+          <Property Name="Version" Type="int4" Nullable="false" />
+          <Property Name="Year" Type="int4" Nullable="false" />
+          <Property Name="PrototypeCode" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Number" Type="int4" />
           <Property Name="InstanceState" Type="varchar" MaxLength="20" Nullable="false" />
           <Property Name="Description" Type="text" />
@@ -64,11 +64,11 @@
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="int8" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Name" Type="varchar" MaxLength="50" />
+          <Property Name="Name" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Description" Type="varchar" MaxLength="100" Nullable="false" />
-          <Property Name="Company" Type="int8" />
-          <Property Name="Department" Type="int8" />
-          <Property Name="PrototypeType" Type="int8" />
+          <Property Name="Company" Type="int8" Nullable="false" />
+          <Property Name="Department" Type="int8" Nullable="false" />
+          <Property Name="PrototypeType" Type="int8" Nullable="false" />
           <Property Name="CreatedBy" Type="varchar" MaxLength="60" />
           <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
           <Property Name="ModifiedBy" Type="varchar" MaxLength="60" />
@@ -79,9 +79,9 @@
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="int8" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Description" Type="varchar" MaxLength="100" />
-          <Property Name="Company" Type="int8" />
-          <Property Name="Department" Type="int8" />
+          <Property Name="Name" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Company" Type="int8" Nullable="false" />
+          <Property Name="Department" Type="int8" Nullable="false" />
           <Property Name="ApprovationWorkFlow" Type="int8" />
           <Property Name="ObsolescenceWorkFlow" Type="int8" />
           <Property Name="CreatedBy" Type="varchar" MaxLength="60" />
@@ -384,7 +384,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Instances_InstanceNumerator">
-          <End Role="InstanceNumerators" Type="Self.InstanceNumerators" Multiplicity="0..1" />
+          <End Role="InstanceNumerators" Type="Self.InstanceNumerators" Multiplicity="1" />
           <End Role="Instances" Type="Self.Instances" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="InstanceNumerators">
@@ -464,7 +464,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="Instances_Prototype_fkey">
-          <End Role="Prototypes" Type="Self.Prototypes" Multiplicity="0..1" />
+          <End Role="Prototypes" Type="Self.Prototypes" Multiplicity="1" />
           <End Role="Instances" Type="Self.Instances" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Prototypes">
@@ -520,7 +520,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="Prototypes_Company_fkey">
-          <End Role="Companies" Type="Self.Companies" Multiplicity="0..1" />
+          <End Role="Companies" Type="Self.Companies" Multiplicity="1" />
           <End Role="Prototypes" Type="Self.Prototypes" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Companies">
@@ -532,7 +532,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="Prototypes_Department_fkey">
-          <End Role="Departments" Type="Self.Departments" Multiplicity="0..1" />
+          <End Role="Departments" Type="Self.Departments" Multiplicity="1" />
           <End Role="Prototypes" Type="Self.Prototypes" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Departments">
@@ -544,7 +544,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="Prototypes_PrototypeType_fkey">
-          <End Role="PrototypeTypes" Type="Self.PrototypeTypes" Multiplicity="0..1" />
+          <End Role="PrototypeTypes" Type="Self.PrototypeTypes" Multiplicity="1" />
           <End Role="Prototypes" Type="Self.Prototypes" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="PrototypeTypes">
@@ -568,7 +568,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="PrototypeTypes_Company_fkey">
-          <End Role="Companies" Type="Self.Companies" Multiplicity="0..1" />
+          <End Role="Companies" Type="Self.Companies" Multiplicity="1" />
           <End Role="PrototypeTypes" Type="Self.PrototypeTypes" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Companies">
@@ -580,7 +580,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="PrototypeTypes_Department_fkey">
-          <End Role="Departments" Type="Self.Departments" Multiplicity="0..1" />
+          <End Role="Departments" Type="Self.Departments" Multiplicity="1" />
           <End Role="PrototypeTypes" Type="Self.PrototypeTypes" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Departments">
@@ -845,7 +845,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        
         <EntityContainer Name="RelationalDatabaseModelStoreContainer">
           <EntitySet Name="InstanceExpressionValues" EntityType="Self.InstanceExpressionValues" Schema="CheckLists" store:Type="Tables" />
           <EntitySet Name="InstanceNumerators" EntityType="Self.InstanceNumerators" Schema="CheckLists" store:Type="Tables" />
@@ -1058,9 +1057,9 @@
           <NavigationProperty Name="Users" Relationship="Self.Users_Company_fkey" FromRole="Companies" ToRole="Users" />
           <NavigationProperty Name="TimeZones" Relationship="RelationalDatabaseModel.Companies_TimeZone_fkey" FromRole="Companies" ToRole="TimeZones" />
           <NavigationProperty Name="UserSessions" Relationship="RelationalDatabaseModel.UserSessions_Company_fkey" FromRole="Companies" ToRole="UserSessions" />
+          <NavigationProperty Name="WorkFlows" Relationship="RelationalDatabaseModel.WorkFlows_Company_fkey" FromRole="Companies" ToRole="WorkFlows" />
           <NavigationProperty Name="Prototypes" Relationship="RelationalDatabaseModel.Prototypes_Company_fkey" FromRole="Companies" ToRole="Prototypes" />
           <NavigationProperty Name="PrototypeTypes" Relationship="RelationalDatabaseModel.PrototypeTypes_Company_fkey" FromRole="Companies" ToRole="PrototypeTypes" />
-          <NavigationProperty Name="WorkFlows" Relationship="RelationalDatabaseModel.WorkFlows_Company_fkey" FromRole="Companies" ToRole="WorkFlows" />
         </EntityType>
         <EntityType Name="Departments">
           <Key>
@@ -1161,8 +1160,6 @@
           <EntitySet Name="InstanceNumerators" EntityType="RelationalDatabaseModel.InstanceNumerators" />
           <EntitySet Name="InstanceStates" EntityType="RelationalDatabaseModel.InstanceStates" />
           <EntitySet Name="InstanceTags" EntityType="RelationalDatabaseModel.InstanceTags" />
-          <EntitySet Name="Prototypes" EntityType="RelationalDatabaseModel.Prototypes" />
-          <EntitySet Name="PrototypeTypes" EntityType="RelationalDatabaseModel.PrototypeTypes" />
           <EntitySet Name="PrototypeVersions" EntityType="RelationalDatabaseModel.PrototypeVersions" />
           <EntitySet Name="PrototypeVersionTags" EntityType="RelationalDatabaseModel.PrototypeVersionTags" />
           <EntitySet Name="VersionStates" EntityType="RelationalDatabaseModel.VersionStates" />
@@ -1178,38 +1175,6 @@
           <AssociationSet Name="FK_Instances_Version" Association="RelationalDatabaseModel.FK_Instances_Version">
             <End Role="PrototypeVersions" EntitySet="PrototypeVersions" />
             <End Role="InstanceNumerators" EntitySet="InstanceNumerators" />
-          </AssociationSet>
-          <AssociationSet Name="Prototypes_Company_fkey" Association="RelationalDatabaseModel.Prototypes_Company_fkey">
-            <End Role="Companies" EntitySet="Companies" />
-            <End Role="Prototypes" EntitySet="Prototypes" />
-          </AssociationSet>
-          <AssociationSet Name="Prototypes_Department_fkey" Association="RelationalDatabaseModel.Prototypes_Department_fkey">
-            <End Role="Departments" EntitySet="Departments" />
-            <End Role="Prototypes" EntitySet="Prototypes" />
-          </AssociationSet>
-          <AssociationSet Name="Prototypes_PrototypeType_fkey" Association="RelationalDatabaseModel.Prototypes_PrototypeType_fkey">
-            <End Role="PrototypeTypes" EntitySet="PrototypeTypes" />
-            <End Role="Prototypes" EntitySet="Prototypes" />
-          </AssociationSet>
-          <AssociationSet Name="PrototypeVersions_Prototype_fkey" Association="RelationalDatabaseModel.PrototypeVersions_Prototype_fkey">
-            <End Role="Prototypes" EntitySet="Prototypes" />
-            <End Role="PrototypeVersions" EntitySet="PrototypeVersions" />
-          </AssociationSet>
-          <AssociationSet Name="PrototypeTypes_ApprovationWorkFlow_fkey" Association="RelationalDatabaseModel.PrototypeTypes_ApprovationWorkFlow_fkey">
-            <End Role="WorkFlows" EntitySet="WorkFlows" />
-            <End Role="PrototypeTypes" EntitySet="PrototypeTypes" />
-          </AssociationSet>
-          <AssociationSet Name="PrototypeTypes_Company_fkey" Association="RelationalDatabaseModel.PrototypeTypes_Company_fkey">
-            <End Role="Companies" EntitySet="Companies" />
-            <End Role="PrototypeTypes" EntitySet="PrototypeTypes" />
-          </AssociationSet>
-          <AssociationSet Name="PrototypeTypes_Department_fkey" Association="RelationalDatabaseModel.PrototypeTypes_Department_fkey">
-            <End Role="Departments" EntitySet="Departments" />
-            <End Role="PrototypeTypes" EntitySet="PrototypeTypes" />
-          </AssociationSet>
-          <AssociationSet Name="PrototypeTypes_ObsolescenceWorkFlow_fkey" Association="RelationalDatabaseModel.PrototypeTypes_ObsolescenceWorkFlow_fkey">
-            <End Role="WorkFlows" EntitySet="WorkFlows" />
-            <End Role="PrototypeTypes" EntitySet="PrototypeTypes" />
           </AssociationSet>
           <AssociationSet Name="FK_PrototypeVersionTags_Version" Association="RelationalDatabaseModel.FK_PrototypeVersionTags_Version">
             <End Role="PrototypeVersions" EntitySet="PrototypeVersions" />
@@ -1271,10 +1236,6 @@
           <EntitySet Name="FunctionGroups" EntityType="RelationalDatabaseModel.FunctionGroups" />
           <EntitySet Name="Functions" EntityType="RelationalDatabaseModel.Functions" />
           <EntitySet Name="UserFunctions" EntityType="RelationalDatabaseModel.UserFunctions" />
-          <AssociationSet Name="UserFunctions_PrototypeType_fkey" Association="RelationalDatabaseModel.UserFunctions_PrototypeType_fkey">
-            <End Role="PrototypeTypes" EntitySet="PrototypeTypes" />
-            <End Role="UserFunctions" EntitySet="UserFunctions" />
-          </AssociationSet>
           <AssociationSet Name="Functions_FunctionGroup_fkey" Association="RelationalDatabaseModel.Functions_FunctionGroup_fkey">
             <End Role="FunctionGroups" EntitySet="FunctionGroups" />
             <End Role="Functions" EntitySet="Functions" />
@@ -1294,6 +1255,8 @@
           </AssociationSet>
           <EntitySet Name="DataSources" EntityType="RelationalDatabaseModel.DataSources" />
           <EntitySet Name="Instances" EntityType="RelationalDatabaseModel.Instances" />
+          <EntitySet Name="Prototypes" EntityType="RelationalDatabaseModel.Prototypes" />
+          <EntitySet Name="PrototypeTypes" EntityType="RelationalDatabaseModel.PrototypeTypes" />
           <AssociationSet Name="InstanceExpressionValues_Instance_fkey" Association="RelationalDatabaseModel.InstanceExpressionValues_Instance_fkey">
             <End Role="Instances" EntitySet="Instances" />
             <End Role="InstanceExpressionValues" EntitySet="InstanceExpressionValues" />
@@ -1313,6 +1276,42 @@
           <AssociationSet Name="InstanceTags_Instance_fkey" Association="RelationalDatabaseModel.InstanceTags_Instance_fkey">
             <End Role="Instances" EntitySet="Instances" />
             <End Role="InstanceTags" EntitySet="InstanceTags" />
+          </AssociationSet>
+          <AssociationSet Name="Prototypes_Company_fkey" Association="RelationalDatabaseModel.Prototypes_Company_fkey">
+            <End Role="Companies" EntitySet="Companies" />
+            <End Role="Prototypes" EntitySet="Prototypes" />
+          </AssociationSet>
+          <AssociationSet Name="Prototypes_Department_fkey" Association="RelationalDatabaseModel.Prototypes_Department_fkey">
+            <End Role="Departments" EntitySet="Departments" />
+            <End Role="Prototypes" EntitySet="Prototypes" />
+          </AssociationSet>
+          <AssociationSet Name="Prototypes_PrototypeType_fkey" Association="RelationalDatabaseModel.Prototypes_PrototypeType_fkey">
+            <End Role="PrototypeTypes" EntitySet="PrototypeTypes" />
+            <End Role="Prototypes" EntitySet="Prototypes" />
+          </AssociationSet>
+          <AssociationSet Name="PrototypeVersions_Prototype_fkey" Association="RelationalDatabaseModel.PrototypeVersions_Prototype_fkey">
+            <End Role="Prototypes" EntitySet="Prototypes" />
+            <End Role="PrototypeVersions" EntitySet="PrototypeVersions" />
+          </AssociationSet>
+          <AssociationSet Name="PrototypeTypes_ApprovationWorkFlow_fkey" Association="RelationalDatabaseModel.PrototypeTypes_ApprovationWorkFlow_fkey">
+            <End Role="WorkFlows" EntitySet="WorkFlows" />
+            <End Role="PrototypeTypes" EntitySet="PrototypeTypes" />
+          </AssociationSet>
+          <AssociationSet Name="PrototypeTypes_Company_fkey" Association="RelationalDatabaseModel.PrototypeTypes_Company_fkey">
+            <End Role="Companies" EntitySet="Companies" />
+            <End Role="PrototypeTypes" EntitySet="PrototypeTypes" />
+          </AssociationSet>
+          <AssociationSet Name="PrototypeTypes_Department_fkey" Association="RelationalDatabaseModel.PrototypeTypes_Department_fkey">
+            <End Role="Departments" EntitySet="Departments" />
+            <End Role="PrototypeTypes" EntitySet="PrototypeTypes" />
+          </AssociationSet>
+          <AssociationSet Name="PrototypeTypes_ObsolescenceWorkFlow_fkey" Association="RelationalDatabaseModel.PrototypeTypes_ObsolescenceWorkFlow_fkey">
+            <End Role="WorkFlows" EntitySet="WorkFlows" />
+            <End Role="PrototypeTypes" EntitySet="PrototypeTypes" />
+          </AssociationSet>
+          <AssociationSet Name="UserFunctions_PrototypeType_fkey" Association="RelationalDatabaseModel.UserFunctions_PrototypeType_fkey">
+            <End Role="PrototypeTypes" EntitySet="PrototypeTypes" />
+            <End Role="UserFunctions" EntitySet="UserFunctions" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="TimeZones">
@@ -1416,47 +1415,6 @@
           <Property Name="Value" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Instances" Relationship="RelationalDatabaseModel.InstanceTags_Instance_fkey" FromRole="InstanceTags" ToRole="Instances" />
         </EntityType>
-        <EntityType Name="Prototypes">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Description" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="Company" Type="Int64" />
-          <Property Name="Department" Type="Int64" />
-          <Property Name="PrototypeType" Type="Int64" />
-          <Property Name="CreatedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
-          <Property Name="CreatedOn" Type="DateTimeOffset" Nullable="false" Precision="7" />
-          <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
-          <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
-          <NavigationProperty Name="Companies" Relationship="RelationalDatabaseModel.Prototypes_Company_fkey" FromRole="Prototypes" ToRole="Companies" />
-          <NavigationProperty Name="Departments" Relationship="RelationalDatabaseModel.Prototypes_Department_fkey" FromRole="Prototypes" ToRole="Departments" />
-          <NavigationProperty Name="PrototypeTypes" Relationship="RelationalDatabaseModel.Prototypes_PrototypeType_fkey" FromRole="Prototypes" ToRole="PrototypeTypes" />
-          <NavigationProperty Name="PrototypeVersions" Relationship="RelationalDatabaseModel.PrototypeVersions_Prototype_fkey" FromRole="Prototypes" ToRole="PrototypeVersions" />
-          <NavigationProperty Name="Instances" Relationship="RelationalDatabaseModel.Instances_Prototype_fkey" FromRole="Prototypes" ToRole="Instances" />
-        </EntityType>
-        <EntityType Name="PrototypeTypes">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Description" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="Company" Type="Int64" />
-          <Property Name="Department" Type="Int64" />
-          <Property Name="ApprovationWorkFlow" Type="Int64" />
-          <Property Name="ObsolescenceWorkFlow" Type="Int64" />
-          <Property Name="CreatedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
-          <Property Name="CreatedOn" Type="DateTimeOffset" Nullable="false" Precision="7" />
-          <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
-          <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
-          <NavigationProperty Name="Prototypes" Relationship="RelationalDatabaseModel.Prototypes_PrototypeType_fkey" FromRole="PrototypeTypes" ToRole="Prototypes" />
-          <NavigationProperty Name="WorkFlows" Relationship="RelationalDatabaseModel.PrototypeTypes_ApprovationWorkFlow_fkey" FromRole="PrototypeTypes" ToRole="WorkFlows" />
-          <NavigationProperty Name="Companies" Relationship="RelationalDatabaseModel.PrototypeTypes_Company_fkey" FromRole="PrototypeTypes" ToRole="Companies" />
-          <NavigationProperty Name="Departments" Relationship="RelationalDatabaseModel.PrototypeTypes_Department_fkey" FromRole="PrototypeTypes" ToRole="Departments" />
-          <NavigationProperty Name="WorkFlows1" Relationship="RelationalDatabaseModel.PrototypeTypes_ObsolescenceWorkFlow_fkey" FromRole="PrototypeTypes" ToRole="WorkFlows" />
-          <NavigationProperty Name="UserFunctions" Relationship="RelationalDatabaseModel.UserFunctions_PrototypeType_fkey" FromRole="PrototypeTypes" ToRole="UserFunctions" />
-        </EntityType>
         <EntityType Name="PrototypeVersions">
           <Key>
             <PropertyRef Name="Prototype" />
@@ -1477,11 +1435,11 @@
           <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
           <NavigationProperty Name="InstanceNumerators" Relationship="RelationalDatabaseModel.FK_Instances_Version" FromRole="PrototypeVersions" ToRole="InstanceNumerators" />
-          <NavigationProperty Name="Prototypes" Relationship="RelationalDatabaseModel.PrototypeVersions_Prototype_fkey" FromRole="PrototypeVersions" ToRole="Prototypes" />
           <NavigationProperty Name="PrototypeVersionTags" Relationship="RelationalDatabaseModel.FK_PrototypeVersionTags_Version" FromRole="PrototypeVersions" ToRole="PrototypeVersionTags" />
           <NavigationProperty Name="WorkFlows" Relationship="RelationalDatabaseModel.PrototypeVersions_InstanceConfirmationWorkFlow_fkey" FromRole="PrototypeVersions" ToRole="WorkFlows" />
           <NavigationProperty Name="VersionStates" Relationship="RelationalDatabaseModel.PrototypeVersions_ProposedState_fkey" FromRole="PrototypeVersions" ToRole="VersionStates" />
           <NavigationProperty Name="VersionStates1" Relationship="RelationalDatabaseModel.PrototypeVersions_VersionState_fkey" FromRole="PrototypeVersions" ToRole="VersionStates" />
+          <NavigationProperty Name="Prototypes" Relationship="RelationalDatabaseModel.PrototypeVersions_Prototype_fkey" FromRole="PrototypeVersions" ToRole="Prototypes" />
         </EntityType>
         <EntityType Name="PrototypeVersionTags">
           <Key>
@@ -1585,12 +1543,12 @@
           <Property Name="CreatedOn" Type="DateTimeOffset" Nullable="false" Precision="7" />
           <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
-          <NavigationProperty Name="PrototypeTypes" Relationship="RelationalDatabaseModel.PrototypeTypes_ApprovationWorkFlow_fkey" FromRole="WorkFlows" ToRole="PrototypeTypes" />
-          <NavigationProperty Name="PrototypeTypes1" Relationship="RelationalDatabaseModel.PrototypeTypes_ObsolescenceWorkFlow_fkey" FromRole="WorkFlows" ToRole="PrototypeTypes" />
           <NavigationProperty Name="PrototypeVersions" Relationship="RelationalDatabaseModel.PrototypeVersions_InstanceConfirmationWorkFlow_fkey" FromRole="WorkFlows" ToRole="PrototypeVersions" />
           <NavigationProperty Name="Companies" Relationship="RelationalDatabaseModel.WorkFlows_Company_fkey" FromRole="WorkFlows" ToRole="Companies" />
           <NavigationProperty Name="WorkFlowApplications" Relationship="RelationalDatabaseModel.WorkFlowApplications_WorkFlow_fkey" FromRole="WorkFlows" ToRole="WorkFlowApplications" />
           <NavigationProperty Name="WorkFlowSteps" Relationship="RelationalDatabaseModel.WorkFlowSteps_WorkFlow_fkey" FromRole="WorkFlows" ToRole="WorkFlowSteps" />
+          <NavigationProperty Name="PrototypeTypes" Relationship="RelationalDatabaseModel.PrototypeTypes_ApprovationWorkFlow_fkey" FromRole="WorkFlows" ToRole="PrototypeTypes" />
+          <NavigationProperty Name="PrototypeTypes1" Relationship="RelationalDatabaseModel.PrototypeTypes_ObsolescenceWorkFlow_fkey" FromRole="WorkFlows" ToRole="PrototypeTypes" />
         </EntityType>
         <EntityType Name="WorkFlowSteps">
           <Key>
@@ -1627,102 +1585,6 @@
             <Dependent Role="InstanceNumerators">
               <PropertyRef Name="Prototype" />
               <PropertyRef Name="Version" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="Prototypes_Company_fkey">
-          <End Type="RelationalDatabaseModel.Companies" Role="Companies" Multiplicity="0..1" />
-          <End Type="RelationalDatabaseModel.Prototypes" Role="Prototypes" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Companies">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="Prototypes">
-              <PropertyRef Name="Company" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="Prototypes_Department_fkey">
-          <End Type="RelationalDatabaseModel.Departments" Role="Departments" Multiplicity="0..1" />
-          <End Type="RelationalDatabaseModel.Prototypes" Role="Prototypes" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Departments">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="Prototypes">
-              <PropertyRef Name="Department" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="Prototypes_PrototypeType_fkey">
-          <End Type="RelationalDatabaseModel.PrototypeTypes" Role="PrototypeTypes" Multiplicity="0..1" />
-          <End Type="RelationalDatabaseModel.Prototypes" Role="Prototypes" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="PrototypeTypes">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="Prototypes">
-              <PropertyRef Name="PrototypeType" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="PrototypeVersions_Prototype_fkey">
-          <End Type="RelationalDatabaseModel.Prototypes" Role="Prototypes" Multiplicity="1" />
-          <End Type="RelationalDatabaseModel.PrototypeVersions" Role="PrototypeVersions" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Prototypes">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="PrototypeVersions">
-              <PropertyRef Name="Prototype" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="PrototypeTypes_ApprovationWorkFlow_fkey">
-          <End Type="RelationalDatabaseModel.WorkFlows" Role="WorkFlows" Multiplicity="0..1" />
-          <End Type="RelationalDatabaseModel.PrototypeTypes" Role="PrototypeTypes" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="WorkFlows">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="PrototypeTypes">
-              <PropertyRef Name="ApprovationWorkFlow" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="PrototypeTypes_Company_fkey">
-          <End Type="RelationalDatabaseModel.Companies" Role="Companies" Multiplicity="0..1" />
-          <End Type="RelationalDatabaseModel.PrototypeTypes" Role="PrototypeTypes" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Companies">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="PrototypeTypes">
-              <PropertyRef Name="Company" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="PrototypeTypes_Department_fkey">
-          <End Type="RelationalDatabaseModel.Departments" Role="Departments" Multiplicity="0..1" />
-          <End Type="RelationalDatabaseModel.PrototypeTypes" Role="PrototypeTypes" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Departments">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="PrototypeTypes">
-              <PropertyRef Name="Department" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="PrototypeTypes_ObsolescenceWorkFlow_fkey">
-          <End Type="RelationalDatabaseModel.WorkFlows" Role="WorkFlows" Multiplicity="0..1" />
-          <End Type="RelationalDatabaseModel.PrototypeTypes" Role="PrototypeTypes" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="WorkFlows">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="PrototypeTypes">
-              <PropertyRef Name="ObsolescenceWorkFlow" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1949,22 +1811,10 @@
           <Property Name="CreatedOn" Type="DateTimeOffset" Nullable="false" Precision="7" />
           <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
-          <NavigationProperty Name="PrototypeTypes" Relationship="RelationalDatabaseModel.UserFunctions_PrototypeType_fkey" FromRole="UserFunctions" ToRole="PrototypeTypes" />
           <NavigationProperty Name="Functions" Relationship="RelationalDatabaseModel.UserFunctions_Function" FromRole="UserFunctions" ToRole="Functions" />
           <NavigationProperty Name="Users" Relationship="RelationalDatabaseModel.UserFunctions_User" FromRole="UserFunctions" ToRole="Users" />
+          <NavigationProperty Name="PrototypeTypes" Relationship="RelationalDatabaseModel.UserFunctions_PrototypeType_fkey" FromRole="UserFunctions" ToRole="PrototypeTypes" />
         </EntityType>
-        <Association Name="UserFunctions_PrototypeType_fkey">
-          <End Type="RelationalDatabaseModel.PrototypeTypes" Role="PrototypeTypes" Multiplicity="0..1" />
-          <End Type="RelationalDatabaseModel.UserFunctions" Role="UserFunctions" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="PrototypeTypes">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="UserFunctions">
-              <PropertyRef Name="PrototypeType" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="Functions_FunctionGroup_fkey">
           <End Type="RelationalDatabaseModel.FunctionGroups" Role="FunctionGroups" Multiplicity="1" />
           <End Type="RelationalDatabaseModel.Functions" Role="Functions" Multiplicity="*" />
@@ -2052,10 +1902,10 @@
           </Key>
           <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Code" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Prototype" Type="Int64" />
-          <Property Name="Version" Type="Int32" />
-          <Property Name="Year" Type="Int32" />
-          <Property Name="PrototypeCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Prototype" Type="Int64" Nullable="false" />
+          <Property Name="Version" Type="Int32" Nullable="false" />
+          <Property Name="Year" Type="Int32" Nullable="false" />
+          <Property Name="PrototypeCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Number" Type="Int32" />
           <Property Name="InstanceState" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
           <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
@@ -2070,6 +1920,47 @@
           <NavigationProperty Name="Prototypes" Relationship="RelationalDatabaseModel.Instances_Prototype_fkey" FromRole="Instances" ToRole="Prototypes" />
           <NavigationProperty Name="InstanceTags" Relationship="RelationalDatabaseModel.InstanceTags_Instance_fkey" FromRole="Instances" ToRole="InstanceTags" />
         </EntityType>
+        <EntityType Name="Prototypes">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Company" Type="Int64" Nullable="false" />
+          <Property Name="Department" Type="Int64" Nullable="false" />
+          <Property Name="PrototypeType" Type="Int64" Nullable="false" />
+          <Property Name="CreatedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedOn" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
+          <NavigationProperty Name="Instances" Relationship="RelationalDatabaseModel.Instances_Prototype_fkey" FromRole="Prototypes" ToRole="Instances" />
+          <NavigationProperty Name="Companies" Relationship="RelationalDatabaseModel.Prototypes_Company_fkey" FromRole="Prototypes" ToRole="Companies" />
+          <NavigationProperty Name="Departments" Relationship="RelationalDatabaseModel.Prototypes_Department_fkey" FromRole="Prototypes" ToRole="Departments" />
+          <NavigationProperty Name="PrototypeTypes" Relationship="RelationalDatabaseModel.Prototypes_PrototypeType_fkey" FromRole="Prototypes" ToRole="PrototypeTypes" />
+          <NavigationProperty Name="PrototypeVersions" Relationship="RelationalDatabaseModel.PrototypeVersions_Prototype_fkey" FromRole="Prototypes" ToRole="PrototypeVersions" />
+        </EntityType>
+        <EntityType Name="PrototypeTypes">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Company" Type="Int64" Nullable="false" />
+          <Property Name="Department" Type="Int64" Nullable="false" />
+          <Property Name="ApprovationWorkFlow" Type="Int64" />
+          <Property Name="ObsolescenceWorkFlow" Type="Int64" />
+          <Property Name="CreatedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedOn" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
+          <NavigationProperty Name="Prototypes" Relationship="RelationalDatabaseModel.Prototypes_PrototypeType_fkey" FromRole="PrototypeTypes" ToRole="Prototypes" />
+          <NavigationProperty Name="WorkFlows" Relationship="RelationalDatabaseModel.PrototypeTypes_ApprovationWorkFlow_fkey" FromRole="PrototypeTypes" ToRole="WorkFlows" />
+          <NavigationProperty Name="Companies" Relationship="RelationalDatabaseModel.PrototypeTypes_Company_fkey" FromRole="PrototypeTypes" ToRole="Companies" />
+          <NavigationProperty Name="Departments" Relationship="RelationalDatabaseModel.PrototypeTypes_Department_fkey" FromRole="PrototypeTypes" ToRole="Departments" />
+          <NavigationProperty Name="WorkFlows1" Relationship="RelationalDatabaseModel.PrototypeTypes_ObsolescenceWorkFlow_fkey" FromRole="PrototypeTypes" ToRole="WorkFlows" />
+          <NavigationProperty Name="UserFunctions" Relationship="RelationalDatabaseModel.UserFunctions_PrototypeType_fkey" FromRole="PrototypeTypes" ToRole="UserFunctions" />
+        </EntityType>
         <Association Name="InstanceExpressionValues_Instance_fkey">
           <End Type="RelationalDatabaseModel.Instances" Role="Instances" Multiplicity="1" />
           <End Type="RelationalDatabaseModel.InstanceExpressionValues" Role="InstanceExpressionValues" Multiplicity="*" />
@@ -2083,7 +1974,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Instances_InstanceNumerator">
-          <End Type="RelationalDatabaseModel.InstanceNumerators" Role="InstanceNumerators" Multiplicity="0..1" />
+          <End Type="RelationalDatabaseModel.InstanceNumerators" Role="InstanceNumerators" Multiplicity="1" />
           <End Type="RelationalDatabaseModel.Instances" Role="Instances" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="InstanceNumerators">
@@ -2111,7 +2002,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="Instances_Prototype_fkey">
-          <End Type="RelationalDatabaseModel.Prototypes" Role="Prototypes" Multiplicity="0..1" />
+          <End Type="RelationalDatabaseModel.Prototypes" Role="Prototypes" Multiplicity="1" />
           <End Type="RelationalDatabaseModel.Instances" Role="Instances" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Prototypes">
@@ -2131,6 +2022,114 @@
             </Principal>
             <Dependent Role="InstanceTags">
               <PropertyRef Name="Instance" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Prototypes_Company_fkey">
+          <End Type="RelationalDatabaseModel.Companies" Role="Companies" Multiplicity="1" />
+          <End Type="RelationalDatabaseModel.Prototypes" Role="Prototypes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Companies">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Prototypes">
+              <PropertyRef Name="Company" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Prototypes_Department_fkey">
+          <End Type="RelationalDatabaseModel.Departments" Role="Departments" Multiplicity="1" />
+          <End Type="RelationalDatabaseModel.Prototypes" Role="Prototypes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Departments">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Prototypes">
+              <PropertyRef Name="Department" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Prototypes_PrototypeType_fkey">
+          <End Type="RelationalDatabaseModel.PrototypeTypes" Role="PrototypeTypes" Multiplicity="1" />
+          <End Type="RelationalDatabaseModel.Prototypes" Role="Prototypes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PrototypeTypes">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Prototypes">
+              <PropertyRef Name="PrototypeType" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PrototypeVersions_Prototype_fkey">
+          <End Type="RelationalDatabaseModel.Prototypes" Role="Prototypes" Multiplicity="1" />
+          <End Type="RelationalDatabaseModel.PrototypeVersions" Role="PrototypeVersions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Prototypes">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="PrototypeVersions">
+              <PropertyRef Name="Prototype" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PrototypeTypes_ApprovationWorkFlow_fkey">
+          <End Type="RelationalDatabaseModel.WorkFlows" Role="WorkFlows" Multiplicity="0..1" />
+          <End Type="RelationalDatabaseModel.PrototypeTypes" Role="PrototypeTypes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="WorkFlows">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="PrototypeTypes">
+              <PropertyRef Name="ApprovationWorkFlow" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PrototypeTypes_Company_fkey">
+          <End Type="RelationalDatabaseModel.Companies" Role="Companies" Multiplicity="1" />
+          <End Type="RelationalDatabaseModel.PrototypeTypes" Role="PrototypeTypes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Companies">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="PrototypeTypes">
+              <PropertyRef Name="Company" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PrototypeTypes_Department_fkey">
+          <End Type="RelationalDatabaseModel.Departments" Role="Departments" Multiplicity="1" />
+          <End Type="RelationalDatabaseModel.PrototypeTypes" Role="PrototypeTypes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Departments">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="PrototypeTypes">
+              <PropertyRef Name="Department" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PrototypeTypes_ObsolescenceWorkFlow_fkey">
+          <End Type="RelationalDatabaseModel.WorkFlows" Role="WorkFlows" Multiplicity="0..1" />
+          <End Type="RelationalDatabaseModel.PrototypeTypes" Role="PrototypeTypes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="WorkFlows">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="PrototypeTypes">
+              <PropertyRef Name="ObsolescenceWorkFlow" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserFunctions_PrototypeType_fkey">
+          <End Type="RelationalDatabaseModel.PrototypeTypes" Role="PrototypeTypes" Multiplicity="0..1" />
+          <End Type="RelationalDatabaseModel.UserFunctions" Role="UserFunctions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PrototypeTypes">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="UserFunctions">
+              <PropertyRef Name="PrototypeType" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2249,38 +2248,6 @@
                 <ScalarProperty Name="Value" ColumnName="Value" />
                 <ScalarProperty Name="Tag" ColumnName="Tag" />
                 <ScalarProperty Name="Instance" ColumnName="Instance" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Prototypes">
-            <EntityTypeMapping TypeName="RelationalDatabaseModel.Prototypes">
-              <MappingFragment StoreEntitySet="Prototypes">
-                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
-                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
-                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="PrototypeType" ColumnName="PrototypeType" />
-                <ScalarProperty Name="Department" ColumnName="Department" />
-                <ScalarProperty Name="Company" ColumnName="Company" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="PrototypeTypes">
-            <EntityTypeMapping TypeName="RelationalDatabaseModel.PrototypeTypes">
-              <MappingFragment StoreEntitySet="PrototypeTypes">
-                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
-                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
-                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="ObsolescenceWorkFlow" ColumnName="ObsolescenceWorkFlow" />
-                <ScalarProperty Name="ApprovationWorkFlow" ColumnName="ApprovationWorkFlow" />
-                <ScalarProperty Name="Department" ColumnName="Department" />
-                <ScalarProperty Name="Company" ColumnName="Company" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -2509,6 +2476,38 @@
                 <ScalarProperty Name="Version" ColumnName="Version" />
                 <ScalarProperty Name="Prototype" ColumnName="Prototype" />
                 <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Prototypes">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.Prototypes">
+              <MappingFragment StoreEntitySet="Prototypes">
+                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="PrototypeType" ColumnName="PrototypeType" />
+                <ScalarProperty Name="Department" ColumnName="Department" />
+                <ScalarProperty Name="Company" ColumnName="Company" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PrototypeTypes">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.PrototypeTypes">
+              <MappingFragment StoreEntitySet="PrototypeTypes">
+                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="ObsolescenceWorkFlow" ColumnName="ObsolescenceWorkFlow" />
+                <ScalarProperty Name="ApprovationWorkFlow" ColumnName="ApprovationWorkFlow" />
+                <ScalarProperty Name="Department" ColumnName="Department" />
+                <ScalarProperty Name="Company" ColumnName="Company" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>

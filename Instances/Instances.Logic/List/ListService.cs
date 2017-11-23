@@ -58,7 +58,7 @@ namespace CheckListManager.Instances.Logic.List
                 prototypeType = form.PrototypeType.HasValue && prototypeTypes.Any(d => d.ID == form.PrototypeType) ? form.PrototypeType.Value : prototypeTypes.FirstOrDefault()?.ID;
                 response.Fields["PrototypeType"] = new Field
                 {
-                    Options = prototypeTypes.Select(pt => new Option(pt.ID.ToString(), pt.Description)),
+                    Options = prototypeTypes.Select(pt => new Option(pt.ID.ToString(), pt.Name)),
                     Value = prototypeType?.ToString()
                 };
                 response.Valid &= prototypeTypes.Any();

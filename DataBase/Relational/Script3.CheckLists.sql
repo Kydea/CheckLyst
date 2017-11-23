@@ -3,10 +3,10 @@ create schema "CheckLists";
 create table "CheckLists"."PrototypeTypes"
 (
 	"ID" bigserial primary key,
-	"Description" varchar (100),
+	"Name" varchar (100) not null,
 
-	"Company" bigint references "Infrastructure"."Companies",
-	"Department" bigint references "Infrastructure"."Departments",
+	"Company" bigint not null references "Infrastructure"."Companies",
+	"Department" bigint not null references "Infrastructure"."Departments",
     
 	"ApprovationWorkFlow" bigint references "WorkFlows"."WorkFlows",
 	"ObsolescenceWorkFlow" bigint references "WorkFlows"."WorkFlows",
@@ -20,12 +20,12 @@ create table "CheckLists"."PrototypeTypes"
 create table "CheckLists"."Prototypes"
 (
 	"ID" bigserial primary key,
-	"Name" varchar (50),
+	"Name" varchar (50) not null,
 	"Description" varchar (100) not null,
 
-	"Company" bigint references "Infrastructure"."Companies",
-	"Department" bigint references "Infrastructure"."Departments",
-	"PrototypeType" bigint references "CheckLists"."PrototypeTypes",
+	"Company" bigint not null references "Infrastructure"."Companies",
+	"Department" bigint not null references "Infrastructure"."Departments",
+	"PrototypeType" bigint not null references "CheckLists"."PrototypeTypes",
 
 	"CreatedBy" varchar (60),
 	"CreatedOn" timestamptz not null default current_timestamp,
@@ -151,13 +151,13 @@ create table "CheckLists"."Instances"
 	"ID" bigserial primary key,
 	"Code" varchar (50) not null,
     
-	"Prototype" bigint references "CheckLists"."Prototypes",
-	"Version" int,
-	"Year" int,
+	"Prototype" bigint not null references "CheckLists"."Prototypes",
+	"Version" int not null ,
+	"Year" int not null,
 	constraint "FK_Instances_InstanceNumerator" foreign key ("Prototype", "Version", "Year") references "CheckLists"."InstanceNumerators",
 
-	"PrototypeCode" varchar (50),
-	"Number" int,
+	"PrototypeCode" varchar (50) not null,
+	"Number" int not null,
 
 	"InstanceState" varchar (20) not null references "CheckLists"."InstanceStates",
 

@@ -8,6 +8,8 @@ matematici.popup = function () {
 		closeHandler,
 
 		ajax = function () {
+			if (options.errorHandler)
+				options.aiax.suppressErrors = true;
 			$.ajax(options.ajax)
 				.done(function (result) {
 					options.content = result;
@@ -19,8 +21,6 @@ matematici.popup = function () {
 				.fail(function (jqXHR, textStatus, errorThrown) {
 					if (options.errorHandler)
 						options.errorHandler.call(matematici.popup, jqXHR, textStatus, errorThrown);
-					else
-						matematici.dialog.error("Error", errorThrown);
 				});
 		},
 
@@ -44,7 +44,7 @@ matematici.popup = function () {
 				if (button.cancelButton) {
 					container
 						.append($("<a />").attr("href", "#").addClass("CloseButton")
-							.append($("<i />").addClass("fa fa-times"))
+							.append($("<i />").addClass("fi flaticon-times-circle"))
 							.on("click", function () {
 								button.content.click();
 							}));

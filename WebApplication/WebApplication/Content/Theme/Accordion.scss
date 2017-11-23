@@ -7,7 +7,7 @@ div.Accordion-Bar {
     .Button {
         background-color: $Color-Yellow-Regular;
         border-radius: 5px 5px 0 0;
-        padding-right: 50px;
+        padding-right: $Metric-Control-Height + 20px;
         box-shadow: none;
 
         i.fi {
@@ -32,7 +32,7 @@ div.Accordion-Bar {
             content: "";
             position: absolute;
             height: 100%;
-            right: 30px;
+            right: $Metric-Control-Height;
             width: 1px;
             top: 0;
             background: white;

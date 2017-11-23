@@ -54,9 +54,14 @@
 			setTimeout(function () {
 				if (options.initHandler) options.initHandler(detailPage);
 				form.setValues(data);
+				if (options.initHandler) options.completeHandler(detailPage);
 			}, 0);
 			
 		};
+
+	this.getElement = function () {
+		return matematici.popup.getElement();
+	},
 
 	this.getSender = function () {
 		return sender;
@@ -64,6 +69,11 @@
 
 	this.getForm = function () {
 		return form;
+	};
+
+	this.isNew = function () {
+		console.log(data);
+		return data == null;
 	};
 
 	setup();

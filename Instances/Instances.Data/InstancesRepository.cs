@@ -62,23 +62,11 @@ namespace CheckListManager.Instances.Data
 				{
 					throw new ArgumentNullException(nameof(instance), "Instance must be not null");
 				}
-				if (instance.Prototype == null)
-				{
-					throw new ArgumentNullException(nameof(instance.Prototype), "Prototype must be not null");
-				}
-				if (instance.Version == null)
-				{
-					throw new ArgumentNullException(nameof(instance.Version), "Version must be not null");
-				}
-				if (instance.Year == null)
-				{
-					throw new ArgumentNullException(nameof(instance.Year), "Year must be not null");
-				}
 
 				Entities.Database.BeginTransaction();
 
 				instance.Number =
-					await GetInstanceNumberAsync(instance.Prototype.Value, instance.Version.Value, instance.Year.Value);
+					await GetInstanceNumberAsync(instance.Prototype, instance.Version, instance.Year);
 
 				Entities.Instances.Add(instance);
 
