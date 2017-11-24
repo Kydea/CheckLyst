@@ -34,7 +34,7 @@ namespace CheckListManager.Instances.Logic.Services
 			_instanceCache = instanceCache;
 		}
 
-		public async Task<InstanceCacheObject> OpenAsync(long companyId, string code)
+		public async Task<InstanceCacheObject> GetAsync(long companyId, string code)
 		{
 			var cacheObject = await _instanceCache.GetAsync(code);
 			if (cacheObject != null)
@@ -92,7 +92,7 @@ namespace CheckListManager.Instances.Logic.Services
 			}
 		}
 
-		public async Task ConfirmAsync(string userCode, string code)
+		public async Task OpenAsync(string userCode, string code)
 		{
 			try
 			{
@@ -145,6 +145,41 @@ namespace CheckListManager.Instances.Logic.Services
 				cacheObject.IsDirty = false;
 
 				await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
+			}
+			catch (InstanceException)
+			{
+				throw;
+			}
+			catch (Exception e)
+			{
+				Logger.Error(e, "Unable to create the instance");
+				throw new InstanceException("Unable to create the instance", e);
+			}
+		}
+
+		public async Task CloseAsync(string code)
+		{
+			try
+			{
+				var cacheObject = await _instanceCache.GetAsync(code);
+				if (cacheObject == null)
+				{
+					return;
+				}
+				if (cacheObject.InstanceState == InstanceState.Draft)
+				{
+					await _instanceCache.RemoveAsync(code);
+					return;
+				}
+				if (cacheObject.InstanceState == InstanceState.Progress)
+				{
+					//Data = JsonConvert.SerializeObject(cacheObject.Instance, _converter)
+					//					ModifiedBy = userCode,
+					//ModifiedOn = DateTimeOffset.UtcNow
+
+					//save;
+					//				row = await _instancesRepository.CreateInstanceAsync(row);
+				}
 			}
 			catch (InstanceException)
 			{

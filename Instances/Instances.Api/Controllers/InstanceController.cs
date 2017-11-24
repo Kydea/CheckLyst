@@ -42,12 +42,12 @@ namespace CheckListManager.Instances.Api.Controllers
 		}
 
 		[HttpPost]
-		[Route("Confirm")]
-		public async Task<IHttpActionResult> Confirm([FromBody]Message<InstanceRequest> request)
+		[Route("Open")]
+		public async Task<IHttpActionResult> Open([FromBody]Message<InstanceRequest> request)
 		{
 			try
 			{
-				await _instanceManagerService.ConfirmAsync(Identity.Code, request.Data.Code);
+				await _instanceManagerService.OpenAsync(Identity.Code, request.Data.Code);
 				return Ok(Message.Create(true));
 			}
 			catch (DatabaseAggregateException exception)
@@ -72,12 +72,12 @@ namespace CheckListManager.Instances.Api.Controllers
 		}
 
 		[HttpPost]
-		[Route("Open")]
-		public async Task<IHttpActionResult> Open([FromBody]Message<InstanceRequest> request)
+		[Route("Get")]
+		public async Task<IHttpActionResult> Get([FromBody]Message<InstanceRequest> request)
 		{
 			try
 			{
-				var cacheObject = await _instanceManagerService.OpenAsync(Identity.CompanyId, request.Data.Code);
+				var cacheObject = await _instanceManagerService.GetAsync(Identity.CompanyId, request.Data.Code);
 				var response = new OpenInstanceResponse
 				{
 					Id = cacheObject.Id,
@@ -102,16 +102,31 @@ namespace CheckListManager.Instances.Api.Controllers
 
 		[HttpPost]
 		[Route("Close")]
-		public async Task<IHttpActionResult> Close()
+		public async Task<IHttpActionResult> Close([FromBody]Message<InstanceRequest> request)
 		{
-			return Ok(await Task.FromResult(true));
-		}
-
-		[HttpPost]
-		[Route("ChangeState")]
-		public async Task<IHttpActionResult> ChangeState()
-		{
-			return Ok(await Task.FromResult(true));
+			try
+			{
+				var cacheObject = await _instanceManagerService.GetAsync(Identity.CompanyId, request.Data.Code);
+				var response = new OpenInstanceResponse
+				{
+					Id = cacheObject.Id,
+					Code = cacheObject.Code,
+					CheckList = _instanceManagerService.GetCheckList(cacheObject.Instance)
+				};
+				return Ok(Message.Create(response));
+			}
+			catch (DatabaseAggregateException exception)
+			{
+				return Error(new ResponseMessage(exception.InnerExceptions.Select(e => e.Message).ToArray()));
+			}
+			catch (DatabaseException exception)
+			{
+				return Error(new ResponseMessage(exception.Message));
+			}
+			catch (Exception exception)
+			{
+				return Error(new ResponseMessage(exception.Message));
+			}
 		}
 
 		[HttpPost]

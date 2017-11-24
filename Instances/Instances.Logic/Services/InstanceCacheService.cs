@@ -60,10 +60,30 @@ namespace CheckListManager.Instances.Logic.Services
 			}
 		}
 
+		public async Task RemoveAsync(string code)
+		{
+			try
+			{
+				_redisCache.BeginTransaction();
+
+				await _redisCache.RemoveAsync($"Instance:{code}:Metadata", RegionName);
+				await _redisCache.RemoveAsync($"Instance:{code}:Data", RegionName);
+				await _redisCache.SortedSetElementRemoveAsync("Instances", code, RegionName);
+
+				await _redisCache.CommitTransactionAsync();
+			}
+			catch (Exception exception)
+			{
+				_redisCache.RollbackTransaction();
+				Logger.Error(exception);
+				throw;
+			}
+		}
+
 		public Task TouchInstanceAsync(string code)
 		{
 			var score = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-			return _redisCache.SortedSetElementUpdateScoreAsync("Instances", code, score, RegionName);
+			return _redisCache.SortedSetElementInsertAsync("Instances", code, score, RegionName);
 		}
 	}
 }

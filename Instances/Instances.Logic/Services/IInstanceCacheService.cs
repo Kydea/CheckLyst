@@ -8,10 +8,10 @@ namespace CheckListManager.Instances.Logic.Services
 	{
 		Task<InstanceCacheObject> GetAsync(string code, bool includeData = true);
 		Task SetAsync(string code, InstanceCacheObject instance);
+		Task RemoveAsync(string code);
 
 		Task TouchInstanceAsync(string code);
 
 		//Task<IEnumerable<InstanceCacheObject>> GetByUserAsync(string userCode);
-		//Task RemoveAsync(string code, string userCode);
 	}
 }
