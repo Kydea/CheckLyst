@@ -7,44 +7,55 @@ using System.Web.Http;
 
 namespace CheckListManager.DataSources.Api.Controllers
 {
-    [RoutePrefix("List")]
-    public class DataSourcesController : BaseApiController
-    {
-        private readonly IListService _listService;
-        private readonly IDetailService _detailService;
+	[Authorize(Roles = "FunctionGroup#DataSources")]
+	[RoutePrefix("List")]
+	public class DataSourcesController : BaseApiController
+	{
+		private readonly IListService _listService;
+		private readonly IDetailService _detailService;
 
-        public DataSourcesController(IListService listService, IDetailService detailService)
-        {
-            _listService = listService;
-            _detailService = detailService;
-        }
+		public DataSourcesController(IListService listService, IDetailService detailService)
+		{
+			_listService = listService;
+			_detailService = detailService;
+		}
 
-        [HttpPost]
-        [Route("GetData")]
-        public async Task<IHttpActionResult> GetData(PagingRequest<ListRequest> request)
-        {
-            return Ok(await _listService.GetDataAsync(Identity.CompanyId, request));
-        }
+		[Authorize(Roles = "DataSources#View")]
+		[HttpPost]
+		[Route("GetData")]
+		public async Task<IHttpActionResult> GetData(PagingRequest<ListRequest> request)
+		{
+			//To use as reference
+			//if (!ValidateUser(0, "tag"))
+			//{
+			//	return Unauthorized();
+			//}
 
-        [HttpPost]
-        [Route("Add")]
-        public async Task<IHttpActionResult> Add(Message<DetailRequest> request)
-        {
-            return Ok(await _detailService.Add(Identity, request.Data));
-        }
+			return Ok(await _listService.GetDataAsync(Identity.CompanyId, request));
+		}
 
-        [HttpPost]
-        [Route("Edit")]
-        public async Task<IHttpActionResult> Edit(Message<DetailRequest> request)
-        {
-            return Ok(await _detailService.Edit(Identity, request.Data));
-        }
+		[Authorize(Roles = "DataSources#Edit")]
+		[HttpPost]
+		[Route("Add")]
+		public async Task<IHttpActionResult> Add(Message<DetailRequest> request)
+		{
+			return Ok(await _detailService.Add(Identity, request.Data));
+		}
 
-        [HttpPost]
-        [Route("Delete")]
-        public async Task<IHttpActionResult> Delete(Message<DetailRequest> request)
-        {
-            return Ok(await _detailService.Delete(Identity, request.Data.Code));
-        }
-    }
+		[Authorize(Roles = "DataSources#Edit")]
+		[HttpPost]
+		[Route("Edit")]
+		public async Task<IHttpActionResult> Edit(Message<DetailRequest> request)
+		{
+			return Ok(await _detailService.Edit(Identity, request.Data));
+		}
+
+		[Authorize(Roles = "DataSources#Edit")]
+		[HttpPost]
+		[Route("Delete")]
+		public async Task<IHttpActionResult> Delete(Message<DetailRequest> request)
+		{
+			return Ok(await _detailService.Delete(Identity, request.Data.Code));
+		}
+	}
 }

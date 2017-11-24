@@ -4,7 +4,7 @@
     {
         public string Code { get; set; }
 
-        public int? PrototypeType { get; set; }
+        public long? PrototypeType { get; set; }
 
         public string Tag { get; set; }
     }
