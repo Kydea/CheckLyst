@@ -1,12 +1,7 @@
-﻿using CheckListManager.Common.Core.Services;
-using CheckListManager.Common.Data;
+﻿using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Messages;
-using CheckListManager.Common.Logic.DataEngine;
 using CheckListManager.DataSources.Data;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CheckListManager.DataSources.Logic.List
