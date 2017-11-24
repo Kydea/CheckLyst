@@ -4,9 +4,7 @@
     <div class="ActionBar"></div>
 
     <div class="ShadowPanel">
-        <div class="Accordion-Bar">
-            <a class="Button">search <i class="fa fa-arrow-down"></i></a>
-        </div>
+        <div class="Accordion"></div>
         <form id="Filters" action="@BaseUrl/Trail/List">
             <label>
                 From
@@ -18,26 +16,24 @@
             </label>
             <label>
                 User
-                <i class="fi flaticon-people" />
+                <i class="fi flaticon-user-o" />
                 <input type="text" name="user" />
             </label>
             <label>
                 Action
-                <i class="fi flaticon-people" />
+                <i class="fi flaticon-cog" />
                 <input type="text" name="action" />
             </label>
             <label>
                 CheckList code
-                <i class="fi flaticon-people" />
+                <i class="fi flaticon-instance" />
                 <input type="text" name="checklist" />
             </label>
             <label>
                 Detail
-                <i class="fi flaticon-people" />
+                <i class="fi flaticon-align-left" />
                 <input type="text" name="information" />
             </label>
-
-            <a id="ApplyButton" class="Button DefaultButton"><i class="fa fa-search"></i> search</a>
         </form>
 
         <table class="Grid">
@@ -78,7 +74,7 @@
             breadCrumbs: [
                 { content: "audit trail" }
             ],
-            NOreadOnly: true
+            readOnly: true
         });
 
         callback.call();

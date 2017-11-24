@@ -1,30 +1,48 @@
-﻿matematici.Tab = function(selector) {
+﻿matematici.Tab = function(selector, options) {
 
-    var
+	var
+		tab = this,
         element = $(selector),
-        currentIndex,
-        currentLabel,
-        currentTab,
+        currentItem,
         handlers = [],
 
-        resize = function () {
-            element.height(currentLabel.height() + currentTab.height());
-        },
+		getCurrentItemHeight = function () {
+			return currentItem.label.height() + currentItem.tab.height() + 3;
+		},
+
+		resize = function () {
+			if (options.fixedHeight) {
+				var
+					height = 0,
+					currentIndex = currentItem && currentItem.index || 0;
+
+				$(".TabLabels a", element).each(function (index) {
+					select(index);
+					height = Math.max(height, getCurrentItemHeight());
+				});
+
+				select (currentIndex);
+				element.height(height);
+			} else
+				element.height(getItemHeight());
+		},
 
         select = function (index) {
-            currentIndex = index;
-            currentLabel = $(".TabLabels a", element).removeClass("Selected").eq(currentIndex).addClass("Selected"),
-            currentTab = $(".Tab", element).removeClass("Selected").eq(index).addClass("Selected");
+			currentItem = {
+				index: index,
+				label: $(".TabLabels a", element).removeClass("Selected").eq(index).addClass("Selected"),
+				tab: $(".Tab", element).removeClass("Selected").eq(index).addClass("Selected")
+			}
 
-            resize();
+			if (!options.fixedHeight)
+				resize();
         },
 
-        setup = function () {
-            element
-                .each(function () {
-                    var current = $(".TabLabels a.Selected", this);
-                    select(current.size() == 0 ? 0 : current.prevAll().size());
-                })
+		setup = function () {
+			select($(".TabLabels a.Selected", element).prevAll().size());
+
+			element
+				.data("tab", tab)
                 .on("click", ".TabLabels a", function (e) {
                     e.preventDefault();
                     e.stopPropagation();
@@ -32,16 +50,16 @@
                     select($(this).prevAll().size());
 
                     for (var index in handlers)
-                        handlers[index].call(this, currentIndex);
-                });
+                        handlers[index].call(this, currentItem.index);
+				});
         };
 
     this.getElement = function () {
         return element;
     };
 
-    this.getCurrentIndex = function () {
-        return currentIndex;
+    this.getCurrentItem = function () {
+        return currentItem;
     };
 
     this.addHandler = function (handler) {
@@ -59,7 +77,11 @@
 
     this.clear = function () {
         $(".TabLabels", element).empty();
-    };
+	};
+
+	this.resize = function () {
+		resize();
+	};
 
     setup();
 };

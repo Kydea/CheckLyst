@@ -25,6 +25,14 @@
 					});
 				}, null, "plus");
 
+			$(options.filterFormSelector).append(
+				$("<a />")
+					.attr({ href: "#", id: "ApplyButton" })
+					.addClass("Button GreyYellowButton DefaultButton")
+					.text("search")
+					.prepend($("<i />").addClass("fi flaticon-arrow-right"))
+			);
+
 			new matematici.Page({
 				name: options.pageName,
 				initializers: [

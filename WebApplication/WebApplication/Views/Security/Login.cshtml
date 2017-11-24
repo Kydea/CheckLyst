@@ -15,13 +15,13 @@
 
             <label class="FullWidth">
                 <span>Company</span>
-                <i class="fi flaticon-departments"></i>
+                <i class="fi flaticon-buildings-o"></i>
                 <select name="companyId"></select>
             </label>
             
             <label class="FullWidth Controls2">
                 <span>Username / Password</span>
-                <i class="fi flaticon-people"></i>
+                <i class="fi flaticon-user-o"></i>
                 <input type="text" name="username" placeholder="username" />
                 <input type="password" name="password" placeholder="password" />
             </label>
@@ -29,7 +29,7 @@
             <div class="Errors"></div>
 
             <div class="Buttons">
-                <a class="Button DefaultButton GreyGreenButton" href="#" id="Sign"><i class="fi flaticon-freccia-destra fi-circle"></i>INVIO</a>
+                <a class="Button DefaultButton GreyGreenButton" href="#" id="Sign"><i class="fi flaticon-arrow-right"></i>INVIO</a>
             </div>
         </form>
     </div>
@@ -87,9 +87,6 @@
                 companyList.append($("<option />").attr("value", company.id).text(company.name));
             }
             companyList.val(null);
-            setTimeout(function () {
-                companyList.data("autoComplete").refresh();
-            }, 0);
             callback.call();
         }).fail(function (jqXhr, textStatus, errorThrown) {
             showError(jqXhr.responseJSON && jqXhr.responseJSON.error_description || errorThrown);

@@ -1,0 +1,54 @@
+﻿<div id="TrailDetailPage">
+    <h2>Data Source</h2>
+
+    <form id="Detail" action="@BaseUrl/DataSources/List">
+        <div class="Triggers">
+            <label>
+                Code
+                <i class="fi flaticon-barcode-o" />
+                <input type="text" name="code" />
+            </label>
+
+            <label>
+                Description
+                <i class="fi flaticon-align-left" />
+                <input type="text" name="description"  />
+            </label>
+
+            <label class="Clearing">
+                Created by
+                <i class="fi flaticon-user-o" />
+                <input type="text" name="createdBy" readonly="readonly" />
+            </label>
+
+            <label>
+                Created on
+                <i class="fi flaticon-calendar" />
+                <input type="text" name="createdOn" readonly="readonly" data-type="DateTimeOffset" />
+            </label>
+
+            <label class="Clearing">
+                Modified by
+                <i class="fi flaticon-user-o" />
+                <input type="text" name="modifiedBy" readonly="readonly" />
+            </label>
+
+            <label>
+                Modified on
+                <i class="fi flaticon-calendar" />
+                <input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
+            </label>
+        </div>
+        <div class="Clearing"></div>
+    </form>
+
+</div>
+
+<script type="text/javascript">
+    new matematici.DetailPage({
+        formSelector: "form#Detail",
+        initHandler: function (detailPage) {
+            matematici.controls.setEditable($("input[name=code]", detailPage.getElement()), detailPage.isNew());
+        }
+    });
+</script>

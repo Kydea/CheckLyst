@@ -37,11 +37,8 @@ namespace CheckListManager.DataSources.Logic.List
                     },
                     wf =>
                         wf.Company == Company
-                        && (
-                            Form.Data.Keyword == string.Empty 
-                            || wf.Code != null && wf.Code.ToUpper().Contains(Form.Data.Keyword.ToUpper())
-                            || wf.Description != null && wf.Description.ToUpper().Contains(Form.Data.Keyword.ToUpper())
-                        ),
+                        && (Form.Data.Code == string.Empty || wf.Code != null && wf.Code.ToUpper().Contains(Form.Data.Code.ToUpper()))
+                        && (Form.Data.Description == string.Empty || wf.Description != null && wf.Description.ToUpper().Contains(Form.Data.Description.ToUpper())),
                     p => p.Code,
                     Form.CurrentPage,
                     Form.ItemsPerPage

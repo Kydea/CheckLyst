@@ -24,6 +24,10 @@
 	this.destroy = function () {
 		destroy();
 	};
+
+	this.center = function () {
+		center();
+	};
 }
 
 matematici.initializers.push(function (context) {

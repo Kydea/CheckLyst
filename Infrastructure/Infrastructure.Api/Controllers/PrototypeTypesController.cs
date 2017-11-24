@@ -34,5 +34,27 @@ namespace CheckListManager.Infrastructure.Api.Controllers
         {
             return Ok(await _prototypeTypesService.GetDataAsync(Identity.CompanyId, request));
         }
+
+        [HttpPost]
+        [Route("Add")]
+        public async Task<IHttpActionResult> Add(Message<PrototypeTypesRequest> request)
+        {
+            return Ok(await _prototypeTypesService.Add(Identity, request.Data));
+        }
+
+        [HttpPost]
+        [Route("Edit")]
+        public async Task<IHttpActionResult> Edit(Message<PrototypeTypesRequest> request)
+        {
+            return Ok(await _prototypeTypesService.Edit(Identity, request.Data));
+        }
+
+        [HttpPost]
+        [Route("Delete")]
+        public async Task<IHttpActionResult> Delete(Message<PrototypeTypesRequest> request)
+        {
+            return Ok(await _prototypeTypesService.Delete(Identity, request.Data.ID.Value));
+        }
+
     }
 }

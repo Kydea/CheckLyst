@@ -31,15 +31,17 @@
         clear: both; }
     div.Popup div.Container a.CloseButton {
       position: absolute;
-      top: 20px;
-      right: 20px;
-      color: black;
-      background: white;
-      border-radius: 50%;
+      top: 15px;
+      right: 15px;
+      color: white;
       width: 30px;
       height: 30px;
       line-height: 30px;
       text-align: center; }
+      div.Popup div.Container a.CloseButton i {
+        font-size: 30px; }
+      div.Popup div.Container a.CloseButton:hover {
+        color: #ccc; }
     div.Popup div.Container form {
       border: none;
       padding-bottom: 0;

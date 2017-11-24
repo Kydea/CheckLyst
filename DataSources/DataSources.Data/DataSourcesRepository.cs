@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Data.Entity;
 using System.Linq.Expressions;
 using CheckListManager.Common.Logic.Api.Messages;
+using CheckListManager.Common.Core.Web.Security;
+using CheckListManager.Common.Data.Exceptions;
 
 namespace CheckListManager.DataSources.Data
 {
@@ -44,5 +46,40 @@ namespace CheckListManager.DataSources.Data
                 CurrentPage = currentPage
             };
         }
+
+        private async Task<Common.Data.DataSources> GetDataSourcesAsync(DefaultIdentity identity, string code)
+        {
+            var DataSource = await Entities.DataSources.SingleOrDefaultAsync(d => d.Company == identity.CompanyId && d.Code == code);
+            if (DataSource == null) throw new DatabaseException($"Data source {code} not found");
+            return DataSource;
+        }
+
+        public async Task<Common.Data.DataSources> AddDataSourceAsync(DefaultIdentity identity, Common.Data.DataSources dataSources)
+        {
+            dataSources.Company = identity.CompanyId;
+            dataSources.CreatedOn = DateTimeOffset.UtcNow;
+            dataSources.CreatedBy = identity.Code;
+            Entities.DataSources.Add(dataSources);
+            await SaveChangesAsync();
+            return dataSources;
+        }
+
+        public async Task<Common.Data.DataSources> EditDataSourceAsync(DefaultIdentity identity, Common.Data.DataSources dataSource)
+        {
+            var ExistingPrototypeType = await GetDataSourcesAsync(identity, dataSource.Code);
+            ExistingPrototypeType.Code = dataSource.Code;
+            ExistingPrototypeType.Description = dataSource.Description;
+            ExistingPrototypeType.ModifiedOn = DateTimeOffset.UtcNow;
+            ExistingPrototypeType.ModifiedBy = identity.Code;
+            await SaveChangesAsync();
+            return ExistingPrototypeType;
+        }
+
+        public async Task DeleteDataSourceAsync(DefaultIdentity identity, string code)
+        {
+            Entities.DataSources.Remove(await GetDataSourcesAsync(identity, code));
+            await SaveChangesAsync();
+        }
+
     }
 }

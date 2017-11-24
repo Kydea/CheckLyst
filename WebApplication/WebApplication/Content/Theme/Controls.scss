@@ -3,14 +3,14 @@
 $Inline-Form-Label-Width: 200px;
 
 div.Errors {
-    color: red;
+    color: $Color-Red-Regular;
     margin-top: 20px;
     display: none;
     line-height: 1.5;
 }
 
 input.Error, select.Error {
-    border-color: red;
+    border-color: $Color-Red-Regular;
     outline-color: #f99;
 }
 
@@ -68,11 +68,27 @@ a.Button {
     line-height: $Metric-Control-Height;
     box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.5);
 
-    i.fa, i.fi {
+    i.fi {
+        margin-top: 8px;
+        margin-right: 8px;
+        width: 20px;
+        height: 20px;
+        right: 0;
+        line-height: 20px;
+        position: absolute;
+        background: white;
+        top: 0;
+        z-index: 1;
+        border-radius: 50%;
+        font-size: 12px;
+        color: green;
+    }
+
+    &::after {
+        content: "";
         width: $Metric-Control-Height;
         height: $Metric-Control-Height;
         right: 0;
-        line-height: $Metric-Control-Height;
         border-left: 1px solid #ebebeb;
         background-color: inherit;
         border-radius: 0 5px 5px 0;
@@ -86,19 +102,75 @@ a.Button {
         &:not(.ReadOnly) {
             background-color: $Color-Green-Light;
             color: white;
+
+            i.fi {
+                color: $Color-Green-Light;
+            }
         }
     }
 
     &.Icon {
-        float: left;
         min-width: 0;
-        margin: 0 0 5px 10px;
-        width: 24px;
-        padding: 5px 0;
+        width: $Metric-Control-Height;
+        padding: 0;
+
+        i.fi {
+            padding: 0;
+        }
+
+        &::after {
+            border: 0;
+            border-radius: 5px;
+        }
+    }
+
+    &.MiniIcon {
+        $size: 16px;
+
+        min-width: 0;
+        width: $Metric-Control-Height;
+        padding: 0;
+        height: $size;
+        width: $size;
+        line-height: $size;
+        margin-top: 20px;
+        margin-left: 0;
+        box-shadow: none;
+        border-radius: 50% !important;
+        font-size: 10px;
+        background: none;
+
+        i.fi {
+            color: $Color-Green-Regular;
+            height: $size;
+            width: $size;
+            line-height: $size;
+            padding: 0;
+            border: 0;
+            border-radius: 50% !important;
+            font-size: 10px;
+            margin: 0;
+        }
+
+        &::after {
+            content: none;
+        }
+
+        &:hover {
+            background: none;
+
+            i.fi {
+                color: $Color-Green-Light;
+            }
+        }
+
+        &.Angle {
+            margin-left: -$size;
+        }
     }
 
     &.Invalid {
-        color: red;
+        color: $Color-Red-Regular;
     }
 
     &.ReadOnly {
@@ -113,13 +185,42 @@ a.Button {
     &.GreyGreenButton {
         background-color: $Color-Grey-Regular;
 
-        i.fa, i.fi {
-            color: $Color-Green-Regular;
+        i.fi {
+            color: white;
+            background-color: $Color-Green-Regular;
+        }
+
+        &::after {
             background-color: white;
         }
 
         &:hover {
             background-color: $Color-Green-Regular;
+
+            i.fi {
+                color: white;
+            }
+        }
+    }
+
+    &.GreyYellowButton {
+        background-color: $Color-Grey-Regular;
+
+        i.fi {
+            color: white;
+            background-color: $Color-Yellow-Regular;
+        }
+
+        &::after {
+            background-color: white;
+        }
+
+        &:hover {
+            background-color: $Color-Yellow-Regular;
+
+            i.fi {
+                color: white;
+            }
         }
     }
 }
@@ -130,6 +231,26 @@ form {
     padding-bottom: $Metric-Control-Space;
     padding-right: $Metric-Control-Space;
     background-color: $Color-Silver-Light;
+
+    h2, h3, h4 {
+        float: left;
+        margin-top: $Metric-Control-Space !important;
+        margin-left: $Metric-Control-Space !important;
+        margin-bottom: 0 !important;
+    }
+
+    hr {
+        clear: both;
+        float: left;
+        margin-top: $Metric-Control-Space !important;
+        margin-left: $Metric-Control-Space !important;
+        margin-bottom: 0 !important;
+        width: calc(100% - 2 * #{$Metric-Control-Space}) !important;
+    }
+
+    a.Button {
+        float: left;
+    }
 
     label {
         float: left;
@@ -174,7 +295,7 @@ form {
         }
 
         i.ValidationMessagesIcon {
-            color: red;
+            color: $Color-Red-Regular;
             cursor: pointer;
         }
         // Number of controls | percentage per item.
@@ -237,7 +358,6 @@ form {
         &.FullWidth {
             width: calc(100% - #{$Metric-Control-Space});
             display: block;
-            float: none;
 
             @each $tuple in $controlsData {
                 &.Controls#{nth($tuple, 1)} {
@@ -258,12 +378,12 @@ form {
 
         &.Error {
             i {
-                border-color: red !important;
+                border-color: $Color-Red-Regular !important;
             }
 
             input, select {
-                border-color: red;
-                outline-color: red;
+                border-color: $Color-Red-Regular;
+                outline-color: $Color-Red-Light;
             }
         }
     }

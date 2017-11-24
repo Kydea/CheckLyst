@@ -2,34 +2,33 @@
 
 $label-height: 40px;
 
-div.TabContainer {
+.TabContainer {
     position: relative;
-    overflow: hidden;
-    transition: height .5s;
+    transition: height .3s;
 
     .TabLabels {
 
         &::after {
             content: "";
             position: absolute;
-            height: 2px;
+            height: 1px;
             width: 100%;
             top: $label-height - 2;
-            background-color: $Color-Grey-Light;
+            background-color: $Color-Grey-Regular;
             clear: both;
             left: 0;
+            z-index: 0;
         }
 
         a {
             height: $label-height;
             line-height: $label-height;
-            font-weight: bold;
-            font-size: 16px;
             float: left;
-            border-bottom: solid 6px $Color-Yellow-Regular;
-            color: red;
+            color: $Color-Grey-Regular;
             text-decoration: none;
-            padding: 0 20px;
+            padding: 0 40px;
+            z-index: 1;
+            position: relative;
 
             i.fa {
                 color: red;
@@ -39,7 +38,9 @@ div.TabContainer {
                 cursor: default;
                 border-top: none;
                 border-bottom: none;
-                color: violet;
+                color: $Color-Grey-Dark;
+                border-bottom: solid 3px $Color-Yellow-Regular;
+                font-weight: bold;
 
                 i.fa {
                     color: violet;
@@ -50,7 +51,7 @@ div.TabContainer {
                 text-decoration: none !important;
 
                 &:not(.Selected) {
-                    color: lightcoral;
+                    color: $Color-Yellow-Regular;
                 }
             }
         }

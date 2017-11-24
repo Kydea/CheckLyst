@@ -5,7 +5,7 @@ select.AutoComplete {
 }
 
 input.AutoComplete {
-    padding-right: 30px !important;
+    padding-right: $Metric-Control-Height !important;
 
     &.Open {
         border-radius: 5px 5px 0 0;
@@ -33,7 +33,7 @@ div.AutoComplete-List {
     background: white;
     max-height: 150px;
     overflow: auto;
-    margin-top: 29px;
+    margin-top: $Metric-Control-Height - 1px;
 
     a {
         display: block;
@@ -54,6 +54,13 @@ div.AutoComplete-List {
         &.Selected {
             background: $Color-Silver-Light;
         }
+
+        &.None {
+            i {
+                font-style: normal;
+                color: $Color-Grey-Dark;
+            }
+        }
     }
 
     i {
@@ -71,4 +78,6 @@ i.AutoComplete {
     height: $Metric-Control-Height;
     position: absolute !important;
     margin: 0 !important;
+    font-size: 14px !important;
+    display: none; //shown by matematici.loader
 }

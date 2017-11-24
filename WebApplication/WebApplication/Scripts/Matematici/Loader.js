@@ -1,154 +1,175 @@
 ﻿matematici.loader = (function () {
 
-    var
-        _once = false,
-        _count = 0,
-        _callback = null,
-        _percentage = 0, _in = 0, _out = 0,
-        _center = $("<div />").addClass("Center").hide(),
-        _image = $("<div />").addClass("Image"),
-        _background = $("<div />").addClass("Background").appendTo(_center).append(_image),
-        _div = $("<div />").attr("id", "Loader").hide().appendTo($(document.body)).append(_center),
-        _text = $("<div />").addClass("Percentage").appendTo(_background),
-        _timeout = null,
+	var
+		_once = false,
+		_count = 0,
+		_callback = null,
+		_percentage = 0, _in = 0, _out = 0,
+		_center = $("<div />").addClass("Center").hide(),
+		_image = $("<div />").addClass("Image"),
+		_background = $("<div />").addClass("Background").appendTo(_center).append(_image),
+		_div = $("<div />").attr("id", "Loader").hide().appendTo($(document.body)).append(_center),
+		_text = $("<div />").addClass("Percentage").appendTo(_background),
+		_timeout = null,
 
-        _show = function () {
-            _div.show();
-            if (_timeout == null) {
-                //mostra il loading solo dopo un periodo di inattività
-                _timeout = setTimeout(function () {
-                    _image.activity({ color: '#ffffff', segments: 14, length: 1, space: 8, speed: 1, steps: 15, opacity: 0 }).show();
-                    _center.show();
-                }, 500);
-            }
-        },
+		_show = function () {
+			_div.show();
+			if (_timeout == null) {
+				//mostra il loading solo dopo un periodo di inattività
+				_timeout = setTimeout(function () {
+					_image.activity({ color: '#ffffff', segments: 14, length: 1, space: 8, speed: 1, steps: 15, opacity: 0 }).show();
+					_center.show();
+				}, 500);
+			}
+		},
 
-        _setPercentage = function () {
-            _percentage = Math.max(_percentage, (_out / _in * 100).toFixed());
-            if (isNaN(_percentage) || _in < 3) _percentage = 0;
-            _text.text(_percentage === 0 ? "" : _percentage + "%");
-        },
+		_setPercentage = function () {
+			_percentage = Math.max(_percentage, (_out / _in * 100).toFixed());
+			if (isNaN(_percentage) || _in < 3) _percentage = 0;
+			_background.toggleClass("Percentage", _percentage > 0)
+			_text.text(_percentage === 0 ? "" : _percentage + "%");
+		},
 
-        _checkInitialCurtain = function () {
-            if (_count <= 0 && !_once) {
-                _once = true;
-                $("div#InitialCurtain").fadeOut(2000, function () {
-                    $(this).remove();
-                });
-            }
-        },
+		_checkInitialCurtain = function () {
+			if (_count <= 0 && !_once) {
+				_once = true;
+				$("div#InitialCurtain").fadeOut(2000, function () {
+					$(this).remove();
+				});
+			}
+		},
 
-        _checkCurtain = function () {
-            if (_count <= 0) {
-                $("div#InitialCurtain").fadeOut(2000);
-                matematici.elements.content.stop(true).fadeTo(500, 1);
-            }
-        };
+		_refreshComponents = function () {
+			setTimeout(function () {
+				$("select.AutoComplete").each(function (index) {
+					var select = $(this);
+					select.data("autoComplete").refresh();
+					select.siblings("i.AutoComplete").show();
+				});
 
-    return {
+				$(".TabContainer").each(function (index) {
+					$(this).data("tab").resize();
+				});
 
-        getImages: function (paths, id) {
-            var _loadedImages = {};
-            if (paths.length > 0) {
-                _count += paths.length;
-                _in += paths.length;
-                _show();
+				$(".AutoCenter").each(function () {
+					$(this).data("autoCenter").center();
+				});
+			}, 0);
+			return;
+		},
 
-                //console.log(new Error("loader += " +  paths.length + ": " + _count));
+		_checkCurtain = function () {
+			if (_count <= 0) {
+				$("div#InitialCurtain").fadeOut(2000);
+				matematici.elements.content.stop(true).fadeTo(500, 1);
+			}
+		};
 
-                for (var index = 0; index < paths.length; ++index)
-                    _loadedImages[id === undefined ? index : id[index]] = $("<img />")
-                        .on("load", function () {
-                            //console.log("image loaded");
-                            matematici.loader.hide();
-                        })
-                        .on("error", function (e) {
-                            console.log("error loading image", this, index, e);
-                            matematici.loader.hide();
-                        }).attr({ src: paths[index] });
-            }
-            return _loadedImages;
-        },
+	return {
 
-        loadImages: function (paths, id) {
-            this.getImages(paths, id);
-            return matematici.loader;
-        },
+		getImages: function (paths, id) {
+			var _loadedImages = {};
+			if (paths.length > 0) {
+				_count += paths.length;
+				_in += paths.length;
+				_show();
 
-        loadContent: function (selector) {
-            var paths = [];
-            $("img.Preload", selector).each(function () {
-                paths.push($(this).attr("src"));
-            });
-            this.getImages(paths);
-            return matematici.loader;
-        },
+				//console.log(new Error("loader += " +  paths.length + ": " + _count));
 
-        show: function () {
-            ++_count;
-            ++_in;
-            $("body").addClass("LinksDisabled");
-            _show();
+				for (var index = 0; index < paths.length; ++index)
+					_loadedImages[id === undefined ? index : id[index]] = $("<img />")
+						.on("load", function () {
+							//console.log("image loaded");
+							matematici.loader.hide();
+						})
+						.on("error", function (e) {
+							console.log("error loading image", this, index, e);
+							matematici.loader.hide();
+						}).attr({ src: paths[index] });
+			}
+			return _loadedImages;
+		},
 
-            _setPercentage();
+		loadImages: function (paths, id) {
+			this.getImages(paths, id);
+			return matematici.loader;
+		},
 
-            //console.log(new Error("loader++: " + _count));
-            return matematici.loader;
-        },
+		loadContent: function (selector) {
+			var paths = [];
+			$("img.Preload", selector).each(function () {
+				paths.push($(this).attr("src"));
+			});
+			this.getImages(paths);
+			return matematici.loader;
+		},
 
-        hide: function () {
-            if (false && _count < 0)
-                console.log("warning: hide have been called when loading was not showed");
+		show: function () {
+			++_count;
+			++_in;
+			$("body").addClass("LinksDisabled");
+			_show();
 
-            if (--_count <= 0) {
+			_setPercentage();
 
-                _percentage = 0;
-                _in = 0;
-                _out = 0;
+			//console.log(new Error("loader++: " + _count));
+			return matematici.loader;
+		},
 
-                $("body").removeClass("LinksDisabled");
+		hide: function () {
+			if (false && _count < 0)
+				console.log("warning: hide have been called when loading was not showed");
 
-                clearTimeout(_timeout);
-                _timeout = null;
-                _image.activity(false);
-                _center.hide();
-                _div.hide();
-                
-                _checkInitialCurtain();
+			if (--_count <= 0) {
 
-                if (_callback !== null) {
-                    _callback.call();
-                    _callback = null;
-                }
-            } 
+				_percentage = 0;
+				_in = 0;
+				_out = 0;
 
-            ++_out;
-            _setPercentage();
+				$("body").removeClass("LinksDisabled");
 
-            //console.log(new Error("loader--: " + _count));
-            return matematici.loader;
-        },
+				clearTimeout(_timeout);
+				_timeout = null;
+				_image.activity(false);
+				_center.hide();
+				_div.hide();
 
-        setCallback: function (callback) {
-            _callback = callback;
-            return matematici.loader;
-        },
+				_checkInitialCurtain();
+				_refreshComponents()
 
-        getCount: function () {
-            return _count;
-        },
+				if (_callback !== null) {
+					_callback.call();
+					_callback = null;
+				}
+			}
 
-        isVisible: function () {
-            return _count > 0;
-        },
+			++_out;
+			_setPercentage();
 
-        checkInitialCurtain: function () {
-            _checkInitialCurtain();
-        },
+			//console.log(new Error("loader--: " + _count));
+			return matematici.loader;
+		},
 
-        checkCurtain: function () {
-            _checkCurtain();
-        }
+		setCallback: function (callback) {
+			_callback = callback;
+			return matematici.loader;
+		},
 
-    };
+		getCount: function () {
+			return _count;
+		},
+
+		isVisible: function () {
+			return _count > 0;
+		},
+
+		checkInitialCurtain: function () {
+			_checkInitialCurtain();
+		},
+
+		checkCurtain: function () {
+			_checkCurtain();
+		}
+
+	};
 })();

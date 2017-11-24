@@ -7,35 +7,26 @@ div.Accordion-Bar {
     .Button {
         background-color: $Color-Yellow-Regular;
         border-radius: 5px 5px 0 0;
-        padding-right: 50px;
+        padding-right: $Metric-Control-Height + 20px;
         box-shadow: none;
 
-        i.fa {
-            background: none;
-            right: 0;
-            border: none;
+        i.fi {
             transition: transform 300ms ease;
-            box-shadow: none;
+            color: $Color-Yellow-Regular;
         }
 
         &:hover {
             background-color: $Color-Yellow-Light !important;
-        }
 
-        &.Closed {
-            i.fa {
-                transform: rotate(-180deg);
+            i.fi {
+                color: $Color-Yellow-Light;
             }
         }
 
-        &::after {
-            content: "";
-            position: absolute;
-            height: 100%;
-            right: 30px;
-            width: 1px;
-            top: 0;
-            background: white;
+        &.Closed {
+            i.fi {
+                transform: rotate(-180deg);
+            }
         }
     }
 }

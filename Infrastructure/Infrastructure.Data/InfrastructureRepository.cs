@@ -60,13 +60,13 @@ namespace CheckListManager.Infrastructure.Data
         public async Task<PrototypeTypes> EditPrototypeTypeAsync(DefaultIdentity identity, PrototypeTypes prototypeType)
         {
             var ExistingPrototypeType = await GetPrototypeTypeAsync(identity, prototypeType.ID);
-            ExistingPrototypeType.ModifiedOn = DateTimeOffset.UtcNow;
-            ExistingPrototypeType.ModifiedBy = identity.Code;
-            ExistingPrototypeType.Description = prototypeType.Description;
+            ExistingPrototypeType.Name = prototypeType.Name;
             ExistingPrototypeType.ApprovationWorkFlow = prototypeType.ApprovationWorkFlow;
             ExistingPrototypeType.ObsolescenceWorkFlow = prototypeType.ObsolescenceWorkFlow;
+            ExistingPrototypeType.ModifiedOn = DateTimeOffset.UtcNow;
+            ExistingPrototypeType.ModifiedBy = identity.Code;
             await SaveChangesAsync();
-            return prototypeType;
+            return ExistingPrototypeType;
         }
 
         public async Task<PrototypeTypes> AddPrototypeTypeAsync(DefaultIdentity identity, PrototypeTypes prototypeType)
@@ -117,17 +117,17 @@ namespace CheckListManager.Infrastructure.Data
         public async Task<PagingResponse<List<TResult>>> GetPrototypeTypesAsync<TResult>(
             long companyId, 
             Expression<Func<PrototypeTypes, TResult>> select, 
-            long? department, string description, int currentPage, int itemsPerPage)
+            long? department, string name, int currentPage, int itemsPerPage)
         {
             var Query = Entities.PrototypeTypes
                 .Where(pt =>
                     pt.Company == companyId
                     && (department == null || pt.Department == department)
-                    && (description == "" || pt.Description != null && pt.Description.ToUpper().Contains(description.ToUpper()))
+                    && (name == "" || pt.Name != null && pt.Name.ToUpper().Contains(name.ToUpper()))
                 );
 
             var Data = await Query
-                .OrderBy(pt => pt.Description).ThenBy(pt => pt.ID)
+                .OrderBy(pt => pt.Name).ThenBy(pt => pt.ID)
                 .Select(select)
                 .Skip((currentPage - 1) * itemsPerPage)
                 .Take(itemsPerPage)
@@ -143,5 +143,14 @@ namespace CheckListManager.Infrastructure.Data
                 CurrentPage = currentPage
             };
         }
+
+        public async Task<List<WorkFlows>> GetWorkFlows(long companyId)
+        {
+            return await Entities.WorkFlows
+                .Where(wf => wf.Company == companyId)
+                .OrderBy(wf => wf.Description).ThenBy(wf => wf.ID)
+                .ToListAsync();
+        }
+
     }
 }

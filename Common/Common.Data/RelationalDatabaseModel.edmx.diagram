@@ -19,8 +19,6 @@
         <EntityTypeShape EntityType="RelationalDatabaseModel.InstanceNumerators" Width="1.5" PointX="15.375" PointY="11.5" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.InstanceStates" Width="1.5" PointX="15.375" PointY="17.875" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.InstanceTags" Width="1.5" PointX="19.875" PointY="11.375" />
-        <EntityTypeShape EntityType="RelationalDatabaseModel.Prototypes" Width="1.5" PointX="10.875" PointY="3.125" />
-        <EntityTypeShape EntityType="RelationalDatabaseModel.PrototypeTypes" Width="1.5" PointX="10.875" PointY="8" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.PrototypeVersions" Width="1.5" PointX="13.125" PointY="10.5" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.PrototypeVersionTags" Width="1.5" PointX="15.375" PointY="14.5" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.VersionStates" Width="1.5" PointX="13" PointY="16.875" />
@@ -34,14 +32,6 @@
         <EntityTypeShape EntityType="RelationalDatabaseModel.WorkFlowSteps" Width="1.5" PointX="7.875" PointY="20.125" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.WorkFlowStepTags" Width="1.5" PointX="10.125" PointY="20.75" />
         <AssociationConnector Association="RelationalDatabaseModel.FK_Instances_Version" />
-        <AssociationConnector Association="RelationalDatabaseModel.Prototypes_Company_fkey" />
-        <AssociationConnector Association="RelationalDatabaseModel.Prototypes_Department_fkey" />
-        <AssociationConnector Association="RelationalDatabaseModel.Prototypes_PrototypeType_fkey" />
-        <AssociationConnector Association="RelationalDatabaseModel.PrototypeVersions_Prototype_fkey" />
-        <AssociationConnector Association="RelationalDatabaseModel.PrototypeTypes_ApprovationWorkFlow_fkey" />
-        <AssociationConnector Association="RelationalDatabaseModel.PrototypeTypes_Company_fkey" />
-        <AssociationConnector Association="RelationalDatabaseModel.PrototypeTypes_Department_fkey" />
-        <AssociationConnector Association="RelationalDatabaseModel.PrototypeTypes_ObsolescenceWorkFlow_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.FK_PrototypeVersionTags_Version" />
         <AssociationConnector Association="RelationalDatabaseModel.PrototypeVersions_InstanceConfirmationWorkFlow_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.PrototypeVersions_ProposedState_fkey" />
@@ -60,19 +50,29 @@
         <EntityTypeShape EntityType="RelationalDatabaseModel.FunctionGroups" Width="1.5" PointX="11.625" PointY="23.625" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.Functions" Width="1.5" PointX="13.875" PointY="23.5" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.UserFunctions" Width="1.5" PointX="16.125" PointY="6.5" />
-        <AssociationConnector Association="RelationalDatabaseModel.UserFunctions_PrototypeType_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.Functions_FunctionGroup_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.UserFunctions_Function" />
         <AssociationConnector Association="RelationalDatabaseModel.UserFunctions_User" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.Records" Width="1.5" PointX="15.125" PointY="1.5" />
         <AssociationConnector Association="RelationalDatabaseModel.Records_Action_fkey" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.DataSources" Width="1.5" PointX="0.75" PointY="9.75" />
-        <EntityTypeShape EntityType="RelationalDatabaseModel.Instances" Width="1.5" PointX="17.625" PointY="11.875" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.Instances" Width="1.5" PointX="17.625" PointY="11.75" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.Prototypes" Width="1.5" PointX="10.5" PointY="2.875" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.PrototypeTypes" Width="1.5" PointX="10.875" PointY="7.875" />
         <AssociationConnector Association="RelationalDatabaseModel.InstanceExpressionValues_Instance_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.FK_Instances_InstanceNumerator" />
         <AssociationConnector Association="RelationalDatabaseModel.Instances_InstanceState_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.Instances_Prototype_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.InstanceTags_Instance_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.Prototypes_Company_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.Prototypes_Department_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.Prototypes_PrototypeType_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.PrototypeVersions_Prototype_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.PrototypeTypes_ApprovationWorkFlow_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.PrototypeTypes_Company_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.PrototypeTypes_Department_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.PrototypeTypes_ObsolescenceWorkFlow_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.UserFunctions_PrototypeType_fkey" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

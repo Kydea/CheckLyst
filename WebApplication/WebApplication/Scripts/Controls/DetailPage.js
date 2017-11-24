@@ -1,8 +1,9 @@
 ﻿matematici.DetailPage = function (options) {
 	var
+		detailPage = this,
 		data = matematici.popup.getData(),
 		sender = matematici.popup.getSender(),
-		buttons = [],
+		buttons = options.buttons || [],
 		form,
 
 		clickHandler = function (event) {
@@ -18,9 +19,9 @@
 		setup = function () {
 			buttons.push({ cancelButton: true, hidden: true });
 
-			if (data != null)
+			if (!options.readOnly && data != null)
 				buttons.push({
-					text: "delete", icon: "delete", handler: function () {
+					text: "delete", icon: "trash-o", handler: function () {
 						matematici.dialog.show("warning", "The record will be deleted.", [
 							{
 								text: "confirm", icon: "check", handler: function () {
@@ -35,7 +36,7 @@
 
 			if (!options.readOnly)
 				buttons.push({
-					text: "save", icon: "save", id: "SaveButton", handler: function () {
+					text: "save", icon: "floppy-o", id: "SaveButton", handler: function () {
 						clickHandler(data == null ? "Add" : "Edit");
 						return true;
 					}
@@ -43,14 +44,36 @@
 
 			matematici.popup.setButtons(buttons);
 
-			matematici.popup.setWidth(420);
+			matematici.popup.setWidth(options.width || "420px");
 
 			form = new matematici.Form(options.formSelector, {
-				applyButton: "#SaveButton"
+				applyButton: "#SaveButton",
+				bindEvent: options.bindEvent
 			});
 			form.initialize();
-			if (data != null) form.setValues(data);
-		}
+			setTimeout(function () {
+				if (options.initHandler) options.initHandler(detailPage);
+				form.setValues(data);
+				if (options.completeHandler) options.completeHandler(detailPage);
+			}, 0);
+			
+		};
+
+	this.getElement = function () {
+		return matematici.popup.getElement();
+	},
+
+	this.getSender = function () {
+		return sender;
+	};
+
+	this.getForm = function () {
+		return form;
+	};
+
+	this.isNew = function () {
+		return data == null;
+	};
 
 	setup();
 }

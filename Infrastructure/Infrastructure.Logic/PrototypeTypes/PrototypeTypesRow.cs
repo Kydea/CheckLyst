@@ -8,9 +8,10 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
 {
     public class PrototypeTypesRow
     {
-        public string Department { get; set; }
+        public long Department { get; set; }
+        public string DepartmentName { get; set; }
         public long ID { get; set; }
-        public string Description { get; set; }
+        public string Name { get; set; }
         public long? ApprovationWorkFlow { get; set; }
         public string ApprovationWorkFlowDescription { get; set; }
         public long? ObsolescenceWorkFlow { get; set; }

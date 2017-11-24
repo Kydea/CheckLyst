@@ -2,10 +2,12 @@
 	var
 		form = this,
 		element = $(selector),
-		fieldsSelector = "input, select",
+		fieldsSelector = "input[name], select[name]",
 		fields = $(fieldsSelector, element),
 		valid = false,
 		errors,
+		fieldErrors = false,
+		bindResult,
 
 		setup = function () {
 			//initial setup
@@ -29,10 +31,7 @@
 				.on("keypress change paste", fieldsSelector, function (e) {
 					if (e.key != "Tab" && e.which !== 0 && !e.ctrlKey && !e.metaKey && !e.altKey && options.applyButton) {
 						matematici.controls.setEditable(options.applyButton, valid);
-						if (errors) {
-							errors.remove();
-							errors = null;
-						}
+						clearFormErrors();
 						matematici.controls.setValidationMessages($(this), []);
 					}
 				})
@@ -50,6 +49,21 @@
 				bind(options.bindEvent, handleResult, loadForm() || prepareRequest());
 			else
 				valid = true;
+		},
+
+		clearFormErrors = function () {
+			if (errors) {
+				errors.remove();
+				errors = null;
+				fieldErrors = false;
+			}
+		},
+
+		clearAllErrors = function () {
+			clearFormErrors();
+			fields.each(function () {
+				matematici.controls.setValidationMessages($(this), []);
+			});
 		},
 
 		getStorageName = function () {
@@ -123,24 +137,28 @@
 
 			if (validationMessages.length > 0) {
 				if (!errors) errors = $("<div />").addClass("Errors").appendTo(element).show();
-				if (field)
-					errors.append(
-						$("<div />").addClass("Error").text(" Some field has errors. Click on error icon of the field for more details.").prepend(
-							$("<i />").addClass("fa fa-warning")
-						)
-					);
-				else
+				if (!field)
 					for (var index in data.validationMessages)
 						errors.append(
 							$("<div />").addClass("Error").text(" " + data.validationMessages[index].message).prepend(
 								$("<i />").addClass("fa fa-warning")
 							)
 						);
+				else if (!fieldErrors) {
+					fieldErrors = true;
+					errors.append(
+						$("<div />").addClass("Error").text(" Some field has errors. Click on error icon of the field for more details.").prepend(
+							$("<i />").addClass("fa fa-warning")
+						)
+					);
+				}
 			} 
-		};
+		},
 
 		handleResult = function (data) {
 			//updates the form
+			clearAllErrors();
+
 			fields.each(function () {
 				var
 					field = $(this),
@@ -149,14 +167,15 @@
 				if (fieldData) {
 					var tagName = field[0].tagName;
 					if (tagName == "SELECT" && fieldData.options !== undefined) {
-						var value = field.val();
+						var
+							value = field.val(),
+							autoComplete = field.data("autoComplete");
 						field.empty();
 						for (var index in fieldData.options) {
 							var option = fieldData.options[index];
 							field.append($("<option />").attr("value", option.value).text(option.text));
 						}
 						if (fieldData.value != null) field.val(fieldData.value);
-						var autoComplete = field.data("autoComplete");
 						autoComplete.refresh();
 						autoComplete.getControl().toggle(!fieldData.visibile);
 						matematici.controls.setEditable(autoComplete.getControl(), fieldData.editable && fieldData.options.length > 0);
@@ -184,6 +203,7 @@
 				contentType: "application/json; charset=utf-8",
 				data: data
 			}).done(function (result) {
+				if (event == options.bindEvent) bindResult = result;
 				if (options.applyButton && data && data.source && (data.source == options.applyButton.attr("name") || data.source == options.applyButton.attr("id")))
 					matematici.controls.setEditable(options.applyButton, false); //by default, the action button is disabled when clicked with success
 				if (handler)
@@ -203,7 +223,7 @@
 	this.setValues = function (values) {
 		fields.each(function () {
 			var field = $(this);
-			setFieldValue(field, values[field.attr("name")]);
+			setFieldValue(field, values && values[field.attr("name")]);
 		});
 	};
 
@@ -213,6 +233,14 @@
 
 	this.handleResult = function (result) {
 		handleResult(result);
+	};
+
+	this.getBindResult = function () {
+		return bindResult;
+	};
+
+	this.getElement = function () {
+		return element;
 	};
 };
 

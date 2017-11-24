@@ -13,6 +13,7 @@ matematici.AutoComplete = function (selector) {
 		icon,
 		noRow,
 		oldValue,
+		multiple,
 
 		setValue = function () {
 			var value = element.val();
@@ -34,29 +35,28 @@ matematici.AutoComplete = function (selector) {
 			});
 			list.outerWidth(width);
 
-            var labelPosition = {
-                'left': position.left + parseInt(label.css('marginLeft'), 10),
-                'top': position.top + label.outerHeight(true)
-            };
+			var labelPosition = {
+				'left': position.left + parseInt(label.css('marginLeft'), 10),
+				'top': position.top + label.outerHeight(true)
+			};
 
-            list.css(labelPosition);
-            input.css(labelPosition);
+			list.css(labelPosition);
+			input.css(labelPosition);
 
-            icon.css({
-                'left': labelPosition.left + width - 20,
-                'top': position.top + parseInt(label.css('marginTop'), 10)
+			icon.css({
+				'left': labelPosition.left + width - 24,
+				'top': position.top + parseInt(label.css('marginTop'), 10)
 			});
-
-			console.log(labelPosition.left + width - 20, position.top + parseInt(label.css('marginTop'), 10));
 		},
 
 		initialize = function () {
 			element.data("autoComplete", autoComplete);
+			multiple = element.prop("multiple");
 			label = $("<input />").addClass("AutoComplete").attr({ type: "text" }).insertAfter(element);
 			var width = label.outerWidth();
 			input = $("<input />").addClass("AutoComplete-Filter").attr({ type: "text" }).hide().insertAfter(label);
 			list = $("<div />").addClass("AutoComplete-List").insertAfter(input);
-			icon = $("<i />").addClass("AutoComplete fi flaticon-freccia-giu").insertAfter(input);
+			icon = $("<i />").addClass("AutoComplete fi flaticon-arrow-down").insertAfter(input);
 			noRow = $("<i />").addClass("fi flaticon-meno");
 			element.parent("label").on("click", function (e) {
 				label.focus();
@@ -120,12 +120,17 @@ matematici.AutoComplete = function (selector) {
 					list.scrollTop(top + itemHeight - listHeight);
 
 				element.val(item.data("value"));
-				label.val(item.text());
+				label.val(item.hasClass("None") ? "" : item.text());
 			}
 		},
 
 		showList = function () {
 			if (oldValue == null) oldValue = element.val() || "";
+			$("select.AutoComplete.Open").each(function () {
+				$(this).data("autoComplete").hideList();
+			});
+
+			element.addClass("Open");
 			label.addClass("Open");
 			input.show();
 			list.show();
@@ -147,12 +152,16 @@ matematici.AutoComplete = function (selector) {
 			input.hide();
 			setCurrentItem(null);
 			label.removeClass("Open");
+			element.removeClass("Open");
 			if (oldValue != (element.val() || "")) element.change();
 			oldValue = null;
 		},
 
 		updateList = function () {
 			list.empty();
+			if (element.data("nullable"))
+				list.append($("<a />").addClass("None").attr("href", "#").append($("<i />").text("(none)")));
+
 			var count = 0;
 			options
 				.each(function () {
@@ -176,6 +185,10 @@ matematici.AutoComplete = function (selector) {
 		setValue();
 	};
 
+	this.hideList = function () {
+		hideList();
+	};
+
 	this.getControl = function () {
 		return label;
 	};
@@ -191,7 +204,8 @@ matematici.AutoComplete = function (selector) {
 
 matematici.initializers.push(function (context) {
 	$("select", context).each(function () {
-		new matematici.AutoComplete(this).initialize();
+		if (!$(this).data("autoComplete"))
+			new matematici.AutoComplete(this).initialize();
 	});
 });
 

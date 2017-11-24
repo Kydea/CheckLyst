@@ -1,26 +1,22 @@
 ﻿<div id="DataSourcesListPage">
-    <h1>DataSources List</h1>
+    <h1>Data Sources List</h1>
 
     <div class="ActionBar"></div>
 
     <div class="ShadowPanel">
-        <div class="Accordion-Bar">
-            <a class="Button">search <i class="fa fa-arrow-down"></i></a>
-        </div>
+        <div class="Accordion"></div>
         <form id="Filters" action="@BaseUrl/DataSources/List">
             <label>
                 Code
-                <i class="fi flaticon-departments" />
+                <i class="fi flaticon-database-o" />
                 <input type="text" name="code" />
             </label>
 
             <label>
                 Description
-                <i class="fi flaticon-departments" />
+                <i class="fi flaticon-align-left" />
                 <input type="text" name="description" />
             </label>
-
-            <a id="ApplyButton" class="Button DefaultButton"><i class="fa fa-search"></i> search</a>
         </form>
 
         <table class="Grid">
@@ -35,7 +31,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
+                <tr class="Handler">
                     <td data-column="code"></td>
                     <td data-column="description"></td>
                     <td data-column="createdBy"></td>

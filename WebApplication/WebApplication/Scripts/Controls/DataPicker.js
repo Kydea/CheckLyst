@@ -85,7 +85,7 @@
 				.on("click", open);
 
 			$("<i />")
-				.addClass("fa fa-calendar")
+				.addClass("fi flaticon-calendar")
 				.insertBefore(element)
 				.on("click", function (e) {
 					e.preventDefault();

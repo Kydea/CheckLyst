@@ -1,20 +1,16 @@
 ﻿<div id="WorkFlowsListPage">
-    <h1>WorkFlows List</h1>
+    <h1>Work Flows List</h1>
 
     <div class="ActionBar"></div>
 
     <div class="ShadowPanel">
-        <div class="Accordion-Bar">
-            <a class="Button">search <i class="fa fa-arrow-down"></i></a>
-        </div>
+        <div class="Accordion"></div>
         <form id="Filters" action="@BaseUrl/WorkFlows/List">
             <label>
                 Description
-                <i class="fi flaticon-departments" />
+                <i class="fi flaticon-align-left" />
                 <input type="text" name="description" />
             </label>
-
-            <a id="ApplyButton" class="Button DefaultButton"><i class="fa fa-search"></i> search</a>
         </form>
 
         <table class="Grid">
@@ -29,7 +25,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
+                <tr class="Handler">
                     <td data-column="id"></td>
                     <td data-column="description"></td>
                     <td data-column="createdBy"></td>

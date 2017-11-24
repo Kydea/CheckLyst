@@ -4,31 +4,38 @@
     <form id="Detail" action="@BaseUrl/Infrastructure/PrototypeTypes">
         <label>
             ID
-            <i class="fi flaticon-departments" />
+            <i class="fi flaticon-barcode-o" />
             <input type="text" name="id" readonly="readonly" placeholder="(new record)" />
         </label>
 
         <label>
-            Description
-            <i class="fi flaticon-data" />
+            Name
+            <i class="fi flaticon-align-left" />
             <input type="text" name="name" />
         </label>
 
         <label class="Clearing">
+            <input type="hidden" name="department" />
+            Department
+            <i class="fi flaticon-building-o" data-nullable="true" />
+            <input type="text" name="departmentName" readonly="readonly" />
+        </label>
+
+        <label class="Clearing">
             Approvation workflow
-            <i class="fi flaticon-departments" />
-            <select type="text" name="approvationWorkflow" />
+            <i class="fi flaticon-workflow" />
+            <select type="text" name="approvationWorkFlow" data-nullable="true" />
         </label>
 
         <label>
-            obslolescence workflow
-            <i class="fi flaticon-departments" />
-            <select type="text" name="obsolescenceWorkflow" />
+            Obslolescence workflow
+            <i class="fi flaticon-workflow" />
+            <select type="text" name="obsolescenceWorkFlow" data-nullable="true" />
         </label>
 
         <label class="Clearing">
             Created by
-            <i class="fi flaticon-people" />
+            <i class="fi flaticon-user-o" />
             <input type="text" name="createdBy" readonly="readonly" />
         </label>
 
@@ -40,7 +47,7 @@
 
         <label class="Clearing">
             Modified by
-            <i class="fi flaticon-people" />
+            <i class="fi flaticon-user-o" />
             <input type="text" name="modifiedBy" readonly="readonly" />
         </label>
 
@@ -56,6 +63,24 @@
 
 <script type="text/javascript">
     new matematici.DetailPage({
-        formSelector: "form#Detail"
+        formSelector: "form#Detail",
+        initHandler: function (detailPage) {
+            var
+                sender = detailPage.getSender(),
+                form = detailPage.getForm();
+
+            form.handleResult(sender.getBindResult());
+        },
+        completeHandler: function (detailPage) {
+            if (detailPage.isNew()) {
+                var
+                    sender = detailPage.getSender(),
+                    department = $("select[name=department]", sender.getElement()),
+                    element = detailPage.getElement();
+
+                $("input[name=department]", element).val(department.val());
+                $("input[name=departmentName]", element).val(department.siblings("input.AutoComplete").val());
+            }
+        }
     });
 </script>
