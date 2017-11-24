@@ -3,7 +3,7 @@
 body:not(.Login) {
     div#Content {
         margin-top: 30px;
-        min-height: calc(100vh - #{$Metric-Header-Height} - #{$Metric-Breadcrumbs-Height});
+        min-height: calc(100vh - #{$Metric-Header-Height} - #{$Metric-Breadcrumbs-Height} - 30px);
         padding-bottom: 50px;
 
         @media #{$Media-Extended} {
@@ -22,7 +22,7 @@ body:not(.Login) {
 
         hr {
             height: 1px;
-            background-color: black;
+            background-color: $Color-Grey-Regular;
             border: 0;
             width: 100%;
         }
@@ -39,12 +39,21 @@ body:not(.Login) {
             font-size: 18px;
             text-transform: uppercase;
             color: $Color-Green-Dark;
+            clear: both;
         }
 
         h3 {
             margin: 20px 0;
             font-size: 16px;
             color: $Color-Green-Dark;
+            clear: both;
+        }
+
+        h4 {
+            margin: 20px 0;
+            font-size: 15px;
+            color: $Color-Grey-Darker;
+            clear: both;
         }
 
         p {

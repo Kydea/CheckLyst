@@ -53,11 +53,25 @@ a.Button {
   height: 36px;
   line-height: 36px;
   box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.5); }
-  a.Button i.fa, a.Button i.fi {
+  a.Button i.fi {
+    margin-top: 8px;
+    margin-right: 8px;
+    width: 20px;
+    height: 20px;
+    right: 0;
+    line-height: 20px;
+    position: absolute;
+    background: white;
+    top: 0;
+    z-index: 1;
+    border-radius: 50%;
+    font-size: 12px;
+    color: green; }
+  a.Button::after {
+    content: "";
     width: 36px;
     height: 36px;
     right: 0;
-    line-height: 36px;
     border-left: 1px solid #ebebeb;
     background-color: inherit;
     border-radius: 0 5px 5px 0;
@@ -68,12 +82,48 @@ a.Button {
     a.Button:hover:not(.ReadOnly), a.Button.Selected:not(.ReadOnly) {
       background-color: #03c3b1;
       color: white; }
+      a.Button:hover:not(.ReadOnly) i.fi, a.Button.Selected:not(.ReadOnly) i.fi {
+        color: #03c3b1; }
   a.Button.Icon {
-    float: left;
     min-width: 0;
-    margin: 0 0 5px 10px;
-    width: 24px;
-    padding: 5px 0; }
+    width: 36px;
+    padding: 0; }
+    a.Button.Icon i.fi {
+      padding: 0; }
+    a.Button.Icon::after {
+      border: 0;
+      border-radius: 5px; }
+  a.Button.MiniIcon {
+    min-width: 0;
+    width: 36px;
+    padding: 0;
+    height: 16px;
+    width: 16px;
+    line-height: 16px;
+    margin-top: 20px;
+    margin-left: 0;
+    box-shadow: none;
+    border-radius: 50% !important;
+    font-size: 10px;
+    background: none; }
+    a.Button.MiniIcon i.fi {
+      color: #009688;
+      height: 16px;
+      width: 16px;
+      line-height: 16px;
+      padding: 0;
+      border: 0;
+      border-radius: 50% !important;
+      font-size: 10px;
+      margin: 0; }
+    a.Button.MiniIcon::after {
+      content: none; }
+    a.Button.MiniIcon:hover {
+      background: none; }
+      a.Button.MiniIcon:hover i.fi {
+        color: #03c3b1; }
+    a.Button.MiniIcon.Angle {
+      margin-left: -16px; }
   a.Button.Invalid {
     color: #cc0000; }
   a.Button.ReadOnly {
@@ -83,11 +133,26 @@ a.Button {
       color: white !important; }
   a.Button.GreyGreenButton {
     background-color: #999; }
-    a.Button.GreyGreenButton i.fa, a.Button.GreyGreenButton i.fi {
-      color: #009688;
+    a.Button.GreyGreenButton i.fi {
+      color: white;
+      background-color: #009688; }
+    a.Button.GreyGreenButton::after {
       background-color: white; }
     a.Button.GreyGreenButton:hover {
       background-color: #009688; }
+      a.Button.GreyGreenButton:hover i.fi {
+        color: white; }
+  a.Button.GreyYellowButton {
+    background-color: #999; }
+    a.Button.GreyYellowButton i.fi {
+      color: white;
+      background-color: #ffba00; }
+    a.Button.GreyYellowButton::after {
+      background-color: white; }
+    a.Button.GreyYellowButton:hover {
+      background-color: #ffba00; }
+      a.Button.GreyYellowButton:hover i.fi {
+        color: white; }
 
 form {
   border: 1px solid #ccc;
@@ -95,6 +160,20 @@ form {
   padding-bottom: 20px;
   padding-right: 20px;
   background-color: #f5f5f5; }
+  form h2, form h3, form h4 {
+    float: left;
+    margin-top: 20px !important;
+    margin-left: 20px !important;
+    margin-bottom: 0 !important; }
+  form hr {
+    clear: both;
+    float: left;
+    margin-top: 20px !important;
+    margin-left: 20px !important;
+    margin-bottom: 0 !important;
+    width: calc(100% - 2 * 20px) !important; }
+  form a.Button {
+    float: left; }
   form label {
     float: left;
     margin-top: 20px;

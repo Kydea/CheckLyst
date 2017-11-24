@@ -1,7 +1,7 @@
 ﻿<div id="TrailDetailPage">
     <h2>Data Source</h2>
 
-    <form id="Detail">
+    <form id="Detail" action="@BaseUrl/DataSources/List">
         <div class="Triggers">
             <label>
                 Code
@@ -39,9 +39,9 @@
                 <input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
             </label>
         </div>
+        <div class="Clearing"></div>
     </form>
 
-    <div class="Clearing"></div>
 </div>
 
 <script type="text/javascript">

@@ -66,16 +66,12 @@ namespace CheckListManager.Infrastructure.Data
             ExistingPrototypeType.ModifiedOn = DateTimeOffset.UtcNow;
             ExistingPrototypeType.ModifiedBy = identity.Code;
             await SaveChangesAsync();
-            return prototypeType;
+            return ExistingPrototypeType;
         }
 
         public async Task<PrototypeTypes> AddPrototypeTypeAsync(DefaultIdentity identity, PrototypeTypes prototypeType)
         {
             prototypeType.Company = identity.CompanyId;
-            prototypeType.Department = prototypeType.Department;
-            prototypeType.Name = prototypeType.Name;
-            prototypeType.ApprovationWorkFlow = prototypeType.ApprovationWorkFlow;
-            prototypeType.ObsolescenceWorkFlow = prototypeType.ObsolescenceWorkFlow;
             prototypeType.CreatedOn = DateTimeOffset.UtcNow;
             prototypeType.CreatedBy = identity.Code;
             Entities.PrototypeTypes.Add(prototypeType);

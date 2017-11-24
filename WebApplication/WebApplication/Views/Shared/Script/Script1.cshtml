@@ -7,6 +7,8 @@
         }).ajaxStop(function () {
             matematici.loader.hide();
         }).ajaxError(function (event, jqxhr, settings, thrownError) {
+            if (matematici.navigator.handleAjaxError(event)) return;
+
             var message = "";
             if (jqxhr.responseJSON && jqxhr.responseJSON.messages)
                 for (var index in jqxhr.responseJSON.messages)
@@ -52,6 +54,11 @@
     matematici.elements.window.on("beforeunload", function () {
         if (!matematici.canClose)
             return "Warning: any unsaved change will be lost.";
+    }).on("resize", function () {
+        //TODO mettere in initializers e destroyers del tab
+        $(".TabContainer").each(function () {
+            $(this).data("tab").resize();
+        });
     });
 
     matematici.breadcrumbs = new matematici.Breadcrumbs("div#Breadcrumbs");

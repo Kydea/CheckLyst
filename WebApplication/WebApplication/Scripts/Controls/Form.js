@@ -136,7 +136,6 @@
 				matematici.controls.setValidationMessages(field, validationMessages);
 
 			if (validationMessages.length > 0) {
-				console.log(field[0], data);
 				if (!errors) errors = $("<div />").addClass("Errors").appendTo(element).show();
 				if (!field)
 					for (var index in data.validationMessages)

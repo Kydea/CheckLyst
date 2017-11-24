@@ -30,7 +30,7 @@ matematici.popup = function () {
 				button.content.prepend($("<textarea />").addClass("Textarea"));
 				if (button.text) button.content.prepend($("<label />").text(button.text));
 			} else if (button.text || button.hidden) {
-				button.content = $("<a />").addClass("Button").text((button.icon ? " " : "") + button.text).on("click", function () {
+				button.content = $("<a />").addClass("Button GreyGreenButton " + (button.cssClass || "")).text((button.icon ? " " : "") + button.text).on("click", function () {
 					if (button.handler) {
 						if (!button.handler.call(this, button.data)) {
 							matematici.popup.close();
@@ -38,9 +38,9 @@ matematici.popup = function () {
 					} else
 						matematici.popup.close();
 				});
-				if (button.icon) button.content.prepend($("<i />").addClass("fa fa-" + button.icon));
+				if (button.icon) button.content.prepend($("<i />").addClass("fi flaticon-" + button.icon));
 				if (button.hidden) button.content.hide();
-				if (button.defaultButton) button.content.addClass("DefaultButton");
+				if (button.defaultButton) button.content.addClass("DefaultButton GreyGreenButton");
 				if (button.cancelButton) {
 					container
 						.append($("<a />").attr("href", "#").addClass("CloseButton")
@@ -50,7 +50,7 @@ matematici.popup = function () {
 							}));
 					button.content.addClass("CancelButton");
 				}
-				if (button.id) button.content.attr("id");
+				if (button.id) button.content.attr("id", button.id);
 			}
 
 			buttons.prepend(button.content);
@@ -151,11 +151,15 @@ matematici.popup = function () {
 		},
 
 		setWidth: function (value) {
-			container.width(value);
+			container.css("width", value);
 		},
 
 		setCloseHandler: function (value) {
 			setCloseHandler(value);
+		},
+
+		center: function () {
+			autoCenter.center();
 		}
 	};
 
@@ -183,7 +187,7 @@ matematici.popup = function () {
                 - or -
                 text - type: String, description: the text of the button (i.e. <a class="Button">[text]</a>)
                 handler - type: function, description: called when the button is clicked
-                icon - type: function, description: the icon of the button (i.e. <a class="Button"><i class="fa fa-[icon]"></i> [text]</a>)
+                icon - type: function, description: the icon of the button (i.e. <a class="Button"><i class="fi flaticon[icon]"></i> [text]</a>)
 				hidden - type: boolean, description: the button is hidden
 				defaultButton - type: boolean, description: the click action is invoked when user press return
 				cancelButton - type: boolean, description: the click action is invoked when user press esc, a close button accociated is displayed (also if this button is hidden)

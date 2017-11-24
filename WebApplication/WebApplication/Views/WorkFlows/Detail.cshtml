@@ -1,49 +1,168 @@
 ﻿<div id="UsersDetailPage">
     <h2>Work Flow</h2>
 
-    <form id="Detail" action="@BaseUrl/WorkFlows">
-        <label>
-            ID
-            <i class="fi flaticon-barcode-o" />
-            <input type="text" name="id" readonly="readonly" placeholder="(new record)" />
-        </label>
+    <form class="TabContainer" id="Detail" action="@BaseUrl/WorkFlows">
+        <div class="TabLabels">
+            <a href="#">Details</a>
+            <a href="#">Steps</a>
+        </div>
+        <div class="Tab">
+            <label>
+                ID
+                <i class="fi flaticon-barcode-o" />
+                <input type="text" name="id" readonly="readonly" placeholder="(new record)" />
+            </label>
 
-        <label>
-            Description
-            <i class="fi flaticon-align-left" />
-            <input type="text" name="description" />
-        </label>
+            <label>
+                Description
+                <i class="fi flaticon-align-left" />
+                <input type="text" name="description" />
+            </label>
 
-        <label class="Clearing">
-            Created by
-            <i class="fi flaticon-user-o" />
-            <input type="text" name="createdBy" readonly="readonly" />
-        </label>
+            <label class="Clearing">
+                Created by
+                <i class="fi flaticon-user-o" />
+                <input type="text" name="createdBy" readonly="readonly" />
+            </label>
 
-        <label>
-            Created on
-            <i class="fi flaticon-calendar" />
-            <input type="text" name="createdOn" readonly="readonly" data-type="DateTimeOffset" />
-        </label>
+            <label>
+                Created on
+                <i class="fi flaticon-calendar" />
+                <input type="text" name="createdOn" readonly="readonly" data-type="DateTimeOffset" />
+            </label>
 
-        <label class="Clearing">
-            Modified by
-            <i class="fi flaticon-user-o" />
-            <input type="text" name="modifiedBy" readonly="readonly" />
-        </label>
+            <label>
+                Modified by
+                <i class="fi flaticon-user-o" />
+                <input type="text" name="modifiedBy" readonly="readonly" />
+            </label>
 
-        <label>
-            Modified on
-            <i class="fi flaticon-calendar" />
-            <input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
-        </label>
-        <div class="Clearing"></div>
-
+            <label>
+                Modified on
+                <i class="fi flaticon-calendar" />
+                <input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
+            </label>
+            <div class="Clearing"></div>
+        </div>
+        <div class="Tab" id="StepTab">
+            <div class="Clearing"></div>
+        </div>
     </form>
 </div>
 
 <script type="text/javascript">
-    new matematici.DetailPage({
-        formSelector: "form#Detail"
+    var
+        formSelector = "form#Detail",
+
+        formElement = $(formSelector),
+
+        stepTab = $("#StepTab", formElement),
+
+        resize = function () {
+            tab.resize();
+            setTimeout(function () {
+                matematici.popup.center();
+            }, 500);
+        },
+
+        fixSteps = function () {
+            var
+                steps = $("div.Step", formElement).each(function (index) {
+                    $(this).children("h3").text("Step " + (index + 1));
+                    $(this).children("hr").toggle(index > 0);
+                }),
+                count = steps.size();
+
+            steps.eq(0).children("h3").next().toggle(count > 1);
+        },
+
+        fixStep = function (step) {
+            var
+                labels = $("label", step).each(function (index) {
+                    $(this)
+                        .toggleClass("Clearing", index == 0)
+                        .children("span")
+                            .text(index == 0 ? "A user with on of the tag" : "and a user with one of the tag");
+                }),
+                count = labels.size();
+
+            labels.eq(0).next().toggle(count > 1);
+            resize();
+        },
+
+        addUser = function (button, text, first) {
+            var
+                step = $(button).parent(),
+
+                select = $("<select />").prop("multiple", true),
+
+                label =
+                    $("<label />")
+                        .insertBefore(button)
+                        .append($("<span />"))
+                        .append(select),
+
+                a = $("<a />").insertBefore(button).attr("href", "#").addClass("Button MiniIcon Angle").append($("<i />").addClass("fi flaticon-trash-o")).on("click", function () {
+                    label.remove();
+                    a.remove();
+                    fixStep(step)
+                });
+
+            select.append($("<option />").text("massimiliano carosi").attr("value", "max"));
+            select.append($("<option />").text("giuseppe ieppariello").attr("value", "peppe"));
+            select.append($("<option />").text("manola bagaglini").attr("value", "lola"));
+            select.append($("<option />").text("giulia carosi").attr("value", "lula"));
+
+            var autoComplete = new matematici.AutoComplete(select);
+            autoComplete.initialize();
+            fixStep(step);
+            setTimeout(function () {
+                autoComplete.refresh();
+            }, 0);
+        },
+
+        addStep = function (separator) {
+            var step = $("<div />").addClass("Step").insertBefore(stepTab.children("div.Clearing"));
+            step.append($("<hr />"));
+
+            step.append($("<h3 />"));
+            step.append($("<a />").attr("href", "#").addClass("Button MiniIcon").append($("<i />").addClass("fi flaticon-trash-o")).on("click", function () {
+                step.remove();
+                fixSteps();
+            }));
+            var addUserButton = $("<a />").attr("href", "#").addClass("Button Icon").append($("<i />").addClass("fi flaticon-plus")).on("click", function () {
+                addUser(addUserButton);
+            });
+            step.append(addUserButton);
+            addUser(addUserButton);
+            fixSteps();
+        },
+
+        tab = new matematici.Tab(formSelector, {
+            fixedHeight: true
+        }),
+
+        detailPage = new matematici.DetailPage({
+            formSelector: formSelector,
+            width: "1vh - 60px",
+            buttons: [{
+                icon: "plus",
+                text: "add step",
+                hidden: true,
+                id: "AddStep",
+                handler: function () {
+                    addStep();
+                    return true;
+                }
+            }]
+        }),
+
+        addStepButton = $("a#AddStep", matematici.popup.getElement());
+
+    tab.addHandler(function (index) {
+        addStepButton.toggle(index == 1);
     });
+
+    addStep();
+
 </script>

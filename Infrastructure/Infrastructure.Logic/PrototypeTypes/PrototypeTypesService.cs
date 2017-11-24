@@ -79,6 +79,7 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
                     },
                     Form.Data.Department, Form.Data.Name, Form.CurrentPage, Form.ItemsPerPage
                 );
+
         private PrototypeTypesResponse Validate(PrototypeTypesRequest record)
         {
             var response = new PrototypeTypesResponse();

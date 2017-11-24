@@ -46,6 +46,14 @@
 					select.data("autoComplete").refresh();
 					select.siblings("i.AutoComplete").show();
 				});
+
+				$(".TabContainer").each(function (index) {
+					$(this).data("tab").resize();
+				});
+
+				$(".AutoCenter").each(function () {
+					$(this).data("autoCenter").center();
+				});
 			}, 0);
 			return;
 		},

@@ -13,6 +13,7 @@ matematici.AutoComplete = function (selector) {
 		icon,
 		noRow,
 		oldValue,
+		multiple,
 
 		setValue = function () {
 			var value = element.val();
@@ -50,6 +51,7 @@ matematici.AutoComplete = function (selector) {
 
 		initialize = function () {
 			element.data("autoComplete", autoComplete);
+			multiple = element.prop("multiple");
 			label = $("<input />").addClass("AutoComplete").attr({ type: "text" }).insertAfter(element);
 			var width = label.outerWidth();
 			input = $("<input />").addClass("AutoComplete-Filter").attr({ type: "text" }).hide().insertAfter(label);
@@ -202,7 +204,8 @@ matematici.AutoComplete = function (selector) {
 
 matematici.initializers.push(function (context) {
 	$("select", context).each(function () {
-		new matematici.AutoComplete(this).initialize();
+		if (!$(this).data("autoComplete"))
+			new matematici.AutoComplete(this).initialize();
 	});
 });
 

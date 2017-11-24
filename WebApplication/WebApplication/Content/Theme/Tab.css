@@ -1,47 +1,48 @@
-﻿div.TabContainer {
+﻿.TabContainer {
   position: relative;
-  overflow: hidden;
-  transition: height .5s; }
-  div.TabContainer .TabLabels::after {
+  transition: height .3s; }
+  .TabContainer .TabLabels::after {
     content: "";
     position: absolute;
-    height: 2px;
+    height: 1px;
     width: 100%;
     top: 38px;
-    background-color: #ccc;
+    background-color: #999;
     clear: both;
-    left: 0; }
-  div.TabContainer .TabLabels a {
+    left: 0;
+    z-index: 0; }
+  .TabContainer .TabLabels a {
     height: 40px;
     line-height: 40px;
-    font-weight: bold;
-    font-size: 16px;
     float: left;
-    border-bottom: solid 6px #ffba00;
-    color: red;
+    color: #999;
     text-decoration: none;
-    padding: 0 20px; }
-    div.TabContainer .TabLabels a i.fa {
+    padding: 0 40px;
+    z-index: 1;
+    position: relative; }
+    .TabContainer .TabLabels a i.fa {
       color: red; }
-    div.TabContainer .TabLabels a.Selected {
+    .TabContainer .TabLabels a.Selected {
       cursor: default;
       border-top: none;
       border-bottom: none;
-      color: violet; }
-      div.TabContainer .TabLabels a.Selected i.fa {
+      color: #666;
+      border-bottom: solid 3px #ffba00;
+      font-weight: bold; }
+      .TabContainer .TabLabels a.Selected i.fa {
         color: violet; }
-    div.TabContainer .TabLabels a:hover {
+    .TabContainer .TabLabels a:hover {
       text-decoration: none !important; }
-      div.TabContainer .TabLabels a:hover:not(.Selected) {
-        color: lightcoral; }
-  div.TabContainer .Tab {
+      .TabContainer .TabLabels a:hover:not(.Selected) {
+        color: #ffba00; }
+  .TabContainer .Tab {
     position: absolute;
     width: 100%;
     top: 40px;
     opacity: 0;
     transition: opacity .5s;
     z-index: 50; }
-    div.TabContainer .Tab.Selected {
+    .TabContainer .Tab.Selected {
       opacity: 1;
       z-index: 51; }
 

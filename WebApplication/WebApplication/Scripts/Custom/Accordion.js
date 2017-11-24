@@ -5,7 +5,7 @@
 		button,
 
 		setup = function () {
-			button = $("<a />").text("filters").addClass("Button").attr("href", "#").append($("<i />").addClass("fi flaticon-arrow-circle-down"));
+			button = $("<a />").text("filters").addClass("Button").attr("href", "#").append($("<i />").addClass("fi flaticon-arrow-down"));
 			bar.removeClass("Accordion").addClass("Accordion-Bar");
 			bar.append(button);
 

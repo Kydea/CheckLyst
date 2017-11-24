@@ -3,7 +3,7 @@
 		detailPage = this,
 		data = matematici.popup.getData(),
 		sender = matematici.popup.getSender(),
-		buttons = [],
+		buttons = options.buttons || [],
 		form,
 
 		clickHandler = function (event) {
@@ -21,7 +21,7 @@
 
 			if (!options.readOnly && data != null)
 				buttons.push({
-					text: "delete", icon: "delete", handler: function () {
+					text: "delete", icon: "trash-o", handler: function () {
 						matematici.dialog.show("warning", "The record will be deleted.", [
 							{
 								text: "confirm", icon: "check", handler: function () {
@@ -36,7 +36,7 @@
 
 			if (!options.readOnly)
 				buttons.push({
-					text: "save", icon: "save", id: "SaveButton", handler: function () {
+					text: "save", icon: "floppy-o", id: "SaveButton", handler: function () {
 						clickHandler(data == null ? "Add" : "Edit");
 						return true;
 					}
@@ -44,7 +44,7 @@
 
 			matematici.popup.setButtons(buttons);
 
-			matematici.popup.setWidth(420);
+			matematici.popup.setWidth(options.width || "420px");
 
 			form = new matematici.Form(options.formSelector, {
 				applyButton: "#SaveButton",

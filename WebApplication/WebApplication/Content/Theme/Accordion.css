@@ -7,23 +7,14 @@
     padding-right: 56px;
     box-shadow: none; }
     div.Accordion-Bar .Button i.fi {
-      background: none;
-      right: 0;
-      border: none;
       transition: transform 300ms ease;
-      box-shadow: none; }
+      color: #ffba00; }
     div.Accordion-Bar .Button:hover {
       background-color: #ffcc09 !important; }
+      div.Accordion-Bar .Button:hover i.fi {
+        color: #ffcc09; }
     div.Accordion-Bar .Button.Closed i.fi {
       transform: rotate(-180deg); }
-    div.Accordion-Bar .Button::after {
-      content: "";
-      position: absolute;
-      height: 100%;
-      right: 36px;
-      width: 1px;
-      top: 0;
-      background: white; }
 
 .Accordion {
   border-top: none; }

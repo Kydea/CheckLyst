@@ -114,7 +114,14 @@
             matematici.AnimationManager.toggle(true);
 
             matematici.events.onPageLoad.call(null, callback);
-        },
+		},
+
+		handleAjaxError: function (e) {
+			if (e.status == 401 || e.status == 498) { //we use the status 498 to mean invalid token (as arcgis)
+				window.location = basePath + "Security/Login"; //add return url
+				return true;
+			}
+		},
 
         changePage: function (e) {
             //console.log("change", e.path, fullSupport, landing);
@@ -164,11 +171,9 @@
                                     matematici.loader.checkCurtain();
                                 });
                             }).always(function () {
-							}).fail(function (e) {
-								if (e.status == 401 || e.status == 498) //we use the status 498 to mean invalid token (as arcgis)
-									window.location = basePath + "Security/Login"; //add return url
-								else
-									window.location = basePath + "Error";
+								}).fail(function (e) {
+									if (!matematici.navigator.handleAjaxError(e))
+										window.location = basePath + "Error";
                             });
                         });
                     });

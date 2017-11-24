@@ -11,31 +11,22 @@ div.Accordion-Bar {
         box-shadow: none;
 
         i.fi {
-            background: none;
-            right: 0;
-            border: none;
             transition: transform 300ms ease;
-            box-shadow: none;
+            color: $Color-Yellow-Regular;
         }
 
         &:hover {
             background-color: $Color-Yellow-Light !important;
+
+            i.fi {
+                color: $Color-Yellow-Light;
+            }
         }
 
         &.Closed {
             i.fi {
                 transform: rotate(-180deg);
             }
-        }
-
-        &::after {
-            content: "";
-            position: absolute;
-            height: 100%;
-            right: $Metric-Control-Height;
-            width: 1px;
-            top: 0;
-            background: white;
         }
     }
 }
