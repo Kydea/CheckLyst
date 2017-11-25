@@ -1,9 +1,20 @@
-﻿div.Popup {
-  display: none; }
+﻿body.Popup {
+  overflow: hidden; }
+
+div.Popup {
+  display: none;
+  overflow: auto;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 103;
+  background-color: rgba(102, 102, 102, 0.7); }
   div.Popup div.Container {
     padding: 20px;
     background-color: white;
-    box-shadow: rgba(0, 0, 0, 0.16) 0 0 16px 5px; }
+    position: relative; }
     div.Popup div.Container p {
       line-height: 1.6; }
     div.Popup div.Container h2 {
@@ -48,30 +59,17 @@
       margin: -20px;
       background: none; }
   @media only screen and (min-width: 760px) {
-    div.Popup {
-      position: fixed;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      z-index: 103;
-      background-color: rgba(102, 102, 102, 0.7); }
-      div.Popup div.Container {
-        position: relative;
-        max-width: calc(100vw - 60px);
-        margin: 0 auto;
-        border-radius: 15px; }
-        div.Popup div.Container h2 {
-          border-radius: 15px 15px 0 0; } }
+    div.Popup div.Container {
+      box-shadow: rgba(0, 0, 0, 0.16) 0 0 16px 5px;
+      max-width: calc(100vw - 60px);
+      margin: 0 auto;
+      border-radius: 15px; }
+      div.Popup div.Container h2 {
+        border-radius: 15px 15px 0 0; } }
   @media only screen and (max-width: 759px) {
     div.Popup div.Container {
-      position: fixed;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      z-index: 103;
-      width: unset !important; }
+      width: 100%;
+      min-height: 1vh; }
       div.Popup div.Container h2 {
         background: #009688;
         padding: 20px;

@@ -1,7 +1,12 @@
 ﻿@import "_Library.scss";
 
+body.Dialog {
+    overflow: hidden;
+}
+
 div.Dialog {
     display: none;
+    overflow: auto;
 
     div.Container {
         padding: 20px;

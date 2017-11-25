@@ -1,12 +1,24 @@
 ﻿@import "_Library.scss";
 
+body.Popup {
+    overflow: hidden;
+}
+
 div.Popup {
     display: none;
+    overflow: auto;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: $Depth-Popup;
+    background-color: rgba(102, 102, 102, .7);
 
     div.Container {
         padding: 20px;
         background-color: white;
-        box-shadow: rgba(0, 0, 0, 0.16) 0 0 16px 5px;
+        position: relative;
 
         p {
             line-height: 1.6;
@@ -73,16 +85,8 @@ div.Popup {
     }
 
     @media #{$Media-Extended} {
-        position: fixed;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        z-index: $Depth-Popup;
-        background-color: rgba(102, 102, 102, .7);
-
         div.Container {
-            position: relative;
+            box-shadow: rgba(0, 0, 0, 0.16) 0 0 16px 5px;
             max-width: calc(100vw - #{2 * $Metric-Separator-Extended});
             margin: 0 auto;
             border-radius: 15px;
@@ -95,13 +99,8 @@ div.Popup {
 
     @media #{$Media-Mobile} {
         div.Container {
-            position: fixed;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            z-index: $Depth-Popup;
-            width: unset !important;
+            width: 100%;
+            min-height: 1vh;
 
             h2 {
                 background: $Color-Green-Regular;
