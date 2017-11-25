@@ -17,12 +17,27 @@ matematici.AutoComplete = function (selector) {
 
 		setValue = function () {
 			var value = element.val();
-			items.each(function (index) {
-				if ($(this).data("value") == value) {
-					setCurrentItem(index);
-					return false;
-				}
-			});
+			if (multiple) {
+				texts = [];
+				items.each(function (index) {
+					var item = $(this).removeClass("Selected");
+					for (var index in value)
+						if (item.data("value") == value[index]) {
+							item.addClass("Selected");
+							texts.push(item.text());
+							continue;
+						}
+				});
+				var text = texts.join(", ");
+				label.val(text).attr("title", text);
+			}
+			else
+				items.each(function (index) {
+					if ($(this).data("value") == value) {
+						setCurrentItem(index);
+						return false;
+					}
+				});
 		},
 
 		setWidth = function () {
@@ -72,8 +87,12 @@ matematici.AutoComplete = function (selector) {
 				.on("keydown", function (e) {
 					if (e.which == 38 || e.which == 40) { //up and down
 						e.preventDefault();
-						setCurrentItem(currentItem + (e.which == 38 ? -1 : 1) || 0);
+						if (!multiple) setCurrentItem(currentItem + (e.which == 38 ? -1 : 1) || 0);
 					} else if (e.which == 13) { //return
+						e.preventDefault();
+						e.stopPropagation();
+						hideList();
+					} else if (e.which == 27) { //esc
 						e.preventDefault();
 						e.stopPropagation();
 						hideList();
@@ -83,7 +102,7 @@ matematici.AutoComplete = function (selector) {
 				.on("keyup", function (e) {
 					if (e.which < 37 || e.which > 40) { //arrow keys
 						updateList();
-						setCurrentItem(0);
+						if (!multiple) setCurrentItem(0);
 						showList();
 					}
 				});
@@ -91,8 +110,12 @@ matematici.AutoComplete = function (selector) {
 				.on("click", "a", function (e) {
 					e.preventDefault();
 					e.stopPropagation();
-					setCurrentItem($(this).prevAll().size());
-					hideList();
+					if (multiple)
+						toggleItem($(this).prevAll().size());
+					else {
+						setCurrentItem($(this).prevAll().size());
+						hideList();
+					}
 				});
 			updateList();
 			setValue();
@@ -102,6 +125,25 @@ matematici.AutoComplete = function (selector) {
 
 		destroy = function () {
 			matematici.elements.window.off("resize", setWidth);
+		},
+
+		toggleItem = function (index) {
+			var
+				item = items.eq(index),
+				option = options.filter("[value='" + item.data("value") + "']"),
+				value = !option.prop("selected");
+
+			items.eq(index).toggleClass("Selected", value);
+			option.prop('selected', value);
+
+			var texts = [];
+			options.each(function () {
+				var option = $(this);
+				if (option.prop("selected"))
+					texts.push(option.text());
+			});
+			var text = texts.join(", ");
+			label.val(text).attr("title", text);
 		},
 
 		setCurrentItem = function (value) {
@@ -150,7 +192,7 @@ matematici.AutoComplete = function (selector) {
 				.off("keydown.autocomplete");
 			list.hide();
 			input.hide();
-			setCurrentItem(null);
+			if (!multiple) setCurrentItem(null);
 			label.removeClass("Open");
 			element.removeClass("Open");
 			if (oldValue != (element.val() || "")) element.change();
@@ -169,10 +211,18 @@ matematici.AutoComplete = function (selector) {
 						option = $(this),
 						filter = input.val().toUpperCase();
 					if (filter == "" || option.text().toUpperCase().indexOf(filter) >= 0) {
-						list.append($("<a />").attr("href", "#").data("value", option.attr("value")).text(option.text()));
+						list.append(
+							$("<a />")
+								.attr("href", "#")
+								.data("value", option.attr("value"))
+								.text(option.text())
+								.attr("title", option.text())
+								.toggleClass("Selected", option.prop("selected"))
+						);
 						++count;
 					}
 				});
+
 			items = $("a", list);
 			if (items.size() == 0)
 				list.append(noRow);
@@ -180,6 +230,7 @@ matematici.AutoComplete = function (selector) {
 		};
 
 	this.refresh = function () {
+		icon.show();
 		options = $("option", element);
 		updateList();
 		setValue();

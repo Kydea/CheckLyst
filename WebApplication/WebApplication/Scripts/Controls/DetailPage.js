@@ -13,7 +13,7 @@
 					matematici.popup.getResult().saved = true;
 					matematici.popup.close();
 				}
-			});
+			}, options.parametersPrepareHandler && options.parametersPrepareHandler());
 		},
 
 		setup = function () {
