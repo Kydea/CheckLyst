@@ -10,7 +10,7 @@ namespace CheckListManager.Instances.Logic.Services
 		Task SetAsync(string code, InstanceCacheObject instance);
 		Task RemoveAsync(string code);
 
-		Task TouchInstanceAsync(string code);
+		Task TouchInstanceAsync(string code, double? score = null);
 
 		//Task<IEnumerable<InstanceCacheObject>> GetByUserAsync(string userCode);
 	}

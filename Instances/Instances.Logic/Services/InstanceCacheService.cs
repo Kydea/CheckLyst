@@ -80,10 +80,10 @@ namespace CheckListManager.Instances.Logic.Services
 			}
 		}
 
-		public Task TouchInstanceAsync(string code)
+		public Task TouchInstanceAsync(string code, double? score = null)
 		{
-			var score = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-			return _redisCache.SortedSetElementInsertAsync("Instances", code, score, RegionName);
+			score = score ?? DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+			return _redisCache.SortedSetElementInsertAsync("Instances", code, score.Value, RegionName);
 		}
 	}
 }

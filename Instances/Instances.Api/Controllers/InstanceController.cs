@@ -31,7 +31,7 @@ namespace CheckListManager.Instances.Api.Controllers
 				var response = new CreateInstanceResponse
 				{
 					Code = cacheObject.Code,
-					CheckList = _instanceManagerService.GetCheckList(Identity.Code, ValidateUser(cacheObject.PrototypeType), cacheObject)
+					CheckList = _instanceManagerService.GetCheckList(Identity.Code, Identity.HasPermission("Instances#Edit", cacheObject.PrototypeType), cacheObject)
 				};
 				return Ok(Message.Create(response));
 			}
@@ -82,7 +82,7 @@ namespace CheckListManager.Instances.Api.Controllers
 				{
 					Id = cacheObject.Id,
 					Code = cacheObject.Code,
-					CheckList = _instanceManagerService.GetCheckList(Identity.Code, ValidateUser(cacheObject.PrototypeType), cacheObject)
+					CheckList = _instanceManagerService.GetCheckList(Identity.Code, Identity.HasPermission("Instances#Edit", cacheObject.PrototypeType), cacheObject)
 				};
 				return Ok(Message.Create(response));
 			}
@@ -106,14 +106,8 @@ namespace CheckListManager.Instances.Api.Controllers
 		{
 			try
 			{
-				var cacheObject = await _instanceManagerService.GetAsync(Identity.CompanyId, request.Data.Code);
-				var response = new OpenInstanceResponse
-				{
-					Id = cacheObject.Id,
-					Code = cacheObject.Code,
-					CheckList = _instanceManagerService.GetCheckList(Identity.Code, ValidateUser(cacheObject.PrototypeType), cacheObject)
-				};
-				return Ok(Message.Create(response));
+				await _instanceManagerService.CloseAsync(Identity.CompanyId, Identity.Code, request.Data.Code);
+				return Ok(Message.Create(true));
 			}
 			catch (DatabaseAggregateException exception)
 			{

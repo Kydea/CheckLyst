@@ -65,7 +65,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 		{
 			Header.UpdateReadOnly(userCode, canEdit && state == InstanceState.Draft);
 			foreach (var page in Pages)
-				page.UpdateReadOnly(userCode, canEdit);
+				page.UpdateReadOnly(userCode, canEdit && state == InstanceState.Progress);
 		}
 	}
 }

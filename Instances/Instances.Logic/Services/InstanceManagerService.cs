@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using CheckListManager.Common.Core.Helpers;
 using CheckListManager.Common.Core.Network;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Logic.Json;
@@ -124,6 +125,7 @@ namespace CheckListManager.Instances.Logic.Services
 					Code = code,
 					InstanceState = cacheObject.InstanceState,
 					Prototype = cacheObject.Prototype,
+					PrototypeCode = "", //TODO: set right value
 					Version = cacheObject.Version,
 					Year = DateTimeOffset.UtcNow.Year,
 					CreatedBy = cacheObject.CreatedBy,
@@ -156,7 +158,7 @@ namespace CheckListManager.Instances.Logic.Services
 			}
 		}
 
-		public async Task CloseAsync(string code)
+		public async Task CloseAsync(long companyId, string userCode, string code)
 		{
 			try
 			{
@@ -172,12 +174,17 @@ namespace CheckListManager.Instances.Logic.Services
 				}
 				if (cacheObject.InstanceState == InstanceState.Progress)
 				{
-					//Data = JsonConvert.SerializeObject(cacheObject.Instance, _converter)
-					//					ModifiedBy = userCode,
-					//ModifiedOn = DateTimeOffset.UtcNow
+					var row = await _instancesRepository.GetByCodeAsync(companyId, code);
+					if (row == null)
+					{
+						throw new InstanceException("Instance not found");
+					}
 
-					//save;
-					//				row = await _instancesRepository.CreateInstanceAsync(row);
+					row.Data = JsonConvert.SerializeObject(cacheObject.Instance, _converter);
+					await Task.WhenAll(
+						_instancesRepository.UpdateInstanceAsync(userCode, row),
+						_instanceCache.TouchInstanceAsync(code, 1)
+					);
 				}
 			}
 			catch (InstanceException)
@@ -193,7 +200,7 @@ namespace CheckListManager.Instances.Logic.Services
 
 		public Instance GetCheckList(string userCode, bool canEdit, InstanceCacheObject instance)
 		{
-			canEdit = canEdit && instance.InstanceState == InstanceState.Progress;
+			canEdit = canEdit && instance.InstanceState.In(InstanceState.Draft, InstanceState.Progress);
 
 			instance.Instance.Update();
 			instance.Instance.UpdateReadOnly(userCode, canEdit, instance.InstanceState);
