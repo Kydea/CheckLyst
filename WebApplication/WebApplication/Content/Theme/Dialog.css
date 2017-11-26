@@ -1,5 +1,9 @@
-﻿div.Dialog {
-  display: none; }
+﻿body.Dialog {
+  overflow: hidden; }
+
+div.Dialog {
+  display: none;
+  overflow: auto; }
   div.Dialog div.Container {
     padding: 20px;
     background-color: white;

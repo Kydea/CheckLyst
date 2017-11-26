@@ -8,6 +8,7 @@
 			console.log(new Date(), "refreshing access token");
 			localStorage.refreshingToken = true;
 			$.ajax(matematici.urls.accessControl.token, {
+				global: false,
 				data: { grant_type: "refresh_token", refresh_token: localStorage.refreshToken },
 				type: "post"
 			}).done(function (result) {
@@ -23,7 +24,7 @@
 		setup = function () {
 			setInterval(function () {
 				//the access token is refreshed by active client, when a refresh token is present, [cautionTimeOffset] milliseconds before the expiration 
-				if (matematici.client.isActive() && localStorage.refreshToken && new Date().getTime() > localStorage.accessTokenExpiration - cautionTimeOffset)
+				if (/*matematici.client.isActive() && */localStorage.refreshToken && new Date().getTime() > localStorage.accessTokenExpiration - cautionTimeOffset)
 					refreshAccessToken();
 			}, 60000);
 		},

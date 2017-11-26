@@ -44,7 +44,6 @@
 				$("select.AutoComplete").each(function (index) {
 					var select = $(this);
 					select.data("autoComplete").refresh();
-					select.siblings("i.AutoComplete").show();
 				});
 
 				$(".TabContainer").each(function (index) {

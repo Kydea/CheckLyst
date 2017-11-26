@@ -52,6 +52,16 @@
 
 <script type="text/javascript">
     var
+        profiles = [
+            "Revisor",
+            "Deputy approver",
+            "Approver",
+            "Deputy final approver",
+            "Final approver"
+        ],
+
+        maxSteps = 3,
+
         formSelector = "form#Detail",
 
         formElement = $(formSelector),
@@ -74,6 +84,8 @@
                 count = steps.size();
 
             steps.eq(0).children("h3").next().toggle(count > 1);
+            addStepButton.toggle($("div.Step", formElement).size() < maxSteps);
+            resize();
         },
 
         fixStep = function (step) {
@@ -82,7 +94,7 @@
                     $(this)
                         .toggleClass("Clearing", index == 0)
                         .children("span")
-                            .text(index == 0 ? "A user with on of the tag" : "and a user with one of the tag");
+                        .text(index == 0 ? "A user with on of the tag" : "and a user with one of the tag");
                 }),
                 count = labels.size();
 
@@ -90,7 +102,7 @@
             resize();
         },
 
-        addUser = function (button, text, first) {
+        addUser = function (button) {
             var
                 step = $(button).parent(),
 
@@ -108,10 +120,8 @@
                     fixStep(step)
                 });
 
-            select.append($("<option />").text("massimiliano carosi").attr("value", "max"));
-            select.append($("<option />").text("giuseppe ieppariello").attr("value", "peppe"));
-            select.append($("<option />").text("manola bagaglini").attr("value", "lola"));
-            select.append($("<option />").text("giulia carosi").attr("value", "lula"));
+            for (var index in profiles)
+                select.append($("<option />").text(profiles[index]).attr("value", profiles[index]));
 
             var autoComplete = new matematici.AutoComplete(select);
             autoComplete.initialize();
@@ -119,9 +129,14 @@
             setTimeout(function () {
                 autoComplete.refresh();
             }, 0);
+
+            return {
+                select: select,
+                label: label
+            }
         },
 
-        addStep = function (separator) {
+        addStep = function (empty) {
             var step = $("<div />").addClass("Step").insertBefore(stepTab.children("div.Clearing"));
             step.append($("<hr />"));
 
@@ -134,17 +149,34 @@
                 addUser(addUserButton);
             });
             step.append(addUserButton);
-            addUser(addUserButton);
+            if (!empty) addUser(addUserButton);
             fixSteps();
+            return {
+                step: step,
+                addUserButton: addUserButton
+            };
         },
 
         tab = new matematici.Tab(formSelector, {
             fixedHeight: true
         }),
 
+        parametersPrepareHandler = function () {
+            var data = { steps: [] };
+            $("div.Step", stepTab).each(function () {
+                var step = { signatures: [] };
+                $("select", this).each(function () {
+                    step.signatures.push($(this).val());
+                })
+                data.steps.push(step);
+            });
+            return { data: data };
+        },
+
         detailPage = new matematici.DetailPage({
             formSelector: formSelector,
             width: "1vh - 60px",
+            parametersPrepareHandler: parametersPrepareHandler,
             buttons: [{
                 icon: "plus",
                 text: "add step",
@@ -157,12 +189,40 @@
             }]
         }),
 
+        handleBindResult = function (steps) {
+            for (var stepIndex in steps) {
+                var step = addStep(true);
+                for (var userIndex in steps[stepIndex].signatures)
+                    addUser(step.addUserButton).select.val(steps[stepIndex].signatures[userIndex]);
+            }
+        },
+
         addStepButton = $("a#AddStep", matematici.popup.getElement());
 
     tab.addHandler(function (index) {
-        addStepButton.toggle(index == 1);
+        addStepButton.toggle(index == 1 && $("div.Step", formElement).size() < maxSteps);
     });
 
-    addStep();
+    if (detailPage.isNew())
+        addStep();
+    else if (false) //TODO remove if (false)
+        detailPage.getForm().trigger("bind", function (result) {
+            detailPage.getForm().handleResult(result);
+            handleBindResult(result);
+        });
 
+    //TODO remove
+    handleBindResult([
+        {
+            signatures: [
+                ["Revisor"],
+                ["Revisor", "Deputy approver"]
+            ]
+        },
+        {
+            signatures: [
+                ["Deputy approver", "Approver"],
+            ]
+        }
+    ]);
 </script>

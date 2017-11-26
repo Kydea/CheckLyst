@@ -2,6 +2,7 @@
   display: none !important; }
 
 input.AutoComplete {
+  text-overflow: ellipsis;
   padding-right: 36px !important; }
   input.AutoComplete.Open {
     border-radius: 5px 5px 0 0; }
@@ -36,12 +37,34 @@ div.AutoComplete-List {
     line-height: 36px;
     padding: 0 10px;
     white-space: nowrap;
-    outline: none; }
+    outline: none;
+    overflow: hidden;
+    text-overflow: ellipsis; }
+    div.AutoComplete-List a.Selected {
+      background: #f5f5f5;
+      position: relative;
+      padding-right: 20px; }
+      div.AutoComplete-List a.Selected::after {
+        line-height: 36px;
+        content: "\f111";
+        display: inline-block;
+        font-family: "Flaticon";
+        font-style: normal;
+        font-weight: normal;
+        font-variant: normal;
+        text-decoration: inherit;
+        text-rendering: optimizeLegibility;
+        text-transform: none;
+        -moz-osx-font-smoothing: grayscale;
+        -webkit-font-smoothing: antialiased;
+        font-smoothing: antialiased;
+        color: #666;
+        position: absolute;
+        right: 0;
+        padding: 0 5px; }
     div.AutoComplete-List a:hover {
       background: #ebebeb !important;
       text-decoration: none !important; }
-    div.AutoComplete-List a.Selected {
-      background: #f5f5f5; }
     div.AutoComplete-List a.None i {
       font-style: normal;
       color: #666; }

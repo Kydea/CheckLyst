@@ -5,6 +5,7 @@ select.AutoComplete {
 }
 
 input.AutoComplete {
+    text-overflow: ellipsis;
     padding-right: $Metric-Control-Height !important;
 
     &.Open {
@@ -45,14 +46,38 @@ div.AutoComplete-List {
         padding: 0 10px;
         white-space: nowrap;
         outline: none;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        &.Selected {
+            background: $Color-Silver-Light;
+            position: relative;
+            padding-right: 20px;
+
+            &::after {
+                line-height: $Metric-Control-Height;
+                content: "\f111";
+                display: inline-block;
+                font-family: "Flaticon";
+                font-style: normal;
+                font-weight: normal;
+                font-variant: normal;
+                text-decoration: inherit;
+                text-rendering: optimizeLegibility;
+                text-transform: none;
+                -moz-osx-font-smoothing: grayscale;
+                -webkit-font-smoothing: antialiased;
+                font-smoothing: antialiased;
+                color: $Color-Grey-Dark;
+                position: absolute;
+                right: 0;
+                padding: 0 5px;
+            }
+        }
 
         &:hover {
             background: $Color-Silver-Dark !important;
             text-decoration: none !important;
-        }
-
-        &.Selected {
-            background: $Color-Silver-Light;
         }
 
         &.None {
