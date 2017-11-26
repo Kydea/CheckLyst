@@ -12,6 +12,6 @@ namespace CheckListManager.Instances.Logic.Services
 		Task OpenAsync(string userCode, string code);
 		Task CloseAsync(string code);
 
-		Instance GetCheckList(Instance instance);
+		Instance GetCheckList(string userCode, bool canEdit, InstanceCacheObject instance);
 	}
 }

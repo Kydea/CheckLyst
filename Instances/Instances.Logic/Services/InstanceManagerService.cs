@@ -62,12 +62,13 @@ namespace CheckListManager.Instances.Logic.Services
 		{
 			try
 			{
-				var instance = await CreateInstanceFromPrototypeAsync(prototype, version);
+				var source = await CreateInstanceFromPrototypeAsync(prototype, version);
 				var cacheObject = new InstanceCacheObject
 				{
 					CompanyId = companyId,
-					Instance = instance,
+					Instance = source.CheckList,
 					Code = _hashService.HashStringToString($"{prototype}-{version}-{Guid.NewGuid()}"),
+					PrototypeType = source.PrototypeType,
 					Prototype = prototype,
 					Version = version,
 					InstanceState = InstanceState.Draft,
@@ -76,8 +77,6 @@ namespace CheckListManager.Instances.Logic.Services
 				};
 
 				await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
-
-				instance.Setup();
 
 				return cacheObject;
 			}
@@ -192,23 +191,26 @@ namespace CheckListManager.Instances.Logic.Services
 			}
 		}
 
-		public Instance GetCheckList(Instance instance)
+		public Instance GetCheckList(string userCode, bool canEdit, InstanceCacheObject instance)
 		{
-			instance.Update();
-			return instance;
+			canEdit = canEdit && instance.InstanceState == InstanceState.Progress;
+
+			instance.Instance.Update();
+			instance.Instance.UpdateReadOnly(userCode, canEdit);
+
+			return instance.Instance;
 		}
 
-		private async Task<Instance> CreateInstanceFromPrototypeAsync(int prototype, int version)
+		private async Task<GetPrototypeResponse> CreateInstanceFromPrototypeAsync(int prototype, int version)
 		{
 			try
 			{
-				//TODO: add companyId (modify prototype endpoint first)
 				var httpResponse = await _client.GetAsync($"Prototypes/Prototype/Get/{prototype}/{version}");
 				var responseData = await httpResponse.Content.ReadAsStringAsync();
 
 				var response = JsonConvert.DeserializeObject<ResponseMessage<GetPrototypeResponse>>(responseData, _converter);
 
-				return response.Data.CheckList;
+				return response.Data;
 			}
 			catch (Exception e)
 			{

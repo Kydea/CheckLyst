@@ -31,7 +31,7 @@ namespace CheckListManager.Instances.Api.Controllers
 				var response = new CreateInstanceResponse
 				{
 					Code = cacheObject.Code,
-					CheckList = _instanceManagerService.GetCheckList(cacheObject.Instance)
+					CheckList = _instanceManagerService.GetCheckList(Identity.Code, ValidateUser(cacheObject.PrototypeType), cacheObject)
 				};
 				return Ok(Message.Create(response));
 			}
@@ -82,7 +82,7 @@ namespace CheckListManager.Instances.Api.Controllers
 				{
 					Id = cacheObject.Id,
 					Code = cacheObject.Code,
-					CheckList = _instanceManagerService.GetCheckList(cacheObject.Instance)
+					CheckList = _instanceManagerService.GetCheckList(Identity.Code, ValidateUser(cacheObject.PrototypeType), cacheObject)
 				};
 				return Ok(Message.Create(response));
 			}
@@ -111,7 +111,7 @@ namespace CheckListManager.Instances.Api.Controllers
 				{
 					Id = cacheObject.Id,
 					Code = cacheObject.Code,
-					CheckList = _instanceManagerService.GetCheckList(cacheObject.Instance)
+					CheckList = _instanceManagerService.GetCheckList(Identity.Code, ValidateUser(cacheObject.PrototypeType), cacheObject)
 				};
 				return Ok(Message.Create(response));
 			}

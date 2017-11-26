@@ -47,6 +47,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 					ValidCondition == Conditions.True;
 			}
 		}
+
 		public Conditions ValidCondition { get; set; }
 		public string ValidExpressionCode { get; set; }
 		public string ValidityMessage { get; set; }
@@ -68,6 +69,31 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 		}
 
 		public abstract void Update();
+
+		public bool ReadOnly { get; protected set; }
+
+		protected virtual bool IsReadOnlyByDefault() => false;
+
+		public virtual void UpdateReadOnly(string userCode, bool canEdit)
+		{
+			if (!canEdit)
+			{
+				ReadOnly = true;
+				return;
+			}
+
+			var expressionValue = ReadOnlyExpressionCode != null && CheckList != null &&
+			                      CheckList.Expressions.ContainsKey(ReadOnlyExpressionCode) &&
+			                      CheckList.Expressions[ReadOnlyExpressionCode].Value.Type == DataType.Boolean &&
+			                      CheckList.Expressions[ReadOnlyExpressionCode].Value.BooleanValue;
+
+			ReadOnly = (Signature?.Signed ?? false) ||
+				ReadOnlyCondition == Conditions.Default && IsReadOnlyByDefault() ||
+				ReadOnlyCondition == Conditions.Expression && expressionValue ||
+				ReadOnlyCondition == Conditions.ExpressionOrDefault && (expressionValue || IsReadOnlyByDefault()) ||
+				ReadOnlyCondition == Conditions.ExpressionAndDefault && expressionValue && IsReadOnlyByDefault() ||
+				ReadOnlyCondition == Conditions.True;
+		}
 
 		public static void Copy(Element source, Element destination)
 		{

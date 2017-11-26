@@ -24,6 +24,7 @@ namespace CheckListManager.Prototypes.Logic.Services
 			{
 				Id = request.Id,
 				Version = request.Version,
+				PrototypeType = 1,
 				CheckList = prototype
 			});
 		}

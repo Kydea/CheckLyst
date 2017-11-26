@@ -9,6 +9,7 @@ namespace CheckListManager.Instances.Logic.Models
 		public long CompanyId { get; set; }
 
 		public string Code { get; set; }
+		public long PrototypeType { get; set; }
 		public long Prototype { get; set; }
 		public int Version { get; set; }
 

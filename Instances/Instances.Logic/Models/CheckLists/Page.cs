@@ -37,5 +37,16 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 				_valid = _valid && group.Valid;
 			}
 		}
+
+		public override void UpdateReadOnly(string userCode, bool canEdit)
+		{
+			base.UpdateReadOnly(userCode, canEdit);
+
+			foreach (var group in Groups)
+			{
+				group.UpdateReadOnly(userCode, canEdit);
+			}
+			//TODO: update when locking is done
+		}
 	}
 }
