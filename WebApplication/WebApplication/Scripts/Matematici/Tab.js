@@ -11,6 +11,7 @@
 		},
 
 		resize = function () {
+			element.show();
 			if (options.fixedHeight) {
 				var
 					height = 0,

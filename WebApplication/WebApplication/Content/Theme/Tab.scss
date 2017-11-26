@@ -2,9 +2,10 @@
 
 $label-height: 40px;
 
-.TabContainer {
+div.TabContainer {
     position: relative;
     transition: height .3s;
+    display: none;
 
     .TabLabels {
 

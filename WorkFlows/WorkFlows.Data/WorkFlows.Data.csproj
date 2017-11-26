@@ -65,6 +65,10 @@
     <None Include="WorkFlows.Data.snk" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\Common.Core.Web\Common.Core.Web.csproj">
+      <Project>{2FAFFF00-D5EB-4BB0-B70B-38290D88C871}</Project>
+      <Name>Common.Core.Web</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Common\Common.Data\Common.Data.csproj">
       <Project>{91482922-D6BA-4DF1-9A9C-88F3087A7B5D}</Project>
       <Name>Common.Data</Name>
