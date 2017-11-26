@@ -7,5 +7,6 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 	{
 		public string Description { get; set; }
 		public List<ICheckListGroup> Groups { get; set; } = new List<ICheckListGroup>();
+		public bool IsLocked { get; set; }
 	}
 }

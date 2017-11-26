@@ -47,9 +47,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
 			if (canEdit)
 			{
-				//TODO: uncomment when locking is done
-				//ReadOnly = Group != null && Group.ReadOnly ||
-				//           Page != null && (Page.IsLocked(ClientId) || Page.ReadOnly);
+				IsReadOnly = Group != null && Group.IsReadOnly ||
+							 Page != null && Page.IsReadOnly;
 			}
 
 		}

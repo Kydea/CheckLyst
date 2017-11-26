@@ -196,7 +196,7 @@ namespace CheckListManager.Instances.Logic.Services
 			canEdit = canEdit && instance.InstanceState == InstanceState.Progress;
 
 			instance.Instance.Update();
-			instance.Instance.UpdateReadOnly(userCode, canEdit);
+			instance.Instance.UpdateReadOnly(userCode, canEdit, instance.InstanceState);
 
 			return instance.Instance;
 		}

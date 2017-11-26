@@ -20,7 +20,7 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
 		ICheckListSignature Signature { get; }
 		string SignatureCode { get; set; }
 		bool Valid { get; }
-		bool ReadOnly { get; }
+		bool IsReadOnly { get; }
 		Conditions ValidCondition { get; set; }
 		string ValidExpressionCode { get; set; }
 		string ValidityMessage { get; set; }

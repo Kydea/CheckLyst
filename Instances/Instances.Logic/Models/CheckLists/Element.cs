@@ -70,7 +70,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
 		public abstract void Update();
 
-		public bool ReadOnly { get; protected set; }
+		public bool IsReadOnly { get; protected set; }
 
 		protected virtual bool IsReadOnlyByDefault() => false;
 
@@ -78,7 +78,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 		{
 			if (!canEdit)
 			{
-				ReadOnly = true;
+				IsReadOnly = true;
 				return;
 			}
 
@@ -87,7 +87,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 			                      CheckList.Expressions[ReadOnlyExpressionCode].Value.Type == DataType.Boolean &&
 			                      CheckList.Expressions[ReadOnlyExpressionCode].Value.BooleanValue;
 
-			ReadOnly = (Signature?.Signed ?? false) ||
+			IsReadOnly = (Signature?.Signed ?? false) ||
 				ReadOnlyCondition == Conditions.Default && IsReadOnlyByDefault() ||
 				ReadOnlyCondition == Conditions.Expression && expressionValue ||
 				ReadOnlyCondition == Conditions.ExpressionOrDefault && (expressionValue || IsReadOnlyByDefault()) ||
