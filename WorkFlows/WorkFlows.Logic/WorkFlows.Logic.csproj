@@ -53,6 +53,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Detail\DetailRequest.cs" />
+    <Compile Include="Detail\DetailResponse.cs" />
+    <Compile Include="Detail\DetailService.cs" />
+    <Compile Include="Detail\IDetailService.cs" />
+    <Compile Include="Detail\Step.cs" />
     <Compile Include="List\ListRow.cs" />
     <Compile Include="List\ListService.cs" />
     <Compile Include="List\IListService.cs" />

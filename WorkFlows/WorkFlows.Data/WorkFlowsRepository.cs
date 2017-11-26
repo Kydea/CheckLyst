@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Data.Entity;
 using System.Linq.Expressions;
 using CheckListManager.Common.Logic.Api.Messages;
+using CheckListManager.Common.Data.Exceptions;
+using CheckListManager.Common.Core.Web.Security;
 
 namespace CheckListManager.WorkFlows.Data
 {
@@ -43,6 +45,40 @@ namespace CheckListManager.WorkFlows.Data
                 ItemsPerPage = itemsPerPage,
                 CurrentPage = currentPage
             };
+        }
+        public async Task<Common.Data.WorkFlows> GetWorkFlowAsync(DefaultIdentity identity, long id)
+        {
+            var WorkFlow = await Entities.WorkFlows.SingleOrDefaultAsync(d => d.Company == identity.CompanyId && d.ID == id);
+            if (WorkFlow == null) throw new DatabaseException($"Work flow {id} not found");
+            return WorkFlow;
+        }
+
+        public async Task<Common.Data.WorkFlows> AddWorkFlowAsync(DefaultIdentity identity, Common.Data.WorkFlows workFlow)
+        {
+            workFlow.Company = identity.CompanyId;
+            workFlow.CreatedOn = DateTimeOffset.UtcNow;
+            workFlow.CreatedBy = identity.Code;
+            Entities.WorkFlows.Add(workFlow);
+            await SaveChangesAsync();
+            return workFlow;
+        }
+
+        public async Task<Common.Data.WorkFlows> EditWorkFlowAsync(DefaultIdentity identity, Common.Data.WorkFlows workFlow)
+        {
+            var ExistingPrototypeType = await GetWorkFlowAsync(identity, workFlow.ID);
+            ExistingPrototypeType.Description = workFlow.Description;
+            ExistingPrototypeType.ModifiedOn = DateTimeOffset.UtcNow;
+            ExistingPrototypeType.ModifiedBy = identity.Code;
+            Entities.WorkFlowSteps.RemoveRange(ExistingPrototypeType.WorkFlowSteps);
+            ExistingPrototypeType.WorkFlowSteps = workFlow.WorkFlowSteps;
+            await SaveChangesAsync();
+            return ExistingPrototypeType;
+        }
+
+        public async Task DeleteWorkFlowAsync(DefaultIdentity identity, long id)
+        {
+            Entities.WorkFlows.Remove(await GetWorkFlowAsync(identity, id));
+            await SaveChangesAsync();
         }
     }
 }

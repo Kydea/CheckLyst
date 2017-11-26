@@ -39,7 +39,7 @@ namespace CheckListManager.DataSources.Api.Controllers
 		[Route("Add")]
 		public async Task<IHttpActionResult> Add(Message<DetailRequest> request)
 		{
-			return Ok(await _detailService.Add(Identity, request.Data));
+			return Ok(await _detailService.AddAsync(Identity, request.Data));
 		}
 
 		[Authorize(Roles = "DataSources#Edit")]
@@ -47,7 +47,7 @@ namespace CheckListManager.DataSources.Api.Controllers
 		[Route("Edit")]
 		public async Task<IHttpActionResult> Edit(Message<DetailRequest> request)
 		{
-			return Ok(await _detailService.Edit(Identity, request.Data));
+			return Ok(await _detailService.EditAsync(Identity, request.Data));
 		}
 
 		[Authorize(Roles = "DataSources#Edit")]
@@ -55,7 +55,7 @@ namespace CheckListManager.DataSources.Api.Controllers
 		[Route("Delete")]
 		public async Task<IHttpActionResult> Delete(Message<DetailRequest> request)
 		{
-			return Ok(await _detailService.Delete(Identity, request.Data.Code));
+			return Ok(await _detailService.DeleteAsync(Identity, request.Data.Code));
 		}
 	}
 }

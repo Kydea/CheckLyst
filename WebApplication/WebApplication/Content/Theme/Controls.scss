@@ -2,13 +2,6 @@
 
 $Inline-Form-Label-Width: 200px;
 
-div.Errors {
-    color: $Color-Red-Regular;
-    margin-top: 20px;
-    display: none;
-    line-height: 1.5;
-}
-
 input.Error, select.Error {
     border-color: $Color-Red-Regular;
     outline-color: #f99;
@@ -169,19 +162,6 @@ a.Button {
         }
     }
 
-    &.Invalid {
-        color: $Color-Red-Regular;
-    }
-
-    &.ReadOnly {
-        background-color: $Color-Grey-Light;
-        box-shadow: none;
-
-        &:hover {
-            color: white !important;
-        }
-    }
-
     &.GreyGreenButton {
         background-color: $Color-Grey-Regular;
 
@@ -223,6 +203,37 @@ a.Button {
             }
         }
     }
+
+    &.Invalid {
+        color: $Color-Red-Regular;
+    }
+
+    &.ReadOnly {
+        background-color: $Color-Grey-Light;
+        box-shadow: none;
+
+        i.fi {
+            color: white;
+            background-color: $Color-Grey-Light;
+        }
+
+        &::after {
+            background-color: $Color-Silver-Dark !important;
+            background-color: white;
+        }
+
+        &:hover {
+            background-color: $Color-Grey-Light !important;
+            color: white !important;
+        }
+    }
+}
+
+div.Errors {
+    color: $Color-Red-Regular;
+    margin-top: $Metric-Control-Space;
+    display: none;
+    line-height: 1.5;
 }
 
 form {

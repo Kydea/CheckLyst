@@ -18,13 +18,16 @@
 					handler = options.applyButton.handler;
 				options.applyButton = $(options.applyButton.button || options.applyButton);
 				if (event)
-					options.applyButton.on("click", function () {
+					options.applyButton.on("click", function (e) {
 						if (options.applyButton.hasClass("ReadOnly")) return;
 						saveForm();
 						bind(event, handler, prepareRequest({ data: { source: options.applyButton.attr("id") } }));
 					});
 				else if (handler)
-					options.applyButton.on("click", handler);
+					options.applyButton.on("click", function () {
+						if (!options.applyButton.hasClass("ReadOnly"))
+							handler();
+					});
 			}
 
 			element
@@ -33,6 +36,7 @@
 						matematici.controls.setEditable(options.applyButton, valid);
 						clearFormErrors();
 						matematici.controls.setValidationMessages($(this), []);
+						matematici.controls.setEditable(options.applyButton, true);
 					}
 				})
 				.on("change", ".Trigger", function () {
@@ -147,7 +151,7 @@
 				else if (!fieldErrors) {
 					fieldErrors = true;
 					errors.append(
-						$("<div />").addClass("Error").text(" Some field has errors. Click on error icon of the field for more details.").prepend(
+						$("<div />").addClass("Error").text(" Some field are not valid. Click on the error icon of the fields for more details.").prepend(
 							$("<i />").addClass("fa fa-warning")
 						)
 					);

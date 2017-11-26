@@ -1,10 +1,4 @@
-﻿div.Errors {
-  color: #cc0000;
-  margin-top: 20px;
-  display: none;
-  line-height: 1.5; }
-
-input.Error, select.Error {
+﻿input.Error, select.Error {
   border-color: #cc0000;
   outline-color: #f99; }
 
@@ -124,13 +118,6 @@ a.Button {
         color: #03c3b1; }
     a.Button.MiniIcon.Angle {
       margin-left: -16px; }
-  a.Button.Invalid {
-    color: #cc0000; }
-  a.Button.ReadOnly {
-    background-color: #ccc;
-    box-shadow: none; }
-    a.Button.ReadOnly:hover {
-      color: white !important; }
   a.Button.GreyGreenButton {
     background-color: #999; }
     a.Button.GreyGreenButton i.fi {
@@ -153,6 +140,26 @@ a.Button {
       background-color: #ffba00; }
       a.Button.GreyYellowButton:hover i.fi {
         color: white; }
+  a.Button.Invalid {
+    color: #cc0000; }
+  a.Button.ReadOnly {
+    background-color: #ccc;
+    box-shadow: none; }
+    a.Button.ReadOnly i.fi {
+      color: white;
+      background-color: #ccc; }
+    a.Button.ReadOnly::after {
+      background-color: #ebebeb !important;
+      background-color: white; }
+    a.Button.ReadOnly:hover {
+      background-color: #ccc !important;
+      color: white !important; }
+
+div.Errors {
+  color: #cc0000;
+  margin-top: 20px;
+  display: none;
+  line-height: 1.5; }
 
 form {
   border: 1px solid #ccc;
