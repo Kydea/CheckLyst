@@ -62,6 +62,10 @@
     <Compile Include="UserSessionRepository.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\Common.Core.Web\Common.Core.Web.csproj">
+      <Project>{2FAFFF00-D5EB-4BB0-B70B-38290D88C871}</Project>
+      <Name>Common.Core.Web</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Common\Common.Data\Common.Data.csproj">
       <Project>{91482922-d6ba-4df1-9a9c-88f3087a7b5d}</Project>
       <Name>Common.Data</Name>

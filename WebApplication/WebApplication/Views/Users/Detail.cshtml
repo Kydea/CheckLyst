@@ -1,7 +1,7 @@
 ﻿<div id="UsersDetailPage">
     <h2>User</h2>
 
-    <form id="Detail">
+    <form id="Detail" action="@BaseUrl/AccessControl/Users">
         <div class="Triggers">
             <label>
                 User code
@@ -25,7 +25,7 @@
 
             <label>
                 Enabled
-                <input type="checkbox" name="enabled" />
+                <input type="checkbox" name="enabled" value="true" />
             </label>
 
             <label class="Clearing">

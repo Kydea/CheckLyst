@@ -14,6 +14,8 @@ using CheckListManager.Common.Logic.Cache;
 using CheckListManager.Common.Logic.Queue;
 using CheckListManager.Common.Logic.Services;
 using NLog;
+using CheckListManager.Common.Logic.DataEngine;
+using CheckListManager.Common.Core.Web.Security;
 
 namespace CheckListManager.AccessControl.Logic.Services
 {
@@ -179,20 +181,141 @@ namespace CheckListManager.AccessControl.Logic.Services
 			};
 		}
 
-		public async Task<AddUserResponse> AddUserAsync(long companyId, AddUserRequest request)
+        private UserResponse Validate(UserRequest record)
+        {
+            //TODO
+            var response = new UserResponse();
+            if (string.IsNullOrWhiteSpace(record.Code))
+                response.Fields["Code"] = new Field
+                {
+                    ValidationMessages = new List<ValidationMessage> {
+                        new ValidationMessage {
+                            Level = ValidationMessage.LevelError,
+                            Message = "Invalid code"
+                        }
+                    }
+                };
+
+            if (string.IsNullOrWhiteSpace(record.Description))
+                response.Fields["Description"] = new Field
+                {
+                    ValidationMessages = new List<ValidationMessage> {
+                        new ValidationMessage {
+                            Level = ValidationMessage.LevelError,
+                            Message = "Invalid description"
+                        }
+                    }
+                };
+
+            response.Valid = response.Fields.Count() == 0;
+            return response;
+        }
+
+        public async Task<UserResponse> LoadUserAsync(DefaultIdentity identity, UserRequest record)
+        {
+            var response = new UserResponse();
+            try
+            {
+                var WorkFlow = await _userRepository.GetAsync(identity.CompanyId, record.Code);
+
+                /*
+                response.Steps = WorkFlow
+                    .WorkFlowSteps
+                    .GroupBy(s => s.Step)
+                    .OrderBy(g => g.Key)
+                    .Select(g => new Step { Signatures = g.Select(s => s.WorkFlowStepTags.Select(t => t.Tag).ToArray()).ToArray() })
+                    .ToArray();
+                */
+            }
+            catch (Exception Exception)
+            {
+                response.ValidationMessages.Add(new ValidationMessage
+                {
+                    Level = ValidationMessage.LevelError,
+                    Message = Exception.Message
+                });
+                response.Valid = false;
+            }
+
+            return response;
+        }
+
+        public async Task<UserResponse> AddUserAsync(DefaultIdentity identity, UserRequest record)
 		{
-			var user = _mapper.Map<Users>(request);
+            var response = Validate(record);
+            if (response.Valid)
+                try
+                {
+                    await _userRepository.AddAsync(identity, new Users
+                    {
+                        Code = record.Code,
+                        Description = record.Description,
+                        Email = record.Email,
+                        Password = _hashService.HashStringToBytes(record.Password),
+                        Enabled = record.Enabled
+                        
+                        //WorkFlowSteps = BuildSteps(identity, record)
+                    });
+                }
+                catch (Exception Exception)
+                {
+                    response.ValidationMessages.Add(new ValidationMessage
+                    {
+                        Level = ValidationMessage.LevelError,
+                        Message = Exception.Message
+                    });
+                    response.Valid = false;
+                }
 
-			user.Company = companyId;
-			user.CreatedOn = DateTimeOffset.UtcNow;
-			user.Password = _hashService.HashStringToBytes(request.Password);
-
-			await _userRepository.AddAsync(user);
-
-			return new AddUserResponse
-			{
-				Code = user.Code
-			};
+            return response;
 		}
-	}
+
+        public async Task<UserResponse> EditUserAsync(DefaultIdentity identity, UserRequest record)
+        {
+            var response = Validate(record);
+            if (response.Valid)
+                try
+                {
+                    await _userRepository.EditAsync(identity, new Users
+                    {
+                        Code = record.Code,
+                        Description = record.Description,
+                        Email = record.Email,
+                        Password = _hashService.HashStringToBytes(record.Password),
+                        Enabled = record.Enabled
+                    });
+                }
+                catch (Exception Exception)
+                {
+                    response.ValidationMessages.Add(new ValidationMessage
+                    {
+                        Level = ValidationMessage.LevelError,
+                        Message = Exception.Message
+                    });
+                    response.Valid = false;
+                }
+
+            return response;
+        }
+
+        public async Task<UserResponse> DeleteUserAsync(DefaultIdentity identity, string code)
+        {
+            var response = new UserResponse();
+            try
+            {
+                await _userRepository.DeleteAsync(identity.CompanyId, code);
+            }
+            catch (Exception Exception)
+            {
+                response.ValidationMessages.Add(new ValidationMessage
+                {
+                    Level = ValidationMessage.LevelError,
+                    Message = Exception.Message
+                });
+                response.Valid = false;
+            }
+
+            return response;
+        }
+    }
 }

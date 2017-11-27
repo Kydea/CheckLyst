@@ -108,30 +108,30 @@
 				var field = $(this);
 				parameters.data[field.attr("name")] =
 					field.hasClass("DatePicker") || field.data("type") == "DateTimeOffset" ? field.data("date") :
-						field.val();
+						field.attr("type") == "checkbox" ? field.prop("checked") :
+							field.val();
 			});
+
 			return JSON.stringify(parameters);
 		},
 
 		setFieldValue = function (field, value) {
-			switch (field.data("type")) {
-				case "DateTimeOffset":
-					if (value == null || value == "")
-						field.val("").attr("title", "").data("date", null);
-					else {
-						var
-							date = new Date(value),
-							formattedDate = matematici.dateFormatter.format(date, true);
-						field.val(formattedDate.date + " " + formattedDate.time).attr("title", formattedDate.offset).data("date", date);
-					}
-					break;
-				default:
-					if (field.hasClass("DatePicker"))
-						field.data("datePicker").setDate(value)
-					else
-						field.val(value);
-			}
-
+            if (field.data("type") == "DateTimeOffset") {
+                if (value == null || value == "")
+                    field.val("").attr("title", "").data("date", null);
+                else {
+                    var
+                        date = new Date(value),
+                        formattedDate = matematici.dateFormatter.format(date, true);
+                    field.val(formattedDate.date + " " + formattedDate.time).attr("title", formattedDate.offset).data("date", date);
+                }
+            }
+            else if (field.attr("type") == "checkbox")
+                field.prop("checked", !!value)
+            else if (field.hasClass("DatePicker"))
+				field.data("datePicker").setDate(value)
+			else
+				field.val(value);
 		},
 
 		handleValidationMessages = function (field, data) {
@@ -156,7 +156,7 @@
 						)
 					);
 				}
-			} 
+			}
 		},
 
 		handleResult = function (data) {

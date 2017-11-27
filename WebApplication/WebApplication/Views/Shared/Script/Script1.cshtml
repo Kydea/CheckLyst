@@ -89,7 +89,7 @@
                 e.preventDefault();
                 break;
         }
-    }).on("click", "label input", function (e) {
+    }).on("click", "label input:not([type=checkbox]):not([type=radio])", function (e) {
         e.preventDefault(); //in ios two inputs in the same label give problems
     });
 </script>

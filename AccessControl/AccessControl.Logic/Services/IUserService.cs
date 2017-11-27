@@ -6,6 +6,7 @@ using CheckListManager.AccessControl.Logic.Messages.Users;
 using CheckListManager.Common.Core.Services;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Messages;
+using CheckListManager.Common.Core.Web.Security;
 
 namespace CheckListManager.AccessControl.Logic.Services
 {
@@ -20,6 +21,9 @@ namespace CheckListManager.AccessControl.Logic.Services
 
 		Task<PagingResponse<List<UsersResponse>>> GetUsersAsync(long companyId, PagingRequest<UsersRequest> request);
 
-		Task<AddUserResponse> AddUserAsync(long companyId, AddUserRequest request);
-	}
+        Task<UserResponse> LoadUserAsync(DefaultIdentity identity, UserRequest record);
+        Task<UserResponse> AddUserAsync(DefaultIdentity identity, UserRequest request);
+        Task<UserResponse> EditUserAsync(DefaultIdentity identity, UserRequest record);
+        Task<UserResponse> DeleteUserAsync(DefaultIdentity identity, string code);
+    }
 }

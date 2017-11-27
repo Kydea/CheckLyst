@@ -3,6 +3,9 @@ using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using CheckListManager.Common.Data;
+using CheckListManager.Common.Core.Web.Security;
+using System;
+using CheckListManager.Common.Data.Exceptions;
 
 namespace CheckListManager.AccessControl.Data
 {
@@ -16,11 +19,38 @@ namespace CheckListManager.AccessControl.Data
 		public Task<Users> GetAsync(long companyId, string code)
 			=> Entities.Users.FirstOrDefaultAsync(u => u.Company == companyId && u.Code == code);
 
-		public Task AddAsync(Users user)
+		public async Task<Users> AddAsync(DefaultIdentity identity, Users user)
 		{
-			Entities.Users.Add(user);
-			return SaveChangesAsync();
-		}
+            user.Company = identity.CompanyId;
+            user.CreatedOn = DateTimeOffset.UtcNow;
+            user.CreatedBy = identity.Code;
+            Entities.Users.Add(user);
+			await SaveChangesAsync();
+            return user;
+        }
+
+        public async Task<Users> EditAsync(DefaultIdentity identity, Users user)
+        {
+            var ExistingUser = await GetAsync(identity.CompanyId, user.Code);
+            if (ExistingUser == null) throw new DatabaseException($"User {user.Code} not found");
+            ExistingUser.Description = user.Description;
+            ExistingUser.ModifiedOn = DateTimeOffset.UtcNow;
+            ExistingUser.ModifiedBy = identity.Code;
+            Entities.UserFunctions.RemoveRange(ExistingUser.UserFunctions);
+            ExistingUser.UserFunctions = user.UserFunctions;
+            await SaveChangesAsync();
+            return ExistingUser;
+        }
+
+        public async Task DeleteAsync(long companyId, string code)
+        {
+            var User = await GetAsync(companyId, code);
+            if (User == null) throw new DatabaseException($"User {code} not found");
+
+            Entities.Users.Remove(User);
+            await SaveChangesAsync();
+        }
+
 
         private IQueryable<Users> Get(long companyId, string code, string description)
         {

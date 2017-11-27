@@ -58,6 +58,7 @@ create table "Security"."UserFunctions"
 	"Function" varchar (20) not null,
 	constraint "UserFunctions_Function" foreign key ("FunctionGroup", "Function") references "Security"."Functions" on update cascade,
 
+	"Department" bigint references "CheckLists"."Departments",
 	"PrototypeType" bigint references "CheckLists"."PrototypeTypes",
 	"Tag" varchar (50),
 
