@@ -73,6 +73,7 @@
         <AssociationConnector Association="RelationalDatabaseModel.PrototypeTypes_Department_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.PrototypeTypes_ObsolescenceWorkFlow_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.UserFunctions_PrototypeType_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.UserFunctions_Department_fkey" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

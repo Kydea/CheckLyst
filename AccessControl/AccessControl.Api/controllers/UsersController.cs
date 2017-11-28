@@ -28,14 +28,20 @@ namespace CheckListManager.AccessControl.Api.Controllers
 			return Ok(await _userService.GetUsersAsync(Identity.CompanyId, request));
 		}
 
-	    [HttpPost]
+        [HttpPost]
+        [Route("Load")]
+        public async Task<IHttpActionResult> Get(Message<UserRequest> request)
+        {
+            return Ok(await _userService.LoadUserAsync(Identity, request.Data));
+        }
+
+        [HttpPost]
 		[Route("Add")]
-	    public async Task<IHttpActionResult> AddUser(Message<AddUserRequest> request)
+	    public async Task<IHttpActionResult> AddUser(Message<UserRequest> request)
 		{
 			try
 			{
-				var response = await _userService.AddUserAsync(Identity.CompanyId, request.Data);
-				return Ok(Message.Create(response));
+				return Ok(await _userService.AddUserAsync(Identity, request.Data));
 			}
 			catch (DatabaseAggregateException exception)
 			{
@@ -53,5 +59,19 @@ namespace CheckListManager.AccessControl.Api.Controllers
 				}
 			}
 		}
+
+        [HttpPost]
+        [Route("Edit")]
+        public async Task<IHttpActionResult> Edit(Message<UserRequest> request)
+        {
+            return Ok(await _userService.EditUserAsync(Identity, request.Data));
+        }
+
+        [HttpPost]
+        [Route("Delete")]
+        public async Task<IHttpActionResult> Delete(Message<UserRequest> request)
+        {
+            return Ok(await _userService.DeleteUserAsync(Identity, request.Data.Code));
+        }
     }
 }

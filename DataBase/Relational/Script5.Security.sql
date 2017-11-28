@@ -5,9 +5,10 @@
 
 insert into "Security"."FunctionGroups" values
 	('DataSources'),
-	('Infrastructure'),
+	('PrototypeTypes'),
+	('Departments'),
 	('Instances'),
-	('Prototype'),
+	('Prototypes'),
 	('Trail'),
 	('Users'),
 	('WorkFlows');
@@ -24,18 +25,21 @@ insert into "Security"."Functions" values
 	('DataSources', 'Edit'),
 	('DataSources', 'View'),
 
-	('Infrastructure', 'Edit'),
-	('Infrastructure', 'View'),
+	('Departments', 'Edit'),
+	('Departments', 'View'),
 
+	('PrototypeTypes', 'Edit'),
+	('PrototypeTypes', 'View'),
+
+	('Instances', 'Confirm'),
 	('Instances', 'Create'),
-	('Instances', 'Edit'),
 	('Instances', 'Delete'),
-	('Instances', 'Approve'),
-	('Instances', 'Unlock'),
+	('Instances', 'Edit'),
+	('Instances', 'Unsing'),
 	('Instances', 'View'),
 
 	('Prototypes', 'Approve'),
-	('Prototypes', 'Design'),
+	('Prototypes', 'Edit'),
 	('Prototypes', 'View'),
 
 	('Trail', 'View'),
@@ -58,6 +62,7 @@ create table "Security"."UserFunctions"
 	"Function" varchar (20) not null,
 	constraint "UserFunctions_Function" foreign key ("FunctionGroup", "Function") references "Security"."Functions" on update cascade,
 
+	"Department" bigint references "Infrastructure"."Departments",
 	"PrototypeType" bigint references "CheckLists"."PrototypeTypes",
 	"Tag" varchar (50),
 
@@ -67,4 +72,4 @@ create table "Security"."UserFunctions"
 	"ModifiedOn" timestamptz
 );
 
-create unique index "Index_UserFunctions_Function" on "Security"."UserFunctions" ("Company", "User", "FunctionGroup", "Function", "PrototypeType", "Tag");
+create unique index "Index_UserFunctions_Function" on "Security"."UserFunctions" ("Company", "User", "FunctionGroup", "Function", "Department", "PrototypeType", "Tag");

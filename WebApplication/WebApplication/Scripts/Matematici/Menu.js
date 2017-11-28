@@ -76,7 +76,7 @@
 		};
 
 	this.toggleItemsByRole = function () {
-		var roles = "," + localStorage.getItem("roles");
+        var roles = "," + localStorage.getItem("roles");
 		$("li[data-role]", menu).each(function () {
 			var item = $(this);
 			item.toggle(roles.indexOf("," + item.data("role") + "#") >= 0);

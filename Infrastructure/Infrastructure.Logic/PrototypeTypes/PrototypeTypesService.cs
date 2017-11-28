@@ -80,6 +80,20 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
                     Form.Data.Department, Form.Data.Name, Form.CurrentPage, Form.ItemsPerPage
                 );
 
+        public async Task<PagingResponse<List<PrototypeTypesSyntheticRow>>> GetSyntheticDataAsync(long Company, PagingRequest<PrototypeTypesRequest> Form)
+            => await _infrastructureRepository
+                .GetPrototypeTypesAsync(
+                    Company,
+                    pt => new PrototypeTypesSyntheticRow
+                    {
+                        Department = pt.Department,
+                        DepartmentName = pt.Departments.Name,
+                        ID = pt.ID,
+                        Name = pt.Name
+                    },
+                    Form.Data.Department, Form.Data.Name, Form.CurrentPage, Form.ItemsPerPage
+                );
+
         private PrototypeTypesResponse Validate(PrototypeTypesRequest record)
         {
             var response = new PrototypeTypesResponse();

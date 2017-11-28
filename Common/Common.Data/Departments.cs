@@ -19,6 +19,7 @@ namespace CheckListManager.Common.Data
         {
             this.Prototypes = new HashSet<Prototypes>();
             this.PrototypeTypes = new HashSet<PrototypeTypes>();
+            this.UserFunctions = new HashSet<UserFunctions>();
         }
     
         public long ID { get; set; }
@@ -34,5 +35,7 @@ namespace CheckListManager.Common.Data
         public virtual ICollection<Prototypes> Prototypes { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PrototypeTypes> PrototypeTypes { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<UserFunctions> UserFunctions { get; set; }
     }
 }

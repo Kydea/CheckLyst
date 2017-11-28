@@ -90,15 +90,15 @@ namespace CheckListManager.Infrastructure.Data
             Expression<Func<Departments, TResult>> select,
             string name, int currentPage, int itemsPerPage)
         {
-            var Query = Entities.Departments
+            IQueryable<TResult> Query = Entities.Departments
                 .Where(d =>
                     d.Company == companyId
                     && (name == "" || d.Name != null && d.Name.ToUpper().Contains(name.ToUpper()))
-                );
+                )
+                .OrderBy(d => d.Name).ThenBy(d => d.ID)
+                .Select(select);
 
             var Data = await Query
-                .OrderBy(d => d.Name).ThenBy(d => d.ID)
-                .Select(select)
                 .Skip((currentPage - 1) * itemsPerPage)
                 .Take(itemsPerPage)
                 .ToListAsync();
@@ -119,16 +119,16 @@ namespace CheckListManager.Infrastructure.Data
             Expression<Func<PrototypeTypes, TResult>> select, 
             long? department, string name, int currentPage, int itemsPerPage)
         {
-            var Query = Entities.PrototypeTypes
+            IQueryable<TResult> Query = Entities.PrototypeTypes
                 .Where(pt =>
                     pt.Company == companyId
                     && (department == null || pt.Department == department)
                     && (name == "" || pt.Name != null && pt.Name.ToUpper().Contains(name.ToUpper()))
-                );
+                )
+                .OrderBy(pt => pt.Department).ThenBy(pt => pt.Name).ThenBy(pt => pt.ID)
+                .Select(select);
 
             var Data = await Query
-                .OrderBy(pt => pt.Name).ThenBy(pt => pt.ID)
-                .Select(select)
                 .Skip((currentPage - 1) * itemsPerPage)
                 .Take(itemsPerPage)
                 .ToListAsync();

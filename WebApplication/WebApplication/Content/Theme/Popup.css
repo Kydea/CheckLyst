@@ -68,7 +68,7 @@ div.Popup {
         border-radius: 15px 15px 0 0; } }
   @media only screen and (max-width: 759px) {
     div.Popup div.Container {
-      width: 100%;
+      width: 100% !important;
       min-height: 1vh; }
       div.Popup div.Container h2 {
         background: #009688;

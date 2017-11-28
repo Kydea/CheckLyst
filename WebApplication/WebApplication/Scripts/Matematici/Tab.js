@@ -26,15 +26,18 @@
 				element.height(height);
 			} else
 				element.height(getItemHeight());
-		},
+        },
+
+        getItem = function(index) {
+            return {
+                index: index,
+                label: $(".TabLabels a", element).removeClass("Selected").eq(index).addClass("Selected"),
+                tab: $(".Tab", element).removeClass("Selected").eq(index).addClass("Selected")
+            }
+        }
 
         select = function (index) {
-			currentItem = {
-				index: index,
-				label: $(".TabLabels a", element).removeClass("Selected").eq(index).addClass("Selected"),
-				tab: $(".Tab", element).removeClass("Selected").eq(index).addClass("Selected")
-			}
-
+            currentItem = getItem(index);
 			if (!options.fixedHeight)
 				resize();
         },
@@ -52,7 +55,12 @@
 
                     for (var index in handlers)
                         handlers[index].call(this, currentItem.index);
-				});
+                });
+
+            $(".TabLabels a", element).each(function() {
+                var label = $(this);
+                label.attr("title", label.text());
+            });
         };
 
     this.getElement = function () {
@@ -61,6 +69,10 @@
 
     this.getCurrentItem = function () {
         return currentItem;
+    };
+
+    this.getItem = function(index) {
+        return getItem(index);
     };
 
     this.addHandler = function (handler) {

@@ -186,7 +186,6 @@ form {
     margin-top: 20px;
     margin-left: 20px;
     width: 200px;
-    width: 200px;
     position: relative;
     color: #666; }
     form label input, form label select, form label textarea {
@@ -253,6 +252,12 @@ form {
         width: calc(33.33% - 36px/3); }
       form label.FullWidth.Controls3 i:not(.AutoComplete) + input:not(.AutoComplete), form label.FullWidth.Controls3 i:not(.AutoComplete) + input.AutoComplete + input, form label.FullWidth.Controls3 i:not(.AutoComplete) + input.AutoComplete + select, form label.FullWidth.Controls3 i:not(.AutoComplete) + select:not(.AutoComplete), form label.FullWidth.Controls3 i:not(.AutoComplete) + select.AutoComplete + input, form label.FullWidth.Controls3 i:not(.AutoComplete) + select.AutoComplete + select {
         width: calc(33.33% + 36px - 36px/3); }
+    form label.Narrow {
+      width: unset; }
+    form label.Width150 {
+      width: 300px; }
+    form label.Width200 {
+      width: 400px; }
     form label.Error i {
       border-color: #cc0000 !important; }
     form label.Error input, form label.Error select {
