@@ -134,5 +134,13 @@
   {
     "outputFile": "Content/Theme/Popup.css",
     "inputFile": "Content/Theme/Popup.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Columns.css",
+    "inputFile": "Content/Theme/Columns.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Users.css",
+    "inputFile": "Content/Theme/Users.scss"
   }
 ]

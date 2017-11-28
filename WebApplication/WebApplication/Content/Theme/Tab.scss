@@ -6,8 +6,10 @@ div.TabContainer {
     position: relative;
     transition: height .3s;
     display: none;
+    margin-right: -20px;
 
     .TabLabels {
+        display: flex;
 
         &::after {
             content: "";
@@ -24,12 +26,13 @@ div.TabContainer {
         a {
             height: $label-height;
             line-height: $label-height;
-            float: left;
             color: $Color-Grey-Regular;
             text-decoration: none;
-            padding: 0 40px;
             z-index: 1;
             position: relative;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
 
             i.fa {
                 color: red;
@@ -65,10 +68,27 @@ div.TabContainer {
         opacity: 0;
         transition: opacity .5s;
         z-index: $Depth-Tab;
+        padding-right: 20px;
 
         &.Selected {
             opacity: 1;
             z-index: $Depth-Tab-Selected;
+        }
+    }
+
+    @media #{$Media-Extended} {
+        .TabLabels {
+            a {
+                padding: 0 40px;
+            }
+        }
+    }
+
+    @media #{$Media-Mobile} {
+        .TabLabels {
+            a {
+                padding: 0 10px;
+            }
         }
     }
 }

@@ -73,7 +73,7 @@ matematici.AutoComplete = function (selector) {
 			input = $("<input />").addClass("AutoComplete-Filter").attr({ type: "text" }).hide().insertAfter(label);
 			list = $("<div />").addClass("AutoComplete-List").insertAfter(input);
 			icon = $("<i />").addClass("AutoComplete fi flaticon-arrow-down").insertAfter(input);
-			noRow = $("<i />").addClass("fi flaticon-meno");
+			noRow = $("<i />").addClass("fi flaticon-minus");
 			element.parent("label").on("click", function (e) {
 				label.focus();
 				e.stopPropagation();
@@ -213,7 +213,7 @@ matematici.AutoComplete = function (selector) {
 		updateList = function () {
 			list.empty();
 			if (element.data("nullable"))
-				list.append($("<a />").addClass("None").attr("href", "#").append($("<i />").text("(none)")));
+                list.append($("<a />").addClass("None").attr("href", "#").append($("<i />").text(element.data("nullable") === true ? "(none)" : element.data("nullable"))));
 
 			var count = 0;
 			options

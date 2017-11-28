@@ -4,9 +4,9 @@ using CheckListManager.WebApplication.Code;
 namespace CheckListManager.WebApplication.Controllers
 {
     [RoutePrefix("Infrastructure")]
-    [DefaultAuthorize(Roles = "FunctionGroup#Trail")]
     public class InfrastructureController : BaseController
 	{
+        [DefaultAuthorize(Roles = "FunctionGroup#Departments")]
         [Route("Departments/List")]
         public ActionResult DepartmentsList()
         {
@@ -14,6 +14,7 @@ namespace CheckListManager.WebApplication.Controllers
         }
 
         [HttpPost]
+        [DefaultAuthorize(Roles = "FunctionGroup#Departments")]
         [Route("Departments/Detail")]
         public ActionResult DepartmentsDetail()
         {
@@ -21,6 +22,7 @@ namespace CheckListManager.WebApplication.Controllers
         }
 
         [Route("PrototypeTypes/List")]
+        [DefaultAuthorize(Roles = "FunctionGroup#PrototypeTypes")]
         public ActionResult PrototypeTypesList()
         {
             return ConditionalView("PrototypeTypes/List");
@@ -28,6 +30,7 @@ namespace CheckListManager.WebApplication.Controllers
 
         [HttpPost]
         [Route("PrototypeTypes/Detail")]
+        [DefaultAuthorize(Roles = "FunctionGroup#PrototypeTypes")]
         public ActionResult PrototypeTypesDetail()
         {
             return PartialView("PrototypeTypes/Detail");

@@ -34,6 +34,10 @@ namespace CheckListManager.AccessControl.Data
             var ExistingUser = await GetAsync(identity.CompanyId, user.Code);
             if (ExistingUser == null) throw new DatabaseException($"User {user.Code} not found");
             ExistingUser.Description = user.Description;
+            ExistingUser.Email = user.Email;
+            if (user.Password != null) ExistingUser.Password = user.Password;
+            ExistingUser.Enabled = user.Enabled;
+            ExistingUser.AuthenticationCode = user.AuthenticationCode;
             ExistingUser.ModifiedOn = DateTimeOffset.UtcNow;
             ExistingUser.ModifiedBy = identity.Code;
             Entities.UserFunctions.RemoveRange(ExistingUser.UserFunctions);

@@ -165,6 +165,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                 Description = u.Description,
                 Email = u.Email,
 				Enabled = u.Enabled,
+                AuthenticationCode = u.AuthenticationCode,
                 LastLoginOn = u.LastLoginOn,
                 CreatedBy = u.CreatedBy,
                 CreatedOn = u.CreatedOn,
@@ -183,7 +184,6 @@ namespace CheckListManager.AccessControl.Logic.Services
 
         private UserResponse Validate(UserRequest record)
         {
-            //TODO
             var response = new UserResponse();
             if (string.IsNullOrWhiteSpace(record.Code))
                 response.Fields["Code"] = new Field
@@ -202,7 +202,29 @@ namespace CheckListManager.AccessControl.Logic.Services
                     ValidationMessages = new List<ValidationMessage> {
                         new ValidationMessage {
                             Level = ValidationMessage.LevelError,
-                            Message = "Invalid description"
+                            Message = "Invalid value"
+                        }
+                    }
+                };
+
+            if (!string.IsNullOrEmpty(record.Password) && record.Password.Length < 8)
+                response.Fields["Password"] = new Field
+                {
+                    ValidationMessages = new List<ValidationMessage> {
+                        new ValidationMessage {
+                            Level = ValidationMessage.LevelError,
+                            Message = "Password must be longer then 8 character"
+                        }
+                    }
+                };
+
+            if (!(string.IsNullOrEmpty(record.Password) && string.IsNullOrEmpty(record.Password2)) && record.Password != record.Password2)
+                response.Fields["Password2"] = new Field
+                {
+                    ValidationMessages = new List<ValidationMessage> {
+                        new ValidationMessage {
+                            Level = ValidationMessage.LevelError,
+                            Message = "Password and confirm password must coincide"
                         }
                     }
                 };
@@ -216,16 +238,34 @@ namespace CheckListManager.AccessControl.Logic.Services
             var response = new UserResponse();
             try
             {
-                var WorkFlow = await _userRepository.GetAsync(identity.CompanyId, record.Code);
+                var User = await _userRepository.GetAsync(identity.CompanyId, record.Code);
 
-                /*
-                response.Steps = WorkFlow
-                    .WorkFlowSteps
-                    .GroupBy(s => s.Step)
-                    .OrderBy(g => g.Key)
-                    .Select(g => new Step { Signatures = g.Select(s => s.WorkFlowStepTags.Select(t => t.Tag).ToArray()).ToArray() })
+                response.GeneralFunctions = User.UserFunctions.Where(f => f.FunctionGroup != "Prototypes" && f.FunctionGroup != "Instances")
+                    .Select(gf => new Function { functionGroup = gf.FunctionGroup, function = gf.Function })
                     .ToArray();
-                */
+
+                response.PrototypeFunctions = User.UserFunctions.Where(f => f.FunctionGroup == "Prototypes")
+                    .GroupBy(pf => pf.PrototypeType)
+                    .Select(g => new Function {
+                        department = g.First().Department,
+                        prototypeType = g.Key,
+                        functionGroup = "Prototypes",
+                        functions = g.Select(pf => pf.Function).ToArray(),
+                        level = g.First().Tag 
+                    })
+                    .ToArray();
+
+                response.InstanceFunctions = User.UserFunctions.Where(f => f.FunctionGroup == "Instances")
+                    .GroupBy(pf => pf.PrototypeType)
+                    .Select(g => new Function
+                    {
+                        department = g.First().Department,
+                        prototypeType = g.Key,
+                        functionGroup = "Instances",
+                        functions = g.Select(pf => pf.Function).ToArray(),
+                        level = g.First().Tag
+                    })
+                    .ToArray();
             }
             catch (Exception Exception)
             {
@@ -240,6 +280,47 @@ namespace CheckListManager.AccessControl.Logic.Services
             return response;
         }
 
+        private List<UserFunctions> BuildFunctions(DefaultIdentity identity, UserRequest record)
+        {
+            var List = new List<UserFunctions>();
+            foreach (var Function in record.GeneralFunctions)
+                List.Add(new UserFunctions
+                {
+                    FunctionGroup = Function.functionGroup,
+                    Function = Function.function,
+                    CreatedOn = DateTimeOffset.UtcNow,
+                    CreatedBy = identity.Code
+                });
+
+            foreach (var Row in record.PrototypeFunctions)
+                foreach (var Function in Row.functions)
+                    List.Add(new UserFunctions
+                    {
+                        Department = Row.department,
+                        PrototypeType = Row.prototypeType,
+                        FunctionGroup = "Prototypes",
+                        Function = Function,
+                        Tag = Row.level,
+                        CreatedOn = DateTimeOffset.UtcNow,
+                        CreatedBy = identity.Code
+                    });
+
+            foreach (var Row in record.InstanceFunctions)
+                foreach (var Function in Row.functions)
+                    List.Add(new UserFunctions
+                    {
+                        Department = Row.department,
+                        PrototypeType = Row.prototypeType,
+                        FunctionGroup = "Instances",
+                        Function = Function,
+                        Tag = Row.level,
+                        CreatedOn = DateTimeOffset.UtcNow,
+                        CreatedBy = identity.Code
+                    });
+
+            return List;
+        }
+
         public async Task<UserResponse> AddUserAsync(DefaultIdentity identity, UserRequest record)
 		{
             var response = Validate(record);
@@ -252,9 +333,10 @@ namespace CheckListManager.AccessControl.Logic.Services
                         Description = record.Description,
                         Email = record.Email,
                         Password = _hashService.HashStringToBytes(record.Password),
-                        Enabled = record.Enabled
+                        AuthenticationCode = record.AuthenticationCode,
+                        Enabled = record.Enabled,
                         
-                        //WorkFlowSteps = BuildSteps(identity, record)
+                        UserFunctions = BuildFunctions(identity, record)
                     });
                 }
                 catch (Exception Exception)
@@ -282,7 +364,10 @@ namespace CheckListManager.AccessControl.Logic.Services
                         Description = record.Description,
                         Email = record.Email,
                         Password = _hashService.HashStringToBytes(record.Password),
-                        Enabled = record.Enabled
+                        Enabled = record.Enabled,
+                        AuthenticationCode = record.AuthenticationCode,
+
+                        UserFunctions = BuildFunctions(identity, record)
                     });
                 }
                 catch (Exception Exception)

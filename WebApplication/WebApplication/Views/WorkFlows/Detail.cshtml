@@ -112,6 +112,7 @@
 
                 label =
                     $("<label />")
+                        .addClass("Width150")
                         .insertBefore(button)
                         .append($("<span />"))
                         .append(select),
@@ -187,9 +188,9 @@
 
         detailPage = new matematici.DetailPage({
             formSelector: formSelector,
-            width: "1vh - 60px",
             parametersPrepareHandler: parametersPrepareHandler,
             completeHandler: completeHandler, 
+            width: "inherit",
             buttons: [{
                 icon: "plus",
                 text: "add step",
@@ -215,19 +216,4 @@
     tab.addHandler(function (index) {
         addStepButton.toggle(index == 1 && $("div.Step", formElement).size() < maxSteps);
     });
-
-    //TODO remove
-    //handleLoadResult([
-    //    {
-    //        signatures: [
-    //            ["Revisor"],
-    //            ["Revisor", "Deputy approver"]
-    //        ]
-    //    },
-    //    {
-    //        signatures: [
-    //            ["Deputy approver", "Approver"],
-    //        ]
-    //    }
-    //]);
 </script>

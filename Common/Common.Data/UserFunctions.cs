@@ -25,9 +25,11 @@ namespace CheckListManager.Common.Data
         public System.DateTimeOffset CreatedOn { get; set; }
         public string ModifiedBy { get; set; }
         public Nullable<System.DateTimeOffset> ModifiedOn { get; set; }
+        public Nullable<long> Department { get; set; }
     
         public virtual Functions Functions { get; set; }
         public virtual Users Users { get; set; }
         public virtual PrototypeTypes PrototypeTypes { get; set; }
+        public virtual Departments Departments { get; set; }
     }
 }

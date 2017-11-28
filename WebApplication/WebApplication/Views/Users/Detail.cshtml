@@ -2,56 +2,145 @@
     <h2>User</h2>
 
     <form id="Detail" action="@BaseUrl/AccessControl/Users">
-        <div class="Triggers">
-            <label>
-                User code
-                <input type="text" name="code" />
-            </label>
+        <div class="TabContainer">
+            <div class="TabLabels">
+                <a href="#">Details</a>
+                <a href="#">General grants</a>
+                <a href="#">Prototype grants</a>
+                <a href="#">Instance grants</a>
+            </div>
+            <div class="Tab">
+                <label>
+                    User code
+                    <input type="text" name="code" />
+                </label>
 
-            <label>
-                Name and surname
-                <input type="text" name="description" />
-            </label>
+                <label>
+                    Name and surname
+                    <input type="text" name="description" />
+                </label>
 
-            <label class="Clearing">
-                Authentication code
-                <input type="text" name="authenticationCode" />
-            </label>
+                <label>
+                    Email
+                    <input type="text" name="email" />
+                </label>
 
-            <label class="Clearing">
-                Email
-                <input type="text" name="email" />
-            </label>
+                <label>
+                    Enabled
+                    <input type="checkbox" name="enabled" value="true" />
+                </label>
 
-            <label>
-                Enabled
-                <input type="checkbox" name="enabled" value="true" />
-            </label>
+                <label class="Clearing">
+                    Password
+                    <input type="password" name="password" />
+                </label>
 
-            <label class="Clearing">
-                Created by
-                <i class="fi flaticon-people" />
-                <input type="text" name="createdBy" readonly="readonly" />
-            </label>
+                <label class="Clearing">
+                    Password confirm
+                    <input type="password" name="password2" />
+                </label>
 
-            <label>
-                Created on
-                <i class="fi flaticon-calendar" />
-                <input type="text" name="createdOn" readonly="readonly" data-type="DateTimeOffset" />
-            </label>
+                <label>
+                    Authentication code
+                    <input type="text" name="authenticationCode" />
+                </label>
 
-            <label class="Clearing">
-                Modified by
-                <i class="fi flaticon-people" />
-                <input type="text" name="modifiedBy" readonly="readonly" />
-            </label>
+                <label class="Clearing">
+                    Created by
+                    <i class="fi flaticon-user-o"" />
+                    <input type="text" name="createdBy" readonly="readonly" />
+                </label>
 
-            <label>
-                Modified on
-                <i class="fi flaticon-calendar" />
-                <input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
-            </label>
-            <div class="Clearing"></div>
+                <label>
+                    Created on
+                    <i class="fi flaticon-calendar" />
+                    <input type="text" name="createdOn" readonly="readonly" data-type="DateTimeOffset" />
+                </label>
+
+                <label>
+                    Modified by
+                    <i class="fi flaticon-user-o" />
+                    <input type="text" name="modifiedBy" readonly="readonly" />
+                </label>
+
+                <label>
+                    Modified on
+                    <i class="fi flaticon-calendar" />
+                    <input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
+                </label>
+                <div class="Clearing"></div>
+            </div>
+            <div class="Tab">
+                <div class="Clearing GeneralFunction">
+                    <h3>Data Source</h3>
+                    <label class="Clearing Narrow">
+                        Edit
+                        <input type="checkbox" data-group="DataSources" data-function="Edit" />
+                    </label>
+                    <label class="Narrow">
+                        View
+                        <input type="checkbox" data-group="DataSources" data-function="View" />
+                    </label>
+                </div>
+                <div class="GeneralFunction">
+                    <h3>Departments</h3>
+                    <label class="Clearing Narrow">
+                        Edit
+                        <input type="checkbox" data-group="Departments" data-function="Edit" />
+                    </label>
+                    <label class="Narrow">
+                        View
+                        <input type="checkbox" data-group="Departments" data-function="View" />
+                    </label>
+                </div>
+                <div class="GeneralFunction">
+                    <h3>Prototype types</h3>
+                    <label class="Clearing Narrow">
+                        Edit
+                        <input type="checkbox" data-group="PrototypeTypes" data-function="Edit" />
+                    </label>
+                    <label class="Narrow">
+                        View
+                        <input type="checkbox" data-group="PrototypeTypes" data-function="View" />
+                    </label>
+                </div>
+                <div class="GeneralFunction">
+                    <h3>Trail</h3>
+                    <label class="Clearing Narrow">
+                        View
+                        <input type="checkbox" data-group="Trail" data-function="View" />
+                    </label>
+                </div>
+                <div class="GeneralFunction">
+                    <h3>Users</h3>
+                    <label class="Clearing Narrow">
+                        Edit
+                        <input type="checkbox" data-group="Users" data-function="Edit" />
+                    </label>
+                    <label class="Narrow">
+                        View
+                        <input type="checkbox" data-group="Users" data-function="View" />
+                    </label>
+                </div>
+                <div class="GeneralFunction">
+                    <h3>WorkFlows</h3>
+                    <label class="Clearing Narrow">
+                        Edit
+                        <input type="checkbox" data-group="WorkFlows" data-function="Edit" />
+                    </label>
+                    <label class="Narrow">
+                        View
+                        <input type="checkbox" data-group="WorkFlows" data-function="View" />
+                    </label>
+                </div>
+                <div class="Clearing"></div>
+            </div>
+            <div class="Tab">
+                <div class="Clearing"></div>
+            </div>
+            <div class="Tab">
+                <div class="Clearing"></div>
+            </div>
         </div>
     </form>
 
@@ -59,7 +148,240 @@
 </div>
 
 <script type="text/javascript">
-    new matematici.DetailPage({
-        formSelector: "form#Detail"
+    var
+        departments,
+        prototypeFunctions = [
+            "Approve", "Edit", "View"
+        ],
+        instanceFunctions = [
+            "Confirm", "Create", "Delete", "Edit", "Unsing", "View"
+        ],
+        profiles = [
+            "Revisor",
+            "Deputy approver",
+            "Approver",
+            "Deputy final approver",
+            "Final approver"
+        ],
+
+        formSelector = "form#Detail",
+
+        formElement = $(formSelector),
+
+        fixFunctions = function (tabIndex) {
+            steps = $("div.Function", tab.getItem(tabIndex).tab).each(function (index) {
+                $(this).children("hr").toggle(index > 0);
+            });
+
+            resize();
+        },
+
+        resize = function () {
+            tab.resize();
+            setTimeout(function () {
+                matematici.popup.center();
+            }, 500);
+        },
+
+        refreshPrototypeTypes = function (departmentSelect, prototypeTypeSelect) {
+            prototypeTypeSelect.empty();
+            var prototypeTypes = departments[departmentSelect.prop('selectedIndex')].prototypeTypes;
+            for (var index in prototypeTypes)
+                prototypeTypeSelect.append($("<option />").text(prototypeTypes[index].name).attr("value", prototypeTypes[index].id));
+            prototypeTypeSelect.val("");
+            setTimeout(function () {
+                prototypeTypeSelect.data("autoComplete").refresh();
+            }, 0);
+        },
+
+        addFunction = function (tabIndex) {
+            var
+                tabItem = tabIndex && tab.getItem(tabIndex) || tab.getCurrentItem(),
+                div = $("<div />").addClass("Function").insertBefore(tabItem.tab.children("div.Clearing"));
+
+            $("<hr />").appendTo(div)
+            var select1 = $("<select />");
+            $("<label />").appendTo(div).text("Department").append(select1).addClass("Clearing");
+            for (var index in departments) 
+                select1.append($("<option />").text(departments[index].name).attr("value", departments[index].code));
+            var autoComplete1 = new matematici.AutoComplete(select1);
+            autoComplete1.initialize();
+            select1.on("change", function () {
+                refreshPrototypeTypes(select1, select2);
+            });
+
+            var select2 = $("<select />").data("nullable", "(all)");
+            $("<label />").appendTo(div).text("Prototype type").append(select2);
+            var autoComplete2 = new matematici.AutoComplete(select2);
+            autoComplete2.initialize();
+            refreshPrototypeTypes(select1, select2);
+
+            var select3 = $("<select />").prop("multiple", true);
+            $("<label />").appendTo(div).text("Function").append(select3).addClass("Width150");
+            var list = tabItem.index == 2 ? prototypeFunctions : instanceFunctions;
+            for (var index in list)
+                select3.append($("<option />").text(list[index]).attr("value", list[index]));
+            var autoComplete3 = new matematici.AutoComplete(select3);
+            autoComplete3.initialize();
+
+            var select4 = $("<select />");
+            $("<label />").appendTo(div).text("Level").append(select4);
+            for (var index in profiles)
+                select4.append($("<option />").text(profiles[index]).attr("value", profiles[index]));
+            var autoComplete4 = new matematici.AutoComplete(select4);
+            autoComplete4.initialize();
+
+            setTimeout(function () {
+                autoComplete1.refresh();
+                autoComplete3.refresh();
+                autoComplete4.refresh();
+            }, 0);
+
+            $("<a />").attr("href", "#").addClass("Button Icon").append($("<i />").addClass("fi flaticon-minus")).on("click", function () {
+                div.remove();
+                fixFunctions(tabIndex);
+            }).appendTo(div);
+
+            fixFunctions(tabIndex);
+
+            return {
+                department: select1,
+                prototypeType: select2,
+                "function": select3,
+                level: select4
+            }
+        },
+
+        tab = new matematici.Tab(formSelector + " div.TabContainer", {
+            fixedHeight: true
+        }),
+
+        parametersPrepareHandler = function () {
+            var data = {
+                generalFunctions: [],
+                prototypeFunctions: [],
+                instanceFunctions: []
+            };
+
+            $("input[type=checkbox]:checked", tab.getItem(1).tab).each(function () {
+                var
+                    record = {},
+                    check = $(this);
+
+                record.functionGroup = check.data("group");
+                record.function = check.data("function");
+                data.generalFunctions.push(record);
+            });
+
+            $("div.Function", tab.getItem(2).tab).each(function () {
+                var
+                    record = {},
+                    selects = $("select", this);
+
+                record.department = selects.eq(0).val();
+                record.prototypeType = selects.eq(1).val();
+                record.functions = selects.eq(2).val();
+                record.level = selects.eq(3).val();
+                data.prototypeFunctions.push(record);
+            });
+
+            $("div.Function", tab.getItem(3).tab).each(function () {
+                var
+                    record = {},
+                    selects = $("select", this);
+
+                record.department = selects.eq(0).val();
+                record.prototypeType = selects.eq(1).val();
+                record.functions = selects.eq(2).val();
+                record.level = selects.eq(3).val();
+                data.instanceFunctions.push(record);
+            });
+
+            return { data: data };
+        },
+
+        preparePrototypeTypes = function (data) {
+            departments = [];
+
+            var
+                departmentID = null,
+                department;
+
+            for (var index in data) {
+                var record = data[index];
+                if (departmentID != record.department) {
+                    departments.push(department = { code: record.department, name: record.departmentName, prototypeTypes: [] });
+                    departmentID = record.department;
+                }
+
+                department.prototypeTypes.push({
+                    id: record.id,
+                    name: record.name
+                });                    
+            }
+        },
+
+        completeHandler = function () {
+            preparePrototypeTypes(detailPage.getSender().getElement().data("prototypeTypes"));
+            if (!detailPage.isNew())
+                detailPage.getForm().trigger("Load", function (result) {
+                    detailPage.getForm().handleResult(result);
+                    if (result.generalFunctions) buildGeneralFunctions(result.generalFunctions);
+                    if (result.prototypeFunctions) buildFunctions(result.prototypeFunctions, 2);
+                    if (result.instanceFunctions) buildFunctions(result.instanceFunctions, 3);
+                });
+        },
+
+        detailPage = new matematici.DetailPage({
+            formSelector: formSelector,
+            initHandler: function () {
+                matematici.controls.setEditable($("input[name=code]", detailPage.getElement()), detailPage.isNew());
+            },
+            parametersPrepareHandler: parametersPrepareHandler,
+            completeHandler: completeHandler,
+            width: "inherit",
+            buttons: [{
+                icon: "plus",
+                text: "add function",
+                hidden: true,
+                id: "AddFunction",
+                handler: function () {
+                    addFunction();
+                    fixFunctions(tab.getCurrentItem().index);
+                    return true;
+                }
+            }]
+        }),
+
+        buildGeneralFunctions = function (functions) {
+            var functionsObject = {};
+            for (var index in functions) {
+                var record = functions[index];
+                (functionsObject[record.functionGroup] = functionsObject[record.functionGroup] || {})[record["function"]] = true;
+            }
+            $("input[type=checkbox]", tab.getItem(1).tab).each(function () {
+                var check = $(this);
+                check.prop("checked", !!(functionsObject[check.data("group")] && functionsObject[check.data("group")][check.data("function")]));
+            });
+        },
+
+        buildFunctions = function (functions, tabIndex) {
+            for (var index in functions) {
+                var
+                    record = functions[index],
+                    row = addFunction(tabIndex);
+
+                row.department.val(record.department);
+                refreshPrototypeTypes(row.department, row.prototypeType);
+                row.prototypeType.val(record.prototypeType);
+                row["function"].val(record.functions);
+                row.level.val(record.level);
+            }
+        },
+
+        addFunctionButton = $("a#AddFunction", matematici.popup.getElement());
+
+    tab.addHandler(function (index) {
+        addFunctionButton.toggle(index > 1);
     });
 </script>

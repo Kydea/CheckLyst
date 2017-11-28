@@ -99,7 +99,7 @@ div.Popup {
 
     @media #{$Media-Mobile} {
         div.Container {
-            width: 100%;
+            width: 100% !important;
             min-height: 1vh;
 
             h2 {
