@@ -115,5 +115,17 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 				previous = item;
 			}
 		}
+
+		public void AddIteration()
+		{
+			var iteration = new Iteration
+			{
+				CheckList = CheckList,
+				Page = Page,
+				Group = this
+			};
+			iteration.Setup();
+			Iterations.Add(iteration);
+		}
 	}
 }

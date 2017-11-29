@@ -30,5 +30,12 @@ namespace CheckListManager.Instances.Logic.Models
 		public DateTimeOffset CreatedOn { get; set; }
 		public string ModifiedBy { get; set; }
 		public DateTimeOffset? ModifiedOn { get; set; }
+
+		public void AsChanged(string userCode)
+		{
+			IsDirty = true;
+			ModifiedBy = userCode;
+			ModifiedOn = DateTimeOffset.UtcNow;
+		}
 	}
 }

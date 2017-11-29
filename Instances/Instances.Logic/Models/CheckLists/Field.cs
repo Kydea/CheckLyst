@@ -54,5 +54,10 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 		{
 			return base.IsReadOnlyByDefault() || ValueFormula != null;
 		}
+
+		public bool Validate(string value)
+		{
+			return ValueType.Validate(Value);
+		}
 	}
 }

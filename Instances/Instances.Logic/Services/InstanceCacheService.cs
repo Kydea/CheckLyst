@@ -85,5 +85,8 @@ namespace CheckListManager.Instances.Logic.Services
 			score = score ?? DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 			return _redisCache.SortedSetElementInsertAsync("Instances", code, score.Value, RegionName);
 		}
+
+		public Task<LockObject> LockInstanceAsync(string code)
+			=> _redisCache.LockAsync("Instance:{code}:Lock", RegionName);
 	}
 }
