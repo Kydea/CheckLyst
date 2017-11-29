@@ -9,10 +9,7 @@ namespace CheckListManager.Common.Logic.Services
 	{
 		public byte[] HashStringToBytes(string text)
 		{
-			if (text == null)
-			{
-				return null;
-			}
+			if (string.IsNullOrEmpty(text)) return null;
 
 			using (var hash = new SHA256Managed())
 			{
