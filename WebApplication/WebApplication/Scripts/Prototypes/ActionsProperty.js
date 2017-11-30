@@ -6,7 +6,7 @@
                 valuePanel.append($("<a />")
                     .attr("href", "#")
                     .addClass("Button")
-                    .append($("<i />").addClass(buttons[index].icon ? "fa fa-" + buttons[index].icon : ""))
+					.append($("<i />").addClass(buttons[index].icon ? "fi flaticon-" + buttons[index].icon : ""))
                     .text(buttons[index].text)
                     .data("handler", buttons[index].handler)
                     .on("click", function (e) {

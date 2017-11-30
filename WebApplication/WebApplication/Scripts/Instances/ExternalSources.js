@@ -40,18 +40,18 @@
                 });
 
             $("<div />").addClass("Buttons").appendTo(container)
-                .append($("<a />").addClass("Button").text("close").prepend($("<i />").addClass("fa fa-remove")).on("click", function () {
+                .append($("<a />").addClass("Button").text("close").prepend($("<i />").addClass("fi flaticon-times")).on("click", function () {
                     element.remove();
                 }))
-                .append(next = $("<a />").addClass("Button").text("next").prepend($("<i />").addClass("fa fa-caret-right")).on("click", function () {
+				.append(next = $("<a />").addClass("Button").text("next").prepend($("<i />").addClass("fi flaticon-arrow-right")).on("click", function () {
                     ++page;
                     load();
                 }).hide())
-                .append(previous = $("<a />").addClass("Button").text("previous").prepend($("<i />").addClass("fa fa-caret-left")).on("click", function () {
+				.append(previous = $("<a />").addClass("Button").text("previous").prepend($("<i />").addClass("fi flaticon-arrow-left")).on("click", function () {
                     --page;
                     load();
                 }).hide())
-                .append(search = $("<a />").addClass("Button").text("search").prepend($("<i />").addClass("fa fa-search")).on("click", function () {
+				.append(search = $("<a />").addClass("Button").text("search").prepend($("<i />").addClass("fi flaticon-search-o")).on("click", function () {
                     load();
                 }));
 

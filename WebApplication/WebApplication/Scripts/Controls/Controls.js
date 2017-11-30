@@ -16,11 +16,11 @@
 				for (var index in values)
 					errors.append(
 						$("<div />").addClass("Error").text(" " + values[index].message).prepend(
-							$("<i />").addClass("fa fa-warning")
+							$("<i />").addClass("fi flaticon-warning")
 						)
 					);
 
-				control.parent().addClass("Error").prepend($("<i />").addClass("ValidationMessagesIcon fa fa-warning").on("click", function (e) {
+				control.parent().addClass("Error").prepend($("<i />").addClass("ValidationMessagesIcon fi flaticon-warning").on("click", function (e) {
 					e.preventDefault();
 					matematici.dialog.error("Error", errors)
 				}));

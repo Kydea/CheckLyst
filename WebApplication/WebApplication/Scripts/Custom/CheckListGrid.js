@@ -35,9 +35,9 @@
 			var
                 buttons =
                     $("<div />").addClass("Buttons").appendTo(container)
-                    .append($("<a />").addClass("Button").text("close").prepend($("<i />").addClass("fa fa-remove")).on("click", function () {
-                    	element.remove();
-                    }));
+						.append($("<a />").addClass("Button").text("close").prepend($("<i />").addClass("fi flaticon-times")).on("click", function () {
+                    		element.remove();
+						}));
 
 			if (values.length == 0) {
 				tr.append($("<th />").text("-"));

@@ -2,7 +2,7 @@
 
 div.Calendar {
     padding: 10px;
-    box-shadow: rgba(0, 0, 0, .3) 0 0 4px;
+    box-shadow: $Box-Shadow;
     text-align: center;
     font-size: 14px;
     position: relative;
@@ -33,6 +33,10 @@ div.Calendar {
         line-height: 30px;
         top: 10px;
         color: $Color-Green-Regular;
+
+        i {
+            font-size: 14px !important;
+        }
 
         &.PreviousMonth {
             left: 10px;

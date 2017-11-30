@@ -271,7 +271,7 @@
     			matematici.canClose = true;
     			matematici.navigator.open(result.redirect, false, false);
     		} else {
-    			var check = $("<i />").addClass("fa fa-check").appendTo($("div.ActionBar a.Save")).hide().fadeIn(1000);
+				var check = $("<i />").addClass("fi flaticon-check").appendTo($("div.ActionBar a.Save")).hide().fadeIn(1000);
     			setTimeout(function () {
     				check.fadeOut(2000, function () { check.remove() });
     			}, 3000);

@@ -87,13 +87,13 @@
 
                 if (group.isIteration()) {
                     iterationCommands = $(tableContent ? "<td />" : "<div />").addClass("IterationCommands").appendTo(element)
-                        .append($("<a />").attr("href", "#").addClass("Up").toggleClass("Hidden", parent.getSetupModel().DisableMove).append($("<i />").addClass("fa fa-arrow-up")).on("click", function () {
+						.append($("<a />").attr("href", "#").addClass("Up").toggleClass("Hidden", parent.getSetupModel().DisableMove).append($("<i />").addClass("fi flaticon-arrow-up")).on("click", function () {
                             new instances.Event(instances.Events.up, id).trigger();
                         }))
-                        .append($("<a />").attr("href", "#").addClass("Down").toggleClass("Hidden", parent.getSetupModel().DisableMove).append($("<i />").addClass("fa fa-arrow-down")).on("click", function () {
+						.append($("<a />").attr("href", "#").addClass("Down").toggleClass("Hidden", parent.getSetupModel().DisableMove).append($("<i />").addClass("fi flaticon-arrow-down")).on("click", function () {
                             new instances.Event(instances.Events.down, id).trigger();
                         }))
-                        .append($("<a />").attr("href", "#").addClass("Remove").toggleClass("Hidden", parent.getSetupModel().DisableRemove).append($("<i />").addClass("fa fa-close")).on("click", function () {
+						.append($("<a />").attr("href", "#").addClass("Remove").toggleClass("Hidden", parent.getSetupModel().DisableRemove).append($("<i />").addClass("fi flaticon-trash-o")).on("click", function () {
                             new instances.Event(instances.Events.remove, id).trigger();
                         }));
                 }

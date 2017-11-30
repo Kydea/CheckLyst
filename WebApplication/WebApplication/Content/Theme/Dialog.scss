@@ -11,7 +11,7 @@ div.Dialog {
     div.Container {
         padding: 20px;
         background-color: white;
-        box-shadow: rgba(0, 0, 0, 0.16) 0 0 16px 5px;
+        box-shadow: $Box-Shadow;
 
         p {
             line-height: 1.6;
@@ -76,8 +76,9 @@ div.Dialog {
 
     &.PopupMenu {
         div.Container {
-            width: 200px !important;
+            width: 240px !important;
             padding: 0 !important;
+            border-radius: 10px;
 
             h2 {
                 display: none;
@@ -90,17 +91,28 @@ div.Dialog {
                     cursor: pointer;
                     width: 100%;
                     height: 40px;
-                    line-height: 32px;
                     color: black;
                     background-color: white;
                     position: relative;
                     border-bottom: solid 1px $Color-Grey-Light;
                     margin-top: 0;
+                    padding: 0;
+                    box-shadow: none;
+                    border-radius: 0;
+                    text-transform: unset;
+                    margin: 0;
 
                     i {
+                        background: none;
                         position: absolute;
-                        left: 15px;
-                        top: 15px;
+                        left: 10px;
+                        top: 10px;
+                        margin: 0;
+                        font-size: 14px;
+                    }
+
+                    &::after {
+                        content: none;
                     }
 
                     &:hover {
@@ -108,7 +120,12 @@ div.Dialog {
                         color: white;
                     }
 
+                    &:first-child {
+                        border-radius: 10px 10px 0 0;
+                    }
+
                     &:last-child {
+                        border-radius: 0 0 10px 10px;
                         border-bottom: none;
                     }
                 }

@@ -6,7 +6,7 @@ div.CheckListGrid {
         background-color: white;
         border: solid 1px $Color-Grey-Light;
         padding: 20px;
-        box-shadow: rgba(0, 0, 0, .75) 5px 5px 5px;
+        box-shadow: $Box-Shadow;
         overflow: auto;
 
         div.Parameters {
@@ -23,11 +23,6 @@ div.CheckListGrid {
 
             a.Button {
                 min-width: 100px;
-                margin-left: 10px;
-
-                i.fa {
-                    margin-right: 10px;
-                }
             }
 
             &::after {
@@ -81,8 +76,8 @@ div.CheckListGrid {
                             width: 50px;
                             text-align: center;
 
-                            i.fa-remove {
-                                color: red;
+                            i.flaticon-times {
+                                color: $Color-Red-Regular;
                             }
                         }
                     }
@@ -111,10 +106,6 @@ div.CheckListGrid {
                 float: right;
                 min-width: 100px;
                 margin-left: 10px;
-
-                i.fa {
-                    margin-right: 10px;
-                }
             }
         }
     }

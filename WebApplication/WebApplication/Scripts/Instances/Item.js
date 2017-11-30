@@ -45,7 +45,7 @@
                 span = $(this),
                 content = span.text();
             if (!content) content = "no value";
-            span.empty().append($("<i />").addClass("fa fa-warning").attr({ title: content }));
+			span.empty().append($("<i />").addClass("fi flaticon-warning").attr({ title: content }));
         });
         elementInformation.update(model);
     };

@@ -46,7 +46,7 @@ div.AutoComplete-List {
       padding-right: 20px; }
       div.AutoComplete-List a.Selected::after {
         line-height: 36px;
-        content: "\f111";
+        content: "\f112";
         display: inline-block;
         font-family: "Flaticon";
         font-style: normal;

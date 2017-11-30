@@ -12,16 +12,19 @@
             <div class="Tab">
                 <label>
                     User code
+                    <i class="fi flaticon-key-o" />
                     <input type="text" name="code" />
                 </label>
 
                 <label>
                     Name and surname
+                    <i class="fi flaticon-id-card-o" />
                     <input type="text" name="description" />
                 </label>
 
                 <label>
                     Email
+                    <i class="fi flaticon-envelope-o" />
                     <input type="text" name="email" />
                 </label>
 
@@ -32,16 +35,19 @@
 
                 <label class="Clearing">
                     Password
+                    <i class="fi flaticon-lock-o" />
                     <input type="password" name="password" />
                 </label>
 
                 <label>
                     Password confirm
+                    <i class="fi flaticon-lock-o" />
                     <input type="password" name="password2" />
                 </label>
 
                 <label>
                     Authentication code
+                    <i class="fi flaticon-key-o" />
                     <input type="text" name="authenticationCode" />
                 </label>
 
@@ -72,7 +78,7 @@
             </div>
             <div class="Tab">
                 <div class="Clearing GeneralFunction">
-                    <h3>Data Source</h3>
+                    <h3>Data source</h3>
                     <label class="Clearing Narrow">
                         Edit
                         <input type="checkbox" data-group="DataSources" data-function="Edit" />
@@ -123,7 +129,7 @@
                     </label>
                 </div>
                 <div class="GeneralFunction">
-                    <h3>WorkFlows</h3>
+                    <h3>Work flows</h3>
                     <label class="Clearing Narrow">
                         Edit
                         <input type="checkbox" data-group="WorkFlows" data-function="Edit" />
@@ -201,7 +207,7 @@
 
             $("<hr />").appendTo(div)
             var select1 = $("<select />");
-            $("<label />").appendTo(div).text("Department").append(select1).addClass("Clearing");
+            $("<label />").appendTo(div).text("Department").append($("<i />").addClass("fi flaticon-building-o")).append(select1).addClass("Clearing");
             for (var index in departments) 
                 select1.append($("<option />").text(departments[index].name).attr("value", departments[index].code));
             var autoComplete1 = new matematici.AutoComplete(select1);
@@ -211,13 +217,13 @@
             });
 
             var select2 = $("<select />").data("nullable", "(all)");
-            $("<label />").appendTo(div).text("Prototype type").append(select2);
+            $("<label />").appendTo(div).text("Prototype type").append($("<i />").addClass("fi flaticon-folder-o")).append(select2);
             var autoComplete2 = new matematici.AutoComplete(select2);
             autoComplete2.initialize();
             refreshPrototypeTypes(select1, select2);
 
             var select3 = $("<select />").prop("multiple", true);
-            $("<label />").appendTo(div).text("Function").append(select3).addClass("Width150");
+            $("<label />").appendTo(div).text("Function").append($("<i />").addClass("fi flaticon-cog")).append(select3).addClass("Width150");
             var list = tabItem.index == 2 ? prototypeFunctions : instanceFunctions;
             for (var index in list)
                 select3.append($("<option />").text(list[index]).attr("value", list[index]));
@@ -225,7 +231,7 @@
             autoComplete3.initialize();
 
             var select4 = $("<select />");
-            $("<label />").appendTo(div).text("Level").append(select4);
+            $("<label />").appendTo(div).text("Level").append($("<i />").addClass("fi flaticon-battery")).append(select4);
             for (var index in profiles)
                 select4.append($("<option />").text(profiles[index]).attr("value", profiles[index]));
             var autoComplete4 = new matematici.AutoComplete(select4);
