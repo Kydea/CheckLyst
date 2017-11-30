@@ -9,13 +9,13 @@
                 foreach (var Session in Security.Sessions)
                 {
                     <a class="User LeftFloating" href="#">
-                        <span class="UserName" title="@Session.Code" data-settingsmanager="@Security.CurrentUser.Code">@Session.Description</span> <i class="fa fa-user"></i>
+                        <span class="UserName" title="@Session.Code" data-settingsmanager="@Security.CurrentUser.Code">@Session.Description</span> <i class="fi flaticon-user-o"></i>
                     </a>
                 }
             }*@
 
         <a id="Logout" class="Standard RightFloating" href="@Url.Action("Login", "Security")">Logout <i class="fa fa-sign-out"></i></a>
-        <a class="Add RightFloating" href="#">(add signer) <i class="fa fa-plus-circle"></i></a>
+        <a class="Add RightFloating" href="#">(add signer) <i class="fa fa-plus"></i></a>
         <a href="#" id="HelpButton" title="User manual">help <i class="fa fa-question"></i></a>
     </div>
 
@@ -38,15 +38,17 @@
                             foreach (var Session in Security.Sessions)
                             {
                                 <a class="User LeftFloating" href="#">
-                                    <span class="UserName" title="@Session.Code" data-settingsmanager="@Security.CurrentUser.Code">@Session.Description</span> <i class="fa fa-user"></i>
+                                    <span class="UserName" title="@Session.Code" data-settingsmanager="@Security.CurrentUser.Code">@Session.Description</span> <i class="fi flaticon-user-o"></i>
                                 </a>
                             }
                         }*@
 
                     <a id="Logout" class="Standard RightFloating" href="@Url.Action("Login", "Security")">Logout <i class="fa fa-sign-out"></i></a>
-                    <a class="Add RightFloating" href="#">(add signer) <i class="fa fa-plus"></i></a>
-                    <a href="#" id="HelpButton" title="User manual"><i class="fa fa-question"></i></a>
                 </div>
+            </li>
+
+            <li class="MenuItem Mobile">
+                <a class="MenuItem" href="#" id="HelpButton">Help</a>
             </li>
 
             <li class="MenuItem">

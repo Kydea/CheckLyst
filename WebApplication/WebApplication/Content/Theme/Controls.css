@@ -46,7 +46,7 @@ a.Button {
   cursor: default;
   height: 36px;
   line-height: 36px;
-  box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.5); }
+  box-shadow: rgba(0, 0, 0, 0.15) 0 0 15px 2px; }
   a.Button i.fi {
     margin-top: 8px;
     margin-right: 8px;
@@ -195,7 +195,7 @@ form {
       margin-left: 0;
       margin-right: 0;
       margin-bottom: 0; }
-    form label i:not(.AutoComplete):not(.ValidationMessagesIcon).fi, form label i:not(.AutoComplete):not(.ValidationMessagesIcon).fa {
+    form label i:not(.AutoComplete):not(.ValidationMessagesIcon).fi {
       position: absolute;
       left: 0;
       bottom: 0;

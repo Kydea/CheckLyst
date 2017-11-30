@@ -11,11 +11,11 @@
             label = $("<label />").text(model.Description ? model.Description : "(no description)");
             element.append(label);
             user = $("<input />").addClass("User").attr({ type: "text", readonly: true }).appendTo(element);
-            $("<i />").addClass("fa fa-user").insertAfter(user);
+			$("<i />").addClass("fi flaticon-user-o").insertAfter(user);
             date = $("<input />").addClass("Date").attr({ type: "text", readonly: true }).appendTo(element);
-            $("<i />").addClass("fa fa-calendar").insertAfter(date);
+			$("<i />").addClass("fi flaticon-calendar").insertAfter(date);
             time = $("<input />").addClass("Time").attr({ type: "text", readonly: true }).appendTo(element);
-            $("<i />").addClass("fa fa-clock-o").insertAfter(time);
+			$("<i />").addClass("fi flaticon-clock-o").insertAfter(time);
             button = $("<a />").addClass("Button").attr({ href: "#" }).appendTo(element);
         };
 

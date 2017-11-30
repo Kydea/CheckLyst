@@ -10,13 +10,13 @@
             <div class="Tab">
                 <label>
                     ID
-                    <i class="fi flaticon-barcode-o" />
+                    <i class="fi flaticon-key-o" />
                     <input type="text" name="id" readonly="readonly" placeholder="(new record)" />
                 </label>
 
                 <label>
                     Description
-                    <i class="fi flaticon-align-left" />
+                    <i class="fi flaticon-id-card-o" />
                     <input type="text" name="description" />
                 </label>
 
@@ -115,6 +115,7 @@
                         .addClass("Width150")
                         .insertBefore(button)
                         .append($("<span />"))
+                        .append($("<i />").addClass("fi flaticon-battery"))
                         .append(select),
 
                 a = $("<a />").insertBefore(button).attr("href", "#").addClass("Button MiniIcon Angle").append($("<i />").addClass("fi flaticon-trash-o")).on("click", function () {

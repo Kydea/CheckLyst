@@ -11,3 +11,14 @@
 
 @import 'Fonts/MyriadPro/MyriadPro.scss';
 @import 'Fonts/FlatIcon/_flaticon.scss';
+
+i.fi {
+    text-rendering: auto;
+
+    &.fw { 
+        //fixed width
+        width: (18em / 14);
+        text-align: center;
+    }
+}
+

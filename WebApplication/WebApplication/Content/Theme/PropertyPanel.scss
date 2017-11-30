@@ -15,7 +15,7 @@ div.PropertyPanel {
         background-color: $Color-Silver-Dark;
         border-top: solid 1px $Color-Grey-Regular;
         border-bottom: solid 1px $Color-Grey-Regular;
-        box-shadow: rgba(0, 0, 0, .3) 0 -3px 3px;
+        box-shadow: $Box-Shadow;
     }
 
     div.NoItem {
@@ -40,7 +40,7 @@ div.PropertyPanel {
             text-decoration: none;
             border-bottom: dotted 1px $Color-Grey-Regular;
 
-            i.fa-caret-right {
+            i.flaticon-arrow-right {
                 visibility: hidden;
                 padding-right: 5px;
             }
@@ -50,7 +50,7 @@ div.PropertyPanel {
             }
 
             &.Selected {
-                i.fa-caret-right {
+                i.flaticon-arrow-right {
                     visibility: visible;
                 }
             }

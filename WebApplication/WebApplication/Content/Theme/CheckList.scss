@@ -1,5 +1,4 @@
 ﻿@import "_Library.scss";
-@import "FontAwesome/_variables.scss";
 
 $SeparatorY: 5px;
 $SeparatorX: 10px;
@@ -7,8 +6,8 @@ $SeparatorX: 10px;
 body.CheckList {
     span {
         &.Error {
-            i.fa {
-                color: red;
+            i.fi {
+                color: $Color-Red-Regular;
             }
         }
 
@@ -22,7 +21,7 @@ body.CheckList {
 
     div.TabLabels {
         a {
-            i.fa {
+            i.fi {
                 cursor: pointer;
             }
         }

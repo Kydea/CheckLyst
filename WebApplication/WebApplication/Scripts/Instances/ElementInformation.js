@@ -19,7 +19,7 @@
         },
 
         addItem = function(icon, value) {
-            if (value != null) panel.append($("<div />").append($("<span />").text(value).prepend($("<i />").addClass("fa fa-fw fa-" + icon))));
+            if (value != null) panel.append($("<div />").append($("<span />").text(value).prepend($("<i />").addClass("fi fi-fw flaticon-" + icon))));
         };
 
     this.update = function (model) {
@@ -31,7 +31,7 @@
         addItem("check-square-o", model.SignatureInformation);
         addItem("link", (model.ExternalSourceName ? model.ExternalSourceName + "." + model.ExternalSourceColumn : null));
         if (model.History && model.History.length > 0)
-            panel.append($("<div />").append($("<a />").attr("href", "#").text("history").prepend($("<i />").addClass("fa fa-fw fa-history")).on("click", function (e) {
+            panel.append($("<div />").append($("<a />").attr("href", "#").text("history").prepend($("<i />").addClass("fi fi-fw flaticon-history")).on("click", function (e) {
                 new matematici.CheckListGrid(model.History);
             })));
     }

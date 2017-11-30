@@ -42,7 +42,7 @@ a {
     }
 }
 
-i.fa, i.fi {
+i.fi {
     font-size: 19px;
 }
 
@@ -148,13 +148,14 @@ header {
                 }
             }
 
-            i {
+            i.fa {
+                display: inline-block;
                 border-radius: 50%;
                 color: white;
                 background-color: $Color-Green-Regular;
                 width: 25px;
                 height: 25px;
-                font-size: 12px;
+                font-size: 13px;
                 line-height: 25px;
                 text-align: center;
             }

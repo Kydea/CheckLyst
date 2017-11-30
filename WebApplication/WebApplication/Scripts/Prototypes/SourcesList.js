@@ -70,7 +70,7 @@
             var
                 buttons =
                     $("<div />").addClass("Buttons").appendTo(container)
-                    .append($("<a />").addClass("Button").text("close").prepend($("<i />").addClass("fa fa-remove")).on("click", function () {
+						.append($("<a />").addClass("Button").text("close").prepend($("<i />").addClass("fi flaticon-times")).on("click", function () {
                         if (model.State == prototypes.Prototype.states.draft) {
                             model.ExternalSources = {};
                             body.children().each(function () {
@@ -80,11 +80,11 @@
                         }
                         element.remove();
                     }))
-                    .append($("<a />").addClass("Button").text("add").toggle(model.State == prototypes.Prototype.states.draft).prepend($("<i />").addClass("fa fa-plus")).on("click", function () {
+					.append($("<a />").addClass("Button").text("add").toggle(model.State == prototypes.Prototype.states.draft).prepend($("<i />").addClass("fi flaticon-plus")).on("click", function () {
                         add({ code: "" });
                         select(body.children().size() - 1);
                     }))
-                    .append(removeButton = $("<a />").addClass("Button").text("remove").prepend($("<i />").addClass("fa fa-minus")).on("click", function () {
+					.append(removeButton = $("<a />").addClass("Button").text("remove").prepend($("<i />").addClass("fi flaticon-minus")).on("click", function () {
                         remove();
                     }).hide());
 

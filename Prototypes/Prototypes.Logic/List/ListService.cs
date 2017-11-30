@@ -85,7 +85,7 @@ namespace CheckListManager.Prototypes.Logic.List
                         p.Prototypes.Company == company
                         && p.Prototypes.Department == form.Data.Department
                         && p.Prototypes.PrototypeType == form.Data.PrototypeType
-                        && (form.Data.State == "All" || p.VersionState == form.Data.State)
+                        && (form.Data.State == string.Empty || p.VersionState == form.Data.State)
                         && (form.Data.Name == string.Empty || p.Description != null && p.Description.ToUpper().Contains(form.Data.Name.ToUpper())),
                     p => p.Prototype,
                     form.CurrentPage,

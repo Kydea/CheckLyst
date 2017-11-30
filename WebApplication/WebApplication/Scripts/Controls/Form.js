@@ -151,14 +151,14 @@
 					for (var index in data.validationMessages)
 						errors.append(
 							$("<div />").addClass("Error").text(" " + data.validationMessages[index].message).prepend(
-								$("<i />").addClass("fa fa-warning")
+								$("<i />").addClass("fi flaticon-warning")
 							)
 						);
 				else if (!fieldErrors) {
 					fieldErrors = true;
 					errors.append(
 						$("<div />").addClass("Error").text(" Some field are not valid. Click on the error icon of the fields for more details.").prepend(
-							$("<i />").addClass("fa fa-warning")
+							$("<i />").addClass("fi flaticon-warning")
 						)
 					);
 				}

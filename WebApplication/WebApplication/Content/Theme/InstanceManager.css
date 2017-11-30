@@ -38,11 +38,11 @@ body.InstanceManager .Element div.Information {
     background-color: rgba(255, 255, 255, 0.9);
     padding: 10px;
     border: solid 1px #999; }
-    body.InstanceManager .Element div.Information div.Panel i.fa {
+    body.InstanceManager .Element div.Information div.Panel i.fi {
       margin-right: 10px; }
-      body.InstanceManager .Element div.Information div.Panel i.fa.fa-thumbs-o-up {
+      body.InstanceManager .Element div.Information div.Panel i.fi.flaticon-thumbs-o-up {
         color: green; }
-      body.InstanceManager .Element div.Information div.Panel i.fa.fa-thumbs-o-down {
+      body.InstanceManager .Element div.Information div.Panel i.fi.flaticon-thumbs-o-down {
         color: red; }
     body.InstanceManager .Element div.Information div.Panel span, body.InstanceManager .Element div.Information div.Panel a {
       display: block;
@@ -128,8 +128,8 @@ body.InstanceManager .Item.Field.List input {
 body.InstanceManager .Item.Field.List select {
   display: block; }
 
-body.InstanceManager .Item.Field.ExternalSource.Inactive i.fa-link {
-  color: #999; }
+body.InstanceManager .Item.Field.ExternalSource.Inactive i.flaticon-link-o {
+  color: #ccc; }
 
 body.InstanceManager .Item.Field.ExternalSource:not(.Inactive) div.Input {
   cursor: pointer !important; }
@@ -168,12 +168,12 @@ body.InstanceManager .Item div.Information {
 body.InstanceManager .Item.Text div.Information {
   display: none; }
 
-body.InstanceManager .Item.Signature a.Button i.fa-exclamation {
+body.InstanceManager .Item.Signature a.Button i.flaticon-exclamation {
   position: absolute;
   color: red;
   margin: 2px 0 0 15px; }
 
-body.InstanceManager .Item.Signature i.fa-exclamation {
+body.InstanceManager .Item.Signature i.flaticon-exclamation {
   color: red;
   font-size: 16px;
   margin-top: 10px; }

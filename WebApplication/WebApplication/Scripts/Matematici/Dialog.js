@@ -21,7 +21,7 @@ matematici.dialog = function () {
 					} else
 						matematici.dialog.close();
 				});
-				if (button.icon) button.content.prepend($("<i />").addClass("fi flaticon" + button.icon));
+				if (button.icon) button.content.prepend($("<i />").addClass("fi flaticon-" + button.icon));
 				if (button.hidden) button.content.hide();
 				if (button.defaultButton) button.content.addClass("DefaultButton");
 				if (button.cancelButton) {

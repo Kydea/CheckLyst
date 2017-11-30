@@ -7,7 +7,7 @@ div.Dialog {
   div.Dialog div.Container {
     padding: 20px;
     background-color: white;
-    box-shadow: rgba(0, 0, 0, 0.16) 0 0 16px 5px; }
+    box-shadow: rgba(0, 0, 0, 0.15) 0 0 15px 2px; }
     div.Dialog div.Container p {
       line-height: 1.6; }
     div.Dialog div.Container h2 {
@@ -49,8 +49,9 @@ div.Dialog {
       div.Dialog div.Container a.CloseButton:hover {
         color: #ccc; }
   div.Dialog.PopupMenu div.Container {
-    width: 200px !important;
-    padding: 0 !important; }
+    width: 240px !important;
+    padding: 0 !important;
+    border-radius: 10px; }
     div.Dialog.PopupMenu div.Container h2 {
       display: none; }
     div.Dialog.PopupMenu div.Container div.Buttons {
@@ -59,20 +60,32 @@ div.Dialog {
         cursor: pointer;
         width: 100%;
         height: 40px;
-        line-height: 32px;
         color: black;
         background-color: white;
         position: relative;
         border-bottom: solid 1px #ccc;
-        margin-top: 0; }
+        margin-top: 0;
+        padding: 0;
+        box-shadow: none;
+        border-radius: 0;
+        text-transform: unset;
+        margin: 0; }
         div.Dialog.PopupMenu div.Container div.Buttons a.Button i {
+          background: none;
           position: absolute;
-          left: 15px;
-          top: 15px; }
+          left: 10px;
+          top: 10px;
+          margin: 0;
+          font-size: 14px; }
+        div.Dialog.PopupMenu div.Container div.Buttons a.Button::after {
+          content: none; }
         div.Dialog.PopupMenu div.Container div.Buttons a.Button:hover {
           background-color: #009688;
           color: white; }
+        div.Dialog.PopupMenu div.Container div.Buttons a.Button:first-child {
+          border-radius: 10px 10px 0 0; }
         div.Dialog.PopupMenu div.Container div.Buttons a.Button:last-child {
+          border-radius: 0 0 10px 10px;
           border-bottom: none; }
   div.Dialog.Error h2 {
     background-color: #cc0000 !important; }
