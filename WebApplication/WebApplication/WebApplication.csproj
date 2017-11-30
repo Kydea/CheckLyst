@@ -66,6 +66,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Prototypes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -89,6 +90,9 @@
     </Content>
     <Content Include="Content\Theme\Breadcrumbs.css">
       <DependentUpon>Breadcrumbs.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\ButtonGroup.css">
+      <DependentUpon>ButtonGroup.scss</DependentUpon>
     </Content>
     <Content Include="Content\Theme\Calendar.css">
       <DependentUpon>Calendar.scss</DependentUpon>
@@ -214,6 +218,7 @@
     <Content Include="Scripts\Controls\Grid.js" />
     <Content Include="Scripts\Controls\DetailPage.js" />
     <Content Include="Scripts\Controls\SearchPage.js" />
+    <Content Include="Scripts\Custom\ButtonGroup.js" />
     <Content Include="Scripts\Custom\AutoCenter.js" />
     <Content Include="Scripts\Custom\Accordion.js" />
     <Content Include="Scripts\Custom\TokenManager.js" />
@@ -255,6 +260,7 @@
     <Content Include="Content\Theme\Accordion.scss" />
     <Content Include="Content\Theme\Popup.scss" />
     <Content Include="Content\Theme\Users.scss" />
+    <Content Include="Content\Theme\ButtonGroup.scss" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Bold\Myriad Pro.scss" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Bold\MyriadPro-Bold.eot" />
@@ -365,6 +371,7 @@
     <Content Include="Views\Infrastructure\Departments\List.cshtml" />
     <Content Include="Views\WorkFlows\Detail.cshtml" />
     <Content Include="Views\DataSources\Detail.cshtml" />
+    <Content Include="Views\Prototypes\Detail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

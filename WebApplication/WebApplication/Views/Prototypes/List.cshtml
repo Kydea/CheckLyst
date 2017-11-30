@@ -70,22 +70,21 @@
 
 <script type="text/javascript">
     var
-        createNewVersionHandler = function () {
-
+        createNewVersionHandler = function (id) {
+            matematici.navigator.open("@Url.Action("Add")/" + id);
         },
 
-        useAsTemplateHandler = function () {
-
+        openPrototypeHandler = function (id) {
+            matematici.navigator.open("@Url.Action("Detail")/" + id);
         },
 
-        openPrototypeHandler = function () {
-
+        useAsTemplateHandler = function (id) {
+            matematici.navigator.open("@Url.Action("Clone")/" + id);
         };
 
     matematici.events.onPageLoad = function (callback) {
         var searchPage = new matematici.SearchPage({
             pageName: "Prototypes",
-            detailUrl: "@Url.Action("Detail")",
             filterFormSelector: "form#Filters",
             resultGridSelector: "div#Content table.Grid",
             bindEvent: "Bind",
@@ -97,19 +96,16 @@
             rowClickHandler: function (row) {
                 var buttons = [];
                 buttons.push({ text: "cancel", icon: "times", cancelButton: true });
-                if ($(this).data("state") != prototypes.Prototype.states.draft) buttons.push({ text: "new version", icon: "file-o", handler: createNewVersionHandler, data: { code: $(this).data("code"), version: $(this).data("version") } });
-                buttons.push({ text: "use as template", icon: "clone-o", handler: useAsTemplateHandler, data: $(this).data("template-url") });
-                buttons.push({ text: "open", icon: "folder-open-o", handler: openPrototypeHandler, data: $(this).data("open-url") });
+                if ($(this).data("state") != prototypes.Prototype.states.draft) buttons.push({ text: "new version", icon: "file-o", handler: createNewVersionHandler, data: row.data("values").id });
+                buttons.push({ text: "use as template", icon: "clone-o", handler: useAsTemplateHandler, data: row.data("values").id });
+                buttons.push({ text: "open", icon: "folder-open-o", handler: openPrototypeHandler, data: row.data("values").id });
 
                 matematici.dialog.popupMenu(buttons);
-
-                console.log(row);
             }
         });
 
         $("#AddButton").on("click", function (e) {
-            e.preventDefault();
-            alert("add");
+            matematici.navigator.open("@Url.Action("Add")");
         });
 
         callback.call();

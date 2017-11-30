@@ -1,0 +1,26 @@
+﻿@model CheckListManager.WebApplication.Models.Prototype
+
+<div id="PrototypesDetailPage">
+    <h1>Prototype @(Model.Id)-@(Model.Action)</h1>
+
+    <div class="ActionBar">
+        <div class="ButtonGroup" data-text="Actions">
+            <a href="#"><i class="fi flaticon-add"></i> test1</a>
+            <a href="#"><i class="fi flaticon-add"></i> test2</a>
+            <a href="#"><i class="fi flaticon-add"></i> test3</a>
+        </div>
+    </div>
+
+    <div class="ShadowPanel">
+        <div class="Accordion"></div>
+        <form id="Filters" action="@BaseUrl/Prototypes/">
+
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    matematici.events.onPageLoad = function (callback) {
+        callback.call();
+    };
+</script>

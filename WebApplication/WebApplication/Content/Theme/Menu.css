@@ -26,7 +26,7 @@
     font-family: Myriad, Arial, sans-serif; }
     nav.Menu ul.Menu {
       height: 100vh;
-      z-index: 101;
+      z-index: 102;
       background-color: #000;
       display: block !important;
       width: 70px; }
@@ -70,12 +70,12 @@
             width: 0;
             height: 0;
             transform: translateY(-50%);
-            z-index: 102;
+            z-index: 103;
             border-width: 9px 12px;
             border-color: transparent #000 transparent transparent;
             border-style: solid; }
         nav.Menu ul.Menu li.MenuItem ul.SubMenu {
-          z-index: 101;
+          z-index: 102;
           background-color: black;
           position: absolute;
           left: 70px;
@@ -151,7 +151,7 @@
       display: none;
       position: absolute;
       text-align: center;
-      z-index: 101; }
+      z-index: 102; }
       nav.Menu ul.Menu li.MenuItem {
         line-height: 40px;
         border-bottom: 1px solid #999; }
