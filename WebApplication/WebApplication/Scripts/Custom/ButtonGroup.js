@@ -30,39 +30,22 @@
 					else
 						open();
 				})
-				.on("mouseover", function () {
-					element.addClass("Hover");
-				})
-				.on("mouseout", function () {
-					element.removeClass("Hover");
-				})
 				.insertBefore(element);
 
 			element
 				.data("buttonGroup", buttonGroup)
 				.on("click", function () {
 					close();
-				});
+				})
+				.appendTo(button);
 
-		},
-
-		destroy = function () {
-			close();
 		};
 
-	this.initialize = initialize;
+	buttonGroup.add = function (label, action, cssClass, icon) {
+		var button = $("<a />").addClass(cssClass || "").html(label).prependTo(element).on("click", action);
+		if (icon) button.append($("<i />").addClass("fi flaticon-" + icon));
+		return this;
+	};
 
-	this.destroy = destroy;
+	initialize();
 }
-
-matematici.initializers.push(function (context) {
-	$("div.ButtonGroup", context).each(function () {
-		new matematici.ButtonGroup($(this)).initialize();
-	});
-});
-
-matematici.destroyers.push(function (context) {
-	$("div.ButtonGroup", context).each(function () {
-		$(this).data("buttonGroup").destroy();
-	});
-});

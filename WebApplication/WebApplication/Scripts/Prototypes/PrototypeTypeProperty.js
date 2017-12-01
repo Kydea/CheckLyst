@@ -18,13 +18,13 @@
                     var option =
                     company =
                         $("<select />")
-                        .append($("<option />").attr("selected", !model.Company))
+                        .append($("<option />").attr("selected", !model.company))
                         .on("change", function () { loadDepartments(valuePanel); })
                         .appendTo(valuePanel);
                     for (var index in result)
-                        company.append($("<option />").text(result[index]).attr({ value: result[index], selected: result[index] == model.Company }));
+                        company.append($("<option />").text(result[index]).attr({ value: result[index], selected: result[index] == model.company }));
 
-                    if (model.Company)
+                    if (model.company)
                         loadDepartments(valuePanel);
                 }
             }).fail(function (jqXHR, textStatus, errorThrown) {
@@ -51,9 +51,9 @@
                             .on("change", function () { loadPrototypeTypes(valuePanel); })
                             .appendTo(valuePanel);
                         for (var index in result)
-                            department.append($("<option />").text(result[index]).attr({ value: result[index], selected: result[index] == model.Department }));
+                            department.append($("<option />").text(result[index]).attr({ value: result[index], selected: result[index] == model.department }));
 
-                        if (model.Department)
+                        if (model.department)
                             loadPrototypeTypes(valuePanel);
                     }
                 }).fail(function (jqXHR, textStatus, errorThrown) {
@@ -78,14 +78,14 @@
                             $("<select />")
                             .append($("<option />").attr("selected", true))
                             .on("change", function () {
-                                model.Company = company.val();
-                                model.Department = department.val();
-                                model.PrototypeType = prototypeType.val();
+                                model.company = company.val();
+                                model.department = department.val();
+                                model.prototypeType = prototypeType.val();
                                 matematici.canClose = false;
                             })
                             .appendTo(valuePanel);
                         for (var index in result)
-                            prototypeType.append($("<option />").text(result[index]).attr({ value: result[index], selected: result[index] == model.PrototypeType }));
+                            prototypeType.append($("<option />").text(result[index]).attr({ value: result[index], selected: result[index] == model.prototypeType }));
                     }
                 }).fail(function (jqXHR, textStatus, errorThrown) {
                     console.log("Server error", jqXHR, textStatus, errorThrown);
@@ -96,15 +96,15 @@
     this.create = function (valuePanel) {
         valuePanel.addClass("PrototypeType");
         if (options.readOnly) {
-            $("<input />").attr({ type: "text", readOnly: true }).val(model.Company).appendTo(valuePanel);
-            $("<input />").attr({ type: "text", readOnly: true }).val(model.Department).appendTo(valuePanel);
-            $("<input />").attr({ type: "text", readOnly: true }).val(model.PrototypeType).appendTo(valuePanel);
+            $("<input />").attr({ type: "text", readOnly: true }).val(model.company).appendTo(valuePanel);
+            $("<input />").attr({ type: "text", readOnly: true }).val(model.department).appendTo(valuePanel);
+            $("<input />").attr({ type: "text", readOnly: true }).val(model.prototypeType).appendTo(valuePanel);
         } else
             loadCompanies(valuePanel)
     }
 
     this.hasChanges = function () {
-        return !!(model.Company || model.Department || model.PrototypeType);
+        return !!(model.company || model.department || model.prototypeType);
     }
 }
 

@@ -8,7 +8,7 @@
         element = item.getElement(),
 
         setup = function () {
-            label = $("<label />").text(model.Description ? model.Description : "(no description)");
+            label = $("<label />").text(model.description ? model.description : "(no description)");
             element.append(label);
             user = $("<input />").addClass("User").attr({ type: "text", readonly: true }).appendTo(element);
 			$("<i />").addClass("fi flaticon-user-o").insertAfter(user);
@@ -20,17 +20,17 @@
         };
 
     this.update = function (model) {
-        button.text(model.ButtonLabel ? model.ButtonLabel : "Signature");
-        this.setColor(model.Color);
-        this.setFontSize(model.FontSize);
+        button.text(model.buttonLabel ? model.buttonLabel : "Signature");
+        this.setColor(model.color);
+        this.setFontSize(model.fontSize);
     };
 
     this.setColor = function (value) {
-        label.css({ color: model.Color });
+        label.css({ color: model.color });
     };
 
     this.setFontSize = function (value) {
-        label.css({ fontSize: model.FontSize == 0 ? "" : model.FontSize + "px" });
+        label.css({ fontSize: model.fontSize == 0 ? "" : model.fontSize + "px" });
     };
 
     setup();

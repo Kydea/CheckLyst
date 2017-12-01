@@ -11,8 +11,9 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 		public Dictionary<string, Expression> Expressions { get; set; } = new Dictionary<string, Expression>();
 		public ICheckListGroup Header { get; set; }
 		public List<ICheckListPage> Pages { get; } = new List<ICheckListPage>();
+        public string State { get; set; }
 
-		public void AddItem(ICheckListItem item)
+        public void AddItem(ICheckListItem item)
 		{
 			throw new NotImplementedException();
 		}

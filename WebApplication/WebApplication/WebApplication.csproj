@@ -335,6 +335,7 @@
     <Content Include="Scripts\Prototypes\ListProperty.js" />
     <Content Include="Scripts\Prototypes\Property.js" />
     <Content Include="Scripts\Prototypes\PropertyPanel.js" />
+    <Content Include="Scripts\Prototypes\PrototypeOld.js" />
     <Content Include="Scripts\Prototypes\Prototype.js" />
     <Content Include="Scripts\Prototypes\PrototypeTypeProperty.js" />
     <Content Include="Scripts\Prototypes\ReadOnlyProperty.js" />

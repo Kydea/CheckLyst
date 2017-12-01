@@ -7,17 +7,17 @@
         };
 
     this.update = function (model) {
-        p.html(model.Description ? model.Description.split('\n').join('<br />') : "(no description)");
-        this.setColor(model.Color);
-        this.setFontSize(model.FontSize);
+        p.html(model.description ? model.description.split('\n').join('<br />') : "(no description)");
+        this.setColor(model.color);
+        this.setFontSize(model.fontSize);
     };
 
     this.setColor = function (value) {
-        p.css({ color: model.Color });
+        p.css({ color: model.color });
     };
 
     this.setFontSize = function (value) {
-        p.css({ fontSize: model.FontSize == 0 ? "" : model.FontSize + "px" });
+        p.css({ fontSize: model.fontSize == 0 ? "" : model.fontSize + "px" });
     };
 
     setup();

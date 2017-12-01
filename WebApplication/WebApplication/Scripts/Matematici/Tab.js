@@ -25,7 +25,7 @@
 				select (currentIndex);
 				element.height(height);
 			} else
-				element.height(getItemHeight());
+				element.height(getCurrentItemHeight());
         },
 
         getItem = function(index) {

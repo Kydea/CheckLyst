@@ -12,7 +12,7 @@
 
         select = function (index) {
         	if (currentIndex != null) body.children().eq(currentIndex).removeClass("Selected").addClass("Handler").children().attr("contenteditable", false);
-        	if (model.State == prototypes.Prototype.states.draft)
+        	if (model.state == prototypes.Prototype.states.draft)
         	{
         		currentIndex = index;
         		if (currentIndex != null) body.children().eq(currentIndex).addClass("Selected").removeClass("Handler").children(":first-child").attr("contenteditable", true).focus();
@@ -23,7 +23,7 @@
         add = function (row) {
             noRecord.remove();
             var value = $("<td />").addClass("SourceColumn");
-            if (model.State == prototypes.Prototype.states.draft)
+            if (model.state == prototypes.Prototype.states.draft)
                 value.append(sources.clone().val(row.source));
             else
                 value.text(row.source);
@@ -34,7 +34,7 @@
                 .append($("<td />").addClass("CodeColumn").text(row.code))
                 .append(value);
 
-            if (model.State == prototypes.Prototype.states.draft) {
+            if (model.state == prototypes.Prototype.states.draft) {
             	matematici.canClose = false;
             }
         },
@@ -71,16 +71,16 @@
                 buttons =
                     $("<div />").addClass("Buttons").appendTo(container)
 						.append($("<a />").addClass("Button").text("close").prepend($("<i />").addClass("fi flaticon-times")).on("click", function () {
-                        if (model.State == prototypes.Prototype.states.draft) {
-                            model.ExternalSources = {};
+                        if (model.state == prototypes.Prototype.states.draft) {
+                            model.externalSources = {};
                             body.children().each(function () {
                                 var row = $(this);
-                                model.ExternalSources[row.children("td").eq(0).text()] = $("select", row).val();
+                                model.externalSources[row.children("td").eq(0).text()] = $("select", row).val();
                             });
                         }
                         element.remove();
                     }))
-					.append($("<a />").addClass("Button").text("add").toggle(model.State == prototypes.Prototype.states.draft).prepend($("<i />").addClass("fi flaticon-plus")).on("click", function () {
+					.append($("<a />").addClass("Button").text("add").toggle(model.state == prototypes.Prototype.states.draft).prepend($("<i />").addClass("fi flaticon-plus")).on("click", function () {
                         add({ code: "" });
                         select(body.children().size() - 1);
                     }))
@@ -92,10 +92,10 @@
             for (index in matematici.sources)
                 $("<option />").appendTo(sources).text(index);
 
-            for (var code in model.ExternalSources)
+            for (var code in model.externalSources)
                 add({
                     code: code,
-                    source: model.ExternalSources[code]
+                    source: model.externalSources[code]
                 });
         };
 

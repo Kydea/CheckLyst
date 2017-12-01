@@ -12,13 +12,13 @@
 
         valueChanged = function () {
             var index = select.prop("selectedIndex");
-            model.ExternalSourceName = index == 1 ? sourceName.val() : null;
-            model.ExternalSourceColumn = index == 1 ? sourceColumn.val() : null;
-            model.ValueFormulaString = index == 2 ? input.val() : null;
-            model.ValuesList = index == 3 ? input.val().split(",") : [];
-            for (var valueIndex in model.ValuesList)
-                if (model.ValuesList[valueIndex])
-                    model.ValuesList[valueIndex] = model.ValuesList[valueIndex].trim();
+            model.externalSourceName = index == 1 ? sourceName.val() : null;
+            model.externalSourceColumn = index == 1 ? sourceColumn.val() : null;
+            model.valueFormulaString = index == 2 ? input.val() : null;
+            model.valuesList = index == 3 ? input.val().split(",") : [];
+            for (var valueIndex in model.valuesList)
+                if (model.valuesList[valueIndex])
+                    model.valuesList[valueIndex] = model.valuesList[valueIndex].trim();
             matematici.canClose = false;
         },
 
@@ -44,10 +44,10 @@
         },
 
         refresh = function () {
-            editable = prototypes.prototype.getModel().State == prototypes.Prototype.states.draft;
-            externalSource = model.ExternalSourceName && model.ExternalSourceColumn;
-            formula = !!model.ValueFormulaString;
-            list = model.ValuesList && model.ValuesList.length > 0;
+            editable = prototypes.prototype.getModel().state == prototypes.Prototype.states.draft;
+            externalSource = model.externalSourceName && model.externalSourceColumn;
+            formula = !!model.valueFormulaString;
+            list = model.valuesList && model.valuesList.length > 0;
             empty = !externalSource && !formula && !list;
         };
 
@@ -67,14 +67,14 @@
 
             $("<label />").text("Source").append(sourceName = $("<select />").on("change", sourceChanged)).appendTo(valuePanel);
             $("<label />").text("Column").append(sourceColumn = $("<select />").on("change", valueChanged)).appendTo(valuePanel);
-            input = $("<textarea />").appendTo(valuePanel).attr({ type: "text" }).on("change", valueChanged).val(model.ValueFormulaString || (model.ValuesList && model.ValuesList.join()));
+            input = $("<textarea />").appendTo(valuePanel).attr({ type: "text" }).on("change", valueChanged).val(model.valueFormulaString || (model.valuesList && model.valuesList.join()));
 
             for (var index in prototypes.prototype.getModel().ExternalSources)
                 $("<option />").appendTo(sourceName).text(index).attr("value", index);
 
             if (externalSource) {
-                sourceName.val(model.ExternalSourceName);
-                sourceChanged(model.ExternalSourceColumn);
+                sourceName.val(model.externalSourceName);
+                sourceChanged(model.externalSourceColumn);
                 input.hide();
             } else {
                 sourceName.parent().hide();
@@ -94,10 +94,10 @@
                 .appendTo(valuePanel);
 
             if (externalSource) {
-                $("<label />").text("Source").append($("<input />").attr({ type: "text", readOnly: true }).val(model.ExternalSourceName)).appendTo(valuePanel);
-                $("<label />").text("Column").append($("<input />").attr({ type: "text", readOnly: true }).val(model.ExternalSourceColumn)).appendTo(valuePanel);
+                $("<label />").text("Source").append($("<input />").attr({ type: "text", readOnly: true }).val(model.externalSourceName)).appendTo(valuePanel);
+                $("<label />").text("Column").append($("<input />").attr({ type: "text", readOnly: true }).val(model.externalSourceColumn)).appendTo(valuePanel);
             } else if (!empty) 
-                input = $("<textarea />").appendTo(valuePanel).attr({ type: "text" }).val(model.ValueFormulaString || (model.ValuesList && model.ValuesList.join()));
+                input = $("<textarea />").appendTo(valuePanel).attr({ type: "text" }).val(model.valueFormulaString || (model.valuesList && model.valuesList.join()));
         }
     }
 

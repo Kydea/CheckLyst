@@ -14,22 +14,28 @@ namespace CheckListManager.WebApplication.Controllers
             return ConditionalView("List");
         }
 
-        [Route("Detail/{Id?}")]
-        public ActionResult Detail(long Id)
+        [Route("Detail/{Id?}/{Version?}")]
+        public ActionResult Detail(long? Id, int? Version)
         {
-            return ConditionalView("Detail", new Prototype { Id = Id, Action = Prototype.Actions.Open });
+            return ConditionalView("Detail", new Prototype { Id = Id ?? -1, Version = Version ?? -1, Action = Prototype.OPEN });
         }
 
-        [Route("Add/{Id?}")]
-        public ActionResult Add(long? Id)
+        [Route("Clone/{Id?}/{Version?}")]
+        public ActionResult Clone(long? Id, int? Version)
         {
-            return ConditionalView("Detail", new Prototype { Id = Id, Action = Prototype.Actions.Add });
+            return ConditionalView("Detail", new Prototype { Id = Id ?? -1, Version = Version ?? -1, Action = Prototype.CLONE });
         }
 
-        [Route("Clone/{Id?}")]
-        public ActionResult Clone(long? Id)
+        [Route("Version/{Id?}/{Version?}")]
+        public ActionResult Version(long? Id, int? Version)
         {
-            return ConditionalView("Detail", new Prototype { Id = Id, Action = Prototype.Actions.Clone });
+            return ConditionalView("Detail", new Prototype { Id = Id ?? -1, Version = Version ?? -1, Action = Prototype.VERSION });
+        }
+
+        [Route("Create")]
+        public ActionResult Create()
+        {
+            return ConditionalView("Detail", new Prototype { Action = Prototype.CREATE });
         }
 
     }

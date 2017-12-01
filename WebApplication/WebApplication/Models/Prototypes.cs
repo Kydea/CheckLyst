@@ -7,10 +7,16 @@ namespace CheckListManager.WebApplication.Models
 {
     public class Prototype
     {
-        public enum Actions { Open, Add, Clone }
+        public const string
+            OPEN = "Open",
+            CLONE = "Clone",
+            CREATE = "Create",
+            VERSION = "Version";
 
-        public long? Id { get; set; }
+        public long Id { get; set; }
 
-        public Actions Action { get; set; }
+        public long Version { get; set; }
+
+        public string Action { get; set; }
     }
 }

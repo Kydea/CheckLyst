@@ -71,7 +71,7 @@
 <script type="text/javascript">
     var
         createNewVersionHandler = function (id) {
-            matematici.navigator.open("@Url.Action("Add")/" + id);
+            matematici.navigator.open("@Url.Action("Version")/" + id);
         },
 
         openPrototypeHandler = function (id) {
@@ -105,7 +105,7 @@
         });
 
         $("#AddButton").on("click", function (e) {
-            matematici.navigator.open("@Url.Action("Add")");
+            matematici.navigator.open("@Url.Action("Create")");
         });
 
         callback.call();

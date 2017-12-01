@@ -9,9 +9,9 @@
                 value = input.val(),
                 error;
 
-            if (input.prop("selectedIndex") > 2 && expressions[value].Error)
+            if (input.prop("selectedIndex") > 2 && expressions[value].error)
                 error = "the expression is not valid";
-            else if (input.prop("selectedIndex") > 2 && expressions[value].DataType.TypeName != "Boolean")
+            else if (input.prop("selectedIndex") > 2 && expressions[value].dataType.typeName != "Boolean")
                 error = "the expression must result must be a boolean";
 
             if (error) {
@@ -20,8 +20,8 @@
             }
 
             var index = input.prop("selectedIndex")
-            model.HiddenExpressionCode = index > 1 ? value : null;
-            model.HiddenCondition = index == 0 ? 2 : index == 1 ? 1 : 3;
+            model.hiddenExpressionCode = index > 1 ? value : null;
+            model.hiddenCondition = index == 0 ? 2 : index == 1 ? 1 : 3;
             matematici.canClose = false;
         };
 
@@ -32,26 +32,26 @@
         {
             input = $("<select />")
                 .appendTo(valuePanel)
-                .append($("<option />").attr("value", "").text("(false)").attr("selected", model.HiddenCondition == 2))
-                .append($("<option />").attr("value", "").text("(true)").attr("selected", model.HiddenCondition == 1));
+                .append($("<option />").attr("value", "").text("(false)").attr("selected", model.hiddenCondition == 2))
+                .append($("<option />").attr("value", "").text("(true)").attr("selected", model.hiddenCondition == 1));
 
             for (var index in expressions)
-                input.append($("<option />").attr({ value: index, selected: model.HiddenCondition > 2 && index == model.HiddenExpressionCode }).text(index));
+                input.append($("<option />").attr({ value: index, selected: model.hiddenCondition > 2 && index == model.hiddenExpressionCode }).text(index));
 
             input.on("change", inputChanged);
         } else
             $("<input />")
                 .attr({ type: "text", readOnly: true })
                 .val(
-                    model.HiddenCondition == 2 ? "(false)" :
-                    model.HiddenCondition == 1 ? "(true)" :
-                    model.HiddenExpressionCode
+                    model.hiddenCondition == 2 ? "(false)" :
+                    model.hiddenCondition == 1 ? "(true)" :
+                    model.hiddenExpressionCode
                 )
                 .appendTo(valuePanel);
     }
 
     this.hasChanges = function () {
-        return model.HiddenCondition && model.HiddenCondition !== 2;
+        return model.hiddenCondition && model.hiddenCondition !== 2;
     }
 }
 

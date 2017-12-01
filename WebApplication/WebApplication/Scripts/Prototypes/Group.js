@@ -18,16 +18,16 @@
         addElement = function (typeName) {
             matematici.canClose = false;
 
-            if (!model.Items) model.Items = [];
-            model.Items.push({ TypeName: typeName });
+            if (!model.items) model.items = [];
+            model.items.push({ typeName: typeName });
             prototypes.prototype.update();
         },
 
         addGroup = function () {
             matematici.canClose = false;
 
-            if (!model.Groups) model.Groups = [];
-            model.Groups.push({ TypeName: "Group" });
+            if (!model.groups) model.groups = [];
+            model.groups.push({ typeName: "Group" });
             prototypes.prototype.update();
         },
 
@@ -76,12 +76,12 @@
 
         update = function (model) {
             if (group.isPage())
-                model.TypeName = "Page";
+                model.typeName = "Page";
             if (title) 
-                title.text(model.Description ? model.Description : "(no title)")
-            group.setColor(model.Color);
-            group.setFontSize(model.FontSize);
-            addButton.children("a").toggleClass("ReadOnly", prototypes.prototype.getModel().State != prototypes.Prototype.states.draft);
+                title.text(model.description ? model.description : "(no title)")
+            group.setColor(model.color);
+            group.setFontSize(model.fontSize);
+            addButton.children("a").toggleClass("ReadOnly", prototypes.prototype.getModel().state != prototypes.Prototype.states.draft);
         };
 
     this.setColor = function (value) {
@@ -107,7 +107,7 @@
     	    var
                 itemModel = children[index],
                 item =
-                    itemModel.TypeName == "Group" ? new prototypes.Group(null, itemModel.TypeName, this, previous) :
+                    itemModel.typeName == "Group" ? new prototypes.Group(null, itemModel.typeName, this, previous) :
                     new prototypes.Item(itemModel, this);
 
     	    item.setIndex(parseInt(index));
@@ -161,14 +161,14 @@
     };
 
     this.getChildren = function () {
-    	return model.Groups || model.Items;
+    	return model.groups || model.items;
     };
 
     this.setChildren = function (value) {
         if (group.isPage())
-            model.Groups = value;
+            model.groups = value;
         else 
-            model.Items = value;
+            model.items = value;
     };
 
     setup();
