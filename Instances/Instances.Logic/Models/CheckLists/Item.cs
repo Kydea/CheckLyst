@@ -53,6 +53,11 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
 		}
 
+		public virtual void Remove()
+		{
+			((Instance)CheckList).Items.Remove(Id);
+		}
+
 		public abstract ICheckListItem Clone(ICheckListGroup parent);
 
 		protected static void Copy(Item source, Item destination)

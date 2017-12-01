@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CheckListManager.Common.Core.Helpers;
 using CheckListManager.Common.Core.Network;
+using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Logic.Cache;
 using CheckListManager.Common.Logic.Json;
@@ -166,7 +167,7 @@ namespace CheckListManager.Instances.Logic.Services
 
 			try
 			{
-				var cacheObject = await _instanceCache.GetAsync(code);
+				var cacheObject = await _instanceCache.GetAsync(code, false);
 				if (cacheObject == null)
 				{
 					return;
@@ -189,6 +190,7 @@ namespace CheckListManager.Instances.Logic.Services
 							throw new InstanceException("Instance not found");
 						}
 
+						UnlockPages(cacheObject.Instance, userCode);
 						row.Data = JsonConvert.SerializeObject(cacheObject.Instance, _converter);
 						row.ModifiedOn = cacheObject.ModifiedOn;
 						row.ModifiedBy = cacheObject.ModifiedBy;
@@ -217,46 +219,61 @@ namespace CheckListManager.Instances.Logic.Services
 
 		#region Events
 
-		public async Task<InstanceCacheObject> HandleEventAsync(string userCode, bool canEdit, InstanceEventRequest request)
+		public async Task<InstanceCacheObject> HandleEventAsync(DefaultIdentity identity, InstanceEventRequest request)
 		{
 			LockObject lockObject = null;
 
 			try
 			{
-				lockObject = await _instanceCache.LockInstanceAsync(request.Code);
-				if (!lockObject.IsAcquired)
-				{
-					throw new InstanceException("Instance is being updated by another user");
-				}
-
-				var cacheObject = await _instanceCache.GetAsync(request.Code);
+				var cacheObject = await _instanceCache.GetAsync(request.Code, false);
 				if (cacheObject == null)
 				{
 					throw new InstanceException("Instance not found");
 				}
-				if (!cacheObject.InstanceState.In(InstanceState.Draft, InstanceState.Progress))
+
+				if (cacheObject.InstanceState == InstanceState.Progress)
 				{
-					throw new InstanceException("Instance state not valid");
+					//Lock and reload the data to be sure it's the most recent one
+					lockObject = await _instanceCache.LockInstanceAsync(request.Code);
+					if (!lockObject.IsAcquired)
+					{
+						throw new InstanceException("Instance is being updated by another user");
+					}
+
+					cacheObject = await _instanceCache.GetAsync(request.Code);
 				}
 
-				var instance = GetCheckList(userCode, canEdit, cacheObject);
+				var canEdit = identity.HasPermission("Instances#Edit", cacheObject.PrototypeType) &&
+				              cacheObject.InstanceState.In(InstanceState.Draft, InstanceState.Progress);
+				var instance = GetCheckList(identity.Code, canEdit, cacheObject);
 
 				switch (request.Type)
 				{
 					case "PageChange":
+						await HandlePageChangeAsync(cacheObject, instance, identity.Code, canEdit, request.Item);
 						break;
 					case "ValueChange":
-						await HandleValueChangeAsync(cacheObject, instance, userCode, canEdit, request.Item, request.Data);
+						await HandleValueChangeAsync(cacheObject, instance, identity.Code, canEdit, request.Item, request.Data);
 						break;
 					case "Add":
-						await HandleAddAsync(cacheObject, instance, userCode, canEdit, request.Item);
+						await HandleAddAsync(cacheObject, instance, identity.Code, canEdit, request.Item);
+						break;
+					case "Remove":
+						await HandleRemoveAsync(cacheObject, instance, identity.Code, canEdit, request.Item);
 						break;
 					case "Up":
-						await HandleMoveAsync(cacheObject, instance, userCode, canEdit, request.Item, -1);
+						await HandleMoveAsync(cacheObject, instance, identity.Code, canEdit, request.Item, -1);
 						break;
 					case "Down":
-						await HandleMoveAsync(cacheObject, instance, userCode, canEdit, request.Item, 1);
+						await HandleMoveAsync(cacheObject, instance, identity.Code, canEdit, request.Item, 1);
 						break;
+					//case "UnlockPage":
+					//case "Refresh":
+					//case "CountDown":
+					//case "Signature":
+					//case "SignatureCheck":
+					//case "SignatureCancelation":
+					//case "ExternalSourceRowChange":
 					default:
 						throw new InstanceException($"Event type {request.Type} not handled.");
 				}
@@ -275,6 +292,32 @@ namespace CheckListManager.Instances.Logic.Services
 			finally
 			{
 				lockObject?.Dispose();
+			}
+		}
+
+		private async Task HandlePageChangeAsync(InstanceCacheObject cacheObject, Instance instance, string userCode, bool canEdit, int? itemId)
+		{
+			if (!canEdit)
+			{
+				return;
+			}
+
+			if (!itemId.HasValue)
+			{
+				throw new InstanceException("Item id not sent");
+			}
+
+			var page = instance.Pages.Count > itemId.Value ? instance.Pages[itemId.Value] as Page : null;
+			if (page == null)
+			{
+				throw new InstanceException("Page not found");
+			}
+
+			UnlockPages(instance, userCode);
+			if (!page.IsLocked)
+			{
+				page.Lock = new Lock(userCode);
+				await Update(cacheObject, instance, userCode);
 			}
 		}
 
@@ -331,25 +374,46 @@ namespace CheckListManager.Instances.Logic.Services
 			}
 		}
 
+		private async Task HandleRemoveAsync(InstanceCacheObject cacheObject, Instance instance, string userCode, bool canEdit, int? itemId)
+		{
+			CheckPermission(canEdit);
+			if (!itemId.HasValue)
+			{
+				throw new InstanceException("Item id not sent");
+			}
+
+			var iteration = instance.Items.ContainsKey(itemId.Value) ? instance.Items[itemId.Value] as Iteration : null;
+			if (iteration == null)
+			{
+				throw new InstanceException("Group not found");
+			}
+
+			if (!iteration.IsReadOnly)
+			{
+				((Group)iteration.Group).Remove(iteration);
+				await Update(cacheObject, instance, userCode);
+			}
+		}
+
 		private async Task HandleMoveAsync(InstanceCacheObject cacheObject, Instance instance, string userCode, bool canEdit, int? itemId, int direction)
 		{
-			//CheckPermission(canEdit);
-			//if (!itemId.HasValue)
-			//{
-			//	throw new InstanceException("Item id not sent");
-			//}
+			CheckPermission(canEdit);
+			if (!itemId.HasValue)
+			{
+				throw new InstanceException("Item id not sent");
+			}
 
-			//var group = instance.Items.ContainsKey(itemId.Value) ? instance.Items[itemId.Value] as Group : null;
-			//if (group == null)
-			//{
-			//	throw new InstanceException("Group not found");
-			//}
+			var iteration = instance.Items.ContainsKey(itemId.Value) ? instance.Items[itemId.Value] as Iteration : null;
+			if (iteration == null)
+			{
+				throw new InstanceException("Group not found");
+			}
 
-			//if (!group.IsReadOnly)
-			//{
-			//	group.AddIteration();
-			//	await Update(cacheObject, instance, userCode);
-			//}
+			if (!iteration.IsReadOnly)
+			{
+				((Group)iteration.Group).Move(iteration, direction);
+				await Update(cacheObject, instance, userCode);
+			}
 		}
 
 		// ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
@@ -420,6 +484,15 @@ namespace CheckListManager.Instances.Logic.Services
 					throw new Exception(
 						$"The value {expression.Value.Value.SerializedValue} for the expression {expression.Key} has been found in the in progress instance {instance.Year} - {instance.Number}");
 				}
+			}
+		}
+
+		private void UnlockPages(ICheckList instance, string userCode)
+		{
+			var pages = instance.Pages.Cast<Page>().Where(p => p.Lock != null && p.Lock.User == userCode);
+			foreach (var p in pages)
+			{
+				p.Lock = null;
 			}
 		}
 

@@ -129,7 +129,7 @@ namespace CheckListManager.Instances.Api.Controllers
 		{
 			try
 			{
-				var cacheObject = await _instanceManagerService.HandleEventAsync(request.Data);
+				var cacheObject = await _instanceManagerService.HandleEventAsync(Identity, request.Data);
 				var response = new InstanceResponse
 				{
 					Id = cacheObject.Id,

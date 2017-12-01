@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using CheckListManager.Common.Core.Services;
+using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Instances.Logic.Messages;
 using CheckListManager.Instances.Logic.Models;
 using CheckListManager.Instances.Logic.Models.CheckLists;
@@ -12,7 +13,7 @@ namespace CheckListManager.Instances.Logic.Services
 		Task<InstanceCacheObject> CreateAsync(long companyId, string userCode, int prototype, int version);
 		Task OpenAsync(string userCode, string code);
 		Task CloseAsync(long companyId, string userCode, string code);
-		Task<InstanceCacheObject> HandleEventAsync(string userCode, bool canEdit, InstanceEventRequest request);
+		Task<InstanceCacheObject> HandleEventAsync(DefaultIdentity identity, InstanceEventRequest request);
 
 		Instance GetCheckList(string userCode, bool canEdit, InstanceCacheObject instance);
 	}
