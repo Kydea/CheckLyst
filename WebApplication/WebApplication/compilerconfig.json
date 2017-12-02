@@ -150,5 +150,9 @@
   {
     "outputFile": "Content/Theme/ButtonGroup.css",
     "inputFile": "Content/Theme/ButtonGroup.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Prototype.css",
+    "inputFile": "Content/Theme/Prototype.scss"
   }
 ]

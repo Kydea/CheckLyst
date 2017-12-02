@@ -13,106 +13,6 @@
         itemHandler,
 		updateHandler,
 
-        completeModel = function () {
-        	var analyzeElement = function (node) {
-        		switch (node.TypeName) {
-        			case "Group":
-        				for (var itemIndex in node.Items || [])
-        					analyzeElement(node.Items[itemIndex]);
-        				break;
-        			case "Signature":
-        				if (node.Code)
-        					model.Signatures[node.Code] = node;
-        				break;
-        		}
-        	};
-
-        	model.TypeName = "Prototype";
-        	model.Signatures = {};
-
-        	analyzeElement(model.Header);
-        	for (var pageIndex in model.Pages || []) {
-        		var page = model.Pages[pageIndex];
-        		for (var groupIndex in page.Groups || [])
-        			analyzeElement(page.Groups[groupIndex])
-        	}
-        },
-
-        update = function () {
-        	completeModel();
-        	title.text(model.Description || "(Prototype title)");
-
-        	tab.clear();
-        	for (var index in model.Pages)
-        		tab.add(model.Pages[index].Description);
-
-        	if (model.State == prototypes.Prototype.states.draft) tab.add($("<i >").addClass("Add fa fa-plus"));
-        	page.setIndex(pageIndex = pageIndex ? pageIndex : 0);
-        	tab.select(pageIndex);
-
-        	if (model.Header) {
-        		header.clear();
-        		header.update(model.Header);
-        	} else
-        		header.getElement().hide();
-
-        	page.clear();
-        	if (model.Pages[tab.getCurrentIndex()])
-        		page.update(model.Pages[tab.getCurrentIndex()]);
-
-        	for (var index in model.Expressions)
-        		if (model.Expressions[index].Error) {
-        			$("div.ActionBar a.Button.ExpressionsList").addClass("Invalid");
-        			break;
-        		}
-
-        	prototypes.propertyPanel.select(null);
-        	prototypes.propertyPanel.windowScrolled();
-
-        	if (updateHandler) updateHandler(model);
-        },
-
-        addPage = function () {
-        	if (!model.Pages) model.Pages = [];
-        	model.Pages.push({ TypeName: "Page", Description: "(new page)" })
-        },
-
-        setup = function () {
-        	tab = new matematici.Tab($("div.TabContainer", element)).addHandler(function (index) {
-        		pageIndex = index;
-        		if (index >= model.Pages.length) {
-        			matematici.canClose = false;
-        			addPage();
-        		}
-        		update();
-
-        		prototype.select(null, null);
-        		prototype.select(null, page);
-        	});
-
-        	title = $("h2", element).on("click", function () {
-        		prototype.select(null, prototype);
-        	});
-
-        	prototypes.propertyPanel.resize();
-
-        	$.ajax({
-        		url: matematici.urls.prototypes.open,
-        		type: "post",
-        		data: { ClientId: matematici.client.getId(), Code: code, Version: version, IsNew: isNew }
-        	}).done(function (result) {
-        		if (result.Error)
-        			matematici.dialog.error("Error", result.Error);
-        		else {
-        			model = result;
-        			update();
-        		}
-        	}).fail(function (jqXHR, textStatus, errorThrown) {
-        		console.log("Server error", jqXHR, textStatus, errorThrown);
-        		alert("Server error: " + errorThrown);
-        	});
-        },
-
 		sign = function (action, grid, signature, username, rowVersion) {
 			var
 				options = {
@@ -183,45 +83,12 @@
 			matematici.popup.show(options);
 		};
 
-    prototype.getElement = function () {
-        return element;
-    };
-
-    prototype.select = function (event, item) {
-        if (event) {
-            event.stopPropagation();
-            event.preventDefault();
-        }
-
-        if (itemHandler && !itemHandler.call(item.getElement()))
-            return;
-
-        if (selectedItem) selectedItem.getElement().removeClass("Selected");
-        if (selectedItem && selectedItem.isPage && selectedItem.isPage()) $("a.Selected", tab.getElement()).removeClass("Red");
-        selectedItem = selectedItem == item ? null : item;
-        prototypes.propertyPanel.select(selectedItem);
-        if (selectedItem) selectedItem.getElement().addClass("Selected");
-        if (selectedItem && selectedItem.isPage && selectedItem.isPage()) $("a.Selected", tab.getElement()).addClass("Red");
-    };
-
-    prototype.getModel = function () {
-        return model;
-    };
-
     prototype.getChildren = function () {
         return model.Pages;
     };
 
     prototype.setChildren = function (value) {
         model.Pages = value;
-    };
-
-    prototype.setItemHandler = function (value) {
-        itemHandler = value;
-    };
-
-    prototype.getItemHandler = function () {
-        return itemHandler;
     };
 
     prototype.getTab = function () {
@@ -424,10 +291,6 @@
     prototype.isNew = function () {
         return isNew;
     };
-
-	prototype.update = update;
-
-    prototypes.prototype = prototype;
 
     setup();
 }

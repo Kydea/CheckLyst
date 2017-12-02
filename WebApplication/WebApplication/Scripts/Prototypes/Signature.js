@@ -10,13 +10,13 @@
         setup = function () {
             label = $("<label />").text(model.description ? model.description : "(no description)");
             element.append(label);
-            user = $("<input />").addClass("User").attr({ type: "text", readonly: true }).appendTo(element);
+			user = $("<input />").addClass("User").attr({ type: "text", readonly: true }).appendTo(label);
 			$("<i />").addClass("fi flaticon-user-o").insertAfter(user);
-            date = $("<input />").addClass("Date").attr({ type: "text", readonly: true }).appendTo(element);
+			date = $("<input />").addClass("Date").attr({ type: "text", readonly: true }).appendTo(label);
 			$("<i />").addClass("fi flaticon-calendar").insertAfter(date);
-            time = $("<input />").addClass("Time").attr({ type: "text", readonly: true }).appendTo(element);
+			time = $("<input />").addClass("Time").attr({ type: "text", readonly: true }).appendTo(label);
 			$("<i />").addClass("fi flaticon-clock-o").insertAfter(time);
-            button = $("<a />").addClass("Button").attr({ href: "#" }).appendTo(element);
+			button = $("<a />").addClass("Button").attr({ href: "#" }).appendTo(label);
         };
 
     this.update = function (model) {

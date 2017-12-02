@@ -40,15 +40,14 @@
         background: url(../Media/Sintlogo.png) no-repeat 10px 50%; }
       nav.Menu ul.Menu li.MenuItem {
         position: relative;
-        border-bottom: 1px solid #333;
-        height: 70px;
-        padding: 15px; }
+        border-bottom: 1px solid #333; }
         nav.Menu ul.Menu li.MenuItem .MenuItem {
           font-size: 0;
           box-sizing: border-box;
-          width: 40px;
-          height: 40px;
-          color: #999; }
+          color: #999;
+          width: 70px;
+          height: 70px;
+          padding: 15px !important; }
           nav.Menu ul.Menu li.MenuItem .MenuItem i {
             font-size: 40px; }
         nav.Menu ul.Menu li.MenuItem.Current {
@@ -96,9 +95,9 @@
           nav.Menu ul.Menu li.MenuItem ul.SubMenu li {
             width: 230px;
             height: 40px;
-            line-height: 40px;
-            padding-left: 40px; }
+            line-height: 40px; }
             nav.Menu ul.Menu li.MenuItem ul.SubMenu li a {
+              padding-left: 40px;
               color: #ccc;
               display: block;
               text-decoration: none;
@@ -109,7 +108,7 @@
                 width: 10px;
                 height: 10px;
                 position: absolute;
-                left: -30px;
+                left: 10px;
                 top: 50%;
                 border: solid #666;
                 border-width: 0 2px 2px 0;

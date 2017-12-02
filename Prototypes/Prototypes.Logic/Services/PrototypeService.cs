@@ -38,13 +38,13 @@ namespace CheckListManager.Prototypes.Logic.Services
         {
             var Prototype = new Prototype
             {
-                Header = new Group { Description = "(Header)" },
+                Header = new Group { Description = "(header)" },
                 State = "Draft"
             };
 
             Page Page;
-            Prototype.Pages.Add(Page = new Page { Description = "(Page)" });
-            Page.Groups.Add(new Group { Description = "(Group)" });
+            Prototype.Pages.Add(Page = new Page { Description = "(page)" });
+            Page.Groups.Add(new Group { Description = "(group)" });
 
             return Task.FromResult(new GetPrototypeResponse
             {

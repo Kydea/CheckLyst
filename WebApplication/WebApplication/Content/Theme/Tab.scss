@@ -6,7 +6,6 @@ div.TabContainer {
     position: relative;
     transition: height .3s;
     display: none;
-    margin-right: -20px;
 
     .TabLabels {
         display: flex;
@@ -35,7 +34,7 @@ div.TabContainer {
             white-space: nowrap;
 
             i.fi {
-                color: red;
+                font-size: 14px;
             }
 
             &.Selected {
@@ -45,10 +44,6 @@ div.TabContainer {
                 color: $Color-Grey-Dark;
                 border-bottom: solid 3px $Color-Yellow-Regular;
                 font-weight: bold;
-
-                i.fi {
-                    color: violet;
-                }
             }
 
             &:hover {
@@ -90,5 +85,19 @@ div.TabContainer {
                 padding: 0 10px;
             }
         }
+    }
+}
+
+div.ShadowPanel {
+    div.TabContainer {
+        margin-bottom: $Metric-Control-Space;
+        margin-right: -20px;
+        margin-left: -20px;
+    }
+}
+
+div.Popup {
+    div.TabContainer {
+        margin-right: -20px;
     }
 }

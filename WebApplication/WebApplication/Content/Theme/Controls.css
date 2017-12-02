@@ -180,97 +180,99 @@ form {
     margin-bottom: 0 !important;
     width: calc(100% - 2 * 20px) !important; }
   form a.Button {
-    float: left; }
-  form label {
     float: left;
-    margin-top: 20px;
-    margin-left: 20px;
-    width: 200px;
-    position: relative;
-    color: #666; }
-    form label input, form label select, form label textarea {
-      margin-top: 5px; }
-    form label input[type=checkbox] {
-      display: block;
-      margin-left: 0;
-      margin-right: 0;
-      margin-bottom: 0; }
-    form label i:not(.AutoComplete):not(.ValidationMessagesIcon).fi {
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      text-align: center;
-      height: 36px;
-      width: 36px;
-      line-height: 36px;
-      border: 1px solid #ccc;
-      background-color: #ebebeb;
-      border-radius: 3px 0 0 3px; }
-    form label i:not(.AutoComplete):not(.ValidationMessagesIcon) + select.AutoComplete + input, form label i:not(.AutoComplete):not(.ValidationMessagesIcon) + select:not(.AutoComplete), form label i:not(.AutoComplete):not(.ValidationMessagesIcon) + input.AutoComplete + input, form label i:not(.AutoComplete):not(.ValidationMessagesIcon) + input:not(.AutoComplete) {
-      padding-left: 41px; }
-    form label i.ValidationMessagesIcon {
-      color: #cc0000;
-      cursor: pointer; }
-    form label.Controls2 {
-      width: 400px; }
-      form label.Controls2 input, form label.Controls2 select {
-        width: calc(200px - 36px/2); }
-      form label.Controls2 i:not(.AutoComplete) + input:not(.AutoComplete), form label.Controls2 i:not(.AutoComplete) + input.AutoComplete + input, form label.Controls2 i:not(.AutoComplete) + input.AutoComplete + select, form label.Controls2 i:not(.AutoComplete) + select:not(.AutoComplete), form label.Controls2 i:not(.AutoComplete) + select.AutoComplete + input, form label.Controls2 i:not(.AutoComplete) + select.AutoComplete + select {
-        width: calc(200px + 36px - 36px/2); }
-    form label.Controls3 {
-      width: 600px; }
-      form label.Controls3 input, form label.Controls3 select {
-        width: calc(200px - 36px/3); }
-      form label.Controls3 i:not(.AutoComplete) + input:not(.AutoComplete), form label.Controls3 i:not(.AutoComplete) + input.AutoComplete + input, form label.Controls3 i:not(.AutoComplete) + input.AutoComplete + select, form label.Controls3 i:not(.AutoComplete) + select:not(.AutoComplete), form label.Controls3 i:not(.AutoComplete) + select.AutoComplete + input, form label.Controls3 i:not(.AutoComplete) + select.AutoComplete + select {
-        width: calc(200px + 36px - 36px/3); }
-    form label.Controls2, form label.Controls3 {
-      font-size: 0;
-      white-space: nowrap; }
-      form label.Controls2 span, form label.Controls3 span {
-        width: calc(100% - 20px);
-        display: block; }
-      form label.Controls2 > *, form label.Controls3 > * {
-        font-size: 1rem; }
-      form label.Controls2 input, form label.Controls2 select, form label.Controls3 input, form label.Controls3 select {
-        float: none;
-        border-radius: 0;
-        display: inline-block; }
-        form label.Controls2 input:not(.AutoComplete-Filter), form label.Controls2 select:not(.AutoComplete-Filter), form label.Controls3 input:not(.AutoComplete-Filter), form label.Controls3 select:not(.AutoComplete-Filter) {
-          border-left: none; }
-    form label.Controls2::after, form label.Controls3::after, form label.FullWidth::after {
-      content: "";
-      display: table;
-      clear: both; }
-    form label.FullWidth {
-      width: calc(100% - 20px);
-      display: block; }
-      form label.FullWidth.Controls2 input, form label.FullWidth.Controls2 select {
-        width: calc(50% - 36px/2); }
-      form label.FullWidth.Controls2 i:not(.AutoComplete) + input:not(.AutoComplete), form label.FullWidth.Controls2 i:not(.AutoComplete) + input.AutoComplete + input, form label.FullWidth.Controls2 i:not(.AutoComplete) + input.AutoComplete + select, form label.FullWidth.Controls2 i:not(.AutoComplete) + select:not(.AutoComplete), form label.FullWidth.Controls2 i:not(.AutoComplete) + select.AutoComplete + input, form label.FullWidth.Controls2 i:not(.AutoComplete) + select.AutoComplete + select {
-        width: calc(50% + 36px - 36px/2); }
-      form label.FullWidth.Controls3 input, form label.FullWidth.Controls3 select {
-        width: calc(33.33% - 36px/3); }
-      form label.FullWidth.Controls3 i:not(.AutoComplete) + input:not(.AutoComplete), form label.FullWidth.Controls3 i:not(.AutoComplete) + input.AutoComplete + input, form label.FullWidth.Controls3 i:not(.AutoComplete) + input.AutoComplete + select, form label.FullWidth.Controls3 i:not(.AutoComplete) + select:not(.AutoComplete), form label.FullWidth.Controls3 i:not(.AutoComplete) + select.AutoComplete + input, form label.FullWidth.Controls3 i:not(.AutoComplete) + select.AutoComplete + select {
-        width: calc(33.33% + 36px - 36px/3); }
-    form label.Narrow {
-      width: unset; }
-    form label.Width150 {
-      width: 300px; }
-    form label.Width200 {
-      width: 400px; }
-    form label.Error i {
-      border-color: #cc0000 !important; }
-    form label.Error input, form label.Error select {
-      border-color: #cc0000;
-      outline-color: #ff3333; }
-  form a.Button {
     margin-top: 41px;
     margin-left: 20px; }
-  form::after {
+
+form label, div.CheckList label {
+  float: left;
+  margin-top: 20px;
+  margin-left: 20px;
+  width: 200px;
+  position: relative;
+  color: #666; }
+  form label input, form label select, form label textarea, form label div.Input, div.CheckList label input, div.CheckList label select, div.CheckList label textarea, div.CheckList label div.Input {
+    margin-top: 5px; }
+  form label input[type=checkbox], div.CheckList label input[type=checkbox] {
+    display: block;
+    margin-left: 0;
+    margin-right: 0;
+    margin-bottom: 0; }
+  form label i:not(.AutoComplete):not(.ValidationMessagesIcon).fi, div.CheckList label i:not(.AutoComplete):not(.ValidationMessagesIcon).fi {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    text-align: center;
+    height: 36px;
+    width: 36px;
+    line-height: 36px;
+    border: 1px solid #ccc;
+    background-color: #ebebeb;
+    border-radius: 3px 0 0 3px; }
+  form label i:not(.AutoComplete):not(.ValidationMessagesIcon) + select.AutoComplete + input, form label i:not(.AutoComplete):not(.ValidationMessagesIcon) + select:not(.AutoComplete), form label i:not(.AutoComplete):not(.ValidationMessagesIcon) + input.AutoComplete + input, form label i:not(.AutoComplete):not(.ValidationMessagesIcon) + input:not(.AutoComplete), div.CheckList label i:not(.AutoComplete):not(.ValidationMessagesIcon) + select.AutoComplete + input, div.CheckList label i:not(.AutoComplete):not(.ValidationMessagesIcon) + select:not(.AutoComplete), div.CheckList label i:not(.AutoComplete):not(.ValidationMessagesIcon) + input.AutoComplete + input, div.CheckList label i:not(.AutoComplete):not(.ValidationMessagesIcon) + input:not(.AutoComplete) {
+    padding-left: 41px; }
+  form label i.ValidationMessagesIcon, div.CheckList label i.ValidationMessagesIcon {
+    color: #cc0000;
+    cursor: pointer; }
+  form label.Controls2, div.CheckList label.Controls2 {
+    width: 400px; }
+    form label.Controls2 input, form label.Controls2 select, div.CheckList label.Controls2 input, div.CheckList label.Controls2 select {
+      width: calc(200px - 36px/2); }
+    form label.Controls2 i:not(.AutoComplete) + input:not(.AutoComplete), form label.Controls2 i:not(.AutoComplete) + input.AutoComplete + input, form label.Controls2 i:not(.AutoComplete) + input.AutoComplete + select, form label.Controls2 i:not(.AutoComplete) + select:not(.AutoComplete), form label.Controls2 i:not(.AutoComplete) + select.AutoComplete + input, form label.Controls2 i:not(.AutoComplete) + select.AutoComplete + select, div.CheckList label.Controls2 i:not(.AutoComplete) + input:not(.AutoComplete), div.CheckList label.Controls2 i:not(.AutoComplete) + input.AutoComplete + input, div.CheckList label.Controls2 i:not(.AutoComplete) + input.AutoComplete + select, div.CheckList label.Controls2 i:not(.AutoComplete) + select:not(.AutoComplete), div.CheckList label.Controls2 i:not(.AutoComplete) + select.AutoComplete + input, div.CheckList label.Controls2 i:not(.AutoComplete) + select.AutoComplete + select {
+      width: calc(200px + 36px - 36px/2); }
+  form label.Controls3, div.CheckList label.Controls3 {
+    width: 600px; }
+    form label.Controls3 input, form label.Controls3 select, div.CheckList label.Controls3 input, div.CheckList label.Controls3 select {
+      width: calc(200px - 36px/3); }
+    form label.Controls3 i:not(.AutoComplete) + input:not(.AutoComplete), form label.Controls3 i:not(.AutoComplete) + input.AutoComplete + input, form label.Controls3 i:not(.AutoComplete) + input.AutoComplete + select, form label.Controls3 i:not(.AutoComplete) + select:not(.AutoComplete), form label.Controls3 i:not(.AutoComplete) + select.AutoComplete + input, form label.Controls3 i:not(.AutoComplete) + select.AutoComplete + select, div.CheckList label.Controls3 i:not(.AutoComplete) + input:not(.AutoComplete), div.CheckList label.Controls3 i:not(.AutoComplete) + input.AutoComplete + input, div.CheckList label.Controls3 i:not(.AutoComplete) + input.AutoComplete + select, div.CheckList label.Controls3 i:not(.AutoComplete) + select:not(.AutoComplete), div.CheckList label.Controls3 i:not(.AutoComplete) + select.AutoComplete + input, div.CheckList label.Controls3 i:not(.AutoComplete) + select.AutoComplete + select {
+      width: calc(200px + 36px - 36px/3); }
+  form label.Controls2, form label.Controls3, div.CheckList label.Controls2, div.CheckList label.Controls3 {
+    font-size: 0;
+    white-space: nowrap; }
+    form label.Controls2 span, form label.Controls3 span, div.CheckList label.Controls2 span, div.CheckList label.Controls3 span {
+      width: calc(100% - 20px);
+      display: block; }
+    form label.Controls2 > *, form label.Controls3 > *, div.CheckList label.Controls2 > *, div.CheckList label.Controls3 > * {
+      font-size: 1rem; }
+    form label.Controls2 input, form label.Controls2 select, form label.Controls3 input, form label.Controls3 select, div.CheckList label.Controls2 input, div.CheckList label.Controls2 select, div.CheckList label.Controls3 input, div.CheckList label.Controls3 select {
+      float: none;
+      border-radius: 0;
+      display: inline-block; }
+      form label.Controls2 input:not(.AutoComplete-Filter), form label.Controls2 select:not(.AutoComplete-Filter), form label.Controls3 input:not(.AutoComplete-Filter), form label.Controls3 select:not(.AutoComplete-Filter), div.CheckList label.Controls2 input:not(.AutoComplete-Filter), div.CheckList label.Controls2 select:not(.AutoComplete-Filter), div.CheckList label.Controls3 input:not(.AutoComplete-Filter), div.CheckList label.Controls3 select:not(.AutoComplete-Filter) {
+        border-left: none; }
+  form label.Controls2::after, form label.Controls3::after, form label.FullWidth::after, div.CheckList label.Controls2::after, div.CheckList label.Controls3::after, div.CheckList label.FullWidth::after {
     content: "";
     display: table;
     clear: both; }
-  form div.Errors {
-    margin-top: 20px;
-    margin-left: 20px; }
+  form label.FullWidth, div.CheckList label.FullWidth {
+    width: calc(100% - 20px);
+    display: block; }
+    form label.FullWidth.Controls2 input, form label.FullWidth.Controls2 select, form label.FullWidth.Controls2 div.Input, div.CheckList label.FullWidth.Controls2 input, div.CheckList label.FullWidth.Controls2 select, div.CheckList label.FullWidth.Controls2 div.Input {
+      width: calc(50% - 36px/2); }
+    form label.FullWidth.Controls2 i:not(.AutoComplete) + input:not(.AutoComplete), form label.FullWidth.Controls2 i:not(.AutoComplete) + input.AutoComplete + input, form label.FullWidth.Controls2 i:not(.AutoComplete) + input.AutoComplete + select, form label.FullWidth.Controls2 i:not(.AutoComplete) + select:not(.AutoComplete), form label.FullWidth.Controls2 i:not(.AutoComplete) + select.AutoComplete + input, form label.FullWidth.Controls2 i:not(.AutoComplete) + select.AutoComplete + select, div.CheckList label.FullWidth.Controls2 i:not(.AutoComplete) + input:not(.AutoComplete), div.CheckList label.FullWidth.Controls2 i:not(.AutoComplete) + input.AutoComplete + input, div.CheckList label.FullWidth.Controls2 i:not(.AutoComplete) + input.AutoComplete + select, div.CheckList label.FullWidth.Controls2 i:not(.AutoComplete) + select:not(.AutoComplete), div.CheckList label.FullWidth.Controls2 i:not(.AutoComplete) + select.AutoComplete + input, div.CheckList label.FullWidth.Controls2 i:not(.AutoComplete) + select.AutoComplete + select {
+      width: calc(50% + 36px - 36px/2); }
+    form label.FullWidth.Controls3 input, form label.FullWidth.Controls3 select, form label.FullWidth.Controls3 div.Input, div.CheckList label.FullWidth.Controls3 input, div.CheckList label.FullWidth.Controls3 select, div.CheckList label.FullWidth.Controls3 div.Input {
+      width: calc(33.33% - 36px/3); }
+    form label.FullWidth.Controls3 i:not(.AutoComplete) + input:not(.AutoComplete), form label.FullWidth.Controls3 i:not(.AutoComplete) + input.AutoComplete + input, form label.FullWidth.Controls3 i:not(.AutoComplete) + input.AutoComplete + select, form label.FullWidth.Controls3 i:not(.AutoComplete) + select:not(.AutoComplete), form label.FullWidth.Controls3 i:not(.AutoComplete) + select.AutoComplete + input, form label.FullWidth.Controls3 i:not(.AutoComplete) + select.AutoComplete + select, div.CheckList label.FullWidth.Controls3 i:not(.AutoComplete) + input:not(.AutoComplete), div.CheckList label.FullWidth.Controls3 i:not(.AutoComplete) + input.AutoComplete + input, div.CheckList label.FullWidth.Controls3 i:not(.AutoComplete) + input.AutoComplete + select, div.CheckList label.FullWidth.Controls3 i:not(.AutoComplete) + select:not(.AutoComplete), div.CheckList label.FullWidth.Controls3 i:not(.AutoComplete) + select.AutoComplete + input, div.CheckList label.FullWidth.Controls3 i:not(.AutoComplete) + select.AutoComplete + select {
+      width: calc(33.33% + 36px - 36px/3); }
+  form label.Narrow, div.CheckList label.Narrow {
+    width: unset; }
+  form label.Width150, div.CheckList label.Width150 {
+    width: 300px; }
+  form label.Width200, div.CheckList label.Width200 {
+    width: 400px; }
+  form label.Error i, div.CheckList label.Error i {
+    border-color: #cc0000 !important; }
+  form label.Error input, form label.Error select, form label.Error div.Input, div.CheckList label.Error input, div.CheckList label.Error select, div.CheckList label.Error div.Input {
+    border-color: #cc0000;
+    outline-color: #ff3333; }
+
+form::after, div.CheckList::after {
+  content: "";
+  display: table;
+  clear: both; }
+
+form div.Errors, div.CheckList div.Errors {
+  margin-top: 20px;
+  margin-left: 20px; }
 

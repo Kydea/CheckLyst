@@ -261,7 +261,12 @@ form {
 
     a.Button {
         float: left;
+        margin-top: 21px + $Metric-Control-Space;
+        margin-left: $Metric-Control-Space;
     }
+}
+
+form, div.CheckList {
 
     label {
         $Label-Width: 200px;
@@ -272,7 +277,7 @@ form {
         position: relative;
         color: $Color-Grey-Dark;
 
-        input, select, textarea {
+        input, select, textarea, div.Input {
             margin-top: 5px;
         }
 
@@ -372,7 +377,7 @@ form {
 
             @each $tuple in $controlsData {
                 &.Controls#{nth($tuple, 1)} {
-                    input, select {
+                    input, select, div.Input {
                         width: calc(#{nth($tuple, 2)} - #{$Metric-Control-Height}/#{nth($tuple, 1)});
                     }
 
@@ -404,16 +409,11 @@ form {
                 border-color: $Color-Red-Regular !important;
             }
 
-            input, select {
+            input, select, div.Input {
                 border-color: $Color-Red-Regular;
                 outline-color: $Color-Red-Light;
             }
         }
-    }
-
-    a.Button {
-        margin-top: 21px + $Metric-Control-Space;
-        margin-left: $Metric-Control-Space;
     }
 
     &::after {

@@ -1,6 +1,6 @@
 ﻿@model CheckListManager.WebApplication.Models.Prototype
 
-<div id="PrototypesDetailPage">
+<div id="PrototypesDetailPage" class="Prototype CheckList" data-action="@BaseUrl/Prototypes/Prototype/">
     <h1>Prototype Editor @(Model.Id)-@(Model.Action)</h1>
 
     <div class="ActionBar">
@@ -8,20 +8,17 @@
     </div>
 
     <div class="ShadowPanel">
-        <h2>(Prototype name)</h2>
+        <h2>(prototype)</h2>
 
-        <form id="Protoype" action="@BaseUrl/Prototypes/Prototype/">
-            
-            <div id="Header" class="Group"></div>
+        <div id="Header" class="Group"></div>
 
-            <div class="TabContainer">
-                <div class="TabLabels">
-                    <a href="#">(New page)</a>
-                </div>
+        <div class="TabContainer">
+            <div class="TabLabels">
+                <a href="#">(new page)</a>
             </div>
+        </div>
 
-            <div class="Page"></div>
-        </form>
+        <div class="Page"></div>
     </div>
 </div>
 

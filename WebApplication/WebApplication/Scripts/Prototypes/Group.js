@@ -46,7 +46,7 @@
 
                         e.preventDefault();
                         e.stopPropagation();
-                        if (prototypes.prototype.getModel().State != prototypes.Prototype.states.draft) return;
+                        if (prototypes.prototype.getModel().state != prototypes.Prototype.states.draft) return;
 
                         addGroup();
                     }));
@@ -61,7 +61,7 @@
 
                         e.preventDefault();
                         e.stopPropagation();
-                        if (prototypes.prototype.getModel().State != prototypes.Prototype.states.draft) return;
+                        if (prototypes.prototype.getModel().state != prototypes.Prototype.states.draft) return;
 
                         matematici.dialog.popupMenu([
                             { text: "cancel", icon: "remove", cancelButton: true },
