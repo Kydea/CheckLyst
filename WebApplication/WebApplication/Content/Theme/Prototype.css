@@ -1,0 +1,53 @@
+﻿body.PrototypeEditor div.Prototype h2 {
+  cursor: pointer; }
+
+body.PrototypeEditor div.Prototype div.TabContainer div.TabLabels a.Selected {
+  cursor: pointer !important; }
+
+body.PrototypeEditor div.Prototype div.TabContainer div.TabLabels a.Red {
+  color: red !important; }
+
+body.PrototypeEditor div.Prototype div.Add {
+  clear: both; }
+  body.PrototypeEditor div.Prototype div.Add.AddGroup {
+    margin: 20px 0; }
+
+body.PrototypeEditor div.Prototype div.Group {
+  position: relative;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  position: relative;
+  padding-bottom: 20px;
+  padding-right: 20px;
+  background-color: #f5f5f5; }
+  body.PrototypeEditor div.Prototype div.Group > * {
+    float: left;
+    margin-top: 20px !important;
+    margin-left: 20px !important; }
+  body.PrototypeEditor div.Prototype div.Group.Selected {
+    background-color: #fce6e8 !important; }
+  body.PrototypeEditor div.Prototype div.Group div.Group.Selected {
+    background-color: #fce6e8 !important; }
+    body.PrototypeEditor div.Prototype div.Group div.Group.Selected::before {
+      content: none; }
+
+body.PrototypeEditor div.Prototype div.Item {
+  cursor: pointer; }
+  body.PrototypeEditor div.Prototype div.Item label {
+    cursor: pointer; }
+  body.PrototypeEditor div.Prototype div.Item.Signature input {
+    cursor: pointer; }
+  body.PrototypeEditor div.Prototype div.Item.Selected.Field label {
+    color: red; }
+  body.PrototypeEditor div.Prototype div.Item.Selected.Field div.Input {
+    background-color: #fce6e8; }
+  body.PrototypeEditor div.Prototype div.Item.Selected.Signature label {
+    color: red; }
+  body.PrototypeEditor div.Prototype div.Item.Selected.Signature input {
+    background-color: #fce6e8; }
+  body.PrototypeEditor div.Prototype div.Item.Selected.Text {
+    background-color: #fce6e8; }
+
+body.PrototypeEditor div.Prototype.Selected h2 {
+  color: red !important; }
+

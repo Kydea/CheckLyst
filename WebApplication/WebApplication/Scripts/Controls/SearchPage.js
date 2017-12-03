@@ -38,7 +38,7 @@
 				initializers: [
 					//new matematici.FixedHeader("div#Content table.Grid")
 					grid = new matematici.Grid(options.resultGridSelector, {
-						rowClick: function (row) {
+						rowClick: options.rowClickHandler || function (row) {
 							matematici.popup.show({
 								url: options.detailUrl,
 								data: row.data("values"),

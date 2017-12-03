@@ -3,59 +3,52 @@
 
     <form id="Detail" action="@BaseUrl/Infrastructure/PrototypeTypes">
         <label>
-            ID
-            <i class="fi flaticon-barcode-o" />
+            <span>ID</span>
+            <i class="Icon fi flaticon-key-o" />
             <input type="text" name="id" readonly="readonly" placeholder="(new record)" />
         </label>
 
         <label>
-            Name
-            <i class="fi flaticon-align-left" />
+            <span>Name</span>
+            <i class="Icon fi flaticon-id-card-o" />
             <input type="text" name="name" />
         </label>
 
+        <input type="hidden" name="department" />
         <label class="Clearing">
-            <input type="hidden" name="department" />
-            Department
-            <i class="fi flaticon-building-o" data-nullable="true" />
+            <span>Department</span>
+            <i class="Icon fi flaticon-building-o" data-nullable="true" />
             <input type="text" name="departmentName" readonly="readonly" />
         </label>
 
         <label class="Clearing">
-            Approvation workflow
-            <i class="fi flaticon-workflow" />
+            <span>Approvation work flow</span>
+            <i class="Icon fi flaticon-workflow" />
             <select type="text" name="approvationWorkFlow" data-nullable="true" />
         </label>
 
         <label>
-            Obslolescence workflow
-            <i class="fi flaticon-workflow" />
+            <span>Obslolescence work flow</span>
+            <i class="Icon fi flaticon-workflow" />
             <select type="text" name="obsolescenceWorkFlow" data-nullable="true" />
         </label>
 
-        <label class="Clearing">
-            Created by
-            <i class="fi flaticon-user-o" />
+        <label class="Clearing Controls2">
+            <span>Creation</span>
+            <i class="Icon fi flaticon-user-o" />
             <input type="text" name="createdBy" readonly="readonly" />
-        </label>
-
-        <label>
-            Created on
-            <i class="fi flaticon-calendar" />
+            <i class="Icon fi flaticon-calendar" />
             <input type="text" name="createdOn" readonly="readonly" data-type="DateTimeOffset" />
         </label>
 
-        <label class="Clearing">
-            Modified by
-            <i class="fi flaticon-user-o" />
+        <label class="Clearing Controls2">
+            <span>Last edit</span>
+            <i class="Icon fi flaticon-user-o" />
             <input type="text" name="modifiedBy" readonly="readonly" />
-        </label>
-
-        <label>
-            Modified on
-            <i class="fi flaticon-calendar" />
+            <i class="Icon fi flaticon-calendar" />
             <input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
         </label>
+
         <div class="Clearing"></div>
 
     </form>

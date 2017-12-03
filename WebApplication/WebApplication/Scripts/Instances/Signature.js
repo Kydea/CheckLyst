@@ -22,16 +22,16 @@
             if (!item.isTableContent())
                 label.appendTo(element);
 
-            check = $("<i />").addClass("fa fa-check").hide().appendTo(element);
+			check = $("<i />").addClass("fi flaticon-check").hide().appendTo(element);
 
             user = $("<input />").addClass("User").attr({ type: "text", readonly: true }).appendTo(element);
-            $("<i />").addClass("fa fa-user").insertAfter(user);
+			$("<i />").addClass("fi flaticon-user-o").insertAfter(user);
             date = $("<input />").addClass("Date").attr({ type: "text", readonly: true }).appendTo(element);
-            $("<i />").addClass("fa fa-calendar").insertAfter(date);
+			$("<i />").addClass("fi flaticon-calendar").insertAfter(date);
             time = $("<input />").addClass("Time").attr({ type: "text", readonly: true }).appendTo(element);
-            $("<i />").addClass("fa fa-clock-o").insertAfter(time);
+			$("<i />").addClass("fi flaticon-clock-o").insertAfter(time);
 
-            exclamation = $("<i />").addClass("fa fa-exclamation").appendTo(element).hide();
+			exclamation = $("<i />").addClass("fi flaticon-exclamation").appendTo(element).hide();
 
             button = $("<a />").addClass("Button SignButton").attr({ href: "#" }).appendTo(element);
             if (model.Cancelable)

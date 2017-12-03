@@ -1,7 +1,7 @@
 ﻿instances.PageLock = function () {
     var
         model = null,
-        labels = $("div.TabContainer div.TabLabels a i.fa-lock", instances.instance.getElement()),
+        labels = $("div.TabContainer div.TabLabels a i.flaticon-lock-o", instances.instance.getElement()),
 
         format = function (date) {
             date = new Date(date);
@@ -51,7 +51,7 @@
 					},
                     handler = function () {
                         setTimeout(function() {
-                        	matematici.dialog.show($("<span><i class=\"fa fa-lock\"></i> Page locked</span>"), "Please confirm you want to unlock the page.",
+							matematici.dialog.show($("<span><i class=\"fi flaticon-lock\"></i> Page locked</span>"), "Please confirm you want to unlock the page.",
 								[
 									{ text: "unlock the page", icon: "exclamation", handler: unlockHandler },
 									{ text: "cancel", icon: "remove", cancelButton: true }
@@ -59,7 +59,7 @@
 							)
                         }, 0);
                     };
-                matematici.dialog.show($("<span><i class=\"fa fa-lock\"></i> Page locked</span>"), createContent(index), [{ text: "close", icon: "remove", cancelButton: true }, { text: "unlock the page", icon: "exclamation", handler: handler }]);
+				matematici.dialog.show($("<span><i class=\"fi flaticon-lock\"></i> Page locked</span>"), createContent(index), [{ text: "close", icon: "remove", cancelButton: true }, { text: "unlock the page", icon: "exclamation", handler: handler }]);
             });
         };
 

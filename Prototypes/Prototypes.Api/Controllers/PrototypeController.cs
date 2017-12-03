@@ -17,11 +17,32 @@ namespace CheckListManager.Prototypes.Api.Controllers
 			_prototypeService = prototypeService;
 		}
 
-		[HttpGet]
-		[Route("Get/{Id}/{Version}")]
-		public async Task<IHttpActionResult> Get([FromUri]GetPrototypeRequest request)
+        [HttpPost]
+		[Route("Open/{Id}/{Version}")]
+		public async Task<IHttpActionResult> Open(GetPrototypeRequest request)
 		{
-			return Ok(Message.Create(await _prototypeService.GetAsync(Identity.CompanyId, request)));
+			return Ok(await _prototypeService.OpenAsync(Identity.CompanyId, request));
 		}
-	}
+
+        [HttpPost]
+        [Route("Clone/{Id}/{Version}")]
+        public async Task<IHttpActionResult> Clone(GetPrototypeRequest request)
+        {
+            return Ok(await _prototypeService.CloneAsync(Identity.CompanyId, request));
+        }
+
+        [HttpPost]
+        [Route("Version/{Id}/{Version}")]
+        public async Task<IHttpActionResult> Version(GetPrototypeRequest request)
+        {
+            return Ok(await _prototypeService.VersionAsync(Identity.CompanyId, request));
+        }
+
+        [HttpPost]
+        [Route("Create")]
+        public async Task<IHttpActionResult> Create(GetPrototypeRequest request)
+        {
+            return Ok(await _prototypeService.CreateAsync(Identity.CompanyId, request));
+        }
+    }
 }

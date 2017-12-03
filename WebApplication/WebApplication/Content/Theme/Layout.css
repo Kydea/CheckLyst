@@ -30,7 +30,7 @@ a {
   a.Right {
     float: right; }
 
-i.fa, i.fi {
+i.fi {
   font-size: 19px; }
 
 .AutoCenter {
@@ -114,13 +114,14 @@ header {
         width: 1px;
         margin: 0 10px;
         transform: translate(0, 25%); }
-      header div#UserPanel a i {
+      header div#UserPanel a i.fa {
+        display: inline-block;
         border-radius: 50%;
         color: white;
         background-color: #009688;
         width: 25px;
         height: 25px;
-        font-size: 12px;
+        font-size: 13px;
         line-height: 25px;
         text-align: center; }
       header div#UserPanel a:hover {

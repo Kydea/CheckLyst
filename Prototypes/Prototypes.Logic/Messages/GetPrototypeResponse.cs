@@ -1,4 +1,4 @@
-﻿using CheckListManager.Prototypes.Logic.Models.CheckLists;
+using CheckListManager.Prototypes.Logic.Models.CheckLists;
 
 namespace CheckListManager.Prototypes.Logic.Messages
 {
@@ -11,6 +11,7 @@ namespace CheckListManager.Prototypes.Logic.Messages
 
 		//TODO add properties from DB
 
-		public Prototype CheckList { get; set; }
+        public string State { get; set; }
+        public Prototype CheckList { get; set; }
 	}
 }

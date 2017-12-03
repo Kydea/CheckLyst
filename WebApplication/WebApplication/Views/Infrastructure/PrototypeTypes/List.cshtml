@@ -7,30 +7,28 @@
         <div class="Accordion"></div>
         <form id="Filters" action="@BaseUrl/Infrastructure/PrototypeTypes">
             <label>
-                Department
-                <i class="fi flaticon-building-o" />
+                <span>Department</span>
+                <i class="Icon fi flaticon-building-o" />
                 <select name="department" />
             </label>
             <label>
-                Name
-                <i class="fi flaticon-align-left" />
+                <span>Prototype type name</span>
+                <i class="Icon fi flaticon-folder-o" />
                 <input type="text" name="name" />
             </label>
-
-            <a id="ApplyButton" class="Button DefaultButton">search <i class="fa fa-arrow-circle-right"></i></a>
         </form>
 
         <table class="Grid">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Approvation Workflow</th>
-                    <th>Obsolescence Workflow</th>
-                    <th>Created By</th>
-                    <th>Created On</th>
-                    <th>Modified By</th>
-                    <th>Modified On</th>
+                    <th>Prototype type ID</th>
+                    <th>Prototype type name</th>
+                    <th>Approvation work flow</th>
+                    <th>Obsolescence work flow</th>
+                    <th>Created by</th>
+                    <th>Created on</th>
+                    <th>Modified by</th>
+                    <th>Modified on</th>
                 </tr>
             </thead>
             <tbody>

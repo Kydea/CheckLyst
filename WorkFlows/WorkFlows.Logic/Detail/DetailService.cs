@@ -1,0 +1,156 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using CheckListManager.Common.Core.Web.Security;
+using CheckListManager.WorkFlows.Data;
+using CheckListManager.Common.Logic.DataEngine;
+using CheckListManager.Common.Data;
+
+namespace CheckListManager.WorkFlows.Logic.Detail
+{
+    public class DetailService : IDetailService
+    {
+        private readonly IWorkFlowsRepository _workFlowsRepository;
+
+        public DetailService(IWorkFlowsRepository workFlowsRepository)
+        {
+            _workFlowsRepository = workFlowsRepository;
+        }
+
+        private DetailResponse Validate(DetailRequest record)
+        {
+            var response = new DetailResponse();
+            if (string.IsNullOrWhiteSpace(record.Description))
+                response.Fields["Description"] = new Field
+                {
+                    ValidationMessages = new List<ValidationMessage> {
+                        new ValidationMessage {
+                            Level = ValidationMessage.LevelError,
+                            Message = "Invalid description"
+                        }
+                    }
+                };
+
+            response.Valid = response.Fields.Count() == 0;
+            return response;
+        }
+
+        public async Task<DetailResponse> LoadAsync(DefaultIdentity identity, DetailRequest record)
+        {
+            var response = new DetailResponse();
+            try
+            {
+                var WorkFlow = await _workFlowsRepository.GetWorkFlowAsync(identity, record.ID.Value);
+                response.Steps = WorkFlow
+                    .WorkFlowSteps
+                    .GroupBy(s => s.Step)
+                    .OrderBy(g => g.Key)
+                    .Select(g => new Step { Signatures = g.Select(s => s.WorkFlowStepTags.Select(t => t.Tag).ToArray()).ToArray() })
+                    .ToArray();
+            }
+            catch (Exception Exception)
+            {
+                response.ValidationMessages.Add(new ValidationMessage
+                {
+                    Level = ValidationMessage.LevelError,
+                    Message = Exception.Message
+                });
+                response.Valid = false;
+            }
+
+            return response;
+        }
+
+        private List<WorkFlowSteps> BuildSteps(DefaultIdentity identity, DetailRequest record)
+        {
+            var List = new List<WorkFlowSteps>();
+            for (int Index = 0; Index < record.Steps.Count(); ++Index)
+                foreach(var Signature in record.Steps[Index].Signatures)
+                    List.Add(new WorkFlowSteps
+                    {
+                        CreatedOn = DateTimeOffset.UtcNow,
+                        CreatedBy = identity.Code,
+                        Step = Index,
+                        WorkFlowStepTags = Signature.Select(s => new WorkFlowStepTags
+                        {
+                            Tag = s
+                        }).ToList()
+                    });
+            return List;
+        }
+
+        public async Task<DetailResponse> AddAsync(DefaultIdentity identity, DetailRequest record)
+        {
+            var response = Validate(record);
+            if (response.Valid)
+                try
+                {
+                    await _workFlowsRepository.AddWorkFlowAsync(identity, new Common.Data.WorkFlows
+                    {
+                        Description = record.Description,
+                        WorkFlowSteps = BuildSteps(identity, record)
+                    });
+                }
+                catch (Exception Exception)
+                {
+                    response.ValidationMessages.Add(new ValidationMessage
+                    {
+                        Level = ValidationMessage.LevelError,
+                        Message = Exception.Message
+                    });
+                    response.Valid = false;
+                }
+
+            return response;
+        }
+
+        public async Task<DetailResponse> EditAsync(DefaultIdentity identity, DetailRequest record)
+        {
+            var response = Validate(record);
+            if (response.Valid)
+                try
+                {
+                    await _workFlowsRepository.EditWorkFlowAsync(identity, new Common.Data.WorkFlows
+                    {
+                        ID = record.ID.Value,
+                        Description = record.Description,
+                        WorkFlowSteps = BuildSteps(identity, record)
+                    });
+                }
+                catch (Exception Exception)
+                {
+                    response.ValidationMessages.Add(new ValidationMessage
+                    {
+                        Level = ValidationMessage.LevelError,
+                        Message = Exception.Message
+                    });
+                    response.Valid = false;
+                }
+
+            return response;
+        }
+
+        public async Task<DetailResponse> DeleteAsync(DefaultIdentity identity, long id)
+        {
+            var response = new DetailResponse();
+            try
+            {
+                await _workFlowsRepository.DeleteWorkFlowAsync(identity, id);
+            }
+            catch (Exception Exception)
+            {
+                response.ValidationMessages.Add(new ValidationMessage
+                {
+                    Level = ValidationMessage.LevelError,
+                    Message = Exception.Message
+                });
+                response.Valid = false;
+            }
+
+            return response;
+        }
+
+    }
+}

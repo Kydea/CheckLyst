@@ -1,12 +1,6 @@
-﻿div.Errors {
-  color: #cc0000;
-  margin-top: 20px;
-  display: none;
-  line-height: 1.5; }
-
-input.Error, select.Error {
+﻿input.Error, select.Error {
   border-color: #cc0000;
-  outline-color: #f99; }
+  outline-color: #ff3333; }
 
 label {
   display: block;
@@ -29,11 +23,6 @@ input[type=text], input[type=range], input[type=number], input[type=password], i
   font-size: 13px; }
   input[type=text][readonly], input[type=text].ReadOnly, input[type=range][readonly], input[type=range].ReadOnly, input[type=number][readonly], input[type=number].ReadOnly, input[type=password][readonly], input[type=password].ReadOnly, input[type=email][readonly], input[type=email].ReadOnly, input[type=file][readonly], input[type=file].ReadOnly, select[readonly], select.ReadOnly, textarea[readonly], textarea.ReadOnly, div.Input[readonly], div.Input.ReadOnly {
     background-color: #f5f5f5; }
-  input[type=text] + i, input[type=range] + i, input[type=number] + i, input[type=password] + i, input[type=email] + i, input[type=file] + i, select + i, textarea + i, div.Input + i {
-    position: relative;
-    float: left;
-    margin-left: -27px;
-    margin-top: 12px; }
 
 textarea {
   height: 88px; }
@@ -52,7 +41,7 @@ a.Button {
   cursor: default;
   height: 36px;
   line-height: 36px;
-  box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.5); }
+  box-shadow: rgba(0, 0, 0, 0.15) 0 0 15px 2px; }
   a.Button i.fi {
     margin-top: 8px;
     margin-right: 8px;
@@ -124,13 +113,6 @@ a.Button {
         color: #03c3b1; }
     a.Button.MiniIcon.Angle {
       margin-left: -16px; }
-  a.Button.Invalid {
-    color: #cc0000; }
-  a.Button.ReadOnly {
-    background-color: #ccc;
-    box-shadow: none; }
-    a.Button.ReadOnly:hover {
-      color: white !important; }
   a.Button.GreyGreenButton {
     background-color: #999; }
     a.Button.GreyGreenButton i.fi {
@@ -153,6 +135,26 @@ a.Button {
       background-color: #ffba00; }
       a.Button.GreyYellowButton:hover i.fi {
         color: white; }
+  a.Button.Invalid {
+    color: #cc0000; }
+  a.Button.ReadOnly {
+    background-color: #ccc;
+    box-shadow: none; }
+    a.Button.ReadOnly i.fi {
+      color: white;
+      background-color: #ccc; }
+    a.Button.ReadOnly::after {
+      background-color: #ebebeb !important;
+      background-color: white; }
+    a.Button.ReadOnly:hover {
+      background-color: #ccc !important;
+      color: white !important; }
+
+div.Errors {
+  color: #cc0000;
+  margin-top: 20px;
+  display: none;
+  line-height: 1.5; }
 
 form {
   border: 1px solid #ccc;
@@ -173,92 +175,112 @@ form {
     margin-bottom: 0 !important;
     width: calc(100% - 2 * 20px) !important; }
   form a.Button {
-    float: left; }
-  form label {
     float: left;
-    margin-top: 20px;
-    margin-left: 20px;
-    width: 200px;
-    width: 200px;
-    position: relative;
-    color: #666; }
-    form label input, form label select, form label textarea {
-      margin-top: 5px; }
-    form label input[type=checkbox] {
-      display: block;
-      margin-left: 0;
-      margin-right: 0;
-      margin-bottom: 0; }
-    form label i:not(.AutoComplete):not(.ValidationMessagesIcon).fi, form label i:not(.AutoComplete):not(.ValidationMessagesIcon).fa {
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      text-align: center;
-      height: 36px;
-      width: 36px;
-      line-height: 36px;
-      border: 1px solid #ccc;
-      background-color: #ebebeb;
-      border-radius: 3px 0 0 3px; }
-    form label i:not(.AutoComplete):not(.ValidationMessagesIcon) + select.AutoComplete + input, form label i:not(.AutoComplete):not(.ValidationMessagesIcon) + select:not(.AutoComplete), form label i:not(.AutoComplete):not(.ValidationMessagesIcon) + input.AutoComplete + input, form label i:not(.AutoComplete):not(.ValidationMessagesIcon) + input:not(.AutoComplete) {
-      padding-left: 41px; }
-    form label i.ValidationMessagesIcon {
-      color: #cc0000;
-      cursor: pointer; }
-    form label.Controls2 {
-      width: 400px; }
-      form label.Controls2 input, form label.Controls2 select {
-        width: calc(200px - 36px/2); }
-      form label.Controls2 i:not(.AutoComplete) + input:not(.AutoComplete), form label.Controls2 i:not(.AutoComplete) + input.AutoComplete + input, form label.Controls2 i:not(.AutoComplete) + input.AutoComplete + select, form label.Controls2 i:not(.AutoComplete) + select:not(.AutoComplete), form label.Controls2 i:not(.AutoComplete) + select.AutoComplete + input, form label.Controls2 i:not(.AutoComplete) + select.AutoComplete + select {
-        width: calc(200px + 36px - 36px/2); }
-    form label.Controls3 {
-      width: 600px; }
-      form label.Controls3 input, form label.Controls3 select {
-        width: calc(200px - 36px/3); }
-      form label.Controls3 i:not(.AutoComplete) + input:not(.AutoComplete), form label.Controls3 i:not(.AutoComplete) + input.AutoComplete + input, form label.Controls3 i:not(.AutoComplete) + input.AutoComplete + select, form label.Controls3 i:not(.AutoComplete) + select:not(.AutoComplete), form label.Controls3 i:not(.AutoComplete) + select.AutoComplete + input, form label.Controls3 i:not(.AutoComplete) + select.AutoComplete + select {
-        width: calc(200px + 36px - 36px/3); }
-    form label.Controls2, form label.Controls3 {
-      font-size: 0;
-      white-space: nowrap; }
-      form label.Controls2 span, form label.Controls3 span {
-        width: calc(100% - 20px);
-        display: block; }
-      form label.Controls2 > *, form label.Controls3 > * {
-        font-size: 1rem; }
-      form label.Controls2 input, form label.Controls2 select, form label.Controls3 input, form label.Controls3 select {
-        float: none;
-        border-radius: 0;
-        display: inline-block; }
-        form label.Controls2 input:not(.AutoComplete-Filter), form label.Controls2 select:not(.AutoComplete-Filter), form label.Controls3 input:not(.AutoComplete-Filter), form label.Controls3 select:not(.AutoComplete-Filter) {
-          border-left: none; }
-    form label.Controls2::after, form label.Controls3::after, form label.FullWidth::after {
-      content: "";
-      display: table;
-      clear: both; }
-    form label.FullWidth {
-      width: calc(100% - 20px);
-      display: block; }
-      form label.FullWidth.Controls2 input, form label.FullWidth.Controls2 select {
-        width: calc(50% - 36px/2); }
-      form label.FullWidth.Controls2 i:not(.AutoComplete) + input:not(.AutoComplete), form label.FullWidth.Controls2 i:not(.AutoComplete) + input.AutoComplete + input, form label.FullWidth.Controls2 i:not(.AutoComplete) + input.AutoComplete + select, form label.FullWidth.Controls2 i:not(.AutoComplete) + select:not(.AutoComplete), form label.FullWidth.Controls2 i:not(.AutoComplete) + select.AutoComplete + input, form label.FullWidth.Controls2 i:not(.AutoComplete) + select.AutoComplete + select {
-        width: calc(50% + 36px - 36px/2); }
-      form label.FullWidth.Controls3 input, form label.FullWidth.Controls3 select {
-        width: calc(33.33% - 36px/3); }
-      form label.FullWidth.Controls3 i:not(.AutoComplete) + input:not(.AutoComplete), form label.FullWidth.Controls3 i:not(.AutoComplete) + input.AutoComplete + input, form label.FullWidth.Controls3 i:not(.AutoComplete) + input.AutoComplete + select, form label.FullWidth.Controls3 i:not(.AutoComplete) + select:not(.AutoComplete), form label.FullWidth.Controls3 i:not(.AutoComplete) + select.AutoComplete + input, form label.FullWidth.Controls3 i:not(.AutoComplete) + select.AutoComplete + select {
-        width: calc(33.33% + 36px - 36px/3); }
-    form label.Error i {
-      border-color: #cc0000 !important; }
-    form label.Error input, form label.Error select {
-      border-color: #cc0000;
-      outline-color: #ff3333; }
-  form a.Button {
     margin-top: 41px;
     margin-left: 20px; }
-  form::after {
-    content: "";
-    display: table;
-    clear: both; }
-  form div.Errors {
-    margin-top: 20px;
-    margin-left: 20px; }
+
+form label, div.CheckList label {
+  float: left;
+  margin-top: 20px;
+  margin-left: 20px;
+  width: 200px;
+  max-width: calc(100% - 20px);
+  position: relative;
+  color: #666;
+  padding-top: calc(1em + 5px); }
+  form label input, form label select, form label textarea, form label div.Input, div.CheckList label input, div.CheckList label select, div.CheckList label textarea, div.CheckList label div.Input {
+    margin-top: 5px; }
+  form label input[type=checkbox], div.CheckList label input[type=checkbox] {
+    display: block;
+    margin-left: 0;
+    margin-right: 0;
+    margin-bottom: 0; }
+  form label > span, div.CheckList label > span {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%; }
+  form label i.Icon, div.CheckList label i.Icon {
+    position: absolute;
+    text-align: center;
+    height: 36px;
+    width: 36px;
+    line-height: 36px;
+    border: 1px solid #ccc;
+    background-color: #ebebeb;
+    border-radius: 3px 0 0 3px;
+    margin-left: 0; }
+    form label i.Icon:first-of-type, div.CheckList label i.Icon:first-of-type {
+      left: 0; }
+    form label i.Icon + select.AutoComplete + input, form label i.Icon + select:not(.AutoComplete), form label i.Icon + input.AutoComplete + input, form label i.Icon + input:not(.AutoComplete), form label i.Icon + div.Input.AutoComplete + input, form label i.Icon + div.Input:not(.AutoComplete), div.CheckList label i.Icon + select.AutoComplete + input, div.CheckList label i.Icon + select:not(.AutoComplete), div.CheckList label i.Icon + input.AutoComplete + input, div.CheckList label i.Icon + input:not(.AutoComplete), div.CheckList label i.Icon + div.Input.AutoComplete + input, div.CheckList label i.Icon + div.Input:not(.AutoComplete) {
+      padding-left: 41px; }
+  form label i.ValidationMessagesIcon, div.CheckList label i.ValidationMessagesIcon {
+    color: #cc0000;
+    cursor: pointer; }
+  form label.Narrow, div.CheckList label.Narrow {
+    width: unset; }
+  form label.Width150, div.CheckList label.Width150 {
+    width: 300px; }
+  form label.Width200, div.CheckList label.Width200 {
+    width: 420px; }
+  form label.Error i, div.CheckList label.Error i {
+    border-color: #cc0000 !important; }
+  form label.Error input, form label.Error select, form label.Error div.Input, div.CheckList label.Error input, div.CheckList label.Error select, div.CheckList label.Error div.Input {
+    border-color: #cc0000;
+    outline-color: #ff3333; }
+  @media only screen and (min-width: 460px) {
+    form label .Icon, div.CheckList label .Icon {
+      bottom: 0; }
+    form label input + i.Icon, form label select + i.Icon, form label div.AutoComplete-List + i.Icon, form label div.Input + i.Icon, div.CheckList label input + i.Icon, div.CheckList label select + i.Icon, div.CheckList label div.AutoComplete-List + i.Icon, div.CheckList label div.Input + i.Icon {
+      border-radius: 0; }
+    form label.Controls2 > *:not(span), form label.Controls3 > *:not(span), div.CheckList label.Controls2 > *:not(span), div.CheckList label.Controls3 > *:not(span) {
+      float: left; }
+    form label.Controls2 > *:not(span):not(i):not(div), form label.Controls3 > *:not(span):not(i):not(div), div.CheckList label.Controls2 > *:not(span):not(i):not(div), div.CheckList label.Controls3 > *:not(span):not(i):not(div) {
+      border-right: none;
+      border-radius: 5px 0 0 5px; }
+      form label.Controls2 > *:not(span):not(i):not(div):last-child, form label.Controls3 > *:not(span):not(i):not(div):last-child, div.CheckList label.Controls2 > *:not(span):not(i):not(div):last-child, div.CheckList label.Controls3 > *:not(span):not(i):not(div):last-child {
+        border-right: solid 1px #ccc;
+        border-radius: 5px; }
+    form label.Controls2, div.CheckList label.Controls2 {
+      width: 420px; }
+      form label.Controls2 > *:not(span):not(.fi), div.CheckList label.Controls2 > *:not(span):not(.fi) {
+        width: calc(50% + 10px); }
+        form label.Controls2 > *:not(span):not(.fi):last-child, div.CheckList label.Controls2 > *:not(span):not(.fi):last-child {
+          width: calc(50% - 10px); }
+      form label.Controls2 input ~ select + input, form label.Controls2 select ~ select + input, div.CheckList label.Controls2 input ~ select + input, div.CheckList label.Controls2 select ~ select + input {
+        width: calc(50% - 10px) !important;
+        border-right: solid 1px #ccc;
+        border-radius: 5px; }
+      form label.Controls2 i.Icon ~ i.Icon, div.CheckList label.Controls2 i.Icon ~ i.Icon {
+        left: calc(50% + 10px); }
+    form label.Controls3, div.CheckList label.Controls3 {
+      width: 640px; }
+      form label.Controls3 > *:not(span):not(.fi), div.CheckList label.Controls3 > *:not(span):not(.fi) {
+        width: calc(33.33% + 6.66667px); }
+        form label.Controls3 > *:not(span):not(.fi):last-child, div.CheckList label.Controls3 > *:not(span):not(.fi):last-child {
+          width: calc(33.33% - 13.33333px); }
+      form label.Controls3 input input ~ select + input, form label.Controls3 input select ~ select + input, form label.Controls3 select input ~ select + input, form label.Controls3 select select ~ select + input, div.CheckList label.Controls3 input input ~ select + input, div.CheckList label.Controls3 input select ~ select + input, div.CheckList label.Controls3 select input ~ select + input, div.CheckList label.Controls3 select select ~ select + input {
+        width: calc(33.33% - 13.33333px);
+        border-right: solid 1px #ccc;
+        border-radius: 5px; }
+      form label.Controls3 i.Icon ~ i.Icon, div.CheckList label.Controls3 i.Icon ~ i.Icon {
+        width: calc(33.33% + 6.66667px); }
+      form label.Controls3 i.Icon ~ i.Icon ~ i.Icon, div.CheckList label.Controls3 i.Icon ~ i.Icon ~ i.Icon {
+        width: calc(66.66% + 13.33333px); } }
+  @media only screen and (max-width: 459px) {
+    form label, div.CheckList label {
+      width: calc(100% - 20px); }
+      form label .Icon, div.CheckList label .Icon {
+        margin-top: 5px; } }
+  form label.FullWidth, div.CheckList label.FullWidth {
+    width: calc(100% - 20px); }
+
+form::after, div.CheckList::after {
+  content: "";
+  display: table;
+  clear: both; }
+
+form div.Errors, div.CheckList div.Errors {
+  margin-top: 20px;
+  margin-left: 20px; }
 

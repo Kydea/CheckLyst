@@ -1,29 +1,29 @@
 ﻿<div id="PrototypesListPage">
     <h1>Prototypes List</h1>
 
-    <div class="ActionBar"></div>
+    <div class="ActionBar">
+        <a id="AddButton" href="#" class="Button"><i class="fi flaticon-plus"></i> New empty prototype</a>
+    </div>
 
     <div class="ShadowPanel">
         <div class="Accordion"></div>
         <form id="Filters" action="@BaseUrl/Prototypes/List">
-            <label>
-                Name
-                <i class="fi flaticon-departments" />
-                <input type="text" name="name" />
-            </label>
-            <label>
-                Department
-                <i class="fi flaticon-departments" />
+            <label class="Controls2">
+                <span>Prototype type</span>
+                <i class="Icon fi flaticon-building-o" />
                 <select name="department" class="Trigger" />
-            </label>
-            <label>
-                Prototype Type
-                <i class="fi flaticon-departments" />
+                <i class="Icon fi flaticon-folder-o" />
                 <select name="prototypeType" />
             </label>
             <label>
-                State
-                <i class="fi flaticon-departments" />
+                <span>Prototype name</span>
+                
+                <i class="Icon fi flaticon-prototype" />
+                <input type="text" name="name" />
+            </label>
+            <label>
+                <span>Prototype state</span>
+                <i class="Icon fi flaticon-battery" />
                 <select name="state" />
             </label>
         </form>
@@ -35,28 +35,28 @@
                     <th>Name</th>
                     <th>Description</th>
                     <th>Version</th>
-                    <th>Validity Start Date</th>
-                    <th>Validity End Date</th>
-                    <th>Created By</th>
-                    <th>Created On</th>
-                    <th>Modified By</th>
-                    <th>Modified On</th>
                     <th>State</th>
+                    <th>Validity start date</th>
+                    <th>Validity end date</th>
+                    <th>Created by</th>
+                    <th>Created on</th>
+                    <th>Modified by</th>
+                    <th>Modified on</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
+                <tr class="Handler">
                     <td data-column="id"></td>
                     <td data-column="name"></td>
                     <td data-column="description"></td>
                     <td data-column="version"></td>
+                    <td data-column="versionState"></td>
                     <td data-column="validityFrom" data-type="DateTimeOffset"></td>
                     <td data-column="validityUntil" data-type="DateTimeOffset"></td>
                     <td data-column="createdBy"></td>
                     <td data-column="createdOn" data-type="DateTimeOffset"></td>
                     <td data-column="modifiedBy"></td>
                     <td data-column="modifiedOn" data-type="DateTimeOffset"></td>
-                    <td data-column="versionState"></td>
                 </tr>
                 <tr class="NoRecord"><td>(no record)</td></tr>
             </tbody>
@@ -67,16 +67,43 @@
 </div>
 
 <script type="text/javascript">
+    var
+        createNewVersionHandler = function (id) {
+            matematici.navigator.open("@Url.Action("Version")/" + id);
+        },
+
+        openPrototypeHandler = function (id) {
+            matematici.navigator.open("@Url.Action("Detail")/" + id);
+        },
+
+        useAsTemplateHandler = function (id) {
+            matematici.navigator.open("@Url.Action("Clone")/" + id);
+        };
+
     matematici.events.onPageLoad = function (callback) {
-        new matematici.SearchPage({
+        var searchPage = new matematici.SearchPage({
             pageName: "Prototypes",
-            detailUrl: "@Url.Action("Detail")",
             filterFormSelector: "form#Filters",
             resultGridSelector: "div#Content table.Grid",
             bindEvent: "Bind",
+            readOnly: true,
             breadCrumbs: [
                 { content: "prototypes" }
-            ]
+            ],
+
+            rowClickHandler: function (row) {
+                var buttons = [];
+                buttons.push({ text: "cancel", icon: "times", cancelButton: true });
+                if ($(this).data("state") != prototypes.Prototype.states.draft) buttons.push({ text: "new version", icon: "file-o", handler: createNewVersionHandler, data: row.data("values").id });
+                buttons.push({ text: "use as template", icon: "clone-o", handler: useAsTemplateHandler, data: row.data("values").id });
+                buttons.push({ text: "open", icon: "folder-open-o", handler: openPrototypeHandler, data: row.data("values").id });
+
+                matematici.dialog.popupMenu(buttons);
+            }
+        });
+
+        $("#AddButton").on("click", function (e) {
+            matematici.navigator.open("@Url.Action("Create")");
         });
 
         callback.call();

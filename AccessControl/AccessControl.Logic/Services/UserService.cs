@@ -14,6 +14,8 @@ using CheckListManager.Common.Logic.Cache;
 using CheckListManager.Common.Logic.Queue;
 using CheckListManager.Common.Logic.Services;
 using NLog;
+using CheckListManager.Common.Logic.DataEngine;
+using CheckListManager.Common.Core.Web.Security;
 
 namespace CheckListManager.AccessControl.Logic.Services
 {
@@ -163,6 +165,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                 Description = u.Description,
                 Email = u.Email,
 				Enabled = u.Enabled,
+                AuthenticationCode = u.AuthenticationCode,
                 LastLoginOn = u.LastLoginOn,
                 CreatedBy = u.CreatedBy,
                 CreatedOn = u.CreatedOn,
@@ -179,20 +182,225 @@ namespace CheckListManager.AccessControl.Logic.Services
 			};
 		}
 
-		public async Task<AddUserResponse> AddUserAsync(long companyId, AddUserRequest request)
+        private UserResponse Validate(UserRequest record)
+        {
+            var response = new UserResponse();
+            if (string.IsNullOrWhiteSpace(record.Code))
+                response.Fields["Code"] = new Field
+                {
+                    ValidationMessages = new List<ValidationMessage> {
+                        new ValidationMessage {
+                            Level = ValidationMessage.LevelError,
+                            Message = "Invalid code"
+                        }
+                    }
+                };
+
+            if (string.IsNullOrWhiteSpace(record.Description))
+                response.Fields["Description"] = new Field
+                {
+                    ValidationMessages = new List<ValidationMessage> {
+                        new ValidationMessage {
+                            Level = ValidationMessage.LevelError,
+                            Message = "Invalid value"
+                        }
+                    }
+                };
+
+            if (!string.IsNullOrEmpty(record.Password) && record.Password.Length < 8)
+                response.Fields["Password"] = new Field
+                {
+                    ValidationMessages = new List<ValidationMessage> {
+                        new ValidationMessage {
+                            Level = ValidationMessage.LevelError,
+                            Message = "Password must be longer then 8 character"
+                        }
+                    }
+                };
+
+            if (!(string.IsNullOrEmpty(record.Password) && string.IsNullOrEmpty(record.Password2)) && record.Password != record.Password2)
+                response.Fields["Password2"] = new Field
+                {
+                    ValidationMessages = new List<ValidationMessage> {
+                        new ValidationMessage {
+                            Level = ValidationMessage.LevelError,
+                            Message = "Password and confirm password must coincide"
+                        }
+                    }
+                };
+
+            response.Valid = response.Fields.Count() == 0;
+            return response;
+        }
+
+        public async Task<UserResponse> LoadUserAsync(DefaultIdentity identity, UserRequest record)
+        {
+            var response = new UserResponse();
+            try
+            {
+                var User = await _userRepository.GetAsync(identity.CompanyId, record.Code);
+
+                response.GeneralFunctions = User.UserFunctions.Where(f => f.FunctionGroup != "Prototypes" && f.FunctionGroup != "Instances")
+                    .Select(gf => new Function { functionGroup = gf.FunctionGroup, function = gf.Function })
+                    .ToArray();
+
+                response.PrototypeFunctions = User.UserFunctions.Where(f => f.FunctionGroup == "Prototypes")
+                    .GroupBy(pf => pf.PrototypeType)
+                    .Select(g => new Function {
+                        department = g.First().Department,
+                        prototypeType = g.Key,
+                        functionGroup = "Prototypes",
+                        functions = g.Select(pf => pf.Function).ToArray(),
+                        level = g.First().Tag 
+                    })
+                    .ToArray();
+
+                response.InstanceFunctions = User.UserFunctions.Where(f => f.FunctionGroup == "Instances")
+                    .GroupBy(pf => pf.PrototypeType)
+                    .Select(g => new Function
+                    {
+                        department = g.First().Department,
+                        prototypeType = g.Key,
+                        functionGroup = "Instances",
+                        functions = g.Select(pf => pf.Function).ToArray(),
+                        level = g.First().Tag
+                    })
+                    .ToArray();
+            }
+            catch (Exception Exception)
+            {
+                response.ValidationMessages.Add(new ValidationMessage
+                {
+                    Level = ValidationMessage.LevelError,
+                    Message = Exception.Message
+                });
+                response.Valid = false;
+            }
+
+            return response;
+        }
+
+        private List<UserFunctions> BuildFunctions(DefaultIdentity identity, UserRequest record)
+        {
+            var List = new List<UserFunctions>();
+            foreach (var Function in record.GeneralFunctions)
+                List.Add(new UserFunctions
+                {
+                    FunctionGroup = Function.functionGroup,
+                    Function = Function.function,
+                    CreatedOn = DateTimeOffset.UtcNow,
+                    CreatedBy = identity.Code
+                });
+
+            foreach (var Row in record.PrototypeFunctions)
+                foreach (var Function in Row.functions)
+                    List.Add(new UserFunctions
+                    {
+                        Department = Row.department,
+                        PrototypeType = Row.prototypeType,
+                        FunctionGroup = "Prototypes",
+                        Function = Function,
+                        Tag = Row.level,
+                        CreatedOn = DateTimeOffset.UtcNow,
+                        CreatedBy = identity.Code
+                    });
+
+            foreach (var Row in record.InstanceFunctions)
+                foreach (var Function in Row.functions)
+                    List.Add(new UserFunctions
+                    {
+                        Department = Row.department,
+                        PrototypeType = Row.prototypeType,
+                        FunctionGroup = "Instances",
+                        Function = Function,
+                        Tag = Row.level,
+                        CreatedOn = DateTimeOffset.UtcNow,
+                        CreatedBy = identity.Code
+                    });
+
+            return List;
+        }
+
+        public async Task<UserResponse> AddUserAsync(DefaultIdentity identity, UserRequest record)
 		{
-			var user = _mapper.Map<Users>(request);
+            var response = Validate(record);
+            if (response.Valid)
+                try
+                {
+                    await _userRepository.AddAsync(identity, new Users
+                    {
+                        Code = record.Code,
+                        Description = record.Description,
+                        Email = record.Email,
+                        Password = _hashService.HashStringToBytes(record.Password),
+                        AuthenticationCode = record.AuthenticationCode,
+                        Enabled = record.Enabled,
+                        
+                        UserFunctions = BuildFunctions(identity, record)
+                    });
+                }
+                catch (Exception Exception)
+                {
+                    response.ValidationMessages.Add(new ValidationMessage
+                    {
+                        Level = ValidationMessage.LevelError,
+                        Message = Exception.Message
+                    });
+                    response.Valid = false;
+                }
 
-			user.Company = companyId;
-			user.CreatedOn = DateTimeOffset.UtcNow;
-			user.Password = _hashService.HashStringToBytes(request.Password);
-
-			await _userRepository.AddAsync(user);
-
-			return new AddUserResponse
-			{
-				Code = user.Code
-			};
+            return response;
 		}
-	}
+
+        public async Task<UserResponse> EditUserAsync(DefaultIdentity identity, UserRequest record)
+        {
+            var response = Validate(record);
+            if (response.Valid)
+                try
+                {
+                    await _userRepository.EditAsync(identity, new Users
+                    {
+                        Code = record.Code,
+                        Description = record.Description,
+                        Email = record.Email,
+                        Password = _hashService.HashStringToBytes(record.Password),
+                        Enabled = record.Enabled,
+                        AuthenticationCode = record.AuthenticationCode,
+
+                        UserFunctions = BuildFunctions(identity, record)
+                    });
+                }
+                catch (Exception Exception)
+                {
+                    response.ValidationMessages.Add(new ValidationMessage
+                    {
+                        Level = ValidationMessage.LevelError,
+                        Message = Exception.Message
+                    });
+                    response.Valid = false;
+                }
+
+            return response;
+        }
+
+        public async Task<UserResponse> DeleteUserAsync(DefaultIdentity identity, string code)
+        {
+            var response = new UserResponse();
+            try
+            {
+                await _userRepository.DeleteAsync(identity.CompanyId, code);
+            }
+            catch (Exception Exception)
+            {
+                response.ValidationMessages.Add(new ValidationMessage
+                {
+                    Level = ValidationMessage.LevelError,
+                    Message = Exception.Message
+                });
+                response.Valid = false;
+            }
+
+            return response;
+        }
+    }
 }

@@ -41,7 +41,7 @@
                 model = item.getModel(),
                 state = prototypes.prototype.getModel().State;
 
-            if (model.TypeName == "Prototype") {
+            if (model.typeName == "Prototype") {
                 new prototypes.Property(
                     this, new prototypes.SimpleValueProperty(model, "Code", {
                         readOnly: state != prototypes.Prototype.states.draft || prototypes.prototype.getModel().Version > 0
@@ -58,7 +58,7 @@
                     "The version number."
                 );
                 new prototypes.Property(
-                    this, new prototypes.SimpleValueProperty(model, "Description", { readOnly: state != prototypes.Prototype.states.draft }).setHandler(function () { $("h2", item.getElement()).text(model.Description); }),
+                    this, new prototypes.SimpleValueProperty(model, "Description", { readOnly: state != prototypes.Prototype.states.draft }).setHandler(function () { $("h2", item.getElement()).text(model.description); }),
                     "Description", "A short description of the prototype."
                 );
                 new prototypes.Property(
@@ -94,7 +94,7 @@
                         message: "Specify a future date or leave empty"
                     }, {
                         action: function (value) {
-                            return !model.ValidFrom || !value || new Date(model.ValidFrom) < value;
+                            return !model.validFrom || !value || new Date(model.validFrom) < value;
                         },
                         message: "Validity end must be greater than validity start"
                     }]), "Validity end",
@@ -149,7 +149,7 @@
                     this, new prototypes.SimpleValueProperty(model, "Code", {
                         readOnly: state != prototypes.Prototype.states.draft
                     }).setHandler(function (value) {
-                        item.getElement().data("code", model.Code);
+                        item.getElement().data("code", model.code);
                         prototypes.prototype.completeModel();
                     }).setCheck([{
                         action: function (value) {
@@ -196,7 +196,7 @@
                             message: "invalid value"
                         }
                     ]).setHandler(function () {
-                        item.setFontSize(model.FontSize);
+                        item.setFontSize(model.fontSize);
                     }), "Font size",
                     "The size in pixel of the text (leave empty for the default font size)."
                 );
@@ -209,7 +209,7 @@
                         { label: "Grey", code: "#9e9e9e" },
                         { label: "Orange", code: "#f90" },
                     ], { readOnly: state != prototypes.Prototype.states.draft }).setHandler(function (value) {
-                        item.setColor(model.Color);
+                        item.setColor(model.color);
                     }), "Color",
                     "The color the text."
                 );
@@ -218,11 +218,11 @@
                     "Determines which signature locks the element. Select the signature in the list or by the command 'set by click'."
                 );
 
-                switch (model.TypeName) {
+                switch (model.typeName) {
                     case "Page":
                         new prototypes.Property(
                             this, new prototypes.SimpleValueProperty(model, "Description", { readOnly: state != prototypes.Prototype.states.draft }).setHandler(function () {
-                                $("div.TabLabels a.Selected", prototypes.prototype.getTab().getElement()).text(model.Description);
+                                $("div.TabLabels a.Selected", prototypes.prototype.getTab().getElement()).text(model.description);
                             }), "Caption",
                             "The caption of the page."
                         );
@@ -230,7 +230,7 @@
                     case "Group":
                         new prototypes.Property(
                             this, new prototypes.SimpleValueProperty(model, "Description", { fullHeight: true, readOnly: state != prototypes.Prototype.states.draft }).setHandler(function () {
-                                item.getElement().children("h3").text(model.Description);
+                                item.getElement().children("h3").text(model.description);
                             }), "Caption",
                             "The caption of the group."
                         );
@@ -243,21 +243,21 @@
                         if (!tableContent && parent.getModel().Header !== model) {
                             new prototypes.Property(
                                 this, new prototypes.BooleanProperty(model, "Iterator", state != prototypes.Prototype.states.draft).setHandler(function () {
-                                    showAsTable.getType().setReadOnly(!model.Iterator);
-                                    instanceIterationsNumber.getType().setReadOnly(!model.Iterator);
-                                    prototypeIterationsNumber.getType().setReadOnly(!model.Iterator);
-                                    disableAdd.getType().setReadOnly(!model.Iterator);
-                                    disableRemove.getType().setReadOnly(!model.Iterator);
-                                    disableMove.getType().setReadOnly(!model.Iterator);
+                                    showAsTable.getType().setReadOnly(!model.iterator);
+                                    instanceIterationsNumber.getType().setReadOnly(!model.iterator);
+                                    prototypeIterationsNumber.getType().setReadOnly(!model.iterator);
+                                    disableAdd.getType().setReadOnly(!model.iterator);
+                                    disableRemove.getType().setReadOnly(!model.iterator);
+                                    disableMove.getType().setReadOnly(!model.iterator);
 
-                                    if (!model.Iterator) {
-                                        model.InstanceIterationsNumber = 0;
-                                        model.PrototypeIterationsNumber = 0;
+                                    if (!model.iterator) {
+                                        model.instanceIterationsNumber = 0;
+                                        model.prototypeIterationsNumber = 0;
 
-                                        model.ShowAsTable =
-                                        model.DisableAdd =
-                                        model.DisableRemove =
-                                        model.DisableMove =
+                                        model.showAsTable =
+                                        model.disableAdd =
+                                        model.disableRemove =
+                                        model.disableMove =
                                             false;
                                     }
                                 }), "Iterator",
@@ -267,27 +267,27 @@
                             var showAsTable = null;
                             if (parent.getModel().Header !== model)
                                 showAsTable = new prototypes.Property(
-                                    this, new prototypes.BooleanProperty(model, "ShowAsTable", state != prototypes.Prototype.states.draft || !model.Iterator), "Show as table",
+                                    this, new prototypes.BooleanProperty(model, "ShowAsTable", state != prototypes.Prototype.states.draft || !model.iterator), "Show as table",
                                     "Displays the group as a table."
                                 );
                             var instanceIterationsNumber = new prototypes.Property(
-                                this, new prototypes.SimpleValueProperty(model, "InstanceIterations", { number: true, readOnly: state != prototypes.Prototype.states.draft || !model.Iterator }), "Instance iterations",
+                                this, new prototypes.SimpleValueProperty(model, "InstanceIterations", { number: true, readOnly: state != prototypes.Prototype.states.draft || !model.iterator }), "Instance iterations",
                                 "Creates the specified number of iterations automatically for new instances."
                             );
                             var prototypeIterationsNumber = new prototypes.Property(
-                                this, new prototypes.SimpleValueProperty(model, "PrototypeIterations", { number: true, readOnly: state != prototypes.Prototype.states.draft || !model.Iterator }), "Prototype iterations",
+                                this, new prototypes.SimpleValueProperty(model, "PrototypeIterations", { number: true, readOnly: state != prototypes.Prototype.states.draft || !model.iterator }), "Prototype iterations",
                                 "Creates the specified number of iterations automatically int the PDF version."
                             );
                             var disableAdd = new prototypes.Property(
-                                this, new prototypes.BooleanProperty(model, "DisableAdd", state != prototypes.Prototype.states.draft || !model.Iterator), "Disable add",
+                                this, new prototypes.BooleanProperty(model, "DisableAdd", state != prototypes.Prototype.states.draft || !model.iterator), "Disable add",
                                 "Disable the add button of the iterator."
                             );
                             var disableRemove = new prototypes.Property(
-                                this, new prototypes.BooleanProperty(model, "DisableRemove", state != prototypes.Prototype.states.draft || !model.Iterator), "Disable remove",
+                                this, new prototypes.BooleanProperty(model, "DisableRemove", state != prototypes.Prototype.states.draft || !model.iterator), "Disable remove",
                                 "Disable the remove button of the iterator."
                             );
                             var disableMove = new prototypes.Property(
-                                this, new prototypes.BooleanProperty(model, "DisableMove", state != prototypes.Prototype.states.draft || !model.Iterator), "Disable move",
+                                this, new prototypes.BooleanProperty(model, "DisableMove", state != prototypes.Prototype.states.draft || !model.iterator), "Disable move",
                                 "Disable the move up and move down buttons of the iterator."
                             );
                         }
@@ -300,7 +300,7 @@
                     case "Text":
                         new prototypes.Property(
                             this, new prototypes.SimpleValueProperty(model, "Description", { fullHeight: true, readOnly: state != prototypes.Prototype.states.draft }).setHandler(function () {
-                                $("p", item.getElement()).html((model.Description || '').split('\n').join('<br />'));
+                                $("p", item.getElement()).html((model.description || '').split('\n').join('<br />'));
                             }), "Content",
                             "The content of the text."
                         );
@@ -308,7 +308,7 @@
                     case "Field":
                         new prototypes.Property(
                             this, new prototypes.SimpleValueProperty(model, "Description", { readOnly: state != prototypes.Prototype.states.draft }).setHandler(function () {
-                                $("label", item.getElement()).text(model.Description);
+                                $("label", item.getElement()).text(model.description);
                             }), "Label",
                             "The label of the item."
                         );
@@ -323,14 +323,14 @@
                                 }
                             ]).setHandler(function () {
                                 var element = item.getElement();
-                                element.toggleClass("MultiLine", model.LinesCount > 0);
-                                $("div.Input", element).height(24 * model.LinesCount - 10);
+                                element.toggleClass("MultiLine", model.linesCount > 0);
+                                $("div.Input", element).height(24 * model.linesCount - 10);
                             }), "Lines count",
                             "The number of text lines shown."
                         );
                         new prototypes.Property(
                             this, new prototypes.BooleanProperty(model, "NewLine", state != prototypes.Prototype.states.draft).setHandler(function () {
-                                item.getElement().toggleClass("NewLine", model.NewLine);
+                                item.getElement().toggleClass("NewLine", model.newLine);
                             }), "New line",
                             "If checked, the field breaks the line."
                         );
@@ -353,13 +353,13 @@
                     case "Signature":
                         new prototypes.Property(
                             this, new prototypes.SimpleValueProperty(model, "Description", { readOnly: state != prototypes.Prototype.states.draft }).setHandler(function () {
-                                $("label", item.getElement()).text(model.Description);
+                                $("label", item.getElement()).text(model.description);
                             }), "Label",
                             "The label (cause) of the signature."
                         );
                         new prototypes.Property(
                             this, new prototypes.SimpleValueProperty(model, "ButtonLabel", { readOnly: state != prototypes.Prototype.states.draft }).setHandler(function () {
-                                $("a.Button", item.getElement()).text(model.ButtonLabel);
+                                $("a.Button", item.getElement()).text(model.buttonLabel);
                             }), "Button label",
                             "The label of the button."
                         );
@@ -385,7 +385,7 @@
                         );
                         break;
                     default:
-                        alert("Unexpected type name " + model.TypeName);
+                        alert("Unexpected type name " + model.typeName);
                         console.log(model);
                 }
             }

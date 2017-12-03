@@ -86,7 +86,7 @@ div.Popup {
 
     @media #{$Media-Extended} {
         div.Container {
-            box-shadow: rgba(0, 0, 0, 0.16) 0 0 16px 5px;
+            box-shadow: $Box-Shadow;
             max-width: calc(100vw - #{2 * $Metric-Separator-Extended});
             margin: 0 auto;
             border-radius: 15px;
@@ -99,7 +99,7 @@ div.Popup {
 
     @media #{$Media-Mobile} {
         div.Container {
-            width: 100%;
+            width: 100% !important;
             min-height: 1vh;
 
             h2 {

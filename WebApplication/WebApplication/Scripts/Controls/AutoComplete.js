@@ -14,6 +14,7 @@ matematici.AutoComplete = function (selector) {
 		noRow,
 		oldValue,
 		multiple,
+		open,
 
 		setValue = function () {
 			var value = element.val();
@@ -42,7 +43,7 @@ matematici.AutoComplete = function (selector) {
 
 		setWidth = function () {
 			var width = label.outerWidth(), position = label.position();
-			input.width(width - parseInt(input.css("padding-left")) - parseInt(input.css("padding-right")) - 2);
+			input.width(width - parseInt(input.css("padding-left")) - parseInt(input.css("padding-right")) - parseInt(input.css("border-left-width")) - parseInt(input.css("border-right-width")));
 			items.each(function () {
 				var itemWidth = $(this).outerWidth();
 				if (itemWidth > width)
@@ -72,16 +73,21 @@ matematici.AutoComplete = function (selector) {
 			input = $("<input />").addClass("AutoComplete-Filter").attr({ type: "text" }).hide().insertAfter(label);
 			list = $("<div />").addClass("AutoComplete-List").insertAfter(input);
 			icon = $("<i />").addClass("AutoComplete fi flaticon-arrow-down").insertAfter(input);
-			noRow = $("<i />").addClass("fi flaticon-meno");
-			element.parent("label").on("click", function (e) {
-				label.focus();
-				e.stopPropagation();
-			});
+			noRow = $("<i />").addClass("fi flaticon-minus");
+			element.parent("label")
+				.on("click", function (e) {
+					console.log($("input:visible", this).eq(0));
+					$("input:visible", this).eq(0).focus();
+					e.stopPropagation();
+				});
 			label
 				.on("focus", function () {
 					showList();
 					input.focus();
 					input.select();
+				})
+				.on("click", function (e) {
+					e.stopPropagation();
 				});
 			input
 				.on("keydown", function (e) {
@@ -115,6 +121,14 @@ matematici.AutoComplete = function (selector) {
 					else {
 						setCurrentItem($(this).prevAll().size());
 						hideList();
+					}
+				});
+			icon.
+				on("click", function (e) {
+					if (open) {
+						hideList();
+						e.preventDefault();
+						e.stopPropagation();
 					}
 				});
 			updateList();
@@ -172,6 +186,7 @@ matematici.AutoComplete = function (selector) {
 				$(this).data("autoComplete").hideList();
 			});
 
+			open = true;
 			element.addClass("Open");
 			label.addClass("Open");
 			input.show();
@@ -195,6 +210,7 @@ matematici.AutoComplete = function (selector) {
 			if (!multiple) setCurrentItem(null);
 			label.removeClass("Open");
 			element.removeClass("Open");
+			open = false;
 			if (oldValue != (element.val() || "")) element.change();
 			oldValue = null;
 		},
@@ -202,7 +218,7 @@ matematici.AutoComplete = function (selector) {
 		updateList = function () {
 			list.empty();
 			if (element.data("nullable"))
-				list.append($("<a />").addClass("None").attr("href", "#").append($("<i />").text("(none)")));
+                list.append($("<a />").addClass("None").attr("href", "#").append($("<i />").text(element.data("nullable") === true ? "(none)" : element.data("nullable"))));
 
 			var count = 0;
 			options

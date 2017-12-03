@@ -7,14 +7,14 @@
         <div class="Accordion"></div>
         <form id="Filters" action="@BaseUrl/AccessControl/Users">
             <label>
-                Code
-                <i class="fi flaticon-user-o" />
+                <span>User code</span>
+                <i class="Icon fi flaticon-key-o" />
                 <input type="text" name="code" />
             </label>
 
             <label>
-                Name
-                <i class="fi flaticon-align-left" />
+                <span>Name and surname</span>
+                <i class="Icon fi flaticon-id-card-o" />
                 <input type="text" name="description" />
             </label>
         </form>
@@ -22,15 +22,15 @@
         <table class="Grid">
             <thead>
                 <tr>
-                    <th>Code</th>
-                    <th>Name</th>
+                    <th>User code</th>
+                    <th>Name and surname</th>
                     <th>Email</th>
-                    <th>Last login</th>
-                    <th>Created By</th>
-                    <th>Created On</th>
-                    <th>Modified By</th>
-                    <th>Modified On</th>
                     <th>Enabled</th>
+                    <th>Last login</th>
+                    <th>Created by</th>
+                    <th>Created on</th>
+                    <th>Modified by</th>
+                    <th>Modified on</th>
                 </tr>
             </thead>
             <tbody>
@@ -38,12 +38,12 @@
                     <td data-column="code"></td>
                     <td data-column="description"></td>
                     <td data-column="email"></td>
+                    <td data-column="enabled" data-type="Boolean"></td>
                     <td data-column="lastLoginOn" data-type="DateTimeOffset"></td>
                     <td data-column="createdBy"></td>
                     <td data-column="createdOn" data-type="DateTimeOffset"></td>
                     <td data-column="modifiedBy"></td>
                     <td data-column="modifiedOn" data-type="DateTimeOffset"></td>
-                    <td data-column="enabled" data-type="Boolean"></td>
                 </tr>
                 <tr class="NoRecord"><td>(no record)</td></tr>
             </tbody>
@@ -54,15 +54,32 @@
 </div>
 
 <script type="text/javascript">
+    var formSelector = "form#Filters";
+
     matematici.events.onPageLoad = function (callback) {
         new matematici.SearchPage({
             pageName: "Users",
             detailUrl: "@Url.Action("Detail")",
-            filterFormSelector: "form#Filters",
+            filterFormSelector: formSelector,
             resultGridSelector: "div#Content table.Grid",
             breadCrumbs: [
                 { content: "users" }
             ]
+        });
+
+        $.ajax({
+            type: "post",
+            url: "@BaseUrl/Infrastructure/PrototypeTypes/GetSyntheticData",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                data: {
+                    name: ""
+                },
+                itemsPerPage: 1000
+            })
+        }).done(function (result) {
+            $(formSelector).data("prototypeTypes", result.data);
         });
 
         callback.call();

@@ -2,16 +2,9 @@
 
 $Inline-Form-Label-Width: 200px;
 
-div.Errors {
-    color: $Color-Red-Regular;
-    margin-top: 20px;
-    display: none;
-    line-height: 1.5;
-}
-
 input.Error, select.Error {
     border-color: $Color-Red-Regular;
-    outline-color: #f99;
+    outline-color: $Color-Red-Light;
 }
 
 label {
@@ -39,13 +32,6 @@ input[type=text], input[type=range], input[type=number], input[type=password], i
     &[readonly], &.ReadOnly {
         background-color: $Color-Silver-Light;
     }
-
-    & + i {
-        position: relative;
-        float: left;
-        margin-left: -27px;
-        margin-top: 12px;
-    }
 }
 
 textarea {
@@ -66,7 +52,7 @@ a.Button {
     cursor: default;
     height: $Metric-Control-Height;
     line-height: $Metric-Control-Height;
-    box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.5);
+    box-shadow: $Box-Shadow;
 
     i.fi {
         margin-top: 8px;
@@ -169,19 +155,6 @@ a.Button {
         }
     }
 
-    &.Invalid {
-        color: $Color-Red-Regular;
-    }
-
-    &.ReadOnly {
-        background-color: $Color-Grey-Light;
-        box-shadow: none;
-
-        &:hover {
-            color: white !important;
-        }
-    }
-
     &.GreyGreenButton {
         background-color: $Color-Grey-Regular;
 
@@ -223,6 +196,37 @@ a.Button {
             }
         }
     }
+
+    &.Invalid {
+        color: $Color-Red-Regular;
+    }
+
+    &.ReadOnly {
+        background-color: $Color-Grey-Light;
+        box-shadow: none;
+
+        i.fi {
+            color: white;
+            background-color: $Color-Grey-Light;
+        }
+
+        &::after {
+            background-color: $Color-Silver-Dark !important;
+            background-color: white;
+        }
+
+        &:hover {
+            background-color: $Color-Grey-Light !important;
+            color: white !important;
+        }
+    }
+}
+
+div.Errors {
+    color: $Color-Red-Regular;
+    margin-top: $Metric-Control-Space;
+    display: none;
+    line-height: 1.5;
 }
 
 form {
@@ -250,18 +254,26 @@ form {
 
     a.Button {
         float: left;
+        margin-top: 21px + $Metric-Control-Space;
+        margin-left: $Metric-Control-Space;
     }
+}
+
+form, div.CheckList {
 
     label {
+        $Label-Width: 200px;
+
         float: left;
         margin-top: $Metric-Control-Space;
         margin-left: $Metric-Control-Space;
-        width: 200px;
         width: $Inline-Form-Label-Width;
+        max-width: calc(100% - #{$Metric-Control-Space});
         position: relative;
         color: $Color-Grey-Dark;
+        padding-top: calc(1em + 5px);
 
-        input, select, textarea {
+        input, select, textarea, div.Input {
             margin-top: 5px;
         }
 
@@ -272,21 +284,29 @@ form {
             margin-bottom: 0;
         }
 
-        i:not(.AutoComplete):not(.ValidationMessagesIcon) {
-            &.fi, &.fa {
-                position: absolute;
+        > span {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+        }
+
+        i.Icon {
+            position: absolute;
+            text-align: center;
+            height: $Metric-Control-Height;
+            width: $Metric-Control-Height;
+            line-height: $Metric-Control-Height;
+            border: 1px solid $Color-Grey-Light;
+            background-color: $Color-Silver-Dark;
+            border-radius: 3px 0 0 3px;
+            margin-left: 0;
+
+            &:first-of-type {
                 left: 0;
-                bottom: 0;
-                text-align: center;
-                height: $Metric-Control-Height;
-                width: $Metric-Control-Height;
-                line-height: $Metric-Control-Height;
-                border: 1px solid $Color-Grey-Light;
-                background-color: $Color-Silver-Dark;
-                border-radius: 3px 0 0 3px;
             }
 
-            & + select, & + input {
+            & + select, & + input, & + div.Input {
                 // The first input|select element after icon is skipped if AutoComplete is active.
                 &.AutoComplete + input, &:not(.AutoComplete) {
                     padding-left: $Metric-Control-Height + 5px;
@@ -298,82 +318,17 @@ form {
             color: $Color-Red-Regular;
             cursor: pointer;
         }
-        // Number of controls | percentage per item.
-        $controlsData: 2 50%, 3 33.33%;
-        $controlsList: null;
 
-        // Generate lists -> this avoid repeating css.
-        @each $tuple in $controlsData {
-            &.Controls#{nth($tuple, 1)} {
-                width: $Inline-Form-Label-Width * nth($tuple, 1);
-                $controlsList: append($controlsList, unquote("&.Controls#{nth($tuple, 1)}"), comma);
-
-                input, select {
-                    width: calc(#{$Inline-Form-Label-Width} - #{$Metric-Control-Height}/#{nth($tuple, 1)});
-                }
-
-                i:not(.AutoComplete) {
-                    & + input, & + select {
-                        &:not(.AutoComplete), &.AutoComplete + input, &.AutoComplete + select {
-                            width: calc(#{$Inline-Form-Label-Width} + #{$Metric-Control-Height} - #{$Metric-Control-Height}/#{nth($tuple, 1)});
-                        }
-                    }
-                }
-            }
+        &.Narrow {
+            width: unset;
         }
 
-        #{$controlsList} {
-            // Collapse white-spaces and use inline-block elements.
-            font-size: 0;
-            white-space: nowrap;
-
-            span {
-                width: calc(100% - #{$Metric-Control-Space});
-                display: block;
-            }
-            // Normalize font size
-            & > * {
-                font-size: 1rem;
-            }
-
-            input, select {
-                float: none;
-                border-radius: 0;
-                display: inline-block;
-
-                &:not(.AutoComplete-Filter) {
-                    border-left: none;
-                }
-            }
+        &.Width150 {
+            width: 1.5 * $Label-Width;
         }
 
-        #{$controlsList}, &.FullWidth {
-            &::after {
-                content: "";
-                display: table;
-                clear: both;
-            }
-        }
-
-        &.FullWidth {
-            width: calc(100% - #{$Metric-Control-Space});
-            display: block;
-
-            @each $tuple in $controlsData {
-                &.Controls#{nth($tuple, 1)} {
-                    input, select {
-                        width: calc(#{nth($tuple, 2)} - #{$Metric-Control-Height}/#{nth($tuple, 1)});
-                    }
-
-                    i:not(.AutoComplete) {
-                        & + input, & + select {
-                            &:not(.AutoComplete), &.AutoComplete + input, &.AutoComplete + select {
-                                width: calc(#{nth($tuple, 2)} + #{$Metric-Control-Height} - #{$Metric-Control-Height}/#{nth($tuple, 1)});
-                            }
-                        }
-                    }
-                }
-            }
+        &.Width200 {
+            width: 2 * $Label-Width + $Metric-Control-Space;
         }
 
         &.Error {
@@ -381,16 +336,110 @@ form {
                 border-color: $Color-Red-Regular !important;
             }
 
-            input, select {
+            input, select, div.Input {
                 border-color: $Color-Red-Regular;
                 outline-color: $Color-Red-Light;
             }
         }
-    }
 
-    a.Button {
-        margin-top: 21px + $Metric-Control-Space;
-        margin-left: $Metric-Control-Space;
+        @media #{$Media-460-} {
+            .Icon {
+                bottom: 0;
+            }
+
+            input, select, div.AutoComplete-List, div.Input {
+                + i.Icon {
+                    border-radius: 0;
+                }
+            }
+
+            &.Controls2, &.Controls3 {
+                > *:not(span) {
+                    float: left;
+                }
+
+                > *:not(span):not(i):not(div) {
+                    border-right: none;
+                    border-radius: 5px 0 0 5px;
+
+                    &:last-child {
+                        //last imput
+                        border-right: solid 1px $Color-Grey-Light;
+                        border-radius: 5px;
+                    }
+                }
+            }
+
+            &.Controls2 {
+                width: $Label-Width * 2 + $Metric-Control-Space;
+
+                > *:not(span):not(.fi) {
+                    width: calc(50% + #{$Metric-Control-Space / 2});
+
+                    &:last-child {
+                        //last input
+                        width: calc(50% - #{$Metric-Control-Space / 2});
+                    }
+                }
+
+                input, select {
+                    ~ select + input {
+                        //last auto complete
+                        width: calc(50% - #{$Metric-Control-Space / 2}) !important;
+                        border-right: solid 1px $Color-Grey-Light;
+                        border-radius: 5px;
+                    }
+                }
+
+                i.Icon ~ i.Icon {
+                    left: calc(50% + #{$Metric-Control-Space / 2}),
+                }
+            }
+
+            &.Controls3 {
+                width: $Label-Width * 3 + $Metric-Control-Space * 2;
+
+                > *:not(span):not(.fi) {
+                    width: calc(33.33% + #{$Metric-Control-Space / 3});
+
+                    &:last-child {
+                        //last input
+                        width: calc(33.33% - #{$Metric-Control-Space * 2 / 3});
+                    }
+                }
+
+                input, select {
+                    input, select {
+                        ~ select + input {
+                            //last auto complete
+                            width: calc(33.33% - #{$Metric-Control-Space * 2 / 3});
+                            border-right: solid 1px $Color-Grey-Light;
+                            border-radius: 5px;
+                        }
+                    }
+                }
+
+                i.Icon ~ i.Icon {
+                    width: calc(33.33% + #{$Metric-Control-Space / 3});
+                }
+
+                i.Icon ~ i.Icon ~ i.Icon {
+                    width: calc(66.66% + #{$Metric-Control-Space * 2 / 3});
+                }
+            }
+        }
+
+        @media #{$Media-0-460} {
+            width: calc(100% - #{$Metric-Control-Space});
+
+            .Icon {
+                margin-top: 5px;
+            }
+        }
+
+        &.FullWidth {
+            width: calc(100% - #{$Metric-Control-Space});
+        }
     }
 
     &::after {

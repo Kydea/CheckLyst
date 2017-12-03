@@ -1,12 +1,12 @@
 ﻿div.Calendar {
   padding: 10px;
-  box-shadow: rgba(0, 0, 0, 0.3) 0 0 4px;
+  box-shadow: rgba(0, 0, 0, 0.15) 0 0 15px 2px;
   text-align: center;
   font-size: 14px;
   position: relative; }
   div.Calendar.Calendar-Popup {
     position: absolute;
-    z-index: 104;
+    z-index: 105;
     display: none;
     background: white; }
     div.Calendar.Calendar-Popup.Calendar {
@@ -22,6 +22,8 @@
     line-height: 30px;
     top: 10px;
     color: #009688; }
+    div.Calendar a.Arrow i {
+      font-size: 14px !important; }
     div.Calendar a.Arrow.PreviousMonth {
       left: 10px; }
     div.Calendar a.Arrow.NextMonth {

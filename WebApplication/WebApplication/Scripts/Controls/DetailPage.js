@@ -6,7 +6,9 @@
 		buttons = options.buttons || [],
 		form,
 
-		clickHandler = function (event) {
+		clickHandler = function (button, event) {
+			if (button.hasClass("ReadOnly")) return false;
+
 			form.trigger(event, function (result) {
 				form.handleResult(result);
 				if (result.valid) {
@@ -14,6 +16,8 @@
 					matematici.popup.close();
 				}
 			}, options.parametersPrepareHandler && options.parametersPrepareHandler());
+
+			return true;
 		},
 
 		setup = function () {
@@ -25,7 +29,7 @@
 						matematici.dialog.show("warning", "The record will be deleted.", [
 							{
 								text: "confirm", icon: "check", handler: function () {
-									clickHandler("Delete");
+									clickHandler($(this), "Delete");
 								}
 							},
 							{ text: "cancel", icon: "remove", cancelButton: true }
@@ -36,15 +40,15 @@
 
 			if (!options.readOnly)
 				buttons.push({
-					text: "save", icon: "floppy-o", id: "SaveButton", handler: function () {
-						clickHandler(data == null ? "Add" : "Edit");
+					text: "save", icon: "floppy-o", id: "SaveButton", handler: function (e) {
+						clickHandler($(this), data == null ? "Add" : "Edit");
 						return true;
 					}
 				});
 
 			matematici.popup.setButtons(buttons);
 
-			matematici.popup.setWidth(options.width || "420px");
+			matematici.popup.setWidth(options.width || "460px");
 
 			form = new matematici.Form(options.formSelector, {
 				applyButton: "#SaveButton",

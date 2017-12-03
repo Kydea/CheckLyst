@@ -47,26 +47,26 @@ namespace CheckListManager.DataSources.Data
             };
         }
 
-        private async Task<Common.Data.DataSources> GetDataSourcesAsync(DefaultIdentity identity, string code)
+        private async Task<Common.Data.DataSources> GetDataSourceAsync(DefaultIdentity identity, string code)
         {
             var DataSource = await Entities.DataSources.SingleOrDefaultAsync(d => d.Company == identity.CompanyId && d.Code == code);
             if (DataSource == null) throw new DatabaseException($"Data source {code} not found");
             return DataSource;
         }
 
-        public async Task<Common.Data.DataSources> AddDataSourceAsync(DefaultIdentity identity, Common.Data.DataSources dataSources)
+        public async Task<Common.Data.DataSources> AddDataSourceAsync(DefaultIdentity identity, Common.Data.DataSources dataSource)
         {
-            dataSources.Company = identity.CompanyId;
-            dataSources.CreatedOn = DateTimeOffset.UtcNow;
-            dataSources.CreatedBy = identity.Code;
-            Entities.DataSources.Add(dataSources);
+            dataSource.Company = identity.CompanyId;
+            dataSource.CreatedOn = DateTimeOffset.UtcNow;
+            dataSource.CreatedBy = identity.Code;
+            Entities.DataSources.Add(dataSource);
             await SaveChangesAsync();
-            return dataSources;
+            return dataSource;
         }
 
         public async Task<Common.Data.DataSources> EditDataSourceAsync(DefaultIdentity identity, Common.Data.DataSources dataSource)
         {
-            var ExistingPrototypeType = await GetDataSourcesAsync(identity, dataSource.Code);
+            var ExistingPrototypeType = await GetDataSourceAsync(identity, dataSource.Code);
             ExistingPrototypeType.Code = dataSource.Code;
             ExistingPrototypeType.Description = dataSource.Description;
             ExistingPrototypeType.ModifiedOn = DateTimeOffset.UtcNow;
@@ -77,7 +77,7 @@ namespace CheckListManager.DataSources.Data
 
         public async Task DeleteDataSourceAsync(DefaultIdentity identity, string code)
         {
-            Entities.DataSources.Remove(await GetDataSourcesAsync(identity, code));
+            Entities.DataSources.Remove(await GetDataSourceAsync(identity, code));
             await SaveChangesAsync();
         }
 

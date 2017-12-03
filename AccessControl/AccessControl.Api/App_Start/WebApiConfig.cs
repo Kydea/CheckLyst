@@ -17,7 +17,7 @@ namespace CheckListManager.AccessControl.Api
 	    {
 		    base.OnCreateMapper(mapperConfig);
 
-		    mapperConfig.CreateMap<AddUserRequest, Users>()
+		    mapperConfig.CreateMap<UserRequest, Users>()
 			    .ForMember(m => m.Password, opt => opt.Ignore());
 	    }
 

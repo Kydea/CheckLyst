@@ -36,6 +36,13 @@ namespace CheckListManager.Infrastructure.Api.Controllers
         }
 
         [HttpPost]
+        [Route("GetSyntheticData")]
+        public async Task<IHttpActionResult> GetSyntheticData(PagingRequest<PrototypeTypesRequest> request)
+        {
+            return Ok(await _prototypeTypesService.GetSyntheticDataAsync(Identity.CompanyId, request));
+        }
+
+        [HttpPost]
         [Route("Add")]
         public async Task<IHttpActionResult> Add(Message<PrototypeTypesRequest> request)
         {

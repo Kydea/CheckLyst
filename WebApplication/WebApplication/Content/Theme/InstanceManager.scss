@@ -52,14 +52,14 @@ body.InstanceManager {
                 padding: 10px;
                 border: solid 1px $Color-Grey-Regular;
 
-                i.fa {
+                i.fi {
                     margin-right: 10px;
 
-                    &.fa-thumbs-o-up {
+                    &.flaticon-thumbs-o-up {
                         color: green;
                     }
 
-                    &.fa-thumbs-o-down {
+                    &.flaticon-thumbs-o-down {
                         color: red;
                     }
                 }
@@ -214,8 +214,8 @@ body.InstanceManager {
 
             &.ExternalSource {
                 &.Inactive {
-                    i.fa-link {
-                        color: $Color-Grey-Regular;
+                    i.flaticon-link-o {
+                        color: $Color-Grey-Light;
                     }
                 }
 
@@ -277,14 +277,14 @@ body.InstanceManager {
 
         &.Signature {
             a.Button {
-                i.fa-exclamation {
+                i.flaticon-exclamation {
                     position: absolute;
                     color: red;
                     margin: 2px 0 0 15px;
                 }
             }
 
-            i.fa-exclamation {
+            i.flaticon-exclamation {
                 color: red;
                 font-size: 16px;
                 margin-top: 10px;

@@ -3,4 +3,8 @@
   text-align: right;
   float: right;
   margin: 0 0 20px; }
+  div.ActionBar a.Button {
+    display: block;
+    float: left;
+    margin-right: 10px; }
 

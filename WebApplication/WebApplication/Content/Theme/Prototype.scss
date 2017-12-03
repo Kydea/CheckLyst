@@ -2,7 +2,7 @@
 
 body.PrototypeEditor {
 
-    div#Content {
+    div.Prototype {
         h2 {
             cursor: pointer;
         }
@@ -28,19 +28,20 @@ body.PrototypeEditor {
         div.Group {
             position: relative;
             cursor: pointer;
+            border: 1px solid $Color-Grey-Light;
+            position: relative;
+            padding-bottom: $Metric-Control-Space;
+            padding-right: $Metric-Control-Space;
+            background-color: $Color-Silver-Light;
+
+            & > * {
+                float: left;
+                margin-top: $Metric-Control-Space !important;
+                margin-left: $Metric-Control-Space !important;
+            }
 
             &.Selected {
-
-                &::before {
-                    background-color: $Color-Pink !important;
-                    position: absolute;
-                    z-index: -1;
-                    content: "";
-                    top: -20px;
-                    left: -20px;
-                    bottom: -20px;
-                    right: -20px;
-                }
+                background-color: $Color-Pink !important;
             }
 
             div.Group.Selected {
@@ -100,7 +101,7 @@ body.PrototypeEditor {
 
         &.Selected {
             h2 {
-                color: red;
+                color: red !important;
             }
         }
     }

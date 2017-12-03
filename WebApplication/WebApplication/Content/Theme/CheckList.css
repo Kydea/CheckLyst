@@ -1,10 +1,10 @@
-﻿body.CheckList span.Error i.fa {
-  color: red; }
+﻿body.CheckList span.Error i.fi {
+  color: #cc0000; }
 
 body.CheckList span.Null {
   color: #ccc; }
 
-body.CheckList div.TabLabels a i.fa {
+body.CheckList div.TabLabels a i.fi {
   cursor: pointer; }
 
 body.CheckList div.Element {

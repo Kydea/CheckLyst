@@ -35,7 +35,7 @@ namespace CheckListManager.DataSources.Logic.Detail
             return response;
         }
 
-        public async Task<DetailResponse> Add(DefaultIdentity identity, DetailRequest record)
+        public async Task<DetailResponse> AddAsync(DefaultIdentity identity, DetailRequest record)
         {
             var response = Validate(record);
             if (response.Valid)
@@ -60,7 +60,7 @@ namespace CheckListManager.DataSources.Logic.Detail
             return response;
         }
 
-        public async Task<DetailResponse> Edit(DefaultIdentity identity, DetailRequest record)
+        public async Task<DetailResponse> EditAsync(DefaultIdentity identity, DetailRequest record)
         {
             var response = Validate(record);
             if (response.Valid)
@@ -85,7 +85,7 @@ namespace CheckListManager.DataSources.Logic.Detail
             return response;
         }
 
-        public async Task<DetailResponse> Delete(DefaultIdentity identity, string code)
+        public async Task<DetailResponse> DeleteAsync(DefaultIdentity identity, string code)
         {
             var response = new DetailResponse();
             try

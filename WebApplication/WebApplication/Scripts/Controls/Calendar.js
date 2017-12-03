@@ -40,8 +40,8 @@
             element
                 .addClass("Calendar")
                 .append(elements.month = $("<span />").addClass("Month"))
-				.append(elements.previous = $("<a />").addClass("Arrow PreviousMonth").attr("href", "#").append($("<i />").addClass("fa fa-angle-left")))
-				.append(elements.next = $("<a />").addClass("Arrow NextMonth").attr("href", "#").append($("<i />").addClass("fa fa-angle-right")))
+				.append(elements.previous = $("<a />").addClass("Arrow PreviousMonth").attr("href", "#").append($("<i />").addClass("fi flaticon-angle-left")))
+				.append(elements.next = $("<a />").addClass("Arrow NextMonth").attr("href", "#").append($("<i />").addClass("fi flaticon-angle-right")))
                 .append(elements.table = $("<table />").addClass("Plain")
                     .append($("<tr />")
                         .append($("<th />").text(matematici.Calendar.translations.it.dayInitials[1]))

@@ -2,11 +2,13 @@
 
 $label-height: 40px;
 
-.TabContainer {
+div.TabContainer {
     position: relative;
     transition: height .3s;
+    display: none;
 
     .TabLabels {
+        display: flex;
 
         &::after {
             content: "";
@@ -23,15 +25,16 @@ $label-height: 40px;
         a {
             height: $label-height;
             line-height: $label-height;
-            float: left;
             color: $Color-Grey-Regular;
             text-decoration: none;
-            padding: 0 40px;
             z-index: 1;
             position: relative;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
 
-            i.fa {
-                color: red;
+            i.fi {
+                font-size: 14px;
             }
 
             &.Selected {
@@ -41,10 +44,6 @@ $label-height: 40px;
                 color: $Color-Grey-Dark;
                 border-bottom: solid 3px $Color-Yellow-Regular;
                 font-weight: bold;
-
-                i.fa {
-                    color: violet;
-                }
             }
 
             &:hover {
@@ -64,10 +63,41 @@ $label-height: 40px;
         opacity: 0;
         transition: opacity .5s;
         z-index: $Depth-Tab;
+        padding-right: 20px;
 
         &.Selected {
             opacity: 1;
             z-index: $Depth-Tab-Selected;
         }
+    }
+
+    @media #{$Media-Extended} {
+        .TabLabels {
+            a {
+                padding: 0 40px;
+            }
+        }
+    }
+
+    @media #{$Media-Mobile} {
+        .TabLabels {
+            a {
+                padding: 0 10px;
+            }
+        }
+    }
+}
+
+div.ShadowPanel {
+    div.TabContainer {
+        margin-bottom: $Metric-Control-Space;
+        margin-right: -20px;
+        margin-left: -20px;
+    }
+}
+
+div.Popup {
+    div.TabContainer {
+        margin-right: -20px;
     }
 }

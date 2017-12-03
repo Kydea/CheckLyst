@@ -18,22 +18,32 @@
 					handler = options.applyButton.handler;
 				options.applyButton = $(options.applyButton.button || options.applyButton);
 				if (event)
-					options.applyButton.on("click", function () {
+					options.applyButton.on("click", function (e) {
 						if (options.applyButton.hasClass("ReadOnly")) return;
 						saveForm();
 						bind(event, handler, prepareRequest({ data: { source: options.applyButton.attr("id") } }));
 					});
 				else if (handler)
-					options.applyButton.on("click", handler);
+					options.applyButton.on("click", function () {
+						if (!options.applyButton.hasClass("ReadOnly"))
+							handler();
+					});
 			}
 
 			element
-				.on("keypress change paste", fieldsSelector, function (e) {
+				.on("keypress", fieldsSelector, function (e) {
 					if (e.key != "Tab" && e.which !== 0 && !e.ctrlKey && !e.metaKey && !e.altKey && options.applyButton) {
 						matematici.controls.setEditable(options.applyButton, valid);
 						clearFormErrors();
 						matematici.controls.setValidationMessages($(this), []);
+						matematici.controls.setEditable(options.applyButton, true);
 					}
+                })
+                .on("change, paste", fieldsSelector, function(e) {
+                    matematici.controls.setEditable(options.applyButton, valid);
+                    clearFormErrors();
+                    matematici.controls.setValidationMessages($(this), []);
+                    matematici.controls.setEditable(options.applyButton, true);
 				})
 				.on("change", ".Trigger", function () {
 					bind(options.bindEvent, handleResult, prepareRequest({ data: { source: $(this).attr("name") } }));
@@ -104,30 +114,30 @@
 				var field = $(this);
 				parameters.data[field.attr("name")] =
 					field.hasClass("DatePicker") || field.data("type") == "DateTimeOffset" ? field.data("date") :
-						field.val();
+						field.attr("type") == "checkbox" ? field.prop("checked") :
+							field.val();
 			});
+
 			return JSON.stringify(parameters);
 		},
 
 		setFieldValue = function (field, value) {
-			switch (field.data("type")) {
-				case "DateTimeOffset":
-					if (value == null || value == "")
-						field.val("").attr("title", "").data("date", null);
-					else {
-						var
-							date = new Date(value),
-							formattedDate = matematici.dateFormatter.format(date, true);
-						field.val(formattedDate.date + " " + formattedDate.time).attr("title", formattedDate.offset).data("date", date);
-					}
-					break;
-				default:
-					if (field.hasClass("DatePicker"))
-						field.data("datePicker").setDate(value)
-					else
-						field.val(value);
-			}
-
+            if (field.data("type") == "DateTimeOffset") {
+                if (value == null || value == "")
+                    field.val("").attr("title", "").data("date", null);
+                else {
+                    var
+                        date = new Date(value),
+                        formattedDate = matematici.dateFormatter.format(date, true);
+                    field.val(formattedDate.date + " " + formattedDate.time).attr("title", formattedDate.offset).data("date", date);
+                }
+            }
+            else if (field.attr("type") == "checkbox")
+                field.prop("checked", !!value)
+            else if (field.hasClass("DatePicker"))
+				field.data("datePicker").setDate(value)
+			else
+				field.val(value);
 		},
 
 		handleValidationMessages = function (field, data) {
@@ -141,18 +151,18 @@
 					for (var index in data.validationMessages)
 						errors.append(
 							$("<div />").addClass("Error").text(" " + data.validationMessages[index].message).prepend(
-								$("<i />").addClass("fa fa-warning")
+								$("<i />").addClass("fi flaticon-warning")
 							)
 						);
 				else if (!fieldErrors) {
 					fieldErrors = true;
 					errors.append(
-						$("<div />").addClass("Error").text(" Some field has errors. Click on error icon of the field for more details.").prepend(
-							$("<i />").addClass("fa fa-warning")
+						$("<div />").addClass("Error").text(" Some field are not valid. Click on the error icon of the fields for more details.").prepend(
+							$("<i />").addClass("fi flaticon-warning")
 						)
 					);
 				}
-			} 
+			}
 		},
 
 		handleResult = function (data) {
@@ -208,7 +218,7 @@
 					matematici.controls.setEditable(options.applyButton, false); //by default, the action button is disabled when clicked with success
 				if (handler)
 					handler(result);
-			});
+            });
 		};
 
 	this.initialize = function () {

@@ -4,7 +4,7 @@
         buttons = [],
 
         setup = function () {
-            element.append($("<div />").addClass("Clearing"));
+			element.append($("<div />").addClass("Clearing"));
         };
 
     this.add = function (label, action, cssClass, icon) {

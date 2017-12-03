@@ -231,6 +231,7 @@
           <Property Name="User" Type="varchar" MaxLength="60" Nullable="false" />
           <Property Name="FunctionGroup" Type="varchar" MaxLength="20" Nullable="false" />
           <Property Name="Function" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="Department" Type="int8" />
           <Property Name="PrototypeType" Type="int8" />
           <Property Name="Tag" Type="varchar" MaxLength="50" />
           <Property Name="CreatedBy" Type="varchar" MaxLength="60" />
@@ -663,6 +664,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="UserFunctions_Department_fkey">
+          <End Role="Departments" Type="Self.Departments" Multiplicity="0..1" />
+          <End Role="UserFunctions" Type="Self.UserFunctions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Departments">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="UserFunctions">
+              <PropertyRef Name="Department" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="UserFunctions_Function">
           <End Role="Functions" Type="Self.Functions" Multiplicity="1" />
           <End Role="UserFunctions" Type="Self.UserFunctions" Multiplicity="*" />
@@ -834,7 +847,9 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="WorkFlowStepTags_WorkFlowStep_fkey">
-          <End Role="WorkFlowSteps" Type="Self.WorkFlowSteps" Multiplicity="1" />
+          <End Role="WorkFlowSteps" Type="Self.WorkFlowSteps" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="WorkFlowStepTags" Type="Self.WorkFlowStepTags" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="WorkFlowSteps">
@@ -972,6 +987,10 @@
             <End Role="Actions" EntitySet="Actions" />
             <End Role="Records" EntitySet="Records" />
           </AssociationSet>
+          <AssociationSet Name="UserFunctions_Department_fkey" Association="Self.UserFunctions_Department_fkey">
+            <End Role="Departments" EntitySet="Departments" />
+            <End Role="UserFunctions" EntitySet="UserFunctions" />
+          </AssociationSet>
           <AssociationSet Name="UserFunctions_Function" Association="Self.UserFunctions_Function">
             <End Role="Functions" EntitySet="Functions" />
             <End Role="UserFunctions" EntitySet="UserFunctions" />
@@ -1075,6 +1094,7 @@
           <NavigationProperty Name="Companies" Relationship="Self.Departments_Company_fkey" FromRole="Departments" ToRole="Companies" />
           <NavigationProperty Name="Prototypes" Relationship="RelationalDatabaseModel.Prototypes_Department_fkey" FromRole="Departments" ToRole="Prototypes" />
           <NavigationProperty Name="PrototypeTypes" Relationship="RelationalDatabaseModel.PrototypeTypes_Department_fkey" FromRole="Departments" ToRole="PrototypeTypes" />
+          <NavigationProperty Name="UserFunctions" Relationship="RelationalDatabaseModel.UserFunctions_Department_fkey" FromRole="Departments" ToRole="UserFunctions" />
         </EntityType>
         <EntityType Name="Users">
           <Key>
@@ -1311,6 +1331,10 @@
           </AssociationSet>
           <AssociationSet Name="UserFunctions_PrototypeType_fkey" Association="RelationalDatabaseModel.UserFunctions_PrototypeType_fkey">
             <End Role="PrototypeTypes" EntitySet="PrototypeTypes" />
+            <End Role="UserFunctions" EntitySet="UserFunctions" />
+          </AssociationSet>
+          <AssociationSet Name="UserFunctions_Department_fkey" Association="RelationalDatabaseModel.UserFunctions_Department_fkey">
+            <End Role="Departments" EntitySet="Departments" />
             <End Role="UserFunctions" EntitySet="UserFunctions" />
           </AssociationSet>
           </EntityContainer>
@@ -1814,6 +1838,8 @@
           <NavigationProperty Name="Functions" Relationship="RelationalDatabaseModel.UserFunctions_Function" FromRole="UserFunctions" ToRole="Functions" />
           <NavigationProperty Name="Users" Relationship="RelationalDatabaseModel.UserFunctions_User" FromRole="UserFunctions" ToRole="Users" />
           <NavigationProperty Name="PrototypeTypes" Relationship="RelationalDatabaseModel.UserFunctions_PrototypeType_fkey" FromRole="UserFunctions" ToRole="PrototypeTypes" />
+          <Property Name="Department" Type="Int64" />
+          <NavigationProperty Name="Departments" Relationship="RelationalDatabaseModel.UserFunctions_Department_fkey" FromRole="UserFunctions" ToRole="Departments" />
         </EntityType>
         <Association Name="Functions_FunctionGroup_fkey">
           <End Type="RelationalDatabaseModel.FunctionGroups" Role="FunctionGroups" Multiplicity="1" />
@@ -2133,6 +2159,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="UserFunctions_Department_fkey">
+          <End Type="RelationalDatabaseModel.Departments" Role="Departments" Multiplicity="0..1" />
+          <End Type="RelationalDatabaseModel.UserFunctions" Role="UserFunctions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Departments">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="UserFunctions">
+              <PropertyRef Name="Department" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2418,6 +2456,7 @@
           <EntitySetMapping Name="UserFunctions">
             <EntityTypeMapping TypeName="RelationalDatabaseModel.UserFunctions">
               <MappingFragment StoreEntitySet="UserFunctions">
+                <ScalarProperty Name="Department" ColumnName="Department" />
                 <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
                 <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
                 <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />

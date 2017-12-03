@@ -5,7 +5,9 @@ input.AutoComplete {
   text-overflow: ellipsis;
   padding-right: 36px !important; }
   input.AutoComplete.Open {
-    border-radius: 5px 5px 0 0; }
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    outline: 5px auto -webkit-focus-ring-color; }
 
 input.AutoComplete-Filter {
   min-width: unset !important;
@@ -46,7 +48,7 @@ div.AutoComplete-List {
       padding-right: 20px; }
       div.AutoComplete-List a.Selected::after {
         line-height: 36px;
-        content: "\f111";
+        content: "\f112";
         display: inline-block;
         font-family: "Flaticon";
         font-style: normal;

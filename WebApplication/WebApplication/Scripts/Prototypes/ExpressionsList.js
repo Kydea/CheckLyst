@@ -33,11 +33,11 @@
             row.node = $("<tr />")
                 .addClass("Handler")
                 .appendTo(table)
-                .append($("<td />").append($("<i />").addClass("fa fa-caret-right")))
+				.append($("<td />").append($("<i />").addClass("fi flaticon-arrow-right")))
                 .append($("<td />").addClass("CodeColumn").text(row.code))
                 .append($("<td />").addClass("ExpressionColumn").text(row.expression))
-                .append($("<td />").addClass("ValidColumn").append($("<i />").attr("title", row.error || "").addClass("fa" + (row.valid == null ? "" : " fa-" + (row.valid ? "check" : "remove")))))
-                .append($("<td />").addClass("UniqueColumn").toggleClass("Off", !row.unique).append($("<i />").addClass("fa fa-key")));
+                .append($("<td />").addClass("ValidColumn").append($("<i />").attr("title", row.error || "").addClass("fi" + (row.valid == null ? "" : " flaticon-" + (row.valid ? "check" : "times")))))
+				.append($("<td />").addClass("UniqueColumn").toggleClass("Off", !row.unique).append($("<i />").addClass("fi flaticon-key")));
 
             if (model.State == prototypes.Prototype.states.draft)
             	matematici.canClose = false;
@@ -45,7 +45,7 @@
 
 		update = function (row) {
 		    row.node.find(".ValidColumn i")
-				.removeClass("fa-check fa-remove fa-question")
+				.removeClass("flaticon-check-o flaticon-times flaticon-question")
 				.attr("title", row.error || "")
 				.addClass("fa-" + (row.valid ? "check" : "remove"));
 		},
@@ -158,7 +158,7 @@
             var
                 buttons =
                     $("<div />").addClass("Buttons").appendTo(container)
-                    .append($("<a />").addClass("Button").text("close").prepend($("<i />").addClass("fa fa-remove")).on("click", function () {
+						.append($("<a />").addClass("Button").text("close").prepend($("<i />").addClass("fi flaticon-remove")).on("click", function () {
                         if (verifyButton.is(":visible")) 
                             verify(function () {
                                 element.remove();
@@ -166,14 +166,14 @@
                         else
                             element.remove();
                     }))
-                    .append(verifyButton = $("<a />").addClass("Button").text("verify").toggle(model.State == prototypes.Prototype.states.draft).prepend($("<i />").addClass("fa fa-check")).on("click", function () {
+						.append(verifyButton = $("<a />").addClass("Button").text("verify").toggle(model.State == prototypes.Prototype.states.draft).prepend($("<i />").addClass("fi flaticon-check")).on("click", function () {
                         verify();
                     }))
-                    .append($("<a />").addClass("Button").text("add").toggle(model.State == prototypes.Prototype.states.draft).prepend($("<i />").addClass("fa fa-plus")).on("click", function () {
+						.append($("<a />").addClass("Button").text("add").toggle(model.State == prototypes.Prototype.states.draft).prepend($("<i />").addClass("fi flaticon-plus")).on("click", function () {
                         add({ code: "", expression: "", error: null });
                         select(list.length - 1);
                     }))
-                    .append(removeButton = $("<a />").addClass("Button").text("remove").prepend($("<i />").addClass("fa fa-minus")).on("click", function () {
+						.append(removeButton = $("<a />").addClass("Button").text("remove").prepend($("<i />").addClass("fi flaticon-minus")).on("click", function () {
                         remove();
                     }).hide());
                 

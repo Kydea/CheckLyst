@@ -15,14 +15,15 @@
 
             <label class="FullWidth">
                 <span>Company</span>
-                <i class="fi flaticon-buildings-o"></i>
+                <i class="Icon fi flaticon-buildings-o"></i>
                 <select name="companyId"></select>
             </label>
             
             <label class="FullWidth Controls2">
                 <span>Username / Password</span>
-                <i class="fi flaticon-user-o"></i>
+                <i class="Icon fi flaticon-user-o"></i>
                 <input type="text" name="username" placeholder="username" />
+                <i class="Icon fi flaticon-key-o"></i>
                 <input type="password" name="password" placeholder="password" />
             </label>
 
@@ -48,7 +49,7 @@
             companyList = $("select[name=companyId]", form),
 
             showError = function (message) {
-                error.html(" " + message).prepend($("<i />").addClass("fa fa-warning")).show()
+                error.html(" " + message).prepend($("<i />").addClass("fi flaticon-warning")).show()
             };
 
         new matematici.Page({

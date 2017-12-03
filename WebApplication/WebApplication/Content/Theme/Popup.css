@@ -9,7 +9,7 @@ div.Popup {
   right: 0;
   bottom: 0;
   left: 0;
-  z-index: 103;
+  z-index: 104;
   background-color: rgba(102, 102, 102, 0.7); }
   div.Popup div.Container {
     padding: 20px;
@@ -60,7 +60,7 @@ div.Popup {
       background: none; }
   @media only screen and (min-width: 760px) {
     div.Popup div.Container {
-      box-shadow: rgba(0, 0, 0, 0.16) 0 0 16px 5px;
+      box-shadow: rgba(0, 0, 0, 0.15) 0 0 15px 2px;
       max-width: calc(100vw - 60px);
       margin: 0 auto;
       border-radius: 15px; }
@@ -68,7 +68,7 @@ div.Popup {
         border-radius: 15px 15px 0 0; } }
   @media only screen and (max-width: 759px) {
     div.Popup div.Container {
-      width: 100%;
+      width: 100% !important;
       min-height: 1vh; }
       div.Popup div.Container h2 {
         background: #009688;

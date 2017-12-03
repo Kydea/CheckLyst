@@ -30,7 +30,7 @@ create table "WorkFlows"."WorkFlowSteps"
 
 create table "WorkFlows"."WorkFlowStepTags"
 (
-	"WorkFlowStep" bigint references "WorkFlows"."WorkFlowSteps",
+	"WorkFlowStep" bigint references "WorkFlows"."WorkFlowSteps" on delete cascade,
 	"Tag" varchar(50) not null,
 
 	constraint "PK_WorkFlowStepTags" primary key ("WorkFlowStep", "Tag")

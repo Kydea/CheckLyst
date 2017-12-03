@@ -5,4 +5,10 @@ div.ActionBar {
     text-align: right;
     float: right;
     margin: 0 0 20px;
+
+    a.Button {
+        display: block;
+        float: left;
+        margin-right: 10px;
+    }
 }

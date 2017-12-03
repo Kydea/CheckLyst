@@ -150,7 +150,7 @@
             if (model.ValuesList)
                 element.addClass("List");
             else if (model.ExternalSourceName && model.ExternalSourceColumn) {
-                element.addClass("ExternalSource").append($("<i />").addClass("fa fa-link"));
+				element.addClass("ExternalSource").append($("<i />").addClass("fi flaticon-link-o"));
                 field.on("click", function () {
                     if (!element.hasClass("Inactive"))
                         new instances.ExternalSources(model.Id, model.ExternalSourceName);
