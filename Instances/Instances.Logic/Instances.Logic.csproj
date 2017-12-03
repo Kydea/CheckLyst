@@ -63,6 +63,7 @@
     <Compile Include="List\IListService.cs" />
     <Compile Include="List\ListResponse.cs" />
     <Compile Include="List\ListRequest.cs" />
+    <Compile Include="Messages\GetPrototypeRequest.cs" />
     <Compile Include="Messages\InstanceEventRequest.cs" />
     <Compile Include="Messages\InstanceRequest.cs" />
     <Compile Include="Messages\CreateInstanceRequest.cs" />

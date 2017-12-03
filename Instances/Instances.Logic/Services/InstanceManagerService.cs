@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using CheckListManager.Common.Core.Helpers;
 using CheckListManager.Common.Core.Network;
 using CheckListManager.Common.Core.Web.Security;
-using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Logic.Cache;
 using CheckListManager.Common.Logic.Json;
 using CheckListManager.Common.Logic.Models.CheckLists;
@@ -62,7 +61,7 @@ namespace CheckListManager.Instances.Logic.Services
 			return cacheObject;
 		}
 
-		public async Task<InstanceCacheObject> CreateAsync(long companyId, string userCode, int prototype, int version)
+		public async Task<InstanceCacheObject> CreateAsync(long companyId, string userCode, long prototype, int version)
 		{
 			try
 			{
@@ -239,9 +238,9 @@ namespace CheckListManager.Instances.Logic.Services
 					{
 						throw new InstanceException("Instance is being updated by another user");
 					}
-
-					cacheObject = await _instanceCache.GetAsync(request.Code);
 				}
+
+				cacheObject = await _instanceCache.GetAsync(request.Code);
 
 				var canEdit = identity.HasPermission("Instances#Edit", cacheObject.PrototypeType) &&
 				              cacheObject.InstanceState.In(InstanceState.Draft, InstanceState.Progress);
@@ -444,16 +443,20 @@ namespace CheckListManager.Instances.Logic.Services
 			return instance.Instance;
 		}
 
-		private async Task<GetPrototypeResponse> CreateInstanceFromPrototypeAsync(int prototype, int version)
+		private async Task<GetPrototypeResponse> CreateInstanceFromPrototypeAsync(long prototype, int version)
 		{
 			try
 			{
-				var httpResponse = await _client.GetAsync($"Prototypes/Prototype/Get/{prototype}/{version}");
+				var httpResponse = await _client.PostAsync("Prototypes/Prototype/Open", new GetPrototypeRequest
+				{
+					Id = prototype,
+					Version = version
+				});
 				var responseData = await httpResponse.Content.ReadAsStringAsync();
 
-				var response = JsonConvert.DeserializeObject<ResponseMessage<GetPrototypeResponse>>(responseData, _converter);
+				var response = JsonConvert.DeserializeObject<GetPrototypeResponse>(responseData, _converter);
 
-				return response.Data;
+				return response;
 			}
 			catch (Exception e)
 			{
@@ -498,7 +501,7 @@ namespace CheckListManager.Instances.Logic.Services
 
 		private InstanceCacheObject CreateInstanceFromDatabase(long companyId, Common.Data.Instances instance)
 		{
-			return new InstanceCacheObject
+			var cacheObject = new InstanceCacheObject
 			{
 				CompanyId = companyId,
 				Instance = JsonConvert.DeserializeObject<Instance>(instance.Data, _converter),
@@ -515,6 +518,8 @@ namespace CheckListManager.Instances.Logic.Services
 				ModifiedOn = instance.ModifiedOn,
 				ModifiedBy = instance.ModifiedBy,
 			};
+			cacheObject.Instance.Setup();
+			return cacheObject;
 		}
 	}
 }

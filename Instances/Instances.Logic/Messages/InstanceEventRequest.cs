@@ -6,6 +6,7 @@ namespace CheckListManager.Instances.Logic.Messages
 	{
 		[Required]
 		public string Code { get; set; }
+		[Required]
 		public string Type { get; set; }
 
 		public int? Item { get; set; }

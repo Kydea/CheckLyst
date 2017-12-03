@@ -21,9 +21,9 @@ namespace CheckListManager.Instances.Api.Controllers
 			_instanceManagerService = instanceManagerService;
 		}
 
-		[HttpGet]
-		[Route("Create/{Prototype}/{Version}")]
-		public async Task<IHttpActionResult> Create([FromUri]CreateInstanceRequest request)
+		[HttpPost]
+		[Route("Create")]
+		public async Task<IHttpActionResult> Create([FromBody]CreateInstanceRequest request)
 		{
 			try
 			{
