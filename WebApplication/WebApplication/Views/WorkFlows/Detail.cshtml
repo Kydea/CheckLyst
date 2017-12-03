@@ -9,40 +9,33 @@
             </div>
             <div class="Tab">
                 <label>
-                    ID
-                    <i class="fi flaticon-key-o" />
+                    <span>ID</span>
+                    <i class="Icon fi flaticon-key-o" />
                     <input type="text" name="id" readonly="readonly" placeholder="(new record)" />
                 </label>
 
                 <label>
-                    Description
-                    <i class="fi flaticon-id-card-o" />
+                    <span>Description</span>
+                    <i class="Icon fi flaticon-id-card-o" />
                     <input type="text" name="description" />
                 </label>
 
-                <label class="Clearing">
-                    Created by
-                    <i class="fi flaticon-user-o" />
+                <label class="Clearing Controls2">
+                    <span>Creation</span>
+                    <i class="Icon fi flaticon-user-o" />
                     <input type="text" name="createdBy" readonly="readonly" />
-                </label>
-
-                <label>
-                    Created on
-                    <i class="fi flaticon-calendar" />
+                    <i class="Icon fi flaticon-calendar" />
                     <input type="text" name="createdOn" readonly="readonly" data-type="DateTimeOffset" />
                 </label>
 
-                <label>
-                    Modified by
-                    <i class="fi flaticon-user-o" />
+                <label class="Controls2">
+                    <span>Last edit</span>
+                    <i class="Icon fi flaticon-user-o" />
                     <input type="text" name="modifiedBy" readonly="readonly" />
-                </label>
-
-                <label>
-                    Modified on
-                    <i class="fi flaticon-calendar" />
+                    <i class="Icon fi flaticon-calendar" />
                     <input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
                 </label>
+
                 <div class="Clearing"></div>
             </div>
             <div class="Tab" id="StepTab">
@@ -115,7 +108,7 @@
                         .addClass("Width150")
                         .insertBefore(button)
                         .append($("<span />"))
-                        .append($("<i />").addClass("fi flaticon-battery"))
+                        .append($("<i />").addClass("Icon fi flaticon-battery"))
                         .append(select),
 
                 a = $("<a />").insertBefore(button).attr("href", "#").addClass("Button MiniIcon Angle").append($("<i />").addClass("fi flaticon-trash-o")).on("click", function () {

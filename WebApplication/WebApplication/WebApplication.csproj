@@ -194,8 +194,8 @@
     <Content Include="Content\Theme\PropertyPanel.css">
       <DependentUpon>PropertyPanel.scss</DependentUpon>
     </Content>
-    <Content Include="Content\Theme\PrototypeEditor.css">
-      <DependentUpon>PrototypeEditor.scss</DependentUpon>
+    <Content Include="Content\Theme\Prototype.css">
+      <DependentUpon>Prototype.scss</DependentUpon>
     </Content>
     <Content Include="Content\Theme\ShadowPanel.css">
       <DependentUpon>ShadowPanel.scss</DependentUpon>
@@ -419,7 +419,7 @@
     <Content Include="Content\Theme\Controls.scss" />
     <Content Include="Content\Theme\Paginator.scss" />
     <Content Include="Content\Theme\PropertyPanel.scss" />
-    <Content Include="Content\Theme\PrototypeEditor.scss" />
+    <Content Include="Content\Theme\Prototype.scss" />
     <Content Include="Content\Theme\Signature.scss" />
     <Content Include="Content\Theme\Tab.scss" />
     <Content Include="Content\Theme\_Library.scss" />

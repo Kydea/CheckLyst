@@ -6,37 +6,36 @@
     <div class="ShadowPanel">
         <div class="Accordion"></div>
         <form id="Filters" action="@BaseUrl/Instances/List">
-            <label>
-                Department
+            <label class="Controls2">
+                <span>Prototype type</span>
+                <i class="Icon fi flaticon-building-o" />
                 <select name="department" class="Trigger" />
+                <i class="Icon fi flaticon-folder-o" />
+                <select name="prototypeType" />
             </label>
-            <label>
-                Prototype Type
-                <select name="prototypeType" class="Trigger" />
-            </label>
-            <label>
-                Prototype
+            <label class="Controls2">
+                <span>Prototype</span>
+                <i class="Icon fi flaticon-prototype" />
                 <select name="prototype" class="Trigger" />
-            </label>
-            <label>
-                Version
+                <i class="Icon fi flaticon-version" />
                 <select name="version" class="Trigger" />
             </label>
-            <label>
-                Instance Description
+            <label class="Clearing">
+                <span>Instance description</span>
+                <i class="Icon fi flaticon-instance" />
                 <input type="text" name="description" />
             </label>
             <label>
-                Tags
-                <select name="tagCode" />
-            </label>
-            <label>
-                Tag Value
-                <input type="text" name="tagValue" />
-            </label>
-            <label>
-                State
+                <span>State</span>
+                <i class="Icon fi flaticon-prototype" />
                 <select name="state" />
+            </label>
+            <label class="Controls2">
+                <span>Tag value</span>
+                <i class="Icon fi flaticon-tags-o" />
+                <select name="tagCode" />
+                <i class="Icon fi flaticon-align-left" />
+                <input type="text" name="tagValue" />
             </label>
         </form>
 
