@@ -24,8 +24,12 @@ div.Prototype {
         right: 0;
         top: 0;
 
-        a.Button.MiniIcon {
+        a {
             margin-top: 0;
+
+            &.Add {
+                display: none;
+            }
         }
     }
 
@@ -34,6 +38,10 @@ div.Prototype {
 
         > div.Commands {
             margin: 10px !important;
+
+            a.Add {
+                display: block;
+            }
         }
 
         &.Current {
@@ -79,6 +87,14 @@ div.Prototype {
     &.Current {
         h2 {
             background-color: $Color-Pink;
+        }
+    }
+
+    &.Locked, .Locked {
+        > div.Commands {
+            a.Remove, a.Up, a.Down {
+                display: none;
+            }
         }
     }
 }

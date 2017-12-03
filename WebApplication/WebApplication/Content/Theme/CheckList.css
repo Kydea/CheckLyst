@@ -39,7 +39,7 @@ div.CheckList div.Group {
     width: calc(100% - 20px); }
   div.CheckList div.Group div.Group {
     border: 0;
-    border-left: solid 5px #ccc;
+    border-left: solid 10px #ccc;
     width: 100%; }
     div.CheckList div.Group div.Group > div:last-child {
       margin-bottom: 0 !important; }

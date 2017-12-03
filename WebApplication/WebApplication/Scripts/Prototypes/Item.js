@@ -33,8 +33,10 @@
         };
 
     this.update = function (value) {
-        model = value;
-        element.attr("data-code", model.code).attr("data-id", model.id);
+		model = value;
+		if (!model.itemId)
+			model.itemId = prototypes.prototype.getNewItemId();
+		element.attr("data-code", model.code).attr("id", "ItemId" + model.itemId);
         specificItem.update(model)
     };
 

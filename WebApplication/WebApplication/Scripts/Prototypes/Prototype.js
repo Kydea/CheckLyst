@@ -13,6 +13,7 @@
 		itemHandler,
 		updateHandler,
 		commands,
+		newItemsId = 1,
 
 		completeModel = function () {
 			var analyzeElement = function (node) {
@@ -40,8 +41,19 @@
 		},
 
 		update = function () {
+			var currentItemId = $(".Current", element).attr("id");
+
 			completeModel();
 			title.text(model.description || "(Prototype name)");
+
+			commands = $("<div />").addClass("Commands")
+				.append($("<a />").attr("data-command", "properties").addClass("Button MiniIcon Properties").append($("<i />").addClass("fi flaticon-cog")))
+			if (model.state == prototypes.Prototype.states.draft)
+				commands
+					.append($("<a />").attr("data-command", "add").addClass("Button MiniIcon Add").append($("<i />").addClass("fi flaticon-plus")))
+					.append($("<a />").attr("data-command", "up").addClass("Button MiniIcon Up").append($("<i />").addClass("fi flaticon-arrow-up")))
+					.append($("<a />").attr("data-command", "down").addClass("Button MiniIcon Down").append($("<i />").addClass("fi flaticon-arrow-down")))
+					.append($("<a />").attr("data-command", "remove").addClass("Button MiniIcon Remove").append($("<i />").addClass("fi flaticon-trash-o")));
 
 			tab.clear();
 			for (var index in model.pages)
@@ -66,6 +78,11 @@
 					$("div.ActionBar a.Button.ExpressionsList").addClass("Invalid");
 					break;
 				}
+
+			if (currentItemId) {
+				currentItem = null;
+				$("#" + currentItemId, element).removeClass("Current").click();
+			}
 
 			if (updateHandler) updateHandler(model);
 		},
@@ -92,6 +109,8 @@
 					$("a.Selected", tab.getElement()).addClass("Current").append(commands);
 				else
 					currentItem.getElement().append(commands);
+
+				commands.on("click", "a", command);
 			}
 		},
 
@@ -99,19 +118,41 @@
 			e.preventDefault();
 			e.stopPropagation();
 
+			var
+				parent = currentItem.getParent(),
+				siblings = !!parent && parent.getChildren && parent.getChildren(),
+				itemIndex = currentItem.getIndex();
+
 			switch ($(this).data("command")) {
 				case "up":
+					var items = [];
+					for (var index in siblings)
+						items.push(siblings[index == itemIndex - 1 ? itemIndex : index == itemIndex ? index - 1 : index]);
+					parent.setChildren(items);
+					update();
+					matematici.canClose = false;
 					break;
 				case "down":
+					var items = [];
+					for (var index in siblings)
+						items.push(siblings[index == itemIndex ? itemIndex + 1 : index == itemIndex + 1 ? itemIndex : index]);
+					parent.setChildren(items);
+					update();
+					matematici.canClose = false;
+					break;
+				case "add":
+					currentItem.add();
 					break;
 				case "remove":
 					matematici.dialog.show("Warning", "The current item will be removed", [
 						{
 							text: "confirm", icon: "check", handler: function () {
-								currentItem.remove();
+								parent.getChildren().splice(itemIndex, 1);
+								update();
+								matematici.canClose = false;
 							}
 						},
-						{ text: "cancel", icon: "remove", cancelButton: true }
+						{ text: "cancel", icon: "times", cancelButton: true }
 					]);
 					break;
 				case "properties":
@@ -132,13 +173,6 @@
 			page = new prototypes.Group($("div.Page", element), "Page", prototype);
 
 			header = new prototypes.Group($("div#Header", element), "Group", prototype);
-
-			commands = $("<div />")
-				.addClass("Commands")
-				.append($("<a />").data("command", "up").addClass("Button MiniIcon").append($("<i />").addClass("fi flaticon-arrow-up")).on("click", command))
-				.append($("<a />").data("command", "down").addClass("Button MiniIcon").append($("<i />").addClass("fi flaticon-arrow-down")).on("click", command))
-				.append($("<a />").data("command", "remove").addClass("Button MiniIcon").append($("<i />").addClass("fi flaticon-times")).on("click", command))
-				.append($("<a />").data("command", "properties").addClass("Button MiniIcon").append($("<i />").addClass("fi flaticon-cog")).on("click", command));
 
 			tab = new matematici.Tab($("div.TabContainer", element), {}).addHandler(function (index) {
 				pageIndex = index;
@@ -186,6 +220,10 @@
 	prototype.getItemHandler = function () {
 		return itemHandler;
 	};
+
+	prototype.getNewItemId = function () {
+		return newItemsId++;
+	}
 
 	prototype.update = update;
 

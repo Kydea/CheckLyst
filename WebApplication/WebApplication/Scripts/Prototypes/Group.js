@@ -3,8 +3,8 @@
         group = this,
         title,
         model,
-        addButton,
-        index,
+		index,
+		addButton,
 
         create = function () {
             element = $("<div />");
@@ -27,56 +27,29 @@
             matematici.canClose = false;
 
             if (!model.groups) model.groups = [];
-            model.groups.push({ typeName: "Group" });
+			model.groups.push({ typeName: "Group", id: prototypes.prototype.getNewItemId() });
             prototypes.prototype.update();
         },
 
         setup = function () {
-            if (!element) create();
+			if (!element)
+				create();				
 
             element
                 .addClass("Element " + typeName)
-                .on("click", function (event) { prototypes.prototype.select(event, group) });
+				.on("click", function (event) {
+					prototypes.prototype.select(event, group)
+				});
 
             if (group.isPage()) 
-				addButton =
-					$("<a />")
-						.attr("href", "#")
-						.addClass("Button Add")
-						.text("Add group")
-						.prepend($("<i >").addClass("Add fi flaticon-plus")).on("click", function (e) {
-                    		if (prototypes.prototype.getItemHandler())
-								return;
-
-							e.preventDefault();
-							e.stopPropagation();
-							if (prototypes.prototype.getModel().state != prototypes.Prototype.states.draft) return;
-
-							addGroup();
-						}).appendTo(element);
-            else {
-
+				addButton = $("<a />")
+					.attr("href", "#")
+					.addClass("Button Add")
+					.text("Add group")
+					.prepend($("<i >").addClass("Add fi flaticon-plus")).on("click", addGroup);
+            else 
                 title = $("<h3 />").appendTo(element);
-
-                addButton = $("<div />").addClass("Add").appendTo(element)
-                    .append($("<a />").attr("href", "#").addClass("Button").text("Add").on("click", function (e) {
-                    	if (prototypes.prototype.getItemHandler())
-                            return;
-
-                        e.preventDefault();
-                        e.stopPropagation();
-                        if (prototypes.prototype.getModel().state != prototypes.Prototype.states.draft) return;
-
-                        matematici.dialog.popupMenu([
-                            { text: "cancel", icon: "times", cancelButton: true },
-                            { text: "signature", icon: "check-o", handler: addElement, data: "Signature" },
-                            { text: "field", icon: "i-cursor", handler: addElement, data: "Field" },
-                            { text: "text", icon: "align-left", handler: addElement, data: "Text" },
-                            { text: "group", icon: "list-ul", handler: addElement, data: "Group" }
-                        ]);
-                    }));
-            }
-        },
+		},
 
         update = function (model) {
             if (group.isPage())
@@ -85,8 +58,17 @@
                 title.text(model.description ? model.description : "(no title)")
             group.setColor(model.color);
             group.setFontSize(model.fontSize);
-            addButton.children("a").toggleClass("ReadOnly", prototypes.prototype.getModel().state != prototypes.Prototype.states.draft);
-        };
+		};
+
+	this.add = function () {
+		matematici.dialog.popupMenu([
+			{ text: "cancel", icon: "times", cancelButton: true },
+			{ text: "signature", icon: "check", handler: addElement, data: "Signature" },
+			{ text: "field", icon: "i-cursor", handler: addElement, data: "Field" },
+			{ text: "text", icon: "align-left", handler: addElement, data: "Text" },
+			{ text: "group", icon: "list-ul", handler: addElement, data: "Group" }
+		]);
+	}
 
     this.setColor = function (value) {
         if (title)
@@ -100,7 +82,11 @@
 
     this.update = function (value) {
     	model = value;
-    	update(model);
+		if (!model.itemId)
+			model.itemId = prototypes.prototype.getNewItemId();
+		element.attr("data-code", model.code).attr("id", "ItemId" + model.itemId);
+
+		update(model);
 
     	/* disegna il prototypo */
     	var
@@ -117,9 +103,10 @@
     	    item.setIndex(parseInt(index));
     	    item.update(itemModel);
     	    previous = item;
-    	}
+		}
 
-        element.append(addButton);
+		if (addButton && prototypes.prototype.getModel().state == prototypes.Prototype.states.draft)
+			addButton.appendTo(element);
     };
 
     this.clear = function () {

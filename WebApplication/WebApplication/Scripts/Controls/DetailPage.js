@@ -32,7 +32,7 @@
 									clickHandler($(this), "Delete");
 								}
 							},
-							{ text: "cancel", icon: "remove", cancelButton: true }
+							{ text: "cancel", icon: "times", cancelButton: true }
 						]);
 						return true;
 					}

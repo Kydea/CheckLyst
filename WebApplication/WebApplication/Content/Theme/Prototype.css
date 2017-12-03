@@ -14,13 +14,17 @@ div.Prototype div.Commands {
   position: absolute;
   right: 0;
   top: 0; }
-  div.Prototype div.Commands a.Button.MiniIcon {
+  div.Prototype div.Commands a {
     margin-top: 0; }
+    div.Prototype div.Commands a.Add {
+      display: none; }
 
 div.Prototype div.Group {
   cursor: pointer; }
   div.Prototype div.Group > div.Commands {
     margin: 10px !important; }
+    div.Prototype div.Group > div.Commands a.Add {
+      display: block; }
   div.Prototype div.Group.Current {
     background-color: #fce6e8; }
 
@@ -43,4 +47,7 @@ div.Prototype div.Item {
 
 div.Prototype.Current h2 {
   background-color: #fce6e8; }
+
+div.Prototype.Locked > div.Commands a.Remove, div.Prototype.Locked > div.Commands a.Up, div.Prototype.Locked > div.Commands a.Down, div.Prototype .Locked > div.Commands a.Remove, div.Prototype .Locked > div.Commands a.Up, div.Prototype .Locked > div.Commands a.Down {
+  display: none; }
 
