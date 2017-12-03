@@ -21,17 +21,17 @@ namespace CheckListManager.Instances.Api.Controllers
 			_instanceManagerService = instanceManagerService;
 		}
 
-		[HttpGet]
-		[Route("Create/{Prototype}/{Version}")]
-		public async Task<IHttpActionResult> Create([FromUri]CreateInstanceRequest request)
+		[HttpPost]
+		[Route("Create")]
+		public async Task<IHttpActionResult> Create([FromBody]CreateInstanceRequest request)
 		{
 			try
 			{
 				var cacheObject = await _instanceManagerService.CreateAsync(Identity.CompanyId, Identity.Code, request.Prototype, request.Version);
-				var response = new CreateInstanceResponse
+				var response = new InstanceResponse
 				{
 					Code = cacheObject.Code,
-					CheckList = _instanceManagerService.GetCheckList(cacheObject.Instance)
+					CheckList = _instanceManagerService.GetCheckList(Identity.Code, Identity.HasPermission("Instances#Edit", cacheObject.PrototypeType), cacheObject)
 				};
 				return Ok(Message.Create(response));
 			}
@@ -42,12 +42,12 @@ namespace CheckListManager.Instances.Api.Controllers
 		}
 
 		[HttpPost]
-		[Route("Confirm")]
-		public async Task<IHttpActionResult> Confirm([FromBody]Message<InstanceRequest> request)
+		[Route("Open")]
+		public async Task<IHttpActionResult> Open([FromBody]Message<InstanceRequest> request)
 		{
 			try
 			{
-				await _instanceManagerService.ConfirmAsync(Identity.Code, request.Data.Code);
+				await _instanceManagerService.OpenAsync(Identity.Code, request.Data.Code);
 				return Ok(Message.Create(true));
 			}
 			catch (DatabaseAggregateException exception)
@@ -72,17 +72,17 @@ namespace CheckListManager.Instances.Api.Controllers
 		}
 
 		[HttpPost]
-		[Route("Open")]
-		public async Task<IHttpActionResult> Open([FromBody]Message<InstanceRequest> request)
+		[Route("Get")]
+		public async Task<IHttpActionResult> Get([FromBody]Message<InstanceRequest> request)
 		{
 			try
 			{
-				var cacheObject = await _instanceManagerService.OpenAsync(Identity.CompanyId, request.Data.Code);
-				var response = new OpenInstanceResponse
+				var cacheObject = await _instanceManagerService.GetAsync(Identity.CompanyId, request.Data.Code);
+				var response = new InstanceResponse
 				{
 					Id = cacheObject.Id,
 					Code = cacheObject.Code,
-					CheckList = _instanceManagerService.GetCheckList(cacheObject.Instance)
+					CheckList = _instanceManagerService.GetCheckList(Identity.Code, Identity.HasPermission("Instances#Edit", cacheObject.PrototypeType), cacheObject)
 				};
 				return Ok(Message.Create(response));
 			}
@@ -102,23 +102,46 @@ namespace CheckListManager.Instances.Api.Controllers
 
 		[HttpPost]
 		[Route("Close")]
-		public async Task<IHttpActionResult> Close()
+		public async Task<IHttpActionResult> Close([FromBody]Message<InstanceRequest> request)
 		{
-			return Ok(await Task.FromResult(true));
-		}
-
-		[HttpPost]
-		[Route("ChangeState")]
-		public async Task<IHttpActionResult> ChangeState()
-		{
-			return Ok(await Task.FromResult(true));
+			try
+			{
+				await _instanceManagerService.CloseAsync(Identity.CompanyId, Identity.Code, request.Data.Code);
+				return Ok(Message.Create(true));
+			}
+			catch (DatabaseAggregateException exception)
+			{
+				return Error(new ResponseMessage(exception.InnerExceptions.Select(e => e.Message).ToArray()));
+			}
+			catch (DatabaseException exception)
+			{
+				return Error(new ResponseMessage(exception.Message));
+			}
+			catch (Exception exception)
+			{
+				return Error(new ResponseMessage(exception.Message));
+			}
 		}
 
 		[HttpPost]
 		[Route("Event")]
-		public async Task<IHttpActionResult> Event()
+		public async Task<IHttpActionResult> Event([FromBody]Message<InstanceEventRequest> request)
 		{
-			return Ok(await Task.FromResult(true));
+			try
+			{
+				var cacheObject = await _instanceManagerService.HandleEventAsync(Identity, request.Data);
+				var response = new InstanceResponse
+				{
+					Id = cacheObject.Id,
+					Code = cacheObject.Code,
+					CheckList = _instanceManagerService.GetCheckList(Identity.Code, Identity.HasPermission("Instances#Edit", cacheObject.PrototypeType), cacheObject)
+				};
+				return Ok(Message.Create(response));
+			}
+			catch (Exception exception)
+			{
+				return Error(new ResponseMessage(exception.Message));
+			}
 		}
 	}
 }

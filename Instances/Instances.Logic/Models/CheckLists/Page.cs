@@ -10,6 +10,10 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 		public string Description { get; set; }
 		public List<ICheckListGroup> Groups { get; set; } = new List<ICheckListGroup>();
 
+		public Lock Lock { get; set; }
+
+		public bool IsLocked { get; set; }
+
 		public override bool IsValidByDefault()
 			=> _valid;
 
@@ -36,6 +40,19 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 				group.Update();
 				_valid = _valid && group.Valid;
 			}
+		}
+
+		public override void UpdateReadOnly(string userCode, bool canEdit)
+		{
+			base.UpdateReadOnly(userCode, canEdit);
+
+			foreach (var group in Groups)
+			{
+				group.UpdateReadOnly(userCode, canEdit);
+			}
+
+			IsLocked = Lock != null && Lock.User != userCode;
+			IsReadOnly = IsReadOnly || IsLocked;
 		}
 	}
 }

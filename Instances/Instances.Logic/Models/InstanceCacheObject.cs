@@ -9,6 +9,7 @@ namespace CheckListManager.Instances.Logic.Models
 		public long CompanyId { get; set; }
 
 		public string Code { get; set; }
+		public long PrototypeType { get; set; }
 		public long Prototype { get; set; }
 		public int Version { get; set; }
 
@@ -29,5 +30,12 @@ namespace CheckListManager.Instances.Logic.Models
 		public DateTimeOffset CreatedOn { get; set; }
 		public string ModifiedBy { get; set; }
 		public DateTimeOffset? ModifiedOn { get; set; }
+
+		public void AsChanged(string userCode)
+		{
+			IsDirty = true;
+			ModifiedBy = userCode;
+			ModifiedOn = DateTimeOffset.UtcNow;
+		}
 	}
 }

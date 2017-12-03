@@ -7,5 +7,10 @@
         public long? PrototypeType { get; set; }
 
         public string Tag { get; set; }
+
+	    public override string ToString()
+	    {
+		    return $"{Code} - {PrototypeType} - {Tag}";
+	    }
     }
 }

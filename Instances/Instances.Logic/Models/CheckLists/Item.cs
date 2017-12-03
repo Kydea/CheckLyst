@@ -41,6 +41,23 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 			DescriptionFormula?.Update(CheckList.Expressions, RuntimeValues);
 		}
 
+		public override void UpdateReadOnly(string userCode, bool canEdit)
+		{
+			base.UpdateReadOnly(userCode, canEdit);
+
+			if (canEdit)
+			{
+				IsReadOnly = Group != null && Group.IsReadOnly ||
+							 Page != null && Page.IsReadOnly;
+			}
+
+		}
+
+		public virtual void Remove()
+		{
+			((Instance)CheckList).Items.Remove(Id);
+		}
+
 		public abstract ICheckListItem Clone(ICheckListGroup parent);
 
 		protected static void Copy(Item source, Item destination)

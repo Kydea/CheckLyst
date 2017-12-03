@@ -26,7 +26,7 @@ namespace CheckListManager.DataSources.Api.Controllers
 		public async Task<IHttpActionResult> GetData(PagingRequest<ListRequest> request)
 		{
 			//To use as reference
-			//if (!ValidateUser(0, "tag"))
+			//if (!Identity.HasPermission("userfunction", 0, "tag"))
 			//{
 			//	return Unauthorized();
 			//}

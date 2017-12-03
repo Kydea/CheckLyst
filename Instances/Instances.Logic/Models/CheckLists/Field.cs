@@ -49,5 +49,15 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 			base.Update();
 			ValueFormula?.Update(CheckList.Expressions, RuntimeValues);
 		}
+
+		protected override bool IsReadOnlyByDefault()
+		{
+			return base.IsReadOnlyByDefault() || ValueFormula != null;
+		}
+
+		public bool Validate(string value)
+		{
+			return ValueType.Validate(Value);
+		}
 	}
 }

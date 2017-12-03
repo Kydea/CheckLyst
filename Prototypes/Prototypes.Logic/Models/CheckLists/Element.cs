@@ -48,6 +48,8 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 					ValidCondition == Conditions.True;
 			}
 		}
+
+		public bool IsReadOnly { get; set; }
 		public Conditions ValidCondition { get; set; }
 		public string ValidExpressionCode { get; set; }
 		public string ValidityMessage { get; set; }
@@ -58,6 +60,11 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 		}
 
 		public void Update()
+		{
+			throw new NotImplementedException();
+		}
+
+		public void UpdateReadOnly(string userCode, bool canEdit)
 		{
 			throw new NotImplementedException();
 		}

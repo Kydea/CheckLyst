@@ -20,11 +20,13 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
 		ICheckListSignature Signature { get; }
 		string SignatureCode { get; set; }
 		bool Valid { get; }
+		bool IsReadOnly { get; }
 		Conditions ValidCondition { get; set; }
 		string ValidExpressionCode { get; set; }
 		string ValidityMessage { get; set; }
 
 		void Setup();
 		void Update();
+		void UpdateReadOnly(string userCode, bool canEdit);
 	}
 }

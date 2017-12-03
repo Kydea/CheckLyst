@@ -1,11 +1,16 @@
-﻿using CheckListManager.Prototypes.Logic.Models.CheckLists;
+using CheckListManager.Prototypes.Logic.Models.CheckLists;
 
 namespace CheckListManager.Prototypes.Logic.Messages
 {
 	public class GetPrototypeResponse
 	{
-		public int Id { get; set; }
+		public long Id { get; set; }
 		public int Version { get; set; }
+
+		public long PrototypeType { get; set; }
+
+		//TODO add properties from DB
+
         public string State { get; set; }
         public Prototype CheckList { get; set; }
 	}

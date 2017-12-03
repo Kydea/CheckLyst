@@ -65,6 +65,25 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 			}
 		}
 
+		public override void UpdateReadOnly(string userCode, bool canEdit)
+		{
+			base.UpdateReadOnly(userCode, canEdit);
+
+			foreach (var item in Items)
+			{
+				item.UpdateReadOnly(userCode, canEdit);
+			}
+
+			if (Iterator)
+			{
+				_valid = true;
+				foreach (var iteration in Iterations)
+				{
+					iteration.UpdateReadOnly(userCode, canEdit);
+				}
+			}
+		}
+
 		public override ICheckListItem Clone(ICheckListGroup parent)
 		{
 			var group = new Group()
@@ -78,6 +97,18 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
 			Copy(this, group);
 			return group;
+		}
+
+		public override void Remove()
+		{
+			foreach (var item in Items)
+				item.Remove();
+
+			if (Group.Iterator)
+				foreach (var iteration in Iterations)
+					iteration.Remove();
+
+			base.Remove();
 		}
 
 		protected void SetupItems()
@@ -95,6 +126,31 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 				item.Setup();
 				previous = item;
 			}
+		}
+
+		public void AddIteration()
+		{
+			var iteration = new Iteration
+			{
+				CheckList = CheckList,
+				Page = Page,
+				Group = this
+			};
+			iteration.Setup();
+			Iterations.Add(iteration);
+		}
+
+		public void Move(Iteration iteration, int direction)
+		{
+			var index = Iterations.IndexOf(iteration);
+			Iterations.RemoveAt(index);
+			Iterations.Insert(index + direction, iteration);
+		}
+
+		public void Remove(Iteration iteration)
+		{
+			Iterations.Remove(iteration);
+			iteration.Remove();
 		}
 	}
 }

@@ -26,5 +26,7 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
 		string TypeName { get; }
 
 		ICheckListItem Clone(ICheckListGroup parent);
+
+		void Remove();
 	}
 }
