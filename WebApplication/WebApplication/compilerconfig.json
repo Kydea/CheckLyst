@@ -154,5 +154,9 @@
   {
     "outputFile": "Content/Theme/Prototype.css",
     "inputFile": "Content/Theme/Prototype.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Instance.css",
+    "inputFile": "Content/Theme/Instance.scss"
   }
 ]

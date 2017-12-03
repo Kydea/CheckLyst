@@ -133,7 +133,7 @@ a.Button {
             line-height: $size;
             padding: 0;
             border: 0;
-            border-radius: 50% !important;
+            background: none;
             font-size: 10px;
             margin: 0;
         }
@@ -254,7 +254,7 @@ form {
 
     a.Button {
         float: left;
-        margin-top: 21px + $Metric-Control-Space;
+        margin-top: calc(1em + #{5px + $Metric-Control-Space});
         margin-left: $Metric-Control-Space;
     }
 }
@@ -271,7 +271,7 @@ form, div.CheckList {
         max-width: calc(100% - #{$Metric-Control-Space});
         position: relative;
         color: $Color-Grey-Dark;
-        padding-top: calc(1em + 5px);
+        padding-top: 1em;
 
         input, select, textarea, div.Input {
             margin-top: 5px;
@@ -420,11 +420,11 @@ form, div.CheckList {
                 }
 
                 i.Icon ~ i.Icon {
-                    width: calc(33.33% + #{$Metric-Control-Space / 3});
+                    left: calc(33.33% + #{$Metric-Control-Space / 3});
                 }
 
                 i.Icon ~ i.Icon ~ i.Icon {
-                    width: calc(66.66% + #{$Metric-Control-Space * 2 / 3});
+                    left: calc(66.66% + #{$Metric-Control-Space * 2 / 3});
                 }
             }
         }

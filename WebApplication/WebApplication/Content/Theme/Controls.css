@@ -102,7 +102,7 @@ a.Button {
       line-height: 16px;
       padding: 0;
       border: 0;
-      border-radius: 50% !important;
+      background: none;
       font-size: 10px;
       margin: 0; }
     a.Button.MiniIcon::after {
@@ -176,7 +176,7 @@ form {
     width: calc(100% - 2 * 20px) !important; }
   form a.Button {
     float: left;
-    margin-top: 41px;
+    margin-top: calc(1em + 25px);
     margin-left: 20px; }
 
 form label, div.CheckList label {
@@ -187,7 +187,7 @@ form label, div.CheckList label {
   max-width: calc(100% - 20px);
   position: relative;
   color: #666;
-  padding-top: calc(1em + 5px); }
+  padding-top: 1em; }
   form label input, form label select, form label textarea, form label div.Input, div.CheckList label input, div.CheckList label select, div.CheckList label textarea, div.CheckList label div.Input {
     margin-top: 5px; }
   form label input[type=checkbox], div.CheckList label input[type=checkbox] {
@@ -264,9 +264,9 @@ form label, div.CheckList label {
         border-right: solid 1px #ccc;
         border-radius: 5px; }
       form label.Controls3 i.Icon ~ i.Icon, div.CheckList label.Controls3 i.Icon ~ i.Icon {
-        width: calc(33.33% + 6.66667px); }
+        left: calc(33.33% + 6.66667px); }
       form label.Controls3 i.Icon ~ i.Icon ~ i.Icon, div.CheckList label.Controls3 i.Icon ~ i.Icon ~ i.Icon {
-        width: calc(66.66% + 13.33333px); } }
+        left: calc(66.66% + 13.33333px); } }
   @media only screen and (max-width: 459px) {
     form label, div.CheckList label {
       width: calc(100% - 20px); }

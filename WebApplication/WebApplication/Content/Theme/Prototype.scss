@@ -1,108 +1,84 @@
 ﻿@import "_Library.scss";
 
-body.PrototypeEditor {
+div.Prototype {
+    h2 {
+        cursor: pointer;
+    }
 
-    div.Prototype {
-        h2 {
+    div.TabContainer div.TabLabels a {
+        &.Selected {
+            cursor: pointer !important;
+        }
+
+        &.Current {
+            background-color: $Color-Pink;
+        }
+    }
+
+    a.Add.Button {
+        float: right;
+    }
+
+    div.Commands {
+        position: absolute;
+        right: 0;
+        top: 0;
+
+        a.Button.MiniIcon {
+            margin-top: 0;
+        }
+    }
+
+    div.Group {
+        cursor: pointer;
+
+        > div.Commands {
+            margin: 10px !important;
+        }
+
+        &.Current {
+            background-color: $Color-Pink;
+        }
+    }
+
+    div.Item {
+        cursor: pointer;
+
+        label {
             cursor: pointer;
         }
 
-        div.TabContainer div.TabLabels a {
-            &.Selected {
-                cursor: pointer !important;
-            }
-
-            &.Red {
-                color: red !important;
-            }
+        &.Field {
         }
 
-        div.Add {
-            clear: both;
-
-            &.AddGroup {
-                margin: 20px 0;
-            }
-        }
-
-        div.Group {
-            position: relative;
-            cursor: pointer;
-            border: 1px solid $Color-Grey-Light;
-            position: relative;
-            padding-bottom: $Metric-Control-Space;
-            padding-right: $Metric-Control-Space;
-            background-color: $Color-Silver-Light;
-
-            & > * {
-                float: left;
-                margin-top: $Metric-Control-Space !important;
-                margin-left: $Metric-Control-Space !important;
-            }
-
-            &.Selected {
-                background-color: $Color-Pink !important;
-            }
-
-            div.Group.Selected {
-                background-color: $Color-Pink !important;
-
-                &::before {
-                    content: none;
-                }
-            }
-        }
-
-        div.Item {
-            cursor: pointer;
-
-            label {
+        &.Signature {
+            input {
                 cursor: pointer;
             }
+        }
 
-            &.Field {
-            }
-
-            &.Signature {
-                input {
-                    cursor: pointer;
-                }
-            }
-
-            &.Text {
-            }
-
-            &.Selected {
-                &.Field {
-                    label {
-                        color: red;
-                    }
-
-                    div.Input {
-                        background-color: $Color-Pink;
-                    }
-                }
-
-                &.Signature {
-                    label {
-                        color: red;
-                    }
-
-                    input {
-                        background-color: $Color-Pink;
-                    }
-                }
-
-                &.Text {
-                    background-color: $Color-Pink;
-                }
+        &.Text {
+            p {
+                position: relative;
             }
         }
 
-        &.Selected {
-            h2 {
-                color: red !important;
+        &.Current {
+            &::before {
+                content: "";
+                position: absolute;
+                background-color: $Color-Pink;
+                left: -10px;
+                right: -10px;
+                top: -10px;
+                bottom: -10px;
             }
+        }
+    }
+
+    &.Current {
+        h2 {
+            background-color: $Color-Pink;
         }
     }
 }

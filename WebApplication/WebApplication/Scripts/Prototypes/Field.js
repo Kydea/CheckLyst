@@ -1,12 +1,14 @@
 ﻿prototypes.Field = function (item, model) {
     var
         field,
-        label,
+		label,
+		span,
         element = item.getElement(),
 
         setup = function () {
-            label = $("<label />").appendTo(element);
-            field = $("<div />").addClass("Input").appendTo(element);
+			label = $("<label />").appendTo(element);
+			span = $("<span />").appendTo(label);
+			field = $("<div />").addClass("Input").appendTo(label);
             if (model.LinesCount > 0) {
                 element.addClass("MultiLine");
                 field.height(24 * model.LinesCount - 10);
@@ -14,7 +16,7 @@
         };
 
     this.update = function (model) {
-        label.html(model.Description ? model.Description : "(no description)")
+		span.html(model.Description ? model.Description : "(no description)")
         this.setColor(model.Color);
         this.setFontSize(model.FontSize);
         field.attr("title", field.text());

@@ -39,17 +39,21 @@
                 .on("click", function (event) { prototypes.prototype.select(event, group) });
 
             if (group.isPage()) 
-                addButton = $("<div />").addClass("Add AddGroup").appendTo(element)
-                    .append($("<a />").attr("href", "#").addClass("Button").text("Add group").on("click", function (e) {
-                    	if (prototypes.prototype.getItemHandler())
-                            return;
+				addButton =
+					$("<a />")
+						.attr("href", "#")
+						.addClass("Button Add")
+						.text("Add group")
+						.prepend($("<i >").addClass("Add fi flaticon-plus")).on("click", function (e) {
+                    		if (prototypes.prototype.getItemHandler())
+								return;
 
-                        e.preventDefault();
-                        e.stopPropagation();
-                        if (prototypes.prototype.getModel().state != prototypes.Prototype.states.draft) return;
+							e.preventDefault();
+							e.stopPropagation();
+							if (prototypes.prototype.getModel().state != prototypes.Prototype.states.draft) return;
 
-                        addGroup();
-                    }));
+							addGroup();
+						}).appendTo(element);
             else {
 
                 title = $("<h3 />").appendTo(element);
@@ -64,8 +68,8 @@
                         if (prototypes.prototype.getModel().state != prototypes.Prototype.states.draft) return;
 
                         matematici.dialog.popupMenu([
-                            { text: "cancel", icon: "remove", cancelButton: true },
-                            { text: "signature", icon: "check-square-o", handler: addElement, data: "Signature" },
+                            { text: "cancel", icon: "times", cancelButton: true },
+                            { text: "signature", icon: "check-o", handler: addElement, data: "Signature" },
                             { text: "field", icon: "i-cursor", handler: addElement, data: "Field" },
                             { text: "text", icon: "align-left", handler: addElement, data: "Text" },
                             { text: "group", icon: "list-ul", handler: addElement, data: "Group" }

@@ -1,22 +1,19 @@
 ﻿prototypes.Signature = function (item, model) {
     var
-        user,
-        date,
-        time,
         button,
         label,
         element = item.getElement(),
 
-        setup = function () {
-            label = $("<label />").text(model.description ? model.description : "(no description)");
-            element.append(label);
-			user = $("<input />").addClass("User").attr({ type: "text", readonly: true }).appendTo(label);
-			$("<i />").addClass("fi flaticon-user-o").insertAfter(user);
-			date = $("<input />").addClass("Date").attr({ type: "text", readonly: true }).appendTo(label);
-			$("<i />").addClass("fi flaticon-calendar").insertAfter(date);
-			time = $("<input />").addClass("Time").attr({ type: "text", readonly: true }).appendTo(label);
-			$("<i />").addClass("fi flaticon-clock-o").insertAfter(time);
-			button = $("<a />").addClass("Button").attr({ href: "#" }).appendTo(label);
+		setup = function () {
+			label = $("<label />").addClass("Controls3").append($("<span />").html(model.description ? model.description : "(no description)"));
+			element.append(label);
+			$("<i />").addClass("Icon fi flaticon-user-o").appendTo(label);
+			$("<input />").addClass("User").attr({ type: "text", readonly: true }).appendTo(label);
+			$("<i />").addClass("Icon fi flaticon-calendar").appendTo(label);
+			$("<input />").addClass("Date").attr({ type: "text", readonly: true }).appendTo(label);
+			$("<i />").addClass("Icon fi flaticon-clock-o").appendTo(label);
+			$("<input />").addClass("Time").attr({ type: "text", readonly: true }).appendTo(label);
+			button = $("<a />").addClass("Button").attr({ href: "#" }).appendTo(element);
         };
 
     this.update = function (model) {

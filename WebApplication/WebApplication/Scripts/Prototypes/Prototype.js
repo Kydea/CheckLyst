@@ -9,9 +9,10 @@
 		tab,
 		pageLock,
 		model,
-		selectedItem,
+		currentItem,
 		itemHandler,
 		updateHandler,
+		commands,
 
 		completeModel = function () {
 			var analyzeElement = function (node) {
@@ -78,11 +79,48 @@
 			if (itemHandler && !itemHandler.call(item.getElement()))
 				return;
 
-			if (selectedItem) selectedItem.getElement().removeClass("Selected");
-			if (selectedItem && selectedItem.isPage && selectedItem.isPage()) $("a.Selected", tab.getElement()).removeClass("Red");
-			selectedItem = selectedItem == item ? null : item;
-			if (selectedItem) selectedItem.getElement().addClass("Selected");
-			if (selectedItem && selectedItem.isPage && selectedItem.isPage()) $("a.Selected", tab.getElement()).addClass("Red");
+			if (currentItem) {
+				currentItem.getElement().removeClass("Current");
+				commands.remove();
+				if (currentItem.isPage && currentItem.isPage()) 
+					$("div.Commands", $("a.Selected", tab.getElement()).removeClass("Current")).remove();
+			}
+			currentItem = currentItem == item ? null : item;
+			if (currentItem) {
+				currentItem.getElement().addClass("Current");
+				if (currentItem.isPage && currentItem.isPage()) 
+					$("a.Selected", tab.getElement()).addClass("Current").append(commands);
+				else
+					currentItem.getElement().append(commands);
+			}
+		},
+
+		command = function (e) {
+			e.preventDefault();
+			e.stopPropagation();
+
+			switch ($(this).data("command")) {
+				case "up":
+					break;
+				case "down":
+					break;
+				case "remove":
+					matematici.dialog.show("Warning", "The current item will be removed", [
+						{
+							text: "confirm", icon: "check", handler: function () {
+								currentItem.remove();
+							}
+						},
+						{ text: "cancel", icon: "remove", cancelButton: true }
+					]);
+					break;
+				case "properties":
+					break;
+				default:
+					alert("invalid command");
+					console.log(this);
+					break;
+			}
 		},
 
 		addPage = function () {
@@ -94,6 +132,13 @@
 			page = new prototypes.Group($("div.Page", element), "Page", prototype);
 
 			header = new prototypes.Group($("div#Header", element), "Group", prototype);
+
+			commands = $("<div />")
+				.addClass("Commands")
+				.append($("<a />").data("command", "up").addClass("Button MiniIcon").append($("<i />").addClass("fi flaticon-arrow-up")).on("click", command))
+				.append($("<a />").data("command", "down").addClass("Button MiniIcon").append($("<i />").addClass("fi flaticon-arrow-down")).on("click", command))
+				.append($("<a />").data("command", "remove").addClass("Button MiniIcon").append($("<i />").addClass("fi flaticon-times")).on("click", command))
+				.append($("<a />").data("command", "properties").addClass("Button MiniIcon").append($("<i />").addClass("fi flaticon-cog")).on("click", command));
 
 			tab = new matematici.Tab($("div.TabContainer", element), {}).addHandler(function (index) {
 				pageIndex = index;

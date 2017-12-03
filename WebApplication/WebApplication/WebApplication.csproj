@@ -148,8 +148,8 @@
     <Content Include="Content\Theme\Help.css">
       <DependentUpon>Help.scss</DependentUpon>
     </Content>
-    <Content Include="Content\Theme\InstanceManager.css">
-      <DependentUpon>InstanceManager.scss</DependentUpon>
+    <Content Include="Content\Theme\Instance.css">
+      <DependentUpon>Instance.scss</DependentUpon>
     </Content>
     <Content Include="Content\Theme\jQuery-UI.css">
       <DependentUpon>jQuery-UI.scss</DependentUpon>
@@ -408,7 +408,7 @@
     <Content Include="Content\Theme\Fonts.scss" />
     <Content Include="Content\Theme\Grid.scss" />
     <Content Include="Content\Theme\Help.scss" />
-    <Content Include="Content\Theme\InstanceManager.scss" />
+    <Content Include="Content\Theme\Instance.scss" />
     <Content Include="Content\Theme\jQuery-UI.scss" />
     <Content Include="Content\Theme\Layout.scss" />
     <Content Include="Content\Theme\Loader.scss" />

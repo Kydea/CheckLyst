@@ -1,9 +1,11 @@
 ﻿@import "_Library.scss";
 
-$SeparatorY: 5px;
-$SeparatorX: 10px;
+div.CheckList {
 
-body.CheckList {
+    h2 {
+        margin: 0 0 $Metric-Control-Space !important;
+    }
+
     span {
         &.Error {
             i.fi {
@@ -38,14 +40,6 @@ body.CheckList {
     }
 
     div.Page {
-        div.Group {
-            border-bottom: solid 1px $Color-Grey-Dark;
-
-            div.Group {
-                border-bottom: none;
-            }
-        }
-
         &::after {
             content: "";
             display: table;
@@ -54,25 +48,29 @@ body.CheckList {
     }
 
     div.Group {
-        min-height: 30px;
-        margin-bottom: 30px;
+        position: relative;
+        min-height: $Metric-Control-Height;
+        margin-bottom: $Metric-Control-Space;
+        border: 1px solid $Color-Grey-Light;
+        padding-bottom: $Metric-Control-Space;
+        padding-right: $Metric-Control-Space;
+        background-color: $Color-Silver-Light;
         clear: both;
+        width: 100%;
+
+        > * {
+            float: left;
+            margin: $Metric-Control-Space 0 0 $Metric-Control-Space !important;
+        }
+
+        h3 {
+            width: calc(100% - #{$Metric-Control-Space});
+        }
 
         div.Group {
-            padding: 30px;
-            background-color: $Color-Grey-Light;
-
-            div.Group {
-                background-color: $Color-Grey-Regular;
-
-                div.Group {
-                    background-color: $Color-Grey-Dark;
-                }
-            }
-
-            h3 {
-                margin-top: 0 !important;
-            }
+            border: 0;
+            border-left: solid 5px $Color-Grey-Light;
+            width: 100%;
 
             > div:last-child {
                 margin-bottom: 0 !important;
@@ -105,14 +103,8 @@ body.CheckList {
         label {
             display: block;
             min-height: 14px;
-            margin-right: $SeparatorX;
-        }
-
-        input, div.Input, select {
-            float: left;
-            width: 150px;
-            margin-right: $SeparatorX;
-            margin-top: $SeparatorY;
+            margin: 0;
+            max-width: 100%;
         }
 
         &::after {
@@ -122,14 +114,7 @@ body.CheckList {
         }
 
         &.Field {
-            float: left;
-
             &.Boolean {
-                input {
-                    margin-top: 13px;
-                    margin-bottom: 5px;
-                }
-
                 input[value=""] {
                     opacity: 0.6;
                 }
@@ -137,19 +122,16 @@ body.CheckList {
         }
 
         &.Text {
-            clear: both;
+            width: calc(100% - #{$Metric-Control-Space});
+            font-size: 13px;
         }
 
         &.Signature {
-            clear: both;
+            width: calc(100% - #{$Metric-Control-Space});
 
-            input {
-                padding-right: 20px;
-
-                &.User {
-                    width: 300px;
-                    max-width: 100%;
-                }
+            > a.Button {
+                margin-left: $Metric-Control-Space;
+                margin-top: calc(1em + 5px);
             }
         }
     }
@@ -157,15 +139,6 @@ body.CheckList {
     .Item {
         p.Description {
             margin: 0;
-        }
-
-        a {
-            float: right;
-            margin-top: $SeparatorY;
-
-            &.Button {
-                min-width: 120px;
-            }
         }
 
         &.Field {
