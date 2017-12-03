@@ -25,5 +25,10 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 		{
 			throw new NotImplementedException();
 		}
+
+		public void Remove()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
