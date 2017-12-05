@@ -16,8 +16,8 @@
 			button = $("<a />").addClass("Button").attr({ href: "#" }).appendTo(element);
         };
 
-    this.update = function (model) {
-        button.text(model.buttonLabel ? model.buttonLabel : "Signature");
+	this.update = function (model) {
+		button.text(model.buttonLabel ? model.buttonLabel : "Signature").prepend($("<i >").addClass("fi flaticon-check"));
         this.setColor(model.color);
         this.setFontSize(model.fontSize);
     };

@@ -31,19 +31,27 @@
         getItem = function(index) {
             return {
                 index: index,
-                label: $(".TabLabels a", element).removeClass("Selected").eq(index).addClass("Selected"),
-                tab: $(".Tab", element).removeClass("Selected").eq(index).addClass("Selected")
+                label: $(".TabLabels a", element).eq(index),
+                tab: $(".Tab", element).eq(index)
             }
-        }
+        },
+
+		setItem = function (index) {
+			return {
+				index: index,
+				label: $(".TabLabels a", element).removeClass("Selected").eq(index).addClass("Selected"),
+				tab: $(".Tab", element).removeClass("Selected").eq(index).addClass("Selected")
+			}
+		},
 
         select = function (index) {
-            currentItem = getItem(index);
+            currentItem = setItem(index);
 			if (!options.fixedHeight)
 				resize();
         },
 
 		setup = function () {
-			select($(".TabLabels a.Selected", element).prevAll().size());
+			select($(".TabLabels a.Selected", element).prevAll("a").size());
 
 			element
 				.data("tab", tab)
@@ -51,10 +59,10 @@
                     e.preventDefault();
                     e.stopPropagation();
 
-                    select($(this).prevAll().size());
+                    select($(this).prevAll("a").size());
 
                     for (var index in handlers)
-                        handlers[index].call(this, currentItem.index);
+                        handlers[index].call(this, currentItem);
                 });
 
             $(".TabLabels a", element).each(function() {
@@ -84,8 +92,8 @@
         select(index);
     };
 
-    this.add = function (label) {
-        $(".TabLabels", element).append($("<a />").attr("href", "#").append(label));
+    this.add = function (label, id) {
+		$(".TabLabels", element).append($("<a />").attr({ href: "#", id: id }).append(label));
     };
 
     this.clear = function () {

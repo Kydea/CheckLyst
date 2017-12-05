@@ -21,14 +21,76 @@ div.Prototype {
 
     div.Commands {
         position: absolute;
+        z-index: $Depth-CheckList-Information;
         right: 0;
         top: 0;
+        margin: #{$Metric-Control-Space} !important;
+        background: white;
+        border: solid 1px $Color-Green-Regular;
+        box-shadow: $Box-Shadow;
+        font-size: 0 !important;
+        border-radius: 3px;
 
-        a {
+        a.MiniIcon {
+            $IconSize: 30px;
             margin-top: 0;
+            line-height: $IconSize !important;
+            height: $IconSize !important;
+            width: $IconSize !important;
+            border-radius: 3px 0 0 3px !important;
 
-            &.Add {
+            i.fi {
+                font-size: 14px !important;
+                line-height: $IconSize !important;
+                height: $IconSize !important;
+                width: $IconSize !important;
+            }
+
+            + a.MiniIcon {
+                border-left: solid 1px $Color-Green-Regular;
+                border-radius: 0 3px 3px 0 !important;
+            }
+
+            &:hover {
+                background: $Color-Silver-Dark;
+
+                i.fi {
+                    color: $Color-Green-Dark !important;
+                }
+            }
+        }
+    }
+
+    div.ShadowPanel {
+        > div.Commands {
+            a.Up, a.Down, a.Add, a.Remove {
                 display: none;
+            }
+        }
+    }
+
+    div.TabLabels {
+        div.Commands {
+            margin: 0;
+
+            a.Add {
+                display: none;
+            }
+        }
+
+        a:first-of-type {
+            + div.Commands {
+                a.Up {
+                    display: none;
+                }
+            }
+        }
+
+        a:nth-last-of-type(2) {
+            + div.Commands {
+                a.Down {
+                    display: none;
+                }
             }
         }
     }
@@ -38,10 +100,6 @@ div.Prototype {
 
         > div.Commands {
             margin: 10px !important;
-
-            a.Add {
-                display: block;
-            }
         }
 
         &.Current {
@@ -80,6 +138,32 @@ div.Prototype {
                 right: -10px;
                 top: -10px;
                 bottom: -10px;
+            }
+        }
+
+        > div.Commands {
+            margin: 0 !important;
+
+            a.Add {
+                display: none;
+            }
+        }
+    }
+
+    div.Element {
+        &:first-of-type {
+            > div.Commands {
+                a.Up {
+                    display: none;
+                }
+            }
+        }
+
+        &:last-of-type {
+            > div.Commands {
+                a.Down {
+                    display: none;
+                }
             }
         }
     }

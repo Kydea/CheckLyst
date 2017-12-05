@@ -26,7 +26,7 @@ div.Popup {
 
         h2 {
             margin: -20px -20px 20px;
-            background: $Color-Green-Regular;
+            background: $Color-Yellow-Regular;
             padding: 20px;
             color: white;
             text-transform: uppercase;
@@ -72,7 +72,7 @@ div.Popup {
             }
 
             &:hover {
-                color: $Color-Grey-Light;
+                color: $Color-Grey-Dark;
             }
         }
 
@@ -103,7 +103,7 @@ div.Popup {
             min-height: 1vh;
 
             h2 {
-                background: $Color-Green-Regular;
+                background: $Color-Yellow-Regular;
                 padding: 20px;
                 color: white;
                 text-transform: uppercase;

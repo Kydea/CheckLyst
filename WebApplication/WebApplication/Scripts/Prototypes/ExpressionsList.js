@@ -13,12 +13,12 @@
 
         select = function (index) {
         	if (currentIndex != null) body.children().eq(currentIndex).removeClass("Selected").addClass("Handler").children().slice(0,2).attr("contenteditable", false);
-        	if (model.State == prototypes.Prototype.states.draft)
+        	if (model.state == prototypes.Prototype.states.draft)
         	{
         	    currentIndex = index;
         	    var used = false;
         	    if (currentIndex != null) {
-        	        used = model.ExpressionsInUse.includes(list[currentIndex].code);
+        	        used = model.expressionsInUse.includes(list[currentIndex].code);
 
         	        body.children().eq(currentIndex).addClass("Selected").removeClass("Handler")
                         .children((used ? ":not(:nth-child(2))" : "") + ":not(:first-child):not(:last-child):not(:nth-last-child(2))").attr("contenteditable", true).eq(0).focus();
@@ -39,7 +39,7 @@
                 .append($("<td />").addClass("ValidColumn").append($("<i />").attr("title", row.error || "").addClass("fi" + (row.valid == null ? "" : " flaticon-" + (row.valid ? "check" : "times")))))
 				.append($("<td />").addClass("UniqueColumn").toggleClass("Off", !row.unique).append($("<i />").addClass("fi flaticon-key")));
 
-            if (model.State == prototypes.Prototype.states.draft)
+            if (model.state == prototypes.Prototype.states.draft)
             	matematici.canClose = false;
         },
 
@@ -59,9 +59,9 @@
         },
 
         updateModel = function () {
-            model.Expressions = {};
+            model.expressions = {};
             for (var index in list) 
-                model.Expressions[list[index].code] = { SerializedValue: list[index].expression, Error: list[index].error, DataType: list[index].dataType, Unique: list[index].unique };
+                model.expressions[list[index].code] = { SerializedValue: list[index].expression, Error: list[index].error, DataType: list[index].dataType, Unique: list[index].unique };
         },
 
         checkCodes = function () {
@@ -166,10 +166,10 @@
                         else
                             element.remove();
                     }))
-						.append(verifyButton = $("<a />").addClass("Button").text("verify").toggle(model.State == prototypes.Prototype.states.draft).prepend($("<i />").addClass("fi flaticon-check")).on("click", function () {
+						.append(verifyButton = $("<a />").addClass("Button").text("verify").toggle(model.state == prototypes.Prototype.states.draft).prepend($("<i />").addClass("fi flaticon-check")).on("click", function () {
                         verify();
                     }))
-						.append($("<a />").addClass("Button").text("add").toggle(model.State == prototypes.Prototype.states.draft).prepend($("<i />").addClass("fi flaticon-plus")).on("click", function () {
+						.append($("<a />").addClass("Button").text("add").toggle(model.state == prototypes.Prototype.states.draft).prepend($("<i />").addClass("fi flaticon-plus")).on("click", function () {
                         add({ code: "", expression: "", error: null });
                         select(list.length - 1);
                     }))
@@ -178,14 +178,14 @@
                     }).hide());
                 
 
-            for (var code in model.Expressions)
+            for (var code in model.expressions)
                 add({
                     code: code,
-                    expression: model.Expressions[code].SerializedValue,
-                    error: model.Expressions[code].Error,
-                    valid: model.Expressions[code].Error == null,
-                    dataType: model.Expressions[code].DataType,
-                    unique: model.Expressions[code].Unique
+                    expression: model.expressions[code].SerializedValue,
+                    error: model.expressions[code].Error,
+                    valid: model.expressions[code].Error == null,
+                    dataType: model.expressions[code].DataType,
+                    unique: model.expressions[code].Unique
                 });
         };
 

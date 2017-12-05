@@ -128,6 +128,7 @@
     <Content Include="Content\Theme\Fonts.css">
       <DependentUpon>Fonts.scss</DependentUpon>
     </Content>
+    <Content Include="Content\Theme\Fonts\FlatIcon\flaticon.css" />
     <Content Include="Content\Theme\Fonts\FlatIcon\flaticon.html" />
     <Content Include="Content\Theme\Fonts\FlatIcon\Flaticon.svg" />
     <Content Include="Content\Theme\Fonts\FlatIcon\_flaticon.css">
@@ -261,6 +262,10 @@
     <Content Include="Content\Theme\Popup.scss" />
     <Content Include="Content\Theme\Users.scss" />
     <Content Include="Content\Theme\ButtonGroup.scss" />
+    <Content Include="Content\Theme\Fonts\FlatIcon\Flaticon.eot" />
+    <Content Include="Content\Theme\Fonts\FlatIcon\Flaticon.ttf" />
+    <Content Include="Content\Theme\Fonts\FlatIcon\Flaticon.woff" />
+    <Content Include="Content\Theme\Fonts\FlatIcon\_flaticon.scss" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Bold\Myriad Pro.scss" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Bold\MyriadPro-Bold.eot" />
@@ -284,10 +289,6 @@
     <Content Include="Content\Theme\Fonts\MyriadPro\Regular\MyriadPro-Regular.woff" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Regular\MyriadPro-Regular.woff2" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Semibold\Myriad Pro Semibold.scss" />
-    <Content Include="Content\Theme\Fonts\FlatIcon\Flaticon.eot" />
-    <Content Include="Content\Theme\Fonts\FlatIcon\Flaticon.ttf" />
-    <Content Include="Content\Theme\Fonts\FlatIcon\Flaticon.woff" />
-    <Content Include="Content\Theme\Fonts\FlatIcon\_flaticon.scss" />
     <None Include="Scripts\Libraries\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\Libraries\jquery-2.1.4.js" />
     <Content Include="Scripts\Libraries\jquery-ui-1.11.4.js" />

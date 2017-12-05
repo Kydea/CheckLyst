@@ -22,7 +22,7 @@ div.TabContainer {
             z-index: 0;
         }
 
-        a {
+        > a {
             height: $label-height;
             line-height: $label-height;
             color: $Color-Grey-Regular;
@@ -73,7 +73,7 @@ div.TabContainer {
 
     @media #{$Media-Extended} {
         .TabLabels {
-            a {
+            > a {
                 padding: 0 40px;
             }
         }
@@ -81,7 +81,7 @@ div.TabContainer {
 
     @media #{$Media-Mobile} {
         .TabLabels {
-            a {
+            > a {
                 padding: 0 10px;
             }
         }

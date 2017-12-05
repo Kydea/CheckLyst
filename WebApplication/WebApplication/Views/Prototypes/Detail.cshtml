@@ -22,9 +22,7 @@
     </div>
 </div>
 
-<div class="PropertyPanel NoItem">
-    <div class="Border"></div>
-    <div class="NoItem">select an element</div>
+<div class="PropertyPanel">
     <div class="PropertyList"></div>
     <div class="PropertyValue"></div>
     <div class="Information"></div>
@@ -41,6 +39,8 @@
         });
 
         var
+            propertyPanel = new prototypes.PropertyPanel(".PropertyPanel"),
+
             prototype = new prototypes.Prototype("#PrototypesDetailPage", {
                 id: "@Model.Id",
                 baseId: "@Model.Id",
@@ -48,10 +48,10 @@
             }),
 
             actionBar = new matematici.ActionBar("div.ActionBar")
-                .add("<i class='fi flaticon-database'></i>", function () {
+                .add("<i class='fi flaticon-database-o'></i>", function () {
                     new prototypes.SourcesList();
                 }, "Icon SourcesList")
-                .add("<i class='fi flaticon-user-o'></i>", function () {
+                .add("<i class='fi flaticon-calculator'></i>", function () {
                     new prototypes.ExpressionsList($(this));
                 }, "Icon ExpressionsList"),
 

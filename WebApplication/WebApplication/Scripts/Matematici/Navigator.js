@@ -64,7 +64,7 @@
                     {
                         text: "discard the changes", icon: "exclamation", handler: actionNavigate
                     },
-                    { text: "cancel", icon: "remove", cancelButton: true }
+                    { text: "cancel", hidden: true, icon: "remove", cancelButton: true }
                 ]);
         },
 

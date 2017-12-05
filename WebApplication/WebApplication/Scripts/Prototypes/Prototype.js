@@ -15,6 +15,10 @@
 		commands,
 		newItemsId = 1,
 
+		getNewItemId = function () {
+			return newItemsId++;
+		},
+
 		completeModel = function () {
 			var analyzeElement = function (node) {
 				switch (node.typeName) {
@@ -41,7 +45,8 @@
 		},
 
 		update = function () {
-			var currentItemId = $(".Current", element).attr("id");
+			var
+				currentItemId = currentItem && (currentItem.isPage && currentItem.isPage() && $("a.Current", element).attr("id") || $("div.Current", element).attr("id")); //saves current item
 
 			completeModel();
 			title.text(model.description || "(Prototype name)");
@@ -57,10 +62,10 @@
 
 			tab.clear();
 			for (var index in model.pages)
-				tab.add(model.pages[index].description);
+				tab.add(model.pages[index].description, "Page" + model.pages[index].itemId);
 
-			if (model.state == prototypes.Prototype.states.draft) tab.add($("<i >").addClass("Add fi flaticon-plus"));
-			page.setIndex(pageIndex = pageIndex ? pageIndex : 0);
+			if (model.state == prototypes.Prototype.states.draft) tab.add($("<span />").text("(add page)").prepend($("<i >").addClass("Add fi flaticon-plus")));
+			page.setIndex(pageIndex = pageIndex >= model.pages.length ? model.pages.length - 1 : pageIndex ? pageIndex : 0);
 			tab.select(pageIndex);
 
 			if (model.header) {
@@ -80,8 +85,9 @@
 				}
 
 			if (currentItemId) {
+				//restores current item
 				currentItem = null;
-				$("#" + currentItemId, element).removeClass("Current").click();
+				$("#" + currentItemId, element).removeClass("Current").removeClass("Selected").click(); //Selected is for the tab when current item is a page
 			}
 
 			if (updateHandler) updateHandler(model);
@@ -99,16 +105,23 @@
 			if (currentItem) {
 				currentItem.getElement().removeClass("Current");
 				commands.remove();
-				if (currentItem.isPage && currentItem.isPage()) 
+				if (currentItem.isPage && currentItem.isPage())
 					$("div.Commands", $("a.Selected", tab.getElement()).removeClass("Current")).remove();
 			}
 			currentItem = currentItem == item ? null : item;
 			if (currentItem) {
 				currentItem.getElement().addClass("Current");
-				if (currentItem.isPage && currentItem.isPage()) 
-					$("a.Selected", tab.getElement()).addClass("Current").append(commands);
-				else
-					currentItem.getElement().append(commands);
+				switch (currentItem.getModel().typeName) {
+					case "Prototype":
+						commands.insertBefore(title)
+						break;
+					case "Page":
+						commands.insertAfter($("a.Selected", tab.getElement()).addClass("Current"));
+						break;
+					default:
+						currentItem.getElement().append(commands);
+						break;
+				}
 
 				commands.on("click", "a", command);
 			}
@@ -119,9 +132,9 @@
 			e.stopPropagation();
 
 			var
-				parent = currentItem.getParent(),
-				siblings = !!parent && parent.getChildren && parent.getChildren(),
-				itemIndex = currentItem.getIndex();
+				parent = currentItem.getParent && currentItem.getParent(),
+				siblings = !!parent && parent.getChildren(),
+				itemIndex = currentItem.getIndex && currentItem.getIndex();
 
 			switch ($(this).data("command")) {
 				case "up":
@@ -156,6 +169,7 @@
 					]);
 					break;
 				case "properties":
+					prototypes.propertyPanel.select(currentItem);
 					break;
 				default:
 					alert("invalid command");
@@ -166,7 +180,7 @@
 
 		addPage = function () {
 			if (!model.pages) model.pages = [];
-			model.pages.push({ typeName: "Page", description: "(page)" })
+			model.pages.push({ typeName: "Page", description: "(page)", itemId: getNewItemId() })
 		},
 
 		setup = function () {
@@ -174,15 +188,21 @@
 
 			header = new prototypes.Group($("div#Header", element), "Group", prototype);
 
-			tab = new matematici.Tab($("div.TabContainer", element), {}).addHandler(function (index) {
-				pageIndex = index;
-				if (index >= model.pages.length) {
-					matematici.canClose = false;
-					addPage();
-				}
-				update();
+			tab = new matematici.Tab($("div.TabContainer", element), {}).addHandler(function (item) {
+				var
+					pageChange = pageIndex != item.index,
+					newPage = item.index == model.pages.length;
 
-				select(null, null);
+				if (pageChange) {
+					pageIndex = item.index;
+					if (newPage) {
+						matematici.canClose = false;
+						addPage();
+					}
+					select(null, null);
+					update();
+				}
+
 				select(null, page);
 			});
 
@@ -209,6 +229,10 @@
 		return element;
 	};
 
+	prototype.getTab = function () {
+		return tab;
+	};
+
 	prototype.getModel = function () {
 		return model;
 	};
@@ -221,9 +245,15 @@
 		return itemHandler;
 	};
 
-	prototype.getNewItemId = function () {
-		return newItemsId++;
-	}
+	prototype.getChildren = function () {
+		return model.pages;
+	};
+
+	prototype.setChildren = function (value) {
+		model.pages = value;
+	};
+
+	prototype.getNewItemId = getNewItemId;
 
 	prototype.update = update;
 

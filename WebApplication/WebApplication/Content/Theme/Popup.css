@@ -19,7 +19,7 @@ div.Popup {
       line-height: 1.6; }
     div.Popup div.Container h2 {
       margin: -20px -20px 20px;
-      background: #009688;
+      background: #ffba00;
       padding: 20px;
       color: white;
       text-transform: uppercase;
@@ -52,7 +52,7 @@ div.Popup {
       div.Popup div.Container a.CloseButton i {
         font-size: 30px; }
       div.Popup div.Container a.CloseButton:hover {
-        color: #ccc; }
+        color: #666; }
     div.Popup div.Container form {
       border: none;
       padding-bottom: 0;
@@ -71,7 +71,7 @@ div.Popup {
       width: 100% !important;
       min-height: 1vh; }
       div.Popup div.Container h2 {
-        background: #009688;
+        background: #ffba00;
         padding: 20px;
         color: white;
         text-transform: uppercase;

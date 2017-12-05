@@ -43,19 +43,19 @@ a.Button {
   line-height: 36px;
   box-shadow: rgba(0, 0, 0, 0.15) 0 0 15px 2px; }
   a.Button i.fi {
-    margin-top: 8px;
-    margin-right: 8px;
-    width: 20px;
-    height: 20px;
+    margin-top: 5px;
+    margin-right: 5px;
+    width: 26px;
+    height: 26px;
     right: 0;
-    line-height: 20px;
+    line-height: 26px;
     position: absolute;
     background: white;
     top: 0;
     z-index: 1;
     border-radius: 50%;
-    font-size: 12px;
-    color: green; }
+    font-size: 16px;
+    color: #009688; }
   a.Button::after {
     content: "";
     width: 36px;
@@ -214,20 +214,25 @@ form label, div.CheckList label {
       left: 0; }
     form label i.Icon + select.AutoComplete + input, form label i.Icon + select:not(.AutoComplete), form label i.Icon + input.AutoComplete + input, form label i.Icon + input:not(.AutoComplete), form label i.Icon + div.Input.AutoComplete + input, form label i.Icon + div.Input:not(.AutoComplete), div.CheckList label i.Icon + select.AutoComplete + input, div.CheckList label i.Icon + select:not(.AutoComplete), div.CheckList label i.Icon + input.AutoComplete + input, div.CheckList label i.Icon + input:not(.AutoComplete), div.CheckList label i.Icon + div.Input.AutoComplete + input, div.CheckList label i.Icon + div.Input:not(.AutoComplete) {
       padding-left: 41px; }
-  form label i.ValidationMessagesIcon, div.CheckList label i.ValidationMessagesIcon {
-    color: #cc0000;
-    cursor: pointer; }
   form label.Narrow, div.CheckList label.Narrow {
     width: unset; }
   form label.Width150, div.CheckList label.Width150 {
     width: 300px; }
   form label.Width200, div.CheckList label.Width200 {
     width: 420px; }
+  form label.Error > span, div.CheckList label.Error > span {
+    margin-left: 25px; }
   form label.Error i, div.CheckList label.Error i {
     border-color: #cc0000 !important; }
   form label.Error input, form label.Error select, form label.Error div.Input, div.CheckList label.Error input, div.CheckList label.Error select, div.CheckList label.Error div.Input {
     border-color: #cc0000;
     outline-color: #ff3333; }
+  form label.Error i.ValidationMessagesIcon, div.CheckList label.Error i.ValidationMessagesIcon {
+    color: #cc0000;
+    cursor: pointer;
+    position: absolute;
+    top: -4px;
+    font-size: 20px; }
   @media only screen and (min-width: 460px) {
     form label .Icon, div.CheckList label .Icon {
       bottom: 0; }

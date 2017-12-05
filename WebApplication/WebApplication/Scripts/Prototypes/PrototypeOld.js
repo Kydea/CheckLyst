@@ -83,18 +83,6 @@
 			matematici.popup.show(options);
 		};
 
-    prototype.getChildren = function () {
-        return model.Pages;
-    };
-
-    prototype.setChildren = function (value) {
-        model.Pages = value;
-    };
-
-    prototype.getTab = function () {
-        return tab;
-    };
-
     prototype.preview = function () {
         var handler = function () {
             $("<a href='" + matematici.urls.instances.preview + "?Prototype=" + model.Code + "&Version=" + model.Version + "' target='_blank'></a>")[0].click();
