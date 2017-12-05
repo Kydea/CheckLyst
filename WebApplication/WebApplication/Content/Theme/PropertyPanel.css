@@ -1,31 +1,17 @@
 ﻿div.PropertyPanel {
-  position: fixed;
-  z-index: 103;
-  left: 0;
-  bottom: 0;
-  height: 300px;
-  width: 100%;
-  background-color: white; }
-  div.PropertyPanel div.Border {
-    cursor: ns-resize;
-    height: 10px;
-    background-color: #ebebeb;
-    border-top: solid 1px #999;
-    border-bottom: solid 1px #999;
-    box-shadow: rgba(0, 0, 0, 0.15) 0 0 15px 2px; }
-  div.PropertyPanel div.NoItem {
-    display: none;
-    font-size: 20px;
-    color: #999;
-    text-align: center;
-    padding-top: 10px; }
+  height: 350px;
+  background-color: white;
+  display: none;
+  position: relative;
+  margin: -20px -20px -40px;
+  border-bottom: solid 1px #999; }
   div.PropertyPanel div.PropertyList {
     position: absolute;
-    overflow: auto;
-    bottom: 0;
-    top: 10px;
-    width: 20%;
-    border-right: solid 1px #999; }
+    overflow: scroll;
+    overflow-y: scroll;
+    overflow-x: auto;
+    width: 50%;
+    height: 100%; }
     div.PropertyPanel div.PropertyList a {
       display: block;
       padding: 4px 10px;
@@ -33,22 +19,22 @@
       border-bottom: dotted 1px #999; }
       div.PropertyPanel div.PropertyList a i.flaticon-arrow-right {
         visibility: hidden;
-        padding-right: 5px; }
+        padding-right: 5px;
+        font-size: 12px; }
       div.PropertyPanel div.PropertyList a:hover {
         text-decoration: none !important; }
       div.PropertyPanel div.PropertyList a.Selected i.flaticon-arrow-right {
         visibility: visible; }
       div.PropertyPanel div.PropertyList a.Changed {
         font-weight: bold;
-        color: black !important; }
+        color: #00877a !important; }
   div.PropertyPanel div.PropertyValue {
     position: absolute;
     overflow: auto;
-    bottom: 0;
-    top: 10px;
-    width: 40%;
-    left: 20%;
-    border-right: solid 1px #999;
+    width: 50%;
+    left: 50%;
+    height: 50%;
+    border-bottom: solid 1px #999;
     padding: 10px; }
     div.PropertyPanel div.PropertyValue input[type=text], div.PropertyPanel div.PropertyValue input[type=checkbox], div.PropertyPanel div.PropertyValue select, div.PropertyPanel div.PropertyValue a.Button, div.PropertyPanel div.PropertyValue label {
       display: block;
@@ -63,17 +49,12 @@
     position: absolute;
     overflow: auto;
     bottom: 0;
-    top: 10px;
-    width: 40%;
-    left: 60%;
+    width: 50%;
+    left: 50%;
+    top: 50%;
     padding: 10px;
     line-height: 1.4; }
-  div.PropertyPanel.NoItem div.NoItem {
-    display: block; }
-  div.PropertyPanel.NoItem div.PropertyList {
-    display: none; }
-  div.PropertyPanel.NoItem div.PropertyValue {
-    display: none; }
-  div.PropertyPanel.NoItem div.Information {
-    display: none; }
+
+div.Popup div.PropertyPanel {
+  display: block; }
 

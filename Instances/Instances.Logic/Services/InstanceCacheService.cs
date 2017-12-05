@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using CheckListManager.Common.Logic.Cache;
 using CheckListManager.Common.Logic.Json;
+using CheckListManager.Instances.Logic.Exceptions;
 using CheckListManager.Instances.Logic.Models;
 using CheckListManager.Instances.Logic.Models.CheckLists;
 using NLog;
@@ -29,6 +30,12 @@ namespace CheckListManager.Instances.Logic.Services
 			if (instance != null && includeData)
 			{
 				instance.Instance = await _redisCache.GetAsync<Instance>($"Instance:{code}:Data", RegionName, _converter);
+				if (instance.Instance == null)
+				{
+					throw new InstanceException("Instance data missing");
+				}
+
+				instance.Instance.Setup();
 			}
 
 			return instance;
@@ -80,10 +87,13 @@ namespace CheckListManager.Instances.Logic.Services
 			}
 		}
 
-		public Task TouchInstanceAsync(string code)
+		public Task TouchInstanceAsync(string code, double? score = null)
 		{
-			var score = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-			return _redisCache.SortedSetElementInsertAsync("Instances", code, score, RegionName);
+			score = score ?? DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+			return _redisCache.SortedSetElementInsertAsync("Instances", code, score.Value, RegionName);
 		}
+
+		public Task<LockObject> LockInstanceAsync(string code)
+			=> _redisCache.LockAsync("Instance:{code}:Lock", RegionName);
 	}
 }

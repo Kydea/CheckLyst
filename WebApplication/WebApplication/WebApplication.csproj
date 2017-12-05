@@ -66,6 +66,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Prototypes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -89,6 +90,9 @@
     </Content>
     <Content Include="Content\Theme\Breadcrumbs.css">
       <DependentUpon>Breadcrumbs.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\ButtonGroup.css">
+      <DependentUpon>ButtonGroup.scss</DependentUpon>
     </Content>
     <Content Include="Content\Theme\Calendar.css">
       <DependentUpon>Calendar.scss</DependentUpon>
@@ -124,6 +128,7 @@
     <Content Include="Content\Theme\Fonts.css">
       <DependentUpon>Fonts.scss</DependentUpon>
     </Content>
+    <Content Include="Content\Theme\Fonts\FlatIcon\flaticon.css" />
     <Content Include="Content\Theme\Fonts\FlatIcon\flaticon.html" />
     <Content Include="Content\Theme\Fonts\FlatIcon\Flaticon.svg" />
     <Content Include="Content\Theme\Fonts\FlatIcon\_flaticon.css">
@@ -144,8 +149,8 @@
     <Content Include="Content\Theme\Help.css">
       <DependentUpon>Help.scss</DependentUpon>
     </Content>
-    <Content Include="Content\Theme\InstanceManager.css">
-      <DependentUpon>InstanceManager.scss</DependentUpon>
+    <Content Include="Content\Theme\Instance.css">
+      <DependentUpon>Instance.scss</DependentUpon>
     </Content>
     <Content Include="Content\Theme\jQuery-UI.css">
       <DependentUpon>jQuery-UI.scss</DependentUpon>
@@ -190,8 +195,8 @@
     <Content Include="Content\Theme\PropertyPanel.css">
       <DependentUpon>PropertyPanel.scss</DependentUpon>
     </Content>
-    <Content Include="Content\Theme\PrototypeEditor.css">
-      <DependentUpon>PrototypeEditor.scss</DependentUpon>
+    <Content Include="Content\Theme\Prototype.css">
+      <DependentUpon>Prototype.scss</DependentUpon>
     </Content>
     <Content Include="Content\Theme\ShadowPanel.css">
       <DependentUpon>ShadowPanel.scss</DependentUpon>
@@ -214,6 +219,7 @@
     <Content Include="Scripts\Controls\Grid.js" />
     <Content Include="Scripts\Controls\DetailPage.js" />
     <Content Include="Scripts\Controls\SearchPage.js" />
+    <Content Include="Scripts\Custom\ButtonGroup.js" />
     <Content Include="Scripts\Custom\AutoCenter.js" />
     <Content Include="Scripts\Custom\Accordion.js" />
     <Content Include="Scripts\Custom\TokenManager.js" />
@@ -255,6 +261,11 @@
     <Content Include="Content\Theme\Accordion.scss" />
     <Content Include="Content\Theme\Popup.scss" />
     <Content Include="Content\Theme\Users.scss" />
+    <Content Include="Content\Theme\ButtonGroup.scss" />
+    <Content Include="Content\Theme\Fonts\FlatIcon\Flaticon.eot" />
+    <Content Include="Content\Theme\Fonts\FlatIcon\Flaticon.ttf" />
+    <Content Include="Content\Theme\Fonts\FlatIcon\Flaticon.woff" />
+    <Content Include="Content\Theme\Fonts\FlatIcon\_flaticon.scss" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Bold\Myriad Pro.scss" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Bold\MyriadPro-Bold.eot" />
@@ -278,10 +289,6 @@
     <Content Include="Content\Theme\Fonts\MyriadPro\Regular\MyriadPro-Regular.woff" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Regular\MyriadPro-Regular.woff2" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Semibold\Myriad Pro Semibold.scss" />
-    <Content Include="Content\Theme\Fonts\FlatIcon\Flaticon.eot" />
-    <Content Include="Content\Theme\Fonts\FlatIcon\Flaticon.ttf" />
-    <Content Include="Content\Theme\Fonts\FlatIcon\Flaticon.woff" />
-    <Content Include="Content\Theme\Fonts\FlatIcon\_flaticon.scss" />
     <None Include="Scripts\Libraries\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\Libraries\jquery-2.1.4.js" />
     <Content Include="Scripts\Libraries\jquery-ui-1.11.4.js" />
@@ -316,7 +323,6 @@
     <Content Include="Scripts\Libraries\moment-0.js" />
     <Content Include="Scripts\Libraries\moment-3-timezone-with-data.js" />
     <Content Include="Scripts\Libraries\moment-2-timezone.js" />
-    <Content Include="Scripts\Prototypes\ActionsProperty.js" />
     <Content Include="Scripts\Prototypes\BooleanProperty.js" />
     <Content Include="Scripts\Prototypes\ChangeStateSignature.js" />
     <Content Include="Scripts\Prototypes\DateProperty.js" />
@@ -329,6 +335,7 @@
     <Content Include="Scripts\Prototypes\ListProperty.js" />
     <Content Include="Scripts\Prototypes\Property.js" />
     <Content Include="Scripts\Prototypes\PropertyPanel.js" />
+    <Content Include="Scripts\Prototypes\PrototypeOld.js" />
     <Content Include="Scripts\Prototypes\Prototype.js" />
     <Content Include="Scripts\Prototypes\PrototypeTypeProperty.js" />
     <Content Include="Scripts\Prototypes\ReadOnlyProperty.js" />
@@ -365,6 +372,7 @@
     <Content Include="Views\Infrastructure\Departments\List.cshtml" />
     <Content Include="Views\WorkFlows\Detail.cshtml" />
     <Content Include="Views\DataSources\Detail.cshtml" />
+    <Content Include="Views\Prototypes\Detail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -400,7 +408,7 @@
     <Content Include="Content\Theme\Fonts.scss" />
     <Content Include="Content\Theme\Grid.scss" />
     <Content Include="Content\Theme\Help.scss" />
-    <Content Include="Content\Theme\InstanceManager.scss" />
+    <Content Include="Content\Theme\Instance.scss" />
     <Content Include="Content\Theme\jQuery-UI.scss" />
     <Content Include="Content\Theme\Layout.scss" />
     <Content Include="Content\Theme\Loader.scss" />
@@ -411,7 +419,7 @@
     <Content Include="Content\Theme\Controls.scss" />
     <Content Include="Content\Theme\Paginator.scss" />
     <Content Include="Content\Theme\PropertyPanel.scss" />
-    <Content Include="Content\Theme\PrototypeEditor.scss" />
+    <Content Include="Content\Theme\Prototype.scss" />
     <Content Include="Content\Theme\Signature.scss" />
     <Content Include="Content\Theme\Tab.scss" />
     <Content Include="Content\Theme\_Library.scss" />

@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using CheckListManager.Common.Core.Services;
+using CheckListManager.Common.Logic.Cache;
 using CheckListManager.Instances.Logic.Models;
 
 namespace CheckListManager.Instances.Logic.Services
@@ -10,7 +11,9 @@ namespace CheckListManager.Instances.Logic.Services
 		Task SetAsync(string code, InstanceCacheObject instance);
 		Task RemoveAsync(string code);
 
-		Task TouchInstanceAsync(string code);
+		Task TouchInstanceAsync(string code, double? score = null);
+
+		Task<LockObject> LockInstanceAsync(string code);
 
 		//Task<IEnumerable<InstanceCacheObject>> GetByUserAsync(string userCode);
 	}

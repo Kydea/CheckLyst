@@ -14,27 +14,29 @@
 
         create = function () {
             element = $("<div />")
-                .addClass("Element Item " + model.TypeName)
+                .addClass("Element Item " + model.typeName)
                 .on("click", function (event) { prototypes.prototype.select(event, item) });
 
-            if (model.NewLine) element.addClass("NewLine");
+            if (model.newLine) element.addClass("NewLine");
 
             if (specificItem = (
-                model.TypeName == typeNames.text ? new prototypes.Text(item, model) :
-                model.TypeName == typeNames.field ? new prototypes.Field(item, model) :
-                model.TypeName == typeNames.signature ? new prototypes.Signature(item, model) :
+                model.typeName == typeNames.text ? new prototypes.Text(item, model) :
+                model.typeName == typeNames.field ? new prototypes.Field(item, model) :
+                model.typeName == typeNames.signature ? new prototypes.Signature(item, model) :
                 null)) {
                 parent.getElement().append(element);
                 specificItem.update(model);
             } else {
                 console.log(model);
-                alert("Invalid type name for item " + model.Id + ": " + model.TypeName);
+                alert("Invalid type name for item " + model.id + ": " + model.typeName);
             }
         };
 
     this.update = function (value) {
-        model = value;
-        element.attr("data-code", model.Code).attr("data-id", model.Id);
+		model = value;
+		if (!model.itemId)
+			model.itemId = prototypes.prototype.getNewItemId();
+		element.attr("data-code", model.code).attr("id", "ItemId" + model.itemId);
         specificItem.update(model)
     };
 

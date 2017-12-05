@@ -3,8 +3,8 @@
         group = this,
         title,
         model,
-        addButton,
-        index,
+		index,
+		addButton,
 
         create = function () {
             element = $("<div />");
@@ -18,71 +18,57 @@
         addElement = function (typeName) {
             matematici.canClose = false;
 
-            if (!model.Items) model.Items = [];
-            model.Items.push({ TypeName: typeName });
+            if (!model.items) model.items = [];
+            model.items.push({ typeName: typeName });
             prototypes.prototype.update();
         },
 
         addGroup = function () {
             matematici.canClose = false;
 
-            if (!model.Groups) model.Groups = [];
-            model.Groups.push({ TypeName: "Group" });
+            if (!model.groups) model.groups = [];
+			model.groups.push({ typeName: "Group", id: prototypes.prototype.getNewItemId() });
             prototypes.prototype.update();
         },
 
         setup = function () {
-            if (!element) create();
+			if (!element)
+				create();				
 
             element
                 .addClass("Element " + typeName)
-                .on("click", function (event) { prototypes.prototype.select(event, group) });
+				.on("click", function (event) {
+					prototypes.prototype.select(event, group)
+				});
 
             if (group.isPage()) 
-                addButton = $("<div />").addClass("Add AddGroup").appendTo(element)
-                    .append($("<a />").attr("href", "#").addClass("Button").text("Add group").on("click", function (e) {
-                    	if (prototypes.prototype.getItemHandler())
-                            return;
-
-                        e.preventDefault();
-                        e.stopPropagation();
-                        if (prototypes.prototype.getModel().State != prototypes.Prototype.states.draft) return;
-
-                        addGroup();
-                    }));
-            else {
-
+				addButton = $("<a />")
+					.attr("href", "#")
+					.addClass("Button Add")
+					.text("Add group")
+					.prepend($("<i >").addClass("Add fi flaticon-plus")).on("click", addGroup);
+            else 
                 title = $("<h3 />").appendTo(element);
-
-                addButton = $("<div />").addClass("Add").appendTo(element)
-                    .append($("<a />").attr("href", "#").addClass("Button").text("Add").on("click", function (e) {
-                    	if (prototypes.prototype.getItemHandler())
-                            return;
-
-                        e.preventDefault();
-                        e.stopPropagation();
-                        if (prototypes.prototype.getModel().State != prototypes.Prototype.states.draft) return;
-
-                        matematici.dialog.popupMenu([
-                            { text: "cancel", icon: "remove", cancelButton: true },
-                            { text: "signature", icon: "check-square-o", handler: addElement, data: "Signature" },
-                            { text: "field", icon: "i-cursor", handler: addElement, data: "Field" },
-                            { text: "text", icon: "align-left", handler: addElement, data: "Text" },
-                            { text: "group", icon: "list-ul", handler: addElement, data: "Group" }
-                        ]);
-                    }));
-            }
-        },
+		},
 
         update = function (model) {
             if (group.isPage())
-                model.TypeName = "Page";
+                model.typeName = "Page";
             if (title) 
-                title.text(model.Description ? model.Description : "(no title)")
-            group.setColor(model.Color);
-            group.setFontSize(model.FontSize);
-            addButton.children("a").toggleClass("ReadOnly", prototypes.prototype.getModel().State != prototypes.Prototype.states.draft);
-        };
+                title.text(model.description ? model.description : "(no title)")
+            group.setColor(model.color);
+            group.setFontSize(model.fontSize);
+		};
+
+	this.add = function () {
+		matematici.dialog.popupMenu([
+			{ text: "cancel", icon: "times", cancelButton: true },
+			{ text: "signature", icon: "check", handler: addElement, data: "Signature" },
+			{ text: "field", icon: "i-cursor", handler: addElement, data: "Field" },
+			{ text: "text", icon: "align-left", handler: addElement, data: "Text" },
+			{ text: "group", icon: "list-ul", handler: addElement, data: "Group" }
+		]);
+	}
 
     this.setColor = function (value) {
         if (title)
@@ -96,7 +82,11 @@
 
     this.update = function (value) {
     	model = value;
-    	update(model);
+		if (!model.itemId)
+			model.itemId = prototypes.prototype.getNewItemId();
+		element.attr("data-code", model.code).attr("id", "ItemId" + model.itemId);
+
+		update(model);
 
     	/* disegna il prototypo */
     	var
@@ -107,15 +97,16 @@
     	    var
                 itemModel = children[index],
                 item =
-                    itemModel.TypeName == "Group" ? new prototypes.Group(null, itemModel.TypeName, this, previous) :
+                    itemModel.typeName == "Group" ? new prototypes.Group(null, itemModel.typeName, this, previous) :
                     new prototypes.Item(itemModel, this);
 
     	    item.setIndex(parseInt(index));
     	    item.update(itemModel);
     	    previous = item;
-    	}
+		}
 
-        element.append(addButton);
+		if (addButton && prototypes.prototype.getModel().state == prototypes.Prototype.states.draft)
+			addButton.appendTo(element);
     };
 
     this.clear = function () {
@@ -161,14 +152,14 @@
     };
 
     this.getChildren = function () {
-    	return model.Groups || model.Items;
+    	return model.groups || model.items;
     };
 
     this.setChildren = function (value) {
         if (group.isPage())
-            model.Groups = value;
+            model.groups = value;
         else 
-            model.Items = value;
+            model.items = value;
     };
 
     setup();

@@ -2,7 +2,7 @@
 {
 	public class CreateInstanceRequest
 	{
-		public int Prototype { get; set; }
+		public long Prototype { get; set; }
 		public int Version { get; set; }
 	}
 }

@@ -1,114 +1,102 @@
-﻿body.CheckList span.Error i.fi {
+﻿div.CheckList h2 {
+  margin: 0 0 20px !important; }
+
+div.CheckList span.Error i.fi {
   color: #cc0000; }
 
-body.CheckList span.Null {
+div.CheckList span.Null {
   color: #ccc; }
 
-body.CheckList div.TabLabels a i.fi {
+div.CheckList div.TabLabels a i.fi {
   cursor: pointer; }
 
-body.CheckList div.Element {
+div.CheckList div.Element {
   position: relative; }
-  body.CheckList div.Element::after {
+  div.CheckList div.Element::after {
     content: "";
     display: table;
     clear: both; }
 
-body.CheckList div.Page div.Group {
-  border-bottom: solid 1px #666; }
-  body.CheckList div.Page div.Group div.Group {
-    border-bottom: none; }
-
-body.CheckList div.Page::after {
+div.CheckList div.Page::after {
   content: "";
   display: table;
   clear: both; }
 
-body.CheckList div.Group {
-  min-height: 30px;
-  margin-bottom: 30px;
-  clear: both; }
-  body.CheckList div.Group div.Group {
-    padding: 30px;
-    background-color: #ccc; }
-    body.CheckList div.Group div.Group div.Group {
-      background-color: #999; }
-      body.CheckList div.Group div.Group div.Group div.Group {
-        background-color: #666; }
-    body.CheckList div.Group div.Group h3 {
-      margin-top: 0 !important; }
-    body.CheckList div.Group div.Group > div:last-child {
+div.CheckList div.Group {
+  position: relative;
+  min-height: 36px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  padding-bottom: 20px;
+  padding-right: 20px;
+  background-color: #f5f5f5;
+  clear: both;
+  width: 100%; }
+  div.CheckList div.Group > * {
+    float: left;
+    margin: 20px 0 0 20px !important; }
+  div.CheckList div.Group h3 {
+    width: calc(100% - 20px); }
+  div.CheckList div.Group div.Group {
+    border: 0;
+    border-left: solid 10px #ccc;
+    width: 100%; }
+    div.CheckList div.Group div.Group > div:last-child {
       margin-bottom: 0 !important; }
-  body.CheckList div.Group::after {
+  div.CheckList div.Group::after {
     content: "";
     display: table;
     clear: both; }
 
-body.CheckList div.Item {
+div.CheckList div.Item {
   margin: 0 0 20px; }
-  body.CheckList div.Item.MultiLine {
+  div.CheckList div.Item.MultiLine {
     clear: both;
     width: 100%; }
-    body.CheckList div.Item.MultiLine input, body.CheckList div.Item.MultiLine div.Input {
+    div.CheckList div.Item.MultiLine input, div.CheckList div.Item.MultiLine div.Input {
       width: 100%; }
-  body.CheckList div.Item.NewLine {
+  div.CheckList div.Item.NewLine {
     clear: both; }
-  body.CheckList div.Item label {
+  div.CheckList div.Item label {
     display: block;
     min-height: 14px;
-    margin-right: 10px; }
-  body.CheckList div.Item input, body.CheckList div.Item div.Input, body.CheckList div.Item select {
-    float: left;
-    width: 150px;
-    margin-right: 10px;
-    margin-top: 5px; }
-  body.CheckList div.Item::after {
+    margin: 0;
+    max-width: 100%; }
+  div.CheckList div.Item::after {
     content: "";
     display: table;
     clear: both; }
-  body.CheckList div.Item.Field {
-    float: left; }
-    body.CheckList div.Item.Field.Boolean input {
-      margin-top: 13px;
-      margin-bottom: 5px; }
-    body.CheckList div.Item.Field.Boolean input[value=""] {
-      opacity: 0.6; }
-  body.CheckList div.Item.Text {
-    clear: both; }
-  body.CheckList div.Item.Signature {
-    clear: both; }
-    body.CheckList div.Item.Signature input {
-      padding-right: 20px; }
-      body.CheckList div.Item.Signature input.User {
-        width: 300px;
-        max-width: 100%; }
+  div.CheckList div.Item.Field.Boolean input[value=""] {
+    opacity: 0.6; }
+  div.CheckList div.Item.Text {
+    width: calc(100% - 20px);
+    font-size: 13px; }
+  div.CheckList div.Item.Signature {
+    width: calc(100% - 20px); }
+    div.CheckList div.Item.Signature > a.Button {
+      margin-left: 20px;
+      margin-top: calc(1em + 5px); }
 
-body.CheckList .Item p.Description {
+div.CheckList .Item p.Description {
   margin: 0; }
 
-body.CheckList .Item a {
-  float: right;
-  margin-top: 5px; }
-  body.CheckList .Item a.Button {
-    min-width: 120px; }
-
-body.CheckList .Item.Field.DateTime input {
+div.CheckList .Item.Field.DateTime input {
   width: 80px;
   padding: 0 5px;
   text-align: center;
   margin-right: 5px; }
-  body.CheckList .Item.Field.DateTime input + select {
+  div.CheckList .Item.Field.DateTime input + select {
     margin-right: 5px; }
 
-body.CheckList .Item.Field.DateTime select {
+div.CheckList .Item.Field.DateTime select {
   display: inline-block;
   width: 50px;
   padding: 0 0 0 5px; }
 
-body.CheckList .Item.Field.Time input {
+div.CheckList .Item.Field.Time input {
   display: none; }
 
-body.CheckList .Item.Field.Time select {
+div.CheckList .Item.Field.Time select {
   display: inline-block;
   width: 70px;
   padding: 0 0 0 5px; }

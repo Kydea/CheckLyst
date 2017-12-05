@@ -1,8 +1,7 @@
 ﻿div.TabContainer {
   position: relative;
   transition: height .3s;
-  display: none;
-  margin-right: -20px; }
+  display: none; }
   div.TabContainer .TabLabels {
     display: flex; }
     div.TabContainer .TabLabels::after {
@@ -15,7 +14,7 @@
       clear: both;
       left: 0;
       z-index: 0; }
-    div.TabContainer .TabLabels a {
+    div.TabContainer .TabLabels > a {
       height: 40px;
       line-height: 40px;
       color: #999;
@@ -25,20 +24,18 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap; }
-      div.TabContainer .TabLabels a i.fi {
-        color: red; }
-      div.TabContainer .TabLabels a.Selected {
+      div.TabContainer .TabLabels > a i.fi {
+        font-size: 14px; }
+      div.TabContainer .TabLabels > a.Selected {
         cursor: default;
         border-top: none;
         border-bottom: none;
         color: #666;
         border-bottom: solid 3px #ffba00;
         font-weight: bold; }
-        div.TabContainer .TabLabels a.Selected i.fi {
-          color: violet; }
-      div.TabContainer .TabLabels a:hover {
+      div.TabContainer .TabLabels > a:hover {
         text-decoration: none !important; }
-        div.TabContainer .TabLabels a:hover:not(.Selected) {
+        div.TabContainer .TabLabels > a:hover:not(.Selected) {
           color: #ffba00; }
   div.TabContainer .Tab {
     position: absolute;
@@ -52,9 +49,17 @@
       opacity: 1;
       z-index: 51; }
   @media only screen and (min-width: 760px) {
-    div.TabContainer .TabLabels a {
+    div.TabContainer .TabLabels > a {
       padding: 0 40px; } }
   @media only screen and (max-width: 759px) {
-    div.TabContainer .TabLabels a {
+    div.TabContainer .TabLabels > a {
       padding: 0 10px; } }
+
+div.ShadowPanel div.TabContainer {
+  margin-bottom: 20px;
+  margin-right: -20px;
+  margin-left: -20px; }
+
+div.Popup div.TabContainer {
+  margin-right: -20px; }
 

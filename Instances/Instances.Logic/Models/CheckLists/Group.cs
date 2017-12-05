@@ -99,6 +99,18 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 			return group;
 		}
 
+		public override void Remove()
+		{
+			foreach (var item in Items)
+				item.Remove();
+
+			if (Group.Iterator)
+				foreach (var iteration in Iterations)
+					iteration.Remove();
+
+			base.Remove();
+		}
+
 		protected void SetupItems()
 		{
 			ICheckListItem previous = null;
@@ -114,6 +126,31 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 				item.Setup();
 				previous = item;
 			}
+		}
+
+		public void AddIteration()
+		{
+			var iteration = new Iteration
+			{
+				CheckList = CheckList,
+				Page = Page,
+				Group = this
+			};
+			iteration.Setup();
+			Iterations.Add(iteration);
+		}
+
+		public void Move(Iteration iteration, int direction)
+		{
+			var index = Iterations.IndexOf(iteration);
+			Iterations.RemoveAt(index);
+			Iterations.Insert(index + direction, iteration);
+		}
+
+		public void Remove(Iteration iteration)
+		{
+			Iterations.Remove(iteration);
+			iteration.Remove();
 		}
 	}
 }

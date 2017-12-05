@@ -2,8 +2,7 @@
 {
 	public class GetPrototypeRequest
 	{
-		public int CompanyId { get; set; }
-		public int Id { get; set; }
+		public long Id { get; set; }
 		public int Version { get; set; }
 	}
 }

@@ -21,17 +21,17 @@ namespace CheckListManager.Instances.Api.Controllers
 			_instanceManagerService = instanceManagerService;
 		}
 
-		[HttpGet]
-		[Route("Create/{Prototype}/{Version}")]
-		public async Task<IHttpActionResult> Create([FromUri]CreateInstanceRequest request)
+		[HttpPost]
+		[Route("Create")]
+		public async Task<IHttpActionResult> Create([FromBody]CreateInstanceRequest request)
 		{
 			try
 			{
 				var cacheObject = await _instanceManagerService.CreateAsync(Identity.CompanyId, Identity.Code, request.Prototype, request.Version);
-				var response = new CreateInstanceResponse
+				var response = new InstanceResponse
 				{
 					Code = cacheObject.Code,
-					CheckList = _instanceManagerService.GetCheckList(Identity.Code, ValidateUser(cacheObject.PrototypeType), cacheObject)
+					CheckList = _instanceManagerService.GetCheckList(Identity.Code, Identity.HasPermission("Instances#Edit", cacheObject.PrototypeType), cacheObject)
 				};
 				return Ok(Message.Create(response));
 			}
@@ -78,11 +78,11 @@ namespace CheckListManager.Instances.Api.Controllers
 			try
 			{
 				var cacheObject = await _instanceManagerService.GetAsync(Identity.CompanyId, request.Data.Code);
-				var response = new OpenInstanceResponse
+				var response = new InstanceResponse
 				{
 					Id = cacheObject.Id,
 					Code = cacheObject.Code,
-					CheckList = _instanceManagerService.GetCheckList(Identity.Code, ValidateUser(cacheObject.PrototypeType), cacheObject)
+					CheckList = _instanceManagerService.GetCheckList(Identity.Code, Identity.HasPermission("Instances#Edit", cacheObject.PrototypeType), cacheObject)
 				};
 				return Ok(Message.Create(response));
 			}
@@ -106,14 +106,8 @@ namespace CheckListManager.Instances.Api.Controllers
 		{
 			try
 			{
-				var cacheObject = await _instanceManagerService.GetAsync(Identity.CompanyId, request.Data.Code);
-				var response = new OpenInstanceResponse
-				{
-					Id = cacheObject.Id,
-					Code = cacheObject.Code,
-					CheckList = _instanceManagerService.GetCheckList(Identity.Code, ValidateUser(cacheObject.PrototypeType), cacheObject)
-				};
-				return Ok(Message.Create(response));
+				await _instanceManagerService.CloseAsync(Identity.CompanyId, Identity.Code, request.Data.Code);
+				return Ok(Message.Create(true));
 			}
 			catch (DatabaseAggregateException exception)
 			{
@@ -131,9 +125,23 @@ namespace CheckListManager.Instances.Api.Controllers
 
 		[HttpPost]
 		[Route("Event")]
-		public async Task<IHttpActionResult> Event()
+		public async Task<IHttpActionResult> Event([FromBody]Message<InstanceEventRequest> request)
 		{
-			return Ok(await Task.FromResult(true));
+			try
+			{
+				var cacheObject = await _instanceManagerService.HandleEventAsync(Identity, request.Data);
+				var response = new InstanceResponse
+				{
+					Id = cacheObject.Id,
+					Code = cacheObject.Code,
+					CheckList = _instanceManagerService.GetCheckList(Identity.Code, Identity.HasPermission("Instances#Edit", cacheObject.PrototypeType), cacheObject)
+				};
+				return Ok(Message.Create(response));
+			}
+			catch (Exception exception)
+			{
+				return Error(new ResponseMessage(exception.Message));
+			}
 		}
 	}
 }

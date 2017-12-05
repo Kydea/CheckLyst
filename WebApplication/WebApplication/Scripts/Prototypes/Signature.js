@@ -1,36 +1,33 @@
 ﻿prototypes.Signature = function (item, model) {
     var
-        user,
-        date,
-        time,
         button,
         label,
         element = item.getElement(),
 
-        setup = function () {
-            label = $("<label />").text(model.Description ? model.Description : "(no description)");
-            element.append(label);
-            user = $("<input />").addClass("User").attr({ type: "text", readonly: true }).appendTo(element);
-			$("<i />").addClass("fi flaticon-user-o").insertAfter(user);
-            date = $("<input />").addClass("Date").attr({ type: "text", readonly: true }).appendTo(element);
-			$("<i />").addClass("fi flaticon-calendar").insertAfter(date);
-            time = $("<input />").addClass("Time").attr({ type: "text", readonly: true }).appendTo(element);
-			$("<i />").addClass("fi flaticon-clock-o").insertAfter(time);
-            button = $("<a />").addClass("Button").attr({ href: "#" }).appendTo(element);
+		setup = function () {
+			label = $("<label />").addClass("Controls3").append($("<span />").html(model.description ? model.description : "(no description)"));
+			element.append(label);
+			$("<i />").addClass("Icon fi flaticon-user-o").appendTo(label);
+			$("<input />").addClass("User").attr({ type: "text", readonly: true }).appendTo(label);
+			$("<i />").addClass("Icon fi flaticon-calendar").appendTo(label);
+			$("<input />").addClass("Date").attr({ type: "text", readonly: true }).appendTo(label);
+			$("<i />").addClass("Icon fi flaticon-clock-o").appendTo(label);
+			$("<input />").addClass("Time").attr({ type: "text", readonly: true }).appendTo(label);
+			button = $("<a />").addClass("Button").attr({ href: "#" }).appendTo(element);
         };
 
-    this.update = function (model) {
-        button.text(model.ButtonLabel ? model.ButtonLabel : "Signature");
-        this.setColor(model.Color);
-        this.setFontSize(model.FontSize);
+	this.update = function (model) {
+		button.text(model.buttonLabel ? model.buttonLabel : "Signature").prepend($("<i >").addClass("fi flaticon-check"));
+        this.setColor(model.color);
+        this.setFontSize(model.fontSize);
     };
 
     this.setColor = function (value) {
-        label.css({ color: model.Color });
+        label.css({ color: model.color });
     };
 
     this.setFontSize = function (value) {
-        label.css({ fontSize: model.FontSize == 0 ? "" : model.FontSize + "px" });
+        label.css({ fontSize: model.fontSize == 0 ? "" : model.fontSize + "px" });
     };
 
     setup();

@@ -52,10 +52,11 @@ $Depth-Fixed-Header: 60;
 $Depth-PropertyPanel: 70;
 $Depth-Header: 103;
 $Depth-Logo: 100;
-$Depth-Menu: 101;
-$Depth-Menu-Indicator: 102;
-$Depth-Popup: 103;
-$Depth-Calendar: 104;
+$Depth-ButtonGroup: 101;
+$Depth-Menu: 102;
+$Depth-Menu-Indicator: 103;
+$Depth-Popup: 104;
+$Depth-Calendar: 105;
 
 $Depth-Dialog: 990;
 $Depth-Help: 991;
@@ -68,6 +69,7 @@ $Media-Extended: "only screen and (min-width: 760px)";
 
 $Media-1250-: "only screen and (min-width: 1250px)";
 $Media-1000-: "only screen and (min-width: 1000px)";
+$Media-460-: "only screen and (min-width: 460px)";
 $Media-1000-1250: "only screen and (min-width: 1000px) and (max-width: 1249px)";
 $Media-1000-1200: "only screen and (min-width: 1000px) and (max-width: 1199px)";
 $Media-900-1000: "only screen and (min-width: 900px) and (max-width: 999px)";
@@ -80,3 +82,4 @@ $Media-0-1200: "only screen and (max-width: 1199px)";
 $Media-0-1100: "only screen and (max-width: 1099px)";
 $Media-0-1000: "only screen and (max-width: 999px)";
 $Media-0-700: "only screen and (max-width: 699px)";
+$Media-0-460: "only screen and (max-width: 459px)";

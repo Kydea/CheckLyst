@@ -30,7 +30,7 @@ matematici.popup = function () {
 				button.content.prepend($("<textarea />").addClass("Textarea"));
 				if (button.text) button.content.prepend($("<label />").text(button.text));
 			} else if (button.text || button.hidden) {
-				button.content = $("<a />").addClass("Button GreyGreenButton " + (button.cssClass || "")).text((button.icon ? " " : "") + button.text).on("click", function () {
+				button.content = $("<a />").addClass("Button GreyYellowButton " + (button.cssClass || "")).text((button.icon ? " " : "") + button.text).on("click", function () {
 					if (button.handler) {
 						if (!button.handler.call(this, button.data)) {
 							matematici.popup.close();

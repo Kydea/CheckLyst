@@ -8,24 +8,22 @@
     <div class="ShadowPanel">
         <div class="Accordion"></div>
         <form id="Filters" action="@BaseUrl/Prototypes/List">
-            <label>
-                Department
-                <i class="fi flaticon-building-o" />
+            <label class="Controls2">
+                <span>Prototype type</span>
+                <i class="Icon fi flaticon-building-o" />
                 <select name="department" class="Trigger" />
-            </label>
-            <label>
-                Prototype type
-                <i class="fi flaticon-folder-o" />
+                <i class="Icon fi flaticon-folder-o" />
                 <select name="prototypeType" />
             </label>
             <label>
-                Prototype name
-                <i class="fi flaticon-prototype" />
+                <span>Prototype name</span>
+                
+                <i class="Icon fi flaticon-prototype" />
                 <input type="text" name="name" />
             </label>
             <label>
-                Prototype state
-                <i class="fi flaticon-battery" />
+                <span>Prototype state</span>
+                <i class="Icon fi flaticon-battery" />
                 <select name="state" />
             </label>
         </form>
@@ -70,22 +68,21 @@
 
 <script type="text/javascript">
     var
-        createNewVersionHandler = function () {
-
+        createNewVersionHandler = function (id) {
+            matematici.navigator.open("@Url.Action("Version")/" + id);
         },
 
-        useAsTemplateHandler = function () {
-
+        openPrototypeHandler = function (id) {
+            matematici.navigator.open("@Url.Action("Detail")/" + id);
         },
 
-        openPrototypeHandler = function () {
-
+        useAsTemplateHandler = function (id) {
+            matematici.navigator.open("@Url.Action("Clone")/" + id);
         };
 
     matematici.events.onPageLoad = function (callback) {
         var searchPage = new matematici.SearchPage({
             pageName: "Prototypes",
-            detailUrl: "@Url.Action("Detail")",
             filterFormSelector: "form#Filters",
             resultGridSelector: "div#Content table.Grid",
             bindEvent: "Bind",
@@ -97,19 +94,16 @@
             rowClickHandler: function (row) {
                 var buttons = [];
                 buttons.push({ text: "cancel", icon: "times", cancelButton: true });
-                if ($(this).data("state") != prototypes.Prototype.states.draft) buttons.push({ text: "new version", icon: "file-o", handler: createNewVersionHandler, data: { code: $(this).data("code"), version: $(this).data("version") } });
-                buttons.push({ text: "use as template", icon: "clone-o", handler: useAsTemplateHandler, data: $(this).data("template-url") });
-                buttons.push({ text: "open", icon: "folder-open-o", handler: openPrototypeHandler, data: $(this).data("open-url") });
+                if ($(this).data("state") != prototypes.Prototype.states.draft) buttons.push({ text: "new version", icon: "file-o", handler: createNewVersionHandler, data: row.data("values").id });
+                buttons.push({ text: "use as template", icon: "clone-o", handler: useAsTemplateHandler, data: row.data("values").id });
+                buttons.push({ text: "open", icon: "folder-open-o", handler: openPrototypeHandler, data: row.data("values").id });
 
                 matematici.dialog.popupMenu(buttons);
-
-                console.log(row);
             }
         });
 
         $("#AddButton").on("click", function (e) {
-            e.preventDefault();
-            alert("add");
+            matematici.navigator.open("@Url.Action("Create")");
         });
 
         callback.call();

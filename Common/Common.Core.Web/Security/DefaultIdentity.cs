@@ -31,6 +31,20 @@ namespace CheckListManager.Common.Core.Web.Security
 
 		public string Description => Name;
 
+		public bool HasPermission(string code, long? prototypeType = null, string tag = null)
+		{
+			if (!prototypeType.HasValue && tag == null)
+			{
+				return true;
+			}
+
+			return Roles.Any(r =>
+				r.Code == code
+				&& (prototypeType == null || r.PrototypeType == prototypeType.Value)
+				&& (tag == null || r.Tag == tag)
+			);
+		}
+
 		private static Role ParseRole(string value)
 		{
 			var roleTokens = value.Split('#');
@@ -43,7 +57,6 @@ namespace CheckListManager.Common.Core.Web.Security
 				PrototypeType = roleTokens.Length < 3 || roleTokens[2] == string.Empty ? (int?)null : int.Parse(roleTokens[2]),
 				Tag = roleTokens.Length < 4 ? null : roleTokens[3]
 			};
-
         }
     }
 }

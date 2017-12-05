@@ -90,11 +90,7 @@ namespace CheckListManager.Instances.Data
 
 		public async Task<Common.Data.Instances> UpdateInstanceAsync(string userCode, Common.Data.Instances instance)
 		{
-			instance.ModifiedOn = DateTimeOffset.UtcNow;
-			instance.ModifiedBy = userCode;
-
 			await SaveChangesAsync();
-
 			return instance;
 		}
 

@@ -61,15 +61,14 @@ nav.Menu {
             li.MenuItem {
                 position: relative;
                 border-bottom: 1px solid $Color-Grey-Darker;
-                height: $Metric-Header-Height;
-                padding: ($Metric-Header-Height - $Menu-Icon-Width)/2;
 
                 .MenuItem {
                     font-size: 0;
                     box-sizing: border-box;
-                    width: $Menu-Icon-Width;
-                    height: $Menu-Icon-Width;
                     color: $Color-Grey-Regular;
+                    width: $Metric-Header-Height;
+                    height: $Metric-Header-Height;
+                    padding: ($Metric-Header-Height - $Menu-Icon-Width)/2 !important;
 
                     i {
                         font-size: $Menu-Icon-Width;
@@ -136,9 +135,9 @@ nav.Menu {
                         width: 230px;
                         height: $Menu-Item-Height;
                         line-height: $Menu-Item-Height;
-                        padding-left: 40px;
 
                         a {
+                            padding-left: 40px;
                             color: $Color-Grey-Light;
                             display: block;
                             text-decoration: none;
@@ -150,7 +149,7 @@ nav.Menu {
                                 width: 10px;
                                 height: 10px;
                                 position: absolute;
-                                left: -30px;
+                                left: 10px;
                                 top: 50%;
                                 border: solid $Color-Grey-Dark;
                                 border-width: 0 2px 2px 0;

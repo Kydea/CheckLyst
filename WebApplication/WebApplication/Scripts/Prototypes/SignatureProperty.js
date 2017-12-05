@@ -5,7 +5,7 @@
         cancelButton,
 
         change = function () {
-            model.SignatureCode = input.val();
+            model.signatureCode = input.val();
             matematici.canClose = false;
         },
 
@@ -41,12 +41,12 @@
     this.create = function (valuePanel) {
         valuePanel.addClass("Expression");
         if (options.readOnly)
-            $("<input />").attr({ type: "text", readOnly: true }).val(model.SignatureCode).appendTo(valuePanel);
+            $("<input />").attr({ type: "text", readOnly: true }).val(model.signatureCode).appendTo(valuePanel);
         else {
             input = $("<select />");
             input.append($("<option />").attr("value", "").text("(not set)"));
             for (var signatureCode in prototypes.prototype.getModel().Signatures)
-                input.append($("<option />").attr({ value: signatureCode, selected: signatureCode == model.SignatureCode }).text(signatureCode));
+                input.append($("<option />").attr({ value: signatureCode, selected: signatureCode == model.signatureCode }).text(signatureCode));
             input.on("change", change);
             valuePanel.append(input);
 
@@ -63,7 +63,7 @@
     }
 
     this.hasChanges = function () {
-        return !!model.SignatureCode;
+        return !!model.signatureCode;
     }
 }
 

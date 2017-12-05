@@ -1,441 +1,273 @@
-﻿prototypes.Prototype = function (code, version, isNew) {
+﻿prototypes.Prototype = function (selector, options) {
 	var
-        prototype = this,
-        element = $("div#Content"),
-        page = new prototypes.Group($("div.Page", element), "Page", prototype),
-        header = new prototypes.Group($("div#Header", element), "Group", prototype),
-        pageIndex,
-        title,
-        tab,
-        pageLock,
-        model,
-        selectedItem,
-        itemHandler,
+		prototype = this,
+		element = $(selector),
+		page,
+		header,
+		pageIndex,
+		title,
+		tab,
+		pageLock,
+		model,
+		currentItem,
+		itemHandler,
 		updateHandler,
+		commands,
+		newItemsId = 1,
 
-        completeModel = function () {
-        	var analyzeElement = function (node) {
-        		switch (node.TypeName) {
-        			case "Group":
-        				for (var itemIndex in node.Items || [])
-        					analyzeElement(node.Items[itemIndex]);
-        				break;
-        			case "Signature":
-        				if (node.Code)
-        					model.Signatures[node.Code] = node;
-        				break;
-        		}
-        	};
+		getNewItemId = function () {
+			return newItemsId++;
+		},
 
-        	model.TypeName = "Prototype";
-        	model.Signatures = {};
+		completeModel = function () {
+			var analyzeElement = function (node) {
+				switch (node.typeName) {
+					case "Group":
+						for (var itemIndex in node.items || [])
+							analyzeElement(node.items[itemIndex]);
+						break;
+					case "Signature":
+						if (node.Code)
+							model.signatures[node.code] = node;
+						break;
+				}
+			};
 
-        	analyzeElement(model.Header);
-        	for (var pageIndex in model.Pages || []) {
-        		var page = model.Pages[pageIndex];
-        		for (var groupIndex in page.Groups || [])
-        			analyzeElement(page.Groups[groupIndex])
-        	}
-        },
+			model.typeName = "Prototype";
+			model.signatures = {};
 
-        update = function () {
-        	completeModel();
-        	title.text(model.Description || "(Prototype title)");
+			analyzeElement(model.header);
+			for (var pageIndex in model.pages || []) {
+				var page = model.pages[pageIndex];
+				for (var groupIndex in page.groups || [])
+					analyzeElement(page.groups[groupIndex])
+			}
+		},
 
-        	tab.clear();
-        	for (var index in model.Pages)
-        		tab.add(model.Pages[index].Description);
-
-        	if (model.State == prototypes.Prototype.states.draft) tab.add($("<i >").addClass("Add fa fa-plus"));
-        	page.setIndex(pageIndex = pageIndex ? pageIndex : 0);
-        	tab.select(pageIndex);
-
-        	if (model.Header) {
-        		header.clear();
-        		header.update(model.Header);
-        	} else
-        		header.getElement().hide();
-
-        	page.clear();
-        	if (model.Pages[tab.getCurrentIndex()])
-        		page.update(model.Pages[tab.getCurrentIndex()]);
-
-        	for (var index in model.Expressions)
-        		if (model.Expressions[index].Error) {
-        			$("div.ActionBar a.Button.ExpressionsList").addClass("Invalid");
-        			break;
-        		}
-
-        	prototypes.propertyPanel.select(null);
-        	prototypes.propertyPanel.windowScrolled();
-
-        	if (updateHandler) updateHandler(model);
-        },
-
-        addPage = function () {
-        	if (!model.Pages) model.Pages = [];
-        	model.Pages.push({ TypeName: "Page", Description: "(new page)" })
-        },
-
-        setup = function () {
-        	tab = new matematici.Tab($("div.TabContainer", element)).addHandler(function (index) {
-        		pageIndex = index;
-        		if (index >= model.Pages.length) {
-        			matematici.canClose = false;
-        			addPage();
-        		}
-        		update();
-
-        		prototype.select(null, null);
-        		prototype.select(null, page);
-        	});
-
-        	title = $("h2", element).on("click", function () {
-        		prototype.select(null, prototype);
-        	});
-
-        	prototypes.propertyPanel.resize();
-
-        	$.ajax({
-        		url: matematici.urls.prototypes.open,
-        		type: "post",
-        		data: { ClientId: matematici.client.getId(), Code: code, Version: version, IsNew: isNew }
-        	}).done(function (result) {
-        		if (result.Error)
-        			matematici.dialog.error("Error", result.Error);
-        		else {
-        			model = result;
-        			update();
-        		}
-        	}).fail(function (jqXHR, textStatus, errorThrown) {
-        		console.log("Server error", jqXHR, textStatus, errorThrown);
-        		alert("Server error: " + errorThrown);
-        	});
-        },
-
-		sign = function (action, grid, signature, username, rowVersion) {
+		update = function () {
 			var
-				options = {
-					ajax: {
-						url: matematici.urls.prototypes.signature,
-						type: "POST",
-						data: {
-							Prototype: model.Code,
-							Version: model.Version,
-							Action: action,
-							SignatureId: signature.Id,
-							Reason: signature.SignatureReason,
-							Code: username,
-							RowVersion: rowVersion
-						}
-					},
-					data: {
-						Prototype: model.Code,
-						Version: model.Version,
-						Action: action,
-						SignatureId: signature.Id,
-						Code: username,
-						RowVersion: rowVersion,
+				currentItemId = currentItem && (currentItem.isPage && currentItem.isPage() && $("a.Current", element).attr("id") || $("div.Current", element).attr("id")); //saves current item
 
-						completeHandler: function (data) {
-							var signature = this;
-							$.ajax({
-								url: matematici.urls.prototypes.sign,
-								type: "post",
-								data: data
-							}).done(function (result) {
-								if (result.error) {
-									if (result.concurrency) {
-										signature.setConcurrencyException(true);
-										grid.close();
-									}
+			completeModel();
+			title.text(model.description || "(Prototype name)");
 
-									signature.showError(result.error);
-								} else {
-									matematici.popup.close();
-									grid.close();
-								}
+			commands = $("<div />").addClass("Commands")
+				.append($("<a />").attr("data-command", "properties").addClass("Button MiniIcon Properties").append($("<i />").addClass("fi flaticon-cog")))
+			if (model.state == prototypes.Prototype.states.draft)
+				commands
+					.append($("<a />").attr("data-command", "add").addClass("Button MiniIcon Add").append($("<i />").addClass("fi flaticon-plus")))
+					.append($("<a />").attr("data-command", "up").addClass("Button MiniIcon Up").append($("<i />").addClass("fi flaticon-arrow-up")))
+					.append($("<a />").attr("data-command", "down").addClass("Button MiniIcon Down").append($("<i />").addClass("fi flaticon-arrow-down")))
+					.append($("<a />").attr("data-command", "remove").addClass("Button MiniIcon Remove").append($("<i />").addClass("fi flaticon-trash-o")));
 
-								var changed = false;
-								if (result.state) {
-									model.State = result.state;
-									changed = true;
-								}
-								if (result.validUntil !== undefined) {
-									model.ValidUntil = result.validUntil;
-									changed = true;
-								}
-								if (result.rowVersion !== undefined) {
-									model.RowVersion = result.rowVersion;
-									changed = true;
-								}
-								if (changed) {
-									update();
-								}
-							}).fail(function (jqXHR, textStatus, errorThrown) {
-								console.log("Server error", jqXHR, textStatus, errorThrown);
-								alert("Server error: " + errorThrown);
-							});
-						}
+			tab.clear();
+			for (var index in model.pages)
+				tab.add(model.pages[index].description, "Page" + model.pages[index].itemId);
+
+			if (model.state == prototypes.Prototype.states.draft) tab.add($("<span />").text("(add page)").prepend($("<i >").addClass("Add fi flaticon-plus")));
+			page.setIndex(pageIndex = pageIndex >= model.pages.length ? model.pages.length - 1 : pageIndex ? pageIndex : 0);
+			tab.select(pageIndex);
+
+			if (model.header) {
+				header.clear();
+				header.update(model.header);
+			} else
+				header.getElement().hide();
+
+			page.clear();
+			if (model.pages[tab.getCurrentItem().index])
+				page.update(model.pages[tab.getCurrentItem().index]);
+
+			for (var index in model.expressions)
+				if (model.expressions[index].Error) {
+					$("div.ActionBar a.Button.ExpressionsList").addClass("Invalid");
+					break;
+				}
+
+			if (currentItemId) {
+				//restores current item
+				currentItem = null;
+				$("#" + currentItemId, element).removeClass("Current").removeClass("Selected").click(); //Selected is for the tab when current item is a page
+			}
+
+			if (updateHandler) updateHandler(model);
+		},
+
+		select = function (event, item) {
+			if (event) {
+				event.stopPropagation();
+				event.preventDefault();
+			}
+
+			if (itemHandler && !itemHandler.call(item.getElement()))
+				return;
+
+			if (currentItem) {
+				currentItem.getElement().removeClass("Current");
+				commands.remove();
+				if (currentItem.isPage && currentItem.isPage())
+					$("div.Commands", $("a.Selected", tab.getElement()).removeClass("Current")).remove();
+			}
+			currentItem = currentItem == item ? null : item;
+			if (currentItem) {
+				currentItem.getElement().addClass("Current");
+				switch (currentItem.getModel().typeName) {
+					case "Prototype":
+						commands.insertBefore(title)
+						break;
+					case "Page":
+						commands.insertAfter($("a.Selected", tab.getElement()).addClass("Current"));
+						break;
+					default:
+						currentItem.getElement().append(commands);
+						break;
+				}
+
+				commands.on("click", "a", command);
+			}
+		},
+
+		command = function (e) {
+			e.preventDefault();
+			e.stopPropagation();
+
+			var
+				parent = currentItem.getParent && currentItem.getParent(),
+				siblings = !!parent && parent.getChildren(),
+				itemIndex = currentItem.getIndex && currentItem.getIndex();
+
+			switch ($(this).data("command")) {
+				case "up":
+					var items = [];
+					for (var index in siblings)
+						items.push(siblings[index == itemIndex - 1 ? itemIndex : index == itemIndex ? index - 1 : index]);
+					parent.setChildren(items);
+					update();
+					matematici.canClose = false;
+					break;
+				case "down":
+					var items = [];
+					for (var index in siblings)
+						items.push(siblings[index == itemIndex ? itemIndex + 1 : index == itemIndex + 1 ? itemIndex : index]);
+					parent.setChildren(items);
+					update();
+					matematici.canClose = false;
+					break;
+				case "add":
+					currentItem.add();
+					break;
+				case "remove":
+					matematici.dialog.show("Warning", "The current item will be removed", [
+						{
+							text: "confirm", icon: "check", handler: function () {
+								parent.getChildren().splice(itemIndex, 1);
+								update();
+								matematici.canClose = false;
+							}
+						},
+						{ text: "cancel", icon: "times", cancelButton: true }
+					]);
+					break;
+				case "properties":
+					prototypes.propertyPanel.select(currentItem);
+					break;
+				default:
+					alert("invalid command");
+					console.log(this);
+					break;
+			}
+		},
+
+		addPage = function () {
+			if (!model.pages) model.pages = [];
+			model.pages.push({ typeName: "Page", description: "(page)", itemId: getNewItemId() })
+		},
+
+		setup = function () {
+			page = new prototypes.Group($("div.Page", element), "Page", prototype);
+
+			header = new prototypes.Group($("div#Header", element), "Group", prototype);
+
+			tab = new matematici.Tab($("div.TabContainer", element), {}).addHandler(function (item) {
+				var
+					pageChange = pageIndex != item.index,
+					newPage = item.index == model.pages.length;
+
+				if (pageChange) {
+					pageIndex = item.index;
+					if (newPage) {
+						matematici.canClose = false;
+						addPage();
 					}
-				};
+					select(null, null);
+					update();
+				}
 
-			matematici.popup.show(options);
+				select(null, page);
+			});
+
+			title = $("h2", element).on("click", function () {
+				select(null, prototype);
+			});
+
+			$.ajax({
+				url: element.data("action") + options.action,
+				type: "post",
+				data: { id: options.id, version: options.version }
+			}).done(function (result) {
+				if (result.error)
+					matematici.dialog.error("Error", result.error);
+				else {
+					console.log(result.checkList);
+					model = result.checkList;
+					update();
+				}
+			});
 		};
 
-    prototype.getElement = function () {
-        return element;
-    };
+	prototype.getElement = function () {
+		return element;
+	};
 
-    prototype.select = function (event, item) {
-        if (event) {
-            event.stopPropagation();
-            event.preventDefault();
-        }
+	prototype.getTab = function () {
+		return tab;
+	};
 
-        if (itemHandler && !itemHandler.call(item.getElement()))
-            return;
+	prototype.getModel = function () {
+		return model;
+	};
 
-        if (selectedItem) selectedItem.getElement().removeClass("Selected");
-        if (selectedItem && selectedItem.isPage && selectedItem.isPage()) $("a.Selected", tab.getElement()).removeClass("Red");
-        selectedItem = selectedItem == item ? null : item;
-        prototypes.propertyPanel.select(selectedItem);
-        if (selectedItem) selectedItem.getElement().addClass("Selected");
-        if (selectedItem && selectedItem.isPage && selectedItem.isPage()) $("a.Selected", tab.getElement()).addClass("Red");
-    };
+	prototype.setItemHandler = function (value) {
+		itemHandler = value;
+	};
 
-    prototype.getModel = function () {
-        return model;
-    };
+	prototype.getItemHandler = function () {
+		return itemHandler;
+	};
 
-    prototype.getChildren = function () {
-        return model.Pages;
-    };
+	prototype.getChildren = function () {
+		return model.pages;
+	};
 
-    prototype.setChildren = function (value) {
-        model.Pages = value;
-    };
+	prototype.setChildren = function (value) {
+		model.pages = value;
+	};
 
-    prototype.setItemHandler = function (value) {
-        itemHandler = value;
-    };
+	prototype.getNewItemId = getNewItemId;
 
-    prototype.getItemHandler = function () {
-        return itemHandler;
-    };
+	prototype.update = update;
 
-    prototype.getTab = function () {
-        return tab;
-    };
+	prototypes.prototype = prototype;
 
-    prototype.preview = function () {
-        var handler = function () {
-            $("<a href='" + matematici.urls.instances.preview + "?Prototype=" + model.Code + "&Version=" + model.Version + "' target='_blank'></a>")[0].click();
-        };
+	prototype.select = select;
 
-        if (matematici.canClose)
-            handler();
-        else
-            matematici.dialog.show("warning", "There are unsaved changes.", [
-                { text: "save", icon: "check", handler: function () { prototype.save(handler); } },
-                { text: "cancel", icon: "remove", cancelButton: true }
-            ]);
-    };
-
-    prototype.startSimulation = function () {
-        var handler = function () {
-            prototype.setState(prototypes.Prototype.states.simulation);
-        };
-
-        if (matematici.canClose)
-            handler();
-        else
-            matematici.dialog.show("warning", "There are unsaved changes.", [
-                { text: "save", icon: "check", handler: function() { prototype.save(handler); } },
-                { text: "cancel", icon: "remove", cancelButton: true }
-            ]);
-    };
-
-    prototype.save = function (callback) {
-        var templateParameters = isNew ? "&TemplateCode=" + code + "&TemplateVersion=" + version : "";
-        prototype.select();
-        $.ajax({
-    		url: matematici.urls.prototypes.save + "?IsNew=" + isNew + templateParameters,
-    		type: "post",
-    		contentType: "application/json",
-    		data: JSON.stringify(model)
-    	}).done(function (result) {
-    		if (result.error) {
-    			matematici.dialog.error("Error", result.message);
-    		} else if (result.redirect) {
-    			matematici.canClose = true;
-    			matematici.navigator.open(result.redirect, false, false);
-    		} else {
-				var check = $("<i />").addClass("fi flaticon-check").appendTo($("div.ActionBar a.Save")).hide().fadeIn(1000);
-    			setTimeout(function () {
-    				check.fadeOut(2000, function () { check.remove() });
-    			}, 3000);
-
-    			matematici.canClose = true;
-    			model = result;
-    			update();
-    			if (callback) callback.call();
-    		}
-    	}).fail(function (jqXHR, textStatus, errorThrown) {
-    		console.log("Server error", jqXHR, textStatus, errorThrown);
-    		alert("Server error: " + errorThrown);
-    	});
-    };
-
-    prototype.setState = function (state, callback, skipConfirmation) {
-        prototype.select();
-        var handler = function () {
-            model.State = state;
-            $.ajax({
-                url: matematici.urls.prototypes.setState,
-                type: "post",
-                contentType: "application/json",
-                data: JSON.stringify(model)
-            }).done(function (result) {
-                if (result.error) {
-                    matematici.dialog.error("Error", result.error);
-                } else {
-                    model = result;
-                    update();
-                    if (callback) callback.call();
-                }
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                console.log("Server error", jqXHR, textStatus, errorThrown);
-                alert("Server error: " + errorThrown);
-            });
-        };
-
-        if (skipConfirmation) {
-        	handler.call();
-        } else {
-        	matematici.dialog.show("warning", "Please confirm the change of state.", [
-				{
-					text: "confirm", icon: "check", handler: function () {
-						if (matematici.canClose)
-							handler.call();
-						else
-							prototype.save(handler);
-					}
-				},
-				{ text: "cancel", icon: "remove", cancelButton: true }
-        	]);
-        }
-    };
-
-    prototype.delete = function () {
-        matematici.dialog.show("warning", "This draft will be permanently deleted.", [
-            {
-                text: "confirm", icon: "check", handler: function () {
-                    $.ajax({
-                        url: matematici.urls.prototypes.delete,
-                        type: "post",
-                        data: { Prototype: model.Code, Version: model.Version }
-                    }).done(function (result) {
-                        if (result.error) {
-                            matematici.dialog.error("Error", result.error);
-                        } else {
-                            matematici.canClose = true;
-                            matematici.navigator.open(result.redirect, false, false);
-                        }
-                    }).fail(function (jqXHR, textStatus, errorThrown) {
-                        console.log("Server error", jqXHR, textStatus, errorThrown);
-                        alert("Server error: " + errorThrown);
-                    });
-                }
-            },
-            { text: "cancel", icon: "remove", cancelButton: true }
-        ]);
-    };
-
-    prototype.loadSignatureBook = function (action) {
-    	return $.ajax(matematici.urls.signatureBook.load, {
-    		type: "POST",
-			data: { Prototype: model.Code, Version: model.Version, Action: action }
-    	}).done(function (result) {
-    		if (result.error) {
-    			matematici.dialog.error("Error", result.error);
-    		} else {
-    			new matematici.CheckListGrid(result.rows, function (instance, row) {
-					if (!row.Flag) prototype.validateSignature(action, instance, row, result.rowVersion);
-    				return true;
-    			}, function (row, column, value) {
-    				return value == "Id" || column == "Id";
-    			});
-    		}
-    	});
-    };
-
-    prototype.validateSignature = function (action, grid, signature, rowVersion) {
-    	return $.ajax(matematici.urls.signatureBook.validate, {
-    		type: "POST",
-    		data: { Prototype: model.Code, Version: model.Version, Action: action, SignatureId: signature.Id }
-    	}).done(function (result) {
-    		if (result.error) {
-    			matematici.dialog.error("Error", result.error);
-    		} else {
-    			sign(action, grid, signature, matematici.userPanel.getUsers()[0], rowVersion);
-    		}
-    	});
-    };
-
-    prototype.quit = function () {
-        matematici.navigator.open(matematici.urls.prototypes.list, false, true)
-    };
-
-    prototype.setOnUpdateHandler = function (handler) {
-    	updateHandler = handler;
-    };
-
-    prototype.completeModel = function () {
-        completeModel();
-    };
-
-    prototype.showHistory = function () {
-        $.ajax({
-            url: matematici.urls.prototypes.history,
-            type: "post",
-            data: { Prototype: code, Version: version  }
-        }).done(function (result) {
-            if (result.Error)
-                matematici.dialog.error("Error", result.Error);
-            else {
-                var
-                    checkListGrid = new matematici.CheckListGrid(result.Data),
-                    parameters = checkListGrid.getParameters(),
-                    attributes = { type: "text", readonly: "readonly" };
-                
-                parameters.append($("<label />").text("Company").append($("<input />").attr(attributes).val(result.Company)));
-                parameters.append($("<label />").text("Department").append($("<input />").attr(attributes).val(result.Department)));
-                parameters.append($("<label />").text("Prototype Type").append($("<input />").attr(attributes).val(result.PrototypeType)));
-                parameters.append($("<label />").text("Prototype").append($("<input />").attr(attributes).val(result.Prototype)));
-                parameters.append($("<label />").text("Version").append($("<input />").attr(attributes).val(result.Version)));
-            }
-        }).fail(function (jqXHR, textStatus, errorThrown) {
-            console.log("Server error", jqXHR, textStatus, errorThrown);
-            alert("Server error: " + errorThrown);
-        });
-    };
-
-    prototype.isNew = function () {
-        return isNew;
-    };
-
-    prototype.update = update;
-    prototypes.prototype = prototype;
-
-    setup();
+	setup();
 }
 
 prototypes.Prototype.states = {
-	active: "Active",
-	approved: "Approved",
 	draft: "Draft",
-	approval: "In approval",
 	simulation: "In simulation",
+	approved: "Approved",
+	active: "Active",
 	obsolete: "Obsolete"
 }

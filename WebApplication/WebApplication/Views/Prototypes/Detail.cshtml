@@ -1,0 +1,98 @@
+﻿@model CheckListManager.WebApplication.Models.Prototype
+
+<div id="PrototypesDetailPage" class="Prototype CheckList" data-action="@BaseUrl/Prototypes/Prototype/">
+    <h1>Prototype Editor @(Model.Id)-@(Model.Action)</h1>
+
+    <div class="ActionBar">
+        <span class="ButtonGroup" data-text="Actions"></span>
+    </div>
+
+    <div class="ShadowPanel">
+        <h2>(prototype)</h2>
+
+        <div id="Header" class="Group Locked"></div>
+
+        <div class="TabContainer">
+            <div class="TabLabels">
+                <a href="#">(new page)</a>
+            </div>
+        </div>
+
+        <div class="Page"></div>
+    </div>
+</div>
+
+<div class="PropertyPanel">
+    <div class="PropertyList"></div>
+    <div class="PropertyValue"></div>
+    <div class="Information"></div>
+</div>
+
+<script type="text/javascript">
+    matematici.events.onPageLoad = function (callback) {
+        new matematici.Page({
+            name: "Prototype-Editor",
+            cssClass: "PrototypeEditor CheckList",
+            breadcrumbs: [
+                { content: "prototype editor" }
+            ],
+        });
+
+        var
+            propertyPanel = new prototypes.PropertyPanel(".PropertyPanel"),
+
+            prototype = new prototypes.Prototype("#PrototypesDetailPage", {
+                id: "@Model.Id",
+                baseId: "@Model.Id",
+                action: "@Model.Action"
+            }),
+
+            actionBar = new matematici.ActionBar("div.ActionBar")
+                .add("<i class='fi flaticon-database-o'></i>", function () {
+                    new prototypes.SourcesList();
+                }, "Icon SourcesList")
+                .add("<i class='fi flaticon-calculator'></i>", function () {
+                    new prototypes.ExpressionsList($(this));
+                }, "Icon ExpressionsList"),
+
+            buttonGroup = new matematici.ButtonGroup("span.ButtonGroup")
+                .add("Preview", function () {
+                    prototype.preview();
+                }, "Preview")
+                .add("Start simulation", function () {
+                    prototype.startSimulation();
+                }, "StartSimulation")
+                .add("Cancel simulation", function () {
+                    prototype.setState(prototypes.Prototype.states.draft);
+                }, "CancelSimulation")
+                .add("Delete", function () {
+                    prototype.delete();
+                }, "Delete")
+                .add("Submit for approval", function () {
+                    prototype.setState(prototypes.Prototype.states.approval);
+                }, "SubmitForApproval")
+                .add("Approve", function () {
+                    prototype.loadSignatureBook(matematici.signatureActions.toApprove);
+                }, "Approve")
+                .add("Obsolete", function () {
+                    prototype.loadSignatureBook(matematici.signatureActions.toObsolete);
+                }, "Obsolete")
+                .add("Save", function () {
+                    prototype.save();
+                }, "Save")
+                .add("History", function () {
+                    prototype.showHistory();
+                }, "History")
+                .add("Quit", function () {
+                    prototype.quit();
+                }, "Quit");
+
+        callback.call();
+
+        matematici.events.onPageUnload = function (callback) {
+            matematici.canClose = true;
+            matematici.save = undefined;
+            callback();
+        };
+    };
+</script>

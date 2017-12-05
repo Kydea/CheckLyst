@@ -1,0 +1,184 @@
+﻿@import "_Library.scss";
+
+div.Prototype {
+    h2 {
+        cursor: pointer;
+    }
+
+    div.TabContainer div.TabLabels a {
+        &.Selected {
+            cursor: pointer !important;
+        }
+
+        &.Current {
+            background-color: $Color-Pink;
+        }
+    }
+
+    a.Add.Button {
+        float: right;
+    }
+
+    div.Commands {
+        position: absolute;
+        z-index: $Depth-CheckList-Information;
+        right: 0;
+        top: 0;
+        margin: #{$Metric-Control-Space} !important;
+        background: white;
+        border: solid 1px $Color-Green-Regular;
+        box-shadow: $Box-Shadow;
+        font-size: 0 !important;
+        border-radius: 3px;
+
+        a.MiniIcon {
+            $IconSize: 30px;
+            margin-top: 0;
+            line-height: $IconSize !important;
+            height: $IconSize !important;
+            width: $IconSize !important;
+            border-radius: 3px 0 0 3px !important;
+
+            i.fi {
+                font-size: 14px !important;
+                line-height: $IconSize !important;
+                height: $IconSize !important;
+                width: $IconSize !important;
+            }
+
+            + a.MiniIcon {
+                border-left: solid 1px $Color-Green-Regular;
+                border-radius: 0 3px 3px 0 !important;
+            }
+
+            &:hover {
+                background: $Color-Silver-Dark;
+
+                i.fi {
+                    color: $Color-Green-Dark !important;
+                }
+            }
+        }
+    }
+
+    div.ShadowPanel {
+        > div.Commands {
+            a.Up, a.Down, a.Add, a.Remove {
+                display: none;
+            }
+        }
+    }
+
+    div.TabLabels {
+        div.Commands {
+            margin: 0;
+
+            a.Add {
+                display: none;
+            }
+        }
+
+        a:first-of-type {
+            + div.Commands {
+                a.Up {
+                    display: none;
+                }
+            }
+        }
+
+        a:nth-last-of-type(2) {
+            + div.Commands {
+                a.Down {
+                    display: none;
+                }
+            }
+        }
+    }
+
+    div.Group {
+        cursor: pointer;
+
+        > div.Commands {
+            margin: 10px !important;
+        }
+
+        &.Current {
+            background-color: $Color-Pink;
+        }
+    }
+
+    div.Item {
+        cursor: pointer;
+
+        label {
+            cursor: pointer;
+        }
+
+        &.Field {
+        }
+
+        &.Signature {
+            input {
+                cursor: pointer;
+            }
+        }
+
+        &.Text {
+            p {
+                position: relative;
+            }
+        }
+
+        &.Current {
+            &::before {
+                content: "";
+                position: absolute;
+                background-color: $Color-Pink;
+                left: -10px;
+                right: -10px;
+                top: -10px;
+                bottom: -10px;
+            }
+        }
+
+        > div.Commands {
+            margin: 0 !important;
+
+            a.Add {
+                display: none;
+            }
+        }
+    }
+
+    div.Element {
+        &:first-of-type {
+            > div.Commands {
+                a.Up {
+                    display: none;
+                }
+            }
+        }
+
+        &:last-of-type {
+            > div.Commands {
+                a.Down {
+                    display: none;
+                }
+            }
+        }
+    }
+
+    &.Current {
+        h2 {
+            background-color: $Color-Pink;
+        }
+    }
+
+    &.Locked, .Locked {
+        > div.Commands {
+            a.Remove, a.Up, a.Down {
+                display: none;
+            }
+        }
+    }
+}

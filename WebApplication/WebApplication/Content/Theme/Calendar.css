@@ -6,7 +6,7 @@
   position: relative; }
   div.Calendar.Calendar-Popup {
     position: absolute;
-    z-index: 104;
+    z-index: 105;
     display: none;
     background: white; }
     div.Calendar.Calendar-Popup.Calendar {

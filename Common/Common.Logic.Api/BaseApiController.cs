@@ -16,18 +16,5 @@ namespace CheckListManager.Common.Logic.Api
 		{
 			return new ErrorResult(Request, message);
 		}
-
-		protected bool ValidateUser(long? prototypeType = null, string tag = null)
-		{
-			if (!prototypeType.HasValue && tag == null)
-			{
-				return true;
-			}
-
-			return Identity.Roles.Any(r =>
-				(prototypeType == null || r.PrototypeType == prototypeType.Value)
-				&& (tag == null || r.Tag == tag)
-			);
-		}
 	}
 }

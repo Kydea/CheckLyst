@@ -43,7 +43,7 @@ matematici.AutoComplete = function (selector) {
 
 		setWidth = function () {
 			var width = label.outerWidth(), position = label.position();
-			input.width(width - parseInt(input.css("padding-left")) - parseInt(input.css("padding-right")) - 2);
+			input.width(width - parseInt(input.css("padding-left")) - parseInt(input.css("padding-right")) - parseInt(input.css("border-left-width")) - parseInt(input.css("border-right-width")));
 			items.each(function () {
 				var itemWidth = $(this).outerWidth();
 				if (itemWidth > width)
@@ -74,15 +74,20 @@ matematici.AutoComplete = function (selector) {
 			list = $("<div />").addClass("AutoComplete-List").insertAfter(input);
 			icon = $("<i />").addClass("AutoComplete fi flaticon-arrow-down").insertAfter(input);
 			noRow = $("<i />").addClass("fi flaticon-minus");
-			element.parent("label").on("click", function (e) {
-				label.focus();
-				e.stopPropagation();
-			});
+			element.parent("label")
+				.on("click", function (e) {
+					console.log($("input:visible", this).eq(0));
+					$("input:visible", this).eq(0).focus();
+					e.stopPropagation();
+				});
 			label
 				.on("focus", function () {
 					showList();
 					input.focus();
 					input.select();
+				})
+				.on("click", function (e) {
+					e.stopPropagation();
 				});
 			input
 				.on("keydown", function (e) {
