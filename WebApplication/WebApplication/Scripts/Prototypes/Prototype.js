@@ -261,6 +261,8 @@
 
 	prototype.select = select;
 
+	prototype.completeModel = completeModel;
+
 	setup();
 }
 

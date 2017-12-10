@@ -246,10 +246,6 @@
     	updateHandler = handler;
     };
 
-    prototype.completeModel = function () {
-        completeModel();
-    };
-
     prototype.showHistory = function () {
         $.ajax({
             url: matematici.urls.prototypes.history,

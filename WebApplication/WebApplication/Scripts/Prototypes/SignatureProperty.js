@@ -50,11 +50,11 @@
             input.on("change", change);
             valuePanel.append(input);
 
-            setButton = $("<a />").addClass("Button").text("set by click").on("click", function (e) {
-                setButton.hide();
-                cancelButton.show();
-                prototypes.prototype.setItemHandler(setSignature);
-            }).appendTo(valuePanel);
+			setButton = $("<a />").addClass("Button").text("set by click").on("click", function (e) {
+				setButton.hide();
+				cancelButton.show();
+				prototypes.prototype.setItemHandler(setSignature);
+			}); //.appendTo(valuePanel);
 
             cancelButton = $("<a />").addClass("Button").text("cancel").on("click", function () {
                 cancel();

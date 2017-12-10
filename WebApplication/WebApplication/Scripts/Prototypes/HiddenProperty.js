@@ -2,7 +2,7 @@
     var
         input,
         expressions,
-        editable = prototypes.prototype.getModel().State == prototypes.Prototype.states.draft,
+        editable = prototypes.prototype.getModel().state == prototypes.Prototype.states.draft,
 
         inputChanged = function () {
             var
