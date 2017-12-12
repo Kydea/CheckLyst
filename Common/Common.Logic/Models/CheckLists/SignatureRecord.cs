@@ -10,6 +10,6 @@
 
 		public string Note { get; set; }
 
-		public string Action => "<center><i class=\"fa fa-fw fa-" + (Note == null ? "check" : "remove") + "\"></i></center>";
+		public string Action => "<center><i class=\"fi fi-fw flaticon-" + (Note == null ? "check" : "trash-o") + "\"></i></center>";
 	}
 }

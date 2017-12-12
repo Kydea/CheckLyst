@@ -1,13 +1,13 @@
 ﻿using System;
 using CheckListManager.Common.Logic.Models.CheckLists;
 
-namespace CheckListManager.Common.Logic.Models.Expressions.AritmeticOperators
+namespace CheckListManager.Common.Logic.Models.Expressions.ArithmeticOperators
 {
-    public class Plus : BinaryAritmeticOperator
+    public class Plus : BinaryArithmeticOperator
     {
-        public override void Check(ICheckList prototype)
+        public override void Check(ICheckList Prototype)
         {
-            base.Check(prototype);
+            base.Check(Prototype);
 
             if (Right.DataType != DataType.Number)
                 throw new Exception("Right operand of operator + must be a number");
@@ -18,15 +18,14 @@ namespace CheckListManager.Common.Logic.Models.Expressions.AritmeticOperators
             DataType = Left.DataType;
         }
 
-        protected override TypedValue EvaluateResult(TypedValue leftValue, TypedValue rightValue)
+        protected override TypedValue EvaluateResult(TypedValue LeftValue, TypedValue RightValue)
         {
-	        return leftValue.Type == DataType.Number
-		        ? new TypedValue(DataType.Number,
-			        leftValue.IsNull || rightValue.IsNull ? (decimal?)null : leftValue.NumberValue + rightValue.NumberValue)
-		        : new TypedValue(DataType.DateTime,
-			        leftValue.IsNull || rightValue.IsNull
-				        ? (DateTime?)null
-				        : leftValue.DateTimeValue.AddSeconds((double)rightValue.NumberValue));
+            if (LeftValue.Type == DataType.Number)
+                return new TypedValue(DataType.Number, LeftValue.IsNull || RightValue.IsNull ? (decimal?)null : LeftValue.NumberValue + RightValue.NumberValue);
+            else
+                return new TypedValue(DataType.DateTime, LeftValue.IsNull || RightValue.IsNull ? (DateTime?)null : LeftValue.DateTimeValue.AddSeconds((double)RightValue.NumberValue));
         }
+
+        protected override string OperatorName => "+";
     }
 }

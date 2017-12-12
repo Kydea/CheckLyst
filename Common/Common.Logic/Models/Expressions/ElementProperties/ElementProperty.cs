@@ -3,44 +3,46 @@ using CheckListManager.Common.Logic.Models.CheckLists;
 
 namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
 {
-    public class ElementProperty : Symbol
+    public abstract class ElementProperty : Symbol
     {
         public enum ElementProperties { Undefined, Valid }
 
-        private readonly ElementProperties _property;
+        private ElementProperties Property;
 
-        protected ElementProperty(string code)
+        protected ElementProperty()
         {
-            Code = code;
         }
 
-        public ElementProperty(string code, ElementProperties property) : this(code)
+        public ElementProperty(ElementProperties Property)
         {
-            _property = property;
+            this.Property = Property;
         }
 
-        protected string Code { get; }
+        public String Code { get; set; }
 
-        protected virtual void Check(ICheckListElement element)
+        protected virtual void Check(ICheckListElement Element)
         {
-			if (_property == ElementProperties.Valid)
-				DataType = DataType.Boolean;
-		}
-
-        public override void Check(ICheckList prototype)
-        {
-            Check(prototype.Elements[Code]);
+            if (Property == ElementProperties.Valid)
+                DataType = DataType.Boolean;
         }
 
-        protected virtual TypedValue GetValue(ICheckListElement element)
+        public override void Check(ICheckList Prototype)
         {
-            throw new NotImplementedException("Implement this ethod in the subclasses.");
+            if (!Prototype.Elements.ContainsKey(Code))
+                throw new Exception("The element with code " + Code + " not found");
+
+            Check(Prototype.Elements[Code]);
         }
 
-        public override TypedValue GetValue(IElementsBranch elementsBranch)
+        protected virtual TypedValue GetValue(ICheckListElement Element)
         {
-            var element = elementsBranch.Elements[Code];
-            return _property == ElementProperties.Undefined ? GetValue(element) : new TypedValue(DataType.Boolean, element.Valid);
+            throw new NotImplementedException("Implement this method in the subclasses.");
+        }
+
+        public override TypedValue GetValue(IElementsBranch ElementsBranch)
+        {
+            var Element = ElementsBranch.Elements[Code];
+            return Property == ElementProperties.Undefined ? GetValue(Element) : new TypedValue(DataType.Boolean, Element.Valid);
         }
     }
 }

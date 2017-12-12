@@ -1,32 +1,35 @@
 ﻿using System;
 using CheckListManager.Common.Logic.Models.CheckLists;
 
-namespace CheckListManager.Common.Logic.Models.Expressions.AritmeticOperators
+namespace CheckListManager.Common.Logic.Models.Expressions.ArithmeticOperators
 {
-    public class Minus : BinaryAritmeticOperator
+    public class Minus : BinaryArithmeticOperator
     {
-        public override void Check(ICheckList prototype)
+        public override void Check(ICheckList Prototype)
         {
-            base.Check(prototype);
+            base.Check(Prototype);
 
             if (
-				!(Left.DataType == DataType.Number && Right.DataType == DataType.Number)
-				&& !((Left.DataType == DataType.DateTime || Left.DataType == DataType.Date) && (Right.DataType == DataType.DateTime || Right.DataType == DataType.Date))
-				&& !(Left.DataType == DataType.Time && Right.DataType == DataType.Time)
-			)
-				throw new Exception("Operands of operator - must be both numbers or both date/time");
+                !(Left.DataType == DataType.Number && Right.DataType == DataType.Number)
+                && !((Left.DataType == DataType.DateTime || Left.DataType == DataType.Date) && (Right.DataType == DataType.DateTime || Right.DataType == DataType.Date))
+                && !(Left.DataType == DataType.Time && Right.DataType == DataType.Time)
+            )
+                throw new Exception("Operands of operator - must be both numbers or both date/time");
 
             DataType = DataType.Number;
         }
 
-        protected override TypedValue EvaluateResult(TypedValue leftValue, TypedValue rightValue)
+        protected override TypedValue EvaluateResult(TypedValue LeftValue, TypedValue RightValue)
         {
             return new TypedValue(DataType.Number,
-                leftValue.IsNull || rightValue.IsNull ? (decimal?)null :
-				leftValue.Type == DataType.Time ? (decimal)(leftValue.TimeSpanValue - rightValue.TimeSpanValue).TotalSeconds :
-                leftValue.Type == DataType.Number ? leftValue.NumberValue - rightValue.NumberValue :
-                (decimal)(leftValue.DateTimeValue - rightValue.DateTimeValue).TotalSeconds
+                LeftValue.IsNull || RightValue.IsNull ? (decimal?)null :
+                LeftValue.Type == DataType.Time ? (decimal)(LeftValue.TimeSpanValue - RightValue.TimeSpanValue).TotalSeconds :
+                LeftValue.Type == DataType.Number ? LeftValue.NumberValue - RightValue.NumberValue :
+                (decimal)(LeftValue.DateTimeValue - RightValue.DateTimeValue).TotalSeconds
             );
         }
+
+        protected override string OperatorName => "-";
     }
+
 }

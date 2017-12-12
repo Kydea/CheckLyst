@@ -1,9 +1,10 @@
-﻿using System;
+﻿using CheckListManager.Common.Logic.Models.CheckLists;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
-using CheckListManager.Common.Logic.Models.CheckLists;
-using CheckListManager.Common.Logic.Models.Expressions.AritmeticOperators;
-using CheckListManager.Common.Logic.Models.Expressions.ComparisionOperators;
-using CheckListManager.Common.Logic.Models.Expressions.LogicOperators;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace CheckListManager.Common.Logic.Models.Expressions
 {
@@ -15,62 +16,38 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
         public override Expression Expression
         {
-            set => Left.Expression = Right.Expression = base.Expression = value;
+            set
+            {
+                Left.Expression = Right.Expression = base.Expression = value;
+            }
         }
 
-        public override void Check(ICheckList prototype)
+        public override void Check(ICheckList Prototype)
         {
-            Left.Check(prototype);
-            Right.Check(prototype);
+            Left.Check(Prototype);
+            Right.Check(Prototype);
         }
 
-        protected virtual TypedValue Evaluate(TypedValue leftValue, TypedValue rightValue)
+        protected virtual TypedValue Evaluate(TypedValue LeftValue, TypedValue RightValue)
         {
             return
-                leftValue.Type == DataType.Error ? leftValue :
-                rightValue.Type == DataType.Error ? rightValue :
+                LeftValue.Type == DataType.Error ? LeftValue :
+                RightValue.Type == DataType.Error ? RightValue :
                 null;
         }
 
-        public override TypedValue GetValue(IElementsBranch elementsBranch)
+        public override TypedValue GetValue(IElementsBranch ElementsBranch)
         {
-            var value = Evaluate(Left.GetValue(elementsBranch), Right.GetValue(elementsBranch));
-            if (value == null) throw new NullReferenceException("Software design error");
-            return value;
+            var Value = Evaluate(Left.GetValue(ElementsBranch), Right.GetValue(ElementsBranch));
+            if (Value == null) throw new NullReferenceException("Software design error");
+            return Value;
         }
 
-		public static BinaryOperator Parse(BinaryExpression expression, ICheckList checkList)
-		{
-			// ReSharper disable once SwitchStatementMissingSomeCases
-			switch (expression.NodeType)
-			{
-				case ExpressionType.Add:
-					return new Plus { Left = Symbol.Parse(expression.Left, checkList), Right = Symbol.Parse(expression.Right, checkList) };
-				case ExpressionType.Subtract:
-					return new Minus { Left = Symbol.Parse(expression.Left, checkList), Right = Symbol.Parse(expression.Right, checkList) };
-				case ExpressionType.Multiply:
-					return new Times { Left = Symbol.Parse(expression.Left, checkList), Right = Symbol.Parse(expression.Right, checkList) };
-				case ExpressionType.Divide:
-					return new Division { Left = Symbol.Parse(expression.Left, checkList), Right = Symbol.Parse(expression.Right, checkList) };
-				case ExpressionType.Equal:
-					return new Equals { Left = Symbol.Parse(expression.Left, checkList), Right = Symbol.Parse(expression.Right, checkList) };
-				case ExpressionType.GreaterThan:
-					return new GreaterThen { Left = Symbol.Parse(expression.Left, checkList), Right = Symbol.Parse(expression.Right, checkList) };
-				case ExpressionType.GreaterThanOrEqual:
-					return new GreaterOrEqual { Left = Symbol.Parse(expression.Left, checkList), Right = Symbol.Parse(expression.Right, checkList) };
-				case ExpressionType.LessThan:
-					return new LessThen { Left = Symbol.Parse(expression.Left, checkList), Right = Symbol.Parse(expression.Right, checkList) };
-				case ExpressionType.LessThanOrEqual:
-					return new LessOrEqual { Left = Symbol.Parse(expression.Left, checkList), Right = Symbol.Parse(expression.Right, checkList) };
-				case ExpressionType.Or:
-				case ExpressionType.OrElse:
-					return new Or { Left = Symbol.Parse(expression.Left, checkList), Right = Symbol.Parse(expression.Right, checkList) };
-				case ExpressionType.And:
-				case ExpressionType.AndAlso:
-					return new And { Left = Symbol.Parse(expression.Left, checkList), Right = Symbol.Parse(expression.Right, checkList) };
-			}
+        protected abstract string OperatorName { get; }
 
-			throw new Exception($"Node Type {expression.NodeType.ToString()} not managed");
-		}
-	}
+        public sealed override string ToString()
+        {
+            return $"({Left?.ToString() ?? "#"} {OperatorName} {Right?.ToString() ?? "#"})";
+        }
+    }
 }

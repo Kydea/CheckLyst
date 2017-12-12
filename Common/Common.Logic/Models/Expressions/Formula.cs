@@ -1,74 +1,86 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace CheckListManager.Common.Logic.Models.Expressions
 {
     public class Formula
     {
-        private string _format;
-        private readonly List<string> _valueKeys = new List<string>();
+        public const string
+            NullValue = "<span class='Null'></span>",
+            ErrorValueLeft = "<span class='Error'>",
+            ErrorValueRight = "</span>";
+
+        private string Format;
+        private List<String> ValueKeys = new List<string>();
 
 		public Formula() { }
 
-		public Formula(string rawValue = null)
+		public Formula(string RawValue = null)
         {
-            RawValue = rawValue;
-			_format = FormatValue(rawValue);
+            this.RawValue = RawValue;
+			Format = FormatValue(RawValue);
         }
 
-		private string _rawValue;
-        public string RawValue
+		private String _RawValue;
+        public String RawValue
 		{
-			get => _rawValue;
-	        set { _rawValue = value; _format = FormatValue(value); }
+			get { return _RawValue; }
+			set { _RawValue = value; Format = FormatValue(value); }
 		}
 
-        public string Value { get; private set; }
+        public String Value { get; private set; }
 
         public bool HasValue { get; private set; }
 
-		private string FormatValue(string rawValue)
+		private String FormatValue(String RawValue)
 		{
 			return
-				string.IsNullOrWhiteSpace(rawValue) ?
+				String.IsNullOrWhiteSpace(RawValue) ?
 					null :
 					new Regex(@"(?<Start>\{)+(?<Property>[\w\-\.\[\]]+)(?<Format>:[^}]+)?(?<End>\})+", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)
-						.Replace(rawValue, delegate (Match match)
+						.Replace(RawValue, delegate (Match Match)
 						{
-							_valueKeys.Add(match.Groups["Property"].Value);
-                            var format = match.Groups["Format"].Value;
-                            if (!string.IsNullOrWhiteSpace(format))
+							ValueKeys.Add(Match.Groups["Property"].Value);
+                            String Format = Match.Groups["Format"].Value;
+                            if (!String.IsNullOrWhiteSpace(Format))
                             {
-	                            if (!int.TryParse(format.Substring(2), out var number)) number = -1;
-                                format =
-                                    number < 0 ? string.Empty :
-                                    format.StartsWith(":s") ? ":0." + new string('0', number) :
-                                    format.StartsWith(":n") ? ":#,##0." + new string('0', number) :
-                                    string.Empty;
+                                int Number;
+                                if (!int.TryParse(Format.Substring(2), out Number)) Number = -1;
+                                Format =
+                                    Number < 0 ? String.Empty :
+                                    Format.StartsWith(":s") ? ":0." + new String('0', Number) :
+                                    Format.StartsWith(":n") ? ":#,##0." + new String('0', Number) :
+                                    String.Empty;
                             }
-                            return new string('{', match.Groups["Start"].Captures.Count) + (_valueKeys.Count - 1) + format + new string('}', match.Groups["End"].Captures.Count);
+                            return new string('{', Match.Groups["Start"].Captures.Count) + (ValueKeys.Count - 1) + Format + new string('}', Match.Groups["End"].Captures.Count);
 						});
 		}
 
-		public void Update(Dictionary<string, Expression> expressions, Dictionary<string, object> runtimeValues)
+		public void Update(Dictionary<String, Expression> Expressions, Dictionary<String, Object> RuntimeValues)
         {
-            Value = _format == null ? null : string.Format(
-                _format, 
-                _valueKeys.Select(key =>
-                    expressions.ContainsKey(key) ?
-                        expressions[key].Value.Type == DataType.Error ? "<span class='Error'>" + expressions[key].Value.ErrorValue + "</span>" :
-                        expressions[key].Value.IsNull ? "<span class='Null'></span>" :
-                        expressions[key].Value.Value :
-                    runtimeValues?.ContainsKey(key) ?? false ? runtimeValues[key] :
-                    "<span class='Error'>Code not found: " + key + "</span>"
+            Value = Format == null ? null : string.Format(
+                Format, 
+                ValueKeys.Select(Key =>
+                    Expressions.ContainsKey(Key) ?
+                        Expressions[Key].Value.Type == DataType.Error ? ErrorValueLeft + Expressions[Key].Value.ErrorValue + ErrorValueRight :
+                        Expressions[Key].Value.IsNull ? NullValue :
+                        Expressions[Key].Value.Type == DataType.DateTime ? Expressions[Key].Value.DateTimeValue.ToString("dd/MM/yyyy HH:mm:ss") :
+                        Expressions[Key].Value.Type == DataType.Date ? Expressions[Key].Value.DateTimeValue.ToString("dd/MM/yyyy") :
+                        Expressions[Key].Value.Type == DataType.Time ? Expressions[Key].Value.TimeSpanValue.ToString(@"hh\:mm\:ss") :
+                        Expressions[Key].Value.Value :
+                    RuntimeValues?.ContainsKey(Key) ?? false ? RuntimeValues[Key] :
+                    ErrorValueLeft + "Code not found: " + Key + ErrorValueRight
                ).ToArray());
 
             HasValue = 
-                !string.IsNullOrEmpty(_format)
-                && !_valueKeys.Any(key =>
-                    expressions.ContainsKey(key) && (expressions[key].Value.Type == DataType.Error || expressions[key].Value.IsNull)
-                    || !expressions.ContainsKey(key) && !runtimeValues.ContainsKey(key)
+                !String.IsNullOrEmpty(Format)
+                && !ValueKeys.Any(Key =>
+                    Expressions.ContainsKey(Key) && (Expressions[Key].Value.Type == DataType.Error || Expressions[Key].Value.IsNull)
+                    || !Expressions.ContainsKey(Key) && !RuntimeValues.ContainsKey(Key)
                 );
         }
 

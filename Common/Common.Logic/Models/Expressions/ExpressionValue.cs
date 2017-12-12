@@ -1,24 +1,30 @@
 ﻿using CheckListManager.Common.Logic.Models.CheckLists;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace CheckListManager.Common.Logic.Models.Expressions
 {
     public class ExpressionValue : Symbol
     {
-        private readonly Expression _otherExpression;
+        public string ExpressionCode { get; set; }
 
-        public ExpressionValue(Expression otherExpression)
+        public override void Check(ICheckList Prototype)
         {
-            _otherExpression = otherExpression;
+            if (!Prototype.Expressions.ContainsKey(ExpressionCode)) throw new Exception("Expression not found: " + ExpressionCode);
+            DataType = Prototype.Expressions[ExpressionCode].DataType;
         }
 
-        public override void Check(ICheckList prototype)
+        public override TypedValue GetValue(IElementsBranch ElementsBranch)
         {
-            DataType = _otherExpression.DataType;
+            return ElementsBranch.CheckList.Expressions[ExpressionCode].Value;
         }
 
-        public override TypedValue GetValue(IElementsBranch elementsBranch)
+        public override string ToString()
         {
-            return _otherExpression.Value;
+            return $"{ExpressionCode}";
         }
     }
 }

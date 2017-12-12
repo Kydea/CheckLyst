@@ -19,5 +19,9 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 		{
 			throw new NotImplementedException();
 		}
-	}
+        public ICheckList CheckList
+        {
+            get { return this; }
+        }
+    }
 }

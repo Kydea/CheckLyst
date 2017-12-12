@@ -7,5 +7,8 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
     {
         [JsonIgnore]
         Dictionary<string, ICheckListElement> Elements { get; }
+
+        [JsonIgnore]
+        ICheckList CheckList { get; }
     }
 }

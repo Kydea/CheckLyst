@@ -49,7 +49,7 @@
 				currentItemId = currentItem && (currentItem.isPage && currentItem.isPage() && $("a.Current", element).attr("id") || $("div.Current", element).attr("id")); //saves current item
 
 			completeModel();
-			title.text(model.description || "(Prototype name)");
+			title.children("span").text(model.description || "(Prototype name)");
 
 			commands = $("<div />").addClass("Commands")
 				.append($("<a />").attr("data-command", "properties").addClass("Button MiniIcon Properties").append($("<i />").addClass("fi flaticon-cog")))

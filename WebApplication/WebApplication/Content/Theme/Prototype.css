@@ -1,5 +1,6 @@
 ﻿div.Prototype h2 {
-  cursor: pointer; }
+  cursor: pointer;
+  color: white !important; }
 
 div.Prototype div.TabContainer div.TabLabels a.Selected {
   cursor: pointer !important; }
@@ -40,6 +41,22 @@ div.Prototype div.Commands {
       div.Prototype div.Commands a.MiniIcon:hover i.fi {
         color: #00877a !important; }
 
+div.Prototype div.ShadowPanel .HeaderContainer {
+  margin-top: -20px;
+  margin-left: -20px;
+  margin-right: -20px;
+  padding: 20px;
+  background-color: #009688;
+  width: calc(100% + 40px);
+  top: 0;
+  left: 0;
+  border-radius: 15px 15px 0 0; }
+  div.Prototype div.ShadowPanel .HeaderContainer > div.Group {
+    margin-bottom: 0;
+    border: none; }
+  div.Prototype div.ShadowPanel .HeaderContainer div.Group {
+    background-color: white; }
+
 div.Prototype div.ShadowPanel > div.Commands a.Up, div.Prototype div.ShadowPanel > div.Commands a.Down, div.Prototype div.ShadowPanel > div.Commands a.Add, div.Prototype div.ShadowPanel > div.Commands a.Remove {
   display: none; }
 
@@ -53,6 +70,15 @@ div.Prototype div.TabLabels a:first-of-type + div.Commands a.Up {
 
 div.Prototype div.TabLabels a:nth-last-of-type(2) + div.Commands a.Down {
   display: none; }
+
+div.Prototype div.TabLabels a:last-child {
+  background-color: #ffba00;
+  margin: 2px;
+  height: 34px;
+  line-height: 34px;
+  color: white;
+  padding-left: 10px;
+  padding-right: 10px; }
 
 div.Prototype div.Group {
   cursor: pointer; }
@@ -89,7 +115,18 @@ div.Prototype div.Element:last-of-type > div.Commands a.Down {
   display: none; }
 
 div.Prototype.Current h2 {
-  background-color: #fce6e8; }
+  position: relative;
+  color: #999 !important; }
+  div.Prototype.Current h2::before {
+    content: "";
+    position: absolute;
+    background-color: #fce6e8;
+    left: -10px;
+    right: -10px;
+    top: -10px;
+    bottom: -10px; }
+  div.Prototype.Current h2 span {
+    position: relative; }
 
 div.Prototype.Locked > div.Commands a.Remove, div.Prototype.Locked > div.Commands a.Up, div.Prototype.Locked > div.Commands a.Down, div.Prototype .Locked > div.Commands a.Remove, div.Prototype .Locked > div.Commands a.Up, div.Prototype .Locked > div.Commands a.Down {
   display: none; }
