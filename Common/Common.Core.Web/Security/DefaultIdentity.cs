@@ -4,8 +4,8 @@ using System.Security.Claims;
 
 namespace CheckListManager.Common.Core.Web.Security
 {
-	public class DefaultIdentity : ClaimsIdentity
-	{
+	public class DefaultIdentity : ClaimsIdentity, IDefaultIdentity
+    {
 		public static string Version => "1.0";
 
 		public DefaultIdentity(ClaimsIdentity identity) : base(identity)
