@@ -12,6 +12,8 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 		public ICheckListGroup Header { get; set; }
 		public List<ICheckListPage> Pages { get; } = new List<ICheckListPage>();
         public string State { get; set; }
+        public DateTimeOffset? ValidFrom { get; set; }
+        public DateTimeOffset? ValidUntil { get; set; }
 
         public void AddItem(ICheckListItem item)
 		{

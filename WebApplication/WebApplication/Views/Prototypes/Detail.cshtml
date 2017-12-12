@@ -87,6 +87,21 @@
                     prototype.quit();
                 }, "Quit");
 
+        $.ajax({
+            type: "post",
+            url: "@BaseUrl/Infrastructure/PrototypeTypes/GetSyntheticData",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                data: {
+                    name: ""
+                },
+                itemsPerPage: 1000
+            })
+        }).done(function (result) {
+            propertyPanel.setPrototypeTypesList(result.data);
+        });
+
         callback.call();
 
         matematici.events.onPageUnload = function (callback) {

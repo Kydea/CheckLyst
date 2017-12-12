@@ -40,7 +40,9 @@ namespace CheckListManager.Prototypes.Logic.Services
             var Prototype = new Prototype
             {
                 Header = new Group { Description = "(header)" },
-                State = "Draft"
+                State = "Draft",
+                ValidFrom = null,
+                ValidUntil = DateTimeOffset.UtcNow.AddDays(10),
             };
 
             Page Page;
@@ -51,9 +53,6 @@ namespace CheckListManager.Prototypes.Logic.Services
             {
                 Id = request.Id,
                 Version = request.Version,
-                //    Version = -1,
-                //    ValidFrom = null,
-                //    ValidUntil = null,
 
                 CheckList = Prototype
             });

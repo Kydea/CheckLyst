@@ -7,6 +7,7 @@
 		calendar = null,
 		min,
 		max,
+		needToParse = false,
 
 		getCurrentDate = function () {
 			var today = new Date();
@@ -45,8 +46,10 @@
 		setDate = function (value) {
 			var formattedDate = matematici.dateFormatter.format(value, true);
 			date = formattedDate.valid ? value : null;
-			element.data("date", date);
-			element.val(formattedDate.date);
+			element
+				.data("date", date)
+				.val(formattedDate.date)
+				.change();
 		},
 
 		close = function () {
@@ -57,9 +60,15 @@
 		parse = function () {
 			try {
 				var value = element.val();
-
-				date = !value ? null : moment(value, matematici.dateFormatter.dateFormat);
-				element.val(date && date.format("L") || "");
+				if (!!value) {
+					var momentDate = moment(value, matematici.dateFormatter.dateFormat);
+					date = momentDate.toDate();
+					element.val(momentDate.format(matematici.dateFormatter.dateFormat));
+				} else {
+					date = null;
+					element.val("");
+				}
+				calendar.close();
 			}
 			catch (error) {
 				matematici.dialog.error("Error", "invalid date");
@@ -81,7 +90,11 @@
 
 			element
 				.data("datePicker", datePicker)
-				.on("change", parse)
+				.on("change", function () {
+					if (needToParse) parse();
+				})
+				.on("focus", function () { needToParse = true; })
+				.on("blur", function () { needToParse = false; })
 				.on("click", open);
 
 			$("<i />")

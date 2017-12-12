@@ -261,7 +261,7 @@ form {
     }
 }
 
-form, div.CheckList {
+form, div.CheckList, div.PropertyPanel div.PropertyValue {
 
     label {
         $Label-Width: 200px;

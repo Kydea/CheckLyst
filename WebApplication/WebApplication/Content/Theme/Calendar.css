@@ -10,7 +10,7 @@
     display: none;
     background: white; }
     div.Calendar.Calendar-Popup.Calendar {
-      z-index: 991; }
+      z-index: 105; }
   div.Calendar a:hover {
     text-decoration: none; }
   div.Calendar span.Month {

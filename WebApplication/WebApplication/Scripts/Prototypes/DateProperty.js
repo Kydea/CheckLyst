@@ -1,21 +1,24 @@
 ﻿prototypes.DateProperty = function (model, property, options) {
     var
         input,
-        check,
-        change = function () {
-        	var date = $.datepicker.parseDate("dd/mm/yy", input.val());
+		check,
+		datePicker,
+		change = function () {
+			var date = datePicker.getDate();
         	if (check)
         	    for (var index in check)
         	        if (!check[index].action.call(this, date)) {
         	            new matematici.dialog.error("error", check[index].message);
         	            return;
-        	        }
+					}
+
         	if (date) {
-        		model[property] = String.format("{0:yyyy-MM-dd}T00:00:00", date);
+				model[property] = date;
         	} else {
         		model[property] = null;
         		input.val("");
-        	}
+			}
+
             matematici.canClose = false;
         };
 
@@ -26,15 +29,16 @@
 
     this.create = function (valuePanel) {
     	valuePanel.addClass("Date");
-        input = $("<input />")
-            .attr({ type: "text", readOnly: options.readOnly })
-            .val(model[property] ? String.format("{0:dd/MM/yyyy}", new Date(model[property])) : null)
-        if (!options.readOnly) {
-            input
-                .datepicker()
-                .on("change", change);
-        }
-        valuePanel.append(input);
+		input = $("<input />")
+			.attr({ type: "text", readOnly: options.readOnly });
+		valuePanel.append($("<label >").append(input));
+		datePicker = new matematici.DatePicker(input);
+		if (!!model[property])
+			datePicker.setDate(new Date(model[property]));
+		if (!options.readOnly)
+			input
+				.addClass("DatePicked")
+				.on("change", change);
     }
 
     this.hasChanges = function () {

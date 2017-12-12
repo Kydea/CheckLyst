@@ -47,14 +47,6 @@
 
 <script type="text/javascript">
     var
-        profiles = [
-            "Revisor",
-            "Deputy approver",
-            "Approver",
-            "Deputy final approver",
-            "Final approver"
-        ],
-
         maxSteps = 3,
 
         formSelector = "form#Detail",
@@ -117,8 +109,8 @@
                     fixStep(step)
                 });
 
-            for (var index in profiles)
-                select.append($("<option />").text(profiles[index]).attr("value", profiles[index]));
+            for (var index in matematici.profiles)
+                select.append($("<option />").text(matematici.profiles[index]).attr("value", matematici.profiles[index]));
 
             var autoComplete = new matematici.AutoComplete(select);
             autoComplete.initialize();

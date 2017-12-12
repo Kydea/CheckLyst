@@ -1,110 +1,89 @@
 ﻿prototypes.PrototypeTypeProperty = function (model, options) {
-    var
-        input,
-        handler,
-        company,
-        department,
-        prototypeType,
+	var
+		input,
+		handler,
+		department,
+		prototypeType,
+		departments,
 
-        loadCompanies = function (valuePanel) {
-            $.ajax({
-                url: matematici.urls.prototypes.companies,
-                type: "post",
-                data: {}
-            }).done(function (result) {
-                if (result.Error)
-                    matematici.dialog.error("Error", result.Error);
-                else {
-                    var option =
-                    company =
-                        $("<select />")
-                        .append($("<option />").attr("selected", !model.company))
-                        .on("change", function () { loadDepartments(valuePanel); })
-                        .appendTo(valuePanel);
-                    for (var index in result)
-                        company.append($("<option />").text(result[index]).attr({ value: result[index], selected: result[index] == model.company }));
+		preparePrototypeTypes = function () {
+			departments = [];
 
-                    if (model.company)
-                        loadDepartments(valuePanel);
-                }
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                console.log("Server error", jqXHR, textStatus, errorThrown);
-                alert("Server error: " + errorThrown);
-            });
-        },
+			var
+				data = prototypes.propertyPanel.getPrototypeTypesList(),
+				departmentID = null,
+				department;
 
-        loadDepartments = function (valuePanel) {
-            if (department) department.remove();
+			for (var index in data) {
+				var record = data[index];
+				if (departmentID != record.department) {
+					departments.push(department = { code: record.department, name: record.departmentName, prototypeTypes: [] });
+					departmentID = record.department;
+				}
 
-            if (company.val())
-                $.ajax({
-                    url: matematici.urls.prototypes.departments,
-                    type: "post",
-                    data: { Company: company.val() }
-                }).done(function (result) {
-                    if (result.Error)
-                        matematici.dialog.error("Error", result.Error);
-                    else {
-                        department =
-                            $("<select />")
-                            .append($("<option />").attr("selected", true))
-                            .on("change", function () { loadPrototypeTypes(valuePanel); })
-                            .appendTo(valuePanel);
-                        for (var index in result)
-                            department.append($("<option />").text(result[index]).attr({ value: result[index], selected: result[index] == model.department }));
+				department.prototypeTypes.push({
+					id: record.id,
+					name: record.name
+				});
+			}
+		},
 
-                        if (model.department)
-                            loadPrototypeTypes(valuePanel);
-                    }
-                }).fail(function (jqXHR, textStatus, errorThrown) {
-                    console.log("Server error", jqXHR, textStatus, errorThrown);
-                    alert("Server error: " + errorThrown);
-                });
-        },
+		refreshPrototypeTypes = function (initialValue) {
+			prototypeType.empty();
+			var departmentIndex = department.prop('selectedIndex');
+			if (departmentIndex >= 0) {
+				var prototypeTypes = departments[departmentIndex].prototypeTypes;
+				for (var index in prototypeTypes)
+					prototypeType.append($("<option />").text(prototypeTypes[index].name).attr("value", prototypeTypes[index].id));
+				prototypeType.val(initialValue).change();
+			} else 
+				prototypeType.val(null).change();
 
-        loadPrototypeTypes = function (valuePanel) {
-            if (prototypeType) prototypeType.remove();
+			setTimeout(function () {
+				prototypeType.data("autoComplete").refresh();
+			}, 0);
+		};
 
-            if (department.val())
-                $.ajax({
-                    url: matematici.urls.prototypes.prototypeTypes,
-                    type: "post",
-                    data: { Company: company.val(), Department: department.val() }
-                }).done(function (result) {
-                    if (result.Error)
-                        matematici.dialog.error("Error", result.Error);
-                    else {
-                        prototypeType =
-                            $("<select />")
-                            .append($("<option />").attr("selected", true))
-                            .on("change", function () {
-                                model.company = company.val();
-                                model.department = department.val();
-                                model.prototypeType = prototypeType.val();
-                                matematici.canClose = false;
-                            })
-                            .appendTo(valuePanel);
-                        for (var index in result)
-                            prototypeType.append($("<option />").text(result[index]).attr({ value: result[index], selected: result[index] == model.prototypeType }));
-                    }
-                }).fail(function (jqXHR, textStatus, errorThrown) {
-                    console.log("Server error", jqXHR, textStatus, errorThrown);
-                    alert("Server error: " + errorThrown);
-                });
-        };
 
-    this.create = function (valuePanel) {
-        valuePanel.addClass("PrototypeType");
-        if (options.readOnly) {
-            $("<input />").attr({ type: "text", readOnly: true }).val(model.company).appendTo(valuePanel);
-            $("<input />").attr({ type: "text", readOnly: true }).val(model.department).appendTo(valuePanel);
-            $("<input />").attr({ type: "text", readOnly: true }).val(model.prototypeType).appendTo(valuePanel);
-        } else
-            loadCompanies(valuePanel)
-    }
+	this.create = function (valuePanel) {
+		valuePanel.addClass("PrototypeType");
 
-    this.hasChanges = function () {
-        return !!(model.company || model.department || model.prototypeType);
-    }
+		preparePrototypeTypes();
+
+		var label = $("<label />").appendTo(valuePanel);
+		$("<i />").addClass("Icon fi flaticon-building-o").appendTo(label);
+		department =
+			$("<select />")
+				.data("nullable", true)
+				.on("change", function () { refreshPrototypeTypes(null); })
+				.appendTo(label);
+
+		for (var index in departments)
+			department.append($("<option />").text(departments[index].name).attr("value", departments[index].code));
+
+		label = $("<label />").appendTo(valuePanel);
+		$("<i />").addClass("Icon fi flaticon-folder-o").appendTo(label);
+		prototypeType =
+			$("<select />")
+				.data("nullable", true)
+				.on("change", function () {
+					model.department = department.val();
+					model.prototypeType = prototypeType.val();
+					matematici.canClose = false;
+				})
+				.appendTo(label);
+
+		department.val(model.department);
+		if (!!model.department) refreshPrototypeTypes(model.prototypeType);
+
+		if (options.readOnly) {
+			matematici.cotrols.setEditable(department, false);
+			matematici.cotrols.setEditable(prototypeType, false);
+		}
+	}
+
+	this.hasChanges = function () {
+		return !!(model.department || model.prototypeType);
+	}
 }
 

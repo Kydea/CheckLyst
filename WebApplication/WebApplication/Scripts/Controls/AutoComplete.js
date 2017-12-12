@@ -267,6 +267,11 @@ matematici.AutoComplete = function (selector) {
 	this.destroy = function () {
 		destroy();
 	};
+
+	this.setValue = function (value) {
+		element.val(value);
+		setValue();
+	};
 };
 
 matematici.initializers.push(function (context) {

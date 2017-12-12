@@ -9,6 +9,7 @@
 		information = element.children("div.Information"),
 		dragY,
 		currentProperty,
+		prototypeTypesList,
 
 		drag = function (e) {
 			e.preventDefault();
@@ -92,7 +93,7 @@
 			);
 			new prototypes.Property(this, new prototypes.PrototypeTypeProperty(model, {
 				readOnly: state != prototypes.Prototype.states.draft || prototypes.prototype.getModel().Version > 0
-			}), "Prototype Type", "Company, Department and Prototype type of the version.");
+			}), "Prototype Type", "Department and Prototype type of the prototype.");
 			new prototypes.Property(
 				this, new prototypes.DateProperty(model, "validFrom", { readOnly: state != prototypes.Prototype.states.draft }).setCheck([{
 					action: function (value) {
@@ -352,15 +353,8 @@
 						"The label of the button."
 					);
 					new prototypes.Property(
-						this, new prototypes.SimpleValueProperty(model, "signatureLevel", { number: true, readOnly: state != prototypes.Prototype.states.draft }).setCheck([
-							{
-								action: function (value) {
-									var intValue = parseInt(value);
-									return (value || "").trim() == "" || intValue >= 0 && value == intValue;
-								},
-								message: "invalid value"
-							}
-						]), "Signature level",
+						this, new prototypes.ListProperty(model, "signatureLevel", matematici.profiles,
+							{ readOnly: state != prototypes.Prototype.states.draft, nullable: true }), "Signature level",
 						"If has a value only users with that level can sign."
 					);
 					new prototypes.Property(
@@ -396,6 +390,14 @@
 		currentProperty = currentProperty == value ? null : value;
 		prototypes.prototype.setItemHandler(null);
 		if (currentProperty) currentProperty.select();
+	};
+
+	propertyPanel.setPrototypeTypesList = function (data) {
+		prototypeTypesList = data;
+	};
+
+	propertyPanel.getPrototypeTypesList = function () {
+		return prototypeTypesList;
 	};
 
 	prototypes.propertyPanel = propertyPanel;

@@ -41,6 +41,15 @@
     padding: 10px;
     background: #ebebeb;
     margin-left: 20px; }
+    div.PropertyPanel div.PropertyValue label {
+      margin: 0;
+      padding-top: 0;
+      width: calc(100%);
+      position: absolute; }
+      div.PropertyPanel div.PropertyValue label input {
+        margin-top: 0; }
+      div.PropertyPanel div.PropertyValue label:nth-child(2) {
+        top: 56px; }
     div.PropertyPanel div.PropertyValue input[type=text], div.PropertyPanel div.PropertyValue input[type=checkbox], div.PropertyPanel div.PropertyValue select, div.PropertyPanel div.PropertyValue a.Button, div.PropertyPanel div.PropertyValue label {
       display: block; }
       div.PropertyPanel div.PropertyValue input[type=text][type=checkbox], div.PropertyPanel div.PropertyValue input[type=checkbox][type=checkbox], div.PropertyPanel div.PropertyValue select[type=checkbox], div.PropertyPanel div.PropertyValue a.Button[type=checkbox], div.PropertyPanel div.PropertyValue label[type=checkbox] {

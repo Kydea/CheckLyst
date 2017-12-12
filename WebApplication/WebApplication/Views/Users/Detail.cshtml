@@ -158,14 +158,6 @@
             "Confirm", "Create", "Delete", "Edit", "Unsing", "View"
         ],
 
-        profiles = [
-            "Revisor",
-            "Deputy approver",
-            "Approver",
-            "Deputy final approver",
-            "Final approver"
-        ],
-
         formSelector = "form#Detail",
 
         formElement = $(formSelector),
@@ -228,8 +220,8 @@
 
             var select4 = $("<select />");
             $("<label />").appendTo(div).append($("<span />").text("Level")).append($("<i />").addClass("Icon fi flaticon-group")).append(select4);
-            for (var index in profiles)
-                select4.append($("<option />").text(profiles[index]).attr("value", profiles[index]));
+            for (var index in matematici.profiles)
+                select4.append($("<option />").text(matematici.profiles[index]).attr("value", matematici.profiles[index]));
             var autoComplete4 = new matematici.AutoComplete(select4);
             autoComplete4.initialize();
 
