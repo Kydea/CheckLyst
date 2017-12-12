@@ -49,7 +49,7 @@
     matematici.logo.init();
 
     matematici.clock = new matematici.Clock(@(ViewBag.AppMode ? "true" : "matematici.isLoginPage"));
-    matematici.client = new matematici.Client();
+    //matematici.client = new matematici.Client();
 
     matematici.elements.window.on("beforeunload", function () {
         if (!matematici.canClose)

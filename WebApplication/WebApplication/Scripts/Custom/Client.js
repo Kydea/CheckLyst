@@ -1,101 +1,101 @@
 ﻿matematici.Client = function () {
-	var
-		handlers = [],
+	//var
+	//	handlers = [],
 
-		active = false,
+	//	active = false,
 
-		trigger = function () {
-			var id = window.name;
-			console.log("Client id: " + id);
-			for (var index in handlers)
-				handlers[index](id);
-		},
+	//	trigger = function () {
+	//		var id = window.name;
+	//		console.log("Client id: " + id);
+	//		for (var index in handlers)
+	//			handlers[index](id);
+	//	},
 
-		set = function (id) {
-			window.name = id;
-			trigger();
-		},
+	//	set = function (id) {
+	//		window.name = id;
+	//		trigger();
+	//	},
 
-		get = function () {
-			if (!!window.name)
-				trigger();
-			else
-				$.ajax({
-					url: matematici.urls.client,
-					type: "post",
-					data: JSON.stringify({
-						data: {
-							token: matematici.tokenManager.getRefreshToken()
-						}
-					}),
-					contentType: "application/json"
-				}).done(function (result) {
-					set(result.data.clientId);
-				}).fail(function (jqXHR, textStatus, errorThrown) {
-					console.log(jqXHR, textStatus, errorThrown);
-					matematici.dialog.error("server error", "Client unique identifier unavailable");
-				});
-		},
+	//	get = function () {
+	//		if (!!window.name)
+	//			trigger();
+	//		else
+	//			$.ajax({
+	//				url: matematici.urls.client,
+	//				type: "post",
+	//				data: JSON.stringify({
+	//					data: {
+	//						token: matematici.tokenManager.getRefreshToken()
+	//					}
+	//				}),
+	//				contentType: "application/json"
+	//			}).done(function (result) {
+	//				set(result.data.clientId);
+	//			}).fail(function (jqXHR, textStatus, errorThrown) {
+	//				console.log(jqXHR, textStatus, errorThrown);
+	//				matematici.dialog.error("server error", "Client unique identifier unavailable");
+	//			});
+	//	},
 
-		toggleActivity = function (value) {
-			active = value;
-			if (value)
-				localStorage.activeClientId = window.name;
-		},
+	//	toggleActivity = function (value) {
+	//		active = value;
+	//		if (value)
+	//			localStorage.activeClientId = window.name;
+	//	},
 
-		setup = function () {
-			matematici.elements.body.on("mousedown", function (e) {
-				toggleActivity(true);
-			});
+	//	setup = function () {
+	//		matematici.elements.body.on("mousedown", function (e) {
+	//			toggleActivity(true);
+	//		});
 
-			$(window).on("blur focus", function (e) {
-				var prevType = $(this).data("prevType");
+	//		$(window).on("blur focus", function (e) {
+	//			var prevType = $(this).data("prevType");
 
-				if (prevType != e.type)
-					switch (e.type) {
-						case "blur":
-							toggleActivity(false);
-							break;
-						case "focus":
-							toggleActivity(true);
-							break;
-					}
+	//			if (prevType != e.type)
+	//				switch (e.type) {
+	//					case "blur":
+	//						toggleActivity(false);
+	//						break;
+	//					case "focus":
+	//						toggleActivity(true);
+	//						break;
+	//				}
 
-				$(this).data("prevType", e.type);
-			});
-		};
+	//			$(this).data("prevType", e.type);
+	//		});
+	//	};
 
-	//TODO serve ancora?
-	//if (matematici.appClientId == "")
+	////TODO serve ancora?
+	////if (matematici.appClientId == "")
+	////	get();
+	////else
+	////	set(parseInt(matematici.appClientId));
+
+	//this.addHandler = function (handler) {
+	//	var id = window.name;
+	//	if (!!id)
+	//		handler(id);
+	//	else
+	//		handlers.push(handler)
+	//};
+
+	//this.createNew = function (handler) {
+	//	window.name = "";
+	//	if (handler) matematici.client.addHandler(handler);
 	//	get();
-	//else
-	//	set(parseInt(matematici.appClientId));
+	//};
 
-	this.addHandler = function (handler) {
-		var id = window.name;
-		if (!!id)
-			handler(id);
-		else
-			handlers.push(handler)
-	};
+	//this.getId = function () {
+	//	return window.name;
+	//};
 
-	this.createNew = function (handler) {
-		window.name = "";
-		if (handler) matematici.client.addHandler(handler);
-		get();
-	};
+	//this.isActive = function () {
+	//	return active && localStorage.activeClientId === window.name;
+	//};
 
-	this.getId = function () {
-		return window.name;
-	};
+	//this.toggleActivity = function (value) {
+	//	toggleActivity(value);
+	//};
 
-	this.isActive = function () {
-		return active && localStorage.activeClientId === window.name;
-	};
-
-	this.toggleActivity = function (value) {
-		toggleActivity(value);
-	};
-
-	setup();
+	//setup();
 };

@@ -67,9 +67,9 @@
                     type: "post"
                 }).done(function (result) {
                     matematici.tokenManager.login(result);
-                    matematici.client.createNew(function () { matematici.navigator.open("@Model"); });
                     matematici.clock.refresh();
                     //matematici.clock.resume();
+                    matematici.navigator.open("@Model")
                 }).fail(function (jqXhr, textStatus, errorThrown) {
                     showError(jqXhr.responseJSON && jqXhr.responseJSON.error_description || errorThrown);
                     console.log(jqXhr, textStatus, errorThrown);

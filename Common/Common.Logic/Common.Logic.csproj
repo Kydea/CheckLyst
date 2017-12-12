@@ -94,6 +94,7 @@
     <Compile Include="Models\CheckLists\ICheckListPage.cs" />
     <Compile Include="Models\CheckLists\ICheckListSignature.cs" />
     <Compile Include="Models\CheckLists\ICheckListText.cs" />
+    <Compile Include="Models\CheckLists\ICheckListNode.cs" />
     <Compile Include="Models\CheckLists\IElementsBranch.cs" />
     <Compile Include="Models\CheckLists\FieldRecord.cs" />
     <Compile Include="Models\CheckLists\SignatureRecord.cs" />

@@ -61,8 +61,9 @@
     <Compile Include="List\IListService.cs" />
     <Compile Include="List\ListResponse.cs" />
     <Compile Include="List\ListRequest.cs" />
-    <Compile Include="Messages\GetPrototypeRequest.cs" />
-    <Compile Include="Messages\GetPrototypeResponse.cs" />
+    <Compile Include="Messages\PrototypeRequest.cs" />
+    <Compile Include="Messages\VerifyExpressionsResponse.cs" />
+    <Compile Include="Messages\PrototypeResponse.cs" />
     <Compile Include="Models\CheckLists\Element.cs" />
     <Compile Include="Models\CheckLists\Field.cs" />
     <Compile Include="Models\CheckLists\Group.cs" />

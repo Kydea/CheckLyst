@@ -90,10 +90,10 @@
         	map();
 
             $.ajax({
-                url: matematici.urls.prototypes.verifyExpressions,
+				url: matematici.urls.api + "/Prototypes/Prototype/VerifyExpressions",
                 type: "post",
                 contentType: "application/json",
-                data: JSON.stringify(model)
+				data: JSON.stringify({ checkList: model })
             }).done(function (result) {
                 if (result.error) 
                     matematici.dialog.error("Error", result.error);
@@ -118,9 +118,6 @@
                     button.toggleClass("Invalid", !valid);
                     if (handler) handler.call(this);
                 }
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                console.log("Server error", jqXHR, textStatus, errorThrown);
-                alert("Server error: " + errorThrown);
             });
         },
 
@@ -130,25 +127,26 @@
                 e.preventDefault();
                 e.stopPropagation();
             });
-            table = $("<table />").addClass("Grid ExpressionsList").appendTo(container)
-                .append($("<thead />")
-                    .append($("<tr />")
-                        .append($("<td />"))
-                        .append($("<th />").text("code"))
-                        .append($("<th />").text("expression"))
-                        .append($("<th />").text("valid"))
-                        .append($("<th />").text("unique"))
-                    )
-                ).append(body = $("<tbody />")
-                    .append(noRecord = $("<tr />").addClass("NoRecord")
-                        .append($("<td />").attr("colspan", "5").text("(no record)"))
-                    )
-                ).on("click", "tr.Handler", function () {
-                    select($(this).prevAll().size());
+			table = $("<table />").addClass("Grid ExpressionsList").appendTo(container)
+				.append($("<thead />")
+					.append($("<tr />")
+						.append($("<td />"))
+						.append($("<th />").text("code"))
+						.append($("<th />").text("expression"))
+						.append($("<th />").text("valid"))
+						.append($("<th />").text("unique"))
+					)
+				).append(body = $("<tbody />")
+					.append(noRecord = $("<tr />").addClass("NoRecord")
+						.append($("<td />").attr("colspan", "5").text("(no record)"))
+					)
+				).on("click", "tr.Handler", function () {
+					select($(this).prevAll().size());
+				}).on("focus", "td", function () {
+					verifyButton.show();
                 }).on("blur", "td", function () {
                     list[currentIndex].valid = null;
 					$("td.ValidColumn i", $(this).parent()).removeClass("flaticon-check flaticon-remove").addClass("flaticon-question");
-                    verifyButton.show();
                 }).on("click", "tr.Selected td.UniqueColumn", function () {
                     list[currentIndex].unique = !list[currentIndex].unique;
                     $(this).toggleClass("Off", !list[currentIndex].unique);

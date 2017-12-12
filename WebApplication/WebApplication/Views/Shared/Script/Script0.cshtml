@@ -8,45 +8,8 @@
         	events: {},
         	actions: {},
         	pages: {},
-        	urls: {
-        		client: "@BaseUrl/AccessControl/Client/Create",
-        		signature: "@Url.Action("Signature", "Security")",
-        	    addSession: "@Url.Action("AddSession", "Security")",
-        	    removeSession: "@Url.Action("RemoveSession", "Security")",
-        		setPIN: "@Url.Action("SetPIN", "Security")",
-        		clock: "@Url.Action("Clock", "Server")",
-        	    dashboard: "@Url.Action("Dashboard", "Default")",
-        		instances: {
-        			list: "@Url.Action("List", "InstancesEditor")",
-        			event: "@Url.Action("Event", "CheckList")",
-        			create: "@Url.Action("Create", "InstancesEditor")",
-        			preview: "@Url.Action("Preview", "InstancesEditor")",
-                    save: "@Url.Action("Save", "CheckList")",
-        		    "export": "@Url.Action("Export", "CheckList")",
-        		    externalSource: "@Url.Action("ExternalSource", "CheckList")",
-        		    close: "@Url.Action("Close", "CheckList")",
-        			history: "@Url.Action("History", "CheckList")",
-        			signers: "@Url.Action("Signers", "CheckList")"
-            	},
-        		prototypes: {
-        		    list: "@Url.Action("List", "PrototypesEditor")",
-        	        open: "@Url.Action("Open", "PrototypesEditor")",
-        			save: "@Url.Action("Save", "PrototypesEditor")",
-        			createNewVersion: "@Url.Action("CreateNewVersion", "PrototypesEditor")",
-        			companies: "@Url.Action("Companies", "PrototypesEditor")",
-        			departments: "@Url.Action("Departments", "PrototypesEditor")",
-        			prototypeTypes: "@Url.Action("PrototypeTypes", "PrototypesEditor")",
-        			verifyExpressions: "@Url.Action("VerifyExpressions", "PrototypesEditor")",
-                    setState: "@Url.Action("SetState", "PrototypesEditor")",
-                    delete: "@Url.Action("Delete", "PrototypesEditor")",
-        			signature: "@Url.Action("Signature", "PrototypesEditor")",
-        			sign: "@Url.Action("Sign", "PrototypesEditor")",
-        		    history: "@Url.Action("History", "PrototypesEditor")"
-            	},
-        		signatureBook: {
-					load: "@Url.Action("Load", "SignatureBook")",
-        			validate: "@Url.Action("Validate", "SignatureBook")"
-                },
+            urls: {
+                api: "@BaseUrl",
                 accessControl: {
                     token: "@BaseUrl/AccessControl/Access/Token",
                     logout: "@BaseUrl/AccessControl/Access/Logout"
