@@ -42,25 +42,8 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
 	    public void Check(ICheckList prototype)
         {
-            try
-            {
-                Error = null;
-                Root.Check(prototype);
-            }
-            catch (Exception exception)
-            {
-                Error = exception.Message;
-            }
+            Error = null;
+            Root.Check(prototype);
         }
-
-		public override bool Equals(object obj)
-		{
-			return obj != null && ((Expression)obj).SerializedValue == SerializedValue;
-		}
-
-		public override int GetHashCode()
-		{
-			return SerializedValue?.GetHashCode() ?? 0;
-		}
 	}
 }

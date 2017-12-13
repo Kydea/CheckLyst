@@ -63,27 +63,6 @@ div.Prototype {
     }
 
     div.ShadowPanel {
-        .HeaderContainer {
-            margin-top: -$Metric-Control-Space;
-            margin-left: -$Metric-Control-Space;
-            margin-right: -$Metric-Control-Space;
-            padding: $Metric-Control-Space;
-            background-color: $Color-Green-Regular;
-            width: calc(100% + #{2 * $Metric-Control-Space});
-            top: 0;
-            left: 0;
-            border-radius: 15px 15px 0 0;
-
-            > div.Group {
-                margin-bottom: 0;
-                border: none;
-            }
-
-            div.Group {
-                background-color: white;
-            }
-        }
-
         > div.Commands {
             a.Up, a.Down, a.Add, a.Remove {
                 display: none;
@@ -91,7 +70,30 @@ div.Prototype {
         }
     }
 
+    .HeaderContainer {
+        margin-top: -$Metric-Control-Space;
+        margin-left: -$Metric-Control-Space;
+        margin-right: -$Metric-Control-Space;
+        padding: $Metric-Control-Space;
+        background-color: $Color-Green-Regular;
+        width: calc(100% + #{2 * $Metric-Control-Space});
+        top: 0;
+        left: 0;
+        border-radius: 15px 15px 0 0;
+
+        > div.Group {
+            margin-bottom: 0;
+            border: none;
+        }
+
+        div.Group {
+            background-color: white;
+        }
+    }
+
     div.TabLabels {
+        margin-top: $Metric-Control-Space;
+
         div.Commands {
             margin: 0;
 
@@ -116,7 +118,7 @@ div.Prototype {
             }
         }
 
-        a:last-child {
+        > a:last-child {
             background-color: $Color-Yellow-Regular;
             margin: 2px;
             height: $Metric-Control-Height - 2px;

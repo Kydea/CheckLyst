@@ -21,27 +21,27 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                 //Constants
                 if (Value.ToLower() == "true")
                 {
-                    Symbol = new Constant(new TypedValue(DataType.Boolean, true));
+                    Symbol = new Constant(new TypedValue(DataType.Boolean, true)) { Position = Position };
                     Operator = false;
                 }
                 else if (Value.ToLower() == "false")
                 {
-                    Symbol = new Constant(new TypedValue(DataType.Boolean, false));
+                    Symbol = new Constant(new TypedValue(DataType.Boolean, false)) { Position = Position };
                     Operator = false;
                 }
 
                 //Logic operators
                 else if (Value.ToLower() == "or")
-                    Symbol = new LogicOperators.Or();
+                    Symbol = new LogicOperators.Or { Position = Position };
                 else if (Value.ToLower() == "and")
-                    Symbol = new LogicOperators.And();
+                    Symbol = new LogicOperators.And { Position = Position };
                 else if (Value.ToLower() == "not")
-                    Symbol = new LogicOperators.Not();
+                    Symbol = new LogicOperators.Not { Position = Position };
 
                 //Ternary operator
                 else if (Value.ToLower() == "iif")
                 {
-                    var TernaryOperator = new Expressions.TernaryOperator();
+                    var TernaryOperator = new Expressions.TernaryOperator { Position = Position };
                     ParseArgument(ref ExpressionValue, ref Position, 3);
                     TernaryOperator.Condition = Arguments[0].Symbol;
                     TernaryOperator.TruePart = Arguments[1].Symbol;
@@ -53,7 +53,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                 //Expression value
                 else
                 {
-                    Symbol = new ExpressionValue { ExpressionCode = Value };
+                    Symbol = new ExpressionValue { ExpressionCode = Value, Position = Position };
                     Operator = false;
                 }
             }
@@ -63,19 +63,19 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                 switch (Values[1])
                 {
                     case "Signed":
-                        Symbol = new ElementProperties.SignatureProperty(ElementProperties.SignatureProperty.SignatureProperties.Signed) { Code = Values[0] };
+                        Symbol = new ElementProperties.SignatureProperty(ElementProperties.SignatureProperty.SignatureProperties.Signed) { Code = Values[0], Position = Position };
                         break;
                     case "SignedBy":
-                        Symbol = new ElementProperties.SignatureProperty(ElementProperties.SignatureProperty.SignatureProperties.SignedBy) { Code = Values[0] };
+                        Symbol = new ElementProperties.SignatureProperty(ElementProperties.SignatureProperty.SignatureProperties.SignedBy) { Code = Values[0], Position = Position };
                         break;
                     case "SignedOn":
-                        Symbol = new ElementProperties.SignatureProperty(ElementProperties.SignatureProperty.SignatureProperties.SignedOn) { Code = Values[0] };
+                        Symbol = new ElementProperties.SignatureProperty(ElementProperties.SignatureProperty.SignatureProperties.SignedOn) { Code = Values[0], Position = Position };
                         break;
                     case "Value":
-                        Symbol = new ElementProperties.FieldProperty { Code = Values[0] };
+                        Symbol = new ElementProperties.FieldProperty { Code = Values[0], Position = Position };
                         break;
                     case "Sum":
-                        var Sum = new AggregateFunctions.Sum { IteratorCode = Values[0] };
+                        var Sum = new AggregateFunctions.Sum { IteratorCode = Values[0], Position = Position };
                         ParseArgument(ref ExpressionValue, ref Position, 1);
                         Sum.Argument = Arguments[0].Symbol;
                         Symbol = Sum;

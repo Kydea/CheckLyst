@@ -1,5 +1,6 @@
 ﻿using System;
 using CheckListManager.Common.Logic.Models.CheckLists;
+using CheckListManager.Common.Logic.Models.Expressions.Parsing;
 
 namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
 {
@@ -29,7 +30,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
         public override void Check(ICheckList Prototype)
         {
             if (!Prototype.Elements.ContainsKey(Code))
-                throw new Exception("The element with code " + Code + " not found");
+                throw new ParseException("Element with code " + Code + " not found", Position);
 
             Check(Prototype.Elements[Code]);
         }

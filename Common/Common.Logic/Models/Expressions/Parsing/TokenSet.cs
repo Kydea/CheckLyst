@@ -48,17 +48,19 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                 else
                     throw new ParseException("Invalid character " + Character, Caret);
 
-                if (Token != null && LastToken != null)
+                if (Token != null)
                 {
-                    if (Token.Operator && LastToken.Operator)
-                        throw new ParseException("Unexpected token " + Token.Value, Caret);
+                    if (LastToken != null)
+                    {
+                        if (Token.Operator && LastToken.Operator)
+                            throw new ParseException("Unexpected token " + Token.Value, Caret);
 
-                    if (!Token.Operator && !LastToken.Operator)
-                        throw new ParseException("Operator expected", Caret);
+                        if (!Token.Operator && !LastToken.Operator)
+                            throw new ParseException("Operator expected", Caret);
+                    }
+
+                    LastToken = Token;
                 }
-
-                LastToken = Token;
-
             }
 
             //Expression symbol connection

@@ -32,5 +32,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         public override abstract string ToString();
 
         public DataType DataType { get; protected set; }
+
+        public int Position { get; set; }
     }
 }

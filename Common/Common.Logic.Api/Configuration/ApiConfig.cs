@@ -24,6 +24,7 @@ using Newtonsoft.Json.Serialization;
 using Owin;
 
 using ServiceClient = CheckListManager.Common.Core.Web.Network.ServiceClient;
+using CheckListManager.Common.Logic.Json;
 
 namespace CheckListManager.Common.Logic.Api.Configuration
 {
@@ -114,6 +115,7 @@ namespace CheckListManager.Common.Logic.Api.Configuration
 			_configuration.MapHttpAttributeRoutes();
 
 			_configuration.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            _configuration.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new CheckListJsonConverter(Container));
 
 			OnConfigureWebApi(_configuration);
 		}
@@ -126,13 +128,9 @@ namespace CheckListManager.Common.Logic.Api.Configuration
 		private void ConfigureAuth(IAppBuilder app)
 		{
 			if (ConfigureOwinProvider)
-			{
 				ConfigureAuthProvider(app);
-			}
 			else
-			{
 				ConfigureAuthToken(app);
-			}
 		}
 
 		private static void ConfigureAuthToken(IAppBuilder app)

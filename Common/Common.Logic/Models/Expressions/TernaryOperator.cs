@@ -1,5 +1,6 @@
 ﻿using System;
 using CheckListManager.Common.Logic.Models.CheckLists;
+using CheckListManager.Common.Logic.Models.Expressions.Parsing;
 
 namespace CheckListManager.Common.Logic.Models.Expressions
 {
@@ -25,8 +26,8 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             TruePart.Check(Prototype);
             FalsePart.Check(Prototype);
 
-            if (Condition.DataType != DataType.Boolean) throw new Exception("The condition must be a boolean");
-            if (TruePart.DataType != FalsePart.DataType) throw new Exception("The 'true part' and 'false part' must implement the same type");
+            if (Condition.DataType != DataType.Boolean) throw new ParseException("The condition must be a boolean", Position);
+            if (TruePart.DataType != FalsePart.DataType) throw new ParseException("The 'true part' and 'false part' must implement the same type", Position);
 
             DataType = TruePart.DataType;
         }

@@ -154,9 +154,9 @@
 				this, new prototypes.ExpressionProperty(model, "countDownToCode", { readOnly: state != prototypes.Prototype.states.draft }).setCheck([
 					{
 						action: function (expression) {
-							return !expression || expression.DataType.TypeName == "DateTime";
+							return !expression || expression.dataType.typeName == "DateTime";
 						},
-						message: "the expression must result must be a date/time"
+						message: "the expression result must be a date/time"
 					}
 				]), "Countdown to",
 				"Shows the countdown until the date and time are reached."
@@ -224,7 +224,7 @@
 						"The caption of the group."
 					);
 					var tableContent = false;
-					for (var node = parent; node.getModel().TypeName == "group"; node = node.getParent())
+					for (var node = parent; node.getModel().typeName == "group"; node = node.getParent())
 						if (node.getModel().ShowAsTable) {
 							tableContent = true;
 							break;

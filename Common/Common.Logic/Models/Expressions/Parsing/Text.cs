@@ -14,7 +14,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     throw new ParseException(Separator + " expected", Position);
 
             Value = ExpressionValue.Substring(this.Position + 1, Position++ - this.Position - 1);
-            Symbol = new Constant(new TypedValue(DataType.Text, Value));
+            Symbol = new Constant(new TypedValue(DataType.Text, Value)) { Position = Position };
             Operator = false;
         }
     }

@@ -10,5 +10,11 @@ div.ActionBar {
         display: block;
         float: left;
         margin-right: 10px;
+
+        &.Invalid {
+            i {
+                color: $Color-Red-Regular;
+            }
+        }
     }
 }

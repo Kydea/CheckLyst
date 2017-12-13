@@ -7,4 +7,6 @@
     display: block;
     float: left;
     margin-right: 10px; }
+    div.ActionBar a.Button.Invalid i {
+      color: #cc0000; }
 

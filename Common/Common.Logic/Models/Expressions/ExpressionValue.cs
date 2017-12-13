@@ -1,4 +1,5 @@
 ﻿using CheckListManager.Common.Logic.Models.CheckLists;
+using CheckListManager.Common.Logic.Models.Expressions.Parsing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
         public override void Check(ICheckList Prototype)
         {
-            if (!Prototype.Expressions.ContainsKey(ExpressionCode)) throw new Exception("Expression not found: " + ExpressionCode);
+            if (!Prototype.Expressions.ContainsKey(ExpressionCode)) throw new ParseException("Expression not found: " + ExpressionCode, Position);
             DataType = Prototype.Expressions[ExpressionCode].DataType;
         }
 

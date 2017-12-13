@@ -1,5 +1,6 @@
 ﻿using System;
 using CheckListManager.Common.Logic.Models.CheckLists;
+using CheckListManager.Common.Logic.Models.Expressions.Parsing;
 
 namespace CheckListManager.Common.Logic.Models.Expressions.ArithmeticOperators
 {
@@ -10,7 +11,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ArithmeticOperators
             base.Check(Prototype);
 
             if (Left.DataType != DataType.Number || Right.DataType != DataType.Number)
-                throw new Exception("Operand of operator * must be numbers");
+                throw new ParseException("Operand of operator * must be numbers", Position);
 
             DataType = DataType.Number;
         }

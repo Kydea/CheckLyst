@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using CheckListManager.Common.Logic.Models.CheckLists;
+using CheckListManager.Common.Logic.Models.Expressions.Parsing;
 
 namespace CheckListManager.Common.Logic.Models.Expressions.AggregateFunctions
 {
@@ -13,8 +14,8 @@ namespace CheckListManager.Common.Logic.Models.Expressions.AggregateFunctions
             base.Check(Prototype);
 
             var Element = Prototype.Elements[IteratorCode];
-            if (!(Element is ICheckListGroup)) throw new Exception("The element with code " + IteratorCode + " is not a Group");
-            if (!((ICheckListGroup)Element).Iterator) throw new Exception("The group " + IteratorCode + " is not an Iterator");
+            if (!(Element is ICheckListGroup)) throw new ParseException("The element with code " + IteratorCode + " is not a Group", Position);
+            if (!((ICheckListGroup)Element).Iterator) throw new ParseException("The group " + IteratorCode + " is not an Iterator", Position);
         }
 
         public String IteratorCode { get; set; }

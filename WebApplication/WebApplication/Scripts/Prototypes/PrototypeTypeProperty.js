@@ -77,8 +77,8 @@
 		if (!!model.department) refreshPrototypeTypes(model.prototypeType);
 
 		if (options.readOnly) {
-			matematici.cotrols.setEditable(department, false);
-			matematici.cotrols.setEditable(prototypeType, false);
+			matematici.controls.setEditable(department, false);
+			matematici.controls.setEditable(prototypeType, false);
 		}
 	}
 

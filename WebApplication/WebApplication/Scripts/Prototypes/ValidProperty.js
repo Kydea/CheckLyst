@@ -20,7 +20,7 @@
             if (input.prop("selectedIndex") > 2 && expressions[value].error)
                 error = "the expression is not valid";
             else if (input.prop("selectedIndex") > 2 && expressions[value].dataType.typeName != "Boolean")
-                error = "the expression must result must be a boolean";
+                error = "the expression result must be a boolean";
 
             if (error) {
                 new matematici.dialog.error("error", error);

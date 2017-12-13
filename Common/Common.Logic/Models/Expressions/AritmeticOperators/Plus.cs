@@ -1,5 +1,6 @@
 ﻿using System;
 using CheckListManager.Common.Logic.Models.CheckLists;
+using CheckListManager.Common.Logic.Models.Expressions.Parsing;
 
 namespace CheckListManager.Common.Logic.Models.Expressions.ArithmeticOperators
 {
@@ -10,10 +11,10 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ArithmeticOperators
             base.Check(Prototype);
 
             if (Right.DataType != DataType.Number)
-                throw new Exception("Right operand of operator + must be a number");
+                throw new ParseException("Right operand of operator + must be a number", Position);
 
             if (Left.DataType != DataType.Number && Left.DataType != DataType.DateTime && Left.DataType != DataType.Date && Left.DataType != DataType.Time)
-                throw new Exception("Left operand of operator + must be a number or a date/time");
+                throw new ParseException("Left operand of operator + must be a number or a date/time", Position);
 
             DataType = Left.DataType;
         }

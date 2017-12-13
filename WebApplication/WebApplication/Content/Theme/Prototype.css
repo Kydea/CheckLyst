@@ -41,7 +41,10 @@ div.Prototype div.Commands {
       div.Prototype div.Commands a.MiniIcon:hover i.fi {
         color: #00877a !important; }
 
-div.Prototype div.ShadowPanel .HeaderContainer {
+div.Prototype div.ShadowPanel > div.Commands a.Up, div.Prototype div.ShadowPanel > div.Commands a.Down, div.Prototype div.ShadowPanel > div.Commands a.Add, div.Prototype div.ShadowPanel > div.Commands a.Remove {
+  display: none; }
+
+div.Prototype .HeaderContainer {
   margin-top: -20px;
   margin-left: -20px;
   margin-right: -20px;
@@ -51,34 +54,30 @@ div.Prototype div.ShadowPanel .HeaderContainer {
   top: 0;
   left: 0;
   border-radius: 15px 15px 0 0; }
-  div.Prototype div.ShadowPanel .HeaderContainer > div.Group {
+  div.Prototype .HeaderContainer > div.Group {
     margin-bottom: 0;
     border: none; }
-  div.Prototype div.ShadowPanel .HeaderContainer div.Group {
+  div.Prototype .HeaderContainer div.Group {
     background-color: white; }
 
-div.Prototype div.ShadowPanel > div.Commands a.Up, div.Prototype div.ShadowPanel > div.Commands a.Down, div.Prototype div.ShadowPanel > div.Commands a.Add, div.Prototype div.ShadowPanel > div.Commands a.Remove {
-  display: none; }
-
-div.Prototype div.TabLabels div.Commands {
-  margin: 0; }
-  div.Prototype div.TabLabels div.Commands a.Add {
+div.Prototype div.TabLabels {
+  margin-top: 20px; }
+  div.Prototype div.TabLabels div.Commands {
+    margin: 0; }
+    div.Prototype div.TabLabels div.Commands a.Add {
+      display: none; }
+  div.Prototype div.TabLabels a:first-of-type + div.Commands a.Up {
     display: none; }
-
-div.Prototype div.TabLabels a:first-of-type + div.Commands a.Up {
-  display: none; }
-
-div.Prototype div.TabLabels a:nth-last-of-type(2) + div.Commands a.Down {
-  display: none; }
-
-div.Prototype div.TabLabels a:last-child {
-  background-color: #ffba00;
-  margin: 2px;
-  height: 34px;
-  line-height: 34px;
-  color: white;
-  padding-left: 10px;
-  padding-right: 10px; }
+  div.Prototype div.TabLabels a:nth-last-of-type(2) + div.Commands a.Down {
+    display: none; }
+  div.Prototype div.TabLabels > a:last-child {
+    background-color: #ffba00;
+    margin: 2px;
+    height: 34px;
+    line-height: 34px;
+    color: white;
+    padding-left: 10px;
+    padding-right: 10px; }
 
 div.Prototype div.Group {
   cursor: pointer; }

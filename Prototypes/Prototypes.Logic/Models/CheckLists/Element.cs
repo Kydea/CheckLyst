@@ -54,12 +54,19 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 		public string ValidExpressionCode { get; set; }
 		public string ValidityMessage { get; set; }
 
-		public void Setup()
+		public virtual void Setup()
 		{
-			throw new NotImplementedException();
-		}
+            var ExpressionsInUse = ((Prototype)CheckList).ExpressionsInUse;
+            if (CountDownToCode != null) ExpressionsInUse.Add(CountDownToCode);
+            if (HiddenExpressionCode != null) ExpressionsInUse.Add(HiddenExpressionCode);
+            if (ValidExpressionCode != null) ExpressionsInUse.Add(ValidExpressionCode);
+            if (ReadOnlyExpressionCode != null) ExpressionsInUse.Add(ReadOnlyExpressionCode);
 
-		public void Update()
+            if (Code != null)
+                CheckList.Elements[Code] = this;
+        }
+
+        public void Update()
 		{
 			throw new NotImplementedException();
 		}

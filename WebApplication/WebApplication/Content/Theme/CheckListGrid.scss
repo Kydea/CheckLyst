@@ -75,9 +75,17 @@ div.CheckListGrid {
                         &:last-child {
                             width: 50px;
                             text-align: center;
+                        }
 
-                            i.flaticon-times {
-                                color: $Color-Red-Regular;
+                        i {
+                            font-size: 14px;
+
+                            &.flaticon-times {
+                                color: $Color-Red-Regular !important;
+                            }
+
+                            &.flaticon-check {
+                                color: $Color-Green-Regular !important;
                             }
                         }
                     }
@@ -117,7 +125,7 @@ div.CheckListGrid {
         bottom: 0;
         left: 0;
         z-index: $Depth-Dialog;
-        background-color: rgba(217, 217, 217, .5);
+        background-color: rgba(102, 102, 102, .7);
 
         div.Container {
             position: absolute;

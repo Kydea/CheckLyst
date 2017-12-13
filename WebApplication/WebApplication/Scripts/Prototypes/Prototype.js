@@ -64,7 +64,7 @@
 			for (var index in model.pages)
 				tab.add(model.pages[index].description, "Page" + model.pages[index].itemId);
 
-			if (model.state == prototypes.Prototype.states.draft) tab.add($("<span />").text("(add page)").prepend($("<i >").addClass("Add fi flaticon-plus")));
+			if (model.state == prototypes.Prototype.states.draft) tab.add($("<span />").prepend($("<i >").addClass("Add fi flaticon-plus")));
 			page.setIndex(pageIndex = pageIndex >= model.pages.length ? model.pages.length - 1 : pageIndex ? pageIndex : 0);
 			tab.select(pageIndex);
 

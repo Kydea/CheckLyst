@@ -37,6 +37,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                 (Symbol)null;
 
             if (Symbol == null) throw new ParseException("Invalid operator: " + Value, Position);
+            Symbol.Position = Position;
         }
     }
 

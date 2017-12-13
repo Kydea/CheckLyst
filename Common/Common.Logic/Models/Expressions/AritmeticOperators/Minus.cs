@@ -1,5 +1,6 @@
 ﻿using System;
 using CheckListManager.Common.Logic.Models.CheckLists;
+using CheckListManager.Common.Logic.Models.Expressions.Parsing;
 
 namespace CheckListManager.Common.Logic.Models.Expressions.ArithmeticOperators
 {
@@ -14,7 +15,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ArithmeticOperators
                 && !((Left.DataType == DataType.DateTime || Left.DataType == DataType.Date) && (Right.DataType == DataType.DateTime || Right.DataType == DataType.Date))
                 && !(Left.DataType == DataType.Time && Right.DataType == DataType.Time)
             )
-                throw new Exception("Operands of operator - must be both numbers or both date/time");
+                throw new ParseException("Operands of operator - must be both numbers or both date/time", Position);
 
             DataType = DataType.Number;
         }

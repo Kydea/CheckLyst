@@ -9,7 +9,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
     {
         public TernaryOperator(ref int Position, int Index) : base(Position, Index)
         {
-            Symbol = new Expressions.TernaryOperator();
+            Symbol = new Expressions.TernaryOperator { Position = Position };
         }
 
         public override string ToString()
