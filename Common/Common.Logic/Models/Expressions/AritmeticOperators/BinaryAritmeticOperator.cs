@@ -1,25 +1,25 @@
 ﻿using System;
 
-namespace CheckListManager.Common.Logic.Models.Expressions.AritmeticOperators
+namespace CheckListManager.Common.Logic.Models.Expressions.ArithmeticOperators
 {
-	public abstract class BinaryAritmeticOperator : BinaryOperator
-	{
-		protected abstract TypedValue EvaluateResult(TypedValue leftValue, TypedValue rightValue);
+    public abstract class BinaryArithmeticOperator : BinaryOperator
+    {
+        protected abstract TypedValue EvaluateResult(TypedValue LeftValue, TypedValue RightValue);
 
-		protected override TypedValue Evaluate(TypedValue leftValue, TypedValue rightValue)
-		{
-			var value = base.Evaluate(leftValue, rightValue);
-			if (value == null)
-				try
-				{
-					return EvaluateResult(leftValue, rightValue);
-				}
-				catch (Exception exception)
-				{
-					return new TypedValue(DataType.Error, exception.Message);
-				}
-
-			return value;
-		}
-	}
+        protected override TypedValue Evaluate(TypedValue LeftValue, TypedValue RightValue)
+        {
+            var Value = base.Evaluate(LeftValue, RightValue);
+            if (Value == null)
+                try
+                {
+                    return EvaluateResult(LeftValue, RightValue);
+                }
+                catch (Exception Exception)
+                {
+                    return new TypedValue(DataType.Error, Exception.Message);
+                }
+            else
+                return Value;
+        }
+    }
 }

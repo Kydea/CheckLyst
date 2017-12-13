@@ -15,6 +15,7 @@ matematici.AutoComplete = function (selector) {
 		oldValue,
 		multiple,
 		open,
+		readOnly,
 
 		setValue = function () {
 			var value = element.val();
@@ -76,7 +77,6 @@ matematici.AutoComplete = function (selector) {
 			noRow = $("<i />").addClass("fi flaticon-minus");
 			element.parent("label")
 				.on("click", function (e) {
-					console.log($("input:visible", this).eq(0));
 					$("input:visible", this).eq(0).focus();
 					e.stopPropagation();
 				});
@@ -134,6 +134,11 @@ matematici.AutoComplete = function (selector) {
 			updateList();
 			setValue();
 
+			if (element.hasClass("ReadOnly")) {
+				readOnly = true;
+				label.addClass("ReadOnly").prop("readonly", true);
+				icon.remove();
+			}
 			matematici.elements.window.on("resize", setWidth);
 		},
 
@@ -181,6 +186,8 @@ matematici.AutoComplete = function (selector) {
 		},
 
 		showList = function () {
+			if (readOnly) return;
+
 			if (oldValue == null) oldValue = element.val() || "";
 			$("select.AutoComplete.Open").each(function () {
 				$(this).data("autoComplete").hideList();
@@ -218,7 +225,7 @@ matematici.AutoComplete = function (selector) {
 		updateList = function () {
 			list.empty();
 			if (element.data("nullable"))
-                list.append($("<a />").addClass("None").attr("href", "#").append($("<i />").text(element.data("nullable") === true ? "(none)" : element.data("nullable"))));
+				list.append($("<a />").addClass("None").attr("href", "#").append($("<i />").text(element.data("nullable") === true ? "(none)" : element.data("nullable"))));
 
 			var count = 0;
 			options
@@ -266,6 +273,11 @@ matematici.AutoComplete = function (selector) {
 
 	this.destroy = function () {
 		destroy();
+	};
+
+	this.setValue = function (value) {
+		element.val(value);
+		setValue();
 	};
 };
 

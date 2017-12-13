@@ -3,7 +3,6 @@
         input,
         handler,
         check,
-        expressions,
 
         change = function () {
             model[property] = input.val();
@@ -30,12 +29,18 @@
                 .val(model[property])
                 .appendTo(valuePanel);
         else {
-            input = $("<select />");
-            expressions = prototypes.prototype.getModel().Expressions;
-            for (var index in values)
-                input.append($("<option />").attr({ value: values[index].code, selected: values[index].code == model[property] }).text(values[index].label));
+			input = $("<select />");
+			if (!!options.nullable) input.data("nullable", true);
+			for (var index in values) {
+				var
+					string = typeof (values[index]) == "string",
+					value = string ? values[index] : values[index].code,
+					label = string ? values[index] : values[index].label;
+				input.append($("<option />").attr({ value: value, selected: value == model[property] }).text(label));
+			}
             input.on("change", change);
-            valuePanel.append(input);
+			valuePanel.append(input);
+			if (!!options.nullable && !model[property]) input.val(null);
         }
     }
 

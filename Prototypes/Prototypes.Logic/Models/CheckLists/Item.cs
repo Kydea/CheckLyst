@@ -21,7 +21,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 		public Dictionary<string, object> RuntimeValues { get; } = new Dictionary<string, object>();
 		public abstract string TypeName { get; }
 
-		public ICheckListItem Clone(ICheckListGroup parent)
+        public ICheckListItem Clone(ICheckListGroup parent)
 		{
 			throw new NotImplementedException();
 		}

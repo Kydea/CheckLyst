@@ -105,7 +105,7 @@
             }
             values.year = month == 13 ? year + 1 : month == 0 ? year - 1 : year;
             values.month = month == 13 ? 1 : month == 0 ? 12 : month;
-            elements.month.text(matematici.Calendar.translations.it.months[values.month - 1] + (year == values.date.getFullYear() ? "" : " " + year));
+			elements.month.text(matematici.Calendar.translations.it.months[values.month - 1] + (year == new Date().getFullYear() ? "" : " " + year));
             elements.previous.toggleClass("Active", !min || year > min.getFullYear() || year == min.getFullYear() && month > min.getMonth() + 1);
             elements.next.toggleClass("Active", !max || year < max.getFullYear() || year == max.getFullYear() && month < max.getMonth() + 1);
 
@@ -141,14 +141,14 @@
         });
     }
 
-    this.setDate = function (value) {
+	this.setDate = function (value) {
         values.date = value;
         calendar.setMonth(value.getMonth() + 1, value.getFullYear());
     }
 
     this.setDatePicker = function (value) {
-        elements.datePicker = value;
-        calendar.setDate(elements.datePicker.getDate() || getCurrentDate());
+		elements.datePicker = value;
+		calendar.setDate(elements.datePicker.getDate() || getCurrentDate());
     };
 
     this.open = function (top, left) {

@@ -38,8 +38,9 @@
         valuePanel.append(input);
     };
 
-    this.hasChanges = function () {
-        return !!model[property];
+	this.hasChanges = function () {
+		console.log()
+		return !options.defaultValue && !!model[property] || !!options.defaultValue && model[property] != options.defaultValue;
     };
 
     this.setReadOnly = function (value) {

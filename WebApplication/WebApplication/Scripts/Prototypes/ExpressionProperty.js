@@ -39,7 +39,7 @@
             $("<input />").attr({ type: "text", readOnly: true }).val(model[property]).appendTo(valuePanel);
         else {
             input = $("<select />");
-            expressions = prototypes.prototype.getModel().Expressions;
+            expressions = prototypes.prototype.getModel().expressions;
             input.append($("<option />").attr("value", "").text("(not set)"));
             for (var index in expressions)
                 input.append($("<option />").attr({ value: index, selected: index == model[property] }).text(index));

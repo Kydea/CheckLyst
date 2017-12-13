@@ -5,8 +5,8 @@ div.PropertyPanel {
     background-color: white;
     display: none;
     position: relative;
-    margin: -#{$Metric-Control-Space} -#{$Metric-Control-Space} -#{2 * $Metric-Control-Space};
-    border-bottom: solid 1px $Color-Grey-Regular;
+    //margin: -#{$Metric-Control-Space / 2} -#{$Metric-Control-Space} -#{2 * $Metric-Control-Space};
+    margin-bottom: -#{2 * $Metric-Control-Space};
 
     div.PropertyList {
         position: absolute;
@@ -15,12 +15,18 @@ div.PropertyPanel {
         overflow-x: auto;
         width: 50%;
         height: 100%;
+        border-top: solid 1px $Color-Grey-Light;
+        border-left: solid 1px $Color-Grey-Light;
+        border-bottom: solid 1px $Color-Grey-Light;
+        background: $Color-Silver-Light;
+        padding-top: 1px;
 
         a {
+            background: white;
             display: block;
             padding: 4px 10px;
             text-decoration: none;
-            border-bottom: dotted 1px $Color-Grey-Regular;
+            border-bottom: solid 1px $Color-Grey-Light;
 
             i.flaticon-arrow-right {
                 visibility: hidden;
@@ -47,16 +53,39 @@ div.PropertyPanel {
 
     div.PropertyValue {
         position: absolute;
-        overflow: auto;
-        width: 50%;
+        width: calc(50% - #{$Metric-Control-Space});
         left: 50%;
-        height: 50%;
-        border-bottom: solid 1px $Color-Grey-Regular;
+        height: calc(50% - #{$Metric-Control-Space / 2});
         padding: 10px;
+        background: $Color-Silver-Dark;
+        margin-left: $Metric-Control-Space;
+
+        label {
+            margin: 0;
+            padding-top: 0;
+            width: calc(100%);
+
+            &:first-child {
+                position: absolute;
+
+                input {
+                    margin-top: 0;
+                }
+            }
+
+            &:nth-child(2) {
+                position: absolute;
+
+                input {
+                    margin-top: 0;
+                }
+
+                top: $Metric-Control-Height + $Metric-Control-Space;
+            }
+        }
 
         input[type=text], input[type=checkbox], select, a.Button, label {
             display: block;
-            margin-bottom: 10px;
 
             &[type=checkbox] {
                 width: 100%;
@@ -77,12 +106,15 @@ div.PropertyPanel {
     div.Information {
         position: absolute;
         overflow: auto;
-        bottom: 0;
+        height: calc(50% - #{$Metric-Control-Space / 2});
         width: 50%;
         left: 50%;
-        top: 50%;
+        top: calc(50% + #{$Metric-Control-Space / 2});
         padding: 10px;
         line-height: 1.4;
+        background: $Color-Silver-Dark;
+        width: calc(50% - #{$Metric-Control-Space});
+        margin-left: $Metric-Control-Space;
     }
 }
 

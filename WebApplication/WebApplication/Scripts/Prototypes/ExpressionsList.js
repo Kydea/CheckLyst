@@ -12,13 +12,13 @@
         verifyButton,
 
         select = function (index) {
-        	if (currentIndex != null) body.children().eq(currentIndex).removeClass("Selected").addClass("Handler").children().slice(0,2).attr("contenteditable", false);
+			if (currentIndex != null) body.children().eq(currentIndex).removeClass("Selected").addClass("Handler").children().slice(0, 2).attr("contenteditable", false);
         	if (model.state == prototypes.Prototype.states.draft)
         	{
         	    currentIndex = index;
         	    var used = false;
-        	    if (currentIndex != null) {
-        	        used = model.expressionsInUse.includes(list[currentIndex].code);
+				if (currentIndex != null) {
+					used = model.expressionsInUse && model.expressionsInUse.includes(list[currentIndex].code);
 
         	        body.children().eq(currentIndex).addClass("Selected").removeClass("Handler")
                         .children((used ? ":not(:nth-child(2))" : "") + ":not(:first-child):not(:last-child):not(:nth-last-child(2))").attr("contenteditable", true).eq(0).focus();
@@ -36,8 +36,8 @@
 				.append($("<td />").append($("<i />").addClass("fi flaticon-arrow-right")))
                 .append($("<td />").addClass("CodeColumn").text(row.code))
                 .append($("<td />").addClass("ExpressionColumn").text(row.expression))
-                .append($("<td />").addClass("ValidColumn").append($("<i />").attr("title", row.error || "").addClass("fi" + (row.valid == null ? "" : " flaticon-" + (row.valid ? "check" : "times")))))
-				.append($("<td />").addClass("UniqueColumn").toggleClass("Off", !row.unique).append($("<i />").addClass("fi flaticon-key")));
+				.append($("<td />").addClass("ValidColumn Centered").append($("<i />").attr("title", row.error || "").addClass("fi" + (row.valid == null ? "" : " flaticon-" + (row.valid ? "check" : "times")))))
+				.append($("<td />").addClass("UniqueColumn Centered").toggleClass("Off", !row.unique).append($("<i />").addClass("fi flaticon-key-o")));
 
             if (model.state == prototypes.Prototype.states.draft)
             	matematici.canClose = false;
@@ -45,9 +45,9 @@
 
 		update = function (row) {
 		    row.node.find(".ValidColumn i")
-				.removeClass("flaticon-check-o flaticon-times flaticon-question")
+				.removeClass("flaticon-check flaticon-times flaticon-question")
 				.attr("title", row.error || "")
-				.addClass("fa-" + (row.valid ? "check" : "remove"));
+				.addClass("flaticon-" + (row.valid ? "check" : "times"));
 		},
 
         remove = function () {
@@ -61,7 +61,7 @@
         updateModel = function () {
             model.expressions = {};
             for (var index in list) 
-                model.expressions[list[index].code] = { SerializedValue: list[index].expression, Error: list[index].error, DataType: list[index].dataType, Unique: list[index].unique };
+                model.expressions[list[index].code] = { serializedValue: list[index].expression, error: list[index].error, dataType: list[index].dataType, unique: list[index].unique };
         },
 
         checkCodes = function () {
@@ -90,10 +90,10 @@
         	map();
 
             $.ajax({
-                url: matematici.urls.prototypes.verifyExpressions,
+				url: matematici.urls.api + "/Prototypes/Prototype/VerifyExpressions",
                 type: "post",
                 contentType: "application/json",
-                data: JSON.stringify(model)
+				data: JSON.stringify({ checkList: model })
             }).done(function (result) {
                 if (result.error) 
                     matematici.dialog.error("Error", result.error);
@@ -102,10 +102,10 @@
                     for (var index in list) {
                         var expressionValidity;
                         try {
-                            expressionValidity = (list[index].valid = result.expressions[list[index].code].Error == null);
-                            list[index].error = result.expressions[list[index].code].Error;
-                            list[index].dataType = result.expressions[list[index].code].DataType;
-                            list[index].unique = result.expressions[list[index].code].Unique;
+                            expressionValidity = (list[index].valid = result.expressions[list[index].code].error == null);
+                            list[index].error = result.expressions[list[index].code].error;
+                            list[index].dataType = result.expressions[list[index].code].dataType;
+                            list[index].unique = result.expressions[list[index].code].unique;
                         } catch (error) {
                             list[index].error = error;
                             list[index].dataType = "Error";
@@ -118,9 +118,6 @@
                     button.toggleClass("Invalid", !valid);
                     if (handler) handler.call(this);
                 }
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                console.log("Server error", jqXHR, textStatus, errorThrown);
-                alert("Server error: " + errorThrown);
             });
         },
 
@@ -130,25 +127,26 @@
                 e.preventDefault();
                 e.stopPropagation();
             });
-            table = $("<table />").addClass("Grid ExpressionsList").appendTo(container)
-                .append($("<thead />")
-                    .append($("<tr />")
-                        .append($("<td />"))
-                        .append($("<th />").text("code"))
-                        .append($("<th />").text("expression"))
-                        .append($("<th />").text("valid"))
-                        .append($("<th />").text("unique"))
-                    )
-                ).append(body = $("<tbody />")
-                    .append(noRecord = $("<tr />").addClass("NoRecord")
-                        .append($("<td />").attr("colspan", "5").text("(no record)"))
-                    )
-                ).on("click", "tr.Handler", function () {
-                    select($(this).prevAll().size());
+			table = $("<table />").addClass("Grid ExpressionsList").appendTo(container)
+				.append($("<thead />")
+					.append($("<tr />")
+						.append($("<td />"))
+						.append($("<th />").text("code"))
+						.append($("<th />").text("expression"))
+						.append($("<th />").text("valid"))
+						.append($("<th />").text("unique"))
+					)
+				).append(body = $("<tbody />")
+					.append(noRecord = $("<tr />").addClass("NoRecord")
+						.append($("<td />").attr("colspan", "5").text("(no record)"))
+					)
+				).on("click", "tr.Handler", function () {
+					select($(this).prevAll().size());
+				}).on("focus", "td", function () {
+					verifyButton.show();
                 }).on("blur", "td", function () {
                     list[currentIndex].valid = null;
-                    $("td.ValidColumn i", $(this).parent()).removeClass("fa-check fa-remove").addClass("fa-question");
-                    verifyButton.show();
+					$("td.ValidColumn i", $(this).parent()).removeClass("flaticon-check flaticon-remove").addClass("flaticon-question");
                 }).on("click", "tr.Selected td.UniqueColumn", function () {
                     list[currentIndex].unique = !list[currentIndex].unique;
                     $(this).toggleClass("Off", !list[currentIndex].unique);
@@ -158,7 +156,7 @@
             var
                 buttons =
                     $("<div />").addClass("Buttons").appendTo(container)
-						.append($("<a />").addClass("Button").text("close").prepend($("<i />").addClass("fi flaticon-remove")).on("click", function () {
+						.append($("<a />").addClass("Button").text("close").prepend($("<i />").addClass("fi flaticon-times")).on("click", function () {
                         if (verifyButton.is(":visible")) 
                             verify(function () {
                                 element.remove();
@@ -173,7 +171,7 @@
                         add({ code: "", expression: "", error: null });
                         select(list.length - 1);
                     }))
-						.append(removeButton = $("<a />").addClass("Button").text("remove").prepend($("<i />").addClass("fi flaticon-minus")).on("click", function () {
+						.append(removeButton = $("<a />").addClass("Button").text("remove").prepend($("<i />").addClass("fi flaticon-trash-o")).on("click", function () {
                         remove();
                     }).hide());
                 
@@ -181,11 +179,11 @@
             for (var code in model.expressions)
                 add({
                     code: code,
-                    expression: model.expressions[code].SerializedValue,
-                    error: model.expressions[code].Error,
-                    valid: model.expressions[code].Error == null,
-                    dataType: model.expressions[code].DataType,
-                    unique: model.expressions[code].Unique
+                    expression: model.expressions[code].serializedValue,
+                    error: model.expressions[code].error,
+                    valid: model.expressions[code].error == null,
+                    dataType: model.expressions[code].dataType,
+                    unique: model.expressions[code].unique
                 });
         };
 

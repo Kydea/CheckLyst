@@ -41,7 +41,7 @@ namespace CheckListManager.Common.Logic.Models
 
 		public override bool Equals(object obj)
 		{
-			return obj != null && ((DataType)obj)._rawValue == _rawValue;
+			return obj is DataType && ((DataType)obj)._rawValue == _rawValue;
 		}
 
 		public override int GetHashCode()

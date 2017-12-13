@@ -5,23 +5,21 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
 {
     public class FieldProperty : ElementProperty
     {
-        public FieldProperty(string code) : base(code)
+        protected override void Check(ICheckListElement Element)
         {
+            if (!(Element is ICheckListField)) throw new Exception("The element with code " + Code + " is not an Field");
+            DataType = ((ICheckListField)Element).ValueType;
         }
 
-        protected override void Check(ICheckListElement element)
+        protected override TypedValue GetValue(ICheckListElement Element)
         {
-            if (element is ICheckListField field)
-				DataType = field.ValueType;
-			else
-				throw new Exception("The element with code " + Code + " is not an Field");
-		}
+            var Field = (ICheckListField)Element;
+            return new TypedValue(Field.ValueType, "");
+        }
 
-        protected override TypedValue GetValue(ICheckListElement element)
+        public override string ToString()
         {
-	        throw new NotImplementedException();
-	        //var field = (ICheckListField)element;
-            //return new TypedValue(field.ValueType, field.GetValue());
-		}
-	}
+            return $"{Code}.Value";
+        }
+    }
 }

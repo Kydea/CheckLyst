@@ -4,45 +4,45 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 {
     public class TypedValue
     {
-        public TypedValue(Type rawType, object value) : this(DataType.FromType(rawType), value.ToString()) { }
+        public TypedValue(Type RawType, Object Value) : this(DataType.FromType(RawType), Value.ToString()) { }
 
-        public TypedValue(DataType type, string serializedValue)
+        public TypedValue(DataType Type, String SerializedValue)
         {
-            Type = type;
-            _serializedValue = serializedValue;
+            _Type = Type;
+            _SerializedValue = SerializedValue;
             Parse();
         }
 
-        public TypedValue(DataType type, object value)
+        public TypedValue(DataType Type, object Value)
         {
             try
             {
-                if (value == null)
+                if (Value == null)
                 {
-                    Type = type;
-                    Value = _serializedValue = null;
+                    _Type = Type;
+                    this.Value = _SerializedValue = null;
                 }
                 else if
                 (
-                       type == DataType.Boolean && !(value is bool) ||
-					   type == DataType.DateTime && !(value is DateTime) ||
-					   type == DataType.Date && !(value is DateTime) ||
-					   type == DataType.Time && !(value is TimeSpan) ||
-					   type == DataType.Number && !(value is decimal) ||
-                       type == DataType.Text && !(value is string)
+                       Type == DataType.Boolean && !(Value is Boolean) ||
+                       Type == DataType.DateTime && !(Value is DateTime) ||
+                       Type == DataType.Date && !(Value is DateTime) ||
+                       Type == DataType.Time && !(Value is TimeSpan) ||
+                       Type == DataType.Number && !(Value is Decimal) ||
+                       Type == DataType.Text && !(Value is String)
                 )
-                    throw new Exception("Invalid class " + value.GetType().Name + " for DataType " + type);
+                    throw new Exception("Invalid class " + Value.GetType().Name + " for DataType " + Type.ToString());
                 else
                 {
-                    Type = type;
-                    Value = value;
-                    _serializedValue = value.ToString();
+                    _Type = Type;
+                    this.Value = Value;
+                    _SerializedValue = Value.ToString();
                 }
             }
-            catch (Exception exception)
+            catch (Exception Exception)
             {
-                Type = DataType.Error;
-                Value = exception.Message;
+                _Type = DataType.Error;
+                this.Value = Exception.Message;
             }
         }
 
@@ -51,31 +51,47 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             try
             {
                 Value =
-                    string.IsNullOrWhiteSpace(_serializedValue) ? null :
-                    Type == DataType.Boolean ? "true".Equals(_serializedValue, StringComparison.InvariantCultureIgnoreCase) :
-					Type == DataType.DateTime ? DateTime.ParseExact(_serializedValue, new[] { "dd/MM/yyyy HH:mm:ss", "dd/MM/yyyy HH:mm" }, null, System.Globalization.DateTimeStyles.None) :
-					Type == DataType.Date ? DateTime.ParseExact(_serializedValue, new[] { "dd/MM/yyyy" }, null, System.Globalization.DateTimeStyles.None) :
-					Type == DataType.Time ? TimeSpan.ParseExact(_serializedValue, new[] { "hh\\:mm" }, null) :
-					Type == DataType.Number ? decimal.Parse(_serializedValue) :
-                    Type == DataType.Error ? _serializedValue :
-                    (object)_serializedValue;
+                    String.IsNullOrWhiteSpace(_SerializedValue) ? null :
+                    Type == DataType.Boolean ? "true".Equals(_SerializedValue, StringComparison.InvariantCultureIgnoreCase) :
+                    Type == DataType.DateTime ? DateTime.ParseExact(_SerializedValue, new[] { "dd/MM/yyyy HH:mm:ss", "dd/MM/yyyy HH:mm" }, null, System.Globalization.DateTimeStyles.AssumeUniversal).ToUniversalTime() :
+                    Type == DataType.Date ? DateTime.ParseExact(_SerializedValue, new[] { "dd/MM/yyyy" }, null, System.Globalization.DateTimeStyles.AssumeUniversal).ToUniversalTime() :
+                    Type == DataType.Time ? TimeSpan.ParseExact(_SerializedValue, new[] { "hh\\:mm" }, null) :
+                    Type == DataType.Number ? Decimal.Parse(_SerializedValue) :
+                    Type == DataType.Error ? _SerializedValue :
+                    (object)_SerializedValue;
             }
-            catch (Exception exception)
+            catch (Exception Exception)
             {
-                Type = DataType.Error;
-                Value = _serializedValue = exception.Message;
+                _Type = DataType.Error;
+                Value = _SerializedValue = Exception.Message;
             }
         }
 
-	    public DataType Type { get; private set; }
-
-	    private string _serializedValue;
-        public string SerializedValue
+        private DataType _Type;
+        public DataType Type
         {
-            get => _serializedValue;
-	        set
+            get
             {
-                _serializedValue = value;
+                return _Type;
+            }
+            private set
+            {
+                _Type = value;
+                Parse();
+            }
+        }
+
+        private String _SerializedValue;
+        public String SerializedValue
+        {
+            get
+            {
+                return _SerializedValue;
+            }
+
+            set
+            {
+                _SerializedValue = value;
                 Parse();
             }
         }
@@ -85,18 +101,18 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             get; private set;
         }
 
-        public bool IsNull => Value == null;
+        public bool IsNull { get { return Value == null; } }
 
-	    public bool BooleanValue => (bool)(Value ?? false);
+        public bool BooleanValue { get { return (bool)(Value ?? false); } }
 
-	    public decimal NumberValue => (decimal)(Value ?? 0);
+        public Decimal NumberValue { get { return (Decimal)(Value ?? 0); } }
 
-	    public DateTime DateTimeValue => (DateTime)(Value ?? DateTime.MinValue);
+        public DateTime DateTimeValue { get { return (DateTime)(Value ?? DateTime.MinValue.ToUniversalTime()); } }
 
-	    public TimeSpan TimeSpanValue => (TimeSpan)(Value ?? 0);
+        public TimeSpan TimeSpanValue { get { return (TimeSpan)(Value ?? 0); } }
 
-	    public string TextValue => (string)Value;
+        public String TextValue { get { return (String)Value; } }
 
-	    public string ErrorValue => (string)Value;
+        public String ErrorValue { get { return (String)Value; } }
     }
 }

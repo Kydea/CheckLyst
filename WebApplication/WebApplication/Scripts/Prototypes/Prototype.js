@@ -49,7 +49,7 @@
 				currentItemId = currentItem && (currentItem.isPage && currentItem.isPage() && $("a.Current", element).attr("id") || $("div.Current", element).attr("id")); //saves current item
 
 			completeModel();
-			title.text(model.description || "(Prototype name)");
+			title.children("span").text(model.description || "(Prototype name)");
 
 			commands = $("<div />").addClass("Commands")
 				.append($("<a />").attr("data-command", "properties").addClass("Button MiniIcon Properties").append($("<i />").addClass("fi flaticon-cog")))
@@ -64,7 +64,7 @@
 			for (var index in model.pages)
 				tab.add(model.pages[index].description, "Page" + model.pages[index].itemId);
 
-			if (model.state == prototypes.Prototype.states.draft) tab.add($("<span />").text("(add page)").prepend($("<i >").addClass("Add fi flaticon-plus")));
+			if (model.state == prototypes.Prototype.states.draft) tab.add($("<span />").prepend($("<i >").addClass("Add fi flaticon-plus")));
 			page.setIndex(pageIndex = pageIndex >= model.pages.length ? model.pages.length - 1 : pageIndex ? pageIndex : 0);
 			tab.select(pageIndex);
 
@@ -260,6 +260,8 @@
 	prototypes.prototype = prototype;
 
 	prototype.select = select;
+
+	prototype.completeModel = completeModel;
 
 	setup();
 }

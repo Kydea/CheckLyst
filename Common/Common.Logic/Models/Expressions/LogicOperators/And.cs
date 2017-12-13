@@ -6,5 +6,7 @@
         {
             return base.Evaluate(leftValue, rightValue) ?? new TypedValue(DataType.Boolean, !leftValue.IsNull && leftValue.BooleanValue && !rightValue.IsNull && rightValue.BooleanValue);
         }
+
+        protected override string OperatorName => "and";
     }
 }

@@ -43,18 +43,18 @@
         if (options.readOnly)
             $("<input />").attr({ type: "text", readOnly: true }).val(model.signatureCode).appendTo(valuePanel);
         else {
-            input = $("<select />");
-            input.append($("<option />").attr("value", "").text("(not set)"));
+            input = $("<select />").data("nullable", true);
             for (var signatureCode in prototypes.prototype.getModel().Signatures)
                 input.append($("<option />").attr({ value: signatureCode, selected: signatureCode == model.signatureCode }).text(signatureCode));
             input.on("change", change);
-            valuePanel.append(input);
+			valuePanel.append(input);
+			if (!model.signatureCode) input.val(null);
 
-            setButton = $("<a />").addClass("Button").text("set by click").on("click", function (e) {
-                setButton.hide();
-                cancelButton.show();
-                prototypes.prototype.setItemHandler(setSignature);
-            }).appendTo(valuePanel);
+			setButton = $("<a />").addClass("Button").text("set by click").on("click", function (e) {
+				setButton.hide();
+				cancelButton.show();
+				prototypes.prototype.setItemHandler(setSignature);
+			}); //.appendTo(valuePanel);
 
             cancelButton = $("<a />").addClass("Button").text("cancel").on("click", function () {
                 cancel();

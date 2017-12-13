@@ -6,9 +6,10 @@ namespace CheckListManager.Prototypes.Logic.Services
 {
 	public interface IPrototypeService : IService
 	{
-		Task<GetPrototypeResponse> OpenAsync(long companyId, GetPrototypeRequest request);
-        Task<GetPrototypeResponse> CloneAsync(long companyId, GetPrototypeRequest request);
-        Task<GetPrototypeResponse> CreateAsync(long companyId, GetPrototypeRequest request);
-        Task<GetPrototypeResponse> VersionAsync(long companyId, GetPrototypeRequest request);
+		Task<PrototypeResponse> OpenAsync(long companyId, PrototypeRequest request);
+        Task<PrototypeResponse> CloneAsync(long companyId, PrototypeRequest request);
+        Task<PrototypeResponse> CreateAsync(long companyId, PrototypeRequest request);
+        Task<PrototypeResponse> VersionAsync(long companyId, PrototypeRequest request);
+        VerifyExpressionsResponse VerifyExpressions(PrototypeRequest request);
     }
 }
