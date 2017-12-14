@@ -336,7 +336,7 @@ namespace CheckListManager.Instances.Logic.Services
 
 			if (!field.IsReadOnly)
 			{
-				if ((value ?? string.Empty) != (field.Value ?? string.Empty) && field.Validate(value))
+				if ((value ?? string.Empty) != (field.Value?.Value ?? string.Empty) && field.Validate(value))
 				{
 					//TODO: add audit
 					field.History.Add(new FieldRecord
@@ -345,7 +345,7 @@ namespace CheckListManager.Instances.Logic.Services
 						User = userCode,
 						Value = value
 					});
-					field.Value = value;
+					field.Value = new Common.Logic.Models.RawValue(value);
 
 					await Update(cacheObject, instance, userCode);
 				}
