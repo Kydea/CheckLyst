@@ -27,7 +27,7 @@
 							analyzeElement(node.items[itemIndex]);
 						break;
 					case "Signature":
-						if (node.Code)
+						if (node.code)
 							model.signatures[node.code] = node;
 						break;
 				}

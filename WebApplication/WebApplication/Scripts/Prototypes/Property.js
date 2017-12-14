@@ -16,7 +16,12 @@
 						e.stopPropagation();
 						propertyPanel.setCurrentProperty(property);
 					});
-		}
+		};
+
+
+	this.getCaption = function () {
+		return caption;
+	}
 
 	this.resize = function () {
 		prototypes.prototype.getElement().css("padding-bottom", element.height());
@@ -27,7 +32,6 @@
 		type.create(propertyPanel.getPropertyValue().removeClass().addClass("PropertyValue").empty());
 		propertyPanel.getInformation().html(information ? information : "");
 
-		console.log()
 		$("select", propertyPanel.getPropertyValue()).each(function () {
 			var autoComplete = new matematici.AutoComplete(this);
 			autoComplete.initialize();
@@ -55,6 +59,6 @@
 		return type;
 	};
 
-	setup();
+	this.setup = setup;
 }
 

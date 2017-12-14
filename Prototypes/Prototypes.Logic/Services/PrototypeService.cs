@@ -38,17 +38,28 @@ namespace CheckListManager.Prototypes.Logic.Services
 
         public async Task<PrototypeResponse> CreateAsync(long companyId, PrototypeRequest request)
         {
+            //expression and items are only for test purpose
+            var BooleanExpression = new Common.Logic.Models.Expressions.Expression { SerializedValue = "true" };
+            var DateTimeExpression = new Common.Logic.Models.Expressions.Expression { SerializedValue = "Signature.SignedOn" };
             var Prototype = new Prototype
             {
                 Header = new Group { Description = "(header)" },
                 State = "Draft",
                 ValidFrom = null,
                 ValidUntil = DateTimeOffset.UtcNow.AddDays(10),
+                Expressions = new System.Collections.Generic.Dictionary<string, Common.Logic.Models.Expressions.Expression> {
+                    { "BooleanExpression", BooleanExpression },
+                    { "DateTimeExpression", DateTimeExpression }
+                }
             };
 
             Page Page;
+            Group Group;
             Prototype.Pages.Add(Page = new Page { Description = "(page)" });
-            Page.Groups.Add(new Group { Description = "(group)" });
+            Page.Groups.Add(Group = new Group { Description = "(group)" });
+            Group.Items.Add(new Signature { Code = "Signature" });
+
+            Prototype.Setup();
 
             return await Task.FromResult(new PrototypeResponse
             {

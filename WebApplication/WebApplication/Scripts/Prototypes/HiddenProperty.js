@@ -27,13 +27,14 @@
 
     this.create = function (valuePanel) {
         valuePanel.addClass("HiddenProperty");
-        expressions = prototypes.prototype.getModel().expressions;
+		expressions = prototypes.prototype.getModel().expressions;
+		console.log(model);
         if (editable)
         {
             input = $("<select />")
                 .appendTo(valuePanel)
-                .append($("<option />").attr("value", "").text("(false)").attr("selected", model.hiddenCondition == 2))
-                .append($("<option />").attr("value", "").text("(true)").attr("selected", model.hiddenCondition == 1));
+                .append($("<option />").attr("value", "2").text("(false)").attr("selected", model.hiddenCondition == 2))
+                .append($("<option />").attr("value", "1").text("(true)").attr("selected", model.hiddenCondition == 1));
 
             for (var index in expressions)
                 input.append($("<option />").attr({ value: index, selected: model.hiddenCondition > 2 && index == model.hiddenExpressionCode }).text(index));
