@@ -45,10 +45,19 @@ namespace CheckListManager.Prototypes.Api.Controllers
             return Ok(await _prototypeService.CreateAsync(Identity.CompanyId, request));
         }
 
+        [HttpPost]
         [Route("VerifyExpressions")]
         public IHttpActionResult VerifyExpressions(PrototypeRequest request)
         {
             return Ok(_prototypeService.VerifyExpressions(request));
         }
+
+        [HttpPost]
+        [Route("Save")]
+        public async Task<IHttpActionResult> Save(PrototypeRequest request)
+        {
+            return Ok(await _prototypeService.SaveAsync(Identity, request));
+        }
+
     }
 }

@@ -62,15 +62,9 @@
 
 		if (model.typeName == "Prototype") {
 			properties.push(new prototypes.Property(
-				this, new prototypes.SimpleValueProperty(model, "code", {
-					readOnly: state != prototypes.Prototype.states.draft || prototypes.prototype.getModel().version > 0
-				}).setCheck([{
-					action: function (value) {
-						return matematici.codeRegularExpression.test(value);
-					},
-					message: "Invalid code"
-				}]), "Code",
-				"The code that uniquely identifies the prototype, can be set only for new prototypes."
+				this, new prototypes.SimpleValueProperty(model, "name", {
+					readOnly: state != prototypes.Prototype.states.draft
+				}), "Name", "The name of the prototype"
 			));
 			properties.push(new prototypes.Property(
 				this, new prototypes.SimpleValueProperty(model, "version", { readOnly: true }), "Version",

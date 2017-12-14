@@ -16,6 +16,10 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public string State { get; set; }
         public DateTimeOffset? ValidFrom { get; set; }
         public DateTimeOffset? ValidUntil { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public long? Department { get; set; }
+        public long? PrototypeType { get; set; }
 
         public void AddItem(ICheckListItem item)
 		{

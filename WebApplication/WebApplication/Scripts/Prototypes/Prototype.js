@@ -9,6 +9,7 @@
 		tab,
 		pageLock,
 		model,
+		concurrencyInformation,
 		currentItem,
 		itemHandler,
 		updateHandler,
@@ -220,6 +221,10 @@
 				else {
 					console.log(result.checkList);
 					model = result.checkList;
+					concurrencyInformation = {
+						modifiedBy: result.modifiedBy,
+						modifiedOn: result.modifiedOn
+					};
 					update();
 				}
 			});
@@ -251,6 +256,39 @@
 
 	prototype.setChildren = function (value) {
 		model.pages = value;
+	};
+
+	prototype.showHistory = function () {
+		alert("not implemented");
+	};
+
+	prototype.save = function (callback) {
+		$.ajax({
+			url: element.data("action") + "Save",
+			type: "post",
+			contentType: "application/json",
+			data: JSON.stringify({ modifiedOn: concurrencyInformation.modifiedOn, modifiedby: concurrencyInformation.modifiedBy, checkList: model })
+		}).done(function (result) {
+			if (result.error) {
+				matematici.dialog.error("Error", result.message);
+			} else if (result.redirect) {
+				matematici.canClose = true;
+				matematici.navigator.open(result.redirect, false, false);
+			} else {
+				var check = $("<i />").addClass("fi flaticon-check").appendTo($("div.ActionBar a.Save")).hide().fadeIn(1000);
+				setTimeout(function () {
+					check.fadeOut(2000, function () { check.remove() });
+				}, 3000);
+
+				matematici.canClose = true;
+				model = result;
+				update();
+				if (callback) callback.call();
+			}
+		}).fail(function (jqXHR, textStatus, errorThrown) {
+			console.log("Server error", jqXHR, textStatus, errorThrown);
+			alert("Server error: " + errorThrown);
+		});
 	};
 
 	prototype.getNewItemId = getNewItemId;

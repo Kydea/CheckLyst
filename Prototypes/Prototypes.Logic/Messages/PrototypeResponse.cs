@@ -8,10 +8,9 @@ namespace CheckListManager.Prototypes.Logic.Messages
 		public long Id { get; set; }
 		public int Version { get; set; }
 		public long PrototypeType { get; set; }
-        public DateTimeOffset? ValidFrom { get; set; }
-        public DateTimeOffset? ValidUntil { get; set; }
-        public string State { get; set; }
         public Prototype CheckList { get; set; }
+        public DateTimeOffset? ModifiedOn { get; set; }
+        public string ModifiedBy { get; set; }
 
         //TODO add properties from DB
     }
