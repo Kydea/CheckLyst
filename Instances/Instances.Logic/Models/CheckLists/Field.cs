@@ -57,7 +57,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
 		public bool Validate(string value)
 		{
-			return ValueType.Validate(Value);
+			return ValueType.Validate(value);
 		}
 	}
 }
