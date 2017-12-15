@@ -4,45 +4,75 @@ using CheckListManager.Common.Logic.Api;
 using CheckListManager.Prototypes.Logic.Messages;
 using CheckListManager.Prototypes.Logic.Services;
 using System.Linq;
+using System;
+using CheckListManager.Common.Logic.Api.Messages;
 
 namespace CheckListManager.Prototypes.Api.Controllers
 {
-	[RoutePrefix("Prototype")]
-	public class PrototypeController : BaseApiController
-	{
-		private readonly IPrototypeService _prototypeService;
+    [RoutePrefix("Prototype")]
+    public class PrototypeController : BaseApiController
+    {
+        private readonly IPrototypeService _prototypeService;
 
-		public PrototypeController(IPrototypeService prototypeService)
-		{
-			_prototypeService = prototypeService;
-		}
+        public PrototypeController(IPrototypeService prototypeService)
+        {
+            _prototypeService = prototypeService;
+        }
 
         [HttpPost]
-		[Route("Open")]
-		public async Task<IHttpActionResult> Open(PrototypeRequest request)
-		{
-			return Ok(await _prototypeService.OpenAsync(Identity.CompanyId, request));
-		}
+        [Route("Open")]
+        public async Task<IHttpActionResult> Open(PrototypeRequest request)
+        {
+            try
+            {
+                return Ok(await _prototypeService.OpenAsync(Identity, request));
+            }
+            catch (Exception e)
+            {
+                return Error(e);
+            }
+        }
 
         [HttpPost]
         [Route("Clone")]
         public async Task<IHttpActionResult> Clone(PrototypeRequest request)
         {
-            return Ok(await _prototypeService.CloneAsync(Identity.CompanyId, request));
+            try
+            {
+                return Ok(await _prototypeService.CloneAsync(Identity, request));
+            }
+            catch (Exception e)
+            {
+                return Error(e);
+            }
         }
 
         [HttpPost]
         [Route("Version")]
         public async Task<IHttpActionResult> Version(PrototypeRequest request)
         {
-            return Ok(await _prototypeService.VersionAsync(Identity.CompanyId, request));
+            try
+            {
+                return Ok(await _prototypeService.VersionAsync(Identity, request));
+            }
+            catch (Exception e)
+            {
+                return Error(e);
+            }
         }
 
         [HttpPost]
         [Route("Create")]
         public async Task<IHttpActionResult> Create(PrototypeRequest request)
         {
-            return Ok(await _prototypeService.CreateAsync(Identity.CompanyId, request));
+            try
+            {
+                return Ok(await _prototypeService.CreateAsync(Identity, request));
+            }
+            catch (Exception e)
+            {
+                return Error(e);
+            }
         }
 
         [HttpPost]
@@ -56,7 +86,15 @@ namespace CheckListManager.Prototypes.Api.Controllers
         [Route("Save")]
         public async Task<IHttpActionResult> Save(PrototypeRequest request)
         {
-            return Ok(await _prototypeService.SaveAsync(Identity, request));
+            try
+            {
+                return Ok(await _prototypeService.SaveAsync(Identity, request));
+            }
+            catch (Exception e)
+            {
+                return Error(e);
+            }
+
         }
 
     }

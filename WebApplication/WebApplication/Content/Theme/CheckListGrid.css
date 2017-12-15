@@ -1,4 +1,7 @@
-﻿div.CheckListGrid div.Container {
+﻿body.CheckListGrid {
+  overflow: hidden; }
+
+div.CheckListGrid div.Container {
   background-color: white;
   border: solid 1px #ccc;
   padding: 20px;
@@ -11,8 +14,6 @@
       div.CheckListGrid div.Container div.Parameters label input {
         width: 200px;
         margin: 5px 10px 10px 0; }
-    div.CheckListGrid div.Container div.Parameters a.Button {
-      min-width: 100px; }
     div.CheckListGrid div.Container div.Parameters::after {
       content: "";
       display: table;
@@ -52,8 +53,8 @@
     padding-top: 20px; }
     div.CheckListGrid div.Container div.Buttons a {
       float: right;
-      min-width: 100px;
-      margin-left: 10px; }
+      margin-left: 10px;
+      margin-top: 10px; }
 
 @media only screen and (min-width: 760px) {
   div.CheckListGrid {

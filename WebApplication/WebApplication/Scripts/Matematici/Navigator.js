@@ -66,7 +66,12 @@
                     },
                     { text: "cancel", hidden: true, icon: "remove", cancelButton: true }
                 ]);
-        },
+		},
+
+		setUrl: function (path, relative, nocache) {
+			matematici.navigator.setSuspended(true);
+			matematici.navigator.open(path, relative, nocache);
+		},
 
         defaultHandler: function (callback) {
             if (callback !== undefined) callback.call();
@@ -194,7 +199,7 @@ $.address
     }).change(function (e) {
         //console.log("change " + e.path);
         if (!matematici.navigator.isSuspended())
-            matematici.navigator.changePage(e);
+			matematici.navigator.changePage(e);
         matematici.navigator.setSuspended(false);
     });
 

@@ -1,0 +1,40 @@
+﻿@import "_Library.scss";
+
+div.Blip {
+    display: none;
+    overflow: auto;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: $Depth-Blip;
+    background-color: rgba(102, 102, 102, .7);
+
+    div.Container {
+        position: fixed;
+        border-radius: 15px;
+        top: 50%;
+        left: 50%;
+        width: unset;
+        padding: 20px;
+        background-color: white;
+        box-shadow: $Box-Shadow;
+
+        i {
+            color: $Color-Green-Regular;
+            font-size: 30px;
+        }
+    }
+
+    &.Error {
+        background-color: rgba(255, 102, 102, .7);
+
+        div.Container {
+            i {
+                color: $Color-Red-Regular;
+                font-size: 30px;
+            }
+        }
+    }
+}

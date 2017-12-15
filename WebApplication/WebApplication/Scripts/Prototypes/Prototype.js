@@ -9,6 +9,7 @@
 		tab,
 		pageLock,
 		model,
+		prototypeKey,
 		concurrencyInformation,
 		currentItem,
 		itemHandler,
@@ -219,8 +220,12 @@
 				if (result.error)
 					matematici.dialog.error("Error", result.error);
 				else {
-					console.log(result.checkList);
 					model = result.checkList;
+					prototypeKey = {
+						id: result.id,
+						version: result.version
+					};
+					if (result.version > 0) model.version = result.version;
 					concurrencyInformation = {
 						modifiedBy: result.modifiedBy,
 						modifiedOn: result.modifiedOn
@@ -267,27 +272,19 @@
 			url: element.data("action") + "Save",
 			type: "post",
 			contentType: "application/json",
-			data: JSON.stringify({ modifiedOn: concurrencyInformation.modifiedOn, modifiedby: concurrencyInformation.modifiedBy, checkList: model })
+			data: JSON.stringify({
+				id: prototypeKey.id,
+				version: prototypeKey.version,
+				modifiedOn: concurrencyInformation.modifiedOn,
+				modifiedby: concurrencyInformation.modifiedBy,
+				checkList: model
+			})
 		}).done(function (result) {
-			if (result.error) {
-				matematici.dialog.error("Error", result.message);
-			} else if (result.redirect) {
-				matematici.canClose = true;
-				matematici.navigator.open(result.redirect, false, false);
-			} else {
-				var check = $("<i />").addClass("fi flaticon-check").appendTo($("div.ActionBar a.Save")).hide().fadeIn(1000);
-				setTimeout(function () {
-					check.fadeOut(2000, function () { check.remove() });
-				}, 3000);
-
-				matematici.canClose = true;
-				model = result;
-				update();
-				if (callback) callback.call();
-			}
-		}).fail(function (jqXHR, textStatus, errorThrown) {
-			console.log("Server error", jqXHR, textStatus, errorThrown);
-			alert("Server error: " + errorThrown);
+			prototypeKey.id = result.id;
+			model.version = prototypeKey.version = result.version;
+			matematici.canClose = true;
+			matematici.blip.ok();
+			matematici.navigator.setUrl(options.detailUrl + "/" + result.id + "/" + result.version);
 		});
 	};
 

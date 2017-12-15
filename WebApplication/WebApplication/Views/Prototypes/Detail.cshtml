@@ -1,7 +1,7 @@
 ﻿@model CheckListManager.WebApplication.Models.Prototype
 
 <div id="PrototypesDetailPage" class="Prototype CheckList" data-action="@BaseUrl/Prototypes/Prototype/">
-    <h1>Prototype Editor @(Model.Id)-@(Model.Action)</h1>
+    <h1>Prototype Editor</h1>
 
     <div class="ActionBar">
         <span class="ButtonGroup" data-text="Actions"></span>
@@ -45,8 +45,9 @@
 
             prototype = new prototypes.Prototype("#PrototypesDetailPage", {
                 id: "@Model.Id",
-                baseId: "@Model.Id",
-                action: "@Model.Action"
+                version: "@Model.Version",
+                action: "@Model.Action",
+                detailUrl: "@Url.Action("Detail")"
             }),
 
             actionBar = new matematici.ActionBar("div.ActionBar")

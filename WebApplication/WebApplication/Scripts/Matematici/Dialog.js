@@ -69,7 +69,7 @@ matematici.dialog = function () {
 			if (options.title)
 				container.append($("<h2 />").html(options.title));
 
-			if (options.content) container.append(options.content);
+			if (options.content) container.append($("<div />").addClass("Content").append(options.content));
 			if (options.buttons) setButtons(options.buttons);
 			if (options.closeHandler) setCloseHandler(options.closeHandler);
 

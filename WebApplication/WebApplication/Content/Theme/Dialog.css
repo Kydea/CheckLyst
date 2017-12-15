@@ -17,8 +17,10 @@ div.Dialog {
       color: white;
       text-transform: uppercase;
       font-weight: normal; }
+    div.Dialog div.Container div.Content {
+      overflow: auto; }
     div.Dialog div.Container div.Buttons {
-      margin-top: 30px; }
+      margin-top: 10px; }
       div.Dialog div.Container div.Buttons a {
         min-width: 100px;
         float: right;

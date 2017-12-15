@@ -10,6 +10,7 @@
                 tr,
                 body;
 
+			matematici.elements.body.addClass("CheckListGrid");
         	element = $("<div />").addClass("CheckListGrid").appendTo(matematici.elements.body);
         	container = $("<div />").addClass("Container").appendTo(element);
 
@@ -78,5 +79,6 @@
 
 	this.close = function () {
 		element.remove();
+		matematici.elements.body.removeClass("CheckListGrid");
 	}
 }

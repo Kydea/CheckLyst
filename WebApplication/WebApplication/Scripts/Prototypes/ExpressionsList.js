@@ -119,9 +119,15 @@
                     if (handler) handler.call(this);
                 }
             });
-        },
+		},
+
+		close = function () {
+			element.remove();
+			matematici.elements.body.removeClass("CheckListGrid");
+		},
 
         setup = function () {
+			matematici.elements.body.addClass("CheckListGrid");
             element = $("<div />").addClass("CheckListGrid").appendTo(matematici.elements.body);
             container = $("<div />").addClass("Container").appendTo(element).on("click", function (e) {
                 e.preventDefault();
@@ -157,12 +163,12 @@
                 buttons =
                     $("<div />").addClass("Buttons").appendTo(container)
 						.append($("<a />").addClass("Button").text("close").prepend($("<i />").addClass("fi flaticon-times")).on("click", function () {
-                        if (verifyButton.is(":visible")) 
-                            verify(function () {
-                                element.remove();
-                            });
-                        else
-                            element.remove();
+							if (verifyButton.is(":visible"))
+								verify(function () {
+									close();
+								});
+							else
+								close();
                     }))
 						.append(verifyButton = $("<a />").addClass("Button").text("verify").toggle(model.state == prototypes.Prototype.states.draft).prepend($("<i />").addClass("fi flaticon-check")).on("click", function () {
                         verify();

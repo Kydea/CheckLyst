@@ -17,7 +17,7 @@
             </label>
             <label>
                 <span>Prototype name</span>
-                
+
                 <i class="Icon fi flaticon-prototype" />
                 <input type="text" name="name" />
             </label>
@@ -50,7 +50,7 @@
                     <td data-column="name"></td>
                     <td data-column="description"></td>
                     <td data-column="version"></td>
-                    <td data-column="versionState"></td>
+                    <td data-column="state"></td>
                     <td data-column="validityFrom" data-type="DateTimeOffset"></td>
                     <td data-column="validityUntil" data-type="DateTimeOffset"></td>
                     <td data-column="createdBy"></td>
@@ -68,16 +68,16 @@
 
 <script type="text/javascript">
     var
-        createNewVersionHandler = function (id) {
-            matematici.navigator.open("@Url.Action("Version")/" + id);
+        createNewVersionHandler = function (data) {
+            matematici.navigator.open("@Url.Action("Version")/" + data.id + "/" + data.version);
         },
 
-        openPrototypeHandler = function (id) {
-            matematici.navigator.open("@Url.Action("Detail")/" + id);
+        openPrototypeHandler = function (data) {
+            matematici.navigator.open("@Url.Action("Detail")/" + data.id + "/" + data.version);
         },
 
-        useAsTemplateHandler = function (id) {
-            matematici.navigator.open("@Url.Action("Clone")/" + id);
+        useAsTemplateHandler = function (data) {
+            matematici.navigator.open("@Url.Action("Clone")/" + data.id + "/" + data.version);
         };
 
     matematici.events.onPageLoad = function (callback) {
@@ -94,9 +94,9 @@
             rowClickHandler: function (row) {
                 var buttons = [];
                 buttons.push({ text: "cancel", icon: "times", cancelButton: true });
-                if ($(this).data("state") != prototypes.Prototype.states.draft) buttons.push({ text: "new version", icon: "file-o", handler: createNewVersionHandler, data: row.data("values").id });
-                buttons.push({ text: "use as template", icon: "clone-o", handler: useAsTemplateHandler, data: row.data("values").id });
-                buttons.push({ text: "open", icon: "folder-open-o", handler: openPrototypeHandler, data: row.data("values").id });
+                if ($(this).data("state") != prototypes.Prototype.states.draft) buttons.push({ text: "new version", icon: "file-o", handler: createNewVersionHandler, data: { id: row.data("values").id, version: row.data("values").version } });
+                buttons.push({ text: "use as template", icon: "clone-o", handler: useAsTemplateHandler, data: { id: row.data("values").id, version: row.data("values").version } });
+                buttons.push({ text: "open", icon: "folder-open-o", handler: openPrototypeHandler, data: { id: row.data("values").id, version: row.data("values").version } });
 
                 matematici.dialog.popupMenu(buttons);
             }

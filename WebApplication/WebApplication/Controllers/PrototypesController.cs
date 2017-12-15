@@ -35,7 +35,7 @@ namespace CheckListManager.WebApplication.Controllers
         [Route("Create")]
         public ActionResult Create()
         {
-            return ConditionalView("Detail", new Prototype { Action = Prototype.CREATE });
+            return ConditionalView("Detail", new Prototype { Action = Prototype.CREATE, Id = -1, Version = -1 });
         }
 
     }

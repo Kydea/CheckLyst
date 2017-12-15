@@ -20,14 +20,18 @@ div.Dialog {
         h2 {
             margin: -20px -20px 20px;
             background: $Color-Green-Regular;
-            padding: 20px;
+            padding: $Metric-Control-Space;
             color: white;
             text-transform: uppercase;
             font-weight: normal;
         }
 
+        div.Content {
+            overflow: auto;
+        }
+
         div.Buttons {
-            margin-top: 30px;
+            margin-top: $Metric-Control-Space - 10px;
 
             a {
                 min-width: 100px;
