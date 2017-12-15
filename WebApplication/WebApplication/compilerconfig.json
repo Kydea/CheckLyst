@@ -158,5 +158,9 @@
   {
     "outputFile": "Content/Theme/Instance.css",
     "inputFile": "Content/Theme/Instance.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Blip.css",
+    "inputFile": "Content/Theme/Blip.scss"
   }
 ]

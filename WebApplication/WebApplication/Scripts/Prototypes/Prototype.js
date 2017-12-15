@@ -9,6 +9,8 @@
 		tab,
 		pageLock,
 		model,
+		prototypeKey,
+		concurrencyInformation,
 		currentItem,
 		itemHandler,
 		updateHandler,
@@ -27,7 +29,7 @@
 							analyzeElement(node.items[itemIndex]);
 						break;
 					case "Signature":
-						if (node.Code)
+						if (node.code)
 							model.signatures[node.code] = node;
 						break;
 				}
@@ -218,8 +220,16 @@
 				if (result.error)
 					matematici.dialog.error("Error", result.error);
 				else {
-					console.log(result.checkList);
 					model = result.checkList;
+					prototypeKey = {
+						id: result.id,
+						version: result.version
+					};
+					if (result.version > 0) model.version = result.version;
+					concurrencyInformation = {
+						modifiedBy: result.modifiedBy,
+						modifiedOn: result.modifiedOn
+					};
 					update();
 				}
 			});
@@ -251,6 +261,31 @@
 
 	prototype.setChildren = function (value) {
 		model.pages = value;
+	};
+
+	prototype.showHistory = function () {
+		alert("not implemented");
+	};
+
+	prototype.save = function (callback) {
+		$.ajax({
+			url: element.data("action") + "Save",
+			type: "post",
+			contentType: "application/json",
+			data: JSON.stringify({
+				id: prototypeKey.id,
+				version: prototypeKey.version,
+				modifiedOn: concurrencyInformation.modifiedOn,
+				modifiedby: concurrencyInformation.modifiedBy,
+				checkList: model
+			})
+		}).done(function (result) {
+			prototypeKey.id = result.id;
+			model.version = prototypeKey.version = result.version;
+			matematici.canClose = true;
+			matematici.blip.ok();
+			matematici.navigator.setUrl(options.detailUrl + "/" + result.id + "/" + result.version);
+		});
 	};
 
 	prototype.getNewItemId = getNewItemId;

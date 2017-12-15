@@ -39,12 +39,12 @@
     };
 
     this.create = function (valuePanel) {
-        valuePanel.addClass("Expression");
+        valuePanel.addClass("Signature");
         if (options.readOnly)
             $("<input />").attr({ type: "text", readOnly: true }).val(model.signatureCode).appendTo(valuePanel);
         else {
             input = $("<select />").data("nullable", true);
-            for (var signatureCode in prototypes.prototype.getModel().Signatures)
+            for (var signatureCode in prototypes.prototype.getModel().signatures)
                 input.append($("<option />").attr({ value: signatureCode, selected: signatureCode == model.signatureCode }).text(signatureCode));
             input.on("change", change);
 			valuePanel.append(input);

@@ -5,14 +5,11 @@ namespace CheckListManager.Prototypes.Logic.Messages
 {
 	public class PrototypeResponse
 	{
-		public long Id { get; set; }
+		public long ID { get; set; }
 		public int Version { get; set; }
 		public long PrototypeType { get; set; }
-        public DateTimeOffset? ValidFrom { get; set; }
-        public DateTimeOffset? ValidUntil { get; set; }
-        public string State { get; set; }
         public Prototype CheckList { get; set; }
-
-        //TODO add properties from DB
+        public DateTimeOffset? ModifiedOn { get; set; }
+        public string ModifiedBy { get; set; }
     }
 }

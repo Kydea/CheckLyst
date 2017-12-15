@@ -1,5 +1,9 @@
 ﻿@import "_Library.scss";
 
+body.CheckListGrid {
+    overflow: hidden;
+}
+
 div.CheckListGrid {
 
     div.Container {
@@ -19,10 +23,6 @@ div.CheckListGrid {
                     width: 200px;
                     margin: 5px 10px 10px 0;
                 }
-            }
-
-            a.Button {
-                min-width: 100px;
             }
 
             &::after {
@@ -112,8 +112,8 @@ div.CheckListGrid {
 
             a {
                 float: right;
-                min-width: 100px;
                 margin-left: 10px;
+                margin-top: 10px;
             }
         }
     }

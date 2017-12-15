@@ -59,9 +59,7 @@ namespace CheckListManager.Instances.Data
 			try
 			{
 				if (instance == null)
-				{
 					throw new ArgumentNullException(nameof(instance), "Instance must be not null");
-				}
 
 				Entities.Database.BeginTransaction();
 

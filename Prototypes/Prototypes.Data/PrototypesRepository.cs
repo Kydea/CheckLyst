@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Data.Entity;
 using System.Linq.Expressions;
 using CheckListManager.Common.Logic.Api.Messages;
+using CheckListManager.Common.Core.Web.Security;
 
 namespace CheckListManager.Prototypes.Data
 {
@@ -42,6 +43,37 @@ namespace CheckListManager.Prototypes.Data
                 ItemsPerPage = itemsPerPage,
                 CurrentPage = currentPage
             };
+        }
+
+        public async Task<Common.Data.Prototypes> GetPrototypeAsync(DefaultIdentity defaultIdentity, long id)
+        {
+            var result = await Entities.Prototypes.SingleOrDefaultAsync(x => x.Company == defaultIdentity.CompanyId && x.ID == id);
+            if (result == null)
+                throw new Exception($"Prototype {id} not found");
+            return result;
+        }
+
+        public async Task<PrototypeVersions> GetPrototypeVersionAsync(DefaultIdentity defaultIdentity, long prototype, int version)
+        {
+            var result = await Entities.PrototypeVersions.SingleOrDefaultAsync(x => x.Prototypes.Company == defaultIdentity.CompanyId && x.Prototype == prototype && x.Version == version);
+            if (result == null)
+                throw new Exception($"Prototype version {prototype}.{version} not found");
+            return result;
+        }
+
+        public void AddPrototype(Common.Data.Prototypes prototype)
+        {
+            Entities.Prototypes.Add(prototype);
+        }
+
+        public void AddPrototypeVersion(PrototypeVersions prototypeVersion)
+        {
+            Entities.PrototypeVersions.Add(prototypeVersion);
+        }
+
+        public async Task SaveAsync()
+        {
+            await SaveChangesAsync();
         }
     }
 }

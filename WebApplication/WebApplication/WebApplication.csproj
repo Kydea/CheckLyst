@@ -88,6 +88,9 @@
     <Content Include="Content\Theme\AutoComplete.css">
       <DependentUpon>AutoComplete.scss</DependentUpon>
     </Content>
+    <Content Include="Content\Theme\Blip.css">
+      <DependentUpon>Blip.scss</DependentUpon>
+    </Content>
     <Content Include="Content\Theme\Breadcrumbs.css">
       <DependentUpon>Breadcrumbs.scss</DependentUpon>
     </Content>
@@ -219,7 +222,7 @@
     <Content Include="Scripts\Controls\Grid.js" />
     <Content Include="Scripts\Controls\DetailPage.js" />
     <Content Include="Scripts\Controls\SearchPage.js" />
-    <Content Include="Scripts\Custom\ButtonGroup.js" />
+    <Content Include="Scripts\Controls\ButtonGroup.js" />
     <Content Include="Scripts\Custom\AutoCenter.js" />
     <Content Include="Scripts\Custom\Accordion.js" />
     <Content Include="Scripts\Custom\TokenManager.js" />
@@ -266,6 +269,7 @@
     <Content Include="Content\Theme\Fonts\FlatIcon\Flaticon.ttf" />
     <Content Include="Content\Theme\Fonts\FlatIcon\Flaticon.woff" />
     <Content Include="Content\Theme\Fonts\FlatIcon\_flaticon.scss" />
+    <Content Include="Content\Theme\Blip.scss" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Bold\Myriad Pro.scss" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Bold\MyriadPro-Bold.eot" />
@@ -307,6 +311,7 @@
     <Content Include="Scripts\Libraries\SmoothScroll.js" />
     <Content Include="Scripts\Matematici\AnimationManager.js" />
     <Content Include="Scripts\Matematici\Breadcrumbs.js" />
+    <Content Include="Scripts\Matematici\Blip.js" />
     <Content Include="Scripts\Matematici\Popup.js" />
     <Content Include="Scripts\Matematici\Dialog.js" />
     <Content Include="Scripts\Matematici\Easings.js" />

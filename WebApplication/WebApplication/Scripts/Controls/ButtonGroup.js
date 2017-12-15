@@ -42,7 +42,12 @@
 		};
 
 	buttonGroup.add = function (label, action, cssClass, icon) {
-		var button = $("<a />").addClass(cssClass || "").html(label).prependTo(element).on("click", action);
+		var button = $("<a />").addClass(cssClass || "").html(label).prependTo(element).on("click", function (e) {
+			e.stopPropagation();
+			e.preventDefault();
+			close();
+			action();
+		});
 		if (icon) button.append($("<i />").addClass("fi flaticon-" + icon));
 		return this;
 	};

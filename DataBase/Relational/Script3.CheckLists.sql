@@ -21,7 +21,7 @@ create table "CheckLists"."Prototypes"
 (
 	"ID" bigserial primary key,
 	"Name" varchar (50) not null,
-	"Description" varchar (100) not null,
+	"Description" varchar (100),
 
 	"Company" bigint not null references "Infrastructure"."Companies",
 	"Department" bigint not null references "Infrastructure"."Departments",

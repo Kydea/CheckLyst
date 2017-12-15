@@ -111,37 +111,6 @@
             ]);
     };
 
-    prototype.save = function (callback) {
-        var templateParameters = isNew ? "&TemplateCode=" + code + "&TemplateVersion=" + version : "";
-        prototype.select();
-        $.ajax({
-    		url: matematici.urls.prototypes.save + "?IsNew=" + isNew + templateParameters,
-    		type: "post",
-    		contentType: "application/json",
-    		data: JSON.stringify(model)
-    	}).done(function (result) {
-    		if (result.error) {
-    			matematici.dialog.error("Error", result.message);
-    		} else if (result.redirect) {
-    			matematici.canClose = true;
-    			matematici.navigator.open(result.redirect, false, false);
-    		} else {
-				var check = $("<i />").addClass("fi flaticon-check").appendTo($("div.ActionBar a.Save")).hide().fadeIn(1000);
-    			setTimeout(function () {
-    				check.fadeOut(2000, function () { check.remove() });
-    			}, 3000);
-
-    			matematici.canClose = true;
-    			model = result;
-    			update();
-    			if (callback) callback.call();
-    		}
-    	}).fail(function (jqXHR, textStatus, errorThrown) {
-    		console.log("Server error", jqXHR, textStatus, errorThrown);
-    		alert("Server error: " + errorThrown);
-    	});
-    };
-
     prototype.setState = function (state, callback, skipConfirmation) {
         prototype.select();
         var handler = function () {
@@ -236,10 +205,6 @@
     			sign(action, grid, signature, matematici.userPanel.getUsers()[0], rowVersion);
     		}
     	});
-    };
-
-    prototype.quit = function () {
-        matematici.navigator.open(matematici.urls.prototypes.list, false, true)
     };
 
     prototype.setOnUpdateHandler = function (handler) {

@@ -44,9 +44,9 @@
         {
             input = $("<select />")
                 .appendTo(valuePanel)
-                .append($("<option />").attr("value", "").text("(default)").attr("selected", model.validCondition == 0))
-                .append($("<option />").attr("value", "").text("(true)").attr("selected", model.validCondition == 1))
-                .append($("<option />").attr("value", "").text("(false)").attr("selected", model.validCondition == 2));
+                .append($("<option />").attr("value", "0").text("(default)").attr("selected", model.validCondition == 0))
+                .append($("<option />").attr("value", "1").text("(true)").attr("selected", model.validCondition == 1))
+                .append($("<option />").attr("value", "2").text("(false)").attr("selected", model.validCondition == 2));
 
             for (var index in expressions)
                 input.append($("<option />").attr({ value: index, selected: model.validCondition > 2 && index == model.validExpressionCode }).text(index));
