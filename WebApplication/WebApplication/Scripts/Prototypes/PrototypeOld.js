@@ -97,85 +97,6 @@
             ]);
     };
 
-    prototype.startSimulation = function () {
-        var handler = function () {
-            prototype.setState(prototypes.Prototype.states.simulation);
-        };
-
-        if (matematici.canClose)
-            handler();
-        else
-            matematici.dialog.show("warning", "There are unsaved changes.", [
-                { text: "save", icon: "check", handler: function() { prototype.save(handler); } },
-                { text: "cancel", icon: "remove", cancelButton: true }
-            ]);
-    };
-
-    prototype.setState = function (state, callback, skipConfirmation) {
-        prototype.select();
-        var handler = function () {
-            model.State = state;
-            $.ajax({
-                url: matematici.urls.prototypes.setState,
-                type: "post",
-                contentType: "application/json",
-                data: JSON.stringify(model)
-            }).done(function (result) {
-                if (result.error) {
-                    matematici.dialog.error("Error", result.error);
-                } else {
-                    model = result;
-                    update();
-                    if (callback) callback.call();
-                }
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                console.log("Server error", jqXHR, textStatus, errorThrown);
-                alert("Server error: " + errorThrown);
-            });
-        };
-
-        if (skipConfirmation) {
-        	handler.call();
-        } else {
-        	matematici.dialog.show("warning", "Please confirm the change of state.", [
-				{
-					text: "confirm", icon: "check", handler: function () {
-						if (matematici.canClose)
-							handler.call();
-						else
-							prototype.save(handler);
-					}
-				},
-				{ text: "cancel", icon: "remove", cancelButton: true }
-        	]);
-        }
-    };
-
-    prototype.delete = function () {
-        matematici.dialog.show("warning", "This draft will be permanently deleted.", [
-            {
-                text: "confirm", icon: "check", handler: function () {
-                    $.ajax({
-                        url: matematici.urls.prototypes.delete,
-                        type: "post",
-                        data: { Prototype: model.Code, Version: model.Version }
-                    }).done(function (result) {
-                        if (result.error) {
-                            matematici.dialog.error("Error", result.error);
-                        } else {
-                            matematici.canClose = true;
-                            matematici.navigator.open(result.redirect, false, false);
-                        }
-                    }).fail(function (jqXHR, textStatus, errorThrown) {
-                        console.log("Server error", jqXHR, textStatus, errorThrown);
-                        alert("Server error: " + errorThrown);
-                    });
-                }
-            },
-            { text: "cancel", icon: "remove", cancelButton: true }
-        ]);
-    };
-
     prototype.loadSignatureBook = function (action) {
     	return $.ajax(matematici.urls.signatureBook.load, {
     		type: "POST",
@@ -205,10 +126,6 @@
     			sign(action, grid, signature, matematici.userPanel.getUsers()[0], rowVersion);
     		}
     	});
-    };
-
-    prototype.setOnUpdateHandler = function (handler) {
-    	updateHandler = handler;
     };
 
     prototype.showHistory = function () {

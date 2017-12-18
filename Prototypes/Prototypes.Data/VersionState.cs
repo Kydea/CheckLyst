@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CheckListManager.Prototypes.Logic.Models
+namespace CheckListManager.Prototypes.Data
 {
     public static class VersionState
     {

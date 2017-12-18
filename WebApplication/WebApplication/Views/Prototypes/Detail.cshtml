@@ -47,7 +47,8 @@
                 id: "@Model.Id",
                 version: "@Model.Version",
                 action: "@Model.Action",
-                detailUrl: "@Url.Action("Detail")"
+                detailUrl: "@Url.Action("Detail")",
+                listUrl: "@Url.Action("List")"
             }),
 
             actionBar = new matematici.ActionBar("div.ActionBar")
@@ -63,7 +64,7 @@
                     prototype.preview();
                 }, "Preview")
                 .add("Start simulation", function () {
-                    prototype.startSimulation();
+                    prototype.setState(prototypes.Prototype.states.simulation);
                 }, "StartSimulation")
                 .add("Cancel simulation", function () {
                     prototype.setState(prototypes.Prototype.states.draft);
@@ -87,6 +88,7 @@
                     prototype.showHistory();
                 }, "History");
 
+        //Loads departments and prototype types
         $.ajax({
             type: "post",
             url: "@BaseUrl/Infrastructure/PrototypeTypes/GetSyntheticData",
@@ -102,12 +104,14 @@
             propertyPanel.setPrototypeTypesList(result.data);
         });
 
-        callback.call();
+        matematici.save = prototype.save;
 
         matematici.events.onPageUnload = function (callback) {
             matematici.canClose = true;
             matematici.save = undefined;
             callback();
         };
+
+        callback.call();
     };
 </script>

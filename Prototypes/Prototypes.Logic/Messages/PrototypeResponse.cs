@@ -7,9 +7,17 @@ namespace CheckListManager.Prototypes.Logic.Messages
 	{
 		public long ID { get; set; }
 		public int Version { get; set; }
-		public long PrototypeType { get; set; }
         public Prototype CheckList { get; set; }
         public DateTimeOffset? ModifiedOn { get; set; }
         public string ModifiedBy { get; set; }
+
+        public string State { get; set; }
+
+        public DateTimeOffset? ValidFrom { get; set; }
+        public DateTimeOffset? ValidUntil { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public long? Department { get; set; }
+        public long? PrototypeType { get; set; }
     }
 }

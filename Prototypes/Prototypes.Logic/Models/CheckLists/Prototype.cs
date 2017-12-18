@@ -13,13 +13,6 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public List<String> ExpressionsInUse { get; private set; }
         public ICheckListGroup Header { get; set; }
 		public List<ICheckListPage> Pages { get; } = new List<ICheckListPage>();
-        public string State { get; set; }
-        public DateTimeOffset? ValidFrom { get; set; }
-        public DateTimeOffset? ValidUntil { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public long? Department { get; set; }
-        public long? PrototypeType { get; set; }
 
         public void AddItem(ICheckListItem item)
 		{

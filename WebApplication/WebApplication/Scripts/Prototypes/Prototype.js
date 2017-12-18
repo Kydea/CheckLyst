@@ -13,7 +13,6 @@
 		concurrencyInformation,
 		currentItem,
 		itemHandler,
-		updateHandler,
 		commands,
 		newItemsId = 1,
 
@@ -44,6 +43,54 @@
 				for (var groupIndex in page.groups || [])
 					analyzeElement(page.groups[groupIndex])
 			}
+		},
+
+		setupActionBar = function () {
+			buttonGroup = $("div.ActionBar a.ButtonGroup", element),
+				previewButton = $("a.Preview", buttonGroup).hide(),
+				startSimulationButton = $("a.StartSimulation", buttonGroup).hide(),
+				cancelSimulationButton = $("a.CancelSimulation", buttonGroup).hide(),
+				deleteButton = $("a.Delete", buttonGroup).hide(),
+				submitForApprovalButton = $("a.SubmitForApproval", buttonGroup).hide(),
+				approveButton = $("a.Approve", buttonGroup).hide(),
+				obsoleteButton = $("a.Obsolete", buttonGroup).hide(),
+				saveButton = $("a.Save", buttonGroup).hide(),
+				historyButton = $("a.History", buttonGroup).toggle(model.version > 0);
+
+			switch (model.state) {
+				case prototypes.Prototype.states.active:
+					if (model.canApprove)
+						obsoleteButton.show();
+					break;
+				case prototypes.Prototype.states.approved:
+					if (model.canApprove)
+						obsoleteButton.show();
+					break;
+				case prototypes.Prototype.states.draft:
+					if (model.version > 0) {
+						previewButton.show();
+						startSimulationButton.show();
+						deleteButton.show();
+					}
+					saveButton.show();
+					break;
+				case prototypes.Prototype.states.simulation:
+					previewButton.show();
+					submitForApprovalButton.show();
+					cancelSimulationButton.show();
+					if (model.canApprove && model.proposedState)
+						approveButton.show();
+					break;
+				case prototypes.Prototype.states.obsolete:
+					break;
+				default:
+					alert("Invalid prototype state: " + (model.state || "(null)"));
+					console.log(model);
+					break;
+			}
+
+			if (buttonGroup.children().size() == 0)
+				buttonGroup.hide();
 		},
 
 		update = function () {
@@ -92,7 +139,7 @@
 				$("#" + currentItemId, element).removeClass("Current").removeClass("Selected").click(); //Selected is for the tab when current item is a page
 			}
 
-			if (updateHandler) updateHandler(model);
+			setupActionBar();
 		},
 
 		select = function (event, item) {
@@ -212,6 +259,7 @@
 				select(null, prototype);
 			});
 
+			//opening
 			$.ajax({
 				url: element.data("action") + options.action,
 				type: "post",
@@ -230,6 +278,13 @@
 						modifiedBy: result.modifiedBy,
 						modifiedOn: result.modifiedOn
 					};
+					model.state = result.state;
+					model.validFrom = result.validFrom;
+					model.validUntil = result.validUntil;
+					model.name = result.name;
+					model.description = result.description;
+					model.department = result.department;
+					model.prototypeType = result.prototypeType;
 					update();
 				}
 			});
@@ -268,6 +323,7 @@
 	};
 
 	prototype.save = function (callback) {
+		select();
 		$.ajax({
 			url: element.data("action") + "Save",
 			type: "post",
@@ -277,20 +333,95 @@
 				version: prototypeKey.version,
 				modifiedOn: concurrencyInformation.modifiedOn,
 				modifiedby: concurrencyInformation.modifiedBy,
+				validFrom: model.validFrom,
+				validUntil: model.validUntil,
+				name: model.name,
+				description: model.description,
+				department: model.department,
+				prototypeType: model.prototypeType,
+
 				checkList: model
 			})
 		}).done(function (result) {
 			prototypeKey.id = result.id;
-			model.version = prototypeKey.version = result.version;
+			if (model.version < 0) {
+				matematici.navigator.setUrl(options.detailUrl + "/" + result.id + "/" + result.version);
+				model.version = prototypeKey.version = result.version;
+			}
 			matematici.canClose = true;
-			matematici.blip.ok();
-			matematici.navigator.setUrl(options.detailUrl + "/" + result.id + "/" + result.version);
+			if (callback)
+				callback.call();
+			else
+				matematici.blip.ok();
 		});
+	};
+
+	prototype.delete = function () {
+		select();
+		matematici.dialog.show("warning", "This draft will be permanently deleted.", [
+			{
+				text: "confirm", icon: "check", handler: function () {
+					var done = function () {
+						matematici.canClose = true;
+						matematici.navigator.open(options.listUrl, false, false);
+					};
+
+					if (prototypeKey.version < 0)
+						done()
+					else
+						$.ajax({
+							url: element.data("action") + "Delete",
+							type: "post",
+							data: {
+								id: prototypeKey.id,
+								version: prototypeKey.version
+							}
+						}).done(function (result) {
+							done();
+						});
+				}
+			},
+			{ text: "cancel", icon: "times", cancelButton: true }
+		]);
+	};
+
+	prototype.setState = function (state) {
+		select();
+		var handler = function () {
+			model.State = state;
+			$.ajax({
+				url: element.data("action") + "SetState",
+				type: "post",
+				data: {
+					id: prototypeKey.id,
+					version: prototypeKey.version,
+					state: state
+				}
+			}).done(function (result) {
+				model.state = result.state;
+				update();
+			});
+		};
+
+		matematici.dialog.show("warning", "Please confirm the change of state.", [
+			{
+				text: "confirm", icon: "check", handler: function () {
+					if (matematici.canClose)
+						handler();
+					else
+						prototype.save(handler);
+				}
+			},
+			{ text: "cancel", icon: "times", cancelButton: true }
+		]);
 	};
 
 	prototype.getNewItemId = getNewItemId;
 
-	prototype.update = update;
+	prototype.update = function () {
+		select();
+		update;
+	};
 
 	prototypes.prototype = prototype;
 
