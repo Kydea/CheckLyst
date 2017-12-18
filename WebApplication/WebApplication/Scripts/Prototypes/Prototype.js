@@ -385,7 +385,7 @@
 		]);
 	};
 
-	prototype.setState = function (state) {
+	prototype.setState = function (state, proposed) {
 		select();
 		var handler = function () {
 			model.State = state;
@@ -395,7 +395,8 @@
 				data: {
 					id: prototypeKey.id,
 					version: prototypeKey.version,
-					state: state
+					state: state,
+					stateProposed: proposed
 				}
 			}).done(function (result) {
 				model.state = result.state;

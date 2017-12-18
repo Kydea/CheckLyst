@@ -27,7 +27,6 @@
         <EntityTypeShape EntityType="RelationalDatabaseModel.Actions" Width="1.5" PointX="11.625" PointY="0.75" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.WorkFlowActions" Width="1.5" PointX="5.625" PointY="12.25" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.WorkFlowApplications" Width="1.5" PointX="7.875" PointY="15" />
-        <EntityTypeShape EntityType="RelationalDatabaseModel.WorkFlowApplicationsStep" Width="1.5" PointX="10.125" PointY="13.375" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.WorkFlows" Width="1.5" PointX="5.625" PointY="15.125" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.WorkFlowSteps" Width="1.5" PointX="7.875" PointY="20.125" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.WorkFlowStepTags" Width="1.5" PointX="10.125" PointY="20.75" />
@@ -39,11 +38,8 @@
         <AssociationConnector Association="RelationalDatabaseModel.WorkFlows_Company_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.PasswordHistory_User" />
         <AssociationConnector Association="RelationalDatabaseModel.PINHistory_User" />
-        <AssociationConnector Association="RelationalDatabaseModel.WorkFlowApplications_User" />
         <AssociationConnector Association="RelationalDatabaseModel.WorkFlowApplications_WorkFlowAction_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.WorkFlowApplications_WorkFlow_fkey" />
-        <AssociationConnector Association="RelationalDatabaseModel.WorkFlowApplicationsStep_WorkFlowApplications_fkey" />
-        <AssociationConnector Association="RelationalDatabaseModel.WorkFlowApplicationsStep_WorkFlowStep_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.WorkFlowSteps_WorkFlow_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.WorkFlowStepTags_WorkFlowStep_fkey" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.Configurations" Width="1.5" PointX="7.375" PointY="8.75" />
@@ -74,6 +70,10 @@
         <AssociationConnector Association="RelationalDatabaseModel.PrototypeTypes_ObsolescenceWorkFlow_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.UserFunctions_PrototypeType_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.UserFunctions_Department_fkey" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.WorkFlowApplicationSteps" Width="1.5" PointX="10.875" PointY="14.125" />
+        <AssociationConnector Association="RelationalDatabaseModel.WorkFlowApplicationSteps_User" />
+        <AssociationConnector Association="RelationalDatabaseModel.WorkFlowApplicationSteps_WorkFlowApplication_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.WorkFlowApplicationSteps_WorkFlowStep_fkey" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

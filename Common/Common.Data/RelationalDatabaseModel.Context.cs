@@ -42,7 +42,6 @@ namespace CheckListManager.Common.Data
         public virtual DbSet<Actions> Actions { get; set; }
         public virtual DbSet<WorkFlowActions> WorkFlowActions { get; set; }
         public virtual DbSet<WorkFlowApplications> WorkFlowApplications { get; set; }
-        public virtual DbSet<WorkFlowApplicationsStep> WorkFlowApplicationsStep { get; set; }
         public virtual DbSet<WorkFlows> WorkFlows { get; set; }
         public virtual DbSet<WorkFlowSteps> WorkFlowSteps { get; set; }
         public virtual DbSet<WorkFlowStepTags> WorkFlowStepTags { get; set; }
@@ -55,5 +54,6 @@ namespace CheckListManager.Common.Data
         public virtual DbSet<Instances> Instances { get; set; }
         public virtual DbSet<Prototypes> Prototypes { get; set; }
         public virtual DbSet<PrototypeTypes> PrototypeTypes { get; set; }
+        public virtual DbSet<WorkFlowApplicationSteps> WorkFlowApplicationSteps { get; set; }
     }
 }

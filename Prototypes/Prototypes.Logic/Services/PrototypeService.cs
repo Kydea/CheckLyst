@@ -190,7 +190,7 @@ namespace CheckListManager.Prototypes.Logic.Services
 
         public async Task<PrototypeResponse> SetStateAsync(DefaultIdentity defaultIdentity, PrototypeRequest request)
         {
-            var PrototypeVersion = await _prototypeRepository.SetStateAsync(defaultIdentity, request.ID, request.Version, request.State);
+            var PrototypeVersion = await _prototypeRepository.SetStateAsync(defaultIdentity, request.ID, request.Version, request.State, request.StateProposed);
             return new PrototypeResponse
             {
                 State = PrototypeVersion.VersionState

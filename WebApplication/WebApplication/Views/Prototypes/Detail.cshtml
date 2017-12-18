@@ -64,16 +64,16 @@
                     prototype.preview();
                 }, "Preview")
                 .add("Start simulation", function () {
-                    prototype.setState(prototypes.Prototype.states.simulation);
+                    prototype.setState(prototypes.Prototype.states.simulation, false);
                 }, "StartSimulation")
                 .add("Cancel simulation", function () {
-                    prototype.setState(prototypes.Prototype.states.draft);
+                    prototype.setState(prototypes.Prototype.states.draft, false);
                 }, "CancelSimulation")
                 .add("Delete", function () {
                     prototype.delete();
                 }, "Delete")
                 .add("Submit for approval", function () {
-                    prototype.setState(prototypes.Prototype.states.approval);
+                    prototype.setState(prototypes.Prototype.states.approved, true);
                 }, "SubmitForApproval")
                 .add("Approve", function () {
                     prototype.loadSignatureBook(matematici.signatureActions.toApprove);

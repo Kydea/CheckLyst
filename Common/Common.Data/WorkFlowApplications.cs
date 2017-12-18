@@ -17,7 +17,7 @@ namespace CheckListManager.Common.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public WorkFlowApplications()
         {
-            this.WorkFlowApplicationsStep = new HashSet<WorkFlowApplicationsStep>();
+            this.WorkFlowApplicationSteps = new HashSet<WorkFlowApplicationSteps>();
         }
     
         public long ID { get; set; }
@@ -36,6 +36,6 @@ namespace CheckListManager.Common.Data
         public virtual WorkFlowActions WorkFlowActions { get; set; }
         public virtual WorkFlows WorkFlows { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<WorkFlowApplicationsStep> WorkFlowApplicationsStep { get; set; }
+        public virtual ICollection<WorkFlowApplicationSteps> WorkFlowApplicationSteps { get; set; }
     }
 }
