@@ -1,28 +1,47 @@
-Ripristinare Client.js (valutare se può essere accorpato ai token, tenere conto della scadenza del token)
-Vautare se mettere i token in Redis invece che in Postgres
-Ripristinareo Clock.js, tenere il client "vivo credo non serva più"
-Possiamo pensare di legarci all'id del token e non del client, rimane scoperat la concorrenza browser su browser, ma potremmo risolvere con javascript (in che modo?)
-
-mostriamo e nascondiamo i menu se diretti o se esiste almeno un sottoitem visibile
-
-va gestito l'ordine e l'ordine desc, non è chiaro come fare
-
 Gestire rowversion per le tabelle, in modo da implementare la concorrenza
 
 Lasciare il json di configurazione con i parametri:
 	Develepment Mode
 	Scheduler
 
-Gestionamo il tag per ogni item
-In firme mettiamo Tag per issue e Tag per cancel (se cancelable)
-
-fare i test per check, trigger, sp, etc. sul db
-
-la procedura per i cambi di stato va riscritta in c#
-
 il trigger per mettere vecchie versioni a obsolete e creare il log va riscritto in c#
 
-prototio di trigger:
+2. element information per iterazioni (va dentro ultima cella come iteration commands)
+il copia valore nei sottogruppi non funziona
+
+Filtrare departments, prototype type, prototipi, instanze, datasouces, etc. in base ai permessi dell'utente
+
+controllare funzionamento logout e warning logout automatico
+
+il refresh del token adesso lo fanno tutti i client!
+
+mettere il controllo di salvataggio a chiusura detail page
+
+Controllo permessi come in datasources ovunque (attenzione a prototipi e instanze)
+
+Mettiamo la regular expression della password in companies
+
+Mettiamo offset countdown su firme diretto
+
+
+PROTOTYPES
+history
+cambio stato 
+preview
+Prototype.canApprove sparisce e viene read only la popup se non si hanno permessi
+	i permessi di firma possono anche essere controllati client side...
+gestire row version per firme
+gestire row version transazionalmente (where nell'aggironamento e conteggio risultati?)
+
+
+USERS 
+Lavorare sulla stringa di autenticazione tramite ldap
+Fare la conferma di chiusura delle pagine di dettaglio 
+Impedire la cancellazione di se stesso
+Se non selezioni nessuna funzione il server dà errore, mettere controllo
+
+
+PROTOTIO DI TRIGGER:
 
 create function "CheckLists"."TF_Versions_Validate"() returns trigger as 
 $body$

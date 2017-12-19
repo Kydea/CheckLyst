@@ -73,7 +73,6 @@
     <Compile Include="Models\CheckLists\Prototype.cs" />
     <Compile Include="Models\CheckLists\Signature.cs" />
     <Compile Include="Models\CheckLists\Text.cs" />
-    <Compile Include="Models\VersionState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\IPrototypeService.cs" />
     <Compile Include="Services\PrototypeService.cs" />

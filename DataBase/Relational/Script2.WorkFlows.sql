@@ -20,7 +20,7 @@ create table "WorkFlows"."WorkFlowSteps"
 	"ID" bigserial primary key,
 
 	"WorkFlow" bigint references "WorkFlows"."WorkFlows" on delete cascade,
-	"Step" int, 
+	"Step" int not null,
 
 	"CreatedBy" varchar (60),
 	"CreatedOn" timestamptz not null default current_timestamp,
@@ -58,7 +58,7 @@ create table "WorkFlows"."WorkFlowApplications"
 
 	"WorkFlow" bigint references "WorkFlows"."WorkFlows",
 
-	"Date" timestamptz default current_timestamp,
+	"Date" timestamptz,
 	"Approved" boolean,
 
 	"CreatedBy" varchar (60),
@@ -78,20 +78,30 @@ create unique index "Index_WorkFlowApplications_Instance_InProgress"
 	on "WorkFlows"."WorkFlowApplications"("Instance", "WorkFlowAction")
 	where not "Instance" is null and ("Approved" is null or "Approved");
 
-create table "WorkFlows"."WorkFlowApplicationsStep"
+create table "WorkFlows"."WorkFlowApplicationSteps"
 (
 	"ID" bigserial primary key,
 
-	"WorkFlowApplications" bigint references "WorkFlows"."WorkFlowApplications",
-	"WorkFlowStep" bigint references "WorkFlows"."WorkFlowSteps",
+	"WorkFlowApplication" bigint references "WorkFlows"."WorkFlowApplications",
+	"Step" int not null,
 
-	"Company" bigint not null,
-	"User" varchar (60) not null,
+	"Company" bigint,
+	"User" varchar (60),
 
-    constraint "WorkFlowApplications_User" foreign key ("Company", "User") references "Security"."Users",
+    constraint "WorkFlowApplicationSteps_User" foreign key ("Company", "User") references "Security"."Users",
 
 	"Comment" varchar (300),
 
-	"Date" timestamptz not null default current_timestamp,
-	"Approved" boolean not null
+	"Date" timestamptz,
+	"Approved" boolean
+);
+
+create  index "Index_WorkFlowApplicationSteps_Step" on "WorkFlows"."WorkFlowApplicationSteps"("WorkFlowApplication", "Step");
+
+create table "WorkFlows"."WorkFlowApplicationStepTags"
+(
+	"WorkFlowApplicationStep" bigint references "WorkFlows"."WorkFlowApplicationSteps" on delete cascade,
+	"Tag" varchar(50) not null,
+
+	constraint "PK_WorkFlowApplicationStepTags" primary key ("WorkFlowApplicationStep", "Tag")
 );

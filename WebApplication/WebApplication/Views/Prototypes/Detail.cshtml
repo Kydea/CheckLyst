@@ -1,6 +1,12 @@
 ﻿@model CheckListManager.WebApplication.Models.Prototype
 
-<div id="PrototypesDetailPage" class="Prototype CheckList" data-action="@BaseUrl/Prototypes/Prototype/">
+<div 
+    id="PrototypesDetailPage" 
+    class="Prototype CheckList" 
+    data-api="@BaseUrl"
+    data-action="@BaseUrl/Prototypes/Prototype/"
+    data-signature="@Url.Action("Signature", "WorkFlows")"
+>
     <h1>Prototype Editor</h1>
 
     <div class="ActionBar">
@@ -47,7 +53,8 @@
                 id: "@Model.Id",
                 version: "@Model.Version",
                 action: "@Model.Action",
-                detailUrl: "@Url.Action("Detail")"
+                detailUrl: "@Url.Action("Detail")",
+                listUrl: "@Url.Action("List")"
             }),
 
             actionBar = new matematici.ActionBar("div.ActionBar")
@@ -63,16 +70,16 @@
                     prototype.preview();
                 }, "Preview")
                 .add("Start simulation", function () {
-                    prototype.startSimulation();
+                    prototype.setState(prototypes.Prototype.states.simulation, false);
                 }, "StartSimulation")
                 .add("Cancel simulation", function () {
-                    prototype.setState(prototypes.Prototype.states.draft);
+                    prototype.setState(prototypes.Prototype.states.draft, false);
                 }, "CancelSimulation")
                 .add("Delete", function () {
                     prototype.delete();
                 }, "Delete")
                 .add("Submit for approval", function () {
-                    prototype.setState(prototypes.Prototype.states.approval);
+                    prototype.setState(prototypes.Prototype.states.approved, true);
                 }, "SubmitForApproval")
                 .add("Approve", function () {
                     prototype.loadSignatureBook(matematici.signatureActions.toApprove);
@@ -87,6 +94,7 @@
                     prototype.showHistory();
                 }, "History");
 
+        //Loads departments and prototype types
         $.ajax({
             type: "post",
             url: "@BaseUrl/Infrastructure/PrototypeTypes/GetSyntheticData",
@@ -102,12 +110,14 @@
             propertyPanel.setPrototypeTypesList(result.data);
         });
 
-        callback.call();
+        matematici.save = prototype.save;
 
         matematici.events.onPageUnload = function (callback) {
             matematici.canClose = true;
             matematici.save = undefined;
             callback();
         };
+
+        callback.call();
     };
 </script>

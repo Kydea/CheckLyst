@@ -41,7 +41,10 @@
 			buttons: [{
 				defaultButton: true,
 				icon: "check",
-				text: "apply"
+				text: "apply",
+				handler: function () {
+					$("input:not(.ReadOnly)", propertyValue).change();
+				}
 			}, {
 				cancelButton: true,
 				hidden: true,
@@ -71,7 +74,7 @@
 				"The version number."
 			));
 			properties.push(new prototypes.Property(
-				this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }).setHandler(function () { $("h2", item.getElement()).text(model.description); }),
+				this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }).setHandler(function () { $("h2 span", item.getElement()).text(model.description); }),
 				"Description", "A short description of the prototype."
 			));
 			properties.push(new prototypes.Property(
@@ -83,7 +86,7 @@
 				"Instance file name", "A formula to use for the file name of the pdf generated for confirmed instances of this prototype."
 			));
 			properties.push(new prototypes.Property(
-				this, new prototypes.SimpleValueProperty(model, "state", { readOnly: true, defaultValue: model.state }), "State",
+				this, new prototypes.SimpleValueProperty(model, "state", { readOnly: true, defaultValue: prototypes.Prototype.states.draft }), "State",
 				"The state of the prototype. This property is not editable. " +
 				"Use the action <strong>buttons</strong> to change the state of the version."
 			));

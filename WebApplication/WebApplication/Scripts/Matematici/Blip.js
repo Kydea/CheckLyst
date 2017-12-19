@@ -4,16 +4,19 @@ matematici.blip = function () {
 		element,
 
 		show = function (options) {
-			element = $("<div />").addClass("Blip " + (options.cssClass || "")).appendTo(matematici.elements.body);
+			element = $("<div />")
+				.addClass("Blip " + (options.cssClass || ""))
+				.appendTo(matematici.elements.body)
+				.on("click", close);
 			var container = $("<div />").addClass("Container").appendTo(element);
 			container.append($("<i />").addClass("fi flaticon-" + options.icon));
 			matematici.elements.body.addClass("Blip");
-			element.fadeIn(500);
-			setTimeout(close, 2000);
+			element.fadeIn(300);
+			//setTimeout(close, 2000);
 		},
 
 		close = function () {
-			element.fadeOut(500, "linear", function () {
+			element.fadeOut(300, "linear", function () {
 				element.remove();
 				matematici.elements.body.removeClass("Blip");
 				options = element = null;

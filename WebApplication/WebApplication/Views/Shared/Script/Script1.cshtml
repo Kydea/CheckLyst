@@ -49,7 +49,6 @@
     matematici.logo.init();
 
     matematici.clock = new matematici.Clock(@(ViewBag.AppMode ? "true" : "matematici.isLoginPage"));
-    //matematici.client = new matematici.Client();
 
     matematici.elements.window.on("beforeunload", function () {
         if (!matematici.canClose)
@@ -83,12 +82,29 @@
         switch (key)
         {
             case 13:
-                $('.DefaultButton').first().click();
-                e.preventDefault();
-                break;
             case 27:
-                $('.CancelButton').first().click();
+
+                var
+                    selector = key == 13 ? ".DefaultButton" : ".CancelButton",
+                    container = $("div.Blip"),
+                    button = $("div.Blip");
+
+                if (container.size() == 0) {
+                    container = $("div.Dialog");
+                    button = $(selector, container);
+                }
+
+                if (container.size() == 0) {
+                    container = $("div.Popup");
+                    button = $(selector, container);
+                }
+
+                if (container.size() == 0)
+                    button = $(selector);
+
+                button.first().click();
                 e.preventDefault();
+
                 break;
         }
     }).on("click", "label input:not([type=checkbox]):not([type=radio])", function (e) {

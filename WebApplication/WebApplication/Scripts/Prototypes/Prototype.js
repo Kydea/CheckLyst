@@ -13,7 +13,6 @@
 		concurrencyInformation,
 		currentItem,
 		itemHandler,
-		updateHandler,
 		commands,
 		newItemsId = 1,
 
@@ -46,6 +45,54 @@
 			}
 		},
 
+		setupActionBar = function () {
+			buttonGroup = $("div.ActionBar a.ButtonGroup", element),
+				previewButton = $("a.Preview", buttonGroup).hide(),
+				startSimulationButton = $("a.StartSimulation", buttonGroup).hide(),
+				cancelSimulationButton = $("a.CancelSimulation", buttonGroup).hide(),
+				deleteButton = $("a.Delete", buttonGroup).hide(),
+				submitForApprovalButton = $("a.SubmitForApproval", buttonGroup).hide(),
+				approveButton = $("a.Approve", buttonGroup).hide(),
+				obsoleteButton = $("a.Obsolete", buttonGroup).hide(),
+				saveButton = $("a.Save", buttonGroup).hide(),
+				historyButton = $("a.History", buttonGroup).toggle(model.version > 0);
+
+			switch (model.state) {
+				case prototypes.Prototype.states.active:
+					obsoleteButton.show();
+					break;
+				case prototypes.Prototype.states.approved:
+					obsoleteButton.show();
+					break;
+				case prototypes.Prototype.states.draft:
+					if (model.version > 0) {
+						previewButton.show();
+						startSimulationButton.show();
+						deleteButton.show();
+					}
+					saveButton.show();
+					break;
+				case prototypes.Prototype.states.simulation:
+					if (model.proposedState)
+						approveButton.show();
+					else {
+						previewButton.show();
+						submitForApprovalButton.show();
+						cancelSimulationButton.show();
+					}
+					break;
+				case prototypes.Prototype.states.obsolete:
+					break;
+				default:
+					alert("Invalid prototype state: " + (model.state || "(null)"));
+					console.log(model);
+					break;
+			}
+
+			if (buttonGroup.children().size() == 0)
+				buttonGroup.hide();
+		},
+
 		update = function () {
 			var
 				currentItemId = currentItem && (currentItem.isPage && currentItem.isPage() && $("a.Current", element).attr("id") || $("div.Current", element).attr("id")); //saves current item
@@ -66,7 +113,7 @@
 			for (var index in model.pages)
 				tab.add(model.pages[index].description, "Page" + model.pages[index].itemId);
 
-			if (model.state == prototypes.Prototype.states.draft) tab.add($("<span />").prepend($("<i >").addClass("Add fi flaticon-plus")));
+			if (model.state == prototypes.Prototype.states.draft) tab.add($("<span />").prepend($("<i >").addClass("Add fi flaticon-plus")), null, "Add");
 			page.setIndex(pageIndex = pageIndex >= model.pages.length ? model.pages.length - 1 : pageIndex ? pageIndex : 0);
 			tab.select(pageIndex);
 
@@ -92,7 +139,7 @@
 				$("#" + currentItemId, element).removeClass("Current").removeClass("Selected").click(); //Selected is for the tab when current item is a page
 			}
 
-			if (updateHandler) updateHandler(model);
+			setupActionBar();
 		},
 
 		select = function (event, item) {
@@ -185,6 +232,108 @@
 			model.pages.push({ typeName: "Page", description: "(page)", itemId: getNewItemId() })
 		},
 
+		sign = function (action, grid, rows, row, rowVersion) {
+			if (row.approved) {
+				matematici.dialog.error("error", "This signature has already been issued");
+				return true;
+			}
+
+			var
+				allowed = false,
+				tags = row.tags.split(", ");
+			for (var role in tags) 
+				if (
+					matematici.tokenManager.checkRole("Prototypes#Approve#" + model.department + "##" + tags[role])
+					|| matematici.tokenManager.checkRole("Prototypes#Approve#" + model.department + "#" + model.prototypeType + "#" + tags[role])
+				) {
+					allowed = true;
+					break;
+				}
+
+			if (!allowed) {
+				matematici.dialog.error("error", "Permission denied");
+				return true;
+			}
+
+			allowed = true;
+			for (var rowIndex in rows) {
+				if (rows[rowIndex].step < row.step) {
+					allowed = false;
+					break;
+				}
+
+				if (rows[rowIndex].id == row.id)
+					break;
+			}
+			if (!allowed) {
+				matematici.dialog.error("error", "The previous step is not completed");
+				return true;
+			}
+
+			allowed = true;
+			for (var rowIndex in rows) {
+				if (rows[rowIndex].step == row.step && rows[rowIndex].user == matematici.tokenManager.getUserCode()) {
+					allowed = false;
+					break;
+				}
+			}
+			if (!allowed) {
+				matematici.dialog.error("error", "You have already signed for this step");
+				return true;
+			}
+
+			var
+				options = {
+					title: action,
+					width: "500px",
+					ajax: {
+						url: element.data("signature"),
+						type: "POST"
+					},
+					buttons: [
+						{ id: "Confirm", icon: "check", text: "Confirm" },
+						{ id: "Reject", icon: "check", text: "Reject" }
+					],
+					data: {
+						prototype: prototypeKey.id,
+						version: prototypeKey.version,
+						applicationStep: row.id,
+						rowVersion: null, //TODO
+
+						completeHandler: function (data) {
+							var signature = this;
+							$.ajax({
+								url: matematici.urls.prototypes.sign,
+								type: "post",
+								data: data
+							}).done(function (result) {
+								matematici.popup.close();
+								grid.close();
+
+								var changed = false;
+								if (result.state) {
+									model.state = result.state;
+									changed = true;
+								}
+								if (result.validUntil !== undefined) {
+									model.validUntil = result.validUntil;
+									changed = true;
+								}
+								if (result.rowVersion !== undefined) {
+									model.rowVersion = result.rowVersion;
+									changed = true;
+								}
+								if (changed) 
+									update();
+							});
+						}
+					}
+				};
+
+			matematici.popup.show(options);
+			return false;
+		},
+
 		setup = function () {
 			page = new prototypes.Group($("div.Page", element), "Page", prototype);
 
@@ -212,6 +361,7 @@
 				select(null, prototype);
 			});
 
+			//opening
 			$.ajax({
 				url: element.data("action") + options.action,
 				type: "post",
@@ -230,6 +380,15 @@
 						modifiedBy: result.modifiedBy,
 						modifiedOn: result.modifiedOn
 					};
+					model.state = result.state;
+					model.proposedState = result.proposedState;
+					model.proposedDate = result.proposedDate;
+					model.validFrom = result.validFrom;
+					model.validUntil = result.validUntil;
+					model.name = result.name;
+					model.description = result.description;
+					model.department = result.department;
+					model.prototypeType = result.prototypeType;
 					update();
 				}
 			});
@@ -268,6 +427,7 @@
 	};
 
 	prototype.save = function (callback) {
+		select();
 		$.ajax({
 			url: element.data("action") + "Save",
 			type: "post",
@@ -277,20 +437,123 @@
 				version: prototypeKey.version,
 				modifiedOn: concurrencyInformation.modifiedOn,
 				modifiedby: concurrencyInformation.modifiedBy,
+				validFrom: model.validFrom,
+				validUntil: model.validUntil,
+				name: model.name,
+				description: model.description,
+				department: model.department,
+				prototypeType: model.prototypeType,
+
 				checkList: model
 			})
 		}).done(function (result) {
 			prototypeKey.id = result.id;
-			model.version = prototypeKey.version = result.version;
+			if (model.version < 0) {
+				matematici.navigator.setUrl(options.detailUrl + "/" + result.id + "/" + result.version);
+				model.version = prototypeKey.version = result.version;
+			}
 			matematici.canClose = true;
-			matematici.blip.ok();
-			matematici.navigator.setUrl(options.detailUrl + "/" + result.id + "/" + result.version);
+			if (callback)
+				callback.call();
+			else
+				matematici.blip.ok();
+		});
+	};
+
+	prototype.delete = function () {
+		select();
+		matematici.dialog.show("warning", "This draft will be permanently deleted.", [
+			{
+				text: "confirm", icon: "check", handler: function () {
+					var done = function () {
+						matematici.canClose = true;
+						matematici.navigator.open(options.listUrl, false, false);
+					};
+
+					if (prototypeKey.version < 0)
+						done()
+					else
+						$.ajax({
+							url: element.data("action") + "Delete",
+							type: "post",
+							data: {
+								id: prototypeKey.id,
+								version: prototypeKey.version
+							}
+						}).done(function (result) {
+							done();
+						});
+				}
+			},
+			{ text: "cancel", icon: "times", cancelButton: true }
+		]);
+	};
+
+	prototype.setState = function (state, proposed) {
+		select();
+		var handler = function () {
+			model.State = state;
+			$.ajax({
+				url: element.data("action") + "SetState",
+				type: "post",
+				data: {
+					id: prototypeKey.id,
+					version: prototypeKey.version,
+					state: state,
+					stateProposed: proposed
+				}
+			}).done(function (result) {
+				model.state = result.state;
+				model.proposedState = result.proposedState;
+				model.proposedDate = result.proposedDate;
+				update();
+			});
+		};
+
+		matematici.dialog.show("warning", "Please confirm the change of state.", [
+			{
+				text: "confirm", icon: "check", handler: function () {
+					if (matematici.canClose)
+						handler();
+					else
+						prototype.save(handler);
+				}
+			},
+			{ text: "cancel", icon: "times", cancelButton: true }
+		]);
+	};
+
+	prototype.loadSignatureBook = function (action) {
+		return $.ajax({
+			url: element.data("api") + "/WorkFlows/Applications/GetSteps",
+			type: "POST",
+			data: {
+				prototype: prototypeKey.id,
+				version: prototypeKey.version,
+			}
+		}).done(function (result) {
+			var columns = [
+				{ name: "step", label: "Step", align: "center" },
+				{ name: "tags", label: "Level" },
+				{ name: "date", label: "Date" },
+				{ name: "user", label: "User" },
+				{ name: "approved", label: "Approved", align: "center" },
+			];
+			new matematici.CheckListGrid(result.steps,
+				function (grid, row) {
+					return sign(result.action, grid, result.steps, row);
+				},
+				null,
+				columns);
 		});
 	};
 
 	prototype.getNewItemId = getNewItemId;
 
-	prototype.update = update;
+	prototype.update = function () {
+		select();
+		update;
+	};
 
 	prototypes.prototype = prototype;
 
