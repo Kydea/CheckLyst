@@ -97,5 +97,33 @@ namespace CheckListManager.Prototypes.Api.Controllers
 
         }
 
+        [HttpPost]
+        [Route("Delete")]
+        public async Task<IHttpActionResult> Delete(PrototypeRequest request)
+        {
+            try
+            {
+                await _prototypeService.DeleteAsync(Identity, request);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return Error(e);
+            }
+        }
+
+        [HttpPost]
+        [Route("SetState")]
+        public async Task<IHttpActionResult> SetState(PrototypeRequest request)
+        {
+            try
+            {
+                return Ok(await _prototypeService.SetStateAsync(Identity, request));
+            }
+            catch (Exception e)
+            {
+                return Error(e);
+            }
+        }
     }
 }

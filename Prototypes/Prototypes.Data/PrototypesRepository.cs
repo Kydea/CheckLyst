@@ -7,13 +7,17 @@ using System.Data.Entity;
 using System.Linq.Expressions;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Core.Web.Security;
+using CheckListManager.Common.Logic.Services;
 
 namespace CheckListManager.Prototypes.Data
 {
     public class PrototypesRepository : Repository, IPrototypesRepository
     {
-        public PrototypesRepository(RelationalDatabaseEntities entities) : base(entities)
+        IWorkFlowsService _workFlowsService;
+
+        public PrototypesRepository(RelationalDatabaseEntities entities, IWorkFlowsService workFlowsService) : base(entities)
 		{
+            _workFlowsService = workFlowsService;
         }
 
         public async Task<PagingResponse<List<TResult>>> GetPrototypesAsync<TResult, TKey>(
@@ -74,6 +78,62 @@ namespace CheckListManager.Prototypes.Data
         public async Task SaveAsync()
         {
             await SaveChangesAsync();
+        }
+
+        public async Task DeletePrototypeVersionAsync(DefaultIdentity defaultIdentity, long prototype, int version)
+        {
+            var PrototypeVersion = await Entities.PrototypeVersions.SingleOrDefaultAsync(x => x.Prototypes.Company == defaultIdentity.CompanyId && x.Prototype == prototype && x.Version == version);
+            if (PrototypeVersion == null)
+                throw new Exception($"Prototype version {prototype}.{version} not found");
+            if (PrototypeVersion.VersionState != VersionState.Draft)
+                throw new Exception("The prototype version is not in state draft");
+
+            var Prototype = PrototypeVersion.Prototypes;
+            Entities.PrototypeVersions.Remove(PrototypeVersion);
+            if (!Prototype.PrototypeVersions.Any()) 
+                Entities.Prototypes.Remove(Prototype);
+            await SaveChangesAsync();
+        }
+
+        public async Task<PrototypeVersions> SetStateAsync(DefaultIdentity defaultIdentity, long prototype, int version, string state, bool proposed)
+        {
+            var PrototypeVersion = await Entities.PrototypeVersions.SingleOrDefaultAsync(x => x.Prototypes.Company == defaultIdentity.CompanyId && x.Prototype == prototype && x.Version == version);
+            if (PrototypeVersion == null)
+                throw new Exception($"Prototype version {prototype}.{version} not found");
+
+            //controlli
+
+            if (PrototypeVersion.VersionState == VersionState.Draft && state == VersionState.InSumulation && !proposed)
+                PrototypeVersion.VersionState = state;
+            else if (PrototypeVersion.VersionState == VersionState.InSumulation && state == VersionState.Draft && !proposed)
+                PrototypeVersion.VersionState = state;
+            else if (PrototypeVersion.VersionState == VersionState.InSumulation && state == VersionState.Approved && proposed)
+            {
+                var WorkFlow = PrototypeVersion.Prototypes.PrototypeTypes.ApprovationWorkFlow;
+                if (WorkFlow == null)
+                    throw new InvalidOperationException($"Approvation workflow not found for prototype type {PrototypeVersion.Prototypes.PrototypeTypes.Name} ({PrototypeVersion.Prototypes.PrototypeType}).");
+
+                await _workFlowsService.ApplyWorkFlowAsync(defaultIdentity, WorkFlow.Value, null, PrototypeVersion.Prototype, PrototypeVersion.Version, null, "Prototype – state to Approved/Active");
+
+                PrototypeVersion.ProposedState = state;
+                PrototypeVersion.ProposedDate = DateTimeOffset.Now;
+            }
+            else if ((PrototypeVersion.VersionState == VersionState.Approved || PrototypeVersion.VersionState == VersionState.Active) && state == VersionState.Obsolete && proposed)
+            {
+                var WorkFlow = PrototypeVersion.Prototypes.PrototypeTypes.ObsolescenceWorkFlow;
+                if (WorkFlow == null)
+                    throw new InvalidOperationException($"Obsolescence workflow not found for prototype type {PrototypeVersion.Prototypes.PrototypeTypes.Name} ({PrototypeVersion.Prototypes.PrototypeType}).");
+
+                await _workFlowsService.ApplyWorkFlowAsync(defaultIdentity, WorkFlow.Value, null, PrototypeVersion.Prototype, PrototypeVersion.Version, null, "Prototype – state to Obsolete");
+
+                PrototypeVersion.ProposedState = state;
+                PrototypeVersion.ProposedDate = DateTimeOffset.Now;
+            }
+            else
+                throw new InvalidOperationException($"Cannot {(proposed ? "propose" : "change")} state from {PrototypeVersion.VersionState} to {state}");
+
+            await SaveChangesAsync();
+            return PrototypeVersion;
         }
     }
 }

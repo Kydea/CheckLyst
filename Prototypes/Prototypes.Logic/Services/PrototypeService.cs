@@ -36,7 +36,14 @@ namespace CheckListManager.Prototypes.Logic.Services
                 Version = PrototypeVersion.Version,
                 CheckList = Prototype,
                 ModifiedOn = PrototypeVersion.ModifiedOn,
-                ModifiedBy = PrototypeVersion.ModifiedBy
+                ModifiedBy = PrototypeVersion.ModifiedBy,
+                Name = PrototypeVersion.Prototypes.Name,
+                Description = PrototypeVersion.Description,
+                ValidFrom = PrototypeVersion.ValidFrom,
+                ValidUntil = PrototypeVersion.ValidUntil,
+                State = PrototypeVersion.VersionState,
+                Department = PrototypeVersion.Prototypes.Department,
+                PrototypeType = PrototypeVersion.Prototypes.PrototypeType
             });
         }
 
@@ -45,20 +52,14 @@ namespace CheckListManager.Prototypes.Logic.Services
             var PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(defaultIdentity, request.ID, request.Version);
 
             var Prototype = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converter);
-            Prototype.ValidFrom = null;
-            Prototype.ValidUntil = null;
-            Prototype.Department = null;
-            Prototype.PrototypeType = null;
-            Prototype.Name = null;
-            Prototype.Description = null;
-            Prototype.State = VersionState.Draft;
             Prototype.Setup();
 
             return await Task.FromResult(new PrototypeResponse
             {
                 ID = -1,
                 Version = -1,
-                CheckList = Prototype
+                CheckList = Prototype,
+                State = VersionState.Draft
             });
         }
 
@@ -66,8 +67,7 @@ namespace CheckListManager.Prototypes.Logic.Services
         {
             var Prototype = new Prototype
             {
-                Header = new Group { Description = "(header)" },
-                State = VersionState.Draft,
+                Header = new Group { Description = "(header)" }
             };
 
             Page Page;
@@ -79,7 +79,8 @@ namespace CheckListManager.Prototypes.Logic.Services
             {
                 ID = -1,
                 Version = -1,
-                CheckList = Prototype
+                CheckList = Prototype,
+                State = VersionState.Draft
             });
         }
 
@@ -88,16 +89,14 @@ namespace CheckListManager.Prototypes.Logic.Services
             var PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(defaultIdentity, request.ID, request.Version);
 
             var Prototype = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converter);
-            Prototype.ValidFrom = null;
-            Prototype.ValidUntil = null;
-            Prototype.State = VersionState.Draft;
             Prototype.Setup();
 
             return await Task.FromResult(new PrototypeResponse
             {
                 ID = PrototypeVersion.Prototype,
                 Version = -1,
-                CheckList = Prototype
+                CheckList = Prototype,
+                State = VersionState.Draft
             });
         }
 
@@ -118,9 +117,9 @@ namespace CheckListManager.Prototypes.Logic.Services
             if (UnvalidExpression.Key != null)
                 throw new Exception($"The expression '{UnvalidExpression.Key}' contains the error: {UnvalidExpression.Value.Error}");
 
-            if (String.IsNullOrWhiteSpace(request.CheckList.Name)) throw new Exception("Specify a name");
-            if (!request.CheckList.Department.HasValue) throw new Exception("Specify a department");
-            if (!request.CheckList.PrototypeType.HasValue) throw new Exception("Specify a prototype type");
+            if (String.IsNullOrWhiteSpace(request.Name)) throw new Exception("Specify a name");
+            if (!request.Department.HasValue) throw new Exception("Specify a department");
+            if (!request.PrototypeType.HasValue) throw new Exception("Specify a prototype type");
 
             bool
                 NewPrototype = request.ID < 0,
@@ -134,11 +133,11 @@ namespace CheckListManager.Prototypes.Logic.Services
             {
                 Prototype = new Common.Data.Prototypes
                 {
-                    Name = request.CheckList.Name,
+                    Name = request.Name,
                     Company = defaultIdentity.CompanyId,
-                    Department = request.CheckList.Department.Value,
-                    PrototypeType = request.CheckList.PrototypeType.Value,
-                    Description = request.CheckList.Description,
+                    Department = request.Department.Value,
+                    PrototypeType = request.PrototypeType.Value,
+                    Description = request.Description,
                     CreatedOn = Now,
                     CreatedBy = defaultIdentity.Code
                 };
@@ -150,10 +149,8 @@ namespace CheckListManager.Prototypes.Logic.Services
             if (NewVersion)
                 Prototype.PrototypeVersions.Add(PrototypeVersion = new PrototypeVersions
                 {
-                    Description = request.CheckList.Description,
                     VersionState = VersionState.Draft,
                     Version = Prototype.PrototypeVersions.Count == 0 ? 1 : Prototype.PrototypeVersions.Max(v => v.Version) + 1,
-                    Data = JsonConvert.SerializeObject(request.CheckList, _converter),
                     CreatedOn = Now,
                     CreatedBy = defaultIdentity.Code
                 });
@@ -163,18 +160,19 @@ namespace CheckListManager.Prototypes.Logic.Services
                 if (PrototypeVersion.VersionState != VersionState.Draft) throw new Exception($"The version {request.ID}.{request.Version} is not editable");
                 if (PrototypeVersion.ModifiedOn != request.ModifiedOn || PrototypeVersion.ModifiedBy != request.ModifiedBy) throw new Exception($"Concurrency error: the prototype has already been modified by the user {request.ModifiedOn}");
 
-                Prototype.Name = request.CheckList.Name;
-                Prototype.Description = request.CheckList.Description;
+                Prototype.Name = request.Name;
+                Prototype.Description = request.Description;
                 Prototype.ModifiedOn = Now;
                 Prototype.ModifiedBy = defaultIdentity.Code;
-                PrototypeVersion.Description = request.CheckList.Description;
-                PrototypeVersion.Data = JsonConvert.SerializeObject(request.CheckList, _converter);
-                PrototypeVersion.ValidFrom = request.CheckList.ValidFrom;
-                PrototypeVersion.ValidUntil = request.CheckList.ValidUntil;
 
                 PrototypeVersion.ModifiedOn = Now;
                 PrototypeVersion.ModifiedBy = defaultIdentity.Code;
             }
+
+            PrototypeVersion.Description = request.Description;
+            PrototypeVersion.Data = JsonConvert.SerializeObject(request.CheckList, _converter);
+            PrototypeVersion.ValidFrom = request.ValidFrom;
+            PrototypeVersion.ValidUntil = request.ValidUntil;
 
             await _prototypeRepository.SaveAsync();
 
@@ -182,6 +180,20 @@ namespace CheckListManager.Prototypes.Logic.Services
             {
                 ID = PrototypeVersion.Prototype,
                 Version = PrototypeVersion.Version
+            };
+        }
+
+        public async Task DeleteAsync(DefaultIdentity defaultIdentity, PrototypeRequest request)
+        {
+            await _prototypeRepository.DeletePrototypeVersionAsync(defaultIdentity, request.ID, request.Version);
+        }
+
+        public async Task<PrototypeResponse> SetStateAsync(DefaultIdentity defaultIdentity, PrototypeRequest request)
+        {
+            var PrototypeVersion = await _prototypeRepository.SetStateAsync(defaultIdentity, request.ID, request.Version, request.State, request.StateProposed);
+            return new PrototypeResponse
+            {
+                State = PrototypeVersion.VersionState
             };
         }
     }
