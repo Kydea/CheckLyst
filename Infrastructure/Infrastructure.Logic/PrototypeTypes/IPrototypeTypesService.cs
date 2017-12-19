@@ -16,8 +16,8 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
         Task<PrototypeTypesResponse> BindAsync(long Company, PrototypeTypesRequest form);
         Task<PagingResponse<List<PrototypeTypesRow>>> GetDataAsync(long company, PagingRequest<PrototypeTypesRequest> form);
         Task<PagingResponse<List<PrototypeTypesSyntheticRow>>> GetSyntheticDataAsync(long company, PagingRequest<PrototypeTypesRequest> form);
-        Task<PrototypeTypesResponse> Add(DefaultIdentity identity, PrototypeTypesRequest record);
-        Task<PrototypeTypesResponse> Edit(DefaultIdentity identity, PrototypeTypesRequest record);
-        Task<PrototypeTypesResponse> Delete(DefaultIdentity identity, long id);
+        Task<PrototypeTypesResponse> Add(IDefaultIdentity identity, PrototypeTypesRequest record);
+        Task<PrototypeTypesResponse> Edit(IDefaultIdentity identity, PrototypeTypesRequest record);
+        Task<PrototypeTypesResponse> Delete(IDefaultIdentity identity, long id);
     }
 }

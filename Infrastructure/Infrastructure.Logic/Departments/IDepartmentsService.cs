@@ -14,8 +14,8 @@ namespace CheckListManager.Infrastructure.Logic.Departments
     {
         Task<PagingResponse<List<DepartmentsRow>>> GetDataAsync(long Company, PagingRequest<DepartmentsRequest> form);
 
-        Task<DepartmentsResponse> AddOrEdit(DefaultIdentity Identity, DepartmentsRow record, bool IsNew);
+        Task<DepartmentsResponse> AddOrEdit(IDefaultIdentity Identity, DepartmentsRow record, bool IsNew);
 
-        Task<DepartmentsResponse> Delete(DefaultIdentity Identity, long ID);
+        Task<DepartmentsResponse> Delete(IDefaultIdentity Identity, long ID);
     }
 }

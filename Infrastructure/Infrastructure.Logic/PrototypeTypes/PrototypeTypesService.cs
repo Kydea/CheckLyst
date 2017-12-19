@@ -112,7 +112,7 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
             return response;
         }
 
-        public async Task<PrototypeTypesResponse> Add(DefaultIdentity identity, PrototypeTypesRequest record)
+        public async Task<PrototypeTypesResponse> Add(IDefaultIdentity identity, PrototypeTypesRequest record)
         {
             var response = Validate(record);
             if (response.Valid)
@@ -139,7 +139,7 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
             return response;
         }
 
-        public async Task<PrototypeTypesResponse> Edit(DefaultIdentity identity, PrototypeTypesRequest record)
+        public async Task<PrototypeTypesResponse> Edit(IDefaultIdentity identity, PrototypeTypesRequest record)
         {
             var response = Validate(record);
             if (response.Valid)
@@ -167,7 +167,7 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
             return response;
         }
 
-        public async Task<PrototypeTypesResponse> Delete(DefaultIdentity identity, long id)
+        public async Task<PrototypeTypesResponse> Delete(IDefaultIdentity identity, long id)
         {
             var response = new PrototypeTypesResponse();
             try
