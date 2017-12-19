@@ -178,6 +178,9 @@
     <Compile Include="WorkFlowApplicationSteps.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="WorkFlowApplicationStepTags.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="WorkFlows.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>

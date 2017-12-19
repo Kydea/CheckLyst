@@ -8,12 +8,12 @@ using System.Web.Http;
 namespace CheckListManager.WorkFlows.Api.Controllers
 {
     [RoutePrefix("List")]
-    public class WorkFlowsController : BaseApiController
+    public class ListController : BaseApiController
     {
         private readonly IListService _listService;
         private readonly IDetailService _detailService;
 
-        public WorkFlowsController(IListService listService, IDetailService detailService)
+        public ListController(IListService listService, IDetailService detailService)
         {
             _listService = listService;
             _detailService = detailService;

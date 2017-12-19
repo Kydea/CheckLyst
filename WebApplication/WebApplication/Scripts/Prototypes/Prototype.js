@@ -59,12 +59,10 @@
 
 			switch (model.state) {
 				case prototypes.Prototype.states.active:
-					if (model.canApprove)
-						obsoleteButton.show();
+					obsoleteButton.show();
 					break;
 				case prototypes.Prototype.states.approved:
-					if (model.canApprove)
-						obsoleteButton.show();
+					obsoleteButton.show();
 					break;
 				case prototypes.Prototype.states.draft:
 					if (model.version > 0) {
@@ -75,11 +73,13 @@
 					saveButton.show();
 					break;
 				case prototypes.Prototype.states.simulation:
-					previewButton.show();
-					submitForApprovalButton.show();
-					cancelSimulationButton.show();
-					if (model.canApprove && model.proposedState)
+					if (model.proposedState)
 						approveButton.show();
+					else {
+						previewButton.show();
+						submitForApprovalButton.show();
+						cancelSimulationButton.show();
+					}
 					break;
 				case prototypes.Prototype.states.obsolete:
 					break;
@@ -113,7 +113,7 @@
 			for (var index in model.pages)
 				tab.add(model.pages[index].description, "Page" + model.pages[index].itemId);
 
-			if (model.state == prototypes.Prototype.states.draft) tab.add($("<span />").prepend($("<i >").addClass("Add fi flaticon-plus")));
+			if (model.state == prototypes.Prototype.states.draft) tab.add($("<span />").prepend($("<i >").addClass("Add fi flaticon-plus")), null, "Add");
 			page.setIndex(pageIndex = pageIndex >= model.pages.length ? model.pages.length - 1 : pageIndex ? pageIndex : 0);
 			tab.select(pageIndex);
 
@@ -232,6 +232,108 @@
 			model.pages.push({ typeName: "Page", description: "(page)", itemId: getNewItemId() })
 		},
 
+		sign = function (action, grid, rows, row, rowVersion) {
+			if (row.approved) {
+				matematici.dialog.error("error", "This signature has already been issued");
+				return true;
+			}
+
+			var
+				allowed = false,
+				tags = row.tags.split(", ");
+			for (var role in tags) 
+				if (
+					matematici.tokenManager.checkRole("Prototypes#Approve#" + model.department + "##" + tags[role])
+					|| matematici.tokenManager.checkRole("Prototypes#Approve#" + model.department + "#" + model.prototypeType + "#" + tags[role])
+				) {
+					allowed = true;
+					break;
+				}
+
+			if (!allowed) {
+				matematici.dialog.error("error", "Permission denied");
+				return true;
+			}
+
+			allowed = true;
+			for (var rowIndex in rows) {
+				if (rows[rowIndex].step < row.step) {
+					allowed = false;
+					break;
+				}
+
+				if (rows[rowIndex].id == row.id)
+					break;
+			}
+			if (!allowed) {
+				matematici.dialog.error("error", "The previous step is not completed");
+				return true;
+			}
+
+			allowed = true;
+			for (var rowIndex in rows) {
+				if (rows[rowIndex].step == row.step && rows[rowIndex].user == matematici.tokenManager.getUserCode()) {
+					allowed = false;
+					break;
+				}
+			}
+			if (!allowed) {
+				matematici.dialog.error("error", "You have already signed for this step");
+				return true;
+			}
+
+			var
+				options = {
+					title: action,
+					width: "500px",
+					ajax: {
+						url: element.data("signature"),
+						type: "POST"
+					},
+					buttons: [
+						{ id: "Confirm", icon: "check", text: "Confirm" },
+						{ id: "Reject", icon: "check", text: "Reject" }
+					],
+					data: {
+						prototype: prototypeKey.id,
+						version: prototypeKey.version,
+						applicationStep: row.id,
+						rowVersion: null, //TODO
+
+						completeHandler: function (data) {
+							var signature = this;
+							$.ajax({
+								url: matematici.urls.prototypes.sign,
+								type: "post",
+								data: data
+							}).done(function (result) {
+								matematici.popup.close();
+								grid.close();
+
+								var changed = false;
+								if (result.state) {
+									model.state = result.state;
+									changed = true;
+								}
+								if (result.validUntil !== undefined) {
+									model.validUntil = result.validUntil;
+									changed = true;
+								}
+								if (result.rowVersion !== undefined) {
+									model.rowVersion = result.rowVersion;
+									changed = true;
+								}
+								if (changed) 
+									update();
+							});
+						}
+					}
+				};
+
+			matematici.popup.show(options);
+			return false;
+		},
+
 		setup = function () {
 			page = new prototypes.Group($("div.Page", element), "Page", prototype);
 
@@ -279,6 +381,8 @@
 						modifiedOn: result.modifiedOn
 					};
 					model.state = result.state;
+					model.proposedState = result.proposedState;
+					model.proposedDate = result.proposedDate;
 					model.validFrom = result.validFrom;
 					model.validUntil = result.validUntil;
 					model.name = result.name;
@@ -400,6 +504,8 @@
 				}
 			}).done(function (result) {
 				model.state = result.state;
+				model.proposedState = result.proposedState;
+				model.proposedDate = result.proposedDate;
 				update();
 			});
 		};
@@ -415,6 +521,31 @@
 			},
 			{ text: "cancel", icon: "times", cancelButton: true }
 		]);
+	};
+
+	prototype.loadSignatureBook = function (action) {
+		return $.ajax({
+			url: element.data("api") + "/WorkFlows/Applications/GetSteps",
+			type: "POST",
+			data: {
+				prototype: prototypeKey.id,
+				version: prototypeKey.version,
+			}
+		}).done(function (result) {
+			var columns = [
+				{ name: "step", label: "Step", align: "center" },
+				{ name: "tags", label: "Level" },
+				{ name: "date", label: "Date" },
+				{ name: "user", label: "User" },
+				{ name: "approved", label: "Approved", align: "center" },
+			];
+			new matematici.CheckListGrid(result.steps,
+				function (grid, row) {
+					return sign(result.action, grid, result.steps, row);
+				},
+				null,
+				columns);
+		});
 	};
 
 	prototype.getNewItemId = getNewItemId;

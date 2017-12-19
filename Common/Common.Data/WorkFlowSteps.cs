@@ -18,12 +18,11 @@ namespace CheckListManager.Common.Data
         public WorkFlowSteps()
         {
             this.WorkFlowStepTags = new HashSet<WorkFlowStepTags>();
-            this.WorkFlowApplicationSteps = new HashSet<WorkFlowApplicationSteps>();
         }
     
         public long ID { get; set; }
         public Nullable<long> WorkFlow { get; set; }
-        public Nullable<int> Step { get; set; }
+        public int Step { get; set; }
         public string CreatedBy { get; set; }
         public System.DateTimeOffset CreatedOn { get; set; }
         public string ModifiedBy { get; set; }
@@ -32,7 +31,5 @@ namespace CheckListManager.Common.Data
         public virtual WorkFlows WorkFlows { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<WorkFlowStepTags> WorkFlowStepTags { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<WorkFlowApplicationSteps> WorkFlowApplicationSteps { get; set; }
     }
 }

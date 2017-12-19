@@ -92,8 +92,8 @@
         select(index);
     };
 
-    this.add = function (label, id) {
-		$(".TabLabels", element).append($("<a />").attr({ href: "#", id: id }).append(label));
+	this.add = function (label, id, cssClass) {
+		$(".TabLabels", element).append($("<a />").attr({ href: "#", id: id }).addClass(cssClass).append(label));
     };
 
     this.clear = function () {

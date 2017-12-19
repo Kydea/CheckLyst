@@ -80,5 +80,12 @@ namespace CheckListManager.WorkFlows.Data
             Entities.WorkFlows.Remove(await GetWorkFlowAsync(identity, id));
             await SaveChangesAsync();
         }
+
+        public async Task<WorkFlowApplications> GetWorkFlowApplicationAsync(DefaultIdentity identity, long? prototype, int? version, long? instance)
+        {
+            var Application = await Entities.WorkFlowApplications.SingleOrDefaultAsync(x => (x.Prototype == prototype && x.Version == version || x.Instance == instance) && x.Approved == null);
+            if (Application == null) throw new ArgumentException($"Workflow application for {(instance == null ? $"prototype version {prototype}.{version}" : $"instance {instance}")} not found");
+            return Application;
+        }
     }
 }

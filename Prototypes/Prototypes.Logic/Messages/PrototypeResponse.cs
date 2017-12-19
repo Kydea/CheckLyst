@@ -12,6 +12,8 @@ namespace CheckListManager.Prototypes.Logic.Messages
         public string ModifiedBy { get; set; }
 
         public string State { get; set; }
+        public string ProposedState { get; set; }
+        public DateTimeOffset? ProposedDate { get; set; }
 
         public DateTimeOffset? ValidFrom { get; set; }
         public DateTimeOffset? ValidUntil { get; set; }

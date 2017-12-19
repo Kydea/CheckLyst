@@ -12,9 +12,6 @@ div.Popup.Signature textarea {
   height: 80px;
   font: inherit; }
 
-div.Popup.Signature div.Simple h2 {
-  text-transform: none; }
-
 div.Popup.Signature div.PinPaddle h2 {
   text-transform: none;
   width: 360px;

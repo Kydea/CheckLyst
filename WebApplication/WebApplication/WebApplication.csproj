@@ -228,7 +228,6 @@
     <Content Include="Scripts\Custom\TokenManager.js" />
     <Content Include="Scripts\Custom\ActionBar.js" />
     <Content Include="Scripts\Custom\CheckListGrid.js" />
-    <Content Include="Scripts\Custom\Client.js" />
     <Content Include="Scripts\Custom\Clock.js" />
     <Content Include="Scripts\Custom\DateFormatter.js" />
     <Content Include="Scripts\Custom\FixedHeader.js" />
@@ -329,7 +328,7 @@
     <Content Include="Scripts\Libraries\moment-3-timezone-with-data.js" />
     <Content Include="Scripts\Libraries\moment-2-timezone.js" />
     <Content Include="Scripts\Prototypes\BooleanProperty.js" />
-    <Content Include="Scripts\Prototypes\ChangeStateSignature.js" />
+    <Content Include="Scripts\Custom\WorkFlowSignature.js" />
     <Content Include="Scripts\Prototypes\DateProperty.js" />
     <Content Include="Scripts\Prototypes\ExpressionProperty.js" />
     <Content Include="Scripts\Prototypes\ExpressionsList.js" />
@@ -378,6 +377,7 @@
     <Content Include="Views\WorkFlows\Detail.cshtml" />
     <Content Include="Views\DataSources\Detail.cshtml" />
     <Content Include="Views\Prototypes\Detail.cshtml" />
+    <Content Include="Views\WorkFlows\Signature.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

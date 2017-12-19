@@ -95,8 +95,8 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
 			identity.AddClaim(new Claim(ClaimTypes.Name, user.Description));
 			identity.AddClaim(new Claim("CompanyId", user.Company.ToString(), ClaimValueTypes.Integer));
 
-			foreach (var function in user.UserFunctions.Where(f => f.PrototypeType.HasValue || !string.IsNullOrEmpty(f.Tag)))
-				identity.AddClaim(new Claim(ClaimTypes.Role, $"{function.FunctionGroup}#{function.Function}#{function.PrototypeType?.ToString() ?? string.Empty}#{function.Tag ?? string.Empty}"));
+			foreach (var function in user.UserFunctions.Where(f => f.Department.HasValue || f.PrototypeType.HasValue || !string.IsNullOrEmpty(f.Tag)))
+				identity.AddClaim(new Claim(ClaimTypes.Role, $"{function.FunctionGroup}#{function.Function}#{function.Department?.ToString() ?? string.Empty}#{function.PrototypeType?.ToString() ?? string.Empty}#{function.Tag ?? string.Empty}"));
 
 			foreach (var function in user.UserFunctions.Select(f => $"{f.FunctionGroup}#{f.Function}").Distinct())
 				identity.AddClaim(new Claim(ClaimTypes.Role, function));
@@ -115,7 +115,7 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
 				{ "code", user.Code },
 				{ "name", user.Description },
                 { "timeZone", user.Companies.TimeZone },
-                { "roles", String.Join(",", user.UserFunctions.Select(function => $"{function.FunctionGroup}#{function.Function}#{function.PrototypeType?.ToString() ?? string.Empty}#{function.Tag ?? string.Empty}")) }
+                { "roles", String.Join(",", user.UserFunctions.Select(function => $"{function.FunctionGroup}#{function.Function}#{function.Department?.ToString() ?? string.Empty}#{function.PrototypeType?.ToString() ?? string.Empty}#{function.Tag ?? string.Empty}")) }
             };
 		}
 	}

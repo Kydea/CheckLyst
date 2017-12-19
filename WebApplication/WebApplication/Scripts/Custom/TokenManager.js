@@ -23,8 +23,8 @@
 
 		setup = function () {
 			setInterval(function () {
-				//the access token is refreshed by active client, when a refresh token is present, [cautionTimeOffset] milliseconds before the expiration 
-				if (/*matematici.client.isActive() && */localStorage.refreshToken && new Date().getTime() > localStorage.accessTokenExpiration - cautionTimeOffset)
+				//the access token is refreshed, when a refresh token is present, [cautionTimeOffset] milliseconds before the expiration 
+				if (localStorage.refreshToken && new Date().getTime() > localStorage.accessTokenExpiration - cautionTimeOffset)
 					refreshAccessToken();
 			}, 60000);
 		},
@@ -37,6 +37,7 @@
 			localStorage.accessTokenExpiration = new Date().getTime() + parseInt(result.expires_in) * 1000;
 			localStorage.timeZone = result.timeZone;
 			localStorage.roles = result.roles;
+			localStorage.userCode = result.code;
 			matematici.menu.toggleItemsByRole();
 		};
 
@@ -61,6 +62,14 @@
 				suppressErrors: true
 			});
 		localStorage.clear();
+	};
+
+	tokenManager.getUserCode = function () {
+		return localStorage.userCode;
+	};
+
+	tokenManager.checkRole = function (role) {
+		return ("," + localStorage.roles).indexOf("," + role) >= 0;
 	};
 
 	setup();

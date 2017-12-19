@@ -319,12 +319,20 @@
           </Key>
           <Property Name="ID" Type="int8" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="WorkFlowApplication" Type="int8" />
-          <Property Name="WorkFlowStep" Type="int8" />
+          <Property Name="Step" Type="int4" Nullable="false" />
           <Property Name="Company" Type="int8" />
           <Property Name="User" Type="varchar" MaxLength="60" />
           <Property Name="Comment" Type="varchar" MaxLength="300" />
-          <Property Name="Date" Type="timestamptz" Precision="7" Nullable="false" />
-          <Property Name="Approved" Type="bool" Nullable="false" />
+          <Property Name="Date" Type="timestamptz" Precision="7" />
+          <Property Name="Approved" Type="bool" />
+        </EntityType>
+        <EntityType Name="WorkFlowApplicationStepTags">
+          <Key>
+            <PropertyRef Name="WorkFlowApplicationStep" />
+            <PropertyRef Name="Tag" />
+          </Key>
+          <Property Name="WorkFlowApplicationStep" Type="int8" Nullable="false" />
+          <Property Name="Tag" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="WorkFlows">
           <Key>
@@ -344,7 +352,7 @@
           </Key>
           <Property Name="ID" Type="int8" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="WorkFlow" Type="int8" />
-          <Property Name="Step" Type="int4" />
+          <Property Name="Step" Type="int4" Nullable="false" />
           <Property Name="CreatedBy" Type="varchar" MaxLength="60" />
           <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
           <Property Name="ModifiedBy" Type="varchar" MaxLength="60" />
@@ -808,15 +816,17 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="WorkFlowApplicationSteps_WorkFlowStep_fkey">
-          <End Role="WorkFlowSteps" Type="Self.WorkFlowSteps" Multiplicity="0..1" />
-          <End Role="WorkFlowApplicationSteps" Type="Self.WorkFlowApplicationSteps" Multiplicity="*" />
+        <Association Name="WorkFlowApplicationStepTags_WorkFlowApplicationStep_fkey">
+          <End Role="WorkFlowApplicationSteps" Type="Self.WorkFlowApplicationSteps" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="WorkFlowApplicationStepTags" Type="Self.WorkFlowApplicationStepTags" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="WorkFlowSteps">
+            <Principal Role="WorkFlowApplicationSteps">
               <PropertyRef Name="ID" />
             </Principal>
-            <Dependent Role="WorkFlowApplicationSteps">
-              <PropertyRef Name="WorkFlowStep" />
+            <Dependent Role="WorkFlowApplicationStepTags">
+              <PropertyRef Name="WorkFlowApplicationStep" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -888,6 +898,7 @@
           <EntitySet Name="WorkFlowActions" EntityType="Self.WorkFlowActions" Schema="WorkFlows" store:Type="Tables" />
           <EntitySet Name="WorkFlowApplications" EntityType="Self.WorkFlowApplications" Schema="WorkFlows" store:Type="Tables" />
           <EntitySet Name="WorkFlowApplicationSteps" EntityType="Self.WorkFlowApplicationSteps" Schema="WorkFlows" store:Type="Tables" />
+          <EntitySet Name="WorkFlowApplicationStepTags" EntityType="Self.WorkFlowApplicationStepTags" Schema="WorkFlows" store:Type="Tables" />
           <EntitySet Name="WorkFlows" EntityType="Self.WorkFlows" Schema="WorkFlows" store:Type="Tables" />
           <EntitySet Name="WorkFlowSteps" EntityType="Self.WorkFlowSteps" Schema="WorkFlows" store:Type="Tables" />
           <EntitySet Name="WorkFlowStepTags" EntityType="Self.WorkFlowStepTags" Schema="WorkFlows" store:Type="Tables" />
@@ -1031,9 +1042,9 @@
             <End Role="WorkFlowApplications" EntitySet="WorkFlowApplications" />
             <End Role="WorkFlowApplicationSteps" EntitySet="WorkFlowApplicationSteps" />
           </AssociationSet>
-          <AssociationSet Name="WorkFlowApplicationSteps_WorkFlowStep_fkey" Association="Self.WorkFlowApplicationSteps_WorkFlowStep_fkey">
-            <End Role="WorkFlowSteps" EntitySet="WorkFlowSteps" />
+          <AssociationSet Name="WorkFlowApplicationStepTags_WorkFlowApplicationStep_fkey" Association="Self.WorkFlowApplicationStepTags_WorkFlowApplicationStep_fkey">
             <End Role="WorkFlowApplicationSteps" EntitySet="WorkFlowApplicationSteps" />
+            <End Role="WorkFlowApplicationStepTags" EntitySet="WorkFlowApplicationStepTags" />
           </AssociationSet>
           <AssociationSet Name="WorkFlows_Company_fkey" Association="Self.WorkFlows_Company_fkey">
             <End Role="Companies" EntitySet="Companies" />
@@ -1187,9 +1198,7 @@
           <EntitySet Name="PINHistory" EntityType="RelationalDatabaseModel.PINHistory" />
           <EntitySet Name="Actions" EntityType="RelationalDatabaseModel.Actions" />
           <EntitySet Name="WorkFlowActions" EntityType="RelationalDatabaseModel.WorkFlowActions" />
-          <EntitySet Name="WorkFlowApplications" EntityType="RelationalDatabaseModel.WorkFlowApplications" />
           <EntitySet Name="WorkFlows" EntityType="RelationalDatabaseModel.WorkFlows" />
-          <EntitySet Name="WorkFlowSteps" EntityType="RelationalDatabaseModel.WorkFlowSteps" />
           <EntitySet Name="WorkFlowStepTags" EntityType="RelationalDatabaseModel.WorkFlowStepTags" />
           <AssociationSet Name="FK_Instances_Version" Association="RelationalDatabaseModel.FK_Instances_Version">
             <End Role="PrototypeVersions" EntitySet="PrototypeVersions" />
@@ -1222,22 +1231,6 @@
           <AssociationSet Name="PINHistory_User" Association="RelationalDatabaseModel.PINHistory_User">
             <End Role="Users" EntitySet="Users" />
             <End Role="PINHistory" EntitySet="PINHistory" />
-          </AssociationSet>
-          <AssociationSet Name="WorkFlowApplications_WorkFlowAction_fkey" Association="RelationalDatabaseModel.WorkFlowApplications_WorkFlowAction_fkey">
-            <End Role="WorkFlowActions" EntitySet="WorkFlowActions" />
-            <End Role="WorkFlowApplications" EntitySet="WorkFlowApplications" />
-          </AssociationSet>
-          <AssociationSet Name="WorkFlowApplications_WorkFlow_fkey" Association="RelationalDatabaseModel.WorkFlowApplications_WorkFlow_fkey">
-            <End Role="WorkFlows" EntitySet="WorkFlows" />
-            <End Role="WorkFlowApplications" EntitySet="WorkFlowApplications" />
-          </AssociationSet>
-          <AssociationSet Name="WorkFlowSteps_WorkFlow_fkey" Association="RelationalDatabaseModel.WorkFlowSteps_WorkFlow_fkey">
-            <End Role="WorkFlows" EntitySet="WorkFlows" />
-            <End Role="WorkFlowSteps" EntitySet="WorkFlowSteps" />
-          </AssociationSet>
-          <AssociationSet Name="WorkFlowStepTags_WorkFlowStep_fkey" Association="RelationalDatabaseModel.WorkFlowStepTags_WorkFlowStep_fkey">
-            <End Role="WorkFlowSteps" EntitySet="WorkFlowSteps" />
-            <End Role="WorkFlowStepTags" EntitySet="WorkFlowStepTags" />
           </AssociationSet>
           <EntitySet Name="Configurations" EntityType="RelationalDatabaseModel.Configurations" />
           <EntitySet Name="FunctionGroups" EntityType="RelationalDatabaseModel.FunctionGroups" />
@@ -1324,7 +1317,18 @@
             <End Role="Departments" EntitySet="Departments" />
             <End Role="UserFunctions" EntitySet="UserFunctions" />
           </AssociationSet>
+          <EntitySet Name="WorkFlowApplications" EntityType="RelationalDatabaseModel.WorkFlowApplications" />
+          <EntitySet Name="WorkFlowApplicationStepTags" EntityType="RelationalDatabaseModel.WorkFlowApplicationStepTags" />
+          <AssociationSet Name="WorkFlowApplications_WorkFlowAction_fkey" Association="RelationalDatabaseModel.WorkFlowApplications_WorkFlowAction_fkey">
+            <End Role="WorkFlowActions" EntitySet="WorkFlowActions" />
+            <End Role="WorkFlowApplications" EntitySet="WorkFlowApplications" />
+          </AssociationSet>
+          <AssociationSet Name="WorkFlowApplications_WorkFlow_fkey" Association="RelationalDatabaseModel.WorkFlowApplications_WorkFlow_fkey">
+            <End Role="WorkFlows" EntitySet="WorkFlows" />
+            <End Role="WorkFlowApplications" EntitySet="WorkFlowApplications" />
+          </AssociationSet>
           <EntitySet Name="WorkFlowApplicationSteps" EntityType="RelationalDatabaseModel.WorkFlowApplicationSteps" />
+          <EntitySet Name="WorkFlowSteps" EntityType="RelationalDatabaseModel.WorkFlowSteps" />
           <AssociationSet Name="WorkFlowApplicationSteps_User" Association="RelationalDatabaseModel.WorkFlowApplicationSteps_User">
             <End Role="Users" EntitySet="Users" />
             <End Role="WorkFlowApplicationSteps" EntitySet="WorkFlowApplicationSteps" />
@@ -1333,9 +1337,17 @@
             <End Role="WorkFlowApplications" EntitySet="WorkFlowApplications" />
             <End Role="WorkFlowApplicationSteps" EntitySet="WorkFlowApplicationSteps" />
           </AssociationSet>
-          <AssociationSet Name="WorkFlowApplicationSteps_WorkFlowStep_fkey" Association="RelationalDatabaseModel.WorkFlowApplicationSteps_WorkFlowStep_fkey">
-            <End Role="WorkFlowSteps" EntitySet="WorkFlowSteps" />
+          <AssociationSet Name="WorkFlowApplicationStepTags_WorkFlowApplicationStep_fkey" Association="RelationalDatabaseModel.WorkFlowApplicationStepTags_WorkFlowApplicationStep_fkey">
             <End Role="WorkFlowApplicationSteps" EntitySet="WorkFlowApplicationSteps" />
+            <End Role="WorkFlowApplicationStepTags" EntitySet="WorkFlowApplicationStepTags" />
+          </AssociationSet>
+          <AssociationSet Name="WorkFlowSteps_WorkFlow_fkey" Association="RelationalDatabaseModel.WorkFlowSteps_WorkFlow_fkey">
+            <End Role="WorkFlows" EntitySet="WorkFlows" />
+            <End Role="WorkFlowSteps" EntitySet="WorkFlowSteps" />
+          </AssociationSet>
+          <AssociationSet Name="WorkFlowStepTags_WorkFlowStep_fkey" Association="RelationalDatabaseModel.WorkFlowStepTags_WorkFlowStep_fkey">
+            <End Role="WorkFlowSteps" EntitySet="WorkFlowSteps" />
+            <End Role="WorkFlowStepTags" EntitySet="WorkFlowStepTags" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="TimeZones">
@@ -1520,26 +1532,6 @@
           <Property Name="Code" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="WorkFlowApplications" Relationship="RelationalDatabaseModel.WorkFlowApplications_WorkFlowAction_fkey" FromRole="WorkFlowActions" ToRole="WorkFlowApplications" />
         </EntityType>
-        <EntityType Name="WorkFlowApplications">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Prototype" Type="Int64" />
-          <Property Name="Version" Type="Int32" />
-          <Property Name="Instance" Type="Int64" />
-          <Property Name="WorkFlowAction" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="WorkFlow" Type="Int64" />
-          <Property Name="Date" Type="DateTimeOffset" Precision="7" />
-          <Property Name="Approved" Type="Boolean" />
-          <Property Name="CreatedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
-          <Property Name="CreatedOn" Type="DateTimeOffset" Nullable="false" Precision="7" />
-          <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
-          <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
-          <NavigationProperty Name="WorkFlowActions" Relationship="RelationalDatabaseModel.WorkFlowApplications_WorkFlowAction_fkey" FromRole="WorkFlowApplications" ToRole="WorkFlowActions" />
-          <NavigationProperty Name="WorkFlows" Relationship="RelationalDatabaseModel.WorkFlowApplications_WorkFlow_fkey" FromRole="WorkFlowApplications" ToRole="WorkFlows" />
-          <NavigationProperty Name="WorkFlowApplicationSteps" Relationship="RelationalDatabaseModel.WorkFlowApplicationSteps_WorkFlowApplication_fkey" FromRole="WorkFlowApplications" ToRole="WorkFlowApplicationSteps" />
-        </EntityType>
         <EntityType Name="WorkFlows">
           <Key>
             <PropertyRef Name="ID" />
@@ -1553,25 +1545,10 @@
           <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
           <NavigationProperty Name="PrototypeVersions" Relationship="RelationalDatabaseModel.PrototypeVersions_InstanceConfirmationWorkFlow_fkey" FromRole="WorkFlows" ToRole="PrototypeVersions" />
           <NavigationProperty Name="Companies" Relationship="RelationalDatabaseModel.WorkFlows_Company_fkey" FromRole="WorkFlows" ToRole="Companies" />
-          <NavigationProperty Name="WorkFlowApplications" Relationship="RelationalDatabaseModel.WorkFlowApplications_WorkFlow_fkey" FromRole="WorkFlows" ToRole="WorkFlowApplications" />
-          <NavigationProperty Name="WorkFlowSteps" Relationship="RelationalDatabaseModel.WorkFlowSteps_WorkFlow_fkey" FromRole="WorkFlows" ToRole="WorkFlowSteps" />
           <NavigationProperty Name="PrototypeTypes" Relationship="RelationalDatabaseModel.PrototypeTypes_ApprovationWorkFlow_fkey" FromRole="WorkFlows" ToRole="PrototypeTypes" />
           <NavigationProperty Name="PrototypeTypes1" Relationship="RelationalDatabaseModel.PrototypeTypes_ObsolescenceWorkFlow_fkey" FromRole="WorkFlows" ToRole="PrototypeTypes" />
-        </EntityType>
-        <EntityType Name="WorkFlowSteps">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="WorkFlow" Type="Int64" />
-          <Property Name="Step" Type="Int32" />
-          <Property Name="CreatedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
-          <Property Name="CreatedOn" Type="DateTimeOffset" Nullable="false" Precision="7" />
-          <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
-          <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
-          <NavigationProperty Name="WorkFlows" Relationship="RelationalDatabaseModel.WorkFlowSteps_WorkFlow_fkey" FromRole="WorkFlowSteps" ToRole="WorkFlows" />
-          <NavigationProperty Name="WorkFlowStepTags" Relationship="RelationalDatabaseModel.WorkFlowStepTags_WorkFlowStep_fkey" FromRole="WorkFlowSteps" ToRole="WorkFlowStepTags" />
-          <NavigationProperty Name="WorkFlowApplicationSteps" Relationship="RelationalDatabaseModel.WorkFlowApplicationSteps_WorkFlowStep_fkey" FromRole="WorkFlowSteps" ToRole="WorkFlowApplicationSteps" />
+          <NavigationProperty Name="WorkFlowApplications" Relationship="RelationalDatabaseModel.WorkFlowApplications_WorkFlow_fkey" FromRole="WorkFlows" ToRole="WorkFlowApplications" />
+          <NavigationProperty Name="WorkFlowSteps" Relationship="RelationalDatabaseModel.WorkFlowSteps_WorkFlow_fkey" FromRole="WorkFlows" ToRole="WorkFlowSteps" />
         </EntityType>
         <EntityType Name="WorkFlowStepTags">
           <Key>
@@ -1687,56 +1664,6 @@
             <Dependent Role="PINHistory">
               <PropertyRef Name="Company" />
               <PropertyRef Name="User" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="WorkFlowApplications_WorkFlowAction_fkey">
-          <End Type="RelationalDatabaseModel.WorkFlowActions" Role="WorkFlowActions" Multiplicity="0..1" />
-          <End Type="RelationalDatabaseModel.WorkFlowApplications" Role="WorkFlowApplications" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="WorkFlowActions">
-              <PropertyRef Name="Code" />
-            </Principal>
-            <Dependent Role="WorkFlowApplications">
-              <PropertyRef Name="WorkFlowAction" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="WorkFlowApplications_WorkFlow_fkey">
-          <End Type="RelationalDatabaseModel.WorkFlows" Role="WorkFlows" Multiplicity="0..1" />
-          <End Type="RelationalDatabaseModel.WorkFlowApplications" Role="WorkFlowApplications" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="WorkFlows">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="WorkFlowApplications">
-              <PropertyRef Name="WorkFlow" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="WorkFlowSteps_WorkFlow_fkey">
-          <End Type="RelationalDatabaseModel.WorkFlows" Role="WorkFlows" Multiplicity="0..1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Type="RelationalDatabaseModel.WorkFlowSteps" Role="WorkFlowSteps" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="WorkFlows">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="WorkFlowSteps">
-              <PropertyRef Name="WorkFlow" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="WorkFlowStepTags_WorkFlowStep_fkey">
-          <End Type="RelationalDatabaseModel.WorkFlowSteps" Role="WorkFlowSteps" Multiplicity="1" />
-          <End Type="RelationalDatabaseModel.WorkFlowStepTags" Role="WorkFlowStepTags" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="WorkFlowSteps">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="WorkFlowStepTags">
-              <PropertyRef Name="WorkFlowStep" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2117,21 +2044,88 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="WorkFlowApplications">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Prototype" Type="Int64" />
+          <Property Name="Version" Type="Int32" />
+          <Property Name="Instance" Type="Int64" />
+          <Property Name="WorkFlowAction" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="WorkFlow" Type="Int64" />
+          <Property Name="Date" Type="DateTimeOffset" Precision="7" />
+          <Property Name="Approved" Type="Boolean" />
+          <Property Name="CreatedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedOn" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
+          <NavigationProperty Name="WorkFlowActions" Relationship="RelationalDatabaseModel.WorkFlowApplications_WorkFlowAction_fkey" FromRole="WorkFlowApplications" ToRole="WorkFlowActions" />
+          <NavigationProperty Name="WorkFlows" Relationship="RelationalDatabaseModel.WorkFlowApplications_WorkFlow_fkey" FromRole="WorkFlowApplications" ToRole="WorkFlows" />
+          <NavigationProperty Name="WorkFlowApplicationSteps" Relationship="RelationalDatabaseModel.WorkFlowApplicationSteps_WorkFlowApplication_fkey" FromRole="WorkFlowApplications" ToRole="WorkFlowApplicationSteps" />
+        </EntityType>
+        <EntityType Name="WorkFlowApplicationStepTags">
+          <Key>
+            <PropertyRef Name="WorkFlowApplicationStep" />
+            <PropertyRef Name="Tag" />
+          </Key>
+          <Property Name="WorkFlowApplicationStep" Type="Int64" Nullable="false" />
+          <Property Name="Tag" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="WorkFlowApplicationSteps" Relationship="RelationalDatabaseModel.WorkFlowApplicationStepTags_WorkFlowApplicationStep_fkey" FromRole="WorkFlowApplicationStepTags" ToRole="WorkFlowApplicationSteps" />
+        </EntityType>
+        <Association Name="WorkFlowApplications_WorkFlowAction_fkey">
+          <End Type="RelationalDatabaseModel.WorkFlowActions" Role="WorkFlowActions" Multiplicity="0..1" />
+          <End Type="RelationalDatabaseModel.WorkFlowApplications" Role="WorkFlowApplications" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="WorkFlowActions">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="WorkFlowApplications">
+              <PropertyRef Name="WorkFlowAction" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="WorkFlowApplications_WorkFlow_fkey">
+          <End Type="RelationalDatabaseModel.WorkFlows" Role="WorkFlows" Multiplicity="0..1" />
+          <End Type="RelationalDatabaseModel.WorkFlowApplications" Role="WorkFlowApplications" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="WorkFlows">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="WorkFlowApplications">
+              <PropertyRef Name="WorkFlow" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityType Name="WorkFlowApplicationSteps">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="WorkFlowApplication" Type="Int64" />
-          <Property Name="WorkFlowStep" Type="Int64" />
+          <Property Name="Step" Type="Int32" Nullable="false" />
           <Property Name="Company" Type="Int64" />
           <Property Name="User" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
           <Property Name="Comment" Type="String" MaxLength="300" FixedLength="false" Unicode="true" />
-          <Property Name="Date" Type="DateTimeOffset" Nullable="false" Precision="7" />
-          <Property Name="Approved" Type="Boolean" Nullable="false" />
+          <Property Name="Date" Type="DateTimeOffset" Precision="7" />
+          <Property Name="Approved" Type="Boolean" />
           <NavigationProperty Name="Users" Relationship="RelationalDatabaseModel.WorkFlowApplicationSteps_User" FromRole="WorkFlowApplicationSteps" ToRole="Users" />
           <NavigationProperty Name="WorkFlowApplications" Relationship="RelationalDatabaseModel.WorkFlowApplicationSteps_WorkFlowApplication_fkey" FromRole="WorkFlowApplicationSteps" ToRole="WorkFlowApplications" />
-          <NavigationProperty Name="WorkFlowSteps" Relationship="RelationalDatabaseModel.WorkFlowApplicationSteps_WorkFlowStep_fkey" FromRole="WorkFlowApplicationSteps" ToRole="WorkFlowSteps" />
+          <NavigationProperty Name="WorkFlowApplicationStepTags" Relationship="RelationalDatabaseModel.WorkFlowApplicationStepTags_WorkFlowApplicationStep_fkey" FromRole="WorkFlowApplicationSteps" ToRole="WorkFlowApplicationStepTags" />
+        </EntityType>
+        <EntityType Name="WorkFlowSteps">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="WorkFlow" Type="Int64" />
+          <Property Name="Step" Type="Int32" Nullable="false" />
+          <Property Name="CreatedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedOn" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
+          <NavigationProperty Name="WorkFlows" Relationship="RelationalDatabaseModel.WorkFlowSteps_WorkFlow_fkey" FromRole="WorkFlowSteps" ToRole="WorkFlows" />
+          <NavigationProperty Name="WorkFlowStepTags" Relationship="RelationalDatabaseModel.WorkFlowStepTags_WorkFlowStep_fkey" FromRole="WorkFlowSteps" ToRole="WorkFlowStepTags" />
         </EntityType>
         <Association Name="WorkFlowApplicationSteps_User">
           <End Type="RelationalDatabaseModel.Users" Role="Users" Multiplicity="0..1" />
@@ -2159,14 +2153,44 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="WorkFlowApplicationSteps_WorkFlowStep_fkey">
-          <End Type="RelationalDatabaseModel.WorkFlowSteps" Role="WorkFlowSteps" Multiplicity="0..1" />
-          <End Type="RelationalDatabaseModel.WorkFlowApplicationSteps" Role="WorkFlowApplicationSteps" Multiplicity="*" />
+        <Association Name="WorkFlowApplicationStepTags_WorkFlowApplicationStep_fkey">
+          <End Type="RelationalDatabaseModel.WorkFlowApplicationSteps" Role="WorkFlowApplicationSteps" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="RelationalDatabaseModel.WorkFlowApplicationStepTags" Role="WorkFlowApplicationStepTags" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="WorkFlowApplicationSteps">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="WorkFlowApplicationStepTags">
+              <PropertyRef Name="WorkFlowApplicationStep" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="WorkFlowSteps_WorkFlow_fkey">
+          <End Type="RelationalDatabaseModel.WorkFlows" Role="WorkFlows" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="RelationalDatabaseModel.WorkFlowSteps" Role="WorkFlowSteps" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="WorkFlows">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="WorkFlowSteps">
+              <PropertyRef Name="WorkFlow" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="WorkFlowStepTags_WorkFlowStep_fkey">
+          <End Type="RelationalDatabaseModel.WorkFlowSteps" Role="WorkFlowSteps" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="RelationalDatabaseModel.WorkFlowStepTags" Role="WorkFlowStepTags" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="WorkFlowSteps">
               <PropertyRef Name="ID" />
             </Principal>
-            <Dependent Role="WorkFlowApplicationSteps">
+            <Dependent Role="WorkFlowStepTags">
               <PropertyRef Name="WorkFlowStep" />
             </Dependent>
           </ReferentialConstraint>
@@ -2362,24 +2386,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="WorkFlowApplications">
-            <EntityTypeMapping TypeName="RelationalDatabaseModel.WorkFlowApplications">
-              <MappingFragment StoreEntitySet="WorkFlowApplications">
-                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
-                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
-                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="Approved" ColumnName="Approved" />
-                <ScalarProperty Name="Date" ColumnName="Date" />
-                <ScalarProperty Name="WorkFlow" ColumnName="WorkFlow" />
-                <ScalarProperty Name="WorkFlowAction" ColumnName="WorkFlowAction" />
-                <ScalarProperty Name="Instance" ColumnName="Instance" />
-                <ScalarProperty Name="Version" ColumnName="Version" />
-                <ScalarProperty Name="Prototype" ColumnName="Prototype" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="WorkFlows">
             <EntityTypeMapping TypeName="RelationalDatabaseModel.WorkFlows">
               <MappingFragment StoreEntitySet="WorkFlows">
@@ -2389,19 +2395,6 @@
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="Company" ColumnName="Company" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="WorkFlowSteps">
-            <EntityTypeMapping TypeName="RelationalDatabaseModel.WorkFlowSteps">
-              <MappingFragment StoreEntitySet="WorkFlowSteps">
-                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
-                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
-                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="Step" ColumnName="Step" />
-                <ScalarProperty Name="WorkFlow" ColumnName="WorkFlow" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -2537,6 +2530,32 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="WorkFlowApplications">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.WorkFlowApplications">
+              <MappingFragment StoreEntitySet="WorkFlowApplications">
+                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="Approved" ColumnName="Approved" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="WorkFlow" ColumnName="WorkFlow" />
+                <ScalarProperty Name="WorkFlowAction" ColumnName="WorkFlowAction" />
+                <ScalarProperty Name="Instance" ColumnName="Instance" />
+                <ScalarProperty Name="Version" ColumnName="Version" />
+                <ScalarProperty Name="Prototype" ColumnName="Prototype" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="WorkFlowApplicationStepTags">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.WorkFlowApplicationStepTags">
+              <MappingFragment StoreEntitySet="WorkFlowApplicationStepTags">
+                <ScalarProperty Name="Tag" ColumnName="Tag" />
+                <ScalarProperty Name="WorkFlowApplicationStep" ColumnName="WorkFlowApplicationStep" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="WorkFlowApplicationSteps">
             <EntityTypeMapping TypeName="RelationalDatabaseModel.WorkFlowApplicationSteps">
               <MappingFragment StoreEntitySet="WorkFlowApplicationSteps">
@@ -2545,8 +2564,21 @@
                 <ScalarProperty Name="Comment" ColumnName="Comment" />
                 <ScalarProperty Name="User" ColumnName="User" />
                 <ScalarProperty Name="Company" ColumnName="Company" />
-                <ScalarProperty Name="WorkFlowStep" ColumnName="WorkFlowStep" />
+                <ScalarProperty Name="Step" ColumnName="Step" />
                 <ScalarProperty Name="WorkFlowApplication" ColumnName="WorkFlowApplication" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="WorkFlowSteps">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.WorkFlowSteps">
+              <MappingFragment StoreEntitySet="WorkFlowSteps">
+                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="Step" ColumnName="Step" />
+                <ScalarProperty Name="WorkFlow" ColumnName="WorkFlow" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>

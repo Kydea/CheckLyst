@@ -14,6 +14,7 @@
 				if (result.valid) {
 					matematici.popup.getResult().saved = true;
 					matematici.popup.close();
+					matematici.blip.ok();
 				}
 			}, options.parametersPrepareHandler && options.parametersPrepareHandler());
 
@@ -40,7 +41,7 @@
 
 			if (!options.readOnly)
 				buttons.push({
-					text: "save", icon: "floppy-o", id: "SaveButton", handler: function (e) {
+					text: "save", defaultButton: true, icon: "floppy-o", id: "SaveButton", handler: function (e) {
 						clickHandler($(this), data == null ? "Add" : "Edit");
 						return true;
 					}

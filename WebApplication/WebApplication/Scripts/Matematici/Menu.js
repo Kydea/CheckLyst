@@ -76,10 +76,9 @@
 		};
 
 	this.toggleItemsByRole = function () {
-        var roles = "," + localStorage.getItem("roles");
 		$("li[data-role]", menu).each(function () {
 			var item = $(this);
-			item.toggle(roles.indexOf("," + item.data("role") + "#") >= 0);
+			item.toggle(matematici.tokenManager.checkRole(item.data("role") + "#"));
 		});
 	};
 

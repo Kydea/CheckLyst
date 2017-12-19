@@ -18,10 +18,10 @@ namespace CheckListManager.Common.Data
         public WorkFlows()
         {
             this.PrototypeVersions = new HashSet<PrototypeVersions>();
-            this.WorkFlowApplications = new HashSet<WorkFlowApplications>();
-            this.WorkFlowSteps = new HashSet<WorkFlowSteps>();
             this.PrototypeTypes = new HashSet<PrototypeTypes>();
             this.PrototypeTypes1 = new HashSet<PrototypeTypes>();
+            this.WorkFlowApplications = new HashSet<WorkFlowApplications>();
+            this.WorkFlowSteps = new HashSet<WorkFlowSteps>();
         }
     
         public long ID { get; set; }
@@ -36,12 +36,12 @@ namespace CheckListManager.Common.Data
         public virtual ICollection<PrototypeVersions> PrototypeVersions { get; set; }
         public virtual Companies Companies { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<WorkFlowApplications> WorkFlowApplications { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<WorkFlowSteps> WorkFlowSteps { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PrototypeTypes> PrototypeTypes { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PrototypeTypes> PrototypeTypes1 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<WorkFlowApplications> WorkFlowApplications { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<WorkFlowSteps> WorkFlowSteps { get; set; }
     }
 }

@@ -14,17 +14,24 @@ namespace CheckListManager.Common.Data
     
     public partial class WorkFlowApplicationSteps
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public WorkFlowApplicationSteps()
+        {
+            this.WorkFlowApplicationStepTags = new HashSet<WorkFlowApplicationStepTags>();
+        }
+    
         public long ID { get; set; }
         public Nullable<long> WorkFlowApplication { get; set; }
-        public Nullable<long> WorkFlowStep { get; set; }
+        public int Step { get; set; }
         public Nullable<long> Company { get; set; }
         public string User { get; set; }
         public string Comment { get; set; }
-        public System.DateTimeOffset Date { get; set; }
-        public bool Approved { get; set; }
+        public Nullable<System.DateTimeOffset> Date { get; set; }
+        public Nullable<bool> Approved { get; set; }
     
         public virtual Users Users { get; set; }
         public virtual WorkFlowApplications WorkFlowApplications { get; set; }
-        public virtual WorkFlowSteps WorkFlowSteps { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<WorkFlowApplicationStepTags> WorkFlowApplicationStepTags { get; set; }
     }
 }

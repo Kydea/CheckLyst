@@ -1,6 +1,12 @@
 ﻿@model CheckListManager.WebApplication.Models.Prototype
 
-<div id="PrototypesDetailPage" class="Prototype CheckList" data-action="@BaseUrl/Prototypes/Prototype/">
+<div 
+    id="PrototypesDetailPage" 
+    class="Prototype CheckList" 
+    data-api="@BaseUrl"
+    data-action="@BaseUrl/Prototypes/Prototype/"
+    data-signature="@Url.Action("Signature", "WorkFlows")"
+>
     <h1>Prototype Editor</h1>
 
     <div class="ActionBar">

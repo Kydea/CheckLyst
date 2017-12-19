@@ -50,9 +50,6 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                     Expression.Error = Exception.Message;
                 }
             }
-
-            //if (Security.CurrentUser != null) //exclude automatic job
-            //    CanApprove = UserFunctions.Contains(Security.CurrentUser.Code, Company, Department, PrototypeType, UserFunctions.PROTOTYPEAPPROVER);
         }
     }
 }
