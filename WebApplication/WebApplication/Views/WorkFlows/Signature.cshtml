@@ -1,25 +1,35 @@
 ﻿<form>
     <label class="FullWidth">
-        <span>Validity Start</span>
-        <i class="Icon fi flaticon-calendar"></i>
-        <input type="text" name="ValidityStart" id="ValidityStart" readonly="readonly" class="ReadOnly" />
+        <span>Validity start</span>
+        <label>
+            <input type="radio" name="ValidityStartType" value="1" class="ValidityStartType" /> Now
+        </label>
+        <label>
+            <input type="radio" name="ValidityStartType" value="2" class="ValidityStartType" /> Date
+        </label>
+        <input type="text" name="ValidityStart" id="ValidityStart" />
     </label>
-    <div class="ValidityMessage" id="ValidityStartMessage">The prototype will become active immediately<br />after all the signatures will be confirmed</div>
+    <div class="ValidityMessage" id="ValidityStartMessage">
+        The prototype will become active immediately after all the signatures will be confirmed
+    </div>
 
-    <label for="ValidityEnd">Validity End</label>
-    <label class="Inline" id="ValidityEndNowLabel">
-        <input type="radio" name="ValidityEndType" value="1" class="ValidityEndType" /> Now
+    <label class="FullWidth">
+        <span>Validity end</span>
+        <label>
+            <input type="radio" name="ValidityEndType" value="0" class="ValidityEndType" /> Never
+        </label>
+        <label>
+            <input type="radio" name="ValidityEndType" value="1" class="ValidityEndType" /> Now
+        </label>
+        <label>
+            <input type="radio" name="ValidityEndType" value="2" class="ValidityEndType" /> Date
+        </label>
+        <input type="text" name="ValidityEnd" id="ValidityEnd" />
     </label>
-    <label class="Inline">
-        <input type="radio" name="ValidityEndType" value="2" class="ValidityEndType" /> Never
-    </label>
-    <label class="Inline">
-        <input type="radio" name="ValidityEndType" value="3" class="ValidityEndType" /> Date
-    </label>
-    <input type="text" name="ValidityEnd" id="ValidityEnd" />
+
     <div class="ValidityMessage" id="ValidityEndMessage">
-        <span data-value="1">The prototype will become obsolete immediately<br />after all the signatures will be confirmed</span>
-        <span data-value="2">The prototype does not have a validity end date</span>
+        <span data-value="0">The prototype will not have an expiration date</span>
+        <span data-value="1">The prototype will become obsolete immediately after all the signatures will be issued</span>
     </div>
 
     <label class="FullWidth">
@@ -27,16 +37,14 @@
         <textarea name="Comment" id="Comment"></textarea>
     </label>
 
-    <label class="FullWidth Controls2">
-        <span>Username / Password</span>
+    <label class="FullWidth">
+        <span>Username</span>
         <i class="Icon fi flaticon-user-o"></i>
         <input type="text" name="Username" id="Username" readonly />
+    </label>
+    <label class="FullWidth">
+        <span>Password</span>
         <i class="Icon fi flaticon-key-o"></i>
         <input type="password" name="Password" id="Password" />
     </label>
 </form>
-
-<script type="text/javascript">
-    new matematici.WorkFlowSignature("div.Signature", matematici.popup.getData());
-</script>
-

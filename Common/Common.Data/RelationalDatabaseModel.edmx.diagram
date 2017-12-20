@@ -75,6 +75,8 @@
         <AssociationConnector Association="RelationalDatabaseModel.WorkFlowApplicationStepTags_WorkFlowApplicationStep_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.WorkFlowSteps_WorkFlow_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.WorkFlowStepTags_WorkFlowStep_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.WorkFlowApplications_Instance" />
+        <AssociationConnector Association="RelationalDatabaseModel.WorkFlowApplications_PrototypeVersion" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

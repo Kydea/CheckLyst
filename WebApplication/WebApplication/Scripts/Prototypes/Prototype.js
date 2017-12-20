@@ -241,7 +241,8 @@
 			var
 				allowed = false,
 				tags = row.tags.split(", ");
-			for (var role in tags) 
+
+			for (var role in tags)
 				if (
 					matematici.tokenManager.checkRole("Prototypes#Approve#" + model.department + "##" + tags[role])
 					|| matematici.tokenManager.checkRole("Prototypes#Approve#" + model.department + "#" + model.prototypeType + "#" + tags[role])
@@ -282,56 +283,31 @@
 				return true;
 			}
 
-			var
-				options = {
-					title: action,
-					width: "500px",
-					ajax: {
-						url: element.data("signature"),
-						type: "POST"
-					},
-					buttons: [
-						{ id: "Confirm", icon: "check", text: "Confirm" },
-						{ id: "Reject", icon: "check", text: "Reject" }
-					],
-					data: {
-						prototype: prototypeKey.id,
-						version: prototypeKey.version,
-						applicationStep: row.id,
-						rowVersion: null, //TODO
+			workFlowSignature = new matematici.WorkFlowSignature({
+				title: action,
+				url: element.data("signature"),
+				prototype: prototypeKey.id,
+				version: prototypeKey.version,
+				applicationStep: row.id,
+				model: model,
+				rows: rows,
 
-						completeHandler: function (data) {
-							var signature = this;
-							$.ajax({
-								url: matematici.urls.prototypes.sign,
-								type: "post",
-								data: data
-							}).done(function (result) {
-								matematici.popup.close();
-								grid.close();
-
-								var changed = false;
-								if (result.state) {
-									model.state = result.state;
-									changed = true;
-								}
-								if (result.validUntil !== undefined) {
-									model.validUntil = result.validUntil;
-									changed = true;
-								}
-								if (result.rowVersion !== undefined) {
-									model.rowVersion = result.rowVersion;
-									changed = true;
-								}
-								if (changed) 
-									update();
-							});
-						}
-					}
-				};
-
-			matematici.popup.show(options);
-			return false;
+				done: function (result) {
+					grid.close();
+					matematici.popup.close();
+					var stateChanged = model.state != result.state;
+					if (result.state) 
+						model.state = result.state;
+					if (result.validUntil !== undefined) 
+						model.validUntil = result.validUntil;
+					if (result.rowVersion !== undefined) 
+						model.rowVersion = result.rowVersion;
+					update();
+					if (!stateChanged)
+						prototype.loadSignatureBook(action);
+				}
+			});
+			return true;
 		},
 
 		setup = function () {
@@ -535,7 +511,7 @@
 			var columns = [
 				{ name: "step", label: "Step", align: "center" },
 				{ name: "tags", label: "Level" },
-				{ name: "date", label: "Date" },
+				{ name: "date", label: "Date", type: "DateTimeOffset" },
 				{ name: "user", label: "User" },
 				{ name: "approved", label: "Approved", align: "center" },
 			];

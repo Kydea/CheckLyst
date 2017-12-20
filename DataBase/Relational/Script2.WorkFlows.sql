@@ -51,7 +51,11 @@ create table "WorkFlows"."WorkFlowApplications"
 
 	"Prototype" bigint,
 	"Version" int,
-	"Instance" bigint,
+	constraint "WorkFlowApplications_PrototypeVersion" foreign key ("Prototype", "Version") references "CheckLists"."PrototypeVersions",
+
+	"Instance" bigint, 
+	constraint "WorkFlowApplications_Instance" foreign key ("Instance") references "CheckLists"."Instances",
+
 	check("Prototype" is null and "Version" is null or "Instance" is null),
 
 	"WorkFlowAction" varchar (50) references "WorkFlows"."WorkFlowActions",

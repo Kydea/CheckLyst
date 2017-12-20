@@ -83,9 +83,16 @@ namespace CheckListManager.WorkFlows.Data
 
         public async Task<WorkFlowApplications> GetWorkFlowApplicationAsync(DefaultIdentity identity, long? prototype, int? version, long? instance)
         {
-            var Application = await Entities.WorkFlowApplications.SingleOrDefaultAsync(x => (x.Prototype == prototype && x.Version == version || x.Instance == instance) && x.Approved == null);
+            var Application = await Entities.WorkFlowApplications.SingleOrDefaultAsync(x => x.WorkFlows.Company == identity.CompanyId && (x.Prototype == prototype && x.Version == version || x.Instance == instance) && x.Approved == null);
             if (Application == null) throw new ArgumentException($"Workflow application for {(instance == null ? $"prototype version {prototype}.{version}" : $"instance {instance}")} not found");
             return Application;
+        }
+
+        public async Task<WorkFlowApplicationSteps> GetWorkFlowApplicationStepAsync(DefaultIdentity identity, long id)
+        {
+            var Step = await Entities.WorkFlowApplicationSteps.SingleOrDefaultAsync(x => x.Company == identity.CompanyId && x.ID == id);
+            if (Step == null) throw new ArgumentException($"Workflow application step {id} not found");
+            return Step;
         }
     }
 }

@@ -32,18 +32,16 @@
 
 			element
 				.on("keypress", fieldsSelector, function (e) {
-					if (e.key != "Tab" && e.which !== 0 && !e.ctrlKey && !e.metaKey && !e.altKey && options.applyButton) {
-						matematici.controls.setEditable(options.applyButton, valid);
+					if (e.key != "Tab" && e.which !== 0 && !e.ctrlKey && !e.metaKey && !e.altKey) {
 						clearFormErrors();
-						matematici.controls.setValidationMessages($(this), []);
-						matematici.controls.setEditable(options.applyButton, true);
+						if (options.applyButton)
+							matematici.controls.setEditable(options.applyButton, true);
 					}
                 })
                 .on("change, paste", fieldsSelector, function(e) {
-                    matematici.controls.setEditable(options.applyButton, valid);
                     clearFormErrors();
-                    matematici.controls.setValidationMessages($(this), []);
-                    matematici.controls.setEditable(options.applyButton, true);
+					if (options.applyButton)
+	                    matematici.controls.setEditable(options.applyButton, true);
 				})
 				.on("change", ".Trigger", function () {
 					bind(options.bindEvent, handleResult, prepareRequest({ data: { source: $(this).attr("name") } }));

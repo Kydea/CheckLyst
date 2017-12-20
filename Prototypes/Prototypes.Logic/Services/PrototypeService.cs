@@ -176,7 +176,7 @@ namespace CheckListManager.Prototypes.Logic.Services
             PrototypeVersion.ValidFrom = request.ValidFrom;
             PrototypeVersion.ValidUntil = request.ValidUntil;
 
-            await _prototypeRepository.SaveAsync();
+            await _prototypeRepository.SaveChangesAsync();
 
             return new PrototypeResponse
             {

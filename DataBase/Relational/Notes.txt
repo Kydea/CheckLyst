@@ -29,9 +29,10 @@ history
 cambio stato 
 preview
 Prototype.canApprove sparisce e viene read only la popup se non si hanno permessi
-	i permessi di firma possono anche essere controllati client side...
 gestire row version per firme
 gestire row version transazionalmente (where nell'aggironamento e conteggio risultati?)
+PrototypeSignatures.SendEmails(db, Version, Action) quando ci sono variazioni nella applicazione di work flow
+Mettere Apply del workflow come MS e non in common
 
 
 USERS 

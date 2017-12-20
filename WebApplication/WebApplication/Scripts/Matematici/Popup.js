@@ -15,7 +15,7 @@ matematici.popup = function () {
 					options.content = result;
 					show();
 
-					if (options.ajax.callback != undefined)
+					if (options.ajax.callback)
 						options.ajax.callback.call();
 
 					if (options.width)

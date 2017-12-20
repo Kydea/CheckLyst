@@ -75,11 +75,6 @@ namespace CheckListManager.Prototypes.Data
             Entities.PrototypeVersions.Add(prototypeVersion);
         }
 
-        public async Task SaveAsync()
-        {
-            await SaveChangesAsync();
-        }
-
         public async Task DeletePrototypeVersionAsync(DefaultIdentity defaultIdentity, long prototype, int version)
         {
             var PrototypeVersion = await Entities.PrototypeVersions.SingleOrDefaultAsync(x => x.Prototypes.Company == defaultIdentity.CompanyId && x.Prototype == prototype && x.Version == version);
@@ -101,7 +96,7 @@ namespace CheckListManager.Prototypes.Data
             if (PrototypeVersion == null)
                 throw new Exception($"Prototype version {prototype}.{version} not found");
 
-            //controlli
+            //todo controlli
 
             if (PrototypeVersion.VersionState == VersionState.Draft && state == VersionState.InSumulation && !proposed)
                 PrototypeVersion.VersionState = state;

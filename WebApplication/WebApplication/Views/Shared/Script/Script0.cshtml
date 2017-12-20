@@ -19,7 +19,10 @@
                         getData: "@BaseUrl/Infrastructure/Companies/GetData"
                     }
                 },
-                help: "@Url.Action("Index", "Help")"
+                help: "@Url.Action("Index", "Help")",
+                workflows: {
+                    signature: "@Url.Action("Signature", "WorkFlows")"
+                }
         	},
         	signatureActions: {
         		toApprove: "Prototype – state to Approved/Active",

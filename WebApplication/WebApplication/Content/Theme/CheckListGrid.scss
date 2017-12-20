@@ -124,7 +124,7 @@ div.CheckListGrid {
         right: 0;
         bottom: 0;
         left: 0;
-        z-index: $Depth-Dialog;
+        z-index: $Depth-CheckListGrid;
         background-color: rgba(102, 102, 102, .7);
 
         div.Container {
@@ -148,7 +148,7 @@ div.CheckListGrid {
             right: 0;
             bottom: 0;
             left: 0;
-            z-index: $Depth-Dialog;
+            z-index: $Depth-CheckListGrid;
         }
     }
 }
