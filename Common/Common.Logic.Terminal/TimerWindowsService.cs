@@ -32,6 +32,7 @@ namespace CheckListManager.Common.Logic.Terminal
 			};
 
 			Timer.Elapsed += (sender, args) => Run();
+			Run();
 
 			return true;
 		}

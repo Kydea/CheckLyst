@@ -1,7 +1,4 @@
-﻿using Autofac;
-using CheckListManager.Instances.Logic.Services;
-using CheckListManager.Instances.Tests.Contexts;
-using TechTalk.SpecFlow;
+﻿using TechTalk.SpecFlow;
 
 namespace CheckListManager.Instances.Tests.Hooks
 {

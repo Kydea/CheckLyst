@@ -15,7 +15,11 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public Formula Description { get; set; }
 
-        public ICheckList CheckList { get { return this; } set { throw new NotImplementedException("Just for inheritance purpose"); } }
+        public ICheckList CheckList
+		{
+			get => this;
+	        set => throw new NotImplementedException("Just for inheritance purpose");
+        }
 
 
         public void AddItem(ICheckListItem item)

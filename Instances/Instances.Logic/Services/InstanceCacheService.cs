@@ -95,5 +95,8 @@ namespace CheckListManager.Instances.Logic.Services
 
 		public Task<LockObject> LockInstanceAsync(string code)
 			=> _redisCache.LockAsync("Instance:{code}:Lock", RegionName);
+
+		public Task<string[]> GetInstancesWithRangeAsync(double start = double.NegativeInfinity, double stop = double.PositiveInfinity)
+			=> _redisCache.SortedSetGetAsync("Instances", start, stop, RegionName);
 	}
 }

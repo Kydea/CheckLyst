@@ -95,7 +95,7 @@ namespace CheckListManager.Instances.Logic.List
                 response.Fields["TagCode"] = new Field
                 {
                     Options = tags.Any() ? new[] { new Option("", "All") }.Union(tags.Select(t => new Option(t, t))) : new Option[0],
-                    Value = tag,
+                    Value = tag
                 };
 
                 response.Fields["TagValue"] = new Field

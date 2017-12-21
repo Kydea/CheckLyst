@@ -21,13 +21,13 @@ namespace CheckListManager.Common.Logic.Api
 
         protected IHttpActionResult Error(Exception exception)
         {
-            var ResponseMessage = new ResponseMessage();
+            var responseMessage = new ResponseMessage();
 
-            if (exception is DatabaseAggregateException)
-                ResponseMessage.Messages.AddRange(((DatabaseAggregateException)exception).InnerExceptions.Select(ie => ie.Message));
+            if (exception is DatabaseAggregateException databaseAggregateException)
+                responseMessage.Messages.AddRange(databaseAggregateException.InnerExceptions.Select(ie => ie.Message));
             else
-                ResponseMessage.Messages.Add(exception.Message);
-            return new ErrorResult(Request, ResponseMessage);
+                responseMessage.Messages.Add(exception.Message);
+            return new ErrorResult(Request, responseMessage);
         }
     }
 }

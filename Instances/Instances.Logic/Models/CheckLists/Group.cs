@@ -86,7 +86,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
 		public override ICheckListItem Clone(ICheckListGroup parent)
 		{
-			var group = new Group()
+			var group = new Group
 			{
 				CheckList = CheckList,
 				Iterator = Iterator,
