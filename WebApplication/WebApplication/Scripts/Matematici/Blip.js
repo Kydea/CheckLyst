@@ -4,6 +4,7 @@ matematici.blip = function () {
 		element,
 
 		show = function (options) {
+			if (element) close();
 			element = $("<div />")
 				.addClass("Blip " + (options.cssClass || ""))
 				.appendTo(matematici.elements.body)

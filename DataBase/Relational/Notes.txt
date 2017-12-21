@@ -17,7 +17,7 @@ il refresh del token adesso lo fanno tutti i client!
 
 mettere il controllo di salvataggio a chiusura detail page
 
-Controllo permessi come in datasources ovunque (attenzione a prototipi e instanze)
+Controllo permessi come in datasources ovunque
 
 Mettiamo la regular expression della password in companies
 
@@ -69,3 +69,8 @@ create trigger "T_Versions_Validate"
 
 ACCESS CONTROL
 Mettere un tempo di attesa per i login falliti
+Non aggiorna il nome utente in header da local storage
+
+
+if (!Identity.HasPermission("Users", "Edit")) return Unauthorized();
+[Authorize(Roles = "Prototypes#View")]

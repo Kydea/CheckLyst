@@ -18,13 +18,15 @@ namespace CheckListManager.Instances.Api.Controllers
 
         [HttpPost]
         [Route("Bind")]
+        [Authorize(Roles = "Instances#View")]
         public async Task<IHttpActionResult> Bind(Message<ListRequest> request)
         {
-            return Ok(await _listService.BindAsync(Identity.CompanyId, request.Data));
+            return Ok(await _listService.BindAsync(Identity, request.Data));
         }
 
         [HttpPost]
         [Route("GetData")]
+        [Authorize(Roles = "Instances#View")]
         public async Task<IHttpActionResult> GetData(PagingRequest<ListRequest> request)
         {
             return Ok(await _listService.GetDataAsync(Identity.CompanyId, request));

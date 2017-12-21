@@ -25,13 +25,7 @@ namespace CheckListManager.DataSources.Api.Controllers
 		[Route("GetData")]
 		public async Task<IHttpActionResult> GetData(PagingRequest<ListRequest> request)
 		{
-			//To use as reference
-			//if (!Identity.HasPermission("userfunction", 0, "tag"))
-			//{
-			//	return Unauthorized();
-			//}
-
-			return Ok(await _listService.GetDataAsync(Identity.CompanyId, request));
+            return Ok(await _listService.GetDataAsync(Identity.CompanyId, request));
 		}
 
 		[Authorize(Roles = "DataSources#Edit")]

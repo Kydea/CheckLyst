@@ -1,4 +1,5 @@
-﻿using CheckListManager.Common.Data;
+﻿using CheckListManager.Common.Core.Web.Security;
+using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Logic.DataEngine;
 using CheckListManager.Prototypes.Data;
@@ -19,7 +20,7 @@ namespace CheckListManager.Prototypes.Logic.List
             _prototypesRepository = prototypesRepository;
         }
 
-        public async Task<ListResponse> BindAsync(long company, ListRequest form)
+        public async Task<ListResponse> BindAsync(DefaultIdentity identity, ListRequest form)
         {
             var response = new ListResponse();
             var department = form.Department;
@@ -30,7 +31,7 @@ namespace CheckListManager.Prototypes.Logic.List
 
                 response.Fields["Name"] = new Field { Value = form.Name };
 
-                var departments = await _commonRepository.GetDepartmentsAsync(company);
+                var departments = await _commonRepository.GetDepartmentsAsync(identity, "Prototypes");
                 department = form.Department.HasValue && departments.Any(d => d.ID == form.Department) ? form.Department.Value : departments.FirstOrDefault()?.ID;
                 response.Fields["Department"] = new Field
                 {
@@ -50,7 +51,7 @@ namespace CheckListManager.Prototypes.Logic.List
 
             if (form.Source == null || form.Source == "department")
             {
-                var prototypeTypes = await _commonRepository.GetPrototypeTypesAsync(company, department ?? -1);
+                var prototypeTypes = await _commonRepository.GetPrototypeTypesAsync(identity, department ?? -1, "Prototypes");
                 response.Fields["PrototypeType"] = new Field
                 {
                     Options = prototypeTypes.Select(pt => new Option(pt.ID.ToString(), pt.Name)),

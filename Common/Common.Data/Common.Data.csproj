@@ -220,6 +220,10 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common.Core.Web\Common.Core.Web.csproj">
+      <Project>{2FAFFF00-D5EB-4BB0-B70B-38290D88C871}</Project>
+      <Name>Common.Core.Web</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common.Core\Common.Core.csproj">
       <Project>{31de9c2f-fb9d-472c-b28a-3c1edeff10dc}</Project>
       <Name>Common.Core</Name>

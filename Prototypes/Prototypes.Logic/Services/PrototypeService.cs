@@ -26,6 +26,11 @@ namespace CheckListManager.Prototypes.Logic.Services
         public async Task<PrototypeResponse> OpenAsync(DefaultIdentity defaultIdentity, PrototypeRequest request)
         {
             var PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(defaultIdentity, request.ID, request.Version);
+            if (
+                !defaultIdentity.HasPermission("Prototypes", "View", PrototypeVersion.Prototypes.Department) &&
+                !defaultIdentity.HasPermission("Prototypes", "View", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType)
+            )
+                throw new UnauthorizedAccessException();
 
             var Prototype = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converter);
             Prototype.Setup();
@@ -52,6 +57,11 @@ namespace CheckListManager.Prototypes.Logic.Services
         public async Task<PrototypeResponse> CloneAsync(DefaultIdentity defaultIdentity, PrototypeRequest request)
         {
             var PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(defaultIdentity, request.ID, request.Version);
+            if (
+                !defaultIdentity.HasPermission("Prototypes", "View", PrototypeVersion.Prototypes.Department) &&
+                !defaultIdentity.HasPermission("Prototypes", "View", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType)
+            )
+                throw new UnauthorizedAccessException();
 
             var Prototype = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converter);
             Prototype.Setup();
@@ -89,6 +99,11 @@ namespace CheckListManager.Prototypes.Logic.Services
         public async Task<PrototypeResponse> VersionAsync(DefaultIdentity defaultIdentity, PrototypeRequest request)
         {
             var PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(defaultIdentity, request.ID, request.Version);
+            if (
+                !defaultIdentity.HasPermission("Prototypes", "View", PrototypeVersion.Prototypes.Department) &&
+                !defaultIdentity.HasPermission("Prototypes", "View", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType)
+            )
+                throw new UnauthorizedAccessException();
 
             var Prototype = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converter);
             Prototype.Setup();
@@ -122,6 +137,11 @@ namespace CheckListManager.Prototypes.Logic.Services
             if (String.IsNullOrWhiteSpace(request.Name)) throw new Exception("Specify a name");
             if (!request.Department.HasValue) throw new Exception("Specify a department");
             if (!request.PrototypeType.HasValue) throw new Exception("Specify a prototype type");
+            if (
+                !defaultIdentity.HasPermission("Prototypes", "Edit", request.Department.Value) &&
+                !defaultIdentity.HasPermission("Prototypes", "Edit", request.Department.Value, request.PrototypeType.Value)
+            )
+                throw new UnauthorizedAccessException();
 
             bool
                 NewPrototype = request.ID < 0,
@@ -187,12 +207,26 @@ namespace CheckListManager.Prototypes.Logic.Services
 
         public async Task DeleteAsync(DefaultIdentity defaultIdentity, PrototypeRequest request)
         {
+            var PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(defaultIdentity, request.ID, request.Version);
+            if (
+                !defaultIdentity.HasPermission("Prototypes", "Edit", PrototypeVersion.Prototypes.Department) &&
+                !defaultIdentity.HasPermission("Prototypes", "Edit", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType)
+            )
+                throw new UnauthorizedAccessException();
+
             await _prototypeRepository.DeletePrototypeVersionAsync(defaultIdentity, request.ID, request.Version);
         }
 
         public async Task<PrototypeResponse> SetStateAsync(DefaultIdentity defaultIdentity, PrototypeRequest request)
         {
-            var PrototypeVersion = await _prototypeRepository.SetStateAsync(defaultIdentity, request.ID, request.Version, request.State, request.StateProposed);
+            var PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(defaultIdentity, request.ID, request.Version);
+            if (
+                !defaultIdentity.HasPermission("Prototypes", "Edit", PrototypeVersion.Prototypes.Department) &&
+                !defaultIdentity.HasPermission("Prototypes", "Edit", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType)
+            )
+                throw new UnauthorizedAccessException();
+
+            await _prototypeRepository.SetStateAsync(defaultIdentity, PrototypeVersion, request.State, request.StateProposed);
             return new PrototypeResponse
             {
                 State = PrototypeVersion.VersionState,

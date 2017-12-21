@@ -23,6 +23,7 @@ namespace CheckListManager.Infrastructure.Api.Controllers
 
         [HttpPost]
         [Route("GetData")]
+        [Authorize(Roles = "Departments#View")]
         public async Task<IHttpActionResult> GetData(PagingRequest<DepartmentsRequest> request)
         {
             return Ok(await _departmentsService.GetDataAsync(Identity.CompanyId, request));
@@ -30,6 +31,7 @@ namespace CheckListManager.Infrastructure.Api.Controllers
 
         [HttpPost]
         [Route("Add")]
+        [Authorize(Roles = "Departments#Edit")]
         public async Task<IHttpActionResult> Add(Message<DepartmentsRow> request)
         {
             return Ok(await _departmentsService.AddOrEdit(Identity, request.Data, true));
@@ -37,6 +39,7 @@ namespace CheckListManager.Infrastructure.Api.Controllers
 
         [HttpPost]
         [Route("Edit")]
+        [Authorize(Roles = "Departments#Edit")]
         public async Task<IHttpActionResult> Edit(Message<DepartmentsRow> request)
         {
             return Ok(await _departmentsService.AddOrEdit(Identity, request.Data, false));
@@ -44,6 +47,7 @@ namespace CheckListManager.Infrastructure.Api.Controllers
 
         [HttpPost]
         [Route("Delete")]
+        [Authorize(Roles = "Departments#Edit")]
         public async Task<IHttpActionResult> Delete(Message<DepartmentsRow> request)
         {
             return Ok(await _departmentsService.Delete(Identity, request.Data.ID.Value));

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 
@@ -31,18 +32,14 @@ namespace CheckListManager.Common.Core.Web.Security
 
 		public string Description => Name;
 
-		public bool HasPermission(string code, long? department = null, long? prototypeType = null, string tag = null)
+		public bool HasPermission(string functionGroup, string function = "", long? department = null, long? prototypeType = null, string tag = null)
 		{
-			if (!department.HasValue && !prototypeType.HasValue && tag == null)
-			{
-				return true;
-			}
-
+            if (string.IsNullOrWhiteSpace(functionGroup) || functionGroup.Contains('#')) throw new ArgumentException($"Invalid function group '{functionGroup}'");
 			return Roles.Any(r =>
-				r.Code == code
-                && (department == null || r.Department == department.Value)
-                && (prototypeType == null || r.PrototypeType == prototypeType.Value)
-				&& (tag == null || r.Tag == tag)
+				r.Code.StartsWith(functionGroup + "#" + function)
+                && r.Department == department
+                && r.PrototypeType == prototypeType
+				&& r.Tag == tag
 			);
 		}
 

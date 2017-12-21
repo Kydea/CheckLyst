@@ -57,7 +57,7 @@ namespace CheckListManager.Infrastructure.Tests.Steps
         [Given(@"I choose a department from the list")]
         public async Task GivenIChooseADepartmentFromTheList()
         {
-            PrototypeTypesResponse response = (await _prototypeTypesService.BindAsync(_defaultIdentity.CompanyId, _context.Request));
+            PrototypeTypesResponse response = (await _prototypeTypesService.BindAsync(_defaultIdentity, _context.Request));
 
             // Almost a department needs to be selected
             Assert.IsTrue(response.Fields.ContainsKey("Department") && response.Fields["Department"].Options.Count() > 0, "Missing dipartments: cannot select a department from the list.");
@@ -93,7 +93,7 @@ namespace CheckListManager.Infrastructure.Tests.Steps
         [Given(@"I click on a prototype type that is used for a prototype")]
         public async Task GivenIClickOnAPrototypeTypeThatIsUsedForAPrototype()
         {
-            List<PrototypeTypes> data = (await _commonRepository.GetPrototypeTypesAsync(_defaultIdentity.CompanyId, _context.Request.Department.Value))
+            List<PrototypeTypes> data = (await _commonRepository.GetPrototypeTypesAsync(_defaultIdentity, _context.Request.Department.Value, null))
                 .Where(pt => pt.Prototypes.Count != 0).ToList();
 
             // If you click on a prototype: Count > 0 (it's a must)

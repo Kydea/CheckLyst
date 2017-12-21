@@ -21,6 +21,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
 
         [HttpPost]
         [Route("Open")]
+        [Authorize(Roles = "Prototypes#View")]
         public async Task<IHttpActionResult> Open(PrototypeRequest request)
         {
             try
@@ -35,6 +36,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
 
         [HttpPost]
         [Route("Clone")]
+        [Authorize(Roles = "Prototypes#Edit")]
         public async Task<IHttpActionResult> Clone(PrototypeRequest request)
         {
             try
@@ -49,6 +51,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
 
         [HttpPost]
         [Route("Version")]
+        [Authorize(Roles = "Prototypes#Edit")]
         public async Task<IHttpActionResult> Version(PrototypeRequest request)
         {
             try
@@ -63,6 +66,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
 
         [HttpPost]
         [Route("Create")]
+        [Authorize(Roles = "Prototypes#Edit")]
         public async Task<IHttpActionResult> Create(PrototypeRequest request)
         {
             try
@@ -77,6 +81,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
 
         [HttpPost]
         [Route("VerifyExpressions")]
+        [Authorize(Roles = "Prototypes#Edit")]
         public IHttpActionResult VerifyExpressions(PrototypeRequest request)
         {
             return Ok(_prototypeService.VerifyExpressions(request));
@@ -84,6 +89,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
 
         [HttpPost]
         [Route("Save")]
+        [Authorize(Roles = "Prototypes#Edit")]
         public async Task<IHttpActionResult> Save(PrototypeRequest request)
         {
             try
@@ -99,6 +105,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
 
         [HttpPost]
         [Route("Delete")]
+        [Authorize(Roles = "Prototypes#Edit")]
         public async Task<IHttpActionResult> Delete(PrototypeRequest request)
         {
             try
@@ -114,6 +121,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
 
         [HttpPost]
         [Route("SetState")]
+        [Authorize(Roles = "Prototypes#Edit")]
         public async Task<IHttpActionResult> SetState(PrototypeRequest request)
         {
             try
