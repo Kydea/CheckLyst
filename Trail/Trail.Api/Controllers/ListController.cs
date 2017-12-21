@@ -18,6 +18,7 @@ namespace CheckListManager.Trail.Api.Controllers
 
         [HttpPost]
         [Route("GetData")]
+        [Authorize(Roles = "Trail#View")]
         public async Task<IHttpActionResult> GetData(PagingRequest<ListRequest> request)
         {
             return Ok(await _listService.GetDataAsync(Identity.CompanyId, request));

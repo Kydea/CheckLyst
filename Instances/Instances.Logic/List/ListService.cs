@@ -5,6 +5,7 @@ using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Logic.DataEngine;
 using CheckListManager.Instances.Data;
+using CheckListManager.Common.Core.Web.Security;
 
 namespace CheckListManager.Instances.Logic.List
 {
@@ -19,7 +20,7 @@ namespace CheckListManager.Instances.Logic.List
             _instancesRepository = instancesRepository;
         }
 
-        public async Task<ListResponse> BindAsync(long company, ListRequest form)
+        public async Task<ListResponse> BindAsync(DefaultIdentity identity, ListRequest form)
         {
             var response = new ListResponse();
             var department = form.Department;
@@ -31,7 +32,7 @@ namespace CheckListManager.Instances.Logic.List
             if (form.Source == null)
             {
                 //initial load
-                var departments = await _commonRepository.GetDepartmentsAsync(company);
+                var departments = await _commonRepository.GetDepartmentsAsync(identity, "Instances");
                 department = form.Department.HasValue && departments.Any(d => d.ID == form.Department) ? form.Department.Value : departments.FirstOrDefault()?.ID;
                 response.Fields["Department"] = new Field
                 {
@@ -54,7 +55,7 @@ namespace CheckListManager.Instances.Logic.List
 
             if (form.Source == null || form.Source == "department")
             {
-                var prototypeTypes = await _commonRepository.GetPrototypeTypesAsync(company, department ?? -1);
+                var prototypeTypes = await _commonRepository.GetPrototypeTypesAsync(identity, department ?? -1, "Instances");
                 prototypeType = form.PrototypeType.HasValue && prototypeTypes.Any(d => d.ID == form.PrototypeType) ? form.PrototypeType.Value : prototypeTypes.FirstOrDefault()?.ID;
                 response.Fields["PrototypeType"] = new Field
                 {
@@ -66,7 +67,7 @@ namespace CheckListManager.Instances.Logic.List
 
             if (form.Source == null || form.Source == "department" || form.Source == "prototypeType")
             {
-                var prototypes = await _commonRepository.GetPrototypesAsync(company, prototypeType ?? -1);
+                var prototypes = await _commonRepository.GetPrototypesAsync(identity, prototypeType ?? -1, "Instances");
                 prototype = form.Prototype.HasValue && prototypes.Any(d => d.ID == form.Prototype) ? form.Prototype.Value : prototypes.FirstOrDefault()?.ID;
                 response.Fields["Prototype"] = new Field
                 {
@@ -78,7 +79,7 @@ namespace CheckListManager.Instances.Logic.List
 
             if (form.Source == null || form.Source == "department" || form.Source == "prototypeType" || form.Source == "prototype")
             {
-                var versions = await _commonRepository.GetPrototypeVersionsAsync(company, prototype ?? -1);
+                var versions = await _commonRepository.GetPrototypeVersionsAsync(identity, prototype ?? -1, "Instances");
                 version = form.Version.HasValue && versions.Any(d => d.Version == form.Version) ? form.Version.Value : versions.FirstOrDefault()?.Version;
                 response.Fields["Version"] = new Field
                 {
@@ -90,7 +91,7 @@ namespace CheckListManager.Instances.Logic.List
 
             if (form.Source == null || form.Source == "department" || form.Source == "prototypeType" || form.Source == "prototype" || form.Source == "version")
             {
-                var tags = await _commonRepository.GetPrototypeVersionTagsAsync(company, prototype ?? -1, version);
+                var tags = await _commonRepository.GetPrototypeVersionTagsAsync(identity, prototype ?? -1, version, "Instances");
                 tag = tag != string.Empty && tags.Any(d => d == tag) ? tag : tags.FirstOrDefault();
                 response.Fields["TagCode"] = new Field
                 {

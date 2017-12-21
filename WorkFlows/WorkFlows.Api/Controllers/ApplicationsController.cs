@@ -20,6 +20,7 @@ namespace CheckListManager.WorkFlows.Api.Controllers
 
         [HttpPost]
         [Route("GetSteps")]
+        [Authorize(Roles = "Prototypes#Edit, Prototypes#View")]
         public async Task<IHttpActionResult> GetSteps(GetStepsRequest request)
         {
             return Ok(await _applicationService.GetStepsAsync(Identity, request));
@@ -27,6 +28,7 @@ namespace CheckListManager.WorkFlows.Api.Controllers
 
         [HttpPost]
         [Route("Create")]
+        [Authorize(Roles = "Prototypes#Edit")]
         public async Task<IHttpActionResult> Create(CreateRequest request)
         {
             try
@@ -41,6 +43,7 @@ namespace CheckListManager.WorkFlows.Api.Controllers
 
         [HttpPost]
         [Route("Sign")]
+        [Authorize(Roles = "Prototypes#Approve")]
         public async Task<IHttpActionResult> Sign(SignRequest request)
         {
             try

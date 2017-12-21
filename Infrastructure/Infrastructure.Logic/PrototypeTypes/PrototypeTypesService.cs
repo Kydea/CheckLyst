@@ -24,7 +24,7 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
             _commonRepository = commonRepository;
         }
 
-        public async Task<PrototypeTypesResponse> BindAsync(long Company, PrototypeTypesRequest Form)
+        public async Task<PrototypeTypesResponse> BindAsync(IDefaultIdentity identity, PrototypeTypesRequest Form)
         {
             PrototypeTypesResponse response = new PrototypeTypesResponse();
             long? Department = Form.Department;
@@ -32,7 +32,7 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
             if (Form.Source == null)
             {
                 //initial load
-                var Departments = await _commonRepository.GetDepartmentsAsync(Company);
+                var Departments = await _commonRepository.GetDepartmentsAsync(identity, null);
                 Department = Form.Department.HasValue && Departments.Any(d => d.ID == Form.Department) ? Form.Department.Value : Departments.FirstOrDefault()?.ID;
                 response.Fields["Department"] = new Field
                 {
@@ -41,7 +41,7 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
                 };
                 response.Valid &= Departments.Any();
 
-                var WorkFlows = (await _infrastructureRepository.GetWorkFlows(Company)).Select(wf => new Option(wf.ID.ToString(), wf.Description));
+                var WorkFlows = (await _infrastructureRepository.GetWorkFlows(identity.CompanyId)).Select(wf => new Option(wf.ID.ToString(), wf.Description));
                 response.Fields["ApprovationWorkFlow"] = new Field
                 {
                     Options = WorkFlows

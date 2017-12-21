@@ -23,7 +23,8 @@ namespace CheckListManager.Instances.Api.Controllers
 
 		[HttpPost]
 		[Route("Create")]
-		public async Task<IHttpActionResult> Create([FromBody]CreateInstanceRequest request)
+        [Authorize(Roles = "Instances#Edit")]
+        public async Task<IHttpActionResult> Create([FromBody]CreateInstanceRequest request)
 		{
 			try
 			{
@@ -31,8 +32,9 @@ namespace CheckListManager.Instances.Api.Controllers
 				var response = new InstanceResponse
 				{
 					Code = cacheObject.Code,
-					CheckList = _instanceManagerService.GetCheckList(Identity.Code, Identity.HasPermission("Instances#Edit", cacheObject.PrototypeType), cacheObject)
-				};
+					CheckList = _instanceManagerService.GetCheckList(Identity.Code, Identity.HasPermission("Instances", "Edit", cacheObject.PrototypeType), cacheObject)
+
+                };
 				return Ok(Message.Create(response));
 			}
 			catch (Exception e)
@@ -43,7 +45,8 @@ namespace CheckListManager.Instances.Api.Controllers
 
 		[HttpPost]
 		[Route("Open")]
-		public async Task<IHttpActionResult> Open([FromBody]Message<InstanceRequest> request)
+        [Authorize(Roles = "Instances#Edit")]
+        public async Task<IHttpActionResult> Open([FromBody]Message<InstanceRequest> request)
 		{
 			try
 			{
@@ -73,7 +76,8 @@ namespace CheckListManager.Instances.Api.Controllers
 
 		[HttpPost]
 		[Route("Get")]
-		public async Task<IHttpActionResult> Get([FromBody]Message<InstanceRequest> request)
+        [Authorize(Roles = "Instances#View")]
+        public async Task<IHttpActionResult> Get([FromBody]Message<InstanceRequest> request)
 		{
 			try
 			{
@@ -82,7 +86,7 @@ namespace CheckListManager.Instances.Api.Controllers
 				{
 					Id = cacheObject.Id,
 					Code = cacheObject.Code,
-					CheckList = _instanceManagerService.GetCheckList(Identity.Code, Identity.HasPermission("Instances#Edit", cacheObject.PrototypeType), cacheObject)
+					CheckList = _instanceManagerService.GetCheckList(Identity.Code, Identity.HasPermission("Instances", "Edit", cacheObject.PrototypeType), cacheObject)
 				};
 				return Ok(Message.Create(response));
 			}
@@ -102,7 +106,8 @@ namespace CheckListManager.Instances.Api.Controllers
 
 		[HttpPost]
 		[Route("Close")]
-		public async Task<IHttpActionResult> Close([FromBody]Message<InstanceRequest> request)
+        [Authorize(Roles = "Instances#View")]
+        public async Task<IHttpActionResult> Close([FromBody]Message<InstanceRequest> request)
 		{
 			try
 			{
@@ -125,7 +130,8 @@ namespace CheckListManager.Instances.Api.Controllers
 
 		[HttpPost]
 		[Route("Event")]
-		public async Task<IHttpActionResult> Event([FromBody]Message<InstanceEventRequest> request)
+        [Authorize(Roles = "Instances#Edit")]
+        public async Task<IHttpActionResult> Event([FromBody]Message<InstanceEventRequest> request)
 		{
 			try
 			{
@@ -134,7 +140,7 @@ namespace CheckListManager.Instances.Api.Controllers
 				{
 					Id = cacheObject.Id,
 					Code = cacheObject.Code,
-					CheckList = _instanceManagerService.GetCheckList(Identity.Code, Identity.HasPermission("Instances#Edit", cacheObject.PrototypeType), cacheObject)
+					CheckList = _instanceManagerService.GetCheckList(Identity.Code, Identity.HasPermission("Instances", "Edit", cacheObject.PrototypeType), cacheObject)
 				};
 				return Ok(Message.Create(response));
 			}

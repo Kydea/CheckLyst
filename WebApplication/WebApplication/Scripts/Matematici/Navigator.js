@@ -122,10 +122,18 @@
 		},
 
 		handleAjaxError: function (e) {
-			if (e.status == 401 || e.status == 498) { //we use the status 498 to mean invalid token (as arcgis)
-				window.location = basePath + "Security/Login"; //add return url
+			if (e.status == 401) { //we use the status 498 to mean invalid token (as arcgis)
+				alert("Permission denied");
+				matematici.blip.ko();
+				matematici.loader.hide();
+				return true;
+			} else if (e.status == 498) {
+				alert("Invalid token");
+				matematici.blip.ko();
+				matematici.loader.hide();
 				return true;
 			}
+
 		},
 
         changePage: function (e) {

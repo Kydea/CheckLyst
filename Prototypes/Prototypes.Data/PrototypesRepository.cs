@@ -90,57 +90,50 @@ namespace CheckListManager.Prototypes.Data
             await SaveChangesAsync();
         }
 
-        public async Task<PrototypeVersions> SetStateAsync(DefaultIdentity defaultIdentity, long prototype, int version, string state, bool proposed)
+        public async Task SetStateAsync(DefaultIdentity defaultIdentity, PrototypeVersions prototypeVersion, string state, bool proposed)
         {
-            var PrototypeVersion = await Entities.PrototypeVersions.SingleOrDefaultAsync(x => x.Prototypes.Company == defaultIdentity.CompanyId && x.Prototype == prototype && x.Version == version);
-            if (PrototypeVersion == null)
-                throw new Exception($"Prototype version {prototype}.{version} not found");
-
-            //todo controlli
-
-            if (PrototypeVersion.VersionState == VersionState.Draft && state == VersionState.InSumulation && !proposed)
-                PrototypeVersion.VersionState = state;
-            else if (PrototypeVersion.VersionState == VersionState.InSumulation && state == VersionState.Draft && !proposed)
-                PrototypeVersion.VersionState = state;
-            else if (PrototypeVersion.VersionState == VersionState.InSumulation && state == VersionState.Approved && proposed)
+            if (prototypeVersion.VersionState == VersionState.Draft && state == VersionState.InSumulation && !proposed)
+                prototypeVersion.VersionState = state;
+            else if (prototypeVersion.VersionState == VersionState.InSumulation && state == VersionState.Draft && !proposed)
+                prototypeVersion.VersionState = state;
+            else if (prototypeVersion.VersionState == VersionState.InSumulation && state == VersionState.Approved && proposed)
             {
-                var WorkFlow = PrototypeVersion.Prototypes.PrototypeTypes.ApprovationWorkFlow;
+                var WorkFlow = prototypeVersion.Prototypes.PrototypeTypes.ApprovationWorkFlow;
                 if (WorkFlow == null)
-                    throw new InvalidOperationException($"Approvation workflow not found for prototype type {PrototypeVersion.Prototypes.PrototypeTypes.Name} ({PrototypeVersion.Prototypes.PrototypeType}).");
+                    throw new InvalidOperationException($"Approvation workflow not found for prototype type {prototypeVersion.Prototypes.PrototypeTypes.Name} ({prototypeVersion.Prototypes.PrototypeType}).");
 
                 await _workFlowsService.CreateWorkFlowApplicationAsync(defaultIdentity, new CreateRequest
                 {
                     WorkFlow = WorkFlow.Value,
-                    Prototype = PrototypeVersion.Prototype,
-                    Version = PrototypeVersion.Version,
+                    Prototype = prototypeVersion.Prototype,
+                    Version = prototypeVersion.Version,
                     Action = "Prototype – state to Approved/Active"
                 });
 
-                PrototypeVersion.ProposedState = state;
-                PrototypeVersion.ProposedDate = DateTimeOffset.Now;
+                prototypeVersion.ProposedState = state;
+                prototypeVersion.ProposedDate = DateTimeOffset.Now;
             }
-            else if ((PrototypeVersion.VersionState == VersionState.Approved || PrototypeVersion.VersionState == VersionState.Active) && state == VersionState.Obsolete && proposed)
+            else if ((prototypeVersion.VersionState == VersionState.Approved || prototypeVersion.VersionState == VersionState.Active) && state == VersionState.Obsolete && proposed)
             {
-                var WorkFlow = PrototypeVersion.Prototypes.PrototypeTypes.ObsolescenceWorkFlow;
+                var WorkFlow = prototypeVersion.Prototypes.PrototypeTypes.ObsolescenceWorkFlow;
                 if (WorkFlow == null)
-                    throw new InvalidOperationException($"Obsolescence workflow not found for prototype type {PrototypeVersion.Prototypes.PrototypeTypes.Name} ({PrototypeVersion.Prototypes.PrototypeType}).");
+                    throw new InvalidOperationException($"Obsolescence workflow not found for prototype type {prototypeVersion.Prototypes.PrototypeTypes.Name} ({prototypeVersion.Prototypes.PrototypeType}).");
 
                 await _workFlowsService.CreateWorkFlowApplicationAsync(defaultIdentity, new CreateRequest
                 {
                     WorkFlow = WorkFlow.Value,
-                    Prototype = PrototypeVersion.Prototype,
-                    Version = PrototypeVersion.Version,
+                    Prototype = prototypeVersion.Prototype,
+                    Version = prototypeVersion.Version,
                     Action = "Prototype – state to Obsolete"
                 });
 
-                PrototypeVersion.ProposedState = state;
-                PrototypeVersion.ProposedDate = DateTimeOffset.Now;
+                prototypeVersion.ProposedState = state;
+                prototypeVersion.ProposedDate = DateTimeOffset.Now;
             }
             else
-                throw new InvalidOperationException($"Cannot {(proposed ? "propose" : "change")} state from {PrototypeVersion.VersionState} to {state}");
+                throw new InvalidOperationException($"Cannot {(proposed ? "propose" : "change")} state from {prototypeVersion.VersionState} to {state}");
 
             await SaveChangesAsync();
-            return PrototypeVersion;
         }
     }
 }
