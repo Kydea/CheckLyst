@@ -70,7 +70,3 @@ create trigger "T_Versions_Validate"
 ACCESS CONTROL
 Mettere un tempo di attesa per i login falliti
 Non aggiorna il nome utente in header da local storage
-
-
-if (!Identity.HasPermission("Users", "Edit")) return Unauthorized();
-[Authorize(Roles = "Prototypes#View")]
