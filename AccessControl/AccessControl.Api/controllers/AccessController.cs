@@ -5,6 +5,7 @@ using CheckListManager.AccessControl.Logic.Services;
 using CheckListManager.Common.Logic.Api;
 using CheckListManager.Common.Logic.Api.Messages;
 using System;
+using CheckListManager.Common.Logic.Authentication;
 
 namespace CheckListManager.AccessControl.Api.Controllers
 {

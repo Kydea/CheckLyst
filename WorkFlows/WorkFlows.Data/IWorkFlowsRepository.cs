@@ -17,5 +17,6 @@ namespace CheckListManager.WorkFlows.Data
         Task DeleteWorkFlowAsync(DefaultIdentity identity, long id);
         Task<WorkFlowApplications> GetWorkFlowApplicationAsync(DefaultIdentity identity, long? prototype, int? version, long? instance);
         Task<WorkFlowApplicationSteps> GetWorkFlowApplicationStepAsync(DefaultIdentity identity, long id);
+        Task<long> CreateWorkFlowApplication(DefaultIdentity defaultIdentity, long workFlow, DateTimeOffset? date, long? prototype, int? version, long? instance, string action);
     }
 }

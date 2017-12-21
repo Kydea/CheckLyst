@@ -308,6 +308,10 @@
 					setupActionBar();
 					if (!stateChanged)
 						prototype.loadSignatureBook(action);
+					if (result.approved)
+						matematici.blip.ok();
+					else
+						matematici.blip.ko();
 				}
 			});
 			return true;
@@ -490,6 +494,7 @@
 				model.proposedState = result.proposedState;
 				model.proposedDate = result.proposedDate;
 				update();
+				matematici.blip.ok();
 			});
 		};
 

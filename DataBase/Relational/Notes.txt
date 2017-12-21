@@ -31,7 +31,6 @@ preview
 gestire concorrenza per firme (credo serva per forza una transazione, chiedere aiuto a Giacomo)
 gestire concorrenza transazionalmente (where nell'aggironamento e conteggio risultati?)
 PrototypeSignatures.SendEmails(db, Version, Action) quando ci sono variazioni nella applicazione di work flow
-Mettere Apply del workflow come MS e non in common
 
 USERS 
 Lavorare sulla stringa di autenticazione tramite ldap

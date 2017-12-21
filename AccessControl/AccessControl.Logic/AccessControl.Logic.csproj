@@ -79,7 +79,6 @@
   <ItemGroup>
     <Compile Include="Authentication\IdentityToken.cs" />
     <Compile Include="Exceptions\AuthenticationException.cs" />
-    <Compile Include="Messages\Access\AuthenticateRequest.cs" />
     <Compile Include="Messages\Access\LogoutRequest.cs" />
     <Compile Include="Messages\Client\CreateRequest.cs" />
     <Compile Include="Messages\Client\CreateResponse.cs" />

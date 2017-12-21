@@ -15,15 +15,15 @@ namespace CheckListManager.WorkFlows.Data
     public class WorkFlowsRepository : Repository, IWorkFlowsRepository
     {
         public WorkFlowsRepository(RelationalDatabaseEntities entities) : base(entities)
-		{
+        {
         }
 
         public async Task<PagingResponse<List<TResult>>> GetWorkFlowsAsync<TResult, TKey>(
             long companyId,
             Expression<Func<Common.Data.WorkFlows, TResult>> select,
             Expression<Func<Common.Data.WorkFlows, bool>> filters,
-            Expression<Func<Common.Data.WorkFlows, TKey>> order, 
-            int currentPage, 
+            Expression<Func<Common.Data.WorkFlows, TKey>> order,
+            int currentPage,
             int itemsPerPage)
         {
             var Data = await Entities.WorkFlows
@@ -93,6 +93,38 @@ namespace CheckListManager.WorkFlows.Data
             var Step = await Entities.WorkFlowApplicationSteps.SingleOrDefaultAsync(x => x.Company == identity.CompanyId && x.ID == id);
             if (Step == null) throw new ArgumentException($"Workflow application step {id} not found");
             return Step;
+        }
+
+        public async Task<long> CreateWorkFlowApplication(DefaultIdentity defaultIdentity, long workFlow, DateTimeOffset? date, long? prototype, int? version, long? instance, string action)
+        {
+            var WorkFlow = await Entities.WorkFlows.SingleOrDefaultAsync(x => x.Company == defaultIdentity.CompanyId && x.ID == workFlow);
+            if (WorkFlow == null) throw new ArgumentException($"Work flow {defaultIdentity.CompanyId}.{workFlow} not found", nameof(workFlow));
+            var WorkFlowApplication = new WorkFlowApplications
+            {
+                WorkFlow = workFlow,
+                Date = date,
+
+                Prototype = prototype,
+                Version = version,
+
+                Instance = instance,
+
+                WorkFlowAction = action,
+                Approved = null, //true means approved, false means rejected
+
+                CreatedOn = DateTimeOffset.UtcNow,
+                CreatedBy = defaultIdentity.Code
+            };
+            Entities.WorkFlowApplications.Add(WorkFlowApplication);
+            Entities.WorkFlowApplicationSteps.AddRange(WorkFlow.WorkFlowSteps.OrderBy(x => x.Step).ThenBy(x => x.ID).Select(x => new WorkFlowApplicationSteps
+            {
+                Company = defaultIdentity.CompanyId,
+                WorkFlowApplications = WorkFlowApplication,
+                Step = x.Step,
+                WorkFlowApplicationStepTags = x.WorkFlowStepTags.Select(t => new WorkFlowApplicationStepTags { Tag = t.Tag }).ToList()
+            }));
+            await SaveChangesAsync();
+            return WorkFlowApplication.ID;
         }
     }
 }
