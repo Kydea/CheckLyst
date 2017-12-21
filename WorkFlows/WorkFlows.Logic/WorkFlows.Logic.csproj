@@ -53,11 +53,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Applications\ApplicationService.cs" />
+    <Compile Include="Applications\SignResponse.cs" />
+    <Compile Include="Applications\SignRequest.cs" />
+    <Compile Include="Applications\GetStepsResponse.cs" />
     <Compile Include="Detail\DetailRequest.cs" />
     <Compile Include="Detail\DetailResponse.cs" />
     <Compile Include="Detail\DetailService.cs" />
     <Compile Include="Detail\IDetailService.cs" />
     <Compile Include="Detail\Step.cs" />
+    <Compile Include="Applications\IApplicationService.cs" />
+    <Compile Include="Applications\GetStepsRequest.cs" />
+    <Compile Include="Applications\ApplicationStep.cs" />
     <Compile Include="List\ListRow.cs" />
     <Compile Include="List\ListService.cs" />
     <Compile Include="List\IListService.cs" />

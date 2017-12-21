@@ -6,11 +6,11 @@
   position: relative; }
   div.Calendar.Calendar-Popup {
     position: absolute;
-    z-index: 105;
+    z-index: 106;
     display: none;
     background: white; }
     div.Calendar.Calendar-Popup.Calendar {
-      z-index: 105; }
+      z-index: 106; }
   div.Calendar a:hover {
     text-decoration: none; }
   div.Calendar span.Month {

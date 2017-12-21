@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CheckListManager.Common.Core.Web.Security
 {
-    interface IDefaultIdentity
+    public interface IDefaultIdentity
     {
         long CompanyId { get; }
 

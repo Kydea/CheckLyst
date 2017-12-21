@@ -17,16 +17,16 @@ div.Input {
     text-overflow: ellipsis;
 }
 
-input[type=text], input[type=range], input[type=number], input[type=password], input[type=email], input[type=file], select, textarea, div.Input {
+input[type=text], input[type=range], input[type=number], input[type=password], input[type=email], input[type=file], select, div.Input {
     display: block;
     border-radius: 3px;
     border: solid 1px $Color-Grey-Light;
     background: white;
     width: 100%;
     padding: 5px 10px;
-    resize: none;
     line-height: $Metric-Control-Height;
     height: $Metric-Control-Height;
+    font-family: $Font-Base;
     font-size: 13px;
 
     &[readonly], &.ReadOnly {
@@ -36,6 +36,19 @@ input[type=text], input[type=range], input[type=number], input[type=password], i
 
 textarea {
     height: 88px;
+    display: block;
+    border-radius: 3px;
+    border: solid 1px $Color-Grey-Light;
+    background: white;
+    width: 100%;
+    padding: 5px 10px;
+    resize: none;
+    font-family: $Font-Base;
+    font-size: 13px;
+
+    &[readonly], &.ReadOnly {
+        background-color: $Color-Silver-Light;
+    }
 }
 
 a.Button {
@@ -275,6 +288,12 @@ form, div.CheckList, div.PropertyPanel div.PropertyValue {
         color: $Color-Grey-Dark;
         padding-top: 1em;
 
+        label {
+            padding: 0;
+            margin: 0;
+            width: unset;
+        }
+
         input, select, textarea, div.Input {
             margin-top: 5px;
         }
@@ -337,7 +356,7 @@ form, div.CheckList, div.PropertyPanel div.PropertyValue {
                 border-color: $Color-Red-Regular !important;
             }
 
-            input, select, div.Input {
+            input, select, div.Input, textarea {
                 border-color: $Color-Red-Regular;
                 outline-color: $Color-Red-Light;
             }

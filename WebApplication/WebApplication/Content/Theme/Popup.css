@@ -9,7 +9,7 @@ div.Popup {
   right: 0;
   bottom: 0;
   left: 0;
-  z-index: 104;
+  z-index: 105;
   background-color: rgba(102, 102, 102, 0.7); }
   div.Popup div.Container {
     padding: 20px;

@@ -3,11 +3,14 @@
 		datePicker = this,
 		element = $(selector),
 		date,
-		enabled = !element.hasClass("Disabled") && !element.prop("readonly"),
 		calendar = null,
 		min,
 		max,
 		needToParse = false,
+
+		isEnabled = function () {
+			return !element.hasClass("Disabled") && !element.prop("readonly");
+		},
 
 		getCurrentDate = function () {
 			var today = new Date();
@@ -20,7 +23,7 @@
 		},
 
 		open = function (e) {
-			if (!enabled) return;
+			if (!isEnabled()) return;
 
 			e.preventDefault();
 			e.stopPropagation();
@@ -45,7 +48,7 @@
 
 		setDate = function (value) {
 			var formattedDate = matematici.dateFormatter.format(value, true);
-			date = formattedDate.valid ? value : null;
+			date = formattedDate.valid ? moment(value).toDate() : null;
 			element
 				.data("date", date)
 				.val(formattedDate.date)
@@ -62,8 +65,8 @@
 				var value = element.val();
 				if (!!value) {
 					var momentDate = moment(value, matematici.dateFormatter.dateFormat);
-					date = momentDate.toDate();
-					element.val(momentDate.format(matematici.dateFormatter.dateFormat));
+					date = momentDate.isValid() ? momentDate.toDate() : null;
+					element.val(momentDate.isValid() ? momentDate.format(matematici.dateFormatter.dateFormat) : "");
 				} else {
 					date = null;
 					element.val("");
@@ -71,11 +74,11 @@
 				calendar.close();
 			}
 			catch (error) {
-				matematici.dialog.error("Error", "invalid date");
 				console.log(error, date, element.val());
 				date = null;
 				element.val("");
 			}
+			element.data("date", date)
 		},
 
 		setup = function () {

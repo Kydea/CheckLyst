@@ -37,9 +37,10 @@ namespace CheckListManager.Common.Logic.Services
             Entities.WorkFlowApplications.Add(WorkFlowApplication);
             Entities.WorkFlowApplicationSteps.AddRange(WorkFlow.WorkFlowSteps.OrderBy(x => x.Step).ThenBy(x => x.ID).Select(x => new WorkFlowApplicationSteps
             {
+                Company = defaultIdentity.CompanyId,
                 WorkFlowApplications = WorkFlowApplication,
-                WorkFlowStep = x.ID,
-                Approved = false
+                Step = x.Step,
+                WorkFlowApplicationStepTags = x.WorkFlowStepTags.Select(t => new WorkFlowApplicationStepTags { Tag = t.Tag }).ToList()
             }));
             await SaveChangesAsync();
             return WorkFlowApplication.ID;

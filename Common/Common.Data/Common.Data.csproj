@@ -166,6 +166,7 @@
     <Compile Include="UserSessions.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="VersionState.cs" />
     <Compile Include="VersionStates.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>
@@ -176,6 +177,9 @@
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="WorkFlowApplicationSteps.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="WorkFlowApplicationStepTags.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="WorkFlows.cs">

@@ -16,4 +16,5 @@ insert into "Configuration"."Configurations" ("Code", "Value") values
 	('RedisHost', 'redis-01.clm.internal'),
 	('RedisPort', '6379'),
 	('SqsBaseUrl', 'https://sqs.eu-west-1.amazonaws.com/'),
-	('ApiBaseUrl', 'http://api.clm.internal/');
+	('ApiBaseUrl', 'http://api.clm.internal/'),
+	('InstanceCloseTimeout', '4320'); --3 days, expressed in minutes

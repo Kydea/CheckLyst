@@ -15,6 +15,6 @@ namespace CheckListManager.Instances.Logic.Services
 
 		Task<LockObject> LockInstanceAsync(string code);
 
-		//Task<IEnumerable<InstanceCacheObject>> GetByUserAsync(string userCode);
+		Task<string[]> GetInstancesWithRangeAsync(double start = double.NegativeInfinity, double stop = double.PositiveInfinity);
 	}
 }

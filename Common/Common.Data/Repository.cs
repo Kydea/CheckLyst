@@ -36,7 +36,7 @@ namespace CheckListManager.Common.Data
 			}
 		}
 
-		protected async Task<int> SaveChangesAsync()
+		public async Task<int> SaveChangesAsync()
 		{
 			try
 			{

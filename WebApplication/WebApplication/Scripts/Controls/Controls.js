@@ -9,9 +9,10 @@
 		},
 
 		setValidationMessages: function (control, values) {
-			if (values.length == 0)
+			if (values.length == 0) {
 				$(".ValidationMessagesIcon", control.parent().removeClass("Error")).remove();
-			else {
+				control.off(".ValidationMessages")
+			} else {
 				var errors = $("<div />").addClass("Errors").show();
 				for (var index in values)
 					errors.append(
@@ -24,6 +25,20 @@
 					e.preventDefault();
 					matematici.dialog.error("Error", errors)
 				}));
+
+				control			
+					.on("keypress.ValidationMessages", function (e) {
+						if (e.key != "Tab" && e.which !== 0 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+							matematici.controls.setValidationMessages($(this), []);
+						}
+					})
+					.on("change.ValidationMessages", function (e) {
+						matematici.controls.setValidationMessages($(this), []);
+					})
+					.on("paste.ValidationMessages", function (e) {
+						matematici.controls.setValidationMessages($(this), []);
+					})
+
 			}
 		}
 	};

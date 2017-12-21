@@ -10,6 +10,7 @@ div.Blip {
     left: 0;
     z-index: $Depth-Blip;
     background-color: rgba(102, 102, 102, .7);
+    cursor: pointer;
 
     div.Container {
         position: fixed;

@@ -2,12 +2,6 @@
   cursor: pointer;
   color: white !important; }
 
-div.Prototype div.TabContainer div.TabLabels a.Selected {
-  cursor: pointer !important; }
-
-div.Prototype div.TabContainer div.TabLabels a.Current {
-  background-color: #fce6e8; }
-
 div.Prototype a.Add.Button {
   float: right; }
 
@@ -66,11 +60,15 @@ div.Prototype div.TabLabels {
     margin: 0; }
     div.Prototype div.TabLabels div.Commands a.Add {
       display: none; }
-  div.Prototype div.TabLabels a:first-of-type + div.Commands a.Up {
+  div.Prototype div.TabLabels > a.Selected {
+    cursor: pointer !important; }
+  div.Prototype div.TabLabels > a.Current {
+    background-color: #fce6e8; }
+  div.Prototype div.TabLabels > a:first-of-type + div.Commands a.Up {
     display: none; }
-  div.Prototype div.TabLabels a:nth-last-of-type(2) + div.Commands a.Down {
+  div.Prototype div.TabLabels > a:nth-last-of-type(2) + div.Commands a.Down {
     display: none; }
-  div.Prototype div.TabLabels > a:last-child {
+  div.Prototype div.TabLabels > a.Add {
     background-color: #ffba00;
     margin: 2px;
     height: 34px;

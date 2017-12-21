@@ -19,7 +19,10 @@
                         getData: "@BaseUrl/Infrastructure/Companies/GetData"
                     }
                 },
-                help: "@Url.Action("Index", "Help")"
+                help: "@Url.Action("Index", "Help")",
+                workflows: {
+                    signature: "@Url.Action("Signature", "WorkFlows")"
+                }
         	},
         	signatureActions: {
         		toApprove: "Prototype – state to Approved/Active",
@@ -32,7 +35,6 @@
                 "Deputy final approver",
                 "Final approver"
             ],
-			activity: true,
             initializers: [],
             destroyers: [],
             codeRegularExpression: /^[$A-Z_][0-9A-Z_$]*$/i,

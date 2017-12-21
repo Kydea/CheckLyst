@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using CheckListManager.Common.Core.Helpers;
 using CheckListManager.Common.Core.Network;
 using CheckListManager.Common.Core.Web.Security;
+using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Logic.Cache;
 using CheckListManager.Common.Logic.Json;
 using CheckListManager.Common.Logic.Models.CheckLists;
@@ -27,14 +30,18 @@ namespace CheckListManager.Instances.Logic.Services
 		private readonly IInstancesRepository _instancesRepository;
 		private readonly CheckListJsonConverter _converter;
 		private readonly IInstanceCacheService _instanceCache;
+		private readonly IConfigurationService _configurationService;
 
-		public InstanceManagerService(IServiceClient client, IHashService hashService, IInstancesRepository instancesRepository, CheckListJsonConverter converter, IInstanceCacheService instanceCache)
+		public InstanceManagerService(IServiceClient client, IHashService hashService,
+			IInstancesRepository instancesRepository, CheckListJsonConverter converter, IInstanceCacheService instanceCache,
+			IConfigurationService configurationService)
 		{
 			_client = client;
 			_hashService = hashService;
 			_instancesRepository = instancesRepository;
 			_converter = converter;
 			_instanceCache = instanceCache;
+			_configurationService = configurationService;
 		}
 
 		public async Task<InstanceCacheObject> GetAsync(long companyId, string code)
@@ -94,7 +101,7 @@ namespace CheckListManager.Instances.Logic.Services
 			}
 		}
 
-		public async Task OpenAsync(string userCode, string code)
+		public async Task OpenAsync(string code, string userCode)
 		{
 			try
 			{
@@ -160,10 +167,8 @@ namespace CheckListManager.Instances.Logic.Services
 			}
 		}
 
-		public async Task CloseAsync(long companyId, string userCode, string code)
+		public async Task CloseAsync(string code, string userCode)
 		{
-			LockObject lockObject = null;
-
 			try
 			{
 				var cacheObject = await _instanceCache.GetAsync(code, false);
@@ -171,19 +176,39 @@ namespace CheckListManager.Instances.Logic.Services
 				{
 					return;
 				}
+				await CloseAsync(cacheObject, userCode, false);
+			}
+			catch (InstanceException)
+			{
+				throw;
+			}
+			catch (Exception e)
+			{
+				Logger.Error(e, "Unable to create the instance");
+				throw new InstanceException("Unable to create the instance", e);
+			}
+		}
+
+		private async Task CloseAsync(InstanceCacheObject cacheObject, string userCode, bool force)
+		{
+			LockObject lockObject = null;
+
+			try
+			{
+				// ReSharper disable once ConvertIfStatementToSwitchStatement
 				if (cacheObject.InstanceState == InstanceState.Draft)
 				{
-					await _instanceCache.RemoveAsync(code);
+					await _instanceCache.RemoveAsync(cacheObject.Code);
 					return;
 				}
 				if (cacheObject.InstanceState == InstanceState.Progress)
 				{
-					lockObject = await _instanceCache.LockInstanceAsync(code);
+					lockObject = await _instanceCache.LockInstanceAsync(cacheObject.Code);
 					if (lockObject.IsAcquired)
 					{
-						cacheObject = await _instanceCache.GetAsync(code);
+						cacheObject = await _instanceCache.GetAsync(cacheObject.Code);
 
-						var row = await _instancesRepository.GetByCodeAsync(companyId, code);
+						var row = await _instancesRepository.GetByCodeAsync(cacheObject.CompanyId, cacheObject.Code);
 						if (row == null)
 						{
 							throw new InstanceException("Instance not found");
@@ -194,10 +219,20 @@ namespace CheckListManager.Instances.Logic.Services
 						row.ModifiedOn = cacheObject.ModifiedOn;
 						row.ModifiedBy = cacheObject.ModifiedBy;
 
-						await Task.WhenAll(
-							_instancesRepository.UpdateInstanceAsync(userCode, row),
-							_instanceCache.TouchInstanceAsync(code, 1)
-						);
+						if (force)
+						{
+							await Task.WhenAll(
+								_instancesRepository.UpdateInstanceAsync(userCode, row),
+								_instanceCache.RemoveAsync(cacheObject.Code)
+							);
+						}
+						else
+						{
+							await Task.WhenAll(
+								_instancesRepository.UpdateInstanceAsync(userCode, row),
+								_instanceCache.TouchInstanceAsync(cacheObject.Code, 1)
+							);
+						}
 					}
 				}
 			}
@@ -416,6 +451,7 @@ namespace CheckListManager.Instances.Logic.Services
 		}
 
 		// ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
+		// ReSharper disable once UnusedParameter.Local
 		private static void CheckPermission(bool canEdit)
 		{
 			if (!canEdit)
@@ -443,6 +479,30 @@ namespace CheckListManager.Instances.Logic.Services
 			return instance.Instance;
 		}
 
+		public async Task ClearPendingInstances(CancellationToken cancellationToken = new CancellationToken())
+		{
+			var score = DateTimeOffset.UtcNow.ToUnixTimeSeconds() - _configurationService.InstanceCloseTimeout * 60;
+			var codes = await _instanceCache.GetInstancesWithRangeAsync(stop: score);
+
+			foreach (var code in codes)
+			{
+				var instance = await _instanceCache.GetAsync(code, false);
+				if (instance == null)
+				{
+					continue;
+				}
+
+				if (instance.IsDirty)
+				{
+					await CloseAsync(instance, null, true);
+				}
+				else
+				{
+					await _instanceCache.RemoveAsync(code);
+				}
+			}
+		}
+
 		private async Task<GetPrototypeResponse> CreateInstanceFromPrototypeAsync(long prototype, int version)
 		{
 			try
@@ -452,11 +512,22 @@ namespace CheckListManager.Instances.Logic.Services
 					Id = prototype,
 					Version = version
 				});
+
 				var responseData = await httpResponse.Content.ReadAsStringAsync();
+				if (httpResponse.StatusCode == HttpStatusCode.InternalServerError)
+				{
+					var messase = JsonConvert.DeserializeObject<ResponseMessage>(responseData);
+					throw new InstanceException(messase.Messages.FirstOrDefault() ?? "Unable to retrieve the prototype");
+				}
 
 				var response = JsonConvert.DeserializeObject<GetPrototypeResponse>(responseData, _converter);
 
 				return response;
+			}
+			catch (InstanceException e)
+			{
+				Logger.Error(e);
+				throw;
 			}
 			catch (Exception e)
 			{
@@ -490,9 +561,9 @@ namespace CheckListManager.Instances.Logic.Services
 			}
 		}
 
-		private void UnlockPages(ICheckList instance, string userCode)
+		private static void UnlockPages(ICheckList instance, string userCode)
 		{
-			var pages = instance.Pages.Cast<Page>().Where(p => p.Lock != null && p.Lock.User == userCode);
+			var pages = instance.Pages.Cast<Page>().Where(p => userCode == null && p.Lock != null || p.Lock != null && p.Lock.User == userCode);
 			foreach (var p in pages)
 			{
 				p.Lock = null;
@@ -516,7 +587,7 @@ namespace CheckListManager.Instances.Logic.Services
 				Description = instance.Description,
 				PrototypeCode = instance.PrototypeCode,
 				ModifiedOn = instance.ModifiedOn,
-				ModifiedBy = instance.ModifiedBy,
+				ModifiedBy = instance.ModifiedBy
 			};
 			cacheObject.Instance.Setup();
 			return cacheObject;

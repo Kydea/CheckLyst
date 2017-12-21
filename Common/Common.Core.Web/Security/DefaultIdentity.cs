@@ -31,16 +31,17 @@ namespace CheckListManager.Common.Core.Web.Security
 
 		public string Description => Name;
 
-		public bool HasPermission(string code, long? prototypeType = null, string tag = null)
+		public bool HasPermission(string code, long? department = null, long? prototypeType = null, string tag = null)
 		{
-			if (!prototypeType.HasValue && tag == null)
+			if (!department.HasValue && !prototypeType.HasValue && tag == null)
 			{
 				return true;
 			}
 
 			return Roles.Any(r =>
 				r.Code == code
-				&& (prototypeType == null || r.PrototypeType == prototypeType.Value)
+                && (department == null || r.Department == department.Value)
+                && (prototypeType == null || r.PrototypeType == prototypeType.Value)
 				&& (tag == null || r.Tag == tag)
 			);
 		}
@@ -48,14 +49,15 @@ namespace CheckListManager.Common.Core.Web.Security
 		private static Role ParseRole(string value)
 		{
 			var roleTokens = value.Split('#');
-			if (roleTokens.Length < 2 || roleTokens.Length > 4)
+			if (roleTokens.Length < 2 || roleTokens.Length > 5)
                 throw new InvalidTokenException();
 
             return new Role
 			{
 				Code = roleTokens[0] + '#' + roleTokens[1],
-				PrototypeType = roleTokens.Length < 3 || roleTokens[2] == string.Empty ? (int?)null : int.Parse(roleTokens[2]),
-				Tag = roleTokens.Length < 4 ? null : roleTokens[3]
+                Department = roleTokens.Length < 3 || roleTokens[2] == string.Empty ? (int?)null : int.Parse(roleTokens[2]),
+                PrototypeType = roleTokens.Length < 4 || roleTokens[3] == string.Empty ? (int?)null : int.Parse(roleTokens[3]),
+				Tag = roleTokens.Length < 5 ? null : roleTokens[4]
 			};
         }
     }

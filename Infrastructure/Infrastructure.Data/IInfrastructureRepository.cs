@@ -10,17 +10,17 @@ namespace CheckListManager.Infrastructure.Data
 {
 	public interface IInfrastructureRepository : IRepository
 	{
-		Task<Departments> EditDepartmentAsync(DefaultIdentity identity, Departments department);
+		Task<Departments> EditDepartmentAsync(IDefaultIdentity identity, Departments department);
 
-        Task<Departments> AddDepartmentAsync(DefaultIdentity identity, Departments department);
+        Task<Departments> AddDepartmentAsync(IDefaultIdentity identity, Departments department);
 
-        Task DeleteDepartmentAsync(DefaultIdentity identity, long id);
+        Task DeleteDepartmentAsync(IDefaultIdentity identity, long id);
 
-        Task<PrototypeTypes> EditPrototypeTypeAsync(DefaultIdentity identity, PrototypeTypes prototypeType);
+        Task<PrototypeTypes> EditPrototypeTypeAsync(IDefaultIdentity identity, PrototypeTypes prototypeType);
 
-        Task<PrototypeTypes> AddPrototypeTypeAsync(DefaultIdentity identity, PrototypeTypes prototypeType);
+        Task<PrototypeTypes> AddPrototypeTypeAsync(IDefaultIdentity identity, PrototypeTypes prototypeType);
 
-        Task DeletePrototypeTypeAsync(DefaultIdentity identity, long id);
+        Task DeletePrototypeTypeAsync(IDefaultIdentity identity, long id);
 
         Task<PagingResponse<List<TResult>>> GetDepartmentsAsync<TResult>(
             long companyId,

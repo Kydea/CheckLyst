@@ -6,16 +6,6 @@ div.Prototype {
         color: white !important;
     }
 
-    div.TabContainer div.TabLabels a {
-        &.Selected {
-            cursor: pointer !important;
-        }
-
-        &.Current {
-            background-color: $Color-Pink;
-        }
-    }
-
     a.Add.Button {
         float: right;
     }
@@ -102,30 +92,40 @@ div.Prototype {
             }
         }
 
-        a:first-of-type {
-            + div.Commands {
-                a.Up {
-                    display: none;
+        > a {
+            &.Selected {
+                cursor: pointer !important;
+            }
+
+            &.Current {
+                background-color: $Color-Pink;
+            }
+
+            &:first-of-type {
+                + div.Commands {
+                    a.Up {
+                        display: none;
+                    }
                 }
             }
-        }
 
-        a:nth-last-of-type(2) {
-            + div.Commands {
-                a.Down {
-                    display: none;
+            &:nth-last-of-type(2) {
+                + div.Commands {
+                    a.Down {
+                        display: none;
+                    }
                 }
             }
-        }
 
-        > a:last-child {
-            background-color: $Color-Yellow-Regular;
-            margin: 2px;
-            height: $Metric-Control-Height - 2px;
-            line-height: $Metric-Control-Height - 2px;
-            color: white;
-            padding-left: 10px;
-            padding-right: 10px;
+            &.Add {
+                background-color: $Color-Yellow-Regular;
+                margin: 2px;
+                height: $Metric-Control-Height - 2px;
+                line-height: $Metric-Control-Height - 2px;
+                color: white;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
         }
     }
 

@@ -15,8 +15,11 @@ matematici.popup = function () {
 					options.content = result;
 					show();
 
-					if (options.ajax.callback != undefined)
+					if (options.ajax.callback)
 						options.ajax.callback.call();
+
+					if (options.width)
+						container.css("width", options.width);
 				})
 				.fail(function (jqXHR, textStatus, errorThrown) {
 					if (options.errorHandler)
@@ -41,20 +44,22 @@ matematici.popup = function () {
 				if (button.icon) button.content.prepend($("<i />").addClass("fi flaticon-" + button.icon));
 				if (button.hidden) button.content.hide();
 				if (button.defaultButton) button.content.addClass("DefaultButton GreyGreenButton");
-				if (button.cancelButton) {
-					container
-						.append($("<a />").attr("href", "#").addClass("CloseButton")
-							.append($("<i />").addClass("fi flaticon-times-circle"))
-							.on("click", function () {
-								button.content.click();
-							}));
-					button.content.addClass("CancelButton");
-				}
+				if (button.cancelButton)
+					addCloseButton(function () {
+						button.content.click();
+					});
 				if (button.id) button.content.attr("id", button.id);
 			}
 
 			buttons.prepend(button.content);
 			return matematici.popup;
+		},
+
+		addCloseButton = function (handler) {
+			container
+				.append($("<a />").attr("href", "#").addClass("CloseButton CancelButton")
+					.append($("<i />").addClass("fi flaticon-times-circle"))
+					.on("click", handler));
 		},
 
 		setButtons = function (value) {
@@ -160,6 +165,10 @@ matematici.popup = function () {
 
 		center: function () {
 			autoCenter.center();
+		},
+
+		addCloseButton: function (handler) {
+			addCloseButton(handler || function () { matematici.popup.close(); });
 		}
 	};
 

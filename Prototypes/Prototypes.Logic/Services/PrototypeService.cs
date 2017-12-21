@@ -43,7 +43,9 @@ namespace CheckListManager.Prototypes.Logic.Services
                 ValidUntil = PrototypeVersion.ValidUntil,
                 State = PrototypeVersion.VersionState,
                 Department = PrototypeVersion.Prototypes.Department,
-                PrototypeType = PrototypeVersion.Prototypes.PrototypeType
+                PrototypeType = PrototypeVersion.Prototypes.PrototypeType,
+                ProposedState = PrototypeVersion.ProposedState,
+                ProposedDate = PrototypeVersion.ProposedDate
             });
         }
 
@@ -174,7 +176,7 @@ namespace CheckListManager.Prototypes.Logic.Services
             PrototypeVersion.ValidFrom = request.ValidFrom;
             PrototypeVersion.ValidUntil = request.ValidUntil;
 
-            await _prototypeRepository.SaveAsync();
+            await _prototypeRepository.SaveChangesAsync();
 
             return new PrototypeResponse
             {
@@ -193,7 +195,9 @@ namespace CheckListManager.Prototypes.Logic.Services
             var PrototypeVersion = await _prototypeRepository.SetStateAsync(defaultIdentity, request.ID, request.Version, request.State, request.StateProposed);
             return new PrototypeResponse
             {
-                State = PrototypeVersion.VersionState
+                State = PrototypeVersion.VersionState,
+                ProposedState = PrototypeVersion.ProposedState,
+                ProposedDate = PrototypeVersion.ProposedDate
             };
         }
     }

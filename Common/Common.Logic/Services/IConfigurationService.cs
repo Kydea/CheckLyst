@@ -10,5 +10,7 @@ namespace CheckListManager.Common.Logic.Services
 		string SqsBaseUrl { get; }
 
 		string ApiBaseUrl { get; }
+
+		int InstanceCloseTimeout { get; }
 	}
 }

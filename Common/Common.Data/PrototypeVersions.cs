@@ -19,6 +19,7 @@ namespace CheckListManager.Common.Data
         {
             this.InstanceNumerators = new HashSet<InstanceNumerators>();
             this.PrototypeVersionTags = new HashSet<PrototypeVersionTags>();
+            this.WorkFlowApplications = new HashSet<WorkFlowApplications>();
         }
     
         public long Prototype { get; set; }
@@ -44,5 +45,7 @@ namespace CheckListManager.Common.Data
         public virtual VersionStates VersionStates { get; set; }
         public virtual VersionStates VersionStates1 { get; set; }
         public virtual Prototypes Prototypes { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<WorkFlowApplications> WorkFlowApplications { get; set; }
     }
 }

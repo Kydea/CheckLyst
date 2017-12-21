@@ -47,7 +47,7 @@ namespace CheckListManager.Instances.Api.Controllers
 		{
 			try
 			{
-				await _instanceManagerService.OpenAsync(Identity.Code, request.Data.Code);
+				await _instanceManagerService.OpenAsync(request.Data.Code, Identity.Code);
 				return Ok(Message.Create(true));
 			}
 			catch (DatabaseAggregateException exception)
@@ -106,7 +106,7 @@ namespace CheckListManager.Instances.Api.Controllers
 		{
 			try
 			{
-				await _instanceManagerService.CloseAsync(Identity.CompanyId, Identity.Code, request.Data.Code);
+				await _instanceManagerService.CloseAsync(request.Data.Code, Identity.Code);
 				return Ok(Message.Create(true));
 			}
 			catch (DatabaseAggregateException exception)

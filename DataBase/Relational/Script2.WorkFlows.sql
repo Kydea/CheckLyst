@@ -20,7 +20,7 @@ create table "WorkFlows"."WorkFlowSteps"
 	"ID" bigserial primary key,
 
 	"WorkFlow" bigint references "WorkFlows"."WorkFlows" on delete cascade,
-	"Step" int, 
+	"Step" int not null,
 
 	"CreatedBy" varchar (60),
 	"CreatedOn" timestamptz not null default current_timestamp,
@@ -51,7 +51,11 @@ create table "WorkFlows"."WorkFlowApplications"
 
 	"Prototype" bigint,
 	"Version" int,
-	"Instance" bigint,
+	constraint "WorkFlowApplications_PrototypeVersion" foreign key ("Prototype", "Version") references "CheckLists"."PrototypeVersions",
+
+	"Instance" bigint, 
+	constraint "WorkFlowApplications_Instance" foreign key ("Instance") references "CheckLists"."Instances",
+
 	check("Prototype" is null and "Version" is null or "Instance" is null),
 
 	"WorkFlowAction" varchar (50) references "WorkFlows"."WorkFlowActions",
@@ -83,7 +87,7 @@ create table "WorkFlows"."WorkFlowApplicationSteps"
 	"ID" bigserial primary key,
 
 	"WorkFlowApplication" bigint references "WorkFlows"."WorkFlowApplications",
-	"WorkFlowStep" bigint references "WorkFlows"."WorkFlowSteps",
+	"Step" int not null,
 
 	"Company" bigint,
 	"User" varchar (60),
@@ -92,8 +96,16 @@ create table "WorkFlows"."WorkFlowApplicationSteps"
 
 	"Comment" varchar (300),
 
-	"Date" timestamptz not null default current_timestamp,
-	"Approved" boolean not null
+	"Date" timestamptz,
+	"Approved" boolean
 );
 
-create unique index "Index_WorkFlowApplicationSteps_WorkFlowStep" on "WorkFlows"."WorkFlowApplicationSteps"("WorkFlowStep")
+create  index "Index_WorkFlowApplicationSteps_Step" on "WorkFlows"."WorkFlowApplicationSteps"("WorkFlowApplication", "Step");
+
+create table "WorkFlows"."WorkFlowApplicationStepTags"
+(
+	"WorkFlowApplicationStep" bigint references "WorkFlows"."WorkFlowApplicationSteps" on delete cascade,
+	"Tag" varchar(50) not null,
+
+	constraint "PK_WorkFlowApplicationStepTags" primary key ("WorkFlowApplicationStep", "Tag")
+);

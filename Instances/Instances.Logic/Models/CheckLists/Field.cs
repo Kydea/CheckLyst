@@ -38,7 +38,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 				ValueTypeName = ValueTypeName,
 				ValuesList = ValuesList,
 				ExternalSourceName = ExternalSourceName,
-				ExternalSourceColumn = ExternalSourceColumn,
+				ExternalSourceColumn = ExternalSourceColumn
 			};
 			Copy(this, field);
 			return field;

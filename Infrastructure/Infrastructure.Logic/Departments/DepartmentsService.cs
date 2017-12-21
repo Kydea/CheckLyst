@@ -59,7 +59,7 @@ namespace CheckListManager.Infrastructure.Logic.Departments
             return response;
         }
 
-        public async Task<DepartmentsResponse> AddOrEdit(DefaultIdentity identity, DepartmentsRow record, bool isNew)
+        public async Task<DepartmentsResponse> AddOrEdit(IDefaultIdentity identity, DepartmentsRow record, bool isNew)
         {
             var response = Validate(record, isNew);
             if (response.Valid)
@@ -90,7 +90,7 @@ namespace CheckListManager.Infrastructure.Logic.Departments
             return response;
         }
 
-        public async Task<DepartmentsResponse> Delete(DefaultIdentity identity, long id)
+        public async Task<DepartmentsResponse> Delete(IDefaultIdentity identity, long id)
         {
             var response = new DepartmentsResponse();
             try

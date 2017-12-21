@@ -19,6 +19,7 @@ namespace CheckListManager.Common.Data
         {
             this.InstanceExpressionValues = new HashSet<InstanceExpressionValues>();
             this.InstanceTags = new HashSet<InstanceTags>();
+            this.WorkFlowApplications = new HashSet<WorkFlowApplications>();
         }
     
         public long ID { get; set; }
@@ -43,5 +44,7 @@ namespace CheckListManager.Common.Data
         public virtual Prototypes Prototypes { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<InstanceTags> InstanceTags { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<WorkFlowApplications> WorkFlowApplications { get; set; }
     }
 }
