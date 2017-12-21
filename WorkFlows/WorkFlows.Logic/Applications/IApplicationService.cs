@@ -12,6 +12,6 @@ namespace CheckListManager.WorkFlows.Logic.Applications
     public interface IApplicationService : IService
     {
         Task<GetStepsResponse> GetStepsAsync(DefaultIdentity identity, GetStepsRequest request);
-        Task SignAsync(DefaultIdentity identity, SignRequest request);
+        Task<SignResponse> SignAsync(DefaultIdentity identity, SignRequest request);
     }
 }

@@ -232,7 +232,7 @@
 			model.pages.push({ typeName: "Page", description: "(page)", itemId: getNewItemId() })
 		},
 
-		sign = function (action, grid, rows, row, rowVersion) {
+		sign = function (action, grid, rows, row) {
 			if (row.approved) {
 				matematici.dialog.error("error", "This signature has already been issued");
 				return true;
@@ -291,18 +291,21 @@
 				applicationStep: row.id,
 				model: model,
 				rows: rows,
+				concurrencyInformation: concurrencyInformation,
 
 				done: function (result) {
 					grid.close();
 					matematici.popup.close();
 					var stateChanged = model.state != result.state;
-					if (result.state) 
-						model.state = result.state;
-					if (result.validUntil !== undefined) 
-						model.validUntil = result.validUntil;
-					if (result.rowVersion !== undefined) 
-						model.rowVersion = result.rowVersion;
+					model.state = result.state;
+					model.validFrom = result.validFrom;
+					model.validUntil = result.validUntil;
+					concurrencyInformation = {
+						modifiedBy: result.modifiedBy,
+						modifiedOn: result.modifiedOn
+					};
 					update();
+					setupActionBar();
 					if (!stateChanged)
 						prototype.loadSignatureBook(action);
 				}
@@ -428,6 +431,10 @@
 				matematici.navigator.setUrl(options.detailUrl + "/" + result.id + "/" + result.version);
 				model.version = prototypeKey.version = result.version;
 			}
+			concurrencyInformation = {
+				modifiedBy: result.modifiedBy,
+				modifiedOn: result.modifiedOn
+			};
 			matematici.canClose = true;
 			if (callback)
 				callback.call();

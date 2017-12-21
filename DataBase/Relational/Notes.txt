@@ -28,12 +28,10 @@ PROTOTYPES
 history
 cambio stato 
 preview
-Prototype.canApprove sparisce e viene read only la popup se non si hanno permessi
-gestire row version per firme
-gestire row version transazionalmente (where nell'aggironamento e conteggio risultati?)
+gestire concorrenza per firme (credo serva per forza una transazione, chiedere aiuto a Giacomo)
+gestire concorrenza transazionalmente (where nell'aggironamento e conteggio risultati?)
 PrototypeSignatures.SendEmails(db, Version, Action) quando ci sono variazioni nella applicazione di work flow
 Mettere Apply del workflow come MS e non in common
-
 
 USERS 
 Lavorare sulla stringa di autenticazione tramite ldap
@@ -69,3 +67,6 @@ create trigger "T_Versions_Validate"
 	after insert or update
 	on "CheckLists"."PrototypeVersions" 
 	for each row execute procedure "TF_Versions_Validate"();
+
+ACCESS CONTROL
+Mettere un tempo di attesa per i login falliti

@@ -35,7 +35,9 @@
 				validUntilNow: validityEndType.filter(":checked").val() == "1",
 				validUntil: validityEndType.filter(":checked").val() == "2" ? validityEnd.data("date") && validityEnd.data("date").toJSON() : null,
 				comment: $("textarea#Comment", element).val(),
-				password: $("input#Password", element).val()
+				password: $("input#Password", element).val(),
+				modifiedBy: options.concurrencyInformation.modifiedBy,
+				modifiedOn: options.concurrencyInformation.modifiedOn
 			};
 		},
 

@@ -30,8 +30,7 @@ namespace CheckListManager.WorkFlows.Api.Controllers
         {
             try
             {
-                await _applicationService.SignAsync(Identity, request);
-                return Ok();
+                return Ok(await _applicationService.SignAsync(Identity, request));
             }
             catch(Exception Exception)
             {

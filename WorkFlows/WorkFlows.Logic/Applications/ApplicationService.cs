@@ -2,6 +2,7 @@
 using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Messages;
+using CheckListManager.Common.Logic.Authentication;
 using CheckListManager.WorkFlows.Data;
 using System;
 using System.Collections.Generic;
@@ -14,10 +15,12 @@ namespace CheckListManager.WorkFlows.Logic.Applications
     public class ApplicationService : IApplicationService
     {
         private readonly IWorkFlowsRepository _workFlowsRepository;
+        private readonly IAuthenticationService _authenticationService;
 
-        public ApplicationService(IWorkFlowsRepository workFlowsRepository)
+        public ApplicationService(IWorkFlowsRepository workFlowsRepository, IAuthenticationService authenticationService)
         {
             _workFlowsRepository = workFlowsRepository;
+            _authenticationService = authenticationService;
         }
 
         public async Task<GetStepsResponse> GetStepsAsync(DefaultIdentity identity, GetStepsRequest request)
@@ -45,8 +48,9 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             };
         }
 
-        public async Task SignAsync(DefaultIdentity identity, SignRequest request)
+        public async Task<SignResponse> SignAsync(DefaultIdentity identity, SignRequest request)
         {
+            var SignResponse = new SignResponse();
             var Step = await _workFlowsRepository.GetWorkFlowApplicationStepAsync(identity, request.ApplicationStep);
             var Steps = Step.WorkFlowApplications.WorkFlowApplicationSteps;
             var FirstSignature = Steps.All(r => r.User == null);
@@ -68,7 +72,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             if (!request.Approved && String.IsNullOrWhiteSpace(request.Comment))
                 throw new Exception("The comment is mandatory for the rejections");
 
-            //Security.VerifyPassword(db, Username, Password); //instances.CreateInstanceFromPrototypeAsync
+            await _authenticationService.AuthenticateAsync(identity.CompanyId, identity.Code, request.Password);
 
             Step.Approved = request.Approved;
             Step.WorkFlowApplications.ModifiedBy = Step.User = identity.Code;
@@ -97,11 +101,11 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                         PrototypeVersion.ProposedState = null;
                         PrototypeVersion.ProposedDate = null;
                         //Cambio di stato da servizio, deve:
-                            //1. creare log
-                            //2. creare history
-                            //3. mettere a obsolete eventuale vecchia versione active
-                            //4. cancellare le simulation evidence
-                            //5. notificare per email
+                        //1. creare log
+                        //2. creare history
+                        //3. mettere a obsolete eventuale vecchia versione active
+                        //4. cancellare le simulation evidence
+                        //5. notificare per email
                         PrototypeVersion.VersionState =
                             PrototypeVersion.VersionState == VersionState.InSumulation ?
                                 PrototypeVersion.ValidFrom.Value >= DateTimeOffset.UtcNow ? VersionState.Active : VersionState.Approved :
@@ -113,8 +117,6 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     throw new NotImplementedException();
                     //TODO Instances section
                 }
-                else
-                    throw new InvalidOperationException();
             }
             else 
             {
@@ -129,11 +131,27 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     throw new NotImplementedException();
                     //TODO Instances section
                 }
-                else
-                    throw new InvalidOperationException();
             }
-            
+
             await _workFlowsRepository.SaveChangesAsync();
+
+            if (PrototypeVersion != null)
+            {
+                SignResponse.State = PrototypeVersion.VersionState;
+                SignResponse.ValidFrom = PrototypeVersion.ValidFrom;
+                SignResponse.ValidUntil = PrototypeVersion.ValidUntil;
+                SignResponse.ModifiedOn = PrototypeVersion.ModifiedOn;
+                SignResponse.ModifiedBy = PrototypeVersion.ModifiedBy;
+            }
+            else if (Instance != null)
+            {
+                throw new NotImplementedException();
+                //TODO Instances section
+            }
+            else
+                throw new InvalidOperationException();
+
+            return SignResponse;
         }
     }
 }
