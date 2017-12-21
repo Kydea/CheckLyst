@@ -25,5 +25,20 @@ namespace CheckListManager.AccessControl.Api.Controllers
 			await _userService.LogoutAsync(request?.Data?.RefreshToken);
 		    return Ok();
 	    }
-	}
+
+        [HttpPost]
+        public async Task<IHttpActionResult> Authenticate(AuthenticateRequest request)
+        {
+            try
+            {
+                await _userService.AuthenticateAsync(Identity.CompanyId, request.Code, request.Password);
+                return Ok();
+            }
+            catch (Exception Exception)
+            {
+                return Error(Exception);
+            }
+        }
+
+    }
 }

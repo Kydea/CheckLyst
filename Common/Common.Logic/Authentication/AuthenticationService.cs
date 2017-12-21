@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Core.Network;
 using Newtonsoft.Json;
+using System.Net.Http;
 
 namespace CheckListManager.Common.Logic.Authentication
 {
@@ -20,25 +21,25 @@ namespace CheckListManager.Common.Logic.Authentication
 
         public async Task AuthenticateAsync(long? companyId, string code, string password)
         {
+            HttpResponseMessage response;
+            string responseData;
             try
             {
-                var httpResponse = await _client.PostAsync("AccessControl/Access/Authenticate", new
+                response = await _client.PostAsync("AccessControl/Access/Authenticate", new
                 {
                     CompanyId = companyId,
                     Code = code,
                     Password = password,
                 });
-                var responseData = await httpResponse.Content.ReadAsStringAsync();
-
-                //var response = JsonConvert.DeserializeObject(responseData, _converter);
-
-                //return response;
+                responseData = await response.Content.ReadAsStringAsync();
             }
             catch (Exception e)
             {
                 throw new Exception("Authentication failed", e);
             }
 
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                throw new Exception(JsonConvert.DeserializeObject<AuthorizeResponse>(responseData).Message);
         }
     }
 }

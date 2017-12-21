@@ -4,10 +4,10 @@ using CheckListManager.WebApplication.Code;
 namespace CheckListManager.WebApplication.Controllers
 {
     [RoutePrefix("WorkFlows")]
-    [DefaultAuthorize(Roles = "FunctionGroup#WorkFlows")]
     public class WorkFlowsController : BaseController
 	{
         [Route("List")]
+        [DefaultAuthorize(Roles = "FunctionGroup#WorkFlows")]
         public ActionResult List()
         {
             return ConditionalView();
@@ -15,6 +15,7 @@ namespace CheckListManager.WebApplication.Controllers
 
         [HttpPost]
         [Route("Detail")]
+        [DefaultAuthorize(Roles = "FunctionGroup#WorkFlows")]
         public ActionResult Detail()
         {
             return PartialView();

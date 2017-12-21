@@ -74,20 +74,5 @@ namespace CheckListManager.AccessControl.Api.Controllers
         {
             return Ok(await _userService.DeleteUserAsync(Identity, request.Data.Code));
         }
-
-        [Route("Pippo")]
-        public IHttpActionResult Pippo(long? companyId, string code, string password)
-        {
-            try
-            {
-                //await _userService.AuthenticateAsync(companyId, code, password);
-                return Ok();
-            }
-            catch (Exception Exception)
-            {
-                return Error(Exception);
-            }
-        }
-
     }
 }

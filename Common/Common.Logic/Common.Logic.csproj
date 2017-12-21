@@ -82,6 +82,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Authentication\AuthorizeResponse.cs" />
     <Compile Include="Json\AutofacJsonConverter.cs" />
     <Compile Include="Json\CheckListJsonConverter.cs" />
     <Compile Include="Models\CheckLists\Conditions.cs" />
