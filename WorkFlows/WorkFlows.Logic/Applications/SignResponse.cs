@@ -14,5 +14,6 @@ namespace CheckListManager.WorkFlows.Logic.Applications
         public DateTimeOffset? ValidUntil { get; set; }
         public string ModifiedBy { get; set; }
         public DateTimeOffset? ModifiedOn { get; set; }
+        public bool Approved { get; set; }
     }
 }

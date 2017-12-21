@@ -3,6 +3,7 @@ using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Logic.Authentication;
+using CheckListManager.Common.Logic.WorkFlows;
 using CheckListManager.WorkFlows.Data;
 using System;
 using System.Collections.Generic;
@@ -74,7 +75,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
 
             await _authenticationService.AuthenticateAsync(identity.CompanyId, identity.Code, request.Password);
 
-            Step.Approved = request.Approved;
+            Step.Approved = SignResponse.Approved = request.Approved;
             Step.WorkFlowApplications.ModifiedBy = Step.User = identity.Code;
             Step.WorkFlowApplications.ModifiedOn = Step.Date = DateTimeOffset.UtcNow;
             Step.Comment = request.Comment;
@@ -100,7 +101,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     {
                         PrototypeVersion.ProposedState = null;
                         PrototypeVersion.ProposedDate = null;
-                        //Cambio di stato da servizio, deve:
+                        //TODO Cambio di stato da servizio, deve:
                         //1. creare log
                         //2. creare history
                         //3. mettere a obsolete eventuale vecchia versione active
@@ -125,6 +126,8 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 {
                     PrototypeVersion.ProposedState = null;
                     PrototypeVersion.ProposedDate = null;
+                    //TODO Cambio di stato da servizio
+                    PrototypeVersion.VersionState = VersionState.Draft;
                 }
                 else if (Instance != null)
                 {
@@ -153,5 +156,14 @@ namespace CheckListManager.WorkFlows.Logic.Applications
 
             return SignResponse;
         }
+
+        public async Task<CreateResponse> CreateAsync(DefaultIdentity identity, CreateRequest request)
+        {
+            return new CreateResponse
+            {
+                ID = await _workFlowsRepository.CreateWorkFlowApplication(identity, request.WorkFlow, request.Date, request.Prototype, request.Version, request.Instance, request.Action)
+            };
+        }
+
     }
 }

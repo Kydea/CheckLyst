@@ -39,7 +39,7 @@ namespace CheckListManager.Common.Logic.Authentication
             }
 
             if (response.StatusCode != System.Net.HttpStatusCode.OK)
-                throw new Exception(JsonConvert.DeserializeObject<AuthorizeResponse>(responseData).Message);
+                throw new Exception(String.Join(" ", JsonConvert.DeserializeObject<AuthenticateResponse>(responseData).Messages));
         }
     }
 }

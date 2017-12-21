@@ -7,7 +7,7 @@ using System.Data.Entity;
 using System.Linq.Expressions;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Core.Web.Security;
-using CheckListManager.Common.Logic.Services;
+using CheckListManager.Common.Logic.WorkFlows;
 
 namespace CheckListManager.Prototypes.Data
 {
@@ -108,7 +108,13 @@ namespace CheckListManager.Prototypes.Data
                 if (WorkFlow == null)
                     throw new InvalidOperationException($"Approvation workflow not found for prototype type {PrototypeVersion.Prototypes.PrototypeTypes.Name} ({PrototypeVersion.Prototypes.PrototypeType}).");
 
-                await _workFlowsService.ApplyWorkFlowAsync(defaultIdentity, WorkFlow.Value, null, PrototypeVersion.Prototype, PrototypeVersion.Version, null, "Prototype – state to Approved/Active");
+                await _workFlowsService.CreateWorkFlowApplicationAsync(defaultIdentity, new CreateRequest
+                {
+                    WorkFlow = WorkFlow.Value,
+                    Prototype = PrototypeVersion.Prototype,
+                    Version = PrototypeVersion.Version,
+                    Action = "Prototype – state to Approved/Active"
+                });
 
                 PrototypeVersion.ProposedState = state;
                 PrototypeVersion.ProposedDate = DateTimeOffset.Now;
@@ -119,7 +125,13 @@ namespace CheckListManager.Prototypes.Data
                 if (WorkFlow == null)
                     throw new InvalidOperationException($"Obsolescence workflow not found for prototype type {PrototypeVersion.Prototypes.PrototypeTypes.Name} ({PrototypeVersion.Prototypes.PrototypeType}).");
 
-                await _workFlowsService.ApplyWorkFlowAsync(defaultIdentity, WorkFlow.Value, null, PrototypeVersion.Prototype, PrototypeVersion.Version, null, "Prototype – state to Obsolete");
+                await _workFlowsService.CreateWorkFlowApplicationAsync(defaultIdentity, new CreateRequest
+                {
+                    WorkFlow = WorkFlow.Value,
+                    Prototype = PrototypeVersion.Prototype,
+                    Version = PrototypeVersion.Version,
+                    Action = "Prototype – state to Obsolete"
+                });
 
                 PrototypeVersion.ProposedState = state;
                 PrototypeVersion.ProposedDate = DateTimeOffset.Now;

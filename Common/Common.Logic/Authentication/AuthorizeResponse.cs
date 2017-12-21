@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace CheckListManager.Common.Logic.Authentication
 {
-    public class AuthorizeResponse
+    public class AuthenticateResponse
     {
-        public string Message { get; set; }
+        public List<string> Messages { get; set; }
     }
 }

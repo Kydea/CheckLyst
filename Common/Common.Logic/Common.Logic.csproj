@@ -82,6 +82,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Authentication\AuthenticateRequest.cs" />
     <Compile Include="Authentication\AuthorizeResponse.cs" />
     <Compile Include="Json\AutofacJsonConverter.cs" />
     <Compile Include="Json\CheckListJsonConverter.cs" />
@@ -140,8 +141,6 @@
     <Compile Include="Models\RawValue.cs" />
     <Compile Include="Authentication\AuthenticationService.cs" />
     <Compile Include="Authentication\IAuthenticationService.cs" />
-    <Compile Include="Services\WorkFlowsService.cs" />
-    <Compile Include="Services\IWorkFlowsService.cs" />
     <Compile Include="Trail\TrailAction.cs" />
     <Compile Include="Trail\TrailMessage.cs" />
     <Compile Include="Cache\IRedisCache.cs" />
@@ -166,6 +165,10 @@
     <Compile Include="Services\QueueService.cs" />
     <Compile Include="Services\ServiceBase.cs" />
     <Compile Include="Services\SingletonServiceBase.cs" />
+    <Compile Include="WorkFlows\WorkFlowsService.cs" />
+    <Compile Include="WorkFlows\CreateResponse.cs" />
+    <Compile Include="WorkFlows\CreateRequest.cs" />
+    <Compile Include="WorkFlows\IWorkFlowsService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common.Core.Web\Common.Core.Web.csproj">

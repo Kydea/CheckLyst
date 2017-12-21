@@ -1,5 +1,6 @@
 ﻿using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Logic.Api;
+using CheckListManager.Common.Logic.WorkFlows;
 using CheckListManager.WorkFlows.Logic.Applications;
 using System;
 using System.Threading.Tasks;
@@ -22,6 +23,20 @@ namespace CheckListManager.WorkFlows.Api.Controllers
         public async Task<IHttpActionResult> GetSteps(GetStepsRequest request)
         {
             return Ok(await _applicationService.GetStepsAsync(Identity, request));
+        }
+
+        [HttpPost]
+        [Route("Create")]
+        public async Task<IHttpActionResult> Create(CreateRequest request)
+        {
+            try
+            {
+                return Ok(await _applicationService.CreateAsync(Identity, request));
+            }
+            catch (Exception Exception)
+            {
+                return Error(Exception);
+            }
         }
 
         [HttpPost]
