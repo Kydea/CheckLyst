@@ -24,10 +24,10 @@ namespace CheckListManager.Infrastructure.Logic.Departments
             _commonRepository = commonRepository;
         }
 
-        public async Task<PagingResponse<List<DepartmentsRow>>> GetDataAsync(long Company, PagingRequest<DepartmentsRequest> Form)
+        public async Task<PagingResponse<List<DepartmentsRow>>> GetDataAsync(IDefaultIdentity identity, PagingRequest<DepartmentsRequest> Form)
             => await _infrastructureRepository
                 .GetDepartmentsAsync(
-                    Company,
+                    identity,
                     d => new DepartmentsRow
                     {
                         ID = d.ID,
