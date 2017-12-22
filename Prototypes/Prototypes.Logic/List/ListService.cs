@@ -77,6 +77,8 @@ namespace CheckListManager.Prototypes.Logic.List
                         Version = p.Version,
                         ValidityFrom = p.ValidFrom,
                         ValidityUntil = p.ValidUntil,
+                        Department = p.Prototypes.Department,
+                        PrototypeType = p.Prototypes.PrototypeType,
                         CreatedBy = p.CreatedBy,
                         CreatedOn = p.CreatedOn,
                         ModifiedBy = p.ModifiedBy,
@@ -87,7 +89,7 @@ namespace CheckListManager.Prototypes.Logic.List
                         && p.Prototypes.Department == form.Data.Department
                         && p.Prototypes.PrototypeType == form.Data.PrototypeType
                         && (form.Data.State == string.Empty || p.VersionState == form.Data.State)
-                        && (form.Data.Name == string.Empty || p.Description != null && p.Description.ToUpper().Contains(form.Data.Name.ToUpper())),
+                        && (form.Data.Name == string.Empty || p.Prototypes.Name != null && p.Prototypes.Name.ToUpper().Contains(form.Data.Name.ToUpper())),
                     p => p.Prototype,
                     form.CurrentPage,
                     form.ItemsPerPage

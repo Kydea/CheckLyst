@@ -71,7 +71,8 @@
                 count = steps.size();
 
             steps.eq(0).children("h3").next().toggle(count > 1);
-            addStepButton.toggle($("div.Step", formElement).size() < maxSteps);
+            if (!detailPage.isReadOnly())
+               addStepButton.toggle($("div.Step", formElement).size() < maxSteps);
             resize();
         },
 
@@ -112,6 +113,7 @@
             for (var index in matematici.profiles)
                 select.append($("<option />").text(matematici.profiles[index]).attr("value", matematici.profiles[index]));
 
+            if (detailPage.isReadOnly()) matematici.controls.setEditable(select, false);
             var autoComplete = new matematici.AutoComplete(select);
             autoComplete.initialize();
             fixStep(step);
@@ -165,11 +167,12 @@
         completeHandler = function () {
             if (detailPage.isNew())
                 addStep();
-            else
+            else {
                 detailPage.getForm().trigger("Load", function (result) {
                     detailPage.getForm().handleResult(result);
                     if (result.steps) buildSteps(result.steps);
                 });
+            }
         },
 
         detailPage = new matematici.DetailPage({
@@ -195,11 +198,15 @@
                 for (var userIndex in steps[stepIndex].signatures)
                     addUser(step.addUserButton).select.val(steps[stepIndex].signatures[userIndex]);
             }
+            if (detailPage.isReadOnly()) $("a.Button", tab.getItem(1).tab).remove();
         },
 
         addStepButton = $("a#AddStep", matematici.popup.getElement());
 
-    tab.addHandler(function (item) {
-        addStepButton.toggle(item.index == 1 && $("div.Step", formElement).size() < maxSteps);
-    });
+    if (detailPage.isReadOnly()) 
+        $("div.Buttons a.Button", detailPage.getElement()).hide();
+    else
+        tab.addHandler(function (item) {
+            addStepButton.toggle(item.index == 1 && $("div.Step", formElement).size() < maxSteps);
+        });
 </script>

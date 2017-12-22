@@ -81,30 +81,46 @@
         };
 
     matematici.events.onPageLoad = function (callback) {
-        var searchPage = new matematici.SearchPage({
-            pageName: "Prototypes",
-            filterFormSelector: "form#Filters",
-            resultGridSelector: "div#Content table.Grid",
-            bindEvent: "Bind",
-            readOnly: true,
-            breadCrumbs: [
-                { content: "prototypes" }
-            ],
+        var
+            editor = matematici.tokenManager.checkRole("Prototypes#Edit#"),
+            searchPage = new matematici.SearchPage({
+                pageName: "Prototypes",
+                filterFormSelector: "form#Filters",
+                resultGridSelector: "div#Content table.Grid",
+                bindEvent: "Bind",
+                readOnly: true,
+                breadCrumbs: [
+                    { content: "prototypes" }
+                ],
 
-            rowClickHandler: function (row) {
-                var buttons = [];
-                buttons.push({ text: "cancel", icon: "times", cancelButton: true });
-                if ($(this).data("state") != prototypes.Prototype.states.draft) buttons.push({ text: "new version", icon: "file-o", handler: createNewVersionHandler, data: { id: row.data("values").id, version: row.data("values").version } });
-                buttons.push({ text: "use as template", icon: "clone-o", handler: useAsTemplateHandler, data: { id: row.data("values").id, version: row.data("values").version } });
-                buttons.push({ text: "open", icon: "folder-open-o", handler: openPrototypeHandler, data: { id: row.data("values").id, version: row.data("values").version } });
+                rowClickHandler: function (row) {
+                    if (editor) {
+                        console.log(row.data("values"));
+                        var buttons = [];
+                        buttons.push({ text: "cancel", icon: "times", cancelButton: true });
+                        if (
+                            $(this).data("state") != prototypes.Prototype.states.draft
+                            && (
+                                matematici.tokenManager.checkRole("Prototypes#Edit#" + row.data("values").department + "##")
+                                || matematici.tokenManager.checkRole("Prototypes#Edit#" + row.data("values").department + "#" + row.data("values").prototypeType)
+                            )
+                        )
+                            buttons.push({ text: "new version", icon: "file-o", handler: createNewVersionHandler, data: { id: row.data("values").id, version: row.data("values").version } });
+                        buttons.push({ text: "use as template", icon: "clone-o", handler: useAsTemplateHandler, data: { id: row.data("values").id, version: row.data("values").version } });
+                        buttons.push({ text: "open", icon: "folder-open-o", handler: openPrototypeHandler, data: { id: row.data("values").id, version: row.data("values").version } });
 
-                matematici.dialog.popupMenu(buttons);
-            }
-        });
+                        matematici.dialog.popupMenu(buttons);
+                    } else
+                        openPrototypeHandler({ id: row.data("values").id, version: row.data("values").version });
+                }
+            }),
 
-        $("#AddButton").on("click", function (e) {
-            matematici.navigator.open("@Url.Action("Create")");
-        });
+            addButton = $("#AddButton").on("click", function (e) {
+                matematici.navigator.open("@Url.Action("Create")");
+            });
+
+        if (!editor)
+            addButton.remove();
 
         callback.call();
     };

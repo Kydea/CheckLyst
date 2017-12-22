@@ -58,12 +58,6 @@ namespace CheckListManager.WorkFlows.Logic.Applications
 
             if (Step.User != null)
                 throw new Exception("Signature already issued");
-
-            //TODO
-            //if (!UserFunctions.Contains(db, Security.CurrentUser.Code, Version.Prototypes.PrototypeTypes.Company, Version.Prototypes.PrototypeTypes.Department, Version.Prototypes.PrototypeType, UserFunctions.PROTOTYPEAPPROVER))
-            //    throw new Exception("User does not have a suitable profile to perform this action");
-            //if (UserFunctions.GetSignatureLevel(db, Security.CurrentUser.Code, Version.Prototypes.PrototypeTypes.Company, Version.Prototypes.PrototypeTypes.Department, Version.Prototypes.PrototypeType) != Row.SignatureLevel)
-            //    throw new Exception("User does not have the right signature level to perform this action");
             if (Steps.Any(r => r.User == null && r.Step < Step.Step))
                 throw new Exception("The previous step is not completed");
             if (Steps.Any(r => r.User == identity.Code && r.Step == Step.Step))
@@ -82,6 +76,35 @@ namespace CheckListManager.WorkFlows.Logic.Applications
 
             var PrototypeVersion = Step.WorkFlowApplications.PrototypeVersions;
             var Instance = Step.WorkFlowApplications.Instances;
+
+            if (PrototypeVersion != null)
+            {
+                var Granted = false;
+                foreach (var Tag in Step.WorkFlowApplicationStepTags)
+                    if (identity.HasPermission("Prototypes", "Approve", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType, Tag.Tag))
+                    {
+                        Granted = true;
+                        break;
+                    }
+
+                if (!Granted)
+                    throw new Exception("Permission denied");
+            }
+            else if (Instance != null)
+            {
+                var Granted = false;
+                foreach (var Tag in Step.WorkFlowApplicationStepTags)
+                    if (identity.HasPermission("Prototypes", "Approve", Instance.Prototypes.Department, Instance.Prototypes.PrototypeType, Tag.Tag))
+                    {
+                        Granted = true;
+                        break;
+                    }
+
+                if (!Granted)
+                    throw new Exception("Permission denied");
+            }
+            else
+                throw new InvalidOperationException();
 
             if (request.Approved)
             {
@@ -151,8 +174,6 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 throw new NotImplementedException();
                 //TODO Instances section
             }
-            else
-                throw new InvalidOperationException();
 
             return SignResponse;
         }
