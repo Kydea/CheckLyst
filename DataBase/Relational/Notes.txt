@@ -33,7 +33,12 @@ Lavorare sulla stringa di autenticazione tramite ldap
 Fare la conferma di chiusura delle pagine di dettaglio 
 Impedire la cancellazione di se stesso
 Se non selezioni nessuna funzione il server dà errore, mettere controllo
+Abilitare View se abilito qualunque altra funzione, disabilitare le altre funzioni se disabilito View
 
+
+ACCESS CONTROL
+Mettere un tempo di attesa per i login falliti
+Non aggiorna il nome utente in header da local storage
 
 PROTOTIO DI TRIGGER:
 
@@ -63,6 +68,3 @@ create trigger "T_Versions_Validate"
 	on "CheckLists"."PrototypeVersions" 
 	for each row execute procedure "TF_Versions_Validate"();
 
-ACCESS CONTROL
-Mettere un tempo di attesa per i login falliti
-Non aggiorna il nome utente in header da local storage

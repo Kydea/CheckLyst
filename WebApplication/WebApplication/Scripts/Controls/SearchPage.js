@@ -1,5 +1,6 @@
 ﻿matematici.SearchPage = function (options) {
 	var
+		searchPage = this,
 		grid,
 		form,
 		paginator,
@@ -15,6 +16,7 @@
 		},
 
 		setup = function () {
+			options.readOnly = options.readOnly != null ? options.readOnly : !matematici.tokenManager.checkRole(options.pageName + "#Edit#");
 			if (!options.readOnly)
 				new matematici.ActionBar("div.ActionBar").add("Add", function () {
 					matematici.popup.show({
@@ -53,7 +55,8 @@
 							button: "#ApplyButton",
 							event: "GetData",
 							handler: filterHandler,
-						}
+						},
+						searchPage: searchPage
 					}),
 					paginator = new matematici.Paginator("div#Content div.Paginator", function (index) {
 						form.trigger("GetData", filterHandler, { CurrentPage: index });
@@ -62,7 +65,11 @@
 
 				breadcrumbs: options.breadCrumbs
 			});
-		}
+		};
+
+	searchPage.isReadOnly = function () {
+		return options.readOnly;
+	};
 
 	setup();
 }
