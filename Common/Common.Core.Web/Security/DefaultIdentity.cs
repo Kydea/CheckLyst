@@ -39,7 +39,7 @@ namespace CheckListManager.Common.Core.Web.Security
 				r.Code.StartsWith(functionGroup + "#" + function)
                 && r.Department == department
                 && r.PrototypeType == prototypeType
-				&& r.Tag == tag
+				&& (tag == null || r.Tag == tag)
 			);
 		}
 

@@ -9,15 +9,11 @@ il trigger per mettere vecchie versioni a obsolete e creare il log va riscritto 
 2. element information per iterazioni (va dentro ultima cella come iteration commands)
 il copia valore nei sottogruppi non funziona
 
-Filtrare departments, prototype type, prototipi, instanze, datasouces, etc. in base ai permessi dell'utente
-
 controllare funzionamento logout e warning logout automatico
 
 il refresh del token adesso lo fanno tutti i client!
 
 mettere il controllo di salvataggio a chiusura detail page
-
-Controllo permessi come in datasources ovunque
 
 Mettiamo la regular expression della password in companies
 
