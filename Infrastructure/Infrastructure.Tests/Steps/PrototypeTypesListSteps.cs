@@ -1,8 +1,6 @@
 ﻿using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Messages;
-using CheckListManager.Common.Logic.DataEngine;
-using CheckListManager.Infrastructure.Data;
 using CheckListManager.Infrastructure.Logic.PrototypeTypes;
 using CheckListManager.Infrastructure.Tests.Contexts;
 using NUnit.Framework;
@@ -21,7 +19,6 @@ namespace CheckListManager.Infrastructure.Tests.Steps
         private readonly IDefaultIdentity _defaultIdentity;
         private readonly ICommonRepository _commonRepository;
         private readonly IPrototypeTypesService _prototypeTypesService;
-        private readonly IInfrastructureRepository _infrastructureRepository;
 
         public PrototypeTypesListSteps(PrototypeTypesContext context, 
             IDefaultIdentity defaultIdentity, 
@@ -79,7 +76,7 @@ namespace CheckListManager.Infrastructure.Tests.Steps
             // The clicked prototype is the first one, if Name is null the "click" fails.
             _context.Request.Name = String.Empty;
 
-            List<PrototypeTypesRow> data = (await _prototypeTypesService.GetDataAsync(_defaultIdentity.CompanyId, new PagingRequest<PrototypeTypesRequest>
+            List<PrototypeTypesRow> data = (await _prototypeTypesService.GetDataAsync(_defaultIdentity, new PagingRequest<PrototypeTypesRequest>
             {
                 Data = _context.Request
             })).Data;

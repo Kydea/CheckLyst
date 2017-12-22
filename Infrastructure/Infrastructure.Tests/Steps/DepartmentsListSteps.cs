@@ -21,7 +21,6 @@ namespace CheckListManager.Infrastructure.Tests.Steps
         private readonly IDefaultIdentity _defaultIdentity;
         private readonly ICommonRepository _commonRepository;
         private readonly IDepartmentsService _departmentsService;
-        private readonly IInfrastructureRepository _infrastructureRepository;
 
         public DepartmentsListSteps(DepartmentsContext context,
             IDefaultIdentity defaultIdentity,
@@ -57,7 +56,7 @@ namespace CheckListManager.Infrastructure.Tests.Steps
         [Given(@"I click on a department")]
         public async Task GivenIClickOnADeparment()
         {
-            List<DepartmentsRow> data = (await _departmentsService.GetDataAsync(_defaultIdentity.CompanyId, new PagingRequest<DepartmentsRequest>
+            List<DepartmentsRow> data = (await _departmentsService.GetDataAsync(_defaultIdentity, new PagingRequest<DepartmentsRequest>
             {
                 Data = new DepartmentsRequest()
                 {

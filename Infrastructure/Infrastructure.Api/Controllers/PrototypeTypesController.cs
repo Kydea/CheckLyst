@@ -34,7 +34,7 @@ namespace CheckListManager.Infrastructure.Api.Controllers
         [Authorize(Roles = "PrototypeTypes#View")]
         public async Task<IHttpActionResult> GetData(PagingRequest<PrototypeTypesRequest> request)
         {
-            return Ok(await _prototypeTypesService.GetDataAsync(Identity.CompanyId, request));
+            return Ok(await _prototypeTypesService.GetDataAsync(Identity, request));
         }
 
         [HttpPost]
@@ -42,7 +42,7 @@ namespace CheckListManager.Infrastructure.Api.Controllers
         [Authorize(Roles = "Prototypes#View, Users#View")]
         public async Task<IHttpActionResult> GetSyntheticData(PagingRequest<PrototypeTypesRequest> request)
         {
-            return Ok(await _prototypeTypesService.GetSyntheticDataAsync(Identity.CompanyId, request));
+            return Ok(await _prototypeTypesService.GetSyntheticDataAsync(Identity, request));
         }
 
         [HttpPost]

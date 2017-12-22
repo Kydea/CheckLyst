@@ -58,10 +58,10 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
             return response;
         }
 
-        public async Task<PagingResponse<List<PrototypeTypesRow>>> GetDataAsync(long Company, PagingRequest<PrototypeTypesRequest> Form)
+        public async Task<PagingResponse<List<PrototypeTypesRow>>> GetDataAsync(IDefaultIdentity identity, PagingRequest<PrototypeTypesRequest> Form)
             => await _infrastructureRepository
                 .GetPrototypeTypesAsync(
-                    Company,
+                    identity,
                     pt => new PrototypeTypesRow
                     {
                         Department = pt.Department,
@@ -77,13 +77,14 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
                         ModifiedBy = pt.ModifiedBy,
                         ModifiedOn = pt.ModifiedOn
                     },
-                    Form.Data.Department, Form.Data.Name, Form.CurrentPage, Form.ItemsPerPage
+                    Form.Data.Department, Form.Data.Name, Form.Data.FunctionGroup, 
+                    Form.CurrentPage, Form.ItemsPerPage
                 );
 
-        public async Task<PagingResponse<List<PrototypeTypesSyntheticRow>>> GetSyntheticDataAsync(long Company, PagingRequest<PrototypeTypesRequest> Form)
+        public async Task<PagingResponse<List<PrototypeTypesSyntheticRow>>> GetSyntheticDataAsync(IDefaultIdentity identity, PagingRequest<PrototypeTypesRequest> Form)
             => await _infrastructureRepository
                 .GetPrototypeTypesAsync(
-                    Company,
+                    identity,
                     pt => new PrototypeTypesSyntheticRow
                     {
                         Department = pt.Department,
@@ -91,7 +92,8 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
                         ID = pt.ID,
                         Name = pt.Name
                     },
-                    Form.Data.Department, Form.Data.Name, Form.CurrentPage, Form.ItemsPerPage
+                    Form.Data.Department, Form.Data.Name, Form.Data.FunctionGroup,
+                    Form.CurrentPage, Form.ItemsPerPage
                 );
 
         private PrototypeTypesResponse Validate(PrototypeTypesRequest record)

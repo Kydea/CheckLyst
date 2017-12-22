@@ -86,13 +86,13 @@ namespace CheckListManager.Infrastructure.Data
         }
 
         public async Task<PagingResponse<List<TResult>>> GetDepartmentsAsync<TResult>(
-            long companyId,
+            IDefaultIdentity identity,
             Expression<Func<Departments, TResult>> select,
             string name, int currentPage, int itemsPerPage)
         {
             IQueryable<TResult> Query = Entities.Departments
                 .Where(d =>
-                    d.Company == companyId
+                    d.Company == identity.CompanyId
                     && (name == "" || d.Name != null && d.Name.ToUpper().Contains(name.ToUpper()))
                 )
                 .OrderBy(d => d.Name).ThenBy(d => d.ID)
@@ -115,16 +115,34 @@ namespace CheckListManager.Infrastructure.Data
         }
 
         public async Task<PagingResponse<List<TResult>>> GetPrototypeTypesAsync<TResult>(
-            long companyId, 
+            IDefaultIdentity identity, 
             Expression<Func<PrototypeTypes, TResult>> select, 
-            long? department, string name, int currentPage, int itemsPerPage)
+            long? department, string name, string functionGroup,
+            int currentPage, int itemsPerPage)
         {
-            IQueryable<TResult> Query = Entities.PrototypeTypes
+            IQueryable<PrototypeTypes> PrototypeTypes = Entities.PrototypeTypes
                 .Where(pt =>
-                    pt.Company == companyId
+                    pt.Company == identity.CompanyId
                     && (department == null || pt.Department == department)
                     && (name == "" || pt.Name != null && pt.Name.ToUpper().Contains(name.ToUpper()))
-                )
+                );
+
+            if (functionGroup != null)
+                PrototypeTypes = PrototypeTypes.Where(pt => pt.UserFunctions.Any(uf =>
+                    uf.Company == identity.CompanyId
+                    && uf.User == identity.Code
+                    && uf.FunctionGroup == functionGroup
+                    && uf.Function == "View"
+                ) || pt.Departments.UserFunctions.Any(uf =>
+                    uf.Company == identity.CompanyId
+                    && uf.User == identity.Code
+                    && uf.FunctionGroup == functionGroup
+                    && uf.Function == "View"
+                    && uf.PrototypeType == null
+                ));
+
+
+            IQueryable<TResult> Query = PrototypeTypes
                 .OrderBy(pt => pt.Department).ThenBy(pt => pt.Name).ThenBy(pt => pt.ID)
                 .Select(select);
 

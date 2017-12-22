@@ -23,14 +23,15 @@ namespace CheckListManager.Infrastructure.Data
         Task DeletePrototypeTypeAsync(IDefaultIdentity identity, long id);
 
         Task<PagingResponse<List<TResult>>> GetDepartmentsAsync<TResult>(
-            long companyId,
+            IDefaultIdentity identity,
             Expression<Func<Departments, TResult>> select,
             string name, int currentPage, int itemsPerPage);
 
         Task<PagingResponse<List<TResult>>> GetPrototypeTypesAsync<TResult>(
-            long companyId,
+            IDefaultIdentity identity,
             Expression<Func<PrototypeTypes, TResult>> select,
-            long? department, string name, int currentPage, int itemsPerPage);
+            long? department, string name, string functionGroup, 
+            int currentPage, int itemsPerPage);
 
         Task<List<WorkFlows>> GetWorkFlows(long companyId);
     }

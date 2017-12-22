@@ -12,7 +12,7 @@ namespace CheckListManager.Infrastructure.Logic.Departments
 {
     public interface IDepartmentsService : IService
     {
-        Task<PagingResponse<List<DepartmentsRow>>> GetDataAsync(long Company, PagingRequest<DepartmentsRequest> form);
+        Task<PagingResponse<List<DepartmentsRow>>> GetDataAsync(IDefaultIdentity Identity, PagingRequest<DepartmentsRequest> form);
 
         Task<DepartmentsResponse> AddOrEdit(IDefaultIdentity Identity, DepartmentsRow record, bool IsNew);
 

@@ -26,7 +26,7 @@ namespace CheckListManager.Infrastructure.Api.Controllers
         [Authorize(Roles = "Departments#View")]
         public async Task<IHttpActionResult> GetData(PagingRequest<DepartmentsRequest> request)
         {
-            return Ok(await _departmentsService.GetDataAsync(Identity.CompanyId, request));
+            return Ok(await _departmentsService.GetDataAsync(Identity, request));
         }
 
         [HttpPost]
