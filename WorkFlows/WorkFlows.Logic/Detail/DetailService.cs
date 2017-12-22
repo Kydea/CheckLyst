@@ -33,6 +33,13 @@ namespace CheckListManager.WorkFlows.Logic.Detail
                     }
                 };
 
+            if (record.Steps.Count() == 0)
+                response.ValidationMessages.Add(new ValidationMessage
+                {
+                    Level = ValidationMessage.LevelError,
+                    Message = "The work flow myst have at least one step"
+                });
+
             response.Valid = response.Fields.Count() == 0;
             return response;
         }

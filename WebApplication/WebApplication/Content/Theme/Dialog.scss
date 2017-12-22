@@ -80,9 +80,7 @@ div.Dialog {
 
     &.PopupMenu {
         div.Container {
-            width: 240px !important;
             padding: 0 !important;
-            border-radius: 10px;
 
             h2 {
                 display: none;
@@ -110,9 +108,9 @@ div.Dialog {
                         background: none;
                         position: absolute;
                         left: 10px;
-                        top: 10px;
+                        top: 6px;
                         margin: 0;
-                        font-size: 14px;
+                        font-size: 16px;
                     }
 
                     &::after {
@@ -122,15 +120,6 @@ div.Dialog {
                     &:hover {
                         background-color: $Color-Green-Regular;
                         color: white;
-                    }
-
-                    &:first-child {
-                        border-radius: 10px 10px 0 0;
-                    }
-
-                    &:last-child {
-                        border-radius: 0 0 10px 10px;
-                        border-bottom: none;
                     }
                 }
             }
@@ -178,6 +167,28 @@ div.Dialog {
 
             h2 {
                 border-radius: 15px 15px 0 0;
+            }
+        }
+
+        &.PopupMenu {
+            div.Container {
+                width: 240px !important;
+                border-radius: 10px;
+
+                div.Buttons {
+                    margin-top: 0 !important;
+
+                    a.Button {
+                        &:first-child {
+                            border-radius: 10px 10px 0 0;
+                        }
+
+                        &:last-child {
+                            border-radius: 0 0 10px 10px;
+                            border-bottom: none;
+                        }
+                    }
+                }
             }
         }
     }

@@ -64,7 +64,8 @@
             else
                 $.ajax(matematici.urls.accessControl.token, {
                     data: form.serialize(),
-                    type: "post"
+                    type: "post",
+                    suppressErrors: true
                 }).done(function (result) {
                     matematici.tokenManager.login(result);
                     matematici.clock.refresh();

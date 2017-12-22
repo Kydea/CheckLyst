@@ -54,6 +54,8 @@
 
 				if (options.readOnly)
 					matematici.controls.setEditable(field, false);
+
+				if (field.data("autoComplete")) field.data("autoComplete").checkReadOnly();
 			});
 
 			if (options.bindEvent)
@@ -189,7 +191,7 @@
 						if (fieldData.value != null) field.val(fieldData.value);
 						autoComplete.refresh();
 						autoComplete.getControl().toggle(!fieldData.visibile);
-						matematici.controls.setEditable(autoComplete.getControl(), fieldData.editable && fieldData.options.length > 0);
+						matematici.controls.setEditable(autoComplete.getControl(), fieldData.editable && fieldData.options.length > 0 && !options.readOnly);
 					} else {
 						if (fieldData.value != null) setFieldValue(field, fieldData.value);
 						field.toggle(!fieldData.visibile);

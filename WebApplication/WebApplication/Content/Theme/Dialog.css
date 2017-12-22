@@ -51,9 +51,7 @@ div.Dialog {
       div.Dialog div.Container a.CloseButton:hover {
         color: #ccc; }
   div.Dialog.PopupMenu div.Container {
-    width: 240px !important;
-    padding: 0 !important;
-    border-radius: 10px; }
+    padding: 0 !important; }
     div.Dialog.PopupMenu div.Container h2 {
       display: none; }
     div.Dialog.PopupMenu div.Container div.Buttons {
@@ -76,19 +74,14 @@ div.Dialog {
           background: none;
           position: absolute;
           left: 10px;
-          top: 10px;
+          top: 6px;
           margin: 0;
-          font-size: 14px; }
+          font-size: 16px; }
         div.Dialog.PopupMenu div.Container div.Buttons a.Button::after {
           content: none; }
         div.Dialog.PopupMenu div.Container div.Buttons a.Button:hover {
           background-color: #009688;
           color: white; }
-        div.Dialog.PopupMenu div.Container div.Buttons a.Button:first-child {
-          border-radius: 10px 10px 0 0; }
-        div.Dialog.PopupMenu div.Container div.Buttons a.Button:last-child {
-          border-radius: 0 0 10px 10px;
-          border-bottom: none; }
   div.Dialog.Error h2 {
     background-color: #cc0000 !important; }
   div.Dialog.Error div.Error {
@@ -114,7 +107,17 @@ div.Dialog {
         margin: 0 auto;
         border-radius: 15px; }
         div.Dialog div.Container h2 {
-          border-radius: 15px 15px 0 0; } }
+          border-radius: 15px 15px 0 0; }
+      div.Dialog.PopupMenu div.Container {
+        width: 240px !important;
+        border-radius: 10px; }
+        div.Dialog.PopupMenu div.Container div.Buttons {
+          margin-top: 0 !important; }
+          div.Dialog.PopupMenu div.Container div.Buttons a.Button:first-child {
+            border-radius: 10px 10px 0 0; }
+          div.Dialog.PopupMenu div.Container div.Buttons a.Button:last-child {
+            border-radius: 0 0 10px 10px;
+            border-bottom: none; } }
   @media only screen and (max-width: 759px) {
     div.Dialog div.Container {
       position: fixed;

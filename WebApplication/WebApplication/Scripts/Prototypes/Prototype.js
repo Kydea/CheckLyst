@@ -83,6 +83,8 @@
 					break;
 				case prototypes.Prototype.states.obsolete:
 					break;
+				case prototypes.Prototype.states.draftReadOnly:
+					break;
 				default:
 					alert("Invalid prototype state: " + (model.state || "(null)"));
 					console.log(model);
@@ -354,6 +356,8 @@
 					matematici.dialog.error("Error", result.error);
 				else {
 					model = result.checkList;
+
+
 					prototypeKey = {
 						id: result.id,
 						version: result.version
@@ -363,6 +367,7 @@
 						modifiedBy: result.modifiedBy,
 						modifiedOn: result.modifiedOn
 					};
+
 					model.state = result.state;
 					model.proposedState = result.proposedState;
 					model.proposedDate = result.proposedDate;
@@ -372,6 +377,15 @@
 					model.description = result.description;
 					model.department = result.department;
 					model.prototypeType = result.prototypeType;
+
+					if (
+						model.version >= 0
+						&& !matematici.tokenManager.checkRole("Prototypes#Edit#" + result.department + "##")
+						&& !matematici.tokenManager.checkRole("Prototypes#Edit#" + result.department + "#" + result.prototypeType)
+					) 
+						if (model.state == prototypes.Prototype.states.draft)
+							model.state = prototypes.Prototype.states.draftReadOnly;
+
 					update();
 				}
 			});
@@ -430,8 +444,9 @@
 				checkList: model
 			})
 		}).done(function (result) {
+			matematici.canClose = true;
 			prototypeKey.id = result.id;
-			if (model.version < 0) {
+			if (model.version == null) {
 				matematici.navigator.setUrl(options.detailUrl + "/" + result.id + "/" + result.version);
 				model.version = prototypeKey.version = result.version;
 			}
@@ -439,7 +454,6 @@
 				modifiedBy: result.modifiedBy,
 				modifiedOn: result.modifiedOn
 			};
-			matematici.canClose = true;
 			if (callback)
 				callback.call();
 			else
@@ -554,6 +568,7 @@
 
 prototypes.Prototype.states = {
 	draft: "Draft",
+	draftReadOnly: "Draft ",
 	simulation: "In simulation",
 	approved: "Approved",
 	active: "Active",

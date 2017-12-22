@@ -134,12 +134,17 @@ matematici.AutoComplete = function (selector) {
 			updateList();
 			setValue();
 
+			checkReadOnly();
+
+			matematici.elements.window.on("resize", setWidth);
+		},
+
+		checkReadOnly = function () {
 			if (element.hasClass("ReadOnly")) {
 				readOnly = true;
 				label.addClass("ReadOnly").prop("readonly", true);
 				icon.remove();
 			}
-			matematici.elements.window.on("resize", setWidth);
 		},
 
 		destroy = function () {
@@ -259,26 +264,23 @@ matematici.AutoComplete = function (selector) {
 		setValue();
 	};
 
-	this.hideList = function () {
-		hideList();
-	};
-
 	this.getControl = function () {
 		return label;
-	};
-
-	this.initialize = function () {
-		initialize();
-	};
-
-	this.destroy = function () {
-		destroy();
 	};
 
 	this.setValue = function (value) {
 		element.val(value);
 		setValue();
 	};
+
+	this.hideList = hideList;
+
+	this.initialize = initialize;
+
+	this.destroy = destroy;
+
+	this.checkReadOnly = checkReadOnly;
+
 };
 
 matematici.initializers.push(function (context) {
