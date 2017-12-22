@@ -51,6 +51,9 @@
 				var field = $(this);
 				if (field.hasClass("DatePicker"))
 					new matematici.DatePicker(field);
+
+				if (options.readOnly)
+					matematici.controls.setEditable(field, false);
 			});
 
 			if (options.bindEvent)

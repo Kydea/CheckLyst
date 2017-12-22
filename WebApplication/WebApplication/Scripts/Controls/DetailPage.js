@@ -22,9 +22,10 @@
 		},
 
 		setup = function () {
+			options.readOnly = options.readOnly != null ? options.readOnly : sender.getOptions().searchPage.isReadOnly();
 			buttons.push({ cancelButton: true, hidden: true });
 
-			if (!options.readOnly && data != null)
+			if (!options.readOnly) {
 				buttons.push({
 					text: "delete", icon: "trash-o", handler: function () {
 						matematici.dialog.show("warning", "The record will be deleted.", [
@@ -39,13 +40,13 @@
 					}
 				});
 
-			if (!options.readOnly)
 				buttons.push({
 					text: "save", defaultButton: true, icon: "floppy-o", id: "SaveButton", handler: function (e) {
 						clickHandler($(this), data == null ? "Add" : "Edit");
 						return true;
 					}
 				});
+			}
 
 			matematici.popup.setButtons(buttons);
 
@@ -53,7 +54,8 @@
 
 			form = new matematici.Form(options.formSelector, {
 				applyButton: "#SaveButton",
-				bindEvent: options.bindEvent
+				bindEvent: options.bindEvent,
+				readOnly: options.readOnly
 			});
 			form.initialize();
 			setTimeout(function () {
@@ -61,12 +63,11 @@
 				form.setValues(data);
 				if (options.completeHandler) options.completeHandler(detailPage);
 			}, 0);
-			
 		};
 
 	this.getElement = function () {
 		return matematici.popup.getElement();
-	},
+	};
 
 	this.getSender = function () {
 		return sender;
@@ -78,6 +79,10 @@
 
 	this.isNew = function () {
 		return data == null;
+	};
+
+	this.isReadOnly = function () {
+		return options.readOnly;
 	};
 
 	setup();
