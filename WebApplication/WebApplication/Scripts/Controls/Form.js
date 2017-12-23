@@ -2,7 +2,7 @@
 	var
 		form = this,
 		element = $(selector),
-		fieldsSelector = "input[name], select[name]",
+		fieldsSelector = "input[name], select[name], textarea[name]",
 		fields = $(fieldsSelector, element),
 		valid = false,
 		errors,
@@ -37,11 +37,11 @@
 						if (options.applyButton)
 							matematici.controls.setEditable(options.applyButton, true);
 					}
-                })
-                .on("change, paste", fieldsSelector, function(e) {
-                    clearFormErrors();
+				})
+				.on("change, paste", fieldsSelector, function (e) {
+					clearFormErrors();
 					if (options.applyButton)
-	                    matematici.controls.setEditable(options.applyButton, true);
+						matematici.controls.setEditable(options.applyButton, true);
 				})
 				.on("change", ".Trigger", function () {
 					bind(options.bindEvent, handleResult, prepareRequest({ data: { source: $(this).attr("name") } }));
@@ -125,19 +125,26 @@
 		},
 
 		setFieldValue = function (field, value) {
-            if (field.data("type") == "DateTimeOffset") {
-                if (value == null || value == "")
-                    field.val("").attr("title", "").data("date", null);
-                else {
-                    var
-                        date = new Date(value),
-                        formattedDate = matematici.dateFormatter.format(date, true);
-                    field.val(formattedDate.date + " " + formattedDate.time).attr("title", formattedDate.offset).data("date", date);
-                }
-            }
-            else if (field.attr("type") == "checkbox")
-                field.prop("checked", !!value)
-            else if (field.hasClass("DatePicker"))
+			if (field.data("type") == "DateTimeOffset") {
+				if (value == null || value == "")
+					field.val("").attr("title", "").data("date", null);
+				else {
+					var
+						date = new Date(value),
+						formattedDate = matematici.dateFormatter.format(date, true);
+					field.val(formattedDate.date + " " + formattedDate.time).attr("title", formattedDate.offset).data("date", date);
+				}
+			}
+			else if (field.data("type") == "JSON")
+				try {
+					value = JSON.stringify(JSON.parse(JSON.parse(value)), null, 4); //the first parse unescape \"
+					field.val(value); 
+				} catch (error) {
+					field.val(value);
+				}
+			else if (field.attr("type") == "checkbox")
+				field.prop("checked", !!value)
+			else if (field.hasClass("DatePicker"))
 				field.data("datePicker").setDate(value)
 			else
 				field.val(value);
@@ -188,7 +195,10 @@
 							var option = fieldData.options[index];
 							field.append($("<option />").attr("value", option.value).text(option.text));
 						}
-						if (fieldData.value != null) field.val(fieldData.value);
+						if (fieldData.value != null)
+							field.val(fieldData.value);
+						else if (autoComplete.isNullable())
+							field.val(null);
 						autoComplete.refresh();
 						autoComplete.getControl().toggle(!fieldData.visibile);
 						matematici.controls.setEditable(autoComplete.getControl(), fieldData.editable && fieldData.options.length > 0 && !options.readOnly);
@@ -221,7 +231,7 @@
 					matematici.controls.setEditable(options.applyButton, false); //by default, the action button is disabled when clicked with success
 				if (handler)
 					handler(result);
-            });
+			});
 		};
 
 	this.initialize = function () {

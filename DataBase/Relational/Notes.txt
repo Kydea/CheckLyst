@@ -22,11 +22,11 @@ Mettiamo offset countdown su firme diretto
 
 PROTOTYPES
 history
-cambio stato 
 preview
-gestire concorrenza per firme (credo serva per forza una transazione, chiedere aiuto a Giacomo)
+gestire concorrenza per firme (credo serva per forza una transazione, o un lock su redis, chiedere aiuto a Giacomo)
 gestire concorrenza transazionalmente (where nell'aggironamento e conteggio risultati?)
 PrototypeSignatures.SendEmails(db, Version, Action) quando ci sono variazioni nella applicazione di work flow
+mettere lock in cambio di stato (?)
 
 USERS 
 Lavorare sulla stringa di autenticazione tramite ldap
@@ -35,10 +35,13 @@ Impedire la cancellazione di se stesso
 Se non selezioni nessuna funzione il server dà errore, mettere controllo
 Abilitare View se abilito qualunque altra funzione, disabilitare le altre funzioni se disabilito View
 
-
 ACCESS CONTROL
 Mettere un tempo di attesa per i login falliti
 Non aggiorna il nome utente in header da local storage
+
+LOG
+WorkFlows, approved, rejected
+
 
 PROTOTIO DI TRIGGER:
 

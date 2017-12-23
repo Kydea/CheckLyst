@@ -49,6 +49,46 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             };
         }
 
+        private void SetPrototypeVersionState(PrototypeVersions PrototypeVersion, string State)
+        {
+            PrototypeVersion.ProposedState = null;
+            PrototypeVersion.ProposedDate = null;
+            PrototypeVersion.VersionState = State;
+        }
+
+        private void Approve(PrototypeVersions PrototypeVersion)
+        {
+            //TODO Cambio di stato da servizio, deve:
+            //1. creare log
+            //2. creare history
+            //5. notificare per email
+
+            var State = 
+                PrototypeVersion.VersionState == VersionState.InSumulation ?
+                    PrototypeVersion.ValidFrom.Value >= DateTimeOffset.UtcNow ? VersionState.Active : VersionState.Approved :
+                    PrototypeVersion.ValidUntil.Value >= DateTimeOffset.UtcNow ? VersionState.Obsolete : PrototypeVersion.VersionState;
+
+            if (State == VersionState.Active)
+            {
+                var OldVersion = PrototypeVersion.Prototypes.PrototypeVersions.SingleOrDefault(pv => pv.VersionState == VersionState.Active);
+                if (OldVersion != null) SetPrototypeVersionState(OldVersion, VersionState.Obsolete);
+            } 
+            SetPrototypeVersionState(PrototypeVersion, State);
+        }
+
+        private void Reject(PrototypeVersions PrototypeVersion)
+        {
+            //TODO Cambio di stato da servizio, deve:
+            //1. creare log
+            //2. creare history
+            //5. notificare per email
+
+            PrototypeVersion.Instances.ToList().ForEach(i =>
+                PrototypeVersion.Instances.Remove(i)
+            );
+            SetPrototypeVersionState(PrototypeVersion, VersionState.Draft);
+        }
+
         public async Task<SignResponse> SignAsync(DefaultIdentity identity, SignRequest request)
         {
             var SignResponse = new SignResponse();
@@ -81,7 +121,10 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             {
                 var Granted = false;
                 foreach (var Tag in Step.WorkFlowApplicationStepTags)
-                    if (identity.HasPermission("Prototypes", "Approve", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType, Tag.Tag))
+                    if (
+                        identity.HasPermission("Prototypes", "Approve", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType, Tag.Tag)
+                        || identity.HasPermission("Prototypes", "Approve", PrototypeVersion.Prototypes.Department, null, Tag.Tag)
+                    )
                     {
                         Granted = true;
                         break;
@@ -94,7 +137,10 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             {
                 var Granted = false;
                 foreach (var Tag in Step.WorkFlowApplicationStepTags)
-                    if (identity.HasPermission("Prototypes", "Approve", Instance.Prototypes.Department, Instance.Prototypes.PrototypeType, Tag.Tag))
+                    if (
+                        identity.HasPermission("Prototypes", "Approve", Instance.Prototypes.Department, Instance.Prototypes.PrototypeType, Tag.Tag)
+                        || identity.HasPermission("Prototypes", "Approve", Instance.Prototypes.Department, null, Tag.Tag)
+                    )
                     {
                         Granted = true;
                         break;
@@ -121,37 +167,22 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     }
 
                     if (AllApproved)
-                    {
-                        PrototypeVersion.ProposedState = null;
-                        PrototypeVersion.ProposedDate = null;
-                        //TODO Cambio di stato da servizio, deve:
-                        //1. creare log
-                        //2. creare history
-                        //3. mettere a obsolete eventuale vecchia versione active
-                        //4. cancellare le simulation evidence
-                        //5. notificare per email
-                        PrototypeVersion.VersionState =
-                            PrototypeVersion.VersionState == VersionState.InSumulation ?
-                                PrototypeVersion.ValidFrom.Value >= DateTimeOffset.UtcNow ? VersionState.Active : VersionState.Approved :
-                                PrototypeVersion.ValidUntil.Value >= DateTimeOffset.UtcNow ? VersionState.Obsolete : PrototypeVersion.VersionState;
-                    }
+                        Approve(PrototypeVersion);
                 }
                 else if (Instance != null)
                 {
                     throw new NotImplementedException();
                     //TODO Instances section
                 }
+
+                if (AllApproved)
+                    Step.WorkFlowApplications.Approved = true;
             }
             else 
             {
                 Step.WorkFlowApplications.Approved = false;
                 if (PrototypeVersion != null)
-                {
-                    PrototypeVersion.ProposedState = null;
-                    PrototypeVersion.ProposedDate = null;
-                    //TODO Cambio di stato da servizio
-                    PrototypeVersion.VersionState = VersionState.Draft;
-                }
+                    Reject(PrototypeVersion);
                 else if (Instance != null)
                 {
                     throw new NotImplementedException();

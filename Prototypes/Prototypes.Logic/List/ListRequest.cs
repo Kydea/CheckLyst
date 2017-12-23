@@ -11,5 +11,7 @@ namespace CheckListManager.Prototypes.Logic.List
         public long? PrototypeType { get; set; }
 
         public string State { get; set; }
+
+        public string Pending { get; set; }
     }
 }

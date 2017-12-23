@@ -29,7 +29,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
         [Authorize(Roles = "Prototypes#View")]
         public async Task<IHttpActionResult> GetData(PagingRequest<ListRequest> request)
 		{
-			return Ok(await _listService.GetDataAsync(Identity.CompanyId, request));
+			return Ok(await _listService.GetDataAsync(Identity, request));
 		}
 	}
 }

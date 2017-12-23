@@ -17,6 +17,10 @@ matematici.AutoComplete = function (selector) {
 		open,
 		readOnly,
 
+		isNullable = function () {
+			return !!element.data("nullable");
+		},
+
 		setValue = function () {
 			var value = element.val();
 			if (multiple) {
@@ -229,7 +233,7 @@ matematici.AutoComplete = function (selector) {
 
 		updateList = function () {
 			list.empty();
-			if (element.data("nullable"))
+			if (isNullable)
 				list.append($("<a />").addClass("None").attr("href", "#").append($("<i />").text(element.data("nullable") === true ? "(none)" : element.data("nullable"))));
 
 			var count = 0;
@@ -272,6 +276,8 @@ matematici.AutoComplete = function (selector) {
 		element.val(value);
 		setValue();
 	};
+
+	this.isNullable = isNullable;
 
 	this.hideList = hideList;
 

@@ -53,16 +53,18 @@
 				deleteButton = $("a.Delete", buttonGroup).hide(),
 				submitForApprovalButton = $("a.SubmitForApproval", buttonGroup).hide(),
 				approveButton = $("a.Approve", buttonGroup).hide(),
+				submitForObsolescence = $("a.SubmitForObsolescence", buttonGroup).hide(),
 				obsoleteButton = $("a.Obsolete", buttonGroup).hide(),
 				saveButton = $("a.Save", buttonGroup).hide(),
 				historyButton = $("a.History", buttonGroup).toggle(model.version > 0);
 
 			switch (model.state) {
 				case prototypes.Prototype.states.active:
-					obsoleteButton.show();
-					break;
 				case prototypes.Prototype.states.approved:
-					obsoleteButton.show();
+					if (model.proposedState)
+						obsoleteButton.show();
+					else 
+						submitForObsolescence.show();
 					break;
 				case prototypes.Prototype.states.draft:
 					if (model.version > 0) {

@@ -16,6 +16,7 @@ using CheckListManager.Common.Logic.Services;
 using NLog;
 using CheckListManager.Common.Logic.DataEngine;
 using CheckListManager.Common.Core.Web.Security;
+using Newtonsoft.Json;
 
 namespace CheckListManager.AccessControl.Logic.Services
 {
@@ -45,47 +46,55 @@ namespace CheckListManager.AccessControl.Logic.Services
 
 		public async Task<Users> AuthenticateAsync(long? companyId, string code, string password)
 		{
-			if (!companyId.HasValue)
-			{
-				throw new AuthenticationException(99, "Company not sent");
-			}
+            if (!companyId.HasValue)
+                throw new AuthenticationException(99, "Company not sent");
 
-			if (string.IsNullOrEmpty(code))
-			{
-				throw new AuthenticationException(100, "User code not sent");
-			}
+            if (string.IsNullOrEmpty(code))
+                throw new AuthenticationException(100, "User code not sent");
 
-			if (string.IsNullOrEmpty(password))
-			{
-				throw new AuthenticationException(101, "User password not sent");
-			}
+            Users User;
 
-			var user = await _userRepository.GetAsync(companyId.Value, code);
+            try
+            {
+                if (string.IsNullOrEmpty(password))
+                    throw new AuthenticationException(101, "User password not sent");
 
-			if (user == null)
-			{
-				throw new AuthenticationException(102, $"User {code} not found");
-			}
-			if (!user.Enabled)
-			{
-				throw new AuthenticationException(103, $"User {code} not enabled");
-			}
-			if (!_hashService.ValidateHash(password, user.Password))
-			{
-				throw new AuthenticationException(104, "User password not valid");
-			}
+                User = await _userRepository.GetAsync(companyId.Value, code);
 
-			await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                if (User == null)
+                    throw new AuthenticationException(102, $"User {code} not found");
+
+                if (!User.Enabled)
+                    throw new AuthenticationException(103, $"User {code} not enabled");
+
+                if (!_hashService.ValidateHash(password, User.Password))
+                    throw new AuthenticationException(104, "User password not valid");
+
+                //TODO: add LDAP / OAUTH SERVER
+            }
+            catch (AuthenticationException AuthenticationException)
+            {
+                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                {
+                    Company = companyId.Value,
+                    User = code,
+                    Action = TrailAction.LoginFailed,
+                    Date = DateTimeOffset.UtcNow,
+                    Information = AuthenticationException.Message
+                });
+
+                throw AuthenticationException;
+            }
+
+            await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
 			{
-				Company = user.Company,
-				User = user.Code,
+				Company = User.Company,
+				User = User.Code,
 				Action = TrailAction.Login,
 				Date = DateTimeOffset.UtcNow
 			});
 
-			//TODO: add LDAP / OAUTH SERVER
-
-			return user;
+			return User;
 		}
 
 		public Task CreateSessionAsync(long company, string code, string user, string ticket, DateTimeOffset expiresOn)
@@ -135,18 +144,25 @@ namespace CheckListManager.AccessControl.Logic.Services
 			);
 		}
 
-		public async Task LogoutAsync(string code)
+		public async Task LogoutAsync(DefaultIdentity identity, string token)
 		{
-			if (!string.IsNullOrEmpty(code))
+			if (!string.IsNullOrEmpty(token))
 			{
 				try
 				{
 					await Task.WhenAll(
-						_cache.RemoveAsync(code, IdentityCacheRegion),
-						_userSessionRepository.SetExpiresOnAsync(code, DateTimeOffset.UtcNow)
+						_cache.RemoveAsync(token, IdentityCacheRegion),
+						_userSessionRepository.SetExpiresOnAsync(token, DateTimeOffset.UtcNow)
 					);
-				}
-				catch (Exception exception)
+                    await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                    {
+                        Company = identity.CompanyId,
+                        User = identity.Code,
+                        Action = TrailAction.Logout,
+                        Date = DateTimeOffset.UtcNow
+                    });
+                }
+                catch (Exception exception)
 				{
 					Logger.Error(exception, "Error during logout");
 				}
@@ -321,12 +337,30 @@ namespace CheckListManager.AccessControl.Logic.Services
             return List;
         }
 
+        private string SerializeUserInformation(string Code, string AuthenticationCode, List<UserFunctions> UserFunctions)
+        {
+            return JsonConvert.SerializeObject(JsonConvert.SerializeObject(new
+            {
+                Code = Code,
+                AuthenticationCode = AuthenticationCode,
+                Functions = UserFunctions.Select(uf => new
+                {
+                    FunctionGroup = uf.FunctionGroup,
+                    Function = uf.Function,
+                    Department = uf.Department + " " + uf.Departments?.Name,
+                    PrototypeType = uf.PrototypeType + " " + uf.PrototypeTypes?.Name,
+                    Tag = uf.Tag
+                })
+            }));
+        }
+
         public async Task<UserResponse> AddUserAsync(DefaultIdentity identity, UserRequest record)
 		{
             var response = Validate(record);
             if (response.Valid)
                 try
                 {
+                    var UserFunctions = BuildFunctions(identity, record);
                     await _userRepository.AddAsync(identity, new Users
                     {
                         Code = record.Code,
@@ -336,7 +370,16 @@ namespace CheckListManager.AccessControl.Logic.Services
                         AuthenticationCode = record.AuthenticationCode,
                         Enabled = record.Enabled,
                         
-                        UserFunctions = BuildFunctions(identity, record)
+                        UserFunctions = UserFunctions
+                    });
+
+                    await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                    {
+                        Company = identity.CompanyId,
+                        User = identity.Code,
+                        Action = TrailAction.UserCreated,
+                        Date = DateTimeOffset.UtcNow,
+                        Information = SerializeUserInformation(record.Code, record.AuthenticationCode, UserFunctions)
                     });
                 }
                 catch (Exception Exception)
@@ -358,6 +401,7 @@ namespace CheckListManager.AccessControl.Logic.Services
             if (response.Valid)
                 try
                 {
+                    var UserFunctions = BuildFunctions(identity, record);
                     await _userRepository.EditAsync(identity, new Users
                     {
                         Code = record.Code,
@@ -367,7 +411,16 @@ namespace CheckListManager.AccessControl.Logic.Services
                         Enabled = record.Enabled,
                         AuthenticationCode = record.AuthenticationCode,
 
-                        UserFunctions = BuildFunctions(identity, record)
+                        UserFunctions = UserFunctions
+                    });
+
+                    await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                    {
+                        Company = identity.CompanyId,
+                        User = identity.Code,
+                        Action = TrailAction.UserEdited,
+                        Date = DateTimeOffset.UtcNow,
+                        Information = SerializeUserInformation (record.Code, record.AuthenticationCode, UserFunctions)
                     });
                 }
                 catch (Exception Exception)
@@ -389,6 +442,14 @@ namespace CheckListManager.AccessControl.Logic.Services
             try
             {
                 await _userRepository.DeleteAsync(identity.CompanyId, code);
+                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                {
+                    Company = identity.CompanyId,
+                    User = identity.Code,
+                    Action = TrailAction.UserDeleted,
+                    Date = DateTimeOffset.UtcNow,
+                    Information = code
+                });
             }
             catch (Exception Exception)
             {

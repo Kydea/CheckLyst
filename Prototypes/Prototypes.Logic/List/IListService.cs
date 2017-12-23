@@ -10,6 +10,6 @@ namespace CheckListManager.Prototypes.Logic.List
     {
         Task<ListResponse> BindAsync(DefaultIdentity identity, ListRequest form);
 
-        Task<PagingResponse<List<ListRow>>> GetDataAsync(long company, PagingRequest<ListRequest> form);
+        Task<PagingResponse<List<ListRow>>> GetDataAsync(DefaultIdentity identity, PagingRequest<ListRequest> form);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace CheckListManager.Common.Logic.Trail
 {
@@ -10,6 +11,7 @@ namespace CheckListManager.Common.Logic.Trail
 		public DateTimeOffset Date { get; set; }
 		public string Action { get; set; }
 		public string Information { get; set; }
+		public string ShortInformation { get; set; }
 		public string CheckList { get; set; }
     }
 }

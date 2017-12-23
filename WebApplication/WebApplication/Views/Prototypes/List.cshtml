@@ -11,18 +11,26 @@
             <label class="Controls2">
                 <span>Prototype type</span>
                 <i class="Icon fi flaticon-building-o" />
-                <select name="department" class="Trigger" />
+                <select name="department" class="Trigger" data-nullable="(all)" />
                 <i class="Icon fi flaticon-folder-o" />
-                <select name="prototypeType" />
+                <select name="prototypeType" data-nullable="(all)" />
             </label>
             <label>
                 <span>Prototype name</span>
-
                 <i class="Icon fi flaticon-prototype" />
                 <input type="text" name="name" />
             </label>
+            <label class="Width200 Clearing">
+                <span>Changing state</span>
+                <i class="Icon fi flaticon-battery" />
+                <select name="pending">
+                    <option value="Include">Include prototypes changing state</option>
+                    <option value="Exclude">Exclude prototypes changing state</option>
+                    <option value="Filter">Only prototypes changing state</option>
+                </select>
+            </label>
             <label>
-                <span>Prototype state</span>
+                <span>State</span>
                 <i class="Icon fi flaticon-battery" />
                 <select name="state" />
             </label>
@@ -33,6 +41,8 @@
                 <tr>
                     <th>ID</th>
                     <th>Name</th>
+                    <th>Department</th>
+                    <th>Prototype type</th>
                     <th>Description</th>
                     <th>Version</th>
                     <th>State</th>
@@ -48,6 +58,8 @@
                 <tr class="Handler">
                     <td data-column="id"></td>
                     <td data-column="name"></td>
+                    <td data-column="departmentName"></td>
+                    <td data-column="prototypeTypeName"></td>
                     <td data-column="description"></td>
                     <td data-column="version"></td>
                     <td data-column="state"></td>
