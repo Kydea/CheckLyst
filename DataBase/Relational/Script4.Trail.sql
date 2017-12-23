@@ -5,7 +5,14 @@ create table "Trail"."Actions"
     "Code" varchar (100) primary key
 );
 
---fino qui
+insert into "Trail"."Actions"
+values 
+	('Login'),
+	('Logout'),
+	('Login failed'),
+	('User created'),
+	('User edited'),
+	('User deleted');
 
 create table "Trail"."Records"
 (

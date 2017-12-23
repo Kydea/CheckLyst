@@ -23,7 +23,7 @@ namespace CheckListManager.AccessControl.Api.Controllers
 		[HttpPost]
 	    public async Task<IHttpActionResult> Logout([FromBody]Message<LogoutRequest> request)
 		{
-			await _userService.LogoutAsync(request?.Data?.RefreshToken);
+			await _userService.LogoutAsync(Identity, request?.Data?.RefreshToken);
 		    return Ok();
 	    }
 

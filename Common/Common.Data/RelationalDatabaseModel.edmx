@@ -408,6 +408,22 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Instances_PrototypeVersions">
+          <End Role="PrototypeVersions" Type="Self.PrototypeVersions" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Instances" Type="Self.Instances" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PrototypeVersions">
+              <PropertyRef Name="Prototype" />
+              <PropertyRef Name="Version" />
+            </Principal>
+            <Dependent Role="Instances">
+              <PropertyRef Name="Prototype" />
+              <PropertyRef Name="Version" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Instances_Version">
           <End Role="PrototypeVersions" Type="Self.PrototypeVersions" Multiplicity="1" />
           <End Role="InstanceNumerators" Type="Self.InstanceNumerators" Multiplicity="*" />
@@ -940,6 +956,10 @@
             <End Role="InstanceNumerators" EntitySet="InstanceNumerators" />
             <End Role="Instances" EntitySet="Instances" />
           </AssociationSet>
+          <AssociationSet Name="FK_Instances_PrototypeVersions" Association="Self.FK_Instances_PrototypeVersions">
+            <End Role="PrototypeVersions" EntitySet="PrototypeVersions" />
+            <End Role="Instances" EntitySet="Instances" />
+          </AssociationSet>
           <AssociationSet Name="FK_Instances_Version" Association="Self.FK_Instances_Version">
             <End Role="PrototypeVersions" EntitySet="PrototypeVersions" />
             <End Role="InstanceNumerators" EntitySet="InstanceNumerators" />
@@ -1391,6 +1411,10 @@
             <End Role="PrototypeVersions" EntitySet="PrototypeVersions" />
             <End Role="WorkFlowApplications" EntitySet="WorkFlowApplications" />
           </AssociationSet>
+          <AssociationSet Name="FK_Instances_PrototypeVersions" Association="RelationalDatabaseModel.FK_Instances_PrototypeVersions">
+            <End Role="PrototypeVersions" EntitySet="PrototypeVersions" />
+            <End Role="Instances" EntitySet="Instances" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="TimeZones">
           <Key>
@@ -1519,6 +1543,7 @@
           <NavigationProperty Name="VersionStates1" Relationship="RelationalDatabaseModel.PrototypeVersions_VersionState_fkey" FromRole="PrototypeVersions" ToRole="VersionStates" />
           <NavigationProperty Name="Prototypes" Relationship="RelationalDatabaseModel.PrototypeVersions_Prototype_fkey" FromRole="PrototypeVersions" ToRole="Prototypes" />
           <NavigationProperty Name="WorkFlowApplications" Relationship="RelationalDatabaseModel.WorkFlowApplications_PrototypeVersion" FromRole="PrototypeVersions" ToRole="WorkFlowApplications" />
+          <NavigationProperty Name="Instances" Relationship="RelationalDatabaseModel.FK_Instances_PrototypeVersions" FromRole="PrototypeVersions" ToRole="Instances" />
         </EntityType>
         <EntityType Name="PrototypeVersionTags">
           <Key>
@@ -1862,6 +1887,7 @@
           <NavigationProperty Name="Prototypes" Relationship="RelationalDatabaseModel.Instances_Prototype_fkey" FromRole="Instances" ToRole="Prototypes" />
           <NavigationProperty Name="InstanceTags" Relationship="RelationalDatabaseModel.InstanceTags_Instance_fkey" FromRole="Instances" ToRole="InstanceTags" />
           <NavigationProperty Name="WorkFlowApplications" Relationship="RelationalDatabaseModel.WorkFlowApplications_Instance" FromRole="Instances" ToRole="WorkFlowApplications" />
+          <NavigationProperty Name="PrototypeVersions" Relationship="RelationalDatabaseModel.FK_Instances_PrototypeVersions" FromRole="Instances" ToRole="PrototypeVersions" />
         </EntityType>
         <EntityType Name="Prototypes">
           <Key>
@@ -2262,6 +2288,22 @@
               <PropertyRef Name="Version" />
             </Principal>
             <Dependent Role="WorkFlowApplications">
+              <PropertyRef Name="Prototype" />
+              <PropertyRef Name="Version" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Instances_PrototypeVersions">
+          <End Type="RelationalDatabaseModel.PrototypeVersions" Role="PrototypeVersions" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="RelationalDatabaseModel.Instances" Role="Instances" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PrototypeVersions">
+              <PropertyRef Name="Prototype" />
+              <PropertyRef Name="Version" />
+            </Principal>
+            <Dependent Role="Instances">
               <PropertyRef Name="Prototype" />
               <PropertyRef Name="Version" />
             </Dependent>
