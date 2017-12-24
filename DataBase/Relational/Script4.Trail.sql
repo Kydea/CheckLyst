@@ -7,12 +7,21 @@ create table "Trail"."Actions"
 
 insert into "Trail"."Actions"
 values 
+	('Email failed'),
+
 	('Login'),
 	('Logout'),
 	('Login failed'),
+
 	('User created'),
 	('User edited'),
-	('User deleted');
+	('User deleted'),
+
+	('Prototype created'),
+	('Prototype deleted'),
+	('Prototype state changed'),
+	('Prototype state change proposed'),
+	('Prototype signature issued');
 
 create table "Trail"."Records"
 (

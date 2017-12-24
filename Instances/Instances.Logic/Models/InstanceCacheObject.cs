@@ -22,7 +22,7 @@ namespace CheckListManager.Instances.Logic.Models
 
 		public string Description { get; set; }
 		public string InstanceState { get; set; }
-		public string PrototypeCode { get; set; }
+		public string PrototypeName { get; set; }
 
 		public bool IsDirty { get; set; }
 

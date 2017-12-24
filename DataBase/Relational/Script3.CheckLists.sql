@@ -33,6 +33,8 @@ create table "CheckLists"."Prototypes"
 	"ModifiedOn" timestamptz
 );
 
+create unique index "Index_Prototypes_Name" on "CheckLists"."Prototypes" ("Company", "Name");
+
 create table "CheckLists"."VersionStates"
 (
 	"Code" varchar (20) primary key
@@ -151,13 +153,15 @@ create table "CheckLists"."Instances"
 	"ID" bigserial primary key,
 	"Code" varchar (50) not null,
     
+	"Company" bigint not null references "Infrastructure"."Companies",
+
 	"Prototype" bigint not null references "CheckLists"."Prototypes",
 	"Version" int not null,
 	constraint "FK_Instances_PrototypeVersions" foreign key ("Prototype", "Version") references "CheckLists"."PrototypeVersions" on delete cascade,
 	"Year" int not null,
 	constraint "FK_Instances_InstanceNumerator" foreign key ("Prototype", "Version", "Year") references "CheckLists"."InstanceNumerators",
 
-	"PrototypeCode" varchar (50) not null,
+	"PrototypeName" varchar (50) not null,
 	"Number" int not null,
 
 	"InstanceState" varchar (20) not null references "CheckLists"."InstanceStates",
@@ -172,8 +176,8 @@ create table "CheckLists"."Instances"
 );
 
 create unique index "Index_Instance_Number" on "CheckLists"."Instances" ("Prototype", "Version", "Year", "Number");
-create unique index "Index_Instance_PrototypeCode" on "CheckLists"."Instances" ("PrototypeCode", "Version", "Year", "Number");
-create unique index "Index_Instance_Code" on "CheckLists"."Instances" ("Code");
+create unique index "Index_Instance_PrototypeName" on "CheckLists"."Instances" ("Company", "PrototypeName", "Version", "Year", "Number");
+create unique index "Index_Instance_Code" on "CheckLists"."Instances" ("Company", "Code");
 
 create table "CheckLists"."InstanceTags"
 (

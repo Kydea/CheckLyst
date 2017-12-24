@@ -134,7 +134,7 @@ namespace CheckListManager.Instances.Logic.Services
 					Code = code,
 					InstanceState = cacheObject.InstanceState,
 					Prototype = cacheObject.Prototype,
-					PrototypeCode = "", //TODO: set right value
+					PrototypeName = "", //TODO: set right value
 					Version = cacheObject.Version,
 					Year = DateTimeOffset.UtcNow.Year,
 					CreatedBy = cacheObject.CreatedBy,
@@ -148,7 +148,7 @@ namespace CheckListManager.Instances.Logic.Services
 				cacheObject.Id = row.ID;
 				cacheObject.Number = row.Number;
 				cacheObject.Description = row.Description;
-				cacheObject.PrototypeCode = row.PrototypeCode;
+				cacheObject.PrototypeName = row.PrototypeName;
 				cacheObject.InstanceState = row.InstanceState;
 				cacheObject.ModifiedOn = row.ModifiedOn;
 				cacheObject.ModifiedBy = row.ModifiedBy;
@@ -586,7 +586,7 @@ namespace CheckListManager.Instances.Logic.Services
 				Id = instance.ID,
 				Number = instance.Number,
 				Description = instance.Description,
-				PrototypeCode = instance.PrototypeCode,
+				PrototypeName = instance.PrototypeName,
 				ModifiedOn = instance.ModifiedOn,
 				ModifiedBy = instance.ModifiedBy
 			};

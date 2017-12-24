@@ -9,6 +9,9 @@ using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Prototypes.Data;
 using CheckListManager.Common.Data;
 using CheckListManager.Prototypes.Logic.Models;
+using CheckListManager.Common.Logic.Queue;
+using CheckListManager.Common.Logic.Trail;
+using CheckListManager.Common.Logic.Services;
 
 namespace CheckListManager.Prototypes.Logic.Services
 {
@@ -16,11 +19,13 @@ namespace CheckListManager.Prototypes.Logic.Services
     {
         private readonly CheckListJsonConverter _converter;
         private readonly IPrototypesRepository _prototypeRepository;
+        private readonly IQueueService _queueService;
 
-        public PrototypeService(CheckListJsonConverter converter, IPrototypesRepository prototypeRepository)
+        public PrototypeService(CheckListJsonConverter converter, IPrototypesRepository prototypeRepository, IQueueService queueService)
         {
             _converter = converter;
             _prototypeRepository = prototypeRepository;
+            _queueService = queueService;
         }
 
         public async Task<PrototypeResponse> OpenAsync(DefaultIdentity defaultIdentity, PrototypeRequest request)
@@ -127,7 +132,7 @@ namespace CheckListManager.Prototypes.Logic.Services
             };
         }
 
-        public async Task<PrototypeResponse> SaveAsync(DefaultIdentity defaultIdentity, PrototypeRequest request)
+        public async Task<PrototypeResponse> SaveAsync(DefaultIdentity identity, PrototypeRequest request)
         {
             request.CheckList.Setup();
             var UnvalidExpression = request.CheckList.Expressions.FirstOrDefault(e => e.Value.Error != null);
@@ -138,8 +143,8 @@ namespace CheckListManager.Prototypes.Logic.Services
             if (!request.Department.HasValue) throw new Exception("Specify a department");
             if (!request.PrototypeType.HasValue) throw new Exception("Specify a prototype type");
             if (
-                !defaultIdentity.HasPermission("Prototypes", "Edit", request.Department.Value) &&
-                !defaultIdentity.HasPermission("Prototypes", "Edit", request.Department.Value, request.PrototypeType.Value)
+                !identity.HasPermission("Prototypes", "Edit", request.Department.Value) &&
+                !identity.HasPermission("Prototypes", "Edit", request.Department.Value, request.PrototypeType.Value)
             )
                 throw new UnauthorizedAccessException();
 
@@ -156,17 +161,17 @@ namespace CheckListManager.Prototypes.Logic.Services
                 Prototype = new Common.Data.Prototypes
                 {
                     Name = request.Name,
-                    Company = defaultIdentity.CompanyId,
+                    Company = identity.CompanyId,
                     Department = request.Department.Value,
                     PrototypeType = request.PrototypeType.Value,
                     Description = request.Description,
                     CreatedOn = Now,
-                    CreatedBy = defaultIdentity.Code
+                    CreatedBy = identity.Code
                 };
                 _prototypeRepository.AddPrototype(Prototype);
             }
             else
-                Prototype = await _prototypeRepository.GetPrototypeAsync(defaultIdentity, request.ID);
+                Prototype = await _prototypeRepository.GetPrototypeAsync(identity, request.ID);
 
             if (NewVersion)
                 Prototype.PrototypeVersions.Add(PrototypeVersion = new PrototypeVersions
@@ -174,21 +179,21 @@ namespace CheckListManager.Prototypes.Logic.Services
                     VersionState = VersionState.Draft,
                     Version = Prototype.PrototypeVersions.Count == 0 ? 1 : Prototype.PrototypeVersions.Max(v => v.Version) + 1,
                     CreatedOn = Now,
-                    CreatedBy = defaultIdentity.Code
+                    CreatedBy = identity.Code
                 });
             else
             {
-                PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(defaultIdentity, request.ID, request.Version);
+                PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(identity, request.ID, request.Version);
                 if (PrototypeVersion.VersionState != VersionState.Draft) throw new Exception($"The version {request.ID}.{request.Version} is not editable");
                 if (PrototypeVersion.ModifiedOn != request.ModifiedOn || PrototypeVersion.ModifiedBy != request.ModifiedBy) throw new Exception($"Concurrency error: the prototype has already been modified by the user {request.ModifiedOn}");
 
                 Prototype.Name = request.Name;
                 Prototype.Description = request.Description;
                 Prototype.ModifiedOn = Now;
-                Prototype.ModifiedBy = defaultIdentity.Code;
+                Prototype.ModifiedBy = identity.Code;
 
                 PrototypeVersion.ModifiedOn = Now;
-                PrototypeVersion.ModifiedBy = defaultIdentity.Code;
+                PrototypeVersion.ModifiedBy = identity.Code;
             }
 
             PrototypeVersion.Description = request.Description;
@@ -198,6 +203,16 @@ namespace CheckListManager.Prototypes.Logic.Services
 
             await _prototypeRepository.SaveChangesAsync();
 
+            if (NewVersion)
+                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                {
+                    Company = identity.CompanyId,
+                    User = identity.Code,
+                    Action = TrailAction.PrototypeCreated,
+                    Date = DateTimeOffset.UtcNow,
+                    CheckList = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}"                    
+                });
+
             return new PrototypeResponse
             {
                 ID = PrototypeVersion.Prototype,
@@ -205,28 +220,48 @@ namespace CheckListManager.Prototypes.Logic.Services
             };
         }
 
-        public async Task DeleteAsync(DefaultIdentity defaultIdentity, PrototypeRequest request)
+        public async Task DeleteAsync(DefaultIdentity identity, PrototypeRequest request)
         {
-            var PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(defaultIdentity, request.ID, request.Version);
+            var PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(identity, request.ID, request.Version);
             if (
-                !defaultIdentity.HasPermission("Prototypes", "Edit", PrototypeVersion.Prototypes.Department) &&
-                !defaultIdentity.HasPermission("Prototypes", "Edit", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType)
+                !identity.HasPermission("Prototypes", "Edit", PrototypeVersion.Prototypes.Department) &&
+                !identity.HasPermission("Prototypes", "Edit", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType)
             )
                 throw new UnauthorizedAccessException();
 
-            await _prototypeRepository.DeletePrototypeVersionAsync(defaultIdentity, request.ID, request.Version);
+            await _prototypeRepository.DeletePrototypeVersionAsync(identity, request.ID, request.Version);
+
+            await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+            {
+                Company = identity.CompanyId,
+                User = identity.Code,
+                Action = TrailAction.PrototypeDeleted,
+                Date = DateTimeOffset.UtcNow,
+                CheckList = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}"
+            });
         }
 
-        public async Task<PrototypeResponse> SetStateAsync(DefaultIdentity defaultIdentity, PrototypeRequest request)
+        public async Task<PrototypeResponse> SetStateAsync(DefaultIdentity identity, PrototypeRequest request)
         {
-            var PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(defaultIdentity, request.ID, request.Version);
+            var PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(identity, request.ID, request.Version);
             if (
-                !defaultIdentity.HasPermission("Prototypes", "Edit", PrototypeVersion.Prototypes.Department) &&
-                !defaultIdentity.HasPermission("Prototypes", "Edit", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType)
+                !identity.HasPermission("Prototypes", "Edit", PrototypeVersion.Prototypes.Department) &&
+                !identity.HasPermission("Prototypes", "Edit", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType)
             )
                 throw new UnauthorizedAccessException();
 
-            await _prototypeRepository.SetStateAsync(defaultIdentity, PrototypeVersion, request.State, request.StateProposed);
+            await _prototypeRepository.SetStateAsync(identity, PrototypeVersion, request.State, request.StateProposed);
+
+            await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+            {
+                Company = identity.CompanyId,
+                User = identity.Code,
+                Action = request.StateProposed ? TrailAction.PrototypeStateChangeProposed : TrailAction.PrototypeStateChanged,
+                Date = DateTimeOffset.UtcNow,
+                CheckList = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}",
+                Information = request.State
+            });
+
             return new PrototypeResponse
             {
                 State = PrototypeVersion.VersionState,

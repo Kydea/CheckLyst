@@ -124,6 +124,18 @@
 			return JSON.stringify(parameters);
 		},
 
+		prettifyObject = function (object, indentation) {
+			if (object == null)
+				return "";
+			else if (typeof object == "object") {
+				var value = "";
+				for (var index in object)
+					value += "\n" + Array(indentation + 1).join(" ") + index + ": " + prettifyObject(object[index], indentation + 4);
+				return value;
+			} else
+				return object;
+		},
+
 		setFieldValue = function (field, value) {
 			if (field.data("type") == "DateTimeOffset") {
 				if (value == null || value == "")
@@ -137,7 +149,7 @@
 			}
 			else if (field.data("type") == "JSON")
 				try {
-					value = JSON.stringify(JSON.parse(JSON.parse(value)), null, 4); //the first parse unescape \"
+					value = prettifyObject(JSON.parse(value), 0);
 					field.val(value); 
 				} catch (error) {
 					field.val(value);

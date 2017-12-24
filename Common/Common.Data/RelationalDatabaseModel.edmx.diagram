@@ -82,6 +82,7 @@
         <EntityTypeShape EntityType="RelationalDatabaseModel.SettingValues" Width="1.5" PointX="8.25" PointY="0.75" />
         <AssociationConnector Association="RelationalDatabaseModel.SettingValues_Setting_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.SettingValues_Company_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.Instances_Company_fkey" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

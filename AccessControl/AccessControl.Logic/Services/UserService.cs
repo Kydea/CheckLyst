@@ -339,7 +339,7 @@ namespace CheckListManager.AccessControl.Logic.Services
 
         private string SerializeUserInformation(string Code, string AuthenticationCode, List<UserFunctions> UserFunctions)
         {
-            return JsonConvert.SerializeObject(JsonConvert.SerializeObject(new
+            return JsonConvert.SerializeObject(new
             {
                 Code = Code,
                 AuthenticationCode = AuthenticationCode,
@@ -351,7 +351,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                     PrototypeType = uf.PrototypeType + " " + uf.PrototypeTypes?.Name,
                     Tag = uf.Tag
                 })
-            }));
+            });
         }
 
         public async Task<UserResponse> AddUserAsync(DefaultIdentity identity, UserRequest record)

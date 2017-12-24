@@ -3,6 +3,9 @@ using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Logic.Authentication;
+using CheckListManager.Common.Logic.Queue;
+using CheckListManager.Common.Logic.Services;
+using CheckListManager.Common.Logic.Trail;
 using CheckListManager.Common.Logic.WorkFlows;
 using CheckListManager.WorkFlows.Data;
 using System;
@@ -17,11 +20,13 @@ namespace CheckListManager.WorkFlows.Logic.Applications
     {
         private readonly IWorkFlowsRepository _workFlowsRepository;
         private readonly IAuthenticationService _authenticationService;
+        private readonly IQueueService _queueService;
 
-        public ApplicationService(IWorkFlowsRepository workFlowsRepository, IAuthenticationService authenticationService)
+        public ApplicationService(IWorkFlowsRepository workFlowsRepository, IAuthenticationService authenticationService, IQueueService queueService)
         {
             _workFlowsRepository = workFlowsRepository;
             _authenticationService = authenticationService;
+            _queueService = queueService;
         }
 
         public async Task<GetStepsResponse> GetStepsAsync(DefaultIdentity identity, GetStepsRequest request)
@@ -49,17 +54,26 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             };
         }
 
-        private void SetPrototypeVersionState(PrototypeVersions PrototypeVersion, string State)
+        private async Task SetPrototypeVersionState(DefaultIdentity identity, PrototypeVersions PrototypeVersion, string State)
         {
             PrototypeVersion.ProposedState = null;
             PrototypeVersion.ProposedDate = null;
             PrototypeVersion.VersionState = State;
+
+            await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+            {
+                Company = identity.CompanyId,
+                User = identity.Code,
+                Action = TrailAction.PrototypeSignatureIssued,
+                Date = DateTimeOffset.UtcNow,
+                CheckList = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}",
+                Information = State
+            });
         }
 
-        private void Approve(PrototypeVersions PrototypeVersion)
+        private async Task Approve(DefaultIdentity identity, PrototypeVersions PrototypeVersion)
         {
             //TODO Cambio di stato da servizio, deve:
-            //1. creare log
             //2. creare history
             //5. notificare per email
 
@@ -71,22 +85,21 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             if (State == VersionState.Active)
             {
                 var OldVersion = PrototypeVersion.Prototypes.PrototypeVersions.SingleOrDefault(pv => pv.VersionState == VersionState.Active);
-                if (OldVersion != null) SetPrototypeVersionState(OldVersion, VersionState.Obsolete);
+                if (OldVersion != null) await SetPrototypeVersionState(identity, OldVersion, VersionState.Obsolete);
             } 
-            SetPrototypeVersionState(PrototypeVersion, State);
+            await SetPrototypeVersionState(identity, PrototypeVersion, State);
         }
 
-        private void Reject(PrototypeVersions PrototypeVersion)
+        private async Task Reject(DefaultIdentity identity, PrototypeVersions PrototypeVersion)
         {
             //TODO Cambio di stato da servizio, deve:
-            //1. creare log
             //2. creare history
             //5. notificare per email
 
             PrototypeVersion.Instances.ToList().ForEach(i =>
                 PrototypeVersion.Instances.Remove(i)
             );
-            SetPrototypeVersionState(PrototypeVersion, VersionState.Draft);
+            await SetPrototypeVersionState(identity, PrototypeVersion, VersionState.Draft);
         }
 
         public async Task<SignResponse> SignAsync(DefaultIdentity identity, SignRequest request)
@@ -167,7 +180,8 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     }
 
                     if (AllApproved)
-                        Approve(PrototypeVersion);
+                        await Approve(identity, PrototypeVersion);
+
                 }
                 else if (Instance != null)
                 {
@@ -182,7 +196,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             {
                 Step.WorkFlowApplications.Approved = false;
                 if (PrototypeVersion != null)
-                    Reject(PrototypeVersion);
+                    await Reject(identity, PrototypeVersion);
                 else if (Instance != null)
                 {
                     throw new NotImplementedException();
