@@ -64,7 +64,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             {
                 Company = identity.CompanyId,
                 User = identity.Code,
-                Action = TrailAction.PrototypeSignatureIssued,
+                Action = TrailAction.PrototypeStateChanged,
                 Date = DateTimeOffset.UtcNow,
                 CheckList = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}",
                 Information = State

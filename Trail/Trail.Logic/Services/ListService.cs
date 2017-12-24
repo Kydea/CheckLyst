@@ -27,7 +27,7 @@ namespace CheckListManager.Trail.Logic.Services
                         Action = p.Action,
                         CheckList = p.CheckList,
                         Information = p.Information,
-                        ShortInformation = p.Information != null && p.Information.StartsWith("\"{") ? "..." : p.Information
+                        ShortInformation = p.Information != null && p.Information.StartsWith("{") ? "..." : p.Information
                     },
                     p =>
                         p.Company == Company
