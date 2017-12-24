@@ -134,6 +134,27 @@
           <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
           <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
         </EntityType>
+        <EntityType Name="Settings">
+          <Key>
+            <PropertyRef Name="Code" />
+          </Key>
+          <Property Name="Code" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Description" Type="text" />
+          <Property Name="DefaultValue" Type="text" />
+          <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
+          <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
+        </EntityType>
+        <EntityType Name="SettingValues">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int8" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Company" Type="int8" Nullable="false" />
+          <Property Name="Setting" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Value" Type="text" Nullable="false" />
+          <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
+          <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
+        </EntityType>
         <EntityType Name="DataSources">
           <Key>
             <PropertyRef Name="ID" />
@@ -688,6 +709,30 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="SettingValues_Company_fkey">
+          <End Role="Companies" Type="Self.Companies" Multiplicity="1" />
+          <End Role="SettingValues" Type="Self.SettingValues" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Companies">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="SettingValues">
+              <PropertyRef Name="Company" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="SettingValues_Setting_fkey">
+          <End Role="Settings" Type="Self.Settings" Multiplicity="1" />
+          <End Role="SettingValues" Type="Self.SettingValues" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Settings">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="SettingValues">
+              <PropertyRef Name="Setting" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="UserFunctions_Department_fkey">
           <End Role="Departments" Type="Self.Departments" Multiplicity="0..1" />
           <End Role="UserFunctions" Type="Self.UserFunctions" Multiplicity="*" />
@@ -924,6 +969,8 @@
           <EntitySet Name="PrototypeVersionTags" EntityType="Self.PrototypeVersionTags" Schema="CheckLists" store:Type="Tables" />
           <EntitySet Name="VersionStates" EntityType="Self.VersionStates" Schema="CheckLists" store:Type="Tables" />
           <EntitySet Name="Configurations" EntityType="Self.Configurations" Schema="Configuration" store:Type="Tables" />
+          <EntitySet Name="Settings" EntityType="Self.Settings" Schema="Configuration" store:Type="Tables" />
+          <EntitySet Name="SettingValues" EntityType="Self.SettingValues" Schema="Configuration" store:Type="Tables" />
           <EntitySet Name="DataSources" EntityType="Self.DataSources" Schema="DataSources" store:Type="Tables" />
           <EntitySet Name="Companies" EntityType="Self.Companies" Schema="Infrastructure" store:Type="Tables" />
           <EntitySet Name="Departments" EntityType="Self.Departments" Schema="Infrastructure" store:Type="Tables" />
@@ -1044,6 +1091,14 @@
             <End Role="Actions" EntitySet="Actions" />
             <End Role="Records" EntitySet="Records" />
           </AssociationSet>
+          <AssociationSet Name="SettingValues_Company_fkey" Association="Self.SettingValues_Company_fkey">
+            <End Role="Companies" EntitySet="Companies" />
+            <End Role="SettingValues" EntitySet="SettingValues" />
+          </AssociationSet>
+          <AssociationSet Name="SettingValues_Setting_fkey" Association="Self.SettingValues_Setting_fkey">
+            <End Role="Settings" EntitySet="Settings" />
+            <End Role="SettingValues" EntitySet="SettingValues" />
+          </AssociationSet>
           <AssociationSet Name="UserFunctions_Department_fkey" Association="Self.UserFunctions_Department_fkey">
             <End Role="Departments" EntitySet="Departments" />
             <End Role="UserFunctions" EntitySet="UserFunctions" />
@@ -1144,6 +1199,7 @@
           <NavigationProperty Name="WorkFlows" Relationship="RelationalDatabaseModel.WorkFlows_Company_fkey" FromRole="Companies" ToRole="WorkFlows" />
           <NavigationProperty Name="Prototypes" Relationship="RelationalDatabaseModel.Prototypes_Company_fkey" FromRole="Companies" ToRole="Prototypes" />
           <NavigationProperty Name="PrototypeTypes" Relationship="RelationalDatabaseModel.PrototypeTypes_Company_fkey" FromRole="Companies" ToRole="PrototypeTypes" />
+          <NavigationProperty Name="SettingValues" Relationship="RelationalDatabaseModel.SettingValues_Company_fkey" FromRole="Companies" ToRole="SettingValues" />
         </EntityType>
         <EntityType Name="Departments">
           <Key>
@@ -1414,6 +1470,16 @@
           <AssociationSet Name="FK_Instances_PrototypeVersions" Association="RelationalDatabaseModel.FK_Instances_PrototypeVersions">
             <End Role="PrototypeVersions" EntitySet="PrototypeVersions" />
             <End Role="Instances" EntitySet="Instances" />
+          </AssociationSet>
+          <EntitySet Name="Settings" EntityType="RelationalDatabaseModel.Settings" />
+          <EntitySet Name="SettingValues" EntityType="RelationalDatabaseModel.SettingValues" />
+          <AssociationSet Name="SettingValues_Setting_fkey" Association="RelationalDatabaseModel.SettingValues_Setting_fkey">
+            <End Role="Settings" EntitySet="Settings" />
+            <End Role="SettingValues" EntitySet="SettingValues" />
+          </AssociationSet>
+          <AssociationSet Name="SettingValues_Company_fkey" Association="RelationalDatabaseModel.SettingValues_Company_fkey">
+            <End Role="Companies" EntitySet="Companies" />
+            <End Role="SettingValues" EntitySet="SettingValues" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="TimeZones">
@@ -2309,6 +2375,54 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Settings">
+          <Key>
+            <PropertyRef Name="Code" />
+          </Key>
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DefaultValue" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedOn" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
+          <NavigationProperty Name="SettingValues" Relationship="RelationalDatabaseModel.SettingValues_Setting_fkey" FromRole="Settings" ToRole="SettingValues" />
+        </EntityType>
+        <EntityType Name="SettingValues">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Company" Type="Int64" Nullable="false" />
+          <Property Name="Setting" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Value" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedOn" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
+          <NavigationProperty Name="Settings" Relationship="RelationalDatabaseModel.SettingValues_Setting_fkey" FromRole="SettingValues" ToRole="Settings" />
+          <NavigationProperty Name="Companies" Relationship="RelationalDatabaseModel.SettingValues_Company_fkey" FromRole="SettingValues" ToRole="Companies" />
+        </EntityType>
+        <Association Name="SettingValues_Setting_fkey">
+          <End Type="RelationalDatabaseModel.Settings" Role="Settings" Multiplicity="1" />
+          <End Type="RelationalDatabaseModel.SettingValues" Role="SettingValues" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Settings">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="SettingValues">
+              <PropertyRef Name="Setting" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="SettingValues_Company_fkey">
+          <End Type="RelationalDatabaseModel.Companies" Role="Companies" Multiplicity="1" />
+          <End Type="RelationalDatabaseModel.SettingValues" Role="SettingValues" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Companies">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="SettingValues">
+              <PropertyRef Name="Company" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2693,6 +2807,29 @@
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="Step" ColumnName="Step" />
                 <ScalarProperty Name="WorkFlow" ColumnName="WorkFlow" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Settings">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.Settings">
+              <MappingFragment StoreEntitySet="Settings">
+                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="DefaultValue" ColumnName="DefaultValue" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SettingValues">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.SettingValues">
+              <MappingFragment StoreEntitySet="SettingValues">
+                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="Value" ColumnName="Value" />
+                <ScalarProperty Name="Setting" ColumnName="Setting" />
+                <ScalarProperty Name="Company" ColumnName="Company" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>

@@ -13,7 +13,6 @@ namespace CheckListManager.Instances.Terminal
 				x.SetDisplayName("CheckListManager - Instances Service");
 				x.SetDescription("CheckListManager - Instances Service");
 				x.SetServiceName("CheckListManager - Instances Service");
-				x.SetInstanceName("CheckListManager - Instances Service");
 
 				x.EnableShutdown();
 

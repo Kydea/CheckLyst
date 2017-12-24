@@ -78,6 +78,10 @@
         <AssociationConnector Association="RelationalDatabaseModel.WorkFlowApplications_Instance" />
         <AssociationConnector Association="RelationalDatabaseModel.WorkFlowApplications_PrototypeVersion" />
         <AssociationConnector Association="RelationalDatabaseModel.FK_Instances_PrototypeVersions" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.Settings" Width="1.5" PointX="6" PointY="29" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.SettingValues" Width="1.5" PointX="8.25" PointY="0.75" />
+        <AssociationConnector Association="RelationalDatabaseModel.SettingValues_Setting_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.SettingValues_Company_fkey" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

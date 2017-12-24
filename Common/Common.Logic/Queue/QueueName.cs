@@ -3,5 +3,6 @@
 	public static class QueueName
 	{
 		public const string Trail = "trail.fifo";
+		public const string Email = "email.fifo";
 	}
 }
