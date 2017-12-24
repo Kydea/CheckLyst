@@ -7,13 +7,13 @@ namespace CheckListManager.Prototypes.Logic.Services
 {
 	public interface IPrototypeService : IService
 	{
-		Task<PrototypeResponse> OpenAsync(DefaultIdentity defaultIdentity, PrototypeRequest request);
-        Task<PrototypeResponse> CloneAsync(DefaultIdentity defaultIdentity, PrototypeRequest request);
-        Task<PrototypeResponse> CreateAsync(DefaultIdentity defaultIdentity, PrototypeRequest request);
-        Task<PrototypeResponse> VersionAsync(DefaultIdentity defaultIdentity, PrototypeRequest request);
+		Task<PrototypeResponse> OpenAsync(DefaultIdentity identity, PrototypeRequest request);
+        Task<PrototypeResponse> CloneAsync(DefaultIdentity identity, PrototypeRequest request);
+        Task<PrototypeResponse> CreateAsync(DefaultIdentity identity, PrototypeRequest request);
+        Task<PrototypeResponse> VersionAsync(DefaultIdentity identity, PrototypeRequest request);
         VerifyExpressionsResponse VerifyExpressions(PrototypeRequest request);
-        Task<PrototypeResponse> SaveAsync(DefaultIdentity defaultIdentity, PrototypeRequest request);
-        Task DeleteAsync(DefaultIdentity defaultIdentity, PrototypeRequest request);
-        Task<PrototypeResponse> SetStateAsync(DefaultIdentity defaultIdentity, PrototypeRequest request);
+        Task<PrototypeResponse> SaveAsync(DefaultIdentity identity, PrototypeRequest request);
+        Task DeleteAsync(DefaultIdentity identity, PrototypeRequest request);
+        Task<PrototypeResponse> SetStateAsync(DefaultIdentity identity, PrototypeRequest request);
     }
 }
