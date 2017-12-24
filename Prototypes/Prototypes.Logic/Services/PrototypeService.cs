@@ -210,12 +210,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                     User = identity.Code,
                     Action = TrailAction.PrototypeCreated,
                     Date = DateTimeOffset.UtcNow,
-                    Information = JsonConvert.SerializeObject(new
-                    {
-                        ID = PrototypeVersion.Prototypes.ID,
-                        Name = PrototypeVersion.Prototypes.Name,
-                        Version = PrototypeVersion.Version
-                    })
+                    CheckList = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}"                    
                 });
 
             return new PrototypeResponse
@@ -225,41 +220,46 @@ namespace CheckListManager.Prototypes.Logic.Services
             };
         }
 
-        public async Task DeleteAsync(DefaultIdentity defaultIdentity, PrototypeRequest request)
+        public async Task DeleteAsync(DefaultIdentity identity, PrototypeRequest request)
         {
-            var PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(defaultIdentity, request.ID, request.Version);
+            var PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(identity, request.ID, request.Version);
             if (
-                !defaultIdentity.HasPermission("Prototypes", "Edit", PrototypeVersion.Prototypes.Department) &&
-                !defaultIdentity.HasPermission("Prototypes", "Edit", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType)
+                !identity.HasPermission("Prototypes", "Edit", PrototypeVersion.Prototypes.Department) &&
+                !identity.HasPermission("Prototypes", "Edit", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType)
             )
                 throw new UnauthorizedAccessException();
 
-            await _prototypeRepository.DeletePrototypeVersionAsync(defaultIdentity, request.ID, request.Version);
-        }
-
-        public async Task<PrototypeResponse> SetStateAsync(DefaultIdentity defaultIdentity, PrototypeRequest request)
-        {
-            var PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(defaultIdentity, request.ID, request.Version);
-            if (
-                !defaultIdentity.HasPermission("Prototypes", "Edit", PrototypeVersion.Prototypes.Department) &&
-                !defaultIdentity.HasPermission("Prototypes", "Edit", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType)
-            )
-                throw new UnauthorizedAccessException();
-
-            await _prototypeRepository.SetStateAsync(defaultIdentity, PrototypeVersion, request.State, request.StateProposed);
+            await _prototypeRepository.DeletePrototypeVersionAsync(identity, request.ID, request.Version);
 
             await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
             {
                 Company = identity.CompanyId,
                 User = identity.Code,
-                Action = TrailAction.PrototypeCreated,
+                Action = TrailAction.PrototypeDeleted,
                 Date = DateTimeOffset.UtcNow,
-                Information = JsonConvert.SerializeObject(new
-                {
-                    ID = PrototypeVersion.Prototypes.ID,
-                    Name = PrototypeVersion.Prototypes.Name,
-                    Version = PrototypeVersion.Version
-                })
+                CheckList = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}"
+            });
+        }
+
+        public async Task<PrototypeResponse> SetStateAsync(DefaultIdentity identity, PrototypeRequest request)
+        {
+            var PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(identity, request.ID, request.Version);
+            if (
+                !identity.HasPermission("Prototypes", "Edit", PrototypeVersion.Prototypes.Department) &&
+                !identity.HasPermission("Prototypes", "Edit", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType)
+            )
+                throw new UnauthorizedAccessException();
+
+            await _prototypeRepository.SetStateAsync(identity, PrototypeVersion, request.State, request.StateProposed);
+
+            await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+            {
+                Company = identity.CompanyId,
+                User = identity.Code,
+                Action = request.StateProposed ? TrailAction.PrototypeStateChangeProposed : TrailAction.PrototypeStateChanged,
+                Date = DateTimeOffset.UtcNow,
+                CheckList = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}",
+                Information = request.State
             });
 
             return new PrototypeResponse

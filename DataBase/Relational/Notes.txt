@@ -40,8 +40,9 @@ ACCESS CONTROL
 Mettere un tempo di attesa per i login falliti
 Non aggiorna il nome utente in header da local storage
 
-LOG
-WorkFlows, approved, rejected
+WORKFLOWS
+Mattere in trail l'emissione di firme
+Invio email
 
 
 PROTOTIO DI TRIGGER:

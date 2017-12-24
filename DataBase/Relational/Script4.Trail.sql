@@ -18,9 +18,9 @@ values
 	('User deleted'),
 
 	('Prototype created'),
+	('Prototype deleted'),
 	('Prototype state changed'),
-	('Prototype state auto-changed'),
-	('Prototype state changed proposed'),
+	('Prototype state change proposed'),
 	('Prototype signature issued');
 
 create table "Trail"."Records"
