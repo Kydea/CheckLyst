@@ -28,6 +28,7 @@ gestire concorrenza transazionalmente (where nell'aggironamento e conteggio risu
 PrototypeSignatures.SendEmails(db, Version, Action) quando ci sono variazioni nella applicazione di work flow
 mettere lock in cambio di stato (?)
 Testare duplicazione nome prototipo, l'errore corretto viene gestito in users
+Rimettere controllo validità nome prototipo come vecchio CLM
 
 USERS 
 Lavorare sulla stringa di autenticazione tramite ldap
