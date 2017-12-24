@@ -79,6 +79,9 @@
     </Compile>
     <Compile Include="Configuration\ConfigurationRepository.cs" />
     <Compile Include="Configuration\IConfigurationRepository.cs" />
+    <Compile Include="Configuration\ISettingRepository.cs" />
+    <Compile Include="Configuration\Setting.cs" />
+    <Compile Include="Configuration\SettingRepository.cs" />
     <Compile Include="DatabaseError.cs" />
     <Compile Include="DataSources.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
@@ -154,6 +157,12 @@
       <DependentUpon>RelationalDatabaseModel.edmx</DependentUpon>
     </Compile>
     <Compile Include="Repository.cs" />
+    <Compile Include="Settings.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SettingValues.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="TimeZones.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>
