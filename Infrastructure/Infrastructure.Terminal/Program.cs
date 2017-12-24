@@ -13,7 +13,6 @@ namespace CheckListManager.Infrastructure.Terminal
 				x.SetDisplayName("CheckListManager - Infrastructure Service");
 				x.SetDescription("CheckListManager - Infrastructure Service");
 				x.SetServiceName("CheckListManager - Infrastructure Service");
-				x.SetInstanceName("CheckListManager - Infrastructure Service");
 
 				x.EnableShutdown();
 

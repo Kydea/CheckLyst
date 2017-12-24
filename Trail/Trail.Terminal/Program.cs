@@ -13,7 +13,6 @@ namespace CheckListManager.Trail.Terminal
 				x.SetDisplayName("CheckListManager - Trail Service");
 				x.SetDescription("CheckListManager - Trail Service");
 				x.SetServiceName("CheckListManager - Trail Service");
-				x.SetInstanceName("CheckListManager - Trail Service");
 
 				x.EnableShutdown();
 
