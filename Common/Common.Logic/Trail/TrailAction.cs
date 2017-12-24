@@ -15,5 +15,7 @@
         public const string PrototypeStateAutoChanged = "Prototype state auto-changed";
         public const string PrototypeStateChangedProposed = "Prototype state changed proposed";
         public const string PrototypeSignatureIssued = "Prototype signature issued";
+
+        public const string EmailFailed = "Email failed";
     }
 }

@@ -7,6 +7,8 @@ create table "Trail"."Actions"
 
 insert into "Trail"."Actions"
 values 
+	('Email failed'),
+
 	('Login'),
 	('Logout'),
 	('Login failed'),
