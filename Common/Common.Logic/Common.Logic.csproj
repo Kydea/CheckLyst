@@ -84,6 +84,7 @@
   <ItemGroup>
     <Compile Include="Authentication\AuthenticateRequest.cs" />
     <Compile Include="Authentication\AuthorizeResponse.cs" />
+    <Compile Include="Email\EmailMessage.cs" />
     <Compile Include="Json\AutofacJsonConverter.cs" />
     <Compile Include="Json\CheckListJsonConverter.cs" />
     <Compile Include="Models\CheckLists\Conditions.cs" />
@@ -141,6 +142,8 @@
     <Compile Include="Models\RawValue.cs" />
     <Compile Include="Authentication\AuthenticationService.cs" />
     <Compile Include="Authentication\IAuthenticationService.cs" />
+    <Compile Include="Services\ISettingService.cs" />
+    <Compile Include="Services\SettingService.cs" />
     <Compile Include="Trail\TrailAction.cs" />
     <Compile Include="Trail\TrailMessage.cs" />
     <Compile Include="Cache\IRedisCache.cs" />
