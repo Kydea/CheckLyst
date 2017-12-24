@@ -27,6 +27,7 @@ gestire concorrenza per firme (credo serva per forza una transazione, o un lock 
 gestire concorrenza transazionalmente (where nell'aggironamento e conteggio risultati?)
 PrototypeSignatures.SendEmails(db, Version, Action) quando ci sono variazioni nella applicazione di work flow
 mettere lock in cambio di stato (?)
+Testare duplicazione nome prototipo, l'errore corretto viene gestito in users
 
 USERS 
 Lavorare sulla stringa di autenticazione tramite ldap

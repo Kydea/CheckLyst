@@ -10,9 +10,16 @@ values
 	('Login'),
 	('Logout'),
 	('Login failed'),
+
 	('User created'),
 	('User edited'),
-	('User deleted');
+	('User deleted'),
+
+	('Prototype created'),
+	('Prototype state changed'),
+	('Prototype state auto-changed'),
+	('Prototype state changed proposed'),
+	('Prototype signature issued');
 
 create table "Trail"."Records"
 (
