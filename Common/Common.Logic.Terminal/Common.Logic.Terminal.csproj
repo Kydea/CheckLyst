@@ -81,6 +81,11 @@
   <ItemGroup>
     <Compile Include="Configuration\TerminalConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scheduler\ComputedSchedulerStrategy.cs" />
+    <Compile Include="Scheduler\IntervalSchedulerStrategy.cs" />
+    <Compile Include="Scheduler\SchedulerStrategyBase.cs" />
+    <Compile Include="TaskScheduler.cs" />
+    <Compile Include="Scheduler\ISchedulerStrategy.cs" />
     <Compile Include="TimerWindowsService.cs" />
     <Compile Include="WindowsService.cs" />
   </ItemGroup>

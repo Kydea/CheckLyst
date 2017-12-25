@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Data.Entity;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using CheckListManager.Common.Data;
 using CheckListManager.Common.Core.Network;
 using Newtonsoft.Json;
 using System.Net.Http;
@@ -12,7 +8,7 @@ namespace CheckListManager.Common.Logic.Authentication
 {
 	public class AuthenticationService : IAuthenticationService
     {
-        private IServiceClient _client;
+        private readonly IServiceClient _client;
 
         public AuthenticationService(IServiceClient client)
         {
@@ -39,7 +35,7 @@ namespace CheckListManager.Common.Logic.Authentication
             }
 
             if (response.StatusCode != System.Net.HttpStatusCode.OK)
-                throw new Exception(String.Join(" ", JsonConvert.DeserializeObject<AuthenticateResponse>(responseData).Messages));
+                throw new Exception(string.Join(" ", JsonConvert.DeserializeObject<AuthenticateResponse>(responseData).Messages));
         }
     }
 }

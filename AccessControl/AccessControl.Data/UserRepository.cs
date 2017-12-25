@@ -31,41 +31,39 @@ namespace CheckListManager.AccessControl.Data
 
         public async Task<Users> EditAsync(DefaultIdentity identity, Users user)
         {
-            var ExistingUser = await GetAsync(identity.CompanyId, user.Code);
-            if (ExistingUser == null) throw new DatabaseException($"User {user.Code} not found");
-            ExistingUser.Description = user.Description;
-            ExistingUser.Email = user.Email;
-            if (user.Password != null) ExistingUser.Password = user.Password;
-            ExistingUser.Enabled = user.Enabled;
-            ExistingUser.AuthenticationCode = user.AuthenticationCode;
-            ExistingUser.ModifiedOn = DateTimeOffset.UtcNow;
-            ExistingUser.ModifiedBy = identity.Code;
-            Entities.UserFunctions.RemoveRange(ExistingUser.UserFunctions);
-            ExistingUser.UserFunctions = user.UserFunctions;
+            var existingUser = await GetAsync(identity.CompanyId, user.Code);
+            if (existingUser == null) throw new DatabaseException($"User {user.Code} not found");
+            existingUser.Description = user.Description;
+            existingUser.Email = user.Email;
+            if (user.Password != null) existingUser.Password = user.Password;
+            existingUser.Enabled = user.Enabled;
+            existingUser.AuthenticationCode = user.AuthenticationCode;
+            existingUser.ModifiedOn = DateTimeOffset.UtcNow;
+            existingUser.ModifiedBy = identity.Code;
+            Entities.UserFunctions.RemoveRange(existingUser.UserFunctions);
+            existingUser.UserFunctions = user.UserFunctions;
             await SaveChangesAsync();
-            return ExistingUser;
+            return existingUser;
         }
 
         public async Task DeleteAsync(long companyId, string code)
         {
-            var User = await GetAsync(companyId, code);
-            if (User == null) throw new DatabaseException($"User {code} not found");
+            var user = await GetAsync(companyId, code);
+            if (user == null) throw new DatabaseException($"User {code} not found");
 
-            Entities.Users.Remove(User);
+            Entities.Users.Remove(user);
             await SaveChangesAsync();
         }
 
 
         private IQueryable<Users> Get(long companyId, string code, string description)
         {
-            return Entities.Users
-                .Where(
-                    u => u.Company == companyId && 
-                    (
-                        (code == string.Empty || u.Code != null && u.Code.ToUpper().Contains(code.ToUpper()))
-                        && (description == string.Empty || u.Description != null && u.Description.ToUpper().Contains(description.ToUpper()))
-                    )
-                );
+	        return Entities.Users
+		        .Where(
+			        u => u.Company == companyId &&
+						(code == string.Empty || u.Code != null && u.Code.ToUpper().Contains(code.ToUpper())) &&
+						(description == string.Empty || u.Description != null && u.Description.ToUpper().Contains(description.ToUpper()))
+		        );
         }
 
 		public Task<List<Users>> GetUsersAsync(long companyId, string code, string description, int skip, int take)
@@ -78,5 +76,44 @@ namespace CheckListManager.AccessControl.Data
 		public Task<int> CountUsersAsync(long companyId, string code, string description)
 			=> Get(companyId, code, description)
 				.CountAsync();
+
+		public async Task UpdateLastLoginAsync(Users user)
+		{
+			user.LastLoginOn = DateTimeOffset.UtcNow;
+			await SaveChangesAsync();
+		}
+
+		public Task<List<Users>> GetUsersToDisableAsync()
+		{
+			return Entities.Users
+				.Include(u => u.Companies)
+				.Where(
+					x =>
+						x.Enabled
+						&& x.LastLoginOn < DbFunctions.AddDays(DateTime.UtcNow, -x.Companies.MaximumUserInactivityDays)
+				).ToListAsync();
+		}
+
+		public Task<List<Users>> GetUsersDisableWarningAsync()
+		{
+			return Entities.Users
+				.Include(u => u.Companies)
+				.Where(
+					x =>
+						x.Enabled
+						&& x.LastLoginOn < DbFunctions.AddDays(DateTime.UtcNow, -x.Companies.WarningUserInactivityDays)
+				).ToListAsync();
+		}
+
+		public Task<List<Users>> GetUsersWithExpiredPin()
+		{
+			return Entities.Users
+				.Include(u => u.Companies)
+				.Where(
+					x =>
+						x.PIN != null
+						&& x.PINChangeDate < DbFunctions.AddDays(DateTime.UtcNow, -x.Companies.PINDaysLife)
+				).ToListAsync();
+		}
 	}
 }

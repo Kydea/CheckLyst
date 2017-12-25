@@ -3,16 +3,15 @@ using Autofac;
 using CheckListManager.Trail.Logic.Services;
 using CheckListManager.Common.Logic.Terminal;
 using CheckListManager.Common.Logic.Terminal.Configuration;
+using CheckListManager.Common.Logic.Terminal.Scheduler;
 
 namespace CheckListManager.Trail.Terminal
 {
 	public class TrailWindowsService : TimerWindowsService
 	{
-		public TrailWindowsService(TerminalConfig config) : base(config, 5000)
+		public TrailWindowsService(TerminalConfig config) : base(config, new IntervalSchedulerStrategy(5))
 		{
 		}
-
-		protected override bool StopTimerWhenRunning => true;
 
 		protected override async Task RunAsync()
 		{
