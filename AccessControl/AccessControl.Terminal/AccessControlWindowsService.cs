@@ -10,7 +10,7 @@ namespace CheckListManager.Trail.Terminal
 	public class AccessControlWindowsService : TimerWindowsService
 	{
 		public AccessControlWindowsService(TerminalConfig config) : base(config,
-			new ComputedSchedulerStrategy(new[] { 0 }, new[] { 0 }) { RunAtStartup = true })
+			new ComputedSchedulerStrategy(new[] { 0 }, new[] { 0 }) { RunAtStartup = false })
 		{
 		}
 

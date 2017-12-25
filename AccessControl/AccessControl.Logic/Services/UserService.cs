@@ -476,35 +476,55 @@ namespace CheckListManager.AccessControl.Logic.Services
 
 		public async Task CheckInactiveUsers(CancellationToken cancellationToken = new CancellationToken())
 		{
-			var users = await _userRepository.GetUsersToDisableAsync();
-			foreach (var user in users)
+			try
 			{
-				user.Enabled = false;
-				if (!string.IsNullOrEmpty(user.Email))
-					await _queueService.SendObjectAsync(QueueName.Email,
-						new EmailMessage(user.Company, "User disabled", await _settingService.UserBlockMessageAsync(user.Company),
-							user.Email, user.Description), cancellationToken);
+				var users = await _userRepository.GetUsersToDisableAsync();
+				foreach (var user in users)
+				{
+					user.Enabled = false;
+					if (!string.IsNullOrEmpty(user.Email))
+						await _queueService.SendObjectAsync(QueueName.Email,
+							new EmailMessage(user.Company, "User disabled", await _settingService.UserBlockMessageAsync(user.Company),
+								user.Email, user.Description), cancellationToken);
+				}
+
+				await _userRepository.SaveChangesAsync();
 			}
-
-			await _userRepository.SaveChangesAsync();
-
-			users = await _userRepository.GetUsersDisableWarningAsync();
-			foreach (var user in users)
+			catch (Exception e)
 			{
-				if (!string.IsNullOrEmpty(user.Email))
-					await _queueService.SendObjectAsync(QueueName.Email,
-						new EmailMessage(user.Company, "User disabled soon", await _settingService.UserBlockWarningMessageAsync(user.Company),
-							user.Email, user.Description), cancellationToken);
+				Logger.Error(e);
+			}
+			try
+			{
+				var users = await _userRepository.GetUsersDisableWarningAsync();
+				foreach (var user in users)
+				{
+					if (!string.IsNullOrEmpty(user.Email))
+						await _queueService.SendObjectAsync(QueueName.Email,
+							new EmailMessage(user.Company, "User disabled soon", await _settingService.UserBlockWarningMessageAsync(user.Company),
+								user.Email, user.Description), cancellationToken);
+				}
+			}
+			catch (Exception e)
+			{
+				Logger.Error(e);
 			}
 		}
 
 		public async Task CheckUnchangedPins(CancellationToken cancellationToken = new CancellationToken())
 		{
-			var users = await _userRepository.GetUsersWithExpiredPin();
-			foreach (var user in users)
-				user.PIN = null;
+			try
+			{
+				var users = await _userRepository.GetUsersWithExpiredPin();
+				foreach (var user in users)
+					user.PIN = null;
 
-			await _userRepository.SaveChangesAsync();
+				await _userRepository.SaveChangesAsync();
+			}
+			catch (Exception e)
+			{
+				Logger.Error(e);
+			}
 		}
 	}
 }
