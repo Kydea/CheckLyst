@@ -314,30 +314,32 @@ namespace CheckListManager.AccessControl.Logic.Services
                 });
 
             foreach (var row in record.PrototypeFunctions)
-                foreach (var function in row.functions)
-                    list.Add(new UserFunctions
-                    {
-                        Department = row.department,
-                        PrototypeType = row.prototypeType,
-                        FunctionGroup = "Prototypes",
-                        Function = function,
-                        Tag = row.level,
-                        CreatedOn = DateTimeOffset.UtcNow,
-                        CreatedBy = identity.Code
-                    });
+                if (row.functions != null)
+                    foreach (var function in row.functions)
+                        list.Add(new UserFunctions
+                        {
+                            Department = row.department,
+                            PrototypeType = row.prototypeType,
+                            FunctionGroup = "Prototypes",
+                            Function = function,
+                            Tag = row.level,
+                            CreatedOn = DateTimeOffset.UtcNow,
+                            CreatedBy = identity.Code
+                        });
 
             foreach (var row in record.InstanceFunctions)
-                foreach (var function in row.functions)
-                    list.Add(new UserFunctions
-                    {
-                        Department = row.department,
-                        PrototypeType = row.prototypeType,
-                        FunctionGroup = "Instances",
-                        Function = function,
-                        Tag = row.level,
-                        CreatedOn = DateTimeOffset.UtcNow,
-                        CreatedBy = identity.Code
-                    });
+                if (row.functions != null)
+                    foreach (var function in row.functions)
+                        list.Add(new UserFunctions
+                        {
+                            Department = row.department,
+                            PrototypeType = row.prototypeType,
+                            FunctionGroup = "Instances",
+                            Function = function,
+                            Tag = row.level,
+                            CreatedOn = DateTimeOffset.UtcNow,
+                            CreatedBy = identity.Code
+                        });
 
             return list;
         }
@@ -446,6 +448,9 @@ namespace CheckListManager.AccessControl.Logic.Services
             var response = new UserResponse();
             try
             {
+                if (identity.Code == code)
+                    throw new Exception("Users cannot delete themselves.");
+
                 await _userRepository.DeleteAsync(identity.CompanyId, code);
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {

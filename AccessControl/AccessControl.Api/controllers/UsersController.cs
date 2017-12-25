@@ -47,20 +47,9 @@ namespace CheckListManager.AccessControl.Api.Controllers
             {
                 return Ok(await _userService.AddUserAsync(Identity, request.Data));
             }
-            catch (DatabaseAggregateException exception)
+            catch(Exception Exception)
             {
-                return Error(new ResponseMessage(exception.InnerExceptions.Select(e => e.Message).ToArray()));
-            }
-            catch (DatabaseException exception)
-            {
-                // ReSharper disable once SwitchStatementMissingSomeCases
-                switch (exception.Error)
-                {
-                    case DatabaseError.PrimaryKeyViolation:
-                        return Error(new ResponseMessage("An user with the same code already exists."));
-                    default:
-                        return Error(new ResponseMessage(exception.Message));
-                }
+                return Error(Exception);
             }
         }
 

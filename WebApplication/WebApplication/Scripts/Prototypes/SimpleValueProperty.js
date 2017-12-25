@@ -34,7 +34,10 @@
             .val(model[property])
         if (!options.readOnly)
             input.on("change", change);
-        if (options.number) input.keyfilter(/[\d\-\,]/);
+		if (options.number)
+			input.keyfilter(/[\d\-\,]/);
+		else if (options.code)
+			input.keyfilter(/^[$A-Z_0-9]*$/i);
         valuePanel.append(input);
     };
 

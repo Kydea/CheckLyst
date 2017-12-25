@@ -2,6 +2,7 @@ matematici.blip = function () {
 
 	var
 		element,
+		callback,
 
 		show = function (options) {
 			if (element) close();
@@ -13,6 +14,7 @@ matematici.blip = function () {
 			container.append($("<i />").addClass("fi flaticon-" + options.icon));
 			matematici.elements.body.addClass("Blip");
 			element.fadeIn(300);
+			callback = options.callback;
 			//setTimeout(close, 2000);
 		},
 
@@ -20,7 +22,8 @@ matematici.blip = function () {
 			element.fadeOut(300, "linear", function () {
 				element.remove();
 				matematici.elements.body.removeClass("Blip");
-				options = element = null;
+				if (callback) callback();
+				callback = element = null;
 			});
 		};
 
@@ -29,12 +32,16 @@ matematici.blip = function () {
 			show(options);
 		},
 
-		ok: function () {
-			show({ icon: "check" });
+		ok: function (callback) {
+			show({
+				icon: "check", callback: callback
+			});
 		},
 
-		ko: function () {
-			show({ cssClass: "Error", icon: "exclamation" });
+		ko: function (callback) {
+			show({
+				cssClass: "Error", icon: "exclamation", callback: callback
+			});
 		}
 	};
 }();

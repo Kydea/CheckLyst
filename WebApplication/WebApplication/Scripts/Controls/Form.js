@@ -8,6 +8,7 @@
 		errors,
 		fieldErrors = false,
 		bindResult,
+		changeHandlers = [];
 
 		setup = function () {
 			//initial setup
@@ -32,16 +33,11 @@
 
 			element
 				.on("keypress", fieldsSelector, function (e) {
-					if (e.key != "Tab" && e.which !== 0 && !e.ctrlKey && !e.metaKey && !e.altKey) {
-						clearFormErrors();
-						if (options.applyButton)
-							matematici.controls.setEditable(options.applyButton, true);
-					}
+					if (e.key != "Tab" && e.which !== 0 && !e.ctrlKey && !e.metaKey && !e.altKey) 
+						onChange($(this));
 				})
 				.on("change, paste", fieldsSelector, function (e) {
-					clearFormErrors();
-					if (options.applyButton)
-						matematici.controls.setEditable(options.applyButton, true);
+					onChange($(this));
 				})
 				.on("change", ".Trigger", function () {
 					bind(options.bindEvent, handleResult, prepareRequest({ data: { source: $(this).attr("name") } }));
@@ -150,7 +146,7 @@
 			else if (field.data("type") == "JSON")
 				try {
 					value = prettifyObject(JSON.parse(value), 0);
-					field.val(value); 
+					field.val(value);
 				} catch (error) {
 					field.val(value);
 				}
@@ -244,6 +240,15 @@
 				if (handler)
 					handler(result);
 			});
+		},
+
+		onChange = function(control) {
+			clearFormErrors();
+			if (options.applyButton)
+				matematici.controls.setEditable(options.applyButton, true);
+
+			for (var index in changeHandlers) 
+				changeHandlers[index].call();
 		};
 
 	this.initialize = function () {
@@ -266,8 +271,12 @@
 		return options;
 	};
 
-	this.handleResult = function (result) {
-		handleResult(result);
+	this.handleResult = handleResult;
+
+	this.onChange = onChange;
+
+	this.addChangeHandler = function (handler) {
+		changeHandlers.push(handler);
 	};
 
 	this.getBindResult = function () {

@@ -66,8 +66,14 @@
 		if (model.typeName == "Prototype") {
 			properties.push(new prototypes.Property(
 				this, new prototypes.SimpleValueProperty(model, "name", {
-					readOnly: state != prototypes.Prototype.states.draft
-				}), "Name", "The name of the prototype"
+					readOnly: state != prototypes.Prototype.states.draft,
+					code: true
+				}).setCheck([{
+					action: function (value) {
+						return value == "" || matematici.codeRegularExpression.test(value);
+					},
+					message: "Invalid name"
+				}]), "Name", "The name of the prototype"
 			));
 			properties.push(new prototypes.Property(
 				this, new prototypes.SimpleValueProperty(model, "version", { readOnly: true }), "Version",
@@ -129,7 +135,8 @@
 
 			properties.push(new prototypes.Property(
 				this, new prototypes.SimpleValueProperty(model, "code", {
-					readOnly: state != prototypes.Prototype.states.draft
+					readOnly: state != prototypes.Prototype.states.draft,
+					code: true
 				}).setHandler(function (value) {
 					item.getElement().data("code", model.code);
 					prototypes.prototype.completeModel();
