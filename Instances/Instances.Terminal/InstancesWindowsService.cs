@@ -2,17 +2,16 @@
 using Autofac;
 using CheckListManager.Common.Logic.Terminal;
 using CheckListManager.Common.Logic.Terminal.Configuration;
+using CheckListManager.Common.Logic.Terminal.Scheduler;
 using CheckListManager.Instances.Logic.Services;
 
 namespace CheckListManager.Instances.Terminal
 {
 	public class InstancesWindowsService : TimerWindowsService
 	{
-		public InstancesWindowsService(TerminalConfig config) : base(config, 3600000)
+		public InstancesWindowsService(TerminalConfig config) : base(config, new IntervalSchedulerStrategy(3600))
 		{
 		}
-
-		protected override bool StopTimerWhenRunning => true;
 
 		protected override async Task RunAsync()
 		{

@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
 using CheckListManager.Common.Logic.Terminal.Configuration;
+using CheckListManager.Common.Logic.Terminal.Scheduler;
 using NLog;
 using Topshelf;
+using Timer = System.Timers.Timer;
 
 namespace CheckListManager.Common.Logic.Terminal
 {
@@ -11,28 +13,32 @@ namespace CheckListManager.Common.Logic.Terminal
 	{
 		private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-		private readonly int _interval;
+		private readonly ISchedulerStrategy _strategy;
 
 		protected Timer Timer { get; private set; }
 
-		protected virtual bool StopTimerWhenRunning { get; } = false;
-
-		protected TimerWindowsService(TerminalConfig config, int interval) : base(config)
+		protected TimerWindowsService(TerminalConfig config, ISchedulerStrategy strategy) : base(config)
 		{
-			_interval = interval;
+			_strategy = strategy;
 		}
 
 		protected override bool OnStart(HostControl hostControl)
 		{
+			_strategy.ComputeNextExecutionTime();
+
 			Timer = new Timer
 			{
 				AutoReset = true,
-				Interval = _interval,
+				Interval = _strategy.Interval.TotalMilliseconds,
 				Enabled = true
 			};
 
 			Timer.Elapsed += (sender, args) => Run();
-			Run();
+
+			if (_strategy.RunAtStartup)
+			{
+				ThreadPool.QueueUserWorkItem(o => Run());
+			}
 
 			return true;
 		}
@@ -46,7 +52,7 @@ namespace CheckListManager.Common.Logic.Terminal
 
 		private void Run()
 		{
-			if (StopTimerWhenRunning)
+			if (_strategy.StopTimerWhenRunning)
 			{
 				Timer.Enabled = false;
 			}
@@ -59,8 +65,15 @@ namespace CheckListManager.Common.Logic.Terminal
 			{
 				Logger.Error(exception);
 			}
+			finally
+			{
+				if (_strategy.ComputeNextExecutionTime(DateTime.UtcNow))
+				{
+					Timer.Interval = _strategy.Interval.TotalMilliseconds;
+				}
+			}
 
-			if (StopTimerWhenRunning)
+			if (_strategy.StopTimerWhenRunning)
 			{
 				Timer.Enabled = true;
 			}

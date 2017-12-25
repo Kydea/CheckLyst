@@ -233,7 +233,7 @@ matematici.AutoComplete = function (selector) {
 
 		updateList = function () {
 			list.empty();
-			if (isNullable)
+			if (isNullable())
 				list.append($("<a />").addClass("None").attr("href", "#").append($("<i />").text(element.data("nullable") === true ? "(none)" : element.data("nullable"))));
 
 			var count = 0;

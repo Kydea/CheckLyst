@@ -12,6 +12,8 @@
 		},
 
 		closeHandler = function () {
+			matematici.canClose = true;
+			matematici.save = null;
 			if (filtered && matematici.popup.getResult().saved) form.getOptions().applyButton.click();
 		},
 

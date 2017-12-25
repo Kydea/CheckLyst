@@ -57,7 +57,7 @@
                 matematici.dialog.show("warning", "Warning: any unsaved change will be lost.", [
                     {
                         text: "save", icon: "check", handler: function () {
-                            if (matematici.save != undefined)
+                            if (matematici.save)
                                 matematici.save(actionNavigate);
                         }
                     },

@@ -7,17 +7,18 @@ Lasciare il json di configurazione con i parametri:
 il trigger per mettere vecchie versioni a obsolete e creare il log va riscritto in c#
 
 2. element information per iterazioni (va dentro ultima cella come iteration commands)
-il copia valore nei sottogruppi non funziona
 
-controllare funzionamento logout e warning logout automatico
+Il copia valore nei sottogruppi non funziona
 
-il refresh del token adesso lo fanno tutti i client!
+Controllare funzionamento logout e warning logout automatico
 
-mettere il controllo di salvataggio a chiusura detail page
+Il refresh del token adesso lo fanno tutti i client!
 
 Mettiamo la regular expression della password in companies
 
 Mettiamo offset countdown su firme diretto
+
+La navigazione nella history avviene senza controlli su modifiche appese
 
 
 PROTOTYPES
@@ -27,13 +28,9 @@ gestire concorrenza per firme (credo serva per forza una transazione, o un lock 
 gestire concorrenza transazionalmente (where nell'aggironamento e conteggio risultati?)
 PrototypeSignatures.SendEmails(db, Version, Action) quando ci sono variazioni nella applicazione di work flow
 mettere lock in cambio di stato (?)
-Testare duplicazione nome prototipo, l'errore corretto viene gestito in users
-Rimettere controllo validità nome prototipo come vecchio CLM
 
 USERS 
 Lavorare sulla stringa di autenticazione tramite ldap
-Fare la conferma di chiusura delle pagine di dettaglio 
-Impedire la cancellazione di se stesso
 Se non selezioni nessuna funzione il server dà errore, mettere controllo
 Abilitare View se abilito qualunque altra funzione, disabilitare le altre funzioni se disabilito View
 
@@ -46,7 +43,7 @@ Mattere in trail l'emissione di firme
 Invio email
 
 
-PROTOTIO DI TRIGGER:
+PROTOTIPO DI TRIGGER:
 
 create function "CheckLists"."TF_Versions_Validate"() returns trigger as 
 $body$
@@ -73,4 +70,3 @@ create trigger "T_Versions_Validate"
 	after insert or update
 	on "CheckLists"."PrototypeVersions" 
 	for each row execute procedure "TF_Versions_Validate"();
-

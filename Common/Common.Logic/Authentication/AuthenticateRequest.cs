@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace CheckListManager.Common.Logic.Authentication
+﻿namespace CheckListManager.Common.Logic.Authentication
 {
     public sealed class AuthenticateRequest
     {

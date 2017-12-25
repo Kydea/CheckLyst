@@ -14,5 +14,9 @@ namespace CheckListManager.AccessControl.Data
 
 		Task<List<Users>> GetUsersAsync(long companyId, string code, string description, int skip, int take);
 		Task<int> CountUsersAsync(long companyId, string code, string description);
+		Task UpdateLastLoginAsync(Users user);
+		Task<List<Users>> GetUsersToDisableAsync();
+		Task<List<Users>> GetUsersDisableWarningAsync();
+		Task<List<Users>> GetUsersWithExpiredPin();
 	}
 }

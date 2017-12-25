@@ -7,11 +7,12 @@
 			
 		}
 
-		public EmailMessage(long company, string subject, string content, string to)
+		public EmailMessage(long company, string subject, string content, string to, string name = null)
 		{
 			Company = company;
 			Subject = subject;
 			Content = content;
+			Name = name;
 
 			if (!string.IsNullOrEmpty(to)) To = new[] { to };
 		}

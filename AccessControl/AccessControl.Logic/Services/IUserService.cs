@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using CheckListManager.AccessControl.Logic.Authentication;
 using CheckListManager.AccessControl.Logic.Messages.Users;
@@ -25,5 +26,8 @@ namespace CheckListManager.AccessControl.Logic.Services
         Task<UserResponse> AddUserAsync(DefaultIdentity identity, UserRequest request);
         Task<UserResponse> EditUserAsync(DefaultIdentity identity, UserRequest record);
         Task<UserResponse> DeleteUserAsync(DefaultIdentity identity, string code);
-    }
+
+		Task CheckInactiveUsers(CancellationToken cancellationToken = default(CancellationToken));
+		Task CheckUnchangedPins(CancellationToken cancellationToken = default(CancellationToken));
+	}
 }

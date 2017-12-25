@@ -4,6 +4,7 @@ using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Logic.Api.Messages;
 using System;
 using CheckListManager.Common.Data.Exceptions;
+using CheckListManager.Common.Data;
 
 namespace CheckListManager.Common.Logic.Api
 {
@@ -25,8 +26,19 @@ namespace CheckListManager.Common.Logic.Api
 
             if (exception is DatabaseAggregateException databaseAggregateException)
                 responseMessage.Messages.AddRange(databaseAggregateException.InnerExceptions.Select(ie => ie.Message));
+            else if (exception is DatabaseException databaseException)
+                switch (databaseException.Error)
+                {
+                    case DatabaseError.PrimaryKeyViolation:
+                        responseMessage.Messages.Add("A record with the same key already exists.");
+                        break;
+                    default:
+                        responseMessage.Messages.Add(databaseException.Message);
+                        break;
+                }
             else
                 responseMessage.Messages.Add(exception.Message);
+
             return new ErrorResult(Request, responseMessage);
         }
     }
