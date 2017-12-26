@@ -18,6 +18,17 @@ namespace CheckListManager.Common.Logic.Services
 			}
 		}
 
+		public string HashStringToString(string text)
+		{
+			if (text == null)
+			{
+				return null;
+			}
+
+			var hash = HashStringToBytes(text);
+			return Convert.ToBase64String(hash).ToUpperInvariant();
+		}
+
 		public bool ValidateHash(string text, byte[] hash)
 		{
 			if (string.IsNullOrEmpty(text) || hash == null)
