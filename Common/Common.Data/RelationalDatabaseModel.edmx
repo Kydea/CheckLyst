@@ -190,6 +190,7 @@
           <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
           <Property Name="ModifiedBy" Type="varchar" MaxLength="60" />
           <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
+          <Property Name="LoginFailedTimeout" Type="int4" Nullable="false" />
         </EntityType>
         <EntityType Name="Departments">
           <Key>
@@ -282,6 +283,7 @@
           <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
           <Property Name="ModifiedBy" Type="varchar" MaxLength="60" />
           <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
+          <Property Name="LastLoginFailedOn" Type="timestamptz" Precision="7" />
         </EntityType>
         <EntityType Name="UserSessions">
           <Key>
@@ -1218,6 +1220,7 @@
           <NavigationProperty Name="PrototypeTypes" Relationship="RelationalDatabaseModel.PrototypeTypes_Company_fkey" FromRole="Companies" ToRole="PrototypeTypes" />
           <NavigationProperty Name="SettingValues" Relationship="RelationalDatabaseModel.SettingValues_Company_fkey" FromRole="Companies" ToRole="SettingValues" />
           <NavigationProperty Name="Instances" Relationship="RelationalDatabaseModel.Instances_Company_fkey" FromRole="Companies" ToRole="Instances" />
+          <Property Name="LoginFailedTimeout" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="Departments">
           <Key>
@@ -1262,6 +1265,7 @@
           <NavigationProperty Name="PINHistory" Relationship="RelationalDatabaseModel.PINHistory_User" FromRole="Users" ToRole="PINHistory" />
           <NavigationProperty Name="UserFunctions" Relationship="RelationalDatabaseModel.UserFunctions_User" FromRole="Users" ToRole="UserFunctions" />
           <NavigationProperty Name="WorkFlowApplicationSteps" Relationship="RelationalDatabaseModel.WorkFlowApplicationSteps_User" FromRole="Users" ToRole="WorkFlowApplicationSteps" />
+          <Property Name="LastLoginFailedOn" Type="DateTimeOffset" Precision="7" />
         </EntityType>
         <Association Name="Departments_Company_fkey">
           <End Role="Companies" Type="Self.Companies" Multiplicity="0..1">
@@ -2468,6 +2472,7 @@
           <EntitySetMapping Name="Companies">
             <EntityTypeMapping TypeName="RelationalDatabaseModel.Companies">
               <MappingFragment StoreEntitySet="Companies">
+                <ScalarProperty Name="LoginFailedTimeout" ColumnName="LoginFailedTimeout" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="TimeZone" ColumnName="TimeZone" />
@@ -2503,6 +2508,7 @@
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="RelationalDatabaseModel.Users">
               <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="LastLoginFailedOn" ColumnName="LastLoginFailedOn" />
                 <ScalarProperty Name="Company" ColumnName="Company" />
                 <ScalarProperty Name="Code" ColumnName="Code" />
                 <ScalarProperty Name="Description" ColumnName="Description" />

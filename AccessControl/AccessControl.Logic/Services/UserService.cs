@@ -53,7 +53,7 @@ namespace CheckListManager.AccessControl.Logic.Services
             if (string.IsNullOrEmpty(code))
                 throw new AuthenticationException(100, "User code not sent");
 
-            Users user;
+            Users user = null;
 
             try
             {
@@ -68,12 +68,20 @@ namespace CheckListManager.AccessControl.Logic.Services
                 if (!user.Enabled)
                     throw new AuthenticationException(103, $"User {code} not enabled");
 
-                if (!_hashService.ValidateHash(password, user.Password))
-                    throw new AuthenticationException(104, "User password not valid");
+	            if (
+					user.Companies.MaximumNumberOfPasswordFailure > 0
+					&& user.NumberOfAttempts >= user.Companies.MaximumNumberOfPasswordFailure
+					&& user.LastLoginFailedOn != null
+					&& user.Companies.LoginFailedTimeout > 0
+					&& (DateTimeOffset.UtcNow - user.LastLoginFailedOn.Value).TotalMinutes < user.Companies.LoginFailedTimeout
+				)
+		            throw new AuthenticationException(104, $"User {code} temporary disabled");
 
+				if (!_hashService.ValidateHash(password, user.Password))
+                    throw new AuthenticationException(105, "User password not valid");
 
 	            await Task.WhenAll(
-		            _userRepository.UpdateLastLoginAsync(user),
+		            _userRepository.UserLoginCompleteAsync(user),
 			        _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
 			        {
 				        Company = user.Company,
@@ -86,15 +94,18 @@ namespace CheckListManager.AccessControl.Logic.Services
 				//TODO: add LDAP / OAUTH SERVER
 			}
 			catch (AuthenticationException authenticationException)
-            {
-                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
-                {
-                    Company = companyId.Value,
-                    User = code,
-                    Action = TrailAction.LoginFailed,
-                    Date = DateTimeOffset.UtcNow,
-                    Information = authenticationException.Message
-                });
+			{
+				await Task.WhenAll(
+					_userRepository.UserLoginFailedAsync(user),
+					_queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+					{
+						Company = companyId.Value,
+						User = code,
+						Action = TrailAction.LoginFailed,
+						Date = DateTimeOffset.UtcNow,
+						Information = authenticationException.Message
+					})
+				);
 
                 throw;
             }
