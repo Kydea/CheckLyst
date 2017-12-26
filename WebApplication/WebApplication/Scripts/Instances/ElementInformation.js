@@ -24,15 +24,15 @@
 
     this.update = function (model) {
         panel.empty();
-        addItem("tag", model.Id + (model.Code ? " - " + model.Code : ""));
-        addItem(model.Valid ? "thumbs-o-up" : "thumbs-o-down", model.Valid ? "valid" : model.ValidityMessage || "not valid");
-        if (!model.ReadOnly) addItem("pencil", "editable");
-        addItem("calculator", model.ValueFormula);
-        addItem("check-square-o", model.SignatureInformation);
-        addItem("link", (model.ExternalSourceName ? model.ExternalSourceName + "." + model.ExternalSourceColumn : null));
-        if (model.History && model.History.length > 0)
+        addItem("tag", model.id + (model.code ? " - " + model.code : ""));
+        addItem(model.valid ? "thumbs-o-up" : "thumbs-o-down", model.valid ? "valid" : model.validityMessage || "not valid");
+        if (!model.readOnly) addItem("pencil", "editable");
+        addItem("calculator", model.valueFormula);
+        addItem("check-square-o", model.signatureInformation);
+        addItem("link", (model.externalSourceName ? model.externalSourceName + "." + model.externalSourceColumn : null));
+        if (model.history && model.history.length > 0)
             panel.append($("<div />").append($("<a />").attr("href", "#").text("history").prepend($("<i />").addClass("fi fi-fw flaticon-history")).on("click", function (e) {
-                new matematici.CheckListGrid(model.History);
+                new matematici.CheckListGrid(model.history);
             })));
     }
 

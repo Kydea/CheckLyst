@@ -77,11 +77,11 @@ namespace CheckListManager.Instances.Api.Controllers
 		[HttpPost]
 		[Route("Get")]
         [Authorize(Roles = "Instances#View")]
-        public async Task<IHttpActionResult> Get([FromBody]Message<InstanceRequest> request)
+        public async Task<IHttpActionResult> Get(InstanceRequest request)
 		{
 			try
 			{
-				var cacheObject = await _instanceManagerService.GetAsync(Identity.CompanyId, request.Data.Code);
+				var cacheObject = await _instanceManagerService.GetAsync(Identity.CompanyId, request.Code);
 				var response = new InstanceResponse
 				{
 					Id = cacheObject.Id,

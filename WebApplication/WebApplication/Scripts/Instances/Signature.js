@@ -13,12 +13,12 @@
 		loadSigners = function () {
 			return $.ajax(matematici.urls.instances.signers, {
 				type: "POST",
-				data: $.extend(instances.instance.getKey(), { SignatureLevel: model.SignatureLevel })
+				data: $.extend(instances.instance.getKey(), { SignatureLevel: model.signatureLevel })
 			});
 		},
 
         setup = function () {
-            label = $("<label />").text(model.Description);
+            label = $("<label />").text(model.description);
             if (!item.isTableContent())
                 label.appendTo(element);
 
@@ -34,7 +34,7 @@
 			exclamation = $("<i />").addClass("fi flaticon-exclamation").appendTo(element).hide();
 
             button = $("<a />").addClass("Button SignButton").attr({ href: "#" }).appendTo(element);
-            if (model.Cancelable)
+            if (model.cancelable)
                 cancelButton = $("<a />").addClass("Button CancelButton").attr({ href: "#" }).appendTo(element).text("Cancel signature");
             
             element
@@ -44,10 +44,10 @@
                         sign = function (username) {
                             var
                                 options = {
-                                    ajax: { url: matematici.urls.signature, data: "ShowPaddle=" + (model.AcceptsPIN) + "&Code=" + username + "&Description=" + (model.Description || "Signature") },
+                                    ajax: { url: matematici.urls.signature, data: "ShowPaddle=" + (model.acceptsPIN) + "&Code=" + username + "&Description=" + (model.description || "Signature") },
                                     data: {
                                         signHandler: function (panel) {
-                                            new instances.Event(instances.Events.signature, model.Id, {
+                                            new instances.Event(instances.Events.signature, model.id, {
                                                 UserName: panel.getUserName(),
                                                 Password: panel.getPassword(),
                                                 PIN: panel.getPIN(),
@@ -73,7 +73,7 @@
                         },
 
                         trySign = function(username) {
-                            new instances.Event(instances.Events.signatureCheck, model.Id, { UserName: username }).done(function (result) {
+                            new instances.Event(instances.Events.signatureCheck, model.id, { UserName: username }).done(function (result) {
                                 if (result.Error)
                                     matematici.dialog.error("signature error", result.Id == null ? result.Error : "The element " + (result.Description ? result.Description + " " : "") + " with id " + result.Id + " is not valid.");
                                 else
@@ -115,10 +115,10 @@
                     var
                         button = $(this),
                         options = {
-                            ajax: { url: matematici.urls.signature, data: "Unsign=true&Description=" + model.Description },
+                            ajax: { url: matematici.urls.signature, data: "Unsign=true&Description=" + model.description },
                             data: {
                                 signHandler: function (panel) {
-                                    new instances.Event(instances.Events.signatureCancelation, model.Id, {
+                                    new instances.Event(instances.Events.signatureCancelation, model.id, {
                                         UserName: panel.getUserName(),
                                         Password: panel.getPassword(),
                                         Note: panel.getNote()
@@ -143,13 +143,13 @@
         };
 
     this.update = function (model) {
-        button.text(model.ButtonLabel ? model.ButtonLabel : "Signature");
-        button.toggleClass("ReadOnly", model.ReadOnly);
+        button.text(model.buttonLabel ? model.buttonLabel : "Signature");
+        button.toggleClass("ReadOnly", model.readOnly);
 
-        if (model.Signed) {
-            var zoneIndex = model.SignedOn.indexOf("+");
-            var signedOn = new Date(model.SignedOn.endsWith("Z") ? model.SignedOn : (zoneIndex > 0 ? model.SignedOn.substring(0, zoneIndex) : model.SignedOn) + "Z");
-			user.val(model.SignedBy + " - " + model.SignerDescription);
+        if (model.signed) {
+            var zoneIndex = model.signedOn.indexOf("+");
+            var signedOn = new Date(model.signedOn.endsWith("Z") ? model.signedOn : (zoneIndex > 0 ? model.signedOn.substring(0, zoneIndex) : model.signedOn) + "Z");
+			user.val(model.signedBy + " - " + model.signerDescription);
 			var format = matematici.dateFormatter.date(signedOn, true);
             date.val(format.date);
 			time.val(format.time);
@@ -172,18 +172,18 @@
             }
         }
 
-        exclamation.toggle(!!(model.History && model.History.length > 1));
+        exclamation.toggle(!!(model.history && model.history.length > 1));
 
-        this.setColor(model.Color);
-        this.setFontSize(model.FontSize);
+        this.setColor(model.color);
+        this.setFontSize(model.fontSize);
     };
 
     this.setColor = function (value) {
-        label.css({ color: model.Color });
+        label.css({ color: model.color });
     };
 
     this.setFontSize = function (value) {
-        label.css({ fontSize: model.FontSize == 0 ? "" : model.FontSize + "px" });
+        label.css({ fontSize: model.fontSize == 0 ? "" : model.fontSize + "px" });
     }
 
     setup();

@@ -15,11 +15,9 @@ namespace CheckListManager.WebApplication.Controllers
         [AllowAnonymous]
         public ActionResult Loader(string url)
         {
-			//Workaround for AWS Load Balancer Healt Check
+			//Load Balancer Healt Check
 	        if ("ping".Equals(url, StringComparison.InvariantCultureIgnoreCase))
-	        {
 		        return Ping();
-	        }
 
             return ConditionalView("Loader", url ?? "Dashboard");
         }

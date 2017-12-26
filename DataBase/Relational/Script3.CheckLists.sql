@@ -144,10 +144,10 @@ create table "CheckLists"."InstanceStates"
 insert into "CheckLists"."InstanceStates" 
 values 
 	('In progress'),
+	('Completed'),
 	('Confirmed'),
-	('Canceled'),
-	('Simulation evidence');
-
+	('Canceled');
+	
 create table "CheckLists"."Instances"
 (
 	"ID" bigserial primary key,

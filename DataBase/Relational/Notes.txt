@@ -42,6 +42,11 @@ WORKFLOWS
 Mattere in trail l'emissione di firme
 Invio email
 
+INSTANCES
+Controllare ruoli specifici
+History
+Attenzione al nuovo stato Completed
+
 
 PROTOTIPO DI TRIGGER:
 

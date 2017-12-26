@@ -22,19 +22,11 @@ instances.Event = function (type, itemId, data) {
 
     this.trigger = function () {
         data = data || {};
-        data.ClientId = matematici.client.getId();
         data.Type = type;
-
-        if (typeof itemId === "object") {
-        	data.Prototype = itemId.prototype;
-        	data.Version = itemId.version;
-        	data.Year = itemId.year;
-        	data.Number = itemId.number;
-        } else 
-        	data.ItemId = itemId;
+        data.ItemId = itemId;
 
         $.ajax({
-            url: matematici.urls.instances.event,
+			url: matematici.urls.instances + "/Event",
             type: "post",
             data: data
         }).done(function (result) {
@@ -43,9 +35,6 @@ instances.Event = function (type, itemId, data) {
                 done = null;
             } else
                 instances.instance.update(result);
-        }).fail(function (jqXHR, textStatus, errorThrown) {
-            console.log("Instance error", jqXHR, textStatus, errorThrown);
-            alert("Instance error: " + errorThrown);
         });
     };
 

@@ -2,9 +2,9 @@
 
 	var
 		tab = this,
-        element = $(selector),
-        currentItem,
-        handlers = [],
+		element = $(selector),
+		currentItem,
+		handlers = [],
 
 		getCurrentItemHeight = function () {
 			return currentItem.label.height() + currentItem.tab.height() + 3;
@@ -22,19 +22,19 @@
 					height = Math.max(height, getCurrentItemHeight());
 				});
 
-				select (currentIndex);
+				select(currentIndex);
 				element.height(height);
 			} else
 				element.height(getCurrentItemHeight());
-        },
+		},
 
-        getItem = function(index) {
-            return {
-                index: index,
-                label: $(".TabLabels a", element).eq(index),
-                tab: $(".Tab", element).eq(index)
-            }
-        },
+		getItem = function (index) {
+			return {
+				index: index,
+				label: $(".TabLabels a", element).eq(index),
+				tab: $(".Tab", element).eq(index)
+			}
+		},
 
 		setItem = function (index) {
 			return {
@@ -44,13 +44,14 @@
 			}
 		},
 
-        select = function (index) {
-            currentItem = setItem(index);
+		select = function (index) {
+			currentItem = setItem(index);
 			if (!options.fixedHeight)
 				resize();
-        },
+		},
 
 		setup = function () {
+			if (!options) options = {};
 			select($(".TabLabels a.Selected", element).prevAll("a").size());
 
 			element
