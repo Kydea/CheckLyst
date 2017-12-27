@@ -55,15 +55,11 @@ namespace CheckListManager.Instances.Logic.Services
 
             var instance = await _instancesRepository.GetByCodeAsync(companyId, code);
             if (instance == null)
-            {
                 throw new InstanceException("Instance not found");
-            }
 
             cacheObject = CreateInstanceFromDatabase(companyId, instance);
             if (cacheObject.InstanceState == InstanceState.Progress)
-            {
                 await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
-            }
 
             return cacheObject;
         }
@@ -107,25 +103,17 @@ namespace CheckListManager.Instances.Logic.Services
             {
                 var cacheObject = await _instanceCache.GetAsync(code);
                 if (cacheObject == null)
-                {
                     throw new InstanceException("Instance not found");
-                }
                 if (cacheObject.Id.HasValue)
-                {
                     throw new InstanceException("Instance already confirmed");
-                }
                 if (cacheObject.InstanceState != InstanceState.Draft)
-                {
                     throw new InstanceException("Instance state not valid");
-                }
 
                 cacheObject.InstanceState = InstanceState.Progress;
                 cacheObject.Instance.Update();
 
                 if (!cacheObject.Instance.Header.Valid)
-                {
                     throw new InstanceException("Header not valid");
-                }
                 await ValidateExpressionsAsync(cacheObject);
 
                 var row = new Common.Data.Instances
@@ -173,9 +161,7 @@ namespace CheckListManager.Instances.Logic.Services
             {
                 var cacheObject = await _instanceCache.GetAsync(code, false);
                 if (cacheObject == null)
-                {
                     return;
-                }
                 await CloseAsync(cacheObject, userCode, false);
             }
             catch (InstanceException)
@@ -210,9 +196,7 @@ namespace CheckListManager.Instances.Logic.Services
 
                         var row = await _instancesRepository.GetByCodeAsync(cacheObject.CompanyId, cacheObject.Code);
                         if (row == null)
-                        {
                             throw new InstanceException("Instance not found");
-                        }
 
                         UnlockPages(cacheObject.Instance, userCode);
                         row.Data = JsonConvert.SerializeObject(cacheObject.Instance, _converter);
@@ -220,19 +204,15 @@ namespace CheckListManager.Instances.Logic.Services
                         row.ModifiedBy = cacheObject.ModifiedBy;
 
                         if (force)
-                        {
                             await Task.WhenAll(
                                 _instancesRepository.UpdateInstanceAsync(userCode, row),
                                 _instanceCache.RemoveAsync(cacheObject.Code)
                             );
-                        }
                         else
-                        {
                             await Task.WhenAll(
                                 _instancesRepository.UpdateInstanceAsync(userCode, row),
                                 _instanceCache.TouchInstanceAsync(cacheObject.Code, 1)
                             );
-                        }
                     }
                 }
             }
@@ -261,18 +241,14 @@ namespace CheckListManager.Instances.Logic.Services
             {
                 var cacheObject = await _instanceCache.GetAsync(request.Code, false);
                 if (cacheObject == null)
-                {
                     throw new InstanceException("Instance not found");
-                }
 
                 if (cacheObject.InstanceState == InstanceState.Progress)
                 {
                     //Lock and reload the data to be sure it's the most recent one
                     lockObject = await _instanceCache.LockInstanceAsync(request.Code);
                     if (!lockObject.IsAcquired)
-                    {
                         throw new InstanceException("Instance is being updated by another user");
-                    }
                 }
 
                 cacheObject = await _instanceCache.GetAsync(request.Code);
@@ -333,20 +309,14 @@ namespace CheckListManager.Instances.Logic.Services
         private async Task HandlePageChangeAsync(InstanceCacheObject cacheObject, Instance instance, string userCode, bool canEdit, int? itemId)
         {
             if (!canEdit)
-            {
                 return;
-            }
 
             if (!itemId.HasValue)
-            {
                 throw new InstanceException("Item id not sent");
-            }
 
             var page = instance.Pages.Count > itemId.Value ? instance.Pages[itemId.Value] as Page : null;
             if (page == null)
-            {
                 throw new InstanceException("Page not found");
-            }
 
             UnlockPages(instance, userCode);
             if (!page.IsLocked)
@@ -360,15 +330,11 @@ namespace CheckListManager.Instances.Logic.Services
         {
             CheckPermission(canEdit);
             if (!itemId.HasValue)
-            {
                 throw new InstanceException("Item id not sent");
-            }
 
             var field = instance.Items.ContainsKey(itemId.Value) ? instance.Items[itemId.Value] as Field : null;
             if (field == null)
-            {
                 throw new InstanceException("Field not found");
-            }
 
             if (!field.IsReadOnly)
             {
@@ -392,15 +358,11 @@ namespace CheckListManager.Instances.Logic.Services
         {
             CheckPermission(canEdit);
             if (!itemId.HasValue)
-            {
                 throw new InstanceException("Item id not sent");
-            }
 
             var group = instance.Items.ContainsKey(itemId.Value) ? instance.Items[itemId.Value] as Group : null;
             if (group == null)
-            {
                 throw new InstanceException("Group not found");
-            }
 
             if (!group.IsReadOnly)
             {
@@ -419,9 +381,7 @@ namespace CheckListManager.Instances.Logic.Services
 
             var iteration = instance.Items.ContainsKey(itemId.Value) ? instance.Items[itemId.Value] as Iteration : null;
             if (iteration == null)
-            {
                 throw new InstanceException("Group not found");
-            }
 
             if (!iteration.IsReadOnly)
             {
@@ -434,15 +394,11 @@ namespace CheckListManager.Instances.Logic.Services
         {
             CheckPermission(canEdit);
             if (!itemId.HasValue)
-            {
                 throw new InstanceException("Item id not sent");
-            }
 
             var iteration = instance.Items.ContainsKey(itemId.Value) ? instance.Items[itemId.Value] as Iteration : null;
             if (iteration == null)
-            {
                 throw new InstanceException("Group not found");
-            }
 
             if (!iteration.IsReadOnly)
             {
@@ -456,9 +412,7 @@ namespace CheckListManager.Instances.Logic.Services
         private static void CheckPermission(bool canEdit)
         {
             if (!canEdit)
-            {
                 throw new InstanceException("This instance cannot be modified");
-            }
         }
 
         private async Task Update(InstanceCacheObject cacheObject, Instance instance, string userCode)
@@ -489,18 +443,12 @@ namespace CheckListManager.Instances.Logic.Services
             {
                 var instance = await _instanceCache.GetAsync(code, false);
                 if (instance == null)
-                {
                     continue;
-                }
 
                 if (instance.IsDirty)
-                {
                     await CloseAsync(instance, null, true);
-                }
                 else
-                {
                     await _instanceCache.RemoveAsync(code);
-                }
             }
         }
 
@@ -566,9 +514,7 @@ namespace CheckListManager.Instances.Logic.Services
         {
             var pages = instance.Pages.Cast<Page>().Where(p => userCode == null && p.Lock != null || p.Lock != null && p.Lock.User == userCode);
             foreach (var p in pages)
-            {
                 p.Lock = null;
-            }
         }
 
         private InstanceCacheObject CreateInstanceFromDatabase(long companyId, Common.Data.Instances instance)

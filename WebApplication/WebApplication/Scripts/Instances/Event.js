@@ -23,7 +23,8 @@ instances.Event = function (type, itemId, data) {
     this.trigger = function () {
         data = data || {};
         data.Type = type;
-        data.ItemId = itemId;
+		data.ItemId = itemId;
+		data.Code = instances.instance.getCode();
 
         $.ajax({
 			url: matematici.urls.instances + "/Event",

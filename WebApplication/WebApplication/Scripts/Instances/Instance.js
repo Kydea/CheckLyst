@@ -1,7 +1,6 @@
 ﻿instances.Instance = function (element, options) {
     var
         instance = this,
-		information = $("div#InstanceInformation", element),
         header = new instances.Group($("div#Header", element), "Group"),
         page = new instances.Group($("div.Page", element), "Page"),
         prototypeState,
@@ -11,27 +10,14 @@
         externalSources = {},
         expressions = [],
 
-        scroll = function () {
-            information.eq(1).toggle(matematici.elements.window.scrollTop() > information.offset().top);
-        },
-
         update = function (model) {
             prototypeState = model.prototypeState;
 
-			information
-				.empty()
-				.append($("<div />").append($("<span />").addClass("Label").text("department")).append($("<span />").addClass("Value").text("Mantainment")))
-				.append($("<div />").append($("<span />").addClass("Label").text("prototype type")).append($("<span />").addClass("Value").text("Bin whashing")))
-				.append($("<div />").append($("<span />").addClass("Label").text("code")).append($("<span />").addClass("Value").text("Bin2070.4.2017.3")))
-				.append($("<div />").append($("<span />").addClass("Label").text("state")).append($("<span />").addClass("Value").text("In simulation")));
-                    //.append($("<tbody />")
-                    //    .append($("<tr />")
-                    //        .append($("<td />").text(model.department))
-                    //        .append($("<td />").text(model.prototypeType))
-                    //        .append($("<td />").text("WashingBin.3.2017.4"))//.text(options.prototype + "." + version + "." + (number < 0 ? "?" : year + "." + number))) TODO
-                    //        .append($("<td />").text(model.state || "Draft"))
-                    //    )
-                    //)
+			matematici.breadcrumbs.set([
+				{ content: model.departmentName },
+				{ content: model.prototypeTypeName },
+				{ content: model.code + " (" + (model.state || "Draft") + ")" },
+			]);
 
 			tab.clear();
 
@@ -89,6 +75,10 @@
                 }
             });
         };
+
+	instance.getCode = function () {
+		return options.code;
+	};
 
     instance.getKey = function () {
         return { prototype, version, year, number };
@@ -174,13 +164,6 @@
     };
 
     instance.initialize = function () {
-		information.clone().addClass("Fixed").insertAfter(information);
-		information = $("div#InstanceInformation", element); //both the elements
-
-        matematici.elements.window.on("resize", scroll);
-        matematici.elements.window.on("scroll", scroll);
-        scroll();
-
         instanceElementInformation = new instances.ElementInformation(element);
 		tab = new matematici.Tab($("div.TabContainer", element)).addHandler(function (index) {
             page.clear();
@@ -190,11 +173,6 @@
 
 		load();
     };
-
-    instance.destroy = function () {
-        matematici.elements.window.off("resize", scroll);
-        matematici.elements.window.off("scroll", scroll);
-    }
 
     instance.initialize();
 };
