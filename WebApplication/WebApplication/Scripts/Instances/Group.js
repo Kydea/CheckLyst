@@ -58,7 +58,6 @@
         },
 
         create = function () {
-            console.log(setupModel);
             tableContent = !parent.isPage() && (parent.isTable() || parent.isTableContent());
             table = !tableContent && setupModel.showAsTable;
             subRow = !parent.isTable() && tableContent; 

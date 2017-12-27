@@ -5,10 +5,10 @@ div#Breadcrumbs {
     font-size: 12px;
 
     @media #{$Media-Extended} {
+        visibility: hidden;
         margin-left: $Metric-Header-Height;
         padding-left: $Metric-Separator-Extended;
         padding-right: $Metric-Separator-Extended;
-        margin-top: $Metric-Header-Height;
     }
 
     @media #{$Media-Mobile} {
@@ -41,6 +41,28 @@ div#Breadcrumbs {
         &:hover {
             text-decoration: none;
             color: blue;
+        }
+    }
+
+    &.Fixed {
+        @media #{$Media-Extended} {
+            position: absolute;
+            visibility: visible;
+
+            &.Visible {
+                padding-top: 10px;
+                padding-bottom: 10px;
+                z-index: $Depth-Header;
+                position: fixed;
+                width: 100%;
+                top: 0;
+                background: white;
+                border-bottom: solid 1px $Color-Grey-Light;
+            }
+        }
+
+        @media #{$Media-Mobile} {
+            display: none;
         }
     }
 }

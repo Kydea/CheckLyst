@@ -24,7 +24,7 @@ namespace CheckListManager.Instances.Api.Controllers
 		[HttpPost]
 		[Route("Create")]
         [Authorize(Roles = "Instances#Edit")]
-        public async Task<IHttpActionResult> Create([FromBody]CreateInstanceRequest request)
+        public async Task<IHttpActionResult> Create(CreateInstanceRequest request)
 		{
 			try
 			{
@@ -46,11 +46,11 @@ namespace CheckListManager.Instances.Api.Controllers
 		[HttpPost]
 		[Route("Open")]
         [Authorize(Roles = "Instances#Edit")]
-        public async Task<IHttpActionResult> Open([FromBody]Message<InstanceRequest> request)
+        public async Task<IHttpActionResult> Open(InstanceRequest request)
 		{
 			try
 			{
-				await _instanceManagerService.OpenAsync(request.Data.Code, Identity.Code);
+				await _instanceManagerService.OpenAsync(request.Code, Identity.Code);
 				return Ok(Message.Create(true));
 			}
 			catch (DatabaseAggregateException exception)
@@ -107,11 +107,11 @@ namespace CheckListManager.Instances.Api.Controllers
 		[HttpPost]
 		[Route("Close")]
         [Authorize(Roles = "Instances#View")]
-        public async Task<IHttpActionResult> Close([FromBody]Message<InstanceRequest> request)
+        public async Task<IHttpActionResult> Close(InstanceRequest request)
 		{
 			try
 			{
-				await _instanceManagerService.CloseAsync(request.Data.Code, Identity.Code);
+				await _instanceManagerService.CloseAsync(request.Code, Identity.Code);
 				return Ok(Message.Create(true));
 			}
 			catch (DatabaseAggregateException exception)
@@ -131,11 +131,11 @@ namespace CheckListManager.Instances.Api.Controllers
 		[HttpPost]
 		[Route("Event")]
         [Authorize(Roles = "Instances#Edit")]
-        public async Task<IHttpActionResult> Event([FromBody]Message<InstanceEventRequest> request)
+        public async Task<IHttpActionResult> Event(InstanceEventRequest request)
 		{
 			try
 			{
-				var cacheObject = await _instanceManagerService.HandleEventAsync(Identity, request.Data);
+				var cacheObject = await _instanceManagerService.HandleEventAsync(Identity, request);
 				var response = new InstanceResponse
 				{
 					Id = cacheObject.Id,
