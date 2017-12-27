@@ -8,7 +8,7 @@
 		errors,
 		fieldErrors = false,
 		bindResult,
-		changeHandlers = [];
+		changeHandlers = [],
 
 		setup = function () {
 			//initial setup

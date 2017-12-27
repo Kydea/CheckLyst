@@ -18,27 +18,20 @@
         update = function (model) {
             prototypeState = model.prototypeState;
 
-            information
-                .empty()
-                .append($("<table />").addClass("Grid")
-                    .append($("<thead />")
-                        .append($("<tr />")
-                            .append($("<th />").text("company"))
-                            .append($("<th />").text("department"))
-                            .append($("<th />").text("prototype type"))
-                            .append($("<th />").text("code"))
-                            .append($("<th />").text("state"))
-                        )
-                    )
-                    .append($("<tbody />")
-                        .append($("<tr />")
-                            .append($("<td />").text(model.department))
-                            .append($("<td />").text(model.prototypeType))
-                            //.append($("<td />").text(options.prototype + "." + version + "." + (number < 0 ? "?" : year + "." + number))) TODO
-                            .append($("<td />").append(model.state || "Draft"))
-                        )
-                    )
-				);
+			information
+				.empty()
+				.append($("<div />").append($("<span />").addClass("Label").text("department")).append($("<span />").addClass("Value").text("Mantainment")))
+				.append($("<div />").append($("<span />").addClass("Label").text("prototype type")).append($("<span />").addClass("Value").text("Bin whashing")))
+				.append($("<div />").append($("<span />").addClass("Label").text("code")).append($("<span />").addClass("Value").text("Bin2070.4.2017.3")))
+				.append($("<div />").append($("<span />").addClass("Label").text("state")).append($("<span />").addClass("Value").text("In simulation")));
+                    //.append($("<tbody />")
+                    //    .append($("<tr />")
+                    //        .append($("<td />").text(model.department))
+                    //        .append($("<td />").text(model.prototypeType))
+                    //        .append($("<td />").text("WashingBin.3.2017.4"))//.text(options.prototype + "." + version + "." + (number < 0 ? "?" : year + "." + number))) TODO
+                    //        .append($("<td />").text(model.state || "Draft"))
+                    //    )
+                    //)
 
 			tab.clear();
 

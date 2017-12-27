@@ -51,10 +51,10 @@ create table "WorkFlows"."WorkFlowApplications"
 
 	"Prototype" bigint,
 	"Version" int,
-	constraint "WorkFlowApplications_PrototypeVersion" foreign key ("Prototype", "Version") references "CheckLists"."PrototypeVersions",
+	constraint "WorkFlowApplications_PrototypeVersion" foreign key ("Prototype", "Version") references "CheckLists"."PrototypeVersions" on delete cascade,
 
 	"Instance" bigint, 
-	constraint "WorkFlowApplications_Instance" foreign key ("Instance") references "CheckLists"."Instances",
+	constraint "WorkFlowApplications_Instance" foreign key ("Instance") references "CheckLists"."Instances" on delete cascade,
 
 	check("Prototype" is null and "Version" is null or "Instance" is null),
 
@@ -86,7 +86,8 @@ create table "WorkFlows"."WorkFlowApplicationSteps"
 (
 	"ID" bigserial primary key,
 
-	"WorkFlowApplication" bigint references "WorkFlows"."WorkFlowApplications",
+	"WorkFlowApplication" bigint,
+	constraint "WorkFlows_WorkFlowApplication" foreign key ("WorkFlowApplication") references "WorkFlows"."WorkFlowApplications" on delete cascade
 	"Step" int not null,
 
 	"Company" bigint,

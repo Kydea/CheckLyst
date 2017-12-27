@@ -5,6 +5,7 @@
 		form,
 		paginator,
 		filtered = false,
+
 		filterHandler = function (result) {
 			grid.update(result.data);
 			paginator.setPage(result.currentPage, result.pagesCount);

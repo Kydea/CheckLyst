@@ -210,7 +210,7 @@
 
 			properties.push(new prototypes.Property(
 				this, new prototypes.SignatureProperty(model, { readOnly: state != prototypes.Prototype.states.draft }), "Signature",
-				"Determines which signature locks the element. Select the signature in the list or by the command 'set by click'."
+				"Determines which signature locks the element."
 			));
 
 			switch (model.typeName) {
@@ -308,7 +308,7 @@
 				case "Field":
 					properties.push(new prototypes.Property(
 						this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }).setHandler(function () {
-							$("label", item.getElement()).text(model.description);
+							$("label", item.getElement()).children("span").text(model.description);
 						}), "Label",
 						"The label of the item."
 					));
@@ -353,7 +353,7 @@
 				case "Signature":
 					properties.push(new prototypes.Property(
 						this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }).setHandler(function () {
-							$("label", item.getElement()).text(model.description);
+							$("label", item.getElement()).children("span").text(model.description);
 						}), "Label",
 						"The label (cause) of the signature."
 					));

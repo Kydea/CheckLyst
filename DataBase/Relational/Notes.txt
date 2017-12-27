@@ -1,14 +1,8 @@
 Gestire rowversion per le tabelle, in modo da implementare la concorrenza
 
-Lasciare il json di configurazione con i parametri:
-	Develepment Mode
-	Scheduler
-
-il trigger per mettere vecchie versioni a obsolete e creare il log va riscritto in c#
-
 2. element information per iterazioni (va dentro ultima cella come iteration commands)
-
 Il copia valore nei sottogruppi non funziona
+Mettiamo offset countdown su firme diretto
 
 Controllare funzionamento logout e warning logout automatico
 
@@ -16,9 +10,7 @@ Il refresh del token adesso lo fanno tutti i client!
 
 Mettiamo la regular expression della password in companies
 
-Mettiamo offset countdown su firme diretto
-
-La navigazione nella history avviene senza controlli su modifiche appese
+La navigazione nella history del browser avviene senza controlli su modifiche appese
 
 
 PROTOTYPES
@@ -36,10 +28,9 @@ Abilitare View se abilito qualunque altra funzione, disabilitare le altre funzio
 
 ACCESS CONTROL
 Mettere un tempo di attesa per i login falliti
-Non aggiorna il nome utente in header da local storage
+impedire cambio di login "dietro le quinte", mettiamo in un js l'utente attuale, se cambia va dato messaggio di errore
 
 WORKFLOWS
-Mattere in trail l'emissione di firme
 Invio email
 
 INSTANCES

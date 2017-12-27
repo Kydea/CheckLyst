@@ -12,6 +12,8 @@ using CheckListManager.Prototypes.Logic.Models;
 using CheckListManager.Common.Logic.Queue;
 using CheckListManager.Common.Logic.Trail;
 using CheckListManager.Common.Logic.Services;
+using System.Collections.Generic;
+using CheckListManager.Common.Logic.Models.CheckLists;
 
 namespace CheckListManager.Prototypes.Logic.Services
 {
@@ -132,6 +134,28 @@ namespace CheckListManager.Prototypes.Logic.Services
             };
         }
 
+        private void AddTags(Dictionary<String, PrototypeVersionTags> Tags, PrototypeRequest request, ICheckListGroup Group)
+        {
+            if (Group != null)
+                foreach (var Item in Group.Items)
+                    if (Item is ICheckListGroup SubGroup)
+                        AddTags(Tags, request, SubGroup);
+                    else if (!string.IsNullOrWhiteSpace(Item.Description) && (Item.TypeName == "Field" || Item.TypeName == "Signature") && !Tags.ContainsKey(Item.Description))
+                        Tags[Item.Description] = (new PrototypeVersionTags
+                        {
+                            Prototype = request.ID,
+                            Version = request.Version,
+                            Code = Item.Description
+                        });
+        }
+
+        public List<PrototypeVersionTags> CreateTags(PrototypeRequest request)
+        {
+            var Tags = new Dictionary<String, PrototypeVersionTags>();
+            AddTags(Tags, request, request.CheckList.Header);
+            return Tags.Values.ToList();
+        }
+
         public async Task<PrototypeResponse> SaveAsync(DefaultIdentity identity, PrototypeRequest request)
         {
             request.CheckList.Setup();
@@ -201,6 +225,11 @@ namespace CheckListManager.Prototypes.Logic.Services
             PrototypeVersion.ValidFrom = request.ValidFrom;
             PrototypeVersion.ValidUntil = request.ValidUntil;
 
+            //Deletes the old tags and creates the new ones
+            PrototypeVersion.PrototypeVersionTags.ToList().ForEach(t => PrototypeVersion.PrototypeVersionTags.Remove(t));
+            var Tags = CreateTags(request);
+            Tags.ForEach(t => PrototypeVersion.PrototypeVersionTags.Add(t));
+
             await _prototypeRepository.SaveChangesAsync();
 
             if (NewVersion)
@@ -210,7 +239,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                     User = identity.Code,
                     Action = TrailAction.PrototypeCreated,
                     Date = DateTimeOffset.UtcNow,
-                    CheckList = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}"                    
+                    CheckList = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}"
                 });
 
             return new PrototypeResponse
@@ -229,6 +258,8 @@ namespace CheckListManager.Prototypes.Logic.Services
             )
                 throw new UnauthorizedAccessException();
 
+            var CheckListCode = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}";
+
             await _prototypeRepository.DeletePrototypeVersionAsync(identity, request.ID, request.Version);
 
             await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
@@ -237,7 +268,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                 User = identity.Code,
                 Action = TrailAction.PrototypeDeleted,
                 Date = DateTimeOffset.UtcNow,
-                CheckList = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}"
+                CheckList = CheckListCode
             });
         }
 

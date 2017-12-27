@@ -155,7 +155,7 @@
         ],
 
         instanceFunctions = [
-            "Confirm", "Create", "Delete", "Edit", "Unsing", "View"
+            "Confirm", "Create", "Delete", "Edit", "Unsign", "View"
         ],
 
         formSelector = "form#Detail",
@@ -380,7 +380,7 @@
 
         addFunctionButton = $("a#AddFunction", matematici.popup.getElement());
 
-    $("input[type=checkbox], select", formSelector).on("change", function () {
+    formElement.on("change", "input[type=checkbox], select", function () {
         detailPage.getForm().onChange($(this));
     });
 

@@ -3,7 +3,6 @@
 
 div.Instance {
     h2 {
-        margin-bottom: 5px !important;
     }
 
     div.ui-datepicker {
@@ -11,7 +10,60 @@ div.Instance {
     }
 
     div#InstanceInformation {
+        clear: both;
+        width: 100%;
         margin-bottom: 30px;
+        overflow: auto;
+
+        div {
+            background-color: $Color-Grey-Regular;
+            color: white;
+
+            span.Label {
+                color: $Color-Grey-Light;
+                margin-bottom: 5px;
+            }
+
+            span.Value {
+                font-weight: bold;
+            }
+        }
+
+        @media #{$Media-Extended} {
+            display: flex;
+
+            div {
+                flex: 1;
+                padding: $Metric-Control-Space;
+                margin-right: 1px;
+
+                span.Label {
+                    display: block;
+                }
+
+                span.Value {
+                    display: block;
+                }
+
+                &:last-child {
+                    margin-right: 0;
+                }
+            }
+        }
+
+        @media #{$Media-Mobile} {
+            div {
+                padding: $Metric-Separator-Mobile $Metric-Separator-Mobile 0;
+
+                span.Label {
+                    margin-right: 10px;
+                }
+
+                &:last-child {
+                    padding-bottom: $Metric-Separator-Mobile;
+                }
+            }
+        }
 
         &.Fixed {
             position: fixed;

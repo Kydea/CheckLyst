@@ -312,12 +312,13 @@ namespace CheckListManager.AccessControl.Logic.Services
             return response;
         }
 
-        private List<UserFunctions> BuildFunctions(DefaultIdentity identity, UserRequest record)
+        private void BuildFunctions(DefaultIdentity identity, UserRequest record, Users User)
         {
-            var list = new List<UserFunctions>();
             foreach (var function in record.GeneralFunctions)
-                list.Add(new UserFunctions
+                User.UserFunctions.Add(new UserFunctions
                 {
+                    Company = identity.CompanyId,
+                    User = record.Code,
                     FunctionGroup = function.functionGroup,
                     Function = function.function,
                     CreatedOn = DateTimeOffset.UtcNow,
@@ -327,8 +328,10 @@ namespace CheckListManager.AccessControl.Logic.Services
             foreach (var row in record.PrototypeFunctions)
                 if (row.functions != null)
                     foreach (var function in row.functions)
-                        list.Add(new UserFunctions
+                        User.UserFunctions.Add(new UserFunctions
                         {
+                            Company = identity.CompanyId,
+                            User = record.Code,
                             Department = row.department,
                             PrototypeType = row.prototypeType,
                             FunctionGroup = "Prototypes",
@@ -341,8 +344,10 @@ namespace CheckListManager.AccessControl.Logic.Services
             foreach (var row in record.InstanceFunctions)
                 if (row.functions != null)
                     foreach (var function in row.functions)
-                        list.Add(new UserFunctions
+                        User.UserFunctions.Add(new UserFunctions
                         {
+                            Company = identity.CompanyId,
+                            User = record.Code,
                             Department = row.department,
                             PrototypeType = row.prototypeType,
                             FunctionGroup = "Instances",
@@ -351,11 +356,9 @@ namespace CheckListManager.AccessControl.Logic.Services
                             CreatedOn = DateTimeOffset.UtcNow,
                             CreatedBy = identity.Code
                         });
-
-            return list;
         }
 
-        private static string SerializeUserInformation(string code, string authenticationCode, List<UserFunctions> userFunctions)
+        private static string SerializeUserInformation(string code, string authenticationCode, IEnumerable<UserFunctions> userFunctions)
         {
             return JsonConvert.SerializeObject(new
             {
@@ -378,18 +381,19 @@ namespace CheckListManager.AccessControl.Logic.Services
             if (response.Valid)
                 try
                 {
-                    var userFunctions = BuildFunctions(identity, record);
-                    await _userRepository.AddAsync(identity, new Users
+                    var User = new Users
                     {
                         Code = record.Code,
                         Description = record.Description,
                         Email = record.Email,
                         Password = _hashService.HashStringToBytes(record.Password),
                         AuthenticationCode = record.AuthenticationCode,
-                        Enabled = record.Enabled,
-                        
-                        UserFunctions = userFunctions
-                    });
+                        Enabled = record.Enabled
+                    };
+
+                    BuildFunctions(identity, record, User);
+
+                    await _userRepository.AddAsync(identity, User);
 
                     await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                     {
@@ -397,7 +401,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                         User = identity.Code,
                         Action = TrailAction.UserCreated,
                         Date = DateTimeOffset.UtcNow,
-                        Information = SerializeUserInformation(record.Code, record.AuthenticationCode, userFunctions)
+                        Information = SerializeUserInformation(record.Code, record.AuthenticationCode, User.UserFunctions)
                     });
                 }
                 catch (Exception exception)
@@ -419,18 +423,19 @@ namespace CheckListManager.AccessControl.Logic.Services
             if (response.Valid)
                 try
                 {
-                    var userFunctions = BuildFunctions(identity, record);
-                    await _userRepository.EditAsync(identity, new Users
+                    var User = new Users
                     {
                         Code = record.Code,
                         Description = record.Description,
                         Email = record.Email,
                         Password = _hashService.HashStringToBytes(record.Password),
                         Enabled = record.Enabled,
-                        AuthenticationCode = record.AuthenticationCode,
+                        AuthenticationCode = record.AuthenticationCode
+                    };
 
-                        UserFunctions = userFunctions
-                    });
+                    BuildFunctions(identity, record, User);
+
+                    await _userRepository.EditAsync(identity, User);
 
                     await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                     {
@@ -438,7 +443,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                         User = identity.Code,
                         Action = TrailAction.UserEdited,
                         Date = DateTimeOffset.UtcNow,
-                        Information = SerializeUserInformation (record.Code, record.AuthenticationCode, userFunctions)
+                        Information = SerializeUserInformation (record.Code, record.AuthenticationCode, User.UserFunctions)
                     });
                 }
                 catch (Exception exception)

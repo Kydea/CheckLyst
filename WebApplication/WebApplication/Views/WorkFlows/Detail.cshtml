@@ -203,7 +203,7 @@
 
         addStepButton = $("a#AddStep", matematici.popup.getElement());
 
-    $(formSelector).on("change", "select", function () {
+    formElement.on("change", "select", function () {
         detailPage.getForm().onChange($(this));
     });
 

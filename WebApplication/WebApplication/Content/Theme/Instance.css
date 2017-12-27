@@ -1,11 +1,39 @@
-﻿div.Instance h2 {
-  margin-bottom: 5px !important; }
-
-div.Instance div.ui-datepicker {
+﻿div.Instance div.ui-datepicker {
   z-index: 33 !important; }
 
 div.Instance div#InstanceInformation {
-  margin-bottom: 30px; }
+  clear: both;
+  width: 100%;
+  margin-bottom: 30px;
+  overflow: auto; }
+  div.Instance div#InstanceInformation div {
+    background-color: #999;
+    color: white; }
+    div.Instance div#InstanceInformation div span.Label {
+      color: #ccc;
+      margin-bottom: 5px; }
+    div.Instance div#InstanceInformation div span.Value {
+      font-weight: bold; }
+  @media only screen and (min-width: 760px) {
+    div.Instance div#InstanceInformation {
+      display: flex; }
+      div.Instance div#InstanceInformation div {
+        flex: 1;
+        padding: 20px;
+        margin-right: 1px; }
+        div.Instance div#InstanceInformation div span.Label {
+          display: block; }
+        div.Instance div#InstanceInformation div span.Value {
+          display: block; }
+        div.Instance div#InstanceInformation div:last-child {
+          margin-right: 0; } }
+  @media only screen and (max-width: 759px) {
+    div.Instance div#InstanceInformation div {
+      padding: 10px 10px 0; }
+      div.Instance div#InstanceInformation div span.Label {
+        margin-right: 10px; }
+      div.Instance div#InstanceInformation div:last-child {
+        padding-bottom: 10px; } }
   div.Instance div#InstanceInformation.Fixed {
     position: fixed;
     z-index: 60;
