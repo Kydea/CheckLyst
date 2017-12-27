@@ -77,10 +77,15 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             //2. creare history
             //5. notificare per email
 
+            var UtcNow = DateTimeOffset.UtcNow;
+
+            if (!PrototypeVersion.ValidFrom.HasValue)
+                PrototypeVersion.ValidFrom = UtcNow;
+
             var State = 
                 PrototypeVersion.VersionState == VersionState.InSumulation ?
-                    PrototypeVersion.ValidFrom.Value >= DateTimeOffset.UtcNow ? VersionState.Active : VersionState.Approved :
-                    PrototypeVersion.ValidUntil.Value >= DateTimeOffset.UtcNow ? VersionState.Obsolete : PrototypeVersion.VersionState;
+                    PrototypeVersion.ValidFrom >= UtcNow ? VersionState.Approved : VersionState.Active :
+                    PrototypeVersion.ValidUntil >= UtcNow ? PrototypeVersion.VersionState : VersionState.Obsolete;
 
             if (State == VersionState.Active)
             {
@@ -96,9 +101,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             //2. creare history
             //5. notificare per email
 
-            PrototypeVersion.Instances.ToList().ForEach(i =>
-                PrototypeVersion.Instances.Remove(i)
-            );
+            PrototypeVersion.Instances.ToList().ForEach(i => PrototypeVersion.Instances.Remove(i));
             await SetPrototypeVersionState(identity, PrototypeVersion, VersionState.Draft);
         }
 
@@ -117,6 +120,8 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 throw new Exception("You have already signed for this step");
             if (Step.WorkFlowApplications.WorkFlowAction == WorkFlowAction.PrototypeToApproved && request.ValidFrom < DateTime.UtcNow && request.Approved)
                 throw new Exception("The prototype has a past validity start date");
+            if (Step.WorkFlowApplications.WorkFlowAction == WorkFlowAction.PrototypeToApproved && (request.ValidFrom >= request.ValidUntil || request.ValidUntil < DateTimeOffset.UtcNow) && request.Approved)
+                throw new Exception("The prototype has a past validity end date");
             if (!request.Approved && String.IsNullOrWhiteSpace(request.Comment))
                 throw new Exception("The comment is mandatory for the rejections");
 
@@ -174,9 +179,9 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     if (FirstSignature)
                     {
                         if (Step.WorkFlowApplications.WorkFlowAction == WorkFlowAction.PrototypeToApproved)
-                            PrototypeVersion.ValidFrom = request.ValidFromNow ? DateTimeOffset.UtcNow : request.ValidFrom.Value;
+                            PrototypeVersion.ValidFrom = request.ValidFromNow ? (DateTimeOffset?)null : request.ValidFrom.Value;
 
-                        PrototypeVersion.ValidUntil = request.ValidUntilNow ? DateTimeOffset.UtcNow : request.ValidUntil;
+                        PrototypeVersion.ValidUntil = request.ValidUntilNow ? null : request.ValidUntil;
                     }
 
                     if (AllApproved)

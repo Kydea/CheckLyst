@@ -18,6 +18,7 @@ create table "Infrastructure"."Companies"
 	"ActivityTimeout" int not null default 600 constraint "Invalid activity timeout" check("ActivityTimeout" > 60),
 
 	"MaximumNumberOfPINFailure" int not null default 0,
+	"LoginFailedTimeout" int not null default 20,
 	"PINDaysLife" int not null default 0,
 	"MaximumNumberOfPasswordFailure" int not null default 0,
 	"PasswordDaysLife" int not null default 0,

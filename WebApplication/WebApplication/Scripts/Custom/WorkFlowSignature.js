@@ -55,7 +55,7 @@
 				error = true;
 			}
 			if (!error && !model.validFromNow && validityEndType.filter(":checked").val() == "2" && validityEnd.data("date") <= validityStart.data("date")) {
-				matematici.controls.setValidationMessages(validityEnd, [{ message: "validity end is before validity start" }])
+				matematici.controls.setValidationMessages(validityEnd, [{ message: "Validity end is before validity start" }])
 				error = true;
 			}
 			if (!model.comment && !model.approved) {

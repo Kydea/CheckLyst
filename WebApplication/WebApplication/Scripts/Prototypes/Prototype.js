@@ -56,7 +56,7 @@
 				submitForObsolescence = $("a.SubmitForObsolescence", buttonGroup).hide(),
 				obsoleteButton = $("a.Obsolete", buttonGroup).hide(),
 				saveButton = $("a.Save", buttonGroup).hide(),
-				historyButton = $("a.History", buttonGroup).toggle(model.version > 0);
+				historyButton = $("a.History", buttonGroup).hide(); //.toggle(model.version > 0);
 
 			switch (model.state) {
 				case prototypes.Prototype.states.active:
@@ -262,7 +262,7 @@
 
 			allowed = true;
 			for (var rowIndex in rows) {
-				if (rows[rowIndex].step < row.step) {
+				if (rows[rowIndex].step < row.step && !rows[rowIndex].approved) {
 					allowed = false;
 					break;
 				}
@@ -304,6 +304,8 @@
 					model.state = result.state;
 					model.validFrom = result.validFrom;
 					model.validUntil = result.validUntil;
+					if (stateChanged)
+						model.proposedState = model.proposedDate = null;
 					concurrencyInformation = {
 						modifiedBy: result.modifiedBy,
 						modifiedOn: result.modifiedOn
@@ -456,6 +458,8 @@
 				modifiedBy: result.modifiedBy,
 				modifiedOn: result.modifiedOn
 			};
+			setupActionBar();
+
 			if (callback)
 				callback.call();
 			else
@@ -556,7 +560,7 @@
 
 	prototype.update = function () {
 		select();
-		update;
+		update();
 	};
 
 	prototypes.prototype = prototype;

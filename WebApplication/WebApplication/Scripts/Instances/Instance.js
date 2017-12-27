@@ -1,8 +1,7 @@
-﻿instances.Instance = function (prototype, version, year, number) {
+﻿instances.Instance = function (element, options) {
     var
         instance = this,
-        element = $("div#Content"),
-        information = element.children("div#InstanceInformation"),
+		information = $("div#InstanceInformation", element),
         header = new instances.Group($("div#Header", element), "Group"),
         page = new instances.Group($("div.Page", element), "Page"),
         prototypeState,
@@ -17,51 +16,61 @@
         },
 
         update = function (model) {
-            if (model.Error)
-                matematici.dialog.error("Error", model.Error);
-            else {
-                //matematici.elements.body.css("zoom", 2);//model.zoom / 100;
-                prototypeState = model.PrototypeState;
+            prototypeState = model.prototypeState;
 
-                information
-                    .empty()
-                    .append($("<table />").addClass("Grid")
-                        .append($("<thead />")
-                            .append($("<tr />")
-                                .append($("<th />").text("company"))
-                                .append($("<th />").text("department"))
-                                .append($("<th />").text("prototype type"))
-                                .append($("<th />").text("code"))
-                                .append($("<th />").text("state"))
-                            )
-                        )
-                        .append($("<tbody />")
-                            .append($("<tr />")
-                                .append($("<td />").text(model.Company))
-                                .append($("<td />").text(model.Department))
-                                .append($("<td />").text(model.PrototypeType))
-                                .append($("<td />").text(prototype + "." + version + "." + (number < 0 ? "?" : year + "." + number)))
-                                .append($("<td />").append(model.State || "Draft"))
-                            )
-                        )
-                    );
+			information
+				.empty()
+				.append($("<div />").append($("<span />").addClass("Label").text("department")).append($("<span />").addClass("Value").text("Mantainment")))
+				.append($("<div />").append($("<span />").addClass("Label").text("prototype type")).append($("<span />").addClass("Value").text("Bin whashing")))
+				.append($("<div />").append($("<span />").addClass("Label").text("code")).append($("<span />").addClass("Value").text("Bin2070.4.2017.3")))
+				.append($("<div />").append($("<span />").addClass("Label").text("state")).append($("<span />").addClass("Value").text("In simulation")));
+                    //.append($("<tbody />")
+                    //    .append($("<tr />")
+                    //        .append($("<td />").text(model.department))
+                    //        .append($("<td />").text(model.prototypeType))
+                    //        .append($("<td />").text("WashingBin.3.2017.4"))//.text(options.prototype + "." + version + "." + (number < 0 ? "?" : year + "." + number))) TODO
+                    //        .append($("<td />").text(model.state || "Draft"))
+                    //    )
+                    //)
 
-                pageLock.update(model);
-                if (model.Header)
-                    header.update(model.Header);
-                else
-                    header.getElement().hide();
-                page.update(model.Pages[tab.getCurrentIndex()]);
-            }
+			tab.clear();
+
+			for (var pageIndex in model.pages)
+				tab.add(model.pages[pageIndex].description)
+
+			tab.select(0)
+			tab.resize();
+
+            pageLock.update(model);
+            if (model.header)
+                header.update(model.header);
+            else
+                header.getElement().hide();
+            page.update(model.pages[tab.getCurrentItem().index]);
 
             if (updateHandler) updateHandler(model);
-            externalSources = model.ExternalSources;
-            expressions = model.Expressions;
-        },
+            externalSources = model.externalSources;
+            expressions = model.expressions;
+		},
+
+		load = function () {
+			$.ajax({
+				url: matematici.urls.instances + "/" + (options.code == "" ? "Create" : "Get"),
+				type: "post",
+				data: {
+					code: options.code,
+					prototype: options.prototype,
+					version: options.version
+				}
+			}).done(function (result) {
+				console.log(result)
+				instances.instance.update(result.data.checkList);
+			});
+		},
 
         save = function (state, callback, note) {
             $.ajax({
-                url: matematici.urls.instances.save,
+				url: matematici.urls.instances + "/Save",
                 type: "post",
                 data: { ClientId: matematici.client.getId(), State: state, Note: note }
             }).done(function (result) {
@@ -78,9 +87,6 @@
                     if (callback)
                         callback.call();
                 }
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                console.log("Server error", jqXHR, textStatus, errorThrown);
-                alert("Server error: " + errorThrown);
             });
         };
 
@@ -146,7 +152,7 @@
 
     instance.showHistory = function () {
         $.ajax({
-            url: matematici.urls.instances.history,
+			url: matematici.urls.instances + "/GetHistory",
             type: "post",
             data: { ClientId: matematici.client.getId() }
         }).done(function (result) {
@@ -164,27 +170,25 @@
                 parameters.append($("<label />").text("Prototype").append($("<input />").attr(attributes).val(result.Prototype + "." + result.Version)));
                 parameters.append($("<label />").text("Instance").append($("<input />").attr(attributes).val(result.Year + "." + result.Number)));
             }
-        }).fail(function (jqXHR, textStatus, errorThrown) {
-            console.log("Server error", jqXHR, textStatus, errorThrown);
-            alert("Server error: " + errorThrown);
         });
     };
 
     instance.initialize = function () {
-        element.children("div#InstanceInformation").clone().addClass("Fixed").insertAfter(information);
-        information = element.children("div#InstanceInformation"); //both the elements
+		information.clone().addClass("Fixed").insertAfter(information);
+		information = $("div#InstanceInformation", element); //both the elements
 
         matematici.elements.window.on("resize", scroll);
         matematici.elements.window.on("scroll", scroll);
         scroll();
 
         instanceElementInformation = new instances.ElementInformation(element);
-        tab = new matematici.Tab($("div.TabContainer", element)).addHandler(function (index) {
+		tab = new matematici.Tab($("div.TabContainer", element)).addHandler(function (index) {
             page.clear();
             new instances.Event(instances.Events.pageChange, index).trigger();
         });
-        pageLock = new instances.PageLock(instance);
-        new instances.Event(instances.Events.setup, { prototype: prototype, version: version, year: year, number: number }).trigger();
+		pageLock = new instances.PageLock(instance);
+
+		load();
     };
 
     instance.destroy = function () {
@@ -197,8 +201,8 @@
 
 instances.Instance.states = {
     draft: "Draft",
-    progress: "In progress",
+	progress: "In progress",
+	completed: "Completed",
     confirmed: "Confirmed",
-    canceled: "Canceled",
-    simulation: "Simulation evidence"
+    canceled: "Canceled"
 };

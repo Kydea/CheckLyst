@@ -3,7 +3,30 @@
 div.CheckList {
 
     h2 {
-        margin: 0 0 $Metric-Control-Space !important;
+        margin: 0 $Metric-Control-Space $Metric-Control-Space !important;
+        color: white !important;
+        min-height: 1em;
+    }
+
+    .HeaderContainer {
+        margin-top: -$Metric-Control-Space;
+        margin-left: -$Metric-Control-Space;
+        margin-right: -$Metric-Control-Space;
+        padding: $Metric-Control-Space 0 0;
+        background-color: $Color-Green-Regular;
+        width: calc(100% + #{2 * $Metric-Control-Space});
+        top: 0;
+        left: 0;
+        border-radius: 15px 15px 0 0;
+
+        > div.Group {
+            margin-bottom: 0;
+            border: none;
+        }
+
+        div.Group {
+            background-color: white;
+        }
     }
 
     span {

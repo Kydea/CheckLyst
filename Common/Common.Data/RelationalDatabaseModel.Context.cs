@@ -46,7 +46,6 @@ namespace CheckListManager.Common.Data
         public virtual DbSet<Configurations> Configurations { get; set; }
         public virtual DbSet<FunctionGroups> FunctionGroups { get; set; }
         public virtual DbSet<Functions> Functions { get; set; }
-        public virtual DbSet<UserFunctions> UserFunctions { get; set; }
         public virtual DbSet<Records> Records { get; set; }
         public virtual DbSet<DataSources> DataSources { get; set; }
         public virtual DbSet<Instances> Instances { get; set; }
@@ -58,5 +57,6 @@ namespace CheckListManager.Common.Data
         public virtual DbSet<WorkFlowSteps> WorkFlowSteps { get; set; }
         public virtual DbSet<Settings> Settings { get; set; }
         public virtual DbSet<SettingValues> SettingValues { get; set; }
+        public virtual DbSet<UserFunctions> UserFunctions { get; set; }
     }
 }

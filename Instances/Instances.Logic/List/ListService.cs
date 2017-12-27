@@ -32,23 +32,21 @@ namespace CheckListManager.Instances.Logic.List
             if (form.Source == null)
             {
                 //initial load
+
                 var departments = await _commonRepository.GetDepartmentsAsync(identity, "Instances");
-                department = form.Department.HasValue && departments.Any(d => d.ID == form.Department) ? form.Department.Value : departments.FirstOrDefault()?.ID;
                 response.Fields["Department"] = new Field
                 {
                     Options = departments.Select(d => new Option(d.ID.ToString(), d.Name)),
                     Value = department?.ToString()
                 };
-                response.Valid &= departments.Any();
 
                 response.Fields["Description"] = new Field { Value = form.Description };
                 response.Fields["TagValue"] = new Field { Value = form.TagValue };
 
-                var states = new List<Option> { new Option(null, "All") };
-                states.AddRange((await _commonRepository.GetInstanceStatesAsync()).Select(x => new Option(x)));
+                var states = await _commonRepository.GetInstanceStatesAsync();
                 response.Fields["State"] = new Field
                 {
-                    Options = states,
+                    Options = states.Select(x => new Option(x)),
                     Value = form.State
                 };
             }
@@ -56,37 +54,31 @@ namespace CheckListManager.Instances.Logic.List
             if (form.Source == null || form.Source == "department")
             {
                 var prototypeTypes = await _commonRepository.GetPrototypeTypesAsync(identity, department ?? -1, "Instances");
-                prototypeType = form.PrototypeType.HasValue && prototypeTypes.Any(d => d.ID == form.PrototypeType) ? form.PrototypeType.Value : prototypeTypes.FirstOrDefault()?.ID;
                 response.Fields["PrototypeType"] = new Field
                 {
                     Options = prototypeTypes.Select(pt => new Option(pt.ID.ToString(), pt.Name)),
                     Value = prototypeType?.ToString()
                 };
-                response.Valid &= prototypeTypes.Any();
             }
 
             if (form.Source == null || form.Source == "department" || form.Source == "prototypeType")
             {
                 var prototypes = await _commonRepository.GetPrototypesAsync(identity, prototypeType ?? -1, "Instances");
-                prototype = form.Prototype.HasValue && prototypes.Any(d => d.ID == form.Prototype) ? form.Prototype.Value : prototypes.FirstOrDefault()?.ID;
                 response.Fields["Prototype"] = new Field
                 {
                     Options = prototypes.Select(p => new Option(p.ID.ToString(), p.Name)),
                     Value = prototype?.ToString()
                 };
-                response.Valid &= prototypes.Any();
             }
 
             if (form.Source == null || form.Source == "department" || form.Source == "prototypeType" || form.Source == "prototype")
             {
                 var versions = await _commonRepository.GetPrototypeVersionsAsync(identity, prototype ?? -1, "Instances");
-                version = form.Version.HasValue && versions.Any(d => d.Version == form.Version) ? form.Version.Value : versions.FirstOrDefault()?.Version;
                 response.Fields["Version"] = new Field
                 {
-                    Options = versions.Any() ? new[] { new Option("0", "All") }.Union(versions.Select(p => new Option(p.Version.ToString(), p.Description))) : new Option[0],
+                    Options = versions.Select(p => new Option(p.Version.ToString(), p.Description)),
                     Value = version?.ToString()
                 };
-                response.Valid &= versions.Any();
             }
 
             if (form.Source == null || form.Source == "department" || form.Source == "prototypeType" || form.Source == "prototype" || form.Source == "version")
@@ -95,7 +87,7 @@ namespace CheckListManager.Instances.Logic.List
                 tag = tag != string.Empty && tags.Any(d => d == tag) ? tag : tags.FirstOrDefault();
                 response.Fields["TagCode"] = new Field
                 {
-                    Options = tags.Any() ? new[] { new Option("", "All") }.Union(tags.Select(t => new Option(t, t))) : new Option[0],
+                    Options = tags.Select(t => new Option(t, t)),
                     Value = tag
                 };
 
@@ -109,31 +101,34 @@ namespace CheckListManager.Instances.Logic.List
         }
 
         public async Task<PagingResponse<List<ListRow>>> GetDataAsync(long company, PagingRequest<ListRequest> form)
-            =>
-                await _instancesRepository.GetInstancesAsync(
-                    company,
-                    i => new ListRow
-                    {
-						Id = i.ID,
-						Code =  i.Code,
-                        CreatedBy = i.CreatedBy,
-                        CreatedOn = i.CreatedOn,
-                        ModifiedBy = i.ModifiedBy,
-                        ModifiedOn = i.ModifiedOn
-                    },
-                    i =>
-                        (form.Data.Description == string.Empty || i.Description != null && i.Description.ToUpper().Contains(form.Data.Description.ToUpper()))
-                        && (form.Data.Department == null || i.Prototypes.Department == form.Data.Department)
-                        && (form.Data.PrototypeType == null || i.Prototypes.PrototypeType == form.Data.PrototypeType)
-                        && (form.Data.Prototype == null || i.Prototype == form.Data.Prototype)
-                        && (form.Data.Version == 0 || i.Version == form.Data.Version)
-                        && (form.Data.Year == null || i.Year == form.Data.Year)
-                        && (form.Data.Number == null || i.Year == form.Data.Number)
-                        && (form.Data.TagCode == string.Empty || i.InstanceTags.Any(it => it.Tag == form.Data.TagCode && it.Value.ToUpper().Contains(form.Data.TagValue) ))
-                        && (form.Data.State == "All" || i.InstanceState == form.Data.State),
-                    i => i.ID,
-                    form.CurrentPage,
-                    form.ItemsPerPage
-                );
+        {
+            form.Data.TagCode = form.Data.TagCode ?? string.Empty;
+            form.Data.State = form.Data.State ?? string.Empty;
+            return await _instancesRepository.GetInstancesAsync(
+                company,
+                i => new ListRow
+                {
+                    Id = i.ID,
+                    Code = i.Code,
+                    CreatedBy = i.CreatedBy,
+                    CreatedOn = i.CreatedOn,
+                    ModifiedBy = i.ModifiedBy,
+                    ModifiedOn = i.ModifiedOn
+                },
+                i =>
+                    (form.Data.Description == string.Empty || i.Description != null && i.Description.ToUpper().Contains(form.Data.Description.ToUpper()))
+                    && (form.Data.Department == null || i.Prototypes.Department == form.Data.Department)
+                    && (form.Data.PrototypeType == null || i.Prototypes.PrototypeType == form.Data.PrototypeType)
+                    && (form.Data.Prototype == null || i.Prototype == form.Data.Prototype)
+                    && (form.Data.Version == null || i.Version == form.Data.Version)
+                    && (form.Data.Year == null || i.Year == form.Data.Year)
+                    && (form.Data.Number == null || i.Year == form.Data.Number)
+                    && (form.Data.TagCode == string.Empty || i.InstanceTags.Any(it => it.Tag == form.Data.TagCode && it.Value.ToUpper().Contains(form.Data.TagValue)))
+                    && (form.Data.State == string.Empty || i.InstanceState == form.Data.State),
+                i => i.ID,
+                form.CurrentPage,
+                form.ItemsPerPage
+            );
+        }
     }
 }

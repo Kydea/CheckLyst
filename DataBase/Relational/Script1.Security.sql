@@ -21,6 +21,7 @@ create table "Security"."Users"
     "NumberOfAttempts" int not null default 0,
 
 	"LastLoginOn" timestamptz,
+	"LastLoginFailedOn" timestamptz,
 
 	"CreatedBy" varchar (60),
 	"CreatedOn" timestamptz not null default current_timestamp,

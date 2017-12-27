@@ -39,10 +39,7 @@
         <EntityTypeShape EntityType="RelationalDatabaseModel.Configurations" Width="1.5" PointX="7.375" PointY="8.75" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.FunctionGroups" Width="1.5" PointX="11.625" PointY="23.625" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.Functions" Width="1.5" PointX="13.875" PointY="23.5" />
-        <EntityTypeShape EntityType="RelationalDatabaseModel.UserFunctions" Width="1.5" PointX="16.125" PointY="6.5" />
         <AssociationConnector Association="RelationalDatabaseModel.Functions_FunctionGroup_fkey" />
-        <AssociationConnector Association="RelationalDatabaseModel.UserFunctions_Function" />
-        <AssociationConnector Association="RelationalDatabaseModel.UserFunctions_User" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.Records" Width="1.5" PointX="15.125" PointY="1.5" />
         <AssociationConnector Association="RelationalDatabaseModel.Records_Action_fkey" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.DataSources" Width="1.5" PointX="0.75" PointY="9.75" />
@@ -62,8 +59,6 @@
         <AssociationConnector Association="RelationalDatabaseModel.PrototypeTypes_Company_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.PrototypeTypes_Department_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.PrototypeTypes_ObsolescenceWorkFlow_fkey" />
-        <AssociationConnector Association="RelationalDatabaseModel.UserFunctions_PrototypeType_fkey" />
-        <AssociationConnector Association="RelationalDatabaseModel.UserFunctions_Department_fkey" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.WorkFlowApplications" Width="1.5" PointX="7.875" PointY="21.5" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.WorkFlowApplicationStepTags" Width="1.5" PointX="15.75" PointY="20.5" />
         <AssociationConnector Association="RelationalDatabaseModel.WorkFlowApplications_WorkFlowAction_fkey" />
@@ -83,6 +78,11 @@
         <AssociationConnector Association="RelationalDatabaseModel.SettingValues_Setting_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.SettingValues_Company_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.Instances_Company_fkey" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.UserFunctions" Width="1.5" PointX="16.125" PointY="6.25" />
+        <AssociationConnector Association="RelationalDatabaseModel.UserFunctions_PrototypeType_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.UserFunctions_Department_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.UserFunctions_Function" />
+        <AssociationConnector Association="RelationalDatabaseModel.UserFunctions_User" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -2,7 +2,6 @@
 	var
 		tokenManager = this,
 		cautionTimeOffset = 120000, //ms
-		userPanel = $("header #UserPanel"),
 
 		refreshAccessToken = function () {
 			console.log(new Date(), "refreshing access token");
@@ -31,14 +30,14 @@
 
 		parseResult = function (result) {
 			localStorage.accessToken = result.access_token;
-			$(".CurrentUser", userPanel)
-				.attr("title", result.code)
-				.children(".UserName").text(result.name)
 			localStorage.accessTokenExpiration = new Date().getTime() + parseInt(result.expires_in) * 1000;
 			localStorage.timeZone = result.timeZone;
 			localStorage.roles = result.roles;
 			localStorage.userCode = result.code;
+			localStorage.userName = result.name;
+
 			matematici.menu.toggleItemsByRole();
+			matematici.userPanel.update();
 		};
 
 	tokenManager.login = function (result) {

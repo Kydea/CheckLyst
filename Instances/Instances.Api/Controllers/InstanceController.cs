@@ -32,7 +32,7 @@ namespace CheckListManager.Instances.Api.Controllers
 				var response = new InstanceResponse
 				{
 					Code = cacheObject.Code,
-					CheckList = _instanceManagerService.GetCheckList(Identity.Code, Identity.HasPermission("Instances", "Edit", cacheObject.PrototypeType), cacheObject)
+					CheckList = _instanceManagerService.GetCheckList(Identity.Code, Identity.HasPermission("Instances", "Edit", prototypeType: cacheObject.PrototypeType), cacheObject)
 
                 };
 				return Ok(Message.Create(response));
@@ -77,16 +77,16 @@ namespace CheckListManager.Instances.Api.Controllers
 		[HttpPost]
 		[Route("Get")]
         [Authorize(Roles = "Instances#View")]
-        public async Task<IHttpActionResult> Get([FromBody]Message<InstanceRequest> request)
+        public async Task<IHttpActionResult> Get(InstanceRequest request)
 		{
 			try
 			{
-				var cacheObject = await _instanceManagerService.GetAsync(Identity.CompanyId, request.Data.Code);
+				var cacheObject = await _instanceManagerService.GetAsync(Identity.CompanyId, request.Code);
 				var response = new InstanceResponse
 				{
 					Id = cacheObject.Id,
 					Code = cacheObject.Code,
-					CheckList = _instanceManagerService.GetCheckList(Identity.Code, Identity.HasPermission("Instances", "Edit", cacheObject.PrototypeType), cacheObject)
+					CheckList = _instanceManagerService.GetCheckList(Identity.Code, Identity.HasPermission("Instances", "Edit", prototypeType: cacheObject.PrototypeType), cacheObject)
 				};
 				return Ok(Message.Create(response));
 			}
@@ -140,7 +140,7 @@ namespace CheckListManager.Instances.Api.Controllers
 				{
 					Id = cacheObject.Id,
 					Code = cacheObject.Code,
-					CheckList = _instanceManagerService.GetCheckList(Identity.Code, Identity.HasPermission("Instances", "Edit", cacheObject.PrototypeType), cacheObject)
+					CheckList = _instanceManagerService.GetCheckList(Identity.Code, Identity.HasPermission("Instances", "Edit", prototypeType: cacheObject.PrototypeType), cacheObject)
 				};
 				return Ok(Message.Create(response));
 			}

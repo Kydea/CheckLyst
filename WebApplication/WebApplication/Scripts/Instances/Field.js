@@ -9,23 +9,23 @@
         copyButton,
 
 		validate = function () {
-		    if (model.ValueTypeName == "DateTime" || model.ValueTypeName == "Date") {
+		    if (model.valueTypeName == "DateTime" || model.valueTypeName == "Date") {
 		        if (!/^$|\d\d\/\d\d\/\d\d\d\d/ig.test(input.val())) {
 		            input.val("");
 		            return false;
 		        }
-		    } else if (model.ValueTypeName == "Number") {
+		    } else if (model.valueTypeName == "Number") {
 		        if (!/^[\d\-\,\.]*$/ig.test(input.val())) {
 		            input.val("");
 		            return false;
 		        }
 		    }
-		    if (model.ValueTypeName == "DateTime") {
+		    if (model.valueTypeName == "DateTime") {
 		        return (
 					((input.val() || "").trim() != "" && (select.val() || "").trim() != "" && (select2.val() || "").trim() != "")
 					|| ((input.val() || "").trim() == "" && (select.val() || "").trim() == "" && (select2.val() || "").trim() == "")
 				);
-		    } else if (model.ValueTypeName == "Time") {
+		    } else if (model.valueTypeName == "Time") {
 		        return (
 					((select.val() || "").trim() != "" && (select2.val() || "").trim() != "")
 					|| ((select.val() || "").trim() == "" && (select2.val() || "").trim() == "")
@@ -36,19 +36,19 @@
 		},
 
 		getValue = function () {
-		    var value = model.ValuesList ? select.val() || "" : (input.val() || "").trim();
-		    if (value != "" && model.ValueTypeName == "DateTime") 
+		    var value = model.valuesList ? select.val() || "" : (input.val() || "").trim();
+		    if (value != "" && model.valueTypeName == "DateTime") 
 		        value = value + " " + select.val() + ":" + select2.val();
-		    else if (model.ValueTypeName == "Time") 
+		    else if (model.valueTypeName == "Time") 
 		        value = select.val() + ":" + select2.val();
-		    else if (model.ValueTypeName == "Boolean") 
+		    else if (model.valueTypeName == "Boolean") 
 		        value = input.prop("checked") ? "true" : "false";
 
 		    return value;
 		},
 
         next = function () {
-            if (model.ValueTypeName != "DateTime" && model.ValueTypeName != "Time") {
+            if (model.valueTypeName != "DateTime" && model.valueTypeName != "Time") {
                 input.datepicker('hide').blur()
                 var next = element.next().children("input, select");
                 if (next.size() > 0)
@@ -58,7 +58,7 @@
 
         change = function (value) {
             if (validate()) {
-                new instances.Event(instances.Events.valueChange, model.Id, { Value: value }).done(function (result) {
+                new instances.Event(instances.Events.valueChange, model.id, { Value: value }).done(function (result) {
                     instances.instance.update(result);
                     next();
                 }).trigger();
@@ -66,7 +66,7 @@
         },
 
         copyValue = function () {
-            new instances.Event(instances.Events.copyValue, model.Id).done(function (result) {
+            new instances.Event(instances.Events.copyValue, model.id).done(function (result) {
                 instances.instance.update(result);
                 next();
             }).trigger();
@@ -86,21 +86,21 @@
                 label.appendTo(element);
             input =
                 (
-                    model.LinesCount == 0 ?
+                    model.linesCount == 0 ?
                     $("<input />").attr("type", "text") :
                     $("<textarea />")
                 ).addClass("Description").appendTo(element);
-            if (model.ValueTypeName == "Number")
+            if (model.valueTypeName == "Number")
             	input.keyfilter(/[\d\-\,\.]/);
-            else if (model.ValueTypeName == "Date" || model.ValueTypeName == "DateTime") {
+            else if (model.valueTypeName == "Date" || model.valueTypeName == "DateTime") {
             	input.keyfilter(/[\d\/]/);
             	input.datepicker({
             		beforeShow: function (el) {
             			return !$(el).prop("readonly");
             		}
             	})
-            } else if (model.ValueTypeName == "Boolean") {
-            	element.addClass(model.ValueTypeName);
+            } else if (model.valueTypeName == "Boolean") {
+            	element.addClass(model.valueTypeName);
             	input.attr("type", "checkbox");
             }
             input.on("change", function () {
@@ -116,8 +116,8 @@
                 keyDown(e);
             });
 
-            if (model.ValueTypeName == "DateTime" || model.ValueTypeName == "Time") {
-            	element.addClass(model.ValueTypeName);
+            if (model.valueTypeName == "DateTime" || model.valueTypeName == "Time") {
+            	element.addClass(model.valueTypeName);
             	select.append($("<option />").attr("value", "").text(""));
             	for (var i = 0; i < 24; i++) {
             		select.append($("<option />").attr("value", (i < 10 ? "0" : "") + i).text((i < 10 ? "0" : "") + i));
@@ -134,26 +134,26 @@
             	}
 			}
 
-            if (model.ValuesList && model.ValuesList.length == 0)
-                model.ValuesList = null;
+            if (model.valuesList && model.valuesList.length == 0)
+                model.valuesList = null;
 
-            if (model.ValuesList)
-                for (var index in model.ValuesList)
-                    select.append($("<option />").attr("value", model.ValuesList[index]).text(model.ValuesList[index]));
+            if (model.valuesList)
+                for (var index in model.valuesList)
+                    select.append($("<option />").attr("value", model.valuesList[index]).text(model.valuesList[index]));
             field = $("<div />").addClass("Input").appendTo(element);
-            if (model.LinesCount > 0) {
+            if (model.linesCount > 0) {
                 element.addClass("MultiLine");
-                input.height(24 * model.LinesCount - 10);
-                field.height(24 * model.LinesCount - 10);
+                input.height(24 * model.linesCount - 10);
+                field.height(24 * model.linesCount - 10);
             }
 
-            if (model.ValuesList)
+            if (model.valuesList)
                 element.addClass("List");
-            else if (model.ExternalSourceName && model.ExternalSourceColumn) {
+            else if (model.externalSourceName && model.externalSourceColumn) {
 				element.addClass("ExternalSource").append($("<i />").addClass("fi flaticon-link-o"));
                 field.on("click", function () {
                     if (!element.hasClass("Inactive"))
-                        new instances.ExternalSources(model.Id, model.ExternalSourceName);
+                        new instances.ExternalSources(model.id, model.externalSourceName);
                 });
             }
 
@@ -164,68 +164,68 @@
         };
 
     this.update = function (model) {
-        var readOnly = !!model.ReadOnly || !!model.ExternalSourceName && !!model.ExternalSourceColumn;
-        label.html(model.Description);
-        element.toggleClass("Inactive", model.ReadOnly);
+        var readOnly = !!model.readOnly || !!model.externalSourceName && !!model.externalSourceColumn;
+        label.html(model.description);
+        element.toggleClass("Inactive", model.readOnly);
         element.toggleClass("ReadOnly", readOnly);
         input.attr("readonly", readOnly);
-        if (model.ValueTypeName == "DateTime") {
-        	var index = (model.Value || "").indexOf(" ");
+        if (model.valueTypeName == "DateTime") {
+        	var index = (model.value || "").indexOf(" ");
         	if (index >= 0) {
-        		input.val(model.Value.substr(0, index));
-        		var index2 = model.Value.indexOf(":");
+        		input.val(model.value.substr(0, index));
+        		var index2 = model.value.indexOf(":");
         		if (index2 >= 0) {
-        			select.val(model.Value.substr(index + 1, index2 - index - 1));
-        			select2.val(model.Value.substr(index2 + 1));
+        			select.val(model.value.substr(index + 1, index2 - index - 1));
+        			select2.val(model.value.substr(index2 + 1));
 				} else {
         			select.val("");
         			select2.val("");
         		}
         	} else {
-        		input.val(model.Value);
+        		input.val(model.value);
         		select.val("");
         		select2.val("");
         	}
-        } else if (model.ValueTypeName == "Time") {
-        	input.val(model.Value);
-        	var index = (model.Value || "").indexOf(":");
+        } else if (model.valueTypeName == "Time") {
+        	input.val(model.value);
+        	var index = (model.value || "").indexOf(":");
         	if (index >= 0) {
-        		select.val(model.Value.substr(0, index));
-        		select2.val(model.Value.substr(index + 1));
+        		select.val(model.value.substr(0, index));
+        		select2.val(model.value.substr(index + 1));
         	} else {
         		select.val("");
         		select2.val("");
         	}
-        } else if (model.ValueTypeName == "Boolean") {
+        } else if (model.valueTypeName == "Boolean") {
         	var b = false;
         	try {
-        		b = $.parseJSON((model.Value || "false").toLowerCase());
+        		b = $.parseJSON((model.value || "false").toLowerCase());
         	} catch (e) { }
         	input.prop("checked", b);
 
         	var s = "";
         	try {
-        		b = $.parseJSON((model.Value || "").toLowerCase()); s = b.toString();
+        		b = $.parseJSON((model.value || "").toLowerCase()); s = b.toString();
         	} catch (e) { }
         	input.val(s);
 		} else {
-        	input.val(model.Value);
-        	select.val(model.Value);
+        	input.val(model.value);
+        	select.val(model.value);
         }
 
-        field.html(model.Value).attr("readonly", readOnly);
+        field.html(model.value).attr("readonly", readOnly);
         field.attr("title", field.text());
 
-        this.setColor(model.Color);
-        this.setFontSize(model.FontSize);
+        this.setColor(model.color);
+        this.setFontSize(model.fontSize);
     };
 
     this.setColor = function (value) {
-        label.css({ color: model.Color });
+        label.css({ color: model.color });
     };
 
     this.setFontSize = function (value) {
-        label.css({ fontSize: model.FontSize == 0 ? "" : model.FontSize + "px" });
+        label.css({ fontSize: model.fontSize == 0 ? "" : model.fontSize + "px" });
     };
 
     setup();

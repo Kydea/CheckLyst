@@ -35,7 +35,7 @@ insert into "Security"."Functions" values
 	('Instances', 'Create'),
 	('Instances', 'Delete'),
 	('Instances', 'Edit'),
-	('Instances', 'Unsing'),
+	('Instances', 'Unsign'),
 	('Instances', 'View'),
 
 	('Prototypes', 'Approve'),
