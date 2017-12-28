@@ -28,6 +28,7 @@
 
 		if (fixedElement) fixedElement.remove();
 		fixedElement = element.clone().addClass("Fixed").insertBefore(element);
+		setTimeout(0, onScroll);
 	}
 
 	setup();

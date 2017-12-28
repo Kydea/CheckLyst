@@ -174,6 +174,9 @@
 		load();
     };
 
+	instance.destroy = function () {
+	}
+
     instance.initialize();
 };
 
