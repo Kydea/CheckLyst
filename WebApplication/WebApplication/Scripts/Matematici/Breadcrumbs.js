@@ -7,7 +7,6 @@
 
 		onScroll = function () {
 			var scrolled = top - matematici.elements.document.scrollTop() < -10;
-			element.toggleClass("Visible", !scrolled);
 			fixedElement.toggleClass("Visible", scrolled);
 		},
 
@@ -28,7 +27,7 @@
 
 		if (fixedElement) fixedElement.remove();
 		fixedElement = element.clone().addClass("Fixed").insertBefore(element);
-		setTimeout(0, onScroll);
+		fixedElement.toggleClass("Visible", false);
 	}
 
 	setup();
