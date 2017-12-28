@@ -21,533 +21,577 @@ using NLog;
 
 namespace CheckListManager.Instances.Logic.Services
 {
-    public class InstanceManagerService : IInstanceManagerService
-    {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+	public class InstanceManagerService : IInstanceManagerService
+	{
+		private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private readonly IServiceClient _client;
-        private readonly IInstancesRepository _instancesRepository;
-        private readonly CheckListJsonConverter _converter;
-        private readonly IInstanceCacheService _instanceCache;
-        private readonly IConfigurationService _configurationService;
+		private readonly IServiceClient _client;
+		private readonly IInstancesRepository _instancesRepository;
+		private readonly CheckListJsonConverter _converter;
+		private readonly IInstanceCacheService _instanceCache;
+		private readonly IConfigurationService _configurationService;
 
-        public InstanceManagerService(IServiceClient client,
-            IInstancesRepository instancesRepository, CheckListJsonConverter converter, IInstanceCacheService instanceCache,
-            IConfigurationService configurationService)
-        {
-            _client = client;
-            _instancesRepository = instancesRepository;
-            _converter = converter;
-            _instanceCache = instanceCache;
-            _configurationService = configurationService;
-        }
+		public InstanceManagerService(IServiceClient client,
+			IInstancesRepository instancesRepository, CheckListJsonConverter converter, IInstanceCacheService instanceCache,
+			IConfigurationService configurationService)
+		{
+			_client = client;
+			_instancesRepository = instancesRepository;
+			_converter = converter;
+			_instanceCache = instanceCache;
+			_configurationService = configurationService;
+		}
 
-        public async Task<InstanceCacheObject> GetAsync(long companyId, string code)
-        {
-            var cacheObject = await _instanceCache.GetAsync(code);
-            if (cacheObject != null)
-            {
-                await _instanceCache.TouchInstanceAsync(code);
-                return cacheObject;
-            }
+		public async Task<InstanceCacheObject> GetAsync(long companyId, string code)
+		{
+			var cacheObject = await _instanceCache.GetAsync(code);
+			if (cacheObject != null)
+			{
+				await _instanceCache.TouchInstanceAsync(code);
+				return cacheObject;
+			}
 
-            var instance = await _instancesRepository.GetByCodeAsync(companyId, code);
-            if (instance == null)
-                throw new InstanceException("Instance not found");
+			var instance = await _instancesRepository.GetByCodeAsync(companyId, code);
+			if (instance == null)
+				throw new InstanceException("Instance not found");
 
-            cacheObject = CreateInstanceFromDatabase(companyId, instance);
-            if (cacheObject.InstanceState == InstanceState.Progress)
-                await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
+			cacheObject = CreateInstanceFromDatabase(companyId, instance);
+			if (cacheObject.InstanceState == InstanceState.Progress)
+				await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
 
-            return cacheObject;
-        }
+			return cacheObject;
+		}
 
-        public async Task<InstanceCacheObject> CreateAsync(long companyId, string userCode, long prototype, int version)
-        {
-            try
-            {
-                var source = await CreateInstanceFromPrototypeAsync(prototype, version);
-                var cacheObject = new InstanceCacheObject
-                {
-                    CompanyId = companyId,
-                    Instance = source.CheckList,
-                    Code = $"{prototype:X}-{version:X}-{Guid.NewGuid()}",
-                    Department = source.Department,
-                    DepartmentName = source.DepartmentName,
-                    PrototypeType = source.PrototypeType,
-                    PrototypeTypeName = source.PrototypeTypeName,
-                    Prototype = prototype,
-                    PrototypeName = source.Name,
-                    Version = version,
-                    VersionState = source.State,
-                    InstanceState = InstanceState.Draft,
-                    CreatedBy = userCode,
-                    CreatedOn = DateTimeOffset.UtcNow
-                };
-	            cacheObject.Instance.Setup();
+		public async Task<InstanceCacheObject> CreateAsync(long companyId, string userCode, long prototype, int version)
+		{
+			try
+			{
+				var source = await CreateInstanceFromPrototypeAsync(prototype, version);
+				var cacheObject = new InstanceCacheObject
+				{
+					CompanyId = companyId,
+					Instance = source.CheckList,
+					Code = $"{prototype:X}-{version:X}-{Guid.NewGuid()}",
+					Department = source.Department,
+					DepartmentName = source.DepartmentName,
+					PrototypeType = source.PrototypeType,
+					PrototypeTypeName = source.PrototypeTypeName,
+					Prototype = prototype,
+					PrototypeName = source.Name,
+					Version = version,
+					VersionState = source.State,
+					InstanceState = InstanceState.Draft,
+					CreatedBy = userCode,
+					CreatedOn = DateTimeOffset.UtcNow
+				};
+				cacheObject.Instance.Setup();
 
 				await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
 
-                return cacheObject;
-            }
-            catch (InstanceException)
-            {
-                throw;
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e, "Unable to create the instance");
-                throw new InstanceException("Unable to create the instance", e);
-            }
-        }
+				return cacheObject;
+			}
+			catch (InstanceException)
+			{
+				throw;
+			}
+			catch (Exception e)
+			{
+				Logger.Error(e, "Unable to create the instance");
+				throw new InstanceException("Unable to create the instance", e);
+			}
+		}
 
-        public async Task OpenAsync(string code, string userCode)
-        {
-            try
-            {
-                var cacheObject = await _instanceCache.GetAsync(code);
-                if (cacheObject == null)
-                    throw new InstanceException("Instance not found");
-                if (cacheObject.Id.HasValue)
-                    throw new InstanceException("Instance already confirmed");
-                if (cacheObject.InstanceState != InstanceState.Draft)
-                    throw new InstanceException("Instance state not valid");
+		public async Task OpenAsync(string code, IDefaultIdentity identity)
+		{
+			try
+			{
+				var cacheObject = await _instanceCache.GetAsync(code);
+				if (cacheObject == null)
+					throw new InstanceException("Instance not found");
+				if (cacheObject.Id.HasValue)
+					throw new InstanceException("Instance already confirmed");
+				if (cacheObject.InstanceState != InstanceState.Draft)
+					throw new InstanceException("Instance state not valid");
+				if (!identity.HasPermission("Instance", "Edit", cacheObject.Department, cacheObject.PrototypeType))
+					throw new InstanceException("Access denied");
 
-                cacheObject.InstanceState = InstanceState.Progress;
-                cacheObject.Instance.Update();
+				cacheObject.InstanceState = InstanceState.Progress;
+				cacheObject.Instance.Update();
 
-                if (!cacheObject.Instance.Header.Valid)
-                    throw new InstanceException("Header not valid");
-                await ValidateExpressionsAsync(cacheObject);
+				if (!cacheObject.Instance.Header.Valid)
+					throw new InstanceException("Header not valid");
+				await ValidateExpressionsAsync(cacheObject);
 
-                var row = new Common.Data.Instances
-                {
-                    Data = JsonConvert.SerializeObject(cacheObject.Instance, _converter),
-                    Code = code,
-                    InstanceState = cacheObject.InstanceState,
-                    Prototype = cacheObject.Prototype,
-                    PrototypeName = cacheObject.PrototypeName,
-                    Version = cacheObject.Version,
-                    Year = DateTimeOffset.UtcNow.Year,
-                    CreatedBy = cacheObject.CreatedBy,
-                    CreatedOn = cacheObject.CreatedOn,
-                    ModifiedBy = userCode,
-                    ModifiedOn = DateTimeOffset.UtcNow
-                };
+				var row = new Common.Data.Instances
+				{
+					Data = JsonConvert.SerializeObject(cacheObject.Instance, _converter),
+					Code = code,
+					InstanceState = cacheObject.InstanceState,
+					Prototype = cacheObject.Prototype,
+					PrototypeName = cacheObject.PrototypeName,
+					Version = cacheObject.Version,
+					Year = DateTimeOffset.UtcNow.Year,
+					CreatedBy = cacheObject.CreatedBy,
+					CreatedOn = cacheObject.CreatedOn,
+					ModifiedBy = identity.Code,
+					ModifiedOn = DateTimeOffset.UtcNow
+				};
 
-                row = await _instancesRepository.CreateInstanceAsync(row);
+				row = await _instancesRepository.CreateInstanceAsync(row);
 
-                cacheObject.Id = row.ID;
-                cacheObject.Number = row.Number;
-                cacheObject.Description = row.Description;
-                cacheObject.PrototypeName = row.PrototypeName;
-                cacheObject.InstanceState = row.InstanceState;
-                cacheObject.ModifiedOn = row.ModifiedOn;
-                cacheObject.ModifiedBy = row.ModifiedBy;
-                cacheObject.IsDirty = false;
+				cacheObject.Id = row.ID;
+				cacheObject.Number = row.Number;
+				cacheObject.Description = row.Description;
+				cacheObject.PrototypeName = row.PrototypeName;
+				cacheObject.InstanceState = row.InstanceState;
+				cacheObject.ModifiedOn = row.ModifiedOn;
+				cacheObject.ModifiedBy = row.ModifiedBy;
+				cacheObject.IsDirty = false;
 
-                await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
-            }
-            catch (InstanceException)
-            {
-                throw;
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e, "Unable to create the instance");
-                throw new InstanceException("Unable to create the instance", e);
-            }
-        }
+				await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
+			}
+			catch (InstanceException)
+			{
+				throw;
+			}
+			catch (Exception e)
+			{
+				Logger.Error(e, "Unable to open the instance");
+				throw new InstanceException("Unable to open the instance", e);
+			}
+		}
 
-        public async Task CloseAsync(string code, string userCode)
-        {
-            try
-            {
-                var cacheObject = await _instanceCache.GetAsync(code, false);
-                if (cacheObject == null)
-                    return;
-                await CloseAsync(cacheObject, userCode, false);
-            }
-            catch (InstanceException)
-            {
-                throw;
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e, "Unable to create the instance");
-                throw new InstanceException("Unable to create the instance", e);
-            }
-        }
+		public async Task SaveAsync(string code, IDefaultIdentity identity)
+		{
+			try
+			{
+				var cacheObject = await _instanceCache.GetAsync(code, false);
+				if (cacheObject == null)
+					throw new InstanceException("Instance not found");
+				if (!cacheObject.Id.HasValue)
+					throw new InstanceException("Instance already confirmed");
+				if (cacheObject.InstanceState != InstanceState.Progress)
+					throw new InstanceException("Instance state not valid");
+				if (!identity.HasPermission("Instance", "Edit", cacheObject.Department, cacheObject.PrototypeType))
+					throw new InstanceException("Access denied");
 
-        private async Task CloseAsync(InstanceCacheObject cacheObject, string userCode, bool force)
-        {
-            LockObject lockObject = null;
+				await SaveAsync(cacheObject, identity.Code, false, true);
+			}
+			catch (InstanceException)
+			{
+				throw;
+			}
+			catch (Exception e)
+			{
+				Logger.Error(e, "Unable to save the instance");
+				throw new InstanceException("Unable to save the instance", e);
+			}
+		}
 
-            try
-            {
-                // ReSharper disable once ConvertIfStatementToSwitchStatement
-                if (cacheObject.InstanceState == InstanceState.Draft)
-                {
-                    await _instanceCache.RemoveAsync(cacheObject.Code);
-                    return;
-                }
-                if (cacheObject.InstanceState == InstanceState.Progress)
-                {
-                    lockObject = await _instanceCache.LockInstanceAsync(cacheObject.Code);
-                    if (lockObject.IsAcquired)
-                    {
-                        cacheObject = await _instanceCache.GetAsync(cacheObject.Code);
+		public async Task CloseAsync(string code, IDefaultIdentity identity)
+		{
+			try
+			{
+				var cacheObject = await _instanceCache.GetAsync(code, false);
+				if (cacheObject == null)
+					return;
 
-                        var row = await _instancesRepository.GetByCodeAsync(cacheObject.CompanyId, cacheObject.Code);
-                        if (row == null)
-                            throw new InstanceException("Instance not found");
+				if (identity.HasPermission("Instance", "Edit", cacheObject.Department, cacheObject.PrototypeType))
+					await CloseAsync(cacheObject, identity.Code, false);
+			}
+			catch (InstanceException)
+			{
+				throw;
+			}
+			catch (Exception e)
+			{
+				Logger.Error(e, "Unable to close the instance");
+				throw new InstanceException("Unable to close the instance", e);
+			}
+		}
 
-                        UnlockPages(cacheObject.Instance, userCode);
-                        row.Data = JsonConvert.SerializeObject(cacheObject.Instance, _converter);
-                        row.ModifiedOn = cacheObject.ModifiedOn;
-                        row.ModifiedBy = cacheObject.ModifiedBy;
+		private async Task CloseAsync(InstanceCacheObject cacheObject, string userCode, bool force)
+		{
+			try
+			{
+				// ReSharper disable once ConvertIfStatementToSwitchStatement
+				if (cacheObject.InstanceState == InstanceState.Draft)
+				{
+					await _instanceCache.RemoveAsync(cacheObject.Code);
+					return;
+				}
+				if (cacheObject.InstanceState == InstanceState.Progress)
+				{
+					await SaveAsync(cacheObject, userCode, force, false);
+				}
+			}
+			catch (InstanceException)
+			{
+				throw;
+			}
+			catch (Exception e)
+			{
+				Logger.Error(e, "Unable to create the instance");
+				throw new InstanceException("Unable to create the instance", e);
+			}
+		}
 
-                        if (force)
-                            await Task.WhenAll(
-                                _instancesRepository.UpdateInstanceAsync(userCode, row),
-                                _instanceCache.RemoveAsync(cacheObject.Code)
-                            );
-                        else
-                            await Task.WhenAll(
-                                _instancesRepository.UpdateInstanceAsync(userCode, row),
-                                _instanceCache.TouchInstanceAsync(cacheObject.Code, 1)
-                            );
-                    }
-                }
-            }
-            catch (InstanceException)
-            {
-                throw;
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e, "Unable to create the instance");
-                throw new InstanceException("Unable to create the instance", e);
-            }
-            finally
-            {
-                lockObject?.Dispose();
-            }
-        }
+		private async Task SaveAsync(InstanceCacheObject cacheObject, string userCode, bool close, bool save)
+		{
+			LockObject lockObject = null;
 
-        #region Events
+			try
+			{
+				lockObject = await _instanceCache.LockInstanceAsync(cacheObject.Code);
+				if (!lockObject.IsAcquired)
+					throw new InstanceException("Impossible to obtain the lock");
 
-        public async Task<InstanceCacheObject> HandleEventAsync(DefaultIdentity identity, InstanceEventRequest request)
-        {
-            LockObject lockObject = null;
+				cacheObject = await _instanceCache.GetAsync(cacheObject.Code);
 
-            try
-            {
-                var cacheObject = await _instanceCache.GetAsync(request.Code, false);
-                if (cacheObject == null)
-                    throw new InstanceException("Instance not found");
+				var row = await _instancesRepository.GetByCodeAsync(cacheObject.CompanyId, cacheObject.Code);
+				if (row == null)
+					throw new InstanceException("Instance not found");
 
-                if (cacheObject.InstanceState == InstanceState.Progress)
-                {
-                    //Lock and reload the data to be sure it's the most recent one
-                    lockObject = await _instanceCache.LockInstanceAsync(request.Code);
-                    if (!lockObject.IsAcquired)
-                        throw new InstanceException("Instance is being updated by another user");
-                }
+				UnlockPages(cacheObject.Instance, userCode);
+				row.Data = JsonConvert.SerializeObject(cacheObject.Instance, _converter);
+				row.ModifiedOn = cacheObject.ModifiedOn;
+				row.ModifiedBy = cacheObject.ModifiedBy;
 
-                cacheObject = await _instanceCache.GetAsync(request.Code);
+				if (save)
+					await Task.WhenAll(
+						_instancesRepository.UpdateInstanceAsync(userCode, row),
+						_instanceCache.TouchInstanceAsync(cacheObject.Code)
+					);
+				else if (close)
+					await Task.WhenAll(
+						_instancesRepository.UpdateInstanceAsync(userCode, row),
+						_instanceCache.RemoveAsync(cacheObject.Code)
+					);
+				else
+					await Task.WhenAll(
+						_instancesRepository.UpdateInstanceAsync(userCode, row),
+						_instanceCache.TouchInstanceAsync(cacheObject.Code, 1)
+					);
+			}
+			finally
+			{
+				lockObject?.Dispose();
+			}
+		}
 
-                var canEdit =
-                    identity.HasPermission("Instances", "Edit", cacheObject.Department, cacheObject.PrototypeType) &&
-                    cacheObject.InstanceState.In(InstanceState.Draft, InstanceState.Progress);
-                var instance = GetCheckList(identity.Code, canEdit, cacheObject);
+		#region Events
 
-                switch (request.Type)
-                {
-                    case "PageChange":
-                        await HandlePageChangeAsync(cacheObject, instance, identity.Code, canEdit, request.Item);
-                        break;
-                    case "ValueChange":
-                        await HandleValueChangeAsync(cacheObject, instance, identity.Code, canEdit, request.Item, request.Data);
-                        break;
-                    case "Add":
-                        await HandleAddAsync(cacheObject, instance, identity.Code, canEdit, request.Item);
-                        break;
-                    case "Remove":
-                        await HandleRemoveAsync(cacheObject, instance, identity.Code, canEdit, request.Item);
-                        break;
-                    case "Up":
-                        await HandleMoveAsync(cacheObject, instance, identity.Code, canEdit, request.Item, -1);
-                        break;
-                    case "Down":
-                        await HandleMoveAsync(cacheObject, instance, identity.Code, canEdit, request.Item, 1);
-                        break;
-                    //case "UnlockPage":
-                    //case "Refresh":
-                    //case "CountDown":
-                    //case "Signature":
-                    //case "SignatureCheck":
-                    //case "SignatureCancelation":
-                    //case "ExternalSourceRowChange":
-                    default:
-                        throw new InstanceException($"Event type {request.Type} not handled.");
-                }
+		public async Task<InstanceCacheObject> HandleEventAsync(DefaultIdentity identity, InstanceEventRequest request)
+		{
+			LockObject lockObject = null;
 
-                return cacheObject;
-            }
-            catch (InstanceException)
-            {
-                throw;
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e, "Unable to create the instance");
-                throw new InstanceException("Unable to create the instance", e);
-            }
-            finally
-            {
-                lockObject?.Dispose();
-            }
-        }
+			try
+			{
+				var cacheObject = await _instanceCache.GetAsync(request.Code, false);
+				if (cacheObject == null)
+					throw new InstanceException("Instance not found");
 
-        private async Task HandlePageChangeAsync(InstanceCacheObject cacheObject, Instance instance, string userCode, bool canEdit, int? itemId)
-        {
-            if (!canEdit)
-                return;
+				if (cacheObject.InstanceState == InstanceState.Progress)
+				{
+					//Lock and reload the data to be sure it's the most recent one
+					lockObject = await _instanceCache.LockInstanceAsync(request.Code);
+					if (!lockObject.IsAcquired)
+						throw new InstanceException("Instance is being updated by another user");
+				}
 
-            if (!itemId.HasValue)
-                throw new InstanceException("Item id not sent");
+				cacheObject = await _instanceCache.GetAsync(request.Code);
 
-            var page = instance.Pages.Count > itemId.Value ? instance.Pages[itemId.Value] as Page : null;
-            if (page == null)
-                throw new InstanceException("Page not found");
+				var canEdit =
+					identity.HasPermission("Instances", "Edit", cacheObject.Department, cacheObject.PrototypeType) &&
+					cacheObject.InstanceState.In(InstanceState.Draft, InstanceState.Progress);
+				var instance = GetCheckList(identity.Code, canEdit, cacheObject);
 
-            UnlockPages(instance, userCode);
-            if (!page.IsLocked)
-            {
-                page.Lock = new Lock(userCode);
-                await Update(cacheObject, instance, userCode);
-            }
-        }
+				switch (request.Type)
+				{
+					case "PageChange":
+						await HandlePageChangeAsync(cacheObject, instance, identity.Code, canEdit, request.Item);
+						break;
+					case "ValueChange":
+						await HandleValueChangeAsync(cacheObject, instance, identity.Code, canEdit, request.Item, request.Data);
+						break;
+					case "Add":
+						await HandleAddAsync(cacheObject, instance, identity.Code, canEdit, request.Item);
+						break;
+					case "Remove":
+						await HandleRemoveAsync(cacheObject, instance, identity.Code, canEdit, request.Item);
+						break;
+					case "Up":
+						await HandleMoveAsync(cacheObject, instance, identity.Code, canEdit, request.Item, -1);
+						break;
+					case "Down":
+						await HandleMoveAsync(cacheObject, instance, identity.Code, canEdit, request.Item, 1);
+						break;
+					//case "UnlockPage":
+					//case "Refresh":
+					//case "CountDown":
+					//case "Signature":
+					//case "SignatureCheck":
+					//case "SignatureCancelation":
+					//case "ExternalSourceRowChange":
+					default:
+						throw new InstanceException($"Event type {request.Type} not handled.");
+				}
 
-        private async Task HandleValueChangeAsync(InstanceCacheObject cacheObject, Instance instance, string userCode, bool canEdit, int? itemId, string value)
-        {
-            CheckPermission(canEdit);
-            if (!itemId.HasValue)
-                throw new InstanceException("Item id not sent");
+				return cacheObject;
+			}
+			catch (InstanceException)
+			{
+				throw;
+			}
+			catch (Exception e)
+			{
+				Logger.Error(e, "Error on handle event");
+				throw new InstanceException("Error on handle event", e);
+			}
+			finally
+			{
+				lockObject?.Dispose();
+			}
+		}
 
-            var field = instance.Items.ContainsKey(itemId.Value) ? instance.Items[itemId.Value] as Field : null;
-            if (field == null)
-                throw new InstanceException("Field not found");
+		private async Task HandlePageChangeAsync(InstanceCacheObject cacheObject, Instance instance, string userCode, bool canEdit, int? itemId)
+		{
+			if (!canEdit)
+				return;
 
-            if (!field.IsReadOnly)
-            {
-                if ((value ?? string.Empty) != (field.Value?.Value ?? string.Empty) && field.Validate(value))
-                {
-                    //TODO: add audit
-                    field.History.Add(new FieldRecord
-                    {
-                        DateTime = DateTimeOffset.UtcNow,
-                        User = userCode,
-                        Value = value
-                    });
-                    field.Value = new Common.Logic.Models.RawValue(value);
+			if (!itemId.HasValue)
+				throw new InstanceException("Item id not sent");
 
-                    await Update(cacheObject, instance, userCode);
-                }
-            }
-        }
+			var page = instance.Pages.Count > itemId.Value ? instance.Pages[itemId.Value] as Page : null;
+			if (page == null)
+				throw new InstanceException("Page not found");
 
-        private async Task HandleAddAsync(InstanceCacheObject cacheObject, Instance instance, string userCode, bool canEdit, int? itemId)
-        {
-            CheckPermission(canEdit);
-            if (!itemId.HasValue)
-                throw new InstanceException("Item id not sent");
+			UnlockPages(instance, userCode);
+			if (!page.IsLocked)
+			{
+				page.Lock = new Lock(userCode);
+				await Update(cacheObject, instance, userCode);
+			}
+		}
 
-            var group = instance.Items.ContainsKey(itemId.Value) ? instance.Items[itemId.Value] as Group : null;
-            if (group == null)
-                throw new InstanceException("Group not found");
+		private async Task HandleValueChangeAsync(InstanceCacheObject cacheObject, Instance instance, string userCode, bool canEdit, int? itemId, string value)
+		{
+			CheckPermission(canEdit);
+			if (!itemId.HasValue)
+				throw new InstanceException("Item id not sent");
 
-            if (!group.IsReadOnly)
-            {
-                group.AddIteration();
-                await Update(cacheObject, instance, userCode);
-            }
-        }
+			var field = instance.Items.ContainsKey(itemId.Value) ? instance.Items[itemId.Value] as Field : null;
+			if (field == null)
+				throw new InstanceException("Field not found");
 
-        private async Task HandleRemoveAsync(InstanceCacheObject cacheObject, Instance instance, string userCode, bool canEdit, int? itemId)
-        {
-            CheckPermission(canEdit);
-            if (!itemId.HasValue)
-            {
-                throw new InstanceException("Item id not sent");
-            }
+			if (!field.IsReadOnly)
+			{
+				if ((value ?? string.Empty) != (field.Value?.Value ?? string.Empty) && field.Validate(value))
+				{
+					//TODO: add audit
+					field.History.Add(new FieldRecord
+					{
+						DateTime = DateTimeOffset.UtcNow,
+						User = userCode,
+						Value = value
+					});
+					field.Value = new Common.Logic.Models.RawValue(value);
 
-            var iteration = instance.Items.ContainsKey(itemId.Value) ? instance.Items[itemId.Value] as Iteration : null;
-            if (iteration == null)
-                throw new InstanceException("Group not found");
+					await Update(cacheObject, instance, userCode);
+				}
+			}
+		}
 
-            if (!iteration.IsReadOnly)
-            {
-                ((Group)iteration.Group).Remove(iteration);
-                await Update(cacheObject, instance, userCode);
-            }
-        }
+		private async Task HandleAddAsync(InstanceCacheObject cacheObject, Instance instance, string userCode, bool canEdit, int? itemId)
+		{
+			CheckPermission(canEdit);
+			if (!itemId.HasValue)
+				throw new InstanceException("Item id not sent");
 
-        private async Task HandleMoveAsync(InstanceCacheObject cacheObject, Instance instance, string userCode, bool canEdit, int? itemId, int direction)
-        {
-            CheckPermission(canEdit);
-            if (!itemId.HasValue)
-                throw new InstanceException("Item id not sent");
+			var group = instance.Items.ContainsKey(itemId.Value) ? instance.Items[itemId.Value] as Group : null;
+			if (group == null)
+				throw new InstanceException("Group not found");
 
-            var iteration = instance.Items.ContainsKey(itemId.Value) ? instance.Items[itemId.Value] as Iteration : null;
-            if (iteration == null)
-                throw new InstanceException("Group not found");
+			if (!group.IsReadOnly)
+			{
+				group.AddIteration();
+				await Update(cacheObject, instance, userCode);
+			}
+		}
 
-            if (!iteration.IsReadOnly)
-            {
-                ((Group)iteration.Group).Move(iteration, direction);
-                await Update(cacheObject, instance, userCode);
-            }
-        }
+		private async Task HandleRemoveAsync(InstanceCacheObject cacheObject, Instance instance, string userCode, bool canEdit, int? itemId)
+		{
+			CheckPermission(canEdit);
+			if (!itemId.HasValue)
+			{
+				throw new InstanceException("Item id not sent");
+			}
 
-        // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
-        // ReSharper disable once UnusedParameter.Local
-        private static void CheckPermission(bool canEdit)
-        {
-            if (!canEdit)
-                throw new InstanceException("This instance cannot be modified");
-        }
+			var iteration = instance.Items.ContainsKey(itemId.Value) ? instance.Items[itemId.Value] as Iteration : null;
+			if (iteration == null)
+				throw new InstanceException("Group not found");
 
-        private async Task Update(InstanceCacheObject cacheObject, Instance instance, string userCode)
-        {
-            cacheObject.Instance = instance;
-            cacheObject.AsChanged(userCode);
-            await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
-        }
+			if (!iteration.IsReadOnly)
+			{
+				((Group)iteration.Group).Remove(iteration);
+				await Update(cacheObject, instance, userCode);
+			}
+		}
 
-        #endregion
+		private async Task HandleMoveAsync(InstanceCacheObject cacheObject, Instance instance, string userCode, bool canEdit, int? itemId, int direction)
+		{
+			CheckPermission(canEdit);
+			if (!itemId.HasValue)
+				throw new InstanceException("Item id not sent");
 
-        public Instance GetCheckList(string userCode, bool canEdit, InstanceCacheObject instance)
-        {
-            canEdit = canEdit && instance.InstanceState.In(InstanceState.Draft, InstanceState.Progress);
+			var iteration = instance.Items.ContainsKey(itemId.Value) ? instance.Items[itemId.Value] as Iteration : null;
+			if (iteration == null)
+				throw new InstanceException("Group not found");
 
-            instance.Instance.Update();
-            instance.Instance.UpdateReadOnly(userCode, canEdit, instance.InstanceState);
+			if (!iteration.IsReadOnly)
+			{
+				((Group)iteration.Group).Move(iteration, direction);
+				await Update(cacheObject, instance, userCode);
+			}
+		}
 
-            return instance.Instance;
-        }
+		// ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
+		// ReSharper disable once UnusedParameter.Local
+		private static void CheckPermission(bool canEdit)
+		{
+			if (!canEdit)
+				throw new InstanceException("This instance cannot be modified");
+		}
 
-        public async Task ClearPendingInstances(CancellationToken cancellationToken = new CancellationToken())
-        {
-            var score = DateTimeOffset.UtcNow.ToUnixTimeSeconds() - _configurationService.InstanceCloseTimeout * 60;
-            var codes = await _instanceCache.GetInstancesWithRangeAsync(stop: score);
+		private async Task Update(InstanceCacheObject cacheObject, Instance instance, string userCode)
+		{
+			cacheObject.Instance = instance;
+			cacheObject.AsChanged(userCode);
+			await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
+		}
 
-            foreach (var code in codes)
-            {
-                var instance = await _instanceCache.GetAsync(code, false);
-                if (instance == null)
-                    continue;
+		#endregion
 
-                if (instance.IsDirty)
-                    await CloseAsync(instance, null, true);
-                else
-                    await _instanceCache.RemoveAsync(code);
-            }
-        }
+		public Instance GetCheckList(string userCode, bool canEdit, InstanceCacheObject instance)
+		{
+			canEdit = canEdit && instance.InstanceState.In(InstanceState.Draft, InstanceState.Progress);
 
-        private async Task<GetPrototypeResponse> CreateInstanceFromPrototypeAsync(long prototype, int version)
-        {
-            try
-            {
-                var httpResponse = await _client.PostAsync("Prototypes/Prototype/Open", new GetPrototypeRequest
-                {
-                    Id = prototype,
-                    Version = version
-                });
+			instance.Instance.Update();
+			instance.Instance.UpdateReadOnly(userCode, canEdit, instance.InstanceState);
 
-                var responseData = await httpResponse.Content.ReadAsStringAsync();
-                if (httpResponse.StatusCode == HttpStatusCode.InternalServerError)
-                {
-                    var messase = JsonConvert.DeserializeObject<ResponseMessage>(responseData);
-                    throw new InstanceException(messase.Messages.FirstOrDefault() ?? "Unable to retrieve the prototype");
-                }
+			return instance.Instance;
+		}
 
-                var response = JsonConvert.DeserializeObject<GetPrototypeResponse>(responseData, _converter);
+		public async Task ClearPendingInstances(CancellationToken cancellationToken = new CancellationToken())
+		{
+			var score = DateTimeOffset.UtcNow.ToUnixTimeSeconds() - _configurationService.InstanceCloseTimeout * 60;
+			var codes = await _instanceCache.GetInstancesWithRangeAsync(stop: score);
 
-                return response;
-            }
-            catch (InstanceException e)
-            {
-                Logger.Error(e);
-                throw;
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e, "Unable to retrieve the prototype");
-                throw new InstanceException("Unable to retrieve the prototype", e);
-            }
-        }
+			foreach (var code in codes)
+			{
+				var instance = await _instanceCache.GetAsync(code, false);
+				if (instance == null)
+					continue;
 
-        private async Task ValidateExpressionsAsync(InstanceCacheObject cacheObject)
-        {
-            var instances = await _instancesRepository.GetInstancesWithExpressions(InstanceState.Progress);
+				if (instance.IsDirty)
+					await CloseAsync(instance, null, true);
+				else
+					await _instanceCache.RemoveAsync(code);
+			}
+		}
 
-            foreach (var instance in instances)
-            {
-                var list = cacheObject.Instance.Expressions.Where(e =>
-                    e.Value.Unique
-                    && !e.Value.Value.IsNull
-                    && instance.InstanceExpressionValues.Any(
-                        e2 =>
-                            e2.Code == e.Key
-                            && e2.Value == e.Value.Value?.SerializedValue
-                    )
-                ).ToList();
+		private async Task<GetPrototypeResponse> CreateInstanceFromPrototypeAsync(long prototype, int version)
+		{
+			try
+			{
+				var httpResponse = await _client.PostAsync("Prototypes/Prototype/Open", new GetPrototypeRequest
+				{
+					Id = prototype,
+					Version = version
+				});
 
-                if (list.Count > 0)
-                {
-                    var expression = list.First();
-                    throw new Exception(
-                        $"The value {expression.Value.Value.SerializedValue} for the expression {expression.Key} has been found in the in progress instance {instance.Year} - {instance.Number}");
-                }
-            }
-        }
+				var responseData = await httpResponse.Content.ReadAsStringAsync();
+				if (httpResponse.StatusCode == HttpStatusCode.InternalServerError)
+				{
+					var messase = JsonConvert.DeserializeObject<ResponseMessage>(responseData);
+					throw new InstanceException(messase.Messages.FirstOrDefault() ?? "Unable to retrieve the prototype");
+				}
 
-        private static void UnlockPages(ICheckList instance, string userCode)
-        {
-            var pages = instance.Pages.Cast<Page>().Where(p => userCode == null && p.Lock != null || p.Lock != null && p.Lock.User == userCode);
-            foreach (var p in pages)
-                p.Lock = null;
-        }
+				var response = JsonConvert.DeserializeObject<GetPrototypeResponse>(responseData, _converter);
 
-        private InstanceCacheObject CreateInstanceFromDatabase(long companyId, Common.Data.Instances instance)
-        {
-            var cacheObject = new InstanceCacheObject
-            {
-                CompanyId = companyId,
-                Instance = JsonConvert.DeserializeObject<Instance>(instance.Data, _converter),
-                Code = instance.Code,
-                Department = instance.Prototypes.Department,
-                DepartmentName = instance.Prototypes.Departments.Name,
-                PrototypeType = instance.Prototypes.Department,
-                PrototypeTypeName = instance.Prototypes.PrototypeTypes.Name,
-                Prototype = instance.Prototype,
-                PrototypeName = instance.PrototypeName,
-                Version = instance.Version,
-                VersionState = instance.PrototypeVersions.VersionState,
-                InstanceState = instance.InstanceState,
-                CreatedBy = instance.CreatedBy,
-                CreatedOn = instance.CreatedOn,
-                Id = instance.ID,
-                Year = instance.Year,
-                Number = instance.Number,
-                Description = instance.Description,
-                ModifiedOn = instance.ModifiedOn,
-                ModifiedBy = instance.ModifiedBy
-            };
-            cacheObject.Instance.Setup();
-            return cacheObject;
-        }
-    }
+				return response;
+			}
+			catch (InstanceException e)
+			{
+				Logger.Error(e);
+				throw;
+			}
+			catch (Exception e)
+			{
+				Logger.Error(e, "Unable to retrieve the prototype");
+				throw new InstanceException("Unable to retrieve the prototype", e);
+			}
+		}
+
+		private async Task ValidateExpressionsAsync(InstanceCacheObject cacheObject)
+		{
+			var instances = await _instancesRepository.GetInstancesWithExpressions(InstanceState.Progress);
+
+			foreach (var instance in instances)
+			{
+				var list = cacheObject.Instance.Expressions.Where(e =>
+					e.Value.Unique
+					&& !e.Value.Value.IsNull
+					&& instance.InstanceExpressionValues.Any(
+						e2 =>
+							e2.Code == e.Key
+							&& e2.Value == e.Value.Value?.SerializedValue
+					)
+				).ToList();
+
+				if (list.Count > 0)
+				{
+					var expression = list.First();
+					throw new Exception(
+						$"The value {expression.Value.Value.SerializedValue} for the expression {expression.Key} has been found in the in progress instance {instance.Year} - {instance.Number}");
+				}
+			}
+		}
+
+		private static void UnlockPages(ICheckList instance, string userCode)
+		{
+			var pages = instance.Pages.Cast<Page>().Where(p => userCode == null && p.Lock != null || p.Lock != null && p.Lock.User == userCode);
+			foreach (var p in pages)
+				p.Lock = null;
+		}
+
+		private InstanceCacheObject CreateInstanceFromDatabase(long companyId, Common.Data.Instances instance)
+		{
+			var cacheObject = new InstanceCacheObject
+			{
+				CompanyId = companyId,
+				Instance = JsonConvert.DeserializeObject<Instance>(instance.Data, _converter),
+				Code = instance.Code,
+				Department = instance.Prototypes.Department,
+				DepartmentName = instance.Prototypes.Departments.Name,
+				PrototypeType = instance.Prototypes.Department,
+				PrototypeTypeName = instance.Prototypes.PrototypeTypes.Name,
+				Prototype = instance.Prototype,
+				PrototypeName = instance.PrototypeName,
+				Version = instance.Version,
+				VersionState = instance.PrototypeVersions.VersionState,
+				InstanceState = instance.InstanceState,
+				CreatedBy = instance.CreatedBy,
+				CreatedOn = instance.CreatedOn,
+				Id = instance.ID,
+				Year = instance.Year,
+				Number = instance.Number,
+				Description = instance.Description,
+				ModifiedOn = instance.ModifiedOn,
+				ModifiedBy = instance.ModifiedBy
+			};
+			cacheObject.Instance.Setup();
+			return cacheObject;
+		}
+	}
 }
