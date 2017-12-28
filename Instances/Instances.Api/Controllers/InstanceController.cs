@@ -32,8 +32,18 @@ namespace CheckListManager.Instances.Api.Controllers
 				var response = new InstanceResponse
 				{
 					Code = cacheObject.Code,
-					CheckList = _instanceManagerService.GetCheckList(Identity.Code, Identity.HasPermission("Instances", "Create", cacheObject.Department, cacheObject.PrototypeType), cacheObject)
+                    State = cacheObject.InstanceState,
 
+                    CheckList = _instanceManagerService.GetCheckList(Identity.Code, Identity.HasPermission("Instances", "Create", cacheObject.Department, cacheObject.PrototypeType), cacheObject),
+
+                    Department = cacheObject.Department,
+                    DepartmentName = cacheObject.DepartmentName,
+                    PrototypeType = cacheObject.Prototype,
+                    PrototypeTypeName = cacheObject.PrototypeTypeName,
+                    Prototype = cacheObject.Prototype,
+                    PrototypeName = cacheObject.PrototypeName,
+                    Version = cacheObject.Version,
+                    VersionState = cacheObject.VersionState
                 };
 				return Ok(Message.Create(response));
 			}
@@ -71,8 +81,21 @@ namespace CheckListManager.Instances.Api.Controllers
 				{
 					Id = cacheObject.Id,
 					Code = cacheObject.Code,
-					CheckList = _instanceManagerService.GetCheckList(Identity.Code, Identity.HasPermission("Instances", "View", cacheObject.Department, cacheObject.PrototypeType), cacheObject)
-				};
+                    Year = cacheObject.Year,
+                    Number = cacheObject.Number,
+                    State = cacheObject.InstanceState,
+
+                    CheckList = _instanceManagerService.GetCheckList(Identity.Code, Identity.HasPermission("Instances", "View", cacheObject.Department, cacheObject.PrototypeType), cacheObject),
+
+                    Department = cacheObject.Department,
+                    DepartmentName = cacheObject.DepartmentName,
+                    PrototypeType = cacheObject.Prototype,
+                    PrototypeTypeName = cacheObject.PrototypeTypeName,
+                    Prototype = cacheObject.Prototype,
+                    PrototypeName = cacheObject.PrototypeName,
+                    Version = cacheObject.Version,
+                    VersionState = cacheObject.VersionState
+                };
 				return Ok(Message.Create(response));
 			}
 			catch (Exception e)
@@ -109,8 +132,9 @@ namespace CheckListManager.Instances.Api.Controllers
 				{
 					Id = cacheObject.Id,
 					Code = cacheObject.Code,
-					CheckList = _instanceManagerService.GetCheckList(Identity.Code, Identity.HasPermission("Instances", "Edit", cacheObject.Department, cacheObject.PrototypeType), cacheObject)
-				};
+					CheckList = _instanceManagerService.GetCheckList(Identity.Code, Identity.HasPermission("Instances", "Edit", cacheObject.Department, cacheObject.PrototypeType), cacheObject),
+                    State = cacheObject.InstanceState
+                };
 				return Ok(Message.Create(response));
 			}
 			catch (Exception e)

@@ -20,7 +20,7 @@
         for (index in items) {
             var item = items[index];
             if (item.content == null)
-                console.log(new Error("content not found in bredcrumbs item"));
+                console.log(new Error("content not found in breadcrumbs item"));
 
             element.append((item.url == null ? $("<span />") : $("<a />").attr("href", item.url)).html(item.content));
 		}

@@ -9,6 +9,7 @@ namespace CheckListManager.Instances.Logic.Messages
         public string DepartmentName { get; set; }
         public long PrototypeType { get; set; }
         public string PrototypeTypeName { get; set; }
+        public string State { get; set; }
         public Instance CheckList { get; set; }
 	}
 }

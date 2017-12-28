@@ -58,24 +58,21 @@
                 }, "Icon"),
 
             buttonGroup = new matematici.ButtonGroup("span.ButtonGroup")
-                .add("Open", function () {
-                    instance.save();
-                }, "Open")
-                .add("Cancel", function () {
-                    instance.cancel(instance.refresh);
-                }, "Cancel")
-                .add("Complete", function () {
-                    instance.confirm(instance.refresh);
-                }, "Complete")
-                .add("Confirm", function () {
-                    instance.save();
-                }, "Confirm")
+                .add("History", function () {
+                    instance.showHistory();
+                }, "History")
                 .add("Save", function () {
                     instance.save();
                 }, "Save")
-                .add("History", function () {
-                    instance.showHistory();
-                }, "History");
+                .add("Cancel", function () {
+                    instance.cancel();
+                }, "Cancel")
+                .add("Complete", function () {
+                    instance.complete();
+                }, "Complete")
+                .add("Confirm", function () {
+                    instance.confirm();
+                }, "Confirm");
 
         matematici.save = instance.save;
 
