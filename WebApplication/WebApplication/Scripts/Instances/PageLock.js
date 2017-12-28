@@ -9,19 +9,16 @@
         },
 
         createContent = function (index) {
-            var content =
-                $("<div />")
-                    .append($("<span />").text("locked by: "))
-                    .append($("<strong />").text(model.Pages[index].Lock.User))
-                    .append($("<br />"))
-                    .append($("<span />").text("locked on: "))
-                    .append($("<strong />").text(format(model.Pages[index].Lock.Date)))
-                    .append($("<br />"))
-                    .append($("<span />").text("updated on: "))
-                    .append($("<strong />").text(format(model.Pages[index].Lock.Date)))
-                    .append($("<br />"))
-                    .append($("<span />").text("client id: "))
-                    .append($("<strong />").text(model.Pages[index].Lock.ClientId));
+			var content =
+				$("<div />")
+					.append($("<span />").text("locked by: "))
+					.append($("<strong />").text(model.pages[index].lock.user))
+					.append($("<br />"))
+					.append($("<span />").text("locked on: "))
+					.append($("<strong />").text(format(model.pages[index].lock.date)))
+					.append($("<br />"))
+					.append($("<span />").text("updated on: "))
+					.append($("<strong />").text(format(model.pages[index].lock.date)));
             return content;
         },
 
@@ -38,9 +35,9 @@
 						$("div.Errrors", buttons.parent()).remove();
 						new instances.Event(instances.Events.unlockPage, index)
 							.done(function (result) {
-								if (result.Error) {
+								if (result.Error) 
 									$("<div />").addClass("Errors").text(result.Error).insertAfter(buttons).show();
-								} else {
+								else {
 									instances.instance.update(result);
 									matematici.dialog.close();
 								}
@@ -65,8 +62,8 @@
 
     this.update = function (newModel) {
         model = newModel;
-        for (var index in model.Pages)
-            labels.eq(index).toggle(model.Pages[index].Locked);
+        for (var index in model.pages)
+            labels.eq(index).toggle(model.pages[index].locked);
     };
 
     setup();

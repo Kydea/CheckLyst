@@ -1,43 +1,23 @@
 ﻿@import "_Library.scss";
 @import "FontAwesome/_variables.scss";
 
-body.Instance {
+div.Instance {
     h2 {
-        margin-bottom: 5px !important;
     }
 
     div.ui-datepicker {
         z-index: $Depth-CheckList-Date-Picker !important;
     }
 
-    div#InstanceInformation {
-        margin-bottom: 30px;
-
-        &.Fixed {
-            position: fixed;
-            z-index: $Depth-Fixed-Header;
-            top: 0;
-
-            @media #{$Media-Extended} {
-                left: $Metric-Separator-Extended;
-                right: $Metric-Separator-Extended;
-            }
-
-            @media #{$Media-Mobile} {
-                left: $Metric-Separator-Mobile;
-                right: $Metric-Separator-Mobile;
-            }
-        }
-    }
-
     .Element {
         div.Information {
+            margin: 0 !important;
             content: "";
             display: block;
             position: absolute;
             z-index: $Depth-CheckList-Information;
-            top: 0;
-            right: 0;
+            top: 10px;
+            right: 10px;
             height: 6px;
             width: 6px;
             background: red;
@@ -169,11 +149,6 @@ body.Instance {
                     display: none;
                 }
             }
-        }
-
-        div.Group > div.Information {
-            right: 10px;
-            top: 10px;
         }
 
         > div.Information {

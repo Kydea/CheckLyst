@@ -101,13 +101,19 @@
             matematici.popup.show(options);
         };
 
-    this.getUsers = function () {
-        var users = [];
-        $("a.User", element).each(function () {
-            users.push($("span.UserName", this).attr("title"));
-        });
-        return users;
-    }
+	this.getUsers = function () {
+		var users = [];
+		$("a.User", element).each(function () {
+			users.push($("span.UserName", this).attr("title"));
+		});
+		return users;
+	};
+
+	this.update = function () {
+		$(".CurrentUser", element)
+			.attr("title", localStorage.userCode)
+			.children(".UserName").text(localStorage.userName)
+	};
 
     setup();
 }

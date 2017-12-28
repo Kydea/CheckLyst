@@ -112,7 +112,6 @@ header {
         @media #{$Media-Extended} {
             top: 0;
             left: 0;
-            position: fixed;
             text-align: right;
             border-bottom: 1px solid $Color-Grey-Light;
             margin-left: $Metric-Header-Height;

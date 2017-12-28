@@ -150,7 +150,7 @@
 
                 matematici.AnimationManager.toggle(false);
 
-                matematici.elements.body.animate({ scrollTop: 0 }, 500, function () {
+				$("document, html").animate({ scrollTop: 0 }, 500, function () {
                     matematici.events.onPageUnload(function () {
 
                         if (landing)
@@ -215,7 +215,7 @@ $(document).on("click", "a:not(.Standard)[target!='_blank']", function (e) {
                 top = parseInt(url.substring(1)),
                 offset = url == "#" + top ? { top: top } : $(url).offset();
             if (offset != null && offset.top != null) {
-                $(document.body).animate({ 'scrollTop': offset.top }, 500);
+                matematici.elements.document.animate({ 'scrollTop': offset.top }, 500);
                 matematici.navigator.setSuspended(true);
                 if (offset.top == 0) {
                     //evita #0 nell'indirizzo

@@ -5,6 +5,7 @@
 		form,
 		paginator,
 		filtered = false,
+
 		filterHandler = function (result) {
 			grid.update(result.data);
 			paginator.setPage(result.currentPage, result.pagesCount);
@@ -71,6 +72,10 @@
 
 	searchPage.isReadOnly = function () {
 		return options.readOnly;
+	};
+
+	searchPage.getForm = function () {
+		return form;
 	};
 
 	setup();

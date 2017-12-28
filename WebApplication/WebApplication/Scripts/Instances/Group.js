@@ -58,15 +58,14 @@
         },
 
         create = function () {
-            console.log(setupModel);
             tableContent = !parent.isPage() && (parent.isTable() || parent.isTableContent());
-            table = !tableContent && setupModel.ShowAsTable;
+            table = !tableContent && setupModel.showAsTable;
             subRow = !parent.isTable() && tableContent; 
             element = parent.isTable() ? $("<tr class='Pippo' />") : subRow ? parent.getElement() : $("<div />");
 
             if (table) {
                 tableElement = $("<table />").addClass("Grid").appendTo(element).append($("<thead />")).append($("<tbody />"));
-                createTableHeader([], 0, setupModel.Items);
+                createTableHeader([], 0, setupModel.items);
             }
 
             group.appendElement();
@@ -99,8 +98,8 @@
                 }
                 if (group.isGroup() && !group.isTableContent()) {
                     elementInformation = new instances.ElementInformation(element);
-                    addButton = $("<div />").addClass("Item NewLine").toggleClass("Hidden", setupModel && setupModel.DisableAdd).appendTo(element)
-                        .append($("<a />").attr("href", "#").addClass("Button AddIteration").toggleClass("Disabled", setupModel && setupModel.DisableAdd).text("Add").on("click", function () {
+                    addButton = $("<div />").addClass("Item NewLine").toggleClass("Hidden", setupModel && setupModel.disableAdd).appendTo(element)
+                        .append($("<a />").attr("href", "#").addClass("Button AddIteration").toggleClass("Disabled", setupModel && setupModel.disableAdd).text("Add").on("click", function () {
                             if (!readOnly) new instances.Event(instances.Events.add, id).trigger();
                         }));
                 }
@@ -108,16 +107,16 @@
         },
 
         update = function (model) {
-            readOnly = !!model.ReadOnly;
-            if (title) title.text(model.Description);
-            if (addButton) addButton.toggle(model.Iterator && !model.DisableAdd);
-            if (!group.isPage()) id = model.Id;
+            readOnly = !!model.readOnly;
+            if (title) title.text(model.description);
+            if (addButton) addButton.toggle(model.iterator && !model.disableAdd);
+            if (!group.isPage()) id = model.id;
             element
-                .toggleClass("Hidden", model.Hidden).toggleClass("ReadOnly", readOnly).toggleClass("Valid", model.Valid)
-                .attr("data-code", model.Code).attr("data-id", model.Id);
-            if (model.CountDownTo) new instances.CountDown(element, model.CountDownTo, model.Id);
-            group.setColor(model.Color);
-            group.setFontSize(model.FontSize);
+                .toggleClass("Hidden", model.hidden).toggleClass("ReadOnly", readOnly).toggleClass("Valid", model.valid)
+                .attr("data-code", model.code).attr("data-id", model.id);
+            if (model.countDownTo) new instances.CountDown(element, model.countDownTo, model.id);
+            group.setColor(model.color);
+            group.setFontSize(model.fontSize);
 
             if (addButton) addButton.children("a").toggleClass("ReadOnly", readOnly);
             if (iterationCommands) iterationCommands.toggle(!readOnly);
@@ -155,23 +154,23 @@
         update(model);
 
         /* instanzia i nuovi oggetti, aggiorna ricorsivamente Groups per le pagine, Items per i gruppi e Iterations per gli iteratori */
-        var children = model.Groups ? model.Groups : model.Iterator ? model.Iterations : model.Items;
+        var children = model.groups ? model.groups : model.iterator ? model.iterations : model.items;
         for (index in children) {
             var
                 item,
                 itemModel = children[index];
 
-            if (!itemIndexes[itemModel.Id]) 
-                item = itemModel.TypeName == "Group" || itemModel.TypeName == "Iteration" ? new instances.Group(null, itemModel.TypeName, this, index == 0 ? null : newItems[index - 1], itemModel) : new instances.Item(itemModel, this);
+            if (!itemIndexes[itemModel.id]) 
+                item = itemModel.typeName == "Group" || itemModel.typeName == "Iteration" ? new instances.Group(null, itemModel.typeName, this, index == 0 ? null : newItems[index - 1], itemModel) : new instances.Item(itemModel, this);
             else
-                item = items[itemIndexes[itemModel.Id]];
+                item = items[itemIndexes[itemModel.id]];
 
             item.update(itemModel);
 
-            newItemIndexes[itemModel.Id] = index;
+            newItemIndexes[itemModel.id] = index;
             newItems.push(item);
-            if (itemModel.TypeName == "Iteration")
-                iteratorOrder[itemModel.Index] = index;
+            if (itemModel.typeName == "Iteration")
+                iteratorOrder[itemModel.index] = index;
         }
 
         /* elimina gli oggetti che non esistono più */

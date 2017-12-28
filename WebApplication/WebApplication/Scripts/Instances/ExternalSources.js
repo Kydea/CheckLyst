@@ -59,14 +59,8 @@
                 method: "post",
                 data: { Name: instances.instance.getExternalSources()[name], Page: -1 }
             }).done(function (result) {
-                if (result.Error)
-                    matematici.dialog.error("error", result.Error);
-                else
-                    for (var index in result.Parameters)
-                        addFilter(result.Parameters[index]);
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                console.log(jqXHR, textStatus, errorThrown);
-                matematici.dialog.error("server error", "Client unique identifier unavailable");
+                for (var index in result.Parameters)
+                    addFilter(result.Parameters[index]);
             });
         },
 
@@ -106,13 +100,7 @@
                 method: "post",
                 data: { Values: getValues(), Name: instances.instance.getExternalSources()[name], Page: page }
             }).done(function (result) {
-                if (result.Error)
-                    matematici.dialog.error("error", result.Error);
-                else
-                    fill(result.Data);
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                console.log(jqXHR, textStatus, errorThrown);
-                matematici.dialog.error("server error", "Client unique identifier unavailable");
+                fill(result.Data);
             });
         };
 

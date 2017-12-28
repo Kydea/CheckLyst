@@ -9,11 +9,16 @@ namespace CheckListManager.Instances.Logic.Models
 		public long CompanyId { get; set; }
 
 		public string Code { get; set; }
-		public long PrototypeType { get; set; }
-		public long Prototype { get; set; }
-		public int Version { get; set; }
+        public long Department { get; set; }
+        public string DepartmentName { get; set; }
+        public long PrototypeType { get; set; }
+        public string PrototypeTypeName { get; set; }
+        public long Prototype { get; set; }
+        public string PrototypeName { get; set; }
+        public int Version { get; set; }
+        public string VersionState { get; set; }
 
-		[JsonIgnore]
+        [JsonIgnore]
 		public Instance Instance { get; set; }
 
 		public long? Id { get; set; }
@@ -22,7 +27,6 @@ namespace CheckListManager.Instances.Logic.Models
 
 		public string Description { get; set; }
 		public string InstanceState { get; set; }
-		public string PrototypeName { get; set; }
 
 		public bool IsDirty { get; set; }
 

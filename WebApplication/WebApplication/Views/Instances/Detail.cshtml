@@ -1,0 +1,95 @@
+﻿@model CheckListManager.WebApplication.Models.Instance
+
+<div 
+    id="InstancesDetailPage" 
+    class="Instance CheckList" 
+    data-api="@BaseUrl"
+>
+    <h1>Instance Manager</h1>
+
+    <div class="ActionBar">
+        <span class="ButtonGroup" data-text="Actions"></span>
+    </div>
+
+    <div class="ShadowPanel">
+        <div class="HeaderContainer">
+            <h2></h2>
+
+            <div id="Header" class="Group"></div>
+        </div>
+
+        <div class="TabContainer">
+            <div class="TabLabels"></div>
+        </div>
+
+        <div class="Element Page Tab"></div>
+    </div>
+</div>
+
+<div class="PropertyPanel">
+    <div class="PropertyList"></div>
+    <div class="PropertyValue"></div>
+    <div class="Information"></div>
+</div>
+
+<script type="text/javascript">
+    matematici.events.onPageLoad = function (callback) {
+        new matematici.Page({
+            name: "Instance-Manager",
+            cssClass: "IstanceManager CheckList",
+            breadcrumbs: [
+                { content: "instance manager" }
+            ],
+        });
+
+        var
+            element = $("#InstancesDetailPage"),
+            instance = new instances.Instance(element, {
+                code: "@(Model.Code ?? "")",
+                prototype: "@(Model.Prototype ?? -1)",
+                version: "@(Model.Version ?? -1)",
+                detailUrl: "@Url.Action("Detail")",
+                listUrl: "@Url.Action("List")"
+            }),
+
+            actionBar = new matematici.ActionBar("div.ActionBar")
+                .add("<i class='fi flaticon-calculator'></i>", function () {
+                    new matematici.CheckListGrid(instance.getExpressions());
+                }, "Icon"),
+
+            buttonGroup = new matematici.ButtonGroup("span.ButtonGroup")
+                .add("History", function () {
+                    instance.showHistory();
+                }, "History")
+                .add("Save", function () {
+                    instance.save();
+                }, "Save")
+                .add("Cancel", function () {
+                    instance.cancel();
+                }, "Cancel")
+                .add("Complete", function () {
+                    instance.complete();
+                }, "Complete")
+                .add("Confirm", function () {
+                    instance.confirm();
+                }, "Confirm");
+
+        matematici.save = instance.save;
+
+        matematici.events.onPageUnload = function (callback) {
+            $.ajax({
+                url: matematici.urls.instances + "/Close",
+                type: "post",
+                data: { code: "@Model.Code" }
+            }).done(function (result) {
+                matematici.canClose = true;
+                matematici.save = undefined;
+                instance.destroy();
+                callback();
+            });
+        };
+
+        callback.call();
+    };
+
+</script>

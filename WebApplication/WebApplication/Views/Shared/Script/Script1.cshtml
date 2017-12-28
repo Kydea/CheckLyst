@@ -40,6 +40,7 @@
     matematici.navigator.checkEventHandlers();
 
     matematici.elements.window = $(window);
+    matematici.elements.document = $(document);
     matematici.elements.body = $("body");
     matematici.elements.content = $("div#Content");
     matematici.elements.header = $("header");
@@ -76,6 +77,8 @@
     matematici.AnimationManager.toggle(true);
 
     matematici.menu.toggleItemsByRole();
+
+    matematici.userPanel.update();
 
     matematici.elements.body.on("keydown", function (e) {
         var key = e.which;

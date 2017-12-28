@@ -77,8 +77,15 @@
 
 	this.toggleItemsByRole = function () {
 		$("li[data-role]", menu).each(function () {
+			var
+				item = $(this),
+				hasRole = matematici.tokenManager.checkRole(item.data("role") + "#");
+			item.toggle(hasRole).toggleClass("Hidden", !hasRole);
+		});
+
+		$(".MenuItem .SubMenu", menu).each(function () {
 			var item = $(this);
-			item.toggle(matematici.tokenManager.checkRole(item.data("role") + "#"));
+			item.parent().toggle(item.children().filter(":not(.Hidden)").size() > 0);
 		});
 	};
 

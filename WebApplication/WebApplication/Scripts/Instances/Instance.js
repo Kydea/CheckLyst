@@ -1,204 +1,212 @@
-﻿instances.Instance = function (prototype, version, year, number) {
-    var
-        instance = this,
-        element = $("div#Content"),
-        information = element.children("div#InstanceInformation"),
-        header = new instances.Group($("div#Header", element), "Group"),
-        page = new instances.Group($("div.Page", element), "Page"),
-        prototypeState,
-        tab,
-        pageLock,
+﻿instances.Instance = function (element, options) {
+	var
+		instance = this,
+		header = new instances.Group($("div#Header", element), "Group"),
+		page = new instances.Group($("div.Page", element), "Page"),
+		prototypeState,
+		code,
+		id,
+		state,
+		tab,
+		pageLock,
 		updateHandler,
-        externalSources = {},
-        expressions = [],
+		externalSources = {},
+		expressions = [],
 
-        scroll = function () {
-            information.eq(1).toggle(matematici.elements.window.scrollTop() > information.offset().top);
-        },
+		setupActionBar = function () {
+			buttonGroup = $("div.ActionBar a.ButtonGroup", element),
+				confirmButton = $("a.Confirm", buttonGroup).toggle(state == instances.Instance.states.completed),
+				completeButton = $("a.Complete", buttonGroup).toggle(state == instances.Instance.states.progress),
+				cancelButton = $("a.Cancel", buttonGroup).toggle(state == state == instances.Instance.states.progress),
+				saveButton = $("a.Save", buttonGroup).toggle(state == instances.Instance.states.draft || state == instances.Instance.states.progress),
+				historyButton = $("a.History", buttonGroup).hide(); //.toggle(state != instances.Instance.states.draft);
 
-        update = function (model) {
-            if (model.Error)
-                matematici.dialog.error("Error", model.Error);
-            else {
-                //matematici.elements.body.css("zoom", 2);//model.zoom / 100;
-                prototypeState = model.PrototypeState;
+			if (buttonGroup.children().size() == 0)
+				buttonGroup.hide();
+		},
 
-                information
-                    .empty()
-                    .append($("<table />").addClass("Grid")
-                        .append($("<thead />")
-                            .append($("<tr />")
-                                .append($("<th />").text("company"))
-                                .append($("<th />").text("department"))
-                                .append($("<th />").text("prototype type"))
-                                .append($("<th />").text("code"))
-                                .append($("<th />").text("state"))
-                            )
-                        )
-                        .append($("<tbody />")
-                            .append($("<tr />")
-                                .append($("<td />").text(model.Company))
-                                .append($("<td />").text(model.Department))
-                                .append($("<td />").text(model.PrototypeType))
-                                .append($("<td />").text(prototype + "." + version + "." + (number < 0 ? "?" : year + "." + number)))
-                                .append($("<td />").append(model.State || "Draft"))
-                            )
-                        )
-                    );
+		update = function (model) {
+			prototypeState = model.prototypeState;
 
-                pageLock.update(model);
-                if (model.Header)
-                    header.update(model.Header);
-                else
-                    header.getElement().hide();
-                page.update(model.Pages[tab.getCurrentIndex()]);
-            }
+			tab.clear();
 
-            if (updateHandler) updateHandler(model);
-            externalSources = model.ExternalSources;
-            expressions = model.Expressions;
-        },
+			for (var pageIndex in model.pages)
+				tab.add(model.pages[pageIndex].description)
 
-        save = function (state, callback, note) {
-            $.ajax({
-                url: matematici.urls.instances.save,
-                type: "post",
-                data: { ClientId: matematici.client.getId(), State: state, Note: note }
-            }).done(function (result) {
-                if (result.error) {
-                    matematici.dialog.error("Error", result.error);
-                } else if (result.redirect) {
-                    matematici.canClose = true;
-                    matematici.navigator.open(result.redirect, false, false);
-                } else {
-                    matematici.canClose = true;
+			tab.select(0)
+			tab.resize();
 
-                    $("div.ActionBar a.Save").text("Save"); //possibly changes Open into Save
+			pageLock.update(model);
+			if (model.header)
+				header.update(model.header);
+			else
+				header.getElement().hide();
+			page.update(model.pages[tab.getCurrentItem().index]);
 
-                    if (callback)
-                        callback.call();
-                }
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                console.log("Server error", jqXHR, textStatus, errorThrown);
-                alert("Server error: " + errorThrown);
-            });
-        };
+			if (updateHandler) updateHandler(model);
+			externalSources = model.externalSources;
+			expressions = model.expressions;
+		},
 
-    instance.getKey = function () {
-        return { prototype, version, year, number };
-    };
+		load = function () {
+			$.ajax({
+				url: matematici.urls.instances + "/" + (options.code == "" ? "Create" : "Get"),
+				type: "post",
+				data: {
+					code: options.code,
+					prototype: options.prototype,
+					version: options.version
+				}
+			}).done(function (result) {
+				console.log(result)
 
-    instance.getElement = function () {
-        return element;
-    };
+				var
+					year = result.data.year,
+					number = result.data.number;
 
-    instance.getExpressions = function () {
-        return expressions;
-    };
+				id = result.data.id;
+				state = result.data.state;
+				code = result.data.code;
 
-    instance.getExternalSources = function () {
-        return externalSources;
-    };
+				matematici.breadcrumbs.set([
+					{ content: result.data.departmentName },
+					{ content: result.data.prototypeTypeName },
+					{ content: result.data.prototypeName + "." + result.data.version },
+					{
+						content:
+						(result.data.versionState == "Active" || year == 0 ? "SE" : year) + "." + (number || "?") + " (" + state + ")"
+					},
+				]);
 
-    instance.getPrototypeState = function () {
-        return prototypeState;
-    };
+				setupActionBar();
 
-    instance.update = update;
+				instances.instance.update(result.data.checkList);
+			});
+		},
 
-    instances.instance = instance;
+		send = function (action, note) {
+			$.ajax({
+				url: matematici.urls.instances + "/" + action,
+				type: "post",
+				data: { code: code, note: note }
+			}).done(function (result) {
+				console.log(result);
+				alert("TODO: refresh");
+			});
+		};
 
-    instance.save = function (callback) {
-        save(null, callback);
-    };
+	instance.getCode = function () {
+		return options.code;
+	};
 
-    instance.refresh = function () {
-        new instances.Event(instances.Events.refresh).trigger();
-    };
+	instance.getKey = function () {
+		return { prototype, version, year, number };
+	};
 
-    instance.export = function () {
-        $("<a href='" + matematici.urls.instances.export + "?ClientID=" + matematici.client.getId() + "&" + new Date().getTime() + "' target='_blank'></a>")[0].click();
-    };
+	instance.getElement = function () {
+		return element;
+	};
 
-    instance.quit = function () {
-        matematici.navigator.open(matematici.urls.instances.list, false, true);
-    };
+	instance.getExpressions = function () {
+		return expressions;
+	};
 
-    instance.cancel = function (callback) {
-        matematici.dialog.show("Cancel", "Provide a note for the cancelation", [
+	instance.getExternalSources = function () {
+		return externalSources;
+	};
+
+	instance.getPrototypeState = function () {
+		return prototypeState;
+	};
+
+	instance.update = update;
+
+	instances.instance = instance;
+
+	instance.refresh = function () {
+		new instances.Event(instances.Events.refresh).trigger();
+	};
+
+	instance.export = function () {
+		$("<a href='" + matematici.urls.instances.export + "?ClientID=" + matematici.client.getId() + "&" + new Date().getTime() + "' target='_blank'></a>")[0].click();
+	};
+
+	instance.quit = function () {
+		matematici.navigator.open(matematici.urls.instances.list, false, true);
+	};
+
+	instance.save = function () {
+		send(state == instances.Instance.states.draft ? "Open" : "Save");
+	};
+
+	instance.cancel = function () {
+		matematici.dialog.show("Cancel", "Provide a note for the cancelation", [
 			{
-			    text: "Save", icon: "check", handler: function () {
-			        save(instances.Instance.states.canceled, callback, $("textarea.Textarea", $(this).closest("div.Dialog")).val());
-			    }
+				text: "Save", icon: "check", handler: function () {
+					send("Cancel", $("textarea.Textarea", $(this).closest("div.Dialog")).val());
+				}
 			},
-			{ text: "Cancel", icon: "remove" },
-			{ textarea: true, text: "Insert note here" }
-        ]);
-    };
+			{ text: "Cancel", icon: "times" },
+			{ textarea: true, text: "Note" }
+		]);
+	};
 
-    instance.confirm = function (callback) {
-        save(instances.Instance.states.confirmed, callback);
-    };
+	instance.complete = function () {
+		send("Complete");
+	};
 
-    instance.setOnUpdateHandler = function (handler) {
-        updateHandler = handler;
-    };
+	instance.confirm = function () {
+		send("Confirm");
+	};
 
-    instance.showHistory = function () {
-        $.ajax({
-            url: matematici.urls.instances.history,
-            type: "post",
-            data: { ClientId: matematici.client.getId() }
-        }).done(function (result) {
-            if (result.Error)
-                matematici.dialog.error("Error", result.Error);
-            else {
-                var
-                    checkListGrid = new matematici.CheckListGrid(result.Data),
-                    parameters = checkListGrid.getParameters(),
-                    attributes = { type: "text", readonly: "readonly" };
+	instance.setOnUpdateHandler = function (handler) {
+		updateHandler = handler;
+	};
 
-                parameters.append($("<label />").text("Company").append($("<input />").attr(attributes).val(result.Company)));
-                parameters.append($("<label />").text("Department").append($("<input />").attr(attributes).val(result.Department)));
-                parameters.append($("<label />").text("Prototype Type").append($("<input />").attr(attributes).val(result.PrototypeType)));
-                parameters.append($("<label />").text("Prototype").append($("<input />").attr(attributes).val(result.Prototype + "." + result.Version)));
-                parameters.append($("<label />").text("Instance").append($("<input />").attr(attributes).val(result.Year + "." + result.Number)));
-            }
-        }).fail(function (jqXHR, textStatus, errorThrown) {
-            console.log("Server error", jqXHR, textStatus, errorThrown);
-            alert("Server error: " + errorThrown);
-        });
-    };
+	instance.showHistory = function () {
+		$.ajax({
+			url: matematici.urls.instances + "/GetHistory",
+			type: "post",
+			data: { ClientId: matematici.client.getId() }
+		}).done(function (result) {
+			if (result.Error)
+				matematici.dialog.error("Error", result.Error);
+			else {
+				var
+					checkListGrid = new matematici.CheckListGrid(result.Data),
+					parameters = checkListGrid.getParameters(),
+					attributes = { type: "text", readonly: "readonly" };
 
-    instance.initialize = function () {
-        element.children("div#InstanceInformation").clone().addClass("Fixed").insertAfter(information);
-        information = element.children("div#InstanceInformation"); //both the elements
+				parameters.append($("<label />").text("Company").append($("<input />").attr(attributes).val(result.Company)));
+				parameters.append($("<label />").text("Department").append($("<input />").attr(attributes).val(result.Department)));
+				parameters.append($("<label />").text("Prototype Type").append($("<input />").attr(attributes).val(result.PrototypeType)));
+				parameters.append($("<label />").text("Prototype").append($("<input />").attr(attributes).val(result.Prototype + "." + result.Version)));
+				parameters.append($("<label />").text("Instance").append($("<input />").attr(attributes).val(result.Year + "." + result.Number)));
+			}
+		});
+	};
 
-        matematici.elements.window.on("resize", scroll);
-        matematici.elements.window.on("scroll", scroll);
-        scroll();
+	instance.initialize = function () {
+		instanceElementInformation = new instances.ElementInformation(element);
+		tab = new matematici.Tab($("div.TabContainer", element)).addHandler(function (index) {
+			page.clear();
+			new instances.Event(instances.Events.pageChange, index).trigger();
+		});
+		pageLock = new instances.PageLock(instance);
 
-        instanceElementInformation = new instances.ElementInformation(element);
-        tab = new matematici.Tab($("div.TabContainer", element)).addHandler(function (index) {
-            page.clear();
-            new instances.Event(instances.Events.pageChange, index).trigger();
-        });
-        pageLock = new instances.PageLock(instance);
-        new instances.Event(instances.Events.setup, { prototype: prototype, version: version, year: year, number: number }).trigger();
-    };
+		load();
+	};
 
-    instance.destroy = function () {
-        matematici.elements.window.off("resize", scroll);
-        matematici.elements.window.off("scroll", scroll);
-    }
+	instance.destroy = function () {
+	}
 
-    instance.initialize();
+	instance.initialize();
 };
 
 instances.Instance.states = {
-    draft: "Draft",
-    progress: "In progress",
-    confirmed: "Confirmed",
-    canceled: "Canceled",
-    simulation: "Simulation evidence"
+	draft: "Draft",
+	progress: "In progress",
+	completed: "Completed",
+	confirmed: "Confirmed",
+	canceled: "Canceled"
 };

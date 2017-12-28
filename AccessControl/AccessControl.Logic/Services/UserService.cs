@@ -53,7 +53,7 @@ namespace CheckListManager.AccessControl.Logic.Services
             if (string.IsNullOrEmpty(code))
                 throw new AuthenticationException(100, "User code not sent");
 
-            Users user;
+            Users user = null;
 
             try
             {
@@ -68,12 +68,20 @@ namespace CheckListManager.AccessControl.Logic.Services
                 if (!user.Enabled)
                     throw new AuthenticationException(103, $"User {code} not enabled");
 
-                if (!_hashService.ValidateHash(password, user.Password))
-                    throw new AuthenticationException(104, "User password not valid");
+	            if (
+					user.Companies.MaximumNumberOfPasswordFailure > 0
+					&& user.NumberOfAttempts >= user.Companies.MaximumNumberOfPasswordFailure
+					&& user.LastLoginFailedOn != null
+					&& user.Companies.LoginFailedTimeout > 0
+					&& (DateTimeOffset.UtcNow - user.LastLoginFailedOn.Value).TotalMinutes < user.Companies.LoginFailedTimeout
+				)
+		            throw new AuthenticationException(104, $"User {code} temporary disabled");
 
+				if (!_hashService.ValidateHash(password, user.Password))
+                    throw new AuthenticationException(105, "User password not valid");
 
 	            await Task.WhenAll(
-		            _userRepository.UpdateLastLoginAsync(user),
+		            _userRepository.UserLoginCompleteAsync(user),
 			        _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
 			        {
 				        Company = user.Company,
@@ -86,15 +94,18 @@ namespace CheckListManager.AccessControl.Logic.Services
 				//TODO: add LDAP / OAUTH SERVER
 			}
 			catch (AuthenticationException authenticationException)
-            {
-                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
-                {
-                    Company = companyId.Value,
-                    User = code,
-                    Action = TrailAction.LoginFailed,
-                    Date = DateTimeOffset.UtcNow,
-                    Information = authenticationException.Message
-                });
+			{
+				await Task.WhenAll(
+					_userRepository.UserLoginFailedAsync(user),
+					_queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+					{
+						Company = companyId.Value,
+						User = code,
+						Action = TrailAction.LoginFailed,
+						Date = DateTimeOffset.UtcNow,
+						Information = authenticationException.Message
+					})
+				);
 
                 throw;
             }
@@ -266,10 +277,10 @@ namespace CheckListManager.AccessControl.Logic.Services
                     .ToArray();
 
                 response.PrototypeFunctions = user.UserFunctions.Where(f => f.FunctionGroup == "Prototypes")
-                    .GroupBy(pf => pf.PrototypeType)
+                    .GroupBy(pf => new { pf.Department, pf.PrototypeType })
                     .Select(g => new Function {
-                        department = g.First().Department,
-                        prototypeType = g.Key,
+                        department = g.Key.Department,
+                        prototypeType = g.Key.PrototypeType,
                         functionGroup = "Prototypes",
                         functions = g.Select(pf => pf.Function).ToArray(),
                         level = g.First().Tag 
@@ -277,11 +288,11 @@ namespace CheckListManager.AccessControl.Logic.Services
                     .ToArray();
 
                 response.InstanceFunctions = user.UserFunctions.Where(f => f.FunctionGroup == "Instances")
-                    .GroupBy(pf => pf.PrototypeType)
+                    .GroupBy(pf => new { pf.Department, pf.PrototypeType })
                     .Select(g => new Function
                     {
-                        department = g.First().Department,
-                        prototypeType = g.Key,
+                        department = g.Key.Department,
+                        prototypeType = g.Key.PrototypeType,
                         functionGroup = "Instances",
                         functions = g.Select(pf => pf.Function).ToArray(),
                         level = g.First().Tag
@@ -301,12 +312,13 @@ namespace CheckListManager.AccessControl.Logic.Services
             return response;
         }
 
-        private List<UserFunctions> BuildFunctions(DefaultIdentity identity, UserRequest record)
+        private void BuildFunctions(DefaultIdentity identity, UserRequest record, Users User)
         {
-            var list = new List<UserFunctions>();
             foreach (var function in record.GeneralFunctions)
-                list.Add(new UserFunctions
+                User.UserFunctions.Add(new UserFunctions
                 {
+                    Company = identity.CompanyId,
+                    User = record.Code,
                     FunctionGroup = function.functionGroup,
                     Function = function.function,
                     CreatedOn = DateTimeOffset.UtcNow,
@@ -316,8 +328,10 @@ namespace CheckListManager.AccessControl.Logic.Services
             foreach (var row in record.PrototypeFunctions)
                 if (row.functions != null)
                     foreach (var function in row.functions)
-                        list.Add(new UserFunctions
+                        User.UserFunctions.Add(new UserFunctions
                         {
+                            Company = identity.CompanyId,
+                            User = record.Code,
                             Department = row.department,
                             PrototypeType = row.prototypeType,
                             FunctionGroup = "Prototypes",
@@ -330,8 +344,10 @@ namespace CheckListManager.AccessControl.Logic.Services
             foreach (var row in record.InstanceFunctions)
                 if (row.functions != null)
                     foreach (var function in row.functions)
-                        list.Add(new UserFunctions
+                        User.UserFunctions.Add(new UserFunctions
                         {
+                            Company = identity.CompanyId,
+                            User = record.Code,
                             Department = row.department,
                             PrototypeType = row.prototypeType,
                             FunctionGroup = "Instances",
@@ -340,11 +356,9 @@ namespace CheckListManager.AccessControl.Logic.Services
                             CreatedOn = DateTimeOffset.UtcNow,
                             CreatedBy = identity.Code
                         });
-
-            return list;
         }
 
-        private static string SerializeUserInformation(string code, string authenticationCode, List<UserFunctions> userFunctions)
+        private static string SerializeUserInformation(string code, string authenticationCode, IEnumerable<UserFunctions> userFunctions)
         {
             return JsonConvert.SerializeObject(new
             {
@@ -367,18 +381,19 @@ namespace CheckListManager.AccessControl.Logic.Services
             if (response.Valid)
                 try
                 {
-                    var userFunctions = BuildFunctions(identity, record);
-                    await _userRepository.AddAsync(identity, new Users
+                    var User = new Users
                     {
                         Code = record.Code,
                         Description = record.Description,
                         Email = record.Email,
                         Password = _hashService.HashStringToBytes(record.Password),
                         AuthenticationCode = record.AuthenticationCode,
-                        Enabled = record.Enabled,
-                        
-                        UserFunctions = userFunctions
-                    });
+                        Enabled = record.Enabled
+                    };
+
+                    BuildFunctions(identity, record, User);
+
+                    await _userRepository.AddAsync(identity, User);
 
                     await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                     {
@@ -386,7 +401,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                         User = identity.Code,
                         Action = TrailAction.UserCreated,
                         Date = DateTimeOffset.UtcNow,
-                        Information = SerializeUserInformation(record.Code, record.AuthenticationCode, userFunctions)
+                        Information = SerializeUserInformation(record.Code, record.AuthenticationCode, User.UserFunctions)
                     });
                 }
                 catch (Exception exception)
@@ -408,18 +423,19 @@ namespace CheckListManager.AccessControl.Logic.Services
             if (response.Valid)
                 try
                 {
-                    var userFunctions = BuildFunctions(identity, record);
-                    await _userRepository.EditAsync(identity, new Users
+                    var User = new Users
                     {
                         Code = record.Code,
                         Description = record.Description,
                         Email = record.Email,
                         Password = _hashService.HashStringToBytes(record.Password),
                         Enabled = record.Enabled,
-                        AuthenticationCode = record.AuthenticationCode,
+                        AuthenticationCode = record.AuthenticationCode
+                    };
 
-                        UserFunctions = userFunctions
-                    });
+                    BuildFunctions(identity, record, User);
+
+                    await _userRepository.EditAsync(identity, User);
 
                     await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                     {
@@ -427,7 +443,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                         User = identity.Code,
                         Action = TrailAction.UserEdited,
                         Date = DateTimeOffset.UtcNow,
-                        Information = SerializeUserInformation (record.Code, record.AuthenticationCode, userFunctions)
+                        Information = SerializeUserInformation (record.Code, record.AuthenticationCode, User.UserFunctions)
                     });
                 }
                 catch (Exception exception)

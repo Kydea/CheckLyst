@@ -87,7 +87,6 @@ header {
       header div#UserPanel {
         top: 0;
         left: 0;
-        position: fixed;
         text-align: right;
         border-bottom: 1px solid #ccc;
         margin-left: 70px;

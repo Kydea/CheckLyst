@@ -69,7 +69,8 @@
 				.on("change", function () {
 					model.department = department.val();
 					model.prototypeType = prototypeType.val();
-					matematici.canClose = false;
+					if (!options.readOnly)
+						matematici.canClose = false;
 				})
 				.appendTo(label);
 

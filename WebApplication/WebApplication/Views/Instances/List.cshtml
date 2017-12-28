@@ -1,7 +1,9 @@
 ﻿<div id="InstancesListPage">
     <h1>Instances List</h1>
 
-    <div class="ActionBar"></div>
+    <div class="ActionBar">
+        <a id="AddButton" href="#" class="Button"><i class="fi flaticon-plus"></i> New instance</a>
+    </div>
 
     <div class="ShadowPanel">
         <div class="Accordion"></div>
@@ -9,16 +11,16 @@
             <label class="Controls2">
                 <span>Prototype type</span>
                 <i class="Icon fi flaticon-building-o" />
-                <select name="department" class="Trigger" />
+                <select name="department" class="Trigger" data-nullable="(all)" />
                 <i class="Icon fi flaticon-folder-o" />
-                <select name="prototypeType" />
+                <select name="prototypeType" class="Trigger" data-nullable="(all)" />
             </label>
             <label class="Controls2">
                 <span>Prototype</span>
                 <i class="Icon fi flaticon-prototype" />
-                <select name="prototype" class="Trigger" />
+                <select name="prototype" class="Trigger" data-nullable="(all)" />
                 <i class="Icon fi flaticon-version" />
-                <select name="version" class="Trigger" />
+                <select name="version" class="Trigger" data-nullable="(all)" />
             </label>
             <label class="Clearing">
                 <span>Instance description</span>
@@ -28,12 +30,12 @@
             <label>
                 <span>State</span>
                 <i class="Icon fi flaticon-prototype" />
-                <select name="state" />
+                <select name="state" data-nullable="(all)" />
             </label>
             <label class="Controls2">
                 <span>Tag value</span>
                 <i class="Icon fi flaticon-tags-o" />
-                <select name="tagCode" />
+                <select name="tagCode"  data-nullable="(all)" />
                 <i class="Icon fi flaticon-align-left" />
                 <input type="text" name="tagValue" />
             </label>
@@ -43,31 +45,31 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Name</th>
+                    <th>State</th>
                     <th>Description</th>
+                    <th>Department</th>
+                    <th>Prototype type</th>
+                    <th>Prototype</th>
                     <th>Version</th>
-                    <th>Validity Start Date</th>
-                    <th>Validity End Date</th>
                     <th>Created By</th>
                     <th>Created On</th>
                     <th>Modified By</th>
                     <th>Modified On</th>
-                    <th>State</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
+                <tr class="Handler">
                     <td data-column="id"></td>
-                    <td data-column="name"></td>
+                    <td data-column="state"></td>
                     <td data-column="description"></td>
+                    <td data-column="department"></td>
+                    <td data-column="prototypeType"></td>
+                    <td data-column="prototype"></td>
                     <td data-column="version"></td>
-                    <td data-column="validityFrom" data-type="DateTimeOffset"></td>
-                    <td data-column="validityUntil" data-type="DateTimeOffset"></td>
                     <td data-column="createdBy"></td>
                     <td data-column="createdOn" data-type="DateTimeOffset"></td>
                     <td data-column="modifiedBy"></td>
                     <td data-column="modifiedOn" data-type="DateTimeOffset"></td>
-                    <td data-column="versionState"></td>
                 </tr>
                 <tr class="NoRecord"><td>(no record)</td></tr>
             </tbody>
@@ -79,14 +81,37 @@
 
 <script type="text/javascript">
     matematici.events.onPageLoad = function (callback) {
+        var
+            formSelector = "form#Filters",
+            formElement = $(formSelector);
+
         new matematici.SearchPage({
             pageName: "Instances",
             detailUrl: "@Url.Action("Detail")",
-            filterFormSelector: "form#Filters",
+            filterFormSelector: formSelector,
             resultGridSelector: "div#Content table.Grid",
+            bindEvent: "Bind",
+            readOnly: true,
             breadCrumbs: [
                 { content: "instances" }
-            ]
+            ],
+            rowClickHandler: function (row) {
+                matematici.navigator.open("@Url.Action("Detail")/" + encodeURIComponent(row.data("values").code));
+            }
+        });
+
+        $("#AddButton").on("click", function () {
+            var versionName = $("select[name=version]", formElement).next().val();
+            if (!versionName)
+                matematici.dialog.error("Error", "Select an active prototype version to create a new isntance.");
+            else if (!versionName.endsWith(" Active"))
+                matematici.dialog.error("Error", "The selected prototype version is not active.");
+            else {
+                var
+                    prototype = $("select[name=prototype]", formElement).val(),
+                    version = $("select[name=version]", formElement).val();
+                matematici.navigator.open("@Url.Action("Create")/" + prototype + "/" + version);
+            }
         });
 
         callback.call();

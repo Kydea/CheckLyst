@@ -20,6 +20,8 @@ namespace CheckListManager.Prototypes.Logic.Messages
         public string Name { get; set; }
         public string Description { get; set; }
         public long? Department { get; set; }
+        public string DepartmentName { get; set; }
         public long? PrototypeType { get; set; }
+        public string PrototypeTypeName { get; set; }
     }
 }

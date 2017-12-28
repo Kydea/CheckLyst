@@ -13,19 +13,19 @@
         item,
 
         create = function () {
-            element = (item.isTableContent() ? $("<td />") : $("<div />")).addClass("Element Item " + model.TypeName);
-            if (model.NewLine) element.addClass("NewLine");
+            element = (item.isTableContent() ? $("<td />") : $("<div />")).addClass("Element Item " + model.typeName);
+            if (model.newLine) element.addClass("NewLine");
 
             if (item = (
-                model.TypeName == typeNames.text ? new instances.Text(item, model) :
-                model.TypeName == typeNames.field ? new instances.Field(item, model) :
-                model.TypeName == typeNames.signature ? new instances.Signature(item, model) :
+                model.typeName == typeNames.text ? new instances.Text(item, model) :
+                model.typeName == typeNames.field ? new instances.Field(item, model) :
+                model.typeName == typeNames.signature ? new instances.Signature(item, model) :
                 null)) {
                 parent.getElement().append(element);
                 item.update(model);
             } else {
                 console.log(model);
-                alert("Invalid type name for item " + model.Id + ": " + model.TypeName);
+                alert("Invalid type name for item " + model.id + ": " + model.typeName);
             }
 
             elementInformation = new instances.ElementInformation(element);
@@ -33,12 +33,12 @@
 
     this.update = function (model) {
         element
-            .attr("data-code", model.Code)
-            .attr("data-id", model.Id)
-            .toggleClass("Valid", model.Valid)
-            .toggleClass("Hidden", model.Hidden);
-        if (model.CountDownTo)
-            new instances.CountDown(element, model.CountDownTo, model.Id);
+            .attr("data-code", model.code)
+            .attr("data-id", model.id)
+            .toggleClass("Valid", model.valid)
+            .toggleClass("Hidden", model.hidden);
+        if (model.countDownTo)
+            new instances.CountDown(element, model.countDownTo, model.id);
         item.update(model)
         $("span.Error, span.Null", element).each(function () {
             var

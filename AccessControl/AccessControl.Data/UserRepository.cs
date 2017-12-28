@@ -17,7 +17,7 @@ namespace CheckListManager.AccessControl.Data
 		}
 
 		public Task<Users> GetAsync(long companyId, string code)
-			=> Entities.Users.FirstOrDefaultAsync(u => u.Company == companyId && u.Code == code);
+			=> Entities.Users.Include(u => u.Companies).FirstOrDefaultAsync(u => u.Company == companyId && u.Code == code);
 
 		public async Task<Users> AddAsync(DefaultIdentity identity, Users user)
 		{
@@ -77,10 +77,23 @@ namespace CheckListManager.AccessControl.Data
 			=> Get(companyId, code, description)
 				.CountAsync();
 
-		public async Task UpdateLastLoginAsync(Users user)
+		public async Task UserLoginCompleteAsync(Users user)
 		{
+			user.NumberOfAttempts = 0;
 			user.LastLoginOn = DateTimeOffset.UtcNow;
+
 			await SaveChangesAsync();
+		}
+
+		public async Task UserLoginFailedAsync(Users user)
+		{
+			if (user != null)
+			{
+				++user.NumberOfAttempts;
+				user.LastLoginFailedOn = DateTimeOffset.UtcNow;
+
+				await SaveChangesAsync();
+			}
 		}
 
 		public Task<List<Users>> GetUsersToDisableAsync()

@@ -79,7 +79,7 @@ create table "CheckLists"."PrototypeVersionTags"
 (
 	"Prototype" bigint,
 	"Version" int,
-	constraint "FK_PrototypeVersionTags_Version" foreign key ("Prototype", "Version") references "CheckLists"."PrototypeVersions",
+	constraint "FK_PrototypeVersionTags_Version" foreign key ("Prototype", "Version") references "CheckLists"."PrototypeVersions" on delete cascade,
 
 	"Code" varchar (50),
 	constraint "PK_PrototypeVersionTags" primary key ("Prototype", "Version", "Code")
@@ -89,7 +89,7 @@ create table "CheckLists"."InstanceNumerators"
 (
 	"Prototype" bigint not null,
 	"Version" int not null,
-	constraint "FK_Instances_Version" foreign key ("Prototype", "Version") references "CheckLists"."PrototypeVersions" on update cascade,
+	constraint "FK_Instances_Version" foreign key ("Prototype", "Version") references "CheckLists"."PrototypeVersions" on delete cascade,
 
 	"Year" int,
 	constraint "PK_InstanceNumerators" primary key ("Prototype", "Version", "Year"),
@@ -144,10 +144,10 @@ create table "CheckLists"."InstanceStates"
 insert into "CheckLists"."InstanceStates" 
 values 
 	('In progress'),
+	('Completed'),
 	('Confirmed'),
-	('Canceled'),
-	('Simulation evidence');
-
+	('Canceled');
+	
 create table "CheckLists"."Instances"
 (
 	"ID" bigserial primary key,
@@ -182,7 +182,8 @@ create unique index "Index_Instance_Code" on "CheckLists"."Instances" ("Company"
 create table "CheckLists"."InstanceTags"
 (
 	"ID" bigserial primary key,
-	"Instance" bigint not null references "CheckLists"."Instances",
+	"Instance" bigint not null,
+	constraint "FK_InstanceTags_Instance" foreign key ("Instance") references "CheckLists"."Instances" on delete cascade,
 	"Tag" varchar (50) not null,
 	"Value" text not null
 );

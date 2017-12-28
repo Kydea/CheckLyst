@@ -1,74 +1,57 @@
-﻿body.Instance h2 {
-  margin-bottom: 5px !important; }
-
-body.Instance div.ui-datepicker {
+﻿div.Instance div.ui-datepicker {
   z-index: 33 !important; }
 
-body.Instance div#InstanceInformation {
-  margin-bottom: 30px; }
-  body.Instance div#InstanceInformation.Fixed {
-    position: fixed;
-    z-index: 60;
-    top: 0; }
-    @media only screen and (min-width: 760px) {
-      body.Instance div#InstanceInformation.Fixed {
-        left: 30px;
-        right: 30px; } }
-    @media only screen and (max-width: 759px) {
-      body.Instance div#InstanceInformation.Fixed {
-        left: 10px;
-        right: 10px; } }
-
-body.Instance .Element div.Information {
+div.Instance .Element div.Information {
+  margin: 0 !important;
   content: "";
   display: block;
   position: absolute;
   z-index: 31;
-  top: 0;
-  right: 0;
+  top: 10px;
+  right: 10px;
   height: 6px;
   width: 6px;
   background: red;
   border: solid 1px #999;
   cursor: pointer;
   border-radius: 50%; }
-  body.Instance .Element div.Information div.Panel {
+  div.Instance .Element div.Information div.Panel {
     display: none;
     position: absolute;
     background-color: rgba(255, 255, 255, 0.9);
     padding: 10px;
     border: solid 1px #999; }
-    body.Instance .Element div.Information div.Panel i.fi {
+    div.Instance .Element div.Information div.Panel i.fi {
       margin-right: 10px; }
-      body.Instance .Element div.Information div.Panel i.fi.flaticon-thumbs-o-up {
+      div.Instance .Element div.Information div.Panel i.fi.flaticon-thumbs-o-up {
         color: green; }
-      body.Instance .Element div.Information div.Panel i.fi.flaticon-thumbs-o-down {
+      div.Instance .Element div.Information div.Panel i.fi.flaticon-thumbs-o-down {
         color: red; }
-    body.Instance .Element div.Information div.Panel span, body.Instance .Element div.Information div.Panel a {
+    div.Instance .Element div.Information div.Panel span, div.Instance .Element div.Information div.Panel a {
       display: block;
       white-space: nowrap;
       padding: 2px;
       color: black !important;
       float: none;
       margin-top: 0; }
-  body.Instance .Element div.Information.Active {
+  div.Instance .Element div.Information.Active {
     z-index: 32; }
-    body.Instance .Element div.Information.Active div.Panel {
+    div.Instance .Element div.Information.Active div.Panel {
       display: block; }
 
-body.Instance .Element.Valid > div.Information {
+div.Instance .Element.Valid > div.Information {
   background-color: green; }
 
-body.Instance div.Page div.LockInformation {
+div.Instance div.Page div.LockInformation {
   display: none; }
 
-body.Instance .Group .Iteration {
+div.Instance .Group .Iteration {
   clear: both; }
-  body.Instance .Group .Iteration > .IterationCommands {
+  div.Instance .Group .Iteration > .IterationCommands {
     float: right;
     position: relative;
     z-index: 30; }
-    body.Instance .Group .Iteration > .IterationCommands a {
+    div.Instance .Group .Iteration > .IterationCommands a {
       float: left;
       display: block;
       background: #ebebeb;
@@ -78,115 +61,111 @@ body.Instance .Group .Iteration {
       width: 20px;
       line-height: 20px;
       border-radius: 50%; }
-      body.Instance .Group .Iteration > .IterationCommands a:hover {
+      div.Instance .Group .Iteration > .IterationCommands a:hover {
         background: #f5f5f5; }
-      body.Instance .Group .Iteration > .IterationCommands a.Hidden {
+      div.Instance .Group .Iteration > .IterationCommands a.Hidden {
         display: none; }
-  body.Instance .Group .Iteration .Item.Field :focus ~ .Copy {
+  div.Instance .Group .Iteration .Item.Field :focus ~ .Copy {
     display: block; }
 
-body.Instance .Group div.Iteration:nth-of-type(1) > .IterationCommands a.Up {
+div.Instance .Group div.Iteration:nth-of-type(1) > .IterationCommands a.Up {
   display: none; }
 
-body.Instance .Group div.Iteration:nth-of-type(1) > .Item.Field .Copy {
+div.Instance .Group div.Iteration:nth-of-type(1) > .Item.Field .Copy {
   display: none !important; }
 
-body.Instance .Group div.Iteration:nth-last-of-type(3) > .IterationCommands a.Down {
+div.Instance .Group div.Iteration:nth-last-of-type(3) > .IterationCommands a.Down {
   display: none; }
 
-body.Instance .Group tr.Iteration:first-child > .IterationCommands a.Up {
+div.Instance .Group tr.Iteration:first-child > .IterationCommands a.Up {
   display: none; }
 
-body.Instance .Group tr.Iteration:first-child > .Item.Field .Copy {
+div.Instance .Group tr.Iteration:first-child > .Item.Field .Copy {
   display: none !important; }
 
-body.Instance .Group tr.Iteration:last-child > .IterationCommands a.Down {
+div.Instance .Group tr.Iteration:last-child > .IterationCommands a.Down {
   display: none; }
 
-body.Instance .Group div.Group > div.Information {
-  right: 10px;
-  top: 10px; }
-
-body.Instance .Group > div.Information div.Panel {
+div.Instance .Group > div.Information div.Panel {
   right: 0; }
 
-body.Instance .Item label {
+div.Instance .Item label {
   padding-left: 8px; }
 
-body.Instance .Item.Field div.Input {
+div.Instance .Item.Field div.Input {
   display: none; }
 
-body.Instance .Item.Field select {
+div.Instance .Item.Field select {
   display: none; }
 
-body.Instance .Item.Field.List input {
+div.Instance .Item.Field.List input {
   display: none; }
 
-body.Instance .Item.Field.List select {
+div.Instance .Item.Field.List select {
   display: block; }
 
-body.Instance .Item.Field.ExternalSource.Inactive i.flaticon-link-o {
+div.Instance .Item.Field.ExternalSource.Inactive i.flaticon-link-o {
   color: #ccc; }
 
-body.Instance .Item.Field.ExternalSource:not(.Inactive) div.Input {
+div.Instance .Item.Field.ExternalSource:not(.Inactive) div.Input {
   cursor: pointer !important; }
 
-body.Instance .Item.Field.ReadOnly input {
+div.Instance .Item.Field.ReadOnly input {
   display: none; }
 
-body.Instance .Item.Field.ReadOnly textarea {
+div.Instance .Item.Field.ReadOnly textarea {
   display: none; }
 
-body.Instance .Item.Field.ReadOnly select {
+div.Instance .Item.Field.ReadOnly select {
   display: none; }
 
-body.Instance .Item.Field.ReadOnly div.Input {
+div.Instance .Item.Field.ReadOnly div.Input {
   display: block;
   cursor: default; }
 
-body.Instance .Item.Field.ReadOnly.Boolean input {
+div.Instance .Item.Field.ReadOnly.Boolean input {
   display: block; }
 
-body.Instance .Item.Field.ReadOnly.Boolean div.Input {
+div.Instance .Item.Field.ReadOnly.Boolean div.Input {
   display: none; }
 
-body.Instance .Item.Field .Copy {
+div.Instance .Item.Field .Copy {
   position: absolute;
   top: 0;
   right: 10px;
   margin: 0;
   display: none; }
 
-body.Instance .Item div.Information {
+div.Instance .Item div.Information {
   top: 3px;
   left: 0;
   right: auto; }
 
-body.Instance .Item.Text div.Information {
+div.Instance .Item.Text div.Information {
   display: none; }
 
-body.Instance .Item.Signature a.Button i.flaticon-exclamation {
+div.Instance .Item.Signature a.Button i.flaticon-exclamation {
   position: absolute;
   color: red;
   margin: 2px 0 0 15px; }
 
-body.Instance .Item.Signature i.flaticon-exclamation {
+div.Instance .Item.Signature i.flaticon-exclamation {
   color: red;
   font-size: 16px;
   margin-top: 10px; }
 
-body.Instance .Item.Hidden {
+div.Instance .Item.Hidden {
   display: none; }
 
-body.Instance .Page.ReadOnly, body.Instance .Group.ReadOnly {
+div.Instance .Page.ReadOnly, div.Instance .Group.ReadOnly {
   color: #999; }
-  body.Instance .Page.ReadOnly h3, body.Instance .Group.ReadOnly h3 {
+  div.Instance .Page.ReadOnly h3, div.Instance .Group.ReadOnly h3 {
     color: #999 !important; }
 
-body.Instance .Page.Hidden, body.Instance .Group.Hidden {
+div.Instance .Page.Hidden, div.Instance .Group.Hidden {
   display: none; }
 
-body.Instance div.CountDown {
+div.Instance div.CountDown {
   position: absolute;
   top: 0;
   left: 0;
@@ -197,85 +176,85 @@ body.Instance div.CountDown {
   padding: 10px;
   z-index: 35;
   font-weight: bold; }
-  body.Instance div.CountDown span.Time {
+  div.Instance div.CountDown span.Time {
     color: red;
     font-size: 50px; }
-  body.Instance div.CountDown span.Interval {
+  div.Instance div.CountDown span.Interval {
     position: absolute;
     color: #666;
     left: 10px;
     top: 0;
     font-size: 12px;
     line-height: 1.4; }
-    body.Instance div.CountDown span.Interval i {
+    div.Instance div.CountDown span.Interval i {
       float: left;
       color: red;
       margin: 3px 10px 0 0;
       font-size: 26px; }
-  body.Instance div.CountDown a {
+  div.Instance div.CountDown a {
     width: 100px;
     margin-top: 15px;
     float: right; }
 
-body.Instance table.Grid thead tr th {
+div.Instance table.Grid thead tr th {
   border: solid 1px #ccc !important; }
 
-body.Instance table.Grid tbody tr td {
+div.Instance table.Grid tbody tr td {
   position: relative; }
-  body.Instance table.Grid tbody tr td.Field {
+  div.Instance table.Grid tbody tr td.Field {
     padding: 0; }
-    body.Instance table.Grid tbody tr td.Field input[type=checkbox] {
+    div.Instance table.Grid tbody tr td.Field input[type=checkbox] {
       display: block;
       margin: 0 auto; }
-    body.Instance table.Grid tbody tr td.Field select {
+    div.Instance table.Grid tbody tr td.Field select {
       border: none;
       background: none; }
-    body.Instance table.Grid tbody tr td.Field .Copy {
+    div.Instance table.Grid tbody tr td.Field .Copy {
       top: 8px;
       right: 8px; }
-    body.Instance table.Grid tbody tr td.Field.DateTime:not(.Inactive) {
+    div.Instance table.Grid tbody tr td.Field.DateTime:not(.Inactive) {
       white-space: nowrap; }
-      body.Instance table.Grid tbody tr td.Field.DateTime:not(.Inactive) input[type=text].Description {
+      div.Instance table.Grid tbody tr td.Field.DateTime:not(.Inactive) input[type=text].Description {
         border: none;
         display: inline-block; }
-    body.Instance table.Grid tbody tr td.Field.Time {
+    div.Instance table.Grid tbody tr td.Field.Time {
       white-space: nowrap; }
-    body.Instance table.Grid tbody tr td.Field.List .Copy {
+    div.Instance table.Grid tbody tr td.Field.List .Copy {
       right: 15px; }
-    body.Instance table.Grid tbody tr td.Field .Input {
+    div.Instance table.Grid tbody tr td.Field .Input {
       border: none !important;
       height: 100%;
       width: 100%;
       background: none; }
-    body.Instance table.Grid tbody tr td.Field:not(.DateTime) input[type=text] {
+    div.Instance table.Grid tbody tr td.Field:not(.DateTime) input[type=text] {
       border: none !important;
       height: 100%;
       width: 100%;
       background: none; }
-    body.Instance table.Grid tbody tr td.Field:not(.DateTime) input[type=text]:focus {
+    div.Instance table.Grid tbody tr td.Field:not(.DateTime) input[type=text]:focus {
       padding-right: 28px !important; }
-  body.Instance table.Grid tbody tr td.Signature {
+  div.Instance table.Grid tbody tr td.Signature {
     text-align: center;
     width: 100px; }
-    body.Instance table.Grid tbody tr td.Signature input {
+    div.Instance table.Grid tbody tr td.Signature input {
       display: none; }
-    body.Instance table.Grid tbody tr td.Signature > i {
+    div.Instance table.Grid tbody tr td.Signature > i {
       display: none; }
-    body.Instance table.Grid tbody tr td.Signature a.Button {
+    div.Instance table.Grid tbody tr td.Signature a.Button {
       float: none;
       min-width: unset;
       margin-top: 0; }
-  body.Instance table.Grid tbody tr td > div.Information {
+  div.Instance table.Grid tbody tr td > div.Information {
     left: 2px; }
-  body.Instance table.Grid tbody tr td.IterationCommands {
+  div.Instance table.Grid tbody tr td.IterationCommands {
     white-space: nowrap; }
-    body.Instance table.Grid tbody tr td.IterationCommands > a.Up, body.Instance table.Grid tbody tr td.IterationCommands a.Down, body.Instance table.Grid tbody tr td.IterationCommands a.Remove {
+    div.Instance table.Grid tbody tr td.IterationCommands > a.Up, div.Instance table.Grid tbody tr td.IterationCommands a.Down, div.Instance table.Grid tbody tr td.IterationCommands a.Remove {
       display: inline-block;
       float: none; }
 
-body.Instance table.Grid tbody tr:nth-child(odd) td.Inactive {
+div.Instance table.Grid tbody tr:nth-child(odd) td.Inactive {
   background-color: #f5f5f5; }
 
-body.Instance table.Grid tbody tr:nth-child(even) td.Inactive {
+div.Instance table.Grid tbody tr:nth-child(even) td.Inactive {
   background-color: #ebebeb; }
 

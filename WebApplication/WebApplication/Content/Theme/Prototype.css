@@ -1,6 +1,5 @@
 ﻿div.Prototype h2 {
-  cursor: pointer;
-  color: white !important; }
+  cursor: pointer; }
 
 div.Prototype a.Add.Button {
   float: right; }
@@ -37,22 +36,6 @@ div.Prototype div.Commands {
 
 div.Prototype div.ShadowPanel > div.Commands a.Up, div.Prototype div.ShadowPanel > div.Commands a.Down, div.Prototype div.ShadowPanel > div.Commands a.Add, div.Prototype div.ShadowPanel > div.Commands a.Remove {
   display: none; }
-
-div.Prototype .HeaderContainer {
-  margin-top: -20px;
-  margin-left: -20px;
-  margin-right: -20px;
-  padding: 20px;
-  background-color: #009688;
-  width: calc(100% + 40px);
-  top: 0;
-  left: 0;
-  border-radius: 15px 15px 0 0; }
-  div.Prototype .HeaderContainer > div.Group {
-    margin-bottom: 0;
-    border: none; }
-  div.Prototype .HeaderContainer div.Group {
-    background-color: white; }
 
 div.Prototype div.TabLabels {
   margin-top: 20px; }
