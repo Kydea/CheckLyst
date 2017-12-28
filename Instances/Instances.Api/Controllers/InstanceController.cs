@@ -23,7 +23,7 @@ namespace CheckListManager.Instances.Api.Controllers
 
 		[HttpPost]
 		[Route("Create")]
-        [Authorize(Roles = "Instances#Edit")]
+        [Authorize(Roles = "Instances#Create")]
         public async Task<IHttpActionResult> Create(CreateInstanceRequest request)
 		{
 			try
@@ -32,20 +32,20 @@ namespace CheckListManager.Instances.Api.Controllers
 				var response = new InstanceResponse
 				{
 					Code = cacheObject.Code,
-					CheckList = _instanceManagerService.GetCheckList(Identity.Code, Identity.HasPermission("Instances", "Edit", prototypeType: cacheObject.PrototypeType), cacheObject)
+					CheckList = _instanceManagerService.GetCheckList(Identity.Code, Identity.HasPermission("Instances", "Create", cacheObject.Department, cacheObject.PrototypeType), cacheObject)
 
                 };
 				return Ok(Message.Create(response));
 			}
 			catch (Exception e)
 			{
-				return Error(new ResponseMessage(e.Message));
+				return Error(e);
 			}
 		}
 
 		[HttpPost]
 		[Route("Open")]
-        [Authorize(Roles = "Instances#Edit")]
+        [Authorize(Roles = "Instances#Create")]
         public async Task<IHttpActionResult> Open(InstanceRequest request)
 		{
 			try
@@ -53,24 +53,9 @@ namespace CheckListManager.Instances.Api.Controllers
 				await _instanceManagerService.OpenAsync(request.Code, Identity.Code);
 				return Ok(Message.Create(true));
 			}
-			catch (DatabaseAggregateException exception)
+			catch (Exception e)
 			{
-				return Error(new ResponseMessage(exception.InnerExceptions.Select(e => e.Message).ToArray()));
-			}
-			catch (DatabaseException exception)
-			{
-				// ReSharper disable once SwitchStatementMissingSomeCases
-				switch (exception.Error)
-				{
-					case DatabaseError.PrimaryKeyViolation:
-						return Error(new ResponseMessage("An instance with the same code already exists."));
-					default:
-						return Error(new ResponseMessage(exception.Message));
-				}
-			}
-			catch (Exception exception)
-			{
-				return Error(new ResponseMessage(exception.Message));
+				return Error(e);
 			}
 		}
 
@@ -86,21 +71,13 @@ namespace CheckListManager.Instances.Api.Controllers
 				{
 					Id = cacheObject.Id,
 					Code = cacheObject.Code,
-					CheckList = _instanceManagerService.GetCheckList(Identity.Code, Identity.HasPermission("Instances", "Edit", prototypeType: cacheObject.PrototypeType), cacheObject)
+					CheckList = _instanceManagerService.GetCheckList(Identity.Code, Identity.HasPermission("Instances", "View", cacheObject.Department, cacheObject.PrototypeType), cacheObject)
 				};
 				return Ok(Message.Create(response));
 			}
-			catch (DatabaseAggregateException exception)
+			catch (Exception e)
 			{
-				return Error(new ResponseMessage(exception.InnerExceptions.Select(e => e.Message).ToArray()));
-			}
-			catch (DatabaseException exception)
-			{
-				return Error(new ResponseMessage(exception.Message));
-			}
-			catch (Exception exception)
-			{
-				return Error(new ResponseMessage(exception.Message));
+				return Error(e);
 			}
 		}
 
@@ -114,17 +91,9 @@ namespace CheckListManager.Instances.Api.Controllers
 				await _instanceManagerService.CloseAsync(request.Code, Identity.Code);
 				return Ok(Message.Create(true));
 			}
-			catch (DatabaseAggregateException exception)
+			catch (Exception e)
 			{
-				return Error(new ResponseMessage(exception.InnerExceptions.Select(e => e.Message).ToArray()));
-			}
-			catch (DatabaseException exception)
-			{
-				return Error(new ResponseMessage(exception.Message));
-			}
-			catch (Exception exception)
-			{
-				return Error(new ResponseMessage(exception.Message));
+				return Error(e);
 			}
 		}
 
@@ -140,13 +109,13 @@ namespace CheckListManager.Instances.Api.Controllers
 				{
 					Id = cacheObject.Id,
 					Code = cacheObject.Code,
-					CheckList = _instanceManagerService.GetCheckList(Identity.Code, Identity.HasPermission("Instances", "Edit", prototypeType: cacheObject.PrototypeType), cacheObject)
+					CheckList = _instanceManagerService.GetCheckList(Identity.Code, Identity.HasPermission("Instances", "Edit", cacheObject.Department, cacheObject.PrototypeType), cacheObject)
 				};
 				return Ok(Message.Create(response));
 			}
-			catch (Exception exception)
+			catch (Exception e)
 			{
-				return Error(new ResponseMessage(exception.Message));
+				return Error(e);
 			}
 		}
 	}

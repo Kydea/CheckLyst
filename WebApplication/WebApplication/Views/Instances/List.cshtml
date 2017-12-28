@@ -1,7 +1,9 @@
 ﻿<div id="InstancesListPage">
     <h1>Instances List</h1>
 
-    <div class="ActionBar"></div>
+    <div class="ActionBar">
+        <a id="AddButton" href="#" class="Button"><i class="fi flaticon-plus"></i> New instance</a>
+    </div>
 
     <div class="ShadowPanel">
         <div class="Accordion"></div>
@@ -11,7 +13,7 @@
                 <i class="Icon fi flaticon-building-o" />
                 <select name="department" class="Trigger" data-nullable="(all)" />
                 <i class="Icon fi flaticon-folder-o" />
-                <select name="prototypeType" />
+                <select name="prototypeType" class="Trigger" data-nullable="(all)" />
             </label>
             <label class="Controls2">
                 <span>Prototype</span>
@@ -79,18 +81,36 @@
 
 <script type="text/javascript">
     matematici.events.onPageLoad = function (callback) {
+        var
+            formSelector = "form#Filters",
+            formElement = $(formSelector);
+
         new matematici.SearchPage({
             pageName: "Instances",
             detailUrl: "@Url.Action("Detail")",
-            filterFormSelector: "form#Filters",
+            filterFormSelector: formSelector,
             resultGridSelector: "div#Content table.Grid",
             bindEvent: "Bind",
+            readOnly: true,
             breadCrumbs: [
                 { content: "instances" }
             ],
-
             rowClickHandler: function (row) {
                 matematici.navigator.open("@Url.Action("Detail")/" + encodeURIComponent(row.data("values").code));
+            }
+        });
+
+        $("#AddButton").on("click", function () {
+            var versionName = $("select[name=version]", formElement).next().val();
+            if (!versionName)
+                matematici.dialog.error("Error", "Select an active prototype version to create a new isntance.");
+            else if (!versionName.endsWith(" Active"))
+                matematici.dialog.error("Error", "The selected prototype version is not active.");
+            else {
+                var
+                    prototype = $("select[name=prototype]", formElement).val(),
+                    version = $("select[name=version]", formElement).val();
+                matematici.navigator.open("@Url.Action("Create")/" + prototype + "/" + version);
             }
         });
 

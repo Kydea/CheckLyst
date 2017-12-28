@@ -74,5 +74,9 @@
 		return options.readOnly;
 	};
 
+	searchPage.getForm = function () {
+		return form;
+	};
+
 	setup();
 }

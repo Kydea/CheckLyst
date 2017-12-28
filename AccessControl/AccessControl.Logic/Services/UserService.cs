@@ -277,10 +277,10 @@ namespace CheckListManager.AccessControl.Logic.Services
                     .ToArray();
 
                 response.PrototypeFunctions = user.UserFunctions.Where(f => f.FunctionGroup == "Prototypes")
-                    .GroupBy(pf => pf.PrototypeType)
+                    .GroupBy(pf => new { pf.Department, pf.PrototypeType })
                     .Select(g => new Function {
-                        department = g.First().Department,
-                        prototypeType = g.Key,
+                        department = g.Key.Department,
+                        prototypeType = g.Key.PrototypeType,
                         functionGroup = "Prototypes",
                         functions = g.Select(pf => pf.Function).ToArray(),
                         level = g.First().Tag 
@@ -288,11 +288,11 @@ namespace CheckListManager.AccessControl.Logic.Services
                     .ToArray();
 
                 response.InstanceFunctions = user.UserFunctions.Where(f => f.FunctionGroup == "Instances")
-                    .GroupBy(pf => pf.PrototypeType)
+                    .GroupBy(pf => new { pf.Department, pf.PrototypeType })
                     .Select(g => new Function
                     {
-                        department = g.First().Department,
-                        prototypeType = g.Key,
+                        department = g.Key.Department,
+                        prototypeType = g.Key.PrototypeType,
                         functionGroup = "Instances",
                         functions = g.Select(pf => pf.Function).ToArray(),
                         level = g.First().Tag

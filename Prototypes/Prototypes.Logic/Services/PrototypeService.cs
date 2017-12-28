@@ -35,7 +35,9 @@ namespace CheckListManager.Prototypes.Logic.Services
             var PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(identity, request.ID, request.Version);
             if (
                 !identity.HasPermission("Prototypes", "View", PrototypeVersion.Prototypes.Department) &&
-                !identity.HasPermission("Prototypes", "View", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType)
+                !identity.HasPermission("Prototypes", "View", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType) &&
+                !identity.HasPermission("Instances", "Create", PrototypeVersion.Prototypes.Department) &&
+                !identity.HasPermission("Instances", "Create", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType)
             )
                 throw new UnauthorizedAccessException();
 
@@ -55,7 +57,9 @@ namespace CheckListManager.Prototypes.Logic.Services
                 ValidUntil = PrototypeVersion.ValidUntil,
                 State = PrototypeVersion.VersionState,
                 Department = PrototypeVersion.Prototypes.Department,
+                DepartmentName = PrototypeVersion.Prototypes.Departments.Name,
                 PrototypeType = PrototypeVersion.Prototypes.PrototypeType,
+                PrototypeTypeName = PrototypeVersion.Prototypes.PrototypeTypes.Name,
                 ProposedState = PrototypeVersion.ProposedState,
                 ProposedDate = PrototypeVersion.ProposedDate
             });

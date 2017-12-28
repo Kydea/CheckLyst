@@ -21,7 +21,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
 
         [HttpPost]
         [Route("Open")]
-        [Authorize(Roles = "Prototypes#View")]
+        [Authorize(Roles = "Prototypes#View, Instances#Create")]
         public async Task<IHttpActionResult> Open(PrototypeRequest request)
         {
             try

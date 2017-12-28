@@ -14,7 +14,7 @@ namespace CheckListManager.WebApplication.Controllers
             return ConditionalView("List");
         }
 
-        [Route("Create/{Protoype?}/{Version?}")]
+        [Route("Create/{Prototype?}/{Version?}")]
         public ActionResult Create(long? Prototype, int? Version)
         {
             return ConditionalView("Detail", new Instance { Prototype = Prototype.Value, Version = Version.Value });

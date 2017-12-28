@@ -221,11 +221,12 @@
             var autoComplete3 = new matematici.AutoComplete(select3);
             autoComplete3.initialize();
 
-            var select4 = $("<select />");
+            var select4 = $("<select />").data("nullable", true);
             if (detailPage.isReadOnly()) matematici.controls.setEditable(select4, false);
             $("<label />").appendTo(div).append($("<span />").text("Level")).append($("<i />").addClass("Icon fi flaticon-group")).append(select4);
             for (var index in matematici.profiles)
-                select4.append($("<option />").text(matematici.profiles[index]).attr("value", matematici.profiles[index]));
+                select4.append($("<option />").text(matematici.profiles[index]).attr("value", matematici.profiles[index])); 
+            select4.val(null);
             var autoComplete4 = new matematici.AutoComplete(select4);
             autoComplete4.initialize();
 

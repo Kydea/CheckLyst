@@ -79,7 +79,7 @@ namespace CheckListManager.Instances.Logic.Services
                     PrototypeType = source.PrototypeType,
                     PrototypeTypeName = source.PrototypeTypeName,
                     Prototype = prototype,
-                    PrototypeName = source.PrototypeName,
+                    PrototypeName = source.Name,
                     Version = version,
                     InstanceState = InstanceState.Draft,
                     CreatedBy = userCode,
@@ -258,7 +258,7 @@ namespace CheckListManager.Instances.Logic.Services
                 cacheObject = await _instanceCache.GetAsync(request.Code);
 
                 var canEdit =
-                    identity.HasPermission("Instances", "Edit", cacheObject.PrototypeType) &&
+                    identity.HasPermission("Instances", "Edit", cacheObject.Department, cacheObject.PrototypeType) &&
                     cacheObject.InstanceState.In(InstanceState.Draft, InstanceState.Progress);
                 var instance = GetCheckList(identity.Code, canEdit, cacheObject);
 
