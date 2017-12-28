@@ -59,8 +59,10 @@
 								if (column.align == "center")
 									td.addClass("Centered");
 								if (column.type == "DateTimeOffset") {
-									var formattedDate = matematici.dateFormatter.format(new Date(value), true);
-									td.append($("<span />").html(formattedDate.date + " " + formattedDate.time).attr("title", formattedDate.offset));
+									if (value) {
+										var formattedDate = matematici.dateFormatter.format(new Date(value), true);
+										td.append($("<span />").html(formattedDate.date + " " + formattedDate.time).attr("title", formattedDate.offset));
+									}
 								} else if (value === true)
 									td.append($("<i />").addClass("fi flaticon-check"));
 								else if (value === false)
