@@ -57,7 +57,7 @@ namespace CheckListManager.Instances.Logic.List
                 response.Fields["PrototypeType"] = new Field
                 {
                     Options = prototypeTypes.Select(pt => new Option(pt.ID.ToString(), pt.Name)),
-                    Value = prototypeType?.ToString()
+                    Value = prototypeType.HasValue && prototypeTypes.Any(pt => pt.ID == prototypeType.Value) ? prototypeType.Value.ToString() : null
                 };
             }
 
@@ -67,7 +67,7 @@ namespace CheckListManager.Instances.Logic.List
                 response.Fields["Prototype"] = new Field
                 {
                     Options = prototypes.Select(p => new Option(p.ID.ToString(), p.Name)),
-                    Value = prototype?.ToString()
+                    Value = prototype.HasValue && prototypes.Any(p => p.ID == prototype.Value) ? prototype.ToString() : null
                 };
             }
 
@@ -77,7 +77,7 @@ namespace CheckListManager.Instances.Logic.List
                 response.Fields["Version"] = new Field
                 {
                     Options = versions.Select(p => new Option(p.Version.ToString(), p.Description)),
-                    Value = version?.ToString()
+                    Value = version.HasValue && versions.Any(v => v.Version == version.Value) ? version.Value.ToString() : null
                 };
             }
 
