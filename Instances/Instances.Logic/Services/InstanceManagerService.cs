@@ -26,18 +26,16 @@ namespace CheckListManager.Instances.Logic.Services
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private readonly IServiceClient _client;
-        private readonly IHashService _hashService;
         private readonly IInstancesRepository _instancesRepository;
         private readonly CheckListJsonConverter _converter;
         private readonly IInstanceCacheService _instanceCache;
         private readonly IConfigurationService _configurationService;
 
-        public InstanceManagerService(IServiceClient client, IHashService hashService,
+        public InstanceManagerService(IServiceClient client,
             IInstancesRepository instancesRepository, CheckListJsonConverter converter, IInstanceCacheService instanceCache,
             IConfigurationService configurationService)
         {
             _client = client;
-            _hashService = hashService;
             _instancesRepository = instancesRepository;
             _converter = converter;
             _instanceCache = instanceCache;
@@ -86,8 +84,9 @@ namespace CheckListManager.Instances.Logic.Services
                     CreatedBy = userCode,
                     CreatedOn = DateTimeOffset.UtcNow
                 };
+	            cacheObject.Instance.Setup();
 
-                await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
+				await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
 
                 return cacheObject;
             }

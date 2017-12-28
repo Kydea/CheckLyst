@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
-using CheckListManager.Common.Data;
-using CheckListManager.Common.Data.Exceptions;
 using CheckListManager.Common.Logic.Api;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Instances.Logic.Messages;
