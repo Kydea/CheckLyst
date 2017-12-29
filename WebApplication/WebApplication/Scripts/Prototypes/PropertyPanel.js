@@ -335,7 +335,7 @@
 						"If checked, the field breaks the line."
 					));
 					properties.push(new prototypes.Property(
-						this, new prototypes.ValueProperty(model), "value",
+						this, new prototypes.ValueProperty(model), "Value",
 						"The value of the field."
 					));
 					properties.push(new prototypes.Property(

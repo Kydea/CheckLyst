@@ -62,6 +62,11 @@
       height: 100%; }
     div.PropertyPanel div.PropertyValue.Value textarea {
       height: 100px !important; }
+    div.PropertyPanel div.PropertyValue.Value label {
+      margin-top: 10px;
+      width: 50%; }
+      div.PropertyPanel div.PropertyValue.Value label span {
+        position: relative; }
   div.PropertyPanel div.Information {
     position: absolute;
     overflow: auto;
