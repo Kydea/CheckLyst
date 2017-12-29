@@ -24,6 +24,8 @@
         color: black;
         text-decoration: none !important;
         background-color: #ebebeb; }
+      a.Button.ButtonGroup span.ButtonGroup a.Hidden {
+        display: none; }
   a.Button.ButtonGroup:hover span.ButtonGroup {
     border: solid 1px #03c3b1; }
 

@@ -15,18 +15,31 @@
 
 		setupActionBar = function () {
 			buttonGroup = $("div.ActionBar a.ButtonGroup", element),
-				confirmButton = $("a.Confirm", buttonGroup).toggle(state == instances.Instance.states.completed),
-				completeButton = $("a.Complete", buttonGroup).toggle(state == instances.Instance.states.progress),
-				cancelButton = $("a.Cancel", buttonGroup).toggle(state == state == instances.Instance.states.progress),
-				saveButton = $("a.Save", buttonGroup).toggle(state == instances.Instance.states.draft || state == instances.Instance.states.progress),
-				historyButton = $("a.History", buttonGroup).hide(); //.toggle(state != instances.Instance.states.draft);
+				confirmButton = $("a.Confirm", buttonGroup).toggleClass("Hidden", state == instances.Instance.states.completed),
+				completeButton = $("a.Complete", buttonGroup).toggleClass("Hidden", state == instances.Instance.states.progress),
+				cancelButton = $("a.Cancel", buttonGroup).toggleClass("Hidden", state == state == instances.Instance.states.progress),
+				saveButton = $("a.Save", buttonGroup).toggleClass("Hidden", state == instances.Instance.states.draft || state == instances.Instance.states.progress),
+				historyButton = $("a.History", buttonGroup).toggleClass("Hidden", true); state != instances.Instance.states.draft;
 
-			if (buttonGroup.children().size() == 0)
+			if ($("a:not(.Hidden)", buttonGroup).size() == 0)
 				buttonGroup.hide();
 		},
 
-		update = function (model) {
-			prototypeState = model.prototypeState;
+		setupBreadcrumbs = function (data) {
+			matematici.breadcrumbs.set([
+				{ content: data.departmentName },
+				{ content: data.prototypeTypeName },
+				{ content: data.prototypeName + "." + data.version },
+				{
+					content:
+					(data.versionState == prototypes.Prototype.states.draft ? "test" : data.versionState == prototypes.Prototype.states.simulation ? "SE" : data.year || "?") + "." + (data.number || "?") + " (" + state + ")"
+				},
+			]);
+		},
+
+		update = function (result) {
+			var model = result.checkList;
+			prototypeState = result.prototypeState;
 
 			tab.clear();
 
@@ -49,8 +62,9 @@
 		},
 
 		load = function () {
+			var newInstance = options.code == "";
 			$.ajax({
-				url: matematici.urls.instances + "/" + (options.code == "" ? "Create" : "Get"),
+				url: matematici.urls.instances + "/" + (newInstance ? "Create" : "Get"),
 				type: "post",
 				data: {
 					code: options.code,
@@ -60,27 +74,16 @@
 			}).done(function (result) {
 				console.log(result)
 
-				var
-					year = result.data.year,
-					number = result.data.number;
-
-				id = result.data.id;
-				state = result.data.state;
-				code = result.data.code;
-
-				matematici.breadcrumbs.set([
-					{ content: result.data.departmentName },
-					{ content: result.data.prototypeTypeName },
-					{ content: result.data.prototypeName + "." + result.data.version },
-					{
-						content:
-						(result.data.versionState == "Active" || year == 0 ? "SE" : year) + "." + (number || "?") + " (" + state + ")"
-					},
-				]);
+				id = result.id;
+				state = result.state;
+				code = result.code;
 
 				setupActionBar();
+				setupBreadcrumbs(result);
 
-				instances.instance.update(result.data.checkList);
+				instances.instance.update(result);
+				if (newInstance)
+					matematici.navigator.setUrl(options.detailUrl + "/" + result.code);
 			});
 		},
 
@@ -96,7 +99,7 @@
 		};
 
 	instance.getCode = function () {
-		return options.code;
+		return code;
 	};
 
 	instance.getKey = function () {

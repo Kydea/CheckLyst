@@ -18,24 +18,24 @@
 		},
 
         setup = function () {
-            label = $("<label />").text(model.description);
+			label = $("<label />").addClass("Controls3").append($("<span />").addClass("Label").html(model.description ? model.description : "(no description)"));
             if (!item.isTableContent())
                 label.appendTo(element);
 
-			check = $("<i />").addClass("fi flaticon-check").hide().appendTo(element);
+			check = $("<i />").addClass("Icon fi flaticon-check").hide().appendTo(element);
 
-            user = $("<input />").addClass("User").attr({ type: "text", readonly: true }).appendTo(element);
-			$("<i />").addClass("fi flaticon-user-o").insertAfter(user);
-            date = $("<input />").addClass("Date").attr({ type: "text", readonly: true }).appendTo(element);
-			$("<i />").addClass("fi flaticon-calendar").insertAfter(date);
-            time = $("<input />").addClass("Time").attr({ type: "text", readonly: true }).appendTo(element);
-			$("<i />").addClass("fi flaticon-clock-o").insertAfter(time);
+			$("<i />").addClass("Icon fi flaticon-user-o").appendTo(item.isTableContent() ? element : label);
+			user = $("<input />").addClass("User").attr({ type: "text", readonly: true }).appendTo(item.isTableContent() ? element : label);
+			$("<i />").addClass("Icon fi flaticon-calendar").appendTo(item.isTableContent() ? element : label);
+			date = $("<input />").addClass("Date").attr({ type: "text", readonly: true }).appendTo(item.isTableContent() ? element : label);
+			$("<i />").addClass("Icon fi flaticon-clock-o").appendTo(item.isTableContent() ? element : label);
+			time = $("<input />").addClass("Time").attr({ type: "text", readonly: true }).appendTo(item.isTableContent() ? element : label);
 
 			exclamation = $("<i />").addClass("fi flaticon-exclamation").appendTo(element).hide();
 
-            button = $("<a />").addClass("Button SignButton").attr({ href: "#" }).appendTo(element);
+			button = $("<a />").addClass("Button SignButton").attr({ href: "#" }).appendTo(element);
             if (model.cancelable)
-                cancelButton = $("<a />").addClass("Button CancelButton").attr({ href: "#" }).appendTo(element).text("Cancel signature");
+				cancelButton = $("<a />").addClass("Button CancelButton").attr({ href: "#" }).appendTo(element).text("Cancel signature").prepend($("<i >").addClass("fi flaticon-times"));
             
             element
                 .on("click", "a.SignButton:not(.Selected):not(.ReadOnly)", function (e) {
@@ -48,10 +48,10 @@
                                     data: {
                                         signHandler: function (panel) {
                                             new instances.Event(instances.Events.signature, model.id, {
-                                                UserName: panel.getUserName(),
-                                                Password: panel.getPassword(),
-                                                PIN: panel.getPIN(),
-                                                Simple: panel.isSimple()
+                                                userName: panel.getUserName(),
+                                                password: panel.getPassword(),
+                                                pin: panel.getPIN(),
+                                                simple: panel.isSimple()
                                             }).done(function (result) {
 												if (result.Error) {
 													//error with dialog
@@ -73,9 +73,9 @@
                         },
 
                         trySign = function(username) {
-                            new instances.Event(instances.Events.signatureCheck, model.id, { UserName: username }).done(function (result) {
+                            new instances.Event(instances.Events.signatureCheck, model.id, { userName: username }).done(function (result) {
                                 if (result.Error)
-                                    matematici.dialog.error("signature error", result.Id == null ? result.Error : "The element " + (result.Description ? result.Description + " " : "") + " with id " + result.Id + " is not valid.");
+                                    matematici.dialog.error("signature error", result.id == null ? result.error : "The element " + (result.description ? result.description + " " : "") + " with id " + result.id + " is not valid.");
                                 else
                                     sign(username);
                             }).trigger();
@@ -119,13 +119,13 @@
                             data: {
                                 signHandler: function (panel) {
                                     new instances.Event(instances.Events.signatureCancelation, model.id, {
-                                        UserName: panel.getUserName(),
-                                        Password: panel.getPassword(),
-                                        Note: panel.getNote()
+                                        userName: panel.getUserName(),
+                                        password: panel.getPassword(),
+                                        note: panel.getNote()
                                     }).done(function (result) {
                                         if (result.Error) {
                                             var error = $("div.Error", matematici.popup.getElement());
-                                            error.fadeTo(500, .9).children().text(result.Error);
+                                            error.fadeTo(500, .9).children().text(result.error);
                                             setTimeout(function () {
                                                 error.fadeTo(500, 0, function () { error.hide(); });
                                             }, 3000);
@@ -143,7 +143,7 @@
         };
 
     this.update = function (model) {
-        button.text(model.buttonLabel ? model.buttonLabel : "Signature");
+		button.text(model.buttonLabel ? model.buttonLabel : "Signature").prepend($("<i >").addClass("fi flaticon-check"));
         button.toggleClass("ReadOnly", model.readOnly);
 
         if (model.signed) {

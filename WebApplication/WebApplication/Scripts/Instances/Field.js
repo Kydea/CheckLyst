@@ -4,7 +4,8 @@
         select,
         select2,
         field,
-        label,
+		label,
+		span,
         element = item.getElement(),
         copyButton,
 
@@ -49,16 +50,14 @@
 
         next = function () {
             if (model.valueTypeName != "DateTime" && model.valueTypeName != "Time") {
-                input.datepicker('hide').blur()
-                var next = element.next().children("input, select");
-                if (next.size() > 0)
-                    next.focus();
+				input.datepicker('hide').blur()
+				$("input:visible, select:visible", element.next()).focus();
             }
         },
 
         change = function (value) {
             if (validate()) {
-                new instances.Event(instances.Events.valueChange, model.id, { Value: value }).done(function (result) {
+                new instances.Event(instances.Events.valueChange, model.id, { value: value }).done(function (result) {
                     instances.instance.update(result);
                     next();
                 }).trigger();
@@ -81,15 +80,17 @@
         },
 
         setup = function () {
-            label = $("<label />");
+			label = $("<label />");
+			span = $("<span />").addClass("Label").appendTo(label);
             if (!item.isTableContent())
-                label.appendTo(element);
+				label.appendTo(element);
+
             input =
                 (
                     model.linesCount == 0 ?
                     $("<input />").attr("type", "text") :
                     $("<textarea />")
-                ).addClass("Description").appendTo(element);
+				).addClass("Description").appendTo(item.isTableContent() ? element : label);
             if (model.valueTypeName == "Number")
             	input.keyfilter(/[\d\-\,\.]/);
             else if (model.valueTypeName == "Date" || model.valueTypeName == "DateTime") {
@@ -109,7 +110,7 @@
                 keyDown(e);
             });
 
-            select = $("<select />").appendTo(element);
+			select = $("<select />").appendTo(item.isTableContent() ? element : label);
             select.on("change", function () {
             	change(getValue());
             }).on("keydown", function (e) {
@@ -122,7 +123,7 @@
             	for (var i = 0; i < 24; i++) {
             		select.append($("<option />").attr("value", (i < 10 ? "0" : "") + i).text((i < 10 ? "0" : "") + i));
             	}
-            	select2 = $("<select />").appendTo(element);
+				select2 = $("<select />").appendTo(item.isTableContent() ? element : label);
             	select2.on("change", function () {
             		change(getValue());
             	}).on("keydown", function (e) {
@@ -140,7 +141,7 @@
             if (model.valuesList)
                 for (var index in model.valuesList)
                     select.append($("<option />").attr("value", model.valuesList[index]).text(model.valuesList[index]));
-            field = $("<div />").addClass("Input").appendTo(element);
+			field = $("<div />").addClass("Input").appendTo(item.isTableContent() ? element : label);
             if (model.linesCount > 0) {
                 element.addClass("MultiLine");
                 input.height(24 * model.linesCount - 10);
@@ -165,7 +166,7 @@
 
     this.update = function (model) {
         var readOnly = !!model.readOnly || !!model.externalSourceName && !!model.externalSourceColumn;
-        label.html(model.description);
+        span.html(model.description);
         element.toggleClass("Inactive", model.readOnly);
         element.toggleClass("ReadOnly", readOnly);
         input.attr("readonly", readOnly);

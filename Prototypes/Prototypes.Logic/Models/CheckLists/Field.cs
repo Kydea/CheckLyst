@@ -13,7 +13,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 		public string ExternalSourceName { get; set; }
 		public List<FieldRecord> History { get; } = new List<FieldRecord>();
 		public int LinesCount { get; set; }
-		public RawValue Value { get; set; }
+		public string Value { get; set; }
 
 		public Formula ValueFormula { get; private set; }
 

@@ -112,10 +112,13 @@ namespace CheckListManager.Instances.Logic.Services
 					throw new InstanceException("Instance already confirmed");
 				if (cacheObject.InstanceState != InstanceState.Draft)
 					throw new InstanceException("Instance state not valid");
-				if (!identity.HasPermission("Instance", "Edit", cacheObject.Department, cacheObject.PrototypeType))
+				if (
+                    !identity.HasPermission("Instances", "Edit", cacheObject.Department)
+                    && !identity.HasPermission("Instances", "Edit", cacheObject.Department, cacheObject.PrototypeType)
+                )
 					throw new InstanceException("Access denied");
 
-				cacheObject.InstanceState = InstanceState.Progress;
+                cacheObject.InstanceState = InstanceState.Progress;
 				cacheObject.Instance.Update();
 
 				if (!cacheObject.Instance.Header.Valid)
@@ -172,7 +175,10 @@ namespace CheckListManager.Instances.Logic.Services
 					throw new InstanceException("Instance already confirmed");
 				if (cacheObject.InstanceState != InstanceState.Progress)
 					throw new InstanceException("Instance state not valid");
-				if (!identity.HasPermission("Instance", "Edit", cacheObject.Department, cacheObject.PrototypeType))
+				if (
+                    !identity.HasPermission("Instances", "Edit", cacheObject.Department)
+                    && !identity.HasPermission("Instances", "Edit", cacheObject.Department, cacheObject.PrototypeType)
+                )
 					throw new InstanceException("Access denied");
 
 				await SaveAsync(cacheObject, identity.Code, false, true);
@@ -188,16 +194,18 @@ namespace CheckListManager.Instances.Logic.Services
 			}
 		}
 
-		public async Task CloseAsync(string code, IDefaultIdentity identity)
+		public async Task SuspendAsync(string code, IDefaultIdentity identity)
 		{
 			try
 			{
 				var cacheObject = await _instanceCache.GetAsync(code, false);
-				if (cacheObject == null)
-					return;
+				if (cacheObject == null) return;
 
-				if (identity.HasPermission("Instance", "Edit", cacheObject.Department, cacheObject.PrototypeType))
-					await CloseAsync(cacheObject, identity.Code, false);
+				if (
+                    identity.HasPermission("Instances", "Edit", cacheObject.Department)
+                    || identity.HasPermission("Instances", "Edit", cacheObject.Department, cacheObject.PrototypeType)
+                )
+					await SuspendAsync(cacheObject, identity.Code, false);
 			}
 			catch (InstanceException)
 			{
@@ -205,12 +213,12 @@ namespace CheckListManager.Instances.Logic.Services
 			}
 			catch (Exception e)
 			{
-				Logger.Error(e, "Unable to close the instance");
-				throw new InstanceException("Unable to close the instance", e);
+				Logger.Error(e, "Unable to suspend the instance");
+				throw new InstanceException("Unable to suspend the instance", e);
 			}
 		}
 
-		private async Task CloseAsync(InstanceCacheObject cacheObject, string userCode, bool force)
+		private async Task SuspendAsync(InstanceCacheObject cacheObject, string userCode, bool force)
 		{
 			try
 			{
@@ -302,29 +310,31 @@ namespace CheckListManager.Instances.Logic.Services
 				cacheObject = await _instanceCache.GetAsync(request.Code);
 
 				var canEdit =
-					identity.HasPermission("Instances", "Edit", cacheObject.Department, cacheObject.PrototypeType) &&
-					cacheObject.InstanceState.In(InstanceState.Draft, InstanceState.Progress);
+					(
+                        identity.HasPermission("Instances", "Edit", cacheObject.Department)
+                        || identity.HasPermission("Instances", "Edit", cacheObject.Department, cacheObject.PrototypeType) 
+                    ) && cacheObject.InstanceState.In(InstanceState.Draft, InstanceState.Progress);
 				var instance = GetCheckList(identity.Code, canEdit, cacheObject);
 
 				switch (request.Type)
 				{
 					case "PageChange":
-						await HandlePageChangeAsync(cacheObject, instance, identity.Code, canEdit, request.Item);
+						await HandlePageChangeAsync(cacheObject, instance, identity.Code, canEdit, request.ItemId);
 						break;
 					case "ValueChange":
-						await HandleValueChangeAsync(cacheObject, instance, identity.Code, canEdit, request.Item, request.Data);
+						await HandleValueChangeAsync(cacheObject, instance, identity.Code, canEdit, request.ItemId, request.Value);
 						break;
 					case "Add":
-						await HandleAddAsync(cacheObject, instance, identity.Code, canEdit, request.Item);
+						await HandleAddAsync(cacheObject, instance, identity.Code, canEdit, request.ItemId);
 						break;
 					case "Remove":
-						await HandleRemoveAsync(cacheObject, instance, identity.Code, canEdit, request.Item);
+						await HandleRemoveAsync(cacheObject, instance, identity.Code, canEdit, request.ItemId);
 						break;
 					case "Up":
-						await HandleMoveAsync(cacheObject, instance, identity.Code, canEdit, request.Item, -1);
+						await HandleMoveAsync(cacheObject, instance, identity.Code, canEdit, request.ItemId, -1);
 						break;
 					case "Down":
-						await HandleMoveAsync(cacheObject, instance, identity.Code, canEdit, request.Item, 1);
+						await HandleMoveAsync(cacheObject, instance, identity.Code, canEdit, request.ItemId, 1);
 						break;
 					//case "UnlockPage":
 					//case "Refresh":
@@ -384,9 +394,9 @@ namespace CheckListManager.Instances.Logic.Services
 			if (field == null)
 				throw new InstanceException("Field not found");
 
-			if (!field.IsReadOnly)
+			if (!field.ReadOnly)
 			{
-				if ((value ?? string.Empty) != (field.Value?.Value ?? string.Empty) && field.Validate(value))
+				if ((value ?? string.Empty) != (field.Value ?? string.Empty) && field.Validate(value))
 				{
 					//TODO: add audit
 					field.History.Add(new FieldRecord
@@ -395,7 +405,7 @@ namespace CheckListManager.Instances.Logic.Services
 						User = userCode,
 						Value = value
 					});
-					field.Value = new Common.Logic.Models.RawValue(value);
+					field.Value = value;
 
 					await Update(cacheObject, instance, userCode);
 				}
@@ -412,7 +422,7 @@ namespace CheckListManager.Instances.Logic.Services
 			if (group == null)
 				throw new InstanceException("Group not found");
 
-			if (!group.IsReadOnly)
+			if (!group.ReadOnly)
 			{
 				group.AddIteration();
 				await Update(cacheObject, instance, userCode);
@@ -431,7 +441,7 @@ namespace CheckListManager.Instances.Logic.Services
 			if (iteration == null)
 				throw new InstanceException("Group not found");
 
-			if (!iteration.IsReadOnly)
+			if (!iteration.ReadOnly)
 			{
 				((Group)iteration.Group).Remove(iteration);
 				await Update(cacheObject, instance, userCode);
@@ -448,7 +458,7 @@ namespace CheckListManager.Instances.Logic.Services
 			if (iteration == null)
 				throw new InstanceException("Group not found");
 
-			if (!iteration.IsReadOnly)
+			if (!iteration.ReadOnly)
 			{
 				((Group)iteration.Group).Move(iteration, direction);
 				await Update(cacheObject, instance, userCode);
@@ -494,7 +504,7 @@ namespace CheckListManager.Instances.Logic.Services
 					continue;
 
 				if (instance.IsDirty)
-					await CloseAsync(instance, null, true);
+					await SuspendAsync(instance, null, true);
 				else
 					await _instanceCache.RemoveAsync(code);
 			}

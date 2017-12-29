@@ -30,7 +30,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
             return
                 Property == SignatureProperties.Signed ? new TypedValue(DataType.Boolean, Signature.Signed) :
                 Property == SignatureProperties.SignedBy ? new TypedValue(DataType.Text, Signature.Signed ? Signature.SignedBy : null) :
-                Property == SignatureProperties.SignedOn ? new TypedValue(DataType.DateTime, Signature.Signed ? Signature.SignedOn : (DateTime?)null) :
+                Property == SignatureProperties.SignedOn ? new TypedValue(DataType.DateTime, Signature.Signed ? Signature.SignedOn : (DateTimeOffset?)null) :
                 null;
         }
 

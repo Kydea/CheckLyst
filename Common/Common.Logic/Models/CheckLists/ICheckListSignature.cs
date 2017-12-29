@@ -12,7 +12,7 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
 		int? SignatureLevel { get; set; }
 		bool Signed { get; set; }
 		string SignedBy { get; set; }
-		DateTime SignedOn { get; set; }
+		DateTimeOffset SignedOn { get; set; }
 		string SignerDescription { get; set; }
 	}
 }

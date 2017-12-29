@@ -14,7 +14,7 @@ namespace CheckListManager.Instances.Logic.Services
 		Task<InstanceCacheObject> CreateAsync(long companyId, string userCode, long prototype, int version);
 		Task OpenAsync(string code, IDefaultIdentity identity);
 		Task SaveAsync(string code, IDefaultIdentity identity);
-		Task CloseAsync(string code, IDefaultIdentity identity);
+		Task SuspendAsync(string code, IDefaultIdentity identity);
 		Task<InstanceCacheObject> HandleEventAsync(DefaultIdentity identity, InstanceEventRequest request);
 
 		Instance GetCheckList(string userCode, bool canEdit, InstanceCacheObject instance);

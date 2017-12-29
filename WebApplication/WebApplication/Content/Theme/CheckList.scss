@@ -153,8 +153,12 @@ div.CheckList {
             width: calc(100% - #{$Metric-Control-Space});
 
             > a.Button {
-                margin-left: $Metric-Control-Space;
                 margin-top: calc(1em + 5px);
+
+                @media #{$Media-Extended} {
+                    margin-left: $Metric-Control-Space;
+                    float: right;
+                }
             }
         }
     }

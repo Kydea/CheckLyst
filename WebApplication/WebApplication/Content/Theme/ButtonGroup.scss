@@ -32,6 +32,10 @@ a.Button.ButtonGroup {
                 text-decoration: none !important;
                 background-color: $Color-Silver-Dark;
             }
+
+            &.Hidden {
+                display: none;
+            }
         }
     }
 

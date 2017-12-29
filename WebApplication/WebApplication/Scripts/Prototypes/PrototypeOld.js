@@ -1,19 +1,5 @@
 ﻿prototypes.PrototypeOld = function (selector, id, isNew) {
 
-    prototype.preview = function () {
-        var handler = function () {
-            $("<a href='" + matematici.urls.instances.preview + "?Prototype=" + model.Code + "&Version=" + model.Version + "' target='_blank'></a>")[0].click();
-        };
-
-        if (matematici.canClose)
-            handler();
-        else
-            matematici.dialog.show("warning", "There are unsaved changes.", [
-                { text: "save", icon: "check", handler: function () { prototype.save(handler); } },
-                { text: "cancel", icon: "remove", cancelButton: true }
-            ]);
-    };
-
     prototype.showHistory = function () {
         $.ajax({
             url: matematici.urls.prototypes.history,

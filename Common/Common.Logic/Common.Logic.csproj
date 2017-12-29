@@ -139,7 +139,6 @@
     <Compile Include="Models\Expressions\Symbol.cs" />
     <Compile Include="Models\Expressions\TypedValue.cs" />
     <Compile Include="Models\Expressions\UnaryOperator.cs" />
-    <Compile Include="Models\RawValue.cs" />
     <Compile Include="Authentication\AuthenticationService.cs" />
     <Compile Include="Authentication\IAuthenticationService.cs" />
     <Compile Include="Services\ISettingService.cs" />
