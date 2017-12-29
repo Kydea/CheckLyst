@@ -58,7 +58,7 @@
 
         change = function (value) {
             if (validate()) {
-                new instances.Event(instances.Events.valueChange, model.id, { Value: value }).done(function (result) {
+                new instances.Event(instances.Events.valueChange, model.id, { value: value }).done(function (result) {
                     instances.instance.update(result);
                     next();
                 }).trigger();

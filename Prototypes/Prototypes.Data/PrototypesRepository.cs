@@ -92,11 +92,17 @@ namespace CheckListManager.Prototypes.Data
 
         public async Task SetStateAsync(DefaultIdentity defaultIdentity, PrototypeVersions prototypeVersion, string state, bool proposed)
         {
-            if (prototypeVersion.VersionState == VersionState.Draft && state == VersionState.InSumulation && !proposed)
+            if (prototypeVersion.VersionState == VersionState.Draft && state == VersionState.InSimulation && !proposed)
+            {
                 prototypeVersion.VersionState = state;
-            else if (prototypeVersion.VersionState == VersionState.InSumulation && state == VersionState.Draft && !proposed)
+                prototypeVersion.Instances.ToList().ForEach(i => prototypeVersion.Instances.Remove(i));
+            }
+            else if (prototypeVersion.VersionState == VersionState.InSimulation && state == VersionState.Draft && !proposed)
+            {
                 prototypeVersion.VersionState = state;
-            else if (prototypeVersion.VersionState == VersionState.InSumulation && state == VersionState.Approved && proposed)
+                prototypeVersion.Instances.ToList().ForEach(i => prototypeVersion.Instances.Remove(i));
+            }
+            else if (prototypeVersion.VersionState == VersionState.InSimulation && state == VersionState.Approved && proposed)
             {
                 var WorkFlow = prototypeVersion.Prototypes.PrototypeTypes.ApprovationWorkFlow;
                 if (WorkFlow == null)

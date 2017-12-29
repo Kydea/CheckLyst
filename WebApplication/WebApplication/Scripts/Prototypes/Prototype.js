@@ -47,40 +47,40 @@
 
 		setupActionBar = function () {
 			buttonGroup = $("div.ActionBar a.ButtonGroup", element),
-				previewButton = $("a.Preview", buttonGroup).hide(),
-				startSimulationButton = $("a.StartSimulation", buttonGroup).hide(),
-				cancelSimulationButton = $("a.CancelSimulation", buttonGroup).hide(),
-				deleteButton = $("a.Delete", buttonGroup).hide(),
-				submitForApprovalButton = $("a.SubmitForApproval", buttonGroup).hide(),
-				approveButton = $("a.Approve", buttonGroup).hide(),
-				submitForObsolescence = $("a.SubmitForObsolescence", buttonGroup).hide(),
-				obsoleteButton = $("a.Obsolete", buttonGroup).hide(),
-				saveButton = $("a.Save", buttonGroup).hide(),
-				historyButton = $("a.History", buttonGroup).hide(); //.toggle(model.version > 0);
+				previewButton = $("a.Preview", buttonGroup).addClass("Hidden"),
+				startSimulationButton = $("a.StartSimulation", buttonGroup).addClass("Hidden"),
+				cancelSimulationButton = $("a.CancelSimulation", buttonGroup).addClass("Hidden"),
+				deleteButton = $("a.Delete", buttonGroup).addClass("Hidden"),
+				submitForApprovalButton = $("a.SubmitForApproval", buttonGroup).addClass("Hidden"),
+				approveButton = $("a.Approve", buttonGroup).addClass("Hidden"),
+				submitForObsolescence = $("a.SubmitForObsolescence", buttonGroup).addClass("Hidden"),
+				obsoleteButton = $("a.Obsolete", buttonGroup).addClass("Hidden"),
+				saveButton = $("a.Save", buttonGroup).addClass("Hidden"),
+				historyButton = $("a.History", buttonGroup).addClass("Hidden"); //.toggle(model.version > 0);
 
 			switch (model.state) {
 				case prototypes.Prototype.states.active:
 				case prototypes.Prototype.states.approved:
 					if (model.proposedState)
-						obsoleteButton.show();
+						obsoleteButton.removeClass("Hidden");
 					else 
-						submitForObsolescence.show();
+						submitForObsolescence.removeClass("Hidden");
 					break;
 				case prototypes.Prototype.states.draft:
 					if (model.version > 0) {
-						previewButton.show();
-						startSimulationButton.show();
-						deleteButton.show();
+						previewButton.removeClass("Hidden");
+						startSimulationButton.removeClass("Hidden");
+						deleteButton.removeClass("Hidden");
 					}
-					saveButton.show();
+					saveButton.removeClass("Hidden");
 					break;
 				case prototypes.Prototype.states.simulation:
 					if (model.proposedState)
-						approveButton.show();
+						approveButton.removeClass("Hidden");
 					else {
-						previewButton.show();
-						submitForApprovalButton.show();
-						cancelSimulationButton.show();
+						previewButton.removeClass("Hidden");
+						submitForApprovalButton.removeClass("Hidden");
+						cancelSimulationButton.removeClass("Hidden");
 					}
 					break;
 				case prototypes.Prototype.states.obsolete:
@@ -93,7 +93,7 @@
 					break;
 			}
 
-			if (buttonGroup.children().size() == 0)
+			if ($("a:not(.Hidden)", buttonGroup).size() == 0)
 				buttonGroup.hide();
 		},
 
@@ -556,12 +556,26 @@
 		});
 	};
 
-	prototype.getNewItemId = getNewItemId;
+	prototype.preview = function () {
+		var handler = function () {
+			$("<a />").attr({ href: options.previewUrl + "/" + prototypeKey.id + "/" + prototypeKey.version, target: "_blank" })[0].click();
+		};
+
+		if (matematici.canClose)
+			handler();
+		else
+			matematici.dialog.show("warning", "There are unsaved changes.", [
+				{ text: "save", icon: "check", handler: function () { prototype.save(handler); } },
+				{ text: "cancel", icon: "times", cancelButton: true }
+			]);
+	};
 
 	prototype.update = function () {
 		select();
 		update();
 	};
+
+	prototype.getNewItemId = getNewItemId;
 
 	prototypes.prototype = prototype;
 

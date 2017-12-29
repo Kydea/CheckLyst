@@ -31,7 +31,11 @@ namespace CheckListManager.Instances.Api.Controllers
 					Code = cacheObject.Code,
                     State = cacheObject.InstanceState,
 
-                    CheckList = _instanceManagerService.GetCheckList(Identity.Code, Identity.HasPermission("Instances", "Create", cacheObject.Department, cacheObject.PrototypeType), cacheObject),
+                    CheckList = _instanceManagerService.GetCheckList(
+                        Identity.Code,
+                        Identity.HasPermission("Instances", "Create", cacheObject.Department)
+                        || Identity.HasPermission("Instances", "Create", cacheObject.Department, cacheObject.PrototypeType), 
+                        cacheObject),
 
                     Department = cacheObject.Department,
                     DepartmentName = cacheObject.DepartmentName,
@@ -42,7 +46,7 @@ namespace CheckListManager.Instances.Api.Controllers
                     Version = cacheObject.Version,
                     VersionState = cacheObject.VersionState
                 };
-				return Ok(Message.Create(response));
+                return Ok(response);
 			}
 			catch (Exception e)
 			{
@@ -58,7 +62,7 @@ namespace CheckListManager.Instances.Api.Controllers
 			try
 			{
 				await _instanceManagerService.OpenAsync(request.Code, Identity);
-				return Ok(Message.Create(true));
+				return Ok();
 			}
 			catch (Exception e)
 			{
@@ -82,7 +86,10 @@ namespace CheckListManager.Instances.Api.Controllers
                     Number = cacheObject.Number,
                     State = cacheObject.InstanceState,
 
-                    CheckList = _instanceManagerService.GetCheckList(Identity.Code, Identity.HasPermission("Instances", "View", cacheObject.Department, cacheObject.PrototypeType), cacheObject),
+                    CheckList = _instanceManagerService.GetCheckList(Identity.Code, 
+                        Identity.HasPermission("Instances", "View", cacheObject.Department)
+                        || Identity.HasPermission("Instances", "View", cacheObject.Department, cacheObject.PrototypeType), 
+                        cacheObject),
 
                     Department = cacheObject.Department,
                     DepartmentName = cacheObject.DepartmentName,
@@ -93,7 +100,7 @@ namespace CheckListManager.Instances.Api.Controllers
                     Version = cacheObject.Version,
                     VersionState = cacheObject.VersionState
                 };
-				return Ok(Message.Create(response));
+                return Ok(response);
 			}
 			catch (Exception e)
 			{
@@ -109,7 +116,7 @@ namespace CheckListManager.Instances.Api.Controllers
 			try
 			{
 				await _instanceManagerService.SaveAsync(request.Code, Identity);
-				return Ok(Message.Create(true));
+				return Ok(true);
 			}
 			catch (Exception e)
 			{
@@ -118,14 +125,14 @@ namespace CheckListManager.Instances.Api.Controllers
 		}
 
 		[HttpPost]
-		[Route("Close")]
-        [Authorize(Roles = "Instances#View,Instances#Edit")]
-        public async Task<IHttpActionResult> Close(InstanceRequest request)
+		[Route("Suspend")]
+        [Authorize(Roles = "Instances#Edit")]
+        public async Task<IHttpActionResult> Suspend(InstanceRequest request)
 		{
 			try
 			{
-				await _instanceManagerService.CloseAsync(request.Code, Identity);
-				return Ok(Message.Create(true));
+				await _instanceManagerService.SuspendAsync(request.Code, Identity);
+				return Ok(true);
 			}
 			catch (Exception e)
 			{
@@ -145,10 +152,14 @@ namespace CheckListManager.Instances.Api.Controllers
 				{
 					Id = cacheObject.Id,
 					Code = cacheObject.Code,
-					CheckList = _instanceManagerService.GetCheckList(Identity.Code, Identity.HasPermission("Instances", "Edit", cacheObject.Department, cacheObject.PrototypeType), cacheObject),
+					CheckList = _instanceManagerService.GetCheckList(
+                        Identity.Code, 
+                        Identity.HasPermission("Instances", "Edit", cacheObject.Department)
+                        || Identity.HasPermission("Instances", "Edit", cacheObject.Department, cacheObject.PrototypeType), 
+                        cacheObject),
                     State = cacheObject.InstanceState
                 };
-				return Ok(Message.Create(response));
+				return Ok(response);
 			}
 			catch (Exception e)
 			{

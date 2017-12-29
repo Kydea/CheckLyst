@@ -48,10 +48,10 @@
                                     data: {
                                         signHandler: function (panel) {
                                             new instances.Event(instances.Events.signature, model.id, {
-                                                UserName: panel.getUserName(),
-                                                Password: panel.getPassword(),
-                                                PIN: panel.getPIN(),
-                                                Simple: panel.isSimple()
+                                                userName: panel.getUserName(),
+                                                password: panel.getPassword(),
+                                                pin: panel.getPIN(),
+                                                simple: panel.isSimple()
                                             }).done(function (result) {
 												if (result.Error) {
 													//error with dialog
@@ -73,9 +73,9 @@
                         },
 
                         trySign = function(username) {
-                            new instances.Event(instances.Events.signatureCheck, model.id, { UserName: username }).done(function (result) {
+                            new instances.Event(instances.Events.signatureCheck, model.id, { userName: username }).done(function (result) {
                                 if (result.Error)
-                                    matematici.dialog.error("signature error", result.Id == null ? result.Error : "The element " + (result.Description ? result.Description + " " : "") + " with id " + result.Id + " is not valid.");
+                                    matematici.dialog.error("signature error", result.id == null ? result.error : "The element " + (result.description ? result.description + " " : "") + " with id " + result.id + " is not valid.");
                                 else
                                     sign(username);
                             }).trigger();
@@ -119,13 +119,13 @@
                             data: {
                                 signHandler: function (panel) {
                                     new instances.Event(instances.Events.signatureCancelation, model.id, {
-                                        UserName: panel.getUserName(),
-                                        Password: panel.getPassword(),
-                                        Note: panel.getNote()
+                                        userName: panel.getUserName(),
+                                        password: panel.getPassword(),
+                                        note: panel.getNote()
                                     }).done(function (result) {
                                         if (result.Error) {
                                             var error = $("div.Error", matematici.popup.getElement());
-                                            error.fadeTo(500, .9).children().text(result.Error);
+                                            error.fadeTo(500, .9).children().text(result.error);
                                             setTimeout(function () {
                                                 error.fadeTo(500, 0, function () { error.hide(); });
                                             }, 3000);
