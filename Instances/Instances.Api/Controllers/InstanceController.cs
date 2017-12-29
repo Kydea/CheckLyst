@@ -57,7 +57,7 @@ namespace CheckListManager.Instances.Api.Controllers
 		{
 			try
 			{
-				await _instanceManagerService.OpenAsync(request.Code, Identity.Code);
+				await _instanceManagerService.OpenAsync(request.Code, Identity);
 				return Ok(Message.Create(true));
 			}
 			catch (Exception e)
@@ -102,13 +102,29 @@ namespace CheckListManager.Instances.Api.Controllers
 		}
 
 		[HttpPost]
+		[Route("Save")]
+		[Authorize(Roles = "Instances#Edit")]
+		public async Task<IHttpActionResult> Save(InstanceRequest request)
+		{
+			try
+			{
+				await _instanceManagerService.SaveAsync(request.Code, Identity);
+				return Ok(Message.Create(true));
+			}
+			catch (Exception e)
+			{
+				return Error(e);
+			}
+		}
+
+		[HttpPost]
 		[Route("Close")]
-        [Authorize(Roles = "Instances#View")]
+        [Authorize(Roles = "Instances#View,Instances#Edit")]
         public async Task<IHttpActionResult> Close(InstanceRequest request)
 		{
 			try
 			{
-				await _instanceManagerService.CloseAsync(request.Code, Identity.Code);
+				await _instanceManagerService.CloseAsync(request.Code, Identity);
 				return Ok(Message.Create(true));
 			}
 			catch (Exception e)

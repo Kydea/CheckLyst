@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CheckListManager.Common.Core.Web.Security
+﻿namespace CheckListManager.Common.Core.Web.Security
 {
     public interface IDefaultIdentity
     {
         long CompanyId { get; }
-
         string Code { get; }
+
+	    bool HasPermission(string functionGroup, string function = "", long? department = null, long? prototypeType = null,
+		    string tag = null);
+
     }
 }

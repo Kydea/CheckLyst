@@ -6,18 +6,19 @@ using CheckListManager.Common.Logic.Models.Expressions.Parsing;
 
 namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 {
-	public class Prototype : ICheckList
-	{
-		public Dictionary<string, ICheckListElement> Elements { get; } = new Dictionary<string, ICheckListElement>();
-		public Dictionary<string, Expression> Expressions { get; set; } = new Dictionary<string, Expression>();
+    public class Prototype : ICheckList
+    {
+        public Dictionary<string, ICheckListElement> Elements { get; } = new Dictionary<string, ICheckListElement>();
+        public Dictionary<string, Expression> Expressions { get; set; } = new Dictionary<string, Expression>();
         public List<String> ExpressionsInUse { get; private set; }
+        public Dictionary<string, string> ExternalSources { get; set; } = new Dictionary<string, string>();
         public ICheckListGroup Header { get; set; }
-		public List<ICheckListPage> Pages { get; } = new List<ICheckListPage>();
+        public List<ICheckListPage> Pages { get; } = new List<ICheckListPage>();
 
         public void AddItem(ICheckListItem item)
-		{
-			throw new NotImplementedException();
-		}
+        {
+            throw new NotImplementedException();
+        }
 
         public ICheckList CheckList { get { return this; } set { throw new NotImplementedException("Just for inheritance purpose"); } }
 

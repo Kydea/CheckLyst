@@ -24,9 +24,11 @@
 
         sourceChanged = function (column) {
             sourceColumn.empty();
-            var columns = matematici.sources[prototypes.prototype.getModel().ExternalSources[sourceName.val()]];
+			var columns = []; //matematici.sources[prototypes.prototype.getModel().externalSources[sourceName.val()]];
             for (index in columns)
-                $("<option />").appendTo(sourceColumn).text(columns[index]).attr("value", columns[index]);
+				$("<option />").appendTo(sourceColumn).text(columns[index]).attr("value", columns[index]);
+			sourceName.data("autoComplete").refresh();
+			sourceColumn.data("autoComplete").refresh();
             if (column)
                 sourceColumn.val(column);
             else
@@ -58,18 +60,30 @@
         if (editable) {
             select = $("<select />")
                 .appendTo(valuePanel)
-                .append($("<option />").text("empty").attr("selected", empty))
-                .append($("<option />").text("external source").attr("selected", externalSource))
-                .append($("<option />").text("formula").attr("selected", formula))
-                .append($("<option />").text("comma separated values").attr("selected", list));
+				.append($("<option />").text("empty").attr({
+					value: 0,
+					selected: empty
+				}))
+				.append($("<option />").text("external source").attr({
+					value: 1,
+					selected: externalSource
+				}))
+				.append($("<option />").text("formula").attr({
+					value: 2,
+					selected: formula
+				}))
+				.append($("<option />").text("comma separated values").attr({
+					value: 3,
+					selected: list
+				}));
 
             select.on("change", selectChanged);
 
-            $("<label />").text("Source").append(sourceName = $("<select />").on("change", sourceChanged)).appendTo(valuePanel);
-            $("<label />").text("Column").append(sourceColumn = $("<select />").on("change", valueChanged)).appendTo(valuePanel);
+            $("<label />").append($("<span />").text("Source")).append(sourceName = $("<select />").on("change", sourceChanged)).appendTo(valuePanel);
+			$("<label />").append($("<span />").text("Column")).append(sourceColumn = $("<select />").on("change", valueChanged)).appendTo(valuePanel);
             input = $("<textarea />").appendTo(valuePanel).attr({ type: "text" }).on("change", valueChanged).val(model.valueFormulaString || (model.valuesList && model.valuesList.join()));
 
-            for (var index in prototypes.prototype.getModel().ExternalSources)
+            for (var index in prototypes.prototype.getModel().externalSources)
                 $("<option />").appendTo(sourceName).text(index).attr("value", index);
 
             if (externalSource) {
