@@ -18,24 +18,24 @@
 		},
 
         setup = function () {
-            label = $("<label />").text(model.description);
+			label = $("<label />").addClass("Controls3").append($("<span />").addClass("Label").html(model.description ? model.description : "(no description)"));
             if (!item.isTableContent())
                 label.appendTo(element);
 
-			check = $("<i />").addClass("fi flaticon-check").hide().appendTo(element);
+			check = $("<i />").addClass("Icon fi flaticon-check").hide().appendTo(element);
 
-            user = $("<input />").addClass("User").attr({ type: "text", readonly: true }).appendTo(element);
-			$("<i />").addClass("fi flaticon-user-o").insertAfter(user);
-            date = $("<input />").addClass("Date").attr({ type: "text", readonly: true }).appendTo(element);
-			$("<i />").addClass("fi flaticon-calendar").insertAfter(date);
-            time = $("<input />").addClass("Time").attr({ type: "text", readonly: true }).appendTo(element);
-			$("<i />").addClass("fi flaticon-clock-o").insertAfter(time);
+			$("<i />").addClass("Icon fi flaticon-user-o").appendTo(item.isTableContent() ? element : label);
+			user = $("<input />").addClass("User").attr({ type: "text", readonly: true }).appendTo(item.isTableContent() ? element : label);
+			$("<i />").addClass("Icon fi flaticon-calendar").appendTo(item.isTableContent() ? element : label);
+			date = $("<input />").addClass("Date").attr({ type: "text", readonly: true }).appendTo(item.isTableContent() ? element : label);
+			$("<i />").addClass("Icon fi flaticon-clock-o").appendTo(item.isTableContent() ? element : label);
+			time = $("<input />").addClass("Time").attr({ type: "text", readonly: true }).appendTo(item.isTableContent() ? element : label);
 
 			exclamation = $("<i />").addClass("fi flaticon-exclamation").appendTo(element).hide();
 
-            button = $("<a />").addClass("Button SignButton").attr({ href: "#" }).appendTo(element);
+			button = $("<a />").addClass("Button SignButton").attr({ href: "#" }).appendTo(element);
             if (model.cancelable)
-                cancelButton = $("<a />").addClass("Button CancelButton").attr({ href: "#" }).appendTo(element).text("Cancel signature");
+				cancelButton = $("<a />").addClass("Button CancelButton").attr({ href: "#" }).appendTo(element).text("Cancel signature").prepend($("<i >").addClass("fi flaticon-times"));
             
             element
                 .on("click", "a.SignButton:not(.Selected):not(.ReadOnly)", function (e) {
@@ -143,7 +143,7 @@
         };
 
     this.update = function (model) {
-        button.text(model.buttonLabel ? model.buttonLabel : "Signature");
+		button.text(model.buttonLabel ? model.buttonLabel : "Signature").prepend($("<i >").addClass("fi flaticon-check"));
         button.toggleClass("ReadOnly", model.readOnly);
 
         if (model.signed) {

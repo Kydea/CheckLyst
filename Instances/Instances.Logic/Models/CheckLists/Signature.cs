@@ -14,10 +14,15 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 		public int? SignatureLevel { get; set; }
 		public bool Signed { get; set; }
 		public string SignedBy { get; set; }
-		public DateTime SignedOn { get; set; }
+		public DateTimeOffset SignedOn { get; set; }
 		public string SignerDescription { get; set; }
 
-		public override ICheckListItem Clone(ICheckListGroup parent)
+        public override bool IsValidByDefault()
+        {
+            return Signed;
+        }
+
+        public override ICheckListItem Clone(ICheckListGroup parent)
 		{
 			var signature = new Signature
 			{

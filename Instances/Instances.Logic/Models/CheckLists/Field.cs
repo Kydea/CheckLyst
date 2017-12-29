@@ -13,7 +13,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 		public string ExternalSourceName { get; set; }
 		public List<FieldRecord> History { get; } = new List<FieldRecord>();
 		public int LinesCount { get; set; }
-		public RawValue Value { get; set; }
+		public string Value { get; set; }
 
 		public Formula ValueFormula { get; private set; }
 
@@ -50,7 +50,12 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 			ValueFormula?.Update(CheckList.Expressions, RuntimeValues);
 		}
 
-		protected override bool IsReadOnlyByDefault()
+        public override bool IsValidByDefault()
+        {
+            return ValueFormula?.HasValue ?? !string.IsNullOrEmpty(Value);
+        }
+
+        protected override bool IsReadOnlyByDefault()
 		{
 			return base.IsReadOnlyByDefault() || ValueFormula != null;
 		}

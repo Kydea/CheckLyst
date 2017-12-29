@@ -10,7 +10,7 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
 		string ExternalSourceName { get; set; }
 		List<FieldRecord> History { get; }
 		int LinesCount { get; set; }
-		RawValue Value { get; set; }
+		string Value { get; set; }
 		[JsonIgnore]
 		Formula ValueFormula { get; }
 		string ValueFormulaString { get; set; }

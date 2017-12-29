@@ -92,8 +92,11 @@ div.CheckList div.Item {
   div.CheckList div.Item.Signature {
     width: calc(100% - 20px); }
     div.CheckList div.Item.Signature > a.Button {
-      margin-left: 20px;
       margin-top: calc(1em + 5px); }
+      @media only screen and (min-width: 760px) {
+        div.CheckList div.Item.Signature > a.Button {
+          margin-left: 20px;
+          float: right; } }
 
 div.CheckList .Item p.Description {
   margin: 0; }

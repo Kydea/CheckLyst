@@ -69,22 +69,16 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 		{
 			base.UpdateReadOnly(userCode, canEdit);
 
-			foreach (var item in Items)
-			{
-				item.UpdateReadOnly(userCode, canEdit);
-			}
-
 			if (Iterator)
-			{
-				_valid = true;
 				foreach (var iteration in Iterations)
-				{
 					iteration.UpdateReadOnly(userCode, canEdit);
-				}
-			}
-		}
+            else
+                foreach (var item in Items)
+                    item.UpdateReadOnly(userCode, canEdit);
 
-		public override ICheckListItem Clone(ICheckListGroup parent)
+        }
+
+        public override ICheckListItem Clone(ICheckListGroup parent)
 		{
 			var group = new Group
 			{

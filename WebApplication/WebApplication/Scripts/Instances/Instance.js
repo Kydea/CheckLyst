@@ -62,8 +62,9 @@
 		},
 
 		load = function () {
+			var newInstance = options.code == "";
 			$.ajax({
-				url: matematici.urls.instances + "/" + (options.code == "" ? "Create" : "Get"),
+				url: matematici.urls.instances + "/" + (newInstance ? "Create" : "Get"),
 				type: "post",
 				data: {
 					code: options.code,
@@ -81,6 +82,8 @@
 				setupBreadcrumbs(result);
 
 				instances.instance.update(result);
+				if (newInstance)
+					matematici.navigator.setUrl(options.detailUrl + "/" + result.code);
 			});
 		},
 

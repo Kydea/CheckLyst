@@ -13,8 +13,8 @@
         },
 
         setup = function () {
-            element = $("<div />").addClass("Information").appendTo(parent).on("click", click);
-            element.siblings().eq(0).filter("label").css("cursor", "pointer").on("click", click);
+			element = $("<div />").addClass("Information").appendTo(parent).on("click", click);
+			element.siblings().eq(0).filter("label").children("span.Label").css("cursor", "pointer").on("click", click);
             panel = $("<div />").addClass("Panel").appendTo(element).on("click", click);
         },
 

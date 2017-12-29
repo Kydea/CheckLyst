@@ -30,16 +30,20 @@ div.Instance {
                 position: absolute;
                 background-color: rgba(255, 255, 255, .9);
                 padding: 10px;
-                border: solid 1px $Color-Grey-Regular;
+                border: solid 1px $Color-Grey-Light;
+                border-radius: 0 10px 10px 10px;
+                box-shadow: $Box-Shadow;
+                line-height: 1.5em;
 
                 i.fi {
                     margin-right: 10px;
+                    color: $Color-Grey-Dark;
 
-                    &.flaticon-thumbs-o-up {
+                    &.flaticon-thumbs-up-o {
                         color: green;
                     }
 
-                    &.flaticon-thumbs-o-down {
+                    &.flaticon-thumbs-down-o {
                         color: red;
                     }
                 }
@@ -155,13 +159,16 @@ div.Instance {
 
             div.Panel {
                 right: 0;
+                border-radius: 10px 0 10px 10px;
             }
         }
     }
 
     .Item {
         label {
-            padding-left: 8px;
+            span.Label {
+                padding-left: 8px;
+            }
         }
 
         &.Field {

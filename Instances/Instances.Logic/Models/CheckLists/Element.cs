@@ -31,8 +31,10 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 		public ICheckListSignature Signature
 			=> SignatureCode == null ? null : (ICheckListSignature)GetBranchElements()[SignatureCode];
 		public string SignatureCode { get; set; }
+        public virtual string GetSignatureInformation()
+            => Signature != null && Signature.Signed ? string.Format("by {0} on {1:dd/MM/yyyy HH:mm}", Signature.SignedBy, Signature.SignedOn) : null;
 
-		public bool Valid
+        public bool Valid
 		{
 			get
 			{
@@ -70,7 +72,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
 		public abstract void Update();
 
-		public bool IsReadOnly { get; protected set; }
+		public bool ReadOnly { get; protected set; }
 
 		protected virtual bool IsReadOnlyByDefault() => false;
 
@@ -78,16 +80,17 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 		{
 			if (!canEdit)
 			{
-				IsReadOnly = true;
+				ReadOnly = true;
 				return;
 			}
 
-			var expressionValue = ReadOnlyExpressionCode != null && CheckList != null &&
-			                      CheckList.Expressions.ContainsKey(ReadOnlyExpressionCode) &&
-			                      CheckList.Expressions[ReadOnlyExpressionCode].Value.Type == DataType.Boolean &&
-			                      CheckList.Expressions[ReadOnlyExpressionCode].Value.BooleanValue;
+			var expressionValue = 
+                ReadOnlyExpressionCode != null && CheckList != null &&
+			    CheckList.Expressions.ContainsKey(ReadOnlyExpressionCode) &&
+			    CheckList.Expressions[ReadOnlyExpressionCode].Value.Type == DataType.Boolean &&
+			    CheckList.Expressions[ReadOnlyExpressionCode].Value.BooleanValue;
 
-			IsReadOnly = (Signature?.Signed ?? false) ||
+			ReadOnly = (Signature?.Signed ?? false) ||
 				ReadOnlyCondition == Conditions.Default && IsReadOnlyByDefault() ||
 				ReadOnlyCondition == Conditions.Expression && expressionValue ||
 				ReadOnlyCondition == Conditions.ExpressionOrDefault && (expressionValue || IsReadOnlyByDefault()) ||

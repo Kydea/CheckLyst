@@ -394,9 +394,9 @@ namespace CheckListManager.Instances.Logic.Services
 			if (field == null)
 				throw new InstanceException("Field not found");
 
-			if (!field.IsReadOnly)
+			if (!field.ReadOnly)
 			{
-				if ((value ?? string.Empty) != (field.Value?.Value ?? string.Empty) && field.Validate(value))
+				if ((value ?? string.Empty) != (field.Value ?? string.Empty) && field.Validate(value))
 				{
 					//TODO: add audit
 					field.History.Add(new FieldRecord
@@ -405,7 +405,7 @@ namespace CheckListManager.Instances.Logic.Services
 						User = userCode,
 						Value = value
 					});
-					field.Value = new Common.Logic.Models.RawValue(value);
+					field.Value = value;
 
 					await Update(cacheObject, instance, userCode);
 				}
@@ -422,7 +422,7 @@ namespace CheckListManager.Instances.Logic.Services
 			if (group == null)
 				throw new InstanceException("Group not found");
 
-			if (!group.IsReadOnly)
+			if (!group.ReadOnly)
 			{
 				group.AddIteration();
 				await Update(cacheObject, instance, userCode);
@@ -441,7 +441,7 @@ namespace CheckListManager.Instances.Logic.Services
 			if (iteration == null)
 				throw new InstanceException("Group not found");
 
-			if (!iteration.IsReadOnly)
+			if (!iteration.ReadOnly)
 			{
 				((Group)iteration.Group).Remove(iteration);
 				await Update(cacheObject, instance, userCode);
@@ -458,7 +458,7 @@ namespace CheckListManager.Instances.Logic.Services
 			if (iteration == null)
 				throw new InstanceException("Group not found");
 
-			if (!iteration.IsReadOnly)
+			if (!iteration.ReadOnly)
 			{
 				((Group)iteration.Group).Move(iteration, direction);
 				await Update(cacheObject, instance, userCode);

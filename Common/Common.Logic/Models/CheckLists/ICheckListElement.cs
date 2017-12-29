@@ -1,5 +1,6 @@
 ﻿using CheckListManager.Common.Logic.Models.Expressions;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace CheckListManager.Common.Logic.Models.CheckLists
 {
@@ -18,7 +19,7 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
         ICheckListSignature Signature { get; }
         string SignatureCode { get; set; }
         bool Valid { get; }
-        bool IsReadOnly { get; }
+        bool ReadOnly { get; }
         Conditions ValidCondition { get; set; }
         string ValidExpressionCode { get; set; }
         string ValidityMessage { get; set; }
@@ -26,5 +27,6 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
         void Setup();
         void Update();
         void UpdateReadOnly(string userCode, bool canEdit);
+        string GetSignatureInformation();
     }
 }

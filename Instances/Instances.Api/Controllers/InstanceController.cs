@@ -5,6 +5,7 @@ using CheckListManager.Common.Logic.Api;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Instances.Logic.Messages;
 using CheckListManager.Instances.Logic.Services;
+using CheckListManager.Instances.Logic.Exceptions;
 
 namespace CheckListManager.Instances.Api.Controllers
 {
@@ -161,9 +162,13 @@ namespace CheckListManager.Instances.Api.Controllers
                 };
 				return Ok(response);
 			}
-			catch (Exception e)
+            catch (InstanceException InstanceException)
+            {
+                return Error(InstanceException.InnerException);
+            }
+            catch (Exception Exception)
 			{
-				return Error(e);
+				return Error(Exception);
 			}
 		}
 	}
