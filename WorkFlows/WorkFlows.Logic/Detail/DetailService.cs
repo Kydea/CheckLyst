@@ -22,6 +22,7 @@ namespace CheckListManager.WorkFlows.Logic.Detail
         private DetailResponse Validate(DetailRequest record)
         {
             var response = new DetailResponse();
+            bool Valid = true;
             if (string.IsNullOrWhiteSpace(record.Description))
                 response.Fields["Description"] = new Field
                 {
@@ -33,14 +34,17 @@ namespace CheckListManager.WorkFlows.Logic.Detail
                     }
                 };
 
-            if (record.Steps.Count() == 0)
+            if (record.Steps != null && record.Steps.Count() == 0)
+            {
+                Valid = false;
                 response.ValidationMessages.Add(new ValidationMessage
                 {
                     Level = ValidationMessage.LevelError,
                     Message = "The work flow myst have at least one step"
                 });
+            }
 
-            response.Valid = response.Fields.Count() == 0;
+            response.Valid = Valid && response.Fields.Count() == 0;
             return response;
         }
 
