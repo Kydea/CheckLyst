@@ -85,5 +85,10 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 		{
 			return CheckList.Elements;
 		}
-	}
+
+        public string GetSignatureInformation()
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
