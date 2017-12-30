@@ -83,7 +83,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 PrototypeVersion.ValidFrom = UtcNow;
 
             var State = 
-                PrototypeVersion.VersionState == VersionState.InSumulation ?
+                PrototypeVersion.VersionState == VersionState.InSimulation ?
                     PrototypeVersion.ValidFrom > UtcNow ? VersionState.Approved : VersionState.Active :
                     PrototypeVersion.ValidUntil > UtcNow ? PrototypeVersion.VersionState : VersionState.Obsolete;
 
