@@ -70,9 +70,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public void UpdateReadOnly(string userCode, string state)
         {
-            Header.UpdateReadOnly(userCode, ReadOnly && state == InstanceState.Draft);
+            Header.UpdateReadOnly(userCode, ReadOnly || state != InstanceState.Draft);
             foreach (var page in Pages)
-                page.UpdateReadOnly(userCode, ReadOnly && state == InstanceState.Progress);
+                page.UpdateReadOnly(userCode, ReadOnly || state != InstanceState.Progress);
         }
     }
 }

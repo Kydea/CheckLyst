@@ -76,9 +76,9 @@
 
         matematici.save = instance.save;
 
-        matematici.events.onPageUnload = function (callback) {
+        @*matematici.events.onPageUnload = function (callback) {
             $.ajax({
-                url: matematici.urls.instances + "/Close",
+                url: matematici.urls.instances + "/Suspend",
                 type: "post",
                 data: { code: "@Model.Code" }
             }).done(function (result) {
@@ -87,7 +87,7 @@
                 instance.destroy();
                 callback();
             });
-        };
+        };*@
 
         callback.call();
     };

@@ -230,7 +230,7 @@ namespace CheckListManager.Prototypes.Logic.Services
             PrototypeVersion.ValidUntil = request.ValidUntil;
 
             //Deletes the old tags and creates the new ones
-            PrototypeVersion.PrototypeVersionTags.ToList().ForEach(t => PrototypeVersion.PrototypeVersionTags.Remove(t));
+            _prototypeRepository.DeletePrototypeVersionTags(PrototypeVersion.PrototypeVersionTags);
             var Tags = CreateTags(request);
             Tags.ForEach(t => PrototypeVersion.PrototypeVersionTags.Add(t));
 

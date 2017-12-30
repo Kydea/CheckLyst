@@ -42,16 +42,16 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 			}
 		}
 
-		public override void UpdateReadOnly(string userCode, bool canEdit)
+		public override void UpdateReadOnly(string userCode, bool ReadOnlyInstance)
 		{
             IsLocked = Lock != null && Lock.User != userCode;
-            if (IsLocked || !canEdit)
+            if (IsLocked || ReadOnlyInstance)
                 ReadOnly = true;
             else
-                base.UpdateReadOnly(userCode, canEdit);
+                base.UpdateReadOnly(userCode, ReadOnlyInstance);
 
             foreach (var group in Groups)
-				group.UpdateReadOnly(userCode, canEdit);
+				group.UpdateReadOnly(userCode, ReadOnlyInstance);
 		}
 	}
 }

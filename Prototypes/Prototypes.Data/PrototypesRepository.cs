@@ -90,17 +90,22 @@ namespace CheckListManager.Prototypes.Data
             await SaveChangesAsync();
         }
 
+        public void DeletePrototypeVersionTags(IEnumerable<PrototypeVersionTags> versionTags)
+        {
+            Entities.PrototypeVersionTags.RemoveRange(versionTags);
+        }
+
         public async Task SetStateAsync(DefaultIdentity defaultIdentity, PrototypeVersions prototypeVersion, string state, bool proposed)
         {
             if (prototypeVersion.VersionState == VersionState.Draft && state == VersionState.InSimulation && !proposed)
             {
                 prototypeVersion.VersionState = state;
-                prototypeVersion.Instances.ToList().ForEach(i => prototypeVersion.Instances.Remove(i));
+                Entities.Instances.RemoveRange(prototypeVersion.Instances);
             }
             else if (prototypeVersion.VersionState == VersionState.InSimulation && state == VersionState.Draft && !proposed)
             {
                 prototypeVersion.VersionState = state;
-                prototypeVersion.Instances.ToList().ForEach(i => prototypeVersion.Instances.Remove(i));
+                Entities.Instances.RemoveRange(prototypeVersion.Instances);
             }
             else if (prototypeVersion.VersionState == VersionState.InSimulation && state == VersionState.Approved && proposed)
             {

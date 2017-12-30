@@ -44,12 +44,12 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         protected override bool IsReadOnlyByDefault()
             => Previous != null && !Previous.Valid;
 
-        public override void UpdateReadOnly(string userCode, bool canEdit)
+        public override void UpdateReadOnly(string userCode, bool readOnlyInstance)
         {
-            if (!canEdit || Group != null && Group.ReadOnly || Page != null && Page.ReadOnly)
+            if (readOnlyInstance || Group != null && Group.ReadOnly || Page != null && Page.ReadOnly)
                 ReadOnly = true;
             else
-                base.UpdateReadOnly(userCode, canEdit);
+                base.UpdateReadOnly(userCode, readOnlyInstance);
         }
 
         public override string GetSignatureInformation()

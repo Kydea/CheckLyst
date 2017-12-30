@@ -65,16 +65,16 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 			}
 		}
 
-		public override void UpdateReadOnly(string userCode, bool canEdit)
+		public override void UpdateReadOnly(string userCode, bool readOnlyInstance)
 		{
-			base.UpdateReadOnly(userCode, canEdit);
+			base.UpdateReadOnly(userCode, readOnlyInstance);
 
 			if (Iterator)
 				foreach (var iteration in Iterations)
-					iteration.UpdateReadOnly(userCode, canEdit);
+					iteration.UpdateReadOnly(userCode, readOnlyInstance);
             else
                 foreach (var item in Items)
-                    item.UpdateReadOnly(userCode, canEdit);
+                    item.UpdateReadOnly(userCode, readOnlyInstance);
 
         }
 

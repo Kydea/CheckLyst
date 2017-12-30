@@ -21,5 +21,10 @@ namespace CheckListManager.Infrastructure.Tests
         public long CompanyId { get; protected set; }
 
         public string Code { get; protected set; }
+
+        public bool HasPermission(string functionGroup, string function = "", long? department = null, long? prototypeType = null, string tag = null)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

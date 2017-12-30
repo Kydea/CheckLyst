@@ -7,6 +7,13 @@
 		code,
 		id,
 		state,
+		departmentName,
+		prototypeTypeName,
+		prototypeName,
+		version,
+		versionState,
+		year,
+		number,
 		tab,
 		pageLock,
 		updateHandler,
@@ -25,14 +32,14 @@
 				buttonGroup.hide();
 		},
 
-		setupBreadcrumbs = function (data) {
+		setupBreadcrumbs = function () {
 			matematici.breadcrumbs.set([
-				{ content: data.departmentName },
-				{ content: data.prototypeTypeName },
-				{ content: data.prototypeName + "." + data.version },
+				{ content: departmentName },
+				{ content: prototypeTypeName },
+				{ content: prototypeName + "." + version },
 				{
 					content:
-					(data.versionState == prototypes.Prototype.states.draft ? "test" : data.versionState == prototypes.Prototype.states.simulation ? "SE" : data.year || "?") + "." + (data.number || "?") + " (" + state + ")"
+					(versionState == prototypes.Prototype.states.draft ? "test" : versionState == prototypes.Prototype.states.simulation ? "SE" : year || "?") + "." + (number || "?") + " (" + state + ")"
 				},
 			]);
 		},
@@ -77,9 +84,16 @@
 				id = result.id;
 				state = result.state;
 				code = result.code;
+				departmentName = result.departmentName;
+				prototypeTypeName = result.prototypeTypeName;
+				prototypeName = result.prototype;
+				version = result.version;
+				versionState = result.versionState;
+				year = result.year;
+				number = result.number;
 
 				setupActionBar();
-				setupBreadcrumbs(result);
+				setupBreadcrumbs();
 
 				update(result);
 				if (newInstance)
@@ -87,21 +101,30 @@
 			});
 		},
 
-		send = function (action, note) {
+		send = function (action, note, callback) {
 			$.ajax({
 				url: matematici.urls.instances + "/" + action,
 				type: "post",
-				data: { code: code, note: note }
+				data: {
+					code: code,
+					note: note
+				}
 			}).done(function (result) {
 				console.log(result)
 
-				id = result.id;
-				state = result.state;
+				id = result.id || id;
+				state = result.state || state;
+				year = result.year || year;
+				number = result.number || number;
 
 				setupActionBar();
-				setupBreadcrumbs(result);
+				setupBreadcrumbs();
 
-				update(result);
+				if (result.checkList) 
+					update(result);
+
+				if (callback)
+					callback();
 			});
 		};
 
@@ -142,7 +165,13 @@
 	};
 
 	instance.quit = function () {
-		matematici.navigator.open(matematici.urls.instances.list, false, true);
+		if (
+			window.opener
+			&& (versionState == prototypes.Prototype.states.simulation || versionState == prototypes.Prototype.states.draft)
+		)
+			window.close();
+		else
+			matematici.navigator.open(options.listUrl);
 	};
 
 	instance.save = function () {
@@ -150,15 +179,18 @@
 	};
 
 	instance.cancel = function () {
-		matematici.dialog.show("Cancel", "Provide a note for the cancelation", [
-			{
-				text: "Save", icon: "check", handler: function () {
-					send("Cancel", $("textarea.Textarea", $(this).closest("div.Dialog")).val());
-				}
-			},
-			{ text: "Cancel", icon: "times" },
-			{ textarea: true, text: "Note" }
-		]);
+		if (versionState == prototypes.Prototype.states.active && state == instances.Instance.states.progress)
+			matematici.dialog.show("Cancel", "Provide a note for the cancelation", [
+				{
+					text: "Save", icon: "check", handler: function () {
+						send("Cancel", $("textarea.Textarea", $(this).closest("div.Dialog")).val(), instance.quit);
+					}
+				},
+				{ text: "Cancel", icon: "times" },
+				{ textarea: true, text: "Note" }
+			]);
+		else
+			send("Cancel", null, instance.quit);
 	};
 
 	instance.complete = function () {
@@ -166,7 +198,7 @@
 	};
 
 	instance.confirm = function () {
-		send("Confirm");
+		alert("not implemented"); //todo
 	};
 
 	instance.setOnUpdateHandler = function (handler) {

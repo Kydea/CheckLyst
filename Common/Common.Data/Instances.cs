@@ -27,7 +27,8 @@ namespace CheckListManager.Common.Data
         public long Prototype { get; set; }
         public int Version { get; set; }
         public int Year { get; set; }
-        public Nullable<int> Number { get; set; }
+        public string PrototypeName { get; set; }
+        public int Number { get; set; }
         public string InstanceState { get; set; }
         public string Description { get; set; }
         public string Data { get; set; }
@@ -35,19 +36,18 @@ namespace CheckListManager.Common.Data
         public System.DateTimeOffset CreatedOn { get; set; }
         public string ModifiedBy { get; set; }
         public Nullable<System.DateTimeOffset> ModifiedOn { get; set; }
-        public string PrototypeName { get; set; }
         public long Company { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<InstanceExpressionValues> InstanceExpressionValues { get; set; }
         public virtual InstanceNumerators InstanceNumerators { get; set; }
+        public virtual PrototypeVersions PrototypeVersions { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<InstanceTags> InstanceTags { get; set; }
+        public virtual Companies Companies { get; set; }
         public virtual InstanceStates InstanceStates { get; set; }
         public virtual Prototypes Prototypes { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<InstanceTags> InstanceTags { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<WorkFlowApplications> WorkFlowApplications { get; set; }
-        public virtual PrototypeVersions PrototypeVersions { get; set; }
-        public virtual Companies Companies { get; set; }
     }
 }

@@ -86,12 +86,6 @@ namespace CheckListManager.Instances.Data
 		public Task<Common.Data.Instances> GetByCodeAsync(long companyId, string code)
 			=> Entities.Instances.FirstOrDefaultAsync(i => i.Prototypes.Company == companyId && i.Code == code);
 
-		public async Task<Common.Data.Instances> UpdateInstanceAsync(string userCode, Common.Data.Instances instance)
-		{
-			await SaveChangesAsync();
-			return instance;
-		}
-
 		public Task<int> GetInstanceNumberAsync(long prototype, int version, int year)
 		{
 			return Call<int>("\"CheckLists\".\"GetInstanceNumber\"",
@@ -109,5 +103,11 @@ namespace CheckListManager.Instances.Data
 				query = query.Where(i => i.InstanceState == state);
 			return query.ToListAsync();
 		}
-	}
+
+        public void DeleteInstance(Common.Data.Instances instance)
+        {
+            Entities.Instances.Remove(instance);
+        }
+
+    }
 }

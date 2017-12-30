@@ -93,7 +93,8 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
                         Name = pt.Name
                     },
                     Form.Data.Department, Form.Data.Name, Form.Data.FunctionGroup,
-                    Form.CurrentPage, Form.ItemsPerPage
+                    Form.CurrentPage, Form.ItemsPerPage,
+                    Form.Data.Function
                 );
 
         private PrototypeTypesResponse Validate(PrototypeTypesRequest record)

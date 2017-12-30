@@ -8,6 +8,7 @@ using CheckListManager.Instances.Logic.Services;
 using CheckListManager.Instances.Logic.Exceptions;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Core.Helpers;
+using CheckListManager.Instances.Logic.Models;
 
 namespace CheckListManager.Instances.Api.Controllers
 {
@@ -59,8 +60,16 @@ namespace CheckListManager.Instances.Api.Controllers
         {
             try
             {
-                await _instanceManagerService.OpenAsync(request.Code, Identity);
-                return Ok();
+                var cacheObject = await _instanceManagerService.OpenAsync(request.Code, Identity);
+                return Ok(new InstanceResponse
+                {
+                    Id = cacheObject.Id,
+                    State = cacheObject.InstanceState,
+                    Year = cacheObject.Year,
+                    Number = cacheObject.Number,
+
+                    CheckList = _instanceManagerService.GetCheckList(Identity, "Create", cacheObject),
+                });
             }
             catch (Exception e)
             {
@@ -76,7 +85,23 @@ namespace CheckListManager.Instances.Api.Controllers
             try
             {
                 await _instanceManagerService.SaveAsync(request.Code, Identity);
-                return Ok(true);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return Error(e);
+            }
+        }
+
+        [HttpPost]
+        [Route("Cancel")]
+        [Authorize(Roles = "Instances#Delete, Prototypes#Edit")]
+        public async Task<IHttpActionResult> Cancel(InstanceRequest request)
+        {
+            try
+            {
+                await _instanceManagerService.CancelAsync(request.Code, Identity, request.Note);
+                return Ok();
             }
             catch (Exception e)
             {
@@ -91,8 +116,12 @@ namespace CheckListManager.Instances.Api.Controllers
         {
             try
             {
-                await _instanceManagerService.CompleteAsync(request.Code, Identity);
-                return Ok(true);
+                var cacheObject = await _instanceManagerService.CompleteAsync(request.Code, Identity);
+                return Ok(new InstanceResponse
+                {
+                    State = InstanceState.Completed,
+                    CheckList = cacheObject.Instance
+                });
             }
             catch (Exception e)
             {
@@ -151,10 +180,6 @@ namespace CheckListManager.Instances.Api.Controllers
                     State = cacheObject.InstanceState
                 };
                 return Ok(response);
-            }
-            catch (InstanceException InstanceException)
-            {
-                return Error(InstanceException.InnerException);
             }
             catch (Exception Exception)
             {

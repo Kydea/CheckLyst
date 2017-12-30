@@ -35,7 +35,7 @@
           <Property Name="Version" Type="int4" Nullable="false" />
           <Property Name="Year" Type="int4" Nullable="false" />
           <Property Name="PrototypeName" Type="varchar" MaxLength="50" Nullable="false" />
-          <Property Name="Number" Type="int4" />
+          <Property Name="Number" Type="int4" Nullable="false" />
           <Property Name="InstanceState" Type="varchar" MaxLength="20" Nullable="false" />
           <Property Name="Description" Type="text" />
           <Property Name="Data" Type="text" />
@@ -1231,8 +1231,8 @@
           <NavigationProperty Name="Prototypes" Relationship="RelationalDatabaseModel.Prototypes_Company_fkey" FromRole="Companies" ToRole="Prototypes" />
           <NavigationProperty Name="PrototypeTypes" Relationship="RelationalDatabaseModel.PrototypeTypes_Company_fkey" FromRole="Companies" ToRole="PrototypeTypes" />
           <NavigationProperty Name="SettingValues" Relationship="RelationalDatabaseModel.SettingValues_Company_fkey" FromRole="Companies" ToRole="SettingValues" />
-          <NavigationProperty Name="Instances" Relationship="RelationalDatabaseModel.Instances_Company_fkey" FromRole="Companies" ToRole="Instances" />
           <Property Name="LoginFailedTimeout" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Instances" Relationship="RelationalDatabaseModel.Instances_Company_fkey" FromRole="Companies" ToRole="Instances" />
         </EntityType>
         <EntityType Name="Departments">
           <Key>
@@ -1389,29 +1389,8 @@
             <End Role="Records" EntitySet="Records" />
           </AssociationSet>
           <EntitySet Name="DataSources" EntityType="RelationalDatabaseModel.DataSources" />
-          <EntitySet Name="Instances" EntityType="RelationalDatabaseModel.Instances" />
           <EntitySet Name="Prototypes" EntityType="RelationalDatabaseModel.Prototypes" />
           <EntitySet Name="PrototypeTypes" EntityType="RelationalDatabaseModel.PrototypeTypes" />
-          <AssociationSet Name="InstanceExpressionValues_Instance_fkey" Association="RelationalDatabaseModel.InstanceExpressionValues_Instance_fkey">
-            <End Role="Instances" EntitySet="Instances" />
-            <End Role="InstanceExpressionValues" EntitySet="InstanceExpressionValues" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Instances_InstanceNumerator" Association="RelationalDatabaseModel.FK_Instances_InstanceNumerator">
-            <End Role="InstanceNumerators" EntitySet="InstanceNumerators" />
-            <End Role="Instances" EntitySet="Instances" />
-          </AssociationSet>
-          <AssociationSet Name="Instances_InstanceState_fkey" Association="RelationalDatabaseModel.Instances_InstanceState_fkey">
-            <End Role="InstanceStates" EntitySet="InstanceStates" />
-            <End Role="Instances" EntitySet="Instances" />
-          </AssociationSet>
-          <AssociationSet Name="Instances_Prototype_fkey" Association="RelationalDatabaseModel.Instances_Prototype_fkey">
-            <End Role="Prototypes" EntitySet="Prototypes" />
-            <End Role="Instances" EntitySet="Instances" />
-          </AssociationSet>
-          <AssociationSet Name="InstanceTags_Instance_fkey" Association="RelationalDatabaseModel.InstanceTags_Instance_fkey">
-            <End Role="Instances" EntitySet="Instances" />
-            <End Role="InstanceTags" EntitySet="InstanceTags" />
-          </AssociationSet>
           <AssociationSet Name="Prototypes_Company_fkey" Association="RelationalDatabaseModel.Prototypes_Company_fkey">
             <End Role="Companies" EntitySet="Companies" />
             <End Role="Prototypes" EntitySet="Prototypes" />
@@ -1476,17 +1455,9 @@
             <End Role="WorkFlowSteps" EntitySet="WorkFlowSteps" />
             <End Role="WorkFlowStepTags" EntitySet="WorkFlowStepTags" />
           </AssociationSet>
-          <AssociationSet Name="WorkFlowApplications_Instance" Association="RelationalDatabaseModel.WorkFlowApplications_Instance">
-            <End Role="Instances" EntitySet="Instances" />
-            <End Role="WorkFlowApplications" EntitySet="WorkFlowApplications" />
-          </AssociationSet>
           <AssociationSet Name="WorkFlowApplications_PrototypeVersion" Association="RelationalDatabaseModel.WorkFlowApplications_PrototypeVersion">
             <End Role="PrototypeVersions" EntitySet="PrototypeVersions" />
             <End Role="WorkFlowApplications" EntitySet="WorkFlowApplications" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Instances_PrototypeVersions" Association="RelationalDatabaseModel.FK_Instances_PrototypeVersions">
-            <End Role="PrototypeVersions" EntitySet="PrototypeVersions" />
-            <End Role="Instances" EntitySet="Instances" />
           </AssociationSet>
           <EntitySet Name="Settings" EntityType="RelationalDatabaseModel.Settings" />
           <EntitySet Name="SettingValues" EntityType="RelationalDatabaseModel.SettingValues" />
@@ -1497,10 +1468,6 @@
           <AssociationSet Name="SettingValues_Company_fkey" Association="RelationalDatabaseModel.SettingValues_Company_fkey">
             <End Role="Companies" EntitySet="Companies" />
             <End Role="SettingValues" EntitySet="SettingValues" />
-          </AssociationSet>
-          <AssociationSet Name="Instances_Company_fkey" Association="RelationalDatabaseModel.Instances_Company_fkey">
-            <End Role="Companies" EntitySet="Companies" />
-            <End Role="Instances" EntitySet="Instances" />
           </AssociationSet>
           <EntitySet Name="UserFunctions" EntityType="RelationalDatabaseModel.UserFunctions" />
           <AssociationSet Name="UserFunctions_PrototypeType_fkey" Association="RelationalDatabaseModel.UserFunctions_PrototypeType_fkey">
@@ -1518,6 +1485,39 @@
           <AssociationSet Name="UserFunctions_User" Association="RelationalDatabaseModel.UserFunctions_User">
             <End Role="Users" EntitySet="Users" />
             <End Role="UserFunctions" EntitySet="UserFunctions" />
+          </AssociationSet>
+          <EntitySet Name="Instances" EntityType="RelationalDatabaseModel.Instances" />
+          <AssociationSet Name="InstanceExpressionValues_Instance_fkey" Association="RelationalDatabaseModel.InstanceExpressionValues_Instance_fkey">
+            <End Role="Instances" EntitySet="Instances" />
+            <End Role="InstanceExpressionValues" EntitySet="InstanceExpressionValues" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Instances_InstanceNumerator" Association="RelationalDatabaseModel.FK_Instances_InstanceNumerator">
+            <End Role="InstanceNumerators" EntitySet="InstanceNumerators" />
+            <End Role="Instances" EntitySet="Instances" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Instances_PrototypeVersions" Association="RelationalDatabaseModel.FK_Instances_PrototypeVersions">
+            <End Role="PrototypeVersions" EntitySet="PrototypeVersions" />
+            <End Role="Instances" EntitySet="Instances" />
+          </AssociationSet>
+          <AssociationSet Name="FK_InstanceTags_Instance" Association="RelationalDatabaseModel.FK_InstanceTags_Instance">
+            <End Role="Instances" EntitySet="Instances" />
+            <End Role="InstanceTags" EntitySet="InstanceTags" />
+          </AssociationSet>
+          <AssociationSet Name="Instances_Company_fkey" Association="RelationalDatabaseModel.Instances_Company_fkey">
+            <End Role="Companies" EntitySet="Companies" />
+            <End Role="Instances" EntitySet="Instances" />
+          </AssociationSet>
+          <AssociationSet Name="Instances_InstanceState_fkey" Association="RelationalDatabaseModel.Instances_InstanceState_fkey">
+            <End Role="InstanceStates" EntitySet="InstanceStates" />
+            <End Role="Instances" EntitySet="Instances" />
+          </AssociationSet>
+          <AssociationSet Name="Instances_Prototype_fkey" Association="RelationalDatabaseModel.Instances_Prototype_fkey">
+            <End Role="Prototypes" EntitySet="Prototypes" />
+            <End Role="Instances" EntitySet="Instances" />
+          </AssociationSet>
+          <AssociationSet Name="WorkFlowApplications_Instance" Association="RelationalDatabaseModel.WorkFlowApplications_Instance">
+            <End Role="Instances" EntitySet="Instances" />
+            <End Role="WorkFlowApplications" EntitySet="WorkFlowApplications" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="TimeZones">
@@ -1619,7 +1619,7 @@
           <Property Name="Instance" Type="Int64" Nullable="false" />
           <Property Name="Tag" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Value" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Instances" Relationship="RelationalDatabaseModel.InstanceTags_Instance_fkey" FromRole="InstanceTags" ToRole="Instances" />
+          <NavigationProperty Name="Instances" Relationship="RelationalDatabaseModel.FK_InstanceTags_Instance" FromRole="InstanceTags" ToRole="Instances" />
         </EntityType>
         <EntityType Name="PrototypeVersions">
           <Key>
@@ -1916,34 +1916,6 @@
           <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
         </EntityType>
-        <EntityType Name="Instances">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Code" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Prototype" Type="Int64" Nullable="false" />
-          <Property Name="Version" Type="Int32" Nullable="false" />
-          <Property Name="Year" Type="Int32" Nullable="false" />
-          <Property Name="Number" Type="Int32" />
-          <Property Name="InstanceState" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Data" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="CreatedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
-          <Property Name="CreatedOn" Type="DateTimeOffset" Nullable="false" Precision="7" />
-          <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
-          <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
-          <NavigationProperty Name="InstanceExpressionValues" Relationship="RelationalDatabaseModel.InstanceExpressionValues_Instance_fkey" FromRole="Instances" ToRole="InstanceExpressionValues" />
-          <NavigationProperty Name="InstanceNumerators" Relationship="RelationalDatabaseModel.FK_Instances_InstanceNumerator" FromRole="Instances" ToRole="InstanceNumerators" />
-          <NavigationProperty Name="InstanceStates" Relationship="RelationalDatabaseModel.Instances_InstanceState_fkey" FromRole="Instances" ToRole="InstanceStates" />
-          <NavigationProperty Name="Prototypes" Relationship="RelationalDatabaseModel.Instances_Prototype_fkey" FromRole="Instances" ToRole="Prototypes" />
-          <NavigationProperty Name="InstanceTags" Relationship="RelationalDatabaseModel.InstanceTags_Instance_fkey" FromRole="Instances" ToRole="InstanceTags" />
-          <NavigationProperty Name="WorkFlowApplications" Relationship="RelationalDatabaseModel.WorkFlowApplications_Instance" FromRole="Instances" ToRole="WorkFlowApplications" />
-          <NavigationProperty Name="PrototypeVersions" Relationship="RelationalDatabaseModel.FK_Instances_PrototypeVersions" FromRole="Instances" ToRole="PrototypeVersions" />
-          <Property Name="PrototypeName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Company" Type="Int64" Nullable="false" />
-          <NavigationProperty Name="Companies" Relationship="RelationalDatabaseModel.Instances_Company_fkey" FromRole="Instances" ToRole="Companies" />
-        </EntityType>
         <EntityType Name="Prototypes">
           <Key>
             <PropertyRef Name="ID" />
@@ -1958,11 +1930,11 @@
           <Property Name="CreatedOn" Type="DateTimeOffset" Nullable="false" Precision="7" />
           <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
-          <NavigationProperty Name="Instances" Relationship="RelationalDatabaseModel.Instances_Prototype_fkey" FromRole="Prototypes" ToRole="Instances" />
           <NavigationProperty Name="Companies" Relationship="RelationalDatabaseModel.Prototypes_Company_fkey" FromRole="Prototypes" ToRole="Companies" />
           <NavigationProperty Name="Departments" Relationship="RelationalDatabaseModel.Prototypes_Department_fkey" FromRole="Prototypes" ToRole="Departments" />
           <NavigationProperty Name="PrototypeTypes" Relationship="RelationalDatabaseModel.Prototypes_PrototypeType_fkey" FromRole="Prototypes" ToRole="PrototypeTypes" />
           <NavigationProperty Name="PrototypeVersions" Relationship="RelationalDatabaseModel.PrototypeVersions_Prototype_fkey" FromRole="Prototypes" ToRole="PrototypeVersions" />
+          <NavigationProperty Name="Instances" Relationship="RelationalDatabaseModel.Instances_Prototype_fkey" FromRole="Prototypes" ToRole="Instances" />
         </EntityType>
         <EntityType Name="PrototypeTypes">
           <Key>
@@ -1985,70 +1957,6 @@
           <NavigationProperty Name="WorkFlows1" Relationship="RelationalDatabaseModel.PrototypeTypes_ObsolescenceWorkFlow_fkey" FromRole="PrototypeTypes" ToRole="WorkFlows" />
           <NavigationProperty Name="UserFunctions" Relationship="RelationalDatabaseModel.UserFunctions_PrototypeType_fkey" FromRole="PrototypeTypes" ToRole="UserFunctions" />
         </EntityType>
-        <Association Name="InstanceExpressionValues_Instance_fkey">
-          <End Type="RelationalDatabaseModel.Instances" Role="Instances" Multiplicity="1" />
-          <End Type="RelationalDatabaseModel.InstanceExpressionValues" Role="InstanceExpressionValues" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Instances">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="InstanceExpressionValues">
-              <PropertyRef Name="Instance" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Instances_InstanceNumerator">
-          <End Type="RelationalDatabaseModel.InstanceNumerators" Role="InstanceNumerators" Multiplicity="1" />
-          <End Type="RelationalDatabaseModel.Instances" Role="Instances" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="InstanceNumerators">
-              <PropertyRef Name="Prototype" />
-              <PropertyRef Name="Version" />
-              <PropertyRef Name="Year" />
-            </Principal>
-            <Dependent Role="Instances">
-              <PropertyRef Name="Prototype" />
-              <PropertyRef Name="Version" />
-              <PropertyRef Name="Year" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="Instances_InstanceState_fkey">
-          <End Type="RelationalDatabaseModel.InstanceStates" Role="InstanceStates" Multiplicity="1" />
-          <End Type="RelationalDatabaseModel.Instances" Role="Instances" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="InstanceStates">
-              <PropertyRef Name="Code" />
-            </Principal>
-            <Dependent Role="Instances">
-              <PropertyRef Name="InstanceState" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="Instances_Prototype_fkey">
-          <End Type="RelationalDatabaseModel.Prototypes" Role="Prototypes" Multiplicity="1" />
-          <End Type="RelationalDatabaseModel.Instances" Role="Instances" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Prototypes">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="Instances">
-              <PropertyRef Name="Prototype" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="InstanceTags_Instance_fkey">
-          <End Type="RelationalDatabaseModel.Instances" Role="Instances" Multiplicity="1" />
-          <End Type="RelationalDatabaseModel.InstanceTags" Role="InstanceTags" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Instances">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="InstanceTags">
-              <PropertyRef Name="Instance" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="Prototypes_Company_fkey">
           <End Type="RelationalDatabaseModel.Companies" Role="Companies" Multiplicity="1" />
           <End Type="RelationalDatabaseModel.Prototypes" Role="Prototypes" Multiplicity="*" />
@@ -2164,8 +2072,8 @@
           <NavigationProperty Name="WorkFlowActions" Relationship="RelationalDatabaseModel.WorkFlowApplications_WorkFlowAction_fkey" FromRole="WorkFlowApplications" ToRole="WorkFlowActions" />
           <NavigationProperty Name="WorkFlows" Relationship="RelationalDatabaseModel.WorkFlowApplications_WorkFlow_fkey" FromRole="WorkFlowApplications" ToRole="WorkFlows" />
           <NavigationProperty Name="WorkFlowApplicationSteps" Relationship="RelationalDatabaseModel.WorkFlowApplicationSteps_WorkFlowApplication_fkey" FromRole="WorkFlowApplications" ToRole="WorkFlowApplicationSteps" />
-          <NavigationProperty Name="Instances" Relationship="RelationalDatabaseModel.WorkFlowApplications_Instance" FromRole="WorkFlowApplications" ToRole="Instances" />
           <NavigationProperty Name="PrototypeVersions" Relationship="RelationalDatabaseModel.WorkFlowApplications_PrototypeVersion" FromRole="WorkFlowApplications" ToRole="PrototypeVersions" />
+          <NavigationProperty Name="Instances" Relationship="RelationalDatabaseModel.WorkFlowApplications_Instance" FromRole="WorkFlowApplications" ToRole="Instances" />
         </EntityType>
         <EntityType Name="WorkFlowApplicationStepTags">
           <Key>
@@ -2298,18 +2206,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="WorkFlowApplications_Instance">
-          <End Type="RelationalDatabaseModel.Instances" Role="Instances" Multiplicity="0..1" />
-          <End Type="RelationalDatabaseModel.WorkFlowApplications" Role="WorkFlowApplications" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Instances">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="WorkFlowApplications">
-              <PropertyRef Name="Instance" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="WorkFlowApplications_PrototypeVersion">
           <End Type="RelationalDatabaseModel.PrototypeVersions" Role="PrototypeVersions" Multiplicity="0..1" />
           <End Type="RelationalDatabaseModel.WorkFlowApplications" Role="WorkFlowApplications" Multiplicity="*" />
@@ -2319,22 +2215,6 @@
               <PropertyRef Name="Version" />
             </Principal>
             <Dependent Role="WorkFlowApplications">
-              <PropertyRef Name="Prototype" />
-              <PropertyRef Name="Version" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Instances_PrototypeVersions">
-          <End Type="RelationalDatabaseModel.PrototypeVersions" Role="PrototypeVersions" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Type="RelationalDatabaseModel.Instances" Role="Instances" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="PrototypeVersions">
-              <PropertyRef Name="Prototype" />
-              <PropertyRef Name="Version" />
-            </Principal>
-            <Dependent Role="Instances">
               <PropertyRef Name="Prototype" />
               <PropertyRef Name="Version" />
             </Dependent>
@@ -2384,18 +2264,6 @@
               <PropertyRef Name="ID" />
             </Principal>
             <Dependent Role="SettingValues">
-              <PropertyRef Name="Company" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="Instances_Company_fkey">
-          <End Type="RelationalDatabaseModel.Companies" Role="Companies" Multiplicity="1" />
-          <End Type="RelationalDatabaseModel.Instances" Role="Instances" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Companies">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="Instances">
               <PropertyRef Name="Company" />
             </Dependent>
           </ReferentialConstraint>
@@ -2472,6 +2340,142 @@
             <Dependent Role="UserFunctions">
               <PropertyRef Name="Company" />
               <PropertyRef Name="User" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Instances">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Prototype" Type="Int64" Nullable="false" />
+          <Property Name="Version" Type="Int32" Nullable="false" />
+          <Property Name="Year" Type="Int32" Nullable="false" />
+          <Property Name="PrototypeName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Number" Type="Int32" Nullable="false" />
+          <Property Name="InstanceState" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Data" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedOn" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
+          <Property Name="Company" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="InstanceExpressionValues" Relationship="RelationalDatabaseModel.InstanceExpressionValues_Instance_fkey" FromRole="Instances" ToRole="InstanceExpressionValues" />
+          <NavigationProperty Name="InstanceNumerators" Relationship="RelationalDatabaseModel.FK_Instances_InstanceNumerator" FromRole="Instances" ToRole="InstanceNumerators" />
+          <NavigationProperty Name="PrototypeVersions" Relationship="RelationalDatabaseModel.FK_Instances_PrototypeVersions" FromRole="Instances" ToRole="PrototypeVersions" />
+          <NavigationProperty Name="InstanceTags" Relationship="RelationalDatabaseModel.FK_InstanceTags_Instance" FromRole="Instances" ToRole="InstanceTags" />
+          <NavigationProperty Name="Companies" Relationship="RelationalDatabaseModel.Instances_Company_fkey" FromRole="Instances" ToRole="Companies" />
+          <NavigationProperty Name="InstanceStates" Relationship="RelationalDatabaseModel.Instances_InstanceState_fkey" FromRole="Instances" ToRole="InstanceStates" />
+          <NavigationProperty Name="Prototypes" Relationship="RelationalDatabaseModel.Instances_Prototype_fkey" FromRole="Instances" ToRole="Prototypes" />
+          <NavigationProperty Name="WorkFlowApplications" Relationship="RelationalDatabaseModel.WorkFlowApplications_Instance" FromRole="Instances" ToRole="WorkFlowApplications" />
+        </EntityType>
+        <Association Name="InstanceExpressionValues_Instance_fkey">
+          <End Type="RelationalDatabaseModel.Instances" Role="Instances" Multiplicity="1" />
+          <End Type="RelationalDatabaseModel.InstanceExpressionValues" Role="InstanceExpressionValues" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Instances">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="InstanceExpressionValues">
+              <PropertyRef Name="Instance" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Instances_InstanceNumerator">
+          <End Type="RelationalDatabaseModel.InstanceNumerators" Role="InstanceNumerators" Multiplicity="1" />
+          <End Type="RelationalDatabaseModel.Instances" Role="Instances" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="InstanceNumerators">
+              <PropertyRef Name="Prototype" />
+              <PropertyRef Name="Version" />
+              <PropertyRef Name="Year" />
+            </Principal>
+            <Dependent Role="Instances">
+              <PropertyRef Name="Prototype" />
+              <PropertyRef Name="Version" />
+              <PropertyRef Name="Year" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Instances_PrototypeVersions">
+          <End Type="RelationalDatabaseModel.PrototypeVersions" Role="PrototypeVersions" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="RelationalDatabaseModel.Instances" Role="Instances" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PrototypeVersions">
+              <PropertyRef Name="Prototype" />
+              <PropertyRef Name="Version" />
+            </Principal>
+            <Dependent Role="Instances">
+              <PropertyRef Name="Prototype" />
+              <PropertyRef Name="Version" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_InstanceTags_Instance">
+          <End Type="RelationalDatabaseModel.Instances" Role="Instances" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="RelationalDatabaseModel.InstanceTags" Role="InstanceTags" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Instances">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="InstanceTags">
+              <PropertyRef Name="Instance" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Instances_Company_fkey">
+          <End Type="RelationalDatabaseModel.Companies" Role="Companies" Multiplicity="1" />
+          <End Type="RelationalDatabaseModel.Instances" Role="Instances" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Companies">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Instances">
+              <PropertyRef Name="Company" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Instances_InstanceState_fkey">
+          <End Type="RelationalDatabaseModel.InstanceStates" Role="InstanceStates" Multiplicity="1" />
+          <End Type="RelationalDatabaseModel.Instances" Role="Instances" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="InstanceStates">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="Instances">
+              <PropertyRef Name="InstanceState" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Instances_Prototype_fkey">
+          <End Type="RelationalDatabaseModel.Prototypes" Role="Prototypes" Multiplicity="1" />
+          <End Type="RelationalDatabaseModel.Instances" Role="Instances" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Prototypes">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Instances">
+              <PropertyRef Name="Prototype" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="WorkFlowApplications_Instance">
+          <End Type="RelationalDatabaseModel.Instances" Role="Instances" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="RelationalDatabaseModel.WorkFlowApplications" Role="WorkFlowApplications" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Instances">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="WorkFlowApplications">
+              <PropertyRef Name="Instance" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2742,27 +2746,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Instances">
-            <EntityTypeMapping TypeName="RelationalDatabaseModel.Instances">
-              <MappingFragment StoreEntitySet="Instances">
-                <ScalarProperty Name="Company" ColumnName="Company" />
-                <ScalarProperty Name="PrototypeName" ColumnName="PrototypeName" />
-                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
-                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
-                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="Data" ColumnName="Data" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="InstanceState" ColumnName="InstanceState" />
-                <ScalarProperty Name="Number" ColumnName="Number" />
-                <ScalarProperty Name="Year" ColumnName="Year" />
-                <ScalarProperty Name="Version" ColumnName="Version" />
-                <ScalarProperty Name="Prototype" ColumnName="Prototype" />
-                <ScalarProperty Name="Code" ColumnName="Code" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Prototypes">
             <EntityTypeMapping TypeName="RelationalDatabaseModel.Prototypes">
               <MappingFragment StoreEntitySet="Prototypes">
@@ -2885,6 +2868,27 @@
                 <ScalarProperty Name="FunctionGroup" ColumnName="FunctionGroup" />
                 <ScalarProperty Name="User" ColumnName="User" />
                 <ScalarProperty Name="Company" ColumnName="Company" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Instances">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.Instances">
+              <MappingFragment StoreEntitySet="Instances">
+                <ScalarProperty Name="Company" ColumnName="Company" />
+                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="Data" ColumnName="Data" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="InstanceState" ColumnName="InstanceState" />
+                <ScalarProperty Name="Number" ColumnName="Number" />
+                <ScalarProperty Name="PrototypeName" ColumnName="PrototypeName" />
+                <ScalarProperty Name="Year" ColumnName="Year" />
+                <ScalarProperty Name="Version" ColumnName="Version" />
+                <ScalarProperty Name="Prototype" ColumnName="Prototype" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
