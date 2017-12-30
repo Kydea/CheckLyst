@@ -76,9 +76,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
 		protected virtual bool IsReadOnlyByDefault() => false;
 
-		public virtual void UpdateReadOnly(string userCode, bool canEdit)
+		public virtual void UpdateReadOnly(string userCode, bool readOnlyInstance)
 		{
-			if (!canEdit)
+			if (readOnlyInstance)
 			{
 				ReadOnly = true;
 				return;

@@ -158,10 +158,9 @@ create table "CheckLists"."Instances"
 	"Prototype" bigint not null references "CheckLists"."Prototypes",
 	"Version" int not null,
 	constraint "FK_Instances_PrototypeVersions" foreign key ("Prototype", "Version") references "CheckLists"."PrototypeVersions" on delete cascade,
+	"PrototypeName" varchar (50) not null,
 	"Year" int not null,
 	constraint "FK_Instances_InstanceNumerator" foreign key ("Prototype", "Version", "Year") references "CheckLists"."InstanceNumerators",
-
-	"PrototypeName" varchar (50) not null,
 	"Number" int not null,
 
 	"InstanceState" varchar (20) not null references "CheckLists"."InstanceStates",

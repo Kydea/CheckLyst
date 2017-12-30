@@ -24,7 +24,7 @@ input[type=text], input[type=range], input[type=number], input[type=password], i
     background: white;
     width: 100%;
     padding: 5px 10px;
-    line-height: $Metric-Control-Height;
+    line-height: $Metric-Control-Height - 10px;
     height: $Metric-Control-Height;
     font-family: $Font-Base;
     font-size: 13px;

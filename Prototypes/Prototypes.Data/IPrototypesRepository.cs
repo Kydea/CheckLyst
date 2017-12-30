@@ -16,6 +16,7 @@ namespace CheckListManager.Prototypes.Data
         void AddPrototype(Common.Data.Prototypes prototype);
         void AddPrototypeVersion(PrototypeVersions prototypeVersion);
         Task DeletePrototypeVersionAsync(DefaultIdentity defaultIdentity, long prototype, int version);
+        void DeletePrototypeVersionTags(IEnumerable<PrototypeVersionTags> versionTags);
         Task SetStateAsync(DefaultIdentity defaultIdentity, PrototypeVersions prototypeVersion, string state, bool proposed);
     }
 }

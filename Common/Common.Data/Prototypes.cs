@@ -17,8 +17,8 @@ namespace CheckListManager.Common.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Prototypes()
         {
-            this.Instances = new HashSet<Instances>();
             this.PrototypeVersions = new HashSet<PrototypeVersions>();
+            this.Instances = new HashSet<Instances>();
         }
     
         public long ID { get; set; }
@@ -32,12 +32,12 @@ namespace CheckListManager.Common.Data
         public string ModifiedBy { get; set; }
         public Nullable<System.DateTimeOffset> ModifiedOn { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Instances> Instances { get; set; }
         public virtual Companies Companies { get; set; }
         public virtual Departments Departments { get; set; }
         public virtual PrototypeTypes PrototypeTypes { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PrototypeVersions> PrototypeVersions { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Instances> Instances { get; set; }
     }
 }

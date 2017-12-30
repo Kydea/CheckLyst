@@ -118,7 +118,7 @@ namespace CheckListManager.Infrastructure.Data
             IDefaultIdentity identity, 
             Expression<Func<PrototypeTypes, TResult>> select, 
             long? department, string name, string functionGroup,
-            int currentPage, int itemsPerPage)
+            int currentPage, int itemsPerPage, string function = "View")
         {
             IQueryable<PrototypeTypes> PrototypeTypes = Entities.PrototypeTypes
                 .Where(pt =>
@@ -132,12 +132,12 @@ namespace CheckListManager.Infrastructure.Data
                     uf.Company == identity.CompanyId
                     && uf.User == identity.Code
                     && uf.FunctionGroup == functionGroup
-                    && uf.Function == "View"
+                    && uf.Function == function
                 ) || pt.Departments.UserFunctions.Any(uf =>
                     uf.Company == identity.CompanyId
                     && uf.User == identity.Code
                     && uf.FunctionGroup == functionGroup
-                    && uf.Function == "View"
+                    && uf.Function == function
                     && uf.PrototypeType == null
                 ));
 

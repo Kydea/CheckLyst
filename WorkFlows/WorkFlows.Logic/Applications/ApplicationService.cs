@@ -100,8 +100,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             //TODO Cambio di stato da servizio, deve:
             //2. creare history
             //5. notificare per email
-
-            PrototypeVersion.Instances.ToList().ForEach(i => PrototypeVersion.Instances.Remove(i));
+            _workFlowsRepository.DeletePrototypeVersionInstances(PrototypeVersion);
             await SetPrototypeVersionState(identity, PrototypeVersion, VersionState.Draft);
         }
 

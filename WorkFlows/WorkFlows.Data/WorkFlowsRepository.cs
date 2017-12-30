@@ -126,5 +126,10 @@ namespace CheckListManager.WorkFlows.Data
             await SaveChangesAsync();
             return WorkFlowApplication.ID;
         }
+
+        public void DeletePrototypeVersionInstances(PrototypeVersions prototypeVersion)
+        {
+            Entities.Instances.RemoveRange(prototypeVersion.Instances);
+        }
     }
 }

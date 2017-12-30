@@ -26,7 +26,7 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
 
         void Setup();
         void Update();
-        void UpdateReadOnly(string userCode, bool canEdit);
+        void UpdateReadOnly(string userCode, bool readOnlyInstance);
         string GetSignatureInformation();
     }
 }

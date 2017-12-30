@@ -110,6 +110,15 @@ namespace CheckListManager.Instances.Logic.List
                 {
                     Id = i.ID,
                     Code = i.Code,
+                    Year = i.Year,
+                    Number = i.Number,
+                    State = i.InstanceState,
+                    Description = i.Description,
+                    DepartmentName = i.Prototypes.Departments.Name,
+                    PrototypeTypeName = i.Prototypes.PrototypeTypes.Name,
+                    PrototypeName = i.Prototypes.Name,
+                    Version = i.Version,
+                    
                     CreatedBy = i.CreatedBy,
                     CreatedOn = i.CreatedOn,
                     ModifiedBy = i.ModifiedBy,

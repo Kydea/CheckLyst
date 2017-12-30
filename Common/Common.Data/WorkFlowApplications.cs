@@ -37,7 +37,7 @@ namespace CheckListManager.Common.Data
         public virtual WorkFlows WorkFlows { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<WorkFlowApplicationSteps> WorkFlowApplicationSteps { get; set; }
-        public virtual Instances Instances { get; set; }
         public virtual PrototypeVersions PrototypeVersions { get; set; }
+        public virtual Instances Instances { get; set; }
     }
 }
