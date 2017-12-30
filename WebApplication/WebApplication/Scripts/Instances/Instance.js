@@ -15,11 +15,11 @@
 
 		setupActionBar = function () {
 			buttonGroup = $("div.ActionBar a.ButtonGroup", element),
-				confirmButton = $("a.Confirm", buttonGroup).toggleClass("Hidden", state == instances.Instance.states.completed),
-				completeButton = $("a.Complete", buttonGroup).toggleClass("Hidden", state == instances.Instance.states.progress),
-				cancelButton = $("a.Cancel", buttonGroup).toggleClass("Hidden", state == state == instances.Instance.states.progress),
-				saveButton = $("a.Save", buttonGroup).toggleClass("Hidden", state == instances.Instance.states.draft || state == instances.Instance.states.progress),
-				historyButton = $("a.History", buttonGroup).toggleClass("Hidden", true); state != instances.Instance.states.draft;
+				confirmButton = $("a.Confirm", buttonGroup).toggleClass("Hidden", true); //state != instances.Instance.states.completed
+				completeButton = $("a.Complete", buttonGroup).toggleClass("Hidden", state != instances.Instance.states.progress),
+				cancelButton = $("a.Cancel", buttonGroup).toggleClass("Hidden", state != instances.Instance.states.draft && state != instances.Instance.states.progress),
+				saveButton = $("a.Save", buttonGroup).toggleClass("Hidden", state != instances.Instance.states.draft && state != instances.Instance.states.progress),
+				historyButton = $("a.History", buttonGroup).toggleClass("Hidden", true); //state == instances.Instance.states.draft
 
 			if ($("a:not(.Hidden)", buttonGroup).size() == 0)
 				buttonGroup.hide();
@@ -81,7 +81,7 @@
 				setupActionBar();
 				setupBreadcrumbs(result);
 
-				instances.instance.update(result);
+				update(result);
 				if (newInstance)
 					matematici.navigator.setUrl(options.detailUrl + "/" + result.code);
 			});
@@ -93,8 +93,15 @@
 				type: "post",
 				data: { code: code, note: note }
 			}).done(function (result) {
-				console.log(result);
-				alert("TODO: refresh");
+				console.log(result)
+
+				id = result.id;
+				state = result.state;
+
+				setupActionBar();
+				setupBreadcrumbs(result);
+
+				update(result);
 			});
 		};
 

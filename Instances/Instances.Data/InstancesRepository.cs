@@ -106,9 +106,7 @@ namespace CheckListManager.Instances.Data
 			//Can't do state == null || i.InstanceState == null, not supported by Npgsql
 			var query = Entities.Instances.Include(i => i.InstanceExpressionValues);
 			if (state != null)
-			{
 				query = query.Where(i => i.InstanceState == state);
-			}
 			return query.ToListAsync();
 		}
 	}

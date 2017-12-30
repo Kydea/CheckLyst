@@ -6,38 +6,33 @@ using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Instances.Logic.Messages;
 using CheckListManager.Instances.Logic.Services;
 using CheckListManager.Instances.Logic.Exceptions;
+using CheckListManager.Common.Data;
+using CheckListManager.Common.Core.Helpers;
 
 namespace CheckListManager.Instances.Api.Controllers
 {
-	[RoutePrefix("Instance")]
-	public class InstanceController : BaseApiController
-	{
-		private readonly IInstanceManagerService _instanceManagerService;
+    [RoutePrefix("Instance")]
+    public class InstanceController : BaseApiController
+    {
+        private readonly IInstanceManagerService _instanceManagerService;
 
-		public InstanceController(IInstanceManagerService instanceManagerService)
-		{
-			_instanceManagerService = instanceManagerService;
-		}
+        public InstanceController(IInstanceManagerService instanceManagerService)
+        {
+            _instanceManagerService = instanceManagerService;
+        }
 
-		[HttpPost]
-		[Route("Create")]
-        [Authorize(Roles = "Instances#Create")]
+        [HttpPost]
+        [Route("Create")]
+        [Authorize(Roles = "Instances#Create, Prototypes#Edit")]
         public async Task<IHttpActionResult> Create(CreateInstanceRequest request)
-		{
-			try
-			{
-				var cacheObject = await _instanceManagerService.CreateAsync(Identity.CompanyId, Identity.Code, request.Prototype, request.Version);
-				var response = new InstanceResponse
-				{
-					Code = cacheObject.Code,
+        {
+            try
+            {
+                var cacheObject = await _instanceManagerService.CreateAsync(Identity, Identity.Code, request.Prototype, request.Version);
+                var response = new InstanceResponse
+                {
+                    Code = cacheObject.Code,
                     State = cacheObject.InstanceState,
-
-                    CheckList = _instanceManagerService.GetCheckList(
-                        Identity.Code,
-                        Identity.HasPermission("Instances", "Create", cacheObject.Department)
-                        || Identity.HasPermission("Instances", "Create", cacheObject.Department, cacheObject.PrototypeType), 
-                        cacheObject),
-
                     Department = cacheObject.Department,
                     DepartmentName = cacheObject.DepartmentName,
                     PrototypeType = cacheObject.Prototype,
@@ -45,52 +40,83 @@ namespace CheckListManager.Instances.Api.Controllers
                     Prototype = cacheObject.Prototype,
                     PrototypeName = cacheObject.PrototypeName,
                     Version = cacheObject.Version,
-                    VersionState = cacheObject.VersionState
+                    VersionState = cacheObject.VersionState,
+
+                    CheckList = _instanceManagerService.GetCheckList(Identity, "Create", cacheObject),
                 };
                 return Ok(response);
-			}
-			catch (Exception e)
-			{
-				return Error(e);
-			}
-		}
+            }
+            catch (Exception e)
+            {
+                return Error(e);
+            }
+        }
 
-		[HttpPost]
-		[Route("Open")]
-        [Authorize(Roles = "Instances#Create")]
+        [HttpPost]
+        [Route("Open")]
+        [Authorize(Roles = "Instances#Create, Prototypes#Edit")]
         public async Task<IHttpActionResult> Open(InstanceRequest request)
-		{
-			try
-			{
-				await _instanceManagerService.OpenAsync(request.Code, Identity);
-				return Ok();
-			}
-			catch (Exception e)
-			{
-				return Error(e);
-			}
-		}
+        {
+            try
+            {
+                await _instanceManagerService.OpenAsync(request.Code, Identity);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return Error(e);
+            }
+        }
 
-		[HttpPost]
-		[Route("Get")]
-        [Authorize(Roles = "Instances#View")]
+        [HttpPost]
+        [Route("Save")]
+        [Authorize(Roles = "Instances#Edit, Prototypes#Edit")]
+        public async Task<IHttpActionResult> Save(InstanceRequest request)
+        {
+            try
+            {
+                await _instanceManagerService.SaveAsync(request.Code, Identity);
+                return Ok(true);
+            }
+            catch (Exception e)
+            {
+                return Error(e);
+            }
+        }
+
+        [HttpPost]
+        [Route("Complete")]
+        [Authorize(Roles = "Instances#Edit, Prototypes#Edit")]
+        public async Task<IHttpActionResult> Complete(InstanceRequest request)
+        {
+            try
+            {
+                await _instanceManagerService.CompleteAsync(request.Code, Identity);
+                return Ok(true);
+            }
+            catch (Exception e)
+            {
+                return Error(e);
+            }
+        }
+
+        [HttpPost]
+        [Route("Get")]
+        [Authorize(Roles = "Instances#View, Prototypes#Edit")]
         public async Task<IHttpActionResult> Get(InstanceRequest request)
-		{
-			try
-			{
-				var cacheObject = await _instanceManagerService.GetAsync(Identity.CompanyId, request.Code);
-				var response = new InstanceResponse
-				{
-					Id = cacheObject.Id,
-					Code = cacheObject.Code,
+        {
+            try
+            {
+                var cacheObject = await _instanceManagerService.GetAsync(Identity, request.Code);
+                var response = new InstanceResponse
+                {
+                    Id = cacheObject.Id,
+                    Code = cacheObject.Code,
                     Year = cacheObject.Year,
                     Number = cacheObject.Number,
                     State = cacheObject.InstanceState,
 
-                    CheckList = _instanceManagerService.GetCheckList(Identity.Code, 
-                        Identity.HasPermission("Instances", "View", cacheObject.Department)
-                        || Identity.HasPermission("Instances", "View", cacheObject.Department, cacheObject.PrototypeType), 
-                        cacheObject),
+                    CheckList = _instanceManagerService.GetCheckList(Identity, "View", cacheObject),
 
                     Department = cacheObject.Department,
                     DepartmentName = cacheObject.DepartmentName,
@@ -102,74 +128,38 @@ namespace CheckListManager.Instances.Api.Controllers
                     VersionState = cacheObject.VersionState
                 };
                 return Ok(response);
-			}
-			catch (Exception e)
-			{
-				return Error(e);
-			}
-		}
+            }
+            catch (Exception e)
+            {
+                return Error(e);
+            }
+        }
 
-		[HttpPost]
-		[Route("Save")]
-		[Authorize(Roles = "Instances#Edit")]
-		public async Task<IHttpActionResult> Save(InstanceRequest request)
-		{
-			try
-			{
-				await _instanceManagerService.SaveAsync(request.Code, Identity);
-				return Ok(true);
-			}
-			catch (Exception e)
-			{
-				return Error(e);
-			}
-		}
-
-		[HttpPost]
-		[Route("Suspend")]
-        [Authorize(Roles = "Instances#Edit")]
-        public async Task<IHttpActionResult> Suspend(InstanceRequest request)
-		{
-			try
-			{
-				await _instanceManagerService.SuspendAsync(request.Code, Identity);
-				return Ok(true);
-			}
-			catch (Exception e)
-			{
-				return Error(e);
-			}
-		}
-
-		[HttpPost]
-		[Route("Event")]
-        [Authorize(Roles = "Instances#Edit")]
+        [HttpPost]
+        [Route("Event")]
+        [Authorize(Roles = "Instances#Edit, Prototypes#Edit")]
         public async Task<IHttpActionResult> Event(InstanceEventRequest request)
-		{
-			try
-			{
-				var cacheObject = await _instanceManagerService.HandleEventAsync(Identity, request);
-				var response = new InstanceResponse
-				{
-					Id = cacheObject.Id,
-					Code = cacheObject.Code,
-					CheckList = _instanceManagerService.GetCheckList(
-                        Identity.Code, 
-                        Identity.HasPermission("Instances", "Edit", cacheObject.Department)
-                        || Identity.HasPermission("Instances", "Edit", cacheObject.Department, cacheObject.PrototypeType), 
-                        cacheObject),
+        {
+            try
+            {
+                var cacheObject = await _instanceManagerService.HandleEventAsync(Identity, request);
+                var response = new InstanceResponse
+                {
+                    Id = cacheObject.Id,
+                    Code = cacheObject.Code,
+                    CheckList = _instanceManagerService.GetCheckList(Identity, "Edit", cacheObject),
                     State = cacheObject.InstanceState
                 };
-				return Ok(response);
-			}
+                return Ok(response);
+            }
             catch (InstanceException InstanceException)
             {
                 return Error(InstanceException.InnerException);
             }
             catch (Exception Exception)
-			{
-				return Error(Exception);
-			}
-		}
-	}
+            {
+                return Error(Exception);
+            }
+        }
+    }
 }

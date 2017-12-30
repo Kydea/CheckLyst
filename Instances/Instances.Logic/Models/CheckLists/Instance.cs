@@ -8,6 +8,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
     public class Instance : ICheckList
     {
+        public bool ReadOnly { get; set; }
         public Dictionary<string, ICheckListElement> Elements { get; set; } = new Dictionary<string, ICheckListElement>();
         public Dictionary<string, Expression> Expressions { get; set; }
         public ICheckListGroup Header { get; set; }
@@ -67,11 +68,11 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 page.Update();
         }
 
-        public void UpdateReadOnly(string userCode, bool canEdit, string state)
+        public void UpdateReadOnly(string userCode, string state)
         {
-            Header.UpdateReadOnly(userCode, canEdit && state == InstanceState.Draft);
+            Header.UpdateReadOnly(userCode, ReadOnly && state == InstanceState.Draft);
             foreach (var page in Pages)
-                page.UpdateReadOnly(userCode, canEdit && state == InstanceState.Progress);
+                page.UpdateReadOnly(userCode, ReadOnly && state == InstanceState.Progress);
         }
     }
 }
