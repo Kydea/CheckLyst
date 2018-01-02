@@ -42,7 +42,6 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             Value = Root.GetValue(instance);
         }
 
-        [JsonIgnore]
         public DataType DataType => Root?.DataType ?? DataType.Error;
 
 	    public void Check(ICheckList prototype)

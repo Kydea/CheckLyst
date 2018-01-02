@@ -20,6 +20,14 @@
 		externalSources = {},
 		expressions = [],
 
+		setupTab = function (pages) {
+			for (var pageIndex in pages)
+				tab.add(pages[pageIndex].description)
+
+			tab.select(0)
+			tab.resize();
+		},
+
 		setupActionBar = function () {
 			buttonGroup = $("div.ActionBar a.ButtonGroup", element),
 				confirmButton = $("a.Confirm", buttonGroup).toggleClass("Hidden", true); //state != instances.Instance.states.completed
@@ -47,14 +55,6 @@
 		update = function (result) {
 			var model = result.checkList;
 			prototypeState = result.prototypeState;
-
-			tab.clear();
-
-			for (var pageIndex in model.pages)
-				tab.add(model.pages[pageIndex].description)
-
-			tab.select(0)
-			tab.resize();
 
 			pageLock.update(model);
 			if (model.header)
@@ -92,12 +92,15 @@
 				year = result.year;
 				number = result.number;
 
+				setupTab(result.checkList.pages);
 				setupActionBar();
 				setupBreadcrumbs();
 
 				update(result);
 				if (newInstance)
 					matematici.navigator.setUrl(options.detailUrl + "/" + result.code);
+
+				element.removeClass("Loading");
 			});
 		},
 
@@ -130,10 +133,6 @@
 
 	instance.getCode = function () {
 		return code;
-	};
-
-	instance.getKey = function () {
-		return { prototype, version, year, number };
 	};
 
 	instance.getElement = function () {
@@ -182,15 +181,22 @@
 		if (versionState == prototypes.Prototype.states.active && state == instances.Instance.states.progress)
 			matematici.dialog.show("Cancel", "Provide a note for the cancelation", [
 				{
-					text: "Save", icon: "check", handler: function () {
+					text: "Confirm", icon: "check", handler: function () {
 						send("Cancel", $("textarea.Textarea", $(this).closest("div.Dialog")).val(), instance.quit);
 					}
 				},
-				{ text: "Cancel", icon: "times" },
+				{ icon: "times", hidden: true, cancelButton: true },
 				{ textarea: true, text: "Note" }
 			]);
 		else
-			send("Cancel", null, instance.quit);
+			matematici.dialog.show("Cancel", "The instance will be deleted", [
+				{
+					text: "Confirm", icon: "check", handler: function () {
+						send("Cancel", null, instance.quit);
+					}
+				},
+				{ icon: "times", hidden: true, cancelButton: true },
+			]);
 	};
 
 	instance.complete = function () {
@@ -230,9 +236,9 @@
 
 	instance.initialize = function () {
 		instanceElementInformation = new instances.ElementInformation(element);
-		tab = new matematici.Tab($("div.TabContainer", element)).addHandler(function (index) {
+		tab = new matematici.Tab($("div.TabContainer", element)).addHandler(function (item) {
 			page.clear();
-			new instances.Event(instances.Events.pageChange, index).trigger();
+			new instances.Event(instances.Events.pageChange, item.index).trigger();
 		});
 		pageLock = new instances.PageLock(instance);
 

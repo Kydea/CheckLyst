@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using CheckListManager.Common.Logic.Models.CheckLists;
+using System.Linq;
+using CheckListManager.Instances.Logic.Exceptions;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
@@ -35,5 +37,50 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 			Copy(this, signature);
 			return signature;
 		}
-	}
+
+        private void CheckItem(ICheckListItem Item)
+        {
+            if (Item.SignatureCode == Code && !Item.Valid) throw new InstanceException($"The item {(string.IsNullOrEmpty(Item.Description) ? Item.Id.ToString() : $"{Item.Description} (id: {Item.Id})")} is not valid");
+        }
+
+        private void FindInvalidItem(ICheckListGroup Group)
+        {
+            if (Group.Iterator)
+                foreach (var Iteration in Group.Iterations)
+                    FindInvalidItem(Iteration);
+            else
+                foreach (var Item in Group.Items)
+                    if (Item is ICheckListGroup)
+                        FindInvalidItem((ICheckListGroup)Item);
+                    else
+                        CheckItem(Item);
+        }
+
+        public void TrySign(String UserName)
+        {
+            var Instance = (Instance)CheckList;
+            if (Signed) throw new Exception("The signature " + Id + " is already signed");
+            try
+            {
+                Signed = true;
+                SignedBy = UserName;
+                SignedOn = DateTimeOffset.UtcNow;
+                Instance.Update();
+                if (!Valid) throw new InstanceException("Signature not valid. " + ValidityMessage);
+                if (Code != null)
+                {
+                    if (IterationItem)
+                        FindInvalidItem(Iteration);
+                    else
+                        Instance.Items.Values.ToList().ForEach(x => CheckItem(x));
+                }
+            }
+            finally
+            {
+                Signed = false;
+                SignedBy = null;
+                Instance.Update();
+            }
+        }
+    }
 }

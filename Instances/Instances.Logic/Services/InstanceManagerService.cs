@@ -19,6 +19,7 @@ using CheckListManager.Instances.Logic.Models.CheckLists;
 using Newtonsoft.Json;
 using NLog;
 using CheckListManager.Common.Data;
+using CheckListManager.Common.Logic.Authentication;
 
 namespace CheckListManager.Instances.Logic.Services
 {
@@ -31,16 +32,18 @@ namespace CheckListManager.Instances.Logic.Services
         private readonly CheckListJsonConverter _converter;
         private readonly IInstanceCacheService _instanceCache;
         private readonly IConfigurationService _configurationService;
+        private readonly IAuthenticationService _authenticationService;
 
         public InstanceManagerService(IServiceClient client,
             IInstancesRepository instancesRepository, CheckListJsonConverter converter, IInstanceCacheService instanceCache,
-            IConfigurationService configurationService)
+            IConfigurationService configurationService, IAuthenticationService authenticationService)
         {
             _client = client;
             _instancesRepository = instancesRepository;
             _converter = converter;
             _instanceCache = instanceCache;
             _configurationService = configurationService;
+            _authenticationService = authenticationService;
         }
 
         public async Task<InstanceCacheObject> GetAsync(IDefaultIdentity identity, string code)
@@ -394,12 +397,16 @@ namespace CheckListManager.Instances.Logic.Services
                     case "Down":
                         await HandleMoveAsync(cacheObject, instance, identity.Code, request.ItemId, 1);
                         break;
+                    case "NOSignature":
+                        //await HandleSignatureAsync(cacheObject, instance, identity.Code, request.ItemId, 1);
+                        break;
+                    case "SignatureCheck":
+                        HandleSignatureCheck(cacheObject, instance, request.Username, request.ItemId);
+                        break;
+                    //case "SignatureCancelation":
                     //case "UnlockPage":
                     //case "Refresh":
                     //case "CountDown":
-                    //case "Signature":
-                    //case "SignatureCheck":
-                    //case "SignatureCancelation":
                     //case "ExternalSourceRowChange":
                     default:
                         throw new InstanceException($"Event type {request.Type} not handled.");
@@ -525,6 +532,47 @@ namespace CheckListManager.Instances.Logic.Services
                 await Update(cacheObject, instance, userCode);
             }
         }
+
+        private void HandleSignatureCheck(InstanceCacheObject cacheObject, Instance instance, string userCode, int? itemId)
+        {
+            if (!itemId.HasValue)
+                throw new InstanceException("Item id not sent");
+
+            var signature = instance.Items.ContainsKey(itemId.Value) ? instance.Items[itemId.Value] as Signature : null;
+            if (signature == null)
+                throw new InstanceException("Signature not found");
+
+            if (signature.ReadOnly)
+                throw new InstanceException("Invalid operation");
+
+            //TODO: add audit
+            signature.TrySign(userCode);
+        }
+
+        //private async Task HandleSignatureAsync(InstanceCacheObject cacheObject, Instance instance, IDefaul userCode, int? itemId, string User)
+        //{
+        //    if (!itemId.HasValue)
+        //        throw new InstanceException("Item id not sent");
+
+        //    var signature = instance.Items.ContainsKey(itemId.Value) ? instance.Items[itemId.Value] as Signature : null;
+        //    if (signature == null)
+        //        throw new InstanceException("Signature not found");
+
+        //    if (signature.ReadOnly)
+        //        throw new InstanceException("Invalid operation");
+
+        //    await _authenticationService.AuthenticateAsync(identity.CompanyId, identity.Code, request.Password);
+
+        //    //TODO: add audit
+        //    UserName = Request["UserName"];
+        //    Password = Request["Password"];
+        //    String Note = Request["Note"];
+        //    Simple = Request["Simple"] == "true";
+        //    Signature = ((Signature)Client.Instance.Items[ItemId.Value]);
+        //    Signature.Unsign(Client, db, UserName, Password, Note);
+        //    Events.Insert("Instance signature canceled", LogDetail + " - Id: " + ItemId.Value + " - Reason: " + (Signature.Description ?? "-") + " - Note: " + (Note ?? String.Empty), UserName, Client.Instance.Key.ToString());
+        //    Client.Instance.SetAsChanged();
+        //}
 
         private async Task Update(InstanceCacheObject cacheObject, Instance instance, string userCode)
         {

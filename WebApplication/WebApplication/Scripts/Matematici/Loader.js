@@ -10,17 +10,11 @@
 		_background = $("<div />").addClass("Background").appendTo(_center).append(_image),
 		_div = $("<div />").attr("id", "Loader").hide().appendTo($(document.body)).append(_center),
 		_text = $("<div />").addClass("Percentage").appendTo(_background),
-		_timeout = null,
 
 		_show = function () {
 			_div.show();
-			if (_timeout == null) {
-				//mostra il loading solo dopo un periodo di inattività
-				_timeout = setTimeout(function () {
-					_image.activity({ color: '#ffffff', segments: 14, length: 1, space: 8, speed: 1, steps: 15, opacity: 0 }).show();
-					_center.show();
-				}, 500);
-			}
+			_image.activity({ color: '#ffffff', segments: 14, length: 1, space: 8, speed: 1, steps: 15, opacity: 0 }).show();
+			_center.show();
 		},
 
 		_setPercentage = function () {
@@ -127,8 +121,6 @@
 
 				$("body").removeClass("LinksDisabled");
 
-				clearTimeout(_timeout);
-				_timeout = null;
 				_image.activity(false);
 				_center.hide();
 				_div.hide();

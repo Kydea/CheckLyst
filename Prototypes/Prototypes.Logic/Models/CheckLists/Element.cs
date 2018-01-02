@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using CheckListManager.Common.Logic.Models;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.Expressions;
+using Newtonsoft.Json;
 
 namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 {
@@ -14,7 +15,8 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 		public Expression CountDownTo => CountDownToCode == null ? null : CheckList.Expressions[CountDownToCode];
 
 		public string CountDownToCode { get; set; }
-		public bool Hidden
+        [JsonIgnore]
+        public bool Hidden
 		{
 			get
 			{
@@ -29,11 +31,13 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 		public Conditions ReadOnlyCondition { get; set; }
 		public string ReadOnlyExpressionCode { get; set; }
 
+        [JsonIgnore]
 		public ICheckListSignature Signature
 			=> SignatureCode == null ? null : (ICheckListSignature)GetBranchElements()[SignatureCode];
 		public string SignatureCode { get; set; }
 
-		public bool Valid
+        [JsonIgnore]
+        public bool Valid
 		{
 			get
 			{

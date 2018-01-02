@@ -11,18 +11,24 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
 		public override void Setup()
 		{
-			var loading = Id > 0;
+			var Loading = Id > 0;
 			CheckList.AddItem(this);
-			foreach (var item in Group.Items)
-			{
-				var clone = item.Clone(this);
-				clone.Iteration = this;
-				if (!loading)
-					Items.Add(clone);
-			}
-			SetupItems();
+            if (Loading)
+                foreach (var Item in Items)
+                {
+                    Item.Iteration = this;
+                    Item.IterationItem = true;
+                }
+            else
+                foreach (var Item in Group.Items)
+                {
+                    var Clone = Item.Clone(this);
+                    Clone.Iteration = this;
+                    Items.Add(Clone);
+                }
+            SetupItems();
 
-			IEnumerable<ICheckListElement> availableItems = Items.Where(x => x.Code != null);
+			IEnumerable<ICheckListElement> AvailableItems = Items.Where(x => x.Code != null);
 
 			var node = Group;
 			while (node != null)
@@ -32,13 +38,13 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 				else
 				{
 					if (node.Elements != null)
-						availableItems = availableItems.Concat(node.Elements.Values);
+						AvailableItems = AvailableItems.Concat(node.Elements.Values);
 					node = node.Group;
 				}
 			}
-			availableItems = availableItems.Concat(CheckList.Elements.Values.Where(element => !(element is ICheckListItem) || !((ICheckListItem)element).IterationItem));
+            AvailableItems = AvailableItems.Concat(CheckList.Elements.Values.Where(Element => !(Element is ICheckListItem) || !((ICheckListItem)Element).IterationItem && !((ICheckListItem)Element).IteratorModelItem));
 
-			_elements = availableItems
+            _elements = AvailableItems
 				.ToDictionary(item => item.Code, item => item);
 		}
 

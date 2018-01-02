@@ -22,7 +22,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public override void Setup()
         {
-            base.Setup();
+            if (!IterationItem)
+                base.Setup();
             CheckList.AddItem(this);
         }
 
