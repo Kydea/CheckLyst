@@ -14,7 +14,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
         protected override TypedValue GetValue(ICheckListElement Element)
         {
             var Field = (ICheckListField)Element;
-            return new TypedValue(Field.ValueType, "");
+            return new TypedValue(Field.ValueType, Field.Value ?? Field.ValueFormula?.Value);
         }
 
         public override string ToString()

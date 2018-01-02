@@ -167,38 +167,5 @@ div.CheckList {
         p.Description {
             margin: 0;
         }
-
-        &.Field {
-            &.DateTime {
-                input {
-                    width: 80px;
-                    padding: 0 5px;
-                    text-align: center;
-                    margin-right: 5px;
-
-                    & + select {
-                        margin-right: 5px;
-                    }
-                }
-
-                select {
-                    display: inline-block;
-                    width: 50px;
-                    padding: 0 0 0 5px;
-                }
-            }
-
-            &.Time {
-                input {
-                    display: none;
-                }
-
-                select {
-                    display: inline-block;
-                    width: 70px;
-                    padding: 0 0 0 5px;
-                }
-            }
-        }
     }
 }

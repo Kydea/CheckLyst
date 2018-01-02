@@ -297,7 +297,7 @@ matematici.initializers.push(function (context) {
 });
 
 matematici.destroyers.push(function (context) {
-	$("select", context).each(function () {
+	$("select.AutoComplete", context).each(function () {
 		$(this).data("autoComplete").destroy();
 	});
 });

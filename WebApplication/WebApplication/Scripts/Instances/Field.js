@@ -7,7 +7,8 @@
 		label,
 		span,
         element = item.getElement(),
-        copyButton,
+		copyButton,
+		readOnly = false,
 
 		validate = function () {
 		    if (model.valueTypeName == "DateTime" || model.valueTypeName == "Date") {
@@ -41,7 +42,7 @@
 		    if (value != "" && model.valueTypeName == "DateTime") 
 		        value = value + " " + select.val() + ":" + select2.val();
 		    else if (model.valueTypeName == "Time") 
-		        value = select.val() + ":" + select2.val();
+				value = select.val() != "" && select2.val() != "" ? select.val() + ":" + select2.val() : "";
 		    else if (model.valueTypeName == "Boolean") 
 		        value = input.prop("checked") ? "true" : "false";
 
@@ -49,14 +50,14 @@
 		},
 
         next = function () {
-            if (model.valueTypeName != "DateTime" && model.valueTypeName != "Time") {
-				input.datepicker('hide').blur()
-				$("input:visible, select:visible", element.next()).focus();
-            }
+			if (model.valueTypeName != "DateTime" && model.valueTypeName != "Time")
+				setTimeout(function () {
+					$("input:visible", element.next()).focus();
+				}, 0);
         },
 
-        change = function (value) {
-            if (validate()) {
+		change = function (value) {
+			if (validate()) {
                 new instances.Event(instances.Events.valueChange, model.id, { value: value }).done(function (result) {
                     instances.instance.update(result);
                     next();
@@ -94,12 +95,8 @@
             if (model.valueTypeName == "Number")
             	input.keyfilter(/[\d\-\,\.]/);
             else if (model.valueTypeName == "Date" || model.valueTypeName == "DateTime") {
-            	input.keyfilter(/[\d\/]/);
-            	input.datepicker({
-            		beforeShow: function (el) {
-            			return !$(el).prop("readonly");
-            		}
-            	})
+				input.keyfilter(/[\d\/]/);
+				new matematici.DatePicker(input);
             } else if (model.valueTypeName == "Boolean") {
             	element.addClass(model.valueTypeName);
             	input.attr("type", "checkbox");
@@ -110,20 +107,24 @@
                 keyDown(e);
             });
 
-			select = $("<select />").appendTo(item.isTableContent() ? element : label);
-            select.on("change", function () {
-            	change(getValue());
-            }).on("keydown", function (e) {
-                keyDown(e);
-            });
+			if (model.valuesList && model.valuesList.length == 0)
+				model.valuesList = null;
 
+			if (model.valuesList || model.valueTypeName == "DateTime" || model.valueTypeName == "Time") {
+				select = $("<select />").appendTo(item.isTableContent() ? element : label).data("nullable", true);
+				select.on("change", function () {
+					change(getValue());
+				}).on("keydown", function (e) {
+					keyDown(e);
+				});
+			}
             if (model.valueTypeName == "DateTime" || model.valueTypeName == "Time") {
             	element.addClass(model.valueTypeName);
             	select.append($("<option />").attr("value", "").text(""));
             	for (var i = 0; i < 24; i++) {
             		select.append($("<option />").attr("value", (i < 10 ? "0" : "") + i).text((i < 10 ? "0" : "") + i));
             	}
-				select2 = $("<select />").appendTo(item.isTableContent() ? element : label);
+				select2 = $("<select />").appendTo(item.isTableContent() ? element : label).data("nullable", true);
             	select2.on("change", function () {
             		change(getValue());
             	}).on("keydown", function (e) {
@@ -161,11 +162,14 @@
             copyButton =
                 $("<i />").addClass("Copy fa fa-copy").attr({ href: "#", title: "F8" })
                     .appendTo(element)
-                    .on("mousedown", function () { copyValue(); });
+					.on("mousedown", function () { copyValue(); });
+
+			if (select) new matematici.AutoComplete(select).initialize();
+			if (select2) new matematici.AutoComplete(select2).initialize();
         };
 
     this.update = function (model) {
-        var readOnly = !!model.readOnly || !!model.externalSourceName && !!model.externalSourceColumn;
+        readOnly = !!model.readOnly || !!model.externalSourceName && !!model.externalSourceColumn;
         span.html(model.description);
         element.toggleClass("Inactive", model.readOnly);
         element.toggleClass("ReadOnly", readOnly);
@@ -211,14 +215,14 @@
         	input.val(s);
 		} else {
         	input.val(model.value);
-        	select.val(model.value);
+			if (select) select.val(model.value);
         }
 
         field.html(model.value).attr("readonly", readOnly);
         field.attr("title", field.text());
 
         this.setColor(model.color);
-        this.setFontSize(model.fontSize);
+		this.setFontSize(model.fontSize);
     };
 
     this.setColor = function (value) {

@@ -66,7 +66,12 @@
 
         checkCodes = function () {
             for (var index in list) {
-                var code = list[index].node.find(".CodeColumn").text();
+				var code = list[index].node.find(".CodeColumn").text();
+				code = code.replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, function (match, index) {
+					if (+match === 0) return ""; // or if (/\s+/.test(match)) for white spaces
+					return index == 0 ? match.toLowerCase() : match.toUpperCase();
+				})
+				list[index].node.find(".CodeColumn").text(code);
                 if (!matematici.codeRegularExpression.test(code)) {
                     matematici.dialog.error("Invalid code", "The code " + code + " is not valid");
                     return false;
@@ -94,30 +99,26 @@
                 type: "post",
                 contentType: "application/json",
 				data: JSON.stringify({ checkList: model })
-            }).done(function (result) {
-                if (result.error) 
-                    matematici.dialog.error("Error", result.error);
-                else {
-                    var valid = true;
-                    for (var index in list) {
-                        var expressionValidity;
-                        try {
-                            expressionValidity = (list[index].valid = result.expressions[list[index].code].error == null);
-                            list[index].error = result.expressions[list[index].code].error;
-                            list[index].dataType = result.expressions[list[index].code].dataType;
-                            list[index].unique = result.expressions[list[index].code].unique;
-                        } catch (error) {
-                            list[index].error = error;
-                            list[index].dataType = "Error";
-                        }
-                        valid &= expressionValidity;
-                        update(list[index]);
-                        updateModel();
+			}).done(function (result) {
+                var valid = true;
+                for (var index in list) {
+                    var expressionValidity;
+                    try {
+                        expressionValidity = (list[index].valid = result.expressions[list[index].code].error == null);
+                        list[index].error = result.expressions[list[index].code].error;
+                        list[index].dataType = result.expressions[list[index].code].dataType;
+                        list[index].unique = result.expressions[list[index].code].unique;
+                    } catch (error) {
+                        list[index].error = error;
+                        list[index].dataType = "Error";
                     }
-
-                    button.toggleClass("Invalid", !valid);
-                    if (handler) handler.call(this);
+                    valid &= expressionValidity;
+                    update(list[index]);
+                    updateModel();
                 }
+
+                button.toggleClass("Invalid", !valid);
+                if (handler) handler.call(this);
             });
 		},
 

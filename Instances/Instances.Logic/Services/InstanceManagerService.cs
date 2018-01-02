@@ -449,7 +449,7 @@ namespace CheckListManager.Instances.Logic.Services
                 throw new InstanceException($"Field {itemId} not found");
 
             if (field.ReadOnly)
-                throw new InstanceException($"Field {itemId} is read only");
+                return;
 
             if ((value ?? string.Empty) != (field.Value ?? string.Empty) && field.Validate(value))
             {

@@ -101,24 +101,3 @@ div.CheckList div.Item {
 div.CheckList .Item p.Description {
   margin: 0; }
 
-div.CheckList .Item.Field.DateTime input {
-  width: 80px;
-  padding: 0 5px;
-  text-align: center;
-  margin-right: 5px; }
-  div.CheckList .Item.Field.DateTime input + select {
-    margin-right: 5px; }
-
-div.CheckList .Item.Field.DateTime select {
-  display: inline-block;
-  width: 50px;
-  padding: 0 0 0 5px; }
-
-div.CheckList .Item.Field.Time input {
-  display: none; }
-
-div.CheckList .Item.Field.Time select {
-  display: inline-block;
-  width: 70px;
-  padding: 0 0 0 5px; }
-

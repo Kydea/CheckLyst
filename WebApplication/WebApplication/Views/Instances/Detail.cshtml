@@ -54,6 +54,7 @@
 
             actionBar = new matematici.ActionBar("div.ActionBar")
                 .add("<i class='fi flaticon-calculator'></i>", function () {
+                    console.log(instance.getExpressions());
                     new matematici.CheckListGrid(instance.getExpressions());
                 }, "Icon"),
 

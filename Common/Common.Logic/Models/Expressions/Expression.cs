@@ -33,11 +33,16 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         [JsonIgnore]
         public TypedValue Value { get; private set; }
 
+        public string TypeName => Value?.Type.TypeName;
+
+        public object RawValue => Value?.Value;
+
         public void Evaluate(ICheckList instance)
         {
             Value = Root.GetValue(instance);
         }
 
+        [JsonIgnore]
         public DataType DataType => Root?.DataType ?? DataType.Error;
 
 	    public void Check(ICheckList prototype)
