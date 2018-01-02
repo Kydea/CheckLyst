@@ -135,6 +135,8 @@
             		select2.append($("<option />").attr("value", (i < 10 ? "0" : "") + i).text((i < 10 ? "0" : "") + i));
             	}
 			}
+			if (model.valueTypeName == "Date")
+				element.addClass(model.valueTypeName);
 
             if (model.valuesList && model.valuesList.length == 0)
                 model.valuesList = null;
@@ -175,28 +177,28 @@
         element.toggleClass("ReadOnly", readOnly);
         input.attr("readonly", readOnly);
         if (model.valueTypeName == "DateTime") {
-        	var index = (model.value || "").indexOf(" ");
+        	var index = (model.rawValue || "").indexOf(" ");
         	if (index >= 0) {
-        		input.val(model.value.substr(0, index));
-        		var index2 = model.value.indexOf(":");
+				input.val(model.rawValue.substr(0, index));
+				var index2 = model.rawValue.indexOf(":");
         		if (index2 >= 0) {
-        			select.val(model.value.substr(index + 1, index2 - index - 1));
-        			select2.val(model.value.substr(index2 + 1));
+					select.val(model.rawValue.substr(index + 1, index2 - index - 1));
+					select2.val(model.rawValue.substr(index2 + 1));
 				} else {
         			select.val("");
         			select2.val("");
         		}
         	} else {
-        		input.val(model.value);
+				input.val(model.rawValue);
         		select.val("");
         		select2.val("");
         	}
         } else if (model.valueTypeName == "Time") {
-        	input.val(model.value);
-        	var index = (model.value || "").indexOf(":");
+			input.val(model.rawValue);
+			var index = (model.rawValue || "").indexOf(":");
         	if (index >= 0) {
-        		select.val(model.value.substr(0, index));
-        		select2.val(model.value.substr(index + 1));
+				select.val(model.rawValue.substr(0, index));
+				select2.val(model.rawValue.substr(index + 1));
         	} else {
         		select.val("");
         		select2.val("");
@@ -204,21 +206,21 @@
         } else if (model.valueTypeName == "Boolean") {
         	var b = false;
         	try {
-        		b = $.parseJSON((model.value || "false").toLowerCase());
+				b = $.parseJSON((model.rawValue || "false").toLowerCase());
         	} catch (e) { }
         	input.prop("checked", b);
 
         	var s = "";
         	try {
-        		b = $.parseJSON((model.value || "").toLowerCase()); s = b.toString();
+				b = $.parseJSON((model.rawValue || "").toLowerCase()); s = b.toString();
         	} catch (e) { }
         	input.val(s);
 		} else {
-        	input.val(model.value);
-			if (select) select.val(model.value);
+			input.val(model.rawValue);
+			if (select) select.val(model.rawValue);
         }
 
-        field.html(model.value).attr("readonly", readOnly);
+		field.html(model.rawValue).attr("readonly", readOnly);
         field.attr("title", field.text());
 
         this.setColor(model.color);

@@ -1,10 +1,8 @@
 ﻿@model CheckListManager.WebApplication.Models.Instance
 
-<div 
-    id="InstancesDetailPage" 
-    class="Instance CheckList" 
-    data-api="@BaseUrl"
->
+<div id="InstancesDetailPage"
+     class="Instance CheckList"
+     data-api="@BaseUrl">
     <h1>Instance Manager</h1>
 
     <div class="ActionBar">
@@ -54,8 +52,10 @@
 
             actionBar = new matematici.ActionBar("div.ActionBar")
                 .add("<i class='fi flaticon-calculator'></i>", function () {
-                    console.log(instance.getExpressions());
-                    new matematici.CheckListGrid(instance.getExpressions());
+                    new matematici.CheckListGrid(instance.getExpressions(), null, null, [
+                        { label: "Code" },
+                        { name: "rawValue", label: "Value" },
+                        { name: "typeName", label: "Type" }]);
                 }, "Icon"),
 
             buttonGroup = new matematici.ButtonGroup("span.ButtonGroup")

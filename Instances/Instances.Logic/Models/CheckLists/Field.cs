@@ -16,6 +16,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 		public int LinesCount { get; set; }
 		public string Value { get; set; }
 
+        public string RawValue => Value ?? ValueFormula?.Value;
+
         [JsonIgnore]
         public Formula ValueFormula { get; private set; }
 

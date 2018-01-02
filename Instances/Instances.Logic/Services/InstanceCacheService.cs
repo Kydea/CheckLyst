@@ -35,7 +35,7 @@ namespace CheckListManager.Instances.Logic.Services
 					throw new InstanceException("Instance data missing");
 				}
 
-				instance.Instance.Setup();
+				instance.Instance.Setup(false);
 			}
 
 			return instance;

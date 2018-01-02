@@ -55,7 +55,7 @@
 							if (!renderHandler || !renderHandler.call(this, rowIndex, columnIndex, row[column.name])) {
 								var
 									td = $("<td />"),
-									value = row[column.name];
+									value = column.name ? row[column.name] : rowIndex;
 								if (column.align == "center")
 									td.addClass("Centered");
 								if (column.type == "DateTimeOffset") {
