@@ -48,7 +48,7 @@ namespace CheckListManager.WorkFlows.Logic.Detail
             return response;
         }
 
-        public async Task<DetailResponse> LoadAsync(DefaultIdentity identity, DetailRequest record)
+        public async Task<DetailResponse> LoadAsync(IDefaultIdentity identity, DetailRequest record)
         {
             var response = new DetailResponse();
             try
@@ -74,7 +74,7 @@ namespace CheckListManager.WorkFlows.Logic.Detail
             return response;
         }
 
-        private List<WorkFlowSteps> BuildSteps(DefaultIdentity identity, DetailRequest record)
+        private List<WorkFlowSteps> BuildSteps(IDefaultIdentity identity, DetailRequest record)
         {
             var List = new List<WorkFlowSteps>();
             for (int Index = 0; Index < record.Steps.Count(); ++Index)
@@ -92,7 +92,7 @@ namespace CheckListManager.WorkFlows.Logic.Detail
             return List;
         }
 
-        public async Task<DetailResponse> AddAsync(DefaultIdentity identity, DetailRequest record)
+        public async Task<DetailResponse> AddAsync(IDefaultIdentity identity, DetailRequest record)
         {
             var response = Validate(record);
             if (response.Valid)
@@ -117,7 +117,7 @@ namespace CheckListManager.WorkFlows.Logic.Detail
             return response;
         }
 
-        public async Task<DetailResponse> EditAsync(DefaultIdentity identity, DetailRequest record)
+        public async Task<DetailResponse> EditAsync(IDefaultIdentity identity, DetailRequest record)
         {
             var response = Validate(record);
             if (response.Valid)
@@ -143,7 +143,7 @@ namespace CheckListManager.WorkFlows.Logic.Detail
             return response;
         }
 
-        public async Task<DetailResponse> DeleteAsync(DefaultIdentity identity, long id)
+        public async Task<DetailResponse> DeleteAsync(IDefaultIdentity identity, long id)
         {
             var response = new DetailResponse();
             try

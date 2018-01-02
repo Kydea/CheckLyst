@@ -10,9 +10,9 @@ namespace CheckListManager.WorkFlows.Logic.Detail
 {
     public interface IDetailService : IService
     {
-        Task<DetailResponse> LoadAsync(DefaultIdentity identity, DetailRequest record);
-        Task<DetailResponse> AddAsync(DefaultIdentity identity, DetailRequest record);
-        Task<DetailResponse> EditAsync(DefaultIdentity identity, DetailRequest record);
-        Task<DetailResponse> DeleteAsync(DefaultIdentity identity, long id);
+        Task<DetailResponse> LoadAsync(IDefaultIdentity identity, DetailRequest record);
+        Task<DetailResponse> AddAsync(IDefaultIdentity identity, DetailRequest record);
+        Task<DetailResponse> EditAsync(IDefaultIdentity identity, DetailRequest record);
+        Task<DetailResponse> DeleteAsync(IDefaultIdentity identity, long id);
     }
 }
