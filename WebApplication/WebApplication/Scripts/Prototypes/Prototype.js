@@ -390,6 +390,7 @@
 							model.state = prototypes.Prototype.states.draftReadOnly;
 
 					update();
+					element.removeClass("Loading");
 				}
 			});
 		};

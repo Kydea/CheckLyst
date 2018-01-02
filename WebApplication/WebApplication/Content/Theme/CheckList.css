@@ -101,3 +101,6 @@ div.CheckList div.Item {
 div.CheckList .Item p.Description {
   margin: 0; }
 
+div.CheckList.Loading .TabContainer, div.CheckList.Loading .Page {
+  display: none !important; }
+

@@ -10,13 +10,6 @@
         label,
         check,
 
-		loadSigners = function () {
-			return $.ajax(matematici.urls.instances.signers, {
-				type: "POST",
-				data: $.extend(instances.instance.getKey(), { SignatureLevel: model.signatureLevel })
-			});
-		},
-
         setup = function () {
 			label = $("<label />").addClass("Controls3").append($("<span />").addClass("Label").html(model.description ? model.description : "(no description)"));
             if (!item.isTableContent())
@@ -81,35 +74,29 @@
                             }).trigger();
                         };
 
-                    loadSigners().done(function (result) {
-                    	if (result.error) {
-                    		matematici.dialog.error("Signature error", result.error);
-                    	} else if (result.length == 0) {
-                    		matematici.dialog.error("Signature error", "There aren't signers available");
-                    	} else if (result.length == 1) {
-                    		trySign(result[0]);
-                    	} else {
-                    		var buttons = [];
+					if (true) //TODO
+						trySign(matematici.tokenManager.getUserCode());
+                    else {
+                    	var buttons = [];
+                    	buttons.push({
+                    		text: "Cancel",
+                    		icon: "times",
+                    		cancelButton: true
+                    	});
+                    	$.each(result, function () {
+                    		var username = this;
                     		buttons.push({
-                    			text: "Cancel",
-                    			icon: "times",
-                    			cancelButton: true
+                    			text: username,
+                    			icon: "user",
+                    			handler: function () {
+                    				setTimeout(function () {
+                    					trySign(username);
+                    				}, 100);
+                    			}
                     		});
-                    		$.each(result, function () {
-                    			var username = this;
-                    			buttons.push({
-                    				text: username,
-                    				icon: "user",
-                    				handler: function () {
-                    					setTimeout(function () {
-                    						trySign(username);
-                    					}, 100);
-                    				}
-                    			});
-                    		});
-                    		matematici.dialog.popupMenu(buttons);
-                    	}
-                    });
+                    	});
+                    	matematici.dialog.popupMenu(buttons);
+					};
                 })
                 .on("click", "a.CancelButton:not(.Selected):not(.ReadOnly)", function (e) {
                     var

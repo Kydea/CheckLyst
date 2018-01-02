@@ -29,7 +29,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public void AddItem(ICheckListItem item)
         {
-            if (item.Id == 0)
+            if (item.Id == 0 || InCreation)
                 item.Id = ++_sequence;
             else
                 _sequence = Math.Max(_sequence, item.Id);

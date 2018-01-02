@@ -168,4 +168,10 @@ div.CheckList {
             margin: 0;
         }
     }
+
+    &.Loading {
+        .TabContainer, .Page {
+            display: none !important;
+        }
+    }
 }

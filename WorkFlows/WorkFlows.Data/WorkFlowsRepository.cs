@@ -46,14 +46,14 @@ namespace CheckListManager.WorkFlows.Data
                 CurrentPage = currentPage
             };
         }
-        public async Task<Common.Data.WorkFlows> GetWorkFlowAsync(DefaultIdentity identity, long id)
+        public async Task<Common.Data.WorkFlows> GetWorkFlowAsync(IDefaultIdentity identity, long id)
         {
             var WorkFlow = await Entities.WorkFlows.SingleOrDefaultAsync(d => d.Company == identity.CompanyId && d.ID == id);
             if (WorkFlow == null) throw new DatabaseException($"Work flow {id} not found");
             return WorkFlow;
         }
 
-        public async Task<Common.Data.WorkFlows> AddWorkFlowAsync(DefaultIdentity identity, Common.Data.WorkFlows workFlow)
+        public async Task<Common.Data.WorkFlows> AddWorkFlowAsync(IDefaultIdentity identity, Common.Data.WorkFlows workFlow)
         {
             workFlow.Company = identity.CompanyId;
             workFlow.CreatedOn = DateTimeOffset.UtcNow;
@@ -63,7 +63,7 @@ namespace CheckListManager.WorkFlows.Data
             return workFlow;
         }
 
-        public async Task<Common.Data.WorkFlows> EditWorkFlowAsync(DefaultIdentity identity, Common.Data.WorkFlows workFlow)
+        public async Task<Common.Data.WorkFlows> EditWorkFlowAsync(IDefaultIdentity identity, Common.Data.WorkFlows workFlow)
         {
             var ExistingPrototypeType = await GetWorkFlowAsync(identity, workFlow.ID);
             ExistingPrototypeType.Description = workFlow.Description;
@@ -75,27 +75,27 @@ namespace CheckListManager.WorkFlows.Data
             return ExistingPrototypeType;
         }
 
-        public async Task DeleteWorkFlowAsync(DefaultIdentity identity, long id)
+        public async Task DeleteWorkFlowAsync(IDefaultIdentity identity, long id)
         {
             Entities.WorkFlows.Remove(await GetWorkFlowAsync(identity, id));
             await SaveChangesAsync();
         }
 
-        public async Task<WorkFlowApplications> GetWorkFlowApplicationAsync(DefaultIdentity identity, long? prototype, int? version, long? instance)
+        public async Task<WorkFlowApplications> GetWorkFlowApplicationAsync(IDefaultIdentity identity, long? prototype, int? version, long? instance)
         {
             var Application = await Entities.WorkFlowApplications.SingleOrDefaultAsync(x => x.WorkFlows.Company == identity.CompanyId && (prototype != null && x.Prototype == prototype && x.Version == version || instance != null && x.Instance == instance) && x.Approved == null);
             if (Application == null) throw new ArgumentException($"Workflow application for {(instance == null ? $"prototype version {prototype}.{version}" : $"instance {instance}")} not found");
             return Application;
         }
 
-        public async Task<WorkFlowApplicationSteps> GetWorkFlowApplicationStepAsync(DefaultIdentity identity, long id)
+        public async Task<WorkFlowApplicationSteps> GetWorkFlowApplicationStepAsync(IDefaultIdentity identity, long id)
         {
             var Step = await Entities.WorkFlowApplicationSteps.SingleOrDefaultAsync(x => x.Company == identity.CompanyId && x.ID == id);
             if (Step == null) throw new ArgumentException($"Workflow application step {id} not found");
             return Step;
         }
 
-        public async Task<long> CreateWorkFlowApplication(DefaultIdentity defaultIdentity, long workFlow, DateTimeOffset? date, long? prototype, int? version, long? instance, string action)
+        public async Task<long> CreateWorkFlowApplication(IDefaultIdentity defaultIdentity, long workFlow, DateTimeOffset? date, long? prototype, int? version, long? instance, string action)
         {
             var WorkFlow = await Entities.WorkFlows.SingleOrDefaultAsync(x => x.Company == defaultIdentity.CompanyId && x.ID == workFlow);
             if (WorkFlow == null) throw new ArgumentException($"Work flow {defaultIdentity.CompanyId}.{workFlow} not found", nameof(workFlow));

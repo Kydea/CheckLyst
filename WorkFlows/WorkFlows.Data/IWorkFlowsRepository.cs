@@ -11,13 +11,13 @@ namespace CheckListManager.WorkFlows.Data
     public interface IWorkFlowsRepository : IRepository
     {
         Task<PagingResponse<List<TResult>>> GetWorkFlowsAsync<TResult, TKey>(long companyId, Expression<Func<Common.Data.WorkFlows, TResult>> select, Expression<Func<Common.Data.WorkFlows, bool>> filters, Expression<Func<Common.Data.WorkFlows, TKey>> order, int currentPage, int itemsPerPage);
-        Task<Common.Data.WorkFlows> GetWorkFlowAsync(DefaultIdentity identity, long id);
-        Task<Common.Data.WorkFlows> AddWorkFlowAsync(DefaultIdentity identity, Common.Data.WorkFlows workFlow);
-        Task<Common.Data.WorkFlows> EditWorkFlowAsync(DefaultIdentity identity, Common.Data.WorkFlows workFlow);
-        Task DeleteWorkFlowAsync(DefaultIdentity identity, long id);
-        Task<WorkFlowApplications> GetWorkFlowApplicationAsync(DefaultIdentity identity, long? prototype, int? version, long? instance);
-        Task<WorkFlowApplicationSteps> GetWorkFlowApplicationStepAsync(DefaultIdentity identity, long id);
-        Task<long> CreateWorkFlowApplication(DefaultIdentity defaultIdentity, long workFlow, DateTimeOffset? date, long? prototype, int? version, long? instance, string action);
+        Task<Common.Data.WorkFlows> GetWorkFlowAsync(IDefaultIdentity identity, long id);
+        Task<Common.Data.WorkFlows> AddWorkFlowAsync(IDefaultIdentity identity, Common.Data.WorkFlows workFlow);
+        Task<Common.Data.WorkFlows> EditWorkFlowAsync(IDefaultIdentity identity, Common.Data.WorkFlows workFlow);
+        Task DeleteWorkFlowAsync(IDefaultIdentity identity, long id);
+        Task<WorkFlowApplications> GetWorkFlowApplicationAsync(IDefaultIdentity identity, long? prototype, int? version, long? instance);
+        Task<WorkFlowApplicationSteps> GetWorkFlowApplicationStepAsync(IDefaultIdentity identity, long id);
+        Task<long> CreateWorkFlowApplication(IDefaultIdentity defaultIdentity, long workFlow, DateTimeOffset? date, long? prototype, int? version, long? instance, string action);
         void DeletePrototypeVersionInstances(PrototypeVersions prototypeVersion);
 
     }

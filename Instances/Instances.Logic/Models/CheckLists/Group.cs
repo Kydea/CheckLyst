@@ -116,12 +116,25 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 			return group;
 		}
 
-		public override void Remove()
+        private void CheckSignatures()
+        {
+            foreach (var Item in Items)
+                if (Item is Group Group)
+                    Group.CheckSignatures();
+                else if (Item is Signature && ((Signature)Item).Signed)
+                    throw new Exception("The iteration contains issued signatures and cannot be removed");
+
+            if (Iterator)
+                foreach (var Iteration in Iterations)
+                    ((Iteration)Iteration).CheckSignatures();
+        }
+
+        public override void Remove()
 		{
 			foreach (var item in Items)
 				item.Remove();
 
-			if (Group.Iterator)
+			if (Iterator)
 				foreach (var iteration in Iterations)
 					iteration.Remove();
 
