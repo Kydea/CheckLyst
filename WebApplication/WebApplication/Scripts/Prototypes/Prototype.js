@@ -361,7 +361,6 @@
 				else {
 					model = result.checkList;
 
-
 					prototypeKey = {
 						id: result.id,
 						version: result.version
@@ -383,7 +382,7 @@
 					model.prototypeType = result.prototypeType;
 
 					if (
-						model.version >= 0
+						result.id >= 0
 						&& !matematici.tokenManager.checkRole("Prototypes#Edit#" + result.department + "##")
 						&& !matematici.tokenManager.checkRole("Prototypes#Edit#" + result.department + "#" + result.prototypeType)
 					) 
@@ -405,6 +404,10 @@
 
 	prototype.getModel = function () {
 		return model;
+	};
+
+	prototype.getPrototypeKey = function () {
+		return prototypeKey;
 	};
 
 	prototype.setItemHandler = function (value) {

@@ -66,7 +66,7 @@
 		if (model.typeName == "Prototype") {
 			properties.push(new prototypes.Property(
 				this, new prototypes.SimpleValueProperty(model, "name", {
-					readOnly: state != prototypes.Prototype.states.draft,
+					readOnly: state != prototypes.Prototype.states.draft || prototypes.prototype.getPrototypeKey().version > 0 || prototypes.prototype.getPrototypeKey().id > 0,
 					code: true
 				}).setCheck([{
 					action: function (value) {
@@ -97,7 +97,7 @@
 				"Use the action <strong>buttons</strong> to change the state of the version."
 			));
 			properties.push(new prototypes.Property(this, new prototypes.PrototypeTypeProperty(model, {
-				readOnly: state != prototypes.Prototype.states.draft || prototypes.prototype.getModel().Version > 0
+				readOnly: state != prototypes.Prototype.states.draft || prototypes.prototype.getPrototypeKey().version > 0 || prototypes.prototype.getPrototypeKey().id > 0
 			}), "Prototype Type", "Department and Prototype type of the prototype."));
 			properties.push(new prototypes.Property(
 				this, new prototypes.DateProperty(model, "validFrom", { readOnly: state != prototypes.Prototype.states.draft }).setCheck([{

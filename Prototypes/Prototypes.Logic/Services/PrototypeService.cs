@@ -124,6 +124,10 @@ namespace CheckListManager.Prototypes.Logic.Services
                 ID = PrototypeVersion.Prototype,
                 Version = -1,
                 CheckList = Prototype,
+                Name = PrototypeVersion.Prototypes.Name,
+                Description = PrototypeVersion.Description,
+                PrototypeType = PrototypeVersion.Prototypes.PrototypeType,
+                Department = PrototypeVersion.Prototypes.Department,
                 State = VersionState.Draft
             });
         }
@@ -213,12 +217,7 @@ namespace CheckListManager.Prototypes.Logic.Services
             {
                 PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(identity, request.ID, request.Version);
                 if (PrototypeVersion.VersionState != VersionState.Draft) throw new Exception($"The version {request.ID}.{request.Version} is not editable");
-                if ((PrototypeVersion.ModifiedOn?.UtcDateTime.Ticks ?? 0) - (request.ModifiedOn?.UtcDateTime.Ticks ?? 0) > 10 || PrototypeVersion.ModifiedBy != request.ModifiedBy) throw new Exception($"Concurrency error: the prototype has already been modified by the user {request.ModifiedBy}"); //the db approximate some tick
-
-                Prototype.Name = request.Name;
-                Prototype.Description = request.Description;
-                Prototype.ModifiedOn = Now;
-                Prototype.ModifiedBy = identity.Code;
+                if ((PrototypeVersion.ModifiedOn?.UtcDateTime.Ticks ?? 0) - (request.ModifiedOn?.UtcDateTime.Ticks ?? 0) > 10 || PrototypeVersion.ModifiedBy != request.ModifiedBy) throw new Exception($"Concurrency error: the prototype has already been modified by the user {request.ModifiedBy}"); //the db approximate some tick, we take 10 as maximum
 
                 PrototypeVersion.ModifiedOn = Now;
                 PrototypeVersion.ModifiedBy = identity.Code;

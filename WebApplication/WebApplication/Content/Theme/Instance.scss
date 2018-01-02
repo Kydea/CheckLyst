@@ -172,21 +172,23 @@ div.Instance {
         }
 
         &.Field {
+            $Label-Width: 200px;
+
+            input {
+                &[type=checkbox] {
+                    height: 16px;
+                    width: 16px;
+                    margin: 5px + ($Metric-Control-Height - 16px) / 2 0 ($Metric-Control-Height - 16px) / 2;
+                }
+            }
+
             div.Input {
                 display: none;
             }
 
-            select {
-                display: none;
-            }
-
             &.List {
-                input {
+                input:first-of-type {
                     display: none;
-                }
-
-                select {
-                    display: block;
                 }
             }
 
@@ -204,6 +206,41 @@ div.Instance {
                 }
             }
 
+            &.DateTime {
+                label {
+                    width: $Label-Width * 2 + $Metric-Control-Space;
+                }
+
+                input {
+                    float: left;
+                    width: calc(50% + #{$Metric-Control-Space / 2});
+                }
+
+                input.AutoComplete {
+                    float: left;
+                    width: calc(25% - #{$Metric-Control-Space / 4});
+                    border-right: solid 1px $Color-Grey-Light;
+                    border-radius: 5px;
+                    padding-left: 5px !important;
+                    padding-right: 0 !important;
+                }
+            }
+
+            &.Time {
+
+                span + input {
+                    display: none;
+                }
+
+                input.AutoComplete {
+                    float: left;
+                    width: 50%;
+                    border-right: solid 1px $Color-Grey-Light;
+                    border-radius: 5px;
+                    padding-left: 5px !important;
+                    padding-right: 0 !important;
+                }
+            }
 
             &.ReadOnly {
                 input {
@@ -211,10 +248,6 @@ div.Instance {
                 }
 
                 textarea {
-                    display: none;
-                }
-
-                select {
                     display: none;
                 }
 
@@ -231,6 +264,16 @@ div.Instance {
                     div.Input {
                         display: none;
                     }
+                }
+
+                &.DateTime {
+                    div.Input {
+                        padding-left: $Metric-Control-Height + 5px;
+                    }
+                }
+
+                .AutoComplete, .AutoComplete-Filter, .AutoComplete-List {
+                    display: none !important;
                 }
             }
 
@@ -348,11 +391,6 @@ div.Instance {
                         input[type=checkbox] {
                             display: block;
                             margin: 0 auto;
-                        }
-
-                        select {
-                            border: none;
-                            background: none;
                         }
 
                         .Copy {

@@ -89,6 +89,10 @@ namespace CheckListManager.WorkFlows.Logic.Applications
 
             if (State == VersionState.Active)
             {
+                PrototypeVersion.Prototypes.Description = PrototypeVersion.Description;
+                PrototypeVersion.Prototypes.ModifiedOn = PrototypeVersion.ModifiedOn;
+                PrototypeVersion.Prototypes.ModifiedBy = PrototypeVersion.ModifiedBy;
+
                 var OldVersion = PrototypeVersion.Prototypes.PrototypeVersions.SingleOrDefault(pv => pv.VersionState == VersionState.Active);
                 if (OldVersion != null) await SetPrototypeVersionState(identity, OldVersion, VersionState.Obsolete);
             } 
