@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using System.Linq;
 using CheckListManager.Instances.Logic.Exceptions;
+using System.Threading.Tasks;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
@@ -13,7 +14,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 		public string ButtonLabel { get; set; }
 		public bool Cancelable { get; set; }
 		public List<SignatureRecord> History { get; } = new List<SignatureRecord>();
-		public int? SignatureLevel { get; set; }
+		public string SignatureLevel { get; set; }
 		public bool Signed { get; set; }
 		public string SignedBy { get; set; }
 		public DateTimeOffset SignedOn { get; set; }
@@ -82,5 +83,16 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 Instance.Update();
             }
         }
+
+        public void Sign(string UserName, string UserDescription, DateTimeOffset Now)
+        {
+            Signed = true;
+            SignedBy = UserName;
+            SignerDescription = UserDescription;
+            SignedOn = Now;
+
+            History.Add(new SignatureRecord { DateTime = SignedOn.ToString("dd/MM/yyyy HH:mm"), User = UserName, Signature = SignerDescription });
+        }
+
     }
 }

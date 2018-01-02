@@ -397,8 +397,8 @@ namespace CheckListManager.Instances.Logic.Services
                     case "Down":
                         await HandleMoveAsync(cacheObject, instance, identity.Code, request.ItemId, 1);
                         break;
-                    case "NOSignature":
-                        //await HandleSignatureAsync(cacheObject, instance, identity.Code, request.ItemId, 1);
+                    case "Signature":
+                        await HandleSignatureAsync(cacheObject, instance, identity, request);
                         break;
                     case "SignatureCheck":
                         HandleSignatureCheck(cacheObject, instance, request.Username, request.ItemId);
@@ -545,11 +545,41 @@ namespace CheckListManager.Instances.Logic.Services
             if (signature.ReadOnly)
                 throw new InstanceException("Invalid operation");
 
-            //TODO: add audit
             signature.TrySign(userCode);
         }
 
-        //private async Task HandleSignatureAsync(InstanceCacheObject cacheObject, Instance instance, IDefaul userCode, int? itemId, string User)
+        private async Task HandleSignatureAsync(InstanceCacheObject cacheObject, Instance instance, IDefaultIdentity defaultIdentity, InstanceEventRequest request)
+        {
+            if (!request.ItemId.HasValue)
+                throw new InstanceException("Item id not sent");
+
+            var signature = instance.Items.ContainsKey(request.ItemId.Value) ? instance.Items[request.ItemId.Value] as Signature : null;
+            if (signature == null)
+                throw new InstanceException("Signature not found");
+
+            if (signature.ReadOnly)
+                throw new InstanceException("Invalid operation");
+
+            signature.TrySign(request.Username);
+
+            if (request.Simple.Value)
+                await _authenticationService.AuthenticateAsync(defaultIdentity.CompanyId, defaultIdentity.Code, request.Password);
+            else
+                await _authenticationService.AuthenticateWithPINAsync(defaultIdentity.CompanyId, defaultIdentity.Code, request.Password);
+
+            if (
+                !string.IsNullOrEmpty(signature.SignatureLevel) 
+                && !HasPermission(defaultIdentity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.Prototype, signature.SignatureLevel)
+            )
+                throw new Exception($"The signature must be applied by an user with level {signature.SignatureLevel}");
+
+            signature.Sign(defaultIdentity.Code, defaultIdentity.Description, DateTimeOffset.UtcNow);
+            await Update(cacheObject, instance, request.Username);
+            //TODO: add audit
+        }
+
+
+        //private async Task HandleUnsignatureAsync(InstanceCacheObject cacheObject, Instance instance, IDefaul userCode, int? itemId, string User)
         //{
         //    if (!itemId.HasValue)
         //        throw new InstanceException("Item id not sent");
@@ -583,11 +613,11 @@ namespace CheckListManager.Instances.Logic.Services
 
         #endregion
 
-        public bool HasPermission(IDefaultIdentity identity, string functionGroup, string PrototypeVersionState, long Department, long PrototypeType)
+        public bool HasPermission(IDefaultIdentity identity, string function, string PrototypeVersionState, long Department, long PrototypeType, string Tag = null)
         {
             return
-                identity.HasPermission("Instances", functionGroup, Department)
-                || identity.HasPermission("Instances", functionGroup, Department, PrototypeType)
+                identity.HasPermission("Instances", function, Department, tag: Tag)
+                || identity.HasPermission("Instances", function, Department, PrototypeType, Tag)
                 || PrototypeVersionState.In(VersionState.Draft, VersionState.InSimulation)
                     && (
                         identity.HasPermission("Prototypes", "Edit", Department)

@@ -37,5 +37,30 @@ namespace CheckListManager.Common.Logic.Authentication
             if (response.StatusCode != System.Net.HttpStatusCode.OK)
                 throw new Exception(string.Join(" ", JsonConvert.DeserializeObject<AuthenticateResponse>(responseData).Messages));
         }
+
+        public async Task AuthenticateWithPINAsync(long? companyId, string token, string pin)
+        {
+            HttpResponseMessage response;
+            string responseData;
+            try
+            {
+                //TODO creare un overload di PostAsync che preveda il token come parametro, creare il metodo AuthenticateWithPIN che controlla il pin dell'identity del token, etc...
+                //OPPURE!!!: forziamo l'utente del lock, non il contrario, non c'è un problema di sicurezza, e usimamo default identity
+                response = await _client.PostAsync("AccessControl/Access/AuthenticateWithPIN", new
+                {
+                    CompanyId = companyId,
+                    Token = token,
+                    PIN = pin,
+                });
+                responseData = await response.Content.ReadAsStringAsync();
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Authentication failed", e);
+            }
+
+            if (true || response.StatusCode != System.Net.HttpStatusCode.OK) //TODO
+                throw new Exception(string.Join(" ", JsonConvert.DeserializeObject<AuthenticateResponse>(responseData).Messages));
+        }
     }
 }

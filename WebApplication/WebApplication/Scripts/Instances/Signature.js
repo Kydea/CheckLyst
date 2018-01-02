@@ -37,7 +37,7 @@
                         sign = function (username) {
                             var
                                 options = {
-                                    ajax: { url: matematici.urls.signature, data: "ShowPaddle=" + (model.acceptsPIN) + "&Code=" + username + "&Description=" + (model.description || "Signature") },
+									ajax: { url: matematici.urls.instances + "/Signature", data: "ShowPaddle=" + (model.acceptsPIN) + "&Code=" + username + "&Description=" + (model.description || "Signature") },
                                     data: {
                                         signHandler: function (panel) {
                                             new instances.Event(instances.Events.signature, model.id, {
@@ -46,17 +46,8 @@
                                                 pin: panel.getPIN(),
                                                 simple: panel.isSimple()
                                             }).done(function (result) {
-												if (result.Error) {
-													//error with dialog
-                                                    var error = $("div.Error", matematici.popup.getElement());
-                                                    error.fadeTo(500, .9).children().text(result.Error);
-                                                    setTimeout(function () {
-                                                        error.fadeTo(500, 0, function () { error.hide(); });
-                                                    }, 3000);
-                                                } else {
-                                                    instances.instance.update(result);
-                                                    matematici.popup.close();
-                                                }
+                                                instances.instance.update(result);
+                                                matematici.popup.close();
                                             }).trigger();
                                         }
                                     }
@@ -67,10 +58,7 @@
 
                         trySign = function(username) {
                             new instances.Event(instances.Events.signatureCheck, model.id, { userName: username }).done(function (result) {
-                                if (result.Error)
-                                    matematici.dialog.error("signature error", result.id == null ? result.error : "The element " + (result.description ? result.description + " " : "") + " with id " + result.id + " is not valid.");
-                                else
-                                    sign(username);
+                                sign(username);
                             }).trigger();
                         };
 
@@ -110,16 +98,8 @@
                                         password: panel.getPassword(),
                                         note: panel.getNote()
                                     }).done(function (result) {
-                                        if (result.Error) {
-                                            var error = $("div.Error", matematici.popup.getElement());
-                                            error.fadeTo(500, .9).children().text(result.error);
-                                            setTimeout(function () {
-                                                error.fadeTo(500, 0, function () { error.hide(); });
-                                            }, 3000);
-                                        } else {
-                                            instances.instance.update(result);
-                                            matematici.popup.close();
-                                        }
+                                        instances.instance.update(result);
+                                        //matematici.popup.close();
                                     }).trigger();
                                 }
                             }
