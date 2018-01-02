@@ -93,7 +93,7 @@ namespace CheckListManager.Instances.Logic.Services
                     CreatedBy = userCode,
                     CreatedOn = DateTimeOffset.UtcNow
                 };
-                cacheObject.Instance.Setup();
+                cacheObject.Instance.Setup(true);
 
                 await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
 
@@ -475,9 +475,13 @@ namespace CheckListManager.Instances.Logic.Services
             if (group == null)
                 throw new InstanceException("Group not found");
 
+            if (!group.Iterator || group.DisableAdd)
+                throw new InstanceException("Invalid operation");
+
             if (!group.ReadOnly)
             {
-                group.AddIteration();
+                //TODO: add audit
+                group.AddIterations(1);
                 await Update(cacheObject, instance, userCode);
             }
         }
@@ -485,16 +489,18 @@ namespace CheckListManager.Instances.Logic.Services
         private async Task HandleRemoveAsync(InstanceCacheObject cacheObject, Instance instance, string userCode, int? itemId)
         {
             if (!itemId.HasValue)
-            {
                 throw new InstanceException("Item id not sent");
-            }
 
             var iteration = instance.Items.ContainsKey(itemId.Value) ? instance.Items[itemId.Value] as Iteration : null;
             if (iteration == null)
                 throw new InstanceException("Group not found");
 
+            if (iteration.Group.DisableRemove)
+                throw new InstanceException("Invalid operation");
+
             if (!iteration.ReadOnly)
             {
+                //TODO: add audit
                 ((Group)iteration.Group).Remove(iteration);
                 await Update(cacheObject, instance, userCode);
             }
@@ -509,8 +515,12 @@ namespace CheckListManager.Instances.Logic.Services
             if (iteration == null)
                 throw new InstanceException("Group not found");
 
+            if (iteration.Group.DisableMove)
+                throw new InstanceException("Invalid operation");
+
             if (!iteration.ReadOnly)
             {
+                //TODO: add audit
                 ((Group)iteration.Group).Move(iteration, direction);
                 await Update(cacheObject, instance, userCode);
             }
@@ -655,7 +665,7 @@ namespace CheckListManager.Instances.Logic.Services
                 ModifiedOn = instance.ModifiedOn,
                 ModifiedBy = instance.ModifiedBy
             };
-            cacheObject.Instance.Setup();
+            cacheObject.Instance.Setup(false);
             return cacheObject;
         }
     }

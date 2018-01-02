@@ -81,6 +81,10 @@ div.Instance {
     .Group {
         .Iteration {
             clear: both;
+            width: 100%;
+            margin-top: 0 !important;
+            margin-left: 0 !important;
+            position: relative;
 
             > .IterationCommands {
                 float: right;
@@ -90,16 +94,22 @@ div.Instance {
                 a {
                     float: left;
                     display: block;
-                    background: $Color-Silver-Dark;
-                    color: white !important;
+                    color: $Color-Green-Regular;
                     text-align: center;
                     margin-left: 1px;
-                    width: 20px;
-                    line-height: 20px;
-                    border-radius: 50%;
+                    background: white;
+                    border: solid 1px $Color-Grey-Light;
+
+                    i {
+                        display: block;
+                        font-size: 12px;
+                        height: 18px;
+                        line-height: 18px;
+                        width: 18px;
+                    }
 
                     &:hover {
-                        background: $Color-Silver-Light;
+                        color: $Color-Green-Light;
                     }
 
                     &.Hidden {
@@ -108,10 +118,19 @@ div.Instance {
                 }
             }
 
+            > * {
+                float: left;
+                margin: $Metric-Control-Space 0 0 $Metric-Control-Space !important;
+            }
+
             .Item.Field {
                 :focus ~ .Copy {
                     display: block;
                 }
+            }
+
+            > h3 {
+                display: none;
             }
         }
 
@@ -266,7 +285,7 @@ div.Instance {
                     }
                 }
 
-                &.DateTime {
+                &.DateTime, &.Date {
                     div.Input {
                         padding-left: $Metric-Control-Height + 5px;
                     }
@@ -314,6 +333,14 @@ div.Instance {
 
         &.Hidden {
             display: none;
+        }
+
+        @media #{$Media-0-460} {
+            width: calc(100% - #{$Metric-Control-Space});
+
+            label {
+                width: 100% !important;
+            }
         }
     }
 

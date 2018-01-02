@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.Expressions;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
@@ -15,6 +16,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public List<ICheckListPage> Pages { get; set; }
 
         public Formula Description { get; set; }
+
+        [JsonIgnore]
+        public bool InCreation { get; private set; }
 
         public ICheckList CheckList
 		{
@@ -38,8 +42,10 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         [JsonIgnore]
         public Dictionary<int, ICheckListItem> Items { get; } = new Dictionary<int, ICheckListItem>(10);
 
-        public void Setup()
+        public void Setup(bool Creation)
         {
+            InCreation = Creation;
+
             Header.CheckList = this;
             Header.Setup();
 
@@ -51,6 +57,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
             foreach (var expression in Expressions.Values)
                 expression.Parse(this);
+
+            InCreation = false;
         }
 
         public void Update()
@@ -74,5 +82,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             foreach (var page in Pages)
                 page.UpdateReadOnly(userCode, ReadOnly || state != InstanceState.Progress);
         }
+
     }
 }

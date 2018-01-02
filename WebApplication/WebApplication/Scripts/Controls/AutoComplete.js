@@ -25,7 +25,7 @@ matematici.AutoComplete = function (selector) {
 			var value = element.val();
 			if (multiple) {
 				texts = [];
-				items.each(function (index) {
+				items.each(function () {
 					var item = $(this).removeClass("Selected");
 					for (var index in value)
 						if (item.data("value") == value[index]) {
