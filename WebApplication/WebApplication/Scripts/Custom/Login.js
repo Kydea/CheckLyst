@@ -10,40 +10,45 @@
 		pin = $("input#PIN", element),
 		confirmPin = $("input#ConfirmPIN", element),
 		note = $("input#Note", element),
-		error = $("div.FormError", element).hide();
 
-	setup = function () {
-		element
-			.on("click", "a#Simple", function () {
-				simple.show();
-				paddle.hide();
-			})
-			.on("click", "a#Sign", function () {
-				if (signHandler != undefined)
-					signHandler.call(this, login);
-			})
-			.on("click", "a#Logout", function () {
-				if (logoutHandler != undefined)
-					logoutHandler.call(this, login);
-			})
-			.on("click", "a#Cancel", function () {
-				matematici.dialog.close();
-				matematici.popup.close();
-			})
-			.on("click", "div.Digits a", function () {
-				var
-					digit = "" + $(this).data("digit"),
-					value = display.val(),
-					length = value.length;
+		togglePaddle = function (value) {
+			simple.toggle(!value);
+			paddle.toggle(value);
+			$("a#Simple", element).toggle(value);
+			setTimeout(function () {
+				matematici.popup.center();
+			}, 0);
+		},
 
-				if (digit == "<")
-					display.val(value.substring(0, length - 1));
-				else if (length < display.attr("maxlength"))
-					display.val(value + digit);
-			});
-	};
+		setup = function () {
+			element
+				.on("click", "a#Simple", function () {
+					togglePaddle(false);
+				})
+				.on("click", "a#Sign", function () {
+					if (signHandler != undefined)
+						signHandler.call(this, login);
+				})
+				.on("click", "a#Logout", function () {
+					if (logoutHandler != undefined)
+						logoutHandler.call(this, login);
+				})
+				.on("click", "div.Digits a", function () {
+					var
+						digit = "" + $(this).data("digit"),
+						value = display.val(),
+						length = value.length;
+
+					if (digit == "<")
+						display.val(value.substring(0, length - 1));
+					else if (length < display.attr("maxlength"))
+						display.val(value + digit);
+				});
+		};
 
 	setup();
+
+	this.togglePaddle = togglePaddle;
 
 	this.isPaddle = function () {
 		return paddle.is(":visible");
@@ -72,8 +77,4 @@
 	this.getConfirmPIN = function () {
 		return String(confirmPin.val());
 	};
-
-	this.showError = function (value) {
-		return error.show().html(value);
-	}
 };

@@ -236,7 +236,6 @@
     <Content Include="Scripts\Custom\Login.js" />
     <Content Include="Scripts\Custom\Paginator.js" />
     <Content Include="Scripts\Custom\Scroller.js" />
-    <Content Include="Scripts\Custom\SignatureBook.js" />
     <Content Include="Scripts\Custom\UserPanel.js" />
     <Content Include="Scripts\Controls\Form.js" />
     <Content Include="Scripts\Instances\CountDown.js" />
@@ -380,6 +379,7 @@
     <Content Include="Views\Prototypes\Detail.cshtml" />
     <Content Include="Views\WorkFlows\Signature.cshtml" />
     <Content Include="Views\Instances\Detail.cshtml" />
+    <Content Include="Views\Instances\Signature.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

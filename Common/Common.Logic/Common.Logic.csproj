@@ -82,6 +82,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Authentication\AuthenticateWithPINRequest.cs" />
     <Compile Include="Authentication\AuthenticateRequest.cs" />
     <Compile Include="Authentication\AuthorizeResponse.cs" />
     <Compile Include="Email\EmailMessage.cs" />

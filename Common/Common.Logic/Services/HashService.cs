@@ -32,9 +32,7 @@ namespace CheckListManager.Common.Logic.Services
 		public bool ValidateHash(string text, byte[] hash)
 		{
 			if (string.IsNullOrEmpty(text) || hash == null)
-			{
 				return false;
-			}
 
 			var computed = HashStringToBytes(text);
 			return hash.SequenceEqual(computed);

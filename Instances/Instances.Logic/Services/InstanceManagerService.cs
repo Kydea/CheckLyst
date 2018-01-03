@@ -403,7 +403,9 @@ namespace CheckListManager.Instances.Logic.Services
                     case "SignatureCheck":
                         HandleSignatureCheck(cacheObject, instance, request.Username, request.ItemId);
                         break;
-                    //case "SignatureCancelation":
+                    case "SignatureCancelation":
+                        await HandleSignatureCancelationAsync(cacheObject, instance, identity, request);
+                        break;
                     //case "UnlockPage":
                     //case "Refresh":
                     //case "CountDown":
@@ -545,6 +547,9 @@ namespace CheckListManager.Instances.Logic.Services
             if (signature.ReadOnly)
                 throw new InstanceException("Invalid operation");
 
+            if (signature.Signed)
+                throw new Exception("The signature is already signed");
+
             signature.TrySign(userCode);
         }
 
@@ -560,18 +565,33 @@ namespace CheckListManager.Instances.Logic.Services
             if (signature.ReadOnly)
                 throw new InstanceException("Invalid operation");
 
+            if (signature.Signed)
+                throw new Exception("The signature is already signed");
+
+            if (request.Simple.Value && string.IsNullOrEmpty(request.Password))
+                throw new InstanceException("Provide your password");
+            if (!request.Simple.Value && string.IsNullOrEmpty(request.Pin))
+                throw new InstanceException("Provide your PIN");
+
             signature.TrySign(request.Username);
 
-            if (request.Simple.Value)
-                await _authenticationService.AuthenticateAsync(defaultIdentity.CompanyId, defaultIdentity.Code, request.Password);
-            else
-                await _authenticationService.AuthenticateWithPINAsync(defaultIdentity.CompanyId, defaultIdentity.Code, request.Password);
+            try
+            {
+                if (request.Simple.Value)
+                    await _authenticationService.AuthenticateAsync(defaultIdentity.Code, request.Password);
+                else
+                    await _authenticationService.AuthenticateWithPINAsync(request.Pin);
+            }
+            catch
+            {
+                throw new InstanceException("Authentication failed");
+            }
 
             if (
                 !string.IsNullOrEmpty(signature.SignatureLevel) 
                 && !HasPermission(defaultIdentity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.Prototype, signature.SignatureLevel)
             )
-                throw new Exception($"The signature must be applied by an user with level {signature.SignatureLevel}");
+                throw new InstanceException($"The signature must be applied by an user with level {signature.SignatureLevel}");
 
             signature.Sign(defaultIdentity.Code, defaultIdentity.Description, DateTimeOffset.UtcNow);
             await Update(cacheObject, instance, request.Username);
@@ -579,30 +599,41 @@ namespace CheckListManager.Instances.Logic.Services
         }
 
 
-        //private async Task HandleUnsignatureAsync(InstanceCacheObject cacheObject, Instance instance, IDefaul userCode, int? itemId, string User)
-        //{
-        //    if (!itemId.HasValue)
-        //        throw new InstanceException("Item id not sent");
+        private async Task HandleSignatureCancelationAsync(InstanceCacheObject cacheObject, Instance instance, IDefaultIdentity defaultIdentity, InstanceEventRequest request)
+        {
+            if (!request.ItemId.HasValue)
+                throw new InstanceException("Item id not sent");
 
-        //    var signature = instance.Items.ContainsKey(itemId.Value) ? instance.Items[itemId.Value] as Signature : null;
-        //    if (signature == null)
-        //        throw new InstanceException("Signature not found");
+            var signature = instance.Items.ContainsKey(request.ItemId.Value) ? instance.Items[request.ItemId.Value] as Signature : null;
+            if (signature == null)
+                throw new InstanceException("Signature not found");
 
-        //    if (signature.ReadOnly)
-        //        throw new InstanceException("Invalid operation");
+            if (!signature.Signed)
+                throw new Exception("The signature is not signed");
 
-        //    await _authenticationService.AuthenticateAsync(identity.CompanyId, identity.Code, request.Password);
+            if (string.IsNullOrEmpty(request.Password))
+                throw new InstanceException("Provide your password");
 
-        //    //TODO: add audit
-        //    UserName = Request["UserName"];
-        //    Password = Request["Password"];
-        //    String Note = Request["Note"];
-        //    Simple = Request["Simple"] == "true";
-        //    Signature = ((Signature)Client.Instance.Items[ItemId.Value]);
-        //    Signature.Unsign(Client, db, UserName, Password, Note);
-        //    Events.Insert("Instance signature canceled", LogDetail + " - Id: " + ItemId.Value + " - Reason: " + (Signature.Description ?? "-") + " - Note: " + (Note ?? String.Empty), UserName, Client.Instance.Key.ToString());
-        //    Client.Instance.SetAsChanged();
-        //}
+            if (string.IsNullOrWhiteSpace(request.Note))
+                throw new InstanceException("Provide a cancelation note");
+
+            try
+            {
+                await _authenticationService.AuthenticateAsync(defaultIdentity.Code, request.Password);
+            }
+            catch
+            {
+                throw new InstanceException("Authentication failed");
+            }
+
+            if (!HasPermission(defaultIdentity, "Unsign", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType, signature.SignatureLevel))
+                throw new InstanceException($"The signature can be canceled by an user with function Unsign and level {signature.SignatureLevel}");
+
+            signature.Unsign(defaultIdentity.Code, defaultIdentity.Description, DateTimeOffset.UtcNow, request.Note, cacheObject.InstanceState);
+            await Update(cacheObject, instance, request.Username);
+
+            //TODO: add audit
+        }
 
         private async Task Update(InstanceCacheObject cacheObject, Instance instance, string userCode)
         {

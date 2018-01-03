@@ -41,5 +41,18 @@ namespace CheckListManager.AccessControl.Api.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<IHttpActionResult> AuthenticateWidthPIN(AuthenticateWithPINRequest request)
+        {
+            try
+            {
+                await _userService.AuthenticateWithPINAsync(Identity.CompanyId, Identity.Code, request.PIN);
+                return Ok();
+            }
+            catch (Exception Exception)
+            {
+                return Error(Exception);
+            }
+        }
     }
 }

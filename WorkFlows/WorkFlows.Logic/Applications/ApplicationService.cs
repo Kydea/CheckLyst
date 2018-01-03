@@ -128,7 +128,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             if (!request.Approved && String.IsNullOrWhiteSpace(request.Comment))
                 throw new Exception("The comment is mandatory for the rejections");
 
-            await _authenticationService.AuthenticateAsync(identity.CompanyId, identity.Code, request.Password);
+            await _authenticationService.AuthenticateAsync(identity.Code, request.Password);
 
             Step.Approved = SignResponse.Approved = request.Approved;
             Step.WorkFlowApplications.ModifiedBy = Step.User = identity.Code;

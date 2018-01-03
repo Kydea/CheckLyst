@@ -196,9 +196,22 @@ div.Instance .Item.Signature a.Button i.flaticon-exclamation {
   margin: 2px 0 0 15px; }
 
 div.Instance .Item.Signature i.flaticon-exclamation {
-  color: red;
-  font-size: 16px;
-  margin-top: 10px; }
+  color: #cc0000;
+  font-size: inherit; }
+
+@media only screen and (min-width: 760px) {
+  div.Instance .Item.Signature label.Controls3 {
+    width: 540px; }
+    div.Instance .Item.Signature label.Controls3 input:nth-of-type(1) {
+      width: 300px; }
+    div.Instance .Item.Signature label.Controls3 input:nth-of-type(2) {
+      width: 120px; }
+    div.Instance .Item.Signature label.Controls3 input:nth-of-type(3) {
+      width: 120px; }
+    div.Instance .Item.Signature label.Controls3 i:nth-of-type(2) {
+      left: 300px; }
+    div.Instance .Item.Signature label.Controls3 i:nth-of-type(3) {
+      left: 420px !important; } }
 
 div.Instance .Item.Hidden {
   display: none; }

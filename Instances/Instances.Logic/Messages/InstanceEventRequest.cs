@@ -17,5 +17,6 @@ namespace CheckListManager.Instances.Logic.Messages
 		public string Username { get; set; }
 		public string Password { get; set; }
 		public string Pin { get; set; }		
+		public string Note { get; set; }		
 	}
 }

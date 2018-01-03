@@ -23,7 +23,10 @@
                 workflows: {
                     signature: "@Url.Action("Signature", "WorkFlows")"
                 },
-                instances: "@BaseUrl/Instances/Instance"
+                instances: {
+                    api: "@BaseUrl/Instances/Instance",
+                    signature: "@Url.Action("Signature", "Instances")"
+                }
         	},
         	signatureActions: {
         		toApprove: "Prototype – state to Approved/Active",
