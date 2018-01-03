@@ -34,9 +34,9 @@ WORKFLOWS
 Invio email
 
 INSTANCES
-Controllare ruoli specifici
 History
 Attenzione al nuovo stato Completed
+Signature: gestire il feedback sugli errori correttamente, adesso dà solo un dialog con l'errore
 
 
 PROTOTIPO DI TRIGGER:

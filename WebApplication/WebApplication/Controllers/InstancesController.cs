@@ -27,5 +27,12 @@ namespace CheckListManager.WebApplication.Controllers
         {
             return ConditionalView("Detail", new Instance { Code = Code });
         }
+
+        [Route("Signature")]
+        [Authorize(Roles = "FunctionGroup#Instances,Prototypes#Edit")]
+        public ActionResult Signature()
+        {
+            return ConditionalView("Signature");
+        }
     }
 }

@@ -30,9 +30,22 @@
 		addItem("calculator", model.valueFormula);
 		addItem("check", model.signatureInformation);
 		addItem("link-0", (model.externalSourceName ? model.externalSourceName + "." + model.externalSourceColumn : null));
+		if (model.history) console.log(model);
 		if (model.history && model.history.length > 0)
 			panel.append($("<div />").append($("<a />").attr("href", "#").text("history").prepend($("<i />").addClass("fi fi-fw flaticon-list-ul")).on("click", function (e) {
-				new matematici.CheckListGrid(model.history, null, null, [{ name: "dateTime", label: "Date/Time", type: "DateTimeOffset" }, { name: "user", label: "User" }, { name: "value", label: "Value" }]);
+				var columns =
+					model.typeName == "Signature" ? [
+						{ name: "dateTime", label: "Date/Time", type: "DateTimeOffset" },
+						{ name: "user", label: "User" },
+						{ name: "signature", label: "Signature" },
+						{ name: "note", label: "Note" },
+						{ name: "action", label: "Action" },
+					] : [
+							{ name: "dateTime", label: "Date/Time", type: "DateTimeOffset" },
+							{ name: "user", label: "User" },
+							{ name: "value", label: "Value" }
+						];
+				new matematici.CheckListGrid(model.history, null, null, columns);
 			})));
 	}
 

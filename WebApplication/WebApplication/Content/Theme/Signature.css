@@ -1,56 +1,50 @@
 ﻿div.Popup.Signature textarea {
   height: 66px !important; }
 
-div.Popup.Signature div.PinPaddle h2 {
-  text-transform: none;
-  width: 360px;
-  margin: 0 auto;
-  border: none; }
-
-div.Popup.Signature div.PinPaddle input {
-  width: 359px;
-  font-size: 50px;
-  text-align: center;
-  background-color: black !important;
-  margin: 0 auto 20px;
-  border: 0 !important;
-  color: white !important;
-  border-radius: 0; }
-
-div.Popup.Signature div.PinPaddle div.Digits {
-  width: 360px;
-  margin: 0 auto; }
-  div.Popup.Signature div.PinPaddle div.Digits a {
-    float: left;
-    width: 120px;
-    height: 80px;
-    text-align: center;
+div.Popup.Signature div.PinPaddle {
+  padding-top: 20px; }
+  div.Popup.Signature div.PinPaddle h2 {
+    text-transform: none;
+    width: 360px;
+    margin: 0 auto;
+    border: none; }
+  div.Popup.Signature div.PinPaddle input {
+    width: calc(100% - 20px);
+    margin: 0 20px 20px;
     font-size: 50px;
-    line-height: 80px;
-    background-color: #ebebeb;
-    color: #009688;
-    border-right: solid 1px white;
-    border-bottom: solid 1px white; }
-    div.Popup.Signature div.PinPaddle div.Digits a.Digit0 {
-      width: 240px; }
-    div.Popup.Signature div.PinPaddle div.Digits a.DigitBack {
-      color: red; }
-    div.Popup.Signature div.PinPaddle div.Digits a:hover {
-      background-color: #03c3b1; }
-
-div.Popup.Signature div.PinPaddle div.User {
-  margin: 20px 0 15px;
-  text-align: center; }
-
-div.Popup.Signature div.PinPaddle div.Buttons {
-  width: 360px;
-  margin: 0 auto; }
-
-div.Popup.Signature label label {
-  margin-bottom: 5px; }
-
-div.Popup.Signature i.Icon {
-  left: 0; }
+    text-align: center;
+    background-color: black !important;
+    border: 0 !important;
+    color: white !important;
+    border-radius: 0;
+    height: unset; }
+  div.Popup.Signature div.PinPaddle div.Digits {
+    width: calc(100% - 20px);
+    margin: 0 20px 20px; }
+    div.Popup.Signature div.PinPaddle div.Digits a {
+      float: left;
+      width: 33.33%;
+      height: 80px;
+      text-align: center;
+      font-size: 50px;
+      line-height: 80px;
+      background-color: #ebebeb;
+      color: #009688;
+      border-right: solid 1px white;
+      border-bottom: solid 1px white; }
+      div.Popup.Signature div.PinPaddle div.Digits a.Digit0 {
+        width: 66.66%; }
+      div.Popup.Signature div.PinPaddle div.Digits a.DigitBack {
+        color: #cc0000; }
+        div.Popup.Signature div.PinPaddle div.Digits a.DigitBack i {
+          font-size: 40px !important; }
+      div.Popup.Signature div.PinPaddle div.Digits a:hover {
+        color: #03c3b1;
+        text-decoration: none; }
+        div.Popup.Signature div.PinPaddle div.Digits a:hover.DigitBack {
+          color: #ff3333; }
+  div.Popup.Signature div.PinPaddle div.User {
+    text-align: center; }
 
 div.Popup.Signature div.ValidityMessage {
   float: left;

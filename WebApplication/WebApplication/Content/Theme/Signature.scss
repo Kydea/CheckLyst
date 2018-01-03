@@ -6,6 +6,7 @@ div.Popup.Signature {
     }
 
     div.PinPaddle {
+        padding-top: $Metric-Control-Space;
 
         h2 {
             text-transform: none;
@@ -15,23 +16,24 @@ div.Popup.Signature {
         }
 
         input {
-            width: 359px;
+            width: calc(100% - #{$Metric-Control-Space});
+            margin: 0 $Metric-Control-Space $Metric-Control-Space;
             font-size: 50px;
             text-align: center;
             background-color: black !important;
-            margin: 0 auto 20px;
             border: 0 !important;
             color: white !important;
             border-radius: 0;
+            height: unset;
         }
 
         div.Digits {
-            width: 360px;
-            margin: 0 auto;
+            width: calc(100% - #{$Metric-Control-Space});
+            margin: 0 $Metric-Control-Space $Metric-Control-Space;
 
             a {
                 float: left;
-                width: 120px;
+                width: 33.33%;
                 height: 80px;
                 text-align: center;
                 font-size: 50px;
@@ -42,36 +44,31 @@ div.Popup.Signature {
                 border-bottom: solid 1px white;
 
                 &.Digit0 {
-                    width: 240px;
+                    width: 66.66%;
                 }
 
                 &.DigitBack {
-                    color: red;
+                    color: $Color-Red-Regular;
+
+                    i {
+                        font-size: 40px !important;
+                    }
                 }
 
                 &:hover {
-                    background-color: $Color-Green-Light;
+                    color: $Color-Green-Light;
+                    text-decoration: none;
+
+                    &.DigitBack {
+                        color: $Color-Red-Light;
+                    }
                 }
             }
         }
 
         div.User {
-            margin: 20px 0 15px;
             text-align: center;
         }
-
-        div.Buttons {
-            width: 360px;
-            margin: 0 auto;
-        }
-    }
-
-    label label {
-        margin-bottom: 5px;
-    }
-
-    i.Icon {
-        left: 0;
     }
 
     div.ValidityMessage {

@@ -24,7 +24,7 @@
 			$("<i />").addClass("Icon fi flaticon-clock-o").appendTo(item.isTableContent() ? element : label);
 			time = $("<input />").addClass("Time").attr({ type: "text", readonly: true }).appendTo(item.isTableContent() ? element : label);
 
-			exclamation = $("<i />").addClass("fi flaticon-exclamation").appendTo(element).hide();
+			exclamation = $("<i />").addClass("fi flaticon-exclamation").appendTo($("span", label)).attr("title", "This signature has been canceled, see the history").hide();
 
 			button = $("<a />").addClass("Button SignButton").attr({ href: "#" }).appendTo(element);
             if (model.cancelable)
@@ -37,8 +37,15 @@
                         sign = function (username) {
                             var
                                 options = {
-                                    ajax: { url: matematici.urls.signature, data: "ShowPaddle=" + (model.acceptsPIN) + "&Code=" + username + "&Description=" + (model.description || "Signature") },
-                                    data: {
+									title: model.description || "Signature",
+									width: 460,
+									ajax: {
+										type: "post",
+										url: matematici.urls.instances.signature
+									},
+									data: {
+										showPaddle: model.acceptsPin,
+										username: username,
                                         signHandler: function (panel) {
                                             new instances.Event(instances.Events.signature, model.id, {
                                                 userName: panel.getUserName(),
@@ -46,17 +53,8 @@
                                                 pin: panel.getPIN(),
                                                 simple: panel.isSimple()
                                             }).done(function (result) {
-												if (result.Error) {
-													//error with dialog
-                                                    var error = $("div.Error", matematici.popup.getElement());
-                                                    error.fadeTo(500, .9).children().text(result.Error);
-                                                    setTimeout(function () {
-                                                        error.fadeTo(500, 0, function () { error.hide(); });
-                                                    }, 3000);
-                                                } else {
-                                                    instances.instance.update(result);
-                                                    matematici.popup.close();
-                                                }
+                                                instances.instance.update(result);
+                                                matematici.popup.close();
                                             }).trigger();
                                         }
                                     }
@@ -67,10 +65,7 @@
 
                         trySign = function(username) {
                             new instances.Event(instances.Events.signatureCheck, model.id, { userName: username }).done(function (result) {
-                                if (result.Error)
-                                    matematici.dialog.error("signature error", result.id == null ? result.error : "The element " + (result.description ? result.description + " " : "") + " with id " + result.id + " is not valid.");
-                                else
-                                    sign(username);
+                                sign(username);
                             }).trigger();
                         };
 
@@ -101,25 +96,24 @@
                 .on("click", "a.CancelButton:not(.Selected):not(.ReadOnly)", function (e) {
                     var
                         button = $(this),
-                        options = {
-                            ajax: { url: matematici.urls.signature, data: "Unsign=true&Description=" + model.description },
-                            data: {
+						options = {
+							title: model.description || "Signature cancelation",
+							width: 460,
+							ajax: {
+								type: "post",
+								url: matematici.urls.instances.signature
+							},
+							data: {
+								unsign: true,
+								username: matematici.tokenManager.getUserCode(),
                                 signHandler: function (panel) {
                                     new instances.Event(instances.Events.signatureCancelation, model.id, {
                                         userName: panel.getUserName(),
                                         password: panel.getPassword(),
                                         note: panel.getNote()
                                     }).done(function (result) {
-                                        if (result.Error) {
-                                            var error = $("div.Error", matematici.popup.getElement());
-                                            error.fadeTo(500, .9).children().text(result.error);
-                                            setTimeout(function () {
-                                                error.fadeTo(500, 0, function () { error.hide(); });
-                                            }, 3000);
-                                        } else {
-                                            instances.instance.update(result);
-                                            matematici.popup.close();
-                                        }
+                                        instances.instance.update(result);
+										matematici.popup.close();
                                     }).trigger();
                                 }
                             }
@@ -133,14 +127,12 @@
 		button.text(model.buttonLabel ? model.buttonLabel : "Signature").prepend($("<i >").addClass("fi flaticon-check"));
         button.toggleClass("ReadOnly", model.readOnly);
 
-        if (model.signed) {
-            var zoneIndex = model.signedOn.indexOf("+");
-            var signedOn = new Date(model.signedOn.endsWith("Z") ? model.signedOn : (zoneIndex > 0 ? model.signedOn.substring(0, zoneIndex) : model.signedOn) + "Z");
+		if (model.signed) {
 			user.val(model.signedBy + " - " + model.signerDescription);
-			var format = matematici.dateFormatter.date(signedOn, true);
+			var format = matematici.dateFormatter.format(model.signedOn, true);
             date.val(format.date);
 			time.val(format.time);
-            element.attr("title", user.val() + " | " + date.val() + " | " + time.val());
+			element.attr("title", user.val() + " | " + format.date + " " + " " + format.time + " " + format.offset);
             if (cancelButton) {
                 button.hide();
                 cancelButton.show();

@@ -71,7 +71,7 @@
 		load = function () {
 			var newInstance = options.code == "";
 			$.ajax({
-				url: matematici.urls.instances + "/" + (newInstance ? "Create" : "Get"),
+				url: matematici.urls.instances.api + "/" + (newInstance ? "Create" : "Get"),
 				type: "post",
 				data: {
 					code: options.code,
@@ -106,7 +106,7 @@
 
 		send = function (action, note, callback) {
 			$.ajax({
-				url: matematici.urls.instances + "/" + action,
+				url: matematici.urls.instances.api + "/" + action,
 				type: "post",
 				data: {
 					code: code,
@@ -213,7 +213,7 @@
 
 	instance.showHistory = function () {
 		$.ajax({
-			url: matematici.urls.instances + "/GetHistory",
+			url: matematici.urls.instances.api + "/GetHistory",
 			type: "post",
 			data: { ClientId: matematici.client.getId() }
 		}).done(function (result) {

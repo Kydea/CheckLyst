@@ -1,0 +1,73 @@
+﻿<form class="Signature">
+    <div class="Simple">
+        <label class="Width200">
+            <span>User code</span>
+            <i class="Icon fi flaticon-user-o"></i>
+            <input type="text" name="UserName" id="UserName" />
+        </label>
+        <label class="Clearing Width200">
+            <span>Password</span>
+            <i class="Icon fi flaticon-key-o"></i>
+            <input type="password" name="Password" id="Password" />
+        </label>
+        <label id="UnsingLabel" class="Clearing Width200">
+            <span>Note</span>
+            <i class="Icon fi flaticon-align-left"></i>
+            <input type="text" name="Note" id="Note" />
+        </label>
+
+        <div id="PIN">
+            <label class="Clearing Width200">
+                <span>Set pin</span>
+                <input type="password" name="PIN" id="PIN" />
+            </label>
+            <label class="Clearing Width200">
+                <span>Confirm pin</span>
+                <input type="password" name="ConfirmPIN" id="ConfirmPIN" />
+            </label>
+        </div>
+    </div>
+    <div class="PinPaddle">
+        <input type="password" maxlength="10" />
+        <div class="Digits">
+            <a href="#" data-digit="7">7</a>
+            <a href="#" data-digit="8">8</a>
+            <a href="#" data-digit="9">9</a>
+            <a href="#" data-digit="4">4</a>
+            <a href="#" data-digit="5">5</a>
+            <a href="#" data-digit="6">6</a>
+            <a href="#" data-digit="1">1</a>
+            <a href="#" data-digit="2">2</a>
+            <a href="#" data-digit="3">3</a>
+            <a href="#" data-digit="0" class="Digit0">0</a>
+            <a href="#" data-digit="<" class="DigitBack"><i class="fi flaticon-angle-left"></i></a>
+            <div class="Clearing"></div>
+        </div>
+        <div class="User"></div>
+    </div>
+</form>
+<div class="Buttons">
+    <a class="Button" href="#" id="Logout"><i class="fi flaticon-logout"></i> Logout </a>
+    <a class="Button DefaultButton" href="#" id="Sign"></a>
+    <a class="Button" href="#" id="Simple"><i class="fi flaticon-key-o"></i> Use login</a>
+</div>
+
+<script type="text/javascript">
+
+    var
+        data = matematici.popup.getData(),
+        element = matematici.popup.getElement().addClass("Signature"),
+        login = new matematici.Login(element, data.signHandler, data.logoutHandler);
+
+    matematici.popup.addCloseButton();
+    login.togglePaddle(data.showPaddle);
+    $("h2", element).text(data.title);
+    $("#UnsingLabel", element).toggle(data.unsign);
+    $("#PIN", element).toggle(data.pin);
+    $("#Logout", element).toggle(data.logout);
+    $("div.User", element).text("User code: " + data.username);
+    matematici.controls.setEditable($("#UserName", element).val(data.username), !data.showPaddle);
+
+    $("#Sign", element).text(data.unsign ? "Unsign" : "Sign").prepend($("<i />").addClass("fi flaticon-check"));
+</script>
+

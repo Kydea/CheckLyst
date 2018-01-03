@@ -22,6 +22,8 @@ namespace CheckListManager.WorkFlows.Tests
 
         public string Code { get; protected set; }
 
+        public string Description => throw new NotImplementedException();
+
         public bool HasPermission(string functionGroup, string function = "", long? department = null, long? prototypeType = null, string tag = null) => true;
     }
 }

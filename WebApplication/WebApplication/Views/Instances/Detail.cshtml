@@ -79,7 +79,7 @@
 
         @*matematici.events.onPageUnload = function (callback) {
             $.ajax({
-                url: matematici.urls.instances + "/Suspend",
+                url: matematici.urls.instances.api + "/Suspend",
                 type: "post",
                 data: { code: "@Model.Code" }
             }).done(function (result) {

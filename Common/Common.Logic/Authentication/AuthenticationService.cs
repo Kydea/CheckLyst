@@ -15,7 +15,7 @@ namespace CheckListManager.Common.Logic.Authentication
             _client = client;
         }
 
-        public async Task AuthenticateAsync(long? companyId, string code, string password)
+        public async Task AuthenticateAsync(string code, string password)
         {
             HttpResponseMessage response;
             string responseData;
@@ -23,9 +23,29 @@ namespace CheckListManager.Common.Logic.Authentication
             {
                 response = await _client.PostAsync("AccessControl/Access/Authenticate", new
                 {
-                    CompanyId = companyId,
                     Code = code,
                     Password = password,
+                });
+                responseData = await response.Content.ReadAsStringAsync();
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Authentication failed", e);
+            }
+
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                throw new Exception(string.Join(" ", JsonConvert.DeserializeObject<AuthenticateResponse>(responseData).Messages));
+        }
+
+        public async Task AuthenticateWithPINAsync(string pin)
+        {
+            HttpResponseMessage response;
+            string responseData;
+            try
+            {
+                response = await _client.PostAsync("AccessControl/Access/AuthenticateWithPIN", new
+                {
+                    PIN = pin,
                 });
                 responseData = await response.Content.ReadAsStringAsync();
             }

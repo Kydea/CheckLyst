@@ -65,41 +65,41 @@
                 <span class="MenuItem"><i class="fi flaticon-cog Extended"></i>Settings</span>
 
                 <ul class="SubMenu">
-                    <li data-role="Users">
+                    <li data-role="Users#View">
                         <a href="@Url.Action("List", "Users")">Users</a>
                     </li>
-                    <li data-role="Departments">
+                    <li data-role="Departments#View">
                         <a href="@Url.Action("DepartmentsList", "Infrastructure")">Departments</a>
                     </li>
-                    <li data-role="PrototypeTypes">
+                    <li data-role="PrototypeTypes#View">
                         <a href="@Url.Action("PrototypeTypesList", "Infrastructure")">Prototype Types</a>
                     </li>
-                    <li data-role="WorkFlows">
+                    <li data-role="WorkFlows#View">
                         <a href="@Url.Action("List", "WorkFlows")">Work Flows</a>
                     </li>
-                    <li data-role="Trail">
+                    <li data-role="Trail#View">
                         <a href="@Url.Action("List", "Trail")">Audit Trail</a>
                     </li>
-                    <li data-role="DataSources">
+                    <li data-role="DataSources#View">
                         <a href="@Url.Action("List", "DataSources")">Data Sources</a>
                     </li>
                 </ul>
             </li>
 
-            <li data-role="Prototypes" class="MenuItem">
+            <li data-role="Prototypes#View" class="MenuItem">
                 <a href="@Url.Action("List", "Prototypes")" class="MenuItem"><i class="fi flaticon-prototype Extended"></i>Prototypes</a>
 
                 <ul class="SubMenu Extended">
-                    <li data-role="Prototypes">
+                    <li data-role="Prototypes#View">
                         <a href="@Url.Action("List", "Prototypes")">Prototypes</a>
                     </li>
                 </ul>
             </li>
-            <li data-role="Instances" class="MenuItem">
+            <li data-role="Instances#View" class="MenuItem">
                 <a href="@Url.Action("List", "Instances")" class="MenuItem"><i class="fi flaticon-instance Extended"></i>Instances</a>
 
                 <ul class="SubMenu Extended">
-                    <li data-role="Instances">
+                    <li data-role="Instances#View">
                         <a href="@Url.Action("List", "Instances")">Instances</a>
                     </li>
                 </ul>

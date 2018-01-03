@@ -14,8 +14,9 @@ namespace CheckListManager.AccessControl.Logic.Services
 	public interface IUserService : IService
 	{
 		Task<Users> AuthenticateAsync(long? companyId, string code, string password);
+        Task AuthenticateWithPINAsync(long? companyId, string code, string pin);
 
-		Task CreateSessionAsync(long company, string code, string user, string ticket, DateTimeOffset expiresOn);
+        Task CreateSessionAsync(long company, string code, string user, string ticket, DateTimeOffset expiresOn);
 		Task<IdentityToken> GetTokenAsync(string code);
 		Task UpdateTokenAsync(IdentityToken token, DateTimeOffset expiresOn);
 		Task LogoutAsync(DefaultIdentity identity, string token);

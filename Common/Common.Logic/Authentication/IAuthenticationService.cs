@@ -5,6 +5,8 @@ namespace CheckListManager.Common.Logic.Authentication
 {
 	public interface IAuthenticationService : IService
 	{
-		Task AuthenticateAsync(long? companyId, string code, string Password);
-	}
+		Task AuthenticateAsync(string code, string password);
+
+		Task AuthenticateWithPINAsync(string pin);
+    }
 }

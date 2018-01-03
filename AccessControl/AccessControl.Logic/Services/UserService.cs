@@ -113,7 +113,72 @@ namespace CheckListManager.AccessControl.Logic.Services
 			return user;
 		}
 
-		public Task CreateSessionAsync(long company, string code, string user, string ticket, DateTimeOffset expiresOn)
+        public async Task AuthenticateWithPINAsync (long? companyId, string code, string pin)
+        {
+            if (!companyId.HasValue)
+                throw new AuthenticationException(99, "Company not sent");
+
+            if (string.IsNullOrEmpty(code))
+                throw new AuthenticationException(100, "User code not sent");
+
+            Users user = null;
+
+            try
+            {
+                if (string.IsNullOrEmpty(pin))
+                    throw new AuthenticationException(101, "User PIN not sent");
+
+                user = await _userRepository.GetAsync(companyId.Value, code);
+
+                if (user == null)
+                    throw new AuthenticationException(102, $"User {code} not found");
+
+                if (!user.Enabled)
+                    throw new AuthenticationException(103, $"User {code} not enabled");
+
+                if (
+                    user.Companies.MaximumNumberOfPasswordFailure > 0
+                    && user.NumberOfAttempts >= user.Companies.MaximumNumberOfPasswordFailure
+                    && user.LastLoginFailedOn != null
+                    && user.Companies.LoginFailedTimeout > 0
+                    && (DateTimeOffset.UtcNow - user.LastLoginFailedOn.Value).TotalMinutes < user.Companies.LoginFailedTimeout
+                )
+                    throw new AuthenticationException(104, $"User {code} temporary disabled");
+
+                if (!_hashService.ValidateHash(pin, user.PIN))
+                    throw new AuthenticationException(105, "User pin not valid");
+
+                await Task.WhenAll(
+                    _userRepository.UserLoginCompleteAsync(user),
+                    _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                    {
+                        Company = user.Company,
+                        User = user.Code,
+                        Action = TrailAction.Login,
+                        Date = DateTimeOffset.UtcNow
+                    })
+                );
+            }
+            catch (AuthenticationException authenticationException)
+            {
+                await Task.WhenAll(
+                    _userRepository.UserLoginFailedAsync(user),
+                    _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                    {
+                        Company = companyId.Value,
+                        User = code,
+                        Action = TrailAction.LoginFailed,
+                        Date = DateTimeOffset.UtcNow,
+                        Information = authenticationException.Message
+                    })
+                );
+
+                throw;
+            }
+        }
+
+
+        public Task CreateSessionAsync(long company, string code, string user, string ticket, DateTimeOffset expiresOn)
 		{
 			var session = new UserSessions
 			{

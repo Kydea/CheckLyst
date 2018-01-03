@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using System.Linq;
 using CheckListManager.Instances.Logic.Exceptions;
+using System.Threading.Tasks;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
@@ -13,7 +14,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 		public string ButtonLabel { get; set; }
 		public bool Cancelable { get; set; }
 		public List<SignatureRecord> History { get; } = new List<SignatureRecord>();
-		public int? SignatureLevel { get; set; }
+		public string SignatureLevel { get; set; }
 		public bool Signed { get; set; }
 		public string SignedBy { get; set; }
 		public DateTimeOffset SignedOn { get; set; }
@@ -56,14 +57,13 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                         CheckItem(Item);
         }
 
-        public void TrySign(String UserName)
+        public void TrySign(String UserCode)
         {
             var Instance = (Instance)CheckList;
-            if (Signed) throw new Exception("The signature " + Id + " is already signed");
             try
             {
                 Signed = true;
-                SignedBy = UserName;
+                SignedBy = UserCode;
                 SignedOn = DateTimeOffset.UtcNow;
                 Instance.Update();
                 if (!Valid) throw new InstanceException("Signature not valid. " + ValidityMessage);
@@ -80,6 +80,37 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 Signed = false;
                 SignedBy = null;
                 Instance.Update();
+            }
+        }
+
+        public void Sign(string UserCode, string UserDescription, DateTimeOffset Now)
+        {
+            Signed = true;
+            SignedBy = UserCode;
+            SignerDescription = UserDescription;
+            SignedOn = Now;
+
+            History.Add(new SignatureRecord { DateTime = SignedOn.ToString("dd/MM/yyyy HH:mm"), User = UserCode, Signature = SignerDescription });
+        }
+
+        public void Unsign(string UserCode, string UserDescription, DateTimeOffset Now, string Note, string InstanceState)
+        {
+            try
+            {
+                Signed = false;
+                var Instance = ((Instance)CheckList);
+                Instance.UpdateReadOnly(UserCode, InstanceState);
+                if (ReadOnly)
+                    throw new Exception("This signature not editable"); //Signature is still readonly after unsigned, may be locked by another signature or a special condition
+
+                SignedOn = Now;
+
+                History.Add(new SignatureRecord { DateTime = SignedOn.ToString("dd/MM/yyyy HH:mm"), User = UserCode, Signature = SignerDescription, Note = Note });
+            }
+            catch
+            {
+                Signed = true;
+                throw;
             }
         }
     }

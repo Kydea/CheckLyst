@@ -27,7 +27,7 @@ instances.Event = function (type, itemId, data) {
 		data.code = instances.instance.getCode();
 
         $.ajax({
-			url: matematici.urls.instances + "/Event",
+			url: matematici.urls.instances.api + "/Event",
             type: "post",
             data: data
         }).done(function (result) {

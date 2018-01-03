@@ -9,7 +9,7 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
 		string ButtonLabel { get; set; }
 		bool Cancelable { get; set; }
 		List<SignatureRecord> History { get; }
-		int? SignatureLevel { get; set; }
+		string SignatureLevel { get; set; }
 		bool Signed { get; set; }
 		string SignedBy { get; set; }
 		DateTimeOffset SignedOn { get; set; }

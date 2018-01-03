@@ -5,31 +5,42 @@ using CheckListManager.Common.Logic.Models.Expressions;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
-	public abstract class Element : ICheckListElement
-	{
-		public ICheckList CheckList { get; set; }
-		public string Code { get; set; }
+    public abstract class Element : ICheckListElement
+    {
+        public ICheckList CheckList { get; set; }
+        public string Code { get; set; }
 
-		public Expression CountDownTo => CountDownToCode == null ? null : CheckList.Expressions[CountDownToCode];
+        public Expression CountDownTo => CountDownToCode == null ? null : CheckList.Expressions[CountDownToCode];
 
-		public string CountDownToCode { get; set; }
-		public bool Hidden
-		{
-			get
-			{
-				var expressionValue = HiddenExpressionCode != null && CheckList != null && CheckList.Expressions.ContainsKey(HiddenExpressionCode) && CheckList.Expressions[HiddenExpressionCode].Value.Type == DataType.Boolean && CheckList.Expressions[HiddenExpressionCode].Value.BooleanValue;
-				return
-					HiddenCondition == Conditions.Expression && expressionValue ||
-					HiddenCondition == Conditions.True;
-			}
-		}
-		public Conditions HiddenCondition { get; set; }
-		public string HiddenExpressionCode { get; set; }
-		public Conditions ReadOnlyCondition { get; set; }
-		public string ReadOnlyExpressionCode { get; set; }
+        public string CountDownToCode { get; set; }
+        public bool Hidden
+        {
+            get
+            {
+                var expressionValue = 
+                    HiddenExpressionCode != null 
+                    && CheckList != null 
+                    && CheckList.Expressions.ContainsKey(HiddenExpressionCode) 
+                    && CheckList.Expressions[HiddenExpressionCode].Value?.Type == DataType.Boolean 
+                    && CheckList.Expressions[HiddenExpressionCode].Value.BooleanValue;
+                return
+                    HiddenCondition == Conditions.Expression && expressionValue ||
+                    HiddenCondition == Conditions.True;
+            }
+        }
+        public Conditions HiddenCondition { get; set; }
+        public string HiddenExpressionCode { get; set; }
+        public Conditions ReadOnlyCondition { get; set; }
+        public string ReadOnlyExpressionCode { get; set; }
 
-		public ICheckListSignature Signature
-			=> SignatureCode == null ? null : (ICheckListSignature)GetBranchElements()[SignatureCode];
+        public ICheckListSignature Signature
+        {
+            get
+            {
+                var BranchElements = GetBranchElements();
+    			return SignatureCode == null || BranchElements == null ? null : (ICheckListSignature)GetBranchElements()[SignatureCode];
+            }
+        }
 		public string SignatureCode { get; set; }
         public virtual string GetSignatureInformation()
             => Signature != null && Signature.Signed ? string.Format("by {0} on {1:dd/MM/yyyy HH:mm}", Signature.SignedBy, Signature.SignedOn) : null;
@@ -40,7 +51,12 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 			{
 				if (Hidden) return true;
 
-				var expressionValue = ValidExpressionCode != null && CheckList != null && CheckList.Expressions.ContainsKey(ValidExpressionCode) && CheckList.Expressions[ValidExpressionCode].Value.Type == DataType.Boolean && CheckList.Expressions[ValidExpressionCode].Value.BooleanValue;
+				var expressionValue = 
+                    ValidExpressionCode != null 
+                    && CheckList != null 
+                    && CheckList.Expressions.ContainsKey(ValidExpressionCode) 
+                    && CheckList.Expressions[ValidExpressionCode].Value?.Type == DataType.Boolean 
+                    && CheckList.Expressions[ValidExpressionCode].Value.BooleanValue;
 				return
 					ValidCondition == Conditions.Default && IsValidByDefault() ||
 					ValidCondition == Conditions.Expression && expressionValue ||
@@ -87,7 +103,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 			var expressionValue = 
                 ReadOnlyExpressionCode != null && CheckList != null &&
 			    CheckList.Expressions.ContainsKey(ReadOnlyExpressionCode) &&
-			    CheckList.Expressions[ReadOnlyExpressionCode].Value.Type == DataType.Boolean &&
+			    CheckList.Expressions[ReadOnlyExpressionCode].Value?.Type == DataType.Boolean &&
 			    CheckList.Expressions[ReadOnlyExpressionCode].Value.BooleanValue;
 
 			ReadOnly = (Signature?.Signed ?? false) ||
