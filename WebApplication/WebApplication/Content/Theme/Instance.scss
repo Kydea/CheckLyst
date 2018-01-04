@@ -9,6 +9,48 @@ div.Instance {
         z-index: $Depth-CheckList-Date-Picker !important;
     }
 
+    div.CountDown {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(255, 255, 255, .85);
+        text-align: center;
+        padding: 10px;
+        z-index: $Depth-CheckList-CountDown;
+        font-weight: bold;
+        min-height: 80px;
+
+        span.Time {
+            display: inline-block;
+            padding-top: 20px;
+            color: red;
+            font-size: 50px;
+        }
+
+        span.Interval {
+            position: absolute;
+            color: #666;
+            left: 10px;
+            top: 0;
+            font-size: 12px;
+            line-height: 1.4;
+
+            i {
+                float: left;
+                color: red;
+                margin: 3px 10px 0 0;
+                font-size: 26px;
+            }
+        }
+
+        a {
+            margin-top: 30px;
+            margin-left: 10px;
+        }
+    }
+
     .Element {
         div.Information {
             margin: 0 !important;
@@ -72,7 +114,7 @@ div.Instance {
         }
     }
 
-    div.Page {
+    .Page {
         div.LockInformation {
             display: none;
         }
@@ -179,6 +221,16 @@ div.Instance {
             div.Panel {
                 right: 0;
                 border-radius: 10px 0 10px 10px;
+            }
+        }
+
+        > div.CountDown {
+            top: -$Metric-Control-Space;
+            left: -$Metric-Control-Space;
+
+            span.Interval {
+                top: $Metric-Control-Space;
+                left: $Metric-Control-Space;
             }
         }
     }
@@ -385,46 +437,6 @@ div.Instance {
 
         &.Hidden {
             display: none;
-        }
-    }
-
-    div.CountDown {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: rgba(255, 255, 255, .85);
-        text-align: center;
-        padding: 10px;
-        z-index: $Depth-CheckList-CountDown;
-        font-weight: bold;
-
-        span.Time {
-            color: red;
-            font-size: 50px;
-        }
-
-        span.Interval {
-            position: absolute;
-            color: #666;
-            left: 10px;
-            top: 0;
-            font-size: 12px;
-            line-height: 1.4;
-
-            i {
-                float: left;
-                color: red;
-                margin: 3px 10px 0 0;
-                font-size: 26px;
-            }
-        }
-
-        a {
-            width: 100px;
-            margin-top: 15px;
-            float: right;
         }
     }
 

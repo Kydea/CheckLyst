@@ -107,7 +107,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
         public Decimal NumberValue { get { return (Decimal)(Value ?? 0); } }
 
-        public DateTime DateTimeValue { get { return (DateTime)(Value ?? DateTime.MinValue.ToUniversalTime()); } }
+        public DateTimeOffset DateTimeValue { get { return (DateTimeOffset)(Value ?? DateTimeOffset.MinValue); } }
 
         public TimeSpan TimeSpanValue { get { return (TimeSpan)(Value ?? 0); } }
 

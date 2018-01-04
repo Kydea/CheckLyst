@@ -25,6 +25,7 @@
       text-overflow: ellipsis;
       white-space: nowrap; }
       div.TabContainer .TabLabels > a i.fi {
+        margin-left: 5px;
         font-size: 14px; }
       div.TabContainer .TabLabels > a.Selected {
         cursor: default;

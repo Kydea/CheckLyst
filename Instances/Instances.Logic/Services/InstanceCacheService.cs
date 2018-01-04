@@ -31,9 +31,7 @@ namespace CheckListManager.Instances.Logic.Services
 			{
 				instance.Instance = await _redisCache.GetAsync<Instance>($"Instance:{code}:Data", RegionName, _converter);
 				if (instance.Instance == null)
-				{
 					throw new InstanceException("Instance data missing");
-				}
 
 				instance.Instance.Setup(false);
 			}

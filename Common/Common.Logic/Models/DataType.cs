@@ -66,7 +66,7 @@ namespace CheckListManager.Common.Logic.Models
 				}
 				if (_rawValue == DataTypeEnum.DateTime)
 				{
-					return System.DateTime.TryParseExact(value, new[] { "dd/MM/yyyy", "dd/MM/yyyy HH:mm" }, CultureInfo.CurrentCulture, DateTimeStyles.None, out _);
+					return DateTimeOffset.TryParseExact(value, new[] { "dd/MM/yyyy", "dd/MM/yyyy HH:mm" }, CultureInfo.CurrentCulture, DateTimeStyles.None, out _);
 				}
 				// ReSharper disable once ConvertIfStatementToReturnStatement
 				if (_rawValue == DataTypeEnum.Time)
@@ -85,8 +85,8 @@ namespace CheckListManager.Common.Logic.Models
 		public static DataType Text = new DataType(DataTypeEnum.Text, typeof(string), "Text");
 		public static DataType Boolean = new DataType(DataTypeEnum.Boolean, typeof(bool), "Boolean");
 		public static DataType Number = new DataType(DataTypeEnum.Number, typeof(decimal), "Number", typeof(int), typeof(double), typeof(float));
-		public static DataType DateTime = new DataType(DataTypeEnum.DateTime, typeof(DateTime), "DateTime");
-		public static DataType Date = new DataType(DataTypeEnum.Date, typeof(DateTime), "Date");
+		public static DataType DateTime = new DataType(DataTypeEnum.DateTime, typeof(DateTimeOffset), "DateTime");
+		public static DataType Date = new DataType(DataTypeEnum.Date, typeof(DateTimeOffset), "Date");
 		public static DataType Time = new DataType(DataTypeEnum.Time, typeof(TimeSpan), "Time");
 		public static DataType Error = new DataType(DataTypeEnum.Error, typeof(string), "Error");
 

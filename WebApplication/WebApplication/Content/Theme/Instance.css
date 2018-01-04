@@ -1,6 +1,39 @@
 ﻿div.Instance div.ui-datepicker {
   z-index: 33 !important; }
 
+div.Instance div.CountDown {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.85);
+  text-align: center;
+  padding: 10px;
+  z-index: 35;
+  font-weight: bold;
+  min-height: 80px; }
+  div.Instance div.CountDown span.Time {
+    display: inline-block;
+    padding-top: 20px;
+    color: red;
+    font-size: 50px; }
+  div.Instance div.CountDown span.Interval {
+    position: absolute;
+    color: #666;
+    left: 10px;
+    top: 0;
+    font-size: 12px;
+    line-height: 1.4; }
+    div.Instance div.CountDown span.Interval i {
+      float: left;
+      color: red;
+      margin: 3px 10px 0 0;
+      font-size: 26px; }
+  div.Instance div.CountDown a {
+    margin-top: 30px;
+    margin-left: 10px; }
+
 div.Instance .Element div.Information {
   margin: 0 !important;
   content: "";
@@ -46,7 +79,7 @@ div.Instance .Element div.Information {
 div.Instance .Element.Valid > div.Information {
   background-color: green; }
 
-div.Instance div.Page div.LockInformation {
+div.Instance .Page div.LockInformation {
   display: none; }
 
 div.Instance .Group .Iteration {
@@ -106,6 +139,13 @@ div.Instance .Group tr.Iteration:last-child > .IterationCommands a.Down {
 div.Instance .Group > div.Information div.Panel {
   right: 0;
   border-radius: 10px 0 10px 10px; }
+
+div.Instance .Group > div.CountDown {
+  top: -20px;
+  left: -20px; }
+  div.Instance .Group > div.CountDown span.Interval {
+    top: 20px;
+    left: 20px; }
 
 div.Instance .Item label span.Label {
   padding-left: 8px; }
@@ -229,37 +269,6 @@ div.Instance .Page.ReadOnly, div.Instance .Group.ReadOnly {
 
 div.Instance .Page.Hidden, div.Instance .Group.Hidden {
   display: none; }
-
-div.Instance div.CountDown {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(255, 255, 255, 0.85);
-  text-align: center;
-  padding: 10px;
-  z-index: 35;
-  font-weight: bold; }
-  div.Instance div.CountDown span.Time {
-    color: red;
-    font-size: 50px; }
-  div.Instance div.CountDown span.Interval {
-    position: absolute;
-    color: #666;
-    left: 10px;
-    top: 0;
-    font-size: 12px;
-    line-height: 1.4; }
-    div.Instance div.CountDown span.Interval i {
-      float: left;
-      color: red;
-      margin: 3px 10px 0 0;
-      font-size: 26px; }
-  div.Instance div.CountDown a {
-    width: 100px;
-    margin-top: 15px;
-    float: right; }
 
 div.Instance table.Grid thead tr th {
   border: solid 1px #ccc !important; }

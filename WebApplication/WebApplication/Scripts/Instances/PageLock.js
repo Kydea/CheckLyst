@@ -1,7 +1,6 @@
 ﻿instances.PageLock = function () {
     var
         model = null,
-        labels = $("div.TabContainer div.TabLabels a i.flaticon-lock-o", instances.instance.getElement()),
 
         format = function (date) {
             date = new Date(date);
@@ -22,7 +21,8 @@
             return content;
         },
 
-        setup = function () {
+		setup = function () {
+			labels = $("div.TabContainer div.TabLabels a i.flaticon-lock-o", instances.instance.getElement());
             labels.on("click", function (e) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -35,12 +35,8 @@
 						$("div.Errrors", buttons.parent()).remove();
 						new instances.Event(instances.Events.unlockPage, index)
 							.done(function (result) {
-								if (result.Error) 
-									$("<div />").addClass("Errors").text(result.Error).insertAfter(buttons).show();
-								else {
-									instances.instance.update(result);
-									matematici.dialog.close();
-								}
+								instances.instance.update(result);
+								matematici.dialog.close();
 							})
 							.trigger();
 
@@ -48,22 +44,23 @@
 					},
                     handler = function () {
                         setTimeout(function() {
-							matematici.dialog.show($("<span><i class=\"fi flaticon-lock\"></i> Page locked</span>"), "Please confirm you want to unlock the page.",
+							matematici.dialog.show($("<span><i class=\"fi flaticon-lock-o\"></i> Page locked</span>"), "Please confirm you want to unlock the page.",
 								[
 									{ text: "unlock the page", icon: "exclamation", handler: unlockHandler },
-									{ text: "cancel", icon: "remove", cancelButton: true }
+									{ text: "cancel", icon: "times", cancelButton: true }
 								]
 							)
                         }, 0);
                     };
-				matematici.dialog.show($("<span><i class=\"fi flaticon-lock\"></i> Page locked</span>"), createContent(index), [{ text: "close", icon: "remove", cancelButton: true }, { text: "unlock the page", icon: "exclamation", handler: handler }]);
+				matematici.dialog.show($("<span><i class=\"fi flaticon-lock-o\"></i> Page locked</span>"), createContent(index), [{ text: "close", icon: "times", cancelButton: true }, { text: "unlock the page", icon: "exclamation", handler: handler }]);
             });
         };
 
-    this.update = function (newModel) {
-        model = newModel;
+	this.update = function (newModel) {
+		model = newModel;
+		var user = matematici.tokenManager.getUserCode();
         for (var index in model.pages)
-            labels.eq(index).toggle(model.pages[index].locked);
+			labels.eq(index).toggle(!!model.pages[index].lock && model.pages[index].lock.user != user);
     };
 
     setup();

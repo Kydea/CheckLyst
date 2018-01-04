@@ -37,8 +37,8 @@
             .attr("data-id", model.id)
             .toggleClass("Valid", model.valid)
             .toggleClass("Hidden", model.hidden);
-        if (model.countDownTo)
-            new instances.CountDown(element, model.countDownTo, model.id);
+        if (model.countDownToValue)
+			new instances.CountDown(element, model.countDownToValue, model.id);
         item.update(model)
         $("span.Error, span.Null", element).each(function () {
             var

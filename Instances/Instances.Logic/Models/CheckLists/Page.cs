@@ -12,9 +12,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
 		public Lock Lock { get; set; }
 
-		public bool IsLocked { get; set; }
-
-		public override bool IsValidByDefault()
+        public override bool IsValidByDefault()
 			=> _valid;
 
 		public override void Setup()
@@ -44,8 +42,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
 		public override void UpdateReadOnly(string userCode, bool ReadOnlyInstance)
 		{
-            IsLocked = Lock != null && Lock.User != userCode;
-            if (IsLocked || ReadOnlyInstance)
+            if (Lock?.User != userCode || ReadOnlyInstance)
                 ReadOnly = true;
             else
                 base.UpdateReadOnly(userCode, ReadOnlyInstance);

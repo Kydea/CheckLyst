@@ -3,7 +3,7 @@
 		instance = this,
 		header = new instances.Group($("div#Header", element), "Group"),
 		page = new instances.Group($("div.Page", element), "Page"),
-		prototypeState,
+		versionState,
 		code,
 		id,
 		state,
@@ -22,7 +22,9 @@
 
 		setupTab = function (pages) {
 			for (var pageIndex in pages)
-				tab.add(pages[pageIndex].description)
+				tab.add(pages[pageIndex].description, null, null, "lock-o")
+
+			pageLock = new instances.PageLock(instance);
 
 			tab.select(0)
 			tab.resize();
@@ -54,7 +56,7 @@
 
 		update = function (result) {
 			var model = result.checkList;
-			prototypeState = result.prototypeState;
+			versionState = result.versionState || versionState;
 
 			pageLock.update(model);
 			if (model.header)
@@ -147,8 +149,8 @@
 		return externalSources;
 	};
 
-	instance.getPrototypeState = function () {
-		return prototypeState;
+	instance.getVersionState = function () {
+		return versionState;
 	};
 
 	instance.update = update;
@@ -240,8 +242,6 @@
 			page.clear();
 			new instances.Event(instances.Events.pageChange, item.index).trigger();
 		});
-		pageLock = new instances.PageLock(instance);
-
 		load();
 	};
 
