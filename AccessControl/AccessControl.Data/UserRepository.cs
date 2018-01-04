@@ -46,6 +46,14 @@ namespace CheckListManager.AccessControl.Data
             return existingUser;
         }
 
+        public async Task SetPINAsync(long companyId, string code, byte[] pin)
+        {
+            await Call<int>("\"Security\".\"SetUserPIN\"",
+                new Parameter("_company", companyId),
+                new Parameter("_user", code),
+                new Parameter("_pin", pin));
+        }
+
         public async Task DeleteAsync(long companyId, string code)
         {
             var user = await GetAsync(companyId, code);

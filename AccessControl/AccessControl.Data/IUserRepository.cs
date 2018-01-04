@@ -10,6 +10,7 @@ namespace CheckListManager.AccessControl.Data
 		Task<Users> GetAsync(long companyId, string code);
         Task<Users> AddAsync(DefaultIdentity identity, Users user);
         Task<Users> EditAsync(DefaultIdentity identity, Users user);
+        Task SetPINAsync(long companyId, string code, byte[] pin);
         Task DeleteAsync(long companyId, string code);
 
 		Task<List<Users>> GetUsersAsync(long companyId, string code, string description, int skip, int take);

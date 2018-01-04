@@ -28,6 +28,20 @@ namespace CheckListManager.AccessControl.Api.Controllers
 	    }
 
         [HttpPost]
+        public async Task<IHttpActionResult> SetPIN(ChangePINRequest request)
+        {
+            try
+            {
+                await _userService.SetPINAsync(Identity.CompanyId, Identity.Code, request.Password, request.PIN);
+                return Ok();
+            }
+            catch (Exception Exception)
+            {
+                return Error(Exception);
+            }
+        }
+
+        [HttpPost]
         public async Task<IHttpActionResult> Authenticate(AuthenticateRequest request)
         {
             try
@@ -42,7 +56,7 @@ namespace CheckListManager.AccessControl.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IHttpActionResult> AuthenticateWidthPIN(AuthenticateWithPINRequest request)
+        public async Task<IHttpActionResult> AuthenticateWithPIN(AuthenticateWithPINRequest request)
         {
             try
             {

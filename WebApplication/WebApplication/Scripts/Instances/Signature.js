@@ -34,25 +34,25 @@
                 .on("click", "a.SignButton:not(.Selected):not(.ReadOnly)", function (e) {
 
                     var 
-                        sign = function (username) {
+						sign = function (code, accessToken) {
                             var
                                 options = {
 									title: model.description || "Signature",
 									width: 460,
 									ajax: {
 										type: "post",
-										url: matematici.urls.instances.signature
+										url: matematici.urls.accessControl.signature
 									},
 									data: {
 										showPaddle: model.acceptsPin,
-										username: username,
+										username: code,
                                         signHandler: function (panel) {
                                             new instances.Event(instances.Events.signature, model.id, {
                                                 userName: panel.getUserName(),
                                                 password: panel.getPassword(),
                                                 pin: panel.getPIN(),
                                                 simple: panel.isSimple()
-                                            }).done(function (result) {
+											}, accessToken).done(function (result) {
                                                 instances.instance.update(result);
                                                 matematici.popup.close();
                                             }).trigger();
@@ -63,14 +63,17 @@
                             matematici.popup.show(options);
                         },
 
-                        trySign = function(username) {
-                            new instances.Event(instances.Events.signatureCheck, model.id, { userName: username }).done(function (result) {
-                                sign(username);
+                        trySign = function(code, accessToken) {
+							new instances.Event(instances.Events.signatureCheck, model.id, { userName: code }).done(function (result) {
+								sign(code, accessToken);
                             }).trigger();
                         };
 
-					if (true) //TODO
-						trySign(matematici.tokenManager.getUserCode());
+					var
+						signers = matematici.tokenManager.getSigners(),
+						mainUser = matematici.tokenManager.getUserCode();
+					if (signers.length == 0) 
+						trySign(mainUser);
                     else {
                     	var buttons = [];
                     	buttons.push({
@@ -78,18 +81,25 @@
                     		icon: "times",
                     		cancelButton: true
                     	});
-                    	$.each(result, function () {
-                    		var username = this;
+                    	$.each(signers, function () {
+                    		var signer = this;
                     		buttons.push({
-                    			text: username,
-                    			icon: "user",
+								text: signer.code,
+								title: signer.name,
+                    			icon: "user-o",
                     			handler: function () {
-                    				setTimeout(function () {
-                    					trySign(username);
-                    				}, 100);
+									trySign(signer.code, signer.accessToken || "-");
                     			}
                     		});
                     	});
+						buttons.push({
+							text: mainUser,
+							title: matematici.tokenManager.getUserName(),
+							icon: "user-o",
+							handler: function () {
+								trySign(mainUser);
+							}
+						});
                     	matematici.dialog.popupMenu(buttons);
 					};
                 })
@@ -101,7 +111,7 @@
 							width: 460,
 							ajax: {
 								type: "post",
-								url: matematici.urls.instances.signature
+								url: matematici.urls.accessControl.signature
 							},
 							data: {
 								unsign: true,

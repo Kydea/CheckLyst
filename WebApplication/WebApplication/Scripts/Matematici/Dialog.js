@@ -24,6 +24,7 @@ matematici.dialog = function () {
 				if (button.icon) button.content.prepend($("<i />").addClass("fi flaticon-" + button.icon));
 				if (button.hidden) button.content.hide();
 				if (button.defaultButton) button.content.addClass("DefaultButton");
+				if (button.title) button.content.attr("title", button.title);
 				if (button.cancelButton) {
 					container
 						.append($("<a />").attr("href", "#").addClass("CloseButton")

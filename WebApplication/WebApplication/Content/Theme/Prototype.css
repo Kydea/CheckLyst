@@ -73,6 +73,11 @@ div.Prototype div.Item {
     cursor: pointer; }
   div.Prototype div.Item.Signature input {
     cursor: pointer; }
+  div.Prototype div.Item.Signature a.Button:hover {
+    background-color: #009688;
+    cursor: pointer; }
+    div.Prototype div.Item.Signature a.Button:hover i {
+      color: #009688; }
   div.Prototype div.Item.Text p {
     position: relative; }
   div.Prototype div.Item.Current::before {

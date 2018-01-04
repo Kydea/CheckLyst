@@ -14,6 +14,7 @@ namespace CheckListManager.AccessControl.Logic.Services
 	public interface IUserService : IService
 	{
 		Task<Users> AuthenticateAsync(long? companyId, string code, string password);
+        Task SetPINAsync(long? companyId, string code, string password, string pin);
         Task AuthenticateWithPINAsync(long? companyId, string code, string pin);
 
         Task CreateSessionAsync(long company, string code, string user, string ticket, DateTimeOffset expiresOn);

@@ -8,8 +8,6 @@ Controllare funzionamento logout e warning logout automatico
 
 Il refresh del token adesso lo fanno tutti i client!
 
-Mettiamo la regular expression della password in companies
-
 La navigazione nella history del browser avviene senza controlli su modifiche appese
 
 
@@ -29,6 +27,9 @@ Abilitare View se abilito qualunque altra funzione, disabilitare le altre funzio
 ACCESS CONTROL
 Mettere un tempo di attesa per i login falliti
 impedire cambio di login "dietro le quinte", mettiamo in un js l'utente attuale, se cambia va dato messaggio di errore
+regular expression della password in companies
+lunghezza minima del pin in companies
+
 
 WORKFLOWS
 Invio email
