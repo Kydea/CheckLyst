@@ -132,7 +132,7 @@ begin
 			and "Year" = _Year;
 	end if;
     
-    RETURN _Number;
+    return _Number;
 end 
 $$ language plpgsql;
 

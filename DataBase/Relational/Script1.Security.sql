@@ -81,19 +81,18 @@ create or replace function "Security"."SetUserPIN"
 	_user varchar(60),
 	_pin bytea
 ) 
-returns void as
-$body$ 
+returns int as
+$$ 
 declare 
 	_count int;
 begin
-
 	delete from "Security"."PINHistory"
     where 
-    	ph."Company" = _company 
-        and ph."User" = _user
-        and ph."Date" + interval '1' year < current_timestamp ;
+    	"Company" = _company 
+        and "User" = _user
+        and "Date" + interval '1' year < current_timestamp ;
 	
-	select _count = count(*) 
+	select count(*) into _count
 	from "Security"."PINHistory" ph 
 	where 
     	ph."Company" = _company 
@@ -101,31 +100,33 @@ begin
 		and ph."PIN" = _pin;
 
 	if _count > 0 then
-		raise 'This PIN is present in the last 5 PINs history of the past 365 days.' using errcode = 'Security.SetUserPIN.PINAlreadyUsed';
+		raise 'This PIN is present in the last 5 PINs history of the past 365 days.';
 	end if;
     
 	delete from "Security"."PINHistory"
     where "ID" in (
-        select ph."ID"
+        select "ID"
         from "Security"."PINHistory" ph
         where
-            ph."Company" = _company 
-            and ph."User" = _user
-        order by ph."ID" desc
+            "Company" = _company 
+            and "User" = _user
+        order by "ID" desc
         offset 5
     );
 
-	update "Security"."Users" u
+	update "Security"."Users"
 	set 
-		u."PIN" = _pin,
-		u."PINChangeDate" = current_timestamp
+		"PIN" = _pin,
+		"PINChangeDate" = current_timestamp
 	where 
-            ph2."Company" = _company 
-            and ph2."User" = _user;
+        "Company" = _company 
+        and "Code" = _user;
 
-	insert into "Security"."PINHistory" ("Compnay", "User", "PIN", "Date") values (_company, _user, _pin, current_timestamp);
+	insert into "Security"."PINHistory" ("Company", "User", "PIN", "Date") values (_company, _user, _pin, current_timestamp);
+
+	return 0;
 end 
-$body$ language plpgsql;
+$$ language plpgsql;
 
 create or replace function "Security"."SetUserPassword"
 (
@@ -133,48 +134,50 @@ create or replace function "Security"."SetUserPassword"
 	_user varchar(60),
 	_password bytea
 ) 
-returns void as
-$body$ 
+returns int as
+$$ 
 declare 
 	_count int;
 begin
 
 	delete from "Security"."PasswordHistory"
     where 
-    	ph."Company" = _company 
-        and ph."User" = _user
-        and ph."Date" + interval '1' year < current_timestamp ;
+    	"Company" = _company 
+        and "User" = _user
+        and "Date" + interval '1' year < current_timestamp ;
 	
-	select _count = count(*) 
-	from "Security"."PasswordHistory" ph 
+	select count(*) into _count
+	from "Security"."PasswordHistory" 
 	where 
-    	ph."Company" = _company 
-        and ph."User" = _user
-		and ph."Password" = _password;
+    	"Company" = _company 
+        and "User" = _user
+		and "Password" = _password;
 
 	if _count > 0 then
-		raise 'This password is present in the last 5 passwords history of the past 365 days.' using errcode = 'Security.SetUserPassword.PasswordAlreadyUsed';
+		raise 'This password is present in the last 5 passwords history of the past 365 days.';
 	end if;
     
 	delete from "Security"."PasswordHistory"
     where "ID" in (
-        select ph."ID"
-        from "Security"."PasswordHistory" ph
+        select "ID"
+        from "Security"."PasswordHistory"
         where
-            ph."Company" = _company 
-            and ph."User" = _user
-        order by ph."ID" desc
+            "Company" = _company 
+            and "User" = _user
+        order by "ID" desc
         offset 5
     );
 
-	update "Security"."Users" u
+	update "Security"."Users"
 	set 
-		u."Password" = _password,
-		u."PasswordChangeDate" = current_timestamp
+		"Password" = _password,
+		"PasswordChangeDate" = current_timestamp
 	where 
-            ph2."Company" = _company 
-            and ph2."User" = _user;
+            "Company" = _company 
+            and "Code" = _user;
 
-	insert into "Security"."PasswordHistory" ("Compnay", "User", "Password", "Date") values (_company, _user, _password, current_timestamp);
+	insert into "Security"."PasswordHistory" ("Company", "User", "Password", "Date") values (_company, _user, _password, current_timestamp);
+
+		return 0;
 end 
-$body$ language plpgsql;
+$$ language plpgsql;

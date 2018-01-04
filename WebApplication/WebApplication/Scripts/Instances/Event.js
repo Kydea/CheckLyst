@@ -17,7 +17,7 @@
     skipCountDown: "SkipCountDown"
 };
 
-instances.Event = function (type, itemId, data) {
+instances.Event = function (type, itemId, data, accessToken) {
     var done;
 
     this.trigger = function () {
@@ -29,7 +29,8 @@ instances.Event = function (type, itemId, data) {
         $.ajax({
 			url: matematici.urls.instances.api + "/Event",
             type: "post",
-            data: data
+			data: data,
+			accessToken: accessToken
         }).done(function (result) {
             if (done) {
                 done(result);

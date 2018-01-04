@@ -7,7 +7,7 @@
         }).ajaxStop(function () {
             matematici.loader.hide();
         }).ajaxError(function (event, jqxhr, settings, thrownError) {
-            if (matematici.navigator.handleAjaxError(jqxhr)) return;
+            if (!settings.accessToken && matematici.navigator.handleAjaxError(jqxhr)) return;
 
             var message = "";
             if (jqxhr.responseJSON && jqxhr.responseJSON.messages)
@@ -26,10 +26,11 @@
     );
 
     $.ajaxSetup({
-        beforeSend: function (xhr) {
-            var token = localStorage.accessToken;
-            if (token)
-                xhr.setRequestHeader("Authorization", "Bearer " + token);
+        beforeSend: function (xhr, settings) {
+            if (!settings.suppressToken) {
+                var token = settings.accessToken || localStorage.accessToken;
+                if (token) xhr.setRequestHeader("Authorization", "Bearer " + token);
+            }
         }
     });
 

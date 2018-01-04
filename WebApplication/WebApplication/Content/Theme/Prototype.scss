@@ -133,6 +133,15 @@ div.Prototype {
             input {
                 cursor: pointer;
             }
+
+            a.Button:hover {
+                background-color: $Color-Green-Regular;
+                cursor: pointer;
+
+                i {
+                    color: $Color-Green-Regular;
+                }
+            }
         }
 
         &.Text {

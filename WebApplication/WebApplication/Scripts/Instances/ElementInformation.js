@@ -30,7 +30,6 @@
 		addItem("calculator", model.valueFormula);
 		addItem("check", model.signatureInformation);
 		addItem("link-0", (model.externalSourceName ? model.externalSourceName + "." + model.externalSourceColumn : null));
-		if (model.history) console.log(model);
 		if (model.history && model.history.length > 0)
 			panel.append($("<div />").append($("<a />").attr("href", "#").text("history").prepend($("<i />").addClass("fi fi-fw flaticon-list-ul")).on("click", function (e) {
 				var columns =

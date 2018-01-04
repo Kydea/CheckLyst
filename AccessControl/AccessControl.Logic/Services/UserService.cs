@@ -113,6 +113,24 @@ namespace CheckListManager.AccessControl.Logic.Services
 			return user;
 		}
 
+        public async Task SetPINAsync(long? companyId, string code, string password, string pin)
+        {
+            if (!companyId.HasValue)
+                throw new AuthenticationException(99, "Company not sent");
+
+            if (string.IsNullOrEmpty(code))
+                throw new AuthenticationException(100, "User code not sent");
+
+            if (string.IsNullOrEmpty(pin))
+                throw new AuthenticationException(106, "Invalid PIN");
+
+            if (pin.Length < 6)
+                throw new AuthenticationException(107, "PIN must be at least 6 characters long");
+
+            await AuthenticateAsync(companyId, code, password);
+            await _userRepository.SetPINAsync(companyId.Value, code, _hashService.HashStringToBytes(pin));
+        }
+
         public async Task AuthenticateWithPINAsync (long? companyId, string code, string pin)
         {
             if (!companyId.HasValue)

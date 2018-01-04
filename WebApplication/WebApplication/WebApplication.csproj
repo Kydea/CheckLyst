@@ -379,7 +379,7 @@
     <Content Include="Views\Prototypes\Detail.cshtml" />
     <Content Include="Views\WorkFlows\Signature.cshtml" />
     <Content Include="Views\Instances\Detail.cshtml" />
-    <Content Include="Views\Instances\Signature.cshtml" />
+    <Content Include="Views\Security\Signature.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

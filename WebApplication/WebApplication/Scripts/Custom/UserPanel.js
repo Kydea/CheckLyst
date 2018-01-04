@@ -1,105 +1,128 @@
 ﻿matematici.UserPanel = function (selector) {
-    var
-        element = $(selector),
+	var
+		element = $(selector),
 
-        setup = function () {
-            element
-                .on("click", "a.User", function (e) {
-                    login($(".UserName", this).attr("title"));
-                })
-                .on("click", "a.Add", add);
-        },
+		setup = function () {
+			element
+				.on("click", "a.User", function (e) {
+					matematici.dialog.popupMenu([
+						{ text: "Cancel", icon: "times", cancelButton: true },
+						{
+							text: "Logout", icon: "logout", handler: function () {
+								matematici.navigator.open(matematici.urls.accessControl.login);
+							}
+						},
+						{
+							text: "Change PIN", icon: "key-o", handler: function () {
+								profile(matematici.tokenManager.getUserCode());
+							}
+						},
+					]);
+				})
+				.on("click", "a.Add", function (e) {
+					var
+						buttons = [
+							{ text: "Cancel", icon: "times", cancelButton: true },
+							{ text: "Add", icon: "plus", handler: add }
+						],
+						signers = matematici.tokenManager.getSigners();
 
-        add = function () {
-            var button = $(this);
+					for (var index in signers) {
+						var signer = signers[index];
+						buttons.push({
+							text: signer.code, icon: "user-o", title: signer.name, handler: function () {
+								profile(signer.code, signer.accessToken || "-");
+							}
+						});
+					}
 
-            options = {
-                ajax: { url: matematici.urls.signature, data: "ShowPaddle=false&IsEnabledPIN=false&ButtonOk=Ok" },
-                data: {
-                    signHandler: function (login) {
-                        $.ajax(matematici.urls.addSession, {
-                            method: "post",
-                            data: { Code: login.getUserName(), Password: login.getPassword() }
-                        }).done(function (result) {
-                            if (result.ok) {
-                                console.log(result.user.Description);
-                                button.siblings(".User").last().clone().insertBefore(button).children("span.UserName").attr("title", result.user.Code).text(result.user.Description);
-                                matematici.popup.close();
-                                matematici.dialog.show("login", "login done with success.", { text: "ok", icon: "check", defaultButton: true, cancelButton: true });
-                            } else {
+					matematici.dialog.popupMenu(buttons);
+				});
+		},
+
+		add = function () {
+			var button = $(this);
+
+			options = {
+				title: "login",
+				width: 460,
+
+				ajax: {
+					type: "post",
+					url: matematici.urls.accessControl.signature
+				},
+				data: {
+					signHandler: function (panel) {
+						if (matematici.tokenManager.checkSigner(panel.getUserName()))
+							$.ajax(matematici.urls.accessControl.token, {
+								type: "post",
+								suppressToken: true,
+								data: {
+									grant_type: "password",
+									companyId: matematici.tokenManager.getCompany(),
+									username: panel.getUserName(),
+									password: panel.getPassword(),
+								}
+							}).done(function (result) {
+								button.siblings(".User").last().clone().insertBefore(button).children("span.UserName")
+									.attr("title", result.code)
+									.text(result.name);
+								matematici.tokenManager.addSigner(result);
 								matematici.popup.close();
-                                matematici.dialog.error("error", result.error);
-                            }
-                        }).fail(function (jqXHR, textStatus, errorThrown) {
-                            console.log(jqXHR, textStatus, errorThrown);
-                            matematici.dialog.error("server error", "Client unique identifier unavailable");
-                        });
-                    }
-                }
-            }
+								matematici.blip.ok();
+							});
+					}
+				},
+			}
 
-            options.title = 'login';
-            matematici.popup.show(options);
-        },
+			matematici.popup.show(options);
+		},
 
-        login = function (user) {
-
-            options = {
-                ajax: {
-                    url: matematici.urls.signature, data: "ShowPaddle=false&IsEnabledPIN=true&ButtonOk=Ok&Logout="+(matematici.userPanel.getUsers()[0] != user),
-                    callback: function () {
-                        $("input#UserName").val(user);
-                    }
-                },
-                data: {
-                    signHandler: function (login) {
-                        if (login.getPIN() == "")
-                            login.showError("PIN is mandatory");
-                        else if (login.getPIN() != login.getConfirmPIN())
-                            login.showError("PIN and confirm pin must contain the same values");
-                        else if(login.getPIN().length < 6)
-                            login.showError("PIN's length must be greater than 5 characters");
-                        else
-                            $.ajax(matematici.urls.setPIN, {
-                                method: "post",
-                                data: { Code: login.getUserName(), Password: login.getPassword(), PIN: login.getPIN(), ConfirmPIN: login.getConfirmPIN() }
-                            }).done(function (result) {
-                                if (result.ok) {
-                                    matematici.popup.close();
-                                    matematici.dialog.show("pin", "PIN set successfully.", { text: "ok", icon: "check", defaultButton: true, cancelButton: true });
-                                } else {
-                                    matematici.popup.close();
-                                    matematici.dialog.error("error", result.error);
-                                }
-                            }).fail(function (jqXHR, textStatus, errorThrown) {
-                                console.log(jqXHR, textStatus, errorThrown);
-                                matematici.dialog.error("server error", "Client unique identifier unavailable");
-                            });
-                    },
-
-                    logoutHandler: function (login) {
-                        $.ajax(matematici.urls.removeSession, {
-                            method: "post",
-                            data: { Code: login.getUserName() }
-                        }).done(function (result) {
-                            if (result.ok) {
-								element.find('.UserName[title="' + login.getUserName() + '"]').parent().remove();
+		profile = function (userCode, accessToken) {
+			options = {
+				title: "PIN",
+				width: 460,
+				ajax: {
+					type: "post",
+					url: matematici.urls.accessControl.signature,
+					data: "ShowPaddle=false&IsEnabledPIN=true&ButtonOk=Ok&Logout=" + (matematici.userPanel.getUsers()[0] != userCode)
+				},
+				data: {
+					pin: true,
+					logout: matematici.tokenManager.getUserCode() != userCode,
+					username: userCode,
+					signHandler: function (panel) {
+						if (panel.getPIN() == "")
+							matematici.dialog.error("PIN", "PIN is mandatory");
+						else if (panel.getPIN() != panel.getConfirmPIN())
+							matematici.dialog.error("PIN", "PIN and confirm pin must contain the same values");
+						else if (panel.getPIN().length < 6)
+							matematici.dialog.error("PIN", "PIN's length must be greater than 5 characters");
+						else if (!panel.getPassword())
+							matematici.dialog.error("PIN", "Provide your password");
+						else
+							$.ajax(matematici.urls.accessControl.setPIN, {
+								method: "post",
+								accessToken: accessToken,
+								data: {
+									password: panel.getPassword(),
+									pin: panel.getPIN()
+								}
+							}).done(function (result) {
 								matematici.popup.close();
-                                matematici.dialog.show("session", "user logged out.", { text: "ok", icon: "check", defaultButton: true, cancelButton: true });
-                            } else {
-                                matematici.popup.close();
-                                matematici.dialog.error("error", result.error);
-                            }
-                        }).fail(function (jqXHR, textStatus, errorThrown) {
-                            console.log(jqXHR, textStatus, errorThrown);
-                            matematici.dialog.error("server error", "Client unique identifier unavailable");
-                        });
-                    }
-                }
-            }
-            options.title = 'pin';
-            matematici.popup.show(options);
-        };
+								matematici.blip.ok();
+							});
+					},
+
+					logoutHandler: function (panel) {
+						matematici.tokenManager.removeSigner(userCode);
+						matematici.popup.close();
+						matematici.blip.ok();
+					}
+				}
+			}
+			matematici.popup.show(options);
+		};
 
 	this.getUsers = function () {
 		var users = [];
@@ -112,8 +135,8 @@
 	this.update = function () {
 		$(".CurrentUser", element)
 			.attr("title", localStorage.userCode)
-			.children(".UserName").text(localStorage.userName)
+			.children(".UserName").text(matematici.tokenManager.getUserName())
 	};
 
-    setup();
+	setup();
 }

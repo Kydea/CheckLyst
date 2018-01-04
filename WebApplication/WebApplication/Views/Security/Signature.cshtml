@@ -5,6 +5,18 @@
             <i class="Icon fi flaticon-user-o"></i>
             <input type="text" name="UserName" id="UserName" />
         </label>
+        <div id="PIN">
+            <label class="Clearing Width200">
+                <span>Set pin</span>
+                <i class="Icon fi flaticon-key-o"></i>
+                <input type="password" name="PIN" id="PIN" />
+            </label>
+            <label class="Clearing Width200">
+                <span>Confirm pin</span>
+                <i class="Icon fi flaticon-key-o"></i>
+                <input type="password" name="ConfirmPIN" id="ConfirmPIN" />
+            </label>
+        </div>
         <label class="Clearing Width200">
             <span>Password</span>
             <i class="Icon fi flaticon-key-o"></i>
@@ -15,17 +27,6 @@
             <i class="Icon fi flaticon-align-left"></i>
             <input type="text" name="Note" id="Note" />
         </label>
-
-        <div id="PIN">
-            <label class="Clearing Width200">
-                <span>Set pin</span>
-                <input type="password" name="PIN" id="PIN" />
-            </label>
-            <label class="Clearing Width200">
-                <span>Confirm pin</span>
-                <input type="password" name="ConfirmPIN" id="ConfirmPIN" />
-            </label>
-        </div>
     </div>
     <div class="PinPaddle">
         <input type="password" maxlength="10" />
@@ -66,8 +67,8 @@
     $("#PIN", element).toggle(data.pin);
     $("#Logout", element).toggle(data.logout);
     $("div.User", element).text("User code: " + data.username);
-    matematici.controls.setEditable($("#UserName", element).val(data.username), !data.showPaddle);
+    matematici.controls.setEditable($("#UserName", element).val(data.username), !data.showPaddle && !data.pin);
 
-    $("#Sign", element).text(data.unsign ? "Unsign" : "Sign").prepend($("<i />").addClass("fi flaticon-check"));
+    $("#Sign", element).text(data.pin ? "Set PIN" : data.unsign ? "Unsign" : "Sign").prepend($("<i />").addClass("fi flaticon-check"));
 </script>
 

@@ -10,5 +10,11 @@ namespace CheckListManager.WebApplication.Controllers
         {
             return ConditionalView("Login", returnUrl ?? Url.Action("Dashboard", "Default"));
         }
+
+        [Route("Signature")]
+        public ActionResult Signature()
+        {
+            return ConditionalView("Signature");
+        }
     }
 }
