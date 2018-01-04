@@ -39,9 +39,10 @@
                 element = $("<div />").addClass("CountDown").appendTo(parent)
                     .append($("<span />").addClass("Time"))
                     .append($("<span />").addClass("Interval"));
-                var prototypeState = instances.instance.getPrototypeState();
+				var prototypeState = instances.instance.getVersionState();
+				console.log(prototypeState);
                 if (prototypeState == prototypes.Prototype.states.draft || prototypeState == prototypes.Prototype.states.simulation)
-                    element.append($("<a />").addClass("Button").text("skip").attr("href", "#").on("click", function (e) {
+					element.append($("<a />").addClass("Button Icon").attr("href", "#").append($("<i />").addClass("fi flaticon-arrow-right")).on("click", function (e) {
                         e.preventDefault();
                         new instances.Event(instances.Events.skipCountDown, itemId).trigger();
                         clear();

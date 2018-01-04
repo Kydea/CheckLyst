@@ -113,7 +113,7 @@
             element
                 .toggleClass("Hidden", model.hidden).toggleClass("ReadOnly", readOnly).toggleClass("Valid", model.valid)
                 .attr("data-code", model.code).attr("data-id", model.id);
-            if (model.countDownTo) new instances.CountDown(element, model.countDownTo, model.id);
+            if (model.countDownToValue) new instances.CountDown(element, model.countDownToValue, model.id);
             group.setColor(model.color);
             group.setFontSize(model.fontSize);
 

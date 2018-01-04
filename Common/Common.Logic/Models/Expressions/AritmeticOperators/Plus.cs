@@ -24,7 +24,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ArithmeticOperators
             if (LeftValue.Type == DataType.Number)
                 return new TypedValue(DataType.Number, LeftValue.IsNull || RightValue.IsNull ? (decimal?)null : LeftValue.NumberValue + RightValue.NumberValue);
             else
-                return new TypedValue(DataType.DateTime, LeftValue.IsNull || RightValue.IsNull ? (DateTime?)null : LeftValue.DateTimeValue.AddSeconds((double)RightValue.NumberValue));
+                return new TypedValue(DataType.DateTime, LeftValue.IsNull || RightValue.IsNull ? (DateTimeOffset?)null : LeftValue.DateTimeValue.AddSeconds((double)RightValue.NumberValue));
         }
 
         protected override string OperatorName => "+";

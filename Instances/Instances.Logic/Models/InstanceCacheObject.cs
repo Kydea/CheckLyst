@@ -35,7 +35,7 @@ namespace CheckListManager.Instances.Logic.Models
 		public string ModifiedBy { get; set; }
 		public DateTimeOffset? ModifiedOn { get; set; }
 
-		public void AsChanged(string userCode)
+		public void TrackChanges(string userCode)
 		{
 			IsDirty = true;
 			ModifiedBy = userCode;

@@ -2,6 +2,7 @@
 using CheckListManager.Common.Logic.Models;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.Expressions;
+using System;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
@@ -11,6 +12,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public string Code { get; set; }
 
         public Expression CountDownTo => CountDownToCode == null ? null : CheckList.Expressions[CountDownToCode];
+
+        public DateTimeOffset? CountDownToValue => CountDownTo != null && CountDownTo.Value != null && CountDownTo.Value.Type == DataType.DateTime && !CountDownTo.Value.IsNull ? CountDownTo.Value.DateTimeValue : (DateTimeOffset?)null;
 
         public string CountDownToCode { get; set; }
         public bool Hidden

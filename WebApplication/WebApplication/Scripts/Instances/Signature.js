@@ -34,6 +34,8 @@
                 .on("click", "a.SignButton:not(.Selected):not(.ReadOnly)", function (e) {
 
                     var 
+						signers = matematici.tokenManager.getSigners(),
+						mainUser = matematici.tokenManager.getUserCode(),
 						sign = function (code, accessToken) {
                             var
                                 options = {
@@ -48,7 +50,7 @@
 										username: code,
                                         signHandler: function (panel) {
                                             new instances.Event(instances.Events.signature, model.id, {
-                                                userName: panel.getUserName(),
+												userName: mainUser, //used to check the lock of the page, the signer is taken from the accesstoken
                                                 password: panel.getPassword(),
                                                 pin: panel.getPIN(),
                                                 simple: panel.isSimple()
@@ -69,9 +71,6 @@
                             }).trigger();
                         };
 
-					var
-						signers = matematici.tokenManager.getSigners(),
-						mainUser = matematici.tokenManager.getUserCode();
 					if (signers.length == 0) 
 						trySign(mainUser);
                     else {
@@ -144,10 +143,10 @@
 			time.val(format.time);
 			element.attr("title", user.val() + " | " + format.date + " " + " " + format.time + " " + format.offset);
             if (cancelButton) {
-                button.hide();
-                cancelButton.show();
+				button.css("display", model.signed ? "inline-block" : "none");
+				cancelButton.css("display", model.signed ? "none" : "inline-block");
             } else if (item.isTableContent()) {
-                button.hide();
+				button.css("display", "none");
                 check.show();
             }
         } else {
@@ -156,8 +155,8 @@
             time.val("");
             element.attr("title", "");
             if (cancelButton) {
-                button.show();
-                cancelButton.hide();
+				button.css("display", "inline-block");
+				cancelButton.css("display", "none");
             }
         }
 

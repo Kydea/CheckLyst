@@ -57,7 +57,17 @@ namespace CheckListManager.Instances.Logic.Services
 
                 cacheObject = CreateInstanceFromDatabase(identity.CompanyId, instance);
                 if (cacheObject.InstanceState == InstanceState.Progress)
+                {
+                    if (cacheObject.Instance.Pages.Count() > 0)
+                        ((Page)cacheObject.Instance.Pages[0]).Lock = new Lock(identity.Code);
                     await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
+                }
+            }
+            else if (cacheObject.Instance.Pages.Any() && ((Page)cacheObject.Instance.Pages.First()).Lock == null)
+            {
+                UnlockPages(cacheObject.Instance, identity.Code);
+                ((Page)cacheObject.Instance.Pages.First()).Lock = new Lock(identity.Code);
+                await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
             }
             else
                 await _instanceCache.TouchInstanceAsync(code);
@@ -160,6 +170,8 @@ namespace CheckListManager.Instances.Logic.Services
                 cacheObject.InstanceState = row.InstanceState;
                 cacheObject.ModifiedOn = row.ModifiedOn;
                 cacheObject.ModifiedBy = row.ModifiedBy;
+                if (cacheObject.Instance.Pages.Count() > 0)
+                    ((Page)cacheObject.Instance.Pages[0]).Lock = new Lock(identity.Code);
                 cacheObject.IsDirty = false;
 
                 await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
@@ -304,7 +316,6 @@ namespace CheckListManager.Instances.Logic.Services
                 if (row == null)
                     throw new InstanceException("Instance not found");
 
-                UnlockPages(cacheObject.Instance, userCode);
                 row.Data = JsonConvert.SerializeObject(cacheObject.Instance, _converter);
                 row.ModifiedOn = cacheObject.ModifiedOn;
                 row.ModifiedBy = cacheObject.ModifiedBy;
@@ -373,42 +384,52 @@ namespace CheckListManager.Instances.Logic.Services
 
                 cacheObject = await _instanceCache.GetAsync(request.Code);
 
-                var instance = GetCheckList(identity, "Edit", cacheObject);
-                if (instance.ReadOnly)
+                var LockUser = request.Type == "Signature" ? request.Username : null; //A signer may sign also if the page is locked by the main user (the lock is for concurrency purpose, not for security)
+                GetCheckList(identity, "Edit", cacheObject, LockUser);
+
+                if (cacheObject.Instance.ReadOnly)
                     throw new InstanceException("This instance cannot be modified");
 
                 switch (request.Type)
                 {
                     case "PageChange":
-                        await HandlePageChangeAsync(cacheObject, instance, identity.Code, request.ItemId);
+                        await HandlePageChangeAsync(cacheObject, identity.Code, request.ItemId);
                         break;
                     case "ValueChange":
-                        await HandleValueChangeAsync(cacheObject, instance, identity.Code, request.ItemId, request.Value);
+                        await HandleValueChangeAsync(cacheObject, identity.Code, request.ItemId, request.Value);
                         break;
                     case "Add":
-                        await HandleAddAsync(cacheObject, instance, identity.Code, request.ItemId);
+                        await HandleAddAsync(cacheObject, identity.Code, request.ItemId);
                         break;
                     case "Remove":
-                        await HandleRemoveAsync(cacheObject, instance, identity.Code, request.ItemId);
+                        await HandleRemoveAsync(cacheObject, identity.Code, request.ItemId);
                         break;
                     case "Up":
-                        await HandleMoveAsync(cacheObject, instance, identity.Code, request.ItemId, -1);
+                        await HandleMoveAsync(cacheObject, identity.Code, request.ItemId, -1);
                         break;
                     case "Down":
-                        await HandleMoveAsync(cacheObject, instance, identity.Code, request.ItemId, 1);
+                        await HandleMoveAsync(cacheObject, identity.Code, request.ItemId, 1);
                         break;
                     case "Signature":
-                        await HandleSignatureAsync(cacheObject, instance, identity, request);
+                        await HandleSignatureAsync(cacheObject, identity, request);
                         break;
                     case "SignatureCheck":
-                        HandleSignatureCheck(cacheObject, instance, request.Username, request.ItemId);
+                        HandleSignatureCheck(cacheObject, request.Username, request.ItemId);
                         break;
                     case "SignatureCancelation":
-                        await HandleSignatureCancelationAsync(cacheObject, instance, identity, request);
+                        await HandleSignatureCancelationAsync(cacheObject, identity, request);
                         break;
-                    //case "UnlockPage":
-                    //case "Refresh":
-                    //case "CountDown":
+                    case "UnlockPage":
+                        await HandleUnlockPageAsync(cacheObject, identity.Code, request.ItemId);
+                        break;
+                    case "CountDown":
+                        //audit trail
+                        break;
+                    case "SkipCountDown":
+                        await HandleSkipCountDown(cacheObject, request.Username, request.ItemId);
+                        break;
+                    case "Refresh":
+                        break;
                     //case "ExternalSourceRowChange":
                     default:
                         throw new InstanceException($"Event type {request.Type} not handled.");
@@ -431,29 +452,27 @@ namespace CheckListManager.Instances.Logic.Services
             }
         }
 
-        private async Task HandlePageChangeAsync(InstanceCacheObject cacheObject, Instance instance, string userCode, int? itemId)
+        private async Task HandlePageChangeAsync(InstanceCacheObject cacheObject, string userCode, int? itemId)
         {
             if (!itemId.HasValue)
                 throw new InstanceException("Item id not sent");
 
-            var page = instance.Pages.Count > itemId.Value ? instance.Pages[itemId.Value] as Page : null;
+            var page = cacheObject.Instance.Pages.Count > itemId.Value ? cacheObject.Instance.Pages[itemId.Value] as Page : null;
             if (page == null)
                 throw new InstanceException("Page not found");
 
-            UnlockPages(instance, userCode);
-            if (!page.IsLocked)
-            {
+            UnlockPages(cacheObject.Instance, userCode);
+            if (page.Lock == null)
                 page.Lock = new Lock(userCode);
-                await Update(cacheObject, instance, userCode);
-            }
+            await Update(cacheObject, userCode);
         }
 
-        private async Task HandleValueChangeAsync(InstanceCacheObject cacheObject, Instance instance, string userCode, int? itemId, string value)
+        private async Task HandleValueChangeAsync(InstanceCacheObject cacheObject, string userCode, int? itemId, string value)
         {
             if (!itemId.HasValue)
                 throw new InstanceException("Item id not sent");
 
-            var field = instance.Items.ContainsKey(itemId.Value) ? instance.Items[itemId.Value] as Field : null;
+            var field = cacheObject.Instance.Items.ContainsKey(itemId.Value) ? cacheObject.Instance.Items[itemId.Value] as Field : null;
             if (field == null)
                 throw new InstanceException($"Field {itemId} not found");
 
@@ -471,16 +490,16 @@ namespace CheckListManager.Instances.Logic.Services
                 });
                 field.Value = value;
 
-                await Update(cacheObject, instance, userCode);
+                await Update(cacheObject, userCode);
             }
         }
 
-        private async Task HandleAddAsync(InstanceCacheObject cacheObject, Instance instance, string userCode, int? itemId)
+        private async Task HandleAddAsync(InstanceCacheObject cacheObject, string userCode, int? itemId)
         {
             if (!itemId.HasValue)
                 throw new InstanceException("Item id not sent");
 
-            var group = instance.Items.ContainsKey(itemId.Value) ? instance.Items[itemId.Value] as Group : null;
+            var group = cacheObject.Instance.Items.ContainsKey(itemId.Value) ? cacheObject.Instance.Items[itemId.Value] as Group : null;
             if (group == null)
                 throw new InstanceException("Group not found");
 
@@ -491,16 +510,16 @@ namespace CheckListManager.Instances.Logic.Services
             {
                 //TODO: add audit
                 group.AddIterations(1);
-                await Update(cacheObject, instance, userCode);
+                await Update(cacheObject, userCode);
             }
         }
 
-        private async Task HandleRemoveAsync(InstanceCacheObject cacheObject, Instance instance, string userCode, int? itemId)
+        private async Task HandleRemoveAsync(InstanceCacheObject cacheObject, string userCode, int? itemId)
         {
             if (!itemId.HasValue)
                 throw new InstanceException("Item id not sent");
 
-            var iteration = instance.Items.ContainsKey(itemId.Value) ? instance.Items[itemId.Value] as Iteration : null;
+            var iteration = cacheObject.Instance.Items.ContainsKey(itemId.Value) ? cacheObject.Instance.Items[itemId.Value] as Iteration : null;
             if (iteration == null)
                 throw new InstanceException("Group not found");
 
@@ -511,16 +530,16 @@ namespace CheckListManager.Instances.Logic.Services
             {
                 //TODO: add audit
                 ((Group)iteration.Group).Remove(iteration);
-                await Update(cacheObject, instance, userCode);
+                await Update(cacheObject, userCode);
             }
         }
 
-        private async Task HandleMoveAsync(InstanceCacheObject cacheObject, Instance instance, string userCode, int? itemId, int direction)
+        private async Task HandleMoveAsync(InstanceCacheObject cacheObject, string userCode, int? itemId, int direction)
         {
             if (!itemId.HasValue)
                 throw new InstanceException("Item id not sent");
 
-            var iteration = instance.Items.ContainsKey(itemId.Value) ? instance.Items[itemId.Value] as Iteration : null;
+            var iteration = cacheObject.Instance.Items.ContainsKey(itemId.Value) ? cacheObject.Instance.Items[itemId.Value] as Iteration : null;
             if (iteration == null)
                 throw new InstanceException("Group not found");
 
@@ -531,16 +550,16 @@ namespace CheckListManager.Instances.Logic.Services
             {
                 //TODO: add audit
                 ((Group)iteration.Group).Move(iteration, direction);
-                await Update(cacheObject, instance, userCode);
+                await Update(cacheObject, userCode);
             }
         }
 
-        private void HandleSignatureCheck(InstanceCacheObject cacheObject, Instance instance, string userCode, int? itemId)
+        private void HandleSignatureCheck(InstanceCacheObject cacheObject, string userCode, int? itemId)
         {
             if (!itemId.HasValue)
                 throw new InstanceException("Item id not sent");
 
-            var signature = instance.Items.ContainsKey(itemId.Value) ? instance.Items[itemId.Value] as Signature : null;
+            var signature = cacheObject.Instance.Items.ContainsKey(itemId.Value) ? cacheObject.Instance.Items[itemId.Value] as Signature : null;
             if (signature == null)
                 throw new InstanceException("Signature not found");
 
@@ -553,12 +572,12 @@ namespace CheckListManager.Instances.Logic.Services
             signature.TrySign(userCode);
         }
 
-        private async Task HandleSignatureAsync(InstanceCacheObject cacheObject, Instance instance, IDefaultIdentity defaultIdentity, InstanceEventRequest request)
+        private async Task HandleSignatureAsync(InstanceCacheObject cacheObject, IDefaultIdentity defaultIdentity, InstanceEventRequest request)
         {
             if (!request.ItemId.HasValue)
                 throw new InstanceException("Item id not sent");
 
-            var signature = instance.Items.ContainsKey(request.ItemId.Value) ? instance.Items[request.ItemId.Value] as Signature : null;
+            var signature = cacheObject.Instance.Items.ContainsKey(request.ItemId.Value) ? cacheObject.Instance.Items[request.ItemId.Value] as Signature : null;
             if (signature == null)
                 throw new InstanceException("Signature not found");
 
@@ -594,17 +613,17 @@ namespace CheckListManager.Instances.Logic.Services
                 throw new InstanceException($"The signature must be applied by an user with level {signature.SignatureLevel}");
 
             signature.Sign(defaultIdentity.Code, defaultIdentity.Description, DateTimeOffset.UtcNow);
-            await Update(cacheObject, instance, request.Username);
+            await Update(cacheObject, request.Username);
             //TODO: add audit
         }
 
 
-        private async Task HandleSignatureCancelationAsync(InstanceCacheObject cacheObject, Instance instance, IDefaultIdentity defaultIdentity, InstanceEventRequest request)
+        private async Task HandleSignatureCancelationAsync(InstanceCacheObject cacheObject, IDefaultIdentity defaultIdentity, InstanceEventRequest request)
         {
             if (!request.ItemId.HasValue)
                 throw new InstanceException("Item id not sent");
 
-            var signature = instance.Items.ContainsKey(request.ItemId.Value) ? instance.Items[request.ItemId.Value] as Signature : null;
+            var signature = cacheObject.Instance.Items.ContainsKey(request.ItemId.Value) ? cacheObject.Instance.Items[request.ItemId.Value] as Signature : null;
             if (signature == null)
                 throw new InstanceException("Signature not found");
 
@@ -630,15 +649,47 @@ namespace CheckListManager.Instances.Logic.Services
                 throw new InstanceException($"The signature can be canceled by an user with function Unsign and level {signature.SignatureLevel}");
 
             signature.Unsign(defaultIdentity.Code, defaultIdentity.Description, DateTimeOffset.UtcNow, request.Note, cacheObject.InstanceState);
-            await Update(cacheObject, instance, request.Username);
+            await Update(cacheObject, request.Username);
 
             //TODO: add audit
         }
 
-        private async Task Update(InstanceCacheObject cacheObject, Instance instance, string userCode)
+        private async Task HandleUnlockPageAsync(InstanceCacheObject cacheObject, string userCode, int? itemId)
         {
-            cacheObject.Instance = instance;
-            cacheObject.AsChanged(userCode);
+            if (!itemId.HasValue)
+                throw new InstanceException("Item id not sent");
+
+            var page = cacheObject.Instance.Pages.Count > itemId.Value ? cacheObject.Instance.Pages[itemId.Value] as Page : null;
+            if (page == null)
+                throw new InstanceException("Page not found");
+
+            page.Lock = new Lock(userCode);
+
+            await Update(cacheObject, userCode);
+
+            //TODO: add audit
+        }
+
+        private async Task HandleSkipCountDown(InstanceCacheObject cacheObject, string userCode, int? itemId)
+        {
+            if (!itemId.HasValue)
+                throw new InstanceException("Item id not sent");
+
+            var item = cacheObject.Instance.Items.ContainsKey(itemId.Value) ? cacheObject.Instance.Items[itemId.Value] : null;
+            if (item == null)
+                throw new InstanceException("Signature not found");
+
+            if (!cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation))
+                throw new InvalidOperationException("A count down can be skipped only for preview and simulation instances");
+
+            item.CountDownToCode = null;
+            await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
+        }
+
+
+        private async Task Update(InstanceCacheObject cacheObject, string userCode)
+        {
+            cacheObject.TrackChanges(userCode);
             await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
         }
 
@@ -656,16 +707,16 @@ namespace CheckListManager.Instances.Logic.Services
                     );
         }
 
-        public Instance GetCheckList(IDefaultIdentity identity, string functionGroup, InstanceCacheObject instance)
+        public Instance GetCheckList(IDefaultIdentity identity, string functionGroup, InstanceCacheObject cacheObject, string LockUser = null)
         {
-            instance.Instance.ReadOnly =
-                !instance.InstanceState.In(InstanceState.Draft, InstanceState.Progress)
-                || !HasPermission(identity, functionGroup, instance.VersionState, instance.Department, instance.PrototypeType);
+            cacheObject.Instance.ReadOnly =
+                !cacheObject.InstanceState.In(InstanceState.Draft, InstanceState.Progress)
+                || !HasPermission(identity, functionGroup, cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType);
 
-            instance.Instance.Update();
-            instance.Instance.UpdateReadOnly(identity.Code, instance.InstanceState);
+            cacheObject.Instance.Update();
+            cacheObject.Instance.UpdateReadOnly(LockUser ?? identity.Code, cacheObject.InstanceState);
 
-            return instance.Instance;
+            return cacheObject.Instance;
         }
 
         public async Task ClearPendingInstances(CancellationToken cancellationToken = new CancellationToken())
@@ -744,9 +795,9 @@ namespace CheckListManager.Instances.Logic.Services
 
         private static void UnlockPages(ICheckList instance, string userCode)
         {
-            var pages = instance.Pages.Cast<Page>().Where(p => userCode == null && p.Lock != null || p.Lock != null && p.Lock.User == userCode);
-            foreach (var p in pages)
-                p.Lock = null;
+            foreach (var Page in instance.Pages.Cast<Page>())
+                if (Page.Lock?.User == userCode)
+                    Page.Lock = null;
         }
 
         private InstanceCacheObject CreateInstanceFromDatabase(long companyId, Common.Data.Instances instance)

@@ -18,6 +18,7 @@ gestire concorrenza per firme (credo serva per forza una transazione, o un lock 
 gestire concorrenza transazionalmente (where nell'aggironamento e conteggio risultati?)
 PrototypeSignatures.SendEmails(db, Version, Action) quando ci sono variazioni nella applicazione di work flow
 mettere lock in cambio di stato (?)
+Esperimento di Giulia: nel signature panel per l'approvazione di un prototipo se clicco su reject mi evidenzia di rosso la box comment. Se poi per esempio decido di non rigettare (magari perché per sbaglio ho cliccato su reject) e clicco su confirm senza inserire la password mi evidenzia in rosso il campo password ma rimane evidenziata anche la box comment per il precedente reject. 
 
 USERS 
 Lavorare sulla stringa di autenticazione tramite ldap
@@ -29,6 +30,7 @@ Mettere un tempo di attesa per i login falliti
 impedire cambio di login "dietro le quinte", mettiamo in un js l'utente attuale, se cambia va dato messaggio di errore
 regular expression della password in companies
 lunghezza minima del pin in companies
+Profile: gestire il feedback sugli errori correttamente, adesso dà solo un dialog con l'errore
 
 
 WORKFLOWS
@@ -38,32 +40,3 @@ INSTANCES
 History
 Attenzione al nuovo stato Completed
 Signature: gestire il feedback sugli errori correttamente, adesso dà solo un dialog con l'errore
-
-
-PROTOTIPO DI TRIGGER:
-
-create function "CheckLists"."TF_Versions_Validate"() returns trigger as 
-$body$
-declare
-	_count int = -1;
-begin
-	select
-		_count = count(*)
-	from
-		"CheckLists"."PrototypeVersions" v
-	where
-		v."Prototype" = new."Prototype"
-		and v."VersionState" = 'Draft'
-
-	if _counter > 1 then 
-		raise exception 'A draft version of the prototype % already exists', new."Prototype";
-	end if;
-
-	return new;  
-end;
-$body$ language plpgsql;
-
-create trigger "T_Versions_Validate" 
-	after insert or update
-	on "CheckLists"."PrototypeVersions" 
-	for each row execute procedure "TF_Versions_Validate"();

@@ -93,8 +93,10 @@
         select(index);
     };
 
-	this.add = function (label, id, cssClass) {
-		$(".TabLabels", element).append($("<a />").attr({ href: "#", id: id }).addClass(cssClass).append(label));
+	this.add = function (label, id, cssClass, icon) {
+		var label = $("<a />").attr({ href: "#", id: id }).addClass(cssClass).append(label);
+		if (icon) label.append($("<i />").addClass("fi flaticon-" + icon));
+		$(".TabLabels", element).append(label);
     };
 
     this.clear = function () {
