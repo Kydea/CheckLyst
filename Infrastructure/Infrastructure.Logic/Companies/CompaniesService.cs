@@ -1,4 +1,5 @@
 ﻿using CheckListManager.Common.Core.Services;
+using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Data.ListItems;
 using CheckListManager.Common.Logic.Api.Messages;
@@ -24,5 +25,9 @@ namespace CheckListManager.Infrastructure.Logic.Companies
 
         public async Task<List<Company>> GetDataAsync()
             => (await _commonRepository.GetCompaniesAsync());
+
+        public DateTimeOffset Clock()
+            => DateTimeOffset.UtcNow;
+
     }
 }

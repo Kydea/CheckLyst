@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace CheckListManager.Common.Logic.Api.Messages
 {
-	internal class ReleaseInfoMessage
+	public class ReleaseInfoMessage
 	{
 		public ReleaseInfoMessage()
 		{

@@ -28,5 +28,12 @@ namespace CheckListManager.Infrastructure.Api.Controllers
         {
             return Ok(await _companiesService.GetDataAsync());
         }
+
+        [HttpPost]
+        [Route("GetData")]
+        public IHttpActionResult Clock()
+        {
+            return Ok(_companiesService.Clock());
+        }
     }
 }
