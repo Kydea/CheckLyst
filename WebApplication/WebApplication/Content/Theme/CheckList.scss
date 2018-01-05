@@ -105,6 +105,10 @@ div.CheckList {
             display: table;
             clear: both;
         }
+
+        &:last-child {
+            margin-bottom: 0;
+        }
     }
 
     div.Item {

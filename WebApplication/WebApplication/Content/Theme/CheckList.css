@@ -65,6 +65,8 @@ div.CheckList div.Group {
     content: "";
     display: table;
     clear: both; }
+  div.CheckList div.Group:last-child {
+    margin-bottom: 0; }
 
 div.CheckList div.Item {
   margin: 0 0 20px; }

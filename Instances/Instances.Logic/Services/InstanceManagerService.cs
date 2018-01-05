@@ -100,6 +100,7 @@ namespace CheckListManager.Instances.Logic.Services
                     PrototypeTypeName = source.PrototypeTypeName,
                     Prototype = prototype,
                     PrototypeName = source.Name,
+                    PrototypeDescription = source.Description,
                     Version = version,
                     VersionState = source.State,
                     InstanceState = InstanceState.Draft,
@@ -167,6 +168,7 @@ namespace CheckListManager.Instances.Logic.Services
                 cacheObject.Number = row.Number;
                 cacheObject.Description = row.Description;
                 cacheObject.PrototypeName = row.PrototypeName;
+                cacheObject.PrototypeDescription = row.PrototypeVersions.Description;
                 cacheObject.InstanceState = row.InstanceState;
                 cacheObject.ModifiedOn = row.ModifiedOn;
                 cacheObject.ModifiedBy = row.ModifiedBy;
@@ -813,6 +815,7 @@ namespace CheckListManager.Instances.Logic.Services
                 PrototypeTypeName = instance.Prototypes.PrototypeTypes.Name,
                 Prototype = instance.Prototype,
                 PrototypeName = instance.PrototypeName,
+                PrototypeDescription = instance.PrototypeVersions.Description,
                 Version = instance.Version,
                 VersionState = instance.PrototypeVersions.VersionState,
                 InstanceState = instance.InstanceState,

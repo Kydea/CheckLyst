@@ -11,7 +11,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public ICheckList CheckList { get; set; }
         public string Code { get; set; }
 
-        public Expression CountDownTo => CountDownToCode == null ? null : CheckList.Expressions[CountDownToCode];
+        public Expression CountDownTo => string.IsNullOrEmpty(CountDownToCode) ? null : CheckList.Expressions[CountDownToCode];
 
         public DateTimeOffset? CountDownToValue => CountDownTo != null && CountDownTo.Value != null && CountDownTo.Value.Type == DataType.DateTime && !CountDownTo.Value.IsNull ? CountDownTo.Value.DateTimeValue : (DateTimeOffset?)null;
 

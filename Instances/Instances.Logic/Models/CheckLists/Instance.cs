@@ -15,15 +15,45 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public ICheckListGroup Header { get; set; }
         public List<ICheckListPage> Pages { get; set; }
 
-        public Formula Description { get; set; }
+        [JsonIgnore]
+        public Formula DescriptionFormula { get; set; }
+        public string DescriptionFormulaString
+        {
+            get => DescriptionFormula?.RawValue;
+            set => DescriptionFormula = value == null ? null : new Formula(value);
+        }
+        public string Description
+        {
+            get
+            {
+                return DescriptionFormula?.Value;
+            }
+        }
+
+        [JsonIgnore]
+        public Formula FileNameFormula { get; set; }
+        public string FileNameFormulaString
+        {
+            get => FileNameFormula?.RawValue;
+            set => FileNameFormula = value == null ? null : new Formula(value);
+        }
+        public string FileName
+        {
+            get
+            {
+                return DescriptionFormula?.Value;
+            }
+        }
+
+        public bool FTPExport { get; set; }
 
         [JsonIgnore]
         public bool InCreation { get; private set; }
 
         public ICheckList CheckList
-		{
-			get => this;
-	        set => throw new NotImplementedException("Just for inheritance purpose");
+        {
+            get => this;
+            set => throw new NotImplementedException("Just for inheritance purpose");
         }
 
 
@@ -69,7 +99,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 expression.Evaluate(this);
             }
 
-            Description?.Update(Expressions, null);
+            DescriptionFormula?.Update(Expressions, null);
+            FileNameFormula?.Update(Expressions, null);
 
             Header.Update();
             foreach (var page in Pages)

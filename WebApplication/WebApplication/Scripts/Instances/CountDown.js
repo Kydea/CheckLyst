@@ -19,30 +19,29 @@
                 new instances.Event(instances.Events.countDown, itemId).trigger();
                 clear();
             } else {
-                $("span.Time", element).text(milliseconds >= 0 ? (hours > 0 ? hours + ":" : "") + (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds) : "00:00");
                 $("span.Interval", element).html("<i class='fa fa-long-arrow-down'></i>" + matematici.dateFormatter.both(serverTime, true) + "<br />" + matematici.dateFormatter.both(date, true));
+				$("span.Time", element).text(milliseconds >= 0 ? (hours > 0 ? hours + ":" : "") + (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds) : "00:00");
             }
         },
 
         clear = function () {
             if (interval) clearInterval(interval);
             element.remove();
-            parent.data("CountDown", null);
+			parent.data("CountDown", null).removeClass("CountDownOn");
         },
 
         setup = function () {
-            var oldCountDown = parent.data("CountDown");
-            if (oldCountDown) oldCountDown.clear();
+			var oldCountDown = parent.removeClass("CountDownOn").data("CountDown");
+			if (oldCountDown)  oldCountDown.clear();
 
-            if (date > matematici.clock.getTime()) {
-                parent.data("CountDown", countDown);
-                element = $("<div />").addClass("CountDown").appendTo(parent)
-                    .append($("<span />").addClass("Time"))
-                    .append($("<span />").addClass("Interval"));
+			if (date > matematici.clock.getTime()) {
+				parent.data("CountDown", countDown).addClass("CountDownOn");
+				element = $("<div />").addClass("CountDown").appendTo(parent)
+					.append($("<span />").addClass("Interval"))
+					.append($("<span />").addClass("Time"));
 				var prototypeState = instances.instance.getVersionState();
-				console.log(prototypeState);
                 if (prototypeState == prototypes.Prototype.states.draft || prototypeState == prototypes.Prototype.states.simulation)
-					element.append($("<a />").addClass("Button Icon").attr("href", "#").append($("<i />").addClass("fi flaticon-arrow-right")).on("click", function (e) {
+					element.append($("<a />").addClass("Button Icon").attr("href", "#").append($("<i />").attr("title", "Skip").addClass("fi flaticon-arrow-right")).on("click", function (e) {
                         e.preventDefault();
                         new instances.Event(instances.Events.skipCountDown, itemId).trigger();
                         clear();

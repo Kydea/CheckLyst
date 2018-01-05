@@ -40,6 +40,7 @@ namespace CheckListManager.Instances.Api.Controllers
                     PrototypeTypeName = cacheObject.PrototypeTypeName,
                     Prototype = cacheObject.Prototype,
                     PrototypeName = cacheObject.PrototypeName,
+                    PrototypeDescription = cacheObject.PrototypeDescription,
                     Version = cacheObject.Version,
                     VersionState = cacheObject.VersionState,
 
@@ -153,6 +154,7 @@ namespace CheckListManager.Instances.Api.Controllers
                     PrototypeTypeName = cacheObject.PrototypeTypeName,
                     Prototype = cacheObject.Prototype,
                     PrototypeName = cacheObject.PrototypeName,
+                    PrototypeDescription = cacheObject.PrototypeDescription,
                     Version = cacheObject.Version,
                     VersionState = cacheObject.VersionState
                 };

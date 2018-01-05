@@ -143,8 +143,16 @@ div.Dialog {
             a {
                 background-color: $Color-Red-Regular !important;
 
+                i {
+                    color: $Color-Red-Regular;
+                }
+
                 &:hover {
                     background-color: $Color-Red-Light !important;
+
+                    i {
+                        color: $Color-Red-Light;
+                    }
                 }
             }
         }

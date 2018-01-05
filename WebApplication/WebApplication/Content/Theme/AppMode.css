@@ -8,6 +8,6 @@ body.AppMode div#Breadcrumbs {
   display: none !important; }
 
 body.AppMode div#Content {
-  margin: 0 !important;
+  margin: 36px 0 !important;
   min-height: unset !important; }
 
