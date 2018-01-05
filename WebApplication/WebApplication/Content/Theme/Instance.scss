@@ -10,12 +10,14 @@ div.Instance {
     }
 
     div.CountDown {
+        box-shadow: $Box-Shadow !important;
+        border: solid 1px $Color-Grey-Light;
         position: absolute;
-        top: 0;
+        top: -10px;
         left: 0;
         right: 0;
         bottom: 0;
-        background-color: rgba(255, 255, 255, .85);
+        background-color: rgba(255, 255, 255, 1);
         text-align: center;
         padding: 10px;
         z-index: $Depth-CheckList-CountDown;
@@ -24,16 +26,16 @@ div.Instance {
 
         span.Time {
             display: inline-block;
-            padding-top: 20px;
+            padding-top: 25px;
             color: red;
-            font-size: 50px;
+            font-size: 40px;
         }
 
         span.Interval {
             position: absolute;
             color: #666;
-            left: 10px;
-            top: 0;
+            left: 5px;
+            top: 5px;
             font-size: 12px;
             line-height: 1.4;
 
@@ -46,8 +48,21 @@ div.Instance {
         }
 
         a {
-            margin-top: 30px;
             margin-left: 10px;
+            width: 30px;
+            height: 30px;
+
+            i {
+                width: 20px;
+                height: 20px;
+                font-size: 14px;
+                line-height: 20px;
+            }
+
+            &::after {
+                width: 30px;
+                height: 30px;
+            }
         }
     }
 
@@ -117,6 +132,11 @@ div.Instance {
     .Page {
         div.LockInformation {
             display: none;
+        }
+
+        > div.CountDown {
+            border: none;
+            box-shadow: none !important;
         }
     }
 
@@ -224,14 +244,9 @@ div.Instance {
             }
         }
 
-        > div.CountDown {
-            top: -$Metric-Control-Space;
-            left: -$Metric-Control-Space;
-
-            span.Interval {
-                top: $Metric-Control-Space;
-                left: $Metric-Control-Space;
-            }
+        &.CountDownOn {
+            height: 163px !important;
+            border: none;
         }
     }
 
@@ -438,9 +453,53 @@ div.Instance {
         &.Hidden {
             display: none;
         }
+
+        > div.CountDown {
+            top: -$Metric-Control-Space;
+            left: -$Metric-Control-Space;
+            padding: $Metric-Control-Space;
+
+            span.Time {
+                font-size: 50px;
+                padding-top: 40px;
+            }
+
+            span.Interval {
+                display: block;
+                text-align: center;
+                position: static;
+                top: $Metric-Control-Space;
+                left: $Metric-Control-Space;
+                padding-left: 20px;
+
+                i {
+                    float: none;
+                    position: absolute;
+                    margin-left: -20px;
+                }
+            }
+
+            a {
+                margin-top: 30px;
+            }
+        }
+    }
+
+    .InstanceDescription {
+        position: relative;
+        padding-right: $Metric-Control-Space;
+        clear: both;
+        width: 100%;
+        font-size: 12px;
+        color: $Color-Grey-Regular;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     table.Grid {
+        width: calc(100% - #{$Metric-Control-Space});
+
         thead {
             tr {
                 th {
@@ -452,6 +511,7 @@ div.Instance {
         tbody {
             tr {
                 td {
+                    float: none !important;
                     position: relative;
 
                     &.Field {
@@ -463,7 +523,7 @@ div.Instance {
                         }
 
                         .Copy {
-                            top: 8px;
+                            top: 13px;
                             right: 8px;
                         }
 
@@ -533,6 +593,7 @@ div.Instance {
 
                     &.IterationCommands {
                         white-space: nowrap;
+                        text-align: center;
 
                         > a.Up, a.Down, a.Remove {
                             display: inline-block;

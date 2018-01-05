@@ -15,6 +15,7 @@ namespace CheckListManager.Instances.Logic.Models
         public string PrototypeTypeName { get; set; }
         public long Prototype { get; set; }
         public string PrototypeName { get; set; }
+        public string PrototypeDescription { get; set; }
         public int Version { get; set; }
         public string VersionState { get; set; }
 

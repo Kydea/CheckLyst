@@ -33,7 +33,7 @@ div.TabContainer {
             text-overflow: ellipsis;
             white-space: nowrap;
 
-            i.fi {
+            i.fi.flaticon-lock-o {
                 margin-left: 5px;
                 font-size: 14px;
             }
@@ -52,6 +52,10 @@ div.TabContainer {
 
                 &:not(.Selected) {
                     color: $Color-Yellow-Regular;
+
+                    i.fi {
+                        color: white !important;
+                    }
                 }
             }
         }

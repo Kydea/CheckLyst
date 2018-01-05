@@ -84,11 +84,11 @@
 				"Description", "A short description of the prototype."
 			));
 			properties.push(new prototypes.Property(
-				this, new prototypes.SimpleValueProperty(model, "instanceDescription", { fullHeight: true, readOnly: state != prototypes.Prototype.states.draft }),
+				this, new prototypes.SimpleValueProperty(model, "descriptionFormulaString", { fullHeight: true, readOnly: state != prototypes.Prototype.states.draft }),
 				"Instance description", "A formula to use for the description of the instances of this prototype."
 			));
 			properties.push(new prototypes.Property(
-				this, new prototypes.SimpleValueProperty(model, "instanceFileName", { fullHeight: true, readOnly: state != prototypes.Prototype.states.draft }),
+				this, new prototypes.SimpleValueProperty(model, "fileNameFormulaString", { fullHeight: true, readOnly: state != prototypes.Prototype.states.draft }),
 				"Instance file name", "A formula to use for the file name of the pdf generated for confirmed instances of this prototype."
 			));
 			properties.push(new prototypes.Property(

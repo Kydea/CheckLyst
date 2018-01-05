@@ -24,7 +24,7 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap; }
-      div.TabContainer .TabLabels > a i.fi {
+      div.TabContainer .TabLabels > a i.fi.flaticon-lock-o {
         margin-left: 5px;
         font-size: 14px; }
       div.TabContainer .TabLabels > a.Selected {
@@ -38,6 +38,8 @@
         text-decoration: none !important; }
         div.TabContainer .TabLabels > a:hover:not(.Selected) {
           color: #ffba00; }
+          div.TabContainer .TabLabels > a:hover:not(.Selected) i.fi {
+            color: white !important; }
   div.TabContainer .Tab {
     position: absolute;
     width: 100%;

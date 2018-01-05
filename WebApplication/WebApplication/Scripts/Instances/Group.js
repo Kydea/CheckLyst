@@ -32,7 +32,7 @@
             for (var index = 0; index < items.length; ++index) {
                 var
                     item = items[index],
-                    cell = $("<th />").appendTo(row).text(item.Description);
+                    cell = $("<th />").appendTo(row).text(item.description);
 
                 if (item.TypeName == "Group") {
                     cell.addClass("SubGroup");
@@ -41,8 +41,7 @@
                     columnsCount += size.columnsCount;
                     if (size.columnsCount > 1)
                         cell.attr("colspan", size.columnsCount);
-                }
-                else
+                } else
                     columnsCount++;
             }
 
@@ -61,7 +60,7 @@
             tableContent = !parent.isPage() && (parent.isTable() || parent.isTableContent());
             table = !tableContent && setupModel.showAsTable;
             subRow = !parent.isTable() && tableContent; 
-            element = parent.isTable() ? $("<tr class='Pippo' />") : subRow ? parent.getElement() : $("<div />");
+            element = parent.isTable() ? $("<tr />") : subRow ? parent.getElement() : $("<div />");
 
             if (table) {
                 tableElement = $("<table />").addClass("Grid").appendTo(element).append($("<thead />")).append($("<tbody />"));

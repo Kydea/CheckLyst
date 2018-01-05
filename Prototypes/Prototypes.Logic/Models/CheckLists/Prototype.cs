@@ -14,6 +14,9 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public Dictionary<string, string> ExternalSources { get; set; } = new Dictionary<string, string>();
         public ICheckListGroup Header { get; set; }
         public List<ICheckListPage> Pages { get; } = new List<ICheckListPage>();
+        public string DescriptionFormulaString { get; set; }
+        public string FileNameFormulaString { get; set; }
+        public bool FTPExport { get; set; }
 
         public void AddItem(ICheckListItem item)
         {

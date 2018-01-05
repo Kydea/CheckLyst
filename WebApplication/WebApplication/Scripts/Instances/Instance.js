@@ -1,6 +1,7 @@
 ﻿instances.Instance = function (element, options) {
 	var
 		instance = this,
+		title = $("h2", element),
 		header = new instances.Group($("div#Header", element), "Group"),
 		page = new instances.Group($("div.Page", element), "Page"),
 		versionState,
@@ -14,11 +15,16 @@
 		versionState,
 		year,
 		number,
+		instanceDescription,
 		tab,
 		pageLock,
 		updateHandler,
 		externalSources = {},
 		expressions = [],
+
+		setupInstanceDescription = function () {
+			header.getElement().prepend(instanceDescription = $("<div />").addClass("InstanceDescription"));
+		},
 
 		setupTab = function (pages) {
 			for (var pageIndex in pages)
@@ -58,6 +64,9 @@
 			var model = result.checkList;
 			versionState = result.versionState || versionState;
 
+			if (result.prototypeDescription) title.text(result.prototypeDescription);
+			instanceDescription.text("Test" + result.checkList.description).attr("title", "Test" + result.checkList.description);//.toggle(!!result.checkList.description && result.checkList.description != "");
+
 			pageLock.update(model);
 			if (model.header)
 				header.update(model.header);
@@ -94,6 +103,7 @@
 				year = result.year;
 				number = result.number;
 
+				setupInstanceDescription();
 				setupTab(result.checkList.pages);
 				setupActionBar();
 				setupBreadcrumbs();

@@ -90,8 +90,12 @@ div.Dialog {
       color: #cc0000; }
   div.Dialog.Error div.Buttons a {
     background-color: #cc0000 !important; }
+    div.Dialog.Error div.Buttons a i {
+      color: #cc0000; }
     div.Dialog.Error div.Buttons a:hover {
       background-color: #ff3333 !important; }
+      div.Dialog.Error div.Buttons a:hover i {
+        color: #ff3333; }
   @media only screen and (min-width: 760px) {
     div.Dialog {
       position: fixed;
