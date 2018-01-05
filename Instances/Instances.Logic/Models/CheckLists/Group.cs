@@ -2,6 +2,7 @@
 using System.Linq;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using System;
+using CheckListManager.Instances.Logic.Exceptions;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
@@ -122,7 +123,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 if (Item is Group Group)
                     Group.CheckSignatures();
                 else if (Item is Signature && ((Signature)Item).Signed)
-                    throw new Exception("The iteration contains issued signatures and cannot be removed");
+                    throw new InstanceException("The iteration contains issued signatures and cannot be removed");
 
             if (Iterator)
                 foreach (var Iteration in Iterations)
@@ -131,7 +132,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public override void Remove()
 		{
-			foreach (var item in Items)
+            CheckSignatures();
+
+            foreach (var item in Items)
 				item.Remove();
 
 			if (Iterator)
@@ -182,8 +185,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
 		public void Remove(Iteration iteration)
 		{
-            Iterations.Remove(iteration);
 			iteration.Remove();
-		}
-	}
+            Iterations.Remove(iteration);
+        }
+    }
 }

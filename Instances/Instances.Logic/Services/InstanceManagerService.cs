@@ -150,6 +150,7 @@ namespace CheckListManager.Instances.Logic.Services
                     Company = identity.CompanyId,
                     Data = JsonConvert.SerializeObject(cacheObject.Instance, _converter),
                     Code = code,
+                    Description = cacheObject.Instance.Description,
                     InstanceState = cacheObject.InstanceState,
                     Prototype = cacheObject.Prototype,
                     PrototypeName = cacheObject.PrototypeName,
@@ -164,12 +165,7 @@ namespace CheckListManager.Instances.Logic.Services
                 row = await _instancesRepository.CreateInstanceAsync(row);
 
                 cacheObject.Id = row.ID;
-                cacheObject.Year = row.Year;
                 cacheObject.Number = row.Number;
-                cacheObject.Description = row.Description;
-                cacheObject.PrototypeName = row.PrototypeName;
-                cacheObject.PrototypeDescription = row.PrototypeVersions.Description;
-                cacheObject.InstanceState = row.InstanceState;
                 cacheObject.ModifiedOn = row.ModifiedOn;
                 cacheObject.ModifiedBy = row.ModifiedBy;
                 if (cacheObject.Instance.Pages.Count() > 0)
@@ -270,8 +266,8 @@ namespace CheckListManager.Instances.Logic.Services
             }
             catch (Exception e)
             {
-                Logger.Error(e, "Unable to save the instance");
-                throw new InstanceException("Unable to save the instance", e);
+                Logger.Error(e, "Unable to cancel the instance");
+                throw new InstanceException("Unable to cancel the instance", e);
             }
         }
 
@@ -318,7 +314,9 @@ namespace CheckListManager.Instances.Logic.Services
                 if (row == null)
                     throw new InstanceException("Instance not found");
 
+                cacheObject.Instance.Update();
                 row.Data = JsonConvert.SerializeObject(cacheObject.Instance, _converter);
+                row.Description = cacheObject.Instance.Description;
                 row.ModifiedOn = cacheObject.ModifiedOn;
                 row.ModifiedBy = cacheObject.ModifiedBy;
                 if (complete) row.InstanceState = InstanceState.Completed;
@@ -824,7 +822,6 @@ namespace CheckListManager.Instances.Logic.Services
                 Id = instance.ID,
                 Year = instance.Year,
                 Number = instance.Number,
-                Description = instance.Description,
                 ModifiedOn = instance.ModifiedOn,
                 ModifiedBy = instance.ModifiedBy
             };

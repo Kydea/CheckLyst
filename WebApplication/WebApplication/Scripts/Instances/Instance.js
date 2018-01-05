@@ -65,7 +65,8 @@
 			versionState = result.versionState || versionState;
 
 			if (result.prototypeDescription) title.text(result.prototypeDescription);
-			instanceDescription.text("Test" + result.checkList.description).attr("title", "Test" + result.checkList.description);//.toggle(!!result.checkList.description && result.checkList.description != "");
+			instanceDescription.html(result.checkList.description).toggle(!!result.checkList.description && result.checkList.description != "");
+			instanceDescription.attr("title", instanceDescription.text());
 
 			pageLock.update(model);
 			if (model.header)
@@ -97,7 +98,7 @@
 				code = result.code;
 				departmentName = result.departmentName;
 				prototypeTypeName = result.prototypeTypeName;
-				prototypeName = result.prototype;
+				prototypeName = result.prototypeName;
 				version = result.version;
 				versionState = result.versionState;
 				year = result.year;

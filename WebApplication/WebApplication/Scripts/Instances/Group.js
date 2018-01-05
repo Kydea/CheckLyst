@@ -13,7 +13,8 @@
         readOnly,
         tableElement,
 
-        createTableHeader = function (rows, rowIndex, items) {
+		createTableHeader = function (rows, rowIndex, items) {
+			console.log(rows, rowIndex, items);
             var
                 rowsCount = 1,
                 columnsCount = 0,
@@ -34,9 +35,9 @@
                     item = items[index],
                     cell = $("<th />").appendTo(row).text(item.description);
 
-                if (item.TypeName == "Group") {
+                if (item.typeName == "Group") {
                     cell.addClass("SubGroup");
-                    var size = createTableHeader(rows, rowIndex + 1, item.Items);
+                    var size = createTableHeader(rows, rowIndex + 1, item.items);
                     rowsCount = Math.max(size.rowsCount + 1, rowsCount);
                     columnsCount += size.columnsCount;
                     if (size.columnsCount > 1)

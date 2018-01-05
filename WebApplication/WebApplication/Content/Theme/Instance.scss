@@ -314,7 +314,7 @@ div.Instance {
 
             &.Time {
 
-                span + input {
+                input.Description {
                     display: none;
                 }
 
@@ -530,7 +530,7 @@ div.Instance {
                         &.DateTime:not(.Inactive) {
                             white-space: nowrap;
 
-                            input[type=text].Description {
+                            input[type=text] {
                                 border: none;
                                 display: inline-block;
                             }
@@ -538,6 +538,11 @@ div.Instance {
 
                         &.Time {
                             white-space: nowrap;
+
+                            input[type=text]:not(.Description) {
+                                border: none;
+                                display: inline-block;
+                            }
                         }
 
                         &.List {
@@ -553,7 +558,7 @@ div.Instance {
                             background: none;
                         }
 
-                        &:not(.DateTime) {
+                        &:not(.DateTime):not(.Time) {
 
                             input[type=text] {
                                 border: none !important;
@@ -589,6 +594,10 @@ div.Instance {
 
                     > div.Information {
                         left: 2px;
+                    }
+
+                    i.Icon {
+                        display: none;
                     }
 
                     &.IterationCommands {
