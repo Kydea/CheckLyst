@@ -7,4 +7,13 @@
         display: none !important;
     }
 
+    div#Breadcrumbs {
+        display: none !important;
+    }
+
+    div#Content {
+        margin: 0 !important;
+        min-height: unset !important;
+    }
+
 }
