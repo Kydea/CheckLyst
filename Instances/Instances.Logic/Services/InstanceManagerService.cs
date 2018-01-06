@@ -319,8 +319,17 @@ namespace CheckListManager.Instances.Logic.Services
                 row.Description = cacheObject.Instance.Description;
                 row.ModifiedOn = cacheObject.ModifiedOn;
                 row.ModifiedBy = cacheObject.ModifiedBy;
-                if (complete) row.InstanceState = InstanceState.Completed;
+                if (complete)
+                {
+                    row.InstanceState = InstanceState.Completed;
 
+                    row.InstanceHistory.Add(new InstanceHistory
+                    {
+                        Date = row.ModifiedOn.Value,
+                        User = row.ModifiedBy,
+                        State = row.InstanceState
+                    });
+                }
                 if (close)
                     await Task.WhenAll(
                         _instancesRepository.SaveChangesAsync(),
@@ -352,6 +361,14 @@ namespace CheckListManager.Instances.Logic.Services
                     row.ModifiedOn = cacheObject.ModifiedOn;
                     row.ModifiedBy = cacheObject.ModifiedBy;
                     row.InstanceState = InstanceState.Canceled;
+
+                    row.InstanceHistory.Add(new InstanceHistory
+                    {
+                        Date = row.ModifiedOn.Value,
+                        User = row.ModifiedBy,
+                        State = row.InstanceState
+                    });
+
                     //TODO trail with the note
                 }
                 else

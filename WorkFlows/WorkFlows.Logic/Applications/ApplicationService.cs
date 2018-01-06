@@ -58,17 +58,20 @@ namespace CheckListManager.WorkFlows.Logic.Applications
         {
             PrototypeVersion.ProposedState = null;
             PrototypeVersion.ProposedDate = null;
-            PrototypeVersion.VersionState = State;
-
-            await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+            if (PrototypeVersion.VersionState != State)
             {
-                Company = identity.CompanyId,
-                User = identity.Code,
-                Action = TrailAction.PrototypeStateChanged,
-                Date = DateTimeOffset.UtcNow,
-                CheckList = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}",
-                Information = State
-            });
+                PrototypeVersion.VersionState = State;
+
+                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                {
+                    Company = identity.CompanyId,
+                    User = identity.Code,
+                    Action = TrailAction.PrototypeStateChanged,
+                    Date = DateTimeOffset.UtcNow,
+                    CheckList = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}",
+                    Information = State
+                });
+            }
         }
 
         private async Task Approve(DefaultIdentity identity, PrototypeVersions PrototypeVersion)
@@ -104,8 +107,9 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             //TODO Cambio di stato da servizio, deve:
             //2. creare history
             //5. notificare per email
-            _workFlowsRepository.DeletePrototypeVersionInstances(PrototypeVersion);
-            await SetPrototypeVersionState(identity, PrototypeVersion, VersionState.Draft);
+            if (PrototypeVersion.VersionState == VersionState.InSimulation)
+                _workFlowsRepository.DeletePrototypeVersionInstances(PrototypeVersion);
+            await SetPrototypeVersionState(identity, PrototypeVersion, PrototypeVersion.VersionState == VersionState.InSimulation ? VersionState.Draft : PrototypeVersion.VersionState);
         }
 
         public async Task<SignResponse> SignAsync(DefaultIdentity identity, SignRequest request)

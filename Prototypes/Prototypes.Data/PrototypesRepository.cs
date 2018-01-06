@@ -100,11 +100,27 @@ namespace CheckListManager.Prototypes.Data
             if (prototypeVersion.VersionState == VersionState.Draft && state == VersionState.InSimulation && !proposed)
             {
                 prototypeVersion.VersionState = state;
+                prototypeVersion.PrototypeVersionHistory.Add(new PrototypeVersionHistory
+                {
+                    Prototype = prototypeVersion.Prototype,
+                    Version = prototypeVersion.Version,
+                    Date = DateTimeOffset.UtcNow,
+                    State = state,
+                    User = defaultIdentity.Code
+                });
                 Entities.Instances.RemoveRange(prototypeVersion.Instances);
             }
             else if (prototypeVersion.VersionState == VersionState.InSimulation && state == VersionState.Draft && !proposed)
             {
                 prototypeVersion.VersionState = state;
+                prototypeVersion.PrototypeVersionHistory.Add(new PrototypeVersionHistory
+                {
+                    Prototype = prototypeVersion.Prototype,
+                    Version = prototypeVersion.Version,
+                    Date = DateTimeOffset.UtcNow,
+                    State = state,
+                    User = defaultIdentity.Code
+                });
                 Entities.Instances.RemoveRange(prototypeVersion.Instances);
             }
             else if (prototypeVersion.VersionState == VersionState.InSimulation && state == VersionState.Approved && proposed)
@@ -113,7 +129,7 @@ namespace CheckListManager.Prototypes.Data
                 if (WorkFlow == null)
                     throw new InvalidOperationException($"Approvation workflow not found for prototype type {prototypeVersion.Prototypes.PrototypeTypes.Name} ({prototypeVersion.Prototypes.PrototypeType}).");
 
-                await _workFlowsService.CreateWorkFlowApplicationAsync(defaultIdentity, new CreateRequest
+                var response = await _workFlowsService.CreateWorkFlowApplicationAsync(defaultIdentity, new CreateRequest
                 {
                     WorkFlow = WorkFlow.Value,
                     Prototype = prototypeVersion.Prototype,
@@ -123,6 +139,16 @@ namespace CheckListManager.Prototypes.Data
 
                 prototypeVersion.ProposedState = state;
                 prototypeVersion.ProposedDate = DateTimeOffset.Now;
+
+                prototypeVersion.PrototypeVersionHistory.Add(new PrototypeVersionHistory
+                {
+                    Prototype = prototypeVersion.Prototype,
+                    Version = prototypeVersion.Version,
+                    Date = DateTimeOffset.UtcNow,
+                    State = state,
+                    User = defaultIdentity.Code,
+                    WorkFlowApplication = response.ID
+                });
             }
             else if ((prototypeVersion.VersionState == VersionState.Approved || prototypeVersion.VersionState == VersionState.Active) && state == VersionState.Obsolete && proposed)
             {
@@ -130,7 +156,7 @@ namespace CheckListManager.Prototypes.Data
                 if (WorkFlow == null)
                     throw new InvalidOperationException($"Obsolescence workflow not found for prototype type {prototypeVersion.Prototypes.PrototypeTypes.Name} ({prototypeVersion.Prototypes.PrototypeType}).");
 
-                await _workFlowsService.CreateWorkFlowApplicationAsync(defaultIdentity, new CreateRequest
+                var response = await _workFlowsService.CreateWorkFlowApplicationAsync(defaultIdentity, new CreateRequest
                 {
                     WorkFlow = WorkFlow.Value,
                     Prototype = prototypeVersion.Prototype,
@@ -140,6 +166,16 @@ namespace CheckListManager.Prototypes.Data
 
                 prototypeVersion.ProposedState = state;
                 prototypeVersion.ProposedDate = DateTimeOffset.Now;
+
+                prototypeVersion.PrototypeVersionHistory.Add(new PrototypeVersionHistory
+                {
+                    Prototype = prototypeVersion.Prototype,
+                    Version = prototypeVersion.Version,
+                    Date = DateTimeOffset.UtcNow,
+                    State = state,
+                    User = defaultIdentity.Code,
+                    WorkFlowApplication = response.ID
+                });
             }
             else
                 throw new InvalidOperationException($"Cannot {(proposed ? "propose" : "change")} state from {prototypeVersion.VersionState} to {state}");

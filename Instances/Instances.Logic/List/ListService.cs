@@ -84,11 +84,10 @@ namespace CheckListManager.Instances.Logic.List
             if (form.Source == null || form.Source == "department" || form.Source == "prototypeType" || form.Source == "prototype" || form.Source == "version")
             {
                 var tags = await _commonRepository.GetPrototypeVersionTagsAsync(identity, prototype ?? -1, version, "Instances");
-                tag = tag != string.Empty && tags.Any(d => d == tag) ? tag : tags.FirstOrDefault();
                 response.Fields["TagCode"] = new Field
                 {
                     Options = tags.Select(t => new Option(t, t)),
-                    Value = tag
+                    Value = !string.IsNullOrEmpty(tag) && tags.Contains(tag) ? tag : null
                 };
 
                 response.Fields["TagValue"] = new Field

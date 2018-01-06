@@ -13,6 +13,5 @@ namespace CheckListManager.Infrastructure.Logic.Companies
     public interface ICompaniesService : IService
     {
         Task<List<Company>> GetDataAsync();
-        DateTimeOffset Clock();
     }
 }

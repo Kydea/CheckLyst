@@ -19,10 +19,12 @@ PrototypeSignatures.SendEmails(db, Version, Action) quando ci sono variazioni ne
 mettere lock in cambio di stato (?)
 Esperimento di Giulia Pizzichelli: nel signature panel per l'approvazione di un prototipo se clicco su reject mi evidenzia di rosso la box comment. Se poi per esempio decido di non rigettare (magari perché per sbaglio ho cliccato su reject) e clicco su confirm senza inserire la password mi evidenzia in rosso il campo password ma rimane evidenziata anche la box comment per il precedente reject. 
 
+
 USERS 
 Lavorare sulla stringa di autenticazione tramite ldap
 Se non selezioni nessuna funzione il server dà errore, mettere controllo
 Abilitare View se abilito qualunque altra funzione, disabilitare le altre funzioni se disabilito View
+
 
 ACCESS CONTROL
 Mettere un tempo di attesa per i login falliti
@@ -38,4 +40,5 @@ Invio email
 INSTANCES
 History
 Attenzione al nuovo stato Completed
+Verificare il funzionamento dei tags
 Signature: gestire il feedback sugli errori correttamente, adesso dà solo un dialog con l'errore

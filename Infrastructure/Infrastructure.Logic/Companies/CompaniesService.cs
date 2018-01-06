@@ -25,9 +25,5 @@ namespace CheckListManager.Infrastructure.Logic.Companies
 
         public async Task<List<Company>> GetDataAsync()
             => (await _commonRepository.GetCompaniesAsync());
-
-        public DateTimeOffset Clock()
-            => DateTimeOffset.UtcNow;
-
     }
 }

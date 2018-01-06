@@ -198,3 +198,37 @@ create table "CheckLists"."InstanceExpressionValues"
 
 	"Value" text not null
 );
+
+create table "CheckLists"."PrototypeVersionHistory"
+(
+	"Id" bigserial primary key,
+
+	"Prototype" bigint not null,
+    "Version" int not null,
+    constraint "PrototypeVersionHistory_PrototypeVersion" foreign key ("Prototype", "Version") references "CheckLists"."PrototypeVersions" on delete cascade,
+
+	"Date" timestamptz not null default current_timestamp,
+
+	"State" varchar (100) not null,
+	"User" varchar (60) not null,
+
+	"WorkFlowApplication" bigint references "WorkFlows"."WorkFlowApplications"
+);
+
+create index "Index_PrototypeVersionHistory_Prototype" on "CheckLists"."PrototypeVersionHistory"("Prototype", "Date");
+
+create table "CheckLists"."InstanceHistory"
+(
+	"Id" bigserial primary key,
+
+	"Instance" bigint not null references "CheckLists"."Instances" on delete cascade,
+
+	"Date" timestamptz not null default current_timestamp,
+
+	"State" varchar (100) not null,
+	"User" varchar (60) not null,
+
+	"WorkFlowApplication" bigint references "WorkFlows"."WorkFlowApplications"
+);
+
+create index "Index_InstanceHistory_Instance" on "CheckLists"."InstanceHistory"("Instance", "Date");

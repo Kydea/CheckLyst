@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="b7aaff1a649b4135b83e9d51a56f22d7" Name="Diagram1" ZoomLevel="88">
+      <Diagram DiagramId="b7aaff1a649b4135b83e9d51a56f22d7" Name="Diagram1" ZoomLevel="64">
         <EntityTypeShape EntityType="RelationalDatabaseModel.Companies" Width="1.5" PointX="3" PointY="3" IsExpanded="true" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.Departments" Width="1.5" PointX="5.25" PointY="1.25" IsExpanded="true" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.Users" Width="1.5" PointX="5.25" PointY="4.625" IsExpanded="true" />
@@ -43,7 +43,7 @@
         <EntityTypeShape EntityType="RelationalDatabaseModel.Records" Width="1.5" PointX="15.125" PointY="1.5" />
         <AssociationConnector Association="RelationalDatabaseModel.Records_Action_fkey" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.DataSources" Width="1.5" PointX="0.75" PointY="9.75" />
-        <EntityTypeShape EntityType="RelationalDatabaseModel.Prototypes" Width="1.5" PointX="10.5" PointY="2.875" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.Prototypes" Width="1.5" PointX="10.625" PointY="3.375" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.PrototypeTypes" Width="1.5" PointX="10.875" PointY="7.875" />
         <AssociationConnector Association="RelationalDatabaseModel.Prototypes_Company_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.Prototypes_Department_fkey" />
@@ -66,7 +66,7 @@
         <AssociationConnector Association="RelationalDatabaseModel.WorkFlowStepTags_WorkFlowStep_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.WorkFlowApplications_PrototypeVersion" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.Settings" Width="1.5" PointX="6" PointY="29" />
-        <EntityTypeShape EntityType="RelationalDatabaseModel.SettingValues" Width="1.5" PointX="8.25" PointY="0.75" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.SettingValues" Width="1.5" PointX="9.75" PointY="0.5" />
         <AssociationConnector Association="RelationalDatabaseModel.SettingValues_Setting_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.SettingValues_Company_fkey" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.UserFunctions" Width="1.5" PointX="16.125" PointY="6.25" />
@@ -83,6 +83,12 @@
         <AssociationConnector Association="RelationalDatabaseModel.Instances_InstanceState_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.Instances_Prototype_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.WorkFlowApplications_Instance" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.InstanceHistory" Width="1.5" PointX="19.875" PointY="17.5" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.PrototypeVersionHistory" Width="1.5" PointX="18.375" PointY="21" />
+        <AssociationConnector Association="RelationalDatabaseModel.InstanceHistory_Instance_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.InstanceHistory_WorkFlowApplication_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.PrototypeVersionHistory_PrototypeVersion" />
+        <AssociationConnector Association="RelationalDatabaseModel.PrototypeVersionHistory_WorkFlowApplication_fkey" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

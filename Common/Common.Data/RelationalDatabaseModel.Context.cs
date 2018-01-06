@@ -58,5 +58,7 @@ namespace CheckListManager.Common.Data
         public virtual DbSet<SettingValues> SettingValues { get; set; }
         public virtual DbSet<UserFunctions> UserFunctions { get; set; }
         public virtual DbSet<Instances> Instances { get; set; }
+        public virtual DbSet<InstanceHistory> InstanceHistory { get; set; }
+        public virtual DbSet<PrototypeVersionHistory> PrototypeVersionHistory { get; set; }
     }
 }
