@@ -5,6 +5,7 @@ using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Instances.Logic.Messages;
 using CheckListManager.Instances.Logic.Models;
 using CheckListManager.Instances.Logic.Models.CheckLists;
+using System.Collections.Generic;
 
 namespace CheckListManager.Instances.Logic.Services
 {
@@ -19,5 +20,6 @@ namespace CheckListManager.Instances.Logic.Services
         Task<InstanceCacheObject> HandleEventAsync(IDefaultIdentity identity, InstanceEventRequest request);
 		Instance GetCheckList(IDefaultIdentity identity, string functionGroup, InstanceCacheObject instance, string LockUser = null);
 		Task ClearPendingInstances(CancellationToken cancellationToken = default(CancellationToken));
-	}
+        Task<List<HistoryRow>> History(DefaultIdentity identity, long id);
+    }
 }

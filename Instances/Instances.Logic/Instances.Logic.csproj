@@ -64,6 +64,8 @@
     <Compile Include="List\ListResponse.cs" />
     <Compile Include="List\ListRequest.cs" />
     <Compile Include="Messages\GetPrototypeRequest.cs" />
+    <Compile Include="Messages\HistoryRow.cs" />
+    <Compile Include="Messages\HistoryStep.cs" />
     <Compile Include="Messages\InstanceEventRequest.cs" />
     <Compile Include="Messages\InstanceRequest.cs" />
     <Compile Include="Messages\CreateInstanceRequest.cs" />
@@ -81,7 +83,6 @@
     <Compile Include="Models\CheckLists\Page.cs" />
     <Compile Include="Models\CheckLists\Signature.cs" />
     <Compile Include="Models\CheckLists\Text.cs" />
-    <Compile Include="Models\InstanceState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\IInstanceCacheService.cs" />
     <Compile Include="Services\IInstanceManagerService.cs" />

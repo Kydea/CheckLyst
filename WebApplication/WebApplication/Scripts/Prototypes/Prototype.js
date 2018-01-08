@@ -260,7 +260,6 @@
 				return true;
 			}
 
-			allowed = true;
 			for (var rowIndex in rows) {
 				if (rows[rowIndex].step < row.step && !rows[rowIndex].approved) {
 					allowed = false;
@@ -275,7 +274,6 @@
 				return true;
 			}
 
-			allowed = true;
 			for (var rowIndex in rows) {
 				if (rows[rowIndex].step == row.step && rows[rowIndex].user == matematici.tokenManager.getUserCode()) {
 					allowed = false;
@@ -376,6 +374,7 @@
 					model.proposedDate = result.proposedDate;
 					model.validFrom = result.validFrom;
 					model.validUntil = result.validUntil;
+					model.instanceConfirmationWorkFlow = result.instanceConfirmationWorkFlow;
 					model.name = result.name;
 					model.description = result.description;
 					model.department = result.department;
@@ -446,6 +445,7 @@
 				modifiedby: concurrencyInformation.modifiedBy,
 				validFrom: model.validFrom,
 				validUntil: model.validUntil,
+				instanceConfirmationWorkFlow: model.instanceConfirmationWorkFlow,
 				name: model.name,
 				description: model.description,
 				department: model.department,
@@ -623,8 +623,6 @@
 			parameters.append($("<label />").append($("<span />").text("Prototype type")).append($("<i />").addClass("Icon fi flaticon-folder-o")).append($("<input />").attr(attributes).val(model.prototypeTypeName)));
 			parameters.append($("<label />").append($("<span />").text("Prototype")).append($("<i />").addClass("Icon fi flaticon-prototype")).append($("<input />").attr(attributes).val(model.name)));
 			parameters.append($("<label />").append($("<span />").text("Version")).append($("<i />").addClass("Icon fi flaticon-version")).append($("<input />").attr(attributes).val(prototypeKey.version)));
-
-			console.log(result)
 		});
 	};
 

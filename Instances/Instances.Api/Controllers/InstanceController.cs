@@ -150,7 +150,7 @@ namespace CheckListManager.Instances.Api.Controllers
 
                     Department = cacheObject.Department,
                     DepartmentName = cacheObject.DepartmentName,
-                    PrototypeType = cacheObject.Prototype,
+                    PrototypeType = cacheObject.PrototypeType,
                     PrototypeTypeName = cacheObject.PrototypeTypeName,
                     Prototype = cacheObject.Prototype,
                     PrototypeName = cacheObject.PrototypeName,
@@ -186,6 +186,21 @@ namespace CheckListManager.Instances.Api.Controllers
             catch (Exception Exception)
             {
                 return Error(Exception);
+            }
+        }
+
+        [HttpPost]
+        [Route("History")]
+        [Authorize(Roles = "Instances#View, Prototypes#Edit")]
+        public async Task<IHttpActionResult> History(InstanceRequest request)
+        {
+            try
+            {
+                return Ok(await _instanceManagerService.History(Identity, request.ID.Value));
+            }
+            catch (Exception e)
+            {
+                return Error(e);
             }
         }
     }

@@ -21,6 +21,7 @@ using NLog;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Authentication;
 using CheckListManager.Common.Logic.WorkFlows;
+using System.Collections.Generic;
 
 namespace CheckListManager.Instances.Logic.Services
 {
@@ -224,7 +225,7 @@ namespace CheckListManager.Instances.Logic.Services
                     throw new InstanceException("Instance not found");
                 if (cacheObject.InstanceState != InstanceState.Progress)
                     throw new InstanceException("Invalid instance state");
-                if (!HasPermission(identity, "Create", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
+                if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
                     throw new InstanceException("Access denied");
 
                 cacheObject.Instance.Update();
@@ -232,7 +233,7 @@ namespace CheckListManager.Instances.Logic.Services
                 if (UnvalidItems.Any())
                     throw new InstanceException($"The following items are not valid: {string.Join(", ", UnvalidItems.Select(i => i.Id.ToString()))}");
 
-                await SaveAsync(cacheObject, identity, true, true);
+                cacheObject = await SaveAsync(cacheObject, identity, true, true);
                 cacheObject.Instance.UpdateReadOnly(identity.Code, InstanceState.Completed);
                 return cacheObject;
             }
@@ -301,7 +302,7 @@ namespace CheckListManager.Instances.Logic.Services
             }
         }
 
-        private async Task SaveAsync(InstanceCacheObject cacheObject, IDefaultIdentity identity, bool close, bool complete)
+        private async Task<InstanceCacheObject> SaveAsync(InstanceCacheObject cacheObject, IDefaultIdentity identity, bool close, bool complete)
         {
             LockObject lockObject = null;
 
@@ -325,7 +326,7 @@ namespace CheckListManager.Instances.Logic.Services
                 if (complete)
                 {
                     long? WorkFlowApplicationId = null;
-                    if (row.PrototypeVersions.InstanceConfirmationWorkFlow.HasValue)
+                    if (!row.PrototypeVersions.VersionState.In(VersionState.Draft, VersionState.InSimulation) && row.PrototypeVersions.InstanceConfirmationWorkFlow.HasValue)
                     {
                         var WorkFlowApplication = await _workFlowService.CreateWorkFlowApplicationAsync(identity, new CreateRequest
                         {
@@ -357,6 +358,7 @@ namespace CheckListManager.Instances.Logic.Services
                         _instancesRepository.SaveChangesAsync(),
                         _instanceCache.TouchInstanceAsync(cacheObject.Code)
                     );
+                return cacheObject;
             }
             finally
             {
@@ -732,13 +734,16 @@ namespace CheckListManager.Instances.Logic.Services
         public bool HasPermission(IDefaultIdentity identity, string function, string PrototypeVersionState, long Department, long PrototypeType, string Tag = null)
         {
             return
-                identity.HasPermission("Instances", function, Department, tag: Tag)
-                || identity.HasPermission("Instances", function, Department, PrototypeType, Tag)
-                || PrototypeVersionState.In(VersionState.Draft, VersionState.InSimulation)
+                PrototypeVersionState.In(VersionState.Draft, VersionState.InSimulation)
                     && (
                         identity.HasPermission("Prototypes", "Edit", Department)
                         || identity.HasPermission("Prototypes", "Edit", Department, PrototypeType)
-                    );
+                    )
+                || !PrototypeVersionState.In(VersionState.Draft, VersionState.InSimulation)
+                && (
+                    identity.HasPermission("Instances", function, Department, tag: Tag)
+                    || identity.HasPermission("Instances", function, Department, PrototypeType, Tag)
+                );
         }
 
         public Instance GetCheckList(IDefaultIdentity identity, string functionGroup, InstanceCacheObject cacheObject, string LockUser = null)
@@ -843,7 +848,7 @@ namespace CheckListManager.Instances.Logic.Services
                 Code = instance.Code,
                 Department = instance.Prototypes.Department,
                 DepartmentName = instance.Prototypes.Departments.Name,
-                PrototypeType = instance.Prototypes.Department,
+                PrototypeType = instance.Prototypes.PrototypeType,
                 PrototypeTypeName = instance.Prototypes.PrototypeTypes.Name,
                 Prototype = instance.Prototype,
                 PrototypeName = instance.PrototypeName,
@@ -861,6 +866,33 @@ namespace CheckListManager.Instances.Logic.Services
             };
             cacheObject.Instance.Setup(false);
             return cacheObject;
+        }
+
+        public async Task<List<HistoryRow>> History(DefaultIdentity identity, long id)
+        {
+            var Instance = await _instancesRepository.GetByIDAsync(identity.CompanyId, id);
+            if (Instance == null)
+                throw new InstanceException("Instance not found");
+            if (!HasPermission(identity, "View", Instance.PrototypeVersions.VersionState, Instance.Prototypes.Department, Instance.Prototypes.PrototypeType))
+                throw new UnauthorizedAccessException();
+
+            return await Task.FromResult(Instance.InstancesHistory.OrderBy(h => h.ID).Select(h => new HistoryRow
+            {
+                ID = h.ID,
+                Date = h.Date,
+                User = h.User,
+                ProposedState = h.State,
+                Approved = h.WorkFlowApplications?.Approved,
+                Steps = h.WorkFlowApplications?.WorkFlowApplicationSteps.OrderBy(s => s.Step).ThenBy(s => s.ID).Select(s => new HistoryStep
+                {
+                    ID = s.ID,
+                    Step = s.Step,
+                    Date = s.Date,
+                    User = s.User ?? $"({string.Join(", ", s.WorkFlowApplicationStepTags.Select(t => t.Tag))})",
+                    Comment = s.Comment,
+                    Approved = s.Approved
+                }).ToList()
+            }).ToList());
         }
     }
 }

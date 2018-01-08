@@ -17,10 +17,10 @@ namespace CheckListManager.Prototypes.Logic.Messages
         {
             get
             {
-                return 
-                    Approved == false ? 
-                    ProposedState == VersionState.Approved ? VersionState.Draft : null :
-                    ProposedState;
+                return
+                    ProposedState == VersionState.Approved ?
+                        Approved == false ? VersionState.Draft : null :
+                        Approved == true ? VersionState.Obsolete : null;
             }
         }
     }

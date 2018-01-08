@@ -4,6 +4,7 @@ using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.Expressions;
 using Newtonsoft.Json;
 using System.Linq;
+using CheckListManager.Common.Data;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {

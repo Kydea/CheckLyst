@@ -47,9 +47,7 @@ namespace CheckListManager.Instances.Logic.Services
 
 				await _redisCache.SetAsync($"Instance:{code}:Metadata", instance, RegionName);
 				if (instance.Instance != null)
-				{
 					await _redisCache.SetAsync($"Instance:{code}:Data", instance.Instance, RegionName);
-				}
 
 				var score = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 

@@ -8,7 +8,9 @@
 		code,
 		id,
 		state,
+		department,
 		departmentName,
+		prototypeType,
 		prototypeTypeName,
 		prototypeName,
 		version,
@@ -21,6 +23,7 @@
 		updateHandler,
 		externalSources = {},
 		expressions = [],
+		lastResult,
 
 		setupInstanceDescription = function () {
 			header.getElement().prepend(instanceDescription = $("<div />").addClass("InstanceDescription"));
@@ -38,14 +41,18 @@
 
 		setupActionBar = function () {
 			buttonGroup = $("div.ActionBar a.ButtonGroup", element),
-				confirmButton = $("a.Confirm", buttonGroup).toggleClass("Hidden", true); //state != instances.Instance.states.completed
+				confirmButton = $("a.Confirm", buttonGroup).toggleClass("Hidden", state != instances.Instance.states.completed),
 				completeButton = $("a.Complete", buttonGroup).toggleClass("Hidden", state != instances.Instance.states.progress),
 				cancelButton = $("a.Cancel", buttonGroup).toggleClass("Hidden", state != instances.Instance.states.draft && state != instances.Instance.states.progress),
 				saveButton = $("a.Save", buttonGroup).toggleClass("Hidden", state != instances.Instance.states.draft && state != instances.Instance.states.progress),
-				historyButton = $("a.History", buttonGroup).toggleClass("Hidden", true); //state == instances.Instance.states.draft
+				historyButton = $("a.History", buttonGroup).toggleClass("Hidden", state == instances.Instance.states.draft);
 
 			if ($("a:not(.Hidden)", buttonGroup).size() == 0)
 				buttonGroup.hide();
+		},
+
+		getFormattedYear = function () {
+			return versionState == prototypes.Prototype.states.draft ? "test" : versionState == prototypes.Prototype.states.simulation ? "SE" : year || "?";
 		},
 
 		setupBreadcrumbs = function () {
@@ -55,12 +62,13 @@
 				{ content: prototypeName + "." + version },
 				{
 					content:
-					(versionState == prototypes.Prototype.states.draft ? "test" : versionState == prototypes.Prototype.states.simulation ? "SE" : year || "?") + "." + (number || "?") + " (" + state + ")"
+					getFormattedYear() + "." + (number || "?") + " (" + state + ")"
 				},
 			]);
 		},
 
 		update = function (result) {
+			lastResult = result;
 			var model = result.checkList;
 			versionState = result.versionState || versionState;
 
@@ -91,12 +99,12 @@
 					version: options.version
 				}
 			}).done(function (result) {
-				console.log(result)
-
 				id = result.id;
 				state = result.state;
 				code = result.code;
+				department = result.department,
 				departmentName = result.departmentName;
+				prototypeType = result.prototypeType;
 				prototypeTypeName = result.prototypeTypeName;
 				prototypeName = result.prototypeName;
 				version = result.version;
@@ -117,6 +125,80 @@
 			});
 		},
 
+		sign = function (grid, rows, row) {
+			if (row.approved) {
+				matematici.dialog.error("error", "This signature has already been issued");
+				return true;
+			}
+
+			var
+				allowed = false,
+				tags = row.tags.split(", ");
+
+			for (var role in tags)
+				if (
+					matematici.tokenManager.checkRole("Instances#Confirm#" + department + "##" + tags[role])
+					|| matematici.tokenManager.checkRole("Instances#Confirm#" + department + "#" + prototypeType + "#" + tags[role])
+				) {
+					allowed = true;
+					break;
+				}
+
+			if (!allowed) {
+				matematici.dialog.error("error", "Permission denied");
+				return true;
+			}
+
+			for (var rowIndex in rows) {
+				if (rows[rowIndex].step < row.step && !rows[rowIndex].approved) {
+					allowed = false;
+					break;
+				}
+
+				if (rows[rowIndex].id == row.id)
+					break;
+			}
+			if (!allowed) {
+				matematici.dialog.error("error", "The previous step is not completed");
+				return true;
+			}
+
+			for (var rowIndex in rows) {
+				if (rows[rowIndex].step == row.step && rows[rowIndex].user == matematici.tokenManager.getUserCode()) {
+					allowed = false;
+					break;
+				}
+			}
+			if (!allowed) {
+				matematici.dialog.error("error", "You have already signed for this step");
+				return true;
+			}
+
+			workFlowSignature = new matematici.WorkFlowSignature({
+				title: "Instance confirmation",
+				url: element.data("signature"),
+				instance: id,
+				applicationStep: row.id,
+				rows: rows,
+				concurrencyInformation: { modifiedBy: null, modifiedOn: null }, //TODO: concurrency fot the signature 
+
+				done: function (result) {
+					grid.close();
+					matematici.popup.close();
+					var stateChanged = state != result.state;
+					state = result.state;
+					setupActionBar();
+					if (!stateChanged)
+						instance.confirm(action);
+					if (result.approved)
+						matematici.blip.ok();
+					else
+						matematici.blip.ko();
+				}
+			});
+			return true;
+		},
+
 		send = function (action, note, callback) {
 			$.ajax({
 				url: matematici.urls.instances.api + "/" + action,
@@ -126,8 +208,6 @@
 					note: note
 				}
 			}).done(function (result) {
-				console.log(result)
-
 				id = result.id || id;
 				state = result.state || state;
 				year = result.year || year;
@@ -213,11 +293,38 @@
 	};
 
 	instance.complete = function () {
-		send("Complete");
+		matematici.dialog.show("warning", "Please confirm the change of state.", [
+			{
+				text: "confirm", icon: "check", handler: function () {
+					send("Complete");
+				}
+			},
+			{ text: "cancel", icon: "times", cancelButton: true }
+		]);
 	};
 
 	instance.confirm = function () {
-		alert("not implemented"); //todo
+		return $.ajax({
+			url: element.data("api") + "/WorkFlows/Applications/GetSteps",
+			type: "POST",
+			data: {
+				instance: id
+			}
+		}).done(function (result) {
+			var columns = [
+				{ name: "step", label: "Step", align: "center" },
+				{ name: "tags", label: "Level" },
+				{ name: "date", label: "Date", type: "DateTimeOffset" },
+				{ name: "user", label: "User" },
+				{ name: "approved", label: "Approved", align: "center" },
+			];
+			new matematici.CheckListGrid(result.steps,
+				function (grid, row) {
+					return sign(grid, result.steps, row);
+				},
+				null,
+				columns);
+		});
 	};
 
 	instance.setOnUpdateHandler = function (handler) {
@@ -226,32 +333,50 @@
 
 	instance.showHistory = function () {
 		$.ajax({
-			url: matematici.urls.instances.api + "/GetHistory",
+			url: matematici.urls.instances.api + "/History",
 			type: "post",
-			data: { ClientId: matematici.client.getId() }
-		}).done(function (result) {
-			if (result.Error)
-				matematici.dialog.error("Error", result.Error);
-			else {
-				var
-					checkListGrid = new matematici.CheckListGrid(result.Data),
-					parameters = checkListGrid.getParameters(),
-					attributes = { type: "text", readonly: "readonly" };
-
-				parameters.append($("<label />").text("Company").append($("<input />").attr(attributes).val(result.Company)));
-				parameters.append($("<label />").text("Department").append($("<input />").attr(attributes).val(result.Department)));
-				parameters.append($("<label />").text("Prototype Type").append($("<input />").attr(attributes).val(result.PrototypeType)));
-				parameters.append($("<label />").text("Prototype").append($("<input />").attr(attributes).val(result.Prototype + "." + result.Version)));
-				parameters.append($("<label />").text("Instance").append($("<input />").attr(attributes).val(result.Year + "." + result.Number)));
+			data: {
+				id: id
 			}
+		}).done(function (result) {
+			var
+				columns = [
+					{ label: "Date", name: "date", type: "DateTimeOffset" },
+					{ label: "User", name: "user" },
+					{ label: "Approved", name: "approved", type: "Boolean", align: "center" },
+					{ label: "State", name: "state" },
+					{ label: "Proposed state", name: "proposedState" },
+					{ label: "Step", name: "step", align: "center" },
+					{ label: "Comment", name: "comment" }
+				],
+				rowRenderHandler = function (checkListGrid, rowIndex, data) {
+					checkListGrid.addRow(data, rowIndex % 2 == 0 ? "Odd" : "Even");
+					for (var subRowIndex in data.steps) {
+						var subRow = data.steps[subRowIndex];
+						checkListGrid.addRow(subRow, "SubRow");
+					}
+					return true;
+				},
+				checkListGrid = new matematici.CheckListGrid(result, null, null, columns, rowRenderHandler),
+				parameters = checkListGrid.getParameters(),
+				attributes = { type: "text", readonly: "readonly" };
+
+			parameters.append($("<label />").append($("<span />").text("Department")).append($("<i />").addClass("Icon fi flaticon-building-o")).append($("<input />").attr(attributes).val(departmentName)));
+			parameters.append($("<label />").append($("<span />").text("Prototype type")).append($("<i />").addClass("Icon fi flaticon-folder-o")).append($("<input />").attr(attributes).val(prototypeTypeName)));
+			parameters.append($("<label />").append($("<span />").text("Prototype version")).append($("<i />").addClass("Icon fi flaticon-prototype")).append($("<input />").attr(attributes).val(prototypeName + "." + version)));
+			parameters.append($("<label />").append($("<span />").text("Instance")).append($("<i />").addClass("Icon fi flaticon-version")).append($("<input />").attr(attributes).val(getFormattedYear() + "." + number)));
 		});
 	};
 
 	instance.initialize = function () {
 		instanceElementInformation = new instances.ElementInformation(element);
 		tab = new matematici.Tab($("div.TabContainer", element)).addHandler(function (item) {
-			page.clear();
-			new instances.Event(instances.Events.pageChange, item.index).trigger();
+			if (state == instances.Instance.states.draft || state == instances.Instance.states.progress) {
+				page.clear();
+				new instances.Event(instances.Events.pageChange, item.index).trigger();
+			}
+			else
+				update(lastResult);
 		});
 		load();
 	};

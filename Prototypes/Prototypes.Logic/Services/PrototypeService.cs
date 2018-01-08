@@ -55,6 +55,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                 Description = PrototypeVersion.Description,
                 ValidFrom = PrototypeVersion.ValidFrom,
                 ValidUntil = PrototypeVersion.ValidUntil,
+                InstanceConfirmationWorkFlow = PrototypeVersion.InstanceConfirmationWorkFlow,
                 State = PrototypeVersion.VersionState,
                 Department = PrototypeVersion.Prototypes.Department,
                 DepartmentName = PrototypeVersion.Prototypes.Departments.Name,
@@ -82,6 +83,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                 ID = -1,
                 Version = -1,
                 CheckList = Prototype,
+                InstanceConfirmationWorkFlow = PrototypeVersion.InstanceConfirmationWorkFlow,
                 State = VersionState.Draft
             });
         }
@@ -128,6 +130,8 @@ namespace CheckListManager.Prototypes.Logic.Services
                 Description = PrototypeVersion.Description,
                 PrototypeType = PrototypeVersion.Prototypes.PrototypeType,
                 Department = PrototypeVersion.Prototypes.Department,
+                InstanceConfirmationWorkFlow = PrototypeVersion.InstanceConfirmationWorkFlow,
+
                 State = VersionState.Draft
             });
         }
@@ -227,6 +231,7 @@ namespace CheckListManager.Prototypes.Logic.Services
             PrototypeVersion.Data = JsonConvert.SerializeObject(request.CheckList, _converter);
             PrototypeVersion.ValidFrom = request.ValidFrom;
             PrototypeVersion.ValidUntil = request.ValidUntil;
+            PrototypeVersion.InstanceConfirmationWorkFlow = request.InstanceConfirmationWorkFlow;
 
             //Deletes the old tags and creates the new ones
             _prototypeRepository.DeletePrototypeVersionTags(PrototypeVersion.PrototypeVersionTags);

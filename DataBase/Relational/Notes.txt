@@ -10,6 +10,11 @@ Il refresh del token adesso lo fanno tutti i client, può essere ottimizzato?
 
 La navigazione nella history del browser avviene senza controlli su modifiche appese
 
+invio email
+export pdf
+export ftp
+completamento audit trail
+
 
 PROTOTYPES
 history
@@ -37,8 +42,8 @@ Profile: gestire il feedback sugli errori correttamente, adesso dà solo un dial
 WORKFLOWS
 Invio email
 
+
 INSTANCES
-History
-Attenzione al nuovo stato Completed
 Verificare il funzionamento dei tags
 Signature: gestire il feedback sugli errori correttamente, adesso dà solo un dialog con l'errore
+gestire concorrenza per firme (credo serva per forza una transazione, o un lock su redis, chiedere aiuto a Giacomo)

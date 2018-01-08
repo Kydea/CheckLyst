@@ -4,5 +4,6 @@
 	{
 		public string Code { get; set; }
         public string Note { get; set; }
+        public long? ID { get; set; }
     }
 }

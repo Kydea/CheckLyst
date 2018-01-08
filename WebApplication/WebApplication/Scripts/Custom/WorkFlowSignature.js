@@ -30,10 +30,10 @@
 			return {
 				approved: approved,
 				applicationStep: options.applicationStep,
-				validFromNow: validityStartType.filter(":checked").val() == "1",
-				validFrom: validityStartType.filter(":checked").val() == "2" ? validityStart.data("date") && validityStart.data("date").toJSON() : null,
-				validUntilNow: validityEndType.filter(":checked").val() == "1",
-				validUntil: validityEndType.filter(":checked").val() == "2" ? validityEnd.data("date") && validityEnd.data("date").toJSON() : null,
+				validFromNow: options.model ? validityStartType.filter(":checked").val() == "1" : false,
+				validFrom: options.model && validityStartType.filter(":checked").val() == "2" ? validityStart.data("date") && validityStart.data("date").toJSON() : null,
+				validUntilNow: options.model ? validityEndType.filter(":checked").val() == "1" : false,
+				validUntil: options.model && validityEndType.filter(":checked").val() == "2" ? validityEnd.data("date") && validityEnd.data("date").toJSON() : null,
 				comment: $("textarea#Comment", element).val(),
 				password: $("input#Password", element).val(),
 				modifiedBy: options.concurrencyInformation.modifiedBy,
@@ -46,18 +46,21 @@
 				model = getModel(approved),
 				error = false;
 
-			if (!model.validFromNow && !validityStart.data("date")) {
-				matematici.controls.setValidationMessages(validityStart, [{ message: "Specify a date" }])
-				error = true;
+			if (options.model) {
+				if (!model.validFromNow && !validityStart.data("date")) {
+					matematici.controls.setValidationMessages(validityStart, [{ message: "Specify a date" }])
+					error = true;
+				}
+				if (validityEndType.filter(":checked").val() == "2" && !validityEnd.data("date")) {
+					matematici.controls.setValidationMessages(validityEnd, [{ message: "Specify a date" }])
+					error = true;
+				}
+				if (!error && !model.validFromNow && validityEndType.filter(":checked").val() == "2" && validityEnd.data("date") <= validityStart.data("date")) {
+					matematici.controls.setValidationMessages(validityEnd, [{ message: "Validity end is before validity start" }])
+					error = true;
+				}
 			}
-			if (validityEndType.filter(":checked").val() == "2" && !validityEnd.data("date")) {
-				matematici.controls.setValidationMessages(validityEnd, [{ message: "Specify a date" }])
-				error = true;
-			}
-			if (!error && !model.validFromNow && validityEndType.filter(":checked").val() == "2" && validityEnd.data("date") <= validityStart.data("date")) {
-				matematici.controls.setValidationMessages(validityEnd, [{ message: "Validity end is before validity start" }])
-				error = true;
-			}
+
 			if (!model.comment && !model.approved) {
 				matematici.controls.setValidationMessages($("textarea#Comment", element), [{ message: "The comment is mandatory for the rejections" }])
 				error = true;
@@ -91,42 +94,51 @@
 							if (options.rows[row].approved != null)
 								firstSignature = false;
 
-
-						validityStartType = $("input.ValidityStartType", element);
-						new matematici.DatePicker(validityStart = $("input#ValidityStart", element));
+						validityStart = $("input#ValidityStart", element);
 						validityStartMessage = $("div#ValidityStartMessage", element);
-
-						validityStartType.eq(options.model.validFrom ? 1 : 0).prop("checked", true);
-						if (options.model.validFrom)
-							validityStart.data("datePicker").setDate(options.model.validFrom);
-						if (options.model.state != prototypes.Prototype.states.simulation) {
-							matematici.controls.setEditable(validityStart, false);
-							validityStartType.prop("disabled", true);
-						}
-
-						validityEndType = $("input.ValidityEndType", element);
-						new matematici.DatePicker(validityEnd = $("input#ValidityEnd", element));
+						validityEnd = $("input#ValidityEnd", element);
 						validityEndMessage = $("div#ValidityEndMessage", element);
 
-						validityEndType.eq(options.model.state != prototypes.Prototype.states.simulation ? 1 : options.model.validUntil ? 2 : 0).prop("checked", true);
-						if (options.model.validUntil)
-							validityEnd.data("datePicker").setDate(options.model.validUntil);
-						if (options.model.state == prototypes.Prototype.states.simulation)
-							validityEndType.eq(1).parent().hide();
+						if (options.model) {
+							validityStartType = $("input.ValidityStartType", element);
+							new matematici.DatePicker(validityStart);
 
-						if (firstSignature)
-							element = $(matematici.popup.getElement())
-								.on("change", "input.ValidityStartType", validityStartChanged)
-								.on("change", "input.ValidityEndType", validityEndChanged);
-						else { 
-							matematici.controls.setEditable(validityStartType, false);
-							matematici.controls.setEditable(validityStart, false);
-							matematici.controls.setEditable(validityEndType, false);
-							matematici.controls.setEditable(validityEnd, false);
-						} 
+							validityStartType.eq(options.model.validFrom ? 1 : 0).prop("checked", true);
+							if (options.model.validFrom)
+								validityStart.data("datePicker").setDate(options.model.validFrom);
+							if (options.model.state != prototypes.Prototype.states.simulation) {
+								matematici.controls.setEditable(validityStart, false);
+								validityStartType.prop("disabled", true);
+							}
 
-						validityStartChanged();
-						validityEndChanged();
+							validityEndType = $("input.ValidityEndType", element);
+							new matematici.DatePicker(validityEnd);
+
+							validityEndType.eq(options.model.state != prototypes.Prototype.states.simulation ? 1 : options.model.validUntil ? 2 : 0).prop("checked", true);
+							if (options.model.validUntil)
+								validityEnd.data("datePicker").setDate(options.model.validUntil);
+							if (options.model.state == prototypes.Prototype.states.simulation)
+								validityEndType.eq(1).parent().hide();
+
+							if (firstSignature)
+								element = $(matematici.popup.getElement())
+									.on("change", "input.ValidityStartType", validityStartChanged)
+									.on("change", "input.ValidityEndType", validityEndChanged);
+							else {
+								matematici.controls.setEditable(validityStartType, false);
+								matematici.controls.setEditable(validityStart, false);
+								matematici.controls.setEditable(validityEndType, false);
+								matematici.controls.setEditable(validityEnd, false);
+							}
+
+							validityStartChanged();
+							validityEndChanged();
+						} else {
+							validityStart.parent().hide();
+							validityStartMessage.hide();
+							validityEnd.parent().hide();
+							validityEndMessage.hide();
+						}
 					}
 				},
 				buttons: [

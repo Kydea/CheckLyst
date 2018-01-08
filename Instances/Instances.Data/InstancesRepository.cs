@@ -91,9 +91,12 @@ namespace CheckListManager.Instances.Data
 		}
 
 		public Task<Common.Data.Instances> GetByCodeAsync(long companyId, string code)
-			=> Entities.Instances.FirstOrDefaultAsync(i => i.Prototypes.Company == companyId && i.Code == code);
+			=> Entities.Instances.SingleOrDefaultAsync(i => i.Prototypes.Company == companyId && i.Code == code);
 
-		public Task<int> GetInstanceNumberAsync(long prototype, int version, int year)
+        public Task<Common.Data.Instances> GetByIDAsync(long companyId, long id)
+            => Entities.Instances.SingleOrDefaultAsync(i => i.Prototypes.Company == companyId && i.ID == id);
+
+        public Task<int> GetInstanceNumberAsync(long prototype, int version, int year)
 		{
 			return Call<int>("\"CheckLists\".\"GetInstanceNumber\"",
 				new Parameter("_prototype", prototype),

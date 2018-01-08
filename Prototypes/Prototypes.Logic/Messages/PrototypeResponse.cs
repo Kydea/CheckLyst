@@ -14,7 +14,7 @@ namespace CheckListManager.Prototypes.Logic.Messages
         public string State { get; set; }
         public string ProposedState { get; set; }
         public DateTimeOffset? ProposedDate { get; set; }
-
+        
         public DateTimeOffset? ValidFrom { get; set; }
         public DateTimeOffset? ValidUntil { get; set; }
         public string Name { get; set; }
@@ -23,5 +23,6 @@ namespace CheckListManager.Prototypes.Logic.Messages
         public string DepartmentName { get; set; }
         public long? PrototypeType { get; set; }
         public string PrototypeTypeName { get; set; }
+        public long? InstanceConfirmationWorkFlow { get; set; }
     }
 }

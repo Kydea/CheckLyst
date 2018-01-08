@@ -76,8 +76,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
 
         private async Task Approve(DefaultIdentity identity, PrototypeVersions PrototypeVersion)
         {
-            //TODO Cambio di stato da servizio, deve:
-            //2. creare history
+            //TODO
             //5. notificare per email
 
             var UtcNow = DateTimeOffset.UtcNow;
@@ -104,12 +103,40 @@ namespace CheckListManager.WorkFlows.Logic.Applications
 
         private async Task Reject(DefaultIdentity identity, PrototypeVersions PrototypeVersion)
         {
-            //TODO Cambio di stato da servizio, deve:
-            //2. creare history
+            //TODO
             //5. notificare per email
             if (PrototypeVersion.VersionState == VersionState.InSimulation)
                 _workFlowsRepository.DeletePrototypeVersionInstances(PrototypeVersion);
             await SetPrototypeVersionState(identity, PrototypeVersion, PrototypeVersion.VersionState == VersionState.InSimulation ? VersionState.Draft : PrototypeVersion.VersionState);
+        }
+
+        private async Task SetInstanceState(DefaultIdentity identity, Instances Instance, string State)
+        {
+            Instance.InstanceState = State;
+
+            await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+            {
+                Company = identity.CompanyId,
+                User = identity.Code,
+                Action = TrailAction.InstanceStateChanged,
+                Date = DateTimeOffset.UtcNow,
+                CheckList = $"{Instance.Prototypes.Name}.{Instance.Version}.{Instance.Year}.{Instance.Number}",
+                Information = State
+            });
+        }
+
+        private async Task Approve(DefaultIdentity identity, Instances Instance)
+        {
+            //TODO
+            //5. notificare per email
+            await SetInstanceState(identity, Instance, InstanceState.Confirmed);
+        }
+
+        private async Task Reject(DefaultIdentity identity, Instances Instance)
+        {
+            //TODO
+            //5. notificare per email
+            await SetInstanceState(identity, Instance, InstanceState.Canceled);
         }
 
         public async Task<SignResponse> SignAsync(DefaultIdentity identity, SignRequest request)
@@ -163,8 +190,8 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 var Granted = false;
                 foreach (var Tag in Step.WorkFlowApplicationStepTags)
                     if (
-                        identity.HasPermission("Prototypes", "Approve", Instance.Prototypes.Department, Instance.Prototypes.PrototypeType, Tag.Tag)
-                        || identity.HasPermission("Prototypes", "Approve", Instance.Prototypes.Department, null, Tag.Tag)
+                        identity.HasPermission("Instances", "Confirm", Instance.Prototypes.Department, Instance.Prototypes.PrototypeType, Tag.Tag)
+                        || identity.HasPermission("Instances", "Confirm", Instance.Prototypes.Department, null, Tag.Tag)
                     )
                     {
                         Granted = true;
@@ -197,8 +224,8 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 }
                 else if (Instance != null)
                 {
-                    throw new NotImplementedException();
-                    //TODO Instances section
+                    if (AllApproved)
+                        await Approve(identity, Instance);
                 }
 
                 if (AllApproved)
@@ -210,10 +237,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 if (PrototypeVersion != null)
                     await Reject(identity, PrototypeVersion);
                 else if (Instance != null)
-                {
-                    throw new NotImplementedException();
-                    //TODO Instances section
-                }
+                    await Reject(identity, Instance);
             }
 
             await _workFlowsRepository.SaveChangesAsync();
@@ -227,10 +251,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 SignResponse.ModifiedBy = PrototypeVersion.ModifiedBy;
             }
             else if (Instance != null)
-            {
-                throw new NotImplementedException();
-                //TODO Instances section
-            }
+                SignResponse.State = Instance.InstanceState;
 
             return SignResponse;
         }

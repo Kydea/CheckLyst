@@ -59,20 +59,20 @@ table.Grid {
                 }
             }
 
-            &.Handler {
-                cursor: pointer;
-
-                &:hover {
-                    background-color: $Color-Pink;
-                }
-            }
-
             &:not(.Even):nth-child(odd), &.Odd {
                 background-color: white;
             }
 
             &:not(.Odd):nth-child(even), &.Even {
                 background-color: $Color-Cyan;
+            }
+
+            &.Handler {
+                cursor: pointer;
+
+                &:hover {
+                    background-color: $Color-Pink;
+                }
             }
 
             &.SubRow {
