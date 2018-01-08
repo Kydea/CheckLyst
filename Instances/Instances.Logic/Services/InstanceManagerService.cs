@@ -20,6 +20,7 @@ using Newtonsoft.Json;
 using NLog;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Authentication;
+using CheckListManager.Common.Logic.WorkFlows;
 
 namespace CheckListManager.Instances.Logic.Services
 {
@@ -33,10 +34,11 @@ namespace CheckListManager.Instances.Logic.Services
         private readonly IInstanceCacheService _instanceCache;
         private readonly IConfigurationService _configurationService;
         private readonly IAuthenticationService _authenticationService;
+        private readonly IWorkFlowsService _workFlowService;
 
         public InstanceManagerService(IServiceClient client,
             IInstancesRepository instancesRepository, CheckListJsonConverter converter, IInstanceCacheService instanceCache,
-            IConfigurationService configurationService, IAuthenticationService authenticationService)
+            IConfigurationService configurationService, IAuthenticationService authenticationService, IWorkFlowsService workFlowService)
         {
             _client = client;
             _instancesRepository = instancesRepository;
@@ -44,6 +46,7 @@ namespace CheckListManager.Instances.Logic.Services
             _instanceCache = instanceCache;
             _configurationService = configurationService;
             _authenticationService = authenticationService;
+            _workFlowService = workFlowService;
         }
 
         public async Task<InstanceCacheObject> GetAsync(IDefaultIdentity identity, string code)
@@ -199,7 +202,7 @@ namespace CheckListManager.Instances.Logic.Services
                 if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
                     throw new InstanceException("Access denied");
 
-                await SaveAsync(cacheObject, identity.Code, false, false);
+                await SaveAsync(cacheObject, identity, false, false);
             }
             catch (InstanceException)
             {
@@ -229,7 +232,7 @@ namespace CheckListManager.Instances.Logic.Services
                 if (UnvalidItems.Any())
                     throw new InstanceException($"The following items are not valid: {string.Join(", ", UnvalidItems.Select(i => i.Id.ToString()))}");
 
-                await SaveAsync(cacheObject, identity.Code, true, true);
+                await SaveAsync(cacheObject, identity, true, true);
                 cacheObject.Instance.UpdateReadOnly(identity.Code, InstanceState.Completed);
                 return cacheObject;
             }
@@ -271,7 +274,7 @@ namespace CheckListManager.Instances.Logic.Services
             }
         }
 
-        private async Task SuspendAsync(InstanceCacheObject cacheObject, string userCode)
+        private async Task SuspendAsync(InstanceCacheObject cacheObject, IDefaultIdentity identity)
         {
             try
             {
@@ -281,7 +284,7 @@ namespace CheckListManager.Instances.Logic.Services
                         await _instanceCache.RemoveAsync(cacheObject.Code);
                         break;
                     case InstanceState.Progress:
-                        await SaveAsync(cacheObject, userCode, true, false);
+                        await SaveAsync(cacheObject, identity, true, false);
                         break;
                     default:
                         throw new InstanceException("Invalid state: " + cacheObject.InstanceState);
@@ -298,7 +301,7 @@ namespace CheckListManager.Instances.Logic.Services
             }
         }
 
-        private async Task SaveAsync(InstanceCacheObject cacheObject, string userCode, bool close, bool complete)
+        private async Task SaveAsync(InstanceCacheObject cacheObject, IDefaultIdentity identity, bool close, bool complete)
         {
             LockObject lockObject = null;
 
@@ -321,13 +324,27 @@ namespace CheckListManager.Instances.Logic.Services
                 row.ModifiedBy = cacheObject.ModifiedBy;
                 if (complete)
                 {
-                    row.InstanceState = InstanceState.Completed;
+                    long? WorkFlowApplicationId = null;
+                    if (row.PrototypeVersions.InstanceConfirmationWorkFlow.HasValue)
+                    {
+                        var WorkFlowApplication = await _workFlowService.CreateWorkFlowApplicationAsync(identity, new CreateRequest
+                        {
+                            WorkFlow = row.PrototypeVersions.InstanceConfirmationWorkFlow.Value,
+                            Instance = row.ID,
+                            Action = "Instance – state to Confirmed"
+                        });
+                        WorkFlowApplicationId = WorkFlowApplication.ID;
+                        cacheObject.InstanceState = row.InstanceState = InstanceState.Completed;
+                    }
+                    else
+                        cacheObject.InstanceState = row.InstanceState = InstanceState.Confirmed;
 
                     row.InstancesHistory.Add(new InstancesHistory
                     {
                         Date = row.ModifiedOn.Value,
                         User = row.ModifiedBy,
-                        State = row.InstanceState
+                        State = row.InstanceState,
+                        WorkFlowApplication = WorkFlowApplicationId
                     });
                 }
                 if (close)

@@ -120,7 +120,7 @@ namespace CheckListManager.Instances.Api.Controllers
                 var cacheObject = await _instanceManagerService.CompleteAsync(request.Code, Identity);
                 return Ok(new InstanceResponse
                 {
-                    State = InstanceState.Completed,
+                    State = cacheObject.InstanceState,
                     CheckList = cacheObject.Instance
                 });
             }

@@ -5,11 +5,12 @@
         expressions,
 
         change = function () {
+			//console.log(model[property], input.val());
             var
                 value = input.val(),
                 error;
 
-            if (input.prop("selectedIndex") > 2 && expressions[value].Error)
+            if (input.prop("selectedIndex") > 1 && expressions[value].Error)
                 error = "the expression is not valid";
             else if (check)
                 for (var index in check)
@@ -25,7 +26,7 @@
             }
 
             model[property] = value;
-            matematici.canClose = false;
+			matematici.canClose = false;
         };
 
     this.setCheck = function (value) {
@@ -38,13 +39,13 @@
         if (options.readOnly)
             $("<input />").attr({ type: "text", readOnly: true }).val(model[property]).appendTo(valuePanel);
         else {
-            input = $("<select />");
+			input = $("<select />").data("nullable", true);
             expressions = prototypes.prototype.getModel().expressions;
-            input.append($("<option />").attr("value", "").text("(not set)"));
             for (var index in expressions)
-                input.append($("<option />").attr({ value: index, selected: index == model[property] }).text(index));
-            input.on("change", change);
-            valuePanel.append(input);
+				input.append($("<option />").attr({ value: index }).text(index));
+			input.on("change", change);
+			input.val(model[property]);
+			valuePanel.append(input);
         }
     }
 

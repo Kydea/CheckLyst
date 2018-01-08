@@ -6,6 +6,6 @@ namespace CheckListManager.Common.Logic.WorkFlows
 {
 	public interface IWorkFlowsService : IService
 	{
-		Task<CreateResponse> CreateWorkFlowApplicationAsync(DefaultIdentity identity, CreateRequest request);
+		Task<CreateResponse> CreateWorkFlowApplicationAsync(IDefaultIdentity identity, CreateRequest request);
 	}
 }

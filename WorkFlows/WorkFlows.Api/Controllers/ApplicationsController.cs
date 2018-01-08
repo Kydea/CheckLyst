@@ -28,7 +28,7 @@ namespace CheckListManager.WorkFlows.Api.Controllers
 
         [HttpPost]
         [Route("Create")]
-        [Authorize(Roles = "Prototypes#Edit")]
+        [Authorize(Roles = "Prototypes#Edit, Instances#Create")]
         public async Task<IHttpActionResult> Create(CreateRequest request)
         {
             try

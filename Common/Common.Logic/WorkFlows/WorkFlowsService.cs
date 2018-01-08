@@ -20,7 +20,7 @@ namespace CheckListManager.Common.Logic.WorkFlows
             _client = client;
         }
 
-        public async Task<CreateResponse> CreateWorkFlowApplicationAsync(DefaultIdentity identity, CreateRequest request)
+        public async Task<CreateResponse> CreateWorkFlowApplicationAsync(IDefaultIdentity identity, CreateRequest request)
         {
             try
             {

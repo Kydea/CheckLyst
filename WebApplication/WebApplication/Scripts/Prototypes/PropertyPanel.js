@@ -92,6 +92,10 @@
 				"Instance file name", "A formula to use for the file name of the pdf generated for confirmed instances of this prototype."
 			));
 			properties.push(new prototypes.Property(
+				this, new prototypes.WorkFlowProperty(model, "instanceConfirmationWorkFlow", { readOnly: state != prototypes.Prototype.states.draft }),
+				"Instance confirmation workflow", "The confirmation work flow of the isntance of this prototype. Leave empty to have the instances confirmed without a confirmation workflow."
+			));
+			properties.push(new prototypes.Property(
 				this, new prototypes.SimpleValueProperty(model, "state", { readOnly: true, defaultValue: prototypes.Prototype.states.draft }), "State",
 				"The state of the prototype. This property is not editable. " +
 				"Use the action <strong>buttons</strong> to change the state of the version."

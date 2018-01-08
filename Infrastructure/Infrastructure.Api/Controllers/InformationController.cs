@@ -24,16 +24,5 @@ namespace CheckListManager.Infrastructure.Api.Controllers
                 Version = new ReleaseInfoMessage()
             });
         }
-
-        [HttpGet]
-        [Route("Test")]
-        public IHttpActionResult Test()
-        {
-            return Ok(new
-            {
-                ServerTime = DateTimeOffset.UtcNow,
-                Version = new ReleaseInfoMessage()
-            });
-        }
     }
 }
