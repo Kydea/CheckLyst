@@ -37,7 +37,6 @@ Profile: gestire il feedback sugli errori correttamente, adesso dà solo un dial
 WORKFLOWS
 Invio email
 
-
 INSTANCES
 History
 Attenzione al nuovo stato Completed
