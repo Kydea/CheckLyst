@@ -199,13 +199,13 @@ create table "CheckLists"."InstanceExpressionValues"
 	"Value" text not null
 );
 
-create table "CheckLists"."PrototypeVersionHistory"
+create table "CheckLists"."PrototypeVersionsHistory"
 (
-	"Id" bigserial primary key,
+	"ID" bigserial primary key,
 
 	"Prototype" bigint not null,
     "Version" int not null,
-    constraint "PrototypeVersionHistory_PrototypeVersion" foreign key ("Prototype", "Version") references "CheckLists"."PrototypeVersions" on delete cascade,
+    constraint "PrototypeVersionsHistory_PrototypeVersion" foreign key ("Prototype", "Version") references "CheckLists"."PrototypeVersions" on delete cascade,
 
 	"Date" timestamptz not null default current_timestamp,
 
@@ -215,11 +215,11 @@ create table "CheckLists"."PrototypeVersionHistory"
 	"WorkFlowApplication" bigint references "WorkFlows"."WorkFlowApplications"
 );
 
-create index "Index_PrototypeVersionHistory_Prototype" on "CheckLists"."PrototypeVersionHistory"("Prototype", "Date");
+create index "Index_PrototypeVersionsHistory_Prototype" on "CheckLists"."PrototypeVersionsHistory"("Prototype", "Date");
 
-create table "CheckLists"."InstanceHistory"
+create table "CheckLists"."InstancesHistory"
 (
-	"Id" bigserial primary key,
+	"ID" bigserial primary key,
 
 	"Instance" bigint not null references "CheckLists"."Instances" on delete cascade,
 
@@ -231,4 +231,4 @@ create table "CheckLists"."InstanceHistory"
 	"WorkFlowApplication" bigint references "WorkFlows"."WorkFlowApplications"
 );
 
-create index "Index_InstanceHistory_Instance" on "CheckLists"."InstanceHistory"("Instance", "Date");
+create index "Index_InstancesHistory_Instance" on "CheckLists"."InstancesHistory"("Instance", "Date");

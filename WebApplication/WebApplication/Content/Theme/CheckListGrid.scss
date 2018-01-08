@@ -14,22 +14,8 @@ div.CheckListGrid {
         overflow: auto;
 
         div.Parameters {
-            padding-bottom: 10px;
-
-            label {
-                float: left;
-
-                input {
-                    width: 200px;
-                    margin: 5px 10px 10px 0;
-                }
-            }
-
-            &::after {
-                content: "";
-                display: table;
-                clear: both;
-            }
+            margin-left: -$Metric-Control-Space;
+            margin-top: -$Metric-Control-Space;
         }
 
         table.Grid {

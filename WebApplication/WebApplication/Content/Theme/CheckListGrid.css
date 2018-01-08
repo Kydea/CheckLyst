@@ -8,16 +8,8 @@ div.CheckListGrid div.Container {
   box-shadow: rgba(0, 0, 0, 0.15) 0 0 15px 2px;
   overflow: auto; }
   div.CheckListGrid div.Container div.Parameters {
-    padding-bottom: 10px; }
-    div.CheckListGrid div.Container div.Parameters label {
-      float: left; }
-      div.CheckListGrid div.Container div.Parameters label input {
-        width: 200px;
-        margin: 5px 10px 10px 0; }
-    div.CheckListGrid div.Container div.Parameters::after {
-      content: "";
-      display: table;
-      clear: both; }
+    margin-left: -20px;
+    margin-top: -20px; }
   div.CheckListGrid div.Container table.Grid {
     clear: both; }
     div.CheckListGrid div.Container table.Grid tr th {

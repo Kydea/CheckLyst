@@ -12,9 +12,9 @@ namespace CheckListManager.Common.Data
     using System;
     using System.Collections.Generic;
     
-    public partial class InstanceHistory
+    public partial class InstancesHistory
     {
-        public long Id { get; set; }
+        public long ID { get; set; }
         public long Instance { get; set; }
         public System.DateTimeOffset Date { get; set; }
         public string State { get; set; }

@@ -83,12 +83,12 @@
         <AssociationConnector Association="RelationalDatabaseModel.Instances_InstanceState_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.Instances_Prototype_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.WorkFlowApplications_Instance" />
-        <EntityTypeShape EntityType="RelationalDatabaseModel.InstanceHistory" Width="1.5" PointX="19.875" PointY="17.5" />
-        <EntityTypeShape EntityType="RelationalDatabaseModel.PrototypeVersionHistory" Width="1.5" PointX="18.375" PointY="21" />
-        <AssociationConnector Association="RelationalDatabaseModel.InstanceHistory_Instance_fkey" />
-        <AssociationConnector Association="RelationalDatabaseModel.InstanceHistory_WorkFlowApplication_fkey" />
-        <AssociationConnector Association="RelationalDatabaseModel.PrototypeVersionHistory_PrototypeVersion" />
-        <AssociationConnector Association="RelationalDatabaseModel.PrototypeVersionHistory_WorkFlowApplication_fkey" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.InstancesHistory" Width="1.5" PointX="19.875" PointY="17.5" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.PrototypeVersionsHistory" Width="1.5" PointX="18.375" PointY="21" />
+        <AssociationConnector Association="RelationalDatabaseModel.InstancesHistory_Instance_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.InstancesHistory_WorkFlowApplication_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.PrototypeVersionsHistory_PrototypeVersion" />
+        <AssociationConnector Association="RelationalDatabaseModel.PrototypeVersionsHistory_WorkFlowApplication_fkey" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -12,9 +12,9 @@ namespace CheckListManager.Common.Data
     using System;
     using System.Collections.Generic;
     
-    public partial class PrototypeVersionHistory
+    public partial class PrototypeVersionsHistory
     {
-        public long Id { get; set; }
+        public long ID { get; set; }
         public long Prototype { get; set; }
         public int Version { get; set; }
         public System.DateTimeOffset Date { get; set; }

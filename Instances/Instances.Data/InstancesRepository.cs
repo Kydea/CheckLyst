@@ -66,7 +66,7 @@ namespace CheckListManager.Instances.Data
 				instance.Number =
 					await GetInstanceNumberAsync(instance.Prototype, instance.Version, instance.Year);
 
-                instance.InstanceHistory.Add(new InstanceHistory
+                instance.InstancesHistory.Add(new InstancesHistory
                 {
                     Date = instance.ModifiedOn.Value,
                     User = instance.ModifiedBy,

@@ -1,15 +1,12 @@
-﻿matematici.CheckListGrid = function (values, handler, renderHandler, columns) {
+﻿matematici.CheckListGrid = function (values, handler, renderHandler, columns, rowRenderHandler) {
 	var
+		checkListGrid = this,
 		element,
 		container,
 		parameters,
-		self = this,
+		body,
 
 		setup = function () {
-			var
-				tr,
-				body;
-
 			matematici.elements.body.addClass("CheckListGrid");
 			element = $("<div />").addClass("CheckListGrid").appendTo(matematici.elements.body);
 			container = $("<div />").addClass("Container").appendTo(element);
@@ -17,7 +14,35 @@
 			renderValues();
 		},
 
+		addRow = function (row, cssClass) {
+			var tr = $("<tr />").data("row", row).appendTo(body).toggleClass("Handler", !!handler);
+			if (cssClass) tr.addClass(cssClass);
+			for (var columnIndex in columns) {
+				var column = columns[columnIndex];
+				if (!renderHandler || !renderHandler(this, rowIndex, columnIndex, row[column.name])) {
+					var
+						td = $("<td />"),
+						value = column.name ? row[column.name] : rowIndex;
+					if (column.align == "center")
+						td.addClass("Centered");
+					if (column.type == "DateTimeOffset") {
+						if (value) {
+							var formattedDate = matematici.dateFormatter.format(new Date(value), true);
+							td.append($("<span />").html(formattedDate.date + " " + formattedDate.time).attr("title", formattedDate.offset));
+						}
+					} else if (value === true)
+						td.append($("<i />").addClass("fi flaticon-check"));
+					else if (value === false)
+						td.append($("<i />").addClass("fi flaticon-times"));
+					else
+						td.html(value)
+					tr.append(td);
+				}
+			}
+		},
+
 		renderValues = function () {
+			var tr;
 			container.empty();
 
 			if (parameters)
@@ -29,7 +54,7 @@
 				).append(
 				body = $("<tbody />")
 				).on("click", "tr.Handler", function () {
-					if (!handler || !handler.call(this, self, $(this).data("row")))
+					if (!handler || !handler.call(this, checkListGrid, $(this).data("row")))
 						element.remove();
 				});
 
@@ -49,29 +74,8 @@
 						tr.append($("<th />").text(columns[column].label));
 					for (var rowIndex in values) {
 						var row = values[rowIndex];
-						tr = $("<tr />").data("row", row).appendTo(body).toggleClass("Handler", !!handler);
-						for (var columnindex in columns) {
-							var column = columns[columnindex];
-							if (!renderHandler || !renderHandler.call(this, rowIndex, columnIndex, row[column.name])) {
-								var
-									td = $("<td />"),
-									value = column.name ? row[column.name] : rowIndex;
-								if (column.align == "center")
-									td.addClass("Centered");
-								if (column.type == "DateTimeOffset") {
-									if (value) {
-										var formattedDate = matematici.dateFormatter.format(new Date(value), true);
-										td.append($("<span />").html(formattedDate.date + " " + formattedDate.time).attr("title", formattedDate.offset));
-									}
-								} else if (value === true)
-									td.append($("<i />").addClass("fi flaticon-check"));
-								else if (value === false)
-									td.append($("<i />").addClass("fi flaticon-times"));
-								else 
-									td.html(value || "")
-								tr.append(td);
-							}
-						}
+						if (!rowRenderHandler || !rowRenderHandler(checkListGrid, rowIndex, row))
+							addRow(row);
 					}
 				} else {
 					var row = values[0];
@@ -97,20 +101,22 @@
 			}
 		};
 
-	setup();
-
-	this.setValues = function (v) {
+	checkListGrid.setValues = function (v) {
 		values = v;
 		renderValues();
 	};
 
-	this.getParameters = function () {
-		container.prepend(parameters = $("<div />").addClass("Parameters"));
+	checkListGrid.getParameters = function () {
+		container.prepend(parameters = $("<div />").addClass("Parameters Module"));
 		return parameters;
 	}
 
-	this.close = function () {
+	checkListGrid.close = function () {
 		element.remove();
 		matematici.elements.body.removeClass("CheckListGrid");
 	}
+
+	checkListGrid.addRow = addRow;
+
+	setup();
 }

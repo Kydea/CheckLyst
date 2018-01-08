@@ -305,5 +305,32 @@ namespace CheckListManager.Prototypes.Logic.Services
                 ProposedDate = PrototypeVersion.ProposedDate
             };
         }
+
+        public async Task<List<HistoryRow>> History(DefaultIdentity identity, PrototypeRequest request)
+        {
+            var PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(identity, request.ID, request.Version);
+            if (
+                !identity.HasPermission("Prototypes", "View", PrototypeVersion.Prototypes.Department) 
+                && !identity.HasPermission("Prototypes", "View", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType)
+            )
+                throw new UnauthorizedAccessException();
+
+            return await Task.FromResult(PrototypeVersion.PrototypeVersionsHistory.OrderBy(h => h.ID).Select(h => new HistoryRow
+            {
+                ID = h.ID,
+                Date = h.Date,
+                User = h.User,
+                ProposedState = h.State,
+                Approved = h.WorkFlowApplications?.Approved,
+                Steps = h.WorkFlowApplications?.WorkFlowApplicationSteps.OrderBy(s => s.Step).ThenBy(s => s.ID).Select(s => new HistoryStep {
+                    ID = s.ID,
+                    Step = s.Step,
+                    Date = s.Date,
+                    User = s.User ?? $"({string.Join(", ", s.WorkFlowApplicationStepTags.Select(t => t.Tag))})",
+                    Comment = s.Comment,
+                    Approved = s.Approved
+                }).ToList()
+            }).ToList());
+        }
     }
 }

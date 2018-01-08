@@ -133,5 +133,21 @@ namespace CheckListManager.Prototypes.Api.Controllers
                 return Error(e);
             }
         }
+
+        [HttpPost]
+        [Route("History")]
+        [Authorize(Roles = "Prototypes#View")]
+        public async Task<IHttpActionResult> History(PrototypeRequest request)
+        {
+            try
+            {
+                return Ok(await _prototypeService.History(Identity, request));
+            }
+            catch (Exception e)
+            {
+                return Error(e);
+            }
+        }
+
     }
 }

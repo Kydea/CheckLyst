@@ -103,13 +103,13 @@
     <Compile Include="InstanceExpressionValues.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="InstanceHistory.cs">
-      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="InstanceNumerators.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Instances.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="InstancesHistory.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="InstanceStates.cs">
@@ -135,10 +135,10 @@
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="ListItems\PrototypeVersion.cs" />
-    <Compile Include="PrototypeVersionHistory.cs">
+    <Compile Include="PrototypeVersions.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="PrototypeVersions.cs">
+    <Compile Include="PrototypeVersionsHistory.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="PrototypeVersionTags.cs">

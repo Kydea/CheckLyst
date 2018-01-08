@@ -323,7 +323,7 @@ namespace CheckListManager.Instances.Logic.Services
                 {
                     row.InstanceState = InstanceState.Completed;
 
-                    row.InstanceHistory.Add(new InstanceHistory
+                    row.InstancesHistory.Add(new InstancesHistory
                     {
                         Date = row.ModifiedOn.Value,
                         User = row.ModifiedBy,
@@ -362,7 +362,7 @@ namespace CheckListManager.Instances.Logic.Services
                     row.ModifiedBy = cacheObject.ModifiedBy;
                     row.InstanceState = InstanceState.Canceled;
 
-                    row.InstanceHistory.Add(new InstanceHistory
+                    row.InstancesHistory.Add(new InstancesHistory
                     {
                         Date = row.ModifiedOn.Value,
                         User = row.ModifiedBy,

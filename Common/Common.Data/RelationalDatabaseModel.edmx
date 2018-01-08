@@ -14,17 +14,6 @@
           <Property Name="Code" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Value" Type="text" Nullable="false" />
         </EntityType>
-        <EntityType Name="InstanceHistory">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="int8" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Instance" Type="int8" Nullable="false" />
-          <Property Name="Date" Type="timestamptz" Precision="7" Nullable="false" />
-          <Property Name="State" Type="varchar" MaxLength="100" Nullable="false" />
-          <Property Name="User" Type="varchar" MaxLength="60" Nullable="false" />
-          <Property Name="WorkFlowApplication" Type="int8" />
-        </EntityType>
         <EntityType Name="InstanceNumerators">
           <Key>
             <PropertyRef Name="Prototype" />
@@ -55,6 +44,17 @@
           <Property Name="ModifiedBy" Type="varchar" MaxLength="60" />
           <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
           <Property Name="Company" Type="int8" Nullable="false" />
+        </EntityType>
+        <EntityType Name="InstancesHistory">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int8" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Instance" Type="int8" Nullable="false" />
+          <Property Name="Date" Type="timestamptz" Precision="7" Nullable="false" />
+          <Property Name="State" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="User" Type="varchar" MaxLength="60" Nullable="false" />
+          <Property Name="WorkFlowApplication" Type="int8" />
         </EntityType>
         <EntityType Name="InstanceStates">
           <Key>
@@ -101,18 +101,6 @@
           <Property Name="ModifiedBy" Type="varchar" MaxLength="60" />
           <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
         </EntityType>
-        <EntityType Name="PrototypeVersionHistory">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="int8" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Prototype" Type="int8" Nullable="false" />
-          <Property Name="Version" Type="int4" Nullable="false" />
-          <Property Name="Date" Type="timestamptz" Precision="7" Nullable="false" />
-          <Property Name="State" Type="varchar" MaxLength="100" Nullable="false" />
-          <Property Name="User" Type="varchar" MaxLength="60" Nullable="false" />
-          <Property Name="WorkFlowApplication" Type="int8" />
-        </EntityType>
         <EntityType Name="PrototypeVersions">
           <Key>
             <PropertyRef Name="Prototype" />
@@ -132,6 +120,18 @@
           <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
           <Property Name="ModifiedBy" Type="varchar" MaxLength="60" />
           <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
+        </EntityType>
+        <EntityType Name="PrototypeVersionsHistory">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int8" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Prototype" Type="int8" Nullable="false" />
+          <Property Name="Version" Type="int4" Nullable="false" />
+          <Property Name="Date" Type="timestamptz" Precision="7" Nullable="false" />
+          <Property Name="State" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="User" Type="varchar" MaxLength="60" Nullable="false" />
+          <Property Name="WorkFlowApplication" Type="int8" />
         </EntityType>
         <EntityType Name="PrototypeVersionTags">
           <Key>
@@ -541,32 +541,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="InstanceHistory_Instance_fkey">
-          <End Role="Instances" Type="Self.Instances" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="InstanceHistory" Type="Self.InstanceHistory" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Instances">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="InstanceHistory">
-              <PropertyRef Name="Instance" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="InstanceHistory_WorkFlowApplication_fkey">
-          <End Role="WorkFlowApplications" Type="Self.WorkFlowApplications" Multiplicity="0..1" />
-          <End Role="InstanceHistory" Type="Self.InstanceHistory" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="WorkFlowApplications">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="InstanceHistory">
-              <PropertyRef Name="WorkFlowApplication" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="Instances_Company_fkey">
           <End Role="Companies" Type="Self.Companies" Multiplicity="1" />
           <End Role="Instances" Type="Self.Instances" Multiplicity="*" />
@@ -600,6 +574,32 @@
             </Principal>
             <Dependent Role="Instances">
               <PropertyRef Name="Prototype" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="InstancesHistory_Instance_fkey">
+          <End Role="Instances" Type="Self.Instances" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="InstancesHistory" Type="Self.InstancesHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Instances">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="InstancesHistory">
+              <PropertyRef Name="Instance" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="InstancesHistory_WorkFlowApplication_fkey">
+          <End Role="WorkFlowApplications" Type="Self.WorkFlowApplications" Multiplicity="0..1" />
+          <End Role="InstancesHistory" Type="Self.InstancesHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="WorkFlowApplications">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="InstancesHistory">
+              <PropertyRef Name="WorkFlowApplication" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -719,34 +719,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="PrototypeVersionHistory_PrototypeVersion">
-          <End Role="PrototypeVersions" Type="Self.PrototypeVersions" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="PrototypeVersionHistory" Type="Self.PrototypeVersionHistory" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="PrototypeVersions">
-              <PropertyRef Name="Prototype" />
-              <PropertyRef Name="Version" />
-            </Principal>
-            <Dependent Role="PrototypeVersionHistory">
-              <PropertyRef Name="Prototype" />
-              <PropertyRef Name="Version" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="PrototypeVersionHistory_WorkFlowApplication_fkey">
-          <End Role="WorkFlowApplications" Type="Self.WorkFlowApplications" Multiplicity="0..1" />
-          <End Role="PrototypeVersionHistory" Type="Self.PrototypeVersionHistory" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="WorkFlowApplications">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="PrototypeVersionHistory">
-              <PropertyRef Name="WorkFlowApplication" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="PrototypeVersions_InstanceConfirmationWorkFlow_fkey">
           <End Role="WorkFlows" Type="Self.WorkFlows" Multiplicity="0..1" />
           <End Role="PrototypeVersions" Type="Self.PrototypeVersions" Multiplicity="*" />
@@ -792,6 +764,34 @@
             </Principal>
             <Dependent Role="PrototypeVersions">
               <PropertyRef Name="VersionState" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PrototypeVersionsHistory_PrototypeVersion">
+          <End Role="PrototypeVersions" Type="Self.PrototypeVersions" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="PrototypeVersionsHistory" Type="Self.PrototypeVersionsHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PrototypeVersions">
+              <PropertyRef Name="Prototype" />
+              <PropertyRef Name="Version" />
+            </Principal>
+            <Dependent Role="PrototypeVersionsHistory">
+              <PropertyRef Name="Prototype" />
+              <PropertyRef Name="Version" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PrototypeVersionsHistory_WorkFlowApplication_fkey">
+          <End Role="WorkFlowApplications" Type="Self.WorkFlowApplications" Multiplicity="0..1" />
+          <End Role="PrototypeVersionsHistory" Type="Self.PrototypeVersionsHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="WorkFlowApplications">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="PrototypeVersionsHistory">
+              <PropertyRef Name="WorkFlowApplication" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1063,15 +1063,15 @@
         </Association>
         <EntityContainer Name="RelationalDatabaseModelStoreContainer">
           <EntitySet Name="InstanceExpressionValues" EntityType="Self.InstanceExpressionValues" Schema="CheckLists" store:Type="Tables" />
-          <EntitySet Name="InstanceHistory" EntityType="Self.InstanceHistory" Schema="CheckLists" store:Type="Tables" />
           <EntitySet Name="InstanceNumerators" EntityType="Self.InstanceNumerators" Schema="CheckLists" store:Type="Tables" />
           <EntitySet Name="Instances" EntityType="Self.Instances" Schema="CheckLists" store:Type="Tables" />
+          <EntitySet Name="InstancesHistory" EntityType="Self.InstancesHistory" Schema="CheckLists" store:Type="Tables" />
           <EntitySet Name="InstanceStates" EntityType="Self.InstanceStates" Schema="CheckLists" store:Type="Tables" />
           <EntitySet Name="InstanceTags" EntityType="Self.InstanceTags" Schema="CheckLists" store:Type="Tables" />
           <EntitySet Name="Prototypes" EntityType="Self.Prototypes" Schema="CheckLists" store:Type="Tables" />
           <EntitySet Name="PrototypeTypes" EntityType="Self.PrototypeTypes" Schema="CheckLists" store:Type="Tables" />
-          <EntitySet Name="PrototypeVersionHistory" EntityType="Self.PrototypeVersionHistory" Schema="CheckLists" store:Type="Tables" />
           <EntitySet Name="PrototypeVersions" EntityType="Self.PrototypeVersions" Schema="CheckLists" store:Type="Tables" />
+          <EntitySet Name="PrototypeVersionsHistory" EntityType="Self.PrototypeVersionsHistory" Schema="CheckLists" store:Type="Tables" />
           <EntitySet Name="PrototypeVersionTags" EntityType="Self.PrototypeVersionTags" Schema="CheckLists" store:Type="Tables" />
           <EntitySet Name="VersionStates" EntityType="Self.VersionStates" Schema="CheckLists" store:Type="Tables" />
           <EntitySet Name="Configurations" EntityType="Self.Configurations" Schema="Configuration" store:Type="Tables" />
@@ -1133,14 +1133,6 @@
             <End Role="Instances" EntitySet="Instances" />
             <End Role="InstanceExpressionValues" EntitySet="InstanceExpressionValues" />
           </AssociationSet>
-          <AssociationSet Name="InstanceHistory_Instance_fkey" Association="Self.InstanceHistory_Instance_fkey">
-            <End Role="Instances" EntitySet="Instances" />
-            <End Role="InstanceHistory" EntitySet="InstanceHistory" />
-          </AssociationSet>
-          <AssociationSet Name="InstanceHistory_WorkFlowApplication_fkey" Association="Self.InstanceHistory_WorkFlowApplication_fkey">
-            <End Role="WorkFlowApplications" EntitySet="WorkFlowApplications" />
-            <End Role="InstanceHistory" EntitySet="InstanceHistory" />
-          </AssociationSet>
           <AssociationSet Name="Instances_Company_fkey" Association="Self.Instances_Company_fkey">
             <End Role="Companies" EntitySet="Companies" />
             <End Role="Instances" EntitySet="Instances" />
@@ -1152,6 +1144,14 @@
           <AssociationSet Name="Instances_Prototype_fkey" Association="Self.Instances_Prototype_fkey">
             <End Role="Prototypes" EntitySet="Prototypes" />
             <End Role="Instances" EntitySet="Instances" />
+          </AssociationSet>
+          <AssociationSet Name="InstancesHistory_Instance_fkey" Association="Self.InstancesHistory_Instance_fkey">
+            <End Role="Instances" EntitySet="Instances" />
+            <End Role="InstancesHistory" EntitySet="InstancesHistory" />
+          </AssociationSet>
+          <AssociationSet Name="InstancesHistory_WorkFlowApplication_fkey" Association="Self.InstancesHistory_WorkFlowApplication_fkey">
+            <End Role="WorkFlowApplications" EntitySet="WorkFlowApplications" />
+            <End Role="InstancesHistory" EntitySet="InstancesHistory" />
           </AssociationSet>
           <AssociationSet Name="PasswordHistory_User" Association="Self.PasswordHistory_User">
             <End Role="Users" EntitySet="Users" />
@@ -1189,14 +1189,6 @@
             <End Role="WorkFlows" EntitySet="WorkFlows" />
             <End Role="PrototypeTypes" EntitySet="PrototypeTypes" />
           </AssociationSet>
-          <AssociationSet Name="PrototypeVersionHistory_PrototypeVersion" Association="Self.PrototypeVersionHistory_PrototypeVersion">
-            <End Role="PrototypeVersions" EntitySet="PrototypeVersions" />
-            <End Role="PrototypeVersionHistory" EntitySet="PrototypeVersionHistory" />
-          </AssociationSet>
-          <AssociationSet Name="PrototypeVersionHistory_WorkFlowApplication_fkey" Association="Self.PrototypeVersionHistory_WorkFlowApplication_fkey">
-            <End Role="WorkFlowApplications" EntitySet="WorkFlowApplications" />
-            <End Role="PrototypeVersionHistory" EntitySet="PrototypeVersionHistory" />
-          </AssociationSet>
           <AssociationSet Name="PrototypeVersions_InstanceConfirmationWorkFlow_fkey" Association="Self.PrototypeVersions_InstanceConfirmationWorkFlow_fkey">
             <End Role="WorkFlows" EntitySet="WorkFlows" />
             <End Role="PrototypeVersions" EntitySet="PrototypeVersions" />
@@ -1212,6 +1204,14 @@
           <AssociationSet Name="PrototypeVersions_VersionState_fkey" Association="Self.PrototypeVersions_VersionState_fkey">
             <End Role="VersionStates" EntitySet="VersionStates" />
             <End Role="PrototypeVersions" EntitySet="PrototypeVersions" />
+          </AssociationSet>
+          <AssociationSet Name="PrototypeVersionsHistory_PrototypeVersion" Association="Self.PrototypeVersionsHistory_PrototypeVersion">
+            <End Role="PrototypeVersions" EntitySet="PrototypeVersions" />
+            <End Role="PrototypeVersionsHistory" EntitySet="PrototypeVersionsHistory" />
+          </AssociationSet>
+          <AssociationSet Name="PrototypeVersionsHistory_WorkFlowApplication_fkey" Association="Self.PrototypeVersionsHistory_WorkFlowApplication_fkey">
+            <End Role="WorkFlowApplications" EntitySet="WorkFlowApplications" />
+            <End Role="PrototypeVersionsHistory" EntitySet="PrototypeVersionsHistory" />
           </AssociationSet>
           <AssociationSet Name="Records_Action_fkey" Association="Self.Records_Action_fkey">
             <End Role="Actions" EntitySet="Actions" />
@@ -1614,23 +1614,23 @@
             <End Role="Instances" EntitySet="Instances" />
             <End Role="WorkFlowApplications" EntitySet="WorkFlowApplications" />
           </AssociationSet>
-          <EntitySet Name="InstanceHistory" EntityType="RelationalDatabaseModel.InstanceHistory" />
-          <EntitySet Name="PrototypeVersionHistory" EntityType="RelationalDatabaseModel.PrototypeVersionHistory" />
-          <AssociationSet Name="InstanceHistory_Instance_fkey" Association="RelationalDatabaseModel.InstanceHistory_Instance_fkey">
+          <EntitySet Name="InstancesHistory" EntityType="RelationalDatabaseModel.InstancesHistory" />
+          <EntitySet Name="PrototypeVersionsHistory" EntityType="RelationalDatabaseModel.PrototypeVersionsHistory" />
+          <AssociationSet Name="InstancesHistory_Instance_fkey" Association="RelationalDatabaseModel.InstancesHistory_Instance_fkey">
             <End Role="Instances" EntitySet="Instances" />
-            <End Role="InstanceHistory" EntitySet="InstanceHistory" />
+            <End Role="InstancesHistory" EntitySet="InstancesHistory" />
           </AssociationSet>
-          <AssociationSet Name="InstanceHistory_WorkFlowApplication_fkey" Association="RelationalDatabaseModel.InstanceHistory_WorkFlowApplication_fkey">
+          <AssociationSet Name="InstancesHistory_WorkFlowApplication_fkey" Association="RelationalDatabaseModel.InstancesHistory_WorkFlowApplication_fkey">
             <End Role="WorkFlowApplications" EntitySet="WorkFlowApplications" />
-            <End Role="InstanceHistory" EntitySet="InstanceHistory" />
+            <End Role="InstancesHistory" EntitySet="InstancesHistory" />
           </AssociationSet>
-          <AssociationSet Name="PrototypeVersionHistory_PrototypeVersion" Association="RelationalDatabaseModel.PrototypeVersionHistory_PrototypeVersion">
+          <AssociationSet Name="PrototypeVersionsHistory_PrototypeVersion" Association="RelationalDatabaseModel.PrototypeVersionsHistory_PrototypeVersion">
             <End Role="PrototypeVersions" EntitySet="PrototypeVersions" />
-            <End Role="PrototypeVersionHistory" EntitySet="PrototypeVersionHistory" />
+            <End Role="PrototypeVersionsHistory" EntitySet="PrototypeVersionsHistory" />
           </AssociationSet>
-          <AssociationSet Name="PrototypeVersionHistory_WorkFlowApplication_fkey" Association="RelationalDatabaseModel.PrototypeVersionHistory_WorkFlowApplication_fkey">
+          <AssociationSet Name="PrototypeVersionsHistory_WorkFlowApplication_fkey" Association="RelationalDatabaseModel.PrototypeVersionsHistory_WorkFlowApplication_fkey">
             <End Role="WorkFlowApplications" EntitySet="WorkFlowApplications" />
-            <End Role="PrototypeVersionHistory" EntitySet="PrototypeVersionHistory" />
+            <End Role="PrototypeVersionsHistory" EntitySet="PrototypeVersionsHistory" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="TimeZones">
@@ -1761,7 +1761,7 @@
           <NavigationProperty Name="Prototypes" Relationship="RelationalDatabaseModel.PrototypeVersions_Prototype_fkey" FromRole="PrototypeVersions" ToRole="Prototypes" />
           <NavigationProperty Name="WorkFlowApplications" Relationship="RelationalDatabaseModel.WorkFlowApplications_PrototypeVersion" FromRole="PrototypeVersions" ToRole="WorkFlowApplications" />
           <NavigationProperty Name="Instances" Relationship="RelationalDatabaseModel.FK_Instances_PrototypeVersions" FromRole="PrototypeVersions" ToRole="Instances" />
-          <NavigationProperty Name="PrototypeVersionHistory" Relationship="RelationalDatabaseModel.PrototypeVersionHistory_PrototypeVersion" FromRole="PrototypeVersions" ToRole="PrototypeVersionHistory" />
+          <NavigationProperty Name="PrototypeVersionsHistory" Relationship="RelationalDatabaseModel.PrototypeVersionsHistory_PrototypeVersion" FromRole="PrototypeVersions" ToRole="PrototypeVersionsHistory" />
         </EntityType>
         <EntityType Name="PrototypeVersionTags">
           <Key>
@@ -2188,8 +2188,8 @@
           <NavigationProperty Name="WorkFlowApplicationSteps" Relationship="RelationalDatabaseModel.WorkFlowApplicationSteps_WorkFlowApplication_fkey" FromRole="WorkFlowApplications" ToRole="WorkFlowApplicationSteps" />
           <NavigationProperty Name="PrototypeVersions" Relationship="RelationalDatabaseModel.WorkFlowApplications_PrototypeVersion" FromRole="WorkFlowApplications" ToRole="PrototypeVersions" />
           <NavigationProperty Name="Instances" Relationship="RelationalDatabaseModel.WorkFlowApplications_Instance" FromRole="WorkFlowApplications" ToRole="Instances" />
-          <NavigationProperty Name="InstanceHistory" Relationship="RelationalDatabaseModel.InstanceHistory_WorkFlowApplication_fkey" FromRole="WorkFlowApplications" ToRole="InstanceHistory" />
-          <NavigationProperty Name="PrototypeVersionHistory" Relationship="RelationalDatabaseModel.PrototypeVersionHistory_WorkFlowApplication_fkey" FromRole="WorkFlowApplications" ToRole="PrototypeVersionHistory" />
+          <NavigationProperty Name="InstancesHistory" Relationship="RelationalDatabaseModel.InstancesHistory_WorkFlowApplication_fkey" FromRole="WorkFlowApplications" ToRole="InstancesHistory" />
+          <NavigationProperty Name="PrototypeVersionsHistory" Relationship="RelationalDatabaseModel.PrototypeVersionsHistory_WorkFlowApplication_fkey" FromRole="WorkFlowApplications" ToRole="PrototypeVersionsHistory" />
         </EntityType>
         <EntityType Name="WorkFlowApplicationStepTags">
           <Key>
@@ -2486,7 +2486,7 @@
           <NavigationProperty Name="InstanceStates" Relationship="RelationalDatabaseModel.Instances_InstanceState_fkey" FromRole="Instances" ToRole="InstanceStates" />
           <NavigationProperty Name="Prototypes" Relationship="RelationalDatabaseModel.Instances_Prototype_fkey" FromRole="Instances" ToRole="Prototypes" />
           <NavigationProperty Name="WorkFlowApplications" Relationship="RelationalDatabaseModel.WorkFlowApplications_Instance" FromRole="Instances" ToRole="WorkFlowApplications" />
-          <NavigationProperty Name="InstanceHistory" Relationship="RelationalDatabaseModel.InstanceHistory_Instance_fkey" FromRole="Instances" ToRole="InstanceHistory" />
+          <NavigationProperty Name="InstancesHistory" Relationship="RelationalDatabaseModel.InstancesHistory_Instance_fkey" FromRole="Instances" ToRole="InstancesHistory" />
         </EntityType>
         <Association Name="InstanceExpressionValues_Instance_fkey">
           <End Type="RelationalDatabaseModel.Instances" Role="Instances" Multiplicity="1" />
@@ -2596,83 +2596,83 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="InstanceHistory">
+        <EntityType Name="InstancesHistory">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="ID" />
           </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Instance" Type="Int64" Nullable="false" />
           <Property Name="Date" Type="DateTimeOffset" Nullable="false" Precision="7" />
           <Property Name="State" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="User" Type="String" Nullable="false" MaxLength="60" FixedLength="false" Unicode="true" />
           <Property Name="WorkFlowApplication" Type="Int64" />
-          <NavigationProperty Name="Instances" Relationship="RelationalDatabaseModel.InstanceHistory_Instance_fkey" FromRole="InstanceHistory" ToRole="Instances" />
-          <NavigationProperty Name="WorkFlowApplications" Relationship="RelationalDatabaseModel.InstanceHistory_WorkFlowApplication_fkey" FromRole="InstanceHistory" ToRole="WorkFlowApplications" />
+          <NavigationProperty Name="Instances" Relationship="RelationalDatabaseModel.InstancesHistory_Instance_fkey" FromRole="InstancesHistory" ToRole="Instances" />
+          <NavigationProperty Name="WorkFlowApplications" Relationship="RelationalDatabaseModel.InstancesHistory_WorkFlowApplication_fkey" FromRole="InstancesHistory" ToRole="WorkFlowApplications" />
         </EntityType>
-        <EntityType Name="PrototypeVersionHistory">
+        <EntityType Name="PrototypeVersionsHistory">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="ID" />
           </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Prototype" Type="Int64" Nullable="false" />
           <Property Name="Version" Type="Int32" Nullable="false" />
           <Property Name="Date" Type="DateTimeOffset" Nullable="false" Precision="7" />
           <Property Name="State" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="User" Type="String" Nullable="false" MaxLength="60" FixedLength="false" Unicode="true" />
           <Property Name="WorkFlowApplication" Type="Int64" />
-          <NavigationProperty Name="PrototypeVersions" Relationship="RelationalDatabaseModel.PrototypeVersionHistory_PrototypeVersion" FromRole="PrototypeVersionHistory" ToRole="PrototypeVersions" />
-          <NavigationProperty Name="WorkFlowApplications" Relationship="RelationalDatabaseModel.PrototypeVersionHistory_WorkFlowApplication_fkey" FromRole="PrototypeVersionHistory" ToRole="WorkFlowApplications" />
+          <NavigationProperty Name="PrototypeVersions" Relationship="RelationalDatabaseModel.PrototypeVersionsHistory_PrototypeVersion" FromRole="PrototypeVersionsHistory" ToRole="PrototypeVersions" />
+          <NavigationProperty Name="WorkFlowApplications" Relationship="RelationalDatabaseModel.PrototypeVersionsHistory_WorkFlowApplication_fkey" FromRole="PrototypeVersionsHistory" ToRole="WorkFlowApplications" />
         </EntityType>
-        <Association Name="InstanceHistory_Instance_fkey">
+        <Association Name="InstancesHistory_Instance_fkey">
           <End Type="RelationalDatabaseModel.Instances" Role="Instances" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
-          <End Type="RelationalDatabaseModel.InstanceHistory" Role="InstanceHistory" Multiplicity="*" />
+          <End Type="RelationalDatabaseModel.InstancesHistory" Role="InstancesHistory" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Instances">
               <PropertyRef Name="ID" />
             </Principal>
-            <Dependent Role="InstanceHistory">
+            <Dependent Role="InstancesHistory">
               <PropertyRef Name="Instance" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="InstanceHistory_WorkFlowApplication_fkey">
+        <Association Name="InstancesHistory_WorkFlowApplication_fkey">
           <End Type="RelationalDatabaseModel.WorkFlowApplications" Role="WorkFlowApplications" Multiplicity="0..1" />
-          <End Type="RelationalDatabaseModel.InstanceHistory" Role="InstanceHistory" Multiplicity="*" />
+          <End Type="RelationalDatabaseModel.InstancesHistory" Role="InstancesHistory" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="WorkFlowApplications">
               <PropertyRef Name="ID" />
             </Principal>
-            <Dependent Role="InstanceHistory">
+            <Dependent Role="InstancesHistory">
               <PropertyRef Name="WorkFlowApplication" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="PrototypeVersionHistory_PrototypeVersion">
+        <Association Name="PrototypeVersionsHistory_PrototypeVersion">
           <End Type="RelationalDatabaseModel.PrototypeVersions" Role="PrototypeVersions" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
-          <End Type="RelationalDatabaseModel.PrototypeVersionHistory" Role="PrototypeVersionHistory" Multiplicity="*" />
+          <End Type="RelationalDatabaseModel.PrototypeVersionsHistory" Role="PrototypeVersionsHistory" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="PrototypeVersions">
               <PropertyRef Name="Prototype" />
               <PropertyRef Name="Version" />
             </Principal>
-            <Dependent Role="PrototypeVersionHistory">
+            <Dependent Role="PrototypeVersionsHistory">
               <PropertyRef Name="Prototype" />
               <PropertyRef Name="Version" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="PrototypeVersionHistory_WorkFlowApplication_fkey">
+        <Association Name="PrototypeVersionsHistory_WorkFlowApplication_fkey">
           <End Type="RelationalDatabaseModel.WorkFlowApplications" Role="WorkFlowApplications" Multiplicity="0..1" />
-          <End Type="RelationalDatabaseModel.PrototypeVersionHistory" Role="PrototypeVersionHistory" Multiplicity="*" />
+          <End Type="RelationalDatabaseModel.PrototypeVersionsHistory" Role="PrototypeVersionsHistory" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="WorkFlowApplications">
               <PropertyRef Name="ID" />
             </Principal>
-            <Dependent Role="PrototypeVersionHistory">
+            <Dependent Role="PrototypeVersionsHistory">
               <PropertyRef Name="WorkFlowApplication" />
             </Dependent>
           </ReferentialConstraint>
@@ -3091,28 +3091,28 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="InstanceHistory">
-            <EntityTypeMapping TypeName="RelationalDatabaseModel.InstanceHistory">
-              <MappingFragment StoreEntitySet="InstanceHistory">
+          <EntitySetMapping Name="InstancesHistory">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.InstancesHistory">
+              <MappingFragment StoreEntitySet="InstancesHistory">
                 <ScalarProperty Name="WorkFlowApplication" ColumnName="WorkFlowApplication" />
                 <ScalarProperty Name="User" ColumnName="User" />
                 <ScalarProperty Name="State" ColumnName="State" />
                 <ScalarProperty Name="Date" ColumnName="Date" />
                 <ScalarProperty Name="Instance" ColumnName="Instance" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="PrototypeVersionHistory">
-            <EntityTypeMapping TypeName="RelationalDatabaseModel.PrototypeVersionHistory">
-              <MappingFragment StoreEntitySet="PrototypeVersionHistory">
+          <EntitySetMapping Name="PrototypeVersionsHistory">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.PrototypeVersionsHistory">
+              <MappingFragment StoreEntitySet="PrototypeVersionsHistory">
                 <ScalarProperty Name="WorkFlowApplication" ColumnName="WorkFlowApplication" />
                 <ScalarProperty Name="User" ColumnName="User" />
                 <ScalarProperty Name="State" ColumnName="State" />
                 <ScalarProperty Name="Date" ColumnName="Date" />
                 <ScalarProperty Name="Version" ColumnName="Version" />
                 <ScalarProperty Name="Prototype" ColumnName="Prototype" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

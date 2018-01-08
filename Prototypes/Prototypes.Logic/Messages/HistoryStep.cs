@@ -1,0 +1,15 @@
+using CheckListManager.Prototypes.Logic.Models.CheckLists;
+using System;
+
+namespace CheckListManager.Prototypes.Logic.Messages
+{
+	public class HistoryStep
+	{
+		public long ID { get; set; }
+        public int Step { get; set; }
+        public string User { get; set; }
+        public string Comment { get; set; }
+        public DateTimeOffset? Date { get; set; }
+        public bool? Approved { get; set; }
+    }
+}

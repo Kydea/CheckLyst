@@ -56,7 +56,7 @@
 				submitForObsolescence = $("a.SubmitForObsolescence", buttonGroup).addClass("Hidden"),
 				obsoleteButton = $("a.Obsolete", buttonGroup).addClass("Hidden"),
 				saveButton = $("a.Save", buttonGroup).addClass("Hidden"),
-				historyButton = $("a.History", buttonGroup).addClass("Hidden"); //.toggle(model.version > 0);
+				historyButton = $("a.History", buttonGroup).toggle(model.version > 0);
 
 			switch (model.state) {
 				case prototypes.Prototype.states.active:
@@ -380,6 +380,8 @@
 					model.description = result.description;
 					model.department = result.department;
 					model.prototypeType = result.prototypeType;
+					model.departmentName = result.departmentName;
+					model.prototypeTypeName = result.prototypeTypeName;
 
 					if (
 						result.id >= 0
@@ -584,6 +586,46 @@
 				{ text: "save", icon: "check", handler: function () { prototype.save(handler); } },
 				{ text: "cancel", icon: "times", cancelButton: true }
 			]);
+	};
+
+	prototype.showHistory = function () {
+		$.ajax({
+			url: element.data("action") + "History",
+			type: "post",
+			data: {
+				id: prototypeKey.id,
+				version: prototypeKey.version,
+			}
+		}).done(function (result) {
+			var
+				columns = [
+					{ label: "Date", name: "date", type: "DateTimeOffset" },
+					{ label: "User", name: "user" },
+					{ label: "Approved", name: "approved", type: "Boolean", align: "center" },
+					{ label: "State", name: "state" },
+					{ label: "Proposed state", name: "proposedState" },
+					{ label: "Step", name: "step", align: "center" },
+					{ label: "Comment", name: "comment" }
+				],
+				rowRenderHandler = function (checkListGrid, rowIndex, data) {
+					checkListGrid.addRow(data, rowIndex % 2 == 0 ? "Odd" : "Even");
+					for (var subRowIndex in data.steps) {
+						var subRow = data.steps[subRowIndex];
+						checkListGrid.addRow(subRow, "SubRow");
+					}
+					return true;
+				},
+				checkListGrid = new matematici.CheckListGrid(result, null, null, columns, rowRenderHandler),
+				parameters = checkListGrid.getParameters(),
+				attributes = { type: "text", readonly: "readonly" };
+
+			parameters.append($("<label />").append($("<span />").text("Department")).append($("<i />").addClass("Icon fi flaticon-building-o")).append($("<input />").attr(attributes).val(model.departmentName)));
+			parameters.append($("<label />").append($("<span />").text("Prototype type")).append($("<i />").addClass("Icon fi flaticon-folder-o")).append($("<input />").attr(attributes).val(model.prototypeTypeName)));
+			parameters.append($("<label />").append($("<span />").text("Prototype")).append($("<i />").addClass("Icon fi flaticon-prototype")).append($("<input />").attr(attributes).val(model.name)));
+			parameters.append($("<label />").append($("<span />").text("Version")).append($("<i />").addClass("Icon fi flaticon-version")).append($("<input />").attr(attributes).val(prototypeKey.version)));
+
+			console.log(result)
+		});
 	};
 
 	prototype.update = function () {

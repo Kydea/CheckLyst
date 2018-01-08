@@ -18,8 +18,8 @@ namespace CheckListManager.Common.Data
         public WorkFlowApplications()
         {
             this.WorkFlowApplicationSteps = new HashSet<WorkFlowApplicationSteps>();
-            this.InstanceHistory = new HashSet<InstanceHistory>();
-            this.PrototypeVersionHistory = new HashSet<PrototypeVersionHistory>();
+            this.InstancesHistory = new HashSet<InstancesHistory>();
+            this.PrototypeVersionsHistory = new HashSet<PrototypeVersionsHistory>();
         }
     
         public long ID { get; set; }
@@ -42,8 +42,8 @@ namespace CheckListManager.Common.Data
         public virtual PrototypeVersions PrototypeVersions { get; set; }
         public virtual Instances Instances { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<InstanceHistory> InstanceHistory { get; set; }
+        public virtual ICollection<InstancesHistory> InstancesHistory { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<PrototypeVersionHistory> PrototypeVersionHistory { get; set; }
+        public virtual ICollection<PrototypeVersionsHistory> PrototypeVersionsHistory { get; set; }
     }
 }

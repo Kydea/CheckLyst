@@ -100,7 +100,7 @@ namespace CheckListManager.Prototypes.Data
             if (prototypeVersion.VersionState == VersionState.Draft && state == VersionState.InSimulation && !proposed)
             {
                 prototypeVersion.VersionState = state;
-                prototypeVersion.PrototypeVersionHistory.Add(new PrototypeVersionHistory
+                prototypeVersion.PrototypeVersionsHistory.Add(new PrototypeVersionsHistory
                 {
                     Prototype = prototypeVersion.Prototype,
                     Version = prototypeVersion.Version,
@@ -113,7 +113,7 @@ namespace CheckListManager.Prototypes.Data
             else if (prototypeVersion.VersionState == VersionState.InSimulation && state == VersionState.Draft && !proposed)
             {
                 prototypeVersion.VersionState = state;
-                prototypeVersion.PrototypeVersionHistory.Add(new PrototypeVersionHistory
+                prototypeVersion.PrototypeVersionsHistory.Add(new PrototypeVersionsHistory
                 {
                     Prototype = prototypeVersion.Prototype,
                     Version = prototypeVersion.Version,
@@ -140,7 +140,7 @@ namespace CheckListManager.Prototypes.Data
                 prototypeVersion.ProposedState = state;
                 prototypeVersion.ProposedDate = DateTimeOffset.Now;
 
-                prototypeVersion.PrototypeVersionHistory.Add(new PrototypeVersionHistory
+                prototypeVersion.PrototypeVersionsHistory.Add(new PrototypeVersionsHistory
                 {
                     Prototype = prototypeVersion.Prototype,
                     Version = prototypeVersion.Version,
@@ -167,7 +167,7 @@ namespace CheckListManager.Prototypes.Data
                 prototypeVersion.ProposedState = state;
                 prototypeVersion.ProposedDate = DateTimeOffset.Now;
 
-                prototypeVersion.PrototypeVersionHistory.Add(new PrototypeVersionHistory
+                prototypeVersion.PrototypeVersionsHistory.Add(new PrototypeVersionsHistory
                 {
                     Prototype = prototypeVersion.Prototype,
                     Version = prototypeVersion.Version,

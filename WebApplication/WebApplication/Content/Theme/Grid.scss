@@ -67,12 +67,16 @@ table.Grid {
                 }
             }
 
-            &:nth-child(odd) {
+            &:not(.Even):nth-child(odd), &.Odd {
                 background-color: white;
             }
 
-            &:nth-child(even) {
+            &:not(.Odd):nth-child(even), &.Even {
                 background-color: $Color-Cyan;
+            }
+
+            &.SubRow {
+                background-color: $Color-Silver-Light !important;
             }
 
             &.NoRecord {

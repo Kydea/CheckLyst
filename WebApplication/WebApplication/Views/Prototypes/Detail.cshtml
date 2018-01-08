@@ -66,6 +66,9 @@
                 }, "Icon ExpressionsList"),
 
             buttonGroup = new matematici.ButtonGroup("span.ButtonGroup")
+                .add("History", function () {
+                    prototype.showHistory();
+                }, "History")
                 .add("Preview", function () {
                     prototype.preview();
                 }, "Preview")
@@ -92,10 +95,7 @@
                 }, "Obsolete")
                 .add("Save", function () {
                     prototype.save();
-                }, "Save")
-                .add("History", function () {
-                    prototype.showHistory();
-                }, "History");
+                }, "Save");
 
         //Loads departments and prototype types
         $.ajax({
