@@ -6,10 +6,10 @@ namespace CheckListManager.DataSources.Logic.Detail
 {
     public interface IDetailService: IService
     {
-        Task<DetailResponse> AddAsync(DefaultIdentity identity, DetailRequest record);
+        Task<DetailResponse> AddAsync(IDefaultIdentity identity, DetailRequest record);
 
-        Task<DetailResponse> EditAsync(DefaultIdentity identity, DetailRequest record);
+        Task<DetailResponse> EditAsync(IDefaultIdentity identity, DetailRequest record);
 
-        Task<DetailResponse> DeleteAsync(DefaultIdentity identity, string code);
+        Task<DetailResponse> DeleteAsync(IDefaultIdentity identity, string code);
     }
 }

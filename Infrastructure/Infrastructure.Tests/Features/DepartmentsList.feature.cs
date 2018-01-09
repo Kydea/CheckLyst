@@ -73,7 +73,7 @@ namespace CheckListManager.Infrastructure.Tests.Features
 #line 9
 this.ScenarioSetup(scenarioInfo);
 #line 10
- testRunner.And("I assign \'\' as the name of the department", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.Given("I assign \'\' as the name of the department", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 11
  testRunner.When("I submit the request to add this department", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 12
@@ -93,7 +93,7 @@ this.ScenarioSetup(scenarioInfo);
 #line 15
 this.ScenarioSetup(scenarioInfo);
 #line 16
- testRunner.And("I assign \'testPrototype\' as the name of the department", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.Given("I assign \'testPrototype\' as the name of the department", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 17
  testRunner.When("I submit the request to add this department", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 18
