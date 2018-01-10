@@ -52,7 +52,7 @@ namespace CheckListManager.Instances.Logic.Services
             _configurationService = configurationService;
             _authenticationService = authenticationService;
             _workFlowService = workFlowService;
-            _queueService = _queueService;
+            _queueService = queueService;
         }
 
         public async Task<InstanceCacheObject> GetAsync(IDefaultIdentity identity, string code)
