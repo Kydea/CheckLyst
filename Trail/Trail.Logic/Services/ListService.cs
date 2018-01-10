@@ -14,6 +14,7 @@ namespace CheckListManager.Trail.Logic.Services
         {
             _trailRepository = trailRepository;
         }
+
         public async Task<List<TrailMessage>> GetDataAsync(long companyId, ListRequest form)
             =>
                 await _trailRepository.GetRecordsAsync(
@@ -30,7 +31,7 @@ namespace CheckListManager.Trail.Logic.Services
                     r =>
                         r.Company == companyId
                         && (form.From == null || r.Date >= form.From)
-                        && (form.To == null || r.Date <= form.To)
+                        && (form.To == null || r.Date <= form.WholeTo)
                         && (form.User == string.Empty || r.User != null && r.User.ToUpper().Contains(form.User.ToUpper()))
                         && (form.CheckList == string.Empty || r.CheckList != null && r.CheckList.ToUpper().Contains(form.CheckList.ToUpper()))
                         && (form.Action == string.Empty || r.Action != null && r.Action.ToUpper().Contains(form.Action.ToUpper()))
@@ -55,7 +56,7 @@ namespace CheckListManager.Trail.Logic.Services
                     p =>
                         p.Company == companyId
                         && (form.Data.From == null || p.Date >= form.Data.From)
-                        && (form.Data.To == null || p.Date <= form.Data.To)
+                        && (form.Data.To == null || p.Date <= form.Data.WholeTo)
                         && (form.Data.User == string.Empty || p.User != null && p.User.ToUpper().Contains(form.Data.User.ToUpper()))
                         && (form.Data.CheckList == string.Empty || p.CheckList != null && p.CheckList.ToUpper().Contains(form.Data.CheckList.ToUpper()))
                         && (form.Data.Action == string.Empty || p.Action != null && p.Action.ToUpper().Contains(form.Data.Action.ToUpper()))

@@ -16,5 +16,6 @@ namespace CheckListManager.Instances.Data
 		Task<int> GetInstanceNumberAsync(long prototype, int version, int year);
 	    Task<List<Common.Data.Instances>> GetInstancesWithExpressions(string state = null);
         void DeleteInstance(Common.Data.Instances instance);
+        void SaveChildren(Common.Data.Instances instance, IEnumerable<InstanceTags> instanceTags, IEnumerable<InstanceExpressionValues> instanceExpressionValues);
     }
 }

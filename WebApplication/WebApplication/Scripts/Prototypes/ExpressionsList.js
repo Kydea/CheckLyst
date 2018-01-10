@@ -18,7 +18,8 @@
         	    currentIndex = index;
         	    var used = false;
 				if (currentIndex != null) {
-					used = model.expressionsInUse && model.expressionsInUse.includes(list[currentIndex].code);
+					var code = list[currentIndex].code;
+					used = code && code != '' && model.expressionsInUse && model.expressionsInUse.includes(code);
 
         	        body.children().eq(currentIndex).addClass("Selected").removeClass("Handler")
                         .children((used ? ":not(:nth-child(2))" : "") + ":not(:first-child):not(:last-child):not(:nth-last-child(2))").attr("contenteditable", true).eq(0).focus();

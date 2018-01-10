@@ -181,6 +181,9 @@ namespace CheckListManager.Instances.Logic.Services
                     ((Page)cacheObject.Instance.Pages[0]).Lock = new Lock(identity.Code);
                 cacheObject.IsDirty = false;
 
+                _instancesRepository.SaveChildren(row, CreateTags(cacheObject), CreateExpressionValues(cacheObject));
+                await _instancesRepository.SaveChangesAsync();
+
                 await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
 
                 if (!cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation))
@@ -218,7 +221,7 @@ namespace CheckListManager.Instances.Logic.Services
                 if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
                     throw new InstanceException("Access denied");
 
-                await SaveAsync(cacheObject, identity, false, false);
+                await SaveAsync(cacheObject, identity, false, false, false);
             }
             catch (InstanceException)
             {
@@ -248,7 +251,7 @@ namespace CheckListManager.Instances.Logic.Services
                 if (UnvalidItems.Any())
                     throw new InstanceException($"The following items are not valid: {string.Join(", ", UnvalidItems.Select(i => i.Id.ToString()))}");
 
-                cacheObject = await SaveAsync(cacheObject, identity, true, true);
+                cacheObject = await SaveAsync(cacheObject, identity, true, true, false);
                 cacheObject.Instance.UpdateReadOnly(identity.Code, InstanceState.Completed);
 
                 if (!cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation))
@@ -324,7 +327,7 @@ namespace CheckListManager.Instances.Logic.Services
                         await _instanceCache.RemoveAsync(cacheObject.Code);
                         break;
                     case InstanceState.Progress:
-                        await SaveAsync(cacheObject, identity, true, false);
+                        await SaveAsync(cacheObject, identity, true, false, false);
                         break;
                     default:
                         throw new InstanceException("Invalid state: " + cacheObject.InstanceState);
@@ -341,17 +344,46 @@ namespace CheckListManager.Instances.Logic.Services
             }
         }
 
-        private async Task<InstanceCacheObject> SaveAsync(InstanceCacheObject cacheObject, IDefaultIdentity identity, bool close, bool complete)
+        private void AddTags(Dictionary<string, InstanceTags> Tags, long InstanceID, ICheckListGroup Group)
+        {
+            if (Group != null)
+                foreach (var Item in Group.Items)
+                    if (Item is ICheckListGroup)
+                        AddTags(Tags, InstanceID, (ICheckListGroup)Item);
+                    else if (!string.IsNullOrWhiteSpace(Item.Description) && (Item.TypeName == "Field" || Item.TypeName == "Signature") && !Tags.ContainsKey(Item.Description))
+                        Tags[Item.Description] = (new InstanceTags { Instance = InstanceID, Tag = Item.Description, Value = (Item.TypeName == "Field" ? ((Field)Item).RawValue : ((ICheckListSignature)Item).SignedBy) ?? String.Empty });
+        }
+
+        private IEnumerable<InstanceTags> CreateTags(InstanceCacheObject cacheObject)
+        {
+            var Tags = new Dictionary<string, InstanceTags>();
+            AddTags(Tags, cacheObject.Id.Value, cacheObject.Instance?.Header);
+            return Tags.Values;
+        }
+
+        private IEnumerable<InstanceExpressionValues> CreateExpressionValues(InstanceCacheObject cacheObject)
+        {
+            return cacheObject.Instance.Expressions.Where(Expression => !Expression.Value.Value.IsNull).Select(e => new InstanceExpressionValues
+            {
+                Instance = cacheObject.Id.Value,
+                Code = e.Key,
+                Value = e.Value.Value.SerializedValue
+            });
+        }
+
+        private async Task<InstanceCacheObject> SaveAsync(InstanceCacheObject cacheObject, IDefaultIdentity identity, bool close, bool complete, bool alreadyLocked)
         {
             LockObject lockObject = null;
 
             try
             {
-                lockObject = await _instanceCache.LockInstanceAsync(cacheObject.Code);
-                if (!lockObject.IsAcquired)
-                    throw new InstanceException("Impossible to obtain the lock");
-
-                cacheObject = await _instanceCache.GetAsync(cacheObject.Code);
+                if (!alreadyLocked)
+                {
+                    lockObject = await _instanceCache.LockInstanceAsync(cacheObject.Code);
+                    if (!lockObject.IsAcquired)
+                        throw new InstanceException("Instance is currently being updated by another user");
+                    cacheObject = await _instanceCache.GetAsync(cacheObject.Code);
+                }
 
                 var row = await _instancesRepository.GetByCodeAsync(cacheObject.CompanyId, cacheObject.Code);
                 if (row == null)
@@ -362,6 +394,9 @@ namespace CheckListManager.Instances.Logic.Services
                 row.Description = cacheObject.Instance.Description;
                 row.ModifiedOn = cacheObject.ModifiedOn;
                 row.ModifiedBy = cacheObject.ModifiedBy;
+
+                _instancesRepository.SaveChildren(row, CreateTags(cacheObject), CreateExpressionValues(cacheObject));
+
                 if (complete)
                 {
                     long? WorkFlowApplicationId = null;
@@ -426,8 +461,6 @@ namespace CheckListManager.Instances.Logic.Services
                         User = row.ModifiedBy,
                         State = row.InstanceState
                     });
-
-                    //TODO trail with the note
                 }
                 else
                     _instancesRepository.DeleteInstance(row);
@@ -454,7 +487,7 @@ namespace CheckListManager.Instances.Logic.Services
                     //Lock and reload the data to be sure it's the most recent one
                     lockObject = await _instanceCache.LockInstanceAsync(request.Code);
                     if (!lockObject.IsAcquired)
-                        throw new InstanceException("Instance is being updated by another user");
+                        throw new InstanceException("Instance is currently being updated by another user");
                 }
 
                 cacheObject = await _instanceCache.GetAsync(request.Code);
@@ -683,6 +716,8 @@ namespace CheckListManager.Instances.Logic.Services
                 throw new InstanceException($"The signature must be applied by an user with level {signature.SignatureLevel}");
 
             signature.Sign(identity.Code, identity.Description, DateTimeOffset.UtcNow);
+            if (cacheObject.InstanceState == InstanceState.Progress)
+                await SaveAsync(cacheObject, identity, false, false, true);
             await Update(cacheObject, request.Username);
 
             if (!cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation))
@@ -729,6 +764,8 @@ namespace CheckListManager.Instances.Logic.Services
                 throw new InstanceException($"The signature can be canceled by an user with function Unsign and level {signature.SignatureLevel}");
 
             signature.Unsign(identity.Code, identity.Description, DateTimeOffset.UtcNow, request.Note, cacheObject.InstanceState);
+            if (cacheObject.InstanceState == InstanceState.Progress)
+                await SaveAsync(cacheObject, identity, false, false, true);
             await Update(cacheObject, request.Username);
 
             if (!cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation))
@@ -759,8 +796,6 @@ namespace CheckListManager.Instances.Logic.Services
             page.Lock = new Lock(userCode);
 
             await Update(cacheObject, userCode);
-
-            //TODO: add audit
         }
 
         private async Task HandleSkipCountDown(InstanceCacheObject cacheObject, string userCode, int? itemId)

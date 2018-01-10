@@ -14,7 +14,7 @@
 			renderValues();
 		},
 
-		addRow = function (row, cssClass) {
+		addRow = function (row, cssClass, rowIndex) {
 			var tr = $("<tr />").data("row", row).appendTo(body).toggleClass("Handler", !!handler);
 			if (cssClass) tr.addClass(cssClass);
 			for (var columnIndex in columns) {
@@ -75,7 +75,7 @@
 					for (var rowIndex in values) {
 						var row = values[rowIndex];
 						if (!rowRenderHandler || !rowRenderHandler(checkListGrid, rowIndex, row))
-							addRow(row);
+							addRow(row, null, rowIndex);
 					}
 				} else {
 					var row = values[0];

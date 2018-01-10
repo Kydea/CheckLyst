@@ -21,7 +21,12 @@ values
 	('Prototype deleted'),
 	('Prototype state changed'),
 	('Prototype state change proposed'),
-	('Prototype signature issued');
+	('Prototype signature issued'),
+
+	('Instance created'),
+    ('Instance state changed'),
+    ('Instance signature issued'),
+    ('Instance signature canceled');
 
 create table "Trail"."Records"
 (

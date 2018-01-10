@@ -119,5 +119,14 @@ namespace CheckListManager.Instances.Data
             Entities.Instances.Remove(instance);
         }
 
+        public void SaveChildren(Common.Data.Instances instance, IEnumerable<InstanceTags> instanceTags, IEnumerable<InstanceExpressionValues> instanceExpressionValues)
+        {
+            Entities.InstanceTags.RemoveRange(Entities.InstanceTags.Where(x => x.Instance == instance.ID));
+            Entities.InstanceTags.AddRange(instanceTags);
+
+            Entities.InstanceExpressionValues.RemoveRange(instance.InstanceExpressionValues);
+            Entities.InstanceExpressionValues.AddRange(instanceExpressionValues);
+        }
+
     }
 }

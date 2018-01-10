@@ -41,7 +41,7 @@
 			input.on("change", change);
     }
 
-    this.hasChanges = function () {
+	this.hasChanges = function () {
         return !!model[property];
     }
 }
