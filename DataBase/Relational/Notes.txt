@@ -11,13 +11,13 @@ Il refresh del token adesso lo fanno tutti i client, può essere ottimizzato?
 La navigazione nella history del browser avviene senza controlli su modifiche appese
 
 invio email
-export pdf
-export ftp
+csv
+pdf
+ftp
 completamento audit trail
 
 
 PROTOTYPES
-history
 gestire concorrenza per firme (credo serva per forza una transazione, o un lock su redis, chiedere aiuto a Giacomo)
 gestire concorrenza transazionalmente (where nell'aggironamento e conteggio risultati?)
 PrototypeSignatures.SendEmails(db, Version, Action) quando ci sono variazioni nella applicazione di work flow

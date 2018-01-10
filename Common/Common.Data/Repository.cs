@@ -31,9 +31,7 @@ namespace CheckListManager.Common.Data
 		protected virtual void Dispose(bool disposing)
 		{
 			if (disposing)
-			{
 				Entities?.Dispose();
-			}
 		}
 
 		public async Task<int> SaveChangesAsync()

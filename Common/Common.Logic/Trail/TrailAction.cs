@@ -17,7 +17,10 @@
         public const string PrototypeStateChangeProposed = "Prototype state change proposed";
         public const string PrototypeSignatureIssued = "Prototype signature issued";
 
+        public const string InstanceCreated = "Instance created";
         public const string InstanceStateChanged = "Instance state changed";
+        public const string InstanceSignatureIssued = "Instance signature issued";
+        public const string InstanceSignatureCanceled = "Instance signature canceled";
 
         public const string EmailFailed = "Email failed";
     }

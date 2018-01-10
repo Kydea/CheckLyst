@@ -22,6 +22,8 @@ using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Authentication;
 using CheckListManager.Common.Logic.WorkFlows;
 using System.Collections.Generic;
+using CheckListManager.Common.Logic.Queue;
+using CheckListManager.Common.Logic.Trail;
 
 namespace CheckListManager.Instances.Logic.Services
 {
@@ -36,10 +38,12 @@ namespace CheckListManager.Instances.Logic.Services
         private readonly IConfigurationService _configurationService;
         private readonly IAuthenticationService _authenticationService;
         private readonly IWorkFlowsService _workFlowService;
+        private readonly IQueueService _queueService;
 
         public InstanceManagerService(IServiceClient client,
             IInstancesRepository instancesRepository, CheckListJsonConverter converter, IInstanceCacheService instanceCache,
-            IConfigurationService configurationService, IAuthenticationService authenticationService, IWorkFlowsService workFlowService)
+            IConfigurationService configurationService, IAuthenticationService authenticationService, IWorkFlowsService workFlowService,
+            IQueueService queueService)
         {
             _client = client;
             _instancesRepository = instancesRepository;
@@ -48,6 +52,7 @@ namespace CheckListManager.Instances.Logic.Services
             _configurationService = configurationService;
             _authenticationService = authenticationService;
             _workFlowService = workFlowService;
+            _queueService = _queueService;
         }
 
         public async Task<InstanceCacheObject> GetAsync(IDefaultIdentity identity, string code)
@@ -178,6 +183,16 @@ namespace CheckListManager.Instances.Logic.Services
 
                 await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
 
+                if (!cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation))
+                    await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                    {
+                        Company = identity.CompanyId,
+                        User = identity.Code,
+                        Action = TrailAction.InstanceCreated,
+                        Date = DateTimeOffset.UtcNow,
+                        CheckList = cacheObject.InstanceCode
+                    });
+
                 return cacheObject;
             }
             catch (InstanceException)
@@ -235,6 +250,18 @@ namespace CheckListManager.Instances.Logic.Services
 
                 cacheObject = await SaveAsync(cacheObject, identity, true, true);
                 cacheObject.Instance.UpdateReadOnly(identity.Code, InstanceState.Completed);
+
+                if (!cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation))
+                    await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                    {
+                        Company = identity.CompanyId,
+                        User = identity.Code,
+                        Action = TrailAction.InstanceStateChanged,
+                        Date = DateTimeOffset.UtcNow,
+                        CheckList = cacheObject.InstanceCode,
+                        Information = cacheObject.InstanceState
+                    });
+
                 return cacheObject;
             }
             catch (InstanceException)
@@ -263,6 +290,18 @@ namespace CheckListManager.Instances.Logic.Services
                     throw new InstanceException("Access denied");
 
                 await CancelAsync(cacheObject, identity.Code, note);
+
+                if (!cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation))
+                    await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                    {
+                        Company = identity.CompanyId,
+                        User = identity.Code,
+                        Action = TrailAction.InstanceStateChanged,
+                        Date = DateTimeOffset.UtcNow,
+                        CheckList = cacheObject.InstanceCode,
+                        Information = InstanceState.Canceled
+                    });
+
             }
             catch (InstanceException)
             {
@@ -459,7 +498,6 @@ namespace CheckListManager.Instances.Logic.Services
                         await HandleUnlockPageAsync(cacheObject, identity.Code, request.ItemId);
                         break;
                     case "CountDown":
-                        //audit trail
                         break;
                     case "SkipCountDown":
                         await HandleSkipCountDown(cacheObject, request.Username, request.ItemId);
@@ -517,7 +555,6 @@ namespace CheckListManager.Instances.Logic.Services
 
             if ((value ?? string.Empty) != (field.Value ?? string.Empty) && field.Validate(value))
             {
-                //TODO: add audit
                 field.History.Add(new FieldRecord
                 {
                     DateTime = DateTimeOffset.UtcNow,
@@ -544,7 +581,6 @@ namespace CheckListManager.Instances.Logic.Services
 
             if (!group.ReadOnly)
             {
-                //TODO: add audit
                 group.AddIterations(1);
                 await Update(cacheObject, userCode);
             }
@@ -564,7 +600,6 @@ namespace CheckListManager.Instances.Logic.Services
 
             if (!iteration.ReadOnly)
             {
-                //TODO: add audit
                 ((Group)iteration.Group).Remove(iteration);
                 await Update(cacheObject, userCode);
             }
@@ -584,7 +619,6 @@ namespace CheckListManager.Instances.Logic.Services
 
             if (!iteration.ReadOnly)
             {
-                //TODO: add audit
                 ((Group)iteration.Group).Move(iteration, direction);
                 await Update(cacheObject, userCode);
             }
@@ -608,7 +642,7 @@ namespace CheckListManager.Instances.Logic.Services
             signature.TrySign(userCode);
         }
 
-        private async Task HandleSignatureAsync(InstanceCacheObject cacheObject, IDefaultIdentity defaultIdentity, InstanceEventRequest request)
+        private async Task HandleSignatureAsync(InstanceCacheObject cacheObject, IDefaultIdentity identity, InstanceEventRequest request)
         {
             if (!request.ItemId.HasValue)
                 throw new InstanceException("Item id not sent");
@@ -633,7 +667,7 @@ namespace CheckListManager.Instances.Logic.Services
             try
             {
                 if (request.Simple.Value)
-                    await _authenticationService.AuthenticateAsync(defaultIdentity.Code, request.Password);
+                    await _authenticationService.AuthenticateAsync(identity.Code, request.Password);
                 else
                     await _authenticationService.AuthenticateWithPINAsync(request.Pin);
             }
@@ -644,17 +678,27 @@ namespace CheckListManager.Instances.Logic.Services
 
             if (
                 !string.IsNullOrEmpty(signature.SignatureLevel) 
-                && !HasPermission(defaultIdentity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.Prototype, signature.SignatureLevel)
+                && !HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType, signature.SignatureLevel)
             )
                 throw new InstanceException($"The signature must be applied by an user with level {signature.SignatureLevel}");
 
-            signature.Sign(defaultIdentity.Code, defaultIdentity.Description, DateTimeOffset.UtcNow);
+            signature.Sign(identity.Code, identity.Description, DateTimeOffset.UtcNow);
             await Update(cacheObject, request.Username);
-            //TODO: add audit
+
+            if (!cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation))
+                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                {
+                    Company = identity.CompanyId,
+                    User = identity.Code,
+                    Action = TrailAction.InstanceSignatureIssued,
+                    Date = DateTimeOffset.UtcNow,
+                    CheckList = cacheObject.InstanceCode,
+                    Information = request.ItemId.ToString()
+                });
         }
 
 
-        private async Task HandleSignatureCancelationAsync(InstanceCacheObject cacheObject, IDefaultIdentity defaultIdentity, InstanceEventRequest request)
+        private async Task HandleSignatureCancelationAsync(InstanceCacheObject cacheObject, IDefaultIdentity identity, InstanceEventRequest request)
         {
             if (!request.ItemId.HasValue)
                 throw new InstanceException("Item id not sent");
@@ -674,20 +718,33 @@ namespace CheckListManager.Instances.Logic.Services
 
             try
             {
-                await _authenticationService.AuthenticateAsync(defaultIdentity.Code, request.Password);
+                await _authenticationService.AuthenticateAsync(identity.Code, request.Password);
             }
             catch
             {
                 throw new InstanceException("Authentication failed");
             }
 
-            if (!HasPermission(defaultIdentity, "Unsign", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType, signature.SignatureLevel))
+            if (!HasPermission(identity, "Unsign", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType, signature.SignatureLevel))
                 throw new InstanceException($"The signature can be canceled by an user with function Unsign and level {signature.SignatureLevel}");
 
-            signature.Unsign(defaultIdentity.Code, defaultIdentity.Description, DateTimeOffset.UtcNow, request.Note, cacheObject.InstanceState);
+            signature.Unsign(identity.Code, identity.Description, DateTimeOffset.UtcNow, request.Note, cacheObject.InstanceState);
             await Update(cacheObject, request.Username);
 
-            //TODO: add audit
+            if (!cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation))
+                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                {
+                    Company = identity.CompanyId,
+                    User = identity.Code,
+                    Action = TrailAction.InstanceSignatureCanceled,
+                    Date = DateTimeOffset.UtcNow,
+                    CheckList = cacheObject.InstanceCode,
+                    Information = JsonConvert.SerializeObject(new
+                    {
+                        Id = request.ItemId,
+                        Note = request.Note
+                    })
+                });
         }
 
         private async Task HandleUnlockPageAsync(InstanceCacheObject cacheObject, string userCode, int? itemId)

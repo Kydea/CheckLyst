@@ -121,7 +121,7 @@ namespace CheckListManager.AccessControl.Logic.Services
             if (string.IsNullOrEmpty(code))
                 throw new AuthenticationException(100, "User code not sent");
 
-            if (string.IsNullOrEmpty(pin))
+            if (string.IsNullOrEmpty(pin) || !System.Text.RegularExpressions.Regex.IsMatch(pin, @"^[0-9]+$"))
                 throw new AuthenticationException(106, "Invalid PIN");
 
             if (pin.Length < 6)
@@ -153,6 +153,9 @@ namespace CheckListManager.AccessControl.Logic.Services
 
                 if (!user.Enabled)
                     throw new AuthenticationException(103, $"User {code} not enabled");
+
+                if (string.IsNullOrEmpty(pin) || !System.Text.RegularExpressions.Regex.IsMatch(pin, @"^[0-9]+$"))
+                    throw new AuthenticationException(106, $"PIN not valid");
 
                 if (
                     user.Companies.MaximumNumberOfPasswordFailure > 0

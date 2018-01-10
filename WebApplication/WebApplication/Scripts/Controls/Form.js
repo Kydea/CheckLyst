@@ -230,7 +230,6 @@
 			$.ajax({
 				type: "post",
 				url: element.attr("action") + "/" + event,
-				dataType: "json",
 				contentType: "application/json; charset=utf-8",
 				data: data
 			}).done(function (result) {
@@ -239,6 +238,8 @@
 					matematici.controls.setEditable(options.applyButton, false); //by default, the action button is disabled when clicked with success
 				if (handler)
 					handler(result);
+			}).progress(function (e) {
+				console.log(e);
 			});
 		},
 

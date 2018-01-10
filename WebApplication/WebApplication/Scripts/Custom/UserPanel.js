@@ -85,7 +85,7 @@
 				ajax: {
 					type: "post",
 					url: matematici.urls.accessControl.signature,
-					data: "ShowPaddle=false&IsEnabledPIN=true&ButtonOk=Ok&Logout=" + (matematici.userPanel.getUsers()[0] != userCode)
+					//data: "ShowPaddle=false&IsEnabledPIN=true&ButtonOk=Ok&Logout=" + (matematici.userPanel.getUsers()[0] != userCode)
 				},
 				data: {
 					pin: true,

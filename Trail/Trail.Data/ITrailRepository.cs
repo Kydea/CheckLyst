@@ -11,6 +11,11 @@ namespace CheckListManager.Trail.Data
 	{
 		Task AddAsync(Records record);
 
+        Task<List<TResult>> GetRecordsAsync<TResult, TKey>(long companyId,
+            Expression<Func<Records, TResult>> select,
+            Expression<Func<Records, bool>> filters,
+            Expression<Func<Records, TKey>> order);
+
         Task<PagingResponse<List<TResult>>> GetRecordsAsync<TResult, TKey>(long companyId,
             Expression<Func<Records, TResult>> select,
             Expression<Func<Records, bool>> filters,

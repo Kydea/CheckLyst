@@ -1,7 +1,9 @@
 ﻿<div id="AuditTrailPage">
     <h1>Audit Trail</h1>
 
-    <div class="ActionBar"></div>
+    <div class="ActionBar">
+        <a id="ExportButton" class="Button" href="#">Export<i class="fi flaticon-angle-down"></i></a>
+    </div>
 
     <div class="ShadowPanel">
         <div class="Accordion"></div>
@@ -63,7 +65,7 @@
 
 <script type="text/javascript">
     matematici.events.onPageLoad = function (callback) {
-        new matematici.SearchPage({
+        var searchPage = new matematici.SearchPage({
             pageName: "Trail",
             detailUrl: "@Url.Action("Detail")",
             filterFormSelector: "form#Filters",
@@ -71,6 +73,13 @@
             breadCrumbs: [
                 { content: "audit trail" }
             ]
+        });
+
+        $("a#ExportButton").on("click", function () {
+            var form = searchPage.getForm();
+            form.trigger("Export", function (result) {
+                location = form.getElement().attr("action") + "/Export?Token=" + result.token;
+            })
         });
 
         callback.call();

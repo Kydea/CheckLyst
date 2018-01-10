@@ -101,9 +101,7 @@ namespace CheckListManager.Common.Logic.Cache
 		public void Set(string key, object value, string regionName = null, TimeSpan? expiry = null)
 		{
 			if (value != null)
-			{
 				Database.Value.StringSet(ResolveKey(key, regionName), value.ToJson(), expiry, flags: CommandFlags.FireAndForget);
-			}
 		}
 
 		public async Task SetAsync(string key, object value, string regionName = null, TimeSpan? expiry = null)
@@ -111,13 +109,9 @@ namespace CheckListManager.Common.Logic.Cache
 			if (value != null)
 			{
 				if (_transaction == null)
-				{
 					await Database.Value.StringSetAsync(ResolveKey(key, regionName), value.ToJson(), expiry, flags: CommandFlags.FireAndForget);
-				}
 				else
-				{
 					await _transaction.StringSetAsync(ResolveKey(key, regionName), value.ToJson(), expiry, flags: CommandFlags.FireAndForget);
-				}
 			}
 		}
 
@@ -126,13 +120,9 @@ namespace CheckListManager.Common.Logic.Cache
 			if (value != null)
 			{
 				if (_transaction == null)
-				{
 					await Database.Value.StringSetAsync(ResolveKey(key, regionName), value.ToJson(converters), expiry, flags: CommandFlags.FireAndForget);
-				}
 				else
-				{
 					await _transaction.StringSetAsync(ResolveKey(key, regionName), value.ToJson(converters), expiry, flags: CommandFlags.FireAndForget);
-				}
 			}
 		}
 
@@ -152,17 +142,11 @@ namespace CheckListManager.Common.Logic.Cache
 			TimeSpan? retry = null, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (!expiry.HasValue)
-			{
 				expiry = TimeSpan.FromSeconds(5); //life time of the lock (it is extended automatically if the program runs)
-			}
 			if (!wait.HasValue)
-			{
 				wait = TimeSpan.FromSeconds(10); //waits until is released by previous lock
-			}
 			if (!retry.HasValue)
-			{
 				retry = TimeSpan.FromSeconds(1); //time between two attempts
-            }
 
 			return _lockFactory.Value.CreateAsync(ResolveKey(key, regionName), expiry.Value, wait.Value, retry.Value, cancellationToken)
 				.ContinueWith(t => new LockObject(t.Result), cancellationToken);
@@ -174,9 +158,7 @@ namespace CheckListManager.Common.Logic.Cache
 		public void BeginTransaction()
 		{
 			if (_transaction == null)
-			{
 				_transaction = Database.Value.CreateTransaction();
-			}
 		}
 
 		public async Task CommitTransactionAsync()
@@ -199,17 +181,11 @@ namespace CheckListManager.Common.Logic.Cache
 		public async Task SortedSetElementRemoveAsync(string key, string value, string regionName = null)
 		{
 			if (string.IsNullOrEmpty(value))
-			{
 				return;
-			}
 			if (_transaction == null)
-			{
 				await Database.Value.SortedSetRemoveAsync(ResolveKey(key, regionName), value, CommandFlags.FireAndForget);
-			}
 			else
-			{
 				await _transaction.SortedSetRemoveAsync(ResolveKey(key, regionName), value, CommandFlags.FireAndForget);
-			}
 		}
 
 		public Task SortedSetElementUpdateScoreAsync(string key, string value, double score, string regionName = null)
@@ -218,18 +194,12 @@ namespace CheckListManager.Common.Logic.Cache
 		private async Task SortedSetElementInsertAsync(string key, string value, double score, string regionName, When when)
 		{
 			if (string.IsNullOrEmpty(value))
-			{
 				return;
-			}
 
 			if (_transaction == null)
-			{
 				await Database.Value.SortedSetAddAsync(ResolveKey(key, regionName), value, score, when, CommandFlags.FireAndForget);
-			}
 			else
-			{
 				await _transaction.SortedSetAddAsync(ResolveKey(key, regionName), value, score, when, CommandFlags.FireAndForget);
-			}
 		}
 
 		public async Task<string[]> SortedSetGetAsync(string key, double start = double.NegativeInfinity, double stop = double.PositiveInfinity,

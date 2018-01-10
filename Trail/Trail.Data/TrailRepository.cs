@@ -21,6 +21,20 @@ namespace CheckListManager.Trail.Data
 			await SaveChangesAsync();
 		}
 
+        public async Task<List<TResult>> GetRecordsAsync<TResult, TKey>(
+            long companyId,
+            Expression<Func<Records, TResult>> select,
+            Expression<Func<Records, bool>> filters,
+            Expression<Func<Records, TKey>> order
+            )
+        {
+            return await Entities.Records
+                .Where(filters)
+                .OrderByDescending(order).ThenByDescending(r => r.ID)
+                .Select(select)
+                .ToListAsync();
+        }
+
         public async Task<PagingResponse<List<TResult>>> GetRecordsAsync<TResult, TKey>(
             long companyId,
             Expression<Func<Records, TResult>> select,

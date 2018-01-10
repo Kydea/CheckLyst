@@ -71,7 +71,7 @@
                 count = steps.size();
 
             steps.eq(0).children("h3").next().toggle(count > 1);
-            if (!detailPage.isReadOnly())
+            if (!detailPage.isReadOnly() && tab.getCurrentItem().index == 1)
                addStepButton.toggle($("div.Step", formElement).size() < maxSteps);
             resize();
         },

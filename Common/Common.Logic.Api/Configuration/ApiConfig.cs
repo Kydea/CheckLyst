@@ -25,6 +25,7 @@ using Owin;
 
 using ServiceClient = CheckListManager.Common.Core.Web.Network.ServiceClient;
 using CheckListManager.Common.Logic.Json;
+using CheckListManager.Common.Logic.Api.Formatters;
 
 namespace CheckListManager.Common.Logic.Api.Configuration
 {
@@ -117,7 +118,7 @@ namespace CheckListManager.Common.Logic.Api.Configuration
 			_configuration.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             _configuration.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new CheckListJsonConverter(Container));
 
-			OnConfigureWebApi(_configuration);
+            OnConfigureWebApi(_configuration);
 		}
 
 		protected virtual void OnConfigureWebApi(HttpConfiguration configuration)

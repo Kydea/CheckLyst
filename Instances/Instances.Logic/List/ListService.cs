@@ -46,7 +46,7 @@ namespace CheckListManager.Instances.Logic.List
                 var states = await _commonRepository.GetInstanceStatesAsync();
                 response.Fields["State"] = new Field
                 {
-                    Options = states.Select(x => new Option(x)),
+                    Options = states.Where(x => x != InstanceState.Draft).Select(x => new Option(x)),
                     Value = form.State
                 };
             }

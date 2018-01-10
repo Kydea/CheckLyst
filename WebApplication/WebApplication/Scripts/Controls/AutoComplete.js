@@ -129,11 +129,12 @@ matematici.AutoComplete = function (selector) {
 				});
 			icon.
 				on("click", function (e) {
-					if (open) {
+					if (open)
 						hideList();
-						e.preventDefault();
-						e.stopPropagation();
-					}
+					else
+						label.focus();
+					e.preventDefault();
+					e.stopPropagation();
 				});
 			updateList();
 			setValue();

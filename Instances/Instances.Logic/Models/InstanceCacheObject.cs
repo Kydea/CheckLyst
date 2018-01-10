@@ -36,6 +36,14 @@ namespace CheckListManager.Instances.Logic.Models
 		public string ModifiedBy { get; set; }
 		public DateTimeOffset? ModifiedOn { get; set; }
 
+        [JsonIgnore]
+        public string InstanceCode {
+            get
+            {
+                return $"{PrototypeName}.{Version}.{Year}.{Number}";
+            }
+        }
+
 		public void TrackChanges(string userCode)
 		{
 			IsDirty = true;
