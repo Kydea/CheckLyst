@@ -6,7 +6,7 @@ namespace CheckListManager.Instances.Logic.List
     {
         public long Id { get; set; }
         public string Code { get; set; }
-        public int Year { get; set; }
+        public string Year { get; set; }
         public int Number { get; set; }
         public string Description { get; set; }
         public string State { get; set; }

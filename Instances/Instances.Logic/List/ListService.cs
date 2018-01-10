@@ -109,7 +109,7 @@ namespace CheckListManager.Instances.Logic.List
                 {
                     Id = i.ID,
                     Code = i.Code,
-                    Year = i.Year,
+                    Year = i.Year == 0 ? "SE" : i.Year.ToString(),
                     Number = i.Number,
                     State = i.InstanceState,
                     Description = i.Description,

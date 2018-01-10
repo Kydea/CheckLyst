@@ -136,7 +136,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
         {
             //TODO
             //5. notificare per email
-            await SetInstanceState(identity, Instance, InstanceState.Canceled);
+            await SetInstanceState(identity, Instance, InstanceState.Deleted);
         }
 
         public async Task<SignResponse> SignAsync(DefaultIdentity identity, SignRequest request)

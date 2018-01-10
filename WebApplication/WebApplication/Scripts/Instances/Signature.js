@@ -143,8 +143,8 @@
 			time.val(format.time);
 			element.attr("title", user.val() + " | " + format.date + " " + " " + format.time + " " + format.offset);
             if (cancelButton) {
-				button.css("display", model.signed ? "inline-block" : "none");
-				cancelButton.css("display", model.signed ? "none" : "inline-block");
+				cancelButton.css("display", "inline-block");
+				button.css("display", "none");
             } else if (item.isTableContent()) {
 				button.css("display", "none");
                 check.show();

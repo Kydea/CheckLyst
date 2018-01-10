@@ -95,13 +95,13 @@ namespace CheckListManager.Instances.Api.Controllers
         }
 
         [HttpPost]
-        [Route("Cancel")]
+        [Route("Delete")]
         [Authorize(Roles = "Instances#Delete, Prototypes#Edit")]
-        public async Task<IHttpActionResult> Cancel(InstanceRequest request)
+        public async Task<IHttpActionResult> Delete(InstanceRequest request)
         {
             try
             {
-                await _instanceManagerService.CancelAsync(request.Code, Identity, request.Note);
+                await _instanceManagerService.DeleteAsync(request.Code, Identity, request.Note);
                 return Ok();
             }
             catch (Exception e)

@@ -18,6 +18,7 @@
 		year,
 		number,
 		instanceDescription,
+		workFlow,
 		tab,
 		pageLock,
 		updateHandler,
@@ -43,7 +44,7 @@
 			buttonGroup = $("div.ActionBar a.ButtonGroup", element),
 				confirmButton = $("a.Confirm", buttonGroup).toggleClass("Hidden", state != instances.Instance.states.completed),
 				completeButton = $("a.Complete", buttonGroup).toggleClass("Hidden", state != instances.Instance.states.progress),
-				cancelButton = $("a.Cancel", buttonGroup).toggleClass("Hidden", state != instances.Instance.states.draft && state != instances.Instance.states.progress),
+				deleteButton = $("a.Delete", buttonGroup).toggleClass("Hidden", state != instances.Instance.states.draft && state != instances.Instance.states.progress),
 				saveButton = $("a.Save", buttonGroup).toggleClass("Hidden", state != instances.Instance.states.draft && state != instances.Instance.states.progress),
 				historyButton = $("a.History", buttonGroup).toggleClass("Hidden", state == instances.Instance.states.draft);
 
@@ -270,22 +271,22 @@
 		send(state == instances.Instance.states.draft ? "Open" : "Save");
 	};
 
-	instance.cancel = function () {
+	instance.delete = function () {
 		if (versionState == prototypes.Prototype.states.active && state == instances.Instance.states.progress)
-			matematici.dialog.show("Cancel", "Provide a note for the cancelation", [
+			matematici.dialog.show("Instance deletion", "Instance will be set as deleted. Provide a note for the deletion", [
 				{
 					text: "Confirm", icon: "check", handler: function () {
-						send("Cancel", $("textarea.Textarea", $(this).closest("div.Dialog")).val(), instance.quit);
+						send("Delete", $("textarea.Textarea", $(this).closest("div.Dialog")).val(), instance.quit);
 					}
 				},
 				{ icon: "times", hidden: true, cancelButton: true },
 				{ textarea: true, text: "Note" }
 			]);
 		else
-			matematici.dialog.show("Cancel", "The instance will be deleted", [
+			matematici.dialog.show("Instance deletion", "The instance will be deleted", [
 				{
 					text: "Confirm", icon: "check", handler: function () {
-						send("Cancel", null, instance.quit);
+						send("Delete", null, instance.quit);
 					}
 				},
 				{ icon: "times", hidden: true, cancelButton: true },
@@ -392,5 +393,5 @@ instances.Instance.states = {
 	progress: "In progress",
 	completed: "Completed",
 	confirmed: "Confirmed",
-	canceled: "Canceled"
+	deleted: "Deleted"
 };

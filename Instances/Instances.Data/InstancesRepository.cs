@@ -28,13 +28,9 @@ namespace CheckListManager.Instances.Data
 				.Where(i => i.Prototypes.Company == companyId);
 
 			if (order != null)
-			{
-				query = query.OrderBy(order);
-			}
+				query = query.OrderByDescending(order);
 			if (currentPage.HasValue && itemsPerPage.HasValue)
-			{
 				query = query.Skip((currentPage.Value - 1) * itemsPerPage.Value).Take(itemsPerPage.Value);
-			}
 
 			var data = await
 				query

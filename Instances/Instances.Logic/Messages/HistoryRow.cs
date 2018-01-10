@@ -21,7 +21,7 @@ namespace CheckListManager.Instances.Logic.Messages
             get
             {
                 return
-                    Approved == false ? InstanceState.Canceled:
+                    Approved == false ? InstanceState.Deleted:
                     Approved == true ? InstanceState.Confirmed :
                     InstanceState.Completed;
             }

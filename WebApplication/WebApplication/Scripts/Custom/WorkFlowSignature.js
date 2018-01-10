@@ -46,6 +46,10 @@
 				model = getModel(approved),
 				error = false;
 
+			$("label.Error input, label.Error textarea", element).each(function () {
+				matematici.controls.setValidationMessages($(this), []);
+			});
+
 			if (options.model) {
 				if (!model.validFromNow && !validityStart.data("date")) {
 					matematici.controls.setValidationMessages(validityStart, [{ message: "Specify a date" }])

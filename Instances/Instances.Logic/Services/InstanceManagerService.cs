@@ -174,6 +174,7 @@ namespace CheckListManager.Instances.Logic.Services
                 row = await _instancesRepository.CreateInstanceAsync(row);
 
                 cacheObject.Id = row.ID;
+                cacheObject.Year = row.Year;
                 cacheObject.Number = row.Number;
                 cacheObject.ModifiedOn = row.ModifiedOn;
                 cacheObject.ModifiedBy = row.ModifiedBy;
@@ -278,7 +279,7 @@ namespace CheckListManager.Instances.Logic.Services
             }
         }
 
-        public async Task CancelAsync(string code, IDefaultIdentity identity, string note)
+        public async Task DeleteAsync(string code, IDefaultIdentity identity, string note)
         {
             try
             {
@@ -288,11 +289,11 @@ namespace CheckListManager.Instances.Logic.Services
                 if (!cacheObject.InstanceState.In(InstanceState.Draft, InstanceState.Progress))
                     throw new InstanceException("Instance state not valid");
                 if (cacheObject.VersionState == VersionState.Active && cacheObject.InstanceState == InstanceState.Progress && string.IsNullOrWhiteSpace(note))
-                    throw new InstanceException("Provide a note for the cancelation");
+                    throw new InstanceException("Provide a note for the deletion");
                 if (!HasPermission(identity, "Delete", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
                     throw new InstanceException("Access denied");
 
-                await CancelAsync(cacheObject, identity.Code, note);
+                await DeleteAsync(cacheObject, identity.Code, note);
 
                 if (!cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation))
                     await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
@@ -302,7 +303,7 @@ namespace CheckListManager.Instances.Logic.Services
                         Action = TrailAction.InstanceStateChanged,
                         Date = DateTimeOffset.UtcNow,
                         CheckList = cacheObject.InstanceCode,
-                        Information = InstanceState.Canceled
+                        Information = InstanceState.Deleted
                     });
 
             }
@@ -312,8 +313,8 @@ namespace CheckListManager.Instances.Logic.Services
             }
             catch (Exception e)
             {
-                Logger.Error(e, "Unable to cancel the instance");
-                throw new InstanceException("Unable to cancel the instance", e);
+                Logger.Error(e, "Unable to delete the instance");
+                throw new InstanceException("Unable to delete the instance", e);
             }
         }
 
@@ -412,7 +413,11 @@ namespace CheckListManager.Instances.Logic.Services
                         cacheObject.InstanceState = row.InstanceState = InstanceState.Completed;
                     }
                     else
+                    {
+                        if (!HasPermission(identity, "Confirm", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
+                            throw new InstanceException("There is not a confirmation workflow for this instance, the function Confirm is needed to complete.");
                         cacheObject.InstanceState = row.InstanceState = InstanceState.Confirmed;
+                    }
 
                     row.InstancesHistory.Add(new InstancesHistory
                     {
@@ -440,7 +445,7 @@ namespace CheckListManager.Instances.Logic.Services
             }
         }
 
-        private async Task CancelAsync(InstanceCacheObject cacheObject, string userCode, string Note)
+        private async Task DeleteAsync(InstanceCacheObject cacheObject, string userCode, string Note)
         {
             if (cacheObject.InstanceState == InstanceState.Progress)
             {
@@ -453,7 +458,7 @@ namespace CheckListManager.Instances.Logic.Services
                     row.Data = JsonConvert.SerializeObject(cacheObject.Instance, _converter);
                     row.ModifiedOn = cacheObject.ModifiedOn;
                     row.ModifiedBy = cacheObject.ModifiedBy;
-                    row.InstanceState = InstanceState.Canceled;
+                    row.InstanceState = InstanceState.Deleted;
 
                     row.InstancesHistory.Add(new InstancesHistory
                     {
