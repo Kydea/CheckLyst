@@ -564,19 +564,7 @@
 
 	prototype.preview = function () {
 		var handler = function () {
-			try {
-				var isntanceWindow = window.open(options.previewUrl + "/" + prototypeKey.id + "/" + prototypeKey.version, "_blank");
-				try {
-					isntanceWindow.focus();
-				}
-				catch (e) {
-					matematici.dialog.error("Warning", "A popup blocker prevented the preview to open.");
-				}
-			}
-			catch (error)
-			{
-
-			}
+			matematici.navigator.open(options.previewUrl + "/" + prototypeKey.id + "/" + prototypeKey.version);
 		};
 
 		if (matematici.canClose)
