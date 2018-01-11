@@ -72,13 +72,13 @@ namespace CheckListManager.AccessControl.Logic.Services
 					user.Companies.MaximumNumberOfPasswordFailure > 0
 					&& user.NumberOfAttempts >= user.Companies.MaximumNumberOfPasswordFailure
 					&& user.LastLoginFailedOn != null
-					&& user.Companies.LoginFailedTimeout > 0
-					&& (DateTimeOffset.UtcNow - user.LastLoginFailedOn.Value).TotalMinutes < user.Companies.LoginFailedTimeout
+					//&& user.Companies.LoginFailedTimeout > 0
+					//&& (DateTimeOffset.UtcNow - user.LastLoginFailedOn.Value).TotalMinutes < user.Companies.LoginFailedTimeout //The users are currently permanently disabled
 				)
-		            throw new AuthenticationException(104, $"User {code} temporary disabled");
+		            throw new AuthenticationException(104, $"User {code} disabled");
 
-				if (!_hashService.ValidateHash(password, user.Password))
-                    throw new AuthenticationException(105, "User password not valid");
+				if (!_hashService.ValidateHash(password, user.Password)) //TODO Valutare l'ordine rispetto all'autenticazione LDAP
+                    throw new AuthenticationException(105, "Password not valid");
 
 	            await Task.WhenAll(
 		            _userRepository.UserLoginCompleteAsync(user),

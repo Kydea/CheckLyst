@@ -68,9 +68,7 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
 		public override Task TokenEndpoint(OAuthTokenEndpointContext context)
 		{
 			foreach (var property in context.Properties.Dictionary)
-			{
 				context.AdditionalResponseParameters.Add(property.Key, property.Value);
-			}
 
 			return Task.FromResult<object>(null);
 		}

@@ -47,6 +47,8 @@
             form = $("form"),
             error = $("div.Errors", form),
             companyList = $("select[name=companyId]", form),
+            userCode = $("input[name=username]", form),
+            password = $("input[name=password]", form),
 
             showError = function (message) {
                 error.html(" " + message).prepend($("<i />").addClass("fi flaticon-warning")).show()
@@ -61,6 +63,10 @@
             error.empty().hide();
             if (companyList.val() == null)
                 showError("select a company");
+            else if (userCode.val() == "")
+                showError("select a user code");
+            else if (password.val() == "")
+                showError("select a password");
             else
                 $.ajax(matematici.urls.accessControl.token, {
                     data: form.serialize(),
