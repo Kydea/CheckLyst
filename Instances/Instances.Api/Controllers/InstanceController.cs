@@ -9,6 +9,10 @@ using CheckListManager.Instances.Logic.Exceptions;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Core.Helpers;
 using CheckListManager.Instances.Logic.Models;
+using CheckListManager.Common.Logic.Cache;
+using System.Net;
+using CheckListManager.Common.Logic.Api.Formatters;
+using CheckListManager.Common.Logic.Api.PDF;
 
 namespace CheckListManager.Instances.Api.Controllers
 {
@@ -16,10 +20,12 @@ namespace CheckListManager.Instances.Api.Controllers
     public class InstanceController : BaseApiController
     {
         private readonly IInstanceManagerService _instanceManagerService;
+        private readonly IRedisCache _redisCache;
 
-        public InstanceController(IInstanceManagerService instanceManagerService)
+        public InstanceController(IInstanceManagerService instanceManagerService, IRedisCache redisCache)
         {
             _instanceManagerService = instanceManagerService;
+            _redisCache = redisCache;
         }
 
         [HttpPost]
@@ -202,6 +208,31 @@ namespace CheckListManager.Instances.Api.Controllers
             {
                 return Error(e);
             }
+        }
+
+        [HttpPost]
+        [Route("Export")]
+        [Authorize(Roles = "Instances#View, Prototypes#Edit")]
+        public async Task<IHttpActionResult> Export(InstanceRequest request)
+        {
+            var Token = Identity.Code + ":" + Guid.NewGuid();
+            request.CompanyId = Identity.CompanyId;
+            request.UserCode = Identity.Code;
+            await _redisCache.SetAsync($"Token:{Token}", request, "Download", new TimeSpan(0, 1, 0));
+            return Ok(new { Token = Token });
+        }
+
+        [HttpGet]
+        [Route("Export")]
+        [AllowAnonymous]
+        public async Task<IHttpActionResult> Export([FromUri]string Token)
+        {
+            //var Data = await _redisCache.GetAsync<InstanceRequest>($"Token:{Token}", "Download");
+            //await _redisCache.RemoveAsync($"Token:{Token}", "Download");
+            //var cacheObject = await _instanceManagerService.GetAsync(Identity, Data.Code);
+            var cacheObject = await _instanceManagerService.GetAsync(2, "CheckListManager", "54-1-9c1c853a-4f9f-4a26-9c2c-942e2fdc4d43");
+
+            return Content(HttpStatusCode.OK, new CheckListPDF(cacheObject.Instance), new PDFFormatter("AuditTrail"));
         }
     }
 }

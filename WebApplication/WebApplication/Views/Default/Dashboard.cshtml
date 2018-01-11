@@ -2,184 +2,73 @@
     ViewBag.Title = "Dashboard";
 }
 
-<div id="DashboardPage">
-    <h1>Dashboard</h1>
+<h1>Dashboard</h1>
 
-    <div>
-        
-    @*
-        @Identity.Code
-        @if (Model.PrototypesVersions.Items.Count() > 0)
-        {
-            <div class="PrototypesVersions">
-                <h2>
-                    Prototypes Versions
-                </h2>
+<div class="Dashboard">
 
-                <form action="@Url.Action("Dashboard", new { PageInstances = @Model.Instances.Page })" method="post">
-                    @Html.Hidden("PageVersions", Model.PrototypesVersions.Page, new { @class = "Page" })
-                    @Html.HiddenFor(x => Model.PrototypesVersions.PagesCount, new { @class = "PagesCount" })
+    <a href="@Url.Action("List", "Prototypes")" class="DashboardItem" id="PrototypesDashboardItem">
+        <img src="~/Content/Media/Dashboard/Prototypes.jpg" />
+        <i class="fi flaticon-prototype"></i>
+        <span>Prototypes</span>
+    </a>
 
-                    <table class="Grid PrototypesVersions">
-                        <thead>
-                            <tr>
-                                <th>Code</th>
-                                <th>Description</th>
-                                <th>Version</th>
-                                <th>Validity start date (UTC)</th>
-                                <th>Validity end date (UTC)</th>
-                                <th>Created by</th>
-                                <th>Created on</th>
-                                <th>Modified by</th>
-                                <th>Modified on</th>
-                                <th>State</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var Item in Model.PrototypesVersions.Items)
-                            {
-                                <tr class="Handler" data-open-url="@Url.Action("Detail", "PrototypesEditor", new { IsNew = false, Code = Item.Prototype, Version = Item.Version })">
-                                    <td>
-                                        @Item.Prototype
-                                    </td>
-                                    <td>
-                                        @Item.Description
-                                    </td>
-                                    <td>
-                                        @Item.Version
-                                    </td>
-                                    <td>
-                                        @(Item.ValidFrom != null ? Item.ValidFrom.Value.ToString("dd/MM/yyyy HH:mm") : "-")
-                                    </td>
-                                    <td>
-                                        @(Item.ValidUntil != null ? Item.ValidUntil.Value.ToString("dd/MM/yyyy HH:mm") : "-")
-                                    </td>
-                                    <td>
-                                        @(String.IsNullOrEmpty(Item.CreatedBy) ? "-" : Item.CreatedBy)
-                                    </td>
-                                    <td>
-                                        @(Item.CreatedOn != null ? Item.CreatedOn.ToString("dd/MM/yyyy HH:mm") : "-")
-                                    </td>
-                                    <td>
-                                        @(String.IsNullOrEmpty(Item.ModifiedBy) ? "-" : Item.ModifiedBy)
-                                    </td>
-                                    <td>
-                                        @(Item.ModifiedOn != null ? Item.ModifiedOn.Value.ToString("dd/MM/yyyy HH:mm") : "-")
-                                    </td>
-                                    <td>
-                                        @Item.VersionState
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </form>
-                <div class="Pager"></div>
-            </div>
-            <div style="clear:both"></div>
-        }
+    <a href="@Url.Action("List", "Instances")" class="DashboardItem" id="InstancesDashboardItem">
+        <img src="~/Content/Media/Dashboard/Instances.jpg" />
+        <i class="fi flaticon-instance"></i>
+        <span>Instances</span>
+    </a>
 
-        @if (Model.Instances.Items.Count() > 0)
-        {
-            <div class="Instances">
-                <h2 style="margin-top:0">
-                    Instances
-                </h2>
+    <a href="#" class="DashboardItem" id="PinDashBoardItem">
+        <img src="~/Content/Media/Dashboard/Pin.jpg" />
+        <i class="fi flaticon-key-o"></i>
+        <span>Change PIN</span>
+    </a>
 
-                <form action="@Url.Action("Dashboard", new { PageVersions = @Model.PrototypesVersions.Page })" method="post">
-                    @Html.Hidden("PageInstances", Model.Instances.Page, new { @class = "Page" })
-                    @Html.HiddenFor(x => Model.Instances.PagesCount, new { @class = "PagesCount" })
+    <a href="@Url.Action("Login", "Security")" class="DashboardItem" id="LogoutDashboardItem">
+        <img src="~/Content/Media/Dashboard/Logout.jpg" />
+        <i class="fi flaticon-logout"></i>
+        <span>Logout</span>
+    </a>
 
-                    <table class="Grid Instances">
-                        <thead>
-                            <tr>
-                                <th>Code</th>
-                                <th>Description</th>
-                                <th>Created by</th>
-                                <th>Created on</th>
-                                <th>Modified by</th>
-                                <th>Modified on</th>
-                                <th>State</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var Item in Model.Instances.Items)
-                            {
-                                <tr class="Handler" data-open-url="@Url.Action("Open", "CheckList", new { Prototype = Item.Prototype, Version = Item.Version, Year = Item.Year, Number = Item.Number })">
-                                    <td>
-                                        @(Item.Prototype + "." + Item.Version + "." + Item.Year + "." + Item.Number)
-                                    </td>
-                                    <td>
-                                        @Html.Raw(Item.Description)
-                                    </td>
-                                    <td>
-                                        @(String.IsNullOrEmpty(Item.CreatedBy) ? "-" : Item.CreatedBy)
-                                    </td>
-                                    <td>
-                                        @(Item.CreatedOn != null ? Item.CreatedOn.ToString("dd/MM/yyyy HH:mm") : "-")
-                                    </td>
-                                    <td>
-                                        @(String.IsNullOrEmpty(Item.ModifiedBy) ? "-" : Item.ModifiedBy)
-                                    </td>
-                                    <td>
-                                        @(Item.ModifiedOn != null ? Item.ModifiedOn.Value.ToString("dd/MM/yyyy HH:mm") : "-")
-                                    </td>
-                                    <td>
-                                        @Item.InstanceState
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </form>
-                <div class="Pager"></div>
-            </div>
-            <div style="clear:both"></div>
-        }*@
-    </div>
+    <a href="#" class="DashboardItem" id="HelpDashboardItem">
+        <img src="~/Content/Media/Dashboard/Help.jpg" />
+        <i class="fi flaticon-question"></i>
+        <span>Help</span>
+    </a>
 
-    <script type="text/javascript">
-        matematici.events.onPageLoad = function (callback) {
-            new matematici.Page({
-                name: "Dashboard",
-                helpPage: "Dashboard",
-                initializers: [
-                    //new matematici.Home("div.Home", images)
-                ],
-                breadcrumbs: [
-                    { content: "root", url: "#" },
-                    { content: "parent page", url: "#" },
-                    { content: "this page" },
-                ]
-            });
-
-            function submit(form) {
-                $.ajax({
-                    url: form.attr("action"),
-                    type: "post",
-                    data: form.serialize()
-                }).done(function (result) {
-                    $("#DashboardPage").html(result);
-                    matematici.events.onPageLoad(callback);
-                }).fail(function (jqXhr, textStatus, errorThrown) {
-                    console.log("Server error", jqXhr, textStatus, errorThrown);
-                    alert("Server error: " + errorThrown);
-                });
-            }
-
-            //new matematici.Paginator(function () {
-            //    submit($(".PrototypesVersions form"));
-            //}, ".PrototypesVersions .Paginator", ".PrototypesVersions form");
-
-            //new matematici.Paginator(function () {
-            //    submit($(".Instances form"));
-            //}, ".Instances .Paginator", ".Instances form");
-
-            $("table.Grid").on("click", "tr.Handler", function () {
-                matematici.navigator.open($(this).data("open-url"));
-            });
-
-            callback.call();
-        };
-    </script>
+    <div class="Clearing"></div>
 </div>
+
+<script type="text/javascript">
+    matematici.events.onPageLoad = function (callback) {
+        new matematici.Page({
+            name: "Dashboard",
+            helpPage: "Dashboard",
+            initializers: [
+            ],
+            breadcrumbs: [
+                { content: "Dashboard" },
+            ]
+        });
+
+        var count = 3;
+
+        if (matematici.tokenManager.checkRole("Prototypes#Edit#"))
+            ++count;
+        else
+            $("#PrototypesDashboardItem").hide();
+
+        if (matematici.tokenManager.checkRole("Instances#Edit#"))
+            ++count;
+        else
+            $("#InstancesDashboardItem").hide();
+
+        $("#PinDashBoardItem").on("click", function () {
+            matematici.userPanel.profile();
+        });
+
+        $(".Dashboard").addClass("Controls" + count);
+
+        callback.call();
+    };
+</script>

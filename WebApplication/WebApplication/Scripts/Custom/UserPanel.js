@@ -138,5 +138,9 @@
 			.children(".UserName").text(matematici.tokenManager.getUserName())
 	};
 
+	this.profile = function () {
+		profile(matematici.tokenManager.getUserCode(), matematici.tokenManager.getAccessToken());
+	};
+
 	setup();
 }

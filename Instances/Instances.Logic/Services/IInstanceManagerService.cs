@@ -11,6 +11,7 @@ namespace CheckListManager.Instances.Logic.Services
 {
 	public interface IInstanceManagerService : IService
 	{
+		Task<InstanceCacheObject> GetAsync(long company, string userCode, string code);
 		Task<InstanceCacheObject> GetAsync(IDefaultIdentity identity, string code);
 		Task<InstanceCacheObject> CreateAsync(IDefaultIdentity identity, string userCode, long prototype, int version);
 		Task<InstanceCacheObject> OpenAsync(string code, IDefaultIdentity identity);

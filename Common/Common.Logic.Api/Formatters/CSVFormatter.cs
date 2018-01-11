@@ -15,15 +15,10 @@ namespace CheckListManager.Common.Logic.Api.Formatters
 {
     public class CSVFormatter<T> : MediaTypeFormatter
     {
-
-        //aggiungere costrutturi per:
-        //ContentLength
-        //FileName
-        //Model
-        //Handler per righe e intestazione
         public CSVFormatter(string[] Header, string FileName, Func<T, string[]> GetRow)
         {
             SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/csv"));
+            MediaTypeMappings.Add(new UriPathExtensionMapping("csv", "text/csv"));
             this.Header = Header;
             this.FileName = string.IsNullOrEmpty(FileName) || FileName.EndsWith(".csv") ? FileName : FileName + ".csv";
             GetValues = GetRow;

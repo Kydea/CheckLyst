@@ -72,6 +72,11 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Media\Dashboard\Help.jpg" />
+    <Content Include="Content\Media\Dashboard\Instances.jpg" />
+    <Content Include="Content\Media\Dashboard\Logout.jpg" />
+    <Content Include="Content\Media\Dashboard\Pin.jpg" />
+    <Content Include="Content\Media\Dashboard\Prototypes.jpg" />
     <Content Include="Content\Media\Logo.Big.png" />
     <Content Include="Content\Media\Logo.png" />
     <Content Include="Content\Media\LogoMobile.png" />
@@ -112,6 +117,9 @@
     </Content>
     <Content Include="Content\Theme\Controls.css">
       <DependentUpon>Controls.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Dashboard.css">
+      <DependentUpon>Dashboard.scss</DependentUpon>
     </Content>
     <Content Include="Content\Theme\DataSourcesEditor.css">
       <DependentUpon>DataSourcesEditor.scss</DependentUpon>
@@ -269,6 +277,7 @@
     <Content Include="Content\Theme\Fonts\FlatIcon\Flaticon.woff" />
     <Content Include="Content\Theme\Fonts\FlatIcon\_flaticon.scss" />
     <Content Include="Content\Theme\Blip.scss" />
+    <Content Include="Content\Theme\Dashboard.scss" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Bold\Myriad Pro.scss" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Bold\MyriadPro-Bold.eot" />

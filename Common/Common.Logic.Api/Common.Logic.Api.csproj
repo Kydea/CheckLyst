@@ -59,6 +59,9 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="itextsharp, Version=5.5.12.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\iTextSharp.5.5.12\lib\itextsharp.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
     </Reference>
@@ -132,12 +135,22 @@
     <Compile Include="ErrorResult.cs" />
     <Compile Include="Filters\ArgumentNullValidationActionFilterAttribute.cs" />
     <Compile Include="Filters\ModelValidationActionFilterAttribute.cs" />
+    <Compile Include="Formatters\PDFFormatter.cs" />
     <Compile Include="Formatters\CSVFormatter.cs" />
     <Compile Include="Messages\Message.cs" />
     <Compile Include="Messages\PagingRequest.cs" />
     <Compile Include="Messages\PagingResponse.cs" />
     <Compile Include="Messages\ReleaseInfoMessage.cs" />
     <Compile Include="Messages\ResponseMessage.cs" />
+    <Compile Include="PDF\CheckListPDF.cs" />
+    <Compile Include="PDF\PDFBase.cs" />
+    <Compile Include="PDF\PDFSection.cs" />
+    <Compile Include="PDF\PDFStyles.cs" />
+    <Compile Include="PDF\Sections\CheckListSection.cs" />
+    <Compile Include="PDF\Sections\Group.cs" />
+    <Compile Include="PDF\Sections\Item.cs" />
+    <Compile Include="PDF\Sections\Page.cs" />
+    <Compile Include="PDF\Sections\Table.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

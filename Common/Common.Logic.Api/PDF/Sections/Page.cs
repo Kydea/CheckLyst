@@ -1,0 +1,34 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using iTextSharp.text.pdf;
+using iTextSharp.text;
+using CheckListManager.Common.Logic.Models.CheckLists;
+
+namespace CheckListManager.Common.Logic.Api.PDF.Sections
+{
+    public class Page : CheckListSection
+    {
+        public Page(CheckListPDF PDFBase, ICheckListPage Page, int Indentation = 1) : base(PDFBase, Page, Indentation)
+        {}
+
+        public override void Render(params Object[] State)
+        {
+            int Page = PDFBase.Document.PageNumber;
+            var PageElement = (ICheckListPage)Element;
+
+            DrawText(PageElement.Description, FirstHeaderFont);
+            RenderChildren();
+        }
+
+        public override void RenderChildren()
+        {
+            foreach (var Group in ((ICheckListPage)Element).Groups)
+                if(Group.ShowAsTable)
+                    new PDF.Sections.Table((CheckListPDF)PDFBase, Group, 2).Render();
+                else
+                    new PDF.Sections.Group((CheckListPDF)PDFBase, Group, 2).Render();
+        }
+    }
+}

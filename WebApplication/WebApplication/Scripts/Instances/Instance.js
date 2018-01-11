@@ -254,7 +254,13 @@
 	};
 
 	instance.export = function () {
-		$("<a href='" + matematici.urls.instances.export + "?ClientID=" + matematici.client.getId() + "&" + new Date().getTime() + "' target='_blank'></a>")[0].click();
+		$.ajax({
+			url: matematici.urls.instances.api + "/Export",
+			type: "post",
+			data: { code: code }
+		}).done(function (result) {
+			location = matematici.urls.instances.api + "/Export?Token=" + result.token;
+		});
 	};
 
 	instance.quit = function () {

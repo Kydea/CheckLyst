@@ -57,32 +57,39 @@ namespace CheckListManager.Instances.Logic.Services
 
         public async Task<InstanceCacheObject> GetAsync(IDefaultIdentity identity, string code)
         {
+            var cacheObject = await GetAsync(identity.CompanyId, identity.Code, code);
+
+            if (!HasPermission(identity, "View", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
+                throw new InstanceException("Access denied");
+
+            return cacheObject;
+        }
+
+        public async Task<InstanceCacheObject> GetAsync(long company, string userCode, string code)
+        {
             var cacheObject = await _instanceCache.GetAsync(code);
             if (cacheObject == null)
             {
-                var instance = await _instancesRepository.GetByCodeAsync(identity.CompanyId, code);
+                var instance = await _instancesRepository.GetByCodeAsync(company, code);
                 if (instance == null)
                     throw new InstanceException("Instance not found");
 
-                cacheObject = CreateInstanceFromDatabase(identity.CompanyId, instance);
+                cacheObject = CreateInstanceFromDatabase(company, instance);
                 if (cacheObject.InstanceState == InstanceState.Progress)
                 {
                     if (cacheObject.Instance.Pages.Count() > 0)
-                        ((Page)cacheObject.Instance.Pages[0]).Lock = new Lock(identity.Code);
+                        ((Page)cacheObject.Instance.Pages[0]).Lock = new Lock(userCode);
                     await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
                 }
             }
             else if (cacheObject.Instance.Pages.Any() && ((Page)cacheObject.Instance.Pages.First()).Lock == null)
             {
-                UnlockPages(cacheObject.Instance, identity.Code);
-                ((Page)cacheObject.Instance.Pages.First()).Lock = new Lock(identity.Code);
+                UnlockPages(cacheObject.Instance, userCode);
+                ((Page)cacheObject.Instance.Pages.First()).Lock = new Lock(userCode);
                 await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
             }
             else
                 await _instanceCache.TouchInstanceAsync(code);
-
-            if (!HasPermission(identity, "View", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
-                throw new InstanceException("Access denied");
 
             return cacheObject;
         }

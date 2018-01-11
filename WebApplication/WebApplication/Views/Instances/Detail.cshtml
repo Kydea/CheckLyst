@@ -62,6 +62,14 @@
                 .add("History", function () {
                     instance.showHistory();
                 }, "History")
+                @if (!ViewBag.AppMode)
+                {
+                    <text>
+                        .add("Export", function () {
+                            instance.export();
+                        }, "Export")
+                    </text>
+                }
                 .add("Save", function () {
                     instance.save();
                 }, "Save")

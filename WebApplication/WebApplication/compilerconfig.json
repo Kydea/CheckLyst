@@ -162,5 +162,9 @@
   {
     "outputFile": "Content/Theme/Blip.css",
     "inputFile": "Content/Theme/Blip.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Dashboard.css",
+    "inputFile": "Content/Theme/Dashboard.scss"
   }
 ]
