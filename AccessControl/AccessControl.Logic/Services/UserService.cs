@@ -158,11 +158,11 @@ namespace CheckListManager.AccessControl.Logic.Services
                     throw new AuthenticationException(106, $"PIN not valid");
 
                 if (
-                    user.Companies.MaximumNumberOfPasswordFailure > 0
-                    && user.NumberOfAttempts >= user.Companies.MaximumNumberOfPasswordFailure
+                    user.Companies.MaximumNumberOfPINFailure > 0
+                    && user.NumberOfAttempts >= user.Companies.MaximumNumberOfPINFailure
                     && user.LastLoginFailedOn != null
-                    && user.Companies.LoginFailedTimeout > 0
-                    && (DateTimeOffset.UtcNow - user.LastLoginFailedOn.Value).TotalMinutes < user.Companies.LoginFailedTimeout
+                    //&& user.Companies.LoginFailedTimeout > 0
+                    //&& (DateTimeOffset.UtcNow - user.LastLoginFailedOn.Value).TotalMinutes < user.Companies.LoginFailedTimeout
                 )
                     throw new AuthenticationException(104, $"User {code} temporary disabled");
 
@@ -222,9 +222,7 @@ namespace CheckListManager.AccessControl.Logic.Services
 		{
 			var token = await _cache.GetAsync<IdentityToken>(code, IdentityCacheRegion);
 			if (token != null)
-			{
 				return token.ExpiresOn >= DateTimeOffset.UtcNow ? token : null;
-			}
 
 			var session = await _userSessionRepository.GetAsync(code);
 			if (session != null && session.ExpiresOn >= DateTimeOffset.UtcNow)

@@ -37,9 +37,7 @@ namespace CheckListManager.Common.Logic.Services
 
 				var configuration = repository.Get(key);
 				if (configuration == null)
-				{
 					return default(T);
-				}
 
 				var value = GetValue<T>(configuration.Value);
 				_cache.Set(key, value, RegionName, TimeSpan.FromMinutes(20));
