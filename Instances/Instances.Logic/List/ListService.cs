@@ -109,6 +109,7 @@ namespace CheckListManager.Instances.Logic.List
                 {
                     Id = i.ID,
                     Code = i.Code,
+                    InstanceCode = $"{i.PrototypeName}.{i.Version}.{i.Year}.{i.Number}",
                     Year = i.Year == 0 ? "SE" : i.Year.ToString(),
                     Number = i.Number,
                     State = i.InstanceState,
