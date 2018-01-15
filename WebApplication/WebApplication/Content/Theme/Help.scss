@@ -9,153 +9,187 @@ body.Help {
 
     div.Help {
         display: block;
+        overflow: auto;
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: $Depth-Popup;
+        background-color: rgba(102, 102, 102, .7);
 
         div.Container {
+            padding: 20px;
             background-color: white;
-            border: solid 1px $Color-Grey-Regular;
-            box-shadow: $Box-Shadow;
+            position: relative;
+
+            h2 {
+                margin: -20px -20px 20px;
+                background: $Color-Yellow-Regular;
+                padding: 20px;
+                color: white;
+                text-transform: uppercase;
+                font-weight: normal;
+            }
 
             div.TOC {
                 line-height: 1.3;
 
-                h2 {
+                h3 {
                     margin: 0 0 15px;
                 }
 
-                > ul {
-                    margin: 0;
-                    padding: 0;
-                    list-style: none outside none;
+                div.Back {
+                    border-top: solid 1px white;
+                    border-bottom: solid 1px white;
+                    padding: 10px 20px;
+                    margin: 20px -20px 20px;
 
-                    h3 {
-                        margin: 15px 0 5px;
+                    a {
+                        color: $Color-Grey-Dark;
+                        font-weight: bold;
+                        display: inline-block;
+                        height: 16px;
+                        line-height: 16px;
+                        padding-left: 20px;
+                        position: relative;
+
+                        i {
+                            left: 0;
+                            position: absolute;
+                            font-size: 9px;
+                            color: white;
+                            background: $Color-Green-Regular;
+                            border-radius: 50%;
+                            display: inline-block;
+                            line-height: 16px;
+                            height: 16px;
+                            width: 16px;
+                            text-align: center;
+                        }
+
+                        &:hover {
+                            color: $Color-Green-Light;
+
+                            i {
+                                background: $Color-Green-Light;
+                            }
+                        }
                     }
+                }
+            }
 
-                    li.ContextualHelp {
-                        margin-bottom: 20px;
-                        font-style: italic;
-                    }
+            ul {
+                color: $Color-Green-Regular;
+                margin: 0 !important;
+                padding: 0 0 0 20px;
 
-                    ul {
-                        margin: 0 0 0 20px;
-                        padding: 0;
-                        list-style: none outside none;
+                li {
+                    margin: 0 !important;
+                }
+
+                ul {
+                    li {
                     }
                 }
             }
 
             div.Content {
-                h1 {
-                    margin: 0 0 15px;
+                h3 {
+                    margin: 30px 0 .5em;
                     color: $Color-Green-Regular;
                 }
 
-                h2 {
-                    margin: 30px 0 15px;
+                h4 {
+                    margin: 1.5em 0 .5em;
                     color: $Color-Green-Regular;
                 }
 
                 ul {
-                    margin: 0;
-                    padding: 0;
-                    list-style: none outside none;
+                    margin: 0 0 1em !important;
+                    color: black;
+                }
 
-                    li {
-                        font-weight: bold;
-                        line-height: 1.5;
-                    }
+                p {
+                    margin: 0 0 1em;
+                }
+
+                i {
+                    font-size: unset;
+                }
+
+                a {
+                    display: inline;
                 }
             }
 
             a.CloseButton {
                 position: absolute;
-                right: 0;
-                top: 0;
-                font-size: 15px;
+                top: 15px;
+                right: 15px;
+                color: white;
+                width: 30px;
+                height: 30px;
+                line-height: 30px;
+                text-align: center;
 
                 i {
-                    display: block;
-                    width: 20px;
-                    height: 20px;
-                    text-align: center;
-                    line-height: 20px;
+                    font-size: 30px;
                 }
 
                 &:hover {
-                    color: $Color-Green-Regular;
+                    color: $Color-Grey-Dark;
                 }
-            }
-        }
-
-        div.Content {
-            i.fi {
-                display: inline-block;
-                border-radius: 50%;
-                background-color: #406f81;
-                width: 25px;
-                height: 25px;
-                line-height: 25px;
-                color: white;
-                text-align: center;
-                font-size: 14px;
             }
         }
 
         @media #{$Media-Extended} {
-            position: fixed;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            z-index: $Depth-Help;
-            background-color: rgba(217, 217, 217, .5);
-
             div.Container {
-                position: fixed;
-                left: 50px;
-                right: 50px;
-                top: 50px;
-                bottom: 50px;
+                box-shadow: $Box-Shadow;
+                max-width: calc(100vw - #{2 * $Metric-Separator-Extended});
+                min-height: calc(100vh - #{2 * $Metric-Separator-Extended});
+                margin: 0 auto $Metric-Separator-Extended;
+                border-radius: 15px;
+                top: $Metric-Separator-Extended;
 
                 div.TOC {
-                    position: absolute;
-                    overflow: auto;
-                    top: 20px;
-                    left: 20px;
-                    bottom: 20px;
+                    float: left;
                     width: 200px;
-                    border-right: solid 1px black;
-                    padding-right: 20px;
+                    background: $Color-Silver-Dark;
+                    position: absolute;
+                    top: 64px;
+                    left: 0;
+                    bottom: 0;
+                    border-radius: 0 0 0 15px;
+                    padding: $Metric-Separator-Extended $Metric-Control-Space;
+                }
+
+                h2 {
+                    border-radius: 15px 15px 0 0;
                 }
 
                 div.Content {
-                    position: absolute;
-                    overflow: auto;
-                    top: 20px;
-                    bottom: 20px;
-                    left: 240px;
-                    right: 20px;
+                    margin-left: 200px;
                 }
             }
         }
 
         @media #{$Media-Mobile} {
             div.Container {
-                position: fixed;
-                top: 0;
-                right: 0;
-                bottom: 0;
-                left: 0;
-                padding: 20px;
-                z-index: $Depth-Help;
+                width: 100% !important;
+                min-height: 100vh;
 
-                div.TOC {
-                    border-bottom: solid 1px black;
-                    padding-bottom: 20px;
-                    margin-bottom: 20px;
+                a.TOC {
+                    float: right;
+                    margin-top: 10px;
                 }
 
-                div.Content {
+                h2 {
+                    background: $Color-Yellow-Regular;
+                    padding: 20px;
+                    color: white;
+                    text-transform: uppercase;
+                    font-weight: normal;
                 }
             }
         }

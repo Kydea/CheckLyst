@@ -54,6 +54,7 @@
     <Compile Include="Code\DefaultViewPage.cs" />
     <Compile Include="Code\Version.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\InfrastructureController.cs" />
     <Compile Include="Controllers\InstancesController.cs" />
     <Compile Include="Controllers\DataSourcesController.cs" />
@@ -389,6 +390,12 @@
     <Content Include="Views\WorkFlows\Signature.cshtml" />
     <Content Include="Views\Instances\Detail.cshtml" />
     <Content Include="Views\Security\Signature.cshtml" />
+    <Content Include="Views\Help\Index.cshtml" />
+    <Content Include="Views\Help\TOC.cshtml" />
+    <Content Include="Views\Help\Instances.cshtml" />
+    <Content Include="Views\Help\Dashboard.cshtml" />
+    <Content Include="Views\Help\MainForm.cshtml" />
+    <Content Include="Views\Help\App.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

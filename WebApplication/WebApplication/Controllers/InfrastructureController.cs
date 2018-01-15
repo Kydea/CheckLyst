@@ -13,7 +13,6 @@ namespace CheckListManager.WebApplication.Controllers
             return ConditionalView("Departments/List");
         }
 
-        [HttpPost]
         [DefaultAuthorize(Roles = "FunctionGroup#Departments")]
         [Route("Departments/Detail")]
         public ActionResult DepartmentsDetail()
@@ -28,7 +27,6 @@ namespace CheckListManager.WebApplication.Controllers
             return ConditionalView("PrototypeTypes/List");
         }
 
-        [HttpPost]
         [Route("PrototypeTypes/Detail")]
         [DefaultAuthorize(Roles = "FunctionGroup#PrototypeTypes")]
         public ActionResult PrototypeTypesDetail()

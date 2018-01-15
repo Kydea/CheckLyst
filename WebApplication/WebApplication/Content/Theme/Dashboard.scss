@@ -3,6 +3,7 @@
 body.Dashboard {
     h1 {
         margin-bottom: 0 !important;
+        float: none !important;
     }
 
     div.Dashboard {
@@ -71,11 +72,11 @@ body.Dashboard {
                 }
             }
         }
+    }
 
-        @media #{$Media-Extended} {
+    @media #{$Media-Extended} {
+        div.Dashboard {
             margin-left: -$Metric-Separator-Extended;
-            margin-top: -$Metric-Separator-Extended;
-
 
             a.DashboardItem {
                 margin-left: $Metric-Separator-Extended;
@@ -92,10 +93,11 @@ body.Dashboard {
                 }
             }
         }
+    }
 
-        @media #{$Media-460-760} {
+    @media #{$Media-460-760} {
+        div.Dashboard {
             margin-left: -$Metric-Separator-Mobile;
-            margin-top: -$Metric-Separator-Mobile;
 
             a.DashboardItem {
                 margin-left: $Metric-Separator-Mobile;
@@ -112,10 +114,10 @@ body.Dashboard {
                 }
             }
         }
+    }
 
-        @media #{$Media-0-460} {
-            margin-top: -$Metric-Separator-Mobile;
-
+    @media #{$Media-0-460} {
+        div.Dashboard {
             a.DashboardItem {
                 margin-top: $Metric-Separator-Mobile;
                 width: 100%;

@@ -8,7 +8,7 @@
 
             matematici.breadcrumbs.set(config.breadcrumbs);
 
-            matematici.help.setCode(config.helpPage, config.helpParagraph);
+            matematici.help.setCode(config.helpPage || config.name, config.helpParagraph);
 
             if (config.initializers)
                 for (var index in config.initializers)
@@ -32,7 +32,7 @@
                     matematici.elements.window
                         .off("resize", config.resize)
                         .off("scroll", config.resize);
-            };
+			};
         };
 
     setup();

@@ -13,7 +13,6 @@ namespace CheckListManager.WebApplication.Controllers
             return ConditionalView();
         }
 
-        [HttpPost]
         [Route("Detail")]
         [DefaultAuthorize(Roles = "FunctionGroup#WorkFlows")]
         public ActionResult Detail()
@@ -21,7 +20,6 @@ namespace CheckListManager.WebApplication.Controllers
             return PartialView();
         }
 
-        [HttpPost]
         [Route("Signature")]
         public ActionResult Signature()
         {

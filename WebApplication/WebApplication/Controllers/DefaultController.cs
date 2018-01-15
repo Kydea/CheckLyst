@@ -23,7 +23,6 @@ namespace CheckListManager.WebApplication.Controllers
         }
 
         [Route("Dashboard")]
-        [HttpPost]
         public ActionResult Dashboard(int? pageVersions, int? pageInstances)
         {
             //var Model = new ViewModels.Dashboard.DashboardModel(db);

@@ -13,7 +13,6 @@ namespace CheckListManager.WebApplication.Controllers
             return ConditionalView();
         }
 
-        [HttpPost]
         [Route("Detail")]
         public ActionResult Detail()
         {

@@ -53,18 +53,22 @@
 
         var count = 3;
 
-        if (matematici.tokenManager.checkRole("Prototypes#Edit#"))
+        if (matematici.tokenManager.checkRole("Prototypes#View#"))
             ++count;
         else
             $("#PrototypesDashboardItem").hide();
 
-        if (matematici.tokenManager.checkRole("Instances#Edit#"))
+        if (matematici.tokenManager.checkRole("Instances#View#"))
             ++count;
         else
             $("#InstancesDashboardItem").hide();
 
         $("#PinDashBoardItem").on("click", function () {
             matematici.userPanel.profile();
+        });
+
+        $("#HelpDashboardItem").on("click", function () {
+            matematici.help.show("Index");
         });
 
         $(".Dashboard").addClass("Controls" + count);

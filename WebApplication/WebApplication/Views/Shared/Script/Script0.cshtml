@@ -22,13 +22,13 @@
                         getData: "@BaseUrl/Infrastructure/Companies/GetData"
                     }
                 },
-                help: "@Url.Action("Index", "Help")",
                 workflows: {
                     signature: "@Url.Action("Signature", "WorkFlows")"
                 },
                 instances: {
                     api: "@BaseUrl/Instances/Instance"
-                }
+                },
+                help: "@Url.Action("Index", "Help")",
         	},
         	signatureActions: {
         		toApprove: "Prototype – state to Approved/Active",
