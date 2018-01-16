@@ -65,7 +65,7 @@
 			});
 
 			element = matematici.elements.body.children("div.Help");
-			container = element.children("div.Container").on("click", "div.TOC ul a, a.Help", function (e) {
+			container = element.children("div.Container").on("click", "ul.TOC a, a.Help", function (e) {
 				e.preventDefault();
 				var
 					anchor = $(this),

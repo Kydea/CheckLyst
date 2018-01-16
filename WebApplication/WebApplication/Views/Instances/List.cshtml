@@ -109,7 +109,7 @@
         $("#AddButton").on("click", function () {
             var versionName = $("select[name=version]", formElement).next().val();
             if (!versionName)
-                matematici.dialog.error("Error", "Select an active prototype version to create a new isntance.");
+                matematici.dialog.error("Error", "Select an active prototype version to create a new instance.");
             else if (!versionName.endsWith(" Active"))
                 matematici.dialog.error("Error", "The selected prototype version is not active.");
             else {

@@ -1,24 +1,34 @@
-﻿<h3>Instances</h3>
-<ul>
-    <li><a href="#" data-paragraph="ManualeUtente">User manual</a></li>
-    <li><a href="#" data-paragraph="Sommario">Contents</a></li>
-    <li><a href="#" data-paragraph="Contenuti">Contenuti</a></li>
-</ul>
+﻿@Html.Partial("SearchPage", new HelpPage
+{
+    Title = "Instances",
+    RecordsName = "instances",
+    ReadOnly = true,
+    P1 = "Click on a row to open the instance manager for that record.",
 
-<h4 id="ManualeUtente">Manuale utente</h4>
-<p>
-    Questo manuale rappresenta l'help online di CheckList Manager e contiene le istruzioni per l'utilizzo dell'applicazione da parte degli utenti.
-</p>
-<p>
-    Per accedere, fare click sull'icona <i class="fa fa-question"></i> nella testata.
-</p>
+    Buttons = new Field[]
+    {
+        new Field("new instance", "Creates a new empty the instance. An active prototype version must have been selected in the filters."),
+    },
 
-<h4 id="Sommario">Sommario</h4>
-<p>
-    Il sommario contiene tutte le sezioni presenti nel manuale e la voce <em>Help contestuale</em> che mostra la sezione relativa alla pagina attualmente aperta nell'applicazione.
-</p>
+    Filters = new Field[] {
+        new Field("Department / prototype type", "The department and prototype type of the instance prototype."),
+        new Field("Prototype / version", "The prototype and version number of the instance."),
+        new Field("Instance description", "The description of the instance or part of it."),
+        new Field("State", "The state of the instance."),
+        new Field("Tab / value", "A tag code and value of instance."),
+    },
 
-<h4 id="Contenuti">Contenuti</h4>
-<p>
-    Ogni sezione è composta da un titolo, una lista di link alle sotto-sezioni e i tutti i contenuti corrispondenti.
-</p>
+    Columns = new Field[]
+    {
+        new Field("ID", Field.ID),
+        new Field("Code", "The code that identifies the instance."),
+        new Field("State", "The state of the instance."),
+        new Field("Year", "The year of the instance."),
+        new Field("Number", "The number of the instance."),
+        new Field("Description", "The description of the instance."),
+        new Field("Department", "The department of the prototype."),
+        new Field("Prototype type", "The type of the prototype."),
+        new Field("Prototype ", "The prototype of the instance."),
+        new Field("Version", "The version number of the prototype.")
+    }
+})

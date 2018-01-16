@@ -38,8 +38,7 @@ namespace CheckListManager.Prototypes.Logic.List
                     Value = department?.ToString()
                 };
 
-                var states = new List<Option> { new Option("", "All") };
-                states.AddRange((await _commonRepository.GetVersionStatesAsync()).Select(x => new Option(x)));
+                var states = (await _commonRepository.GetVersionStatesAsync()).Select(x => new Option(x));
                 response.Fields["State"] = new Field
                 {
                     Options = states,
@@ -53,7 +52,7 @@ namespace CheckListManager.Prototypes.Logic.List
                 response.Fields["PrototypeType"] = new Field
                 {
                     Options = prototypeTypes.Select(pt => new Option(pt.ID.ToString(), pt.Name)),
-                    Value = form.PrototypeType.HasValue && prototypeTypes.Any(pt => pt.ID == form.PrototypeType) ? form.PrototypeType.Value.ToString() : null 
+                    Value = form.PrototypeType.HasValue && prototypeTypes.Any(pt => pt.ID == form.PrototypeType) ? form.PrototypeType.Value.ToString() : null
                 };
 
             }
@@ -62,51 +61,53 @@ namespace CheckListManager.Prototypes.Logic.List
         }
 
         public async Task<PagingResponse<List<ListRow>>> GetDataAsync(DefaultIdentity identity, PagingRequest<ListRequest> form)
-            =>
-                await _prototypesRepository.GetPrototypesAsync(
-                    identity.CompanyId,
-                    p => new ListRow
-                    {
-                        Id = p.Prototype,
-                        Name = p.Prototypes.Name,
-                        Description = p.Description,
-                        State = p.VersionState,
-                        Version = p.Version,
-                        ValidityFrom = p.ValidFrom,
-                        ValidityUntil = p.ValidUntil,
-                        Department = p.Prototypes.Department,
-                        DepartmentName = p.Prototypes.Departments.Name,
-                        PrototypeType = p.Prototypes.PrototypeType,
-                        PrototypeTypeName = p.Prototypes.PrototypeTypes.Name,
-                        CreatedBy = p.CreatedBy,
-                        CreatedOn = p.CreatedOn,
-                        ModifiedBy = p.ModifiedBy,
-                        ModifiedOn = p.ModifiedOn
-                    },
-                    p =>
-                        p.Prototypes.Company == identity.CompanyId
-                        && (form.Data.Department == null || p.Prototypes.Department == form.Data.Department)
-                        && (form.Data.PrototypeType == null || p.Prototypes.PrototypeType == form.Data.PrototypeType)
-                        && (form.Data.State == string.Empty || p.VersionState == form.Data.State)
-                        && (form.Data.Name == string.Empty || p.Prototypes.Name != null && p.Prototypes.Name.ToUpper().Contains(form.Data.Name.ToUpper()))
-                        && (form.Data.Pending == "Include" || form.Data.Pending == "Exclude" && p.ProposedState == null || form.Data.Pending == "Filter" && p.ProposedState != null)
-                        && (
-                            p.Prototypes.PrototypeTypes.UserFunctions.Any(uf =>
-                                uf.Company == identity.CompanyId
-                                && uf.User == identity.Code
-                                && uf.FunctionGroup == "Prototypes"
-                                && uf.Function == "View"
-                            ) || p.Prototypes.Departments.UserFunctions.Any(uf =>
-                                uf.Company == identity.CompanyId
-                                && uf.User == identity.Code
-                                && uf.FunctionGroup == "Prototypes"
-                                && uf.Function == "View"
-                                && uf.PrototypeType == null
-                            )
-                        ),
-                    p => p.Prototype,
-                        form.CurrentPage,
-                        form.ItemsPerPage
-                    );
+        {
+            if (form.Data.State == null) form.Data.State = string.Empty;
+            return await _prototypesRepository.GetPrototypesAsync(
+                identity.CompanyId,
+                p => new ListRow
+                {
+                    Id = p.Prototype,
+                    Name = p.Prototypes.Name,
+                    Description = p.Description,
+                    State = p.VersionState,
+                    Version = p.Version,
+                    ValidityFrom = p.ValidFrom,
+                    ValidityUntil = p.ValidUntil,
+                    Department = p.Prototypes.Department,
+                    DepartmentName = p.Prototypes.Departments.Name,
+                    PrototypeType = p.Prototypes.PrototypeType,
+                    PrototypeTypeName = p.Prototypes.PrototypeTypes.Name,
+                    CreatedBy = p.CreatedBy,
+                    CreatedOn = p.CreatedOn,
+                    ModifiedBy = p.ModifiedBy,
+                    ModifiedOn = p.ModifiedOn
+                },
+                p =>
+                    p.Prototypes.Company == identity.CompanyId
+                    && (form.Data.Department == null || p.Prototypes.Department == form.Data.Department)
+                    && (form.Data.PrototypeType == null || p.Prototypes.PrototypeType == form.Data.PrototypeType)
+                    && (form.Data.State == string.Empty || p.VersionState == form.Data.State)
+                    && (form.Data.Name == string.Empty || p.Prototypes.Name != null && p.Prototypes.Name.ToUpper().Contains(form.Data.Name.ToUpper()))
+                    && (form.Data.Pending == "Include" || form.Data.Pending == "Exclude" && p.ProposedState == null || form.Data.Pending == "Filter" && p.ProposedState != null)
+                    && (
+                        p.Prototypes.PrototypeTypes.UserFunctions.Any(uf =>
+                            uf.Company == identity.CompanyId
+                            && uf.User == identity.Code
+                            && uf.FunctionGroup == "Prototypes"
+                            && uf.Function == "View"
+                        ) || p.Prototypes.Departments.UserFunctions.Any(uf =>
+                            uf.Company == identity.CompanyId
+                            && uf.User == identity.Code
+                            && uf.FunctionGroup == "Prototypes"
+                            && uf.Function == "View"
+                            && uf.PrototypeType == null
+                        )
+                    ),
+                p => p.Prototype,
+                    form.CurrentPage,
+                    form.ItemsPerPage
+                );
+        }
     }
 }

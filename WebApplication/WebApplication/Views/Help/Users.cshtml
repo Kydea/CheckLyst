@@ -1,0 +1,62 @@
+﻿@Html.Partial("SearchPage", new HelpPage {
+    Title = "Users",
+    RecordsName = "users",
+
+    Filters = new Field[] {
+        new Field("User code", "The code of the user or part of it."),
+        new Field("Name and surname", "The name and surname of the user or part of it.")
+    },
+
+    Columns = new Field[]
+    {
+        new Field("User code", Field.ID),
+        new Field("Name and surname", "The name and surname of the user."),
+        new Field("Email", "The email of the user."),
+        new Field("Enabled", "<i class=\"fi flaticon-check\"></i> if the user is enabled, <i class=\"fi flaticon-check\"></i> otherwise."),
+        new Field("Last login", "the date and time of the last login of the user.")
+    },
+
+    DetailTabs = new Tab[]
+    {
+        new Tab("Details") {
+            Fields = new Field[] {
+                new Field("Code", Field.ID, Field.FINAL),
+                new Field("Name and surname", "The name and surname of the user.", Field.MANDATORY),
+                new Field("Email", "The email of the user."),
+                new Field("Enabled", "Only enabled users can log in the application."),
+                new Field("Password/Confirm password", "To change a user's password, type the new password in the field <strong>password</strong> and <strong>confirm password</strong>."),
+                new Field("Authentication code", "To authentication user code in the company domain or LDAP system.")
+            },
+            IncludeLogFields = true
+        },
+        new Tab("General grants")
+        {
+            Description = @"
+                Check a <strong>view</strong> grant to give access in read only mode for a function to the user.<br />
+                Check also <strong>edit</strong> grant to give full access for that function to the user.
+            "
+        },
+        new Tab("Prototype grants")
+        {
+            Description = @"
+                Click on <strong>ADD FUNCTION</strong> to add one or more functions to a whole department or a specific prototype type.<br />
+                Check a <strong>view</strong> grant to give access in read only mode to the user.<br />
+                Check also <strong>edit</strong> grant to give access in edit mode to the user.<br />
+                Check also <strong>approve</strong> grant to enable the user for the signature of the approvation or obsolescence work flow for a specific level.<br />
+                Click on <i class=""fi flaticon-minus""></i> to delete a function.<br />
+            "
+        },
+        new Tab("Instances grants")
+        {
+            Description = @"
+                Click on <strong>ADD FUNCTION</strong> to add one or more functions to a whole department or a specific prototype type.<br />
+                Check a <strong>view</strong> grant to give access in read only mode to the user.<br />
+                Check also <strong>edit</strong> grant to give access in edit mode to the user for in pregress instances.<br />
+                Check also <strong>create</strong> grant to enable the user to create new instances.<br />
+                Check also <strong>unsign</strong> grant to enable the user to unsign a cancelable signature in an instances, possibly for a specific level.<br />
+                Check also <strong>confirm</strong> grant to enable the user a confirmation directly instances without a confirmation work flow or to enable the user for the signature of the confirmation work flow for a specific level.<br />
+                Click on <i class=""fi flaticon-minus""></i> to delete a function.<br />
+            "
+        }
+    }
+})

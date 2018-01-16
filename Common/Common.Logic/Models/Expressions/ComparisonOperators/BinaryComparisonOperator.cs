@@ -17,7 +17,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ComparisonOperators
                         || (Left.DataType == DataType.DateTime && Right.DataType == DataType.Date)
                     )
             )
-                throw new ParseException("Comparison operators operands have the same type", Position);
+                throw new ParseException("Comparison operators' operands must have the same type", Position);
 
             DataType = DataType.Boolean;
         }

@@ -1,0 +1,42 @@
+﻿@Html.Partial("SearchPage", new HelpPage {
+    Title = "Work flows",
+    RecordsName = "work flows",
+
+    Buttons = new Field[]
+    {
+        new Field("Export", "Download the filtered records in CVS format")
+    },
+
+    Filters = new Field[] {
+        new Field("Work flow description", "The description of the work flow or part of it.")
+    },
+
+    Columns = new Field[]
+    {
+        new Field("Work flow ID", Field.ID),
+        new Field("Work flow description", "The description of the work flow.")
+    },
+
+    DetailTabs = new Tab[]
+    {
+        new Tab("Details") {
+            Fields = new Field[] {
+                new Field("ID", Field.ID, Field.READ_ONLY),
+                new Field("Description", "The description of the work flow.", Field.MANDATORY)
+            },
+            IncludeLogFields = true
+        },
+        new Tab("Steps")
+        {
+            Description = @"
+                Each step of a work flow must have all the signature issued to be accepted.<br />
+                Each signature can be issued by a user of one of the foreseen levels.<br /> 
+                <br />
+                Click on <strong>ADD STEP</strong> to add a step to the work flow.<br />
+                Click on the icon <i class=""fi flaticon-trash-o""></i> near the step caption to delete it.<br />
+                Click on <i class=""fi flaticon-plus""></i> to add a signature.<br />
+                Click on the icon <i class=""fi flaticon-trash-o""></i> can near the signature to delete it.
+            "
+        }
+    }
+})

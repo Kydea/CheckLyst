@@ -67,6 +67,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Help\Tab.cs" />
+    <Compile Include="Models\Help\Field.cs" />
+    <Compile Include="Models\Help\HelpPage.cs" />
     <Compile Include="Models\Instance.cs" />
     <Compile Include="Models\Prototype.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -369,7 +372,9 @@
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
-    <Content Include="Views\Web.config" />
+    <Content Include="Views\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Views\Default\Loader.cshtml" />
     <Content Include="Views\Security\Login.cshtml" />
     <Content Include="Views\Prototypes\List.cshtml" />
@@ -396,6 +401,16 @@
     <Content Include="Views\Help\Dashboard.cshtml" />
     <Content Include="Views\Help\MainForm.cshtml" />
     <Content Include="Views\Help\App.cshtml" />
+    <Content Include="Views\Help\Departments.cshtml" />
+    <Content Include="Views\Help\SearchPage.cshtml" />
+    <Content Include="Views\Help\PrototypeTypes.cshtml" />
+    <Content Include="Views\Help\WorkFlows.cshtml" />
+    <Content Include="Views\Help\Users.cshtml" />
+    <Content Include="Views\Help\Trail.cshtml" />
+    <Content Include="Views\Help\DataSources.cshtml" />
+    <Content Include="Views\Help\Prototypes.cshtml" />
+    <Content Include="Views\Help\InstanceManager.cshtml" />
+    <Content Include="Views\Help\PrototypeEditor.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

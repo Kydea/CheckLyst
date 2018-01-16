@@ -69,6 +69,10 @@ body.Help {
       body.Help div.Help div.Container div.Content h4 {
         margin: 1.5em 0 .5em;
         color: #009688; }
+      body.Help div.Help div.Container div.Content h5 {
+        margin: 1em 0 .5em;
+        color: black;
+        font-size: 14px; }
       body.Help div.Help div.Container div.Content ul {
         margin: 0 0 1em !important;
         color: black; }
@@ -78,6 +82,25 @@ body.Help {
         font-size: unset; }
       body.Help div.Help div.Container div.Content a {
         display: inline; }
+      body.Help div.Help div.Container div.Content table {
+        border-collapse: collapse;
+        width: 100%; }
+        body.Help div.Help div.Container div.Content table td {
+          padding: 10px;
+          border-bottom: solid 1px white;
+          border-left: solid 1px white;
+          background: #ebebeb;
+          width: 100%; }
+          body.Help div.Help div.Container div.Content table td span.Note {
+            margin-left: 10px;
+            color: #ffba00; }
+            body.Help div.Help div.Container div.Content table td span.Note:first-child {
+              margin-left: 0; }
+          body.Help div.Help div.Container div.Content table td:first-child {
+            min-width: 150px;
+            width: unset;
+            border-left: none;
+            font-weight: bold; }
       body.Help div.Help div.Container a.CloseButton {
         position: absolute;
         top: 15px;

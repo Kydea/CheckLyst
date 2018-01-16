@@ -1,0 +1,21 @@
+﻿@Html.Partial("SearchPage", new HelpPage {
+    Title = "Data sources",
+    RecordsName = "data sources",
+
+    Filters = new Field[] {
+        new Field("Code", "The code of the data source or part of it."),
+        new Field("Description", "The description of the data source or part of it.")
+    },
+
+    Columns = new Field[]
+    {
+        new Field("Code", Field.ID),
+        new Field("Description", "The description of the data source.")
+    },
+
+    DetailFields = new Field[]
+    {
+        new Field("Code", Field.ID, Field.FINAL),
+        new Field("Description", "The description of the data source.", Field.MANDATORY)
+    }
+})
