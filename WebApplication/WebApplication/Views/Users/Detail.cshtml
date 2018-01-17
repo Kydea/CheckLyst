@@ -194,7 +194,9 @@
                 div = $("<div />").addClass("Function").insertBefore(tabItem.tab.children("div.Clearing"));
 
             $("<hr />").appendTo(div)
-            var select1 = $("<select />");
+            var
+                select1 = $("<select />"),
+                select2;
             if (detailPage.isReadOnly()) matematici.controls.setEditable(select1, false);
             $("<label />").appendTo(div).append($("<span />").text("Department")).append($("<i />").addClass("Icon fi flaticon-building-o")).append(select1).addClass("Clearing");
             for (var index in departments) 
@@ -205,7 +207,7 @@
                 refreshPrototypeTypes(select1, select2);
             });
 
-            var select2 = $("<select />").data("nullable", "(all)");
+            select2 = $("<select />").data("nullable", "(all)");
             if (detailPage.isReadOnly()) matematici.controls.setEditable(select2, false);
             $("<label />").appendTo(div).append($("<span />").text("Prototype type")).append($("<i />").addClass("Icon fi flaticon-folder-o")).append(select2);
             var autoComplete2 = new matematici.AutoComplete(select2);
