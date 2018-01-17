@@ -1,5 +1,35 @@
 ﻿<h3>Instance manager</h3>
 
 <p>
-    Show an instance.
+    The <strong>Instance manager</strong> can be used to display, follow and fill in instances of checklists.
 </p>
+<p>
+    Basing on the corresponding <strong>prototype</strong>, an instance is composed by the <strong>header</strong> and one or more <strong>pages</strong>, containing <strong>groups</strong>. Each group can contain other groups (subgroups) itself, <strong>text</strong>, <strong>fields</strong> and <strong>signatures</strong>. And so on.
+</p>
+<p>
+    The <strong>header</strong> usually contains the information that qualifies the isntance. For example for a business process ruled by the instance, about an object, the header will contain the identifier of this object. Once the header is valid, the instance can be saved, changes the state from <strong>draft</strong> to <strong>in progress</strong> and get a progressive number, depending on the year.
+</p>
+<p>
+    The <strong>header</strong> of instances in state <strong>in progress</strong> are not editable. On the other hand, the <strong>pages</strong> are editable only for isntances with state <strong>in progress</strong>.
+</p>
+<p>
+    Once all the pages are valid, the instance can be completed. If a confirmation work flow is expected, it will be created and the isntance will take the state <strong>completed</strong>.
+</p>
+<p>
+    If a confirmation work flow is not expected or the confirmation work flow is approved, the instance takes the state <strong>confirmed</strong>.
+</p>
+<p>
+    If the confirmation work flow is rejected, the instance takes the state <strong>canceled</strong>.
+</p>
+
+<h4>Actions</h4>
+
+<table>
+    <tr><td>Confirm</td><td>Shows the confirmation work flow steps.</td></tr>
+    <tr><td>Complete</td><td>Changes the state of the instance to <strong>completed</strong> (if a confirmation work flow is present) or <strong>confirmed</strong> (otherwise).</td></tr>
+    <tr><td>Delete</td><td>If the instance has the state <strong>draft</strong>, is a test instance or is a simulation evidentes, deletes the istance. Otherwise, changes the state of the instance to <strong>deleted</strong>.</td></tr>
+    <tr><td>Save</td><td>Saves the instance.</td></tr>
+    <tr><td>Export</td><td>Creates a PDF version of the isntance.</td></tr>
+    <tr><td>History</td><td>Shows the history of the isntance.</td></tr>
+    <tr><td><i class="fi flaticon-calculator"></i></td><td>Shows the expressions of the instance and their value.</td></tr>
+</table>

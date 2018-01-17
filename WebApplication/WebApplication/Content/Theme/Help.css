@@ -78,7 +78,7 @@ body.Help {
         color: black; }
       body.Help div.Help div.Container div.Content p {
         margin: 0 0 1em; }
-      body.Help div.Help div.Container div.Content i {
+      body.Help div.Help div.Container div.Content i.fi {
         font-size: unset; }
       body.Help div.Help div.Container div.Content a {
         display: inline; }
