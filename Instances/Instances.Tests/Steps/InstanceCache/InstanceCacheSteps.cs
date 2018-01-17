@@ -33,7 +33,7 @@ namespace CheckListManager.Instances.Tests.Steps.InstanceCache
 			_context.UserCode = userCode;
 		}
 
-		[Given(@"I have want to create an instance based on a prototype")]
+		[Given(@"I want to create an instance based on a prototype")]
 		public void GivenIHaveWantToCreateAnInstanceBasedOnAPrototype()
 		{
 			_context.Code = "MyTestInstance";

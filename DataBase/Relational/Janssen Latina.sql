@@ -1,10 +1,10 @@
-insert into "Infrastructure"."Companies"("Name", "TimeZone") values ('Janssen Latina', 'Europe/Rome');
+insert into "Infrastructure"."Companies"("Name", "TimeZone") values ('Janssen Latina', 'Europe/Rome'); --see http://momentjs.com/timezone/docs/#/data-loading/
 
 insert into "Infrastructure"."Departments" ("Company", "Name") values (currval('"Infrastructure"."Companies_ID_seq"'), 'Automation');
 insert into "Infrastructure"."Departments" ("Company", "Name") values (currval('"Infrastructure"."Companies_ID_seq"'), 'Quality control');
 insert into "Infrastructure"."Departments" ("Company", "Name") values (currval('"Infrastructure"."Companies_ID_seq"'), 'Information technology');
 
-insert into "Security"."Users" ("Company", "Code", "Description", "Password", "Enabled", "PIN") 
+insert into "Security"."Users" ("Company", "Code", "Description", "Password", "PIN", "Enabled") 
 values (
 	currval('"Infrastructure"."Companies_ID_seq"'), 
 	'CheckListManager', 

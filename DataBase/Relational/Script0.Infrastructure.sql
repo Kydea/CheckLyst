@@ -6,7 +6,9 @@ create table "Infrastructure"."TimeZones"
     "MicrosoftCode" varchar (100) not null
 );
 
-insert into "Infrastructure"."TimeZones" values ('Europe/Rome', 'W. Europe Standard Time');
+insert into "Infrastructure"."TimeZones" values 
+	('Europe/Rome', 'W. Europe Standard Time'),
+	('America/Puerto_Rico', 'Atlantic Standard Time');
 
 create table "Infrastructure"."Companies"
 (
