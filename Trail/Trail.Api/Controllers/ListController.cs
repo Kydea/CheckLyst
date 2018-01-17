@@ -4,12 +4,10 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using CheckListManager.Trail.Logic.Services;
 using CheckListManager.Common.Logic.Api.Formatters;
-using System.Collections.Generic;
 using System.Net;
 using System.Linq;
 using CheckListManager.Common.Logic.Cache;
 using System;
-using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Logic.Trail;
 
 namespace CheckListManager.Trail.Api.Controllers
