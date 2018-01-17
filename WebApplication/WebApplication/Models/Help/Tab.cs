@@ -10,7 +10,6 @@ namespace CheckListManager.WebApplication.Models
         public Tab(string Name)
         {
             this.Name = Name;
-            this.Fields = Fields;
         }
 
         public string Name { get; }
