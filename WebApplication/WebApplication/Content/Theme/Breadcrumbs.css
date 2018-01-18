@@ -24,6 +24,13 @@
       padding-right: 0; }
       div#Breadcrumbs a:last-child::after, div#Breadcrumbs span:last-child::after {
         content: none; }
+    div#Breadcrumbs a.Label, div#Breadcrumbs span.Label {
+      font-weight: bold; }
+      div#Breadcrumbs a.Label::after, div#Breadcrumbs span.Label::after {
+        content: ":";
+        font-weight: bold;
+        padding-left: 0;
+        color: unset; }
   div#Breadcrumbs a:hover {
     text-decoration: none;
     color: blue; }

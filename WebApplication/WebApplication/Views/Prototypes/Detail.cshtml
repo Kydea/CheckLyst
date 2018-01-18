@@ -66,6 +66,9 @@
                 }, "Icon ExpressionsList"),
 
             buttonGroup = new matematici.ButtonGroup("span.ButtonGroup")
+                .add("Quit", function () {
+                    prototype.quit();
+                }, "History")
                 .add("History", function () {
                     prototype.showHistory();
                 }, "History")

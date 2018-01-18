@@ -44,6 +44,7 @@ insert into "CheckLists"."VersionStates"
 values 
 	('Draft'),
 	('In simulation'),
+	('In approval'),
 	('Approved'),
 	('Active'),
 	('Obsolete');

@@ -107,11 +107,20 @@
         });
 
         $("#AddButton").on("click", function () {
-            var versionName = $("select[name=version]", formElement).next().val();
+            var
+                versionName = $("select[name=version]", formElement).next().val(),
+                department = $("select[name=department]", formElement).val(),
+                prototypeType = $("select[name=prototypeType]", formElement).val();
+
             if (!versionName)
                 matematici.dialog.error("Error", "Select an active prototype version to create a new instance.");
             else if (!versionName.endsWith(" Active"))
                 matematici.dialog.error("Error", "The selected prototype version is not active.");
+            else if (
+                !matematici.tokenManager.checkRole("Instances#Create#" + department + "##")
+                && !matematici.tokenManager.checkRole("Instances#Create#" + department + "#" + prototype + "#")
+            )
+                matematici.dialog.error("Error", "Permission denied.");
             else {
                 var
                     prototype = $("select[name=prototype]", formElement).val(),
@@ -119,7 +128,6 @@
                 matematici.navigator.open("@Url.Action("Create")/" + prototype + "/" + version);
             }
         });
-
         callback.call();
     };
 </script>

@@ -10,6 +10,7 @@ namespace CheckListManager.Common.Data
     {
         public const string Draft = "Draft";
         public const string InSimulation = "In simulation";
+        public const string InApproval = "In approval";
         public const string Approved = "Approved";
         public const string Active = "Active";
         public const string Obsolete = "Obsolete";

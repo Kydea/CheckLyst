@@ -59,6 +59,9 @@
                 }, "Icon"),
 
             buttonGroup = new matematici.ButtonGroup("span.ButtonGroup")
+                .add("Quit", function () {
+                    instance.quit();
+                }, "Quit")
                 .add("History", function () {
                     instance.showHistory();
                 }, "History")

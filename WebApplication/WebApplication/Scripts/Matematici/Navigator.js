@@ -36,11 +36,15 @@
         setSuspended: function (value) {
             suspended = value;
             return this;
-        },
+		},
 
-        navigate: function (path, relative) {
-            if (relative) path = basePath + path;
-            $.address.value(path + (path.indexOf("?") >= 0 ? "&" : "?") + "d=" + new Date().getTime());
+		buildUrl: function (path, relative) {
+			if (relative) path = basePath + path;
+			return path + (path.indexOf("?") >= 0 ? "&" : "?") + "d=" + new Date().getTime();
+		},
+
+		navigate: function (path, relative) {
+			$.address.value(matematici.navigator.buildUrl(path, relative));
         },
 
         open: function (path, relative, nocache, data) {
@@ -68,9 +72,13 @@
                 ]);
 		},
 
-		setUrl: function (path, relative, nocache) {
-			matematici.navigator.setSuspended(true);
-			matematici.navigator.open(path, relative, nocache);
+		setUrl: function (path, relative) {
+			if (window.history && window.history.replaceState)
+				window.history.replaceState({}, '', matematici.navigator.buildUrl(path, relative));
+			else {
+				matematici.navigator.setSuspended(true);
+				matematici.navigator.open(path, relative, nocache);
+			}
 		},
 
         defaultHandler: function (callback) {

@@ -21,7 +21,7 @@
             var item = items[index];
             if (item.content == null)
                 console.log(new Error("content not found in breadcrumbs item"));
-
+			element.append($("<span />").html(item.label || "page").addClass("Extended Label"));
             element.append((item.url == null ? $("<span />") : $("<a />").attr("href", item.url)).html(item.content));
 		}
 

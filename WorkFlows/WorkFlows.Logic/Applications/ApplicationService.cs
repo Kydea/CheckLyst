@@ -85,7 +85,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 PrototypeVersion.ValidFrom = UtcNow;
 
             var State = 
-                PrototypeVersion.VersionState == VersionState.InSimulation ?
+                PrototypeVersion.VersionState == VersionState.InApproval ?
                     PrototypeVersion.ValidFrom > UtcNow ? VersionState.Approved : VersionState.Active :
                     PrototypeVersion.ValidUntil > UtcNow ? PrototypeVersion.VersionState : VersionState.Obsolete;
 
@@ -105,9 +105,9 @@ namespace CheckListManager.WorkFlows.Logic.Applications
         {
             //TODO
             //5. notificare per email
-            if (PrototypeVersion.VersionState == VersionState.InSimulation)
+            if (PrototypeVersion.VersionState == VersionState.InApproval)
                 _workFlowsRepository.DeletePrototypeVersionInstances(PrototypeVersion);
-            await SetPrototypeVersionState(identity, PrototypeVersion, PrototypeVersion.VersionState == VersionState.InSimulation ? VersionState.Draft : PrototypeVersion.VersionState);
+            await SetPrototypeVersionState(identity, PrototypeVersion, PrototypeVersion.VersionState == VersionState.InApproval ? VersionState.Draft : PrototypeVersion.VersionState);
         }
 
         private async Task SetInstanceState(DefaultIdentity identity, Instances Instance, string State)
@@ -206,7 +206,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
 
             if (request.Approved)
             {
-                bool AllApproved = Steps.All(x => x.Approved == true);
+                bool AllApproved = SignResponse.Completed = Steps.All(x => x.Approved == true);
 
                 if (PrototypeVersion != null)
                 {
@@ -240,6 +240,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             else 
             {
                 Step.WorkFlowApplications.Approved = false;
+                SignResponse.Completed = true;
                 if (PrototypeVersion != null)
                 {
                     await Reject(identity, PrototypeVersion);

@@ -53,19 +53,15 @@
 		},
 
 		getFormattedYear = function () {
-			console.log(versionState, year);
 			return versionState == prototypes.Prototype.states.draft ? "test" : versionState == prototypes.Prototype.states.simulation || year == 0 ? "SE" : year || "?";
 		},
 
 		setupBreadcrumbs = function () {
 			matematici.breadcrumbs.set([
-				{ content: departmentName },
-				{ content: prototypeTypeName },
-				{ content: prototypeName + "." + version },
-				{
-					content:
-					getFormattedYear() + "." + (number || "?") + " (" + state + ")"
-				},
+				{ content: departmentName, label: "department"},
+				{ content: prototypeTypeName, label: "prototype type" },
+				{ content: prototypeName + "." + version + "." + getFormattedYear() + "." + (number || "?"), label: "code" },
+				{ content: state, label: "state" }
 			]);
 		},
 
@@ -265,13 +261,7 @@
 	};
 
 	instance.quit = function () {
-		if (
-			window.opener
-			&& (versionState == prototypes.Prototype.states.simulation || versionState == prototypes.Prototype.states.draft)
-		)
-			window.close();
-		else
-			matematici.navigator.open(options.listUrl);
+		matematici.navigator.open(options.listUrl);
 	};
 
 	instance.save = function () {

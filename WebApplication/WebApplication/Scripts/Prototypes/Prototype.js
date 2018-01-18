@@ -46,7 +46,8 @@
 		},
 
 		setupActionBar = function () {
-			buttonGroup = $("div.ActionBar a.ButtonGroup", element),
+			var
+				buttonGroup = $("div.ActionBar a.ButtonGroup", element),
 				previewButton = $("a.Preview", buttonGroup).addClass("Hidden"),
 				startSimulationButton = $("a.StartSimulation", buttonGroup).addClass("Hidden"),
 				cancelSimulationButton = $("a.CancelSimulation", buttonGroup).addClass("Hidden"),
@@ -75,14 +76,12 @@
 					saveButton.removeClass("Hidden");
 					break;
 				case prototypes.Prototype.states.simulation:
-					if (model.proposedState)
-						approveButton.removeClass("Hidden");
-					else {
-						previewButton.removeClass("Hidden");
-						submitForApprovalButton.removeClass("Hidden");
-						cancelSimulationButton.removeClass("Hidden");
-					}
+					previewButton.removeClass("Hidden");
+					submitForApprovalButton.removeClass("Hidden");
+					cancelSimulationButton.removeClass("Hidden");
 					break;
+				case prototypes.Prototype.states.approval:
+					approveButton.removeClass("Hidden");
 				case prototypes.Prototype.states.obsolete:
 					break;
 				case prototypes.Prototype.states.draftReadOnly:
@@ -298,11 +297,10 @@
 				done: function (result) {
 					grid.close();
 					matematici.popup.close();
-					var stateChanged = model.state != result.state;
 					model.state = result.state;
 					model.validFrom = result.validFrom;
 					model.validUntil = result.validUntil;
-					if (stateChanged)
+					if (result.completed)
 						model.proposedState = model.proposedDate = null;
 					concurrencyInformation = {
 						modifiedBy: result.modifiedBy,
@@ -310,7 +308,7 @@
 					};
 					update();
 					setupActionBar();
-					if (!stateChanged)
+					if (!result.completed)
 						prototype.loadSignatureBook(action);
 					if (result.approved)
 						matematici.blip.ok();
@@ -559,6 +557,14 @@
 	};
 
 	prototype.preview = function () {
+		if (
+			!matematici.tokenManager.checkRole("Prototypes#Edit#" + model.department + "##")
+			&& !matematici.tokenManager.checkRole("Prototypes#Edit#" + model.department + "#" + model.prototypeType + "#")
+		) {
+			matematici.dialog.error("error", "Permission denied");
+			return;
+		}
+
 		var handler = function () {
 			matematici.navigator.open(options.previewUrl + "/" + prototypeKey.id + "/" + prototypeKey.version);
 		};
@@ -615,6 +621,10 @@
 		update();
 	};
 
+	prototype.quit = function () {
+		matematici.navigator.open(options.listUrl);
+	};
+
 	prototype.getNewItemId = getNewItemId;
 
 	prototypes.prototype = prototype;
@@ -630,6 +640,7 @@ prototypes.Prototype.states = {
 	draft: "Draft",
 	draftReadOnly: "Draft ",
 	simulation: "In simulation",
+	approval: "In approval",
 	approved: "Approved",
 	active: "Active",
 	obsolete: "Obsolete"

@@ -137,8 +137,18 @@ namespace CheckListManager.Prototypes.Data
                     Action = "Prototype – state to Approved/Active"
                 });
 
+                prototypeVersion.VersionState = VersionState.InApproval;
                 prototypeVersion.ProposedState = state;
                 prototypeVersion.ProposedDate = DateTimeOffset.Now;
+
+                prototypeVersion.PrototypeVersionsHistory.Add(new PrototypeVersionsHistory
+                {
+                    Prototype = prototypeVersion.Prototype,
+                    Version = prototypeVersion.Version,
+                    Date = DateTimeOffset.UtcNow,
+                    State = VersionState.InApproval,
+                    User = defaultIdentity.Code
+                });
 
                 prototypeVersion.PrototypeVersionsHistory.Add(new PrototypeVersionsHistory
                 {

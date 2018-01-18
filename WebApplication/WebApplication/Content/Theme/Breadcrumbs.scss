@@ -35,6 +35,17 @@ div#Breadcrumbs {
                 content: none;
             }
         }
+
+        &.Label {
+            font-weight: bold;
+
+            &::after {
+                content: ":";
+                font-weight: bold;
+                padding-left: 0;
+                color: unset;
+            }
+        }
     }
 
     a {
