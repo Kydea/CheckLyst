@@ -27,3 +27,69 @@
 <p>
     Tap on <strong>logout</strong> to log out and go back to login page.
 </p>
+
+@Html.Partial("SearchPage", new HelpPage
+{
+    Title = "Search form",
+    RecordsName = "instances",
+    ReadOnly = true,
+    P1 = "Click on a row to open the instance manager for that record.",
+
+    Buttons = new Field[]
+    {
+        new Field("new instance", "Creates a new empty the instance. An active prototype version must have been selected in the filters."),
+    },
+
+    Filters = new Field[] {
+        new Field("Department / prototype type", "The department and prototype type of the instance prototype."),
+        new Field("Prototype / version", "The prototype and version number of the instance."),
+        new Field("Instance description", "The description of the instance or part of it."),
+        new Field("Tab / value", "A tag code and value of instance."),
+        new Field("State", "The state of the instance.")
+    }
+})
+
+<h4>Search result</h4>
+
+<table>
+    <tr><td>Department / Prototype Type</td><td>The department and prototype type of the instance prototype.</td></tr>
+    <tr><td>Istance code</td><td>The code that identifies the instance.</td></tr>
+    <tr><td>Description</td><td>The description of the instance.</td></tr>
+    <tr><td>State</td><td>The state of the instance.</td></tr>
+    <tr><td>i</td><td>Shows more information about the instances.</td></tr>
+</table>
+
+<h3>Instance manager</h3>
+
+<p>
+    The <strong>Instance manager</strong> can be used to display, follow and fill in instances of checklists.
+</p>
+<p>
+    Basing on the corresponding <strong>prototype</strong>, an instance is composed by the <strong>header</strong> and one or more <strong>pages</strong>, containing <strong>groups</strong>. Each group can contain other groups (subgroups) itself, <strong>text</strong>, <strong>fields</strong> and <strong>signatures</strong>. And so on.
+</p>
+<p>
+    The <strong>header</strong> usually contains the information that qualifies the instance. For example for a business process ruled by the instance, about an object, the header will contain the identifier of this object. Once the header is valid, the instance can be saved, changes the state from <strong>draft</strong> to <strong>in progress</strong> and get a progressive number, depending on the year.
+</p>
+<p>
+    The <strong>header</strong> of instances in state <strong>in progress</strong> are not editable. On the other hand, the <strong>pages</strong> are editable only for instances with state <strong>in progress</strong>.
+</p>
+<p>
+    Once all the pages are valid, the instance can be completed. If a confirmation work flow is expected, it will be created and the instance will take the state <strong>completed</strong>.
+</p>
+<p>
+    If a confirmation work flow is not expected or the confirmation work flow is approved, the instance takes the state <strong>confirmed</strong>.
+</p>
+<p>
+    If the confirmation work flow is rejected, the instance takes the state <strong>canceled</strong>.
+</p>
+
+<h4>Actions</h4>
+
+<table>
+    <tr><td>Confirm</td><td>Shows the confirmation work flow steps.</td></tr>
+    <tr><td>Complete</td><td>Changes the state of the instance to <strong>completed</strong> (if a confirmation work flow is present) or <strong>confirmed</strong> (otherwise).</td></tr>
+    <tr><td>Delete</td><td>If the instance has the state <strong>draft</strong>, is a test instance or is a simulation evidentes, deletes the istance. Otherwise, changes the state of the instance to <strong>deleted</strong>.</td></tr>
+    <tr><td>Save</td><td>Saves the instance.</td></tr>
+    <tr><td>History</td><td>Shows the history of the instance.</td></tr>
+    <tr><td><i class="fi flaticon-calculator"></i></td><td>Shows the expressions of the instance and their value.</td></tr>
+</table>
