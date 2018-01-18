@@ -64,6 +64,7 @@ create table "WorkFlows"."WorkFlowApplications"
 
 	"Date" timestamptz,
 	"Approved" boolean,
+	"FinalState" varchar (20),
 
 	"CreatedBy" varchar (60),
 	"CreatedOn" timestamptz not null default current_timestamp,

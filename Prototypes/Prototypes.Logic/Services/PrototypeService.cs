@@ -210,6 +210,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                 Prototype = await _prototypeRepository.GetPrototypeAsync(identity, request.ID);
 
             if (NewVersion)
+            {
                 Prototype.PrototypeVersions.Add(PrototypeVersion = new PrototypeVersions
                 {
                     VersionState = VersionState.Draft,
@@ -217,6 +218,16 @@ namespace CheckListManager.Prototypes.Logic.Services
                     CreatedOn = Now,
                     CreatedBy = identity.Code
                 });
+
+                PrototypeVersion.PrototypeVersionsHistory.Add(new PrototypeVersionsHistory
+                {
+                    Prototype = Prototype.ID,
+                    Version = PrototypeVersion.Version,
+                    Date = Now,
+                    State = VersionState.Draft,
+                    User = identity.Code
+                });
+            }
             else
             {
                 PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(identity, request.ID, request.Version);
@@ -315,7 +326,7 @@ namespace CheckListManager.Prototypes.Logic.Services
         {
             var PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(identity, request.ID, request.Version);
             if (
-                !identity.HasPermission("Prototypes", "View", PrototypeVersion.Prototypes.Department) 
+                !identity.HasPermission("Prototypes", "View", PrototypeVersion.Prototypes.Department)
                 && !identity.HasPermission("Prototypes", "View", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType)
             )
                 throw new UnauthorizedAccessException();
@@ -325,9 +336,12 @@ namespace CheckListManager.Prototypes.Logic.Services
                 ID = h.ID,
                 Date = h.Date,
                 User = h.User,
-                ProposedState = h.State,
+                HasWorkFlow = h.WorkFlowApplications != null,
+                State = h.WorkFlowApplications == null ? h.State : h.WorkFlowApplications.FinalState,
+                ProposedState = h.WorkFlowApplications == null ? null : h.State,
                 Approved = h.WorkFlowApplications?.Approved,
-                Steps = h.WorkFlowApplications?.WorkFlowApplicationSteps.OrderBy(s => s.Step).ThenBy(s => s.ID).Select(s => new HistoryStep {
+                Steps = h.WorkFlowApplications?.WorkFlowApplicationSteps.OrderBy(s => s.Step).ThenBy(s => s.ID).Select(s => new HistoryStep
+                {
                     ID = s.ID,
                     Step = s.Step,
                     Date = s.Date,

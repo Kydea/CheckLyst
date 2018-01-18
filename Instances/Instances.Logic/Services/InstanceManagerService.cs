@@ -985,7 +985,8 @@ namespace CheckListManager.Instances.Logic.Services
                 ID = h.ID,
                 Date = h.Date,
                 User = h.User,
-                ProposedState = h.State,
+                State = h.WorkFlowApplications == null ? h.State : null,
+                ProposedState = h.WorkFlowApplications == null || h.WorkFlowApplications.Approved.HasValue ? null : InstanceState.Confirmed,
                 Approved = h.WorkFlowApplications?.Approved,
                 Steps = h.WorkFlowApplications?.WorkFlowApplicationSteps.OrderBy(s => s.Step).ThenBy(s => s.ID).Select(s => new HistoryStep
                 {

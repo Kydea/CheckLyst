@@ -37,26 +37,46 @@
 
     Buttons = new Field[]
     {
-        new Field("new instance", "Creates a new empty the instance. An active prototype version must have been selected in the filters."),
+new Field("new instance", "Creates a new empty the instance. An active prototype version must have been selected in the filters."),
     },
 
     Filters = new Field[] {
-        new Field("Department / prototype type", "The department and prototype type of the instance prototype."),
-        new Field("Prototype / version", "The prototype and version number of the instance."),
-        new Field("Instance description", "The description of the instance or part of it."),
-        new Field("Tab / value", "A tag code and value of instance."),
-        new Field("State", "The state of the instance.")
-    }
+new Field("Department / prototype type", "The department and prototype type of the instance prototype."),
+new Field("Prototype / version", "The prototype and version number of the instance."),
+new Field("Instance description", "The description of the instance or part of it."),
+new Field("Tag / value", "A tag code and value of instance."),
+new Field("State", "The state of the instance.")
+}
 })
 
 <h4>Search result</h4>
 
 <table>
-    <tr><td>Department / Prototype Type</td><td>The department and prototype type of the instance prototype.</td></tr>
-    <tr><td>Istance code</td><td>The code that identifies the instance.</td></tr>
-    <tr><td>Description</td><td>The description of the instance.</td></tr>
-    <tr><td>State</td><td>The state of the instance.</td></tr>
-    <tr><td>i</td><td>Shows more information about the instances.</td></tr>
+    <tr><td>First Row</td><td>Department / Prototype Type</td></tr>
+    <tr><td>Second Row</td><td>Prototype.Version.Year.Number</td></tr>
+    <tr><td>Third Row</td><td>Description (if available)</td></tr>
+    <tr><td>Fourth Row</td><td>State</td></tr>
+</table>
+
+<p>Tap on the button <strong>i</strong> to show the information about that instance</p>
+
+<table>
+    <tbody>
+        <tr><td>ID</td><td>The unique identifier.</td></tr>
+        <tr><td>Code</td><td>The code that identifies the instance.</td></tr>
+        <tr><td>State</td><td>The state of the instance.</td></tr>
+        <tr><td>Year</td><td>The year of the instance.</td></tr>
+        <tr><td>Number</td><td>The number of the instance.</td></tr>
+        <tr><td>Description</td><td>The description of the instance.</td></tr>
+        <tr><td>Department</td><td>The department of the prototype.</td></tr>
+        <tr><td>Prototype type</td><td>The type of the prototype.</td></tr>
+        <tr><td>Prototype </td><td>The prototype of the instance.</td></tr>
+        <tr><td>Version</td><td>The version number of the prototype.</td></tr>
+        <tr><td>Created by</td><td>The user who created the record.</td></tr>
+        <tr><td>Created by</td><td>The date and time of creation of the record.</td></tr>
+        <tr><td>Modified by</td><td>The user who modified the record last time.</td></tr>
+        <tr><td>Created by</td><td>The date and time of the last modification.</td></tr>
+    </tbody>
 </table>
 
 <h3>Instance manager</h3>

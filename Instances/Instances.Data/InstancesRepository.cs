@@ -64,6 +64,13 @@ namespace CheckListManager.Instances.Data
 
                 instance.InstancesHistory.Add(new InstancesHistory
                 {
+                    Date = instance.CreatedOn,
+                    User = instance.CreatedBy,
+                    State = InstanceState.Draft
+                });
+
+                instance.InstancesHistory.Add(new InstancesHistory
+                {
                     Date = instance.ModifiedOn.Value,
                     User = instance.ModifiedBy,
                     State = instance.InstanceState

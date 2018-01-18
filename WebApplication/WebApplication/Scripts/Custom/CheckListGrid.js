@@ -62,7 +62,7 @@
 				buttons =
 					$("<div />").addClass("Buttons").appendTo(container)
 						.append($("<a />").addClass("Button").text("close").prepend($("<i />").addClass("fi flaticon-times")).on("click", function () {
-							element.remove();
+							checkListGrid.close();
 						}));
 
 			if (values.length == 0) {

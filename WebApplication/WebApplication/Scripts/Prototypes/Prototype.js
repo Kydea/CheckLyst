@@ -428,10 +428,6 @@
 		model.pages = value;
 	};
 
-	prototype.showHistory = function () {
-		alert("not implemented");
-	};
-
 	prototype.save = function (callback) {
 		select();
 		$.ajax({

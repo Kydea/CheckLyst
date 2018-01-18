@@ -53,7 +53,8 @@
 		},
 
 		getFormattedYear = function () {
-			return versionState == prototypes.Prototype.states.draft ? "test" : versionState == prototypes.Prototype.states.simulation ? "SE" : year || "?";
+			console.log(versionState, year);
+			return versionState == prototypes.Prototype.states.draft ? "test" : versionState == prototypes.Prototype.states.simulation || year == 0 ? "SE" : year || "?";
 		},
 
 		setupBreadcrumbs = function () {

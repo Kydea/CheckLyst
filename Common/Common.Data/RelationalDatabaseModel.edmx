@@ -359,6 +359,7 @@
           <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
           <Property Name="ModifiedBy" Type="varchar" MaxLength="60" />
           <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
+          <Property Name="FinalState" Type="varchar" MaxLength="20" />
         </EntityType>
         <EntityType Name="WorkFlowApplicationSteps">
           <Key>
@@ -436,6 +437,20 @@
             </Principal>
             <Dependent Role="Departments">
               <PropertyRef Name="Company" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_InstanceExpressionValues_Instance">
+          <End Role="Instances" Type="Self.Instances" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="InstanceExpressionValues" Type="Self.InstanceExpressionValues" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Instances">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="InstanceExpressionValues">
+              <PropertyRef Name="Instance" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -526,18 +541,6 @@
             </Principal>
             <Dependent Role="Functions">
               <PropertyRef Name="FunctionGroup" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="InstanceExpressionValues_Instance_fkey">
-          <End Role="Instances" Type="Self.Instances" Multiplicity="1" />
-          <End Role="InstanceExpressionValues" Type="Self.InstanceExpressionValues" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Instances">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="InstanceExpressionValues">
-              <PropertyRef Name="Instance" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1105,6 +1108,10 @@
             <End Role="Companies" EntitySet="Companies" />
             <End Role="Departments" EntitySet="Departments" />
           </AssociationSet>
+          <AssociationSet Name="FK_InstanceExpressionValues_Instance" Association="Self.FK_InstanceExpressionValues_Instance">
+            <End Role="Instances" EntitySet="Instances" />
+            <End Role="InstanceExpressionValues" EntitySet="InstanceExpressionValues" />
+          </AssociationSet>
           <AssociationSet Name="FK_Instances_InstanceNumerator" Association="Self.FK_Instances_InstanceNumerator">
             <End Role="InstanceNumerators" EntitySet="InstanceNumerators" />
             <End Role="Instances" EntitySet="Instances" />
@@ -1128,10 +1135,6 @@
           <AssociationSet Name="Functions_FunctionGroup_fkey" Association="Self.Functions_FunctionGroup_fkey">
             <End Role="FunctionGroups" EntitySet="FunctionGroups" />
             <End Role="Functions" EntitySet="Functions" />
-          </AssociationSet>
-          <AssociationSet Name="InstanceExpressionValues_Instance_fkey" Association="Self.InstanceExpressionValues_Instance_fkey">
-            <End Role="Instances" EntitySet="Instances" />
-            <End Role="InstanceExpressionValues" EntitySet="InstanceExpressionValues" />
           </AssociationSet>
           <AssociationSet Name="Instances_Company_fkey" Association="Self.Instances_Company_fkey">
             <End Role="Companies" EntitySet="Companies" />
@@ -2190,6 +2193,7 @@
           <NavigationProperty Name="Instances" Relationship="RelationalDatabaseModel.WorkFlowApplications_Instance" FromRole="WorkFlowApplications" ToRole="Instances" />
           <NavigationProperty Name="InstancesHistory" Relationship="RelationalDatabaseModel.InstancesHistory_WorkFlowApplication_fkey" FromRole="WorkFlowApplications" ToRole="InstancesHistory" />
           <NavigationProperty Name="PrototypeVersionsHistory" Relationship="RelationalDatabaseModel.PrototypeVersionsHistory_WorkFlowApplication_fkey" FromRole="WorkFlowApplications" ToRole="PrototypeVersionsHistory" />
+          <Property Name="FinalState" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="WorkFlowApplicationStepTags">
           <Key>
@@ -2979,6 +2983,7 @@
           <EntitySetMapping Name="WorkFlowApplications">
             <EntityTypeMapping TypeName="RelationalDatabaseModel.WorkFlowApplications">
               <MappingFragment StoreEntitySet="WorkFlowApplications">
+                <ScalarProperty Name="FinalState" ColumnName="FinalState" />
                 <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
                 <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
                 <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />

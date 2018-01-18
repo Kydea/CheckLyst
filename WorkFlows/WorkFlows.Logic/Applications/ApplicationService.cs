@@ -219,13 +219,19 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     }
 
                     if (AllApproved)
+                    {
                         await Approve(identity, PrototypeVersion);
+                        Step.WorkFlowApplications.FinalState = PrototypeVersion.VersionState;
+                    }
 
                 }
                 else if (Instance != null)
                 {
                     if (AllApproved)
+                    {
                         await Approve(identity, Instance);
+                        Step.WorkFlowApplications.FinalState = Instance.InstanceState;
+                    }
                 }
 
                 if (AllApproved)
@@ -235,9 +241,15 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             {
                 Step.WorkFlowApplications.Approved = false;
                 if (PrototypeVersion != null)
+                {
                     await Reject(identity, PrototypeVersion);
+                    Step.WorkFlowApplications.FinalState = PrototypeVersion.VersionState;
+                }
                 else if (Instance != null)
+                {
                     await Reject(identity, Instance);
+                    Step.WorkFlowApplications.FinalState = Instance.InstanceState;
+                }
             }
 
             await _workFlowsRepository.SaveChangesAsync();

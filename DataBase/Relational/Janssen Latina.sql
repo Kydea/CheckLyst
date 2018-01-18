@@ -20,3 +20,13 @@ values (currval('"Infrastructure"."Companies_ID_seq"'), 'CheckListManager', 'Use
 insert into "Security"."UserFunctions" ("Company", "User", "FunctionGroup", "Function")
 values (currval('"Infrastructure"."Companies_ID_seq"'), 'CheckListManager', 'Users', 'Edit');
 
+
+insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
+	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpHost', 'email-smtp.eu-west-1.amazonaws.com'),
+	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpPort', '587'),
+	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpUsername', 'AKIAIEIVPEHAHBTTCRKA'),
+	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpPassword', 'AmUlYueJDWpD0lJZrzgiZFjxpi+uGf8G3b8f9+IRFdz5'),
+	(currval('"Infrastructure"."Companies_ID_seq"'), 'EmailSender', 'noreply@matematici-aws.com'),
+	(currval('"Infrastructure"."Companies_ID_seq"'), 'UserBlockMessage', '[NameAndSurname], <br /> il tuo account è stato disabilitato in quanto non hai effettuato nessun accesso negli ultimi 400 giorni.'),
+	(currval('"Infrastructure"."Companies_ID_seq"'), 'UserBlockWarningMessage', '[NameAndSurname], <br /> il tuo account verrà disabilitato se non effettuerai un accesso al sistema.'),
+	(currval('"Infrastructure"."Companies_ID_seq"'), 'SignatureMessage', '[NameAndSurname], <br /> hai un prototipo da firmare. Accedi a CheckList Manager per effettuare l\'operazione richiesta.');

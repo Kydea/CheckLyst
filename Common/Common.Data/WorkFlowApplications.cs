@@ -34,6 +34,7 @@ namespace CheckListManager.Common.Data
         public System.DateTimeOffset CreatedOn { get; set; }
         public string ModifiedBy { get; set; }
         public Nullable<System.DateTimeOffset> ModifiedOn { get; set; }
+        public string FinalState { get; set; }
     
         public virtual WorkFlowActions WorkFlowActions { get; set; }
         public virtual WorkFlows WorkFlows { get; set; }
