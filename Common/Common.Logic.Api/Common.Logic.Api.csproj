@@ -147,10 +147,12 @@
     <Compile Include="PDF\PDFSection.cs" />
     <Compile Include="PDF\PDFStyles.cs" />
     <Compile Include="PDF\Sections\CheckListSection.cs" />
+    <Compile Include="PDF\Sections\FirstPage.cs" />
     <Compile Include="PDF\Sections\Group.cs" />
     <Compile Include="PDF\Sections\Item.cs" />
     <Compile Include="PDF\Sections\Page.cs" />
     <Compile Include="PDF\Sections\Table.cs" />
+    <Compile Include="PDF\Sections\Template.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

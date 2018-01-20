@@ -16,9 +16,11 @@ namespace CheckListManager.Common.Data
             _memoryCache = memoryCache;
         }
 
+        public Task<Companies> GetCompanyAsync(long id)
+            => Entities.Companies.SingleAsync(c => c.ID == id);
+
         public Task<List<ListItems.Company>> GetCompaniesAsync()
             => _memoryCache.GetOrAddAsync("Companies", key => Entities.Companies.Where(c => c.ID > 1).Select(c => new ListItems.Company { ID = c.ID, Name = c.Name }).ToListAsync(), "CommonRepository");
-
 
         public Task<List<Departments>> GetDepartmentsAsync(IDefaultIdentity identity, string functionGroup)
         {

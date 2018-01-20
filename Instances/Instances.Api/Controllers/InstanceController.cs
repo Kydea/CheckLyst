@@ -13,6 +13,8 @@ using CheckListManager.Common.Logic.Cache;
 using System.Net;
 using CheckListManager.Common.Logic.Api.Formatters;
 using CheckListManager.Common.Logic.Api.PDF;
+using CheckListManager.Instances.Logic.PDF;
+using CheckListManager.Common.Logic.Services;
 
 namespace CheckListManager.Instances.Api.Controllers
 {
@@ -21,11 +23,15 @@ namespace CheckListManager.Instances.Api.Controllers
     {
         private readonly IInstanceManagerService _instanceManagerService;
         private readonly IRedisCache _redisCache;
+        private readonly ICommonRepository _commonRepository;
+        private readonly IConfigurationService _configurationService;
 
-        public InstanceController(IInstanceManagerService instanceManagerService, IRedisCache redisCache)
+        public InstanceController(IInstanceManagerService instanceManagerService, IRedisCache redisCache, ICommonRepository commonRepository, IConfigurationService configurationService)
         {
             _instanceManagerService = instanceManagerService;
             _redisCache = redisCache;
+            _commonRepository = commonRepository;
+            _configurationService = configurationService;
         }
 
         [HttpPost]
@@ -216,10 +222,13 @@ namespace CheckListManager.Instances.Api.Controllers
         public async Task<IHttpActionResult> Export(InstanceRequest request)
         {
             var Token = Identity.Code + ":" + Guid.NewGuid();
+            var Company = await _commonRepository.GetCompanyAsync(Identity.CompanyId);
             request.CompanyId = Identity.CompanyId;
+            request.CompanyName = Company.Name;
+            request.TimeZone = Company.TimeZones.MicrosoftCode;
             request.UserCode = Identity.Code;
             await _redisCache.SetAsync($"Token:{Token}", request, "Download", new TimeSpan(0, 1, 0));
-            return Ok(new { Token = Token });
+            return Ok(new { Token });
         }
 
         [HttpGet]
@@ -227,12 +236,10 @@ namespace CheckListManager.Instances.Api.Controllers
         [AllowAnonymous]
         public async Task<IHttpActionResult> Export([FromUri]string Token)
         {
-            //var Data = await _redisCache.GetAsync<InstanceRequest>($"Token:{Token}", "Download");
-            //await _redisCache.RemoveAsync($"Token:{Token}", "Download");
-            //var cacheObject = await _instanceManagerService.GetAsync(Identity, Data.Code);
-            var cacheObject = await _instanceManagerService.GetAsync(2, "CheckListManager", "54-1-9c1c853a-4f9f-4a26-9c2c-942e2fdc4d43");
-
-            return Content(HttpStatusCode.OK, new CheckListPDF(cacheObject.Instance), new PDFFormatter("AuditTrail"));
+            var Data = await _redisCache.GetAsync<InstanceRequest>($"Token:{Token}", "Download");
+            await _redisCache.RemoveAsync($"Token:{Token}", "Download");
+            var cacheObject = await _instanceManagerService.GetAsync(Data.CompanyId.Value, Data.UserCode, Data.Code);
+            return Content(HttpStatusCode.OK, new InstancePDF(Data.CompanyId.Value, Data.CompanyName, Data.TimeZone, _configurationService.PublicRepositoryUrl, cacheObject), new PDFFormatter("Instance"));
         }
     }
 }

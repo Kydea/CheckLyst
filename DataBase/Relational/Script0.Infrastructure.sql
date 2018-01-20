@@ -8,7 +8,7 @@ create table "Infrastructure"."TimeZones"
 
 insert into "Infrastructure"."TimeZones" values 
 	('Europe/Rome', 'W. Europe Standard Time'),
-	('America/Puerto_Rico', 'Atlantic Standard Time');
+	('America/Puerto_Rico', 'SA Western Standard Time');
 
 create table "Infrastructure"."Companies"
 (

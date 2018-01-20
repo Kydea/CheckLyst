@@ -22,6 +22,7 @@ namespace CheckListManager.AccessControl.Logic.Services
 		Task UpdateTokenAsync(IdentityToken token, DateTimeOffset expiresOn);
 		Task LogoutAsync(DefaultIdentity identity, string token);
 
+		Task<List<UserFunctions>> GetFunctionsAsync(long companyId, UsersRequest request);
 		Task<PagingResponse<List<UsersResponse>>> GetUsersAsync(long companyId, PagingRequest<UsersRequest> request);
 
         Task<UserResponse> LoadUserAsync(DefaultIdentity identity, UserRequest record);

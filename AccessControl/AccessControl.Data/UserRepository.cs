@@ -74,7 +74,17 @@ namespace CheckListManager.AccessControl.Data
 		        );
         }
 
-		public Task<List<Users>> GetUsersAsync(long companyId, string code, string description, int skip, int take)
+        public async Task<List<UserFunctions>> GetFunctionsAsync(long companyId, string code, string description)
+        {
+            return await Entities.UserFunctions
+                .Where(
+                    f => f.Company == companyId &&
+                        (code == string.Empty || f.User != null && f.User.ToUpper().Contains(code.ToUpper())) &&
+                        (description == string.Empty || f.Users.Description != null && f.Users.Description.ToUpper().Contains(description.ToUpper()))
+                ).ToListAsync();
+        }
+
+        public Task<List<Users>> GetUsersAsync(long companyId, string code, string description, int skip, int take)
 			=> Get(companyId, code, description)
 				.OrderBy(u => u.Code)
 				.Skip(skip)

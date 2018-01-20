@@ -27,7 +27,9 @@ namespace CheckListManager.Common.Logic.Services
 
 		public string ApiBaseUrl => _cache.GetOrAdd("ApiBaseUrl", Load<string>, RegionName);
 
-		public int InstanceCloseTimeout => _cache.GetOrAdd("InstanceCloseTimeout", Load<int>, RegionName);
+        public string PublicRepositoryUrl => _cache.GetOrAdd("PublicRepositoryUrl", Load<string>, RegionName);
+
+        public int InstanceCloseTimeout => _cache.GetOrAdd("InstanceCloseTimeout", Load<int>, RegionName);
 
 		private T Load<T>(string key)
 		{

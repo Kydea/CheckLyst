@@ -83,6 +83,7 @@
     <Compile Include="Models\CheckLists\Page.cs" />
     <Compile Include="Models\CheckLists\Signature.cs" />
     <Compile Include="Models\CheckLists\Text.cs" />
+    <Compile Include="PDF\InstancePDF.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\IInstanceCacheService.cs" />
     <Compile Include="Services\IInstanceManagerService.cs" />

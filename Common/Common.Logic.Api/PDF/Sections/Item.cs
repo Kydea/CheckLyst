@@ -13,18 +13,14 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
     {
         public ICheckListItem Next;
         bool FirstOfGroup = false;
+
         public Item(CheckListPDF PDFBase, ICheckListItem Item, ICheckListItem Next, bool FirstOfGroup, int Indentation = 1) : base(PDFBase, Item, Indentation)
         {
             this.FirstOfGroup = FirstOfGroup;
             this.Next = Next;
         }
 
-        public string StripTagsRegex(string Source)
-        {
-            return System.Text.RegularExpressions.Regex.Replace(Source, "<.*?>", string.Empty);
-        }
-
-        void DrawSignature(string Description, string User = null, string Date = null, string Time = null, string Signature = null)
+        private void DrawSignature(string Description, string User = null, string Date = null, string Time = null, string Signature = null)
         {
             PdfPTable Table = new PdfPTable(4);
 
@@ -32,16 +28,10 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             Table.AddCell(new PdfPCell(new Paragraph("Date", GenericBoldFont)) { Padding = 10 });
             Table.AddCell(new PdfPCell(new Paragraph("Time", GenericBoldFont)) { Padding = 10 });
             Table.AddCell(new PdfPCell(new Paragraph("Signature", GenericBoldFont)) { Padding = 10 });
-
-            var UserDescription =
-                Date == null ? " " :
-                String.IsNullOrEmpty(Signature) ? "???" : //PDFBase.DbContext.Users.FirstOrDefault(x => x.Code == User)?.Description : //TODO PDF
-                Signature;
-
             Table.AddCell(new PdfPCell(new Paragraph(User, GenericFont)) { Padding = 10 });
             Table.AddCell(new PdfPCell(new Paragraph(Date, GenericFont)) { Padding = 10 });
             Table.AddCell(new PdfPCell(new Paragraph(Time, GenericFont)) { Padding = 10 });
-            Table.AddCell(new PdfPCell(new Paragraph(UserDescription, GenericFont)) { Padding = 10 });
+            Table.AddCell(new PdfPCell(new Paragraph(Date == null ? " " : Signature, GenericFont)) { Padding = 10 });
 
             Table.WidthPercentage = 100;
 
@@ -56,9 +46,9 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             {
                 var Group = (ICheckListGroup)Element;
                 if (Group.ShowAsTable)
-                    new PDF.Sections.Table((CheckListPDF)PDFBase, Group, Indentation + 1).Render();
+                    new Table((CheckListPDF)PDFBase, Group, Indentation + 1).Render();
                 else
-                    new PDF.Sections.Group((CheckListPDF)PDFBase, Group, Indentation + 1).Render();
+                    new Group((CheckListPDF)PDFBase, Group, Indentation + 1).Render();
             }
 
             #region Text
@@ -85,13 +75,11 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                 }
 
                 if (SignatureElement.History.Count > 0)
-                {
                     foreach (var Sign in SignatureElement.History)
                     {
                         string[] Date = Sign.DateTime.Split(' ');
                         DrawSignature(String.IsNullOrEmpty(Sign.Note) ? "Signed" : "Canceled", Sign.User, Date[0], Date[1], Sign.Signature);
                     }
-                }
                 else
                     DrawSignature(SignatureElement.Description);
             }
@@ -111,14 +99,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
 
                 DrawText(Description + "\n", GenericBoldFont);
 
-                var Value = "????"; // FieldElement.RawValue; //TODO PDF
-                if (!String.IsNullOrEmpty(Value))
-                    DrawText(this.StripTagsRegex(Value), GenericFontGray);
-                else
-                    DrawText("_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _", GenericFontGray);
-
-                DrawText("\n");
-
+                DrawText(CheckListPDF.GetFieldValue(this) + "\n", GenericFontGray);
             }
 
             #endregion

@@ -85,7 +85,6 @@
     <Content Include="Content\Media\Logo.png" />
     <Content Include="Content\Media\LogoMobile.png" />
     <Content Include="Content\Media\Sintlogo.png" />
-    <Content Include="Content\PDF\Janssen.png" />
     <Content Include="Content\Theme\Accordion.css">
       <DependentUpon>Accordion.scss</DependentUpon>
     </Content>

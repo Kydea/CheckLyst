@@ -17,6 +17,7 @@ insert into "Configuration"."Configurations" ("Code", "Value") values
 	('RedisPort', '6379'),
 	('SqsBaseUrl', 'https://sqs.eu-west-1.amazonaws.com/'),
 	('ApiBaseUrl', 'http://api.clm.internal/'),
+	('PublicRepositoryUrl', 'https://s3-eu-west-1.amazonaws.com/public.matematici-clm.com/'),
 	('InstanceCloseTimeout', '4320'); --3 days, expressed in minutes
 
 

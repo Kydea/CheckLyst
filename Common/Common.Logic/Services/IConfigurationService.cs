@@ -8,9 +8,8 @@ namespace CheckListManager.Common.Logic.Services
 		int RedisPort { get; }
 
 		string SqsBaseUrl { get; }
-
 		string ApiBaseUrl { get; }
-
-		int InstanceCloseTimeout { get; }
+        string PublicRepositoryUrl { get; }
+        int InstanceCloseTimeout { get; }
 	}
 }

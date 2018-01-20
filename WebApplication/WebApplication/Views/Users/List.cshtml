@@ -1,7 +1,9 @@
 ﻿<div id="UsersListPage">
     <h1>Users List</h1>
 
-    <div class="ActionBar"></div>
+    <div class="ActionBar">
+        <a id="ExportButton" class="Button" href="#">Export<i class="fi flaticon-angle-down"></i></a>
+    </div>
 
     <div class="ShadowPanel">
         <div class="Accordion"></div>
@@ -57,7 +59,7 @@
     var formSelector = "form#Filters";
 
     matematici.events.onPageLoad = function (callback) {
-        new matematici.SearchPage({
+        var searchPage = new matematici.SearchPage({
             pageName: "Users",
             detailUrl: "@Url.Action("Detail")",
             filterFormSelector: formSelector,
@@ -80,6 +82,13 @@
             })
         }).done(function (result) {
             $(formSelector).data("prototypeTypes", result.data);
+        });
+
+        $("a#ExportButton").on("click", function () {
+            var form = searchPage.getForm();
+            form.trigger("Export", function (result) {
+                location = form.getElement().attr("action") + "/Export?Token=" + result.token;
+            })
         });
 
         callback.call();

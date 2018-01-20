@@ -36,14 +36,11 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
         public Table(CheckListPDF PDFBase, ICheckListGroup Group, int Indentation = 1) : base(PDFBase, Group, Indentation)
         { }
 
-        bool IsPrototype = false;
-
         public override void Render(params Object[] State)
         {
             if (Element == null)
                 return;
 
-            IsPrototype = false; // ((CheckListPDF)PDFBase).Model is Prototype; //TODO PDF
             var GroupElement = (ICheckListGroup)Element;
             PDFBase.CurrentRenderingX = Indentation * 20;
             DrawText("\n");
@@ -59,7 +56,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             DrawText("\n");
 
             /*Render Signatures Table*/
-            if (IsPrototype || Signatures.Any(x => x.History.Count > 0))
+            if (CheckListPDF.IsPrototype() || Signatures.Any(x => x.History.Count > 0))
             {
                 DrawText("Signatures", SecondHeaderFont);
                 DrawText("\n");
@@ -96,13 +93,8 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
         #region Signatures Rendering
         void RenderSignature(PdfPTable Table, int Id, string Description, string User = null, string Date = null, string Time = null, string Signature = null)
         {
-            var UserDescription =
-                Date == null ? " " :
-                String.IsNullOrEmpty(Signature) ? "???" : //PDFBase.DbContext.Users.FirstOrDefault(x => x.Code == User)?.Description : //TODO PDF
-                Signature;
-
-            var Padding = IsPrototype ? 10 : 0;
-            var Align = IsPrototype ? iTextSharp.text.Element.ALIGN_BOTTOM : iTextSharp.text.Element.ALIGN_MIDDLE;
+            var Padding = CheckListPDF.IsPrototype() ? 10 : 0;
+            var Align = CheckListPDF.IsPrototype() ? iTextSharp.text.Element.ALIGN_BOTTOM : iTextSharp.text.Element.ALIGN_MIDDLE;
             var FillableText = "_ _ _ _ _ _ _ _ _ _ _";
 
             Table.AddCell(
@@ -113,31 +105,31 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             );
 
             Table.AddCell(
-                NewCell(IsPrototype ? FillableText : Description)
+                NewCell(CheckListPDF.IsPrototype() ? FillableText : Description)
                 .SetBorder(0)
                 .SetVerticalAlign(Align)
              );
 
             Table.AddCell(
-                NewCell(IsPrototype ? FillableText : User)
+                NewCell(CheckListPDF.IsPrototype() ? FillableText : User)
                 .SetBorder(0)
                 .SetVerticalAlign(Align)
             );
 
             Table.AddCell(
-                NewCell(IsPrototype ? FillableText : Date)
+                NewCell(CheckListPDF.IsPrototype() ? FillableText : Date)
                 .SetBorder(0)
                 .SetVerticalAlign(Align)
             );
 
             Table.AddCell(
-                NewCell(IsPrototype ? FillableText : Time)
+                NewCell(CheckListPDF.IsPrototype() ? FillableText : Time)
                 .SetBorder(0)
                 .SetVerticalAlign(Align)
             );
 
             Table.AddCell(
-                NewCell(IsPrototype ? FillableText : UserDescription)
+                NewCell(CheckListPDF.IsPrototype() ? FillableText : Date == null ? " " : Signature)
                 .SetBorder(0)
                 .SetVerticalAlign(Align)
             );
@@ -182,7 +174,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             VisibleSignaturesCount = 0;
             for (int s = 0; s < Signatures.Count; ++s)
             {
-                if (IsPrototype)
+                if (CheckListPDF.IsPrototype())
                     RenderSignature(Table, (++VisibleSignaturesCount), "", "");
                 else
                 {
@@ -220,7 +212,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                             var Signature = (ICheckListSignature)Item;
                             Signatures.Add(Signature);
 
-                            if (IsPrototype)
+                            if (CheckListPDF.IsPrototype())
                                 Cell = NewCell((++VisibleSignaturesCount).ToString());
                             else
                                 Cell = Signature.History.Count > 0 ? NewCell(String.IsNullOrEmpty(Signature.History.OrderByDescending(x => x.DateTime).FirstOrDefault().Note) ? "Signed" : "Canceled").AddNote(" " + (++VisibleSignaturesCount).ToString()) : NewCell("");
@@ -230,11 +222,11 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                             Cell = NewCell(String.IsNullOrWhiteSpace(Item.Description) ? "(no description)" : Item.Description);
                             break;
                         case "Field":
-                            if (IsPrototype)
+                            if (CheckListPDF.IsPrototype())
                                 Cell = NewCell("").SetHorizontalAlign(iTextSharp.text.Element.ALIGN_CENTER);
                             else
                             {
-                                var Value = "????"; // ((ICheckListField)Item).RawValue; //TODO PDF
+                                var Value = CheckListPDF.GetFieldValue((ICheckListField)Item);
                                 Cell = NewCell(String.IsNullOrWhiteSpace(Value) ? " " : Value);
                             }
                             break;
@@ -249,7 +241,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
 
         void RenderTableBody(PdfPTable Table, ICheckListGroup Element)
         {
-            if(IsPrototype)
+            if(CheckListPDF.IsPrototype())
                 for (int i = 0; i < Element.PrototypeIterations; i++)
                     RenderTableRow(Table, Element.Items);
             else

@@ -6,6 +6,7 @@ namespace CheckListManager.Common.Data
 {
     public interface ICommonRepository : IRepository
     {
+        Task<Companies> GetCompanyAsync(long id);
         Task<List<ListItems.Company>> GetCompaniesAsync();
         Task<List<Departments>> GetDepartmentsAsync(IDefaultIdentity identity, string functionGroup);
         Task<List<PrototypeTypes>> GetPrototypeTypesAsync(IDefaultIdentity identity, long department, string functionGroup);
