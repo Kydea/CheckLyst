@@ -19,6 +19,7 @@ values
 
 	('Prototype created'),
 	('Prototype deleted'),
+	('Prototype state auto-changed'),
 	('Prototype state changed'),
 	('Prototype state change proposed'),
 	('Prototype signature issued'),

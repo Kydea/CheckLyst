@@ -447,19 +447,22 @@ namespace CheckListManager.AccessControl.Logic.Services
                         });
         }
 
-        private static string SerializeUserInformation(string code, string authenticationCode, IEnumerable<UserFunctions> userFunctions)
+        private static string SerializeUserInformation(UserRequest user, IEnumerable<UserFunctions> userFunctions)
         {
             return JsonConvert.SerializeObject(new
             {
-                Code = code,
-                AuthenticationCode = authenticationCode,
+                user.Code,
+                user.AuthenticationCode,
+                user.Email,
+                NameAndSurname = user.Description,
+                user.Enabled,
                 Functions = userFunctions.Select(uf => new
                 {
 	                uf.FunctionGroup,
 	                uf.Function,
-                    Department = uf.Department + " " + uf.Departments?.Name,
-                    PrototypeType = uf.PrototypeType + " " + uf.PrototypeTypes?.Name,
-	                uf.Tag
+                    Department = uf.Department.HasValue ? uf.Department + " " + uf.Departments?.Name : null,
+                    PrototypeType = uf.PrototypeType.HasValue ? uf.PrototypeType + " " + uf.PrototypeTypes?.Name : null,
+	                Level = uf.Tag
                 })
             });
         }

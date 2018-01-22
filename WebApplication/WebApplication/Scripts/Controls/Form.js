@@ -124,9 +124,12 @@
 			if (object == null)
 				return "";
 			else if (typeof object == "object") {
-				var value = "";
-				for (var index in object)
-					value += "\n" + Array(indentation + 1).join(" ") + index + ": " + prettifyObject(object[index], indentation + 4);
+				var value = ""; 
+				for (var index in object) {
+					if (object[index] != null && object[index] != "")
+						value += "\n" + Array(indentation + 1).join(" ") + index + ": " + prettifyObject(object[index], indentation + 4);
+					console.log(object[index]);
+				}
 				return value;
 			} else
 				return object;
