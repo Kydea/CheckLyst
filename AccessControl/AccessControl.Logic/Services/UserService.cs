@@ -493,7 +493,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                         User = identity.Code,
                         Action = TrailAction.UserCreated,
                         Date = DateTimeOffset.UtcNow,
-                        Information = SerializeUserInformation(record.Code, record.AuthenticationCode, User.UserFunctions)
+                        Information = SerializeUserInformation(record, User.UserFunctions)
                     });
                 }
                 catch (Exception exception)
@@ -535,7 +535,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                         User = identity.Code,
                         Action = TrailAction.UserEdited,
                         Date = DateTimeOffset.UtcNow,
-                        Information = SerializeUserInformation (record.Code, record.AuthenticationCode, User.UserFunctions)
+                        Information = SerializeUserInformation (record, User.UserFunctions)
                     });
                 }
                 catch (Exception exception)
