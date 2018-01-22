@@ -599,6 +599,7 @@ namespace CheckListManager.AccessControl.Logic.Services
 			{
 				Logger.Error(e);
 			}
+
 			try
 			{
 				var users = await _userRepository.GetUsersDisableWarningAsync();

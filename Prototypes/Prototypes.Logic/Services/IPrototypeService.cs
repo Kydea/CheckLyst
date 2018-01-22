@@ -3,6 +3,7 @@ using CheckListManager.Common.Core.Services;
 using CheckListManager.Prototypes.Logic.Messages;
 using CheckListManager.Common.Core.Web.Security;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace CheckListManager.Prototypes.Logic.Services
 {
@@ -17,5 +18,6 @@ namespace CheckListManager.Prototypes.Logic.Services
         Task DeleteAsync(DefaultIdentity identity, PrototypeRequest request);
         Task<PrototypeResponse> SetStateAsync(DefaultIdentity identity, PrototypeRequest request);
         Task<List<HistoryRow>> History(DefaultIdentity identity, PrototypeRequest request);
+        Task UpdatePrototypeVersionsState(CancellationToken CancellationToken);
     }
 }

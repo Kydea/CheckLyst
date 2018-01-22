@@ -192,5 +192,11 @@ namespace CheckListManager.Prototypes.Data
 
             await SaveChangesAsync();
         }
+
+        public async Task<List<PrototypeVersions>> GetPrototypeVersionsAsync(Expression<Func<PrototypeVersions, bool>> filters)
+        {
+            return await Entities.PrototypeVersions.Where(filters).ToListAsync();
+        }
+
     }
 }

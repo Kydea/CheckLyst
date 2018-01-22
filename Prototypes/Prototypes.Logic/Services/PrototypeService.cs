@@ -14,6 +14,8 @@ using CheckListManager.Common.Logic.Trail;
 using CheckListManager.Common.Logic.Services;
 using System.Collections.Generic;
 using CheckListManager.Common.Logic.Models.CheckLists;
+using System.Threading;
+using NLog;
 
 namespace CheckListManager.Prototypes.Logic.Services
 {
@@ -22,6 +24,7 @@ namespace CheckListManager.Prototypes.Logic.Services
         private readonly CheckListJsonConverter _converter;
         private readonly IPrototypesRepository _prototypeRepository;
         private readonly IQueueService _queueService;
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public PrototypeService(CheckListJsonConverter converter, IPrototypesRepository prototypeRepository, IQueueService queueService)
         {
@@ -350,6 +353,78 @@ namespace CheckListManager.Prototypes.Logic.Services
                     Approved = s.Approved
                 }).ToList()
             }).ToList());
+        }
+
+        private async Task SetPrototypeVersionState(PrototypeVersions PrototypeVersion, string State)
+        {
+            PrototypeVersion.ProposedState = null;
+            PrototypeVersion.ProposedDate = null;
+            if (PrototypeVersion.VersionState != State)
+            {
+                PrototypeVersion.VersionState = State;
+
+                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                {
+                    Company = PrototypeVersion.Prototypes.Company,
+                    Action = TrailAction.PrototypeStateAutoChanged,
+                    Date = DateTimeOffset.UtcNow,
+                    CheckList = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}",
+                    Information = State
+                });
+            }
+        }
+
+        public async Task UpdatePrototypeVersionsState(CancellationToken CancellationToken)
+        {
+            //TODO
+            //5. notificare per email
+
+            var PrototypeVersions = await _prototypeRepository.GetPrototypeVersionsAsync(pv =>
+                pv.VersionState == VersionState.Approved && pv.ValidFrom <= DateTimeOffset.UtcNow
+                || (pv.VersionState == VersionState.Approved || pv.VersionState == VersionState.Active) && pv.ValidUntil <= DateTimeOffset.UtcNow
+            );
+            foreach (var PrototypeVersion in PrototypeVersions)
+                try
+                {
+                    if (CancellationToken.IsCancellationRequested) return;
+
+                    var UtcNow = DateTimeOffset.UtcNow;
+                    PrototypeVersion.ValidFrom = UtcNow;
+
+                    var State =
+                        PrototypeVersion.VersionState == VersionState.InApproval ?
+                            PrototypeVersion.ValidFrom > UtcNow ? VersionState.Approved : VersionState.Active :
+                            PrototypeVersion.ValidUntil > UtcNow ? PrototypeVersion.VersionState : VersionState.Obsolete;
+
+                    if (State == VersionState.Active)
+                    {
+                        PrototypeVersion.Prototypes.Description = PrototypeVersion.Description;
+                        PrototypeVersion.Prototypes.ModifiedOn = PrototypeVersion.ModifiedOn;
+                        PrototypeVersion.Prototypes.ModifiedBy = PrototypeVersion.ModifiedBy;
+
+                        var OldVersion = PrototypeVersion.Prototypes.PrototypeVersions.SingleOrDefault(pv => pv.VersionState == VersionState.Active);
+                        if (OldVersion != null) await SetPrototypeVersionState(OldVersion, VersionState.Obsolete);
+                    }
+                    await SetPrototypeVersionState(PrototypeVersion, State);
+                    await _prototypeRepository.SaveChangesAsync();
+                }
+                catch (Exception Exception)
+                {
+                    Logger.Error(Exception);
+                    await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                    {
+                        Company = PrototypeVersion.Prototypes.Company,
+                        Action = "Job error",
+                        Date = DateTimeOffset.UtcNow,
+                        CheckList = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}",
+                        Information = JsonConvert.SerializeObject(new
+                        {
+                            Job = "UpdatePrototypes",
+                            Exception = Exception.Message
+                        })
+                    });
+
+                }
         }
     }
 }

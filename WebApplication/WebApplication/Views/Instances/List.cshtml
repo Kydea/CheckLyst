@@ -118,7 +118,7 @@
                 matematici.dialog.error("Error", "The selected prototype version is not active.");
             else if (
                 !matematici.tokenManager.checkRole("Instances#Create#" + department + "##")
-                && !matematici.tokenManager.checkRole("Instances#Create#" + department + "#" + prototype + "#")
+                && !matematici.tokenManager.checkRole("Instances#Create#" + department + "#" + prototypeType + "#")
             )
                 matematici.dialog.error("Error", "Permission denied.");
             else {

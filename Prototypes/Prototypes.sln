@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.14
+VisualStudioVersion = 15.0.27130.2024
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Data", "..\Common\Common.Data\Common.Data.csproj", "{91482922-D6BA-4DF1-9A9C-88F3087A7B5D}"
 EndProject
@@ -31,6 +31,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Prototypes.Api", "Prototypes.Api\Prototypes.Api.csproj", "{EC509A88-99D6-4DC2-943B-464E495F672D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Core.Web", "..\Common\Common.Core.Web\Common.Core.Web.csproj", "{2FAFFF00-D5EB-4BB0-B70B-38290D88C871}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Prototypes.Terminal", "Prototypes.Terminal\Prototypes.Terminal.csproj", "{23C7D6C0-62B6-481A-805F-88F26F56CF93}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -78,6 +80,10 @@ Global
 		{2FAFFF00-D5EB-4BB0-B70B-38290D88C871}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FAFFF00-D5EB-4BB0-B70B-38290D88C871}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2FAFFF00-D5EB-4BB0-B70B-38290D88C871}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23C7D6C0-62B6-481A-805F-88F26F56CF93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23C7D6C0-62B6-481A-805F-88F26F56CF93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23C7D6C0-62B6-481A-805F-88F26F56CF93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23C7D6C0-62B6-481A-805F-88F26F56CF93}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

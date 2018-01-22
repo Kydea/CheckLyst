@@ -36,9 +36,7 @@ namespace CheckListManager.Common.Logic.Terminal
 			Timer.Elapsed += (sender, args) => Run();
 
 			if (_strategy.RunAtStartup)
-			{
 				ThreadPool.QueueUserWorkItem(o => Run());
-			}
 
 			return true;
 		}
@@ -53,9 +51,7 @@ namespace CheckListManager.Common.Logic.Terminal
 		private void Run()
 		{
 			if (_strategy.StopTimerWhenRunning)
-			{
 				Timer.Enabled = false;
-			}
 
 			try
 			{
@@ -68,15 +64,11 @@ namespace CheckListManager.Common.Logic.Terminal
 			finally
 			{
 				if (_strategy.ComputeNextExecutionTime(DateTime.UtcNow))
-				{
 					Timer.Interval = _strategy.Interval.TotalMilliseconds;
-				}
 			}
 
 			if (_strategy.StopTimerWhenRunning)
-			{
 				Timer.Enabled = true;
-			}
 		}
 
 		protected abstract Task RunAsync();
