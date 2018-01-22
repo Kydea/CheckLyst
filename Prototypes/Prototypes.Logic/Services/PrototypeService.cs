@@ -357,21 +357,26 @@ namespace CheckListManager.Prototypes.Logic.Services
 
         private async Task SetPrototypeVersionState(PrototypeVersions PrototypeVersion, string State)
         {
-            PrototypeVersion.ProposedState = null;
-            PrototypeVersion.ProposedDate = null;
-            if (PrototypeVersion.VersionState != State)
-            {
-                PrototypeVersion.VersionState = State;
+            PrototypeVersion.VersionState = State;
 
-                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
-                {
-                    Company = PrototypeVersion.Prototypes.Company,
-                    Action = TrailAction.PrototypeStateAutoChanged,
-                    Date = DateTimeOffset.UtcNow,
-                    CheckList = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}",
-                    Information = State
-                });
-            }
+            PrototypeVersion.PrototypeVersionsHistory.Add(new PrototypeVersionsHistory
+            {
+                Prototype = PrototypeVersion.Prototype,
+                Version = PrototypeVersion.Version,
+                Date = PrototypeVersion.ModifiedOn.Value,
+                State = State,
+                User = "(system)"
+            });
+
+            await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+            {
+                Company = PrototypeVersion.Prototypes.Company,
+                Action = TrailAction.PrototypeStateAutoChanged,
+                User = "(system)",
+                Date = PrototypeVersion.ModifiedOn.Value,
+                CheckList = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}",
+                Information = State
+            });
         }
 
         public async Task UpdatePrototypeVersionsState(CancellationToken CancellationToken)
@@ -389,15 +394,15 @@ namespace CheckListManager.Prototypes.Logic.Services
                     if (CancellationToken.IsCancellationRequested) return;
 
                     var UtcNow = DateTimeOffset.UtcNow;
-                    PrototypeVersion.ValidFrom = UtcNow;
 
-                    var State =
-                        PrototypeVersion.VersionState == VersionState.InApproval ?
-                            PrototypeVersion.ValidFrom > UtcNow ? VersionState.Approved : VersionState.Active :
-                            PrototypeVersion.ValidUntil > UtcNow ? PrototypeVersion.VersionState : VersionState.Obsolete;
+                    var State = PrototypeVersion.ValidUntil <= UtcNow ? VersionState.Obsolete : VersionState.Active;
+                    PrototypeVersion.ModifiedOn = UtcNow;
+                    PrototypeVersion.ModifiedBy = "(system)";
 
                     if (State == VersionState.Active)
                     {
+                        PrototypeVersion.ValidFrom = UtcNow;
+
                         PrototypeVersion.Prototypes.Description = PrototypeVersion.Description;
                         PrototypeVersion.Prototypes.ModifiedOn = PrototypeVersion.ModifiedOn;
                         PrototypeVersion.Prototypes.ModifiedBy = PrototypeVersion.ModifiedBy;
@@ -405,6 +410,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                         var OldVersion = PrototypeVersion.Prototypes.PrototypeVersions.SingleOrDefault(pv => pv.VersionState == VersionState.Active);
                         if (OldVersion != null) await SetPrototypeVersionState(OldVersion, VersionState.Obsolete);
                     }
+
                     await SetPrototypeVersionState(PrototypeVersion, State);
                     await _prototypeRepository.SaveChangesAsync();
                 }
@@ -415,6 +421,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                     {
                         Company = PrototypeVersion.Prototypes.Company,
                         Action = "Job error",
+                        User = "(system)",
                         Date = DateTimeOffset.UtcNow,
                         CheckList = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}",
                         Information = JsonConvert.SerializeObject(new
