@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using System.Threading;
 using NLog;
+using CheckListManager.Common.Logic.Email;
 
 namespace CheckListManager.Prototypes.Logic.Services
 {
@@ -327,6 +328,8 @@ namespace CheckListManager.Prototypes.Logic.Services
 
         public async Task<List<HistoryRow>> History(DefaultIdentity identity, PrototypeRequest request)
         {
+            await _queueService.SendObjectAsync(QueueName.Email, new EmailMessage(2, "Email test", "invio email di test", "carosi@matematici.com", "Massimiliano Carosi"), CancellationToken.None);
+
             var PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(identity, request.ID, request.Version);
             if (
                 !identity.HasPermission("Prototypes", "View", PrototypeVersion.Prototypes.Department)

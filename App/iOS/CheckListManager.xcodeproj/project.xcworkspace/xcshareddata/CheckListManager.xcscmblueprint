@@ -1,0 +1,25 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "ad15cad4-76f8-384d-9d51-fd9e866b0cfb++505",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+    "ad15cad4-76f8-384d-9d51-fd9e866b0cfb++505" : {
+
+    }
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "ad15cad4-76f8-384d-9d51-fd9e866b0cfb++505" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "61824655-E0D4-429C-88C5-01B19BA08201",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "ad15cad4-76f8-384d-9d51-fd9e866b0cfb++505" : "CheckListManagerRepo\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "CheckListManager",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "Ios App\/CheckListManager.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/daedalus.matematici.com:8443\/svn\/CheckListManager",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Subversion",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "ad15cad4-76f8-384d-9d51-fd9e866b0cfb++505"
+    }
+  ]
+}

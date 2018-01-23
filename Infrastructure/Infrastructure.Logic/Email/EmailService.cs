@@ -31,11 +31,7 @@ namespace CheckListManager.Infrastructure.Logic.Email
 			foreach (var message in messages)
 			{
 				await ProcessMessageAsync(message, cancellationToken);
-
-				if (cancellationToken.IsCancellationRequested)
-				{
-					break;
-				}
+				if (cancellationToken.IsCancellationRequested) break;
 			}
 		}
 
@@ -66,7 +62,7 @@ namespace CheckListManager.Infrastructure.Logic.Email
 
 			body = body.Append("<h1>CheckList Manager - " + message.Subject + "</h1>");
 			body = body.Append("<p>" + (message.Content?.Replace("[NameAndSurname]", message.Name ?? "(no user)") ?? "(no content)") + " </p>");
-			if (message.Link != null) body.Append("<p><a href=\"" + message.Link + "\">Open CheckList Manager</a></p>");
+			if (message.Link != null) body.Append("<p><a href=\"" + message.Link + "\">Open CheckLyst</a></p>");
 
 			var sender = await _settingService.EmailSenderAsync(message.Company);
 			var mailMessage = new MailMessage { From = new MailAddress(sender) };
@@ -82,7 +78,7 @@ namespace CheckListManager.Infrastructure.Logic.Email
 			mailMessage.Body = body.ToString();
 
 			mailMessage.IsBodyHtml = true;
-			mailMessage.Subject = "CheckList Manager - " + message.Subject;
+			mailMessage.Subject = "CheckLyst - " + message.Subject;
 
 
 			var username = await _settingService.SmtpUsernameAsync(message.Company);

@@ -1,0 +1,81 @@
+{
+    "ClientId":2,
+    "Key":{"Prototype":"codice","Version":1,"Year":2016,"Number":1},
+    "Description":null,
+    
+    /* INIZIO HEADER */
+    
+   "Header"{
+       
+       "Code":null,
+       "CountDownTo":null,
+       "ReadOnly":true,
+       "HiddenIfReadOnly":false,
+       "Valid":false,
+       "SignatureInformation":null,
+       "ValidityMessage":null,
+       "Id":1,
+       "CSSClass":"",
+       "Description":"1",
+       "NewLine":false,
+       "TypeName":"Group",
+       "InIterator":false,
+       "Iterator":false,
+       /* ITEMS NELL'HEADER */
+        "Items":
+            [
+             // ITEM 1
+             {"Code":null,"CountDownTo":null,"ReadOnly":true,"HiddenIfReadOnly":false,"Valid":true,"SignatureInformation":null,"ValidityMessage":null,"Id":2,"CSSClass":"Text","Description":null,"NewLine":true,"TypeName":"Text","InIterator":false},
+                 
+             // ITEM 2
+             {"Code":"c0","CountDownTo":null,"ReadOnly":true,"HiddenIfReadOnly":false,"Valid":true,"SignatureInformation":null,"ValidityMessage":null,"Id":3,"CSSClass":"Field","Description":"1 sss","NewLine":false,"TypeName":"Field","InIterator":false, "LinesCount":0,"ValueTypeName":"Text","Value":"prova2","ValueFormula":null,"ValuesList"["prova1","prova2","prova3"],"ExternalSourceName":null,"ExternalSourceColumn":null,"History":[
+                                {"DateTime":"18/05/2016 22:37","User":"CheckListManager","Value":"prova2"},
+                                {"DateTime":"16/05/2016 15:45","User":"CheckListManager","Value":"prova1"},
+                                {"DateTime":"16/05/2016 15:45","User":"CheckListManager","Value":"prova1"},
+                                {"DateTime":"16/05/2016 15:49","User":"CheckListManager","Value":"prova2"}
+                                                ]
+                  },
+             
+             // ITEM 3
+             {"Code":"s1","CountDownTo":null,"ReadOnly":true,"HiddenIfReadOnly":false,"Valid":true,"SignatureInformation":null,"ValidityMessage":null,"Id":4,"CSSClass":"Signature","Description":null,"NewLine":true,"TypeName":"Signature","InIterator":false,"ButtonLabel":null,"Signed":true,"SignedBy":"CheckListManager","SignedOn":"2016-05-16T15:45:18.8261357+02:00","Cancelable":false,"AcceptsPIN":true,
+                                 "History":[
+                                 {"DateTime":"16/05/2016 15:45","User":"CheckListManager","Note":null,"Action":"<center><i class=\"fa fa-fw fa-check\"></i></center>"}
+                                            ],"SignatureLevel":null},
+             //ITEM4
+             {"Code":"c1","CountDownTo":null,"ReadOnly":true,"HiddenIfReadOnly":false,"Valid":false,"SignatureInformation":null,"ValidityMessage":null,"Id":5,"CSSClass":"Field","Description":null,"NewLine":false,"TypeName":"Field","InIterator":false,"LinesCount":0,"ValueTypeName":"Text","Value":null,"ValueFormula":null,"ValuesList":[],"ExternalSourceName":"test","ExternalSourceColumn":"Company", "History":[]},
+             //ITEM5
+             {"Code":null,"CountDownTo":null,"ReadOnly":true,"HiddenIfReadOnly":false,"Valid":false,"SignatureInformation":null,"ValidityMessage":null,"Id":6,"CSSClass":"Field","Description":null,"NewLine":false,"TypeName":"Field","InIterator":false,"LinesCount":0,"ValueTypeName":"Text","Value":null,"ValueFormula":null,"ValuesList":[],"ExternalSourceName":"test","ExternalSourceColumn":"Code", "History":[]
+                 }
+             ]
+   
+        },
+    
+    /*  FINE HEADER */
+    
+    
+    /* INIZIO PAGES */
+    "Pages"[
+             {"Code":null,"CountDownTo":null,"ReadOnly":true,"HiddenIfReadOnly":false,"Valid":true,"SignatureInformation":null,"ValidityMessage":null,
+            
+              "Groups":[
+                       {"Code":null,"CountDownTo":null,"ReadOnly":true,"HiddenIfReadOnly":false,"Valid":true,"SignatureInformation":null,"ValidityMessage":null,"Id":7,"CSSClass":"","Description":"(Group)","NewLine":false,"TypeName":"Group","InIterator":false,"Iterator":false,"Items":[]
+                           }
+                      
+                       ],
+            
+              "Lock": {"User":"System administrator","Date":"2016-06-22T09:56:03.9831936+02:00","ClientId":2},
+              "Locked":false
+             }
+            ],
+    
+    "State":"Confirmed",
+    "PrototypeState":"Active",
+    "Expressions":[
+                   {"Expression":"test","Type":"Number","Value":1.0},
+                   {"Expression":"test2","Type":"Number","Value":0.0002483854942871336313959265},
+                   {"Expression":"c1expr","Type":"Text","Value":""},
+                   {"Expression":"c0expr","Type":"Text","Value":"prova2"
+                   {"Expression":"sig","Type":"DateTime","Value":"2016-05-16T15:45:18.8261357+02:00"}
+                   ],
+    "ExternalSources":{"test":"SqlServerExample"},
+    "ExternalSourceRows":{"test":{"Company":"Janssen","Code":"Maintenance"}}}
