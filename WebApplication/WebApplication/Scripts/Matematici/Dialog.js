@@ -9,9 +9,15 @@ matematici.dialog = function () {
 
 		addButton = function (buttons, button) {
 			if (button.textarea) {
+				var textArea = $("<textarea />").addClass("Textarea");
 				button.content = $("<div />");
-				button.content.prepend($("<textarea />").addClass("Textarea"));
+				button.content.prepend(textArea);
 				if (button.text) button.content.prepend($("<label />").text(button.text));
+				if (button.val) textArea.val(button.val);
+				if (button.readOnly) textArea.prop("readonly", true).addClass("ReadOnly");
+				if (button.handler) textArea.on("click", button.handler);
+				if (button.height) textArea.height(button.height);
+				container.append(button.content);
 			} else if (button.text || button.hidden) {
 				button.content = $("<a />").addClass("Button").text((button.icon ? " " : "") + button.text).on("click", function () {
 					if (button.handler) {
@@ -35,9 +41,9 @@ matematici.dialog = function () {
 					button.content.addClass("CancelButton");
 				}
 				if (button.id) button.content.attr("id");
-			}
 
-			buttons.prepend(button.content);
+				buttons.prepend(button.content);
+			}
 			return matematici.dialog;
 		},
 

@@ -16,7 +16,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
 
         protected override void Check(ICheckListElement Element)
         {
-            if (!(Element is ICheckListSignature)) throw new Exception("The element with code " + Code + " is not an Signature");
+            if (!(Element is ICheckListSignature)) throw new Exception($"The element with code {Code} is not an Signature");
             var Signature = (ICheckListSignature)Element;
             DataType =
                 Property == SignatureProperties.Signed ? DataType.Boolean :

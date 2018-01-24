@@ -74,6 +74,9 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     case "Value":
                         Symbol = new ElementProperties.FieldProperty { Code = Values[0], Position = Position };
                         break;
+                    case "Valid":
+                        Symbol = new ElementProperties.ElementProperty(ElementProperties.ElementProperty.ElementProperties.Valid) { Code = Values[0], Position = Position };
+                        break;
                     case "Sum":
                         var Sum = new AggregateFunctions.Sum { IteratorCode = Values[0], Position = Position };
                         ParseArgument(ref ExpressionValue, ref Position, 1);

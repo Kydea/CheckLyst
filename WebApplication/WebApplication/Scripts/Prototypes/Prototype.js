@@ -57,7 +57,9 @@
 				submitForObsolescence = $("a.SubmitForObsolescence", buttonGroup).addClass("Hidden"),
 				obsoleteButton = $("a.Obsolete", buttonGroup).addClass("Hidden"),
 				saveButton = $("a.Save", buttonGroup).addClass("Hidden"),
-				historyButton = $("a.History", buttonGroup).toggle(model.version > 0);
+				historyButton = $("a.History", buttonGroup).toggle(model.version > 0),
+				importButton = $("a.Import", buttonGroup).addClass("Hidden"),
+				exportButton = $("a.Export", buttonGroup);
 
 			switch (model.state) {
 				case prototypes.Prototype.states.active:
@@ -73,6 +75,7 @@
 						startSimulationButton.removeClass("Hidden");
 						deleteButton.removeClass("Hidden");
 					}
+					importButton.removeClass("Hidden");
 					saveButton.removeClass("Hidden");
 					break;
 				case prototypes.Prototype.states.simulation:
@@ -614,6 +617,63 @@
 			parameters.append($("<label />").append($("<span />").text("Prototype")).append($("<i />").addClass("Icon fi flaticon-prototype")).append($("<input />").attr(attributes).val(model.name)));
 			parameters.append($("<label />").append($("<span />").text("Version")).append($("<i />").addClass("Icon fi flaticon-version")).append($("<input />").attr(attributes).val(prototypeKey.version)));
 		});
+	};
+
+	prototype.import = function () {
+		var handler = function () {
+			var oldModel = model;
+			try {
+				model = JSON.parse($("textarea", matematici.dialog.getElement()).val());
+				model.name = model.department = model.prototypeType = model.version = validFrom = validUntil = null;
+				state = prototypes.Prototype.states.draft;
+				update();
+				matematici.blip.ok();
+			} catch (error) {
+				matematici.dialog.error("Error", error);
+				model = oldModel;
+				update();
+				return true;
+			}
+		};
+
+		matematici.dialog.show({
+			title: "Prototype import",
+			content: "Beware, the current prototype properties and items will be replaced by the imported one:",
+			buttons: [{
+				textarea: true,
+				height: 300,
+			}, {
+				icon: "check",
+				text: "ok",
+				handler: handler
+			}, {
+				icon: "times",
+				text: "cancel",
+				cancelButton: true
+			}]
+		});
+	};
+
+	prototype.export = function () {
+		matematici.dialog.show({
+			title: "Click to copy",
+			buttons: [{
+				textarea: true,
+				val: JSON.stringify(model),
+				readOnly: true,
+				height: 300,
+				handler: function () {
+					$(this).select();
+					document.execCommand("copy");
+					matematici.blip.ok(matematici.dialog.close());
+				}
+			}, {
+				hidden: true,
+				cancelButton: true
+			}]
+		});
+
+		matematici.dialog.setWidth(600);
 	};
 
 	prototype.update = function () {

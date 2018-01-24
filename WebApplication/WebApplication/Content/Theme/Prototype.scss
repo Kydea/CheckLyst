@@ -134,7 +134,7 @@ div.Prototype {
                 cursor: pointer;
             }
 
-            a.Button:hover {
+            a.Button:not(.MiniIcon):hover {
                 background-color: $Color-Green-Regular;
                 cursor: pointer;
 
