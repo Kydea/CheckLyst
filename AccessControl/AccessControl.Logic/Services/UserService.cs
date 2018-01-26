@@ -158,7 +158,6 @@ namespace CheckListManager.AccessControl.Logic.Services
             }
         }
 
-
         public Task CreateSessionAsync(long company, string code, string user, string ticket, DateTimeOffset expiresOn)
 		{
 			var session = new UserSessions
@@ -316,7 +315,12 @@ namespace CheckListManager.AccessControl.Logic.Services
 
         public async Task<UserResponse> LoadUserAsync(DefaultIdentity identity, UserRequest record)
         {
-            var response = new UserResponse();
+            bool LDAP = !string.IsNullOrEmpty(await _settingService.LDAPHostAsync(identity.CompanyId));
+            var response = new UserResponse {
+                ShowPassword = !LDAP,
+                ShowAuthenticationCode = LDAP
+            };
+
             try
             {
                 var user = await _userRepository.GetAsync(identity.CompanyId, record.Code);

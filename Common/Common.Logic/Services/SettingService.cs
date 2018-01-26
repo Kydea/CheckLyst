@@ -18,7 +18,14 @@ namespace CheckListManager.Common.Logic.Services
 			_cache = cache;
 		}
 
-		public Task<string> SmtpHostAsync(long companyId)
+        public Task<string> LDAPHostAsync(long companyId)
+        {
+            const string code = "LDAPHost";
+            return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<string>(companyId, code), RegionName);
+        }
+
+
+        public Task<string> SmtpHostAsync(long companyId)
 		{
 			const string code = "SmtpHost";
 			return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<string>(companyId, code), RegionName);

@@ -13,6 +13,8 @@
             if (jqxhr.responseJSON && jqxhr.responseJSON.messages)
                 for (var index in jqxhr.responseJSON.messages)
                     message += jqxhr.responseJSON.messages[index] + "<br />";
+            else if (jqxhr.responseJSON && jqxhr.responseJSON.error_description)
+                message = jqxhr.responseJSON.error_description;
             else
                 message = thrownError;
 

@@ -37,6 +37,7 @@ namespace CheckListManager.AccessControl.Data
             existingUser.Email = user.Email;
             if (user.Password != null) existingUser.Password = user.Password;
             existingUser.Enabled = user.Enabled;
+            if (user.Enabled) existingUser.NumberOfAttempts = 0;
             existingUser.AuthenticationCode = user.AuthenticationCode;
             existingUser.ModifiedOn = DateTimeOffset.UtcNow;
             existingUser.ModifiedBy = identity.Code;

@@ -33,19 +33,19 @@
                     <input type="checkbox" name="enabled" value="true" />
                 </label>
 
-                <label class="Clearing">
+                <label class="Clearing Hidden">
                     <span>Password</span>
                     <i class="Icon fi flaticon-lock-o" />
                     <input type="password" name="password" />
                 </label>
 
-                <label>
+                <label class="Hidden">
                     <span>Password confirm</span>
                     <i class="Icon fi flaticon-lock-o" />
                     <input type="password" name="password2" />
                 </label>
 
-                <label>
+                <label class="Clearing Hidden">
                     <span>Authentication code</span>
                     <i class="Icon fi flaticon-key-o" />
                     <input type="text" name="authenticationCode" />
@@ -328,6 +328,10 @@
             if (!detailPage.isNew())
                 detailPage.getForm().trigger("Load", function (result) {
                     detailPage.getForm().handleResult(result);
+
+                    $("input[name=authenticationCode]").parent().toggle(result.showAuthenticationCode);
+                    $("input[name=password]").parent().toggle(result.showPassword);
+                    $("input[name=password2]").parent().toggle(result.showPassword);
                     if (result.generalFunctions) buildGeneralFunctions(result.generalFunctions);
                     if (result.prototypeFunctions) buildFunctions(result.prototypeFunctions, 2);
                     if (result.instanceFunctions) buildFunctions(result.instanceFunctions, 3);

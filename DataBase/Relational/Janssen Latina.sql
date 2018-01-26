@@ -22,6 +22,7 @@ values (currval('"Infrastructure"."Companies_ID_seq"'), 'CheckListManager', 'Use
 
 
 insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
+	--(currval('"Infrastructure"."Companies_ID_seq"'), 'LDAPHost', 'eu.jnj.com'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpHost', 'email-smtp.eu-west-1.amazonaws.com'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpPort', '587'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpUsername', 'AKIAIEIVPEHAHBTTCRKA'),

@@ -9,7 +9,8 @@ namespace CheckListManager.Common.Logic.Services
 {
 	public interface ISettingService : IService
 	{
-		Task<string> SmtpHostAsync(long companyId);
+        Task<string> LDAPHostAsync(long companyId);
+        Task<string> SmtpHostAsync(long companyId);
 		Task<int> SmtpPortAsync(long companyId);
 		Task<string> SmtpUsernameAsync(long companyId);
 		Task<string> SmtpPasswordAsync(long companyId);
