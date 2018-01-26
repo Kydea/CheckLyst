@@ -25,13 +25,15 @@ namespace CheckListManager.Prototypes.Logic.Services
         private readonly CheckListJsonConverter _converter;
         private readonly IPrototypesRepository _prototypeRepository;
         private readonly IQueueService _queueService;
+        private readonly ICommonRepository _commonRepository;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public PrototypeService(CheckListJsonConverter converter, IPrototypesRepository prototypeRepository, IQueueService queueService)
+        public PrototypeService(CheckListJsonConverter converter, IPrototypesRepository prototypeRepository, IQueueService queueService, ICommonRepository commonRepository)
         {
             _converter = converter;
             _prototypeRepository = prototypeRepository;
             _queueService = queueService;
+            _commonRepository = commonRepository;
         }
 
         public async Task<PrototypeResponse> OpenAsync(DefaultIdentity identity, PrototypeRequest request)
@@ -328,8 +330,6 @@ namespace CheckListManager.Prototypes.Logic.Services
 
         public async Task<List<HistoryRow>> History(DefaultIdentity identity, PrototypeRequest request)
         {
-            await _queueService.SendObjectAsync(QueueName.Email, new EmailMessage(2, "Email test", "invio email di test", "carosi@matematici.com", "Massimiliano Carosi"), CancellationToken.None);
-
             var PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(identity, request.ID, request.Version);
             if (
                 !identity.HasPermission("Prototypes", "View", PrototypeVersion.Prototypes.Department)
@@ -341,7 +341,7 @@ namespace CheckListManager.Prototypes.Logic.Services
             {
                 ID = h.ID,
                 Date = h.Date,
-                User = h.User,
+                User = $"{h.User} - {_commonRepository.GetUser(identity.CompanyId, h.User)?.Description ?? "(unknown user)"}",
                 HasWorkFlow = h.WorkFlowApplications != null,
                 State = h.WorkFlowApplications == null ? h.State : h.WorkFlowApplications.FinalState,
                 ProposedState = h.WorkFlowApplications == null ? null : h.State,
@@ -351,9 +351,11 @@ namespace CheckListManager.Prototypes.Logic.Services
                     ID = s.ID,
                     Step = s.Step,
                     Date = s.Date,
-                    User = s.User ?? $"({string.Join(", ", s.WorkFlowApplicationStepTags.Select(t => t.Tag))})",
+                    User = s.User,
+                    Level = $"({string.Join(", ", s.WorkFlowApplicationStepTags.Select(t => t.Tag))})",
                     Comment = s.Comment,
-                    Approved = s.Approved
+                    Approved = s.Approved,
+                    AppointedUser = s.User == null ? string.Join(", ", _commonRepository.GetAppointedUsers(identity.CompanyId, "Prototypes", "Approve", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType, s.WorkFlowApplicationStepTags.Select(t => t.Tag)).Select(u => u.Code)) : null
                 }).ToList()
             }).ToList());
         }

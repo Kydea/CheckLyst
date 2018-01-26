@@ -106,8 +106,10 @@
                 if (container.size() == 0)
                     button = $(selector);
 
-                button.first().click();
-                e.preventDefault();
+                if (button.size() > 0) {
+                    button.first().click();
+                    e.preventDefault();
+                }
 
                 break;
         }

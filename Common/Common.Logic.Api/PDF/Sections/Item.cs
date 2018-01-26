@@ -24,7 +24,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
         {
             PdfPTable Table = new PdfPTable(4);
 
-            Table.AddCell(new PdfPCell(new Paragraph("Signed by", GenericBoldFont)) { Padding = 10 });
+            Table.AddCell(new PdfPCell(new Paragraph(Description, GenericBoldFont)) { Padding = 10 });
             Table.AddCell(new PdfPCell(new Paragraph("Date", GenericBoldFont)) { Padding = 10 });
             Table.AddCell(new PdfPCell(new Paragraph("Time", GenericBoldFont)) { Padding = 10 });
             Table.AddCell(new PdfPCell(new Paragraph("Signature", GenericBoldFont)) { Padding = 10 });
@@ -68,7 +68,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
 
             else if (Element is ICheckListSignature SignatureElement)
             {
-                if (!String.IsNullOrEmpty(SignatureElement.Description))
+                if (!string.IsNullOrEmpty(SignatureElement.Description))
                 {
                     DrawText(SignatureElement.Description, GenericBoldFont);
                     DrawText("\n");
@@ -78,10 +78,10 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                     foreach (var Sign in SignatureElement.History)
                     {
                         string[] Date = Sign.DateTime.Split(' ');
-                        DrawSignature(String.IsNullOrEmpty(Sign.Note) ? "Signed" : "Canceled", Sign.User, Date[0], Date[1], Sign.Signature);
+                        DrawSignature(string.IsNullOrEmpty(Sign.Note) ? "Signed by" : "Canceled by", Sign.User, Date[0], Date[1], Sign.Signature);
                     }
                 else
-                    DrawSignature(SignatureElement.Description);
+                    DrawSignature("Signed by");
             }
 
             #endregion
@@ -92,7 +92,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             {
                 var Description = FieldElement.Description;
 
-                if (String.IsNullOrEmpty(Description))
+                if (string.IsNullOrEmpty(Description))
                     Description = "(no description)";
                 else
                     Description = FieldElement.Description;

@@ -17,7 +17,7 @@ namespace CheckListManager.AccessControl.Data
 		}
 
 		public Task<Users> GetAsync(long companyId, string code)
-			=> Entities.Users.Include(u => u.Companies).FirstOrDefaultAsync(u => u.Company == companyId && u.Code == code);
+			=> Entities.Users.Include(u => u.Companies).FirstOrDefaultAsync(u => u.Company == companyId && u.Code.ToUpper() == code.ToUpper());
 
 		public async Task<Users> AddAsync(DefaultIdentity identity, Users user)
 		{

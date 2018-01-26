@@ -8,7 +8,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
     public class Literal : Token
     {
         public Literal(ref string ExpressionValue, ref int Position, int Index) : base(
-            ref ExpressionValue, ref Position, Index, c =>
+            ref ExpressionValue, ref Position, Index, (c, i) =>
                 c >= 'a' && c <= 'z'
                 || c >= 'A' && c <= 'Z'
                 || c >= '0' && c <= '9'

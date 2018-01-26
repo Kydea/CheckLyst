@@ -33,7 +33,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             //Create Tablele object
             PdfPTable Table = new PdfPTable(1);
             PdfPCell Cell = new PdfPCell(writer.PageNumber != 1 ? Description : null);
-            String text = "Page " + writer.PageNumber + " of ";
+            string text = $"Page {writer.PageNumber} of ";
 
             PDF.PdfContentByte.BeginText();
             PDF.PdfContentByte.SetFontAndSize(PDFSection.BaseFont, 12);
@@ -44,7 +44,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             PDF.PdfContentByte.BeginText();
             PDF.PdfContentByte.SetFontAndSize(PDFSection.BaseFont, 12);
             PDF.PdfContentByte.SetTextMatrix(document.PageSize.GetLeft(45), document.PageSize.GetBottom(55));
-            PDF.PdfContentByte.ShowText(DateTimeOffset.UtcNow.ToLocalTime(PDF.TimeZone).ToString("dd/MM/yyyy HH:mm"));
+            PDF.PdfContentByte.ShowText($"Generated on {DateTimeOffset.UtcNow.ToLocalTime(PDF.TimeZone):dd/MM/yyyy HH:mm tt zzz} - RESTRICTED");
             PDF.PdfContentByte.EndText();
 
             float len = PDFSection.BaseFont.GetWidthPoint(text, 12);

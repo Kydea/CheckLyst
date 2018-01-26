@@ -239,6 +239,7 @@ namespace CheckListManager.Instances.Api.Controllers
             var Data = await _redisCache.GetAsync<InstanceRequest>($"Token:{Token}", "Download");
             await _redisCache.RemoveAsync($"Token:{Token}", "Download");
             var cacheObject = await _instanceManagerService.GetAsync(Data.CompanyId.Value, Data.UserCode, Data.Code);
+            cacheObject.Instance.Update();
             return Content(HttpStatusCode.OK, new InstancePDF(Data.CompanyId.Value, Data.CompanyName, Data.TimeZone, _configurationService.PublicRepositoryUrl, cacheObject), new PDFFormatter("Instance"));
         }
     }

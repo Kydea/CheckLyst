@@ -134,7 +134,8 @@
 
     this.update = function (model) {
 		button.text(model.buttonLabel ? model.buttonLabel : "Signature").prepend($("<i >").addClass("fi flaticon-check"));
-        button.toggleClass("ReadOnly", model.readOnly);
+		button.toggleClass("ReadOnly", model.readOnly);
+		if (cancelButton) cancelButton.toggleClass("ReadOnly", model.readOnly);
 
 		if (model.signed) {
 			user.val(model.signedBy + " - " + model.signerDescription);

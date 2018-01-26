@@ -80,33 +80,13 @@ namespace CheckListManager.AccessControl.Logic.Services
 				if (!_hashService.ValidateHash(password, user.Password)) //TODO Valutare l'ordine rispetto all'autenticazione LDAP
                     throw new AuthenticationException(105, "Password not valid");
 
-	            await Task.WhenAll(
-		            _userRepository.UserLoginCompleteAsync(user),
-			        _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
-			        {
-				        Company = user.Company,
-				        User = user.Code,
-				        Action = TrailAction.Login,
-				        Date = DateTimeOffset.UtcNow
-			        })
-	            );
+                await _userRepository.UserLoginCompleteAsync(user);
 
 				//TODO: add LDAP / OAUTH SERVER
 			}
-			catch (AuthenticationException authenticationException)
+			catch (AuthenticationException)
 			{
-				await Task.WhenAll(
-					_userRepository.UserLoginFailedAsync(user),
-					_queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
-					{
-						Company = companyId.Value,
-						User = code,
-						Action = TrailAction.LoginFailed,
-						Date = DateTimeOffset.UtcNow,
-						Information = authenticationException.Message
-					})
-				);
-
+                await _userRepository.UserLoginFailedAsync(user);
                 throw;
             }
 
@@ -169,31 +149,11 @@ namespace CheckListManager.AccessControl.Logic.Services
                 if (!_hashService.ValidateHash(pin, user.PIN))
                     throw new AuthenticationException(105, "User pin not valid");
 
-                await Task.WhenAll(
-                    _userRepository.UserLoginCompleteAsync(user),
-                    _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
-                    {
-                        Company = user.Company,
-                        User = user.Code,
-                        Action = TrailAction.Login,
-                        Date = DateTimeOffset.UtcNow
-                    })
-                );
+                await _userRepository.UserLoginCompleteAsync(user);
             }
-            catch (AuthenticationException authenticationException)
+            catch (AuthenticationException)
             {
-                await Task.WhenAll(
-                    _userRepository.UserLoginFailedAsync(user),
-                    _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
-                    {
-                        Company = companyId.Value,
-                        User = code,
-                        Action = TrailAction.LoginFailed,
-                        Date = DateTimeOffset.UtcNow,
-                        Information = authenticationException.Message
-                    })
-                );
-
+                await _userRepository.UserLoginFailedAsync(user);
                 throw;
             }
         }

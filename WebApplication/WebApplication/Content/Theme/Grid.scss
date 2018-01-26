@@ -57,6 +57,14 @@ table.Grid {
                 &:last-child {
                     border-right: none;
                 }
+
+                &.Odd {
+                    background-color: white;
+                }
+
+                &.Even {
+                    background-color: $Color-Cyan;
+                }
             }
 
             &:not(.Even):nth-child(odd), &.Odd {
@@ -76,7 +84,33 @@ table.Grid {
             }
 
             &.SubRow {
-                background-color: $Color-Silver-Light !important;
+                &.Odd {
+                    background-color: $Color-Silver-Light !important;
+                }
+
+                &.Even {
+                    background-color: $Color-Silver-Light !important;
+                }
+
+                td {
+                    color: $Color-Grey-Regular;
+
+                    &:not(.Odd):not(.Even) {
+                        border-top: solid 1px white;
+                    }
+                }
+
+                &.Red {
+                    td {
+                        color: $Color-Red-Light;
+                    }
+                }
+
+                &.Green {
+                    td {
+                        color: $Color-Green-Regular;
+                    }
+                }
             }
 
             &.NoRecord {

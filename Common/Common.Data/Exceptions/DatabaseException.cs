@@ -34,9 +34,7 @@ namespace CheckListManager.Common.Data.Exceptions
 			base.GetObjectData(info, context);
 
 			if (Error.HasValue)
-			{
 				info.AddValue("Error", Error.Value);
-			}
 		}
 	}
 }

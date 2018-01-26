@@ -39,7 +39,6 @@
 			title: "Properties",
 			content: element,
 			buttons: [{
-				defaultButton: true,
 				icon: "check",
 				text: "apply",
 				handler: function () {
@@ -363,7 +362,10 @@
 					));
 					properties.push(new prototypes.Property(
 						this, new prototypes.SimpleValueProperty(model, "buttonLabel", { readOnly: state != prototypes.Prototype.states.draft }).setHandler(function () {
-							$("a.Button", item.getElement()).text(model.buttonLabel);
+							var
+								button = $("a.SignatureButton", item.getElement()),
+								icon = button.children().clone();
+							button.text(model.buttonLabel).prepend(icon);
 						}), "Button label",
 						"The label of the button."
 					));

@@ -25,6 +25,7 @@ namespace CheckListManager.Instances.Logic.PDF
         protected override FirstPage GenerateFirstPage()
         {
             var Rows = new List<Tuple<string, string>> {
+                new Tuple<string, string> ("Plant", CompanyName),
                 new Tuple<string, string> ("Department", Instance.DepartmentName),
                 new Tuple<string, string> ("Prototype type", Instance.PrototypeTypeName),
                 new Tuple<string, string> ("Instance state", Instance.InstanceState),

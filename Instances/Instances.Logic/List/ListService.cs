@@ -34,6 +34,7 @@ namespace CheckListManager.Instances.Logic.List
                 //initial load
 
                 var departments = await _commonRepository.GetDepartmentsAsync(identity, "Instances");
+                department = department.HasValue && departments.Any(d => d.ID == department.Value) ? department.Value : departments.FirstOrDefault()?.ID;
                 response.Fields["Department"] = new Field
                 {
                     Options = departments.Select(d => new Option(d.ID.ToString(), d.Name)),
@@ -54,10 +55,11 @@ namespace CheckListManager.Instances.Logic.List
             if (form.Source == null || form.Source == "department")
             {
                 var prototypeTypes = await _commonRepository.GetPrototypeTypesAsync(identity, department ?? -1, "Instances");
+                prototypeType = prototypeType.HasValue && prototypeTypes.Any(d => d.ID == prototypeType.Value) ? form.PrototypeType.Value : prototypeTypes.FirstOrDefault()?.ID;
                 response.Fields["PrototypeType"] = new Field
                 {
                     Options = prototypeTypes.Select(pt => new Option(pt.ID.ToString(), pt.Name)),
-                    Value = prototypeType.HasValue && prototypeTypes.Any(pt => pt.ID == prototypeType.Value) ? prototypeType.Value.ToString() : null
+                    Value = prototypeType?.ToString()
                 };
             }
 
