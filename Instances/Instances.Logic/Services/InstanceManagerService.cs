@@ -299,7 +299,10 @@ namespace CheckListManager.Instances.Logic.Services
                     throw new InstanceException("Instance state not valid");
                 if (cacheObject.VersionState == VersionState.Active && cacheObject.InstanceState == InstanceState.Progress && string.IsNullOrWhiteSpace(note))
                     throw new InstanceException("Provide a note for the deletion");
-                if (!HasPermission(identity, "Delete", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
+                if (
+                    !(cacheObject.InstanceState == InstanceState.Draft && HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
+                    && !HasPermission(identity, "Delete", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType)
+                )
                     throw new InstanceException("Access denied");
 
                 await DeleteAsync(cacheObject, identity.Code, note);

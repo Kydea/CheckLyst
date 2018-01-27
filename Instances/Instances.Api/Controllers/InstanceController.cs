@@ -108,7 +108,7 @@ namespace CheckListManager.Instances.Api.Controllers
 
         [HttpPost]
         [Route("Delete")]
-        [Authorize(Roles = "Instances#Delete, Prototypes#Edit")]
+        [Authorize(Roles = "Instances#Delete, Instances#Edit, Prototypes#Edit")]
         public async Task<IHttpActionResult> Delete(InstanceRequest request)
         {
             try
