@@ -125,7 +125,7 @@ class EditFieldViewController: UIViewController, UITableViewDataSource, UITableV
         
         accessoryButton.titleLabel?.font = UIFont (name: "Flaticon", size: 25)
         
-        accessoryButton.tintColor = UIColor(red: 82.0/255, green: 140.0/255, blue: 162.0/255, alpha: 1.0)
+        accessoryButton.tintColor = UIColor(red: 0.0/255, green: 150.0/255, blue: 136.0/255, alpha: 1.0)
         
         accessoryButton.setTitle("\u{f101}", for: UIControlState())
         

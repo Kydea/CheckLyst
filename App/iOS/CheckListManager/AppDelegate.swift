@@ -25,7 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         navigationBarAppearace.barTintColor = UIColor(red: 43.0/255, green: 43.0/255, blue: 43.0/255, alpha: 1.0)
         
-        UITabBar.appearance().barTintColor = UIColor(red: 82.0/255, green: 140.0/255, blue: 162.0/255, alpha: 1.0)
+        UITabBar.appearance().barTintColor = UIColor(red: 0.0/255, green: 150.0/255, blue: 136.0/255, alpha: 1.0)
         
         UITabBar.appearance().tintColor = UIColor.white
         
@@ -34,7 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         UITabBarItem.appearance().setTitleTextAttributes([NSAttributedStringKey.font:UIFont (name: "Flaticon", size: 15)!,NSAttributedStringKey.foregroundColor: UIColor.white], for:.selected)
         
-        UITabBarItem.appearance().setTitleTextAttributes([NSAttributedStringKey.font:UIFont (name: "Flaticon", size: 15)!,NSAttributedStringKey.foregroundColor: UIColor(red: 162.0/255, green: 194.0/255, blue: 205.0/255, alpha: 1.0)], for:UIControlState())
+        UITabBarItem.appearance().setTitleTextAttributes([NSAttributedStringKey.font:UIFont (name: "Flaticon", size: 15)!,NSAttributedStringKey.foregroundColor: UIColor(red: 3.0/255, green: 195.0/255, blue: 177.0/255, alpha: 1.0)], for:UIControlState())
 
    
         UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedStringKey.font:UIFont (name: "Flaticon", size: 20)!,NSAttributedStringKey.foregroundColor: UIColor(red: 153.0/255, green: 153.0/255, blue: 153.0/255, alpha: 1.0)], for:UIControlState())
@@ -42,8 +42,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedStringKey.font:UIFont (name: "Flaticon", size: 20)!,NSAttributedStringKey.foregroundColor: UIColor.clear], for:.disabled)
         URLProtocol.registerClass(CustomUrlprotocol.self)
         
-        //URLProtocol.registerClass(CustomNetworkProtocol.self)
-
         return true
     }
 

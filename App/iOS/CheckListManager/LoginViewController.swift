@@ -28,6 +28,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate
     
     var chooseDictionary : NSMutableDictionary = [:]
     
+    var selectedCompany : String = ""
+    
     let context = ((UIApplication.shared.delegate as! AppDelegate).managedObjectContext)
     
     
@@ -181,82 +183,93 @@ class LoginViewController: UIViewController, UITextFieldDelegate
     
     {
         
-        activityIndicator.startAnimating()
-        
-        self.view.isUserInteractionEnabled = false
-        
-        ServerConnection.baseUrl = self.serverTextField.text!
-        
-        ServerConnection.loginOrRefreshToServer(["Company" : UserDefaults.standard.value(forKey: "company") as! String,"Code":userCodeTextField.text!,"Password":passwordTextField.text!]){ (serverResponse) -> Void in
+        if(companyTextField.text! != "" && userCodeTextField.text! != "" && passwordTextField.text! != "") {
             
-            if(serverResponse.error != nil){
-                
-                var errorMessage = "Connection error to the server"
-                var title = "Error"
-                
-                if(serverResponse.error!.code == -1009){
-                    errorMessage = "Connection error to the server"
-                }
-                    
-                else if(NSString(string:UserDefaults.standard.string(forKey: "invalidCertificate")!).boolValue == true)
-                    
-                {
-                    title = "Security Error"
-                    errorMessage = "Invalid SSL Certificate"
-                }
-                
-                self.showSimpleErrorAlert(title, message: errorMessage)
-            }
+            activityIndicator.startAnimating()
             
-            do{
+            self.view.isUserInteractionEnabled = false
+            
+            ServerConnection.baseUrl = self.serverTextField.text!
+        
+            ServerConnection.loginOrRefreshToServer(["Company" : self.selectedCompany,"Code":userCodeTextField.text!,"Password":passwordTextField.text!]){ (serverResponse) -> Void in
                 
-                if serverResponse.data != nil
-                {
-                    let json = try JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
+                if(serverResponse.error != nil){
                     
-                    //print ("data received = \(json)")
+                    var errorMessage = "Connection error to the server"
+                    var title = "Error"
                     
-                    if(json["error"] == nil)
-                        
-                    {
-                        Server.setNewServerUrl(self.serverTextField.text!, managedObjectContext: self.context)
-                        
-                        UserDefaults.standard.setValue(self.userCodeTextField.text, forKey: "userCode")
-                        
-                        UserDefaults.standard.setValue(true, forKey: "logged")
-                        
-                        UserDefaults.standard.setValue(json["access_token"], forKey: "access_token")
-                        
-                        UserDefaults.standard.setValue(json["refresh_token"], forKey: "refresh_token")
-                        
-                        UserDefaults.standard.setValue(json["token_type"], forKey: "token_type")
-                        
-                        UserDefaults.standard.setValue(Formatter.instance.dateFromTimeString(json[".expires"] as! String), forKey: "token_expires")
-                        
-                        self.getClient()
-  
+                    if(serverResponse.error!.code == -1009){
+                        errorMessage = "Connection error to the server"
                     }
                         
-                    else
+                    else if(NSString(string:UserDefaults.standard.string(forKey: "invalidCertificate")!).boolValue == true)
                         
                     {
-                        let okMex = (json["error"] == nil)
-                        let messageMex = !okMex ? json["error_description"] as! String : ""
-                        let alert = UIAlertController(title: "Error", message: messageMex, preferredStyle: .alert)
-                        
-                        alert.addAction(UIAlertAction(title: "Ok", style: .destructive, handler:nil))
-                        
-                        self.present(alert, animated: false, completion: nil)
+                        title = "Security Error"
+                        errorMessage = "Invalid SSL Certificate"
                     }
                     
+                    self.showSimpleErrorAlert(title, message: errorMessage)
                 }
-            } catch {
-                print("Error deserializing JSON: \(error)")
+                
+                do{
+                    
+                    if serverResponse.data != nil
+                    {
+                        let json = try JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
+                        
+                        //print ("data received = \(json)")
+                        
+                        if(json["error"] == nil)
+                            
+                        {
+                            Server.setNewServerUrl(self.serverTextField.text!, managedObjectContext: self.context)
+                            
+                            UserDefaults.standard.setValue(self.userCodeTextField.text, forKey: "userCode")
+                            
+                            UserDefaults.standard.setValue(true, forKey: "logged")
+                            
+                            UserDefaults.standard.setValue(json["access_token"], forKey: "access_token")
+                            
+                            UserDefaults.standard.setValue(json["refresh_token"], forKey: "refresh_token")
+                            
+                            UserDefaults.standard.setValue(json["token_type"], forKey: "token_type")
+                            
+                            UserDefaults.standard.setValue(Formatter.instance.dateFromTimeString(json[".expires"] as! String), forKey: "token_expires")
+                            
+                            self.getClient()
+      
+                        }
+                            
+                        else
+                            
+                        {
+                            let okMex = (json["error"] == nil)
+                            let messageMex = !okMex ? json["error_description"] as! String : ""
+                            self.showSimpleErrorAlert("Error", message: messageMex)
+                        }
+                        
+                    }
+                } catch {
+                    print("Error deserializing JSON: \(error)")
+                }
+                
+                self.activityIndicator.stopAnimating()
+                
+                self.view.isUserInteractionEnabled = true
             }
+        } else if(companyTextField.text! == "" ) {
             
-            self.activityIndicator.stopAnimating()
+            self.showSimpleErrorAlert("Error", message: "Select a company")
             
-            self.view.isUserInteractionEnabled = true
+        } else if(userCodeTextField.text! == "") {
+            
+            self.showSimpleErrorAlert("Error", message: "Select a user code")
+            
+        } else if(passwordTextField.text! == "") {
+            
+            self.showSimpleErrorAlert("Error", message: "Select a password")
+            
         }
         
     }

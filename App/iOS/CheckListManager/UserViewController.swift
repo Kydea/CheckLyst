@@ -34,6 +34,9 @@ class UserViewController: UIViewController {
         
         ServerConnection.logoutFromServer(["data":["refreshToken":UserDefaults.standard.value(forKey: "refresh_token") as! String]]){ (serverResponse) -> Void in
             if(serverResponse.data != nil){
+                UserDefaults.standard.setValue(false, forKey: "logged")
+                UserDefaults.standard.setValue(nil, forKey: "access_token")
+                UserDefaults.standard.setValue(nil, forKey: "refresh_token")
                 self.performSegue(withIdentifier: "logoutSegue", sender: self)
             }
             else

@@ -99,7 +99,8 @@ class ChooseServerAndCompanyViewController: UIViewController, UITableViewDelegat
             ServerConnection.baseUrl = (loginViewController?.serverTextField.text)!
         } else {
             loginViewController?.companyTextField.text = Array(fieldsDictionary!.keys)[indexPath.row]
-            UserDefaults.standard.set(fieldsDictionary![Array(fieldsDictionary!.keys)[indexPath.row]], forKey: "company")
+            
+            loginViewController?.selectedCompany = fieldsDictionary![Array(fieldsDictionary!.keys)[indexPath.row]]!
         }
         
         self.navigationController?.popViewController(animated: true)

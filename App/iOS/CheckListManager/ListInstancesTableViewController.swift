@@ -56,12 +56,12 @@ class ListInstancesTableViewController: UIViewController, UITableViewDataSource,
         }
         else if(instance!.description != nil)
         {
-        return 110//130.0
+        return 110
             
         }
         else
         {
-            return 84//104.0
+            return 84
         }
     }
     
@@ -83,6 +83,8 @@ class ListInstancesTableViewController: UIViewController, UITableViewDataSource,
         (!buttonTappedRows![indexPath.row]) ? accessoryButton.setTitle("\u{f107}", for: UIControlState()) :  accessoryButton.setTitle("\u{f102}", for: UIControlState())
   
         accessoryButton.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
+        
+        accessoryButton.tintColor = UIColor(red: 0.0/255, green: 150.0/255, blue: 136.0/255, alpha: 1.0)
         
         accessoryButton.addTarget(self, action: #selector(ListInstancesTableViewController.accessoryButtonTapped(_:)), for: .touchUpInside)
         
@@ -118,10 +120,6 @@ class ListInstancesTableViewController: UIViewController, UITableViewDataSource,
         idLabel?.text = String(instance!.id)
         
         descrLabel?.text = instance!.description
-        
-        if (instance!.description != nil) {
-            print("stop")
-        }
         
         
         if(instance!.description == nil)

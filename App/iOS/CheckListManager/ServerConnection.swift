@@ -60,9 +60,6 @@ open class ServerConnection {
     static func logoutFromServer(_ params : Dictionary<String, Dictionary<String, String>>,_ completion: ((_ result:ServerResponse) -> Void)!){
         
         sendHTTPRequest(baseUrl+"/AccessControl/Access/Logout", params: params as Dictionary<String, AnyObject>){ (result) -> Void in
-            UserDefaults.standard.setValue(false, forKey: "logged")
-            UserDefaults.standard.setValue(nil, forKey: "access_token")
-            UserDefaults.standard.setValue(nil, forKey: "refresh_token")
             completion(result)
         }
     }
@@ -94,7 +91,7 @@ open class ServerConnection {
             
             request.timeoutInterval = 20
             
-            //print("params\(params.debugDescription)");
+            print("params\(params.debugDescription)");
             
             if (!params.isEmpty)
                 
@@ -151,10 +148,10 @@ open class ServerConnection {
                         serverResponse.data = data
                         serverResponse.error = error as NSError?
                         
-                        /*print("response = \(String(describing: serverResponse.response))");
+                        print("response = \(String(describing: serverResponse.response).debugDescription)");
                         print("data = \(String(describing: serverResponse.data))")
                         print(String(data: serverResponse.data!, encoding: .utf8)!)
-                        print(serverResponse.error ?? "nessun errore");*/
+                        print(serverResponse.error ?? "nessun errore");
                         
                         completion(serverResponse)
                     }

@@ -18,6 +18,7 @@ import UIKit
     var displayAlert : UIAlertController?
     var isWarningPresented = false
     let timeBeforeTokenExpires = 120.0
+    var isRefreshing = false
     
     var activity: Bool = true
     
@@ -56,7 +57,7 @@ import UIKit
         if(logged)
             
         {
-            let expireDate = UserDefaults.standard.value(forKey: "token_expires") as! Date
+            let expireDate = (UserDefaults.standard.value(forKey: "token_expires") as! Date)//.addingTimeInterval(-1665)
             
             if(expireDate < Date() && !isWarningPresented) {
                 print("expired Token")
@@ -71,9 +72,13 @@ import UIKit
     
         timeToExpire = expireDate.timeIntervalSinceNow
         
-        if(timeToExpire <= timeBeforeTokenExpires && !isWarningPresented) {
+        print(timeToExpire)
+        
+        if(timeToExpire <= timeBeforeTokenExpires && !isWarningPresented && !isRefreshing) {
             
             print("refreshing user token")
+            
+            isRefreshing = true
             
             ServerConnection.loginOrRefreshToServer(["Refresh_Token" : UserDefaults.standard.value(forKey: "refresh_token") as! String]) { (serverResponse) -> Void in
                 do{
@@ -88,14 +93,16 @@ import UIKit
                         {
                             UserDefaults.standard.setValue(json["access_token"], forKey: "access_token")
                             
-                            UserDefaults.standard.setValue(json["refresh_token"], forKey: "refresh_token")
-                            
-                            UserDefaults.standard.setValue(json["token_type"], forKey: "token_type")
-                            
                             UserDefaults.standard.setValue(Formatter.instance.dateFromTimeString(json[".expires"] as! String), forKey: "token_expires")
+                            
+                            self.isRefreshing = false
                             
                         } else {
                     
+                            print("##### REFRESH ERROR #####")
+                            print("access token = \(String(describing: UserDefaults.standard.value(forKey: "access_token")))")
+                            print("refresh token = \(String(describing: UserDefaults.standard.value(forKey: "refresh_token")))")
+                            
                             self.displayError(Title: "Error", Message: "Something has gone wrong, you'll be redirected to login section.")
                         }
                     }

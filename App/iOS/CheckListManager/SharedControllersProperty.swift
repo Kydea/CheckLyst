@@ -92,8 +92,9 @@ class SharedControllersProperty: NSObject {
                         
                         if topController.isKind(of: UIViewController.self)
                         {
+                            self.optionMenu.popoverPresentationController?.permittedArrowDirections = .right
                             self.optionMenu.popoverPresentationController?.sourceView = topController.view
-                            
+                            self.optionMenu.popoverPresentationController?.sourceRect = CGRect(x:topController.view.bounds.width - 50, y:0, width:0,height:0)
                             topController.present(self.optionMenu, animated: true, completion: nil)
                         }
                     }
