@@ -63,10 +63,10 @@
 			var
 				signers = tokenManager.getSigners(),
 				signer = signers[index];
-			signer.accessToken = data.access_token;
-			signer.accessTokenExpiration = new Date().getTime() + parseInt(data.expires_in) * 1000;
-			signer.roles = data.roles;
-			signer.name = data.name;
+			signer.accessToken = result.access_token;
+			signer.accessTokenExpiration = new Date().getTime() + parseInt(result.expires_in) * 1000;
+			signer.roles = result.roles;
+			signer.name = result.name;
 
 			localStorage.signers = JSON.stringify(signers);
 		},

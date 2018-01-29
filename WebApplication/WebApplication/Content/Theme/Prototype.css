@@ -73,10 +73,10 @@ div.Prototype div.Item {
     cursor: pointer; }
   div.Prototype div.Item.Signature input {
     cursor: pointer; }
-  div.Prototype div.Item.Signature a.Button:hover {
+  div.Prototype div.Item.Signature a.Button:not(.MiniIcon):hover {
     background-color: #009688;
     cursor: pointer; }
-    div.Prototype div.Item.Signature a.Button:hover i {
+    div.Prototype div.Item.Signature a.Button:not(.MiniIcon):hover i {
       color: #009688; }
   div.Prototype div.Item.Text p {
     position: relative; }

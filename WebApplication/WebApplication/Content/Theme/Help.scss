@@ -94,70 +94,6 @@ body.Help {
                 }
             }
 
-            div.Content {
-                h3 {
-                    margin: 30px 0 .5em;
-                    color: $Color-Green-Regular;
-                }
-
-                h4 {
-                    margin: 1.5em 0 .5em;
-                    color: $Color-Green-Regular;
-                }
-
-                h5 {
-                    margin: 1em 0 .5em;
-                    color: black;
-                    font-size: 14px;
-                }
-
-                ul {
-                    margin: 0 0 1em !important;
-                    color: black;
-                }
-
-                p {
-                    margin: 0 0 1em;
-                }
-
-                i.fi {
-                    font-size: unset;
-                }
-
-                a {
-                    display: inline;
-                }
-
-                table {
-                    border-collapse: collapse;
-                    width: 100%;
-
-                    td {
-                        padding: 10px;
-                        border-bottom: solid 1px white;
-                        border-left: solid 1px white;
-                        background: $Color-Silver-Dark;
-                        width: 100%;
-
-                        span.Note {
-                            margin-left: 10px;
-                            color: $Color-Yellow-Regular;
-
-                            &:first-child {
-                                margin-left: 0;
-                            }
-                        }
-
-                        &:first-child {
-                            min-width: 150px;
-                            width: unset;
-                            border-left: none;
-                            font-weight: bold;
-                        }
-                    }
-                }
-            }
-
             a.CloseButton {
                 position: absolute;
                 top: 15px;
@@ -226,6 +162,74 @@ body.Help {
                     text-transform: uppercase;
                     font-weight: normal;
                 }
+            }
+        }
+    }
+}
+
+body.OnlyHelp  {
+    background-color: white;
+}
+
+body.Help div.Help div.Content, body.OnlyHelp {
+    h3 {
+        margin: 30px 0 .5em;
+        color: $Color-Green-Regular;
+    }
+
+    h4 {
+        margin: 1.5em 0 .5em;
+        color: $Color-Green-Regular;
+    }
+
+    h5 {
+        margin: 1em 0 .5em;
+        color: black;
+        font-size: 14px;
+    }
+
+    ul {
+        margin: 0 0 1em !important;
+        color: black;
+    }
+
+    p {
+        margin: 0 0 1em;
+    }
+
+    i.fi {
+        font-size: unset;
+    }
+
+    a {
+        display: inline;
+    }
+
+    table {
+        border-collapse: collapse;
+        width: 100%;
+
+        td {
+            padding: 10px;
+            border-bottom: solid 1px white;
+            border-left: solid 1px white;
+            background: $Color-Silver-Dark;
+            width: 100%;
+
+            span.Note {
+                margin-left: 10px;
+                color: $Color-Yellow-Regular;
+
+                &:first-child {
+                    margin-left: 0;
+                }
+            }
+
+            &:first-child {
+                min-width: 150px;
+                width: unset;
+                border-left: none;
+                font-weight: bold;
             }
         }
     }

@@ -106,6 +106,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             Header.Update();
             foreach (var page in Pages)
                 page.Update();
+
+            foreach (var expression in Expressions.Values)
+                expression.Evaluate(this); //secondo evaluation takes into account expression with item properties which depends by expression valus, cycles are still a problem
         }
 
         public void UpdateReadOnly(string userCode, string state)

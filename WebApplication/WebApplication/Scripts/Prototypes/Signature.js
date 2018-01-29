@@ -13,7 +13,7 @@
 			$("<input />").addClass("Date").attr({ type: "text", readonly: true }).appendTo(label);
 			$("<i />").addClass("Icon fi flaticon-clock-o").appendTo(label);
 			$("<input />").addClass("Time").attr({ type: "text", readonly: true }).appendTo(label);
-			button = $("<a />").addClass("Button").attr({ href: "#" }).appendTo(element);
+			button = $("<a />").addClass("Button SignatureButton").attr({ href: "#" }).appendTo(element);
         };
 
 	this.update = function (model) {

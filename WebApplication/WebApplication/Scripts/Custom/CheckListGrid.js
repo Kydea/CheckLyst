@@ -39,6 +39,8 @@
 					tr.append(td);
 				}
 			}
+
+			return tr;
 		},
 
 		renderValues = function () {

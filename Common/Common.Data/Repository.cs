@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
 using System.Linq;
@@ -27,7 +29,6 @@ namespace CheckListManager.Common.Data
 			GC.SuppressFinalize(this);
 		}
 
-		// ReSharper disable once VirtualMemberNeverOverridden.Global
 		protected virtual void Dispose(bool disposing)
 		{
 			if (disposing)

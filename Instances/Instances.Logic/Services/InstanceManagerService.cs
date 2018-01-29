@@ -39,11 +39,12 @@ namespace CheckListManager.Instances.Logic.Services
         private readonly IAuthenticationService _authenticationService;
         private readonly IWorkFlowsService _workFlowService;
         private readonly IQueueService _queueService;
+        private readonly ICommonRepository _commonRepository;
 
         public InstanceManagerService(IServiceClient client,
             IInstancesRepository instancesRepository, CheckListJsonConverter converter, IInstanceCacheService instanceCache,
             IConfigurationService configurationService, IAuthenticationService authenticationService, IWorkFlowsService workFlowService,
-            IQueueService queueService)
+            IQueueService queueService, ICommonRepository commonRepository)
         {
             _client = client;
             _instancesRepository = instancesRepository;
@@ -53,6 +54,7 @@ namespace CheckListManager.Instances.Logic.Services
             _authenticationService = authenticationService;
             _workFlowService = workFlowService;
             _queueService = queueService;
+            _commonRepository = commonRepository;
         }
 
         public async Task<InstanceCacheObject> GetAsync(IDefaultIdentity identity, string code)
@@ -297,7 +299,10 @@ namespace CheckListManager.Instances.Logic.Services
                     throw new InstanceException("Instance state not valid");
                 if (cacheObject.VersionState == VersionState.Active && cacheObject.InstanceState == InstanceState.Progress && string.IsNullOrWhiteSpace(note))
                     throw new InstanceException("Provide a note for the deletion");
-                if (!HasPermission(identity, "Delete", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
+                if (
+                    !(cacheObject.InstanceState == InstanceState.Draft && HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
+                    && !HasPermission(identity, "Delete", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType)
+                )
                     throw new InstanceException("Access denied");
 
                 await DeleteAsync(cacheObject, identity.Code, note);
@@ -462,7 +467,6 @@ namespace CheckListManager.Instances.Logic.Services
 
                 if (cacheObject.VersionState == VersionState.Active)
                 {
-                    row.Data = JsonConvert.SerializeObject(cacheObject.Instance, _converter);
                     row.ModifiedOn = cacheObject.ModifiedOn;
                     row.ModifiedBy = cacheObject.ModifiedBy;
                     row.InstanceState = InstanceState.Deleted;
@@ -984,7 +988,7 @@ namespace CheckListManager.Instances.Logic.Services
             {
                 ID = h.ID,
                 Date = h.Date,
-                User = h.User,
+                User = $"{h.User} - {_commonRepository.GetUser(identity.CompanyId, h.User)?.Description ?? "(unknown user)"}",
                 State = h.WorkFlowApplications == null ? h.State : null,
                 ProposedState = h.WorkFlowApplications == null || h.WorkFlowApplications.Approved.HasValue ? null : InstanceState.Confirmed,
                 Approved = h.WorkFlowApplications?.Approved,
@@ -993,9 +997,11 @@ namespace CheckListManager.Instances.Logic.Services
                     ID = s.ID,
                     Step = s.Step,
                     Date = s.Date,
-                    User = s.User ?? $"({string.Join(", ", s.WorkFlowApplicationStepTags.Select(t => t.Tag))})",
+                    User = s.User,
+                    Level = $"({string.Join(", ", s.WorkFlowApplicationStepTags.Select(t => t.Tag))})",
                     Comment = s.Comment,
-                    Approved = s.Approved
+                    Approved = s.Approved,
+                    AppointedUser = s.User == null ? string.Join(", ", _commonRepository.GetAppointedUsers(identity.CompanyId, "Instances", "Confirm", Instance.Prototypes.Department, Instance.Prototypes.PrototypeType, s.WorkFlowApplicationStepTags.Select(t => t.Tag)).Select(u => u.Code)) : null
                 }).ToList()
             }).ToList());
         }

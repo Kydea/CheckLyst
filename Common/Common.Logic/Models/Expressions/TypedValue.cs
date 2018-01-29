@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace CheckListManager.Common.Logic.Models.Expressions
 {
@@ -53,10 +54,10 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                 Value =
                     String.IsNullOrWhiteSpace(_SerializedValue) ? null :
                     Type == DataType.Boolean ? "true".Equals(_SerializedValue, StringComparison.InvariantCultureIgnoreCase) :
-                    Type == DataType.DateTime ? DateTimeOffset.ParseExact(_SerializedValue, new[] { "dd/MM/yyyy HH:mm:ss", "dd/MM/yyyy HH:mm" }, null, System.Globalization.DateTimeStyles.AssumeUniversal).ToUniversalTime() :
-                    Type == DataType.Date ? DateTimeOffset.ParseExact(_SerializedValue, new[] { "dd/MM/yyyy" }, null, System.Globalization.DateTimeStyles.AssumeUniversal).ToUniversalTime() :
+                    Type == DataType.DateTime ? DateTimeOffset.ParseExact(_SerializedValue, new[] { "dd/MM/yyyy HH:mm:ss", "dd/MM/yyyy HH:mm" }, null, DateTimeStyles.AssumeUniversal).ToUniversalTime() :
+                    Type == DataType.Date ? DateTimeOffset.ParseExact(_SerializedValue, new[] { "dd/MM/yyyy" }, null, DateTimeStyles.AssumeUniversal).ToUniversalTime() :
                     Type == DataType.Time ? TimeSpan.ParseExact(_SerializedValue, new[] { "hh\\:mm" }, null) :
-                    Type == DataType.Number ? Decimal.Parse(_SerializedValue) :
+                    Type == DataType.Number ? Decimal.Parse(_SerializedValue.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture) :
                     Type == DataType.Error ? _SerializedValue :
                     (object)_SerializedValue;
             }

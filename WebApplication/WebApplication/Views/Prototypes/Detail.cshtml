@@ -68,10 +68,16 @@
             buttonGroup = new matematici.ButtonGroup("span.ButtonGroup")
                 .add("Quit", function () {
                     prototype.quit();
-                }, "History")
+                }, "Quit")
                 .add("History", function () {
                     prototype.showHistory();
                 }, "History")
+                .add("Import", function () {
+                    prototype.import();
+                }, "Import")
+                .add("Export", function () {
+                    prototype.export();
+                }, "Export")
                 .add("Preview", function () {
                     prototype.preview();
                 }, "Preview")

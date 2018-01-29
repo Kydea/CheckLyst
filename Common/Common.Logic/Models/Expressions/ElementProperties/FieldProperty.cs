@@ -7,7 +7,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
     {
         protected override void Check(ICheckListElement Element)
         {
-            if (!(Element is ICheckListField)) throw new Exception("The element with code " + Code + " is not an Field");
+            if (!(Element is ICheckListField)) throw new Exception($"The element with code {Code} is not a Field");
             DataType = ((ICheckListField)Element).ValueType;
         }
 

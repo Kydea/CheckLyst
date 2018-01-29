@@ -73,3 +73,4 @@ create table "Security"."UserFunctions"
 );
 
 create unique index "Index_UserFunctions_Function" on "Security"."UserFunctions" ("Company", "User", "FunctionGroup", "Function", "Department", "PrototypeType", "Tag");
+create index "Index_UserFunctions_AppointedUsers" on "Security"."UserFunctions" ("Company", "FunctionGroup", "Function", "Department", "PrototypeType", "Tag");

@@ -17,7 +17,7 @@ namespace CheckListManager.AccessControl.Data
 		}
 
 		public Task<Users> GetAsync(long companyId, string code)
-			=> Entities.Users.Include(u => u.Companies).FirstOrDefaultAsync(u => u.Company == companyId && u.Code == code);
+			=> Entities.Users.Include(u => u.Companies).FirstOrDefaultAsync(u => u.Company == companyId && u.Code.ToUpper() == code.ToUpper());
 
 		public async Task<Users> AddAsync(DefaultIdentity identity, Users user)
 		{
@@ -37,6 +37,7 @@ namespace CheckListManager.AccessControl.Data
             existingUser.Email = user.Email;
             if (user.Password != null) existingUser.Password = user.Password;
             existingUser.Enabled = user.Enabled;
+            if (user.Enabled) existingUser.NumberOfAttempts = 0;
             existingUser.AuthenticationCode = user.AuthenticationCode;
             existingUser.ModifiedOn = DateTimeOffset.UtcNow;
             existingUser.ModifiedBy = identity.Code;

@@ -339,19 +339,24 @@
 		}).done(function (result) {
 			var
 				columns = [
+					{ label: "State", name: "state" },
 					{ label: "Date", name: "date", type: "DateTimeOffset" },
 					{ label: "User", name: "user" },
 					{ label: "Approved", name: "approved", type: "Boolean", align: "center" },
-					{ label: "State", name: "state" },
 					{ label: "Proposed state", name: "proposedState" },
-					{ label: "Step", name: "step", align: "center" },
-					{ label: "Comment", name: "comment" }
+					{ label: "Signature step", name: "step", align: "center" },
+					{ label: "Signature level", name: "level" },
+					{ label: "Signature comment", name: "comment" },
+					{ label: "Appointed signers", name: "appointedUser" }
 				],
 				rowRenderHandler = function (checkListGrid, rowIndex, data) {
 					checkListGrid.addRow(data, rowIndex % 2 == 0 ? "Odd" : "Even");
 					for (var subRowIndex in data.steps) {
-						var subRow = data.steps[subRowIndex];
-						checkListGrid.addRow(subRow, "SubRow");
+						var
+							subRow = data.steps[subRowIndex],
+							tr = checkListGrid.addRow(subRow, "SubRow " + (subRowIndex % 2 == 0 ? "Odd " : "Even ") + (subRow.approved == true ? "Green" : subRow.approved == false ? "Red" : ""));
+
+						$("td", tr).eq(0).addClass(rowIndex % 2 == 0 ? "Odd" : "Even");
 					}
 					return true;
 				},

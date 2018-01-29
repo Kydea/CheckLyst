@@ -33,7 +33,7 @@ create table "CheckLists"."Prototypes"
 	"ModifiedOn" timestamptz
 );
 
-create unique index "Index_Prototypes_Name" on "CheckLists"."Prototypes" ("Company", "Name");
+create unique index "Prototypes_Name" on "CheckLists"."Prototypes" ("Company", upper("Name"));
 
 create table "CheckLists"."VersionStates"
 (

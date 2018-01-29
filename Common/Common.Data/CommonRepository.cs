@@ -116,5 +116,23 @@ namespace CheckListManager.Common.Data
 
         public Task<List<string>> GetInstanceStatesAsync()
             => _memoryCache.GetOrAddAsync("InstanceStates", key => Entities.InstanceStates.Select(s => s.Code).ToListAsync(), "CommonRepository");
+
+
+        public Users GetUser(long CompanyID, string Code)
+        {
+            return Entities.Users.SingleOrDefault(u => u.Company == CompanyID && u.Code == Code);
+        }
+
+        public List<Users> GetAppointedUsers(long CompanyID, string FunctionGroup, string Function, long Department, long PrototypeType, IEnumerable<string> Tags)
+        {
+            return Entities.UserFunctions.Where(uf =>
+                uf.Company == CompanyID
+                && uf.FunctionGroup == FunctionGroup
+                && uf.Function == Function
+                && uf.Department == Department
+                && (uf.PrototypeType == null || uf.PrototypeType == PrototypeType)
+                && (Tags.Count() == 0 || Tags.Contains(uf.Tag))
+            ).Select(uf => uf.Users).ToList();
+        }
     }
 }

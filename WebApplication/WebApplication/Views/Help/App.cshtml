@@ -58,7 +58,7 @@ new Field("State", "The state of the instance.")
     <tr><td>Fourth Row</td><td>State</td></tr>
 </table>
 
-<p>Tap on the button <strong>i</strong> to show the information about that instance</p>
+<p style="margin-top: 20px">Tap on the button <strong>i</strong> to show the information about that instance</p>
 
 <table>
     <tbody>
@@ -113,3 +113,10 @@ new Field("State", "The state of the instance.")
     <tr><td>History</td><td>Shows the history of the instance.</td></tr>
     <tr><td><i class="fi flaticon-calculator"></i></td><td>Shows the expressions of the instance and their value.</td></tr>
 </table>
+
+@if (ViewBag.AppMode)
+{
+    <script type="text/javascript">
+        matematici.elements.body.addClass("OnlyHelp");
+    </script>
+}

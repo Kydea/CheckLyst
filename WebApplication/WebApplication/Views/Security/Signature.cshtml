@@ -67,7 +67,7 @@
     $("#PIN", element).toggle(data.pin);
     $("#Logout", element).toggle(data.logout);
     $("div.User", element).text("User code: " + data.username);
-    matematici.controls.setEditable($("#UserName", element).val(data.username), !data.showPaddle && !data.pin);
+    matematici.controls.setEditable($("#UserName", element).val(data.username), !data.username);
 
     $("#Sign", element).text(data.pin ? "Set PIN" : data.unsign ? "Unsign" : "Sign").prepend($("<i />").addClass("fi flaticon-check"));
 </script>

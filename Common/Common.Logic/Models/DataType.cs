@@ -55,24 +55,16 @@ namespace CheckListManager.Common.Logic.Models
 			{
 				if (string.IsNullOrEmpty(value)) return true;
 
-				// ReSharper disable once ConvertIfStatementToSwitchStatement
                 if (_rawValue == DataTypeEnum.Boolean)
-                {
-	                return bool.TryParse(value, out _);
-                }
+	                return "true".Equals(value, StringComparison.InvariantCultureIgnoreCase) || "false".Equals(value, StringComparison.InvariantCultureIgnoreCase);
 				if (_rawValue == DataTypeEnum.Number)
-				{
-					return decimal.TryParse(value, NumberStyles.Number | NumberStyles.Integer | NumberStyles.Float | NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign | NumberStyles.AllowThousands, CultureInfo.CurrentCulture, out _);
-				}
-				if (_rawValue == DataTypeEnum.DateTime)
-				{
-					return DateTimeOffset.TryParseExact(value, new[] { "dd/MM/yyyy", "dd/MM/yyyy HH:mm" }, CultureInfo.CurrentCulture, DateTimeStyles.None, out _);
-				}
-				// ReSharper disable once ConvertIfStatementToReturnStatement
+					return decimal.TryParse(value.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out _);
+                if (_rawValue == DataTypeEnum.Date)
+                    return DateTimeOffset.TryParseExact(value, new[] { "dd/MM/yyyy" }, null, DateTimeStyles.AssumeUniversal, out _);
+                if (_rawValue == DataTypeEnum.DateTime)
+					return DateTimeOffset.TryParseExact(value, new[] { "dd/MM/yyyy", "dd/MM/yyyy HH:mm" }, null, DateTimeStyles.AssumeUniversal, out _);
 				if (_rawValue == DataTypeEnum.Time)
-				{
-					return TimeSpan.TryParseExact(value, "hh\\:mm", CultureInfo.CurrentCulture, out _);
-				}
+					return TimeSpan.TryParseExact(value, "hh\\:mm", null, out _);
 
 				return true;
 			}

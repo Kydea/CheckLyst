@@ -63,44 +63,6 @@ body.Help {
         padding: 0 0 0 20px; }
         body.Help div.Help div.Container ul li {
           margin: 0 !important; }
-      body.Help div.Help div.Container div.Content h3 {
-        margin: 30px 0 .5em;
-        color: #009688; }
-      body.Help div.Help div.Container div.Content h4 {
-        margin: 1.5em 0 .5em;
-        color: #009688; }
-      body.Help div.Help div.Container div.Content h5 {
-        margin: 1em 0 .5em;
-        color: black;
-        font-size: 14px; }
-      body.Help div.Help div.Container div.Content ul {
-        margin: 0 0 1em !important;
-        color: black; }
-      body.Help div.Help div.Container div.Content p {
-        margin: 0 0 1em; }
-      body.Help div.Help div.Container div.Content i.fi {
-        font-size: unset; }
-      body.Help div.Help div.Container div.Content a {
-        display: inline; }
-      body.Help div.Help div.Container div.Content table {
-        border-collapse: collapse;
-        width: 100%; }
-        body.Help div.Help div.Container div.Content table td {
-          padding: 10px;
-          border-bottom: solid 1px white;
-          border-left: solid 1px white;
-          background: #ebebeb;
-          width: 100%; }
-          body.Help div.Help div.Container div.Content table td span.Note {
-            margin-left: 10px;
-            color: #ffba00; }
-            body.Help div.Help div.Container div.Content table td span.Note:first-child {
-              margin-left: 0; }
-          body.Help div.Help div.Container div.Content table td:first-child {
-            min-width: 150px;
-            width: unset;
-            border-left: none;
-            font-weight: bold; }
       body.Help div.Help div.Container a.CloseButton {
         position: absolute;
         top: 15px;
@@ -149,4 +111,53 @@ body.Help {
           color: white;
           text-transform: uppercase;
           font-weight: normal; } }
+
+body.OnlyHelp {
+  background-color: white; }
+
+body.Help div.Help div.Content h3, body.OnlyHelp h3 {
+  margin: 30px 0 .5em;
+  color: #009688; }
+
+body.Help div.Help div.Content h4, body.OnlyHelp h4 {
+  margin: 1.5em 0 .5em;
+  color: #009688; }
+
+body.Help div.Help div.Content h5, body.OnlyHelp h5 {
+  margin: 1em 0 .5em;
+  color: black;
+  font-size: 14px; }
+
+body.Help div.Help div.Content ul, body.OnlyHelp ul {
+  margin: 0 0 1em !important;
+  color: black; }
+
+body.Help div.Help div.Content p, body.OnlyHelp p {
+  margin: 0 0 1em; }
+
+body.Help div.Help div.Content i.fi, body.OnlyHelp i.fi {
+  font-size: unset; }
+
+body.Help div.Help div.Content a, body.OnlyHelp a {
+  display: inline; }
+
+body.Help div.Help div.Content table, body.OnlyHelp table {
+  border-collapse: collapse;
+  width: 100%; }
+  body.Help div.Help div.Content table td, body.OnlyHelp table td {
+    padding: 10px;
+    border-bottom: solid 1px white;
+    border-left: solid 1px white;
+    background: #ebebeb;
+    width: 100%; }
+    body.Help div.Help div.Content table td span.Note, body.OnlyHelp table td span.Note {
+      margin-left: 10px;
+      color: #ffba00; }
+      body.Help div.Help div.Content table td span.Note:first-child, body.OnlyHelp table td span.Note:first-child {
+        margin-left: 0; }
+    body.Help div.Help div.Content table td:first-child, body.OnlyHelp table td:first-child {
+      min-width: 150px;
+      width: unset;
+      border-left: none;
+      font-weight: bold; }
 

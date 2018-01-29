@@ -20,6 +20,8 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 		public ICheckListItem Previous { get; set; }
 		public Dictionary<string, object> RuntimeValues { get; } = new Dictionary<string, object>();
 		public abstract string TypeName { get; }
+        public int FontSize { get; set; }
+        public string Color { get; set; }
 
         public ICheckListItem Clone(ICheckListGroup parent)
 		{

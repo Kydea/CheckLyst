@@ -17,7 +17,7 @@
 		            return false;
 		        }
 		    } else if (model.valueTypeName == "Number") {
-		        if (!/^[\d\-\,\.]*$/ig.test(input.val())) {
+				if (!/^[\d\-\.]*$/ig.test(input.val())) {
 		            input.val("");
 		            return false;
 		        }
@@ -76,8 +76,13 @@
             //f8
             if (e.which == 119) {
                 e.preventDefault();
-                copyValue();
-            }
+				copyValue();
+			}
+
+			if (e.key == ',') {
+				e.preventDefault();
+				matematici.dialog.error("Error", "Invalid decimal separator, use dot instead of comma");
+			}
         },
 
         setup = function () {
@@ -147,8 +152,8 @@
 			field = $("<div />").addClass("Input").appendTo(item.isTableContent() ? element : label);
             if (model.linesCount > 0) {
                 element.addClass("MultiLine");
-                input.height(24 * model.linesCount - 10);
-                field.height(24 * model.linesCount - 10);
+				input.height(36 * model.linesCount);
+				field.height(36 * model.linesCount);
             }
 
             if (model.valuesList)

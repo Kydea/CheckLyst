@@ -14,9 +14,10 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
             this.Index = Index;
         }
 
-        protected Token(ref string ExpressionValue, ref int Position, int Index, Func<char, bool> Test) : this(Position, Index)
+        protected Token(ref string ExpressionValue, ref int Position, int Index, Func<char, int, bool> Test) : this(Position, Index)
         {
-            while (Position < ExpressionValue.Length && Test(ExpressionValue[Position]))
+            var StartPosition = Position;
+            while (Position < ExpressionValue.Length && Test(ExpressionValue[Position], Position - StartPosition))
                 ++Position;
 
             Value = ExpressionValue.Substring(this.Position, Position - this.Position);

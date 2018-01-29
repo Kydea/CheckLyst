@@ -23,7 +23,6 @@
       margin-left: 16px; }
       .Paginator a:not(:first-child)::before, .Paginator span:not(:first-child)::before {
         border-left: 2px solid #ccc;
-        background-color: black;
         display: inline-block;
         position: absolute;
         margin-top: 3px;

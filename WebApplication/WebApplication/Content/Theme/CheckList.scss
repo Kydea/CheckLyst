@@ -116,7 +116,20 @@ div.CheckList {
 
         &.MultiLine {
             clear: both;
-            width: 100%;
+            width: calc(100% - #{$Metric-Control-Space});
+
+            label {
+                width: 100%;
+                padding-top: 0 !important;
+
+                > span {
+                    height: unset;
+                    white-space: normal !important;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    position: static;
+                }
+            }
 
             input, div.Input {
                 width: 100%;
@@ -129,9 +142,15 @@ div.CheckList {
 
         label {
             display: block;
-            min-height: 14px;
             margin: 0;
             max-width: 100%;
+
+            > span {
+                min-height: 14px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
         }
 
         &::after {

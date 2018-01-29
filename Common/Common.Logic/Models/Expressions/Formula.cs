@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -52,8 +53,8 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                                 if (!int.TryParse(Format.Substring(2), out Number)) Number = -1;
                                 Format =
                                     Number < 0 ? String.Empty :
-                                    Format.StartsWith(":s") ? ":0." + new String('0', Number) :
-                                    Format.StartsWith(":n") ? ":#,##0." + new String('0', Number) :
+                                    Format.StartsWith(":s") ? ":0." + new string('0', Number) :
+                                    Format.StartsWith(":n") ? ":#,##0." + new string('0', Number) :
                                     String.Empty;
                             }
                             return new string('{', Match.Groups["Start"].Captures.Count) + (ValueKeys.Count - 1) + Format + new string('}', Match.Groups["End"].Captures.Count);
@@ -63,6 +64,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 		public void Update(Dictionary<String, Expression> Expressions, Dictionary<String, Object> RuntimeValues)
         {
             Value = Format == null ? null : string.Format(
+                CultureInfo.InvariantCulture,
                 Format, 
                 ValueKeys.Select(Key =>
                     Expressions.ContainsKey(Key) ?
@@ -74,7 +76,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                         Expressions[Key].Value.Value :
                     RuntimeValues?.ContainsKey(Key) ?? false ? RuntimeValues[Key] :
                     ErrorValueLeft + "Code not found: " + Key + ErrorValueRight
-               ).ToArray());
+                ).ToArray());
 
             HasValue = 
                 !String.IsNullOrEmpty(Format)

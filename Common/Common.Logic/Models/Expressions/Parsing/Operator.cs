@@ -11,7 +11,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
         public Operator(ref string ExpressionValue, ref int Position, int Index) :
             base
             (
-                ref ExpressionValue, ref Position, Index, c =>
+                ref ExpressionValue, ref Position, Index, (c, i) =>
                     OPERATORS_CHARACTERS.Contains(c.ToString())
             )
         {
