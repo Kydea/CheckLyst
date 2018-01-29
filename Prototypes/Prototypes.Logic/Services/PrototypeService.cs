@@ -159,12 +159,16 @@ namespace CheckListManager.Prototypes.Logic.Services
                     if (Item is ICheckListGroup SubGroup)
                         AddTags(Tags, request, SubGroup);
                     else if (!string.IsNullOrWhiteSpace(Item.Description) && (Item.TypeName == "Field" || Item.TypeName == "Signature") && !Tags.ContainsKey(Item.Description))
-                        Tags[Item.Description] = (new PrototypeVersionTags
+                    {
+                        var Tag = new PrototypeVersionTags
                         {
                             Prototype = request.ID,
                             Version = request.Version,
                             Code = Item.Description
-                        });
+                        };
+                        if (Tag.Code.Length > 50) Tag.Code = Tag.Code.Substring(0, 50);
+                        Tags[Item.Description] = Tag;
+                    }
         }
 
         public List<PrototypeVersionTags> CreateTags(PrototypeRequest request)

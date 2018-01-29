@@ -327,7 +327,7 @@
 						]).setHandler(function () {
 							var element = item.getElement();
 							element.toggleClass("MultiLine", model.linesCount > 0);
-							$("div.Input", element).height(24 * model.linesCount - 10);
+							$("div.Input", element).height(36 * model.linesCount);
 						}), "Lines count",
 						"The number of text lines shown."
 					));

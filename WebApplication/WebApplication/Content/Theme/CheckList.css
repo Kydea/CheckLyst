@@ -74,16 +74,27 @@ div.CheckList div.Item {
     clear: both;
     width: calc(100% - 20px); }
     div.CheckList div.Item.MultiLine label {
-      width: 100%; }
+      width: 100%;
+      padding-top: 0 !important; }
+      div.CheckList div.Item.MultiLine label > span {
+        height: unset;
+        white-space: normal !important;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        position: static; }
     div.CheckList div.Item.MultiLine input, div.CheckList div.Item.MultiLine div.Input {
       width: 100%; }
   div.CheckList div.Item.NewLine {
     clear: both; }
   div.CheckList div.Item label {
     display: block;
-    min-height: 14px;
     margin: 0;
     max-width: 100%; }
+    div.CheckList div.Item label > span {
+      min-height: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis; }
   div.CheckList div.Item::after {
     content: "";
     display: table;
