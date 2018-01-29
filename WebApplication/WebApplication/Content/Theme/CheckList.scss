@@ -116,7 +116,11 @@ div.CheckList {
 
         &.MultiLine {
             clear: both;
-            width: 100%;
+            width: calc(100% - #{$Metric-Control-Space});
+
+            label {
+                width: 100%;
+            }
 
             input, div.Input {
                 width: 100%;

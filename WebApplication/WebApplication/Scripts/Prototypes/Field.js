@@ -11,7 +11,7 @@
 			field = $("<div />").addClass("Input").appendTo(label);
             if (model.linesCount > 0) {
                 element.addClass("MultiLine");
-                field.height(24 * model.linesCount - 10);
+                field.height(36 * model.linesCount);
             }
         };
 

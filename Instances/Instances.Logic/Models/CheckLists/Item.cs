@@ -19,6 +19,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public ICheckListItem Previous { get; set; }
         public Dictionary<string, object> RuntimeValues { get; } = new Dictionary<string, object>();
         public abstract string TypeName { get; }
+        public int FontSize { get; set; }
+        public string Color { get; set; }
 
         public override void Setup()
         {
@@ -75,6 +77,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             destination.DescriptionFormula = source.DescriptionFormula == null ? null : new Formula(source.DescriptionFormula.RawValue);
             destination.IterationItem = true;
             destination.IteratorModelItem = false;
+            destination.Color = source.Color;
+            destination.FontSize = source.FontSize;
         }
     }
 }

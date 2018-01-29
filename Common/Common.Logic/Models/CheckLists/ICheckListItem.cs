@@ -24,9 +24,9 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
 		ICheckListItem Previous { get; set; }
 		Dictionary<string, object> RuntimeValues { get; }
 		string TypeName { get; }
-
 		ICheckListItem Clone(ICheckListGroup parent);
-
-		void Remove();
+        int FontSize { get; set; }
+        string Color { get; set; }
+        void Remove();
 	}
 }
