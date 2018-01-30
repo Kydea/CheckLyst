@@ -12,7 +12,7 @@
             breadcrumbs: []
         });
 
-        matematici.navigator.open("@Model@(ViewBag.AppMode ? "?AppMode=1" : string.Empty)");
+        matematici.navigator.open("@Model@(ViewBag.AppMode ? $"?AppUser={ViewBag.AppUser}" : string.Empty)");
 
         callback.call();
     };

@@ -8,15 +8,20 @@ namespace CheckListManager.WebApplication.Controllers
     [Authorize]
     public class BaseController : Controller
     {
-	    private DefaultIdentity _identity;
+        private DefaultIdentity _identity;
 
-	    protected DefaultIdentity Identity
-		    => _identity ?? (_identity = User?.Identity as DefaultIdentity);
+        protected DefaultIdentity Identity
+            => _identity ?? (_identity = User?.Identity as DefaultIdentity);
 
-	    // ReSharper disable once MemberCanBePrivate.Global
-		protected bool IsAppMode()
+
+        protected string GetAppUser()
         {
-            return Request["AppMode"] == "1";
+            return Request["AppUser"];
+        }
+
+        protected bool IsAppMode()
+        {
+            return !string.IsNullOrEmpty(GetAppUser());
         }
 
         protected override void OnException(ExceptionContext filterContext)
@@ -31,7 +36,8 @@ namespace CheckListManager.WebApplication.Controllers
 
         private void CheckAppMode()
         {
-            ViewBag.AppMode = IsAppMode();
+            ViewBag.AppUser = GetAppUser();
+            ViewBag.AppMode = !string.IsNullOrEmpty(ViewBag.AppUser);
         }
 
         protected ActionResult ConditionalView()

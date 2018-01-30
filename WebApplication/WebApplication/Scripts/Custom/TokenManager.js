@@ -106,6 +106,10 @@
 		return localStorage.userCode;
 	};
 
+	tokenManager.setUserCode = function (value) {
+		return localStorage.userCode = value;
+	};
+
 	tokenManager.getUserName = function () {
 		return localStorage.userName;
 	};

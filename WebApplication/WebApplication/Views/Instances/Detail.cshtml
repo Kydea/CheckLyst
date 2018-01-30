@@ -59,17 +59,17 @@
                 }, "Icon"),
 
             buttonGroup = new matematici.ButtonGroup("span.ButtonGroup")
-                .add("Quit", function () {
-                    instance.quit();
-                }, "Quit")
                 .add("History", function () {
                     instance.showHistory();
                 }, "History")
                 @if (!ViewBag.AppMode)
                 {
                     <text>
+                        .add("Quit", function () {
+                            instance.quit();
+                        }, "Quit")
                         .add("Export", function () {
-                            instance.export();
+                           instance.export();
                         }, "Export")
                     </text>
                 }
@@ -100,6 +100,13 @@
                 callback();
             });
         };*@
+
+        @if (ViewBag.AppMode)
+        {
+            <text>
+                matematici.tokenManager.setUserCode("@ViewBag.AppUser");
+            </text>
+        }
 
         callback.call();
     };
