@@ -557,7 +557,7 @@ namespace CheckListManager.AccessControl.Logic.Services
 					if (!string.IsNullOrEmpty(user.Email))
 						await _queueService.SendObjectAsync(QueueName.Email,
 							new EmailMessage(user.Company, "User disabled", await _settingService.UserBlockMessageAsync(user.Company),
-								user.Email, user.Description), cancellationToken);
+								user.Email, new List<Tuple<string, string>> { new Tuple<string, string>("User", user.Description) }), cancellationToken);
 				}
 
 				await _userRepository.SaveChangesAsync();
@@ -575,7 +575,7 @@ namespace CheckListManager.AccessControl.Logic.Services
 					if (!string.IsNullOrEmpty(user.Email))
 						await _queueService.SendObjectAsync(QueueName.Email,
 							new EmailMessage(user.Company, "User disabled soon", await _settingService.UserBlockWarningMessageAsync(user.Company),
-								user.Email, user.Description), cancellationToken);
+								user.Email, new List<Tuple<string, string>> { new Tuple<string, string>("User", user.Description) }), cancellationToken);
 				}
 			}
 			catch (Exception e)

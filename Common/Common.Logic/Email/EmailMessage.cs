@@ -1,4 +1,7 @@
-﻿namespace CheckListManager.Common.Logic.Email
+﻿using System;
+using System.Collections.Generic;
+
+namespace CheckListManager.Common.Logic.Email
 {
 	public class EmailMessage
 	{
@@ -7,14 +10,17 @@
 			
 		}
 
-		public EmailMessage(long company, string subject, string content, string to, string name = null)
+		public EmailMessage(long company, string subject, string content, string to, List<Tuple<string, string>> parameters = null)
 		{
 			Company = company;
-			Subject = subject;
-			Content = content;
-			Name = name;
+            Subject = subject;
+            Content = content;
 
-			if (!string.IsNullOrEmpty(to)) To = new[] { to };
+            if (parameters != null)
+                foreach (var parameter in parameters)
+                    Content = Content.Replace($"[{parameter.Item1}]", parameter.Item2);
+
+            if (!string.IsNullOrEmpty(to)) To = new[] { to };
 		}
 
 		public long Company { get; set; }
@@ -23,8 +29,5 @@
 		public string Content { get; set; }
 		public string[] To { get; set; }
 		public string[] Cc { get; set; }
-
-		public string Name { get; set; }
-		public string Link { get; set; }
 	}
 }

@@ -390,9 +390,6 @@ namespace CheckListManager.Prototypes.Logic.Services
 
         public async Task UpdatePrototypeVersionsState(CancellationToken CancellationToken)
         {
-            //TODO
-            //5. notificare per email
-
             var PrototypeVersions = await _prototypeRepository.GetPrototypeVersionsAsync(pv =>
                 pv.VersionState == VersionState.Approved && pv.ValidFrom <= DateTimeOffset.UtcNow
                 || (pv.VersionState == VersionState.Approved || pv.VersionState == VersionState.Active) && pv.ValidUntil <= DateTimeOffset.UtcNow

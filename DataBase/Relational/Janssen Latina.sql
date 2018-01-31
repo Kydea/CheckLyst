@@ -28,6 +28,6 @@ insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") valu
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpUsername', 'AKIAIEIVPEHAHBTTCRKA'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpPassword', 'AmUlYueJDWpD0lJZrzgiZFjxpi+uGf8G3b8f9+IRFdz5'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'EmailSender', 'noreply@matematici-aws.com'),
-	(currval('"Infrastructure"."Companies_ID_seq"'), 'UserBlockMessage', '[NameAndSurname], <br /> il tuo account è stato disabilitato in quanto non hai effettuato nessun accesso negli ultimi 400 giorni.'),
-	(currval('"Infrastructure"."Companies_ID_seq"'), 'UserBlockWarningMessage', '[NameAndSurname], <br /> il tuo account verrà disabilitato se non effettuerai un accesso al sistema.'),
-	(currval('"Infrastructure"."Companies_ID_seq"'), 'SignatureMessage', '[NameAndSurname], <br /> hai un prototipo da firmare. Accedi a CheckList Manager per effettuare l\'operazione richiesta.');
+	(currval('"Infrastructure"."Companies_ID_seq"'), 'UserBlockMessage', '[User], <br /> your account has been disabled because you did not login for too much time.'),
+	(currval('"Infrastructure"."Companies_ID_seq"'), 'UserBlockWarningMessage', '[User], <br /> your account will soon be disabled if you do not login.'),
+	(currval('"Infrastructure"."Companies_ID_seq"'), 'SignatureMessage', '[User], <br /> you have a pending wirk flow for the [CheckListType] [CheckListCode].');

@@ -123,7 +123,7 @@ namespace CheckListManager.Common.Data
             return Entities.Users.SingleOrDefault(u => u.Company == CompanyID && u.Code == Code);
         }
 
-        public List<Users> GetAppointedUsers(long CompanyID, string FunctionGroup, string Function, long Department, long PrototypeType, IEnumerable<string> Tags)
+        private IQueryable<Users> GetAppointedUsersQuery(long CompanyID, string FunctionGroup, string Function, long Department, long PrototypeType, IEnumerable<string> Tags)
         {
             return Entities.UserFunctions.Where(uf =>
                 uf.Company == CompanyID
@@ -132,7 +132,17 @@ namespace CheckListManager.Common.Data
                 && uf.Department == Department
                 && (uf.PrototypeType == null || uf.PrototypeType == PrototypeType)
                 && (Tags.Count() == 0 || Tags.Contains(uf.Tag))
-            ).Select(uf => uf.Users).ToList();
+            ).Select(uf => uf.Users);
+        }
+
+        public List<Users> GetAppointedUsers(long CompanyID, string FunctionGroup, string Function, long Department, long PrototypeType, IEnumerable<string> Tags)
+        {
+            return GetAppointedUsersQuery(CompanyID, FunctionGroup, Function, Department, PrototypeType, Tags).ToList();
+        }
+
+        public async Task<List<Users>> GetAppointedUsersAsync(long CompanyID, string FunctionGroup, string Function, long Department, long PrototypeType, IEnumerable<string> Tags)
+        {
+            return await GetAppointedUsersQuery(CompanyID, FunctionGroup, Function, Department, PrototypeType, Tags).ToListAsync();
         }
     }
 }

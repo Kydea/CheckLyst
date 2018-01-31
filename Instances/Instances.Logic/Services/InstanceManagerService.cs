@@ -400,7 +400,10 @@ namespace CheckListManager.Instances.Logic.Services
 
                 var row = await _instancesRepository.GetByCodeAsync(cacheObject.CompanyId, cacheObject.Code);
                 if (row == null)
+                {
+                    await _instanceCache.RemoveAsync(cacheObject.Code);
                     throw new InstanceException("Instance not found");
+                }
 
                 cacheObject.Instance.Update();
                 row.Data = JsonConvert.SerializeObject(cacheObject.Instance, _converter);
@@ -873,14 +876,21 @@ namespace CheckListManager.Instances.Logic.Services
 
             foreach (var code in codes)
             {
-                var instance = await _instanceCache.GetAsync(code, false);
-                if (instance == null)
-                    continue;
+                try
+                {
+                    var instance = await _instanceCache.GetAsync(code, false);
+                    if (instance == null)
+                        continue;
 
-                if (instance.IsDirty)
-                    await SuspendAsync(instance, null);
-                else
-                    await _instanceCache.RemoveAsync(code);
+                    if (instance.IsDirty)
+                        await SuspendAsync(instance, null);
+                    else
+                        await _instanceCache.RemoveAsync(code);
+                }
+                catch (Exception exception)
+                {
+                    Logger.Error(exception);
+                }
             }
         }
 

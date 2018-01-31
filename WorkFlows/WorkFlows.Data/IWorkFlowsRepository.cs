@@ -17,7 +17,7 @@ namespace CheckListManager.WorkFlows.Data
         Task DeleteWorkFlowAsync(IDefaultIdentity identity, long id);
         Task<WorkFlowApplications> GetWorkFlowApplicationAsync(IDefaultIdentity identity, long? prototype, int? version, long? instance);
         Task<WorkFlowApplicationSteps> GetWorkFlowApplicationStepAsync(IDefaultIdentity identity, long id);
-        Task<long> CreateWorkFlowApplication(IDefaultIdentity defaultIdentity, long workFlow, DateTimeOffset? date, long? prototype, int? version, long? instance, string action);
+        Task<WorkFlowApplications> CreateWorkFlowApplication(IDefaultIdentity defaultIdentity, long workFlow, DateTimeOffset? date, long? prototype, int? version, long? instance, string action);
         void DeletePrototypeVersionInstances(PrototypeVersions prototypeVersion);
 
     }

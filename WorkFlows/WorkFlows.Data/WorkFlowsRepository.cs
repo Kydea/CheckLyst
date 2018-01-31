@@ -95,7 +95,7 @@ namespace CheckListManager.WorkFlows.Data
             return Step;
         }
 
-        public async Task<long> CreateWorkFlowApplication(IDefaultIdentity defaultIdentity, long workFlow, DateTimeOffset? date, long? prototype, int? version, long? instance, string action)
+        public async Task<WorkFlowApplications> CreateWorkFlowApplication(IDefaultIdentity defaultIdentity, long workFlow, DateTimeOffset? date, long? prototype, int? version, long? instance, string action)
         {
             var WorkFlow = await Entities.WorkFlows.SingleOrDefaultAsync(x => x.Company == defaultIdentity.CompanyId && x.ID == workFlow);
             if (WorkFlow == null) throw new ArgumentException($"Work flow {defaultIdentity.CompanyId}.{workFlow} not found", nameof(workFlow));
@@ -124,7 +124,7 @@ namespace CheckListManager.WorkFlows.Data
                 WorkFlowApplicationStepTags = x.WorkFlowStepTags.Select(t => new WorkFlowApplicationStepTags { Tag = t.Tag }).ToList()
             }));
             await SaveChangesAsync();
-            return WorkFlowApplication.ID;
+            return WorkFlowApplication;
         }
 
         public void DeletePrototypeVersionInstances(PrototypeVersions prototypeVersion)

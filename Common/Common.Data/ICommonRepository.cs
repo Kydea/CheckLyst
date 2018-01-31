@@ -17,5 +17,6 @@ namespace CheckListManager.Common.Data
         Task<List<string>> GetInstanceStatesAsync();
         Users GetUser(long CompanyID, string Code);
         List<Users> GetAppointedUsers(long CompanyID, string FunctionGroup, string Function, long Department, long PrototypeType, IEnumerable<string> Tags);
+        Task<List<Users>> GetAppointedUsersAsync(long CompanyID, string FunctionGroup, string Function, long Department, long PrototypeType, IEnumerable<string> Tags);
     }
 }
