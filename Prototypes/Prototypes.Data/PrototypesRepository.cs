@@ -57,9 +57,9 @@ namespace CheckListManager.Prototypes.Data
             return result;
         }
 
-        public async Task<PrototypeVersions> GetPrototypeVersionAsync(DefaultIdentity defaultIdentity, long prototype, int version)
+        public async Task<PrototypeVersions> GetPrototypeVersionAsync(long companyId, long prototype, int version)
         {
-            var result = await Entities.PrototypeVersions.SingleOrDefaultAsync(x => x.Prototypes.Company == defaultIdentity.CompanyId && x.Prototype == prototype && x.Version == version);
+            var result = await Entities.PrototypeVersions.SingleOrDefaultAsync(x => x.Prototypes.Company == companyId && x.Prototype == prototype && x.Version == version);
             if (result == null)
                 throw new Exception($"Prototype version {prototype}.{version} not found");
             return result;

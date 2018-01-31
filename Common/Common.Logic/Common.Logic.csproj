@@ -86,6 +86,8 @@
     <Compile Include="Authentication\AuthenticateWithPINRequest.cs" />
     <Compile Include="Authentication\AuthenticateRequest.cs" />
     <Compile Include="Authentication\AuthorizeResponse.cs" />
+    <Compile Include="FTP\InstancesFTPMessage.cs" />
+    <Compile Include="FTP\PrototypesFTPMessage.cs" />
     <Compile Include="Email\EmailMessage.cs" />
     <Compile Include="Json\AutofacJsonConverter.cs" />
     <Compile Include="Json\CheckListJsonConverter.cs" />

@@ -24,6 +24,7 @@ using CheckListManager.Common.Logic.WorkFlows;
 using System.Collections.Generic;
 using CheckListManager.Common.Logic.Queue;
 using CheckListManager.Common.Logic.Trail;
+using CheckListManager.Common.Logic.FTP;
 
 namespace CheckListManager.Instances.Logic.Services
 {
@@ -93,6 +94,15 @@ namespace CheckListManager.Instances.Logic.Services
             else
                 await _instanceCache.TouchInstanceAsync(code);
 
+            return cacheObject;
+        }
+
+        public async Task<InstanceCacheObject> GetAsync(long company, long ID)
+        {
+            var instance = await _instancesRepository.GetByIDAsync(company, ID);
+            if (instance == null)
+                throw new InstanceException("Instance not found");
+            var cacheObject = CreateInstanceFromDatabase(company, instance);
             return cacheObject;
         }
 
@@ -408,6 +418,7 @@ namespace CheckListManager.Instances.Logic.Services
                 cacheObject.Instance.Update();
                 row.Data = JsonConvert.SerializeObject(cacheObject.Instance, _converter);
                 row.Description = cacheObject.Instance.Description;
+                row.FileName = cacheObject.Instance.FileName;
                 row.ModifiedOn = cacheObject.ModifiedOn;
                 row.ModifiedBy = cacheObject.ModifiedBy;
 
@@ -432,6 +443,13 @@ namespace CheckListManager.Instances.Logic.Services
                         if (!HasPermission(identity, "Confirm", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
                             throw new InstanceException("There is not a confirmation workflow for this instance, the function Confirm is needed to complete.");
                         cacheObject.InstanceState = row.InstanceState = InstanceState.Confirmed;
+
+                        await _queueService.SendObjectAsync(QueueName.InstancesFTP, new InstancesFTPMessage
+                        {
+                            Company = identity.CompanyId,
+                            ID = row.ID,
+                            Path = cacheObject.Instance.FileName
+                        });
                     }
 
                     row.InstancesHistory.Add(new InstancesHistory

@@ -60,48 +60,11 @@ namespace CheckListManager.Common.Logic.Api.PDF
                 CurrentRenderingY = 0;
                 new Page(this, Element).Render();
             }
+        }
 
-            //TODO PDF
-            //if (Model is Prototype)
-            //{
-            //    var Prototype = ((Prototype)Model);
-            //    var Version = DbContext.Versions.FirstOrDefault(x => x.Prototype == Prototype.Code && x.Version == Prototype.Version);
-            //    var Signatures = PrototypeSignatures.Load(Version, PrototypeSignatureBookActions.TO_ACTIVE, true);
+        public virtual void RenderGroup(ICheckListGroup Group)
+        {
 
-            //    if (Signatures.Count > 0)
-            //    {
-            //        Document.NewPage();
-
-            //        Text = new Paragraph(new Phrase("History \n\n", PDFSection.FirstHeaderFont));
-            //        Text.Alignment = iTextSharp.text.Element.ALIGN_CENTER;
-            //        Document.Add(Text);
-
-            //        Table = new PdfPTable(7);
-
-            //        Table.AddCell(new PdfPCell(new Paragraph("User", PDFSection.GenericFont)) { Padding = 10 });
-            //        Table.AddCell(new PdfPCell(new Paragraph("Date", PDFSection.GenericFont)) { Padding = 10 });
-            //        Table.AddCell(new PdfPCell(new Paragraph("Time", PDFSection.GenericFont)) { Padding = 10 });
-            //        Table.AddCell(new PdfPCell(new Paragraph("Signature Step", PDFSection.GenericFont)) { Padding = 10 });
-            //        Table.AddCell(new PdfPCell(new Paragraph("Signature Reason", PDFSection.GenericFont)) { Padding = 10 });
-            //        Table.AddCell(new PdfPCell(new Paragraph("Signature Comment", PDFSection.GenericFont)) { Padding = 10 });
-            //        Table.AddCell(new PdfPCell(new Paragraph("Signature Result", PDFSection.GenericFont)) { Padding = 10 });
-
-
-            //        foreach (var Signature in Signatures)
-            //        {
-            //            Table.AddCell(new PdfPCell(new Paragraph(Signature.User + " - " + Signature.Users.Description, PDFSection.SmallFont)) { Padding = 10, VerticalAlignment = iTextSharp.text.Element.ALIGN_CENTER });
-            //            Table.AddCell(new PdfPCell(new Paragraph(Signature.Date.ToString("dd/MM/yyyy"), PDFSection.SmallFont)) { Padding = 10, VerticalAlignment = iTextSharp.text.Element.ALIGN_CENTER });
-            //            Table.AddCell(new PdfPCell(new Paragraph(Signature.Date.ToString("hh:mm"), PDFSection.SmallFont)) { Padding = 10, VerticalAlignment = iTextSharp.text.Element.ALIGN_CENTER });
-            //            Table.AddCell(new PdfPCell(new Paragraph(Signature.Step.ToString(), PDFSection.SmallFont)) { Padding = 10, HorizontalAlignment = iTextSharp.text.Element.ALIGN_CENTER, VerticalAlignment = iTextSharp.text.Element.ALIGN_CENTER });
-            //            Table.AddCell(new PdfPCell(new Paragraph(Signature.SignatureReason, PDFSection.SmallFont)) { Padding = 10, VerticalAlignment = iTextSharp.text.Element.ALIGN_CENTER });
-            //            Table.AddCell(new PdfPCell(new Paragraph(Signature.Comment, PDFSection.SmallFont)) { Padding = 10, VerticalAlignment = iTextSharp.text.Element.ALIGN_CENTER });
-            //            Table.AddCell(new PdfPCell(new Paragraph(Signature.Approved ? "Approved" : "Rejected", PDFSection.SmallFont)) { Padding = 10, HorizontalAlignment = iTextSharp.text.Element.ALIGN_CENTER, VerticalAlignment = iTextSharp.text.Element.ALIGN_CENTER });
-            //        }
-
-            //        Table.WidthPercentage = 100;
-            //        Document.Add(Table);
-            //    }
-            //}
         }
     }
 }

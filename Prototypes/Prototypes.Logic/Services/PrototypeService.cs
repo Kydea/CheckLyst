@@ -17,6 +17,7 @@ using CheckListManager.Common.Logic.Models.CheckLists;
 using System.Threading;
 using NLog;
 using CheckListManager.Common.Logic.Email;
+using CheckListManager.Common.Logic.FTP;
 
 namespace CheckListManager.Prototypes.Logic.Services
 {
@@ -38,7 +39,7 @@ namespace CheckListManager.Prototypes.Logic.Services
 
         public async Task<PrototypeResponse> OpenAsync(DefaultIdentity identity, PrototypeRequest request)
         {
-            var PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(identity, request.ID, request.Version);
+            var PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(identity.CompanyId, request.ID, request.Version);
             if (
                 !identity.HasPermission("Prototypes", "View", PrototypeVersion.Prototypes.Department) &&
                 !identity.HasPermission("Prototypes", "View", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType) &&
@@ -74,7 +75,7 @@ namespace CheckListManager.Prototypes.Logic.Services
 
         public async Task<PrototypeResponse> CloneAsync(DefaultIdentity identity, PrototypeRequest request)
         {
-            var PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(identity, request.ID, request.Version);
+            var PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(identity.CompanyId, request.ID, request.Version);
             if (
                 !identity.HasPermission("Prototypes", "View", PrototypeVersion.Prototypes.Department) &&
                 !identity.HasPermission("Prototypes", "View", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType)
@@ -117,7 +118,7 @@ namespace CheckListManager.Prototypes.Logic.Services
 
         public async Task<PrototypeResponse> VersionAsync(DefaultIdentity identity, PrototypeRequest request)
         {
-            var PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(identity, request.ID, request.Version);
+            var PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(identity.CompanyId, request.ID, request.Version);
             if (
                 !identity.HasPermission("Prototypes", "View", PrototypeVersion.Prototypes.Department) &&
                 !identity.HasPermission("Prototypes", "View", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType)
@@ -240,7 +241,7 @@ namespace CheckListManager.Prototypes.Logic.Services
             }
             else
             {
-                PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(identity, request.ID, request.Version);
+                PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(identity.CompanyId, request.ID, request.Version);
                 if (PrototypeVersion.VersionState != VersionState.Draft) throw new Exception($"The version {request.ID}.{request.Version} is not editable");
                 if ((PrototypeVersion.ModifiedOn?.UtcDateTime.Ticks ?? 0) - (request.ModifiedOn?.UtcDateTime.Ticks ?? 0) > 10 || PrototypeVersion.ModifiedBy != request.ModifiedBy) throw new Exception($"Concurrency error: the prototype has already been modified by the user {request.ModifiedBy}"); //the db approximate some tick, we take 10 as maximum
 
@@ -282,7 +283,7 @@ namespace CheckListManager.Prototypes.Logic.Services
 
         public async Task DeleteAsync(DefaultIdentity identity, PrototypeRequest request)
         {
-            var PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(identity, request.ID, request.Version);
+            var PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(identity.CompanyId, request.ID, request.Version);
             if (
                 !identity.HasPermission("Prototypes", "Edit", PrototypeVersion.Prototypes.Department) &&
                 !identity.HasPermission("Prototypes", "Edit", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType)
@@ -305,7 +306,7 @@ namespace CheckListManager.Prototypes.Logic.Services
 
         public async Task<PrototypeResponse> SetStateAsync(DefaultIdentity identity, PrototypeRequest request)
         {
-            var PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(identity, request.ID, request.Version);
+            var PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(identity.CompanyId, request.ID, request.Version);
             if (
                 !identity.HasPermission("Prototypes", "Edit", PrototypeVersion.Prototypes.Department) &&
                 !identity.HasPermission("Prototypes", "Edit", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType)
@@ -334,7 +335,7 @@ namespace CheckListManager.Prototypes.Logic.Services
 
         public async Task<List<HistoryRow>> History(DefaultIdentity identity, PrototypeRequest request)
         {
-            var PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(identity, request.ID, request.Version);
+            var PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(identity.CompanyId, request.ID, request.Version);
             if (
                 !identity.HasPermission("Prototypes", "View", PrototypeVersion.Prototypes.Department)
                 && !identity.HasPermission("Prototypes", "View", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType)
@@ -412,6 +413,14 @@ namespace CheckListManager.Prototypes.Logic.Services
                         PrototypeVersion.Prototypes.Description = PrototypeVersion.Description;
                         PrototypeVersion.Prototypes.ModifiedOn = PrototypeVersion.ModifiedOn;
                         PrototypeVersion.Prototypes.ModifiedBy = PrototypeVersion.ModifiedBy;
+
+                        await _queueService.SendObjectAsync(QueueName.PrototypesFTP, new PrototypesFTPMessage
+                        {
+                            Company = PrototypeVersion.Prototypes.Company,
+                            Prototype = PrototypeVersion.Prototype,
+                            Version = PrototypeVersion.Version,
+                            Path = $"{(PrototypeVersion.Prototypes.Companies.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.Departments.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.PrototypeTypes.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.Name?.Replace('#', '-') ?? "")}#{PrototypeVersion.Version}#{(PrototypeVersion.Description?.Replace('#', '-') ?? "")}"
+                        });
 
                         var OldVersion = PrototypeVersion.Prototypes.PrototypeVersions.SingleOrDefault(pv => pv.VersionState == VersionState.Active);
                         if (OldVersion != null) await SetPrototypeVersionState(OldVersion, VersionState.Obsolete);

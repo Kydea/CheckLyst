@@ -27,7 +27,12 @@ values
 	('Instance created'),
     ('Instance state changed'),
     ('Instance signature issued'),
-    ('Instance signature canceled');
+    ('Instance signature canceled'),
+
+	('Instance export completed'),
+    ('Instance export failed'),
+    ('Prototype export completed'),
+    ('Prototype export failed');
 
 create table "Trail"."Records"
 (

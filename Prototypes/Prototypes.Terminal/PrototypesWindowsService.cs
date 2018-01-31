@@ -9,11 +9,13 @@ namespace CheckListManager.Prototypes.Terminal
 {
 	public class PrototypesWindowsService : TimerWindowsService
 	{
-		public PrototypesWindowsService(TerminalConfig config) : base(config, new ComputedSchedulerStrategy(new[] { 0 }, new[] { 0 }) { RunAtStartup = true })
+		public PrototypesWindowsService(TerminalConfig config) : base(config)
         {
+            Add(new ComputedSchedulerStrategy(UpdatePrototypeVersionsState, new[] { 0 }, new[] { 0 }) { RunAtStartup = true });
+            Add(new IntervalSchedulerStrategy(SendFTPFiles, 60) { RunAtStartup = true });
         }
 
-        protected override async Task RunAsync()
+        private async Task UpdatePrototypeVersionsState()
 		{
 			using (var scope = Container.BeginLifetimeScope())
 			{
@@ -21,5 +23,15 @@ namespace CheckListManager.Prototypes.Terminal
                 await service.UpdatePrototypeVersionsState(CancellationTokenSource.Token);
 			}
 		}
-	}
+
+        private async Task SendFTPFiles()
+        {
+            using (var scope = Container.BeginLifetimeScope())
+            {
+                var service = scope.Resolve<IFTPService>();
+                await service.ProcessFTPMessagesAsync(CancellationTokenSource.Token);
+            }
+        }
+
+    }
 }

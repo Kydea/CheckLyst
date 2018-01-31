@@ -4,6 +4,7 @@ using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Logic.Authentication;
 using CheckListManager.Common.Logic.Email;
+using CheckListManager.Common.Logic.FTP;
 using CheckListManager.Common.Logic.Queue;
 using CheckListManager.Common.Logic.Services;
 using CheckListManager.Common.Logic.Trail;
@@ -99,6 +100,14 @@ namespace CheckListManager.WorkFlows.Logic.Applications
 
                 var OldVersion = PrototypeVersion.Prototypes.PrototypeVersions.SingleOrDefault(pv => pv.VersionState == VersionState.Active);
                 if (OldVersion != null) await SetPrototypeVersionState(identity, OldVersion, VersionState.Obsolete);
+
+                await _queueService.SendObjectAsync(QueueName.PrototypesFTP, new PrototypesFTPMessage
+                {
+                    Company = identity.CompanyId,
+                    Prototype = PrototypeVersion.Prototype,
+                    Version = PrototypeVersion.Version,
+                    Path = $"{(PrototypeVersion.Prototypes.Companies.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.Departments.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.PrototypeTypes.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.Name?.Replace('#', '-') ?? "")}#{PrototypeVersion.Version}#{(PrototypeVersion.Description?.Replace('#', '-') ?? "")}"
+                });
             }
             await SetPrototypeVersionState(identity, PrototypeVersion, State);
         }
@@ -128,6 +137,14 @@ namespace CheckListManager.WorkFlows.Logic.Applications
         private async Task Approve(DefaultIdentity identity, Instances Instance)
         {
             await SetInstanceState(identity, Instance, InstanceState.Confirmed);
+
+            if (!string.IsNullOrWhiteSpace(Instance.FileName))
+                await _queueService.SendObjectAsync(QueueName.InstancesFTP, new InstancesFTPMessage
+                {
+                    Company = identity.CompanyId,
+                    ID = Instance.ID,
+                    Path = Instance.FileName
+                });
         }
 
         private async Task Reject(DefaultIdentity identity, Instances Instance)
@@ -303,7 +320,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                                 new Tuple<string, string> ("CheckListType", Instance == null ? "prototype" : "instance"),
                                 new Tuple<string, string> ("CheckListCode",
                                     Instance == null ? 
-                                        $"{PrototypeVersion.Prototype}.{PrototypeVersion.Version}" :
+                                        $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}" :
                                         $"{Instance.Prototype}.{Instance.Version}.{Instance.Year}.{Instance.Number}" 
                                 ),
                             }));

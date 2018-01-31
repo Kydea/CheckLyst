@@ -9,11 +9,13 @@ namespace CheckListManager.Instances.Terminal
 {
 	public class InstancesWindowsService : TimerWindowsService
 	{
-		public InstancesWindowsService(TerminalConfig config) : base(config, new IntervalSchedulerStrategy(3600))
+		public InstancesWindowsService(TerminalConfig config) : base(config)
 		{
-		}
+            Add(new IntervalSchedulerStrategy(ClearPendingInstances, 3600));
+            Add(new IntervalSchedulerStrategy(SendFTPFiles, 60));
+        }
 
-		protected override async Task RunAsync()
+        protected async Task ClearPendingInstances()
 		{
 			using (var scope = Container.BeginLifetimeScope())
 			{
@@ -21,5 +23,14 @@ namespace CheckListManager.Instances.Terminal
 				await service.ClearPendingInstances(CancellationTokenSource.Token);
 			}
 		}
-	}
+
+        protected async Task SendFTPFiles()
+        {
+            using (var scope = Container.BeginLifetimeScope())
+            {
+                var service = scope.Resolve<IFTPService>();
+                await service.ProcessFTPMessagesAsync(CancellationTokenSource.Token);
+            }
+        }
+    }
 }

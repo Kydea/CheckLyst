@@ -38,12 +38,8 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
         {
             var Group = ((ICheckListGroup)Element);
             var CheckList = ((CheckListPDF)PDFBase).Model;
-            //TODO PDF
-            //if (CheckList is Prototype)
-            //{
-            //    Group.CheckList = CheckList;
-            //    Group.AddIterations(Math.Max(Group.PrototypeIterations, 1));
-            //}
+
+            CheckListPDF.RenderGroup(Group);
 
             List<ICheckListItem> Items =
                 Group.Iterator ?

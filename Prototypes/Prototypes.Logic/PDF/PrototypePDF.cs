@@ -1,9 +1,12 @@
 ﻿using CheckListManager.Common.Core.Helpers;
+using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.PDF;
 using CheckListManager.Common.Logic.Api.PDF.Sections;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Prototypes.Logic.Messages;
 using CheckListManager.Prototypes.Logic.Models.CheckLists;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,28 +17,75 @@ namespace CheckListManager.Prototypes.Logic.PDF
 {
     public class PrototypePDF : CheckListPDF
     {
-        public PrototypePDF(long CompanyID, string CompanyName, string TimeZone, string Repository, PrototypeResponse Prototype) : base(CompanyID, CompanyName, TimeZone, Repository, Prototype.CheckList)
+        public PrototypePDF(long CompanyID, string CompanyName, string TimeZone, string Repository, PrototypeVersions Prototype, ICheckList CheckList) : base(CompanyID, CompanyName, TimeZone, Repository, CheckList)
         {
-            this.Prototype = Prototype;
+            PrototypeVersion = Prototype;
         }
 
-        private PrototypeResponse Prototype { get; }
+        private PrototypeVersions PrototypeVersion { get; }
+
+        protected override void OnGenerate()
+        {
+            base.OnGenerate();
+
+            var Prototype = ((Prototype)Model);
+            var Signatures = PrototypeVersion.PrototypeVersionsHistory.SingleOrDefault(h => h.State == VersionState.Approved)?.WorkFlowApplications?.WorkFlowApplicationSteps.OrderBy(h => h.Step).OrderBy(h => h.ID);
+
+            if (Signatures != null && Signatures.Count() > 0)
+            {
+                Document.NewPage();
+
+                var Text = new Paragraph(new Phrase("Approvation workflow \n\n", PDFSection.FirstHeaderFont));
+                Text.Alignment = iTextSharp.text.Element.ALIGN_CENTER;
+                Document.Add(Text);
+
+                var Table = new PdfPTable(7);
+
+                Table.AddCell(new PdfPCell(new Paragraph("User", PDFSection.GenericFont)) { Padding = 10 });
+                Table.AddCell(new PdfPCell(new Paragraph("Date", PDFSection.GenericFont)) { Padding = 10 });
+                Table.AddCell(new PdfPCell(new Paragraph("Time", PDFSection.GenericFont)) { Padding = 10 });
+                Table.AddCell(new PdfPCell(new Paragraph("Signature Step", PDFSection.GenericFont)) { Padding = 10 });
+                Table.AddCell(new PdfPCell(new Paragraph("Signature Level", PDFSection.GenericFont)) { Padding = 10 });
+                Table.AddCell(new PdfPCell(new Paragraph("Signature Comment", PDFSection.GenericFont)) { Padding = 10 });
+                Table.AddCell(new PdfPCell(new Paragraph("Signature Result", PDFSection.GenericFont)) { Padding = 10 });
+
+                foreach (var Signature in Signatures)
+                {
+                    Table.AddCell(new PdfPCell(new Paragraph($"{Signature.User}", PDFSection.SmallFont)) { Padding = 10, VerticalAlignment = iTextSharp.text.Element.ALIGN_CENTER });
+                    Table.AddCell(new PdfPCell(new Paragraph(Signature.Date?.ToLocalTime(TimeZone).ToString("dd/MM/yyyy"), PDFSection.SmallFont)) { Padding = 10, VerticalAlignment = iTextSharp.text.Element.ALIGN_CENTER });
+                    Table.AddCell(new PdfPCell(new Paragraph(Signature.Date?.ToLocalTime(TimeZone).ToString("HH:mm"), PDFSection.SmallFont)) { Padding = 10, VerticalAlignment = iTextSharp.text.Element.ALIGN_CENTER });
+                    Table.AddCell(new PdfPCell(new Paragraph(Signature.Step.ToString(), PDFSection.SmallFont)) { Padding = 10, HorizontalAlignment = iTextSharp.text.Element.ALIGN_CENTER, VerticalAlignment = iTextSharp.text.Element.ALIGN_CENTER });
+                    Table.AddCell(new PdfPCell(new Paragraph($"({string.Join(", ", Signature.WorkFlowApplicationStepTags.Select(t => t.Tag))})", PDFSection.SmallFont)) { Padding = 10, VerticalAlignment = iTextSharp.text.Element.ALIGN_CENTER });
+                    Table.AddCell(new PdfPCell(new Paragraph(Signature.Comment, PDFSection.SmallFont)) { Padding = 10, VerticalAlignment = iTextSharp.text.Element.ALIGN_CENTER });
+                    Table.AddCell(new PdfPCell(new Paragraph(!Signature.Approved.HasValue ? "Pending" : Signature.Approved.Value ? "Approved" : "Rejected", PDFSection.SmallFont)) { Padding = 10, HorizontalAlignment = iTextSharp.text.Element.ALIGN_CENTER, VerticalAlignment = iTextSharp.text.Element.ALIGN_CENTER });
+                }
+
+                Table.WidthPercentage = 100;
+                Document.Add(Table);
+            }
+        }
 
         protected override FirstPage GenerateFirstPage()
         {
-            return new FirstPage(this, $"{Prototype.Name}",  $"Version {Prototype.Version}", Prototype.Description, new List<Tuple<string, string>> {
-                new Tuple<string, string>("Department", Prototype.DepartmentName),
-                new Tuple<string, string>("Prototype type", Prototype.PrototypeTypeName),
-                new Tuple<string, string>("State", Prototype.State),
-                new Tuple<string, string>("Valid from", Prototype.ValidFrom?.ToLocalTime(TimeZone).ToString("dd/MM/yyyy HH:mm")),
-                new Tuple<string, string>("Valid until", Prototype.ValidUntil?.ToLocalTime(TimeZone).ToString("dd/MM/yyyy HH:mm"))
+            return new FirstPage(this, $"{PrototypeVersion.Prototypes.Name}", $"Version {PrototypeVersion.Version}", PrototypeVersion.Description, new List<Tuple<string, string>> {
+                new Tuple<string, string>("Department", PrototypeVersion.Prototypes.Departments.Name),
+                new Tuple<string, string>("Prototype type", PrototypeVersion.Prototypes.PrototypeTypes.Name),
+                new Tuple<string, string>("State", PrototypeVersion.VersionState),
+                new Tuple<string, string>("Valid from", PrototypeVersion.ValidFrom?.ToLocalTime(TimeZone).ToString("dd/MM/yyyy HH:mm")),
+                new Tuple<string, string>("Valid until", PrototypeVersion.ValidUntil?.ToLocalTime(TimeZone).ToString("dd/MM/yyyy HH:mm"))
             });
         }
 
-        protected override Template GenerateTemplate() => new Template(this, $"{Prototype.DepartmentName}.{Prototype.Version}\n{Prototype.Description}");
+        protected override Template GenerateTemplate() => new Template(this, $"{PrototypeVersion.Prototypes.Departments.Name}.{PrototypeVersion.Version}\n{PrototypeVersion.Description}");
 
         public override string GetFieldValue(ICheckListField Field) => "_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _";
 
-        public override bool IsPrototype() => false;
+        public override bool IsPrototype() => true;
+
+        public override void RenderGroup(ICheckListGroup Group)
+        {
+            Group.CheckList = Model;
+            ((Models.CheckLists.Group)Group).AddIterations(Math.Max(Group.PrototypeIterations, 1));
+        }
     }
 }

@@ -9,17 +9,18 @@ namespace CheckListManager.Infrastructure.Terminal
 {
 	public class InfrastructureWindowsService : TimerWindowsService
 	{
-		public InfrastructureWindowsService(TerminalConfig config) : base(config, new IntervalSchedulerStrategy(10))
+		public InfrastructureWindowsService(TerminalConfig config) : base(config)
 		{
+            Add(new IntervalSchedulerStrategy(RunAsync, 10));
 		}
 
-		protected override async Task RunAsync()
+		protected async Task RunAsync()
 		{
 			using (var scope = Container.BeginLifetimeScope())
 			{
-				var service = scope.Resolve<IEmailService>();
-				await service.ProcessEmailMessagesAsync(CancellationTokenSource.Token);
-			}
-		}
+				var emailService = scope.Resolve<IEmailService>();
+				await emailService.ProcessEmailMessagesAsync(CancellationTokenSource.Token);
+            }
+        }
 	}
 }

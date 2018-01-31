@@ -13,9 +13,9 @@ namespace CheckListManager.Common.Logic.Api.PDF
     {
         protected String Subject;
 
-        internal Document Document { get; private set; }
-        internal PdfContentByte PdfContentByte { get; private set; }
-        internal PdfWriter PdfWriter { get; private set; }
+        public Document Document { get; private set; }
+        public PdfContentByte PdfContentByte { get; private set; }
+        public PdfWriter PdfWriter { get; private set; }
 
         public float CurrentRenderingY = 0, CurrentRenderingX = 0, PageStartY = 0;
 

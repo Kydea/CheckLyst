@@ -102,6 +102,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FTPService.cs" />
+    <Compile Include="IFTPService.cs" />
     <Compile Include="InstancesTerminalConfig.cs" />
     <Compile Include="InstancesWindowsService.cs" />
     <Compile Include="Program.cs" />
@@ -133,6 +135,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\Common.Core.Web\Common.Core.Web.csproj">
+      <Project>{2FAFFF00-D5EB-4BB0-B70B-38290D88C871}</Project>
+      <Name>Common.Core.Web</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Common\Common.Core\Common.Core.csproj">
       <Project>{31DE9C2F-FB9D-472C-B28A-3C1EDEFF10DC}</Project>
       <Name>Common.Core</Name>
@@ -141,6 +147,10 @@
       <Project>{91482922-D6BA-4DF1-9A9C-88F3087A7B5D}</Project>
       <Name>Common.Data</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Common\Common.Logic.Api\Common.Logic.Api.csproj">
+      <Project>{BE658746-48A9-4AF2-B2B6-A13A7D6DE439}</Project>
+      <Name>Common.Logic.Api</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Common\Common.Logic.Terminal\Common.Logic.Terminal.csproj">
       <Project>{F42D2988-A390-4BE2-A5A1-58BB34B29BF0}</Project>
       <Name>Common.Logic.Terminal</Name>
@@ -148,6 +158,10 @@
     <ProjectReference Include="..\..\Common\Common.Logic\Common.Logic.csproj">
       <Project>{351C3388-67B1-46EE-8FD1-5A63277B3C0C}</Project>
       <Name>Common.Logic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Instances.Data\Instances.Data.csproj">
+      <Project>{B1773E1A-FDE3-4D1C-BDE0-3C5A6B2B3514}</Project>
+      <Name>Instances.Data</Name>
     </ProjectReference>
     <ProjectReference Include="..\Instances.Logic\Instances.Logic.csproj">
       <Project>{5f03eba2-7ff0-4fe0-9945-58fa5f084563}</Project>

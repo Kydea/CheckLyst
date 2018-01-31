@@ -26,9 +26,9 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
         {
             foreach (var Group in ((ICheckListPage)Element).Groups)
                 if(Group.ShowAsTable)
-                    new PDF.Sections.Table((CheckListPDF)PDFBase, Group, 2).Render();
+                    new Table((CheckListPDF)PDFBase, Group, 2).Render();
                 else
-                    new PDF.Sections.Group((CheckListPDF)PDFBase, Group, 2).Render();
+                    new Group((CheckListPDF)PDFBase, Group, 2).Render();
         }
     }
 }

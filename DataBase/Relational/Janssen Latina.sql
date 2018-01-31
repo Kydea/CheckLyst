@@ -23,6 +23,7 @@ values (currval('"Infrastructure"."Companies_ID_seq"'), 'CheckListManager', 'Use
 
 insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
 	--(currval('"Infrastructure"."Companies_ID_seq"'), 'LDAPHost', 'eu.jnj.com'),
+	(currval('"Infrastructure"."Companies_ID_seq"'), 'FtpConnection', '{ "Host": "www.ruggerogiovannelli.org", "Port": 21, "Folder": "ruggerogiovannelli.org/Data", "UserName": "2348977@aruba.it", "Password": "oeof5sxc", "UsePassive": "true", "EnableSSL": "false" }'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpHost', 'email-smtp.eu-west-1.amazonaws.com'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpPort', '587'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpUsername', 'AKIAIEIVPEHAHBTTCRKA'),
@@ -30,4 +31,4 @@ insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") valu
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'EmailSender', 'noreply@matematici-aws.com'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'UserBlockMessage', '[User], <br /> your account has been disabled because you did not login for too much time.'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'UserBlockWarningMessage', '[User], <br /> your account will soon be disabled if you do not login.'),
-	(currval('"Infrastructure"."Companies_ID_seq"'), 'SignatureMessage', '[User], <br /> you have a pending wirk flow for the [CheckListType] [CheckListCode].');
+	(currval('"Infrastructure"."Companies_ID_seq"'), 'SignatureMessage', '[User], <br /> you have a pending work flow for the [CheckListType] [CheckListCode].');

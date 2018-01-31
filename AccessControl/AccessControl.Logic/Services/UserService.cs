@@ -21,32 +21,32 @@ using Newtonsoft.Json;
 
 namespace CheckListManager.AccessControl.Logic.Services
 {
-	public class UserService : IUserService
-	{
-		private const string IdentityCacheRegion = "UserService.IdentityToken";
+    public class UserService : IUserService
+    {
+        private const string IdentityCacheRegion = "UserService.IdentityToken";
 
-		private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-		private readonly IUserRepository _userRepository;
-		private readonly IUserSessionRepository _userSessionRepository;
-		private readonly IHashService _hashService;
-		private readonly IQueueService _queueService;
-		private readonly IRedisCache _cache;
-		private readonly ISettingService _settingService;
+        private readonly IUserRepository _userRepository;
+        private readonly IUserSessionRepository _userSessionRepository;
+        private readonly IHashService _hashService;
+        private readonly IQueueService _queueService;
+        private readonly IRedisCache _cache;
+        private readonly ISettingService _settingService;
 
-		public UserService(IUserRepository userRepository, IUserSessionRepository userSessionRepository,
-			IHashService hashService, IQueueService queueService, IRedisCache cache, ISettingService settingService)
-		{
-			_userRepository = userRepository;
-			_userSessionRepository = userSessionRepository;
-			_hashService = hashService;
-			_queueService = queueService;
-			_cache = cache;
-			_settingService = settingService;
-		}
+        public UserService(IUserRepository userRepository, IUserSessionRepository userSessionRepository,
+            IHashService hashService, IQueueService queueService, IRedisCache cache, ISettingService settingService)
+        {
+            _userRepository = userRepository;
+            _userSessionRepository = userSessionRepository;
+            _hashService = hashService;
+            _queueService = queueService;
+            _cache = cache;
+            _settingService = settingService;
+        }
 
-		public async Task<Users> AuthenticateAsync(long? companyId, string code, string password)
-		{
+        public async Task<Users> AuthenticateAsync(long? companyId, string code, string password)
+        {
             if (!companyId.HasValue)
                 throw new AuthenticationException(99, "Company not sent");
 
@@ -68,30 +68,30 @@ namespace CheckListManager.AccessControl.Logic.Services
                 if (!user.Enabled)
                     throw new AuthenticationException(103, $"User {code} not enabled");
 
-	            if (
-					user.Companies.MaximumNumberOfPasswordFailure > 0
-					&& user.NumberOfAttempts >= user.Companies.MaximumNumberOfPasswordFailure
-					&& user.LastLoginFailedOn != null
-					//&& user.Companies.LoginFailedTimeout > 0
-					//&& (DateTimeOffset.UtcNow - user.LastLoginFailedOn.Value).TotalMinutes < user.Companies.LoginFailedTimeout //The users are currently permanently disabled
-				)
-		            throw new AuthenticationException(104, $"User {code} disabled");
+                if (
+                    user.Companies.MaximumNumberOfPasswordFailure > 0
+                    && user.NumberOfAttempts >= user.Companies.MaximumNumberOfPasswordFailure
+                    && user.LastLoginFailedOn != null
+                //&& user.Companies.LoginFailedTimeout > 0
+                //&& (DateTimeOffset.UtcNow - user.LastLoginFailedOn.Value).TotalMinutes < user.Companies.LoginFailedTimeout //The users are currently permanently disabled
+                )
+                    throw new AuthenticationException(104, $"User {code} disabled");
 
-				if (!_hashService.ValidateHash(password, user.Password)) //TODO Valutare l'ordine rispetto all'autenticazione LDAP
+                if (!_hashService.ValidateHash(password, user.Password)) //TODO Valutare l'ordine rispetto all'autenticazione LDAP
                     throw new AuthenticationException(105, "Password not valid");
 
                 await _userRepository.UserLoginCompleteAsync(user);
 
-				//TODO: add LDAP / OAUTH SERVER
-			}
-			catch (AuthenticationException)
-			{
+                //TODO: add LDAP / OAUTH SERVER
+            }
+            catch (AuthenticationException)
+            {
                 await _userRepository.UserLoginFailedAsync(user);
                 throw;
             }
 
-			return user;
-		}
+            return user;
+        }
 
         public async Task SetPINAsync(long? companyId, string code, string password, string pin)
         {
@@ -111,7 +111,7 @@ namespace CheckListManager.AccessControl.Logic.Services
             await _userRepository.SetPINAsync(companyId.Value, code, _hashService.HashStringToBytes(pin));
         }
 
-        public async Task AuthenticateWithPINAsync (long? companyId, string code, string pin)
+        public async Task AuthenticateWithPINAsync(long? companyId, string code, string pin)
         {
             if (!companyId.HasValue)
                 throw new AuthenticationException(99, "Company not sent");
@@ -141,8 +141,8 @@ namespace CheckListManager.AccessControl.Logic.Services
                     user.Companies.MaximumNumberOfPINFailure > 0
                     && user.NumberOfAttempts >= user.Companies.MaximumNumberOfPINFailure
                     && user.LastLoginFailedOn != null
-                    //&& user.Companies.LoginFailedTimeout > 0
-                    //&& (DateTimeOffset.UtcNow - user.LastLoginFailedOn.Value).TotalMinutes < user.Companies.LoginFailedTimeout
+                //&& user.Companies.LoginFailedTimeout > 0
+                //&& (DateTimeOffset.UtcNow - user.LastLoginFailedOn.Value).TotalMinutes < user.Companies.LoginFailedTimeout
                 )
                     throw new AuthenticationException(104, $"User {code} temporary disabled");
 
@@ -159,60 +159,60 @@ namespace CheckListManager.AccessControl.Logic.Services
         }
 
         public Task CreateSessionAsync(long company, string code, string user, string ticket, DateTimeOffset expiresOn)
-		{
-			var session = new UserSessions
-			{
-				Company = company,
-				Code = code,
-				User = user,
-				Ticket = ticket,
-				CreatedOn = DateTimeOffset.UtcNow,
-				ExpiresOn = expiresOn
-			};
-			var identityToken = new IdentityToken(ticket, code, expiresOn);
+        {
+            var session = new UserSessions
+            {
+                Company = company,
+                Code = code,
+                User = user,
+                Ticket = ticket,
+                CreatedOn = DateTimeOffset.UtcNow,
+                ExpiresOn = expiresOn
+            };
+            var identityToken = new IdentityToken(ticket, code, expiresOn);
 
-			return Task.WhenAll(
-				_userSessionRepository.CreateAsync(session),
-				_cache.SetAsync(identityToken.RefreshToken, identityToken, IdentityCacheRegion, expiresOn - DateTimeOffset.UtcNow)
-			);
-		}
+            return Task.WhenAll(
+                _userSessionRepository.CreateAsync(session),
+                _cache.SetAsync(identityToken.RefreshToken, identityToken, IdentityCacheRegion, expiresOn - DateTimeOffset.UtcNow)
+            );
+        }
 
-		public async Task<IdentityToken> GetTokenAsync(string code)
-		{
-			var token = await _cache.GetAsync<IdentityToken>(code, IdentityCacheRegion);
-			if (token != null)
-				return token.ExpiresOn >= DateTimeOffset.UtcNow ? token : null;
+        public async Task<IdentityToken> GetTokenAsync(string code)
+        {
+            var token = await _cache.GetAsync<IdentityToken>(code, IdentityCacheRegion);
+            if (token != null)
+                return token.ExpiresOn >= DateTimeOffset.UtcNow ? token : null;
 
-			var session = await _userSessionRepository.GetAsync(code);
-			if (session != null && session.ExpiresOn >= DateTimeOffset.UtcNow)
-			{
-				token = new IdentityToken(session.Ticket, session.Code, session.ExpiresOn);
-				await _cache.SetAsync(token.RefreshToken, token, IdentityCacheRegion, session.ExpiresOn - DateTimeOffset.UtcNow);
-			}
+            var session = await _userSessionRepository.GetAsync(code);
+            if (session != null && session.ExpiresOn >= DateTimeOffset.UtcNow)
+            {
+                token = new IdentityToken(session.Ticket, session.Code, session.ExpiresOn);
+                await _cache.SetAsync(token.RefreshToken, token, IdentityCacheRegion, session.ExpiresOn - DateTimeOffset.UtcNow);
+            }
 
-			return token;
-		}
+            return token;
+        }
 
-		public Task UpdateTokenAsync(IdentityToken token, DateTimeOffset expiresOn)
-		{
-			token = new IdentityToken(token.AuthenticationTicket, token.RefreshToken, expiresOn);
+        public Task UpdateTokenAsync(IdentityToken token, DateTimeOffset expiresOn)
+        {
+            token = new IdentityToken(token.AuthenticationTicket, token.RefreshToken, expiresOn);
 
-			return Task.WhenAll(
-				_cache.SetAsync(token.RefreshToken, token, IdentityCacheRegion, expiresOn - DateTimeOffset.UtcNow),
-				_userSessionRepository.SetExpiresOnAsync(token.RefreshToken, expiresOn)
-			);
-		}
+            return Task.WhenAll(
+                _cache.SetAsync(token.RefreshToken, token, IdentityCacheRegion, expiresOn - DateTimeOffset.UtcNow),
+                _userSessionRepository.SetExpiresOnAsync(token.RefreshToken, expiresOn)
+            );
+        }
 
-		public async Task LogoutAsync(DefaultIdentity identity, string token)
-		{
-			if (!string.IsNullOrEmpty(token))
-			{
-				try
-				{
-					await Task.WhenAll(
-						_cache.RemoveAsync(token, IdentityCacheRegion),
-						_userSessionRepository.SetExpiresOnAsync(token, DateTimeOffset.UtcNow)
-					);
+        public async Task LogoutAsync(DefaultIdentity identity, string token)
+        {
+            if (!string.IsNullOrEmpty(token))
+            {
+                try
+                {
+                    await Task.WhenAll(
+                        _cache.RemoveAsync(token, IdentityCacheRegion),
+                        _userSessionRepository.SetExpiresOnAsync(token, DateTimeOffset.UtcNow)
+                    );
                     await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                     {
                         Company = identity.CompanyId,
@@ -222,11 +222,11 @@ namespace CheckListManager.AccessControl.Logic.Services
                     });
                 }
                 catch (Exception exception)
-				{
-					Logger.Error(exception, "Error during logout");
-				}
-			}
-		}
+                {
+                    Logger.Error(exception, "Error during logout");
+                }
+            }
+        }
 
         public async Task<List<UserFunctions>> GetFunctionsAsync(long companyId, UsersRequest request)
         {
@@ -234,17 +234,17 @@ namespace CheckListManager.AccessControl.Logic.Services
         }
 
         public async Task<PagingResponse<List<UsersResponse>>> GetUsersAsync(long companyId, PagingRequest<UsersRequest> request)
-	    {
-			var take = request.ItemsPerPage;
-			var users = await _userRepository.GetUsersAsync(companyId, request.Data.Code, request.Data.Description, request.Skip, take);
-			var count = await _userRepository.CountUsersAsync(companyId, request.Data.Code, request.Data.Description);
+        {
+            var take = request.ItemsPerPage;
+            var users = await _userRepository.GetUsersAsync(companyId, request.Data.Code, request.Data.Description, request.Skip, take);
+            var count = await _userRepository.CountUsersAsync(companyId, request.Data.Code, request.Data.Description);
 
-			var response = users.Select(u => new UsersResponse
-			{
-				Code = u.Code,
+            var response = users.Select(u => new UsersResponse
+            {
+                Code = u.Code,
                 Description = u.Description,
                 Email = u.Email,
-				Enabled = u.Enabled,
+                Enabled = u.Enabled,
                 AuthenticationCode = u.AuthenticationCode,
                 LastLoginOn = u.LastLoginOn,
                 CreatedBy = u.CreatedBy,
@@ -253,14 +253,14 @@ namespace CheckListManager.AccessControl.Logic.Services
                 ModifiedOn = u.ModifiedOn
             }).ToList();
 
-			return new PagingResponse<List<UsersResponse>>
-			{
-				Data = response,
-				ItemsPerPage = request.ItemsPerPage,
-				Count = count,
-				CurrentPage = request.CurrentPage
-			};
-		}
+            return new PagingResponse<List<UsersResponse>>
+            {
+                Data = response,
+                ItemsPerPage = request.ItemsPerPage,
+                Count = count,
+                CurrentPage = request.CurrentPage
+            };
+        }
 
         private UserResponse Validate(UserRequest record)
         {
@@ -316,51 +316,54 @@ namespace CheckListManager.AccessControl.Logic.Services
         public async Task<UserResponse> LoadUserAsync(DefaultIdentity identity, UserRequest record)
         {
             bool LDAP = !string.IsNullOrEmpty(await _settingService.LDAPHostAsync(identity.CompanyId));
-            var response = new UserResponse {
+            var response = new UserResponse
+            {
                 ShowPassword = !LDAP,
                 ShowAuthenticationCode = LDAP
             };
 
-            try
-            {
-                var user = await _userRepository.GetAsync(identity.CompanyId, record.Code);
-
-                response.GeneralFunctions = user.UserFunctions.Where(f => f.FunctionGroup != "Prototypes" && f.FunctionGroup != "Instances")
-                    .Select(gf => new Function { functionGroup = gf.FunctionGroup, function = gf.Function })
-                    .ToArray();
-
-                response.PrototypeFunctions = user.UserFunctions.Where(f => f.FunctionGroup == "Prototypes")
-                    .GroupBy(pf => new { pf.Department, pf.PrototypeType })
-                    .Select(g => new Function {
-                        department = g.Key.Department,
-                        prototypeType = g.Key.PrototypeType,
-                        functionGroup = "Prototypes",
-                        functions = g.Select(pf => pf.Function).ToArray(),
-                        level = g.First().Tag 
-                    })
-                    .ToArray();
-
-                response.InstanceFunctions = user.UserFunctions.Where(f => f.FunctionGroup == "Instances")
-                    .GroupBy(pf => new { pf.Department, pf.PrototypeType })
-                    .Select(g => new Function
-                    {
-                        department = g.Key.Department,
-                        prototypeType = g.Key.PrototypeType,
-                        functionGroup = "Instances",
-                        functions = g.Select(pf => pf.Function).ToArray(),
-                        level = g.First().Tag
-                    })
-                    .ToArray();
-            }
-            catch (Exception exception)
-            {
-                response.ValidationMessages.Add(new ValidationMessage
+            if (!string.IsNullOrEmpty(record.Code))
+                try
                 {
-                    Level = ValidationMessage.LevelError,
-                    Message = exception.Message
-                });
-                response.Valid = false;
-            }
+                    var user = await _userRepository.GetAsync(identity.CompanyId, record.Code);
+
+                    response.GeneralFunctions = user.UserFunctions.Where(f => f.FunctionGroup != "Prototypes" && f.FunctionGroup != "Instances")
+                        .Select(gf => new Function { functionGroup = gf.FunctionGroup, function = gf.Function })
+                        .ToArray();
+
+                    response.PrototypeFunctions = user.UserFunctions.Where(f => f.FunctionGroup == "Prototypes")
+                        .GroupBy(pf => new { pf.Department, pf.PrototypeType })
+                        .Select(g => new Function
+                        {
+                            department = g.Key.Department,
+                            prototypeType = g.Key.PrototypeType,
+                            functionGroup = "Prototypes",
+                            functions = g.Select(pf => pf.Function).ToArray(),
+                            level = g.First().Tag
+                        })
+                        .ToArray();
+
+                    response.InstanceFunctions = user.UserFunctions.Where(f => f.FunctionGroup == "Instances")
+                        .GroupBy(pf => new { pf.Department, pf.PrototypeType })
+                        .Select(g => new Function
+                        {
+                            department = g.Key.Department,
+                            prototypeType = g.Key.PrototypeType,
+                            functionGroup = "Instances",
+                            functions = g.Select(pf => pf.Function).ToArray(),
+                            level = g.First().Tag
+                        })
+                        .ToArray();
+                }
+                catch (Exception exception)
+                {
+                    response.ValidationMessages.Add(new ValidationMessage
+                    {
+                        Level = ValidationMessage.LevelError,
+                        Message = exception.Message
+                    });
+                    response.Valid = false;
+                }
 
             return response;
         }
@@ -422,17 +425,17 @@ namespace CheckListManager.AccessControl.Logic.Services
                 user.Enabled,
                 Functions = userFunctions.Select(uf => new
                 {
-	                uf.FunctionGroup,
-	                uf.Function,
+                    uf.FunctionGroup,
+                    uf.Function,
                     Department = uf.Department.HasValue ? uf.Department + " " + uf.Departments?.Name : null,
                     PrototypeType = uf.PrototypeType.HasValue ? uf.PrototypeType + " " + uf.PrototypeTypes?.Name : null,
-	                Level = uf.Tag
+                    Level = uf.Tag
                 })
             });
         }
 
         public async Task<UserResponse> AddUserAsync(DefaultIdentity identity, UserRequest record)
-		{
+        {
             var response = Validate(record);
             if (response.Valid)
                 try
@@ -471,7 +474,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                 }
 
             return response;
-		}
+        }
 
         public async Task<UserResponse> EditUserAsync(DefaultIdentity identity, UserRequest record)
         {
@@ -499,7 +502,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                         User = identity.Code,
                         Action = TrailAction.UserEdited,
                         Date = DateTimeOffset.UtcNow,
-                        Information = SerializeUserInformation (record, User.UserFunctions)
+                        Information = SerializeUserInformation(record, User.UserFunctions)
                     });
                 }
                 catch (Exception exception)
@@ -546,58 +549,58 @@ namespace CheckListManager.AccessControl.Logic.Services
             return response;
         }
 
-		public async Task CheckInactiveUsers(CancellationToken cancellationToken = new CancellationToken())
-		{
-			try
-			{
-				var users = await _userRepository.GetUsersToDisableAsync();
-				foreach (var user in users)
-				{
-					user.Enabled = false;
-					if (!string.IsNullOrEmpty(user.Email))
-						await _queueService.SendObjectAsync(QueueName.Email,
-							new EmailMessage(user.Company, "User disabled", await _settingService.UserBlockMessageAsync(user.Company),
-								user.Email, new List<Tuple<string, string>> { new Tuple<string, string>("User", user.Description) }), cancellationToken);
-				}
+        public async Task CheckInactiveUsers(CancellationToken cancellationToken = new CancellationToken())
+        {
+            try
+            {
+                var users = await _userRepository.GetUsersToDisableAsync();
+                foreach (var user in users)
+                {
+                    user.Enabled = false;
+                    if (!string.IsNullOrEmpty(user.Email))
+                        await _queueService.SendObjectAsync(QueueName.Email,
+                            new EmailMessage(user.Company, "User disabled", await _settingService.UserBlockMessageAsync(user.Company),
+                                user.Email, new List<Tuple<string, string>> { new Tuple<string, string>("User", user.Description) }), cancellationToken);
+                }
 
-				await _userRepository.SaveChangesAsync();
-			}
-			catch (Exception e)
-			{
-				Logger.Error(e);
-			}
+                await _userRepository.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e);
+            }
 
-			try
-			{
-				var users = await _userRepository.GetUsersDisableWarningAsync();
-				foreach (var user in users)
-				{
-					if (!string.IsNullOrEmpty(user.Email))
-						await _queueService.SendObjectAsync(QueueName.Email,
-							new EmailMessage(user.Company, "User disabled soon", await _settingService.UserBlockWarningMessageAsync(user.Company),
-								user.Email, new List<Tuple<string, string>> { new Tuple<string, string>("User", user.Description) }), cancellationToken);
-				}
-			}
-			catch (Exception e)
-			{
-				Logger.Error(e);
-			}
-		}
+            try
+            {
+                var users = await _userRepository.GetUsersDisableWarningAsync();
+                foreach (var user in users)
+                {
+                    if (!string.IsNullOrEmpty(user.Email))
+                        await _queueService.SendObjectAsync(QueueName.Email,
+                            new EmailMessage(user.Company, "User disabled soon", await _settingService.UserBlockWarningMessageAsync(user.Company),
+                                user.Email, new List<Tuple<string, string>> { new Tuple<string, string>("User", user.Description) }), cancellationToken);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e);
+            }
+        }
 
-		public async Task CheckUnchangedPins(CancellationToken cancellationToken = new CancellationToken())
-		{
-			try
-			{
-				var users = await _userRepository.GetUsersWithExpiredPin();
-				foreach (var user in users)
-					user.PIN = null;
+        public async Task CheckUnchangedPins(CancellationToken cancellationToken = new CancellationToken())
+        {
+            try
+            {
+                var users = await _userRepository.GetUsersWithExpiredPin();
+                foreach (var user in users)
+                    user.PIN = null;
 
-				await _userRepository.SaveChangesAsync();
-			}
-			catch (Exception e)
-			{
-				Logger.Error(e);
-			}
-		}
-	}
+                await _userRepository.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e);
+            }
+        }
+    }
 }

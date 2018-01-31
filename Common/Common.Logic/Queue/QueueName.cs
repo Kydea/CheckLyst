@@ -4,5 +4,7 @@
 	{
 		public const string Trail = "trail.fifo";
 		public const string Email = "email.fifo";
-	}
+        public const string InstancesFTP = "instances-ftp.fifo";
+        public const string PrototypesFTP = "prototypes-ftp.fifo";
+    }
 }

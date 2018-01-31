@@ -13,7 +13,8 @@ namespace CheckListManager.Instances.Logic.Services
 	{
 		Task<InstanceCacheObject> GetAsync(long company, string userCode, string code);
 		Task<InstanceCacheObject> GetAsync(IDefaultIdentity identity, string code);
-		Task<InstanceCacheObject> CreateAsync(IDefaultIdentity identity, string userCode, long prototype, int version);
+        Task<InstanceCacheObject> GetAsync(long company, long ID);
+        Task<InstanceCacheObject> CreateAsync(IDefaultIdentity identity, string userCode, long prototype, int version);
 		Task<InstanceCacheObject> OpenAsync(string code, IDefaultIdentity identity);
         Task SaveAsync(string code, IDefaultIdentity identity);
         Task<InstanceCacheObject> CompleteAsync(string code, IDefaultIdentity identity);

@@ -23,5 +23,10 @@
         public const string InstanceSignatureCanceled = "Instance signature canceled";
 
         public const string EmailFailed = "Email failed";
+
+        public const string InstanceExportCompleted = "Instance export completed";
+        public const string InstanceExportFailed = "Instance export failed";
+        public const string PrototypeExportCompleted = "Prototype export completed";
+        public const string PrototypeExportFailed = "Prototype export failed";
     }
 }

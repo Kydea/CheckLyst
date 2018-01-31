@@ -34,5 +34,19 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 Item.Setup();
             }
         }
+        public void AddIterations(int Count)
+        {
+            for (int Index = 0; Index < Count; ++Index)
+            {
+                var iteration = new Iteration
+                {
+                    CheckList = CheckList,
+                    Page = Page,
+                    Group = this
+                };
+                iteration.Setup();
+                Iterations.Add(iteration);
+            }
+        }
     }
 }

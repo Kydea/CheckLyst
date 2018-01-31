@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using CheckListManager.Common.Logic.Terminal.Configuration;
@@ -13,49 +14,54 @@ namespace CheckListManager.Common.Logic.Terminal
 	{
 		private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-		private readonly ISchedulerStrategy _strategy;
+		private readonly List<ISchedulerStrategy> strategies = new List<ISchedulerStrategy>();
 
-		protected Timer Timer { get; private set; }
-
-		protected TimerWindowsService(TerminalConfig config, ISchedulerStrategy strategy) : base(config)
+		protected TimerWindowsService(TerminalConfig config) : base(config)
 		{
-			_strategy = strategy;
 		}
+
+        protected void Add(ISchedulerStrategy strategy)
+        {
+            strategies.Add(strategy);
+        }
 
 		protected override bool OnStart(HostControl hostControl)
 		{
-			_strategy.ComputeNextExecutionTime();
+            foreach (var strategy in strategies)
+            {
+                strategy.ComputeNextExecutionTime();
 
-			Timer = new Timer
-			{
-				AutoReset = true,
-				Interval = _strategy.Interval.TotalMilliseconds,
-				Enabled = true
-			};
+                strategy.Timer = new Timer
+                {
+                    AutoReset = true,
+                    Interval = strategy.Interval.TotalMilliseconds,
+                    Enabled = true
+                };
 
-			Timer.Elapsed += (sender, args) => Run();
+                strategy.Timer.Elapsed += (sender, args) => Run(strategy);
 
-			if (_strategy.RunAtStartup)
-				ThreadPool.QueueUserWorkItem(o => Run());
-
+                if (strategy.RunAtStartup)
+                    ThreadPool.QueueUserWorkItem(o => Run(strategy));
+            }
 			return true;
 		}
 
 		protected override bool OnStop(HostControl hostControl)
 		{
-			Timer.Stop();
+            foreach(var strategy in strategies)
+			    strategy.Timer.Stop();
 
 			return true;
 		}
 
-		private void Run()
+		private void Run(ISchedulerStrategy strategy)
 		{
-			if (_strategy.StopTimerWhenRunning)
-				Timer.Enabled = false;
+			if (strategy.StopTimerWhenRunning)
+                strategy.Timer.Enabled = false;
 
 			try
 			{
-				RunAsync().Wait(CancellationTokenSource.Token);
+                strategy.RunHandler().Wait(CancellationTokenSource.Token);
 			}
 			catch (Exception exception)
 			{
@@ -63,14 +69,12 @@ namespace CheckListManager.Common.Logic.Terminal
 			}
 			finally
 			{
-				if (_strategy.ComputeNextExecutionTime(DateTime.UtcNow))
-					Timer.Interval = _strategy.Interval.TotalMilliseconds;
+				if (strategy.ComputeNextExecutionTime(DateTime.UtcNow))
+                    strategy.Timer.Interval = strategy.Interval.TotalMilliseconds;
 			}
 
-			if (_strategy.StopTimerWhenRunning)
-				Timer.Enabled = true;
+			if (strategy.StopTimerWhenRunning)
+                strategy.Timer.Enabled = true;
 		}
-
-		protected abstract Task RunAsync();
 	}
 }

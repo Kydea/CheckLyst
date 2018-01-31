@@ -325,7 +325,7 @@
 
         completeHandler = function () {
             preparePrototypeTypes(detailPage.getSender().getElement().data("prototypeTypes"));
-            if (!detailPage.isNew())
+            //if (!detailPage.isNew())
                 detailPage.getForm().trigger("Load", function (result) {
                     detailPage.getForm().handleResult(result);
 

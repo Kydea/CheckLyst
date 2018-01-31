@@ -168,6 +168,7 @@ create table "CheckLists"."Instances"
 
 	"Description" text,
 	"Data" text, --replace with no sql table
+	"FileName" text,
 
 	"CreatedBy" varchar (60),
 	"CreatedOn" timestamptz not null default current_timestamp,

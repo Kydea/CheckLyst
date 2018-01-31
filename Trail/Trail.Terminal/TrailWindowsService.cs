@@ -9,11 +9,12 @@ namespace CheckListManager.Trail.Terminal
 {
 	public class TrailWindowsService : TimerWindowsService
 	{
-		public TrailWindowsService(TerminalConfig config) : base(config, new IntervalSchedulerStrategy(5))
+		public TrailWindowsService(TerminalConfig config) : base(config)
 		{
+            Add(new IntervalSchedulerStrategy(RunAsync, 5));
 		}
 
-		protected override async Task RunAsync()
+		protected async Task RunAsync()
 		{
 			using (var scope = Container.BeginLifetimeScope())
 			{
