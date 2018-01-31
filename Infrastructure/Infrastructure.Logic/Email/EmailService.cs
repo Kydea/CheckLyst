@@ -61,8 +61,6 @@ namespace CheckListManager.Infrastructure.Logic.Email
 			var body = new StringBuilder();
 
 			body = body.Append("<h1>CheckList Manager - " + message.Subject + "</h1>");
-			body = body.Append("<p>" + (message.Content?.Replace("[NameAndSurname]", message.Name ?? "(no user)") ?? "(no content)") + " </p>");
-			if (message.Link != null) body.Append("<p><a href=\"" + message.Link + "\">Open CheckLyst</a></p>");
 
 			var sender = await _settingService.EmailSenderAsync(message.Company);
 			var mailMessage = new MailMessage { From = new MailAddress(sender) };
