@@ -124,7 +124,7 @@ namespace CheckListManager.WorkFlows.Data
                 WorkFlowApplicationStepTags = x.WorkFlowStepTags.Select(t => new WorkFlowApplicationStepTags { Tag = t.Tag }).ToList()
             }));
             await SaveChangesAsync();
-            return WorkFlowApplication;
+            return Entities.WorkFlowApplications.Include(a => a.Instances).Include(a => a.PrototypeVersions).Single(a => a.ID == WorkFlowApplication.ID); //refreshes to have the references objects available
         }
 
         public void DeletePrototypeVersionInstances(PrototypeVersions prototypeVersion)
