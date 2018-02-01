@@ -83,7 +83,7 @@
         <AssociationConnector Association="RelationalDatabaseModel.Instances_InstanceState_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.Instances_Prototype_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.WorkFlowApplications_Instance" />
-        <EntityTypeShape EntityType="RelationalDatabaseModel.InstancesHistory" Width="1.5" PointX="19.875" PointY="17.5" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.InstancesHistory" Width="1.5" PointX="19.875" PointY="17.625" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.PrototypeVersionsHistory" Width="1.5" PointX="18.375" PointY="21" />
         <AssociationConnector Association="RelationalDatabaseModel.InstancesHistory_Instance_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.InstancesHistory_WorkFlowApplication_fkey" />

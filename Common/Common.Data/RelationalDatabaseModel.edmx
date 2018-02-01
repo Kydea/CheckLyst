@@ -56,8 +56,6 @@
           <Property Name="State" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="User" Type="varchar" MaxLength="60" Nullable="false" />
           <Property Name="WorkFlowApplication" Type="int8" />
-          <Property Name="UserDescription" Type="varchar" MaxLength="100" />
-          <Property Name="Tag" Type="text" />
         </EntityType>
         <EntityType Name="InstanceStates">
           <Key>
@@ -135,8 +133,6 @@
           <Property Name="State" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="User" Type="varchar" MaxLength="60" Nullable="false" />
           <Property Name="WorkFlowApplication" Type="int8" />
-          <Property Name="UserDescription" Type="varchar" MaxLength="100" />
-          <Property Name="Tag" Type="text" />
         </EntityType>
         <EntityType Name="PrototypeVersionTags">
           <Key>
@@ -2196,9 +2192,9 @@
           <NavigationProperty Name="WorkFlowApplicationSteps" Relationship="RelationalDatabaseModel.WorkFlowApplicationSteps_WorkFlowApplication_fkey" FromRole="WorkFlowApplications" ToRole="WorkFlowApplicationSteps" />
           <NavigationProperty Name="PrototypeVersions" Relationship="RelationalDatabaseModel.WorkFlowApplications_PrototypeVersion" FromRole="WorkFlowApplications" ToRole="PrototypeVersions" />
           <NavigationProperty Name="Instances" Relationship="RelationalDatabaseModel.WorkFlowApplications_Instance" FromRole="WorkFlowApplications" ToRole="Instances" />
+          <Property Name="FinalState" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="InstancesHistory" Relationship="RelationalDatabaseModel.InstancesHistory_WorkFlowApplication_fkey" FromRole="WorkFlowApplications" ToRole="InstancesHistory" />
           <NavigationProperty Name="PrototypeVersionsHistory" Relationship="RelationalDatabaseModel.PrototypeVersionsHistory_WorkFlowApplication_fkey" FromRole="WorkFlowApplications" ToRole="PrototypeVersionsHistory" />
-          <Property Name="FinalState" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="WorkFlowApplicationStepTags">
           <Key>
@@ -2495,8 +2491,8 @@
           <NavigationProperty Name="InstanceStates" Relationship="RelationalDatabaseModel.Instances_InstanceState_fkey" FromRole="Instances" ToRole="InstanceStates" />
           <NavigationProperty Name="Prototypes" Relationship="RelationalDatabaseModel.Instances_Prototype_fkey" FromRole="Instances" ToRole="Prototypes" />
           <NavigationProperty Name="WorkFlowApplications" Relationship="RelationalDatabaseModel.WorkFlowApplications_Instance" FromRole="Instances" ToRole="WorkFlowApplications" />
-          <NavigationProperty Name="InstancesHistory" Relationship="RelationalDatabaseModel.InstancesHistory_Instance_fkey" FromRole="Instances" ToRole="InstancesHistory" />
           <Property Name="FileName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="InstancesHistory" Relationship="RelationalDatabaseModel.InstancesHistory_Instance_fkey" FromRole="Instances" ToRole="InstancesHistory" />
         </EntityType>
         <Association Name="InstanceExpressionValues_Instance_fkey">
           <End Type="RelationalDatabaseModel.Instances" Role="Instances" Multiplicity="1" />
@@ -2618,7 +2614,7 @@
           <Property Name="WorkFlowApplication" Type="Int64" />
           <NavigationProperty Name="Instances" Relationship="RelationalDatabaseModel.InstancesHistory_Instance_fkey" FromRole="InstancesHistory" ToRole="Instances" />
           <NavigationProperty Name="WorkFlowApplications" Relationship="RelationalDatabaseModel.InstancesHistory_WorkFlowApplication_fkey" FromRole="InstancesHistory" ToRole="WorkFlowApplications" />
-          </EntityType>
+        </EntityType>
         <EntityType Name="PrototypeVersionsHistory">
           <Key>
             <PropertyRef Name="ID" />
@@ -2632,7 +2628,7 @@
           <Property Name="WorkFlowApplication" Type="Int64" />
           <NavigationProperty Name="PrototypeVersions" Relationship="RelationalDatabaseModel.PrototypeVersionsHistory_PrototypeVersion" FromRole="PrototypeVersionsHistory" ToRole="PrototypeVersions" />
           <NavigationProperty Name="WorkFlowApplications" Relationship="RelationalDatabaseModel.PrototypeVersionsHistory_WorkFlowApplication_fkey" FromRole="PrototypeVersionsHistory" ToRole="WorkFlowApplications" />
-          </EntityType>
+        </EntityType>
         <Association Name="InstancesHistory_Instance_fkey">
           <End Type="RelationalDatabaseModel.Instances" Role="Instances" Multiplicity="1">
             <OnDelete Action="Cascade" />

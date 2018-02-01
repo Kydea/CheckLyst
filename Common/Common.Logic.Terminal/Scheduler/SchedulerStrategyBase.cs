@@ -6,8 +6,6 @@ namespace CheckListManager.Common.Logic.Terminal.Scheduler
 {
 	public abstract class SchedulerStrategyBase : ISchedulerStrategy
 	{
-        private Func<Task> runHandler;
-
         public SchedulerStrategyBase(Func<Task> RunHandler)
         {
             this.RunHandler = RunHandler;
