@@ -335,6 +335,25 @@ namespace CheckListManager.Prototypes.Logic.Services
 
         public async Task<List<HistoryRow>> History(DefaultIdentity identity, PrototypeRequest request)
         {
+            //TEST
+            await _queueService.SendObjectAsync(QueueName.PrototypesFTP, new PrototypesFTPMessage
+            {
+                Company = identity.CompanyId,
+                Path = "Prototipo",
+                Prototype = 84,
+                Version = 1,
+                PrototypeName = "TestIteratori.1"
+            });
+
+            await _queueService.SendObjectAsync(QueueName.InstancesFTP, new InstancesFTPMessage
+            {
+                Company = identity.CompanyId,
+                ID = 322,
+                Path = "Istanza",
+                Code = "CancelableSignature.1.2018.1"
+            });
+            //Fine TEST
+
             var PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(identity.CompanyId, request.ID, request.Version);
             if (
                 !identity.HasPermission("Prototypes", "View", PrototypeVersion.Prototypes.Department)
