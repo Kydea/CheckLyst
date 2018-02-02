@@ -105,6 +105,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 {
                     Company = identity.CompanyId,
                     Prototype = PrototypeVersion.Prototype,
+                    PrototypeName = PrototypeVersion.Prototypes.Name,
                     Version = PrototypeVersion.Version,
                     Path = $"{(PrototypeVersion.Prototypes.Companies.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.Departments.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.PrototypeTypes.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.Name?.Replace('#', '-') ?? "")}#{PrototypeVersion.Version}#{(PrototypeVersion.Description?.Replace('#', '-') ?? "")}"
                 });
@@ -143,7 +144,8 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 {
                     Company = identity.CompanyId,
                     ID = Instance.ID,
-                    Path = Instance.FileName
+                    Path = Instance.FileName,
+                    Code = $"{Instance.PrototypeName}.{Instance.Version}.{Instance.Year}.{Instance.Number}"
                 });
         }
 

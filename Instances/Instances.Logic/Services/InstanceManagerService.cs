@@ -418,7 +418,7 @@ namespace CheckListManager.Instances.Logic.Services
                 cacheObject.Instance.Update();
                 row.Data = JsonConvert.SerializeObject(cacheObject.Instance, _converter);
                 row.Description = cacheObject.Instance.Description;
-                row.FileName = cacheObject.Instance.FileName;
+                row.FileName = cacheObject.Instance.FTPExport ? cacheObject.Instance.FileName ?? cacheObject.Instance.Description ?? $"Instance{cacheObject.InstanceCode}" : null;
                 row.ModifiedOn = cacheObject.ModifiedOn;
                 row.ModifiedBy = cacheObject.ModifiedBy;
 
@@ -444,12 +444,14 @@ namespace CheckListManager.Instances.Logic.Services
                             throw new InstanceException("There is not a confirmation workflow for this instance, the function Confirm is needed to complete.");
                         cacheObject.InstanceState = row.InstanceState = InstanceState.Confirmed;
 
-                        await _queueService.SendObjectAsync(QueueName.InstancesFTP, new InstancesFTPMessage
-                        {
-                            Company = identity.CompanyId,
-                            ID = row.ID,
-                            Path = cacheObject.Instance.FileName
-                        });
+                        if (!string.IsNullOrEmpty(row.FileName))
+                            await _queueService.SendObjectAsync(QueueName.InstancesFTP, new InstancesFTPMessage
+                            {
+                                Company = identity.CompanyId,
+                                ID = row.ID,
+                                Path = row.FileName,
+                                Code = cacheObject.InstanceCode
+                            });
                     }
 
                     row.InstancesHistory.Add(new InstancesHistory

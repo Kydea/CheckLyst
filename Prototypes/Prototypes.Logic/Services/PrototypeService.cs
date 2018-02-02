@@ -418,6 +418,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                         {
                             Company = PrototypeVersion.Prototypes.Company,
                             Prototype = PrototypeVersion.Prototype,
+                            PrototypeName = PrototypeVersion.Prototypes.Name,
                             Version = PrototypeVersion.Version,
                             Path = $"{(PrototypeVersion.Prototypes.Companies.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.Departments.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.PrototypeTypes.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.Name?.Replace('#', '-') ?? "")}#{PrototypeVersion.Version}#{(PrototypeVersion.Description?.Replace('#', '-') ?? "")}"
                         });

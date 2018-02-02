@@ -59,14 +59,29 @@ namespace CheckListManager.Prototypes.Terminal
 			{
 				await Send(message.Message);
 				await _queueService.DeleteMessageAsync(QueueName.PrototypesFTP, message.MessageHandle, cancellationToken);
-			}
-			catch (Exception exception)
+                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                {
+                    Action = TrailAction.PrototypeExportCompleted,
+                    Company = message.Message.Company,
+                    CheckList = $"{message.Message.PrototypeName}.{message.Message.Version}",
+                    Information = JsonConvert.SerializeObject(new
+                    {
+                        File = message.Message.Path
+                    })
+                }, cancellationToken);
+            }
+            catch (Exception exception)
 			{
-				await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
-				{
-					Action = TrailAction.EmailFailed,
-					Company = message.Message.Company,
-					Information = exception.Message
+                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                {
+                    Action = TrailAction.PrototypeExportFailed,
+                    Company = message.Message.Company,
+                    CheckList = $"{message.Message.PrototypeName}.{message.Message.Version}",
+                    Information = JsonConvert.SerializeObject(new
+                    {
+                        File = message.Message.Path,
+                        Error = exception.Message
+                    })
 				}, cancellationToken);
 
 				Logger.Error(exception);
