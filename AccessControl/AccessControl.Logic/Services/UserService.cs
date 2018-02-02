@@ -80,13 +80,32 @@ namespace CheckListManager.AccessControl.Logic.Services
                 if (!_hashService.ValidateHash(password, user.Password)) //TODO Valutare l'ordine rispetto all'autenticazione LDAP
                     throw new AuthenticationException(105, "Password not valid");
 
-                await _userRepository.UserLoginCompleteAsync(user);
+                await Task.WhenAll(
+                    _userRepository.UserLoginCompleteAsync(user),
+                    _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                    {
+                        Company = user.Company,
+                        User = user.Code,
+                        Action = TrailAction.Login,
+                        Date = DateTimeOffset.UtcNow
+                    })
+                );
 
                 //TODO: add LDAP / OAUTH SERVER
             }
-            catch (AuthenticationException)
+            catch (AuthenticationException authenticationException)
             {
-                await _userRepository.UserLoginFailedAsync(user);
+                await Task.WhenAll(
+                    _userRepository.UserLoginFailedAsync(user),
+                    _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                    {
+                        Company = companyId.Value,
+                        User = code,
+                        Action = TrailAction.LoginFailed,
+                        Date = DateTimeOffset.UtcNow,
+                        Information = authenticationException.Message
+                    })
+                );
                 throw;
             }
 

@@ -52,6 +52,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 {
                     ID = x.ID,
                     Step = x.Step + 1,
+                    Reason = x.Reason,
                     Date = x.Date,
                     User = x.User,
                     Approved = x.Approved,

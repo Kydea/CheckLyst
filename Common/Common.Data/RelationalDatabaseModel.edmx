@@ -374,6 +374,7 @@
           <Property Name="Comment" Type="varchar" MaxLength="300" />
           <Property Name="Date" Type="timestamptz" Precision="7" />
           <Property Name="Approved" Type="bool" />
+          <Property Name="Reason" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="WorkFlowApplicationStepTags">
           <Key>
@@ -406,6 +407,7 @@
           <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
           <Property Name="ModifiedBy" Type="varchar" MaxLength="60" />
           <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
+          <Property Name="Reason" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="WorkFlowStepTags">
           <Key>
@@ -2244,6 +2246,7 @@
           <NavigationProperty Name="Users" Relationship="RelationalDatabaseModel.WorkFlowApplicationSteps_User" FromRole="WorkFlowApplicationSteps" ToRole="Users" />
           <NavigationProperty Name="WorkFlowApplications" Relationship="RelationalDatabaseModel.WorkFlowApplicationSteps_WorkFlowApplication_fkey" FromRole="WorkFlowApplicationSteps" ToRole="WorkFlowApplications" />
           <NavigationProperty Name="WorkFlowApplicationStepTags" Relationship="RelationalDatabaseModel.WorkFlowApplicationStepTags_WorkFlowApplicationStep_fkey" FromRole="WorkFlowApplicationSteps" ToRole="WorkFlowApplicationStepTags" />
+          <Property Name="Reason" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="WorkFlowSteps">
           <Key>
@@ -2258,6 +2261,7 @@
           <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
           <NavigationProperty Name="WorkFlows" Relationship="RelationalDatabaseModel.WorkFlowSteps_WorkFlow_fkey" FromRole="WorkFlowSteps" ToRole="WorkFlows" />
           <NavigationProperty Name="WorkFlowStepTags" Relationship="RelationalDatabaseModel.WorkFlowStepTags_WorkFlowStep_fkey" FromRole="WorkFlowSteps" ToRole="WorkFlowStepTags" />
+          <Property Name="Reason" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="WorkFlowApplicationSteps_User">
           <End Type="RelationalDatabaseModel.Users" Role="Users" Multiplicity="0..1" />
@@ -3012,6 +3016,7 @@
           <EntitySetMapping Name="WorkFlowApplicationSteps">
             <EntityTypeMapping TypeName="RelationalDatabaseModel.WorkFlowApplicationSteps">
               <MappingFragment StoreEntitySet="WorkFlowApplicationSteps">
+                <ScalarProperty Name="Reason" ColumnName="Reason" />
                 <ScalarProperty Name="Approved" ColumnName="Approved" />
                 <ScalarProperty Name="Date" ColumnName="Date" />
                 <ScalarProperty Name="Comment" ColumnName="Comment" />
@@ -3026,6 +3031,7 @@
           <EntitySetMapping Name="WorkFlowSteps">
             <EntityTypeMapping TypeName="RelationalDatabaseModel.WorkFlowSteps">
               <MappingFragment StoreEntitySet="WorkFlowSteps">
+                <ScalarProperty Name="Reason" ColumnName="Reason" />
                 <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
                 <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
                 <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />

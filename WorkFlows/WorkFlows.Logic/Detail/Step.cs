@@ -8,6 +8,7 @@ namespace CheckListManager.WorkFlows.Logic.Detail
 {
     public class Step
     {
+        public string Reason { get; set; }
         public string[][] Signatures { get; set; }
     }
 }

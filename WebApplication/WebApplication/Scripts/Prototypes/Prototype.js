@@ -289,6 +289,7 @@
 
 			workFlowSignature = new matematici.WorkFlowSignature({
 				title: action,
+				reason: row.reason,
 				url: element.data("signature"),
 				prototype: prototypeKey.id,
 				version: prototypeKey.version,
@@ -546,6 +547,7 @@
 			var columns = [
 				{ name: "step", label: "Step", align: "center" },
 				{ name: "tags", label: "Level" },
+				{ name: "reason", label: "Reason" },
 				{ name: "date", label: "Date", type: "DateTimeOffset" },
 				{ name: "user", label: "User" },
 				{ name: "approved", label: "Approved", align: "center" },
@@ -598,7 +600,7 @@
 					{ label: "Approved", name: "approved", type: "Boolean", align: "center" },
 					{ label: "Proposed state", name: "proposedState" },
 					{ label: "Signature step", name: "step", align: "center" },
-					{ label: "Signature level", name: "level" },
+					{ label: "Signature reason", name: "reason" },
 					{ label: "Signature comment", name: "comment" },
 					{ label: "Appointed signer", name: "appointedUser"}
 				],

@@ -121,6 +121,7 @@ namespace CheckListManager.WorkFlows.Data
                 Company = defaultIdentity.CompanyId,
                 WorkFlowApplications = WorkFlowApplication,
                 Step = x.Step,
+                Reason = x.Reason,
                 WorkFlowApplicationStepTags = x.WorkFlowStepTags.Select(t => new WorkFlowApplicationStepTags { Tag = t.Tag }).ToList()
             }));
             await SaveChangesAsync();

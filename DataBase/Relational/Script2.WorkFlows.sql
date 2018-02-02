@@ -21,6 +21,7 @@ create table "WorkFlows"."WorkFlowSteps"
 
 	"WorkFlow" bigint references "WorkFlows"."WorkFlows" on delete cascade,
 	"Step" int not null,
+	"Reason" varchar (50) not null,
 
 	"CreatedBy" varchar (60),
 	"CreatedOn" timestamptz not null default current_timestamp,
@@ -90,6 +91,7 @@ create table "WorkFlows"."WorkFlowApplicationSteps"
 	"WorkFlowApplication" bigint,
 	constraint "WorkFlows_WorkFlowApplication" foreign key ("WorkFlowApplication") references "WorkFlows"."WorkFlowApplications" on delete cascade
 	"Step" int not null,
+	"Reason" varchar (50) not null,
 
 	"Company" bigint,
 	"User" varchar (60),

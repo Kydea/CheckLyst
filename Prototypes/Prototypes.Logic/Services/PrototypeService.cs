@@ -335,25 +335,6 @@ namespace CheckListManager.Prototypes.Logic.Services
 
         public async Task<List<HistoryRow>> History(DefaultIdentity identity, PrototypeRequest request)
         {
-            //TEST
-            await _queueService.SendObjectAsync(QueueName.PrototypesFTP, new PrototypesFTPMessage
-            {
-                Company = identity.CompanyId,
-                Path = "Prototipo",
-                Prototype = 84,
-                Version = 1,
-                PrototypeName = "TestIteratori.1"
-            });
-
-            await _queueService.SendObjectAsync(QueueName.InstancesFTP, new InstancesFTPMessage
-            {
-                Company = identity.CompanyId,
-                ID = 322,
-                Path = "Istanza",
-                Code = "CancelableSignature.1.2018.1"
-            });
-            //Fine TEST
-
             var PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(identity.CompanyId, request.ID, request.Version);
             if (
                 !identity.HasPermission("Prototypes", "View", PrototypeVersion.Prototypes.Department)
@@ -373,10 +354,11 @@ namespace CheckListManager.Prototypes.Logic.Services
                 Steps = h.WorkFlowApplications?.WorkFlowApplicationSteps.OrderBy(s => s.Step).ThenBy(s => s.ID).Select(s => new HistoryStep
                 {
                     ID = s.ID,
-                    Step = s.Step,
+                    Step = s.Step + 1,
                     Date = s.Date,
                     User = s.User,
                     Level = $"({string.Join(", ", s.WorkFlowApplicationStepTags.Select(t => t.Tag))})",
+                    Reason = s.Reason,
                     Comment = s.Comment,
                     Approved = s.Approved,
                     AppointedUser = s.User == null ? string.Join(", ", _commonRepository.GetAppointedUsers(identity.CompanyId, "Prototypes", "Approve", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType, s.WorkFlowApplicationStepTags.Select(t => t.Tag)).Select(u => u.Code)) : null

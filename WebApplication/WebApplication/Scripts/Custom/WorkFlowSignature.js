@@ -91,6 +91,8 @@
 					url: matematici.urls.workflows.signature,
 					type: "POST",
 					callback: function () {
+						console.log(options);
+						$("#Reason", element).val(options.reason);
 						$("#Username", element).val(matematici.tokenManager.getUserCode());
 
 						var firstSignature = true;

@@ -43,6 +43,18 @@ namespace CheckListManager.WorkFlows.Logic.Detail
                     Message = "The work flow myst have at least one step"
                 });
             }
+            else
+                for (var Index = 0; Index < record.Steps.Count(); ++Index)
+                    if (string.IsNullOrWhiteSpace(record.Steps[Index].Reason))
+                        response.Fields[$"Reason{Index}"] = new Field
+                        {
+                            ValidationMessages = new List<ValidationMessage> {
+                                new ValidationMessage {
+                                    Level = ValidationMessage.LevelError,
+                                    Message = "Mandatory field"
+                                }
+                            }
+                        };
 
             response.Valid = Valid && response.Fields.Count() == 0;
             return response;
@@ -58,7 +70,11 @@ namespace CheckListManager.WorkFlows.Logic.Detail
                     .WorkFlowSteps
                     .GroupBy(s => s.Step)
                     .OrderBy(g => g.Key)
-                    .Select(g => new Step { Signatures = g.Select(s => s.WorkFlowStepTags.Select(t => t.Tag).ToArray()).ToArray() })
+                    .Select(g => new Step
+                    {
+                        Reason = g.Select(s => s.Reason).FirstOrDefault(),
+                        Signatures = g.Select(s => s.WorkFlowStepTags.Select(t => t.Tag).ToArray()).ToArray()
+                    })
                     .ToArray();
             }
             catch (Exception Exception)
@@ -78,9 +94,10 @@ namespace CheckListManager.WorkFlows.Logic.Detail
         {
             var List = new List<WorkFlowSteps>();
             for (int Index = 0; Index < record.Steps.Count(); ++Index)
-                foreach(var Signature in record.Steps[Index].Signatures)
+                foreach (var Signature in record.Steps[Index].Signatures)
                     List.Add(new WorkFlowSteps
                     {
+                        Reason = record.Steps[Index].Reason,
                         CreatedOn = DateTimeOffset.UtcNow,
                         CreatedBy = identity.Code,
                         Step = Index,

@@ -190,7 +190,7 @@
 			//updates the form
 			clearAllErrors();
 
-			fields.each(function () {
+			$(fieldsSelector).each(function () { //i use jquery on fieldsSelector again to include the progammatically added fields
 				var
 					field = $(this),
 					fieldData = data.fields[field.attr("name")];

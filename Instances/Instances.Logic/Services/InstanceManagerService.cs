@@ -1025,10 +1025,11 @@ namespace CheckListManager.Instances.Logic.Services
                 Steps = h.WorkFlowApplications?.WorkFlowApplicationSteps.OrderBy(s => s.Step).ThenBy(s => s.ID).Select(s => new HistoryStep
                 {
                     ID = s.ID,
-                    Step = s.Step,
+                    Step = s.Step + 1,
                     Date = s.Date,
                     User = s.User,
                     Level = $"({string.Join(", ", s.WorkFlowApplicationStepTags.Select(t => t.Tag))})",
+                    Reason = s.Reason,
                     Comment = s.Comment,
                     Approved = s.Approved,
                     AppointedUser = s.User == null ? string.Join(", ", _commonRepository.GetAppointedUsers(identity.CompanyId, "Instances", "Confirm", Instance.Prototypes.Department, Instance.Prototypes.PrototypeType, s.WorkFlowApplicationStepTags.Select(t => t.Tag)).Select(u => u.Code)) : null

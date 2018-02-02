@@ -66,6 +66,7 @@
             var
                 steps = $("div.Step", formElement).each(function (index) {
                     $(this).children("h3").text("Step " + (index + 1));
+                    $("label.Reason input", this).attr("name", "reason" + index);
                     $(this).children("hr").toggle(index > 0);
                 }),
                 count = steps.size();
@@ -78,9 +79,8 @@
 
         fixStep = function (step) {
             var
-                labels = $("label", step).each(function (index) {
+                labels = $("label.Users", step).each(function (index) {
                     $(this)
-                        .toggleClass("Clearing", index == 0)
                         .children("span")
                         .text(index == 0 ? "A user with on of the level" : "and a user with one of the level");
                 }),
@@ -98,7 +98,7 @@
 
                 label =
                     $("<label />")
-                        .addClass("Width150")
+                        .addClass("Width150 Users")
                         .insertBefore(button)
                         .append($("<span />"))
                         .append($("<i />").addClass("Icon fi flaticon-group"))
@@ -136,6 +136,11 @@
                 step.remove();
                 fixSteps();
             }));
+
+            var reason;
+            step.append($("<label />").addClass("Clearing Reason").append($("<span />").text("Segnature reason")).append($("<i />").addClass("Icon fi flaticon-edit-o")).append(reason = $("<input />").attr({ type: "text" })));
+            if (detailPage.isReadOnly()) matematici.controls.setEditable(reason, false);
+
             var addUserButton = $("<a />").attr("href", "#").addClass("Button Icon").append($("<i />").addClass("fi flaticon-plus")).on("click", function () {
                 addUser(addUserButton);
             });
@@ -144,6 +149,7 @@
             fixSteps();
             return {
                 step: step,
+                reason: reason,
                 addUserButton: addUserButton
             };
         },
@@ -155,7 +161,7 @@
         parametersPrepareHandler = function () {
             var data = { steps: [] };
             $("div.Step", stepTab).each(function () {
-                var step = { signatures: [] };
+                var step = { reason: $("input", this).val(), signatures: [] };
                 $("select", this).each(function () {
                     step.signatures.push($(this).val());
                 })
@@ -195,6 +201,7 @@
         buildSteps = function (steps) {
             for (var stepIndex in steps) {
                 var step = addStep(true);
+                step.reason.val(steps[stepIndex].reason);
                 for (var userIndex in steps[stepIndex].signatures)
                     addUser(step.addUserButton).select.val(steps[stepIndex].signatures[userIndex]);
             }
