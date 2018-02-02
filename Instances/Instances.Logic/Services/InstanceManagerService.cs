@@ -947,7 +947,7 @@ namespace CheckListManager.Instances.Logic.Services
 
         private async Task ValidateUniqueExpressionsAsync(InstanceCacheObject cacheObject)
         {
-            var instances = await _instancesRepository.GetInstancesWithExpressions(cacheObject.InstanceState);
+            var instances = await _instancesRepository.GetInstancesWithExpressions(cacheObject.Prototype, cacheObject.Version);
 
             foreach (var instance in instances)
             {
@@ -964,8 +964,8 @@ namespace CheckListManager.Instances.Logic.Services
                 if (list.Count > 0)
                 {
                     var expression = list.First();
-                    throw new Exception(
-                        $"The value {expression.Value.Value.SerializedValue} for the expression {expression.Key} has been found in the in progress instance {instance.Year} - {instance.Number}");
+                    throw new InstanceException(
+                        $"The value {expression.Value.Value.SerializedValue} for the expression {expression.Key} has been found in the in progress instance {(instance.Year > 0 ? instance.Year.ToString() : instance.PrototypeVersions.VersionState == VersionState.Draft ? "TEST" : "SE")} - {instance.Number}");
                 }
             }
         }

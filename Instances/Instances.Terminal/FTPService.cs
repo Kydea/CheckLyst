@@ -56,7 +56,7 @@ namespace CheckListManager.Instances.Terminal
                 await _queueService.DeleteMessageAsync(QueueName.InstancesFTP, message.MessageHandle, cancellationToken);
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
-                    Action = TrailAction.PrototypeExportCompleted,
+                    Action = TrailAction.InstanceExportCompleted,
                     Company = message.Message.Company,
                     CheckList = message.Message.Code,
                     Information = JsonConvert.SerializeObject(new
@@ -69,7 +69,7 @@ namespace CheckListManager.Instances.Terminal
 			{
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
-                    Action = TrailAction.PrototypeExportFailed,
+                    Action = TrailAction.InstanceExportFailed,
                     Company = message.Message.Company,
                     CheckList = message.Message.Code,
                     Information = JsonConvert.SerializeObject(new

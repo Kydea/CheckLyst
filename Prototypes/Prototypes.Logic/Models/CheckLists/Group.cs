@@ -10,7 +10,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 		public virtual Dictionary<string, ICheckListElement> Elements { get; set; }
 
         public List<ICheckListItem> Items { get; set; } = new List<ICheckListItem>();
-        public List<ICheckListIteration> Iterations { get; }
+        public List<ICheckListIteration> Iterations { get; } = new List<ICheckListIteration>();
 		public bool Iterator { get; set; }
 
         public bool ShowAsTable { get; set; }

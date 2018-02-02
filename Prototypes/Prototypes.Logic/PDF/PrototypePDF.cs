@@ -29,7 +29,7 @@ namespace CheckListManager.Prototypes.Logic.PDF
             base.OnGenerate();
 
             var Prototype = ((Prototype)Model);
-            var Signatures = PrototypeVersion.PrototypeVersionsHistory.SingleOrDefault(h => h.State == VersionState.Approved)?.WorkFlowApplications?.WorkFlowApplicationSteps.OrderBy(h => h.Step).OrderBy(h => h.ID);
+            var Signatures = PrototypeVersion.PrototypeVersionsHistory.LastOrDefault(h => h.State == VersionState.Approved)?.WorkFlowApplications?.WorkFlowApplicationSteps.OrderBy(h => h.Step).OrderBy(h => h.ID);
 
             if (Signatures != null && Signatures.Count() > 0)
             {

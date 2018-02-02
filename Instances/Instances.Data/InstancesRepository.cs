@@ -108,13 +108,9 @@ namespace CheckListManager.Instances.Data
 			);
 		}
 
-		public Task<List<Common.Data.Instances>> GetInstancesWithExpressions(string state = null)
+		public Task<List<Common.Data.Instances>> GetInstancesWithExpressions(long Prototype, int Version)
 		{
-			//Can't do state == null || i.InstanceState == null, not supported by Npgsql
-			var query = Entities.Instances.Include(i => i.InstanceExpressionValues);
-			if (state != null)
-				query = query.Where(i => i.InstanceState == state);
-			return query.ToListAsync();
+			return Entities.Instances.Include(i => i.InstanceExpressionValues).Where(i => i.Prototype == Prototype && i.Version == Version && i.InstanceState == InstanceState.Progress).ToListAsync();
 		}
 
         public void DeleteInstance(Common.Data.Instances instance)
