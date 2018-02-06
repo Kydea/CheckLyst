@@ -65,8 +65,8 @@
             }
         },
 
-        copyValue = function () {
-            new instances.Event(instances.Events.copyValue, model.id).done(function (result) {
+		valueCopy = function () {
+			new instances.Event(instances.Events.valueCopy, model.id).done(function (result) {
                 instances.instance.update(result);
                 next();
             }).trigger();
@@ -76,7 +76,7 @@
             //f8
             if (e.which == 119) {
                 e.preventDefault();
-				copyValue();
+				valueCopy();
 			}
 
 			if (e.key == ',') {
@@ -125,7 +125,6 @@
 			}
             if (model.valueTypeName == "DateTime" || model.valueTypeName == "Time") {
             	element.addClass(model.valueTypeName);
-            	select.append($("<option />").attr("value", "").text(""));
             	for (var i = 0; i < 24; i++) {
             		select.append($("<option />").attr("value", (i < 10 ? "0" : "") + i).text((i < 10 ? "0" : "") + i));
             	}
@@ -135,7 +134,6 @@
             	}).on("keydown", function (e) {
             	    keyDown(e);
             	});
-                select2.append($("<option />").attr("value", "").text(""));
             	for (var i = 0; i < 60; i++) {
             		select2.append($("<option />").attr("value", (i < 10 ? "0" : "") + i).text((i < 10 ? "0" : "") + i));
             	}
@@ -167,9 +165,11 @@
             }
 
             copyButton =
-                $("<i />").addClass("Copy fa fa-copy").attr({ href: "#", title: "F8" })
-                    .appendTo(element)
-					.on("mousedown", function () { copyValue(); });
+				$("<i />").addClass("Copy fi flaticon-clone-o").attr({ href: "#", title: "F8" })
+					.on("mousedown", function () { valueCopy(); });
+
+			if (!item.isTableContent() || !item.getParent().isSubRow())
+				copyButton.appendTo(item.isTableContent() ? element : label)
 
 			if (select) new matematici.AutoComplete(select).initialize();
 			if (select2) new matematici.AutoComplete(select2).initialize();

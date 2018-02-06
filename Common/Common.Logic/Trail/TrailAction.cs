@@ -18,6 +18,8 @@
         public const string PrototypeSignatureIssued = "Prototype signature issued";
 
         public const string InstanceCreated = "Instance created";
+        public const string InstanceOpened = "Instance opened";
+        public const string InstanceQuitted = "Instance quitted";
         public const string InstanceStateChanged = "Instance state changed";
         public const string InstanceSignatureIssued = "Instance signature issued";
         public const string InstanceSignatureCanceled = "Instance signature canceled";

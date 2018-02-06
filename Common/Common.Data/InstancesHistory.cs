@@ -20,6 +20,7 @@ namespace CheckListManager.Common.Data
         public string State { get; set; }
         public string User { get; set; }
         public Nullable<long> WorkFlowApplication { get; set; }
+        public string Note { get; set; }
     
         public virtual Instances Instances { get; set; }
         public virtual WorkFlowApplications WorkFlowApplications { get; set; }

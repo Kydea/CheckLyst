@@ -48,6 +48,7 @@
 
 		setMainUser = function (result) {
 			localStorage.company = result.company;
+			//localStorage.companyName is set directly by the login form
 			localStorage.accessToken = result.access_token;
 			localStorage.accessTokenExpiration = new Date().getTime() + parseInt(result.expires_in) * 1000;
 			localStorage.timeZone = result.timeZone;

@@ -81,8 +81,10 @@ matematici.AutoComplete = function (selector) {
 			noRow = $("<i />").addClass("fi flaticon-minus");
 			element.parent("label")
 				.on("click", function (e) {
-					$("input:visible", this).eq(0).focus();
-					e.stopPropagation();
+					if (e.target.tagName != "INPUT") {
+						$("input:visible", this).eq(0).focus();
+						e.stopPropagation();
+					}
 				});
 			label
 				.on("focus", function () {

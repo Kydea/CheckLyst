@@ -20,7 +20,7 @@
             </label>
             
             <label class="FullWidth Controls2">
-                <span>Username / Password</span>
+                <span>User code / Password</span>
                 <i class="Icon fi flaticon-user-o"></i>
                 <input type="text" name="username" placeholder="username" />
                 <i class="Icon fi flaticon-key-o"></i>
@@ -73,6 +73,7 @@
                     type: "post",
                     suppressErrors: true
                 }).done(function (result) {
+                    localStorage.companyName = companyList.data("autoComplete").getControl().val();
                     matematici.tokenManager.login(result);
                     matematici.clock.refresh();
                     //matematici.clock.resume();

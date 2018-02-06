@@ -82,7 +82,7 @@
                 labels = $("label.Users", step).each(function (index) {
                     $(this)
                         .children("span")
-                        .text(index == 0 ? "A user with on of the level" : "and a user with one of the level");
+                        .text(index == 0 ? "A user with one of the levels" : "and a user with one of the levels");
                 }),
                 count = labels.size();
 
@@ -138,7 +138,7 @@
             }));
 
             var reason;
-            step.append($("<label />").addClass("Clearing Reason").append($("<span />").text("Segnature reason")).append($("<i />").addClass("Icon fi flaticon-edit-o")).append(reason = $("<input />").attr({ type: "text" })));
+            step.append($("<label />").addClass("Clearing Reason").append($("<span />").text("Signature reason")).append($("<i />").addClass("Icon fi flaticon-edit-o")).append(reason = $("<input />").attr({ type: "text" })));
             if (detailPage.isReadOnly()) matematici.controls.setEditable(reason, false);
 
             var addUserButton = $("<a />").attr("href", "#").addClass("Button Icon").append($("<i />").addClass("fi flaticon-plus")).on("click", function () {

@@ -56,6 +56,7 @@
           <Property Name="State" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="User" Type="varchar" MaxLength="60" Nullable="false" />
           <Property Name="WorkFlowApplication" Type="int8" />
+          <Property Name="Note" Type="text" />
         </EntityType>
         <EntityType Name="InstanceStates">
           <Key>
@@ -2618,6 +2619,7 @@
           <Property Name="WorkFlowApplication" Type="Int64" />
           <NavigationProperty Name="Instances" Relationship="RelationalDatabaseModel.InstancesHistory_Instance_fkey" FromRole="InstancesHistory" ToRole="Instances" />
           <NavigationProperty Name="WorkFlowApplications" Relationship="RelationalDatabaseModel.InstancesHistory_WorkFlowApplication_fkey" FromRole="InstancesHistory" ToRole="WorkFlowApplications" />
+          <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="PrototypeVersionsHistory">
           <Key>
@@ -3108,6 +3110,7 @@
           <EntitySetMapping Name="InstancesHistory">
             <EntityTypeMapping TypeName="RelationalDatabaseModel.InstancesHistory">
               <MappingFragment StoreEntitySet="InstancesHistory">
+                <ScalarProperty Name="Note" ColumnName="Note" />
                 <ScalarProperty Name="WorkFlowApplication" ColumnName="WorkFlowApplication" />
                 <ScalarProperty Name="User" ColumnName="User" />
                 <ScalarProperty Name="State" ColumnName="State" />

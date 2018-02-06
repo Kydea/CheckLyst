@@ -3,7 +3,7 @@
     refresh: "Refresh",
     pageChange: "PageChange",
     valueChange: "ValueChange",
-    copyValue: "CopyValue",
+	valueCopy: "ValueCopy",
     up: "Up",
     down: "Down",
     add: "Add",

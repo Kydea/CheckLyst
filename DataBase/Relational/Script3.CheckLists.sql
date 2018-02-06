@@ -231,6 +231,8 @@ create table "CheckLists"."InstancesHistory"
 	"State" varchar (100) not null,
 	"User" varchar (60) not null,
 
+	"Note" text,
+
 	"WorkFlowApplication" bigint references "WorkFlows"."WorkFlowApplications"
 );
 

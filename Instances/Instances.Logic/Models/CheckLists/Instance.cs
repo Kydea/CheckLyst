@@ -42,7 +42,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         {
             get
             {
-                return DescriptionFormula?.Value;
+                return FileNameFormula?.Value;
             }
         }
 
@@ -92,23 +92,36 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             InCreation = false;
         }
 
-        public void Update()
-        {
+        public void Update(InstanceCacheObject cacheObject = null)
+        { 
+            Dictionary<string, object> InstanceRuntimeValues = cacheObject == null ? null : new Dictionary<string, object> {
+                { "InstanceCompany", cacheObject.CompanyId },
+                { "InstanceDepartment", cacheObject.Department },
+                { "InstanceDepartmentName", cacheObject.DepartmentName },
+                { "InstancePrototypeType", cacheObject.PrototypeType },
+                { "InstancePrototypeTypeName", cacheObject.PrototypeTypeName },
+                { "InstancePrototype", cacheObject.Prototype },
+                { "InstancePrototypeName", cacheObject.PrototypeName },
+                { "InstanceVersion", cacheObject.Version },
+                { "InstanceYear", cacheObject.Year > 0 ? cacheObject.Year.ToString() : cacheObject.VersionState == VersionState.Draft ? "Test" : "SE" },
+                { "InstanceNumber", cacheObject.Number },
+            };
+
             foreach (var expression in Expressions.Values)
             {
                 expression.Parse(this);
                 expression.Evaluate(this);
             }
 
-            DescriptionFormula?.Update(Expressions, null);
-            FileNameFormula?.Update(Expressions, null);
+            DescriptionFormula?.Update(Expressions, InstanceRuntimeValues);
+            FileNameFormula?.Update(Expressions, InstanceRuntimeValues);
 
             Header.Update();
             foreach (var page in Pages)
                 page.Update();
 
             foreach (var expression in Expressions.Values)
-                expression.Evaluate(this); //secondo evaluation takes into account expression with item properties which depends by expression valus, cycles are still a problem
+                expression.Evaluate(this); //this second evaluation takes into account expression with item properties which depends by expression valus, cycles are still a problem
         }
 
         public void UpdateReadOnly(string userCode, string state)
@@ -117,6 +130,5 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             foreach (var page in Pages)
                 page.UpdateReadOnly(userCode, ReadOnly || state != InstanceState.Progress);
         }
-
     }
 }

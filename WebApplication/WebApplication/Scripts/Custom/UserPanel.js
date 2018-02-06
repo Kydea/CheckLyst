@@ -137,7 +137,9 @@
 	this.update = function () {
 		$(".CurrentUser", element)
 			.attr("title", localStorage.userCode)
-			.children(".UserName").text(matematici.tokenManager.getUserName())
+			.children(".UserName").text(matematici.tokenManager.getUserName());
+
+		$(".CompanyName", matematici.elements.footer).text(localStorage.companyName);
 	};
 
 	this.profile = function () {

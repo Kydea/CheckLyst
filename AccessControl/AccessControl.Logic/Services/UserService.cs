@@ -163,12 +163,12 @@ namespace CheckListManager.AccessControl.Logic.Services
                 //&& user.Companies.LoginFailedTimeout > 0
                 //&& (DateTimeOffset.UtcNow - user.LastLoginFailedOn.Value).TotalMinutes < user.Companies.LoginFailedTimeout
                 )
-                    throw new AuthenticationException(104, $"User {code} temporary disabled");
+                    throw new AuthenticationException(104, $"User {code} disabled");
 
                 if (!_hashService.ValidateHash(pin, user.PIN))
                     throw new AuthenticationException(105, "User pin not valid");
 
-                await _userRepository.UserLoginCompleteAsync(user);
+                await _userRepository.SaveChangesAsync();
             }
             catch (AuthenticationException)
             {
@@ -312,7 +312,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                     ValidationMessages = new List<ValidationMessage> {
                         new ValidationMessage {
                             Level = ValidationMessage.LevelError,
-                            Message = "Password must be longer then 8 character"
+                            Message = "Password must be long at least 8 characters"
                         }
                     }
                 };
@@ -327,6 +327,9 @@ namespace CheckListManager.AccessControl.Logic.Services
                         }
                     }
                 };
+
+            if (string.IsNullOrEmpty(record.Password) || !System.Text.RegularExpressions.Regex.IsMatch(record.Password, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,30}$"))
+                throw new AuthenticationException(106, "The password must be long no more than 30 characters and must contain at least one lowercase character, one upper case lettcharacter and one digit");
 
             response.Valid = !response.Fields.Any();
             return response;

@@ -344,6 +344,7 @@
 					{ label: "State", name: "state" },
 					{ label: "Date", name: "date", type: "DateTimeOffset" },
 					{ label: "User", name: "user" },
+					{ label: "Note", name: "note"  },
 					{ label: "Approved", name: "approved", type: "Boolean", align: "center" },
 					{ label: "Proposed state", name: "proposedState" },
 					{ label: "Signature step", name: "step", align: "center" },

@@ -25,6 +25,8 @@ values
 	('Prototype signature issued'),
 
 	('Instance created'),
+	('Instance opened'),
+	('Instance quitted'),
     ('Instance state changed'),
     ('Instance signature issued'),
     ('Instance signature canceled'),

@@ -17,6 +17,8 @@ namespace CheckListManager.Instances.Logic.Messages
         public bool? Approved { get; set; }
         public string ProposedState { get; set; }
 
+        public string Note { get; set; }
+
         private string _State;
         public string State
         {

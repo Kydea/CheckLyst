@@ -86,7 +86,7 @@ namespace CheckListManager.Instances.Terminal
 		private async Task Send(InstancesFTPMessage message)
 		{
             var cacheObject = await _instanceManagerService.GetAsync(message.Company, message.ID);
-            cacheObject.Instance.Update();
+            cacheObject.Instance.Update(cacheObject);
 
             var Company = await _commonRepository.GetCompanyAsync(message.Company);
 

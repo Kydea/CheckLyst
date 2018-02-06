@@ -103,8 +103,9 @@ namespace CheckListManager.Instances.Logic.List
 
         public async Task<PagingResponse<List<ListRow>>> GetDataAsync(long company, PagingRequest<ListRequest> form)
         {
-            form.Data.TagCode = form.Data.TagCode ?? string.Empty;
             form.Data.State = form.Data.State ?? string.Empty;
+            form.Data.TagCode = form.Data.TagCode ?? string.Empty;
+            form.Data.TagValue = form.Data.TagValue ?? string.Empty;
             return await _instancesRepository.GetInstancesAsync(
                 company,
                 i => new ListRow
@@ -133,7 +134,7 @@ namespace CheckListManager.Instances.Logic.List
                     && (form.Data.Version == null || i.Version == form.Data.Version)
                     && (form.Data.Year == null || i.Year == form.Data.Year)
                     && (form.Data.Number == null || i.Year == form.Data.Number)
-                    && (form.Data.TagCode == string.Empty || i.InstanceTags.Any(it => it.Tag == form.Data.TagCode && it.Value.ToUpper().Contains(form.Data.TagValue)))
+                    && (form.Data.TagValue == string.Empty || i.InstanceTags.Any(it => (form.Data.TagCode == string.Empty || it.Tag == form.Data.TagCode) && it.Value.ToUpper().Contains(form.Data.TagValue)))
                     && (form.Data.State == string.Empty || i.InstanceState == form.Data.State),
                 i => i.ID,
                 form.CurrentPage,

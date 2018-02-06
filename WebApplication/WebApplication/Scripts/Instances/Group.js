@@ -14,7 +14,6 @@
         tableElement,
 
 		createTableHeader = function (rows, rowIndex, items) {
-			console.log(rows, rowIndex, items);
             var
                 rowsCount = 1,
                 columnsCount = 0,
@@ -59,7 +58,7 @@
 
         create = function () {
             tableContent = !parent.isPage() && (parent.isTable() || parent.isTableContent());
-            table = !tableContent && setupModel.showAsTable;
+			table = !tableContent && setupModel.showAsTable;
             subRow = !parent.isTable() && tableContent; 
             element = parent.isTable() ? $("<tr />") : subRow ? parent.getElement() : $("<div />");
 
@@ -128,7 +127,7 @@
         else if (parent.isTable()) 
             element.appendTo($("tbody", parent.getElement()));
         else if (!subRow) 
-			element.insertBefore($("> div.Information", parent.getElement()));
+			element.appendTo(parent.getElement());
     };
 
     this.setColor = function (value) {
@@ -152,7 +151,7 @@
 
         update(model);
 
-        /* instanzia i nuovi oggetti, aggiorna ricorsivamente Groups per le pagine, Items per i gruppi e Iterations per gli iteratori */
+        /* istanzia i nuovi oggetti, aggiorna ricorsivamente Groups per le pagine, Items per i gruppi e Iterations per gli iteratori */
         var children = model.groups ? model.groups : model.iterator ? model.iterations : model.items;
         for (index in children) {
             var
@@ -230,6 +229,10 @@
     this.isTableContent = function () {
         return tableContent;
     };
+
+	this.isSubRow = function () {
+		return subRow;
+	};
 
     this.getParent = function () {
         return parent;

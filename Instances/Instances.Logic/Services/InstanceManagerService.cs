@@ -65,6 +65,15 @@ namespace CheckListManager.Instances.Logic.Services
             if (!HasPermission(identity, "View", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
                 throw new InstanceException("Access denied");
 
+            await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+            {
+                Company = identity.CompanyId,
+                User = identity.Code,
+                Action = TrailAction.InstanceOpened,
+                Date = DateTimeOffset.UtcNow,
+                CheckList = cacheObject.InstanceCode
+            });
+
             return cacheObject;
         }
 
@@ -167,7 +176,7 @@ namespace CheckListManager.Instances.Logic.Services
                     throw new InstanceException("Access denied");
 
                 cacheObject.InstanceState = InstanceState.Progress;
-                cacheObject.Instance.Update();
+                cacheObject.Instance.Update(cacheObject);
 
                 if (!cacheObject.Instance.Header.Valid)
                     throw new InstanceException("Header not valid");
@@ -266,7 +275,7 @@ namespace CheckListManager.Instances.Logic.Services
                 if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
                     throw new InstanceException("Access denied");
 
-                cacheObject.Instance.Update();
+                cacheObject.Instance.Update(cacheObject);
                 var UnvalidItems = cacheObject.Instance.Items.Values.Where(i => !i.Valid && !i.IteratorModelItem);
                 if (UnvalidItems.Any())
                     throw new InstanceException($"The following items are not valid: {string.Join(", ", UnvalidItems.Select(i => i.Id.ToString()))}");
@@ -325,7 +334,7 @@ namespace CheckListManager.Instances.Logic.Services
                         Action = TrailAction.InstanceStateChanged,
                         Date = DateTimeOffset.UtcNow,
                         CheckList = cacheObject.InstanceCode,
-                        Information = InstanceState.Deleted
+                        Information = note
                     });
 
             }
@@ -337,6 +346,36 @@ namespace CheckListManager.Instances.Logic.Services
             {
                 Logger.Error(e, "Unable to delete the instance");
                 throw new InstanceException("Unable to delete the instance", e);
+            }
+        }
+
+        public async Task QuitAsync(string code, IDefaultIdentity identity)
+        {
+            try
+            {
+                var cacheObject = await _instanceCache.GetAsync(code, false);
+                if (cacheObject == null)
+                    throw new InstanceException("Instance not found");
+                if (HasPermission(identity, "View", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
+                    throw new InstanceException("Access denied");
+
+                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                {
+                    Company = identity.CompanyId,
+                    User = identity.Code,
+                    Action = TrailAction.InstanceQuitted,
+                    Date = DateTimeOffset.UtcNow,
+                    CheckList = cacheObject.InstanceCode
+                });
+            }
+            catch (InstanceException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, "Unable to quit the instance");
+                throw new InstanceException("Unable to quit the instance", e);
             }
         }
 
@@ -415,7 +454,7 @@ namespace CheckListManager.Instances.Logic.Services
                     throw new InstanceException("Instance not found");
                 }
 
-                cacheObject.Instance.Update();
+                cacheObject.Instance.Update(cacheObject);
                 row.Data = JsonConvert.SerializeObject(cacheObject.Instance, _converter);
                 row.Description = cacheObject.Instance.Description;
                 row.FileName = cacheObject.Instance.FTPExport ? cacheObject.Instance.FileName ?? cacheObject.Instance.Description ?? $"Instance{cacheObject.InstanceCode}" : null;
@@ -498,7 +537,8 @@ namespace CheckListManager.Instances.Logic.Services
                     {
                         Date = row.ModifiedOn.Value,
                         User = row.ModifiedBy,
-                        State = row.InstanceState
+                        State = row.InstanceState,
+                        Note = Note
                     });
                 }
                 else
@@ -544,6 +584,9 @@ namespace CheckListManager.Instances.Logic.Services
                         break;
                     case "ValueChange":
                         await HandleValueChangeAsync(cacheObject, identity.Code, request.ItemId, request.Value);
+                        break;
+                    case "ValueCopy":
+                        await HandleValueCopyAsync(cacheObject, identity.Code, request.ItemId);
                         break;
                     case "Add":
                         await HandleAddAsync(cacheObject, identity.Code, request.ItemId);
@@ -624,6 +667,42 @@ namespace CheckListManager.Instances.Logic.Services
 
             if (field.ReadOnly)
                 return;
+
+            if ((value ?? string.Empty) != (field.Value ?? string.Empty) && field.Validate(value))
+            {
+                field.History.Add(new FieldRecord
+                {
+                    DateTime = DateTimeOffset.UtcNow,
+                    User = userCode,
+                    Value = value
+                });
+                field.Value = value;
+
+                await Update(cacheObject, userCode);
+            }
+        }
+
+        private async Task HandleValueCopyAsync(InstanceCacheObject cacheObject, string userCode, int? itemId)
+        {
+            if (!itemId.HasValue)
+                throw new InstanceException("Item id not sent");
+
+            var field = cacheObject.Instance.Items.ContainsKey(itemId.Value) ? cacheObject.Instance.Items[itemId.Value] as Field : null;
+            if (field == null)
+                throw new InstanceException($"Field {itemId} not found");
+
+            if (field.ReadOnly)
+                return;
+
+            string value = null;
+
+            if (field.IterationItem && field.Iteration.Index > 1)
+            {
+                var PreviuosIteration = field.Iteration.Group.Iterations[field.Iteration.Index - 2];
+                var ItemIndex = field.Iteration.Items.Contains(field) ? field.Iteration.Items.IndexOf(field) : -1;
+                var PreviuosField = ItemIndex < 0 ? null : (Field)PreviuosIteration.Items[field.Iteration.Items.IndexOf(field)];
+                value = PreviuosField?.Value ?? String.Empty;
+            }
 
             if ((value ?? string.Empty) != (field.Value ?? string.Empty) && field.Validate(value))
             {
@@ -883,7 +962,7 @@ namespace CheckListManager.Instances.Logic.Services
                 !cacheObject.InstanceState.In(InstanceState.Draft, InstanceState.Progress)
                 || !HasPermission(identity, functionGroup, cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType);
 
-            cacheObject.Instance.Update();
+            cacheObject.Instance.Update(cacheObject);
             cacheObject.Instance.UpdateReadOnly(LockUser ?? identity.Code, cacheObject.InstanceState);
 
             return cacheObject.Instance;
@@ -1022,6 +1101,7 @@ namespace CheckListManager.Instances.Logic.Services
                 State = h.WorkFlowApplications == null ? h.State : null,
                 ProposedState = h.WorkFlowApplications == null || h.WorkFlowApplications.Approved.HasValue ? null : InstanceState.Confirmed,
                 Approved = h.WorkFlowApplications?.Approved,
+                Note = h.Note,
                 Steps = h.WorkFlowApplications?.WorkFlowApplicationSteps.OrderBy(s => s.Step).ThenBy(s => s.ID).Select(s => new HistoryStep
                 {
                     ID = s.ID,
