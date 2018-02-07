@@ -328,7 +328,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                     }
                 };
 
-            if (string.IsNullOrEmpty(record.Password) || !System.Text.RegularExpressions.Regex.IsMatch(record.Password, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,30}$"))
+            if (!string.IsNullOrEmpty(record.Password) && !System.Text.RegularExpressions.Regex.IsMatch(record.Password, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,30}$"))
                 throw new AuthenticationException(106, "The password must be long no more than 30 characters and must contain at least one lowercase character, one upper case lettcharacter and one digit");
 
             response.Valid = !response.Fields.Any();
