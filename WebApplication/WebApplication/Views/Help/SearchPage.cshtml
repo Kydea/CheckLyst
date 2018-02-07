@@ -3,7 +3,7 @@
 <h3>@Model.Title</h3>
 
 <p>
-    Shows a list of @Model.RecordsName matching the filters provided. Fill the needed filter fields and click on <strong>SEARCH</strong> to see the list of matcing records.
+    Shows a list of @Model.RecordsName matching the filters provided. Fill the needed filter fields and click on <strong>SEARCH</strong> to see the list of matching records.
 </p>
 
 @if (!Model.ReadOnly)
@@ -23,7 +23,7 @@
 <h4>Actions</h4>
 
 <table>
-    <tr><td>SEARCH</td><td>Applies the filters and show the result.</td></tr>
+    <tr><td>Search</td><td>Applies the filters and show the result.</td></tr>
     @if (Model.Buttons != null)
     {
         foreach (var Filter in Model.Buttons)
@@ -73,9 +73,9 @@
         @if (Model.IncludeLogColumns)
         {
             <tr><td>Created by</td><td>The user who created the record.</td></tr>
-            <tr><td>Created by</td><td>The date and time of creation of the record.</td></tr>
+            <tr><td>Created on</td><td>The date and time of creation of the record.</td></tr>
             <tr><td>Modified by</td><td>The user who modified the record last time.</td></tr>
-            <tr><td>Created by</td><td>The date and time of the last modification.</td></tr>
+            <tr><td>Modified on</td><td>The date and time of the last modification.</td></tr>
         }
     </table>
 }
