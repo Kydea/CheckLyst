@@ -123,7 +123,10 @@ namespace CheckListManager.Instances.Logic.Services
                 if (!source.State.In(VersionState.Draft, VersionState.InSimulation, VersionState.Active))
                     throw new InstanceException($"Invalid state of the prototype version {prototype}.{version}: {source.State}");
 
-                if (!HasPermission(identity, "Create", source.State, source.Department, source.PrototypeType))
+                if (
+                    !HasPermission(identity, "Create", source.State, source.Department, source.PrototypeType)
+                    && !HasPermission(identity, "Edit", source.State, source.Department, source.PrototypeType)
+                )
                     throw new InstanceException("Access denied");
 
                 var cacheObject = new InstanceCacheObject
@@ -172,7 +175,10 @@ namespace CheckListManager.Instances.Logic.Services
                     throw new InstanceException("Instance already saved");
                 if (cacheObject.InstanceState != InstanceState.Draft)
                     throw new InstanceException("Instance state not valid");
-                if (!HasPermission(identity, "Create", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
+                if (
+                    !HasPermission(identity, "Create", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType)
+                    && !HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType)
+                )
                     throw new InstanceException("Access denied");
 
                 cacheObject.InstanceState = InstanceState.Progress;
