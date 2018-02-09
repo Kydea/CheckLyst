@@ -112,7 +112,7 @@
 							validityStartType.eq(options.model.validFrom ? 1 : 0).prop("checked", true);
 							if (options.model.validFrom)
 								validityStart.data("datePicker").setDate(options.model.validFrom);
-							if (options.model.state != prototypes.Prototype.states.simulation) {
+							if (options.model.state != prototypes.Prototype.states.approval) {
 								matematici.controls.setEditable(validityStart, false);
 								validityStartType.prop("disabled", true);
 							}
@@ -120,10 +120,10 @@
 							validityEndType = $("input.ValidityEndType", element);
 							new matematici.DatePicker(validityEnd);
 
-							validityEndType.eq(options.model.state != prototypes.Prototype.states.simulation ? 1 : options.model.validUntil ? 2 : 0).prop("checked", true);
+							validityEndType.eq(options.model.state != prototypes.Prototype.states.approval ? 1 : options.model.validUntil ? 2 : 0).prop("checked", true);
 							if (options.model.validUntil)
 								validityEnd.data("datePicker").setDate(options.model.validUntil);
-							if (options.model.state == prototypes.Prototype.states.simulation)
+							if (options.model.state == prototypes.Prototype.states.approval)
 								validityEndType.eq(1).parent().hide();
 
 							if (firstSignature)

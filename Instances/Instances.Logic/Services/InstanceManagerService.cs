@@ -286,6 +286,8 @@ namespace CheckListManager.Instances.Logic.Services
                 if (UnvalidItems.Any())
                     throw new InstanceException($"The following items are not valid: {string.Join(", ", UnvalidItems.Select(i => i.Id.ToString()))}");
 
+                cacheObject.ModifiedBy = identity.Code;
+                cacheObject.ModifiedOn = DateTimeOffset.UtcNow;
                 cacheObject = await SaveAsync(cacheObject, identity, true, true, false);
                 cacheObject.Instance.UpdateReadOnly(identity.Code, InstanceState.Completed);
 
@@ -551,7 +553,7 @@ namespace CheckListManager.Instances.Logic.Services
                 cacheObject = await _instanceCache.GetAsync(request.Code);
 
                 var LockUser = request.Type == "Signature" ? request.Username : null; //A signer may sign also if the page is locked by the main user (the lock is for concurrency purpose, not for security)
-                GetCheckList(identity, "Edit", cacheObject, LockUser);
+                GetCheckList(identity, cacheObject, LockUser);
 
                 if (cacheObject.Instance.ReadOnly)
                     throw new InstanceException("This instance cannot be modified");
@@ -967,11 +969,11 @@ namespace CheckListManager.Instances.Logic.Services
                 );
         }
 
-        public Instance GetCheckList(IDefaultIdentity identity, string functionGroup, InstanceCacheObject cacheObject, string LockUser = null)
+        public Instance GetCheckList(IDefaultIdentity identity, InstanceCacheObject cacheObject, string LockUser = null)
         {
             cacheObject.Instance.ReadOnly =
                 !cacheObject.InstanceState.In(InstanceState.Draft, InstanceState.Progress)
-                || !HasPermission(identity, functionGroup, cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType);
+                || !HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType);
 
             cacheObject.Instance.Update(cacheObject);
             cacheObject.Instance.UpdateReadOnly(LockUser ?? identity.Code, cacheObject.InstanceState);

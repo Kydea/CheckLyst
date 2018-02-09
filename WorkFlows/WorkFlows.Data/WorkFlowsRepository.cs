@@ -97,6 +97,15 @@ namespace CheckListManager.WorkFlows.Data
 
         public async Task<WorkFlowApplications> CreateWorkFlowApplication(IDefaultIdentity defaultIdentity, long workFlow, DateTimeOffset? date, long? prototype, int? version, long? instance, string action)
         {
+            var PrototypeVersion = instance == null ? Entities.PrototypeVersions.Single(pv => pv.Prototype == prototype.Value && pv.Version == version.Value) : null;
+            var Instance = instance == null ? null : Entities.Instances.Single(i => i.ID == instance.Value);
+
+            if (
+                PrototypeVersion != null && !defaultIdentity.HasPermission("Instances", "Edit", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType)
+                || Instance != null && !defaultIdentity.HasPermission("Prototypes", "Edit", Instance.Prototypes.Department, Instance.Prototypes.PrototypeType)
+            )
+                throw new Exception("Access denied");
+
             var WorkFlow = await Entities.WorkFlows.SingleOrDefaultAsync(x => x.Company == defaultIdentity.CompanyId && x.ID == workFlow);
             if (WorkFlow == null) throw new ArgumentException($"Work flow {defaultIdentity.CompanyId}.{workFlow} not found", nameof(workFlow));
             var WorkFlowApplication = new WorkFlowApplications

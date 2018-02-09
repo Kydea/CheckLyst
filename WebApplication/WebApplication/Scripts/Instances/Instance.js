@@ -388,11 +388,21 @@
 	};
 
 	instance.close = function (callback) {
-		if (state == instances.Instance.states.draft || state == instances.Instance.states.progress) {
+		if (
+			(state == instances.Instance.states.draft || state == instances.Instance.states.progress)
+			&& (
+				matematici.tokenManager.checkRole("Instances#Edit#" + department + "##")
+				|| matematici.tokenManager.checkRole("Instances#Edit#" + department + "#" + prototypeType + "#")
+			)
+		) {
 			new instances.Event(instances.Events.quit, null, null, null, true).done(function () {
+				callback();
+			}).error(function () {
 				callback();
 			}).trigger();
 		}
+		else
+			callback();
 	};
 
 	instance.destroy = function () {

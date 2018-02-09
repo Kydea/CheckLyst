@@ -60,7 +60,7 @@
 		model = newModel;
 		var user = matematici.tokenManager.getUserCode();
         for (var index in model.pages)
-			labels.eq(index).toggle(!!model.pages[index].lock && model.pages[index].lock.user != user);
+			labels.eq(index).toggle(!model.readOnly && !!model.pages[index].lock && model.pages[index].lock.user != user);
     };
 
     setup();

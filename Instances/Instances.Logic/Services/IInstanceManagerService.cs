@@ -20,7 +20,7 @@ namespace CheckListManager.Instances.Logic.Services
         Task<InstanceCacheObject> CompleteAsync(string code, IDefaultIdentity identity);
         Task DeleteAsync(string code, IDefaultIdentity identity, string note);
         Task<InstanceCacheObject> HandleEventAsync(IDefaultIdentity identity, InstanceEventRequest request);
-		Instance GetCheckList(IDefaultIdentity identity, string functionGroup, InstanceCacheObject instance, string LockUser = null);
+		Instance GetCheckList(IDefaultIdentity identity, InstanceCacheObject instance, string LockUser = null);
 		Task ClearPendingInstances(CancellationToken cancellationToken = default(CancellationToken));
         Task<List<HistoryRow>> History(DefaultIdentity identity, long id);
     }

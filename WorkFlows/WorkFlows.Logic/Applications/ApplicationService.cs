@@ -44,6 +44,12 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 request.Instance
             );
 
+            if (
+                Application.Instances != null && !identity.HasPermission("Instances", "View", Application.Instances.Prototypes.Department, Application.Instances.Prototypes.PrototypeType)
+                || Application.PrototypeVersions != null && !identity.HasPermission("Prototypes", "View", Application.PrototypeVersions.Prototypes.Department, Application.PrototypeVersions.Prototypes.PrototypeType)
+            )
+                throw new Exception("Access denied");
+
             return new GetStepsResponse
             {
                 Action = Application.WorkFlowAction,

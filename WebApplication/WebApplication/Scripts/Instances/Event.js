@@ -19,7 +19,9 @@
 };
 
 instances.Event = function (type, itemId, data, accessToken, suppressError) {
-    var done;
+	var
+		done,
+		error;
 
     this.trigger = function () {
         data = data || {};
@@ -27,23 +29,30 @@ instances.Event = function (type, itemId, data, accessToken, suppressError) {
 		data.itemId = itemId;
 		data.code = instances.instance.getCode();
 
-        $.ajax({
+		$.ajax({
 			url: matematici.urls.instances.api + "/Event",
-            type: "post",
+			type: "post",
 			data: data,
 			accessToken: accessToken,
 			suppressErrors: !!suppressError
-        }).done(function (result) {
-            if (done) {
-                done(result);
-                done = null;
-            } else
-                instances.instance.update(result);
-        });
+		}).done(function (result) {
+			if (done) {
+				done(result);
+				done = null;
+			} else
+				instances.instance.update(result);
+		}).error(function () {
+			if (error) error();
+		});
     };
 
     this.done = function (value) {
         done = value;
         return this;
     };
+
+	this.error = function (value) {
+		error = value;
+		return this;
+	};
 };
