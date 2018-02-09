@@ -387,8 +387,16 @@
 		load();
 	};
 
+	instance.close = function (callback) {
+		if (state == instances.Instance.states.draft || state == instances.Instance.states.progress) {
+			new instances.Event(instances.Events.quit, null, null, null, true).done(function () {
+				callback();
+			}).trigger();
+		}
+	};
+
 	instance.destroy = function () {
-	}
+	};
 
 	instance.initialize();
 };

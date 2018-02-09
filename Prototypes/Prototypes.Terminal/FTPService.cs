@@ -102,7 +102,7 @@ namespace CheckListManager.Prototypes.Terminal
             var Settings = JsonConvert.DeserializeObject<FTPConnectionSettings>(await _settingService.FtpConnectionAsync(message.Company));
             var ftpClient = new FTPClient();
 
-            await ftpClient.ActionAsync(MemoryStream.ToArray(), message.Path, Settings, FTPClient.Methods.Upload);
+            await ftpClient.ActionAsync(MemoryStream.ToArray(), $"{(string.IsNullOrEmpty(Settings.PrototypesFolder) ? string.Empty : Settings.PrototypesFolder + "/")}{message.Path}", Settings, FTPClient.Methods.Upload);
         }
     }
 }

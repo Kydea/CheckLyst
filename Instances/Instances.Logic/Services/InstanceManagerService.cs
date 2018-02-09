@@ -349,36 +349,6 @@ namespace CheckListManager.Instances.Logic.Services
             }
         }
 
-        public async Task QuitAsync(string code, IDefaultIdentity identity)
-        {
-            try
-            {
-                var cacheObject = await _instanceCache.GetAsync(code, false);
-                if (cacheObject == null)
-                    throw new InstanceException("Instance not found");
-                if (HasPermission(identity, "View", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
-                    throw new InstanceException("Access denied");
-
-                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
-                {
-                    Company = identity.CompanyId,
-                    User = identity.Code,
-                    Action = TrailAction.InstanceQuitted,
-                    Date = DateTimeOffset.UtcNow,
-                    CheckList = cacheObject.InstanceCode
-                });
-            }
-            catch (InstanceException)
-            {
-                throw;
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e, "Unable to quit the instance");
-                throw new InstanceException("Unable to quit the instance", e);
-            }
-        }
-
         private async Task SuspendAsync(InstanceCacheObject cacheObject, IDefaultIdentity identity)
         {
             try
@@ -457,7 +427,10 @@ namespace CheckListManager.Instances.Logic.Services
                 cacheObject.Instance.Update(cacheObject);
                 row.Data = JsonConvert.SerializeObject(cacheObject.Instance, _converter);
                 row.Description = cacheObject.Instance.Description;
-                row.FileName = cacheObject.Instance.FTPExport ? cacheObject.Instance.FileName ?? cacheObject.Instance.Description ?? $"Instance{cacheObject.InstanceCode}" : null;
+                row.FileName = 
+                    !cacheObject.Instance.FTPExport ? null :
+                    !string.IsNullOrWhiteSpace(cacheObject.Instance.FileName) ? cacheObject.Instance.FileName :
+                    $"Instance{cacheObject.InstanceCode}";
                 row.ModifiedOn = cacheObject.ModifiedOn;
                 row.ModifiedBy = cacheObject.ModifiedBy;
 
@@ -529,8 +502,8 @@ namespace CheckListManager.Instances.Logic.Services
 
                 if (cacheObject.VersionState == VersionState.Active)
                 {
-                    row.ModifiedOn = cacheObject.ModifiedOn;
-                    row.ModifiedBy = cacheObject.ModifiedBy;
+                    row.ModifiedOn = DateTimeOffset.UtcNow;
+                    row.ModifiedBy = userCode;
                     row.InstanceState = InstanceState.Deleted;
 
                     row.InstancesHistory.Add(new InstancesHistory
@@ -618,6 +591,9 @@ namespace CheckListManager.Instances.Logic.Services
                         await HandleSkipCountDown(cacheObject, request.Username, request.ItemId);
                         break;
                     case "Refresh":
+                        break;
+                    case "Quit":
+                        await HandleQuitAsync(cacheObject, identity);
                         break;
                     //case "ExternalSourceRowChange":
                     default:
@@ -932,6 +908,35 @@ namespace CheckListManager.Instances.Logic.Services
             await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
         }
 
+        private async Task HandleQuitAsync(InstanceCacheObject cacheObject, IDefaultIdentity identity)
+        {
+            try
+            {
+                if (!HasPermission(identity, "View", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
+                    throw new InstanceException("Access denied");
+
+                UnlockPages(cacheObject.Instance, identity.Code);
+                await Update(cacheObject, identity.Code);
+
+                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                {
+                    Company = identity.CompanyId,
+                    User = identity.Code,
+                    Action = TrailAction.InstanceQuitted,
+                    Date = DateTimeOffset.UtcNow,
+                    CheckList = cacheObject.InstanceCode
+                });
+            }
+            catch (InstanceException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, "Unable to quit the instance");
+                throw new InstanceException("Unable to quit the instance", e);
+            }
+        }
 
         private async Task Update(InstanceCacheObject cacheObject, string userCode)
         {

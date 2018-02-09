@@ -38,7 +38,7 @@
         text-decoration: none !important; }
         div.TabContainer .TabLabels > a:hover:not(.Selected) {
           color: #ffba00; }
-          div.TabContainer .TabLabels > a:hover:not(.Selected) i.fi {
+          div.TabContainer .TabLabels > a:hover:not(.Selected) i.fi:not(.flaticon-lock-o) {
             color: white !important; }
   div.TabContainer .Tab {
     position: absolute;

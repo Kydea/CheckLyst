@@ -14,10 +14,11 @@
     externalSourceRowChange: "ExternalSourceRowChange",
     countDown: "CountDown",
     unlockPage: "UnlockPage",
-    skipCountDown: "SkipCountDown"
+	skipCountDown: "SkipCountDown",
+	quit: "Quit"
 };
 
-instances.Event = function (type, itemId, data, accessToken) {
+instances.Event = function (type, itemId, data, accessToken, suppressError) {
     var done;
 
     this.trigger = function () {
@@ -30,7 +31,8 @@ instances.Event = function (type, itemId, data, accessToken) {
 			url: matematici.urls.instances.api + "/Event",
             type: "post",
 			data: data,
-			accessToken: accessToken
+			accessToken: accessToken,
+			suppressErrors: !!suppressError
         }).done(function (result) {
             if (done) {
                 done(result);

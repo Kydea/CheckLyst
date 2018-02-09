@@ -68,15 +68,6 @@ namespace CheckListManager.AccessControl.Logic.Services
                 if (!user.Enabled)
                     throw new AuthenticationException(103, $"User {code} not enabled");
 
-                if (
-                    user.Companies.MaximumNumberOfPasswordFailure > 0
-                    && user.NumberOfAttempts >= user.Companies.MaximumNumberOfPasswordFailure
-                    && user.LastLoginFailedOn != null
-                //&& user.Companies.LoginFailedTimeout > 0
-                //&& (DateTimeOffset.UtcNow - user.LastLoginFailedOn.Value).TotalMinutes < user.Companies.LoginFailedTimeout //The users are currently permanently disabled
-                )
-                    throw new AuthenticationException(104, $"User {code} disabled");
-
                 if (!_hashService.ValidateHash(password, user.Password)) //TODO Valutare l'ordine rispetto all'autenticazione LDAP
                     throw new AuthenticationException(105, "Password not valid");
 
@@ -96,7 +87,7 @@ namespace CheckListManager.AccessControl.Logic.Services
             catch (AuthenticationException authenticationException)
             {
                 await Task.WhenAll(
-                    _userRepository.UserLoginFailedAsync(user),
+                    _userRepository.UserPasswordFailedAsync(user),
                     _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                     {
                         Company = companyId.Value,
@@ -156,15 +147,6 @@ namespace CheckListManager.AccessControl.Logic.Services
                 if (string.IsNullOrEmpty(pin) || !System.Text.RegularExpressions.Regex.IsMatch(pin, @"^[0-9]+$"))
                     throw new AuthenticationException(106, $"PIN not valid");
 
-                if (
-                    user.Companies.MaximumNumberOfPINFailure > 0
-                    && user.NumberOfAttempts >= user.Companies.MaximumNumberOfPINFailure
-                    && user.LastLoginFailedOn != null
-                //&& user.Companies.LoginFailedTimeout > 0
-                //&& (DateTimeOffset.UtcNow - user.LastLoginFailedOn.Value).TotalMinutes < user.Companies.LoginFailedTimeout
-                )
-                    throw new AuthenticationException(104, $"User {code} disabled");
-
                 if (!_hashService.ValidateHash(pin, user.PIN))
                     throw new AuthenticationException(105, "User pin not valid");
 
@@ -172,7 +154,7 @@ namespace CheckListManager.AccessControl.Logic.Services
             }
             catch (AuthenticationException)
             {
-                await _userRepository.UserLoginFailedAsync(user);
+                await _userRepository.UserPINFailedAsync(user);
                 throw;
             }
         }
@@ -316,6 +298,17 @@ namespace CheckListManager.AccessControl.Logic.Services
                         }
                     }
                 };
+            else if (!string.IsNullOrEmpty(record.Password) && !System.Text.RegularExpressions.Regex.IsMatch(record.Password, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,30}$"))
+                response.Fields["Password"] = new Field
+                {
+                    ValidationMessages = new List<ValidationMessage> {
+                        new ValidationMessage {
+                            Level = ValidationMessage.LevelError,
+                            Message = "The password must be long no more than 30 characters and must contain at least one lowercase character, one upper case lettcharacter and one digit"
+                        }
+                    }
+                };
+
 
             if (!(string.IsNullOrEmpty(record.Password) && string.IsNullOrEmpty(record.Password2)) && record.Password != record.Password2)
                 response.Fields["Password2"] = new Field
@@ -327,9 +320,6 @@ namespace CheckListManager.AccessControl.Logic.Services
                         }
                     }
                 };
-
-            if (!string.IsNullOrEmpty(record.Password) && !System.Text.RegularExpressions.Regex.IsMatch(record.Password, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,30}$"))
-                throw new AuthenticationException(106, "The password must be long no more than 30 characters and must contain at least one lowercase character, one upper case lettcharacter and one digit");
 
             response.Valid = !response.Fields.Any();
             return response;

@@ -14,11 +14,11 @@ create table "Security"."Users"
 
     "Password" bytea,
 	"PasswordChangeDate" timestamptz,
+    "NumberOfPasswordAttempts" int not null default 0,
 
 	"PIN" bytea,
 	"PINChangeDate" timestamptz,
-
-    "NumberOfAttempts" int not null default 0,
+    "NumberOfPINAttempts" int not null default 0,
 
 	"LastLoginOn" timestamptz,
 	"LastLoginFailedOn" timestamptz,
@@ -119,7 +119,8 @@ begin
 	update "Security"."Users"
 	set 
 		"PIN" = _pin,
-		"PINChangeDate" = current_timestamp
+		"PINChangeDate" = current_timestamp,
+		"NumberOfPINAttempts" = 0
 	where 
         "Company" = _company 
         and "Code" = _user;

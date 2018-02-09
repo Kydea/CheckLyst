@@ -356,7 +356,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                     ID = s.ID,
                     Step = s.Step + 1,
                     Date = s.Date,
-                    User = $"{s.User} - {_commonRepository.GetUser(identity.CompanyId, h.User)?.Description ?? "(unknown user)"}",
+                    User = s.User == null ? string.Empty : $"{s.User} - {_commonRepository.GetUser(identity.CompanyId, s.User)?.Description ?? "(unknown user)"}",
                     Level = $"({string.Join(", ", s.WorkFlowApplicationStepTags.Select(t => t.Tag))})",
                     Reason = s.Reason,
                     Comment = s.Comment,

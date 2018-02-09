@@ -53,7 +53,7 @@ div.TabContainer {
                 &:not(.Selected) {
                     color: $Color-Yellow-Regular;
 
-                    i.fi {
+                    i.fi:not(.flaticon-lock-o) {
                         color: white !important;
                     }
                 }

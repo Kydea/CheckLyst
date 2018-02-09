@@ -144,22 +144,6 @@ namespace CheckListManager.Instances.Api.Controllers
         }
 
         [HttpPost]
-        [Route("Quit")]
-        [Authorize(Roles = "Instances#View, Prototypes#Edit")]
-        public async Task<IHttpActionResult> Quit(InstanceRequest request)
-        {
-            try
-            {
-                await _instanceManagerService.QuitAsync(request.Code, Identity);
-                return Ok();
-            }
-            catch (Exception e)
-            {
-                return Error(e);
-            }
-        }
-
-        [HttpPost]
         [Route("Get")]
         [Authorize(Roles = "Instances#View, Prototypes#Edit")]
         public async Task<IHttpActionResult> Get(InstanceRequest request)
@@ -257,7 +241,7 @@ namespace CheckListManager.Instances.Api.Controllers
             await _redisCache.RemoveAsync($"Token:{Token}", "Download");
             var cacheObject = await _instanceManagerService.GetAsync(Data.CompanyId.Value, Data.UserCode, Data.Code);
             cacheObject.Instance.Update(cacheObject);
-            return Content(HttpStatusCode.OK, new InstancePDF(Data.CompanyId.Value, Data.CompanyName, Data.TimeZone, _configurationService.PublicRepositoryUrl, cacheObject), new PDFFormatter("Instance"));
+            return Content(HttpStatusCode.OK, new InstancePDF(Data.CompanyId.Value, Data.CompanyName, Data.TimeZone, _configurationService.PublicRepositoryUrl, cacheObject), new PDFFormatter(string.IsNullOrEmpty(cacheObject.Instance.FileName) ? "Instance" : cacheObject.Instance.FileName));
         }
     }
 }

@@ -134,7 +134,7 @@ namespace CheckListManager.Instances.Logic.List
                     && (form.Data.Version == null || i.Version == form.Data.Version)
                     && (form.Data.Year == null || i.Year == form.Data.Year)
                     && (form.Data.Number == null || i.Year == form.Data.Number)
-                    && (form.Data.TagValue == string.Empty || i.InstanceTags.Any(it => (form.Data.TagCode == string.Empty || it.Tag == form.Data.TagCode) && it.Value.ToUpper().Contains(form.Data.TagValue)))
+                    && (form.Data.TagValue == string.Empty || i.InstanceTags.Any(it => (form.Data.TagCode == string.Empty || it.Tag == form.Data.TagCode) && it.Value.ToUpper().Contains(form.Data.TagValue.ToUpper())))
                     && (form.Data.State == string.Empty || i.InstanceState == form.Data.State),
                 i => i.ID,
                 form.CurrentPage,

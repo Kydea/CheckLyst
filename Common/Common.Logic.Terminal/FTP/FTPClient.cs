@@ -17,7 +17,7 @@ namespace CheckListManager.Common.Logic.Terminal.FTP
         {
             String Status = "(unset)";
 
-            var Uri = $"ftp://{Settings.Host}:{Settings.Port}/{(string.IsNullOrEmpty(Settings.Folder) ? string.Empty : Settings.Folder + "/")}{System.Uri.EscapeDataString(FileName)}.pdf";
+            var Uri = $"ftp://{Settings.Host}:{Settings.Port}/{System.Uri.EscapeDataString(FileName)}.pdf";
             FtpWebRequest FtpWebRequest = (FtpWebRequest)WebRequest.Create(Uri);
             FtpWebRequest.Credentials = new NetworkCredential(Settings.UserName, Settings.Password);
             FtpWebRequest.Method = Method == Methods.Deletion ? WebRequestMethods.Ftp.DeleteFile : WebRequestMethods.Ftp.UploadFile;

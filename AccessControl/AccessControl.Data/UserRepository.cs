@@ -9,23 +9,23 @@ using CheckListManager.Common.Data.Exceptions;
 
 namespace CheckListManager.AccessControl.Data
 {
-	public class UserRepository : Repository, IUserRepository
-	{
-		// ReSharper disable once MemberCanBeProtected.Global
-		public UserRepository(RelationalDatabaseEntities entities) : base(entities)
-		{			
-		}
+    public class UserRepository : Repository, IUserRepository
+    {
+        // ReSharper disable once MemberCanBeProtected.Global
+        public UserRepository(RelationalDatabaseEntities entities) : base(entities)
+        {
+        }
 
-		public Task<Users> GetAsync(long companyId, string code)
-			=> Entities.Users.Include(u => u.Companies).FirstOrDefaultAsync(u => u.Company == companyId && u.Code.ToUpper() == code.ToUpper());
+        public Task<Users> GetAsync(long companyId, string code)
+            => Entities.Users.Include(u => u.Companies).FirstOrDefaultAsync(u => u.Company == companyId && u.Code.ToUpper() == code.ToUpper());
 
-		public async Task<Users> AddAsync(DefaultIdentity identity, Users user)
-		{
+        public async Task<Users> AddAsync(DefaultIdentity identity, Users user)
+        {
             user.Company = identity.CompanyId;
             user.CreatedOn = DateTimeOffset.UtcNow;
             user.CreatedBy = identity.Code;
             Entities.Users.Add(user);
-			await SaveChangesAsync();
+            await SaveChangesAsync();
             return user;
         }
 
@@ -37,7 +37,7 @@ namespace CheckListManager.AccessControl.Data
             existingUser.Email = user.Email;
             if (user.Password != null) existingUser.Password = user.Password;
             existingUser.Enabled = user.Enabled;
-            if (user.Enabled) existingUser.NumberOfAttempts = 0;
+            if (user.Enabled) existingUser.NumberOfPasswordAttempts = 0;
             existingUser.AuthenticationCode = user.AuthenticationCode;
             existingUser.ModifiedOn = DateTimeOffset.UtcNow;
             existingUser.ModifiedBy = identity.Code;
@@ -67,12 +67,12 @@ namespace CheckListManager.AccessControl.Data
 
         private IQueryable<Users> Get(long companyId, string code, string description)
         {
-	        return Entities.Users
-		        .Where(
-			        u => u.Company == companyId &&
-						(code == string.Empty || u.Code != null && u.Code.ToUpper().Contains(code.ToUpper())) &&
-						(description == string.Empty || u.Description != null && u.Description.ToUpper().Contains(description.ToUpper()))
-		        );
+            return Entities.Users
+                .Where(
+                    u => u.Company == companyId &&
+                        (code == string.Empty || u.Code != null && u.Code.ToUpper().Contains(code.ToUpper())) &&
+                        (description == string.Empty || u.Description != null && u.Description.ToUpper().Contains(description.ToUpper()))
+                );
         }
 
         public async Task<List<UserFunctions>> GetFunctionsAsync(long companyId, string code, string description)
@@ -86,36 +86,59 @@ namespace CheckListManager.AccessControl.Data
         }
 
         public Task<List<Users>> GetUsersAsync(long companyId, string code, string description, int skip, int take)
-			=> Get(companyId, code, description)
-				.OrderBy(u => u.Code)
-				.Skip(skip)
-				.Take(take)
-				.ToListAsync();
+            => Get(companyId, code, description)
+                .OrderBy(u => u.Code)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
 
-		public Task<int> CountUsersAsync(long companyId, string code, string description)
-			=> Get(companyId, code, description)
-				.CountAsync();
+        public Task<int> CountUsersAsync(long companyId, string code, string description)
+            => Get(companyId, code, description)
+                .CountAsync();
 
-		public async Task UserLoginCompleteAsync(Users user)
-		{
-			user.NumberOfAttempts = 0;
-			user.LastLoginOn = DateTimeOffset.UtcNow;
+        public async Task UserLoginCompleteAsync(Users user)
+        {
+            user.NumberOfPasswordAttempts = 0;
+            user.LastLoginOn = DateTimeOffset.UtcNow;
 
-			await SaveChangesAsync();
-		}
+            await SaveChangesAsync();
+        }
 
-		public async Task UserLoginFailedAsync(Users user)
-		{
-			if (user != null)
-			{
-				++user.NumberOfAttempts;
-				user.LastLoginFailedOn = DateTimeOffset.UtcNow;
+        public async Task UserPasswordFailedAsync(Users user)
+        {
+            if (user != null)
+            {
+                ++user.NumberOfPasswordAttempts;
+                user.LastLoginFailedOn = DateTimeOffset.UtcNow;
 
-				await SaveChangesAsync();
-			}
-		}
+                if (
+                    user.Companies.MaximumNumberOfPasswordFailure > 0
+                    && user.NumberOfPasswordAttempts >= user.Companies.MaximumNumberOfPasswordFailure
+                )
+                    user.Enabled = false;
 
-		public Task<List<Users>> GetUsersToDisableAsync()
+                await SaveChangesAsync();
+            }
+        }
+
+        public async Task UserPINFailedAsync(Users user)
+        {
+            if (user != null)
+            {
+                ++user.NumberOfPasswordAttempts;
+                user.LastLoginFailedOn = DateTimeOffset.UtcNow;
+
+                if (
+                    user.Companies.MaximumNumberOfPINFailure > 0
+                    && user.NumberOfPINAttempts >= user.Companies.MaximumNumberOfPINFailure
+                )
+                    user.PIN = null;
+
+                await SaveChangesAsync();
+            }
+        }
+
+        public Task<List<Users>> GetUsersToDisableAsync()
 		{
 			return Entities.Users
 				.Include(u => u.Companies)

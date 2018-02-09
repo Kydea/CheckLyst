@@ -96,7 +96,7 @@ namespace CheckListManager.Instances.Terminal
             var Settings = JsonConvert.DeserializeObject<FTPConnectionSettings>(await _settingService.FtpConnectionAsync(message.Company));
             var ftpClient = new FTPClient();
 
-            await ftpClient.ActionAsync(MemoryStream.ToArray(), message.Path, Settings, FTPClient.Methods.Upload);
+            await ftpClient.ActionAsync(MemoryStream.ToArray(), $"{(string.IsNullOrEmpty(Settings.InstancesFolder) ? string.Empty : Settings.InstancesFolder + "/")}{message.Path}", Settings, FTPClient.Methods.Upload);
 		}
 	}
 }

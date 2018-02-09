@@ -302,13 +302,14 @@
           <Property Name="PasswordChangeDate" Type="timestamptz" Precision="7" />
           <Property Name="PIN" Type="bytea" />
           <Property Name="PINChangeDate" Type="timestamptz" Precision="7" />
-          <Property Name="NumberOfAttempts" Type="int4" Nullable="false" />
           <Property Name="LastLoginOn" Type="timestamptz" Precision="7" />
           <Property Name="CreatedBy" Type="varchar" MaxLength="60" />
           <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
           <Property Name="ModifiedBy" Type="varchar" MaxLength="60" />
           <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
           <Property Name="LastLoginFailedOn" Type="timestamptz" Precision="7" />
+          <Property Name="NumberOfPasswordAttempts" Type="int4" Nullable="false" />
+          <Property Name="NumberOfPINAttempts" Type="int4" Nullable="false" />
         </EntityType>
         <EntityType Name="UserSessions">
           <Key>
@@ -1367,7 +1368,6 @@
           <Property Name="PasswordChangeDate" Type="DateTimeOffset" Precision="7" />
           <Property Name="PIN" Type="Binary" MaxLength="2147483647" FixedLength="false" />
           <Property Name="PINChangeDate" Type="DateTimeOffset" Precision="7" />
-          <Property Name="NumberOfAttempts" Type="Int32" Nullable="false" />
           <Property Name="LastLoginOn" Type="DateTimeOffset" Precision="7" />
           <Property Name="CreatedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
           <Property Name="CreatedOn" Type="DateTimeOffset" Precision="7" Nullable="false" />
@@ -1380,6 +1380,8 @@
           <NavigationProperty Name="WorkFlowApplicationSteps" Relationship="RelationalDatabaseModel.WorkFlowApplicationSteps_User" FromRole="Users" ToRole="WorkFlowApplicationSteps" />
           <Property Name="LastLoginFailedOn" Type="DateTimeOffset" Precision="7" />
           <NavigationProperty Name="UserFunctions" Relationship="RelationalDatabaseModel.UserFunctions_User" FromRole="Users" ToRole="UserFunctions" />
+          <Property Name="NumberOfPasswordAttempts" Type="Int32" Nullable="false" />
+          <Property Name="NumberOfPINAttempts" Type="Int32" Nullable="false" />
         </EntityType>
         <Association Name="Departments_Company_fkey">
           <End Role="Companies" Type="Self.Companies" Multiplicity="0..1">
@@ -2734,6 +2736,8 @@
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="RelationalDatabaseModel.Users">
               <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="NumberOfPINAttempts" ColumnName="NumberOfPINAttempts" />
+                <ScalarProperty Name="NumberOfPasswordAttempts" ColumnName="NumberOfPasswordAttempts" />
                 <ScalarProperty Name="LastLoginFailedOn" ColumnName="LastLoginFailedOn" />
                 <ScalarProperty Name="Company" ColumnName="Company" />
                 <ScalarProperty Name="Code" ColumnName="Code" />
@@ -2745,7 +2749,6 @@
                 <ScalarProperty Name="PasswordChangeDate" ColumnName="PasswordChangeDate" />
                 <ScalarProperty Name="PIN" ColumnName="PIN" />
                 <ScalarProperty Name="PINChangeDate" ColumnName="PINChangeDate" />
-                <ScalarProperty Name="NumberOfAttempts" ColumnName="NumberOfAttempts" />
                 <ScalarProperty Name="LastLoginOn" ColumnName="LastLoginOn" />
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
