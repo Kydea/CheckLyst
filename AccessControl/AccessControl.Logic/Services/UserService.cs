@@ -150,6 +150,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                 if (!_hashService.ValidateHash(pin, user.PIN))
                     throw new AuthenticationException(105, "User pin not valid");
 
+                user.NumberOfPINAttempts = 0;
                 await _userRepository.SaveChangesAsync();
             }
             catch (AuthenticationException)

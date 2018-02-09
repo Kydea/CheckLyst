@@ -68,7 +68,9 @@
 				.data("nullable", true)
 				.on("change", function () {
 					model.department = department.val();
+					model.departmentName = department.next().val();
 					model.prototypeType = prototypeType.val();
+					model.prototypeTypeName = prototypeType.next().val();
 					if (!options.readOnly)
 						matematici.canClose = false;
 				})
