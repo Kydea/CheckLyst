@@ -144,8 +144,8 @@ this.ScenarioSetup(scenarioInfo);
 #line 26
 this.ScenarioSetup(scenarioInfo);
 #line 27
- testRunner.Given("The system contains the user \'TestUser01\' with password \'Test Password\' that is n" +
-                    "ot enabled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("The system contains the user \'TestUser01\' for the company \'1\' with password \'Test" +
+                    " Password\' that is not enabled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 28
  testRunner.And("I want to login to companyId \'1\' as \'TestUser01\' with password \'Test Password\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 29

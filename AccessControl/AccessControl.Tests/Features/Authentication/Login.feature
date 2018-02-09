@@ -24,7 +24,7 @@ Scenario: Login with a not existing user
 
 @WithTransaction
 Scenario: Login with a not enabled user
-	Given The system contains the user 'TestUser01' with password 'Test Password' that is not enabled
+	Given The system contains the user 'TestUser01' for the company '1' with password 'Test Password' that is not enabled
 	And I want to login to companyId '1' as 'TestUser01' with password 'Test Password'
 	When I send the login request
 	Then the result should be an exception with error '103' and message 'User TestUser01 not enabled'

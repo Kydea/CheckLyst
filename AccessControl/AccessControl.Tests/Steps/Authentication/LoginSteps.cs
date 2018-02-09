@@ -30,15 +30,15 @@ namespace CheckListManager.AccessControl.Tests.Steps.Authentication
 			_companyRepository = companyRepository;
 		}
 
-		[Given(@"The system contains the user '(.*)' with password '(.*)' that is not enabled")]
-		public async Task GivenTheSystemContainsTheUserWithPasswordThatIsNotEnabled(string username, string password)
+		[Given(@"The system contains the user '(.*)' for the company '(.*)' with password '(.*)' that is not enabled")]
+		public async Task GivenTheSystemContainsTheUserWithPasswordThatIsNotEnabled(string username, long company, string password)
 		{
 			var user = new Users
 			{
 				Code = username,
 				Description = username,
 				Password = _hashService.HashStringToBytes(password),
-				Company = (await _companyRepository.GetFirstCompanyAsync()).ID,
+				Company = company,
 				CreatedOn = DateTimeOffset.UtcNow,
 				Enabled = false
 			};
