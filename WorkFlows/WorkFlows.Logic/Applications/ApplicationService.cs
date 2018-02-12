@@ -45,8 +45,12 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             );
 
             if (
-                Application.Instances != null && !identity.HasPermission("Instances", "View", Application.Instances.Prototypes.Department, Application.Instances.Prototypes.PrototypeType)
-                || Application.PrototypeVersions != null && !identity.HasPermission("Prototypes", "View", Application.PrototypeVersions.Prototypes.Department, Application.PrototypeVersions.Prototypes.PrototypeType)
+                Application.Instances != null 
+                    && !identity.HasPermission("Instances", "View", Application.Instances.Prototypes.Department, Application.Instances.Prototypes.PrototypeType)
+                    && !identity.HasPermission("Instances", "View", Application.Instances.Prototypes.Department) 
+                || Application.PrototypeVersions != null 
+                    && !identity.HasPermission("Prototypes", "View", Application.PrototypeVersions.Prototypes.Department, Application.PrototypeVersions.Prototypes.PrototypeType)
+                    && !identity.HasPermission("Prototypes", "View", Application.PrototypeVersions.Prototypes.Department)
             )
                 throw new Exception("Access denied");
 
