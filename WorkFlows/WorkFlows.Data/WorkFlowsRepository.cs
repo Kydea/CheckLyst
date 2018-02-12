@@ -101,8 +101,12 @@ namespace CheckListManager.WorkFlows.Data
             var Instance = instance == null ? null : Entities.Instances.Single(i => i.ID == instance.Value);
 
             if (
-                PrototypeVersion != null && !defaultIdentity.HasPermission("Instances", "Edit", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType)
-                || Instance != null && !defaultIdentity.HasPermission("Prototypes", "Edit", Instance.Prototypes.Department, Instance.Prototypes.PrototypeType)
+                PrototypeVersion != null 
+                    && !defaultIdentity.HasPermission("Instances", "Edit", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType)
+                    && !defaultIdentity.HasPermission("Instances", "Edit", PrototypeVersion.Prototypes.Department)
+                || Instance != null 
+                    && !defaultIdentity.HasPermission("Prototypes", "Edit", Instance.Prototypes.Department, Instance.Prototypes.PrototypeType)
+                    && !defaultIdentity.HasPermission("Prototypes", "Edit", Instance.Prototypes.Department)
             )
                 throw new Exception("Access denied");
 
