@@ -125,7 +125,7 @@ namespace CheckListManager.AccessControl.Data
         {
             if (user != null)
             {
-                ++user.NumberOfPasswordAttempts;
+                ++user.NumberOfPINAttempts;
 
                 if (
                     user.Companies.MaximumNumberOfPINFailure > 0
