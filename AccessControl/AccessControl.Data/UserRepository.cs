@@ -126,7 +126,6 @@ namespace CheckListManager.AccessControl.Data
             if (user != null)
             {
                 ++user.NumberOfPasswordAttempts;
-                user.LastLoginFailedOn = DateTimeOffset.UtcNow;
 
                 if (
                     user.Companies.MaximumNumberOfPINFailure > 0
