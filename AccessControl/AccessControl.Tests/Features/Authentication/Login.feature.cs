@@ -135,24 +135,24 @@ this.ScenarioSetup(scenarioInfo);
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Login with a not enabled user")]
+        [NUnit.Framework.DescriptionAttribute("Login with a disabled user")]
         [NUnit.Framework.CategoryAttribute("WithTransaction")]
-        public virtual void LoginWithANotEnabledUser()
+        public virtual void LoginWithADisabledUser()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Login with a not enabled user", new string[] {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Login with a disabled user", new string[] {
                         "WithTransaction"});
 #line 26
 this.ScenarioSetup(scenarioInfo);
 #line 27
  testRunner.Given("The system contains the user \'TestUser01\' for the company \'1\' with password \'Test" +
-                    " Password\' that is not enabled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+                    " Password\' that is disabled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 28
  testRunner.And("I want to login to companyId \'1\' as \'TestUser01\' with password \'Test Password\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 29
  testRunner.When("I send the login request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 30
- testRunner.Then("the result should be an exception with error \'103\' and message \'User TestUser01 n" +
-                    "ot enabled\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("the result should be an exception with error \'103\' and message \'User TestUser01 d" +
+                    "isabled\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }

@@ -30,8 +30,8 @@ namespace CheckListManager.AccessControl.Tests.Steps.Authentication
 			_companyRepository = companyRepository;
 		}
 
-		[Given(@"The system contains the user '(.*)' for the company '(.*)' with password '(.*)' that is not enabled")]
-		public async Task GivenTheSystemContainsTheUserWithPasswordThatIsNotEnabled(string username, long company, string password)
+		[Given(@"The system contains the user '(.*)' for the company '(.*)' with password '(.*)' that is disabled")]
+		public async Task GivenTheSystemContainsTheUserWithPasswordThatIsDisabled(string username, long company, string password)
 		{
 			var user = new Users
 			{
