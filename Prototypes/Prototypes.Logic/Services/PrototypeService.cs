@@ -315,6 +315,17 @@ namespace CheckListManager.Prototypes.Logic.Services
 
             await _prototypeRepository.SetStateAsync(identity, PrototypeVersion, request.State, request.StateProposed);
 
+            if (request.StateProposed && request.State == VersionState.Approved) //we track both the state change and the propoed state for the wirkflow
+                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                {
+                    Company = identity.CompanyId,
+                    User = identity.Code,
+                    Action = TrailAction.PrototypeStateChanged,
+                    Date = DateTimeOffset.UtcNow,
+                    CheckList = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}",
+                    Information = VersionState.InApproval
+                });
+
             await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
             {
                 Company = identity.CompanyId,

@@ -35,7 +35,7 @@ namespace CheckListManager.Prototypes.Logic.PDF
             {
                 Document.NewPage();
 
-                var Text = new Paragraph(new Phrase("Approvation workflow \n\n", PDFSection.FirstHeaderFont));
+                var Text = new Paragraph(new Phrase("Approval workflow \n\n", PDFSection.FirstHeaderFont));
                 Text.Alignment = iTextSharp.text.Element.ALIGN_CENTER;
                 Document.Add(Text);
 

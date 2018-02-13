@@ -92,7 +92,7 @@
 			));
 			properties.push(new prototypes.Property(
 				this, new prototypes.WorkFlowProperty(model, "instanceConfirmationWorkFlow", { readOnly: state != prototypes.Prototype.states.draft }),
-				"Instance confirmation workflow", "The confirmation work flow of the instance of this prototype. Leave empty to have the instances confirmed without a confirmation workflow."
+				"Instance confirmation workflow", "The confirmation workflow of the instance of this prototype. Leave empty to have the instances confirmed without a confirmation workflow."
 			));
 			properties.push(new prototypes.Property(
 				this, new prototypes.SimpleValueProperty(model, "state", { readOnly: true, defaultValue: prototypes.Prototype.states.draft }), "State",

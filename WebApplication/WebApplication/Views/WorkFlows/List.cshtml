@@ -1,5 +1,5 @@
 ﻿<div id="WorkFlowsListPage">
-    <h1>Work Flows List</h1>
+    <h1>Workflows List</h1>
 
     <div class="ActionBar"></div>
 
@@ -7,7 +7,7 @@
         <div class="Accordion"></div>
         <form id="Filters" action="@BaseUrl/WorkFlows/List">
             <label>
-                <span>Work flow description</span>
+                <span>Workflow description</span>
                 <i class="Icon fi flaticon-workflow" />
                 <input type="text" name="description" />
             </label>
@@ -16,8 +16,8 @@
         <table class="Grid">
             <thead>
                 <tr>
-                    <th>Work flow ID</th>
-                    <th>Work flow description</th>
+                    <th>Workflow ID</th>
+                    <th>Workflow description</th>
                     <th>Created by</th>
                     <th>Created on</th>
                     <th>Modified by</th>
@@ -49,7 +49,7 @@
             filterFormSelector: "form#Filters",
             resultGridSelector: "div#Content table.Grid",
             breadCrumbs: [
-                { content: "work flows" }
+                { content: "workflows" }
             ]
         });
 

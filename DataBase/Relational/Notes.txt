@@ -20,7 +20,7 @@ completamento audit trail
 PROTOTYPES
 gestire concorrenza per firme (credo serva per forza una transazione, o un lock su redis, chiedere aiuto a Giacomo)
 gestire concorrenza transazionalmente (where nell'aggironamento e conteggio risultati?)
-PrototypeSignatures.SendEmails(db, Version, Action) quando ci sono variazioni nella applicazione di work flow
+PrototypeSignatures.SendEmails(db, Version, Action) quando ci sono variazioni nella applicazione di workflow
 mettere lock in cambio di stato (?)
 Esperimento di Giulia Pizzichelli: nel signature panel per l'approvazione di un prototipo se clicco su reject mi evidenzia di rosso la box comment. Se poi per esempio decido di non rigettare (magari perché per sbaglio ho cliccato su reject) e clicco su confirm senza inserire la password mi evidenzia in rosso il campo password ma rimane evidenziata anche la box comment per il precedente reject. 
 

@@ -49,7 +49,7 @@ namespace CheckListManager.WorkFlows.Data
         public async Task<Common.Data.WorkFlows> GetWorkFlowAsync(IDefaultIdentity identity, long id)
         {
             var WorkFlow = await Entities.WorkFlows.SingleOrDefaultAsync(d => d.Company == identity.CompanyId && d.ID == id);
-            if (WorkFlow == null) throw new DatabaseException($"Work flow {id} not found");
+            if (WorkFlow == null) throw new DatabaseException($"Workflow {id} not found");
             return WorkFlow;
         }
 
@@ -101,17 +101,17 @@ namespace CheckListManager.WorkFlows.Data
             var Instance = instance == null ? null : Entities.Instances.Single(i => i.ID == instance.Value);
 
             if (
-                PrototypeVersion != null 
+                Instance != null 
                     && !defaultIdentity.HasPermission("Instances", "Edit", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType)
                     && !defaultIdentity.HasPermission("Instances", "Edit", PrototypeVersion.Prototypes.Department)
-                || Instance != null 
+                || PrototypeVersion != null 
                     && !defaultIdentity.HasPermission("Prototypes", "Edit", Instance.Prototypes.Department, Instance.Prototypes.PrototypeType)
                     && !defaultIdentity.HasPermission("Prototypes", "Edit", Instance.Prototypes.Department)
             )
                 throw new Exception("Access denied");
 
             var WorkFlow = await Entities.WorkFlows.SingleOrDefaultAsync(x => x.Company == defaultIdentity.CompanyId && x.ID == workFlow);
-            if (WorkFlow == null) throw new ArgumentException($"Work flow {defaultIdentity.CompanyId}.{workFlow} not found", nameof(workFlow));
+            if (WorkFlow == null) throw new ArgumentException($"Workflow {defaultIdentity.CompanyId}.{workFlow} not found", nameof(workFlow));
             var WorkFlowApplication = new WorkFlowApplications
             {
                 WorkFlow = workFlow,

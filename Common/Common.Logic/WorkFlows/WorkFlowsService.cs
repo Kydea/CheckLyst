@@ -32,7 +32,7 @@ namespace CheckListManager.Common.Logic.WorkFlows
             }
             catch (Exception e)
             {
-                throw new Exception("Work flow application creation failed", e);
+                throw new Exception("Workflow application creation failed", e);
             }
         }
     }

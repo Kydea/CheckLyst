@@ -127,7 +127,7 @@ namespace CheckListManager.Prototypes.Data
             {
                 var WorkFlow = prototypeVersion.Prototypes.PrototypeTypes.ApprovationWorkFlow;
                 if (WorkFlow == null)
-                    throw new InvalidOperationException($"Approvation workflow not found for prototype type {prototypeVersion.Prototypes.PrototypeTypes.Name} ({prototypeVersion.Prototypes.PrototypeType}).");
+                    throw new InvalidOperationException($"Approval workflow not found for prototype type {prototypeVersion.Prototypes.PrototypeTypes.Name} ({prototypeVersion.Prototypes.PrototypeType}).");
 
                 var response = await _workFlowsService.CreateWorkFlowApplicationAsync(defaultIdentity, new CreateRequest
                 {

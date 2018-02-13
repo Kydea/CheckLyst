@@ -11,7 +11,7 @@ namespace CheckListManager.Prototypes.Terminal
 	{
 		public PrototypesWindowsService(TerminalConfig config) : base(config)
         {
-            Add(new ComputedSchedulerStrategy(UpdatePrototypeVersionsState, new[] { 0 }, new[] { 0 }) { RunAtStartup = true });
+            Add(new ComputedSchedulerStrategy(UpdatePrototypeVersionsState, new[] { 0 }) { RunAtStartup = true });
             Add(new IntervalSchedulerStrategy(SendFTPFiles, 60) { RunAtStartup = true });
         }
 

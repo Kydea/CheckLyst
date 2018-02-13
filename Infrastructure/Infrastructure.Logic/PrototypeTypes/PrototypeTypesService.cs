@@ -111,6 +111,28 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
                     }
                 };
 
+            if (!record.ApprovationWorkFlow.HasValue)
+                response.Fields["ApprovationWorkFlow"] = new Field
+                {
+                    ValidationMessages = new List<ValidationMessage> {
+                        new ValidationMessage {
+                            Level = ValidationMessage.LevelError,
+                            Message = "Invalid approval workflow"
+                        }
+                    }
+                };
+
+            if (!record.ObsolescenceWorkFlow.HasValue)
+                response.Fields["ObsolescenceWorkFlow"] = new Field
+                {
+                    ValidationMessages = new List<ValidationMessage> {
+                        new ValidationMessage {
+                            Level = ValidationMessage.LevelError,
+                            Message = "Invalid obsolescence workflow"
+                        }
+                    }
+                };
+
             response.Valid = response.Fields.Count() == 0;
             return response;
         }

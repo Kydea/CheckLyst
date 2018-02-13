@@ -161,29 +161,5 @@
 		return true;
 	};
 
-	tokenManager.setMainUser = function (user) {
-		//used by app
-		localStorage.company = user.company;
-		localStorage.companyName = user.companyName;
-		localStorage.accessToken = user.access_token;
-		localStorage.accessTokenExpiration = new Date().getTime() + parseInt(user.expires_in) * 1000;
-		localStorage.timeZone = user.timeZone;
-		localStorage.roles = user.roles;
-		localStorage.userCode = user.code;
-		localStorage.userName = user.name;
-	};
-
-	tokenManager.testMainUser = function () {
-		//TODO: remove
-		alert("company: " + localStorage.company);
-		alert("companyName: " + localStorage.companyName);
-		alert("accessToken: " + localStorage.accessToken);
-		alert("accessTokenExpiration: " + localStorage.accessTokenExpiration);
-		alert("timeZone: " + localStorage.timeZone);
-		alert("roles: " + localStorage.roles);
-		alert("userCode: " + localStorage.userCode);
-		alert("userName: " + localStorage.userName);
-	};
-
 	setup();
 }

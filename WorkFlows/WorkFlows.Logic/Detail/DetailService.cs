@@ -40,7 +40,7 @@ namespace CheckListManager.WorkFlows.Logic.Detail
                 response.ValidationMessages.Add(new ValidationMessage
                 {
                     Level = ValidationMessage.LevelError,
-                    Message = "The work flow myst have at least one step"
+                    Message = "The workflow myst have at least one step"
                 });
             }
             else

@@ -66,7 +66,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                     throw new AuthenticationException(102, $"User {code} not found");
 
                 if (!user.Enabled)
-                    throw new AuthenticationException(103, $"User {code} not enabled");
+                    throw new AuthenticationException(103, $"User {code} disabled");
 
                 if (!_hashService.ValidateHash(password, user.Password)) //TODO Valutare l'ordine rispetto all'autenticazione LDAP
                     throw new AuthenticationException(105, "Password not valid");
@@ -142,7 +142,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                     throw new AuthenticationException(102, $"User {code} not found");
 
                 if (!user.Enabled)
-                    throw new AuthenticationException(103, $"User {code} not enabled");
+                    throw new AuthenticationException(103, $"User {code} disabled");
 
                 if (string.IsNullOrEmpty(pin) || !System.Text.RegularExpressions.Regex.IsMatch(pin, @"^[0-9]+$"))
                     throw new AuthenticationException(106, $"PIN not valid");
