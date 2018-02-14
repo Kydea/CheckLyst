@@ -19,6 +19,7 @@ namespace CheckListManager.WebApplication.Controllers
         [Authorize(Roles = "FunctionGroup#Instances,Prototypes#Edit")]
         public ActionResult Create(long? Prototype, int? Version)
         {
+            ViewBag.AppRoles = Request["roles"];
             return ConditionalView("Detail", new Instance { Prototype = Prototype.Value, Version = Version.Value });
         }
 

@@ -1,8 +1,6 @@
 ﻿@model CheckListManager.WebApplication.Models.Instance
 
-<div id="InstancesDetailPage"
-     class="Instance CheckList Loading"
-     data-api="@BaseUrl">
+<div id="InstancesDetailPage" class="Instance CheckList Loading" data-api="@BaseUrl">
     <h1>Instance Manager</h1>
 
     <div class="ActionBar">
@@ -95,7 +93,8 @@
         @if (ViewBag.AppMode)
         {
             <text>
-                matematici.tokenManager.setUserCode("@ViewBag.AppUser", "@ViewBag.AppRoles");
+        matematici.tokenManager.setUserCode("@ViewBag.AppUser", "@ViewBag.AppRoles");
+        alert(localStorage.roles);
             </text>
         }
 
