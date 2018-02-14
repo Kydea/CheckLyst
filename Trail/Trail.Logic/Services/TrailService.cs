@@ -35,23 +35,23 @@ namespace CheckListManager.Trail.Logic.Services
 				await ProcessMessageAsync(message, cancellationToken);
 
 				if (cancellationToken.IsCancellationRequested)
-				{
 					break;
-				}
 			}
 		}
 
 		private async Task ProcessMessageAsync(QueueMessage<TrailMessage> message, CancellationToken cancellationToken)
 		{
+            Records record = null;
 			try
 			{
-				var record = _mapper.Map<Records>(message.Message);
+                record = null;
+				record = _mapper.Map<Records>(message.Message);
 				await _trailRepository.AddAsync(record);
 				await _queueService.DeleteMessageAsync(QueueName.Trail, message.MessageHandle, cancellationToken);
 			}
 			catch (Exception exception)
 			{
-				Logger.Error(exception);
+				Logger.Error(record == null ? exception : new Exception($"Error creating audit trail record (action: {record.Action})", exception));
 			}
 		}
 	}
