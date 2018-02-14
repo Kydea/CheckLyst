@@ -21,7 +21,7 @@ namespace CheckListManager.WorkFlows.Api.Controllers
 
         [HttpPost]
         [Route("GetData")]
-        [Authorize(Roles = "WorkFlows#View")]
+        [Authorize(Roles = "WorkFlows#View, Prototypes#Edit, Prototypes#View")]
         public async Task<IHttpActionResult> GetData(PagingRequest<ListRequest> request)
         {
             return Ok(await _listService.GetDataAsync(Identity.CompanyId, request));
