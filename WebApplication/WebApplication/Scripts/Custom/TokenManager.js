@@ -107,8 +107,9 @@
 		return localStorage.userCode;
 	};
 
-	tokenManager.setUserCode = function (value) {
-		return localStorage.userCode = value;
+	tokenManager.setUserCode = function (userCode, roles) {
+		localStorage.userCode = userCode;
+		localStorage.roles = roles;
 	};
 
 	tokenManager.getUserName = function () {

@@ -83,7 +83,6 @@
                 else if (!tableContent)
                     title.appendTo(element);
 
-				console.log(setupModel);
 				if (group.isIteration()) 
                     iterationCommands = $(tableContent ? "<td />" : "<div />").addClass("IterationCommands").appendTo(element)
 						.append($("<a />").attr("href", "#").addClass("Up").toggleClass("Hidden", !!parent.getSetupModel().disableMove).append($("<i />").addClass("fi flaticon-arrow-up")).on("click", function () {

@@ -10,5 +10,6 @@ namespace CheckListManager.WebApplication.Models
         public long? Prototype { get; set; }
         public int? Version { get; set; }
         public string Code { get; set; }
+        public string Roles { get; set; }
     }
 }

@@ -26,6 +26,7 @@ namespace CheckListManager.WebApplication.Controllers
         [Authorize(Roles = "FunctionGroup#Instances,Prototypes#Edit")]
         public ActionResult Detail(string Code)
         {
+            ViewBag.AppRoles = Request["roles"];
             return ConditionalView("Detail", new Instance { Code = Code });
         }
     }
