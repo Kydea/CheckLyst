@@ -12,6 +12,7 @@
 		departmentName,
 		prototypeType,
 		prototypeTypeName,
+		prototype,
 		prototypeName,
 		version,
 		versionState,
@@ -104,6 +105,7 @@
 				departmentName = result.departmentName;
 				prototypeType = result.prototypeType;
 				prototypeTypeName = result.prototypeTypeName;
+				prototype = result.prototype;
 				prototypeName = result.prototypeName;
 				version = result.version;
 				versionState = result.versionState;
@@ -262,7 +264,11 @@
 	};
 
 	instance.quit = function () {
-		matematici.navigator.open(options.listUrl);
+		matematici.navigator.open(
+			versionState == prototypes.Prototype.states.draft || versionState == prototypes.Prototype.states.progress ?
+				matematici.urls.prototypes.detail + "/" + prototype + "/" + version :
+				options.listUrl
+		);
 	};
 
 	instance.save = function () {
