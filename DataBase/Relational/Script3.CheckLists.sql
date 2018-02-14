@@ -147,7 +147,7 @@ values
 	('In progress'),
 	('Completed'),
 	('Confirmed'),
-	('Canceled');
+	('Deleted');
 	
 create table "CheckLists"."Instances"
 (

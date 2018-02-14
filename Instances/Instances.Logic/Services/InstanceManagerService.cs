@@ -256,7 +256,7 @@ namespace CheckListManager.Instances.Logic.Services
                 if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
                     throw new InstanceException("Access denied");
 
-                await SaveAsync(cacheObject, identity, false, false, false);
+                await SaveAsync(cacheObject, identity, false, false, false, cacheObject.ModifiedBy, cacheObject.ModifiedOn);
             }
             catch (InstanceException)
             {
@@ -286,9 +286,7 @@ namespace CheckListManager.Instances.Logic.Services
                 if (UnvalidItems.Any())
                     throw new InstanceException($"The following items are not valid: {string.Join(", ", UnvalidItems.Select(i => i.Id.ToString()))}");
 
-                cacheObject.ModifiedBy = identity.Code;
-                cacheObject.ModifiedOn = DateTimeOffset.UtcNow;
-                cacheObject = await SaveAsync(cacheObject, identity, true, true, false);
+                cacheObject = await SaveAsync(cacheObject, identity, true, true, false, identity.Code, DateTimeOffset.UtcNow);
                 cacheObject.Instance.UpdateReadOnly(identity.Code, InstanceState.Completed);
 
                 if (!cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation))
@@ -367,7 +365,7 @@ namespace CheckListManager.Instances.Logic.Services
                         await _instanceCache.RemoveAsync(cacheObject.Code);
                         break;
                     case InstanceState.Progress:
-                        await SaveAsync(cacheObject, identity, true, false, false);
+                        await SaveAsync(cacheObject, identity, true, false, false, cacheObject.ModifiedBy, cacheObject.ModifiedOn);
                         break;
                     default:
                         throw new InstanceException("Invalid state: " + cacheObject.InstanceState);
@@ -411,7 +409,7 @@ namespace CheckListManager.Instances.Logic.Services
             });
         }
 
-        private async Task<InstanceCacheObject> SaveAsync(InstanceCacheObject cacheObject, IDefaultIdentity identity, bool close, bool complete, bool alreadyLocked)
+        private async Task<InstanceCacheObject> SaveAsync(InstanceCacheObject cacheObject, IDefaultIdentity identity, bool close, bool complete, bool alreadyLocked, string ModifiedBy, DateTimeOffset? ModifiedOn)
         {
             LockObject lockObject = null;
 
@@ -817,9 +815,12 @@ namespace CheckListManager.Instances.Logic.Services
             )
                 throw new InstanceException($"The signature must be applied by an user with level {signature.SignatureLevel}");
 
-            signature.Sign(identity.Code, identity.Description, DateTimeOffset.UtcNow);
+            var Now = DateTimeOffset.UtcNow;
+            cacheObject.ModifiedBy = identity.Code;
+            cacheObject.ModifiedOn = Now;
+            signature.Sign(identity.Code, identity.Description, Now);
             if (cacheObject.InstanceState == InstanceState.Progress)
-                await SaveAsync(cacheObject, identity, false, false, true);
+                await SaveAsync(cacheObject, identity, false, false, true, cacheObject.ModifiedBy, cacheObject.ModifiedOn);
             await Update(cacheObject, request.Username);
 
             if (!cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation))
@@ -866,8 +867,11 @@ namespace CheckListManager.Instances.Logic.Services
                 throw new InstanceException($"The signature can be canceled by an user with function Unsign and level {signature.SignatureLevel}");
 
             signature.Unsign(identity.Code, identity.Description, DateTimeOffset.UtcNow, request.Note, cacheObject.InstanceState);
+            var Now = DateTimeOffset.UtcNow;
+            cacheObject.ModifiedBy = identity.Code;
+            cacheObject.ModifiedOn = Now;
             if (cacheObject.InstanceState == InstanceState.Progress)
-                await SaveAsync(cacheObject, identity, false, false, true);
+                await SaveAsync(cacheObject, identity, false, false, true, cacheObject.ModifiedBy, cacheObject.ModifiedOn);
             await Update(cacheObject, request.Username);
 
             if (!cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation))
