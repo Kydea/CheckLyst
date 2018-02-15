@@ -437,8 +437,8 @@ namespace CheckListManager.Instances.Logic.Services
                     !cacheObject.Instance.FTPExport ? null :
                     !string.IsNullOrWhiteSpace(cacheObject.Instance.FileName) ? cacheObject.Instance.FileName :
                     $"Instance{cacheObject.InstanceCode}";
-                row.ModifiedOn = cacheObject.ModifiedOn;
-                row.ModifiedBy = cacheObject.ModifiedBy;
+                row.ModifiedOn = ModifiedOn;
+                row.ModifiedBy = ModifiedBy;
 
                 _instancesRepository.SaveChildren(row, CreateTags(cacheObject), CreateExpressionValues(cacheObject));
 
@@ -474,8 +474,8 @@ namespace CheckListManager.Instances.Logic.Services
 
                     row.InstancesHistory.Add(new InstancesHistory
                     {
-                        Date = row.ModifiedOn.Value,
-                        User = row.ModifiedBy,
+                        Date = ModifiedOn ?? DateTimeOffset.UtcNow, 
+                        User = ModifiedBy,
                         State = row.InstanceState,
                         WorkFlowApplication = WorkFlowApplicationId
                     });
