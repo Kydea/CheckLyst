@@ -34,7 +34,7 @@ namespace CheckListManager.WorkFlows.Logic.Detail
                     }
                 };
 
-            if (record.Steps != null && record.Steps.Count() == 0)
+            if (record.Steps == null || record.Steps.Count() == 0)
             {
                 Valid = false;
                 response.ValidationMessages.Add(new ValidationMessage
@@ -43,7 +43,7 @@ namespace CheckListManager.WorkFlows.Logic.Detail
                     Message = "The workflow myst have at least one step"
                 });
             }
-            else
+            else if (record.Steps != null)
                 for (var Index = 0; Index < record.Steps.Count(); ++Index)
                     if (string.IsNullOrWhiteSpace(record.Steps[Index].Reason))
                         response.Fields[$"Reason{Index}"] = new Field

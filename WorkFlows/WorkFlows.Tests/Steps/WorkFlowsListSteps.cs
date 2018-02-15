@@ -65,6 +65,7 @@ namespace CheckListManager.WorkFlows.Tests.Steps
 
             if (!steps.Any())
                 steps.Add(new Step() {
+                    Reason = "No reason",
                     Signatures = new List<string[]>()
                     {
                         new string[] { signature }

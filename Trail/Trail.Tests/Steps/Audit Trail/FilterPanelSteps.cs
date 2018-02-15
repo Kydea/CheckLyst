@@ -69,7 +69,7 @@ namespace CheckListManager.Trail.Tests.Steps.Audit_Trail
         [Then(@"the result should be a list of records with the same checklist code")]
         public void ThenTheResultShouldBeAListOfRecordsWithTheSameChecklistCode()
         {
-            _context.Response.ForEach(trail => Assert.AreEqual(_context.CheckList, trail.CheckList));
+            _context.Response.ForEach(trail => Assert.IsTrue(trail.CheckList.ToUpper().Contains(_context.CheckList.ToUpper())));
         }
     }
 }

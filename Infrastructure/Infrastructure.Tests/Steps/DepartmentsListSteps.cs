@@ -56,11 +56,18 @@ namespace CheckListManager.Infrastructure.Tests.Steps
         [Given(@"I click on a department")]
         public async Task GivenIClickOnADeparment()
         {
+            string Name = Guid.NewGuid().ToString();
+
+            // Create the department
+            GivenIAssignAsTheNameOfTheDepartment(Name);
+            await WhenISendTheAddRequestAsync();
+
+            // "Click" on the department
             List<DepartmentsRow> data = (await _departmentsService.GetDataAsync(_defaultIdentity, new PagingRequest<DepartmentsRequest>
             {
                 Data = new DepartmentsRequest()
                 {
-                    Department = String.Empty
+                    Department = Name
                 }
             })).Data;
 

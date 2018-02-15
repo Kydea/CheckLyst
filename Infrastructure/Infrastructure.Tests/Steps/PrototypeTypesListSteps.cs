@@ -45,6 +45,17 @@ namespace CheckListManager.Infrastructure.Tests.Steps
             _context.Response = null;
         }
 
+        public void DebugContext()
+        {
+            if (_context.Response == null)
+                return;
+
+            _context.Response.ValidationMessages.ForEach(e => Console.WriteLine("Errore[{0}]: {1}", e.Level, e.Message));
+            
+            foreach (var Field in _context.Response.Fields)
+                Field.Value.ValidationMessages.ForEach(e => Console.WriteLine("Errore[{0}]: {1}", e.Level, e.Message));
+        }
+
         [Given(@"I don't choose any department from the list")]
         public void GivenIDonTChooseAnyDepartmentFromTheList()
         {
@@ -56,11 +67,18 @@ namespace CheckListManager.Infrastructure.Tests.Steps
         {
             PrototypeTypesResponse response = (await _prototypeTypesService.BindAsync(_defaultIdentity, _context.Request));
 
-            // Almost a department needs to be selected
-            Assert.IsTrue(response.Fields.ContainsKey("Department") && response.Fields["Department"].Options.Count() > 0, "Missing dipartments: cannot select a department from the list.");
+            Assert.IsTrue(response.Fields.ContainsKey("Department") && response.Fields["Department"].Options.Any(), "Missing dipartments: cannot select a department from the list.");
             Assert.IsTrue(long.TryParse(response.Fields["Department"].Options.First().Value, out long Department));
 
+            Assert.IsTrue(response.Fields.ContainsKey("ApprovationWorkFlow") && response.Fields["ApprovationWorkFlow"].Options.Any());
+            Assert.IsTrue(long.TryParse(response.Fields["ApprovationWorkFlow"].Options.First().Value, out long ApprovationWorkFlow));
+
+            Assert.IsTrue(response.Fields.ContainsKey("ApprovationWorkFlow") && response.Fields["ApprovationWorkFlow"].Options.Any());
+            Assert.IsTrue(long.TryParse(response.Fields["ApprovationWorkFlow"].Options.First().Value, out long ObsolescenceWorkFlow));
+
             _context.Request.Department = Department;
+            _context.Request.ApprovationWorkFlow = ApprovationWorkFlow;
+            _context.Request.ObsolescenceWorkFlow = ObsolescenceWorkFlow;
         }
         
         [Given(@"I change the name of the prototype in '(.*)'")]
@@ -73,16 +91,19 @@ namespace CheckListManager.Infrastructure.Tests.Steps
         [Given(@"I click on a prototype type")]
         public async Task GivenIClickOnAPrototypeType()
         {
-            // The clicked prototype is the first one, if Name is null the "click" fails.
-            _context.Request.Name = String.Empty;
+            string Name = Guid.NewGuid().ToString();
+
+            // Add a prototype type
+            GivenIAssignAsTheNameOfThePrototype(Name);
+            await WhenISendTheAddRequestAsync();
+
+            // Get the prototype type
+            _context.Request.Name = Name;
 
             List<PrototypeTypesRow> data = (await _prototypeTypesService.GetDataAsync(_defaultIdentity, new PagingRequest<PrototypeTypesRequest>
             {
                 Data = _context.Request
             })).Data;
-
-            // If you click on a prototype: Count > 0 (it's a must)
-            Assert.NotZero(data.Count, "Clicking on a prototype type implies that the number of prototypes types is greater than 0.");
 
             _context.Request.ID = data.First().ID;
         }
@@ -113,14 +134,30 @@ namespace CheckListManager.Infrastructure.Tests.Steps
             => Assert.IsTrue(_context.Response.Fields.ContainsKey("Name") && _context.Response.Fields["Name"].ValidationMessages.Any(msg => msg.Message == Message));
 
         [Then(@"the system allows to correctly save the record into the database")]
-        public void ThenTheSystemAllowsToCorrectlySaveTheRecordIntoTheDatabase() => Assert.IsTrue(_context.Response.Valid);
+        public void ThenTheSystemAllowsToCorrectlySaveTheRecordIntoTheDatabase()
+        {
+            DebugContext();
+
+            Assert.IsTrue(!_context.Response.Fields.Any());
+            Assert.IsTrue(!_context.Response.ValidationMessages.Any());
+            Assert.IsTrue(_context.Response.Valid);
+        }
 
         [Then(@"the system correctly delete the record from the database")]
-        public void ThenTheSystemCorrectlyDeleteTheRecordFromTheDatabase() => Assert.IsTrue(_context.Response.Valid);
+        public async Task ThenTheSystemCorrectlyDeleteTheRecordFromTheDatabaseAsync()
+        {
+            DebugContext();
+
+            Assert.IsTrue(!_context.Response.Fields.Any());
+            Assert.IsTrue(!_context.Response.ValidationMessages.Any());
+            Assert.IsTrue(_context.Response.Valid);
+        }
 
         [Then(@"the system does not allow to add the unnamed prototype type")]
         [Then(@"the system does not allow the prototype type deletion from the database")]
-        public void ThenTheSystemDoesNotAllowThePrototypeTypeDeletionFromTheDatabase()
-            => Assert.IsFalse(_context.Response.Valid);
+        public void ThenTheSystemDoesNotAllowToAddTheUnnamedPrototypeType()
+        {
+            Assert.IsFalse(_context.Response.Valid);
+        }
     }
 }
