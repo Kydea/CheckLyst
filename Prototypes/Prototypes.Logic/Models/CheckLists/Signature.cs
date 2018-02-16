@@ -16,5 +16,21 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 		public string SignedBy { get; set; }
 		public DateTimeOffset SignedOn { get; set; }
 		public string SignerDescription { get; set; }
-	}
+
+        public override ICheckListItem Clone(ICheckListGroup parent)
+        {
+            var signature = new Signature
+            {
+                Group = parent,
+                ButtonLabel = ButtonLabel,
+                Cancelable = Cancelable,
+                AcceptsPin = AcceptsPin
+            };
+
+            Copy(this, signature);
+            return signature;
+        }
+
+
+    }
 }

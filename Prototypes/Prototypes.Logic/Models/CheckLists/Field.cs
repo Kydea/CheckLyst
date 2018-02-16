@@ -34,5 +34,21 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             set { ValueType = DataType.FromName(value); }
         }
 
+        public override ICheckListItem Clone(ICheckListGroup parent)
+        {
+            var field = new Field
+            {
+                Group = parent,
+                LinesCount = LinesCount,
+                Value = Value,
+                ValueFormula = ValueFormula == null ? null : new Formula(ValueFormula.RawValue),
+                ValueTypeName = ValueTypeName,
+                ValuesList = ValuesList,
+                ExternalSourceName = ExternalSourceName,
+                ExternalSourceColumn = ExternalSourceColumn
+            };
+            Copy(this, field);
+            return field;
+        }
     }
 }

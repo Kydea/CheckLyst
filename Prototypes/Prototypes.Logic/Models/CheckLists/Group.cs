@@ -48,5 +48,26 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 Iterations.Add(iteration);
             }
         }
+
+        public override ICheckListItem Clone(ICheckListGroup parent)
+        {
+            var group = new Group
+            {
+                CheckList = CheckList,
+                Iterator = Iterator,
+                ShowAsTable = ShowAsTable,
+                InstanceIterations = InstanceIterations,
+                PrototypeIterations = PrototypeIterations,
+                DisableAdd = DisableAdd,
+                DisableRemove = DisableRemove,
+                DisableMove = DisableMove,
+                Group = parent
+            };
+            foreach (var item in Items)
+                group.Items.Add(item.Clone(group));
+
+            Copy(this, group);
+            return group;
+        }
     }
 }
