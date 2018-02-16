@@ -140,8 +140,8 @@
 			isa = PBXGroup;
 			children = (
 				681BF9001FF40D51007F6824 /* Company.swift */,
-				33A4F4CF1D25D76D005FAED9 /* SearchFieldsJSON.swift */,
 				686E4B581FF51D0F00A8AE22 /* FirstIstancesBindRequestJSON.swift */,
+				33A4F4CF1D25D76D005FAED9 /* SearchFieldsJSON.swift */,
 				686E4B5C1FF5250E00A8AE22 /* IstancesBindRequestJSON.swift */,
 				686E4B5A1FF5209500A8AE22 /* IstanceBindResponseJSON.swift */,
 				33A4F4D11D25F036005FAED9 /* AppInfo.swift */,

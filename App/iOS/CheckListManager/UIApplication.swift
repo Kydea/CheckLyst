@@ -72,7 +72,7 @@ import UIKit
     
         timeToExpire = expireDate.timeIntervalSinceNow
         
-        print(timeToExpire)
+        //print(timeToExpire)
         
         if(timeToExpire <= timeBeforeTokenExpires && !isWarningPresented && !isRefreshing) {
             

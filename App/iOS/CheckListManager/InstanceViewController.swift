@@ -16,11 +16,9 @@ class InstanceViewController: UIViewController, UIWebViewDelegate, UIGestureReco
     var newInstance = false
     var newInstancePrototype: String?
     var newInstanceVersion: String?
-    var json: [String: AnyObject]!
     @IBOutlet var webView: UIWebView!
     @IBOutlet var activityIndicator: UIActivityIndicatorView!
 
-    
     override func viewDidLoad()
     {
         super.viewDidLoad()
@@ -29,28 +27,23 @@ class InstanceViewController: UIViewController, UIWebViewDelegate, UIGestureReco
         webView.delegate = self
         activityIndicator.hidesWhenStopped = true
         activityIndicator.transform = CGAffineTransform(scaleX: 2.0, y: 2.0)
-
         
-        if(!newInstance)
-        {
-            let fullUrl = "http://clm.matematici-aws.com/Instances/Detail/" + instance.code + "?d=" + String(Int64(Date().timeIntervalSince1970 * 1000)) + "&AppMode=1"
-            let url = URL(string: fullUrl)
-            let request = NSMutableURLRequest(url: url!)
-            request.httpMethod = "POST"
-            request.timeoutInterval = 20
-            
-            webView.loadRequest(request as URLRequest)
-        }
-        else
-        {
-            let fullUrl = "http://clm.matematici-aws.com/Instances/Create/" + newInstancePrototype! + "/" + newInstanceVersion! + "?d=" + String(Int64(Date().timeIntervalSince1970 * 1000)) + "&AppMode=1"
-            let url = URL(string: fullUrl)
-            let request = NSMutableURLRequest(url: url!)
-            request.httpMethod = "POST"
-            request.timeoutInterval = 20
-            
-            webView.loadRequest(request as URLRequest)
-        }
+        let fullUrl = !newInstance ?
+            "http://clm.matematici-aws.com/Instances/Detail/" + instance.code + "?d=" + String(Int64(Date().timeIntervalSince1970 * 1000)) + "&AppUser=" + (UserDefaults.standard.string(forKey: "userCode"))! :
+            "http://clm.matematici-aws.com/Instances/Create/" + newInstancePrototype! + "/" + newInstanceVersion! + "?d=" + String(Int64(Date().timeIntervalSince1970 * 1000)) + "&AppUser=" + (UserDefaults.standard.string(forKey: "userCode"))!
+        
+        let url = URL(string: fullUrl)
+        
+        let request = NSMutableURLRequest(url: url!)
+        request.httpMethod = "POST"
+        request.timeoutInterval = 20
+        request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        
+        let bodyString = "roles=" + (UserDefaults.standard.value(forKey: "roles") as! String)
+        request.httpBody = bodyString.data(using: String.Encoding.utf8)
+        
+        webView.loadRequest(request as URLRequest)
+        
         self.lockView()
         NotificationCenter.default.addObserver(self, selector: #selector(InstanceViewController.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(InstanceViewController.keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
@@ -58,7 +51,6 @@ class InstanceViewController: UIViewController, UIWebViewDelegate, UIGestureReco
         tap.delegate = self
         self.view.addGestureRecognizer(tap)
     }
-    
     
     override func didReceiveMemoryWarning()
     {
@@ -113,7 +105,7 @@ class InstanceViewController: UIViewController, UIWebViewDelegate, UIGestureReco
     func webView(_ webView: UIWebView, didFailLoadWithError error: Error) {
         
         unlockView()
-        let alert = UIAlertController(title: "Error", message: "No internet connection", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Error", message: "Connection error to the server", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action) -> Void in
             self.navigationController?.popViewController(animated: true)
         }))
@@ -121,6 +113,7 @@ class InstanceViewController: UIViewController, UIWebViewDelegate, UIGestureReco
     }
     
     func webView(_ webView: UIWebView, shouldStartLoadWith request: URLRequest, navigationType: UIWebViewNavigationType) -> Bool {
+
         return true
     }
     
@@ -131,7 +124,7 @@ class InstanceViewController: UIViewController, UIWebViewDelegate, UIGestureReco
     
     
     func webViewDidFinishLoad(_ webView: UIWebView) {
-        
+    
         unlockView()
         if let request = self.webView.request {
             if let resp = URLCache.shared.cachedResponse(for: request) {
@@ -141,17 +134,16 @@ class InstanceViewController: UIViewController, UIWebViewDelegate, UIGestureReco
             }
         }
         self.webView.isHidden = false
+        
         if( webView.stringByEvaluatingJavaScript(from: "window.location.href")!.contains("Security/Login")){
             print("redirecting")
             webView.isHidden = true
             logoutAndGoToLogin()
         }
+        
     }
     
-    
-     func logoutAndGoToLogin(){ app.logoutAndGoToLogin()  }
-    
-    
+    func logoutAndGoToLogin(){ app.logoutAndGoToLogin()  }
 
     @objc func keyboardWillShow(_ notification: Notification) {
         if view.frame.origin.y == 0{
@@ -168,16 +160,5 @@ class InstanceViewController: UIViewController, UIWebViewDelegate, UIGestureReco
     
     @objc func dismissKeyboard() {
         self.view.endEditing(true)   }
-    
-    
-    
-    /* to implement if necessary */
-    @IBAction func qrAction(_ sender: AnyObject) {
-        
-        //let javascriptString = "if(document.activeElement instanceof HTMLInputElement){document.activeElement.value='QR COPIED'}"
-        
-        //webView.stringByEvaluatingJavaScriptFromString(javascriptString)
-
-    }
 }
 

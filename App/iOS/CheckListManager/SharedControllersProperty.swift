@@ -50,9 +50,9 @@ class SharedControllersProperty: NSObject {
         ServerConnection.getAppInfo(){ (result) -> Void in
             do{
                 
-                if(result?.data != nil)
+                if(result.data != nil)
                 {
-                    let infoResponse = try JSONDecoder().decode(AppInfo.self, from: result!.data!)
+                    let infoResponse = try JSONDecoder().decode(AppInfo.self, from: result.data!)
                     
                     self.serverDatetime = Formatter.instance.stringToDate(infoResponse.serverTime) as Date
                     
