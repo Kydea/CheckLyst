@@ -69,15 +69,30 @@ class LoginViewController: UIViewController, UITextFieldDelegate
     }
     
     @IBAction func chooseCompany(_ sender: Any) {
+        
         activityIndicator.startAnimating()
         
+        self.view.isUserInteractionEnabled = false
+        
         ServerConnection.getCompaniesRequest(){ (serverResponse) -> Void in
+          
+            if(serverResponse.error != nil){
+                
+                var errorMessage = "No message"
+                let title = "Error"
+                
+                if(serverResponse.error!.code == -1009){
+                    errorMessage = "Connection error to the server"
+                }
+                
+                self.showSimpleErrorAlert(title, message: errorMessage)
+            }
             
             do{
                 
-                if serverResponse?.data != nil
+                if serverResponse.data != nil
                 {
-                    let json = try JSONDecoder().decode([Company].self, from: serverResponse!.data!)
+                    let json = try JSONDecoder().decode([Company].self, from: serverResponse.data!)
                     
                     self.chooseDictionary.removeAllObjects()
                     
@@ -85,16 +100,22 @@ class LoginViewController: UIViewController, UITextFieldDelegate
                         self.chooseDictionary.addEntries(from: [company.name : String(company.id)])
                     }
                     
-                    print(self.chooseDictionary.description)
-                    
                     self.activityIndicator.stopAnimating()
+                    
+                    self.view.isUserInteractionEnabled = true
                     
                     self.performSegue(withIdentifier: "ChooseServer", sender: "company")
                     
                 }
+                
             } catch {
                 print("Error deserializing JSON: \(error)")
             }
+            
+            self.activityIndicator.stopAnimating()
+            
+            self.view.isUserInteractionEnabled = true
+            
         }
     }
     
@@ -139,124 +160,37 @@ class LoginViewController: UIViewController, UITextFieldDelegate
            
     }
     
-    
-    
-    
-    // usr: "CheckListManager" pw "V4sc0 R0ss1"
     @IBAction func loginToserver(_ sender: UIButton) {
         
-        if(serverTextField.text!.contains("https"))
-        
-        {
-        
-            performLogin()
-        }
-  
-            
-        else
-        
-        {
-        
-            let alert = UIAlertController(title: "Warning", message: "You are connecting to an insecure server, are you really sure?", preferredStyle: .alert)
-        
-            
-            
-            alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
-            
-            alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (action) -> Void in
-                
-                self.performLogin()
-                
-            }))
-            
-            
-            self.present(alert, animated: true, completion: nil)
-        
-        }
-        
-        
-        }
-    
-    
-    
-    func performLogin()
-    
-    {
-        
         if(companyTextField.text! != "" && userCodeTextField.text! != "" && passwordTextField.text! != "") {
-            
-            activityIndicator.startAnimating()
-            
-            self.view.isUserInteractionEnabled = false
-            
-            ServerConnection.baseUrl = self.serverTextField.text!
         
-            ServerConnection.loginOrRefreshToServer(["Company" : self.selectedCompany,"Code":userCodeTextField.text!,"Password":passwordTextField.text!]){ (serverResponse) -> Void in
-                
-                if(serverResponse.error != nil){
-                    
-                    var errorMessage = "Connection error to the server"
-                    var title = "Error"
-                    
-                    if(serverResponse.error!.code == -1009){
-                        errorMessage = "Connection error to the server"
-                    }
-                        
-                    else if(NSString(string:UserDefaults.standard.string(forKey: "invalidCertificate")!).boolValue == true)
-                        
-                    {
-                        title = "Security Error"
-                        errorMessage = "Invalid SSL Certificate"
-                    }
-                    
-                    self.showSimpleErrorAlert(title, message: errorMessage)
-                }
-                
-                do{
-                    
-                    if serverResponse.data != nil
-                    {
-                        let json = try JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
-                        
-                        //print ("data received = \(json)")
-                        
-                        if(json["error"] == nil)
-                            
-                        {
-                            Server.setNewServerUrl(self.serverTextField.text!, managedObjectContext: self.context)
-                            
-                            UserDefaults.standard.setValue(self.userCodeTextField.text, forKey: "userCode")
-                            
-                            UserDefaults.standard.setValue(true, forKey: "logged")
-                            
-                            UserDefaults.standard.setValue(json["access_token"], forKey: "access_token")
-                            
-                            UserDefaults.standard.setValue(json["refresh_token"], forKey: "refresh_token")
-                            
-                            UserDefaults.standard.setValue(json["token_type"], forKey: "token_type")
-                            
-                            UserDefaults.standard.setValue(Formatter.instance.dateFromTimeString(json[".expires"] as! String), forKey: "token_expires")
-                            
-                            self.getClient()
+            if(serverTextField.text!.hasPrefix("https"))
+            
+            {
+            
+                performLogin()
+            }
       
-                        }
-                            
-                        else
-                            
-                        {
-                            let okMex = (json["error"] == nil)
-                            let messageMex = !okMex ? json["error_description"] as! String : ""
-                            self.showSimpleErrorAlert("Error", message: messageMex)
-                        }
-                        
-                    }
-                } catch {
-                    print("Error deserializing JSON: \(error)")
-                }
                 
-                self.activityIndicator.stopAnimating()
+            else
+            
+            {
+            
+                let alert = UIAlertController(title: "Warning", message: "You are connecting to an insecure server, are you really sure?", preferredStyle: .alert)
+            
                 
-                self.view.isUserInteractionEnabled = true
+                
+                alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
+                
+                alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (action) -> Void in
+                    
+                    self.performLogin()
+                    
+                }))
+                
+                
+                self.present(alert, animated: true, completion: nil)
+            
             }
         } else if(companyTextField.text! == "" ) {
             
@@ -272,6 +206,77 @@ class LoginViewController: UIViewController, UITextFieldDelegate
             
         }
         
+        
+    }
+    
+    
+    
+    func performLogin()
+    
+    {
+        activityIndicator.startAnimating()
+        
+        self.view.isUserInteractionEnabled = false
+        
+        ServerConnection.baseUrl = self.serverTextField.text!
+    
+        ServerConnection.loginOrRefreshToServer(["Company" : self.selectedCompany,"Code":userCodeTextField.text!,"Password":passwordTextField.text!]){ (serverResponse) -> Void in
+            
+            if(serverResponse.error != nil){
+                
+                var errorMessage = "Connection error to the server"
+                var title = "Error"
+                
+                if(serverResponse.error!.code == -1009){
+                    errorMessage = "Connection error to the server"
+                }
+                    
+                else if(NSString(string:UserDefaults.standard.string(forKey: "invalidCertificate")!).boolValue == true)
+                    
+                {
+                    title = "Security Error"
+                    errorMessage = "Invalid SSL Certificate"
+                }
+                
+                self.showSimpleErrorAlert(title, message: errorMessage)
+            }
+            
+            do{
+                
+                if serverResponse.data != nil
+                {
+                    let json = try JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
+                    
+                    
+                    if(json["error"] == nil)
+                        
+                    {
+                        Server.setNewServerUrl(self.serverTextField.text!, managedObjectContext: self.context)
+                        
+                        self.setUserInformation(userInfo: json)
+                        
+                        self.getClient()
+  
+                    }
+                        
+                    else
+                        
+                    {
+                        let okMex = (json["error"] == nil)
+                        let messageMex = !okMex ? json["error_description"] as! String : ""
+                        self.showSimpleErrorAlert("Error", message: messageMex)
+                    }
+                    
+                }
+            } catch {
+                print("Error deserializing JSON: \(error)")
+            }
+            
+            self.activityIndicator.stopAnimating()
+            
+            self.view.isUserInteractionEnabled = true
+        }
+
     }
     
     
@@ -297,6 +302,34 @@ class LoginViewController: UIViewController, UITextFieldDelegate
                 self.showSimpleErrorAlert("Error", message: "Connection error to the server")
             }
         }
+    }
+    
+    func setUserInformation(userInfo json:[String:Any]) {
+        
+        UserDefaults.standard.setValue(self.userCodeTextField.text, forKey: "userCode")
+        
+        UserDefaults.standard.setValue(true, forKey: "logged")
+        
+        UserDefaults.standard.setValue(json["access_token"], forKey: "access_token")
+        
+        UserDefaults.standard.setValue(json["refresh_token"], forKey: "refresh_token")
+        
+        UserDefaults.standard.setValue(json["token_type"], forKey: "token_type")
+        
+        UserDefaults.standard.setValue(json["roles"], forKey: "roles")
+        
+        UserDefaults.standard.setValue((json["expires_in"] as! Int).description, forKey: "expires_in")
+        
+        UserDefaults.standard.setValue(json["company"], forKey: "company")
+        
+        UserDefaults.standard.setValue(json["name"], forKey: "name")
+        
+        UserDefaults.standard.setValue(json["timeZone"], forKey: "timeZone")
+        
+        UserDefaults.standard.setValue(self.companyTextField.text!, forKey: "companyName")
+        
+        UserDefaults.standard.setValue(Formatter.instance.dateFromTimeString(json[".expires"] as! String), forKey: "token_expires")
+    
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

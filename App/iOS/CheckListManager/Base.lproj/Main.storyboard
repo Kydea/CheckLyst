@@ -946,6 +946,7 @@
                         <outlet property="activityIndicator" destination="1sB-x4-Tyf" id="oud-2C-hcW"/>
                         <outlet property="newInstanceButton" destination="t19-Au-y41" id="OXx-N5-Oez"/>
                         <outlet property="scrollView" destination="aMy-cf-WfW" id="Gws-V2-05E"/>
+                        <outlet property="searchInstanceButton" destination="ZNN-rq-hjE" id="phn-J7-46d"/>
                         <outlet property="tableView" destination="hS5-t2-TWg" id="LDh-yq-F1V"/>
                         <segue destination="p6U-4t-1pC" kind="show" identifier="editFieldSegue" id="gqm-RD-5Zn"/>
                         <segue destination="iYy-bq-ngU" kind="show" identifier="instanceDetailsSegue" id="bnp-28-bxz"/>
@@ -984,7 +985,7 @@
                                         </view>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="192-T3-l0E" userLabel="topLine">
                                             <rect key="frame" x="0.0" y="-650" width="600" height="564"/>
-                                            <color key="backgroundColor" red="0.32156862749999998" green="0.54901960780000003" blue="0.63529411759999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <color key="backgroundColor" red="0.0" green="0.58823529409999997" blue="0.53333333329999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </view>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DFW-dB-fMT">
                                             <rect key="frame" x="40" y="-10" width="0.0" height="0.0"/>
@@ -1353,7 +1354,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="bW4-j5-PrF"/>
+        <segue reference="NKc-6S-8bD"/>
         <segue reference="qFk-ul-dl4"/>
     </inferredMetricsTieBreakers>
 </document>

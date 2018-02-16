@@ -6,6 +6,14 @@ using CheckListManager.Prototypes.Logic.Services;
 using System.Linq;
 using System;
 using CheckListManager.Common.Logic.Api.Messages;
+using CheckListManager.Common.Data;
+using CheckListManager.Prototypes.Data;
+using Newtonsoft.Json;
+using CheckListManager.Prototypes.Logic.Models.CheckLists;
+using CheckListManager.Common.Logic.Json;
+using System.Net;
+using CheckListManager.Prototypes.Logic.PDF;
+using CheckListManager.Common.Logic.Api.Formatters;
 
 namespace CheckListManager.Prototypes.Api.Controllers
 {
@@ -13,10 +21,14 @@ namespace CheckListManager.Prototypes.Api.Controllers
     public class PrototypeController : BaseApiController
     {
         private readonly IPrototypeService _prototypeService;
+        private readonly IPrototypesRepository _prototypesRepository;
+        private readonly CheckListJsonConverter _converter;
 
-        public PrototypeController(IPrototypeService prototypeService)
+        public PrototypeController(IPrototypeService prototypeService, IPrototypesRepository prototypesRepository, CheckListJsonConverter converter)
         {
             _prototypeService = prototypeService;
+            _prototypesRepository = prototypesRepository;
+            _converter = converter;
         }
 
         [HttpPost]
@@ -148,6 +160,20 @@ namespace CheckListManager.Prototypes.Api.Controllers
                 return Error(e);
             }
         }
+
+
+        [HttpGet]
+        [Route("Export")]
+        [AllowAnonymous]
+        public async Task<IHttpActionResult> Export()
+        {
+            var PrototypeVersion = await _prototypesRepository.GetPrototypeVersionAsync(2, 212, 2);
+            var CheckList = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converter);
+
+            var PDF = new PrototypePDF(2, "Janssen", "W. Europe Standard Time", "https://s3-eu-west-1.amazonaws.com/public.matematici-clm.com/", PrototypeVersion, CheckList);
+            return Content(HttpStatusCode.OK, PDF, new PDFFormatter("Prototype"));
+        }
+
 
     }
 }

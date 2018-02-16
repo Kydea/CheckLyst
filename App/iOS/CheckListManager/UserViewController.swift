@@ -37,11 +37,12 @@ class UserViewController: UIViewController {
                 UserDefaults.standard.setValue(false, forKey: "logged")
                 UserDefaults.standard.setValue(nil, forKey: "access_token")
                 UserDefaults.standard.setValue(nil, forKey: "refresh_token")
+                UserDefaults.standard.setValue(nil, forKey: "roles")
                 self.performSegue(withIdentifier: "logoutSegue", sender: self)
             }
             else
             {
-                let alert = UIAlertController(title: "Error", message: "No internet connection", preferredStyle: .alert)
+                let alert = UIAlertController(title: "Error", message: "Connection error to the server", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Ok", style: .destructive, handler: nil))
                 self.present(alert, animated: false, completion: nil)
             }

@@ -15,28 +15,28 @@ open class ServerConnection {
     static var baseUrl : String = (Server.getServer((UIApplication.shared.delegate as! AppDelegate).managedObjectContext)?.serverUrl)!
     
 
-    static func bindListWithParams(_ params : Dictionary<String, Dictionary<String, String?>>, completion: ((_ result:ServerResponse?) -> Void)!){
+    static func bindListWithParams(_ params : Dictionary<String, Dictionary<String, String?>>, completion: ((_ result:ServerResponse) -> Void)!){
         
         ServerConnection.sendHTTPRequest(baseUrl+"/Instances/List/Bind", params: params as Dictionary<String, AnyObject>){ (result) -> Void in
         completion(result)
         }
     }
     
-    static func getListInstancesWithParams(_ params : Dictionary<String, Any>, completion: ((_ result:ServerResponse?) -> Void)!){
+    static func getListInstancesWithParams(_ params : Dictionary<String, Any>, completion: ((_ result:ServerResponse) -> Void)!){
         
         ServerConnection.sendHTTPRequest(baseUrl+"/Instances/List/GetData", params: params as Dictionary<String, AnyObject>){ (result) -> Void in
             completion(result)
         }
     }
     
-    static func getCompaniesRequest(_ completion: ((_ result:ServerResponse?) -> Void)!){
+    static func getCompaniesRequest(_ completion: ((_ result:ServerResponse) -> Void)!){
         
         ServerConnection.sendHTTPRequest(baseUrl+"/Infrastructure/Companies/GetData", params: [:] as Dictionary<String, AnyObject>){ (result) -> Void in
             completion(result)
         }
     }
     
-    static func getAppInfo(_ completion: ((_ result:ServerResponse?) -> Void)!){
+    static func getAppInfo(_ completion: ((_ result:ServerResponse) -> Void)!){
         
         ServerConnection.sendHTTPRequest(baseUrl+"/Infrastructure/Information/Get", params: [:] as Dictionary<String, AnyObject>){ (result) -> Void in
             completion(result)
@@ -91,8 +91,6 @@ open class ServerConnection {
             
             request.timeoutInterval = 20
             
-            print("params\(params.debugDescription)");
-            
             if (!params.isEmpty)
                 
             {
@@ -100,25 +98,19 @@ open class ServerConnection {
                     request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
                     
                     let bodyString = "grant_type=password" + "&companyId=" + (params["Company"] as! String) + "&username=" + (params["Code"] as! String) + "&password=" + (params["Password"] as! String)
-                    
-                    //print(bodyString);
-                    
+                
                     request.httpBody = bodyString.data(using: String.Encoding.utf8)
                     
                 } else if((params["Refresh_Token"]) != nil) {
                     
                     request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
                     
-                     let bodyString = "grant_type=refresh_token&refresh_token=" + (params["Refresh_Token"] as! String)
-                    
-                    //print(bodyString);
-                    
+                    let bodyString = "grant_type=refresh_token&refresh_token=" + (params["Refresh_Token"] as! String)
+                 
                     request.httpBody = bodyString.data(using: String.Encoding.utf8)
                     
                 } else {
                     request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-                    
-                    //print("json result \(String.init(data: try JSONSerialization.data(withJSONObject: params, options:[]), encoding: String.Encoding.utf8) ?? "no json")")
                     
                     request.httpBody = try  JSONSerialization.data(withJSONObject: params, options:[])
                 }
@@ -147,11 +139,6 @@ open class ServerConnection {
                         serverResponse.response = response
                         serverResponse.data = data
                         serverResponse.error = error as NSError?
-                        
-                        print("response = \(String(describing: serverResponse.response).debugDescription)");
-                        print("data = \(String(describing: serverResponse.data))")
-                        print(String(data: serverResponse.data!, encoding: .utf8)!)
-                        print(serverResponse.error ?? "nessun errore");
                         
                         completion(serverResponse)
                     }

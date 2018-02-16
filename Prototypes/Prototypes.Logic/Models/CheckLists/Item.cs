@@ -23,12 +23,22 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public int FontSize { get; set; }
         public string Color { get; set; }
 
-        public ICheckListItem Clone(ICheckListGroup parent)
-		{
-			throw new NotImplementedException();
-		}
+        public abstract ICheckListItem Clone(ICheckListGroup parent);
 
-		public void Remove()
+        protected static void Copy(Item source, Item destination)
+        {
+            Element.Copy(source, destination);
+            destination.Page = source.Page;
+            destination.Description = source.Description;
+            destination.NewLine = source.NewLine;
+            destination.DescriptionFormula = source.DescriptionFormula == null ? null : new Formula(source.DescriptionFormula.RawValue);
+            destination.IterationItem = true;
+            destination.IteratorModelItem = false;
+            destination.Color = source.Color;
+            destination.FontSize = source.FontSize;
+        }
+
+        public void Remove()
 		{
 			throw new NotImplementedException();
 		}

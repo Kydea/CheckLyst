@@ -67,5 +67,19 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         {
             throw new NotImplementedException();
         }
+
+        public static void Copy(Element source, Element destination)
+        {
+            destination.CheckList = source.CheckList;
+            destination.Code = source.Code;
+            destination.ReadOnlyExpressionCode = source.ReadOnlyExpressionCode;
+            destination.ReadOnlyCondition = source.ReadOnlyCondition;
+            destination.HiddenExpressionCode = source.HiddenExpressionCode;
+            destination.HiddenCondition = source.HiddenCondition;
+            destination.ValidExpressionCode = source.ValidExpressionCode;
+            destination.ValidCondition = source.ValidCondition;
+            destination.ValidityMessage = source.ValidityMessage;
+            destination.SignatureCode = source.SignatureCode;
+        }
     }
 }
