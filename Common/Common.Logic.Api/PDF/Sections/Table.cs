@@ -223,7 +223,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                             break;
                         case "Field":
                             if (CheckListPDF.IsPrototype())
-                                Cell = NewCell("").SetHorizontalAlign(iTextSharp.text.Element.ALIGN_CENTER);
+                                Cell = NewCell(" ").SetHorizontalAlign(iTextSharp.text.Element.ALIGN_CENTER);
                             else
                             {
                                 var Value = CheckListPDF.GetFieldValue((ICheckListField)Item);
@@ -317,7 +317,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
 
         public override void RenderChildren()
         {
-
+            CheckListPDF.RenderGroup((ICheckListGroup)Element);
         }
     }
 }

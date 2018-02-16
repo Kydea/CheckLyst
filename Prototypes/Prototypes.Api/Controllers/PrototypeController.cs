@@ -167,7 +167,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
         [AllowAnonymous]
         public async Task<IHttpActionResult> Export()
         {
-            var PrototypeVersion = await _prototypesRepository.GetPrototypeVersionAsync(2, 212, 2);
+            var PrototypeVersion = await _prototypesRepository.GetPrototypeVersionAsync(2, 198, 2);
             var CheckList = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converter);
 
             var PDF = new PrototypePDF(2, "Janssen", "W. Europe Standard Time", "https://s3-eu-west-1.amazonaws.com/public.matematici-clm.com/", PrototypeVersion, CheckList);
