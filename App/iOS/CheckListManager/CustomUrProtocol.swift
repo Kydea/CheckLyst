@@ -9,8 +9,6 @@
 import Foundation
 import UIKit
 
-var requestCounts = 0
-
 class CustomUrlprotocol: URLProtocol, URLSessionDataDelegate, URLSessionTaskDelegate {
     
     fileprivate var dataTask:URLSessionDataTask?
@@ -24,8 +22,7 @@ class CustomUrlprotocol: URLProtocol, URLSessionDataDelegate, URLSessionTaskDele
     // MARK: NSURLProtocol
 
     override class func canInit(with request: URLRequest) -> Bool {
-//        print("Request #\(requestCounts): URL = \(request.url!.absoluteString)")
-//        requestCounts += 1
+
         if (URLProtocol.property(forKey: CustomUrlprotocol.CustomKey, in: request) != nil) {
             return false
         }
@@ -41,12 +38,8 @@ class CustomUrlprotocol: URLProtocol, URLSessionDataDelegate, URLSessionTaskDele
 
         let newRequest = (self.request as NSURLRequest).mutableCopy() as! NSMutableURLRequest
         
-        if (UserDefaults.standard.value(forKey: "access_token") != nil && (UserDefaults.standard.value(forKey: "logged") as! Bool)/* && newRequest.url!.absoluteString != "http://api.clm.matematici-aws.com/AccessControl/Access/Token"*/) {
+        if (UserDefaults.standard.value(forKey: "access_token") != nil && (UserDefaults.standard.value(forKey: "logged") as! Bool)) {
             newRequest.addValue((UserDefaults.standard.value(forKey: "token_type") as! String).capitalized + " " + (UserDefaults.standard.value(forKey: "access_token") as! String), forHTTPHeaderField: "Authorization")
-        }
-        
-        if(newRequest.url!.absoluteString.contains("http://clm.matematici-aws.com/Instances/List")) {
-            (UIApplication.shared as! MyApplication).goBackToList()
         }
 
         URLProtocol.setProperty("true", forKey: CustomUrlprotocol.CustomKey, in: newRequest)
@@ -75,6 +68,7 @@ class CustomUrlprotocol: URLProtocol, URLSessionDataDelegate, URLSessionTaskDele
         self.client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
 
         self.urlResponse = response
+    
         self.receivedData = NSMutableData()
 
         completionHandler(.allow)
@@ -91,19 +85,7 @@ class CustomUrlprotocol: URLProtocol, URLSessionDataDelegate, URLSessionTaskDele
         if error != nil && (error! as NSError).code != NSURLErrorCancelled {
             self.client?.urlProtocol(self, didFailWithError: error!)
         } else {
-            //saveCachedResponse()
             self.client?.urlProtocolDidFinishLoading(self)
         }
     }
-
-
-    func saveCachedResponse () {
-        
-        //let urlString = self.request.URL?.absoluteString
-        // let dataString = NSString(data: self.receivedData!, encoding: NSUTF8StringEncoding) as NSString?
-        //print("URL: \(urlString)\n\nDATA:\(dataString)\n\n")
-    }
-
-    
-    
 }

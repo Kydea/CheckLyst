@@ -154,8 +154,7 @@ class EditFieldViewController: UIViewController, UITableViewDataSource, UITableV
         if(isListField!)
         
         {
-            //let cell = self.tableView.cellForRow(at: indexPath)
-        
+            
             if(searchViewController!.selectedItemsDictionary[rowIndex!]?.text != fieldsArray![indexPath.row].text && rowIndex! < 7) {
                 for i in (rowIndex! + 1)...7 {
                     if(indexFieldDictionary![i] != "description" && indexFieldDictionary![i] != "state") {
@@ -165,7 +164,7 @@ class EditFieldViewController: UIViewController, UITableViewDataSource, UITableV
                 }
             }
             
-            searchViewController!.selectedItemsDictionary[rowIndex!] = fieldsArray![indexPath.row]//(cell!.contentView.viewWithTag(1) as? UILabel)?.text
+            searchViewController!.selectedItemsDictionary[rowIndex!] = fieldsArray![indexPath.row]
             
         
             self.navigationController?.popViewController(animated: true)

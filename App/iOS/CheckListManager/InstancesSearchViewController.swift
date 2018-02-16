@@ -18,13 +18,14 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
     @IBOutlet var scrollView: UIScrollView!
     var listInstances : [Instance?] = []
     @IBOutlet var newInstanceButton: UIBarButtonItem!
+    @IBOutlet var searchInstanceButton: UIButton!
     
     /*  static text for the labels */
     var indexTextDictionary =
     [0:"Departments", 1:"Prototype Types", 2:"Prototype", 3:"Version", 4:"Description", 5:"Tags", 6:"Tags Value" ,7:"States"]
     
     /*  values sent to the server like query    */
-    var searchDictionary : Dictionary<String, String?> = ["department" : nil, "description" : "", "prototype" : nil, "prototypeType": nil, "state" : nil, "tagCode" : nil, "tagValue" : "", "version" : nil]
+    var searchDictionary : Dictionary<String, String?> = ["department" : "", "description" : "", "prototype" : "", "prototypeType": "", "state" : "", "tagCode" : "", "tagValue" : "", "version" : ""]
     
     var fieldIndexDictionary =
     ["department":0, "prototypeType":1, "prototype":2, "version":3, "description":4, "tagCode":5, "tagValue":6 ,"state":7]
@@ -79,6 +80,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
             searchDictionary[field] = (field == "version") ? selectedItemsDictionary[index]!.value.components(separatedBy: " -")[0] : searchDictionary[field]
             searchDictionary[field] = (searchDictionary[field] == nil) ? "" : selectedItemsDictionary[fieldIndexDictionary[field]!]!.value
         }
+        print(searchDictionary.debugDescription)
     }
     
     
@@ -184,10 +186,10 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
             
             do
             {
-                if(serverResponse?.data != nil)
+                if(serverResponse.data != nil)
                 {
                     
-                    let searchFields = try JSONDecoder().decode(IstanceBindResponseJSON.self, from: serverResponse!.data!)
+                    let searchFields = try JSONDecoder().decode(IstanceBindResponseJSON.self, from: serverResponse.data!)
 
                     if (searchFields.fields.department != nil) {
                         guard let departments = searchFields.fields.department?.options else {
@@ -196,12 +198,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                             return
                         }
                     
-                        if departments.count == 0 {
-                            self.displayMessage("Error", messageText: "The user does not have instance grants on any department of this company")
-                        }
-                    
                         self.indexArrayDictionary[self.fieldIndexDictionary["department"]!] = departments
-                        self.indexArrayDictionary[self.fieldIndexDictionary["department"]!]?.insert(Option(text: "All", value: ""), at: 0)
                     }
                     
                     if(searchFields.fields.prototypeType != nil) {
@@ -211,12 +208,12 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                             return
                         }
                         
-                        if prototypeTypes.count == 0 {
-                            //self.displayMessage("Error", messageText: "The user does not have instance grants on any prototype type of this department")
-                        }
+//                        if prototypeTypes.count == 0 {
+//                            //self.displayMessage("Error", messageText: "The user does not have instance grants on any prototype type of this department")
+//                        }
                         
                         self.indexArrayDictionary[self.fieldIndexDictionary["prototypeType"]!] = prototypeTypes
-                        self.indexArrayDictionary[self.fieldIndexDictionary["prototypeType"]!]?.insert(Option(text: "All", value: ""), at: 0)
+
                     }
                     
                     if(searchFields.fields.prototype != nil) {
@@ -226,9 +223,9 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                             return
                         }
                         
-                        if prototype.count == 0 {
-                            //self.displayMessage("Error", messageText: "The user does not have instance grants on any prototype of this type")
-                        }
+//                        if prototype.count == 0 {
+//                            //self.displayMessage("Error", messageText: "The user does not have instance grants on any prototype of this type")
+//                        }
                         
                         self.indexArrayDictionary[self.fieldIndexDictionary["prototype"]!] = prototype
                         self.indexArrayDictionary[self.fieldIndexDictionary["prototype"]!]?.insert(Option(text: "All", value: ""), at: 0)
@@ -269,27 +266,38 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                         self.indexArrayDictionary[self.fieldIndexDictionary["state"]!] = states
                         self.indexArrayDictionary[self.fieldIndexDictionary["state"]!]?.insert(Option(text: "All", value: ""), at: 0)
                     }
-                    
+                
                     self.setLabelTitles()
                 }
                 
                 else
                 {
-                    let alert = UIAlertController(title: "Error", message: "Connection error to the server", preferredStyle: .alert)
-                    
-                    alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action) -> Void in
-    
-                        let app = UIApplication.shared as! MyApplication
-                        
-                        app.logoutAndGoToLogin()
-                    }))
-                    
-                    self.present(alert, animated: false, completion: nil)
+                    self.displayMessage("Error", messageText: "Connection error to the server")
                 }
             }
             catch {
                 print(error)
-                self.stopActivityIndicator()
+                
+                do {
+                    
+                    let json = try JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
+                    
+                    let error = json["message"] as? String
+                    
+                    if(error != nil) {
+                        self.displayMessage("Error", messageText: "The user does not have any instance grant on this company")
+                        self.tableView.isUserInteractionEnabled = false
+                        self.searchInstanceButton.isUserInteractionEnabled = false
+                    }
+    
+                }
+                    
+                catch {
+                    
+                    print(error)
+                    
+                }
+                
             }
             self.stopActivityIndicator()
         }
@@ -308,20 +316,23 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
     
     func setLabelTitles()
     {
+        var selectedDepartemnt = ""
+        var selectedPrototypeType = ""
+        
         for index in indexArrayDictionary.keys{
             
             let field = indexFieldDictionary[index]!
             
             if let option = findOPtionInIndexArrayDictionaryForValue(self.searchDictionary[field]!!, inField: field, andIndex: index)
             {
+                if(field == "department") { selectedDepartemnt = option.value }
+                if(field == "prototypeType") { selectedPrototypeType = option.value }
                 self.selectedItemsDictionary[index]?.text = option.text
                 self.selectedItemsDictionary[index]?.value = option.value
             }
                 
             else
             {
-                print(self.selectedItemsDictionary[index]!)
-                print(indexArrayDictionary[index]!)
                 if(indexArrayDictionary[index]!.count > 0) {
                     self.selectedItemsDictionary[index] = indexArrayDictionary[index]![0]
                 } else {
@@ -329,7 +340,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                 }
             }
         }
-        self.newInstanceButton.isEnabled = self.selectedItemsDictionary[fieldIndexDictionary["version"]!]!.text.contains("Active") ? true : false
+        self.newInstanceButton.isEnabled = (self.selectedItemsDictionary[fieldIndexDictionary["version"]!]!.text.contains("Active") && (self.checkRoles(role: "Instances#Create#" + selectedDepartemnt + "##") || self.checkRoles(role: "Instances#Create#" + selectedDepartemnt + "#" + selectedPrototypeType + "#"))) ? true : false
         
         self.tableView.reloadData()
     }
@@ -343,6 +354,11 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
         self.present(alert, animated: false, completion: nil)
     }
     
+    func checkRoles(role:String) -> Bool {
+        let roles = (UserDefaults.standard.value(forKey: "roles") as! String)
+        return roles.contains(role)
+    }
+    
 
     
     @IBAction func searchInstances(_ sender: AnyObject)
@@ -350,24 +366,27 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
     {
         
         self.startActivityIndicator()
+        /*Needed to avoid the first call with all parameters set to "" (this is experienced when the user start search without changing filters at the first time)*/
+        if(searchDictionary["department"]!! == "" || searchDictionary["prototypeType"]!! == "") {
+            self.fromSelectionToSearchDictionary()
+        }
         self.listInstances = []
         self.getResearchResultForPage(currentPage: 1)
         
     }
     
     func getResearchResultForPage(currentPage:Int) {
-        var connectionError = false
         
         ServerConnection.getListInstancesWithParams(["CurrentPage" : String(currentPage), "data" : searchDictionary]) { (serverResponse) -> Void in
             
             do
             {
                 
-                if(serverResponse?.data != nil)
+                if(serverResponse.data != nil)
                     
                 {
                     
-                    let listIstancesJSON = try JSONDecoder().decode(ListIstancesJSON.self, from: serverResponse!.data!)
+                    let listIstancesJSON = try JSONDecoder().decode(ListIstancesJSON.self, from: serverResponse.data!)
 
                     self.listInstances += listIstancesJSON.data
                     
@@ -378,8 +397,9 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                 else
                 {
                     self.displayMessage("Error", messageText: "Connection error to the server")
+                    self.stopActivityIndicator()
                     
-                    connectionError = true
+                    return;
                 }
             }
                 
@@ -389,8 +409,8 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                 
                 do {
                     
-                    let json = try JSONSerialization.jsonObject(with: serverResponse!.data!, options: .allowFragments) as? [String:[Any]]
-                    self.displayMessage("Error", messageText: json!["messages"]![0] as! String)
+                    let json = try JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
+                    self.displayMessage("Error", messageText: json["messages"] as! String)
                     
                 }
                 catch {
@@ -400,7 +420,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                 }
             }
             
-            if(self.listInstances.count == 0 && !connectionError)
+            if(self.listInstances.count == 0)
                 
             {
                 self.stopActivityIndicator()
@@ -408,7 +428,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
             }
                 
                 
-            else if(!connectionError && currentPage == self.numberOfPages)
+            else if(currentPage == self.numberOfPages)
             {
                 self.stopActivityIndicator()
                 self.performSegue(withIdentifier: "instanceDetailsSegue", sender: self)

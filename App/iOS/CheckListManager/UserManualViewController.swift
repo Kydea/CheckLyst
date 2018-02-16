@@ -16,6 +16,8 @@ class UserManualViewController: UIViewController, UIWebViewDelegate {
     @IBOutlet var activityIndicator: UIActivityIndicatorView!
     
     let app = UIApplication.shared as! MyApplication
+    
+    var helpLoaded : Bool = false
 
     
     override func viewDidLoad()
@@ -33,20 +35,30 @@ class UserManualViewController: UIViewController, UIWebViewDelegate {
         
         activityIndicator.transform = CGAffineTransform(scaleX: 2.0, y: 2.0)
         
-        let fullUrl = "http://clm.matematici-aws.com/Help/App?AppMode=1&d=" + String(Int64(Date().timeIntervalSince1970 * 1000))
+        helpLoaded = false
         
-        let url = URL(string: fullUrl)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        if(!helpLoaded) {
+            
+            let fullUrl = "http://clm.matematici-aws.com/Help/App?AppUser="+(UserDefaults.standard.string(forKey: "userCode"))!+"&d=" + String(Int64(Date().timeIntervalSince1970 * 1000))
+            
+            let url = URL(string: fullUrl)
+            
+            let request = NSMutableURLRequest(url: url!)
+            
+            request.httpMethod = "GET"
+            
+            request.timeoutInterval = 10
+            
+            webView.loadRequest(request as URLRequest)
+            
+            self.lockView()
+            
+        }
         
-        let request = NSMutableURLRequest(url: url!)
-        
-        request.httpMethod = "GET"
-        
-        request.timeoutInterval = 10
-        
-        webView.loadRequest(request as URLRequest)
-        
-        self.lockView()
-
     }
 
     
@@ -70,10 +82,14 @@ class UserManualViewController: UIViewController, UIWebViewDelegate {
     func webViewDidFinishLoad(_ webView: UIWebView) {
         
         unlockView()
+        
+        helpLoaded = true
 
         if( webView.stringByEvaluatingJavaScript(from: "window.location.href")!.contains("Security/Login")){
             
             webView.isHidden = true
+            
+            helpLoaded = false
             
             logoutAndGoToLogin()
         }
@@ -84,9 +100,9 @@ class UserManualViewController: UIViewController, UIWebViewDelegate {
         
         unlockView()
         
-        let alert = UIAlertController(title: "Error", message: "No internet connection", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Error", message: "Connection error to the server", preferredStyle: .alert)
         
-        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action) -> Void in
+        alert.addAction(UIAlertAction(title: "Ok", style: .destructive, handler: { (action) -> Void in
             
             self.tabBarController?.selectedIndex = 0
             
