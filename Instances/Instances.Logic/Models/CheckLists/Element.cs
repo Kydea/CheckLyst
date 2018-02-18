@@ -85,7 +85,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
 		public virtual void Setup()
 		{
-			if (Code != null)
+            if (!string.IsNullOrEmpty(Code))
 				CheckList.Elements[Code] = this;
 		}
 

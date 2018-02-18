@@ -5,6 +5,7 @@ using System.Web;
 using iTextSharp.text.pdf;
 using System.Drawing;
 using CheckListManager.Common.Logic.Models.CheckLists;
+using CheckListManager.Common.Core.Helpers;
 
 namespace CheckListManager.Common.Logic.Api.PDF.Sections
 {
@@ -33,8 +34,12 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             public String Text = "";
         }
 
+        private string TimeZone;
+
         public Table(CheckListPDF PDFBase, ICheckListGroup Group, int Indentation = 1) : base(PDFBase, Group, Indentation)
-        { }
+        {
+            TimeZone = PDFBase.TimeZone;
+        }
 
         public override void Render(params Object[] State)
         {
@@ -184,8 +189,8 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                         int i = 0;
                         foreach(var Sign in Signatures[s].History.OrderByDescending(x => x.DateTime))
                         {
-                            string[] Date = Sign.DateTime.Split(' ');
-                            RenderSignature(Table, i>0 ? 0 : VisibleSignaturesCount, String.IsNullOrEmpty(Sign.Note) ? "Signed" : "Canceled", Sign.User, Date[0], Date[1], Sign.Signature);
+                            var Date = Sign.DateTime.ToLocalTime(TimeZone);
+                            RenderSignature(Table, i>0 ? 0 : VisibleSignaturesCount, String.IsNullOrEmpty(Sign.Note) ? "Signed" : "Canceled", Sign.User, Date.ToString("dd/MM/yyyy"), Date.ToString("HH:mm"), Sign.Signature);
                             i++;
                         }
                     }

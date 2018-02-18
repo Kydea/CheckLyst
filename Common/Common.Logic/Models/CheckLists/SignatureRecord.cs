@@ -1,8 +1,10 @@
-﻿namespace CheckListManager.Common.Logic.Models.CheckLists
+﻿using System;
+
+namespace CheckListManager.Common.Logic.Models.CheckLists
 {
 	public struct SignatureRecord
 	{
-		public string DateTime { get; set; }
+		public DateTimeOffset DateTime { get; set; }
 
 		public string User { get; set; }
 

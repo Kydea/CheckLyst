@@ -7,7 +7,7 @@
         	elements: {},
         	events: {},
         	actions: {},
-        	pages: {},
+            pages: {},
             urls: {
                 api: "@BaseUrl",
                 accessControl: {
@@ -20,7 +20,8 @@
                 infrastructure: {
                     companies: {
                         getData: "@BaseUrl/Infrastructure/Companies/GetData"
-                    }
+                    },
+                    clock: "@BaseUrl/Infrastructure/Information/Clock"
                 },
                 workflows: {
                     signature: "@Url.Action("Signature", "WorkFlows")"

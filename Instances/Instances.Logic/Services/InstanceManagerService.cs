@@ -924,7 +924,7 @@ namespace CheckListManager.Instances.Logic.Services
         {
             try
             {
-                if (!HasPermission(identity, "View", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
+                if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
                     throw new InstanceException("Access denied");
 
                 UnlockPages(cacheObject.Instance, identity.Code);

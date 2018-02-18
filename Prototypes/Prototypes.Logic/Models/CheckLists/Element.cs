@@ -39,8 +39,12 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             if (ValidExpressionCode != null) ExpressionsInUse.Add(ValidExpressionCode);
             if (ReadOnlyExpressionCode != null) ExpressionsInUse.Add(ReadOnlyExpressionCode);
 
-            if (Code != null)
+            if (!string.IsNullOrEmpty(Code))
+            {
+                if (CheckList.Elements.ContainsKey(Code))
+                    throw new Exception($"Duplicated code {Code}");
                 CheckList.Elements[Code] = this;
+            }
         }
 
         public void Update()

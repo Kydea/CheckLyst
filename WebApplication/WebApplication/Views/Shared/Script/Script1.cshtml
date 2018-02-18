@@ -82,6 +82,8 @@
     matematici.menu.toggleItemsByRole();
 
     matematici.userPanel.update();
+    if (matematici.tokenManager.getAccessToken())
+        matematici.clock.resume();
 
     matematici.elements.body.on("keydown", function (e) {
         var key = e.which;

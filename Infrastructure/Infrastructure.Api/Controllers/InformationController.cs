@@ -24,5 +24,15 @@ namespace CheckListManager.Infrastructure.Api.Controllers
                 Version = new ReleaseInfoMessage()
             });
         }
+
+        [HttpPost]
+        [Route("Clock")]
+        public IHttpActionResult Clock()
+        {
+            return Ok(new
+            {
+                ServerTime = DateTimeOffset.UtcNow
+            });
+        }
     }
 }

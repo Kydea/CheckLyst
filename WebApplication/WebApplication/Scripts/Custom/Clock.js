@@ -21,9 +21,8 @@
 
 		check = function () {
 			return $.ajax({
-				url: matematici.urls.clock,
-				type: "post",
-				data: { Client: matematici.client.getId() }
+				url: matematici.urls.infrastructure.clock,
+				type: "post"
 			});
 		},
 
@@ -36,32 +35,25 @@
 
 		update = function () {
 			check().done(function (result) {
-				var serverTime = new Date(result.utcNow);
+				var
+					serverTime = new Date(result.serverTime),
+					milliseconds = (60 - serverTime.getSeconds() + 1) * 1000;
 
 				weak = false;
-				error = null
+				error = null;
 				offset = serverTime.getTime() - new Date().getTime();
 
-				//console.log(result);
-				//console.log("Server time: " + serverTime);
-				//console.log("Client time: " + new Date());
-				//console.log("offset: " + offset);
+				console.log(result);
+				console.log("Server time: " + serverTime);
+				console.log("Client time: " + new Date());
+				console.log("offset: " + offset);
 
 				setTimeout(function () {
 					if (!stopped)
 						update();
-				}, (60 - serverTime.getSeconds() + 1) * 1000);
+				}, Math.max(milliseconds || 0, 10000));
 
 				refresh();
-
-				if (result.logout) {
-					logout(result.logout);
-				} else if (result.warning) {
-					alert("Warning: " + result.warning);
-					check().done(function (checkResult) {
-						if (checkResult.logout) logout(checkResult.logout);
-					});
-				}
 			}).fail(function (jqXHR, textStatus, errorThrown) {
 				weak = true;
 				error = errorThrown;

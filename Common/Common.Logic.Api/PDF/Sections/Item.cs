@@ -6,18 +6,17 @@ using iTextSharp.text.pdf;
 using iTextSharp.text;
 using System.Drawing;
 using CheckListManager.Common.Logic.Models.CheckLists;
+using CheckListManager.Common.Core.Helpers;
 
 namespace CheckListManager.Common.Logic.Api.PDF.Sections
 {
     public class Item : CheckListSection
     {
-        public ICheckListItem Next;
-        bool FirstOfGroup = false;
+        private string TimeZone;
 
         public Item(CheckListPDF PDFBase, ICheckListItem Item, ICheckListItem Next, bool FirstOfGroup, int Indentation = 1) : base(PDFBase, Item, Indentation)
         {
-            this.FirstOfGroup = FirstOfGroup;
-            this.Next = Next;
+            TimeZone = PDFBase.TimeZone;
         }
 
         private void DrawSignature(string Description, string User = null, string Date = null, string Time = null, string Signature = null)
@@ -77,8 +76,8 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                 if (SignatureElement.History.Count > 0)
                     foreach (var Sign in SignatureElement.History)
                     {
-                        string[] Date = Sign.DateTime.Split(' ');
-                        DrawSignature(string.IsNullOrEmpty(Sign.Note) ? "Signed by" : "Canceled by", Sign.User, Date[0], Date[1], Sign.Signature);
+                        var Date = Sign.DateTime.ToLocalTime(TimeZone);
+                        DrawSignature(string.IsNullOrEmpty(Sign.Note) ? "Signed by" : "Canceled by", Sign.User, Date.ToString("dd/MM/yyyy"), Date.ToString("HH:mm"), Sign.Signature);
                     }
                 else
                     DrawSignature("Signed by");

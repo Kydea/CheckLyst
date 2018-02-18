@@ -26,6 +26,7 @@
 		externalSources = {},
 		expressions = [],
 		lastResult,
+		deleted,
 
 		setupInstanceDescription = function () {
 			header.getElement().prepend(instanceDescription = $("<div />").addClass("InstanceDescription"));
@@ -42,11 +43,15 @@
 		},
 
 		setupActionBar = function () {
+			var
+				editor = hasPermission("Edit"),
+				deleter = hasPermission("Delete");
+
 			buttonGroup = $("div.ActionBar a.ButtonGroup", element),
-				confirmButton = $("a.Confirm", buttonGroup).toggleClass("Hidden", state != instances.Instance.states.completed),
-				completeButton = $("a.Complete", buttonGroup).toggleClass("Hidden", state != instances.Instance.states.progress),
-				deleteButton = $("a.Delete", buttonGroup).toggleClass("Hidden", state != instances.Instance.states.draft && state != instances.Instance.states.progress),
-				saveButton = $("a.Save", buttonGroup).toggleClass("Hidden", state != instances.Instance.states.draft && state != instances.Instance.states.progress),
+				confirmButton = $("a.Confirm", buttonGroup).toggleClass("Hidden", !editor || state != instances.Instance.states.completed),
+				completeButton = $("a.Complete", buttonGroup).toggleClass("Hidden", !editor || state != instances.Instance.states.progress),
+				deleteButton = $("a.Delete", buttonGroup).toggleClass("Hidden", !deleter || state != instances.Instance.states.draft && state != instances.Instance.states.progress),
+				saveButton = $("a.Save", buttonGroup).toggleClass("Hidden", !editor || state != instances.Instance.states.draft && state != instances.Instance.states.progress),
 				historyButton = $("a.History", buttonGroup).toggleClass("Hidden", state == instances.Instance.states.draft);
 
 			if ($("a:not(.Hidden)", buttonGroup).size() == 0)
@@ -59,7 +64,7 @@
 
 		setupBreadcrumbs = function () {
 			matematici.breadcrumbs.set([
-				{ content: departmentName, label: "department"},
+				{ content: departmentName, label: "department" },
 				{ content: prototypeTypeName, label: "prototype type" },
 				{ content: prototypeName + "." + version + "." + getFormattedYear() + "." + (number || "?"), label: "code" },
 				{ content: state, label: "state" }
@@ -102,7 +107,7 @@
 				state = result.state;
 				code = result.code;
 				department = result.department,
-				departmentName = result.departmentName;
+					departmentName = result.departmentName;
 				prototypeType = result.prototypeType;
 				prototypeTypeName = result.prototypeTypeName;
 				prototype = result.prototype;
@@ -200,6 +205,17 @@
 			return true;
 		},
 
+		hasPermission = function (instanceFunction) {
+			return versionState != prototypes.Prototype.states.draft && versionState != prototypes.Prototype.states.simulation
+				&& (state == instances.Instance.states.draft || state == instances.Instance.states.progress)
+				&& (matematici.tokenManager.checkRole("Instances#" + instanceFunction + "#" + department + "##")
+					|| matematici.tokenManager.checkRole("Instances#" + instanceFunction + "#" + department + "#" + prototypeType + "#"))
+				|| (versionState == prototypes.Prototype.states.draft || versionState == prototypes.Prototype.states.simulation)
+				&& (state == instances.Instance.states.draft || state == instances.Instance.states.progress)
+				&& (matematici.tokenManager.checkRole("Prototypes#Edit#" + department + "##")
+					|| matematici.tokenManager.checkRole("Prototypes#Edit#" + department + "#" + prototypeType + "#"));
+		},
+
 		send = function (action, note, callback) {
 			$.ajax({
 				url: matematici.urls.instances.api + "/" + action,
@@ -217,7 +233,7 @@
 				setupActionBar();
 				setupBreadcrumbs();
 
-				if (result.checkList) 
+				if (result.checkList)
 					update(result);
 
 				if (callback)
@@ -265,7 +281,7 @@
 
 	instance.quit = function () {
 		matematici.navigator.open(
-			versionState == prototypes.Prototype.states.draft || versionState == prototypes.Prototype.states.progress ?
+			versionState == prototypes.Prototype.states.draft || versionState == prototypes.Prototype.states.simulation ?
 				matematici.urls.prototypes.detail + "/" + prototype + "/" + version :
 				options.listUrl
 		);
@@ -280,7 +296,10 @@
 			matematici.dialog.show("Instance deletion", "Instance will be set as deleted. Provide a note for the deletion", [
 				{
 					text: "Confirm", icon: "check", handler: function () {
-						send("Delete", $("textarea.Textarea", $(this).closest("div.Dialog")).val(), instance.quit);
+						send("Delete", $("textarea.Textarea", $(this).closest("div.Dialog")).val(), function () {
+							deleted = true;
+							instance.quit();
+						});
 					}
 				},
 				{ icon: "times", hidden: true, cancelButton: true },
@@ -290,7 +309,10 @@
 			matematici.dialog.show("Instance deletion", "The instance will be deleted", [
 				{
 					text: "Confirm", icon: "check", handler: function () {
-						send("Delete", null, instance.quit);
+						send("Delete", null, function () {
+							deleted = true;
+							instance.quit();
+						});
 					}
 				},
 				{ icon: "times", hidden: true, cancelButton: true },
@@ -350,7 +372,7 @@
 					{ label: "State", name: "state" },
 					{ label: "Date", name: "date", type: "DateTimeOffset" },
 					{ label: "User", name: "user" },
-					{ label: "Note", name: "note"  },
+					{ label: "Note", name: "note" },
 					{ label: "Approved", name: "approved", type: "Boolean", align: "center" },
 					{ label: "Proposed state", name: "proposedState" },
 					{ label: "Signature step", name: "step", align: "center" },
@@ -394,20 +416,13 @@
 	};
 
 	instance.close = function (callback) {
-		if (
-			(state == instances.Instance.states.draft || state == instances.Instance.states.progress)
-			&& (
-				matematici.tokenManager.checkRole("Instances#Edit#" + department + "##")
-				|| matematici.tokenManager.checkRole("Instances#Edit#" + department + "#" + prototypeType + "#")
-			)
-		) {
+		if (!deleted && hasPermission("Edit")) {
 			new instances.Event(instances.Events.quit, null, null, null, true).done(function () {
 				callback();
 			}).error(function () {
 				callback();
 			}).trigger();
-		}
-		else
+		} else
 			callback();
 	};
 

@@ -90,7 +90,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             SignerDescription = UserDescription;
             SignedOn = Now;
 
-            History.Add(new SignatureRecord { DateTime = SignedOn.ToString("dd/MM/yyyy HH:mm"), User = UserCode, Signature = SignerDescription });
+            History.Add(new SignatureRecord { DateTime = SignedOn, User = UserCode, Signature = SignerDescription });
         }
 
         public void Unsign(string UserCode, string UserDescription, DateTimeOffset Now, string Note, string InstanceState)
@@ -105,13 +105,19 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
                 SignedOn = Now;
 
-                History.Add(new SignatureRecord { DateTime = SignedOn.ToString("dd/MM/yyyy HH:mm"), User = UserCode, Signature = SignerDescription, Note = Note });
+                History.Add(new SignatureRecord { DateTime = SignedOn, User = UserCode, Signature = SignerDescription, Note = Note });
             }
             catch
             {
                 Signed = true;
                 throw;
             }
+        }
+
+        public override void UpdateReadOnly(string userCode, bool readOnlyInstance)
+        {
+            base.UpdateReadOnly(userCode, readOnlyInstance);
+            ReadOnly |= Signed;
         }
     }
 }
