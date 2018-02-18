@@ -119,7 +119,7 @@
             else if (
                 !matematici.tokenManager.checkRole("Instances#Create#" + department + "##")
                 && !matematici.tokenManager.checkRole("Instances#Create#" + department + "#" + prototypeType + "#")
-                && !matematici.tokenManager.checkRole("Instances#Edit#" + department + "##")
+                || !matematici.tokenManager.checkRole("Instances#Edit#" + department + "##")
                 && !matematici.tokenManager.checkRole("Instances#Edit#" + department + "#" + prototypeType + "#")
             )
                 matematici.dialog.error("Error", "Permission denied.");
