@@ -20,6 +20,7 @@ namespace CheckListManager.WebApplication.Controllers
         public ActionResult Create(long? Prototype, int? Version)
         {
             ViewBag.AppRoles = Request["roles"];
+            ViewBag.AppTimeZone = Request["timeZone"];
             return ConditionalView("Detail", new Instance { Prototype = Prototype.Value, Version = Version.Value });
         }
 
@@ -28,6 +29,7 @@ namespace CheckListManager.WebApplication.Controllers
         public ActionResult Detail(string Code)
         {
             ViewBag.AppRoles = Request["roles"];
+            ViewBag.AppTimeZone = Request["timeZone"];
             return ConditionalView("Detail", new Instance { Code = Code });
         }
     }

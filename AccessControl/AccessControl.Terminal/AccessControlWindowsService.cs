@@ -11,7 +11,7 @@ namespace CheckListManager.Trail.Terminal
 	{
 		public AccessControlWindowsService(TerminalConfig config) : base(config)
 		{
-            Add(new ComputedSchedulerStrategy(RunAsync, new[] { 0 }, new[] { 0 }) { RunAtStartup = false });
+            Add(new ComputedSchedulerStrategy(RunAsync, new[] { 0 }, new[] { 0 }) { RunAtStartup = true });
 		}
 
 		protected async Task RunAsync()
