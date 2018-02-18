@@ -49,7 +49,7 @@ namespace CheckListManager.Instances.Api.Controllers
                     State = cacheObject.InstanceState,
                     Department = cacheObject.Department,
                     DepartmentName = cacheObject.DepartmentName,
-                    PrototypeType = cacheObject.Prototype,
+                    PrototypeType = cacheObject.PrototypeType,
                     PrototypeTypeName = cacheObject.PrototypeTypeName,
                     Prototype = cacheObject.Prototype,
                     PrototypeName = cacheObject.PrototypeName,

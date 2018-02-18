@@ -30,7 +30,7 @@ namespace CheckListManager.Trail.Logic.Services
 		{
 			var messages = await _queueService.ReceiveObjectsAsync<TrailMessage>(QueueName.Trail, cancellationToken: cancellationToken);
 
-			foreach (var message in messages)
+            foreach (var message in messages)
 			{
 				await ProcessMessageAsync(message, cancellationToken);
 

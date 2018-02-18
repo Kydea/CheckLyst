@@ -43,10 +43,10 @@
 				error = null;
 				offset = serverTime.getTime() - new Date().getTime();
 
-				console.log(result);
-				console.log("Server time: " + serverTime);
-				console.log("Client time: " + new Date());
-				console.log("offset: " + offset);
+				//console.log(result);
+				//console.log("Server time: " + serverTime);
+				//console.log("Client time: " + new Date());
+				//console.log("offset: " + offset);
 
 				setTimeout(function () {
 					if (!stopped)
