@@ -144,7 +144,7 @@ namespace CheckListManager.Infrastructure.Tests.Steps
         }
 
         [Then(@"the system correctly delete the record from the database")]
-        public async Task ThenTheSystemCorrectlyDeleteTheRecordFromTheDatabaseAsync()
+        public void ThenTheSystemCorrectlyDeleteTheRecordFromTheDatabaseAsync()
         {
             DebugContext();
 
