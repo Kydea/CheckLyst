@@ -43,7 +43,7 @@ namespace CheckListManager.WorkFlows.Api.Controllers
 
         [HttpPost]
         [Route("Sign")]
-        [Authorize(Roles = "Prototypes#Approve, Instance#Confirm")]
+        [Authorize(Roles = "Prototypes#Approve, Instances#Confirm")]
         public async Task<IHttpActionResult> Sign(SignRequest request)
         {
             try
