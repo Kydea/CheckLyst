@@ -48,7 +48,7 @@
 				deleter = hasPermission("Delete");
 
 			buttonGroup = $("div.ActionBar a.ButtonGroup", element),
-				confirmButton = $("a.Confirm", buttonGroup).toggleClass("Hidden", !editor || state != instances.Instance.states.completed),
+				confirmButton = $("a.Confirm", buttonGroup).toggleClass("Hidden", state != instances.Instance.states.completed),
 				completeButton = $("a.Complete", buttonGroup).toggleClass("Hidden", !editor || state != instances.Instance.states.progress),
 				deleteButton = $("a.Delete", buttonGroup).toggleClass("Hidden", !deleter || state != instances.Instance.states.draft && state != instances.Instance.states.progress),
 				saveButton = $("a.Save", buttonGroup).toggleClass("Hidden", !editor || state != instances.Instance.states.draft && state != instances.Instance.states.progress),
