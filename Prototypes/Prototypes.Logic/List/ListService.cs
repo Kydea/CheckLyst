@@ -60,7 +60,7 @@ namespace CheckListManager.Prototypes.Logic.List
             return response;
         }
 
-        public async Task<PagingResponse<List<ListRow>>> GetDataAsync(DefaultIdentity identity, PagingRequest<ListRequest> form)
+        public async Task<PagingResponse<List<ListRow>>> GetDataAsync(IDefaultIdentity identity, PagingRequest<ListRequest> form)
         {
             if (form.Data.State == null) form.Data.State = string.Empty;
             return await _prototypesRepository.GetPrototypesAsync(
