@@ -23,6 +23,8 @@ class Formatter: NSObject {
     
     fileprivate let infoTSFormatter : DateFormatter
     
+    fileprivate let instanceDateTimeFormatter : DateFormatter
+    
     
     
     fileprivate override init() {
@@ -36,16 +38,18 @@ class Formatter: NSObject {
         
         self.infoTSFormatter = DateFormatter()
         
+        self.instanceDateTimeFormatter = DateFormatter()
+        
         self.dateToDateTimeFormatter.dateFormat = "EEE, dd MMM yyyy HH:mm:ss zzz"
         self.dateToDateTimeFormatter.locale = Locale(identifier: "en_US")
-        
         self.dateToTimeFormatter.dateFormat = "HH:mm"
         
         self.stringToDateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SZ"
+        self.stringToDateFormatter.timeZone = TimeZone(abbreviation: "UTC")
         
-        //self.stringToDateFormatter.timeZone = TimeZone(abbreviation: "UTC")
-        self.infoTSFormatter.timeZone = TimeZone(abbreviation: "UTC")
         self.infoTSFormatter.dateFormat = "EEE, dd MMM yyyy HH:mm"
+        
+        self.instanceDateTimeFormatter.dateFormat = "dd/MM/yyyy HH:mm"
         
     }
     
@@ -82,15 +86,18 @@ class Formatter: NSObject {
     }
     
     func getInfoTSFromDate(_ date: Date) -> String {
+        if ((UserDefaults.standard.value(forKey: "timeZone") as! String) != self.infoTSFormatter.timeZone.identifier) {
+            self.infoTSFormatter.timeZone = TimeZone(identifier: UserDefaults.standard.value(forKey: "timeZone") as! String)
+        }
         return self.infoTSFormatter.string(from: date)
+        
     }
     
-    func stringFromServerToReadbleString(_ str:String) -> String {
-        let aux = str.split(separator: "T")
-        let date = aux[0].replacingOccurrences(of: "-", with: "/")
-        let time = aux[1].split(separator: ".")[0]
-        let formattedStr = date + " " + time
-        return formattedStr
+    func stringFromServerToReadbleString(_ date:String) -> String {
+        if ((UserDefaults.standard.value(forKey: "timeZone") as! String) != self.instanceDateTimeFormatter.timeZone.identifier) {
+            self.instanceDateTimeFormatter.timeZone = TimeZone(identifier: UserDefaults.standard.value(forKey: "timeZone") as! String)
+        }
+        return self.instanceDateTimeFormatter.string(from: (self.stringToDate(date) as Date) )
     }
     
     

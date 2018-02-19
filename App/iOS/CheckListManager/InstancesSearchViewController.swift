@@ -80,7 +80,6 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
             searchDictionary[field] = (field == "version") ? selectedItemsDictionary[index]!.value.components(separatedBy: " -")[0] : searchDictionary[field]
             searchDictionary[field] = (searchDictionary[field] == nil) ? "" : selectedItemsDictionary[fieldIndexDictionary[field]!]!.value
         }
-        print(searchDictionary.debugDescription)
     }
     
     
@@ -340,7 +339,10 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                 }
             }
         }
-        self.newInstanceButton.isEnabled = (self.selectedItemsDictionary[fieldIndexDictionary["version"]!]!.text.contains("Active") && (self.checkRoles(role: "Instances#Create#" + selectedDepartemnt + "##") || self.checkRoles(role: "Instances#Create#" + selectedDepartemnt + "#" + selectedPrototypeType + "#"))) ? true : false
+        self.newInstanceButton.isEnabled = (self.selectedItemsDictionary[fieldIndexDictionary["version"]!]!.text.contains("Active")
+            && (self.checkRoles(role: "Instances#Create#" + selectedDepartemnt + "##") || self.checkRoles(role: "Instances#Create#" + selectedDepartemnt + "#" + selectedPrototypeType + "#"))
+            && (self.checkRoles(role: "Instances#Edit#" + selectedDepartemnt + "##") || self.checkRoles(role: "Instances#Edit#" + selectedDepartemnt + "#" + selectedPrototypeType + "#"))) ?
+                true : false
         
         self.tableView.reloadData()
     }

@@ -38,8 +38,9 @@ class InstanceViewController: UIViewController, UIWebViewDelegate, UIGestureReco
         request.httpMethod = "POST"
         request.timeoutInterval = 20
         request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        /*Setting value for local storage*/
+        let bodyString = "roles=" + (UserDefaults.standard.value(forKey: "roles") as! String) + "&timeZone=" + (UserDefaults.standard.value(forKey: "timeZone") as! String)
         
-        let bodyString = "roles=" + (UserDefaults.standard.value(forKey: "roles") as! String)
         request.httpBody = bodyString.data(using: String.Encoding.utf8)
         
         webView.loadRequest(request as URLRequest)
@@ -138,12 +139,10 @@ class InstanceViewController: UIViewController, UIWebViewDelegate, UIGestureReco
         if( webView.stringByEvaluatingJavaScript(from: "window.location.href")!.contains("Security/Login")){
             print("redirecting")
             webView.isHidden = true
-            logoutAndGoToLogin()
+            app.logoutAndGoToLogin()
         }
         
     }
-    
-    func logoutAndGoToLogin(){ app.logoutAndGoToLogin()  }
 
     @objc func keyboardWillShow(_ notification: Notification) {
         if view.frame.origin.y == 0{
