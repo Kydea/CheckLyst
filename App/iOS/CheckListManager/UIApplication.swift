@@ -57,7 +57,7 @@ import UIKit
         if(logged)
             
         {
-            let expireDate = (UserDefaults.standard.value(forKey: "token_expires") as! Date)//.addingTimeInterval(-1665)
+            let expireDate = (UserDefaults.standard.value(forKey: "token_expires") as! Date)//.addingTimeInterval(-1615)
             
             if(expireDate < Date() && !isWarningPresented) {
                 print("expired Token")
@@ -76,7 +76,7 @@ import UIKit
         
         if(timeToExpire <= timeBeforeTokenExpires && !isWarningPresented && !isRefreshing) {
             
-            print("refreshing user token")
+            //print("refreshing user token")
             
             isRefreshing = true
             
@@ -86,7 +86,7 @@ import UIKit
                     {
                         let json = try JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
                         
-                        print ("data received = \(json)")
+                        //print ("data received = \(json)")
                         
                         if(json["error"] == nil)
                             
@@ -99,11 +99,13 @@ import UIKit
                             
                         } else {
                     
-                            print("##### REFRESH ERROR #####")
-                            print("access token = \(String(describing: UserDefaults.standard.value(forKey: "access_token")))")
-                            print("refresh token = \(String(describing: UserDefaults.standard.value(forKey: "refresh_token")))")
+                            //print("##### REFRESH ERROR #####")
+                            //print("access token = \(String(describing: UserDefaults.standard.value(forKey: "access_token")))")
+                            //print("refresh token = \(String(describing: UserDefaults.standard.value(forKey: "refresh_token")))")
                             
                             self.displayError(Title: "Error", Message: "Something has gone wrong, you'll be redirected to login section.")
+                            
+                            self.isRefreshing = false
                         }
                     }
                 } catch {

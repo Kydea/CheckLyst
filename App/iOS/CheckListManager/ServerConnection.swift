@@ -107,7 +107,9 @@ open class ServerConnection {
                     
                     let bodyString = "grant_type=refresh_token&refresh_token=" + (params["Refresh_Token"] as! String)
                  
-                    request.httpBody = bodyString.data(using: String.Encoding.utf8)
+                    request.httpBody = bodyString.data(using: String.Encoding.utf8)!
+                    
+                    //print(String(data: request.httpBody!, encoding: String.Encoding.utf8)!)
                     
                 } else {
                     request.addValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -139,6 +141,12 @@ open class ServerConnection {
                         serverResponse.response = response
                         serverResponse.data = data
                         serverResponse.error = error as NSError?
+                        
+                        /*print("response = \(String(describing: serverResponse.response).debugDescription)");
+                        print("data = \(String(describing: serverResponse.data))")
+                        print(String(data: serverResponse.data!, encoding: .utf8)!)
+                        print(serverResponse.error ?? "nessun errore");*/
+
                         
                         completion(serverResponse)
                     }
