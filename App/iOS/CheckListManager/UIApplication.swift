@@ -57,10 +57,9 @@ import UIKit
         if(logged)
             
         {
-            let expireDate = (UserDefaults.standard.value(forKey: "token_expires") as! Date)//.addingTimeInterval(-1615)
+            let expireDate = UserDefaults.standard.value(forKey: "token_expires") as! Date
             
             if(expireDate < Date() && !isWarningPresented) {
-                print("expired Token")
                 self.displayError(Title: "Session Expired", Message: "Your session is expired, you'll be redirected to login section.")
             } else {
                 self.refreshToken(expireDate)
@@ -72,12 +71,8 @@ import UIKit
     
         timeToExpire = expireDate.timeIntervalSinceNow
         
-        //print(timeToExpire)
-        
         if(timeToExpire <= timeBeforeTokenExpires && !isWarningPresented && !isRefreshing) {
-            
-            //print("refreshing user token")
-            
+        
             isRefreshing = true
             
             ServerConnection.loginOrRefreshToServer(["Refresh_Token" : UserDefaults.standard.value(forKey: "refresh_token") as! String]) { (serverResponse) -> Void in
@@ -85,9 +80,7 @@ import UIKit
                     if serverResponse.data != nil
                     {
                         let json = try JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
-                        
-                        //print ("data received = \(json)")
-                        
+                       
                         if(json["error"] == nil)
                             
                         {
@@ -98,10 +91,6 @@ import UIKit
                             self.isRefreshing = false
                             
                         } else {
-                    
-                            //print("##### REFRESH ERROR #####")
-                            //print("access token = \(String(describing: UserDefaults.standard.value(forKey: "access_token")))")
-                            //print("refresh token = \(String(describing: UserDefaults.standard.value(forKey: "refresh_token")))")
                             
                             self.displayError(Title: "Error", Message: "Something has gone wrong, you'll be redirected to login section.")
                             
