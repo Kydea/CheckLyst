@@ -10,7 +10,8 @@ namespace CheckListManager.Common.Logic.Api.Controllers
 		[Route]
 		public IHttpActionResult Get()
 		{
-			return Ok(Message.Create(new ReleaseInfoMessage()));
+            var Model = new ReleaseInfoMessage();
+            return Ok(new { Model.Version, Model.FileVersion, Model.BuildDate });
 		}
 	}
 }
