@@ -82,6 +82,8 @@ open class ServerConnection {
     static func sendHTTPRequest(_ urlPath: String,params : Dictionary<String, AnyObject>, completion: ((_ result:ServerResponse) -> Void)!){
         
         do {
+            /*necessary to urlencode the refresh token correctly*/
+            let allowedCharacterSet = CharacterSet(charactersIn: "+").inverted
             
             let request = NSMutableURLRequest(url: URL(string: urlPath)!)
             
@@ -105,11 +107,9 @@ open class ServerConnection {
                     
                     request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
                     
-                    let bodyString = "grant_type=refresh_token&refresh_token=" + (params["Refresh_Token"] as! String)
-                 
-                    request.httpBody = bodyString.data(using: String.Encoding.utf8)!
-                    
-                    //print(String(data: request.httpBody!, encoding: String.Encoding.utf8)!)
+                    let bodyString = ("grant_type=refresh_token&refresh_token=" + (params["Refresh_Token"] as! String)).addingPercentEncoding(withAllowedCharacters: allowedCharacterSet)!
+
+                    request.httpBody = bodyString.data(using: String.Encoding.utf8)
                     
                 } else {
                     request.addValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -141,12 +141,6 @@ open class ServerConnection {
                         serverResponse.response = response
                         serverResponse.data = data
                         serverResponse.error = error as NSError?
-                        
-                        /*print("response = \(String(describing: serverResponse.response).debugDescription)");
-                        print("data = \(String(describing: serverResponse.data))")
-                        print(String(data: serverResponse.data!, encoding: .utf8)!)
-                        print(serverResponse.error ?? "nessun errore");*/
-
                         
                         completion(serverResponse)
                     }
