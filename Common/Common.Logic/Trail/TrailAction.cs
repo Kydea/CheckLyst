@@ -30,5 +30,7 @@
         public const string InstanceExportFailed = "Instance export failed";
         public const string PrototypeExportCompleted = "Prototype export completed";
         public const string PrototypeExportFailed = "Prototype export failed";
+
+        public const string JobError = "Job error";
     }
 }

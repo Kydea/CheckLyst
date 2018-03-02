@@ -436,7 +436,11 @@ namespace CheckListManager.Prototypes.Logic.Services
                         });
 
                         var OldVersion = PrototypeVersion.Prototypes.PrototypeVersions.SingleOrDefault(pv => pv.VersionState == VersionState.Active);
-                        if (OldVersion != null) await SetPrototypeVersionState(OldVersion, VersionState.Obsolete);
+                        if (OldVersion != null)
+                        {
+                            await SetPrototypeVersionState(OldVersion, VersionState.Obsolete);
+                            await _prototypeRepository.SaveChangesAsync();
+                        }
                     }
 
                     await SetPrototypeVersionState(PrototypeVersion, State);
@@ -448,7 +452,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                     await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                     {
                         Company = PrototypeVersion.Prototypes.Company,
-                        Action = "Job error",
+                        Action = TrailAction.JobError,
                         User = "(system)",
                         Date = DateTimeOffset.UtcNow,
                         CheckList = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}",

@@ -34,7 +34,10 @@ values
 	('Instance export completed'),
     ('Instance export failed'),
     ('Prototype export completed'),
-    ('Prototype export failed');
+    ('Prototype export failed'),
+
+    ('Job error');
+
 
 create table "Trail"."Records"
 (

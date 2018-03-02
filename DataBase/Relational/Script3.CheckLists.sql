@@ -74,7 +74,7 @@ create table "CheckLists"."PrototypeVersions"
 	"ModifiedOn" timestamptz
 );
 
-create unique index "Index_PrototypeVersions_Drafts" on "CheckLists"."PrototypeVersions"("Prototype", "VersionState") where "VersionState" in ('Draft', 'In simulation', 'Active');
+create unique index "Index_PrototypeVersions_State" on "CheckLists"."PrototypeVersions"("Prototype", "VersionState") where "VersionState" in ('In simulation', 'Active');
 
 create table "CheckLists"."PrototypeVersionTags"
 (
