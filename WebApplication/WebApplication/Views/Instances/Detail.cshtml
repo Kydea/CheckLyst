@@ -45,7 +45,8 @@
                 prototype: "@(Model.Prototype ?? -1)",
                 version: "@(Model.Version ?? -1)",
                 detailUrl: "@Url.Action("Detail")",
-                listUrl: "@Url.Action("List")"
+                listUrl: "@Url.Action("List")",
+                appMode: "@(ViewBag.AppMode ? 1 : 0)" == "1"
             }),
 
             actionBar = new matematici.ActionBar("div.ActionBar")

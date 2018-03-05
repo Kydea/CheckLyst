@@ -206,8 +206,10 @@
 		},
 
 		hasPermission = function (instanceFunction) {
-			return versionState != prototypes.Prototype.states.draft && versionState != prototypes.Prototype.states.simulation
+			return
+				versionState != prototypes.Prototype.states.draft && versionState != prototypes.Prototype.states.simulation
 				&& (state == instances.Instance.states.draft || state == instances.Instance.states.progress)
+				&& instanceFunction //when null, only prototype grants are checked
 				&& (matematici.tokenManager.checkRole("Instances#" + instanceFunction + "#" + department + "##")
 					|| matematici.tokenManager.checkRole("Instances#" + instanceFunction + "#" + department + "#" + prototypeType + "#"))
 				|| (versionState == prototypes.Prototype.states.draft || versionState == prototypes.Prototype.states.simulation)
@@ -281,7 +283,7 @@
 
 	instance.quit = function () {
 		matematici.navigator.open(
-			versionState == prototypes.Prototype.states.draft || versionState == prototypes.Prototype.states.simulation ?
+			!options.appMode && hasPermission(null) && versionState == prototypes.Prototype.states.draft || versionState == prototypes.Prototype.states.simulation ?
 				matematici.urls.prototypes.detail + "/" + prototype + "/" + version :
 				options.listUrl
 		);
