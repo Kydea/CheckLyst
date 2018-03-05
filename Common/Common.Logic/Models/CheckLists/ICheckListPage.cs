@@ -6,5 +6,5 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
 	{
 		string Description { get; set; }
 		List<ICheckListGroup> Groups { get; set; }
-	}
+    }
 }

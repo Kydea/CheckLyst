@@ -18,5 +18,15 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 Group.Setup();
             }
         }
+
+        public override void Check()
+        {
+            base.Check();
+            foreach (Group Group in Groups)
+            {
+                Group.CheckList = CheckList;
+                Group.Check();
+            }
+        }
     }
 }

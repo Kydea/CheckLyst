@@ -249,8 +249,11 @@ namespace CheckListManager.Prototypes.Logic.Services
                 PrototypeVersion.ModifiedBy = identity.Code;
             }
 
+            var CheckList = request.CheckList;
+            Check(CheckList);
+
             PrototypeVersion.Description = request.Description;
-            PrototypeVersion.Data = JsonConvert.SerializeObject(request.CheckList, _converter);
+            PrototypeVersion.Data = JsonConvert.SerializeObject(CheckList, _converter);
             PrototypeVersion.ValidFrom = request.ValidFrom;
             PrototypeVersion.ValidUntil = request.ValidUntil;
             PrototypeVersion.InstanceConfirmationWorkFlow = request.InstanceConfirmationWorkFlow;
@@ -279,6 +282,12 @@ namespace CheckListManager.Prototypes.Logic.Services
                 ModifiedBy = PrototypeVersion.ModifiedBy,
                 ModifiedOn = PrototypeVersion.ModifiedOn
             };
+        }
+
+        private void Check(Prototype CheckList)
+        {
+            foreach (Page Page in CheckList.Pages)
+                Page.Check();
         }
 
         public async Task DeleteAsync(DefaultIdentity identity, PrototypeRequest request)

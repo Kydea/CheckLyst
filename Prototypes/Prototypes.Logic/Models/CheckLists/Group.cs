@@ -69,5 +69,15 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             Copy(this, group);
             return group;
         }
+
+        public override void Check()
+        {
+            base.Check();
+            foreach (Item Item in Items)
+            {
+                Item.CheckList = CheckList;
+                Item.Check();
+            }
+        }
     }
 }

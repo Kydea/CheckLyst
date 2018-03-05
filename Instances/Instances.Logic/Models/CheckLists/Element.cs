@@ -3,6 +3,7 @@ using CheckListManager.Common.Logic.Models;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.Expressions;
 using System;
+using CheckListManager.Instances.Logic.Exceptions;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
@@ -41,7 +42,12 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             get
             {
                 var BranchElements = GetBranchElements();
-    			return SignatureCode == null || BranchElements == null ? null : (ICheckListSignature)GetBranchElements()[SignatureCode];
+                if (SignatureCode == null || BranchElements == null) return null;
+                if (!BranchElements.ContainsKey(SignatureCode))
+                    throw new InstanceException((string.IsNullOrEmpty(Code) ? "An element" : $"The element {Code}") + $" references to the inexistent signature {SignatureCode}");
+                if (!(BranchElements[SignatureCode] is ICheckListSignature Signature))
+                    throw new InstanceException((string.IsNullOrEmpty(Code) ? "An element" : $"The element {Code}") + $" references to a signature with code {SignatureCode} that is not a signature");
+                return Signature;
             }
         }
 		public string SignatureCode { get; set; }

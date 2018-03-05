@@ -52,7 +52,7 @@
 
     matematici.logo.init();
 
-    matematici.clock = new matematici.Clock(@(ViewBag.AppMode ? "true" : "matematici.isLoginPage"));
+    matematici.clock = new matematici.Clock(matematici.isLoginPage); //@@(ViewBag.AppMode ? "true" : "matematici.isLoginPage"));
 
     matematici.elements.window.on("beforeunload", function () {
         if (!matematici.canClose)

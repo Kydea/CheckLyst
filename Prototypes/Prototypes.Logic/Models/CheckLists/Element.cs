@@ -72,6 +72,13 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             throw new NotImplementedException();
         }
 
+        public virtual void Check()
+        {
+            var BranchElements = GetBranchElements();
+            if (!string.IsNullOrEmpty(SignatureCode) && (!BranchElements.ContainsKey(SignatureCode) || !(BranchElements[SignatureCode] is ICheckListSignature)))
+                SignatureCode = null;
+        }
+
         public static void Copy(Element source, Element destination)
         {
             destination.CheckList = source.CheckList;
