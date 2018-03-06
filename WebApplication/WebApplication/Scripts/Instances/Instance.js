@@ -206,8 +206,7 @@
 		},
 
 		hasPermission = function (instanceFunction) {
-			return
-				versionState != prototypes.Prototype.states.draft && versionState != prototypes.Prototype.states.simulation
+			return versionState != prototypes.Prototype.states.draft && versionState != prototypes.Prototype.states.simulation
 				&& (state == instances.Instance.states.draft || state == instances.Instance.states.progress)
 				&& instanceFunction //when null, only prototype grants are checked
 				&& (matematici.tokenManager.checkRole("Instances#" + instanceFunction + "#" + department + "##")
