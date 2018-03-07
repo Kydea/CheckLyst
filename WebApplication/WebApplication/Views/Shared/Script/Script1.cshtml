@@ -39,6 +39,7 @@
 
     if (Modernizr.touch) matematici.touch.init();
 
+    matematici.appMode = "@(ViewBag.AppMode ? "1" : "0")" == "1";
     matematici.navigator.setBasePath("@Url.Content("~/")").setLastPath("@Request.RawUrl");
     matematici.navigator.checkEventHandlers();
 
@@ -82,7 +83,7 @@
     matematici.menu.toggleItemsByRole();
 
     matematici.userPanel.update();
-    if (matematici.tokenManager.getAccessToken())
+    if (matematici.tokenManager.getAccessToken() || matematici.appMode)
         matematici.clock.resume();
 
     matematici.elements.body.on("keydown", function (e) {

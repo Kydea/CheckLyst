@@ -65,11 +65,7 @@
             }
         },
 
-		valueCopy = function (e) {
-			if (e) {
-				e.preventDefault();
-				e.stopPropagation();
-			}
+		valueCopy = function () {
 			new instances.Event(instances.Events.valueCopy, model.id).done(function (result) {
                 instances.instance.update(result);
                 next();
@@ -170,7 +166,7 @@
 
             copyButton =
 				$("<i />").addClass("Copy fi flaticon-clone-o").attr({ href: "#", title: "F8" })
-					.on("mousedown", function (e) { valueCopy(e); });
+					.on("click", function () { valueCopy(); });
 
 			if (!item.isTableContent() || !item.getParent().isSubRow())
 				copyButton.appendTo(item.isTableContent() ? element : label)

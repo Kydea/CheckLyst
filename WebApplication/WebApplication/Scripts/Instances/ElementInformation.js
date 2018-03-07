@@ -19,7 +19,7 @@
 		},
 
 		addItem = function (icon, value) {
-			if (value != null) panel.append($("<div />").append($("<span />").text(value).prepend($("<i />").addClass("fi fi-fw flaticon-" + icon))));
+			if (value != null) panel.append($("<div />").append($("<span />").html(value).prepend($("<i />").addClass("fi fi-fw flaticon-" + icon))));
 		};
 
 	this.update = function (model) {
@@ -27,7 +27,7 @@
 		addItem("tags-o", model.id + (model.code ? " - " + model.code : ""));
 		addItem(model.valid ? "thumbs-up-o" : "thumbs-down-o", model.valid ? "valid" : model.validityMessage || "not valid");
 		if (!model.readOnly) addItem("edit-o", "editable");
-		addItem("calculator", model.valueFormula);
+		addItem("calculator", model.valueFormulaString + ": <strong>" + model.rawValue + "</strong>");
 		addItem("check", model.signatureInformation);
 		addItem("link-0", (model.externalSourceName ? model.externalSourceName + "." + model.externalSourceColumn : null));
 		if (model.history && model.history.length > 0)
