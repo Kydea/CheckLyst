@@ -40,6 +40,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedStringKey.font:UIFont (name: "Flaticon", size: 20)!,NSAttributedStringKey.foregroundColor: UIColor(red: 153.0/255, green: 153.0/255, blue: 153.0/255, alpha: 1.0)], for:UIControlState())
 
         UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedStringKey.font:UIFont (name: "Flaticon", size: 20)!,NSAttributedStringKey.foregroundColor: UIColor.clear], for:.disabled)
+        
         URLProtocol.registerClass(CustomUrlprotocol.self)
         
         return true

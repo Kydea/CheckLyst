@@ -55,6 +55,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
         activityIndicator.hidesWhenStopped = true
         newInstanceButton.isEnabled = false
         newInstanceButton.title = "\u{f103} New Instance   "
+        self.navigationItem.leftBarButtonItem = SharedControllersProperty.setLogo(self.navigationItem.leftBarButtonItem);
         
         for i in 0...7 {
             selectedItemsDictionary[i] = Option(text: "",value: "")
@@ -64,7 +65,6 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
     
     override func viewDidAppear(_ animated: Bool)
     {
-        self.navigationItem.leftBarButtonItem = SharedControllersProperty.setLogo(self.navigationItem.leftBarButtonItem);
         fromSelectionToSearchDictionary()
         fillSearchFields()
     }

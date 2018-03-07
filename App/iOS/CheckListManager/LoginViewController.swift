@@ -61,7 +61,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate
         activityIndicator.transform = CGAffineTransform(scaleX: 2.0, y: 2.0)
         
         serverTextField.addTarget(self, action: #selector(LoginViewController.chooseServer(_:)), for: UIControlEvents.touchDown)
-        
+ 
     }
     
     @IBAction func chooseServer(_ sender: Any) {

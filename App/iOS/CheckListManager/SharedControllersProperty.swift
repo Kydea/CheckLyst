@@ -24,11 +24,21 @@ class SharedControllersProperty: NSObject {
 
     static func setLogo(_ button: UIBarButtonItem?) -> UIBarButtonItem {
         var button = button
-        var logo =  UIImage(named: "logo")
-        logo = logo!.withRenderingMode(UIImageRenderingMode.alwaysOriginal)
-        button = UIBarButtonItem(image: logo, style: UIBarButtonItemStyle.plain, target: nil, action: nil)
-        button!.imageInsets = UIEdgeInsetsMake(-5, 30, 10, 0);
-        button?.isEnabled=false
+        
+        if #available(iOS 11.0, *) {
+            var logo =  UIImage(named: "logo")
+            logo = logo!.withRenderingMode(UIImageRenderingMode.alwaysOriginal)
+            button = UIBarButtonItem(image: logo, style: UIBarButtonItemStyle.plain, target: nil, action: nil)
+            button!.imageInsets = UIEdgeInsetsMake(0, 30, 10, 0);
+            button?.isEnabled=false
+        } else {
+            var logo =  UIImage(named: "logoBig")
+            logo = logo!.withRenderingMode(UIImageRenderingMode.alwaysOriginal)
+            button = UIBarButtonItem(image: logo, style: UIBarButtonItemStyle.plain, target: nil, action: nil)
+            button!.imageInsets = UIEdgeInsetsMake(-2, 30, 10, 0);
+            button?.isEnabled=false
+        }
+        
         return button!
     }
     
