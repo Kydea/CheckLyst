@@ -305,7 +305,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                     ValidationMessages = new List<ValidationMessage> {
                         new ValidationMessage {
                             Level = ValidationMessage.LevelError,
-                            Message = "The password must be long no more than 30 characters and must contain at least one lowercase character, one upper case lettcharacter and one digit"
+                            Message = "The password must be long no more than 30 characters and contain at least a digit, a lower and an upper case letter"
                         }
                     }
                 };

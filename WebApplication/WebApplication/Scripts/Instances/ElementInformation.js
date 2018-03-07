@@ -27,7 +27,7 @@
 		addItem("tags-o", model.id + (model.code ? " - " + model.code : ""));
 		addItem(model.valid ? "thumbs-up-o" : "thumbs-down-o", model.valid ? "valid" : model.validityMessage || "not valid");
 		if (!model.readOnly) addItem("edit-o", "editable");
-		addItem("calculator", model.valueFormulaString + ": <strong>" + model.rawValue + "</strong>");
+		addItem("calculator", model.valueFormulaString ? model.valueFormulaString + ": <strong>" + model.rawValue + "</strong>" : null);
 		addItem("check", model.signatureInformation);
 		addItem("link-0", (model.externalSourceName ? model.externalSourceName + "." + model.externalSourceColumn : null));
 		if (model.history && model.history.length > 0)

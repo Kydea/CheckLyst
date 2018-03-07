@@ -66,8 +66,6 @@
         },
 
 		valueCopy = function (e) {
-			alert("Value copy");
-			alert("Id: " + model.id);
 			if (e) {
 				e.preventDefault();
 				e.stopPropagation();
