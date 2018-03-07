@@ -795,7 +795,7 @@ namespace CheckListManager.Instances.Logic.Services
             if (!request.Simple.Value && string.IsNullOrEmpty(request.Pin))
                 throw new InstanceException("Provide your PIN");
 
-            signature.TrySign(request.Username);
+            signature.TrySign(identity.Code);
 
             try
             {
