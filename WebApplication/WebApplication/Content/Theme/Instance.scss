@@ -378,6 +378,10 @@ div.Instance {
                 margin: 0;
                 display: none;
                 font-size: 10px;
+
+                &:hover {
+                    text-decoration: none;
+                }
             }
         }
 

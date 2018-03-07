@@ -237,6 +237,8 @@ div.Instance .Item.Field .Copy {
   margin: 0;
   display: none;
   font-size: 10px; }
+  div.Instance .Item.Field .Copy:hover {
+    text-decoration: none; }
 
 div.Instance .Item div.Information {
   top: 3px;
