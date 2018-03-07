@@ -66,6 +66,8 @@
         },
 
 		valueCopy = function () {
+			alert("Value copy");
+			alert("Id: " + model.id);
 			new instances.Event(instances.Events.valueCopy, model.id).done(function (result) {
                 instances.instance.update(result);
                 next();
