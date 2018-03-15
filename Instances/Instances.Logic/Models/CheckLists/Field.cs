@@ -24,7 +24,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 		public string ValueFormulaString
 		{
 			get => ValueFormula?.RawValue;
-			set => ValueFormula = value == null ? null : new Formula(value);
+            set => ValueFormula = string.IsNullOrEmpty(value) ? null : new Formula(value);
 		}
 
 		public List<string> ValuesList { get; set; }

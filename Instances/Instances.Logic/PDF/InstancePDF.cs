@@ -29,11 +29,11 @@ namespace CheckListManager.Instances.Logic.PDF
                 new Tuple<string, string> ("Department", Instance.DepartmentName),
                 new Tuple<string, string> ("Prototype type", Instance.PrototypeTypeName),
                 new Tuple<string, string> ("Instance state", Instance.InstanceState),
-                new Tuple<string, string> ("Instance creation", Instance.CreatedOn.ToLocalTime(TimeZone).ToString("dd/MM/yyyy HH/mm"))
+                new Tuple<string, string> ("Instance creation", Instance.CreatedOn.ToLocalTime(TimeZone).ToString("dd/MM/yyyy HH:mm"))
             };
 
             if (Instance.InstanceState == InstanceState.Confirmed)
-                Rows.Add(new Tuple<string, string>("Instance confirmation", Instance.ModifiedOn?.ToLocalTime(TimeZone).ToString("dd/MM/yyyy HH/mm")));
+                Rows.Add(new Tuple<string, string>("Instance confirmation", Instance.ModifiedOn?.ToLocalTime(TimeZone).ToString("dd/MM/yyyy HH:mm")));
 
             return new FirstPage(this, $"{Instance.PrototypeName} (v. {Instance.Version})", Instance.InstanceCode, Instance.Description, Rows);
 

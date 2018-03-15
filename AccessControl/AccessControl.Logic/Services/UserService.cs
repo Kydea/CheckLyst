@@ -18,6 +18,8 @@ using CheckListManager.Common.Logic.DataEngine;
 using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Logic.Email;
 using Newtonsoft.Json;
+using System.DirectoryServices.Protocols;
+using System.Net;
 
 namespace CheckListManager.AccessControl.Logic.Services
 {
@@ -68,7 +70,11 @@ namespace CheckListManager.AccessControl.Logic.Services
                 if (!user.Enabled)
                     throw new AuthenticationException(103, $"User {code} disabled");
 
-                if (!_hashService.ValidateHash(password, user.Password)) //TODO Valutare l'ordine rispetto all'autenticazione LDAP
+                var LDAPHost = await _settingService.LDAPHostAsync(companyId.Value);
+
+                if (!string.IsNullOrEmpty(LDAPHost))
+                    VerifyLDAPPassword(LDAPHost, user.AuthenticationCode, password);
+                else if (!_hashService.ValidateHash(password, user.Password))
                     throw new AuthenticationException(105, "Password not valid");
 
                 await Task.WhenAll(
@@ -81,8 +87,6 @@ namespace CheckListManager.AccessControl.Logic.Services
                         Date = DateTimeOffset.UtcNow
                     })
                 );
-
-                //TODO: add LDAP / OAUTH SERVER
             }
             catch (AuthenticationException authenticationException)
             {
@@ -101,6 +105,25 @@ namespace CheckListManager.AccessControl.Logic.Services
             }
 
             return user;
+        }
+
+        private static void VerifyLDAPPassword(string LDAPHost, string Code, string Password)
+        {
+            try
+            {
+                var LdapDirectoryIdentifier = new LdapDirectoryIdentifier(LDAPHost, 636, true, false); //ldap: 389, ldaps: 636
+                var NetworkCredential = new NetworkCredential(Code, Password);
+                var LdapConnection = new LdapConnection(LdapDirectoryIdentifier, NetworkCredential, AuthType.Basic);
+
+                LdapConnection.SessionOptions.SecureSocketLayer = true;
+                LdapConnection.SessionOptions.ProtocolVersion = 3;
+                LdapConnection.SessionOptions.VerifyServerCertificate = new VerifyServerCertificateCallback((Connection, Certificate) => true);
+                LdapConnection.Bind();
+            }
+            catch (Exception Exception)
+            {
+                throw new Exception("LDAP Error. " + Exception.Message);
+            }
         }
 
         public async Task SetPINAsync(long? companyId, string code, string password, string pin)

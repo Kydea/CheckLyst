@@ -29,13 +29,9 @@ namespace CheckListManager.Common.Logic.Services
 			GC.SuppressFinalize(this);
 		}
 
-		// ReSharper disable once VirtualMemberNeverOverridden.Global
 		protected virtual void Dispose(bool disposing)
 		{
-			if (disposing)
-			{
-				_client?.Dispose();
-			}
+			if (disposing) _client?.Dispose();
 		}
 
 		public Task SendMessageAsync(string queueName, string message, CancellationToken cancellationToken = default(CancellationToken))
