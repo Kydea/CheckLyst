@@ -74,14 +74,15 @@ div.CheckList div.Item {
     clear: both;
     width: calc(100% - 20px); }
     div.CheckList div.Item.MultiLine label {
-      width: 100%;
+      width: 100% !important;
       padding-top: 0 !important; }
       div.CheckList div.Item.MultiLine label > span {
         height: unset;
         white-space: normal !important;
         overflow: hidden;
         text-overflow: ellipsis;
-        position: static; }
+        position: static;
+        display: block; }
     div.CheckList div.Item.MultiLine input, div.CheckList div.Item.MultiLine div.Input {
       width: 100%; }
   div.CheckList div.Item.NewLine {

@@ -52,10 +52,12 @@ create table "WorkFlows"."WorkFlowApplications"
 
 	"Prototype" bigint,
 	"Version" int,
-	constraint "WorkFlowApplications_PrototypeVersion" foreign key ("Prototype", "Version") references "CheckLists"."PrototypeVersions" on delete cascade,
+	--the followin constraint is added in the script Script3.CheckLists.sql
+	--constraint "WorkFlowApplications_PrototypeVersion" foreign key ("Prototype", "Version") references "CheckLists"."PrototypeVersions" on delete cascade,
 
 	"Instance" bigint, 
-	constraint "WorkFlowApplications_Instance" foreign key ("Instance") references "CheckLists"."Instances" on delete cascade,
+	--the followin constraint is added in the script Script3.CheckLists.sql
+	--constraint "WorkFlowApplications_Instance" foreign key ("Instance") references "CheckLists"."Instances" on delete cascade,
 
 	check("Prototype" is null and "Version" is null or "Instance" is null),
 

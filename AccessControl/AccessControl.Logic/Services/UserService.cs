@@ -333,7 +333,6 @@ namespace CheckListManager.AccessControl.Logic.Services
                     }
                 };
 
-
             if (!(string.IsNullOrEmpty(record.Password) && string.IsNullOrEmpty(record.Password2)) && record.Password != record.Password2)
                 response.Fields["Password2"] = new Field
                 {

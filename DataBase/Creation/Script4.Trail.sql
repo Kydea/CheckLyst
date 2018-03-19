@@ -36,6 +36,13 @@ values
     ('Prototype export completed'),
     ('Prototype export failed'),
 
+	('Instance value changed'),
+	('Instance value copied'),
+	('Instance iteration added'),
+	('Instance iteration deleted'),
+	('Instance iteration moved up'),
+	('Instance iteration moved down'),
+
     ('Job error');
 
 

@@ -85,7 +85,7 @@
 
 			if (e.key == ',') {
 				e.preventDefault();
-				matematici.dialog.error("Error", "Invalid decimal separator, use dot instead of comma");
+				matematici.dialog.error("Error", "Invalid decimal separator, use character ? instead of comma");
 			}
         },
 
@@ -95,9 +95,8 @@
             if (!item.isTableContent())
 				label.appendTo(element);
 
-            input =
-                (
-                    model.linesCount == 0 ?
+            input = (
+                    model.linesCount < 2 ?
                     $("<input />").attr("type", "text") :
                     $("<textarea />")
 				).addClass("Description").appendTo(item.isTableContent() ? element : label);
@@ -152,10 +151,11 @@
                 for (var index in model.valuesList)
                     select.append($("<option />").attr("value", model.valuesList[index]).text(model.valuesList[index]));
 			field = $("<div />").addClass("Input").appendTo(item.isTableContent() ? element : label);
-            if (model.linesCount > 0) {
-                element.addClass("MultiLine");
-				input.height(36 * model.linesCount);
-				field.height(36 * model.linesCount);
+            if (model.linesCount > 0) 
+				element.addClass("MultiLine");
+			if (model.linesCount > 1) {
+				input.outerHeight(20 * model.linesCount + 12);
+				field.outerHeight(20 * model.linesCount + 12);
             }
 
             if (model.valuesList)

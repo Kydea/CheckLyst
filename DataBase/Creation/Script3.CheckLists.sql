@@ -237,3 +237,6 @@ create table "CheckLists"."InstancesHistory"
 );
 
 create index "Index_InstancesHistory_Instance" on "CheckLists"."InstancesHistory"("Instance", "Date");
+
+alter table "WorkFlows"."WorkFlowApplications" add constraint "WorkFlowApplications_PrototypeVersion" foreign key ("Prototype", "Version") references "CheckLists"."PrototypeVersions" on delete cascade;
+alter table "WorkFlows"."WorkFlowApplications" add constraint "WorkFlowApplications_Instance" foreign key ("Instance") references "CheckLists"."Instances" on delete cascade;

@@ -110,7 +110,8 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
 			return new Dictionary<string, string>
 			{
 				{ "company", user.Company.ToString() },
-				{ "code", user.Code },
+                { "separator", "," },
+                { "code", user.Code },
 				{ "name", user.Description },
                 { "timeZone", user.Companies.TimeZone },
                 { "roles", String.Join(",", user.UserFunctions.Select(function => $"{function.FunctionGroup}#{function.Function}#{function.Department?.ToString() ?? string.Empty}#{function.PrototypeType?.ToString() ?? string.Empty}#{function.Tag ?? string.Empty}")) }

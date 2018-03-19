@@ -315,21 +315,31 @@
 						}), "Label",
 						"The label of the item."
 					));
+
+					let
+						linesCountProperty,
+						linesCountItems,
+						prepareLinesCount = function () {
+							linesCountItems = [
+								{ label: "Standar width", code: "0" },
+								{ label: "Full width", code: "1" }
+							];
+
+							if (model.valueTypeName == "Text")
+								for (let index = 2; index < 100; ++index)
+									linesCountItems.push({ label: index + " rows", code: index });
+						};
+
+					prepareLinesCount();
+
+					if (!model.linesCount) model.linesCount = 0;
 					properties.push(new prototypes.Property(
-						this, new prototypes.SimpleValueProperty(model, "linesCount", { number: true, readOnly: state != prototypes.Prototype.states.draft }).setCheck([
-							{
-								action: function (value) {
-									var intValue = parseInt(value);
-									return intValue >= 0 && value == intValue;
-								},
-								message: "invalid value"
-							}
-						]).setHandler(function () {
+						this, linesCountProperty = new prototypes.ListProperty(model, "linesCount", linesCountItems, { readOnly: state != prototypes.Prototype.states.draft }).setHandler(function () {
 							var element = item.getElement();
 							element.toggleClass("MultiLine", model.linesCount > 0);
-							$("div.Input", element).height(36 * model.linesCount);
-						}), "Lines count",
-						"The number of text lines shown."
+							$("div.Input", element).outerHeight(model.linesCount < 2 ? 36 : 20 * model.linesCount + 12);
+						}), "Size",
+						"The size of the field."
 					));
 					properties.push(new prototypes.Property(
 						this, new prototypes.BooleanProperty(model, "newLine", state != prototypes.Prototype.states.draft).setHandler(function () {
@@ -349,7 +359,16 @@
 							{ label: "Date Time", code: "DateTime" },
 							{ label: "Date", code: "Date" },
 							{ label: "Time", code: "Time" },
-						], { readOnly: state != prototypes.Prototype.states.draft }), "Value type",
+						], { readOnly: state != prototypes.Prototype.states.draft }).setHandler(function () {
+							prepareLinesCount();
+							if (model.valueTypeName != "Text" && model.linesCount > 1) {
+								var element = item.getElement();
+								model.linesCount = 0;
+								element.removeClass("MultiLine");
+								$("div.Input", element).outerHeight(36);
+							}
+							linesCountProperty.refresh(linesCountItems);
+						}), "Value type",
 						"The data type returned by field. Data type affects the behaviour of the field and restricts the allowed inputs."
 					));
 					break;

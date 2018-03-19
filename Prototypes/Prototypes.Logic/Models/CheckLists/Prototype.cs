@@ -10,7 +10,6 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
     {
         public Dictionary<string, ICheckListElement> Elements { get; } = new Dictionary<string, ICheckListElement>();
         public Dictionary<string, Expression> Expressions { get; set; } = new Dictionary<string, Expression>();
-        public List<String> ExpressionsInUse { get; private set; }
         public Dictionary<string, string> ExternalSources { get; set; } = new Dictionary<string, string>();
         public ICheckListGroup Header { get; set; }
         public List<ICheckListPage> Pages { get; } = new List<ICheckListPage>();
@@ -27,8 +26,6 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         public void Setup()
         {
-            ExpressionsInUse = new List<string>(Expressions.Count);
-
             Header.CheckList = this;
             Header.Setup();
 

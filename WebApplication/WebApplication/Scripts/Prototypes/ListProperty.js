@@ -1,14 +1,14 @@
 ﻿prototypes.ListProperty = function (model, property, values, options) {
-    var
-        input,
-        handler,
-        check,
+	var
+		input,
+		handler,
+		check,
 
-        change = function () {
-            model[property] = input.val();
-            matematici.canClose = false;
-            if (handler) handler.call(this, model);
-        };
+		change = function () {
+			model[property] = input.val();
+			matematici.canClose = false;
+			if (handler) handler.call(this, model);
+		};
 
     this.setCheck = function (value) {
         check = value;
@@ -31,6 +31,7 @@
         else {
 			input = $("<select />");
 			if (!!options.nullable) input.data("nullable", true);
+			input.empty();
 			for (var index in values) {
 				var
 					string = typeof (values[index]) == "string",
@@ -46,6 +47,10 @@
 
     this.hasChanges = function () {
         return !!model[property] && model[property] != values[0].code;
-    }
+	}
+
+	this.refresh = function (newValues) {
+		values = newValues;
+	}
 }
 

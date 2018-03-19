@@ -33,12 +33,6 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         public virtual void Setup()
 		{
-            var ExpressionsInUse = ((Prototype)CheckList).ExpressionsInUse;
-            if (CountDownToCode != null) ExpressionsInUse.Add(CountDownToCode);
-            if (HiddenExpressionCode != null) ExpressionsInUse.Add(HiddenExpressionCode);
-            if (ValidExpressionCode != null) ExpressionsInUse.Add(ValidExpressionCode);
-            if (ReadOnlyExpressionCode != null) ExpressionsInUse.Add(ReadOnlyExpressionCode);
-
             if (!string.IsNullOrEmpty(Code))
             {
                 if (CheckList.Elements.ContainsKey(Code))

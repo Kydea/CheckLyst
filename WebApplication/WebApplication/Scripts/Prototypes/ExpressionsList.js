@@ -10,6 +10,7 @@
 		list = [],
 		removeButton,
 		verifyButton,
+		expressionsInUse,
 
 		select = function (index) {
 			if (currentIndex != null) body.children().eq(currentIndex).removeClass("Selected").addClass("Handler").children().slice(0, 2).attr("contenteditable", false);
@@ -18,7 +19,7 @@
 				var used = false;
 				if (currentIndex != null) {
 					var code = list[currentIndex].code;
-					used = code && code != '' && model.expressionsInUse && model.expressionsInUse.includes(code);
+					used = !!expressionsInUse[code];
 
 					body.children().eq(currentIndex).addClass("Selected").removeClass("Handler")
 						.children((used ? ":not(:nth-child(2))" : "") + ":not(:first-child):not(:last-child):not(:nth-last-child(2))").attr("contenteditable", true).eq(0).focus();
@@ -127,6 +128,24 @@
 			matematici.elements.body.removeClass("CheckListGrid");
 		},
 
+		checkElementExpressionsInUse = function (element) {
+			if (element.hiddenExpressionCode) expressionsInUse[element.hiddenExpressionCode] = true;
+			if (element.readOnlyExpressionCode) expressionsInUse[element.readOnlyExpressionCode] = true;
+			if (element.validExpressionCode) expressionsInUse[element.validExpressionCode] = true;
+			if (element.countDownToCode) expressionsInUse[element.countDownToCode] = true;
+		},
+
+		checkGroupExpressionsInUse = function (group) {
+			checkElementExpressionsInUse(group);
+			for (let itemIndex in group.items) {
+				var item = group.items[itemIndex]
+				if (item.type == "Group")
+					checkElementExpressionsInUse(item);
+				else
+					checkGroupExpressionsInUse(item);
+			}
+		},
+
 		setup = function () {
 			matematici.elements.body.addClass("CheckListGrid");
 			element = $("<div />").addClass("CheckListGrid").appendTo(matematici.elements.body);
@@ -192,6 +211,15 @@
 					dataType: model.expressions[code].dataType,
 					unique: model.expressions[code].unique
 				});
+
+			expressionsInUse = {};
+			checkGroupExpressionsInUse(model.header);
+			for (let pageIndex in model.pages) {
+				var page = model.pages[pageIndex];
+				checkElementExpressionsInUse(page);
+				for (let groupIndex in page.groups)
+					checkGroupExpressionsInUse(page.groups[groupIndex]);
+			}
 		};
 
 	setup();

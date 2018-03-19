@@ -119,7 +119,7 @@ div.CheckList {
             width: calc(100% - #{$Metric-Control-Space});
 
             label {
-                width: 100%;
+                width: 100% !important;
                 padding-top: 0 !important;
 
                 > span {
@@ -128,6 +128,7 @@ div.CheckList {
                     overflow: hidden;
                     text-overflow: ellipsis;
                     position: static;
+                    display: block;
                 }
             }
 

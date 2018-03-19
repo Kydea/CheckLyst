@@ -44,7 +44,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             PDF.PdfContentByte.BeginText();
             PDF.PdfContentByte.SetFontAndSize(PDFSection.BaseFont, 12);
             PDF.PdfContentByte.SetTextMatrix(document.PageSize.GetLeft(45), document.PageSize.GetBottom(55));
-            PDF.PdfContentByte.ShowText($"Generated on {DateTimeOffset.UtcNow.ToLocalTime(PDF.TimeZone):dd/MM/yyyy HH:mm tt zzz} - RESTRICTED");
+            PDF.PdfContentByte.ShowText($"Generated on {DateTimeOffset.UtcNow.ToLocalTime(PDF.TimeZone):yyyy-MM-dd HH:mm UTC zzz} - RESTRICTED");
             PDF.PdfContentByte.EndText();
 
             float len = PDFSection.BaseFont.GetWidthPoint(text, 12);

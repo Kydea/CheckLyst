@@ -9,9 +9,10 @@
 			label = $("<label />").appendTo(element);
 			span = $("<span />").appendTo(label);
 			field = $("<div />").addClass("Input").appendTo(label);
-            if (model.linesCount > 0) {
-                element.addClass("MultiLine");
-                field.height(36 * model.linesCount);
+			if (model.linesCount > 0) 
+				element.addClass("MultiLine");
+            if (model.linesCount > 1) {
+				field.outerHeight(20 * model.linesCount + 12);
             }
         };
 
