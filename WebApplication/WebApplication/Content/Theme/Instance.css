@@ -63,25 +63,26 @@ div.Instance .Element div.Information {
     display: none;
     position: absolute;
     background-color: rgba(255, 255, 255, 0.9);
-    padding: 10px;
+    padding: 5px 10px 10px;
     border: solid 1px #ccc;
     border-radius: 0 10px 10px 10px;
     box-shadow: rgba(0, 0, 0, 0.15) 0 0 15px 2px;
-    line-height: 1.5em; }
+    line-height: 1.5em;
+    width: 200px; }
     div.Instance .Element div.Information div.Panel i.fi {
-      margin-right: 10px;
-      color: #666; }
+      margin-left: -30px;
+      color: #666;
+      position: absolute; }
       div.Instance .Element div.Information div.Panel i.fi.flaticon-thumbs-up-o {
         color: green; }
       div.Instance .Element div.Information div.Panel i.fi.flaticon-thumbs-down-o {
         color: red; }
     div.Instance .Element div.Information div.Panel span, div.Instance .Element div.Information div.Panel a {
       display: block;
-      white-space: nowrap;
       padding: 2px;
       color: black !important;
       float: none;
-      margin-top: 0; }
+      margin: 5px 0 0 30px; }
   div.Instance .Element div.Information.Active {
     z-index: 32; }
     div.Instance .Element div.Information.Active div.Panel {

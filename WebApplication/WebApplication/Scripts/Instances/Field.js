@@ -38,14 +38,15 @@
 		},
 
 		getValue = function () {
-		    var value = model.valuesList ? select.val() || "" : (input.val() || "").trim();
-		    if (value != "" && model.valueTypeName == "DateTime") 
-		        value = value + " " + select.val() + ":" + select2.val();
-		    else if (model.valueTypeName == "Time") 
-				value = select.val() != "" && select2.val() != "" ? select.val() + ":" + select2.val() : "";
-		    else if (model.valueTypeName == "Boolean") 
-		        value = input.prop("checked") ? "true" : "false";
-
+			var value = model.valuesList ? select.val() || "" : (input.val() || "").trim();
+			if (!model.valuesList) {
+				if (value != "" && model.valueTypeName == "DateTime")
+					value = value + " " + select.val() + ":" + select2.val();
+				else if (model.valueTypeName == "Time")
+					value = select.val() != "" && select2.val() != "" ? select.val() + ":" + select2.val() : "";
+				else if (model.valueTypeName == "Boolean")
+					value = input.prop("checked") ? "true" : "false";
+			}
 		    return value;
 		},
 
@@ -57,12 +58,12 @@
         },
 
 		change = function (value) {
-			if (validate()) {
-                new instances.Event(instances.Events.valueChange, model.id, { value: value }).done(function (result) {
-                    instances.instance.update(result);
-                    next();
-                }).trigger();
-            }
+			if (model.valuesList || validate()) {
+				new instances.Event(instances.Events.valueChange, model.id, { value: value }).done(function (result) {
+					instances.instance.update(result);
+					next();
+				}).trigger();
+			} 
         },
 
 		valueCopy = function (e) {
@@ -100,72 +101,69 @@
                     $("<input />").attr("type", "text") :
                     $("<textarea />")
 				).addClass("Description").appendTo(item.isTableContent() ? element : label);
-            if (model.valueTypeName == "Number")
-            	input.keyfilter(/[\d\-\,\.]/);
-            else if (model.valueTypeName == "Date" || model.valueTypeName == "DateTime") {
-				input.keyfilter(/[\d\/]/);
-				new matematici.DatePicker(input);
-            } else if (model.valueTypeName == "Boolean") {
-            	element.addClass(model.valueTypeName);
-            	input.attr("type", "checkbox");
-            }
-            input.on("change", function () {
-            	change(getValue());
-            }).on("keydown", function(e) {
-                keyDown(e);
-            });
 
-			if (model.valuesList && model.valuesList.length == 0)
-				model.valuesList = null;
+			if (!model.valueFormulaString) {
+				if (!model.valuesList) {
+					if (model.valueTypeName == "Number")
+						input.keyfilter(/[\d\-\,\.]/);
+					else if (model.valueTypeName == "Date" || model.valueTypeName == "DateTime") {
+						input.keyfilter(/[\d\/]/);
+						new matematici.DatePicker(input);
+					} else if (model.valueTypeName == "Boolean") {
+						element.addClass(model.valueTypeName);
+						input.attr("type", "checkbox");
+					}
+					input.on("change", function () {
+						change(getValue());
+					}).on("keydown", function (e) {
+						keyDown(e);
+					});
+				}
 
-			if (model.valuesList || model.valueTypeName == "DateTime" || model.valueTypeName == "Time") {
-				select = $("<select />").appendTo(item.isTableContent() ? element : label).data("nullable", true);
-				select.on("change", function () {
-					change(getValue());
-				}).on("keydown", function (e) {
-					keyDown(e);
-				});
+				if (model.valuesList || model.valueTypeName == "DateTime" || model.valueTypeName == "Time") {
+					select = $("<select />").appendTo(item.isTableContent() ? element : label).data("nullable", true);
+					select.on("change", function () {
+						change(getValue());
+					}).on("keydown", function (e) {
+						keyDown(e);
+					});
+				}
+
+				if (model.valuesList) {
+					element.addClass("List");
+					for (var index in model.valuesList)
+						select.append($("<option />").attr("value", model.valuesList[index]).text(model.valuesList[index]));
+				} else if (model.externalSourceName && model.externalSourceColumn) {
+					element.addClass("ExternalSource").append($("<i />").addClass("fi flaticon-link-o"));
+					field.on("click", function () {
+						if (!element.hasClass("Inactive"))
+							new instances.ExternalSources(model.id, model.externalSourceName);
+					});
+				} else if (model.valueTypeName == "DateTime" || model.valueTypeName == "Time") {
+					element.addClass(model.valueTypeName);
+					for (var i = 0; i < 24; i++) {
+						select.append($("<option />").attr("value", (i < 10 ? "0" : "") + i).text((i < 10 ? "0" : "") + i));
+					}
+					select2 = $("<select />").appendTo(item.isTableContent() ? element : label).data("nullable", true);
+					select2.on("change", function () {
+						change(getValue());
+					}).on("keydown", function (e) {
+						keyDown(e);
+					});
+					for (var i = 0; i < 60; i++) {
+						select2.append($("<option />").attr("value", (i < 10 ? "0" : "") + i).text((i < 10 ? "0" : "") + i));
+					}
+				}
+				else if (model.valueTypeName == "Date")
+					element.addClass(model.valueTypeName);
 			}
-            if (model.valueTypeName == "DateTime" || model.valueTypeName == "Time") {
-            	element.addClass(model.valueTypeName);
-            	for (var i = 0; i < 24; i++) {
-            		select.append($("<option />").attr("value", (i < 10 ? "0" : "") + i).text((i < 10 ? "0" : "") + i));
-            	}
-				select2 = $("<select />").appendTo(item.isTableContent() ? element : label).data("nullable", true);
-            	select2.on("change", function () {
-            		change(getValue());
-            	}).on("keydown", function (e) {
-            	    keyDown(e);
-            	});
-            	for (var i = 0; i < 60; i++) {
-            		select2.append($("<option />").attr("value", (i < 10 ? "0" : "") + i).text((i < 10 ? "0" : "") + i));
-            	}
-			}
-			if (model.valueTypeName == "Date")
-				element.addClass(model.valueTypeName);
 
-            if (model.valuesList && model.valuesList.length == 0)
-                model.valuesList = null;
-
-            if (model.valuesList)
-                for (var index in model.valuesList)
-                    select.append($("<option />").attr("value", model.valuesList[index]).text(model.valuesList[index]));
 			field = $("<div />").addClass("Input").appendTo(item.isTableContent() ? element : label);
             if (model.linesCount > 0) 
 				element.addClass("MultiLine");
 			if (model.linesCount > 1) {
 				input.outerHeight(20 * model.linesCount + 12);
 				field.outerHeight(20 * model.linesCount + 12);
-            }
-
-            if (model.valuesList)
-                element.addClass("List");
-            else if (model.externalSourceName && model.externalSourceColumn) {
-				element.addClass("ExternalSource").append($("<i />").addClass("fi flaticon-link-o"));
-                field.on("click", function () {
-                    if (!element.hasClass("Inactive"))
-                        new instances.ExternalSources(model.id, model.externalSourceName);
-                });
             }
 
             copyButton =
@@ -179,13 +177,17 @@
 			if (select2) new matematici.AutoComplete(select2).initialize();
         };
 
-    this.update = function (model) {
-        readOnly = !!model.readOnly || !!model.externalSourceName && !!model.externalSourceColumn;
+	this.update = function (model) {
+		readOnly = !!model.readOnly;
         span.html(model.description);
         element.toggleClass("Inactive", model.readOnly);
         element.toggleClass("ReadOnly", readOnly);
-        input.attr("readonly", readOnly);
-        if (model.valueTypeName == "DateTime") {
+		input.attr("readonly", readOnly);
+		if (model.valuesList)
+			select.val(model.rawValue)
+		else if (model.valueFormulaString)
+			input.val(model.rawValue);
+		else if (model.valueTypeName == "DateTime") {
         	var index = (model.rawValue || "").indexOf(" ");
         	if (index >= 0) {
 				input.val(model.rawValue.substr(0, index));
@@ -224,10 +226,8 @@
 				b = $.parseJSON((model.rawValue || "").toLowerCase()); s = b.toString();
         	} catch (e) { }
         	input.val(s);
-		} else {
+		} else 
 			input.val(model.rawValue);
-			if (select) select.val(model.rawValue);
-        }
 
 		field.html(model.rawValue).attr("readonly", readOnly);
         field.attr("title", field.text());

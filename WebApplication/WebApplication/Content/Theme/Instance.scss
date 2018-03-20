@@ -86,15 +86,17 @@ div.Instance {
                 display: none;
                 position: absolute;
                 background-color: rgba(255, 255, 255, .9);
-                padding: 10px;
+                padding: 5px 10px 10px;
                 border: solid 1px $Color-Grey-Light;
                 border-radius: 0 10px 10px 10px;
                 box-shadow: $Box-Shadow;
                 line-height: 1.5em;
+                width: 200px;
 
                 i.fi {
-                    margin-right: 10px;
+                    margin-left: -30px;
                     color: $Color-Grey-Dark;
+                    position: absolute;
 
                     &.flaticon-thumbs-up-o {
                         color: green;
@@ -107,11 +109,10 @@ div.Instance {
 
                 span, a {
                     display: block;
-                    white-space: nowrap;
                     padding: 2px;
                     color: black !important;
                     float: none;
-                    margin-top: 0;
+                    margin: 5px 0 0 30px;
                 }
             }
 

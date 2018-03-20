@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using CheckListManager.Common.Logic.Models;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.Expressions;
@@ -24,7 +25,8 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 			set => ValueFormula = value == null ? null : new Formula(value);
 		}
 
-		public List<string> ValuesList { get; set; }
+        private List<string> _ValuesList;
+        public List<string> ValuesList { get { return _ValuesList; } set { _ValuesList = value == null || !value.Any() ? null : value; } }
 
         [JsonIgnore]
         public DataType ValueType { get; private set; } = DataType.Text;
