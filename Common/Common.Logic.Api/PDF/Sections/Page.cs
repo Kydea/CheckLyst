@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using iTextSharp.text.pdf;
-using iTextSharp.text;
 using CheckListManager.Common.Logic.Models.CheckLists;
 
 namespace CheckListManager.Common.Logic.Api.PDF.Sections
@@ -15,7 +13,6 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
 
         public override void Render(params Object[] State)
         {
-            int Page = PDFBase.Document.PageNumber;
             var PageElement = (ICheckListPage)Element;
 
             DrawText(PageElement.Description, FirstHeaderFont);
@@ -25,7 +22,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
         public override void RenderChildren()
         {
             foreach (var Group in ((ICheckListPage)Element).Groups)
-                if(Group.ShowAsTable)
+                if (Group.ShowAsTable)
                     new Table((CheckListPDF)PDFBase, Group, 2).Render();
                 else
                     new Group((CheckListPDF)PDFBase, Group, 2).Render();

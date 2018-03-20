@@ -1,92 +1,59 @@
-﻿using iTextSharp.text;
-using iTextSharp.text.pdf;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CheckListManager.Common.Core.Helpers;
+using MigraDoc.DocumentObjectModel;
 
 namespace CheckListManager.Common.Logic.Api.PDF.Sections
 {
-    public class Template : PdfPageEventHelper
+    public class Template
     {
-        private CheckListPDF PDF;
-        private PdfTemplate headerTemplate, footerTemplate;
-
-        public string DocumentDescription { get; }
-
         public Template(CheckListPDF PDF, string DocumentDescription)
         {
-            this.PDF = PDF;
-            this.DocumentDescription = DocumentDescription;
-            headerTemplate = PDF.PdfContentByte.CreateTemplate(40, 40);
-            footerTemplate = PDF.PdfContentByte.CreateTemplate(40, 40);
-        }
+            // PAGE_FORMAT
+            PageSetup setup = PDF.Container.Document.DefaultPageSetup.Clone();
 
-        public override void OnEndPage(PdfWriter writer, Document document)
-        {
-            base.OnEndPage(writer, document);
+            setup.PageFormat = PageFormat.A4;
+            setup.LeftMargin = setup.RightMargin = Unit.FromPoint(30);
+            setup.TopMargin = Unit.FromPoint(70);
+            setup.BottomMargin = Unit.FromPoint(50);
+            setup.FooterDistance = Unit.FromPoint(10);
+            setup.HeaderDistance = Unit.FromPoint(20);
+            setup.DifferentFirstPageHeaderFooter = true;
 
-            Phrase Description = new Phrase(DocumentDescription, PDFSection.GenericFont);
+            PDF.Container.PageSetup = setup;
+            // END_PAGE_FORMAT
 
-            //Create Tablele object
-            PdfPTable Table = new PdfPTable(1);
-            PdfPCell Cell = new PdfPCell(writer.PageNumber != 1 ? Description : null);
-            string text = $"Page {writer.PageNumber} of ";
+            // STYLE
+            Style style = style = PDF.Container.Document.Styles[StyleNames.Normal];
+            style.Font = PDFSection.GenericFont.Clone();
+            // END_STYLE
 
-            PDF.PdfContentByte.BeginText();
-            PDF.PdfContentByte.SetFontAndSize(PDFSection.BaseFont, 12);
-            PDF.PdfContentByte.SetTextMatrix(document.PageSize.GetRight(105), document.PageSize.GetBottom(55));
-            PDF.PdfContentByte.ShowText(text);
-            PDF.PdfContentByte.EndText();
+            Paragraph header = PDF.Container.Headers.Primary.AddParagraph(DocumentDescription);
+            header.Format.Borders.Bottom.Color = Colors.Black;
+            header.Format.Borders.Bottom.Width = 0.5;
+            header.Format.Borders.DistanceFromBottom = 5;
 
-            PDF.PdfContentByte.BeginText();
-            PDF.PdfContentByte.SetFontAndSize(PDFSection.BaseFont, 12);
-            PDF.PdfContentByte.SetTextMatrix(document.PageSize.GetLeft(45), document.PageSize.GetBottom(55));
-            PDF.PdfContentByte.ShowText($"Generated on {DateTimeOffset.UtcNow.ToLocalTime(PDF.TimeZone):yyyy-MM-dd HH:mm UTC zzz} - RESTRICTED");
-            PDF.PdfContentByte.EndText();
+            // Page counter
+            Paragraph footer = PDF.Container.Footers.Primary.AddParagraph();
+            footer.AddText("Page ");
+            footer.AddPageField();
+            footer.AddText(" of ");
+            footer.AddNumPagesField();
+            footer.Format.Alignment = ParagraphAlignment.Right;
+            footer.Format.Borders.Top.Color = Colors.Black;
+            footer.Format.Borders.Top.Width = 0.5;
+            footer.Format.Borders.DistanceFromTop = 5;
+            PDF.Container.Footers.FirstPage.Add(footer.Clone());
 
-            float len = PDFSection.BaseFont.GetWidthPoint(text, 12);
-            PDF.PdfContentByte.AddTemplate(footerTemplate, document.PageSize.GetRight(105) + len, document.PageSize.GetBottom(55));
-
-            Cell.HorizontalAlignment = Element.ALIGN_LEFT;
-
-            Cell.Border = 0;
-
-            Table.AddCell(Cell);
-
-            Table.TotalWidth = document.PageSize.Width - 40f;
-            Table.WidthPercentage = 100;
-            Table.WriteSelectedRows(0, -1, 40, document.PageSize.Height - 60, writer.DirectContent);
-
-            if (writer.PageNumber != 1)
-            {
-                PDF.PdfContentByte.MoveTo(40, document.PageSize.Height - 100);
-                PDF.PdfContentByte.LineTo(document.PageSize.Width - 40, document.PageSize.Height - 100);
-                PDF.PdfContentByte.Stroke();
-            }
-
-            PDF.PdfContentByte.MoveTo(40, document.PageSize.GetBottom(90));
-            PDF.PdfContentByte.LineTo(document.PageSize.Width - 40, document.PageSize.GetBottom(90));
-            PDF.PdfContentByte.Stroke();
-        }
-
-        public override void OnCloseDocument(PdfWriter writer, Document document)
-        {
-            base.OnCloseDocument(writer, document);
-
-            headerTemplate.BeginText();
-            headerTemplate.SetFontAndSize(PDFSection.BaseFont, 12);
-            headerTemplate.SetTextMatrix(0, 0);
-            headerTemplate.ShowText((writer.PageNumber).ToString());
-            headerTemplate.EndText();
-
-            footerTemplate.BeginText();
-            footerTemplate.SetFontAndSize(PDFSection.BaseFont, 12);
-            footerTemplate.SetTextMatrix(0, 0);
-            footerTemplate.ShowText((writer.PageNumber).ToString());
-            footerTemplate.EndText();
+            // Time
+            footer = PDF.Container.Footers.Primary.AddParagraph();
+            footer.AddText($"Generated on {DateTimeOffset.UtcNow.ToLocalTime(PDF.TimeZone):yyyy-MM-dd HH:mm UTC zzz} - RESTRICTED");
+            footer.Format.Borders.DistanceFromTop = 5;
+            footer.Format.SpaceAfter = new Unit(-footer.Format.Font.Size, UnitType.Point);
+            PDF.Container.Footers.FirstPage.Add(footer.Clone());
         }
     }
 }

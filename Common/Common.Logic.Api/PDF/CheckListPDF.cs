@@ -1,13 +1,14 @@
-﻿using System;
+﻿using CheckListManager.Common.Logic.Api.PDF.Helper;
+using CheckListManager.Common.Logic.Api.PDF.Sections;
+using CheckListManager.Common.Logic.Models.CheckLists;
+using MigraDoc.DocumentObjectModel;
+using MigraDoc.DocumentObjectModel.Shapes;
+using PdfSharp.Drawing;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using iTextSharp;
-using iTextSharp.text;
-using iTextSharp.text.pdf;
-using CheckListManager.Common.Core.Helpers;
-using CheckListManager.Common.Logic.Models.CheckLists;
-using CheckListManager.Common.Logic.Api.PDF.Sections;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace CheckListManager.Common.Logic.Api.PDF
 {
@@ -17,7 +18,6 @@ namespace CheckListManager.Common.Logic.Api.PDF
         public string CompanyName { get; }
         public string TimeZone { get; }
         public string Repository { get; }
-
         public ICheckList Model { get; }
 
         public string PrototypeDescription = "", InstanceCode = "";
@@ -43,28 +43,22 @@ namespace CheckListManager.Common.Logic.Api.PDF
 
         protected override void OnGenerate()
         {
-            PdfWriter.PageEvent = GenerateTemplate();
-            Document.SetMargins(40, 40, 120, 120);
-
+            GenerateTemplate();
             GenerateFirstPage().Render();
 
-            //Header
             var Header = Model.Header;
             if (Header != null && Header is ICheckListGroup)
                 new Group(this, Header).Render();
 
-            //Pages
             foreach (var Element in Model.Pages)
             {
-                Document.NewPage();
-                CurrentRenderingY = 0;
+                Container.AddPageBreak();
                 new Page(this, Element).Render();
             }
         }
 
         public virtual void RenderGroup(ICheckListGroup Group)
         {
-
-        }
+		}
     }
 }

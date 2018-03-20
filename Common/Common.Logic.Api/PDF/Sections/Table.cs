@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using iTextSharp.text.pdf;
-using System.Drawing;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Core.Helpers;
+using CheckListManager.Common.Logic.Api.PDF.Helper;
+using MigraDoc.DocumentObjectModel;
+using MigraDoc.DocumentObjectModel.Tables;
 
 namespace CheckListManager.Common.Logic.Api.PDF.Sections
 {
@@ -47,27 +48,24 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                 return;
 
             var GroupElement = (ICheckListGroup)Element;
-            PDFBase.CurrentRenderingX = Indentation * 20;
             DrawText("\n");
 
             /*Render Table Header*/
             PdfPTable Table = RenderTableHeader(GroupElement);
-            Table.CompleteRow();
             /*Render Table Body*/
             RenderTableBody(Table, GroupElement);
-            Table.CompleteRow();
-            PDFBase.Document.Add(Table);
+            PDFBase.Container.Add(Table);
 
             DrawText("\n");
 
-            /*Render Signatures Table*/
+            ///*Render Signatures Table*/
             if (CheckListPDF.IsPrototype() || Signatures.Any(x => x.History.Count > 0))
             {
                 DrawText("Signatures", SecondHeaderFont);
                 DrawText("\n");
 
                 Table = RenderSignaturesTable();
-                PDFBase.Document.Add(Table);
+                PDFBase.Container.Add(Table);
             }
 
             DrawText("\n");
@@ -76,19 +74,25 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
 
         #region Rendering Primitives
 
-        PdfPCell NewCell(String Text, iTextSharp.text.Font Font = null)
+        PdfPCell NewCell(String Text, Font Font = null)
         {
             return PdfPCellFromNode(new RenderingCell { Text = Text }, Font);
         }
 
-        PdfPCell PdfPCellFromNode(RenderingNode Node, iTextSharp.text.Font Font = null)
+        PdfPCell PdfPCellFromNode(RenderingNode Node, Font Font = null)
         {
             if (Font == null)
                 Font = SmallFont;
 
             var Cell = (RenderingCell)Node;
-            var Content = new iTextSharp.text.Phrase(Cell.Text, Font);
-            return new PdfPCell(Content) { Rowspan = Cell.Rowspan, Colspan = Cell.Colspan, HorizontalAlignment = iTextSharp.text.Element.ALIGN_LEFT, VerticalAlignment = iTextSharp.text.Element.ALIGN_MIDDLE };
+
+            return new PdfPCell(new Paragraph().SetText(Cell.Text).SetFont(Font))
+            {
+                Rowspan = Cell.Rowspan,
+                Colspan = Cell.Colspan,
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = ParagraphAlignment.Left,
+            };
         }
         #endregion
 
@@ -99,7 +103,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
         void RenderSignature(PdfPTable Table, int Id, string Description, string User = null, string Date = null, string Time = null, string Signature = null)
         {
             var Padding = CheckListPDF.IsPrototype() ? 10 : 0;
-            var Align = CheckListPDF.IsPrototype() ? iTextSharp.text.Element.ALIGN_BOTTOM : iTextSharp.text.Element.ALIGN_MIDDLE;
+            var Align = CheckListPDF.IsPrototype() ? VerticalAlignment.Bottom : VerticalAlignment.Center;
             var FillableText = "_ _ _ _ _ _ _ _ _ _ _";
 
             Table.AddCell(
@@ -142,8 +146,11 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
 
         PdfPTable RenderSignaturesTable()
         {
-            PdfPTable Table = new PdfPTable(6) { HorizontalAlignment = iTextSharp.text.Element.ALIGN_CENTER, WidthPercentage = 100 };
-            Table.SetWidths(new float[] { 1, 2, 2, 2, 2, 2 });
+            PdfPTable Table = new PdfPTable(6) {
+                HorizontalAlignment = RowAlignment.Center,
+                WidthPercentage = 100
+            };
+            Table.SetWidths(new float[] { 10, 15, 20, 20, 15, 20 });
 
             /*Header*/
             Table.AddCell(
@@ -176,6 +183,8 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                 .SetBorder(0)
             );
 
+            Table.CompleteRow();
+
             VisibleSignaturesCount = 0;
             for (int s = 0; s < Signatures.Count; ++s)
             {
@@ -187,7 +196,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                     {
                         ++VisibleSignaturesCount;
                         int i = 0;
-                        foreach(var Sign in Signatures[s].History.OrderByDescending(x => x.DateTime))
+                        foreach (var Sign in Signatures[s].History.OrderByDescending(x => x.DateTime))
                         {
                             var Date = Sign.DateTime.ToLocalTime(TimeZone);
                             RenderSignature(Table, i>0 ? 0 : VisibleSignaturesCount, String.IsNullOrEmpty(Sign.Note) ? "Signed" : "Canceled", Sign.User, Date.ToString("dd/MM/yyyy"), Date.ToString("HH:mm"), Sign.Signature);
@@ -210,7 +219,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                     RenderTableRow(Table, ((ICheckListGroup)Item).Items);
                 else
                 {
-                    var Cell = new PdfPCell();
+                    PdfPCell Cell = new PdfPCell(new Paragraph());
                     switch (Item.TypeName)
                     {
                         case "Signature":
@@ -228,7 +237,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                             break;
                         case "Field":
                             if (CheckListPDF.IsPrototype())
-                                Cell = NewCell(" ").SetHorizontalAlign(iTextSharp.text.Element.ALIGN_CENTER);
+                                Cell = NewCell("").SetHorizontalAlign(ParagraphAlignment.Center);
                             else
                             {
                                 var Value = CheckListPDF.GetFieldValue((ICheckListField)Item);
@@ -242,11 +251,13 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
 
                     Table.AddCell(Cell.SetPadding(5));
                 }
+
+            Table.CompleteRow();
         }
 
         void RenderTableBody(PdfPTable Table, ICheckListGroup Element)
         {
-            if(CheckListPDF.IsPrototype())
+            if (CheckListPDF.IsPrototype())
                 for (int i = 0; i < Element.PrototypeIterations; i++)
                     RenderTableRow(Table, Element.Items);
             else
@@ -308,14 +319,15 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
         PdfPTable RenderTableHeader(ICheckListGroup Group)
         {
             Size Size = CreateTableHeader(new List<RenderingRow> { }, 0/*, null*/, Group.Items);
-
-            PdfPTable Table = new PdfPTable(Size.ColumnsCount) { HorizontalAlignment = iTextSharp.text.Element.ALIGN_CENTER, WidthPercentage = 100 };
+            
+            PdfPTable Table = new PdfPTable(Size.ColumnsCount) { HorizontalAlignment = RowAlignment.Center, WidthPercentage = 100 };
 
             /*Render DOM-like data*/
             foreach (RenderingRow Row in Main.Children)
                 foreach (RenderingCell Cell in Row.Children)
                     Table.AddCell(PdfPCellFromNode(Cell).SetPadding(5));
 
+            Table.CompleteRow();
             return Table;
         }
         #endregion
