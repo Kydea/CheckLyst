@@ -161,7 +161,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 			}
 		}
 
-		public void AddIterations(int Count)
+		public IEnumerable<Iteration> AddIterations(int Count)
 		{
             for (int Index = 0; Index < Count; ++Index)
             {
@@ -173,6 +173,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 };
                 iteration.Setup();
                 Iterations.Add(iteration);
+                yield return iteration;
             }
 		}
 

@@ -433,7 +433,7 @@ namespace CheckListManager.Instances.Logic.Services
                 cacheObject.Instance.Update(cacheObject);
                 row.Data = JsonConvert.SerializeObject(cacheObject.Instance, _converter);
                 row.Description = cacheObject.Instance.Description;
-                row.FileName = 
+                row.FileName =
                     !cacheObject.Instance.FTPExport ? null :
                     !string.IsNullOrWhiteSpace(cacheObject.Instance.FileName) ? cacheObject.Instance.FileName :
                     $"Instance{cacheObject.InstanceCode}";
@@ -481,7 +481,7 @@ namespace CheckListManager.Instances.Logic.Services
 
                     row.InstancesHistory.Add(new InstancesHistory
                     {
-                        Date = ModifiedOn ?? DateTimeOffset.UtcNow, 
+                        Date = ModifiedOn ?? DateTimeOffset.UtcNow,
                         User = ModifiedBy,
                         State = row.InstanceState,
                         WorkFlowApplication = WorkFlowApplicationId
@@ -665,6 +665,20 @@ namespace CheckListManager.Instances.Logic.Services
                     User = userCode,
                     Value = value
                 });
+                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                {
+                    Company = cacheObject.CompanyId,
+                    User = userCode,
+                    Action = TrailAction.InstanceValueChanged,
+                    Date = DateTimeOffset.UtcNow,
+                    CheckList = cacheObject.InstanceCode,
+                    Information = JsonConvert.SerializeObject(new
+                    {
+                        Id = itemId,
+                        OldValue = field.Value,
+                        NewValue = value,
+                    })
+                });
                 field.Value = value;
 
                 await Update(cacheObject, userCode);
@@ -701,6 +715,20 @@ namespace CheckListManager.Instances.Logic.Services
                     User = userCode,
                     Value = value
                 });
+                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                {
+                    Company = cacheObject.CompanyId,
+                    User = userCode,
+                    Action = TrailAction.InstanceValueCopied,
+                    Date = DateTimeOffset.UtcNow,
+                    CheckList = cacheObject.InstanceCode,
+                    Information = JsonConvert.SerializeObject(new
+                    {
+                        Id = itemId,
+                        OldValue = field.Value,
+                        NewValue = value,
+                    })
+                });
                 field.Value = value;
 
                 await Update(cacheObject, userCode);
@@ -721,7 +749,16 @@ namespace CheckListManager.Instances.Logic.Services
 
             if (!group.ReadOnly)
             {
-                group.AddIterations(1);
+                var Iteration = group.AddIterations(1);
+                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                {
+                    Company = cacheObject.CompanyId,
+                    User = userCode,
+                    Action = TrailAction.InstanceIterationAdded,
+                    Date = DateTimeOffset.UtcNow,
+                    CheckList = cacheObject.InstanceCode,
+                    Information = Iteration.Single().Id.ToString()
+                });
                 await Update(cacheObject, userCode);
             }
         }
@@ -741,6 +778,15 @@ namespace CheckListManager.Instances.Logic.Services
             if (!iteration.ReadOnly)
             {
                 ((Group)iteration.Group).Remove(iteration);
+                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                {
+                    Company = cacheObject.CompanyId,
+                    User = userCode,
+                    Action = TrailAction.InstanceIterationAdded,
+                    Date = DateTimeOffset.UtcNow,
+                    CheckList = cacheObject.InstanceCode,
+                    Information = itemId.ToString()
+                });
                 await Update(cacheObject, userCode);
             }
         }
@@ -760,6 +806,15 @@ namespace CheckListManager.Instances.Logic.Services
             if (!iteration.ReadOnly)
             {
                 ((Group)iteration.Group).Move(iteration, direction);
+                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                {
+                    Company = cacheObject.CompanyId,
+                    User = userCode,
+                    Action = direction == 1 ? TrailAction.InstanceIterationMovedDown : TrailAction.InstanceIterationMovedUp,
+                    Date = DateTimeOffset.UtcNow,
+                    CheckList = cacheObject.InstanceCode,
+                    Information = itemId.ToString()
+                });
                 await Update(cacheObject, userCode);
             }
         }
@@ -817,7 +872,7 @@ namespace CheckListManager.Instances.Logic.Services
             }
 
             if (
-                !string.IsNullOrEmpty(signature.SignatureLevel) 
+                !string.IsNullOrEmpty(signature.SignatureLevel)
                 && !HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType, signature.SignatureLevel)
             )
                 throw new InstanceException($"The signature must be applied by an user with level {signature.SignatureLevel}");
@@ -892,7 +947,7 @@ namespace CheckListManager.Instances.Logic.Services
                     Information = JsonConvert.SerializeObject(new
                     {
                         Id = request.ItemId,
-                        Note = request.Note
+                        request.Note
                     })
                 });
         }

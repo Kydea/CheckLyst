@@ -25,6 +25,12 @@
         public const string InstanceStateChanged = "Instance state changed";
         public const string InstanceSignatureIssued = "Instance signature issued";
         public const string InstanceSignatureCanceled = "Instance signature canceled";
+        public const string InstanceValueChanged = "Instance value changed";
+        public const string InstanceValueCopied = "Instance value copied";
+        public const string InstanceIterationAdded = "Instance iteration added";
+        public const string InstanceIterationDeleted = "Instance iteration deleted";
+        public const string InstanceIterationMovedUp = "Instance iteration moved up";
+        public const string InstanceIterationMovedDown = "Instance iteration moved down";
 
         public const string InstanceExportCompleted = "Instance export completed";
         public const string InstanceExportFailed = "Instance export failed";
