@@ -62,7 +62,7 @@ namespace CheckListManager.Common.Logic.Models
                 if (_rawValue == DataTypeEnum.Date)
                     return DateTimeOffset.TryParseExact(value, new[] { "dd/MM/yyyy" }, null, DateTimeStyles.AssumeUniversal, out _);
                 if (_rawValue == DataTypeEnum.DateTime)
-					return DateTimeOffset.TryParseExact(value, new[] { "dd/MM/yyyy", "dd/MM/yyyy HH:mm" }, null, DateTimeStyles.AssumeUniversal, out _);
+					return DateTimeOffset.TryParseExact(value, new[] { "dd/MM/yyyy HH:mm" }, null, DateTimeStyles.AssumeUniversal, out _);
 				if (_rawValue == DataTypeEnum.Time)
 					return TimeSpan.TryParseExact(value, "hh\\:mm", null, out _);
 

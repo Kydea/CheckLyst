@@ -4,6 +4,7 @@ using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.Expressions;
 using System;
 using CheckListManager.Instances.Logic.Exceptions;
+using Newtonsoft.Json;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
@@ -17,7 +18,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public DateTimeOffset? CountDownToValue => CountDownTo != null && CountDownTo.Value != null && CountDownTo.Value.Type == DataType.DateTime && !CountDownTo.Value.IsNull ? CountDownTo.Value.DateTimeValue : (DateTimeOffset?)null;
 
         public string CountDownToCode { get; set; }
-        public bool Hidden
+        public virtual bool Hidden
         {
             get
             {
@@ -54,7 +55,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public virtual string GetSignatureInformation()
             => Signature != null && Signature.Signed ? string.Format("by {0} on {1:dd/MM/yyyy HH:mm}", Signature.SignedBy, Signature.SignedOn) : null;
 
-        public bool Valid
+        public virtual bool Valid
 		{
 			get
 			{
@@ -77,7 +78,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
 		public Conditions ValidCondition { get; set; }
 		public string ValidExpressionCode { get; set; }
-		public string ValidityMessage { get; set; }
+		public virtual string ValidityMessage { get; set; }
 
 		public virtual bool IsValidByDefault()
 		{
