@@ -2,11 +2,11 @@
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.PDF;
 using CheckListManager.Common.Logic.Api.PDF.Sections;
+using CheckListManager.Common.Logic.Api.PDF.Helper;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Prototypes.Logic.Messages;
 using CheckListManager.Prototypes.Logic.Models.CheckLists;
-using iTextSharp.text;
-using iTextSharp.text.pdf;
+using MigraDoc.DocumentObjectModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,35 +33,35 @@ namespace CheckListManager.Prototypes.Logic.PDF
 
             if (Signatures != null && Signatures.Count() > 0)
             {
-                Document.NewPage();
+                Container.AddPageBreak();
 
-                var Text = new Paragraph(new Phrase("Approval workflow \n\n", PDFSection.FirstHeaderFont));
-                Text.Alignment = iTextSharp.text.Element.ALIGN_CENTER;
-                Document.Add(Text);
+                Paragraph paragraph = Container.AddParagraph("Approval workflow \n\n").SetFont(PDFSection.FirstHeaderFont);
+                paragraph.Format.Alignment = ParagraphAlignment.Center;
 
-                var Table = new PdfPTable(7);
+                var Table = new PdfPTable(7) { WidthPercentage = 100 };
 
-                Table.AddCell(new PdfPCell(new Paragraph("User", PDFSection.GenericFont)) { Padding = 10 });
-                Table.AddCell(new PdfPCell(new Paragraph("Date", PDFSection.GenericFont)) { Padding = 10 });
-                Table.AddCell(new PdfPCell(new Paragraph("Time", PDFSection.GenericFont)) { Padding = 10 });
-                Table.AddCell(new PdfPCell(new Paragraph("Signature Step", PDFSection.GenericFont)) { Padding = 10 });
-                Table.AddCell(new PdfPCell(new Paragraph("Signature Level", PDFSection.GenericFont)) { Padding = 10 });
-                Table.AddCell(new PdfPCell(new Paragraph("Signature Comment", PDFSection.GenericFont)) { Padding = 10 });
-                Table.AddCell(new PdfPCell(new Paragraph("Signature Result", PDFSection.GenericFont)) { Padding = 10 });
+                Table.AddCell(new PdfPCell(new Paragraph().SetText("User", PDFSection.GenericFont).Padding(10)));
+                Table.AddCell(new PdfPCell(new Paragraph().SetText("Date", PDFSection.GenericFont).Padding(10)));
+                Table.AddCell(new PdfPCell(new Paragraph().SetText("Time", PDFSection.GenericFont).Padding(10)));
+                Table.AddCell(new PdfPCell(new Paragraph().SetText("Signature Step", PDFSection.GenericFont).Padding(10)));
+                Table.AddCell(new PdfPCell(new Paragraph().SetText("Signature Level", PDFSection.GenericFont).Padding(10)));
+                Table.AddCell(new PdfPCell(new Paragraph().SetText("Signature Comment", PDFSection.GenericFont).Padding(10)));
+                Table.AddCell(new PdfPCell(new Paragraph().SetText("Signature Result", PDFSection.GenericFont).Padding(10)));
+                Table.CompleteRow();
 
                 foreach (var Signature in Signatures)
                 {
-                    Table.AddCell(new PdfPCell(new Paragraph($"{Signature.User}", PDFSection.SmallFont)) { Padding = 10, VerticalAlignment = iTextSharp.text.Element.ALIGN_CENTER });
-                    Table.AddCell(new PdfPCell(new Paragraph(Signature.Date?.ToLocalTime(TimeZone).ToString("dd/MM/yyyy"), PDFSection.SmallFont)) { Padding = 10, VerticalAlignment = iTextSharp.text.Element.ALIGN_CENTER });
-                    Table.AddCell(new PdfPCell(new Paragraph(Signature.Date?.ToLocalTime(TimeZone).ToString("HH:mm"), PDFSection.SmallFont)) { Padding = 10, VerticalAlignment = iTextSharp.text.Element.ALIGN_CENTER });
-                    Table.AddCell(new PdfPCell(new Paragraph(Signature.Step.ToString(), PDFSection.SmallFont)) { Padding = 10, HorizontalAlignment = iTextSharp.text.Element.ALIGN_CENTER, VerticalAlignment = iTextSharp.text.Element.ALIGN_CENTER });
-                    Table.AddCell(new PdfPCell(new Paragraph($"({string.Join(", ", Signature.WorkFlowApplicationStepTags.Select(t => t.Tag))})", PDFSection.SmallFont)) { Padding = 10, VerticalAlignment = iTextSharp.text.Element.ALIGN_CENTER });
-                    Table.AddCell(new PdfPCell(new Paragraph(Signature.Comment, PDFSection.SmallFont)) { Padding = 10, VerticalAlignment = iTextSharp.text.Element.ALIGN_CENTER });
-                    Table.AddCell(new PdfPCell(new Paragraph(!Signature.Approved.HasValue ? "Pending" : Signature.Approved.Value ? "Approved" : "Rejected", PDFSection.SmallFont)) { Padding = 10, HorizontalAlignment = iTextSharp.text.Element.ALIGN_CENTER, VerticalAlignment = iTextSharp.text.Element.ALIGN_CENTER });
+                    Table.AddCell(new PdfPCell(new Paragraph().SetText($"{Signature.User}", PDFSection.SmallFont).Padding(10).SetAlignment(ParagraphAlignment.Center)));
+                    Table.AddCell(new PdfPCell(new Paragraph().SetText(Signature.Date?.ToLocalTime(TimeZone).ToString("dd/MM/yyyy"), PDFSection.SmallFont).Padding(10)) { VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center });
+                    Table.AddCell(new PdfPCell(new Paragraph().SetText(Signature.Date?.ToLocalTime(TimeZone).ToString("HH:mm"), PDFSection.SmallFont).Padding(10)) { VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center });
+                    Table.AddCell(new PdfPCell(new Paragraph().SetText(Signature.Step.ToString(), PDFSection.SmallFont).Padding(10)) { VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center });
+                    Table.AddCell(new PdfPCell(new Paragraph().SetText($"({string.Join(", ", Signature.WorkFlowApplicationStepTags.Select(t => t.Tag))})", PDFSection.SmallFont).Padding(10)) { VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center });
+                    Table.AddCell(new PdfPCell(new Paragraph().SetText(Signature.Comment, PDFSection.SmallFont).Padding(10)) { VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center });
+                    Table.AddCell(new PdfPCell(new Paragraph().SetText(!Signature.Approved.HasValue ? "Pending" : Signature.Approved.Value ? "Approved" : "Rejected", PDFSection.SmallFont).Padding(10)) { HorizontalAlignment = ParagraphAlignment.Center, VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center });
+                    Table.CompleteRow();
                 }
 
-                Table.WidthPercentage = 100;
-                Document.Add(Table);
+                Container.Add(Table);
             }
         }
 

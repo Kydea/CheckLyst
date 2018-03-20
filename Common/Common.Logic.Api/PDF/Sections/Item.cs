@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using iTextSharp.text.pdf;
-using iTextSharp.text;
 using System.Drawing;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Core.Helpers;
+using MigraDoc.DocumentObjectModel.Tables;
+using MigraDoc.DocumentObjectModel;
+using CheckListManager.Common.Logic.Api.PDF.Helper;
 
 namespace CheckListManager.Common.Logic.Api.PDF.Sections
 {
@@ -21,21 +22,21 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
 
         private void DrawSignature(string Description, string User = null, string Date = null, string Time = null, string Signature = null)
         {
-            PdfPTable Table = new PdfPTable(4);
+            PdfPTable Table = new PdfPTable(4) { WidthPercentage = 100 };
 
-            Table.AddCell(new PdfPCell(new Paragraph(Description, GenericBoldFont)) { Padding = 10 });
-            Table.AddCell(new PdfPCell(new Paragraph("Date", GenericBoldFont)) { Padding = 10 });
-            Table.AddCell(new PdfPCell(new Paragraph("Time", GenericBoldFont)) { Padding = 10 });
-            Table.AddCell(new PdfPCell(new Paragraph("Signature", GenericBoldFont)) { Padding = 10 });
-            Table.AddCell(new PdfPCell(new Paragraph(User, GenericFont)) { Padding = 10 });
-            Table.AddCell(new PdfPCell(new Paragraph(Date, GenericFont)) { Padding = 10 });
-            Table.AddCell(new PdfPCell(new Paragraph(Time, GenericFont)) { Padding = 10 });
-            Table.AddCell(new PdfPCell(new Paragraph(Date == null ? " " : Signature, GenericFont)) { Padding = 10 });
+            Table.AddCell(new PdfPCell(new Paragraph().SetText("Signed by").SetFont(GenericBoldFont).Padding(10)));
+            Table.AddCell(new PdfPCell(new Paragraph().SetText("Date").SetFont(GenericBoldFont).Padding(10)));
+            Table.AddCell(new PdfPCell(new Paragraph().SetText("Time").SetFont(GenericBoldFont).Padding(10)));
+            Table.AddCell(new PdfPCell(new Paragraph().SetText("Signature").SetFont(GenericBoldFont).Padding(10)));
+            Table.CompleteRow();
 
-            Table.WidthPercentage = 100;
+            Table.AddCell(new PdfPCell(new Paragraph().SetText(User).Padding(10)));
+            Table.AddCell(new PdfPCell(new Paragraph().SetText(Date).Padding(10)));
+            Table.AddCell(new PdfPCell(new Paragraph().SetText(Time).Padding(10)));
+            Table.AddCell(new PdfPCell(new Paragraph().SetText(Date == null ? " " : Signature).Padding(10)));
+            Table.CompleteRow();
 
-            PDFBase.Document.Add(Table);
-
+            PDFBase.Container.Add(Table);
             DrawText("\n");
         }
 
@@ -67,7 +68,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
 
             else if (Element is ICheckListSignature SignatureElement)
             {
-                if (!string.IsNullOrEmpty(SignatureElement.Description))
+                if (!String.IsNullOrEmpty(SignatureElement.Description))
                 {
                     DrawText(SignatureElement.Description, GenericBoldFont);
                     DrawText("\n");
@@ -77,7 +78,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                     foreach (var Sign in SignatureElement.History)
                     {
                         var Date = Sign.DateTime.ToLocalTime(TimeZone);
-                        DrawSignature(string.IsNullOrEmpty(Sign.Note) ? "Signed by" : "Canceled by", Sign.User, Date.ToString("dd/MM/yyyy"), Date.ToString("HH:mm"), Sign.Signature);
+                        DrawSignature(String.IsNullOrEmpty(Sign.Note) ? "Signed by" : "Canceled by", Sign.User, Date.ToString("dd/MM/yyyy"), Date.ToString("HH:mm"), Sign.Signature);
                     }
                 else
                     DrawSignature("Signed by");
@@ -91,7 +92,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             {
                 var Description = FieldElement.Description;
 
-                if (string.IsNullOrEmpty(Description))
+                if (String.IsNullOrEmpty(Description))
                     Description = "(no description)";
                 else
                     Description = FieldElement.Description;

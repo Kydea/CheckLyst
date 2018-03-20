@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using iTextSharp.text.pdf;
 using System.Drawing;
 using CheckListManager.Common.Logic.Models.CheckLists;
 
@@ -21,8 +20,6 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
 
             var GroupElement = (ICheckListGroup)Element;
 
-            PDFBase.CurrentRenderingX = Indentation * 20;
-
             if (!String.IsNullOrEmpty(GroupElement.Description))
             {
                 DrawText(GroupElement.Description, Indentation == 1 ? FirstHeaderFont : SecondHeaderFont);
@@ -31,7 +28,6 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
 
             if (GroupElement.Items.Count > 0)
                 RenderChildren();
-
         }
 
         public override void RenderChildren()
