@@ -455,6 +455,13 @@ namespace CheckListManager.Instances.Logic.Services
                         });
                         WorkFlowApplicationId = WorkFlowApplication.ID;
                         cacheObject.InstanceState = row.InstanceState = InstanceState.Completed;
+
+                        row.InstancesHistory.Add(new InstancesHistory
+                        {
+                            Date = ModifiedOn ?? DateTimeOffset.UtcNow,
+                            User = ModifiedBy,
+                            State = InstanceState.Completed
+                        });
                     }
                     else
                     {
