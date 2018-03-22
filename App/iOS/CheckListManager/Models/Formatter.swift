@@ -47,9 +47,9 @@ class Formatter: NSObject {
         self.stringToDateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SZ"
         self.stringToDateFormatter.timeZone = TimeZone(abbreviation: "UTC")
         
-        self.infoTSFormatter.dateFormat = "EEE, dd MMM yyyy HH:mm"
+        self.infoTSFormatter.dateFormat = "yyyy-MM-dd HH:mm"
         
-        self.instanceDateTimeFormatter.dateFormat = "dd/MM/yyyy HH:mm"
+        self.instanceDateTimeFormatter.dateFormat = "yyyy-MM-dd HH:mm"
         
     }
     
