@@ -70,8 +70,8 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                     Expressions.ContainsKey(Key) ?
                         Expressions[Key].Value.Type == DataType.Error ? ErrorValueLeft + Expressions[Key].Value.ErrorValue + ErrorValueRight :
                         Expressions[Key].Value.IsNull ? NullValue :
-                        Expressions[Key].Value.Type == DataType.DateTime ? Expressions[Key].Value.DateTimeValue.ToString("dd/MM/yyyy HH:mm:ss") :
-                        Expressions[Key].Value.Type == DataType.Date ? Expressions[Key].Value.DateTimeValue.ToString("dd/MM/yyyy") :
+                        Expressions[Key].Value.Type == DataType.DateTime ? Expressions[Key].Value.DateTimeValue.ToString("yyyy-MM-dd HH:mm:ss") :
+                        Expressions[Key].Value.Type == DataType.Date ? Expressions[Key].Value.DateTimeValue.ToString("yyyy-MM-dd") :
                         Expressions[Key].Value.Type == DataType.Time ? Expressions[Key].Value.TimeSpanValue.ToString(@"hh\:mm\:ss") :
                         Expressions[Key].Value.Value :
                     RuntimeValues?.ContainsKey(Key) ?? false ? RuntimeValues[Key] :

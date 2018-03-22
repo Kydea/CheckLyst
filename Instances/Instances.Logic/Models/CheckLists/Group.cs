@@ -78,7 +78,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 				{
 					iteration.Index = index++;
 					iteration.Update();
-					_valid = _valid && iteration.Valid;
+					_valid = _valid && (iteration.Removed || iteration.Valid);
 				}
 			}
 		}
@@ -179,15 +179,18 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
 		public void Move(Iteration iteration, int direction)
 		{
-            var index = Iterations.IndexOf(iteration);
-			Iterations.RemoveAt(index);
-			Iterations.Insert(index + direction, iteration);
+            int 
+                from = Iterations.IndexOf(iteration),
+                to = from + direction;
+            while (Iterations[to].Removed)
+                to += direction;
+            Iterations.RemoveAt(from);
+            Iterations.Insert(to, iteration);
 		}
 
 		public void Remove(Iteration iteration)
 		{
 			iteration.Remove();
-            Iterations.Remove(iteration);
         }
     }
 }

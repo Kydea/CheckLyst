@@ -27,6 +27,7 @@
 		expressions = [],
 		lastResult,
 		deleted,
+		removedIterationsVisible = false, 
 
 		setupInstanceDescription = function () {
 			header.getElement().prepend(instanceDescription = $("<div />").addClass("InstanceDescription"));
@@ -45,14 +46,17 @@
 		setupActionBar = function () {
 			var
 				editor = hasPermission("Edit"),
-				deleter = hasPermission("Delete");
+				deleter = hasPermission("Delete"),
 
-			buttonGroup = $("div.ActionBar a.ButtonGroup", element),
+				buttonGroup = $("div.ActionBar a.ButtonGroup", element),
 				confirmButton = $("a.Confirm", buttonGroup).toggleClass("Hidden", state != instances.Instance.states.completed),
 				completeButton = $("a.Complete", buttonGroup).toggleClass("Hidden", !editor || state != instances.Instance.states.progress),
 				deleteButton = $("a.Delete", buttonGroup).toggleClass("Hidden", !deleter || state != instances.Instance.states.draft && state != instances.Instance.states.progress),
 				saveButton = $("a.Save", buttonGroup).toggleClass("Hidden", !editor || state != instances.Instance.states.draft && state != instances.Instance.states.progress),
-				historyButton = $("a.History", buttonGroup).toggleClass("Hidden", state == instances.Instance.states.draft);
+				historyButton = $("a.History", buttonGroup).toggleClass("Hidden", state == instances.Instance.states.draft),
+				showRemovedIterationsButton = $("a.ShowRemovedIterations", buttonGroup).toggleClass("Hidden", !matematici.tokenManager.checkRole("Trail#View#") || removedIterationsVisible),
+				hideRemovedIterationsButton = $("a.HideRemovedIterations", buttonGroup).toggleClass("Hidden", !removedIterationsVisible);
+
 
 			if ($("a:not(.Hidden)", buttonGroup).size() == 0)
 				buttonGroup.hide();
@@ -401,6 +405,16 @@
 			parameters.append($("<label />").append($("<span />").text("Prototype version")).append($("<i />").addClass("Icon fi flaticon-prototype")).append($("<input />").attr(attributes).val(prototypeName + "." + version)));
 			parameters.append($("<label />").append($("<span />").text("Instance")).append($("<i />").addClass("Icon fi flaticon-version")).append($("<input />").attr(attributes).val(getFormattedYear() + "." + number)));
 		});
+	};
+
+	instance.toggleRemovedIterations = function (value) {
+		removedIterationsVisible = value;
+		setupActionBar();
+		instance.update(lastResult);
+	};
+
+	instance.areRemovedIterationsVisible = function () {
+		return removedIterationsVisible;
 	};
 
 	instance.initialize = function () {

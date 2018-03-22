@@ -133,27 +133,14 @@ div.Instance .Group .Iteration {
     display: block; }
   div.Instance .Group .Iteration > h3 {
     display: none; }
-
-div.Instance .Group div.Iteration:nth-of-type(2) > .IterationCommands a.Up {
-  display: none; }
-
-div.Instance .Group div.Iteration:nth-of-type(2) > .Item.Field .Copy {
-  display: none !important; }
-
-div.Instance .Group div.Iteration:nth-last-of-type(2) > .IterationCommands a.Down {
-  display: none; }
-
-div.Instance .Group div.Iteration div.Group .Item.Field .Copy {
-  display: none !important; }
-
-div.Instance .Group tr.Iteration:first-child > .IterationCommands a.Up {
-  display: none; }
-
-div.Instance .Group tr.Iteration:first-child > .Item.Field .Copy {
-  display: none !important; }
-
-div.Instance .Group tr.Iteration:last-child > .IterationCommands a.Down {
-  display: none; }
+  div.Instance .Group .Iteration.Removed label, div.Instance .Group .Iteration.Removed input, div.Instance .Group .Iteration.Removed select {
+    color: #cc0000 !important; }
+  div.Instance .Group .Iteration.FirstIteration > .IterationCommands a.Up {
+    display: none; }
+  div.Instance .Group .Iteration.FirstIteration > .Item.Field .Copy {
+    display: none !important; }
+  div.Instance .Group .Iteration.LastIteration > .IterationCommands a.Down {
+    display: none; }
 
 div.Instance .Group > div.Information div.Panel {
   right: 0;

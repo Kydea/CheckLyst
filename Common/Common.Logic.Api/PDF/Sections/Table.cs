@@ -199,7 +199,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                         foreach (var Sign in Signatures[s].History.OrderByDescending(x => x.DateTime))
                         {
                             var Date = Sign.DateTime.ToLocalTime(TimeZone);
-                            RenderSignature(Table, i>0 ? 0 : VisibleSignaturesCount, String.IsNullOrEmpty(Sign.Note) ? "Signed" : "Canceled", Sign.User, Date.ToString("dd/MM/yyyy"), Date.ToString("HH:mm"), Sign.Signature);
+                            RenderSignature(Table, i>0 ? 0 : VisibleSignaturesCount, String.IsNullOrEmpty(Sign.Note) ? "Signed" : "Canceled", Sign.User, Date.ToString("yyyy-MM-dd"), Date.ToString("HH:mm"), Sign.Signature);
                             i++;
                         }
                     }

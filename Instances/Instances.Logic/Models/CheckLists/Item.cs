@@ -21,6 +21,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public abstract string TypeName { get; }
         public int FontSize { get; set; }
         public string Color { get; set; }
+        public bool Removed { get; set; }
 
         public override void Setup()
         {
@@ -49,7 +50,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public override void UpdateReadOnly(string userCode, bool readOnlyInstance)
         {
-            if (readOnlyInstance || Group != null && Group.ReadOnly || Page != null && Page.ReadOnly)
+            if (Removed || readOnlyInstance || Group != null && Group.ReadOnly || Page != null && Page.ReadOnly)
                 ReadOnly = true;
             else
                 base.UpdateReadOnly(userCode, readOnlyInstance);
@@ -63,7 +64,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public virtual void Remove()
         {
-            ((Instance)CheckList).Items.Remove(Id);
+            Removed = true;
         }
 
         public abstract ICheckListItem Clone(ICheckListGroup parent);

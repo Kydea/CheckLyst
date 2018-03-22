@@ -12,7 +12,7 @@
 
 		validate = function () {
 		    if (model.valueTypeName == "DateTime" || model.valueTypeName == "Date") {
-		        if (!/^$|\d\d\/\d\d\/\d\d\d\d/ig.test(input.val())) {
+				if (!/^$|\d\d\d\d\-\d\d\-\d\d/ig.test(input.val())) {
 		            input.val("");
 		            return false;
 		        }
@@ -107,7 +107,7 @@
 					if (model.valueTypeName == "Number")
 						input.keyfilter(/[\d\-\,\.]/);
 					else if (model.valueTypeName == "Date" || model.valueTypeName == "DateTime") {
-						input.keyfilter(/[\d\/]/);
+						input.keyfilter(/[\d\-]/);
 						new matematici.DatePicker(input);
 					} else if (model.valueTypeName == "Boolean") {
 						element.addClass(model.valueTypeName);

@@ -36,7 +36,7 @@
             .attr("data-code", model.code)
             .attr("data-id", model.id)
             .toggleClass("Valid", model.valid)
-            .toggleClass("Hidden", model.hidden);
+			.toggleClass("Hidden", model.hidden);
         if (model.countDownToValue)
 			new instances.CountDown(element, model.countDownToValue, model.id);
         item.update(model)

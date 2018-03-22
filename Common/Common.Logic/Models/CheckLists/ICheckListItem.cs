@@ -28,5 +28,6 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
         int FontSize { get; set; }
         string Color { get; set; }
         void Remove();
+        bool Removed { get; set; }
 	}
 }

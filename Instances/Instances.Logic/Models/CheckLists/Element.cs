@@ -53,7 +53,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         }
 		public string SignatureCode { get; set; }
         public virtual string GetSignatureInformation()
-            => Signature != null && Signature.Signed ? string.Format("by {0} on {1:dd/MM/yyyy HH:mm}", Signature.SignedBy, Signature.SignedOn) : null;
+            => Signature != null && Signature.Signed ? string.Format("by {0} on {1:yyyy-MM-dd HH:mm}", Signature.SignedBy, Signature.SignedOn) : null;
 
         public virtual bool Valid
 		{

@@ -195,10 +195,14 @@ div.Instance {
             > h3 {
                 display: none;
             }
-        }
 
-        div.Iteration {
-            &:nth-of-type(2) {
+            &.Removed {
+                label, input, select {
+                    color: $Color-Red-Regular !important;
+                }
+            }
+
+            &.FirstIteration {
                 > .IterationCommands a.Up {
                     display: none;
                 }
@@ -210,35 +214,7 @@ div.Instance {
                 }
             }
 
-            &:nth-last-of-type(2) {
-                > .IterationCommands a.Down {
-                    display: none;
-                }
-            }
-
-            div.Group {
-                .Item.Field {
-                    .Copy {
-                        display: none !important;
-                    }
-                }
-            }
-        }
-
-        tr.Iteration {
-            &:first-child {
-                > .IterationCommands a.Up {
-                    display: none;
-                }
-
-                > .Item.Field {
-                    .Copy {
-                        display: none !important;
-                    }
-                }
-            }
-
-            &:last-child {
+            &.LastIteration {
                 > .IterationCommands a.Down {
                     display: none;
                 }

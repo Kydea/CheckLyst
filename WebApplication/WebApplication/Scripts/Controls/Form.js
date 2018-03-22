@@ -265,7 +265,6 @@
 	};
 
 	this.setValues = function (values) {
-		console.log(values);
 		fields.each(function () {
 			var field = $(this);
 			setFieldValue(field, values && values[field.attr("name")]);

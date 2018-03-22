@@ -41,7 +41,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         private void CheckItem(ICheckListItem Item)
         {
-            if (Item.SignatureCode == Code && !Item.Valid) throw new InstanceException($"The item {(string.IsNullOrEmpty(Item.Description) ? Item.Id.ToString() : $"{Item.Description} (id: {Item.Id})")} is not valid");
+            if (Item.SignatureCode == Code && !Item.Removed && !Item.Valid) throw new InstanceException($"The item {(string.IsNullOrEmpty(Item.Description) ? Item.Id.ToString() : $"{Item.Description} (id: {Item.Id})")} is not valid");
         }
 
         private void FindInvalidItem(ICheckListGroup Group)

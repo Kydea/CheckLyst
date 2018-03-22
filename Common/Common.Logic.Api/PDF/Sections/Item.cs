@@ -78,7 +78,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                     foreach (var Sign in SignatureElement.History)
                     {
                         var Date = Sign.DateTime.ToLocalTime(TimeZone);
-                        DrawSignature(String.IsNullOrEmpty(Sign.Note) ? "Signed by" : "Canceled by", Sign.User, Date.ToString("dd/MM/yyyy"), Date.ToString("HH:mm"), Sign.Signature);
+                        DrawSignature(String.IsNullOrEmpty(Sign.Note) ? "Signed by" : "Canceled by", Sign.User, Date.ToString("yyyy-MM-dd"), Date.ToString("HH:mm"), Sign.Signature);
                     }
                 else
                     DrawSignature("Signed by");

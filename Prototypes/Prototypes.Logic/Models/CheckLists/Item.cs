@@ -22,6 +22,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 		public abstract string TypeName { get; }
         public int FontSize { get; set; }
         public string Color { get; set; }
+        public bool Removed { get; set; }
 
         public abstract ICheckListItem Clone(ICheckListGroup parent);
 

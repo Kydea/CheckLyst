@@ -108,9 +108,12 @@
             readOnly = !!model.readOnly;
             if (title) title.text(model.description);
             if (addButton) addButton.toggle(model.iterator && !model.disableAdd);
-            if (!group.isPage()) id = model.id;
+			if (!group.isPage()) id = model.id;
             element
-                .toggleClass("Hidden", model.hidden).toggleClass("ReadOnly", readOnly).toggleClass("Valid", model.valid)
+				.toggleClass("Hidden", model.hidden || !!model.removed && !instances.instance.areRemovedIterationsVisible())
+				.toggleClass("Removed", !!model.removed)
+				.toggleClass("ReadOnly", readOnly)
+				.toggleClass("Valid", model.valid)
                 .attr("data-code", model.code).attr("data-id", model.id);
             if (model.countDownToValue) new instances.CountDown(element, model.countDownToValue, model.id);
             group.setColor(model.color);
@@ -126,8 +129,9 @@
             element.appendTo(parent.getElement());
         else if (parent.isTable()) 
             element.appendTo($("tbody", parent.getElement()));
-        else if (!subRow) 
+        else if (!subRow)
 			element.appendTo(parent.getElement());
+		element.removeClass("FirstIteration").removeClass("LastIteration")
     };
 
     this.setColor = function (value) {
@@ -156,7 +160,7 @@
         for (index in children) {
             var
                 item,
-                itemModel = children[index];
+				itemModel = children[index];
 
             if (!itemIndexes[itemModel.id]) 
                 item = itemModel.typeName == "Group" || itemModel.typeName == "Iteration" ? new instances.Group(null, itemModel.typeName, this, index == 0 ? null : newItems[index - 1], itemModel) : new instances.Item(itemModel, this);
@@ -180,12 +184,15 @@
         itemIndexes = newItemIndexes;
 
         /* riordina gli oggetti iteration */
-        if (iteratorOrder)
-            for (index in iteratorOrder)
-                items[iteratorOrder[index]].appendElement();
-                //element.append(items[iteratorOrder[index]].getElement());
+		if (iteratorOrder)
+			for (index in iteratorOrder) 
+				items[iteratorOrder[index]].appendElement();
 
-        if (iterationCommands) iterationCommands.appendTo(element);
+		var visibleChildren = element.children(".Iteration:not(.Removed)");
+		visibleChildren.first().addClass("FirstIteration");
+		visibleChildren.last().addClass("LastIteration");
+
+		if (iterationCommands) iterationCommands.appendTo(element);
 
         element.append(addButton);
 

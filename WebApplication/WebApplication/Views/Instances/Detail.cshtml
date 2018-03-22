@@ -83,7 +83,13 @@
                 }, "Complete")
                 .add("Confirm", function () {
                     instance.confirm();
-                }, "Confirm");
+                }, "Confirm")
+                .add("Show removed iterations", function () {
+                    instance.toggleRemovedIterations(true);
+                }, "ShowRemovedIterations")
+                .add("Hide removed iterations", function () {
+                    instance.toggleRemovedIterations(false);
+                }, "HideRemovedIterations");
 
         matematici.save = instance.save;
 

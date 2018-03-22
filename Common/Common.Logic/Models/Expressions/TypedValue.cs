@@ -54,8 +54,8 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                 Value =
                     String.IsNullOrWhiteSpace(_SerializedValue) ? null :
                     Type == DataType.Boolean ? Boolean.Parse(_SerializedValue) : 
-                    Type == DataType.DateTime ? DateTimeOffset.ParseExact(_SerializedValue, new[] { "dd/MM/yyyy HH:mm:ss", "dd/MM/yyyy HH:mm" }, null, DateTimeStyles.AssumeUniversal).ToUniversalTime() :
-                    Type == DataType.Date ? DateTimeOffset.ParseExact(_SerializedValue, new[] { "dd/MM/yyyy" }, null, DateTimeStyles.AssumeUniversal).ToUniversalTime() :
+                    Type == DataType.DateTime ? DateTimeOffset.ParseExact(_SerializedValue, new[] { "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm" }, null, DateTimeStyles.AssumeUniversal).ToUniversalTime() :
+                    Type == DataType.Date ? DateTimeOffset.ParseExact(_SerializedValue, new[] { "yyyy-MM-dd" }, null, DateTimeStyles.AssumeUniversal).ToUniversalTime() :
                     Type == DataType.Time ? TimeSpan.ParseExact(_SerializedValue, new[] { "hh\\:mm" }, null) :
                     Type == DataType.Number ? Decimal.Parse(_SerializedValue.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture) :
                     Type == DataType.Error ? _SerializedValue :

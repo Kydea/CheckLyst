@@ -282,7 +282,7 @@ namespace CheckListManager.Instances.Logic.Services
                     throw new InstanceException("Access denied");
 
                 cacheObject.Instance.Update(cacheObject);
-                var UnvalidItems = cacheObject.Instance.Items.Values.Where(i => !i.Valid && !i.IteratorModelItem);
+                var UnvalidItems = cacheObject.Instance.Items.Values.Where(i => !i.Removed && !i.Valid && !i.IteratorModelItem);
                 if (UnvalidItems.Any())
                     throw new InstanceException($"The following items are not valid: {string.Join(", ", UnvalidItems.Select(i => i.Id.ToString()))}");
 

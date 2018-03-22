@@ -38,7 +38,7 @@
 		return format.date + " " + format.time + " " + format.offset;
 	},
 
-	dateFormat: "DD/MM/YYYY",
+	dateFormat: "YYYY-MM-DD",
 
 	timeFormat: "HH:mm"
 }
