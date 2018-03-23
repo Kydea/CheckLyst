@@ -151,10 +151,11 @@
 				}]), "Code",
 				"Uniquely identifies an element. Can be left empty. Use only if a reference to the element is needed is some expression."
 			));
-			properties.push(new prototypes.Property(
-				this, new prototypes.ReadOnlyProperty(model), "Read-only",
-				"Determines if the element is editable by the operator or not."
-			));
+			if (model.typeName != "Text")
+				properties.push(new prototypes.Property(
+					this, new prototypes.ReadOnlyProperty(model), "Read-only",
+					"Determines if the element is editable by the operator or not."
+				));
 			properties.push(new prototypes.Property(
 				this, new prototypes.HiddenProperty(model, "hidden", state != prototypes.Prototype.states.draft), "Hidden",
 				"Determines if the element is visible or not."

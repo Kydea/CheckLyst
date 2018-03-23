@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{23C7D6C0-62B6-481A-805F-88F26F56CF93}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>CheckListManager.Trail.Terminal</RootNamespace>
-    <AssemblyName>CheckListManager.Trail.Terminal</AssemblyName>
+    <RootNamespace>CheckListManager.AccessControl.Terminal</RootNamespace>
+    <AssemblyName>CheckListManager.AccessControl.Terminal</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
