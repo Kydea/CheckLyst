@@ -22,12 +22,12 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                 if (Value.ToLower() == "true")
                 {
                     Symbol = new Constant(new TypedValue(DataType.Boolean, true)) { Position = Position };
-                    Operator = false;
+                    Operator = OperatorType.No;
                 }
                 else if (Value.ToLower() == "false")
                 {
                     Symbol = new Constant(new TypedValue(DataType.Boolean, false)) { Position = Position };
-                    Operator = false;
+                    Operator = OperatorType.No;
                 }
 
                 //Logic operators
@@ -36,7 +36,11 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                 else if (Value.ToLower() == "and")
                     Symbol = new LogicOperators.And { Position = Position };
                 else if (Value.ToLower() == "not")
+                {
                     Symbol = new LogicOperators.Not { Position = Position };
+                    TokenOrderRightToLeft = true;
+                    Operator = OperatorType.Right;
+                }
 
                 //Ternary operator
                 else if (Value.ToLower() == "iif")
@@ -47,14 +51,14 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     TernaryOperator.TruePart = Arguments[1].Symbol;
                     TernaryOperator.FalsePart = Arguments[2].Symbol;
                     Symbol = TernaryOperator;
-                    Operator = false;
+                    Operator = OperatorType.No;
                 }
 
                 //Expression value
                 else
                 {
                     Symbol = new ExpressionValue { ExpressionCode = Value, Position = Position };
-                    Operator = false;
+                    Operator = OperatorType.No;
                 }
             }
             else if (Values.Length == 2)
@@ -86,7 +90,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     default:
                         throw new ParseException("Invalid property: " + Value, Position);
                 }
-                Operator = false;
+                Operator = OperatorType.No;
             }
             else
                 throw new ParseException("Invalid identifier: " + Value, Position);

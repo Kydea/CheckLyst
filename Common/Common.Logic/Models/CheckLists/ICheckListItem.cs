@@ -9,8 +9,6 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
 		string CssClass { get; }
 		string Description { get; set; }
 		[JsonIgnore]
-		Formula DescriptionFormula { get; set; }
-		[JsonIgnore]
 		ICheckListGroup Group { get; set; }
 		int Id { get; set; }
 		[JsonIgnore]

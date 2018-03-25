@@ -1,14 +1,21 @@
 ﻿using System.Collections.Generic;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.Expressions;
+using Newtonsoft.Json;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
     public abstract class Item : Element, ICheckListItem
     {
         public virtual string CssClass => TypeName;
-        public string Description { get; set; }
-        public Formula DescriptionFormula { get; set; }
+
+        [JsonIgnore]
+        public Formula DescriptionFormula { get; private set; }
+        public string Description {
+            get => DescriptionFormula?.Value;
+            set => DescriptionFormula = string.IsNullOrEmpty(value) ? null : new Formula(value);
+        }
+
         public ICheckListGroup Group { get; set; }
         public int Id { get; set; }
         public ICheckListIteration Iteration { get; set; }
@@ -44,6 +51,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
             DescriptionFormula?.Update(CheckList.Expressions, RuntimeValues);
         }
+
+        public override bool Hidden => (Group?.Hidden ?? false) || base.Hidden;
 
         protected override bool IsReadOnlyByDefault()
             => Previous != null && !Previous.Valid;

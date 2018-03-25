@@ -234,12 +234,13 @@
 						"The caption of the group."
 					));
 					var tableContent = false;
-					for (var node = parent; node.getModel().typeName == "group"; node = node.getParent())
-						if (node.getModel().ShowAsTable) {
+					for (var node = parent; node.getModel().typeName == "Group"; node = node.getParent())
+						if (node.getModel().showAsTable) {
 							tableContent = true;
 							break;
 						}
-					if (!tableContent && parent.getModel().Header !== model) {
+
+					if (!tableContent && parent.getModel().header !== model) {
 						properties.push(new prototypes.Property(
 							this, new prototypes.BooleanProperty(model, "iterator", state != prototypes.Prototype.states.draft).setHandler(function () {
 								showAsTable.getType().setReadOnly(!model.iterator);
@@ -263,32 +264,36 @@
 							"Determines if the group is an iterator."
 						));
 
-						var showAsTable = null;
-						if (parent.getModel().Header !== model)
-							properties.push(showAsTable = new prototypes.Property(
-								this, new prototypes.BooleanProperty(model, "showAsTable", state != prototypes.Prototype.states.draft || !model.iterator), "Show as table",
-								"Displays the group as a table."
-							));
+						var showAsTable = new prototypes.Property(
+							this, new prototypes.BooleanProperty(model, "showAsTable", state != prototypes.Prototype.states.draft || !model.iterator), "Show as table",
+							"Displays the group as a table."
+						);
+						properties.push(showAsTable);
+
 						var instanceIterationsNumber = new prototypes.Property(
 							this, new prototypes.SimpleValueProperty(model, "instanceIterations", { number: true, readOnly: state != prototypes.Prototype.states.draft || !model.iterator }), "Instance iterations",
 							"Creates the specified number of iterations automatically for new instances."
 						);
 						properties.push(instanceIterationsNumber);
+
 						var prototypeIterationsNumber = new prototypes.Property(
 							this, new prototypes.SimpleValueProperty(model, "prototypeIterations", { number: true, readOnly: state != prototypes.Prototype.states.draft || !model.iterator }), "Prototype iterations",
 							"Creates the specified number of iterations automatically int the PDF version."
 						);
 						properties.push(prototypeIterationsNumber);
+
 						var disableAdd = new prototypes.Property(
 							this, new prototypes.BooleanProperty(model, "disableAdd", state != prototypes.Prototype.states.draft || !model.iterator), "Disable add",
 							"Disable the add button of the iterator."
 						);
 						properties.push(disableAdd);
+
 						var disableRemove = new prototypes.Property(
 							this, new prototypes.BooleanProperty(model, "disableRemove", state != prototypes.Prototype.states.draft || !model.iterator), "Disable remove",
 							"Disable the remove button of the iterator."
 						);
 						properties.push(disableRemove);
+
 						var disableMove = new prototypes.Property(
 							this, new prototypes.BooleanProperty(model, "disableMove", state != prototypes.Prototype.states.draft || !model.iterator), "Disable move",
 							"Disable the move up and move down buttons of the iterator."
@@ -296,10 +301,6 @@
 						properties.push(disableMove);
 					}
 
-					//new prototypes.Property(
-					//	this, new prototypes.BooleanProperty(model, "prototypesDirectory", state != prototypes.Prototype.states.draft), "Prototypes Directory",
-					//	"Saves the prototype in the application Checklist Prototypes Directory."
-					//);
 					break;
 				case "Text":
 					properties.push(new prototypes.Property(

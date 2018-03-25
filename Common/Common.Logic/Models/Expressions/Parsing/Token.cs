@@ -8,6 +8,8 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
 {
     public abstract class Token
     {
+        public enum OperatorType { No, Right, Left, Both }
+
         protected Token(int Position, int Index)
         {
             this.Position = Position;
@@ -49,7 +51,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
             }
         }
 
-        public virtual bool TokenOrderRightToLeft { get; private set; }
+        public virtual bool TokenOrderRightToLeft { get; protected set; }
 
         public Symbol Symbol { get; protected set; }
 
@@ -59,7 +61,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
 
         public int Index { get; set; }
 
-        public bool Operator { get; protected set; } = true;
+        public OperatorType Operator { get; protected set; } = OperatorType.Both;
     }
 
 }

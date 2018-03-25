@@ -9,7 +9,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
     {
         public TokenSet(string ExpressionString, int Position, int? EndIndex = null, TokenSet Parent = null, int? Index = null) : base(Position, Index ?? -1)
         {
-            Operator = false;
+            Operator = OperatorType.No;
             Tokens = new List<Token>();
             TokenIndexes = new SortedList<Token, int>(this);
 
@@ -52,11 +52,11 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                 {
                     if (LastToken != null)
                     {
-                        if (Token.Operator && LastToken.Operator)
+                        if ((Token.Operator == OperatorType.Left || Token.Operator == OperatorType.Both) && (LastToken.Operator == OperatorType.Right || LastToken.Operator == OperatorType.Both))
                             throw new ParseException("Unexpected token " + Token.Value, Caret);
 
-                        if (!Token.Operator && !LastToken.Operator)
-                            throw new ParseException("Operator expected", Caret);
+                        if ((Token.Operator == OperatorType.Right || Token.Operator == OperatorType.No) && (LastToken.Operator == OperatorType.Left || LastToken.Operator == OperatorType.No))
+                            throw new ParseException("Operator expected", Token.Position);
                     }
 
                     LastToken = Token;

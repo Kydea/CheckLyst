@@ -21,7 +21,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                 throw new ParseException("Invalid number: " + Value, Position);
 
             Symbol = new Constant(new TypedValue(DataType.Number, DecimalValue)) { Position = Position };
-            Operator = false;
+            Operator = OperatorType.No;
         }
     }
 
