@@ -1,4 +1,5 @@
-insert into "Infrastructure"."Companies"("Name", "TimeZone") values ('Janssen Gurrabo', 'America/Puerto_Rico'); --see http://momentjs.com/timezone/docs/#/data-loading/
+insert into "Infrastructure"."Companies"("Name", "TimeZone", "MaximumNumberOfPINFailure", "LoginFailedTimeout", "PINDaysLife", "MaximumNumberOfPasswordFailure", "PasswordDaysLife", "WarningUserInactivityDays", "MaximumUserInactivityDays") 
+values ('Janssen Gurrabo', 'America/Puerto_Rico', 5, 20, 365, 5, 365, 335, 365); --see http://momentjs.com/timezone/docs/#/data-loading/
 
 insert into "Infrastructure"."Departments" ("Company", "Name") values (currval('"Infrastructure"."Companies_ID_seq"'), 'Automation (P)');
 insert into "Infrastructure"."Departments" ("Company", "Name") values (currval('"Infrastructure"."Companies_ID_seq"'), 'Quality control (P)');
@@ -21,7 +22,7 @@ insert into "Security"."UserFunctions" ("Company", "User", "FunctionGroup", "Fun
 values (currval('"Infrastructure"."Companies_ID_seq"'), 'CheckListManager', 'Users', 'Edit');
 
 insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
-	--(currval('"Infrastructure"."Companies_ID_seq"'), 'LDAPHost', 'eu.jnj.com'),
+	(currval('"Infrastructure"."Companies_ID_seq"'), 'LDAPHost', 'eu.jnj.com'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpHost', 'smtp.eu.jnj.com'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpPort', '25'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpUsername', ''),

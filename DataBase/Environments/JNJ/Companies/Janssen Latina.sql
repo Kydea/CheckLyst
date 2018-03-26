@@ -1,4 +1,5 @@
-insert into "Infrastructure"."Companies"("Name", "TimeZone") values ('Janssen Latina', 'Europe/Rome'); --see http://momentjs.com/timezone/docs/#/data-loading/
+insert into "Infrastructure"."Companies"("Name", "TimeZone", "MaximumNumberOfPINFailure", "LoginFailedTimeout", "PINDaysLife", "MaximumNumberOfPasswordFailure", "PasswordDaysLife", "WarningUserInactivityDays", "MaximumUserInactivityDays") 
+values ('Janssen Latina', 'Europe/Rome', 5, 20, 365, 5, 365, 335, 365); --see http://momentjs.com/timezone/docs/#/data-loading/
 
 insert into "Infrastructure"."Departments" ("Company", "Name") values (currval('"Infrastructure"."Companies_ID_seq"'), 'Automation');
 insert into "Infrastructure"."Departments" ("Company", "Name") values (currval('"Infrastructure"."Companies_ID_seq"'), 'Quality control');
@@ -22,7 +23,7 @@ values (currval('"Infrastructure"."Companies_ID_seq"'), 'CheckListManager', 'Use
 
 
 insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
-	--(currval('"Infrastructure"."Companies_ID_seq"'), 'LDAPHost', 'eu.jnj.com'),
+	(currval('"Infrastructure"."Companies_ID_seq"'), 'LDAPHost', 'eu.jnj.com'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'FtpConnection', '{ "Host": "www.ruggerogiovannelli.org", "Port": 21, "PrototypesFolder": "ruggerogiovannelli.org/Data/P", "InstancesFolder": "ruggerogiovannelli.org/Data/I", "UserName": "2348977@aruba.it", "Password": "oeof5sxc", "UsePassive": "true", "EnableSSL": "false" }'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpHost', 'email-smtp.eu-west-1.amazonaws.com'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpPort', '587'),
