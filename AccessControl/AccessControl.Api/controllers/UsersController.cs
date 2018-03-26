@@ -77,7 +77,7 @@ namespace CheckListManager.AccessControl.Api.Controllers
 
         [HttpPost]
         [Route("Export")]
-        [Authorize(Roles = "Trail#View")]
+        [Authorize(Roles = "Users#View")]
         public async Task<IHttpActionResult> Export(Message<UsersRequest> request)
         {
             var Token = Identity.Code + ":" + Guid.NewGuid();

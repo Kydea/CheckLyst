@@ -35,9 +35,11 @@ namespace CheckListManager.AccessControl.Logic.Services
         private readonly IQueueService _queueService;
         private readonly IRedisCache _cache;
         private readonly ISettingService _settingService;
+        private readonly IConfigurationService _configurationService;
 
         public UserService(IUserRepository userRepository, IUserSessionRepository userSessionRepository,
-            IHashService hashService, IQueueService queueService, IRedisCache cache, ISettingService settingService)
+            IHashService hashService, IQueueService queueService, IRedisCache cache, ISettingService settingService,
+            IConfigurationService configurationService)
         {
             _userRepository = userRepository;
             _userSessionRepository = userSessionRepository;

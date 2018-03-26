@@ -16,12 +16,15 @@ namespace CheckListManager.Common.Logic.Services
 
 		private readonly IAmazonSQS _client;
 		private readonly IMemoryCache _memoryCache;
+        private readonly IConfigurationService _configurationService;
 
-		public QueueService(IAmazonSQS client, IMemoryCache memoryCache)
+        public QueueService(IAmazonSQS client, IMemoryCache memoryCache, IConfigurationService configurationService)
 		{
 			_client = client;
 			_memoryCache = memoryCache;
-		}
+            _configurationService = configurationService;
+
+        }
 
 		public void Dispose()
 		{
@@ -85,7 +88,7 @@ namespace CheckListManager.Common.Logic.Services
 		{
 			return await _memoryCache.GetOrAddAsync(queueName, k =>
 			{
-				return _client.GetQueueUrlAsync(queueName, cancellationToken).ContinueWith(task => task.Result.QueueUrl, cancellationToken);
+				return _client.GetQueueUrlAsync(_configurationService.SqsPrefix + queueName, cancellationToken).ContinueWith(task => task.Result.QueueUrl, cancellationToken);
 			}, QueueRegionName);
 		}
 	}
