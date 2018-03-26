@@ -27,12 +27,15 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
 
         public override void Render(params Object[] State)
         {
+            PDFBase.Container.Headers = null;
+            PDFBase.Container.PageSetup.TopMargin = 36;
+
             Paragraph paragraph = PDFBase.Container.AddParagraph();
 
             paragraph.Format.Alignment = ParagraphAlignment.Center;
             var CheckListPDF = (CheckListPDF)PDFBase;
             Image logo = paragraph.AddImage(new Uri($"{CheckListPDF.Repository}PDF/Logo-{CheckListPDF.CompanyID}.png"));
-            logo.ScaleWidth = 0.5;
+            logo.ScaleWidth = 0.4;
 
             paragraph = PDFBase.Container.AddParagraph().SetText("\n" + FirstRow + "\n");
             paragraph.Format.Alignment = ParagraphAlignment.Center;
@@ -44,7 +47,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             paragraph.Format.Alignment = ParagraphAlignment.Center;
 
             // Define table
-            PdfPTable Table = new PdfPTable(2);
+            PdfPTable Table = new PdfPTable(2) { WidthPercentage = 80, HorizontalAlignment = RowAlignment.Center };
 
             foreach (var Row in Rows)
             {
@@ -54,7 +57,6 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             }
 
             PDFBase.Container.Add(Table);
-            PDFBase.Container.AddPageBreak();
         }
     }
 }

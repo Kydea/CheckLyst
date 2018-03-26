@@ -7,11 +7,19 @@ namespace CheckListManager.Common.Logic.Api.PDF
     public abstract class PDFBase
     {
         protected string Subject;
+
+        protected Document PdfDocument;
         public Section Container;
 
         public PDFBase(string Subject)
         {
             this.Subject = Subject;
+        }
+
+        public void AddSection()
+        {
+            Container = PdfDocument.AddSection();
+            OnNewSection();
         }
 
         public void Generate(Stream Stream)
@@ -24,7 +32,8 @@ namespace CheckListManager.Common.Logic.Api.PDF
                 Document.Info.Creator = "www.matematici.com";
                 Document.Info.Author = "Matematici";
 
-                Container = new MigraDoc.DocumentObjectModel.Document().AddSection();
+                this.PdfDocument = new MigraDoc.DocumentObjectModel.Document();
+                AddSection();
 
                 OnGenerate();
 
@@ -42,5 +51,7 @@ namespace CheckListManager.Common.Logic.Api.PDF
         }
 
         abstract protected void OnGenerate();
+
+        abstract protected void OnNewSection();
     }
 }

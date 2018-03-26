@@ -14,17 +14,15 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
         {
             // PAGE_FORMAT
             PageSetup setup = PDF.Container.Document.DefaultPageSetup.Clone();
-
             setup.PageFormat = PageFormat.A4;
-            setup.LeftMargin = setup.RightMargin = Unit.FromPoint(30);
-            setup.TopMargin = Unit.FromPoint(70);
-            setup.BottomMargin = Unit.FromPoint(50);
-            setup.FooterDistance = Unit.FromPoint(10);
-            setup.HeaderDistance = Unit.FromPoint(20);
-            setup.DifferentFirstPageHeaderFooter = true;
+            setup.LeftMargin = setup.RightMargin = Unit.FromPoint(40);
+            setup.TopMargin = Unit.FromPoint(136);
+            setup.BottomMargin = Unit.FromPoint(0);
+            setup.FooterDistance = Unit.FromPoint(61);
+            setup.HeaderDistance = Unit.FromPoint(0);
+            //setup.DifferentFirstPageHeaderFooter = true;
 
             PDF.Container.PageSetup = setup;
-            // END_PAGE_FORMAT
 
             // STYLE
             Style style = style = PDF.Container.Document.Styles[StyleNames.Normal];
@@ -33,27 +31,34 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
 
             Paragraph header = PDF.Container.Headers.Primary.AddParagraph(DocumentDescription);
             header.Format.Borders.Bottom.Color = Colors.Black;
-            header.Format.Borders.Bottom.Width = 0.5;
-            header.Format.Borders.DistanceFromBottom = 5;
+            header.Format.Borders.Bottom.Width = new Unit(0.75, UnitType.Point);
+            header.Format.Borders.DistanceFromTop = 58;
+            header.Format.Borders.DistanceFromBottom = 15;
+            header.Format.Font.Size = 12;
 
             // Page counter
             Paragraph footer = PDF.Container.Footers.Primary.AddParagraph();
+            footer.Format.Font.Size = 12;
             footer.AddText("Page ");
             footer.AddPageField();
             footer.AddText(" of ");
             footer.AddNumPagesField();
             footer.Format.Alignment = ParagraphAlignment.Right;
             footer.Format.Borders.Top.Color = Colors.Black;
-            footer.Format.Borders.Top.Width = 0.5;
-            footer.Format.Borders.DistanceFromTop = 5;
-            PDF.Container.Footers.FirstPage.Add(footer.Clone());
+            footer.Format.Borders.Top.Width = new Unit(0.75, UnitType.Point);
+            footer.Format.Borders.DistanceFromTop = 25;
+            footer.Format.SpaceAfter = new Unit(-footer.Format.Font.Size, UnitType.Point);
 
             // Time
             footer = PDF.Container.Footers.Primary.AddParagraph();
+            footer.Format.Font.Size = 12;
             footer.AddText($"Generated on {DateTimeOffset.UtcNow.ToLocalTime(PDF.TimeZone):yyyy-MM-dd HH:mm UTC zzz} - RESTRICTED");
-            footer.Format.Borders.DistanceFromTop = 5;
             footer.Format.SpaceAfter = new Unit(-footer.Format.Font.Size, UnitType.Point);
-            PDF.Container.Footers.FirstPage.Add(footer.Clone());
+        }
+
+        public void Render(FirstPage firstPage = null)
+        {
+
         }
     }
 }

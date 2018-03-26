@@ -43,8 +43,8 @@ namespace CheckListManager.Common.Logic.Api.PDF
 
         protected override void OnGenerate()
         {
-            GenerateTemplate();
             GenerateFirstPage().Render();
+            AddSection();
 
             var Header = Model.Header;
             if (Header != null && Header is ICheckListGroup)
@@ -56,6 +56,8 @@ namespace CheckListManager.Common.Logic.Api.PDF
                 new Page(this, Element).Render();
             }
         }
+
+        protected override void OnNewSection() => GenerateTemplate();
 
         public virtual void RenderGroup(ICheckListGroup Group)
         {
