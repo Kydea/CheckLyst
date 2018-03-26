@@ -41,7 +41,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             }
         }
 
-        public void Update()
+        public void Update(string DecimalSeparator)
 		{
 			throw new NotImplementedException();
 		}

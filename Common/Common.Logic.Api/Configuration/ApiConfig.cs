@@ -149,7 +149,7 @@ namespace CheckListManager.Common.Logic.Api.Configuration
 				{
 					TokenEndpointPath = new PathString("/Access/Token"),
 					Provider = scope.Resolve<OAuthAuthorizationServerProvider>(),
-					AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(30), //TODO load from configuration
+					AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(30),
 					RefreshTokenProvider = scope.Resolve<IAuthenticationTokenProvider>(),
 					AllowInsecureHttp = true
 				};

@@ -13,7 +13,7 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
 {
 	public class RefreshTokenProvider : IAuthenticationTokenProvider
 	{
-		private const int RefreshTokenTimeSpan = 1; //TODO set right value
+		private const int RefreshTokenTimeSpan = 1; //1 day
 
 		private readonly ILifetimeScope _parentScope;
 		private readonly IHashService _hashService;

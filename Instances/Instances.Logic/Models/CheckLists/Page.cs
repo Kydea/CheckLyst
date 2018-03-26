@@ -30,12 +30,12 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 			}
 		}
 
-		public override void Update()
+		public override void Update(string DecimalSeparator)
 		{
 			_valid = true;
 			foreach (var group in Groups)
 			{
-				group.Update();
+				group.Update(DecimalSeparator);
 				_valid = _valid && group.Valid;
 			}
 		}

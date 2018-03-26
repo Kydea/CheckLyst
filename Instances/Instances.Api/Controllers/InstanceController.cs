@@ -26,13 +26,15 @@ namespace CheckListManager.Instances.Api.Controllers
         private readonly IRedisCache _redisCache;
         private readonly ICommonRepository _commonRepository;
         private readonly IConfigurationService _configurationService;
+        private readonly ISettingService _settingService;
 
-        public InstanceController(IInstanceManagerService instanceManagerService, IRedisCache redisCache, ICommonRepository commonRepository, IConfigurationService configurationService)
+        public InstanceController(IInstanceManagerService instanceManagerService, IRedisCache redisCache, ICommonRepository commonRepository, IConfigurationService configurationService, ISettingService settingService)
         {
             _instanceManagerService = instanceManagerService;
             _redisCache = redisCache;
             _commonRepository = commonRepository;
             _configurationService = configurationService;
+            _settingService = settingService;
         }
 
         [HttpPost]
@@ -57,7 +59,7 @@ namespace CheckListManager.Instances.Api.Controllers
                     Version = cacheObject.Version,
                     VersionState = cacheObject.VersionState,
 
-                    CheckList = _instanceManagerService.GetCheckList(Identity, cacheObject),
+                    CheckList = await _instanceManagerService.GetCheckListAsync(Identity, cacheObject),
                 };
                 return Ok(response);
             }
@@ -82,7 +84,7 @@ namespace CheckListManager.Instances.Api.Controllers
                     Year = cacheObject.Year,
                     Number = cacheObject.Number,
 
-                    CheckList = _instanceManagerService.GetCheckList(Identity, cacheObject),
+                    CheckList = await _instanceManagerService.GetCheckListAsync(Identity, cacheObject),
                 });
             }
             catch (Exception e)
@@ -159,7 +161,7 @@ namespace CheckListManager.Instances.Api.Controllers
                     Number = cacheObject.Number,
                     State = cacheObject.InstanceState,
 
-                    CheckList = _instanceManagerService.GetCheckList(Identity, cacheObject),
+                    CheckList = await _instanceManagerService.GetCheckListAsync(Identity, cacheObject),
 
                     Department = cacheObject.Department,
                     DepartmentName = cacheObject.DepartmentName,
@@ -191,7 +193,7 @@ namespace CheckListManager.Instances.Api.Controllers
                 {
                     Id = cacheObject.Id,
                     Code = cacheObject.Code,
-                    CheckList = _instanceManagerService.GetCheckList(Identity, cacheObject),
+                    CheckList = await _instanceManagerService.GetCheckListAsync(Identity, cacheObject),
                     State = cacheObject.InstanceState
                 };
                 return Ok(response);
@@ -240,7 +242,7 @@ namespace CheckListManager.Instances.Api.Controllers
             var Data = await _redisCache.GetAsync<InstanceRequest>($"Token:{Token}", "Download");
             await _redisCache.RemoveAsync($"Token:{Token}", "Download");
             var cacheObject = await _instanceManagerService.GetAsync(Data.CompanyId.Value, Data.UserCode, Data.Code);
-            cacheObject.Instance.Update(cacheObject);
+            cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(Data.CompanyId.Value), cacheObject);
             return Content(HttpStatusCode.OK, new InstancePDF(Data.CompanyId.Value, Data.CompanyName, Data.TimeZone, _configurationService.PublicRepositoryUrl, cacheObject), new PDFFormatter(string.IsNullOrEmpty(cacheObject.Instance.FileName) ? "Instance" : cacheObject.Instance.FileName));
         }
     }

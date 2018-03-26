@@ -110,7 +110,7 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
 			return new Dictionary<string, string>
 			{
 				{ "company", user.Company.ToString() },
-                { "separator", "," },
+                { "decimalSeparator", user.Companies.SettingValues.SingleOrDefault(c => c.Setting == "DecimalSeparator")?.Value ?? "*" },
                 { "code", user.Code },
 				{ "name", user.Description },
                 { "timeZone", user.Companies.TimeZone },

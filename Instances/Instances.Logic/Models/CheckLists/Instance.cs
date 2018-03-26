@@ -23,13 +23,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             get => DescriptionFormula?.RawValue;
             set => DescriptionFormula = value == null ? null : new Formula(value);
         }
-        public string Description
-        {
-            get
-            {
-                return DescriptionFormula?.Value;
-            }
-        }
+        public string Description => DescriptionFormula?.Value;
 
         [JsonIgnore]
         public Formula FileNameFormula { get; set; }
@@ -38,13 +32,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             get => FileNameFormula?.RawValue;
             set => FileNameFormula = value == null ? null : new Formula(value);
         }
-        public string FileName
-        {
-            get
-            {
-                return FileNameFormula?.Value;
-            }
-        }
+        public string FileName => FileNameFormula?.Value;
 
         public bool FTPExport { get; set; }
 
@@ -92,7 +80,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             InCreation = false;
         }
 
-        public void Update(InstanceCacheObject cacheObject = null)
+        public void Update(string DecimalSeparator, InstanceCacheObject cacheObject = null)
         { 
             Dictionary<string, object> InstanceRuntimeValues = cacheObject == null ? null : new Dictionary<string, object> {
                 { "InstanceCompany", cacheObject.CompanyId },
@@ -113,12 +101,12 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 expression.Evaluate(this);
             }
 
-            DescriptionFormula?.Update(Expressions, InstanceRuntimeValues);
-            FileNameFormula?.Update(Expressions, InstanceRuntimeValues);
+            DescriptionFormula?.Update(Expressions, InstanceRuntimeValues, DecimalSeparator);
+            FileNameFormula?.Update(Expressions, InstanceRuntimeValues, DecimalSeparator);
 
-            Header.Update();
+            Header.Update(DecimalSeparator);
             foreach (var page in Pages)
-                page.Update();
+                page.Update(DecimalSeparator);
 
             foreach (var expression in Expressions.Values)
                 expression.Evaluate(this); //this second evaluation takes into account expression with item properties which depends by expression valus, cycles are still a problem

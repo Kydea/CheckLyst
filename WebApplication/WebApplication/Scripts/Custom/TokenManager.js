@@ -2,6 +2,7 @@
 	var
 		tokenManager = this,
 		cautionTimeOffset = 120000, //ms
+		lastActivity = new Date(),
 
 		refreshAccessToken = function (user, successHandler, failHandler) {
 			console.info("refreshing access token for " + user, new Date());
@@ -14,7 +15,17 @@
 		},
 
 		setup = function () {
+			matematici.elements.document.on("mousedown keydown	", function () {
+				lastActivity = new Date();
+			});
+
 			setInterval(function () {
+				if (localStorage.refreshToken && new Date() - lastActivity > 900000) {
+					localStorage.refreshToken = null;
+					matematici.navigator.open(matematici.urls.accessControl.login);
+					return;
+				}
+
 				//the access token is refreshed, when a refresh token is present, [cautionTimeOffset] milliseconds before the expiration 
 				if (localStorage.refreshToken && new Date().getTime() > localStorage.accessTokenExpiration - cautionTimeOffset)
 					refreshAccessToken(tokenManager.getUserCode(), setMainUser, function (jqXhr, textStatus, errorThrown) {
@@ -55,6 +66,7 @@
 			localStorage.roles = result.roles;
 			localStorage.userCode = result.code;
 			localStorage.userName = result.name;
+			localStorage.decimalSeparator = result.decimalSeparator;
 
 			matematici.menu.toggleItemsByRole();
 			matematici.userPanel.update();

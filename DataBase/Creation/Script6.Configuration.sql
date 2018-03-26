@@ -44,7 +44,8 @@ insert into "Configuration"."Settings" ("Code") values
 	('EmailSender'),
 	('UserBlockMessage'),
 	('UserBlockWarningMessage'),
-	('SignatureMessage');
+	('SignatureMessage'),
+	('DecimalSeparator');
 
 create table "Configuration"."SettingValues"
 (

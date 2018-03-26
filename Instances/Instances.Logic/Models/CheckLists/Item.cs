@@ -12,9 +12,10 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         [JsonIgnore]
         public Formula DescriptionFormula { get; private set; }
         public string Description {
-            get => DescriptionFormula?.Value;
+            get => DescriptionFormula?.RawValue;
             set => DescriptionFormula = string.IsNullOrEmpty(value) ? null : new Formula(value);
         }
+        public string DescriptionValue { get => DescriptionFormula?.Value; }
 
         public ICheckListGroup Group { get; set; }
         public int Id { get; set; }
@@ -37,7 +38,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             CheckList.AddItem(this);
         }
 
-        public override void Update()
+        public override void Update(string DecimalSeparator)
         {
             var parent = Group;
             while (parent != null)
@@ -49,7 +50,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 else
                     parent = parent.Group;
 
-            DescriptionFormula?.Update(CheckList.Expressions, RuntimeValues);
+            DescriptionFormula?.Update(CheckList.Expressions, RuntimeValues, DecimalSeparator);
         }
 
         public override bool Hidden => (Group?.Hidden ?? false) || base.Hidden;

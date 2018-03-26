@@ -19,5 +19,6 @@ namespace CheckListManager.Common.Logic.Services
 		Task<string> UserBlockWarningMessageAsync(long companyId);
 		Task<string> SignatureMessageAsync(long companyId);
         Task<string> FtpConnectionAsync(long companyId);
+        Task<string> DecimalSeparatorAsync(long companyId);
     }
 }

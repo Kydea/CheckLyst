@@ -37,6 +37,7 @@ namespace CheckListManager.Instances.Logic.Services
         private readonly CheckListJsonConverter _converter;
         private readonly IInstanceCacheService _instanceCache;
         private readonly IConfigurationService _configurationService;
+        private readonly ISettingService _settingService;
         private readonly IAuthenticationService _authenticationService;
         private readonly IWorkFlowsService _workFlowService;
         private readonly IQueueService _queueService;
@@ -44,14 +45,15 @@ namespace CheckListManager.Instances.Logic.Services
 
         public InstanceManagerService(IServiceClient client,
             IInstancesRepository instancesRepository, CheckListJsonConverter converter, IInstanceCacheService instanceCache,
-            IConfigurationService configurationService, IAuthenticationService authenticationService, IWorkFlowsService workFlowService,
-            IQueueService queueService, ICommonRepository commonRepository)
+            IConfigurationService configurationService, ISettingService settingService, IAuthenticationService authenticationService, 
+            IWorkFlowsService workFlowService, IQueueService queueService, ICommonRepository commonRepository)
         {
             _client = client;
             _instancesRepository = instancesRepository;
             _converter = converter;
             _instanceCache = instanceCache;
             _configurationService = configurationService;
+            _settingService = settingService;
             _authenticationService = authenticationService;
             _workFlowService = workFlowService;
             _queueService = queueService;
@@ -182,7 +184,7 @@ namespace CheckListManager.Instances.Logic.Services
                     throw new InstanceException("Access denied");
 
                 cacheObject.InstanceState = InstanceState.Progress;
-                cacheObject.Instance.Update(cacheObject);
+                cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(identity.CompanyId), cacheObject);
 
                 if (!cacheObject.Instance.Header.Valid)
                     throw new InstanceException("Header not valid");
@@ -281,7 +283,7 @@ namespace CheckListManager.Instances.Logic.Services
                 if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
                     throw new InstanceException("Access denied");
 
-                cacheObject.Instance.Update(cacheObject);
+                cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(identity.CompanyId), cacheObject);
                 var UnvalidItems = cacheObject.Instance.Items.Values.Where(i => !i.Removed && !i.Valid && !i.IteratorModelItem);
                 if (UnvalidItems.Any())
                     throw new InstanceException($"The following items are not valid: {string.Join(", ", UnvalidItems.Select(i => i.Id.ToString()))}");
@@ -430,7 +432,7 @@ namespace CheckListManager.Instances.Logic.Services
                     throw new InstanceException("Instance not found");
                 }
 
-                cacheObject.Instance.Update(cacheObject);
+                cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(identity.CompanyId), cacheObject);
                 row.Data = JsonConvert.SerializeObject(cacheObject.Instance, _converter);
                 row.Description = cacheObject.Instance.Description;
                 row.FileName =
@@ -558,7 +560,7 @@ namespace CheckListManager.Instances.Logic.Services
                 cacheObject = await _instanceCache.GetAsync(request.Code);
 
                 var LockUser = request.Type == "Signature" ? request.Username : null; //A signer may sign also if the page is locked by the main user (the lock is for concurrency purpose, not for security)
-                GetCheckList(identity, cacheObject, LockUser);
+                await GetCheckListAsync(identity, cacheObject, LockUser);
 
                 if (cacheObject.Instance.ReadOnly)
                     throw new InstanceException("This instance cannot be modified");
@@ -590,7 +592,7 @@ namespace CheckListManager.Instances.Logic.Services
                         await HandleSignatureAsync(cacheObject, identity, request);
                         break;
                     case "SignatureCheck":
-                        HandleSignatureCheck(cacheObject, request.Username, request.ItemId);
+                        await HandleSignatureCheckAsync(cacheObject, request.Username, request.ItemId);
                         break;
                     case "SignatureCancelation":
                         await HandleSignatureCancelationAsync(cacheObject, identity, request);
@@ -819,7 +821,7 @@ namespace CheckListManager.Instances.Logic.Services
             }
         }
 
-        private void HandleSignatureCheck(InstanceCacheObject cacheObject, string userCode, int? itemId)
+        private async Task HandleSignatureCheckAsync(InstanceCacheObject cacheObject, string userCode, int? itemId)
         {
             if (!itemId.HasValue)
                 throw new InstanceException("Item id not sent");
@@ -834,7 +836,7 @@ namespace CheckListManager.Instances.Logic.Services
             if (signature.Signed)
                 throw new Exception("The signature is already signed");
 
-            signature.TrySign(userCode);
+            signature.TrySign(await _settingService.DecimalSeparatorAsync(cacheObject.CompanyId), userCode);
         }
 
         private async Task HandleSignatureAsync(InstanceCacheObject cacheObject, IDefaultIdentity identity, InstanceEventRequest request)
@@ -857,7 +859,7 @@ namespace CheckListManager.Instances.Logic.Services
             if (!request.Simple.Value && string.IsNullOrEmpty(request.Pin))
                 throw new InstanceException("Provide your PIN");
 
-            signature.TrySign(identity.Code);
+            signature.TrySign(await _settingService.DecimalSeparatorAsync(cacheObject.CompanyId), identity.Code);
 
             try
             {
@@ -1035,13 +1037,13 @@ namespace CheckListManager.Instances.Logic.Services
                 );
         }
 
-        public Instance GetCheckList(IDefaultIdentity identity, InstanceCacheObject cacheObject, string LockUser = null)
+        public async Task<Instance> GetCheckListAsync(IDefaultIdentity identity, InstanceCacheObject cacheObject, string LockUser = null)
         {
             cacheObject.Instance.ReadOnly =
                 !cacheObject.InstanceState.In(InstanceState.Draft, InstanceState.Progress)
                 || !HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType);
 
-            cacheObject.Instance.Update(cacheObject);
+            cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(identity.CompanyId), cacheObject);
             cacheObject.Instance.UpdateReadOnly(LockUser ?? identity.Code, cacheObject.InstanceState);
 
             return cacheObject.Instance;

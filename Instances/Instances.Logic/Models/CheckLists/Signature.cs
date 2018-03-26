@@ -57,7 +57,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                         CheckItem(Item);
         }
 
-        public void TrySign(String UserCode)
+        public void TrySign(string DecimalSeparator, string UserCode)
         {
             var Instance = (Instance)CheckList;
             try
@@ -65,7 +65,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 Signed = true;
                 SignedBy = UserCode;
                 SignedOn = DateTimeOffset.UtcNow;
-                Instance.Update();
+                Instance.Update(DecimalSeparator);
                 if (!Valid) throw new InstanceException("Signature not valid. " + ValidityMessage);
                 if (Code != null)
                 {
@@ -79,7 +79,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             {
                 Signed = false;
                 SignedBy = null;
-                Instance.Update();
+                Instance.Update(DecimalSeparator);
             }
         }
 

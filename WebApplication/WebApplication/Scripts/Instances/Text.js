@@ -7,7 +7,7 @@
         };
 
     this.update = function (model) {
-        p.html(model.description ? model.description.split('\n').join('<br />') : "(no description)");
+		p.html(model.descriptionValue ? model.descriptionValue.split('\n').join('<br />') : "(no description)");
         this.setColor(model.color);
         this.setFontSize(model.fontSize);
     };

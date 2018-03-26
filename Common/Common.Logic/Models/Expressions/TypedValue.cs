@@ -5,9 +5,9 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 {
     public class TypedValue
     {
-        public TypedValue(Type RawType, Object Value) : this(DataType.FromType(RawType), Value.ToString()) { }
+        public TypedValue(Type RawType, object Value) : this(DataType.FromType(RawType), Value.ToString()) { }
 
-        public TypedValue(DataType Type, String SerializedValue)
+        public TypedValue(DataType Type, string SerializedValue)
         {
             _Type = Type;
             _SerializedValue = SerializedValue;
@@ -30,7 +30,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                     Type == DataType.Date && !(Value is DateTimeOffset) ||
                     Type == DataType.Time && !(Value is TimeSpan) ||
                     Type == DataType.Number && !(Value is Decimal) ||
-                    Type == DataType.Text && !(Value is String)
+                    Type == DataType.Text && !(Value is string)
                 )
                     throw new Exception("Invalid class " + Value.GetType().Name + " for DataType " + Type.ToString());
                 else
@@ -52,7 +52,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             try
             {
                 Value =
-                    String.IsNullOrWhiteSpace(_SerializedValue) ? null :
+                    string.IsNullOrWhiteSpace(_SerializedValue) ? null :
                     Type == DataType.Boolean ? Boolean.Parse(_SerializedValue) : 
                     Type == DataType.DateTime ? DateTimeOffset.ParseExact(_SerializedValue, new[] { "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm" }, null, DateTimeStyles.AssumeUniversal).ToUniversalTime() :
                     Type == DataType.Date ? DateTimeOffset.ParseExact(_SerializedValue, new[] { "yyyy-MM-dd" }, null, DateTimeStyles.AssumeUniversal).ToUniversalTime() :
@@ -82,7 +82,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             }
         }
 
-        private String _SerializedValue;
+        private string _SerializedValue;
         public String SerializedValue
         {
             get
@@ -112,8 +112,8 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
         public TimeSpan TimeSpanValue { get { return (TimeSpan)(Value ?? 0); } }
 
-        public String TextValue { get { return (String)Value; } }
+        public string TextValue { get { return (string)Value; } }
 
-        public String ErrorValue { get { return (String)Value; } }
+        public string ErrorValue { get { return (string)Value; } }
     }
 }

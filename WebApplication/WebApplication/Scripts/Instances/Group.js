@@ -106,7 +106,7 @@
 
         update = function (model) {
             readOnly = !!model.readOnly;
-            if (title) title.text(model.description);
+			if (title) title.html(model.descriptionValue);
             if (addButton) addButton.toggle(model.iterator && !model.disableAdd);
 			if (!group.isPage()) id = model.id;
             element

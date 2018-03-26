@@ -11,7 +11,7 @@
         check,
 
         setup = function () {
-			label = $("<label />").addClass("Controls3").append($("<span />").addClass("Label").html(model.description ? model.description : "(no description)"));
+			label = $("<label />").addClass("Controls3").append($("<span />").addClass("Label").html(model.descriptionValue ? model.descriptionValue : "(no description)"));
             if (!item.isTableContent())
                 label.appendTo(element);
 
@@ -39,7 +39,7 @@
 						sign = function (code, accessToken) {
                             var
                                 options = {
-									title: model.description || "Signature",
+									title: model.descriptionValue || "Signature",
 									width: 460,
 									ajax: {
 										type: "post",
@@ -106,7 +106,7 @@
                     var
                         button = $(this),
 						options = {
-							title: model.description || "Signature cancelation",
+							title: model.descriptionValue || "Signature cancelation",
 							width: 460,
 							ajax: {
 								type: "post",

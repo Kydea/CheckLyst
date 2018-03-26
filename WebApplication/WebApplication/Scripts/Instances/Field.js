@@ -16,11 +16,17 @@
 		            input.val("");
 		            return false;
 		        }
-		    } else if (model.valueTypeName == "Number") {
-				if (!/^[\d\-\.]*$/ig.test(input.val())) {
-		            input.val("");
-		            return false;
-		        }
+			} else if (model.valueTypeName == "Number") {
+				var value = input.val();
+				for (let index = 0; index < value.length; ++index)
+					if (!(
+						value[index] >= "0" && value[index] <= "9"
+						|| value[index] == "-"
+						|| value[index] == localStorage.decimalSeparator
+					)) {
+						input.val("");
+						return false;
+					}
 		    }
 		    if (model.valueTypeName == "DateTime") {
 		        return (
@@ -84,9 +90,9 @@
 				valueCopy();
 			}
 
-			if (e.key == ',') {
+			if ((e.key == ',' || e.key == '.') && e.key != localStorage.decimalSeparator) {
 				e.preventDefault();
-				matematici.dialog.error("Error", "Invalid decimal separator, use character ? instead of comma");
+				matematici.dialog.error("Error", "Invalid decimal separator, use the character " + localStorage.decimalSeparator + " instead");
 			}
         },
 
@@ -104,9 +110,10 @@
 
 			if (!model.valueFormulaString) {
 				if (!model.valuesList) {
-					if (model.valueTypeName == "Number")
-						input.keyfilter(/[\d\-\,\.]/);
-					else if (model.valueTypeName == "Date" || model.valueTypeName == "DateTime") {
+					if (model.valueTypeName == "Number") {
+						if (localStorage.decimalSeparator == '.' || localStorage.decimalSeparator == ',')
+							input.keyfilter(/[\d\-\,\.]/);
+					} else if (model.valueTypeName == "Date" || model.valueTypeName == "DateTime") {
 						input.keyfilter(/[\d\-]/);
 						new matematici.DatePicker(input);
 					} else if (model.valueTypeName == "Boolean") {
@@ -179,7 +186,7 @@
 
 	this.update = function (model) {
 		readOnly = !!model.readOnly;
-        span.html(model.description);
+        span.html(model.descriptionValue);
         element.toggleClass("Inactive", model.readOnly);
         element.toggleClass("ReadOnly", readOnly);
 		input.attr("readonly", readOnly);
