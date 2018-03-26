@@ -74,7 +74,7 @@ namespace CheckListManager.AccessControl.Logic.Services
 
                 var LDAPHost = await _settingService.LDAPHostAsync(companyId.Value);
 
-                if (!string.IsNullOrEmpty(LDAPHost))
+                if (!string.IsNullOrEmpty(LDAPHost) && !string.IsNullOrEmpty(user.AuthenticationCode))
                     VerifyLDAPPassword(LDAPHost, user.AuthenticationCode, password);
                 else if (!_hashService.ValidateHash(password, user.Password))
                     throw new AuthenticationException(105, "Password not valid");
