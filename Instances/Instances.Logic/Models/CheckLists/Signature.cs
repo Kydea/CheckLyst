@@ -105,7 +105,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
                 SignedOn = Now;
 
-                History.Add(new SignatureRecord { DateTime = SignedOn, User = UserCode, Signature = SignerDescription, Note = Note });
+                History.Add(new SignatureRecord { DateTime = SignedOn, User = UserCode, Signature = UserDescription , Note = Note });
             }
             catch
             {

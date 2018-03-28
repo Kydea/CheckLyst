@@ -36,7 +36,7 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
                 Department = Form.Department.HasValue && Departments.Any(d => d.ID == Form.Department) ? Form.Department.Value : Departments.FirstOrDefault()?.ID;
                 response.Fields["Department"] = new Field
                 {
-                    Options = Departments.Select(d => new Option(d.ID.ToString(), d.Name)),
+                    Options = Departments.OrderBy(x => x.Name).Select(d => new Option(d.ID.ToString(), d.Name)),
                     Value = Department?.ToString()
                 };
                 response.Valid &= Departments.Any();

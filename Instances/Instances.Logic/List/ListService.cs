@@ -37,7 +37,7 @@ namespace CheckListManager.Instances.Logic.List
                 department = department.HasValue && departments.Any(d => d.ID == department.Value) ? department.Value : departments.FirstOrDefault()?.ID;
                 response.Fields["Department"] = new Field
                 {
-                    Options = departments.Select(d => new Option(d.ID.ToString(), d.Name)),
+                    Options = departments.OrderBy(x => x.Name).Select(d => new Option(d.ID.ToString(), d.Name)),
                     Value = department?.ToString()
                 };
 
@@ -58,7 +58,7 @@ namespace CheckListManager.Instances.Logic.List
                 prototypeType = prototypeType.HasValue && prototypeTypes.Any(d => d.ID == prototypeType.Value) ? form.PrototypeType.Value : prototypeTypes.FirstOrDefault()?.ID;
                 response.Fields["PrototypeType"] = new Field
                 {
-                    Options = prototypeTypes.Select(pt => new Option(pt.ID.ToString(), pt.Name)),
+                    Options = prototypeTypes.OrderBy(x => x.Name).Select(pt => new Option(pt.ID.ToString(), pt.Name)),
                     Value = prototypeType?.ToString()
                 };
             }
@@ -68,7 +68,7 @@ namespace CheckListManager.Instances.Logic.List
                 var prototypes = await _commonRepository.GetPrototypesAsync(identity, prototypeType ?? -1, "Instances");
                 response.Fields["Prototype"] = new Field
                 {
-                    Options = prototypes.Select(p => new Option(p.ID.ToString(), p.Name)),
+                    Options = prototypes.OrderBy(x => x.Name).Select(p => new Option(p.ID.ToString(), p.Name)),
                     Value = prototype.HasValue && prototypes.Any(p => p.ID == prototype.Value) ? prototype.ToString() : null
                 };
             }
@@ -78,7 +78,7 @@ namespace CheckListManager.Instances.Logic.List
                 var versions = await _commonRepository.GetPrototypeVersionsAsync(identity, prototype ?? -1, "Instances");
                 response.Fields["Version"] = new Field
                 {
-                    Options = versions.Select(p => new Option(p.Version.ToString(), p.Description)),
+                    Options = versions.OrderBy(x => x.Description).Select(p => new Option(p.Version.ToString(), p.Description)),
                     Value = version.HasValue && versions.Any(v => v.Version == version.Value) ? version.Value.ToString() : null
                 };
             }
@@ -88,7 +88,7 @@ namespace CheckListManager.Instances.Logic.List
                 var tags = await _commonRepository.GetPrototypeVersionTagsAsync(identity, prototype ?? -1, version, "Instances");
                 response.Fields["TagCode"] = new Field
                 {
-                    Options = tags.Select(t => new Option(t, t)),
+                    Options = tags.OrderBy(x => x).Select(t => new Option(t, t)),
                     Value = !string.IsNullOrEmpty(tag) && tags.Contains(tag) ? tag : null
                 };
 

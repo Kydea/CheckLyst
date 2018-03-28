@@ -16,26 +16,7 @@ namespace CheckListManager.Instances.Logic.Messages
         public List<HistoryStep> Steps { get; set; }
         public bool? Approved { get; set; }
         public string ProposedState { get; set; }
-
         public string Note { get; set; }
-
-        private string _State;
-        public string State
-        {
-            set
-            {
-                _State = value;
-            }
-            get
-            {
-                return
-                    _State ??
-                    (
-                        Approved == false ? InstanceState.Deleted :
-                        Approved == true ? InstanceState.Confirmed :
-                        InstanceState.Completed
-                    );
-            }
-        }
+        public string State { get; set; }
     }
 }

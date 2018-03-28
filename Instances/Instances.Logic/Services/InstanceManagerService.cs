@@ -1179,8 +1179,8 @@ namespace CheckListManager.Instances.Logic.Services
                 ID = h.ID,
                 Date = h.Date,
                 User = $"{h.User} - {_commonRepository.GetUser(identity.CompanyId, h.User)?.Description ?? "(unknown user)"}",
-                State = h.WorkFlowApplications == null ? h.State : null,
-                ProposedState = h.WorkFlowApplications == null || h.WorkFlowApplications.Approved.HasValue ? null : InstanceState.Confirmed,
+                State = h.WorkFlowApplications == null ? h.State : h.WorkFlowApplications.FinalState,
+                ProposedState = h.WorkFlowApplications == null ? null : InstanceState.Confirmed,
                 Approved = h.WorkFlowApplications?.Approved,
                 Note = h.Note,
                 Steps = h.WorkFlowApplications?.WorkFlowApplicationSteps.OrderBy(s => s.Step).ThenBy(s => s.ID).Select(s => new HistoryStep
