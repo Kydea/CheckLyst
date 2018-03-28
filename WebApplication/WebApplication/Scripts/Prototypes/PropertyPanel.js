@@ -323,7 +323,7 @@
 						linesCountItems,
 						prepareLinesCount = function () {
 							linesCountItems = [
-								{ label: "Standar width", code: "0" },
+								{ label: "Standard width", code: "0" },
 								{ label: "Full width", code: "1" }
 							];
 

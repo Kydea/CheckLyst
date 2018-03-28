@@ -386,7 +386,7 @@ namespace CheckListManager.Prototypes.Logic.Services
             }).ToList());
         }
 
-        private async Task SetPrototypeVersionState(PrototypeVersions PrototypeVersion, string State)
+        private async Task SetPrototypeVersionState(PrototypeVersions PrototypeVersion, string State, DateTimeOffset Date)
         {
             PrototypeVersion.VersionState = State;
 
@@ -394,7 +394,7 @@ namespace CheckListManager.Prototypes.Logic.Services
             {
                 Prototype = PrototypeVersion.Prototype,
                 Version = PrototypeVersion.Version,
-                Date = PrototypeVersion.ModifiedOn.Value,
+                Date = Date,
                 State = State,
                 User = "(system)"
             });
@@ -404,7 +404,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                 Company = PrototypeVersion.Prototypes.Company,
                 Action = TrailAction.PrototypeStateAutoChanged,
                 User = "(system)",
-                Date = PrototypeVersion.ModifiedOn.Value,
+                Date = Date,
                 CheckList = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}",
                 Information = State
             });
@@ -447,12 +447,12 @@ namespace CheckListManager.Prototypes.Logic.Services
                         var OldVersion = PrototypeVersion.Prototypes.PrototypeVersions.SingleOrDefault(pv => pv.VersionState == VersionState.Active);
                         if (OldVersion != null)
                         {
-                            await SetPrototypeVersionState(OldVersion, VersionState.Obsolete);
+                            await SetPrototypeVersionState(OldVersion, VersionState.Obsolete, UtcNow);
                             await _prototypeRepository.SaveChangesAsync();
                         }
                     }
 
-                    await SetPrototypeVersionState(PrototypeVersion, State);
+                    await SetPrototypeVersionState(PrototypeVersion, State, UtcNow);
                     await _prototypeRepository.SaveChangesAsync();
                 }
                 catch (Exception Exception)

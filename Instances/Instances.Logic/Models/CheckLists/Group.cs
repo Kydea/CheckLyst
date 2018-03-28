@@ -30,10 +30,11 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public bool DisableMove { get; set; }
 
-        public override bool IsValidByDefault()
-			=> _valid;
+        public override bool IsValidByDefault() => _valid;
 
-		public override void Setup()
+        public override bool Hidden => (Page?.Hidden ?? false) || base.Hidden;
+        
+        public override void Setup()
 		{
 			base.Setup();
 			SetupItems();

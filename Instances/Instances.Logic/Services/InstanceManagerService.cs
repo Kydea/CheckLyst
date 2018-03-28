@@ -784,7 +784,7 @@ namespace CheckListManager.Instances.Logic.Services
                 {
                     Company = cacheObject.CompanyId,
                     User = userCode,
-                    Action = TrailAction.InstanceIterationAdded,
+                    Action = TrailAction.InstanceIterationDeleted,
                     Date = DateTimeOffset.UtcNow,
                     CheckList = cacheObject.InstanceCode,
                     Information = itemId.ToString()
