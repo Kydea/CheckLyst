@@ -748,11 +748,13 @@
                     <connections>
                         <outlet property="activityIndicator" destination="R3u-YP-wuO" id="7Ye-Ks-b2V"/>
                         <outlet property="webView" destination="jvx-D1-KR9" id="65m-T6-DMz"/>
+                        <segue destination="me8-qg-fhs" kind="unwind" identifier="goBackSearchInstances" unwindAction="unwindToSearchInstancesWithSender:" id="bIA-Us-Bky"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="csU-0m-jhN" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="me8-qg-fhs" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="3711" y="-746"/>
+            <point key="canvasLocation" x="3710.9375" y="-746.484375"/>
         </scene>
         <!--Instances Search View Controller-->
         <scene sceneID="Kr9-P1-buK">

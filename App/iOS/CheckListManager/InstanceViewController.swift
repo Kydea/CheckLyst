@@ -16,6 +16,7 @@ class InstanceViewController: UIViewController, UIWebViewDelegate, UIGestureReco
     var newInstance = false
     var newInstancePrototype: String?
     var newInstanceVersion: String?
+    var selectedItemsDictionary = [Int:Option] ()
     @IBOutlet var webView: UIWebView!
     @IBOutlet var activityIndicator: UIActivityIndicatorView!
 
@@ -40,10 +41,11 @@ class InstanceViewController: UIViewController, UIWebViewDelegate, UIGestureReco
         request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         /*Setting value for local storage*/
         let bodyString = "roles=" + (UserDefaults.standard.value(forKey: "roles") as! String) + "&timeZone=" + (UserDefaults.standard.value(forKey: "timeZone") as! String)
-        
+        print(bodyString)
         request.httpBody = bodyString.data(using: String.Encoding.utf8)
         
         webView.loadRequest(request as URLRequest)
+        //webView.loadRequest(URLRequest(url:URL(string:"http://www.google.com")!))
         
         self.lockView()
         NotificationCenter.default.addObserver(self, selector: #selector(InstanceViewController.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
@@ -127,13 +129,13 @@ class InstanceViewController: UIViewController, UIWebViewDelegate, UIGestureReco
     func webViewDidFinishLoad(_ webView: UIWebView) {
     
         unlockView()
-        if let request = self.webView.request {
-            if let resp = URLCache.shared.cachedResponse(for: request) {
-                if let response = resp.response as? HTTPURLResponse {
-                    print(response.allHeaderFields)
-                }
-            }
-        }
+//        if let request = self.webView.request {
+//            if let resp = URLCache.shared.cachedResponse(for: request) {
+//                if let response = resp.response as? HTTPURLResponse {
+//                    print(response.allHeaderFields)
+//                }
+//            }
+//        }
         self.webView.isHidden = false
         
         if( webView.stringByEvaluatingJavaScript(from: "window.location.href")!.contains("Security/Login")){
