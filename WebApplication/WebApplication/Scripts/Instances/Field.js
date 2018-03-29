@@ -18,7 +18,7 @@
 		        }
 			} else if (model.valueTypeName == "Number") {
 				var value = input.val();
-				for (let index = 0; index < value.length; ++index)
+				for (var index = 0; index < value.length; ++index)
 					if (!(
 						value[index] >= "0" && value[index] <= "9"
 						|| value[index] == "-"

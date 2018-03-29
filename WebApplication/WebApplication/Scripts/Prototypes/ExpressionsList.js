@@ -137,7 +137,7 @@
 
 		checkGroupExpressionsInUse = function (group) {
 			checkElementExpressionsInUse(group);
-			for (let itemIndex in group.items) {
+			for (var itemIndex in group.items) {
 				var item = group.items[itemIndex]
 				if (item.type == "Group")
 					checkElementExpressionsInUse(item);
@@ -214,10 +214,10 @@
 
 			expressionsInUse = {};
 			checkGroupExpressionsInUse(model.header);
-			for (let pageIndex in model.pages) {
+			for (var pageIndex in model.pages) {
 				var page = model.pages[pageIndex];
 				checkElementExpressionsInUse(page);
-				for (let groupIndex in page.groups)
+				for (var groupIndex in page.groups)
 					checkGroupExpressionsInUse(page.groups[groupIndex]);
 			}
 		};

@@ -328,7 +328,7 @@
 							];
 
 							if (model.valueTypeName == "Text")
-								for (let index = 2; index < 100; ++index)
+								for (var index = 2; index < 100; ++index)
 									linesCountItems.push({ label: index + " rows", code: index });
 						};
 
