@@ -456,14 +456,22 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
             
         else if let controller = segue.destination as? ListInstancesTableViewController {
             controller.instancesList = self.listInstances as! [Instance]
+            controller.selectedItemsDictionary = selectedItemsDictionary;
         }
         
         else if let controller = segue.destination as? InstanceViewController {
             controller.newInstance = true
             controller.newInstancePrototype = searchDictionary["prototype"]!
             controller.newInstanceVersion = searchDictionary["version"]!
+            controller.selectedItemsDictionary = selectedItemsDictionary;
         }
         
+    }
+    
+    @IBAction func unwindToSearchInstances(sender: UIStoryboardSegue) {
+        if let sourceViewController = sender.source as? InstanceViewController {
+            selectedItemsDictionary = sourceViewController.selectedItemsDictionary
+        }
     }
     
     func startActivityIndicator(){

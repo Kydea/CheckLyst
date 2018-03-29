@@ -19,6 +19,7 @@ class ListInstancesTableViewController: UIViewController, UITableViewDataSource,
     var infoButtonTapped = false
     var infoButtonTappedRow = -1
     var selectedInstance: Instance?
+    var selectedItemsDictionary = [Int:Option] ()
     
     @IBOutlet var tableView: UITableView!
     
@@ -225,7 +226,7 @@ class ListInstancesTableViewController: UIViewController, UITableViewDataSource,
             if let controller = segue.destination as? InstanceViewController {
                 
                 controller.instance = selectedInstance
-                
+                controller.selectedItemsDictionary = selectedItemsDictionary;
             }
    
         }
