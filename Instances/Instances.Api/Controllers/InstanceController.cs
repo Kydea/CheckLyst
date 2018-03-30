@@ -193,7 +193,7 @@ namespace CheckListManager.Instances.Api.Controllers
                 {
                     Id = cacheObject.Id,
                     Code = cacheObject.Code,
-                    CheckList = await _instanceManagerService.GetCheckListAsync(Identity, cacheObject),
+                    CheckList = await _instanceManagerService.GetCheckListAsync(Identity, cacheObject, request.Type == "Signature" || request.Type == "SignatureCheck" ? request.Username : null),
                     State = cacheObject.InstanceState
                 };
                 return Ok(response);

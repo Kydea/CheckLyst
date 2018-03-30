@@ -53,7 +53,7 @@ namespace CheckListManager.Prototypes.Logic.PDF
                 {
                     Table.AddCell(new PdfPCell(new Paragraph().SetText($"{Signature.User}", PDFSection.SmallFont).Padding(10).SetAlignment(ParagraphAlignment.Center)));
                     Table.AddCell(new PdfPCell(new Paragraph().SetText(Signature.Date?.ToLocalTime(TimeZone).ToString("yyyy-MM-dd"), PDFSection.SmallFont).Padding(10)) { VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center });
-                    Table.AddCell(new PdfPCell(new Paragraph().SetText(Signature.Date?.ToLocalTime(TimeZone).ToString("HH:mm"), PDFSection.SmallFont).Padding(10)) { VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center });
+                    Table.AddCell(new PdfPCell(new Paragraph().SetText(Signature.Date?.ToLocalTime(TimeZone).ToString("HH:mm UTC zzz"), PDFSection.SmallFont).Padding(10)) { VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center });
                     Table.AddCell(new PdfPCell(new Paragraph().SetText(Signature.Step.ToString(), PDFSection.SmallFont).Padding(10)) { VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center });
                     Table.AddCell(new PdfPCell(new Paragraph().SetText($"({string.Join(", ", Signature.WorkFlowApplicationStepTags.Select(t => t.Tag))})", PDFSection.SmallFont).Padding(10)) { VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center });
                     Table.AddCell(new PdfPCell(new Paragraph().SetText(Signature.Comment, PDFSection.SmallFont).Padding(10)) { VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center });
@@ -68,11 +68,12 @@ namespace CheckListManager.Prototypes.Logic.PDF
         protected override FirstPage GenerateFirstPage()
         {
             return new FirstPage(this, $"{PrototypeVersion.Prototypes.Name}", $"Version {PrototypeVersion.Version}", PrototypeVersion.Description, new List<Tuple<string, string>> {
+                new Tuple<string, string>("Plant", CompanyName),
                 new Tuple<string, string>("Department", PrototypeVersion.Prototypes.Departments.Name),
                 new Tuple<string, string>("Prototype type", PrototypeVersion.Prototypes.PrototypeTypes.Name),
                 new Tuple<string, string>("State", PrototypeVersion.VersionState),
-                new Tuple<string, string>("Valid from", PrototypeVersion.ValidFrom?.ToLocalTime(TimeZone).ToString("yyyy-MM-dd HH:mm")),
-                new Tuple<string, string>("Valid until", PrototypeVersion.ValidUntil?.ToLocalTime(TimeZone).ToString("yyyy-MM-dd HH:mm"))
+                new Tuple<string, string>("Valid from", PrototypeVersion.ValidFrom?.ToLocalTime(TimeZone).ToString("yyyy-MM-dd HH:mm UTC zzz")),
+                new Tuple<string, string>("Valid until", PrototypeVersion.ValidUntil?.ToLocalTime(TimeZone).ToString("yyyy-MM-dd HH:mm UTC zzz"))
             });
         }
 
