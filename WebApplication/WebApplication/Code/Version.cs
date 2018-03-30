@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace CheckListManager.WebApplication.Code
 {
@@ -10,8 +11,9 @@ namespace CheckListManager.WebApplication.Code
         {
             if (Cache == null)
             {
-                var Version = typeof(MvcApplication).Assembly.GetName().Version;
-                Cache = String.Format("{0}.{1}.{2}.{3}", Version.Major, Version.Minor, Version.Build, Version.Revision);
+                var assembly = typeof(MvcApplication).Assembly;
+                var versionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
+                Cache = String.Format(versionInfo.FileVersion);
             }
             return Cache;
         }

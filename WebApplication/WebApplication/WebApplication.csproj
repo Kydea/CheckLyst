@@ -483,6 +483,10 @@
       <Project>{2fafff00-d5eb-4bb0-b70b-38290d88c871}</Project>
       <Name>Common.Core.Web</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Common\Common.Core\Common.Core.csproj">
+      <Project>{31de9c2f-fb9d-472c-b28a-3c1edeff10dc}</Project>
+      <Name>Common.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Antlr3.Runtime">

@@ -11,7 +11,7 @@ namespace CheckListManager.Common.Logic.Api.Controllers
 		public IHttpActionResult Get()
 		{
             var Model = new ReleaseInfoMessage();
-            return Ok(new { Model.Version, Model.FileVersion, Model.BuildDate });
+            return Ok(new { Model.Version, Model.BuildDate });
 		}
 	}
 }
