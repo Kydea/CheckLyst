@@ -327,7 +327,7 @@
 								{ label: "Full width", code: "1" }
 							];
 
-							if (model.valueTypeName == "Text")
+							if (!model.valueTypeName || model.valueTypeName == "Text")
 								for (var index = 2; index < 100; ++index)
 									linesCountItems.push({ label: index + " rows", code: index });
 						};

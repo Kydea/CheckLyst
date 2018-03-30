@@ -751,7 +751,7 @@ namespace CheckListManager.Instances.Logic.Services
 
             if (!group.ReadOnly)
             {
-                var Iteration = group.AddIterations(1);
+                var Iteration = group.AddIteration();
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
                     Company = cacheObject.CompanyId,
@@ -759,7 +759,7 @@ namespace CheckListManager.Instances.Logic.Services
                     Action = TrailAction.InstanceIterationAdded,
                     Date = DateTimeOffset.UtcNow,
                     CheckList = cacheObject.InstanceCode,
-                    Information = Iteration.Single().Id.ToString()
+                    Information = Iteration.Id.ToString()
                 });
                 await Update(cacheObject, userCode);
             }
