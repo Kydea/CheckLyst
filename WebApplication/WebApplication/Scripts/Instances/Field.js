@@ -59,7 +59,7 @@
         next = function () {
 			if (model.valueTypeName != "DateTime" && model.valueTypeName != "Time")
 				setTimeout(function () {
-					$("input:visible", element.next()).focus();
+					$("input:visible", element.next()).eq(0).focus();
 				}, 0);
         },
 

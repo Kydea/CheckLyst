@@ -50,7 +50,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 				}
 
                 if (((Instance)CheckList).InCreation && InstanceIterations > 0 && !IteratorModelItem)
-                    AddIterations(InstanceIterations);
+                    for (int Index = 0; Index < InstanceIterations; ++Index)
+                        AddIteration();
 
                 Elements = new Dictionary<string, ICheckListElement>();
 			}
@@ -162,21 +163,18 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 			}
 		}
 
-		public IEnumerable<Iteration> AddIterations(int Count)
-		{
-            for (int Index = 0; Index < Count; ++Index)
+        public Iteration AddIteration()
+        {
+            var iteration = new Iteration
             {
-                var iteration = new Iteration
-                {
-                    CheckList = CheckList,
-                    Page = Page,
-                    Group = this
-                };
-                iteration.Setup();
-                Iterations.Add(iteration);
-                yield return iteration;
-            }
-		}
+                CheckList = CheckList,
+                Page = Page,
+                Group = this
+            };
+            iteration.Setup();
+            Iterations.Add(iteration);
+            return iteration;
+        }
 
 		public void Move(Iteration iteration, int direction)
 		{
