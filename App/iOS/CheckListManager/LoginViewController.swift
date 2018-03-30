@@ -306,7 +306,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate
     
     func setUserInformation(userInfo json:[String:Any]) {
         
-        UserDefaults.standard.setValue(self.userCodeTextField.text, forKey: "userCode")
+        UserDefaults.standard.setValue(json["code"], forKey: "userCode")
         
         UserDefaults.standard.setValue(true, forKey: "logged")
         

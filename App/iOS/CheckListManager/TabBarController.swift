@@ -9,7 +9,7 @@
 import UIKit
 import Foundation
 
-class TabViewController: UITabBarController {
+class TabViewController: UITabBarController, UITabBarControllerDelegate {
     
     
     var userCode: String?
@@ -29,6 +29,8 @@ class TabViewController: UITabBarController {
         let image = UIImage.imageWithLabel(label)
         
         self.tabBarItem.image = image
+        
+        self.delegate = self;
         
     }
 
@@ -75,6 +77,12 @@ class TabViewController: UITabBarController {
         
         tabBarItems[2].image = tabBarItems[2].selectedImage?.imageWithColor(UIColor(red: 162.0/255, green: 194.0/255, blue: 205.0/255, alpha: 1.0)).withRenderingMode(UIImageRenderingMode.alwaysOriginal)
         
+    }
+    
+    func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
+        if let vc = viewController as? UINavigationController {
+            vc.popToRootViewController(animated: false)
+        }
     }
  
 }

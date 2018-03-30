@@ -744,9 +744,16 @@
                             <constraint firstItem="R3u-YP-wuO" firstAttribute="centerX" secondItem="jvx-D1-KR9" secondAttribute="centerX" id="gM1-In-cqt"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="B2A-Na-3AA"/>
+                    <navigationItem key="navigationItem" id="B2A-Na-3AA">
+                        <barButtonItem key="leftBarButtonItem" title="Back" style="plain" id="d8g-73-n1R">
+                            <connections>
+                                <action selector="goBackToSearchInstances:" destination="zcb-Wv-5O8" id="5GT-cB-ZSR"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="activityIndicator" destination="R3u-YP-wuO" id="7Ye-Ks-b2V"/>
+                        <outlet property="customBackButton" destination="d8g-73-n1R" id="C86-0N-VGP"/>
                         <outlet property="webView" destination="jvx-D1-KR9" id="65m-T6-DMz"/>
                         <segue destination="me8-qg-fhs" kind="unwind" identifier="goBackSearchInstances" unwindAction="unwindToSearchInstancesWithSender:" id="bIA-Us-Bky"/>
                     </connections>

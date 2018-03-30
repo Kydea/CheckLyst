@@ -19,7 +19,8 @@ class InstanceViewController: UIViewController, UIWebViewDelegate, UIGestureReco
     var selectedItemsDictionary = [Int:Option] ()
     @IBOutlet var webView: UIWebView!
     @IBOutlet var activityIndicator: UIActivityIndicatorView!
-
+    @IBOutlet var customBackButton: UIBarButtonItem!
+    
     override func viewDidLoad()
     {
         super.viewDidLoad()
@@ -45,8 +46,7 @@ class InstanceViewController: UIViewController, UIWebViewDelegate, UIGestureReco
         request.httpBody = bodyString.data(using: String.Encoding.utf8)
         
         webView.loadRequest(request as URLRequest)
-        //webView.loadRequest(URLRequest(url:URL(string:"http://www.google.com")!))
-        
+       
         self.lockView()
         NotificationCenter.default.addObserver(self, selector: #selector(InstanceViewController.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(InstanceViewController.keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
@@ -78,6 +78,7 @@ class InstanceViewController: UIViewController, UIWebViewDelegate, UIGestureReco
         self.webView.isHidden = true
         webView.scrollView.isScrollEnabled = false
         self.navigationItem.setHidesBackButton(true, animated:false)
+        self.navigationItem.leftBarButtonItem = nil;
         self.tabBarController!.tabBar.isUserInteractionEnabled = false
     }
     
@@ -87,13 +88,14 @@ class InstanceViewController: UIViewController, UIWebViewDelegate, UIGestureReco
         self.webView.isHidden = false
         webView.scrollView.isScrollEnabled = true
         self.navigationItem.setHidesBackButton(false, animated:false)
+        self.navigationItem.leftBarButtonItem = self.customBackButton;
         self.tabBarController!.tabBar.isUserInteractionEnabled = true
     }
 
     
     override func viewWillDisappear(_ animated : Bool) {
         super.viewWillDisappear(animated)
-        
+        self.webView.stringByEvaluatingJavaScript(from: "instances.instance.close()")
     }
 
     
@@ -102,8 +104,6 @@ class InstanceViewController: UIViewController, UIWebViewDelegate, UIGestureReco
         webView.frame = CGRect(x: 0, y: 10, width: self.view.frame.size.width, height: self.view.frame.size.height)
         
     }
-
-    
     
     func webView(_ webView: UIWebView, didFailLoadWithError error: Error) {
         
@@ -129,23 +129,21 @@ class InstanceViewController: UIViewController, UIWebViewDelegate, UIGestureReco
     func webViewDidFinishLoad(_ webView: UIWebView) {
     
         unlockView()
-//        if let request = self.webView.request {
-//            if let resp = URLCache.shared.cachedResponse(for: request) {
-//                if let response = resp.response as? HTTPURLResponse {
-//                    print(response.allHeaderFields)
-//                }
-//            }
-//        }
+
         self.webView.isHidden = false
         
-        if( webView.stringByEvaluatingJavaScript(from: "window.location.href")!.contains("Security/Login")){
+        if(webView.stringByEvaluatingJavaScript(from: "window.location.href")!.contains("Security/Login")){
             print("redirecting")
             webView.isHidden = true
             app.logoutAndGoToLogin()
         }
         
     }
-
+    
+    @IBAction func goBackToSearchInstances(_ sender: Any) {
+        self.performSegue(withIdentifier: "goBackSearchInstances", sender: self)
+    }
+    
     @objc func keyboardWillShow(_ notification: Notification) {
         if view.frame.origin.y == 0{
             self.view.frame.origin.y -= 20
