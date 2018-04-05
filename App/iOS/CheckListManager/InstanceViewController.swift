@@ -41,7 +41,9 @@ class InstanceViewController: UIViewController, UIWebViewDelegate, UIGestureReco
         request.timeoutInterval = 20
         request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         /*Setting value for local storage*/
-        let bodyString = "roles=" + (UserDefaults.standard.value(forKey: "roles") as! String) + "&timeZone=" + (UserDefaults.standard.value(forKey: "timeZone") as! String)
+        let bodyString = "roles=" + (UserDefaults.standard.value(forKey: "roles") as! String) +
+                         "&timeZone=" + (UserDefaults.standard.value(forKey: "timeZone") as! String) +
+                         "&decimalSeparator=" + (UserDefaults.standard.value(forKey: "decimalSeparator") as! String)
         print(bodyString)
         request.httpBody = bodyString.data(using: String.Encoding.utf8)
         
@@ -95,6 +97,7 @@ class InstanceViewController: UIViewController, UIWebViewDelegate, UIGestureReco
     
     override func viewWillDisappear(_ animated : Bool) {
         super.viewWillDisappear(animated)
+        print("disappering")
         self.webView.stringByEvaluatingJavaScript(from: "instances.instance.close()")
     }
 
@@ -139,6 +142,7 @@ class InstanceViewController: UIViewController, UIWebViewDelegate, UIGestureReco
         }
         
     }
+    
     
     @IBAction func goBackToSearchInstances(_ sender: Any) {
         self.performSegue(withIdentifier: "goBackSearchInstances", sender: self)

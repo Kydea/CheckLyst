@@ -10,19 +10,18 @@
 import Foundation
 import UIKit
 
-
-
 @objc(MyApplication) class MyApplication: UIApplication, UIApplicationDelegate {
     
     var timeToExpire = 0.0
     var displayAlert : UIAlertController?
     var isWarningPresented = false
-    let timeBeforeTokenExpires = 120.0
+    let timeBeforeTokenExpires = 120.0 /* 2 minutes */
     var isRefreshing = false
     
-    var activity: Bool = true
-    
     var timer : Timer?
+    var inactivityTimer : Timer?
+    
+    let inactivityTime = 900.0 /* 15 minutes */
     
     
     override func sendEvent(_ event: UIEvent) {
@@ -32,12 +31,12 @@ import UIKit
             return
         }
         
-        var restartTimer = true
+        var restartTimer = false
         
         if let touches = event.allTouches {
             for touch in touches.enumerated() {
                 if touch.element.phase != .cancelled && touch.element.phase != .ended {
-                    restartTimer = false
+                    restartTimer = true
                     break
                 }
             }
@@ -45,7 +44,7 @@ import UIKit
         
         
         if restartTimer {
-            activity = true
+            self.refreshInactivityTimer(timeToExpireActivity: inactivityTime)
         }
         super.sendEvent(event)
     }
@@ -111,6 +110,24 @@ import UIKit
     func logoutAndGoToLogin()
         
     {
+        if var topController = UIApplication.shared.keyWindow?.rootViewController {
+            
+            while let presentedViewController = topController.presentedViewController {
+                topController = presentedViewController
+            }
+            
+            if topController.isKind(of: TabViewController.self)
+            {
+        
+                if((topController as! TabViewController).selectedIndex == 1) {
+                    if let navigationController = (topController as! TabViewController).viewControllers![(topController as! TabViewController).selectedIndex] as? UINavigationController {
+                        if(navigationController.childViewControllers.count > 2) {
+                            navigationController.popViewController(animated: false)
+                        }
+                    }
+                }
+            }
+        }
         UserDefaults.standard.setValue(false, forKey: "logged")
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let homeVC = storyboard.instantiateViewController(withIdentifier: "FirstCheck")
@@ -140,8 +157,34 @@ import UIKit
         
     }
     
+    func refreshInactivityTimer(timeToExpireActivity: Double) {
+        let logged = NSString(string:UserDefaults.standard.string(forKey: "logged")!).boolValue
+        
+        if(logged){
+            print("refreshed inactivity timer")
+            if let timer = inactivityTimer {
+                timer.invalidate()
+            }
+            inactivityTimer = Timer.scheduledTimer(timeInterval: timeToExpireActivity, target: UIApplication.shared, selector: #selector(MyApplication.inactivityHasDetected), userInfo: nil, repeats: true)
+        }
+    }
+    
+    @objc func inactivityHasDetected() {
+        print("inactivity detected")
+        if let timer = inactivityTimer {
+            timer.invalidate()
+        }
+        self.logoutAndGoToLogin()
+    }
+    
     func goBackGround(){
-        timer!.invalidate()
+        UserDefaults.standard.set(Date(), forKey: "backgroundTime")
+        if let timer = timer {
+            timer.invalidate()
+        }
+        if let timer = inactivityTimer {
+            timer.invalidate()
+        }
         timeToExpire = 0
     }
     
@@ -149,6 +192,22 @@ import UIKit
     func goForeGround()
     {
         timer = Timer.scheduledTimer(timeInterval: 1.0, target: UIApplication.shared, selector: #selector(MyApplication.timerAction), userInfo: nil, repeats: true)
+    }
+    
+    func backFromBackGround() {
+        let logged = NSString(string:UserDefaults.standard.string(forKey: "logged")!).boolValue
+        
+        timer = Timer.scheduledTimer(timeInterval: 1.0, target: UIApplication.shared, selector: #selector(MyApplication.timerAction), userInfo: nil, repeats: true)
+        
+        if(logged){
+            if let lastActiveTime = UserDefaults.standard.value(forKey: "backgroundTime") as? Date {
+                if(lastActiveTime.addingTimeInterval(inactivityTime) < Date()) {
+                    self.logoutAndGoToLogin()
+                } else {
+                    self.refreshInactivityTimer(timeToExpireActivity: lastActiveTime.addingTimeInterval(inactivityTime).timeIntervalSince(Date()))
+                }
+            }
+        }
     }
     
     func goBackToList() {

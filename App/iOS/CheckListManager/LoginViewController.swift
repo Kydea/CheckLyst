@@ -255,6 +255,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate
                         
                         self.setUserInformation(userInfo: json)
                         
+                        (UIApplication.shared as! MyApplication).refreshInactivityTimer(timeToExpireActivity: (UIApplication.shared as! MyApplication).inactivityTime)
+                        
                         self.getClient()
   
                     }
@@ -329,6 +331,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate
         UserDefaults.standard.setValue(self.companyTextField.text!, forKey: "companyName")
         
         UserDefaults.standard.setValue(Formatter.instance.dateFromTimeString(json[".expires"] as! String), forKey: "token_expires")
+        
+        UserDefaults.standard.setValue(json["decimalSeparator"], forKey: "decimalSeparator")
     
     }
     
