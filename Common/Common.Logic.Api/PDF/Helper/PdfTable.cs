@@ -66,11 +66,18 @@ namespace CheckListManager.Common.Logic.Api.PDF.Helper
                         _cells.Insert(j, new PdfPCell(new Paragraph()));
                 }
             }
+
+            int colspanCount = _cells.Sum(s => s.Colspan);
+
+            // Add missing cells
+            if (colspanCount != Columns)
+            {
+                _cells.Add(new PdfPCell(new Paragraph()) {
+                    Colspan = Columns - colspanCount
+                });
+            }
             #endregion
-
-            if (_cells.Sum(s => s.Colspan) != Columns)
-                throw new Exception("Invalid row format. Missing cells?" + "Columns: " + Columns + " + Sum: " + _cells.Sum(s => s.Colspan));
-
+                
             row = new Row();
 
             for (int i = 0; i < _cells.Count; i++)

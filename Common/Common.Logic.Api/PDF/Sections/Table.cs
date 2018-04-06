@@ -324,10 +324,13 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
 
             /*Render DOM-like data*/
             foreach (RenderingRow Row in Main.Children)
+            {
                 foreach (RenderingCell Cell in Row.Children)
                     Table.AddCell(PdfPCellFromNode(Cell).SetPadding(5));
 
-            Table.CompleteRow();
+                Table.CompleteRow();
+            }
+            
             return Table;
         }
         #endregion
