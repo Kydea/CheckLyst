@@ -112,7 +112,7 @@ namespace CheckListManager.Instances.Logic.List
                 {
                     Id = i.ID,
                     Code = i.Code,
-                    Year = i.Year == 0 ? "SE" : i.Year.ToString(),
+                    Year = i.Year > 0 ? i.Year.ToString() : i.PrototypeVersions.VersionState == VersionState.Draft ? "Test" : "SE",
                     Number = i.Number,
                     State = i.InstanceState,
                     Description = i.Description,

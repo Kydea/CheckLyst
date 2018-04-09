@@ -11,7 +11,7 @@ namespace CheckListManager.Common.Logic.Services
 		{
 			if (string.IsNullOrEmpty(text)) return null;
 
-			using (var hash = new SHA512Managed())
+			using (var hash = new SHA256Managed())
 			{
 				var bytes = Encoding.UTF8.GetBytes(text);
 				return hash.ComputeHash(bytes);
