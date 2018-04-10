@@ -98,26 +98,38 @@ namespace CheckListManager.Common.Logic.Api.PDF
         // ALTERNATIVE (2): DOWNLOAD IMAGE, SAVE AS TEMP FILE, DELETE IMAGE
         public static Image AddImage(this Paragraph paragraph, Uri uri)
         {
-            Image img;
+            Image img = null;
 
             HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(uri);
 
-            using (WebResponse response = request.GetResponse())
+            try
             {
-                using (BinaryReader reader = new BinaryReader(response.GetResponseStream()))
+                using (WebResponse response = request.GetResponse())
                 {
-                    const int BUFFER_SIZE = 4096;
-
-                    using (var ms = new MemoryStream())
+                    using (BinaryReader reader = new BinaryReader(response.GetResponseStream()))
                     {
-                        int count;
-                        byte[] buffer = new byte[BUFFER_SIZE];
+                        const int BUFFER_SIZE = 4096;
 
-                        while ((count = reader.Read(buffer, 0, buffer.Length)) != 0)
-                            ms.Write(buffer, 0, count);
+                        using (var ms = new MemoryStream())
+                        {
+                            int count;
+                            byte[] buffer = new byte[BUFFER_SIZE];
 
-                        img = paragraph.AddImage(ms.ToArray());
+                            while ((count = reader.Read(buffer, 0, buffer.Length)) != 0)
+                                ms.Write(buffer, 0, count);
+
+                            img = paragraph.AddImage(ms.ToArray());
+                        }
                     }
+                }
+            }
+            catch (WebException e)
+            {
+                HttpWebResponse response = e.Response as HttpWebResponse;
+
+                if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    paragraph.AddText(String.Format("Image \"{0}\" not found.", uri));
                 }
             }
 

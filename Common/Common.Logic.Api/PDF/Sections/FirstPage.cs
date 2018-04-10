@@ -35,7 +35,9 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             paragraph.Format.Alignment = ParagraphAlignment.Center;
             var CheckListPDF = (CheckListPDF)PDFBase;
             Image logo = paragraph.AddImage(new Uri($"{CheckListPDF.Repository}PDF/Logo-{CheckListPDF.CompanyID}.png"));
-            logo.ScaleWidth = 0.4;
+
+            if (logo != null)
+                logo.ScaleWidth = 0.4;
 
             paragraph = PDFBase.Container.AddParagraph().SetText("\n" + FirstRow + "\n");
             paragraph.Format.Alignment = ParagraphAlignment.Center;
