@@ -90,7 +90,7 @@
 				valueCopy();
 			}
 
-			if ((e.key == ',' || e.key == '.') && e.key != localStorage.decimalSeparator) {
+			if (model.valueTypeName == "Number" && (e.key == ',' || e.key == '.') && e.key != localStorage.decimalSeparator) {
 				e.preventDefault();
 				matematici.dialog.error("Error", "Invalid decimal separator, use the character " + localStorage.decimalSeparator + " instead");
 			}
@@ -110,10 +110,9 @@
 
 			if (!model.valueFormulaString) {
 				if (!model.valuesList) {
-					if (model.valueTypeName == "Number") {
-						if (localStorage.decimalSeparator == '.' || localStorage.decimalSeparator == ',')
-							input.keyfilter(/[\d\-\,\.]/);
-					} else if (model.valueTypeName == "Date" || model.valueTypeName == "DateTime") {
+					if (model.valueTypeName == "Number")
+						input.keyfilter(/[\d\-\,\.]/);
+					else if (model.valueTypeName == "Date" || model.valueTypeName == "DateTime") {
 						input.keyfilter(/[\d\-]/);
 						new matematici.DatePicker(input);
 					} else if (model.valueTypeName == "Boolean") {

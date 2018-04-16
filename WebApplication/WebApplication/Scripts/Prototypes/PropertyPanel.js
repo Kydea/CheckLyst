@@ -400,7 +400,7 @@
 						"If checked, the signature can be reverted by a signature manager."
 					));
 					properties.push(new prototypes.Property(
-						this, new prototypes.BooleanProperty(model, "acceptsPIN", state != prototypes.Prototype.states.draft), "Accepts PIN",
+						this, new prototypes.BooleanProperty(model, "acceptsPin", state != prototypes.Prototype.states.draft), "Accepts PIN",
 						"If checked, the signature users can issue this signature using their PIN."
 					));
 					break;

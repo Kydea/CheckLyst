@@ -47,7 +47,7 @@
 		},
 
 		setDate = function (value) {
-			var formattedDate = matematici.dateFormatter.format(value, true);
+			var formattedDate = matematici.dateFormatter.format(value, false);
 			date = formattedDate.valid ? moment(value).toDate() : null;
 			element
 				.data("date", date)

@@ -109,8 +109,8 @@
             elements.previous.toggleClass("Active", !min || year > min.getFullYear() || year == min.getFullYear() && month > min.getMonth() + 1);
             elements.next.toggleClass("Active", !max || year < max.getFullYear() || year == max.getFullYear() && month < max.getMonth() + 1);
 
-            var
-                date = new Date(year, month - 1, 1),
+			var
+				date = new Date(Date.UTC(year, month - 1, 1)),
                 rows = $("tr:not(:first-child)", elements.table).hide(),
                 dayOfWeek = (date.getDay() + 6) % 7, //0: monday .. 6: sunday
                 datesIndex = 0;

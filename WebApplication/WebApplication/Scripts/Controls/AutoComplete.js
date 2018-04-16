@@ -89,8 +89,10 @@ matematici.AutoComplete = function (selector) {
 			label
 				.on("focus", function () {
 					showList();
-					input.focus();
-					input.select();
+					setTimeout(function () {
+						input.focus();
+						input.select();
+					}, 0);
 				})
 				.on("click", function (e) {
 					e.stopPropagation();
