@@ -124,6 +124,23 @@
             propertyPanel.setPrototypeTypesList(result.data);
         });
 
+        //Loads data sources
+        $.ajax({
+            type: "post",
+            url: "@BaseUrl/DataSources/List/GetSyntheticData",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                data: {
+                    code: "",
+                    description: ""
+                },
+                itemsPerPage: 1000
+            })
+        }).done(function (result) {
+            prototype.setDataSources(result);
+        });
+
         matematici.save = prototype.save;
 
         matematici.events.onPageUnload = function (callback) {

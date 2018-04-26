@@ -88,9 +88,10 @@
                         remove();
                     }).hide());
 
-            sources = $("<select />");
-            for (index in matematici.sources)
-                $("<option />").appendTo(sources).text(index);
+			sources = $("<select />");
+			var dataSources = prototypes.prototype.getDataSources();
+			for (index in dataSources.data)
+				$("<option />").appendTo(sources).text(dataSources.data[index].code).val(dataSources.data[index].code);
 
             for (var code in model.externalSources)
                 add({

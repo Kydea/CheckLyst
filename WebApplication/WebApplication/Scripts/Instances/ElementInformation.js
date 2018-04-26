@@ -28,7 +28,7 @@
 		addItem(model.valid ? "thumbs-up-o" : "thumbs-down-o", model.valid ? "valid" : model.validityMessage || "not valid");
 		if (!model.readOnly) addItem("edit-o", "editable");
 		addItem("calculator", model.valueFormulaString ? model.valueFormulaString + ": <strong>" + model.rawValue + "</strong>" : null);
-		addItem("link-0", (model.externalSourceName ? model.externalSourceName + "." + model.externalSourceColumn : null));
+		addItem("link-o", (model.externalSourceName ? model.externalSourceName + "." + model.externalSourceColumn : null));
 		if (model.history && model.history.length > 0)
 			panel.append($("<div />").append($("<a />").attr("href", "#").text("history").prepend($("<i />").addClass("fi fi-fw flaticon-list-ul")).on("click", function (e) {
 				var columns =

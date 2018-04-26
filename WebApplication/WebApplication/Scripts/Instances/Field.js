@@ -141,7 +141,7 @@
 						select.append($("<option />").attr("value", model.valuesList[index]).text(model.valuesList[index]));
 				} else if (model.externalSourceName && model.externalSourceColumn) {
 					element.addClass("ExternalSource").append($("<i />").addClass("fi flaticon-link-o"));
-					field.on("click", function () {
+					input.on("click", function () {
 						if (!element.hasClass("Inactive"))
 							new instances.ExternalSources(model.id, model.externalSourceName);
 					});

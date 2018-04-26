@@ -15,6 +15,7 @@
 		itemHandler,
 		commands,
 		newItemsId = 1,
+		dataSources,
 
 		getNewItemId = function () {
 			return newItemsId++;
@@ -686,6 +687,14 @@
 	prototype.update = function () {
 		select();
 		update();
+	};
+
+	prototype.setDataSources = function (value) {
+		dataSources = value;
+	};
+
+	prototype.getDataSources = function () {
+		return dataSources;
 	};
 
 	prototype.quit = function () {
