@@ -31,6 +31,17 @@ namespace CheckListManager.DataSources.Logic.Detail
                     }
                 };
 
+            if (string.IsNullOrWhiteSpace(record.Class))
+                response.Fields["Class"] = new Field
+                {
+                    ValidationMessages = new List<ValidationMessage> {
+                        new ValidationMessage {
+                            Level = ValidationMessage.LevelError,
+                            Message = "Invalid class"
+                        }
+                    }
+                };
+
             response.Valid = response.Fields.Count() == 0;
             return response;
         }
@@ -44,7 +55,10 @@ namespace CheckListManager.DataSources.Logic.Detail
                     await _dataSourcesRepository.AddDataSourceAsync(identity, new Common.Data.DataSources
                     {
                         Code = record.Code,
-                        Description = record.Description
+                        Description = record.Description,
+                        Class = record.Class,
+                        Data = record.Parameters,
+                        Password = record.Password
                     });
                 }
                 catch (Exception Exception)
@@ -69,7 +83,10 @@ namespace CheckListManager.DataSources.Logic.Detail
                     await _dataSourcesRepository.EditDataSourceAsync(identity, new Common.Data.DataSources
                     {
                         Code = record.Code,
-                        Description = record.Description
+                        Description = record.Description,
+                        Class = record.Class,
+                        Data = record.Parameters,
+                        Password = record.Password
                     });
                 }
                 catch (Exception Exception)
@@ -104,6 +121,5 @@ namespace CheckListManager.DataSources.Logic.Detail
 
             return response;
         }
-
     }
 }

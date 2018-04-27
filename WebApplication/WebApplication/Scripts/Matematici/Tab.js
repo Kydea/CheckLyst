@@ -48,6 +48,13 @@
 			currentItem = setItem(index);
 			if (!options.fixedHeight)
 				resize();
+
+			$("select.AutoComplete").each(function (index) {
+				var
+					select = $(this),
+					autoComplete = select.data("autoComplete");
+				if (autoComplete) autoComplete.refresh();
+			});
 		},
 
 		setup = function () {
@@ -82,7 +89,11 @@
 
     this.getItem = function(index) {
         return getItem(index);
-    };
+	};
+
+	this.getLabels = function () {
+		return $(".TabLabels a", element);
+	};
 
     this.addHandler = function (handler) {
         handlers.push(handler);

@@ -6,7 +6,8 @@ namespace CheckListManager.DataSources.Logic.Detail
     {
         public string Code { get; set; }
         public string Description { get; set; }
-
-        //TODO: add interface information to store as json in data
+        public string Class { get; set; }
+        public string Password { get; set; }
+        public string Parameters { get; set; }
     }
 }

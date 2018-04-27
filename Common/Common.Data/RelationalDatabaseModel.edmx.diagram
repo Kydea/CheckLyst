@@ -42,7 +42,6 @@
         <AssociationConnector Association="RelationalDatabaseModel.Functions_FunctionGroup_fkey" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.Records" Width="1.5" PointX="15.125" PointY="1.5" />
         <AssociationConnector Association="RelationalDatabaseModel.Records_Action_fkey" />
-        <EntityTypeShape EntityType="RelationalDatabaseModel.DataSources" Width="1.5" PointX="0.75" PointY="9.75" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.Prototypes" Width="1.5" PointX="10.625" PointY="3.375" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.PrototypeTypes" Width="1.5" PointX="10.875" PointY="7.875" />
         <AssociationConnector Association="RelationalDatabaseModel.Prototypes_Company_fkey" />
@@ -89,6 +88,7 @@
         <AssociationConnector Association="RelationalDatabaseModel.InstancesHistory_WorkFlowApplication_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.PrototypeVersionsHistory_PrototypeVersion" />
         <AssociationConnector Association="RelationalDatabaseModel.PrototypeVersionsHistory_WorkFlowApplication_fkey" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.DataSources" Width="1.5" PointX="0.75" PointY="10.75" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

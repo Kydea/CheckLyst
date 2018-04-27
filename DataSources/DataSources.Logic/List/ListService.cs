@@ -25,27 +25,12 @@ namespace CheckListManager.DataSources.Logic.List
                     {
                         Code = ds.Code,
                         Description = ds.Description,
+                        Class = ds.Class,
+                        Parameters = ds.Data,
                         CreatedBy = ds.CreatedBy,
                         CreatedOn = ds.CreatedOn,
                         ModifiedBy = ds.ModifiedBy,
                         ModifiedOn = ds.ModifiedOn
-                    },
-                    wf =>
-                        wf.Company == Company
-                        && (Form.Data.Code == string.Empty || wf.Code != null && wf.Code.ToUpper().Contains(Form.Data.Code.ToUpper()))
-                        && (Form.Data.Description == string.Empty || wf.Description != null && wf.Description.ToUpper().Contains(Form.Data.Description.ToUpper())),
-                    p => p.Code,
-                    Form.CurrentPage,
-                    Form.ItemsPerPage
-                );
-
-        public async Task<PagingResponse<List<SyntheticRow>>> GetSyntheticDataAsync(long Company, PagingRequest<ListRequest> Form)
-            =>
-                await _dataSourcesRepository.GetDataSourcesAsync(
-                    Company,
-                    ds => new SyntheticRow
-                    {
-                        Code = ds.Code
                     },
                     wf =>
                         wf.Company == Company

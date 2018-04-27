@@ -1,13 +1,13 @@
 ﻿using CheckListManager.Common.Logic.Api;
 using CheckListManager.Common.Logic.Api.Messages;
-using CheckListManager.DataSources.Logic.Detail;
 using CheckListManager.DataSources.Logic.Data;
 using System.Threading.Tasks;
 using System.Web.Http;
+using CheckListManager.Common.Logic.DataEngine;
+using System;
 
 namespace CheckListManager.DataSources.Api.Controllers
 {
-	[Authorize(Roles = "FunctionGroup#DataSources")]
 	[RoutePrefix("Data")]
 	public class DataController : BaseApiController
 	{
@@ -18,20 +18,36 @@ namespace CheckListManager.DataSources.Api.Controllers
             _dataService = dataService;
 		}
 
-		[Authorize(Roles = "Prototypes#Edit")]
-		[HttpPost]
-		[Route("GetColumns")]
-		public async Task<IHttpActionResult> GetColumns(DetailRequest request)
-		{
-            return Ok(); //await _dataService.GetDataAsync(Identity.CompanyId, request));
-		}
-
-        [Authorize(Roles = "Isntances#Edit")]
+        [Authorize(Roles = "Instances#Edit")]
         [HttpPost]
-        [Route("GetRows")]
-        public async Task<IHttpActionResult> GetRows(PagingRequest<DetailRequest> request)
+        [Route("GetDataSource")]
+        public async Task<IHttpActionResult> GetDataSource(DataRequest request)
         {
-            return Ok(); // await _dataService.GetDataAsync(Identity.CompanyId, request));
+            return Ok(await _dataService.GetDataSourceAsync(Identity.CompanyId, request)); 
+        }
+
+        [Authorize(Roles = "Prototypes#View")]
+        [HttpPost]
+        [Route("GetDataSources")]
+        public async Task<IHttpActionResult> GetDataSources(PagingRequest<Request> request)
+        {
+            return Ok(await _dataService.GetDataSourcesAsync(Identity.CompanyId, request));
+        }
+
+        [Authorize(Roles = "DataSources#View")]
+        [HttpPost]
+        [Route("Test")]
+        public async Task<IHttpActionResult> Test(DataRequest request)
+        {
+            try
+            {
+                await _dataService.TestAsync(Identity.CompanyId, request.Code);
+                return Ok();
+            }
+            catch(Exception Exception)
+            {
+                return Error(Exception);
+            }
         }
     }
 }

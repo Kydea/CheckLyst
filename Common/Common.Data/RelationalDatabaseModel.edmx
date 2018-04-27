@@ -194,6 +194,8 @@
           <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
           <Property Name="ModifiedBy" Type="varchar" MaxLength="60" />
           <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
+          <Property Name="Class" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Password" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="Companies">
           <Key>
@@ -1492,7 +1494,6 @@
             <End Role="Actions" EntitySet="Actions" />
             <End Role="Records" EntitySet="Records" />
           </AssociationSet>
-          <EntitySet Name="DataSources" EntityType="RelationalDatabaseModel.DataSources" />
           <EntitySet Name="Prototypes" EntityType="RelationalDatabaseModel.Prototypes" />
           <EntitySet Name="PrototypeTypes" EntityType="RelationalDatabaseModel.PrototypeTypes" />
           <AssociationSet Name="Prototypes_Company_fkey" Association="RelationalDatabaseModel.Prototypes_Company_fkey">
@@ -1641,6 +1642,7 @@
             <End Role="WorkFlowApplications" EntitySet="WorkFlowApplications" />
             <End Role="PrototypeVersionsHistory" EntitySet="PrototypeVersionsHistory" />
           </AssociationSet>
+          <EntitySet Name="DataSources" EntityType="RelationalDatabaseModel.DataSources" />
           </EntityContainer>
         <EntityType Name="TimeZones">
           <Key>
@@ -2025,20 +2027,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="DataSources">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Company" Type="Int64" Nullable="false" />
-          <Property Name="Code" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="true" />
-          <Property Name="Description" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="Data" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="CreatedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
-          <Property Name="CreatedOn" Type="DateTimeOffset" Nullable="false" Precision="7" />
-          <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
-          <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
-        </EntityType>
         <EntityType Name="Prototypes">
           <Key>
             <PropertyRef Name="ID" />
@@ -2691,6 +2679,22 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="DataSources">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Company" Type="Int64" Nullable="false" />
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Data" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedOn" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
+          <Property Name="Class" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2944,21 +2948,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="DataSources">
-            <EntityTypeMapping TypeName="RelationalDatabaseModel.DataSources">
-              <MappingFragment StoreEntitySet="DataSources">
-                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
-                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
-                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="Data" ColumnName="Data" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="Code" ColumnName="Code" />
-                <ScalarProperty Name="Company" ColumnName="Company" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Prototypes">
             <EntityTypeMapping TypeName="RelationalDatabaseModel.Prototypes">
               <MappingFragment StoreEntitySet="Prototypes">
@@ -3132,6 +3121,23 @@
                 <ScalarProperty Name="Date" ColumnName="Date" />
                 <ScalarProperty Name="Version" ColumnName="Version" />
                 <ScalarProperty Name="Prototype" ColumnName="Prototype" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DataSources">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.DataSources">
+              <MappingFragment StoreEntitySet="DataSources">
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Class" ColumnName="Class" />
+                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="Data" ColumnName="Data" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Company" ColumnName="Company" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>

@@ -2,45 +2,198 @@
     <h2>Data Source</h2>
 
     <form id="Detail" action="@BaseUrl/DataSources/List">
-        <div class="Triggers">
-            <label>
-                <span>Code</span>
-                <i class="Icon fi flaticon-key-o" />
-                <input type="text" name="code" />
-            </label>
+        <div class="TabContainer">
+            <div class="TabLabels">
+                <a href="#">Details</a>
+                <a href="#" class="Parameters SAP">Parameters</a>
+                <a href="#" class="Parameters SQLServer">Parameters</a>
+                <a href="#" class="Parameters Oracle">Parameters</a>
+            </div>
+            <div class="Tab">
+                <label>
+                    <span>Code</span>
+                    <i class="Icon fi flaticon-key-o" />
+                    <input type="text" name="code" class="Code" />
+                </label>
 
-            <label>
-                <span>Description</span>
-                <i class="Icon fi flaticon-align-left" />
-                <input type="text" name="description" />
-            </label>
+                <label>
+                    <span>Source class</span>
+                    <i class="Icon fi flaticon-connection" />
+                    <select class="AutoComplete SourceClass" name="class">
+                        <option value="SAP">SAP</option>
+                        @*
+                            <option value="SQLServer">SQLServer</option>
+                            <option value="Oracle">Oracle</option>
+                        *@
+                    </select>
+                </label>
 
-            <label class="Clearing Controls2">
-                <span>Creation</span>
-                <i class="Icon fi flaticon-user-o" />
-                <input type="text" name="createdBy" readonly="readonly" />
-                <i class="Icon fi flaticon-calendar" />
-                <input type="text" name="createdOn" readonly="readonly" data-type="DateTimeOffset" />
-            </label>
+                <label class="Clearing Width200">
+                    <span>Description</span>
+                    <i class="Icon fi flaticon-align-left" />
+                    <input type="text" name="description" />
+                </label>
 
-            <label class="Clearing Controls2">
-                <span>Last edit</span>
-                <i class="Icon fi flaticon-user-o" />
-                <input type="text" name="modifiedBy" readonly="readonly" />
-                <i class="Icon fi flaticon-calendar" />
-                <input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
-            </label>
+                <label class="Clearing Controls2">
+                    <span>Creation</span>
+                    <i class="Icon fi flaticon-user-o" />
+                    <input type="text" name="createdBy" readonly="readonly" />
+                    <i class="Icon fi flaticon-calendar" />
+                    <input type="text" name="createdOn" readonly="readonly" data-type="DateTimeOffset" />
+                </label>
+
+                <label class="Clearing Controls2">
+                    <span>Last edit</span>
+                    <i class="Icon fi flaticon-user-o" />
+                    <input type="text" name="modifiedBy" readonly="readonly" />
+                    <i class="Icon fi flaticon-calendar" />
+                    <input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
+                </label>
+            </div>
+            <div class="Tab">
+                <label>
+                    <span>User</span>
+                    <i class="Icon fi flaticon-user-o" />
+                    <input type="text" name="user" maxlength="200" />
+                </label>
+
+                <label>
+                    <span>Password</span>
+                    <i class="Icon fi flaticon-lock-o" />
+                    <input type="password" />
+                </label>
+
+                <label>
+                    <span>Query</span>
+                    <i class="Icon fi flaticon-cog" />
+                    <select class="AutoComplete" name="functionName" data-nullable="true">
+                        <option value="PO Header">PO Header</option>
+                    </select>
+                </label>
+
+                <label>
+                    <span>Client</span>
+                    <i class="Icon fi flaticon-connection" />
+                    <input type="text" name="client" maxlength="200" />
+                </label>
+
+                <label>
+                    <span>Message server host</span>
+                    <i class="Icon fi flaticon-connection" />
+                    <input type="text" name="messageServerHost" maxlength="200" />
+                </label>
+
+                <label>
+                    <span>Message server service</span>
+                    <i class="Icon fi flaticon-connection" />
+                    <input type="text" name="messageServerService" maxlength="200" />
+                </label>
+
+                <label>
+                    <span>System ID</span>
+                    <i class="Icon fi flaticon-connection" />
+                    <input type="text" name="systemID" maxlength="200" />
+                </label>
+
+                <label>
+                    <span>Logon group</span>
+                    <i class="Icon fi flaticon-group" />
+                    <input type="text" name="logonGroup" maxlength="200" />
+                </label>
+
+                <label>
+                    <span>Language</span>
+                    <i class="Icon fi flaticon-align-left" />
+                    <input type="text" name="language" maxlength="200" />
+                </label>
+            </div>
+            <div class="Tab">
+                SQL Server
+            </div>
+            <div class="Tab">
+                Oracle
+            </div>
+            <div class="Clearing"></div>
         </div>
-        <div class="Clearing"></div>
     </form>
-
 </div>
 
 <script type="text/javascript">
-    new matematici.DetailPage({
-        formSelector: "form#Detail",
-        initHandler: function (detailPage) {
-            matematici.controls.setEditable($("input[name=code]", detailPage.getElement()), detailPage.isNew());
-        }
-    });
+    var
+        formSelector = "form#Detail",
+        formElement = $(formSelector),
+        codeInput = $("input.Code", formElement),
+        classSelect = $("select.SourceClass", formElement),
+
+        tab = new matematici.Tab(formSelector + " div.TabContainer", {
+            fixedHeight: true
+        }),
+
+        detailPage = new matematici.DetailPage({
+            formSelector: formSelector,
+            completeHandler: function (detailPage) {
+                matematici.controls.setEditable($("input[name=code]", detailPage.getElement()), detailPage.isNew());
+                toggleTabs();
+                var
+                    parameters = JSON.parse(matematici.popup.getData().parameters),
+                    tabPage = tab.getItem(tab.getLabels().filter(".Parameters." + classSelect.val()).prevAll().size());
+                $("*[name]", tabPage.tab).each(function () {
+                    var field = $(this);
+                    field.val(parameters[field.attr("name")]);
+                });
+            },
+            parametersPrepareHandler: function () {
+                var
+                    parameters = {},
+                    tabPage = tab.getItem(tab.getLabels().filter(".Parameters:visible").prevAll().size());
+                $("*[name]", tabPage.tab).each(function () {
+                    var field = $(this);
+                    parameters[field.attr("name")] = field.val();
+                });
+                return {
+                    data: {
+                        parameters: JSON.stringify(parameters),
+                        password: $("*[type=password]", tabPage.tab).val()
+                    }
+                };
+            },
+            buttons: [{
+                icon: "cog",
+                text: "test",
+                ahidden: true,
+                id: "TestButton",
+                handler: function () {
+                    var action = function () {
+                        $.ajax({
+                            type: "post",
+                            url: "@BaseUrl/DataSources/Data/Test",
+                            contentType: "application/json; charset=utf-8",
+                            data: JSON.stringify({ code: codeInput.val() })
+                        }).done(function (result) {
+                            matematici.dialog.show("Connection test", "Test succesfully completed");
+                        });
+                    }
+                    if (matematici.canClose)
+                        action();
+                    else
+                        matematici.dialog.show("warning", "There are unsaved change.", [
+                            {
+                                text: "save", icon: "check", handler: function () {
+                                    matematici.save(action);
+                                }
+                            },
+                            { text: "cancel", icon: "times", cancelButton: true }
+                        ]);
+
+
+                    return true;
+                }
+            }]
+        }),
+
+        toggleTabs = function () {
+            $(".TabLabels a.Parameters", tab.getElement()).hide().filter("." + classSelect.val()).show();
+        };
+
+    classSelect.on("change", toggleTabs);
 </script>

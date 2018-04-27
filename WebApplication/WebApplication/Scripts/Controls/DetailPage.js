@@ -82,7 +82,7 @@
 
 			setTimeout(function () {
 				if (options.initHandler) options.initHandler(detailPage);
-				form.setValues(data);
+				if (data) form.setValues(data);
 				if (options.completeHandler) options.completeHandler(detailPage);
 			}, 0);
 		};

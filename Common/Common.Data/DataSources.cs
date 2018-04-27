@@ -23,5 +23,7 @@ namespace CheckListManager.Common.Data
         public System.DateTimeOffset CreatedOn { get; set; }
         public string ModifiedBy { get; set; }
         public Nullable<System.DateTimeOffset> ModifiedOn { get; set; }
+        public string Class { get; set; }
+        public string Password { get; set; }
     }
 }

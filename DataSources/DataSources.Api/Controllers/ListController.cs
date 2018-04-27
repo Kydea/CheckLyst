@@ -7,7 +7,8 @@ using System.Web.Http;
 
 namespace CheckListManager.DataSources.Api.Controllers
 {
-	[RoutePrefix("List")]
+    [Authorize(Roles = "FunctionGroup#DataSources")]
+    [RoutePrefix("List")]
 	public class ListController : BaseApiController
 	{
 		private readonly IListService _listService;
@@ -19,7 +20,6 @@ namespace CheckListManager.DataSources.Api.Controllers
 			_detailService = detailService;
 		}
 
-        [Authorize(Roles = "FunctionGroup#DataSources")]
         [Authorize(Roles = "DataSources#View")]
 		[HttpPost]
 		[Route("GetData")]
@@ -28,15 +28,6 @@ namespace CheckListManager.DataSources.Api.Controllers
             return Ok(await _listService.GetDataAsync(Identity.CompanyId, request));
 		}
 
-        [Authorize(Roles = "Prototypes#View")]
-        [HttpPost]
-        [Route("GetSyntheticData")]
-        public async Task<IHttpActionResult> GetSyntheticData(PagingRequest<ListRequest> request)
-        {
-            return Ok(await _listService.GetSyntheticDataAsync(Identity.CompanyId, request));
-        }
-
-        [Authorize(Roles = "FunctionGroup#DataSources")]
         [Authorize(Roles = "DataSources#Edit")]
 		[HttpPost]
 		[Route("Add")]
@@ -45,7 +36,6 @@ namespace CheckListManager.DataSources.Api.Controllers
 			return Ok(await _detailService.AddAsync(Identity, request.Data));
 		}
 
-        [Authorize(Roles = "FunctionGroup#DataSources")]
         [Authorize(Roles = "DataSources#Edit")]
 		[HttpPost]
 		[Route("Edit")]
@@ -54,7 +44,6 @@ namespace CheckListManager.DataSources.Api.Controllers
 			return Ok(await _detailService.EditAsync(Identity, request.Data));
 		}
 
-        [Authorize(Roles = "FunctionGroup#DataSources")]
         [Authorize(Roles = "DataSources#Edit")]
 		[HttpPost]
 		[Route("Delete")]
@@ -62,5 +51,13 @@ namespace CheckListManager.DataSources.Api.Controllers
 		{
 			return Ok(await _detailService.DeleteAsync(Identity, request.Data.Code));
 		}
+
+        [Authorize(Roles = "DataSources#View")]
+        [HttpPost]
+        [Route("Test")]
+        public async Task<IHttpActionResult> Test(Message<DetailRequest> request)
+        {
+            return Ok(await _detailService.DeleteAsync(Identity, request.Data.Code));
+        }
     }
 }

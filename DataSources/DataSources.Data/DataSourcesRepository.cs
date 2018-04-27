@@ -69,6 +69,9 @@ namespace CheckListManager.DataSources.Data
             var ExistingPrototypeType = await GetDataSourceAsync(identity, dataSource.Code);
             ExistingPrototypeType.Code = dataSource.Code;
             ExistingPrototypeType.Description = dataSource.Description;
+            if (!string.IsNullOrEmpty(dataSource.Password))
+                ExistingPrototypeType.Password = dataSource.Password;
+            ExistingPrototypeType.Data = dataSource.Data;
             ExistingPrototypeType.ModifiedOn = DateTimeOffset.UtcNow;
             ExistingPrototypeType.ModifiedBy = identity.Code;
             await SaveChangesAsync();

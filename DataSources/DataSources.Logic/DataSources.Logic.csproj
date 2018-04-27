@@ -40,6 +40,9 @@
     <Reference Include="AutoMapper, Version=6.1.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
       <HintPath>..\..\packages\AutoMapper.6.1.1\lib\net45\AutoMapper.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\..\packages\NLog.4.4.12\lib\net45\NLog.dll</HintPath>
     </Reference>
@@ -53,18 +56,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\DataRequest.cs" />
+    <Compile Include="Data\Parameter.cs" />
+    <Compile Include="Data\SourceBase.cs" />
+    <Compile Include="Data\Sources\SAP.cs" />
     <Compile Include="Detail\IDetailService.cs" />
     <Compile Include="Detail\DetailRequest.cs" />
     <Compile Include="Detail\DetailResponse.cs" />
     <Compile Include="Detail\DetailService.cs" />
     <Compile Include="Data\IDataService.cs" />
     <Compile Include="Data\DataService.cs" />
-    <Compile Include="List\SyntheticRow.cs" />
     <Compile Include="List\ListRow.cs" />
     <Compile Include="List\ListService.cs" />
     <Compile Include="List\IListService.cs" />
     <Compile Include="List\ListResponse.cs" />
     <Compile Include="List\ListRequest.cs" />
+    <Compile Include="Data\DataSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -98,5 +105,6 @@
       <Name>Trail.Data</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

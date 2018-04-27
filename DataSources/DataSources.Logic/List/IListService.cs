@@ -8,6 +8,5 @@ namespace CheckListManager.DataSources.Logic.List
     public interface IListService: IService
     {
         Task<PagingResponse<List<ListRow>>> GetDataAsync(long Company, PagingRequest<ListRequest> form);
-        Task<PagingResponse<List<SyntheticRow>>> GetSyntheticDataAsync(long Company, PagingRequest<ListRequest> form);
     }
 }
