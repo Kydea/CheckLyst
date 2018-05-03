@@ -123,7 +123,7 @@ namespace CheckListManager.AccessControl.Logic.Services
             }
             catch (Exception Exception)
             {
-                throw new Exception("LDAP Error. " + Exception.Message);
+                throw new AuthenticationException(104, "LDAP Error. " + Exception.Message);
             }
         }
 

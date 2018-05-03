@@ -1,4 +1,6 @@
-﻿namespace CheckListManager.Common.Core.Web.Security
+﻿using System.Runtime.Serialization;
+
+namespace CheckListManager.Common.Core.Web.Security
 {
     public interface IDefaultIdentity
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CheckListManager.DataSources.Logic.Data
+namespace CheckListManager.ExternalSources.Logic
 {
     public class Parameter
     {
