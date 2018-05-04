@@ -23,17 +23,27 @@
         },
 
         sourceChanged = function (column) {
-            sourceColumn.empty();
-			var columns = []; //matematici.sources[prototypes.prototype.getModel().externalSources[sourceName.val()]];
-            for (index in columns)
-				$("<option />").appendTo(sourceColumn).text(columns[index]).attr("value", columns[index]);
-			sourceName.data("autoComplete").refresh();
-			sourceColumn.data("autoComplete").refresh();
-            if (column)
-                sourceColumn.val(column);
-            else
-                sourceColumn[0].selectedIndex = 0;
-            valueChanged();
+			sourceColumn.empty();
+			$.ajax({
+				type: "post",
+				url: matematici.urls.api + "/DataSources/Data/GetDataSource",
+				dataType: "json",
+				contentType: "application/json; charset=utf-8",
+				data: JSON.stringify({
+					code: prototypes.prototype.getModel().externalSources[sourceName.val()]
+				})
+			}).done(function (result) {
+				var columns = result.columns;
+				for (index in columns)
+					$("<option />").appendTo(sourceColumn).text(columns[index]).attr("value", columns[index]);
+				sourceName.data("autoComplete").refresh();
+				sourceColumn.data("autoComplete").refresh();
+				if (column)
+					sourceColumn.val(column);
+				else
+					sourceColumn[0].selectedIndex = 0;
+				valueChanged();
+			});
         },
 
         selectChanged = function () {

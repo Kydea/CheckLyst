@@ -18,18 +18,18 @@ namespace CheckListManager.DataSources.Api.Controllers
             _dataService = dataService;
 		}
 
-        [Authorize(Roles = "Instances#Edit")]
+        [Authorize(Roles = "Instances#Edit, Prototypes#View")]
         [HttpPost]
         [Route("GetDataSource")]
         public async Task<IHttpActionResult> GetDataSource(DataRequest request)
         {
-            return Ok(await _dataService.GetDataSourceAsync(Identity.CompanyId, request)); 
+            return Ok(await _dataService.GetDataSourceAsync(Identity.CompanyId, request.Code)); 
         }
 
         [Authorize(Roles = "Prototypes#View")]
         [HttpPost]
         [Route("GetDataSources")]
-        public async Task<IHttpActionResult> GetDataSources(PagingRequest<Request> request)
+        public async Task<IHttpActionResult> GetDataSources(PagingRequest<DataRequest> request)
         {
             return Ok(await _dataService.GetDataSourcesAsync(Identity.CompanyId, request));
         }

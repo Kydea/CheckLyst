@@ -12,13 +12,14 @@ namespace CheckListManager.ExternalSources.Logic.SAP
     {
         private Object Lock = new System.Object();
 
-        private static bool ConfigurationRegistered { get; set; }
+        private static SAPConfiguration SAPConfiguration { get; set; }
+
         private RfcDestination Destination { get; set; }
-        private SAPParameters SourceParameters { get;set;}
+        private SAPParameters SAPParameters { get;set;}
 
         public override void Parse(string Data)
         {
-            SourceParameters = JsonConvert.DeserializeObject<SAPParameters>(Data);
+            SAPParameters = JsonConvert.DeserializeObject<SAPParameters>(Data);
             BuildParameters();
             BuildColumns();
         }
@@ -27,13 +28,9 @@ namespace CheckListManager.ExternalSources.Logic.SAP
         {
             lock (Lock)
             {
-                if (!ConfigurationRegistered)
-                {
-                    RfcDestinationManager.RegisterDestinationConfiguration(new SAPConfiguration());
-                    ConfigurationRegistered = true;
-                }
-
-                SAPConfiguration.Check(Code, SourceParameters, Version);
+                if (SAPConfiguration == null)
+                    RfcDestinationManager.RegisterDestinationConfiguration(SAPConfiguration = new SAPConfiguration());
+                SAPConfiguration.Check(Code, SAPParameters, Version, Password);
             }
 
             Destination = RfcDestinationManager.GetDestination(Code);
@@ -45,19 +42,19 @@ namespace CheckListManager.ExternalSources.Logic.SAP
 
         private void BuildParameters()
         {
-            switch (SourceParameters.FunctionName)
+            switch (SAPParameters.FunctionName)
             {
                 case "PO Header":
                     Parameters = new List<Parameter> { new Parameter { Label = "PO Number", Name = "PO", ParameterType = "Text" } };
                     break;
                 default:
-                    throw new NotSupportedException($"Source name {SourceParameters.FunctionName}");
+                    throw new NotSupportedException($"Source name {SAPParameters.FunctionName}");
             }
         }
 
         private void BuildColumns()
         {
-            switch (SourceParameters.FunctionName)
+            switch (SAPParameters.FunctionName)
             {
                 case "PO Header":
                     Columns = new List<string>
@@ -78,7 +75,7 @@ namespace CheckListManager.ExternalSources.Logic.SAP
                     };
                     break;
                 default:
-                    throw new NotSupportedException($"Source name {SourceParameters.FunctionName}");
+                    throw new NotSupportedException($"Source name {SAPParameters.FunctionName}");
             }
         }
 

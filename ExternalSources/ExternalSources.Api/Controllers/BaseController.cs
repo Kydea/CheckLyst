@@ -12,6 +12,7 @@ namespace CheckListManager.ExternalSources.Api.Controllers
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
+        [HttpPost]
         [Route("Test")]
         public IHttpActionResult Test(ExternalSourceRequest request)
         {
@@ -31,5 +32,24 @@ namespace CheckListManager.ExternalSources.Api.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("GetMetaData")]
+        public IHttpActionResult GetMetaData(ExternalSourceRequest request)
+        {
+            try
+            {
+                using (var Source = SourceBase.Build(request.DataSourceClass, request.DataSourceCode, request.Password, request.Version, request.DataSourceParameters))
+                    return Ok(new {
+                        Code = request.DataSourceCode,
+                        Source.Parameters,
+                        Source.Columns
+                    });
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, "External source error");
+                throw;
+            }
+        }
     }
 }

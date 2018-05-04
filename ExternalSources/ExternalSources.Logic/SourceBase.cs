@@ -29,7 +29,7 @@ namespace CheckListManager.ExternalSources.Logic
         public static SourceBase Build(string Class, string Code, string Password, DateTimeOffset Version, string Data)
         {
             var SourceType = Type.GetType($"CheckListManager.ExternalSources.Logic.{Class}.Source");
-            if (SourceType.IsAssignableFrom(typeof(SourceBase)))
+            if (SourceType == null || SourceType.IsAssignableFrom(typeof(SourceBase)))
                 throw new InvalidOperationException();
             var SourceBase = (SourceBase)Activator.CreateInstance(SourceType);
             SourceBase.Code = Code;

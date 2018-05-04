@@ -127,7 +127,7 @@
         //Loads data sources
         $.ajax({
             type: "post",
-            url: "@BaseUrl/DataSources/List/GetSyntheticData",
+            url: "@BaseUrl/DataSources/Data/GetDataSources",
             dataType: "json",
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({
@@ -138,7 +138,7 @@
                 itemsPerPage: 1000
             })
         }).done(function (result) {
-            prototype.setDataSources(result);
+            prototype.setDataSources(result.data);
         });
 
         matematici.save = prototype.save;

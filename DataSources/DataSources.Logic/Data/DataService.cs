@@ -2,6 +2,7 @@
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Logic.DataEngine;
 using CheckListManager.DataSources.Data;
+using Newtonsoft.Json;
 using NLog;
 using SAP.Middleware.Connector;
 using System;
@@ -24,23 +25,30 @@ namespace CheckListManager.DataSources.Logic.Data
             _client = client;
         }
 
-        public async Task<DataSource> GetDataSourceAsync(long Company, DataRequest Form)
-            =>
-                (await _dataSourcesRepository.GetDataSourcesAsync(
-                    Company,
-                    ds => new DataSource
-                    {
-                        Code = ds.Code,
-                        Class = ds.Class,
-                        Data = ds.Data
-                    },
-                    wf => wf.Company == Company && wf.Code == Form.Code,
-                    p => p.Code,
-                    0,
-                    1
-                )).Data.SingleOrDefault();
+        public async Task<DataSource> GetDataSourceAsync(long Company, string Code)
+        {
+            var Record = (await _dataSourcesRepository.GetDataSourcesAsync(
+                Company,
+                ds => ds,
+                wf => wf.Company == Company && wf.Code == Code,
+                p => p.Code,
+                1,
+                1
+            )).Data.SingleOrDefault();
 
-        public async Task<PagingResponse<List<DataSource>>> GetDataSourcesAsync(long Company, PagingRequest<Request> Form)
+            var Data = await CallExternalSource("GetMetaData", new
+            {
+                dataSourceCode = $"{Company}.{Record.Code}",
+                dataSourceClass = Record.Class,
+                password = Record.Password,
+                dataSourceParameters = Record.Data,
+                version = Record.ModifiedOn ?? Record.CreatedOn
+            });
+
+            return JsonConvert.DeserializeObject<DataSource>(Data);
+        }
+
+        public async Task<PagingResponse<List<DataSource>>> GetDataSourcesAsync(long Company, PagingRequest<DataRequest> Form)
             =>
                 await _dataSourcesRepository.GetDataSourcesAsync(
                     Company,
@@ -67,13 +75,13 @@ namespace CheckListManager.DataSources.Logic.Data
                 1
             )).Data.SingleOrDefault();
 
-            var DataSource = new DataSource {
-                Data = Record.Data,
-                Password = Record.Password,
-                Class = Record.Class
-            };
-
-            await CallExternalSource("Test", new { });
+            await CallExternalSource("Test", new {
+                dataSourceCode = $"{Company}.{Record.Code}",
+                dataSourceClass = Record.Class,
+                password = Record.Password,
+                dataSourceParameters = Record.Data,
+                version = Record.ModifiedOn ?? Record.CreatedOn
+            });
         }
 
         private async Task<string> CallExternalSource<T>(string Action, T Data)

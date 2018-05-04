@@ -13,36 +13,35 @@ namespace CheckListManager.ExternalSources.Logic.SAP
 
         public event RfcDestinationManager.ConfigurationChangeHandler ConfigurationChanged;
 
-        public static void Check(string Code, SAPParameters SAPParameters, DateTimeOffset Version)
+        public void Check(string Code, SAPParameters SAPParameters, DateTimeOffset Version, string Password)
         {
             if (!SourceParametersDictionary.ContainsKey(Code) || Version - SourceParametersDictionary[Code].Version > TimeSpan.Zero)
-                SourceParametersDictionary.Add(Code, SAPParameters);
-        }
-
-        public SAPConfiguration()
-        {
+            {
+                SAPParameters.Version = Version;
+                SAPParameters.Password = Password;
+                SourceParametersDictionary[Code] = SAPParameters;
+                ConfigurationChanged?.Invoke(Code, new RfcConfigurationEventArgs(RfcConfigParameters.EventType.CHANGED, GetParameters(Code)));
+            }
         }
 
         public bool ChangeEventsSupported()
         {
-            return false;
+            return true;
         }
 
         public RfcConfigParameters GetParameters(string Code)
         {
-            var ConfigParameters = new RfcConfigParameters();
+            var Parameters = new RfcConfigParameters();
             var SAPParameters = SourceParametersDictionary[Code];
-            ConfigParameters.Add(RfcConfigParameters.Name, Code);
-            ConfigParameters.Add(RfcConfigParameters.Client, SAPParameters.Client);
-            ConfigParameters.Add(RfcConfigParameters.MessageServerHost, SAPParameters.MessageServerHost);
-            ConfigParameters.Add(RfcConfigParameters.MessageServerService, SAPParameters.MessageServerService);
-            ConfigParameters.Add(RfcConfigParameters.SystemID, SAPParameters.SystemID);
-            ConfigParameters.Add(RfcConfigParameters.LogonGroup, SAPParameters.LogonGroup);
-            ConfigParameters.Add(RfcConfigParameters.User, SAPParameters.User);
-            ConfigParameters.Add(RfcConfigParameters.Password, SAPParameters.Password);
-            ConfigParameters.Add(RfcConfigParameters.Language, SAPParameters.Language);
-            ConfigurationChanged?.Invoke(Code, new RfcConfigurationEventArgs(RfcConfigParameters.EventType.CHANGED, ConfigParameters));
-            return ConfigParameters;
+            Parameters.Add(RfcConfigParameters.Client, SAPParameters.Client);
+            Parameters.Add(RfcConfigParameters.MessageServerHost, SAPParameters.MessageServerHost);
+            Parameters.Add(RfcConfigParameters.MessageServerService, SAPParameters.MessageServerService);
+            Parameters.Add(RfcConfigParameters.SystemID, SAPParameters.SystemID);
+            Parameters.Add(RfcConfigParameters.LogonGroup, SAPParameters.LogonGroup);
+            Parameters.Add(RfcConfigParameters.User, SAPParameters.User);
+            Parameters.Add(RfcConfigParameters.Password, SAPParameters.Password);
+            Parameters.Add(RfcConfigParameters.Language, SAPParameters.Language);
+            return Parameters;
         }
     }
 }

@@ -23,9 +23,13 @@
         add = function (row) {
             noRecord.remove();
             var value = $("<td />").addClass("SourceColumn");
-            if (model.state == prototypes.Prototype.states.draft)
-                value.append(sources.clone().val(row.source));
-            else
+			if (model.state == prototypes.Prototype.states.draft) {
+				var select = sources.clone().val(row.source);
+				value.append(select);
+				setTimeout(function () {
+					new matematici.AutoComplete(select).initialize();
+				}, 0)
+			} else
                 value.text(row.source);
 
             $("<tr />")
@@ -90,7 +94,7 @@
 
 			sources = $("<select />");
 			var dataSources = prototypes.prototype.getDataSources();
-			for (index in dataSources.data)
+			for (index in dataSources)
 				$("<option />").appendTo(sources).text(dataSources.data[index].code).val(dataSources.data[index].code);
 
             for (var code in model.externalSources)

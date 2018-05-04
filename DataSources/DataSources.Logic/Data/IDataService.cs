@@ -8,8 +8,8 @@ namespace CheckListManager.DataSources.Logic.Data
 {
     public interface IDataService : IService
     {
-        Task<DataSource> GetDataSourceAsync(long Company, DataRequest form);
-        Task<PagingResponse<List<DataSource>>> GetDataSourcesAsync(long Company, PagingRequest<Request> form);
+        Task<DataSource> GetDataSourceAsync(long Company, string Code);
+        Task<PagingResponse<List<DataSource>>> GetDataSourcesAsync(long Company, PagingRequest<DataRequest> form);
         Task TestAsync(long Company, string Code);
     }
 }
