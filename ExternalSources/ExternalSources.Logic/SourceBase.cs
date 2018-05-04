@@ -16,16 +16,27 @@ namespace CheckListManager.ExternalSources.Logic
 
         public abstract void Test();
 
+        protected string Code { get; private set; }
+
+        protected string Password { get; private set; }
+
+        protected DateTimeOffset Version { get; private set; }
+
         public List<string> Columns { get; protected set; }
 
         public List<Parameter> Parameters { get; protected set; }
 
-        public static SourceBase Build(string Class)
+        public static SourceBase Build(string Class, string Code, string Password, DateTimeOffset Version, string Data)
         {
             var SourceType = Type.GetType($"CheckListManager.ExternalSources.Logic.{Class}.Source");
             if (SourceType.IsAssignableFrom(typeof(SourceBase)))
                 throw new InvalidOperationException();
-            return (SourceBase)Activator.CreateInstance(SourceType);
+            var SourceBase = (SourceBase)Activator.CreateInstance(SourceType);
+            SourceBase.Code = Code;
+            SourceBase.Password = Password;
+            SourceBase.Version = Version;
+            SourceBase.Parse(Data);
+            return SourceBase;
         }
     }
 }

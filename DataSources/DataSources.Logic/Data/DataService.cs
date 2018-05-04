@@ -2,6 +2,7 @@
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Logic.DataEngine;
 using CheckListManager.DataSources.Data;
+using NLog;
 using SAP.Middleware.Connector;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,8 @@ namespace CheckListManager.DataSources.Logic.Data
     {
         private readonly IDataSourcesRepository _dataSourcesRepository;
         private readonly IServiceClient _client;
+
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public DataService(IDataSourcesRepository dataSourcesRepository, IServiceClient client)
         {
@@ -77,12 +80,15 @@ namespace CheckListManager.DataSources.Logic.Data
         {
             try
             {
-                var response = await _client.PostAsync("ExternalSource/" + Action, Data);
-                return await response.Content.ReadAsStringAsync();
+                var response = await _client.PostAsync("ExternalSources/" + Action, Data);
+                var responseData = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                    throw new Exception(responseData);
+                return responseData;
             }
             catch (Exception e)
             {
-                throw new Exception("External source not available", e);
+                throw new Exception("External source error", e);
             }
 
         }
