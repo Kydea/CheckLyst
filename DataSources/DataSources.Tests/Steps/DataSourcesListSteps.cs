@@ -51,6 +51,12 @@ namespace CheckListManager.DataSources.Tests.Steps
             _context.Request.Code = Code;
         }
 
+        [Given(@"I assign '(.*)' as the class of the Data Source")]
+        public void GivenIAssignAsTheClassOfTheDataSource(string Class)
+        {
+            _context.Request.Class = Class;
+        }
+
         [Given(@"I assign '(.*)' as the description of the Data Source")]
         public void GivenIAssignAsTheDescriptionOfTheDataSource(string Description)
         {
@@ -74,6 +80,7 @@ namespace CheckListManager.DataSources.Tests.Steps
             var element = data.First();
 
             _context.Request.Code = element.Code;
+            _context.Request.Class = element.Class;
             _context.Request.Description = element.Description;
         }
         #endregion
