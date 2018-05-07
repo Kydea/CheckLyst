@@ -7,11 +7,21 @@ div.CheckListGrid div.Container {
   padding: 20px;
   box-shadow: rgba(0, 0, 0, 0.15) 0 0 15px 2px;
   overflow: auto; }
+  div.CheckListGrid div.Container h2 {
+    margin: 0;
+    padding-bottom: 30px; }
   div.CheckListGrid div.Container div.Parameters {
+    clear: both;
     margin-left: -20px;
     margin-top: -20px; }
+    div.CheckListGrid div.Container div.Parameters label {
+      margin: 20px 0 0 20px;
+      width: 200px; }
+    div.CheckListGrid div.Container div.Parameters input {
+      margin-top: 5px; }
   div.CheckListGrid div.Container table.Grid {
-    clear: both; }
+    clear: both;
+    margin-top: 0; }
     div.CheckListGrid div.Container table.Grid tr th {
       text-align: center; }
     div.CheckListGrid div.Container table.Grid tr.Selected td {

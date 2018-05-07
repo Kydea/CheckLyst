@@ -348,6 +348,18 @@ div.Instance {
                 }
             }
 
+            .ExternalSourceLink {
+                position: absolute;
+                top: 26px;
+                right: 6px;
+                margin: 0;
+
+                &:hover {
+                    text-decoration: none;
+                }
+            }
+
+
             .Copy {
                 position: absolute;
                 top: 21px;

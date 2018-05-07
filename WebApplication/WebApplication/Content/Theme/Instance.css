@@ -218,6 +218,14 @@ div.Instance .Item.Field.ReadOnly.DateTime div.Input, div.Instance .Item.Field.R
 div.Instance .Item.Field.ReadOnly .AutoComplete, div.Instance .Item.Field.ReadOnly .AutoComplete-Filter, div.Instance .Item.Field.ReadOnly .AutoComplete-List {
   display: none !important; }
 
+div.Instance .Item.Field .ExternalSourceLink {
+  position: absolute;
+  top: 26px;
+  right: 6px;
+  margin: 0; }
+  div.Instance .Item.Field .ExternalSourceLink:hover {
+    text-decoration: none; }
+
 div.Instance .Item.Field .Copy {
   position: absolute;
   top: 21px;

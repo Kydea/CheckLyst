@@ -16,6 +16,8 @@ namespace CheckListManager.ExternalSources.Logic
 
         public abstract void Test();
 
+        public abstract IEnumerable<List<string>> GetData(Dictionary<string, string> Parameters, int Page);
+
         protected string Code { get; private set; }
 
         protected string Password { get; private set; }

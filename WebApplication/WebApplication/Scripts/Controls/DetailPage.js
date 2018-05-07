@@ -6,14 +6,14 @@
 		buttons = options.buttons || [],
 		form,
 
-		clickHandler = function (button, event, callback) {
+		clickHandler = function (button, event, callback, takeOpen) {
 			if (button.hasClass("ReadOnly")) return false;
 
 			form.trigger(event, function (result) {
 				form.handleResult(result);
 				if (result.valid) {
 					matematici.popup.getResult().saved = true;
-					matematici.popup.close();
+					if (!takeOpen) matematici.popup.close();
 					matematici.blip.ok(callback);
 				}
 			}, options.parametersPrepareHandler && options.parametersPrepareHandler());
@@ -75,8 +75,8 @@
 			if (!options.readOnly)
 				form.addChangeHandler(function () {
 					matematici.canClose = false;
-					matematici.save = function (callback) {
-						clickHandler($("#SaveButton"), data == null ? "Add" : "Edit", callback);
+					matematici.save = function (callback, takeOpen) {
+						clickHandler($("#SaveButton"), data == null ? "Add" : "Edit", callback, takeOpen);
 					}
 				});
 

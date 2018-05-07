@@ -75,7 +75,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         protected override bool IsReadOnlyByDefault()
         {
-            return base.IsReadOnlyByDefault() || ValueFormula != null || !string.IsNullOrEmpty(ExternalSourceName);
+            return base.IsReadOnlyByDefault() || ValueFormula != null; // || !string.IsNullOrEmpty(ExternalSourceName);
         }
 
         public bool Validate(string value)

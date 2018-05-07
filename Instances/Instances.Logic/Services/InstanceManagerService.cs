@@ -42,11 +42,12 @@ namespace CheckListManager.Instances.Logic.Services
         private readonly IWorkFlowsService _workFlowService;
         private readonly IQueueService _queueService;
         private readonly ICommonRepository _commonRepository;
+        private readonly IRedisCache _redisCache;
 
         public InstanceManagerService(IServiceClient client,
             IInstancesRepository instancesRepository, CheckListJsonConverter converter, IInstanceCacheService instanceCache,
             IConfigurationService configurationService, ISettingService settingService, IAuthenticationService authenticationService, 
-            IWorkFlowsService workFlowService, IQueueService queueService, ICommonRepository commonRepository)
+            IWorkFlowsService workFlowService, IQueueService queueService, ICommonRepository commonRepository, IRedisCache redisCache)
         {
             _client = client;
             _instancesRepository = instancesRepository;
@@ -58,6 +59,7 @@ namespace CheckListManager.Instances.Logic.Services
             _workFlowService = workFlowService;
             _queueService = queueService;
             _commonRepository = commonRepository;
+            _redisCache = redisCache;
         }
 
         public async Task<InstanceCacheObject> GetAsync(IDefaultIdentity identity, string code)
@@ -536,6 +538,46 @@ namespace CheckListManager.Instances.Logic.Services
             }
             await _instanceCache.RemoveAsync(cacheObject.Code);
         }
+
+        public async Task<string> GetExternalSourceRows(string code, IDefaultIdentity identity, string externalSourceCode, Dictionary<string, string> parameters, int page)
+        {
+            try
+            {
+                var cacheObject = await _instanceCache.GetAsync(code, true);
+                if (cacheObject == null)
+                    throw new InstanceException("Instance not found");
+                if (cacheObject.InstanceState != InstanceState.Draft && cacheObject.InstanceState != InstanceState.Progress)
+                    throw new InstanceException("Instance state not valid");
+                if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
+                    throw new InstanceException("Access denied");
+                if (!cacheObject.Instance.ExternalSources.ContainsKey(externalSourceCode))
+                    throw new InstanceException("Access denied");
+
+                var token = identity.Code + ":" + Guid.NewGuid();
+                await _redisCache.SetAsync($"Token:{token}", new
+                {
+                    dataSourceCode = cacheObject.Instance.ExternalSources[externalSourceCode],
+                    parameters,
+                    page
+                }, "S2S", new TimeSpan(0, 1, 0));
+                var response = await _client.PostAsync("DataSources/Data/GetData", new { token });
+                var responseData = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode != HttpStatusCode.OK)
+                    throw new Exception(responseData);
+
+                return responseData;
+            }
+            catch (InstanceException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, "Unable retrieve the external source data");
+                throw new InstanceException("Unable retrieve the external source data", e);
+            }
+        }
+
 
         #region Events
 

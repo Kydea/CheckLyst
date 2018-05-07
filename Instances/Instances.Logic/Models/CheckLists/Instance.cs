@@ -13,6 +13,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public bool ReadOnly { get; set; }
         public Dictionary<string, ICheckListElement> Elements { get; set; } = new Dictionary<string, ICheckListElement>();
         public Dictionary<string, Expression> Expressions { get; set; }
+        public Dictionary<string, string> ExternalSources { get; set; }
+        public Dictionary<string, Dictionary<string, string>> ExternalSourceRows { get; set; }
         public ICheckListGroup Header { get; set; }
         public List<ICheckListPage> Pages { get; set; }
 
@@ -64,6 +66,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public void Setup(bool Creation)
         {
             InCreation = Creation;
+
+            if (Creation)
+                ExternalSourceRows = ExternalSources.ToDictionary(x => x.Key, x => new Dictionary<string, string>());
 
             Header.CheckList = this;
             Header.Setup();

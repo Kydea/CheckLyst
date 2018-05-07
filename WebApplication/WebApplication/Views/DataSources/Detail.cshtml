@@ -130,6 +130,7 @@
         }),
 
         detailPage = new matematici.DetailPage({
+            takeOpenOnSave: true,
             formSelector: formSelector,
             completeHandler: function (detailPage) {
                 matematici.controls.setEditable($("input[name=code]", detailPage.getElement()), detailPage.isNew());
@@ -179,7 +180,7 @@
                         matematici.dialog.show("warning", "There are unsaved change.", [
                             {
                                 text: "save", icon: "check", handler: function () {
-                                    matematici.save(action);
+                                    matematici.save(action, true);
                                 }
                             },
                             { text: "cancel", icon: "times", cancelButton: true }

@@ -63,6 +63,7 @@
     <Compile Include="List\IListService.cs" />
     <Compile Include="List\ListResponse.cs" />
     <Compile Include="List\ListRequest.cs" />
+    <Compile Include="Messages\ExternalSourceRequest.cs" />
     <Compile Include="Messages\GetPrototypeRequest.cs" />
     <Compile Include="Messages\HistoryRow.cs" />
     <Compile Include="Messages\HistoryStep.cs" />

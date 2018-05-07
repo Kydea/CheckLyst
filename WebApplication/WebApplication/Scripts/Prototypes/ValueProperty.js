@@ -26,7 +26,7 @@
 			sourceColumn.empty();
 			$.ajax({
 				type: "post",
-				url: matematici.urls.api + "/DataSources/Data/GetDataSource",
+				url: matematici.urls.dataSources.api + "/Data/GetDataSource",
 				dataType: "json",
 				contentType: "application/json; charset=utf-8",
 				data: JSON.stringify({

@@ -83,5 +83,11 @@ namespace CheckListManager.ExternalSources.Logic.SAP
         {
             var Repository = Destination.Repository;
         }
+
+        public override IEnumerable<List<string>> GetData(Dictionary<string, string> Parameters, int Page)
+        {
+            for (int Index = 0; Index < Page; ++Index)
+                yield return new List<string> { $"{Index}", "Colonna 2", "Colonna 3" };
+        }
     }
 }

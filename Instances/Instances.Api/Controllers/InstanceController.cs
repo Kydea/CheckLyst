@@ -16,6 +16,7 @@ using CheckListManager.Common.Logic.Api.PDF;
 using CheckListManager.Instances.Logic.PDF;
 using CheckListManager.Common.Logic.Services;
 using System.Collections.Generic;
+using CheckListManager.Common.Core.Network;
 
 namespace CheckListManager.Instances.Api.Controllers
 {
@@ -27,14 +28,16 @@ namespace CheckListManager.Instances.Api.Controllers
         private readonly ICommonRepository _commonRepository;
         private readonly IConfigurationService _configurationService;
         private readonly ISettingService _settingService;
+        private readonly IServiceClient _client;
 
-        public InstanceController(IInstanceManagerService instanceManagerService, IRedisCache redisCache, ICommonRepository commonRepository, IConfigurationService configurationService, ISettingService settingService)
+        public InstanceController(IInstanceManagerService instanceManagerService, IRedisCache redisCache, ICommonRepository commonRepository, IConfigurationService configurationService, ISettingService settingService, IServiceClient client)
         {
             _instanceManagerService = instanceManagerService;
             _redisCache = redisCache;
             _commonRepository = commonRepository;
             _configurationService = configurationService;
             _settingService = settingService;
+            _client = client;
         }
 
         [HttpPost]
@@ -244,6 +247,20 @@ namespace CheckListManager.Instances.Api.Controllers
             var cacheObject = await _instanceManagerService.GetAsync(Data.CompanyId.Value, Data.UserCode, Data.Code);
             cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(Data.CompanyId.Value), cacheObject);
             return Content(HttpStatusCode.OK, new InstancePDF(Data.CompanyId.Value, Data.CompanyName, Data.TimeZone, _configurationService.PublicRepositoryUrl, cacheObject), new PDFFormatter(string.IsNullOrEmpty(cacheObject.Instance.FileName) ? "Instance" : cacheObject.Instance.FileName));
+        }
+
+        [HttpPost]
+        [Route("GetExternalSourceRows")]
+        public async Task<IHttpActionResult> GetExternalSourceRows(PagingRequest<ExternalSourceRequest> request)
+        {
+            try
+            {
+                return Ok(await _instanceManagerService.GetExternalSourceRows(request.Data.InstanceCode, Identity, request.Data.ExternalSourceCode, request.Data.Parameters, request.CurrentPage));
+            }
+            catch (Exception Exception)
+            {
+                return Error(Exception);
+            }
         }
     }
 }

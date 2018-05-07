@@ -18,8 +18,8 @@
 
         addFilter = function (parameter) {
             parameters
-                .append($("<label />").text(parameter.Label)
-                    .append($("<input />").attr({ type: "text", id: parameter.Name }).on("change, keydown", filterChanged))
+                .append($("<label />").text(parameter.label)
+                    .append($("<input />").attr({ type: "text", id: parameter.name }).on("change, keydown", filterChanged))
                 );
         },
 
@@ -55,13 +55,18 @@
                     load();
                 }));
 
-            $.ajax(matematici.urls.instances.externalSource, {
-                method: "post",
-                data: { Name: instances.instance.getExternalSources()[name], Page: -1 }
-            }).done(function (result) {
-                for (var index in result.Parameters)
-                    addFilter(result.Parameters[index]);
-            });
+			$.ajax({
+				type: "post",
+				url: matematici.urls.dataSources.api + "/Data/GetDataSource",
+				dataType: "json",
+				contentType: "application/json; charset=utf-8",
+				data: JSON.stringify({
+					code: instances.instance.getExternalSources()[name]
+				})
+			}).done(function (result) {
+				for (var index in result.parameters)
+					addFilter(result.parameters[index]);
+			});
         },
 
         getValues = function () {
@@ -95,10 +100,10 @@
             }
         },
 
-        load = function () {
-            $.ajax(matematici.urls.instances.externalSource, {
-                method: "post",
-                data: { Values: getValues(), Name: instances.instance.getExternalSources()[name], Page: page }
+		load = function () {
+			$.ajax(matematici.urls.instances.api + "/GetExternalSourceRows", {
+				method: "post",
+				data: { data: { instanceCode: instances.instance.getCode(), parameters: getValues(), externalSourceCode: name, page: page } }
             }).done(function (result) {
                 fill(result.Data);
             });

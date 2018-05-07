@@ -13,13 +13,29 @@ div.CheckListGrid {
         box-shadow: $Box-Shadow;
         overflow: auto;
 
+        h2 {
+            margin: 0;
+            padding-bottom: $Metric-Separator-Extended;
+        }
+
         div.Parameters {
+            clear: both;
             margin-left: -$Metric-Control-Space;
             margin-top: -$Metric-Control-Space;
+
+            label {
+                margin: 20px 0 0 20px;
+                width: 200px;
+            }
+
+            input {
+                margin-top: 5px;
+            }
         }
 
         table.Grid {
             clear: both;
+            margin-top: 0;
 
             tr {
                 th {

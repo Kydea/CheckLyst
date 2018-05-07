@@ -51,5 +51,24 @@ namespace CheckListManager.ExternalSources.Api.Controllers
                 throw;
             }
         }
+
+        [HttpPost]
+        [Route("GetData")]
+        public IHttpActionResult GetData(ExternalSourceRequest request)
+        {
+            try
+            {
+                using (var Source = SourceBase.Build(request.DataSourceClass, request.DataSourceCode, request.Password, request.Version, request.DataSourceParameters))
+                    return Ok(new
+                    {
+                        Rows = Source.GetData(request.ParametersValues, request.Page)
+                    });
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, "External source error");
+                throw;
+            }
+        }
     }
 }

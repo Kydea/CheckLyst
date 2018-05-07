@@ -140,7 +140,7 @@
 					for (var index in model.valuesList)
 						select.append($("<option />").attr("value", model.valuesList[index]).text(model.valuesList[index]));
 				} else if (model.externalSourceName && model.externalSourceColumn) {
-					element.addClass("ExternalSource").append($("<i />").addClass("fi flaticon-link-o"));
+					element.addClass("ExternalSource").append($("<i />").addClass("ExternalSourceLink fi flaticon-link-o"));
 					input.on("click", function () {
 						if (!element.hasClass("Inactive"))
 							new instances.ExternalSources(model.id, model.externalSourceName);

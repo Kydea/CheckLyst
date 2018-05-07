@@ -49,5 +49,13 @@ namespace CheckListManager.DataSources.Api.Controllers
                 return Error(Exception);
             }
         }
+
+        [Authorize(Roles = "Instances#Edit")]
+        [HttpPost]
+        [Route("GetDataSourceRows")]
+        public async Task<IHttpActionResult> GetDataSourceRows(PagingRequest<DataRequest> request)
+        {
+            return Ok(await _dataService.GetDataSourceRowsAsync(Identity.CompanyId, request));
+        }
     }
 }

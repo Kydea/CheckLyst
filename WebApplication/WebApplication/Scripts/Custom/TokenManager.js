@@ -23,6 +23,7 @@
 			setInterval(function () {
 				if (localStorage.refreshToken && new Date() - lastActivity > 900000) {
 					localStorage.refreshToken = null;
+					matematici.canClose = true;
 					matematici.navigator.open(matematici.urls.accessControl.login);
 					return;
 				}

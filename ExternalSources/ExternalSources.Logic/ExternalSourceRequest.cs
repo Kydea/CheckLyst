@@ -13,5 +13,7 @@ namespace CheckListManager.ExternalSources.Logic
         public string Password { get; set; }
         public string DataSourceParameters { get; set; }
         public DateTimeOffset Version { get; set; }
+        public int Page { get; set; }
+        public Dictionary<string, string> ParametersValues { get; set; }
     }
 }

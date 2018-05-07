@@ -11,6 +11,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public Dictionary<string, ICheckListElement> Elements { get; } = new Dictionary<string, ICheckListElement>();
         public Dictionary<string, Expression> Expressions { get; set; } = new Dictionary<string, Expression>();
         public Dictionary<string, string> ExternalSources { get; set; } = new Dictionary<string, string>();
+        public Dictionary<string, Dictionary<string, string>> ExternalSourceRows { get; }
         public ICheckListGroup Header { get; set; }
         public List<ICheckListPage> Pages { get; } = new List<ICheckListPage>();
         public string DescriptionFormulaString { get; set; }

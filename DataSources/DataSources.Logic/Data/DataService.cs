@@ -84,6 +84,28 @@ namespace CheckListManager.DataSources.Logic.Data
             });
         }
 
+        public async Task<string> GetDataSourceRowsAsync(long Company, PagingRequest<DataRequest> Request)
+        {
+            var Record = (await _dataSourcesRepository.GetDataSourcesAsync(
+                Company,
+                ds => ds,
+                wf => wf.Company == Company && wf.Code == Request.Data.Code,
+                p => p.Code,
+                1,
+                1
+            )).Data.SingleOrDefault();
+
+            return await CallExternalSource("GetData", new
+            {
+                dataSourceCode = $"{Company}.{Record.Code}",
+                dataSourceClass = Record.Class,
+                password = Record.Password,
+                dataSourceParameters = Record.Data,
+                version = Record.ModifiedOn ?? Record.CreatedOn,
+                page = Request.CurrentPage
+            });
+        }
+
         private async Task<string> CallExternalSource<T>(string Action, T Data)
         {
             try

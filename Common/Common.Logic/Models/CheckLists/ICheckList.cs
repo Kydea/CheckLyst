@@ -11,6 +11,8 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
         bool FTPExport { get; set; }
 
         Dictionary<string, Expression> Expressions { get; }
+        Dictionary<string, string> ExternalSources { get; }
+        Dictionary<string, Dictionary<string, string>> ExternalSourceRows { get; }
 
         void AddItem(ICheckListItem item);
 

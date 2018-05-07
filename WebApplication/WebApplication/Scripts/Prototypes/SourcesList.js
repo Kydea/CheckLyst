@@ -95,7 +95,7 @@
 			sources = $("<select />");
 			var dataSources = prototypes.prototype.getDataSources();
 			for (index in dataSources)
-				$("<option />").appendTo(sources).text(dataSources.data[index].code).val(dataSources.data[index].code);
+				$("<option />").appendTo(sources).text(dataSources[index].code).val(dataSources[index].code);
 
             for (var code in model.externalSources)
                 add({
