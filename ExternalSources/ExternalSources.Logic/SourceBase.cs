@@ -8,6 +8,7 @@ namespace CheckListManager.ExternalSources.Logic
 {
     public abstract class SourceBase : IDisposable
     {
+        public const int PAGE_SIZE = 20;
         public abstract void Parse(string Data);
 
         public abstract void Open();

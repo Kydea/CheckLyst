@@ -60,7 +60,17 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         {
             base.Update(DecimalSeparator);
             ValueFormula?.Update(CheckList.Expressions, RuntimeValues, DecimalSeparator);
-            if (ValueFormula != null && ValueFormula.HasValue) ConversionError = !ValueType.Validate(ValueFormula.Value);
+            if (ValueFormula != null && ValueFormula.HasValue)
+                ConversionError = !ValueType.Validate(ValueFormula.Value);
+            if (ExternalSourceName != null)
+            {
+                var Instance = CheckList as Instance;
+                string Value = Instance != null && ExternalSourceName != null && Instance.ExternalSourceRows.ContainsKey(ExternalSourceName) && Instance.ExternalSourceRows[ExternalSourceName].ContainsKey(ExternalSourceColumn) ?
+                    Instance.ExternalSourceRows[ExternalSourceName][ExternalSourceColumn] :
+                    null;
+                ConversionError = !ValueType.Validate(Value);
+                if (!ConversionError) this.Value = Value;
+            }
         }
 
         public bool ConversionError { get; set; }

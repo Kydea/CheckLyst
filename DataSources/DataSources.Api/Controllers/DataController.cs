@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using CheckListManager.Common.Logic.DataEngine;
 using System;
+using CheckListManager.Common.Logic.Cache;
+using CheckListManager.Common.Logic.DataSources;
 
 namespace CheckListManager.DataSources.Api.Controllers
 {
@@ -12,16 +14,18 @@ namespace CheckListManager.DataSources.Api.Controllers
 	public class DataController : BaseApiController
 	{
 		private readonly IDataService _dataService;
+        private readonly IRedisCache _redisCache;
 
-		public DataController(IDataService dataService)
+        public DataController(IDataService dataService, IRedisCache redisCache)
 		{
             _dataService = dataService;
-		}
+            _redisCache = redisCache;
+        }
 
         [Authorize(Roles = "Instances#Edit, Prototypes#View")]
         [HttpPost]
         [Route("GetDataSource")]
-        public async Task<IHttpActionResult> GetDataSource(DataRequest request)
+        public async Task<IHttpActionResult> GetDataSource(Logic.Data.DataRequest request)
         {
             return Ok(await _dataService.GetDataSourceAsync(Identity.CompanyId, request.Code)); 
         }
@@ -29,7 +33,7 @@ namespace CheckListManager.DataSources.Api.Controllers
         [Authorize(Roles = "Prototypes#View")]
         [HttpPost]
         [Route("GetDataSources")]
-        public async Task<IHttpActionResult> GetDataSources(PagingRequest<DataRequest> request)
+        public async Task<IHttpActionResult> GetDataSources(PagingRequest<Logic.Data.DataRequest> request)
         {
             return Ok(await _dataService.GetDataSourcesAsync(Identity.CompanyId, request));
         }
@@ -37,7 +41,7 @@ namespace CheckListManager.DataSources.Api.Controllers
         [Authorize(Roles = "DataSources#View")]
         [HttpPost]
         [Route("Test")]
-        public async Task<IHttpActionResult> Test(DataRequest request)
+        public async Task<IHttpActionResult> Test(Logic.Data.DataRequest request)
         {
             try
             {
@@ -53,9 +57,12 @@ namespace CheckListManager.DataSources.Api.Controllers
         [Authorize(Roles = "Instances#Edit")]
         [HttpPost]
         [Route("GetDataSourceRows")]
-        public async Task<IHttpActionResult> GetDataSourceRows(PagingRequest<DataRequest> request)
+        public async Task<IHttpActionResult> GetDataSourceRows(TokenRequest tokenRequest)
         {
-            return Ok(await _dataService.GetDataSourceRowsAsync(Identity.CompanyId, request));
+            var Data = await _redisCache.GetAsync<Common.Logic.DataSources.DataRequest>($"Token:{tokenRequest.token}", "S2S");
+            await _redisCache.RemoveAsync($"Token:{tokenRequest.token}", "S2S");
+
+            return Ok(await _dataService.GetDataSourceRowsAsync(Identity.CompanyId, Data));
         }
     }
 }

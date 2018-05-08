@@ -184,7 +184,7 @@
         };
 
 	this.update = function (model) {
-		readOnly = !!model.readOnly;
+        readOnly = !!model.readOnly || !!model.externalSourceName;
         span.html(model.descriptionValue);
         element.toggleClass("Inactive", model.readOnly);
         element.toggleClass("ReadOnly", readOnly);

@@ -22,6 +22,7 @@ div.CheckListGrid {
             clear: both;
             margin-left: -$Metric-Control-Space;
             margin-top: -$Metric-Control-Space;
+            padding-bottom: $Metric-Control-Space; 
 
             label {
                 margin: 20px 0 0 20px;

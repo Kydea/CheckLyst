@@ -127,10 +127,10 @@ namespace CheckListManager.Common.Logic.Api.PDF
             {
                 HttpWebResponse response = e.Response as HttpWebResponse;
 
-                if (response.StatusCode == HttpStatusCode.NotFound)
-                {
+                if (response?.StatusCode == HttpStatusCode.NotFound)
                     paragraph.AddText(String.Format("Image \"{0}\" not found.", uri));
-                }
+                else
+                    paragraph.AddText($"Error: {e.Message}");
             }
 
             return img;

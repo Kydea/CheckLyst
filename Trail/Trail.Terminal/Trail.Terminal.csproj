@@ -105,15 +105,17 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\Common\ConnectionStrings.config">
-      <Link>ConnectionStrings.config</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="..\..\Common\NLog.config">
       <Link>NLog.config</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="App.config" />
+    <None Include="ConnectionStrings.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ConnectionStrings.config.JNJ.DEV" />
+    <None Include="ConnectionStrings.config.JNJ.QA" />
+    <None Include="ConnectionStrings.config.Matematici" />
     <None Include="Trail.Terminal.snk" />
     <None Include="packages.config" />
   </ItemGroup>

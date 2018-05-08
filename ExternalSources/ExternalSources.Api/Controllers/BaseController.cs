@@ -18,7 +18,7 @@ namespace CheckListManager.ExternalSources.Api.Controllers
         {
             try
             {
-                using (var Source = SourceBase.Build(request.DataSourceClass, request.DataSourceCode, request.Password, request.Version, request.DataSourceParameters))
+                using (var Source = SourceBase.Build(request.className, request.code, request.password, request.version, request.data))
                 {
                     Source.Open();
                     Source.Test();
@@ -38,9 +38,9 @@ namespace CheckListManager.ExternalSources.Api.Controllers
         {
             try
             {
-                using (var Source = SourceBase.Build(request.DataSourceClass, request.DataSourceCode, request.Password, request.Version, request.DataSourceParameters))
+                using (var Source = SourceBase.Build(request.className, request.code, request.password, request.version, request.data))
                     return Ok(new {
-                        Code = request.DataSourceCode,
+                        Code = request.code,
                         Source.Parameters,
                         Source.Columns
                     });
@@ -58,11 +58,14 @@ namespace CheckListManager.ExternalSources.Api.Controllers
         {
             try
             {
-                using (var Source = SourceBase.Build(request.DataSourceClass, request.DataSourceCode, request.Password, request.Version, request.DataSourceParameters))
+                using (var Source = SourceBase.Build(request.className, request.code, request.password, request.version, request.data))
+                {
+                    Source.Open();
                     return Ok(new
                     {
-                        Rows = Source.GetData(request.ParametersValues, request.Page)
+                        Rows = Source.GetData(request.parameters, request.page)
                     });
+                }
             }
             catch (Exception e)
             {

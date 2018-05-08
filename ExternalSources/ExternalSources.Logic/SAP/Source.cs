@@ -68,10 +68,7 @@ namespace CheckListManager.ExternalSources.Logic.SAP
                         "Material Description",
                         "Batch",
                         "Scheduled Quantity",
-                        "Effective Quantity",
-                        "DHT ?",
-                        "PO End Date ?",
-                        "Equipment"
+                        "Effective Quantity"
                     };
                     break;
                 default:
@@ -86,8 +83,75 @@ namespace CheckListManager.ExternalSources.Logic.SAP
 
         public override IEnumerable<List<string>> GetData(Dictionary<string, string> Parameters, int Page)
         {
-            for (int Index = 0; Index < Page; ++Index)
-                yield return new List<string> { $"{Index}", "Colonna 2", "Colonna 3" };
+            switch (SAPParameters.FunctionName)
+            {
+                case "PO Header":
+                    return FunctionPOHeader(Parameters, Page);
+                default:
+                    throw new NotSupportedException($"Source name {SAPParameters.FunctionName}");
+            }
         }
+
+        #region Functions
+
+        public IEnumerable<List<string>> FunctionPOHeader(Dictionary<string, string> Parameters, int Page)
+        {
+            if (string.IsNullOrWhiteSpace(Parameters["PO"]))
+                yield break;
+
+            var PO = Parameters["PO"]?.Trim().PadLeft(12, '0');
+
+            var Repository = Destination.Repository;
+            IRfcFunction function = Repository.CreateFunction("BAPI_PROCORD_GET_DETAIL");
+
+            IRfcStructure Structure = function.GetStructure("ORDER_OBJECTS");
+            Structure.SetValue("HEADER", "X");
+            Structure.SetValue("POSITIONS", "X");
+            Structure.SetValue("SEQUENCES", "X");
+            Structure.SetValue("COMPONENTS", "X");
+            Structure.SetValue("PHASES", "X");
+            Structure.SetValue("PROD_REL_TOOLS", "X");
+            Structure.SetValue("TRIGGER_POINTS", "X");
+
+            function.SetValue("NUMBER", PO);
+
+            IRfcStructure Return = function.GetStructure("RETURN");
+            var Message = Return.GetString("MESSAGE");
+            var Header = function.GetTable("HEADER");
+            var Positions = function.GetTable("POSITION");
+            var Sequences = function.GetTable("SEQUENCE");
+            var Components = function.GetTable("COMPONENT");
+            var Phase = function.GetTable("PHASE");
+            var ProdRelTools = function.GetTable("PROD_REL_TOOL");
+            var TriggerPoints = function.GetTable("TRIGGER_POINT");
+            function.Invoke(Destination);
+
+            var Row = 0;
+            for (var PhaseIndex = 0; PhaseIndex < Phase.RowCount && PhaseIndex < PAGE_SIZE * (Page + 1); ++PhaseIndex)
+            {
+                Phase.CurrentIndex = PhaseIndex;
+                if (Phase.CurrentRow["OPERATION_NUMBER"].GetString()?.EndsWith("00") ?? false)
+                {
+                    if (Row >= PAGE_SIZE * Page)
+                        yield return new List<string> {
+                            Header.GetString("ORDER_NUMBER"),
+                            Header.GetString("PROD_SCHED_PROFILE"),
+                            Phase.GetString("RESOURCE"),
+                            Phase.GetString("OPERATION_NUMBER"),
+                            Phase.GetString("DESCRIPTION"),
+                            Header.GetString("MATERIAL"),
+                            Header.GetString("MATERIAL_TEXT"),
+                            Header.GetString("BATCH"),
+                            Positions.GetString("QUANTITY"),
+                            Positions.GetString("DELIVERED_QUANTITY")
+                        };
+                    ++Row;
+                }
+            }
+
+
+        }
+
+        #endregion
     }
 }

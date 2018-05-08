@@ -104,6 +104,8 @@
     <Compile Include="Authentication\AuthenticateWithPINRequest.cs" />
     <Compile Include="Authentication\AuthenticateRequest.cs" />
     <Compile Include="Authentication\AuthorizeResponse.cs" />
+    <Compile Include="DataSources\DataRequest.cs" />
+    <Compile Include="ExternalSources\DataRequest.cs" />
     <Compile Include="FTP\InstancesFTPMessage.cs" />
     <Compile Include="FTP\PrototypesFTPMessage.cs" />
     <Compile Include="Email\EmailMessage.cs" />

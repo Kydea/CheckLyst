@@ -171,6 +171,7 @@
     <Compile Include="Formatters\PDFFormatter.cs" />
     <Compile Include="Formatters\CSVFormatter.cs" />
     <Compile Include="Messages\Message.cs" />
+    <Compile Include="Messages\TokenRequest.cs" />
     <Compile Include="Messages\PagingRequest.cs" />
     <Compile Include="Messages\PagingResponse.cs" />
     <Compile Include="Messages\ReleaseInfoMessage.cs" />

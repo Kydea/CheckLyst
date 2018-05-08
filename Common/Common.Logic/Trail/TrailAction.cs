@@ -32,6 +32,8 @@
         public const string InstanceIterationMovedUp = "Instance iteration moved up";
         public const string InstanceIterationMovedDown = "Instance iteration moved down";
 
+        public const string InstanceExternalSourceRowChanged = "Instance external source row changed";
+
         public const string InstanceExportCompleted = "Instance export completed";
         public const string InstanceExportFailed = "Instance export failed";
         public const string PrototypeExportCompleted = "Prototype export completed";

@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using CheckListManager.Common.Logic.Queue;
 using CheckListManager.Common.Logic.Trail;
 using CheckListManager.Common.Logic.FTP;
+using CheckListManager.Common.Logic.DataSources;
 
 namespace CheckListManager.Instances.Logic.Services
 {
@@ -554,18 +555,18 @@ namespace CheckListManager.Instances.Logic.Services
                     throw new InstanceException("Access denied");
 
                 var token = identity.Code + ":" + Guid.NewGuid();
-                await _redisCache.SetAsync($"Token:{token}", new
+                await _redisCache.SetAsync($"Token:{token}", new DataRequest
                 {
-                    dataSourceCode = cacheObject.Instance.ExternalSources[externalSourceCode],
-                    parameters,
-                    page
+                    code = cacheObject.Instance.ExternalSources[externalSourceCode],
+                    parameters = parameters,
+                    page = page
                 }, "S2S", new TimeSpan(0, 1, 0));
-                var response = await _client.PostAsync("DataSources/Data/GetData", new { token });
+                var response = await _client.PostAsync("DataSources/Data/GetDataSourceRows", new TokenRequest { token = token });
                 var responseData = await response.Content.ReadAsStringAsync();
                 if (response.StatusCode != HttpStatusCode.OK)
                     throw new Exception(responseData);
 
-                return responseData;
+                return JsonConvert.DeserializeObject<string>(responseData);
             }
             catch (InstanceException)
             {
@@ -652,7 +653,9 @@ namespace CheckListManager.Instances.Logic.Services
                     case "Quit":
                         await HandleQuitAsync(cacheObject, identity);
                         break;
-                    //case "ExternalSourceRowChange":
+                    case "ExternalSourceRowChange":
+                        await HandleExternalSourceRowChange(cacheObject, identity, request.ItemId, request.RowIndex, request.Row);
+                        break;
                     default:
                         throw new InstanceException($"Event type {request.Type} not handled.");
                 }
@@ -1060,6 +1063,38 @@ namespace CheckListManager.Instances.Logic.Services
         {
             cacheObject.TrackChanges(userCode);
             await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
+        }
+
+        private async Task HandleExternalSourceRowChange(InstanceCacheObject cacheObject, IDefaultIdentity identity, int? itemId, int? rowIndex, Dictionary<string, string> row)
+        {
+            if (!itemId.HasValue)
+                throw new InstanceException("Item id not sent");
+
+            var field = cacheObject.Instance.Items.ContainsKey(itemId.Value) ? cacheObject.Instance.Items[itemId.Value] as Field : null;
+            if (field == null)
+                throw new InstanceException($"Field {itemId} not found");
+
+            if (field.ReadOnly)
+                return;
+
+            if (cacheObject.Instance.ExternalSourceRows == null) cacheObject.Instance.ExternalSourceRows = new Dictionary<string, Dictionary<string, string>>();
+            cacheObject.Instance.ExternalSourceRows[field.ExternalSourceName] = row;
+
+            await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+            {
+                Company = cacheObject.CompanyId,
+                User = identity.Code,
+                Action = TrailAction.InstanceExternalSourceRowChanged,
+                Date = DateTimeOffset.UtcNow,
+                CheckList = cacheObject.InstanceCode,
+                Information = JsonConvert.SerializeObject(new
+                {
+                    Id = itemId,
+                    Values = row
+                })
+            });
+
+            await Update(cacheObject, identity.Code);
         }
 
         #endregion

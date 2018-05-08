@@ -13,7 +13,8 @@ div.CheckListGrid div.Container {
   div.CheckListGrid div.Container div.Parameters {
     clear: both;
     margin-left: -20px;
-    margin-top: -20px; }
+    margin-top: -20px;
+    padding-bottom: 20px; }
     div.CheckListGrid div.Container div.Parameters label {
       margin: 20px 0 0 20px;
       width: 200px; }

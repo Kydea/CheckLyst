@@ -3,6 +3,7 @@
         element,
         page = 0,
         parameters,
+        columns,
         next,
         previous,
         search,
@@ -34,8 +35,15 @@
                 ).append(
                     body = $("<tbody />")
                 ).on("click", "tr.Handler", function () {
-                    var tr = $(this);
-                    new instances.Event(instances.Events.externalSourceRowChange, itemId, { RowNumber: tr.data("index"), Row: JSON.stringify(tr.data("row")), FakeRow: tr.data("row") }).trigger();
+                    var
+                        tr = $(this),
+                        row = tr.data("row"),
+                        data = {};
+
+                    for (var index = 0; index < columns.length; ++index)
+                        data[index] = { key: columns[index], value: row[index] };
+
+                    new instances.Event(instances.Events.externalSourceRowChange, itemId, { rowIndex: tr.data("index"), row: data }).trigger();
                     element.remove();
                 });
 
@@ -65,47 +73,49 @@
 				})
 			}).done(function (result) {
 				for (var index in result.parameters)
-					addFilter(result.parameters[index]);
+                    addFilter(result.parameters[index]);
+
+                columns = result.columns;
+
+                for (var column in columns)
+                    if (columns[column][0] != "_")
+                        header.append($("<th />").text(columns[column].split("_").join(" ")));
 			});
         },
 
         getValues = function () {
             var values = {};
-            $("input", parameters).each(function () {
+            $("input", parameters).each(function (index) {
                 var input = $(this);
-                values[input.attr("id")] = input.val();
+				values[index] = {
+					key: input.attr("id"),
+					value: input.val()
+				}
             });
             return values;
         },
 
-        fill = function (values) {
+        fill = function (rows) {
             body.empty();
-            header.empty();
             previous.toggle(page > 0);
-            next.toggle(values.length > 0 && values.length < 20);
-            if (values.length == 0) {
-                header.append($("<th />").text(name));
-                body.append($("<tr />").addClass("NoRecord").append($("<td />").attr("colspan", 1).text("(no record)")))
-            } else {
-                for (var column in values[0])
-                    if (column[0] != "_")
-                        header.append($("<th />").text(column.split("_").join(" ")));
-
-                for (var row in values) {
+            next.toggle(rows.length > 0 && rows.length >= 20);
+            if (!rows || rows.length == 0) 
+                body.append($("<tr />").addClass("NoRecord").append($("<td />").attr("colspan", header.children().size()).text("(no record)")))
+            else 
+                for (var row in rows) {
                     var tr = $("<tr />").appendTo(body).addClass("Handler");
-                    for (var column in values[row])
+                    for (var column in rows[row])
                         if (column[0] != "_")
-                            tr.append($("<td />").html(values[row][column])).data({ index: parseInt(row) + 20 * page, row: values[row] });
+                            tr.append($("<td />").html(rows[row][column])).data({ index: parseInt(row) + 20 * page, row: rows[row] });
                 }
-            }
         },
 
 		load = function () {
 			$.ajax(matematici.urls.instances.api + "/GetExternalSourceRows", {
 				method: "post",
 				data: { data: { instanceCode: instances.instance.getCode(), parameters: getValues(), externalSourceCode: name, page: page } }
-            }).done(function (result) {
-                fill(result.Data);
+            }).done(function(result) {
+                fill(JSON.parse(result).rows);
             });
         };
 

@@ -23,6 +23,9 @@ values
 	('Prototype state changed'),
 	('Prototype state change proposed'),
 	('Prototype signature issued'),
+    ('Prototype export completed'),
+    ('Prototype export failed'),
+
 
 	('Instance created'),
 	('Instance opened'),
@@ -30,18 +33,15 @@ values
     ('Instance state changed'),
     ('Instance signature issued'),
     ('Instance signature canceled'),
-
 	('Instance export completed'),
     ('Instance export failed'),
-    ('Prototype export completed'),
-    ('Prototype export failed'),
-
 	('Instance value changed'),
 	('Instance value copied'),
 	('Instance iteration added'),
 	('Instance iteration deleted'),
 	('Instance iteration moved up'),
 	('Instance iteration moved down'),
+    ('Instance external source row changed'),
 
     ('Job error');
 

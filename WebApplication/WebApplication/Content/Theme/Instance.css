@@ -222,7 +222,8 @@ div.Instance .Item.Field .ExternalSourceLink {
   position: absolute;
   top: 26px;
   right: 6px;
-  margin: 0; }
+  margin: 0;
+  cursor: pointer; }
   div.Instance .Item.Field .ExternalSourceLink:hover {
     text-decoration: none; }
 

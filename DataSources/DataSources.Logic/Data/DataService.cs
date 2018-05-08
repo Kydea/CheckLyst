@@ -1,6 +1,7 @@
 ﻿using CheckListManager.Common.Core.Network;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Logic.DataEngine;
+using CheckListManager.Common.Logic.DataSources;
 using CheckListManager.DataSources.Data;
 using Newtonsoft.Json;
 using NLog;
@@ -36,12 +37,12 @@ namespace CheckListManager.DataSources.Logic.Data
                 1
             )).Data.SingleOrDefault();
 
-            var Data = await CallExternalSource("GetMetaData", new
+            var Data = await CallExternalSource("GetMetaData", new Common.Logic.ExternalSources.DataRequest
             {
-                dataSourceCode = $"{Company}.{Record.Code}",
-                dataSourceClass = Record.Class,
+                code = $"{Company}.{Record.Code}",
+                className = Record.Class,
                 password = Record.Password,
-                dataSourceParameters = Record.Data,
+                data = Record.Data,
                 version = Record.ModifiedOn ?? Record.CreatedOn
             });
 
@@ -75,38 +76,39 @@ namespace CheckListManager.DataSources.Logic.Data
                 1
             )).Data.SingleOrDefault();
 
-            await CallExternalSource("Test", new {
-                dataSourceCode = $"{Company}.{Record.Code}",
-                dataSourceClass = Record.Class,
+            await CallExternalSource("Test", new Common.Logic.ExternalSources.DataRequest {
+                code = $"{Company}.{Record.Code}",
+                className = Record.Class,
                 password = Record.Password,
-                dataSourceParameters = Record.Data,
+                data = Record.Data,
                 version = Record.ModifiedOn ?? Record.CreatedOn
             });
         }
 
-        public async Task<string> GetDataSourceRowsAsync(long Company, PagingRequest<DataRequest> Request)
+        public async Task<string> GetDataSourceRowsAsync(long Company, Common.Logic.DataSources.DataRequest Request)
         {
             var Record = (await _dataSourcesRepository.GetDataSourcesAsync(
                 Company,
-                ds => ds,
-                wf => wf.Company == Company && wf.Code == Request.Data.Code,
+                ds => new Common.Logic.ExternalSources.DataRequest
+                {
+                    code = ds.Code,
+                    className = ds.Class,
+                    password = ds.Password,
+                    version = ds.ModifiedOn ?? ds.CreatedOn,
+                    data = ds.Data
+                },
+                wf => wf.Company == Company && wf.Code == Request.code,
                 p => p.Code,
                 1,
                 1
             )).Data.SingleOrDefault();
 
-            return await CallExternalSource("GetData", new
-            {
-                dataSourceCode = $"{Company}.{Record.Code}",
-                dataSourceClass = Record.Class,
-                password = Record.Password,
-                dataSourceParameters = Record.Data,
-                version = Record.ModifiedOn ?? Record.CreatedOn,
-                page = Request.CurrentPage
-            });
+            Record.parameters = Request.parameters;
+
+            return await CallExternalSource("GetData", Record);
         }
 
-        private async Task<string> CallExternalSource<T>(string Action, T Data)
+        private async Task<string> CallExternalSource(string Action, Common.Logic.ExternalSources.DataRequest Data)
         {
             try
             {
