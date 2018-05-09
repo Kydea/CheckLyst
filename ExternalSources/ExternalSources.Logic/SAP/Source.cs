@@ -130,7 +130,7 @@ namespace CheckListManager.ExternalSources.Logic.SAP
             for (var PhaseIndex = 0; PhaseIndex < Phase.RowCount && PhaseIndex < PAGE_SIZE * (Page + 1); ++PhaseIndex)
             {
                 Phase.CurrentIndex = PhaseIndex;
-                if (Phase.CurrentRow["OPERATION_NUMBER"].GetString()?.EndsWith("00") ?? false)
+                if ((Phase.GetString("OPERATION_NUMBER")?.EndsWith("00") ?? false) && Phase.GetString("DESCRIPTION") != "Checks")
                 {
                     if (Row >= PAGE_SIZE * Page)
                         yield return new List<string> {

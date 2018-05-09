@@ -103,10 +103,12 @@
 				label.appendTo(element);
 
             input = (
-                    model.linesCount < 2 ?
-                    $("<input />").attr("type", "text") :
-                    $("<textarea />")
-				).addClass("Description").appendTo(item.isTableContent() ? element : label);
+                model.linesCount < 2 ?
+					$("<input />").attr("type", "text") :
+					$("<textarea />")
+			).addClass("Description").appendTo(item.isTableContent() ? element : label);
+
+			select = select2 = $("<select />");
 
 			if (!model.valueFormulaString) {
 				if (!model.valuesList) {
