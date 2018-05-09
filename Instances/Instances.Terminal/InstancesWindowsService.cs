@@ -11,8 +11,8 @@ namespace CheckListManager.Instances.Terminal
 	{
 		public InstancesWindowsService(TerminalConfig config) : base(config)
 		{
-            Add(new IntervalSchedulerStrategy(ClearPendingInstances, 3600));
-            Add(new IntervalSchedulerStrategy(SendFTPFiles, 60));
+            Add(new IntervalSchedulerStrategy(ClearPendingInstances, 3600) { RunAtStartup = true });
+            Add(new IntervalSchedulerStrategy(SendFTPFiles, 60) { RunAtStartup = true });
         }
 
         protected async Task ClearPendingInstances()

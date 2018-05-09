@@ -435,7 +435,7 @@ namespace CheckListManager.Instances.Logic.Services
                     throw new InstanceException("Instance not found");
                 }
 
-                cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(identity.CompanyId), cacheObject);
+                cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(cacheObject.CompanyId), cacheObject);
                 row.Data = JsonConvert.SerializeObject(cacheObject.Instance, _converter);
                 row.Description = cacheObject.Instance.Description;
                 row.FileName =
