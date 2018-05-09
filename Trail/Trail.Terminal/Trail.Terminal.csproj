@@ -113,9 +113,6 @@
     <None Include="ConnectionStrings.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="ConnectionStrings.config.JNJ.DEV" />
-    <None Include="ConnectionStrings.config.JNJ.QA" />
-    <None Include="ConnectionStrings.config.Matematici" />
     <None Include="Trail.Terminal.snk" />
     <None Include="packages.config" />
   </ItemGroup>
