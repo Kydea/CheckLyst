@@ -160,8 +160,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Instances.Api.snk" />
-    <Content Include="ConnectionStrings.config.JNJ" />
-    <Content Include="ConnectionStrings.config.Matematici" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

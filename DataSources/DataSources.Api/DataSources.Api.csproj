@@ -158,13 +158,11 @@
   <ItemGroup>
     <Content Include="packages.config" />
     <None Include="ConnectionStrings.config" />
-    <None Include="ConnectionStrings.config.Matematici" />
     <Content Include="..\..\Common\NLog.config">
       <Link>NLog.config</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="DataSources.Api.snk" />
-    <Content Include="ConnectionStrings.config.JNJ" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
