@@ -89,6 +89,7 @@
 				case prototypes.Prototype.states.obsolete:
 					break;
 				case prototypes.Prototype.states.draftReadOnly:
+				case prototypes.Prototype.states.simulationReadOnly:
 					break;
 				default:
 					alert("Invalid prototype state: " + (model.state || "(null)"));
@@ -389,10 +390,12 @@
 						result.id >= 0
 						&& !matematici.tokenManager.checkRole("Prototypes#Edit#" + result.department + "##")
 						&& !matematici.tokenManager.checkRole("Prototypes#Edit#" + result.department + "#" + result.prototypeType)
-					) 
+					) {
 						if (model.state == prototypes.Prototype.states.draft)
 							model.state = prototypes.Prototype.states.draftReadOnly;
-
+						if (model.state == prototypes.Prototype.states.simulation)
+							model.state = prototypes.Prototype.states.simulationReadOnly;
+					}
 					update();
 					element.removeClass("Loading");
 				}
@@ -716,6 +719,7 @@ prototypes.Prototype.states = {
 	draft: "Draft",
 	draftReadOnly: "Draft ",
 	simulation: "In simulation",
+	simulationReadOnly: "In simulation ",
 	approval: "In approval",
 	approved: "Approved",
 	active: "Active",
