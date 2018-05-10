@@ -31,8 +31,8 @@ class InstanceViewController: UIViewController, UIWebViewDelegate, UIGestureReco
         activityIndicator.transform = CGAffineTransform(scaleX: 2.0, y: 2.0)
         
         let fullUrl = !newInstance ?
-            "http://clm.matematici-aws.com/Instances/Detail/" + instance.code + "?d=" + String(Int64(Date().timeIntervalSince1970 * 1000)) + "&AppUser=" + (UserDefaults.standard.string(forKey: "userCode"))! :
-            "http://clm.matematici-aws.com/Instances/Create/" + newInstancePrototype! + "/" + newInstanceVersion! + "?d=" + String(Int64(Date().timeIntervalSince1970 * 1000)) + "&AppUser=" + (UserDefaults.standard.string(forKey: "userCode"))!
+            ServerConnection.baseFrontEndUrl + "/Instances/Detail/" + instance.code + "?d=" + String(Int64(Date().timeIntervalSince1970 * 1000)) + "&AppUser=" + (UserDefaults.standard.string(forKey: "userCode"))! :
+            ServerConnection.baseFrontEndUrl + "/Instances/Create/" + newInstancePrototype! + "/" + newInstanceVersion! + "?d=" + String(Int64(Date().timeIntervalSince1970 * 1000)) + "&AppUser=" + (UserDefaults.standard.string(forKey: "userCode"))!
         
         let url = URL(string: fullUrl)
         
@@ -42,13 +42,13 @@ class InstanceViewController: UIViewController, UIWebViewDelegate, UIGestureReco
         request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         /*Setting value for local storage*/
         let bodyString = "roles=" + (UserDefaults.standard.value(forKey: "roles") as! String) +
-                         "&timeZone=" + (UserDefaults.standard.value(forKey: "timeZone") as! String) +
-                         "&decimalSeparator=" + (UserDefaults.standard.value(forKey: "decimalSeparator") as! String)
+            "&timeZone=" + (UserDefaults.standard.value(forKey: "timeZone") as! String) +
+            "&decimalSeparator=" + (UserDefaults.standard.value(forKey: "decimalSeparator") as! String)
         print(bodyString)
         request.httpBody = bodyString.data(using: String.Encoding.utf8)
         
         webView.loadRequest(request as URLRequest)
-       
+        
         self.lockView()
         NotificationCenter.default.addObserver(self, selector: #selector(InstanceViewController.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(InstanceViewController.keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
@@ -72,7 +72,7 @@ class InstanceViewController: UIViewController, UIWebViewDelegate, UIGestureReco
     {
         self.navigationController?.popViewController(animated: true)
     }
-
+    
     
     func lockView()
     {
@@ -93,14 +93,14 @@ class InstanceViewController: UIViewController, UIWebViewDelegate, UIGestureReco
         self.navigationItem.leftBarButtonItem = self.customBackButton;
         self.tabBarController!.tabBar.isUserInteractionEnabled = true
     }
-
+    
     
     override func viewWillDisappear(_ animated : Bool) {
         super.viewWillDisappear(animated)
         print("disappering")
         self.webView.stringByEvaluatingJavaScript(from: "instances.instance.close()")
     }
-
+    
     
     override func viewDidLayoutSubviews() {
         
@@ -119,20 +119,20 @@ class InstanceViewController: UIViewController, UIWebViewDelegate, UIGestureReco
     }
     
     func webView(_ webView: UIWebView, shouldStartLoadWith request: URLRequest, navigationType: UIWebViewNavigationType) -> Bool {
-
+        
         return true
     }
     
     func webViewDidStartLoad(_ webView: UIWebView) {
-       // print("Webview started Loading")
+        // print("Webview started Loading")
     }
     
     
     
     func webViewDidFinishLoad(_ webView: UIWebView) {
-    
+        
         unlockView()
-
+        
         self.webView.isHidden = false
         
         if(webView.stringByEvaluatingJavaScript(from: "window.location.href")!.contains("Security/Login")){

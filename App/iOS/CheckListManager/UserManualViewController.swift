@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 class UserManualViewController: UIViewController, UIWebViewDelegate {
-
+    
     @IBOutlet var webView: UIWebView!
     
     @IBOutlet var activityIndicator: UIActivityIndicatorView!
@@ -18,10 +18,10 @@ class UserManualViewController: UIViewController, UIWebViewDelegate {
     let app = UIApplication.shared as! MyApplication
     
     var helpLoaded : Bool = false
-
+    
     
     override func viewDidLoad()
-    
+        
     {
         super.viewDidLoad()
         let infoBarButtonItem = SharedControllersProperty.instance.setInfoButton()
@@ -43,7 +43,7 @@ class UserManualViewController: UIViewController, UIWebViewDelegate {
         super.viewWillAppear(true)
         if(!helpLoaded) {
             
-            let fullUrl = "http://clm.matematici-aws.com/Help/App?AppUser="+(UserDefaults.standard.string(forKey: "userCode"))!+"&d=" + String(Int64(Date().timeIntervalSince1970 * 1000))
+            let fullUrl = ServerConnection.baseFrontEndUrl + "/Help/App?AppUser="+(UserDefaults.standard.string(forKey: "userCode"))!+"&d=" + String(Int64(Date().timeIntervalSince1970 * 1000))
             
             let url = URL(string: fullUrl)
             
@@ -60,7 +60,7 @@ class UserManualViewController: UIViewController, UIWebViewDelegate {
         }
         
     }
-
+    
     
     override func viewDidLayoutSubviews() {
         
@@ -69,13 +69,13 @@ class UserManualViewController: UIViewController, UIWebViewDelegate {
     }
     
     
-
+    
     func webView(_ webView: UIWebView, shouldStartLoadWith request: URLRequest, navigationType: UIWebViewNavigationType) -> Bool {
         
         return true;
         
     }
-
+    
     
     
     
@@ -84,7 +84,7 @@ class UserManualViewController: UIViewController, UIWebViewDelegate {
         unlockView()
         
         helpLoaded = true
-
+        
         if( webView.stringByEvaluatingJavaScript(from: "window.location.href")!.contains("Security/Login")){
             
             webView.isHidden = true
@@ -110,7 +110,7 @@ class UserManualViewController: UIViewController, UIWebViewDelegate {
         
         self.present(alert, animated: false, completion: nil)
     }
-
+    
     
     
     func logoutAndGoToLogin()
@@ -134,5 +134,5 @@ class UserManualViewController: UIViewController, UIWebViewDelegate {
         self.tabBarController!.tabBar.isUserInteractionEnabled = true
         webView.scrollView.isScrollEnabled = true
     }
-
+    
 }

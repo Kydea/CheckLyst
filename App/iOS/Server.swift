@@ -11,8 +11,8 @@ import CoreData
 
 
 class Server: NSManagedObject {
-
-// Insert code here to add functionality to your managed object subclass
+    
+    // Insert code here to add functionality to your managed object subclass
     
     static func setupWithManagedObjectContext(_ managedObjectContext : NSManagedObjectContext) -> Void {
         
@@ -23,27 +23,29 @@ class Server: NSManagedObject {
                 
                 do {
                     
-                    server.serverUrl = "http://api.clm.matematici-aws.com"
+                    server.serverUrl = "https://checklystapi.jnj.com"
+                    server.serverFrontEndUrl = "https://checklyst.jnj.com"
                     
                     try managedObjectContext.save()
-           
+                    
                 }
-      
+                    
                 catch {
                     
                 }
-         
+                
             }
         }
-
+        
     }
     
-    static func setNewServerUrl(_ url: String, managedObjectContext: NSManagedObjectContext) -> Bool {
+    static func setNewServerUrl(_ url: (api: String, frontEnd: String), managedObjectContext: NSManagedObjectContext) -> Bool {
         
         
         if let server = Server.getServer(managedObjectContext) {
             
-            server.serverUrl = url
+            server.serverUrl = url.api
+            server.serverFrontEndUrl = url.frontEnd
             
             do {
                 
@@ -66,7 +68,7 @@ class Server: NSManagedObject {
         
         
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Server")
- 
+        
         
         
         do {
@@ -90,5 +92,5 @@ class Server: NSManagedObject {
         return try! managedObjectContext.count(for: request) > 0
         
     }
-
+    
 }
