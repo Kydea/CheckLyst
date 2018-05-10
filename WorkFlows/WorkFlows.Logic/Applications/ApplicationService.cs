@@ -64,7 +64,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     Step = x.Step + 1,
                     Reason = x.Reason,
                     Date = x.Date,
-                    User = x.User,
+                    User = x.User + " - " + x.Users?.Description,
                     Approved = x.Approved,
                     Tags = string.Join(", ", x.WorkFlowApplicationStepTags.Select(t => t.Tag))
                 }).ToList()
