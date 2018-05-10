@@ -722,8 +722,8 @@ namespace CheckListManager.Instances.Logic.Services
                     Information = JsonConvert.SerializeObject(new
                     {
                         Id = itemId,
-                        OldValue = field.Value,
-                        NewValue = value,
+                        OldValue = field.Value ?? string.Empty,
+                        NewValue = value ?? string.Empty,
                     })
                 });
                 field.Value = value;
@@ -772,8 +772,8 @@ namespace CheckListManager.Instances.Logic.Services
                     Information = JsonConvert.SerializeObject(new
                     {
                         Id = itemId,
-                        OldValue = field.Value,
-                        NewValue = value,
+                        OldValue = field.Value ?? string.Empty,
+                        NewValue = value ?? string.Empty,
                     })
                 });
                 field.Value = value;
