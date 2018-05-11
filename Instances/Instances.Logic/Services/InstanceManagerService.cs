@@ -47,7 +47,7 @@ namespace CheckListManager.Instances.Logic.Services
 
         public InstanceManagerService(IServiceClient client,
             IInstancesRepository instancesRepository, CheckListJsonConverter converter, IInstanceCacheService instanceCache,
-            IConfigurationService configurationService, ISettingService settingService, IAuthenticationService authenticationService, 
+            IConfigurationService configurationService, ISettingService settingService, IAuthenticationService authenticationService,
             IWorkFlowsService workFlowService, IQueueService queueService, ICommonRepository commonRepository, IRedisCache redisCache)
         {
             _client = client;
@@ -722,8 +722,8 @@ namespace CheckListManager.Instances.Logic.Services
                     Information = JsonConvert.SerializeObject(new
                     {
                         Id = itemId,
-                        OldValue = field.Value ?? string.Empty,
-                        NewValue = value ?? string.Empty,
+                        OldValue = field.Value,
+                        NewValue = value,
                     })
                 });
                 field.Value = value;
@@ -772,8 +772,8 @@ namespace CheckListManager.Instances.Logic.Services
                     Information = JsonConvert.SerializeObject(new
                     {
                         Id = itemId,
-                        OldValue = field.Value ?? string.Empty,
-                        NewValue = value ?? string.Empty,
+                        OldValue = field.Value,
+                        NewValue = value,
                     })
                 });
                 field.Value = value;

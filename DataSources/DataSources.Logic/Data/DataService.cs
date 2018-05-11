@@ -56,8 +56,6 @@ namespace CheckListManager.DataSources.Logic.Data
                     ds => new DataSource
                     {
                         Code = ds.Code, 
-                        Class = ds.Class,
-                        Data = ds.Data
                     },
                     wf => wf.Company == Company,
                     p => p.Code,
