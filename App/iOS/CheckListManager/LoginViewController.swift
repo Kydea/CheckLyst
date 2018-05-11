@@ -41,7 +41,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate
         
         serverTextField.delegate = self
         
-        serverTextField.text = (Server.getServer((UIApplication.shared.delegate as! AppDelegate).managedObjectContext)?.serverUrl)!
+        serverTextField.text = (Server.getServer((UIApplication.shared.delegate as! AppDelegate).managedObjectContext)?.serverFrontEndUrl)!
         
         userCodeTextField.delegate = self
         
@@ -53,7 +53,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate
         NotificationCenter.default.addObserver(self, selector: #selector(LoginViewController.keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(LoginViewController.dismissKeyboard))
-       
+        
         view.addGestureRecognizer(tap)
         
         activityIndicator.hidesWhenStopped = true
@@ -61,7 +61,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate
         activityIndicator.transform = CGAffineTransform(scaleX: 2.0, y: 2.0)
         
         serverTextField.addTarget(self, action: #selector(LoginViewController.chooseServer(_:)), for: UIControlEvents.touchDown)
- 
+        
     }
     
     @IBAction func chooseServer(_ sender: Any) {
@@ -75,7 +75,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate
         self.view.isUserInteractionEnabled = false
         
         ServerConnection.getCompaniesRequest(){ (serverResponse) -> Void in
-          
+            
             if(serverResponse.error != nil){
                 
                 var errorMessage = "No message"
@@ -142,10 +142,10 @@ class LoginViewController: UIViewController, UITextFieldDelegate
     
     @objc func keyboardWillShow(_ notification: Notification) {
         
-       
-            if view.frame.origin.y == 0{
-                self.view.frame.origin.y -= 190
-            }
+        
+        if view.frame.origin.y == 0{
+            self.view.frame.origin.y -= 190
+        }
         
         
         
@@ -153,31 +153,31 @@ class LoginViewController: UIViewController, UITextFieldDelegate
     
     
     @objc func keyboardWillHide(_ notification: Notification) {
-    
-            if view.frame.origin.y != 0 {
-                self.view.frame.origin.y += 190
-            }
-           
+        
+        if view.frame.origin.y != 0 {
+            self.view.frame.origin.y += 190
+        }
+        
     }
     
     @IBAction func loginToserver(_ sender: UIButton) {
         
         if(companyTextField.text! != "" && userCodeTextField.text! != "" && passwordTextField.text! != "") {
-        
+            
             if(serverTextField.text!.hasPrefix("https"))
-            
+                
             {
-            
+                
                 performLogin()
             }
-      
+                
                 
             else
-            
+                
             {
-            
+                
                 let alert = UIAlertController(title: "Warning", message: "You are connecting to an insecure server, are you really sure?", preferredStyle: .alert)
-            
+                
                 
                 
                 alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
@@ -190,7 +190,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate
                 
                 
                 self.present(alert, animated: true, completion: nil)
-            
+                
             }
         } else if(companyTextField.text! == "" ) {
             
@@ -212,14 +212,12 @@ class LoginViewController: UIViewController, UITextFieldDelegate
     
     
     func performLogin()
-    
+        
     {
         activityIndicator.startAnimating()
         
         self.view.isUserInteractionEnabled = false
         
-        ServerConnection.baseUrl = self.serverTextField.text!
-    
         ServerConnection.loginOrRefreshToServer(["Company" : self.selectedCompany,"Code":userCodeTextField.text!,"Password":passwordTextField.text!]){ (serverResponse) -> Void in
             
             if(serverResponse.error != nil){
@@ -251,14 +249,13 @@ class LoginViewController: UIViewController, UITextFieldDelegate
                     if(json["error"] == nil)
                         
                     {
-                        Server.setNewServerUrl(self.serverTextField.text!, managedObjectContext: self.context)
                         
                         self.setUserInformation(userInfo: json)
                         
                         (UIApplication.shared as! MyApplication).refreshInactivityTimer(timeToExpireActivity: (UIApplication.shared as! MyApplication).inactivityTime)
                         
                         self.getClient()
-  
+                        
                     }
                         
                     else
@@ -278,7 +275,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate
             
             self.view.isUserInteractionEnabled = true
         }
-
+        
     }
     
     
@@ -333,7 +330,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate
         UserDefaults.standard.setValue(Formatter.instance.dateFromTimeString(json[".expires"] as! String), forKey: "token_expires")
         
         UserDefaults.standard.setValue(json["decimalSeparator"], forKey: "decimalSeparator")
-    
+        
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -341,17 +338,20 @@ class LoginViewController: UIViewController, UITextFieldDelegate
             if let controller = segue.destination as? ChooseServerAndCompanyViewController {
                 
                 if(sender as! String == "server") {
-                
+                    
                     chooseDictionary.removeAllObjects()
                     
-                    chooseDictionary = ["Sviluppo": "https://itsbebewsp00642.jnj.com",
-                                        "Acceptance": "https://itsbebewsp00899.jnj.com",
-                                        "Production": "https://itsbebewsp00910.jnj.com",
-                                        "Sviluppo2": "http://clm.matematici.com",
-                                        "Sviluppo3": "http://api.clm.matematici-aws.com"]
+                    chooseDictionary = [
+                        "Production": (api:"https://checklystapi.jnj.com",frontEnd: "https://checklyst.jnj.com"),
+                        "Acceptance": (api:"https://checklystqaapi.jnj.com", frontEnd: "https://checklystqa.jnj.com"),
+                        "Development": (api:"https://checklystdevapi.jnj.com", frontEnd: "https://checklystdev.jnj.com"),
+                        "Development 2": (api:"http://api.clm.matematici-aws.com",frontEnd:"http://clm.matematici-aws.com")
+                    ]
+                    
+                    controller.serverFieldsDictionary = chooseDictionary as? Dictionary<String,(api:String, frontEnd:String)>
+                } else {
+                    controller.companyFieldsDictionary = chooseDictionary as? Dictionary<String,String>
                 }
-                
-                controller.fieldsDictionary = chooseDictionary as? Dictionary<String,String>
                 
                 controller.loginViewController = self
                 
@@ -360,7 +360,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate
             }
         }
     }
-
+    
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         if(textField.isEqual(serverTextField)){
@@ -368,7 +368,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate
             ServerConnection.baseUrl = self.serverTextField.text!
         }
     }
-
+    
     @objc func dismissKeyboard() {
         
         view.endEditing(true)

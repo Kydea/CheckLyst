@@ -15,7 +15,9 @@ class ChooseServerAndCompanyViewController: UIViewController, UITableViewDelegat
     
     @IBOutlet var okButton: UIButton!
     
-    var fieldsDictionary: [String:String]?
+    var companyFieldsDictionary: [String:String]?
+    
+    var serverFieldsDictionary: [String:(api: String, frontEnd: String)]?
     
     var rowIndex : Int?
     
@@ -29,7 +31,7 @@ class ChooseServerAndCompanyViewController: UIViewController, UITableViewDelegat
     
     var inputTextField: UITextField?
     
-    var chooseServer : Bool?
+    var chooseServer : Bool!
     
     @IBOutlet var fieldNameLabel: UILabel!
     
@@ -62,7 +64,7 @@ class ChooseServerAndCompanyViewController: UIViewController, UITableViewDelegat
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         
-        return fieldsDictionary?.count ?? 1
+        return (chooseServer ? serverFieldsDictionary?.count : companyFieldsDictionary?.count) ?? 1
     }
     
     
@@ -77,11 +79,11 @@ class ChooseServerAndCompanyViewController: UIViewController, UITableViewDelegat
         
         inputTextField = cell!.contentView.viewWithTag(2) as? UITextField
         
- 
-        fieldLabel?.text = Array(fieldsDictionary!.keys)[indexPath.row]
+        
+        fieldLabel?.text = chooseServer ? Array(serverFieldsDictionary!.keys).reversed()[indexPath.row] : Array(companyFieldsDictionary!.keys)[indexPath.row]
         inputTextField?.isHidden = true
-
-
+        
+        
         cell!.preservesSuperviewLayoutMargins = false
         
         return cell!
@@ -91,16 +93,20 @@ class ChooseServerAndCompanyViewController: UIViewController, UITableViewDelegat
     
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-
-        if(chooseServer!) {
         
-            loginViewController?.serverTextField.text = fieldsDictionary![Array(fieldsDictionary!.keys)[indexPath.row]]
-
-            ServerConnection.baseUrl = (loginViewController?.serverTextField.text)!
-        } else {
-            loginViewController?.companyTextField.text = Array(fieldsDictionary!.keys)[indexPath.row]
+        if(chooseServer!) {
             
-            loginViewController?.selectedCompany = fieldsDictionary![Array(fieldsDictionary!.keys)[indexPath.row]]!
+            
+            let url = serverFieldsDictionary![Array(serverFieldsDictionary!.keys).reversed()[indexPath.row]]!
+            
+            loginViewController?.serverTextField.text = url.frontEnd
+            
+            Server.setNewServerUrl(url, managedObjectContext: (UIApplication.shared.delegate as! AppDelegate).managedObjectContext)
+            
+        } else {
+            loginViewController?.companyTextField.text = Array(companyFieldsDictionary!.keys)[indexPath.row]
+            
+            loginViewController?.selectedCompany = companyFieldsDictionary![Array(companyFieldsDictionary!.keys)[indexPath.row]]!
         }
         
         self.navigationController?.popViewController(animated: true)
@@ -111,7 +117,7 @@ class ChooseServerAndCompanyViewController: UIViewController, UITableViewDelegat
     override func viewWillDisappear(_ animated : Bool) {
         
         super.viewWillDisappear(animated)
-
+        
     }
     
     
@@ -120,6 +126,6 @@ class ChooseServerAndCompanyViewController: UIViewController, UITableViewDelegat
         
         self.navigationController?.popViewController(animated: true)
     }
-
-
+    
+    
 }

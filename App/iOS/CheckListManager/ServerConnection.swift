@@ -14,11 +14,13 @@ open class ServerConnection {
     
     static var baseUrl : String = (Server.getServer((UIApplication.shared.delegate as! AppDelegate).managedObjectContext)?.serverUrl)!
     
-
+    static var baseFrontEndUrl : String = (Server.getServer((UIApplication.shared.delegate as! AppDelegate).managedObjectContext)?.serverFrontEndUrl)!
+    
+    
     static func bindListWithParams(_ params : Dictionary<String, Dictionary<String, String?>>, completion: ((_ result:ServerResponse) -> Void)!){
         
         ServerConnection.sendHTTPRequest(baseUrl+"/Instances/List/Bind", params: params as Dictionary<String, AnyObject>){ (result) -> Void in
-        completion(result)
+            completion(result)
         }
     }
     
@@ -48,15 +50,15 @@ open class ServerConnection {
             completion(result)
         }
     }
-
+    
     
     static func loginOrRefreshToServer(_ params : Dictionary<String, String>, completion: ((_ result:ServerResponse) -> Void)!){
         sendHTTPRequest(baseUrl+"/AccessControl/Access/Token", params: params as Dictionary<String, AnyObject>){ (result) -> Void in
-                completion(result)
+            completion(result)
         }
     }
-
-
+    
+    
     static func logoutFromServer(_ params : Dictionary<String, Dictionary<String, String>>,_ completion: ((_ result:ServerResponse) -> Void)!){
         
         sendHTTPRequest(baseUrl+"/AccessControl/Access/Logout", params: params as Dictionary<String, AnyObject>){ (result) -> Void in
@@ -64,20 +66,20 @@ open class ServerConnection {
         }
     }
     
-
+    
     static func closeInstance(_ params : Dictionary<String, String>, completion: ((_ result:ServerResponse) -> Void)!){
         sendHTTPRequest(baseUrl+"/CheckList/Close", params: params as Dictionary<String, AnyObject>){ (result) -> Void in
-                completion(result)
+            completion(result)
         }
     }
-
+    
     static func sendClockRequest(_ params : Dictionary<String, AnyObject>, completion: ((_ result:ServerResponse) -> Void)!) {
         
         sendHTTPRequest(baseUrl+"/Server/Clock", params: params){ (result) -> Void in
             completion(result)
         }
     }
-
+    
     
     static func sendHTTPRequest(_ urlPath: String,params : Dictionary<String, AnyObject>, completion: ((_ result:ServerResponse) -> Void)!){
         
@@ -100,7 +102,7 @@ open class ServerConnection {
                     request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
                     
                     let bodyString = "grant_type=password" + "&companyId=" + (params["Company"] as! String) + "&username=" + (params["Code"] as! String) + "&password=" + (params["Password"] as! String)
-                
+                    
                     request.httpBody = bodyString.data(using: String.Encoding.utf8)
                     
                 } else if((params["Refresh_Token"]) != nil) {
@@ -108,7 +110,7 @@ open class ServerConnection {
                     request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
                     
                     let bodyString = ("grant_type=refresh_token&refresh_token=" + (params["Refresh_Token"] as! String)).addingPercentEncoding(withAllowedCharacters: allowedCharacterSet)!
-
+                    
                     request.httpBody = bodyString.data(using: String.Encoding.utf8)
                     
                 } else {
@@ -131,7 +133,7 @@ open class ServerConnection {
                         {
                             UserDefaults.standard.setValue("true", forKey: "invalidCertificate")
                         }
-                        
+                            
                         else
                         {
                             UserDefaults.standard.setValue("false", forKey: "invalidCertificate")
@@ -153,10 +155,10 @@ open class ServerConnection {
         
     }
     
-
+    
     
     static func sendHTTPGetRequest(_ urlPath: String, completion: ((_ result:ServerResponse) -> Void)!){
-       
+        
         do{
             let request = NSMutableURLRequest(url: URL(string: urlPath)!)
             let session = URLSession.shared
@@ -167,12 +169,12 @@ open class ServerConnection {
                 let priority = DispatchQoS.default.qosClass
                 DispatchQueue.global(qos: priority).async {
                     DispatchQueue.main.async    {
-                    
-                    let serverResponse = ServerResponse()
-                    serverResponse.response = response
-                    serverResponse.data = data
-                    serverResponse.error = error as NSError?
-                    completion(serverResponse)
+                        
+                        let serverResponse = ServerResponse()
+                        serverResponse.response = response
+                        serverResponse.data = data
+                        serverResponse.error = error as NSError?
+                        completion(serverResponse)
                     }
                 }
             })

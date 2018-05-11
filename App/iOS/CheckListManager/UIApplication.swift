@@ -161,7 +161,6 @@ import UIKit
         let logged = NSString(string:UserDefaults.standard.string(forKey: "logged")!).boolValue
         
         if(logged){
-            print("refreshed inactivity timer")
             if let timer = inactivityTimer {
                 timer.invalidate()
             }
@@ -170,7 +169,6 @@ import UIKit
     }
     
     @objc func inactivityHasDetected() {
-        print("inactivity detected")
         if let timer = inactivityTimer {
             timer.invalidate()
         }
