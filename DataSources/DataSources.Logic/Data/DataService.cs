@@ -37,6 +37,9 @@ namespace CheckListManager.DataSources.Logic.Data
                 1
             )).Data.SingleOrDefault();
 
+            if (Record == null)
+                throw new Exception($"Invalid external source");
+
             var Data = await CallExternalSource("GetMetaData", new Common.Logic.ExternalSources.DataRequest
             {
                 code = $"{Company}.{Record.Code}",

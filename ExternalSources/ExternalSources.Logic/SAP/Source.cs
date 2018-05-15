@@ -134,12 +134,12 @@ namespace CheckListManager.ExternalSources.Logic.SAP
                 {
                     if (Row >= PAGE_SIZE * Page)
                         yield return new List<string> {
-                            Header.GetString("ORDER_NUMBER"),
+                            Header.GetString("ORDER_NUMBER")?.TrimStart('0'),
                             Header.GetString("PROD_SCHED_PROFILE"),
                             Phase.GetString("RESOURCE"),
                             Phase.GetString("OPERATION_NUMBER"),
                             Phase.GetString("DESCRIPTION"),
-                            Header.GetString("MATERIAL"),
+                            Header.GetString("MATERIAL")?.TrimStart('0'),
                             Header.GetString("MATERIAL_TEXT"),
                             Header.GetString("BATCH"),
                             Positions.GetString("QUANTITY"),

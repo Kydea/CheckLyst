@@ -552,7 +552,7 @@ namespace CheckListManager.Instances.Logic.Services
                 if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
                     throw new InstanceException("Access denied");
                 if (!cacheObject.Instance.ExternalSources.ContainsKey(externalSourceCode))
-                    throw new InstanceException("Access denied");
+                    throw new InstanceException("Invalid external source");
 
                 var token = identity.Code + ":" + Guid.NewGuid();
                 await _redisCache.SetAsync($"Token:{token}", new DataRequest
