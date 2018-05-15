@@ -82,6 +82,18 @@ div.PropertyPanel {
 
                 top: $Metric-Control-Height + $Metric-Control-Space;
             }
+
+            &:nth-child(3) {
+                position: absolute;
+
+                input {
+                    margin-top: 0;
+                }
+
+                top: $Metric-Control-Height + $Metric-Control-Space;
+                left: calc(50% + 10px);
+                width: calc(50% - 20px) !important;
+            }
         }
 
         input[type=text], input[type=checkbox], select, a.Button, label {
@@ -108,7 +120,6 @@ div.PropertyPanel {
                 span {
                     position: relative;
                 }
-                
             }
         }
     }
