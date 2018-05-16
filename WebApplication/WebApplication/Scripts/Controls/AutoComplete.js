@@ -120,7 +120,6 @@ matematici.AutoComplete = function (selector) {
 					if (e.which < 37 || e.which > 40) { //arrow keys
 						updateList();
 						if (!multiple) setCurrentItem(0);
-						showList();
 					}
 				});
 			list
