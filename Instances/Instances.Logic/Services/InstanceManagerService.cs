@@ -1022,14 +1022,18 @@ namespace CheckListManager.Instances.Logic.Services
             if (!itemId.HasValue)
                 throw new InstanceException("Item id not sent");
 
-            var item = cacheObject.Instance.Items.ContainsKey(itemId.Value) ? cacheObject.Instance.Items[itemId.Value] : null;
-            if (item == null)
-                throw new InstanceException("Signature not found");
+            var element =
+                itemId > 0 ?
+                    cacheObject.Instance.Items.ContainsKey(itemId.Value) ? (ICheckListElement)cacheObject.Instance.Items[itemId.Value] : null :
+                    cacheObject.Instance.Pages.Count > -itemId.Value ? (ICheckListElement)cacheObject.Instance.Pages[-itemId.Value] : null;
+
+            if (element == null)
+                throw new InstanceException("Element not found");
 
             if (!cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation))
                 throw new InvalidOperationException("A count down can be skipped only for preview and simulation instances");
 
-            item.CountDownToCode = null;
+            element.CountDownToCode = null;
             await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
         }
 

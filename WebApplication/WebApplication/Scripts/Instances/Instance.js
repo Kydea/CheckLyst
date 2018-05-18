@@ -34,7 +34,7 @@
 		},
 
 		setupTab = function (pages) {
-			for (var pageIndex in pages)
+			for (var pageIndex in pages) 
 				tab.add(pages[pageIndex].description, null, null, "lock-o")
 
 			pageLock = new instances.PageLock(instance);
@@ -89,7 +89,9 @@
 				header.update(model.header);
 			else
 				header.getElement().hide();
-			page.update(model.pages[tab.getCurrentItem().index]);
+			var pageIndex = tab.getCurrentItem().index;
+			page.setPageIndex(pageIndex);
+			page.update(model.pages[pageIndex]);
 
 			if (updateHandler) updateHandler(model);
 			externalSources = model.externalSources;
