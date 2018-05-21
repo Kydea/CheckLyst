@@ -67,7 +67,7 @@ namespace CheckListManager.ExternalSources.Api.Controllers
                     Source.Open();
                     return Ok(new
                     {
-                        Rows = Source.GetData(request.parameters, request.page)
+                        Rows = Source.GetData(request.parameters, request.page, request.DecimalSeparator)
                     });
                 }
             }

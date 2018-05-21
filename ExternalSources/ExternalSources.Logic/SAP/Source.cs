@@ -81,12 +81,12 @@ namespace CheckListManager.ExternalSources.Logic.SAP
             var Repository = Destination.Repository;
         }
 
-        public override IEnumerable<List<string>> GetData(Dictionary<string, string> Parameters, int Page)
+        public override IEnumerable<List<string>> GetData(Dictionary<string, string> Parameters, int Page, string DecimalSeparator)
         {
             switch (SAPParameters.FunctionName)
             {
                 case "PO Header":
-                    return FunctionPOHeader(Parameters, Page);
+                    return FunctionPOHeader(Parameters, Page, DecimalSeparator);
                 default:
                     throw new NotSupportedException($"Source name {SAPParameters.FunctionName}");
             }
@@ -94,7 +94,7 @@ namespace CheckListManager.ExternalSources.Logic.SAP
 
         #region Functions
 
-        public IEnumerable<List<string>> FunctionPOHeader(Dictionary<string, string> Parameters, int Page)
+        public IEnumerable<List<string>> FunctionPOHeader(Dictionary<string, string> Parameters, int Page, string DecimalSeparator)
         {
             if (string.IsNullOrWhiteSpace(Parameters["PO"]))
                 yield break;
@@ -142,8 +142,8 @@ namespace CheckListManager.ExternalSources.Logic.SAP
                             Header.GetString("MATERIAL")?.TrimStart('0'),
                             Header.GetString("MATERIAL_TEXT"),
                             Header.GetString("BATCH"),
-                            Positions.GetString("QUANTITY"),
-                            Positions.GetString("DELIVERED_QUANTITY")
+                            Format(Positions.GetDecimal("QUANTITY"), DecimalSeparator),
+                            Format(Positions.GetDecimal("DELIVERED_QUANTITY"), DecimalSeparator)
                         };
                     ++Row;
                 }

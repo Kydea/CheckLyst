@@ -17,7 +17,7 @@ namespace CheckListManager.ExternalSources.Logic
 
         public abstract void Test();
 
-        public abstract IEnumerable<List<string>> GetData(Dictionary<string, string> Parameters, int Page);
+        public abstract IEnumerable<List<string>> GetData(Dictionary<string, string> Parameters, int Page, string DecimalSeparator);
 
         protected string Code { get; private set; }
 
@@ -40,6 +40,11 @@ namespace CheckListManager.ExternalSources.Logic
             SourceBase.Version = Version;
             SourceBase.Parse(Data);
             return SourceBase;
+        }
+
+        public static string Format(decimal Number, string Separator)
+        {
+            return Number.ToString("0,#####").Replace(",", Separator);
         }
     }
 }
