@@ -142,11 +142,14 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                 .SetBorder(0)
                 .SetVerticalAlign(Align)
             );
+
+            Table.CompleteRow();
         }
 
         PdfPTable RenderSignaturesTable()
         {
-            PdfPTable Table = new PdfPTable(6) {
+            PdfPTable Table = new PdfPTable(6)
+            {
                 HorizontalAlignment = RowAlignment.Center,
                 WidthPercentage = 100
             };
@@ -199,7 +202,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                         foreach (var Sign in Signatures[s].History.OrderByDescending(x => x.DateTime))
                         {
                             var Date = Sign.DateTime.ToLocalTime(TimeZone);
-                            RenderSignature(Table, i>0 ? 0 : VisibleSignaturesCount, String.IsNullOrEmpty(Sign.Note) ? "Signed" : "Canceled", Sign.User, Date.ToString("yyyy-MM-dd"), Date.ToString("HH:mm"), Sign.Signature);
+                            RenderSignature(Table, i > 0 ? 0 : VisibleSignaturesCount, String.IsNullOrEmpty(Sign.Note) ? "Signed" : "Canceled", Sign.User, Date.ToString("yyyy-MM-dd"), Date.ToString("HH:mm"), Sign.Signature);
                             i++;
                         }
                     }
@@ -319,7 +322,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
         PdfPTable RenderTableHeader(ICheckListGroup Group)
         {
             Size Size = CreateTableHeader(new List<RenderingRow> { }, 0/*, null*/, Group.Items);
-            
+
             PdfPTable Table = new PdfPTable(Size.ColumnsCount) { HorizontalAlignment = RowAlignment.Center, WidthPercentage = 100 };
 
             /*Render DOM-like data*/
@@ -330,7 +333,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
 
                 Table.CompleteRow();
             }
-            
+
             return Table;
         }
         #endregion

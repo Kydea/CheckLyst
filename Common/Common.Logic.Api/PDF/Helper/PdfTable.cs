@@ -1,4 +1,5 @@
 ﻿using MigraDoc.DocumentObjectModel;
+using MigraDoc.DocumentObjectModel.Shapes;
 using MigraDoc.DocumentObjectModel.Tables;
 using System;
 using System.Collections.Generic;
@@ -168,9 +169,10 @@ namespace CheckListManager.Common.Logic.Api.PDF.Helper
             return this;
         }
 
-        public PdfPCell AddNote(string textNote)
+        public PdfPCell AddNote(string value)
         {
-            // @TO_DO
+            var TextFormat = Content.AddFormattedText(value);
+            TextFormat.Superscript = true;
             return this;
         }
 
