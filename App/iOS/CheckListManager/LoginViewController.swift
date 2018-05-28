@@ -343,6 +343,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate
                     
                     chooseDictionary = [
                         "Production": (api:"https://checklystapi.jnj.com",frontEnd: "https://checklyst.jnj.com"),
+                        "Pre-Acceptance": (api:"http://10.157.83.252",frontEnd: "http://10.157.83.244"),
                         "Acceptance": (api:"https://checklystqaapi.jnj.com", frontEnd: "https://checklystqa.jnj.com"),
                         "Development": (api:"https://checklystdevapi.jnj.com", frontEnd: "https://checklystdev.jnj.com"),
                         "Development 2": (api:"http://api.clm.matematici-aws.com",frontEnd:"http://clm.matematici-aws.com")
@@ -365,7 +366,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate
     func textFieldDidEndEditing(_ textField: UITextField) {
         if(textField.isEqual(serverTextField)){
             isEditingServer = false
-            ServerConnection.baseUrl = self.serverTextField.text!
         }
     }
     
