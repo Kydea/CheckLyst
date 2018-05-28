@@ -22,7 +22,7 @@ insert into "Security"."UserFunctions" ("Company", "User", "FunctionGroup", "Fun
 values (currval('"Infrastructure"."Companies_ID_seq"'), 'CheckListManager', 'Users', 'Edit');
 
 insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
-	(currval('"Infrastructure"."Companies_ID_seq"'), 'LDAPHost', 'eu.jnj.com'),
+	(currval('"Infrastructure"."Companies_ID_seq"'), 'LDAPHost', 'na.jnj.com'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpHost', 'smtp.eu.jnj.com'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpPort', '25'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpUsername', ''),

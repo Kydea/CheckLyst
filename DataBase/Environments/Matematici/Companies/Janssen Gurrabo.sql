@@ -1,4 +1,5 @@
-insert into "Infrastructure"."Companies"("Name", "TimeZone") values ('Janssen Gurrabo', 'America/Puerto_Rico'); --see http://momentjs.com/timezone/docs/#/data-loading/
+insert into "Infrastructure"."Companies"("Name", "TimeZone")
+values ('Janssen Gurrabo', 'America/Puerto_Rico', 5, 20, 365, 5, 365, 335, 365); --see http://momentjs.com/timezone/docs/#/data-loading/
 
 insert into "Infrastructure"."Departments" ("Company", "Name") values (currval('"Infrastructure"."Companies_ID_seq"'), 'Automation (P)');
 insert into "Infrastructure"."Departments" ("Company", "Name") values (currval('"Infrastructure"."Companies_ID_seq"'), 'Quality control (P)');

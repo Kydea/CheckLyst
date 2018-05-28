@@ -1,8 +1,8 @@
 insert into "Configuration"."Configurations" ("Code", "Value") values
-	('RedisHost', 'redis-01.clm.internal'),
+	('RedisHost', 'checklyst-dev.u2gbnk.ng.0001.euw1.cache.amazonaws.com'),
 	('RedisPort', '6379'),
 	('SqsBaseUrl', 'https://sqs.eu-west-1.amazonaws.com/'),
-	('SqsPrefix', ''),
-	('ApiBaseUrl', 'http://api.clm.internal/'),
-	('PublicRepositoryUrl', 'https://s3-eu-west-1.amazonaws.com/public.matematici-clm.com/'),
+	('SqsPrefix', 'dev-'),
+	('ApiBaseUrl', 'http://10.157.83.252/'),
+	('PublicRepositoryUrl', 'http://10.157.83.244/content/media/'),
 	('InstanceCloseTimeout', '4320'); --3 days, expressed in minutes
