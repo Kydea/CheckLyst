@@ -61,8 +61,11 @@ matematici.AutoComplete = function (selector) {
 				'top': position.top + label.outerHeight(true)
 			};
 
-			list.css(labelPosition);
-			input.css(labelPosition);
+			input.css({ top: label.offset().top + label.outerHeight(), left: label.offset().left });
+			list.css({ top: label.offset().top + input.outerHeight(), left: label.offset().left });
+
+			//list.css(labelPosition);
+			//input.css(labelPosition);
 
 			icon.css({
 				'left': labelPosition.left + width - 24,
@@ -117,7 +120,6 @@ matematici.AutoComplete = function (selector) {
 					if (e.which < 37 || e.which > 40) { //arrow keys
 						updateList();
 						if (!multiple) setCurrentItem(0);
-						showList();
 					}
 				});
 			list
@@ -211,6 +213,10 @@ matematici.AutoComplete = function (selector) {
 			element.addClass("Open");
 			label.addClass("Open");
 			input.show();
+			matematici.elements.body.append(input);
+			matematici.elements.body.append(list);
+			input.css({ top: label.offset().top + label.outerHeight(), left: label.offset().left });
+			list.css({ top: label.offset().top + input.outerHeight(), left: label.offset().left });
 			list.show();
 			setValue();
 			setTimeout(function () {
@@ -234,6 +240,8 @@ matematici.AutoComplete = function (selector) {
 			open = false;
 			if (oldValue != (element.val() || "")) element.change();
 			oldValue = null;
+			input.insertAfter(label);
+			list.insertAfter(label);
 		},
 
 		updateList = function () {

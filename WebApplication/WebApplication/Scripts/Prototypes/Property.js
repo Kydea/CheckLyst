@@ -13,7 +13,6 @@
 					.toggleClass("Changed", !!type.hasChanges())
 					.on("click", function (e) {
 						e.preventDefault();
-						e.stopPropagation();
 						propertyPanel.setCurrentProperty(property);
 					});
 		};

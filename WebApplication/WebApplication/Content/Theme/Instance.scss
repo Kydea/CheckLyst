@@ -402,11 +402,11 @@ div.Instance {
             @media #{$Media-Extended} {
 
                 label.Controls3 {
-                    width: 300px + 2 * 120px;
+                    width: 280px + 2 * 120px;
 
                     input {
                         &:nth-of-type(1) {
-                            width: 300px;
+                            width: 280px;
                         }
 
                         &:nth-of-type(2) {
@@ -420,11 +420,11 @@ div.Instance {
 
                     i {
                         &:nth-of-type(2) {
-                            left: 300px;
+                            left: 280px;
                         }
 
                         &:nth-of-type(3) {
-                            left: 420px !important;
+                            left: 400px !important;
                         }
                     }
                 }

@@ -47,7 +47,7 @@ namespace CheckListManager.Instances.Logic.Services
 
         public InstanceManagerService(IServiceClient client,
             IInstancesRepository instancesRepository, CheckListJsonConverter converter, IInstanceCacheService instanceCache,
-            IConfigurationService configurationService, ISettingService settingService, IAuthenticationService authenticationService, 
+            IConfigurationService configurationService, ISettingService settingService, IAuthenticationService authenticationService,
             IWorkFlowsService workFlowService, IQueueService queueService, ICommonRepository commonRepository, IRedisCache redisCache)
         {
             _client = client;
@@ -287,9 +287,13 @@ namespace CheckListManager.Instances.Logic.Services
                     throw new InstanceException("Access denied");
 
                 cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(identity.CompanyId), cacheObject);
-                var UnvalidItems = cacheObject.Instance.Items.Values.Where(i => !i.Removed && !i.Valid && !i.IteratorModelItem);
-                if (UnvalidItems.Any())
-                    throw new InstanceException($"The following items are not valid: {string.Join(", ", UnvalidItems.Select(i => i.Id.ToString()))}");
+                var InvalidItems = cacheObject.Instance.Items.Values.Where(i => !i.Removed && !i.Valid && !i.IteratorModelItem);
+                if (InvalidItems.Any())
+                    throw new InstanceException($"The following items are not valid: {string.Join(", ", InvalidItems.Select(i => i.Id.ToString()))}");
+
+                var InvalidPage = cacheObject.Instance.Pages.FirstOrDefault(p => !p.Valid);
+                if (InvalidPage != null)
+                    throw new InstanceException($"The page {InvalidPage.Description} is not valid{(InvalidPage.ValidityMessage == null ? string.Empty : $": {InvalidPage.ValidityMessage}")}");
 
                 cacheObject = await SaveAsync(cacheObject, identity, true, true, false, identity.Code, DateTimeOffset.UtcNow);
                 cacheObject.Instance.UpdateReadOnly(identity.Code, InstanceState.Completed);
@@ -552,14 +556,15 @@ namespace CheckListManager.Instances.Logic.Services
                 if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
                     throw new InstanceException("Access denied");
                 if (!cacheObject.Instance.ExternalSources.ContainsKey(externalSourceCode))
-                    throw new InstanceException("Access denied");
+                    throw new InstanceException("Invalid external source");
 
                 var token = identity.Code + ":" + Guid.NewGuid();
                 await _redisCache.SetAsync($"Token:{token}", new DataRequest
                 {
                     code = cacheObject.Instance.ExternalSources[externalSourceCode],
                     parameters = parameters,
-                    page = page
+                    page = page,
+                    decimalSeparator = await _settingService.DecimalSeparatorAsync(identity.CompanyId)
                 }, "S2S", new TimeSpan(0, 1, 0));
                 var response = await _client.PostAsync("DataSources/Data/GetDataSourceRows", new TokenRequest { token = token });
                 var responseData = await response.Content.ReadAsStringAsync();
@@ -722,8 +727,8 @@ namespace CheckListManager.Instances.Logic.Services
                     Information = JsonConvert.SerializeObject(new
                     {
                         Id = itemId,
-                        OldValue = field.Value ?? string.Empty,
-                        NewValue = value ?? string.Empty,
+                        OldValue = field.Value,
+                        NewValue = value,
                     })
                 });
                 field.Value = value;
@@ -772,8 +777,8 @@ namespace CheckListManager.Instances.Logic.Services
                     Information = JsonConvert.SerializeObject(new
                     {
                         Id = itemId,
-                        OldValue = field.Value ?? string.Empty,
-                        NewValue = value ?? string.Empty,
+                        OldValue = field.Value,
+                        NewValue = value,
                     })
                 });
                 field.Value = value;
@@ -1018,14 +1023,18 @@ namespace CheckListManager.Instances.Logic.Services
             if (!itemId.HasValue)
                 throw new InstanceException("Item id not sent");
 
-            var item = cacheObject.Instance.Items.ContainsKey(itemId.Value) ? cacheObject.Instance.Items[itemId.Value] : null;
-            if (item == null)
-                throw new InstanceException("Signature not found");
+            var element =
+                itemId > 0 ?
+                    cacheObject.Instance.Items.ContainsKey(itemId.Value) ? (ICheckListElement)cacheObject.Instance.Items[itemId.Value] : null :
+                    cacheObject.Instance.Pages.Count > -itemId.Value ? (ICheckListElement)cacheObject.Instance.Pages[-itemId.Value] : null;
+
+            if (element == null)
+                throw new InstanceException("Element not found");
 
             if (!cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation))
                 throw new InvalidOperationException("A count down can be skipped only for preview and simulation instances");
 
-            item.CountDownToCode = null;
+            element.CountDownToCode = null;
             await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
         }
 

@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net;
 using NLog;
 using CheckListManager.ExternalSources.Logic;
+using Newtonsoft.Json;
 
 namespace CheckListManager.ExternalSources.Api.Controllers
 {
@@ -18,6 +19,7 @@ namespace CheckListManager.ExternalSources.Api.Controllers
         {
             try
             {
+                Logger.Info("ExternalSource/Test parameters:\n" + JsonConvert.SerializeObject(request));
                 using (var Source = SourceBase.Build(request.className, request.code, request.password, request.version, request.data))
                 {
                     Source.Open();
@@ -38,6 +40,7 @@ namespace CheckListManager.ExternalSources.Api.Controllers
         {
             try
             {
+                Logger.Info("ExternalSource/GetMetaData parameters:\n" + JsonConvert.SerializeObject(request));
                 using (var Source = SourceBase.Build(request.className, request.code, request.password, request.version, request.data))
                     return Ok(new {
                         Code = request.code,
@@ -58,12 +61,13 @@ namespace CheckListManager.ExternalSources.Api.Controllers
         {
             try
             {
+                Logger.Info("ExternalSource/GetData parameters:\n" + JsonConvert.SerializeObject(request));
                 using (var Source = SourceBase.Build(request.className, request.code, request.password, request.version, request.data))
                 {
                     Source.Open();
                     return Ok(new
                     {
-                        Rows = Source.GetData(request.parameters, request.page)
+                        Rows = Source.GetData(request.parameters, request.page, request.DecimalSeparator)
                     });
                 }
             }

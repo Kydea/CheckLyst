@@ -17,14 +17,14 @@ input.AutoComplete-Filter {
   border-top: none !important;
   border-bottom: none !important;
   background-color: #ccc !important;
-  z-index: 34;
+  z-index: 991;
   outline: none; }
 
 div.AutoComplete-List {
   position: absolute;
   display: none;
   height: unset;
-  z-index: 34;
+  z-index: 991;
   border: solid 1px #ccc;
   background: white;
   max-height: 150px;

@@ -251,6 +251,7 @@ namespace CheckListManager.Instances.Api.Controllers
 
         [HttpPost]
         [Route("GetExternalSourceRows")]
+        [Authorize(Roles = "Instances#View, Prototypes#Edit")]
         public async Task<IHttpActionResult> GetExternalSourceRows(PagingRequest<ExternalSourceRequest> request)
         {
             try

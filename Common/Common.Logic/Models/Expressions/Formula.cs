@@ -53,7 +53,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                                 if (!int.TryParse(Format.Substring(2), out Number)) Number = -1;
                                 Format =
                                     Number < 0 ? string.Empty :
-                                    Format.StartsWith(":s") ? "0." + new string('0', Number) :
+                                    Format.StartsWith(":n") ? "0." + new string('0', Number) :
                                     string.Empty;
                             }
                             Formats.Add(Format);

@@ -256,17 +256,17 @@ div.Instance .Item.Signature i.flaticon-exclamation {
 
 @media only screen and (min-width: 760px) {
   div.Instance .Item.Signature label.Controls3 {
-    width: 540px; }
+    width: 520px; }
     div.Instance .Item.Signature label.Controls3 input:nth-of-type(1) {
-      width: 300px; }
+      width: 280px; }
     div.Instance .Item.Signature label.Controls3 input:nth-of-type(2) {
       width: 120px; }
     div.Instance .Item.Signature label.Controls3 input:nth-of-type(3) {
       width: 120px; }
     div.Instance .Item.Signature label.Controls3 i:nth-of-type(2) {
-      left: 300px; }
+      left: 280px; }
     div.Instance .Item.Signature label.Controls3 i:nth-of-type(3) {
-      left: 420px !important; } }
+      left: 400px !important; } }
 
 div.Instance .Item.Hidden {
   display: none; }

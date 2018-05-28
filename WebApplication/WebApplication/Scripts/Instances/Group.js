@@ -11,7 +11,8 @@
         table = false,
         tableContent = false,
         readOnly,
-        tableElement,
+		tableElement,
+		pageIndex,
 
 		createTableHeader = function (rows, rowIndex, items) {
             var
@@ -115,7 +116,7 @@
 				.toggleClass("ReadOnly", readOnly)
 				.toggleClass("Valid", model.valid)
                 .attr("data-code", model.code).attr("data-id", model.id);
-            if (model.countDownToValue) new instances.CountDown(element, model.countDownToValue, model.id);
+			if (model.countDownToValue) new instances.CountDown(element, model.countDownToValue, group.isPage() ? -group.getPageIndex() : model.id);
             group.setColor(model.color);
             group.setFontSize(model.fontSize);
 
@@ -244,6 +245,14 @@
     this.getParent = function () {
         return parent;
     };
+
+	this.setPageIndex = function (value) {
+		pageIndex = value;
+	};
+
+	this.getPageIndex = function () {
+		return pageIndex;
+	};
 
     setup();
 }

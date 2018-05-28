@@ -17,5 +17,6 @@ namespace CheckListManager.ExternalSources.Logic
         public string password { get; set; }
         public string data { get; set; }
         public DateTimeOffset version { get; set; }
+        public string DecimalSeparator { get; set; }
     }
 }
