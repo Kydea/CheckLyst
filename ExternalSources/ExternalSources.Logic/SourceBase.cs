@@ -44,7 +44,7 @@ namespace CheckListManager.ExternalSources.Logic
 
         public static string Format(decimal Number, string Separator)
         {
-            return Number.ToString("0,#####").Replace(",", Separator);
+            return Number.ToString("0.#####").Replace(",", Separator).Replace(".", Separator);
         }
     }
 }

@@ -141,7 +141,7 @@ namespace CheckListManager.ExternalSources.Logic.SAP
                             Phase.GetString("DESCRIPTION"),
                             Header.GetString("MATERIAL")?.TrimStart('0'),
                             Header.GetString("MATERIAL_TEXT"),
-                            Header.GetString("BATCH") + " S " + DecimalSeparator,
+                            Header.GetString("BATCH"),
                             Format(Positions.GetDecimal("QUANTITY"), DecimalSeparator),
                             Format(Positions.GetDecimal("DELIVERED_QUANTITY"), DecimalSeparator)
                         };
