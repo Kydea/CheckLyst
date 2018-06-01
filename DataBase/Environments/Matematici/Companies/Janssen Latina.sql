@@ -21,7 +21,6 @@ values (currval('"Infrastructure"."Companies_ID_seq"'), 'CheckListManager', 'Use
 insert into "Security"."UserFunctions" ("Company", "User", "FunctionGroup", "Function")
 values (currval('"Infrastructure"."Companies_ID_seq"'), 'CheckListManager', 'Users', 'Edit');
 
-
 insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
 	--(currval('"Infrastructure"."Companies_ID_seq"'), 'LDAPHost', 'eu.jnj.com'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'FtpConnection', '{ "Host": "www.ruggerogiovannelli.org", "Port": 21, "PrototypesFolder": "ruggerogiovannelli.org/Data/P", "InstancesFolder": "ruggerogiovannelli.org/Data/I", "UserName": "2348977@aruba.it", "Password": "oeof5sxc", "UsePassive": "true", "EnableSSL": "false" }'),
@@ -34,4 +33,3 @@ insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") valu
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'UserBlockWarningMessage', '[User], <br /> your account will soon be disabled if you do not login.'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'SignatureMessage', '[User], <br /> you have a pending workflow for the [CheckListType] [CheckListCode].'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'DecimalSeparator', '.');
-	

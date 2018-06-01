@@ -25,6 +25,10 @@
 		}
 	},
 
+	parse: function (year, month, day) {
+		return moment(year + "-" + month + "-" + day, matematici.dateFormatter.dateFormat);
+	},
+
 	date: function (dateTime, local) {
 		return matematici.dateFormatter.format(dateTime, local).date;
 	},

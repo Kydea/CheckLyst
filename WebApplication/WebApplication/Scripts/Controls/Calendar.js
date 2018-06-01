@@ -26,7 +26,7 @@
 
         getCurrentDate = function () {
             var today = new Date();
-            today.setHours(0, 0, 0, 0);
+            today.setUTCHours(0, 0, 0, 0);
             return today;
         },
 
@@ -73,8 +73,8 @@
                 )
                 .on("click", "td.Active", function () {
                     var item = $(this);
-                    if (clickHandler) clickHandler(item);
-                    if (elements.datePicker) elements.datePicker.setDate(item.data("date"));
+					if (clickHandler) clickHandler(item);
+					if (elements.datePicker) elements.datePicker.setDate(matematici.dateFormatter.parse(values.year, values.month, item.text()));
                     if (popup) calendar.close();
                 })
                 .on("click", "a.PreviousMonth.Active", function () {
@@ -105,29 +105,29 @@
             }
             values.year = month == 13 ? year + 1 : month == 0 ? year - 1 : year;
             values.month = month == 13 ? 1 : month == 0 ? 12 : month;
-			elements.month.text(matematici.Calendar.translations.it.months[values.month - 1] + (year == new Date().getFullYear() ? "" : " " + year));
-            elements.previous.toggleClass("Active", !min || year > min.getFullYear() || year == min.getFullYear() && month > min.getMonth() + 1);
-            elements.next.toggleClass("Active", !max || year < max.getFullYear() || year == max.getFullYear() && month < max.getMonth() + 1);
+			elements.month.text(matematici.Calendar.translations.it.months[values.month - 1] + (year == new Date().getUTCFullYear() ? "" : " " + year));
+			elements.previous.toggleClass("Active", !min || year > min.getUTCFullYear() || year == min.getUTCFullYear() && month > min.getUTCMonth() + 1);
+			elements.next.toggleClass("Active", !max || year < max.getUTCFullYear() || year == max.getUTCFullYear() && month < max.getUTCMonth() + 1);
 
 			var
 				date = new Date(Date.UTC(year, month - 1, 1)),
                 rows = $("tr:not(:first-child)", elements.table).hide(),
-                dayOfWeek = (date.getDay() + 6) % 7, //0: monday .. 6: sunday
+                dayOfWeek = (date.getUTCDay() + 6) % 7, //0: monday .. 6: sunday
                 datesIndex = 0;
 
-            for (var rowIndex = 0; rowIndex <= rows.size() && date.getMonth() + 1 == month; ++rowIndex) {
+            for (var rowIndex = 0; rowIndex <= rows.size() && date.getUTCMonth() + 1 == month; ++rowIndex) {
                 row = rows.eq(rowIndex).show();
                 $("td", row).removeClass();
 
                 for (var columnIndex = 0; columnIndex < 7 ; ++columnIndex) {
                     var cell = row.children().eq(columnIndex).toggleClass("Today", date.getTime() == today.getTime());
-                    if (rowIndex == 0 && columnIndex < dayOfWeek || date.getMonth() + 1 > month || date.getFullYear() > year)
+					if (rowIndex == 0 && columnIndex < dayOfWeek || date.getUTCMonth() + 1 > month || date.getUTCFullYear() > year)
                         cell.empty().removeClass("Active");
                     else {
                         while (dates && datesIndex < dates.length && date > dates[datesIndex])
                             ++datesIndex;
                         var match = !dates || datesIndex < dates.length && date.getTime() == dates[datesIndex].getTime();
-                        cell.data("date", new Date(date)).text(date.getDate()).toggleClass("Active", match).toggleClass("Holyday", cell.data("Holyday") == true);
+                        cell.text(date.getUTCDate()).toggleClass("Active", match).toggleClass("Holyday", cell.data("Holyday") == true);
                         if (match && attributes && attributes[datesIndex]) {
                             if (attributes[datesIndex].cssClass) cell.addClass(attributes[datesIndex].cssClass);
                             for (index in attributes[datesIndex].data)
@@ -143,7 +143,7 @@
 
 	this.setDate = function (value) {
         values.date = value;
-        calendar.setMonth(value.getMonth() + 1, value.getFullYear());
+        calendar.setMonth(value.getUTCMonth() + 1, value.getUTCFullYear());
     }
 
     this.setDatePicker = function (value) {
