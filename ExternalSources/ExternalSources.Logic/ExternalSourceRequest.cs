@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-
 //Warning: keep aligned with CheckListManager.Common.Logic.ExternalSources.DataRequest
 namespace CheckListManager.ExternalSources.Logic
 {
@@ -17,6 +16,6 @@ namespace CheckListManager.ExternalSources.Logic
         public string password { get; set; }
         public string data { get; set; }
         public DateTimeOffset version { get; set; }
-        public string DecimalSeparator { get; set; }
+        public string decimalSeparator { get; set; }
     }
 }

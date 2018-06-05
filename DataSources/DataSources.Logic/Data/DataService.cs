@@ -105,6 +105,7 @@ namespace CheckListManager.DataSources.Logic.Data
             )).Data.SingleOrDefault();
 
             Record.parameters = Request.parameters;
+            Record.decimalSeparator = Request.decimalSeparator;
 
             return await CallExternalSource("GetData", Record);
         }
