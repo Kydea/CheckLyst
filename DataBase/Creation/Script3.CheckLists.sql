@@ -193,7 +193,7 @@ create index "Index_InstanceTags_Tag" on "CheckLists"."InstanceTags"("Instance",
 
 create table "CheckLists"."InstanceExpressionValues"
 (
-	"Instance" bigint not null references "CheckLists"."Instances",
+	"Instance" bigint not null,
 	constraint "FK_InstanceExpressionValues_Instance" foreign key ("Instance") references "CheckLists"."Instances" on delete cascade,
 	"Code" varchar (50),
 
