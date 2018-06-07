@@ -635,8 +635,8 @@
 			var oldModel = model;
 			try {
 				model = JSON.parse($("textarea", matematici.dialog.getElement()).val());
-				model.name = model.department = model.prototypeType = model.version = validFrom = validUntil = null;
-				state = prototypes.Prototype.states.draft;
+				model.name = model.department = model.prototypeType = model.version = model.validFrom = model.validUntil = null;
+				model.state = prototypes.Prototype.states.draft;
 				update();
 				matematici.blip.ok();
 			} catch (error) {
