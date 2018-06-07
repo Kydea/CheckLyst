@@ -74,7 +74,8 @@
                 .on("click", "td.Active", function () {
                     var item = $(this);
 					if (clickHandler) clickHandler(item);
-					if (elements.datePicker) elements.datePicker.setDate(matematici.dateFormatter.parse(values.year, values.month, item.text()));
+					var value = matematici.dateFormatter.parse(values.year, values.month, item.text()).toDate();
+					if (elements.datePicker) elements.datePicker.setDate(value, true);
                     if (popup) calendar.close();
                 })
                 .on("click", "a.PreviousMonth.Active", function () {

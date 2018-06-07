@@ -46,8 +46,8 @@
 			}, 0);
 		},
 
-		setDate = function (value) {
-			var formattedDate = matematici.dateFormatter.format(value, false);
+		setDate = function (value, local) {
+			var formattedDate = matematici.dateFormatter.format(value, !!local);
 			date = formattedDate.valid ? moment(value).toDate() : null;
 			element
 				.data("date", date)
@@ -116,8 +116,8 @@
 			parse();
 		};
 
-	this.setDate = function (value) {
-		setDate(value);
+	this.setDate = function (value, local) {
+		setDate(value, local);
 	};
 
 	this.getDate = function () {
