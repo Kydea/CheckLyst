@@ -1,5 +1,5 @@
 insert into "Infrastructure"."Companies"("Name", "TimeZone", "MaximumNumberOfPINFailure", "LoginFailedTimeout", "PINDaysLife", "MaximumNumberOfPasswordFailure", "PasswordDaysLife", "WarningUserInactivityDays", "MaximumUserInactivityDays") 
-values ('Janssen Latina', 'Europe/Rome', 5, 20, 365, 5, 365, 335, 365); --see http://momentjs.com/timezone/docs/#/data-loading/
+values ('Janssen Latina', 'Europe/Rome', 5, 20, 90, 5, 365, 335, 365); --see http://momentjs.com/timezone/docs/#/data-loading/
 
 insert into "Infrastructure"."Departments" ("Company", "Name") values (currval('"Infrastructure"."Companies_ID_seq"'), 'Automation');
 insert into "Infrastructure"."Departments" ("Company", "Name") values (currval('"Infrastructure"."Companies_ID_seq"'), 'Quality control');
@@ -23,12 +23,12 @@ values (currval('"Infrastructure"."Companies_ID_seq"'), 'CheckListManager', 'Use
 
 insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'LDAPHost', 'eu.jnj.com'),
-	(currval('"Infrastructure"."Companies_ID_seq"'), 'FtpConnection', '{ "Host": "www.ruggerogiovannelli.org", "Port": 21, "PrototypesFolder": "ruggerogiovannelli.org/Data/P", "InstancesFolder": "ruggerogiovannelli.org/Data/I", "UserName": "2348977@aruba.it", "Password": "oeof5sxc", "UsePassive": "true", "EnableSSL": "false" }'),
-	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpHost', 'email-smtp.eu-west-1.amazonaws.com'),
-	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpPort', '587'),
-	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpUsername', 'AKIAIEIVPEHAHBTTCRKA'),
-	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpPassword', 'AmUlYueJDWpD0lJZrzgiZFjxpi+uGf8G3b8f9+IRFdz5'),
-	(currval('"Infrastructure"."Companies_ID_seq"'), 'EmailSender', 'noreply@matematici-aws.com'),
+	(currval('"Infrastructure"."Companies_ID_seq"'), 'FtpConnection', ''),
+	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpHost', 'smtp.eu.jnj.com'),
+	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpPort', '25'),
+	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpUsername', ''),
+	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpPassword', ''),
+	(currval('"Infrastructure"."Companies_ID_seq"'), 'EmailSender', 'noreply-checklistmanager@its.jnj.com'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'UserBlockMessage', '[User], <br /> your account has been disabled because you did not login for too much time.'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'UserBlockWarningMessage', '[User], <br /> your account will soon be disabled if you do not login.'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'SignatureMessage', '[User], <br /> you have a pending workflow for the [CheckListType] [CheckListCode].'),
