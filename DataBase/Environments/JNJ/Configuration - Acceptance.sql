@@ -3,6 +3,6 @@ insert into "Configuration"."Configurations" ("Code", "Value") values
 	('RedisPort', '6379'),
 	('SqsBaseUrl', 'https://sqs.eu-west-1.amazonaws.com/'),
 	('SqsPrefix', 'qa-'),
-	('ApiBaseUrl', 'https://internal-Internal-checklystQA-189885092.eu-west-1.elb.amazonaws.com/'),
+	('ApiBaseUrl', 'https://internal-checklystqa.jnj.com/'),
 	('PublicRepositoryUrl', 'https://checklystqa.jnj.com/content/media/'),
 	('InstanceCloseTimeout', '4320'); --3 days, expressed in minutes
