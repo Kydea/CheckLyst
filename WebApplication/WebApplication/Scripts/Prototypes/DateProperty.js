@@ -34,7 +34,7 @@
 		valuePanel.append($("<label >").append(input));
 		datePicker = new matematici.DatePicker(input);
 		if (!!model[property])
-			datePicker.setDate(new Date(model[property]));
+			datePicker.setDate(new Date(model[property]), true);
 		if (!options.readOnly)
 			input
 				.addClass("DatePicked")

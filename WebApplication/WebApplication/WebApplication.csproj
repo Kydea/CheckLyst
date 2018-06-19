@@ -230,7 +230,7 @@
     <Content Include="Scripts\Controls\AutoComplete.js" />
     <Content Include="Scripts\Controls\Calendar.js" />
     <Content Include="Scripts\Controls\Controls.js" />
-    <Content Include="Scripts\Controls\DataPicker.js" />
+    <Content Include="Scripts\Controls\DatePicker.js" />
     <Content Include="Scripts\Controls\Grid.js" />
     <Content Include="Scripts\Controls\DetailPage.js" />
     <Content Include="Scripts\Controls\SearchPage.js" />
