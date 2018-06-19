@@ -154,7 +154,7 @@
 			else if (field.attr("type") == "checkbox")
 				field.prop("checked", !!value)
 			else if (field.hasClass("DatePicker"))
-				field.data("datePicker").setDate(value)
+				field.data("datePicker").setDate(value, true);
 			else
 				field.val(value);
 		},
