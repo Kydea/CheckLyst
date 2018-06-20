@@ -71,13 +71,15 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             };
         }
 
-        private async Task SetPrototypeVersionState(DefaultIdentity identity, PrototypeVersions PrototypeVersion, string State)
+        private async Task SetPrototypeVersionState(DefaultIdentity identity, PrototypeVersions PrototypeVersion, string State, DateTimeOffset Now)
         {
             PrototypeVersion.ProposedState = null;
             PrototypeVersion.ProposedDate = null;
             if (PrototypeVersion.VersionState != State)
             {
                 PrototypeVersion.VersionState = State;
+                if (PrototypeVersion.VersionState == VersionState.Obsolete && PrototypeVersion.ValidUntil == null)
+                    PrototypeVersion.ValidUntil = Now;
 
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
@@ -110,7 +112,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 PrototypeVersion.Prototypes.ModifiedBy = PrototypeVersion.ModifiedBy;
 
                 var OldVersion = PrototypeVersion.Prototypes.PrototypeVersions.SingleOrDefault(pv => pv.VersionState == VersionState.Active);
-                if (OldVersion != null) await SetPrototypeVersionState(identity, OldVersion, VersionState.Obsolete);
+                if (OldVersion != null) await SetPrototypeVersionState(identity, OldVersion, VersionState.Obsolete, UtcNow);
 
                 await _queueService.SendObjectAsync(QueueName.PrototypesFTP, new PrototypesFTPMessage
                 {
@@ -121,14 +123,14 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     Path = $"{(PrototypeVersion.Prototypes.Companies.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.Departments.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.PrototypeTypes.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.Name?.Replace('#', '-') ?? "")}#{PrototypeVersion.Version}#{(PrototypeVersion.Description?.Replace('#', '-') ?? "")}"
                 });
             }
-            await SetPrototypeVersionState(identity, PrototypeVersion, State);
+            await SetPrototypeVersionState(identity, PrototypeVersion, State, UtcNow);
         }
 
         private async Task Reject(DefaultIdentity identity, PrototypeVersions PrototypeVersion)
         {
             if (PrototypeVersion.VersionState == VersionState.InApproval)
                 _workFlowsRepository.DeletePrototypeVersionInstances(PrototypeVersion);
-            await SetPrototypeVersionState(identity, PrototypeVersion, PrototypeVersion.VersionState == VersionState.InApproval ? VersionState.Draft : PrototypeVersion.VersionState);
+            await SetPrototypeVersionState(identity, PrototypeVersion, PrototypeVersion.VersionState == VersionState.InApproval ? VersionState.Draft : PrototypeVersion.VersionState, DateTimeOffset.UtcNow);
         }
 
         private async Task SetInstanceState(DefaultIdentity identity, Instances Instance, string State)

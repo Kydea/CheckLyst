@@ -389,6 +389,8 @@ namespace CheckListManager.Prototypes.Logic.Services
         private async Task SetPrototypeVersionState(PrototypeVersions PrototypeVersion, string State, DateTimeOffset Date)
         {
             PrototypeVersion.VersionState = State;
+            if (State == VersionState.Obsolete && PrototypeVersion.ValidUntil == null)
+                PrototypeVersion.ValidUntil = Date;
 
             PrototypeVersion.PrototypeVersionsHistory.Add(new PrototypeVersionsHistory
             {
