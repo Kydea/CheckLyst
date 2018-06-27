@@ -163,16 +163,16 @@ namespace CheckListManager.Prototypes.Api.Controllers
 
 
         //Use to test the pdf generation and comment again when finished
-        //[HttpGet]
-        //[Route("Export")]
-        //[AllowAnonymous]
-        //public async Task<IHttpActionResult> Export()
-        //{
-        //    var PrototypeVersion = await _prototypesRepository.GetPrototypeVersionAsync(2, 422, 1);
-        //    var CheckList = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converter);
+        [HttpGet]
+        [Route("Export")]
+        [AllowAnonymous]
+        public async Task<IHttpActionResult> Export()
+        {
+            var PrototypeVersion = await _prototypesRepository.GetPrototypeVersionAsync(2, 484, 1);
+            var CheckList = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converter);
 
-        //    var PDF = new PrototypePDF(2, "Janssen", "W. Europe Standard Time", "https://s3-eu-west-1.amazonaws.com/public.matematici-clm.com/", PrototypeVersion, CheckList);
-        //    return Content(HttpStatusCode.OK, PDF, new PDFFormatter("Prototype"));
-        //}
+            var PDF = new PrototypePDF(2, "Janssen", "W. Europe Standard Time", "https://s3-eu-west-1.amazonaws.com/public.matematici-clm.com/", PrototypeVersion, CheckList);
+            return Content(HttpStatusCode.OK, PDF, new PDFFormatter("Prototype"));
+        }
     }
 }

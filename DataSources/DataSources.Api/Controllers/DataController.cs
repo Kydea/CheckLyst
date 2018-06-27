@@ -54,7 +54,6 @@ namespace CheckListManager.DataSources.Api.Controllers
             }
         }
 
-        [Authorize(Roles = "Instances#Edit")]
         [HttpPost]
         [Route("GetDataSourceRows")]
         public async Task<IHttpActionResult> GetDataSourceRows(TokenRequest tokenRequest)
