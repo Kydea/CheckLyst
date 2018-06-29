@@ -77,7 +77,7 @@ namespace CheckListManager.Prototypes.Logic.PDF
             });
         }
 
-        protected override Template GenerateTemplate() => new Template(this, $"{PrototypeVersion.Prototypes.Departments.Name}.{PrototypeVersion.Version}\n{PrototypeVersion.Description}");
+        protected override Template GenerateTemplate() => new Template(this, $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}\n{PrototypeVersion.Description}");
 
         public override string GetFieldValue(ICheckListField Field) => "_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _";
 

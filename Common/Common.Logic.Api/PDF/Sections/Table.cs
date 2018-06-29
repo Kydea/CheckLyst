@@ -48,6 +48,10 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                 return;
 
             var GroupElement = (ICheckListGroup)Element;
+
+            if (!String.IsNullOrEmpty(GroupElement.Description))
+                DrawText(GroupElement.Description, Indentation == 1 ? FirstHeaderFont : SecondHeaderFont);
+
             DrawText("\n");
 
             /*Render Table Header*/
@@ -104,7 +108,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
         {
             var Padding = CheckListPDF.IsPrototype() ? 10 : 0;
             var Align = CheckListPDF.IsPrototype() ? VerticalAlignment.Bottom : VerticalAlignment.Center;
-            var FillableText = "_ _ _ _ _ _ _ _ _ _ _";
+            var FillableText = "_ _ _ _ _ _ _ _ _ _";
 
             Table.AddCell(
                 NewCell("")

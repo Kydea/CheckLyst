@@ -324,7 +324,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             var Users = 
                 Instance == null ?
                 await _commonRepository.GetAppointedUsersAsync(PrototypeVersion.Prototypes.Company, "Prototypes", "Approve", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType, workFlowApplicationStep.WorkFlowApplicationStepTags.Select(t => t.Tag)) :
-                await _commonRepository.GetAppointedUsersAsync(Instance.Company, "Instance", "Confirm", Instance.Prototypes.Department, Instance.Prototypes.PrototypeType, workFlowApplicationStep.WorkFlowApplicationStepTags.Select(t => t.Tag));
+                await _commonRepository.GetAppointedUsersAsync(Instance.Company, "Instances", "Confirm", Instance.Prototypes.Department, Instance.Prototypes.PrototypeType, workFlowApplicationStep.WorkFlowApplicationStepTags.Select(t => t.Tag));
 
             foreach (var user in Users)
                 if (!string.IsNullOrEmpty(user.Email))
