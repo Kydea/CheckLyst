@@ -336,7 +336,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                                 new Tuple<string, string> ("CheckListCode",
                                     Instance == null ? 
                                         $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}" :
-                                        $"{Instance.Prototype}.{Instance.Version}.{Instance.Year}.{Instance.Number}" 
+                                        $"{Instance.PrototypeName}.{Instance.Version}.{Instance.Year}.{Instance.Number}" 
                                 ),
                             }));
 
