@@ -201,7 +201,7 @@
 					state = result.state;
 					setupActionBar();
 					if (!stateChanged)
-						instance.confirm(action);
+						instance.confirm();
 					if (result.approved)
 						matematici.blip.ok();
 					else
