@@ -51,8 +51,10 @@
 								]
 							)
                         }, 0);
-                    };
-				matematici.dialog.show($("<span><i class=\"fi flaticon-lock-o\"></i> Page locked</span>"), createContent(index), [{ text: "close", icon: "times", cancelButton: true }, { text: "unlock the page", icon: "exclamation", handler: handler }]);
+					};
+				var buttons = [{ text: "close", icon: "times", cancelButton: true }];
+				if (!model.readOnly) buttons.push({ text: "unlock the page", icon: "exclamation", handler: handler });
+				matematici.dialog.show($("<span><i class=\"fi flaticon-lock-o\"></i> Page locked</span>"), createContent(index), buttons);
             });
         };
 
@@ -60,7 +62,7 @@
 		model = newModel;
 		var user = matematici.tokenManager.getUserCode();
         for (var index in model.pages)
-			labels.eq(index).toggle(!model.readOnly && !!model.pages[index].lock && model.pages[index].lock.user != user);
+			labels.eq(index).toggle(!!model.pages[index].lock && model.pages[index].lock.user != user);
     };
 
     setup();
