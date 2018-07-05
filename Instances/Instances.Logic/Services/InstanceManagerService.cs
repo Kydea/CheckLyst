@@ -63,9 +63,35 @@ namespace CheckListManager.Instances.Logic.Services
             _redisCache = redisCache;
         }
 
-        public async Task<InstanceCacheObject> GetAsync(IDefaultIdentity identity, string code)
+        public async Task<InstanceCacheObject> Open(IDefaultIdentity identity, string code)
         {
-            var cacheObject = await GetAsync(identity.CompanyId, identity.Code, code);
+            var cacheObject = await _instanceCache.GetAsync(code);
+            if (cacheObject == null)
+            {
+                var instance = await _instancesRepository.GetByCodeAsync(identity.CompanyId, code);
+                if (instance == null)
+                    throw new InstanceException("Instance not found");
+
+                cacheObject = CreateInstanceFromDatabase(identity.CompanyId, instance);
+
+                if (!HasPermission(identity, "View", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
+                    throw new InstanceException("Access denied");
+
+                if (cacheObject.InstanceState == InstanceState.Progress)
+                {
+                    if (cacheObject.Instance.Pages.Any() && HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
+                        ((Page)cacheObject.Instance.Pages[0]).Lock = new Lock(identity.Code);
+                    await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
+                }
+            }
+            else if (cacheObject.Instance.Pages.Any() && ((Page)cacheObject.Instance.Pages.First()).Lock == null && HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
+            {
+                UnlockPages(cacheObject.Instance, identity.Code);
+                ((Page)cacheObject.Instance.Pages.First()).Lock = new Lock(identity.Code);
+                await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
+            }
+            else
+                await _instanceCache.TouchInstanceAsync(code);
 
             if (!HasPermission(identity, "View", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
                 throw new InstanceException("Access denied");
@@ -92,18 +118,6 @@ namespace CheckListManager.Instances.Logic.Services
                     throw new InstanceException("Instance not found");
 
                 cacheObject = CreateInstanceFromDatabase(company, instance);
-                if (cacheObject.InstanceState == InstanceState.Progress)
-                {
-                    if (cacheObject.Instance.Pages.Count() > 0)
-                        ((Page)cacheObject.Instance.Pages[0]).Lock = new Lock(userCode);
-                    await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
-                }
-            }
-            else if (cacheObject.Instance.Pages.Any() && ((Page)cacheObject.Instance.Pages.First()).Lock == null)
-            {
-                UnlockPages(cacheObject.Instance, userCode);
-                ((Page)cacheObject.Instance.Pages.First()).Lock = new Lock(userCode);
-                await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
             }
             else
                 await _instanceCache.TouchInstanceAsync(code);
@@ -610,9 +624,6 @@ namespace CheckListManager.Instances.Logic.Services
                 var LockUser = request.Type == "Signature" ? request.Username : null; //A signer may sign also if the page is locked by the main user (the lock is for concurrency purpose, not for security)
                 await GetCheckListAsync(identity, cacheObject, LockUser);
 
-                if (cacheObject.Instance.ReadOnly)
-                    throw new InstanceException("This instance cannot be modified");
-
                 switch (request.Type)
                 {
                     case "PageChange":
@@ -690,6 +701,9 @@ namespace CheckListManager.Instances.Logic.Services
             var page = cacheObject.Instance.Pages.Count > itemId.Value ? cacheObject.Instance.Pages[itemId.Value] as Page : null;
             if (page == null)
                 throw new InstanceException("Page not found");
+
+            if (cacheObject.Instance.ReadOnly)
+                return;
 
             UnlockPages(cacheObject.Instance, userCode);
             if (page.Lock == null)
@@ -967,6 +981,9 @@ namespace CheckListManager.Instances.Logic.Services
 
             if (string.IsNullOrWhiteSpace(request.Note))
                 throw new InstanceException("Provide a cancelation note");
+
+            if (cacheObject.Instance.ReadOnly)
+                throw new InstanceException("Invalid operation");
 
             try
             {

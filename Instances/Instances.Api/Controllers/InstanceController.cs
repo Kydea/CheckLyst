@@ -155,7 +155,7 @@ namespace CheckListManager.Instances.Api.Controllers
         {
             try
             {
-                var cacheObject = await _instanceManagerService.GetAsync(Identity, request.Code);
+                var cacheObject = await _instanceManagerService.Open(Identity, request.Code);
                 var response = new InstanceResponse
                 {
                     Id = cacheObject.Id,
@@ -186,7 +186,7 @@ namespace CheckListManager.Instances.Api.Controllers
 
         [HttpPost]
         [Route("Event")]
-        [Authorize(Roles = "Instances#Edit, Prototypes#Edit")]
+        [Authorize(Roles = "Instances#View, Prototypes#Edit")]
         public async Task<IHttpActionResult> Event(InstanceEventRequest request)
         {
             try

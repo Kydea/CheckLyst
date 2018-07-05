@@ -114,7 +114,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 page.Update(DecimalSeparator);
 
             foreach (var expression in Expressions.Values)
-                expression.Evaluate(this); //this second evaluation takes into account expression with item properties which depends by expression valus, cycles are still a problem
+                expression.Evaluate(this); //this second evaluation takes into account expression with item properties which depends by expression values, cycles are still a problem
         }
 
         public void UpdateReadOnly(string userCode, string state)
