@@ -10,7 +10,12 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 			Date = DateTimeOffset.UtcNow;
 		}
 
-		public string User { get; }
-		public DateTimeOffset Date { get; }
+        public Lock()
+        {
+
+        }
+
+		public string User { get; set; }
+		public DateTimeOffset Date { get; set; }
 	}
 }
