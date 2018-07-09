@@ -24,7 +24,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.AggregateFunctions
 
         public override TypedValue GetValue(IElementsBranch ElementsBranch)
         {
-            var Values = ((ICheckListGroup)ElementsBranch.Elements[IteratorCode]).Iterations.Select(Iteration => Argument.GetValue(Iteration));
+            var Values = ((ICheckListGroup)ElementsBranch.Elements[IteratorCode]).Iterations.Where(x => !x.Removed).Select(Iteration => Argument.GetValue(Iteration));
             return Values.FirstOrDefault(TypedValue => TypedValue.Type == DataType.Error) ?? GetValue(Values);
         }
     }
