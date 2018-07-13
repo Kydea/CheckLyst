@@ -268,6 +268,10 @@
 		return versionState;
 	};
 
+	instance.getState = function () {
+		return state;
+	};
+
 	instance.update = update;
 
 	instances.instance = instance;
