@@ -127,7 +127,7 @@ namespace CheckListManager.ExternalSources.Logic.SAP
             function.Invoke(Destination);
 
             var Row = 0;
-            for (var PhaseIndex = 0; PhaseIndex < Phase.RowCount && PhaseIndex < PAGE_SIZE * (Page + 1); ++PhaseIndex)
+            for (var PhaseIndex = 0; PhaseIndex < Phase.RowCount && Row < PAGE_SIZE * (Page + 1); ++PhaseIndex)
             {
                 Phase.CurrentIndex = PhaseIndex;
                 if ((Phase.GetString("OPERATION_NUMBER")?.EndsWith("00") ?? false) && Phase.GetString("DESCRIPTION") != "Checks")
