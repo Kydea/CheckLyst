@@ -25,8 +25,8 @@
 		}
 	},
 
-	parse: function (year, month, day) {
-		return moment(year + "-" + month + "-" + day, matematici.dateFormatter.dateFormat);
+	parse: function (year, month, day, local) {
+		return moment.tz(year + "-" + month + "-" + day, matematici.dateFormatter.dateFormat, local && localStorage.timeZone || 'UTC');
 	},
 
 	date: function (dateTime, local) {
