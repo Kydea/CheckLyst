@@ -98,10 +98,12 @@
       <HintPath>..\..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
     </Reference>
     <Reference Include="sapnco, Version=3.0.0.42, Culture=neutral, PublicKeyToken=50436dca5c7f7d23, processorArchitecture=AMD64">
-      <HintPath>..\..\packages\sapnco3.x64.3.0.2.0\lib\sapnco.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Documents\Visual Studio 2015\Projects\TestSAP\TestSAP\SAPNCO\sapnco.dll</HintPath>
     </Reference>
     <Reference Include="sapnco_utils, Version=3.0.0.42, Culture=neutral, PublicKeyToken=50436dca5c7f7d23, processorArchitecture=AMD64">
-      <HintPath>..\..\packages\sapnco3.x64.3.0.2.0\lib\sapnco_utils.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Documents\Visual Studio 2015\Projects\TestSAP\TestSAP\SAPNCO\sapnco_utils.dll</HintPath>
     </Reference>
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Net.Http" />
