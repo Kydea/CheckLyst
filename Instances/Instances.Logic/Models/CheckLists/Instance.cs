@@ -87,7 +87,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public void Update(string DecimalSeparator, InstanceCacheObject cacheObject = null)
         { 
-            Dictionary<string, object> InstanceRuntimeValues = cacheObject == null ? null : new Dictionary<string, object> {
+            Dictionary<string, object> InstanceRuntimeValues = cacheObject == null ? new Dictionary<string, object>() : new Dictionary<string, object> {
                 { "InstanceCompany", cacheObject.CompanyId },
                 { "InstanceDepartment", cacheObject.Department },
                 { "InstanceDepartmentName", cacheObject.DepartmentName },

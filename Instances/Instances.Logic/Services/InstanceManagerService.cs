@@ -235,9 +235,10 @@ namespace CheckListManager.Instances.Logic.Services
                     ((Page)cacheObject.Instance.Pages[0]).Lock = new Lock(identity.Code);
                 cacheObject.IsDirty = false;
 
+                cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(identity.CompanyId), cacheObject); //new update to consider the database values 
+
                 _instancesRepository.SaveChildren(row, CreateTags(cacheObject), CreateExpressionValues(cacheObject));
                 await _instancesRepository.SaveChangesAsync();
-
                 await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
 
                 if (!cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation))
