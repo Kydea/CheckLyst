@@ -22,24 +22,26 @@ namespace CheckListManager.Common.Logic.Api
 
         protected IHttpActionResult Error(Exception exception)
         {
-            var responseMessage = new ResponseMessage();
+            var message = new ResponseMessage<Exception>();
 
             if (exception is DatabaseAggregateException databaseAggregateException)
-                responseMessage.Messages.AddRange(databaseAggregateException.InnerExceptions.Select(ie => ie.Message));
+                message.Messages.AddRange(databaseAggregateException.InnerExceptions.Select(ie => ie.Message));
             else if (exception is DatabaseException databaseException)
                 switch (databaseException.Error)
                 {
                     case DatabaseError.PrimaryKeyViolation:
-                        responseMessage.Messages.Add("A record with the same key already exists.");
+                        message.Messages.Add("A record with the same key already exists.");
                         break;
                     default:
-                        responseMessage.Messages.Add(databaseException.Message);
+                        message.Messages.Add(databaseException.Message);
                         break;
                 }
             else
-                responseMessage.Messages.Add(exception.Message);
+                message.Messages.Add(exception.Message);
 
-            return new ErrorResult(Request, responseMessage);
+            message.Data = exception;
+
+            return new ErrorResult(Request, message);
         }
     }
 }

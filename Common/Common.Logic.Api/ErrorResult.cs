@@ -1,41 +1,36 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Http;
+using System.Net.Http.Formatting;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.ExceptionHandling;
 using CheckListManager.Common.Logic.Api.Messages;
+using Newtonsoft.Json;
 
 namespace CheckListManager.Common.Logic.Api
 {
 	public class ErrorResult : IHttpActionResult
 	{
-		private readonly ExceptionHandlerContext _context;
 		private readonly HttpRequestMessage _request;
 		private ResponseMessage _message;
-
-		public ErrorResult(ExceptionHandlerContext context)
-		{
-			_context = context;
-		}
 
 		public ErrorResult(HttpRequestMessage request, ResponseMessage message)
 		{
 			_request = request;
 			_message = message;
-		}
+        }
 
-		public Task<HttpResponseMessage> ExecuteAsync(CancellationToken cancellationToken)
+        public Task<HttpResponseMessage> ExecuteAsync(CancellationToken cancellationToken)
 		{
 			if (_message == null)
 			{
 				_message = new ResponseMessage();
-				_message.Messages.Add(_context.Exception?.Message ?? "An error has occurred.");
+				_message.Messages.Add("An error has occurred.");
 			}
 
-			var request = _request ?? _context.Request;
-
-			return Task.FromResult(request.CreateResponse(HttpStatusCode.InternalServerError, _message));
+			return Task.FromResult(_request.CreateResponse(HttpStatusCode.InternalServerError, _message));
 		}
 	}
 }

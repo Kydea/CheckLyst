@@ -1,4 +1,10 @@
 ﻿<script type="text/javascript">
+    var lastError;
+
+    function copyError() {
+        copy(lastError);
+    };
+
 	$.datepicker.setDefaults({ dateFormat: 'dd/mm/yy' });
 
     $(document).ajaxStart(
@@ -7,9 +13,11 @@
         }).ajaxStop(function () {
             matematici.loader.hide();
         }).ajaxError(function (event, jqxhr, settings, thrownError) {
-            if (!settings.accessToken && matematici.navigator.handleAjaxError(jqxhr)) return;
+            if (!settings.accessToken && matematici.navigator.handleAjaxError(jqxhr)) return; //possibly redirects to login form
 
-            var message = "";
+            var
+                message = "",
+                data = jqxhr.responseJSON && jqxhr.responseJSON.data || "(no exception detail)";
             if (jqxhr.responseJSON && jqxhr.responseJSON.messages)
                 for (var index in jqxhr.responseJSON.messages)
                     message += jqxhr.responseJSON.messages[index] + "<br />";
@@ -18,12 +26,13 @@
             else
                 message = thrownError;
 
-            if (settings.suppressErrors)
-                console.warn(event, jqxhr, settings, thrownError);
-            else {
-                console.log(event, jqxhr, settings, thrownError);
+            lastError = { message, detail: data, extra: { event, jqxhr, settings, thrownError } };
+
+            console.log("error", new Date(), lastError);
+            console.log("you can copy last error in the clipboard with the command copyError()");
+
+            if (!settings.suppressErrors)
                 matematici.dialog.error("Error", message);
-            }
         }
     );
 

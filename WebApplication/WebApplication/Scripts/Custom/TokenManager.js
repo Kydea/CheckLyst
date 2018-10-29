@@ -32,7 +32,7 @@
 				if (localStorage.refreshToken && new Date().getTime() > localStorage.accessTokenExpiration - cautionTimeOffset)
 					refreshAccessToken(tokenManager.getUserCode(), localStorage.accessToken, localStorage.refreshToken, setMainUser, function (jqXhr, textStatus, errorThrown) {
 						matematici.dialog.error("system error", "Access token refresh failed, please login again.");
-						console.log("Access token refresh failed.", jqXhr, textStatus, errorThrown);
+						console.log("Access token refresh failed.");
 					});
 
 				var
@@ -44,8 +44,8 @@
 					if (signer.refreshToken && new Date().getTime() > signer.accessTokenExpiration - cautionTimeOffset)
 						refreshAccessToken(signer.code, signer.accessToken, signer.refreshToken, function (result) {
 							updateSigner(index, result);
-						}, function (jqXhr, textStatus, errorThrown) {
-							console.log("Access token refresh failed.", jqXhr, textStatus, errorThrown);
+						}, function () {
+							console.log("Access token refresh failed.");
 							expiredSigner.push(index);
 						});
 				}
@@ -182,7 +182,7 @@
 	tokenManager.forceRefresh = function () {
 		refreshAccessToken(tokenManager.getUserCode(), localStorage.accessToken, localStorage.refreshToken, setMainUser, function (jqXhr, textStatus, errorThrown) {
 			matematici.dialog.error("system error", "Access token refresh failed, please login again.");
-			console.log("Access token refresh failed.", jqXhr, textStatus, errorThrown);
+			console.log("Access token refresh failed.");
 		});
 
 		var signers = tokenManager.getSigners();
@@ -192,7 +192,7 @@
 				console.log("Access token refresh worked.", result);
 				updateSigner(index, result);
 			}, function (jqXhr, textStatus, errorThrown) {
-				console.log("Access token refresh failed.", jqXhr, textStatus, errorThrown);
+				console.log("Access token refresh failed.");
 				expiredSigner.push(index);
 			});
 		}
