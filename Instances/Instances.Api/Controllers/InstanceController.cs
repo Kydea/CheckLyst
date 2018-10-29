@@ -201,9 +201,9 @@ namespace CheckListManager.Instances.Api.Controllers
                 };
                 return Ok(response);
             }
-            catch (Exception Exception)
+            catch (Exception e)
             {
-                return Error(Exception);
+                return Error(e);
             }
         }
 
@@ -258,9 +258,9 @@ namespace CheckListManager.Instances.Api.Controllers
             {
                 return Ok(await _instanceManagerService.GetExternalSourceRows(request.Data.InstanceCode, Identity, request.Data.ExternalSourceCode, request.Data.Parameters, request.CurrentPage));
             }
-            catch (Exception Exception)
+            catch (Exception e)
             {
-                return Error(Exception);
+                return Error(e);
             }
         }
     }

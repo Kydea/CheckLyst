@@ -86,8 +86,8 @@
 					break;
 				case prototypes.Prototype.states.approval:
 					approveButton.removeClass("Hidden");
+                    break;
 				case prototypes.Prototype.states.obsolete:
-					break;
 				case prototypes.Prototype.states.draftReadOnly:
 				case prototypes.Prototype.states.simulationReadOnly:
 					break;
@@ -237,7 +237,7 @@
 
 		addPage = function () {
 			if (!model.pages) model.pages = [];
-			model.pages.push({ typeName: "Page", description: "(page)", itemId: getNewItemId() })
+            model.pages.push({ typeName: "Page", description: "(page)", itemId: getNewItemId() });
 		},
 
 		sign = function (action, grid, rows, row) {

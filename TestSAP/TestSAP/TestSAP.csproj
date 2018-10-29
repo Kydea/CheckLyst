@@ -97,10 +97,10 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>DB48D4046D98182A2402E846EB8D8FCB825A1485</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>BEBCF68184E64DF8ED7CBA0CCBA0035759B00512</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>TestSAP_ChiaveTemporanea.pfx</ManifestKeyFile>
+    <ManifestKeyFile>TestSAP_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -169,7 +169,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="TestSAP_ChiaveTemporanea.pfx" />
+    <None Include="TestSAP_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

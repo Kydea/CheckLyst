@@ -118,6 +118,7 @@
     <None Include="..\..\Common\NLog.config">
       <Link>NLog.config</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
     <None Include="App.config" />
     <None Include="Instances.Terminal.snk" />
