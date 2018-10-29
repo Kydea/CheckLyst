@@ -15,7 +15,6 @@
 		prototype,
 		prototypeName,
 		version,
-		versionState,
 		year,
 		number,
 		instanceDescription,
@@ -174,7 +173,7 @@
 				return true;
 			}
 
-			for (var rowIndex in rows) {
+			for (rowIndex in rows) {
 				if (rows[rowIndex].step == row.step && rows[rowIndex].user == matematici.tokenManager.getUserCode()) {
 					allowed = false;
 					break;
@@ -200,6 +199,7 @@
 					var stateChanged = state != result.state;
 					state = result.state;
 					setupActionBar();
+                    setupBreadcrumbs();
 					if (!stateChanged)
 						instance.confirm();
 					if (result.approved)
