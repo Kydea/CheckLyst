@@ -194,7 +194,7 @@
 					]).setHandler(function () {
 						item.setFontSize(model.fontSize);
 					}), "Font size",
-					"The size in pixel of the text (leave empty for the default font size)."
+					"The size in pixel of the text (empty or 0 for the default font size)."
 				));
 				properties.push(new prototypes.Property(
 					this, new prototypes.ListProperty(model, "color", [

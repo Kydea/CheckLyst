@@ -5,6 +5,7 @@
         check,
         change = function () {
             var value = input.val();
+            if (value == "" && options.number) value = 0;
             if (check) 
                 for(var index in check)
                     if (!check[index].action.call(this, value)) {
@@ -37,13 +38,15 @@
 		if (options.number)
 			input.keyfilter(/[\d]/);
 		else if (options.code)
-			input.keyfilter(/^[$A-Z_0-9]*$/i);
+            input.keyfilter(/^[$A-Z_0-9]*$/i);
+
+        if (options.number && !options.defaultValue)
+            options.defaultValue = "0";
         valuePanel.append(input);
     };
 
-	this.hasChanges = function () {
-		console.log()
-		return !options.defaultValue && !!model[property] || !!options.defaultValue && model[property] != options.defaultValue;
+    this.hasChanges = function () {
+        return !options.defaultValue && !!model[property] || !!options.defaultValue && model[property] != options.defaultValue;
     };
 
     this.setReadOnly = function (value) {
