@@ -221,6 +221,8 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
         #region Table Rendering
         void RenderTableRow(PdfPTable Table, List<ICheckListItem> Items)
         {
+            Table.CompleteRow();
+
             foreach (var Item in Items)
                 if (Item.TypeName == "Group")
                     RenderTableRow(Table, ((ICheckListGroup)Item).Items);
@@ -258,8 +260,6 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
 
                     Table.AddCell(Cell.SetPadding(5));
                 }
-
-            Table.CompleteRow();
         }
 
         void RenderTableBody(PdfPTable Table, ICheckListGroup Element)
@@ -308,7 +308,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                     Cell.SubGroup = true;
                     var Size = CreateTableHeader(Rows, RowIndex + 1, ((ICheckListGroup)Item).Items);
                     RowsCount = Math.Max(Size.RowsCount + 1, RowsCount);
-                    ColumnsCount += Size.ColumnsCount;
+                    ColumnsCount += Math.Max(Size.ColumnsCount, 1);
                     if (Size.ColumnsCount > 1)
                         Cell.Colspan = Size.ColumnsCount;
                 }
@@ -334,8 +334,6 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             {
                 foreach (RenderingCell Cell in Row.Children)
                     Table.AddCell(PdfPCellFromNode(Cell).SetPadding(5));
-
-                Table.CompleteRow();
             }
 
             return Table;

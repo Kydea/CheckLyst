@@ -11,9 +11,117 @@ namespace CheckListManager.Common.Logic.Api.PDF.Helper
 {
     public class PdfPTable
     {
+        public class PdfPRows
+        {
+            protected Dictionary<int, List<PdfPCell>> Rows;
+            protected int startingRow;
+            protected int Columns;
+
+            public PdfPRows(int Columns)
+            {
+                this.Rows = new Dictionary<int, List<PdfPCell>>();
+                this.Columns = Columns;
+                this.startingRow = 0;
+            }
+
+            private int GetFilledColumns(int rowIndex)
+            {
+                if (rowIndex >= Rows.Count)
+                    return Columns;
+
+                return Rows[rowIndex].Where(x => x != null).Sum(x => x.Colspan);
+            }
+
+            private int GetAvailableRow(PdfPCell cell)
+            {
+                for (int i = startingRow; i < Rows.Count; ++i)
+                    // Search the one with a free slot
+                    if (GetFilledColumns(i) < Columns)
+                        return i;
+
+                // No free rows - create one
+                int index = Rows.Count;
+                Rows.Add(index, new List<PdfPCell>(Enumerable.Repeat<PdfPCell>(null, Columns)));
+                return index; // get the last one
+            }
+
+            public void AddCell(PdfPCell cell)
+            {
+                int rowIndex = GetAvailableRow(cell);
+                int filledColumns = GetFilledColumns(rowIndex);
+
+                if (filledColumns + cell.Colspan > Columns)
+                    throw new InvalidOperationException("Invalid operation: table colspan overflow.");
+
+                int cellIndex = Rows[rowIndex].IndexOf(null);
+
+                // check validity
+                for (int i = cellIndex + 1; i < cellIndex + cell.Colspan; ++i)
+                    if (i >= Columns || Rows[rowIndex][i] != null)
+                        throw new InvalidOperationException("Invalid operation: table colspan conflict.");
+
+                Rows[rowIndex][cellIndex] = cell;
+
+                if (cell.Colspan > 1)
+                    for (int i = cellIndex + 1; i < cellIndex + cell.Colspan; ++i)
+                        Rows[rowIndex][i] = new PdfPCell() { Empty = true, Colspan = 0 }; // Colspan = 0: ignore it,just
+
+                if (cell.Rowspan > 1)
+                    for (int i = rowIndex + 1; i < rowIndex + cell.Rowspan; ++i)
+                    {
+                        if (!Rows.ContainsKey(i))
+                            Rows.Add(i, new List<PdfPCell>(Enumerable.Repeat<PdfPCell>(null, Columns)));
+
+                        for (int j = cellIndex; j < cellIndex + cell.Colspan; ++j)
+                            Rows[i][j] = new PdfPCell() { Empty = true };
+                    }
+            }
+
+            public void Render(Table table)
+            {
+                Row row;
+                PdfPCell cell;
+
+                for (int rowIndex = 0; rowIndex < Rows.Count; ++rowIndex)
+                {
+                    row = new Row();
+
+                    for (int cellIndex = 0; cellIndex < Columns; ++cellIndex)
+                    {
+                        cell = Rows[rowIndex][cellIndex];
+
+                        if (cell == null || cell.Empty)
+                            continue;
+
+                        row.Cells[cellIndex].Add(cell.Content.Clone());
+                        row.Cells[cellIndex].VerticalAlignment = cell.VerticalAlignment;
+
+                        if ((cell.Border & PdfPCell.NO_BORDER) == PdfPCell.NO_BORDER)
+                            row.Cells[cellIndex].Borders.Visible = false;
+                        else
+                        {
+                            row.Cells[cellIndex].Borders.Top.Visible = (cell.Border & PdfPCell.TOP) == PdfPCell.TOP;
+                            row.Cells[cellIndex].Borders.Left.Visible = (cell.Border & PdfPCell.LEFT) == PdfPCell.LEFT;
+                            row.Cells[cellIndex].Borders.Right.Visible = (cell.Border & PdfPCell.RIGHT) == PdfPCell.RIGHT;
+                            row.Cells[cellIndex].Borders.Bottom.Visible = (cell.Border & PdfPCell.BOTTOM) == PdfPCell.BOTTOM;
+                        }
+
+                        row.Cells[cellIndex].MergeRight = cell.Colspan - 1;
+                        row.Cells[cellIndex].MergeDown = cell.Rowspan - 1;
+                    }
+
+                    Rows[rowIndex] = null;
+                    table.Rows.Add(row);
+                }
+
+                Rows = null;
+            }
+
+            internal void CompleteRow() => startingRow = Rows.Count; // start from the last
+        }
+
         protected float[] _widths;
-        protected List<Row> _rows;
-        protected List<PdfPCell> _cells;
+        protected PdfPRows Rows;
 
         public int WidthPercentage { get; set; } = 100;
 
@@ -21,24 +129,17 @@ namespace CheckListManager.Common.Logic.Api.PDF.Helper
 
         public RowAlignment HorizontalAlignment { get; set; }
 
-        public PdfPTable()
-        {
-            _rows = new List<Row>();
-            _cells = new List<PdfPCell>();
-        }
-
-        public PdfPTable(int columns) : this()
+        public PdfPTable(int columns)
         {
             if (columns == 0)
                 throw new InvalidOperationException("Cannot create table, almost one column needed.");
 
             Columns = columns;
+            Rows = new PdfPRows(Columns);
         }
 
-        public void AddCell(PdfPCell cell)
-        {
-            _cells.Add(cell);
-        }
+        public void AddCell(PdfPCell cell) => Rows.AddCell(cell);
+        public void CompleteRow() => Rows.CompleteRow();
 
         public void SetWidths(float[] widths)
         {
@@ -46,70 +147,6 @@ namespace CheckListManager.Common.Logic.Api.PDF.Helper
                 throw new Exception();
 
             _widths = widths;
-        }
-
-        public void CompleteRow()
-        {
-            // Check for rowspan & add "missing" cells.
-            #region Rowspan check
-            Row row;
-            int idx = _rows.Count;
-
-            for (int rowIdx = 0; rowIdx < idx; rowIdx++)
-            {
-                row = _rows[rowIdx];
-
-                for (int j = 0; j < row.Cells.Count; j++)
-                {
-                    Cell cell = row.Cells[j];
-
-                    if (cell.MergeDown > 0 && (cell.MergeDown + rowIdx >= idx) && _cells.Count < Columns)
-                        _cells.Insert(j, new PdfPCell(new Paragraph()));
-                }
-            }
-
-            int colspanCount = _cells.Sum(s => s.Colspan);
-
-            // Add missing cells
-            if (colspanCount != Columns)
-            {
-                _cells.Add(new PdfPCell(new Paragraph()) {
-                    Colspan = Columns - colspanCount
-                });
-            }
-            #endregion
-                
-            row = new Row();
-
-            for (int i = 0; i < _cells.Count; i++)
-            {
-                PdfPCell cell = _cells[i];
-
-                row.Cells[i].Add(cell.Content.Clone());
-                row.Cells[i].VerticalAlignment = cell.VerticalAlignment;
-
-                if ((cell.Border & PdfPCell.NO_BORDER) == PdfPCell.NO_BORDER)
-                    row.Cells[i].Borders.Visible = false;
-                else
-                {
-                    row.Cells[i].Borders.Top.Visible = (cell.Border & PdfPCell.TOP) == PdfPCell.TOP;
-                    row.Cells[i].Borders.Left.Visible = (cell.Border & PdfPCell.LEFT) == PdfPCell.LEFT;
-                    row.Cells[i].Borders.Right.Visible = (cell.Border & PdfPCell.RIGHT) == PdfPCell.RIGHT;
-                    row.Cells[i].Borders.Bottom.Visible = (cell.Border & PdfPCell.BOTTOM) == PdfPCell.BOTTOM;
-                }
-
-                if (cell.Colspan > 1)
-                {
-                    row.Cells[i].MergeRight = cell.Colspan - 1;
-                    i += cell.Colspan - 1;
-                }
-
-                if (cell.Rowspan > 1)
-                    row.Cells[i].MergeDown = cell.Rowspan - 1;
-            }
-
-            _rows.Add(row);
-            _cells.Clear();
         }
 
         public MigraDoc.DocumentObjectModel.Tables.Table Render(Section Section)
@@ -127,7 +164,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Helper
                     table.AddColumn(Unit.FromPoint(width / Columns));
             }
 
-            _rows.ForEach(row => table.Rows.Add(row));
+            Rows.Render(table);
 
             return table;
         }
@@ -145,6 +182,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Helper
         public int Rowspan { get; set; } = 1;
         public int Colspan { get; set; } = 1;
         public int Border { get; set; } = TOP | BOTTOM | LEFT | RIGHT;
+        public bool Empty { get; set; } = false;
         public VerticalAlignment VerticalAlignment { get; set; } = VerticalAlignment.Top;
         public ParagraphAlignment HorizontalAlignment
         {
@@ -155,6 +193,11 @@ namespace CheckListManager.Common.Logic.Api.PDF.Helper
         public PdfPCell(Paragraph paragraph)
         {
             Content = paragraph;
+        }
+
+        public PdfPCell()
+        {
+            Content = new Paragraph();
         }
 
         public PdfPCell SetVerticalAlign(VerticalAlignment verticalAlignment)
