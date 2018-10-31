@@ -187,9 +187,10 @@
         /* riordina gli oggetti iteration */
 		if (iteratorOrder)
 			for (index in iteratorOrder) 
-				items[iteratorOrder[index]].appendElement();
+                items[iteratorOrder[index]].appendElement();
 
-		var visibleChildren = element.children(".Iteration:not(.Removed)");
+
+        var visibleChildren = $(model.showAsTable ? "tr.Iteration:not(.Removed)" : "> .Iteration:not(.Removed)", element);
 		visibleChildren.first().addClass("FirstIteration");
 		visibleChildren.last().addClass("LastIteration");
 

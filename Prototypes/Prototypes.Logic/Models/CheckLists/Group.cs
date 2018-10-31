@@ -25,12 +25,21 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         public bool DisableMove { get; set; }
 
+        private bool InTable { get; set; }
+
         public override void Setup()
         {
             base.Setup();
+
             foreach (var Item in Items)
             {
                 Item.CheckList = CheckList;
+                if ((ShowAsTable || InTable) && Item is Group) ((Group)Item).InTable = true;
+                if (InTable) //disable hidden properties for subgroups of tables
+                {
+                    ShowAsTable = false;
+                    Iterator = false;
+                }
                 Item.Setup();
             }
         }
