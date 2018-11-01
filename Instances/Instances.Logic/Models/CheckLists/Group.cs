@@ -57,7 +57,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 			}
 			else
 				Elements = Items
-					.Where(item => item.Code != null)
+					.Where(item => item.Code != null && item.Code != string.Empty)
 					.ToDictionary(item => item.Code, item => (ICheckListElement)item);
 		}
 

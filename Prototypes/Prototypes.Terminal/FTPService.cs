@@ -90,6 +90,9 @@ namespace CheckListManager.Prototypes.Terminal
 
 		private async Task Send(PrototypesFTPMessage message)
 		{
+            var SerializedSettings = await _settingService.PrototypesFtpConnectionAsync(message.Company);
+            if (string.IsNullOrWhiteSpace(SerializedSettings)) return;
+
             var Company = await _commonRepository.GetCompanyAsync(message.Company);
 
             var PrototypeVersion = await _prototypesRepository.GetPrototypeVersionAsync(message.Company, message.Prototype, message.Version);
@@ -99,7 +102,7 @@ namespace CheckListManager.Prototypes.Terminal
 
             var MemoryStream = new MemoryStream();
             PDF.Generate(MemoryStream);
-            var Settings = JsonConvert.DeserializeObject<FTPConnectionSettings>(await _settingService.FtpConnectionAsync(message.Company));
+            var Settings = JsonConvert.DeserializeObject<FTPConnectionSettings>(SerializedSettings);
             var ftpClient = new FTPClient();
 
             await ftpClient.ActionAsync(MemoryStream.ToArray(), $"{(string.IsNullOrEmpty(Settings.PrototypesFolder) ? string.Empty : Settings.PrototypesFolder + "/")}{message.Path}", Settings, FTPClient.Methods.Upload);

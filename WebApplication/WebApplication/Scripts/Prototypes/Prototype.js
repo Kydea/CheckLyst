@@ -67,7 +67,10 @@
 				case prototypes.Prototype.states.approved:
 					if (model.proposedState)
 						obsoleteButton.removeClass("Hidden");
-					else 
+                    else if (
+						matematici.tokenManager.checkRole("Prototypes#Edit#" + model.department + "##")
+                        || matematici.tokenManager.checkRole("Prototypes#Edit#" + model.department + "#" + model.prototypeType)
+                    )
 						submitForObsolescence.removeClass("Hidden");
 					break;
 				case prototypes.Prototype.states.draft:
@@ -539,7 +542,7 @@
 		]);
 	};
 
-	prototype.loadSignatureBook = function (action) {
+    prototype.loadSignatureBook = function (action) {
 		return $.ajax({
 			url: element.data("api") + "/WorkFlows/Applications/GetSteps",
 			type: "POST",

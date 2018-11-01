@@ -173,7 +173,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
         public int Compare(Token Token1, Token Token2)
         {
             return
-                (Token1.TokenOrder - Token2.TokenOrder) * 1000
+                (Token1.TokenOrder - Token2.TokenOrder) * Expression.MAXIMUM_LENGTH
                 + (Token1.TokenOrderRightToLeft ? Token2.Position - Token1.Position : Token1.Position - Token2.Position);
         }
 

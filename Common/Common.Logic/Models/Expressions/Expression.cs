@@ -7,6 +7,8 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 {
     public class Expression
     {
+        public const int MAXIMUM_LENGTH = 100000;
+
         public string SerializedValue { get; set; }
 
         public string Error { get; set; }
@@ -20,6 +22,9 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
         public void Parse(ICheckList checkList)
         {
+            if (SerializedValue?.Length >= MAXIMUM_LENGTH)
+                throw new Parsing.ParseException($"Expressions lengh must not exceed {MAXIMUM_LENGTH - 1} characters", MAXIMUM_LENGTH);
+
             Root = new Parsing.TokenSet(SerializedValue, 0).Symbol;
             Root.Expression = this;
         }

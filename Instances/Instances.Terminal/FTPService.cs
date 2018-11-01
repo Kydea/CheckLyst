@@ -85,6 +85,10 @@ namespace CheckListManager.Instances.Terminal
 
 		private async Task Send(InstancesFTPMessage message)
 		{
+            var SerializedSettings = await _settingService.InstancesFtpConnectionAsync(message.Company);
+            if (string.IsNullOrWhiteSpace(SerializedSettings)) return;
+
+
             var cacheObject = await _instanceManagerService.GetAsync(message.Company, message.ID);
             cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(cacheObject.CompanyId), cacheObject);
 
@@ -93,7 +97,8 @@ namespace CheckListManager.Instances.Terminal
             var PDF = new InstancePDF(Company.ID, Company.Name, Company.TimeZones.MicrosoftCode, _configurationService.PublicRepositoryUrl, cacheObject);
             var MemoryStream = new MemoryStream();
             PDF.Generate(MemoryStream);
-            var Settings = JsonConvert.DeserializeObject<FTPConnectionSettings>(await _settingService.FtpConnectionAsync(message.Company));
+
+            var Settings = JsonConvert.DeserializeObject<FTPConnectionSettings>(SerializedSettings);
             var ftpClient = new FTPClient();
 
             await ftpClient.ActionAsync(MemoryStream.ToArray(), $"{(string.IsNullOrEmpty(Settings.InstancesFolder) ? string.Empty : Settings.InstancesFolder + "/")}{message.Path}", Settings, FTPClient.Methods.Upload);

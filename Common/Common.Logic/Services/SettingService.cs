@@ -73,9 +73,15 @@ namespace CheckListManager.Common.Logic.Services
 			return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<string>(companyId, code), RegionName);
 		}
 
-        public Task<string> FtpConnectionAsync(long companyId)
+        public Task<string> PrototypesFtpConnectionAsync(long companyId)
         {
-            const string code = "FtpConnection";
+            const string code = "PrototypesFtpConnection";
+            return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<string>(companyId, code), RegionName);
+        }
+
+        public Task<string> InstancesFtpConnectionAsync(long companyId)
+        {
+            const string code = "InstancesFtpConnection";
             return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<string>(companyId, code), RegionName);
         }
 

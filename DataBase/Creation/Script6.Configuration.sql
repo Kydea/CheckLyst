@@ -35,7 +35,8 @@ create table "Configuration"."Settings"
 );
 
 insert into "Configuration"."Settings" ("Code") values
-	('FtpConnection'),
+	('InstancesFtpConnection'),
+	('PrototypesFtpConnection'),
 	('LDAPHost'),
 	('SmtpHost'),
 	('SmtpPort'),

@@ -40,8 +40,7 @@
     this.create = function (valuePanel) {
         valuePanel.addClass("Valid");
         expressions = prototypes.prototype.getModel().expressions;
-        if (editable)
-        {
+        if (editable) {
             input = $("<select />")
                 .appendTo(valuePanel)
                 .append($("<option />").attr("value", "0").text("(default)").attr("selected", model.validCondition == 0))
@@ -52,17 +51,21 @@
                 input.append($("<option />").attr({ value: index, selected: model.validCondition > 2 && index == model.validExpressionCode }).text(index));
 
             input.on("change", inputChanged);
-        } else
+        } else {
             $("<input />")
                 .attr({ type: "text", readOnly: true })
                 .val(
                     model.validCondition == 0 ? "(default)" :
-                    model.validCondition == 1 ? "(true)" :
-                    model.validCondition == 2 ? "(false)" :
-                    model.validExpressionCode
+                        model.validCondition == 1 ? "(true)" :
+                            model.validCondition == 2 ? "(false)" :
+                                model.validExpressionCode
                 )
                 .appendTo(valuePanel);
 
+            //for css consistency
+            $("<div />").appendTo(valuePanel); 
+            $("<div />").appendTo(valuePanel);
+        }
         $("<label />").text("instead of default").prepend(insteadRadio = $("<input />").on("click", radioClicked).attr({ type: "radio", name: "ReadOnly", value: "instead" }).attr('disabled', !editable).prop("checked", model.validCondition == 3)).appendTo(valuePanel).toggle(model.validCondition > 2);
         $("<label />").text("and default").prepend(andRadio = $("<input />").on("click", radioClicked).attr({ type: "radio", name: "ReadOnly", value: "and" }).attr('disabled', !editable).prop("checked", model.validCondition == 4)).appendTo(valuePanel).toggle(model.validCondition > 2);
         $("<label />").text("or default").prepend(orRadio = $("<input />").on("click", radioClicked).attr({ type: "radio", name: "ReadOnly", value: "or" }).attr('disabled', !editable).prop("checked", model.validCondition == 5)).appendTo(valuePanel).toggle(model.validCondition > 2);
