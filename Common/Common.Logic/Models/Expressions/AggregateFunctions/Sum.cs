@@ -12,7 +12,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.AggregateFunctions
         {
             base.Check(Prototype);
             if (DataType != DataType.Number)
-                throw new ParseException("Operands of functon Sum must be numbers", Position);
+                throw new ParseException("Operands of function Sum must be numbers", Position);
         }
 
         protected override TypedValue GetValue(IEnumerable<TypedValue> Values)

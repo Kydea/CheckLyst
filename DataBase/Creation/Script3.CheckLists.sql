@@ -17,6 +17,8 @@ create table "CheckLists"."PrototypeTypes"
 	"ModifiedOn" timestamptz
 );
 
+create unique index "PrototypeTypes_Name" on "CheckLists"."PrototypeTypes" ("Company", "Department", upper("Name"));
+
 create table "CheckLists"."Prototypes"
 (
 	"ID" bigserial primary key,
@@ -74,7 +76,8 @@ create table "CheckLists"."PrototypeVersions"
 	"ModifiedOn" timestamptz
 );
 
-create unique index "Index_PrototypeVersions_State" on "CheckLists"."PrototypeVersions"("Prototype", "VersionState") where "VersionState" in ('In simulation', 'Active');
+create unique index "Index_PrototypeVersions_Active" on "CheckLists"."PrototypeVersions"("Prototype", "VersionState") where "VersionState" in ('Active');
+create unique index "Index_PrototypeVersions_NewVersion" on "CheckLists"."PrototypeVersions"("Prototype") where "VersionState" in ('Draft', 'In simulation', 'In approval');
 
 create table "CheckLists"."PrototypeVersionTags"
 (

@@ -17,5 +17,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
 		public string User { get; set; }
 		public DateTimeOffset Date { get; set; }
-	}
+        public DateTimeOffset LastUpdate { get; set; }
+    }
 }

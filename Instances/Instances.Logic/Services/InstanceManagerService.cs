@@ -1088,6 +1088,9 @@ namespace CheckListManager.Instances.Logic.Services
 
         private async Task Update(InstanceCacheObject cacheObject, string userCode)
         {
+            foreach (Page Page in cacheObject.Instance.Pages)
+                if (Page.Lock != null && Page.Lock.User == userCode)
+                    Page.Lock.LastUpdate = DateTimeOffset.Now;
             cacheObject.TrackChanges(userCode);
             await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
         }

@@ -4,7 +4,7 @@
 
         format = function (date) {
             date = new Date(date);
-            return matematici.dateFormatter.both(date);
+            return matematici.dateFormatter.both(date, true);
         },
 
         createContent = function (index) {
@@ -17,7 +17,7 @@
 					.append($("<strong />").text(format(model.pages[index].lock.date)))
 					.append($("<br />"))
 					.append($("<span />").text("updated on: "))
-					.append($("<strong />").text(format(model.pages[index].lock.date)));
+					.append($("<strong />").text(format(model.pages[index].lock.lastUpdate)));
             return content;
         },
 

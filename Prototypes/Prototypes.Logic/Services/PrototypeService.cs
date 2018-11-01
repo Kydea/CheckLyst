@@ -116,6 +116,11 @@ namespace CheckListManager.Prototypes.Logic.Services
             });
         }
 
+        public async Task CheckNewVersionAsync(DefaultIdentity identity, PrototypeRequest request)
+        {
+            await _prototypeRepository.CheckNewVersionAsync(identity.CompanyId, request.ID);
+        }
+
         public async Task<PrototypeResponse> VersionAsync(DefaultIdentity identity, PrototypeRequest request)
         {
             var PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(identity.CompanyId, request.ID, request.Version);

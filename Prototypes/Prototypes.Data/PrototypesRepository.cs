@@ -65,6 +65,12 @@ namespace CheckListManager.Prototypes.Data
             return result;
         }
 
+        public async Task CheckNewVersionAsync(long companyId, long prototype)
+        {
+            if (await Entities.PrototypeVersions.AnyAsync(x => x.Prototypes.Company == companyId && x.Prototype == prototype && (x.VersionState == VersionState.Draft || x.VersionState == VersionState.InSimulation || x.VersionState == VersionState.InApproval)))
+                throw new Exception("There is already a new version under processing");
+        }
+
         public void AddPrototype(Common.Data.Prototypes prototype)
         {
             Entities.Prototypes.Add(prototype);

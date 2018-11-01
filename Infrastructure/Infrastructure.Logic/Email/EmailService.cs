@@ -69,7 +69,7 @@ namespace CheckListManager.Infrastructure.Logic.Email
 
 			if (message.To != null)
 				foreach (var email in message.To)
-					mailMessage.CC.Add(email);
+					mailMessage.To.Add(email);
 
 			if (message.Cc != null)
 				foreach (var email in message.Cc)

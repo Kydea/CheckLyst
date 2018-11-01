@@ -61,6 +61,23 @@ namespace CheckListManager.Prototypes.Api.Controllers
             }
         }
 
+
+        [HttpPost]
+        [Route("CheckNewVersion")]
+        [Authorize(Roles = "Prototypes#Edit")]
+        public async Task<IHttpActionResult> CheckNewVersion(PrototypeRequest request)
+        {
+            try
+            {
+                await _prototypeService.CheckNewVersionAsync(Identity, request);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return Ok(new { error = e.Message });
+            }
+        }
+
         [HttpPost]
         [Route("Version")]
         [Authorize(Roles = "Prototypes#Edit")]

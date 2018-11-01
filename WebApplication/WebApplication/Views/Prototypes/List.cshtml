@@ -81,7 +81,18 @@
 <script type="text/javascript">
     var
         createNewVersionHandler = function (data) {
-            matematici.navigator.open("@Url.Action("Version")/" + data.id + "/" + data.version);
+            $.ajax({
+                url: matematici.urls.api + "/Prototypes/Prototype/CheckNewVersion",
+                type: "post",
+                data: {
+                    id: data.id,
+                }
+            }).done(function (result) {
+                if (result.error)
+                    matematici.dialog.error("error", result.error);
+                else
+                    matematici.navigator.open("@Url.Action("Version")/" + data.id + "/" + data.version);
+            });
         },
 
         openPrototypeHandler = function (data) {
@@ -107,10 +118,14 @@
 
                 rowClickHandler: function (row) {
                     if (editor) {
-                        var buttons = [];
+                        var
+                            buttons = [],
+                            state = row.data("values").state;
                         buttons.push({ text: "cancel", icon: "times", cancelButton: true });
                         if (
-                            $(this).data("state") != prototypes.Prototype.states.draft
+                            state != prototypes.Prototype.states.draft
+                            && state != prototypes.Prototype.states.simulation
+                            && state != prototypes.Prototype.states.approval
                             && (
                                 matematici.tokenManager.checkRole("Prototypes#Edit#" + row.data("values").department + "##")
                                 || matematici.tokenManager.checkRole("Prototypes#Edit#" + row.data("values").department + "#" + row.data("values").prototypeType)

@@ -26,7 +26,14 @@ namespace CheckListManager.Infrastructure.Api.Controllers
         [AllowAnonymous]
         public async Task<IHttpActionResult> GetData()
         {
-            return Ok(await _companiesService.GetDataAsync());
+            try
+            {
+                return Ok(await _companiesService.GetDataAsync());
+            }
+            catch (Exception e)
+            {
+                return Error(new Exception("Error retrieving the companies list", e));
+            }
         }
     }
 }

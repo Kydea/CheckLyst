@@ -50,3 +50,5 @@ create table "Infrastructure"."Departments"
 	"ModifiedBy" varchar (60),
 	"ModifiedOn" timestamptz
 );
+
+create unique index "Departments_Name" on "Infrastructure"."Departments" ("Company", upper("Name"));
