@@ -6,8 +6,8 @@
             <div class="TabLabels">
                 <a href="#">Details</a>
                 <a href="#" class="Parameters SAP">Parameters</a>
-                <a href="#" class="Parameters SQLServer">Parameters</a>
-                <a href="#" class="Parameters Oracle">Parameters</a>
+                <a href="#" class="Parameters SQL">Connection</a>
+                <a href="#" class="Parameters SQL">Parameters</a>
             </div>
             <div class="Tab">
                 <label>
@@ -21,14 +21,11 @@
                     <i class="Icon fi flaticon-connection" />
                     <select class="AutoComplete SourceClass" name="class">
                         <option value="SAP">SAP</option>
-                        @*
-                            <option value="SQLServer">SQLServer</option>
-                            <option value="Oracle">Oracle</option>
-                        *@
+                        <option value="SQL">SQL</option>
                     </select>
                 </label>
 
-                <label class="Clearing Width200">
+                <label>
                     <span>Description</span>
                     <i class="Icon fi flaticon-align-left" />
                     <input type="text" name="description" />
@@ -108,10 +105,34 @@
                 </label>
             </div>
             <div class="Tab">
-                SQL Server
+                <label>
+                    <span>DBMS</span>
+                    <i class="Icon fi flaticon-connection" />
+                    <select class="AutoComplete" name="DBMS">
+                        <option value="SQL Server">SQL Server</option>
+                        <option value="Oracle">Oracle</option>
+                    </select>
+                </label>
+
+                <label>
+                    <span>Connectio string</span>
+                    <i class="Icon fi flaticon-user-o" />
+                    <input type="text" name="user" maxlength="500" />
+                </label>
+
+                <label>
+                    <span>Password</span>
+                    <i class="Icon fi flaticon-lock-o" />
+                    <input type="password" maxlength="50" />
+                </label>
+
+                <label class="Width300">
+                    <span>Query</span>
+                    <textarea name="query" maxlength="10000" style="height: 300px" />
+                </label>
             </div>
             <div class="Tab">
-                Oracle
+                <div class="Clearing"></div>
             </div>
             <div class="Clearing"></div>
         </div>
@@ -125,39 +146,137 @@
         codeInput = $("input.Code", formElement),
         classSelect = $("select.SourceClass", formElement),
 
+        parameterTypes = [
+            "Text",
+            "Number",
+            "Date"
+        ],
+
+        fixQueryParameters = function (tabIndex) {
+            steps = $("div.Function", tab.getItem(tabIndex).tab).each(function (index) {
+                $(this).children("hr").toggle(index > 0);
+            });
+
+            resize();
+        },
+
+        resize = function () {
+            tab.resize();
+            setTimeout(function () {
+                matematici.popup.center();
+            }, 500);
+        },
+
+        addQueryParameter = function (tabIndex) {
+            var
+                tabItem = tabIndex && tab.getItem(tabIndex) || tab.getCurrentItem(),
+                div = $("<div />").addClass("QueryParameter").insertBefore(tabItem.tab.children("div.Clearing"));
+
+            $("<hr />").appendTo(div)
+
+            var input1 = $("<input />").attr("type", "text");
+            if (detailPage.isReadOnly()) matematici.controls.setEditable(input1, false);
+            $("<label />").appendTo(div).append($("<span />").text("Name")).append(input1).css("width", "144px");
+
+            var input2 = $("<input />").attr("type", "text");
+            if (detailPage.isReadOnly()) matematici.controls.setEditable(input2, false);
+            $("<label />").appendTo(div).append($("<span />").text("Label")).append(input2);
+
+            var select = $("<select />");
+            if (detailPage.isReadOnly()) matematici.controls.setEditable(select, false);
+            $("<label />").appendTo(div).append($("<span />").text("Type")).append(select);
+            for (var index in parameterTypes)
+                select.append($("<option />").text(parameterTypes[index]).attr("value", parameterTypes[index]));
+            var autoComplete = new matematici.AutoComplete(select);
+            autoComplete.initialize();
+
+            setTimeout(function () {
+                autoComplete.refresh();
+            }, 0);
+
+            if (!detailPage.isReadOnly())
+                $("<a />").attr("href", "#").addClass("Button Icon").append($("<i />").addClass("fi flaticon-minus")).on("click", function () {
+                    div.remove();
+                    fixQueryParameters(tabIndex);
+                }).appendTo(div);
+
+            fixQueryParameters(tabIndex);
+
+            return {
+                name: input1,
+                label: input2,
+                type: select
+            }
+        },
+
         tab = new matematici.Tab(formSelector + " div.TabContainer", {
             fixedHeight: true
         }),
 
-        detailPage = new matematici.DetailPage({
-            takeOpenOnSave: true,
-            formSelector: formSelector,
-            completeHandler: function (detailPage) {
-                matematici.controls.setEditable($("input[name=code]", detailPage.getElement()), detailPage.isNew());
-                toggleTabs();
-                var
-                    parameters = JSON.parse(matematici.popup.getData().parameters),
-                    tabPage = tab.getItem(tab.getLabels().filter(".Parameters." + classSelect.val()).prevAll().size());
-                $("*[name]", tabPage.tab).each(function () {
-                    var field = $(this);
-                    field.val(parameters[field.attr("name")]);
-                });
-            },
-            parametersPrepareHandler: function () {
-                var
-                    parameters = {},
-                    tabPage = tab.getItem(tab.getLabels().filter(".Parameters:visible").prevAll().size());
+        parametersPrepare = function () {
+            var
+                parameters = {},
+                visibleTabs = tab.getLabels().filter(".Parameters:visible"),
+                queryParameters = [],
+                password;
+
+            visibleTabs.each(function (index) {
+                var tabPage = tab.getItem(visibleTabs.eq(index).prevAll().length);
                 $("*[name]", tabPage.tab).each(function () {
                     var field = $(this);
                     parameters[field.attr("name")] = field.val();
                 });
-                return {
-                    data: {
-                        parameters: JSON.stringify(parameters),
-                        password: $("*[type=password]", tabPage.tab).val()
-                    }
-                };
-            },
+                password = password || $("*[type=password]", tabPage.tab).val();
+            });
+
+            $("div.QueryParameter", tab.getItem(3).tab).each(function () {
+                var
+                    record = {},
+                    inputs = $("input", this),
+                    selects = $("select", this);
+
+                record.name = inputs.eq(0).val();
+                record.label = inputs.eq(1).val();
+                record.type = selects.val();
+                queryParameters.push(record);
+            });
+
+            if (queryParameters.length > 0)
+                parameters.queryParameters = queryParameters;
+
+            return {
+                data: {
+                    parameters: JSON.stringify(parameters),
+                    password: password
+                }
+            };
+        },
+
+        completeHandler = function (detailPage) {
+            matematici.controls.setEditable($("input[name=code]", detailPage.getElement()), detailPage.isNew());
+            toggleTabs();
+            var
+                data = matematici.popup.getData(),
+                parameters = data && data.parameters && JSON.parse(data.parameters);
+
+            tab.getLabels().filter(".Parameters." + classSelect.val()).each(function () {
+                var tabPage = tab.getItem($(this).prevAll().size());
+                $("*[name]", tabPage.tab).each(function () {
+                    var field = $(this);
+                    field.val(parameters && parameters[field.attr("name")] || "");
+                });
+            });
+
+            if (parameters && parameters.queryParameters) buildQueryParameters(parameters.queryParameters);
+        },
+
+        detailPage = new matematici.DetailPage({
+            takeOpenOnSave: true,
+            formSelector: formSelector,
+            completeHandler: completeHandler,
+            parametersPrepareHandler: parametersPrepare,
+            width: "680px",
+
             buttons: [{
                 icon: "cog",
                 text: "test",
@@ -189,12 +308,53 @@
 
                     return true;
                 }
+            }, {
+                icon: "plus",
+                text: "parameter",
+                hidden: true,
+                id: "AddQueryParameter",
+                handler: function () {
+                    addQueryParameter(3);
+                    fixQueryParameters(tab.getCurrentItem().index);
+                    return true;
+                }
             }]
         }),
+
+        buildQueryParameters = function (queryParameters) {
+            for (var index in queryParameters) {
+                var
+                    record = queryParameters[index],
+                    row = addQueryParameter(3);
+
+                row.name.val(record.name);
+                row.label.val(record.label);
+                row.type.val(record.type);
+            }
+        },
+
+        addQueryParameterButton = $("a#AddQueryParameter", matematici.popup.getElement()),
 
         toggleTabs = function () {
             $(".TabLabels a.Parameters", tab.getElement()).hide().filter("." + classSelect.val()).show();
         };
 
     classSelect.on("change", toggleTabs);
+
+    formElement.on("change", "input, select", function () {
+        detailPage.getForm().onChange($(this));
+    });
+
+    if (detailPage.isReadOnly()) {
+        $("div.Buttons a.Button", detailPage.getElement()).hide();
+        $("input, select", detailPage.getElement()).each(function () {
+            var field = $(this);
+            matematici.controls.setEditable(field, false);
+            if (field.hasClass("AutoComplete"))
+                field.data("autoComplete.")
+        });
+    } else
+        tab.addHandler(function (item) {
+            addQueryParameterButton.toggle(item.index > 2);
+        });
 </script>

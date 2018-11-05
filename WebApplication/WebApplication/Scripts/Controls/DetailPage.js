@@ -80,7 +80,7 @@
 					}
 				});
 
-			setTimeout(function () {
+            setTimeout(function () {
 				if (options.initHandler) options.initHandler(detailPage);
 				if (data) form.setValues(data);
 				if (options.completeHandler) options.completeHandler(detailPage);

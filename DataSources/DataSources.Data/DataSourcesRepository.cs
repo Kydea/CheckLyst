@@ -66,16 +66,17 @@ namespace CheckListManager.DataSources.Data
 
         public async Task<Common.Data.DataSources> EditDataSourceAsync(IDefaultIdentity identity, Common.Data.DataSources dataSource)
         {
-            var ExistingPrototypeType = await GetDataSourceAsync(identity, dataSource.Code);
-            ExistingPrototypeType.Code = dataSource.Code;
-            ExistingPrototypeType.Description = dataSource.Description;
+            var existingDataSource = await GetDataSourceAsync(identity, dataSource.Code);
+            existingDataSource.Code = dataSource.Code;
+            existingDataSource.Description = dataSource.Description;
+            existingDataSource.Class = dataSource.Class;
             if (!string.IsNullOrEmpty(dataSource.Password))
-                ExistingPrototypeType.Password = dataSource.Password;
-            ExistingPrototypeType.Data = dataSource.Data;
-            ExistingPrototypeType.ModifiedOn = DateTimeOffset.UtcNow;
-            ExistingPrototypeType.ModifiedBy = identity.Code;
+                existingDataSource.Password = dataSource.Password;
+            existingDataSource.Data = dataSource.Data;
+            existingDataSource.ModifiedOn = DateTimeOffset.UtcNow;
+            existingDataSource.ModifiedBy = identity.Code;
             await SaveChangesAsync();
-            return ExistingPrototypeType;
+            return existingDataSource;
         }
 
         public async Task DeleteDataSourceAsync(IDefaultIdentity identity, string code)

@@ -348,6 +348,10 @@ form, div.CheckList, div.PropertyPanel div.PropertyValue, div.Module {
             width: 2 * $Label-Width + $Metric-Control-Space;
         }
 
+        &.Width300 {
+            width: 3 * $Label-Width + 2 * $Metric-Control-Space;
+        }
+
         &.Error {
             > span {
                 margin-left: 25px;

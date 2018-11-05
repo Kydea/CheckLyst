@@ -162,7 +162,7 @@
 
         formElement = $(formSelector),
 
-        fixFunctions = function (tabIndex) {
+        fixQueryParameters = function (tabIndex) {
             steps = $("div.Function", tab.getItem(tabIndex).tab).each(function (index) {
                 $(this).children("hr").toggle(index > 0);
             });
@@ -241,10 +241,10 @@
             if (!detailPage.isReadOnly())
                 $("<a />").attr("href", "#").addClass("Button Icon").append($("<i />").addClass("fi flaticon-minus")).on("click", function () {
                     div.remove();
-                    fixFunctions(tabIndex);
+                    fixQueryParameters(tabIndex);
                 }).appendTo(div);
 
-            fixFunctions(tabIndex);
+            fixQueryParameters(tabIndex);
 
             return {
                 department: select1,
@@ -353,7 +353,7 @@
                 id: "AddFunction",
                 handler: function () {
                     addFunction();
-                    fixFunctions(tab.getCurrentItem().index);
+                    fixQueryParameters(tab.getCurrentItem().index);
                     return true;
                 }
             }]

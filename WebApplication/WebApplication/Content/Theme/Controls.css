@@ -236,6 +236,8 @@ form label, div.CheckList label, div.PropertyPanel div.PropertyValue label, div.
     width: 300px; }
   form label.Width200, div.CheckList label.Width200, div.PropertyPanel div.PropertyValue label.Width200, div.Module label.Width200 {
     width: 420px; }
+  form label.Width300, div.CheckList label.Width300, div.PropertyPanel div.PropertyValue label.Width300, div.Module label.Width300 {
+    width: 640px; }
   form label.Error > span, div.CheckList label.Error > span, div.PropertyPanel div.PropertyValue label.Error > span, div.Module label.Error > span {
     margin-left: 25px; }
   form label.Error i, div.CheckList label.Error i, div.PropertyPanel div.PropertyValue label.Error i, div.Module label.Error i {
@@ -304,4 +306,3 @@ form::after, div.CheckList::after, div.PropertyPanel div.PropertyValue::after, d
 form div.Errors, div.CheckList div.Errors, div.PropertyPanel div.PropertyValue div.Errors, div.Module div.Errors {
   margin-top: 20px;
   margin-left: 20px; }
-

@@ -85,6 +85,8 @@
     <Compile Include="ExternalSourceRequest.cs" />
     <Compile Include="Parameter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SQL\SQLParameters.cs" />
+    <Compile Include="SQL\Source.cs" />
     <Compile Include="SAP\SAPConfiguration.cs" />
     <Compile Include="SAP\SAPParameters.cs" />
     <Compile Include="SAP\Source.cs" />
