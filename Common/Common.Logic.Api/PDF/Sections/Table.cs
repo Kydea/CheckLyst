@@ -219,13 +219,14 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
         #endregion
 
         #region Table Rendering
-        void RenderTableRow(PdfPTable Table, List<ICheckListItem> Items)
+        void RenderTableRow(PdfPTable Table, List<ICheckListItem> Items, bool completeRow = true)
         {
-            Table.CompleteRow();
+            if (completeRow)
+                Table.CompleteRow();
 
             foreach (var Item in Items)
                 if (Item.TypeName == "Group")
-                    RenderTableRow(Table, ((ICheckListGroup)Item).Items);
+                    RenderTableRow(Table, ((ICheckListGroup)Item).Items, false);
                 else
                 {
                     PdfPCell Cell = new PdfPCell(new Paragraph());
