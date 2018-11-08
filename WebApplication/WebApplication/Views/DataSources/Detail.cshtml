@@ -108,7 +108,7 @@
                 <label>
                     <span>DBMS</span>
                     <i class="Icon fi flaticon-connection" />
-                    <select class="AutoComplete" name="DBMS">
+                    <select class="AutoComplete" name="dbms">
                         <option value="SQL Server">SQL Server</option>
                         <option value="Oracle">Oracle</option>
                     </select>
@@ -117,7 +117,7 @@
                 <label>
                     <span>Connectio string</span>
                     <i class="Icon fi flaticon-user-o" />
-                    <input type="text" name="user" maxlength="500" />
+                    <input type="text" name="connectionString" maxlength="500" />
                 </label>
 
                 <label>
@@ -147,9 +147,9 @@
         classSelect = $("select.SourceClass", formElement),
 
         parameterTypes = [
-            "Text",
-            "Number",
-            "Date"
+            "Text"
+            //"Number",
+            //"Date"
         ],
 
         fixQueryParameters = function (tabIndex) {
@@ -237,7 +237,7 @@
 
                 record.name = inputs.eq(0).val();
                 record.label = inputs.eq(1).val();
-                record.type = selects.val();
+                record.parameterType = selects.val();
                 queryParameters.push(record);
             });
 
@@ -290,6 +290,7 @@
                             contentType: "application/json; charset=utf-8",
                             data: JSON.stringify({ code: codeInput.val() })
                         }).done(function (result) {
+                            console.log("test result", result);
                             matematici.dialog.show("Connection test", "Test succesfully completed");
                         });
                     }
@@ -329,7 +330,7 @@
 
                 row.name.val(record.name);
                 row.label.val(record.label);
-                row.type.val(record.type);
+                row.parameterType.val(record.parameterType);
             }
         },
 
