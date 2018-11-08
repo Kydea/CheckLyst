@@ -12,5 +12,6 @@ namespace CheckListManager.Common.Logic.DataSources
         public Dictionary<string, string> parameters { get; set; }
         public int page { get; set; }
         public string decimalSeparator { get; set; }
+        public string timeZone { get; set; }
     }
 }

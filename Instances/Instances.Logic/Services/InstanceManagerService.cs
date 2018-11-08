@@ -579,7 +579,8 @@ namespace CheckListManager.Instances.Logic.Services
                     code = cacheObject.Instance.ExternalSources[externalSourceCode],
                     parameters = parameters,
                     page = page,
-                    decimalSeparator = await _settingService.DecimalSeparatorAsync(identity.CompanyId)
+                    decimalSeparator = await _settingService.DecimalSeparatorAsync(identity.CompanyId),
+                    timeZone = (await _commonRepository.GetCompanyAsync(identity.CompanyId)).TimeZones.MicrosoftCode
                 }, "S2S", new TimeSpan(0, 1, 0));
                 var response = await _client.PostAsync("DataSources/Data/GetDataSourceRows", new TokenRequest { token = token });
                 var responseData = await response.Content.ReadAsStringAsync();

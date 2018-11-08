@@ -7,6 +7,7 @@ namespace CheckListManager.Instances.Logic.Messages
     {
 		public string InstanceCode { get; set; }
 		public string ExternalSourceCode { get; set; }
+        public int Page { get; set; }
 		public Dictionary<string, string> Parameters{ get; set; }
 	}
 }

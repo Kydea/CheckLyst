@@ -256,7 +256,7 @@ namespace CheckListManager.Instances.Api.Controllers
         {
             try
             {
-                return Ok(await _instanceManagerService.GetExternalSourceRows(request.Data.InstanceCode, Identity, request.Data.ExternalSourceCode, request.Data.Parameters, request.CurrentPage));
+                return Ok(await _instanceManagerService.GetExternalSourceRows(request.Data.InstanceCode, Identity, request.Data.ExternalSourceCode, request.Data.Parameters, request.Data.Page));
             }
             catch (Exception e)
             {

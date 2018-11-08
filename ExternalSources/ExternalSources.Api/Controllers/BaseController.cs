@@ -42,11 +42,15 @@ namespace CheckListManager.ExternalSources.Api.Controllers
             {
                 Logger.Info("ExternalSource/GetMetaData parameters:\n" + JsonConvert.SerializeObject(request));
                 using (var Source = SourceBase.Build(request.className, request.code, request.password, request.version, request.data))
-                    return Ok(new {
+                {
+                    Source.PrepareMetaData();
+                    return Ok(new
+                    {
                         Code = request.code,
                         Source.Parameters,
                         Source.Columns
                     });
+                }
             }
             catch (Exception e)
             {
@@ -67,7 +71,7 @@ namespace CheckListManager.ExternalSources.Api.Controllers
                     Source.Open();
                     return Ok(new
                     {
-                        Rows = Source.GetData(request.parameters, request.page, request.decimalSeparator)
+                        Rows = Source.GetData(request.parameters, request.page, request.decimalSeparator, request.timeZone)
                     });
                 }
             }

@@ -12,21 +12,31 @@ namespace CheckListManager.ExternalSources.Logic.SQL
     public class Source : SourceBase
     {
         private SQLParameters SQLParameters { get; set; }
-        private DbConnection Connection;
-        private DbCommand Command;
-        private DbDataAdapter DataAdapter;
 
         public override void Parse(string Data)
         {
             SQLParameters = JsonConvert.DeserializeObject<SQLParameters>(Data);
+            Parameters = SQLParameters.QueryParameters ?? new List<Parameter>(0);
+        }
+
+        private string GetConnectionString()
+        {
+            var ConnectionString =
+                SQLParameters.DBMS == "Oracle" ?
+                    (DbConnectionStringBuilder)new OracleConnectionStringBuilder() :
+                    new SqlConnectionStringBuilder();
+
+            ConnectionString.ConnectionString = SQLParameters.ConnectionString;
+            ConnectionString["password"] = Password;
+            return ConnectionString.ConnectionString;
         }
 
         private DbConnection GetConnection()
         {
             return
                 SQLParameters.DBMS == "Oracle" ?
-                    (DbConnection)new OracleConnection(SQLParameters.ConnectionString) :
-                    new SqlConnection(SQLParameters.ConnectionString);
+                    (DbConnection)new OracleConnection(GetConnectionString()) :
+                    new SqlConnection(GetConnectionString());
         }
 
         private DbCommand GetCommand(DbConnection Connection)
@@ -45,7 +55,7 @@ namespace CheckListManager.ExternalSources.Logic.SQL
                     new SqlDataAdapter((SqlCommand)Command);
         }
 
-        public DbParameter GetDbParameter(string Name, object Value)
+        private DbParameter GetDbParameter(string Name, object Value)
         {
             return
                 SQLParameters.DBMS == "Oracle" ?
@@ -53,66 +63,73 @@ namespace CheckListManager.ExternalSources.Logic.SQL
                     new SqlParameter(Name, Value);
         }
 
-        public string GetDefaultParameterValue(Parameter Parameter)
+        private string GetDefaultParameterValue(Parameter Parameter)
         {
             return Parameter.ParameterType == "Text" ? "" : Parameter.ParameterType == "Number" ? "-1" : "01/01/1900";
         }
 
-        public void ValidateParameter(Parameter Parameter)
+        private void ValidateParameter(Parameter Parameter)
         {
             //we carrently accept only text parameter
             if (Parameter.ParameterType != "Text")
                 throw new Exception("Invalid parameter type: " + Parameter.ParameterType);
         }
 
-        private DataSet LoadData(Dictionary<string, string> Values, int FirstRowIndex, int MaxRowsCount)
+        private string Format(object Value, string DecimalSeparator, string TimeZone)
         {
-            var DataSet = new DataSet();
-
-            foreach (var Parameter in Parameters)
-                Command.Parameters.Add(GetDbParameter(Parameter.Name, Values?[Parameter.Name] ?? GetDefaultParameterValue(Parameter)));
-            DataAdapter.Fill(DataSet, 0, 1, "Source");
-
-            return DataSet;
+            return
+                Value == null || Value == DBNull.Value ? string.Empty :
+                Value is decimal DecimalValue ? Format(DecimalValue, DecimalSeparator) :
+                Value is DateTime DateTimeValue ? Format(DateTimeValue) :
+                Value is DateTimeOffset DateTimeOffsetValue ? Format(DateTimeOffsetValue, TimeZone) :
+                Value.ToString();
         }
 
-        private void Setup()
+        private DataSet LoadData(Dictionary<string, string> Values, int FirstRowIndex, int MaxRowsCount)
+        {
+            using (var Connection = GetConnection())
+            using (var Command = GetCommand(Connection))
+            using (var DataAdapter = GetDataAdapter(Command))
+            {
+                var DataSet = new DataSet();
+
+                foreach (var Parameter in Parameters)
+                    Command.Parameters.Add(GetDbParameter(Parameter.Name, Values?[Parameter.Name] ?? GetDefaultParameterValue(Parameter)));
+                DataAdapter.Fill(DataSet, FirstRowIndex, MaxRowsCount, "Source");
+
+                return DataSet;
+            }
+        }
+
+        public override void Open()
+        {
+        }
+
+        public override void Dispose()
+        {
+        }
+
+        public override void Test()
         {
             var DataSet = LoadData(null, 0, 0);
             if (DataSet.Tables.Count == 0) throw new Exception("The query returns no table");
             if (DataSet.Tables.Count > 1) throw new Exception("The query returns more than one table");
             foreach (var Parameter in Parameters)
                 ValidateParameter(Parameter);
+        }
+
+        public override void PrepareMetaData()
+        {
+            var DataSet = LoadData(null, 0, 0);
             Columns = new List<string>(DataSet.Tables[0].Columns.Count);
             foreach (var Column in DataSet.Tables[0].Columns)
                 Columns.Add(((DataColumn)Column).ColumnName);
         }
 
-        public override void Open()
+        public override IEnumerable<List<string>> GetData(Dictionary<string, string> Parameters, int Page, string DecimalSeparator, string TimeZone)
         {
-            Connection = GetConnection();
-            Command = GetCommand(Connection);
-            DataAdapter = GetDataAdapter(Command);
-        }
-
-        public override void Dispose()
-        {
-            DataAdapter.Dispose();
-            Command.Dispose();
-            Connection.Dispose();
-        }
-
-        public override void Test()
-        {
-            Setup();
-            LoadData(null, 0, 0);
-        }
-
-        public override IEnumerable<List<string>> GetData(Dictionary<string, string> Parameters, int Page, string DecimalSeparator)
-        {
-            Setup();
             //mettere formattazione invece che tostring generico sui campi
-            return LoadData(Parameters, Page * PAGE_SIZE, PAGE_SIZE).Tables[0].AsEnumerable().Select(r => r.ItemArray.Select(v => v.ToString()).ToList()); 
+            return LoadData(Parameters, Page * PAGE_SIZE, PAGE_SIZE).Tables[0].AsEnumerable().Select(r => r.ItemArray.Select(v => Format(v, DecimalSeparator, TimeZone)).ToList());
         }
     }
 }

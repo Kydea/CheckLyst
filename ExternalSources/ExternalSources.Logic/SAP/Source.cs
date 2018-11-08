@@ -81,7 +81,11 @@ namespace CheckListManager.ExternalSources.Logic.SAP
             var Repository = Destination.Repository;
         }
 
-        public override IEnumerable<List<string>> GetData(Dictionary<string, string> Parameters, int Page, string DecimalSeparator)
+        public override void PrepareMetaData()
+        {
+        }
+
+        public override IEnumerable<List<string>> GetData(Dictionary<string, string> Parameters, int Page, string DecimalSeparator, string TimeZone)
         {
             switch (SAPParameters.FunctionName)
             {
