@@ -147,7 +147,7 @@ matematici.AutoComplete = function (selector) {
 
 			checkReadOnly();
 
-			matematici.elements.window.on("resize", setWidth);
+            matematici.elements.window.on("resize", setWidth);
 		},
 
 		checkReadOnly = function () {
@@ -225,6 +225,7 @@ matematici.AutoComplete = function (selector) {
 					if (e.which == 13)
 						hideList();
 				});
+                matematici.elements.body.children(".Popup").on("scroll.autocomplete", hideList);
 			}, 0);
 		},
 
@@ -232,6 +233,7 @@ matematici.AutoComplete = function (selector) {
 			$(document)
 				.off("click.autocomplete")
 				.off("keydown.autocomplete");
+            matematici.elements.body.children(".Popup").off("scroll.autocomplete");
 			list.hide();
 			input.hide();
 			if (!multiple) setCurrentItem(null);

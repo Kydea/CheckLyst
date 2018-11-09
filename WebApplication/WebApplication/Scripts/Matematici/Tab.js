@@ -36,12 +36,14 @@
 			}
 		},
 
-		setItem = function (index) {
-			return {
+        setItem = function (index) {
+			var item = {
 				index: index,
-				label: $(".TabLabels a", element).removeClass("Selected").eq(index).addClass("Selected"),
-				tab: $(".Tab", element).removeClass("Selected").eq(index).addClass("Selected")
+                label: $(".TabLabels a", element).removeClass("Selected").eq(index).addClass("Selected"),
+                tab: $(".Tab", element).removeClass("Selected").eq(index).addClass("Selected").show()
 			}
+            setTimeout(function () { $(".Tab:not(.Selected)", element).hide(); }, 500);
+            return item;
 		},
 
 		select = function (index) {
@@ -65,7 +67,7 @@
 				.data("tab", tab)
                 .on("click", ".TabLabels a", function (e) {
                     e.preventDefault();
-                    e.stopPropagation();
+                    //e.stopPropagation();
 
                     select($(this).prevAll("a").size());
 
