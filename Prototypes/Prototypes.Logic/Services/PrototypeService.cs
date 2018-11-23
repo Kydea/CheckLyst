@@ -442,15 +442,6 @@ namespace CheckListManager.Prototypes.Logic.Services
                         PrototypeVersion.Prototypes.ModifiedOn = PrototypeVersion.ModifiedOn;
                         PrototypeVersion.Prototypes.ModifiedBy = PrototypeVersion.ModifiedBy;
 
-                        await _queueService.SendObjectAsync(QueueName.PrototypesFTP, new PrototypesFTPMessage
-                        {
-                            Company = PrototypeVersion.Prototypes.Company,
-                            Prototype = PrototypeVersion.Prototype,
-                            PrototypeName = PrototypeVersion.Prototypes.Name,
-                            Version = PrototypeVersion.Version,
-                            Path = $"{(PrototypeVersion.Prototypes.Companies.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.Departments.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.PrototypeTypes.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.Name?.Replace('#', '-') ?? "")}#{PrototypeVersion.Version}#{(PrototypeVersion.Description?.Replace('#', '-') ?? "")}"
-                        });
-
                         var OldVersion = PrototypeVersion.Prototypes.PrototypeVersions.SingleOrDefault(pv => pv.VersionState == VersionState.Active);
                         if (OldVersion != null)
                         {
@@ -458,6 +449,16 @@ namespace CheckListManager.Prototypes.Logic.Services
                             await _prototypeRepository.SaveChangesAsync();
                         }
                     }
+            
+                    await _queueService.SendObjectAsync(QueueName.PrototypesFTP, new PrototypesFTPMessage
+                    {
+                        Company = PrototypeVersion.Prototypes.Company,
+                        Prototype = PrototypeVersion.Prototype,
+                        PrototypeName = PrototypeVersion.Prototypes.Name,
+                        Version = PrototypeVersion.Version,
+                        State = State,
+                        Path = $"{(PrototypeVersion.Prototypes.Companies.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.Departments.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.PrototypeTypes.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.Name?.Replace('#', '-') ?? "")}#{PrototypeVersion.Version}#{(PrototypeVersion.Description?.Replace('#', '-') ?? "")}"
+                    });
 
                     await SetPrototypeVersionState(PrototypeVersion, State, UtcNow);
                     await _prototypeRepository.SaveChangesAsync();
