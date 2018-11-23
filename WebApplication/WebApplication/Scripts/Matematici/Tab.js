@@ -17,9 +17,10 @@
 					height = 0,
 					currentIndex = currentItem && currentItem.index || 0;
 
-				$(".TabLabels a", element).each(function (index) {
-					select(index);
-					height = Math.max(height, getCurrentItemHeight());
+                $(".TabLabels a", element).each(function (index) {
+                    var item = select(index);
+                    height = Math.max(height, getCurrentItemHeight());
+                    item.tab.hide();
 				});
 
 				select(currentIndex);
@@ -56,7 +57,9 @@
 					select = $(this),
 					autoComplete = select.data("autoComplete");
 				if (autoComplete) autoComplete.refresh();
-			});
+            });
+
+            return currentItem;
 		},
 
 		setup = function () {

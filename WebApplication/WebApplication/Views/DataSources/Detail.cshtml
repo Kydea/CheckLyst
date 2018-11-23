@@ -153,7 +153,7 @@
         ],
 
         fixQueryParameters = function (tabIndex) {
-            steps = $("div.Function", tab.getItem(tabIndex).tab).each(function (index) {
+            steps = $("div.QueryParameter", tab.getItem(tabIndex).tab).each(function (index) {
                 $(this).children("hr").toggle(index > 0);
             });
 
@@ -297,7 +297,7 @@
                     if (matematici.canClose)
                         action();
                     else
-                        matematici.dialog.show("warning", "There are unsaved change.", [
+                        matematici.dialog.show("warning", "There are unsaved changes.", [
                             {
                                 text: "save", icon: "check", handler: function () {
                                     matematici.save(action, true);
