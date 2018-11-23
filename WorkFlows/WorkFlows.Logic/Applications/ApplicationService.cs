@@ -115,15 +115,16 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 if (OldVersion != null) await SetPrototypeVersionState(identity, OldVersion, VersionState.Obsolete, UtcNow);
             }
 
-            await _queueService.SendObjectAsync(QueueName.PrototypesFTP, new PrototypesFTPMessage
-            {
-                Company = identity.CompanyId,
-                Prototype = PrototypeVersion.Prototype,
-                PrototypeName = PrototypeVersion.Prototypes.Name,
-                Version = PrototypeVersion.Version,
-                State = State,
-                Path = $"{(PrototypeVersion.Prototypes.Companies.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.Departments.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.PrototypeTypes.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.Name?.Replace('#', '-') ?? "")}#{PrototypeVersion.Version}#{(PrototypeVersion.Description?.Replace('#', '-') ?? "")}"
-            });
+            if (State == VersionState.Active || State == VersionState.Obsolete)
+                await _queueService.SendObjectAsync(QueueName.PrototypesFTP, new PrototypesFTPMessage
+                {
+                    Company = identity.CompanyId,
+                    Prototype = PrototypeVersion.Prototype,
+                    PrototypeName = PrototypeVersion.Prototypes.Name,
+                    Version = PrototypeVersion.Version,
+                    State = State,
+                    Path = $"{(PrototypeVersion.Prototypes.Companies.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.Departments.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.PrototypeTypes.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.Name?.Replace('#', '-') ?? "")}#{PrototypeVersion.Version}#{(PrototypeVersion.Description?.Replace('#', '-') ?? "")}"
+                });
 
             await SetPrototypeVersionState(identity, PrototypeVersion, State, UtcNow);
         }
