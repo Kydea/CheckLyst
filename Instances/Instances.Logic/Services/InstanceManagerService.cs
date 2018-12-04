@@ -623,8 +623,8 @@ namespace CheckListManager.Instances.Logic.Services
 
                 cacheObject = await _instanceCache.GetAsync(request.Code);
 
-                var LockUser = request.Type == "Signature" ? request.Username : null; //A signer may sign also if the page is locked by the main user (the lock is for concurrency purpose, not for security)
-                await GetCheckListAsync(identity, cacheObject, LockUser);
+                var lockUser = request.Type == "Signature" ? request.Username : null; //A signer may sign also if the page is locked by the main user (the lock is for concurrency purpose, not for security)
+                await GetCheckListAsync(identity, cacheObject, lockUser);
 
                 switch (request.Type)
                 {
@@ -1145,14 +1145,16 @@ namespace CheckListManager.Instances.Logic.Services
                 );
         }
 
-        public async Task<Instance> GetCheckListAsync(IDefaultIdentity identity, InstanceCacheObject cacheObject, string LockUser = null)
+        public async Task<Instance> GetCheckListAsync(IDefaultIdentity identity, InstanceCacheObject cacheObject, string lockUser)
         {
             cacheObject.Instance.ReadOnly =
                 !cacheObject.InstanceState.In(InstanceState.Draft, InstanceState.Progress)
                 || !HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType);
 
             cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(identity.CompanyId), cacheObject);
-            cacheObject.Instance.UpdateReadOnly(LockUser ?? identity.Code, cacheObject.InstanceState);
+            cacheObject.Instance.UpdateReadOnly(lockUser ?? identity.Code, cacheObject.InstanceState);
+
+            if (!identity.HasPermission("Trail")) cacheObject.Instance.Expressions = null;
 
             return cacheObject.Instance;
         }

@@ -62,8 +62,9 @@ namespace CheckListManager.Instances.Api.Controllers
                     Version = cacheObject.Version,
                     VersionState = cacheObject.VersionState,
 
-                    CheckList = await _instanceManagerService.GetCheckListAsync(Identity, cacheObject),
+                    CheckList = await _instanceManagerService.GetCheckListAsync(Identity, cacheObject, null),
                 };
+
                 return Ok(response);
             }
             catch (Exception e)
@@ -87,7 +88,7 @@ namespace CheckListManager.Instances.Api.Controllers
                     Year = cacheObject.Year,
                     Number = cacheObject.Number,
 
-                    CheckList = await _instanceManagerService.GetCheckListAsync(Identity, cacheObject),
+                    CheckList = await _instanceManagerService.GetCheckListAsync(Identity, cacheObject, null),
                 });
             }
             catch (Exception e)
@@ -164,7 +165,7 @@ namespace CheckListManager.Instances.Api.Controllers
                     Number = cacheObject.Number,
                     State = cacheObject.InstanceState,
 
-                    CheckList = await _instanceManagerService.GetCheckListAsync(Identity, cacheObject),
+                    CheckList = await _instanceManagerService.GetCheckListAsync(Identity, cacheObject, null),
 
                     Department = cacheObject.Department,
                     DepartmentName = cacheObject.DepartmentName,

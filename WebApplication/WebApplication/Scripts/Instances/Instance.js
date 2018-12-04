@@ -26,7 +26,8 @@
 		expressions = [],
 		lastResult,
 		deleted,
-		removedIterationsVisible = false, 
+        removedIterationsVisible = false, 
+        expressionsButton,
 
 		setupInstanceDescription = function () {
 			header.getElement().prepend(instanceDescription = $("<div />").addClass("InstanceDescription"));
@@ -47,7 +48,8 @@
 				editor = hasPermission("Edit"),
 				deleter = hasPermission("Delete"),
 
-				buttonGroup = $("div.ActionBar a.ButtonGroup", element),
+                actionBar = $("div.ActionBar", element),
+                buttonGroup = $("a.ButtonGroup", actionBar),
 				confirmButton = $("a.Confirm", buttonGroup).toggleClass("Hidden", state != instances.Instance.states.completed),
 				completeButton = $("a.Complete", buttonGroup).toggleClass("Hidden", !editor || state != instances.Instance.states.progress),
 				deleteButton = $("a.Delete", buttonGroup).toggleClass("Hidden", !deleter || state != instances.Instance.states.draft && state != instances.Instance.states.progress),
@@ -56,6 +58,7 @@
 				showRemovedIterationsButton = $("a.ShowRemovedIterations", buttonGroup).toggleClass("Hidden", !matematici.tokenManager.checkRole("Trail#View#") || removedIterationsVisible),
 				hideRemovedIterationsButton = $("a.HideRemovedIterations", buttonGroup).toggleClass("Hidden", !removedIterationsVisible);
 
+            expressionsButton = $("a.ExpressionsButton", actionBar);
 
 			if ($("a:not(.Hidden)", buttonGroup).size() == 0)
 				buttonGroup.hide();
@@ -94,7 +97,9 @@
 
 			if (updateHandler) updateHandler(model);
 			externalSources = model.externalSources;
-			expressions = model.expressions;
+            expressions = model.expressions;
+
+            expressionsButton.toggle(!!model.expressions);
 		},
 
 		load = function () {
