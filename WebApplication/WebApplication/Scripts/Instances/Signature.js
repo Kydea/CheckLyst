@@ -82,11 +82,12 @@
                     	});
                     	$.each(signers, function () {
                     		var signer = this;
-                    		buttons.push({
-								text: signer.code,
-								title: signer.name,
-                    			icon: "user-o",
-                    			handler: function () {
+                            buttons.push({
+                                text: signer.code,
+                                title: signer.name,
+                                icon: "user-o",
+                                data: signer,
+                                handler: function (signer) {
 									trySign(signer.code, signer.accessToken || "-");
                     			}
                     		});

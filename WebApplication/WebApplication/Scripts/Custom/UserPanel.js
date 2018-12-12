@@ -27,12 +27,12 @@
 							{ text: "Cancel", icon: "times", cancelButton: true },
 							{ text: "Add", icon: "plus", handler: add }
 						],
-						signers = matematici.tokenManager.getSigners();
+                        signers = matematici.tokenManager.getSigners();
 
-					for (var index in signers) {
-						var signer = signers[index];
+                    for (var index in signers) {
+                        var signer = signers[index];
 						buttons.push({
-							text: signer.code, icon: "user-o", title: signer.name, handler: function () {
+                            text: signer.code, icon: "user-o", title: signer.name, data: signer, handler: function (signer) {
 								profile(signer.code, signer.accessToken || "-");
 							}
 						});

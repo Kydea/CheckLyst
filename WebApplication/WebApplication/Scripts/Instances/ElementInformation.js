@@ -19,15 +19,16 @@
 		},
 
 		addItem = function (icon, value) {
-			if (value != null) panel.append($("<div />").append($("<span />").html(value).prepend($("<i />").addClass("fi fi-fw flaticon-" + icon))));
+            if (value != null) panel.append($("<div />").append($("<span />").html(value).attr({ title: value}).prepend($("<i />").addClass("fi fi-fw flaticon-" + icon))));
 		};
 
 	this.update = function (model) {
 		panel.empty();
 		addItem("tags-o", model.id + (model.code ? " - " + model.code : ""));
 		addItem(model.valid ? "thumbs-up-o" : "thumbs-down-o", model.valid ? "valid" : model.validityMessage || "not valid");
-		if (!model.readOnly) addItem("edit-o", "editable");
-		addItem("calculator", model.valueFormulaString ? model.valueFormulaString + ": <strong>" + model.rawValue + "</strong>" : null);
+        if (!model.readOnly) addItem("edit-o", "editable");
+        var formulaParser = $("<span />").html(model.rawValue);
+        addItem("calculator", model.valueFormulaString ? model.valueFormulaString + ": <strong>" + formulaParser.text() + "</strong>" : null);
 		addItem("link-o", (model.externalSourceName ? model.externalSourceName + "." + model.externalSourceColumn : null));
 		if (model.history && model.history.length > 0)
 			panel.append($("<div />").append($("<a />").attr("href", "#").text("history").prepend($("<i />").addClass("fi fi-fw flaticon-list-ul")).on("click", function (e) {

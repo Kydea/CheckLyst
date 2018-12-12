@@ -63,33 +63,42 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
         public void Update(Dictionary<string, Expression> Expressions, Dictionary<string, object> RuntimeValues, string DecimalSeparator)
         {
-            int Index = 0;
-            Value = Format == null ? null : string.Format(
-                CultureInfo.InvariantCulture,
-                Format,
-                ValueKeys.Select(Key =>
-                {
-                    var Value =
-                        Expressions.ContainsKey(Key) ?
-                            Expressions[Key].Value.Type == DataType.Error ? ErrorValueLeft + Expressions[Key].Value.ErrorValue + ErrorValueRight :
-                            Expressions[Key].Value.IsNull ? NullValue :
-                            Expressions[Key].Value.Type == DataType.Number ? Expressions[Key].Value.NumberValue.ToString(Formats[Index]).Replace(".", DecimalSeparator).Replace(",", DecimalSeparator) :
-                            Expressions[Key].Value.Type == DataType.DateTime ? Expressions[Key].Value.DateTimeValue.ToString("yyyy-MM-dd HH:mm:ss") :
-                            Expressions[Key].Value.Type == DataType.Date ? Expressions[Key].Value.DateTimeValue.ToString("yyyy-MM-dd") :
-                            Expressions[Key].Value.Type == DataType.Time ? Expressions[Key].Value.TimeSpanValue.ToString(@"hh\:mm\:ss") :
-                            Expressions[Key].Value.Value :
-                        RuntimeValues?.ContainsKey(Key) ?? false ? RuntimeValues[Key] :
-                        ErrorValueLeft + "Code not found: " + Key + ErrorValueRight;
-                    ++Index;
-                    return Value;
-                }).ToArray());
+            try
+            {
+                int Index = 0;
+                Value = Format == null ? null : string.Format(
+                    CultureInfo.InvariantCulture,
+                    Format,
+                    ValueKeys.Select(Key =>
+                    {
+                        var Value =
+                            Expressions.ContainsKey(Key) ?
+                                Expressions[Key].Value.Type == DataType.Error ? ErrorValueLeft + Expressions[Key].Value.ErrorValue + ErrorValueRight :
+                                Expressions[Key].Value.IsNull ? NullValue :
+                                Expressions[Key].Value.Type == DataType.Number ? Expressions[Key].Value.NumberValue.ToString(Formats[Index]).Replace(".", DecimalSeparator).Replace(",", DecimalSeparator) :
+                                Expressions[Key].Value.Type == DataType.DateTime ? Expressions[Key].Value.DateTimeValue.ToString("yyyy-MM-dd HH:mm:ss") :
+                                Expressions[Key].Value.Type == DataType.Date ? Expressions[Key].Value.DateTimeValue.ToString("yyyy-MM-dd") :
+                                Expressions[Key].Value.Type == DataType.Time ? Expressions[Key].Value.TimeSpanValue.ToString(@"hh\:mm\:ss") :
+                                Expressions[Key].Value.Value :
+                            RuntimeValues?.ContainsKey(Key) ?? false ? RuntimeValues[Key] :
+                            $"{ErrorValueLeft}Code not found: {Key}{ErrorValueRight}";
+                        ++Index;
+                        return Value;
+                    }).ToArray());
 
-            HasValue =
-                !string.IsNullOrEmpty(Format)
-                && !ValueKeys.Any(Key =>
-                    Expressions.ContainsKey(Key) && (Expressions[Key].Value.Type == DataType.Error || Expressions[Key].Value.IsNull)
-                    || !Expressions.ContainsKey(Key) && !RuntimeValues.ContainsKey(Key)
-                );
+                HasValue =
+                    !string.IsNullOrEmpty(Format)
+                    && !ValueKeys.Any(Key =>
+                        Expressions.ContainsKey(Key) && (Expressions[Key].Value.Type == DataType.Error || Expressions[Key].Value.IsNull)
+                        || !Expressions.ContainsKey(Key) && !RuntimeValues.ContainsKey(Key)
+                    );
+            }
+            catch
+            {
+                Value = $"{ErrorValueLeft}Invalid formula{ErrorValueRight}";
+                HasValue = false;
+            }
+
         }
 
     }

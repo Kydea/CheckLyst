@@ -48,6 +48,7 @@ namespace CheckListManager.Instances.Api.Controllers
             try
             {
                 var cacheObject = await _instanceManagerService.CreateAsync(Identity, Identity.Code, request.Prototype, request.Version);
+                var checkList = await _instanceManagerService.GetCheckListAsync(Identity, cacheObject, null);
                 var response = new InstanceResponse
                 {
                     Code = cacheObject.Code,
@@ -62,8 +63,9 @@ namespace CheckListManager.Instances.Api.Controllers
                     Version = cacheObject.Version,
                     VersionState = cacheObject.VersionState,
 
-                    CheckList = await _instanceManagerService.GetCheckListAsync(Identity, cacheObject, null),
+                    CheckList = checkList
                 };
+                if (!Identity.HasPermission("Trail")) checkList.Expressions = null;
 
                 return Ok(response);
             }
@@ -81,6 +83,7 @@ namespace CheckListManager.Instances.Api.Controllers
             try
             {
                 var cacheObject = await _instanceManagerService.OpenAsync(request.Code, Identity);
+                var checkList = await _instanceManagerService.GetCheckListAsync(Identity, cacheObject, null);
                 return Ok(new InstanceResponse
                 {
                     Id = cacheObject.Id,
@@ -88,8 +91,9 @@ namespace CheckListManager.Instances.Api.Controllers
                     Year = cacheObject.Year,
                     Number = cacheObject.Number,
 
-                    CheckList = await _instanceManagerService.GetCheckListAsync(Identity, cacheObject, null),
+                    CheckList = checkList
                 });
+                if (!Identity.HasPermission("Trail")) checkList.Expressions = null;
             }
             catch (Exception e)
             {
@@ -157,6 +161,7 @@ namespace CheckListManager.Instances.Api.Controllers
             try
             {
                 var cacheObject = await _instanceManagerService.Open(Identity, request.Code);
+                var checkList = await _instanceManagerService.GetCheckListAsync(Identity, cacheObject, null);
                 var response = new InstanceResponse
                 {
                     Id = cacheObject.Id,
@@ -165,7 +170,7 @@ namespace CheckListManager.Instances.Api.Controllers
                     Number = cacheObject.Number,
                     State = cacheObject.InstanceState,
 
-                    CheckList = await _instanceManagerService.GetCheckListAsync(Identity, cacheObject, null),
+                    CheckList = checkList,
 
                     Department = cacheObject.Department,
                     DepartmentName = cacheObject.DepartmentName,
@@ -177,6 +182,7 @@ namespace CheckListManager.Instances.Api.Controllers
                     Version = cacheObject.Version,
                     VersionState = cacheObject.VersionState
                 };
+                if (!Identity.HasPermission("Trail")) checkList.Expressions = null;
                 return Ok(response);
             }
             catch (Exception e)
@@ -193,13 +199,15 @@ namespace CheckListManager.Instances.Api.Controllers
             try
             {
                 var cacheObject = await _instanceManagerService.HandleEventAsync(Identity, request);
+                var checkList = await _instanceManagerService.GetCheckListAsync(Identity, cacheObject, request.Type == "Signature" || request.Type == "SignatureCheck" ? request.Username : null);
                 var response = new InstanceResponse
                 {
                     Id = cacheObject.Id,
                     Code = cacheObject.Code,
-                    CheckList = await _instanceManagerService.GetCheckListAsync(Identity, cacheObject, request.Type == "Signature" || request.Type == "SignatureCheck" ? request.Username : null),
+                    CheckList = checkList,
                     State = cacheObject.InstanceState
                 };
+                if (!Identity.HasPermission("Trail")) checkList.Expressions = null;
                 return Ok(response);
             }
             catch (Exception e)

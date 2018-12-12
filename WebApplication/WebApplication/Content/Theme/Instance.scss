@@ -113,6 +113,8 @@ div.Instance {
                     color: black !important;
                     float: none;
                     margin: 5px 0 0 30px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                 }
             }
 

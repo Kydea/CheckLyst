@@ -4,15 +4,15 @@
 		cautionTimeOffset = 120000, //ms
 		lastActivity = new Date(),
 
-		refreshAccessToken = function (user, accessToken, refreshToken, successHandler, failHandler) {
+		refreshAccessToken = function (user, accessToken, refreshToken, successHandler, failHandler, index) {
 			console.info("refreshing access token for " + user, new Date());
-			var success;
-			$.ajax(matematici.urls.accessControl.token, {
+
+            $.ajax(matematici.urls.accessControl.token, {
 				global: false,
 				data: { grant_type: "refresh_token", refresh_token: refreshToken },
 				type: "post",
 				accessToken: accessToken
-			}).done(successHandler).fail(failHandler);
+            }).done(function (result) { successHandler(result, index); }).fail(function () { failHandler(index); });
 		},
 
 		setup = function () {
@@ -30,7 +30,7 @@
 
 				//the access token is refreshed, when a refresh token is present, [cautionTimeOffset] milliseconds before the expiration 
 				if (localStorage.refreshToken && new Date().getTime() > localStorage.accessTokenExpiration - cautionTimeOffset)
-					refreshAccessToken(tokenManager.getUserCode(), localStorage.accessToken, localStorage.refreshToken, setMainUser, function (jqXhr, textStatus, errorThrown) {
+					refreshAccessToken(tokenManager.getUserCode(), localStorage.accessToken, localStorage.refreshToken, setMainUser, function () {
 						matematici.dialog.error("system error", "Access token refresh failed, please login again.");
 						console.log("Access token refresh failed.");
 					});
@@ -42,12 +42,12 @@
 				for (var index in signers) {
 					var signer = signers[index];
 					if (signer.refreshToken && new Date().getTime() > signer.accessTokenExpiration - cautionTimeOffset)
-						refreshAccessToken(signer.code, signer.accessToken, signer.refreshToken, function (result) {
+                        refreshAccessToken(signer.code, signer.accessToken, signer.refreshToken, function (result, index) {
 							updateSigner(index, result);
-						}, function () {
+                        }, function (index) {
 							console.log("Access token refresh failed.");
 							expiredSigner.push(index);
-						});
+						}, index);
 				}
 				if (expiredSigner.length > 0) {
 					for (var index = expiredSigner.length - 1; index >= 0; --index)
@@ -188,13 +188,13 @@
 		var signers = tokenManager.getSigners();
 		for (var index in signers) {
 			var signer = signers[index];
-			refreshAccessToken(signer.code, signer.accessToken, signer.refreshToken, function (result) {
+			refreshAccessToken(signer.code, signer.accessToken, signer.refreshToken, function (result, index) {
 				console.log("Access token refresh worked.", result);
 				updateSigner(index, result);
-			}, function (jqXhr, textStatus, errorThrown) {
+			}, function (index) {
 				console.log("Access token refresh failed.");
 				expiredSigner.push(index);
-			});
+			}, index);
 		}
 	};
 

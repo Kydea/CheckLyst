@@ -1154,8 +1154,6 @@ namespace CheckListManager.Instances.Logic.Services
             cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(identity.CompanyId), cacheObject);
             cacheObject.Instance.UpdateReadOnly(lockUser ?? identity.Code, cacheObject.InstanceState);
 
-            if (!identity.HasPermission("Trail")) cacheObject.Instance.Expressions = null;
-
             return cacheObject.Instance;
         }
 
