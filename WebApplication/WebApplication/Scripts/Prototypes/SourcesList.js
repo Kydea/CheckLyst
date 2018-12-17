@@ -7,47 +7,80 @@
         body,
         sources,
         noRecord,
+        list = [],
         currentIndex,
         removeButton,
 
         select = function (index) {
-        	if (currentIndex != null) body.children().eq(currentIndex).removeClass("Selected").addClass("Handler").children().attr("contenteditable", false);
-        	if (model.state == prototypes.Prototype.states.draft)
-        	{
-        		currentIndex = index;
-        		if (currentIndex != null) body.children().eq(currentIndex).addClass("Selected").removeClass("Handler").children(":first-child").attr("contenteditable", true).focus();
-        		removeButton.toggle(currentIndex != null);
-        	}
+            if (currentIndex != null) body.children().eq(currentIndex).removeClass("Selected").addClass("Handler").children().attr("contenteditable", false);
+            if (model.state == prototypes.Prototype.states.draft) {
+                currentIndex = index;
+                if (currentIndex != null)
+                    body.children().eq(currentIndex).addClass("Selected").removeClass("Handler")
+                        .children(":first-child").attr("contenteditable", true).focus();
+                removeButton.toggle(currentIndex != null);
+            }
         },
 
         add = function (row) {
             noRecord.remove();
+            list.push(row);
+
             var value = $("<td />").addClass("SourceColumn");
-			if (model.state == prototypes.Prototype.states.draft) {
-				var select = sources.clone().val(row.source);
-				value.append(select);
-				setTimeout(function () {
-					new matematici.AutoComplete(select).initialize();
-				}, 0)
-			} else
+            if (model.state == prototypes.Prototype.states.draft) {
+                var select = sources.clone().val(row.source);
+                value.append(select);
+                setTimeout(function () {
+                    new matematici.AutoComplete(select).initialize();
+                }, 0)
+            } else
                 value.text(row.source);
 
-            $("<tr />")
+            row.node = $("<tr />")
                 .addClass("Handler")
                 .appendTo(table)
                 .append($("<td />").addClass("CodeColumn").text(row.code))
                 .append(value);
 
-            if (model.state == prototypes.Prototype.states.draft) {
-            	matematici.canClose = false;
-            }
+            if (model.state == prototypes.Prototype.states.draft)
+                matematici.canClose = false;
         },
 
         remove = function () {
             body.children().eq(currentIndex).remove();
-            if (body.children().size() == 0) noRecord.appendTo(body);
+            list.splice(currentIndex, 1);
+            if (list.length == 0) noRecord.appendTo(body);
             select();
             matematici.canClose = false;
+        },
+
+        checkCodes = function () {
+            for (var index in list) {
+                var code = list[index].node.find(".CodeColumn").text();
+                code = code.replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, function (match, index) {
+                    if (+match === 0) return ""; // or if (/\s+/.test(match)) for white spaces
+                    return index == 0 ? match.toLowerCase() : match.toUpperCase();
+                });
+                list[index].node.find(".CodeColumn").text(code);
+                if (!matematici.codeRegularExpression.test(code)) {
+                    matematici.dialog.error("Invalid code", "The code " + code + " is not valid");
+                    return false;
+                }
+            }
+            return true;
+        },
+
+        close = function () {
+            if (model.state == prototypes.Prototype.states.draft) {
+                if (!checkCodes()) return;
+
+                model.externalSources = {};
+                body.children().each(function () {
+                    var row = $(this);
+                    model.externalSources[row.children("td").eq(0).text()] = $("select", row).val();
+                });
+            }
+            element.remove();
         },
 
         setup = function () {
@@ -74,23 +107,16 @@
             var
                 buttons =
                     $("<div />").addClass("Buttons").appendTo(container)
-						.append($("<a />").addClass("Button").text("close").prepend($("<i />").addClass("fi flaticon-times")).on("click", function () {
-                        if (model.state == prototypes.Prototype.states.draft) {
-                            model.externalSources = {};
-                            body.children().each(function () {
-                                var row = $(this);
-                                model.externalSources[row.children("td").eq(0).text()] = $("select", row).val();
-                            });
-                        }
-                        element.remove();
-                    }))
-					.append($("<a />").addClass("Button").text("add").toggle(model.state == prototypes.Prototype.states.draft).prepend($("<i />").addClass("fi flaticon-plus")).on("click", function () {
-                        add({ code: "" });
-                        select(body.children().size() - 1);
-                    }))
-					.append(removeButton = $("<a />").addClass("Button").text("remove").prepend($("<i />").addClass("fi flaticon-minus")).on("click", function () {
-                        remove();
-                    }).hide());
+                        .append($("<a />").addClass("Button").text("close").prepend($("<i />").addClass("fi flaticon-times")).on("click", function () {
+                            close();
+                        }))
+					    .append($("<a />").addClass("Button").text("add").toggle(model.state == prototypes.Prototype.states.draft).prepend($("<i />").addClass("fi flaticon-plus")).on("click", function () {
+                            add({ code: "" });
+                            select(body.children().size() - 1);
+                        }))
+					    .append(removeButton = $("<a />").addClass("Button").text("remove").prepend($("<i />").addClass("fi flaticon-minus")).on("click", function () {
+                            remove();
+                        }).hide());
 
 			sources = $("<select />");
 			var dataSources = prototypes.prototype.getDataSources();

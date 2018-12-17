@@ -23,8 +23,8 @@ values (currval('"Infrastructure"."Companies_ID_seq"'), 'CheckListManager', 'Use
 
 insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
 	--(currval('"Infrastructure"."Companies_ID_seq"'), 'LDAPHost', 'eu.jnj.com'),
-	(currval('"Infrastructure"."Companies_ID_seq"'), 'InstancesFtpConnection', '{ "Host": "www.ruggerogiovannelli.org", "Port": 21, "Folder": "ruggerogiovannelli.org/Data/P", "UserName": "2348977@aruba.it", "Password": "oeof5sxc", "UsePassive": "true", "EnableSSL": "false" }'),
-	(currval('"Infrastructure"."Companies_ID_seq"'), 'PrototypesFtpConnection', '{ "Host": "www.ruggerogiovannelli.org", "Port": 21, "Folder": "ruggerogiovannelli.org/Data/I", "UserName": "2348977@aruba.it", "Password": "oeof5sxc", "UsePassive": "true", "EnableSSL": "false" }'),
+	(currval('"Infrastructure"."Companies_ID_seq"'), 'InstancesFtpConnection', '{ "Host": "www.ruggerogiovannelli.org", "Port": 21, "Folder": "ruggerogiovannelli.org/Data/P", "UserName": "2348977@aruba.it", "Password": "-", "UsePassive": "true", "EnableSSL": "false" }'),
+	(currval('"Infrastructure"."Companies_ID_seq"'), 'PrototypesFtpConnection', '{ "Host": "www.ruggerogiovannelli.org", "Port": 21, "Folder": "ruggerogiovannelli.org/Data/I", "UserName": "2348977@aruba.it", "Password": "-", "UsePassive": "true", "EnableSSL": "false" }'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpHost', 'email-smtp.eu-west-1.amazonaws.com'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpPort', '587'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpUsername', 'AKIAIEIVPEHAHBTTCRKA'),

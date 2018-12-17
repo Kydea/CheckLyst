@@ -27,7 +27,7 @@ namespace CheckListManager.Common.Logic.Services
 
         public string SqsPrefix => _cache.GetOrAdd("SqsPrefix", Load<string>, RegionName);
 
-        public string ApiBaseUrl => "http://localhost/API/"; //_cache.GetOrAdd("ApiBaseUrl", Load<string>, RegionName); //"http://localhost/API/";
+        public string ApiBaseUrl => _cache.GetOrAdd("ApiBaseUrl", Load<string>, RegionName); //"http://localhost/API/";
 
         public string PublicRepositoryUrl => _cache.GetOrAdd("PublicRepositoryUrl", Load<string>, RegionName);
 

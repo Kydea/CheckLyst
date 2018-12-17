@@ -64,9 +64,6 @@ matematici.AutoComplete = function (selector) {
 			input.css({ top: label.offset().top + label.outerHeight(), left: label.offset().left });
 			list.css({ top: label.offset().top + input.outerHeight(), left: label.offset().left });
 
-			//list.css(labelPosition);
-			//input.css(labelPosition);
-
 			icon.css({
 				'left': labelPosition.left + width - 24,
 				'top': position.top + parseInt(label.css('marginTop'), 10)
@@ -163,13 +160,14 @@ matematici.AutoComplete = function (selector) {
 		},
 
 		toggleItem = function (index) {
-			var
-				item = items.eq(index),
-				option = options.filter("[value='" + item.data("value") + "']"),
-				value = !option.prop("selected");
+            var
+                item = items.eq(index),
+                value = item.data("value"),
+                option = options.filter("[value='" + value + "']"),
+				on = !option.prop("selected");
 
-			items.eq(index).toggleClass("Selected", value);
-			option.prop('selected', value);
+			items.eq(index).toggleClass("Selected", on);
+			option.prop('selected', on);
 
 			var texts = [];
 			options.each(function () {
@@ -178,7 +176,9 @@ matematici.AutoComplete = function (selector) {
 					texts.push(option.text());
 			});
 			var text = texts.join(", ");
-			label.val(text).attr("title", text);
+            label.val(text).attr("title", text);
+
+            element.trigger("toggle", [ value, on ]);
 		},
 
 		setCurrentItem = function (value) {
@@ -197,7 +197,7 @@ matematici.AutoComplete = function (selector) {
 					list.scrollTop(top + itemHeight - listHeight);
 
 				element.val(item.data("value"));
-				label.val(item.hasClass("None") ? "" : item.text());
+                label.val(item.hasClass("None") ? "" : item.text());
 			}
 		},
 
@@ -285,7 +285,11 @@ matematici.AutoComplete = function (selector) {
 
 	this.getControl = function () {
 		return label;
-	};
+    };
+
+    this.getValue = function () {
+        return element.val();
+    }
 
 	this.setValue = function (value) {
 		element.val(value);

@@ -14,6 +14,8 @@ using CheckListManager.Common.Logic.Json;
 using System.Net;
 using CheckListManager.Prototypes.Logic.PDF;
 using CheckListManager.Common.Logic.Api.Formatters;
+using CheckListManager.Common.Logic.Cache;
+using CheckListManager.Common.Logic.Services;
 
 namespace CheckListManager.Prototypes.Api.Controllers
 {
@@ -23,12 +25,18 @@ namespace CheckListManager.Prototypes.Api.Controllers
         private readonly IPrototypeService _prototypeService;
         private readonly IPrototypesRepository _prototypesRepository;
         private readonly CheckListJsonConverter _converter;
+        private readonly IRedisCache _redisCache;
+        private readonly ICommonRepository _commonRepository;
+        private readonly IConfigurationService _configurationService;
 
-        public PrototypeController(IPrototypeService prototypeService, IPrototypesRepository prototypesRepository, CheckListJsonConverter converter)
+        public PrototypeController(IPrototypeService prototypeService, IPrototypesRepository prototypesRepository, CheckListJsonConverter converter, IRedisCache redisCache, ICommonRepository commonRepository, IConfigurationService configurationService)
         {
             _prototypeService = prototypeService;
             _prototypesRepository = prototypesRepository;
             _converter = converter;
+            _redisCache = redisCache;
+            _commonRepository = commonRepository;
+            _configurationService = configurationService;
         }
 
         [HttpPost]
@@ -178,16 +186,32 @@ namespace CheckListManager.Prototypes.Api.Controllers
             }
         }
 
-        ////Use to test the pdf generation and comment again when finished, usage: http://localhost/Prototypes/Prototype/Export/482/1
-        [HttpGet]
-        [Route("Export/{Id}/{Version}")]
-        [AllowAnonymous]
-        public async Task<IHttpActionResult> Export(int Id, int Version)
+        [HttpPost]
+        [Route("Download")]
+        [Authorize(Roles = "Prototypes#View")]
+        public async Task<IHttpActionResult> Download(PrototypeRequest request)
         {
-            var PrototypeVersion = await _prototypesRepository.GetPrototypeVersionAsync(2, Id, Version);
+            var Token = Identity.Code + ":" + Guid.NewGuid();
+            var Company = await _commonRepository.GetCompanyAsync(Identity.CompanyId);
+            request.CompanyId = Identity.CompanyId;
+            request.CompanyName = Company.Name;
+            request.TimeZone = Company.TimeZones.MicrosoftCode;
+            request.UserCode = Identity.Code;
+            await _redisCache.SetAsync($"Token:{Token}", request, "Download", new TimeSpan(0, 1, 0));
+            return Ok(new { Token });
+        }
+
+        [HttpGet]
+        [Route("Download")]
+        [AllowAnonymous]
+        public async Task<IHttpActionResult> Download([FromUri]string Token)
+        {
+            var Data = await _redisCache.GetAsync<PrototypeRequest>($"Token:{Token}", "Download");
+            await _redisCache.RemoveAsync($"Token:{Token}", "Download");
+            var PrototypeVersion = await _prototypesRepository.GetPrototypeVersionAsync(2, Data.ID, Data.Version);
             var CheckList = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converter);
 
-            var PDF = new PrototypePDF(2, "Janssen", "W. Europe Standard Time", "https://s3-eu-west-1.amazonaws.com/public.matematici-clm.com/", PrototypeVersion, CheckList);
+            var PDF = new PrototypePDF(2, Data.CompanyName, Data.TimeZone, _configurationService.PublicRepositoryUrl, PrototypeVersion, CheckList);
             return Content(HttpStatusCode.OK, PDF, new PDFFormatter("Prototype"));
         }
     }

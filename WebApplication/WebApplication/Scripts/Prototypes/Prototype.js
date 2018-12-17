@@ -60,7 +60,8 @@
 				saveButton = $("a.Save", buttonGroup).addClass("Hidden"),
 				historyButton = $("a.History", buttonGroup).toggle(model.version > 0),
 				importButton = $("a.Import", buttonGroup).addClass("Hidden"),
-				exportButton = $("a.Export", buttonGroup);
+                exportButton = $("a.Export", buttonGroup),
+                downloadButton = $("a.Download", buttonGroup);
 
 			switch (model.state) {
 				case prototypes.Prototype.states.active:
@@ -689,6 +690,26 @@
 
 		matematici.dialog.setWidth(600);
 	};
+
+    prototype.download = function () {
+        var handler = function () {
+            $.ajax({
+                url: matematici.urls.prototypes.api + "/Download",
+                type: "post",
+                data: { id: prototypeKey.id, version: prototypeKey.version }
+            }).done(function (result) {
+                location = matematici.urls.prototypes.api + "/Download?Token=" + result.token;
+            });
+        };
+
+        if (matematici.canClose)
+            handler();
+        else
+            matematici.dialog.show("warning", "There are unsaved changes.", [
+                { text: "save", icon: "check", handler: function () { prototype.save(handler); } },
+                { text: "cancel", icon: "times", cancelButton: true }
+            ]);
+    };
 
 	prototype.update = function () {
 		select();

@@ -19,5 +19,10 @@ namespace CheckListManager.Prototypes.Logic.Messages
         public long? Department { get; set; }
         public long? PrototypeType { get; set; }
         public long? InstanceConfirmationWorkFlow { get; set; }
+
+        public long? CompanyId { get; set; }
+        public string CompanyName { get; set; }
+        public string UserCode { get; set; }
+        public string TimeZone { get; set; }
     }
 }

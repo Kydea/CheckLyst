@@ -199,7 +199,7 @@
                 select2;
             if (detailPage.isReadOnly()) matematici.controls.setEditable(select1, false);
             $("<label />").appendTo(div).append($("<span />").text("Department")).append($("<i />").addClass("Icon fi flaticon-building-o")).append(select1).addClass("Clearing");
-            for (var index in departments) 
+            for (var index in departments)
                 select1.append($("<option />").text(departments[index].name).attr("value", departments[index].code));
             var autoComplete1 = new matematici.AutoComplete(select1);
             autoComplete1.initialize();
@@ -227,7 +227,7 @@
             if (detailPage.isReadOnly()) matematici.controls.setEditable(select4, false);
             $("<label />").appendTo(div).append($("<span />").text("Level")).append($("<i />").addClass("Icon fi flaticon-group")).append(select4);
             for (var index in matematici.profiles)
-                select4.append($("<option />").text(matematici.profiles[index]).attr("value", matematici.profiles[index])); 
+                select4.append($("<option />").text(matematici.profiles[index]).attr("value", matematici.profiles[index]));
             select4.val(null);
             var autoComplete4 = new matematici.AutoComplete(select4);
             autoComplete4.initialize();
@@ -319,8 +319,75 @@
                 department.prototypeTypes.push({
                     id: record.id,
                     name: record.name
-                });                    
+                });
             }
+        },
+
+        applyConstraintToPrototypeGrant = function (autoComplete, value, on) {
+            var values = autoComplete.getValue();
+            if (!on && value == "View")
+                values = [];
+            else if (on && (value == "Approve" || value == "Edit"))
+                Array.addElement(values, "View");
+            else
+                values = null;
+
+            if (values)
+                autoComplete.setValue(values);
+        },
+
+        applyConstraintToInstanceGrant = function (autoComplete, value, on) {
+            var values = autoComplete.getValue();
+            if (on) {
+                if (value == "Edit" || value == "Confirm" || value == "Delete")
+                    Array.addElement(values, "View");
+                else if (value == "Create" || value == "Unsign") {
+                    Array.addElement(values, "View");
+                    Array.addElement(values, "Edit");
+                } else
+                    values = null;
+            } else {
+                if (value == "View")
+                    values = [];
+                else if (value == "Edit") {
+                    Array.removeElement(values, "Create");
+                    Array.removeElement(values, "Unsign");
+                } else
+                    values = null
+            }
+
+            if (values)
+                autoComplete.setValue(values);
+        },
+
+        initHandler = function () {
+            matematici.controls.setEditable($("input[name=code]", detailPage.getElement()), detailPage.isNew());
+
+            tab.getItem(1).tab
+                .on("click", "input[data-function=Edit]", function () {
+                    var check = $(this);
+                    setTimeout(function () {
+                        if (check.is(":checked")) 
+                            check.closest(".GeneralFunction").find("input[data-function=View]").prop("checked", true);
+                    }, 0);
+                })
+                .on("click", "input[data-function=View]", function () {
+                    var check = $(this);
+                    setTimeout(function () {
+                        if (!check.is(":checked"))
+                            check.closest(".GeneralFunction").find("input[data-function=Edit]").prop("checked", false);
+                    }, 0);
+                });
+
+            tab.getItem(2).tab.on("toggle", "select.AutoComplete", function (e, value, on) {
+                console.log(value, on);
+                applyConstraintToPrototypeGrant($(this).data("autoComplete"), value, on);
+            });
+
+            tab.getItem(3).tab.on("toggle", "select.AutoComplete", function (e, value, on) {
+                console.log(value, on);
+                applyConstraintToInstanceGrant($(this).data("autoComplete"), value, on);
+            });
         },
 
         completeHandler = function () {
@@ -340,9 +407,7 @@
 
         detailPage = new matematici.DetailPage({
             formSelector: formSelector,
-            initHandler: function () {
-                matematici.controls.setEditable($("input[name=code]", detailPage.getElement()), detailPage.isNew());
-            },
+            initHandler: initHandler,
             parametersPrepareHandler: parametersPrepareHandler,
             completeHandler: completeHandler,
             width: "inherit",
