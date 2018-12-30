@@ -114,6 +114,8 @@ declare
 begin
 	_Number = 1;
 
+	lock table only CheckLists.InstanceNumerators in row exclusive mode;
+	
 	select coalesce(n."Number", 0) + 1 into _Number
 	from 
 		"CheckLists"."InstanceNumerators" n 

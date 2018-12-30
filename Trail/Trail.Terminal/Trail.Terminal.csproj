@@ -112,6 +112,7 @@
     <None Include="App.config" />
     <None Include="ConnectionStrings.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
     <None Include="Trail.Terminal.snk" />
     <None Include="packages.config" />

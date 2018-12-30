@@ -205,7 +205,6 @@ namespace CheckListManager.Instances.Logic.Services
 
                 if (!cacheObject.Instance.Header.Valid)
                     throw new InstanceException("Header not valid");
-                await ValidateUniqueExpressionsAsync(cacheObject);
 
                 var row = new Common.Data.Instances
                 {
@@ -224,21 +223,31 @@ namespace CheckListManager.Instances.Logic.Services
                     ModifiedOn = DateTimeOffset.UtcNow
                 };
 
-                row = await _instancesRepository.CreateInstanceAsync(row);
+                try
+                {
+                    row = await _instancesRepository.BeginCreateInstanceAsync(row);
 
-                cacheObject.Id = row.ID;
-                cacheObject.Year = row.Year;
-                cacheObject.Number = row.Number;
-                cacheObject.ModifiedOn = row.ModifiedOn;
-                cacheObject.ModifiedBy = row.ModifiedBy;
-                if (cacheObject.Instance.Pages.Count() > 0)
-                    ((Page)cacheObject.Instance.Pages[0]).Lock = new Lock(identity.Code);
-                cacheObject.IsDirty = false;
+                    cacheObject.Id = row.ID;
+                    cacheObject.Year = row.Year;
+                    cacheObject.Number = row.Number;
+                    cacheObject.ModifiedOn = row.ModifiedOn;
+                    cacheObject.ModifiedBy = row.ModifiedBy;
+                    if (cacheObject.Instance.Pages.Count() > 0)
+                        ((Page)cacheObject.Instance.Pages[0]).Lock = new Lock(identity.Code);
+                    cacheObject.IsDirty = false;
 
-                cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(identity.CompanyId), cacheObject); //new update to consider the database values 
+                    cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(identity.CompanyId), cacheObject); //new update to consider the database values 
 
-                _instancesRepository.SaveChildren(row, CreateTags(cacheObject), CreateExpressionValues(cacheObject));
-                await _instancesRepository.SaveChangesAsync();
+                    await _instancesRepository.SaveChildren(row, CreateTags(cacheObject), CreateExpressionValues(cacheObject));
+
+                    _instancesRepository.EndCreateInstanceAsync(row);
+                }
+                catch
+                {
+                    _instancesRepository.CancelCreateInstanceAsync();
+                    throw;
+                }
+
                 await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
 
                 if (!cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation))
@@ -1210,31 +1219,6 @@ namespace CheckListManager.Instances.Logic.Services
             {
                 Logger.Error(e, "Unable to retrieve the prototype");
                 throw new InstanceException("Unable to retrieve the prototype", e);
-            }
-        }
-
-        private async Task ValidateUniqueExpressionsAsync(InstanceCacheObject cacheObject)
-        {
-            var instances = await _instancesRepository.GetInstancesWithExpressions(cacheObject.Prototype, cacheObject.Version);
-
-            foreach (var instance in instances)
-            {
-                var list = cacheObject.Instance.Expressions.Where(e =>
-                    e.Value.Unique
-                    && !e.Value.Value.IsNull
-                    && instance.InstanceExpressionValues.Any(
-                        e2 =>
-                            e2.Code == e.Key
-                            && e2.Value == e.Value.Value?.SerializedValue
-                    )
-                ).ToList();
-
-                if (list.Count > 0)
-                {
-                    var expression = list.First();
-                    throw new InstanceException(
-                        $"The value {expression.Value.Value.SerializedValue} for the expression {expression.Key} has been found in the in progress instance {(instance.Year > 0 ? instance.Year.ToString() : instance.PrototypeVersions.VersionState == VersionState.Draft ? "TEST" : "SE")} - {instance.Number}");
-                }
             }
         }
 

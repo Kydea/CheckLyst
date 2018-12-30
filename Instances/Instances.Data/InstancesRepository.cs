@@ -50,50 +50,51 @@ namespace CheckListManager.Instances.Data
 			};
 		}
 
-		public async Task<Common.Data.Instances> CreateInstanceAsync(Common.Data.Instances instance)
+		public async Task<Common.Data.Instances> BeginCreateInstanceAsync(Common.Data.Instances instance)
 		{
-			try
-			{
-				if (instance == null)
-					throw new ArgumentNullException(nameof(instance), "Instance must be not null");
+			if (instance == null)
+				throw new ArgumentNullException(nameof(instance), "Instance must be not null");
 
-				Entities.Database.BeginTransaction();
+			Entities.Database.BeginTransaction();
 
-				instance.Number =
-					await GetInstanceNumberAsync(instance.Prototype, instance.Version, instance.Year);
+			instance.Number =
+				await GetInstanceNumberAsync(instance.Prototype, instance.Version, instance.Year);
 
-                instance.InstancesHistory.Add(new InstancesHistory
-                {
-                    Date = instance.CreatedOn,
-                    User = instance.CreatedBy,
-                    State = InstanceState.Draft
-                });
+            instance.InstancesHistory.Add(new InstancesHistory
+            {
+                Date = instance.CreatedOn,
+                User = instance.CreatedBy,
+                State = InstanceState.Draft
+            });
 
-                instance.InstancesHistory.Add(new InstancesHistory
-                {
-                    Date = instance.ModifiedOn.Value,
-                    User = instance.ModifiedBy,
-                    State = instance.InstanceState
-                });
+            instance.InstancesHistory.Add(new InstancesHistory
+            {
+                Date = instance.ModifiedOn.Value,
+                User = instance.ModifiedBy,
+                State = instance.InstanceState
+            });
 
-				Entities.Instances.Add(instance);
+			Entities.Instances.Add(instance);
 
-				await SaveChangesAsync();
+			await SaveChangesAsync();
 
-				Entities.Database.CurrentTransaction.Commit();
+			await Entities.Entry(instance).ReloadAsync();
 
-				await Entities.Entry(instance).ReloadAsync();
-
-				return instance;
-			}
-			catch
-			{
-				Entities.Database.CurrentTransaction?.Rollback();
-				throw;
-			}
+			return instance;
 		}
 
-		public Task<Common.Data.Instances> GetByCodeAsync(long companyId, string code)
+        public void EndCreateInstanceAsync(Common.Data.Instances instance)
+        {
+            Entities.Database.CurrentTransaction.Commit();
+        }
+
+        public void CancelCreateInstanceAsync()
+        {
+            Entities.Database.CurrentTransaction?.Rollback();
+
+        }
+
+        public Task<Common.Data.Instances> GetByCodeAsync(long companyId, string code)
 			=> Entities.Instances.SingleOrDefaultAsync(i => i.Prototypes.Company == companyId && i.Code == code);
 
         public Task<Common.Data.Instances> GetByIDAsync(long companyId, long id)
@@ -118,13 +119,19 @@ namespace CheckListManager.Instances.Data
             Entities.Instances.Remove(instance);
         }
 
-        public void SaveChildren(Common.Data.Instances instance, IEnumerable<InstanceTags> instanceTags, IEnumerable<InstanceExpressionValues> instanceExpressionValues)
+        public async Task SaveChildren(Common.Data.Instances instance, IEnumerable<InstanceTags> instanceTags, IEnumerable<InstanceExpressionValues> instanceExpressionValues)
         {
             Entities.InstanceTags.RemoveRange(Entities.InstanceTags.Where(x => x.Instance == instance.ID));
             Entities.InstanceTags.AddRange(instanceTags);
 
             Entities.InstanceExpressionValues.RemoveRange(instance.InstanceExpressionValues);
             Entities.InstanceExpressionValues.AddRange(instanceExpressionValues);
+
+            await SaveChangesAsync();
+
+            await Call<int>("\"CheckLists\".\"ValidateUniqueExpressions\"",
+                new Parameter("_instance", instance.ID)
+            );
         }
 
     }
