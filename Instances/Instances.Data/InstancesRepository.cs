@@ -119,20 +119,20 @@ namespace CheckListManager.Instances.Data
             Entities.Instances.Remove(instance);
         }
 
-        public async Task SaveChildren(Common.Data.Instances instance, IEnumerable<InstanceTags> instanceTags, IEnumerable<InstanceExpressionValues> instanceExpressionValues)
+        public void SaveChildren(Common.Data.Instances instance, IEnumerable<InstanceTags> instanceTags, IEnumerable<InstanceExpressionValues> instanceExpressionValues)
         {
             Entities.InstanceTags.RemoveRange(Entities.InstanceTags.Where(x => x.Instance == instance.ID));
             Entities.InstanceTags.AddRange(instanceTags);
 
             Entities.InstanceExpressionValues.RemoveRange(instance.InstanceExpressionValues);
             Entities.InstanceExpressionValues.AddRange(instanceExpressionValues);
-
-            await SaveChangesAsync();
-
-            await Call<int>("\"CheckLists\".\"ValidateUniqueExpressions\"",
-                new Parameter("_instance", instance.ID)
-            );
         }
 
+        public async Task ValidateUniqueExpressions(long instance)
+        {
+            await Call<int>("\"CheckLists\".\"ValidateUniqueExpressions\"",
+                new Parameter("_instance", instance)
+            );
+        }
     }
 }

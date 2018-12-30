@@ -238,7 +238,18 @@ namespace CheckListManager.Instances.Logic.Services
 
                     cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(identity.CompanyId), cacheObject); //new update to consider the database values 
 
-                    await _instancesRepository.SaveChildren(row, CreateTags(cacheObject), CreateExpressionValues(cacheObject));
+                    _instancesRepository.SaveChildren(row, CreateTags(cacheObject), CreateExpressionValues(cacheObject));
+
+                    await _instancesRepository.SaveChangesAsync();
+
+                    try
+                    {
+                        await _instancesRepository.ValidateUniqueExpressions(row.ID);
+                    }
+                    catch (Exception Exception)
+                    {
+                        throw new InstanceException(Exception.Message);
+                    }
 
                     _instancesRepository.EndCreateInstanceAsync(row);
                 }
@@ -473,7 +484,7 @@ namespace CheckListManager.Instances.Logic.Services
                 row.ModifiedOn = ModifiedOn;
                 row.ModifiedBy = ModifiedBy;
 
-                _instancesRepository.SaveChildren(row, CreateTags(cacheObject), CreateExpressionValues(cacheObject));
+                await _instancesRepository.SaveChildren(row, CreateTags(cacheObject), CreateExpressionValues(cacheObject));
 
                 if (complete)
                 {
