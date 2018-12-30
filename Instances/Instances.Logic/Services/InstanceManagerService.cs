@@ -246,9 +246,9 @@ namespace CheckListManager.Instances.Logic.Services
                     {
                         await _instancesRepository.ValidateUniqueExpressions(row.ID);
                     }
-                    catch (Exception Exception)
+                    catch (AggregateException Exception)
                     {
-                        throw new InstanceException(Exception.Message);
+                        throw new InstanceException(string.Join(" - ", Exception.InnerExceptions.Select(e => e.Message)));
                     }
 
                     _instancesRepository.EndCreateInstanceAsync(row);
@@ -445,7 +445,7 @@ namespace CheckListManager.Instances.Logic.Services
 
         private IEnumerable<InstanceExpressionValues> CreateExpressionValues(InstanceCacheObject cacheObject)
         {
-            return cacheObject.Instance.Expressions.Where(Expression => !Expression.Value.Value.IsNull).Select(e => new InstanceExpressionValues
+            return cacheObject.Instance.Expressions.Where(Expression => !Expression.Value.Value.IsNull && Expression.Value.Unique).Select(e => new InstanceExpressionValues
             {
                 Instance = cacheObject.Id.Value,
                 Code = e.Key,
