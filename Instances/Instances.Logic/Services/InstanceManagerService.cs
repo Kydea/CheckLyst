@@ -484,7 +484,7 @@ namespace CheckListManager.Instances.Logic.Services
                 row.ModifiedOn = ModifiedOn;
                 row.ModifiedBy = ModifiedBy;
 
-                await _instancesRepository.SaveChildren(row, CreateTags(cacheObject), CreateExpressionValues(cacheObject));
+                _instancesRepository.SaveChildren(row, CreateTags(cacheObject), CreateExpressionValues(cacheObject));
 
                 if (complete)
                 {
