@@ -22,24 +22,22 @@ namespace Matematici.Controllers
 
         [HttpPost]
         [Route("Bind")]
-        public ActionResult Bind(PagingRequest<ViewModels.Browser.Request> Model)
+        public ActionResult Bind(PagingRequest<ViewModels.Browser.Request> Request)
         {
             var List = new List(Identity.Company);
             if (Engine.Instance.Companies[Identity.Company].Exception != null)
                 throw new Exception(Engine.Instance.Companies[Identity.Company].Exception.Message);
             else
-                List.Bind(Model);
+                List.Bind(Request);
 
             return Json(List);
         }
 
         [HttpPost]
         [Route("GetData")]
-        public ActionResult GetData(PagingRequest<ViewModels.Browser.Request> Model)
+        public ActionResult GetData(PagingRequest<ViewModels.Browser.Request> Request)
         {
-            throw new Exception("Not implemented");
-            //Model.Company = Identity.Company;
-            //return Json(Model);
+            return Json(new List(Identity.Company).GetData(Request));
         }
 
         [Route("Detail")]

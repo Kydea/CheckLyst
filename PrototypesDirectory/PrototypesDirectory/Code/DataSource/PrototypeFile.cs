@@ -12,7 +12,7 @@ namespace Matematici.DataSource
             this.FileName = FileName;
 
             var Tokens = FileName.Split('#');
-            if (Tokens.Length != 6)
+            if (Tokens.Length < 6 || Tokens.Length > 6)
                 throw new Exception($"Invalid file name: {FileName}, invalid number of tokens.");
 
             Company = Tokens[0];
@@ -39,21 +39,23 @@ namespace Matematici.DataSource
             Description = Tokens[5];
             if (string.IsNullOrWhiteSpace(Description))
                 throw new Exception($"Invalid file name: {FileName}, invalid description.");
+
+            if (Tokens.Length == 7)
+            {
+                if (Tokens[6] != "O")
+                    throw new Exception($"Invalid file name: {FileName}, invalid suffix, only O (for obsolete prototypes) can be used.");
+                Obsolete = true;
+            }
         }
 
         public string FileName { get; }
-
         public string Company { get; }
-
         public string Department { get; }
-
         public string PrototypeType { get; }
-
         public string Code { get; }
-
         public int Version { get; }
-
         public string Description { get; }
+        public bool Obsolete { get; }
 
     }
 

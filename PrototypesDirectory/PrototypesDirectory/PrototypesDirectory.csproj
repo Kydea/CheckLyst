@@ -210,10 +210,12 @@
     <Compile Include="Code\Security\InvalidTokenException.cs" />
     <Compile Include="Code\Security\DefaultIdentity.cs" />
     <Compile Include="Code\Settings\Company.cs" />
+    <Compile Include="Code\ViewModels\Browser\Row.cs" />
     <Compile Include="Code\ViewModels\Browser\Request.cs" />
     <Compile Include="Code\ViewModels\DataEngine\Field.cs" />
     <Compile Include="Code\ViewModels\DataEngine\Form.cs" />
     <Compile Include="Code\ViewModels\DataEngine\Option.cs" />
+    <Compile Include="Code\ViewModels\DataEngine\PagingResponse.cs" />
     <Compile Include="Code\ViewModels\DataEngine\PagingRequest.cs" />
     <Compile Include="Code\ViewModels\DataEngine\Request.cs" />
     <Compile Include="Code\ViewModels\DataEngine\ValidationMessage.cs" />

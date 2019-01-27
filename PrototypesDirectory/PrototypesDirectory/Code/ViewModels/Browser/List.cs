@@ -46,5 +46,31 @@ namespace Matematici.ViewModels.Browser
             }
         }
 
+        public PagingResponse<List<Row>> GetData(PagingRequest<Request> Request)
+        {
+            const int PAGE_SIZE = 20;
+            var Result = Engine.Instance.Companies[Company].Search(Request.Data.Department, Request.Data.PrototypeType, Request.Data.Name);
+
+            return new PagingResponse<List<Row>>
+            {
+                Count = Result.Count,
+                CurrentPage = Request.CurrentPage,
+                ItemsPerPage = PAGE_SIZE,
+                Data = Result
+                    .Skip((Request.CurrentPage - 1) * PAGE_SIZE)
+                    .Take(PAGE_SIZE)
+                    .Select(x => new Row
+                    {
+                        Name = x.Code,
+                        Department = x.Department,
+                        PrototypeType = x.PrototypeType,
+                        Description = x.Description,
+                        Version = x.Version,
+                        FileName = x.FileName,
+                    })
+                    .ToList()
+            };
+        }
+
     }
 }
