@@ -1,0 +1,144 @@
+﻿@import "_Library.scss";
+
+div.PropertyPanel {
+    height: 350px;
+    background-color: white;
+    display: none;
+    position: relative;
+    //margin: -#{$Metric-Control-Space / 2} -#{$Metric-Control-Space} -#{2 * $Metric-Control-Space};
+    margin-bottom: -#{2 * $Metric-Control-Space};
+
+    div.PropertyList {
+        position: absolute;
+        overflow: scroll;
+        overflow-y: scroll;
+        overflow-x: auto;
+        width: 50%;
+        height: 100%;
+        border-top: solid 1px $Color-Grey-Light;
+        border-left: solid 1px $Color-Grey-Light;
+        border-bottom: solid 1px $Color-Grey-Light;
+        background: $Color-Silver-Light;
+        padding-top: 1px;
+
+        a {
+            background: white;
+            display: block;
+            padding: 4px 10px;
+            text-decoration: none;
+            border-bottom: solid 1px $Color-Grey-Light;
+
+            i.flaticon-arrow-right {
+                visibility: hidden;
+                padding-right: 5px;
+                font-size: 12px;
+            }
+
+            &:hover {
+                text-decoration: none !important;
+            }
+
+            &.Selected {
+                i.flaticon-arrow-right {
+                    visibility: visible;
+                }
+            }
+
+            &.Changed {
+                font-weight: bold;
+                color: $Color-Green-Dark !important;
+            }
+        }
+    }
+
+    div.PropertyValue {
+        position: absolute;
+        width: calc(50% - #{$Metric-Control-Space});
+        left: 50%;
+        height: calc(50% - #{$Metric-Control-Space / 2});
+        padding: 10px;
+        background: $Color-Silver-Dark;
+        margin-left: $Metric-Control-Space;
+
+        label {
+            margin: 0;
+            padding-top: 0;
+            width: calc(100%);
+
+            &:first-child {
+                position: absolute;
+
+                input {
+                    margin-top: 0;
+                }
+            }
+
+            &:nth-child(2) {
+                position: absolute;
+
+                input {
+                    margin-top: 0;
+                }
+
+                top: $Metric-Control-Height + $Metric-Control-Space;
+            }
+
+            &:nth-child(3) {
+                position: absolute;
+
+                input {
+                    margin-top: 0;
+                }
+
+                top: $Metric-Control-Height + $Metric-Control-Space;
+                left: calc(50% + 10px);
+                width: calc(50% - 20px) !important;
+            }
+        }
+
+        input[type=text], input[type=checkbox], select, a.Button, label {
+            display: block;
+
+            &[type=checkbox] {
+                width: 100%;
+            }
+        }
+
+        textarea {
+            height: 100%;
+        }
+
+        &.Value {
+            textarea {
+                height: 100px !important;
+            }
+
+            label {
+                margin-top: 10px;
+                width: 50%;
+
+                span {
+                    position: relative;
+                }
+            }
+        }
+    }
+
+    div.Information {
+        position: absolute;
+        overflow: auto;
+        height: calc(50% - #{$Metric-Control-Space / 2});
+        width: 50%;
+        left: 50%;
+        top: calc(50% + #{$Metric-Control-Space / 2});
+        padding: 10px;
+        line-height: 1.4;
+        background: $Color-Silver-Dark;
+        width: calc(50% - #{$Metric-Control-Space});
+        margin-left: $Metric-Control-Space;
+    }
+}
+
+div.Popup div.PropertyPanel {
+    display: block;
+}

@@ -1,0 +1,488 @@
+﻿@import "Library";
+
+$Inline-Form-Label-Width: 200px;
+
+input.Error, select.Error {
+    border-color: $Color-Red-Regular;
+    outline-color: $Color-Red-Light;
+}
+
+label {
+    display: block;
+    font-size: 13px;
+}
+
+div.Input {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+input[type=text], input[type=range], input[type=number], input[type=password], input[type=email], input[type=file], select, div.Input {
+    display: block;
+    border-radius: 3px;
+    border: solid 1px $Color-Grey-Light;
+    background: white;
+    width: 100%;
+    padding: 5px 10px;
+    line-height: $Metric-Control-Height - 10px;
+    height: $Metric-Control-Height;
+    font-family: $Font-Base;
+    font-size: 13px;
+
+    &[readonly], &.ReadOnly {
+        background-color: $Color-Silver-Light;
+    }
+}
+
+textarea {
+    height: 88px;
+    line-height: 20px;
+    display: block;
+    border-radius: 3px;
+    border: solid 1px $Color-Grey-Light;
+    background: white;
+    width: 100%;
+    padding: 5px 10px;
+    resize: none;
+    font-family: $Font-Base;
+    font-size: 13px;
+
+    &[readonly], &.ReadOnly {
+        background-color: $Color-Silver-Light;
+    }
+}
+
+a.Button {
+    text-transform: uppercase;
+    color: white;
+    padding: 0 $Metric-Control-Space + $Metric-Control-Height 0 $Metric-Control-Space;
+    min-width: 90px;
+    display: inline-block;
+    border-radius: 5px;
+    border: none;
+    position: relative;
+    background-color: $Color-Green-Regular;
+    text-align: center;
+    cursor: default;
+    height: $Metric-Control-Height;
+    line-height: $Metric-Control-Height;
+    box-shadow: $Box-Shadow;
+
+    i.fi {
+        $Size: 26px;
+
+        margin-top: #{($Metric-Control-Height - $Size) / 2};
+        margin-right: #{($Metric-Control-Height - $Size) / 2};
+        width: $Size;
+        height: $Size;
+        right: 0;
+        line-height: $Size;
+        position: absolute;
+        background: white;
+        top: 0;
+        z-index: 1;
+        border-radius: 50%;
+        font-size: 16px;
+        color: $Color-Green-Regular;
+    }
+
+    &::after {
+        content: "";
+        width: $Metric-Control-Height;
+        height: $Metric-Control-Height;
+        right: 0;
+        border-left: 1px solid #ebebeb;
+        background-color: inherit;
+        border-radius: 0 5px 5px 0;
+        position: absolute;
+        top: 0;
+    }
+
+    &:hover, &.Selected {
+        text-decoration: none !important;
+
+        &:not(.ReadOnly) {
+            background-color: $Color-Green-Light;
+            color: white;
+
+            i.fi {
+                color: $Color-Green-Light;
+            }
+        }
+    }
+
+    &.Icon {
+        min-width: 0;
+        width: $Metric-Control-Height;
+        padding: 0;
+
+        i.fi {
+            padding: 0;
+        }
+
+        &::after {
+            border: 0;
+            border-radius: 5px;
+        }
+    }
+
+    &.MiniIcon {
+        $size: 16px;
+
+        min-width: 0;
+        width: $Metric-Control-Height;
+        padding: 0;
+        height: $size;
+        width: $size;
+        line-height: $size;
+        margin-top: 20px;
+        margin-left: 0;
+        box-shadow: none;
+        border-radius: 50% !important;
+        font-size: 10px;
+        background: none;
+
+        i.fi {
+            color: $Color-Green-Regular;
+            height: $size;
+            width: $size;
+            line-height: $size;
+            padding: 0;
+            border: 0;
+            background: none;
+            font-size: 10px;
+            margin: 0;
+        }
+
+        &::after {
+            content: none;
+        }
+
+        &:hover {
+            background: none;
+
+            i.fi {
+                color: $Color-Green-Light;
+            }
+        }
+
+        &.Angle {
+            margin-left: -$size;
+        }
+    }
+
+    &.GreyGreenButton {
+        background-color: $Color-Grey-Regular;
+
+        i.fi {
+            color: white;
+            background-color: $Color-Green-Regular;
+        }
+
+        &::after {
+            background-color: white;
+        }
+
+        &:hover {
+            background-color: $Color-Green-Regular;
+
+            i.fi {
+                color: white;
+            }
+        }
+    }
+
+    &.GreyYellowButton {
+        background-color: $Color-Grey-Regular;
+
+        i.fi {
+            color: white;
+            background-color: $Color-Yellow-Regular;
+        }
+
+        &::after {
+            background-color: white;
+        }
+
+        &:hover {
+            background-color: $Color-Yellow-Regular;
+
+            i.fi {
+                color: white;
+            }
+        }
+    }
+
+    &.Invalid {
+        color: $Color-Red-Regular;
+    }
+
+    &.ReadOnly {
+        background-color: $Color-Grey-Light;
+        box-shadow: none;
+
+        i.fi {
+            color: white;
+            background-color: $Color-Grey-Light;
+        }
+
+        &::after {
+            background-color: $Color-Silver-Dark !important;
+            background-color: white;
+        }
+
+        &:hover {
+            background-color: $Color-Grey-Light !important;
+            color: white !important;
+        }
+    }
+}
+
+div.Errors {
+    color: $Color-Red-Regular;
+    margin-top: $Metric-Control-Space;
+    display: none;
+    line-height: 1.5;
+}
+
+form {
+    border: 1px solid $Color-Grey-Light;
+    position: relative;
+    padding-bottom: $Metric-Control-Space;
+    padding-right: $Metric-Control-Space;
+    background-color: $Color-Silver-Light;
+
+    h2, h3, h4 {
+        float: left;
+        margin-top: $Metric-Control-Space !important;
+        margin-left: $Metric-Control-Space !important;
+        margin-bottom: 0 !important;
+    }
+
+    hr {
+        clear: both;
+        float: left;
+        margin-top: $Metric-Control-Space !important;
+        margin-left: $Metric-Control-Space !important;
+        margin-bottom: 0 !important;
+        width: calc(100% - 2 * #{$Metric-Control-Space}) !important;
+    }
+
+    a.Button {
+        float: left;
+        margin-top: calc(1em + #{5px + $Metric-Control-Space});
+        margin-left: $Metric-Control-Space;
+    }
+}
+
+form, div.CheckList, div.PropertyPanel div.PropertyValue, div.Module {
+
+    label {
+        $Label-Width: 200px;
+
+        float: left;
+        margin-top: $Metric-Control-Space;
+        margin-left: $Metric-Control-Space;
+        width: $Inline-Form-Label-Width;
+        max-width: calc(100% - #{$Metric-Control-Space});
+        position: relative;
+        color: $Color-Grey-Dark;
+        padding-top: 1em;
+
+        label {
+            padding: 0;
+            margin: 0;
+            width: unset;
+        }
+
+        input, select, textarea, div.Input {
+            margin-top: 5px;
+        }
+
+        input[type=checkbox] {
+            display: block;
+            margin-left: 0;
+            margin-right: 0;
+            margin-bottom: 0;
+        }
+
+        > span {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+        }
+
+        i.Icon {
+            position: absolute;
+            text-align: center;
+            height: $Metric-Control-Height;
+            width: $Metric-Control-Height;
+            line-height: $Metric-Control-Height;
+            border: 1px solid $Color-Grey-Light;
+            background-color: $Color-Silver-Dark;
+            border-radius: 3px 0 0 3px;
+            margin-left: 0;
+
+            &:first-of-type {
+                left: 0;
+            }
+
+            & + select, & + input, & + div.Input {
+                // The first input|select element after icon is skipped if AutoComplete is active.
+                &.AutoComplete + input, &:not(.AutoComplete) {
+                    padding-left: $Metric-Control-Height + 5px;
+                }
+            }
+        }
+
+        &.Narrow {
+            width: unset;
+        }
+
+        &.Width150 {
+            width: 1.5 * $Label-Width;
+        }
+
+        &.Width200 {
+            width: 2 * $Label-Width + $Metric-Control-Space;
+        }
+
+        &.Width300 {
+            width: 3 * $Label-Width + 2 * $Metric-Control-Space;
+        }
+
+        &.Error {
+            > span {
+                margin-left: 25px;
+            }
+
+            i {
+                border-color: $Color-Red-Regular !important;
+            }
+
+            input, select, div.Input, textarea {
+                border-color: $Color-Red-Regular;
+                outline-color: $Color-Red-Light;
+            }
+
+            i.ValidationMessagesIcon {
+                color: $Color-Red-Regular;
+                cursor: pointer;
+                position: absolute;
+                top: -4px;
+                font-size: 20px;
+            }
+        }
+
+        @media #{$Media-460-} {
+            .Icon {
+                bottom: 0;
+            }
+
+            input, select, div.AutoComplete-List, div.Input {
+                + i.Icon {
+                    border-radius: 0;
+                }
+            }
+
+            &.Controls2, &.Controls3 {
+                > *:not(span) {
+                    float: left;
+                }
+
+                > *:not(span):not(i):not(div) {
+                    border-right: none;
+                    border-radius: 5px 0 0 5px;
+
+                    &:last-child {
+                        //last imput
+                        border-right: solid 1px $Color-Grey-Light;
+                        border-radius: 5px;
+                    }
+                }
+            }
+
+            &.Controls2 {
+                width: $Label-Width * 2 + $Metric-Control-Space;
+
+                > *:not(span):not(.fi) {
+                    width: calc(50% + #{$Metric-Control-Space / 2});
+
+                    &:last-child {
+                        //last input
+                        width: calc(50% - #{$Metric-Control-Space / 2});
+                    }
+                }
+
+                input, select {
+                    ~ select + input {
+                        //last auto complete
+                        width: calc(50% - #{$Metric-Control-Space / 2}) !important;
+                        border-right: solid 1px $Color-Grey-Light;
+                        border-radius: 5px;
+                    }
+                }
+
+                i.Icon ~ i.Icon {
+                    left: calc(50% + #{$Metric-Control-Space / 2}),
+                }
+            }
+
+            &.Controls3 {
+                width: $Label-Width * 3 + $Metric-Control-Space * 2;
+
+                > *:not(span):not(.fi) {
+                    width: calc(33.33% + #{$Metric-Control-Space / 3});
+
+                    &:last-child {
+                        //last input
+                        width: calc(33.33% - #{$Metric-Control-Space * 2 / 3});
+                    }
+                }
+
+                input, select {
+                    input, select {
+                        ~ select + input {
+                            //last auto complete
+                            width: calc(33.33% - #{$Metric-Control-Space * 2 / 3});
+                            border-right: solid 1px $Color-Grey-Light;
+                            border-radius: 5px;
+                        }
+                    }
+                }
+
+                i.Icon ~ i.Icon {
+                    left: calc(33.33% + #{$Metric-Control-Space / 3});
+                }
+
+                i.Icon ~ i.Icon ~ i.Icon {
+                    left: calc(66.66% + #{$Metric-Control-Space * 2 / 3});
+                }
+            }
+        }
+
+        @media #{$Media-0-460} {
+            width: calc(100% - #{$Metric-Control-Space});
+
+            .Icon {
+                margin-top: 5px;
+            }
+        }
+
+        &.FullWidth {
+            width: calc(100% - #{$Metric-Control-Space});
+        }
+    }
+
+    &::after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+    div.Errors {
+        margin-top: $Metric-Control-Space;
+        margin-left: $Metric-Control-Space;
+    }
+}

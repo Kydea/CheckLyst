@@ -1,0 +1,382 @@
+﻿div.Instance div.ui-datepicker {
+  z-index: 33 !important; }
+
+div.Instance div.CountDown {
+  box-shadow: rgba(0, 0, 0, 0.15) 0 0 15px 2px !important;
+  border: solid 1px #ccc;
+  position: absolute;
+  top: -10px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: white;
+  text-align: center;
+  padding: 10px;
+  z-index: 35;
+  font-weight: bold;
+  min-height: 80px; }
+  div.Instance div.CountDown span.Time {
+    display: inline-block;
+    padding-top: 25px;
+    color: red;
+    font-size: 40px; }
+  div.Instance div.CountDown span.Interval {
+    position: absolute;
+    color: #666;
+    left: 5px;
+    top: 5px;
+    font-size: 12px;
+    line-height: 1.4; }
+    div.Instance div.CountDown span.Interval i {
+      float: left;
+      color: red;
+      margin: 3px 10px 0 0;
+      font-size: 26px; }
+  div.Instance div.CountDown a {
+    margin-left: 10px;
+    width: 30px;
+    height: 30px; }
+    div.Instance div.CountDown a i {
+      width: 20px;
+      height: 20px;
+      font-size: 14px;
+      line-height: 20px; }
+    div.Instance div.CountDown a::after {
+      width: 30px;
+      height: 30px; }
+
+div.Instance .Element div.Information {
+  margin: 0 !important;
+  content: "";
+  display: block;
+  position: absolute;
+  z-index: 31;
+  top: 10px;
+  right: 10px;
+  height: 6px;
+  width: 6px;
+  background: red;
+  border: solid 1px #999;
+  cursor: pointer;
+  border-radius: 50%; }
+  div.Instance .Element div.Information div.Panel {
+    display: none;
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 5px 10px 10px;
+    border: solid 1px #ccc;
+    border-radius: 0 10px 10px 10px;
+    box-shadow: rgba(0, 0, 0, 0.15) 0 0 15px 2px;
+    line-height: 1.5em;
+    width: 200px; }
+    div.Instance .Element div.Information div.Panel i.fi {
+      margin-left: -30px;
+      color: #666;
+      position: absolute; }
+      div.Instance .Element div.Information div.Panel i.fi.flaticon-thumbs-up-o {
+        color: green; }
+      div.Instance .Element div.Information div.Panel i.fi.flaticon-thumbs-down-o {
+        color: red; }
+    div.Instance .Element div.Information div.Panel span, div.Instance .Element div.Information div.Panel a {
+      display: block;
+      padding: 2px;
+      color: black !important;
+      float: none;
+      margin: 5px 0 0 30px;
+      overflow: hidden;
+      text-overflow: ellipsis; }
+  div.Instance .Element div.Information.Active {
+    z-index: 32; }
+    div.Instance .Element div.Information.Active div.Panel {
+      display: block; }
+
+div.Instance .Element.Valid > div.Information {
+  background-color: green; }
+
+div.Instance .Page div.LockInformation {
+  display: none; }
+
+div.Instance .Page > div.CountDown {
+  border: none;
+  box-shadow: none !important; }
+
+div.Instance .Group .Iteration {
+  clear: both;
+  width: 100%;
+  margin-top: 0 !important;
+  margin-left: 0 !important;
+  position: relative; }
+  div.Instance .Group .Iteration > .IterationCommands {
+    float: right;
+    position: relative;
+    z-index: 30; }
+    div.Instance .Group .Iteration > .IterationCommands a {
+      float: left;
+      display: block;
+      color: #009688;
+      text-align: center;
+      margin-left: 1px;
+      background: white;
+      border: solid 1px #ccc; }
+      div.Instance .Group .Iteration > .IterationCommands a i {
+        display: block;
+        font-size: 12px;
+        height: 18px;
+        line-height: 18px;
+        width: 18px; }
+      div.Instance .Group .Iteration > .IterationCommands a:hover {
+        color: #03c3b1; }
+      div.Instance .Group .Iteration > .IterationCommands a.Hidden {
+        display: none; }
+  div.Instance .Group .Iteration > * {
+    float: left;
+    margin: 20px 0 0 20px !important; }
+  div.Instance .Group .Iteration .Item.Field:not(.Boolean) :focus ~ .Copy {
+    display: block; }
+  div.Instance .Group .Iteration > h3 {
+    display: none; }
+  div.Instance .Group .Iteration.Removed label, div.Instance .Group .Iteration.Removed input, div.Instance .Group .Iteration.Removed select {
+    color: #cc0000 !important; }
+  div.Instance .Group .Iteration.FirstIteration > .IterationCommands a.Up {
+    display: none; }
+  div.Instance .Group .Iteration.FirstIteration > .Item.Field .Copy {
+    display: none !important; }
+  div.Instance .Group .Iteration.LastIteration > .IterationCommands a.Down {
+    display: none; }
+
+div.Instance .Group > div.Information div.Panel {
+  right: 0;
+  border-radius: 10px 0 10px 10px; }
+
+div.Instance .Group.CountDownOn {
+  height: 163px !important;
+  border: none; }
+
+div.Instance .Item label span.Label {
+  padding-left: 8px; }
+
+div.Instance .Item.Field input[type=checkbox] {
+  height: 16px;
+  width: 16px;
+  margin: 15px 0 10px; }
+
+div.Instance .Item.Field div.Input {
+  display: none; }
+
+div.Instance .Item.Field.List input:first-of-type {
+  display: none; }
+
+div.Instance .Item.Field.ExternalSource.Inactive i.flaticon-link-o {
+  color: #ccc; }
+
+div.Instance .Item.Field.ExternalSource:not(.Inactive) div.Input {
+  cursor: pointer !important; }
+
+div.Instance .Item.Field.DateTime label {
+  width: 420px; }
+
+div.Instance .Item.Field.DateTime input {
+  float: left;
+  width: calc(50% + 10px); }
+
+div.Instance .Item.Field.DateTime input.AutoComplete {
+  float: left;
+  width: calc(25% - 5px);
+  border-right: solid 1px #ccc;
+  border-radius: 5px;
+  padding-left: 5px !important;
+  padding-right: 0 !important; }
+
+div.Instance .Item.Field.Time input.Description {
+  display: none; }
+
+div.Instance .Item.Field.Time input.AutoComplete {
+  float: left;
+  width: 50%;
+  border-right: solid 1px #ccc;
+  border-radius: 5px;
+  padding-left: 5px !important;
+  padding-right: 0 !important; }
+
+div.Instance .Item.Field.ReadOnly input {
+  display: none; }
+
+div.Instance .Item.Field.ReadOnly textarea {
+  display: none; }
+
+div.Instance .Item.Field.ReadOnly div.Input {
+  display: block;
+  cursor: default; }
+
+div.Instance .Item.Field.ReadOnly.Boolean input {
+  display: block; }
+
+div.Instance .Item.Field.ReadOnly.Boolean div.Input {
+  display: none; }
+
+div.Instance .Item.Field.ReadOnly.DateTime div.Input, div.Instance .Item.Field.ReadOnly.Date div.Input {
+  padding-left: 41px; }
+
+div.Instance .Item.Field.ReadOnly .AutoComplete, div.Instance .Item.Field.ReadOnly .AutoComplete-Filter, div.Instance .Item.Field.ReadOnly .AutoComplete-List {
+  display: none !important; }
+
+div.Instance .Item.Field .ExternalSourceLink {
+  position: absolute;
+  top: 26px;
+  right: 6px;
+  margin: 0;
+  cursor: pointer; }
+  div.Instance .Item.Field .ExternalSourceLink:hover {
+    text-decoration: none; }
+
+div.Instance .Item.Field .Copy {
+  position: absolute;
+  top: 21px;
+  right: 1px;
+  margin: 0;
+  display: none;
+  font-size: 10px; }
+  div.Instance .Item.Field .Copy:hover {
+    text-decoration: none; }
+
+div.Instance .Item div.Information {
+  top: 3px;
+  left: 0;
+  right: auto; }
+
+div.Instance .Item.Text div.Information {
+  display: none; }
+
+div.Instance .Item.Signature a.Button i.flaticon-exclamation {
+  position: absolute;
+  color: red;
+  margin: 2px 0 0 15px; }
+
+div.Instance .Item.Signature i.flaticon-exclamation {
+  color: #cc0000;
+  font-size: inherit; }
+
+@media only screen and (min-width: 760px) {
+  div.Instance .Item.Signature label.Controls3 {
+    width: 520px; }
+    div.Instance .Item.Signature label.Controls3 input:nth-of-type(1) {
+      width: 280px; }
+    div.Instance .Item.Signature label.Controls3 input:nth-of-type(2) {
+      width: 120px; }
+    div.Instance .Item.Signature label.Controls3 input:nth-of-type(3) {
+      width: 120px; }
+    div.Instance .Item.Signature label.Controls3 i:nth-of-type(2) {
+      left: 280px; }
+    div.Instance .Item.Signature label.Controls3 i:nth-of-type(3) {
+      left: 400px !important; } }
+
+div.Instance .Item.Hidden {
+  display: none; }
+
+@media only screen and (max-width: 459px) {
+  div.Instance .Item {
+    width: calc(100% - 20px); }
+    div.Instance .Item label {
+      width: 100% !important; } }
+
+div.Instance .Page.ReadOnly, div.Instance .Group.ReadOnly {
+  color: #999; }
+  div.Instance .Page.ReadOnly h3, div.Instance .Group.ReadOnly h3 {
+    color: #999 !important; }
+
+div.Instance .Page.Hidden, div.Instance .Group.Hidden {
+  display: none; }
+
+div.Instance .Page > div.CountDown, div.Instance .Group > div.CountDown {
+  top: -20px;
+  left: -20px;
+  padding: 20px; }
+  div.Instance .Page > div.CountDown span.Time, div.Instance .Group > div.CountDown span.Time {
+    font-size: 50px;
+    padding-top: 40px; }
+  div.Instance .Page > div.CountDown span.Interval, div.Instance .Group > div.CountDown span.Interval {
+    display: block;
+    text-align: center;
+    position: static;
+    top: 20px;
+    left: 20px;
+    padding-left: 20px; }
+    div.Instance .Page > div.CountDown span.Interval i, div.Instance .Group > div.CountDown span.Interval i {
+      float: none;
+      position: absolute;
+      margin-left: -20px; }
+  div.Instance .Page > div.CountDown a, div.Instance .Group > div.CountDown a {
+    margin-top: 30px; }
+
+div.Instance .InstanceDescription {
+  position: relative;
+  padding-right: 20px;
+  clear: both;
+  width: 100%;
+  font-size: 12px;
+  color: #999;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; }
+
+div.Instance table.Grid {
+  width: calc(100% - 20px); }
+  div.Instance table.Grid thead tr th {
+    border: solid 1px #ccc !important; }
+  div.Instance table.Grid tbody tr td {
+    float: none !important;
+    position: relative; }
+    div.Instance table.Grid tbody tr td.Field {
+      padding: 0; }
+      div.Instance table.Grid tbody tr td.Field input[type=checkbox] {
+        display: block;
+        margin: 0 auto; }
+      div.Instance table.Grid tbody tr td.Field .Copy {
+        top: 2px; }
+      div.Instance table.Grid tbody tr td.Field.DateTime:not(.Inactive) {
+        white-space: nowrap; }
+        div.Instance table.Grid tbody tr td.Field.DateTime:not(.Inactive) input[type=text] {
+          border: none;
+          display: inline-block; }
+      div.Instance table.Grid tbody tr td.Field.Time {
+        white-space: nowrap; }
+        div.Instance table.Grid tbody tr td.Field.Time input[type=text]:not(.Description) {
+          border: none;
+          display: inline-block; }
+      div.Instance table.Grid tbody tr td.Field .Input {
+        border: none !important;
+        height: 100%;
+        width: 100%;
+        background: none; }
+      div.Instance table.Grid tbody tr td.Field:not(.DateTime):not(.Time) input[type=text] {
+        border: none !important;
+        height: 100%;
+        width: 100%;
+        background: none; }
+      div.Instance table.Grid tbody tr td.Field:not(.DateTime):not(.Time) input[type=text]:focus {
+        padding-right: 28px !important; }
+    div.Instance table.Grid tbody tr td.Signature {
+      text-align: center;
+      width: 100px; }
+      div.Instance table.Grid tbody tr td.Signature input {
+        display: none; }
+      div.Instance table.Grid tbody tr td.Signature > i {
+        display: none; }
+      div.Instance table.Grid tbody tr td.Signature a.Button {
+        float: none;
+        min-width: unset;
+        margin-top: 0; }
+    div.Instance table.Grid tbody tr td > div.Information {
+      left: 2px; }
+    div.Instance table.Grid tbody tr td i.Icon {
+      display: none; }
+    div.Instance table.Grid tbody tr td.IterationCommands {
+      white-space: nowrap;
+      text-align: center; }
+      div.Instance table.Grid tbody tr td.IterationCommands > a.Up, div.Instance table.Grid tbody tr td.IterationCommands a.Down, div.Instance table.Grid tbody tr td.IterationCommands a.Remove {
+        display: inline-block;
+        float: none; }
+  div.Instance table.Grid tbody tr:nth-child(odd) td.Inactive {
+    background-color: #f5f5f5; }
+  div.Instance table.Grid tbody tr:nth-child(even) td.Inactive {
+    background-color: #ebebeb; }

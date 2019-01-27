@@ -1,0 +1,131 @@
+﻿@import "_Library.scss";
+
+body.Dashboard {
+    h1 {
+        margin-bottom: 0 !important;
+        float: none !important;
+    }
+
+    div.Dashboard {
+        clear: both;
+
+        a.DashboardItem {
+            box-shadow: $Box-Shadow;
+            overflow: hidden;
+            position: relative;
+            padding-bottom: 80px;
+
+            img {
+                display: block;
+                width: 100%;
+                transition: all 300ms;
+            }
+
+            i {
+                display: block;
+                position: absolute;
+                width: 60px;
+                height: 60px;
+                line-height: 60px;
+                font-size: 30px;
+                background: white;
+                border-radius: 50%;
+                text-align: center;
+                color: $Color-Grey-Regular;
+                z-index: 2;
+                bottom: 50px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            span {
+                background: white;
+                display: block;
+                position: relative;
+                text-align: center;
+                color: black;
+                padding: 0 10px 20px;
+                text-transform: uppercase;
+                font-family: $Font-Myriad;
+                position: absolute;
+                width: 100%;
+                height: 80px;
+                padding-top: 5px;
+                line-height: 75px;
+                bottom: 0;
+                z-index: 1;
+            }
+
+            &:hover {
+                text-decoration: none !important;
+
+                img {
+                    transform: scale(1.2);
+                }
+
+                i {
+                    color: $Color-Green-Regular;
+                }
+
+                span {
+                    color: $Color-Green-Regular;
+                }
+            }
+        }
+    }
+
+    @media #{$Media-Extended} {
+        div.Dashboard {
+            margin-left: -$Metric-Separator-Extended;
+
+            a.DashboardItem {
+                margin-left: $Metric-Separator-Extended;
+                margin-top: $Metric-Separator-Extended;
+                float: left;
+                display: block;
+                width: calc(33.33% - #{$Metric-Separator-Extended});
+
+                span {
+                    font-size: 25px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+            }
+        }
+    }
+
+    @media #{$Media-460-760} {
+        div.Dashboard {
+            margin-left: -$Metric-Separator-Mobile;
+
+            a.DashboardItem {
+                margin-left: $Metric-Separator-Mobile;
+                margin-top: $Metric-Separator-Mobile;
+                float: left;
+                display: block;
+                width: calc(50% - #{$Metric-Separator-Mobile});
+
+                span {
+                    font-size: 25px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+            }
+        }
+    }
+
+    @media #{$Media-0-460} {
+        div.Dashboard {
+            a.DashboardItem {
+                margin-top: $Metric-Separator-Mobile;
+                width: 100%;
+
+                span {
+                    font-size: 28px;
+                }
+            }
+        }
+    }
+}

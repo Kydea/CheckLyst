@@ -1,0 +1,48 @@
+﻿$width: 50px;
+$height: 50px;
+
+div#Loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 100000;
+
+    div.Center {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        z-index: 100001;
+
+        div.Background {
+            position: relative;
+            height: $height;
+            width: $width;
+            left: -($width / 2);
+            background-color: black;
+            opacity: .5;
+            border-radius: 10px;
+
+            div.Image {
+                position: absolute;
+                height: $width;
+                width: $width;
+            }
+
+            &.Percentage {
+                height: $height + 20px;
+
+                div.Percentage {
+                    position: absolute;
+                    bottom: 0;
+                    padding-bottom: 5px;
+                    width: $width;
+                    color: white;
+                    text-align: center;
+                    font-size: 10px;
+                }
+            }
+        }
+    }
+}

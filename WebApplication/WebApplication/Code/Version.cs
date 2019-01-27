@@ -13,7 +13,7 @@ namespace CheckListManager.WebApplication.Code
             {
                 var assembly = typeof(MvcApplication).Assembly;
                 var versionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
-                Cache = String.Format(versionInfo.FileVersion);
+                Cache = string.Format(versionInfo.FileVersion);
             }
             return Cache;
         }

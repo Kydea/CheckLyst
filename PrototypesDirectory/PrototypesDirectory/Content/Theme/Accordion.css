@@ -1,0 +1,21 @@
+﻿div.Accordion-Bar {
+  padding-bottom: 2px;
+  border-bottom: solid 1px #ccc; }
+  div.Accordion-Bar .Button {
+    background-color: #ffba00;
+    border-radius: 5px 5px 0 0;
+    padding-right: 56px;
+    box-shadow: none; }
+    div.Accordion-Bar .Button i.fi {
+      transition: transform 300ms ease;
+      color: #ffba00; }
+    div.Accordion-Bar .Button:hover {
+      background-color: #ffcc09 !important; }
+      div.Accordion-Bar .Button:hover i.fi {
+        color: #ffcc09 !important; }
+    div.Accordion-Bar .Button.Closed i.fi {
+      transform: rotate(-180deg); }
+
+.Accordion {
+  border-top: none; }
+

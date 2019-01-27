@@ -176,7 +176,7 @@
 				else if (!fieldErrors) {
 					fieldErrors = true;
 					errors.append(
-						$("<div />").addClass("Error").text(" Some field are not valid. Click on the error icon of the fields for more details.").prepend(
+						$("<div />").addClass("Error").text("Some field is not valid. Click on the error icon of the fields for more details.").prepend(
 							$("<i />").addClass("fi flaticon-warning")
 						)
 					);

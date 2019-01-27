@@ -1,0 +1,157 @@
+﻿@import "_Library.scss";
+
+body.CheckListGrid {
+    overflow: hidden;
+}
+
+div.CheckListGrid {
+
+    div.Container {
+        background-color: white;
+        border: solid 1px $Color-Grey-Light;
+        padding: 20px;
+        box-shadow: $Box-Shadow;
+        overflow: auto;
+
+        h2 {
+            margin: 0;
+            padding-bottom: $Metric-Separator-Extended;
+        }
+
+        div.Parameters {
+            clear: both;
+            margin-left: -$Metric-Control-Space;
+            margin-top: -$Metric-Control-Space;
+            padding-bottom: $Metric-Control-Space; 
+
+            label {
+                margin: 20px 0 0 20px;
+                width: 200px;
+            }
+
+            input {
+                margin-top: 5px;
+            }
+        }
+
+        table.Grid {
+            clear: both;
+            margin-top: 0;
+
+            tr {
+                th {
+                    text-align: center;
+                }
+
+                &.Selected {
+                    td {
+                        font-weight: bold;
+
+                        i {
+                            display: block;
+                        }
+                    }
+                }
+            }
+
+            &.ExpressionsList {
+                tr {
+                    td {
+                        &:first-child {
+                            width: 30px;
+                            text-align: center;
+
+                            i {
+                                display: none;
+                                font-size: 16px;
+                            }
+                        }
+
+                        &.CodeColumn {
+                            width: 20%;
+                        }
+
+                        &.ExpressionColumn {
+                            width: 80%;
+                        }
+
+                        &:last-child {
+                            width: 50px;
+                            text-align: center;
+                        }
+
+                        i {
+                            font-size: 14px;
+
+                            &.flaticon-times {
+                                color: $Color-Red-Regular !important;
+                            }
+
+                            &.flaticon-check {
+                                color: $Color-Green-Regular !important;
+                            }
+                        }
+                    }
+
+                    &.Selected {
+                        td {
+                            i {
+                                display: block;
+                            }
+                        }
+                    }
+                }
+            }
+
+            &.SourcesList {
+                td {
+                    width: 50%;
+                }
+            }
+        }
+
+        div.Buttons {
+            padding-top: 20px;
+
+            a {
+                float: right;
+                margin-left: 10px;
+                margin-top: 10px;
+            }
+        }
+    }
+
+    @media #{$Media-Extended} {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: $Depth-CheckListGrid;
+        background-color: rgba(102, 102, 102, .7);
+
+        div.Container {
+            position: absolute;
+            width: 90%;
+            max-height: 90%;
+            top: 50%;
+            left: 50%;
+            -moz-transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            -o-transform: translate(-50%, -50%);
+            -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+        }
+    }
+
+    @media #{$Media-Mobile} {
+        div.Container {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: $Depth-CheckListGrid;
+        }
+    }
+}

@@ -1,0 +1,273 @@
+﻿@import "Library";
+
+$Menu-Icon-Width: 40px;
+$Menu-Item-Height: 40px;
+
+nav.Menu {
+    ul.Menu {
+        background-color: #fff;
+
+        li.MenuItem {
+            display: block;
+
+            .MenuItem {
+                display: block;
+            }
+
+            span.MenuItem {
+                cursor: default;
+            }
+
+            ul.SubMenu {
+                text-transform: none;
+                background: white;
+                display: none;
+                padding: 0;
+                margin: 0;
+
+                li {
+                    list-style: none;
+                    padding: 0;
+                    margin: 0;
+                }
+            }
+        }
+    }
+
+    @media #{$Media-Extended} {
+        top: 0px;
+        left: 0;
+        position: fixed;
+        font-size: 14px;
+        font-family: $Font-Myriad;
+
+        ul.Menu {
+            height: 100vh;
+            z-index: $Depth-Menu;
+            background-color: #000;
+            display: block !important;
+            width: $Metric-Header-Height;
+            // Logo
+            &:before {
+                content: "";
+                width: 100%;
+                display: block;
+                height: $Metric-Header-Height;
+                box-sizing: border-box;
+                border-bottom: 1px solid $Color-Grey-Darker;
+                background: url(../Media/Sintlogo.png) no-repeat ($Metric-Header-Height - 50px)/2 50%;
+            }
+
+            li.MenuItem {
+                position: relative;
+                border-bottom: 1px solid $Color-Grey-Darker;
+
+                .MenuItem {
+                    font-size: 0;
+                    box-sizing: border-box;
+                    color: $Color-Grey-Regular;
+                    width: $Metric-Header-Height;
+                    height: $Metric-Header-Height;
+                    padding: ($Metric-Header-Height - $Menu-Icon-Width)/2 !important;
+
+                    i {
+                        font-size: $Menu-Icon-Width;
+                    }
+                }
+
+                &.Current {
+                    i {
+                        color: $Color-Green-Light;
+                    }
+
+                    background-color: #333;
+                }
+
+                &.Selected, &:hover {
+                    background-color: $Color-Grey-Regular;
+                    position: relative;
+                    color: white !important;
+
+                    .MenuItem {
+                        color: white;
+                    }
+
+                    &:after {
+                        // Menu Indicator
+                        content: "";
+                        display: block;
+                        position: absolute;
+                        top: 50%;
+                        right: 0;
+                        width: 0;
+                        height: 0;
+                        transform: translateY(-50%);
+                        z-index: $Depth-Menu-Indicator;
+                        border-width: 9px 12px;
+                        border-color: transparent #000 transparent transparent;
+                        border-style: solid;
+                    }
+                }
+
+                ul.SubMenu {
+                    z-index: $Depth-Menu;
+                    background-color: black;
+                    position: absolute;
+                    left: $Metric-Header-Height;
+                    top: ($Metric-Header-Height - $Menu-Icon-Width)/2;
+                    border-left: 1px solid $Color-Grey-Darker;
+                    border-radius: 0 5px 5px 0;
+                    box-shadow: rgba(0, 0, 0, .35) 3px 0 15px;
+                    // Menu indicator: no border between it and the submenu.
+                    &:before {
+                        left: -1px;
+                        width: 1px;
+                        content: "";
+                        display: block;
+                        position: absolute;
+                        height: 18px; // same as menu indicator
+                        background-color: black; // same as menu indicator
+                        top: ($Menu-Item-Height - 18px)/2; // 18px = menu indicator's height
+                        opacity: 0;
+                    }
+
+                    li {
+                        width: 230px;
+                        height: $Menu-Item-Height;
+                        line-height: $Menu-Item-Height;
+
+                        a {
+                            padding-left: 40px;
+                            color: $Color-Grey-Light;
+                            display: block;
+                            text-decoration: none;
+                            position: relative;
+
+                            &::before {
+                                content: "";
+                                display: block;
+                                width: 10px;
+                                height: 10px;
+                                position: absolute;
+                                left: 10px;
+                                top: 50%;
+                                border: solid $Color-Grey-Dark;
+                                border-width: 0 2px 2px 0;
+                                opacity: 0;
+                                //transition: opacity 300ms ease-in-out; //gives a rendering problem on the font for some browsers
+                                transform: translateY(-50%) rotate(-45deg) skew(8.16deg, 8.16deg);
+                            }
+                        }
+
+                        & + li {
+                            border-top: 1px solid $Color-Grey-Dark;
+                        }
+
+                        &.Current {
+                            a {
+                                color: $Color-Green-Light !important;
+                                cursor: default !important;
+
+                                &::before {
+                                    content: none !important;
+                                }
+                            }
+                        }
+
+                        &:hover, &:only-child {
+                            a {
+                                color: white;
+
+                                &::before {
+                                    opacity: 1;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @media #{$Media-Mobile} {
+        clear: both;
+        text-transform: uppercase;
+        background-color: #000;
+        text-align: right;
+        height: $Metric-Header-Height;
+        font-size: 18px;
+        font-weight: 300;
+        font-family: $Font-Myriad;
+
+        &::before {
+            $Logo-Width: 134px;
+
+            background: url(../Media/LogoMobile.png) no-repeat 0 50%;
+            transform: translateX(-$Logo-Width/2);
+            width: $Logo-Width;
+            position: absolute;
+            content: "";
+            height: 100%;
+            left: 50%;
+            top: 0px;
+        }
+
+        ul.Menu {
+            width: 100%;
+            display: none;
+            position: absolute;
+            text-align: center;
+            z-index: $Depth-Menu;
+
+            li.MenuItem {
+                line-height: 40px;
+                border-bottom: 1px solid $Color-Grey-Regular;
+
+                .MenuItem {
+                    padding: 0 $Metric-Separator-Mobile;
+                    color: black;
+
+                    &:hover {
+                        color: $Color-Green-Dark;
+                    }
+                }
+
+                &.Current {
+                    .MenuItem {
+                        color: $Color-Green-Dark !important;
+                    }
+                }
+
+                ul.SubMenu {
+                    li {
+                        background: #efefef;
+
+                        a {
+                            padding: 0 2*$Metric-Separator-Mobile;
+                            color: black;
+
+                            &:hover {
+                                color: $Color-Green-Dark;
+                            }
+                        }
+
+                        border-top: 1px solid $Color-Grey-Light;
+
+                        &.Current {
+                            a {
+                                color: $Color-Green-Dark !important;
+                            }
+                        }
+                    }
+                }
+            }
+
+            &::after {
+                content: "";
+                height: 10px;
+                display: block;
+                background-color: #000;
+            }
+        }
+    }
+}

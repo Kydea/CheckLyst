@@ -1,0 +1,29 @@
+﻿div.Blip {
+  display: none;
+  overflow: auto;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1001;
+  background-color: rgba(102, 102, 102, 0.7);
+  cursor: pointer; }
+  div.Blip div.Container {
+    position: fixed;
+    border-radius: 15px;
+    top: 50%;
+    left: 50%;
+    width: unset;
+    padding: 20px;
+    background-color: white;
+    box-shadow: rgba(0, 0, 0, 0.15) 0 0 15px 2px; }
+    div.Blip div.Container i {
+      color: #009688;
+      font-size: 30px; }
+  div.Blip.Error {
+    background-color: rgba(255, 102, 102, 0.7); }
+    div.Blip.Error div.Container i {
+      color: #cc0000;
+      font-size: 30px; }
+

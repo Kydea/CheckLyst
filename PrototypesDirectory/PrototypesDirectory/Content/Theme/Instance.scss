@@ -1,0 +1,626 @@
+﻿@import "_Library.scss";
+@import "FontAwesome/_variables.scss";
+
+div.Instance {
+    h2 {
+    }
+
+    div.ui-datepicker {
+        z-index: $Depth-CheckList-Date-Picker !important;
+    }
+
+    div.CountDown {
+        box-shadow: $Box-Shadow !important;
+        border: solid 1px $Color-Grey-Light;
+        position: absolute;
+        top: -10px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(255, 255, 255, 1);
+        text-align: center;
+        padding: 10px;
+        z-index: $Depth-CheckList-CountDown;
+        font-weight: bold;
+        min-height: 80px;
+
+        span.Time {
+            display: inline-block;
+            padding-top: 25px;
+            color: red;
+            font-size: 40px;
+        }
+
+        span.Interval {
+            position: absolute;
+            color: #666;
+            left: 5px;
+            top: 5px;
+            font-size: 12px;
+            line-height: 1.4;
+
+            i {
+                float: left;
+                color: red;
+                margin: 3px 10px 0 0;
+                font-size: 26px;
+            }
+        }
+
+        a {
+            margin-left: 10px;
+            width: 30px;
+            height: 30px;
+
+            i {
+                width: 20px;
+                height: 20px;
+                font-size: 14px;
+                line-height: 20px;
+            }
+
+            &::after {
+                width: 30px;
+                height: 30px;
+            }
+        }
+    }
+
+    .Element {
+        div.Information {
+            margin: 0 !important;
+            content: "";
+            display: block;
+            position: absolute;
+            z-index: $Depth-CheckList-Information;
+            top: 10px;
+            right: 10px;
+            height: 6px;
+            width: 6px;
+            background: red;
+            border: solid 1px $Color-Grey-Regular;
+            cursor: pointer;
+            border-radius: 50%;
+
+            div.Panel {
+                display: none;
+                position: absolute;
+                background-color: rgba(255, 255, 255, .9);
+                padding: 5px 10px 10px;
+                border: solid 1px $Color-Grey-Light;
+                border-radius: 0 10px 10px 10px;
+                box-shadow: $Box-Shadow;
+                line-height: 1.5em;
+                width: 200px;
+
+                i.fi {
+                    margin-left: -30px;
+                    color: $Color-Grey-Dark;
+                    position: absolute;
+
+                    &.flaticon-thumbs-up-o {
+                        color: green;
+                    }
+
+                    &.flaticon-thumbs-down-o {
+                        color: red;
+                    }
+                }
+
+                span, a {
+                    display: block;
+                    padding: 2px;
+                    color: black !important;
+                    float: none;
+                    margin: 5px 0 0 30px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+            }
+
+            &.Active {
+                z-index: $Depth-CheckList-Information-Active;
+
+                div.Panel {
+                    display: block;
+                }
+            }
+        }
+
+        &.Valid > div.Information {
+            background-color: green;
+        }
+    }
+
+    .Page {
+        div.LockInformation {
+            display: none;
+        }
+
+        > div.CountDown {
+            border: none;
+            box-shadow: none !important;
+        }
+    }
+
+    .Group {
+        .Iteration {
+            clear: both;
+            width: 100%;
+            margin-top: 0 !important;
+            margin-left: 0 !important;
+            position: relative;
+
+            > .IterationCommands {
+                float: right;
+                position: relative;
+                z-index: $Depth-CheckList-IterationCommands;
+
+                a {
+                    float: left;
+                    display: block;
+                    color: $Color-Green-Regular;
+                    text-align: center;
+                    margin-left: 1px;
+                    background: white;
+                    border: solid 1px $Color-Grey-Light;
+
+                    i {
+                        display: block;
+                        font-size: 12px;
+                        height: 18px;
+                        line-height: 18px;
+                        width: 18px;
+                    }
+
+                    &:hover {
+                        color: $Color-Green-Light;
+                    }
+
+                    &.Hidden {
+                        display: none;
+                    }
+                }
+            }
+
+            > * {
+                float: left;
+                margin: $Metric-Control-Space 0 0 $Metric-Control-Space !important;
+            }
+
+            .Item.Field:not(.Boolean) {
+                :focus ~ .Copy {
+                    display: block;
+                }
+            }
+
+            > h3 {
+                display: none;
+            }
+
+            &.Removed {
+                label, input, select {
+                    color: $Color-Red-Regular !important;
+                }
+            }
+
+            &.FirstIteration {
+                > .IterationCommands a.Up {
+                    display: none;
+                }
+
+                > .Item.Field {
+                    .Copy {
+                        display: none !important;
+                    }
+                }
+            }
+
+            &.LastIteration {
+                > .IterationCommands a.Down {
+                    display: none;
+                }
+            }
+        }
+
+        > div.Information {
+
+            div.Panel {
+                right: 0;
+                border-radius: 10px 0 10px 10px;
+            }
+        }
+
+        &.CountDownOn {
+            height: 163px !important;
+            border: none;
+        }
+    }
+
+    .Item {
+        label {
+            span.Label {
+                padding-left: 8px;
+            }
+        }
+
+        &.Field {
+            $Label-Width: 200px;
+
+            input {
+                &[type=checkbox] {
+                    height: 16px;
+                    width: 16px;
+                    margin: 5px + ($Metric-Control-Height - 16px) / 2 0 ($Metric-Control-Height - 16px) / 2;
+                }
+            }
+
+            div.Input {
+                display: none;
+            }
+
+            &.List {
+                input:first-of-type {
+                    display: none;
+                }
+            }
+
+            &.ExternalSource {
+                &.Inactive {
+                    i.flaticon-link-o {
+                        color: $Color-Grey-Light;
+                    }
+                }
+
+                &:not(.Inactive) {
+                    div.Input {
+                        cursor: pointer !important;
+                    }
+                }
+            }
+
+            &.DateTime {
+                label {
+                    width: $Label-Width * 2 + $Metric-Control-Space;
+                }
+
+                input {
+                    float: left;
+                    width: calc(50% + #{$Metric-Control-Space / 2});
+                }
+
+                input.AutoComplete {
+                    float: left;
+                    width: calc(25% - #{$Metric-Control-Space / 4});
+                    border-right: solid 1px $Color-Grey-Light;
+                    border-radius: 5px;
+                    padding-left: 5px !important;
+                    padding-right: 0 !important;
+                }
+            }
+
+            &.Time {
+
+                input.Description {
+                    display: none;
+                }
+
+                input.AutoComplete {
+                    float: left;
+                    width: 50%;
+                    border-right: solid 1px $Color-Grey-Light;
+                    border-radius: 5px;
+                    padding-left: 5px !important;
+                    padding-right: 0 !important;
+                }
+            }
+
+            &.ReadOnly {
+                input {
+                    display: none;
+                }
+
+                textarea {
+                    display: none;
+                }
+
+                div.Input {
+                    display: block;
+                    cursor: default;
+                }
+
+                &.Boolean {
+                    input {
+                        display: block;
+                    }
+
+                    div.Input {
+                        display: none;
+                    }
+                }
+
+                &.DateTime, &.Date {
+                    div.Input {
+                        padding-left: $Metric-Control-Height + 5px;
+                    }
+                }
+
+                .AutoComplete, .AutoComplete-Filter, .AutoComplete-List {
+                    display: none !important;
+                }
+            }
+
+            .ExternalSourceLink {
+                position: absolute;
+                top: 26px;
+                right: 6px;
+                margin: 0;
+                cursor: pointer;
+
+                &:hover {
+                    text-decoration: none;
+                }
+            }
+
+
+            .Copy {
+                position: absolute;
+                top: 21px;
+                right: 1px;
+                margin: 0;
+                display: none;
+                font-size: 10px;
+
+                &:hover {
+                    text-decoration: none;
+                }
+            }
+        }
+
+        div.Information {
+            top: 3px;
+            left: 0;
+            right: auto;
+        }
+
+        &.Text div.Information {
+            display: none;
+        }
+
+        &.Signature {
+            a.Button {
+                i.flaticon-exclamation {
+                    position: absolute;
+                    color: red;
+                    margin: 2px 0 0 15px;
+                }
+            }
+
+            i.flaticon-exclamation {
+                color: $Color-Red-Regular;
+                font-size: inherit;
+            }
+
+            @media #{$Media-Extended} {
+
+                label.Controls3 {
+                    width: 280px + 2 * 120px;
+
+                    input {
+                        &:nth-of-type(1) {
+                            width: 280px;
+                        }
+
+                        &:nth-of-type(2) {
+                            width: 120px;
+                        }
+
+                        &:nth-of-type(3) {
+                            width: 120px;
+                        }
+                    }
+
+                    i {
+                        &:nth-of-type(2) {
+                            left: 280px;
+                        }
+
+                        &:nth-of-type(3) {
+                            left: 400px !important;
+                        }
+                    }
+                }
+            }
+        }
+
+        &.Hidden {
+            display: none;
+        }
+
+        @media #{$Media-0-460} {
+            width: calc(100% - #{$Metric-Control-Space});
+
+            label {
+                width: 100% !important;
+            }
+        }
+    }
+
+    .Page, .Group {
+        &.ReadOnly {
+            color: $Color-Grey-Regular;
+
+            h3 {
+                color: $Color-Grey-Regular !important;
+            }
+        }
+
+        &.Hidden {
+            display: none;
+        }
+
+        > div.CountDown {
+            top: -$Metric-Control-Space;
+            left: -$Metric-Control-Space;
+            padding: $Metric-Control-Space;
+
+            span.Time {
+                font-size: 50px;
+                padding-top: 40px;
+            }
+
+            span.Interval {
+                display: block;
+                text-align: center;
+                position: static;
+                top: $Metric-Control-Space;
+                left: $Metric-Control-Space;
+                padding-left: 20px;
+
+                i {
+                    float: none;
+                    position: absolute;
+                    margin-left: -20px;
+                }
+            }
+
+            a {
+                margin-top: 30px;
+            }
+        }
+    }
+
+    .InstanceDescription {
+        position: relative;
+        padding-right: $Metric-Control-Space;
+        clear: both;
+        width: 100%;
+        font-size: 12px;
+        color: $Color-Grey-Regular;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    table.Grid {
+        width: calc(100% - #{$Metric-Control-Space});
+
+        thead {
+            tr {
+                th {
+                    border: solid 1px $Color-Grey-Light !important;
+                }
+            }
+        }
+
+        tbody {
+            tr {
+                td {
+                    float: none !important;
+                    position: relative;
+
+                    &.Field {
+                        padding: 0;
+
+                        input[type=checkbox] {
+                            display: block;
+                            margin: 0 auto;
+                        }
+
+                        .Copy {
+                            top: 2px;
+                        }
+
+                        &.DateTime:not(.Inactive) {
+                            white-space: nowrap;
+
+                            input[type=text] {
+                                border: none;
+                                display: inline-block;
+                            }
+                        }
+
+                        &.Time {
+                            white-space: nowrap;
+
+                            input[type=text]:not(.Description) {
+                                border: none;
+                                display: inline-block;
+                            }
+                        }
+
+                        .Input {
+                            border: none !important;
+                            height: 100%;
+                            width: 100%;
+                            background: none;
+                        }
+
+                        &:not(.DateTime):not(.Time) {
+
+                            input[type=text] {
+                                border: none !important;
+                                height: 100%;
+                                width: 100%;
+                                background: none;
+                            }
+
+                            input[type=text]:focus {
+                                padding-right: 28px !important;
+                            }
+                        }
+                    }
+
+                    &.Signature {
+                        text-align: center;
+                        width: 100px;
+
+                        input {
+                            display: none;
+                        }
+
+                        > i {
+                            display: none;
+                        }
+
+                        a.Button {
+                            float: none;
+                            min-width: unset;
+                            margin-top: 0;
+                        }
+                    }
+
+                    > div.Information {
+                        left: 2px;
+                    }
+
+                    i.Icon {
+                        display: none;
+                    }
+
+                    &.IterationCommands {
+                        white-space: nowrap;
+                        text-align: center;
+
+                        > a.Up, a.Down, a.Remove {
+                            display: inline-block;
+                            float: none;
+                        }
+                    }
+                }
+
+                &:nth-child(odd) {
+                    td.Inactive {
+                        background-color: $Color-Silver-Light;
+                    }
+                }
+
+                &:nth-child(even) {
+                    td.Inactive {
+                        background-color: $Color-Silver-Dark;
+                    }
+                }
+            }
+        }
+    }
+}

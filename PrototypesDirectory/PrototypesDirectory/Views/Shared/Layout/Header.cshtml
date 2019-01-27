@@ -1,0 +1,83 @@
+﻿<header class="Container">
+    <div id="UserPanel" class="Padded Container Extended">
+        <a class="Standard" href="/Security/Logout">
+            Logout <i class="fa fa-sign-out"></i>
+        </a>
+        @*<a href="#" id="HelpButton" title="User manual">Help <i class="fa fa-question"></i></a>*@
+    </div>
+
+    <nav class="Menu">
+        <button id="MenuButton" class="Mobile hamburger hamburger--spin" type="button">
+            <span class="hamburger-box">
+                <span class="hamburger-inner"></span>
+            </span>
+        </button>
+
+        <ul class="Menu Plain">
+            <li class="MenuItem Mobile">
+                <a class="Standard" href="/Security/Logout">
+                    Logout <i class="fa fa-sign-out"></i>
+                </a>
+            </li>
+
+            @*<li class="MenuItem Mobile">
+                <a class="MenuItem" href="#" id="HelpButton">Help</a>
+            </li>*@
+
+            <li class="MenuItem">
+                <a class="MenuItem" href="@Url.Action("Dashboard", "Default")"><i class="fi flaticon-dashboard-o Extended"></i>Dashboard</a>
+
+                <ul class="SubMenu Extended">
+                    <li>
+                        <a href="@Url.Action("Dashboard", "Default")">Dashboard</a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="MenuItem">
+                <span class="MenuItem"><i class="fi flaticon-cog Extended"></i>Settings</span>
+
+                <ul class="SubMenu">
+                    <li data-role="Users#View">
+                        <a href="@Url.Action("List", "Users")">Users</a>
+                    </li>
+                    <li data-role="Departments#View">
+                        <a href="@Url.Action("DepartmentsList", "Infrastructure")">Departments</a>
+                    </li>
+                    <li data-role="PrototypeTypes#View">
+                        <a href="@Url.Action("PrototypeTypesList", "Infrastructure")">Prototype Types</a>
+                    </li>
+                    <li data-role="WorkFlows#View">
+                        <a href="@Url.Action("List", "WorkFlows")">Workflows</a>
+                    </li>
+                    <li data-role="Trail#View">
+                        <a href="@Url.Action("List", "Trail")">Audit Trail</a>
+                    </li>
+                    <li data-role="DataSources#View">
+                        <a href="@Url.Action("List", "DataSources")">Data Sources</a>
+                    </li>
+                </ul>
+            </li>
+
+            <li data-role="Prototypes#View" class="MenuItem">
+                <a href="@Url.Action("List", "Prototypes")" class="MenuItem"><i class="fi flaticon-prototype Extended"></i>Prototypes</a>
+
+                <ul class="SubMenu Extended">
+                    <li data-role="Prototypes#View">
+                        <a href="@Url.Action("List", "Prototypes")">Prototypes</a>
+                    </li>
+                </ul>
+            </li>
+            <li data-role="Instances#View" class="MenuItem">
+                <a href="@Url.Action("List", "Instances")" class="MenuItem"><i class="fi flaticon-instance Extended"></i>Instances</a>
+
+                <ul class="SubMenu Extended">
+                    <li data-role="Instances#View">
+                        <a href="@Url.Action("List", "Instances")">Instances</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+
+</header>

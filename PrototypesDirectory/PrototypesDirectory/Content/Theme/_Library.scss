@@ -1,0 +1,87 @@
+﻿//Styles
+$Box-Shadow: rgba(0, 0, 0, .15) 0 0 15px 2px;
+
+//Fonts
+$Font-Base: Arial, sans-serif;
+$Font-Myriad: Myriad, Arial, sans-serif;
+
+//Colors
+$Color-Green-Light: #03c3b1;
+$Color-Green-Regular: #009688;
+$Color-Green-Dark: #00877a;
+
+$Color-Yellow-Light: #ffcc09;
+$Color-Yellow-Regular: #ffba00;
+
+$Color-Red-Light: #ff3333;
+$Color-Red-Regular: #cc0000;
+
+$Color-Grey-Darker: #333;
+$Color-Grey-Dark: #666;
+$Color-Grey-Regular: #999;
+$Color-Grey-Light: #ccc;
+
+$Color-Silver-Light: #f5f5f5;
+$Color-Silver-Dark: #ebebeb;
+
+$Color-Cyan: #e8f7fc;
+$Color-Pink: #fce6e8;
+
+//Metrics
+$Metric-Max-Width: 1250px;
+$Metric-Separator-Extended: 30px;
+$Metric-Separator-Mobile: 10px;
+$Metric-Control-Height: 36px;
+$Metric-Control-Space: 20px;
+$Metric-Header-Height: 70px;
+$Metric-Breadcrumbs-Height: 14px + 20px; // 12px font size, 20px margin top
+
+//Depths
+$Depth-CheckList-IterationCommands: 30;
+$Depth-CheckList-Information: 31;
+$Depth-CheckList-Information-Active: 32;
+$Depth-CheckList-Date-Picker: 33;
+$Depth-CheckList-CountDown: 35;
+
+$Depth-Tab: 50;
+$Depth-Tab-Selected: 51;
+
+$Depth-Fixed-Header: 60;
+
+$Depth-PropertyPanel: 70;
+$Depth-Header: 103;
+$Depth-Logo: 100;
+$Depth-ButtonGroup: 101;
+$Depth-Menu: 102;
+$Depth-Menu-Indicator: 103;
+$Depth-CheckListGrid: 104;
+$Depth-Popup: 105;
+$Depth-Calendar: 106;
+
+$Depth-Dialog: 990;
+$Depth-AutoComplete: 991;
+$Depth-Help: 1000;
+$Depth-Blip: 1001;
+$Depth-InitialCurtain: 1002;
+
+//Media
+$Media-Mobile: "only screen and (max-width: 759px)";
+$Media-Extended: "only screen and (min-width: 760px)";
+
+$Media-1250-: "only screen and (min-width: 1250px)";
+$Media-1000-: "only screen and (min-width: 1000px)";
+$Media-460-: "only screen and (min-width: 460px)";
+$Media-1000-1250: "only screen and (min-width: 1000px) and (max-width: 1249px)";
+$Media-1000-1200: "only screen and (min-width: 1000px) and (max-width: 1199px)";
+$Media-900-1000: "only screen and (min-width: 900px) and (max-width: 999px)";
+$Media-800-900: "only screen and (min-width: 800px) and (max-width: 899px)";
+$Media-760-1000: "only screen and (min-width: 760px) and (max-width: 999px)";
+$Media-760-1250: "only screen and (min-width: 760px) and (max-width: 1249px)";
+$Media-760-1200: "only screen and (min-width: 760px) and (max-width: 1199px)";
+$Media-700-800: "only screen and (min-width: 700px) and (max-width: 799px)";
+$Media-460-760: "only screen and (min-width: 460px) and (max-width: 759px)";
+$Media-0-1200: "only screen and (max-width: 1199px)";
+$Media-0-1100: "only screen and (max-width: 1099px)";
+$Media-0-1000: "only screen and (max-width: 999px)";
+$Media-0-700: "only screen and (max-width: 699px)";
+$Media-0-460: "only screen and (max-width: 459px)";

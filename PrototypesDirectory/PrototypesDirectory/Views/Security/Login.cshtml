@@ -1,0 +1,101 @@
+@model Matematici.ViewModels.Membership.Login
+
+<div class="Login">
+    <div class="Box AutoCenter">
+        <form>
+            @if (Request["m"] != null)
+            {
+                <div class="Message">
+                    Your session has expired. Please login again.
+                </div>
+            }
+
+            <input type="hidden" name="grant_type" value="password" />
+
+            <label class="FullWidth">
+                <span>Company</span>
+                <i class="Icon fi flaticon-buildings-o"></i>
+                @Html.DropDownListFor(m => m.Company, Matematici.Settings.Provider.Values.Companies.Select(c => new SelectListItem { Value = c.Index.ToString(), Text = c.Name }))
+            </label>
+
+            <label class="FullWidth Controls2">
+                <span>User code / Password</span>
+                <i class="Icon fi flaticon-user-o"></i>
+                <input type="text" name="Code" placeholder="username" />
+                <i class="Icon fi flaticon-key-o"></i>
+                <input type="password" name="Password" placeholder="password" />
+            </label>
+
+            <div class="Errors"></div>
+
+            <div class="Buttons">
+                <a class="Button DefaultButton GreyGreenButton" href="#" id="Sign"><i class="fi flaticon-arrow-right"></i>LOGIN</a>
+            </div>
+        </form>
+    </div>
+    <div class="Version">Version: @Matematici.Version.Get()</div>
+</div>
+
+<script type="text/javascript">
+    matematici.isLoginPage = true;
+
+    matematici.events.onPageLoad = function (callback) {
+        matematici.clock.stop();
+
+        var
+            form = $("form"),
+            error = $("div.Errors", form),
+            companyList = $("select#Company", form),
+            userCode = $("input[name=Code]",    form),
+            password = $("input[name=Password]", form),
+
+            showError = function (message) {
+                error.html(" " + message).prepend($("<i />").addClass("fi flaticon-warning")).show()
+            };
+
+        new matematici.Page({
+            name: "Login",
+            initializers: []
+        });
+
+        new matematici.Login("div.Login", function () {
+            error.empty().hide();
+            if (companyList.val() == null)
+                showError("select a company");
+            else if (userCode.val() == "")
+                showError("select a user code");
+            else if (password.val() == "")
+                showError("select a password");
+            else
+                $.ajax(form.attr("action"), {
+                    data: form.serialize(),
+                    type: "post"
+                }).done(function (result) {
+                    if (result.ok) {
+                        $(".Company", matematici.elements.footer).text(companyList.data("autoComplete").getControl().val());
+                        $(".User", matematici.elements.footer).text(userCode.val());
+                        matematici.navigator.open("/");
+                    } else
+                        showError(result.message);
+                }).fail(function (jqXhr, textStatus, errorThrown) {
+                    showError(jqXhr.responseJSON && jqXhr.responseJSON.error_description || jqXhr.responseJSON && jqXhr.responseJSON.messages && jqXhr.responseJSON.messages.join(' ') || errorThrown);
+                });
+        });
+
+        //closes all possibile pending light boxes
+        matematici.popup.close();
+        matematici.dialog.close();
+        matematici.elements.body.removeClass("CheckListGrid");
+        matematici.elements.body.children("div.CheckListGrid").remove();
+
+        matematici.loader.checkInitialCurtain();
+        setTimeout(function () {
+            companyList.data("autoComplete").refresh();
+        }, 0);
+    };
+
+    matematici.events.onPageUnload = function (callback) {
+        matematici.isLoginPage = false;
+        callback.call();
+    }
+</script>

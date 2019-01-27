@@ -1,0 +1,79 @@
+﻿@import "_Library.scss";
+
+div#Breadcrumbs {
+    padding-top: 20px;
+    font-size: 12px;
+
+    @media #{$Media-Extended} {
+        visibility: hidden;
+        margin-left: $Metric-Header-Height;
+        padding-left: $Metric-Separator-Extended;
+        padding-right: $Metric-Separator-Extended;
+    }
+
+    @media #{$Media-Mobile} {
+        padding-left: $Metric-Separator-Mobile;
+        padding-right: $Metric-Separator-Mobile;
+    }
+
+    a, span {
+        color: $Color-Grey-Regular;
+        display: inline-block;
+        padding-right: 5px;
+
+        &::after {
+            content: "|";
+            font-weight: 100;
+            padding-left: 5px;
+            color: $Color-Grey-Light !important;
+        }
+
+        &:last-child {
+            padding-right: 0;
+
+            &::after {
+                content: none;
+            }
+        }
+
+        &.Label {
+            font-weight: bold;
+
+            &::after {
+                content: ":";
+                font-weight: bold;
+                padding-left: 0;
+                color: unset;
+            }
+        }
+    }
+
+    a {
+        &:hover {
+            text-decoration: none;
+            color: blue;
+        }
+    }
+
+    &.Fixed {
+        @media #{$Media-Extended} {
+            position: absolute;
+            visibility: visible;
+
+            &.Visible {
+                padding-top: 10px;
+                padding-bottom: 10px;
+                z-index: $Depth-Header;
+                position: fixed;
+                width: 100%;
+                top: 0;
+                background: white;
+                border-bottom: solid 1px $Color-Grey-Light;
+            }
+        }
+
+        @media #{$Media-Mobile} {
+            display: none;
+        }
+    }
+}

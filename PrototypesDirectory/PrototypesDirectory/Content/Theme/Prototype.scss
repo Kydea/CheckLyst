@@ -1,0 +1,220 @@
+﻿@import "_Library.scss";
+
+div.Prototype {
+    h2 {
+        cursor: pointer;
+    }
+
+    a.Add.Button {
+        float: right;
+    }
+
+    div.Commands {
+        position: absolute;
+        z-index: $Depth-CheckList-Information;
+        right: 0;
+        top: 0;
+        margin: #{$Metric-Control-Space} !important;
+        background: white;
+        border: solid 1px $Color-Green-Regular;
+        box-shadow: $Box-Shadow;
+        font-size: 0 !important;
+        border-radius: 3px;
+
+        a.MiniIcon {
+            $IconSize: 30px;
+            margin-top: 0;
+            line-height: $IconSize !important;
+            height: $IconSize !important;
+            width: $IconSize !important;
+            border-radius: 3px 0 0 3px !important;
+
+            i.fi {
+                font-size: 14px !important;
+                line-height: $IconSize !important;
+                height: $IconSize !important;
+                width: $IconSize !important;
+            }
+
+            + a.MiniIcon {
+                border-left: solid 1px $Color-Green-Regular;
+                border-radius: 0 3px 3px 0 !important;
+            }
+
+            &:hover {
+                background: $Color-Silver-Dark;
+
+                i.fi {
+                    color: $Color-Green-Dark !important;
+                }
+            }
+        }
+    }
+
+    div.HeaderContainer {
+        > div.Commands {
+            a.Up, a.Down, a.Add, a.Remove {
+                display: none;
+            }
+        }
+    }
+
+    div.TabLabels {
+        margin-top: $Metric-Control-Space;
+
+        div.Commands {
+            margin: 0;
+
+            a.Add {
+                display: none;
+            }
+        }
+
+        > a {
+            &.Selected {
+                cursor: pointer !important;
+            }
+
+            &.Current {
+                background-color: $Color-Pink;
+            }
+
+            &:first-of-type {
+                + div.Commands {
+                    a.Up {
+                        display: none;
+                    }
+                }
+            }
+
+            &:nth-last-of-type(2) {
+                + div.Commands {
+                    a.Down {
+                        display: none;
+                    }
+                }
+            }
+
+            &.Add {
+                background-color: $Color-Yellow-Regular;
+                margin: 2px;
+                height: $Metric-Control-Height - 2px;
+                line-height: $Metric-Control-Height - 2px;
+                color: white;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+        }
+    }
+
+    div.Group {
+        cursor: pointer;
+
+        > div.Commands {
+            margin: 10px !important;
+        }
+
+        &.Current {
+            background-color: $Color-Pink;
+        }
+    }
+
+    div.Item {
+        cursor: pointer;
+
+        label {
+            cursor: pointer;
+        }
+
+        &.Field {
+        }
+
+        &.Signature {
+            input {
+                cursor: pointer;
+            }
+
+            a.Button:not(.MiniIcon):hover {
+                background-color: $Color-Green-Regular;
+                cursor: pointer;
+
+                i {
+                    color: $Color-Green-Regular;
+                }
+            }
+        }
+
+        &.Text {
+            p {
+                position: relative;
+            }
+        }
+
+        &.Current {
+            &::before {
+                content: "";
+                position: absolute;
+                background-color: $Color-Pink;
+                left: -10px;
+                right: -10px;
+                top: -10px;
+                bottom: -10px;
+            }
+        }
+
+        > div.Commands {
+            margin: 0 !important;
+
+            a.Add {
+                display: none;
+            }
+        }
+    }
+
+    div.Element {
+        &:first-of-type {
+            > div.Commands {
+                a.Up {
+                    display: none;
+                }
+            }
+        }
+
+        &:last-of-type {
+            > div.Commands {
+                a.Down {
+                    display: none;
+                }
+            }
+        }
+    }
+
+    &.Current {
+        h2 {
+            position: relative;
+            color: $Color-Grey-Regular !important;
+
+            &::before {
+                content: "";
+                position: absolute;
+                background-color: $Color-Pink;
+                left: -10px;
+                right: -10px;
+                top: -10px;
+                bottom: -10px;
+            }
+
+            span {
+                position: relative;
+            }
+        }
+    }
+
+    &.Locked, .Locked {
+        > div.Commands {
+            a.Remove, a.Up, a.Down {
+                display: none;
+            }
+        }
+    }
+}

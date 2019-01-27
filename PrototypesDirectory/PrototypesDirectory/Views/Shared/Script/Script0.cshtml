@@ -1,0 +1,23 @@
+﻿<script type="text/javascript">
+	var
+        matematici = {
+        	cacheVersion: 1,
+        	canClose: true,
+        	elements: {},
+        	events: {},
+        	actions: {},
+            pages: {},
+            initializers: [],
+            destroyers: [],
+            codeRegularExpression: /^[$A-Z_][0-9A-Z_$]*$/i,
+            isLoginPage: false
+        },
+        instances = {},
+        prototypes = {};
+
+	if (typeof console === "undefined") console = {};
+	if (typeof console.log === "undefined") console.log = function () { };
+    if (typeof console.dir === "undefined") console.dir = console.log;
+    if (typeof console.warn === "undefined") console.warn = console.log;
+    if (typeof console.info === "undefined") console.warn = console.log;
+</script>

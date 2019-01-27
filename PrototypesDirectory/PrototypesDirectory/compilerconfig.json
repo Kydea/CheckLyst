@@ -1,0 +1,170 @@
+﻿[
+  {
+    "outputFile": "Content/Theme/FontAwesome.css",
+    "inputFile": "Content/Theme/FontAwesome.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Breadcrumbs.css",
+    "inputFile": "Content/Theme/Breadcrumbs.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Content.css",
+    "inputFile": "Content/Theme/Content.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Fonts.css",
+    "inputFile": "Content/Theme/Fonts.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Layout.css",
+    "inputFile": "Content/Theme/Layout.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Loader.css",
+    "inputFile": "Content/Theme/Loader.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Matematici.css",
+    "inputFile": "Content/Theme/Matematici.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Menu.css",
+    "inputFile": "Content/Theme/Menu.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Tab.css",
+    "inputFile": "Content/Theme/Tab.scss"
+  },
+  {
+    "outputFile": "Content/Theme/ActionBar.css",
+    "inputFile": "Content/Theme/ActionBar.scss"
+  },
+  {
+    "outputFile": "Content/Theme/CheckList.css",
+    "inputFile": "Content/Theme/CheckList.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Dialog.css",
+    "inputFile": "Content/Theme/Dialog.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Login.css",
+    "inputFile": "Content/Theme/Login.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Signature.css",
+    "inputFile": "Content/Theme/Signature.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Grid.css",
+    "inputFile": "Content/Theme/Grid.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Pager.css",
+    "inputFile": "Content/Theme/Pager.scss"
+  },
+  {
+    "outputFile": "Content/Theme/PrototypeEditor.css",
+    "inputFile": "Content/Theme/PrototypeEditor.scss"
+  },
+  {
+    "outputFile": "Content/Theme/InstanceManager.css",
+    "inputFile": "Content/Theme/InstanceManager.scss"
+  },
+  {
+    "outputFile": "Content/Theme/PropertyPanel.css",
+    "inputFile": "Content/Theme/PropertyPanel.scss"
+  },
+  {
+    "outputFile": "Content/Theme/jQuery-UI.css",
+    "inputFile": "Content/Theme/jQuery-UI.scss"
+  },
+  {
+    "outputFile": "Content/Theme/CheckListGrid.css",
+    "inputFile": "Content/Theme/CheckListGrid.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Help.css",
+    "inputFile": "Content/Theme/Help.scss"
+  },
+  {
+    "outputFile": "Content/Theme/FixedHeader.css",
+    "inputFile": "Content/Theme/FixedHeader.scss"
+  },
+  {
+    "outputFile": "Content/Theme/AppMode.css",
+    "inputFile": "Content/Theme/AppMode.scss"
+  },
+  {
+    "outputFile": "Content/Theme/DataSourcesEditor.css",
+    "inputFile": "Content/Theme/DataSourcesEditor.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Paginator.css",
+    "inputFile": "Content/Theme/Paginator.scss"
+  },
+  {
+    "outputFile": "Content/Theme/DatePicker.css",
+    "inputFile": "Content/Theme/DatePicker.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Calendar.css",
+    "inputFile": "Content/Theme/Calendar.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Hamburger.css",
+    "inputFile": "Content/Theme/Hamburger.scss"
+  },
+  {
+    "outputFile": "Content/Theme/AutoComplete.css",
+    "inputFile": "Content/Theme/AutoComplete.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Controls.css",
+    "inputFile": "Content/Theme/Controls.scss"
+  },
+  {
+    "outputFile": "Content/Theme/ShadowPanel.css",
+    "inputFile": "Content/Theme/ShadowPanel.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Accordion.css",
+    "inputFile": "Content/Theme/Accordion.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Popup.css",
+    "inputFile": "Content/Theme/Popup.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Columns.css",
+    "inputFile": "Content/Theme/Columns.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Users.css",
+    "inputFile": "Content/Theme/Users.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Fonts/FlatIcon/_flaticon.css",
+    "inputFile": "Content/Theme/Fonts/FlatIcon/_flaticon.scss"
+  },
+  {
+    "outputFile": "Content/Theme/ButtonGroup.css",
+    "inputFile": "Content/Theme/ButtonGroup.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Prototype.css",
+    "inputFile": "Content/Theme/Prototype.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Instance.css",
+    "inputFile": "Content/Theme/Instance.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Blip.css",
+    "inputFile": "Content/Theme/Blip.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Dashboard.css",
+    "inputFile": "Content/Theme/Dashboard.scss"
+  }
+]

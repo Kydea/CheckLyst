@@ -1,0 +1,36 @@
+﻿@import "_Library.scss";
+
+div.Accordion-Bar {
+    padding-bottom: 2px;
+    border-bottom: solid 1px $Color-Grey-Light;
+
+    .Button {
+        background-color: $Color-Yellow-Regular;
+        border-radius: 5px 5px 0 0;
+        padding-right: $Metric-Control-Height + 20px;
+        box-shadow: none;
+
+        i.fi {
+            transition: transform 300ms ease;
+            color: $Color-Yellow-Regular;
+        }
+
+        &:hover {
+            background-color: $Color-Yellow-Light !important;
+
+            i.fi {
+                color: $Color-Yellow-Light !important;
+            }
+        }
+
+        &.Closed {
+            i.fi {
+                transform: rotate(-180deg);
+            }
+        }
+    }
+}
+
+.Accordion {
+    border-top: none;
+}

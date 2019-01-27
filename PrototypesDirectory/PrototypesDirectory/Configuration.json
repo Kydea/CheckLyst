@@ -1,0 +1,12 @@
+﻿{
+  "SessionTimeout": 900, //timeout in seconds
+  "DevelopmentMode": true,
+  "Companies": [
+    {
+      "Name": "Jassen Latina",
+      "PrototypesFolder": "C:\\Matematici\\Prototypes",
+      "LDAPServer": "eu.jnj.com",
+      "GroupName": "JACITLA FS - CMPrototypeDirectoryQA"
+    }
+  ]
+}
