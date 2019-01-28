@@ -11,14 +11,14 @@ namespace Matematici.Settings
         public string Name { get; set; }
         public string PrototypesFolder { get; set; }
         public string LDAPServer { get; set; }
-        public string GroupName { get; set; }
+        public string LDAPQuery { get; set; }
 
         public void Check()
         {
             try
             {
                 if (string.IsNullOrWhiteSpace(PrototypesFolder)) throw new Exception("Error in configuration file. Invalid value for PrototypesFolder");
-                if (string.IsNullOrWhiteSpace(GroupName)) throw new Exception("Error in configuration file. Invalid value for GroupName");
+                if (string.IsNullOrWhiteSpace(LDAPQuery)) throw new Exception("Error in configuration file. Invalid value for LDAPQuery");
                 if (!PrototypesFolder.EndsWith("\\") & !PrototypesFolder.EndsWith("/"))
                     PrototypesFolder += "\\";
                 Provider.TestPath(PrototypesFolder);

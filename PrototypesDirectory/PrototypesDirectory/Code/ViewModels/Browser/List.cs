@@ -61,7 +61,7 @@ namespace Matematici.ViewModels.Browser
                     .Take(PAGE_SIZE)
                     .Select(x => new Row
                     {
-                        Name = x.Code,
+                        Name = x.Name,
                         Department = x.Department,
                         PrototypeType = x.PrototypeType,
                         Description = x.Description,

@@ -6,7 +6,13 @@
       "Name": "Jassen Latina",
       "PrototypesFolder": "C:\\Matematici\\Prototypes",
       "LDAPServer": "eu.jnj.com",
-      "GroupName": "JACITLA FS - CMPrototypeDirectoryQA"
+      "LDAPQuery": "CN=JACITLA FS - CMPrototypeDirectoryQA,OU=Groups,OU=JACITLA,DC=eu,DC=jnj,DC=com"
+    },
+    {
+      "Name": "Test",
+      "PrototypesFolder": "C:\\Matematici\\Prototypes2",
+      "LDAPServer": "eu.jnj.com",
+      "LDAPQuery": "CN=JACITLA FS - CMPrototypeDirectoryQA,OU=Groups,OU=JACITLA,DC=eu,DC=jnj,DC=com"
     }
   ]
 }

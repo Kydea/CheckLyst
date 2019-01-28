@@ -32,7 +32,7 @@ namespace CheckListManager.Common.Logic.Api.PDF
                 Document.Info.Creator = "www.matematici.com";
                 Document.Info.Author = "Matematici";
 
-                this.PdfDocument = new MigraDoc.DocumentObjectModel.Document();
+                PdfDocument = new Document();
                 AddSection();
 
                 OnGenerate();

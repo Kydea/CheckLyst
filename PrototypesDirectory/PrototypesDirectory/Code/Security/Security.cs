@@ -50,7 +50,8 @@ namespace Matematici.Security
 
             try
             {
-                var LdapDirectoryIdentifier = new LdapDirectoryIdentifier(Settings.Provider.Values.Companies[Company].LDAPServer, 636, true, false); //ldap: 389, ldaps: 636
+                var CompanySettings = Settings.Provider.Values.Companies[Company];
+                var LdapDirectoryIdentifier = new LdapDirectoryIdentifier(CompanySettings.LDAPServer, 636, true, false); //ldap: 389, ldaps: 636
                 var NetworkCredential = new NetworkCredential((Code.Contains(@"\") ? string.Empty : @"eu\") + Code, Password);
                 var LdapConnection = new LdapConnection(LdapDirectoryIdentifier, NetworkCredential, AuthType.Basic);
 
@@ -60,10 +61,10 @@ namespace Matematici.Security
                     LdapConnection.SessionOptions.VerifyServerCertificate = new VerifyServerCertificateCallback((Connection, Certificate) => true); //not necessary on janssen server, use only for test for security reasons
                 LdapConnection.Bind();
 
-                DirectoryEntry Root = new DirectoryEntry($"LDAP://{Settings.Provider.Values.Companies[Company].LDAPServer}", (Code.Contains(@"\") ? string.Empty : @"eu\") + Code, Password);
+                DirectoryEntry Root = new DirectoryEntry($"LDAP://{CompanySettings.LDAPServer}", (Code.Contains(@"\") ? string.Empty : @"eu\") + Code, Password);
                 DirectorySearcher Searcher = new DirectorySearcher(Root)
                 {
-                    Filter = $"(&(objectClass=user)(sAMAccountName={Code})(memberOf=CN={Settings.Provider.Values.Companies[Company].GroupName},OU=Groups,OU=JACITLA,DC=eu,DC=jnj,DC=com))"
+                    Filter = $"(&(objectClass=user)(sAMAccountName={Code})(memberOf={CompanySettings.LDAPQuery}))"
                 };
                 if (Searcher.FindAll()?.Count <= 0)
                     throw new Exception($"User is not enabled");

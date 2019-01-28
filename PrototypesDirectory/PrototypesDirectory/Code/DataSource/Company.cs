@@ -28,6 +28,12 @@ namespace Matematici.DataSource
             ReadFolder();
         }
 
+        public PrototypeFile GetPrototype(string Name)
+        {
+            if (!PrototypesDictionary.TryGetValue(Name, out var Result)) Result = null;
+            return Result;
+        }
+
         public string Name { get; }
         public string Folder { get; }
 
@@ -38,6 +44,7 @@ namespace Matematici.DataSource
         public Exception Exception { get; private set; }
 
         private List<PrototypeFile> Prototypes { get; set; } = new List<PrototypeFile>();
+        private Dictionary<string, PrototypeFile> PrototypesDictionary { get; set; }
         public List<string> Departments { get; private set; } = new List<string>();
         public Dictionary<string, List<string>> PrototypeTypes { get; private set; } = new Dictionary<string, List<string>>();
 
@@ -46,7 +53,7 @@ namespace Matematici.DataSource
             return Prototypes.Where(x =>
                 (string.IsNullOrEmpty(Department) || x.Department == Department)
                 && (string.IsNullOrEmpty(PrototypeType) || x.PrototypeType == PrototypeType)
-                && (string.IsNullOrEmpty(Prototype) || x.Code.Contains(Prototype) || x.Description.Contains(Prototype))
+                && (string.IsNullOrEmpty(Prototype) || x.Name.Contains(Prototype) || x.Description.Contains(Prototype))
             ).ToList() ?? new List<PrototypeFile>();
         }
 
@@ -78,11 +85,16 @@ namespace Matematici.DataSource
             try
             {
                 int PathOffset = Folder.Length;
-                var Prototypes = 
+                var Prototypes =
                     Directory.GetFiles(Folder, "*.pdf")
-                    .Select(f => new PrototypeFile(f.Substring(PathOffset)))
-                    .OrderBy(x => x.Company).ThenBy(x => x.Department).ThenBy(x => x.PrototypeType).ThenBy(x => x.Code).ThenBy(x => x.Description)
+                    .Select(f => new PrototypeFile(Folder, f.Substring(PathOffset)))
+                    .OrderBy(x => x.Name).ThenBy(x => x.Version).ThenBy(x => x.Obsolete ? 1 : 0)
+                    .GroupBy(x => new { x.Name })
+                    .Select(g => g.Last())
+                    .Where(p => !p.Obsolete)
+                    .OrderBy(x => x.Company).ThenBy(x => x.Department).ThenBy(x => x.PrototypeType).ThenBy(x => x.Name).ThenBy(x => x.Description)
                     .ToList();
+                
                 var PrototypeTypes =
                     Prototypes
                         .GroupBy(d => d.Department).ToDictionary(d => d.Key, d => d
@@ -111,6 +123,7 @@ namespace Matematici.DataSource
         private void SwapSources(List<string> Departments, Dictionary<string, List<string>> PrototypeTypes, List<PrototypeFile> Prototypes)
         {
             this.Prototypes = Prototypes;
+            PrototypesDictionary = Prototypes.ToDictionary(k => k.Name, v => v);
             this.Departments = Departments;
             this.PrototypeTypes = PrototypeTypes;
         }

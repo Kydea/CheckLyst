@@ -11,7 +11,7 @@
                 <i class="Icon fi flaticon-building-o"></i>
                 <select name="department" class="Trigger" data-nullable="(all)"></select>
                 <i class="Icon fi flaticon-folder-o"></i>
-                <select name="prototypeType"></select>
+                <select name="prototypeType" data-nullable="(all)"></select>
             </label>
             <label>
                 <span>Prototype name</span>
@@ -48,45 +48,20 @@
 
 <script type="text/javascript">
     matematici.events.onPageLoad = function (callback) {
-        var
-            editor = matematici.tokenManager.checkRole("Prototypes#Edit#"),
-            searchPage = new matematici.SearchPage({
-                pageName: "Prototypes",
-                filterFormSelector: "form#Filters",
-                resultGridSelector: "div#Content table.Grid",
-                readOnly: true,
-                bindEvent: "Bind",
-                breadCrumbs: [
-                    { content: "prototypes list" }
-                ],
+        new matematici.SearchPage({
+            pageName: "Prototypes",
+            filterFormSelector: "form#Filters",
+            resultGridSelector: "div#Content table.Grid",
+            readOnly: true,
+            bindEvent: "Bind",
+            breadCrumbs: [
+                { content: "prototypes list" }
+            ],
 
-                rowClickHandler: function (row) {
-                    if (editor) {
-                        var
-                            buttons = [],
-                            state = row.data("values").state;
-                        buttons.push({ text: "cancel", icon: "times", cancelButton: true });
-                        if (
-                            state != prototypes.Prototype.states.draft
-                            && state != prototypes.Prototype.states.simulation
-                            && state != prototypes.Prototype.states.approval
-                            && (
-                                matematici.tokenManager.checkRole("Prototypes#Edit#" + row.data("values").department + "##")
-                                || matematici.tokenManager.checkRole("Prototypes#Edit#" + row.data("values").department + "#" + row.data("values").prototypeType)
-                            )
-                        )
-                            buttons.push({ text: "new version", icon: "file-o", handler: createNewVersionHandler, data: { id: row.data("values").id, version: row.data("values").version } });
-                        buttons.push({ text: "use as template", icon: "clone-o", handler: useAsTemplateHandler, data: { id: row.data("values").id, version: row.data("values").version } });
-                        buttons.push({ text: "open", icon: "folder-open-o", handler: openPrototypeHandler, data: { id: row.data("values").id, version: row.data("values").version } });
-
-                        matematici.dialog.popupMenu(buttons);
-                    } else
-                        openPrototypeHandler({ id: row.data("values").id, version: row.data("values").version });
-                }
-            });
-
-        if (!editor)
-            addButton.remove();
+            rowClickHandler: function (row) {
+                window.open("/Detail/" + encodeURIComponent(row.data("values").name));
+            }
+        });
 
         setTimeout(function () {
             $("select").each(function () {
