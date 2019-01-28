@@ -50,10 +50,11 @@ namespace Matematici.DataSource
 
         public List<PrototypeFile> Search(string Department, string PrototypeType, string Prototype)
         {
+            Prototype = Prototype?.ToUpper();
             return Prototypes.Where(x =>
                 (string.IsNullOrEmpty(Department) || x.Department == Department)
                 && (string.IsNullOrEmpty(PrototypeType) || x.PrototypeType == PrototypeType)
-                && (string.IsNullOrEmpty(Prototype) || x.Name.Contains(Prototype) || x.Description.Contains(Prototype))
+                && (string.IsNullOrEmpty(Prototype) || (x.Name?.ToUpper().Contains(Prototype) ?? false) || (x.Description?.ToUpper().Contains(Prototype) ?? false))
             ).ToList() ?? new List<PrototypeFile>();
         }
 

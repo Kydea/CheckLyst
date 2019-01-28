@@ -16,6 +16,6 @@ namespace Matematici.ViewModels.Membership
 
         public string ReturnUrl { get; set; }
 
-        public int Company { get; set; }
+        public int? Company { get; set; }
     }
 }

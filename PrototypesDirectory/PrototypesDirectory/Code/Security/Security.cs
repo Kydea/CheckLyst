@@ -40,8 +40,11 @@ namespace Matematici.Security
             SaveIdentity(Identity);
         }
 
-        private static void VerifyPassword(int Company, string Code, string Password)
+        private static void VerifyPassword(int? Company, string Code, string Password)
         {
+            if (!Company.HasValue)
+                throw new Exception("Please enter a company");
+
             if (string.IsNullOrWhiteSpace(Code))
                 throw new Exception("Please enter a user code");
 
@@ -50,7 +53,7 @@ namespace Matematici.Security
 
             try
             {
-                var CompanySettings = Settings.Provider.Values.Companies[Company];
+                var CompanySettings = Settings.Provider.Values.Companies[Company.Value];
                 var LdapDirectoryIdentifier = new LdapDirectoryIdentifier(CompanySettings.LDAPServer, 636, true, false); //ldap: 389, ldaps: 636
                 var NetworkCredential = new NetworkCredential((Code.Contains(@"\") ? string.Empty : @"eu\") + Code, Password);
                 var LdapConnection = new LdapConnection(LdapDirectoryIdentifier, NetworkCredential, AuthType.Basic);

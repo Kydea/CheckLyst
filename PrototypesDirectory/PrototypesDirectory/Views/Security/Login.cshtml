@@ -15,7 +15,7 @@
             <label class="FullWidth">
                 <span>Company</span>
                 <i class="Icon fi flaticon-buildings-o"></i>
-                @Html.DropDownListFor(m => m.Company, Matematici.Settings.Provider.Values.Companies.Select(c => new SelectListItem { Value = c.Index.ToString(), Text = c.Name }))
+                @Html.DropDownListFor(m => m.Company, Matematici.Settings.Provider.Values.Companies.Select(c => new SelectListItem { Value = c.Index.ToString(), Text = c.Name }), new { data_nullable = "(select a company)" })
             </label>
 
             <label class="FullWidth Controls2">
@@ -60,26 +60,19 @@
 
         new matematici.Login("div.Login", function () {
             error.empty().hide();
-            if (companyList.val() == null)
-                showError("select a company");
-            else if (userCode.val() == "")
-                showError("select a user code");
-            else if (password.val() == "")
-                showError("select a password");
-            else
-                $.ajax(form.attr("action"), {
-                    data: form.serialize(),
-                    type: "post"
-                }).done(function (result) {
-                    if (result.ok) {
-                        $(".Company", matematici.elements.footer).text(companyList.data("autoComplete").getControl().val());
-                        $(".User", matematici.elements.footer).text(userCode.val());
-                        matematici.navigator.open("/");
-                    } else
-                        showError(result.message);
-                }).fail(function (jqXhr, textStatus, errorThrown) {
-                    showError(jqXhr.responseJSON && jqXhr.responseJSON.error_description || jqXhr.responseJSON && jqXhr.responseJSON.messages && jqXhr.responseJSON.messages.join(' ') || errorThrown);
-                });
+            $.ajax(form.attr("action"), {
+                data: form.serialize(),
+                type: "post"
+            }).done(function (result) {
+                if (result.ok) {
+                    $(".Company", matematici.elements.footer).text(companyList.data("autoComplete").getControl().val());
+                    $(".User", matematici.elements.footer).text(userCode.val());
+                    matematici.navigator.open("/");
+                } else
+                    showError(result.message);
+            }).fail(function (jqXhr, textStatus, errorThrown) {
+                showError(jqXhr.responseJSON && jqXhr.responseJSON.error_description || jqXhr.responseJSON && jqXhr.responseJSON.messages && jqXhr.responseJSON.messages.join(' ') || errorThrown);
+            });
         });
 
         //closes all possibile pending light boxes
