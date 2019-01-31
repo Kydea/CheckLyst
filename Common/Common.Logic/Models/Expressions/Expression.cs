@@ -7,7 +7,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 {
     public class Expression
     {
-        public const int MAXIMUM_LENGTH = 100000;
+        public const int MAXIMUM_LENGTH = 10000;
 
         public string SerializedValue { get; set; }
 
