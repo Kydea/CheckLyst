@@ -27,7 +27,7 @@
 		lastResult,
 		deleted,
         removedIterationsVisible = false, 
-        expressionsButton,
+                    Button,
 
 		setupInstanceDescription = function () {
 			header.getElement().prepend(instanceDescription = $("<div />").addClass("InstanceDescription"));

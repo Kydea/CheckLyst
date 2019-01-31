@@ -65,8 +65,7 @@ namespace CheckListManager.Instances.Api.Controllers
 
                     CheckList = checkList
                 };
-                if (!Identity.HasPermission("Trail")) checkList.Expressions = null;
-
+                if (!Identity.HasPermission("Trail") && cacheObject.VersionState != VersionState.Draft && cacheObject.VersionState != VersionState.InSimulation) checkList.Expressions = null;
                 return Ok(response);
             }
             catch (Exception e)
@@ -84,7 +83,7 @@ namespace CheckListManager.Instances.Api.Controllers
             {
                 var cacheObject = await _instanceManagerService.OpenAsync(request.Code, Identity);
                 var checkList = await _instanceManagerService.GetCheckListAsync(Identity, cacheObject, null);
-                return Ok(new InstanceResponse
+                var response = new InstanceResponse
                 {
                     Id = cacheObject.Id,
                     State = cacheObject.InstanceState,
@@ -92,8 +91,9 @@ namespace CheckListManager.Instances.Api.Controllers
                     Number = cacheObject.Number,
 
                     CheckList = checkList
-                });
-                if (!Identity.HasPermission("Trail")) checkList.Expressions = null;
+                };
+                if (!Identity.HasPermission("Trail") && cacheObject.VersionState != VersionState.Draft && cacheObject.VersionState != VersionState.InSimulation) checkList.Expressions = null;
+                return Ok(response);
             }
             catch (Exception e)
             {
@@ -182,7 +182,7 @@ namespace CheckListManager.Instances.Api.Controllers
                     Version = cacheObject.Version,
                     VersionState = cacheObject.VersionState
                 };
-                if (!Identity.HasPermission("Trail")) checkList.Expressions = null;
+                if (!Identity.HasPermission("Trail") && cacheObject.VersionState != VersionState.Draft && cacheObject.VersionState != VersionState.InSimulation) checkList.Expressions = null;
                 return Ok(response);
             }
             catch (Exception e)
@@ -207,7 +207,7 @@ namespace CheckListManager.Instances.Api.Controllers
                     CheckList = checkList,
                     State = cacheObject.InstanceState
                 };
-                if (!Identity.HasPermission("Trail")) checkList.Expressions = null;
+                if (!Identity.HasPermission("Trail") && cacheObject.VersionState != VersionState.Draft && cacheObject.VersionState != VersionState.InSimulation) checkList.Expressions = null;
                 return Ok(response);
             }
             catch (Exception e)
