@@ -63,7 +63,7 @@ namespace CheckListManager.Trail.Tests.Steps.Audit_Trail
         [Then(@"the result should be a list of records belonging to the same user")]
         public void ThenTheResultShouldBeAListOfRecordsBelongingToTheSameUser()
         {
-            _context.Response.ForEach(trail => Assert.AreEqual(_context.User, trail.User));
+            _context.Response.ForEach(trail => Assert.AreEqual(_context.User.ToUpper(), trail.User.ToUpper()));
         }
         
         [Then(@"the result should be a list of records with the same checklist code")]
