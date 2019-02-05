@@ -1,6 +1,6 @@
 ﻿{
   "SessionTimeout": 900, //timeout in seconds
-  "DevelopmentMode": true,
+  "DevelopmentMode": false,
   "Companies": [
     {
       "Name": "Jassen Latina",

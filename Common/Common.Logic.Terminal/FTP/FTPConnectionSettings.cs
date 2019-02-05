@@ -17,8 +17,7 @@ namespace CheckListManager.Common.Logic.Terminal.FTP
         public bool EnableSSL { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
-        public string PrototypesFolder { get; set; }
-        public string InstancesFolder { get; set; }
+        public string Folder { get; set; }
     }
 
 }

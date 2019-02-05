@@ -258,7 +258,6 @@
     <Content Include="Content\Media\Logo.png" />
     <Content Include="Content\Media\LogoMobile.png" />
     <Content Include="Content\Media\Sintlogo.png" />
-    <Content Include="Configuration.json" />
     <Content Include="Content\Theme\Accordion.css" />
     <Content Include="Content\Theme\ActionBar.css" />
     <Content Include="Content\Theme\AppMode.css" />
@@ -416,6 +415,7 @@
     <Content Include="Content\Theme\Tab.scss" />
     <Content Include="Content\Theme\Users.scss" />
     <Content Include="Content\Theme\_Library.scss" />
+    <Content Include="Configuration.json" />
     <None Include="Properties\PublishProfiles\Janssen.pubxml" />
     <None Include="Scripts\Libraries\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\Controls\AutoComplete.js" />
