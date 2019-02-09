@@ -3,8 +3,7 @@
         <span class="Item"><span class="Label">Company:</span> <span class="Company">@(Identity?.IsAuthenticated ?? false ? Matematici.Settings.Provider.Values.Companies[Identity.Company].Name : "")</span></span>
         <span class="Item"><span class="Label">User:</span> <span class="User">@(Identity?.IsAuthenticated ?? false ? Identity.Code : "")</span></span>
         <span class="Item"><span class="Label">Version:</span> @Matematici.Version.Get()</span>
-        <span class="Item"><span class="Label">Server time:</span> <span class="ServerTime"></span></span>
-        <span class="Item"><span class="Label">Local time:</span> <span class="LocalTime"></span></span>
+        <span class="Item"><span class="Label">UTC Server time:</span> <span class="ServerTime"></span></span>
         <div class="Clearing"></div>
     </div>
     @Html.Partial("Layout/Matematici")

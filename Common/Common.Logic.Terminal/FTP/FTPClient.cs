@@ -13,11 +13,18 @@ namespace CheckListManager.Common.Logic.Terminal.FTP
     {
         public enum Methods { Upload, Deletion };
 
-        public async Task ActionAsync(byte[] Bytes, string FileName, FTPConnectionSettings Settings, Methods Method)
+        public async Task ActionAsync(byte[] Bytes, string Path, string FileName, FTPConnectionSettings Settings, Methods Method)
         {
-            String Status = "(unset)";
+            string Status = "(unset)";
 
-            var Uri = $"ftp://{Settings.Host}:{Settings.Port}/{System.Uri.EscapeDataString(FileName)}.pdf";
+            Path = string.IsNullOrEmpty(Path) ? string.Empty : Path + "/";
+
+            FileName = FileName?
+                .Replace('\\', '-').Replace('/', '-').Replace('|', '-').Replace('>', '-').Replace('<', '-')
+                .Replace(':', '-').Replace('*', '-').Replace('?', '-')
+                .Replace('"', '\'') ?? "";
+
+            var Uri = $"ftp://{Settings.Host}:{Settings.Port}/{System.Uri.EscapeDataString(Path + FileName)}.pdf";
             FtpWebRequest FtpWebRequest = (FtpWebRequest)WebRequest.Create(Uri);
             FtpWebRequest.Credentials = new NetworkCredential(Settings.UserName, Settings.Password);
             FtpWebRequest.Method = Method == Methods.Deletion ? WebRequestMethods.Ftp.DeleteFile : WebRequestMethods.Ftp.UploadFile;
