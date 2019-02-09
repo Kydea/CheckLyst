@@ -1,6 +1,22 @@
-﻿matematici.TokenManager = function () {
+﻿matematici.TokenManager = function (inactivityTimeout) {
     var
-        tokenManager = this;
+        tokenManager = this,
+        lastActivity = new Date(),
+
+        setup = function () {
+            matematici.elements.document.on("mousedown keydown	", function () {
+                lastActivity = new Date();
+            });
+
+            setInterval(function () {
+                if (!matematici.isLoginPage && new Date() - lastActivity > inactivityTimeout * 1000) {
+                    matematici.canClose = true;
+                    location = matematici.urls.login;
+                    return;
+                }
+            }, 60000);
+        };
+
 
     tokenManager.login = function (company, userCode, userName) {
         localStorage.company = company;
@@ -22,5 +38,7 @@
 
 	tokenManager.checkRole = function (role) {
         return true;
-	};
+    };
+
+    setup();
 }

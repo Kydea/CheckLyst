@@ -30,6 +30,7 @@ namespace Matematici.Controllers
         [Route("Login")]
         public ActionResult Login(string ReturnUrl)
         {
+            Security.Security.Logout();
             return ConditionalView(new Login { ReturnUrl = ReturnUrl ?? Url.Action("Dashboard", "Default") });
         }
 

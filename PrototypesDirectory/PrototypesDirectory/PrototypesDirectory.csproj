@@ -498,8 +498,7 @@
     <Content Include="Views\Help\Template.cshtml" />
     <Content Include="Views\Help\TOC.cshtml" />
     <Content Include="Views\Help\List.cshtml" />
-    <None Include="Views\Web.config.old" />
-    <None Include="Views\Web.config" />
+    <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Default\List.cshtml" />
   </ItemGroup>

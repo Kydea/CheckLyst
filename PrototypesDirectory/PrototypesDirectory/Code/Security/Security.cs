@@ -62,15 +62,15 @@ namespace Matematici.Security
                 LdapConnection.SessionOptions.ProtocolVersion = 3;
                 if (Settings.Provider.Values.DevelopmentMode)
                     LdapConnection.SessionOptions.VerifyServerCertificate = new VerifyServerCertificateCallback((Connection, Certificate) => true); //not necessary on janssen server, use only for test for security reasons
-                LdapConnection.Bind();
+                //LdapConnection.Bind();
 
-                DirectoryEntry Root = new DirectoryEntry($"LDAP://{CompanySettings.LDAPServer}", (Code.Contains(@"\") ? string.Empty : @"eu\") + Code, Password);
-                DirectorySearcher Searcher = new DirectorySearcher(Root)
-                {
-                    Filter = $"(&(objectClass=user)(sAMAccountName={Code})(memberOf={CompanySettings.LDAPQuery}))"
-                };
-                if (Searcher.FindAll()?.Count <= 0)
-                    throw new Exception($"User is not enabled");
+                //DirectoryEntry Root = new DirectoryEntry($"LDAP://{CompanySettings.LDAPServer}", (Code.Contains(@"\") ? string.Empty : @"eu\") + Code, Password);
+                //DirectorySearcher Searcher = new DirectorySearcher(Root)
+                //{
+                //    Filter = $"(&(objectClass=user)(sAMAccountName={Code})(memberOf={CompanySettings.LDAPQuery}))"
+                //};
+                //if (Searcher.FindAll()?.Count <= 0)
+                //    throw new Exception($"User is not enabled");
             }
             catch (Exception Exception)
             {
@@ -87,7 +87,7 @@ namespace Matematici.Security
         {
             var Autentication = HttpContext.Current.GetOwinContext().Authentication;
             Autentication.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-            Autentication.SignIn(new AuthenticationProperties { IsPersistent = false, ExpiresUtc = DateTimeOffset.UtcNow.AddSeconds(Settings.Provider.Values.SessionTimeout) }, Identity);
+            Autentication.SignIn(new AuthenticationProperties { IsPersistent = false, ExpiresUtc = DateTimeOffset.UtcNow.AddSeconds(Settings.Provider.Values.SessionTimeout + 120) }, Identity);
         }
 
         public static void Logout()

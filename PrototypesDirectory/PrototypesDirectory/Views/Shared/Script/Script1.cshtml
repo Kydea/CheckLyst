@@ -79,7 +79,7 @@
     matematici.userPanel = new matematici.UserPanel("div#UserPanel");
     matematici.autoScroller = new matematici.AutoScroller();
     matematici.help = new matematici.Help();
-    matematici.tokenManager = new matematici.TokenManager();
+    matematici.tokenManager = new matematici.TokenManager(@Matematici.Settings.Provider.Values.SessionTimeout);
     matematici.hamburger = new matematici.Hamburger("#MenuButton");
 
     matematici.navigator.handlePageLoad(null, function () { });
