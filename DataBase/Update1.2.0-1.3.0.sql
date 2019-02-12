@@ -14,7 +14,8 @@ insert into "Configuration"."Settings" ("Code") values
 	('PrototypesFtpConnection');
 	
 create index "Index_InstanceExpressionValues_Code" on "CheckLists"."InstanceExpressionValues"("Instance", "Code");
-
+create unique index "Index_DataSources_Company_Code" on "DataSources"."DataSources" ("Company", "Code");
+	
 create or replace function "CheckLists"."GetInstanceNumber"
 (
 	_Prototype bigint,
@@ -96,3 +97,4 @@ $$ language plpgsql;
 insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
 	(id, 'InstancesFtpConnection', '{ "Host": "www.ruggerogiovannelli.org", "Port": 21, "Folder": "ruggerogiovannelli.org/Data/P", "UserName": "?", "Password": "?", "UsePassive": "true", "EnableSSL": "false" }'),
 	(id, 'PrototypesFtpConnection', '{ "Host": "www.ruggerogiovannelli.org", "Port": 21, "Folder": "ruggerogiovannelli.org/Data/I", "UserName": "?", "Password": "?", "UsePassive": "true", "EnableSSL": "false" }');
+

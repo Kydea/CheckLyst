@@ -51,13 +51,5 @@ namespace CheckListManager.DataSources.Api.Controllers
 		{
 			return Ok(await _detailService.DeleteAsync(Identity, request.Data.Code));
 		}
-
-        [Authorize(Roles = "DataSources#View")]
-        [HttpPost]
-        [Route("Test")]
-        public async Task<IHttpActionResult> Test(Message<DetailRequest> request)
-        {
-            return Ok(await _detailService.DeleteAsync(Identity, request.Data.Code));
-        }
     }
 }

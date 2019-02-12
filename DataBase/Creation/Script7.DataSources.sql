@@ -18,3 +18,5 @@ create table "DataSources"."DataSources"
 	"ModifiedBy" varchar (60),
 	"ModifiedOn" timestamptz
 );
+
+create unique index "Index_DataSources_Company_Code" on "DataSources"."DataSources" ("Company", "Code");
