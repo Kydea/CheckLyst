@@ -57,11 +57,11 @@ namespace Matematici.DataSource
             }
         }
 
-        public void GeneratePDF(Stream Stream)
+        public void GeneratePDF(string User, Stream Stream)
         {
             XFont Font = new XFont("Sans Serif", 12);
             PdfDocument Document = PdfReader.Open(FileName);
-            var Watermark = $"Printed on {DateTime.Now.ToUniversalTime():yyyy-MM-dd HH:mm UTC}";
+            var Watermark = $"Printed on {DateTime.Now.ToUniversalTime():yyyy-MM-dd HH:mm UTC} by {User}";
 
             for (int Index = 0; Index < Document.Pages.Count; Index++)
             {

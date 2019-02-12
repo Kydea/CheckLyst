@@ -16,10 +16,12 @@ namespace Matematici.ActionResults
     {
         public PrototypeFile PrototypeFile { get; }
         public bool Download { get; }
+        public string User { get; }
 
-        public PDFResult(PrototypeFile PrototypeFile, bool Download)
+        public PDFResult(PrototypeFile PrototypeFile, string User, bool Download)
         {
             this.PrototypeFile = PrototypeFile;
+            this.User = User;
             this.Download = Download;
         }
 
@@ -32,7 +34,7 @@ namespace Matematici.ActionResults
 
                 Context.HttpContext.Response.AddHeader("content-disposition", $"{(Download ? "attachment;" : string.Empty)}filename={PrototypeFile.Name}.pdf");
 
-                PrototypeFile.GeneratePDF(Context.HttpContext.Response.OutputStream);
+                PrototypeFile.GeneratePDF(User, Context.HttpContext.Response.OutputStream);
             }
             catch
             {
