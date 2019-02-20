@@ -26,6 +26,9 @@
             else
                 message = thrownError;
 
+            if (message == "" || message == null)
+                message = "Connection error";
+
             lastError = { message, detail: data, extra: { event, jqxhr, settings, thrownError } };
 
             console.log("error", new Date(), lastError);

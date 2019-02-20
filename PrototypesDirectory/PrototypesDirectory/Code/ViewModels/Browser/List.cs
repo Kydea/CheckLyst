@@ -36,13 +36,12 @@ namespace Matematici.ViewModels.Browser
 
             if (Request.Data.Source == null || Request.Data.Source == "department")
             {
-                var prototypeTypes = string.IsNullOrEmpty(Request.Data.Department) ? new List<string>() : Engine.Instance.Companies[Company].PrototypeTypes[Request.Data.Department];
+                var prototypeTypes = string.IsNullOrEmpty(Request.Data.Department) || !Engine.Instance.Companies[Company].PrototypeTypes.ContainsKey(Request.Data.Department) ? new List<string>() : Engine.Instance.Companies[Company].PrototypeTypes[Request.Data.Department];
                 Fields["prototypeType"] = new Field
                 {
                     Options = prototypeTypes.OrderBy(x => x).Select(pt => new Option(pt, pt)),
                     Value = !string.IsNullOrEmpty(Request.Data.PrototypeType) && prototypeTypes.Any(pt => pt == Request.Data.PrototypeType) ? Request.Data.PrototypeType : null
                 };
-
             }
         }
 
