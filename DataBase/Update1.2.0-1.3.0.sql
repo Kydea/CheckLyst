@@ -2,7 +2,7 @@ create unique index "Departments_Name" on "Infrastructure"."Departments" ("Compa
 create unique index "PrototypeTypes_Name" on "CheckLists"."PrototypeTypes" ("Company", "Department", upper("Name"));
 create unique index "WorkFlows_Description" on "WorkFlows"."WorkFlows" ("Company", upper("Description"));
 
-drop index "Index_PrototypeVersions_Draft" on "CheckLists"."PrototypeVersions";
+drop index "CheckLists"."Index_PrototypeVersions_State";
 create unique index "Index_PrototypeVersions_Active" on "CheckLists"."PrototypeVersions"("Prototype") where "VersionState" in ('Active');
 create unique index "Index_PrototypeVersions_NewVersion" on "CheckLists"."PrototypeVersions"("Prototype") where "VersionState" in ('Draft', 'In simulation', 'In approval');
 
@@ -93,8 +93,32 @@ begin
 end
 $$ language plpgsql;
 
---for each company id
+for each company id
 insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
 	(id, 'InstancesFtpConnection', '{ "Host": "www.ruggerogiovannelli.org", "Port": 21, "Folder": "ruggerogiovannelli.org/Data/P", "UserName": "?", "Password": "?", "UsePassive": "true", "EnableSSL": "false" }'),
 	(id, 'PrototypesFtpConnection', '{ "Host": "www.ruggerogiovannelli.org", "Port": 21, "Folder": "ruggerogiovannelli.org/Data/I", "UserName": "?", "Password": "?", "UsePassive": "true", "EnableSSL": "false" }');
+  
+ ---------  Inserimento manuale --------------- 
+  insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
+	(2, 'PrototypesFtpConnection', '{ "Host": "10.157.83.244", "Port": 21, "Folder": "/ChecklystPrototype_dev_lt",  "UserName": "FtpDev", "Password": "AA_Latina_01", "UsePassive": "true", "EnableSSL": "false" }');
+
+
+  insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
+	(2, 'InstancesFtpConnection', '{ "Host": "10.157.83.244", "Port": 21, "Folder": "/ChecklystInstances_dev_lt",  "UserName": "FtpDev", "Password": "AA_Latina_01", "UsePassive": "true", "EnableSSL": "false" }');
+  
+  
+  insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
+	(3, 'PrototypesFtpConnection', '{ "Host": "10.157.83.244", "Port": 21, "Folder": "/ChecklystPrototype_dev_gb",  "UserName": "FtpDev", "Password": "AA_Latina_01", "UsePassive": "true", "EnableSSL": "false" }');
+
+
+  insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
+	(3, 'InstancesFtpConnection', '{ "Host": "10.157.83.244", "Port": 21, "Folder": "/ChecklystInstances_dev_gb",  "UserName": "FtpDev", "Password": "AA_Latina_01", "UsePassive": "true", "EnableSSL": "false" }');
+  
+  
+  insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
+	(6, 'PrototypesFtpConnection', '{ "Host": "10.157.83.244", "Port": 21, "Folder": "/ChecklystPrototype_dev_sjc",  "UserName": "FtpDev", "Password": "AA_Latina_01", "UsePassive": "true", "EnableSSL": "false" }');
+
+
+  insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
+	(6, 'InstancesFtpConnection', '{ "Host": "10.157.83.244", "Port": 21, "Folder": "/ChecklystInstances_dev_sjc",  "UserName": "FtpDev", "Password": "AA_Latina_01", "UsePassive": "true", "EnableSSL": "false" }');
 
