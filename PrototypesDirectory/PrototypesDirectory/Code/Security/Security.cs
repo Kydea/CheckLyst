@@ -55,7 +55,7 @@ namespace Matematici.Security
             {
                 var CompanySettings = Settings.Provider.Values.Companies[Company.Value];
                 var LdapDirectoryIdentifier = new LdapDirectoryIdentifier(CompanySettings.LDAPServer, 636, true, false); //ldap: 389, ldaps: 636
-                var NetworkCredential = new NetworkCredential((Code.Contains(@"\") ? string.Empty : @"eu\") + Code, Password);
+                var NetworkCredential = new NetworkCredential(Code, Password);
                 var LdapConnection = new LdapConnection(LdapDirectoryIdentifier, NetworkCredential, AuthType.Basic);
 
                 LdapConnection.SessionOptions.SecureSocketLayer = true;
@@ -64,10 +64,15 @@ namespace Matematici.Security
                     LdapConnection.SessionOptions.VerifyServerCertificate = new VerifyServerCertificateCallback((Connection, Certificate) => true); //not necessary on janssen server, use only for test for security reasons
                 LdapConnection.Bind();
 
-                DirectoryEntry Root = new DirectoryEntry($"LDAP://{CompanySettings.LDAPServer}", (Code.Contains(@"\") ? string.Empty : @"eu\") + Code, Password);
-                DirectorySearcher Searcher = new DirectorySearcher(Root)
+                var CodeParts = Code.Split('\\');
+
+                if (CodeParts.Length != 2)
+                    throw new Exception("Invalid user code");
+
+                DirectoryEntry Root = new DirectoryEntry($"LDAP://{CompanySettings.LDAPServer}", Code, Password);
+                var Searcher = new DirectorySearcher(Root)
                 {
-                    Filter = $"(&(objectClass=user)(sAMAccountName={Code})(memberOf={CompanySettings.LDAPQuery}))"
+                    Filter = $"(&(objectClass=user)(sAMAccountName={CodeParts[1]})(memberOf={CompanySettings.LDAPQuery.Replace("##DOMAIN##", CodeParts[0])}))"
                 };
                 if (Searcher.FindAll()?.Count <= 0)
                     throw new Exception($"User is not enabled");

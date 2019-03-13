@@ -1,18 +1,18 @@
 ﻿{
   "SessionTimeout": 900, //timeout in seconds
-  "DevelopmentMode": false,
+  "DevelopmentMode": true,
   "Companies": [
     {
       "Name": "Jassen Latina",
       "PrototypesFolder": "C:\\Matematici\\Prototypes",
       "LDAPServer": "eu.jnj.com",
-      "LDAPQuery": "CN=JACITLA FS - CMPrototypeDirectoryQA,OU=Groups,OU=JACITLA,DC=eu,DC=jnj,DC=com"
+      "LDAPQuery": "CN=JACITLA – CM PROTOTYPE DIRECTORY,OU=Groups,OU=JACITLA,DC=##DOMAIN##,DC=jnj,DC=com"
     },
     {
       "Name": "Test",
       "PrototypesFolder": "C:\\Matematici\\Prototypes2",
       "LDAPServer": "eu.jnj.com",
-      "LDAPQuery": "CN=JACITLA FS - CMPrototypeDirectoryQA,OU=Groups,OU=JACITLA,DC=eu,DC=jnj,DC=com"
+      "LDAPQuery": "CN=JACITLA – CM PROTOTYPE DIRECTORY,OU=Groups,OU=JACITLA,DC=##DOMAIN##,DC=jnj,DC=com"
     }
   ]
 }

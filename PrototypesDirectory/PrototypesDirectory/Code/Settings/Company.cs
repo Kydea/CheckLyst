@@ -12,6 +12,7 @@ namespace Matematici.Settings
         public string PrototypesFolder { get; set; }
         public string LDAPServer { get; set; }
         public string LDAPQuery { get; set; }
+        public string LDAPDefaultDomain { get; set; }
 
         public void Check()
         {
