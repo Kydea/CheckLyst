@@ -173,6 +173,7 @@
     <Compile Include="Messages\PagingResponse.cs" />
     <Compile Include="Messages\ReleaseInfoMessage.cs" />
     <Compile Include="Messages\ResponseMessage.cs" />
+    <Compile Include="PascalCaseDictionary.cs" />
     <Compile Include="PDF\CheckListPDF.cs" />
     <Compile Include="PDF\Helper\Font.cs" />
     <Compile Include="PDF\Helper\PdfTable.cs" />
