@@ -165,6 +165,7 @@
     <Compile Include="Models\Expressions\UnaryOperator.cs" />
     <Compile Include="Authentication\AuthenticationService.cs" />
     <Compile Include="Authentication\IAuthenticationService.cs" />
+    <Compile Include="PascalCaseDictionary.cs" />
     <Compile Include="Services\ISettingService.cs" />
     <Compile Include="Services\SettingService.cs" />
     <Compile Include="Trail\TrailAction.cs" />

@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace CheckListManager.Common.Logic.Api
+namespace CheckListManager.Common.Logic
 {
 	[JsonDictionary(NamingStrategyType = typeof(DefaultNamingStrategy))]
 	public class PascalCaseDictionary<TKey, TValue> : Dictionary<TKey, TValue>

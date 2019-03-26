@@ -5,6 +5,7 @@ using CheckListManager.Common.Logic.Models.Expressions;
 using Newtonsoft.Json;
 using System.Linq;
 using CheckListManager.Common.Data;
+using CheckListManager.Common.Logic;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
@@ -12,9 +13,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
     {
         public bool ReadOnly { get; set; }
         public Dictionary<string, ICheckListElement> Elements { get; set; } = new Dictionary<string, ICheckListElement>();
-        public Dictionary<string, Expression> Expressions { get; set; }
-        public Dictionary<string, string> ExternalSources { get; set; }
-        public Dictionary<string, Dictionary<string, string>> ExternalSourceRows { get; set; }
+        public PascalCaseDictionary<string, Expression> Expressions { get; set; }
+        public PascalCaseDictionary<string, string> ExternalSources { get; set; }
+        public PascalCaseDictionary<string, PascalCaseDictionary<string, string>> ExternalSourceRows { get; set; }
         public ICheckListGroup Header { get; set; }
         public List<ICheckListPage> Pages { get; set; }
 
@@ -68,7 +69,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             InCreation = Creation;
 
             if (Creation)
-                ExternalSourceRows = ExternalSources.ToDictionary(x => x.Key, x => new Dictionary<string, string>());
+                ExternalSourceRows = (PascalCaseDictionary<string, PascalCaseDictionary<string, string>>)(ExternalSources.ToDictionary(x => x.Key, x => new PascalCaseDictionary<string, string>()));
 
             Header.CheckList = this;
             Header.Setup();

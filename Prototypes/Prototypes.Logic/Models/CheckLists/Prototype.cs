@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using CheckListManager.Common.Logic;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.Expressions;
 using CheckListManager.Common.Logic.Models.Expressions.Parsing;
@@ -9,9 +10,9 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
     public class Prototype : ICheckList
     {
         public Dictionary<string, ICheckListElement> Elements { get; } = new Dictionary<string, ICheckListElement>();
-        public Dictionary<string, Expression> Expressions { get; set; } = new Dictionary<string, Expression>();
-        public Dictionary<string, string> ExternalSources { get; set; } = new Dictionary<string, string>();
-        public Dictionary<string, Dictionary<string, string>> ExternalSourceRows { get; }
+        public PascalCaseDictionary<string, Expression> Expressions { get; set; } = new PascalCaseDictionary<string, Expression>();
+        public PascalCaseDictionary<string, string> ExternalSources { get; set; } = new PascalCaseDictionary<string, string>();
+        public PascalCaseDictionary<string, PascalCaseDictionary<string, string>> ExternalSourceRows { get; }
         public ICheckListGroup Header { get; set; }
         public List<ICheckListPage> Pages { get; } = new List<ICheckListPage>();
         public string DescriptionFormulaString { get; set; }

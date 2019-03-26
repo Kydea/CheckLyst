@@ -10,9 +10,9 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
         string FileNameFormulaString { get; set; }
         bool FTPExport { get; set; }
 
-        Dictionary<string, Expression> Expressions { get; }
-        Dictionary<string, string> ExternalSources { get; }
-        Dictionary<string, Dictionary<string, string>> ExternalSourceRows { get; }
+        PascalCaseDictionary<string, Expression> Expressions { get; }
+        PascalCaseDictionary<string, string> ExternalSources { get; }
+        PascalCaseDictionary<string, PascalCaseDictionary<string, string>> ExternalSourceRows { get; }
 
         void AddItem(ICheckListItem item);
 

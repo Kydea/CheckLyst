@@ -26,6 +26,7 @@ using CheckListManager.Common.Logic.Queue;
 using CheckListManager.Common.Logic.Trail;
 using CheckListManager.Common.Logic.FTP;
 using CheckListManager.Common.Logic.DataSources;
+using CheckListManager.Common.Logic;
 
 namespace CheckListManager.Instances.Logic.Services
 {
@@ -1116,7 +1117,7 @@ namespace CheckListManager.Instances.Logic.Services
             await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
         }
 
-        private async Task HandleExternalSourceRowChange(InstanceCacheObject cacheObject, IDefaultIdentity identity, int? itemId, int? rowIndex, Dictionary<string, string> row)
+        private async Task HandleExternalSourceRowChange(InstanceCacheObject cacheObject, IDefaultIdentity identity, int? itemId, int? rowIndex, PascalCaseDictionary<string, string> row)
         {
             if (!itemId.HasValue)
                 throw new InstanceException("Item id not sent");
@@ -1128,7 +1129,7 @@ namespace CheckListManager.Instances.Logic.Services
             if (field.ReadOnly)
                 return;
 
-            if (cacheObject.Instance.ExternalSourceRows == null) cacheObject.Instance.ExternalSourceRows = new Dictionary<string, Dictionary<string, string>>();
+            if (cacheObject.Instance.ExternalSourceRows == null) cacheObject.Instance.ExternalSourceRows = new PascalCaseDictionary<string, PascalCaseDictionary<string, string>>();
             cacheObject.Instance.ExternalSourceRows[field.ExternalSourceName] = row;
 
             await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using CheckListManager.Common.Logic;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace CheckListManager.Instances.Logic.Messages
@@ -21,6 +22,6 @@ namespace CheckListManager.Instances.Logic.Messages
 		public string Note { get; set; }
 
         public int? RowIndex { get; set; }
-        public Dictionary<string, string> Row { get; set; }
+        public PascalCaseDictionary<string, string> Row { get; set; }
 	}
 }
