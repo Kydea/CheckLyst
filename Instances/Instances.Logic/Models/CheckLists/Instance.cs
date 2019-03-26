@@ -69,7 +69,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             InCreation = Creation;
 
             if (Creation)
-                ExternalSourceRows = (PascalCaseDictionary<string, PascalCaseDictionary<string, string>>)(ExternalSources.ToDictionary(x => x.Key, x => new PascalCaseDictionary<string, string>()));
+                ExternalSourceRows = new PascalCaseDictionary<string, PascalCaseDictionary<string, string>>(ExternalSources.ToDictionary(x => x.Key, x => new PascalCaseDictionary<string, string>()));
 
             Header.CheckList = this;
             Header.Setup();
