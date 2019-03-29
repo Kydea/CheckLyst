@@ -1117,7 +1117,7 @@ namespace CheckListManager.Instances.Logic.Services
             await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
         }
 
-        private async Task HandleExternalSourceRowChange(InstanceCacheObject cacheObject, IDefaultIdentity identity, int? itemId, int? rowIndex, PascalCaseDictionary<string, string> row)
+        private async Task HandleExternalSourceRowChange(InstanceCacheObject cacheObject, IDefaultIdentity identity, int? itemId, int? rowIndex, Dictionary<string, string> row)
         {
             if (!itemId.HasValue)
                 throw new InstanceException("Item id not sent");
@@ -1130,7 +1130,7 @@ namespace CheckListManager.Instances.Logic.Services
                 return;
 
             if (cacheObject.Instance.ExternalSourceRows == null) cacheObject.Instance.ExternalSourceRows = new PascalCaseDictionary<string, PascalCaseDictionary<string, string>>();
-            cacheObject.Instance.ExternalSourceRows[field.ExternalSourceName] = row;
+            cacheObject.Instance.ExternalSourceRows[field.ExternalSourceName] = new PascalCaseDictionary<string, string>(row);
 
             await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
             {
