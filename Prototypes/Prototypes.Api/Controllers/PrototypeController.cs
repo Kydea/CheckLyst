@@ -208,10 +208,10 @@ namespace CheckListManager.Prototypes.Api.Controllers
         {
             var Data = await _redisCache.GetAsync<PrototypeRequest>($"Token:{Token}", "Download");
             await _redisCache.RemoveAsync($"Token:{Token}", "Download");
-            var PrototypeVersion = await _prototypesRepository.GetPrototypeVersionAsync(2, Data.ID, Data.Version);
+            var PrototypeVersion = await _prototypesRepository.GetPrototypeVersionAsync(Data.CompanyId.Value, Data.ID, Data.Version);
             var CheckList = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converter);
 
-            var PDF = new PrototypePDF(2, Data.CompanyName, Data.TimeZone, _configurationService.PublicRepositoryUrl, PrototypeVersion, CheckList);
+            var PDF = new PrototypePDF(Data.CompanyId.Value, Data.CompanyName, Data.TimeZone, _configurationService.PublicRepositoryUrl, PrototypeVersion, CheckList);
             return Content(HttpStatusCode.OK, PDF, new PDFFormatter("Prototype"));
         }
     }
