@@ -2,7 +2,6 @@
 	var
 		tokenManager = this,
 		cautionTimeOffset = 120000, //ms
-		lastActivity = new Date(),
 
 		refreshAccessToken = function (user, accessToken, refreshToken, successHandler, failHandler, index) {
 			console.info("refreshing access token for " + user, new Date());
@@ -15,16 +14,18 @@
             }).done(function (result) { successHandler(result, index); }).fail(function () { failHandler(index); });
 		},
 
-		setup = function () {
+        setup = function () {
+            localStorage.lastActivity = new Date();
 			matematici.elements.document.on("mousedown keydown	", function () {
-				lastActivity = new Date();
+				localStorage.lastActivity = new Date();
 			});
 
 			setInterval(function () {
-				if (localStorage.refreshToken && new Date() - lastActivity > 900000) {
+                if (localStorage.refreshToken && new Date() - new Date(localStorage.lastActivity) > 900000) {
+                    //alert("last activity performed on " + localStorage.lastActivity + ", redirecting to login page");
 					localStorage.refreshToken = null;
-					matematici.canClose = true;
-					matematici.navigator.open(matematici.urls.accessControl.login);
+                    matematici.canClose = true;
+                    window.location = matematici.urls.accessControl.login;
 					return;
 				}
 

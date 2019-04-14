@@ -26,13 +26,6 @@
 			});
 		},
 
-		logout = function (redirect) {
-			matematici.dialog.close();
-			matematici.popup.close();
-			matematici.canClose = true;
-			matematici.navigator.open(redirect, false, true);
-		},
-
 		update = function () {
 			check().done(function (result) {
 				var

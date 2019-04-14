@@ -131,7 +131,7 @@
 
 		handleAjaxError: function (e) {
 			if (e.status == 401 || e.status == 498) { //we use the status 498 to mean invalid token (as arcgis)
-				window.location = basePath + "Security/Login"; //add return url
+                window.location = matematici.urls.accessControl.login; //add return url
 				return true;
 			}
 		},

@@ -9,8 +9,8 @@
 						{ text: "Cancel", icon: "times", cancelButton: true },
 						{
 							text: "Logout", icon: "logout", handler: function () {
-								matematici.dialog.close();
-								matematici.navigator.open(matematici.urls.accessControl.login);
+                                matematici.dialog.close();
+                                window.location = matematici.urls.accessControl.login;
 								return true;
 							}
 						},
