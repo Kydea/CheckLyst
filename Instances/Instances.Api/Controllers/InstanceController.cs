@@ -65,7 +65,7 @@ namespace CheckListManager.Instances.Api.Controllers
 
                     CheckList = checkList
                 };
-                if (!Identity.HasPermission("Trail") && cacheObject.VersionState != VersionState.Draft && cacheObject.VersionState != VersionState.InSimulation) checkList.Expressions = null;
+                if (!Identity.HasPermission("Trail") && cacheObject.VersionState != VersionState.Draft && cacheObject.VersionState != VersionState.InSimulation) checkList.HideExpressions = true;
                 return Ok(response);
             }
             catch (Exception e)
@@ -92,7 +92,7 @@ namespace CheckListManager.Instances.Api.Controllers
 
                     CheckList = checkList
                 };
-                if (!Identity.HasPermission("Trail") && cacheObject.VersionState != VersionState.Draft && cacheObject.VersionState != VersionState.InSimulation) checkList.Expressions = null;
+                if (!Identity.HasPermission("Trail") && cacheObject.VersionState != VersionState.Draft && cacheObject.VersionState != VersionState.InSimulation) checkList.HideExpressions = true;
                 return Ok(response);
             }
             catch (Exception e)
@@ -182,7 +182,7 @@ namespace CheckListManager.Instances.Api.Controllers
                     Version = cacheObject.Version,
                     VersionState = cacheObject.VersionState
                 };
-                if (!Identity.HasPermission("Trail") && cacheObject.VersionState != VersionState.Draft && cacheObject.VersionState != VersionState.InSimulation) checkList.Expressions = null;
+                if (!Identity.HasPermission("Trail") && cacheObject.VersionState != VersionState.Draft && cacheObject.VersionState != VersionState.InSimulation) checkList.HideExpressions = true;
                 return Ok(response);
             }
             catch (Exception e)
@@ -207,7 +207,7 @@ namespace CheckListManager.Instances.Api.Controllers
                     CheckList = checkList,
                     State = cacheObject.InstanceState
                 };
-                if (!Identity.HasPermission("Trail") && cacheObject.VersionState != VersionState.Draft && cacheObject.VersionState != VersionState.InSimulation) checkList.Expressions = null;
+                if (!Identity.HasPermission("Trail") && cacheObject.VersionState != VersionState.Draft && cacheObject.VersionState != VersionState.InSimulation) checkList.HideExpressions = true;
                 return Ok(response);
             }
             catch (Exception e)
