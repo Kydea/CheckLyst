@@ -124,5 +124,12 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             foreach (var page in Pages)
                 page.UpdateReadOnly(userCode, ReadOnly || state != InstanceState.Progress);
         }
+
+        public bool HideExpressions { get; set; }
+
+        public bool ShouldSerializeExpressions()
+        {
+            return !HideExpressions;
+        }
     }
 }
