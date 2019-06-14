@@ -70,7 +70,8 @@
 				var code = list[index].node.find(".CodeColumn").text();
 				code = code.replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, function (match, index) {
 					if (+match === 0) return ""; // or if (/\s+/.test(match)) for white spaces
-					return index == 0 ? match.toLowerCase() : match.toUpperCase();
+					//return index == 0 ? match.toLowerCase() : match.toUpperCase();
+                    return match;
 				});
 				list[index].node.find(".CodeColumn").text(code);
 				if (!matematici.codeRegularExpression.test(code)) {

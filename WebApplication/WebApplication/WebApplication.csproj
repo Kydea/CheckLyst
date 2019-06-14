@@ -319,7 +319,6 @@
     <Content Include="Scripts\Libraries\knockout-3.3.0.js" />
     <Content Include="Scripts\Libraries\MicrosoftAjax.js" />
     <Content Include="Scripts\Libraries\modernizr-2.8.3.js" />
-    <Content Include="Scripts\Libraries\SmoothScroll.js" />
     <Content Include="Scripts\Matematici\AnimationManager.js" />
     <Content Include="Scripts\Matematici\Breadcrumbs.js" />
     <Content Include="Scripts\Matematici\Blip.js" />
