@@ -10,10 +10,10 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         public const int MAXIMUM_LENGTH = 10000;
 
         public string SerializedValue { get; set; }
-
+        public string Description { get; set; }
         public string Error { get; set; }
-
         public bool Unique { get; set; }
+        public bool Exception { get; set; }
 
         public Expression()
         {
@@ -22,10 +22,14 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
         public void Parse(ICheckList checkList)
         {
+            if (string.IsNullOrWhiteSpace(Description) && (Unique || Exception))
+                throw new Exception($"Unique and exception expressions must have a description");
+
             if (SerializedValue?.Length >= MAXIMUM_LENGTH)
                 throw new Parsing.ParseException($"Expressions lengh must not exceed {MAXIMUM_LENGTH - 1} characters", MAXIMUM_LENGTH);
 
             Root = new Parsing.TokenSet(SerializedValue, 0).Symbol;
+
             Root.Expression = this;
         }
 
@@ -53,6 +57,8 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         {
             Error = null;
             Root.Check(prototype);
+            if (Exception && Root.DataType != DataType.Boolean)
+                throw new Exception($"Exception expressions must be boolean");
         }
-	}
+    }
 }

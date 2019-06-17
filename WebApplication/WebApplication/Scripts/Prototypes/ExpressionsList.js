@@ -48,7 +48,7 @@
                     used = !!expressionsInUse[code];
 
                     body.children().eq(currentIndex).addClass("Selected").removeClass("Handler")
-                        .children((used ? ":not(:nth-child(2))" : "") + ":not(:first-child):not(:last-child):not(:nth-last-child(2)):not(:nth-last-child(3))").attr("contenteditable", true).eq(0).focus();
+                        .children((used ? ":not(:nth-child(2))" : "") + ":not(:first-child):not(:last-child):not(:nth-last-child(2)):not(:nth-last-child(3)):not(:nth-last-child(4))").attr("contenteditable", true).eq(0).focus();
                 }
                 removeButton.toggle(currentIndex != null && !used);
             }
@@ -62,9 +62,11 @@
                 .appendTo(table)
                 .append($("<td />").append($("<i />").addClass("fi flaticon-arrow-right")))
                 .append($("<td />").addClass("CodeColumn").text(row.code))
+                .append($("<td />").addClass("DescriptionColumn").text(row.description))
                 .append($("<td />").addClass("ExpressionColumn").text(row.expression))
                 .append($("<td />").addClass("ValidColumn Centered").append($("<i />").attr("title", row.error || "").addClass("fi" + (row.valid == null ? "" : " flaticon-" + (row.valid ? "check" : "times")))))
                 .append($("<td />").addClass("UniqueColumn Centered").toggleClass("Off", !row.unique).append($("<i />").addClass("fi flaticon-key-o")))
+                .append($("<td />").addClass("ExceptionColumn Centered").toggleClass("Off", !row.exception).append($("<i />").addClass("fi flaticon-exclamation")))
                 .append($("<td />").addClass("Order Centered Inactive").append($("<i />").addClass("Up fi flaticon-arrow-up")).append($("<i />").addClass("Down fi flaticon-arrow-down")))
 
             if (model.state == prototypes.Prototype.states.draft)
@@ -89,7 +91,14 @@
         updateModel = function () {
             model.expressions = {};
             for (var index in list)
-                model.expressions[list[index].code] = { serializedValue: list[index].expression, error: list[index].error, dataType: list[index].dataType, unique: list[index].unique };
+                model.expressions[list[index].code] = {
+                    serializedValue: list[index].expression,
+                    description: list[index].description,
+                    error: list[index].error,
+                    dataType: list[index].dataType,
+                    unique: list[index].unique,
+                    exception: list[index].exception
+                };
         },
 
         checkCodes = function () {
@@ -112,6 +121,7 @@
         map = function () {
             for (var index in list) {
                 list[index].code = list[index].node.find(".CodeColumn").text();
+                list[index].description = list[index].node.find(".DescriptionColumn").text();
                 list[index].expression = list[index].node.find(".ExpressionColumn").text();
             }
             updateModel();
@@ -134,9 +144,11 @@
                     var expressionValidity;
                     try {
                         expressionValidity = list[index].valid = result.expressions[list[index].code].error == null;
+                        list[index].description = result.expressions[list[index].code].description;
                         list[index].error = result.expressions[list[index].code].error;
                         list[index].dataType = result.expressions[list[index].code].dataType;
                         list[index].unique = result.expressions[list[index].code].unique;
+                        list[index].exception = result.expressions[list[index].code].exception;
                     } catch (error) {
                         list[index].error = error;
                         list[index].dataType = "Error";
@@ -186,9 +198,11 @@
                     .append($("<tr />")
                         .append($("<th />"))
                         .append($("<th />").text("code"))
+                        .append($("<th />").text("description"))
                         .append($("<th />").text("expression"))
                         .append($("<th />").text("valid"))
                         .append($("<th />").text("unique"))
+                        .append($("<th />").text("exception"))
                         .append($("<th />"))
                     )
                 ).append(body = $("<tbody />")
@@ -202,15 +216,22 @@
                     e.stopPropagation();
                     down(this);
                 }).on("click", "tr.Handler td:not(.Inactive)", function () {
-                    select($(this).prevAll().size());
+                    select($(this).parent().prevAll().size());
                 }).on("focus", "td", function () {
                     verifyButton.show();
                 }).on("blur", "td", function () {
                     list[currentIndex].valid = null;
                     $("td.ValidColumn i", $(this).parent()).removeClass("flaticon-check flaticon-remove").addClass("flaticon-question");
                 }).on("click", "tr.Selected td.UniqueColumn", function () {
+                    verifyButton.show();
+                    $("td.ValidColumn i", $(this).parent()).removeClass("flaticon-check flaticon-remove").addClass("flaticon-question");
                     list[currentIndex].unique = !list[currentIndex].unique;
                     $(this).toggleClass("Off", !list[currentIndex].unique);
+                }).on("click", "tr.Selected td.ExceptionColumn", function () {
+                    verifyButton.show();
+                    $("td.ValidColumn i", $(this).parent()).removeClass("flaticon-check flaticon-remove").addClass("flaticon-question");
+                    list[currentIndex].exception = !list[currentIndex].exception;
+                    $(this).toggleClass("Off", !list[currentIndex].exception);
                 });
 
 
@@ -241,10 +262,12 @@
                 add({
                     code: code,
                     expression: model.expressions[code].serializedValue,
+                    description: model.expressions[code].description,
                     error: model.expressions[code].error,
                     valid: model.expressions[code].error == null,
                     dataType: model.expressions[code].dataType,
-                    unique: model.expressions[code].unique
+                    unique: model.expressions[code].unique,
+                    exception: model.expressions[code].exception
                 });
 
             expressionsInUse = {};

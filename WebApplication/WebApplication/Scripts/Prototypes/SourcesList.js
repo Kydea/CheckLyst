@@ -135,7 +135,7 @@
                     e.stopPropagation();
                     down(this);
                 }).on("click", "tr.Handler td:not(.Inactive)", function () {
-                    select($(this).prevAll().size());
+                    select($(this).parent().prevAll().size());
                 });
 
 
