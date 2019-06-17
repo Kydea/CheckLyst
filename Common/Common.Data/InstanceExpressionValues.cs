@@ -17,6 +17,7 @@ namespace CheckListManager.Common.Data
         public long Instance { get; set; }
         public string Code { get; set; }
         public string Value { get; set; }
+        public string Description { get; set; }
     
         public virtual Instances Instances { get; set; }
     }

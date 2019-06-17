@@ -450,6 +450,7 @@ namespace CheckListManager.Instances.Logic.Services
             {
                 Instance = cacheObject.Id.Value,
                 Code = e.Key,
+                Description = e.Value.Description,
                 Value = e.Value.Value.SerializedValue
             });
         }

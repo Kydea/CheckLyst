@@ -37,20 +37,26 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 Page.Setup();
             }
 
-            foreach (var Expression in Expressions.Values)
+            foreach (var Expression in Expressions)
             {
                 try
                 {
-                    Expression.Parse(this);
-                    Expression.Check(this);
+                    if (Expression.Key.Length > 50)
+                        throw new Exception($"Expression codes must not exceed 50 characters");
+
+                    if (Expression.Value.Description?.Length > 100)
+                        throw new Exception($"Expression descriptions must not exceed 100 characters");
+
+                    Expression.Value.Parse(this);
+                    Expression.Value.Check(this);
                 }
                 catch (ParseException Exception)
                 {
-                    Expression.Error = $"{Exception.Message} (position {Exception.Position})";
+                    Expression.Value.Error = $"{Exception.Message} (position {Exception.Position})";
                 }
                 catch (Exception Exception)
                 {
-                    Expression.Error = Exception.Message;
+                    Expression.Value.Error = Exception.Message;
                 }
             }
         }

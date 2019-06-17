@@ -1,81 +1,105 @@
 ﻿instances.Instance = function (element, options) {
-	var
-		instance = this,
-		title = $("h2", element),
-		header = new instances.Group($("div#Header", element), "Group"),
-		page = new instances.Group($("div.Page", element), "Page"),
-		versionState,
-		code,
-		id,
-		state,
-		department,
-		departmentName,
-		prototypeType,
-		prototypeTypeName,
-		prototype,
-		prototypeName,
-		version,
-		year,
-		number,
-		instanceDescription,
-		workFlow,
-		tab,
-		pageLock,
-		updateHandler,
-		externalSources = {},
-		expressions = [],
-		lastResult,
-		deleted,
-        removedIterationsVisible = false, 
-                    Button,
+    var
+        instance = this,
+        title = $("h2", element),
+        header = new instances.Group($("div#Header", element), "Group"),
+        page = new instances.Group($("div.Page", element), "Page"),
+        versionState,
+        code,
+        id,
+        state,
+        department,
+        departmentName,
+        prototypeType,
+        prototypeTypeName,
+        prototype,
+        prototypeName,
+        version,
+        year,
+        number,
+        instanceDescription,
+        workFlow,
+        tab,
+        pageLock,
+        updateHandler,
+        externalSources = {},
+        expressions = [],
+        exceptions = [],
+        expressionsButton,
+        exceptionsButton,
+        lastResult,
+        deleted,
+        removedIterationsVisible = false,
+        Button,
 
-		setupInstanceDescription = function () {
-			header.getElement().prepend(instanceDescription = $("<div />").addClass("InstanceDescription"));
-		},
+        setupInstanceDescription = function () {
+            header.getElement().prepend(instanceDescription = $("<div />").addClass("InstanceDescription"));
+        },
 
-		setupTab = function (pages) {
-			for (var pageIndex in pages) 
-				tab.add(pages[pageIndex].description, null, null, "lock-o")
+        setupTab = function (pages) {
+            for (var pageIndex in pages)
+                tab.add(pages[pageIndex].description, null, null, "lock-o")
 
-			pageLock = new instances.PageLock(instance);
+            pageLock = new instances.PageLock(instance);
 
-			tab.select(0)
-			tab.resize();
-		},
+            tab.select(0)
+            tab.resize();
+        },
 
-		setupActionBar = function () {
-			var
-				editor = hasPermission("Edit"),
-				deleter = hasPermission("Delete"),
+        setupActionBar = function () {
+            var
+                editor = hasPermission("Edit"),
+                deleter = hasPermission("Delete"),
 
                 actionBar = $("div.ActionBar", element),
                 buttonGroup = $("a.ButtonGroup", actionBar),
-				confirmButton = $("a.Confirm", buttonGroup).toggleClass("Hidden", state != instances.Instance.states.completed),
-				completeButton = $("a.Complete", buttonGroup).toggleClass("Hidden", !editor || state != instances.Instance.states.progress),
-				deleteButton = $("a.Delete", buttonGroup).toggleClass("Hidden", !deleter || state != instances.Instance.states.draft && state != instances.Instance.states.progress),
-				saveButton = $("a.Save", buttonGroup).toggleClass("Hidden", !editor || state != instances.Instance.states.draft && state != instances.Instance.states.progress),
-				historyButton = $("a.History", buttonGroup).toggleClass("Hidden", state == instances.Instance.states.draft),
-				showRemovedIterationsButton = $("a.ShowRemovedIterations", buttonGroup).toggleClass("Hidden", !matematici.tokenManager.checkRole("Trail#View#") || removedIterationsVisible),
-				hideRemovedIterationsButton = $("a.HideRemovedIterations", buttonGroup).toggleClass("Hidden", !removedIterationsVisible);
+                confirmButton = $("a.Confirm", buttonGroup).toggleClass("Hidden", state != instances.Instance.states.completed),
+                completeButton = $("a.Complete", buttonGroup).toggleClass("Hidden", !editor || state != instances.Instance.states.progress),
+                deleteButton = $("a.Delete", buttonGroup).toggleClass("Hidden", !deleter || state != instances.Instance.states.draft && state != instances.Instance.states.progress),
+                saveButton = $("a.Save", buttonGroup).toggleClass("Hidden", !editor || state != instances.Instance.states.draft && state != instances.Instance.states.progress),
+                historyButton = $("a.History", buttonGroup).toggleClass("Hidden", state == instances.Instance.states.draft),
+                showRemovedIterationsButton = $("a.ShowRemovedIterations", buttonGroup).toggleClass("Hidden", !matematici.tokenManager.checkRole("Trail#View#") || removedIterationsVisible),
+                hideRemovedIterationsButton = $("a.HideRemovedIterations", buttonGroup).toggleClass("Hidden", !removedIterationsVisible);
 
             expressionsButton = $("a.ExpressionsButton", actionBar);
+            exceptionsButton = $("a.ExceptionsButton", actionBar);
 
-			if ($("a:not(.Hidden)", buttonGroup).size() == 0)
-				buttonGroup.hide();
-		},
+            if ($("a:not(.Hidden)", buttonGroup).size() == 0)
+                buttonGroup.hide();
+        },
 
-		getFormattedYear = function () {
-			return versionState == prototypes.Prototype.states.draft ? "test" : versionState == prototypes.Prototype.states.simulation || year == 0 ? "SE" : year || "?";
-		},
+        getFormattedYear = function () {
+            return versionState == prototypes.Prototype.states.draft ? "test" : versionState == prototypes.Prototype.states.simulation || year == 0 ? "SE" : year || "?";
+        },
 
-		setupBreadcrumbs = function () {
-			matematici.breadcrumbs.set([
-				{ content: departmentName, label: "department" },
-				{ content: prototypeTypeName, label: "prototype type" },
-				{ content: prototypeName + "." + version + "." + getFormattedYear() + "." + (number || "?"), label: "code" },
-				{ content: state, label: "state" }
-			]);
-		},
+        setupBreadcrumbs = function () {
+            matematici.breadcrumbs.set([
+                { content: departmentName, label: "department" },
+                { content: prototypeTypeName, label: "prototype type" },
+                { content: prototypeName + "." + version + "." + getFormattedYear() + "." + (number || "?"), label: "code" },
+                { content: state, label: "state" }
+            ]);
+        },
+
+        checkExceptions = function () {
+            exceptions = [];
+            for (var index in expressions) {
+                var expression = expressions[index];
+                if (!!expression.exception && !expression.rawValue)
+                    exceptions.push(expression);
+            }
+            exceptionsButton.toggle(exceptions.length > 0);
+        },
+
+        showExceptions = function () {
+            var message = "";
+            for (var index in exceptions) {
+                var exception = exceptions[index];
+                message += exception.description + " (" + exception.code + ")<br />";
+            }
+
+            matematici.dialog.error("exceptions list", message);
+        },
 
 		update = function (result) {
 			lastResult = result;
@@ -98,6 +122,7 @@
 			if (updateHandler) updateHandler(model);
 			externalSources = model.externalSources;
             expressions = model.expressions;
+            checkExceptions();
 
             expressionsButton.toggle(!!model.expressions);
 		},
@@ -460,7 +485,9 @@
 	};
 
 	instance.destroy = function () {
-	};
+    };
+
+    instance.showExceptions = showExceptions;
 
 	instance.initialize();
 };

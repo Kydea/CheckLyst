@@ -13,6 +13,7 @@
           <Property Name="Instance" Type="int8" Nullable="false" />
           <Property Name="Code" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Value" Type="text" Nullable="false" />
+          <Property Name="Description" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="InstanceNumerators">
           <Key>
@@ -1714,6 +1715,7 @@
           <Property Name="Code" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Value" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Instances" Relationship="RelationalDatabaseModel.InstanceExpressionValues_Instance_fkey" FromRole="InstanceExpressionValues" ToRole="Instances" />
+          <Property Name="Description" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="InstanceNumerators">
           <Key>
@@ -2784,6 +2786,7 @@
           <EntitySetMapping Name="InstanceExpressionValues">
             <EntityTypeMapping TypeName="RelationalDatabaseModel.InstanceExpressionValues">
               <MappingFragment StoreEntitySet="InstanceExpressionValues">
+                <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="Value" ColumnName="Value" />
                 <ScalarProperty Name="Code" ColumnName="Code" />
                 <ScalarProperty Name="Instance" ColumnName="Instance" />

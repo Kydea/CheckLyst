@@ -55,7 +55,10 @@
                         { label: "Code" },
                         { name: "rawValue", label: "Value" },
                         { name: "typeName", label: "Type" }]);
-                }, "Icon ExpressionsButton"),
+                }, "Icon ExpressionsButton")
+                .add("<i class='fi flaticon-exclamation'></i>", function () {
+                    instance.showExceptions();
+                }, "Icon Invalid ExceptionsButton"),
 
             buttonGroup = new matematici.ButtonGroup("span.ButtonGroup")
                 .add("History", function () {
