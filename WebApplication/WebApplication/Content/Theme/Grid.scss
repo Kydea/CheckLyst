@@ -54,6 +54,16 @@ table.Grid {
                     text-align: center;
                 }
 
+                &.Inactive {
+                    cursor: default !important;
+                }
+
+                &.Order {
+                    i {
+                        cursor: pointer;
+                    }
+                }
+
                 &:last-child {
                     border-right: none;
                 }
@@ -73,6 +83,18 @@ table.Grid {
 
             &:not(.Odd):nth-child(even), &.Even {
                 background-color: $Color-Cyan;
+            }
+
+            &:first-child {
+                td.Order i.Up {
+                    display: none;
+                }
+            }
+
+            &:last-child {
+                td.Order i.Down {
+                    display: none;
+                }
             }
 
             &.Handler {

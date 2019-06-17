@@ -11,6 +11,32 @@
         currentIndex,
         removeButton,
 
+        up = function (icon) {
+            var
+                row = $(icon).closest("tr"),
+                index = row.prevAll().length,
+                item = list[index];
+
+            list[index] = list[index - 1];
+            list[index - 1] = item;
+            console.log(list);
+
+            row.insertBefore(row.prev());
+        },
+
+        down = function (icon) {
+            var
+                row = $(icon).closest("tr"),
+                index = row.prevAll().length,
+                item = list[row.prevAll().length];
+
+            list[index] = list[index + 1];
+            list[index + 1] = item;
+            console.log(list);
+
+            row.insertAfter(row.next());
+        },
+
         select = function (index) {
             if (currentIndex != null) body.children().eq(currentIndex).removeClass("Selected").addClass("Handler").children().attr("contenteditable", false);
             if (model.state == prototypes.Prototype.states.draft) {
@@ -40,7 +66,8 @@
                 .addClass("Handler")
                 .appendTo(table)
                 .append($("<td />").addClass("CodeColumn").text(row.code))
-                .append(value);
+                .append(value)
+                .append($("<td />").addClass("Order Centered Inactive").append($("<i />").addClass("Up fi flaticon-arrow-up")).append($("<i />").addClass("Down fi flaticon-arrow-down")));
 
             if (model.state == prototypes.Prototype.states.draft)
                 matematici.canClose = false;
@@ -95,12 +122,19 @@
                     .append($("<tr />")
                         .append($("<th />").text("code"))
                         .append($("<th />").text("source"))
+                        .append($("<th />"))
                     )
                 ).append(body = $("<tbody />")
                     .append(noRecord = $("<tr />").addClass("NoRecord")
-                        .append($("<td />").attr("colspan", "2").text("(no record)"))
+                        .append($("<td />").attr("colspan", "3").text("(no record)"))
                     )
-                ).on("click", "tr.Handler", function () {
+                ).on("click", "tr.Handler td.Order i.Up", function (e) {
+                    e.stopPropagation();
+                    up(this);
+                }).on("click", "tr.Handler td.Order i.Down", function (e) {
+                    e.stopPropagation();
+                    down(this);
+                }).on("click", "tr.Handler td:not(.Inactive)", function () {
                     select($(this).prevAll().size());
                 });
 
@@ -111,18 +145,18 @@
                         .append($("<a />").addClass("Button").text("close").prepend($("<i />").addClass("fi flaticon-times")).on("click", function () {
                             close();
                         }))
-					    .append($("<a />").addClass("Button").text("add").toggle(model.state == prototypes.Prototype.states.draft).prepend($("<i />").addClass("fi flaticon-plus")).on("click", function () {
+                        .append($("<a />").addClass("Button").text("add").toggle(model.state == prototypes.Prototype.states.draft).prepend($("<i />").addClass("fi flaticon-plus")).on("click", function () {
                             add({ code: "" });
                             select(body.children().size() - 1);
                         }))
-					    .append(removeButton = $("<a />").addClass("Button").text("remove").prepend($("<i />").addClass("fi flaticon-minus")).on("click", function () {
+                        .append(removeButton = $("<a />").addClass("Button").text("remove").prepend($("<i />").addClass("fi flaticon-minus")).on("click", function () {
                             remove();
                         }).hide());
 
-			sources = $("<select />");
-			var dataSources = prototypes.prototype.getDataSources();
-			for (index in dataSources)
-				$("<option />").appendTo(sources).text(dataSources[index].code).val(dataSources[index].code);
+            sources = $("<select />");
+            var dataSources = prototypes.prototype.getDataSources();
+            for (index in dataSources)
+                $("<option />").appendTo(sources).text(dataSources[index].code).val(dataSources[index].code);
 
             for (var code in model.externalSources)
                 add({
