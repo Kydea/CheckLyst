@@ -22,19 +22,22 @@ namespace CheckListManager.WorkFlows.Tests.Steps
         private readonly IDetailService _detailService;
         private readonly IDefaultIdentity _defaultIdentity;
         private readonly IWorkFlowsRepositoryExtended _workFlowsRepositoryExtended;
+        private readonly IPrototypeTypesRepositoryExtended _prototypeTypesRepositoryExtended;
 
         public WorkFlowsListSteps(
             IListService listService,
             WorkFlowsListContext context,
             IDetailService detailService,
             IDefaultIdentity defaultIdentity,
-            IWorkFlowsRepositoryExtended workFlowsRepositoryExtended)
+            IWorkFlowsRepositoryExtended workFlowsRepositoryExtended,
+            IPrototypeTypesRepositoryExtended prototypeTypesRepositoryExtended)
         {
             _context = context;
             _listService = listService;
             _detailService = detailService;
             _defaultIdentity = defaultIdentity;
             _workFlowsRepositoryExtended = workFlowsRepositoryExtended;
+            _prototypeTypesRepositoryExtended = prototypeTypesRepositoryExtended;
         }
 
         [BeforeScenario]
@@ -88,37 +91,46 @@ namespace CheckListManager.WorkFlows.Tests.Steps
             _context.Request.Steps = steps.ToArray();
         }
 
-        private async Task IClickOnAWorkFlow(Expression<Func<Common.Data.WorkFlows, bool>> filters)
+        private async Task<ListRow> IClickOnAWorkFlow()
         {
-            // #1: Fetch workflows list.
-            List<ListRow> data = (await _workFlowsRepositoryExtended.GetRecordsAsync(_defaultIdentity.CompanyId, filters));
+            var workFlowDescription = Guid.NewGuid().ToString();
 
-            // If you click on a workflow: Count > 0 (it's a must)
-            Assert.NotZero(data.Count, "Clicking on a workflow implies that the number of workflows is greater than 0.");
+            GivenIAssignAsTheDescriptionOfTheWorkflow(workFlowDescription);
+            GivenIAddTheSignatureInTheWorkflowsSteps("Revisor");
+            await WhenISubmitTheRequestToAddTheWorkflow();
 
-            var workFlow = data.First();
+            // #1: Get WorkFlows.
+            var workFlow = (await _workFlowsRepositoryExtended.GetRecordsAsync(_defaultIdentity.CompanyId, wp => wp.Description == workFlowDescription)).First();
 
             // #2: Fetch detailed workflow.
             var detailedWorkFlow = (await _detailService.LoadAsync(_defaultIdentity, new DetailRequest()
             {
-                ID = workFlow.ID
+                ID = workFlow.ID,
             }));
 
             _context.Request.ID = workFlow.ID;
             _context.Request.Steps = detailedWorkFlow.Steps;
             _context.Request.Description = workFlow.Description;
+
+            return workFlow;
         }
         
         [Given(@"I click on a workflow")]
         public async Task GivenIClickOnAWorkflow()
         {
-            await IClickOnAWorkFlow(wf => !wf.PrototypeTypes.Any() && !wf.PrototypeTypes1.Any());
+            await IClickOnAWorkFlow();
         }
 
         [Given(@"I click on a workflow that has been used for a prototype type")]
         public async Task GivenIClickOnAWorkflowThatHasBeenUsedForAPrototypeType()
         {
-            await IClickOnAWorkFlow(wf => wf.PrototypeTypes.Any() || wf.PrototypeTypes1.Any());
+            var workFlow = await IClickOnAWorkFlow();
+
+            _prototypeTypesRepositoryExtended.Add(_defaultIdentity.CompanyId, new Common.Data.PrototypeTypes()
+            {
+                Company = _defaultIdentity.CompanyId,
+                ApprovationWorkFlow = workFlow.ID,
+            });
         }
 
         [Given(@"I do not add any signature to the workflow")]
