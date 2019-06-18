@@ -102,6 +102,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Contexts\WorkFlowsListContext.cs" />
+    <Compile Include="Data\PrototypeTypesRepositoryExtended.cs" />
+    <Compile Include="Data\IPrototypeTypesRepositoryExtended.cs" />
     <Compile Include="Data\IWorkFlowsRepositoryExtended.cs" />
     <Compile Include="Data\WorkFlowsRepositoryExtended.cs" />
     <Compile Include="DefaultIdentityHelper.cs" />
@@ -127,7 +129,6 @@
   <ItemGroup>
     <Analyzer Include="..\..\packages\AWSSDK.SQS.3.3.3.1\analyzers\dotnet\cs\AWSSDK.SQS.CodeAnalysis.dll" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.Core.Web\Common.Core.Web.csproj">
       <Project>{2FAFFF00-D5EB-4BB0-B70B-38290D88C871}</Project>
