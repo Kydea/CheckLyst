@@ -202,6 +202,7 @@ create table "CheckLists"."InstanceExpressionValues"
 	constraint "FK_InstanceExpressionValues_Instance" foreign key ("Instance") references "CheckLists"."Instances" on delete cascade,
 	"Code" varchar (50),
 	"Description" varchar (100),
+	"Exception" boolean not null default,
 
 	constraint "PK_InstanceExpressionValues" primary key ("Instance", "Code"),
 

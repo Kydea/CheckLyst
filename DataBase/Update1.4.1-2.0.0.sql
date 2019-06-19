@@ -1,4 +1,6 @@
-alter table "CheckLists"."InstanceExpressionValues" add "Description" varchar (100);
+alter table "CheckLists"."InstanceExpressionValues" add 
+	"Description" varchar (100),
+	"Exception" boolean not null default false;
 
 create or replace function "CheckLists"."ValidateUniqueExpressions"
 (

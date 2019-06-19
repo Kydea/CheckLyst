@@ -190,6 +190,34 @@ form {
     float: left;
     margin-top: calc(1em + 25px);
     margin-left: 20px; }
+  form.AdvancedSearch {
+    padding-bottom: 56px; }
+  form div.AdvancedSearch {
+    display: none;
+    clear: both; }
+    form div.AdvancedSearch + #ApplyButton {
+      clear: both; }
+  form a.AdvancedSearch {
+    width: 100%;
+    display: block;
+    background-color: #ccc;
+    border-top: solid 1px #ccc;
+    color: white;
+    position: absolute;
+    bottom: 0;
+    height: 36px;
+    line-height: 36px;
+    text-align: center; }
+    form a.AdvancedSearch i {
+      font-size: 12px !important;
+      transition: transform linear .3s;
+      margin-left: 10px;
+      display: inline-block; }
+    form a.AdvancedSearch.Open i {
+      transform: rotate(180deg); }
+    form a.AdvancedSearch:hover {
+      text-decoration: none !important;
+      background-color: #bbb; }
 
 form label, div.CheckList label, div.PropertyPanel div.PropertyValue label, div.Module label {
   float: left;

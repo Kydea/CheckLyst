@@ -120,6 +120,7 @@ namespace CheckListManager.Instances.Logic.List
                     PrototypeTypeName = i.Prototypes.PrototypeTypes.Name,
                     PrototypeName = i.Prototypes.Name,
                     Version = i.Version,
+                    Exceptions = i.InstanceExpressionValues.Where(ev => ev.Exception && ev.Value == "True").Select(ev => new InstanceException { Code = ev.Code, Description = ev.Description }).ToList(),
                     
                     CreatedBy = i.CreatedBy,
                     CreatedOn = i.CreatedOn,
@@ -135,7 +136,15 @@ namespace CheckListManager.Instances.Logic.List
                     && (form.Data.Year == null || i.Year == form.Data.Year)
                     && (form.Data.Number == null || i.Year == form.Data.Number)
                     && (form.Data.TagValue == string.Empty || i.InstanceTags.Any(it => (form.Data.TagCode == string.Empty || it.Tag == form.Data.TagCode) && it.Value.ToUpper().Contains(form.Data.TagValue.ToUpper())))
-                    && (form.Data.State == string.Empty || i.InstanceState == form.Data.State),
+                    && (form.Data.State == string.Empty || i.InstanceState == form.Data.State)
+                    && (!form.Data.From.HasValue || i.ModifiedOn <= form.Data.From.Value)
+                    && (!form.Data.To.HasValue || i.ModifiedOn <= form.Data.WholeTo.Value)
+                    && (
+                        form.Data.ExceptionState == string.Empty
+                        || form.Data.ExceptionState == "include" && i.InstanceExpressionValues.Any(ev => ev.Exception && ev.Value == "True")
+                        || form.Data.ExceptionState == "exclude" && !i.InstanceExpressionValues.Any(ev => ev.Exception && ev.Value == "True")
+                    ),
+                    //&& (form.Data.ExceptionDescription == null || i.InstanceExpressionValues.Any(ev => ev.Exception && ev.Value == "True" && ev.Description.ToUpper().Contains(form.Data.ExceptionDescription.ToUpper()))),
                 i => i.ID,
                 form.CurrentPage,
                 form.ItemsPerPage

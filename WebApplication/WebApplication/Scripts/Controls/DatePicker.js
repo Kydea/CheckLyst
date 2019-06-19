@@ -91,14 +91,15 @@
 			if (minAttribute) min = new Date(minAttribute);
 			if (maxAttribute) max = new Date(maxAttribute);
 
-			element
-				.data("datePicker", datePicker)
-				.on("change", function () {
-					if (needToParse) parse();
-				})
-				.on("focus", function () { needToParse = true; })
-				.on("blur", function () { needToParse = false; })
-				.on("click", open);
+            element
+                .data("datePicker", datePicker)
+                .attr({ autocomplete: "off" })
+                .on("change", function () {
+                    if (needToParse) parse();
+                })
+                .on("focus", function () { needToParse = true; })
+                .on("blur", function () { needToParse = false; })
+                .on("click", open);
 
 			$("<i />")
 				.addClass("Icon fi flaticon-calendar")

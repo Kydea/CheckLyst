@@ -115,4 +115,3 @@ div.Prototype.Current h2 {
 
 div.Prototype.Locked > div.Commands a.Remove, div.Prototype.Locked > div.Commands a.Up, div.Prototype.Locked > div.Commands a.Down, div.Prototype .Locked > div.Commands a.Remove, div.Prototype .Locked > div.Commands a.Up, div.Prototype .Locked > div.Commands a.Down {
   display: none; }
-

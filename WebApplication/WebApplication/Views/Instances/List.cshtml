@@ -39,6 +39,32 @@
                 <i class="Icon fi flaticon-align-left" />
                 <input type="text" name="tagValue" />
             </label>
+
+            <div class="AdvancedSearch">
+                <label class="Controls2">
+                    <span>Last update date range</span>
+                    <input type="text" name="from" class="DatePicker" />
+                    <input type="text" name="to" class="DatePicker" />
+                </label>
+                <label>
+                    <span>Exception state</span>
+                    <i class="Icon fi flaticon-prototype" />
+                    <select name="exceptionState">
+                        <option value="">(all)</option>
+                        <option value="include">only with exceptions</option>
+                        <option value="exclude">only without exceptions</option>
+                    </select>
+                </label>
+                <label class="Clearing">
+                    <span>Exception description</span>
+                    <i class="Icon fi flaticon-exclamation" />
+                    <input type="text" name="exceptionDescription" />
+                </label>
+                <label>
+                    <span>Show exceptions</span>
+                    <input type="checkbox" name="showException" />
+                </label>
+            </div>
         </form>
 
         <table class="Grid">

@@ -273,6 +273,50 @@ form {
         margin-top: calc(1em + #{5px + $Metric-Control-Space});
         margin-left: $Metric-Control-Space;
     }
+
+    &.AdvancedSearch {
+        padding-bottom: $Metric-Control-Height + $Metric-Control-Space;
+    }
+
+    div.AdvancedSearch {
+        display: none;
+        clear: both;
+
+        + #ApplyButton {
+            clear: both;
+        }
+    }
+
+    a.AdvancedSearch {
+        width: 100%;
+        display: block;
+        background-color: $Color-Grey-Light;
+        border-top: solid 1px $Color-Grey-Light;
+        color: white;
+        position: absolute;
+        bottom: 0;
+        height: $Metric-Control-Height;
+        line-height: $Metric-Control-Height;
+        text-align: center;
+
+        i {
+            font-size: 12px !important;
+            transition: transform linear .3s;
+            margin-left: 10px;
+            display: inline-block;
+        }
+
+        &.Open {
+            i {
+                transform: rotate(180deg);
+            }
+        }
+
+        &:hover {
+            text-decoration: none !important;
+            background-color: $Color-Grey-Light-Over;
+        }
+    }
 }
 
 form, div.CheckList, div.PropertyPanel div.PropertyValue, div.Module {

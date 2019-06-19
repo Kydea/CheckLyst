@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace CheckListManager.Instances.Logic.List
 {
@@ -15,6 +16,7 @@ namespace CheckListManager.Instances.Logic.List
         public string PrototypeTypeName { get; set; }
         public string PrototypeName { get; set; }
         public int Version { get; set; }
+        public List<InstanceException> Exceptions { get; set; }
         public string CreatedBy { get; set; }
         public DateTimeOffset CreatedOn { get; set; }
         public string ModifiedBy { get; set; }

@@ -82,7 +82,8 @@
 		saveForm = function () {
 			var storageName = getStorageName();
 			try {
-				localStorage.setItem(storageName, prepareRequest());
+                localStorage.setItem(storageName, prepareRequest());
+                localStorage.setItem(storageName + "/AdvancedSearch", options.searchPage.isAdvancedSearchMode());
 			} catch (error) {
 				console.log(error);
 				try { localStorage.removeItem(storageName) } catch (error) { }
@@ -95,7 +96,9 @@
 				storageName = getStorageName(),
 				value;
 			try {
-				value = localStorage.getItem(storageName);
+                value = localStorage.getItem(storageName);
+                var advancedSearch = localStorage.getItem(storageName + "/AdvancedSearch");
+                options.searchPage.setAdvancedSearchMode(advancedSearch == "true");
 			} catch (error) {
 				value = null;
 				console.log(error);
@@ -116,6 +119,8 @@
 						field.attr("type") == "checkbox" ? field.prop("checked") :
 							field.val();
 			});
+
+            parameters.data["advancedSearch"] = options.searchPage.isAdvancedSearchMode();
 
 			return JSON.stringify(parameters);
 		},
