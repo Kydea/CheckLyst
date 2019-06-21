@@ -382,6 +382,7 @@
           <Property Name="Date" Type="timestamptz" Precision="7" />
           <Property Name="Approved" Type="bool" />
           <Property Name="Reason" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="UserDescription" Type="varchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="WorkFlowApplicationStepTags">
           <Key>
@@ -2244,6 +2245,7 @@
           <NavigationProperty Name="WorkFlowApplications" Relationship="RelationalDatabaseModel.WorkFlowApplicationSteps_WorkFlowApplication_fkey" FromRole="WorkFlowApplicationSteps" ToRole="WorkFlowApplications" />
           <NavigationProperty Name="WorkFlowApplicationStepTags" Relationship="RelationalDatabaseModel.WorkFlowApplicationStepTags_WorkFlowApplicationStep_fkey" FromRole="WorkFlowApplicationSteps" ToRole="WorkFlowApplicationStepTags" />
           <Property Name="Reason" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="UserDescription" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="WorkFlowSteps">
           <Key>
@@ -3019,6 +3021,7 @@
           <EntitySetMapping Name="WorkFlowApplicationSteps">
             <EntityTypeMapping TypeName="RelationalDatabaseModel.WorkFlowApplicationSteps">
               <MappingFragment StoreEntitySet="WorkFlowApplicationSteps">
+                <ScalarProperty Name="UserDescription" ColumnName="UserDescription" />
                 <ScalarProperty Name="Reason" ColumnName="Reason" />
                 <ScalarProperty Name="Approved" ColumnName="Approved" />
                 <ScalarProperty Name="Date" ColumnName="Date" />

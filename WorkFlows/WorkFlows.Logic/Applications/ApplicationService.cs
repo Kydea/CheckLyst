@@ -64,7 +64,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     Step = x.Step + 1,
                     Reason = x.Reason,
                     Date = x.Date,
-                    User = x.User == null ? "" : x.User + " - " + x.Users?.Description,
+                    User = x.User == null ? "" : x.User + " - " + x.UserDescription,
                     Approved = x.Approved,
                     Tags = string.Join(", ", x.WorkFlowApplicationStepTags.Select(t => t.Tag))
                 }).ToList()
@@ -194,6 +194,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
 
             Step.Approved = SignResponse.Approved = request.Approved;
             Step.WorkFlowApplications.ModifiedBy = Step.User = identity.Code;
+            Step.UserDescription = identity.Description;
             Step.WorkFlowApplications.ModifiedOn = Step.Date = DateTimeOffset.UtcNow;
             Step.Comment = request.Comment;
 

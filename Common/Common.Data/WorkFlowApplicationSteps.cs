@@ -29,6 +29,7 @@ namespace CheckListManager.Common.Data
         public Nullable<System.DateTimeOffset> Date { get; set; }
         public Nullable<bool> Approved { get; set; }
         public string Reason { get; set; }
+        public string UserDescription { get; set; }
     
         public virtual Users Users { get; set; }
         public virtual WorkFlowApplications WorkFlowApplications { get; set; }
