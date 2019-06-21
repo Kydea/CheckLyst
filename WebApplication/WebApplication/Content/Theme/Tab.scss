@@ -9,13 +9,15 @@ div.TabContainer {
 
     .TabLabels {
         display: flex;
+        position: relative;
+        flex-wrap: wrap;
 
         &::after {
             content: "";
             position: absolute;
             height: 1px;
             width: 100%;
-            top: $label-height - 2;
+            bottom: 1px;
             background-color: $Color-Grey-Regular;
             clear: both;
             left: 0;
@@ -32,6 +34,8 @@ div.TabContainer {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            padding: 0 20px;
+            max-width: 100%;
 
             i.fi.flaticon-lock-o {
                 margin-left: 5px;
@@ -64,7 +68,7 @@ div.TabContainer {
     .Tab {
         position: absolute;
         width: 100%;
-        top: $label-height;
+        //top: $label-height;
         opacity: 0;
         transition: opacity .5s;
         z-index: $Depth-Tab;
@@ -76,20 +80,8 @@ div.TabContainer {
         }
     }
 
-    @media #{$Media-Extended} {
-        .TabLabels {
-            > a {
-                padding: 0 40px;
-            }
-        }
-    }
-
-    @media #{$Media-Mobile} {
-        .TabLabels {
-            > a {
-                padding: 0 10px;
-            }
-        }
+    &.MultiLine {
+        
     }
 }
 

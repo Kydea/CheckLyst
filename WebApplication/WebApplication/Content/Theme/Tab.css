@@ -3,13 +3,15 @@
   transition: height .3s;
   display: none; }
   div.TabContainer .TabLabels {
-    display: flex; }
+    display: flex;
+    position: relative;
+    flex-wrap: wrap; }
     div.TabContainer .TabLabels::after {
       content: "";
       position: absolute;
       height: 1px;
       width: 100%;
-      top: 38px;
+      bottom: 1px;
       background-color: #999;
       clear: both;
       left: 0;
@@ -23,7 +25,9 @@
       position: relative;
       overflow: hidden;
       text-overflow: ellipsis;
-      white-space: nowrap; }
+      white-space: nowrap;
+      padding: 0 20px;
+      max-width: 100%; }
       div.TabContainer .TabLabels > a i.fi.flaticon-lock-o {
         margin-left: 5px;
         font-size: 14px; }
@@ -43,7 +47,6 @@
   div.TabContainer .Tab {
     position: absolute;
     width: 100%;
-    top: 40px;
     opacity: 0;
     transition: opacity .5s;
     z-index: 50;
@@ -51,12 +54,6 @@
     div.TabContainer .Tab.Selected {
       opacity: 1;
       z-index: 51; }
-  @media only screen and (min-width: 760px) {
-    div.TabContainer .TabLabels > a {
-      padding: 0 40px; } }
-  @media only screen and (max-width: 759px) {
-    div.TabContainer .TabLabels > a {
-      padding: 0 10px; } }
 
 div.ShadowPanel div.TabContainer {
   margin-bottom: 20px;

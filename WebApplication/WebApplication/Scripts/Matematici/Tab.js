@@ -1,30 +1,37 @@
 ﻿matematici.Tab = function(selector, options) {
 
-	var
-		tab = this,
-		element = $(selector),
-		currentItem,
-		handlers = [],
+    var
+        tab = this,
+        element = $(selector),
+        currentItem,
+        handlers = [],
+
+        getLabelsHeight = function () {
+            return $("> .TabLabels", element).outerHeight();
+        },
 
 		getCurrentItemHeight = function () {
-			return currentItem.label.height() + currentItem.tab.height() + 3;
+            return getLabelsHeight() + currentItem.tab.height() + 3;
 		},
 
 		resize = function () {
 			element.show();
 			if (options.fixedHeight) {
-				var
-					height = 0,
+                var
+                    labelsHeight = getLabelsHeight();
+					tagHeight = 0,
 					currentIndex = currentItem && currentItem.index || 0;
 
-                $(".TabLabels a", element).each(function (index) {
+                $("> .Tab", element).css("margin-top", labelsHeight);
+
+                $("> .TabLabels a", element).each(function (index) {
                     var item = select(index);
-                    height = Math.max(height, getCurrentItemHeight());
+                    tagHeight = Math.max(tagHeight, getCurrentItemHeight());
                     item.tab.hide();
-				});
+                });
 
 				select(currentIndex);
-				element.height(height);
+                element.height(labelsHeight);
 			} else
 				element.height(getCurrentItemHeight());
 		},
@@ -32,18 +39,18 @@
 		getItem = function (index) {
 			return {
 				index: index,
-				label: $(".TabLabels a", element).eq(index),
-				tab: $(".Tab", element).eq(index)
+				label: $("> .TabLabels a", element).eq(index),
+				tab: $("> .Tab", element).eq(index)
 			}
 		},
 
         setItem = function (index) {
 			var item = {
 				index: index,
-                label: $(".TabLabels a", element).removeClass("Selected").eq(index).addClass("Selected"),
-                tab: $(".Tab", element).removeClass("Selected").eq(index).addClass("Selected").show()
+                label: $("> .TabLabels a", element).removeClass("Selected").eq(index).addClass("Selected"),
+                tab: $("> .Tab", element).removeClass("Selected").eq(index).addClass("Selected").show()
 			}
-            setTimeout(function () { $(".Tab:not(.Selected)", element).hide(); }, 500);
+            setTimeout(function () { $("> .Tab:not(.Selected)", element).hide(); }, 500);
             return item;
 		},
 
@@ -64,11 +71,11 @@
 
 		setup = function () {
 			if (!options) options = {};
-			select($(".TabLabels a.Selected", element).prevAll("a").size());
+			select($("> .TabLabels a.Selected", element).prevAll("a").size());
 
 			element
 				.data("tab", tab)
-                .on("click", ".TabLabels a", function (e) {
+                .on("click", "> .TabLabels a", function (e) {
                     e.preventDefault();
                     //e.stopPropagation();
 
@@ -78,7 +85,7 @@
                         handlers[index].call(this, currentItem);
                 });
 
-            $(".TabLabels a", element).each(function() {
+            $("> .TabLabels a", element).each(function() {
                 var label = $(this);
                 label.attr("title", label.text());
             });
@@ -97,7 +104,7 @@
 	};
 
 	this.getLabels = function () {
-		return $(".TabLabels a", element);
+		return $("> .TabLabels a", element);
 	};
 
     this.addHandler = function (handler) {
@@ -112,11 +119,11 @@
 	this.add = function (label, id, cssClass, icon) {
 		var label = $("<a />").attr({ href: "#", id: id }).addClass(cssClass).append(label);
 		if (icon) label.append($("<i />").addClass("fi flaticon-" + icon));
-		$(".TabLabels", element).append(label);
+		$("> .TabLabels", element).append(label);
     };
 
     this.clear = function () {
-        $(".TabLabels", element).empty();
+        $("> .TabLabels", element).empty();
 	};
 
 	this.resize = function () {
