@@ -20,8 +20,8 @@
 				localStorage.lastActivity = new Date();
 			});
 
-			setInterval(function () {
-                if (localStorage.refreshToken && new Date() - new Date(localStorage.lastActivity) > 900000) {
+            setInterval(function () {
+                if (localStorage.refreshToken && new Date() - new Date(localStorage.lastActivity) > (parseInt(localStorage.inactivityTimeoutSeconds) * 1000 || 900000)) {
                     //alert("last activity performed on " + localStorage.lastActivity + ", redirecting to login page");
 					localStorage.refreshToken = null;
                     matematici.canClose = true;
@@ -70,6 +70,7 @@
 			localStorage.userCode = result.code;
 			localStorage.userName = result.name;
 			localStorage.decimalSeparator = result.decimalSeparator;
+            //localStorage.inactivityTimeoutSeconds is set directly by the login form
 
 			matematici.menu.toggleItemsByRole();
 			matematici.userPanel.update();

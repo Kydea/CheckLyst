@@ -9,7 +9,7 @@ namespace CheckListManager.Common.Data
 {
     public class CommonRepository : Repository, ICommonRepository
     {
-	    private readonly IMemoryCache _memoryCache;
+        private readonly IMemoryCache _memoryCache;
 
         public CommonRepository(RelationalDatabaseEntities entities, IMemoryCache memoryCache) : base(entities)
         {
@@ -20,7 +20,15 @@ namespace CheckListManager.Common.Data
             => Entities.Companies.SingleAsync(c => c.ID == id);
 
         public Task<List<ListItems.Company>> GetCompaniesAsync()
-            => _memoryCache.GetOrAddAsync("Companies", key => Entities.Companies.Where(c => c.ID > 1).Select(c => new ListItems.Company { ID = c.ID, Name = c.Name }).ToListAsync(), "CommonRepository");
+            => _memoryCache.GetOrAddAsync("Companies", key =>
+            Entities.Companies.Where(c => c.ID > 1)
+            .OrderBy(c => c.Name).ThenBy(c => c.ID)
+            .Select(c => new ListItems.Company
+            {
+                ID = c.ID,
+                Name = c.Name,
+                InactivityTimeoutSeconds = c.InactivityTimeoutSeconds
+            }).ToListAsync(), "CommonRepository");
 
         public Task<List<Departments>> GetDepartmentsAsync(IDefaultIdentity identity, string functionGroup)
         {
@@ -108,7 +116,7 @@ namespace CheckListManager.Common.Data
                     && uf.Function == "View"
                     && uf.PrototypeType == null
                ));
-                return PrototypeVersionTags.Select(pv => pv.Code).ToListAsync();
+            return PrototypeVersionTags.Select(pv => pv.Code).ToListAsync();
         }
 
         public Task<List<string>> GetVersionStatesAsync()

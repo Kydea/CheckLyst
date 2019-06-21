@@ -221,6 +221,7 @@
           <Property Name="ModifiedBy" Type="varchar" MaxLength="60" />
           <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
           <Property Name="LoginFailedTimeout" Type="int4" Nullable="false" />
+          <Property Name="InactivityTimeoutSeconds" Type="int4" Nullable="false" />
         </EntityType>
         <EntityType Name="Departments">
           <Key>
@@ -1342,6 +1343,7 @@
           <NavigationProperty Name="SettingValues" Relationship="RelationalDatabaseModel.SettingValues_Company_fkey" FromRole="Companies" ToRole="SettingValues" />
           <Property Name="LoginFailedTimeout" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Instances" Relationship="RelationalDatabaseModel.Instances_Company_fkey" FromRole="Companies" ToRole="Instances" />
+          <Property Name="InactivityTimeoutSeconds" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="Departments">
           <Key>
@@ -2712,6 +2714,7 @@
           <EntitySetMapping Name="Companies">
             <EntityTypeMapping TypeName="RelationalDatabaseModel.Companies">
               <MappingFragment StoreEntitySet="Companies">
+                <ScalarProperty Name="InactivityTimeoutSeconds" ColumnName="InactivityTimeoutSeconds" />
                 <ScalarProperty Name="LoginFailedTimeout" ColumnName="LoginFailedTimeout" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />

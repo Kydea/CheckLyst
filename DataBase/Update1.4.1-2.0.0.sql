@@ -3,14 +3,6 @@ alter table "CheckLists"."InstanceExpressionValues" add
 	"Unique" boolean not null default true,
 	"Exception" boolean not null default false;
 
-alter table "WorkFlows"."WorkFlowApplicationSteps" add "UserDescription" varchar (100);
-
-update "WorkFlows"."WorkFlowApplicationSteps"
-set 
-	"UserDescription" = (select u."Description" from "Security"."Users" u where u."Company" = "WorkFlowApplicationSteps"."Company" and u."Code" = "WorkFlowApplicationSteps"."User")
-where 
-	not "User" is null;
-
 create or replace function "CheckLists"."ValidateUniqueExpressions"
 (
 	_Instance bigint
@@ -48,3 +40,13 @@ begin
 end
 $$
 language plpgsql;
+
+alter table "WorkFlows"."WorkFlowApplicationSteps" add "UserDescription" varchar (100);
+
+update "WorkFlows"."WorkFlowApplicationSteps"
+set 
+	"UserDescription" = (select u."Description" from "Security"."Users" u where u."Company" = "WorkFlowApplicationSteps"."Company" and u."Code" = "WorkFlowApplicationSteps"."User")
+where 
+	not "User" is null;
+
+alter  table "Infrastructure"."Companies" add "InactivityTimeoutSeconds" int not null default 900;

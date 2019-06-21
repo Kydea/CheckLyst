@@ -27,6 +27,7 @@ create table "Infrastructure"."Companies"
 	"PasswordDaysLife" int not null default 0,
   	"WarningUserInactivityDays" int not null default 0,
   	"MaximumUserInactivityDays" int not null default 0,
+  	"InactivityTimeoutSeconds" int not null default 900,
 
 	"AuthenticationServer" text,
 

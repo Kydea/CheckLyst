@@ -44,6 +44,7 @@ namespace CheckListManager.Common.Data
         public string ModifiedBy { get; set; }
         public Nullable<System.DateTimeOffset> ModifiedOn { get; set; }
         public int LoginFailedTimeout { get; set; }
+        public int InactivityTimeoutSeconds { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Departments> Departments { get; set; }

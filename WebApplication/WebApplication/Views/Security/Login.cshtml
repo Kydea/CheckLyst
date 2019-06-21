@@ -49,6 +49,7 @@
             companyList = $("select[name=companyId]", form),
             userCode = $("input[name=username]", form),
             password = $("input[name=password]", form),
+            companies = {},
 
             showError = function (message) {
                 error.html(" " + message).prepend($("<i />").addClass("fi flaticon-warning")).show()
@@ -74,6 +75,8 @@
                     suppressErrors: true
                 }).done(function (result) {
                     localStorage.companyName = companyList.data("autoComplete").getControl().val();
+                    var company = companyList.data("autoComplete").getValue();
+                    localStorage.inactivityTimeoutSeconds = companies[company].inactivityTimeoutSeconds;
                     matematici.tokenManager.login(result);
                     matematici.clock.resume();
                     matematici.navigator.open("@Model")
@@ -99,7 +102,8 @@
         }).done(function (result) {
             for (var index in result) {
                 var company = result[index];
-                companyList.append($("<option />").attr("value", company.id).text(company.name));
+                companies[company.id] = company;
+                companyList.append($("<option />").attr("value", company.id).data("inactivityTimeoutSeconds", company.inactivityTimeoutSeconds).text(company.name));
             }
             companyList.val(null);
             callback.call();

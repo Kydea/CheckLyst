@@ -6,6 +6,7 @@
         paginator,
         filtered = false,
         advancedSearchPanel = $("div.AdvancedSearch", options.filterFormSelector),
+        advancedSearchButton,
         advancedSearchMode = false,
 
         filterHandler = function (result) {
@@ -24,7 +25,7 @@
             advancedSearchMode = value;
             if (advancedSearchMode) {
                 advancedSearchPanel.slideDown();
-                $(this).addClass("Open");
+                advancedSearchButton.addClass("Open");
 
                 setTimeout(function () {
                     $("select.AutoComplete", advancedSearchPanel).each(function (index) {
@@ -36,7 +37,7 @@
                 }, 0);
             } else {
                 advancedSearchPanel.slideUp();
-                $(this).removeClass("Open");
+                advancedSearchButton.removeClass("Open");
             };
         },
 
@@ -56,13 +57,12 @@
 					});
                 }, null, "plus");
 
-			$(options.filterFormSelector).append(
-				$("<a />")
-					.attr({ href: "#", id: "ApplyButton" })
-					.addClass("Button GreyYellowButton DefaultButton")
-					.text("search")
-					.prepend($("<i />").addClass("fi flaticon-arrow-right"))
-			);
+            $(options.filterFormSelector).append($("<a />")
+                .attr({ href: "#", id: "ApplyButton" })
+                .addClass("Button GreyYellowButton DefaultButton")
+                .text("search")
+                .prepend($("<i />").addClass("fi flaticon-arrow-right"))
+            );
 
 			new matematici.Page({
 				name: options.pageName,
@@ -97,7 +97,7 @@
 
             if (advancedSearchPanel.length == 1) {
                 form.getElement().addClass("AdvancedSearch");
-                $("<a />")
+                advancedSearchButton = $("<a />")
                     .addClass("AdvancedSearch")
                     .text("Advanced search")
                     .on("click", toggleAdvancedSearch)

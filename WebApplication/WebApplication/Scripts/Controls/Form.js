@@ -112,12 +112,14 @@
 			parameters.data = parameters.data || {};
 
 			//prepares the request
-			fields.each(function () {
-				var field = $(this);
-				parameters.data[field.attr("name")] =
-					field.hasClass("DatePicker") || field.data("type") == "DateTimeOffset" ? field.data("date") :
-						field.attr("type") == "checkbox" ? field.prop("checked") :
-							field.val();
+            fields.each(function () {
+                var
+                    field = $(this),
+                    apply = options.searchPage.isAdvancedSearchMode() || field.closest("div.AdvancedSearch").length == 0;
+                parameters.data[field.attr("name")] =
+                    field.hasClass("DatePicker") || field.data("type") == "DateTimeOffset" ? (apply ? field.data("date") : null) :
+					field.attr("type") == "checkbox" ? (apply ? field.prop("checked") : false) :
+                    (apply ? field.val() : "");
 			});
 
             parameters.data["advancedSearch"] = options.searchPage.isAdvancedSearchMode();
