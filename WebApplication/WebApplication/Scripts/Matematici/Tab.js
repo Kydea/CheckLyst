@@ -1,5 +1,4 @@
 ﻿matematici.Tab = function(selector, options) {
-
     var
         tab = this,
         element = $(selector),
