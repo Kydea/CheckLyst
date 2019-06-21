@@ -15,6 +15,7 @@
           <Property Name="Value" Type="text" Nullable="false" />
           <Property Name="Description" Type="varchar" MaxLength="100" />
           <Property Name="Exception" Type="bool" Nullable="false" />
+          <Property Name="Unique" Type="bool" Nullable="false" />
         </EntityType>
         <EntityType Name="InstanceNumerators">
           <Key>
@@ -1718,6 +1719,7 @@
           <NavigationProperty Name="Instances" Relationship="RelationalDatabaseModel.InstanceExpressionValues_Instance_fkey" FromRole="InstanceExpressionValues" ToRole="Instances" />
           <Property Name="Description" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Exception" Type="Boolean" Nullable="false" />
+          <Property Name="Unique" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="InstanceNumerators">
           <Key>
@@ -2788,6 +2790,7 @@
           <EntitySetMapping Name="InstanceExpressionValues">
             <EntityTypeMapping TypeName="RelationalDatabaseModel.InstanceExpressionValues">
               <MappingFragment StoreEntitySet="InstanceExpressionValues">
+                <ScalarProperty Name="Unique" ColumnName="Unique" />
                 <ScalarProperty Name="Exception" ColumnName="Exception" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="Value" ColumnName="Value" />

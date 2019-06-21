@@ -202,7 +202,8 @@ create table "CheckLists"."InstanceExpressionValues"
 	constraint "FK_InstanceExpressionValues_Instance" foreign key ("Instance") references "CheckLists"."Instances" on delete cascade,
 	"Code" varchar (50),
 	"Description" varchar (100),
-	"Exception" boolean not null default,
+	"Unique" boolean not null,
+	"Exception" boolean not null,
 
 	constraint "PK_InstanceExpressionValues" primary key ("Instance", "Code"),
 
@@ -234,8 +235,8 @@ begin
 		"CheckLists"."Instances" i1
 		inner join "CheckLists"."PrototypeVersions" pv on i1."Prototype" = pv."Prototype" and i1."Version" = pv."Version"
 		inner join "CheckLists"."Instances" i2 on i1."Prototype" = i2."Prototype" and i1."Version" = i2."Version" and i2."InstanceState" = 'In progress' and i1."ID" <> i2."ID"
-		inner join "CheckLists"."InstanceExpressionValues" iev1 on i1."ID" = iev1."Instance"
-		inner join "CheckLists"."InstanceExpressionValues" iev2 on i2."ID" = iev2."Instance" and iev1."Code" = iev2."Code" and iev1."Value" = iev2."Value"
+		inner join "CheckLists"."InstanceExpressionValues" iev1 on i1."ID" = iev1."Instance" and iev1."Unique"
+		inner join "CheckLists"."InstanceExpressionValues" iev2 on i2."ID" = iev2."Instance" and iev1."Code" = iev2."Code" and iev1."Value" = iev2."Value" and iev1."Unique"
 	where
 		i1."ID" = _Instance
 	limit 1;

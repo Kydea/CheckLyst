@@ -141,10 +141,10 @@ namespace CheckListManager.Instances.Logic.List
                     && (!form.Data.To.HasValue || i.ModifiedOn <= form.Data.WholeTo.Value)
                     && (
                         form.Data.ExceptionState == string.Empty
-                        || form.Data.ExceptionState == "include" && i.InstanceExpressionValues.Any(ev => ev.Exception && ev.Value == "True")
-                        || form.Data.ExceptionState == "exclude" && !i.InstanceExpressionValues.Any(ev => ev.Exception && ev.Value == "True")
-                    ),
-                    //&& (form.Data.ExceptionDescription == null || i.InstanceExpressionValues.Any(ev => ev.Exception && ev.Value == "True" && ev.Description.ToUpper().Contains(form.Data.ExceptionDescription.ToUpper()))),
+                        || form.Data.ExceptionState == "include" && i.InstanceExpressionValues.Any(ev => ev.Exception)
+                        || form.Data.ExceptionState == "exclude" && !i.InstanceExpressionValues.Any(ev => ev.Exception)
+                    )
+                    && (form.Data.ExceptionDescription == string.Empty || i.InstanceExpressionValues.Any(ev => ev.Exception && ev.Description.ToUpper().Contains(form.Data.ExceptionDescription.ToUpper()))),
                 i => i.ID,
                 form.CurrentPage,
                 form.ItemsPerPage

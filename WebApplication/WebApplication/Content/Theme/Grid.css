@@ -49,9 +49,9 @@
   table.Grid tbody tr:not(.Odd):nth-child(even), table.Grid tbody tr.Even {
     background-color: #e8f7fc; }
   table.Grid tbody tr:first-child td.Order i.Up {
-    display: none; }
+    display: none !important; }
   table.Grid tbody tr:last-child td.Order i.Down {
-    display: none; }
+    display: none !important; }
   table.Grid tbody tr.Handler {
     cursor: pointer; }
     table.Grid tbody tr.Handler:hover {

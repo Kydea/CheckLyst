@@ -34,19 +34,15 @@
   div#Breadcrumbs a:hover {
     text-decoration: none;
     color: blue; }
-  @media only screen and (min-width: 760px) {
-    div#Breadcrumbs.Fixed {
-      position: absolute;
-      visibility: visible; }
-      div#Breadcrumbs.Fixed.Visible {
-        padding-top: 10px;
-        padding-bottom: 10px;
-        z-index: 103;
-        position: fixed;
-        width: 100%;
-        top: 0;
-        background: white;
-        border-bottom: solid 1px #ccc; } }
-  @media only screen and (max-width: 759px) {
-    div#Breadcrumbs.Fixed {
-      display: none; } }
+  div#Breadcrumbs.Fixed {
+    position: absolute;
+    visibility: visible; }
+    div#Breadcrumbs.Fixed.Visible {
+      padding-top: 10px;
+      padding-bottom: 10px;
+      z-index: 103;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      background: white;
+      border-bottom: solid 1px #ccc; }

@@ -1,6 +1,15 @@
 alter table "CheckLists"."InstanceExpressionValues" add 
 	"Description" varchar (100),
+	"Unique" boolean not null default true,
 	"Exception" boolean not null default false;
+
+alter table "WorkFlows"."WorkFlowApplicationSteps" add "UserDescription" varchar (100);
+
+update "WorkFlows"."WorkFlowApplicationSteps"
+set 
+	"UserDescription" = (select u."Description" from "Security"."Users" u where u."Company" = "WorkFlowApplicationSteps"."Company" and u."Code" = "WorkFlowApplicationSteps"."User")
+where 
+	not "User" is null;
 
 create or replace function "CheckLists"."ValidateUniqueExpressions"
 (
@@ -25,8 +34,8 @@ begin
 		"CheckLists"."Instances" i1
 		inner join "CheckLists"."PrototypeVersions" pv on i1."Prototype" = pv."Prototype" and i1."Version" = pv."Version"
 		inner join "CheckLists"."Instances" i2 on i1."Prototype" = i2."Prototype" and i1."Version" = i2."Version" and i2."InstanceState" = 'In progress' and i1."ID" <> i2."ID"
-		inner join "CheckLists"."InstanceExpressionValues" iev1 on i1."ID" = iev1."Instance"
-		inner join "CheckLists"."InstanceExpressionValues" iev2 on i2."ID" = iev2."Instance" and iev1."Code" = iev2."Code" and iev1."Value" = iev2."Value"
+		inner join "CheckLists"."InstanceExpressionValues" iev1 on i1."ID" = iev1."Instance" and iev1."Unique"
+		inner join "CheckLists"."InstanceExpressionValues" iev2 on i2."ID" = iev2."Instance" and iev1."Code" = iev2."Code" and iev1."Value" = iev2."Value" and iev1."Unique"
 	where
 		i1."ID" = _Instance
 	limit 1;

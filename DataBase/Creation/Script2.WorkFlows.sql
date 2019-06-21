@@ -99,6 +99,7 @@ create table "WorkFlows"."WorkFlowApplicationSteps"
 
 	"Company" bigint,
 	"User" varchar (60),
+	"UserDescription" varchar (100),
 
     constraint "WorkFlowApplicationSteps_User" foreign key ("Company", "User") references "Security"."Users",
 

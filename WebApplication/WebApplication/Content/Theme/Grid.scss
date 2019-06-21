@@ -87,13 +87,13 @@ table.Grid {
 
             &:first-child {
                 td.Order i.Up {
-                    display: none;
+                    display: none !important;
                 }
             }
 
             &:last-child {
                 td.Order i.Down {
-                    display: none;
+                    display: none !important;
                 }
             }
 

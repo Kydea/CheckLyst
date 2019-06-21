@@ -446,12 +446,14 @@ namespace CheckListManager.Instances.Logic.Services
 
         private IEnumerable<InstanceExpressionValues> CreateExpressionValues(InstanceCacheObject cacheObject)
         {
-            return cacheObject.Instance.Expressions.Where(Expression => !Expression.Value.Value.IsNull && Expression.Value.Unique).Select(e => new InstanceExpressionValues
+            return cacheObject.Instance.Expressions.Where(Expression => Expression.Value.Exception && Expression.Value.Value.BooleanValue || Expression.Value.Unique && !Expression.Value.Value.IsNull).Select(e => new InstanceExpressionValues
             {
                 Instance = cacheObject.Id.Value,
                 Code = e.Key,
                 Description = e.Value.Description,
-                Value = e.Value.Value.SerializedValue
+                Value = e.Value.Value.SerializedValue,
+                Exception = e.Value.Exception,
+                Unique = e.Value.Unique
             });
         }
 

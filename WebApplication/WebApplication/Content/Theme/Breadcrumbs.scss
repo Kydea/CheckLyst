@@ -56,24 +56,18 @@ div#Breadcrumbs {
     }
 
     &.Fixed {
-        @media #{$Media-Extended} {
-            position: absolute;
-            visibility: visible;
+        position: absolute;
+        visibility: visible;
 
-            &.Visible {
-                padding-top: 10px;
-                padding-bottom: 10px;
-                z-index: $Depth-Header;
-                position: fixed;
-                width: 100%;
-                top: 0;
-                background: white;
-                border-bottom: solid 1px $Color-Grey-Light;
-            }
-        }
-
-        @media #{$Media-Mobile} {
-            display: none;
+        &.Visible {
+            padding-top: 10px;
+            padding-bottom: 10px;
+            z-index: $Depth-Header;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            background: white;
+            border-bottom: solid 1px $Color-Grey-Light;
         }
     }
 }

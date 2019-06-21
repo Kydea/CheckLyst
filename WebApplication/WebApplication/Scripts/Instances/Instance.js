@@ -85,14 +85,17 @@
             exceptions = [];
             for (var index in expressions) {
                 var expression = expressions[index];
-                if (!!expression.exception && !expression.rawValue)
-                    exceptions.push(expression);
+                if (!!expression.exception && expression.rawValue) {
+                    var exception = { code: index, description: expression.description };
+                    exceptions.push(exception);
+                }
             }
             exceptionsButton.toggle(exceptions.length > 0);
         },
 
         showExceptions = function () {
             var message = "";
+            console.log(exceptions);
             for (var index in exceptions) {
                 var exception = exceptions[index];
                 message += exception.description + " (" + exception.code + ")<br />";
