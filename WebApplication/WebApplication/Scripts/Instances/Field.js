@@ -46,9 +46,10 @@
 		getValue = function () {
 			var value = model.valuesList ? select.val() || "" : (input.val() || "").trim();
 			if (!model.valuesList) {
-				if (value != "" && model.valueTypeName == "DateTime")
-					value = value + " " + select.val() + ":" + select2.val();
-				else if (model.valueTypeName == "Time")
+                if (value != "" && model.valueTypeName == "DateTime") {
+                    var momentDate = matematici.dateFormatter.parse(value, select.val() + ":" + select2.val(), null, true);
+                    value = matematici.dateFormatter.date(momentDate, false) + " " + matematici.dateFormatter.time(momentDate, false);
+                } else if (model.valueTypeName == "Time")
 					value = select.val() != "" && select2.val() != "" ? select.val() + ":" + select2.val() : "";
 				else if (model.valueTypeName == "Boolean")
 					value = input.prop("checked") ? "true" : "false";
@@ -153,9 +154,8 @@
 					icon.on("click", call);
 				} else if (model.valueTypeName == "DateTime" || model.valueTypeName == "Time") {
 					element.addClass(model.valueTypeName);
-					for (var i = 0; i < 24; i++) {
+					for (var i = 0; i < 24; i++) 
 						select.append($("<option />").attr("value", (i < 10 ? "0" : "") + i).text((i < 10 ? "0" : "") + i));
-					}
 					select2 = $("<select />").appendTo(item.isTableContent() ? element : label).data("nullable", true);
 					select2.on("change", function () {
 						change(getValue());
@@ -199,23 +199,22 @@
 			select.val(model.rawValue)
 		else if (model.valueFormulaString)
 			input.val(model.rawValue);
-		else if (model.valueTypeName == "DateTime") {
-        	var index = (model.rawValue || "").indexOf(" ");
-        	if (index >= 0) {
-				input.val(model.rawValue.substr(0, index));
-				var index2 = model.rawValue.indexOf(":");
-        		if (index2 >= 0) {
-					select.val(model.rawValue.substr(index + 1, index2 - index - 1));
-					select2.val(model.rawValue.substr(index2 + 1));
-				} else {
-        			select.val("");
-        			select2.val("");
-        		}
-        	} else {
-				input.val(model.rawValue);
-        		select.val("");
-        		select2.val("");
-        	}
+        else if (model.valueTypeName == "DateTime") {
+            if (!model.rawValue || model.rawValue == "") {
+                input.val("");
+                select.val("");
+                select2.val("");
+            } else {
+                var
+                    index = model.rawValue.indexOf(" "),
+                    date = model.rawValue.substr(0, index),
+                    time = model.rawValue.substr(index + 1),
+                    m = matematici.dateFormatter.parse(date, time, null, false),
+                    formattedDate = matematici.dateFormatter.format(m, true);
+                input.val(formattedDate.date);
+                select.val(formattedDate.hours);
+                select2.val(formattedDate.minutes);
+            }
         } else if (model.valueTypeName == "Time") {
 			input.val(model.rawValue);
 			var index = (model.rawValue || "").indexOf(":");

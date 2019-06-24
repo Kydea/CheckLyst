@@ -28,7 +28,7 @@
 					if (column.type == "DateTimeOffset") {
 						if (value) {
 							var formattedDate = matematici.dateFormatter.format(new Date(value), true);
-							td.append($("<span />").html(formattedDate.date + " " + formattedDate.time).attr("title", formattedDate.offset));
+                            td.append($("<span />").html(formattedDate.date + " " + formattedDate.time + ":" + formattedDate.seconds).attr("title", formattedDate.offset));
 						}
 					} else if (value === true)
 						td.append($("<i />").addClass("fi flaticon-check"));

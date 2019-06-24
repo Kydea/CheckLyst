@@ -52,11 +52,15 @@
             actionBar = new matematici.ActionBar("div.ActionBar")
                 .add("<i class='fi flaticon-calculator'></i>", function () {
                     new matematici.CheckListGrid(instance.getExpressions(), null, function (tr, row, rowIndex, columnIndex, value) {
-                        if (columnIndex == 1 && row["typeName"] == "DateTime") {
+                        if (columnIndex == 1 && (row.typeName == "DateTime" || row.typeName == "Date")) {
                             var td = $("<td />").appendTo(tr);
                             if (value) {
-                                var formattedDate = matematici.dateFormatter.format(new Date(value), true);
-                                td.append($("<span />").html(formattedDate.date + " " + formattedDate.time).attr("title", formattedDate.offset));
+                                var
+                                    formattedDate = matematici.dateFormatter.format(new Date(value), true),
+                                    formattedValue =
+                                        row.typeName == "DateTime" ? formattedDate.date + " " + formattedDate.time + ":" + formattedDate.seconds : formattedDate.date;
+
+                                    td.append($("<span />").html(formattedValue).attr("title", formattedDate.offset));
                             }
                             return true;
                         } 

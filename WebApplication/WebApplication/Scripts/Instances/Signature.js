@@ -142,8 +142,8 @@
 			user.val(model.signedBy + " - " + model.signerDescription);
 			var format = matematici.dateFormatter.format(model.signedOn, true);
             date.val(format.date);
-			time.val(format.time);
-			element.attr("title", user.val() + " | " + format.date + " " + " " + format.time + " " + format.offset);
+            time.val(format.time + ":" + format.seconds);
+            element.attr("title", user.val() + " | " + format.date + " " + " " + format.time + ":" + format.seconds + " " + format.offset);
             if (cancelButton) {
 				cancelButton.css("display", "inline-block");
 				button.css("display", "none");
