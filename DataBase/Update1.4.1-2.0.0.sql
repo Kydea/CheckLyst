@@ -50,3 +50,4 @@ where
 	not "User" is null;
 
 alter  table "Infrastructure"."Companies" add "InactivityTimeoutSeconds" int not null default 900;
+

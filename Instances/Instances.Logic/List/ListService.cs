@@ -50,6 +50,17 @@ namespace CheckListManager.Instances.Logic.List
                     Options = states.Where(x => x != InstanceState.Draft).Select(x => new Option(x)),
                     Value = form.State
                 };
+
+                response.Fields["ExceptionDescription"] = new Field { Value = form.ExceptionDescription };
+                response.Fields["ExceptionState"] = new Field
+                {
+                    Options = new Option[] {
+                        new Option("", "(all)"),
+                        new Option("include", "only with exceptions"),
+                        new Option("exclude", "only without exceptions")
+                    },
+                    Value = form.ExceptionState
+                };
             }
 
             if (form.Source == null || form.Source == "department")
@@ -106,6 +117,9 @@ namespace CheckListManager.Instances.Logic.List
             form.Data.State = form.Data.State ?? string.Empty;
             form.Data.TagCode = form.Data.TagCode ?? string.Empty;
             form.Data.TagValue = form.Data.TagValue ?? string.Empty;
+            form.Data.ExceptionState = form.Data.ExceptionState ?? string.Empty;
+            form.Data.ExceptionDescription = form.Data.ExceptionDescription ?? string.Empty;
+
             return await _instancesRepository.GetInstancesAsync(
                 company,
                 i => new ListRow
@@ -120,8 +134,8 @@ namespace CheckListManager.Instances.Logic.List
                     PrototypeTypeName = i.Prototypes.PrototypeTypes.Name,
                     PrototypeName = i.Prototypes.Name,
                     Version = i.Version,
-                    Exceptions = i.InstanceExpressionValues.Where(ev => ev.Exception && ev.Value == "True").Select(ev => new InstanceException { Code = ev.Code, Description = ev.Description }).ToList(),
-                    
+                    Exceptions = i.InstanceExpressionValues.Where(ev => ev.Exception).Select(ev => new InstanceException { Code = ev.Code, Description = ev.Description }).ToList(),
+
                     CreatedBy = i.CreatedBy,
                     CreatedOn = i.CreatedOn,
                     ModifiedBy = i.ModifiedBy,

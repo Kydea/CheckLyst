@@ -35,7 +35,7 @@
             <label class="Controls2">
                 <span>Tag / value</span>
                 <i class="Icon fi flaticon-tags-o" />
-                <select name="tagCode"  data-nullable="(all)" />
+                <select name="tagCode" data-nullable="(all)" />
                 <i class="Icon fi flaticon-align-left" />
                 <input type="text" name="tagValue" />
             </label>
@@ -46,23 +46,15 @@
                     <input type="text" name="from" class="DatePicker" />
                     <input type="text" name="to" class="DatePicker" />
                 </label>
-                <label>
+                <label class="Clearing">
                     <span>Exception state</span>
                     <i class="Icon fi flaticon-prototype" />
-                    <select name="exceptionState">
-                        <option value="">(all)</option>
-                        <option value="include">only with exceptions</option>
-                        <option value="exclude">only without exceptions</option>
-                    </select>
+                    <select name="exceptionState" />
                 </label>
-                <label class="Clearing">
+                <label>
                     <span>Exception description</span>
                     <i class="Icon fi flaticon-exclamation" />
                     <input type="text" name="exceptionDescription" />
-                </label>
-                <label>
-                    <span>Show exceptions</span>
-                    <input type="checkbox" name="showException" />
                 </label>
             </div>
         </form>
@@ -76,6 +68,7 @@
                     <th>Year</th>
                     <th>Number</th>
                     <th>Description</th>
+                    <th class="AdvancedSearch">Exceptions</th>
                     <th>Department</th>
                     <th>Prototype type</th>
                     <th>Prototype</th>
@@ -90,10 +83,11 @@
                 <tr class="Handler">
                     <td data-column="id"></td>
                     <td data-column="instanceCode"></td>
-                    <td data-column="state"></td>
+                    <td data-column="state" style="min-width: 120px;"></td>
                     <td data-column="year"></td>
                     <td data-column="number"></td>
-                    <td data-column="description"></td>
+                    <td data-column="description" style="min-width: 250px;"></td>
+                    <td class="AdvancedSearch" data-column="exceptions" data-type="Custom" style="min-width: 250px;"></td>
                     <td data-column="departmentName"></td>
                     <td data-column="prototypeTypeName"></td>
                     <td data-column="prototypeName"></td>
@@ -129,6 +123,13 @@
             ],
             rowClickHandler: function (row) {
                 matematici.navigator.open("@Url.Action("Detail")/" + encodeURIComponent(row.data("values").code));
+            },
+            setCellValueHandler: function (cell, data, column, type, value) {
+                if (column == "exceptions" && value)
+                    for (var index in value) {
+                        var exception = value[index];
+                        cell.addClass("Red").append($("<span />").addClass("Block").text(exception.description));
+                    }
             }
         });
 

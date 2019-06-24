@@ -10,7 +10,7 @@
         advancedSearchMode = false,
 
         filterHandler = function (result) {
-            grid.update(result.data);
+            grid.update(result.data, options.updateHandler);
             paginator.setPage(result.currentPage, result.pagesCount);
             filtered = true;
         },
@@ -26,6 +26,7 @@
             if (advancedSearchMode) {
                 advancedSearchPanel.slideDown();
                 advancedSearchButton.addClass("Open");
+                grid.getElement().addClass("AdvancedSearch")
 
                 setTimeout(function () {
                     $("select.AutoComplete", advancedSearchPanel).each(function (index) {
@@ -38,6 +39,7 @@
             } else {
                 advancedSearchPanel.slideUp();
                 advancedSearchButton.removeClass("Open");
+                grid.getElement().removeClass("AdvancedSearch")
             };
         },
 
@@ -64,6 +66,14 @@
                 .prepend($("<i />").addClass("fi flaticon-arrow-right"))
             );
 
+            if (advancedSearchPanel.length == 1)
+                advancedSearchButton = $("<a />")
+                    .addClass("AdvancedSearch")
+                    .text("Advanced search")
+                    .on("click", toggleAdvancedSearch)
+                    .attr("href", "#")
+                    .append($("<i >").addClass("fi flaticon-arrow-down"));
+
 			new matematici.Page({
 				name: options.pageName,
 				initializers: [
@@ -76,7 +86,8 @@
 								sender: form,
 								closeHandler: closeHandler
 							});
-						}
+                        },
+                        setCellValueHandler: options.setCellValueHandler
 					}),
 					form = new matematici.Form(options.filterFormSelector, {
 						bindEvent: options.bindEvent,
@@ -93,18 +104,10 @@
 				],
 
 				breadcrumbs: options.breadCrumbs
-			});
+            });
 
-            if (advancedSearchPanel.length == 1) {
-                form.getElement().addClass("AdvancedSearch");
-                advancedSearchButton = $("<a />")
-                    .addClass("AdvancedSearch")
-                    .text("Advanced search")
-                    .on("click", toggleAdvancedSearch)
-                    .attr("href", "#")
-                    .append($("<i >").addClass("fi flaticon-arrow-down"))
-                    .appendTo(form.getElement());
-            }
+            if (advancedSearchPanel.length == 1) 
+                form.getElement().addClass("AdvancedSearch").append(advancedSearchButton);
         };
 
 	searchPage.isReadOnly = function () {

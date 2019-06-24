@@ -30,6 +30,12 @@
     padding: 3px 20px;
     height: 40px;
     border-right: solid 1px #ccc; }
+    table.Grid tbody tr td span.Block {
+      display: block; }
+      table.Grid tbody tr td span.Block + span.Block {
+        margin-top: 10px; }
+    table.Grid tbody tr td.Red {
+      color: #cc0000; }
     table.Grid tbody tr td.Off {
       opacity: .3; }
     table.Grid tbody tr td.Centered {
@@ -44,6 +50,8 @@
       background-color: white; }
     table.Grid tbody tr td.Even {
       background-color: #e8f7fc; }
+    table.Grid tbody tr td[data-type="DateTimeOffset"] {
+      min-width: 160px; }
   table.Grid tbody tr:not(.Even):nth-child(odd), table.Grid tbody tr.Odd {
     background-color: white; }
   table.Grid tbody tr:not(.Odd):nth-child(even), table.Grid tbody tr.Even {
@@ -71,3 +79,5 @@
   table.Grid tbody tr.NoRecord td {
     color: #999;
     text-align: center; }
+  table.Grid:not(.AdvancedSearch) .AdvancedSearch {
+    display: none; }

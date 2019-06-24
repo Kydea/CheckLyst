@@ -46,6 +46,18 @@ table.Grid {
                 height: 40px;
                 border-right: solid 1px $Color-Grey-Light;
 
+                span.Block {
+                    display: block;
+
+                    + span.Block {
+                        margin-top: 10px;
+                    }
+                }
+
+                &.Red {
+                    color: $Color-Red-Regular;
+                }
+
                 &.Off {
                     opacity: .3;
                 }
@@ -74,6 +86,10 @@ table.Grid {
 
                 &.Even {
                     background-color: $Color-Cyan;
+                }
+
+                &[data-type="DateTimeOffset"] {
+                    min-width: 160px;
                 }
             }
 
@@ -142,5 +158,9 @@ table.Grid {
                 }
             }
         }
+    }
+
+    &:not(.AdvancedSearch) .AdvancedSearch {
+        display: none;
     }
 }

@@ -20,7 +20,5 @@ namespace CheckListManager.Instances.Logic.List
         public DateTimeOffset? WholeTo { get { return To?.AddDays(1); } }
         public string ExceptionState { get; set; }
         public string ExceptionDescription { get; set; }
-        public bool ShowException { get; set; }
-
     }
 }
