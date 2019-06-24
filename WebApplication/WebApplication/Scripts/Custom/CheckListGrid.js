@@ -19,7 +19,7 @@
 			if (cssClass) tr.addClass(cssClass);
 			for (var columnIndex in columns) {
 				var column = columns[columnIndex];
-				if (!renderHandler || !renderHandler(this, rowIndex, columnIndex, row[column.name])) {
+				if (!renderHandler || !renderHandler(tr, row, rowIndex, columnIndex, row[column.name])) {
 					var
 						td = $("<td />"),
 						value = column.name ? row[column.name] : rowIndex;

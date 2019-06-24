@@ -51,10 +51,21 @@
 
             actionBar = new matematici.ActionBar("div.ActionBar")
                 .add("<i class='fi flaticon-calculator'></i>", function () {
-                    new matematici.CheckListGrid(instance.getExpressions(), null, null, [
+                    new matematici.CheckListGrid(instance.getExpressions(), null, function (tr, row, rowIndex, columnIndex, value) {
+                        if (columnIndex == 1 && row["typeName"] == "DateTime") {
+                            var td = $("<td />").appendTo(tr);
+                            if (value) {
+                                var formattedDate = matematici.dateFormatter.format(new Date(value), true);
+                                td.append($("<span />").html(formattedDate.date + " " + formattedDate.time).attr("title", formattedDate.offset));
+                            }
+                            return true;
+                        } 
+                        return false;
+                    }, [
                         { label: "Code" },
                         { name: "rawValue", label: "Value" },
-                        { name: "typeName", label: "Type" }]);
+                        { name: "typeName", label: "Type" }
+                    ]);
                 }, "Icon ExpressionsButton")
                 .add("<i class='fi flaticon-exclamation'></i>", function () {
                     instance.showExceptions();

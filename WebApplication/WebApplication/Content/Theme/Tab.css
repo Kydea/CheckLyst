@@ -1,7 +1,8 @@
 ﻿div.TabContainer {
   position: relative;
   transition: height .3s;
-  display: none; }
+  display: none;
+  min-height: 40px; }
   div.TabContainer .TabLabels {
     display: flex;
     position: relative;
