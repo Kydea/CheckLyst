@@ -74,6 +74,12 @@
       width: 50%; }
       div.PropertyPanel div.PropertyValue.Value label span {
         position: relative; }
+    div.PropertyPanel div.PropertyValue.Upload form {
+      margin: 0 !important; }
+      div.PropertyPanel div.PropertyValue.Upload form input[type=file] {
+        display: none; }
+      div.PropertyPanel div.PropertyValue.Upload form a.Button {
+        margin: 0 !important; }
   div.PropertyPanel div.Information {
     position: absolute;
     overflow: auto;

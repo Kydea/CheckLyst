@@ -186,6 +186,12 @@ div.CheckList {
             }
         }
 
+        &.Image {
+            a.Image {
+                min-width: 150px;
+            }
+        }
+
         &.Link {
             position: relative;
             width: calc(100% - #{$Metric-Control-Space});

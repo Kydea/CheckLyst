@@ -73,8 +73,8 @@ matematici.dialog = function () {
 				element.addClass(options.cssClass);
 				matematici.elements.body.addClass("Dialog-" + options.cssClass);
 			}
-			if (options.title)
-				container.append($("<h2 />").html(options.title));
+            if (options.title)
+                container.append($("<h2 />").html(options.title));
 
 			if (options.content) container.append($("<div />").addClass("Content").append(options.content));
 			if (options.buttons) setButtons(options.buttons);
@@ -173,6 +173,9 @@ matematici.dialog = function () {
             text - type: String, description: the text of the button (i.e. <a class="Button">[text]</a>)
             handler - type: function, description: called when the button is clicked
             icon - type: function, description: the icon of the button (i.e. <a class="Button"><i class="fi flaticon[icon]"></i> [text]</a>)
+			hidden - type: boolean, description: the button is hidden
+			defaultButton - type: boolean, description: the click action is invoked when user press return
+			cancelButton - type: boolean, description: the click action is invoked when user press esc, a close button accociated is displayed (also if this button is hidden)
 
     or:
         show(settings) 

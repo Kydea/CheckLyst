@@ -270,6 +270,12 @@ div.Instance .Item.Signature i.flaticon-exclamation {
     div.Instance .Item.Signature label.Controls3 i:nth-of-type(3) {
       left: 400px !important; } }
 
+div.Instance .Item.Link div.Information {
+  display: none; }
+
+div.Instance .Item.Image div.Information {
+  display: none; }
+
 div.Instance .Item.Hidden {
   display: none; }
 

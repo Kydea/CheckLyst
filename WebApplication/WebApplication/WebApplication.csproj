@@ -237,6 +237,7 @@
     <Content Include="Scripts\Controls\ButtonGroup.js" />
     <Content Include="Scripts\Custom\AutoCenter.js" />
     <Content Include="Scripts\Custom\Accordion.js" />
+    <Content Include="Scripts\Custom\ImageViewer.js" />
     <Content Include="Scripts\Custom\TokenManager.js" />
     <Content Include="Scripts\Custom\ActionBar.js" />
     <Content Include="Scripts\Custom\CheckListGrid.js" />
@@ -257,8 +258,10 @@
     <Content Include="Scripts\Instances\Group.js" />
     <Content Include="Scripts\Instances\Instance.js" />
     <Content Include="Scripts\Instances\Item.js" />
+    <Content Include="Scripts\Instances\Image.js" />
     <Content Include="Scripts\Instances\PageLock.js" />
     <Content Include="Scripts\Instances\Signature.js" />
+    <Content Include="Scripts\Instances\Link.js" />
     <Content Include="Scripts\Instances\Text.js" />
     <Content Include="packages.config" />
     <Content Include="Content\Theme\Calendar.scss" />
@@ -341,7 +344,9 @@
     <Content Include="Scripts\Prototypes\BooleanProperty.js" />
     <Content Include="Scripts\Custom\WorkFlowSignature.js" />
     <Content Include="Scripts\Prototypes\DateProperty.js" />
+    <Content Include="Scripts\Prototypes\Image.js" />
     <Content Include="Scripts\Prototypes\Link.js" />
+    <Content Include="Scripts\Prototypes\UploadProperty.js" />
     <Content Include="Scripts\Prototypes\WorkFlowProperty.js" />
     <Content Include="Scripts\Prototypes\ExpressionProperty.js" />
     <Content Include="Scripts\Prototypes\ExpressionsList.js" />

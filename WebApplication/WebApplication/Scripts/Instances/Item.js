@@ -7,7 +7,10 @@
         typeNames = {
             text: "Text",
             field: "Field",
-            signature: "Signature"
+            signature: "Signature",
+            link: "Link",
+            image: "Image",
+            attachment: "Attachment"
         },
 
         item,
@@ -20,6 +23,9 @@
                 model.typeName == typeNames.text ? new instances.Text(item, model) :
                 model.typeName == typeNames.field ? new instances.Field(item, model) :
                 model.typeName == typeNames.signature ? new instances.Signature(item, model) :
+                model.typeName == typeNames.link ? new instances.Link(item, model) :
+                model.typeName == typeNames.image ? new instances.Image(item, model) :
+                model.typeName == typeNames.attachment ? new instances.Attachment(item, model) :
                 null)) {
                 parent.getElement().append(element);
                 item.update(model);

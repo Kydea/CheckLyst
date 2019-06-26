@@ -122,6 +122,20 @@ div.PropertyPanel {
                 }
             }
         }
+
+        &.Upload {
+            form {
+                margin: 0 !important;
+
+                input[type=file] {
+                    display: none;
+                }
+
+                a.Button {
+                    margin: 0 !important;
+                }
+            }
+        }
     }
 
     div.Information {

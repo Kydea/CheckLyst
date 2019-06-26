@@ -433,6 +433,14 @@ div.Instance {
             }
         }
 
+        &.Link div.Information {
+            display: none;
+        }
+
+        &.Image div.Information {
+            display: none;
+        }
+
         &.Hidden {
             display: none;
         }
