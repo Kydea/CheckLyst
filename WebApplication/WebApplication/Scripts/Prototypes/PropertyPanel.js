@@ -151,7 +151,7 @@
 				}]), "Code",
 				"Uniquely identifies an element. Can be left empty. Use only if a reference to the element is needed is some expression."
 			));
-			if (model.typeName != "Text")
+            if (model.typeName != "Text" && model.typeName != "Link")
 				properties.push(new prototypes.Property(
 					this, new prototypes.ReadOnlyProperty(model), "Read-only",
 					"Determines if the element is editable by the operator or not."
@@ -404,6 +404,20 @@
 						"If checked, the signature users can issue this signature using their PIN."
 					));
 					break;
+                case "Link":
+                    properties.push(new prototypes.Property(
+                        this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }).setHandler(function () {
+                            $("a.Link", item.getElement()).html((model.description || '(no label)'));
+                        }), "Label",
+                        "The label of the link."
+                    ));
+                    properties.push(new prototypes.Property(
+                        this, new prototypes.SimpleValueProperty(model, "url", { readOnly: state != prototypes.Prototype.states.draft }).setHandler(function () {
+                            $("a.Link", item.getElement()).attr("href", model.url);
+                        }), "Url",
+                        "The url to open."
+                    ));
+                    break;
 				default:
 					alert("Unexpected type name " + model.typeName);
 					console.log(model);

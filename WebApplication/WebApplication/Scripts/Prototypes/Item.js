@@ -9,7 +9,10 @@
         typeNames = {
             text: "Text",
             field: "Field",
-            signature: "Signature"
+            signature: "Signature",
+            link: "Link",
+            image: "Image",
+            attachment: "Attachment"
         },
 
         create = function () {
@@ -23,20 +26,23 @@
                 model.typeName == typeNames.text ? new prototypes.Text(item, model) :
                 model.typeName == typeNames.field ? new prototypes.Field(item, model) :
                 model.typeName == typeNames.signature ? new prototypes.Signature(item, model) :
+                model.typeName == typeNames.link ? new prototypes.Link(item, model) :
+                model.typeName == typeNames.image ? new prototypes.Image(item, model) :
+                model.typeName == typeNames.attachment ? new prototypes.Attachment(item, model) :
                 null)) {
                 parent.getElement().append(element);
                 specificItem.update(model);
             } else {
                 console.log(model);
-                alert("Invalid type name for item " + model.id + ": " + model.typeName);
+                alert("Invalid type name for item " + (model.id || "(no id)") + ": " + model.typeName);
             }
         };
 
     this.update = function (value) {
-		model = value;
-		if (!model.itemId)
-			model.itemId = prototypes.prototype.getNewItemId();
-		element.attr("data-code", model.code).attr("id", "ItemId" + model.itemId);
+        model = value;
+        if (!model.itemId)
+            model.itemId = prototypes.prototype.getNewItemId();
+        element.attr("data-code", model.code).attr("id", "ItemId" + model.itemId);
         specificItem.update(model)
     };
 

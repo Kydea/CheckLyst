@@ -20,8 +20,11 @@ namespace CheckListManager.Instances.Api
 		    RegisterChecklistItem<Page, ICheckListPage>(builder);
 		    RegisterChecklistItem<Signature, ICheckListSignature>(builder);
 		    RegisterChecklistItem<Text, ICheckListText>(builder);
+            RegisterChecklistItem<Link, ICheckListLink>(builder);
+            RegisterChecklistItem<Image, ICheckListImage>(builder);
+            RegisterChecklistItem<Attachment, ICheckListAttachment>(builder);
 
-		    builder.RegisterType<CheckListJsonConverter>()
+            builder.RegisterType<CheckListJsonConverter>()
 			    .AsSelf()
 			    .InstancePerDependency();
 	    }

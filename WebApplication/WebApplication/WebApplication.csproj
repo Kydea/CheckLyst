@@ -341,6 +341,7 @@
     <Content Include="Scripts\Prototypes\BooleanProperty.js" />
     <Content Include="Scripts\Custom\WorkFlowSignature.js" />
     <Content Include="Scripts\Prototypes\DateProperty.js" />
+    <Content Include="Scripts\Prototypes\Link.js" />
     <Content Include="Scripts\Prototypes\WorkFlowProperty.js" />
     <Content Include="Scripts\Prototypes\ExpressionProperty.js" />
     <Content Include="Scripts\Prototypes\ExpressionsList.js" />

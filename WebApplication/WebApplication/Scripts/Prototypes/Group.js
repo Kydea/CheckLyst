@@ -63,6 +63,9 @@
 	this.add = function () {
 		matematici.dialog.popupMenu([
 			{ text: "cancel", icon: "times", cancelButton: true },
+            { text: "attachment", icon: "attachment", handler: addElement, data: "Attachment" },
+            { text: "image", icon: "image", handler: addElement, data: "Image" },
+            { text: "link", icon: "link-o", handler: addElement, data: "Link" },
 			{ text: "signature", icon: "check", handler: addElement, data: "Signature" },
 			{ text: "field", icon: "i-cursor", handler: addElement, data: "Field" },
 			{ text: "text", icon: "align-left", handler: addElement, data: "Text" },

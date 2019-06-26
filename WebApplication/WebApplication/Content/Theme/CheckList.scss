@@ -185,6 +185,32 @@ div.CheckList {
                 }
             }
         }
+
+        &.Link {
+            position: relative;
+            width: calc(100% - #{$Metric-Control-Space});
+            font-size: 13px;
+
+            i.Link {
+                font-size: 9px;
+                position: absolute;
+                top: 3px;
+                left: 0;
+                color: $Color-Yellow-Regular;
+                transition: all linear .1s;
+            }
+
+            a.Link {
+                color: $Color-Yellow-Regular;
+                padding-left: 15px;
+            }
+
+            &:hover {
+                i.Link {
+                    left: 5px;
+                }
+            }
+        }
     }
 
     .Item {

@@ -120,6 +120,9 @@
     <Compile Include="Models\CheckLists\ICheckListIteration.cs" />
     <Compile Include="Models\CheckLists\ICheckListPage.cs" />
     <Compile Include="Models\CheckLists\ICheckListSignature.cs" />
+    <Compile Include="Models\CheckLists\ICheckListLink.cs" />
+    <Compile Include="Models\CheckLists\ICheckListAttachment.cs" />
+    <Compile Include="Models\CheckLists\ICheckListImage.cs" />
     <Compile Include="Models\CheckLists\ICheckListText.cs" />
     <Compile Include="Models\CheckLists\ICheckListNode.cs" />
     <Compile Include="Models\CheckLists\IElementsBranch.cs" />

@@ -27,9 +27,15 @@ namespace CheckListManager.Common.Logic.Json
 					return Scope.Resolve<ICheckListSignature>();
 				case "Text":
 					return Scope.Resolve<ICheckListText>();
-			}
+                case "Link":
+                    return Scope.Resolve<ICheckListLink>();
+                case "Image":
+                    return Scope.Resolve<ICheckListImage>();
+                case "Attachment":
+                    return Scope.Resolve<ICheckListAttachment>();
+            }
 
-			if (Scope.TryResolve(objectType, out var instance))
+            if (Scope.TryResolve(objectType, out var instance))
 				return (ICheckListElement)instance;
 
 			throw new Exception($"Check List Item not supported: {type}");

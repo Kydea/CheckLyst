@@ -150,6 +150,12 @@ div.Prototype {
             }
         }
 
+        &.Link {
+            a {
+                position: relative;
+            }
+        }
+
         &.Current {
             &::before {
                 content: "";

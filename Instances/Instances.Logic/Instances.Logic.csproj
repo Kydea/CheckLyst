@@ -75,6 +75,9 @@
     <Compile Include="Messages\InstanceResponse.cs" />
     <Compile Include="Messages\SaveInstanceRequest.cs" />
     <Compile Include="Models\CheckLists\Lock.cs" />
+    <Compile Include="Models\CheckLists\Image.cs" />
+    <Compile Include="Models\CheckLists\Attachment.cs" />
+    <Compile Include="Models\CheckLists\Link.cs" />
     <Compile Include="Models\InstanceCacheObject.cs" />
     <Compile Include="Models\CheckLists\Element.cs" />
     <Compile Include="Models\CheckLists\Field.cs" />

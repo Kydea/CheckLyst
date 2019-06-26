@@ -80,6 +80,8 @@ div.Prototype div.Item {
       color: #009688; }
   div.Prototype div.Item.Text p {
     position: relative; }
+  div.Prototype div.Item.Link a {
+    position: relative; }
   div.Prototype div.Item.Current::before {
     content: "";
     position: absolute;

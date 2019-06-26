@@ -93,6 +93,9 @@
     <Compile Include="Models\CheckLists\Page.cs" />
     <Compile Include="Models\CheckLists\Prototype.cs" />
     <Compile Include="Models\CheckLists\Signature.cs" />
+    <Compile Include="Models\CheckLists\Link.cs" />
+    <Compile Include="Models\CheckLists\Image.cs" />
+    <Compile Include="Models\CheckLists\Attachment.cs" />
     <Compile Include="Models\CheckLists\Text.cs" />
     <Compile Include="PDF\PrototypePDF.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
