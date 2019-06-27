@@ -22,6 +22,7 @@ using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Authentication;
 using CheckListManager.Common.Logic.WorkFlows;
 using System.Collections.Generic;
+using System.Diagnostics;
 using CheckListManager.Common.Logic.Queue;
 using CheckListManager.Common.Logic.Trail;
 using CheckListManager.Common.Logic.FTP;
@@ -631,26 +632,39 @@ namespace CheckListManager.Instances.Logic.Services
         {
             LockObject lockObject = null;
 
-            try
+            double initialGetTime = 0, lockTime = 0, getTime = 0, handleTime = 0;
+
+			try
             {
+	            var stopWatch = Stopwatch.StartNew();
                 var cacheObject = await _instanceCache.GetAsync(request.Code, false);
+				stopWatch.Stop();
+				initialGetTime = stopWatch.Elapsed.TotalMilliseconds;
+
                 if (cacheObject == null)
                     throw new InstanceException("Instance not found");
 
                 if (cacheObject.InstanceState == InstanceState.Progress)
                 {
-                    //Lock and reload the data to be sure it's the most recent one
-                    lockObject = await _instanceCache.LockInstanceAsync(request.Code);
+					//Lock and reload the data to be sure it's the most recent one
+					stopWatch = Stopwatch.StartNew();
+					lockObject = await _instanceCache.LockInstanceAsync(request.Code);
+					stopWatch.Stop();
+					lockTime = stopWatch.Elapsed.TotalMilliseconds;
                     if (!lockObject.IsAcquired)
                         throw new InstanceException("Instance is currently being updated by another user");
                 }
 
+                stopWatch = Stopwatch.StartNew();
                 cacheObject = await _instanceCache.GetAsync(request.Code);
+                stopWatch.Stop();
+                getTime = stopWatch.Elapsed.TotalMilliseconds;
 
-                var lockUser = request.Type == "Signature" ? request.Username : null; //A signer may sign also if the page is locked by the main user (the lock is for concurrency purpose, not for security)
+				var lockUser = request.Type == "Signature" ? request.Username : null; //A signer may sign also if the page is locked by the main user (the lock is for concurrency purpose, not for security)
                 await GetCheckListAsync(identity, cacheObject, lockUser);
 
-                switch (request.Type)
+                stopWatch = Stopwatch.StartNew();
+				switch (request.Type)
                 {
                     case "PageChange":
                         await HandlePageChangeAsync(cacheObject, identity.Code, request.ItemId);
@@ -701,8 +715,10 @@ namespace CheckListManager.Instances.Logic.Services
                     default:
                         throw new InstanceException($"Event type {request.Type} not handled.");
                 }
+				stopWatch.Stop();
+				handleTime = stopWatch.Elapsed.TotalMilliseconds;
 
-                return cacheObject;
+				return cacheObject;
             }
             catch (InstanceException)
             {
@@ -715,6 +731,11 @@ namespace CheckListManager.Instances.Logic.Services
             }
             finally
             {
+				Logger.Info($"Handle Event {request.Type} timings:{Environment.NewLine}" +
+				            $"Initial get: {initialGetTime}{Environment.NewLine}" +
+				            $"Lock: {lockTime}{Environment.NewLine}" +
+				            $"Get: {getTime}{Environment.NewLine}" +
+				            $"Handle: {handleTime}{Environment.NewLine}");
                 lockObject?.Dispose();
             }
         }
