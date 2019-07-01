@@ -31,7 +31,7 @@ div.CheckList {
 
     span {
         &.Error {
-            i.fi {
+            i.fa {
                 color: $Color-Red-Regular;
             }
         }
@@ -46,7 +46,7 @@ div.CheckList {
 
     div.TabLabels {
         a {
-            i.fi {
+            i.fa {
                 cursor: pointer;
             }
         }

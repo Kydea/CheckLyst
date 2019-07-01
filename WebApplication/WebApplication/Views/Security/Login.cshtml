@@ -15,22 +15,22 @@
 
             <label class="FullWidth">
                 <span>Company</span>
-                <i class="Icon fi flaticon-buildings-o"></i>
+                <i class="Icon fal fa-industry"></i>
                 <select name="companyId"></select>
             </label>
             
             <label class="FullWidth Controls2">
                 <span>User code / Password</span>
-                <i class="Icon fi flaticon-user-o"></i>
+                <i class="Icon fal fa-user"></i>
                 <input type="text" name="username" placeholder="username" />
-                <i class="Icon fi flaticon-key-o"></i>
+                <i class="Icon fal fa-key"></i>
                 <input type="password" name="password" placeholder="password" />
             </label>
 
             <div class="Errors"></div>
 
             <div class="Buttons">
-                <a class="Button DefaultButton GreyGreenButton" href="#" id="Sign"><i class="fi flaticon-arrow-right"></i>LOGIN</a>
+                <a class="Button DefaultButton GreyGreenButton" href="#" id="Sign"><i class="Icon fas fa-chevron-circle-right"></i>LOGIN</a>
             </div>
         </form>
     </div>
@@ -52,7 +52,7 @@
             companies = {},
 
             showError = function (message) {
-                error.html(" " + message).prepend($("<i />").addClass("fi flaticon-warning")).show()
+                error.html(" " + message).prepend($("<i />").addClass("fas fa-exclamation-triangle")).show()
             };
 
         new matematici.Page({

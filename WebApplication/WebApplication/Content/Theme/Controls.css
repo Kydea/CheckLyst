@@ -54,7 +54,7 @@ a.Button {
   height: 36px;
   line-height: 36px;
   box-shadow: rgba(0, 0, 0, 0.15) 0 0 15px 2px; }
-  a.Button i.fi {
+  a.Button i.Icon {
     margin-top: 5px;
     margin-right: 5px;
     width: 26px;
@@ -66,7 +66,6 @@ a.Button {
     top: 0;
     z-index: 1;
     border-radius: 50%;
-    font-size: 16px;
     color: #009688; }
   a.Button::after {
     content: "";
@@ -83,13 +82,13 @@ a.Button {
     a.Button:hover:not(.ReadOnly), a.Button.Selected:not(.ReadOnly) {
       background-color: #03c3b1;
       color: white; }
-      a.Button:hover:not(.ReadOnly) i.fi, a.Button.Selected:not(.ReadOnly) i.fi {
+      a.Button:hover:not(.ReadOnly) i.Icon, a.Button.Selected:not(.ReadOnly) i.Icon {
         color: #03c3b1; }
   a.Button.Icon {
     min-width: 0;
     width: 36px;
     padding: 0; }
-    a.Button.Icon i.fi {
+    a.Button.Icon i.Icon {
       padding: 0; }
     a.Button.Icon::after {
       border: 0;
@@ -107,7 +106,7 @@ a.Button {
     border-radius: 50% !important;
     font-size: 10px;
     background: none; }
-    a.Button.MiniIcon i.fi {
+    a.Button.MiniIcon i.Icon {
       color: #009688;
       height: 16px;
       width: 16px;
@@ -121,38 +120,38 @@ a.Button {
       content: none; }
     a.Button.MiniIcon:hover {
       background: none; }
-      a.Button.MiniIcon:hover i.fi {
+      a.Button.MiniIcon:hover i.Icon {
         color: #03c3b1; }
     a.Button.MiniIcon.Angle {
       margin-left: -16px; }
   a.Button.GreyGreenButton {
     background-color: #999; }
-    a.Button.GreyGreenButton i.fi {
+    a.Button.GreyGreenButton i.Icond {
       color: white;
       background-color: #009688; }
     a.Button.GreyGreenButton::after {
       background-color: white; }
     a.Button.GreyGreenButton:hover {
       background-color: #009688; }
-      a.Button.GreyGreenButton:hover i.fi {
-        color: white; }
+      a.Button.GreyGreenButton:hover i.Icon {
+        color: #009688; }
   a.Button.GreyYellowButton {
     background-color: #999; }
-    a.Button.GreyYellowButton i.fi {
+    a.Button.GreyYellowButton i.Icon {
       color: white;
       background-color: #ffba00; }
     a.Button.GreyYellowButton::after {
       background-color: white; }
     a.Button.GreyYellowButton:hover {
       background-color: #ffba00; }
-      a.Button.GreyYellowButton:hover i.fi {
+      a.Button.GreyYellowButton:hover i.Icon {
         color: white; }
   a.Button.Invalid {
     color: #cc0000; }
   a.Button.ReadOnly {
     background-color: #ccc;
     box-shadow: none; }
-    a.Button.ReadOnly i.fi {
+    a.Button.ReadOnly i.Icon {
       color: white;
       background-color: #ccc; }
     a.Button.ReadOnly::after {
@@ -294,9 +293,9 @@ form label, div.CheckList label, div.PropertyPanel div.PropertyValue label, div.
         border-radius: 5px; }
     form label.Controls2, div.CheckList label.Controls2, div.PropertyPanel div.PropertyValue label.Controls2, div.Module label.Controls2 {
       width: 420px; }
-      form label.Controls2 > *:not(span):not(.fi), div.CheckList label.Controls2 > *:not(span):not(.fi), div.PropertyPanel div.PropertyValue label.Controls2 > *:not(span):not(.fi), div.Module label.Controls2 > *:not(span):not(.fi) {
+      form label.Controls2 > *:not(span):not(.Icon), div.CheckList label.Controls2 > *:not(span):not(.Icon), div.PropertyPanel div.PropertyValue label.Controls2 > *:not(span):not(.Icon), div.Module label.Controls2 > *:not(span):not(.Icon) {
         width: calc(50% + 10px); }
-        form label.Controls2 > *:not(span):not(.fi):last-child, div.CheckList label.Controls2 > *:not(span):not(.fi):last-child, div.PropertyPanel div.PropertyValue label.Controls2 > *:not(span):not(.fi):last-child, div.Module label.Controls2 > *:not(span):not(.fi):last-child {
+        form label.Controls2 > *:not(span):not(.Icon):last-child, div.CheckList label.Controls2 > *:not(span):not(.Icon):last-child, div.PropertyPanel div.PropertyValue label.Controls2 > *:not(span):not(.Icon):last-child, div.Module label.Controls2 > *:not(span):not(.Icon):last-child {
           width: calc(50% - 10px); }
       form label.Controls2 input ~ select + input, form label.Controls2 select ~ select + input, div.CheckList label.Controls2 input ~ select + input, div.CheckList label.Controls2 select ~ select + input, div.PropertyPanel div.PropertyValue label.Controls2 input ~ select + input, div.PropertyPanel div.PropertyValue label.Controls2 select ~ select + input, div.Module label.Controls2 input ~ select + input, div.Module label.Controls2 select ~ select + input {
         width: calc(50% - 10px) !important;
@@ -306,9 +305,9 @@ form label, div.CheckList label, div.PropertyPanel div.PropertyValue label, div.
         left: calc(50% + 10px); }
     form label.Controls3, div.CheckList label.Controls3, div.PropertyPanel div.PropertyValue label.Controls3, div.Module label.Controls3 {
       width: 640px; }
-      form label.Controls3 > *:not(span):not(.fi), div.CheckList label.Controls3 > *:not(span):not(.fi), div.PropertyPanel div.PropertyValue label.Controls3 > *:not(span):not(.fi), div.Module label.Controls3 > *:not(span):not(.fi) {
+      form label.Controls3 > *:not(span):not(.Icon), div.CheckList label.Controls3 > *:not(span):not(.Icon), div.PropertyPanel div.PropertyValue label.Controls3 > *:not(span):not(.Icon), div.Module label.Controls3 > *:not(span):not(.Icon) {
         width: calc(33.33% + 6.66667px); }
-        form label.Controls3 > *:not(span):not(.fi):last-child, div.CheckList label.Controls3 > *:not(span):not(.fi):last-child, div.PropertyPanel div.PropertyValue label.Controls3 > *:not(span):not(.fi):last-child, div.Module label.Controls3 > *:not(span):not(.fi):last-child {
+        form label.Controls3 > *:not(span):not(.Icon):last-child, div.CheckList label.Controls3 > *:not(span):not(.Icon):last-child, div.PropertyPanel div.PropertyValue label.Controls3 > *:not(span):not(.Icon):last-child, div.Module label.Controls3 > *:not(span):not(.Icon):last-child {
           width: calc(33.33% - 13.33333px); }
       form label.Controls3 input input ~ select + input, form label.Controls3 input select ~ select + input, form label.Controls3 select input ~ select + input, form label.Controls3 select select ~ select + input, div.CheckList label.Controls3 input input ~ select + input, div.CheckList label.Controls3 input select ~ select + input, div.CheckList label.Controls3 select input ~ select + input, div.CheckList label.Controls3 select select ~ select + input, div.PropertyPanel div.PropertyValue label.Controls3 input input ~ select + input, div.PropertyPanel div.PropertyValue label.Controls3 input select ~ select + input, div.PropertyPanel div.PropertyValue label.Controls3 select input ~ select + input, div.PropertyPanel div.PropertyValue label.Controls3 select select ~ select + input, div.Module label.Controls3 input input ~ select + input, div.Module label.Controls3 input select ~ select + input, div.Module label.Controls3 select input ~ select + input, div.Module label.Controls3 select select ~ select + input {
         width: calc(33.33% - 13.33333px);

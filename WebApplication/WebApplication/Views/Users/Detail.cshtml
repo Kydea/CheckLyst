@@ -12,19 +12,19 @@
             <div class="Tab">
                 <label>
                     <span>User code</span>
-                    <i class="Icon fi flaticon-key-o" />
+                    <i class="Icon fal fa-key" />
                     <input type="text" name="code" />
                 </label>
 
                 <label>
                     <span>Name and surname</span>
-                    <i class="Icon fi flaticon-id-card-o" />
+                    <i class="Icon fal fa-id-card" />
                     <input type="text" name="description" />
                 </label>
 
                 <label>
                     <span>Email</span>
-                    <i class="Icon fi flaticon-envelope-o" />
+                    <i class="Icon fal fa-envelope" />
                     <input type="text" name="email" />
                 </label>
 
@@ -35,35 +35,35 @@
 
                 <label class="Clearing Hidden">
                     <span>Password</span>
-                    <i class="Icon fi flaticon-lock-o" />
+                    <i class="Icon fal fa-lock" />
                     <input type="password" name="password" />
                 </label>
 
                 <label class="Hidden">
                     <span>Password confirm</span>
-                    <i class="Icon fi flaticon-lock-o" />
+                    <i class="Icon fal fa-lock" />
                     <input type="password" name="password2" />
                 </label>
 
                 <label class="Clearing Hidden">
                     <span>Authentication code</span>
-                    <i class="Icon fi flaticon-key-o" />
+                    <i class="Icon fal fa-key" />
                     <input type="text" name="authenticationCode" />
                 </label>
 
                 <label class="Clearing Controls2">
                     <span>Creation</span>
-                    <i class="Icon fi flaticon-user-o" />
+                    <i class="Icon fal fa-user" />
                     <input type="text" name="createdBy" readonly="readonly" />
-                    <i class="Icon fi flaticon-calendar" />
+                    <i class="Icon fal fa-calendar-alt" />
                     <input type="text" name="createdOn" readonly="readonly" data-type="DateTimeOffset" />
                 </label>
 
                 <label class="Controls2">
                     <span>Last edit</span>
-                    <i class="Icon fi flaticon-user-o" />
+                    <i class="Icon fal fa-user" />
                     <input type="text" name="modifiedBy" readonly="readonly" />
-                    <i class="Icon fi flaticon-calendar" />
+                    <i class="Icon fal fa-calendar-alt" />
                     <input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
                 </label>
 
@@ -198,7 +198,7 @@
                 select1 = $("<select />"),
                 select2;
             if (detailPage.isReadOnly()) matematici.controls.setEditable(select1, false);
-            $("<label />").appendTo(div).append($("<span />").text("Department")).append($("<i />").addClass("Icon fi flaticon-building-o")).append(select1).addClass("Clearing");
+            $("<label />").appendTo(div).append($("<span />").text("Department")).append($("<i />").addClass("Icon fal fa-industry")).append(select1).addClass("Clearing");
             for (var index in departments)
                 select1.append($("<option />").text(departments[index].name).attr("value", departments[index].code));
             var autoComplete1 = new matematici.AutoComplete(select1);
@@ -209,14 +209,14 @@
 
             select2 = $("<select />").data("nullable", "(all)");
             if (detailPage.isReadOnly()) matematici.controls.setEditable(select2, false);
-            $("<label />").appendTo(div).append($("<span />").text("Prototype type")).append($("<i />").addClass("Icon fi flaticon-folder-o")).append(select2);
+            $("<label />").appendTo(div).append($("<span />").text("Prototype type")).append($("<i />").addClass("Icon fal fa-folder")).append(select2);
             var autoComplete2 = new matematici.AutoComplete(select2);
             autoComplete2.initialize();
             refreshPrototypeTypes(select1, select2);
 
             var select3 = $("<select />").prop("multiple", true);
             if (detailPage.isReadOnly()) matematici.controls.setEditable(select3, false);
-            $("<label />").appendTo(div).append($("<span />").text("Function")).append($("<i />").addClass("Icon fi flaticon-cog")).append(select3).addClass("Width150");
+            $("<label />").appendTo(div).append($("<span />").text("Function")).append($("<i />").addClass("Icon fal fa-cogs")).append(select3).addClass("Width150");
             var list = tabItem.index == 2 ? prototypeFunctions : instanceFunctions;
             for (var index in list)
                 select3.append($("<option />").text(list[index]).attr("value", list[index]));
@@ -225,7 +225,7 @@
 
             var select4 = $("<select />").data("nullable", true);
             if (detailPage.isReadOnly()) matematici.controls.setEditable(select4, false);
-            $("<label />").appendTo(div).append($("<span />").text("Level")).append($("<i />").addClass("Icon fi flaticon-group")).append(select4);
+            $("<label />").appendTo(div).append($("<span />").text("Level")).append($("<i />").addClass("Icon fal fa-users")).append(select4);
             for (var index in matematici.profiles)
                 select4.append($("<option />").text(matematici.profiles[index]).attr("value", matematici.profiles[index]));
             select4.val(null);
@@ -239,7 +239,7 @@
             }, 0);
 
             if (!detailPage.isReadOnly())
-                $("<a />").attr("href", "#").addClass("Button Icon").append($("<i />").addClass("fi flaticon-minus")).on("click", function () {
+                $("<a />").attr("href", "#").addClass("Button Icon").append($("<i />").addClass("Icon fa fa-minus")).on("click", function () {
                     div.remove();
                     fixQueryParameters(tabIndex);
                 }).appendTo(div);

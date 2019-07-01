@@ -30,8 +30,8 @@ a {
   a.Right {
     float: right; }
 
-i.fi {
-  font-size: 19px; }
+i.fa, i.fal {
+  font-size: 16px; }
 
 .AutoCenter {
   display: none; }
@@ -118,10 +118,10 @@ header {
         border-radius: 50%;
         color: white;
         background-color: #009688;
-        width: 25px;
-        height: 25px;
-        font-size: 13px;
-        line-height: 25px;
+        width: 20px;
+        height: 20px;
+        font-size: 10px;
+        line-height: 20px;
         text-align: center; }
       header div#UserPanel a:hover {
         color: black !important; }

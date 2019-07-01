@@ -144,10 +144,6 @@
     "inputFile": "Content/Theme/Users.scss"
   },
   {
-    "outputFile": "Content/Theme/Fonts/FlatIcon/_flaticon.css",
-    "inputFile": "Content/Theme/Fonts/FlatIcon/_flaticon.scss"
-  },
-  {
     "outputFile": "Content/Theme/ButtonGroup.css",
     "inputFile": "Content/Theme/ButtonGroup.scss"
   },

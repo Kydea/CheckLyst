@@ -2,7 +2,7 @@
     <h1>Instances List</h1>
 
     <div class="ActionBar">
-        <a id="AddButton" href="#" class="Button"><i class="fi flaticon-plus"></i> New instance</a>
+        <a id="AddButton" href="#" class="Button"><i class="Icon fa fa-plus"></i> New instance</a>
     </div>
 
     <div class="ShadowPanel">
@@ -10,33 +10,33 @@
         <form id="Filters" action="@BaseUrl/Instances/List">
             <label class="Controls2">
                 <span>Department / prototype type</span>
-                <i class="Icon fi flaticon-building-o" />
+                <i class="Icon fal fa-industry" />
                 <select name="department" class="Trigger" />
-                <i class="Icon fi flaticon-folder-o" />
+                <i class="Icon fal fa-folder" />
                 <select name="prototypeType" class="Trigger" />
             </label>
             <label class="Controls2">
                 <span>Prototype / version</span>
-                <i class="Icon fi flaticon-prototype" />
+                <i class="Icon fal fa-file-invoice" />
                 <select name="prototype" class="Trigger" data-nullable="(all)" />
-                <i class="Icon fi flaticon-version" />
+                <i class="Icon fal fa-list-ol" />
                 <select name="version" class="Trigger" data-nullable="(all)" />
             </label>
             <label class="Clearing">
                 <span>Instance description</span>
-                <i class="Icon fi flaticon-instance" />
+                <i class="Icon fal fa-layer-group" />
                 <input type="text" name="description" />
             </label>
             <label>
                 <span>State</span>
-                <i class="Icon fi flaticon-prototype" />
+                <i class="Icon fal fa-file-invoice" />
                 <select name="state" data-nullable="(all)" />
             </label>
             <label class="Controls2">
                 <span>Tag / value</span>
-                <i class="Icon fi flaticon-tags-o" />
+                <i class="Icon fal fa-tag" />
                 <select name="tagCode" data-nullable="(all)" />
-                <i class="Icon fi flaticon-align-left" />
+                <i class="Icon fal fa-align-left" />
                 <input type="text" name="tagValue" />
             </label>
 
@@ -48,12 +48,12 @@
                 </label>
                 <label class="Clearing">
                     <span>Exception state</span>
-                    <i class="Icon fi flaticon-prototype" />
+                    <i class="Icon fal fa-file-invoice" />
                     <select name="exceptionState" />
                 </label>
                 <label>
                     <span>Exception description</span>
-                    <i class="Icon fi flaticon-exclamation" />
+                    <i class="Icon fal fa-exclamation" />
                     <input type="text" name="exceptionDescription" />
                 </label>
             </div>

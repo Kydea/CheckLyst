@@ -21,17 +21,18 @@ div.Prototype div.Commands {
     height: 30px !important;
     width: 30px !important;
     border-radius: 3px 0 0 3px !important; }
-    div.Prototype div.Commands a.MiniIcon i.fi {
-      font-size: 14px !important;
+    div.Prototype div.Commands a.MiniIcon i.fa, div.Prototype div.Commands a.MiniIcon i.fal {
+      font-size: 16px !important;
       line-height: 30px !important;
       height: 30px !important;
-      width: 30px !important; }
+      width: 30px !important;
+      color: #00877a !important; }
     div.Prototype div.Commands a.MiniIcon + a.MiniIcon {
       border-left: solid 1px #009688;
       border-radius: 0 3px 3px 0 !important; }
     div.Prototype div.Commands a.MiniIcon:hover {
       background: #ebebeb; }
-      div.Prototype div.Commands a.MiniIcon:hover i.fi {
+      div.Prototype div.Commands a.MiniIcon:hover i.fa, div.Prototype div.Commands a.MiniIcon:hover i.fal {
         color: #00877a !important; }
 
 div.Prototype div.HeaderContainer > div.Commands a.Up, div.Prototype div.HeaderContainer > div.Commands a.Down, div.Prototype div.HeaderContainer > div.Commands a.Add, div.Prototype div.HeaderContainer > div.Commands a.Remove {

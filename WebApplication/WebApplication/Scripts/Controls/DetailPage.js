@@ -39,7 +39,7 @@
 
 			if (!options.readOnly) {
 				buttons.push({
-					text: "delete", icon: "trash-o", handler: function () {
+					text: "delete", icon: "trash-alt", handler: function () {
 						matematici.dialog.show("warning", "The record will be deleted.", [
 							{
 								text: "confirm", icon: "check", handler: function () {
@@ -55,7 +55,7 @@
 				});
 
 				buttons.push({
-					text: "save", defaultButton: true, icon: "floppy-o", id: "SaveButton", handler: function (e) {
+					text: "save", defaultButton: true, icon: "save", id: "SaveButton", handler: function (e) {
 						clickHandler($(this), data == null ? "Add" : "Edit");
 						return true;
 					}

@@ -93,16 +93,16 @@ div.Instance {
                 line-height: 1.5em;
                 width: 200px;
 
-                i.fi {
+                i.fa {
                     margin-left: -30px;
                     color: $Color-Grey-Dark;
                     position: absolute;
 
-                    &.flaticon-thumbs-up-o {
+                    &.fa-thumbs-up {
                         color: green;
                     }
 
-                    &.flaticon-thumbs-down-o {
+                    &.fa-thumbs-down {
                         color: red;
                     }
                 }
@@ -267,7 +267,7 @@ div.Instance {
 
             &.ExternalSource {
                 &.Inactive {
-                    i.flaticon-link-o {
+                    i.fa-link {
                         color: $Color-Grey-Light;
                     }
                 }
@@ -389,14 +389,14 @@ div.Instance {
 
         &.Signature {
             a.Button {
-                i.flaticon-exclamation {
+                i.fa-exclamation {
                     position: absolute;
                     color: red;
                     margin: 2px 0 0 15px;
                 }
             }
 
-            i.flaticon-exclamation {
+            i.fa-exclamation {
                 color: $Color-Red-Regular;
                 font-size: inherit;
             }

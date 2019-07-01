@@ -1,6 +1,6 @@
 ﻿@import "Library";
 
-$Menu-Icon-Width: 40px;
+$Menu-Icon-Height: 25px;
 $Menu-Item-Height: 40px;
 
 nav.Menu {
@@ -68,10 +68,11 @@ nav.Menu {
                     color: $Color-Grey-Regular;
                     width: $Metric-Header-Height;
                     height: $Metric-Header-Height;
-                    padding: ($Metric-Header-Height - $Menu-Icon-Width)/2 !important;
+                    padding: #{($Metric-Header-Height - $Menu-Icon-Height)/2} 0 !important;
+                    text-align: center;
 
                     i {
-                        font-size: $Menu-Icon-Width;
+                        font-size: 25px;
                     }
                 }
 
@@ -114,7 +115,7 @@ nav.Menu {
                     background-color: black;
                     position: absolute;
                     left: $Metric-Header-Height;
-                    top: ($Metric-Header-Height - $Menu-Icon-Width)/2;
+                    top: ($Metric-Header-Height - $Menu-Item-Height)/2;
                     border-left: 1px solid $Color-Grey-Darker;
                     border-radius: 0 5px 5px 0;
                     box-shadow: rgba(0, 0, 0, .35) 3px 0 15px;

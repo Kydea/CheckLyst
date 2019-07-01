@@ -47,19 +47,8 @@ div.AutoComplete-List {
       position: relative;
       padding-right: 20px; }
       div.AutoComplete-List a.Selected::after {
-        line-height: 36px;
-        content: "\f12b";
-        display: inline-block;
-        font-family: "Flaticon";
-        font-style: normal;
-        font-weight: normal;
-        font-variant: normal;
-        text-decoration: inherit;
-        text-rendering: optimizeLegibility;
-        text-transform: none;
-        -moz-osx-font-smoothing: grayscale;
-        -webkit-font-smoothing: antialiased;
-        font-smoothing: antialiased;
+        content: "\f00c";
+        font-family: "Font Awesome 5 Pro";
         color: #666;
         position: absolute;
         right: 0;
@@ -83,5 +72,4 @@ i.AutoComplete {
   height: 36px;
   position: absolute !important;
   margin: 0 !important;
-  font-size: 14px !important;
   display: none; }

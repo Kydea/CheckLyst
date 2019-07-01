@@ -6,14 +6,14 @@
     border-radius: 5px 5px 0 0;
     padding-right: 56px;
     box-shadow: none; }
-    div.Accordion-Bar .Button i.fi {
+    div.Accordion-Bar .Button i.Icon {
       transition: transform 300ms ease;
       color: #ffba00; }
     div.Accordion-Bar .Button:hover {
       background-color: #ffcc09 !important; }
-      div.Accordion-Bar .Button:hover i.fi {
+      div.Accordion-Bar .Button:hover i.Icon {
         color: #ffcc09 !important; }
-    div.Accordion-Bar .Button.Closed i.fi {
+    div.Accordion-Bar .Button.Closed i.Icon {
       transform: rotate(-180deg); }
 
 .Accordion {

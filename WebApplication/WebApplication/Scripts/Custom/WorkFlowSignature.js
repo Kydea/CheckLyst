@@ -148,7 +148,7 @@
 				},
 				buttons: [
 					{ id: "Confirm", icon: "check", text: "Confirm", handler: function () { completeHandler(true); return true; } },
-					{ id: "Reject", icon: "trash-o", text: "Reject", handler: function () { completeHandler(false); return true;} },
+					{ id: "Reject", icon: "trash-alt", text: "Reject", handler: function () { completeHandler(false); return true;} },
 					{ hidden: true, cancelButton: true }
 				]
 			});

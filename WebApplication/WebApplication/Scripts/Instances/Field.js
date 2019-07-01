@@ -144,7 +144,7 @@
 						select.append($("<option />").attr("value", model.valuesList[index]).text(model.valuesList[index]));
 				} else if (model.externalSourceName && model.externalSourceColumn) {
 					var
-						icon = $("<i />").addClass("ExternalSourceLink fi flaticon-link-o"),
+						icon = $("<i />").addClass("ExternalSourceLink fa fa-link"),
 						call = function () {
 							if (!element.hasClass("Inactive"))
 								new instances.ExternalSources(model.id, model.externalSourceName);
@@ -179,7 +179,7 @@
             }
 
             copyButton =
-				$("<a />").addClass("Copy fi flaticon-clone-o").attr({ href: "#", title: "F8" })
+				$("<a />").addClass("Copy fa fa-clone").attr({ href: "#", title: "F8" })
 					.on("mousedown", valueCopy);
 
 			if (!item.isTableContent() || !item.getParent().isSubRow())

@@ -15,20 +15,20 @@
             if (!item.isTableContent())
                 label.appendTo(element);
 
-			check = $("<i />").addClass("Icon fi flaticon-check").hide().appendTo(element);
+			check = $("<i />").addClass("Icon fal fa-check").hide().appendTo(element);
 
-			$("<i />").addClass("Icon fi flaticon-user-o").appendTo(item.isTableContent() ? element : label);
+			$("<i />").addClass("Icon fal fa-user").appendTo(item.isTableContent() ? element : label);
 			user = $("<input />").addClass("User").attr({ type: "text", readonly: true }).appendTo(item.isTableContent() ? element : label);
-			$("<i />").addClass("Icon fi flaticon-calendar").appendTo(item.isTableContent() ? element : label);
+			$("<i />").addClass("Icon fal fa-calendar-alt").appendTo(item.isTableContent() ? element : label);
 			date = $("<input />").addClass("Date").attr({ type: "text", readonly: true }).appendTo(item.isTableContent() ? element : label);
-			$("<i />").addClass("Icon fi flaticon-clock-o").appendTo(item.isTableContent() ? element : label);
+			$("<i />").addClass("Icon fal fa-clock").appendTo(item.isTableContent() ? element : label);
 			time = $("<input />").addClass("Time").attr({ type: "text", readonly: true }).appendTo(item.isTableContent() ? element : label);
 
-			exclamation = $("<i />").addClass("fi flaticon-exclamation").appendTo($("span", label)).attr("title", "This signature has been canceled, see the history").hide();
+			exclamation = $("<i />").addClass("fa fa-exclamation").appendTo($("span", label)).attr("title", "This signature has been canceled, see the history").hide();
 
 			button = $("<a />").addClass("Button SignButton").attr({ href: "#" }).appendTo(element);
             if (model.cancelable)
-				cancelButton = $("<a />").addClass("Button CancelButton").attr({ href: "#" }).appendTo(element).text("Cancel signature").prepend($("<i >").addClass("fi flaticon-times"));
+				cancelButton = $("<a />").addClass("Button CancelButton").attr({ href: "#" }).appendTo(element).text("Cancel signature").prepend($("<i >").addClass("fa fa-times"));
             
             element
                 .on("click", "a.SignButton:not(.Selected):not(.ReadOnly)", function (e) {
@@ -85,7 +85,7 @@
                             buttons.push({
                                 text: signer.code,
                                 title: signer.name,
-                                icon: "user-o",
+                                icon: "user",
                                 data: signer,
                                 handler: function (signer) {
 									trySign(signer.code, signer.accessToken || "-");
@@ -95,7 +95,7 @@
 						buttons.push({
 							text: mainUser,
 							title: matematici.tokenManager.getUserName(),
-							icon: "user-o",
+							icon: "user",
 							handler: function () {
 								trySign(mainUser);
 							}
@@ -134,7 +134,7 @@
         };
 
     this.update = function (model) {
-		button.text(model.buttonLabel ? model.buttonLabel : "Signature").prepend($("<i >").addClass("fi flaticon-check"));
+		button.text(model.buttonLabel ? model.buttonLabel : "Signature").prepend($("<i >").addClass("fa fa-check"));
 		button.toggleClass("ReadOnly", model.readOnly);
 		if (cancelButton) cancelButton.toggleClass("ReadOnly", model.readOnly);
 

@@ -7,7 +7,7 @@
 			element =
 				$("<a />")
 					.text(caption)
-					.prepend($("<i />").addClass("fi flaticon-arrow-right"))
+					.prepend($("<i />").addClass("fa fa-caret-right"))
 					.attr("href", "#")
 					.appendTo(propertyPanel.getPropertyList())
 					.toggleClass("Changed", !!type.hasChanges())

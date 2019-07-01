@@ -9,7 +9,7 @@
 
     this.add = function (label, action, cssClass, icon) {
 		var button = $("<a />").addClass("Button " + (cssClass || "")).html(label).prependTo(element).on("click", action);
-		if (icon) button.append($("<i />").addClass("fi flaticon-" + icon));
+		if (icon) button.append($("<i />").addClass("Icon fa fa-" + icon));
         return this;
     };
 

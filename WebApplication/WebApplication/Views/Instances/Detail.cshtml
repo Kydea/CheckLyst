@@ -50,7 +50,7 @@
             }),
 
             actionBar = new matematici.ActionBar("div.ActionBar")
-                .add("<i class='fi flaticon-calculator'></i>", function () {
+                .add("<i class='Icon fa fa-calculator'></i>", function () {
                     new matematici.CheckListGrid(instance.getExpressions(), null, function (tr, row, rowIndex, columnIndex, value) {
                         if (columnIndex == 1 && (row.typeName == "DateTime" || row.typeName == "Date")) {
                             var td = $("<td />").appendTo(tr);
@@ -71,7 +71,7 @@
                         { name: "typeName", label: "Type" }
                     ]);
                 }, "Icon ExpressionsButton")
-                .add("<i class='fi flaticon-exclamation'></i>", function () {
+                .add("<i class='Icon fa fa-exclamation'></i>", function () {
                     instance.showExceptions();
                 }, "Icon Invalid ExceptionsButton"),
 

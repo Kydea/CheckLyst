@@ -19,13 +19,13 @@ div.CheckList .HeaderContainer {
   div.CheckList .HeaderContainer div.Group {
     background-color: white; }
 
-div.CheckList span.Error i.fi {
+div.CheckList span.Error i.fa {
   color: #cc0000; }
 
 div.CheckList span.Null {
   color: #ccc; }
 
-div.CheckList div.TabLabels a i.fi {
+div.CheckList div.TabLabels a i.fa {
   cursor: pointer; }
 
 div.CheckList div.Element {

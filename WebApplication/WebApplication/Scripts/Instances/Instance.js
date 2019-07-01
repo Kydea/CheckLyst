@@ -38,7 +38,7 @@
 
         setupTab = function (pages) {
             for (var pageIndex in pages)
-                tab.add(pages[pageIndex].description, null, null, "lock-o")
+                tab.add(pages[pageIndex].description, null, null, "lock")
 
             pageLock = new instances.PageLock(instance);
 
@@ -446,10 +446,10 @@
 				parameters = checkListGrid.getParameters(),
 				attributes = { type: "text", readonly: "readonly" };
 
-			parameters.append($("<label />").append($("<span />").text("Department")).append($("<i />").addClass("Icon fi flaticon-building-o")).append($("<input />").attr(attributes).val(departmentName)));
-			parameters.append($("<label />").append($("<span />").text("Prototype type")).append($("<i />").addClass("Icon fi flaticon-folder-o")).append($("<input />").attr(attributes).val(prototypeTypeName)));
-			parameters.append($("<label />").append($("<span />").text("Prototype version")).append($("<i />").addClass("Icon fi flaticon-prototype")).append($("<input />").attr(attributes).val(prototypeName + "." + version)));
-			parameters.append($("<label />").append($("<span />").text("Instance")).append($("<i />").addClass("Icon fi flaticon-version")).append($("<input />").attr(attributes).val(getFormattedYear() + "." + number)));
+            parameters.append($("<label />").append($("<span />").text("Department")).append($("<i />").addClass("Icon fal fa-industry")).append($("<input />").attr(attributes).val(departmentName)));
+			parameters.append($("<label />").append($("<span />").text("Prototype type")).append($("<i />").addClass("Icon fal fa-folder")).append($("<input />").attr(attributes).val(prototypeTypeName)));
+            parameters.append($("<label />").append($("<span />").text("Prototype version")).append($("<i />").addClass("Icon fal fa-file-invoice")).append($("<input />").attr(attributes).val(prototypeName + "." + version)));
+			parameters.append($("<label />").append($("<span />").text("Instance")).append($("<i />").addClass("Icon fal fa-list-ol")).append($("<input />").attr(attributes).val(getFormattedYear() + "." + number)));
 		});
 	};
 

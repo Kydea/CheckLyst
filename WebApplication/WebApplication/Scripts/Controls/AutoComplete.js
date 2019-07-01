@@ -77,8 +77,8 @@ matematici.AutoComplete = function (selector) {
 			var width = label.outerWidth();
 			input = $("<input />").addClass("AutoComplete-Filter").attr({ type: "text" }).hide().insertAfter(label);
 			list = $("<div />").addClass("AutoComplete-List").insertAfter(input);
-			icon = $("<i />").addClass("AutoComplete fi flaticon-arrow-down").insertAfter(input);
-			noRow = $("<i />").addClass("fi flaticon-minus");
+			icon = $("<i />").addClass("AutoComplete fa fa-caret-down").insertAfter(input);
+			noRow = $("<i />").addClass("fa fa-minus");
 			element.parent("label")
 				.on("click", function (e) {
 					if (e.target.tagName != "INPUT") {

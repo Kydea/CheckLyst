@@ -113,19 +113,19 @@
 			title.children("span").text(model.description || "(Prototype name)");
 
 			commands = $("<div />").addClass("Commands")
-				.append($("<a />").attr("data-command", "properties").addClass("Button MiniIcon Properties").append($("<i />").addClass("fi flaticon-cog")))
+				.append($("<a />").attr("data-command", "properties").addClass("Button MiniIcon Properties").append($("<i />").addClass("fal fa-cogs")))
 			if (model.state == prototypes.Prototype.states.draft)
 				commands
-					.append($("<a />").attr("data-command", "add").addClass("Button MiniIcon Add").append($("<i />").addClass("fi flaticon-plus")))
-					.append($("<a />").attr("data-command", "up").addClass("Button MiniIcon Up").append($("<i />").addClass("fi flaticon-arrow-up")))
-					.append($("<a />").attr("data-command", "down").addClass("Button MiniIcon Down").append($("<i />").addClass("fi flaticon-arrow-down")))
-					.append($("<a />").attr("data-command", "remove").addClass("Button MiniIcon Remove").append($("<i />").addClass("fi flaticon-trash-o")));
+					.append($("<a />").attr("data-command", "add").addClass("Button MiniIcon Add").append($("<i />").addClass("fal fa-plus")))
+					.append($("<a />").attr("data-command", "up").addClass("Button MiniIcon Up").append($("<i />").addClass("fal fa-caret-up")))
+					.append($("<a />").attr("data-command", "down").addClass("Button MiniIcon Down").append($("<i />").addClass("fal fa-caret-down")))
+					.append($("<a />").attr("data-command", "remove").addClass("Button MiniIcon Remove").append($("<i />").addClass("fal fa-trash-alt")));
 
 			tab.clear();
 			for (var index in model.pages)
 				tab.add(model.pages[index].description, "Page" + model.pages[index].itemId);
 
-			if (model.state == prototypes.Prototype.states.draft) tab.add($("<span />").prepend($("<i >").addClass("Add fi flaticon-plus")), null, "Add");
+			if (model.state == prototypes.Prototype.states.draft) tab.add($("<span />").prepend($("<i >").addClass("Add fal fa-plus")), null, "Add");
 			page.setIndex(pageIndex = pageIndex >= model.pages.length ? model.pages.length - 1 : pageIndex ? pageIndex : 0);
 			tab.select(pageIndex);
 
@@ -627,10 +627,10 @@
 				parameters = checkListGrid.getParameters(),
 				attributes = { type: "text", readonly: "readonly" };
 
-			parameters.append($("<label />").append($("<span />").text("Department")).append($("<i />").addClass("Icon fi flaticon-building-o")).append($("<input />").attr(attributes).val(model.departmentName)));
-			parameters.append($("<label />").append($("<span />").text("Prototype type")).append($("<i />").addClass("Icon fi flaticon-folder-o")).append($("<input />").attr(attributes).val(model.prototypeTypeName)));
-			parameters.append($("<label />").append($("<span />").text("Prototype")).append($("<i />").addClass("Icon fi flaticon-prototype")).append($("<input />").attr(attributes).val(model.name)));
-			parameters.append($("<label />").append($("<span />").text("Version")).append($("<i />").addClass("Icon fi flaticon-version")).append($("<input />").attr(attributes).val(prototypeKey.version)));
+            parameters.append($("<label />").append($("<span />").text("Department")).append($("<i />").addClass("Icon fal fa-industry")).append($("<input />").attr(attributes).val(model.departmentName)));
+			parameters.append($("<label />").append($("<span />").text("Prototype type")).append($("<i />").addClass("Icon fal fa-folder")).append($("<input />").attr(attributes).val(model.prototypeTypeName)));
+            parameters.append($("<label />").append($("<span />").text("Prototype")).append($("<i />").addClass("Icon fal fa-file-invoice")).append($("<input />").attr(attributes).val(model.name)));
+			parameters.append($("<label />").append($("<span />").text("Version")).append($("<i />").addClass("Icon fal fa-list-ol")).append($("<input />").attr(attributes).val(prototypeKey.version)));
 		});
 	};
 

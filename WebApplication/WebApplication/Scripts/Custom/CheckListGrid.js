@@ -31,9 +31,9 @@
                             td.append($("<span />").html(formattedDate.date + " " + formattedDate.time + ":" + formattedDate.seconds).attr("title", formattedDate.offset));
 						}
 					} else if (value === true)
-						td.append($("<i />").addClass("fi flaticon-check"));
+						td.append($("<i />").addClass("fa fa-check"));
 					else if (value === false)
-						td.append($("<i />").addClass("fi flaticon-times"));
+						td.append($("<i />").addClass("fa fa-times"));
 					else
 						td.html(value)
 					tr.append(td);
@@ -63,7 +63,7 @@
 			var
 				buttons =
 					$("<div />").addClass("Buttons").appendTo(container)
-						.append($("<a />").addClass("Button").text("close").prepend($("<i />").addClass("fi flaticon-times")).on("click", function () {
+						.append($("<a />").addClass("Button").text("close").prepend($("<i />").addClass("Icon fa fa-times")).on("click", function () {
 							checkListGrid.close();
 						}));
 

@@ -57,7 +57,7 @@ body.Help {
                         i {
                             left: 0;
                             position: absolute;
-                            font-size: 9px;
+                            font-size: 12px;
                             color: white;
                             background: $Color-Green-Regular;
                             border-radius: 50%;
@@ -197,7 +197,7 @@ body.Help div.Help div.Content, body.OnlyHelp {
         margin: 0 0 1em;
     }
 
-    i.fi {
+    i.fa, i.fal {
         font-size: unset;
     }
 

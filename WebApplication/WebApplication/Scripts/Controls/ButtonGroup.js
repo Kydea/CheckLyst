@@ -21,7 +21,7 @@
 				.attr("href", "#")
 				.addClass("Button ButtonGroup")
 				.text(element.data("text"))
-				.prepend($("<i />").addClass("fi flaticon-arrow-down"))
+				.prepend($("<i />").addClass("Icon fa fa-caret-down"))
 				.on("click", function (e) {
 					e.preventDefault();
 					e.stopPropagation();
@@ -48,7 +48,7 @@
 			close();
 			action();
 		});
-		if (icon) button.append($("<i />").addClass("fi flaticon-" + icon));
+		if (icon) button.append($("<i />").addClass("Icon fa fa-" + icon));
 		return this;
 	};
 

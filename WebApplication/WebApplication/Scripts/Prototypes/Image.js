@@ -5,7 +5,7 @@
 
         setup = function () {
             span = $("<span />");
-            a = $("<a />").addClass("Image Button GreyYellowButton").append(span).append($("<i />").addClass("fi flaticon-arrow-right")).appendTo(item.getElement());
+            a = $("<a />").addClass("Image Button GreyYellowButton").append(span).append($("<i />").addClass("fal fa-caret-right")).appendTo(item.getElement());
         };
 
     this.update = function (model) {

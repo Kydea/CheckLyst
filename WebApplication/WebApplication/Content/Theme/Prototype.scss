@@ -29,11 +29,12 @@ div.Prototype {
             width: $IconSize !important;
             border-radius: 3px 0 0 3px !important;
 
-            i.fi {
-                font-size: 14px !important;
+            i.fa, i.fal {
+                font-size: 16px !important;
                 line-height: $IconSize !important;
                 height: $IconSize !important;
                 width: $IconSize !important;
+                color: $Color-Green-Dark !important;
             }
 
             + a.MiniIcon {
@@ -44,7 +45,7 @@ div.Prototype {
             &:hover {
                 background: $Color-Silver-Dark;
 
-                i.fi {
+                i.fa, i.fal {
                     color: $Color-Green-Dark !important;
                 }
             }

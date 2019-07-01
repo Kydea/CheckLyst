@@ -44,7 +44,7 @@ body.Help {
             body.Help div.Help div.Container div.TOC div.Back a i {
               left: 0;
               position: absolute;
-              font-size: 9px;
+              font-size: 12px;
               color: white;
               background: #009688;
               border-radius: 50%;
@@ -135,7 +135,7 @@ body.Help div.Help div.Content ul, body.OnlyHelp ul {
 body.Help div.Help div.Content p, body.OnlyHelp p {
   margin: 0 0 1em; }
 
-body.Help div.Help div.Content i.fi, body.OnlyHelp i.fi {
+body.Help div.Help div.Content i.fa, body.Help div.Help div.Content i.fal, body.OnlyHelp i.fa, body.OnlyHelp i.fal {
   font-size: unset; }
 
 body.Help div.Help div.Content a, body.OnlyHelp a {

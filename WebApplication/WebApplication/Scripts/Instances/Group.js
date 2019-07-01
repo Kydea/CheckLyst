@@ -86,19 +86,19 @@
 
 				if (group.isIteration()) 
                     iterationCommands = $(tableContent ? "<td />" : "<div />").addClass("IterationCommands").appendTo(element)
-						.append($("<a />").attr("href", "#").addClass("Up").toggleClass("Hidden", !!parent.getSetupModel().disableMove).append($("<i />").addClass("fi flaticon-arrow-up")).on("click", function () {
+						.append($("<a />").attr("href", "#").addClass("Up").toggleClass("Hidden", !!parent.getSetupModel().disableMove).append($("<i />").addClass("fa fa-caret-up")).on("click", function () {
                             new instances.Event(instances.Events.up, id).trigger();
                         }))
-						.append($("<a />").attr("href", "#").addClass("Down").toggleClass("Hidden", !!parent.getSetupModel().disableMove).append($("<i />").addClass("fi flaticon-arrow-down")).on("click", function () {
+						.append($("<a />").attr("href", "#").addClass("Down").toggleClass("Hidden", !!parent.getSetupModel().disableMove).append($("<i />").addClass("fa fa-caret-down")).on("click", function () {
                             new instances.Event(instances.Events.down, id).trigger();
                         }))
-						.append($("<a />").attr("href", "#").addClass("Remove").toggleClass("Hidden", !!parent.getSetupModel().disableRemove).append($("<i />").addClass("fi flaticon-trash-o")).on("click", function () {
+						.append($("<a />").attr("href", "#").addClass("Remove").toggleClass("Hidden", !!parent.getSetupModel().disableRemove).append($("<i />").addClass("fa fa-trash-alt")).on("click", function () {
                             new instances.Event(instances.Events.remove, id).trigger();
                         }));
 				if (group.isGroup() && !group.isTableContent()) {
                     elementInformation = new instances.ElementInformation(element);
 					addButton = $("<div />").addClass("Item NewLine").toggleClass("Hidden", setupModel && setupModel.disableAdd).appendTo(element)
-						.append($("<a />").attr("href", "#").addClass("Button AddIteration").toggleClass("Disabled", setupModel && setupModel.disableAdd).text("Add").prepend($("<i />").addClass("fi flaticon-plus")).on("click", function () {
+						.append($("<a />").attr("href", "#").addClass("Button AddIteration").toggleClass("Disabled", setupModel && setupModel.disableAdd).text("Add").prepend($("<i />").addClass("Icon fa fa-plus")).on("click", function () {
                             if (!readOnly) new instances.Event(instances.Events.add, id).trigger();
                         }));
                 }

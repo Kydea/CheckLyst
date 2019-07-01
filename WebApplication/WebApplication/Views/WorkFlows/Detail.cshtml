@@ -10,29 +10,29 @@
             <div class="Tab">
                 <label>
                     <span>ID</span>
-                    <i class="Icon fi flaticon-key-o" />
+                    <i class="Icon fal fa-key" />
                     <input type="text" name="id" readonly="readonly" placeholder="(new record)" />
                 </label>
 
                 <label>
                     <span>Description</span>
-                    <i class="Icon fi flaticon-id-card-o" />
+                    <i class="Icon fal fa-id-card" />
                     <input type="text" name="description" />
                 </label>
 
                 <label class="Clearing Controls2">
                     <span>Creation</span>
-                    <i class="Icon fi flaticon-user-o" />
+                    <i class="Icon fal fa-user" />
                     <input type="text" name="createdBy" readonly="readonly" />
-                    <i class="Icon fi flaticon-calendar" />
+                    <i class="Icon fal fa-calendar-alt" />
                     <input type="text" name="createdOn" readonly="readonly" data-type="DateTimeOffset" />
                 </label>
 
                 <label class="Controls2">
                     <span>Last edit</span>
-                    <i class="Icon fi flaticon-user-o" />
+                    <i class="Icon fal fa-user" />
                     <input type="text" name="modifiedBy" readonly="readonly" />
-                    <i class="Icon fi flaticon-calendar" />
+                    <i class="Icon fal fa-calendar-alt" />
                     <input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
                 </label>
 
@@ -101,10 +101,10 @@
                         .addClass("Width150 Users")
                         .insertBefore(button)
                         .append($("<span />"))
-                        .append($("<i />").addClass("Icon fi flaticon-group"))
+                        .append($("<i />").addClass("Icon fal fa-users"))
                         .append(select),
 
-                a = $("<a />").insertBefore(button).attr("href", "#").addClass("Button MiniIcon Angle").append($("<i />").addClass("fi flaticon-trash-o")).on("click", function () {
+                a = $("<a />").insertBefore(button).attr("href", "#").addClass("Button MiniIcon Angle").append($("<i />").addClass("Icon fal fa-trash-alt")).on("click", function () {
                     label.remove();
                     a.remove();
                     fixStep(step)
@@ -132,16 +132,16 @@
             step.append($("<hr />"));
 
             step.append($("<h3 />"));
-            step.append($("<a />").attr("href", "#").addClass("Button MiniIcon").append($("<i />").addClass("fi flaticon-trash-o")).on("click", function () {
+            step.append($("<a />").attr("href", "#").addClass("Button MiniIcon").append($("<i />").addClass("Icon fal fa-trash-alt")).on("click", function () {
                 step.remove();
                 fixSteps();
             }));
 
             var reason;
-            step.append($("<label />").addClass("Clearing Reason").append($("<span />").text("Signature reason")).append($("<i />").addClass("Icon fi flaticon-edit-o")).append(reason = $("<input />").attr({ type: "text" })));
+            step.append($("<label />").addClass("Clearing Reason").append($("<span />").text("Signature reason")).append($("<i />").addClass("Icon fal fa-pencil")).append(reason = $("<input />").attr({ type: "text" })));
             if (detailPage.isReadOnly()) matematici.controls.setEditable(reason, false);
 
-            var addUserButton = $("<a />").attr("href", "#").addClass("Button Icon").append($("<i />").addClass("fi flaticon-plus")).on("click", function () {
+            var addUserButton = $("<a />").attr("href", "#").addClass("Button Icon").append($("<i />").addClass("Icon fal fa-plus")).on("click", function () {
                 addUser(addUserButton);
             });
             step.append(addUserButton);

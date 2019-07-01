@@ -85,11 +85,11 @@ div.CheckListGrid {
                         i {
                             font-size: 14px;
 
-                            &.flaticon-times {
+                            &.fa-times {
                                 color: $Color-Red-Regular !important;
                             }
 
-                            &.flaticon-check {
+                            &.fa-check {
                                 color: $Color-Green-Regular !important;
                             }
                         }

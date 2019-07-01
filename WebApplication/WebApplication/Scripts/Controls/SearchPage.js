@@ -63,7 +63,7 @@
                 .attr({ href: "#", id: "ApplyButton" })
                 .addClass("Button GreyYellowButton DefaultButton")
                 .text("search")
-                .prepend($("<i />").addClass("fi flaticon-arrow-right"))
+                .prepend($("<i />").addClass("Icon fa fa-caret-right"))
             );
 
             if (advancedSearchPanel.length == 1)
@@ -72,7 +72,7 @@
                     .text("Advanced search")
                     .on("click", toggleAdvancedSearch)
                     .attr("href", "#")
-                    .append($("<i >").addClass("fi flaticon-arrow-down"));
+                    .append($("<i >").addClass("Icon fal fa-caret-down"));
 
 			new matematici.Page({
 				name: options.pageName,

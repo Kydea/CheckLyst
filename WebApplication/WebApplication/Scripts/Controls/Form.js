@@ -13,6 +13,8 @@
 		setup = function () {
 			//initial setup
 
+            options = options || {};
+
 			if (options.applyButton) {
 				var
 					event = options.applyButton.event,
@@ -83,7 +85,7 @@
 			var storageName = getStorageName();
 			try {
                 localStorage.setItem(storageName, prepareRequest());
-                localStorage.setItem(storageName + "/AdvancedSearch", options.searchPage.isAdvancedSearchMode());
+                localStorage.setItem(storageName + "/AdvancedSearch", options.searchPage && options.searchPage.isAdvancedSearchMode && options.searchPage.isAdvancedSearchMode());
 			} catch (error) {
 				console.log(error);
 				try { localStorage.removeItem(storageName) } catch (error) { }
@@ -115,14 +117,14 @@
             fields.each(function () {
                 var
                     field = $(this),
-                    apply = options.searchPage.isAdvancedSearchMode() || field.closest("div.AdvancedSearch").length == 0;
+                    apply = options.searchPage && options.searchPage.isAdvancedSearchMode && options.searchPage.isAdvancedSearchMode() || field.closest("div.AdvancedSearch").length == 0;
                 parameters.data[field.attr("name")] =
                     field.hasClass("DatePicker") || field.data("type") == "DateTimeOffset" ? (apply ? field.data("date") : null) :
 					field.attr("type") == "checkbox" ? (apply ? field.prop("checked") : false) :
                     (apply ? field.val() : "");
 			});
 
-            parameters.data["advancedSearch"] = options.searchPage.isAdvancedSearchMode();
+            parameters.data["advancedSearch"] = options.searchPage && options.searchPage.isAdvancedSearchMode && options.searchPage.isAdvancedSearchMode();
 
 			return JSON.stringify(parameters);
 		},
@@ -177,14 +179,14 @@
 					for (var index in data.validationMessages)
 						errors.append(
 							$("<div />").addClass("Error").text(" " + data.validationMessages[index].message).prepend(
-								$("<i />").addClass("fi flaticon-warning")
+                                $("<i />").addClass("fas fa-exclamation-triangle")
 							)
 						);
 				else if (!fieldErrors) {
 					fieldErrors = true;
 					errors.append(
 						$("<div />").addClass("Error").text("Some field is not valid. Click on the error icon of the fields for more details.").prepend(
-							$("<i />").addClass("fi flaticon-warning")
+                            $("<i />").addClass("fas fa-exclamation-triangle")
 						)
 					);
 				}

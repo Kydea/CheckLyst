@@ -21,7 +21,7 @@
 					tagHeight = 0,
 					currentIndex = currentItem && currentItem.index || 0;
 
-                $("> .Tab", element).css("margin-top", labelsHeight);
+                //$("> .Tab", element).css("margin-top", labelsHeight);
 
                 $("> .TabLabels a", element).each(function (index) {
                     var item = select(index);
@@ -30,7 +30,7 @@
                 });
 
 				select(currentIndex);
-                element.height(labelsHeight);
+                element.height(tagHeight);
 			} else
 				element.height(getCurrentItemHeight());
 		},
@@ -117,7 +117,7 @@
 
 	this.add = function (label, id, cssClass, icon) {
 		var label = $("<a />").attr({ href: "#", id: id }).addClass(cssClass).append(label);
-		if (icon) label.append($("<i />").addClass("fi flaticon-" + icon));
+		if (icon) label.append($("<i />").addClass("fal fa-" + icon));
 		$("> .TabLabels", element).append(label);
     };
 

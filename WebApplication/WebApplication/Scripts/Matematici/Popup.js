@@ -41,7 +41,7 @@ matematici.popup = function () {
 					} else
 						matematici.popup.close();
 				});
-				if (button.icon) button.content.prepend($("<i />").addClass("fi flaticon-" + button.icon));
+				if (button.icon) button.content.prepend($("<i />").addClass("Icon fal fa-" + button.icon));
 				if (button.hidden) button.content.hide();
 				if (button.defaultButton) button.content.addClass("DefaultButton GreyGreenButton");
 				if (button.cancelButton)
@@ -58,7 +58,7 @@ matematici.popup = function () {
 		addCloseButton = function (handler) {
 			container
 				.append($("<a />").attr("href", "#").addClass("CloseButton CancelButton")
-					.append($("<i />").addClass("fi flaticon-times-circle"))
+                    .append($("<i />").addClass("fas fa-times-circle"))
 					.on("click", handler));
 		},
 
@@ -196,7 +196,7 @@ matematici.popup = function () {
                 - or -
                 text - type: String, description: the text of the button (i.e. <a class="Button">[text]</a>)
                 handler - type: function, description: called when the button is clicked
-                icon - type: function, description: the icon of the button (i.e. <a class="Button"><i class="fi flaticon[icon]"></i> [text]</a>)
+                icon - type: function, description: the icon of the button (i.e. <a class="Button"><i class="fal fa-[icon]"></i> [text]</a>)
 				hidden - type: boolean, description: the button is hidden
 				defaultButton - type: boolean, description: the click action is invoked when user press return
 				cancelButton - type: boolean, description: the click action is invoked when user press esc, a close button accociated is displayed (also if this button is hidden)

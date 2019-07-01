@@ -12,13 +12,13 @@
             <div class="Tab">
                 <label>
                     <span>Code</span>
-                    <i class="Icon fi flaticon-key-o" />
+                    <i class="Icon fal fa-key" />
                     <input type="text" name="code" class="Code" />
                 </label>
 
                 <label>
                     <span>Source class</span>
-                    <i class="Icon fi flaticon-connection" />
+                    <i class="Icon fal fa-chart-network" />
                     <select class="AutoComplete SourceClass" name="class">
                         <option value="SAP">SAP</option>
                         <option value="SQL">SQL</option>
@@ -27,42 +27,42 @@
 
                 <label>
                     <span>Description</span>
-                    <i class="Icon fi flaticon-align-left" />
+                    <i class="Icon fal fa-align-left" />
                     <input type="text" name="description" />
                 </label>
 
                 <label class="Clearing Controls2">
                     <span>Creation</span>
-                    <i class="Icon fi flaticon-user-o" />
+                    <i class="Icon fal fa-user" />
                     <input type="text" name="createdBy" readonly="readonly" />
-                    <i class="Icon fi flaticon-calendar" />
+                    <i class="Icon fal fa-calendar-alt" />
                     <input type="text" name="createdOn" readonly="readonly" data-type="DateTimeOffset" />
                 </label>
 
                 <label class="Clearing Controls2">
                     <span>Last edit</span>
-                    <i class="Icon fi flaticon-user-o" />
+                    <i class="Icon fal fa-user" />
                     <input type="text" name="modifiedBy" readonly="readonly" />
-                    <i class="Icon fi flaticon-calendar" />
+                    <i class="Icon fal fa-calendar-alt" />
                     <input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
                 </label>
             </div>
             <div class="Tab">
                 <label>
                     <span>User</span>
-                    <i class="Icon fi flaticon-user-o" />
+                    <i class="Icon fal fa-user" />
                     <input type="text" name="user" maxlength="200" />
                 </label>
 
                 <label>
                     <span>Password</span>
-                    <i class="Icon fi flaticon-lock-o" />
+                    <i class="Icon fal fa-lock" />
                     <input type="password" maxlength="50" />
                 </label>
 
                 <label>
                     <span>Query</span>
-                    <i class="Icon fi flaticon-cog" />
+                    <i class="Icon fal fa-cogs" />
                     <select class="AutoComplete" name="functionName" data-nullable="true">
                         <option value="PO Header">PO Header</option>
                     </select>
@@ -70,44 +70,44 @@
 
                 <label>
                     <span>Client</span>
-                    <i class="Icon fi flaticon-connection" />
+                    <i class="Icon fal fa-chart-network" />
                     <input type="text" name="client" maxlength="200" />
                 </label>
 
                 <label>
                     <span>Message server host</span>
-                    <i class="Icon fi flaticon-connection" />
+                    <i class="Icon fal fa-chart-network" />
                     <input type="text" name="messageServerHost" maxlength="200" />
                 </label>
 
                 <label>
                     <span>Message server service</span>
-                    <i class="Icon fi flaticon-connection" />
+                    <i class="Icon fal fa-chart-network" />
                     <input type="text" name="messageServerService" maxlength="200" />
                 </label>
 
                 <label>
                     <span>System ID</span>
-                    <i class="Icon fi flaticon-connection" />
+                    <i class="Icon fal fa-chart-network" />
                     <input type="text" name="systemID" maxlength="200" />
                 </label>
 
                 <label>
                     <span>Logon group</span>
-                    <i class="Icon fi flaticon-group" />
+                    <i class="Icon fal fa-users" />
                     <input type="text" name="logonGroup" maxlength="200" />
                 </label>
 
                 <label>
                     <span>Language</span>
-                    <i class="Icon fi flaticon-align-left" />
+                    <i class="Icon fal fa-align-left" />
                     <input type="text" name="language" maxlength="200" />
                 </label>
             </div>
             <div class="Tab">
                 <label>
                     <span>DBMS</span>
-                    <i class="Icon fi flaticon-connection" />
+                    <i class="Icon fal fa-chart-network" />
                     <select class="AutoComplete" name="dbms">
                         <option value="SQL Server">SQL Server</option>
                         <option value="Oracle">Oracle</option>
@@ -116,13 +116,13 @@
 
                 <label class="Width300">
                     <span>Connectio string</span>
-                    <i class="Icon fi flaticon-user-o" />
+                    <i class="Icon fal fa-user" />
                     <input type="text" name="connectionString" maxlength="500" />
                 </label>
 
                 <label>
                     <span>Password</span>
-                    <i class="Icon fi flaticon-lock-o" />
+                    <i class="Icon fal fa-lock" />
                     <input type="password" maxlength="50" />
                 </label>
 
@@ -195,7 +195,7 @@
             }, 0);
 
             if (!detailPage.isReadOnly())
-                $("<a />").attr("href", "#").addClass("Button Icon").append($("<i />").addClass("fi flaticon-minus")).on("click", function () {
+                $("<a />").attr("href", "#").addClass("Button Icon").append($("<i />").addClass("Icon fal fa-minus")).on("click", function () {
                     div.remove();
                     fixQueryParameters(tabIndex);
                 }).appendTo(div);

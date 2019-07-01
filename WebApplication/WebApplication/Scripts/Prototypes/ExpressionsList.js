@@ -60,14 +60,14 @@
             row.node = $("<tr />")
                 .addClass("Handler")
                 .appendTo(table)
-                .append($("<td />").append($("<i />").addClass("fi flaticon-arrow-right")))
+                .append($("<td />").append($("<i />").addClass("fa fa-caret-right")))
                 .append($("<td />").addClass("CodeColumn").text(row.code))
                 .append($("<td />").addClass("DescriptionColumn").text(row.description))
                 .append($("<td />").addClass("ExpressionColumn").text(row.expression))
-                .append($("<td />").addClass("ValidColumn Centered").append($("<i />").attr("title", row.error || "").addClass("fi" + (row.valid == null ? "" : " flaticon-" + (row.valid ? "check" : "times")))))
-                .append($("<td />").addClass("UniqueColumn Centered").toggleClass("Off", !row.unique).append($("<i />").addClass("fi flaticon-key-o")))
-                .append($("<td />").addClass("ExceptionColumn Centered").toggleClass("Off", !row.exception).append($("<i />").addClass("fi flaticon-exclamation")))
-                .append($("<td />").addClass("Order Centered Inactive").append($("<i />").addClass("Up fi flaticon-arrow-up")).append($("<i />").addClass("Down fi flaticon-arrow-down")))
+                .append($("<td />").addClass("ValidColumn Centered").append($("<i />").attr("title", row.error || "").addClass("fa" + (row.valid == null ? "" : " fa-" + (row.valid ? "check" : "times")))))
+                .append($("<td />").addClass("UniqueColumn Centered").toggleClass("Off", !row.unique).append($("<i />").addClass("fa fa-key")))
+                .append($("<td />").addClass("ExceptionColumn Centered").toggleClass("Off", !row.exception).append($("<i />").addClass("fa fa-exclamation")))
+                .append($("<td />").addClass("Order Centered Inactive").append($("<i />").addClass("Up fa fa-caret-up")).append($("<i />").addClass("Down fa fa-caret-down")))
 
             if (model.state == prototypes.Prototype.states.draft)
                 matematici.canClose = false;
@@ -75,9 +75,9 @@
 
         update = function (row) {
             row.node.find(".ValidColumn i")
-                .removeClass("flaticon-check flaticon-times flaticon-question")
+                .removeClass("fa-check fa-times fa-question")
                 .attr("title", row.error || "")
-                .addClass("flaticon-" + (row.valid ? "check" : "times"));
+                .addClass("fa-" + (row.valid ? "check" : "times"));
         },
 
         remove = function () {
@@ -221,15 +221,15 @@
                     verifyButton.show();
                 }).on("blur", "td", function () {
                     list[currentIndex].valid = null;
-                    $("td.ValidColumn i", $(this).parent()).removeClass("flaticon-check flaticon-remove").addClass("flaticon-question");
+                    $("td.ValidColumn i", $(this).parent()).removeClass("fa-check fa-remove").addClass("fa-question");
                 }).on("click", "tr.Selected td.UniqueColumn", function () {
                     verifyButton.show();
-                    $("td.ValidColumn i", $(this).parent()).removeClass("flaticon-check flaticon-remove").addClass("flaticon-question");
+                    $("td.ValidColumn i", $(this).parent()).removeClass("fa-check fa-remove").addClass("fa-question");
                     list[currentIndex].unique = !list[currentIndex].unique;
                     $(this).toggleClass("Off", !list[currentIndex].unique);
                 }).on("click", "tr.Selected td.ExceptionColumn", function () {
                     verifyButton.show();
-                    $("td.ValidColumn i", $(this).parent()).removeClass("flaticon-check flaticon-remove").addClass("flaticon-question");
+                    $("td.ValidColumn i", $(this).parent()).removeClass("fa-check fa-remove").addClass("fa-question");
                     list[currentIndex].exception = !list[currentIndex].exception;
                     $(this).toggleClass("Off", !list[currentIndex].exception);
                 });
@@ -238,7 +238,7 @@
             var
                 buttons =
                     $("<div />").addClass("Buttons").appendTo(container)
-                        .append($("<a />").addClass("Button").text("close").prepend($("<i />").addClass("fi flaticon-times")).on("click", function () {
+                        .append($("<a />").addClass("Button").text("close").prepend($("<i />").addClass("Icon fa fa-times")).on("click", function () {
                             if (verifyButton.is(":visible"))
                                 verify(function () {
                                     close();
@@ -246,14 +246,14 @@
                             else
                                 close();
                         }))
-                        .append(verifyButton = $("<a />").addClass("Button").text("verify").toggle(model.state == prototypes.Prototype.states.draft).prepend($("<i />").addClass("fi flaticon-check")).on("click", function () {
+                        .append(verifyButton = $("<a />").addClass("Button").text("verify").toggle(model.state == prototypes.Prototype.states.draft).prepend($("<i />").addClass("Icon fa fa-check")).on("click", function () {
                             verify();
                         }))
-                        .append($("<a />").addClass("Button").text("add").toggle(model.state == prototypes.Prototype.states.draft).prepend($("<i />").addClass("fi flaticon-plus")).on("click", function () {
+                        .append($("<a />").addClass("Button").text("add").toggle(model.state == prototypes.Prototype.states.draft).prepend($("<i />").addClass("Icon fa fa-plus")).on("click", function () {
                             add({ code: "", expression: "", error: null });
                             select(list.length - 1);
                         }))
-                        .append(removeButton = $("<a />").addClass("Button").text("remove").prepend($("<i />").addClass("fi flaticon-trash-o")).on("click", function () {
+                        .append(removeButton = $("<a />").addClass("Button").text("remove").prepend($("<i />").addClass("Icon fa fa-trash-alt")).on("click", function () {
                             remove();
                         }).hide());
 

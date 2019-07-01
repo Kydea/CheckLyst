@@ -1,10 +1,6 @@
 ﻿<header class="Container">
     <div id="UserPanel" class="Padded Container Extended">
-        <a class="User LeftFloating CurrentUser" href="#">
-            <span class="UserName"></span> <i class="fa fa-chevron-down"></i>
-        </a>
-        <a class="Add RightFloating" href="#">Signers <i class="fa fa-chevron-down"></i></a>
-        <a href="#" id="HelpButton" title="User manual">Help <i class="fa fa-question"></i></a>
+        <a class="User LeftFloating CurrentUser" href="#"><span class="UserName"></span> <i class="fa fa-chevron-down"></i></a><a class="Add RightFloating" href="#">Signers <i class="fa fa-chevron-down"></i></a><a href="#" id="HelpButton" title="User manual">Help <i class="fa fa-question"></i></a>
     </div>
 
     <nav class="Menu">
@@ -29,7 +25,7 @@
             </li>
 
             <li class="MenuItem">
-                <a class="MenuItem" href="@Url.Action("Dashboard", "Default")"><i class="fi flaticon-dashboard-o Extended"></i>Dashboard</a>
+                <a class="MenuItem" href="@Url.Action("Dashboard", "Default")"><i class="fal fa-table Extended"></i>Dashboard</a>
 
                 <ul class="SubMenu Extended">
                     <li>
@@ -39,7 +35,7 @@
             </li>
 
             <li class="MenuItem">
-                <span class="MenuItem"><i class="fi flaticon-cog Extended"></i>Settings</span>
+                <span class="MenuItem"><i class="fal fa-cogs Extended"></i>Settings</span>
 
                 <ul class="SubMenu">
                     <li data-role="Users#View">
@@ -64,7 +60,7 @@
             </li>
 
             <li data-role="Prototypes#View" class="MenuItem">
-                <a href="@Url.Action("List", "Prototypes")" class="MenuItem"><i class="fi flaticon-prototype Extended"></i>Prototypes</a>
+                <a href="@Url.Action("List", "Prototypes")" class="MenuItem"><i class="fal fa-file-invoice Extended"></i>Prototypes</a>
 
                 <ul class="SubMenu Extended">
                     <li data-role="Prototypes#View">
@@ -73,7 +69,7 @@
                 </ul>
             </li>
             <li data-role="Instances#View" class="MenuItem">
-                <a href="@Url.Action("List", "Instances")" class="MenuItem"><i class="fi flaticon-instance Extended"></i>Instances</a>
+                <a href="@Url.Action("List", "Instances")" class="MenuItem"><i class="fal fa-layer-group Extended"></i>Instances</a>
 
                 <ul class="SubMenu Extended">
                     <li data-role="Instances#View">

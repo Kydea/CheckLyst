@@ -29,7 +29,7 @@
       white-space: nowrap;
       padding: 0 20px;
       max-width: 100%; }
-      div.TabContainer .TabLabels > a i.fi.flaticon-lock-o {
+      div.TabContainer .TabLabels > a i.fa.fa-lock {
         margin-left: 5px;
         font-size: 14px; }
       div.TabContainer .TabLabels > a.Selected {
@@ -43,7 +43,7 @@
         text-decoration: none !important; }
         div.TabContainer .TabLabels > a:hover:not(.Selected) {
           color: #ffba00; }
-          div.TabContainer .TabLabels > a:hover:not(.Selected) i.fi:not(.flaticon-lock-o) {
+          div.TabContainer .TabLabels > a:hover:not(.Selected) i.fa:not(.fa-lock) {
             color: white !important; }
   div.TabContainer .Tab {
     position: absolute;

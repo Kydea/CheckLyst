@@ -46,7 +46,7 @@
 					.attr("href", "#")
 					.addClass("Button Add")
 					.text("Add group")
-					.prepend($("<i >").addClass("Add fi flaticon-plus")).on("click", addGroup);
+					.prepend($("<i >").addClass("Icon Add fa fa-plus")).on("click", addGroup);
             else 
                 title = $("<h3 />").appendTo(element);
 		},
@@ -63,9 +63,9 @@
 	this.add = function () {
 		matematici.dialog.popupMenu([
 			{ text: "cancel", icon: "times", cancelButton: true },
-            { text: "attachment", icon: "attachment", handler: addElement, data: "Attachment" },
+            { text: "attachment", icon: "paperclip", handler: addElement, data: "Attachment" },
             { text: "image", icon: "image", handler: addElement, data: "Image" },
-            { text: "link", icon: "link-o", handler: addElement, data: "Link" },
+            { text: "link", icon: "link", handler: addElement, data: "Link" },
 			{ text: "signature", icon: "check", handler: addElement, data: "Signature" },
 			{ text: "field", icon: "i-cursor", handler: addElement, data: "Field" },
 			{ text: "text", icon: "align-left", handler: addElement, data: "Text" },

@@ -8,14 +8,14 @@
 					matematici.dialog.popupMenu([
 						{ text: "Cancel", icon: "times", cancelButton: true },
 						{
-							text: "Logout", icon: "logout", handler: function () {
+							text: "Logout", icon: "sign-out", handler: function () {
                                 matematici.dialog.close();
                                 window.location = matematici.urls.accessControl.login;
 								return true;
 							}
 						},
 						{
-							text: "Change PIN", icon: "key-o", handler: function () {
+							text: "Change PIN", icon: "key", handler: function () {
 								profile(matematici.tokenManager.getUserCode());
 							}
 						},
@@ -32,7 +32,7 @@
                     for (var index in signers) {
                         var signer = signers[index];
 						buttons.push({
-                            text: signer.code, icon: "user-o", title: signer.name, data: signer, handler: function (signer) {
+                            text: signer.code, icon: "user", title: signer.name, data: signer, handler: function (signer) {
 								profile(signer.code, signer.accessToken || "-");
 							}
 						});

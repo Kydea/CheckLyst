@@ -2,7 +2,7 @@
     <h1>Prototypes List</h1>
 
     <div class="ActionBar">
-        <a id="AddButton" href="#" class="Button"><i class="fi flaticon-plus"></i> New empty prototype</a>
+        <a id="AddButton" href="#" class="Button"><i class="Icon fa fa-plus"></i> New empty prototype</a>
     </div>
 
     <div class="ShadowPanel">
@@ -10,19 +10,19 @@
         <form id="Filters" action="@BaseUrl/Prototypes/List">
             <label class="Controls2">
                 <span>Department / prototype type</span>
-                <i class="Icon fi flaticon-building-o" />
+                <i class="Icon fal fa-industry" />
                 <select name="department" class="Trigger" data-nullable="(all)" />
-                <i class="Icon fi flaticon-folder-o" />
+                <i class="Icon fal fa-folder" />
                 <select name="prototypeType" data-nullable="(all)" />
             </label>
             <label>
                 <span>Prototype name</span>
-                <i class="Icon fi flaticon-prototype" />
+                <i class="Icon fal fa-file-invoice" />
                 <input type="text" name="name" />
             </label>
             <label class="Width200 Clearing">
                 <span>Changing state</span>
-                <i class="Icon fi flaticon-battery" />
+                <i class="Icon fal fa-tasks" />
                 <select name="pending">
                     <option value="Include">Include prototypes changing state</option>
                     <option value="Exclude">Exclude prototypes changing state</option>
@@ -31,7 +31,7 @@
             </label>
             <label>
                 <span>State</span>
-                <i class="Icon fi flaticon-battery" />
+                <i class="Icon fal fa-tasks" />
                 <select name="state" data-nullable="(all)" />
             </label>
         </form>
@@ -131,9 +131,9 @@
                                 || matematici.tokenManager.checkRole("Prototypes#Edit#" + row.data("values").department + "#" + row.data("values").prototypeType)
                             )
                         )
-                            buttons.push({ text: "new version", icon: "file-o", handler: createNewVersionHandler, data: { id: row.data("values").id, version: row.data("values").version } });
-                        buttons.push({ text: "use as template", icon: "clone-o", handler: useAsTemplateHandler, data: { id: row.data("values").id, version: row.data("values").version } });
-                        buttons.push({ text: "open", icon: "folder-open-o", handler: openPrototypeHandler, data: { id: row.data("values").id, version: row.data("values").version } });
+                            buttons.push({ text: "new version", icon: "file", handler: createNewVersionHandler, data: { id: row.data("values").id, version: row.data("values").version } });
+                        buttons.push({ text: "use as template", icon: "clone", handler: useAsTemplateHandler, data: { id: row.data("values").id, version: row.data("values").version } });
+                        buttons.push({ text: "open", icon: "folder-open", handler: openPrototypeHandler, data: { id: row.data("values").id, version: row.data("values").version } });
 
                         matematici.dialog.popupMenu(buttons);
                     } else

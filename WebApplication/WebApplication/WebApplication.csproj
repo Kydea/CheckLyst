@@ -136,19 +136,17 @@
     <Content Include="Content\Theme\FixedHeader.css">
       <DependentUpon>FixedHeader.scss</DependentUpon>
     </Content>
-    <Content Include="Content\Theme\FontAwesome.css">
-      <DependentUpon>FontAwesome.scss</DependentUpon>
-    </Content>
-    <Content Include="Content\Theme\FontAwesome\fontawesome-webfont.svg" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-brands-400.svg" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-light-300.svg" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-regular-400.svg" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-solid-900.svg" />
     <Content Include="Content\Theme\Fonts.css">
       <DependentUpon>Fonts.scss</DependentUpon>
     </Content>
     <Content Include="Content\Theme\Fonts\FlatIcon\flaticon.css" />
     <Content Include="Content\Theme\Fonts\FlatIcon\flaticon.html" />
     <Content Include="Content\Theme\Fonts\FlatIcon\Flaticon.svg" />
-    <Content Include="Content\Theme\Fonts\FlatIcon\_flaticon.css">
-      <DependentUpon>_flaticon.scss</DependentUpon>
-    </Content>
+    <Content Include="Content\Theme\Fonts\FlatIcon\_flaticon.css" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Bold\MyriadPro-Bold.svg" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Cond\MyriadPro-Cond.svg" />
     <Content Include="Content\Theme\Fonts\MyriadPro\LightCond\MyriadPro-LightCond.svg" />
@@ -278,12 +276,46 @@
     <Content Include="Content\Theme\Popup.scss" />
     <Content Include="Content\Theme\Users.scss" />
     <Content Include="Content\Theme\ButtonGroup.scss" />
+    <Content Include="Content\Theme\Blip.scss" />
+    <Content Include="Content\Theme\Dashboard.scss" />
+    <Content Include="Content\Theme\FontAwesome\fa-brands.scss" />
+    <Content Include="Content\Theme\FontAwesome\fa-light.scss" />
+    <Content Include="Content\Theme\FontAwesome\fa-regular.scss" />
+    <Content Include="Content\Theme\FontAwesome\fa-solid.scss" />
+    <Content Include="Content\Theme\FontAwesome\fontawesome.scss" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-brands-400.eot" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-brands-400.ttf" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-brands-400.woff" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-brands-400.woff2" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-light-300.eot" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-light-300.ttf" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-light-300.woff" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-light-300.woff2" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-regular-400.eot" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-regular-400.ttf" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-regular-400.woff" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-regular-400.woff2" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-solid-900.eot" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-solid-900.ttf" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-solid-900.woff" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-solid-900.woff2" />
+    <Content Include="Content\Theme\FontAwesome\_animated.scss" />
+    <Content Include="Content\Theme\FontAwesome\_bordered-pulled.scss" />
+    <Content Include="Content\Theme\FontAwesome\_core.scss" />
+    <Content Include="Content\Theme\FontAwesome\_fixed-width.scss" />
+    <Content Include="Content\Theme\FontAwesome\_icons.scss" />
+    <Content Include="Content\Theme\FontAwesome\_larger.scss" />
+    <Content Include="Content\Theme\FontAwesome\_list.scss" />
+    <Content Include="Content\Theme\FontAwesome\_mixins.scss" />
+    <Content Include="Content\Theme\FontAwesome\_rotated-flipped.scss" />
+    <Content Include="Content\Theme\FontAwesome\_screen-reader.scss" />
+    <Content Include="Content\Theme\FontAwesome\_stacked.scss" />
+    <Content Include="Content\Theme\FontAwesome\_variables.scss" />
     <Content Include="Content\Theme\Fonts\FlatIcon\Flaticon.eot" />
     <Content Include="Content\Theme\Fonts\FlatIcon\Flaticon.ttf" />
     <Content Include="Content\Theme\Fonts\FlatIcon\Flaticon.woff" />
     <Content Include="Content\Theme\Fonts\FlatIcon\_flaticon.scss" />
-    <Content Include="Content\Theme\Blip.scss" />
-    <Content Include="Content\Theme\Dashboard.scss" />
+    <Content Include="Content\Theme\FontAwesome\_shims.scss" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Bold\Myriad Pro.scss" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Bold\MyriadPro-Bold.eot" />
@@ -429,24 +461,6 @@
     <Content Include="Content\Theme\DataSourcesEditor.scss" />
     <Content Include="Content\Theme\Dialog.scss" />
     <Content Include="Content\Theme\FixedHeader.scss" />
-    <Content Include="Content\Theme\FontAwesome.scss" />
-    <Content Include="Content\Theme\FontAwesome\fontawesome-webfont.eot" />
-    <Content Include="Content\Theme\FontAwesome\fontawesome-webfont.ttf" />
-    <Content Include="Content\Theme\FontAwesome\fontawesome-webfont.woff" />
-    <Content Include="Content\Theme\FontAwesome\fontawesome-webfont.woff2" />
-    <Content Include="Content\Theme\FontAwesome\FontAwesome.otf" />
-    <Content Include="Content\Theme\FontAwesome\_animated.scss" />
-    <Content Include="Content\Theme\FontAwesome\_bordered-pulled.scss" />
-    <Content Include="Content\Theme\FontAwesome\_core.scss" />
-    <Content Include="Content\Theme\FontAwesome\_fixed-width.scss" />
-    <Content Include="Content\Theme\FontAwesome\_icons.scss" />
-    <Content Include="Content\Theme\FontAwesome\_larger.scss" />
-    <Content Include="Content\Theme\FontAwesome\_list.scss" />
-    <Content Include="Content\Theme\FontAwesome\_mixins.scss" />
-    <Content Include="Content\Theme\FontAwesome\_path.scss" />
-    <Content Include="Content\Theme\FontAwesome\_rotated-flipped.scss" />
-    <Content Include="Content\Theme\FontAwesome\_stacked.scss" />
-    <Content Include="Content\Theme\FontAwesome\_variables.scss" />
     <Content Include="Content\Theme\Fonts.scss" />
     <Content Include="Content\Theme\Grid.scss" />
     <Content Include="Content\Theme\Help.scss" />

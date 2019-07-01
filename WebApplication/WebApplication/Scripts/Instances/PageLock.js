@@ -22,7 +22,7 @@
         },
 
 		setup = function () {
-			labels = $("div.TabContainer div.TabLabels a i.flaticon-lock-o", instances.instance.getElement());
+			labels = $("div.TabContainer div.TabLabels a i.fa-lock", instances.instance.getElement());
             labels.on("click", function (e) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -44,7 +44,7 @@
 					},
                     handler = function () {
                         setTimeout(function() {
-							matematici.dialog.show($("<span><i class=\"fi flaticon-lock-o\"></i> Page locked</span>"), "Please confirm you want to unlock the page.",
+							matematici.dialog.show($("<span><i class=\"fa fa-lock\"></i> Page locked</span>"), "Please confirm you want to unlock the page.",
 								[
 									{ text: "unlock the page", icon: "exclamation", handler: unlockHandler },
 									{ text: "cancel", icon: "times", cancelButton: true }
@@ -54,7 +54,7 @@
 					};
 				var buttons = [{ text: "close", icon: "times", cancelButton: true }];
 				if (!model.readOnly) buttons.push({ text: "unlock the page", icon: "exclamation", handler: handler });
-				matematici.dialog.show($("<span><i class=\"fi flaticon-lock-o\"></i> Page locked</span>"), createContent(index), buttons);
+				matematici.dialog.show($("<span><i class=\"fa fa-lock\"></i> Page locked</span>"), createContent(index), buttons);
             });
         };
 

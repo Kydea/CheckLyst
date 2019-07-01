@@ -1,4 +1,5 @@
 ﻿@import "_Library.scss";
+@import "FontAwesome/_variables.scss";
 
 select.AutoComplete {
     display: none !important;
@@ -58,19 +59,8 @@ div.AutoComplete-List {
             padding-right: 20px;
 
             &::after {
-                line-height: $Metric-Control-Height;
-                content: "\f12b";
-                display: inline-block;
-                font-family: "Flaticon";
-                font-style: normal;
-                font-weight: normal;
-                font-variant: normal;
-                text-decoration: inherit;
-                text-rendering: optimizeLegibility;
-                text-transform: none;
-                -moz-osx-font-smoothing: grayscale;
-                -webkit-font-smoothing: antialiased;
-                font-smoothing: antialiased;
+                content: fa-content($fa-var-check);
+                font-family: "Font Awesome 5 Pro"; 
                 color: $Color-Grey-Dark;
                 position: absolute;
                 right: 0;
@@ -106,6 +96,5 @@ i.AutoComplete {
     height: $Metric-Control-Height;
     position: absolute !important;
     margin: 0 !important;
-    font-size: 14px !important;
     display: none; //shown by matematici.loader
 }

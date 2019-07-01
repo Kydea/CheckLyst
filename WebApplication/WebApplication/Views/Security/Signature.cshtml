@@ -2,29 +2,29 @@
     <div class="Simple">
         <label class="Width200">
             <span>User code</span>
-            <i class="Icon fi flaticon-user-o"></i>
+            <i class="Icon fal fa-user"></i>
             <input type="text" name="UserName" id="UserName" />
         </label>
         <div id="PIN">
             <label class="Clearing Width200">
                 <span>Set pin</span>
-                <i class="Icon fi flaticon-key-o"></i>
+                <i class="Icon fa fa-key"></i>
                 <input type="password" name="PIN" id="PIN" />
             </label>
             <label class="Clearing Width200">
                 <span>Confirm pin</span>
-                <i class="Icon fi flaticon-key-o"></i>
+                <i class="Icon fa fa-key"></i>
                 <input type="password" name="ConfirmPIN" id="ConfirmPIN" />
             </label>
         </div>
         <label class="Clearing Width200">
             <span>Password</span>
-            <i class="Icon fi flaticon-key-o"></i>
+            <i class="Icon fa fa-key"></i>
             <input type="password" name="Password" id="Password" />
         </label>
         <label id="UnsingLabel" class="Clearing Width200">
             <span>Note</span>
-            <i class="Icon fi flaticon-align-left"></i>
+            <i class="Icon fal fa-align-left"></i>
             <input type="text" name="Note" id="Note" />
         </label>
     </div>
@@ -41,16 +41,16 @@
             <a href="#" data-digit="2">2</a>
             <a href="#" data-digit="3">3</a>
             <a href="#" data-digit="0" class="Digit0">0</a>
-            <a href="#" data-digit="<" class="DigitBack"><i class="fi flaticon-angle-left"></i></a>
+            <a href="#" data-digit="<" class="DigitBack"><i class="fa fa-caret-left"></i></a>
             <div class="Clearing"></div>
         </div>
         <div class="User"></div>
     </div>
 </form>
 <div class="Buttons">
-    <a class="Button GreyYellowButton" href="#" id="Logout"><i class="fi flaticon-logout"></i> Logout </a>
+    <a class="Button GreyYellowButton" href="#" id="Logout"><i class="fa fa-sign-out"></i> Logout </a>
     <a class="Button GreyYellowButton DefaultButton" href="#" id="Sign"></a>
-    <a class="Button GreyYellowButton" href="#" id="Simple"><i class="fi flaticon-key-o"></i> Use login</a>
+    <a class="Button GreyYellowButton" href="#" id="Simple"><i class="fa fa-key"></i> Use login</a>
 </div>
 
 <script type="text/javascript">
@@ -69,6 +69,6 @@
     $("div.User", element).text("User code: " + data.username);
     matematici.controls.setEditable($("#UserName", element).val(data.username), !data.username);
 
-    $("#Sign", element).text(data.pin ? "Set PIN" : data.unsign ? "Unsign" : "Sign").prepend($("<i />").addClass("fi flaticon-check"));
+    $("#Sign", element).text(data.pin ? "Set PIN" : data.unsign ? "Unsign" : "Sign").prepend($("<i />").addClass("fa fa-check"));
 </script>
 

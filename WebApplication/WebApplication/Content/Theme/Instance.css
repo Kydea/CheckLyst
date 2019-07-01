@@ -69,13 +69,13 @@ div.Instance .Element div.Information {
     box-shadow: rgba(0, 0, 0, 0.15) 0 0 15px 2px;
     line-height: 1.5em;
     width: 200px; }
-    div.Instance .Element div.Information div.Panel i.fi {
+    div.Instance .Element div.Information div.Panel i.fa {
       margin-left: -30px;
       color: #666;
       position: absolute; }
-      div.Instance .Element div.Information div.Panel i.fi.flaticon-thumbs-up-o {
+      div.Instance .Element div.Information div.Panel i.fa.fa-thumbs-up {
         color: green; }
-      div.Instance .Element div.Information div.Panel i.fi.flaticon-thumbs-down-o {
+      div.Instance .Element div.Information div.Panel i.fa.fa-thumbs-down {
         color: red; }
     div.Instance .Element div.Information div.Panel span, div.Instance .Element div.Information div.Panel a {
       display: block;
@@ -166,7 +166,7 @@ div.Instance .Item.Field div.Input {
 div.Instance .Item.Field.List input:first-of-type {
   display: none; }
 
-div.Instance .Item.Field.ExternalSource.Inactive i.flaticon-link-o {
+div.Instance .Item.Field.ExternalSource.Inactive i.fa-link {
   color: #ccc; }
 
 div.Instance .Item.Field.ExternalSource:not(.Inactive) div.Input {
@@ -247,12 +247,12 @@ div.Instance .Item div.Information {
 div.Instance .Item.Text div.Information {
   display: none; }
 
-div.Instance .Item.Signature a.Button i.flaticon-exclamation {
+div.Instance .Item.Signature a.Button i.fa-exclamation {
   position: absolute;
   color: red;
   margin: 2px 0 0 15px; }
 
-div.Instance .Item.Signature i.flaticon-exclamation {
+div.Instance .Item.Signature i.fa-exclamation {
   color: #cc0000;
   font-size: inherit; }
 

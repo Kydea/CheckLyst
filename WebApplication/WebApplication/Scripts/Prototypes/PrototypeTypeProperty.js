@@ -51,7 +51,7 @@
 		preparePrototypeTypes();
 
 		var label = $("<label />").appendTo(valuePanel);
-		$("<i />").addClass("Icon fi flaticon-building-o").appendTo(label);
+        $("<i />").addClass("Icon fal fa-industry").appendTo(label);
 		department =
 			$("<select />")
 				.data("nullable", true)
@@ -62,7 +62,7 @@
 			department.append($("<option />").text(departments[index].name).attr("value", departments[index].code));
 
 		label = $("<label />").appendTo(valuePanel);
-		$("<i />").addClass("Icon fi flaticon-folder-o").appendTo(label);
+		$("<i />").addClass("Icon fal fa-folder").appendTo(label);
 		prototypeType =
 			$("<select />")
 				.data("nullable", true)

@@ -11,7 +11,7 @@ matematici.blip = function () {
 				.appendTo(matematici.elements.body)
 				.on("click", close);
 			var container = $("<div />").addClass("Container").appendTo(element);
-			container.append($("<i />").addClass("fi flaticon-" + options.icon));
+			container.append($("<i />").addClass("fal fa-" + options.icon));
 			matematici.elements.body.addClass("Blip");
 			element.fadeIn(300);
 			callback = options.callback;

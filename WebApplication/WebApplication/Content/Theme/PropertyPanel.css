@@ -22,13 +22,13 @@
       padding: 4px 10px;
       text-decoration: none;
       border-bottom: solid 1px #ccc; }
-      div.PropertyPanel div.PropertyList a i.flaticon-arrow-right {
+      div.PropertyPanel div.PropertyList a i.fa-caret-right {
         visibility: hidden;
         padding-right: 5px;
         font-size: 12px; }
       div.PropertyPanel div.PropertyList a:hover {
         text-decoration: none !important; }
-      div.PropertyPanel div.PropertyList a.Selected i.flaticon-arrow-right {
+      div.PropertyPanel div.PropertyList a.Selected i.fa-caret-right {
         visibility: visible; }
       div.PropertyPanel div.PropertyList a.Changed {
         font-weight: bold;
