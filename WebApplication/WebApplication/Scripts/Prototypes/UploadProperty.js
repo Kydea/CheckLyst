@@ -62,9 +62,10 @@
         var form =
             $("<form />")
                 .attr("enctype", "multipart/form-data")
-                .append($("<a />").attr("href", "#").addClass("Button").text("upload").append($("<i />").addClass("fi flaticon-link-o")))
-                .append(input)
-                .on("click", "a", function () { input.click(); });
+                .append($("<a />").attr("href", "#").addClass("Button").text("upload").append($("<i />").addClass("fi flaticon-link-o")).on("click", function () { input.click(); }))
+                .append($("<a />").attr("href", "#").addClass("Button").text("preview").append($("<i />").addClass("fi flaticon-image")).on("click", deleteImage))
+                .append($("<a />").attr("href", "#").addClass("Button").text("delete").append($("<i />").addClass("fi flaticon-delete")).on("click", preview))
+                .append(input);
         input.on("change", change);
 
         if (!options.readOnly)
