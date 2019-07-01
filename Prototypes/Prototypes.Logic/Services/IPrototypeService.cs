@@ -20,5 +20,6 @@ namespace CheckListManager.Prototypes.Logic.Services
         Task<PrototypeResponse> SetStateAsync(DefaultIdentity identity, PrototypeRequest request);
         Task<List<HistoryRow>> History(DefaultIdentity identity, PrototypeRequest request);
         Task UpdatePrototypeVersionsState(CancellationToken CancellationToken);
-    }
+        Task<UploadResponse> UploadAsync(DefaultIdentity identity, UploadRequest request);
+	}
 }

@@ -12,5 +12,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             Copy(this, text);
             return text;
         }
+
+        public string Key { get; set; }
     }
 }

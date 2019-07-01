@@ -15,9 +15,11 @@ using CheckListManager.Common.Logic.Services;
 using System.Collections.Generic;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using System.Threading;
+using CheckListManager.Common.Data.ListItems;
 using NLog;
 using CheckListManager.Common.Logic.Email;
 using CheckListManager.Common.Logic.FTP;
+using iTextSharp.text.pdf.parser;
 
 namespace CheckListManager.Prototypes.Logic.Services
 {
@@ -27,14 +29,22 @@ namespace CheckListManager.Prototypes.Logic.Services
         private readonly IPrototypesRepository _prototypeRepository;
         private readonly IQueueService _queueService;
         private readonly ICommonRepository _commonRepository;
+        private readonly IStorageService _storageService;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public PrototypeService(CheckListJsonConverter converter, IPrototypesRepository prototypeRepository, IQueueService queueService, ICommonRepository commonRepository)
+        public PrototypeService(
+	        CheckListJsonConverter converter,
+	        IPrototypesRepository prototypeRepository,
+	        IQueueService queueService,
+	        ICommonRepository commonRepository,
+			IStorageService storageService
+        )
         {
             _converter = converter;
             _prototypeRepository = prototypeRepository;
             _queueService = queueService;
             _commonRepository = commonRepository;
+            _storageService = storageService;
         }
 
         public async Task<PrototypeResponse> OpenAsync(DefaultIdentity identity, PrototypeRequest request)
@@ -83,6 +93,13 @@ namespace CheckListManager.Prototypes.Logic.Services
                 throw new UnauthorizedAccessException();
 
             var Prototype = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converter);
+
+            var key = $"{identity.CompanyId}/{PrototypeVersion.Prototype}-{PrototypeVersion.Version}";
+            var newKey = $"{identity.CompanyId}/tmp/{Guid.NewGuid()}";
+            await _storageService.CloneAsync("", key, newKey); // TODO set bucket name
+
+			// TODO modify Prototype's images to replace key with newKey in all the occurrences
+
             Prototype.Setup();
 
             return await Task.FromResult(new PrototypeResponse
@@ -458,7 +475,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                         Version = PrototypeVersion.Version,
                         State = State,
                         Path = $"{(PrototypeVersion.Prototypes.Companies.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.Departments.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.PrototypeTypes.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.Name?.Replace('#', '-') ?? "")}#{PrototypeVersion.Version}#{(PrototypeVersion.Description?.Replace('#', '-') ?? "")}"
-                    });
+                    }, CancellationToken);
 
                     await SetPrototypeVersionState(PrototypeVersion, State, UtcNow);
                     await _prototypeRepository.SaveChangesAsync();
@@ -478,9 +495,34 @@ namespace CheckListManager.Prototypes.Logic.Services
                             Job = "UpdatePrototypes",
                             Exception = Exception.Message
                         })
-                    });
+                    }, CancellationToken);
 
                 }
+        }
+
+        public async Task<UploadResponse> UploadAsync(DefaultIdentity identity, UploadRequest request)
+        {
+	        var prototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(identity.CompanyId, request.Id, request.Version);
+	        if (
+		        !identity.HasPermission("Prototypes", "Edit", prototypeVersion.Prototypes.Department) &&
+		        !identity.HasPermission("Prototypes", "Edit", prototypeVersion.Prototypes.Department, prototypeVersion.Prototypes.PrototypeType)
+	        )
+		        throw new UnauthorizedAccessException();
+
+	        if (prototypeVersion.VersionState != VersionState.Draft)
+		        throw new Exception("The prototype version is not in state draft");
+
+	        var extension = System.IO.Path.GetExtension(request.Attachment.FileName);
+	        var partialKey = $"{request.Id}-{request.Version}/{request.Code}.{extension}";
+	        var key = $"{identity.CompanyId}/{partialKey}";
+
+	        var success = await _storageService.PutAsync("", key, request.Attachment.InputStream); // TODO set bucket name
+			if (!success)
+	        {
+		        throw new Exception("Impossible to upload the attachment");
+	        }
+
+			return new UploadResponse { Key = partialKey };
         }
     }
 }
