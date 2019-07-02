@@ -25,11 +25,11 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                 }
                 else if
                 (
-                    Type == DataType.Boolean && !(Value is Boolean) ||
+                    Type == DataType.Boolean && !(Value is bool) ||
                     Type == DataType.DateTime && !(Value is DateTimeOffset) ||
                     Type == DataType.Date && !(Value is DateTimeOffset) ||
                     Type == DataType.Time && !(Value is TimeSpan) ||
-                    Type == DataType.Number && !(Value is Decimal) ||
+                    Type == DataType.Number && !(Value is decimal) ||
                     Type == DataType.Text && !(Value is string)
                 )
                     throw new Exception("Invalid class " + Value.GetType().Name + " for DataType " + Type.ToString());
@@ -53,11 +53,11 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             {
                 Value =
                     string.IsNullOrWhiteSpace(_SerializedValue) ? null :
-                    Type == DataType.Boolean ? Boolean.Parse(_SerializedValue) : 
+                    Type == DataType.Boolean ? bool.Parse(_SerializedValue) : 
                     Type == DataType.DateTime ? DateTimeOffset.ParseExact(_SerializedValue, new[] { "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm" }, null, DateTimeStyles.AssumeUniversal).ToUniversalTime() :
                     Type == DataType.Date ? DateTimeOffset.ParseExact(_SerializedValue, new[] { "yyyy-MM-dd" }, null, DateTimeStyles.AssumeUniversal).ToUniversalTime() :
                     Type == DataType.Time ? TimeSpan.ParseExact(_SerializedValue, new[] { "hh\\:mm" }, null) :
-                    Type == DataType.Number ? Decimal.Parse(_SerializedValue.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture) :
+                    Type == DataType.Number ? decimal.Parse(_SerializedValue.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture) :
                     Type == DataType.Error ? _SerializedValue :
                     (object)_SerializedValue;
             }
@@ -106,7 +106,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
         public bool BooleanValue { get { return (bool)(Value ?? false); } }
 
-        public Decimal NumberValue { get { return (Decimal)(Value ?? 0); } }
+        public Decimal NumberValue { get { return (decimal)(Value ?? 0); } }
 
         public DateTimeOffset DateTimeValue { get { return (DateTimeOffset)(Value ?? DateTimeOffset.MinValue); } }
 

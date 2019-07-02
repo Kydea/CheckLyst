@@ -42,6 +42,17 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     Operator = OperatorType.Right;
                 }
 
+                //Math functions
+
+                else if (Value.ToLower() == "sin")
+                {
+                    var Sin = new MathFunctions.Sin { Position = Position };
+                    ParseArgument(ref ExpressionValue, ref Position, 1);
+                    Sin.Argument = Arguments[0].Symbol;
+                    Symbol = Sin;
+                    Operator = OperatorType.No;
+                }
+
                 //Ternary operator
                 else if (Value.ToLower() == "iif")
                 {

@@ -293,9 +293,9 @@ form label, div.CheckList label, div.PropertyPanel div.PropertyValue label, div.
         border-radius: 5px; }
     form label.Controls2, div.CheckList label.Controls2, div.PropertyPanel div.PropertyValue label.Controls2, div.Module label.Controls2 {
       width: 420px; }
-      form label.Controls2 > *:not(span):not(.Icon), div.CheckList label.Controls2 > *:not(span):not(.Icon), div.PropertyPanel div.PropertyValue label.Controls2 > *:not(span):not(.Icon), div.Module label.Controls2 > *:not(span):not(.Icon) {
+      form label.Controls2 > *:not(span):not(.Icon):not(.fa), div.CheckList label.Controls2 > *:not(span):not(.Icon):not(.fa), div.PropertyPanel div.PropertyValue label.Controls2 > *:not(span):not(.Icon):not(.fa), div.Module label.Controls2 > *:not(span):not(.Icon):not(.fa) {
         width: calc(50% + 10px); }
-        form label.Controls2 > *:not(span):not(.Icon):last-child, div.CheckList label.Controls2 > *:not(span):not(.Icon):last-child, div.PropertyPanel div.PropertyValue label.Controls2 > *:not(span):not(.Icon):last-child, div.Module label.Controls2 > *:not(span):not(.Icon):last-child {
+        form label.Controls2 > *:not(span):not(.Icon):not(.fa):last-child, div.CheckList label.Controls2 > *:not(span):not(.Icon):not(.fa):last-child, div.PropertyPanel div.PropertyValue label.Controls2 > *:not(span):not(.Icon):not(.fa):last-child, div.Module label.Controls2 > *:not(span):not(.Icon):not(.fa):last-child {
           width: calc(50% - 10px); }
       form label.Controls2 input ~ select + input, form label.Controls2 select ~ select + input, div.CheckList label.Controls2 input ~ select + input, div.CheckList label.Controls2 select ~ select + input, div.PropertyPanel div.PropertyValue label.Controls2 input ~ select + input, div.PropertyPanel div.PropertyValue label.Controls2 select ~ select + input, div.Module label.Controls2 input ~ select + input, div.Module label.Controls2 select ~ select + input {
         width: calc(50% - 10px) !important;
@@ -305,9 +305,9 @@ form label, div.CheckList label, div.PropertyPanel div.PropertyValue label, div.
         left: calc(50% + 10px); }
     form label.Controls3, div.CheckList label.Controls3, div.PropertyPanel div.PropertyValue label.Controls3, div.Module label.Controls3 {
       width: 640px; }
-      form label.Controls3 > *:not(span):not(.Icon), div.CheckList label.Controls3 > *:not(span):not(.Icon), div.PropertyPanel div.PropertyValue label.Controls3 > *:not(span):not(.Icon), div.Module label.Controls3 > *:not(span):not(.Icon) {
+      form label.Controls3 > *:not(span):not(.Icon):not(.fa), div.CheckList label.Controls3 > *:not(span):not(.Icon):not(.fa), div.PropertyPanel div.PropertyValue label.Controls3 > *:not(span):not(.Icon):not(.fa), div.Module label.Controls3 > *:not(span):not(.Icon):not(.fa) {
         width: calc(33.33% + 6.66667px); }
-        form label.Controls3 > *:not(span):not(.Icon):last-child, div.CheckList label.Controls3 > *:not(span):not(.Icon):last-child, div.PropertyPanel div.PropertyValue label.Controls3 > *:not(span):not(.Icon):last-child, div.Module label.Controls3 > *:not(span):not(.Icon):last-child {
+        form label.Controls3 > *:not(span):not(.Icon):not(.fa):last-child, div.CheckList label.Controls3 > *:not(span):not(.Icon):not(.fa):last-child, div.PropertyPanel div.PropertyValue label.Controls3 > *:not(span):not(.Icon):not(.fa):last-child, div.Module label.Controls3 > *:not(span):not(.Icon):not(.fa):last-child {
           width: calc(33.33% - 13.33333px); }
       form label.Controls3 input input ~ select + input, form label.Controls3 input select ~ select + input, form label.Controls3 select input ~ select + input, form label.Controls3 select select ~ select + input, div.CheckList label.Controls3 input input ~ select + input, div.CheckList label.Controls3 input select ~ select + input, div.CheckList label.Controls3 select input ~ select + input, div.CheckList label.Controls3 select select ~ select + input, div.PropertyPanel div.PropertyValue label.Controls3 input input ~ select + input, div.PropertyPanel div.PropertyValue label.Controls3 input select ~ select + input, div.PropertyPanel div.PropertyValue label.Controls3 select input ~ select + input, div.PropertyPanel div.PropertyValue label.Controls3 select select ~ select + input, div.Module label.Controls3 input input ~ select + input, div.Module label.Controls3 input select ~ select + input, div.Module label.Controls3 select input ~ select + input, div.Module label.Controls3 select select ~ select + input {
         width: calc(33.33% - 13.33333px);

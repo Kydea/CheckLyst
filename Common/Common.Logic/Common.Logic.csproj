@@ -150,6 +150,8 @@
     <Compile Include="Models\Expressions\Expression.cs" />
     <Compile Include="Models\Expressions\ExpressionValue.cs" />
     <Compile Include="Models\Expressions\Formula.cs" />
+    <Compile Include="Models\Expressions\MathFunctions\MathFunction.cs" />
+    <Compile Include="Models\Expressions\MathFunctions\Sin.cs" />
     <Compile Include="Models\Expressions\Parsing\Literal.cs" />
     <Compile Include="Models\Expressions\Parsing\Number.cs" />
     <Compile Include="Models\Expressions\Parsing\Operator.cs" />
