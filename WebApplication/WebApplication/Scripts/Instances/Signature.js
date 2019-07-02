@@ -28,7 +28,7 @@
 
 			button = $("<a />").addClass("Button SignButton").attr({ href: "#" }).appendTo(element);
             if (model.cancelable)
-				cancelButton = $("<a />").addClass("Button CancelButton").attr({ href: "#" }).appendTo(element).text("Cancel signature").prepend($("<i >").addClass("fa fa-times"));
+				cancelButton = $("<a />").addClass("Button CancelButton").attr({ href: "#" }).appendTo(element).text("Cancel signature").prepend($("<i >").addClass("Icon fa fa-times"));
             
             element
                 .on("click", "a.SignButton:not(.Selected):not(.ReadOnly)", function (e) {
@@ -134,7 +134,7 @@
         };
 
     this.update = function (model) {
-		button.text(model.buttonLabel ? model.buttonLabel : "Signature").prepend($("<i >").addClass("fa fa-check"));
+        button.text(model.buttonLabel ? model.buttonLabel : "Signature").prepend($("<i >").addClass("Icon fa fa-check"));
 		button.toggleClass("ReadOnly", model.readOnly);
 		if (cancelButton) cancelButton.toggleClass("ReadOnly", model.readOnly);
 

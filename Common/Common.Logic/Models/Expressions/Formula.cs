@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CheckListManager.Common.Core.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -61,7 +62,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                         });
         }
 
-        public void Update(Dictionary<string, Expression> Expressions, Dictionary<string, object> RuntimeValues, string DecimalSeparator)
+        public void Update(Dictionary<string, Expression> Expressions, Dictionary<string, object> RuntimeValues, string DecimalSeparator, string TimeZone)
         {
             try
             {
@@ -76,7 +77,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                                 Expressions[Key].Value.Type == DataType.Error ? ErrorValueLeft + Expressions[Key].Value.ErrorValue + ErrorValueRight :
                                 Expressions[Key].Value.IsNull ? NullValue :
                                 Expressions[Key].Value.Type == DataType.Number ? Expressions[Key].Value.NumberValue.ToString(Formats[Index]).Replace(".", DecimalSeparator).Replace(",", DecimalSeparator) :
-                                Expressions[Key].Value.Type == DataType.DateTime ? Expressions[Key].Value.DateTimeValue.ToString("yyyy-MM-dd HH:mm:ss") :
+                                Expressions[Key].Value.Type == DataType.DateTime ? Expressions[Key].Value.DateTimeValue.ToLocalTime(TimeZone).ToString("yyyy-MM-dd HH:mm:ss") :
                                 Expressions[Key].Value.Type == DataType.Date ? Expressions[Key].Value.DateTimeValue.ToString("yyyy-MM-dd") :
                                 Expressions[Key].Value.Type == DataType.Time ? Expressions[Key].Value.TimeSpanValue.ToString(@"hh\:mm\:ss") :
                                 Expressions[Key].Value.Value :

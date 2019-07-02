@@ -25,7 +25,7 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
         string ValidityMessage { get; set; }
 
         void Setup();
-        void Update(string DecimalSeparator);
+        void Update(string DecimalSeparator, string TimeZone);
         void UpdateReadOnly(string userCode, bool readOnlyInstance);
         string GetSignatureInformation();
     }

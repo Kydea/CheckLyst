@@ -86,7 +86,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             InCreation = false;
         }
 
-        public void Update(string DecimalSeparator, InstanceCacheObject cacheObject = null)
+        public void Update(string DecimalSeparator, string TimeZone, InstanceCacheObject cacheObject = null)
         { 
             Dictionary<string, object> InstanceRuntimeValues = cacheObject == null ? new Dictionary<string, object>() : new Dictionary<string, object> {
                 { "InstanceCompany", cacheObject.CompanyId },
@@ -107,12 +107,12 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 expression.Evaluate(this);
             }
 
-            DescriptionFormula?.Update(Expressions, InstanceRuntimeValues, DecimalSeparator);
-            FileNameFormula?.Update(Expressions, InstanceRuntimeValues, DecimalSeparator);
+            DescriptionFormula?.Update(Expressions, InstanceRuntimeValues, DecimalSeparator, TimeZone);
+            FileNameFormula?.Update(Expressions, InstanceRuntimeValues, DecimalSeparator, TimeZone);
 
-            Header.Update(DecimalSeparator);
+            Header.Update(DecimalSeparator, TimeZone);
             foreach (var page in Pages)
-                page.Update(DecimalSeparator);
+                page.Update(DecimalSeparator, TimeZone);
 
             foreach (var expression in Expressions.Values)
                 expression.Evaluate(this); //this second evaluation takes into account expression with item properties which depends by expression values, cycles are still a problem

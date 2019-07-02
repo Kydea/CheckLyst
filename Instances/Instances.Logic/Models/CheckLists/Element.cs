@@ -96,7 +96,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 				CheckList.Elements[Code] = this;
 		}
 
-		public abstract void Update(string DecimalSeparator);
+		public abstract void Update(string DecimalSeparator, string TimeZone);
 
 		public bool ReadOnly { get; protected set; }
 

@@ -56,10 +56,10 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             return field;
         }
 
-        public override void Update(string DecimalSeparator)
+        public override void Update(string DecimalSeparator, string TimeZone)
         {
-            base.Update(DecimalSeparator);
-            ValueFormula?.Update(CheckList.Expressions, RuntimeValues, DecimalSeparator);
+            base.Update(DecimalSeparator, TimeZone);
+            ValueFormula?.Update(CheckList.Expressions, RuntimeValues, DecimalSeparator, TimeZone);
             if (ValueFormula != null && ValueFormula.HasValue)
                 ConversionError = !ValueType.Validate(ValueFormula.Value);
             if (ExternalSourceName != null)

@@ -61,14 +61,14 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 					.ToDictionary(item => item.Code, item => (ICheckListElement)item);
 		}
 
-		public override void Update(string DecimalSeparator)
+		public override void Update(string DecimalSeparator, string TimeZone)
 		{
-			base.Update(DecimalSeparator);
+			base.Update(DecimalSeparator, TimeZone);
 
 			_valid = true;
 			foreach (var item in Items)
 			{
-				item.Update(DecimalSeparator);
+				item.Update(DecimalSeparator, TimeZone);
 				_valid = _valid && item.Valid;
 			}
 
@@ -79,7 +79,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 				foreach (var iteration in Iterations)
 				{
 					iteration.Index = index++;
-					iteration.Update(DecimalSeparator);
+					iteration.Update(DecimalSeparator, TimeZone);
 					_valid = _valid && (iteration.Removed || iteration.Valid);
 				}
 			}
