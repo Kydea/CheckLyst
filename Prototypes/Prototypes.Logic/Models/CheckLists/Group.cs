@@ -34,6 +34,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             foreach (var Item in Items)
             {
                 Item.CheckList = CheckList;
+                Item.Group = this;
                 if ((ShowAsTable || InTable) && Item is Group) ((Group)Item).InTable = true;
                 if (InTable) //disable hidden properties for subgroups of tables
                 {

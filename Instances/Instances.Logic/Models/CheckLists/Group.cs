@@ -12,8 +12,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
 		public override string TypeName => "Group";
 
-		public virtual Dictionary<string, ICheckListElement> Elements { get; set; }
-
 		public List<ICheckListItem> Items { get; set; } = new List<ICheckListItem>();
         public List<ICheckListIteration> Iterations { get; } = new List<ICheckListIteration>();
 		public bool Iterator { get; set; }
@@ -52,13 +50,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 if (((Instance)CheckList).InCreation && InstanceIterations > 0 && !IteratorModelItem)
                     for (int Index = 0; Index < InstanceIterations; ++Index)
                         AddIteration();
-
-                Elements = new Dictionary<string, ICheckListElement>();
 			}
-			else
-				Elements = Items
-					.Where(item => item.Code != null && item.Code != string.Empty)
-					.ToDictionary(item => item.Code, item => (ICheckListElement)item);
 		}
 
 		public override void Update(string DecimalSeparator, string TimeZone)

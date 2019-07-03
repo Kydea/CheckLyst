@@ -83,6 +83,11 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             foreach (var expression in Expressions.Values)
                 expression.Parse(this);
 
+            var InstanceElements = CheckList.Elements.Values.Where(Element => !(Element is ICheckListItem) || !((ICheckListItem)Element).IterationItem && !((ICheckListItem)Element).IteratorModelItem);
+
+            if (ElementsList == null) //if (InCreation) //replaced with this more generic but less meaningful form for back compatibility with 1.4 when ElementList did not exist
+                ElementsList = Elements.Values.Where(Element => !(Element is ICheckListItem CheckListItem) || !CheckListItem.IterationItem && !CheckListItem.IteratorModelItem).ToList(); //pages and items outside iterators
+
             InCreation = false;
         }
 
@@ -131,5 +136,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         {
             return !HideExpressions;
         }
+
+        public List<ICheckListElement> ElementsList { get; private set; }
     }
 }

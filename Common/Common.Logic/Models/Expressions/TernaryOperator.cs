@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.Expressions.Parsing;
 
@@ -20,11 +21,11 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             }
         }
 
-        public override void Check(ICheckList Prototype)
+        public override void Check(ICheckList Prototype, List<string> IteratorStack)
         {
-            Condition.Check(Prototype);
-            TruePart.Check(Prototype);
-            FalsePart.Check(Prototype);
+            Condition.Check(Prototype, IteratorStack);
+            TruePart.Check(Prototype, IteratorStack);
+            FalsePart.Check(Prototype, IteratorStack);
 
             if (Condition.DataType != DataType.Boolean) throw new ParseException("The condition must be a boolean", Position);
             if (TruePart.DataType != FalsePart.DataType) throw new ParseException("The 'true part' and 'false part' must implement the same type", Position);

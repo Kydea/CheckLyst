@@ -53,10 +53,12 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
         public DataType DataType => Root?.DataType ?? DataType.Error;
 
-	    public void Check(ICheckList prototype)
+        public DataType? InnerDataType => Root?.InnerDataType;
+
+        public void Check(ICheckList prototype)
         {
             Error = null;
-            Root.Check(prototype);
+            Root.Check(prototype, new List<string>());
             if (Exception && Root.DataType != DataType.Boolean)
                 throw new Exception($"Exception expressions must be boolean");
         }

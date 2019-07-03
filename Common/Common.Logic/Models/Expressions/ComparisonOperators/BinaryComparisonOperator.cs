@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.Expressions.Parsing;
 
@@ -6,9 +7,9 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ComparisonOperators
 {
     public abstract class BinaryComparisonOperator : BinaryOperator
     {
-        public override void Check(ICheckList Prototype)
+        public override void Check(ICheckList Prototype, List<string> IteratorStack)
         {
-            base.Check(Prototype);
+            base.Check(Prototype, IteratorStack);
 
             if (
                 Left.DataType != Right.DataType

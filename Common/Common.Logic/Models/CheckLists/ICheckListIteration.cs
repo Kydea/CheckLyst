@@ -1,7 +1,7 @@
 ﻿namespace CheckListManager.Common.Logic.Models.CheckLists
 {
-	public interface ICheckListIteration : ICheckListGroup
-	{
+	public interface ICheckListIteration : ICheckListGroup, IElementsBranch
+    {
 		int Index { get; set; }
 	}
 }

@@ -60,10 +60,14 @@
                                     formattedValue =
                                         row.typeName == "DateTime" ? formattedDate.date + " " + formattedDate.time + ":" + formattedDate.seconds : formattedDate.date;
 
-                                    td.append($("<span />").html(formattedValue).attr("title", formattedDate.offset));
+                                td.append($("<span />").html(formattedValue).attr("title", formattedDate.offset));
                             }
                             return true;
-                        } 
+                        } else if (columnIndex == 1 && row.typeName == "Array") {
+                            var td = $("<td />").appendTo(tr.addClass("Handler"));
+                            td.on("click", function () { console.log($(this).data("array")); }).data("array", value).text("..."); //todo
+                            return true;
+                        }
                         return false;
                     }, [
                         { label: "Code" },

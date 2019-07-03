@@ -106,20 +106,28 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             get; private set;
         }
 
+        [JsonIgnore]
         public bool IsNull { get { return Value == null; } }
 
+        [JsonIgnore]
         public bool BooleanValue { get { return (bool)(Value ?? false); } }
 
-        public Decimal NumberValue { get { return (decimal)(Value ?? 0); } }
+        [JsonIgnore]
+        public decimal NumberValue { get { return (decimal)(Value ?? 0m); } }
 
+        [JsonIgnore]
         public DateTimeOffset DateTimeValue { get { return (DateTimeOffset)(Value ?? DateTimeOffset.MinValue); } }
 
-        public TimeSpan TimeSpanValue { get { return (TimeSpan)(Value ?? 0); } }
+        [JsonIgnore]
+        public TimeSpan TimeSpanValue { get { return (TimeSpan)(Value ?? TimeSpan.Zero); } }
 
+        [JsonIgnore]
         public string TextValue { get { return (string)Value; } }
 
+        [JsonIgnore]
         public string ErrorValue { get { return (string)Value; } }
 
+        [JsonIgnore]
         public IEnumerable<TypedValue> ArrayValue { get { return (IEnumerable<TypedValue>)Value; } }
     }
 }

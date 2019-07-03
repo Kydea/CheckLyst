@@ -93,13 +93,13 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                         Symbol = new ElementProperties.ElementProperty(ElementProperties.ElementProperty.ElementProperties.Valid) { Code = Values[0], Position = Position };
                         break;
                     case "Sum":
-                        var Sum = new AggregateFunctions.Sum { IteratorCode = Values[0], Position = Position };
+                        var Sum = new IteratorFunctions.Sum { IteratorCode = Values[0], Position = Position };
                         ParseArgument(ref ExpressionValue, ref Position, 1);
                         Sum.Argument = Arguments[0].Symbol;
                         Symbol = Sum;
                         break;
                     case "Each":
-                        var Each = new AggregateFunctions.Each { IteratorCode = Values[0], Position = Position };
+                        var Each = new IteratorFunctions.Each { IteratorCode = Values[0], Position = Position };
                         ParseArgument(ref ExpressionValue, ref Position, 1);
                         Each.Argument = Arguments[0].Symbol;
                         Symbol = Each;

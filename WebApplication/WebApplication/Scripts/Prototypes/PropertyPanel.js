@@ -27,11 +27,11 @@
 		};
 
 	propertyPanel.select = function (value) {
-		var
-			item = value,
-			model = item.getModel(),
-			state = prototypes.prototype.getModel().state,
-			oldModel = {};
+        var
+            item = value,
+            model = item.getModel(),
+            state = prototypes.prototype.getModel().state,
+            oldModel = {};
 
 		copyModel(model, oldModel);
 

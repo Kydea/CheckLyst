@@ -4,21 +4,35 @@ using CheckListManager.Common.Logic.Models.CheckLists;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
-	public class Iteration : Group, ICheckListIteration
-	{
-		public override string TypeName => "Iteration";
-		public int Index { get; set; }
+    public class Iteration : Group, ICheckListIteration
+    {
+        public override string TypeName => "Iteration";
+        public int Index { get; set; }
 
-		public override void Setup()
-		{
-			var Loading = Id > 0;
-			CheckList.AddItem(this);
+        private void AddAvailableSubItem(ICheckListGroup Group)
+        {
+            if (!Group.Iterator)
+                Group.Items.ForEach(Item =>
+                {
+                    if (!string.IsNullOrEmpty(Item.Code)) ElementsList.Add(Item);
+                    if (Item is ICheckListGroup group) AddAvailableSubItem(group);
+                });
+        }
+
+        public override void Setup()
+        {
+            //loads or setup for the first time the iteration
+            var Loading = Id > 0;
+            CheckList.AddItem(this);
             if (Loading)
+            {
+                IterationItem = true;
                 foreach (var Item in Items)
                 {
                     Item.Iteration = this;
                     Item.IterationItem = true;
                 }
+            }
             else
                 foreach (var Item in Group.Items)
                 {
@@ -28,27 +42,32 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 }
             SetupItems();
 
-			IEnumerable<ICheckListElement> AvailableItems = Items.Where(x => x.Code != null);
+            ElementsList = new List<ICheckListElement>();
+            AddAvailableSubItem(this);
+        }
 
-			var node = Group;
-			while (node != null)
-			{
-				if (!node.IterationItem)
-					node = null;
-				else
-				{
-					if (node.Elements != null)
-						AvailableItems = AvailableItems.Concat(node.Elements.Values);
-					node = node.Group;
-				}
-			}
-            AvailableItems = AvailableItems.Concat(CheckList.Elements.Values.Where(Element => !(Element is ICheckListItem) || !((ICheckListItem)Element).IterationItem && !((ICheckListItem)Element).IteratorModelItem));
+        public List<ICheckListElement> ElementsList { get; private set; }
 
-            _elements = AvailableItems
-				.ToDictionary(item => item.Code, item => item);
-		}
+        public Dictionary<string, ICheckListElement> Elements
+        {
+            get
+            {
+                var Result = new Dictionary<string, ICheckListElement>(ElementsList.Count);
+                ElementsList.ForEach(x => Result.Add(x.Code, x));
+                var Parent = Group;
+                while (Parent != null)
+                    if (!Parent.IterationItem)
+                        Parent = null;
+                    else
+                    {
+                        if (Parent is Iteration Iteration)
+                            Iteration.ElementsList.ForEach(x => Result.Add(x.Code, x));
+                        Parent = Parent.Group;
+                    }
 
-		private Dictionary<string, ICheckListElement> _elements;
-		public override Dictionary<string, ICheckListElement> Elements => _elements;
-	}
+                ((Instance)CheckList).ElementsList.ForEach(x => Result.Add(x.Code, x));
+                return Result;
+            }
+        }
+    }
 }
