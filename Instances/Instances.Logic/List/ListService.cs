@@ -151,7 +151,7 @@ namespace CheckListManager.Instances.Logic.List
                     && (form.Data.Number == null || i.Year == form.Data.Number)
                     && (form.Data.TagValue == string.Empty || i.InstanceTags.Any(it => (form.Data.TagCode == string.Empty || it.Tag == form.Data.TagCode) && it.Value.ToUpper().Contains(form.Data.TagValue.ToUpper())))
                     && (form.Data.State == string.Empty || i.InstanceState == form.Data.State)
-                    && (!form.Data.From.HasValue || i.ModifiedOn <= form.Data.From.Value)
+                    && (!form.Data.From.HasValue || i.ModifiedOn >= form.Data.From.Value)
                     && (!form.Data.To.HasValue || i.ModifiedOn <= form.Data.WholeTo.Value)
                     && (
                         form.Data.ExceptionState == string.Empty
