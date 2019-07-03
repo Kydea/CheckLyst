@@ -18,7 +18,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.AggregateFunctions
             if (!((ICheckListGroup)Element).Iterator) throw new ParseException("The group " + IteratorCode + " is not an Iterator", Position);
         }
 
-        public String IteratorCode { get; set; }
+        public string IteratorCode { get; set; }
 
         protected abstract TypedValue GetValue(IEnumerable<TypedValue> Values);
 

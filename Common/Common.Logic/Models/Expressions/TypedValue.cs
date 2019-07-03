@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 using System.Globalization;
 
 namespace CheckListManager.Common.Logic.Models.Expressions
@@ -30,6 +32,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                     Type == DataType.Date && !(Value is DateTimeOffset) ||
                     Type == DataType.Time && !(Value is TimeSpan) ||
                     Type == DataType.Number && !(Value is decimal) ||
+                    Type == DataType.Array && !(Value is IEnumerable<TypedValue>) ||
                     Type == DataType.Text && !(Value is string)
                 )
                     throw new Exception("Invalid class " + Value.GetType().Name + " for DataType " + Type.ToString());
@@ -58,6 +61,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                     Type == DataType.Date ? DateTimeOffset.ParseExact(_SerializedValue, new[] { "yyyy-MM-dd" }, null, DateTimeStyles.AssumeUniversal).ToUniversalTime() :
                     Type == DataType.Time ? TimeSpan.ParseExact(_SerializedValue, new[] { "hh\\:mm" }, null) :
                     Type == DataType.Number ? decimal.Parse(_SerializedValue.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture) :
+                    Type == DataType.Array ? JsonConvert.DeserializeObject<IEnumerable<TypedValue>>(_SerializedValue) :
                     Type == DataType.Error ? _SerializedValue :
                     (object)_SerializedValue;
             }
@@ -115,5 +119,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         public string TextValue { get { return (string)Value; } }
 
         public string ErrorValue { get { return (string)Value; } }
+
+        public IEnumerable<TypedValue> ArrayValue { get { return (IEnumerable<TypedValue>)Value; } }
     }
 }

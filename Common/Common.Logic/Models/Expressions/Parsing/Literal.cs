@@ -98,6 +98,12 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                         Sum.Argument = Arguments[0].Symbol;
                         Symbol = Sum;
                         break;
+                    case "Each":
+                        var Each = new AggregateFunctions.Each { IteratorCode = Values[0], Position = Position };
+                        ParseArgument(ref ExpressionValue, ref Position, 1);
+                        Each.Argument = Arguments[0].Symbol;
+                        Symbol = Each;
+                        break;
                     default:
                         throw new ParseException("Invalid property: " + Value, Position);
                 }

@@ -130,6 +130,7 @@
     <Compile Include="Models\CheckLists\SignatureRecord.cs" />
     <Compile Include="Models\DataType.cs" />
     <Compile Include="Models\Expressions\AggregateFunctions\AggregateFunction.cs" />
+    <Compile Include="Models\Expressions\AggregateFunctions\Each.cs" />
     <Compile Include="Models\Expressions\AggregateFunctions\Sum.cs" />
     <Compile Include="Models\Expressions\AritmeticOperators\BinaryAritmeticOperator.cs" />
     <Compile Include="Models\Expressions\AritmeticOperators\Division.cs" />

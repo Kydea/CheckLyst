@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using CheckListManager.Common.Logic.Models.Expressions;
 using Newtonsoft.Json;
 
 namespace CheckListManager.Common.Logic.Models
@@ -80,7 +81,8 @@ namespace CheckListManager.Common.Logic.Models
 		public static DataType DateTime = new DataType(DataTypeEnum.DateTime, typeof(DateTimeOffset), "DateTime");
 		public static DataType Date = new DataType(DataTypeEnum.Date, typeof(DateTimeOffset), "Date");
 		public static DataType Time = new DataType(DataTypeEnum.Time, typeof(TimeSpan), "Time");
-		public static DataType Error = new DataType(DataTypeEnum.Error, typeof(string), "Error");
+        public static DataType Array = new DataType(DataTypeEnum.Array, typeof(IEnumerable<TypedValue>), "Array");
+        public static DataType Error = new DataType(DataTypeEnum.Error, typeof(string), "Error");
 
 		public static DataType FromType(Type type)
 		{
@@ -94,7 +96,9 @@ namespace CheckListManager.Common.Logic.Models
 				return DateTime;
 			if (Date._compatibleTypes.Contains(type))
 				return DateTime;
-			if (Time._compatibleTypes.Contains(type))
+            if (Array._compatibleTypes.Contains(type))
+                return Array;
+            if (Time._compatibleTypes.Contains(type))
 				return Time;
 
 			throw new Exception("Type " + type.FullName + " not handled.");
@@ -108,13 +112,14 @@ namespace CheckListManager.Common.Logic.Models
 				name == "DateTime" ? DateTime :
 				name == "Date" ? Date :
 				name == "Time" ? Time :
+                name == "Array" ? Array :
 				name == "Error" ? Error :
                 Text;
         }
 
         private enum DataTypeEnum
 		{
-			Text, Boolean, Number, DateTime, Date, Time, Error
+			Text, Boolean, Number, DateTime, Date, Time, Array, Error
 		}
 	}
 }
