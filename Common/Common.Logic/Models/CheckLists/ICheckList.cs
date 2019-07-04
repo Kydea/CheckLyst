@@ -21,5 +21,6 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
         List<ICheckListPage> Pages { get; }
 
         TypedValue GetExpressionValue(string ExpressionCode, ICheckListElement Element);
+        TypedValue GetExpressionValue(string ExpressionCode, List<int> IterationIndexes);
     }
 }

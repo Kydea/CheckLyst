@@ -93,7 +93,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         }
 
         public void Update(string DecimalSeparator, string TimeZone, InstanceCacheObject cacheObject = null)
-        { 
+        {
             Dictionary<string, object> InstanceRuntimeValues = cacheObject == null ? new Dictionary<string, object>() : new Dictionary<string, object> {
                 { "InstanceCompany", cacheObject.CompanyId },
                 { "InstanceDepartment", cacheObject.Department },
@@ -113,8 +113,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 expression.Evaluate(this);
             }
 
-            DescriptionFormula?.Update(Expressions, InstanceRuntimeValues, DecimalSeparator, TimeZone);
-            FileNameFormula?.Update(Expressions, InstanceRuntimeValues, DecimalSeparator, TimeZone);
+            DescriptionFormula?.Update(this, InstanceRuntimeValues, DecimalSeparator, TimeZone, null);
+            FileNameFormula?.Update(this, InstanceRuntimeValues, DecimalSeparator, TimeZone, null);
 
             Header.Update(DecimalSeparator, TimeZone);
             foreach (var page in Pages)
@@ -138,6 +138,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             return !HideExpressions;
         }
 
+        [JsonIgnore]
         public List<ICheckListElement> ElementsList { get; private set; }
 
         public TypedValue GetExpressionValue(string ExpressionCode, ICheckListElement Element)
@@ -145,12 +146,17 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             if (ExpressionCode == null || !CheckList.Expressions.ContainsKey(ExpressionCode)) return null;
 
             var IterationIndexes = (Element as ICheckListItem)?.Iteration?.Indexes;
+            return GetExpressionValue(ExpressionCode, IterationIndexes);
+        }
+
+        public TypedValue GetExpressionValue(string ExpressionCode, List<int> IterationIndexes)
+        {
             var Value = CheckList.Expressions[ExpressionCode].Value;
             var Index = 0;
             while (Value?.IsNull == false && Value?.Type == DataType.Array)
             {
                 IEnumerable<TypedValue> ArrayValue;
-                if (IterationIndexes == null || IterationIndexes.Count < Index || (ArrayValue = Value.ArrayValue).Count() < IterationIndexes[Index]) return null;
+                if (IterationIndexes == null || IterationIndexes.Count <= Index || (ArrayValue = Value.ArrayValue).Count() <= IterationIndexes[Index]) return null;
                 Value = ArrayValue.ToList()[IterationIndexes[Index]];
             }
             return Value;

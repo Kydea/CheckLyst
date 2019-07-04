@@ -8,18 +8,18 @@
         <div id="PIN">
             <label class="Clearing Width200">
                 <span>Set pin</span>
-                <i class="Icon fa fa-key"></i>
+                <i class="Icon fal fa-key"></i>
                 <input type="password" name="PIN" id="PIN" />
             </label>
             <label class="Clearing Width200">
                 <span>Confirm pin</span>
-                <i class="Icon fa fa-key"></i>
+                <i class="Icon fal fa-key"></i>
                 <input type="password" name="ConfirmPIN" id="ConfirmPIN" />
             </label>
         </div>
         <label class="Clearing Width200">
             <span>Password</span>
-            <i class="Icon fa fa-key"></i>
+            <i class="Icon fal fa-key"></i>
             <input type="password" name="Password" id="Password" />
         </label>
         <label id="UnsingLabel" class="Clearing Width200">
@@ -48,9 +48,9 @@
     </div>
 </form>
 <div class="Buttons">
-    <a class="Button GreyYellowButton" href="#" id="Logout"><i class="fa fa-sign-out"></i> Logout </a>
+    <a class="Button GreyYellowButton" href="#" id="Logout"><i class="Icon fa fa-sign-out"></i> Logout </a>
     <a class="Button GreyYellowButton DefaultButton" href="#" id="Sign"></a>
-    <a class="Button GreyYellowButton" href="#" id="Simple"><i class="fa fa-key"></i> Use login</a>
+    <a class="Button GreyYellowButton" href="#" id="Simple"><i class="Icon fa fa-key"></i> Use login</a>
 </div>
 
 <script type="text/javascript">
@@ -69,6 +69,6 @@
     $("div.User", element).text("User code: " + data.username);
     matematici.controls.setEditable($("#UserName", element).val(data.username), !data.username);
 
-    $("#Sign", element).text(data.pin ? "Set PIN" : data.unsign ? "Unsign" : "Sign").prepend($("<i />").addClass("fa fa-check"));
+    $("#Sign", element).text(data.pin ? "Set PIN" : data.unsign ? "Unsign" : "Sign").prepend($("<i />").addClass("Icon fa fa-check"));
 </script>
 

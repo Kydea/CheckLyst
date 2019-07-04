@@ -400,6 +400,7 @@ div.Instance {
             i.fa-exclamation {
                 color: $Color-Red-Regular;
                 font-size: inherit;
+                margin-left: 5px;
             }
 
             @media #{$Media-Extended} {

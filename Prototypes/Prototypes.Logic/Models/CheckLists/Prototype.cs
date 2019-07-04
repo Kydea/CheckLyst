@@ -29,6 +29,11 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             throw new NotImplementedException(); //only for instances
         }
 
+        public TypedValue GetExpressionValue(string ExpressionCode, List<int> IterationIndexes)
+        {
+            throw new NotImplementedException(); //only for instances
+        }
+
         public ICheckList CheckList { get { return this; } set { throw new NotImplementedException("Just for inheritance purpose"); } }
 
         public void Setup()

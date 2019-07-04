@@ -59,7 +59,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public override void Update(string DecimalSeparator, string TimeZone)
         {
             base.Update(DecimalSeparator, TimeZone);
-            ValueFormula?.Update(CheckList.Expressions, RuntimeValues, DecimalSeparator, TimeZone);
+            ValueFormula?.Update(CheckList, RuntimeValues, DecimalSeparator, TimeZone, Iteration?.Indexes);
             if (ValueFormula != null && ValueFormula.HasValue)
                 ConversionError = !ValueType.Validate(ValueFormula.Value);
             if (ExternalSourceName != null)

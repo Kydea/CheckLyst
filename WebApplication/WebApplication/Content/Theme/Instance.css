@@ -255,7 +255,8 @@ div.Instance .Item.Signature a.Button i.fa-exclamation {
 
 div.Instance .Item.Signature i.fa-exclamation {
   color: #cc0000;
-  font-size: inherit; }
+  font-size: inherit;
+  margin-left: 5px; }
 
 @media only screen and (min-width: 760px) {
   div.Instance .Item.Signature label.Controls3 {

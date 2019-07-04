@@ -12,6 +12,6 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
 
 		public string Note { get; set; }
 
-		public string Action => "<center><i class=\"fi fi-fw flaticon-" + (Note == null ? "check" : "trash-o") + "\"></i></center>";
+		public string Action => "<center><i class=\"fal fa-" + (Note == null ? "check" : "trash") + "\"></i></center>";
 	}
 }

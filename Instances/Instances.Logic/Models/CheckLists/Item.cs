@@ -50,7 +50,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 else
                     parent = parent.Group;
 
-            DescriptionFormula?.Update(CheckList.Expressions, RuntimeValues, DecimalSeparator, TimeZone);
+            DescriptionFormula?.Update(CheckList, RuntimeValues, DecimalSeparator, TimeZone, Iteration?.Indexes);
         }
 
         public override bool Hidden => (Group?.Hidden ?? false) || base.Hidden;

@@ -109,7 +109,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 		{
 			destination.CheckList = source.CheckList;
 			destination.Code = source.Code;
-			destination.ReadOnlyExpressionCode = source.ReadOnlyExpressionCode;
+            destination.CountDownToCode = source.CountDownToCode;
+            destination.ReadOnlyExpressionCode = source.ReadOnlyExpressionCode;
 			destination.ReadOnlyCondition = source.ReadOnlyCondition;
 			destination.HiddenExpressionCode = source.HiddenExpressionCode;
 			destination.HiddenCondition = source.HiddenCondition;
