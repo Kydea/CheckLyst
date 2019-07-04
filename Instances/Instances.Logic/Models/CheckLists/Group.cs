@@ -64,15 +64,20 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 				_valid = _valid && item.Valid;
 			}
 
-			var index = 1;
+			var index = 0;
 			if (Iterator)
 			{
 				_valid = true;
-				foreach (var iteration in Iterations)
+				foreach (var Iteration in Iterations)
 				{
-					iteration.Index = index++;
-					iteration.Update(DecimalSeparator, TimeZone);
-					_valid = _valid && (iteration.Removed || iteration.Valid);
+                    Iteration.Indexes.Clear();
+                    if (Iteration != null)
+                        Iteration.Indexes.ForEach(i => Iteration.Indexes.Add(i));
+
+                    Iteration.Indexes.Add(index); //0-base
+                    Iteration.Index = ++index; //1-base
+                    Iteration.Update(DecimalSeparator, TimeZone);
+					_valid = _valid && (Iteration.Removed || Iteration.Valid);
 				}
 			}
 		}

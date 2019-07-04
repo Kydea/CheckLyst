@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System.Linq;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic;
+using CheckListManager.Common.Logic.Models;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
@@ -138,5 +139,21 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         }
 
         public List<ICheckListElement> ElementsList { get; private set; }
+
+        public TypedValue GetExpressionValue(string ExpressionCode, ICheckListElement Element)
+        {
+            if (ExpressionCode == null || !CheckList.Expressions.ContainsKey(ExpressionCode)) return null;
+
+            var IterationIndexes = (Element as ICheckListItem)?.Iteration?.Indexes;
+            var Value = CheckList.Expressions[ExpressionCode].Value;
+            var Index = 0;
+            while (Value?.IsNull == false && Value?.Type == DataType.Array)
+            {
+                IEnumerable<TypedValue> ArrayValue;
+                if (IterationIndexes == null || IterationIndexes.Count < Index || (ArrayValue = Value.ArrayValue).Count() < IterationIndexes[Index]) return null;
+                Value = ArrayValue.ToList()[IterationIndexes[Index]];
+            }
+            return Value;
+        }
     }
 }

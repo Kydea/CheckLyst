@@ -19,7 +19,7 @@
 
             if (input.prop("selectedIndex") > 2 && expressions[value].error)
                 error = "the expression is not valid";
-            else if (input.prop("selectedIndex") > 2 && expressions[value].dataType.typeName != "Boolean" && !(expressions[value].innerDataType && expressions[value].innerDataType.typeName == "Boolean"))
+            else if (input.prop("selectedIndex") > 2 && !prototypes.propertyPanel.checkDataType(expressions[value], "Boolean"))
                 error = "the expression result must be a boolean";
 
             if (error) {

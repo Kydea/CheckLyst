@@ -1,13 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using CheckListManager.Common.Logic.Models.CheckLists;
+using Newtonsoft.Json;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
     public class Iteration : Group, ICheckListIteration
     {
         public override string TypeName => "Iteration";
+
+        [JsonIgnore]
         public int Index { get; set; }
+
+        [JsonIgnore]
+        public List<int> Indexes { get; set; } = new List<int>();
 
         private void AddAvailableSubItem(ICheckListGroup Group)
         {
@@ -46,6 +52,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             AddAvailableSubItem(this);
         }
 
+        [JsonIgnore]
         public List<ICheckListElement> ElementsList { get; private set; }
 
         public Dictionary<string, ICheckListElement> Elements

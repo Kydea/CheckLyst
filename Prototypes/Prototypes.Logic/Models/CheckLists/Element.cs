@@ -25,8 +25,6 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         [JsonIgnore]
         public bool Hidden => false;
         [JsonIgnore]
-        public Expression CountDownTo => null;
-        [JsonIgnore]
         public ICheckListSignature Signature => null;
         [JsonIgnore]
         public bool Valid => true;

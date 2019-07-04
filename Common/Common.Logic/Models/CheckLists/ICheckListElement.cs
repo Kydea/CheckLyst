@@ -7,8 +7,6 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
     public interface ICheckListElement : ICheckListNode
     {
         string Code { get; set; }
-        [JsonIgnore]
-        Expression CountDownTo { get; }
         string CountDownToCode { get; set; }
         bool Hidden { get; }
         Conditions HiddenCondition { get; set; }

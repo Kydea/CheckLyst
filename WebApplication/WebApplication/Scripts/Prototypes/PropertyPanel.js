@@ -164,7 +164,7 @@
 				this, new prototypes.ExpressionProperty(model, "countDownToCode", { readOnly: state != prototypes.Prototype.states.draft }).setCheck([
 					{
 						action: function (expression) {
-							return !expression || expression.dataType.typeName == "DateTime";
+                            return !expression || propertyPanel.checkDataType(expression, "DateTime");
 						},
 						message: "the expression result must be a date/time"
 					}
@@ -473,7 +473,11 @@
 
 	propertyPanel.getPrototypeTypesList = function () {
 		return prototypeTypesList;
-	};
+    };
+
+    propertyPanel.checkDataType = function (expression, typeName) {
+        return expression.dataType.typeName == typeName || expression.innerDataType && expression.innerDataType.typeName == typeName;
+    };
 
 	prototypes.propertyPanel = propertyPanel;
 }
