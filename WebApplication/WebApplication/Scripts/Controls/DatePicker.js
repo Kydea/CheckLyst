@@ -123,7 +123,11 @@
 
 	this.getDate = function () {
 		return date;
-	};
+    };
+
+    this.getValue = function () {
+        return element.val();
+    };
 
 	setup();
 };

@@ -89,7 +89,10 @@
                     e.preventDefault();
                 });
 
-            if (!popup) calendar.setDate(getCurrentDate());
+            if (!popup) {
+                var date = getCurrentDate();
+                calendar.setMonth(date.getUTCMonth() + 1, date.getUTCFullYear());
+            }
         }
 
     this.setMonth = function (month, year) {
@@ -142,14 +145,12 @@
         });
     }
 
-	this.setDate = function (value) {
-        values.date = value;
-        calendar.setMonth(value.getUTCMonth() + 1, value.getUTCFullYear());
-    }
-
     this.setDatePicker = function (value) {
-		elements.datePicker = value;
-		calendar.setDate(elements.datePicker.getDate() || getCurrentDate());
+        elements.datePicker = value;
+        var
+            text = elements.datePicker.getValue(),
+            date = text == "" || !text ? getCurrentDate() : matematici.dateFormatter.parse(text, "00:00", null, false).toDate();
+        calendar.setMonth(date.getUTCMonth() + 1, date.getUTCFullYear());
     };
 
     this.open = function (top, left) {
