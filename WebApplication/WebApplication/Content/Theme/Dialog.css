@@ -95,6 +95,19 @@ div.Dialog {
       background-color: #ff3333 !important; }
       div.Dialog.Error div.Buttons a:hover i {
         color: #ff3333; }
+  div.Dialog div.Array {
+    padding-bottom: 10px; }
+    div.Dialog div.Array span.Index {
+      float: left;
+      clear: both;
+      color: #ccc; }
+    div.Dialog div.Array div.Value {
+      float: left;
+      margin-left: 25px; }
+    div.Dialog div.Array::after {
+      content: "";
+      display: table;
+      clear: both; }
   @media only screen and (min-width: 760px) {
     div.Dialog {
       position: fixed;

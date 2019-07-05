@@ -62,7 +62,7 @@
                 hideRemovedIterationsButton = $("a.HideRemovedIterations", buttonGroup).toggleClass("Hidden", !removedIterationsVisible);
 
             expressionsButton = $("a.ExpressionsButton", actionBar);
-            exceptionsButton = $("a.ExceptionsButton", actionBar);
+            exceptionsButton = $("a.ExceptionsButton", actionBar).hide();
 
             if ($("a:not(.Hidden)", buttonGroup).size() == 0)
                 buttonGroup.hide();
@@ -102,6 +102,37 @@
             }
 
             matematici.dialog.error("exceptions list", message);
+        },
+
+        navigateArray = function (value) {
+            var element = $("<div />").addClass("Array");
+            for (var index in value) {
+                element.append($("<span />").addClass("Index").text(parseInt(index) + 1));
+                var
+                    item = value[index],
+                    div = $("<div />").addClass("Value").appendTo(element);
+                switch (item && item.type && item.type.typeName) {
+                    case "DateTime":
+                        var formattedDate = matematici.dateFormatter.format(new Date(item.value), true);
+                        div.html(formattedDate.date + " " + formattedDate.time).attr("title", formattedDate.offset);
+                        break;
+                    case "Boolean":
+                        div.addClass("Centered").append($("<i />").addClass("fa").addClass("fa-" + (item.value || item.value == true ? "check" : "times")));
+                        break;
+                    case "Array":
+                        div.append(navigateArray(item.value));
+                        break;
+                    default:
+                        div.html(item.value);
+                }
+            }
+            return element;
+        },
+
+        showArray = function (tr) {
+            console.log($("td", tr).text());
+            var content = navigateArray(tr.data("array"));
+            matematici.dialog.show($("td", tr).eq(0).text(), content);
         },
 
 		update = function (result) {
@@ -461,7 +492,11 @@
 
 	instance.areRemovedIterationsVisible = function () {
 		return removedIterationsVisible;
-	};
+    };
+
+    instance.showArray = function (value) {
+        showArray(value);
+    };
 
 	instance.initialize = function () {
 		instanceElementInformation = new instances.ElementInformation(element);

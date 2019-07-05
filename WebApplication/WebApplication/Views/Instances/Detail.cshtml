@@ -64,8 +64,11 @@
                             }
                             return true;
                         } else if (columnIndex == 1 && row.typeName == "Array") {
-                            var td = $("<td />").appendTo(tr.addClass("Handler"));
-                            td.on("click", function () { console.log($(this).data("array")); }).data("array", value).text("..."); //todo
+                            $("<td />").text("(click to open)").appendTo(tr.addClass("Handler"));
+                            tr.on("click", function () {
+                                instance.showArray($(this));
+                                matematici.checkListGrid.close();
+                            }).data("array", value);
                             return true;
                         }
                         return false;
