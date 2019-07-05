@@ -191,6 +191,7 @@
 
 
         var visibleChildren = $(model.showAsTable ? "tr.Iteration:not(.Removed)" : "> .Iteration:not(.Removed)", element);
+        visibleChildren.removeClass("FirstIteration").removeClass("LastIteration");
 		visibleChildren.first().addClass("FirstIteration");
 		visibleChildren.last().addClass("LastIteration");
 

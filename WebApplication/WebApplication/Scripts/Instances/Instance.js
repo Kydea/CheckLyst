@@ -62,7 +62,7 @@
                 hideRemovedIterationsButton = $("a.HideRemovedIterations", buttonGroup).toggleClass("Hidden", !removedIterationsVisible);
 
             expressionsButton = $("a.ExpressionsButton", actionBar);
-            exceptionsButton = $("a.ExceptionsButton", actionBar).hide();
+            exceptionsButton = $("a.ExceptionsButton", actionBar);
 
             if ($("a:not(.Hidden)", buttonGroup).size() == 0)
                 buttonGroup.hide();

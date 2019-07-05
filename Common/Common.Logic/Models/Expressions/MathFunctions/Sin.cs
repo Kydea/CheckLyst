@@ -6,9 +6,9 @@ namespace CheckListManager.Common.Logic.Models.Expressions.MathFunctions
 {
     public class Sin : MathFunction
     {
-        protected override TypedValue Evaluate(TypedValue ArgumentValue)
+        protected override TypedValue EvaluateResult(TypedValue ArgumentValue)
         {
-            return base.Evaluate(ArgumentValue) ?? new TypedValue(DataType.Number, (decimal)Math.Sin((double)ArgumentValue.NumberValue));
+            return new TypedValue(DataType.Number, (decimal)Math.Sin((double)ArgumentValue.NumberValue));
         }
 
         public override string ToString()

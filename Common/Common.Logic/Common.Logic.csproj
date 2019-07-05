@@ -129,6 +129,7 @@
     <Compile Include="Models\CheckLists\FieldRecord.cs" />
     <Compile Include="Models\CheckLists\SignatureRecord.cs" />
     <Compile Include="Models\DataType.cs" />
+    <Compile Include="Models\Expressions\AritmeticOperators\Power.cs" />
     <Compile Include="Models\Expressions\IteratorFunctions\IteratorFunction.cs" />
     <Compile Include="Models\Expressions\IteratorFunctions\Each.cs" />
     <Compile Include="Models\Expressions\IteratorFunctions\Sum.cs" />
@@ -152,6 +153,12 @@
     <Compile Include="Models\Expressions\ExpressionValue.cs" />
     <Compile Include="Models\Expressions\Formula.cs" />
     <Compile Include="Models\Expressions\MathFunctions\MathFunction.cs" />
+    <Compile Include="Models\Expressions\MathFunctions\Cos.cs" />
+    <Compile Include="Models\Expressions\MathFunctions\SqRt.cs" />
+    <Compile Include="Models\Expressions\MathFunctions\Tan.cs" />
+    <Compile Include="Models\Expressions\MathFunctions\ATan.cs" />
+    <Compile Include="Models\Expressions\MathFunctions\Log.cs" />
+    <Compile Include="Models\Expressions\MathFunctions\LN.cs" />
     <Compile Include="Models\Expressions\MathFunctions\Sin.cs" />
     <Compile Include="Models\Expressions\Parsing\Literal.cs" />
     <Compile Include="Models\Expressions\Parsing\Number.cs" />

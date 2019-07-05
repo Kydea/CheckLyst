@@ -20,16 +20,18 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             Symbols = new List<Symbol>();
         }
 
-        public void Parse(ICheckList checkList)
+        public void Validate(ICheckList checkList)
         {
             if (string.IsNullOrWhiteSpace(Description) && (Unique || Exception))
-                throw new Exception($"Unique and exception expressions must have a description");
+                throw new Exception($"Unique expressions and exception expressions must have a description");
 
             if (SerializedValue?.Length >= MAXIMUM_LENGTH)
                 throw new Parsing.ParseException($"Expressions lengh must not exceed {MAXIMUM_LENGTH - 1} characters", MAXIMUM_LENGTH);
+        }
 
+        public void Parse(ICheckList checkList)
+        {
             Root = new Parsing.TokenSet(SerializedValue, 0).Symbol;
-
             Root.Expression = this;
         }
 

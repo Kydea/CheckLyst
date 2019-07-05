@@ -12,14 +12,27 @@ namespace CheckListManager.Common.Logic.Models.Expressions.MathFunctions
             base.Check(Prototype, IteratorStack);
 
             if (Argument.DataType != DataType.Number)
-                throw new ParseException("Left operand of math functions must be numbers", Position);
+                throw new ParseException("The argument of a math functions must be a number", Position);
 
             DataType = DataType.Number;
         }
 
+        protected abstract TypedValue EvaluateResult(TypedValue ArgumentValue);
+
         protected override TypedValue Evaluate(TypedValue ArgumentValue)
         {
-            return base.Evaluate(ArgumentValue) ?? (ArgumentValue.IsNull ? ArgumentValue : null);
+            var Value = base.Evaluate(ArgumentValue);
+            if (Value == null)
+                try
+                {
+                    return ArgumentValue.IsNull ? ArgumentValue : EvaluateResult(ArgumentValue);
+                }
+                catch (Exception Exception)
+                {
+                    return new TypedValue(DataType.Error, Exception.Message);
+                }
+            else
+                return Value;
         }
 
     }
