@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using CheckListManager.Common.Logic.Models.CheckLists;
 
 namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
@@ -14,7 +15,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
             this.Property = Property;
         }
 
-        protected override void Check(ICheckListElement Element)
+        protected override void Check(ICheckListElement Element, List<string> IteratorStack)
         {
             if (!(Element is ICheckListSignature)) throw new Exception($"The element with code {Code} is not an Signature");
             var Signature = (ICheckListSignature)Element;

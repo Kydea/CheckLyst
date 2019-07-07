@@ -42,6 +42,65 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     Operator = OperatorType.Right;
                 }
 
+                //Math functions
+
+                else if (Value.ToLower() == "sqrt")
+                {
+                    var SqRt = new MathFunctions.SqRt { Position = Position };
+                    ParseArgument(ref ExpressionValue, ref Position, 1);
+                    SqRt.Argument = Arguments[0].Symbol;
+                    Symbol = SqRt;
+                    Operator = OperatorType.No;
+                }
+                else if (Value.ToLower() == "sin")
+                {
+                    var Sin = new MathFunctions.Sin { Position = Position };
+                    ParseArgument(ref ExpressionValue, ref Position, 1);
+                    Sin.Argument = Arguments[0].Symbol;
+                    Symbol = Sin;
+                    Operator = OperatorType.No;
+                }
+                else if (Value.ToLower() == "cos")
+                {
+                    var Cos = new MathFunctions.Cos { Position = Position };
+                    ParseArgument(ref ExpressionValue, ref Position, 1);
+                    Cos.Argument = Arguments[0].Symbol;
+                    Symbol = Cos;
+                    Operator = OperatorType.No;
+                }
+                else if (Value.ToLower() == "tan")
+                {
+                    var Tan = new MathFunctions.Tan { Position = Position };
+                    ParseArgument(ref ExpressionValue, ref Position, 1);
+                    Tan.Argument = Arguments[0].Symbol;
+                    Symbol = Tan;
+                    Operator = OperatorType.No;
+                }
+                else if (Value.ToLower() == "atan")
+                {
+                    var ATan = new MathFunctions.ATan { Position = Position };
+                    ParseArgument(ref ExpressionValue, ref Position, 1);
+                    ATan.Argument = Arguments[0].Symbol;
+                    Symbol = ATan;
+                    Operator = OperatorType.No;
+                }
+                else if (Value.ToLower() == "ln")
+                {
+                    var LN = new MathFunctions.LN { Position = Position };
+                    ParseArgument(ref ExpressionValue, ref Position, 1);
+                    LN.Argument = Arguments[0].Symbol;
+                    Symbol = LN;
+                    Operator = OperatorType.No;
+                }
+                else if (Value.ToLower() == "log")
+                {
+                    var Log = new MathFunctions.Log { Position = Position };
+                    ParseArgument(ref ExpressionValue, ref Position, 1);
+                    Log.Argument = Arguments[0].Symbol;
+                    Symbol = Log;
+                    Operator = OperatorType.No;
+                }
+
                 //Ternary operator
                 else if (Value.ToLower() == "iif")
                 {
@@ -82,10 +141,16 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                         Symbol = new ElementProperties.ElementProperty(ElementProperties.ElementProperty.ElementProperties.Valid) { Code = Values[0], Position = Position };
                         break;
                     case "Sum":
-                        var Sum = new AggregateFunctions.Sum { IteratorCode = Values[0], Position = Position };
+                        var Sum = new IteratorFunctions.Sum { IteratorCode = Values[0], Position = Position };
                         ParseArgument(ref ExpressionValue, ref Position, 1);
                         Sum.Argument = Arguments[0].Symbol;
                         Symbol = Sum;
+                        break;
+                    case "Each":
+                        var Each = new IteratorFunctions.Each { IteratorCode = Values[0], Position = Position };
+                        ParseArgument(ref ExpressionValue, ref Position, 1);
+                        Each.Argument = Arguments[0].Symbol;
+                        Symbol = Each;
                         break;
                     default:
                         throw new ParseException("Invalid property: " + Value, Position);

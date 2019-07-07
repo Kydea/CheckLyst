@@ -21,7 +21,17 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         public void AddItem(ICheckListItem item)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException(); //only for instances
+        }
+
+        public TypedValue GetExpressionValue(string ExpressionCode, ICheckListElement Element)
+        {
+            throw new NotImplementedException(); //only for instances
+        }
+
+        public TypedValue GetExpressionValue(string ExpressionCode, List<int> IterationIndexes)
+        {
+            throw new NotImplementedException(); //only for instances
         }
 
         public ICheckList CheckList { get { return this; } set { throw new NotImplementedException("Just for inheritance purpose"); } }
@@ -47,6 +57,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                     if (Expression.Value.Description?.Length > 100)
                         throw new Exception($"Expression descriptions must not exceed 100 characters");
 
+                    Expression.Value.Validate(this);
                     Expression.Value.Parse(this);
                     Expression.Value.Check(this);
                 }

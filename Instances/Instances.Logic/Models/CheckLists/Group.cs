@@ -12,8 +12,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
 		public override string TypeName => "Group";
 
-		public virtual Dictionary<string, ICheckListElement> Elements { get; set; }
-
 		public List<ICheckListItem> Items { get; set; } = new List<ICheckListItem>();
         public List<ICheckListIteration> Iterations { get; } = new List<ICheckListIteration>();
 		public bool Iterator { get; set; }
@@ -52,35 +50,34 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 if (((Instance)CheckList).InCreation && InstanceIterations > 0 && !IteratorModelItem)
                     for (int Index = 0; Index < InstanceIterations; ++Index)
                         AddIteration();
-
-                Elements = new Dictionary<string, ICheckListElement>();
 			}
-			else
-				Elements = Items
-					.Where(item => item.Code != null && item.Code != string.Empty)
-					.ToDictionary(item => item.Code, item => (ICheckListElement)item);
 		}
 
-		public override void Update(string DecimalSeparator)
+		public override void Update(string DecimalSeparator, string TimeZone)
 		{
-			base.Update(DecimalSeparator);
+			base.Update(DecimalSeparator, TimeZone);
 
 			_valid = true;
 			foreach (var item in Items)
 			{
-				item.Update(DecimalSeparator);
+				item.Update(DecimalSeparator, TimeZone);
 				_valid = _valid && item.Valid;
 			}
 
-			var index = 1;
+			var index = 0;
 			if (Iterator)
 			{
 				_valid = true;
-				foreach (var iteration in Iterations)
+				foreach (var Iteration in Iterations)
 				{
-					iteration.Index = index++;
-					iteration.Update(DecimalSeparator);
-					_valid = _valid && (iteration.Removed || iteration.Valid);
+                    Iteration.Indexes.Clear();
+                    if (Iteration != null)
+                        Iteration.Indexes.ForEach(i => Iteration.Indexes.Add(i));
+
+                    Iteration.Indexes.Add(index); //0-base
+                    Iteration.Index = ++index; //1-base
+                    Iteration.Update(DecimalSeparator, TimeZone);
+					_valid = _valid && (Iteration.Removed || Iteration.Valid);
 				}
 			}
 		}

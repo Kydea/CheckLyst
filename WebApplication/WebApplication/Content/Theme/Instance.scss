@@ -175,6 +175,7 @@ div.Instance {
 
                     &:hover {
                         color: $Color-Green-Light;
+                        text-decoration: none !important;
                     }
 
                     &.Hidden {
@@ -366,7 +367,7 @@ div.Instance {
             .Copy {
                 position: absolute;
                 top: 21px;
-                right: 1px;
+                right: 3px;
                 margin: 0;
                 display: none;
                 font-size: 10px;
@@ -399,6 +400,7 @@ div.Instance {
             i.fa-exclamation {
                 color: $Color-Red-Regular;
                 font-size: inherit;
+                margin-left: 5px;
             }
 
             @media #{$Media-Extended} {

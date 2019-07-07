@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CheckListManager.Common.Core.Helpers;
+using CheckListManager.Common.Logic.Models.CheckLists;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -61,7 +63,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                         });
         }
 
-        public void Update(Dictionary<string, Expression> Expressions, Dictionary<string, object> RuntimeValues, string DecimalSeparator)
+        public void Update(ICheckList CheckList, Dictionary<string, object> RuntimeValues, string DecimalSeparator, string TimeZone, List<int> IterationIndexes)
         {
             try
             {
@@ -71,15 +73,16 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                     Format,
                     ValueKeys.Select(Key =>
                     {
+                        var ExpressionValue = CheckList.GetExpressionValue(Key, IterationIndexes);
                         var Value =
-                            Expressions.ContainsKey(Key) ?
-                                Expressions[Key].Value.Type == DataType.Error ? ErrorValueLeft + Expressions[Key].Value.ErrorValue + ErrorValueRight :
-                                Expressions[Key].Value.IsNull ? NullValue :
-                                Expressions[Key].Value.Type == DataType.Number ? Expressions[Key].Value.NumberValue.ToString(Formats[Index]).Replace(".", DecimalSeparator).Replace(",", DecimalSeparator) :
-                                Expressions[Key].Value.Type == DataType.DateTime ? Expressions[Key].Value.DateTimeValue.ToString("yyyy-MM-dd HH:mm:ss") :
-                                Expressions[Key].Value.Type == DataType.Date ? Expressions[Key].Value.DateTimeValue.ToString("yyyy-MM-dd") :
-                                Expressions[Key].Value.Type == DataType.Time ? Expressions[Key].Value.TimeSpanValue.ToString(@"hh\:mm\:ss") :
-                                Expressions[Key].Value.Value :
+                            CheckList.Expressions.ContainsKey(Key) ?
+                                ExpressionValue.Type == DataType.Error ? ErrorValueLeft + ExpressionValue.ErrorValue + ErrorValueRight :
+                                ExpressionValue.IsNull ? NullValue :
+                                ExpressionValue.Type == DataType.Number ? ExpressionValue.NumberValue.ToString(Formats[Index]).Replace(".", DecimalSeparator).Replace(",", DecimalSeparator) :
+                                ExpressionValue.Type == DataType.DateTime ? ExpressionValue.DateTimeValue.ToLocalTime(TimeZone).ToString("yyyy-MM-dd HH:mm:ss") :
+                                ExpressionValue.Type == DataType.Date ? ExpressionValue.DateTimeValue.ToString("yyyy-MM-dd") :
+                                ExpressionValue.Type == DataType.Time ? ExpressionValue.TimeSpanValue.ToString(@"hh\:mm\:ss") :
+                                ExpressionValue.Value :
                             RuntimeValues?.ContainsKey(Key) ?? false ? RuntimeValues[Key] :
                             $"{ErrorValueLeft}Code not found: {Key}{ErrorValueRight}";
                         ++Index;
@@ -89,9 +92,13 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                 HasValue =
                     !string.IsNullOrEmpty(Format)
                     && !ValueKeys.Any(Key =>
-                        Expressions.ContainsKey(Key) && (Expressions[Key].Value.Type == DataType.Error || Expressions[Key].Value.IsNull)
-                        || !Expressions.ContainsKey(Key) && !RuntimeValues.ContainsKey(Key)
-                    );
+                    {
+                        var ExpressionValue = CheckList.GetExpressionValue(Key, IterationIndexes);
+                        var Value = 
+                            CheckList.Expressions.ContainsKey(Key) && (ExpressionValue.Type == DataType.Error || ExpressionValue.IsNull)
+                            || !CheckList.Expressions.ContainsKey(Key) && !RuntimeValues.ContainsKey(Key);
+                        return Value;
+                    });
             }
             catch
             {

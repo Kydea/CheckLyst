@@ -2,7 +2,7 @@
 
 namespace CheckListManager.Common.Logic.Models.CheckLists
 {
-	public interface ICheckListGroup : ICheckListItem, IElementsBranch
+	public interface ICheckListGroup : ICheckListItem
 	{
 		List<ICheckListItem> Items { get; set; }
 		List<ICheckListIteration> Iterations { get; }

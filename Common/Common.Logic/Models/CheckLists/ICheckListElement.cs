@@ -7,8 +7,6 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
     public interface ICheckListElement : ICheckListNode
     {
         string Code { get; set; }
-        [JsonIgnore]
-        Expression CountDownTo { get; }
         string CountDownToCode { get; set; }
         bool Hidden { get; }
         Conditions HiddenCondition { get; set; }
@@ -25,7 +23,7 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
         string ValidityMessage { get; set; }
 
         void Setup();
-        void Update(string DecimalSeparator);
+        void Update(string DecimalSeparator, string TimeZone);
         void UpdateReadOnly(string userCode, bool readOnlyInstance);
         string GetSignatureInformation();
     }

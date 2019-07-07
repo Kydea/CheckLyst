@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using CheckListManager.Common.Logic.Models.CheckLists;
 
 namespace CheckListManager.Common.Logic.Models.Expressions
@@ -15,9 +16,9 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             }
         }
 
-        public override void Check(ICheckList Prototype)
+        public override void Check(ICheckList Prototype, List<string> IteratorStack)
         {
-            Argument.Check(Prototype);
+            Argument.Check(Prototype, IteratorStack);
             DataType = Argument.DataType;
         }
 

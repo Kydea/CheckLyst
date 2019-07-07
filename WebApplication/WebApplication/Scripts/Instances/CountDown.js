@@ -41,7 +41,7 @@
 					.append($("<span />").addClass("Time"));
 				var prototypeState = instances.instance.getVersionState();
                 if (prototypeState == prototypes.Prototype.states.draft || prototypeState == prototypes.Prototype.states.simulation)
-					element.append($("<a />").addClass("Button Icon").attr("href", "#").append($("<i />").attr("title", "Skip").addClass("fa fa-caret-right")).on("click", function (e) {
+					element.append($("<a />").addClass("Button Icon").attr("href", "#").append($("<i />").attr("title", "Skip").addClass("Icon fa fa-caret-right")).on("click", function (e) {
                         e.preventDefault();
                         new instances.Event(instances.Events.skipCountDown, itemId).trigger();
                         clear();

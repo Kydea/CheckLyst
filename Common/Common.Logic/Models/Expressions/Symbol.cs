@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using CheckListManager.Common.Logic.Models.CheckLists;
-using CheckListManager.Common.Logic.Models.Expressions.AggregateFunctions;
+using CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions;
 using CheckListManager.Common.Logic.Models.Expressions.ElementProperties;
 using CheckListManager.Common.Logic.Models.Expressions.LogicOperators;
 using Newtonsoft.Json;
@@ -27,11 +28,13 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
         public abstract TypedValue GetValue(IElementsBranch ElementsBranch);
 
-        public abstract void Check(ICheckList Prototype);
+        public abstract void Check(ICheckList Prototype, List<string> IteratorStack);
 
         public override abstract string ToString();
 
         public DataType DataType { get; protected set; }
+
+        public DataType? InnerDataType { get; protected set; }
 
         public int Position { get; set; }
     }

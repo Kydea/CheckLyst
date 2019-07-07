@@ -17,7 +17,7 @@
         };
 
 	this.update = function (model) {
-		button.text(model.buttonLabel ? model.buttonLabel : "Signature").prepend($("<i >").addClass("fa fa-check"));
+		button.text(model.buttonLabel ? model.buttonLabel : "Signature").prepend($("<i >").addClass("Icon fa fa-check"));
         this.setColor(model.color);
         this.setFontSize(model.fontSize);
     };

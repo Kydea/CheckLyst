@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using CheckListManager.Common.Logic.Models.CheckLists;
 
 namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
 {
     public class FieldProperty : ElementProperty
     {
-        protected override void Check(ICheckListElement Element)
+        protected override void Check(ICheckListElement Element, List<string> IteratorStack)
         {
             if (!(Element is ICheckListField)) throw new Exception($"The element with code {Code} is not a Field");
             DataType = ((ICheckListField)Element).ValueType;

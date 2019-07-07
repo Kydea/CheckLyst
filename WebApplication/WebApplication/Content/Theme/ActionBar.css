@@ -9,3 +9,5 @@
     margin-right: 10px; }
     div.ActionBar a.Button.Invalid i {
       color: #cc0000; }
+    div.ActionBar a.Button.Hidden {
+      display: none; }

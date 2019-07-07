@@ -179,7 +179,7 @@
             }
 
             copyButton =
-				$("<a />").addClass("Copy fa fa-clone").attr({ href: "#", title: "F8" })
+				$("<a />").addClass("Copy fal fa-clone").attr({ href: "#", title: "F8" })
 					.on("mousedown", valueCopy);
 
 			if (!item.isTableContent() || !item.getParent().isSubRow())

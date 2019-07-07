@@ -449,7 +449,7 @@ form, div.CheckList, div.PropertyPanel div.PropertyValue, div.Module {
             &.Controls2 {
                 width: $Label-Width * 2 + $Metric-Control-Space;
 
-                > *:not(span):not(.Icon) {
+                > *:not(span):not(.Icon):not(.fa) {
                     width: calc(50% + #{$Metric-Control-Space / 2});
 
                     &:last-child {
@@ -475,7 +475,7 @@ form, div.CheckList, div.PropertyPanel div.PropertyValue, div.Module {
             &.Controls3 {
                 width: $Label-Width * 3 + $Metric-Control-Space * 2;
 
-                > *:not(span):not(.Icon) {
+                > *:not(span):not(.Icon):not(.fa) {
                     width: calc(33.33% + #{$Metric-Control-Space / 3});
 
                     &:last-child {

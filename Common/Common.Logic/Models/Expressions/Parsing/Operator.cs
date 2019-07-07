@@ -7,7 +7,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
 {
     public class Operator : Token
     {
-        public const string OPERATORS_CHARACTERS = "+-*/=?:&|!><";
+        public const string OPERATORS_CHARACTERS = "+-*/=?:&|!><^";
         public Operator(ref string ExpressionValue, ref int Position, int Index) :
             base
             (
@@ -21,6 +21,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                 Value == "-" ? new ArithmeticOperators.Minus() :
                 Value == "*" ? new ArithmeticOperators.Times() :
                 Value == "/" ? new ArithmeticOperators.Division() :
+                Value == "^" ? new ArithmeticOperators.Power() :
 
                 //Comparision operators
                 Value == "==" || Value == "=" ? new ComparisonOperators.Equals() :

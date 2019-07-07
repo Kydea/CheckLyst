@@ -16,5 +16,9 @@ div.ActionBar {
                 color: $Color-Red-Regular;
             }
         }
+
+        &.Hidden {
+            display: none;
+        }
     }
 }

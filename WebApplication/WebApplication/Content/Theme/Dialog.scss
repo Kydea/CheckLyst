@@ -108,7 +108,7 @@ div.Dialog {
                         background: none;
                         position: absolute;
                         left: 10px;
-                        top: 12px;
+                        top: 7px;
                         margin: 0;
                     }
 
@@ -154,6 +154,27 @@ div.Dialog {
                     }
                 }
             }
+        }
+    }
+
+    div.Array {
+        padding-bottom: 10px;
+
+        span.Index {
+            float: left;
+            clear: both;
+            color: $Color-Grey-Light;
+        }
+
+        div.Value {
+            float: left;
+            margin-left: 25px;
+        }
+
+        &::after {
+            content: "";
+            display: table;
+            clear: both;
         }
     }
 

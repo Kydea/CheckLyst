@@ -203,7 +203,7 @@ namespace CheckListManager.Instances.Logic.Services
                     throw new InstanceException("Access denied");
 
                 cacheObject.InstanceState = InstanceState.Progress;
-                cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(identity.CompanyId), cacheObject);
+                cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(identity.CompanyId), (await _settingService.TimeZoneAsync(identity.CompanyId)).MicrosoftCode, cacheObject);
 
                 if (!cacheObject.Instance.Header.Valid)
                     throw new InstanceException("Header not valid");
@@ -238,7 +238,7 @@ namespace CheckListManager.Instances.Logic.Services
                         ((Page)cacheObject.Instance.Pages[0]).Lock = new Lock(identity.Code);
                     cacheObject.IsDirty = false;
 
-                    cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(identity.CompanyId), cacheObject); //new update to consider the database values 
+                    cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(identity.CompanyId), (await _settingService.TimeZoneAsync(identity.CompanyId)).MicrosoftCode, cacheObject); //new update to consider the database values 
 
                     _instancesRepository.SaveChildren(row, CreateTags(cacheObject), CreateExpressionValues(cacheObject));
 
@@ -323,7 +323,7 @@ namespace CheckListManager.Instances.Logic.Services
                 if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
                     throw new InstanceException("Access denied");
 
-                cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(identity.CompanyId), cacheObject);
+                cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(identity.CompanyId), (await _settingService.TimeZoneAsync(identity.CompanyId)).MicrosoftCode, cacheObject);
                 var InvalidItems = cacheObject.Instance.Items.Values.Where(i => !i.Removed && !i.Valid && !i.IteratorModelItem);
                 if (InvalidItems.Any())
                     throw new InstanceException($"The following items are not valid: {string.Join(", ", InvalidItems.Select(i => i.Id.ToString()))}");
@@ -479,7 +479,7 @@ namespace CheckListManager.Instances.Logic.Services
                     throw new InstanceException("Instance not found");
                 }
 
-                cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(cacheObject.CompanyId), cacheObject);
+                cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(cacheObject.CompanyId), (await _settingService.TimeZoneAsync(cacheObject.CompanyId)).MicrosoftCode, cacheObject);
                 row.Data = JsonConvert.SerializeObject(cacheObject.Instance, _converter);
                 row.Description = cacheObject.Instance.Description;
                 row.FileName =
@@ -947,7 +947,7 @@ namespace CheckListManager.Instances.Logic.Services
             if (signature.Signed)
                 throw new Exception("The signature is already signed");
 
-            signature.TrySign(await _settingService.DecimalSeparatorAsync(cacheObject.CompanyId), userCode);
+            signature.TrySign(await _settingService.DecimalSeparatorAsync(cacheObject.CompanyId), (await _settingService.TimeZoneAsync(cacheObject.CompanyId)).MicrosoftCode, userCode);
         }
 
         private async Task HandleSignatureAsync(InstanceCacheObject cacheObject, IDefaultIdentity identity, InstanceEventRequest request)
@@ -970,7 +970,7 @@ namespace CheckListManager.Instances.Logic.Services
             if (!request.Simple.Value && string.IsNullOrEmpty(request.Pin))
                 throw new InstanceException("Provide your PIN");
 
-            signature.TrySign(await _settingService.DecimalSeparatorAsync(cacheObject.CompanyId), identity.Code);
+            signature.TrySign(await _settingService.DecimalSeparatorAsync(cacheObject.CompanyId), (await _settingService.TimeZoneAsync(cacheObject.CompanyId)).MicrosoftCode, identity.Code);
 
             try
             {
@@ -1196,7 +1196,7 @@ namespace CheckListManager.Instances.Logic.Services
                 !cacheObject.InstanceState.In(InstanceState.Draft, InstanceState.Progress)
                 || !HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType);
 
-            cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(identity.CompanyId), cacheObject);
+            cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(identity.CompanyId), (await _settingService.TimeZoneAsync(identity.CompanyId)).MicrosoftCode, cacheObject);
             cacheObject.Instance.UpdateReadOnly(lockUser ?? identity.Code, cacheObject.InstanceState);
 
             return cacheObject.Instance;

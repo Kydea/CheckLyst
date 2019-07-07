@@ -96,6 +96,7 @@
                     description: list[index].description,
                     error: list[index].error,
                     dataType: list[index].dataType,
+                    innerDataType: list[index].innerDataType,
                     unique: list[index].unique,
                     exception: list[index].exception
                 };
@@ -147,6 +148,7 @@
                         list[index].description = result.expressions[list[index].code].description;
                         list[index].error = result.expressions[list[index].code].error;
                         list[index].dataType = result.expressions[list[index].code].dataType;
+                        list[index].innerDataType = result.expressions[list[index].code].innerDataType;
                         list[index].unique = result.expressions[list[index].code].unique;
                         list[index].exception = result.expressions[list[index].code].exception;
                     } catch (error) {
@@ -266,6 +268,7 @@
                     error: model.expressions[code].error,
                     valid: model.expressions[code].error == null,
                     dataType: model.expressions[code].dataType,
+                    innerDataType: model.expressions[code].innerDataType,
                     unique: model.expressions[code].unique,
                     exception: model.expressions[code].exception
                 });

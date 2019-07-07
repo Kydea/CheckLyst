@@ -23,6 +23,9 @@
 
         setAdvancedSearchMode = function (value) {
             advancedSearchMode = value;
+
+            if (advancedSearchPanel.length == 0) return;
+
             if (advancedSearchMode) {
                 advancedSearchPanel.slideDown();
                 advancedSearchButton.addClass("Open");

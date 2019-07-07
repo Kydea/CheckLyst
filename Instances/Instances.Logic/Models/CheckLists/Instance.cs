@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System.Linq;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic;
+using CheckListManager.Common.Logic.Models;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
@@ -83,11 +84,16 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             foreach (var expression in Expressions.Values)
                 expression.Parse(this);
 
+            var InstanceElements = CheckList.Elements.Values.Where(Element => !(Element is ICheckListItem) || !((ICheckListItem)Element).IterationItem && !((ICheckListItem)Element).IteratorModelItem);
+
+            if (ElementsList == null) //if (InCreation) //replaced with this more generic but less meaningful form for back compatibility with 1.4 when ElementList did not exist
+                ElementsList = Elements.Values.Where(Element => !(Element is ICheckListItem CheckListItem) || !CheckListItem.IterationItem && !CheckListItem.IteratorModelItem).ToList(); //pages and items outside iterators
+
             InCreation = false;
         }
 
-        public void Update(string DecimalSeparator, InstanceCacheObject cacheObject = null)
-        { 
+        public void Update(string DecimalSeparator, string TimeZone, InstanceCacheObject cacheObject = null)
+        {
             Dictionary<string, object> InstanceRuntimeValues = cacheObject == null ? new Dictionary<string, object>() : new Dictionary<string, object> {
                 { "InstanceCompany", cacheObject.CompanyId },
                 { "InstanceDepartment", cacheObject.Department },
@@ -107,12 +113,12 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 expression.Evaluate(this);
             }
 
-            DescriptionFormula?.Update(Expressions, InstanceRuntimeValues, DecimalSeparator);
-            FileNameFormula?.Update(Expressions, InstanceRuntimeValues, DecimalSeparator);
+            DescriptionFormula?.Update(this, InstanceRuntimeValues, DecimalSeparator, TimeZone, null);
+            FileNameFormula?.Update(this, InstanceRuntimeValues, DecimalSeparator, TimeZone, null);
 
-            Header.Update(DecimalSeparator);
+            Header.Update(DecimalSeparator, TimeZone);
             foreach (var page in Pages)
-                page.Update(DecimalSeparator);
+                page.Update(DecimalSeparator, TimeZone);
 
             foreach (var expression in Expressions.Values)
                 expression.Evaluate(this); //this second evaluation takes into account expression with item properties which depends by expression values, cycles are still a problem
@@ -130,6 +136,30 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public bool ShouldSerializeExpressions()
         {
             return !HideExpressions;
+        }
+
+        [JsonIgnore]
+        public List<ICheckListElement> ElementsList { get; private set; }
+
+        public TypedValue GetExpressionValue(string ExpressionCode, ICheckListElement Element)
+        {
+            if (ExpressionCode == null || !CheckList.Expressions.ContainsKey(ExpressionCode)) return null;
+
+            var IterationIndexes = (Element as ICheckListItem)?.Iteration?.Indexes;
+            return GetExpressionValue(ExpressionCode, IterationIndexes);
+        }
+
+        public TypedValue GetExpressionValue(string ExpressionCode, List<int> IterationIndexes)
+        {
+            var Value = CheckList.Expressions[ExpressionCode].Value;
+            var Index = 0;
+            while (Value?.IsNull == false && Value?.Type == DataType.Array)
+            {
+                IEnumerable<TypedValue> ArrayValue;
+                if (IterationIndexes == null || IterationIndexes.Count <= Index || (ArrayValue = Value.ArrayValue).Count() <= IterationIndexes[Index]) return null;
+                Value = ArrayValue.ToList()[IterationIndexes[Index]];
+            }
+            return Value;
         }
     }
 }

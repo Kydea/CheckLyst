@@ -1,52 +1,55 @@
 ﻿instances.ElementInformation = function (parent) {
-	var
-		element,
-		panel,
+    var
+        element,
+        panel,
 
-		click = function (e) {
-			e.stopPropagation();
-			e.preventDefault();
+        click = function (e) {
+            e.stopPropagation();
+            e.preventDefault();
 
-			if (instances.ElementInformation.current && instances.ElementInformation.current != element) instances.ElementInformation.current.removeClass("Active");
-			element.toggleClass("Active");
-			if (element.hasClass("Active")) instances.ElementInformation.current = element;
-		},
+            if (instances.ElementInformation.current && instances.ElementInformation.current != element) instances.ElementInformation.current.removeClass("Active");
+            element.toggleClass("Active");
+            if (element.hasClass("Active")) instances.ElementInformation.current = element;
+        },
 
-		setup = function () {
-			element = $("<div />").addClass("Information").appendTo(parent).on("click", click);
-			element.siblings().eq(0).filter("label").children("span.Label").css("cursor", "pointer").on("click", click);
-			panel = $("<div />").addClass("Panel").appendTo(element).on("click", click);
-		},
+        setup = function () {
+            element = $("<div />").addClass("Information").appendTo(parent).on("click", click);
+            element.siblings().eq(0).filter("label").children("span.Label").css("cursor", "pointer").on("click", click);
+            panel = $("<div />").addClass("Panel").appendTo(element).on("click", click);
+        },
 
-		addItem = function (icon, value) {
-            if (value != null) panel.append($("<div />").append($("<span />").html(value).attr({ title: value}).prepend($("<i />").addClass("fa fa-fw fa-" + icon))));
-		};
+        addItem = function (icon, value) {
+            if (value != null) panel.append($("<div />").append($("<span />").html(value).attr({ title: value }).prepend($("<i />").addClass("fa fa-fw fa-" + icon))));
+        };
 
-	this.update = function (model) {
-		panel.empty();
-		addItem("tags", model.id + (model.code ? " - " + model.code : ""));
-		addItem(model.valid ? "thumbs-up" : "thumbs-down", model.valid ? "valid" : model.validityMessage || "not valid");
+    this.update = function (model) {
+        panel.empty();
+        addItem("tags", model.id + (model.code ? " - " + model.code : ""));
+        addItem(model.valid ? "thumbs-up" : "thumbs-down", model.valid ? "valid" : model.validityMessage || "not valid");
         if (!model.readOnly) addItem("edit", "editable");
         var formulaParser = $("<span />").html(model.rawValue);
         addItem("calculator", model.valueFormulaString ? model.valueFormulaString + ": <strong>" + formulaParser.text() + "</strong>" : null);
-		addItem("link", (model.externalSourceName ? model.externalSourceName + "." + model.externalSourceColumn : null));
-		if (model.history && model.history.length > 0)
-			panel.append($("<div />").append($("<a />").attr("href", "#").text("history").prepend($("<i />").addClass("fa fa-fw fa-list-ul")).on("click", function (e) {
-				var columns =
-					model.typeName == "Signature" ? [
-						{ name: "dateTime", label: "Date/Time", type: "DateTimeOffset" },
-						{ name: "user", label: "User" },
-						{ name: "signature", label: "Signature" },
-						{ name: "note", label: "Note" },
-						{ name: "action", label: "Action" },
-					] : [
-							{ name: "dateTime", label: "Date/Time", type: "DateTimeOffset" },
-							{ name: "user", label: "User" },
-							{ name: "value", label: "Value" }
-						];
-				new matematici.CheckListGrid(model.history, null, null, columns);
-			})));
-	}
+        addItem("link", (model.externalSourceName ? model.externalSourceName + "." + model.externalSourceColumn : null));
+        if (model.history && model.history.length > 0)
+            panel.append($("<div />").append($("<a />").attr("href", "#").text("history").prepend($("<i />").addClass("fa fa-fw fa-list-ul")).on("click", function (e) {
+                var columns =
+                    model.typeName == "Signature" ? [
+                        { name: "dateTime", label: "Date/Time", type: "DateTimeOffset" },
+                        { name: "user", label: "User" },
+                        { name: "signature", label: "Signature" },
+                        { name: "note", label: "Note" },
+                        { name: "action", label: "Action" },
+                    ] : [
+                            { name: "dateTime", label: "Date/Time", type: "DateTimeOffset" },
+                            { name: "user", label: "User" },
+                            { name: "value", label: "Value" }
+                        ];
+                //back compatbility before icon change for signature history
+                new matematici.CheckListGrid(model.history, null, null, columns, function (checkListGrid, rowIndex, row) {
+                    row.action = row.action && row.action.replace("fi fi-fw flaticon-check", "fal fa-check").replace("fi fi-fw flaticon-trash-o", "fal fa-trash");
+                });
+            })));
+    }
 
-	setup();
+    setup();
 }

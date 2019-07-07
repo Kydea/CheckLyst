@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-using CheckListManager.Common.Logic.Models;
 using CheckListManager.Common.Logic.Models.CheckLists;
-using CheckListManager.Common.Logic.Models.Expressions;
 using System;
 using CheckListManager.Instances.Logic.Exceptions;
 using Newtonsoft.Json;
@@ -13,28 +11,21 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public ICheckList CheckList { get; set; }
         public string Code { get; set; }
 
-        public Expression CountDownTo => string.IsNullOrEmpty(CountDownToCode) ? null : CheckList.Expressions[CountDownToCode];
-
-        public DateTimeOffset? CountDownToValue => CountDownTo != null && CountDownTo.Value != null && CountDownTo.Value.Type == DataType.DateTime && !CountDownTo.Value.IsNull ? CountDownTo.Value.DateTimeValue : (DateTimeOffset?)null;
-
+        public DateTimeOffset? CountDownToValue => CheckList?.GetExpressionValue(CountDownToCode, this)?.Value as DateTimeOffset?;
         public string CountDownToCode { get; set; }
+
         public virtual bool Hidden
         {
             get
             {
-                var expressionValue = 
-                    HiddenExpressionCode != null 
-                    && CheckList != null 
-                    && CheckList.Expressions.ContainsKey(HiddenExpressionCode) 
-                    && CheckList.Expressions[HiddenExpressionCode].Value?.Type == DataType.Boolean 
-                    && CheckList.Expressions[HiddenExpressionCode].Value.BooleanValue;
                 return
-                    HiddenCondition == Conditions.Expression && expressionValue ||
-                    HiddenCondition == Conditions.True;
+                    HiddenCondition == Conditions.Expression && CheckList?.GetExpressionValue(HiddenExpressionCode, this)?.Value as bool? == true
+                    || HiddenCondition == Conditions.True;
             }
         }
         public Conditions HiddenCondition { get; set; }
         public string HiddenExpressionCode { get; set; }
+
         public Conditions ReadOnlyCondition { get; set; }
         public string ReadOnlyExpressionCode { get; set; }
 
@@ -61,12 +52,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 			{
 				if (Hidden) return true;
 
-				var expressionValue = 
-                    ValidExpressionCode != null 
-                    && CheckList != null 
-                    && CheckList.Expressions.ContainsKey(ValidExpressionCode) 
-                    && CheckList.Expressions[ValidExpressionCode].Value?.Type == DataType.Boolean 
-                    && CheckList.Expressions[ValidExpressionCode].Value.BooleanValue;
+                var expressionValue = CheckList?.GetExpressionValue(ValidExpressionCode, this)?.Value as bool? == true;
 				return
 					ValidCondition == Conditions.Default && IsValidByDefault() ||
 					ValidCondition == Conditions.Expression && expressionValue ||
@@ -96,7 +82,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 				CheckList.Elements[Code] = this;
 		}
 
-		public abstract void Update(string DecimalSeparator);
+		public abstract void Update(string DecimalSeparator, string TimeZone);
 
 		public bool ReadOnly { get; protected set; }
 
@@ -110,12 +96,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 				return;
 			}
 
-			var expressionValue = 
-                ReadOnlyExpressionCode != null && CheckList != null &&
-			    CheckList.Expressions.ContainsKey(ReadOnlyExpressionCode) &&
-			    CheckList.Expressions[ReadOnlyExpressionCode].Value?.Type == DataType.Boolean &&
-			    CheckList.Expressions[ReadOnlyExpressionCode].Value.BooleanValue;
-
+            var expressionValue = CheckList?.GetExpressionValue(ReadOnlyExpressionCode, this)?.Value as bool? == true;
 			ReadOnly = (Signature?.Signed ?? false) ||
 				ReadOnlyCondition == Conditions.Default && IsReadOnlyByDefault() ||
 				ReadOnlyCondition == Conditions.Expression && expressionValue ||
@@ -128,7 +109,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 		{
 			destination.CheckList = source.CheckList;
 			destination.Code = source.Code;
-			destination.ReadOnlyExpressionCode = source.ReadOnlyExpressionCode;
+            destination.CountDownToCode = source.CountDownToCode;
+            destination.ReadOnlyExpressionCode = source.ReadOnlyExpressionCode;
 			destination.ReadOnlyCondition = source.ReadOnlyCondition;
 			destination.HiddenExpressionCode = source.HiddenExpressionCode;
 			destination.HiddenCondition = source.HiddenCondition;

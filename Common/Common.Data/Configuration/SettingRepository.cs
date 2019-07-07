@@ -35,5 +35,8 @@ namespace CheckListManager.Common.Data.Configuration
 					CurrentValue = x.Result.Value ?? x.Result.DefaultValue
 				});
 		}
-	}
+
+        public async Task<TimeZones> GetTimeZoneAsync(long companyId)
+            => (await Entities.Companies.SingleAsync(c => c.ID == companyId)).TimeZones;
+    }
 }

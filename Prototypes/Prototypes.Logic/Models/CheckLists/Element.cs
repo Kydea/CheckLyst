@@ -25,8 +25,6 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         [JsonIgnore]
         public bool Hidden => false;
         [JsonIgnore]
-        public Expression CountDownTo => null;
-        [JsonIgnore]
         public ICheckListSignature Signature => null;
         [JsonIgnore]
         public bool Valid => true;
@@ -41,7 +39,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             }
         }
 
-        public void Update(string DecimalSeparator)
+        public void Update(string DecimalSeparator, string TimeZone)
 		{
 			throw new NotImplementedException();
 		}

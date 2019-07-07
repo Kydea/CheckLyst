@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using CheckListManager.Common.Core.Cache;
+using CheckListManager.Common.Data;
 using CheckListManager.Common.Data.Configuration;
 
 namespace CheckListManager.Common.Logic.Services
@@ -91,17 +92,19 @@ namespace CheckListManager.Common.Logic.Services
             return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<string>(companyId, code), RegionName);
         }
 
+        public Task<TimeZones> TimeZoneAsync(long companyId)
+        {
+            const string code = "TimeZone";
+            return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await _settingRepository.GetTimeZoneAsync(companyId), RegionName);
+        }
+
         private async Task<T> Load<T>(long companyId, string code)
 		{
 			var configuration = await _settingRepository.GetAsync(companyId, code);
 			if (configuration == null)
-			{
 				return default(T);
-			}
 
 			var value = GetValue<T>(configuration.CurrentValue);
-			_cache.Set(code, value, RegionName, TimeSpan.FromMinutes(20));
-
 			return value;
 		}
 
@@ -109,13 +112,9 @@ namespace CheckListManager.Common.Logic.Services
 		{
 			var type = typeof(T);
 			if (type == typeof(int))
-			{
 				return int.TryParse(value, out var i) ? (T)(object)i : default(T);
-			}
 			if (type == typeof(string))
-			{
 				return (T)(object)value;
-			}
 
 			return default(T);
 		}

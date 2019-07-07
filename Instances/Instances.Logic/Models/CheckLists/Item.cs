@@ -38,7 +38,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             CheckList.AddItem(this);
         }
 
-        public override void Update(string DecimalSeparator)
+        public override void Update(string DecimalSeparator, string TimeZone)
         {
             var parent = Group;
             while (parent != null)
@@ -50,7 +50,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 else
                     parent = parent.Group;
 
-            DescriptionFormula?.Update(CheckList.Expressions, RuntimeValues, DecimalSeparator);
+            DescriptionFormula?.Update(CheckList, RuntimeValues, DecimalSeparator, TimeZone, Iteration?.Indexes);
         }
 
         public override bool Hidden => (Group?.Hidden ?? false) || base.Hidden;

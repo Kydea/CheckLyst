@@ -39,13 +39,14 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                 // - parenteses befor literals to have function numbers before the function name
 
                 return
-                    Value == "?" ? 8 : //Conditional (this value is overridden by the specific class)
-                    Value == "||" || Value == "or" ? 7 : //Conditional or
-                    Value == "&&" || Value == "and" ? 6 : //Conditional and
-                    Value == "==" || Value == "!=" || Value == "=" ? 5 : //Equality
-                    Value.StartsWith("<") || Value.StartsWith(">") ? 4 : //Relational
-                    Value == "+" || Value == "-" ? 3 : //Additive
-                    Value == "*" || Value == "/" || Value == "%" ? 2 : //Multiplicative
+                    Value == "?" ? 9 : //Conditional (this value is overridden by the specific class)
+                    Value == "||" || Value == "or" ? 8 : //Conditional or
+                    Value == "&&" || Value == "and" ? 7 : //Conditional and
+                    Value == "==" || Value == "!=" || Value == "=" ? 6 : //Equality
+                    Value.StartsWith("<") || Value.StartsWith(">") ? 5 : //Relational
+                    Value == "+" || Value == "-" ? 4 : //Additive
+                    Value == "*" || Value == "/" || Value == "%" ? 3 : //Multiplicative
+                    Value == "^" ? 2 : //Multiplicative
                     this.Value != null ? 1 : //literal and numbers
                     0; //Paranteses (Token set) and unexpected tokens,
             }
