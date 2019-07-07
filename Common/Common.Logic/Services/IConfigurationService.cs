@@ -12,5 +12,7 @@ namespace CheckListManager.Common.Logic.Services
         string ApiBaseUrl { get; }
         string PublicRepositoryUrl { get; }
         int InstanceCloseTimeout { get; }
+        string PrototypesStorageBucket { get; }
+        string InstancesStorageBucket { get; }
     }
 }

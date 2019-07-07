@@ -10,6 +10,7 @@
 		pageLock,
 		model,
 		prototypeKey,
+		attachmentTemporaryKey,
 		concurrencyInformation,
 		currentItem,
 		itemHandler,
@@ -371,6 +372,7 @@
 						id: result.id,
 						version: result.version
 					};
+					attachmentTemporaryKey = result.attachmentTemporaryKey;
 					if (result.version > 0) model.version = result.version;
 					concurrencyInformation = {
 						modifiedBy: result.modifiedBy,
@@ -422,6 +424,10 @@
 		return prototypeKey;
 	};
 
+	prototype.getAttachmentTemporaryKey = function () {
+		return attachmentTemporaryKey;
+	};
+
 	prototype.setItemHandler = function (value) {
 		itemHandler = value;
 	};
@@ -456,6 +462,7 @@
 				description: model.description,
 				department: model.department,
 				prototypeType: model.prototypeType,
+				attachmentTemporaryKey: attachmentTemporaryKey,
 
 				checkList: model
 			})

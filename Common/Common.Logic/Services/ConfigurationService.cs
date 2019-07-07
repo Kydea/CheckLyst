@@ -32,8 +32,12 @@ namespace CheckListManager.Common.Logic.Services
         public string PublicRepositoryUrl => _cache.GetOrAdd("PublicRepositoryUrl", Load<string>, RegionName);
 
         public int InstanceCloseTimeout => _cache.GetOrAdd("InstanceCloseTimeout", Load<int>, RegionName);
+        public string PrototypesStorageBucket
+	        => _cache.GetOrAdd(nameof(PrototypesStorageBucket), Load<string>, RegionName);
+        public string InstancesStorageBucket
+	        => _cache.GetOrAdd(nameof(InstancesStorageBucket), Load<string>, RegionName);
 
-		private T Load<T>(string key)
+        private T Load<T>(string key)
 		{
 			using (var scope = _scope.BeginLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag))
 			{

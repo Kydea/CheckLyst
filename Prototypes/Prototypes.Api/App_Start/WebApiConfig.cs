@@ -1,8 +1,11 @@
-﻿using Autofac;
+﻿using System.Web.Http;
+using Autofac;
 using CheckListManager.Common.Logic.Api.Configuration;
 using CheckListManager.Common.Logic.Json;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Prototypes.Logic.Models.CheckLists;
+using MultipartDataMediaFormatter;
+using MultipartDataMediaFormatter.Infrastructure;
 using Owin;
 
 namespace CheckListManager.Prototypes.Api
@@ -26,6 +29,13 @@ namespace CheckListManager.Prototypes.Api
             builder.RegisterType<CheckListJsonConverter>()
 			    .AsSelf()
 			    .InstancePerDependency();
+	    }
+
+	    protected override void OnConfigureWebApi(HttpConfiguration configuration)
+	    {
+		    base.OnConfigureWebApi(configuration);
+
+		    configuration.Formatters.Add(new FormMultipartEncodedMediaTypeFormatter(new MultipartFormatterSettings()));
 	    }
 
 	    private static void RegisterChecklistItem<TClass, TInterface>(ContainerBuilder builder) where TClass : TInterface

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace CheckListManager.Common.Logic.Models.CheckLists
 {
@@ -13,5 +14,6 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
         bool DisableAdd { get; set; }
         bool DisableRemove { get; set; }
         bool DisableMove { get; set; }
-    }
+        void Traverse(Func<ICheckListItem, bool> condition, Action<ICheckListItem> action);
+	}
 }

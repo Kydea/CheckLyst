@@ -62,7 +62,7 @@ namespace CheckListManager.Common.Logic.Services
 			{
 				foreach (var item in response.S3Objects)
 				{
-					var key = $"{newKeyPrefix}/{item.Key.Replace(keyPrefix, "")}";
+					var key = $"{newKeyPrefix}{item.Key.Replace(keyPrefix, "")}";
 					var copyResponse = await _s3.CopyObjectAsync(new CopyObjectRequest
 					{
 						SourceBucket = bucketName,

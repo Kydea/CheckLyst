@@ -10,7 +10,6 @@ using Newtonsoft.Json;
 using CheckListManager.Prototypes.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Json;
 using System.Net;
-using System.Web.UI.WebControls;
 using CheckListManager.Prototypes.Logic.PDF;
 using CheckListManager.Common.Logic.Api.Formatters;
 using CheckListManager.Common.Logic.Cache;
@@ -176,6 +175,16 @@ namespace CheckListManager.Prototypes.Api.Controllers
         {
 	        try
 	        {
+                if ((request.Id < 0 || request.Version < 0) && !request.AttachmentTemporaryKey.HasValue)
+                {
+                    throw new Exception("Temporary Key has to be specified when Id or Version are not available");
+                }
+
+                if (request.Id < 0 && (!request.Department.HasValue || !request.PrototypeType.HasValue))
+                {
+                    throw new Exception("Department and Prototype Type must have a value when the prototype is not yet saved");
+                }
+                
 		        return Ok(await _prototypeService.UploadAsync(Identity, request));
 	        }
 	        catch (Exception e)
