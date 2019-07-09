@@ -79,6 +79,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public abstract ICheckListItem Clone(ICheckListGroup parent);
 
+        
+
         protected static void Copy(Item source, Item destination)
         {
             Element.Copy(source, destination);

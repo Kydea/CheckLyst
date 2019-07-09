@@ -188,5 +188,10 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 		{
 			iteration.Remove();
         }
+
+        public void Traverse(Func<ICheckListItem, bool> condition, Action<ICheckListItem> action)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

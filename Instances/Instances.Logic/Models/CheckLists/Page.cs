@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using CheckListManager.Common.Logic.Models.CheckLists;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
@@ -50,5 +51,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             foreach (var group in Groups)
 				group.UpdateReadOnly(userCode, ReadOnlyInstance);
 		}
-	}
+        public void Traverse(Func<ICheckListItem, bool> condition, Action<ICheckListItem> action)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
