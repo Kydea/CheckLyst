@@ -51,3 +51,6 @@ where
 
 alter  table "Infrastructure"."Companies" add "InactivityTimeoutSeconds" int not null default 900;
 
+insert into "Configuration"."Configurations" ("Code", "Value") values
+    ('PrototypesStorageBucket', 's3-clm-matematici-prototypes'),
+    ('InstancesStorageBucket', 's3-clm-matematici-instances')

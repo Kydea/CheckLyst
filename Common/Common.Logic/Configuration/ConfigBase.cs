@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using Amazon.S3;
 using Amazon.SQS;
 using Autofac;
 using Autofac.Builder;
@@ -113,6 +114,16 @@ namespace CheckListManager.Common.Logic.Configuration
 				.As<IServiceClient>()
 				.As<ServiceClient>()
 				.InstancePerDependency();
+
+			builder.RegisterType<AmazonS3Client>()
+				.As<IAmazonS3>()
+				.AsSelf()
+				.InstancePerScope(UseInstancePerRequest);
+
+			builder.RegisterType<StorageService>()
+				.As<IStorageService>()
+				.AsSelf()
+				.InstancePerScope(UseInstancePerRequest);
 		}
 
 		private static void OnConfiguringRedis(IActivatingEventArgs<RedisLockEndPoint> e)

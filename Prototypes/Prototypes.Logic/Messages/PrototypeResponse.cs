@@ -24,5 +24,7 @@ namespace CheckListManager.Prototypes.Logic.Messages
         public long? PrototypeType { get; set; }
         public string PrototypeTypeName { get; set; }
         public long? InstanceConfirmationWorkFlow { get; set; }
+
+        public Guid? AttachmentTemporaryKey { get; set; }
     }
 }

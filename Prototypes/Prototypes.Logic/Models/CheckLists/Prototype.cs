@@ -71,5 +71,18 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 }
             }
         }
+
+        public void Traverse(Func<ICheckListItem, bool> condition, Action<ICheckListItem> action)
+        {
+            if (condition(Header))
+            {
+                action(Header);
+            }
+            
+            foreach (var page in Pages)
+            {
+                page.Traverse(condition, action);
+            }
+        }
     }
 }

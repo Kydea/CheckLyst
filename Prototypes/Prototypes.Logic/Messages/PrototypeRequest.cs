@@ -24,5 +24,7 @@ namespace CheckListManager.Prototypes.Logic.Messages
         public string CompanyName { get; set; }
         public string UserCode { get; set; }
         public string TimeZone { get; set; }
+
+        public Guid? AttachmentTemporaryKey { get; set; }
     }
 }

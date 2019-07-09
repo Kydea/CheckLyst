@@ -3,9 +3,7 @@ using System.Web.Http;
 using CheckListManager.Common.Logic.Api;
 using CheckListManager.Prototypes.Logic.Messages;
 using CheckListManager.Prototypes.Logic.Services;
-using System.Linq;
 using System;
-using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Data;
 using CheckListManager.Prototypes.Data;
 using Newtonsoft.Json;
@@ -137,7 +135,6 @@ namespace CheckListManager.Prototypes.Api.Controllers
             {
                 return Error(e);
             }
-
         }
 
         [HttpPost]
@@ -163,7 +160,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
         {
             try
             {
-                return Ok(await _prototypeService.SetStateAsync(Identity, request));
+				return Ok(await _prototypeService.SetStateAsync(Identity, request));
             }
             catch (Exception e)
             {
@@ -172,6 +169,31 @@ namespace CheckListManager.Prototypes.Api.Controllers
         }
 
         [HttpPost]
+        [Route("Upload")]
+        [Authorize(Roles = "Prototypes#Edit")]
+        public async Task<IHttpActionResult> Upload(UploadRequest request)
+        {
+	        try
+	        {
+                if ((request.Id < 0 || request.Version < 0) && !request.AttachmentTemporaryKey.HasValue)
+                {
+                    throw new Exception("Temporary Key has to be specified when Id or Version are not available");
+                }
+
+                if (request.Id < 0 && (!request.Department.HasValue || !request.PrototypeType.HasValue))
+                {
+                    throw new Exception("Department and Prototype Type must have a value when the prototype is not yet saved");
+                }
+                
+		        return Ok(await _prototypeService.UploadAsync(Identity, request));
+	        }
+	        catch (Exception e)
+	        {
+		        return Error(e);
+	        }
+        }
+
+		[HttpPost]
         [Route("History")]
         [Authorize(Roles = "Prototypes#View")]
         public async Task<IHttpActionResult> History(PrototypeRequest request)

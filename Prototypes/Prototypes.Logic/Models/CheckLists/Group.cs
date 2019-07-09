@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using CheckListManager.Common.Logic.Models.CheckLists;
 
 namespace CheckListManager.Prototypes.Logic.Models.CheckLists
@@ -35,7 +36,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             {
                 Item.CheckList = CheckList;
                 Item.Group = this;
-                if ((ShowAsTable || InTable) && Item is Group) ((Group)Item).InTable = true;
+                if ((ShowAsTable || InTable) && Item is Group group) group.InTable = true;
                 if (InTable) //disable hidden properties for subgroups of tables
                 {
                     ShowAsTable = false;
@@ -44,6 +45,28 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 Item.Setup();
             }
         }
+        
+        public void Traverse(Func<ICheckListItem, bool> condition, Action<ICheckListItem> action)
+        {
+            foreach (var iteration in Iterations)
+            {
+                if (condition(iteration))
+                {
+                    action(iteration);
+                }
+
+                iteration.Traverse(condition, action);
+            }
+            
+            foreach (var item in Items)
+            {
+                if (condition(item))
+                {
+                    action(item);
+                }
+            }
+        }
+        
         public void AddIterations(int Count)
         {
             for (int Index = 0; Index < Count; ++Index)

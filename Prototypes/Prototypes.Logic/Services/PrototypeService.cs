@@ -8,15 +8,14 @@ using System.Linq;
 using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Prototypes.Data;
 using CheckListManager.Common.Data;
-using CheckListManager.Prototypes.Logic.Models;
 using CheckListManager.Common.Logic.Queue;
 using CheckListManager.Common.Logic.Trail;
 using CheckListManager.Common.Logic.Services;
 using System.Collections.Generic;
+using System.IO;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using System.Threading;
 using NLog;
-using CheckListManager.Common.Logic.Email;
 using CheckListManager.Common.Logic.FTP;
 
 namespace CheckListManager.Prototypes.Logic.Services
@@ -27,14 +26,25 @@ namespace CheckListManager.Prototypes.Logic.Services
         private readonly IPrototypesRepository _prototypeRepository;
         private readonly IQueueService _queueService;
         private readonly ICommonRepository _commonRepository;
+        private readonly IStorageService _storageService;
+        private readonly IConfigurationService _configurationService;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public PrototypeService(CheckListJsonConverter converter, IPrototypesRepository prototypeRepository, IQueueService queueService, ICommonRepository commonRepository)
+        public PrototypeService(
+	        CheckListJsonConverter converter,
+	        IPrototypesRepository prototypeRepository,
+	        IQueueService queueService,
+	        ICommonRepository commonRepository,
+			IStorageService storageService,
+            IConfigurationService configurationService
+        )
         {
             _converter = converter;
             _prototypeRepository = prototypeRepository;
             _queueService = queueService;
             _commonRepository = commonRepository;
+            _storageService = storageService;
+            _configurationService = configurationService;
         }
 
         public async Task<PrototypeResponse> OpenAsync(DefaultIdentity identity, PrototypeRequest request)
@@ -83,6 +93,12 @@ namespace CheckListManager.Prototypes.Logic.Services
                 throw new UnauthorizedAccessException();
 
             var Prototype = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converter);
+            var temporaryKey = await CloneAttachmentsToTempAsync(
+                identity.CompanyId,
+                PrototypeVersion.Prototype,
+                PrototypeVersion.Version,
+                Prototype
+            );
             Prototype.Setup();
 
             return await Task.FromResult(new PrototypeResponse
@@ -91,7 +107,8 @@ namespace CheckListManager.Prototypes.Logic.Services
                 Version = -1,
                 CheckList = Prototype,
                 InstanceConfirmationWorkFlow = PrototypeVersion.InstanceConfirmationWorkFlow,
-                State = VersionState.Draft
+                State = VersionState.Draft,
+                AttachmentTemporaryKey = temporaryKey
             });
         }
 
@@ -103,16 +120,16 @@ namespace CheckListManager.Prototypes.Logic.Services
             };
 
             Page Page;
-            Group Group;
             Prototype.Pages.Add(Page = new Page { Description = "(page)" });
-            Page.Groups.Add(Group = new Group { Description = "(group)" });
+            Page.Groups.Add(new Group { Description = "(group)" });
 
             return await Task.FromResult(new PrototypeResponse
             {
                 ID = -1,
                 Version = -1,
                 CheckList = Prototype,
-                State = VersionState.Draft
+                State = VersionState.Draft,
+                AttachmentTemporaryKey = Guid.NewGuid()
             });
         }
 
@@ -131,6 +148,12 @@ namespace CheckListManager.Prototypes.Logic.Services
                 throw new UnauthorizedAccessException();
 
             var Prototype = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converter);
+            var temporaryKey = await CloneAttachmentsToTempAsync(
+                identity.CompanyId,
+                PrototypeVersion.Prototype,
+                PrototypeVersion.Version,
+                Prototype
+            );
             Prototype.Setup();
 
             return await Task.FromResult(new PrototypeResponse
@@ -144,7 +167,8 @@ namespace CheckListManager.Prototypes.Logic.Services
                 Department = PrototypeVersion.Prototypes.Department,
                 InstanceConfirmationWorkFlow = PrototypeVersion.InstanceConfirmationWorkFlow,
 
-                State = VersionState.Draft
+                State = VersionState.Draft,
+                AttachmentTemporaryKey = temporaryKey
             });
         }
 
@@ -177,7 +201,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                     }
         }
 
-        public List<PrototypeVersionTags> CreateTags(PrototypeRequest request)
+        private List<PrototypeVersionTags> CreateTags(PrototypeRequest request)
         {
             var Tags = new Dictionary<String, PrototypeVersionTags>();
             AddTags(Tags, request, request.CheckList.Header);
@@ -187,11 +211,11 @@ namespace CheckListManager.Prototypes.Logic.Services
         public async Task<PrototypeResponse> SaveAsync(DefaultIdentity identity, PrototypeRequest request)
         {
             request.CheckList.Setup();
-            var UnvalidExpression = request.CheckList.Expressions.FirstOrDefault(e => e.Value.Error != null);
-            if (UnvalidExpression.Key != null)
-                throw new Exception($"The expression '{UnvalidExpression.Key}' contains the error: {UnvalidExpression.Value.Error}");
+            var invalidExpression = request.CheckList.Expressions.FirstOrDefault(e => e.Value.Error != null);
+            if (invalidExpression.Key != null)
+                throw new Exception($"The expression '{invalidExpression.Key}' contains the error: {invalidExpression.Value.Error}");
 
-            if (String.IsNullOrWhiteSpace(request.Name)) throw new Exception("Specify a name");
+            if (string.IsNullOrWhiteSpace(request.Name)) throw new Exception("Specify a name");
             if (!request.Department.HasValue) throw new Exception("Specify a department");
             if (!request.PrototypeType.HasValue) throw new Exception("Specify a prototype type");
             if (
@@ -256,7 +280,26 @@ namespace CheckListManager.Prototypes.Logic.Services
 
             var CheckList = request.CheckList;
             Check(CheckList);
-
+            
+            if (NewPrototype || NewVersion)
+            {
+                // Need to save here to get the new id
+                await _prototypeRepository.SaveChangesAsync();
+                
+                if (!request.AttachmentTemporaryKey.HasValue)
+                {
+                    throw new Exception("AttachmentTemporaryKey has not been set. Impossible to clone the attachments");
+                }
+                
+                await CloneAttachmentsFromTempAsync(
+                    request.AttachmentTemporaryKey.Value,
+                    identity.CompanyId,
+                    PrototypeVersion.Prototype,
+                    PrototypeVersion.Version,
+                    CheckList
+                );
+            }
+            
             PrototypeVersion.Description = request.Description;
             PrototypeVersion.Data = JsonConvert.SerializeObject(CheckList, _converter);
             PrototypeVersion.ValidFrom = request.ValidFrom;
@@ -329,7 +372,7 @@ namespace CheckListManager.Prototypes.Logic.Services
 
             await _prototypeRepository.SetStateAsync(identity, PrototypeVersion, request.State, request.StateProposed);
 
-            if (request.StateProposed && request.State == VersionState.Approved) //we track both the state change and the propoed state for the wirkflow
+            if (request.StateProposed && request.State == VersionState.Approved) //we track both the state change and the proposed state for the workflow
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
                     Company = identity.CompanyId,
@@ -458,7 +501,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                         Version = PrototypeVersion.Version,
                         State = State,
                         Path = $"{(PrototypeVersion.Prototypes.Companies.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.Departments.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.PrototypeTypes.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.Name?.Replace('#', '-') ?? "")}#{PrototypeVersion.Version}#{(PrototypeVersion.Description?.Replace('#', '-') ?? "")}"
-                    });
+                    }, CancellationToken);
 
                     await SetPrototypeVersionState(PrototypeVersion, State, UtcNow);
                     await _prototypeRepository.SaveChangesAsync();
@@ -478,9 +521,100 @@ namespace CheckListManager.Prototypes.Logic.Services
                             Job = "UpdatePrototypes",
                             Exception = Exception.Message
                         })
-                    });
+                    }, CancellationToken);
 
                 }
+        }
+
+        public async Task<UploadResponse> UploadAsync(DefaultIdentity identity, UploadRequest request)
+        {
+            long department, prototypeType;
+            PrototypeVersions prototypeVersion = null;
+            if (request.Id >= 0 && request.Version >= 0)
+            {
+                prototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(identity.CompanyId, request.Id, request.Version);
+                department = prototypeVersion.Prototypes.Department;
+                prototypeType = prototypeVersion.Prototypes.PrototypeType;
+            }
+            else if (request.Id >= 0)
+            {
+                var prototype = await _prototypeRepository.GetPrototypeAsync(identity, request.Id);
+                department = prototype.Department;
+                prototypeType = prototype.PrototypeType;
+            }
+            else if (request.Department.HasValue && request.PrototypeType.HasValue)
+            {
+                department = request.Department.Value;
+                prototypeType = request.PrototypeType.Value;
+            }
+            else
+            {
+                // Shouldn't get here but just in case
+                throw new InvalidOperationException();
+            }
+            
+	        if (
+		        !identity.HasPermission("Prototypes", "Edit", department) &&
+		        !identity.HasPermission("Prototypes", "Edit", department, prototypeType)
+	        )
+		        throw new UnauthorizedAccessException();
+
+            // If prototype version is null the state is always draft (either a clone or new version)
+	        if (prototypeVersion != null && prototypeVersion.VersionState != VersionState.Draft)
+		        throw new Exception("The prototype version is not in state draft");
+
+	        var extension = System.IO.Path.GetExtension(request.Attachment.FileName);
+
+            var key = request.Id >= 0 && request.Version >= 0
+                ? $"{identity.CompanyId}/{request.Id}-{request.Version}/{request.Code}.{extension}"
+                : $"tmp/{identity.CompanyId}/{request.AttachmentTemporaryKey}/{request.Code}{extension}";
+
+            using (var memoryStream = new MemoryStream(request.Attachment.Buffer))
+            {
+                var success = await _storageService.PutAsync(_configurationService.PrototypesStorageBucket, key, memoryStream);
+                if (!success)
+                {
+                    throw new Exception("Impossible to upload the attachment");
+                }
+            }
+
+			return new UploadResponse { Key = key };
+        }
+
+        private async Task<Guid> CloneAttachmentsToTempAsync(long companyId, long prototypeId, int versionId, Prototype prototype)
+        {
+            var temporaryKey = Guid.NewGuid();
+            var key = $"{companyId}/{prototypeId}-{versionId}";
+            var newKey = $"tmp/{companyId}/{temporaryKey}";
+
+            await CloneAttachmentsAsync(prototype, key, newKey);
+
+            return temporaryKey;
+        }
+
+        private Task CloneAttachmentsFromTempAsync(Guid temporaryKey, long companyId, long prototypeId, int versionId, Prototype prototype)
+        {
+            var key = $"tmp/{companyId}/{temporaryKey}";
+            var newKey = $"{companyId}/{prototypeId}-{versionId}";
+
+            return CloneAttachmentsAsync(prototype, key, newKey);
+        }
+
+        private async Task CloneAttachmentsAsync(Prototype prototype, string key, string newKey)
+        {
+            if (!await _storageService.CloneAsync(_configurationService.PrototypesStorageBucket, key, newKey))
+            {
+                throw new Exception("Impossible to clone images from original prototype.");
+            }
+            
+            prototype.Traverse(
+                item => item is ICheckListAttachment,
+                item =>
+                {
+                    var attachment = (ICheckListAttachment)item;
+                    attachment.Key = attachment.Key?.Replace(key, newKey);
+                }
+            );
         }
     }
 }

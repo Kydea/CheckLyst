@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using CheckListManager.Common.Logic.Models.CheckLists;
 
 namespace CheckListManager.Prototypes.Logic.Models.CheckLists
@@ -7,7 +8,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 	{
 		public string Description { get; set; }
 		public List<ICheckListGroup> Groups { get; set; } = new List<ICheckListGroup>();
-		public bool IsLocked { get; set; }
+        public bool IsLocked { get; set; }
 
         public override void Setup()
         {
@@ -16,6 +17,19 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             {
                 Group.CheckList = CheckList;
                 Group.Setup();
+            }
+        }
+        
+        public void Traverse(Func<ICheckListItem, bool> condition, Action<ICheckListItem> action)
+        {
+            foreach (var group in Groups)
+            {
+                if (condition(group))
+                {
+                    action(group);
+                }
+
+                group.Traverse(condition, action);
             }
         }
 
