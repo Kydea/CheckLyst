@@ -134,5 +134,10 @@ namespace CheckListManager.Instances.Data
                 new Parameter("_instance", instance)
             );
         }
+
+        public async Task<int?> GetActivePrototypeVersion(long prototype)
+        {
+            return (await Entities.PrototypeVersions.SingleOrDefaultAsync(p => p.Prototype == prototype && p.VersionState == VersionState.Active))?.Version;
+        }
     }
 }

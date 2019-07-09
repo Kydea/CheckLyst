@@ -39,6 +39,7 @@
 
 <script type="text/javascript">
     matematici.isLoginPage = true;
+    console.log(localStorage);
 
     matematici.events.onPageLoad = function (callback) {
         matematici.clock.stop();
@@ -50,6 +51,7 @@
             userCode = $("input[name=username]", form),
             password = $("input[name=password]", form),
             companies = {},
+            redirectUrl = localStorage.redirectUrl;
 
             showError = function (message) {
                 error.html(" " + message).prepend($("<i />").addClass("fas fa-exclamation-triangle")).show()
@@ -79,7 +81,7 @@
                     localStorage.inactivityTimeoutSeconds = companies[company].inactivityTimeoutSeconds;
                     matematici.tokenManager.login(result);
                     matematici.clock.resume();
-                    matematici.navigator.open("@Model")
+                    matematici.navigator.open(redirectUrl || matematici.urls.dashboard);
                 }).fail(function (jqXhr, textStatus, errorThrown) {
                     showError(jqXhr.responseJSON && jqXhr.responseJSON.error_description || jqXhr.responseJSON && jqXhr.responseJSON.messages && jqXhr.responseJSON.messages.join(' ') || errorThrown);
                 });

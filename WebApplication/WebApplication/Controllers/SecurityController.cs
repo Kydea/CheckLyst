@@ -6,9 +6,9 @@ namespace CheckListManager.WebApplication.Controllers
     public class SecurityController : BaseController
 	{
         [AllowAnonymous]
-        public ActionResult Login(string returnUrl)
+        public ActionResult Login()
         {
-            return ConditionalView("Login", returnUrl ?? Url.Action("Dashboard", "Default"));
+            return ConditionalView("Login");
         }
 
         [Route("Signature")]

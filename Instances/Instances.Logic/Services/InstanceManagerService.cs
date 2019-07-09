@@ -136,13 +136,17 @@ namespace CheckListManager.Instances.Logic.Services
             return cacheObject;
         }
 
-        public async Task<InstanceCacheObject> CreateAsync(IDefaultIdentity identity, string userCode, long prototype, int version)
+        public async Task<InstanceCacheObject> CreateAsync(IDefaultIdentity identity, string userCode, long prototype)
         {
             try
             {
-                var source = await GetPrototype(prototype, version);
+                var version = await _instancesRepository.GetActivePrototypeVersion(prototype);
+                if (!version.HasValue)
+                    throw new InstanceException($"The prototype {prototype} has no active version");
+
+                var source = await GetPrototype(prototype, version.Value);
                 if (!source.State.In(VersionState.Draft, VersionState.InSimulation, VersionState.Active))
-                    throw new InstanceException($"Invalid state of the prototype version {prototype}.{version}: {source.State}");
+                    throw new InstanceException($"Invalid state of the prototype version {prototype}.{version}: {source.State}"); //double check
 
                 if (
                     !HasPermission(identity, "Create", source.State, source.Department, source.PrototypeType)

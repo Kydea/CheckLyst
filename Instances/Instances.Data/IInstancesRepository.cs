@@ -20,5 +20,6 @@ namespace CheckListManager.Instances.Data
         void DeleteInstance(Common.Data.Instances instance);
         void SaveChildren(Common.Data.Instances instance, IEnumerable<InstanceTags> instanceTags, IEnumerable<InstanceExpressionValues> instanceExpressionValues);
         Task ValidateUniqueExpressions(long instance);
+        Task<int?> GetActivePrototypeVersion(long prototype);
     }
 }

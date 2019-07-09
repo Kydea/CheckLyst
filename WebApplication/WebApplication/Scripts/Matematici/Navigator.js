@@ -36,50 +36,41 @@
         setSuspended: function (value) {
             suspended = value;
             return this;
-		},
+        },
 
-		buildUrl: function (path, relative) {
-			if (relative) path = basePath + path;
-			return path + (path.indexOf("?") >= 0 ? "&" : "?") + "d=" + new Date().getTime();
-		},
+        buildUrl: function (path, relative) {
+            if (relative) path = basePath + path;
+            return path + (path.indexOf("?") >= 0 ? "&" : "?") + "d=" + new Date().getTime();
+        },
 
-		navigate: function (path, relative) {
-			$.address.value(matematici.navigator.buildUrl(path, relative));
+        navigate: function (path, relative) {
+            localStorage.redirectUrl = matematici.navigator.buildUrl(path, relative);
+            $.address.value(localStorage.redirectUrl);
         },
 
         open: function (path, relative, nocache, data) {
-            if(data != undefined)
-                callData = data;
+            if (data != undefined) callData = data;
 
-            var actionNavigate = function () {
-                matematici.navigator.navigate(path, relative, nocache);
-            }
+            var actionNavigate = function () { matematici.navigator.navigate(path, relative, nocache); }
 
             if (matematici.canClose)
                 actionNavigate();
             else
                 matematici.dialog.show("warning", "Warning: any unsaved change will be lost.", [
-                    {
-                        text: "save", icon: "check", handler: function () {
-                            if (matematici.save)
-                                matematici.save(actionNavigate);
-                        }
-                    },
-                    {
-                        text: "discard the changes", icon: "exclamation", handler: actionNavigate
-                    },
+                    { text: "save", icon: "check", handler: function () { if (matematici.save) matematici.save(actionNavigate); } },
+                    { text: "discard the changes", icon: "exclamation", handler: actionNavigate },
                     { text: "cancel", hidden: true, icon: "remove", cancelButton: true }
                 ]);
-		},
+        },
 
-		setUrl: function (path, relative) {
-			if (window.history && window.history.replaceState)
-				window.history.replaceState({}, '', matematici.navigator.buildUrl(path, relative));
-			else {
-				matematici.navigator.setSuspended(true);
-				matematici.navigator.open(path, relative, nocache);
-			}
-		},
+        setUrl: function (path, relative) {
+            if (window.history && window.history.replaceState)
+                window.history.replaceState({}, '', matematici.navigator.buildUrl(path, relative));
+            else {
+                matematici.navigator.setSuspended(true);
+                matematici.navigator.open(path, relative, nocache);
+            }
+        },
 
         defaultHandler: function (callback) {
             if (callback !== undefined) callback.call();
@@ -87,9 +78,9 @@
 
         initializeEventHandlers: function () {
             matematici.events.onPageLoad =
-            matematici.events.onPageUnload =
-            matematici.events.onPageResize =
-            matematici.events.onPageDestroy =
+                matematici.events.onPageUnload =
+                matematici.events.onPageResize =
+                matematici.events.onPageDestroy =
                 matematici.navigator.defaultHandler;
         },
 
@@ -101,13 +92,13 @@
         },
 
         setBaseCSSClass: function (value) {
-			matematici.elements.body.addClass(value);
-			return matematici.navigator;
+            matematici.elements.body.addClass(value);
+            return matematici.navigator;
         },
 
         resetForm: function () {
             var form = $("form", matematici.elements.content);
-			if (form.size() > 0) {
+            if (form.size() > 0) {
                 form.unbind();
                 form.data('validator', null);
                 $.validator.unobtrusive.parse(matematici.elements.content);
@@ -127,14 +118,20 @@
             matematici.AnimationManager.toggle(true);
 
             matematici.events.onPageLoad.call(null, callback);
-		},
+        },
 
-		handleAjaxError: function (e) {
-			if (e.status == 401 || e.status == 498) { //we use the status 498 to mean invalid token (as arcgis)
-                window.location = matematici.urls.accessControl.login; //add return url
-				return true;
-			}
-		},
+        handleAjaxError: function (e) {
+            if (e.status == 401 || e.status == 498) { //we use the status 498 to mean invalid token (as arcgis)
+                if (localStorage.accessToken) {
+                    alert("Access denied to the following resource: " + location.href);
+                    window.location = matematici.urls.dashboard;
+                } else {
+                    localStorage.redirectUrl = location.pathname;
+                    window.location = matematici.urls.accessControl.login;
+                }
+                return true;
+            }
+        },
 
         changePage: function (e) {
             //console.log("change", e.path, fullSupport, landing);
@@ -142,23 +139,23 @@
                 //console.log("ajaxing " + e.path);
 
                 matematici.loader.show();
-				this.setLastPath(e.path);
+                this.setLastPath(e.path);
 
-				//highlight current menu
-				$(".MenuItem", matematici.elements.menu).removeClass("Current");
-				$("ul.SubMenu li", matematici.elements.menu).removeClass("Current");
-				if (e.path != "/")
-					$("a", matematici.elements.menu).each(function () {
-						var a = $(this);
-						if (a.attr("href").indexOf(e.path) >= 0) {
-							a.parent().addClass("Current").closest(".MenuItem").addClass("Current");
-							return true;
-						}
-					});
+                //highlight current menu
+                $(".MenuItem", matematici.elements.menu).removeClass("Current");
+                $("ul.SubMenu li", matematici.elements.menu).removeClass("Current");
+                if (e.path != "/")
+                    $("a", matematici.elements.menu).each(function () {
+                        var a = $(this);
+                        if (a.attr("href").indexOf(e.path) >= 0) {
+                            a.parent().addClass("Current").closest(".MenuItem").addClass("Current");
+                            return true;
+                        }
+                    });
 
                 matematici.AnimationManager.toggle(false);
 
-				$("document, html").animate({ scrollTop: 0 }, 500, function () {
+                $("document, html").animate({ scrollTop: 0 }, 500, function () {
                     matematici.events.onPageUnload(function () {
 
                         if (landing)
@@ -168,14 +165,14 @@
                             $.ajax(e.value, {
                                 type: 'POST',
                                 data: callData,
-								cache: false
-							}).done(function (result, status, request) {
+                                cache: false
+                            }).done(function (result, status, request) {
                                 data = ''
                                 var appMode = matematici.elements.body.hasClass("AppMode");
                                 matematici.elements.body.removeClass();
-								if (appMode) matematici.elements.body.addClass("AppMode");
-								for (var index in matematici.destroyers)
-									matematici.destroyers[index].call(null, matematici.elements.content);
+                                if (appMode) matematici.elements.body.addClass("AppMode");
+                                for (var index in matematici.destroyers)
+                                    matematici.destroyers[index].call(null, matematici.elements.content);
                                 matematici.events.onPageDestroy();
                                 matematici.navigator.initializeEventHandlers();
                                 matematici.navigator.handlePageLoad(result, function () {
@@ -184,9 +181,9 @@
                                     matematici.loader.checkCurtain();
                                 });
                             }).always(function () {
-								}).fail(function (e) {
-									if (!matematici.navigator.handleAjaxError(e))
-										window.location = basePath + "Error";
+                            }).fail(function (e) {
+                                if (!matematici.navigator.handleAjaxError(e))
+                                    window.location = basePath + "Error";
                             });
                         });
                     });
@@ -207,7 +204,7 @@ $.address
     }).change(function (e) {
         //console.log("change " + e.path);
         if (!matematici.navigator.isSuspended())
-			matematici.navigator.changePage(e);
+            matematici.navigator.changePage(e);
         matematici.navigator.setSuspended(false);
     });
 

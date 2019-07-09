@@ -139,11 +139,13 @@
                 department = $("select[name=department]", formElement).val(),
                 prototypeType = $("select[name=prototypeType]", formElement).val();
 
-            if (!versionName)
-                matematici.dialog.error("Error", "Select an active prototype version to create a new instance.");
-            else if (!versionName.endsWith(" Active"))
-                matematici.dialog.error("Error", "The selected prototype version is not active.");
-            else if (
+            //if (!versionName)
+            //    matematici.dialog.error("Error", "Select an active prototype version to create a new instance.");
+            //else if (!versionName.endsWith(" Active"))
+            //    matematici.dialog.error("Error", "The selected prototype version is not active.");
+            //else 
+
+            if (
                 !matematici.tokenManager.checkRole("Instances#Create#" + department + "##")
                 && !matematici.tokenManager.checkRole("Instances#Create#" + department + "#" + prototypeType + "#")
                 || !matematici.tokenManager.checkRole("Instances#Edit#" + department + "##")
@@ -151,10 +153,10 @@
             )
                 matematici.dialog.error("Error", "Permission denied.");
             else {
-                var
-                    prototype = $("select[name=prototype]", formElement).val(),
-                    version = $("select[name=version]", formElement).val();
-                matematici.navigator.open("@Url.Action("Create")/" + prototype + "/" + version);
+                var prototype = $("select[name=prototype]", formElement).val();
+
+                //version = $("select[name=version]", formElement).val();
+                matematici.navigator.open("@Url.Action("Create")/" + prototype);
             }
         });
         callback.call();
