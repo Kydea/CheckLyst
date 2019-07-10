@@ -169,7 +169,7 @@
 				data: {
 					code: options.code,
 					prototype: options.prototype,
-					version: options.version
+                    version: options.version == "-1" ? null : options.version
 				}
 			}).done(function (result) {
 				id = result.id;

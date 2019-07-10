@@ -2,6 +2,7 @@
     <h1>Instances List</h1>
 
     <div class="ActionBar">
+        <a id="LinkButton" href="#" class="Button Icon"><i class="Icon fa fa-link"></i></a>
         <a id="AddButton" href="#" class="Button"><i class="Icon fa fa-plus"></i> New instance</a>
     </div>
 
@@ -133,14 +134,54 @@
             }
         });
 
+        $("#LinkButton").on("click", function () {
+            var
+                prototype = $("select[name=prototype]", formElement).val(),
+                prototypeName = $("select[name=prototype]", formElement).next().val(),
+                url = matematici.urls.webApplication + "/@Url.Action("Create")/" + prototype;
+
+            if (!prototypeName)
+                matematici.dialog.error("Error", "Select a prototype.");
+            else
+                matematici.dialog.show("new instance link", url, [{
+                    hidden: true,
+                    cancelButton: true
+                }, {
+                    text: "copy",
+                    icon: "copy",
+                    defaultButton: true,
+                    handler: function () {
+                        var textArea = document.createElement("textarea");
+                        textArea.value = url;
+                        document.body.appendChild(textArea);
+                        textArea.focus();
+                        textArea.select();
+
+                        try {
+                            successful = document.execCommand('copy');
+                            if (successful) 
+                                matematici.blip.ok();
+                            else
+                                matematici.blip.ko();
+                        } catch (e) {
+                            console.log(e);
+                            matematici.blip.ko();
+                        }
+                        setTimeout(function () { textArea.remove(); }, 0);
+                    }
+                }]);
+        });
+
         $("#AddButton").on("click", function () {
             var
+                version = $("select[name=version]", formElement).val(),
                 versionName = $("select[name=version]", formElement).next().val(),
-                prototype = $("select[name=prototype]", formElement).next().val()
+                prototype = $("select[name=prototype]", formElement).val(),
+                prototypeName = $("select[name=prototype]", formElement).next().val(),
                 department = $("select[name=department]", formElement).val(),
                 prototypeType = $("select[name=prototypeType]", formElement).val();
 
-            if (!prototype)
+            if (!prototypeName)
                 matematici.dialog.error("Error", "Select a prototype to create a new instance.");
             else if (!versionName)
                 matematici.dialog.error("Error", "Select an active prototype version to create a new instance.");
@@ -153,12 +194,8 @@
                 && !matematici.tokenManager.checkRole("Instances#Edit#" + department + "#" + prototypeType + "#")
             )
                 matematici.dialog.error("Error", "Permission denied.");
-            else {
-                var
-                    prototype = $("select[name=prototype]", formElement).val(),
-                    version = $("select[name=version]", formElement).val();
+            else 
                 matematici.navigator.open("@Url.Action("Create")/" + prototype + "/" + version);
-            }
         });
         callback.call();
     };
