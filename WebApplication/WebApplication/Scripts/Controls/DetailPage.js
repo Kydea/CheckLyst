@@ -81,9 +81,11 @@
 				});
 
             setTimeout(function () {
-				if (options.initHandler) options.initHandler(detailPage);
+                if (options.initHandler) options.initHandler(detailPage);
 				if (data) form.setValues(data);
-				if (options.completeHandler) options.completeHandler(detailPage);
+                if (options.completeHandler) options.completeHandler(detailPage);
+
+                matematici.popup.getTitle().html(matematici.popup.getTitle().html() + (!data ? " (new)" : data.id ? " (ID: " + data.id + ")" : data.code ? " (Code: " + data.code + ")" : "" ))
 			}, 0);
 		};
 

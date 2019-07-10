@@ -5,7 +5,8 @@ matematici.popup = function () {
 		container,
 		options = {},
 		autoCenter,
-		closeHandler,
+        closeHandler,
+        title,
 
 		ajax = function () {
 			if (options.errorHandler)
@@ -89,7 +90,7 @@ matematici.popup = function () {
 				matematici.elements.body.addClass("Popup-" + options.cssClass);
 			}
 			if (options.title)
-				container.append($("<h2 />").html(options.title));
+                container.append(title = $("<h2 />").html(options.title));
 
 			if (options.content) container.append(options.content);
 			if (options.buttons) setButtons(options.buttons);
@@ -126,7 +127,11 @@ matematici.popup = function () {
 
 		getSender: function () {
 			return options.sender;
-		},
+        },
+
+        getOptions: function () {
+            return options;
+        },
 
 		show: function (settings) {
 			options = settings;
@@ -149,7 +154,11 @@ matematici.popup = function () {
 
 		getResult: function () {
 			return result;
-		},
+        },
+
+        getTitle: function () {
+            return $("h2", element);
+        },
 
 		setButtons: function (value) {
 			setButtons(value);

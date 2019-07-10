@@ -349,6 +349,7 @@
     <Content Include="Scripts\Matematici\AnimationManager.js" />
     <Content Include="Scripts\Matematici\Breadcrumbs.js" />
     <Content Include="Scripts\Matematici\Blip.js" />
+    <Content Include="Scripts\Matematici\Clipboard.js" />
     <Content Include="Scripts\Matematici\Popup.js" />
     <Content Include="Scripts\Matematici\Dialog.js" />
     <Content Include="Scripts\Matematici\Easings.js" />
