@@ -1,244 +1,307 @@
 ﻿prototypes.Prototype = function (selector, options) {
-	var
-		prototype = this,
-		element = $(selector),
-		page,
-		header,
-		pageIndex,
-		title,
-		tab,
-		pageLock,
-		model,
-		prototypeKey,
-		attachmentTemporaryKey,
-		concurrencyInformation,
-		currentItem,
-		itemHandler,
-		commands,
-		newItemsId = 1,
-		dataSources,
+    var
+        prototype = this,
+        element = $(selector),
+        page,
+        header,
+        pageIndex,
+        title,
+        tab,
+        pageLock,
+        model,
+        prototypeKey,
+        attachmentTemporaryKey,
+        concurrencyInformation,
+        currentItem,
+        itemHandler,
+        commands,
+        newItemsId = 1,
+        dataSources,
 
-		getNewItemId = function () {
-			return newItemsId++;
-		},
+        getNewItemId = function () {
+            return newItemsId++;
+        },
 
-		completeModel = function () {
-			var analyzeElement = function (node) {
-				switch (node.typeName) {
-					case "Group":
-						for (var itemIndex in node.items || [])
-							analyzeElement(node.items[itemIndex]);
-						break;
-					case "Signature":
-						if (node.code)
-							model.signatures[node.code] = node;
-						break;
-				}
-			};
+        completeModel = function () {
+            var analyzeElement = function (node) {
+                switch (node.typeName) {
+                    case "Group":
+                        for (var itemIndex in node.items || [])
+                            analyzeElement(node.items[itemIndex]);
+                        break;
+                    case "Signature":
+                        if (node.code)
+                            model.signatures[node.code] = node;
+                        break;
+                }
+            };
 
-			model.typeName = "Prototype";
-			model.signatures = {};
+            model.typeName = "Prototype";
+            model.signatures = {};
 
-			analyzeElement(model.header);
-			for (var pageIndex in model.pages || []) {
-				var page = model.pages[pageIndex];
-				for (var groupIndex in page.groups || [])
-					analyzeElement(page.groups[groupIndex])
-			}
-		},
+            analyzeElement(model.header);
+            for (var pageIndex in model.pages || []) {
+                var page = model.pages[pageIndex];
+                for (var groupIndex in page.groups || [])
+                    analyzeElement(page.groups[groupIndex])
+            }
+        },
 
-		setupActionBar = function () {
-			var
-				buttonGroup = $("div.ActionBar a.ButtonGroup", element),
-				previewButton = $("a.Preview", buttonGroup).addClass("Hidden"),
-				startSimulationButton = $("a.StartSimulation", buttonGroup).addClass("Hidden"),
-				cancelSimulationButton = $("a.CancelSimulation", buttonGroup).addClass("Hidden"),
-				deleteButton = $("a.Delete", buttonGroup).addClass("Hidden"),
-				submitForApprovalButton = $("a.SubmitForApproval", buttonGroup).addClass("Hidden"),
-				approveButton = $("a.Approve", buttonGroup).addClass("Hidden"),
-				submitForObsolescence = $("a.SubmitForObsolescence", buttonGroup).addClass("Hidden"),
-				obsoleteButton = $("a.Obsolete", buttonGroup).addClass("Hidden"),
-				saveButton = $("a.Save", buttonGroup).addClass("Hidden"),
-				historyButton = $("a.History", buttonGroup).toggle(model.version > 0),
-				importButton = $("a.Import", buttonGroup).addClass("Hidden"),
+        setupActionBar = function () {
+            var
+                buttonGroup = $("div.ActionBar a.ButtonGroup", element),
+                previewButton = $("a.Preview", buttonGroup).addClass("Hidden"),
+                startSimulationButton = $("a.StartSimulation", buttonGroup).addClass("Hidden"),
+                cancelSimulationButton = $("a.CancelSimulation", buttonGroup).addClass("Hidden"),
+                deleteButton = $("a.Delete", buttonGroup).addClass("Hidden"),
+                submitForApprovalButton = $("a.SubmitForApproval", buttonGroup).addClass("Hidden"),
+                approveButton = $("a.Approve", buttonGroup).addClass("Hidden"),
+                submitForObsolescence = $("a.SubmitForObsolescence", buttonGroup).addClass("Hidden"),
+                obsoleteButton = $("a.Obsolete", buttonGroup).addClass("Hidden"),
+                saveButton = $("a.Save", buttonGroup).addClass("Hidden"),
+                historyButton = $("a.History", buttonGroup).toggle(model.version > 0),
+                importButton = $("a.Import", buttonGroup).addClass("Hidden"),
                 exportButton = $("a.Export", buttonGroup),
                 downloadButton = $("a.Download", buttonGroup);
 
-			switch (model.state) {
-				case prototypes.Prototype.states.active:
-				case prototypes.Prototype.states.approved:
-					if (model.proposedState)
-						obsoleteButton.removeClass("Hidden");
+            switch (model.state) {
+                case prototypes.Prototype.states.active:
+                case prototypes.Prototype.states.approved:
+                    if (model.proposedState)
+                        obsoleteButton.removeClass("Hidden");
                     else if (
-						matematici.tokenManager.checkRole("Prototypes#Edit#" + model.department + "##")
+                        matematici.tokenManager.checkRole("Prototypes#Edit#" + model.department + "##")
                         || matematici.tokenManager.checkRole("Prototypes#Edit#" + model.department + "#" + model.prototypeType)
                     )
-						submitForObsolescence.removeClass("Hidden");
-					break;
-				case prototypes.Prototype.states.draft:
-					if (model.version > 0) {
-						previewButton.removeClass("Hidden");
-						startSimulationButton.removeClass("Hidden");
-						deleteButton.removeClass("Hidden");
-					}
-					importButton.removeClass("Hidden");
-					saveButton.removeClass("Hidden");
-					break;
-				case prototypes.Prototype.states.simulation:
-					previewButton.removeClass("Hidden");
-					submitForApprovalButton.removeClass("Hidden");
-					cancelSimulationButton.removeClass("Hidden");
-					break;
-				case prototypes.Prototype.states.approval:
-					approveButton.removeClass("Hidden");
+                        submitForObsolescence.removeClass("Hidden");
                     break;
-				case prototypes.Prototype.states.obsolete:
-				case prototypes.Prototype.states.draftReadOnly:
-				case prototypes.Prototype.states.simulationReadOnly:
-					break;
-				default:
-					alert("Invalid prototype state: " + (model.state || "(null)"));
-					console.log(model);
-					break;
-			}
+                case prototypes.Prototype.states.draft:
+                    if (model.version > 0) {
+                        previewButton.removeClass("Hidden");
+                        startSimulationButton.removeClass("Hidden");
+                        deleteButton.removeClass("Hidden");
+                    }
+                    importButton.removeClass("Hidden");
+                    saveButton.removeClass("Hidden");
+                    break;
+                case prototypes.Prototype.states.simulation:
+                    previewButton.removeClass("Hidden");
+                    submitForApprovalButton.removeClass("Hidden");
+                    cancelSimulationButton.removeClass("Hidden");
+                    break;
+                case prototypes.Prototype.states.approval:
+                    approveButton.removeClass("Hidden");
+                    break;
+                case prototypes.Prototype.states.obsolete:
+                case prototypes.Prototype.states.draftReadOnly:
+                case prototypes.Prototype.states.simulationReadOnly:
+                    break;
+                default:
+                    alert("Invalid prototype state: " + (model.state || "(null)"));
+                    console.log(model);
+                    break;
+            }
 
-			if ($("a:not(.Hidden)", buttonGroup).size() == 0)
-				buttonGroup.hide();
-		},
+            if ($("a:not(.Hidden)", buttonGroup).size() == 0)
+                buttonGroup.hide();
+        },
 
-		update = function () {
-			var
-				currentItemId = currentItem && (currentItem.isPage && currentItem.isPage() && $("a.Current", element).attr("id") || $("div.Current", element).attr("id")); //saves current item
+        update = function () {
+            var
+                currentItemId = currentItem && (currentItem.isPage && currentItem.isPage() && $("a.Current", element).attr("id") || $("div.Current", element).attr("id")); //saves current item
 
-			completeModel();
-			title.children("span").text(model.description || "(Prototype name)");
+            completeModel();
+            title.children("span").text(model.description || "(Prototype name)");
 
-			commands = $("<div />").addClass("Commands")
-				.append($("<a />").attr("data-command", "properties").addClass("Button MiniIcon Properties").append($("<i />").addClass("fal fa-cogs")))
-			if (model.state == prototypes.Prototype.states.draft)
-				commands
-					.append($("<a />").attr("data-command", "add").addClass("Button MiniIcon Add").append($("<i />").addClass("fal fa-plus")))
-					.append($("<a />").attr("data-command", "up").addClass("Button MiniIcon Up").append($("<i />").addClass("fal fa-caret-up")))
-					.append($("<a />").attr("data-command", "down").addClass("Button MiniIcon Down").append($("<i />").addClass("fal fa-caret-down")))
-					.append($("<a />").attr("data-command", "remove").addClass("Button MiniIcon Remove").append($("<i />").addClass("fal fa-trash-alt")));
+            commands = $("<div />").addClass("Commands")
+                .append($("<a />").attr("title", "properties").attr("data-command", "properties").addClass("Button MiniIcon Properties").append($("<i />").addClass("fal fa-cogs")))
+                .append($("<a />").attr("title", "copy").attr("data-command", "copy").addClass("Button MiniIcon Copy").append($("<i />").addClass("fal fa-copy")));
+            if (model.state == prototypes.Prototype.states.draft)
+                commands
+                    .append($("<a />").attr("title", "paste").attr("data-command", "paste").addClass("Button MiniIcon Paste").append($("<i />").addClass("fal fa-paste")))
+                    .append($("<a />").attr("title", "add").attr("data-command", "add").addClass("Button MiniIcon Add").append($("<i />").addClass("fal fa-plus")))
+                    .append($("<a />").attr("title", "move up").attr("data-command", "up").addClass("Button MiniIcon Up").append($("<i />").addClass("fal fa-caret-up")))
+                    .append($("<a />").attr("title", "move down").attr("data-command", "down").addClass("Button MiniIcon Down").append($("<i />").addClass("fal fa-caret-down")))
+                    .append($("<a />").attr("title", "remove").attr("data-command", "remove").addClass("Button MiniIcon Remove").append($("<i />").addClass("fal fa-trash-alt")));
 
-			tab.clear();
-			for (var index in model.pages)
-				tab.add(model.pages[index].description, "Page" + model.pages[index].itemId);
 
-			if (model.state == prototypes.Prototype.states.draft) tab.add($("<span />").prepend($("<i >").addClass("Add fal fa-plus")), null, "Add");
-			page.setIndex(pageIndex = pageIndex >= model.pages.length ? model.pages.length - 1 : pageIndex ? pageIndex : 0);
-			tab.select(pageIndex);
+            $("a.Paste", commands).css("display", localStorage.prototypeClipboard ? "inline-block" : "none");
 
-			if (model.header) {
-				header.clear();
-				header.update(model.header);
-			} else
-				header.getElement().hide();
+            tab.clear();
+            for (var index in model.pages)
+                tab.add(model.pages[index].description, "Page" + model.pages[index].itemId);
 
-			page.clear();
-			if (model.pages[tab.getCurrentItem().index])
-				page.update(model.pages[tab.getCurrentItem().index]);
+            if (model.state == prototypes.Prototype.states.draft) tab.add($("<span />").prepend($("<i >").addClass("Add fal fa-plus")), null, "Add");
+            page.setIndex(pageIndex = pageIndex >= model.pages.length ? model.pages.length - 1 : pageIndex ? pageIndex : 0);
+            tab.select(pageIndex);
 
-			for (var index in model.expressions)
-				if (model.expressions[index].Error) {
-					$("div.ActionBar a.Button.ExpressionsList").addClass("Invalid");
-					break;
-				}
+            if (model.header) {
+                header.clear();
+                header.update(model.header);
+            } else
+                header.getElement().hide();
 
-			if (currentItemId) {
-				//restores current item
-				currentItem = null;
-				$("#" + currentItemId, element).removeClass("Current").removeClass("Selected").click(); //Selected is for the tab when current item is a page
-			}
+            page.clear();
+            if (model.pages[tab.getCurrentItem().index])
+                page.update(model.pages[tab.getCurrentItem().index]);
 
-			setupActionBar();
-		},
+            for (var index in model.expressions)
+                if (model.expressions[index].Error) {
+                    $("div.ActionBar a.Button.ExpressionsList").addClass("Invalid");
+                    break;
+                }
 
-		select = function (event, item) {
-			if (event) {
-				event.stopPropagation();
-				event.preventDefault();
-			}
+            if (currentItemId) {
+                //restores current item
+                currentItem = null;
+                $("#" + currentItemId, element).removeClass("Current").removeClass("Selected").click(); //Selected is for the tab when current item is a page
+            }
 
-			if (itemHandler && !itemHandler.call(item.getElement()))
-				return;
+            setupActionBar();
+        },
 
-			if (currentItem) {
-				currentItem.getElement().removeClass("Current");
-				commands.remove();
-				if (currentItem.isPage && currentItem.isPage())
-					$("div.Commands", $("a.Selected", tab.getElement()).removeClass("Current")).remove();
-			}
-			currentItem = currentItem == item ? null : item;
-			if (currentItem) {
-				currentItem.getElement().addClass("Current");
-				switch (currentItem.getModel().typeName) {
-					case "Prototype":
-						commands.insertBefore(title)
-						break;
-					case "Page":
-						commands.insertAfter($("a.Selected", tab.getElement()).addClass("Current"));
-						break;
-					default:
-						currentItem.getElement().append(commands);
-						break;
-				}
+        select = function (event, item) {
+            if (event) {
+                event.stopPropagation();
+                event.preventDefault();
+            }
 
-				commands.on("click", "a", command);
-			}
-		},
+            if (itemHandler && !itemHandler.call(item.getElement()))
+                return;
 
-		command = function (e) {
-			e.preventDefault();
-			e.stopPropagation();
+            if (currentItem) {
+                currentItem.getElement().removeClass("Current");
+                commands.remove();
+                if (currentItem.isPage && currentItem.isPage())
+                    $("div.Commands", $("a.Selected", tab.getElement()).removeClass("Current")).remove();
+            }
+            currentItem = currentItem == item ? null : item;
+            if (currentItem) {
+                currentItem.getElement().addClass("Current");
+                switch (currentItem.getModel().typeName) {
+                    case "Prototype":
+                        commands.insertBefore(title)
+                        break;
+                    case "Page":
+                        commands.insertAfter($("a.Selected", tab.getElement()).addClass("Current"));
+                        break;
+                    default:
+                        currentItem.getElement().append(commands);
+                        break;
+                }
 
-			var
-				parent = currentItem.getParent && currentItem.getParent(),
-				siblings = !!parent && parent.getChildren(),
-				itemIndex = currentItem.getIndex && currentItem.getIndex();
+                commands.on("click", "a", command);
+            }
+        },
 
-			switch ($(this).data("command")) {
-				case "up":
-					var items = [];
-					for (var index in siblings)
-						items.push(siblings[index == itemIndex - 1 ? itemIndex : index == itemIndex ? index - 1 : index]);
-					parent.setChildren(items);
-					update();
-					matematici.canClose = false;
-					break;
-				case "down":
-					var items = [];
-					for (var index in siblings)
-						items.push(siblings[index == itemIndex ? itemIndex + 1 : index == itemIndex + 1 ? itemIndex : index]);
-					parent.setChildren(items);
-					update();
-					matematici.canClose = false;
-					break;
-				case "add":
-					currentItem.add();
-					break;
-				case "remove":
-					matematici.dialog.show("Warning", "The current item will be removed", [
-						{
-							text: "confirm", icon: "check", handler: function () {
-								parent.getChildren().splice(itemIndex, 1);
-								update();
-								matematici.canClose = false;
-							}
-						},
-						{ text: "cancel", icon: "times", cancelButton: true }
-					]);
-					break;
-				case "properties":
-					prototypes.propertyPanel.select(currentItem);
-					break;
-				default:
-					alert("invalid command");
-					console.log(this);
-					break;
-			}
-		},
+        command = function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            var
+                parent = currentItem.getParent && currentItem.getParent(),
+                siblings = !!parent && parent.getChildren(),
+                itemIndex = currentItem.getIndex && currentItem.getIndex();
+
+            switch ($(this).data("command")) {
+                case "up":
+                    var items = [];
+                    for (var index in siblings)
+                        items.push(siblings[index == itemIndex - 1 ? itemIndex : index == itemIndex ? index - 1 : index]);
+                    parent.setChildren(items);
+                    update();
+                    matematici.canClose = false;
+                    break;
+                case "down":
+                    var items = [];
+                    for (var index in siblings)
+                        items.push(siblings[index == itemIndex ? itemIndex + 1 : index == itemIndex + 1 ? itemIndex : index]);
+                    parent.setChildren(items);
+                    update();
+                    matematici.canClose = false;
+                    break;
+                case "add":
+                    currentItem.add();
+                    break;
+                case "remove":
+                    matematici.dialog.show("Warning", "The current item will be removed", [
+                        {
+                            text: "confirm", icon: "check", handler: function () {
+                                parent.getChildren().splice(itemIndex, 1);
+                                update();
+                                matematici.canClose = false;
+                            }
+                        },
+                        { text: "cancel", icon: "times", cancelButton: true }
+                    ]);
+                    break;
+                case "paste":
+                    paste();
+                    break;
+                case "copy":
+                    localStorage.prototypeClipboard = JSON.stringify(currentItem.getModel());
+                    $("a.Paste", commands).css("display", "inline-block");
+                    matematici.blip.ok();
+                    break;
+                case "properties":
+                    prototypes.propertyPanel.select(currentItem);
+                    break;
+                default:
+                    alert("invalid command");
+                    console.log(this);
+                    break;
+            }
+        },
+
+        traverseForPaste = function (element) {
+            element.code = null;
+            element.id = element.itemId = getNewItemId();
+            if (element.typeName == "Page")
+                for (var index in element.groups)
+                    traverseForPaste(element.groups[index]);
+            else if (element.typeName == "Group")
+                for (var index in element.items)
+                    traverseForPaste(element.items[index]);
+        },
+
+        paste = function () {
+            if (!localStorage.prototypeClipboard) {
+                matematici.dialog.error("Error", "Nothing to paste.");
+                return;
+            }
+
+            var
+                itemModel = currentItem.getModel(),
+                clipboardModel = JSON.parse(localStorage.prototypeClipboard);
+
+            traverseForPaste(clipboardModel);
+            switch (clipboardModel.typeName) {
+                case "Page":
+                    if (itemModel.typeName != "Page") {
+                        matematici.dialog.error("Error", "Select a page to paste another page.");
+                        return;
+                    }
+                    model.pages.push(clipboardModel);
+                    select(null, null);
+                    update();
+                    break;
+                case "Group":
+                    if (itemModel.typeName == "Page") 
+                        currentItem.addGroup(clipboardModel);
+                    else
+                        currentItem.addElement(null, clipboardModel);
+                    break;
+                default:
+                    if (itemModel.typeName == "Page") {
+                        matematici.dialog.error("Error", "A page cannot directly contain an item. Paste the item into a group.");
+                        return;
+                    } 
+                    currentItem.addElement(null, clipboardModel);
+                    break;
+            }
+
+            matematici.canClose = false;
+        },
 
 		addPage = function () {
 			if (!model.pages) model.pages = [];

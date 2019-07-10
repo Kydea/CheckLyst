@@ -15,38 +15,40 @@
                 element.insertAfter(previous ? previous.getElement() : $("h3", parent.getElement()));
         },
 
-        addElement = function (typeName) {
+        addElement = function (typeName, itemModel) {
             matematici.canClose = false;
 
             if (!model.items) model.items = [];
-            model.items.push({ typeName: typeName });
+            var newItem = itemModel || { typeName: typeName };
+            model.items.push(newItem);
             prototypes.prototype.update();
         },
 
-        addGroup = function () {
+        addGroup = function (groupModel) {
             matematici.canClose = false;
 
             if (!model.groups) model.groups = [];
-			model.groups.push({ typeName: "Group", id: prototypes.prototype.getNewItemId() });
+            var newGroup = groupModel || { typeName: "Group", id: prototypes.prototype.getNewItemId() };
+            model.groups.push(newGroup);
             prototypes.prototype.update();
         },
 
         setup = function () {
-			if (!element)
-				create();				
+            if (!element)
+                create();
 
             element
                 .addClass("Element " + typeName)
-				.on("click", function (event) {
-					prototypes.prototype.select(event, group)
-				});
+                .on("click", function (event) {
+                    prototypes.prototype.select(event, group)
+                });
 
-            if (group.isPage()) 
-				addButton = $("<a />")
-					.attr("href", "#")
-					.addClass("Button Add")
-					.text("Add group")
-					.prepend($("<i >").addClass("Icon Add fa fa-plus")).on("click", addGroup);
+            if (group.isPage())
+                addButton = $("<a />")
+                    .attr("href", "#")
+                    .addClass("Button Add")
+                    .text("Add group")
+                    .prepend($("<i >").addClass("Icon Add fa fa-plus")).on("click", function () { addGroup(); });
             else 
                 title = $("<h3 />").appendTo(element);
 		},
@@ -164,6 +166,10 @@
         else 
             model.items = value;
     };
+
+    this.addGroup = addGroup;
+
+    this.addElement = addElement;
 
     setup();
 }

@@ -17,15 +17,15 @@ div.Prototype div.Commands {
   border-radius: 3px; }
   div.Prototype div.Commands a.MiniIcon {
     margin-top: 0;
-    line-height: 30px !important;
-    height: 30px !important;
-    width: 30px !important;
+    line-height: 20px !important;
+    height: 20px !important;
+    width: 20px !important;
     border-radius: 3px 0 0 3px !important; }
     div.Prototype div.Commands a.MiniIcon i.fa, div.Prototype div.Commands a.MiniIcon i.fal {
-      font-size: 16px !important;
-      line-height: 30px !important;
-      height: 30px !important;
-      width: 30px !important;
+      font-size: 12px !important;
+      line-height: 20px !important;
+      height: 20px !important;
+      width: 20px !important;
       color: #00877a !important; }
     div.Prototype div.Commands a.MiniIcon + a.MiniIcon {
       border-left: solid 1px #009688;
@@ -94,6 +94,8 @@ div.Prototype div.Item {
   div.Prototype div.Item > div.Commands {
     margin: 0 !important; }
     div.Prototype div.Item > div.Commands a.Add {
+      display: none; }
+    div.Prototype div.Item > div.Commands a.Paste {
       display: none; }
 
 div.Prototype div.Element:first-of-type > div.Commands a.Up {

@@ -50,7 +50,7 @@
             userCode = $("input[name=username]", form),
             password = $("input[name=password]", form),
             companies = {},
-            redirectUrl = localStorage.redirectUrl;
+            redirectUrl = localStorage.redirectUrl && localStorage.redirectUrl.indexOf("/Security/Login") < 0 ? localStorage.redirectUrl : null,
 
             showError = function (message) {
                 error.html(" " + message).prepend($("<i />").addClass("fas fa-exclamation-triangle")).show()

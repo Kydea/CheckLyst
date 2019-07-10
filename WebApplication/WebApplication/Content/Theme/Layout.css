@@ -63,6 +63,13 @@ i.fa, i.fal {
 .Hidden {
   display: none; }
 
+textarea.ClipboardBridge {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  height: 1px; }
+
 div#InitialCurtain {
   position: fixed;
   top: 0;

@@ -151,23 +151,7 @@
                     icon: "copy",
                     defaultButton: true,
                     handler: function () {
-                        var textArea = document.createElement("textarea");
-                        textArea.value = url;
-                        document.body.appendChild(textArea);
-                        textArea.focus();
-                        textArea.select();
-
-                        try {
-                            successful = document.execCommand('copy');
-                            if (successful) 
-                                matematici.blip.ok();
-                            else
-                                matematici.blip.ko();
-                        } catch (e) {
-                            console.log(e);
-                            matematici.blip.ko();
-                        }
-                        setTimeout(function () { textArea.remove(); }, 0);
+                        matematici.clipboard.copy(url);
                     }
                 }]);
         });

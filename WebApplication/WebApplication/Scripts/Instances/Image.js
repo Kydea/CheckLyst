@@ -10,7 +10,7 @@
 
         setup = function () {
             span = $("<span />");
-            a = $("<a />").addClass("Image Button GreyYellowButton").append(span).append($("<i />").addClass("fa fa-caret-right")).appendTo(item.getElement()).on("click", clickHandler);
+            a = $("<a />").addClass("Image Button GreyYellowButton").append(span).append($("<i />").addClass("Icon fa fa-caret-right")).appendTo(item.getElement()).on("click", clickHandler);
         };
 
     this.update = function (model) {

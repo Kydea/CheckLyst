@@ -3,7 +3,7 @@
         i, a,
 
         setup = function () {
-            i = $("<i >").addClass("Link fa fa-caret-right").appendTo(item.getElement());
+            i = $("<i >").addClass("Icon Link fa fa-caret-right").appendTo(item.getElement());
             a = $("<a />").addClass("Link").appendTo(item.getElement());
         };
 
