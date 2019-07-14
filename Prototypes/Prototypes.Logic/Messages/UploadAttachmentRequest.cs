@@ -3,7 +3,7 @@ using MultipartDataMediaFormatter.Infrastructure;
 
 namespace CheckListManager.Prototypes.Logic.Messages
 {
-	public class UploadRequest
+	public class UploadAttachmentRequest
 	{
 		public long Id { get; set; }
 		public int Version { get; set; }

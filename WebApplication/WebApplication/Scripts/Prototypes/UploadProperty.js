@@ -3,11 +3,6 @@
 		input,
 		handler,
 		change = function () {
-			var file = input[0].files[0];
-			console.log(file);
-			console.log(model, property, options);
-
-			// TODO get data from prototype or instance
 			var prototypeKey = prototypes.prototype.getPrototypeKey();
 			var prototypeModel = prototypes.prototype.getModel();
 			var formData = new FormData();
@@ -20,32 +15,13 @@
 			if (prototypeModel.prototypeType) formData.append("prototypeType", prototypeModel.prototypeType);
 
 			$.ajax({
-				// Your server script to process the upload
-				url: prototypes.prototype.getElement().data("action") + "Upload",
+				url: prototypes.prototype.getElement().data("action") + "UploadAttachment",
 				type: 'POST',
 
 				data: formData,
 				cache: false,
 				contentType: false,
 				processData: false,
-
-				xhr: function () {
-					var xhr = $.ajaxSettings.xhr();
-					//if (xhr.upload) {
-					//	xhr.upload.addEventListener('progress', function (e) {
-					//		if (e.lengthComputable) {
-					//			$('progress').attr({
-					//				value: e.loaded,
-					//				max: e.total,
-					//			});
-					//		}
-					//	}, false);
-					//}
-					return xhr;
-				}
-			}).fail(function (e) {
-				console.log(e);
-				new matematici.dialog.error("error", "Impossible to upload the image");
 			}).done(function (result) {
 				console.log(result);
 				model.key = result.key;
@@ -61,7 +37,19 @@
 		},
 
 		preview = function () {
-			alert("preview");
+			var prototypeKey = prototypes.prototype.getPrototypeKey();
+			var prototypeModel = prototypes.prototype.getModel();
+
+			var url = prototypes.prototype.getElement().data("action") + "DownloadAttachment?";
+			url += "id=" + prototypeKey.id;
+			url += "&version=" + prototypeKey.version;
+			url += "&department=" + (prototypeModel.department || '');
+			url += "&prototypeType=" + (prototypeModel.prototypeType || '');
+			url += "&attachmentTemporaryKey=" + (prototypes.prototype.getAttachmentTemporaryKey() || '');
+			url += "&key=" + model.key;
+			url += "&Authorization=" + encodeURIComponent("Bearer " + matematici.tokenManager.getAccessToken());
+
+			matematici.imageViewer.show("Preview", url);
 		};
 
 	this.setHandler = function (value) {
@@ -79,8 +67,8 @@
 			$("<form />")
 				.attr("enctype", "multipart/form-data")
 				.append($("<a />").attr("href", "#").addClass("Button").text("upload").append($("<i />").addClass("Icon fa fa-link")).on("click", function () { input.click(); }))
-				.append($("<a />").attr("href", "#").addClass("Button").text("preview").append($("<i />").addClass("Icon fa fa-image")).on("click", deleteImage))
-				.append($("<a />").attr("href", "#").addClass("Button").text("delete").append($("<i />").addClass("Icon fa fa-trash-alt")).on("click", preview))
+				.append($("<a />").attr("href", "#").addClass("Button").text("preview").append($("<i />").addClass("Icon fa fa-image")).on("click", preview))
+				.append($("<a />").attr("href", "#").addClass("Button").text("delete").append($("<i />").addClass("Icon fa fa-trash-alt")).on("click", deleteImage))
 				.append(input);
 		input.on("change", change);
 

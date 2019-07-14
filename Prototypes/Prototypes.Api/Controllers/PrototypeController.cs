@@ -169,9 +169,9 @@ namespace CheckListManager.Prototypes.Api.Controllers
         }
 
         [HttpPost]
-        [Route("Upload")]
+        [Route("UploadAttachment")]
         [Authorize(Roles = "Prototypes#Edit")]
-        public async Task<IHttpActionResult> Upload(UploadRequest request)
+        public async Task<IHttpActionResult> UploadAttachment(UploadAttachmentRequest request)
         {
 	        try
 	        {
@@ -185,12 +185,44 @@ namespace CheckListManager.Prototypes.Api.Controllers
                     throw new Exception("Department and Prototype Type must have a value when the prototype is not yet saved");
                 }
                 
-		        return Ok(await _prototypeService.UploadAsync(Identity, request));
+		        return Ok(await _prototypeService.UploadAttachmentAsync(Identity, request));
 	        }
 	        catch (Exception e)
 	        {
 		        return Error(e);
 	        }
+        }
+
+        [HttpGet]
+        [Route("DownloadAttachment")]
+        [Authorize(Roles = "Prototypes#View")]
+        public async Task<IHttpActionResult> DownloadAttachment([FromUri]DownloadAttachmentRequest request)
+        {
+            try
+            {
+                if ((request.Id < 0 || request.Version < 0) && !request.AttachmentTemporaryKey.HasValue)
+                {
+                    throw new Exception("Temporary Key has to be specified when Id or Version are not available");
+                }
+
+                if (request.Id < 0 && (!request.Department.HasValue || !request.PrototypeType.HasValue))
+                {
+                    throw new Exception("Department and Prototype Type must have a value when the prototype is not yet saved");
+                }
+
+                if (string.IsNullOrEmpty(request.Key))
+                {
+                    throw new Exception("Key must have a value");
+                }
+
+                var response = await _prototypeService.DownloadAttachmentAsync(Identity, request);
+                return Content(HttpStatusCode.OK, response.Content,
+                    new FileFormatter(response.ContentType, request.FormatAsBase64));
+            }
+            catch (Exception e)
+            {
+                return Error(e);
+            }
         }
 
 		[HttpPost]

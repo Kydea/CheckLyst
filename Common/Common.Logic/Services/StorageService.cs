@@ -4,6 +4,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Amazon.S3;
 using Amazon.S3.Model;
+using CheckListManager.Common.Logic.Models;
 
 namespace CheckListManager.Common.Logic.Services
 {
@@ -16,7 +17,7 @@ namespace CheckListManager.Common.Logic.Services
 			_s3 = s3;
 		}
 
-		public async Task<Stream> GetAsync(string bucketName, string key)
+		public async Task<StorageFile> GetAsync(string bucketName, string key)
 		{
 			var response = await _s3.GetObjectAsync(bucketName, key);
 			if (response.HttpStatusCode == HttpStatusCode.NotFound)
@@ -24,7 +25,7 @@ namespace CheckListManager.Common.Logic.Services
 				throw new Exception($"File {key} not found");
 			}
 
-			return response.ResponseStream;
+			return new StorageFile(response.ResponseStream, response.Headers.ContentType);
 		}
 
 		public async Task<bool> PutAsync(string bucketName, string key, Stream inputStream)

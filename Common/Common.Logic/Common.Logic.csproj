@@ -181,6 +181,7 @@
     <Compile Include="Models\Expressions\UnaryOperator.cs" />
     <Compile Include="Authentication\AuthenticationService.cs" />
     <Compile Include="Authentication\IAuthenticationService.cs" />
+    <Compile Include="Models\StorageFile.cs" />
     <Compile Include="PascalCaseDictionary.cs" />
     <Compile Include="Services\ISettingService.cs" />
     <Compile Include="Services\IStorageService.cs" />

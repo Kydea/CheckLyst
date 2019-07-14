@@ -4,6 +4,7 @@ using CheckListManager.Prototypes.Logic.Messages;
 using CheckListManager.Common.Core.Web.Security;
 using System.Collections.Generic;
 using System.Threading;
+using CheckListManager.Common.Logic.Models;
 
 namespace CheckListManager.Prototypes.Logic.Services
 {
@@ -20,6 +21,7 @@ namespace CheckListManager.Prototypes.Logic.Services
         Task<PrototypeResponse> SetStateAsync(DefaultIdentity identity, PrototypeRequest request);
         Task<List<HistoryRow>> History(DefaultIdentity identity, PrototypeRequest request);
         Task UpdatePrototypeVersionsState(CancellationToken CancellationToken);
-        Task<UploadResponse> UploadAsync(DefaultIdentity identity, UploadRequest request);
+        Task<UploadAttachmentResponse> UploadAttachmentAsync(DefaultIdentity identity, UploadAttachmentRequest request);
+        Task<StorageFile> DownloadAttachmentAsync(DefaultIdentity identity, DownloadAttachmentRequest request);
 	}
 }

@@ -17,11 +17,15 @@ using CheckListManager.Common.Logic.Models.CheckLists;
 using System.Threading;
 using NLog;
 using CheckListManager.Common.Logic.FTP;
+using CheckListManager.Common.Logic.Models;
 
 namespace CheckListManager.Prototypes.Logic.Services
 {
     public class PrototypeService : IPrototypeService
     {
+        private const string TemporaryFolder = "tmp/";
+        private const int TemporaryFolderStartIndex = 5;
+        
         private readonly CheckListJsonConverter _converter;
         private readonly IPrototypesRepository _prototypeRepository;
         private readonly IQueueService _queueService;
@@ -526,7 +530,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                 }
         }
 
-        public async Task<UploadResponse> UploadAsync(DefaultIdentity identity, UploadRequest request)
+        public async Task<UploadAttachmentResponse> UploadAttachmentAsync(DefaultIdentity identity, UploadAttachmentRequest request)
         {
             long department, prototypeType;
             PrototypeVersions prototypeVersion = null;
@@ -563,11 +567,11 @@ namespace CheckListManager.Prototypes.Logic.Services
 	        if (prototypeVersion != null && prototypeVersion.VersionState != VersionState.Draft)
 		        throw new Exception("The prototype version is not in state draft");
 
-	        var extension = System.IO.Path.GetExtension(request.Attachment.FileName);
+	        var extension = Path.GetExtension(request.Attachment.FileName);
 
             var key = request.Id >= 0 && request.Version >= 0
                 ? $"{identity.CompanyId}/{request.Id}-{request.Version}/{request.Code}.{extension}"
-                : $"tmp/{identity.CompanyId}/{request.AttachmentTemporaryKey}/{request.Code}{extension}";
+                : $"{TemporaryFolder}{identity.CompanyId}/{request.AttachmentTemporaryKey}/{request.Code}{extension}";
 
             using (var memoryStream = new MemoryStream(request.Attachment.Buffer))
             {
@@ -578,14 +582,61 @@ namespace CheckListManager.Prototypes.Logic.Services
                 }
             }
 
-			return new UploadResponse { Key = key };
+			return new UploadAttachmentResponse { Key = key };
+        }
+
+        public async Task<StorageFile> DownloadAttachmentAsync(DefaultIdentity identity, DownloadAttachmentRequest request)
+        {
+            long department, prototypeType;
+            if (request.Id >= 0 && request.Version >= 0)
+            {
+                var prototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(
+                    identity.CompanyId, 
+                    request.Id,
+                    request.Version
+                );
+                department = prototypeVersion.Prototypes.Department;
+                prototypeType = prototypeVersion.Prototypes.PrototypeType;
+            }
+            else if (request.Id >= 0)
+            {
+                var prototype = await _prototypeRepository.GetPrototypeAsync(identity, request.Id);
+                department = prototype.Department;
+                prototypeType = prototype.PrototypeType;
+            }
+            else if (request.Department.HasValue && request.PrototypeType.HasValue)
+            {
+                department = request.Department.Value;
+                prototypeType = request.PrototypeType.Value;
+            }
+            else
+            {
+                // Shouldn't get here but just in case
+                throw new InvalidOperationException();
+            }
+            
+            if (
+                !identity.HasPermission("Prototypes", "Edit", department) &&
+                !identity.HasPermission("Prototypes", "Edit", department, prototypeType)
+            )
+                throw new UnauthorizedAccessException();
+
+            var isTemporary = request.Key.StartsWith(TemporaryFolder);
+            var startIndex = request.Key.IndexOf('/', isTemporary ? TemporaryFolderStartIndex : 0);
+            if (startIndex < 0)
+            {
+                throw new InvalidOperationException("Key format non valid");
+            }
+            var key = $"{(isTemporary ? TemporaryFolder : "")}{identity.CompanyId}{request.Key.Substring(startIndex)}";
+            
+            return await _storageService.GetAsync(_configurationService.PrototypesStorageBucket, key);
         }
 
         private async Task<Guid> CloneAttachmentsToTempAsync(long companyId, long prototypeId, int versionId, Prototype prototype)
         {
             var temporaryKey = Guid.NewGuid();
             var key = $"{companyId}/{prototypeId}-{versionId}";
-            var newKey = $"tmp/{companyId}/{temporaryKey}";
+            var newKey = $"{TemporaryFolder}{companyId}/{temporaryKey}";
 
             await CloneAttachmentsAsync(prototype, key, newKey);
 
@@ -594,7 +645,7 @@ namespace CheckListManager.Prototypes.Logic.Services
 
         private Task CloneAttachmentsFromTempAsync(Guid temporaryKey, long companyId, long prototypeId, int versionId, Prototype prototype)
         {
-            var key = $"tmp/{companyId}/{temporaryKey}";
+            var key = $"{TemporaryFolder}{companyId}/{temporaryKey}";
             var newKey = $"{companyId}/{prototypeId}-{versionId}";
 
             return CloneAttachmentsAsync(prototype, key, newKey);

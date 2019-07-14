@@ -85,11 +85,12 @@
     <Compile Include="List\IListService.cs" />
     <Compile Include="List\ListResponse.cs" />
     <Compile Include="List\ListRequest.cs" />
+    <Compile Include="Messages\DownloadAttachmentRequest.cs" />
     <Compile Include="Messages\HistoryStep.cs" />
     <Compile Include="Messages\PrototypeRequest.cs" />
     <Compile Include="Messages\HistoryRow.cs" />
-    <Compile Include="Messages\UploadRequest.cs" />
-    <Compile Include="Messages\UploadResponse.cs" />
+    <Compile Include="Messages\UploadAttachmentRequest.cs" />
+    <Compile Include="Messages\UploadAttachmentResponse.cs" />
     <Compile Include="Messages\VerifyExpressionsResponse.cs" />
     <Compile Include="Messages\PrototypeResponse.cs" />
     <Compile Include="Models\CheckLists\Element.cs" />

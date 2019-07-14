@@ -168,6 +168,7 @@
     <Compile Include="ErrorResult.cs" />
     <Compile Include="Filters\ArgumentNullValidationActionFilterAttribute.cs" />
     <Compile Include="Filters\ModelValidationActionFilterAttribute.cs" />
+    <Compile Include="Formatters\FileFormatter.cs" />
     <Compile Include="Formatters\PDFFormatter.cs" />
     <Compile Include="Formatters\CSVFormatter.cs" />
     <Compile Include="Messages\Message.cs" />

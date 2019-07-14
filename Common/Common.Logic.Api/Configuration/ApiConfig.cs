@@ -95,6 +95,19 @@ namespace CheckListManager.Common.Logic.Api.Configuration
 
 				return next.Invoke();
 			});
+			app.Use((context, next) =>
+			{
+				if (!context.Request.Headers.ContainsKey("Authorization"))
+				{
+					var authorization = context.Request.Query["Authorization"];
+					if (!string.IsNullOrEmpty(authorization))
+					{
+						context.Request.Headers.Add("Authorization", new[] { authorization });
+					}
+				}
+
+				return next.Invoke();
+			});
 			ConfigureWebApi();
 			ConfigureAuth(app);
 			app.UseWebApi(_configuration);
