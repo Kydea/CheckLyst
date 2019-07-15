@@ -22,6 +22,7 @@ namespace CheckListManager.Prototypes.Logic.Services
         Task<List<HistoryRow>> History(DefaultIdentity identity, PrototypeRequest request);
         Task UpdatePrototypeVersionsState(CancellationToken CancellationToken);
         Task<UploadAttachmentResponse> UploadAttachmentAsync(DefaultIdentity identity, UploadAttachmentRequest request);
-        Task<StorageFile> DownloadAttachmentAsync(DefaultIdentity identity, DownloadAttachmentRequest request);
+        Task<StorageFile> DownloadAttachmentAsync(DefaultIdentity identity, ProcessAttachmentRequest request);
+        Task DeleteAttachmentAsync(DefaultIdentity identity, ProcessAttachmentRequest request);
 	}
 }

@@ -168,63 +168,6 @@ namespace CheckListManager.Prototypes.Api.Controllers
             }
         }
 
-        [HttpPost]
-        [Route("UploadAttachment")]
-        [Authorize(Roles = "Prototypes#Edit")]
-        public async Task<IHttpActionResult> UploadAttachment(UploadAttachmentRequest request)
-        {
-	        try
-	        {
-                if ((request.Id < 0 || request.Version < 0) && !request.AttachmentTemporaryKey.HasValue)
-                {
-                    throw new Exception("Temporary Key has to be specified when Id or Version are not available");
-                }
-
-                if (request.Id < 0 && (!request.Department.HasValue || !request.PrototypeType.HasValue))
-                {
-                    throw new Exception("Department and Prototype Type must have a value when the prototype is not yet saved");
-                }
-                
-		        return Ok(await _prototypeService.UploadAttachmentAsync(Identity, request));
-	        }
-	        catch (Exception e)
-	        {
-		        return Error(e);
-	        }
-        }
-
-        [HttpGet]
-        [Route("DownloadAttachment")]
-        [Authorize(Roles = "Prototypes#View")]
-        public async Task<IHttpActionResult> DownloadAttachment([FromUri]DownloadAttachmentRequest request)
-        {
-            try
-            {
-                if ((request.Id < 0 || request.Version < 0) && !request.AttachmentTemporaryKey.HasValue)
-                {
-                    throw new Exception("Temporary Key has to be specified when Id or Version are not available");
-                }
-
-                if (request.Id < 0 && (!request.Department.HasValue || !request.PrototypeType.HasValue))
-                {
-                    throw new Exception("Department and Prototype Type must have a value when the prototype is not yet saved");
-                }
-
-                if (string.IsNullOrEmpty(request.Key))
-                {
-                    throw new Exception("Key must have a value");
-                }
-
-                var response = await _prototypeService.DownloadAttachmentAsync(Identity, request);
-                return Content(HttpStatusCode.OK, response.Content,
-                    new FileFormatter(response.ContentType, request.FormatAsBase64));
-            }
-            catch (Exception e)
-            {
-                return Error(e);
-            }
-        }
-
 		[HttpPost]
         [Route("History")]
         [Authorize(Roles = "Prototypes#View")]
@@ -268,5 +211,97 @@ namespace CheckListManager.Prototypes.Api.Controllers
             var PDF = new PrototypePDF(Data.CompanyId.Value, Data.CompanyName, Data.TimeZone, _configurationService.PublicRepositoryUrl, PrototypeVersion, CheckList);
             return Content(HttpStatusCode.OK, PDF, new PDFFormatter("Prototype"));
         }
+        
+        #region Attachment
+        
+        [HttpPost]
+        [Route("UploadAttachment")]
+        [Authorize(Roles = "Prototypes#Edit")]
+        public async Task<IHttpActionResult> UploadAttachment(UploadAttachmentRequest request)
+        {
+	        try
+	        {
+                if ((request.Id < 0 || request.Version < 0) && !request.AttachmentTemporaryKey.HasValue)
+                {
+                    throw new Exception("Temporary Key has to be specified when Id or Version are not available");
+                }
+
+                if (request.Id < 0 && (!request.Department.HasValue || !request.PrototypeType.HasValue))
+                {
+                    throw new Exception("Department and Prototype Type must have a value when the prototype is not yet saved");
+                }
+                
+		        return Ok(await _prototypeService.UploadAttachmentAsync(Identity, request));
+	        }
+	        catch (Exception e)
+	        {
+		        return Error(e);
+	        }
+        }
+
+        [HttpGet]
+        [Route("DownloadAttachment")]
+        [Authorize(Roles = "Prototypes#View")]
+        public async Task<IHttpActionResult> DownloadAttachment([FromUri]ProcessAttachmentRequest request)
+        {
+            try
+            {
+                if ((request.Id < 0 || request.Version < 0) && !request.AttachmentTemporaryKey.HasValue)
+                {
+                    throw new Exception("Temporary Key has to be specified when Id or Version are not available");
+                }
+
+                if (request.Id < 0 && (!request.Department.HasValue || !request.PrototypeType.HasValue))
+                {
+                    throw new Exception("Department and Prototype Type must have a value when the prototype is not yet saved");
+                }
+
+                if (string.IsNullOrEmpty(request.Key))
+                {
+                    throw new Exception("Key must have a value");
+                }
+
+                var response = await _prototypeService.DownloadAttachmentAsync(Identity, request);
+                return Content(HttpStatusCode.OK, response.Content,
+                    new FileFormatter(response.ContentType, request.FormatAsBase64));
+            }
+            catch (Exception e)
+            {
+                return Error(e);
+            }
+        }
+
+        [HttpPost]
+        [Route("DeleteAttachment")]
+        [Authorize(Roles = "Prototypes#Edit")]
+        public async Task<IHttpActionResult> DeleteAttachment(ProcessAttachmentRequest request)
+        {
+            try
+            {
+                if ((request.Id < 0 || request.Version < 0) && !request.AttachmentTemporaryKey.HasValue)
+                {
+                    throw new Exception("Temporary Key has to be specified when Id or Version are not available");
+                }
+
+                if (request.Id < 0 && (!request.Department.HasValue || !request.PrototypeType.HasValue))
+                {
+                    throw new Exception("Department and Prototype Type must have a value when the prototype is not yet saved");
+                }
+
+                if (string.IsNullOrEmpty(request.Key))
+                {
+                    throw new Exception("Key must have a value");
+                }
+
+                await _prototypeService.DeleteAttachmentAsync(Identity, request);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return Error(e);
+            }
+        }
+        
+        #endregion
     }
 }

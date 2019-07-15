@@ -85,7 +85,8 @@
     <Compile Include="List\IListService.cs" />
     <Compile Include="List\ListResponse.cs" />
     <Compile Include="List\ListRequest.cs" />
-    <Compile Include="Messages\DownloadAttachmentRequest.cs" />
+    <Compile Include="Messages\AttachmentRequestBase.cs" />
+    <Compile Include="Messages\ProcessAttachmentRequest.cs" />
     <Compile Include="Messages\HistoryStep.cs" />
     <Compile Include="Messages\PrototypeRequest.cs" />
     <Compile Include="Messages\HistoryRow.cs" />

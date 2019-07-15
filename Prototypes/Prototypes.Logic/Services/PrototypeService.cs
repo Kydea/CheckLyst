@@ -529,8 +529,14 @@ namespace CheckListManager.Prototypes.Logic.Services
 
                 }
         }
+        
+        #region Attachment
 
-        public async Task<UploadAttachmentResponse> UploadAttachmentAsync(DefaultIdentity identity, UploadAttachmentRequest request)
+        private async Task ValidateRequest(
+            DefaultIdentity identity,
+            AttachmentRequestBase request,
+            bool isEdit = true
+        )
         {
             long department, prototypeType;
             PrototypeVersions prototypeVersion = null;
@@ -556,21 +562,27 @@ namespace CheckListManager.Prototypes.Logic.Services
                 // Shouldn't get here but just in case
                 throw new InvalidOperationException();
             }
+
+            var function = isEdit ? "Edit" : "View";
             
-	        if (
-		        !identity.HasPermission("Prototypes", "Edit", department) &&
-		        !identity.HasPermission("Prototypes", "Edit", department, prototypeType)
-	        )
-		        throw new UnauthorizedAccessException();
+            if (
+                !identity.HasPermission("Prototypes", function, department) &&
+                !identity.HasPermission("Prototypes", function, department, prototypeType)
+            )
+                throw new UnauthorizedAccessException();
 
             // If prototype version is null the state is always draft (either a clone or new version)
-	        if (prototypeVersion != null && prototypeVersion.VersionState != VersionState.Draft)
-		        throw new Exception("The prototype version is not in state draft");
+            if (isEdit && prototypeVersion != null && prototypeVersion.VersionState != VersionState.Draft)
+                throw new Exception("The prototype version is not in state draft");
+        }
 
+        public async Task<UploadAttachmentResponse> UploadAttachmentAsync(DefaultIdentity identity, UploadAttachmentRequest request)
+        {
+            await ValidateRequest(identity, request);
 	        var extension = Path.GetExtension(request.Attachment.FileName);
 
             var key = request.Id >= 0 && request.Version >= 0
-                ? $"{identity.CompanyId}/{request.Id}-{request.Version}/{request.Code}.{extension}"
+                ? $"{identity.CompanyId}/{request.Id}-{request.Version}/{request.Code}{extension}"
                 : $"{TemporaryFolder}{identity.CompanyId}/{request.AttachmentTemporaryKey}/{request.Code}{extension}";
 
             using (var memoryStream = new MemoryStream(request.Attachment.Buffer))
@@ -585,41 +597,9 @@ namespace CheckListManager.Prototypes.Logic.Services
 			return new UploadAttachmentResponse { Key = key };
         }
 
-        public async Task<StorageFile> DownloadAttachmentAsync(DefaultIdentity identity, DownloadAttachmentRequest request)
+        public async Task<StorageFile> DownloadAttachmentAsync(DefaultIdentity identity, ProcessAttachmentRequest request)
         {
-            long department, prototypeType;
-            if (request.Id >= 0 && request.Version >= 0)
-            {
-                var prototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(
-                    identity.CompanyId, 
-                    request.Id,
-                    request.Version
-                );
-                department = prototypeVersion.Prototypes.Department;
-                prototypeType = prototypeVersion.Prototypes.PrototypeType;
-            }
-            else if (request.Id >= 0)
-            {
-                var prototype = await _prototypeRepository.GetPrototypeAsync(identity, request.Id);
-                department = prototype.Department;
-                prototypeType = prototype.PrototypeType;
-            }
-            else if (request.Department.HasValue && request.PrototypeType.HasValue)
-            {
-                department = request.Department.Value;
-                prototypeType = request.PrototypeType.Value;
-            }
-            else
-            {
-                // Shouldn't get here but just in case
-                throw new InvalidOperationException();
-            }
-            
-            if (
-                !identity.HasPermission("Prototypes", "Edit", department) &&
-                !identity.HasPermission("Prototypes", "Edit", department, prototypeType)
-            )
-                throw new UnauthorizedAccessException();
+            await ValidateRequest(identity, request, false);
 
             var isTemporary = request.Key.StartsWith(TemporaryFolder);
             var startIndex = request.Key.IndexOf('/', isTemporary ? TemporaryFolderStartIndex : 0);
@@ -631,6 +611,23 @@ namespace CheckListManager.Prototypes.Logic.Services
             
             return await _storageService.GetAsync(_configurationService.PrototypesStorageBucket, key);
         }
+
+        public async Task DeleteAttachmentAsync(DefaultIdentity identity, ProcessAttachmentRequest request)
+        {
+            await ValidateRequest(identity, request, false);
+
+            var isTemporary = request.Key.StartsWith(TemporaryFolder);
+            var startIndex = request.Key.IndexOf('/', isTemporary ? TemporaryFolderStartIndex : 0);
+            if (startIndex < 0)
+            {
+                throw new InvalidOperationException("Key format non valid");
+            }
+            var key = $"{(isTemporary ? TemporaryFolder : "")}{identity.CompanyId}{request.Key.Substring(startIndex)}";
+
+            await _storageService.DeleteAsync(_configurationService.PrototypesStorageBucket, key);
+        }
+        
+        #endregion
 
         private async Task<Guid> CloneAttachmentsToTempAsync(long companyId, long prototypeId, int versionId, Prototype prototype)
         {

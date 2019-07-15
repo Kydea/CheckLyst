@@ -1,15 +1,21 @@
 ﻿prototypes.UploadProperty = function (model, property, options) {
 	var
 		input,
+		previewButton,
+		deleteButton,
 		handler,
 		change = function () {
+			if (!input[0].files.length) {
+				return;
+			}
+			
 			var prototypeKey = prototypes.prototype.getPrototypeKey();
 			var prototypeModel = prototypes.prototype.getModel();
 			var formData = new FormData();
 			formData.append("attachment", input[0].files[0]);
 			formData.append("id", prototypeKey.id);
 			formData.append("version", prototypeKey.version);
-			formData.append("attachmentTemporaryKey", prototypes.prototype.getAttachmentTemporaryKey());
+			formData.append("attachmentTemporaryKey", prototypes.prototype.getAttachmentTemporaryKey() || '');
 			formData.append("code", model.itemId);
 			if (prototypeModel.department) formData.append("department", prototypeModel.department);
 			if (prototypeModel.prototypeType) formData.append("prototypeType", prototypeModel.prototypeType);
@@ -23,8 +29,9 @@
 				contentType: false,
 				processData: false,
 			}).done(function (result) {
-				console.log(result);
 				model.key = result.key;
+				previewButton.toggle(true);
+				deleteButton.toggle(true);
 				matematici.canClose = false;
 				if (handler) handler.call(this, model);
 			}).always(function () {
@@ -33,7 +40,28 @@
 		},
 
 		deleteImage = function () {
-			alert("delete image");
+			var prototypeKey = prototypes.prototype.getPrototypeKey();
+			var prototypeModel = prototypes.prototype.getModel();
+			var formData = {
+				id: prototypeKey.id,
+				version: prototypeKey.version,
+				attachmentTemporaryKey: prototypes.prototype.getAttachmentTemporaryKey() || '',
+				department: prototypeModel.department || '',
+				prototypeType: prototypes.prototype.getAttachmentTemporaryKey() || '',
+				key: model.key
+			};
+
+			$.ajax({
+				url: prototypes.prototype.getElement().data("action") + "DeleteAttachment",
+				type: "POST",
+				data: formData
+			}).done(function () {
+				model.key = null;
+				previewButton.toggle(false);
+				deleteButton.toggle(false);
+				matematici.canClose = false;
+				if (handler) handler.call(this, model);
+			});
 		},
 
 		preview = function () {
@@ -61,14 +89,27 @@
 		valuePanel.addClass("Upload");
 		options = options || {};
 		input = $("<input />")
-			.attr({ type: "file", readOnly: options.readOnly })
-			.val(model[property]);
+			.attr({ type: "file", readOnly: options.readOnly });
 		var form =
 			$("<form />")
 				.attr("enctype", "multipart/form-data")
 				.append($("<a />").attr("href", "#").addClass("Button").text("upload").append($("<i />").addClass("Icon fa fa-link")).on("click", function () { input.click(); }))
-				.append($("<a />").attr("href", "#").addClass("Button").text("preview").append($("<i />").addClass("Icon fa fa-image")).on("click", preview))
-				.append($("<a />").attr("href", "#").addClass("Button").text("delete").append($("<i />").addClass("Icon fa fa-trash-alt")).on("click", deleteImage))
+				.append(previewButton = $("<a />")
+					.attr("href", "#")
+					.addClass("Button")
+					.text("preview")
+					.append($("<i />").addClass("Icon fa fa-image"))
+					.on("click", preview)
+					.toggle(!!model.key)
+				)
+				.append(deleteButton = $("<a />")
+					.attr("href", "#")
+					.addClass("Button")
+					.text("delete")
+					.append($("<i />").addClass("Icon fa fa-trash-alt"))
+					.on("click", deleteImage)
+					.toggle(!!model.key)
+				)
 				.append(input);
 		input.on("change", change);
 
