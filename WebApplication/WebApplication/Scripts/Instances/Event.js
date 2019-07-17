@@ -15,27 +15,43 @@
     countDown: "CountDown",
     unlockPage: "UnlockPage",
 	skipCountDown: "SkipCountDown",
-	quit: "Quit"
+	quit: "Quit",
+	uploadAttachment: "UploadAttachment"
 };
 
-instances.Event = function (type, itemId, data, accessToken, suppressError) {
+instances.Event = function (type, itemId, data, accessToken, suppressError, fileUpload) {
 	var
 		done,
 		error;
 
-    this.trigger = function () {
-        data = data || {};
-        data.type = type;
-		data.itemId = itemId;
-		data.code = instances.instance.getCode();
-
-		$.ajax({
+	this.trigger = function () {
+		var options = {
 			url: matematici.urls.instances.api + "/Event",
 			type: "post",
 			data: data,
 			accessToken: accessToken,
 			suppressErrors: !!suppressError
-		}).done(function (result) {
+		};
+
+		if (fileUpload) {
+			data = data || new FormData();
+			formData.append("type", type);
+			formData.append("itemId", itemId);
+			formData.append("code", instances.instance.getCode());
+
+			options.cache = false;
+			options.contentType = false;
+			options.processData = false;
+		} else {
+			data = data || {};
+			data.type = type;
+			data.itemId = itemId;
+			data.code = instances.instance.getCode();
+		}
+
+		options.data = data;
+
+		$.ajax(options).done(function (result) {
 			if (done) {
 				done(result);
 				done = null;

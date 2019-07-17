@@ -27,7 +27,7 @@
 				data: formData,
 				cache: false,
 				contentType: false,
-				processData: false,
+				processData: false
 			}).done(function (result) {
 				model.key = result.key;
 				previewButton.toggle(true);

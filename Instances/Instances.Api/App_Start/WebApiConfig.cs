@@ -4,6 +4,8 @@ using CheckListManager.Common.Logic.Api.Configuration;
 using CheckListManager.Common.Logic.Json;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Instances.Logic.Models.CheckLists;
+using MultipartDataMediaFormatter;
+using MultipartDataMediaFormatter.Infrastructure;
 using Owin;
 
 namespace CheckListManager.Instances.Api
@@ -42,6 +44,7 @@ namespace CheckListManager.Instances.Api
 		    base.OnConfigureWebApi(configuration);
 
 		    configuration.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new CheckListJsonConverter(Container));
+		    configuration.Formatters.Add(new FormMultipartEncodedMediaTypeFormatter(new MultipartFormatterSettings()));
 	    }
 
 	    #region Static

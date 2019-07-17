@@ -23,11 +23,13 @@ using CheckListManager.Common.Logic.Authentication;
 using CheckListManager.Common.Logic.WorkFlows;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using CheckListManager.Common.Logic.Queue;
 using CheckListManager.Common.Logic.Trail;
 using CheckListManager.Common.Logic.FTP;
 using CheckListManager.Common.Logic.DataSources;
 using CheckListManager.Common.Logic;
+using MultipartDataMediaFormatter.Infrastructure;
 
 namespace CheckListManager.Instances.Logic.Services
 {
@@ -46,11 +48,22 @@ namespace CheckListManager.Instances.Logic.Services
         private readonly IQueueService _queueService;
         private readonly ICommonRepository _commonRepository;
         private readonly IRedisCache _redisCache;
+        private readonly IStorageService _storageService;
 
-        public InstanceManagerService(IServiceClient client,
-            IInstancesRepository instancesRepository, CheckListJsonConverter converter, IInstanceCacheService instanceCache,
-            IConfigurationService configurationService, ISettingService settingService, IAuthenticationService authenticationService,
-            IWorkFlowsService workFlowService, IQueueService queueService, ICommonRepository commonRepository, IRedisCache redisCache)
+        public InstanceManagerService(
+            IServiceClient client,
+            IInstancesRepository instancesRepository,
+            CheckListJsonConverter converter,
+            IInstanceCacheService instanceCache,
+            IConfigurationService configurationService,
+            ISettingService settingService,
+            IAuthenticationService authenticationService,
+            IWorkFlowsService workFlowService,
+            IQueueService queueService,
+            ICommonRepository commonRepository,
+            IRedisCache redisCache,
+            IStorageService storageService
+        )
         {
             _client = client;
             _instancesRepository = instancesRepository;
@@ -63,6 +76,7 @@ namespace CheckListManager.Instances.Logic.Services
             _queueService = queueService;
             _commonRepository = commonRepository;
             _redisCache = redisCache;
+            _storageService = storageService;
         }
 
         public async Task<InstanceCacheObject> Open(IDefaultIdentity identity, string code)
@@ -239,7 +253,7 @@ namespace CheckListManager.Instances.Logic.Services
                     cacheObject.Number = row.Number;
                     cacheObject.ModifiedOn = row.ModifiedOn;
                     cacheObject.ModifiedBy = row.ModifiedBy;
-                    if (cacheObject.Instance.Pages.Count() > 0)
+                    if (cacheObject.Instance.Pages.Any())
                         ((Page)cacheObject.Instance.Pages[0]).Lock = new Lock(identity.Code);
                     cacheObject.IsDirty = false;
 
@@ -671,51 +685,54 @@ namespace CheckListManager.Instances.Logic.Services
                 stopWatch = Stopwatch.StartNew();
 				switch (request.Type)
                 {
-                    case "PageChange":
+                    case EventTypes.PageChange:
                         await HandlePageChangeAsync(cacheObject, identity.Code, request.ItemId);
                         break;
-                    case "ValueChange":
+                    case EventTypes.ValueChange:
                         await HandleValueChangeAsync(cacheObject, identity.Code, request.ItemId, request.Value);
                         break;
-                    case "ValueCopy":
+                    case EventTypes.ValueCopy:
                         await HandleValueCopyAsync(cacheObject, identity.Code, request.ItemId);
                         break;
-                    case "Add":
+                    case EventTypes.Add:
                         await HandleAddAsync(cacheObject, identity.Code, request.ItemId);
                         break;
-                    case "Remove":
+                    case EventTypes.Remove:
                         await HandleRemoveAsync(cacheObject, identity.Code, request.ItemId);
                         break;
-                    case "Up":
+                    case EventTypes.Up:
                         await HandleMoveAsync(cacheObject, identity.Code, request.ItemId, -1);
                         break;
-                    case "Down":
+                    case EventTypes.Down:
                         await HandleMoveAsync(cacheObject, identity.Code, request.ItemId, 1);
                         break;
-                    case "Signature":
+                    case EventTypes.Signature:
                         await HandleSignatureAsync(cacheObject, identity, request);
                         break;
-                    case "SignatureCheck":
+                    case EventTypes.SignatureCheck:
                         await HandleSignatureCheckAsync(cacheObject, request.Username, request.ItemId);
                         break;
-                    case "SignatureCancelation":
-                        await HandleSignatureCancelationAsync(cacheObject, identity, request);
+                    case EventTypes.SignatureCancelation:
+                        await HandleSignatureCancellationAsync(cacheObject, identity, request);
                         break;
-                    case "UnlockPage":
+                    case EventTypes.UnlockPageUnlockPage:
                         await HandleUnlockPageAsync(cacheObject, identity.Code, request.ItemId);
                         break;
-                    case "CountDown":
+                    case EventTypes.CountDown:
                         break;
-                    case "SkipCountDown":
+                    case EventTypes.SkipCountDown:
                         await HandleSkipCountDown(cacheObject, request.Username, request.ItemId);
                         break;
-                    case "Refresh":
+                    case EventTypes.Refresh:
                         break;
-                    case "Quit":
+                    case EventTypes.Quit:
                         await HandleQuitAsync(cacheObject, identity);
                         break;
-                    case "ExternalSourceRowChange":
+                    case EventTypes.ExternalSourceRowChange:
                         await HandleExternalSourceRowChange(cacheObject, identity, request.ItemId, request.RowIndex, request.Row);
+                        break;
+                    case EventTypes.UploadAttachment:
+                        await HandleUploadAttachment(cacheObject, identity, request.ItemId, request.Attachment);
                         break;
                     default:
                         throw new InstanceException($"Event type {request.Type} not handled.");
@@ -743,6 +760,40 @@ namespace CheckListManager.Instances.Logic.Services
 				            $"Handle: {handleTime}{Environment.NewLine}");
                 lockObject?.Dispose();
             }
+        }
+
+        private async Task HandleUploadAttachment(
+            InstanceCacheObject cacheObject,
+            IDefaultIdentity identity,
+            int? itemId,
+            HttpFile attachment
+        )
+        {
+            if (!itemId.HasValue)
+                throw new InstanceException("Item id not sent");
+            
+            var item = cacheObject.Instance.Items.ContainsKey(itemId.Value) ? cacheObject.Instance.Items[itemId.Value] as Attachment : null;
+            if (item == null)
+                throw new InstanceException($"Attachment {itemId} not found");
+
+            if (item.ReadOnly)
+                return;
+            
+            var extension = Path.GetExtension(attachment.FileName);
+            var key = $"{identity.CompanyId}/{cacheObject.Code}/{itemId.Value}{extension}";
+            
+            using (var memoryStream = new MemoryStream(attachment.Buffer))
+            {
+                var success = await _storageService.PutAsync(_configurationService.InstancesStorageBucket, key, memoryStream);
+                if (!success)
+                {
+                    throw new InstanceException("Impossible to upload the attachment to the storage");
+                }
+            }
+
+            item.Key = key;
+
+            await Update(cacheObject, identity.Code);
         }
 
         private async Task HandlePageChangeAsync(InstanceCacheObject cacheObject, string userCode, int? itemId)
@@ -819,10 +870,10 @@ namespace CheckListManager.Instances.Logic.Services
 
             if (field.IterationItem && field.Iteration.Index > 1)
             {
-                var PreviuosIteration = field.Iteration.Group.Iterations[field.Iteration.Index - 2];
+                var previousIteration = field.Iteration.Group.Iterations[field.Iteration.Index - 2];
                 var ItemIndex = field.Iteration.Items.Contains(field) ? field.Iteration.Items.IndexOf(field) : -1;
-                var PreviuosField = ItemIndex < 0 ? null : (Field)PreviuosIteration.Items[field.Iteration.Items.IndexOf(field)];
-                value = PreviuosField?.Value ?? String.Empty;
+                var previousField = ItemIndex < 0 ? null : (Field)previousIteration.Items[field.Iteration.Items.IndexOf(field)];
+                value = previousField?.Value ?? String.Empty;
             }
 
             if ((value ?? string.Empty) != (field.Value ?? string.Empty) && field.Validate(value))
@@ -970,16 +1021,16 @@ namespace CheckListManager.Instances.Logic.Services
             if (signature.Signed)
                 throw new Exception("The signature is already signed");
 
-            if (request.Simple.Value && string.IsNullOrEmpty(request.Password))
+            if (request.Simple && string.IsNullOrEmpty(request.Password))
                 throw new InstanceException("Provide your password");
-            if (!request.Simple.Value && string.IsNullOrEmpty(request.Pin))
+            if (!request.Simple && string.IsNullOrEmpty(request.Pin))
                 throw new InstanceException("Provide your PIN");
 
             signature.TrySign(await _settingService.DecimalSeparatorAsync(cacheObject.CompanyId), (await _settingService.TimeZoneAsync(cacheObject.CompanyId)).MicrosoftCode, identity.Code);
 
             try
             {
-                if (request.Simple.Value)
+                if (request.Simple)
                     await _authenticationService.AuthenticateAsync(identity.Code, request.Password);
                 else
                     await _authenticationService.AuthenticateWithPINAsync(request.Pin);
@@ -1016,7 +1067,7 @@ namespace CheckListManager.Instances.Logic.Services
         }
 
 
-        private async Task HandleSignatureCancelationAsync(InstanceCacheObject cacheObject, IDefaultIdentity identity, InstanceEventRequest request)
+        private async Task HandleSignatureCancellationAsync(InstanceCacheObject cacheObject, IDefaultIdentity identity, InstanceEventRequest request)
         {
             if (!request.ItemId.HasValue)
                 throw new InstanceException("Item id not sent");
@@ -1032,7 +1083,7 @@ namespace CheckListManager.Instances.Logic.Services
                 throw new InstanceException("Provide your password");
 
             if (string.IsNullOrWhiteSpace(request.Note))
-                throw new InstanceException("Provide a cancelation note");
+                throw new InstanceException("Provide a cancellation note");
 
             if (cacheObject.Instance.ReadOnly)
                 throw new InstanceException("Invalid operation");
@@ -1180,7 +1231,7 @@ namespace CheckListManager.Instances.Logic.Services
 
         #endregion
 
-        public bool HasPermission(IDefaultIdentity identity, string function, string PrototypeVersionState, long Department, long PrototypeType, string Tag = null)
+        private bool HasPermission(IDefaultIdentity identity, string function, string PrototypeVersionState, long Department, long PrototypeType, string Tag = null)
         {
             return
                 PrototypeVersionState.In(VersionState.Draft, VersionState.InSimulation)
@@ -1245,8 +1296,8 @@ namespace CheckListManager.Instances.Logic.Services
                 var responseData = await httpResponse.Content.ReadAsStringAsync();
                 if (httpResponse.StatusCode == HttpStatusCode.InternalServerError)
                 {
-                    var messase = JsonConvert.DeserializeObject<ResponseMessage>(responseData);
-                    throw new InstanceException(messase.Messages.FirstOrDefault() ?? "Unable to retrieve the prototype");
+                    var message = JsonConvert.DeserializeObject<ResponseMessage>(responseData);
+                    throw new InstanceException(message.Messages.FirstOrDefault() ?? "Unable to retrieve the prototype");
                 }
                 var response = JsonConvert.DeserializeObject<GetPrototypeResponse>(responseData, _converter);
                 return response;

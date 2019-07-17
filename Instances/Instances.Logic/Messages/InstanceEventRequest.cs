@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using MultipartDataMediaFormatter.Infrastructure;
 
 namespace CheckListManager.Instances.Logic.Messages
 {
@@ -14,7 +15,7 @@ namespace CheckListManager.Instances.Logic.Messages
 
         public string Value { get; set; }
 
-		public bool? Simple { get; set; }
+		public bool Simple { get; set; }
 		public string Username { get; set; }
 		public string Password { get; set; }
 		public string Pin { get; set; }		
@@ -22,5 +23,7 @@ namespace CheckListManager.Instances.Logic.Messages
 
         public int? RowIndex { get; set; }
         public Dictionary<string, string> Row { get; set; }
+        
+        public HttpFile Attachment { get; set; }
 	}
 }
