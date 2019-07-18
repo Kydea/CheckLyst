@@ -6,7 +6,7 @@
             textArea[0].select();
 
             try {
-                successful = document.execCommand(command);
+                successful = document.execCommand("copy");
                 if (successful)
                     matematici.blip.ok();
                 else
