@@ -161,14 +161,7 @@
 				"Determines if the element is visible or not."
 			));
 			properties.push(new prototypes.Property(
-				this, new prototypes.ExpressionProperty(model, "countDownToCode", { readOnly: state != prototypes.Prototype.states.draft }).setCheck([
-					{
-						action: function (expression) {
-                            return !expression || propertyPanel.checkDataType(expression, "DateTime");
-						},
-						message: "the expression result must be a date/time"
-					}
-				]), "Countdown to",
+                this, new prototypes.CountDownToProperty(model, "countDownToCode"), "Countdown to",
 				"Shows the countdown until the date and time are reached."
 			));
 			properties.push(new prototypes.Property(

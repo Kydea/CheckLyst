@@ -148,11 +148,15 @@ matematici.AutoComplete = function (selector) {
 		},
 
 		checkReadOnly = function () {
-			if (element.hasClass("ReadOnly")) {
-				readOnly = true;
-				label.addClass("ReadOnly").prop("readonly", true);
-				icon.remove();
-			}
+            if (element.hasClass("ReadOnly")) {
+                readOnly = true;
+                label.addClass("ReadOnly").prop("readonly", true);
+                icon.remove();
+            } else {
+                readOnly = false;
+                label.removeClass("ReadOnly").prop("readonly", false);
+                icon.insertAfter(input);
+            }
 		},
 
 		destroy = function () {

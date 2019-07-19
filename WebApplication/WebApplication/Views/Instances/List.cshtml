@@ -138,7 +138,7 @@
             var
                 prototype = $("select[name=prototype]", formElement).val(),
                 prototypeName = $("select[name=prototype]", formElement).next().val(),
-                url = matematici.urls.webApplication + "/@Url.Action("Create")/" + prototype;
+                url = matematici.urls.webApplication + "@Url.Action("Create")/" + prototype;
 
             if (!prototypeName)
                 matematici.dialog.error("Error", "Select a prototype.");

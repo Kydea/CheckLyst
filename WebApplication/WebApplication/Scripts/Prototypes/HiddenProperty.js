@@ -28,7 +28,7 @@
     this.create = function (valuePanel) {
         valuePanel.addClass("HiddenProperty");
 		expressions = prototypes.prototype.getModel().expressions;
-		console.log(model);
+
         if (editable)
         {
             input = $("<select />")

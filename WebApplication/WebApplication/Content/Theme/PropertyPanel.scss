@@ -136,6 +136,12 @@ div.PropertyPanel {
                 }
             }
         }
+
+        &.CountDown {
+            label {
+                margin-top: $Metric-Control-Space;
+            }
+        }
     }
 
     div.Information {

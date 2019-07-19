@@ -80,6 +80,8 @@
         display: none; }
       div.PropertyPanel div.PropertyValue.Upload form a.Button {
         margin: 0 !important; }
+    div.PropertyPanel div.PropertyValue.CountDown label {
+      margin-top: 20px; }
   div.PropertyPanel div.Information {
     position: absolute;
     overflow: auto;

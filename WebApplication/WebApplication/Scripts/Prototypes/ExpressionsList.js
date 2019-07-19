@@ -174,7 +174,7 @@
             if (element.hiddenExpressionCode) expressionsInUse[element.hiddenExpressionCode] = true;
             if (element.readOnlyExpressionCode) expressionsInUse[element.readOnlyExpressionCode] = true;
             if (element.validExpressionCode) expressionsInUse[element.validExpressionCode] = true;
-            if (element.countDownToCode) expressionsInUse[element.countDownToCode] = true;
+            if (element.countDownCondition != 6 && element.countDownToCode) expressionsInUse[element.countDownToCode] = true;
         },
 
         checkGroupExpressionsInUse = function (group) {

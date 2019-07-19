@@ -11,8 +11,10 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 	{
 		public ICheckList CheckList { get; set; }
 		public string Code { get; set; }
-		public string CountDownToCode { get; set; }
-		public Conditions HiddenCondition { get; set; }
+        public Conditions CountDownCondition { get; set; }
+        public string CountDownToCode { get; set; }
+        public int CountDownOffset { get; set; }
+        public Conditions HiddenCondition { get; set; }
 		public string HiddenExpressionCode { get; set; }
 		public Conditions ReadOnlyCondition { get; set; }
 		public string ReadOnlyExpressionCode { get; set; }
