@@ -3,8 +3,9 @@
         i, a,
 
         setup = function () {
-            i = $("<i >").addClass("Icon Link fa fa-caret-right").appendTo(item.getElement());
-            a = $("<a />").addClass("Link").appendTo(item.getElement());
+            var element = item.getElement();
+            i = $("<i >").addClass("Icon Link fa fa-caret-right").appendTo(element);
+            a = $("<a />").addClass("Link").appendTo(element);
         };
 
     this.update = function (model) {
