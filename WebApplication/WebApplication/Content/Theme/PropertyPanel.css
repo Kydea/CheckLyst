@@ -79,7 +79,9 @@
       div.PropertyPanel div.PropertyValue.Upload form input[type=file] {
         display: none; }
       div.PropertyPanel div.PropertyValue.Upload form a.Button {
-        margin: 0 !important; }
+        margin: 0 0 10px 0 !important;
+        clear: both;
+        min-width: 200px; }
     div.PropertyPanel div.PropertyValue.CountDown label {
       margin-top: 20px; }
   div.PropertyPanel div.Information {

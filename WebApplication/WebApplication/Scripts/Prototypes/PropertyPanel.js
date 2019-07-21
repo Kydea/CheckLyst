@@ -36,7 +36,7 @@
         copyModel(model, oldModel);
 
         matematici.popup.show({
-            title: "Properties",
+            title: "Properties - " + model.typeName,
             content: element,
             buttons: [{
                 icon: "check",

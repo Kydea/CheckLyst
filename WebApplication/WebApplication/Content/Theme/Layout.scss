@@ -83,7 +83,7 @@ i.fa, i.fal {
 }
 
 .Hidden {
-    display: none;
+    display: none !important;
 }
 
 textarea.ClipboardBridge {

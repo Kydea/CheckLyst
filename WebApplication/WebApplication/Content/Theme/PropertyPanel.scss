@@ -132,7 +132,9 @@ div.PropertyPanel {
                 }
 
                 a.Button {
-                    margin: 0 !important;
+                    margin: 0 0 10px 0 !important;
+                    clear: both;
+                    min-width: 200px;
                 }
             }
         }
