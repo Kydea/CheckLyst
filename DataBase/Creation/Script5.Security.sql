@@ -11,7 +11,8 @@ insert into "Security"."FunctionGroups" values
 	('Prototypes'),
 	('Trail'),
 	('Users'),
-	('WorkFlows');
+	('WorkFlows'),
+	('FTPServers');
 
 create table "Security"."Functions"
 (
@@ -48,7 +49,10 @@ insert into "Security"."Functions" values
 	('Users', 'View'),
 
 	('WorkFlows', 'Edit'),
-	('WorkFlows', 'View');
+	('WorkFlows', 'View'),
+
+	('FTPServers', 'Edit'),
+	('FTPServers', 'View');
 
 create table "Security"."UserFunctions"
 (

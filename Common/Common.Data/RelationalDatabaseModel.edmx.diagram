@@ -89,6 +89,8 @@
         <AssociationConnector Association="RelationalDatabaseModel.PrototypeVersionsHistory_PrototypeVersion" />
         <AssociationConnector Association="RelationalDatabaseModel.PrototypeVersionsHistory_WorkFlowApplication_fkey" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.DataSources" Width="1.5" PointX="0.75" PointY="10.75" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.FTPServers" Width="1.5" PointX="5.25" PointY="20.125" />
+        <AssociationConnector Association="RelationalDatabaseModel.FTPServers_Company_fkey" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

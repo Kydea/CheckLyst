@@ -53,3 +53,30 @@ create table "Infrastructure"."Departments"
 );
 
 create unique index "Departments_Name" on "Infrastructure"."Departments" ("Company", upper("Name"));
+
+create table "Infrastructure"."FTPServers"
+(
+    "ID" bigserial primary key,
+
+	"Company" bigint references "Infrastructure"."Companies" on delete cascade,
+
+    "Name" varchar (50) not null,
+    "Host" varchar(500) not null,
+    "Port" int not null default 21,
+    "Folder" varchar(500),
+    "UserName" varchar(100),
+    "Password" varchar(100),
+    "Passive" boolean not null, 
+    "SSL" boolean not null, 
+    "PrototypesDefault" boolean not null, 
+    "InstancesDefault" boolean not null, 
+
+	"CreatedBy" varchar (60),
+	"CreatedOn" timestamptz not null default current_timestamp,
+	"ModifiedBy" varchar (60),
+	"ModifiedOn" timestamptz
+);
+
+create unique index "FTPServers_Name" on "Infrastructure"."FTPServers" ("Company", upper("Name"));
+create unique index "FTPServers_PrototypesDefault" on "Infrastructure"."FTPServers" ("Company") where "PrototypesDefault";
+create unique index "FTPServers_InstancesDefault" on "Infrastructure"."FTPServers" ("Company") where "InstancesDefault";

@@ -56,6 +56,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FTPServers\FTPServersRequest.cs" />
+    <Compile Include="FTPServers\FTPServersResponse.cs" />
+    <Compile Include="FTPServers\FTPServersRow.cs" />
+    <Compile Include="FTPServers\FTPServersService.cs" />
+    <Compile Include="FTPServers\IFTPServersService.cs" />
     <Compile Include="Email\EmailService.cs" />
     <Compile Include="Email\IEmailService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

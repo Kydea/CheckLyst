@@ -235,6 +235,27 @@
           <Property Name="ModifiedBy" Type="varchar" MaxLength="60" />
           <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
         </EntityType>
+        <EntityType Name="FTPServers">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int8" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Company" Type="int8" />
+          <Property Name="Name" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Host" Type="varchar" MaxLength="500" Nullable="false" />
+          <Property Name="Port" Type="int4" Nullable="false" />
+          <Property Name="Folder" Type="varchar" MaxLength="500" />
+          <Property Name="UserName" Type="varchar" MaxLength="100" />
+          <Property Name="Password" Type="varchar" MaxLength="100" />
+          <Property Name="Passive" Type="bool" Nullable="false" />
+          <Property Name="SSL" Type="bool" Nullable="false" />
+          <Property Name="PrototypesDefault" Type="bool" Nullable="false" />
+          <Property Name="InstancesDefault" Type="bool" Nullable="false" />
+          <Property Name="CreatedBy" Type="varchar" MaxLength="60" />
+          <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
+          <Property Name="ModifiedBy" Type="varchar" MaxLength="60" />
+          <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
+        </EntityType>
         <EntityType Name="TimeZones">
           <Key>
             <PropertyRef Name="Code" />
@@ -541,6 +562,20 @@
             <Dependent Role="PrototypeVersionTags">
               <PropertyRef Name="Prototype" />
               <PropertyRef Name="Version" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FTPServers_Company_fkey">
+          <End Role="Companies" Type="Self.Companies" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="FTPServers" Type="Self.FTPServers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Companies">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="FTPServers">
+              <PropertyRef Name="Company" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1095,6 +1130,7 @@
           <EntitySet Name="DataSources" EntityType="Self.DataSources" Schema="DataSources" store:Type="Tables" />
           <EntitySet Name="Companies" EntityType="Self.Companies" Schema="Infrastructure" store:Type="Tables" />
           <EntitySet Name="Departments" EntityType="Self.Departments" Schema="Infrastructure" store:Type="Tables" />
+          <EntitySet Name="FTPServers" EntityType="Self.FTPServers" Schema="Infrastructure" store:Type="Tables" />
           <EntitySet Name="TimeZones" EntityType="Self.TimeZones" Schema="Infrastructure" store:Type="Tables" />
           <EntitySet Name="FunctionGroups" EntityType="Self.FunctionGroups" Schema="Security" store:Type="Tables" />
           <EntitySet Name="Functions" EntityType="Self.Functions" Schema="Security" store:Type="Tables" />
@@ -1143,6 +1179,10 @@
           <AssociationSet Name="FK_PrototypeVersionTags_Version" Association="Self.FK_PrototypeVersionTags_Version">
             <End Role="PrototypeVersions" EntitySet="PrototypeVersions" />
             <End Role="PrototypeVersionTags" EntitySet="PrototypeVersionTags" />
+          </AssociationSet>
+          <AssociationSet Name="FTPServers_Company_fkey" Association="Self.FTPServers_Company_fkey">
+            <End Role="Companies" EntitySet="Companies" />
+            <End Role="FTPServers" EntitySet="FTPServers" />
           </AssociationSet>
           <AssociationSet Name="Functions_FunctionGroup_fkey" Association="Self.Functions_FunctionGroup_fkey">
             <End Role="FunctionGroups" EntitySet="FunctionGroups" />
@@ -1344,6 +1384,7 @@
           <Property Name="LoginFailedTimeout" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Instances" Relationship="RelationalDatabaseModel.Instances_Company_fkey" FromRole="Companies" ToRole="Instances" />
           <Property Name="InactivityTimeoutSeconds" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="FTPServers" Relationship="RelationalDatabaseModel.FTPServers_Company_fkey" FromRole="Companies" ToRole="FTPServers" />
         </EntityType>
         <EntityType Name="Departments">
           <Key>
@@ -1649,6 +1690,11 @@
             <End Role="PrototypeVersionsHistory" EntitySet="PrototypeVersionsHistory" />
           </AssociationSet>
           <EntitySet Name="DataSources" EntityType="RelationalDatabaseModel.DataSources" />
+          <EntitySet Name="FTPServers" EntityType="RelationalDatabaseModel.FTPServers" />
+          <AssociationSet Name="FTPServers_Company_fkey" Association="RelationalDatabaseModel.FTPServers_Company_fkey">
+            <End Role="Companies" EntitySet="Companies" />
+            <End Role="FTPServers" EntitySet="FTPServers" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="TimeZones">
           <Key>
@@ -2705,6 +2751,42 @@
           <Property Name="Class" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Password" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
+        <EntityType Name="FTPServers">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Company" Type="Int64" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Host" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Port" Type="Int32" Nullable="false" />
+          <Property Name="Folder" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="UserName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Passive" Type="Boolean" Nullable="false" />
+          <Property Name="SSL" Type="Boolean" Nullable="false" />
+          <Property Name="PrototypesDefault" Type="Boolean" Nullable="false" />
+          <Property Name="InstancesDefault" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedOn" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
+          <NavigationProperty Name="Companies" Relationship="RelationalDatabaseModel.FTPServers_Company_fkey" FromRole="FTPServers" ToRole="Companies" />
+        </EntityType>
+        <Association Name="FTPServers_Company_fkey">
+          <End Type="RelationalDatabaseModel.Companies" Role="Companies" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="RelationalDatabaseModel.FTPServers" Role="FTPServers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Companies">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="FTPServers">
+              <PropertyRef Name="Company" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -3152,6 +3234,28 @@
                 <ScalarProperty Name="Data" ColumnName="Data" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Company" ColumnName="Company" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FTPServers">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.FTPServers">
+              <MappingFragment StoreEntitySet="FTPServers">
+                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="InstancesDefault" ColumnName="InstancesDefault" />
+                <ScalarProperty Name="PrototypesDefault" ColumnName="PrototypesDefault" />
+                <ScalarProperty Name="SSL" ColumnName="SSL" />
+                <ScalarProperty Name="Passive" ColumnName="Passive" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="Folder" ColumnName="Folder" />
+                <ScalarProperty Name="Port" ColumnName="Port" />
+                <ScalarProperty Name="Host" ColumnName="Host" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Company" ColumnName="Company" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>

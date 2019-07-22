@@ -5,4 +5,6 @@ insert into "Configuration"."Configurations" ("Code", "Value") values
 	('SqsPrefix', 'dev-'),
 	('ApiBaseUrl', 'http://10.157.83.252/'),
 	('PublicRepositoryUrl', 'http://10.157.83.244/content/media/'),
-	('InstanceCloseTimeout', '4320'); --3 days, expressed in minutes
+	('InstanceCloseTimeout', '4320'), --3 days, expressed in minutes
+	('PrototypesStorageBucket', '???'),
+	('InstancesStorageBucket', '???');

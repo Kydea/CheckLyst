@@ -109,6 +109,9 @@
     </Compile>
     <Compile Include="Exceptions\DatabaseAggregateException.cs" />
     <Compile Include="Exceptions\DatabaseException.cs" />
+    <Compile Include="FTPServers.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="FunctionGroups.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>

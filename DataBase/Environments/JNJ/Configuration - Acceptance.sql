@@ -5,4 +5,6 @@ insert into "Configuration"."Configurations" ("Code", "Value") values
 	('SqsPrefix', 'qa-'),
 	('ApiBaseUrl', 'https://internal-checklystqa.jnj.com/'),
 	('PublicRepositoryUrl', 'https://checklystqa.jnj.com/content/media/'),
-	('InstanceCloseTimeout', '4320'); --3 days, expressed in minutes
+	('InstanceCloseTimeout', '4320'), --3 days, expressed in minutes
+	('PrototypesStorageBucket', '???'),
+	('InstancesStorageBucket', '???');

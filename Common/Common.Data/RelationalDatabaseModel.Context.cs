@@ -60,5 +60,6 @@ namespace CheckListManager.Common.Data
         public virtual DbSet<InstancesHistory> InstancesHistory { get; set; }
         public virtual DbSet<PrototypeVersionsHistory> PrototypeVersionsHistory { get; set; }
         public virtual DbSet<DataSources> DataSources { get; set; }
+        public virtual DbSet<FTPServers> FTPServers { get; set; }
     }
 }

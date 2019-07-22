@@ -1,3 +1,7 @@
+insert into "Configuration"."Configurations" ("Code", "Value") values
+	('PrototypesStorageBucket', <TBD>), --update Configuration - XXX.sql accordingly
+	('InstancesStorageBucket', <TBD>); --update Configuration - XXX.sql accordingly
+
 alter table "CheckLists"."InstanceExpressionValues" add 
 	"Description" varchar (100),
 	"Unique" boolean not null default true,
@@ -51,6 +55,36 @@ where
 
 alter  table "Infrastructure"."Companies" add "InactivityTimeoutSeconds" int not null default 900;
 
-insert into "Configuration"."Configurations" ("Code", "Value") values
-    ('PrototypesStorageBucket', 's3-clm-matematici-prototypes'),
-    ('InstancesStorageBucket', 's3-clm-matematici-instances')
+create table "Infrastructure"."FTPServers"
+(
+    "ID" bigserial primary key,
+
+	"Company" bigint references "Infrastructure"."Companies" on delete cascade,
+
+    "Name" varchar (50) not null,
+    "Host" varchar(500) not null,
+    "Port" int not null default 21,
+    "Folder" varchar(500),
+    "UserName" varchar(100),
+    "Password" varchar(100),
+    "Passive" boolean not null, 
+    "SSL" boolean not null, 
+    "PrototypesDefault" boolean not null, 
+    "InstancesDefault" boolean not null, 
+
+	"CreatedBy" varchar (60),
+	"CreatedOn" timestamptz not null default current_timestamp,
+	"ModifiedBy" varchar (60),
+	"ModifiedOn" timestamptz
+);
+
+create unique index "FTPServers_Name" on "Infrastructure"."FTPServers" ("Company", upper("Name"));
+create unique index "FTPServers_PrototypesDefault" on "Infrastructure"."FTPServers" ("Company") where "PrototypesDefault";
+create unique index "FTPServers_InstancesDefault" on "Infrastructure"."FTPServers" ("Company") where "InstancesDefault";
+
+insert into "Security"."FunctionGroups" values
+	('FTPServers');
+
+insert into "Security"."Functions" values
+	('FTPServers', 'Edit'),
+	('FTPServers', 'View');

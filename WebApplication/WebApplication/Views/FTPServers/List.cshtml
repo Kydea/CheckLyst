@@ -1,0 +1,70 @@
+﻿<div id="DataSourcesListPage">
+    <h1>FTP Servers List</h1>
+
+    <div class="ActionBar"></div>
+
+    <div class="ShadowPanel">
+        <div class="Accordion"></div>
+        <form id="Filters" action="@BaseUrl/FTPServers/List">
+            <label>
+                <span>Name</span>
+                <i class="Icon fal fa-key" />
+                <input type="text" name="code" />
+            </label>
+
+            <label>
+                <span>Host</span>
+                <i class="Icon fal fa-align-left" />
+                <input type="text" name="description" />
+            </label>
+        </form>
+
+        <table class="Grid">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Host</th>
+                    <th>Prototypes default</th>
+                    <th>Instances default</th>
+                    <th>Created by</th>
+                    <th>Created on</th>
+                    <th>Modified by</th>
+                    <th>Modified on</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="Handler">
+                    <td data-column="id"></td>
+                    <td data-column="name"></td>
+                    <td data-column="host"></td>
+                    <td data-column="prototypesDefault"></td>
+                    <td data-column="instancesDefault"></td>
+                    <td data-column="createdBy"></td>
+                    <td data-column="createdOn" data-type="DateTimeOffset"></td>
+                    <td data-column="modifiedBy"></td>
+                    <td data-column="modifiedOn" data-type="DateTimeOffset"></td>
+                </tr>
+                <tr class="NoRecord"><td>(no record)</td></tr>
+            </tbody>
+        </table>
+        <div class="Paginator"></div>
+        <div class="Clearing"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    matematici.events.onPageLoad = function (callback) {
+        new matematici.SearchPage({
+            pageName: "FTPServers",
+            detailUrl: "@Url.Action("Detail")",
+            filterFormSelector: "form#Filters",
+            resultGridSelector: "div#Content table.Grid",
+            breadCrumbs: [
+                { content: "ftp servers" }
+            ]
+        });
+
+        callback.call();
+    };
+</script>

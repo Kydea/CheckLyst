@@ -5,4 +5,6 @@ insert into "Configuration"."Configurations" ("Code", "Value") values
 	('SqsPrefix', ''),
 	('ApiBaseUrl', 'http://api.clm.internal/'),
 	('PublicRepositoryUrl', 'https://s3-eu-west-1.amazonaws.com/public.matematici-clm.com/'),
-	('InstanceCloseTimeout', '4320'); --3 days, expressed in minutes
+	('InstanceCloseTimeout', '4320'), --3 days, expressed in minutes
+	('PrototypesStorageBucket', '???'),
+	('InstancesStorageBucket', '???');

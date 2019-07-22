@@ -22,6 +22,12 @@ namespace CheckListManager.Infrastructure.Data
 
         Task DeletePrototypeTypeAsync(IDefaultIdentity identity, long id);
 
+        Task<FTPServers> EditFTPServerAsync(IDefaultIdentity identity, FTPServers ftpServer);
+
+        Task<FTPServers> AddFTPServerAsync(IDefaultIdentity identity, FTPServers ftpServer);
+
+        Task DeleteFTPServerAsync(IDefaultIdentity identity, long id);
+
         Task<PagingResponse<List<TResult>>> GetDepartmentsAsync<TResult>(
             IDefaultIdentity identity,
             Expression<Func<Departments, TResult>> select,
@@ -33,6 +39,11 @@ namespace CheckListManager.Infrastructure.Data
             long? department, string name, string functionGroup, 
             int currentPage, int itemsPerPage,
             string Function = "View");
+
+        Task<PagingResponse<List<TResult>>> GetFTPServersAsync<TResult>(
+            IDefaultIdentity identity,
+            Expression<Func<FTPServers, TResult>> select,
+            string name, string host, int currentPage, int itemsPerPage);
 
         Task<List<WorkFlows>> GetWorkFlows(long companyId);
     }

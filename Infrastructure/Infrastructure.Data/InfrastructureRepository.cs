@@ -85,6 +85,47 @@ namespace CheckListManager.Infrastructure.Data
             await SaveChangesAsync();
         }
 
+        private async Task<FTPServers> GetFTPServerAsync(IDefaultIdentity identity, long id)
+        {
+            var FTPServer = await Entities.FTPServers.SingleOrDefaultAsync(d => d.Company == identity.CompanyId && d.ID == id);
+            if (FTPServer == null) throw new DatabaseException($"FTP server {id} not found");
+            return FTPServer;
+        }
+
+        public async Task<FTPServers> EditFTPServerAsync(IDefaultIdentity identity, FTPServers ftpServer)
+        {
+            var ExistingFTPServer = await GetFTPServerAsync(identity, ftpServer.ID);
+            ExistingFTPServer.Name = ftpServer.Name;
+            ExistingFTPServer.Host = ftpServer.Host;
+            ExistingFTPServer.Port = ftpServer.Port;
+            ExistingFTPServer.Folder = ftpServer.Folder;
+            ExistingFTPServer.UserName = ftpServer.UserName;
+            ExistingFTPServer.Password = ftpServer.Password;
+            ExistingFTPServer.Passive = ftpServer.Passive;
+            ExistingFTPServer.SSL = ftpServer.SSL;
+            ExistingFTPServer.PrototypesDefault = ftpServer.PrototypesDefault;
+            ExistingFTPServer.InstancesDefault = ftpServer.InstancesDefault;
+            ExistingFTPServer.ModifiedOn = DateTimeOffset.UtcNow;
+            ExistingFTPServer.ModifiedBy = identity.Code;
+            await SaveChangesAsync();
+            return ExistingFTPServer;
+        }
+
+        public async Task<FTPServers> AddFTPServerAsync(IDefaultIdentity identity, FTPServers ftpServer)
+        {
+            ftpServer.Company = identity.CompanyId;
+            ftpServer.CreatedOn = DateTimeOffset.UtcNow;
+            ftpServer.CreatedBy = identity.Code;
+            Entities.FTPServers.Add(ftpServer);
+            await SaveChangesAsync();
+            return ftpServer;
+        }
+
+        public async Task DeleteFTPServerAsync(IDefaultIdentity identity, long id)
+        {
+            Entities.PrototypeTypes.Remove(await GetPrototypeTypeAsync(identity, id));
+            await SaveChangesAsync();
+        }
         public async Task<PagingResponse<List<TResult>>> GetDepartmentsAsync<TResult>(
             IDefaultIdentity identity,
             Expression<Func<Departments, TResult>> select,
@@ -144,6 +185,38 @@ namespace CheckListManager.Infrastructure.Data
 
             IQueryable<TResult> Query = PrototypeTypes
                 .OrderBy(pt => pt.Department).ThenBy(pt => pt.Name).ThenBy(pt => pt.ID)
+                .Select(select);
+
+            var Data = await Query
+                .Skip((currentPage - 1) * itemsPerPage)
+                .Take(itemsPerPage)
+                .ToListAsync();
+
+            int Count = await Query.CountAsync();
+
+            return new PagingResponse<List<TResult>>
+            {
+                Data = Data,
+                Count = Count,
+                ItemsPerPage = itemsPerPage,
+                CurrentPage = currentPage
+            };
+        }
+
+        public async Task<PagingResponse<List<TResult>>> GetFTPServersAsync<TResult>(
+            IDefaultIdentity identity,
+            Expression<Func<FTPServers, TResult>> select,
+            string name, string host, int currentPage, int itemsPerPage)
+        {
+            IQueryable<FTPServers> FTPServers = Entities.FTPServers
+                .Where(ftps =>
+                    ftps.Company == identity.CompanyId
+                    && (name == "" || ftps.Name != null && ftps.Name.ToUpper().Contains(name.ToUpper()))
+                    && (host == "" || ftps.Host != null && ftps.Host.ToUpper().Contains(host.ToUpper()))
+                );
+
+            IQueryable<TResult> Query = FTPServers
+                .OrderBy(pt => pt.Name).ThenBy(pt => pt.ID)
                 .Select(select);
 
             var Data = await Query
