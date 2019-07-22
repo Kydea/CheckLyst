@@ -131,6 +131,13 @@ div.CheckList div.Item {
       padding-left: 15px; }
     div.CheckList div.Item.Link:hover i.Link {
       left: 5px; }
+  div.CheckList div.Item.Attachment {
+    max-width: calc(100% - 40px); }
+    div.CheckList div.Item.Attachment a.Attachment {
+      white-space: nowrap;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis; }
 
 div.CheckList .Item p.Description {
   margin: 0; }

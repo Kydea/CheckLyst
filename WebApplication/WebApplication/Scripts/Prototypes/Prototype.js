@@ -262,6 +262,8 @@
             else if (element.typeName == "Group")
                 for (var index in element.items)
                     traverseForPaste(element.items[index]);
+            else if (element.typeName == "Image")
+                element.key = null;
         },
 
         paste = function () {

@@ -217,6 +217,17 @@ div.CheckList {
                 }
             }
         }
+
+        &.Attachment {
+            max-width: calc(100% - #{2 * $Metric-Control-Space});
+
+            a.Attachment {
+                white-space: nowrap;
+                max-width: 100%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
     }
 
     .Item {

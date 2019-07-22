@@ -151,6 +151,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public TypedValue GetExpressionValue(string ExpressionCode, List<int> IterationIndexes)
         {
+            if (ExpressionCode == null || !CheckList.Expressions.ContainsKey(ExpressionCode)) return null;
+
             var Value = CheckList.Expressions[ExpressionCode].Value;
             var Index = 0;
             while (Value?.IsNull == false && Value?.Type == DataType.Array)

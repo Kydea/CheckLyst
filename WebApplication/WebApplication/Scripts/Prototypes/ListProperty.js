@@ -46,7 +46,7 @@
     }
 
     this.hasChanges = function () {
-        return !!model[property] && model[property] != values[0].code;
+        return !!model[property] && model[property] != values[0].code && model[property] != values[0];
 	}
 
 	this.refresh = function (newValues) {

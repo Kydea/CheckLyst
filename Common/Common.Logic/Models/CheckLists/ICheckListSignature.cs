@@ -8,7 +8,8 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
 		bool AcceptsPin { get; set; }
 		string ButtonLabel { get; set; }
 		bool Cancelable { get; set; }
-		List<SignatureRecord> History { get; }
+		bool SendEmail { get; set; }
+        List<SignatureRecord> History { get; }
 		string SignatureLevel { get; set; }
 		bool Signed { get; set; }
 		string SignedBy { get; set; }

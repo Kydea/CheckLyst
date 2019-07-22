@@ -93,7 +93,7 @@
 		var form =
 			$("<form />")
 				.attr("enctype", "multipart/form-data")
-				.append($("<a />").attr("href", "#").addClass("Button").text("upload").append($("<i />").addClass("Icon fa fa-link")).on("click", function () { input.click(); }))
+				.append($("<a />").attr("href", "#").addClass("Button").text("upload").append($("<i />").addClass("Icon fa fa-paperclip")).on("click", function () { input.click(); }))
 				.append(previewButton = $("<a />")
 					.attr("href", "#")
 					.addClass("Button")

@@ -8,11 +8,42 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
     public abstract class Element : ICheckListElement
     {
+        private ICheckListSignature GetSignature(string SignatureCode)
+        {
+            var BranchElements = GetBranchElements();
+            if (SignatureCode == null || BranchElements == null) return null;
+            if (!BranchElements.ContainsKey(SignatureCode))
+                throw new InstanceException((string.IsNullOrEmpty(Code) ? "An element" : $"The element {Code}") + $" references to the inexistent signature {SignatureCode}");
+            if (!(BranchElements[SignatureCode] is ICheckListSignature Signature))
+                throw new InstanceException((string.IsNullOrEmpty(Code) ? "An element" : $"The element {Code}") + $" references to a signature with code {SignatureCode} that is not a signature");
+            return Signature;
+
+        }
+
         public ICheckList CheckList { get; set; }
         public string Code { get; set; }
 
-        public DateTimeOffset? CountDownToValue => CheckList?.GetExpressionValue(CountDownToCode, this)?.Value as DateTimeOffset?;
+        public Conditions CountDownCondition { get; set; }
+        public DateTimeOffset? CountDownToValue {
+            get
+            {
+                DateTimeOffset? Value;
+                if (string.IsNullOrEmpty(CountDownToCode))
+                    Value = null;
+                else if (CountDownCondition == Conditions.Signature)
+                {
+                    var Signature = GetSignature(CountDownToCode);
+                    Value = Signature.Signed ? Signature.SignedOn : default(DateTimeOffset?);
+                }
+                else 
+                    Value = CheckList?.GetExpressionValue(CountDownToCode, this)?.Value as DateTimeOffset?;
+
+                if (Value.HasValue) Value = Value.Value.AddSeconds(CountDownOffset);
+                return Value;
+            }
+        }
         public string CountDownToCode { get; set; }
+        public int CountDownOffset { get; set; }
 
         public virtual bool Hidden
         {
@@ -29,20 +60,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public Conditions ReadOnlyCondition { get; set; }
         public string ReadOnlyExpressionCode { get; set; }
 
-        public ICheckListSignature Signature
-        {
-            get
-            {
-                var BranchElements = GetBranchElements();
-                if (SignatureCode == null || BranchElements == null) return null;
-                if (!BranchElements.ContainsKey(SignatureCode))
-                    throw new InstanceException((string.IsNullOrEmpty(Code) ? "An element" : $"The element {Code}") + $" references to the inexistent signature {SignatureCode}");
-                if (!(BranchElements[SignatureCode] is ICheckListSignature Signature))
-                    throw new InstanceException((string.IsNullOrEmpty(Code) ? "An element" : $"The element {Code}") + $" references to a signature with code {SignatureCode} that is not a signature");
-                return Signature;
-            }
-        }
-		public string SignatureCode { get; set; }
+        public ICheckListSignature Signature => GetSignature(SignatureCode);
+
+        public string SignatureCode { get; set; }
         public virtual string GetSignatureInformation()
             => Signature != null && Signature.Signed ? string.Format("by {0} on {1:yyyy-MM-dd HH:mm}", Signature.SignedBy, Signature.SignedOn) : null;
 

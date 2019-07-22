@@ -61,7 +61,7 @@ i.fa, i.fal {
     padding-right: 10px; } }
 
 .Hidden {
-  display: none; }
+  display: none !important; }
 
 textarea.ClipboardBridge {
   position: absolute;
