@@ -75,7 +75,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                     {
                         var ExpressionValue = CheckList.GetExpressionValue(Key, IterationIndexes);
                         var Value =
-                            CheckList.Expressions.ContainsKey(Key) ?
+                            ExpressionValue != null ?
                                 ExpressionValue.Type == DataType.Error ? ErrorValueLeft + ExpressionValue.ErrorValue + ErrorValueRight :
                                 ExpressionValue.IsNull ? NullValue :
                                 ExpressionValue.Type == DataType.Number ? ExpressionValue.NumberValue.ToString(Formats[Index]).Replace(".", DecimalSeparator).Replace(",", DecimalSeparator) :

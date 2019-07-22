@@ -40,15 +40,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public override void Update(string DecimalSeparator, string TimeZone)
         {
-            var parent = Group;
-            while (parent != null)
-                if (parent is Iteration iteration)
-                {
-                    RuntimeValues["IterationIndex"] = iteration.Index;
-                    parent = null;
-                }
-                else
-                    parent = parent.Group;
+            if (Iteration != null)
+                RuntimeValues["IterationIndex"] = Iteration.Index;
 
             DescriptionFormula?.Update(CheckList, RuntimeValues, DecimalSeparator, TimeZone, Iteration?.Indexes);
         }
