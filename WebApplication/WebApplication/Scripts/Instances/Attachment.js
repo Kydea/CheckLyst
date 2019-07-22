@@ -1,13 +1,23 @@
 ﻿instances.Attachment = function (item, model) {
-    var
-        button,
+	var
+		button,
+		input,
+
+		onChange = function () {
+			var data = new FormData();
+			data.append("attachment", input[0].files[0]);
+			new instances.Event(instances.Events.uploadAttachment, model.id, data, undefined, undefined, true).done(function (result) {
+				instances.instance.update(result);
+				input.val('');
+			}).trigger();
+		},
 
         setup = function () {
-            var input = $("<input />").addClass("Hidden").attr({ type: "file" }).appendTo(item.getElement())
+			input = $("<input />").addClass("Hidden").attr({ type: "file" }).on("change", onChange).appendTo(item.getElement());
             button =
                 $("<a />")
                     .addClass("Button Attachment").attr({ href: "#" }).appendTo(item.getElement())
-                    .on("click", function (e) {
+                    .on("click", function () {
                         input.click();
                     });
         };

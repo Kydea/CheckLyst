@@ -4,8 +4,21 @@
         a,
         title,
 
-        clickHandler = function () {
-            matematici.imageViewer.show(title, "http://www.matematicires.com/Content/Media/7/Home/Slide.Landscape/1.jpg");
+		clickHandler = function () {
+			var id = instances.instance.getPrototype();
+			var version = instances.instance.getVersion();
+			var department = instances.instance.getDepartment();
+			var prototypeType = instances.instance.getPrototypeType();
+
+			var url = instances.instance.getElement().data("api") + "/Prototypes/Prototype/DownloadAttachment?";
+			url += "id=" + id;
+			url += "&version=" + version;
+			url += "&department=" + department;
+			url += "&prototypeType=" + prototypeType;
+			url += "&key=" + model.key;
+			url += "&Authorization=" + encodeURIComponent("Bearer " + matematici.tokenManager.getAccessToken());
+
+			matematici.imageViewer.show(title, url);
         },
 
         setup = function () {
@@ -28,5 +41,5 @@
         a.css({ fontSize: model.fontSize == 0 ? "" : model.fontSize + "px" });
     };
 
-    setup();
+	setup();
 }

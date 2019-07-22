@@ -175,8 +175,8 @@
 				id = result.id;
 				state = result.state;
 				code = result.code;
-				department = result.department,
-					departmentName = result.departmentName;
+				department = result.department;
+				departmentName = result.departmentName;
 				prototypeType = result.prototypeType;
 				prototypeTypeName = result.prototypeTypeName;
 				prototype = result.prototype;
@@ -334,6 +334,22 @@
 
 	instance.getState = function () {
 		return state;
+	};
+
+	instance.getDepartment = function () {
+		return department;
+	};
+
+	instance.getPrototypeType = function () {
+		return prototypeType;
+	};
+
+	instance.getPrototype = function () {
+		return prototype;
+	};
+
+	instance.getVersion = function () {
+		return version;
 	};
 
 	instance.update = update;

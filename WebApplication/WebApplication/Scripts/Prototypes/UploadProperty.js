@@ -8,60 +8,80 @@
 			if (!input[0].files.length) {
 				return;
 			}
-			
-			var prototypeKey = prototypes.prototype.getPrototypeKey();
-			var prototypeModel = prototypes.prototype.getModel();
-			var formData = new FormData();
-			formData.append("attachment", input[0].files[0]);
-			formData.append("id", prototypeKey.id);
-			formData.append("version", prototypeKey.version);
-			formData.append("attachmentTemporaryKey", prototypes.prototype.getAttachmentTemporaryKey() || '');
-			formData.append("code", model.itemId);
-			if (prototypeModel.department) formData.append("department", prototypeModel.department);
-			if (prototypeModel.prototypeType) formData.append("prototypeType", prototypeModel.prototypeType);
 
-			$.ajax({
-				url: prototypes.prototype.getElement().data("action") + "UploadAttachment",
-				type: 'POST',
+			var save = function () {
+				prototypes.prototype.save(function () {
+					var prototypeKey = prototypes.prototype.getPrototypeKey();
+					var prototypeModel = prototypes.prototype.getModel();
+					var formData = new FormData();
+					formData.append("attachment", input[0].files[0]);
+					formData.append("id", prototypeKey.id);
+					formData.append("version", prototypeKey.version);
+					formData.append("attachmentTemporaryKey", prototypes.prototype.getAttachmentTemporaryKey() || '');
+					formData.append("code", model.itemId);
+					if (prototypeModel.department) formData.append("department", prototypeModel.department);
+					if (prototypeModel.prototypeType) formData.append("prototypeType", prototypeModel.prototypeType);
 
-				data: formData,
-				cache: false,
-				contentType: false,
-				processData: false
-			}).done(function (result) {
-				model.key = result.key;
-				previewButton.toggle(true);
-				deleteButton.toggle(true);
-				matematici.canClose = false;
-				if (handler) handler.call(this, model);
-			}).always(function () {
-				input.val('');
-			});
+					$.ajax({
+						url: prototypes.prototype.getElement().data("action") + "UploadAttachment",
+						type: 'POST',
+
+						data: formData,
+						cache: false,
+						contentType: false,
+						processData: false
+					}).done(function (result) {
+						model.key = result.key;
+						previewButton.toggle(true);
+						deleteButton.toggle(true);
+						matematici.canClose = false;
+						if (handler) handler.call(this, model);
+						prototypes.prototype.save();
+					}).always(function () {
+						input.val('');
+					});
+				});
+			};
+
+			matematici.dialog.show("warning", "The prototype will be saved. Do you want to proceed?", [
+				{ text: "yes", icon: "check", handler: save },
+				{ text: "no", hidden: true, icon: "remove", cancelButton: true }
+			]);			
 		},
 
 		deleteImage = function () {
-			var prototypeKey = prototypes.prototype.getPrototypeKey();
-			var prototypeModel = prototypes.prototype.getModel();
-			var formData = {
-				id: prototypeKey.id,
-				version: prototypeKey.version,
-				attachmentTemporaryKey: prototypes.prototype.getAttachmentTemporaryKey() || '',
-				department: prototypeModel.department || '',
-				prototypeType: prototypes.prototype.getAttachmentTemporaryKey() || '',
-				key: model.key
+			var save = function () {
+				prototypes.prototype.save(function () {
+					var prototypeKey = prototypes.prototype.getPrototypeKey();
+					var prototypeModel = prototypes.prototype.getModel();
+					var formData = {
+						id: prototypeKey.id,
+						version: prototypeKey.version,
+						attachmentTemporaryKey: prototypes.prototype.getAttachmentTemporaryKey() || '',
+						department: prototypeModel.department || '',
+						prototypeType: prototypes.prototype.getAttachmentTemporaryKey() || '',
+						key: model.key
+					};
+
+					$.ajax({
+						url: prototypes.prototype.getElement().data("action") + "DeleteAttachment",
+						type: "POST",
+						data: formData
+					}).done(function () {
+						model.key = null;
+						previewButton.toggle(false);
+						deleteButton.toggle(false);
+						matematici.canClose = false;
+						if (handler) handler.call(this, model);
+						prototypes.prototype.save();
+					});
+				});
 			};
 
-			$.ajax({
-				url: prototypes.prototype.getElement().data("action") + "DeleteAttachment",
-				type: "POST",
-				data: formData
-			}).done(function () {
-				model.key = null;
-				previewButton.toggle(false);
-				deleteButton.toggle(false);
-				matematici.canClose = false;
-				if (handler) handler.call(this, model);
-			});
+			matematici.dialog.show("warning", "The prototype will be saved. Do you want to proceed?", [
+				{ text: "yes", icon: "check", handler: save },
+				{ text: "no", hidden: true, icon: "remove", cancelButton: true }
+			]);			
 		},
 
 		preview = function () {
@@ -124,6 +144,4 @@
 	this.setReadOnly = function (value) {
 		options.readOnly = value;
 	};
-
-	console.log(model, property, options);
 };

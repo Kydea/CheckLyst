@@ -28,16 +28,15 @@ instances.Event = function (type, itemId, data, accessToken, suppressError, file
 		var options = {
 			url: matematici.urls.instances.api + "/Event",
 			type: "post",
-			data: data,
 			accessToken: accessToken,
 			suppressErrors: !!suppressError
 		};
 
 		if (fileUpload) {
 			data = data || new FormData();
-			formData.append("type", type);
-			formData.append("itemId", itemId);
-			formData.append("code", instances.instance.getCode());
+			data.append("type", type);
+			data.append("itemId", itemId);
+			data.append("code", instances.instance.getCode());
 
 			options.cache = false;
 			options.contentType = false;
