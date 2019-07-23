@@ -16,31 +16,31 @@
 
         <label>
             <span>Host</span>
-            <i class="Icon fal fa-id-card" />
+            <i class="Icon fal fa-chart-network" />
             <input type="text" name="host" maxlength="500" />
         </label>
 
         <label>
             <span>Port</span>
-            <i class="Icon fal fa-id-card" />
-            <input type="text" name="name" class="mask-pint" />
+            <i class="Icon fal fa-chart-network" />
+            <input type="text" name="port" class="mask-pint" maxlength="5" />
         </label>
 
         <label>
             <span>Folder</span>
-            <i class="Icon fal fa-id-card" />
+            <i class="Icon fal fa-folder" />
             <input type="text" name="folder" maxlength="500" />
         </label>
 
         <label class="Clearing">
             <span>User name</span>
-            <i class="Icon fal fa-id-card" />
-            <input type="text" name="folder" maxlength="100" />
+            <i class="Icon fal fa-user" />
+            <input type="text" name="userName" maxlength="100" />
         </label>
 
         <label>
             <span>Password</span>
-            <i class="Icon fal fa-id-card" />
+            <i class="Icon fal fa-lock" />
             <input type="password" name="password" maxlength="100" />
         </label>
 
@@ -87,6 +87,9 @@
 
 <script type="text/javascript">
     new matematici.DetailPage({
-        formSelector: "form#Detail"
+        formSelector: "form#Detail",
+        initHandler: function () {
+            $("input[name=port]").keyfilter(/[\d]/);
+        }
     });
 </script>

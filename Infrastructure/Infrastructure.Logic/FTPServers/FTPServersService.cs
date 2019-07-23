@@ -38,6 +38,7 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
                         UserName = d.UserName,
                         Password = d.Password,
                         SSL = d.SSL,
+                        Passive = d.Passive,
                         PrototypesDefault = d.PrototypesDefault,
                         InstancesDefault = d.InstancesDefault,
 
@@ -65,6 +66,19 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
                 };
                 response.Valid = false;
             }
+            if (string.IsNullOrWhiteSpace(record.Host))
+            {
+                response.Fields["Host"] = new Field
+                {
+                    ValidationMessages = new List<ValidationMessage> {
+                        new ValidationMessage {
+                            Level = ValidationMessage.LevelError,
+                            Message = "Invalid host"
+                        }
+                    }
+                };
+                response.Valid = false;
+            }
             return response;
         }
 
@@ -74,16 +88,25 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
             if (response.Valid)
                 try
                 {
-                    var Department = new Common.Data.Departments
+                    var FTPServer = new Common.Data.FTPServers
                     {
-                        Name = record.Name
+                        Name = record.Name,
+                        Host = record.Host,
+                        Port = record.Port ?? 21,
+                        Folder = record.Folder,
+                        UserName = record.UserName,
+                        Password = record.Password,
+                        Passive = record.Passive,
+                        SSL = record.SSL,
+                        PrototypesDefault = record.PrototypesDefault,
+                        InstancesDefault = record.InstancesDefault
                     };
                     if (isNew)
-                        await _infrastructureRepository.AddDepartmentAsync(identity, Department);
+                        await _infrastructureRepository.AddFTPServerAsync(identity, FTPServer);
                     else
                     {
-                        Department.ID = record.ID.Value;
-                        await _infrastructureRepository.EditDepartmentAsync(identity, Department);
+                        FTPServer.ID = record.ID.Value;
+                        await _infrastructureRepository.EditFTPServerAsync(identity, FTPServer);
                     }
                 }
                 catch (Exception Exception)
@@ -104,7 +127,7 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
             var response = new FTPServersResponse();
             try
             {
-                await _infrastructureRepository.DeleteDepartmentAsync(identity, id);
+                await _infrastructureRepository.DeleteFTPServerAsync(identity, id);
             }
             catch (Exception Exception)
             {

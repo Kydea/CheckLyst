@@ -123,7 +123,7 @@ namespace CheckListManager.Infrastructure.Data
 
         public async Task DeleteFTPServerAsync(IDefaultIdentity identity, long id)
         {
-            Entities.PrototypeTypes.Remove(await GetPrototypeTypeAsync(identity, id));
+            Entities.FTPServers.Remove(await GetFTPServerAsync(identity, id));
             await SaveChangesAsync();
         }
         public async Task<PagingResponse<List<TResult>>> GetDepartmentsAsync<TResult>(
