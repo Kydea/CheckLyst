@@ -9,6 +9,8 @@ using System.Linq;
 using CheckListManager.Common.Logic.Cache;
 using System;
 using CheckListManager.Common.Logic.Trail;
+using CheckListManager.Common.Core.Helpers;
+using CheckListManager.Common.Logic.Services;
 
 namespace CheckListManager.Trail.Api.Controllers
 {
@@ -17,11 +19,13 @@ namespace CheckListManager.Trail.Api.Controllers
     {
         private readonly IListService _listService;
         private readonly IRedisCache _redisCache;
+        private readonly ISettingService _settingService;
 
-        public ListController(IListService listService, IRedisCache redisCache)
+        public ListController(IListService listService, IRedisCache redisCache, ISettingService settingService)
         {
             _listService = listService;
             _redisCache = redisCache;
+            _settingService = settingService;
         }
 
         [HttpPost]
@@ -58,10 +62,12 @@ namespace CheckListManager.Trail.Api.Controllers
                 "CheckList code",
                 "Detail"
             };
+            string timeZone = (await _settingService.TimeZoneAsync(Data.CompanyId.Value)).MicrosoftCode;
+                
             var Rows = await _listService.GetDataAsync(Data.CompanyId.Value, Data);
             return Content(HttpStatusCode.OK, Rows, new CSVFormatter<TrailMessage>(Header, "AuditTrail", tm => new string[] {
                 tm.Id.ToString(),
-                tm.Date.ToString(),
+                tm.Date.ToLocalTime(timeZone).ToString(),
                 tm.User,
                 tm.Action,
                 tm.CheckList,

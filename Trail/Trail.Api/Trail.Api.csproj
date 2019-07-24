@@ -173,6 +173,10 @@
       <Project>{31de9c2f-fb9d-472c-b28a-3c1edeff10dc}</Project>
       <Name>Common.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Common\Common.Data\Common.Data.csproj">
+      <Project>{91482922-D6BA-4DF1-9A9C-88F3087A7B5D}</Project>
+      <Name>Common.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Common\Common.Logic.Api\Common.Logic.Api.csproj">
       <Project>{be658746-48a9-4af2-b2b6-a13a7d6de439}</Project>
       <Name>Common.Logic.Api</Name>
