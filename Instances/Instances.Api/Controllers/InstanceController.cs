@@ -272,5 +272,20 @@ namespace CheckListManager.Instances.Api.Controllers
                 return Error(e);
             }
         }
+
+        [HttpPost]
+        [Route("GetInstanceEditors")]
+        [Authorize(Roles = "Instances#Edit, Prototypes#Edit")]
+        public async Task<IHttpActionResult> GetInstanceEditors(InstanceRequest request)
+        {
+            try
+            {
+                return Ok(await _instanceManagerService.GetExternalSourceRows(request.Data.InstanceCode, Identity, request.Data.ExternalSourceCode, request.Data.Parameters, request.Data.Page));
+            }
+            catch (Exception e)
+            {
+                return Error(e);
+            }
+        }
     }
 }

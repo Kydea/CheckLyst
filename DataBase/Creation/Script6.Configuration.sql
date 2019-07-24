@@ -38,6 +38,7 @@ insert into "Configuration"."Settings" ("Code") values
 	('UserBlockMessage'),
 	('UserBlockWarningMessage'),
 	('SignatureMessage'),
+	('InstanceMessage'),
 	('DecimalSeparator');
 
 create table "Configuration"."SettingValues"

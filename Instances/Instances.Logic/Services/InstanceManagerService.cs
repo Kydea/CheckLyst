@@ -30,6 +30,7 @@ using CheckListManager.Common.Logic.FTP;
 using CheckListManager.Common.Logic.DataSources;
 using CheckListManager.Common.Logic;
 using MultipartDataMediaFormatter.Infrastructure;
+using CheckListManager.Common.Logic.Email;
 
 namespace CheckListManager.Instances.Logic.Services
 {
@@ -734,6 +735,9 @@ namespace CheckListManager.Instances.Logic.Services
                     case EventTypes.UploadAttachment:
                         await HandleUploadAttachment(cacheObject, identity, request.ItemId, request.Attachment);
                         break;
+                    case EventTypes.SendEmail:
+                        await HandleEmailSend(cacheObject, identity, request.ItemId, request.Emails);
+                        break;
                     default:
                         throw new InstanceException($"Event type {request.Type} not handled.");
                 }
@@ -1064,6 +1068,30 @@ namespace CheckListManager.Instances.Logic.Services
                     CheckList = cacheObject.InstanceCode,
                     Information = request.ItemId.ToString()
                 });
+        }
+
+        private async Task HandleEmailSend(InstanceCacheObject cacheObject, IDefaultIdentity identity, int? itemId, List<InstanceEventRequest.Email> Emails)
+        {
+            if (itemId.HasValue)
+                throw new InstanceException("Item id not sent");
+
+            var signature = cacheObject.Instance.Items.ContainsKey(itemId.Value) ? cacheObject.Instance.Items[itemId.Value] as Signature : null;
+            if (signature == null)
+                throw new InstanceException("Signature not found");
+
+            if (!signature.Signed)
+                throw new Exception("The signature is not signed");
+
+            var message = await _settingService.SignatureMessageAsync(identity.CompanyId);
+            var checkListURL = $"Instances/Detail/{cacheObject.Code}";
+            var checklistLabel = $"{cacheObject.PrototypeName}.{cacheObject.Version}.{cacheObject.Year}.{cacheObject.Number}";
+            foreach (var Email in Emails)
+                await _queueService.SendObjectAsync(QueueName.Email,
+                    new EmailMessage(identity.CompanyId, "Signature needed", message,
+                        Email.Address, new List<Tuple<string, string>> {
+                            new Tuple<string, string> ("User", Email.User),
+                            new Tuple<string, string> ("CheckListCode", $"<a href='{checkListURL}' target='_blank'>{checklistLabel}</a>")
+                    }));
         }
 
 

@@ -123,7 +123,8 @@
                                         note: panel.getNote()
                                     }).done(function (result) {
                                         instances.instance.update(result);
-										matematici.popup.close();
+                                        matematici.popup.close();
+                                        new instances.SignatureEmail(model.id).show();
                                     }).trigger();
                                 }
                             }

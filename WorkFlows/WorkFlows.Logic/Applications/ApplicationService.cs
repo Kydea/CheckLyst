@@ -332,17 +332,22 @@ namespace CheckListManager.WorkFlows.Logic.Applications
 
             foreach (var user in Users)
                 if (!string.IsNullOrEmpty(user.Email))
+                {
+                    var message = await _settingService.SignatureMessageAsync(user.Company);
+                    var checkListURL = Instance == null ?
+                        $"Prototypes/Detail/{PrototypeVersion.Prototypes.ID}/{PrototypeVersion.Version}" :
+                        $"Instances/Detail/{Instance.Code}";
+                    var checklistLabel = Instance == null ?
+                        $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}" :
+                        $"{Instance.PrototypeName}.{Instance.Version}.{Instance.Year}.{Instance.Number}";
                     await _queueService.SendObjectAsync(QueueName.Email,
-                        new EmailMessage(user.Company, "Signature needed", await _settingService.SignatureMessageAsync(user.Company),
+                        new EmailMessage(user.Company, "Signature needed", message,
                             user.Email, new List<Tuple<string, string>> {
                                 new Tuple<string, string> ("User", user.Description),
                                 new Tuple<string, string> ("CheckListType", Instance == null ? "prototype" : "instance"),
-                                new Tuple<string, string> ("CheckListCode",
-                                    Instance == null ? 
-                                        $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}" :
-                                        $"{Instance.PrototypeName}.{Instance.Version}.{Instance.Year}.{Instance.Number}" 
-                                ),
+                                new Tuple<string, string> ("CheckListCode", $"<a href='{checkListURL}' target='_blank'>{checklistLabel}</a>"),
                             }));
+                }
 
         }
     }

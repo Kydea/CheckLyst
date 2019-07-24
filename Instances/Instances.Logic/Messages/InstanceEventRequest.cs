@@ -25,5 +25,13 @@ namespace CheckListManager.Instances.Logic.Messages
         public Dictionary<string, string> Row { get; set; }
         
         public HttpFile Attachment { get; set; }
+
+        public List<Email> Emails { get; set; }
+
+        public struct Email
+        {
+            public string User { get; set; }
+            public string Address { get; set; }
+        }
 	}
 }

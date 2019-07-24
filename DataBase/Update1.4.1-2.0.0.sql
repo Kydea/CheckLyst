@@ -88,3 +88,11 @@ insert into "Security"."FunctionGroups" values
 insert into "Security"."Functions" values
 	('FTPServers', 'Edit'),
 	('FTPServers', 'View');
+
+
+insert into "Configuration"."Settings" ("Code") values
+	('InstanceMessage');
+
+insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") 
+select "ID", 'InstanceMessage', '[User], <br /> A signature has been issued for the instance [CheckListCode].'
+from "Infrastructure"."Companies";
