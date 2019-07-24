@@ -230,6 +230,16 @@ namespace CheckListManager.Prototypes.Api.Controllers
                 {
                     throw new Exception("Department and Prototype Type must have a value when the prototype is not yet saved");
                 }
+
+                if (request.Attachment == null)
+                {
+                    throw new Exception("No attachment has been uploaded");
+                }
+
+                if (!request.Attachment.MediaType.StartsWith("image/"))
+                {
+                    throw new Exception("The file uploaded is not supported");
+                }
                 
 		        return Ok(await _prototypeService.UploadAttachmentAsync(Identity, request));
 	        }

@@ -14,13 +14,16 @@
             matematici.dialog.setWidth(width);
         };
 
-    return {
-        show: function (title, url) {
-            matematici.loader.show();
-            image = $("<img />").on("load", function () {
-                matematici.loader.hide();
-                popup(title);
-            }).attr("src", url)
-        }
-    }
+	return {
+		show: function (title, url) {
+			matematici.loader.show();
+			image = $("<img />").on("load", function () {
+				matematici.loader.hide();
+				popup(title);
+			}).on("error", function (e) {
+				matematici.loader.hide();
+				matematici.dialog.error("Error", "Unable to load the image");
+			}).attr("src", url);
+		}
+	};
 }();

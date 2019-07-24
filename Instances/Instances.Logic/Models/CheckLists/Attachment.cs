@@ -14,7 +14,19 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             Copy(this, text);
             return text;
         }
+
+        public override bool IsValidByDefault()
+        {
+            return !string.IsNullOrEmpty(Key);
+        }
         
         public string Key { get; set; }
+        public string FileType { get; set; }
+
+        public class FileTypes
+        {
+            public const string Images = "images";
+            public const string Pdf = "pdf";
+        }
     }
 }

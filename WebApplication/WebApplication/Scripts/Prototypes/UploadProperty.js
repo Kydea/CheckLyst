@@ -31,7 +31,7 @@
 						contentType: false,
 						processData: false
 					}).done(function (result) {
-						model.key = result.key;
+						model[property] = result.key;
 						previewButton.toggle(true);
 						deleteButton.toggle(true);
 						matematici.canClose = false;
@@ -60,7 +60,7 @@
 						attachmentTemporaryKey: prototypes.prototype.getAttachmentTemporaryKey() || '',
 						department: prototypeModel.department || '',
 						prototypeType: prototypes.prototype.getAttachmentTemporaryKey() || '',
-						key: model.key
+						key: model[property]
 					};
 
 					$.ajax({
@@ -68,7 +68,7 @@
 						type: "POST",
 						data: formData
 					}).done(function () {
-						model.key = null;
+						model[property] = null;
 						previewButton.toggle(false);
 						deleteButton.toggle(false);
 						matematici.canClose = false;
@@ -94,7 +94,7 @@
 			url += "&department=" + (prototypeModel.department || '');
 			url += "&prototypeType=" + (prototypeModel.prototypeType || '');
 			url += "&attachmentTemporaryKey=" + (prototypes.prototype.getAttachmentTemporaryKey() || '');
-			url += "&key=" + model.key;
+			url += "&key=" + model[property];
 			url += "&Authorization=" + encodeURIComponent("Bearer " + matematici.tokenManager.getAccessToken());
 
 			matematici.imageViewer.show("Preview", url);
@@ -109,7 +109,7 @@
 		valuePanel.addClass("Upload");
 		options = options || {};
 		input = $("<input />")
-			.attr({ type: "file", readOnly: options.readOnly });
+			.attr({ type: "file", readOnly: options.readOnly, accept: "image/*"  });
 		var form =
 			$("<form />")
 				.attr("enctype", "multipart/form-data")
@@ -120,7 +120,7 @@
 					.text("preview")
 					.append($("<i />").addClass("Icon fa fa-image"))
 					.on("click", preview)
-					.toggle(!!model.key)
+					.toggle(!!model[property])
 				)
 				.append(deleteButton = $("<a />")
 					.attr("href", "#")
@@ -128,7 +128,7 @@
 					.text("delete")
 					.append($("<i />").addClass("Icon fa fa-trash-alt"))
 					.on("click", deleteImage)
-					.toggle(!!model.key)
+					.toggle(!!model[property])
 				)
 				.append(input);
 		input.on("change", change);

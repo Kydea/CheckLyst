@@ -656,10 +656,10 @@ namespace CheckListManager.Prototypes.Logic.Services
             }
             
             prototype.Traverse(
-                item => item is ICheckListAttachment,
+                item => item is ICheckListAttachmentBase,
                 item =>
                 {
-                    var attachment = (ICheckListAttachment)item;
+                    var attachment = (ICheckListAttachmentBase)item;
                     attachment.Key = attachment.Key?.Replace(key, newKey);
                 }
             );

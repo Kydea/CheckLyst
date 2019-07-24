@@ -8,89 +8,103 @@ using CheckListManager.Common.Logic.Models;
 
 namespace CheckListManager.Common.Logic.Services
 {
-	public class StorageService : IStorageService
-	{
-		private readonly IAmazonS3 _s3;
+    public class StorageService : IStorageService
+    {
+        private readonly IAmazonS3 _s3;
 
-		public StorageService(IAmazonS3 s3)
-		{
-			_s3 = s3;
-		}
+        public StorageService(IAmazonS3 s3)
+        {
+            _s3 = s3;
+        }
 
-		public async Task<StorageFile> GetAsync(string bucketName, string key)
-		{
-			var response = await _s3.GetObjectAsync(bucketName, key);
-			if (response.HttpStatusCode == HttpStatusCode.NotFound)
-			{
-				throw new Exception($"File {key} not found");
-			}
+        public async Task<StorageFile> GetAsync(string bucketName, string key)
+        {
+            var response = await _s3.GetObjectAsync(bucketName, key);
+            if (response.HttpStatusCode == HttpStatusCode.NotFound)
+            {
+                throw new Exception($"File {key} not found");
+            }
 
-			return new StorageFile(response.ResponseStream, response.Headers.ContentType);
-		}
+            return new StorageFile(response.ResponseStream, response.Headers.ContentType);
+        }
 
-		public async Task<bool> PutAsync(string bucketName, string key, Stream inputStream)
-		{
-			var response = await _s3.PutObjectAsync(new PutObjectRequest
-			{
-				BucketName = bucketName,
-				Key = key,
-				InputStream = inputStream
-			});
+        public async Task<bool> PutAsync(string bucketName, string key, Stream inputStream)
+        {
+            var response = await _s3.PutObjectAsync(new PutObjectRequest
+            {
+                BucketName = bucketName,
+                Key = key,
+                InputStream = inputStream
+            });
 
-			return response.HttpStatusCode == HttpStatusCode.OK;
-		}
+            return response.HttpStatusCode == HttpStatusCode.OK;
+        }
 
-		public async Task<bool> DeleteAsync(string bucketName, string key)
-		{
-			var response = await _s3.DeleteObjectAsync(bucketName, key);
-			return response.HttpStatusCode == HttpStatusCode.OK;
-		}
+        public async Task<bool> DeleteAsync(string bucketName, string key)
+        {
+            var response = await _s3.DeleteObjectAsync(bucketName, key);
+            return response.HttpStatusCode == HttpStatusCode.OK;
+        }
 
-		public async Task<bool> CloneAsync(string bucketName, string keyPrefix, string newKeyPrefix)
-		{
-			var response = await _s3.ListObjectsV2Async(new ListObjectsV2Request
-			{
-				BucketName = bucketName,
-				Prefix = keyPrefix
-			});
+        public async Task<bool> DeleteRecursiveAsync(string bucketName, string keyPrefix)
+        {
+            return await IterateAsync(bucketName, keyPrefix, async itemKey => await DeleteAsync(bucketName, itemKey));
+        }
 
-			if (response.HttpStatusCode != HttpStatusCode.OK)
-			{
-				return false;
-			}
+        public async Task<bool> CloneAsync(string bucketName, string keyPrefix, string newKeyPrefix)
+        {
+            return await IterateAsync(bucketName, keyPrefix, async itemKey =>
+            {
+                var key = $"{newKeyPrefix}{itemKey.Replace(keyPrefix, "")}";
+                var copyResponse = await _s3.CopyObjectAsync(new CopyObjectRequest
+                {
+                    SourceBucket = bucketName,
+                    DestinationBucket = bucketName,
+                    SourceKey = itemKey,
+                    DestinationKey = key
+                });
 
-			do
-			{
-				foreach (var item in response.S3Objects)
-				{
-					var key = $"{newKeyPrefix}{item.Key.Replace(keyPrefix, "")}";
-					var copyResponse = await _s3.CopyObjectAsync(new CopyObjectRequest
-					{
-						SourceBucket = bucketName,
-						DestinationBucket = bucketName,
-						SourceKey = item.Key,
-						DestinationKey = key
-					});
+                return copyResponse.HttpStatusCode == HttpStatusCode.OK;
+            });
+        }
 
-					if (copyResponse.HttpStatusCode != HttpStatusCode.OK)
-					{
-						return false;
-					}
-				}
+        private async Task<bool> IterateAsync(string bucketName, string keyPrefix, Func<string, Task<bool>> action)
+        {
+            var response = await _s3.ListObjectsV2Async(new ListObjectsV2Request
+            {
+                BucketName = bucketName,
+                Prefix = keyPrefix
+            });
 
-				response = await _s3.ListObjectsV2Async(new ListObjectsV2Request
-				{
-					BucketName = bucketName,
-					Prefix = keyPrefix,
-					ContinuationToken = response.NextContinuationToken
-				});
-				if (response.HttpStatusCode != HttpStatusCode.OK)
-				{
-					return false;
-				}
-			} while (response.IsTruncated);
+            if (response.HttpStatusCode != HttpStatusCode.OK)
+            {
+                return false;
+            }
 
-			return true;
-		}
-	}
+            do
+            {
+                foreach (var item in response.S3Objects)
+                {
+                    var result = await action(item.Key);
+                    if (!result)
+                    {
+                        return false;
+                    }
+                }
+
+                response = await _s3.ListObjectsV2Async(new ListObjectsV2Request
+                {
+                    BucketName = bucketName,
+                    Prefix = keyPrefix,
+                    ContinuationToken = response.NextContinuationToken
+                });
+                if (response.HttpStatusCode != HttpStatusCode.OK)
+                {
+                    return false;
+                }
+            } while (response.IsTruncated);
+
+            return true;
+        }
+    }
 }

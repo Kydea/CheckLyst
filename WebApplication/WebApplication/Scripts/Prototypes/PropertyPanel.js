@@ -166,7 +166,7 @@
             ));
             properties.push(new prototypes.Property(
                 this, new prototypes.ValidProperty(model), "Validity",
-                "Sets the condition under which the element is considered valid. By default pages and groups are valid if alle the contained elements are valid, fields are valid if contains a value, signature are valid if signed. Text are always valid."
+                "Sets the condition under which the element is considered valid. By default pages and groups are valid if all the contained elements are valid, fields are valid if contains a value, signature are valid if signed. Text are always valid. Attachments are valid if contains a file."
             ));
             properties.push(new prototypes.Property(
                 this, new prototypes.SimpleValueProperty(model, "validityMessage", { readOnly: state != prototypes.Prototype.states.draft }), "Validity message",
@@ -423,7 +423,7 @@
                         "The label of the button."
                     ));
                     properties.push(new prototypes.Property(
-                        this, new prototypes.UploadProperty(model, "data", { readOnly: state != prototypes.Prototype.states.draft }),
+                        this, new prototypes.UploadProperty(model, "key", { readOnly: state != prototypes.Prototype.states.draft }),
                         "Image",
                         "Upload the image to show."
                     ));
@@ -444,7 +444,13 @@
                         "The label of the button."
                     ));
                     properties.push(new prototypes.Property(
-                        this, new prototypes.ListProperty(model, "fileType", ["images", "pdf"], { readOnly: state != prototypes.Prototype.states.draft }), "File type",
+						this, new prototypes.ListProperty(
+							model,
+							"fileType",
+							/* The first element is the default one. If changing it, change also in CheckListManager.Prototypes.Logic.Models.CheckLists.Attachment */
+							["images", "pdf"],
+							{ readOnly: state != prototypes.Prototype.states.draft }
+						), "File type",
                         "The file type of the attachment."
                     ));
                     break;
