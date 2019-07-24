@@ -105,7 +105,7 @@
                 for (var row in rows) {
                     var tr = $("<tr />").appendTo(body).addClass("Handler");
                     for (var column in rows[row])
-                        if (column[0] != "_")
+                        if (columns[column][0] != "_")
                             tr.append($("<td />").html(rows[row][column])).data({ index: parseInt(row) + 20 * page, row: rows[row] });
                 }
         },
