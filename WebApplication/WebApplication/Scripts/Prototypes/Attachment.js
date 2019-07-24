@@ -3,11 +3,10 @@
         button,
 
         setup = function () {
-            button = $("<a />").addClass("Button Attachment").attr({ href: "#" }).appendTo(item.getElement());
-            model.fileType = "images";
+			button = $("<a />").addClass("Button Attachment").attr({ href: "#" }).appendTo(item.getElement());
         };
 
-    this.update = function (model) {
+	this.update = function (model) {
         button
             .html(model.description || "upload")
             .append($("<i />").addClass("Icon fa fa-paperclip"));

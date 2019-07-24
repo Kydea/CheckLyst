@@ -2,243 +2,245 @@
 
 div.CheckList {
 
-    h2 {
-        margin: 0 $Metric-Control-Space $Metric-Control-Space !important;
-        color: white !important;
-        min-height: 1em;
-    }
+	h2 {
+		margin: 0 $Metric-Control-Space $Metric-Control-Space !important;
+		color: white !important;
+		min-height: 1em;
+	}
 
-    .HeaderContainer {
-        margin-top: -$Metric-Control-Space;
-        margin-left: -$Metric-Control-Space;
-        margin-right: -$Metric-Control-Space;
-        padding: $Metric-Control-Space 0 0;
-        background-color: $Color-Green-Regular;
-        width: calc(100% + #{2 * $Metric-Control-Space});
-        top: 0;
-        left: 0;
-        border-radius: 15px 15px 0 0;
+	.HeaderContainer {
+		margin-top: -$Metric-Control-Space;
+		margin-left: -$Metric-Control-Space;
+		margin-right: -$Metric-Control-Space;
+		padding: $Metric-Control-Space 0 0;
+		background-color: $Color-Green-Regular;
+		width: calc(100% + #{2 * $Metric-Control-Space});
+		top: 0;
+		left: 0;
+		border-radius: 15px 15px 0 0;
 
-        > div.Group {
-            margin-bottom: 0;
-            border: none;
-        }
+		> div.Group {
+			margin-bottom: 0;
+			border: none;
+		}
 
-        div.Group {
-            background-color: white;
-        }
-    }
+		div.Group {
+			background-color: white;
+		}
+	}
 
-    span {
-        &.Error {
-            i.fa {
-                color: $Color-Red-Regular;
-            }
-        }
+	span {
+		&.Error {
+			i.fa {
+				color: $Color-Red-Regular;
+			}
+		}
 
-        &.Null {
-            color: $Color-Grey-Light;
-        }
+		&.Null {
+			color: $Color-Grey-Light;
+		}
 
-        &.Value {
-        }
-    }
+		&.Value {
+		}
+	}
 
-    div.TabLabels {
-        a {
-            i.fa {
-                cursor: pointer;
-            }
-        }
-    }
+	div.TabLabels {
+		a {
+			i.fa {
+				cursor: pointer;
+			}
+		}
+	}
 
-    div.Element {
-        position: relative;
+	div.Element {
+		position: relative;
 
-        &::after {
-            content: "";
-            display: table;
-            clear: both;
-        }
-    }
+		&::after {
+			content: "";
+			display: table;
+			clear: both;
+		}
+	}
 
-    div.Page {
-        &::after {
-            content: "";
-            display: table;
-            clear: both;
-        }
-    }
+	div.Page {
+		&::after {
+			content: "";
+			display: table;
+			clear: both;
+		}
+	}
 
-    div.Group {
-        position: relative;
-        min-height: $Metric-Control-Height;
-        margin-bottom: $Metric-Control-Space;
-        border: 1px solid $Color-Grey-Light;
-        padding-bottom: $Metric-Control-Space;
-        padding-right: $Metric-Control-Space;
-        background-color: $Color-Silver-Light;
-        clear: both;
-        width: 100%;
+	div.Group {
+		position: relative;
+		min-height: $Metric-Control-Height;
+		margin-bottom: $Metric-Control-Space;
+		border: 1px solid $Color-Grey-Light;
+		padding-bottom: $Metric-Control-Space;
+		padding-right: $Metric-Control-Space;
+		background-color: $Color-Silver-Light;
+		clear: both;
+		width: 100%;
 
-        > * {
-            float: left;
-            margin: $Metric-Control-Space 0 0 $Metric-Control-Space !important;
-        }
+		> * {
+			float: left;
+			margin: $Metric-Control-Space 0 0 $Metric-Control-Space !important;
+		}
 
-        h3 {
-            width: calc(100% - #{$Metric-Control-Space});
-        }
+		h3 {
+			width: calc(100% - #{$Metric-Control-Space});
+		}
 
-        div.Group {
-            border: 0;
-            border-left: solid 10px $Color-Grey-Light;
-            width: 100%;
+		div.Group {
+			border: 0;
+			border-left: solid 10px $Color-Grey-Light;
+			width: 100%;
 
-            > div:last-child {
-                margin-bottom: 0 !important;
-            }
-        }
+			> div:last-child {
+				margin-bottom: 0 !important;
+			}
+		}
 
-        &::after {
-            content: "";
-            display: table;
-            clear: both;
-        }
+		&::after {
+			content: "";
+			display: table;
+			clear: both;
+		}
 
-        &:last-child {
-            margin-bottom: 0;
-        }
-    }
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
 
-    div.Item {
-        margin: 0 0 20px;
+	div.Item {
+		margin: 0 0 20px;
 
-        &.MultiLine {
-            clear: both;
-            width: calc(100% - #{$Metric-Control-Space});
+		&.MultiLine {
+			clear: both;
+			width: calc(100% - #{$Metric-Control-Space});
 
-            label {
-                width: 100% !important;
-                padding-top: 0 !important;
+			label {
+				width: 100% !important;
+				padding-top: 0 !important;
 
-                > span {
-                    height: unset;
-                    white-space: normal !important;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    position: static;
-                    display: block;
-                }
-            }
+				> span {
+					height: unset;
+					white-space: normal !important;
+					overflow: hidden;
+					text-overflow: ellipsis;
+					position: static;
+					display: block;
+				}
+			}
 
-            input, div.Input {
-                width: 100%;
-            }
-        }
+			input, div.Input {
+				width: 100%;
+			}
+		}
 
-        &.NewLine {
-            clear: both;
-        }
+		&.NewLine {
+			clear: both;
+		}
 
-        label {
-            display: block;
-            margin: 0;
-            max-width: 100%;
+		label {
+			display: block;
+			margin: 0;
+			max-width: 100%;
 
-            > span {
-                min-height: 14px;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-        }
+			> span {
+				min-height: 14px;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+		}
 
-        &::after {
-            content: "";
-            display: table;
-            clear: both;
-        }
+		&::after {
+			content: "";
+			display: table;
+			clear: both;
+		}
 
-        &.Field {
-            &.Boolean {
-                input[value=""] {
-                    opacity: 0.6;
-                }
-            }
-        }
+		&.Field {
+			&.Boolean {
+				input[value=""] {
+					opacity: 0.6;
+				}
+			}
+		}
 
-        &.Text {
-            width: calc(100% - #{$Metric-Control-Space});
-            font-size: 13px;
-        }
+		&.Text {
+			width: calc(100% - #{$Metric-Control-Space});
+			font-size: 13px;
+		}
 
-        &.Signature {
-            width: calc(100% - #{$Metric-Control-Space});
+		&.Signature {
+			width: calc(100% - #{$Metric-Control-Space});
 
-            > a.Button {
-                margin-top: calc(1em + 5px);
+			> a.Button {
+				margin-top: calc(1em + 5px);
 
-                @media #{$Media-Extended} {
-                    margin-left: $Metric-Control-Space;
-                    float: right;
-                }
-            }
-        }
+				@media #{$Media-Extended} {
+					margin-left: $Metric-Control-Space;
+					float: right;
+				}
+			}
+		}
 
-        &.Image {
-            a.Image {
-                min-width: 150px;
-            }
-        }
+		&.Image {
+			width: calc(100% - #{$Metric-Control-Space});
 
-        &.Link {
-            position: relative;
-            width: calc(100% - #{$Metric-Control-Space});
-            font-size: 13px;
+			a.Image {
+				min-width: 150px;
+			}
+		}
 
-            i.Link {
-                font-size: 9px;
-                position: absolute;
-                top: 3px;
-                left: 0;
-                color: $Color-Yellow-Regular;
-                transition: all linear .1s;
-            }
+		&.Link {
+			position: relative;
+			width: calc(100% - #{$Metric-Control-Space});
+			font-size: 13px;
 
-            a.Link {
-                color: $Color-Yellow-Regular;
-                padding-left: 15px;
-            }
+			i.Link {
+				font-size: 9px;
+				position: absolute;
+				top: 3px;
+				left: 0;
+				color: $Color-Yellow-Regular;
+				transition: all linear .1s;
+			}
 
-            &:hover {
-                i.Link {
-                    left: 5px;
-                }
-            }
-        }
+			a.Link {
+				color: $Color-Yellow-Regular;
+				padding-left: 15px;
+			}
 
-        &.Attachment {
-            max-width: calc(100% - #{2 * $Metric-Control-Space});
+			&:hover {
+				i.Link {
+					left: 5px;
+				}
+			}
+		}
 
-            a.Attachment {
-                white-space: nowrap;
-                max-width: 100%;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-        }
-    }
+		&.Attachment {
+			width: calc(100% - #{$Metric-Control-Space});
 
-    .Item {
-        p.Description {
-            margin: 0;
-        }
-    }
+			a.Attachment {
+				white-space: nowrap;
+				max-width: 100%;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+		}
+	}
 
-    &.Loading {
-        .TabContainer, .Page {
-            display: none !important;
-        }
-    }
+	.Item {
+		p.Description {
+			margin: 0;
+		}
+	}
+
+	&.Loading {
+		.TabContainer, .Page {
+			display: none !important;
+		}
+	}
 }
