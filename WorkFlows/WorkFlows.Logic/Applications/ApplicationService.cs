@@ -24,14 +24,16 @@ namespace CheckListManager.WorkFlows.Logic.Applications
         private readonly IAuthenticationService _authenticationService;
         private readonly IQueueService _queueService;
         private readonly ISettingService _settingService;
+        private readonly IConfigurationService _configurationService;
         private readonly ICommonRepository _commonRepository;
 
-        public ApplicationService(IWorkFlowsRepository workFlowsRepository, IAuthenticationService authenticationService, IQueueService queueService, ISettingService settingService, ICommonRepository commonRepository)
+        public ApplicationService(IWorkFlowsRepository workFlowsRepository, IAuthenticationService authenticationService, IQueueService queueService, ISettingService settingService, IConfigurationService configurationService, ICommonRepository commonRepository)
         {
             _workFlowsRepository = workFlowsRepository;
             _authenticationService = authenticationService;
             _queueService = queueService;
             _settingService = settingService;
+            _configurationService = configurationService;
             _commonRepository = commonRepository;
         }
 
@@ -329,14 +331,15 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 Instance == null ?
                 await _commonRepository.GetAppointedUsersAsync(PrototypeVersion.Prototypes.Company, "Prototypes", "Approve", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType, workFlowApplicationStep.WorkFlowApplicationStepTags.Select(t => t.Tag)) :
                 await _commonRepository.GetAppointedUsersAsync(Instance.Company, "Instances", "Confirm", Instance.Prototypes.Department, Instance.Prototypes.PrototypeType, workFlowApplicationStep.WorkFlowApplicationStepTags.Select(t => t.Tag));
+            var webApplicationUrl = _configurationService.WebApplicationUrl;
 
             foreach (var user in Users)
                 if (!string.IsNullOrEmpty(user.Email))
                 {
                     var message = await _settingService.SignatureMessageAsync(user.Company);
                     var checkListURL = Instance == null ?
-                        $"Prototypes/Detail/{PrototypeVersion.Prototypes.ID}/{PrototypeVersion.Version}" :
-                        $"Instances/Detail/{Instance.Code}";
+                        $"{webApplicationUrl}/Prototypes / Detail/{PrototypeVersion.Prototypes.ID}/{PrototypeVersion.Version}" :
+                        $"{webApplicationUrl}/Instances/Detail/{Instance.Code}";
                     var checklistLabel = Instance == null ?
                         $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}" :
                         $"{Instance.PrototypeName}.{Instance.Version}.{Instance.Year}.{Instance.Number}";
