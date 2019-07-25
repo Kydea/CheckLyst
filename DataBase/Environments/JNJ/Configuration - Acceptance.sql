@@ -4,6 +4,7 @@ insert into "Configuration"."Configurations" ("Code", "Value") values
 	('SqsBaseUrl', 'https://sqs.eu-west-1.amazonaws.com/'),
 	('SqsPrefix', 'qa-'),
 	('ApiBaseUrl', 'https://internal-checklystqa.jnj.com/'),
+	('WebApplicationUrl', 'https://checklystqa.jnj.com'), --the url must be specified without final slash
 	('PublicRepositoryUrl', 'https://checklystqa.jnj.com/content/media/'),
 	('InstanceCloseTimeout', '4320'), --3 days, expressed in minutes
 	('PrototypesStorageBucket', '???'),

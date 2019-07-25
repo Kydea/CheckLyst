@@ -139,5 +139,25 @@ namespace CheckListManager.Instances.Data
         {
             return (await Entities.PrototypeVersions.SingleOrDefaultAsync(p => p.Prototype == prototype && p.VersionState == VersionState.Active))?.Version;
         }
+
+        public async Task<List<Users>> GetInstanceEditors(long department, long prototypeType, string versionState)
+        {
+            var Users =
+                versionState == VersionState.Draft || versionState == VersionState.InSimulation ?
+                    Entities.UserFunctions.Where(uf =>
+                        uf.Department == department && (
+                            uf.PrototypeType == null 
+                            || uf.PrototypeType == prototypeType
+                        )
+                        && uf.FunctionGroup == "Prototypes" && uf.Function == "Edit").Select(uf => uf.Users).Distinct().ToListAsync()
+                    : Entities.UserFunctions.Where(uf =>
+                        uf.Department == department && (
+                            uf.PrototypeType == null
+                            || uf.PrototypeType == prototypeType
+                        )
+                        && uf.FunctionGroup == "Instances" && uf.Function == "Edit").Select(uf => uf.Users).Distinct().ToListAsync();
+
+            return await Users;
+        }
     }
 }

@@ -3,7 +3,8 @@
 matematici.AutoComplete = function (selector) {
 	var
 		autoComplete = this,
-		element = $(selector).addClass("AutoComplete"),
+        element = $(selector).addClass("AutoComplete"),
+        fullHeight = $(selector).hasClass("FullHeight"),
 		options = $("option", element),
 		items,
 		currentItem,
@@ -142,7 +143,14 @@ matematici.AutoComplete = function (selector) {
 			updateList();
 			setValue();
 
-			checkReadOnly();
+            checkReadOnly();
+
+            if (fullHeight) {
+                label.hide();
+                icon.addClass("FullHeight");
+                input.addClass("FullHeight");
+                list.insertAfter(input).addClass("FullHeight");
+            }
 
             matematici.elements.window.on("resize", setWidth);
 		},

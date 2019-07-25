@@ -19,6 +19,8 @@ input.AutoComplete-Filter {
   background-color: #ccc !important;
   z-index: 991;
   outline: none; }
+  input.AutoComplete-Filter.FullHeight {
+    display: none !important; }
 
 div.AutoComplete-List {
   position: absolute;
@@ -66,6 +68,11 @@ div.AutoComplete-List {
     position: relative !important;
     border: none !important;
     background: none !important; }
+  div.AutoComplete-List.FullHeight {
+    display: block;
+    position: static;
+    margin-top: 0;
+    max-height: 500px; }
 
 i.AutoComplete {
   line-height: 36px;
@@ -73,3 +80,5 @@ i.AutoComplete {
   position: absolute !important;
   margin: 0 !important;
   display: none; }
+  i.AutoComplete.FullHeight {
+    display: none !important; }

@@ -14,7 +14,7 @@
                 hours = parseInt((milliseconds - seconds * 1000 - minutes * 60000) / 1000 / 60 / 60);
 
             //console.log(milliseconds, seconds, minutes, hours, date, matematici.clock.getTime());
-
+             
             if (milliseconds < -1000) { //after an extra delay of 1s
                 new instances.Event(instances.Events.countDown, itemId).trigger();
                 clear();

@@ -651,6 +651,34 @@ namespace CheckListManager.Instances.Logic.Services
             }
         }
 
+        public async Task<List<InstanceEventRequest.Email>> GetInstanceEditors(string code, IDefaultIdentity identity)
+        {
+            try
+            {
+                var cacheObject = await _instanceCache.GetAsync(code, true);
+                if (cacheObject == null)
+                    throw new InstanceException("Instance not found");
+                if (cacheObject.InstanceState != InstanceState.Draft && cacheObject.InstanceState != InstanceState.Progress)
+                    throw new InstanceException("Instance state not valid");
+                if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
+                    throw new InstanceException("Access denied");
+
+                return (await _instancesRepository.GetInstanceEditors(cacheObject.Department, cacheObject.PrototypeType, cacheObject.VersionState)).Select(u => new InstanceEventRequest.Email {
+                    Code = u.Code,
+                    Description = u.Description,
+                    Address = u.Email
+                }).ToList();
+            }
+            catch (InstanceException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, "Unable to retrieve the instance editors");
+                throw new InstanceException("Unable to retrieve the instance editors", e);
+            }
+        }
 
         #region Events
 
@@ -1104,7 +1132,7 @@ namespace CheckListManager.Instances.Logic.Services
 
         private async Task HandleEmailSend(InstanceCacheObject cacheObject, IDefaultIdentity identity, int? itemId, List<InstanceEventRequest.Email> Emails)
         {
-            if (itemId.HasValue)
+            if (!itemId.HasValue)
                 throw new InstanceException("Item id not sent");
 
             var signature = cacheObject.Instance.Items.ContainsKey(itemId.Value) ? cacheObject.Instance.Items[itemId.Value] as Signature : null;
@@ -1114,14 +1142,15 @@ namespace CheckListManager.Instances.Logic.Services
             if (!signature.Signed)
                 throw new Exception("The signature is not signed");
 
-            var message = await _settingService.SignatureMessageAsync(identity.CompanyId);
-            var checkListURL = $"Instances/Detail/{cacheObject.Code}";
-            var checklistLabel = $"{cacheObject.PrototypeName}.{cacheObject.Version}.{cacheObject.Year}.{cacheObject.Number}";
+            var message = await _settingService.InstanceMessageAsync(identity.CompanyId);
+            var webApplicationUrl = _configurationService.WebApplicationUrl;
+            var checkListURL = $"{webApplicationUrl}/Instances/Detail/{cacheObject.Code}";
+            var checklistLabel = $"{cacheObject.PrototypeName}.{cacheObject.Version}.{(cacheObject.Year > 0 ? cacheObject.Year.ToString() : cacheObject.VersionState == VersionState.Draft ? "Test" : "SE")}.{cacheObject.Number?.ToString() ?? "?"}";
             foreach (var Email in Emails)
                 await _queueService.SendObjectAsync(QueueName.Email,
-                    new EmailMessage(identity.CompanyId, "Signature needed", message,
+                    new EmailMessage(identity.CompanyId, "Signature notification", message,
                         Email.Address, new List<Tuple<string, string>> {
-                            new Tuple<string, string> ("User", Email.User),
+                            new Tuple<string, string> ("User", Email.Description),
                             new Tuple<string, string> ("CheckListCode", $"<a href='{checkListURL}' target='_blank'>{checklistLabel}</a>")
                     }));
         }

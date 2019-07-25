@@ -10,6 +10,7 @@ namespace CheckListManager.Common.Logic.Services
 		string SqsBaseUrl { get; }
         string SqsPrefix { get; }
         string ApiBaseUrl { get; }
+        string WebApplicationUrl { get; }
         string PublicRepositoryUrl { get; }
         int InstanceCloseTimeout { get; }
         string PrototypesStorageBucket { get; }
