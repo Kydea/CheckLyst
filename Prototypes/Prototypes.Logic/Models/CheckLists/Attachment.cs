@@ -16,5 +16,6 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         }
 
         public string Key { get; set; }
+        public string FileType { get; set; } = "images";
     }
 }

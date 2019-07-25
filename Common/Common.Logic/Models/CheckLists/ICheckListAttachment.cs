@@ -1,7 +1,7 @@
 ﻿namespace CheckListManager.Common.Logic.Models.CheckLists
 {
-	public interface ICheckListAttachment : ICheckListItem
+	public interface ICheckListAttachment : ICheckListAttachmentBase
 	{
-		string Key { get; set; }
+		string FileType { get; set; }
 	}
 }

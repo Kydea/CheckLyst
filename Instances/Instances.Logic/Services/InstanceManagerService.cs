@@ -396,7 +396,7 @@ namespace CheckListManager.Instances.Logic.Services
                 )
                     throw new InstanceException("Access denied");
 
-                await DeleteAsync(cacheObject, identity.Code, note);
+                await DeleteInstanceAsync(cacheObject, identity, note);
 
                 if (!cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation))
                     await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
@@ -574,7 +574,7 @@ namespace CheckListManager.Instances.Logic.Services
             }
         }
 
-        private async Task DeleteAsync(InstanceCacheObject cacheObject, string userCode, string Note)
+        private async Task DeleteInstanceAsync(InstanceCacheObject cacheObject, IDefaultIdentity identity, string note)
         {
             if (cacheObject.InstanceState == InstanceState.Progress)
             {
@@ -585,7 +585,7 @@ namespace CheckListManager.Instances.Logic.Services
                 if (cacheObject.VersionState == VersionState.Active)
                 {
                     row.ModifiedOn = DateTimeOffset.UtcNow;
-                    row.ModifiedBy = userCode;
+                    row.ModifiedBy = identity.Code;
                     row.InstanceState = InstanceState.Deleted;
 
                     row.InstancesHistory.Add(new InstancesHistory
@@ -593,11 +593,17 @@ namespace CheckListManager.Instances.Logic.Services
                         Date = row.ModifiedOn.Value,
                         User = row.ModifiedBy,
                         State = row.InstanceState,
-                        Note = Note
+                        Note = note
                     });
                 }
                 else
+                {
                     _instancesRepository.DeleteInstance(row);
+                    await _storageService.DeleteRecursiveAsync(
+                        _configurationService.InstancesStorageBucket,
+                        GetAttachmentKeyPrefix(identity, cacheObject)
+                    );
+                }
 
                 await _instancesRepository.SaveChangesAsync();
             }
@@ -806,10 +812,33 @@ namespace CheckListManager.Instances.Logic.Services
 
             if (item.ReadOnly)
                 return;
-            
+
+            if (attachment == null)
+            {
+                throw new InstanceException("No attachment has been uploaded");
+            }
+
             var extension = Path.GetExtension(attachment.FileName);
-            var key = $"{identity.CompanyId}/{cacheObject.Code}/{itemId.Value}{extension}";
+            if (item.FileType == Attachment.FileTypes.Images)
+            {
+                if (!attachment.MediaType.StartsWith("image/"))
+                {
+                    throw new InstanceException("The attachment has to be an image");
+                }
+            }
+            else if (item.FileType == Attachment.FileTypes.Pdf)
+            {
+                if (extension != ".pdf")
+                {
+                    throw new InstanceException("The attachment has to be a pdf document");
+                }
+            }
+            else
+            {
+                throw new InstanceException("File type not supported");
+            }
             
+            var key = $"{GetAttachmentKeyPrefix(identity, cacheObject)}{itemId.Value}{extension}";
             using (var memoryStream = new MemoryStream(attachment.Buffer))
             {
                 var success = await _storageService.PutAsync(_configurationService.InstancesStorageBucket, key, memoryStream);
@@ -823,6 +852,9 @@ namespace CheckListManager.Instances.Logic.Services
 
             await Update(cacheObject, identity.Code);
         }
+
+        private static string GetAttachmentKeyPrefix(IDefaultIdentity identity, InstanceCacheObject cacheObject)
+            => $"{identity.CompanyId}/{cacheObject.Code}/";
 
         private async Task HandlePageChangeAsync(InstanceCacheObject cacheObject, string userCode, int? itemId)
         {
