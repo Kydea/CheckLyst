@@ -16,7 +16,8 @@
     unlockPage: "UnlockPage",
 	skipCountDown: "SkipCountDown",
 	quit: "Quit",
-	uploadAttachment: "UploadAttachment"
+	uploadAttachment: "UploadAttachment",
+    sendEmail: "SendEmail",
 };
 
 instances.Event = function (type, itemId, data, accessToken, suppressError, fileUpload) {

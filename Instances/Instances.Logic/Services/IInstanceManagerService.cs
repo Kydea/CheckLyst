@@ -24,6 +24,6 @@ namespace CheckListManager.Instances.Logic.Services
 		Task ClearPendingInstances(CancellationToken cancellationToken = default(CancellationToken));
         Task<List<HistoryRow>> History(DefaultIdentity identity, long id);
         Task<string> GetExternalSourceRows(string code, IDefaultIdentity identity, string dataSourceCode, Dictionary<string, string> parameters, int page);
-        Task<string> GetInstanceEditors(string code, IDefaultIdentity identity);
+        Task<List<InstanceEventRequest.Email>> GetInstanceEditors(string code, IDefaultIdentity identity);
     }
 }

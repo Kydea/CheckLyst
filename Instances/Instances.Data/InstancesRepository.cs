@@ -140,17 +140,24 @@ namespace CheckListManager.Instances.Data
             return (await Entities.PrototypeVersions.SingleOrDefaultAsync(p => p.Prototype == prototype && p.VersionState == VersionState.Active))?.Version;
         }
 
-        Task<List<Users>> GetInstanceEditors(long department, long prototypeType, string versionState)
+        public async Task<List<Users>> GetInstanceEditors(long department, long prototypeType, string versionState)
         {
-            List<Users> Users;
-            if (versionState == VersionState.Draft || versionState == VersionState.InSimulation)
-                Users = Entities.UserFunctions.Where(uf =>
-                    uf.Department == department && (
-                        uf.PrototypeType == null 
-                        || uf.PrototypeType == prototypeType
-                    )).Select(uf => uf.Users).Distinct().ToList();
+            var Users =
+                versionState == VersionState.Draft || versionState == VersionState.InSimulation ?
+                    Entities.UserFunctions.Where(uf =>
+                        uf.Department == department && (
+                            uf.PrototypeType == null 
+                            || uf.PrototypeType == prototypeType
+                        )
+                        && uf.FunctionGroup == "Prototypes" && uf.Function == "Edit").Select(uf => uf.Users).Distinct().ToListAsync()
+                    : Entities.UserFunctions.Where(uf =>
+                        uf.Department == department && (
+                            uf.PrototypeType == null
+                            || uf.PrototypeType == prototypeType
+                        )
+                        && uf.FunctionGroup == "Instances" && uf.Function == "Edit").Select(uf => uf.Users).Distinct().ToListAsync();
 
-            return (await Entities.Users.SingleOrDefaultAsync(p => p.Prototype == prototype && p.VersionState == VersionState.Active))?.Version;
+            return await Users;
         }
     }
 }

@@ -280,7 +280,7 @@ namespace CheckListManager.Instances.Api.Controllers
         {
             try
             {
-                return Ok(await _instanceManagerService.GetIn(request.InstanceCode, Identity, request.ExternalSourceCode));
+                return Ok(await _instanceManagerService.GetInstanceEditors(request.Code, Identity));
             }
             catch (Exception e)
             {

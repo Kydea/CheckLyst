@@ -27,6 +27,10 @@ input.AutoComplete-Filter {
     background-color: $Color-Grey-Light !important;
     z-index: $Depth-AutoComplete;
     outline: none;
+
+    &.FullHeight {
+        display: none !important;
+    }
 }
 
 div.AutoComplete-List {
@@ -60,7 +64,7 @@ div.AutoComplete-List {
 
             &::after {
                 content: fa-content($fa-var-check);
-                font-family: "Font Awesome 5 Pro"; 
+                font-family: "Font Awesome 5 Pro";
                 color: $Color-Grey-Dark;
                 position: absolute;
                 right: 0;
@@ -89,6 +93,13 @@ div.AutoComplete-List {
         border: none !important;
         background: none !important;
     }
+
+    &.FullHeight {
+        display: block;
+        position: static;
+        margin-top: 0;
+        max-height: 500px;
+    }
 }
 
 i.AutoComplete {
@@ -97,4 +108,8 @@ i.AutoComplete {
     position: absolute !important;
     margin: 0 !important;
     display: none; //shown by matematici.loader
+
+    &.FullHeight {
+        display: none !important;
+    }
 }
