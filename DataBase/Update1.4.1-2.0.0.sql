@@ -1,4 +1,5 @@
 insert into "Configuration"."Configurations" ("Code", "Value") values
+	('WebApplicationUrl', <TBD>), --update Configuration - XXX.sql accordingly, the url must be specified without final slash
 	('PrototypesStorageBucket', <TBD>), --update Configuration - XXX.sql accordingly
 	('InstancesStorageBucket', <TBD>); --update Configuration - XXX.sql accordingly
 
