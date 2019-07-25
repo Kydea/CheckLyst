@@ -3,8 +3,8 @@ insert into "Configuration"."Configurations" ("Code", "Value") values
 	('RedisPort', '6379'),
 	('SqsBaseUrl', 'https://sqs.eu-west-1.amazonaws.com/'),
 	('SqsPrefix', 'prd-'),
-	('ApiBaseUrl', 'https://checklystinternal.jnj.com'),
-	('WebApplicationUrl', '?'), --the url must be specified without final slash
+	('ApiBaseUrl', 'https://checklystinternal.jnj.com/'),
+	('WebApplicationUrl', 'https://checklyst.jnj.com'), --the url must be specified without final slash
 	('PublicRepositoryUrl', 'https://checklyst.jnj.com/content/media/'),
 	('InstanceCloseTimeout', '4320'); --3 days, expressed in minutes
 	('PrototypesStorageBucket', '???'),

@@ -21,5 +21,6 @@ namespace CheckListManager.Instances.Data
         void SaveChildren(Common.Data.Instances instance, IEnumerable<InstanceTags> instanceTags, IEnumerable<InstanceExpressionValues> instanceExpressionValues);
         Task ValidateUniqueExpressions(long instance);
         Task<int?> GetActivePrototypeVersion(long prototype);
+        Task<List<Users>> GetInstanceEditors(long department, long prototypeType, string versionState);
     }
 }
