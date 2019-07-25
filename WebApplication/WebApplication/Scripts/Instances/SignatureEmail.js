@@ -5,7 +5,7 @@
         getInstanceEditors = function () {
             $.ajax(matematici.urls.instances.api + "/GetInstanceEditors", {
                 method: "post",
-                data: { data: { instanceCode: instances.instance.getCode() } }
+                data: { instanceCode: instances.instance.getCode() }
             }).done(function (result) {
                 console.log(result);
             });

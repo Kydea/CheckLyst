@@ -645,6 +645,30 @@ namespace CheckListManager.Instances.Logic.Services
             }
         }
 
+        public async Task<List<InstanceEventRequest.Email>> GetInstanceEditors(string code, IDefaultIdentity identity)
+        {
+            try
+            {
+                var cacheObject = await _instanceCache.GetAsync(code, true);
+                if (cacheObject == null)
+                    throw new InstanceException("Instance not found");
+                if (cacheObject.InstanceState != InstanceState.Draft && cacheObject.InstanceState != InstanceState.Progress)
+                    throw new InstanceException("Instance state not valid");
+                if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
+                    throw new InstanceException("Access denied");
+
+                return await _instancesRepository.GetInstanceEditors(cacheObject.Department, cacheObject.PrototypeType, cacheObject.VersionState);
+            }
+            catch (InstanceException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, "Unable to retrieve the instance editors");
+                throw new InstanceException("Unable to retrieve the instance editors", e);
+            }
+        }
 
         #region Events
 
