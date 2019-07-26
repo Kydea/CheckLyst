@@ -22,28 +22,28 @@ using CheckListManager.Common.Logic.Json;
 namespace CheckListManager.Prototypes.Terminal
 {
     public class FTPService : IFTPService
-	{
-		private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+    {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private readonly CheckListJsonConverter _converter;
         private readonly IQueueService _queueService;
-		private readonly ISettingService _settingService;
+        private readonly ISettingService _settingService;
         private readonly IPrototypesRepository _prototypesRepository;
         private readonly ICommonRepository _commonRepository;
         private readonly IConfigurationService _configurationService;
 
         public FTPService(CheckListJsonConverter converter, IQueueService queueService, ISettingService settingService, IPrototypesRepository prototypesRepository, ICommonRepository commonRepository, IConfigurationService configurationService)
-		{
+        {
             _converter = converter;
             _queueService = queueService;
-			_settingService = settingService;
+            _settingService = settingService;
             _prototypesRepository = prototypesRepository;
             _commonRepository = commonRepository;
             _configurationService = configurationService;
         }
 
-		public async Task ProcessFTPMessagesAsync(CancellationToken cancellationToken = default(CancellationToken))
-		{
+        public async Task ProcessFTPMessagesAsync(CancellationToken cancellationToken = default(CancellationToken))
+        {
             var messages = await _queueService.ReceiveObjectsAsync<PrototypesFTPMessage>(QueueName.PrototypesFTP, cancellationToken: cancellationToken);
 
             foreach (var message in messages)
@@ -53,12 +53,12 @@ namespace CheckListManager.Prototypes.Terminal
             }
         }
 
-		private async Task ProcessMessageAsync(QueueMessage<PrototypesFTPMessage> message, CancellationToken cancellationToken = default(CancellationToken))
-		{
-			try
-			{
-				await Send(message.Message);
-				await _queueService.DeleteMessageAsync(QueueName.PrototypesFTP, message.MessageHandle, cancellationToken);
+        private async Task ProcessMessageAsync(QueueMessage<PrototypesFTPMessage> message, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            try
+            {
+                await Send(message.Message);
+                await _queueService.DeleteMessageAsync(QueueName.PrototypesFTP, message.MessageHandle, cancellationToken);
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
                     Action = TrailAction.PrototypeExportCompleted,
@@ -71,7 +71,7 @@ namespace CheckListManager.Prototypes.Terminal
                 }, cancellationToken);
             }
             catch (Exception exception)
-			{
+            {
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
                     Action = TrailAction.PrototypeExportFailed,
@@ -82,14 +82,14 @@ namespace CheckListManager.Prototypes.Terminal
                         File = message.Message.Path,
                         Error = exception.Message
                     })
-				}, cancellationToken);
+                }, cancellationToken);
 
-				Logger.Error(exception);
-			}
-		}
+                Logger.Error(exception);
+            }
+        }
 
-		private async Task Send(PrototypesFTPMessage message)
-		{
+        private async Task Send(PrototypesFTPMessage message)
+        {
             var PrototypeVersion = await _prototypesRepository.GetPrototypeVersionAsync(message.Company, message.Prototype, message.Version);
 
             FTPConnectionSettings Settings;

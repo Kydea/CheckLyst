@@ -17,7 +17,13 @@ namespace CheckListManager.Common.Logic.Terminal.FTP
         {
             string Status = "(unset)";
 
-            Path = string.IsNullOrEmpty(Path) ? string.Empty : Path + "/";
+            if (string.IsNullOrEmpty(Path))
+                Path = string.Empty;
+            else
+            {
+                if (!Path.EndsWith("/")) Path += "/";
+                if (!Path.StartsWith("/")) Path = "/" + Path;
+            }
 
             FileName = FileName?
                 .Replace('\\', '-').Replace('/', '-').Replace('|', '-').Replace('>', '-').Replace('<', '-')
