@@ -152,5 +152,21 @@ namespace CheckListManager.Common.Data
         {
             return await GetAppointedUsersQuery(CompanyID, FunctionGroup, Function, Department, PrototypeType, Tags).ToListAsync();
         }
+
+        public async Task<FTPServers> GetPrototypesFTPServerAsync(long CompanyID, long PrototypeType)
+        {
+            var PrototypeTypeRow = await Entities.PrototypeTypes.SingleAsync(pt => pt.Company == CompanyID && pt.ID == PrototypeType);
+            return
+                !PrototypeTypeRow.PrototypesFTPServerEnabled ? null : await Entities.FTPServers.SingleOrDefaultAsync(ftps =>
+                    ftps.Company == CompanyID && (!PrototypeTypeRow.PrototypesFTPServer.HasValue && ftps.PrototypesDefault || ftps.ID == PrototypeTypeRow.PrototypesFTPServer));
+        }
+
+        public async Task<FTPServers> GetInstancesFTPServerAsync(long CompanyID, long PrototypeType)
+        {
+            var PrototypeTypeRow = await Entities.PrototypeTypes.SingleAsync(pt => pt.Company == CompanyID && pt.ID == PrototypeType);
+            return
+                !PrototypeTypeRow.InstancesFTPServerEnabled ? null : await Entities.FTPServers.SingleOrDefaultAsync(ftps =>
+                    ftps.Company == CompanyID && (!PrototypeTypeRow.InstancesFTPServer.HasValue && ftps.InstancesDefault || ftps.ID == PrototypeTypeRow.InstancesFTPServer));
+        }
     }
 }

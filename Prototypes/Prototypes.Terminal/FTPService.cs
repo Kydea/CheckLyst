@@ -90,19 +90,36 @@ namespace CheckListManager.Prototypes.Terminal
 
 		private async Task Send(PrototypesFTPMessage message)
 		{
-            var SerializedSettings = await _settingService.PrototypesFtpConnectionAsync(message.Company);
-            if (string.IsNullOrWhiteSpace(SerializedSettings)) return;
+            var PrototypeVersion = await _prototypesRepository.GetPrototypeVersionAsync(message.Company, message.Prototype, message.Version);
+
+            FTPConnectionSettings Settings;
+            var FTPServer = await _commonRepository.GetPrototypesFTPServerAsync(message.Company, PrototypeVersion.Prototypes.PrototypeType);
+            if (FTPServer == null)
+            {
+                var SerializedSettings = await _settingService.PrototypesFtpConnectionAsync(message.Company);
+                if (string.IsNullOrWhiteSpace(SerializedSettings)) return;
+                Settings = JsonConvert.DeserializeObject<FTPConnectionSettings>(SerializedSettings);
+            }
+            else
+                Settings = new FTPConnectionSettings
+                {
+                    Host = FTPServer.Host,
+                    Port = FTPServer.Port,
+                    Folder = FTPServer.Folder,
+                    EnableSSL = FTPServer.SSL,
+                    UsePassive = FTPServer.Passive,
+                    UserName = FTPServer.UserName,
+                    Password = FTPServer.Password
+                };
 
             var Company = await _commonRepository.GetCompanyAsync(message.Company);
 
-            var PrototypeVersion = await _prototypesRepository.GetPrototypeVersionAsync(message.Company, message.Prototype, message.Version);
             var CheckList = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converter);
 
             var PDF = new PrototypePDF(Company.ID, Company.Name, Company.TimeZones.MicrosoftCode, _configurationService.PublicRepositoryUrl, PrototypeVersion, CheckList);
 
             var MemoryStream = new MemoryStream();
             PDF.Generate(MemoryStream);
-            var Settings = JsonConvert.DeserializeObject<FTPConnectionSettings>(SerializedSettings);
             var ftpClient = new FTPClient();
 
             await ftpClient.ActionAsync(MemoryStream.ToArray(), Settings.Folder, $"{message.Path}{(message.State == VersionState.Obsolete ? "#O" : string.Empty)}", Settings, FTPClient.Methods.Upload);
