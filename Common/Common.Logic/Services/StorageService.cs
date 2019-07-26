@@ -37,13 +37,13 @@ namespace CheckListManager.Common.Logic.Services
                 InputStream = inputStream
             });
 
-            return response.HttpStatusCode == HttpStatusCode.OK;
+            return response.HttpStatusCode == HttpStatusCode.OK || response.HttpStatusCode == HttpStatusCode.NoContent;
         }
 
         public async Task<bool> DeleteAsync(string bucketName, string key)
         {
             var response = await _s3.DeleteObjectAsync(bucketName, key);
-            return response.HttpStatusCode == HttpStatusCode.OK;
+            return response.HttpStatusCode == HttpStatusCode.OK || response.HttpStatusCode == HttpStatusCode.NoContent;
         }
 
         public async Task<bool> DeleteRecursiveAsync(string bucketName, string keyPrefix)
@@ -56,7 +56,7 @@ namespace CheckListManager.Common.Logic.Services
             return await IterateAsync(bucketName, keyPrefix, async itemKey =>
             {
                 var key = $"{newKeyPrefix}{itemKey.Replace(keyPrefix, "")}";
-                var copyResponse = await _s3.CopyObjectAsync(new CopyObjectRequest
+                var response = await _s3.CopyObjectAsync(new CopyObjectRequest
                 {
                     SourceBucket = bucketName,
                     DestinationBucket = bucketName,
@@ -64,25 +64,28 @@ namespace CheckListManager.Common.Logic.Services
                     DestinationKey = key
                 });
 
-                return copyResponse.HttpStatusCode == HttpStatusCode.OK;
+                return response.HttpStatusCode == HttpStatusCode.OK;
             });
         }
 
         private async Task<bool> IterateAsync(string bucketName, string keyPrefix, Func<string, Task<bool>> action)
         {
-            var response = await _s3.ListObjectsV2Async(new ListObjectsV2Request
-            {
-                BucketName = bucketName,
-                Prefix = keyPrefix
-            });
-
-            if (response.HttpStatusCode != HttpStatusCode.OK)
-            {
-                return false;
-            }
-
+            string continuationToken = null;
+            ListObjectsV2Response response;
             do
             {
+                response = await _s3.ListObjectsV2Async(new ListObjectsV2Request
+                {
+                    BucketName = bucketName,
+                    Prefix = keyPrefix,
+                    ContinuationToken = continuationToken
+                });
+
+                if (response.HttpStatusCode != HttpStatusCode.OK)
+                {
+                    return false;
+                }
+
                 foreach (var item in response.S3Objects)
                 {
                     var result = await action(item.Key);
@@ -92,16 +95,7 @@ namespace CheckListManager.Common.Logic.Services
                     }
                 }
 
-                response = await _s3.ListObjectsV2Async(new ListObjectsV2Request
-                {
-                    BucketName = bucketName,
-                    Prefix = keyPrefix,
-                    ContinuationToken = response.NextContinuationToken
-                });
-                if (response.HttpStatusCode != HttpStatusCode.OK)
-                {
-                    return false;
-                }
+                continuationToken = response.ContinuationToken;
             } while (response.IsTruncated);
 
             return true;

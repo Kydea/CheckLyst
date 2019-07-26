@@ -287,5 +287,21 @@ namespace CheckListManager.Instances.Api.Controllers
                 return Error(e);
             }
         }
+
+        [HttpGet]
+        [Route("DownloadAttachment")]
+        [Authorize(Roles = "Instances#View, Prototypes#Edit")]
+        public async Task<IHttpActionResult> DownloadAttachment([FromUri] string code, [FromUri]string key)
+        {
+            try
+            {
+                var response = await _instanceManagerService.DownloadAttachmentAsync(Identity, code, key);
+                return Content(HttpStatusCode.OK, response.Content, new FileFormatter(response.ContentType));
+            }
+            catch (Exception e)
+            {
+                return Error(e);
+            }
+        }
     }
 }

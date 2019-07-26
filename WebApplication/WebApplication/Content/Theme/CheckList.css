@@ -140,6 +140,13 @@ div.CheckList div.Item {
       max-width: 100%;
       overflow: hidden;
       text-overflow: ellipsis; }
+    div.CheckList div.Item.Attachment a.ViewAttachment {
+      vertical-align: top;
+      margin-left: 20px;
+      white-space: nowrap;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis; }
 
 div.CheckList .Item p.Description {
   margin: 0; }

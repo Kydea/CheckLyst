@@ -229,6 +229,15 @@ div.CheckList {
 				overflow: hidden;
 				text-overflow: ellipsis;
 			}
+
+			a.ViewAttachment {
+				vertical-align: top;
+				margin-left: $Metric-Control-Space;
+				white-space: nowrap;
+				max-width: 100%;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
 		}
 	}
 

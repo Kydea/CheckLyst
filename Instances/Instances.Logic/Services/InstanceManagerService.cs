@@ -31,6 +31,7 @@ using CheckListManager.Common.Logic.DataSources;
 using CheckListManager.Common.Logic;
 using MultipartDataMediaFormatter.Infrastructure;
 using CheckListManager.Common.Logic.Email;
+using CheckListManager.Common.Logic.Models;
 
 namespace CheckListManager.Instances.Logic.Services
 {
@@ -678,6 +679,19 @@ namespace CheckListManager.Instances.Logic.Services
                 Logger.Error(e, "Unable to retrieve the instance editors");
                 throw new InstanceException("Unable to retrieve the instance editors", e);
             }
+        }
+
+        public async Task<StorageFile> DownloadAttachmentAsync(IDefaultIdentity identity, string code, string key)
+        {
+            var cacheObject = await _instanceCache.GetAsync(code, false);
+            if (cacheObject == null)
+                throw new InstanceException("Instance not found");
+            if (!HasPermission(identity, "View", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
+                throw new InstanceException("Access denied");
+            if (key == null || !key.StartsWith(GetAttachmentKeyPrefix(identity, cacheObject)))
+                throw new InstanceException("Attachment key not valid");
+            
+            return await _storageService.GetAsync(_configurationService.InstancesStorageBucket, key);
         }
 
         #region Events

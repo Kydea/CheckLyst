@@ -6,6 +6,7 @@ using CheckListManager.Instances.Logic.Messages;
 using CheckListManager.Instances.Logic.Models;
 using CheckListManager.Instances.Logic.Models.CheckLists;
 using System.Collections.Generic;
+using CheckListManager.Common.Logic.Models;
 
 namespace CheckListManager.Instances.Logic.Services
 {
@@ -25,5 +26,6 @@ namespace CheckListManager.Instances.Logic.Services
         Task<List<HistoryRow>> History(DefaultIdentity identity, long id);
         Task<string> GetExternalSourceRows(string code, IDefaultIdentity identity, string dataSourceCode, Dictionary<string, string> parameters, int page);
         Task<List<InstanceEventRequest.Email>> GetInstanceEditors(string code, IDefaultIdentity identity);
-    }
+        Task<StorageFile> DownloadAttachmentAsync(IDefaultIdentity identity, string code, string key);
+	}
 }
