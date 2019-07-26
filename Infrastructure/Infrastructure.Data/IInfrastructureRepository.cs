@@ -45,6 +45,9 @@ namespace CheckListManager.Infrastructure.Data
             Expression<Func<FTPServers, TResult>> select,
             string name, string host, int currentPage, int itemsPerPage);
 
+        Task<FTPServers> GetFTPServerAsync(IDefaultIdentity identity, long id);
+
         Task<List<WorkFlows>> GetWorkFlows(long companyId);
+
     }
 }

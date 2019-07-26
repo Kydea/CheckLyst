@@ -42,5 +42,21 @@ namespace CheckListManager.Common.Logic.Terminal.FTP
             using (FtpWebResponse Response = (FtpWebResponse)(await FtpWebRequest.GetResponseAsync()))
                 Status = Response.StatusDescription;
         }
+
+        public async Task<string> TestAsync(FTPConnectionSettings Settings)
+        {
+            var Uri = $"ftp://{Settings.Host}:{Settings.Port}/%2F/{System.Uri.EscapeDataString(Settings.Folder)}";
+            FtpWebRequest FtpWebRequest = (FtpWebRequest)WebRequest.Create(Uri);
+            FtpWebRequest.Credentials = new NetworkCredential(Settings.UserName, Settings.Password);
+            FtpWebRequest.Method = WebRequestMethods.Ftp.ListDirectory;
+
+            using (FtpWebResponse Response = (FtpWebResponse)(await FtpWebRequest.GetResponseAsync()))
+            using (Stream ResponseStream = Response.GetResponseStream())
+            {
+                StreamReader Reader = new StreamReader(ResponseStream);
+                string Names = Reader.ReadToEnd();
+                return Names;   
+            }
+        }
     }
 }

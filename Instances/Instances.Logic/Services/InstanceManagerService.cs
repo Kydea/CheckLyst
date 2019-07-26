@@ -668,7 +668,7 @@ namespace CheckListManager.Instances.Logic.Services
                     Code = u.Code,
                     Description = u.Description,
                     Address = u.Email
-                }).ToList();
+                }).OrderBy(u => u.Code).ToList();
             }
             catch (InstanceException)
             {

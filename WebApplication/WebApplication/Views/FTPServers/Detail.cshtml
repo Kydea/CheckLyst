@@ -5,7 +5,7 @@
         <label>
             <span>ID</span>
             <i class="Icon fal fa-key" />
-            <input type="text" name="id" readonly="readonly" placeholder="(new record)" />
+            <input type="text" id="ID" name="id" readonly="readonly" placeholder="(new record)" />
         </label>
 
         <label>
@@ -86,10 +86,52 @@
 </div>
 
 <script type="text/javascript">
+    var
+        formSelector = "form#Detail";
+
     new matematici.DetailPage({
-        formSelector: "form#Detail",
+        formSelector: formSelector,
         initHandler: function () {
             $("input[name=port]").keyfilter(/[\d]/);
-        }
+        },
+        buttons: [{
+            icon: "cog",
+            text: "test",
+            ahidden: true,
+            id: "TestButton",
+            handler: function () {
+                var action = function () {
+                    $.ajax({
+                        type: "post",
+                        url: "@BaseUrl/Infrastructure/FTPServers/Test",
+                        data: { id: $("input#ID", formSelector).val() }
+                    }).done(function (result) {
+                        var
+                            div = $("<div />"),
+                            rows = result.split("\n");
+                        for (var index in rows) {
+                            var row = rows[index]
+                            if (row && row.trim() && row.trim() != "\r")
+                                div.append($("<div />").css("white-space", "nowrap").text((1 + parseInt(index)) + ": " + row));
+                        }
+                        matematici.dialog.show("Folder content", div);
+                    });
+                }
+                if (matematici.canClose)
+                    action();
+                else
+                    matematici.dialog.show("warning", "There are unsaved changes.", [
+                        {
+                            text: "save", icon: "check", handler: function () {
+                                matematici.save(action, true);
+                            }
+                        },
+                        { text: "cancel", icon: "times", cancelButton: true }
+                    ]);
+
+
+                return true;
+            }
+        }]
     });
 </script>

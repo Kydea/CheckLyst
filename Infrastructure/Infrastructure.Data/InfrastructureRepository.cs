@@ -85,7 +85,7 @@ namespace CheckListManager.Infrastructure.Data
             await SaveChangesAsync();
         }
 
-        private async Task<FTPServers> GetFTPServerAsync(IDefaultIdentity identity, long id)
+        public async Task<FTPServers> GetFTPServerAsync(IDefaultIdentity identity, long id)
         {
             var FTPServer = await Entities.FTPServers.SingleOrDefaultAsync(d => d.Company == identity.CompanyId && d.ID == id);
             if (FTPServer == null) throw new DatabaseException($"FTP server {id} not found");

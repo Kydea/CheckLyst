@@ -3,6 +3,7 @@ using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Logic.DataEngine;
+using CheckListManager.Common.Logic.Terminal.FTP;
 using CheckListManager.Common.Logic.Trail;
 using CheckListManager.Infrastructure.Data;
 using System;
@@ -140,6 +141,23 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
             }
 
             return response;
+        }
+
+        public async Task<string> Test(IDefaultIdentity identity, long id)
+        {
+            var record = await _infrastructureRepository.GetFTPServerAsync(identity, id);
+
+            var result = await new FTPClient().TestAsync(new FTPConnectionSettings {
+                Host = record.Host,
+                Folder = record.Folder,
+                Port = record.Port,
+                EnableSSL = record.SSL,
+                UsePassive = record.Passive,
+                UserName = record.UserName,
+                Password = record.Password
+            });
+
+            return result;
         }
     }
 }

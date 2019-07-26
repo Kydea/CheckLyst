@@ -17,5 +17,7 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
         Task<FTPServersResponse> AddOrEdit(IDefaultIdentity Identity, FTPServersRow record, bool IsNew);
 
         Task<FTPServersResponse> Delete(IDefaultIdentity Identity, long ID);
+
+        Task<string> Test(IDefaultIdentity Identity, long ID);
     }
 }
