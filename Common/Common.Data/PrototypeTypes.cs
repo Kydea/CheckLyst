@@ -31,6 +31,10 @@ namespace CheckListManager.Common.Data
         public System.DateTimeOffset CreatedOn { get; set; }
         public string ModifiedBy { get; set; }
         public Nullable<System.DateTimeOffset> ModifiedOn { get; set; }
+        public bool PrototypesFTPServerEnabled { get; set; }
+        public bool InstancesFTPServerEnabled { get; set; }
+        public Nullable<long> PrototypesFTPServer { get; set; }
+        public Nullable<long> InstancesFTPServer { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Prototypes> Prototypes { get; set; }
@@ -40,5 +44,7 @@ namespace CheckListManager.Common.Data
         public virtual WorkFlows WorkFlows1 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UserFunctions> UserFunctions { get; set; }
+        public virtual FTPServers FTPServers { get; set; }
+        public virtual FTPServers FTPServers1 { get; set; }
     }
 }

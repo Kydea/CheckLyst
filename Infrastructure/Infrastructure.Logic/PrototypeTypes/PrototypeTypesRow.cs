@@ -16,6 +16,8 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
         public string ApprovationWorkFlowDescription { get; set; }
         public long? ObsolescenceWorkFlow { get; set; }
         public string ObsolescenceWorkFlowDescription { get; set; }
+        public long? PrototypesFTPServer { get; set; }
+        public long? InstancesFTPServer { get; set; }
         public string CreatedBy { get; set; }
         public DateTimeOffset CreatedOn { get; set; }
         public string ModifiedBy { get; set; }

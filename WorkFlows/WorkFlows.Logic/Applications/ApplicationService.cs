@@ -338,7 +338,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 {
                     var message = await _settingService.SignatureMessageAsync(user.Company);
                     var checkListURL = Instance == null ?
-                        $"{webApplicationUrl}/Prototypes / Detail/{PrototypeVersion.Prototypes.ID}/{PrototypeVersion.Version}" :
+                        $"{webApplicationUrl}/Prototypes/Detail/{PrototypeVersion.Prototypes.ID}/{PrototypeVersion.Version}" :
                         $"{webApplicationUrl}/Instances/Detail/{Instance.Code}";
                     var checklistLabel = Instance == null ?
                         $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}" :

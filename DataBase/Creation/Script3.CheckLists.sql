@@ -11,6 +11,11 @@ create table "CheckLists"."PrototypeTypes"
 	"ApprovationWorkFlow" bigint references "WorkFlows"."WorkFlows",
 	"ObsolescenceWorkFlow" bigint references "WorkFlows"."WorkFlows",
 
+	"PrototypesFTPServerEnabled" boolean not null default true,
+	"PrototypesFTPServer" bigint references "Infrastructure"."FTPServers",
+	"InstancesFTPServerEnabled" boolean not null default false,
+	"InstancesFTPServer" bigint references "Infrastructure"."FTPServers",
+
 	"CreatedBy" varchar (60),
 	"CreatedOn" timestamptz not null default current_timestamp,
 	"ModifiedBy" varchar (60),

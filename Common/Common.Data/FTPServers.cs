@@ -14,6 +14,13 @@ namespace CheckListManager.Common.Data
     
     public partial class FTPServers
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public FTPServers()
+        {
+            this.PrototypeTypes = new HashSet<PrototypeTypes>();
+            this.PrototypeTypes1 = new HashSet<PrototypeTypes>();
+        }
+    
         public long ID { get; set; }
         public Nullable<long> Company { get; set; }
         public string Name { get; set; }
@@ -32,5 +39,9 @@ namespace CheckListManager.Common.Data
         public Nullable<System.DateTimeOffset> ModifiedOn { get; set; }
     
         public virtual Companies Companies { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PrototypeTypes> PrototypeTypes { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PrototypeTypes> PrototypeTypes1 { get; set; }
     }
 }

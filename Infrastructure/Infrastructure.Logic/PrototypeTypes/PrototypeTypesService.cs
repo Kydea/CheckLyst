@@ -52,6 +52,18 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
                     Options = WorkFlows
                 };
 
+                var FTPServers = (await _infrastructureRepository.GetFTPServersAsync(identity, ftps => new { ftps.ID, ftps.Name }, string.Empty, string.Empty, 1, 1000)).Data.Select(ftps => new Option(ftps.ID.ToString(), ftps.Name)).ToList();
+                FTPServers.Insert(0, new Option("-1", "(default)"));
+                response.Fields["PrototypesFTPServer"] = new Field
+                {
+                    Options = FTPServers
+                };
+
+                response.Fields["InstancesFTPServer"] = new Field
+                {
+                    Options = FTPServers
+                };
+
                 response.Fields["PrototypeType"] = new Field { Value = Form.Name };
             }
 
@@ -72,6 +84,8 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
                         ApprovationWorkFlowDescription = pt.WorkFlows.Description,
                         ObsolescenceWorkFlow = pt.ObsolescenceWorkFlow,
                         ObsolescenceWorkFlowDescription = pt.WorkFlows1.Description,
+                        PrototypesFTPServer = !pt.PrototypesFTPServerEnabled ? default(long?) : (pt.PrototypesFTPServer ?? -1),
+                        InstancesFTPServer = !pt.InstancesFTPServerEnabled ? default(long?) : (pt.InstancesFTPServer ?? -1),
                         CreatedBy = pt.CreatedBy,
                         CreatedOn = pt.CreatedOn,
                         ModifiedBy = pt.ModifiedBy,
@@ -148,7 +162,11 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
                         Department = record.Department.Value,
                         Name = record.Name,
                         ApprovationWorkFlow = record.ApprovationWorkFlow,
-                        ObsolescenceWorkFlow = record.ObsolescenceWorkFlow
+                        ObsolescenceWorkFlow = record.ObsolescenceWorkFlow,
+                        PrototypesFTPServerEnabled = record.PrototypesFTPServer.HasValue,
+                        PrototypesFTPServer = record.PrototypesFTPServer >= 0 ? record.PrototypesFTPServer : default(long?),
+                        InstancesFTPServerEnabled = record.InstancesFTPServer.HasValue,
+                        InstancesFTPServer = record.InstancesFTPServer >= 0 ? record.InstancesFTPServer : default(long?)
                     });
                 }
                 catch (Exception Exception)
@@ -176,7 +194,11 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
                         Department = record.Department.Value,
                         Name = record.Name,
                         ApprovationWorkFlow = record.ApprovationWorkFlow,
-                        ObsolescenceWorkFlow = record.ObsolescenceWorkFlow
+                        ObsolescenceWorkFlow = record.ObsolescenceWorkFlow,
+                        PrototypesFTPServerEnabled = record.PrototypesFTPServer.HasValue,
+                        PrototypesFTPServer = record.PrototypesFTPServer >= 0 ? record.PrototypesFTPServer : default(long?),
+                        InstancesFTPServerEnabled = record.InstancesFTPServer.HasValue,
+                        InstancesFTPServer = record.InstancesFTPServer >= 0 ? record.InstancesFTPServer : default(long?)
                     });
                 }
                 catch (Exception Exception)

@@ -97,3 +97,9 @@ insert into "Configuration"."Settings" ("Code") values
 insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") 
 select "ID", 'InstanceMessage', '[User], <br /> A signature has been issued for the instance [CheckListCode].'
 from "Infrastructure"."Companies";
+
+
+alter table "CheckLists"."PrototypeTypes" add "PrototypesFTPServerEnabled" boolean not null default true;
+alter table "CheckLists"."PrototypeTypes" add "PrototypesFTPServer" bigint references "Infrastructure"."FTPServers";
+alter table "CheckLists"."PrototypeTypes" add "InstancesFTPServerEnabled" boolean not null default false;
+alter table "CheckLists"."PrototypeTypes" add "InstancesFTPServer" bigint references "Infrastructure"."FTPServers";

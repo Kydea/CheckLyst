@@ -63,6 +63,10 @@ namespace CheckListManager.Infrastructure.Data
             ExistingPrototypeType.Name = prototypeType.Name;
             ExistingPrototypeType.ApprovationWorkFlow = prototypeType.ApprovationWorkFlow;
             ExistingPrototypeType.ObsolescenceWorkFlow = prototypeType.ObsolescenceWorkFlow;
+            ExistingPrototypeType.PrototypesFTPServerEnabled = prototypeType.PrototypesFTPServerEnabled;
+            ExistingPrototypeType.PrototypesFTPServer = prototypeType.PrototypesFTPServer;
+            ExistingPrototypeType.InstancesFTPServerEnabled = prototypeType.InstancesFTPServerEnabled;
+            ExistingPrototypeType.InstancesFTPServer = prototypeType.InstancesFTPServer;
             ExistingPrototypeType.ModifiedOn = DateTimeOffset.UtcNow;
             ExistingPrototypeType.ModifiedBy = identity.Code;
             await SaveChangesAsync();

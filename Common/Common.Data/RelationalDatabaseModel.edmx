@@ -105,6 +105,10 @@
           <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
           <Property Name="ModifiedBy" Type="varchar" MaxLength="60" />
           <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
+          <Property Name="PrototypesFTPServerEnabled" Type="bool" Nullable="false" />
+          <Property Name="InstancesFTPServerEnabled" Type="bool" Nullable="false" />
+          <Property Name="PrototypesFTPServer" Type="int8" />
+          <Property Name="InstancesFTPServer" Type="int8" />
         </EntityType>
         <EntityType Name="PrototypeVersions">
           <Key>
@@ -757,6 +761,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="PrototypeTypes_InstancesFTPServer_fkey">
+          <End Role="FTPServers" Type="Self.FTPServers" Multiplicity="0..1" />
+          <End Role="PrototypeTypes" Type="Self.PrototypeTypes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FTPServers">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="PrototypeTypes">
+              <PropertyRef Name="InstancesFTPServer" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="PrototypeTypes_ObsolescenceWorkFlow_fkey">
           <End Role="WorkFlows" Type="Self.WorkFlows" Multiplicity="0..1" />
           <End Role="PrototypeTypes" Type="Self.PrototypeTypes" Multiplicity="*" />
@@ -766,6 +782,18 @@
             </Principal>
             <Dependent Role="PrototypeTypes">
               <PropertyRef Name="ObsolescenceWorkFlow" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PrototypeTypes_PrototypesFTPServer_fkey">
+          <End Role="FTPServers" Type="Self.FTPServers" Multiplicity="0..1" />
+          <End Role="PrototypeTypes" Type="Self.PrototypeTypes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FTPServers">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="PrototypeTypes">
+              <PropertyRef Name="PrototypesFTPServer" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1240,8 +1268,16 @@
             <End Role="Departments" EntitySet="Departments" />
             <End Role="PrototypeTypes" EntitySet="PrototypeTypes" />
           </AssociationSet>
+          <AssociationSet Name="PrototypeTypes_InstancesFTPServer_fkey" Association="Self.PrototypeTypes_InstancesFTPServer_fkey">
+            <End Role="FTPServers" EntitySet="FTPServers" />
+            <End Role="PrototypeTypes" EntitySet="PrototypeTypes" />
+          </AssociationSet>
           <AssociationSet Name="PrototypeTypes_ObsolescenceWorkFlow_fkey" Association="Self.PrototypeTypes_ObsolescenceWorkFlow_fkey">
             <End Role="WorkFlows" EntitySet="WorkFlows" />
+            <End Role="PrototypeTypes" EntitySet="PrototypeTypes" />
+          </AssociationSet>
+          <AssociationSet Name="PrototypeTypes_PrototypesFTPServer_fkey" Association="Self.PrototypeTypes_PrototypesFTPServer_fkey">
+            <End Role="FTPServers" EntitySet="FTPServers" />
             <End Role="PrototypeTypes" EntitySet="PrototypeTypes" />
           </AssociationSet>
           <AssociationSet Name="PrototypeVersions_InstanceConfirmationWorkFlow_fkey" Association="Self.PrototypeVersions_InstanceConfirmationWorkFlow_fkey">
@@ -1695,6 +1731,14 @@
             <End Role="Companies" EntitySet="Companies" />
             <End Role="FTPServers" EntitySet="FTPServers" />
           </AssociationSet>
+          <AssociationSet Name="PrototypeTypes_InstancesFTPServer_fkey" Association="RelationalDatabaseModel.PrototypeTypes_InstancesFTPServer_fkey">
+            <End Role="FTPServers" EntitySet="FTPServers" />
+            <End Role="PrototypeTypes" EntitySet="PrototypeTypes" />
+          </AssociationSet>
+          <AssociationSet Name="PrototypeTypes_PrototypesFTPServer_fkey" Association="RelationalDatabaseModel.PrototypeTypes_PrototypesFTPServer_fkey">
+            <End Role="FTPServers" EntitySet="FTPServers" />
+            <End Role="PrototypeTypes" EntitySet="PrototypeTypes" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="TimeZones">
           <Key>
@@ -2122,6 +2166,12 @@
           <NavigationProperty Name="Departments" Relationship="RelationalDatabaseModel.PrototypeTypes_Department_fkey" FromRole="PrototypeTypes" ToRole="Departments" />
           <NavigationProperty Name="WorkFlows1" Relationship="RelationalDatabaseModel.PrototypeTypes_ObsolescenceWorkFlow_fkey" FromRole="PrototypeTypes" ToRole="WorkFlows" />
           <NavigationProperty Name="UserFunctions" Relationship="RelationalDatabaseModel.UserFunctions_PrototypeType_fkey" FromRole="PrototypeTypes" ToRole="UserFunctions" />
+          <Property Name="PrototypesFTPServerEnabled" Type="Boolean" Nullable="false" />
+          <Property Name="InstancesFTPServerEnabled" Type="Boolean" Nullable="false" />
+          <Property Name="PrototypesFTPServer" Type="Int64" />
+          <Property Name="InstancesFTPServer" Type="Int64" />
+          <NavigationProperty Name="FTPServers" Relationship="RelationalDatabaseModel.PrototypeTypes_InstancesFTPServer_fkey" FromRole="PrototypeTypes" ToRole="FTPServers" />
+          <NavigationProperty Name="FTPServers1" Relationship="RelationalDatabaseModel.PrototypeTypes_PrototypesFTPServer_fkey" FromRole="PrototypeTypes" ToRole="FTPServers" />
         </EntityType>
         <Association Name="Prototypes_Company_fkey">
           <End Type="RelationalDatabaseModel.Companies" Role="Companies" Multiplicity="1" />
@@ -2772,6 +2822,8 @@
           <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
           <NavigationProperty Name="Companies" Relationship="RelationalDatabaseModel.FTPServers_Company_fkey" FromRole="FTPServers" ToRole="Companies" />
+          <NavigationProperty Name="PrototypeTypes" Relationship="RelationalDatabaseModel.PrototypeTypes_InstancesFTPServer_fkey" FromRole="FTPServers" ToRole="PrototypeTypes" />
+          <NavigationProperty Name="PrototypeTypes1" Relationship="RelationalDatabaseModel.PrototypeTypes_PrototypesFTPServer_fkey" FromRole="FTPServers" ToRole="PrototypeTypes" />
         </EntityType>
         <Association Name="FTPServers_Company_fkey">
           <End Type="RelationalDatabaseModel.Companies" Role="Companies" Multiplicity="0..1">
@@ -2784,6 +2836,30 @@
             </Principal>
             <Dependent Role="FTPServers">
               <PropertyRef Name="Company" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PrototypeTypes_InstancesFTPServer_fkey">
+          <End Type="RelationalDatabaseModel.FTPServers" Role="FTPServers" Multiplicity="0..1" />
+          <End Type="RelationalDatabaseModel.PrototypeTypes" Role="PrototypeTypes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FTPServers">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="PrototypeTypes">
+              <PropertyRef Name="InstancesFTPServer" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PrototypeTypes_PrototypesFTPServer_fkey">
+          <End Type="RelationalDatabaseModel.FTPServers" Role="FTPServers" Multiplicity="0..1" />
+          <End Type="RelationalDatabaseModel.PrototypeTypes" Role="PrototypeTypes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FTPServers">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="PrototypeTypes">
+              <PropertyRef Name="PrototypesFTPServer" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -3063,6 +3139,10 @@
           <EntitySetMapping Name="PrototypeTypes">
             <EntityTypeMapping TypeName="RelationalDatabaseModel.PrototypeTypes">
               <MappingFragment StoreEntitySet="PrototypeTypes">
+                <ScalarProperty Name="InstancesFTPServer" ColumnName="InstancesFTPServer" />
+                <ScalarProperty Name="PrototypesFTPServer" ColumnName="PrototypesFTPServer" />
+                <ScalarProperty Name="InstancesFTPServerEnabled" ColumnName="InstancesFTPServerEnabled" />
+                <ScalarProperty Name="PrototypesFTPServerEnabled" ColumnName="PrototypesFTPServerEnabled" />
                 <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
                 <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
                 <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
