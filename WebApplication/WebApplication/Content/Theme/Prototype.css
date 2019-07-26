@@ -96,7 +96,7 @@ div.Prototype div.Item {
     div.Prototype div.Item > div.Commands a.Add {
       display: none; }
     div.Prototype div.Item > div.Commands a.Paste {
-      display: none; }
+      display: none !important; }
 
 div.Prototype div.Element:first-of-type > div.Commands a.Up {
   display: none; }
