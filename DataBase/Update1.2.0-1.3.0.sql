@@ -98,7 +98,9 @@ insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") valu
 	(id, 'InstancesFtpConnection', '{ "Host": "www.ruggerogiovannelli.org", "Port": 21, "Folder": "ruggerogiovannelli.org/Data/P", "UserName": "?", "Password": "?", "UsePassive": "true", "EnableSSL": "false" }'),
 	(id, 'PrototypesFtpConnection', '{ "Host": "www.ruggerogiovannelli.org", "Port": 21, "Folder": "ruggerogiovannelli.org/Data/I", "UserName": "?", "Password": "?", "UsePassive": "true", "EnableSSL": "false" }');
   
- ---------  Inserimento manuale --------------- 
+ --------------------------------------------------------------------------------------------
+ ---------  Inserimento manuale DEV  ---------------------------------------------------------
+ -------------------------------------------------------------------------------------------- 
   insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
 	(2, 'PrototypesFtpConnection', '{ "Host": "10.157.83.244", "Port": 21, "Folder": "/ChecklystPrototype_dev_lt",  "UserName": "FtpDev", "Password": "AA_Latina_01", "UsePassive": "true", "EnableSSL": "false" }');
 
@@ -121,4 +123,46 @@ insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") valu
 
   insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
 	(6, 'InstancesFtpConnection', '{ "Host": "10.157.83.244", "Port": 21, "Folder": "/ChecklystInstances_dev_sjc",  "UserName": "FtpDev", "Password": "AA_Latina_01", "UsePassive": "true", "EnableSSL": "false" }');
+
+ 
+ --------------------------------------------------------------------------------------------
+ ---------  Inserimento manuale QA  ---------------------------------------------------------
+ -------------------------------------------------------------------------------------------- 
+ 
+
+ insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values 
+ ('3','PrototypesFtpConnection','{ "Host": "AWSAZFIRL1234.jnj.com", "Port": 21, "Folder": "/CLFTP-Prototypes-GB-QA",  "UserName": "SA-JAC-CLFTP-GB-QA", "Password": "@Ch3ck7yst", "UsePassive": "true", "EnableSSL": "true" }');
+ 
+ insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
+ ('3','InstancesFtpConnection','{ "Host": "AWSAZFIRL1234.jnj.com", "Port": 21, "Folder": "/CLFTP-Instances-GB-QA",  "UserName": "SA-JAC-CLFTP-GB-QA", "Password": "@Ch3ck7yst", "UsePassive": "true", "EnableSSL": "true" }');
+ 
+ insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
+ ('4','PrototypesFtpConnection','{ "Host": "AWSAZFIRL1234.jnj.com", "Port": 21, "Folder": "/CLFTP-Prototypes-LT-QA",  "UserName": "SA-JAC-CLFTP-LT-QA", "Password": "@Ch3ck7yst", "UsePassive": "true", "EnableSSL": "true" }');
+ 
+ insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
+ ('4','InstancesFtpConnection','{ "Host": "AWSAZFIRL1234.jnj.com", "Port": 21, "Folder": "/CLFTP-Instances-LT-QA",  "UserName": "SA-JAC-CLFTP-LT-QA", "Password": "@Ch3ck7yst", "UsePassive": "true", "EnableSSL": "false" }');
+ 
+ insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
+ ('6','PrototypesFtpConnection','{ Host": "AWSAZFIRL1234.jnj.com", "Port": 21, "Folder": "/CLFTP-Prototypes-SJ-QA", "UserName": "SA-JAC-CLFTP-SJ-QA", "Password": "@Ch3ck7yst", "UsePassive": "true", "EnableSSL": "true" }');
+ 
+ 
+ --------------------------------------------------------------------------------------------
+ ---------  Inserimento manuale PRODUZIONE nell'installazione del 01/06/2019  ---------------
+ -------------------------------------------------------------------------------------------- 
+
+  insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
+	(2, 'PrototypesFtpConnection', '{ "Host": "AWSAZFIRL1238.jnj.com", "Port": 21, "Folder": "/CLFTP-Prototypes-GB-PRD",  "UserName": "SA-JAC-CLFTP-GB-PRD", "Password": "@Ch3ck7yst,1", "UsePassive": "true", "EnableSSL": "true" }');
+
+
+  insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
+	(3, 'PrototypesFtpConnection', '{ "Host": "AWSAZFIRL1238.jnj.com", "Port": 21, "Folder": "/CLFTP-Prototypes-SJ-PRD",  "UserName": "SA-JAC-CLFTP-SJ-PRD", "Password": "@Ch3ck7yst,1", "UsePassive": "true", "EnableSSL": "true" }');
+  
+  
+  insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
+	(4, 'PrototypesFtpConnection', '{ "Host": "AWSAZFIRL1238.jnj.com", "Port": 21, "Folder": "/CLFTP-Prototypes-LT-PRD",  "UserName": "SA-JAC-CLFTP-LT-PRD", "Password": "@Ch3ck7yst,1", "UsePassive": "true", "EnableSSL": "true" }');
+
+
+  insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
+	(4, 'InstancesFtpConnection', '{ "Host": "Sapftpeur2p.jnj.com", "Port": 22, "Folder": "/prd/mnt/share/pes/cm ",  "UserName": "Ftpprdcl", "Password": "Latina@12", "UsePassive": "true", "EnableSSL": "true" }');
+
 
