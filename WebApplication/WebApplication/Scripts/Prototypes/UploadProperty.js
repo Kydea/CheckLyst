@@ -45,7 +45,7 @@
 
 			matematici.dialog.show("warning", "The prototype will be saved. Do you want to proceed?", [
 				{ text: "yes", icon: "check", handler: save },
-				{ text: "no", hidden: true, icon: "remove", cancelButton: true }
+				{ text: "no", icon: "times", cancelButton: true, handler: function () { input.val(''); } }
 			]);			
 		},
 
@@ -80,7 +80,7 @@
 
 			matematici.dialog.show("warning", "The prototype will be saved. Do you want to proceed?", [
 				{ text: "yes", icon: "check", handler: save },
-				{ text: "no", hidden: true, icon: "remove", cancelButton: true }
+				{ text: "no", icon: "times", cancelButton: true }
 			]);			
 		},
 

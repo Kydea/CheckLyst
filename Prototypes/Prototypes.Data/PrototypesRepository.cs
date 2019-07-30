@@ -101,8 +101,9 @@ namespace CheckListManager.Prototypes.Data
             Entities.PrototypeVersionTags.RemoveRange(versionTags);
         }
 
-        public async Task SetStateAsync(DefaultIdentity defaultIdentity, PrototypeVersions prototypeVersion, string state, bool proposed)
+        public async Task<bool> SetStateAsync(DefaultIdentity defaultIdentity, PrototypeVersions prototypeVersion, string state, bool proposed)
         {
+            var instancesDeleted = false;
             if (prototypeVersion.VersionState == VersionState.Draft && state == VersionState.InSimulation && !proposed)
             {
                 prototypeVersion.VersionState = state;
@@ -115,6 +116,7 @@ namespace CheckListManager.Prototypes.Data
                     User = defaultIdentity.Code
                 });
                 Entities.Instances.RemoveRange(prototypeVersion.Instances);
+                instancesDeleted = true;
             }
             else if (prototypeVersion.VersionState == VersionState.InSimulation && state == VersionState.Draft && !proposed)
             {
@@ -128,6 +130,7 @@ namespace CheckListManager.Prototypes.Data
                     User = defaultIdentity.Code
                 });
                 Entities.Instances.RemoveRange(prototypeVersion.Instances);
+                instancesDeleted = true;
             }
             else if (prototypeVersion.VersionState == VersionState.InSimulation && state == VersionState.Approved && proposed)
             {
@@ -197,6 +200,8 @@ namespace CheckListManager.Prototypes.Data
                 throw new InvalidOperationException($"Cannot {(proposed ? "propose" : "change")} state from {prototypeVersion.VersionState} to {state}");
 
             await SaveChangesAsync();
+            
+            return instancesDeleted;
         }
 
         public async Task<List<PrototypeVersions>> GetPrototypeVersionsAsync(Expression<Func<PrototypeVersions, bool>> filters)

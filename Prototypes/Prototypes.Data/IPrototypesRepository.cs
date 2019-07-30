@@ -10,7 +10,10 @@ namespace CheckListManager.Prototypes.Data
 {
     public interface IPrototypesRepository : IRepository
     {
-        Task<PagingResponse<List<TResult>>> GetPrototypesAsync<TResult, TKey>(long companyId, Expression<Func<PrototypeVersions, TResult>> select, Expression<Func<PrototypeVersions, bool>> filters, Expression<Func<PrototypeVersions, TKey>> order, int currentPage, int itemsPerPage);
+        Task<PagingResponse<List<TResult>>> GetPrototypesAsync<TResult, TKey>(long companyId,
+            Expression<Func<PrototypeVersions, TResult>> select, Expression<Func<PrototypeVersions, bool>> filters,
+            Expression<Func<PrototypeVersions, TKey>> order, int currentPage, int itemsPerPage);
+
         Task<Common.Data.Prototypes> GetPrototypeAsync(DefaultIdentity defaultIdentity, long id);
         Task<PrototypeVersions> GetPrototypeVersionAsync(long companyId, long prototype, int version);
         Task CheckNewVersionAsync(long companyId, long prototype);
@@ -18,7 +21,18 @@ namespace CheckListManager.Prototypes.Data
         void AddPrototypeVersion(PrototypeVersions prototypeVersion);
         Task DeletePrototypeVersionAsync(DefaultIdentity defaultIdentity, long prototype, int version);
         void DeletePrototypeVersionTags(IEnumerable<PrototypeVersionTags> versionTags);
-        Task SetStateAsync(DefaultIdentity defaultIdentity, PrototypeVersions prototypeVersion, string state, bool proposed);
+
+        /// <summary>
+        /// Change status of a prototype version
+        /// </summary>
+        /// <param name="defaultIdentity"></param>
+        /// <param name="prototypeVersion"></param>
+        /// <param name="state"></param>
+        /// <param name="proposed"></param>
+        /// <returns>Returns true if during the state change, the related instances have been deleted, false otherwise</returns>
+        Task<bool> SetStateAsync(DefaultIdentity defaultIdentity, PrototypeVersions prototypeVersion, string state,
+            bool proposed);
+
         Task<List<PrototypeVersions>> GetPrototypeVersionsAsync(Expression<Func<PrototypeVersions, bool>> filters);
     }
 }

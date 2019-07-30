@@ -374,7 +374,12 @@ namespace CheckListManager.Prototypes.Logic.Services
             )
                 throw new UnauthorizedAccessException();
 
-            await _prototypeRepository.SetStateAsync(identity, PrototypeVersion, request.State, request.StateProposed);
+            var instances = PrototypeVersion.Instances.ToList();
+            var instancesDeleted = await _prototypeRepository.SetStateAsync(identity, PrototypeVersion, request.State, request.StateProposed);
+            if (instancesDeleted)
+            {
+                await DeleteAttachmentFromInstancesAsync(identity, instances);
+            }
 
             if (request.StateProposed && request.State == VersionState.Approved) //we track both the state change and the proposed state for the workflow
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
@@ -403,6 +408,17 @@ namespace CheckListManager.Prototypes.Logic.Services
                 ProposedState = PrototypeVersion.ProposedState,
                 ProposedDate = PrototypeVersion.ProposedDate
             };
+        }
+
+        private async Task DeleteAttachmentFromInstancesAsync(IDefaultIdentity identity, List<Instances> instances)
+        {
+            foreach (var instance in instances)
+            {
+                await _storageService.DeleteRecursiveAsync(
+                    _configurationService.InstancesStorageBucket,
+                    $"{identity.CompanyId}/{instance.Code}/"
+                );
+            }
         }
 
         public async Task<List<HistoryRow>> History(DefaultIdentity identity, PrototypeRequest request)
