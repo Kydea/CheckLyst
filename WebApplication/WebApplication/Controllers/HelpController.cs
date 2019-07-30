@@ -8,6 +8,7 @@ namespace CheckListManager.WebApplication.Controllers
 	{
         [HttpPost]
         [Route("{Page?}")]
+        [AllowAnonymous]
         public ActionResult Index(string Page)
         {
             return ConditionalView(Page ?? "Index");
