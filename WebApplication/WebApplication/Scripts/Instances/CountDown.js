@@ -4,6 +4,7 @@
         element,
         interval,
         date = new Date(dateString),
+        lastHours = null, //for debug
 
         update = function () {
             var
@@ -13,7 +14,8 @@
                 minutes = parseInt((milliseconds - seconds * 1000) / 1000 / 60 % 60),
                 hours = parseInt((milliseconds - seconds * 1000 - minutes * 60000) / 1000 / 60 / 60);
 
-            //console.log(milliseconds, seconds, minutes, hours, date, matematici.clock.getTime());
+            if (lastHours != hours)
+                console.log({ serverTime: serverTime, date: date, milliseconds: milliseconds, seconds: seconds, minutes: minutes, hours: hours });
              
             if (milliseconds < -1000) { //after an extra delay of 1s
                 new instances.Event(instances.Events.countDown, itemId).trigger();
