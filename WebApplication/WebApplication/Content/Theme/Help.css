@@ -114,6 +114,8 @@ body.Help {
 
 body.OnlyHelp {
   background-color: white; }
+  body.OnlyHelp div#Breadcrumbs {
+    display: none !important; }
 
 body.Help div.Help div.Content h3, body.OnlyHelp h3 {
   margin: 30px 0 .5em;

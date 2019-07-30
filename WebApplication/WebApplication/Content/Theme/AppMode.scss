@@ -21,4 +21,8 @@ body.AppMode {
     div.Instance .Item.Field .Copy {
         display: none !important;
     }
+
+    div#Breadcrumbs {
+        margin-left: 0 !important;
+    }
 }

@@ -169,6 +169,10 @@ body.Help {
 
 body.OnlyHelp  {
     background-color: white;
+
+    div#Breadcrumbs {
+        display: none !important;
+    }
 }
 
 body.Help div.Help div.Content, body.OnlyHelp {
