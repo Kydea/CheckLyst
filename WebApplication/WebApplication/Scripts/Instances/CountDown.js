@@ -14,8 +14,11 @@
                 minutes = parseInt((milliseconds - seconds * 1000) / 1000 / 60 % 60),
                 hours = parseInt((milliseconds - seconds * 1000 - minutes * 60000) / 1000 / 60 / 60);
 
+            // \/ debug \/
             if (lastHours != hours)
                 console.log({ serverTime: serverTime, date: date, milliseconds: milliseconds, seconds: seconds, minutes: minutes, hours: hours });
+            lastHours = hours;
+            // /\ debug /\
              
             if (milliseconds < -1000) { //after an extra delay of 1s
                 new instances.Event(instances.Events.countDown, itemId).trigger();
