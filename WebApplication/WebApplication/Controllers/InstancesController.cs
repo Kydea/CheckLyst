@@ -22,6 +22,8 @@ namespace CheckListManager.WebApplication.Controllers
             ViewBag.AppRoles = Request["roles"];
             ViewBag.AppTimeZone = Request["timeZone"];
             ViewBag.AppDecimalSeparator = Request["decimalSeparator"];
+            ViewBag.AppAccessToken = Request["accessToken"];
+            ViewBag.AppRefreshToken = Request["refreshToken"];
             return ConditionalView("Detail", new Instance { Prototype = Prototype.Value, Version = Version });
         }
 
@@ -32,6 +34,8 @@ namespace CheckListManager.WebApplication.Controllers
             ViewBag.AppRoles = Request["roles"];
             ViewBag.AppTimeZone = Request["timeZone"];
             ViewBag.AppDecimalSeparator = Request["decimalSeparator"];
+            ViewBag.AppAccessToken = Request["accessToken"];
+            ViewBag.AppRefreshToken = Request["refreshToken"];
             return ConditionalView("Detail", new Instance { Code = Code });
         }
     }

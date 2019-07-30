@@ -123,14 +123,23 @@
 		return localStorage.userCode;
 	};
 
-	tokenManager.setUserCode = function (userCode, roles, timeZone, decimalSeparator) {
+    //for the app
+	tokenManager.setUserCode = function (userCode, roles, timeZone, decimalSeparator, accessToken, refreshToken) {
 		localStorage.userCode = userCode;
 		localStorage.roles = roles;
 		localStorage.timeZone = timeZone;
-		localStorage.decimalSeparator = decimalSeparator;
+        localStorage.decimalSeparator = decimalSeparator;
+        tokenManager.setTokens(accessToken, refreshToken);
 	};
 
-	tokenManager.getUserName = function () {
+    //called directly by the app
+    tokenManager.setTokens = function (accessToken, refreshToken) {
+        localStorage.accessToken = accessToken;
+        localStorage.refreshToken = refreshToken;
+        localStorage.accessTokenExpiration = null;
+    };
+
+    tokenManager.getUserName = function () {
 		return localStorage.userName;
 	};
 
@@ -198,7 +207,7 @@
 				expiredSigner.push(index);
 			}, index);
 		}
-	};
+    };
 
 	setup();
 }
