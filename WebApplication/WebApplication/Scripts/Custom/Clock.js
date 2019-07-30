@@ -1,4 +1,4 @@
-﻿matematici.Clock = function (_stopped) {
+﻿matematici.Clock = function () {
 	//gestire weak = true con colore rosso e tooltip con errore
 	var
 		offset = 0,
@@ -6,7 +6,7 @@
 		error = null,
 		elements = [],
 		selectors = [],
-		stopped = _stopped,
+		stopped,
 
 		refresh = function () {
 			var
@@ -19,7 +19,7 @@
 			}
 		},
 
-		check = function () {
+        check = function () {
 			return $.ajax({
 				url: matematici.urls.infrastructure.clock,
 				type: "post"
@@ -64,8 +64,6 @@
 			date.setTime(new Date().getTime() + offset);
 			return date;
 		};
-
-	//if(!stopped) update();
 
 	return {
 		getTime: function () {
