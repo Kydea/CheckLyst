@@ -90,27 +90,28 @@ namespace CheckListManager.Prototypes.Terminal
 
         private async Task Send(PrototypesFTPMessage message)
         {
+            ////we are not using company settings from v2.0.0
+            //var SerializedSettings = await _settingService.PrototypesFtpConnectionAsync(message.Company);
+            //if (string.IsNullOrWhiteSpace(SerializedSettings)) return;
+            //Settings = JsonConvert.DeserializeObject<FTPConnectionSettings>(SerializedSettings);
+
             var PrototypeVersion = await _prototypesRepository.GetPrototypeVersionAsync(message.Company, message.Prototype, message.Version);
 
             FTPConnectionSettings Settings;
             var FTPServer = await _commonRepository.GetPrototypesFTPServerAsync(message.Company, PrototypeVersion.Prototypes.PrototypeType);
             if (FTPServer == null)
+                return;
+
+            Settings = new FTPConnectionSettings
             {
-                var SerializedSettings = await _settingService.PrototypesFtpConnectionAsync(message.Company);
-                if (string.IsNullOrWhiteSpace(SerializedSettings)) return;
-                Settings = JsonConvert.DeserializeObject<FTPConnectionSettings>(SerializedSettings);
-            }
-            else
-                Settings = new FTPConnectionSettings
-                {
-                    Host = FTPServer.Host,
-                    Port = FTPServer.Port,
-                    Folder = FTPServer.Folder,
-                    EnableSSL = FTPServer.SSL,
-                    UsePassive = FTPServer.Passive,
-                    UserName = FTPServer.UserName,
-                    Password = FTPServer.Password
-                };
+                Host = FTPServer.Host,
+                Port = FTPServer.Port,
+                Folder = FTPServer.Folder,
+                EnableSSL = FTPServer.SSL,
+                UsePassive = FTPServer.Passive,
+                UserName = FTPServer.UserName,
+                Password = FTPServer.Password
+            };
 
             var Company = await _commonRepository.GetCompanyAsync(message.Company);
 

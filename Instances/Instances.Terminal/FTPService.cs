@@ -85,28 +85,29 @@ namespace CheckListManager.Instances.Terminal
 
 		private async Task Send(InstancesFTPMessage message)
 		{
+            ////we are not using company settings from v2.0.0
+            //var SerializedSettings = await _settingService.InstancesFtpConnectionAsync(message.Company);
+            //if (string.IsNullOrWhiteSpace(SerializedSettings)) return;
+            //Settings = JsonConvert.DeserializeObject<FTPConnectionSettings>(SerializedSettings);
+
             var cacheObject = await _instanceManagerService.GetAsync(message.Company, message.ID);
             cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(cacheObject.CompanyId), (await _settingService.TimeZoneAsync(cacheObject.CompanyId)).MicrosoftCode, cacheObject);
 
             FTPConnectionSettings Settings;
             var FTPServer = await _commonRepository.GetInstancesFTPServerAsync(message.Company, cacheObject.PrototypeType);
             if (FTPServer == null)
+                return;
+
+            Settings = new FTPConnectionSettings
             {
-                var SerializedSettings = await _settingService.InstancesFtpConnectionAsync(message.Company);
-                if (string.IsNullOrWhiteSpace(SerializedSettings)) return;
-                Settings = JsonConvert.DeserializeObject<FTPConnectionSettings>(SerializedSettings);
-            }
-            else
-                Settings = new FTPConnectionSettings
-                {
-                    Host = FTPServer.Host,
-                    Port = FTPServer.Port,
-                    Folder = FTPServer.Folder,
-                    EnableSSL = FTPServer.SSL,
-                    UsePassive = FTPServer.Passive,
-                    UserName = FTPServer.UserName,
-                    Password = FTPServer.Password
-                };
+                Host = FTPServer.Host,
+                Port = FTPServer.Port,
+                Folder = FTPServer.Folder,
+                EnableSSL = FTPServer.SSL,
+                UsePassive = FTPServer.Passive,
+                UserName = FTPServer.UserName,
+                Password = FTPServer.Password
+            };
 
             var Company = await _commonRepository.GetCompanyAsync(message.Company);
 
