@@ -278,6 +278,9 @@ div.Instance .Item.Link div.Information {
 div.Instance .Item.Image div.Information {
   display: none; }
 
+div.Instance .Item.Attachment div.Information {
+  display: none; }
+
 div.Instance .Item.Hidden {
   display: none; }
 

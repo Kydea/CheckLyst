@@ -12,7 +12,15 @@
             breadcrumbs: []
         });
 
-        matematici.navigator.open("@Model@(ViewBag.AppMode ? "?AppUser=" + ViewBag.AppUser : string.Empty)");
+        var url;
+
+        if ("@(ViewBag.AppMode)" != "True" && navigator.userAgent.match(/iPad/i) != null && "@(Model.StartsWith("Instances/Detail") || Model.StartsWith("Instances/Create"))" == "True")
+            url = "checklyst://" + window.location.host + "/" + window.location.pathname;
+        else
+            url = "@Model@(ViewBag.AppMode ? "?AppUser=" + ViewBag.AppUser : string.Empty)";
+
+        console.log(url);
+        //matematici.navigator.open(url);
 
         callback.call();
     };
