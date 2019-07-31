@@ -19,8 +19,7 @@
         else
             url = "@Model@(ViewBag.AppMode ? "?AppUser=" + ViewBag.AppUser : string.Empty)";
 
-        console.log(url);
-        //matematici.navigator.open(url);
+        matematici.navigator.open(url);
 
         callback.call();
     };

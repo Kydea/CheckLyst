@@ -160,6 +160,7 @@
 <script type="text/javascript">
     var
         departments,
+        loading = false,
 
         prototypeFunctions = [
             "Approve", "Edit", "View"
@@ -255,7 +256,8 @@
                     fixQueryParameters(tabIndex);
                 }).appendTo(div);
 
-            fixQueryParameters(tabIndex);
+            if (!loading)
+                fixQueryParameters(tabIndex);
 
             return {
                 department: select1,
@@ -391,12 +393,10 @@
                 });
 
             tab.getItem(2).tab.on("toggle", "select.AutoComplete", function (e, value, on) {
-                console.log(value, on);
                 applyConstraintToPrototypeGrant($(this).data("autoComplete"), value, on);
             });
 
             tab.getItem(3).tab.on("toggle", "select.AutoComplete", function (e, value, on) {
-                console.log(value, on);
                 applyConstraintToInstanceGrant($(this).data("autoComplete"), value, on);
             });
         },
@@ -405,6 +405,7 @@
             preparePrototypeTypes(detailPage.getSender().getElement().data("prototypeTypes"));
             //if (!detailPage.isNew())
                 detailPage.getForm().trigger("Load", function (result) {
+                    loading = true;
                     detailPage.getForm().handleResult(result);
 
                     $("input[name=authenticationCode]").parent().toggle(result.showAuthenticationCode);
@@ -413,6 +414,9 @@
                     if (result.generalFunctions) buildGeneralFunctions(result.generalFunctions);
                     if (result.prototypeFunctions) buildFunctions(result.prototypeFunctions, 2);
                     if (result.instanceFunctions) buildFunctions(result.instanceFunctions, 3);
+                    fixQueryParameters(2);
+                    fixQueryParameters(3);
+                    loading = false;
                 });
         },
 
