@@ -10,9 +10,13 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public override ICheckListItem Clone(ICheckListGroup parent)
         {
-            var text = new Attachment { Group = parent };
-            Copy(this, text);
-            return text;
+            var attachment = new Attachment
+            {
+                Group = parent,
+                FileType = FileType
+            };
+            Copy(this, attachment);
+            return attachment;
         }
 
         public override bool IsValidByDefault()
