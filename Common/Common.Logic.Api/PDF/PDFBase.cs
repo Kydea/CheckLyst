@@ -1,4 +1,5 @@
-﻿using MigraDoc.DocumentObjectModel;
+﻿using CheckListManager.Common.Logic.Api.PDF.Helper;
+using MigraDoc.DocumentObjectModel;
 using PdfSharp.Pdf;
 using System.IO;
 
@@ -6,6 +7,20 @@ namespace CheckListManager.Common.Logic.Api.PDF
 {
     public abstract class PDFBase
     {
+        public static Font NoteFont => FontHelper.GetInstance("Helvetica", 7, FontStyle.Regular, Colors.Black).Clone();
+        public static Font SmallFont => FontHelper.GetInstance("Helvetica", 8, FontStyle.Regular, Colors.Black).Clone();
+        public static Font SmallBoldFont => FontHelper.GetInstance("Helvetica", 8, FontStyle.Bold, Colors.Black).Clone();
+        public static Font NormalFont => FontHelper.GetInstance("Helvetica", 9, FontStyle.Regular, Colors.Black).Clone();
+        public static Font GenericFont => FontHelper.GetInstance("Helvetica", 10, FontStyle.Regular, Colors.Black).Clone();
+        public static Font GenericBoldFont => FontHelper.GetInstance("Helvetica", 10, FontStyle.Bold, Colors.DimGray).Clone();
+        public static Font GenericFontGray => FontHelper.GetInstance("Helvetica", 10, FontStyle.Regular, Colors.DimGray).Clone();
+        public static Font FirstHeaderFont => FontHelper.GetInstance("Helvetica", 14, FontStyle.Bold, Colors.Black).Clone();
+        public static Font SecondHeaderFont => FontHelper.GetInstance("Helvetica", 10, FontStyle.Bold, Colors.Black).Clone();
+
+        public static readonly Color BorderColor = Color.FromRgb(204, 204, 204);
+        public static Border DefaultBorder => new Border { Color = BorderColor, Style = BorderStyle.Single };
+
+
         protected string Subject;
 
         protected Document PdfDocument;

@@ -26,7 +26,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
 
             // STYLE
             Style style = style = PDF.Container.Document.Styles[StyleNames.Normal];
-            style.Font = PDFSection.GenericFont.Clone();
+            style.Font = PDFBase.GenericFont.Clone();
             // END_STYLE
 
             Paragraph header = PDF.Container.Headers.Primary.AddParagraph(DocumentDescription);
@@ -38,20 +38,19 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
 
             // Page counter
             Paragraph footer = PDF.Container.Footers.Primary.AddParagraph();
-            footer.Format.Font.Size = 12;
+            footer.Format.Font = PDFBase.GenericFontGray;
             footer.AddText("Page ");
             footer.AddPageField();
-            footer.AddText(" of ");
+            footer.AddText(" / ");
             footer.AddNumPagesField();
             footer.Format.Alignment = ParagraphAlignment.Right;
-            footer.Format.Borders.Top.Color = Colors.Black;
-            footer.Format.Borders.Top.Width = new Unit(0.75, UnitType.Point);
+            footer.Format.Borders.Top = PDFBase.DefaultBorder;
             footer.Format.Borders.DistanceFromTop = 25;
             footer.Format.SpaceAfter = new Unit(-footer.Format.Font.Size, UnitType.Point);
 
             // Time
             footer = PDF.Container.Footers.Primary.AddParagraph();
-            footer.Format.Font.Size = 12;
+            footer.Format.Font = PDFBase.GenericFontGray;
             footer.AddText($"Generated on {DateTimeOffset.UtcNow.ToLocalTime(PDF.TimeZone):yyyy-MM-dd HH:mm UTC zzz} - RESTRICTED");
             footer.Format.SpaceAfter = new Unit(-footer.Format.Font.Size, UnitType.Point);
         }

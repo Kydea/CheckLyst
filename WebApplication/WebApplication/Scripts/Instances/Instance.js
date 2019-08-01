@@ -360,13 +360,13 @@
 		new instances.Event(instances.Events.refresh).trigger();
 	};
 
-	instance.export = function () {
+	instance.download = function () {
 		$.ajax({
-			url: matematici.urls.instances.api + "/Export",
+			url: matematici.urls.instances.api + "/Download",
 			type: "post",
 			data: { code: code }
 		}).done(function (result) {
-			location = matematici.urls.instances.api + "/Export?Token=" + result.token;
+            location = matematici.urls.instances.api + "/Download?Token=" + result.token;
 		});
 	};
 

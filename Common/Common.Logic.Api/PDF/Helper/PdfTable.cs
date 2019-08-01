@@ -108,6 +108,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Helper
 
                         row.Cells[cellIndex].MergeRight = cell.Colspan - 1;
                         row.Cells[cellIndex].MergeDown = cell.Rowspan - 1;
+                        row.Cells[cellIndex].Borders.Color = CheckListPDF.BorderColor;
                     }
 
                     Rows[rowIndex] = null;

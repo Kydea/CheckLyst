@@ -24,10 +24,10 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
         {
             PdfPTable Table = new PdfPTable(4) { WidthPercentage = 100 };
 
-            Table.AddCell(new PdfPCell(new Paragraph().SetText("Signed by").SetFont(GenericBoldFont).Padding(10)));
-            Table.AddCell(new PdfPCell(new Paragraph().SetText("Date").SetFont(GenericBoldFont).Padding(10)));
-            Table.AddCell(new PdfPCell(new Paragraph().SetText("Time").SetFont(GenericBoldFont).Padding(10)));
-            Table.AddCell(new PdfPCell(new Paragraph().SetText("Signature").SetFont(GenericBoldFont).Padding(10)));
+            Table.AddCell(new PdfPCell(new Paragraph().SetText("Signed by").SetFont(PDFBase.GenericBoldFont).Padding(10)));
+            Table.AddCell(new PdfPCell(new Paragraph().SetText("Date").SetFont(PDFBase.GenericBoldFont).Padding(10)));
+            Table.AddCell(new PdfPCell(new Paragraph().SetText("Time").SetFont(PDFBase.GenericBoldFont).Padding(10)));
+            Table.AddCell(new PdfPCell(new Paragraph().SetText("Signature").SetFont(PDFBase.GenericBoldFont).Padding(10)));
             Table.CompleteRow();
 
             Table.AddCell(new PdfPCell(new Paragraph().SetText(User).Padding(10)));
@@ -70,7 +70,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             {
                 if (!String.IsNullOrEmpty(SignatureElement.Description))
                 {
-                    DrawText(SignatureElement.Description, GenericBoldFont);
+                    DrawText(SignatureElement.Description, PDFBase.GenericBoldFont);
                     DrawText("\n");
                 }
 
@@ -97,9 +97,9 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                 else
                     Description = FieldElement.Description;
 
-                DrawText(Description + "\n", GenericBoldFont);
+                DrawText(Description + "\n", PDFBase.GenericBoldFont);
 
-                DrawText(CheckListPDF.GetFieldValue(this) + "\n", GenericFontGray);
+                DrawText(CheckListPDF.GetFieldValue(this) + "\n", PDFBase.GenericFontGray);
             }
 
             #endregion

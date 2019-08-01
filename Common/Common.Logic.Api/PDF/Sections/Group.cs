@@ -22,7 +22,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
 
             if (!String.IsNullOrEmpty(GroupElement.Description))
             {
-                DrawText(GroupElement.Description, Indentation == 1 ? FirstHeaderFont : SecondHeaderFont);
+                DrawText(GroupElement.Description, Indentation == 1 ? PDFBase.FirstHeaderFont : PDFBase.SecondHeaderFont);
                 DrawText("\n");
             }
 

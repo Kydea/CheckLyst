@@ -232,9 +232,9 @@ namespace CheckListManager.Instances.Api.Controllers
         }
 
         [HttpPost]
-        [Route("Export")]
+        [Route("Download")]
         [Authorize(Roles = "Instances#View, Prototypes#Preview")]
-        public async Task<IHttpActionResult> Export(InstanceRequest request)
+        public async Task<IHttpActionResult> Download(InstanceRequest request)
         {
             var Token = Identity.Code + ":" + Guid.NewGuid();
             var Company = await _commonRepository.GetCompanyAsync(Identity.CompanyId);
@@ -247,9 +247,9 @@ namespace CheckListManager.Instances.Api.Controllers
         }
 
         [HttpGet]
-        [Route("Export")]
+        [Route("Download")]
         [AllowAnonymous]
-        public async Task<IHttpActionResult> Export([FromUri]string Token)
+        public async Task<IHttpActionResult> Download([FromUri]string Token)
         {
             var Data = await _redisCache.GetAsync<InstanceRequest>($"Token:{Token}", "Download");
             await _redisCache.RemoveAsync($"Token:{Token}", "Download");

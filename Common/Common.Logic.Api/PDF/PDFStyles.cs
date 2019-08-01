@@ -75,7 +75,7 @@ namespace CheckListManager.Common.Logic.Api.PDF
                 paragraph.AddText(text);
 
             if (font == null)
-                paragraph.SetFont(PDFSection.GenericFont);
+                paragraph.SetFont(PDFBase.GenericFont);
 
             return paragraph;
         }

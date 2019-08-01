@@ -50,7 +50,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             var GroupElement = (ICheckListGroup)Element;
 
             if (!String.IsNullOrEmpty(GroupElement.Description))
-                DrawText(GroupElement.Description, Indentation == 1 ? FirstHeaderFont : SecondHeaderFont);
+                DrawText(GroupElement.Description, Indentation == 1 ? PDFBase.FirstHeaderFont : PDFBase.SecondHeaderFont);
 
             DrawText("\n");
 
@@ -65,7 +65,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             ///*Render Signatures Table*/
             if (CheckListPDF.IsPrototype() || Signatures.Any(x => x.History.Count > 0))
             {
-                DrawText("Signatures", SecondHeaderFont);
+                DrawText("Signatures", PDFBase.SecondHeaderFont);
                 DrawText("\n");
 
                 Table = RenderSignaturesTable();
@@ -86,7 +86,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
         PdfPCell PdfPCellFromNode(RenderingNode Node, Font Font = null)
         {
             if (Font == null)
-                Font = SmallFont;
+                Font = PDFBase.SmallFont;
 
             var Cell = (RenderingCell)Node;
 
@@ -161,32 +161,32 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
 
             /*Header*/
             Table.AddCell(
-                NewCell("Reference", SmallBoldFont)
+                NewCell("Reference", PDFBase.SmallBoldFont)
                 .SetBorder(0)
             );
 
             Table.AddCell(
-                NewCell("Status", SmallBoldFont)
+                NewCell("Status", PDFBase.SmallBoldFont)
                 .SetBorder(0)
             );
 
             Table.AddCell(
-                NewCell("Signed by", SmallBoldFont)
+                NewCell("Signed by", PDFBase.SmallBoldFont)
                 .SetBorder(0)
             );
 
             Table.AddCell(
-                NewCell("Date", SmallBoldFont)
+                NewCell("Date", PDFBase.SmallBoldFont)
                 .SetBorder(0)
             );
 
             Table.AddCell(
-                NewCell("Time", SmallBoldFont)
+                NewCell("Time", PDFBase.SmallBoldFont)
                 .SetBorder(0)
             );
 
             Table.AddCell(
-                NewCell("Signature", SmallBoldFont)
+                NewCell("Signature", PDFBase.SmallBoldFont)
                 .SetBorder(0)
             );
 

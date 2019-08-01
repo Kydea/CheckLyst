@@ -15,7 +15,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
         {
             var PageElement = (ICheckListPage)Element;
 
-            DrawText(PageElement.Description, FirstHeaderFont);
+            DrawText(PageElement.Description, PDFBase.FirstHeaderFont);
             RenderChildren();
         }
 

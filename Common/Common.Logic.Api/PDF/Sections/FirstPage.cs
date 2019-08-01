@@ -12,11 +12,11 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
 {
     public class FirstPage : PDFSection
     {
-        public FirstPage(CheckListPDF PDFBase, string Prototype, string Instance, string InstanceDescription, List<Tuple<string, string>> Rows) : base(PDFBase, 0)
+        public FirstPage(CheckListPDF PDFBase, string FirstRow, string SecondRow, string ThirdRow, List<Tuple<string, string>> Rows) : base(PDFBase, 0)
         {
-            this.FirstRow = Prototype;
-            this.SecondRow = Instance;
-            this.ThirdRow = InstanceDescription;
+            this.FirstRow = FirstRow;
+            this.SecondRow = SecondRow;
+            this.ThirdRow = ThirdRow;
             this.Rows = Rows;
         }
 
@@ -25,7 +25,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
         private string ThirdRow { get; }
         private List<Tuple<string, string>> Rows { get; }
 
-        public override void Render(params Object[] State)
+        public override void Render(params object[] State)
         {
             PDFBase.Container.Headers = null;
             PDFBase.Container.PageSetup.TopMargin = 36;
@@ -39,26 +39,37 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             if (logo != null)
                 logo.ScaleWidth = 0.4;
 
-            paragraph = PDFBase.Container.AddParagraph().SetText("\n" + FirstRow + "\n");
-            paragraph.Format.Alignment = ParagraphAlignment.Center;
-
-            paragraph = PDFBase.Container.AddParagraph().SetText(SecondRow + "\n");
-            paragraph.Format.Alignment = ParagraphAlignment.Center;
-
-            paragraph = PDFBase.Container.AddParagraph().SetText(ThirdRow + "\n\n\n");
-            paragraph.Format.Alignment = ParagraphAlignment.Center;
-
-            // Define table
-            PdfPTable Table = new PdfPTable(2) { WidthPercentage = 80, HorizontalAlignment = RowAlignment.Center };
-
-            foreach (var Row in Rows)
+            if (!string.IsNullOrWhiteSpace(FirstRow))
             {
-                Table.AddCell(new PdfPCell(new Paragraph().SetText(Row.Item1).SetFont(GenericBoldFont).Padding(10)));
-                Table.AddCell(new PdfPCell(new Paragraph().SetText(Row.Item2).Padding(10)));
-                Table.CompleteRow();
+                paragraph = PDFBase.Container.AddParagraph(FirstRow);
+                paragraph.Format.Alignment = ParagraphAlignment.Center;
+                paragraph.Format.SpaceBefore = 20;
+                paragraph.Format.SpaceAfter = 10;
+                paragraph = PDFBase.Container.AddParagraph();
+                paragraph.Format.Borders.Bottom = PDFBase.DefaultBorder;
             }
 
+            if (!string.IsNullOrWhiteSpace(SecondRow))
+            {
+                paragraph = PDFBase.Container.AddParagraph(SecondRow);
+                paragraph.Format.SpaceBefore = paragraph.Format.SpaceAfter = 20;
+            }
+
+            PdfPTable Table = new PdfPTable(2) { WidthPercentage = 100, HorizontalAlignment = RowAlignment.Center };
+            foreach (var Row in Rows)
+            {
+                Table.AddCell(new PdfPCell(new Paragraph().SetText(Row.Item1).SetFont(PDFBase.GenericBoldFont).Padding(5)));
+                Table.AddCell(new PdfPCell(new Paragraph().SetText(Row.Item2).Padding(5)));
+                Table.CompleteRow();
+            }
             PDFBase.Container.Add(Table);
+
+            if (!string.IsNullOrWhiteSpace(ThirdRow))
+            {
+                paragraph = PDFBase.Container.AddParagraph(ThirdRow);
+                paragraph.Format.SpaceBefore = 20;
+            }
+
         }
     }
 }
