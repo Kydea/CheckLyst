@@ -57,7 +57,7 @@ namespace CheckListManager.Prototypes.Terminal
         {
             try
             {
-                await Send(message.Message);
+                var Settings = await Send(message.Message);
                 await _queueService.DeleteMessageAsync(QueueName.PrototypesFTP, message.MessageHandle, cancellationToken);
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
@@ -66,7 +66,9 @@ namespace CheckListManager.Prototypes.Terminal
                     CheckList = $"{message.Message.PrototypeName}.{message.Message.Version}",
                     Information = JsonConvert.SerializeObject(new
                     {
-                        File = message.Message.Path
+                        Exported = Settings != null,
+                        File = message.Message.Path,
+                        Server = Settings
                     })
                 }, cancellationToken);
             }
@@ -79,6 +81,7 @@ namespace CheckListManager.Prototypes.Terminal
                     CheckList = $"{message.Message.PrototypeName}.{message.Message.Version}",
                     Information = JsonConvert.SerializeObject(new
                     {
+                        Exported = false,
                         File = message.Message.Path,
                         Error = exception.Message
                     })
@@ -88,7 +91,7 @@ namespace CheckListManager.Prototypes.Terminal
             }
         }
 
-        private async Task Send(PrototypesFTPMessage message)
+        private async Task<FTPConnectionSettings> Send(PrototypesFTPMessage message)
         {
             ////we are not using company settings from v2.0.0
             //var SerializedSettings = await _settingService.PrototypesFtpConnectionAsync(message.Company);
@@ -100,7 +103,7 @@ namespace CheckListManager.Prototypes.Terminal
             FTPConnectionSettings Settings;
             var FTPServer = await _commonRepository.GetPrototypesFTPServerAsync(message.Company, PrototypeVersion.Prototypes.PrototypeType);
             if (FTPServer == null)
-                return;
+                return null;
 
             Settings = new FTPConnectionSettings
             {
@@ -124,6 +127,7 @@ namespace CheckListManager.Prototypes.Terminal
             var ftpClient = new FTPClient();
 
             await ftpClient.ActionAsync(MemoryStream.ToArray(), Settings.Folder, $"{message.Path}{(message.State == VersionState.Obsolete ? "#O" : string.Empty)}", Settings, FTPClient.Methods.Upload);
+            return Settings;
         }
     }
 }

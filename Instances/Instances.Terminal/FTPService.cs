@@ -52,17 +52,21 @@ namespace CheckListManager.Instances.Terminal
 		{
 			try
 			{
-				await Send(message.Message);
+				var Settings = await Send(message.Message);
                 await _queueService.DeleteMessageAsync(QueueName.InstancesFTP, message.MessageHandle, cancellationToken);
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
                     Action = TrailAction.InstanceExportCompleted,
                     Company = message.Message.Company,
                     CheckList = message.Message.Code,
-                    Information = JsonConvert.SerializeObject(new
-                    {
-                        File = message.Message.Path
-                    })
+                    Information = JsonConvert.SerializeObject(
+                        new
+                        {
+                            Exported = Settings != null,
+                            File = message.Message.Path,
+                            Server = Settings 
+                        }
+                    )
                 }, cancellationToken);
             }
             catch (Exception exception)
@@ -74,6 +78,7 @@ namespace CheckListManager.Instances.Terminal
                     CheckList = message.Message.Code,
                     Information = JsonConvert.SerializeObject(new
                     {
+                        Exported = false,
                         File = message.Message.Path,
                         Error = exception.Message
                     })
@@ -83,7 +88,7 @@ namespace CheckListManager.Instances.Terminal
 			}
 		}
 
-		private async Task Send(InstancesFTPMessage message)
+		private async Task<FTPConnectionSettings> Send(InstancesFTPMessage message)
 		{
             ////we are not using company settings from v2.0.0
             //var SerializedSettings = await _settingService.InstancesFtpConnectionAsync(message.Company);
@@ -96,7 +101,7 @@ namespace CheckListManager.Instances.Terminal
             FTPConnectionSettings Settings;
             var FTPServer = await _commonRepository.GetInstancesFTPServerAsync(message.Company, cacheObject.PrototypeType);
             if (FTPServer == null)
-                return;
+                return null;
 
             Settings = new FTPConnectionSettings
             {
@@ -118,6 +123,7 @@ namespace CheckListManager.Instances.Terminal
             var ftpClient = new FTPClient();
 
             await ftpClient.ActionAsync(MemoryStream.ToArray(), Settings.Folder, message.Path, Settings, FTPClient.Methods.Upload);
-		}
-	}
+            return Settings;
+        }
+    }
 }
