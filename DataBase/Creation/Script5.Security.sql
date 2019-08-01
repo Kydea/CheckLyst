@@ -41,6 +41,7 @@ insert into "Security"."Functions" values
 
 	('Prototypes', 'Approve'),
 	('Prototypes', 'Edit'),
+	('Prototypes', 'Preview'),
 	('Prototypes', 'View'),
 
 	('Trail', 'View'),

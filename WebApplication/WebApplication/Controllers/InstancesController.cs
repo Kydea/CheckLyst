@@ -16,7 +16,7 @@ namespace CheckListManager.WebApplication.Controllers
         }
 
         [Route("Create/{Prototype?}/{Version?}")]
-        [Authorize(Roles = "FunctionGroup#Instances,Prototypes#Edit")]
+        [Authorize(Roles = "FunctionGroup#Instances,Prototypes#Preview")]
         public ActionResult Create(long? Prototype, int? Version)
         {
             ViewBag.AppRoles = Request["roles"];
@@ -28,7 +28,7 @@ namespace CheckListManager.WebApplication.Controllers
         }
 
         [Route("Detail/{Code?}")]
-        [Authorize(Roles = "FunctionGroup#Instances,Prototypes#Edit")]
+        [Authorize(Roles = "FunctionGroup#Instances,Prototypes#Preview")]
         public ActionResult Detail(string Code)
         {
             ViewBag.AppRoles = Request["roles"];

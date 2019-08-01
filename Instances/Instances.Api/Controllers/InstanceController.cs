@@ -42,7 +42,7 @@ namespace CheckListManager.Instances.Api.Controllers
 
         [HttpPost]
         [Route("Create")]
-        [Authorize(Roles = "Instances#Create, Prototypes#Edit")]
+        [Authorize(Roles = "Instances#Create, Prototypes#Preview")]
         public async Task<IHttpActionResult> Create(CreateInstanceRequest request)
         {
             try
@@ -76,7 +76,7 @@ namespace CheckListManager.Instances.Api.Controllers
 
         [HttpPost]
         [Route("Open")]
-        [Authorize(Roles = "Instances#Create, Prototypes#Edit")]
+        [Authorize(Roles = "Instances#Create, Prototypes#Preview")]
         public async Task<IHttpActionResult> Open(InstanceRequest request)
         {
             try
@@ -103,7 +103,7 @@ namespace CheckListManager.Instances.Api.Controllers
 
         [HttpPost]
         [Route("Save")]
-        [Authorize(Roles = "Instances#Edit, Prototypes#Edit")]
+        [Authorize(Roles = "Instances#Edit, Prototypes#Preview")]
         public async Task<IHttpActionResult> Save(InstanceRequest request)
         {
             try
@@ -119,7 +119,7 @@ namespace CheckListManager.Instances.Api.Controllers
 
         [HttpPost]
         [Route("Delete")]
-        [Authorize(Roles = "Instances#Delete, Instances#Edit, Prototypes#Edit")]
+        [Authorize(Roles = "Instances#Delete, Instances#Edit, Prototypes#Preview")]
         public async Task<IHttpActionResult> Delete(InstanceRequest request)
         {
             try
@@ -135,7 +135,7 @@ namespace CheckListManager.Instances.Api.Controllers
 
         [HttpPost]
         [Route("Complete")]
-        [Authorize(Roles = "Instances#Edit, Prototypes#Edit")]
+        [Authorize(Roles = "Instances#Edit, Prototypes#Preview")]
         public async Task<IHttpActionResult> Complete(InstanceRequest request)
         {
             try
@@ -155,7 +155,7 @@ namespace CheckListManager.Instances.Api.Controllers
 
         [HttpPost]
         [Route("Get")]
-        [Authorize(Roles = "Instances#View, Prototypes#Edit")]
+        [Authorize(Roles = "Instances#View, Prototypes#Preview")]
         public async Task<IHttpActionResult> Get(InstanceRequest request)
         {
             try
@@ -193,7 +193,7 @@ namespace CheckListManager.Instances.Api.Controllers
 
         [HttpPost]
         [Route("Event")]
-        [Authorize(Roles = "Instances#View, Prototypes#Edit")]
+        [Authorize(Roles = "Instances#View, Prototypes#Preview")]
         public async Task<IHttpActionResult> Event(InstanceEventRequest request)
         {
             try
@@ -218,7 +218,7 @@ namespace CheckListManager.Instances.Api.Controllers
 
         [HttpPost]
         [Route("History")]
-        [Authorize(Roles = "Instances#View, Prototypes#Edit")]
+        [Authorize(Roles = "Instances#View, Prototypes#Preview")]
         public async Task<IHttpActionResult> History(InstanceRequest request)
         {
             try
@@ -233,7 +233,7 @@ namespace CheckListManager.Instances.Api.Controllers
 
         [HttpPost]
         [Route("Export")]
-        [Authorize(Roles = "Instances#View, Prototypes#Edit")]
+        [Authorize(Roles = "Instances#View, Prototypes#Preview")]
         public async Task<IHttpActionResult> Export(InstanceRequest request)
         {
             var Token = Identity.Code + ":" + Guid.NewGuid();
@@ -260,7 +260,7 @@ namespace CheckListManager.Instances.Api.Controllers
 
         [HttpPost]
         [Route("GetExternalSourceRows")]
-        [Authorize(Roles = "Instances#View, Prototypes#Edit")]
+        [Authorize(Roles = "Instances#View, Prototypes#Preview")]
         public async Task<IHttpActionResult> GetExternalSourceRows(PagingRequest<ExternalSourceRequest> request)
         {
             try
@@ -275,7 +275,7 @@ namespace CheckListManager.Instances.Api.Controllers
 
         [HttpPost]
         [Route("GetInstanceEditors")]
-        [Authorize(Roles = "Instances#Edit, Prototypes#Edit")]
+        [Authorize(Roles = "Instances#Edit, Prototypes#Preview")]
         public async Task<IHttpActionResult> GetInstanceEditors(InstanceRequest request)
         {
             try
@@ -290,7 +290,7 @@ namespace CheckListManager.Instances.Api.Controllers
 
         [HttpGet]
         [Route("DownloadAttachment")]
-        [Authorize(Roles = "Instances#View, Prototypes#Edit")]
+        [Authorize(Roles = "Instances#View, Prototypes#Preview")]
         public async Task<IHttpActionResult> DownloadAttachment([FromUri] string code, [FromUri]string key)
         {
             try

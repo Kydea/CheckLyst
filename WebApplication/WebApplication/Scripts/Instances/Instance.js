@@ -283,8 +283,8 @@
 					|| matematici.tokenManager.checkRole("Instances#" + instanceFunction + "#" + department + "#" + prototypeType + "#"))
 				|| (versionState == prototypes.Prototype.states.draft || versionState == prototypes.Prototype.states.simulation)
 				&& (state == instances.Instance.states.draft || state == instances.Instance.states.progress)
-				&& (matematici.tokenManager.checkRole("Prototypes#Edit#" + department + "##")
-					|| matematici.tokenManager.checkRole("Prototypes#Edit#" + department + "#" + prototypeType + "#"));
+				&& (matematici.tokenManager.checkRole("Prototypes#Preview#" + department + "##")
+					|| matematici.tokenManager.checkRole("Prototypes#Preview#" + department + "#" + prototypeType + "#"));
 		},
 
 		send = function (action, note, callback) {

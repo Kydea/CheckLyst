@@ -92,9 +92,15 @@
                 case prototypes.Prototype.states.approval:
                     approveButton.removeClass("Hidden");
                     break;
-                case prototypes.Prototype.states.obsolete:
                 case prototypes.Prototype.states.draftReadOnly:
                 case prototypes.Prototype.states.simulationReadOnly:
+                    if (
+                        matematici.tokenManager.checkRole("Prototypes#Preview#" + model.department + "##")
+                        || matematici.tokenManager.checkRole("Prototypes#Preview#" + model.department + "#" + model.prototypeType)
+                    )
+                        previewButton.removeClass("Hidden");
+                    break;
+                case prototypes.Prototype.states.obsolete:
                     break;
                 default:
                     alert("Invalid prototype state: " + (model.state || "(null)"));
@@ -643,8 +649,8 @@
 
 	prototype.preview = function () {
 		if (
-			!matematici.tokenManager.checkRole("Prototypes#Edit#" + model.department + "##")
-			&& !matematici.tokenManager.checkRole("Prototypes#Edit#" + model.department + "#" + model.prototypeType + "#")
+			!matematici.tokenManager.checkRole("Prototypes#Preview#" + model.department + "##")
+			&& !matematici.tokenManager.checkRole("Prototypes#Preview#" + model.department + "#" + model.prototypeType + "#")
 		) {
 			matematici.dialog.error("error", "Permission denied");
 			return;

@@ -103,3 +103,13 @@ alter table "CheckLists"."PrototypeTypes" add "PrototypesFTPServerEnabled" boole
 alter table "CheckLists"."PrototypeTypes" add "PrototypesFTPServer" bigint references "Infrastructure"."FTPServers";
 alter table "CheckLists"."PrototypeTypes" add "InstancesFTPServerEnabled" boolean not null default false;
 alter table "CheckLists"."PrototypeTypes" add "InstancesFTPServer" bigint references "Infrastructure"."FTPServers";
+
+insert into "Security"."Functions" values
+	('Prototypes', 'Preview');
+
+insert into "Security"."UserFunctions" ("Company", "User", "FunctionGroup", "Function", "Department", "PrototypeType", "Tag") 
+select "Company", "User", 'Prototypes', 'Preview', "Department", "PrototypeType", "Tag"
+from "Security"."UserFunctions"
+where
+	"FunctionGroup" = 'Prototypes' 
+	and "Function" = 'Edit';
