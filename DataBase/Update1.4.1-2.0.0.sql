@@ -113,3 +113,7 @@ from "Security"."UserFunctions"
 where
 	"FunctionGroup" = 'Prototypes' 
 	and "Function" = 'Edit';
+
+insert into "Trail"."Actions"
+values
+	('Email sent');
