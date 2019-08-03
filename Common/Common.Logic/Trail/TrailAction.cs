@@ -11,6 +11,7 @@
         public const string UserDeleted = "User deleted";
 
         public const string EmailFailed = "Email failed";
+        public const string EmailSent = "Email sent";
 
         public const string PrototypeCreated = "Prototype created";
         public const string PrototypeDeleted = "Prototype deleted";
