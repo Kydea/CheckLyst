@@ -4,10 +4,12 @@ using System.Net.Mail;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using CheckListManager.Common.Core.Helpers;
 using CheckListManager.Common.Logic.Email;
 using CheckListManager.Common.Logic.Queue;
 using CheckListManager.Common.Logic.Services;
 using CheckListManager.Common.Logic.Trail;
+using Newtonsoft.Json;
 using NLog;
 
 namespace CheckListManager.Infrastructure.Logic.Email
@@ -49,11 +51,9 @@ namespace CheckListManager.Infrastructure.Logic.Email
                     _queueService.DeleteMessageAsync(QueueName.Email, message.MessageHandle, cancellationToken);
                 if (message.Message.TrailMessage != null)
                 {
-                    var recipient = message.Message.To.Concat(message.Message.Cc).ToArray();
-                    var information = (string.IsNullOrEmpty(message.Message.TrailMessage.Information)
-                                          ? message.Message.TrailMessage.Information + " - "
-                                          : ""
-                                      ) + "Recipient: " + string.Join(", ", recipient);
+                    var recipients = message.Message.To.Concat(message.Message.Cc).ToArray();
+                    message.Message.TrailMessage.Information.Recipients = recipients;
+                    message.Message.TrailMessage.Information.Subject = message.Message.Subject;
 
                     var trailTask = _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                     {
@@ -62,7 +62,10 @@ namespace CheckListManager.Infrastructure.Logic.Email
                         Action = TrailAction.EmailSent,
                         Date = DateTimeOffset.UtcNow,
                         CheckList = message.Message.TrailMessage.CheckList,
-                        Information = information,
+                        Information = message.Message.TrailMessage.Information.ToJson(new JsonSerializerSettings
+                        {
+                            TypeNameHandling = TypeNameHandling.None
+                        })
                     }, cancellationToken);
 
                     await Task.WhenAll(deleteTask, trailTask);

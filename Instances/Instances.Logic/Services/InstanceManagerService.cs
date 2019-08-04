@@ -1166,7 +1166,13 @@ namespace CheckListManager.Instances.Logic.Services
                         Email.Address, new List<Tuple<string, string>> {
                             new Tuple<string, string> ("User", Email.Description),
                             new Tuple<string, string> ("CheckListCode", $"<a href='{checkListURL}' target='_blank'>{checklistLabel}</a>")
-                    }));
+                    })
+                    {
+                        TrailMessage = new EmailTrailMessage(identity.Code, cacheObject.InstanceCode, new EmailTrailMessage.EmailTrailInformation
+                        {
+                            Id = itemId.Value.ToString()
+                        })
+                    });
         }
 
 
