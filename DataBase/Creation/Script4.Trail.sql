@@ -48,7 +48,11 @@ values
 	('Job error'),
 
 	('Workflow signature issued'),
-	('Workflow signature failed');
+	('Workflow signature failed'),
+	
+	('Workflow created'),
+	('Workflow updated'),
+	('Workflow deleted');
 
 
 create table "Trail"."Records"

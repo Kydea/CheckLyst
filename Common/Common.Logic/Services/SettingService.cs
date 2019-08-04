@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using CheckListManager.Common.Core.Cache;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Data.Configuration;
@@ -104,6 +103,12 @@ namespace CheckListManager.Common.Logic.Services
             return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await _settingRepository.GetTimeZoneAsync(companyId), RegionName);
         }
 
+        public Task<bool> RequireUserReasonAsync(long companyId)
+        {
+	        const string code = "RequireUserReason";
+	        return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<bool>(companyId, code), RegionName);
+        }
+
         private async Task<T> Load<T>(long companyId, string code)
 		{
 			var configuration = await _settingRepository.GetAsync(companyId, code);
@@ -119,6 +124,8 @@ namespace CheckListManager.Common.Logic.Services
 			var type = typeof(T);
 			if (type == typeof(int))
 				return int.TryParse(value, out var i) ? (T)(object)i : default(T);
+			if (type == typeof(bool))
+				return bool.TryParse(value, out var i) ? (T)(object)i : default(T);
 			if (type == typeof(string))
 				return (T)(object)value;
 

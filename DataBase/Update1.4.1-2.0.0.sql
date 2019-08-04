@@ -127,5 +127,15 @@ values
 	('Workflow signature issued'),
 	('Workflow signature failed');
 	
-	
-	
+insert into "Configuration"."Settings" ("Code") values
+	('RequireUserReason');
+
+insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") 
+select "ID", 'RequireUserReason', 'true'
+from "Infrastructure"."Companies";
+
+insert into "Trail"."Actions"
+values
+	('Workflow created'),
+	('Workflow updated'),
+	('Workflow deleted');

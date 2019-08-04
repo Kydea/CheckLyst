@@ -45,5 +45,9 @@
         
         public const string WorkflowSignatureIssued = "Workflow signature issued";
         public const string WorkflowSignatureFailed = "Workflow signature failed";
+        
+        public const string WorkflowCreated = "Workflow created";
+        public const string WorkflowUpdated = "Workflow updated";
+        public const string WorkflowDeleted = "Workflow deleted";
     }
 }
