@@ -117,3 +117,15 @@ where
 insert into "Trail"."Actions"
 values
 	('Email sent');
+
+insert into "Trail"."Actions"
+values
+	('Instance signature failed');
+
+insert into "Trail"."Actions"
+values
+	('Workflow signature issued'),
+	('Workflow signature failed');
+	
+	
+	

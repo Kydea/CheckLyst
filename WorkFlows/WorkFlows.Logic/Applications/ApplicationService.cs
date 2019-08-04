@@ -1,7 +1,5 @@
-﻿using CheckListManager.Common.Core.Services;
-using CheckListManager.Common.Core.Web.Security;
+﻿using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Data;
-using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Logic.Authentication;
 using CheckListManager.Common.Logic.Email;
 using CheckListManager.Common.Logic.FTP;
@@ -13,8 +11,9 @@ using CheckListManager.WorkFlows.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using CheckListManager.Common.Core.Helpers;
+using Newtonsoft.Json;
 
 namespace CheckListManager.WorkFlows.Logic.Applications
 {
@@ -189,141 +188,180 @@ namespace CheckListManager.WorkFlows.Logic.Applications
 
         public async Task<SignResponse> SignAsync(DefaultIdentity identity, SignRequest request)
         {
-            var SignResponse = new SignResponse();
-            var Step = await _workFlowsRepository.GetWorkFlowApplicationStepAsync(identity, request.ApplicationStep);
-            var Steps = Step.WorkFlowApplications.WorkFlowApplicationSteps;
-            var FirstSignature = Steps.All(r => r.User == null);
-
-            if (Step.User != null)
-                throw new Exception("Signature already issued");
-            if (Steps.Any(r => r.User == null && r.Step < Step.Step))
-                throw new Exception("The previous step is not completed");
-            if (Steps.Any(r => r.User == identity.Code && r.Step == Step.Step))
-                throw new Exception("You have already signed for this step");
-            if (Step.WorkFlowApplications.WorkFlowAction == WorkFlowAction.PrototypeToApproved &&
-                request.ValidFrom < DateTime.UtcNow && request.Approved)
-                throw new Exception("The prototype has a past validity start date");
-            if (Step.WorkFlowApplications.WorkFlowAction == WorkFlowAction.PrototypeToApproved &&
-                (request.ValidFrom >= request.ValidUntil || request.ValidUntil < DateTimeOffset.UtcNow) &&
-                request.Approved)
-                throw new Exception("The prototype has a past validity end date");
-            if (!request.Approved && String.IsNullOrWhiteSpace(request.Comment))
-                throw new Exception("The comment is mandatory for the rejections");
-
-            await _authenticationService.AuthenticateAsync(identity.Code, request.Password);
-
-            Step.Approved = SignResponse.Approved = request.Approved;
-            Step.WorkFlowApplications.ModifiedBy = Step.User = identity.Code;
-            Step.UserDescription = identity.Description;
-            Step.WorkFlowApplications.ModifiedOn = Step.Date = DateTimeOffset.UtcNow;
-            Step.Comment = request.Comment;
-
-            var PrototypeVersion = Step.WorkFlowApplications.PrototypeVersions;
-            var Instance = Step.WorkFlowApplications.Instances;
-
-            if (PrototypeVersion != null)
+            PrototypeVersions PrototypeVersion = null;
+            Instances Instance = null;
+            
+            try
             {
-                var Granted = false;
-                foreach (var Tag in Step.WorkFlowApplicationStepTags)
-                    if (
-                        identity.HasPermission("Prototypes", "Approve", PrototypeVersion.Prototypes.Department,
-                            PrototypeVersion.Prototypes.PrototypeType, Tag.Tag)
-                        || identity.HasPermission("Prototypes", "Approve", PrototypeVersion.Prototypes.Department, null,
-                            Tag.Tag)
-                    )
-                    {
-                        Granted = true;
-                        break;
-                    }
+                var SignResponse = new SignResponse();
+                var Step = await _workFlowsRepository.GetWorkFlowApplicationStepAsync(identity, request.ApplicationStep);
+                var Steps = Step.WorkFlowApplications.WorkFlowApplicationSteps;
+                var FirstSignature = Steps.All(r => r.User == null);
 
-                if (!Granted)
-                    throw new Exception("Permission denied");
-            }
-            else if (Instance != null)
-            {
-                var Granted = false;
-                foreach (var Tag in Step.WorkFlowApplicationStepTags)
-                    if (
-                        identity.HasPermission("Instances", "Confirm", Instance.Prototypes.Department,
-                            Instance.Prototypes.PrototypeType, Tag.Tag)
-                        || identity.HasPermission("Instances", "Confirm", Instance.Prototypes.Department, null, Tag.Tag)
-                    )
-                    {
-                        Granted = true;
-                        break;
-                    }
+                PrototypeVersion = Step.WorkFlowApplications.PrototypeVersions;
+                Instance = Step.WorkFlowApplications.Instances;
+                
+                if (Step.User != null)
+                    throw new Exception("Signature already issued");
+                if (Steps.Any(r => r.User == null && r.Step < Step.Step))
+                    throw new Exception("The previous step is not completed");
+                if (Steps.Any(r => r.User == identity.Code && r.Step == Step.Step))
+                    throw new Exception("You have already signed for this step");
+                if (Step.WorkFlowApplications.WorkFlowAction == WorkFlowAction.PrototypeToApproved &&
+                    request.ValidFrom < DateTime.UtcNow && request.Approved)
+                    throw new Exception("The prototype has a past validity start date");
+                if (Step.WorkFlowApplications.WorkFlowAction == WorkFlowAction.PrototypeToApproved &&
+                    (request.ValidFrom >= request.ValidUntil || request.ValidUntil < DateTimeOffset.UtcNow) &&
+                    request.Approved)
+                    throw new Exception("The prototype has a past validity end date");
+                if (!request.Approved && String.IsNullOrWhiteSpace(request.Comment))
+                    throw new Exception("The comment is mandatory for the rejections");
 
-                if (!Granted)
-                    throw new Exception("Permission denied");
-            }
-            else
-                throw new InvalidOperationException();
+                await _authenticationService.AuthenticateAsync(identity.Code, request.Password);
 
-            if (request.Approved)
-            {
-                bool AllApproved = SignResponse.Completed = Steps.All(x => x.Approved == true);
+                Step.Approved = SignResponse.Approved = request.Approved;
+                Step.WorkFlowApplications.ModifiedBy = Step.User = identity.Code;
+                Step.UserDescription = identity.Description;
+                Step.WorkFlowApplications.ModifiedOn = Step.Date = DateTimeOffset.UtcNow;
+                Step.Comment = request.Comment;
 
                 if (PrototypeVersion != null)
                 {
-                    if (FirstSignature)
-                    {
-                        if (Step.WorkFlowApplications.WorkFlowAction == WorkFlowAction.PrototypeToApproved)
-                            PrototypeVersion.ValidFrom =
-                                request.ValidFromNow ? (DateTimeOffset?)null : request.ValidFrom.Value;
+                    var Granted = false;
+                    foreach (var Tag in Step.WorkFlowApplicationStepTags)
+                        if (
+                            identity.HasPermission("Prototypes", "Approve", PrototypeVersion.Prototypes.Department,
+                                PrototypeVersion.Prototypes.PrototypeType, Tag.Tag)
+                            || identity.HasPermission("Prototypes", "Approve", PrototypeVersion.Prototypes.Department, null,
+                                Tag.Tag)
+                        )
+                        {
+                            Granted = true;
+                            break;
+                        }
 
-                        PrototypeVersion.ValidUntil = request.ValidUntilNow ? null : request.ValidUntil;
-                    }
-
-                    if (AllApproved)
-                    {
-                        await Approve(identity, PrototypeVersion);
-                        Step.WorkFlowApplications.FinalState = PrototypeVersion.VersionState;
-                    }
+                    if (!Granted)
+                        throw new Exception("Permission denied");
                 }
                 else if (Instance != null)
                 {
-                    if (AllApproved)
+                    var Granted = false;
+                    foreach (var Tag in Step.WorkFlowApplicationStepTags)
+                        if (
+                            identity.HasPermission("Instances", "Confirm", Instance.Prototypes.Department,
+                                Instance.Prototypes.PrototypeType, Tag.Tag)
+                            || identity.HasPermission("Instances", "Confirm", Instance.Prototypes.Department, null, Tag.Tag)
+                        )
+                        {
+                            Granted = true;
+                            break;
+                        }
+
+                    if (!Granted)
+                        throw new Exception("Permission denied");
+                }
+                else
+                    throw new InvalidOperationException();
+
+                if (request.Approved)
+                {
+                    bool AllApproved = SignResponse.Completed = Steps.All(x => x.Approved == true);
+
+                    if (PrototypeVersion != null)
                     {
-                        await Approve(identity, Instance);
+                        if (FirstSignature)
+                        {
+                            if (Step.WorkFlowApplications.WorkFlowAction == WorkFlowAction.PrototypeToApproved)
+                                PrototypeVersion.ValidFrom =
+                                    request.ValidFromNow ? (DateTimeOffset?)null : request.ValidFrom.Value;
+
+                            PrototypeVersion.ValidUntil = request.ValidUntilNow ? null : request.ValidUntil;
+                        }
+
+                        if (AllApproved)
+                        {
+                            await Approve(identity, PrototypeVersion);
+                            Step.WorkFlowApplications.FinalState = PrototypeVersion.VersionState;
+                        }
+                    }
+                    else if (Instance != null)
+                    {
+                        if (AllApproved)
+                        {
+                            await Approve(identity, Instance);
+                            Step.WorkFlowApplications.FinalState = Instance.InstanceState;
+                        }
+                    }
+
+                    if (AllApproved)
+                        Step.WorkFlowApplications.Approved = true;
+                    else
+                        await SendEmailsAsync(identity, Step.WorkFlowApplications);
+                }
+                else
+                {
+                    Step.WorkFlowApplications.Approved = false;
+                    SignResponse.Completed = true;
+                    if (PrototypeVersion != null)
+                    {
+                        await Reject(identity, PrototypeVersion);
+                        Step.WorkFlowApplications.FinalState = PrototypeVersion.VersionState;
+                    }
+                    else if (Instance != null)
+                    {
+                        await Reject(identity, Instance);
                         Step.WorkFlowApplications.FinalState = Instance.InstanceState;
                     }
                 }
 
-                if (AllApproved)
-                    Step.WorkFlowApplications.Approved = true;
-                else
-                    await SendEmailsAsync(identity, Step.WorkFlowApplications);
-            }
-            else
-            {
-                Step.WorkFlowApplications.Approved = false;
-                SignResponse.Completed = true;
+                await _workFlowsRepository.SaveChangesAsync();
+
                 if (PrototypeVersion != null)
                 {
-                    await Reject(identity, PrototypeVersion);
-                    Step.WorkFlowApplications.FinalState = PrototypeVersion.VersionState;
+                    SignResponse.State = PrototypeVersion.VersionState;
+                    SignResponse.ValidFrom = PrototypeVersion.ValidFrom;
+                    SignResponse.ValidUntil = PrototypeVersion.ValidUntil;
+                    SignResponse.ModifiedOn = PrototypeVersion.ModifiedOn;
+                    SignResponse.ModifiedBy = PrototypeVersion.ModifiedBy;
                 }
                 else if (Instance != null)
+                    SignResponse.State = Instance.InstanceState;
+
+                var checklistLabel = Instance == null
+                    ? $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}"
+                    : $"{Instance.PrototypeName}.{Instance.Version}.{Instance.Year}.{Instance.Number}";
+                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
-                    await Reject(identity, Instance);
-                    Step.WorkFlowApplications.FinalState = Instance.InstanceState;
-                }
+                    Company = identity.CompanyId,
+                    User = identity.Code,
+                    Action = TrailAction.WorkflowSignatureIssued,
+                    Date = DateTimeOffset.UtcNow,
+                    CheckList = checklistLabel,
+                });
+                
+                return SignResponse;
             }
-
-            await _workFlowsRepository.SaveChangesAsync();
-
-            if (PrototypeVersion != null)
+            catch (Exception e)
             {
-                SignResponse.State = PrototypeVersion.VersionState;
-                SignResponse.ValidFrom = PrototypeVersion.ValidFrom;
-                SignResponse.ValidUntil = PrototypeVersion.ValidUntil;
-                SignResponse.ModifiedOn = PrototypeVersion.ModifiedOn;
-                SignResponse.ModifiedBy = PrototypeVersion.ModifiedBy;
+                var checklistLabel = Instance == null
+                    ? $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}"
+                    : $"{Instance.PrototypeName}.{Instance.Version}.{Instance.Year}.{Instance.Number}";
+                var information = new Dictionary<string, string>
+                {
+                    { "Reason", e.Message }
+                };
+                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                {
+                    Company = identity.CompanyId,
+                    User = identity.Code,
+                    Action = TrailAction.WorkflowSignatureFailed,
+                    Date = DateTimeOffset.UtcNow,
+                    CheckList = checklistLabel,
+                    Information = information.ToJson(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None })
+                });
+                
+                throw;
             }
-            else if (Instance != null)
-                SignResponse.State = Instance.InstanceState;
-
-            return SignResponse;
         }
 
         public async Task<CreateResponse> CreateAsync(DefaultIdentity identity, CreateRequest request)

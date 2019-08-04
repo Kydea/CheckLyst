@@ -1086,62 +1086,87 @@ namespace CheckListManager.Instances.Logic.Services
 
         private async Task HandleSignatureAsync(InstanceCacheObject cacheObject, IDefaultIdentity identity, InstanceEventRequest request)
         {
-            if (!request.ItemId.HasValue)
-                throw new InstanceException("Item id not sent");
-
-            var signature = cacheObject.Instance.Items.ContainsKey(request.ItemId.Value) ? cacheObject.Instance.Items[request.ItemId.Value] as Signature : null;
-            if (signature == null)
-                throw new InstanceException("Signature not found");
-
-            if (signature.ReadOnly)
-                throw new InstanceException("Invalid operation");
-
-            if (signature.Signed)
-                throw new Exception("The signature is already signed");
-
-            if (request.Simple && string.IsNullOrEmpty(request.Password))
-                throw new InstanceException("Provide your password");
-            if (!request.Simple && string.IsNullOrEmpty(request.Pin))
-                throw new InstanceException("Provide your PIN");
-
-            signature.TrySign(await _settingService.DecimalSeparatorAsync(cacheObject.CompanyId), (await _settingService.TimeZoneAsync(cacheObject.CompanyId)).MicrosoftCode, identity.Code);
-
             try
             {
-                if (request.Simple)
-                    await _authenticationService.AuthenticateAsync(identity.Code, request.Password);
-                else
-                    await _authenticationService.AuthenticateWithPINAsync(request.Pin);
-            }
-            catch
-            {
-                throw new InstanceException("Authentication failed");
-            }
+                if (!request.ItemId.HasValue)
+                    throw new InstanceException("Item id not sent");
 
-            if (
-                !string.IsNullOrEmpty(signature.SignatureLevel)
-                && !HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType, signature.SignatureLevel)
-            )
-                throw new InstanceException($"The signature must be applied by an user with level {signature.SignatureLevel}");
+                var signature = cacheObject.Instance.Items.ContainsKey(request.ItemId.Value) ? cacheObject.Instance.Items[request.ItemId.Value] as Signature : null;
+                if (signature == null)
+                    throw new InstanceException("Signature not found");
 
-            var Now = DateTimeOffset.UtcNow;
-            cacheObject.ModifiedBy = identity.Code;
-            cacheObject.ModifiedOn = Now;
-            signature.Sign(identity.Code, identity.Description, Now);
-            if (cacheObject.InstanceState == InstanceState.Progress)
-                await SaveAsync(cacheObject, identity, false, false, true, cacheObject.ModifiedBy, cacheObject.ModifiedOn);
-            await Update(cacheObject, request.Username);
+                if (signature.ReadOnly)
+                    throw new InstanceException("Invalid operation");
 
-            if (!cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation))
-                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                if (signature.Signed)
+                    throw new Exception("The signature is already signed");
+
+                if (request.Simple && string.IsNullOrEmpty(request.Password))
+                    throw new InstanceException("Provide your password");
+                if (!request.Simple && string.IsNullOrEmpty(request.Pin))
+                    throw new InstanceException("Provide your PIN");
+
+                signature.TrySign(await _settingService.DecimalSeparatorAsync(cacheObject.CompanyId), (await _settingService.TimeZoneAsync(cacheObject.CompanyId)).MicrosoftCode, identity.Code);
+
+                try
                 {
-                    Company = identity.CompanyId,
-                    User = identity.Code,
-                    Action = TrailAction.InstanceSignatureIssued,
-                    Date = DateTimeOffset.UtcNow,
-                    CheckList = cacheObject.InstanceCode,
-                    Information = request.ItemId.ToString()
-                });
+                    if (request.Simple)
+                        await _authenticationService.AuthenticateAsync(identity.Code, request.Password);
+                    else
+                        await _authenticationService.AuthenticateWithPINAsync(request.Pin);
+                }
+                catch
+                {
+                    throw new InstanceException("Authentication failed");
+                }
+
+                if (
+                    !string.IsNullOrEmpty(signature.SignatureLevel)
+                    && !HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType, signature.SignatureLevel)
+                )
+                    throw new InstanceException($"The signature must be applied by an user with level {signature.SignatureLevel}");
+
+                var Now = DateTimeOffset.UtcNow;
+                cacheObject.ModifiedBy = identity.Code;
+                cacheObject.ModifiedOn = Now;
+                signature.Sign(identity.Code, identity.Description, Now);
+                if (cacheObject.InstanceState == InstanceState.Progress)
+                    await SaveAsync(cacheObject, identity, false, false, true, cacheObject.ModifiedBy, cacheObject.ModifiedOn);
+                await Update(cacheObject, request.Username);
+
+                if (!cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation))
+                    await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                    {
+                        Company = identity.CompanyId,
+                        User = identity.Code,
+                        Action = TrailAction.InstanceSignatureIssued,
+                        Date = DateTimeOffset.UtcNow,
+                        CheckList = cacheObject.InstanceCode,
+                        Information = request.ItemId.ToString()
+                    });
+            }
+            catch (Exception e)
+            {
+                if (!cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation))
+                {
+                    var information = new Dictionary<string, string>
+                    {
+                        { "Id", request.ItemId.ToString() },
+                        { "Reason", e.Message }
+                    };
+                    await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                    {
+                        Company = identity.CompanyId,
+                        User = identity.Code,
+                        Action = TrailAction.InstanceSignatureFailed,
+                        Date = DateTimeOffset.UtcNow,
+                        CheckList = cacheObject.InstanceCode,
+                        Information = information.ToJson(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None })
+                    });
+                }
+                
+                throw;
+            }
         }
 
         private async Task HandleEmailSend(InstanceCacheObject cacheObject, IDefaultIdentity identity, int? itemId, List<InstanceEventRequest.Email> Emails)
