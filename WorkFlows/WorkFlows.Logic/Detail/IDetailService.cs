@@ -13,6 +13,6 @@ namespace CheckListManager.WorkFlows.Logic.Detail
         Task<DetailResponse> LoadAsync(IDefaultIdentity identity, DetailRequest record);
         Task<DetailResponse> AddAsync(IDefaultIdentity identity, DetailRequest record);
         Task<DetailResponse> EditAsync(IDefaultIdentity identity, DetailRequest record);
-        Task<DetailResponse> DeleteAsync(IDefaultIdentity identity, long id);
+        Task<DetailResponse> DeleteAsync(IDefaultIdentity identity, DetailRequest record);
     }
 }

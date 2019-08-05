@@ -123,6 +123,10 @@
 		return localStorage.userCode;
 	};
 
+	tokenManager.getCompanySettings = function () {
+		return JSON.parse(localStorage.companySettings);
+	}
+
     //for the app
 	tokenManager.setUserCode = function (userCode, roles, timeZone, decimalSeparator, accessToken, refreshToken) {
 		localStorage.userCode = userCode;

@@ -43,18 +43,30 @@
     matematici.events.onPageLoad = function (callback) {
         matematici.clock.stop();
 
-        var
-            form = $("form"),
-            error = $("div.Errors", form),
-            companyList = $("select[name=companyId]", form),
-            userCode = $("input[name=username]", form),
-            password = $("input[name=password]", form),
-            companies = {},
-            redirectUrl = localStorage.redirectUrl && localStorage.redirectUrl.indexOf("/Security/Login") < 0 ? localStorage.redirectUrl : null,
+		var
+			form = $("form"),
+			error = $("div.Errors", form),
+			companyList = $("select[name=companyId]", form),
+			userCode = $("input[name=username]", form),
+			password = $("input[name=password]", form),
+			companies = {},
+			redirectUrl = localStorage.redirectUrl && localStorage.redirectUrl.indexOf("/Security/Login") < 0 ? localStorage.redirectUrl : null,
 
-            showError = function (message) {
-                error.html(" " + message).prepend($("<i />").addClass("fas fa-exclamation-triangle")).show()
-            };
+			showError = function (message) {
+				error.html(" " + message).prepend($("<i />").addClass("fas fa-exclamation-triangle")).show()
+			},
+
+			getSettings = function (callback) {
+				$.ajax(matematici.urls.infrastructure.companies.getSettings, {
+					type: "get",
+					suppressErrors: true
+				}).done(function (result) {
+					localStorage.companySettings = JSON.stringify(result);
+					callback.call();
+				}).fail(function (jqXhr, textStatus, errorThrown) {
+					showError(jqXhr.responseJSON && jqXhr.responseJSON && jqXhr.responseJSON.messages && jqXhr.responseJSON.messages.join(' ') || errorThrown);
+				});
+			};
 
         new matematici.Page({
             name: "Login",
@@ -79,9 +91,13 @@
                     var company = companyList.data("autoComplete").getValue();
                     localStorage.inactivityTimeoutSeconds = companies[company].inactivityTimeoutSeconds;
                     matematici.tokenManager.login(result);
-                    matematici.clock.resume();
-                    localStorage.removeItem("redirectUrl");
-                    matematici.navigator.open(redirectUrl || matematici.urls.dashboard);
+					matematici.clock.resume();
+
+					getSettings(function () {
+						localStorage.removeItem("redirectUrl");
+						matematici.navigator.open(redirectUrl || matematici.urls.dashboard);
+					});
+
                 }).fail(function (jqXhr, textStatus, errorThrown) {
                     showError(jqXhr.responseJSON && jqXhr.responseJSON.error_description || jqXhr.responseJSON && jqXhr.responseJSON.messages && jqXhr.responseJSON.messages.join(' ') || errorThrown);
                 });

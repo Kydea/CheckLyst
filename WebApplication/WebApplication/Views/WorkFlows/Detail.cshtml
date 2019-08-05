@@ -1,12 +1,13 @@
 ﻿<div id="UsersDetailPage">
     <h2>Workflow</h2>
 
-    <form id="Detail" action="@BaseUrl/WorkFlows/List">
-        <div class="TabContainer">
-            <div class="TabLabels">
-                <a href="#">Details</a>
-                <a href="#">Steps</a>
-            </div>
+	<form id="Detail" action="@BaseUrl/WorkFlows/List">
+		<input type="hidden" name="reason" />
+		<div class="TabContainer">
+			<div class="TabLabels">
+				<a href="#">Details</a>
+				<a href="#">Steps</a>
+			</div>
 			<div class="Tab">
 				<label>
 					<span>ID</span>
@@ -36,19 +37,13 @@
 					<input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
 				</label>
 
-				<label class="Clearing">
-					<span>Reason</span>
-					<i class="Icon fal fa-ellipsis-h" />
-					<input type="text" name="reason" />
-				</label>
-
 				<div class="Clearing"></div>
 			</div>
-            <div class="Tab" id="StepTab">
-                <div class="Clearing"></div>
-            </div>
-        </div>
-    </form>
+			<div class="Tab" id="StepTab">
+				<div class="Clearing"></div>
+			</div>
+		</div>
+	</form>
 </div>
 
 <script type="text/javascript">

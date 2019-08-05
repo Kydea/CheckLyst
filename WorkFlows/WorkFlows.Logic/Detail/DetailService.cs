@@ -192,13 +192,13 @@ namespace CheckListManager.WorkFlows.Logic.Detail
             return response;
         }
 
-        public async Task<DetailResponse> DeleteAsync(IDefaultIdentity identity, long id)
+        public async Task<DetailResponse> DeleteAsync(IDefaultIdentity identity, DetailRequest record)
         {
             var response = new DetailResponse();
             try
             {
-                await _workFlowsRepository.DeleteWorkFlowAsync(identity, id);
-                await AuditAsync(identity, TrailAction.WorkflowDeleted, id);
+                await _workFlowsRepository.DeleteWorkFlowAsync(identity, record.ID.Value);
+                await AuditAsync(identity, TrailAction.WorkflowDeleted, record.ID.Value, record.Reason);
             }
             catch (Exception Exception)
             {
@@ -225,11 +225,12 @@ namespace CheckListManager.WorkFlows.Logic.Detail
             return AuditAsync(identity, action, information);
         }
 
-        private Task AuditAsync(IDefaultIdentity identity, string action, long id)
+        private Task AuditAsync(IDefaultIdentity identity, string action, long id, string reason)
         {
             var information = new
             {
                 ID = id,
+                Reason = reason
             };
             return AuditAsync(identity, action, information);
         }

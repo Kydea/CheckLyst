@@ -56,7 +56,7 @@ namespace CheckListManager.WorkFlows.Api.Controllers
         [Authorize(Roles = "WorkFlows#Edit")]
         public async Task<IHttpActionResult> Delete(Message<DetailRequest> request)
         {
-            return Ok(await _detailService.DeleteAsync(Identity, request.Data.ID.Value));
+            return Ok(await _detailService.DeleteAsync(Identity, request.Data));
         }
     }
 }

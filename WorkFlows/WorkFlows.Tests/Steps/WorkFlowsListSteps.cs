@@ -148,7 +148,7 @@ namespace CheckListManager.WorkFlows.Tests.Steps
         public async Task WhenISubmitTheRequestToEditTheWorkflow() => _context.Response = await _detailService.EditAsync(_defaultIdentity, _context.Request);
 
         [When(@"I submit the delete request to delete the workflow")]
-        public async Task WhenISubmitTheDeleteRequestToDeleteTheWorkflow() => _context.Response = await _detailService.DeleteAsync(_defaultIdentity, _context.Request.ID.Value);
+        public async Task WhenISubmitTheDeleteRequestToDeleteTheWorkflow() => _context.Response = await _detailService.DeleteAsync(_defaultIdentity, _context.Request);
         
         [Then(@"the system does not save the workflow and returns an error message: '(.*)'")]
         public void ThenTheSystemDoesNotSavesTheWorkflowAndReturnsAnErrorMessage(string Message)

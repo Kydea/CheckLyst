@@ -2,11 +2,6 @@
 
 $Inline-Form-Label-Width: 200px;
 
-input.Error, select.Error {
-    border-color: $Color-Red-Regular;
-    outline-color: $Color-Red-Light;
-}
-
 label {
     display: block;
     font-size: 13px;
@@ -32,6 +27,11 @@ input[type=text], input[type=range], input[type=number], input[type=password], i
     &[readonly], &.ReadOnly {
         background-color: $Color-Silver-Light;
     }
+}
+
+input.Error, select.Error {
+	border-color: $Color-Red-Regular;
+	outline-color: $Color-Red-Light;
 }
 
 textarea {
