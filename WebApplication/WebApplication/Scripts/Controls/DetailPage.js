@@ -38,21 +38,23 @@
 			});
 
 			if (!options.readOnly) {
-				buttons.push({
-					text: "delete", icon: "trash-alt", handler: function () {
-						matematici.dialog.show("warning", "The record will be deleted.", [
-							{
-								text: "confirm", icon: "check", handler: function () {
-									clickHandler($(this), "Delete");
+				if (data !== null) {
+					buttons.push({
+						text: "delete", icon: "trash-alt", handler: function () {
+							matematici.dialog.show("warning", "The record will be deleted.", [
+								{
+									text: "confirm", icon: "check", handler: function () {
+										clickHandler($(this), "Delete");
+									}
+								},
+								{
+									text: "cancel", icon: "times", cancelButton: true
 								}
-							},
-							{
-								text: "cancel", icon: "times", cancelButton: true
-							}
-						]);
-						return true;
-					}
-				});
+							]);
+							return true;
+						}
+					});
+				}
 
 				buttons.push({
 					text: "save", defaultButton: true, icon: "save", id: "SaveButton", handler: function (e) {

@@ -27,7 +27,9 @@ namespace CheckListManager.Common.Logic.Email
 
 		public string Subject { get; set; }
 		public string Content { get; set; }
-		public string[] To { get; set; }
-		public string[] Cc { get; set; }
+		public string[] To { get; set; } = new string [0];
+		public string[] Cc { get; set; } = new string [0];
+
+		public EmailTrailMessage TrailMessage { get; set; }
 	}
 }

@@ -11,6 +11,7 @@
         public const string UserDeleted = "User deleted";
 
         public const string EmailFailed = "Email failed";
+        public const string EmailSent = "Email sent";
 
         public const string PrototypeCreated = "Prototype created";
         public const string PrototypeDeleted = "Prototype deleted";
@@ -24,6 +25,7 @@
         public const string InstanceQuitted = "Instance quitted";
         public const string InstanceStateChanged = "Instance state changed";
         public const string InstanceSignatureIssued = "Instance signature issued";
+        public const string InstanceSignatureFailed = "Instance signature failed";
         public const string InstanceSignatureCanceled = "Instance signature canceled";
         public const string InstanceValueChanged = "Instance value changed";
         public const string InstanceValueCopied = "Instance value copied";
@@ -40,5 +42,12 @@
         public const string PrototypeExportFailed = "Prototype export failed";
 
         public const string JobError = "Job error";
+        
+        public const string WorkflowSignatureIssued = "Workflow signature issued";
+        public const string WorkflowSignatureFailed = "Workflow signature failed";
+        
+        public const string WorkflowCreated = "Workflow created";
+        public const string WorkflowUpdated = "Workflow updated";
+        public const string WorkflowDeleted = "Workflow deleted";
     }
 }

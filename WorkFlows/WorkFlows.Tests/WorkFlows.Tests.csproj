@@ -115,6 +115,7 @@
     <Compile Include="Hooks\DatabaseHooks.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Setup\DependencyInjection.cs" />
+    <Compile Include="Setup\EmptyQueueService.cs" />
     <Compile Include="Steps\WorkFlowsListSteps.cs" />
   </ItemGroup>
   <ItemGroup>

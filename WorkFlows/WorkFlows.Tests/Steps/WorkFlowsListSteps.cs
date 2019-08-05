@@ -54,6 +54,7 @@ namespace CheckListManager.WorkFlows.Tests.Steps
         public void GivenIAssignAsTheDescriptionOfTheWorkflow(string Description)
         {
             _context.Request.Description = Description;
+            _context.Request.Reason = "Unit test";
         }
 
         [Given(@"I add the '(.*)' signature in the workflows' steps")]
