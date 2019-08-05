@@ -24,7 +24,12 @@ namespace CheckListManager.Instances.Logic.PDF
 
         public string FormatFormula(string Value)
         {
-            return Value.Replace("<span class='Error'>", "[ #Error: ").Replace("<span class='Null'>", "[ null").Replace("</span>", " ]");
+            return Value?.Replace("<span class='Null'></span>", string.Empty).Replace("<span class='Error'>", "[ #Error: ").Replace("</span>", " ]") ?? string.Empty;
+        }
+
+        public override string GetFieldValue(ICheckListField Field)
+        {
+            return FormatFormula(((Field)Field).RawValue);
         }
 
         protected override FirstPage GenerateFirstPage()
@@ -48,13 +53,6 @@ namespace CheckListManager.Instances.Logic.PDF
         protected override Template GenerateTemplate()
         {
             return new Template(this, $"{Instance.PrototypeDescription}\n{Instance.InstanceCode}\n{Instance.Description}");
-        }
-
-        public override string GetFieldValue(ICheckListField Field)
-        {
-            var Value = ((Field)Field).RawValue;
-            if (Value == null) return null;
-            return System.Text.RegularExpressions.Regex.Replace(Value, "<.*?>", string.Empty, System.Text.RegularExpressions.RegexOptions.Compiled);
         }
 
         public override bool IsPrototype() => false;

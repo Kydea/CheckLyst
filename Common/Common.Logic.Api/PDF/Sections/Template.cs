@@ -12,7 +12,6 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
     {
         public Template(CheckListPDF PDF, string DocumentDescription)
         {
-            // PAGE_FORMAT
             PageSetup setup = PDF.Container.Document.DefaultPageSetup.Clone();
             setup.PageFormat = PageFormat.A4;
             setup.LeftMargin = setup.RightMargin = Unit.FromPoint(40);
@@ -24,19 +23,15 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
 
             PDF.Container.PageSetup = setup;
 
-            // STYLE
             Style style = style = PDF.Container.Document.Styles[StyleNames.Normal];
             style.Font = PDFBase.GenericFont.Clone();
-            // END_STYLE
 
             Paragraph header = PDF.Container.Headers.Primary.AddParagraph(DocumentDescription);
-            header.Format.Borders.Bottom.Color = Colors.Black;
-            header.Format.Borders.Bottom.Width = new Unit(0.75, UnitType.Point);
+            header.Format.Borders.Bottom = PDFBase.DefaultBorder;
             header.Format.Borders.DistanceFromTop = 58;
-            header.Format.Borders.DistanceFromBottom = 15;
-            header.Format.Font.Size = 12;
+            header.Format.Borders.DistanceFromBottom = 10;
+            header.Format.Font = PDFBase.GenericFontGray;
 
-            // Page counter
             Paragraph footer = PDF.Container.Footers.Primary.AddParagraph();
             footer.Format.Font = PDFBase.GenericFontGray;
             footer.AddText("Page ");
@@ -45,10 +40,9 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             footer.AddNumPagesField();
             footer.Format.Alignment = ParagraphAlignment.Right;
             footer.Format.Borders.Top = PDFBase.DefaultBorder;
-            footer.Format.Borders.DistanceFromTop = 25;
+            footer.Format.Borders.DistanceFromTop = 10;
             footer.Format.SpaceAfter = new Unit(-footer.Format.Font.Size, UnitType.Point);
 
-            // Time
             footer = PDF.Container.Footers.Primary.AddParagraph();
             footer.Format.Font = PDFBase.GenericFontGray;
             footer.AddText($"Generated on {DateTimeOffset.UtcNow.ToLocalTime(PDF.TimeZone):yyyy-MM-dd HH:mm UTC zzz} - RESTRICTED");

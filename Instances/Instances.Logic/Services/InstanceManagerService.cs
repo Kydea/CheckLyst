@@ -1339,8 +1339,8 @@ namespace CheckListManager.Instances.Logic.Services
             return
                 PrototypeVersionState.In(VersionState.Draft, VersionState.InSimulation)
                     && (
-                        identity.HasPermission("Prototypes", "Edit", Department)
-                        || identity.HasPermission("Prototypes", "Edit", Department, PrototypeType)
+                        identity.HasPermission("Prototypes", "Preview", Department)
+                        || identity.HasPermission("Prototypes", "Preview", Department, PrototypeType)
                     )
                 || !PrototypeVersionState.In(VersionState.Draft, VersionState.InSimulation)
                 && (
