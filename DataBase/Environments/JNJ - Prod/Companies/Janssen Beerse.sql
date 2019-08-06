@@ -1,7 +1,9 @@
 insert into "Infrastructure"."Companies"("Name", "TimeZone", "MaximumNumberOfPINFailure", "LoginFailedTimeout", "PINDaysLife", "MaximumNumberOfPasswordFailure", "PasswordDaysLife", "WarningUserInactivityDays", "MaximumUserInactivityDays") 
-values ('Janssen Shaffhausen', 'Europe/Zurich', 5, 20, 90, 20, 365, 335, 365); --see http://momentjs.com/timezone/docs/#/data-loading/
+values ('Janssen Beerse', 'Europe/Rome', 5, 20, 90, 20, 365, 335, 365); --see http://momentjs.com/timezone/docs/#/data-loading/
 
-insert into "Infrastructure"."Departments" ("Company", "Name") values (currval('"Infrastructure"."Companies_ID_seq"'), '???');
+insert into "Infrastructure"."Departments" ("Company", "Name") values (currval('"Infrastructure"."Companies_ID_seq"'), 'Automation (P)');
+insert into "Infrastructure"."Departments" ("Company", "Name") values (currval('"Infrastructure"."Companies_ID_seq"'), 'Quality control (P)');
+insert into "Infrastructure"."Departments" ("Company", "Name") values (currval('"Infrastructure"."Companies_ID_seq"'), 'Information technology (P)');
 
 insert into "Security"."Users" ("Company", "Code", "Description", "Password", "PIN", "Enabled") 
 values (
@@ -20,7 +22,7 @@ insert into "Security"."UserFunctions" ("Company", "User", "FunctionGroup", "Fun
 values (currval('"Infrastructure"."Companies_ID_seq"'), 'CheckListManager', 'Users', 'Edit');
 
 insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
-	(currval('"Infrastructure"."Companies_ID_seq"'), 'LDAPHost', 'eu.jnj.com'), 
+	(currval('"Infrastructure"."Companies_ID_seq"'), 'LDAPHost', 'eu.jnj.com'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpHost', 'smtp.eu.jnj.com'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpPort', '25'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpUsername', ''),
@@ -32,27 +34,3 @@ insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") valu
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'InstanceMessage', '[User], <br /> A signature has been issued for the instance [CheckListCode].'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'DecimalSeparator', ','),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'RequireUserReason', 'true');
-
-
-  ---- DEV ---------
-  
-   insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
-	(currval('"Infrastructure"."Companies_ID_seq"'), 'PrototypesFtpConnection', '{ "Host": "10.157.83.244", "Port": 21, "Folder": "/ChecklystPrototype_dev_sch",  "UserName": "FtpDev", "Password": "AA_Latina_01", "UsePassive": "true", "EnableSSL": "false" }');
-
-
-  insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
-	(currval('"Infrastructure"."Companies_ID_seq"'), 'InstancesFtpConnection', '{ "Host": "10.157.83.244", "Port": 21, "Folder": "/ChecklystInstances_dev_sch",  "UserName": "FtpDev", "Password": "AA_Latina_01", "UsePassive": "true", "EnableSSL": "false" }');
-  
-  ---- QA ---------
- 
-  insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values 
-  (currval('"Infrastructure"."Companies_ID_seq"'),'PrototypesFtpConnection','{ "Host": "AWSAZFIRL1234.jnj.com", "Port": 21, "Folder": "/CLFTP-Prototypes-SCH-QA",  "UserName": "SA-JAC-CLFTP-SCH-QA", "Password": "@Ch3ck7yst", "UsePassive": "true", "EnableSSL": "true" }');
- 
-  insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
-  (currval('"Infrastructure"."Companies_ID_seq"'),'InstancesFtpConnection','{ "Host": "AWSAZFIRL1234.jnj.com", "Port": 21, "Folder": "/CLFTP-Instances-SCH-QA",  "UserName": "SA-JAC-CLFTP-SCH-QA", "Password": "@Ch3ck7yst", "UsePassive": "true", "EnableSSL": "true" }');
- 
-  ---- PROD ---------
-  
-  insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
-	(currval('"Infrastructure"."Companies_ID_seq"'), 'PrototypesFtpConnection', '{ "Host": "AWSAZFIRL1238.jnj.com", "Port": 21, "Folder": "/CLFTP-Prototypes-SCH-PRD",  "UserName": "SA-JAC-CLFTP-SCH-PRD", "Password": "@Ch3ck7yst,1", "UsePassive": "true", "EnableSSL": "true" }');
-
