@@ -2,6 +2,7 @@
 using MigraDoc.DocumentObjectModel;
 using PdfSharp.Pdf;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace CheckListManager.Common.Logic.Api.PDF
 {
@@ -37,13 +38,13 @@ namespace CheckListManager.Common.Logic.Api.PDF
             this.Subject = Subject;
         }
 
-        public void AddSection()
+        public async Task AddSectionAsync()
         {
             Container = PdfDocument.AddSection();
-            OnNewSection();
+            await OnNewSectionAsync();
         }
 
-        public void Generate(Stream Stream)
+        public async Task GenerateAsync(Stream Stream)
         {
             try
             {
@@ -54,9 +55,9 @@ namespace CheckListManager.Common.Logic.Api.PDF
                 Document.Info.Author = "Matematici";
 
                 PdfDocument = new Document();
-                AddSection();
-
-                OnGenerate();
+                
+                await AddSectionAsync();
+                await OnGenerateAsync();
 
                 // Render MigraDoc document into PDFsharp document
                 Document.RenderMigraDocument(Container.Document);
@@ -71,8 +72,8 @@ namespace CheckListManager.Common.Logic.Api.PDF
             }
         }
 
-        abstract protected void OnGenerate();
+        protected abstract Task OnGenerateAsync();
 
-        abstract protected void OnNewSection();
+        protected abstract Task OnNewSectionAsync();
     }
 }

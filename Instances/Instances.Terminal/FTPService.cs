@@ -120,7 +120,7 @@ namespace CheckListManager.Instances.Terminal
 
             var PDF = new InstancePDF(Company.ID, Company.Name, Company.TimeZones.MicrosoftCode, _configurationService.PublicRepositoryUrl, cacheObject, _storageService, _configurationService);
             var MemoryStream = new MemoryStream();
-            PDF.Generate(MemoryStream);
+            await PDF.GenerateAsync(MemoryStream);
 
             var ftpClient = new FTPClient();
 

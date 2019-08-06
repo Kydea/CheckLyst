@@ -1,15 +1,7 @@
-﻿using CheckListManager.Common.Logic.Api.PDF.Helper;
+﻿using System.Threading.Tasks;
 using CheckListManager.Common.Logic.Api.PDF.Sections;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Services;
-using MigraDoc.DocumentObjectModel;
-using MigraDoc.DocumentObjectModel.Shapes;
-using PdfSharp.Drawing;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CheckListManager.Common.Logic.Api.PDF
 {
@@ -37,29 +29,29 @@ namespace CheckListManager.Common.Logic.Api.PDF
 
         protected abstract FirstPage GenerateFirstPage();
 
-        protected abstract Template GenerateTemplate();
+        protected abstract Task<Template> GenerateTemplateAsync();
 
         public abstract string GetFieldValue(ICheckListField Field);
 
         public abstract bool IsPrototype();
 
-        protected override void OnGenerate()
+        protected override async Task OnGenerateAsync()
         {
-            GenerateFirstPage().Render();
-            AddSection();
+            await GenerateFirstPage().RenderAsync();
+            await AddSectionAsync();
 
             var Header = Model.Header;
             if (Header != null && Header is ICheckListGroup)
-                new Group(this, Header).Render();
+                await new Group(this, Header).RenderAsync();
 
             foreach (var Element in Model.Pages)
             {
                 Container.AddPageBreak();
-                new Page(this, Element).Render();
+                await new Page(this, Element).RenderAsync();
             }
         }
 
-        protected override void OnNewSection() => GenerateTemplate();
+        protected override Task OnNewSectionAsync() => GenerateTemplateAsync();
 
         public virtual void RenderGroup(ICheckListGroup Group)
         {

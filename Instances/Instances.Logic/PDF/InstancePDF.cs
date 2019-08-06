@@ -1,4 +1,7 @@
-﻿using CheckListManager.Common.Core.Helpers;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using CheckListManager.Common.Core.Helpers;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.PDF;
 using CheckListManager.Common.Logic.Api.PDF.Sections;
@@ -6,11 +9,6 @@ using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Services;
 using CheckListManager.Instances.Logic.Models;
 using CheckListManager.Instances.Logic.Models.CheckLists;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CheckListManager.Instances.Logic.PDF
 {
@@ -51,9 +49,10 @@ namespace CheckListManager.Instances.Logic.PDF
 
         }
 
-        protected override Template GenerateTemplate()
+        protected override Task<Template> GenerateTemplateAsync()
         {
-            return new Template(this, $"{Instance.InstanceCode} - {Instance.InstanceState}");
+            var template = new Template(this, $"{Instance.InstanceCode} - {Instance.InstanceState}");
+            return Task.FromResult(template);
         }
 
         public override bool IsPrototype() => false;

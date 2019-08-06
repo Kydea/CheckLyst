@@ -4,34 +4,49 @@ using CheckListManager.Common.Logic.Api.PDF;
 using CheckListManager.Common.Logic.Api.PDF.Sections;
 using CheckListManager.Common.Logic.Api.PDF.Helper;
 using CheckListManager.Common.Logic.Models.CheckLists;
-using CheckListManager.Prototypes.Logic.Messages;
 using CheckListManager.Prototypes.Logic.Models.CheckLists;
 using MigraDoc.DocumentObjectModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using CheckListManager.Common.Logic.Services;
 
 namespace CheckListManager.Prototypes.Logic.PDF
 {
     public class PrototypePDF : CheckListPDF
     {
-        public PrototypePDF(long CompanyID, string CompanyName, string TimeZone, string Repository, PrototypeVersions Prototype, ICheckList CheckList) : base(CompanyID, CompanyName, TimeZone, Repository, CheckList)
+        public PrototypePDF(
+            long CompanyID,
+            string CompanyName,
+            string TimeZone,
+            string Repository,
+            PrototypeVersions Prototype,
+            ICheckList CheckList,
+            IStorageService StorageService,
+            IConfigurationService ConfigurationService
+        ) : base(CompanyID, CompanyName, TimeZone, Repository, CheckList, StorageService, ConfigurationService)
         {
             PrototypeVersion = Prototype;
         }
 
         private PrototypeVersions PrototypeVersion { get; }
 
-        protected override void OnGenerate()
+        protected override async Task OnGenerateAsync()
         {
-            base.OnGenerate();
+            await base.OnGenerateAsync();
 
             var Prototype = ((Prototype)Model);
-            var Signatures = PrototypeVersion.PrototypeVersionsHistory.LastOrDefault(h => h.State == VersionState.Approved)?.WorkFlowApplications?.WorkFlowApplicationSteps.OrderBy(h => h.Step).OrderBy(h => h.ID);
+            var Signatures = PrototypeVersion
+                .PrototypeVersionsHistory
+                .LastOrDefault(h => h.State == VersionState.Approved)?
+                .WorkFlowApplications?
+                .WorkFlowApplicationSteps
+                .OrderBy(h => h.Step)
+                .ThenBy(h => h.ID)
+                .ToList();
 
-            if (Signatures != null && Signatures.Count() > 0)
+            if (Signatures != null && Signatures.Any())
             {
                 Container.AddPageBreak();
 
@@ -79,7 +94,8 @@ namespace CheckListManager.Prototypes.Logic.PDF
             });
         }
 
-        protected override Template GenerateTemplate() => new Template(this, $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version} - {PrototypeVersion.VersionState}");
+        protected override Task<Template> GenerateTemplateAsync() => Task.FromResult(new Template(this,
+            $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version} - {PrototypeVersion.VersionState}"));
 
         public override string GetFieldValue(ICheckListField Field) => new string('\n', Field.LinesCount);
 

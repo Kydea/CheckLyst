@@ -10,6 +10,7 @@ using MigraDoc.DocumentObjectModel;
 using CheckListManager.Common.Logic.Api.PDF.Helper;
 using MigraDoc.DocumentObjectModel.Shapes;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace CheckListManager.Common.Logic.Api.PDF.Sections
 {
@@ -42,16 +43,16 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             DrawText("\n");
         }
 
-        public override async void Render(params object[] State)
+        public override async Task RenderAsync(params object[] State)
         {
             if (Element.Hidden) return;
 
             if (Element is ICheckListGroup GroupElement)
             {
                 if (GroupElement.ShowAsTable)
-                    new Table((CheckListPDF)PDFBase, GroupElement, Indentation + 1).Render();
+                    await new Table((CheckListPDF)PDFBase, GroupElement, Indentation + 1).RenderAsync();
                 else
-                    new Group((CheckListPDF)PDFBase, GroupElement, Indentation + 1).Render();
+                    await new Group((CheckListPDF)PDFBase, GroupElement, Indentation + 1).RenderAsync();
             }
             else if (Element is ICheckListText Text)
             {
@@ -113,7 +114,9 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             {
                 Paragraph Paragraph = PDFBase.Container.AddParagraph();
                 Paragraph.Format.Alignment = ParagraphAlignment.Center;
-                var StorageFile = await CheckListPDF.StorageService.GetAsync(CheckListPDF.ConfigurationService.PrototypesStorageBucket, ImageElement.Key).ConfigureAwait(false);
+                var StorageFile =
+                    await CheckListPDF.StorageService.GetAsync(
+                        CheckListPDF.ConfigurationService.PrototypesStorageBucket, ImageElement.Key);
                 byte[] Data;
                 using (MemoryStream ms = new MemoryStream())
                 {

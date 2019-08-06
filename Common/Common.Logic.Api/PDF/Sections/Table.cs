@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using System.Threading.Tasks;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Core.Helpers;
 using CheckListManager.Common.Logic.Api.PDF.Helper;
@@ -42,10 +42,10 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             TimeZone = PDFBase.TimeZone;
         }
 
-        public override void Render(params object[] State)
+        public override Task RenderAsync(params object[] State)
         {
             if (Element == null)
-                return;
+                return Task.CompletedTask;
 
             var GroupElement = (ICheckListGroup)Element;
 
@@ -69,6 +69,8 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             }
 
             DrawText("\n");
+
+            return Task.CompletedTask;
         }
 
 
@@ -337,9 +339,10 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
         }
         #endregion
 
-        public override void RenderChildren()
+        public override Task RenderChildrenAsync()
         {
             CheckListPDF.RenderGroup((ICheckListGroup)Element);
+            return Task.CompletedTask;
         }
     }
 }

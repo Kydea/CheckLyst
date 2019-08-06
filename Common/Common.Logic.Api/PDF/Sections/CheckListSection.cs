@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Drawing;
+using System.Threading.Tasks;
 using CheckListManager.Common.Logic.Models.CheckLists;
 
 namespace CheckListManager.Common.Logic.Api.PDF.Sections
@@ -19,10 +16,8 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
 
         public CheckListPDF CheckListPDF { get; }
 
-        public override void Render(params Object[] State)
-        { }
+        public override Task RenderAsync(params Object[] State) => Task.CompletedTask;
 
-        public virtual void RenderChildren()
-        { }
+        public virtual Task RenderChildrenAsync() => Task.CompletedTask;
     }
 }

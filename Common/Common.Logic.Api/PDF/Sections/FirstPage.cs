@@ -25,7 +25,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
         private string ThirdRow { get; }
         private List<Tuple<string, string>> Rows { get; }
 
-        public override void Render(params object[] State)
+        public override Task RenderAsync(params object[] State)
         {
             PDFBase.Container.Headers = null;
             PDFBase.Container.PageSetup.TopMargin = 36;
@@ -70,6 +70,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                 paragraph.Format.SpaceBefore = 20;
             }
 
+            return Task.CompletedTask;
         }
     }
 }

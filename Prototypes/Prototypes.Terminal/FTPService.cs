@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Net.Mail;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CheckListManager.Common.Logic.FTP;
@@ -12,10 +10,8 @@ using Newtonsoft.Json;
 using System.IO;
 using CheckListManager.Prototypes.Data;
 using CheckListManager.Common.Logic.Terminal.FTP;
-using CheckListManager.Common.Logic.Api.PDF;
 using CheckListManager.Common.Data;
 using CheckListManager.Prototypes.Logic.PDF;
-using CheckListManager.Prototypes.Logic.Messages;
 using CheckListManager.Prototypes.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Json;
 
@@ -31,8 +27,17 @@ namespace CheckListManager.Prototypes.Terminal
         private readonly IPrototypesRepository _prototypesRepository;
         private readonly ICommonRepository _commonRepository;
         private readonly IConfigurationService _configurationService;
+        private readonly IStorageService _storageService;
 
-        public FTPService(CheckListJsonConverter converter, IQueueService queueService, ISettingService settingService, IPrototypesRepository prototypesRepository, ICommonRepository commonRepository, IConfigurationService configurationService)
+        public FTPService(
+            CheckListJsonConverter converter,
+            IQueueService queueService,
+            ISettingService settingService,
+            IPrototypesRepository prototypesRepository,
+            ICommonRepository commonRepository,
+            IConfigurationService configurationService,
+            IStorageService storageService
+        )
         {
             _converter = converter;
             _queueService = queueService;
@@ -40,6 +45,7 @@ namespace CheckListManager.Prototypes.Terminal
             _prototypesRepository = prototypesRepository;
             _commonRepository = commonRepository;
             _configurationService = configurationService;
+            _storageService = storageService;
         }
 
         public async Task ProcessFTPMessagesAsync(CancellationToken cancellationToken = default(CancellationToken))
@@ -120,10 +126,19 @@ namespace CheckListManager.Prototypes.Terminal
 
             var CheckList = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converter);
 
-            var PDF = new PrototypePDF(Company.ID, Company.Name, Company.TimeZones.MicrosoftCode, _configurationService.PublicRepositoryUrl, PrototypeVersion, CheckList);
+            var PDF = new PrototypePDF(
+                Company.ID,
+                Company.Name,
+                Company.TimeZones.MicrosoftCode,
+                _configurationService.PublicRepositoryUrl,
+                PrototypeVersion,
+                CheckList,
+                _storageService,
+                _configurationService
+            );
 
             var MemoryStream = new MemoryStream();
-            PDF.Generate(MemoryStream);
+            await PDF.GenerateAsync(MemoryStream);
             var ftpClient = new FTPClient();
 
             await ftpClient.ActionAsync(MemoryStream.ToArray(), Settings.Folder, $"{message.Path}{(message.State == VersionState.Obsolete ? "#O" : string.Empty)}", Settings, FTPClient.Methods.Upload);

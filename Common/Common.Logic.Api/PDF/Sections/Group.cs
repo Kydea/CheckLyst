@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using System.Drawing;
+using System.Threading.Tasks;
 using CheckListManager.Common.Logic.Models.CheckLists;
 
 namespace CheckListManager.Common.Logic.Api.PDF.Sections
@@ -13,7 +11,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
         public Group(CheckListPDF PDFBase, ICheckListGroup Group, int Indentation = 1) : base(PDFBase, Group, Indentation)
         { }
 
-        public override void Render(params object[] State)
+        public override async Task RenderAsync(params object[] State)
         {
             if (Element == null)
                 return;
@@ -24,10 +22,10 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                 DrawText(GroupElement.Description, Indentation == 1 ? PDFBase.TitleFont1 : Indentation == 2 ? PDFBase.TitleFont2 : PDFBase.TitleFont3, 10);
 
             if (GroupElement.Items.Count > 0)
-                RenderChildren();
+                await RenderChildrenAsync();
         }
 
-        public override void RenderChildren()
+        public override async Task RenderChildrenAsync()
         {
             var Group = ((ICheckListGroup)Element);
             var CheckList = ((CheckListPDF)PDFBase).Model;
@@ -43,7 +41,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             {
                 var Item = Items[i];
                 var NextItem = i == Items.Count - 1 ? null : Items[i + 1];
-                new Item((CheckListPDF)PDFBase, Item, NextItem, i == 0, Indentation).Render();
+                await new Item((CheckListPDF)PDFBase, Item, NextItem, i == 0, Indentation).RenderAsync();
             }
         }
     }
