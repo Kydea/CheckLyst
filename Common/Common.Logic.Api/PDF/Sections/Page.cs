@@ -11,11 +11,11 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
         public Page(CheckListPDF PDFBase, ICheckListPage Page, int Indentation = 1) : base(PDFBase, Page, Indentation)
         {}
 
-        public override void Render(params Object[] State)
+        public override void Render(params object[] State)
         {
             var PageElement = (ICheckListPage)Element;
 
-            DrawText(PageElement.Description, PDFBase.FirstHeaderFont);
+            DrawText(PageElement.Description, PDFBase.TitleFont1, 20);
             RenderChildren();
         }
 

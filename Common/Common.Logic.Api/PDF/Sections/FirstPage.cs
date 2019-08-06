@@ -58,7 +58,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             PdfPTable Table = new PdfPTable(2) { WidthPercentage = 100, HorizontalAlignment = RowAlignment.Center };
             foreach (var Row in Rows)
             {
-                Table.AddCell(new PdfPCell(new Paragraph().SetText(Row.Item1).SetFont(PDFBase.GenericBoldFont).Padding(5)));
+                Table.AddCell(new PdfPCell(new Paragraph().SetText(Row.Item1).SetFont(PDFBase.BoldFont).Padding(5)));
                 Table.AddCell(new PdfPCell(new Paragraph().SetText(Row.Item2).Padding(5)));
                 Table.CompleteRow();
             }

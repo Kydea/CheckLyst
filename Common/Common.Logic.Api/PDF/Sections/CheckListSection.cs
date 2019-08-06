@@ -11,9 +11,9 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
     {
         public ICheckListElement Element;
 
-        public CheckListSection(CheckListPDF PDFBase, ICheckListElement Element, int Indentation) : base(PDFBase, Indentation)
+        public CheckListSection(CheckListPDF CheckListPDF, ICheckListElement Element, int Indentation) : base(CheckListPDF, Indentation)
         {
-            CheckListPDF = PDFBase;
+            this.CheckListPDF = CheckListPDF;
             this.Element = Element;
         }
 

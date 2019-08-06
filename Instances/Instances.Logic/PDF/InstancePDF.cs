@@ -3,6 +3,7 @@ using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.PDF;
 using CheckListManager.Common.Logic.Api.PDF.Sections;
 using CheckListManager.Common.Logic.Models.CheckLists;
+using CheckListManager.Common.Logic.Services;
 using CheckListManager.Instances.Logic.Models;
 using CheckListManager.Instances.Logic.Models.CheckLists;
 using System;
@@ -15,7 +16,7 @@ namespace CheckListManager.Instances.Logic.PDF
 {
     public class InstancePDF : CheckListPDF
     {
-        public InstancePDF(long CompanyID, string CompanyName, string TimeZone, string Repository, InstanceCacheObject Instance) : base(CompanyID, CompanyName, TimeZone, Repository, Instance.Instance)
+        public InstancePDF(long CompanyID, string CompanyName, string TimeZone, string Repository, InstanceCacheObject Instance, IStorageService StorageService, IConfigurationService ConfigurationService) : base(CompanyID, CompanyName, TimeZone, Repository, Instance.Instance, StorageService, ConfigurationService)
         {
             this.Instance = Instance;
         }
@@ -52,7 +53,7 @@ namespace CheckListManager.Instances.Logic.PDF
 
         protected override Template GenerateTemplate()
         {
-            return new Template(this, $"{Instance.PrototypeDescription}\n{Instance.InstanceCode}\n{Instance.Description}");
+            return new Template(this, $"{Instance.InstanceCode} - {Instance.InstanceState}");
         }
 
         public override bool IsPrototype() => false;

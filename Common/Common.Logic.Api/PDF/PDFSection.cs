@@ -23,17 +23,13 @@ namespace CheckListManager.Common.Logic.Api.PDF
 
         public abstract void Render(params object[] State);
 
-        public void DrawText(string Text, Font Font = null)
+        public Paragraph DrawText(string Text, Font Font = null, int? SpaceAfter = null)
         {
-            if (Font == null)
-                Font = PDFBase.GenericFont;
-
-            if (Text == null)
-                Text = string.Empty;
-
             Paragraph Paragraph = PDFBase.Container.AddParagraph();
-            Paragraph.SetFont(Font);
-            Paragraph.AddText(Text);
+            Paragraph.SetFont(Font ?? PDFBase.GenericFont);
+            Paragraph.AddText(Text ?? string.Empty);
+            if (SpaceAfter.HasValue) Paragraph.Format.SpaceAfter = SpaceAfter.Value;
+            return Paragraph;
         }
     }
 }

@@ -35,7 +35,7 @@ namespace CheckListManager.Prototypes.Logic.PDF
             {
                 Container.AddPageBreak();
 
-                Paragraph paragraph = Container.AddParagraph("Approval workflow \n\n").SetFont(FirstHeaderFont);
+                Paragraph paragraph = Container.AddParagraph("Approval workflow").SetFont(TitleFont1);
                 paragraph.Format.Alignment = ParagraphAlignment.Center;
 
                 var Table = new PdfPTable(7) { WidthPercentage = 100 };
@@ -79,9 +79,9 @@ namespace CheckListManager.Prototypes.Logic.PDF
             });
         }
 
-        protected override Template GenerateTemplate() => new Template(this, $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}\n{PrototypeVersion.Description}");
+        protected override Template GenerateTemplate() => new Template(this, $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version} - {PrototypeVersion.VersionState}");
 
-        public override string GetFieldValue(ICheckListField Field) => "_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _";
+        public override string GetFieldValue(ICheckListField Field) => new string('\n', Field.LinesCount);
 
         public override bool IsPrototype() => true;
 

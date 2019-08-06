@@ -13,18 +13,15 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
         public Group(CheckListPDF PDFBase, ICheckListGroup Group, int Indentation = 1) : base(PDFBase, Group, Indentation)
         { }
 
-        public override void Render(params Object[] State)
+        public override void Render(params object[] State)
         {
             if (Element == null)
                 return;
 
             var GroupElement = (ICheckListGroup)Element;
 
-            if (!String.IsNullOrEmpty(GroupElement.Description))
-            {
-                DrawText(GroupElement.Description, Indentation == 1 ? PDFBase.FirstHeaderFont : PDFBase.SecondHeaderFont);
-                DrawText("\n");
-            }
+            if (!string.IsNullOrEmpty(GroupElement.Description))
+                DrawText(GroupElement.Description, Indentation == 1 ? PDFBase.TitleFont1 : Indentation == 2 ? PDFBase.TitleFont2 : PDFBase.TitleFont3, 10);
 
             if (GroupElement.Items.Count > 0)
                 RenderChildren();

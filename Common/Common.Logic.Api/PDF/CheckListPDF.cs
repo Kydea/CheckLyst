@@ -1,6 +1,7 @@
 ﻿using CheckListManager.Common.Logic.Api.PDF.Helper;
 using CheckListManager.Common.Logic.Api.PDF.Sections;
 using CheckListManager.Common.Logic.Models.CheckLists;
+using CheckListManager.Common.Logic.Services;
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Shapes;
 using PdfSharp.Drawing;
@@ -20,22 +21,23 @@ namespace CheckListManager.Common.Logic.Api.PDF
         public string Repository { get; }
         public ICheckList Model { get; }
 
-        public string PrototypeDescription = "", InstanceCode = "";
+        public IStorageService StorageService { get; }
+        public IConfigurationService ConfigurationService { get; }
 
-        public CheckListPDF(long CompanyID, string CompanyName, string TimeZone, string Repository, ICheckList Model) : base("CheckList")
+        public CheckListPDF(long CompanyID, string CompanyName, string TimeZone, string Repository, ICheckList Model, IStorageService StorageService, IConfigurationService ConfigurationService) : base("CheckList")
         {
             this.CompanyID = CompanyID;
             this.CompanyName = CompanyName;
             this.TimeZone = TimeZone;
             this.Repository = Repository;
             this.Model = Model;
+            this.StorageService = StorageService;
+            this.ConfigurationService = ConfigurationService;
         }
 
         protected abstract FirstPage GenerateFirstPage();
 
         protected abstract Template GenerateTemplate();
-
-        public string GetFieldValue(Item Item) => GetFieldValue((ICheckListField)Item.Element);
 
         public abstract string GetFieldValue(ICheckListField Field);
 

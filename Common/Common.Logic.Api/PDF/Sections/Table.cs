@@ -35,28 +35,24 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             public String Text = "";
         }
 
-        private string TimeZone;
+        private string TimeZone { get; }
 
         public Table(CheckListPDF PDFBase, ICheckListGroup Group, int Indentation = 1) : base(PDFBase, Group, Indentation)
         {
             TimeZone = PDFBase.TimeZone;
         }
 
-        public override void Render(params Object[] State)
+        public override void Render(params object[] State)
         {
             if (Element == null)
                 return;
 
             var GroupElement = (ICheckListGroup)Element;
 
-            if (!String.IsNullOrEmpty(GroupElement.Description))
-                DrawText(GroupElement.Description, Indentation == 1 ? PDFBase.FirstHeaderFont : PDFBase.SecondHeaderFont);
+            if (!string.IsNullOrEmpty(GroupElement.Description))
+                DrawText(GroupElement.Description, Indentation == 1 ? PDFBase.TitleFont1 : Indentation == 2 ? PDFBase.TitleFont2 : PDFBase.TitleFont3, 10);
 
-            DrawText("\n");
-
-            /*Render Table Header*/
             PdfPTable Table = RenderTableHeader(GroupElement);
-            /*Render Table Body*/
             RenderTableBody(Table, GroupElement);
             PDFBase.Container.Add(Table);
 
@@ -65,7 +61,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             ///*Render Signatures Table*/
             if (CheckListPDF.IsPrototype() || Signatures.Any(x => x.History.Count > 0))
             {
-                DrawText("Signatures", PDFBase.SecondHeaderFont);
+                DrawText("Signatures", PDFBase.TitleFont2);
                 DrawText("\n");
 
                 Table = RenderSignaturesTable();
