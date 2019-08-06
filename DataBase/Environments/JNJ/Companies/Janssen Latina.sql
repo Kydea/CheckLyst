@@ -1,9 +1,9 @@
 insert into "Infrastructure"."Companies"("Name", "TimeZone", "MaximumNumberOfPINFailure", "LoginFailedTimeout", "PINDaysLife", "MaximumNumberOfPasswordFailure", "PasswordDaysLife", "WarningUserInactivityDays", "MaximumUserInactivityDays") 
 values ('Janssen Latina', 'Europe/Rome', 5, 20, 90, 20, 365, 335, 365); --see http://momentjs.com/timezone/docs/#/data-loading/
 
-insert into "Infrastructure"."Departments" ("Company", "Name") values (currval('"Infrastructure"."Companies_ID_seq"'), 'Automation');
-insert into "Infrastructure"."Departments" ("Company", "Name") values (currval('"Infrastructure"."Companies_ID_seq"'), 'Quality control');
-insert into "Infrastructure"."Departments" ("Company", "Name") values (currval('"Infrastructure"."Companies_ID_seq"'), 'Information technology');
+--insert into "Infrastructure"."Departments" ("Company", "Name") values (currval('"Infrastructure"."Companies_ID_seq"'), 'Automation');
+--insert into "Infrastructure"."Departments" ("Company", "Name") values (currval('"Infrastructure"."Companies_ID_seq"'), 'Quality control');
+--insert into "Infrastructure"."Departments" ("Company", "Name") values (currval('"Infrastructure"."Companies_ID_seq"'), 'Information technology');
 
 insert into "Security"."Users" ("Company", "Code", "Description", "Password", "PIN", "Enabled") 
 values (
@@ -35,3 +35,4 @@ insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") valu
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'InstanceMessage', '[User], <br /> A signature has been issued for the instance [CheckListCode].'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'DecimalSeparator', ','),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'RequireUserReason', 'true');
+
