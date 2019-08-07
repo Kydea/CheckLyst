@@ -12,7 +12,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
 {
     public class Table : CheckListSection
     {
-        class RenderingNode
+        public class RenderingNode
         {
             public RenderingNode Parent = null;
             public List<RenderingNode> Children = new List<RenderingNode>();
@@ -26,13 +26,13 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             }
         }
 
-        class RenderingTable : RenderingNode { }
-        class RenderingRow : RenderingNode { }
-        class RenderingCell : RenderingNode
+        public class RenderingTable : RenderingNode { }
+        public class RenderingRow : RenderingNode { }
+        public class RenderingCell : RenderingNode
         {
             public int Colspan = 1, Rowspan = 1;
             public bool SubGroup;
-            public String Text = "";
+            public string Text = "";
         }
 
         private string TimeZone { get; }
@@ -42,18 +42,18 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             TimeZone = PDFBase.TimeZone;
         }
 
-        public override Task RenderAsync(params object[] State)
+        public override async Task RenderAsync(params object[] State)
         {
             if (Element == null)
-                return Task.CompletedTask;
+                return;
 
             var GroupElement = (ICheckListGroup)Element;
 
             if (!string.IsNullOrEmpty(GroupElement.Description))
                 DrawText(GroupElement.Description, Indentation == 1 ? PDFBase.TitleFont1 : Indentation == 2 ? PDFBase.TitleFont2 : PDFBase.TitleFont3, 10);
 
-            PdfPTable Table = RenderTableHeader(GroupElement);
-            RenderTableBody(Table, GroupElement);
+            PdfPTable Table = await RenderTableHeader(GroupElement);
+            await RenderTableBody(Table, GroupElement);
             PDFBase.Container.Add(Table);
 
             DrawText("\n");
@@ -70,13 +70,13 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
 
             DrawText("\n");
 
-            return Task.CompletedTask;
+            return;
         }
 
 
         #region Rendering Primitives
 
-        PdfPCell NewCell(String Text, Font Font = null)
+        PdfPCell NewCell(string Text, Font Font = null)
         {
             return PdfPCellFromNode(new RenderingCell { Text = Text }, Font);
         }
@@ -204,7 +204,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                         foreach (var Sign in Signatures[s].History.OrderByDescending(x => x.DateTime))
                         {
                             var Date = Sign.DateTime.ToLocalTime(TimeZone);
-                            RenderSignature(Table, i > 0 ? 0 : VisibleSignaturesCount, String.IsNullOrEmpty(Sign.Note) ? "Signed" : "Canceled", Sign.User, Date.ToString("yyyy-MM-dd"), Date.ToString("HH:mm"), Sign.Signature);
+                            RenderSignature(Table, i > 0 ? 0 : VisibleSignaturesCount, string.IsNullOrEmpty(Sign.Note) ? "Signed" : "Canceled", Sign.User, Date.ToString("yyyy-MM-dd"), Date.ToString("HH:mm"), Sign.Signature);
                             i++;
                         }
                     }
@@ -217,14 +217,14 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
         #endregion
 
         #region Table Rendering
-        void RenderTableRow(PdfPTable Table, List<ICheckListItem> Items, bool completeRow = true)
+        public async Task RenderTableRow(PdfPTable Table, List<ICheckListItem> Items, bool completeRow = true)
         {
             if (completeRow)
                 Table.CompleteRow();
 
             foreach (var Item in Items)
                 if (Item.TypeName == "Group")
-                    RenderTableRow(Table, ((ICheckListGroup)Item).Items, false);
+                    await RenderTableRow(Table, ((ICheckListGroup)Item).Items, false);
                 else
                 {
                     PdfPCell Cell = new PdfPCell(new Paragraph());
@@ -237,11 +237,11 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                             if (CheckListPDF.IsPrototype())
                                 Cell = NewCell((++VisibleSignaturesCount).ToString());
                             else
-                                Cell = Signature.History.Count > 0 ? NewCell(String.IsNullOrEmpty(Signature.History.OrderByDescending(x => x.DateTime).FirstOrDefault().Note) ? "Signed" : "Canceled").AddNote(" " + (++VisibleSignaturesCount).ToString()) : NewCell("");
+                                Cell = Signature.History.Count > 0 ? NewCell(string.IsNullOrEmpty(Signature.History.OrderByDescending(x => x.DateTime).FirstOrDefault().Note) ? "Signed" : "Canceled").AddNote(" " + (++VisibleSignaturesCount).ToString()) : NewCell("");
 
                             break;
                         case "Text":
-                            Cell = NewCell(String.IsNullOrWhiteSpace(Item.Description) ? "(no description)" : Item.Description);
+                            Cell = NewCell(string.IsNullOrWhiteSpace(Item.Description) ? "(no description)" : Item.Description);
                             break;
                         case "Field":
                             if (CheckListPDF.IsPrototype())
@@ -249,7 +249,31 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                             else
                             {
                                 var Value = CheckListPDF.GetFieldValue((ICheckListField)Item);
-                                Cell = NewCell(String.IsNullOrWhiteSpace(Value) ? " " : Value);
+                                Cell = NewCell(string.IsNullOrWhiteSpace(Value) ? " " : Value);
+                            }
+                            break;
+                        case "Link":
+                            var Link = (ICheckListLink)Item;
+                            Cell = NewCell(string.Empty);
+                            var Paragraph = Cell.Content.AddHyperlink(Link.Url, HyperlinkType.Web).AddFormattedText(string.IsNullOrWhiteSpace(Item.Description) ? "(link)" : Item.Description);
+                            Paragraph.Font.Underline = Underline.Single;
+                            break;
+                        case "Image":
+                            var Image = (ICheckListImage)Item;
+                            if (Image.Key == null)
+                                Cell = NewCell("(# no key)");
+                            else
+                            {
+                                var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.PrototypesStorageBucket, Image.Key);
+                                Cell = NewCell($"{(string.IsNullOrEmpty(Image.Description) ? string.Empty : Image.Description + " ")}(see attachament {Index})");
+                            }
+                            break;
+                        case "Attachment":
+                            var Attachment = (ICheckListAttachment)Item;
+                            if (Attachment.Key != null)
+                            {
+                                var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.InstancesStorageBucket, Attachment.Key);
+                                Cell = NewCell($"{(string.IsNullOrEmpty(Attachment.Description) ? string.Empty : Attachment.Description + " ")}(see attachament {Index})");
                             }
                             break;
                         default:
@@ -261,24 +285,24 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                 }
         }
 
-        void RenderTableBody(PdfPTable Table, ICheckListGroup Element)
+        public async Task RenderTableBody(PdfPTable Table, ICheckListGroup Element)
         {
             if (CheckListPDF.IsPrototype())
                 for (int i = 0; i < Element.PrototypeIterations; i++)
-                    RenderTableRow(Table, Element.Items);
+                    await RenderTableRow(Table, Element.Items);
             else
                 foreach (var Iteration in Element.Iterations)
-                    RenderTableRow(Table, Iteration.Items);
+                    await RenderTableRow(Table, Iteration.Items);
         }
 
-        class Size
+        public class Size
         {
             public int RowsCount, ColumnsCount;
         }
 
         RenderingTable Main = new RenderingTable();
 
-        Size CreateTableHeader(List<RenderingRow> Rows, int RowIndex, List<ICheckListItem> Items)
+        public async Task<Size> CreateTableHeader(List<RenderingRow> Rows, int RowIndex, List<ICheckListItem> Items)
         {
             int
                 RowsCount = 1,
@@ -300,12 +324,12 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                 var Item = Items[Index];
                 var Cell = new RenderingCell();
                 Cell.AppendTo(Row);
-                Cell.Text = String.IsNullOrEmpty(Item.Description) ? "(empty)" : Item.Description;
+                Cell.Text = string.IsNullOrEmpty(Item.Description) ? "(empty)" : Item.Description;
 
                 if (Item.TypeName == "Group")
                 {
                     Cell.SubGroup = true;
-                    var Size = CreateTableHeader(Rows, RowIndex + 1, ((ICheckListGroup)Item).Items);
+                    var Size = await CreateTableHeader(Rows, RowIndex + 1, ((ICheckListGroup)Item).Items);
                     RowsCount = Math.Max(Size.RowsCount + 1, RowsCount);
                     ColumnsCount += Math.Max(Size.ColumnsCount, 1);
                     if (Size.ColumnsCount > 1)
@@ -322,18 +346,15 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             return new Size { RowsCount = RowsCount, ColumnsCount = ColumnsCount };
         }
 
-        PdfPTable RenderTableHeader(ICheckListGroup Group)
+        public async Task<PdfPTable> RenderTableHeader(ICheckListGroup Group)
         {
-            Size Size = CreateTableHeader(new List<RenderingRow> { }, 0/*, null*/, Group.Items);
+            Size Size = await CreateTableHeader(new List<RenderingRow> { }, 0/*, null*/, Group.Items);
 
             PdfPTable Table = new PdfPTable(Size.ColumnsCount) { HorizontalAlignment = RowAlignment.Center, WidthPercentage = 100 };
 
-            /*Render DOM-like data*/
             foreach (RenderingRow Row in Main.Children)
-            {
                 foreach (RenderingCell Cell in Row.Children)
                     Table.AddCell(PdfPCellFromNode(Cell).SetPadding(5));
-            }
 
             return Table;
         }

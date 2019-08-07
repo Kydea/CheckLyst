@@ -64,7 +64,7 @@
             element = parent.isTable() ? $("<tr />") : subRow ? parent.getElement() : $("<div />");
 
             if (table) {
-                tableElement = $("<table />").addClass("Grid").appendTo(element).append($("<thead />")).append($("<tbody />"));
+                tableElement = $("<table />").addClass("Grid").appendTo($("<div />").addClass("TableContainer").appendTo(element)).append($("<thead />")).append($("<tbody />"));
                 createTableHeader([], 0, setupModel.items);
             }
 

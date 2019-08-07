@@ -16,7 +16,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             setup.PageFormat = PageFormat.A4;
             setup.LeftMargin = setup.RightMargin = Unit.FromPoint(40);
             setup.TopMargin = Unit.FromPoint(70);
-            setup.BottomMargin = Unit.FromPoint(50);
+            setup.BottomMargin = Unit.FromPoint(80);
             setup.FooterDistance = Unit.FromPoint(61);
             setup.HeaderDistance = Unit.FromPoint(0);
             //setup.DifferentFirstPageHeaderFooter = true;

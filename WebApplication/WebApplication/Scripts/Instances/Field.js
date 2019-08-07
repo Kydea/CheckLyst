@@ -240,8 +240,9 @@
 		} else 
 			input.val(model.rawValue);
 
-		field.html(model.rawValue).attr("readonly", readOnly);
-        field.attr("title", field.text());
+        var rawValue = model.rawValue;
+        field.html(readOnly && rawValue ? rawValue.split('\n').join("<br />") : rawValue).attr("readonly", readOnly);
+        field.attr("title", rawValue);
 
         this.setColor(model.color);
 		this.setFontSize(model.fontSize);

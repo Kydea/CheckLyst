@@ -30,7 +30,8 @@ namespace CheckListManager.Common.Logic.Api.PDF
         public static Font SmallBoldFont => FontHelper.GetInstance("Helvetica", 8, FontStyle.Bold, Colors.Black).Clone();
 
         protected string Subject { get; private set; }
-        protected Document PdfDocument { get; private set; }
+        protected Document MigraDocDocument { get; private set; }
+        protected PdfDocument PdfDocument { get; private set; }
         public Section Container { get; private set; }
 
         public PDFBase(string Subject)
@@ -40,7 +41,7 @@ namespace CheckListManager.Common.Logic.Api.PDF
 
         public async Task AddSectionAsync()
         {
-            Container = PdfDocument.AddSection();
+            Container = MigraDocDocument.AddSection();
             await OnNewSectionAsync();
         }
 
@@ -48,22 +49,24 @@ namespace CheckListManager.Common.Logic.Api.PDF
         {
             try
             {
-                PdfDocument Document = new PdfDocument();
-                Document.Info.Subject = Subject;
-                Document.Info.Keywords = "";
-                Document.Info.Creator = "www.matematici.com";
-                Document.Info.Author = "Matematici";
+                PdfDocument = new PdfDocument();
+                PdfDocument.Info.Subject = Subject;
+                PdfDocument.Info.Keywords = "";
+                PdfDocument.Info.Creator = "www.matematici.com";
+                PdfDocument.Info.Author = "Matematici";
 
-                PdfDocument = new Document();
+                MigraDocDocument = new Document();
                 
                 await AddSectionAsync();
                 await OnGenerateAsync();
 
                 // Render MigraDoc document into PDFsharp document
-                Document.RenderMigraDocument(Container.Document);
+                PdfDocument.RenderMigraDocument(Container.Document);
 
-                Document.Save(Stream, false);
-                Document.Close();
+                await OnRenderAttachmentsAsync();
+
+                PdfDocument.Save(Stream, false);
+                PdfDocument.Close();
                 Stream.Flush();
             }
             catch
@@ -73,6 +76,8 @@ namespace CheckListManager.Common.Logic.Api.PDF
         }
 
         protected abstract Task OnGenerateAsync();
+
+        protected abstract Task OnRenderAttachmentsAsync();
 
         protected abstract Task OnNewSectionAsync();
     }

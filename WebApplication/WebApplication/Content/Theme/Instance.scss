@@ -349,6 +349,12 @@ div.Instance {
                 .AutoComplete, .AutoComplete-Filter, .AutoComplete-List {
                     display: none !important;
                 }
+
+                &.MultiLine {
+                    div.Input {
+                        line-height: 20px;
+                    }
+                }
             }
 
             .ExternalSourceLink {
@@ -461,6 +467,7 @@ div.Instance {
     }
 
     .Page, .Group {
+
         &.ReadOnly {
             color: $Color-Grey-Regular;
 
@@ -501,6 +508,11 @@ div.Instance {
             a {
                 margin-top: 30px;
             }
+        }
+
+        div.TableContainer {
+            overflow: auto;
+            width: calc(100% - #{$Metric-Control-Space});
         }
     }
 
@@ -604,11 +616,30 @@ div.Instance {
                         }
                     }
 
+                    &.Link {
+                        font-size: 13px;
+
+                        a.Link {
+                            color: $Color-Yellow-Regular;
+                        }
+                    }
+
+                    &.Image, &.Attachment {
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        max-width: 100%;
+
+                        a + a {
+                            margin-left: 10px;
+                        }
+                    }
+
                     > div.Information {
                         left: 2px;
                     }
 
-                    i.Icon {
+                    &:not(.Image):not(.Attachment) i.Icon {
                         display: none;
                     }
 
