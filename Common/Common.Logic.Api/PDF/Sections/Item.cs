@@ -45,7 +45,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
 
         public override async Task RenderAsync(params object[] State)
         {
-            if (Element.Hidden) return;
+            if (!CheckListPDF.IsPrototype() && Element.Hidden) return;
 
             if (Element is ICheckListGroup GroupElement)
             {
