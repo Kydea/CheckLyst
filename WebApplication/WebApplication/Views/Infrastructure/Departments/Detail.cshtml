@@ -1,38 +1,39 @@
 ﻿<div id="UsersDetailPage">
     <h2>Department</h2>
 
-    <form id="Detail" action="@BaseUrl/Infrastructure/Departments">
-        <label>
-            <span>ID</span>
-            <i class="Icon fal fa-key" />
-            <input type="text" name="id" readonly="readonly" placeholder="(new record)" />
-        </label>
+	<form id="Detail" action="@BaseUrl/Infrastructure/Departments">
+		<input type="hidden" name="reason" />
+		<label>
+			<span>ID</span>
+			<i class="Icon fal fa-key" />
+			<input type="text" name="id" readonly="readonly" placeholder="(new record)" />
+		</label>
 
-        <label>
-            <span>Name</span>
-            <i class="Icon fal fa-id-card" />
-            <input type="text" name="name" />
-        </label>
+		<label>
+			<span>Name</span>
+			<i class="Icon fal fa-id-card" />
+			<input type="text" name="name" />
+		</label>
 
-        <label class="Clearing Controls2">
-            <span>Creation</span>
-            <i class="Icon fal fa-user" />
-            <input type="text" name="createdBy" readonly="readonly" />
-            <i class="Icon fal fa-calendar-alt" />
-            <input type="text" name="createdOn" readonly="readonly" data-type="DateTimeOffset" />
-        </label>
+		<label class="Clearing Controls2">
+			<span>Creation</span>
+			<i class="Icon fal fa-user" />
+			<input type="text" name="createdBy" readonly="readonly" />
+			<i class="Icon fal fa-calendar-alt" />
+			<input type="text" name="createdOn" readonly="readonly" data-type="DateTimeOffset" />
+		</label>
 
-        <label class="Clearing Controls2">
-            <span>Last edit</span>
-            <i class="Icon fal fa-user" />
-            <input type="text" name="modifiedBy" readonly="readonly" />
-            <i class="Icon fal fa-calendar-alt" />
-            <input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
-        </label>
+		<label class="Clearing Controls2">
+			<span>Last edit</span>
+			<i class="Icon fal fa-user" />
+			<input type="text" name="modifiedBy" readonly="readonly" />
+			<i class="Icon fal fa-calendar-alt" />
+			<input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
+		</label>
 
-        <div class="Clearing"></div>
+		<div class="Clearing"></div>
 
-    </form>
+	</form>
 </div>
 
 <script type="text/javascript">

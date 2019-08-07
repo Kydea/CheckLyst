@@ -1,27 +1,34 @@
-﻿using CheckListManager.Common.Core.Services;
-using CheckListManager.Common.Core.Web.Security;
-using CheckListManager.Common.Data;
-using CheckListManager.Common.Logic.Api.Messages;
-using CheckListManager.Common.Logic.DataEngine;
-using CheckListManager.Common.Logic.Trail;
-using CheckListManager.Infrastructure.Data;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using CheckListManager.Common.Core.Helpers;
+using CheckListManager.Common.Core.Web.Security;
+using CheckListManager.Common.Logic.Api.Messages;
+using CheckListManager.Common.Logic.DataEngine;
+using CheckListManager.Common.Logic.Queue;
+using CheckListManager.Common.Logic.Services;
+using CheckListManager.Common.Logic.Trail;
+using CheckListManager.Infrastructure.Data;
+using Newtonsoft.Json;
 
 namespace CheckListManager.Infrastructure.Logic.Departments
 {
     public class DepartmentsService : IDepartmentsService
     {
         private readonly IInfrastructureRepository _infrastructureRepository;
-        private readonly ICommonRepository _commonRepository;
+        private readonly ISettingService _settingService;
+        private readonly IQueueService _queueService;
 
-        public DepartmentsService(IInfrastructureRepository infrastructureRepository, ICommonRepository commonRepository)
+        public DepartmentsService(
+            IInfrastructureRepository infrastructureRepository,
+            ISettingService settingService,
+            IQueueService queueService
+        )
         {
             _infrastructureRepository = infrastructureRepository;
-            _commonRepository = commonRepository;
+            _settingService = settingService;
+            _queueService = queueService;
         }
 
         public async Task<PagingResponse<List<DepartmentsRow>>> GetDataAsync(IDefaultIdentity identity, PagingRequest<DepartmentsRequest> Form)
@@ -40,8 +47,10 @@ namespace CheckListManager.Infrastructure.Logic.Departments
                     Form.Data.Department, Form.CurrentPage, Form.ItemsPerPage
                 );
 
-        private DepartmentsResponse Validate(DepartmentsRow record, bool IsNew)
+        private async Task<DepartmentsResponse> ValidateAsync(IDefaultIdentity identity, DepartmentsRow record)
         {
+            var requireUserReason = await _settingService.RequireUserReasonAsync(identity.CompanyId);
+            
             var response = new DepartmentsResponse();
             if (string.IsNullOrWhiteSpace(record.Name))
             {
@@ -56,12 +65,29 @@ namespace CheckListManager.Infrastructure.Logic.Departments
                 };
                 response.Valid = false;
             }
+
+            if (requireUserReason && string.IsNullOrEmpty(record.Reason))
+            {
+                response.Fields["Reason"] = new Field
+                {
+                    ValidationMessages = new List<ValidationMessage>
+                    {
+                        new ValidationMessage
+                        {
+                            Level = ValidationMessage.LevelError,
+                            Message = "Reason is a required field"
+                        }
+                    }
+                };
+            }
+            
+            response.Valid = !response.Fields.Any();
             return response;
         }
 
         public async Task<DepartmentsResponse> AddOrEdit(IDefaultIdentity identity, DepartmentsRow record, bool isNew)
         {
-            var response = Validate(record, isNew);
+            var response = await ValidateAsync(identity, record);
             if (response.Valid)
                 try
                 {
@@ -70,11 +96,15 @@ namespace CheckListManager.Infrastructure.Logic.Departments
                         Name = record.Name
                     };
                     if (isNew)
+                    {
                         await _infrastructureRepository.AddDepartmentAsync(identity, Department);
+                        await AuditAsync(identity, TrailAction.DepartmentCreated, record);
+                    }
                     else
                     {
                         Department.ID = record.ID.Value;
                         await _infrastructureRepository.EditDepartmentAsync(identity, Department);
+                        await AuditAsync(identity, TrailAction.DepartmentUpdated, record);
                     }
                 }
                 catch (Exception Exception)
@@ -90,12 +120,13 @@ namespace CheckListManager.Infrastructure.Logic.Departments
             return response;
         }
 
-        public async Task<DepartmentsResponse> Delete(IDefaultIdentity identity, long id)
+        public async Task<DepartmentsResponse> Delete(IDefaultIdentity identity, DepartmentsRow record)
         {
             var response = new DepartmentsResponse();
             try
             {
-                await _infrastructureRepository.DeleteDepartmentAsync(identity, id);
+                await _infrastructureRepository.DeleteDepartmentAsync(identity, record.ID.Value);
+                await AuditAsync(identity, TrailAction.DepartmentDeleted, record.ID.Value, record.Reason);
             }
             catch (Exception Exception)
             {
@@ -109,5 +140,38 @@ namespace CheckListManager.Infrastructure.Logic.Departments
 
             return response;
         }
+
+        private Task AuditAsync(IDefaultIdentity identity, string action, DepartmentsRow record)
+        {
+            var information = new
+            {
+                record.ID,
+                record.Name,
+                record.Reason,
+            };
+            return AuditAsync(identity, action, information);
+        }
+
+        private Task AuditAsync(IDefaultIdentity identity, string action, long id, string reason)
+        {
+            var information = new
+            {
+                Id = id,
+                Reason = reason
+            };
+            return AuditAsync(identity, action, information);
+        }
+
+        private Task AuditAsync(IDefaultIdentity identity, string action, object information)
+        {
+            return _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+            {
+                Company = identity.CompanyId,
+                User = identity.Code,
+                Action = action,
+                Date = DateTimeOffset.UtcNow,
+                Information = information.ToJson(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None })
+            });
+        }        
     }
 }

@@ -139,3 +139,27 @@ values
 	('Workflow created'),
 	('Workflow updated'),
 	('Workflow deleted');
+
+insert into "Trail"."Actions"
+values
+	('DataSource created'),
+	('DataSource updated'),
+	('DataSource deleted');
+
+insert into "Trail"."Actions"
+values
+	('PrototypeType created'),
+	('PrototypeType updated'),
+	('PrototypeType deleted');
+
+insert into "Trail"."Actions"
+values
+	('Department created'),
+	('Department updated'),
+	('Department deleted');
+
+insert into "Trail"."Actions"
+values
+	('FTPServer created'),
+	('FTPServer updated'),
+	('FTPServer deleted');

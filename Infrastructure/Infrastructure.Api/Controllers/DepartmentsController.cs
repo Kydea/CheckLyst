@@ -50,7 +50,7 @@ namespace CheckListManager.Infrastructure.Api.Controllers
         [Authorize(Roles = "Departments#Edit")]
         public async Task<IHttpActionResult> Delete(Message<DepartmentsRow> request)
         {
-            return Ok(await _departmentsService.Delete(Identity, request.Data.ID.Value));
+            return Ok(await _departmentsService.Delete(Identity, request.Data));
         }
     }
 }

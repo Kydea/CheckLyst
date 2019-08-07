@@ -1,88 +1,89 @@
 ﻿<div id="UsersDetailPage">
     <h2>FTP Servers</h2>
 
-    <form id="Detail" action="@BaseUrl/Infrastructure/FTPServers">
-        <label>
-            <span>ID</span>
-            <i class="Icon fal fa-key" />
-            <input type="text" id="ID" name="id" readonly="readonly" placeholder="(new record)" />
-        </label>
+	<form id="Detail" action="@BaseUrl/Infrastructure/FTPServers">
+		<input type="hidden" name="reason" />
+		<label>
+			<span>ID</span>
+			<i class="Icon fal fa-key" />
+			<input type="text" id="ID" name="id" readonly="readonly" placeholder="(new record)" />
+		</label>
 
-        <label>
-            <span>Name</span>
-            <i class="Icon fal fa-id-card" />
-            <input type="text" name="name" maxlength="50" />
-        </label>
+		<label>
+			<span>Name</span>
+			<i class="Icon fal fa-id-card" />
+			<input type="text" name="name" maxlength="50" />
+		</label>
 
-        <label>
-            <span>Host</span>
-            <i class="Icon fal fa-chart-network" />
-            <input type="text" name="host" maxlength="500" />
-        </label>
+		<label>
+			<span>Host</span>
+			<i class="Icon fal fa-chart-network" />
+			<input type="text" name="host" maxlength="500" />
+		</label>
 
-        <label>
-            <span>Port</span>
-            <i class="Icon fal fa-chart-network" />
-            <input type="text" name="port" class="mask-pint" maxlength="5" />
-        </label>
+		<label>
+			<span>Port</span>
+			<i class="Icon fal fa-chart-network" />
+			<input type="text" name="port" class="mask-pint" maxlength="5" />
+		</label>
 
-        <label>
-            <span>Folder</span>
-            <i class="Icon fal fa-folder" />
-            <input type="text" name="folder" maxlength="500" />
-        </label>
+		<label>
+			<span>Folder</span>
+			<i class="Icon fal fa-folder" />
+			<input type="text" name="folder" maxlength="500" />
+		</label>
 
-        <label class="Clearing">
-            <span>User name</span>
-            <i class="Icon fal fa-user" />
-            <input type="text" name="userName" maxlength="100" />
-        </label>
+		<label class="Clearing">
+			<span>User name</span>
+			<i class="Icon fal fa-user" />
+			<input type="text" name="userName" maxlength="100" />
+		</label>
 
-        <label>
-            <span>Password</span>
-            <i class="Icon fal fa-lock" />
-            <input type="password" name="password" maxlength="100" />
-        </label>
+		<label>
+			<span>Password</span>
+			<i class="Icon fal fa-lock" />
+			<input type="password" name="password" maxlength="100" />
+		</label>
 
-        <label class="Clearing">
-            <span>Passive</span>
-            <input type="checkbox" name="passive" />
-        </label>
+		<label class="Clearing">
+			<span>Passive</span>
+			<input type="checkbox" name="passive" />
+		</label>
 
-        <label>
-            <span>SSL</span>
-            <input type="checkbox" name="ssl" />
-        </label>
+		<label>
+			<span>SSL</span>
+			<input type="checkbox" name="ssl" />
+		</label>
 
-        <label>
-            <span>Prototypes default</span>
-            <input type="checkbox" name="prototypesDefault" />
-        </label>
+		<label>
+			<span>Prototypes default</span>
+			<input type="checkbox" name="prototypesDefault" />
+		</label>
 
-        <label>
-            <span>Instances Default</span>
-            <input type="checkbox" name="instancesDefault" />
-        </label>
+		<label>
+			<span>Instances Default</span>
+			<input type="checkbox" name="instancesDefault" />
+		</label>
 
-        <label class="Clearing Controls2">
-            <span>Creation</span>
-            <i class="Icon fal fa-user" />
-            <input type="text" name="createdBy" readonly="readonly" />
-            <i class="Icon fal fa-calendar-alt" />
-            <input type="text" name="createdOn" readonly="readonly" data-type="DateTimeOffset" />
-        </label>
+		<label class="Clearing Controls2">
+			<span>Creation</span>
+			<i class="Icon fal fa-user" />
+			<input type="text" name="createdBy" readonly="readonly" />
+			<i class="Icon fal fa-calendar-alt" />
+			<input type="text" name="createdOn" readonly="readonly" data-type="DateTimeOffset" />
+		</label>
 
-        <label class="Clearing Controls2">
-            <span>Last edit</span>
-            <i class="Icon fal fa-user" />
-            <input type="text" name="modifiedBy" readonly="readonly" />
-            <i class="Icon fal fa-calendar-alt" />
-            <input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
-        </label>
+		<label class="Clearing Controls2">
+			<span>Last edit</span>
+			<i class="Icon fal fa-user" />
+			<input type="text" name="modifiedBy" readonly="readonly" />
+			<i class="Icon fal fa-calendar-alt" />
+			<input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
+		</label>
 
-        <div class="Clearing"></div>
+		<div class="Clearing"></div>
 
-    </form>
+	</form>
 </div>
 
 <script type="text/javascript">

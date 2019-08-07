@@ -1,13 +1,9 @@
-﻿using CheckListManager.Common.Logic.Api;
-using CheckListManager.Common.Logic.Api.Messages;
-using CheckListManager.Infrastructure.Logic.FTPServers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
+﻿using System;
 using System.Threading.Tasks;
 using System.Web.Http;
+using CheckListManager.Common.Logic.Api;
+using CheckListManager.Common.Logic.Api.Messages;
+using CheckListManager.Infrastructure.Logic.FTPServers;
 
 namespace CheckListManager.Infrastructure.Api.Controllers
 {
@@ -50,7 +46,7 @@ namespace CheckListManager.Infrastructure.Api.Controllers
         [Authorize(Roles = "FTPServers#Edit")]
         public async Task<IHttpActionResult> Delete(Message<FTPServersRow> request)
         {
-            return Ok(await _ftpServersService.Delete(Identity, request.Data.ID.Value));
+            return Ok(await _ftpServersService.Delete(Identity, request.Data));
         }
 
         [HttpPost]

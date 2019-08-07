@@ -1,28 +1,35 @@
-﻿using CheckListManager.Common.Core.Services;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using CheckListManager.Common.Core.Helpers;
 using CheckListManager.Common.Core.Web.Security;
-using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Logic.DataEngine;
+using CheckListManager.Common.Logic.Queue;
+using CheckListManager.Common.Logic.Services;
 using CheckListManager.Common.Logic.Terminal.FTP;
 using CheckListManager.Common.Logic.Trail;
 using CheckListManager.Infrastructure.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace CheckListManager.Infrastructure.Logic.FTPServers
 {
     public class FTPServersService : IFTPServersService
     {
         private readonly IInfrastructureRepository _infrastructureRepository;
-        private readonly ICommonRepository _commonRepository;
+        private readonly ISettingService _settingService;
+        private readonly IQueueService _queueService;
 
-        public FTPServersService(IInfrastructureRepository infrastructureRepository, ICommonRepository commonRepository)
+        public FTPServersService(
+            IInfrastructureRepository infrastructureRepository,
+            ISettingService settingService,
+            IQueueService queueService
+        )
         {
             _infrastructureRepository = infrastructureRepository;
-            _commonRepository = commonRepository;
+            _settingService = settingService;
+            _queueService = queueService;
         }
 
         public async Task<PagingResponse<List<FTPServersRow>>> GetDataAsync(IDefaultIdentity identity, PagingRequest<FTPServersRequest> Form)
@@ -51,8 +58,10 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
                     Form.Data.Name, Form.Data.Host, Form.CurrentPage, Form.ItemsPerPage
                 );
 
-        private FTPServersResponse Validate(FTPServersRow record, bool IsNew)
+        private async Task<FTPServersResponse> ValidateAsync(IDefaultIdentity identity, FTPServersRow record)
         {
+            var requireUserReason = await _settingService.RequireUserReasonAsync(identity.CompanyId);
+            
             var response = new FTPServersResponse();
             if (string.IsNullOrWhiteSpace(record.Name))
             {
@@ -80,12 +89,29 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
                 };
                 response.Valid = false;
             }
+
+            if (requireUserReason && string.IsNullOrEmpty(record.Reason))
+            {
+                response.Fields["Reason"] = new Field
+                {
+                    ValidationMessages = new List<ValidationMessage>
+                    {
+                        new ValidationMessage
+                        {
+                            Level = ValidationMessage.LevelError,
+                            Message = "Reason is a required field"
+                        }
+                    }
+                };
+            }
+            
+            response.Valid = !response.Fields.Any();
             return response;
         }
 
         public async Task<FTPServersResponse> AddOrEdit(IDefaultIdentity identity, FTPServersRow record, bool isNew)
         {
-            var response = Validate(record, isNew);
+            var response = await ValidateAsync(identity, record);
             if (response.Valid)
                 try
                 {
@@ -103,11 +129,15 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
                         InstancesDefault = record.InstancesDefault
                     };
                     if (isNew)
+                    {
                         await _infrastructureRepository.AddFTPServerAsync(identity, FTPServer);
+                        await AuditAsync(identity, TrailAction.FtpServerCreated, record);
+                    }
                     else
                     {
                         FTPServer.ID = record.ID.Value;
                         await _infrastructureRepository.EditFTPServerAsync(identity, FTPServer);
+                        await AuditAsync(identity, TrailAction.FtpServerUpdated, record);
                     }
                 }
                 catch (Exception Exception)
@@ -123,12 +153,13 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
             return response;
         }
 
-        public async Task<FTPServersResponse> Delete(IDefaultIdentity identity, long id)
+        public async Task<FTPServersResponse> Delete(IDefaultIdentity identity, FTPServersRow record)
         {
             var response = new FTPServersResponse();
             try
             {
-                await _infrastructureRepository.DeleteFTPServerAsync(identity, id);
+                await _infrastructureRepository.DeleteFTPServerAsync(identity, record.ID.Value);
+                await AuditAsync(identity, TrailAction.FtpServerDeleted, record.ID.Value, record.Reason);
             }
             catch (Exception Exception)
             {
@@ -158,6 +189,48 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
             });
 
             return result;
+        }
+        
+        private Task AuditAsync(IDefaultIdentity identity, string action, FTPServersRow record)
+        {
+            var information = new
+            {
+                record.ID,
+                record.Name,
+                record.Host,
+                record.Port,
+                record.Folder,
+                record.UserName,
+                Password = new string('*', Math.Min(3, record.Password?.Length ?? 0)), // Avoid to log password from UI
+                record.Passive,
+                record.InstancesDefault,
+                record.PrototypesDefault,
+                record.SSL,
+                record.Reason,
+            };
+            return AuditAsync(identity, action, information);
+        }
+
+        private Task AuditAsync(IDefaultIdentity identity, string action, long id, string reason)
+        {
+            var information = new
+            {
+                Id = id,
+                Reason = reason
+            };
+            return AuditAsync(identity, action, information);
+        }
+
+        private Task AuditAsync(IDefaultIdentity identity, string action, object information)
+        {
+            return _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+            {
+                Company = identity.CompanyId,
+                User = identity.Code,
+                Action = action,
+                Date = DateTimeOffset.UtcNow,
+                Information = information.ToJson(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None })
+            });
         }
     }
 }

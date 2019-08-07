@@ -9,5 +9,7 @@ namespace CheckListManager.DataSources.Logic.Detail
         public string Class { get; set; }
         public string Password { get; set; }
         public string Parameters { get; set; }
+        
+        public string Reason { get; set; }
     }
 }

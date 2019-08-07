@@ -18,5 +18,7 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
         public long? ObsolescenceWorkFlow { get; set; }
         public long? PrototypesFTPServer { get; set; }
         public long? InstancesFTPServer { get; set; }
+
+        public string Reason { get; set; }
     }
 }

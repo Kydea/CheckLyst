@@ -13,6 +13,6 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
         Task<PagingResponse<List<PrototypeTypesSyntheticRow>>> GetSyntheticDataAsync(IDefaultIdentity identity, PagingRequest<PrototypeTypesRequest> form);
         Task<PrototypeTypesResponse> Add(IDefaultIdentity identity, PrototypeTypesRequest record);
         Task<PrototypeTypesResponse> Edit(IDefaultIdentity identity, PrototypeTypesRequest record);
-        Task<PrototypeTypesResponse> Delete(IDefaultIdentity identity, long id);
+        Task<PrototypeTypesResponse> Delete(IDefaultIdentity identity, PrototypeTypesRequest record);
     }
 }

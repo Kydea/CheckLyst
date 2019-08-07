@@ -49,5 +49,21 @@
         public const string WorkflowCreated = "Workflow created";
         public const string WorkflowUpdated = "Workflow updated";
         public const string WorkflowDeleted = "Workflow deleted";
+        
+        public const string DataSourceCreated = "DataSource created";
+        public const string DataSourceUpdated = "DataSource updated";
+        public const string DataSourceDeleted = "DataSource deleted";
+        
+        public const string PrototypeTypeCreated = "PrototypeType created";
+        public const string PrototypeTypeUpdated = "PrototypeType updated";
+        public const string PrototypeTypeDeleted = "PrototypeType deleted";
+        
+        public const string DepartmentCreated = "Department created";
+        public const string DepartmentUpdated = "Department updated";
+        public const string DepartmentDeleted = "Department deleted";
+        
+        public const string FtpServerCreated = "FTPServer created";
+        public const string FtpServerUpdated = "FTPServer updated";
+        public const string FtpServerDeleted = "FTPServer deleted";
     }
 }

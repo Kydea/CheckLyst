@@ -49,7 +49,7 @@ namespace CheckListManager.DataSources.Api.Controllers
 		[Route("Delete")]
 		public async Task<IHttpActionResult> Delete(Message<DetailRequest> request)
 		{
-			return Ok(await _detailService.DeleteAsync(Identity, request.Data.Code));
+			return Ok(await _detailService.DeleteAsync(Identity, request.Data));
 		}
     }
 }

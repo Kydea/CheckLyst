@@ -16,6 +16,6 @@ namespace CheckListManager.Infrastructure.Logic.Departments
 
         Task<DepartmentsResponse> AddOrEdit(IDefaultIdentity Identity, DepartmentsRow record, bool IsNew);
 
-        Task<DepartmentsResponse> Delete(IDefaultIdentity Identity, long ID);
+        Task<DepartmentsResponse> Delete(IDefaultIdentity Identity, DepartmentsRow record);
     }
 }

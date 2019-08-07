@@ -66,7 +66,7 @@ namespace CheckListManager.Infrastructure.Api.Controllers
         [Authorize(Roles = "PrototypeTypes#Edit")]
         public async Task<IHttpActionResult> Delete(Message<PrototypeTypesRequest> request)
         {
-            return Ok(await _prototypeTypesService.Delete(Identity, request.Data.ID.Value));
+            return Ok(await _prototypeTypesService.Delete(Identity, request.Data));
         }
 
     }

@@ -52,8 +52,23 @@ values
 	
 	('Workflow created'),
 	('Workflow updated'),
-	('Workflow deleted');
+	('Workflow deleted'),
+	
+	('DataSource created'),
+	('DataSource updated'),
+	('DataSource deleted'),
+	
+	('PrototypeType created'),
+	('PrototypeType updated'),
+	('PrototypeType deleted'),
+	
+	('Department created'),
+	('Department updated'),
+	('Department deleted'),
 
+	('FTPServer created'),
+	('FTPServer updated'),
+	('FTPServer deleted');
 
 create table "Trail"."Records"
 (

@@ -14,5 +14,7 @@ namespace CheckListManager.Infrastructure.Logic.Departments
         public DateTimeOffset? CreatedOn { get; set; }
         public string ModifiedBy { get; set; }
         public DateTimeOffset? ModifiedOn { get; set; }
+
+        public string Reason { get; set; }
     }
 }

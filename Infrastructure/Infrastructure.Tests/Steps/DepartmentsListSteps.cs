@@ -108,7 +108,7 @@ namespace CheckListManager.Infrastructure.Tests.Steps
         public async Task WhenISendTheEditRequestAsync() => _context.Response = await _departmentsService.AddOrEdit(_defaultIdentity, _context.Record, false);
 
         [When(@"I submit the request to delete this department")]
-        public async Task WhenISendTheDeleteRequest() => _context.Response = await _departmentsService.Delete(_defaultIdentity, _context.Record.ID.Value);
+        public async Task WhenISendTheDeleteRequest() => _context.Response = await _departmentsService.Delete(_defaultIdentity, _context.Record);
 
         [Then(@"the system does not saves the department and returns an error message: '(.*)'")]
         public void ThenTheSystemReturnsAnError(string Message)

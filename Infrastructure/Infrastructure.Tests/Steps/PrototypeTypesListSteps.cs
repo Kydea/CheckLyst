@@ -127,7 +127,7 @@ namespace CheckListManager.Infrastructure.Tests.Steps
         public async Task WhenISendTheEditRequestAsync() => _context.Response = await _prototypeTypesService.Edit(_defaultIdentity, _context.Request);
 
         [When(@"I send the delete request")]
-        public async Task WhenISendTheDeleteRequest() => _context.Response = await _prototypeTypesService.Delete(_defaultIdentity, _context.Request.ID.Value);
+        public async Task WhenISendTheDeleteRequest() => _context.Response = await _prototypeTypesService.Delete(_defaultIdentity, _context.Request);
 
         [Then(@"the system returns an error message: '(.*)'")]
         public void ThenTheSystemReturnsAnError(string Message)

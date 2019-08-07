@@ -10,6 +10,6 @@ namespace CheckListManager.DataSources.Logic.Detail
 
         Task<DetailResponse> EditAsync(IDefaultIdentity identity, DetailRequest record);
 
-        Task<DetailResponse> DeleteAsync(IDefaultIdentity identity, string code);
+        Task<DetailResponse> DeleteAsync(IDefaultIdentity identity, DetailRequest record);
     }
 }

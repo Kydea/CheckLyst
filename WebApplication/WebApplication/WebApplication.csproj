@@ -54,7 +54,7 @@
     <Compile Include="Code\DefaultViewPage.cs" />
     <Compile Include="Code\Version.cs" />
     <Compile Include="Controllers\BaseController.cs" />
-    <Compile Include="Controllers\FTPServers.cs" />
+    <Compile Include="Controllers\FTPServersController.cs" />
     <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\InfrastructureController.cs" />
     <Compile Include="Controllers\InstancesController.cs" />

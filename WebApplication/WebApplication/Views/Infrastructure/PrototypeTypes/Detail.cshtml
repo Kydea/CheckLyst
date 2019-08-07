@@ -1,69 +1,70 @@
 ﻿<div id="UsersDetailPage">
     <h2>Prototype type</h2>
 
-    <form id="Detail" action="@BaseUrl/Infrastructure/PrototypeTypes">
-        <label>
-            <span>ID</span>
-            <i class="Icon fal fa-key" />
-            <input type="text" name="id" readonly="readonly" placeholder="(new record)" />
-        </label>
+	<form id="Detail" action="@BaseUrl/Infrastructure/PrototypeTypes">
+		<input type="hidden" name="reason" />
+		<label>
+			<span>ID</span>
+			<i class="Icon fal fa-key" />
+			<input type="text" name="id" readonly="readonly" placeholder="(new record)" />
+		</label>
 
-        <label>
-            <span>Name</span>
-            <i class="Icon fal fa-id-card" />
-            <input type="text" name="name" />
-        </label>
+		<label>
+			<span>Name</span>
+			<i class="Icon fal fa-id-card" />
+			<input type="text" name="name" />
+		</label>
 
-        <input type="hidden" name="department" />
-        <label class="Clearing">
-            <span>Department</span>
-            <i class="Icon fal fa-industry" data-nullable="true" />
-            <input type="text" name="departmentName" readonly="readonly" />
-        </label>
+		<input type="hidden" name="department" />
+		<label class="Clearing">
+			<span>Department</span>
+			<i class="Icon fal fa-industry" data-nullable="true" />
+			<input type="text" name="departmentName" readonly="readonly" />
+		</label>
 
-        <label class="Clearing">
-            <span>Approval workflow</span>
-            <i class="Icon fal fa-file-certificate" />
-            <select type="text" name="approvationWorkFlow" data-nullable="true" />
-        </label>
+		<label class="Clearing">
+			<span>Approval workflow</span>
+			<i class="Icon fal fa-file-certificate" />
+			<select type="text" name="approvationWorkFlow" data-nullable="true" />
+		</label>
 
-        <label>
-            <span>Obsolescence workflow</span>
-            <i class="Icon fal fa-file-certificate" />
-            <select type="text" name="obsolescenceWorkFlow" data-nullable="true" />
-        </label>
+		<label>
+			<span>Obsolescence workflow</span>
+			<i class="Icon fal fa-file-certificate" />
+			<select type="text" name="obsolescenceWorkFlow" data-nullable="true" />
+		</label>
 
-        <label>
-            <span>Prototypes FTP server</span>
-            <i class="Icon fal fa-file-export" />
-            <select type="text" name="prototypesFTPServer" data-nullable="(disabled)" />
-        </label>
+		<label>
+			<span>Prototypes FTP server</span>
+			<i class="Icon fal fa-file-export" />
+			<select type="text" name="prototypesFTPServer" data-nullable="(disabled)" />
+		</label>
 
-        <label>
-            <span>Instances FTP server</span>
-            <i class="Icon fal fa-file-export" />
-            <select type="text" name="instancesFTPServer" data-nullable="(disabled)" />
-        </label>
+		<label>
+			<span>Instances FTP server</span>
+			<i class="Icon fal fa-file-export" />
+			<select type="text" name="instancesFTPServer" data-nullable="(disabled)" />
+		</label>
 
-        <label class="Clearing Controls2">
-            <span>Creation</span>
-            <i class="Icon fal fa-user" />
-            <input type="text" name="createdBy" readonly="readonly" />
-            <i class="Icon fal fa-calendar-alt" />
-            <input type="text" name="createdOn" readonly="readonly" data-type="DateTimeOffset" />
-        </label>
+		<label class="Clearing Controls2">
+			<span>Creation</span>
+			<i class="Icon fal fa-user" />
+			<input type="text" name="createdBy" readonly="readonly" />
+			<i class="Icon fal fa-calendar-alt" />
+			<input type="text" name="createdOn" readonly="readonly" data-type="DateTimeOffset" />
+		</label>
 
-        <label class="Clearing Controls2">
-            <span>Last edit</span>
-            <i class="Icon fal fa-user" />
-            <input type="text" name="modifiedBy" readonly="readonly" />
-            <i class="Icon fal fa-calendar-alt" />
-            <input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
-        </label>
+		<label class="Clearing Controls2">
+			<span>Last edit</span>
+			<i class="Icon fal fa-user" />
+			<input type="text" name="modifiedBy" readonly="readonly" />
+			<i class="Icon fal fa-calendar-alt" />
+			<input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
+		</label>
 
-        <div class="Clearing"></div>
+		<div class="Clearing"></div>
 
-    </form>
+	</form>
 </div>
 
 <script type="text/javascript">

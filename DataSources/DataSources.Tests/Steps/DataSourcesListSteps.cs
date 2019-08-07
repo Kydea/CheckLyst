@@ -96,7 +96,7 @@ namespace CheckListManager.DataSources.Tests.Steps
 
         [When(@"I submit the request to delete the Data Source")]
         public async Task WhenISubmitTheRequestToDeleteTheDataSource()
-            => _context.Response = await _detailService.DeleteAsync(_defaultIdentity, _context.Request.Code);
+            => _context.Response = await _detailService.DeleteAsync(_defaultIdentity, _context.Request);
         #endregion
 
         #region THEN
