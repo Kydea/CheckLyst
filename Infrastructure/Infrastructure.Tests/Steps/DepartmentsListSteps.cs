@@ -51,6 +51,7 @@ namespace CheckListManager.Infrastructure.Tests.Steps
         public void GivenIAssignAsTheNameOfTheDepartment(string Name)
         {
             _context.Record.Name = Name;
+            _context.Record.Reason = "Reason";
         }
 
         [Given(@"I click on a department")]

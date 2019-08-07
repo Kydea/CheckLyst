@@ -86,6 +86,7 @@ namespace CheckListManager.Infrastructure.Tests.Steps
         public void GivenIAssignAsTheNameOfThePrototype(string Name)
         {
             _context.Request.Name = Name;
+            _context.Request.Reason = "Reason";
         }
 
         [Given(@"I click on a prototype type")]

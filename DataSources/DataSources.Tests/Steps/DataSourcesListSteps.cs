@@ -49,6 +49,7 @@ namespace CheckListManager.DataSources.Tests.Steps
         public void GivenIAssignAsTheCodeOfTheDataSource(string Code)
         {
             _context.Request.Code = Code;
+            _context.Request.Reason = "Reason";
         }
 
         [Given(@"I assign '(.*)' as the class of the Data Source")]
@@ -61,6 +62,7 @@ namespace CheckListManager.DataSources.Tests.Steps
         public void GivenIAssignAsTheDescriptionOfTheDataSource(string Description)
         {
             _context.Request.Description = Description;
+            _context.Request.Reason = "Reason";
         }
 
         [Given(@"I click on a Data Source")]

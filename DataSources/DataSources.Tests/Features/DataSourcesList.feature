@@ -7,7 +7,7 @@
 
 @WithTransaction
 Scenario: Add a Data Source
-	Given I assign 'testDataSource2123' as the code of the Data Source
+	Given I assign 'testDataSource2124' as the code of the Data Source
 	And I assign 'test' as the class of the Data Source
 	When I submit the request to add the Data Source
 	Then the system correctly adds the Data Source

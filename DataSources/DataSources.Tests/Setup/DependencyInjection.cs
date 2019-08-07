@@ -12,6 +12,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using CheckListManager.Common.Logic.Services;
 
 namespace CheckListManager.DataSources.Tests.Setup
 {
@@ -36,6 +37,11 @@ namespace CheckListManager.DataSources.Tests.Setup
             builder.RegisterAssemblyTypes(assemblies)
                 .AssignableTo<IService>()
                 .AsImplementedInterfaces()
+                .InstancePerLifetimeScope();
+
+            builder.RegisterType<EmptyQueueService>()
+                .As<IQueueService>()
+                .AsSelf()
                 .InstancePerLifetimeScope();
 
             builder
