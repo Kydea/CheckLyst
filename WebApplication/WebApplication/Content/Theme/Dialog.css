@@ -19,6 +19,8 @@ div.Dialog {
       font-weight: normal; }
     div.Dialog div.Container div.Content {
       overflow: auto; }
+      div.Dialog div.Container div.Content label {
+        margin-bottom: 5px; }
     div.Dialog div.Container div.Buttons {
       margin-top: 10px; }
       div.Dialog div.Container div.Buttons a {

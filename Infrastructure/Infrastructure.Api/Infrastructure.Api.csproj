@@ -57,10 +57,6 @@
     <Reference Include="AWSSDK.SQS, Version=3.3.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
       <HintPath>..\..\packages\AWSSDK.SQS.3.3.100.49\lib\net45\AWSSDK.SQS.dll</HintPath>
     </Reference>
-    <Reference Include="CheckListManager.Common.Logic, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f59642dc3948967f, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Bin\CheckListManager.Common.Logic.dll</HintPath>
-    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>

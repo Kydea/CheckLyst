@@ -9,6 +9,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using CheckListManager.Common.Logic.Services;
 
 namespace CheckListManager.WorkFlows.Tests.Setup
 {
@@ -33,6 +34,11 @@ namespace CheckListManager.WorkFlows.Tests.Setup
             builder.RegisterAssemblyTypes(assemblies)
                 .AssignableTo<IService>()
                 .AsImplementedInterfaces()
+                .InstancePerLifetimeScope();
+
+            builder.RegisterType<EmptyQueueService>()
+                .As<IQueueService>()
+                .AsSelf()
                 .InstancePerLifetimeScope();
 
             builder

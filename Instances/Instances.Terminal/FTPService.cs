@@ -27,14 +27,16 @@ namespace CheckListManager.Instances.Terminal
         private readonly IInstanceManagerService _instanceManagerService;
         private readonly ICommonRepository _commonRepository;
         private readonly IConfigurationService _configurationService;
+        private readonly IStorageService _storageService;
 
-        public FTPService(IQueueService queueService, ISettingService settingService, IInstanceManagerService instanceManagerService, ICommonRepository commonRepository, IConfigurationService configurationService)
+        public FTPService(IQueueService queueService, ISettingService settingService, IInstanceManagerService instanceManagerService, ICommonRepository commonRepository, IConfigurationService configurationService, IStorageService storageService)
 		{
 			_queueService = queueService;
 			_settingService = settingService;
             _instanceManagerService = instanceManagerService;
             _commonRepository = commonRepository;
             _configurationService = configurationService;
+            _storageService = storageService;
         }
 
         public async Task ProcessFTPMessagesAsync(CancellationToken cancellationToken = default(CancellationToken))
@@ -116,9 +118,9 @@ namespace CheckListManager.Instances.Terminal
 
             var Company = await _commonRepository.GetCompanyAsync(message.Company);
 
-            var PDF = new InstancePDF(Company.ID, Company.Name, Company.TimeZones.MicrosoftCode, _configurationService.PublicRepositoryUrl, cacheObject);
+            var PDF = new InstancePDF(Company.ID, Company.Name, Company.TimeZones.MicrosoftCode, _configurationService.PublicRepositoryUrl, cacheObject, _storageService, _configurationService);
             var MemoryStream = new MemoryStream();
-            PDF.Generate(MemoryStream);
+            await PDF.GenerateAsync(MemoryStream);
 
             var ftpClient = new FTPClient();
 

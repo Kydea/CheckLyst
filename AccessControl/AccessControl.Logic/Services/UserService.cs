@@ -1,25 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.DirectoryServices.Protocols;
 using System.Linq;
+using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using CheckListManager.AccessControl.Data;
 using CheckListManager.AccessControl.Logic.Authentication;
 using CheckListManager.AccessControl.Logic.Exceptions;
 using CheckListManager.AccessControl.Logic.Messages.Users;
+using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Messages;
-using CheckListManager.Common.Logic.Trail;
 using CheckListManager.Common.Logic.Cache;
+using CheckListManager.Common.Logic.DataEngine;
+using CheckListManager.Common.Logic.Email;
 using CheckListManager.Common.Logic.Queue;
 using CheckListManager.Common.Logic.Services;
-using NLog;
-using CheckListManager.Common.Logic.DataEngine;
-using CheckListManager.Common.Core.Web.Security;
-using CheckListManager.Common.Logic.Email;
+using CheckListManager.Common.Logic.Trail;
 using Newtonsoft.Json;
-using System.DirectoryServices.Protocols;
-using System.Net;
+using NLog;
 
 namespace CheckListManager.AccessControl.Logic.Services
 {
@@ -112,13 +113,14 @@ namespace CheckListManager.AccessControl.Logic.Services
         {
             try
             {
-                var LdapDirectoryIdentifier = new LdapDirectoryIdentifier(LDAPHost, 636, true, false); //ldap: 389, ldaps: 636
+                var LdapDirectoryIdentifier =
+                    new LdapDirectoryIdentifier(LDAPHost, 636, true, false); //ldap: 389, ldaps: 636
                 var NetworkCredential = new NetworkCredential(Code, Password);
                 var LdapConnection = new LdapConnection(LdapDirectoryIdentifier, NetworkCredential, AuthType.Basic);
 
                 LdapConnection.SessionOptions.SecureSocketLayer = true;
                 LdapConnection.SessionOptions.ProtocolVersion = 3;
-                LdapConnection.SessionOptions.VerifyServerCertificate = new VerifyServerCertificateCallback((Connection, Certificate) => true);
+                LdapConnection.SessionOptions.VerifyServerCertificate = (connection, certificate) => true;
                 LdapConnection.Bind();
             }
             catch (Exception Exception)
@@ -135,7 +137,7 @@ namespace CheckListManager.AccessControl.Logic.Services
             if (string.IsNullOrEmpty(code))
                 throw new AuthenticationException(100, "User code not sent");
 
-            if (string.IsNullOrEmpty(pin) || !System.Text.RegularExpressions.Regex.IsMatch(pin, @"^[0-9]+$"))
+            if (string.IsNullOrEmpty(pin) || !Regex.IsMatch(pin, @"^[0-9]+$"))
                 throw new AuthenticationException(106, "Invalid PIN");
 
             if (pin.Length < 6)
@@ -168,7 +170,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                 if (!user.Enabled)
                     throw new AuthenticationException(103, $"User {code} disabled");
 
-                if (string.IsNullOrEmpty(pin) || !System.Text.RegularExpressions.Regex.IsMatch(pin, @"^[0-9]+$"))
+                if (string.IsNullOrEmpty(pin) || !Regex.IsMatch(pin, @"^[0-9]+$"))
                     throw new AuthenticationException(106, $"PIN not valid");
 
                 if (!_hashService.ValidateHash(pin, user.PIN))
@@ -199,7 +201,8 @@ namespace CheckListManager.AccessControl.Logic.Services
 
             return Task.WhenAll(
                 _userSessionRepository.CreateAsync(session),
-                _cache.SetAsync(identityToken.RefreshToken, identityToken, IdentityCacheRegion, expiresOn - DateTimeOffset.UtcNow)
+                _cache.SetAsync(identityToken.RefreshToken, identityToken, IdentityCacheRegion,
+                    expiresOn - DateTimeOffset.UtcNow)
             );
         }
 
@@ -213,7 +216,8 @@ namespace CheckListManager.AccessControl.Logic.Services
             if (session != null && session.ExpiresOn >= DateTimeOffset.UtcNow)
             {
                 token = new IdentityToken(session.Ticket, session.Code, session.ExpiresOn);
-                await _cache.SetAsync(token.RefreshToken, token, IdentityCacheRegion, session.ExpiresOn - DateTimeOffset.UtcNow);
+                await _cache.SetAsync(token.RefreshToken, token, IdentityCacheRegion,
+                    session.ExpiresOn - DateTimeOffset.UtcNow);
             }
 
             return token;
@@ -259,10 +263,12 @@ namespace CheckListManager.AccessControl.Logic.Services
             return await _userRepository.GetFunctionsAsync(companyId, request.Code, request.Description);
         }
 
-        public async Task<PagingResponse<List<UsersResponse>>> GetUsersAsync(long companyId, PagingRequest<UsersRequest> request)
+        public async Task<PagingResponse<List<UsersResponse>>> GetUsersAsync(long companyId,
+            PagingRequest<UsersRequest> request)
         {
             var take = request.ItemsPerPage;
-            var users = await _userRepository.GetUsersAsync(companyId, request.Data.Code, request.Data.Description, request.Skip, take);
+            var users = await _userRepository.GetUsersAsync(companyId, request.Data.Code, request.Data.Description,
+                request.Skip, take);
             var count = await _userRepository.CountUsersAsync(companyId, request.Data.Code, request.Data.Description);
 
             var response = users.Select(u => new UsersResponse
@@ -294,8 +300,10 @@ namespace CheckListManager.AccessControl.Logic.Services
             if (string.IsNullOrWhiteSpace(record.Code))
                 response.Fields["Code"] = new Field
                 {
-                    ValidationMessages = new List<ValidationMessage> {
-                        new ValidationMessage {
+                    ValidationMessages = new List<ValidationMessage>
+                    {
+                        new ValidationMessage
+                        {
                             Level = ValidationMessage.LevelError,
                             Message = "Invalid code"
                         }
@@ -305,8 +313,10 @@ namespace CheckListManager.AccessControl.Logic.Services
             if (string.IsNullOrWhiteSpace(record.Description))
                 response.Fields["Description"] = new Field
                 {
-                    ValidationMessages = new List<ValidationMessage> {
-                        new ValidationMessage {
+                    ValidationMessages = new List<ValidationMessage>
+                    {
+                        new ValidationMessage
+                        {
                             Level = ValidationMessage.LevelError,
                             Message = "Invalid value"
                         }
@@ -316,29 +326,39 @@ namespace CheckListManager.AccessControl.Logic.Services
             if (!string.IsNullOrEmpty(record.Password) && record.Password.Length < 8)
                 response.Fields["Password"] = new Field
                 {
-                    ValidationMessages = new List<ValidationMessage> {
-                        new ValidationMessage {
+                    ValidationMessages = new List<ValidationMessage>
+                    {
+                        new ValidationMessage
+                        {
                             Level = ValidationMessage.LevelError,
                             Message = "Password must be long at least 8 characters"
                         }
                     }
                 };
-            else if (!string.IsNullOrEmpty(record.Password) && !System.Text.RegularExpressions.Regex.IsMatch(record.Password, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,30}$"))
+            else if (!string.IsNullOrEmpty(record.Password) &&
+                     !Regex.IsMatch(record.Password,
+                         @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,30}$"))
                 response.Fields["Password"] = new Field
                 {
-                    ValidationMessages = new List<ValidationMessage> {
-                        new ValidationMessage {
+                    ValidationMessages = new List<ValidationMessage>
+                    {
+                        new ValidationMessage
+                        {
                             Level = ValidationMessage.LevelError,
-                            Message = "The password must be long no more than 30 characters and contain at least a digit, a lower and an upper case letter"
+                            Message =
+                                "The password must be long no more than 30 characters and contain at least a digit, a lower and an upper case letter"
                         }
                     }
                 };
 
-            if (!(string.IsNullOrEmpty(record.Password) && string.IsNullOrEmpty(record.Password2)) && record.Password != record.Password2)
+            if (!(string.IsNullOrEmpty(record.Password) && string.IsNullOrEmpty(record.Password2)) &&
+                record.Password != record.Password2)
                 response.Fields["Password2"] = new Field
                 {
-                    ValidationMessages = new List<ValidationMessage> {
-                        new ValidationMessage {
+                    ValidationMessages = new List<ValidationMessage>
+                    {
+                        new ValidationMessage
+                        {
                             Level = ValidationMessage.LevelError,
                             Message = "Password and confirm password must coincide"
                         }
@@ -363,7 +383,8 @@ namespace CheckListManager.AccessControl.Logic.Services
                 {
                     var user = await _userRepository.GetAsync(identity.CompanyId, record.Code);
 
-                    response.GeneralFunctions = user.UserFunctions.Where(f => f.FunctionGroup != "Prototypes" && f.FunctionGroup != "Instances")
+                    response.GeneralFunctions = user.UserFunctions.Where(f =>
+                            f.FunctionGroup != "Prototypes" && f.FunctionGroup != "Instances")
                         .Select(gf => new Function { functionGroup = gf.FunctionGroup, function = gf.Function })
                         .ToArray();
 
@@ -595,8 +616,13 @@ namespace CheckListManager.AccessControl.Logic.Services
                     user.Enabled = false;
                     if (!string.IsNullOrEmpty(user.Email))
                         await _queueService.SendObjectAsync(QueueName.Email,
-                            new EmailMessage(user.Company, "User disabled", await _settingService.UserBlockMessageAsync(user.Company),
-                                user.Email, new List<Tuple<string, string>> { new Tuple<string, string>("User", user.Description) }), cancellationToken);
+                            new EmailMessage(user.Company, "User disabled",
+                                await _settingService.UserBlockMessageAsync(user.Company),
+                                user.Email,
+                                new List<Tuple<string, string>> { new Tuple<string, string>("User", user.Description) })
+                            {
+                                TrailMessage = new EmailTrailMessage(user.Code, null, null)
+                            }, cancellationToken);
                 }
 
                 await _userRepository.SaveChangesAsync();
@@ -613,8 +639,13 @@ namespace CheckListManager.AccessControl.Logic.Services
                 {
                     if (!string.IsNullOrEmpty(user.Email))
                         await _queueService.SendObjectAsync(QueueName.Email,
-                            new EmailMessage(user.Company, "User disabled soon", await _settingService.UserBlockWarningMessageAsync(user.Company),
-                                user.Email, new List<Tuple<string, string>> { new Tuple<string, string>("User", user.Description) }), cancellationToken);
+                            new EmailMessage(user.Company, "User disabled soon",
+                                await _settingService.UserBlockWarningMessageAsync(user.Company),
+                                user.Email,
+                                new List<Tuple<string, string>> { new Tuple<string, string>("User", user.Description) })
+                            {
+                                TrailMessage = new EmailTrailMessage(user.Code, null, null)
+                            }, cancellationToken);
                 }
             }
             catch (Exception e)

@@ -1,15 +1,10 @@
 ﻿using CheckListManager.Common.Logic.Api.PDF;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace CheckListManager.Common.Logic.Api.Formatters
@@ -43,23 +38,13 @@ namespace CheckListManager.Common.Logic.Api.Formatters
             base.SetDefaultContentHeaders(type, headers, mediaType);
         }
 
-        public override Task WriteToStreamAsync(Type type, object value, Stream stream, HttpContent content, TransportContext transportContext)
+        public override async Task WriteToStreamAsync(Type type, object value, Stream stream, HttpContent content, TransportContext transportContext)
         {
-            var TaskSource = new TaskCompletionSource<object>();
-            try
-            {
-                var MemoryStream = new MemoryStream();
-                ((PDFBase)value).Generate(MemoryStream);
+            var MemoryStream = new MemoryStream();
+            await ((PDFBase)value).GenerateAsync(MemoryStream);
 
-                var Bytes = MemoryStream.ToArray();
-                stream.Write(Bytes, 0, Bytes.Length);
-                TaskSource.SetResult(null);
-            }
-            catch (Exception e)
-            {
-                TaskSource.SetException(e);
-            }
-            return TaskSource.Task;
+            var Bytes = MemoryStream.ToArray();
+            stream.Write(Bytes, 0, Bytes.Length);
         }
     }
 }

@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Drawing;
+using System.Threading.Tasks;
 using CheckListManager.Common.Logic.Models.CheckLists;
 
 namespace CheckListManager.Common.Logic.Api.PDF.Sections
@@ -11,18 +8,16 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
     {
         public ICheckListElement Element;
 
-        public CheckListSection(CheckListPDF PDFBase, ICheckListElement Element, int Indentation) : base(PDFBase, Indentation)
+        public CheckListSection(CheckListPDF CheckListPDF, ICheckListElement Element, int Indentation) : base(CheckListPDF, Indentation)
         {
-            CheckListPDF = PDFBase;
+            this.CheckListPDF = CheckListPDF;
             this.Element = Element;
         }
 
         public CheckListPDF CheckListPDF { get; }
 
-        public override void Render(params Object[] State)
-        { }
+        public override Task RenderAsync(params Object[] State) => Task.CompletedTask;
 
-        public virtual void RenderChildren()
-        { }
+        public virtual Task RenderChildrenAsync() => Task.CompletedTask;
     }
 }

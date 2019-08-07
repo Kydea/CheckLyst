@@ -9,3 +9,5 @@ insert into "Configuration"."Configurations" ("Code", "Value") values
 	('InstanceCloseTimeout', '4320'), --3 days, expressed in minutes
 	('PrototypesStorageBucket', '???'),
 	('InstancesStorageBucket', '???');
+    
+  

@@ -26,8 +26,17 @@ namespace CheckListManager.Prototypes.Api.Controllers
         private readonly IRedisCache _redisCache;
         private readonly ICommonRepository _commonRepository;
         private readonly IConfigurationService _configurationService;
+        private readonly IStorageService _storageService;
 
-        public PrototypeController(IPrototypeService prototypeService, IPrototypesRepository prototypesRepository, CheckListJsonConverter converter, IRedisCache redisCache, ICommonRepository commonRepository, IConfigurationService configurationService)
+        public PrototypeController(
+            IPrototypeService prototypeService,
+            IPrototypesRepository prototypesRepository,
+            CheckListJsonConverter converter,
+            IRedisCache redisCache,
+            ICommonRepository commonRepository,
+            IConfigurationService configurationService,
+            IStorageService storageService
+        )
         {
             _prototypeService = prototypeService;
             _prototypesRepository = prototypesRepository;
@@ -35,6 +44,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
             _redisCache = redisCache;
             _commonRepository = commonRepository;
             _configurationService = configurationService;
+            _storageService = storageService;
         }
 
         [HttpPost]
@@ -208,7 +218,16 @@ namespace CheckListManager.Prototypes.Api.Controllers
             var PrototypeVersion = await _prototypesRepository.GetPrototypeVersionAsync(Data.CompanyId.Value, Data.ID, Data.Version);
             var CheckList = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converter);
 
-            var PDF = new PrototypePDF(Data.CompanyId.Value, Data.CompanyName, Data.TimeZone, _configurationService.PublicRepositoryUrl, PrototypeVersion, CheckList);
+            var PDF = new PrototypePDF(
+                Data.CompanyId.Value,
+                Data.CompanyName,
+                Data.TimeZone,
+                _configurationService.PublicRepositoryUrl,
+                PrototypeVersion,
+                CheckList,
+                _storageService,
+                _configurationService
+            );
             return Content(HttpStatusCode.OK, PDF, new PDFFormatter("Prototype"));
         }
         

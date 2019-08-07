@@ -1,21 +1,20 @@
-﻿using CheckListManager.Common.Core.Helpers;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using CheckListManager.Common.Core.Helpers;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.PDF;
 using CheckListManager.Common.Logic.Api.PDF.Sections;
 using CheckListManager.Common.Logic.Models.CheckLists;
+using CheckListManager.Common.Logic.Services;
 using CheckListManager.Instances.Logic.Models;
 using CheckListManager.Instances.Logic.Models.CheckLists;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CheckListManager.Instances.Logic.PDF
 {
     public class InstancePDF : CheckListPDF
     {
-        public InstancePDF(long CompanyID, string CompanyName, string TimeZone, string Repository, InstanceCacheObject Instance) : base(CompanyID, CompanyName, TimeZone, Repository, Instance.Instance)
+        public InstancePDF(long CompanyID, string CompanyName, string TimeZone, string Repository, InstanceCacheObject Instance, IStorageService StorageService, IConfigurationService ConfigurationService) : base(CompanyID, CompanyName, TimeZone, Repository, Instance.Instance, StorageService, ConfigurationService)
         {
             this.Instance = Instance;
         }
@@ -24,7 +23,12 @@ namespace CheckListManager.Instances.Logic.PDF
 
         public string FormatFormula(string Value)
         {
-            return Value.Replace("<span class='Error'>", "[ #Error: ").Replace("<span class='Null'>", "[ null").Replace("</span>", " ]");
+            return Value?.Replace("<span class='Null'></span>", string.Empty).Replace("<span class='Error'>", "[ #Error: ").Replace("</span>", " ]") ?? string.Empty;
+        }
+
+        public override string GetFieldValue(ICheckListField Field)
+        {
+            return FormatFormula(((Field)Field).RawValue);
         }
 
         protected override FirstPage GenerateFirstPage()
@@ -45,16 +49,10 @@ namespace CheckListManager.Instances.Logic.PDF
 
         }
 
-        protected override Template GenerateTemplate()
+        protected override Task<Template> GenerateTemplateAsync()
         {
-            return new Template(this, $"{Instance.PrototypeDescription}\n{Instance.InstanceCode}\n{Instance.Description}");
-        }
-
-        public override string GetFieldValue(ICheckListField Field)
-        {
-            var Value = ((Field)Field).RawValue;
-            if (Value == null) return null;
-            return System.Text.RegularExpressions.Regex.Replace(Value, "<.*?>", string.Empty, System.Text.RegularExpressions.RegexOptions.Compiled);
+            var template = new Template(this, $"{Instance.InstanceCode} - {Instance.InstanceState}");
+            return Task.FromResult(template);
         }
 
         public override bool IsPrototype() => false;

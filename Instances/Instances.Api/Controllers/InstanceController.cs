@@ -28,15 +28,17 @@ namespace CheckListManager.Instances.Api.Controllers
         private readonly ICommonRepository _commonRepository;
         private readonly IConfigurationService _configurationService;
         private readonly ISettingService _settingService;
+        private readonly IStorageService _storageService;
         private readonly IServiceClient _client;
 
-        public InstanceController(IInstanceManagerService instanceManagerService, IRedisCache redisCache, ICommonRepository commonRepository, IConfigurationService configurationService, ISettingService settingService, IServiceClient client)
+        public InstanceController(IInstanceManagerService instanceManagerService, IRedisCache redisCache, ICommonRepository commonRepository, IConfigurationService configurationService, ISettingService settingService, IStorageService storageService, IServiceClient client)
         {
             _instanceManagerService = instanceManagerService;
             _redisCache = redisCache;
             _commonRepository = commonRepository;
             _configurationService = configurationService;
             _settingService = settingService;
+            _storageService = storageService;
             _client = client;
         }
 
@@ -255,7 +257,9 @@ namespace CheckListManager.Instances.Api.Controllers
             await _redisCache.RemoveAsync($"Token:{Token}", "Download");
             var cacheObject = await _instanceManagerService.GetAsync(Data.CompanyId.Value, Data.UserCode, Data.Code);
             cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(Data.CompanyId.Value), (await _settingService.TimeZoneAsync(Data.CompanyId.Value)).MicrosoftCode, cacheObject);
-            return Content(HttpStatusCode.OK, new InstancePDF(Data.CompanyId.Value, Data.CompanyName, Data.TimeZone, _configurationService.PublicRepositoryUrl, cacheObject), new PDFFormatter(string.IsNullOrEmpty(cacheObject.Instance.FileName) ? "Instance" : cacheObject.Instance.FileName));
+            cacheObject.Instance.UpdateReadOnly(Data.UserCode, cacheObject.InstanceState);
+            var PDF = new InstancePDF(Data.CompanyId.Value, Data.CompanyName, Data.TimeZone, _configurationService.PublicRepositoryUrl, cacheObject, _storageService, _configurationService);
+            return Content(HttpStatusCode.OK, PDF, new PDFFormatter(string.IsNullOrEmpty(cacheObject.Instance.FileName) ? "Instance" : cacheObject.Instance.FileName));
         }
 
         [HttpPost]

@@ -5,18 +5,71 @@
 		sender = matematici.popup.getSender(),
 		buttons = options.buttons || [],
 		form,
+		lastReason,
 
 		clickHandler = function (button, event, callback, takeOpen) {
 			if (button.hasClass("ReadOnly")) return false;
 
-			form.trigger(event, function (result) {
-				form.handleResult(result);
-				if (result.valid) {
-					matematici.popup.getResult().saved = true;
-					if (!takeOpen) matematici.popup.close();
-					matematici.blip.ok(callback);
+			var settings = matematici.tokenManager.getCompanySettings();
+			var input;
+
+			var save = function () {
+				form.trigger(event, function (result) {
+					form.handleResult(result);
+
+					if (settings && settings.requireUserReason) {
+						lastReason = !result.valid ? input.val() : "";
+						matematici.dialog.close();
+					}
+
+					if (result.valid) {
+						matematici.popup.getResult().saved = true;
+						if (!takeOpen) matematici.popup.close();
+						matematici.blip.ok(callback);
+					}
+				}, options.parametersPrepareHandler && options.parametersPrepareHandler());
+			};
+
+			if (settings && settings.requireUserReason) {
+				matematici.dialog.show({
+					title: "Reason",
+					content: $("<div />")
+						.append(
+							$("<label />")
+								.attr("for", "DetailPageReasonInput")
+								.text("Type the reason of the changes for the audit trail")
+						)
+						.append(
+							input = $("<input />")
+								.attr("id", "DetailPageReasonInput")
+								.attr("type", "text")
+								.attr("autocomplete", "off")
+								.val(lastReason)
+						),
+					buttons: [
+						{
+							text: "save", icon: "check", defaultButton: true, handler: function () {
+								if (input.val().trim() === "") {
+									input.addClass("Error");
+								} else {
+									input.removeClass("Error");
+									form.setValue("reason", input.val());
+									save();
+								}
+
+								return true;
+							}
+						},
+						{ text: "cancel", hidden: false, icon: "times", cancelButton: true }
+					],
+				});
+				setTimeout(function () { input.focus(); }, 1);
+			} else {
+				save();
+				if (event === "Delete") {
+					return false; // Close dialog in case event is delete and reason is not required
 				}
-			}, options.parametersPrepareHandler && options.parametersPrepareHandler());
+			}
 
 			return true;
 		},
@@ -38,21 +91,23 @@
 			});
 
 			if (!options.readOnly) {
-				buttons.push({
-					text: "delete", icon: "trash-alt", handler: function () {
-						matematici.dialog.show("warning", "The record will be deleted.", [
-							{
-								text: "confirm", icon: "check", handler: function () {
-									clickHandler($(this), "Delete");
+				if (data !== null) {
+					buttons.push({
+						text: "delete", icon: "trash-alt", handler: function () {
+							matematici.dialog.show("warning", "The record will be deleted.", [
+								{
+									text: "confirm", icon: "check", handler: function () {
+										return clickHandler($(this), "Delete");
+									}
+								},
+								{
+									text: "cancel", icon: "times", cancelButton: true
 								}
-							},
-							{
-								text: "cancel", icon: "times", cancelButton: true
-							}
-						]);
-						return true;
-					}
-				});
+							]);
+							return true;
+						}
+					});
+				}
 
 				buttons.push({
 					text: "save", defaultButton: true, icon: "save", id: "SaveButton", handler: function (e) {

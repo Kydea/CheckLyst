@@ -90,7 +90,7 @@
                     exceptions.push(exception);
                 }
             }
-            exceptionsButton.toggle(exceptions.length > 0);
+            exceptionsButton.toggleClass("Hidden", exceptions.length == 0);
         },
 
         showExceptions = function () {

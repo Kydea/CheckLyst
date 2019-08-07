@@ -8,101 +8,182 @@ using CheckListManager.Common.Core.Helpers;
 using MigraDoc.DocumentObjectModel.Tables;
 using MigraDoc.DocumentObjectModel;
 using CheckListManager.Common.Logic.Api.PDF.Helper;
+using MigraDoc.DocumentObjectModel.Shapes;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace CheckListManager.Common.Logic.Api.PDF.Sections
 {
     public class Item : CheckListSection
     {
-        private string TimeZone;
-
         public Item(CheckListPDF PDFBase, ICheckListItem Item, ICheckListItem Next, bool FirstOfGroup, int Indentation = 1) : base(PDFBase, Item, Indentation)
         {
-            TimeZone = PDFBase.TimeZone;
         }
 
-        private void DrawSignature(string Description, string User = null, string Date = null, string Time = null, string Signature = null)
+        private void DrawSignature(string Description, bool Valid, string User = null, string Date = null, string Time = null, string Signature = null)
         {
             PdfPTable Table = new PdfPTable(4) { WidthPercentage = 100 };
 
-            Table.AddCell(new PdfPCell(new Paragraph().SetText("Signed by").SetFont(PDFBase.GenericBoldFont).Padding(10)));
-            Table.AddCell(new PdfPCell(new Paragraph().SetText("Date").SetFont(PDFBase.GenericBoldFont).Padding(10)));
-            Table.AddCell(new PdfPCell(new Paragraph().SetText("Time").SetFont(PDFBase.GenericBoldFont).Padding(10)));
-            Table.AddCell(new PdfPCell(new Paragraph().SetText("Signature").SetFont(PDFBase.GenericBoldFont).Padding(10)));
+            Table.AddCell(new PdfPCell(new Paragraph().SetText("Signed by").SetFont(PDFBase.BoldFont).Padding(5)));
+            Table.AddCell(new PdfPCell(new Paragraph().SetText("Date").SetFont(PDFBase.BoldFont).Padding(5)));
+            Table.AddCell(new PdfPCell(new Paragraph().SetText("Time").SetFont(PDFBase.BoldFont).Padding(5)));
+            Table.AddCell(new PdfPCell(new Paragraph().SetText("Signature").SetFont(PDFBase.BoldFont).Padding(5)));
             Table.CompleteRow();
 
-            Table.AddCell(new PdfPCell(new Paragraph().SetText(User).Padding(10)));
-            Table.AddCell(new PdfPCell(new Paragraph().SetText(Date).Padding(10)));
-            Table.AddCell(new PdfPCell(new Paragraph().SetText(Time).Padding(10)));
-            Table.AddCell(new PdfPCell(new Paragraph().SetText(Date == null ? " " : Signature).Padding(10)));
+            Table.AddCell(new PdfPCell(new Paragraph().SetText(User).Padding(5)));
+            Table.AddCell(new PdfPCell(new Paragraph().SetText(Date).Padding(5)));
+            Table.AddCell(new PdfPCell(new Paragraph().SetText(Time).Padding(5)));
+            Table.AddCell(new PdfPCell(new Paragraph().SetText(Date == null ? " " : Signature).Padding(5)));
             Table.CompleteRow();
+
+            if (!Valid)
+                Table.BorderColor = PDFBase.Red;
 
             PDFBase.Container.Add(Table);
             DrawText("\n");
         }
 
-        public override void Render(params Object[] State)
+        public override async Task RenderAsync(params object[] State)
         {
-            if (Element is ICheckListGroup)
+            if (Element.Hidden) return;
+
+            if (Element is ICheckListGroup GroupElement)
             {
-                var Group = (ICheckListGroup)Element;
-                if (Group.ShowAsTable)
-                    new Table((CheckListPDF)PDFBase, Group, Indentation + 1).Render();
+                if (GroupElement.ShowAsTable)
+                    await new Table((CheckListPDF)PDFBase, GroupElement, Indentation + 1).RenderAsync();
                 else
-                    new Group((CheckListPDF)PDFBase, Group, Indentation + 1).Render();
+                    await new Group((CheckListPDF)PDFBase, GroupElement, Indentation + 1).RenderAsync();
             }
-
-            #region Text
-
-            else if (Element is ICheckListText TextElement)
+            else if (Element is ICheckListText Text)
             {
-                if (!String.IsNullOrEmpty(TextElement.Description))
-                {
-                    DrawText(TextElement.Description);
-                    DrawText("\n");
-                }
+                if (!string.IsNullOrEmpty(Text.Description))
+                    DrawText(Text.Description, null, 10);
             }
-
-            #endregion
-
-            #region Signature
-
             else if (Element is ICheckListSignature SignatureElement)
             {
-                if (!String.IsNullOrEmpty(SignatureElement.Description))
-                {
-                    DrawText(SignatureElement.Description, PDFBase.GenericBoldFont);
-                    DrawText("\n");
-                }
+                if (!string.IsNullOrEmpty(SignatureElement.Description))
+                    DrawText(SignatureElement.Description, PDFBase.BoldFont, 5);
 
                 if (SignatureElement.History.Count > 0)
                     foreach (var Sign in SignatureElement.History)
                     {
-                        var Date = Sign.DateTime.ToLocalTime(TimeZone);
-                        DrawSignature(String.IsNullOrEmpty(Sign.Note) ? "Signed by" : "Canceled by", Sign.User, Date.ToString("yyyy-MM-dd"), Date.ToString("HH:mm"), Sign.Signature);
+                        var Date = Sign.DateTime.ToLocalTime(CheckListPDF.TimeZone);
+                        DrawSignature(string.IsNullOrEmpty(Sign.Note) ? "Signed by" : "Canceled by", SignatureElement.Valid, Sign.User, Date.ToString("yyyy-MM-dd"), Date.ToString("HH:mm"), Sign.Signature);
                     }
                 else
-                    DrawSignature("Signed by");
+                    DrawSignature("Signed by", SignatureElement.Valid);
             }
-
-            #endregion
-
-            #region Field
-
             else if (Element is ICheckListField FieldElement)
             {
-                var Description = FieldElement.Description;
+                DrawText(string.IsNullOrEmpty(FieldElement.Description) ? "(no description)" : FieldElement.Description, PDFBase.BoldFont, 5);
 
-                if (String.IsNullOrEmpty(Description))
-                    Description = "(no description)";
+                if (FieldElement.ValueType.TypeName == "Boolean")
+                {
+                    PdfPTable Table = new PdfPTable(1) { WidthPercentage = 3, HorizontalAlignment = RowAlignment.Left };
+                    var Cell = new PdfPCell(new Paragraph().SetText(FieldElement.Value == "true" ? "X" : string.Empty).SetFont(PDFBase.GenericFont).Padding(0)).SetHorizontalAlign(ParagraphAlignment.Center);
+                    Table.AddCell(Cell);
+                    if (!FieldElement.Valid)
+                        Table.BorderColor = PDFBase.Red;
+                    if (FieldElement.ReadOnly)
+                        Cell.Content.Format.Shading.Color = PDFBase.LightGray;
+                    Table.CompleteRow();
+                    PDFBase.Container.Add(Table);
+                    DrawText(string.Empty);
+                }
                 else
-                    Description = FieldElement.Description;
-
-                DrawText(Description + "\n", PDFBase.GenericBoldFont);
-
-                DrawText(CheckListPDF.GetFieldValue(this) + "\n", PDFBase.GenericFontGray);
+                {
+                    var Paragraph = DrawText(CheckListPDF.GetFieldValue(FieldElement), PDFBase.GenericFont, 10);
+                    Paragraph.Format.LeftIndent = 5;
+                    Paragraph.Format.RightIndent = 5;
+                    Paragraph.Format.Borders.Top = FieldElement.Valid ? PDFBase.DefaultBorder : PDFBase.RedBorder;
+                    Paragraph.Format.Borders.Right = FieldElement.Valid ? PDFBase.DefaultBorder : PDFBase.RedBorder;
+                    Paragraph.Format.Borders.Bottom = FieldElement.Valid ? PDFBase.DefaultBorder : PDFBase.RedBorder;
+                    Paragraph.Format.Borders.Left = FieldElement.Valid ? PDFBase.DefaultBorder : PDFBase.RedBorder;
+                    Paragraph.Format.Borders.DistanceFromLeft = Paragraph.Format.Borders.DistanceFromRight = 5;
+                    Paragraph.Format.Borders.DistanceFromTop = Paragraph.Format.Borders.DistanceFromBottom = 5;
+                    if (FieldElement.ReadOnly)
+                        Paragraph.Format.Shading.Color = PDFBase.LightGray;
+                }
             }
+            else if (Element is ICheckListLink LinkElement)
+            {
+                var Paragraph = DrawText(null, PDFBase.GenericFont, 10).AddHyperlink(LinkElement.Url, HyperlinkType.Web).AddFormattedText(string.IsNullOrEmpty(LinkElement.Description) ? "(link)" : LinkElement.Description);
+                Paragraph.Font.Underline = Underline.Single;
+            }
+            else if (Element is ICheckListImage ImageElement)
+            {
+                Paragraph Paragraph;
+                if (!string.IsNullOrEmpty(ImageElement.Description))
+                {
+                    Paragraph = DrawText(ImageElement.Description, PDFBase.BoldFont, 5);
+                    Paragraph.Format.Alignment = ParagraphAlignment.Center;
+                }
 
-            #endregion
+                Paragraph = PDFBase.Container.AddParagraph();
+                Paragraph.Format.Alignment = ParagraphAlignment.Center;
+                var StorageFile =
+                    await CheckListPDF.StorageService.GetAsync(
+                        CheckListPDF.ConfigurationService.PrototypesStorageBucket, ImageElement.Key);
+                byte[] Data;
+                Bitmap Image;
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    await StorageFile.Content.CopyToAsync(ms);
+                    Image = new Bitmap(ms);
+                    Data = ms.ToArray();
+                }
+
+                var PDFImage = Paragraph.AddImage(Data);
+                var MaxWidth = PDFBase.Container.PageSetup.PageWidth - PDFBase.Container.PageSetup.LeftMargin - PDFBase.Container.PageSetup.LeftMargin;
+                Paragraph.Format.SpaceAfter = 10;
+
+                if (Image.Width * .4 > MaxWidth)
+                {
+                    PDFImage.LockAspectRatio = true;
+                    PDFImage.Width = PDFBase.Container.PageSetup.PageWidth - PDFBase.Container.PageSetup.LeftMargin - PDFBase.Container.PageSetup.LeftMargin;
+                }
+                else
+                    PDFImage.ScaleWidth = .4;
+            }
+            else if (Element is ICheckListAttachment AttachmentElement)
+            {
+                if (!string.IsNullOrEmpty(AttachmentElement.Description))
+                    DrawText(AttachmentElement.Description, PDFBase.BoldFont, 5);
+
+                if (AttachmentElement.FileType == "Image")
+                {
+                    Paragraph Paragraph = PDFBase.Container.AddParagraph();
+                    Paragraph.Format.Alignment = ParagraphAlignment.Center;
+                    var StorageFile =
+                        await CheckListPDF.StorageService.GetAsync(
+                            CheckListPDF.ConfigurationService.InstancesStorageBucket, AttachmentElement.Key);
+                    byte[] Data;
+                    Bitmap Image;
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        await StorageFile.Content.CopyToAsync(ms);
+                        Image = new Bitmap(ms);
+                        Data = ms.ToArray();
+                    }
+
+                    var PDFImage = Paragraph.AddImage(Data);
+                    var MaxWidth = PDFBase.Container.PageSetup.PageWidth - PDFBase.Container.PageSetup.LeftMargin - PDFBase.Container.PageSetup.LeftMargin;
+                    Paragraph.Format.SpaceAfter = 10;
+
+                    if (Image.Width * .4 > MaxWidth)
+                    {
+                        PDFImage.LockAspectRatio = true;
+                        PDFImage.Width = PDFBase.Container.PageSetup.PageWidth - PDFBase.Container.PageSetup.LeftMargin - PDFBase.Container.PageSetup.LeftMargin;
+                    }
+                    else
+                        PDFImage.ScaleWidth = .4;
+                }
+                else
+                {
+                    var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.InstancesStorageBucket, AttachmentElement.Key);
+                    DrawText($"(see attachament {Index})", null, 10);
+                }
+            }
         }
     }
 }

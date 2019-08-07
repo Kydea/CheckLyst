@@ -28,6 +28,10 @@ div.Dialog {
 
         div.Content {
             overflow: auto;
+
+			label {
+				margin-bottom: 5px;
+			}
         }
 
         div.Buttons {

@@ -77,7 +77,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Helper
                     }
             }
 
-            public void Render(Table table)
+            public void Render(Table table, Color? BorderColor)
             {
                 Row row;
                 PdfPCell cell;
@@ -108,7 +108,8 @@ namespace CheckListManager.Common.Logic.Api.PDF.Helper
 
                         row.Cells[cellIndex].MergeRight = cell.Colspan - 1;
                         row.Cells[cellIndex].MergeDown = cell.Rowspan - 1;
-                        row.Cells[cellIndex].Borders.Color = CheckListPDF.BorderColor;
+                        row.Cells[cellIndex].Borders.Color = BorderColor ?? PDFBase.Gray;
+                        row.Cells[cellIndex].Shading.Color = cell.Content.Format.Shading.Color;
                     }
 
                     Rows[rowIndex] = null;
@@ -130,6 +131,8 @@ namespace CheckListManager.Common.Logic.Api.PDF.Helper
 
         public RowAlignment HorizontalAlignment { get; set; }
 
+        public Color? BorderColor { get; set; }
+
         public PdfPTable(int columns)
         {
             if (columns == 0)
@@ -150,7 +153,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Helper
             _widths = widths;
         }
 
-        public MigraDoc.DocumentObjectModel.Tables.Table Render(Section Section)
+        public Table Render(Section Section)
         {
             Table table = PDFExtension.CreateTable();
             table.Rows.Alignment = HorizontalAlignment;
@@ -165,7 +168,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Helper
                     table.AddColumn(Unit.FromPoint(width / Columns));
             }
 
-            Rows.Render(table);
+            Rows.Render(table, BorderColor);
 
             return table;
         }

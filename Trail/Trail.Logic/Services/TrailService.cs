@@ -44,7 +44,6 @@ namespace CheckListManager.Trail.Logic.Services
             Records record = null;
 			try
 			{
-                record = null;
 				record = _mapper.Map<Records>(message.Message);
 				await _trailRepository.AddAsync(record);
 				await _queueService.DeleteMessageAsync(QueueName.Trail, message.MessageHandle, cancellationToken);

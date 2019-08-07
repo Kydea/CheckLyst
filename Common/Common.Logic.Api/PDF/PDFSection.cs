@@ -1,10 +1,4 @@
-﻿using CheckListManager.Common.Logic.Api.PDF.Helper;
-using MigraDoc.DocumentObjectModel;
-using PdfSharp.Drawing;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using MigraDoc.DocumentObjectModel;
 using System.Threading.Tasks;
 
 namespace CheckListManager.Common.Logic.Api.PDF
@@ -21,19 +15,15 @@ namespace CheckListManager.Common.Logic.Api.PDF
             this.Indentation = Indentation;
         }
 
-        public abstract void Render(params object[] State);
+        public abstract Task RenderAsync(params object[] State);
 
-        public void DrawText(string Text, Font Font = null)
+        public Paragraph DrawText(string Text, Font Font = null, int? SpaceAfter = null)
         {
-            if (Font == null)
-                Font = PDFBase.GenericFont;
-
-            if (Text == null)
-                Text = string.Empty;
-
             Paragraph Paragraph = PDFBase.Container.AddParagraph();
-            Paragraph.SetFont(Font);
-            Paragraph.AddText(Text);
+            Paragraph.SetFont(Font ?? PDFBase.GenericFont);
+            Paragraph.AddText(Text ?? string.Empty);
+            if (SpaceAfter.HasValue) Paragraph.Format.SpaceAfter = SpaceAfter.Value;
+            return Paragraph;
         }
     }
 }

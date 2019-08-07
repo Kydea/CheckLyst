@@ -1,5 +1,5 @@
 insert into "Infrastructure"."Companies"("Name", "TimeZone", "MaximumNumberOfPINFailure", "LoginFailedTimeout", "PINDaysLife", "MaximumNumberOfPasswordFailure", "PasswordDaysLife", "WarningUserInactivityDays", "MaximumUserInactivityDays") 
-values ('Janssen Beerse', 'Europe/Rome', 5, 20, 90, 20, 365, 335, 365); --see http://momentjs.com/timezone/docs/#/data-loading/
+values ('Janssen Manati', 'America/Puerto_Rico', 5, 20, 90, 20, 365, 335, 365); --see http://momentjs.com/timezone/docs/#/data-loading/
 
 insert into "Infrastructure"."Departments" ("Company", "Name") values (currval('"Infrastructure"."Companies_ID_seq"'), 'Automation (P)');
 insert into "Infrastructure"."Departments" ("Company", "Name") values (currval('"Infrastructure"."Companies_ID_seq"'), 'Quality control (P)');
@@ -22,8 +22,8 @@ insert into "Security"."UserFunctions" ("Company", "User", "FunctionGroup", "Fun
 values (currval('"Infrastructure"."Companies_ID_seq"'), 'CheckListManager', 'Users', 'Edit');
 
 insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
-	(currval('"Infrastructure"."Companies_ID_seq"'), 'LDAPHost', 'eu.jnj.com'),
-	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpHost', 'smtp.eu.jnj.com'),
+	(currval('"Infrastructure"."Companies_ID_seq"'), 'LDAPHost', 'na.jnj.com'),
+	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpHost', 'smtp.na.jnj.com'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpPort', '25'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpUsername', ''),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'SmtpPassword', ''),
@@ -32,4 +32,5 @@ insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") valu
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'UserBlockWarningMessage', '[User], <br /> your account will soon be disabled if you do not login.'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'SignatureMessage', '[User], <br /> you have a pending workflow for the [CheckListType] [CheckListCode].'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'InstanceMessage', '[User], <br /> A signature has been issued for the instance [CheckListCode].'),
-	(currval('"Infrastructure"."Companies_ID_seq"'), 'DecimalSeparator', ',');
+	(currval('"Infrastructure"."Companies_ID_seq"'), 'DecimalSeparator', '.'),
+	(currval('"Infrastructure"."Companies_ID_seq"'), 'RequireUserReason', 'true');

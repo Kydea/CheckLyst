@@ -278,6 +278,13 @@
 		});
 	};
 
+	this.setValue = function (name, value) {
+		var field = fields.filter("[name=" + name + "]");
+		if (field.length) {
+			setFieldValue(field, value);
+		}
+	};
+
 	this.getOptions = function () {
 		return options;
 	};

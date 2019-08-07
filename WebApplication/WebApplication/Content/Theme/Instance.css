@@ -221,6 +221,9 @@ div.Instance .Item.Field.ReadOnly.DateTime div.Input, div.Instance .Item.Field.R
 div.Instance .Item.Field.ReadOnly .AutoComplete, div.Instance .Item.Field.ReadOnly .AutoComplete-Filter, div.Instance .Item.Field.ReadOnly .AutoComplete-List {
   display: none !important; }
 
+div.Instance .Item.Field.ReadOnly.MultiLine div.Input {
+  line-height: 20px; }
+
 div.Instance .Item.Field .ExternalSourceLink {
   position: absolute;
   top: 26px;
@@ -319,6 +322,10 @@ div.Instance .Page > div.CountDown, div.Instance .Group > div.CountDown {
   div.Instance .Page > div.CountDown a, div.Instance .Group > div.CountDown a {
     margin-top: 30px; }
 
+div.Instance .Page div.TableContainer, div.Instance .Group div.TableContainer {
+  overflow: auto;
+  width: calc(100% - 20px); }
+
 div.Instance .InstanceDescription {
   position: relative;
   padding-right: 20px;
@@ -377,9 +384,20 @@ div.Instance table.Grid {
         float: none;
         min-width: unset;
         margin-top: 0; }
+    div.Instance table.Grid tbody tr td.Link {
+      font-size: 13px; }
+      div.Instance table.Grid tbody tr td.Link a.Link {
+        color: #ffba00; }
+    div.Instance table.Grid tbody tr td.Image, div.Instance table.Grid tbody tr td.Attachment {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%; }
+      div.Instance table.Grid tbody tr td.Image a + a, div.Instance table.Grid tbody tr td.Attachment a + a {
+        margin-left: 10px; }
     div.Instance table.Grid tbody tr td > div.Information {
       left: 2px; }
-    div.Instance table.Grid tbody tr td i.Icon {
+    div.Instance table.Grid tbody tr td:not(.Image):not(.Attachment) i.Icon {
       display: none; }
     div.Instance table.Grid tbody tr td.IterationCommands {
       white-space: nowrap;
