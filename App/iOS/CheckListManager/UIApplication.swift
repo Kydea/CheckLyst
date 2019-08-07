@@ -17,12 +17,19 @@ import UIKit
     var isWarningPresented = false
     let timeBeforeTokenExpires = 120.0 /* 2 minutes */
     var isRefreshing = false
+    var requestToOpenInstance = false
+    var needToUpdateTokens = false
     
     var timer : Timer?
     var inactivityTimer : Timer?
     
-    let inactivityTime = 900.0 /* 15 minutes */
+    let defaultInactivityTime = 900.0 /* 15 minutes */
     
+    var requestedUrlInfo : Dictionary<String, String>?
+    
+    var inactivityInterval : TimeInterval {
+        return (UserDefaults.standard.value(forKey: "inactivityTimeoutSeconds") as? Double) ?? defaultInactivityTime
+    }
     
     override func sendEvent(_ event: UIEvent) {
         
@@ -44,7 +51,7 @@ import UIKit
         
         
         if restartTimer {
-            self.refreshInactivityTimer(timeToExpireActivity: inactivityTime)
+            self.refreshInactivityTimer(timeToExpireActivity: inactivityInterval)
         }
         super.sendEvent(event)
     }
@@ -85,9 +92,14 @@ import UIKit
                         {
                             UserDefaults.standard.setValue(json["access_token"], forKey: "access_token")
                             
-                            UserDefaults.standard.setValue(Formatter.instance.dateFromTimeString(json[".expires"] as! String), forKey: "token_expires")
+                            UserDefaults.standard.setValue(Date() + (json["expires_in"] as! TimeInterval), forKey: "token_expires")
                             
                             self.isRefreshing = false
+                            self.needToUpdateTokens = true
+                            
+                            if let controller = self.getInstanceWebView() {
+                                controller.refreshTokensByJSInjection(accessToken: UserDefaults.standard.value(forKey: "access_token") as! String, refreshToken: UserDefaults.standard.value(forKey: "refresh_token") as! String)
+                            }
                             
                         } else {
                             
@@ -105,6 +117,55 @@ import UIKit
             
         }
         
+    }
+    
+    private func getInstanceWebView() -> InstanceViewController? {
+        if var topController = UIApplication.shared.keyWindow?.rootViewController {
+            
+            while let presentedViewController = topController.presentedViewController {
+                topController = presentedViewController
+            }
+            
+            if topController.isKind(of: TabViewController.self)
+            {
+                
+                if((topController as! TabViewController).selectedIndex == 1) {
+                    if let navigationController = (topController as! TabViewController).viewControllers![(topController as! TabViewController).selectedIndex] as? UINavigationController {
+                        if(navigationController.childViewControllers.count > 2) {
+                            print(navigationController.childViewControllers.debugDescription)
+                            for controller in navigationController.childViewControllers {
+                                if controller.isKind(of: InstanceViewController.self) {
+                                    return controller as? InstanceViewController
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return nil
+    }
+    
+    func openInstance() {
+        if var topController = UIApplication.shared.keyWindow?.rootViewController {
+            
+            while let presentedViewController = topController.presentedViewController {
+                topController = presentedViewController
+            }
+            
+            if topController.isKind(of: TabViewController.self)
+            {
+                
+                if ((topController as! TabViewController).selectedIndex != 1) {
+                    (topController as! TabViewController).selectedIndex = 1
+                }
+                
+                if let controller = (topController as! TabViewController).viewControllers![(topController as! TabViewController).selectedIndex] as? InstancesSearchViewController {
+                    requestToOpenInstance = false
+                    controller.performSegue(withIdentifier: "openInstanceDirectly", sender: self)
+                }
+            }
+        }
     }
     
     func logoutAndGoToLogin()
@@ -172,6 +233,7 @@ import UIKit
         if let timer = inactivityTimer {
             timer.invalidate()
         }
+        
         self.logoutAndGoToLogin()
     }
     
@@ -199,10 +261,11 @@ import UIKit
         
         if(logged){
             if let lastActiveTime = UserDefaults.standard.value(forKey: "backgroundTime") as? Date {
-                if(lastActiveTime.addingTimeInterval(inactivityTime) < Date()) {
+                
+                if(lastActiveTime.addingTimeInterval(inactivityInterval) < Date()) {
                     self.logoutAndGoToLogin()
                 } else {
-                    self.refreshInactivityTimer(timeToExpireActivity: lastActiveTime.addingTimeInterval(inactivityTime).timeIntervalSince(Date()))
+                    self.refreshInactivityTimer(timeToExpireActivity: lastActiveTime.addingTimeInterval(inactivityInterval).timeIntervalSince(Date()))
                 }
             }
         }

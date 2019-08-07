@@ -139,6 +139,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
+    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+        
+        print(url.path)
+        
+        let delegate = (UIApplication.shared as! MyApplication)
+        delegate.requestToOpenInstance = true
+        delegate.requestedUrlInfo = url.getParametersForInstance
+        if let logged = UserDefaults.standard.string(forKey: "logged") {
+            if (NSString(string:logged).boolValue) {
+                print("open instance")
+                (UIApplication.shared as! MyApplication).openInstance()
+            } else {
+                print("login and then open instance")
+            }
+        } else {
+            (UIApplication.shared as! MyApplication).logoutAndGoToLogin()
+        }
+        return true
+    }
+    
    
 }
 

@@ -28,7 +28,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate
     
     var chooseDictionary : NSMutableDictionary = [:]
     
-    var selectedCompany : String = ""
+    var selectedCompany : Company?
     
     let context = ((UIApplication.shared.delegate as! AppDelegate).managedObjectContext)
     
@@ -78,12 +78,9 @@ class LoginViewController: UIViewController, UITextFieldDelegate
             
             if(serverResponse.error != nil){
                 
-                var errorMessage = "No message"
+                let errorMessage = "Connection error to the server"
                 let title = "Error"
                 
-                if(serverResponse.error!.code == -1009){
-                    errorMessage = "Connection error to the server"
-                }
                 
                 self.showSimpleErrorAlert(title, message: errorMessage)
             }
@@ -97,7 +94,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate
                     self.chooseDictionary.removeAllObjects()
                     
                     for company in json {
-                        self.chooseDictionary.addEntries(from: [company.name : String(company.id)])
+                        self.chooseDictionary.addEntries(from: [company.name : ["id" : String(company.id), "inactivityTimeoutSeconds" : String(company.inactivityTimeoutSeconds)]])
                     }
                     
                     self.activityIndicator.stopAnimating()
@@ -218,7 +215,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate
         
         self.view.isUserInteractionEnabled = false
         
-        ServerConnection.loginOrRefreshToServer(["Company" : self.selectedCompany,"Code":userCodeTextField.text!,"Password":passwordTextField.text!]){ (serverResponse) -> Void in
+        ServerConnection.loginOrRefreshToServer(["Company" : String(self.selectedCompany!.id),"Code":userCodeTextField.text!,"Password":passwordTextField.text!]){ (serverResponse) -> Void in
             
             if(serverResponse.error != nil){
                 
@@ -252,7 +249,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate
                         
                         self.setUserInformation(userInfo: json)
                         
-                        (UIApplication.shared as! MyApplication).refreshInactivityTimer(timeToExpireActivity: (UIApplication.shared as! MyApplication).inactivityTime)
+                        (UIApplication.shared as! MyApplication).refreshInactivityTimer(timeToExpireActivity: (UIApplication.shared as! MyApplication).inactivityInterval)
                         
                         self.getClient()
                         
@@ -327,7 +324,9 @@ class LoginViewController: UIViewController, UITextFieldDelegate
         
         UserDefaults.standard.setValue(self.companyTextField.text!, forKey: "companyName")
         
-        UserDefaults.standard.setValue(Formatter.instance.dateFromTimeString(json[".expires"] as! String), forKey: "token_expires")
+        UserDefaults.standard.setValue(self.selectedCompany!.inactivityTimeoutSeconds, forKey: "inactivityTimeoutSeconds")
+        
+        UserDefaults.standard.setValue(Date() + (json["expires_in"] as! TimeInterval), forKey: "token_expires")
         
         UserDefaults.standard.setValue(json["decimalSeparator"], forKey: "decimalSeparator")
         
@@ -351,7 +350,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate
                     
                     controller.serverFieldsDictionary = chooseDictionary as? Dictionary<String,(api:String, frontEnd:String)>
                 } else {
-                    controller.companyFieldsDictionary = chooseDictionary as? Dictionary<String,String>
+                    controller.companyFieldsDictionary = chooseDictionary as? Dictionary<String,Dictionary<String, String>>
                 }
                 
                 controller.loginViewController = self

@@ -8,17 +8,18 @@
 
 import Foundation
 import UIKit
+import WebKit
 
-class UserManualViewController: UIViewController, UIWebViewDelegate {
+class UserManualViewController: UIViewController, WKNavigationDelegate {
     
-    @IBOutlet var webView: UIWebView!
+    
+    @IBOutlet var webView: WKWebView!
     
     @IBOutlet var activityIndicator: UIActivityIndicatorView!
     
     let app = UIApplication.shared as! MyApplication
     
     var helpLoaded : Bool = false
-    
     
     override func viewDidLoad()
         
@@ -29,7 +30,7 @@ class UserManualViewController: UIViewController, UIWebViewDelegate {
         
         self.navigationItem.leftBarButtonItem = SharedControllersProperty.setLogo(self.navigationItem.leftBarButtonItem);
         
-        webView.delegate = self
+        webView.navigationDelegate = self
         
         activityIndicator.hidesWhenStopped = true
         
@@ -45,6 +46,8 @@ class UserManualViewController: UIViewController, UIWebViewDelegate {
             
             let fullUrl = ServerConnection.baseFrontEndUrl + "/Help/App?AppUser="+(UserDefaults.standard.string(forKey: "userCode"))!+"&d=" + String(Int64(Date().timeIntervalSince1970 * 1000))
             
+            print(fullUrl)
+            
             let url = URL(string: fullUrl)
             
             let request = NSMutableURLRequest(url: url!)
@@ -53,13 +56,16 @@ class UserManualViewController: UIViewController, UIWebViewDelegate {
             
             request.timeoutInterval = 10
             
-            webView.loadRequest(request as URLRequest)
+            //request.addValue((UserDefaults.standard.value(forKey: "token_type") as! String).capitalized + " " + (UserDefaults.standard.value(forKey: "access_token") as! String), forHTTPHeaderField: "Authorization")
+            
+            webView.load(request as URLRequest)
             
             self.lockView()
             
         }
         
     }
+   
     
     
     override func viewDidLayoutSubviews() {
@@ -69,17 +75,28 @@ class UserManualViewController: UIViewController, UIWebViewDelegate {
     }
     
     
-    
-    func webView(_ webView: UIWebView, shouldStartLoadWith request: URLRequest, navigationType: UIWebViewNavigationType) -> Bool {
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        unlockView()
         
-        return true;
+        self.webView.isHidden = false
         
+        
+        webView.evaluateJavaScript("window.location.href") {
+            (response, error) -> Void in
+            if let value = response as? String {
+                if(value.contains("Security/Login")) {
+                    print("redirecting")
+                    webView.isHidden = true
+                    self.helpLoaded = false
+                    self.app.logoutAndGoToLogin()
+                }
+            }
+        }
     }
     
     
     
-    
-    func webViewDidFinishLoad(_ webView: UIWebView) {
+    /*func webViewDidFinishLoad(_ webView: UIWebView) {
         
         unlockView()
         
@@ -93,10 +110,12 @@ class UserManualViewController: UIViewController, UIWebViewDelegate {
             
             logoutAndGoToLogin()
         }
-    }
+    }*/
     
     
-    func webView(_ webView: UIWebView, didFailLoadWithError error: Error) {
+    
+    
+    /*func webView(_ webView: UIWebView, didFailLoadWithError error: Error) {
         
         unlockView()
         
@@ -109,8 +128,16 @@ class UserManualViewController: UIViewController, UIWebViewDelegate {
         }))
         
         self.present(alert, animated: false, completion: nil)
-    }
+    }*/
     
+    func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+    unlockView()
+    let alert = UIAlertController(title: "Error", message: "Connection error to the server", preferredStyle: .alert)
+    alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action) -> Void in
+    self.tabBarController?.selectedIndex = 0
+    }))
+    self.present(alert, animated: false, completion: nil)
+    }
     
     
     func logoutAndGoToLogin()

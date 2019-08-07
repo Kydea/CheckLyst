@@ -32,6 +32,10 @@ class ListInstancesTableViewController: UIViewController, UITableViewDataSource,
         self.tableView.tableFooterView =  UIView()
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated);
+        
+    }
     
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -49,20 +53,26 @@ class ListInstancesTableViewController: UIViewController, UITableViewDataSource,
      {
         
         let instance = instancesList[indexPath.row]
-
+        
+        var descriptionSize : CGFloat = 0
+        
+        if let description = instance?.description {
+            descriptionSize = description.getHTMLStringHeight(font: UIFont(name: "Arial", size: 14.0)!)
+        }
+        
         if(buttonTappedRows![indexPath.row])
             
         {
-            return instance!.description != nil ? 254.0 :  228.0
+            return instance!.description != nil ? 239.0 + descriptionSize :  239.0
         }
         else if(instance!.description != nil)
         {
-        return 110
+        return 95 + descriptionSize
             
         }
         else
         {
-            return 84
+            return 95
         }
     }
     
@@ -120,17 +130,11 @@ class ListInstancesTableViewController: UIViewController, UITableViewDataSource,
         
         idLabel?.text = String(instance!.id)
         
-        descrLabel?.text = instance!.description
-        
-        
-        if(instance!.description == nil)
-        
-        {
-            cell?.stateLabelTopConstraint.constant = 10.0
-            tableView.setNeedsLayout()
+        if (instance!.description?.classFormat != nil) {
+            print("description: " + instance!.description!.classFormat!.string)
+            descrLabel?.attributedText = instance!.description?.classFormat
         } else {
-            cell?.stateLabelTopConstraint.constant = 33.0
-            tableView.setNeedsLayout()
+            descrLabel?.text = instance!.description
         }
         
         stateLabel?.text = instance!.state
@@ -179,7 +183,9 @@ class ListInstancesTableViewController: UIViewController, UITableViewDataSource,
         
         paths.append(IndexPath(row: sender.tag, section: 0))
         
-        paths.append(oldIndexPath)
+        if(oldIndexPath.row != -1) {
+            paths.append(oldIndexPath)
+        }
         
         if(infoButtonTappedRow != -1 && infoButtonTappedRow != sender.tag)
             

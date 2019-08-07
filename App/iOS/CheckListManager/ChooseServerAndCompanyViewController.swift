@@ -15,7 +15,7 @@ class ChooseServerAndCompanyViewController: UIViewController, UITableViewDelegat
     
     @IBOutlet var okButton: UIButton!
     
-    var companyFieldsDictionary: [String:String]?
+    var companyFieldsDictionary: [String:[String: String]]?
     
     var serverFieldsDictionary: [String:(api: String, frontEnd: String)]?
     
@@ -106,7 +106,11 @@ class ChooseServerAndCompanyViewController: UIViewController, UITableViewDelegat
         } else {
             loginViewController?.companyTextField.text = Array(companyFieldsDictionary!.keys)[indexPath.row]
             
-            loginViewController?.selectedCompany = companyFieldsDictionary![Array(companyFieldsDictionary!.keys)[indexPath.row]]!
+            let id = Int(companyFieldsDictionary![Array(companyFieldsDictionary!.keys)[indexPath.row]]!["id"]!)!
+            let name = Array(companyFieldsDictionary!.keys)[indexPath.row]
+            let inactivitySecondsTimeout = Int(companyFieldsDictionary![Array(companyFieldsDictionary!.keys)[indexPath.row]]!["inactivityTimeoutSeconds"]!)!
+            
+            loginViewController?.selectedCompany = Company(id: id, name: name, inactivityTimeoutSeconds: inactivitySecondsTimeout)
         }
         
         self.navigationController?.popViewController(animated: true)
