@@ -36,3 +36,9 @@ insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") valu
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'DecimalSeparator', ','),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'RequireUserReason', 'true');
 
+insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
+ (currval('"Infrastructure"."Companies_ID_seq"'),'PrototypesFtpConnection','{ "Host": "AWSAZFIRL1234.jnj.com", "Port": 21, "Folder": "/CLFTP-Prototypes-LT-QA",  "UserName": "SA-JAC-CLFTP-LT-QA", "Password": "@Ch3ck7yst", "UsePassive": "true", "EnableSSL": "true" }');
+ 
+insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
+ (currval('"Infrastructure"."Companies_ID_seq"'),'InstancesFtpConnection','{ "Host": "AWSAZFIRL1234.jnj.com", "Port": 21, "Folder": "/CLFTP-Instances-LT-QA",  "UserName": "SA-JAC-CLFTP-LT-QA", "Password": "@Ch3ck7yst", "UsePassive": "true", "EnableSSL": "false" }');
+ 

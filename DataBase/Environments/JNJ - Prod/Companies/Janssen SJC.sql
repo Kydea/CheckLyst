@@ -34,3 +34,8 @@ insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") valu
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'InstanceMessage', '[User], <br /> A signature has been issued for the instance [CheckListCode].'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'DecimalSeparator', ','),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'RequireUserReason', 'true');
+
+insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
+	(currval('"Infrastructure"."Companies_ID_seq"'), 'PrototypesFtpConnection', '{ "Host": "AWSAZFIRL1238.jnj.com", "Port": 21, "Folder": "/CLFTP-Prototypes-SJ-PRD",  "UserName": "SA-JAC-CLFTP-SJ-PRD", "Password": "@Ch3ck7yst,1", "UsePassive": "true", "EnableSSL": "true" }');
+  
+  

@@ -32,24 +32,12 @@ insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") valu
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'InstanceMessage', '[User], <br /> A signature has been issued for the instance [CheckListCode].'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'DecimalSeparator', ','),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'RequireUserReason', 'true');
-
-
--- DEV
-insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
-	(currval('"Infrastructure"."Companies_ID_seq"'), 'PrototypesFtpConnection', '{ "Host": "10.157.83.244", "Port": 21, "Folder": "/ChecklystPrototype_dev_sch",  "UserName": "FtpDev", "Password": "AA_Latina_01", "UsePassive": "true", "EnableSSL": "false" }');
-
-insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
-	(currval('"Infrastructure"."Companies_ID_seq"'), 'InstancesFtpConnection', '{ "Host": "10.157.83.244", "Port": 21, "Folder": "/ChecklystInstances_dev_sch",  "UserName": "FtpDev", "Password": "AA_Latina_01", "UsePassive": "true", "EnableSSL": "false" }');
-  
--- QA
+ 
 insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values 
 	(currval('"Infrastructure"."Companies_ID_seq"'),'PrototypesFtpConnection','{ "Host": "AWSAZFIRL1234.jnj.com", "Port": 21, "Folder": "/CLFTP-Prototypes-SCH-QA",  "UserName": "SA-JAC-CLFTP-SCH-QA", "Password": "@Ch3ck7yst", "UsePassive": "true", "EnableSSL": "true" }');
  
 insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
 	(currval('"Infrastructure"."Companies_ID_seq"'),'InstancesFtpConnection','{ "Host": "AWSAZFIRL1234.jnj.com", "Port": 21, "Folder": "/CLFTP-Instances-SCH-QA",  "UserName": "SA-JAC-CLFTP-SCH-QA", "Password": "@Ch3ck7yst", "UsePassive": "true", "EnableSSL": "true" }');
  
--- PRODUCTION
-  
-insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
-	(currval('"Infrastructure"."Companies_ID_seq"'), 'PrototypesFtpConnection', '{ "Host": "AWSAZFIRL1238.jnj.com", "Port": 21, "Folder": "/CLFTP-Prototypes-SCH-PRD",  "UserName": "SA-JAC-CLFTP-SCH-PRD", "Password": "@Ch3ck7yst,1", "UsePassive": "true", "EnableSSL": "true" }');
+
 
