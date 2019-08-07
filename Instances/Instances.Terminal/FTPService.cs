@@ -26,15 +26,17 @@ namespace CheckListManager.Instances.Terminal
 		private readonly ISettingService _settingService;
         private readonly IInstanceManagerService _instanceManagerService;
         private readonly ICommonRepository _commonRepository;
+        private readonly IInstancesRepository _instancesRepository;
         private readonly IConfigurationService _configurationService;
         private readonly IStorageService _storageService;
 
-        public FTPService(IQueueService queueService, ISettingService settingService, IInstanceManagerService instanceManagerService, ICommonRepository commonRepository, IConfigurationService configurationService, IStorageService storageService)
+        public FTPService(IQueueService queueService, ISettingService settingService, IInstanceManagerService instanceManagerService, ICommonRepository commonRepository, IInstancesRepository instancesRepository, IConfigurationService configurationService, IStorageService storageService)
 		{
 			_queueService = queueService;
 			_settingService = settingService;
             _instanceManagerService = instanceManagerService;
             _commonRepository = commonRepository;
+            _instancesRepository = instancesRepository;
             _configurationService = configurationService;
             _storageService = storageService;
         }
@@ -118,7 +120,7 @@ namespace CheckListManager.Instances.Terminal
 
             var Company = await _commonRepository.GetCompanyAsync(message.Company);
 
-            var PDF = new InstancePDF(Company.ID, Company.Name, Company.TimeZones.MicrosoftCode, _configurationService.PublicRepositoryUrl, cacheObject, _storageService, _configurationService);
+            var PDF = new InstancePDF(Company.ID, Company.Name, Company.TimeZones.MicrosoftCode, _configurationService.PublicRepositoryUrl, cacheObject, _instancesRepository, _storageService, _configurationService);
             var MemoryStream = new MemoryStream();
             await PDF.GenerateAsync(MemoryStream);
 

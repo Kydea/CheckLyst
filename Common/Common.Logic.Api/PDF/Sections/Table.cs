@@ -58,11 +58,9 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
 
             DrawText("\n");
 
-            ///*Render Signatures Table*/
-            if (CheckListPDF.IsPrototype() || Signatures.Any(x => x.History.Count > 0))
+            if (Signatures.Any(x => x.History.Count > 0))
             {
-                DrawText("Signatures", PDFBase.TitleFont2);
-                DrawText("\n");
+                DrawText("Signatures", PDFBase.TitleFont2, 10);
 
                 Table = RenderSignaturesTable();
                 PDFBase.Container.Add(Table);

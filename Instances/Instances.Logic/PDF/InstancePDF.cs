@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CheckListManager.Common.Core.Helpers;
 using CheckListManager.Common.Data;
@@ -7,19 +8,23 @@ using CheckListManager.Common.Logic.Api.PDF;
 using CheckListManager.Common.Logic.Api.PDF.Sections;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Services;
+using CheckListManager.Instances.Data;
 using CheckListManager.Instances.Logic.Models;
 using CheckListManager.Instances.Logic.Models.CheckLists;
+using CheckListManager.Instances.Logic.Services;
 
 namespace CheckListManager.Instances.Logic.PDF
 {
     public class InstancePDF : CheckListPDF
     {
-        public InstancePDF(long CompanyID, string CompanyName, string TimeZone, string Repository, InstanceCacheObject Instance, IStorageService StorageService, IConfigurationService ConfigurationService) : base(CompanyID, CompanyName, TimeZone, Repository, Instance.Instance, StorageService, ConfigurationService)
+        public InstancePDF(long CompanyID, string CompanyName, string TimeZone, string Repository, InstanceCacheObject Instance, IInstancesRepository InstancesRepository, IStorageService StorageService, IConfigurationService ConfigurationService) : base(CompanyID, CompanyName, TimeZone, Repository, Instance.Instance, StorageService, ConfigurationService)
         {
             this.Instance = Instance;
+            this.InstancesRepository = InstancesRepository;
         }
 
         private InstanceCacheObject Instance { get; }
+        private IInstancesRepository InstancesRepository { get; }
 
         public string FormatFormula(string Value)
         {
@@ -53,6 +58,27 @@ namespace CheckListManager.Instances.Logic.PDF
         {
             var template = new Template(this, $"{Instance.InstanceCode} - {Instance.InstanceState}");
             return Task.FromResult(template);
+        }
+
+        protected override async Task OnGenerateAsync()
+        {
+            await base.OnGenerateAsync();
+
+            if (Instance.InstanceState == InstanceState.Confirmed)
+            {
+                var Record = await InstancesRepository.GetByIDAsync(Instance.CompanyId, Instance.Id.Value);
+
+                var Signatures = Record
+                    .InstancesHistory
+                    .LastOrDefault(h => h.State == InstanceState.Completed && h.WorkFlowApplication.HasValue)?
+                    .WorkFlowApplications?
+                    .WorkFlowApplicationSteps
+                    .OrderBy(h => h.Step)
+                    .ThenBy(h => h.ID)
+                    .ToList();
+
+                GenerateSignatureBook(Signatures);
+            }
         }
 
         public override bool IsPrototype() => false;

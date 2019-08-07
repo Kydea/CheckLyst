@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
+using CheckListManager.Common.Data;
+using CheckListManager.Common.Logic.Api.PDF.Helper;
 using CheckListManager.Common.Logic.Api.PDF.Sections;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Services;
 using MigraDoc.DocumentObjectModel;
 using PdfSharp.Pdf;
 using PdfSharp.Pdf.IO;
+using CheckListManager.Common.Core.Helpers;
+using System.Linq;
 
 namespace CheckListManager.Common.Logic.Api.PDF
 {
@@ -138,6 +142,42 @@ namespace CheckListManager.Common.Logic.Api.PDF
 
         public virtual void RenderGroup(ICheckListGroup Group)
         {
+        }
+
+        protected void GenerateSignatureBook(List<WorkFlowApplicationSteps> Signatures)
+        {
+            if (Signatures != null && Signatures.Any())
+            {
+                Container.AddPageBreak();
+
+                Paragraph paragraph = Container.AddParagraph("Approval workflow").SetFont(TitleFont1);
+                paragraph.Format.SpaceAfter =    10;
+
+                var Table = new PdfPTable(7) { WidthPercentage = 100 };
+
+                Table.AddCell(new PdfPCell(new Paragraph().SetText("User", BoldFont).Padding(5)));
+                Table.AddCell(new PdfPCell(new Paragraph().SetText("Date", BoldFont).Padding(5)));
+                Table.AddCell(new PdfPCell(new Paragraph().SetText("Time", BoldFont).Padding(5)));
+                Table.AddCell(new PdfPCell(new Paragraph().SetText("Signature step", BoldFont).Padding(5)));
+                Table.AddCell(new PdfPCell(new Paragraph().SetText("Signature reason", BoldFont).Padding(5)));
+                Table.AddCell(new PdfPCell(new Paragraph().SetText("Signature comment", BoldFont).Padding(5)));
+                Table.AddCell(new PdfPCell(new Paragraph().SetText("Signature result", BoldFont).Padding(5)));
+                Table.CompleteRow();
+
+                foreach (var Signature in Signatures)
+                {
+                    Table.AddCell(new PdfPCell(new Paragraph().SetText($"{Signature.User} - {Signature.Users?.Description}", GenericFont).Padding(5)));
+                    Table.AddCell(new PdfPCell(new Paragraph().SetText(Signature.Date?.ToLocalTime(TimeZone).ToString("yyyy-MM-dd"), GenericFont).Padding(5)));
+                    Table.AddCell(new PdfPCell(new Paragraph().SetText(Signature.Date?.ToLocalTime(TimeZone).ToString("HH:mm UTC zzz"), GenericFont).Padding(5)));
+                    Table.AddCell(new PdfPCell(new Paragraph().SetText((Signature.Step + 1).ToString(), GenericFont).Padding(5)));
+                    Table.AddCell(new PdfPCell(new Paragraph().SetText(Signature.Reason, GenericFont).Padding(5)));
+                    Table.AddCell(new PdfPCell(new Paragraph().SetText(Signature.Comment, GenericFont).Padding(5)));
+                    Table.AddCell(new PdfPCell(new Paragraph().SetText(!Signature.Approved.HasValue ? "Pending" : Signature.Approved.Value ? "Approved" : "Rejected", GenericFont).Padding(5)));
+                    Table.CompleteRow();
+                }
+
+                Container.Add(Table);
+            }
         }
     }
 }

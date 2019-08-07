@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CheckListManager.Common.Logic.Services;
 
+
 namespace CheckListManager.Prototypes.Logic.PDF
 {
     public class PrototypePDF : CheckListPDF
@@ -36,7 +37,6 @@ namespace CheckListManager.Prototypes.Logic.PDF
         {
             await base.OnGenerateAsync();
 
-            var Prototype = ((Prototype)Model);
             var Signatures = PrototypeVersion
                 .PrototypeVersionsHistory
                 .LastOrDefault(h => h.State == VersionState.Approved)?
@@ -46,38 +46,7 @@ namespace CheckListManager.Prototypes.Logic.PDF
                 .ThenBy(h => h.ID)
                 .ToList();
 
-            if (Signatures != null && Signatures.Any())
-            {
-                Container.AddPageBreak();
-
-                Paragraph paragraph = Container.AddParagraph("Approval workflow").SetFont(TitleFont1);
-                paragraph.Format.Alignment = ParagraphAlignment.Center;
-
-                var Table = new PdfPTable(7) { WidthPercentage = 100 };
-
-                Table.AddCell(new PdfPCell(new Paragraph().SetText("User", GenericFont).Padding(10)));
-                Table.AddCell(new PdfPCell(new Paragraph().SetText("Date", GenericFont).Padding(10)));
-                Table.AddCell(new PdfPCell(new Paragraph().SetText("Time", GenericFont).Padding(10)));
-                Table.AddCell(new PdfPCell(new Paragraph().SetText("Signature step", GenericFont).Padding(10)));
-                Table.AddCell(new PdfPCell(new Paragraph().SetText("Signature reason", GenericFont).Padding(10)));
-                Table.AddCell(new PdfPCell(new Paragraph().SetText("Signature comment", GenericFont).Padding(10)));
-                Table.AddCell(new PdfPCell(new Paragraph().SetText("Signature result", GenericFont).Padding(10)));
-                Table.CompleteRow();
-
-                foreach (var Signature in Signatures)
-                {
-                    Table.AddCell(new PdfPCell(new Paragraph().SetText($"{Signature.User} - {Signature.Users?.Description}", SmallFont).Padding(10).SetAlignment(ParagraphAlignment.Center)));
-                    Table.AddCell(new PdfPCell(new Paragraph().SetText(Signature.Date?.ToLocalTime(TimeZone).ToString("yyyy-MM-dd"), SmallFont).Padding(10)) { VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center });
-                    Table.AddCell(new PdfPCell(new Paragraph().SetText(Signature.Date?.ToLocalTime(TimeZone).ToString("HH:mm UTC zzz"), SmallFont).Padding(10)) { VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center });
-                    Table.AddCell(new PdfPCell(new Paragraph().SetText((Signature.Step + 1).ToString(), SmallFont).Padding(10)) { VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center });
-                    Table.AddCell(new PdfPCell(new Paragraph().SetText(Signature.Reason)) { VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center });
-                    Table.AddCell(new PdfPCell(new Paragraph().SetText(Signature.Comment, SmallFont).Padding(10)) { VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center });
-                    Table.AddCell(new PdfPCell(new Paragraph().SetText(!Signature.Approved.HasValue ? "Pending" : Signature.Approved.Value ? "Approved" : "Rejected", PDFBase.SmallFont).Padding(10)) { HorizontalAlignment = ParagraphAlignment.Center, VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center });
-                    Table.CompleteRow();
-                }
-
-                Container.Add(Table);
-            }
+            GenerateSignatureBook(Signatures);
         }
 
         protected override FirstPage GenerateFirstPage()

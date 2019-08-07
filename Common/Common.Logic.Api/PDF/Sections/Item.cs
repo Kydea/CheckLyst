@@ -147,6 +147,8 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             }
             else if (Element is ICheckListAttachment AttachmentElement)
             {
+                if (AttachmentElement.Key == null) return;
+
                 if (!string.IsNullOrEmpty(AttachmentElement.Description))
                     DrawText(AttachmentElement.Description, PDFBase.BoldFont, 5);
 
