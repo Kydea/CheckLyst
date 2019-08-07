@@ -1,27 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="ypL-u9-hOc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="ypL-u9-hOc">
     <device id="ipad9_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <deployment version="4608" identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
-    <customFonts key="customFonts">
-        <array key="Arial.ttf">
-            <string>ArialMT</string>
-        </array>
-        <array key="ArialBold.ttf">
-            <string>Arial-BoldMT</string>
-        </array>
-    </customFonts>
     <scenes>
         <!--Login View Controller-->
         <scene sceneID="Pjo-Xg-Rv6">
             <objects>
-                <viewController id="HEh-jm-TWD" customClass="LoginViewController" customModule="CheckListManager" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="HEh-jm-TWD" customClass="LoginViewController" customModule="Checklyst" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="qD4-b8-bIg"/>
                         <viewControllerLayoutGuide type="bottom" id="qba-uV-ne5"/>
@@ -241,12 +232,12 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1Md-Tn-h1M" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="527.9296875" y="-1994.143484626647"/>
+            <point key="canvasLocation" x="505" y="-2082"/>
         </scene>
         <!--firstVc-->
         <scene sceneID="61a-H7-Txf">
             <objects>
-                <viewController storyboardIdentifier="FirstCheck" title="firstVc" id="ypL-u9-hOc" customClass="FirstCheckViewController" customModule="CheckListManager" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="FirstCheck" title="firstVc" modalPresentationStyle="overFullScreen" id="ypL-u9-hOc" customClass="FirstCheckViewController" customModule="Checklyst" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="3ls-ZF-qpD"/>
                         <viewControllerLayoutGuide type="bottom" id="LR3-Kk-xnp"/>
@@ -268,8 +259,8 @@
         <!--Tab View Controller-->
         <scene sceneID="TRA-Nw-phb">
             <objects>
-                <tabBarController id="b9I-jK-yxg" customClass="TabViewController" customModule="CheckListManager" customModuleProvider="target" sceneMemberID="viewController">
-                    <tabBar key="tabBar" contentMode="scaleToFill" itemPositioning="fill" id="CIS-9S-mQl" customClass="TabBar" customModule="CheckListManager" customModuleProvider="target">
+                <tabBarController modalPresentationStyle="overFullScreen" id="b9I-jK-yxg" customClass="TabViewController" customModule="Checklyst" customModuleProvider="target" sceneMemberID="viewController">
+                    <tabBar key="tabBar" contentMode="scaleToFill" itemPositioning="fill" id="CIS-9S-mQl" customClass="TabBar" customModule="Checklyst" customModuleProvider="target">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="49"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
@@ -290,8 +281,8 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="eoM-w6-39R" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="user" id="Cui-ue-8Eo"/>
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="4hL-2e-PIA" customClass="NavigationBar" customModule="CheckListManager" customModuleProvider="target">
-                        <rect key="frame" x="0.0" y="20" width="768" height="44"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="4hL-2e-PIA" customClass="NavigationBar" customModule="Checklyst" customModuleProvider="target">
+                        <rect key="frame" x="0.0" y="20" width="768" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -309,8 +300,8 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="3mh-JQ-axa" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="search" id="NgT-Oy-hDN"/>
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="lOl-hg-lLk" customClass="NavigationBar" customModule="CheckListManager" customModuleProvider="target">
-                        <rect key="frame" x="0.0" y="20" width="768" height="44"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="lOl-hg-lLk" customClass="NavigationBar" customModule="Checklyst" customModuleProvider="target">
+                        <rect key="frame" x="0.0" y="20" width="768" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -329,8 +320,8 @@
                     <tabBarItem key="tabBarItem" title="help" id="VUt-Y1-x3i"/>
                     <toolbarItems/>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="pAS-8f-qmw" customClass="NavigationBar" customModule="CheckListManager" customModuleProvider="target">
-                        <rect key="frame" x="0.0" y="20" width="768" height="44"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="pAS-8f-qmw" customClass="NavigationBar" customModule="Checklyst" customModuleProvider="target">
+                        <rect key="frame" x="0.0" y="20" width="768" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -345,10 +336,10 @@
         <!--Navigation Controller-->
         <scene sceneID="x8t-fJ-b1v">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="8BG-4h-fqk" sceneMemberID="viewController">
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" modalPresentationStyle="overFullScreen" id="8BG-4h-fqk" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="hWK-BO-5Sv" customClass="NavigationBar" customModule="CheckListManager" customModuleProvider="target">
-                        <rect key="frame" x="0.0" y="20" width="768" height="44"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="hWK-BO-5Sv" customClass="NavigationBar" customModule="Checklyst" customModuleProvider="target">
+                        <rect key="frame" x="0.0" y="20" width="768" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -363,7 +354,7 @@
         <!--User View Controller-->
         <scene sceneID="J48-BT-YBO">
             <objects>
-                <viewController id="DBL-nC-Fpb" customClass="UserViewController" customModule="CheckListManager" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="DBL-nC-Fpb" customClass="UserViewController" customModule="Checklyst" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="B7Y-Kj-q2R"/>
                         <viewControllerLayoutGuide type="bottom" id="791-1h-osu"/>
@@ -504,7 +495,7 @@
         <!--List Instances Table View Controller-->
         <scene sceneID="DtQ-P9-YPO">
             <objects>
-                <viewController id="iYy-bq-ngU" customClass="ListInstancesTableViewController" customModule="CheckListManager" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="iYy-bq-ngU" customClass="ListInstancesTableViewController" customModule="Checklyst" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="wsF-eU-niG"/>
                         <viewControllerLayoutGuide type="bottom" id="Hzc-Mx-mQf"/>
@@ -514,7 +505,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="119" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="nkU-lR-d9i">
-                                <rect key="frame" x="0.0" y="64" width="768" height="911"/>
+                                <rect key="frame" x="0.0" y="70" width="768" height="904"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <color key="separatorColor" red="0.63529411759999999" green="0.76078431369999999" blue="0.80392156859999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <inset key="separatorInset" minX="15" minY="0.0" maxX="0.0" maxY="0.0"/>
@@ -555,7 +546,7 @@
                                     </constraints>
                                 </view>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="instanceCell" rowHeight="254" id="sFG-Pm-hlf" customClass="ListInstancesCell" customModule="CheckListManager" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="instanceCell" rowHeight="254" id="sFG-Pm-hlf" customClass="ListInstancesCell" customModule="Checklyst" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="78" width="768" height="254"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="sFG-Pm-hlf" id="EvZ-56-0sL">
@@ -665,8 +656,8 @@
                                                 <constraint firstItem="NKy-Dh-Kxv" firstAttribute="leading" secondItem="plT-Ma-aAS" secondAttribute="trailing" constant="10" id="Ux2-cd-itC"/>
                                                 <constraint firstItem="HTa-wJ-qbD" firstAttribute="leading" secondItem="g6K-Ao-Cco" secondAttribute="trailing" constant="10" id="Vtp-ne-AW5"/>
                                                 <constraint firstItem="fVN-2N-uku" firstAttribute="leading" secondItem="EvZ-56-0sL" secondAttribute="leading" constant="40" id="YnQ-kb-H54"/>
+                                                <constraint firstItem="5Sc-a5-OSO" firstAttribute="top" secondItem="jAu-Yx-uJL" secondAttribute="bottom" constant="9" id="ctb-SB-jYi"/>
                                                 <constraint firstItem="djH-sA-KuZ" firstAttribute="top" secondItem="5Sc-a5-OSO" secondAttribute="bottom" constant="20" id="eMV-kg-N4D"/>
-                                                <constraint firstItem="5Sc-a5-OSO" firstAttribute="top" secondItem="uIS-Sk-xfF" secondAttribute="bottom" constant="33" id="fFa-5J-BUu"/>
                                                 <constraint firstItem="BCK-PQ-rZF" firstAttribute="leading" secondItem="EvZ-56-0sL" secondAttribute="leading" constant="40" id="fhP-ld-jkY"/>
                                                 <constraint firstItem="uIS-Sk-xfF" firstAttribute="leading" secondItem="ZKV-um-CqW" secondAttribute="leading" id="h4n-Mt-UPp"/>
                                                 <constraint firstItem="m2z-uA-h1G" firstAttribute="top" secondItem="fVN-2N-uku" secondAttribute="bottom" constant="10" id="kF3-i7-3So"/>
@@ -682,7 +673,6 @@
                                         </tableViewCellContentView>
                                         <connections>
                                             <outlet property="descrizione" destination="jAu-Yx-uJL" id="1iN-mh-EQN"/>
-                                            <outlet property="stateLabelTopConstraint" destination="fFa-5J-BUu" id="gVK-tN-08J"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -713,7 +703,7 @@
         <!--Instance View Controller-->
         <scene sceneID="HQq-pW-NyX">
             <objects>
-                <viewController id="zcb-Wv-5O8" customClass="InstanceViewController" customModule="CheckListManager" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="instanceVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="zcb-Wv-5O8" customClass="InstanceViewController" customModule="Checklyst" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="F68-QZ-Uoa"/>
                         <viewControllerLayoutGuide type="bottom" id="fdL-VX-nyi"/>
@@ -722,26 +712,30 @@
                         <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <webView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jvx-D1-KR9">
-                                <rect key="frame" x="0.0" y="104" width="768" height="891"/>
-                                <color key="backgroundColor" red="0.0" green="0.58823529409999997" blue="0.53333333329999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                            </webView>
                             <activityIndicatorView opaque="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="R3u-YP-wuO">
-                                <rect key="frame" x="374" y="539.5" width="20" height="20"/>
+                                <rect key="frame" x="374" y="512" width="20" height="20"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="20" id="AaR-4O-gfV"/>
                                     <constraint firstAttribute="height" constant="20" id="EYL-13-jWV"/>
                                 </constraints>
                             </activityIndicatorView>
+                            <wkWebView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sDV-7B-eD1" customClass="CustomWKWebView" customModule="Checklyst" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="70" width="768" height="904"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <wkWebViewConfiguration key="configuration">
+                                    <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
+                                    <wkPreferences key="preferences"/>
+                                </wkWebViewConfiguration>
+                            </wkWebView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="jvx-D1-KR9" firstAttribute="leading" secondItem="B9F-Ne-GUH" secondAttribute="leading" id="GOa-ti-NIi"/>
-                            <constraint firstItem="R3u-YP-wuO" firstAttribute="centerY" secondItem="jvx-D1-KR9" secondAttribute="centerY" id="LtC-hx-Tdp"/>
-                            <constraint firstItem="fdL-VX-nyi" firstAttribute="top" secondItem="jvx-D1-KR9" secondAttribute="bottom" constant="-20" id="MGu-0U-kwQ"/>
-                            <constraint firstItem="jvx-D1-KR9" firstAttribute="top" secondItem="F68-QZ-Uoa" secondAttribute="bottom" constant="40" id="RB1-YF-hqI"/>
-                            <constraint firstAttribute="trailing" secondItem="jvx-D1-KR9" secondAttribute="trailing" id="eAe-cT-HVo"/>
-                            <constraint firstItem="R3u-YP-wuO" firstAttribute="centerX" secondItem="jvx-D1-KR9" secondAttribute="centerX" id="gM1-In-cqt"/>
+                            <constraint firstAttribute="trailing" secondItem="sDV-7B-eD1" secondAttribute="trailing" id="3ZY-h0-vpo"/>
+                            <constraint firstItem="R3u-YP-wuO" firstAttribute="centerY" secondItem="sDV-7B-eD1" secondAttribute="centerY" id="GPJ-BL-edP"/>
+                            <constraint firstItem="fdL-VX-nyi" firstAttribute="top" secondItem="sDV-7B-eD1" secondAttribute="bottom" id="T9y-wN-jfu"/>
+                            <constraint firstItem="R3u-YP-wuO" firstAttribute="centerX" secondItem="sDV-7B-eD1" secondAttribute="centerX" id="Uid-ms-cg8"/>
+                            <constraint firstItem="sDV-7B-eD1" firstAttribute="top" secondItem="F68-QZ-Uoa" secondAttribute="bottom" id="cAe-8j-8OW"/>
+                            <constraint firstItem="sDV-7B-eD1" firstAttribute="leading" secondItem="B9F-Ne-GUH" secondAttribute="leading" id="kVq-oI-MFl"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="B2A-Na-3AA">
@@ -754,8 +748,9 @@
                     <connections>
                         <outlet property="activityIndicator" destination="R3u-YP-wuO" id="7Ye-Ks-b2V"/>
                         <outlet property="customBackButton" destination="d8g-73-n1R" id="C86-0N-VGP"/>
-                        <outlet property="webView" destination="jvx-D1-KR9" id="65m-T6-DMz"/>
+                        <outlet property="webView" destination="sDV-7B-eD1" id="9Jh-56-h5z"/>
                         <segue destination="me8-qg-fhs" kind="unwind" identifier="goBackSearchInstances" unwindAction="unwindToSearchInstancesWithSender:" id="bIA-Us-Bky"/>
+                        <segue destination="OoL-vf-MC3" kind="presentation" identifier="ScanSegue" id="R4e-93-VN0"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="csU-0m-jhN" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -763,10 +758,61 @@
             </objects>
             <point key="canvasLocation" x="3710.9375" y="-746.484375"/>
         </scene>
+        <!--Code Scanner View Controller-->
+        <scene sceneID="NTd-30-Bc5">
+            <objects>
+                <viewController modalPresentationStyle="overCurrentContext" id="OoL-vf-MC3" customClass="QRCodeScannerViewController" customModule="Checklyst" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="reS-y2-QKA"/>
+                        <viewControllerLayoutGuide type="bottom" id="kEl-Cz-fZ0"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="INy-Zd-tWK">
+                        <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="IuP-QF-R2L" customClass="QRScannerView" customModule="Checklyst" customModuleProvider="target">
+                                <rect key="frame" x="168" y="224" width="432" height="576"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7y9-SS-ceE">
+                                        <rect key="frame" x="391" y="16" width="25" height="25"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="25" id="Axu-bT-EpB"/>
+                                            <constraint firstAttribute="width" constant="25" id="aNg-3K-E6V"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="25"/>
+                                        <state key="normal" title="x">
+                                            <color key="titleColor" red="0.074085928499999995" green="0.30546820159999999" blue="0.21321776510000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="closeScanner:" destination="OoL-vf-MC3" eventType="touchUpInside" id="FZR-cH-uTI"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="7y9-SS-ceE" firstAttribute="top" secondItem="IuP-QF-R2L" secondAttribute="top" constant="16" id="JPH-gh-Qwe"/>
+                                    <constraint firstAttribute="trailing" secondItem="7y9-SS-ceE" secondAttribute="trailing" constant="16" id="tJ3-pV-x5J"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="IuP-QF-R2L" firstAttribute="centerX" secondItem="INy-Zd-tWK" secondAttribute="centerX" id="8xD-Ya-Smv"/>
+                            <constraint firstItem="IuP-QF-R2L" firstAttribute="centerY" secondItem="INy-Zd-tWK" secondAttribute="centerY" id="YTh-TR-7Cx"/>
+                            <constraint firstItem="IuP-QF-R2L" firstAttribute="height" secondItem="INy-Zd-tWK" secondAttribute="height" multiplier="9:16" id="c1s-fM-Syy"/>
+                            <constraint firstItem="IuP-QF-R2L" firstAttribute="width" secondItem="INy-Zd-tWK" secondAttribute="width" multiplier="9:16" id="s7E-4J-I0r"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="scannerView" destination="IuP-QF-R2L" id="6g0-5c-nZO"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="OLT-kI-PV2" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4479.6875" y="-1410.3515625"/>
+        </scene>
         <!--Instances Search View Controller-->
         <scene sceneID="Kr9-P1-buK">
             <objects>
-                <viewController id="vDh-uK-ako" customClass="InstancesSearchViewController" customModule="CheckListManager" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="vDh-uK-ako" customClass="InstancesSearchViewController" customModule="Checklyst" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="VZ8-lZ-Mv4"/>
                         <viewControllerLayoutGuide type="bottom" id="ai6-J6-EjE"/>
@@ -849,7 +895,7 @@
                                                 </constraints>
                                                 <inset key="separatorInset" minX="15" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                 <prototypes>
-                                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="searchCell" rowHeight="78" id="49e-0A-gqh" customClass="InstanceSearchCell" customModule="CheckListManager" customModuleProvider="target">
+                                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="searchCell" rowHeight="78" id="49e-0A-gqh" customClass="InstanceSearchCell" customModule="Checklyst" customModuleProvider="target">
                                                         <rect key="frame" x="0.0" y="28" width="600" height="78"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="49e-0A-gqh" id="aiM-kS-Qjq">
@@ -857,12 +903,12 @@
                                                             <autoresizingMask key="autoresizingMask"/>
                                                             <subviews>
                                                                 <label opaque="NO" userInteractionEnabled="NO" tag="1" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Field" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="M5n-KP-9U8">
-                                                                    <rect key="frame" x="40" y="20" width="40" height="37"/>
+                                                                    <rect key="frame" x="40" y="20" width="40" height="37.5"/>
                                                                     <fontDescription key="fontDescription" name="ArialMT" family="Arial" pointSize="18"/>
                                                                     <nil key="highlightedColor"/>
                                                                 </label>
                                                                 <label opaque="NO" userInteractionEnabled="NO" tag="2" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mNj-hx-MOI">
-                                                                    <rect key="frame" x="538" y="20" width="42" height="37"/>
+                                                                    <rect key="frame" x="538" y="20" width="42" height="37.5"/>
                                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                                     <color key="textColor" red="0.80000000000000004" green="0.80000000000000004" blue="0.80000000000000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                                     <nil key="highlightedColor"/>
@@ -959,6 +1005,7 @@
                         <outlet property="tableView" destination="hS5-t2-TWg" id="LDh-yq-F1V"/>
                         <segue destination="p6U-4t-1pC" kind="show" identifier="editFieldSegue" id="gqm-RD-5Zn"/>
                         <segue destination="iYy-bq-ngU" kind="show" identifier="instanceDetailsSegue" id="bnp-28-bxz"/>
+                        <segue destination="zcb-Wv-5O8" kind="show" identifier="openInstanceDirectly" id="wq3-Yy-xYd"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kDp-6F-0mS" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -968,7 +1015,7 @@
         <!--Edit Field View Controller-->
         <scene sceneID="Ask-fm-cvS">
             <objects>
-                <viewController id="p6U-4t-1pC" customClass="EditFieldViewController" customModule="CheckListManager" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="p6U-4t-1pC" customClass="EditFieldViewController" customModule="Checklyst" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="KZR-6J-63W"/>
                         <viewControllerLayoutGuide type="bottom" id="zfI-CO-lbh"/>
@@ -978,7 +1025,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="66" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="QtL-cE-5PG">
-                                <rect key="frame" x="0.0" y="64" width="600" height="600"/>
+                                <rect key="frame" x="0.0" y="70" width="600" height="593"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <inset key="separatorInset" minX="15" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 <view key="tableHeaderView" contentMode="scaleToFill" id="nzD-qh-0vE">
@@ -1065,7 +1112,7 @@
                                     </constraints>
                                 </view>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="searchCell" rowHeight="78" id="WW4-yN-8UY" customClass="InstanceSearchCell" customModule="CheckListManager" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="searchCell" rowHeight="78" id="WW4-yN-8UY" customClass="InstanceSearchCell" customModule="Checklyst" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="78" width="600" height="78"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="WW4-yN-8UY" id="wNz-Z7-j9c">
@@ -1073,13 +1120,13 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" tag="1" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Field" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hrf-12-laU">
-                                                    <rect key="frame" x="40" y="20" width="40" height="37"/>
+                                                    <rect key="frame" x="40" y="20" width="40" height="37.5"/>
                                                     <fontDescription key="fontDescription" name="ArialMT" family="Arial" pointSize="18"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <textField opaque="NO" clipsSubviews="YES" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Enter Text" textAlignment="right" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="G8y-3m-wJQ">
-                                                    <rect key="frame" x="422" y="20" width="158" height="37"/>
+                                                    <rect key="frame" x="254" y="20" width="158" height="37.5"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="158" id="FhX-dX-Itc"/>
                                                     </constraints>
@@ -1140,7 +1187,7 @@
         <!--User Manual View Controller-->
         <scene sceneID="qMl-3x-NGA">
             <objects>
-                <viewController id="e2n-E6-1pg" customClass="UserManualViewController" customModule="CheckListManager" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="e2n-E6-1pg" customClass="UserManualViewController" customModule="Checklyst" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Saa-4x-LZt"/>
                         <viewControllerLayoutGuide type="bottom" id="VyD-rS-TeA"/>
@@ -1149,42 +1196,46 @@
                         <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <webView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="s8l-Gw-OOf">
-                                <rect key="frame" x="0.0" y="104" width="768" height="891"/>
-                                <color key="backgroundColor" red="0.0" green="0.58823529409999997" blue="0.53333333329999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                            </webView>
                             <activityIndicatorView opaque="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="7SY-gU-cPQ">
-                                <rect key="frame" x="374" y="539.5" width="20" height="20"/>
+                                <rect key="frame" x="374" y="542" width="20" height="20"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="20" id="5Gj-2d-sWb"/>
                                     <constraint firstAttribute="height" constant="20" id="B5s-mX-naY"/>
                                 </constraints>
                             </activityIndicatorView>
+                            <wkWebView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Z96-s9-jSy">
+                                <rect key="frame" x="0.0" y="110" width="768" height="884"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <wkWebViewConfiguration key="configuration">
+                                    <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
+                                    <wkPreferences key="preferences"/>
+                                </wkWebViewConfiguration>
+                            </wkWebView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="s8l-Gw-OOf" firstAttribute="top" secondItem="Saa-4x-LZt" secondAttribute="bottom" constant="40" id="1wM-q3-kt5"/>
-                            <constraint firstAttribute="trailing" secondItem="s8l-Gw-OOf" secondAttribute="trailing" id="8UT-fi-E48"/>
-                            <constraint firstItem="s8l-Gw-OOf" firstAttribute="leading" secondItem="QaB-zB-p7u" secondAttribute="leading" id="FeL-RL-dkx"/>
-                            <constraint firstItem="7SY-gU-cPQ" firstAttribute="centerX" secondItem="s8l-Gw-OOf" secondAttribute="centerX" id="X2s-zQ-OBV"/>
-                            <constraint firstItem="7SY-gU-cPQ" firstAttribute="centerY" secondItem="s8l-Gw-OOf" secondAttribute="centerY" id="dhn-3p-W4l"/>
-                            <constraint firstItem="VyD-rS-TeA" firstAttribute="top" secondItem="s8l-Gw-OOf" secondAttribute="bottom" constant="-20" id="uHZ-Jy-tqd"/>
+                            <constraint firstItem="7SY-gU-cPQ" firstAttribute="centerX" secondItem="Z96-s9-jSy" secondAttribute="centerX" id="2VJ-IR-1TN"/>
+                            <constraint firstItem="Z96-s9-jSy" firstAttribute="leading" secondItem="QaB-zB-p7u" secondAttribute="leading" id="5YR-Py-wJz"/>
+                            <constraint firstItem="Z96-s9-jSy" firstAttribute="top" secondItem="Saa-4x-LZt" secondAttribute="bottom" constant="40" id="PfP-rl-p37"/>
+                            <constraint firstAttribute="trailing" secondItem="Z96-s9-jSy" secondAttribute="trailing" id="RAl-iK-lFR"/>
+                            <constraint firstItem="VyD-rS-TeA" firstAttribute="top" secondItem="Z96-s9-jSy" secondAttribute="bottom" constant="-20" id="Z9R-Iq-Dgh"/>
+                            <constraint firstItem="7SY-gU-cPQ" firstAttribute="centerY" secondItem="Z96-s9-jSy" secondAttribute="centerY" id="ndW-Oc-090"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="zZ3-48-vKb"/>
                     <connections>
                         <outlet property="activityIndicator" destination="7SY-gU-cPQ" id="oH8-ng-yjG"/>
-                        <outlet property="webView" destination="s8l-Gw-OOf" id="SS8-8P-85r"/>
+                        <outlet property="webView" destination="Z96-s9-jSy" id="aBD-6l-d34"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Z5k-T3-KFg" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-169" y="1460"/>
+            <point key="canvasLocation" x="-169.53125" y="1459.5703125"/>
         </scene>
         <!--Choose Server And Company View Controller-->
         <scene sceneID="TkU-aE-aO3">
             <objects>
-                <viewController id="DPq-KL-f5R" customClass="ChooseServerAndCompanyViewController" customModule="CheckListManager" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="DPq-KL-f5R" customClass="ChooseServerAndCompanyViewController" customModule="Checklyst" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="We7-ra-G0g"/>
                         <viewControllerLayoutGuide type="bottom" id="AKq-uW-Un2"/>
@@ -1194,7 +1245,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="66" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="hWr-mu-bJy">
-                                <rect key="frame" x="0.0" y="64" width="600" height="649"/>
+                                <rect key="frame" x="0.0" y="70" width="600" height="643"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <inset key="separatorInset" minX="15" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 <view key="tableHeaderView" contentMode="scaleToFill" id="ibW-qX-YSo">
@@ -1289,7 +1340,7 @@
                                     </constraints>
                                 </view>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="searchCell" rowHeight="78" id="ZQl-Cm-ghP" customClass="InstanceSearchCell" customModule="CheckListManager" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="searchCell" rowHeight="78" id="ZQl-Cm-ghP" customClass="InstanceSearchCell" customModule="Checklyst" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="78" width="600" height="78"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ZQl-Cm-ghP" id="Tcy-zw-Kli">
@@ -1297,13 +1348,13 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" tag="1" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Field" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lQx-LC-bzo">
-                                                    <rect key="frame" x="40" y="20" width="40" height="37"/>
+                                                    <rect key="frame" x="40" y="20" width="40" height="37.5"/>
                                                     <fontDescription key="fontDescription" name="ArialMT" family="Arial" pointSize="18"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <textField opaque="NO" clipsSubviews="YES" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Enter Text" textAlignment="right" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="IUy-Zv-cAf">
-                                                    <rect key="frame" x="422" y="20" width="158" height="37"/>
+                                                    <rect key="frame" x="254" y="20" width="158" height="37.5"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="158" id="jYD-Ia-imH"/>
                                                     </constraints>
@@ -1363,7 +1414,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="NKc-6S-8bD"/>
+        <segue reference="wq3-Yy-xYd"/>
         <segue reference="qFk-ul-dl4"/>
     </inferredMetricsTieBreakers>
 </document>

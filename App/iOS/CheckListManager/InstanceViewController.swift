@@ -8,31 +8,48 @@
 
 
 import UIKit
+import WebKit
 
-class InstanceViewController: UIViewController, UIWebViewDelegate, UIGestureRecognizerDelegate {
+class InstanceViewController: UIViewController, WKNavigationDelegate, UIGestureRecognizerDelegate {
     
     let app = UIApplication.shared as! MyApplication
     var instance:Instance!
+    var instanceCodeFromRequest : String?
     var newInstance = false
     var newInstancePrototype: String?
     var newInstanceVersion: String?
     var selectedItemsDictionary = [Int:Option] ()
-    @IBOutlet var webView: UIWebView!
+    var inputAccessory : UIBarButtonItemGroup?
+    var contentView : UIView?
+    var scanButtonIsVisible : Bool = false
+    var requestForScanning : Bool = false
+    
+    @IBOutlet var webView: WKWebView!
     @IBOutlet var activityIndicator: UIActivityIndicatorView!
     @IBOutlet var customBackButton: UIBarButtonItem!
+    
     
     override func viewDidLoad()
     {
         super.viewDidLoad()
         let infoBarButtonItem = SharedControllersProperty.instance.setInfoButton()
         self.navigationItem.rightBarButtonItem = infoBarButtonItem
-        webView.delegate = self
+        webView.navigationDelegate = self
         activityIndicator.hidesWhenStopped = true
         activityIndicator.transform = CGAffineTransform(scaleX: 2.0, y: 2.0)
         
+        scanButtonIsVisible = false
+        
+        for subview in webView.scrollView.subviews {
+            if subview.classForCoder.description() == "WKContentView" {
+                contentView = subview
+            }
+        }
+        
         let fullUrl = !newInstance ?
-            ServerConnection.baseFrontEndUrl + "/Instances/Detail/" + instance.code + "?d=" + String(Int64(Date().timeIntervalSince1970 * 1000)) + "&AppUser=" + (UserDefaults.standard.string(forKey: "userCode"))! :
+            ServerConnection.baseFrontEndUrl + "/Instances/Detail/" + (instanceCodeFromRequest != nil ? instanceCodeFromRequest! : instance.code) + "?d=" + String(Int64(Date().timeIntervalSince1970 * 1000)) + "&AppUser=" + (UserDefaults.standard.string(forKey: "userCode"))! :
             ServerConnection.baseFrontEndUrl + "/Instances/Create/" + newInstancePrototype! + "/" + newInstanceVersion! + "?d=" + String(Int64(Date().timeIntervalSince1970 * 1000)) + "&AppUser=" + (UserDefaults.standard.string(forKey: "userCode"))!
+        
         
         let url = URL(string: fullUrl)
         
@@ -40,21 +57,29 @@ class InstanceViewController: UIViewController, UIWebViewDelegate, UIGestureReco
         request.httpMethod = "POST"
         request.timeoutInterval = 20
         request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        request.addValue((UserDefaults.standard.value(forKey: "token_type") as! String).capitalized + " " + (UserDefaults.standard.value(forKey: "access_token") as! String), forHTTPHeaderField: "Authorization")
+        
         /*Setting value for local storage*/
         let bodyString = "roles=" + (UserDefaults.standard.value(forKey: "roles") as! String) +
             "&timeZone=" + (UserDefaults.standard.value(forKey: "timeZone") as! String) +
-            "&decimalSeparator=" + (UserDefaults.standard.value(forKey: "decimalSeparator") as! String)
-        print(bodyString)
+            "&decimalSeparator=" + (UserDefaults.standard.value(forKey: "decimalSeparator") as! String) + "&accessToken=" + (UserDefaults.standard.value(forKey: "access_token") as! String) + "&refreshToken=" + (UserDefaults.standard.value(forKey: "refresh_token") as! String)
+        print("request = " + bodyString)
         request.httpBody = bodyString.data(using: String.Encoding.utf8)
         
-        webView.loadRequest(request as URLRequest)
+        webView.load(request as URLRequest)
         
         self.lockView()
         NotificationCenter.default.addObserver(self, selector: #selector(InstanceViewController.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(InstanceViewController.keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(InstanceViewController.keyboardDidHide(_:)), name: NSNotification.Name.UIKeyboardDidHide, object: nil)
+        
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(InstanceViewController.dismissKeyboard))
         tap.delegate = self
         self.view.addGestureRecognizer(tap)
+        
+         inputAccessory = UIBarButtonItemGroup(barButtonItems: [UIBarButtonItem(barButtonSystemItem: .camera, target: self, action: #selector(scanItem(_:)))], representativeItem: nil)
+        
+        self.scanButtonIsVisible = true;
     }
     
     override func didReceiveMemoryWarning()
@@ -66,13 +91,6 @@ class InstanceViewController: UIViewController, UIWebViewDelegate, UIGestureReco
     {
         return true
     }
-    
-    
-    func willEnterForeground()
-    {
-        self.navigationController?.popViewController(animated: true)
-    }
-    
     
     func lockView()
     {
@@ -94,11 +112,23 @@ class InstanceViewController: UIViewController, UIWebViewDelegate, UIGestureReco
         self.tabBarController!.tabBar.isUserInteractionEnabled = true
     }
     
+    func willEnterForeground()
+    {
+        print("enter foreground")
+        self.navigationController?.popViewController(animated: true)
+    }
+    
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        requestForScanning = false
+    }
     
     override func viewWillDisappear(_ animated : Bool) {
         super.viewWillDisappear(animated)
-        print("disappering")
-        self.webView.stringByEvaluatingJavaScript(from: "instances.instance.close()")
+        if(!requestForScanning) {
+            self.webView.evaluateJavaScript("instances.instance.close()", completionHandler: nil)
+        }
     }
     
     
@@ -108,8 +138,7 @@ class InstanceViewController: UIViewController, UIWebViewDelegate, UIGestureReco
         
     }
     
-    func webView(_ webView: UIWebView, didFailLoadWithError error: Error) {
-        
+    func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
         unlockView()
         let alert = UIAlertController(title: "Error", message: "Connection error to the server", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action) -> Void in
@@ -118,18 +147,34 @@ class InstanceViewController: UIViewController, UIWebViewDelegate, UIGestureReco
         self.present(alert, animated: false, completion: nil)
     }
     
-    func webView(_ webView: UIWebView, shouldStartLoadWith request: URLRequest, navigationType: UIWebViewNavigationType) -> Bool {
+    /*func webView(_ webView: UIWebView, didFailLoadWithError error: Error) {
         
-        return true
+        unlockView()
+        let alert = UIAlertController(title: "Error", message: "Connection error to the server", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action) -> Void in
+            self.navigationController?.popViewController(animated: true)
+        }))
+        self.present(alert, animated: false, completion: nil)
+    }*/
+    
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        unlockView()
+        
+        self.webView.isHidden = false
+        
+        webView.evaluateJavaScript("window.location.href") {
+            (response, error) -> Void in
+            if let value = response as? String {
+                if(value.contains("Security/Login")) {
+                    print("redirecting")
+                    webView.isHidden = true
+                    self.app.logoutAndGoToLogin()
+                }
+            }
+        }
     }
-    
-    func webViewDidStartLoad(_ webView: UIWebView) {
-        // print("Webview started Loading")
-    }
-    
-    
-    
-    func webViewDidFinishLoad(_ webView: UIWebView) {
+   
+    /*func webViewDidFinishLoad(_ webView: UIWebView) {
         
         unlockView()
         
@@ -141,6 +186,47 @@ class InstanceViewController: UIViewController, UIWebViewDelegate, UIGestureReco
             app.logoutAndGoToLogin()
         }
         
+    }*/
+    
+    func shouldShowScanButton() {
+        webView.evaluateJavaScript("document.activeElement.classList.contains(\"Scan\")") {
+            (response, error) -> Void in
+            if let value = response as? Bool {
+                if(value) {
+                    if (self.inputAccessory != nil && self.contentView != nil && !self.scanButtonIsVisible) {
+                        self.contentView!.inputAssistantItem.trailingBarButtonGroups = [self.inputAccessory] as! [UIBarButtonItemGroup]
+                        self.scanButtonIsVisible = true;
+                        print("scan button on")
+                    }
+                }
+            }
+        }
+    }
+    
+    func refreshTokensByJSInjection(accessToken : String, refreshToken : String) {
+        webView.evaluateJavaScript("matematici.tokenManager.setTokens(\"\(accessToken)\",\"\(refreshToken)\")") {
+            (response, error) -> Void in
+            if let res = response {
+                print(res)
+            } else if let err = error {
+                print(err)
+            } else {
+                print("Unexpected situation")
+            }
+        }
+    }
+    
+    func setValueForInputField(_ value : String) {
+        webView.evaluateJavaScript("document.activeElement.value = \"\(value)\"") {
+            (response, error) -> Void in
+            self.view.endEditing(true)
+        }
+    }
+    
+    @objc private func scanItem(_ sender: UIBarButtonItem) {
+        print("camera pressed")
+        requestForScanning = true
+        performSegue(withIdentifier: "ScanSegue", sender: self)
     }
     
     
@@ -152,6 +238,7 @@ class InstanceViewController: UIViewController, UIWebViewDelegate, UIGestureReco
         if view.frame.origin.y == 0{
             self.view.frame.origin.y -= 20
         }
+        shouldShowScanButton()
     }
     
     
@@ -161,7 +248,23 @@ class InstanceViewController: UIViewController, UIWebViewDelegate, UIGestureReco
         }
     }
     
+    @objc func keyboardDidHide(_ notification: Notification) {
+        if (self.contentView != nil && scanButtonIsVisible) {
+            self.contentView!.inputAssistantItem.trailingBarButtonGroups.removeAll()
+            scanButtonIsVisible = false
+            print("scan button off")
+        }
+    }
+    
     @objc func dismissKeyboard() {
-        self.view.endEditing(true)   }
+        self.view.endEditing(true)
+        
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let controller = segue.destination as? QRCodeScannerViewController {
+            controller.callback = self.setValueForInputField
+        }
+    }
 }
 

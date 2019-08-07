@@ -189,104 +189,162 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                 {
                     
                     let searchFields = try JSONDecoder().decode(IstanceBindResponseJSON.self, from: serverResponse.data!)
+                    
+                    if(searchFields.valid) {
 
-                    if (searchFields.fields.department != nil) {
-                        guard let departments = searchFields.fields.department?.options else {
-                            print("No departments")
-                            self.stopActivityIndicator()
-                            return
-                        }
-                    
-                        self.indexArrayDictionary[self.fieldIndexDictionary["department"]!] = departments
-                    }
-                    
-                    if(searchFields.fields.prototypeType != nil) {
-                        guard let prototypeTypes = searchFields.fields.prototypeType?.options else {
-                            print("No prototypeTypes")
-                            self.stopActivityIndicator()
-                            return
-                        }
+                        if (searchFields.fields.department != nil) {
+                            guard let departments = searchFields.fields.department?.options else {
+                                print("No departments")
+                                self.stopActivityIndicator()
+                                return
+                            }
                         
-//                        if prototypeTypes.count == 0 {
-//                            //self.displayMessage("Error", messageText: "The user does not have instance grants on any prototype type of this department")
-//                        }
-                        
-                        self.indexArrayDictionary[self.fieldIndexDictionary["prototypeType"]!] = prototypeTypes
-
-                    }
-                    
-                    if(searchFields.fields.prototype != nil) {
-                        guard let prototype = searchFields.fields.prototype?.options else {
-                            print("No prototype")
-                            self.stopActivityIndicator()
-                            return
+                            let index = self.fieldIndexDictionary["department"]!
+                            let field = self.indexFieldDictionary[index]!
+                            
+                            self.indexArrayDictionary[index] = departments
+                            
+                            if let value = searchFields.fields.department?.value {
+                                self.selectedItemsDictionary[index] = self.findOPtionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
+                            }
                         }
                         
-//                        if prototype.count == 0 {
-//                            //self.displayMessage("Error", messageText: "The user does not have instance grants on any prototype of this type")
-//                        }
-                        
-                        self.indexArrayDictionary[self.fieldIndexDictionary["prototype"]!] = prototype
-                        self.indexArrayDictionary[self.fieldIndexDictionary["prototype"]!]?.insert(Option(text: "All", value: ""), at: 0)
-                    }
-                    
-                    if(searchFields.fields.version != nil) {
-                    
-                        guard let versions = searchFields.fields.version?.options else {
-                            print("No versions")
-                            self.stopActivityIndicator()
-                            return
+                        if(searchFields.fields.prototypeType != nil) {
+                            guard let prototypeTypes = searchFields.fields.prototypeType?.options else {
+                                print("No prototypeTypes")
+                                self.stopActivityIndicator()
+                                return
+                            }
+                            
+                            let index = self.fieldIndexDictionary["prototypeType"]!
+                            let field = self.indexFieldDictionary[index]!
+                            
+    //                        if prototypeTypes.count == 0 {
+    //                            //self.displayMessage("Error", messageText: "The user does not have instance grants on any prototype type of this department")
+    //                        }
+                            
+                            self.indexArrayDictionary[index] = prototypeTypes
+                            if let value = searchFields.fields.prototypeType?.value {
+                                self.selectedItemsDictionary[index] = self.findOPtionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
+                            }
                         }
                         
-                        self.indexArrayDictionary[self.fieldIndexDictionary["version"]!] = versions
-                        self.indexArrayDictionary[self.fieldIndexDictionary["version"]!]?.insert(Option(text: "All", value: ""), at: 0)
-                    }
-                    
-                    if(searchFields.fields.tagCode != nil) {
-                    
-                        guard let tags = searchFields.fields.tagCode?.options else {
-                            print("No tags")
-                            self.stopActivityIndicator()
-                            return
-                        }
-                    
-                        self.indexArrayDictionary[self.fieldIndexDictionary["tagCode"]!] = tags
-                        self.indexArrayDictionary[self.fieldIndexDictionary["tagCode"]!]?.insert(Option(text: "All", value: ""), at: 0)
-                    }
-                    
-                    if(searchFields.fields.state != nil) {
-                        
-                        guard let states = searchFields.fields.state?.options else {
-                            print("No state")
-                            self.stopActivityIndicator()
-                            return
+                        if(searchFields.fields.prototype != nil) {
+                            guard let prototype = searchFields.fields.prototype?.options else {
+                                print("No prototype")
+                                self.stopActivityIndicator()
+                                return
+                            }
+                            
+                            let index = self.fieldIndexDictionary["prototype"]!
+                            let field = self.indexFieldDictionary[index]!
+                            
+    //                        if prototype.count == 0 {
+    //                            //self.displayMessage("Error", messageText: "The user does not have instance grants on any prototype of this type")
+    //                        }
+                            
+                            self.indexArrayDictionary[self.fieldIndexDictionary["prototype"]!] = prototype
+                            self.indexArrayDictionary[self.fieldIndexDictionary["prototype"]!]?.insert(Option(text: "All", value: ""), at: 0)
+                            
+                            if let value = searchFields.fields.prototype?.value {
+                                self.selectedItemsDictionary[index] = self.findOPtionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
+                            }
                         }
                         
-                        self.indexArrayDictionary[self.fieldIndexDictionary["state"]!] = states
-                        self.indexArrayDictionary[self.fieldIndexDictionary["state"]!]?.insert(Option(text: "All", value: ""), at: 0)
+                        if(searchFields.fields.version != nil) {
+                        
+                            guard let versions = searchFields.fields.version?.options else {
+                                print("No versions")
+                                self.stopActivityIndicator()
+                                return
+                            }
+                            
+                            let index = self.fieldIndexDictionary["version"]!
+                            let field = self.indexFieldDictionary[index]!
+                            
+                            self.indexArrayDictionary[self.fieldIndexDictionary["version"]!] = versions
+                            self.indexArrayDictionary[self.fieldIndexDictionary["version"]!]?.insert(Option(text: "All", value: ""), at: 0)
+                            
+                            if let value = searchFields.fields.version?.value {
+                                self.selectedItemsDictionary[index] = self.findOPtionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
+                            }
+                        }
+                        
+                        if(searchFields.fields.tagCode != nil) {
+                        
+                            guard let tags = searchFields.fields.tagCode?.options else {
+                                print("No tags")
+                                self.stopActivityIndicator()
+                                return
+                            }
+                            
+                            let index = self.fieldIndexDictionary["tagCode"]!
+                            let field = self.indexFieldDictionary[index]!
+                        
+                            self.indexArrayDictionary[self.fieldIndexDictionary["tagCode"]!] = tags
+                            self.indexArrayDictionary[self.fieldIndexDictionary["tagCode"]!]?.insert(Option(text: "All", value: ""), at: 0)
+                            
+                            if let value = searchFields.fields.tagCode?.value {
+                                self.selectedItemsDictionary[index] = self.findOPtionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
+                            }
+                        }
+                        
+                        if(searchFields.fields.state != nil) {
+                            
+                            guard let states = searchFields.fields.state?.options else {
+                                print("No state")
+                                self.stopActivityIndicator()
+                                return
+                            }
+                            
+                            let index = self.fieldIndexDictionary["state"]!
+                            let field = self.indexFieldDictionary[index]!
+                            
+                            self.indexArrayDictionary[self.fieldIndexDictionary["state"]!] = states
+                            self.indexArrayDictionary[self.fieldIndexDictionary["state"]!]?.insert(Option(text: "All", value: ""), at: 0)
+                            
+                            if let value = searchFields.fields.state?.value {
+                                self.selectedItemsDictionary[index] = self.findOPtionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
+                            }
+                        }
+                    
+                        self.setLabelTitles()
+                    } else {
+                        var error = String()
+                        let validationMessages = searchFields.validationMessages
+                        if (validationMessages.count > 0) {
+                            for value in validationMessages {
+                                error.append(value! + "\n")
+                            }
+                            self.displayMessage("Error", messageText: error, goBack: false)
+                            self.tableView.isUserInteractionEnabled = false
+                            self.searchInstanceButton.isUserInteractionEnabled = false
+                        }
                     }
-                
-                    self.setLabelTitles()
                 }
                 
                 else
                 {
-                    self.displayMessage("Error", messageText: "Connection error to the server")
+                    self.displayMessage("Error", messageText: "Connection error to the server", goBack: true)
                 }
             }
             catch {
                 print(error)
                 
                 do {
-                    
+                    /*This handles the case in which the error is not about validation (ex. send a letter instead of number)*/
                     let json = try JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
+                    var error = String()
                     
-                    let error = json["message"] as? String
-                    
-                    if(error != nil) {
-                        self.displayMessage("Error", messageText: "The user does not have any instance grant on this company")
-                        self.tableView.isUserInteractionEnabled = false
-                        self.searchInstanceButton.isUserInteractionEnabled = false
+                    if let errorMessages = json["messages"] as? [String] {
+                        for value in errorMessages {
+                            error.append(value + "\n")
+                        }
+                        self.displayMessage("Error", messageText: error, goBack: true)
+                    } else if let error = json["message"] as? String{
+                        self.displayMessage("Error", messageText: error, goBack: true)
+                    } else {
+                        self.displayMessage("Error", messageText: "Unexpected error has occurred", goBack: true)
                     }
     
                 }
@@ -332,9 +390,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                 
             else
             {
-                if(indexArrayDictionary[index]!.count > 0) {
-                    self.selectedItemsDictionary[index] = indexArrayDictionary[index]![0]
-                } else {
+                if(indexArrayDictionary[index]!.count == 0) {
                     self.selectedItemsDictionary[index] = Option(text: "", value: "")
                 }
             }
@@ -348,11 +404,18 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
     }
     
 
-    func displayMessage(_ messageTitle:String, messageText:String)
+    func displayMessage(_ messageTitle:String, messageText:String, goBack back:Bool)
         
     {
         let alert = UIAlertController(title: messageTitle, message: messageText, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Ok", style: .destructive, handler: nil))
+        if(back) {
+            alert.addAction(UIAlertAction(title: "Ok", style: .destructive) {
+                UIAlertAction in
+                self.tabBarController?.selectedIndex = 0
+            })
+        } else {
+            alert.addAction(UIAlertAction(title: "Ok", style: .destructive, handler: nil))
+        }
         self.present(alert, animated: false, completion: nil)
     }
     
@@ -398,7 +461,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                     
                 else
                 {
-                    self.displayMessage("Error", messageText: "Connection error to the server")
+                    self.displayMessage("Error", messageText: "Connection error to the server", goBack: true)
                     self.stopActivityIndicator()
                     
                     return;
@@ -410,9 +473,16 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                 print(error)
                 
                 do {
-                    
+                    var error = String()
                     let json = try JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
-                    self.displayMessage("Error", messageText: json["messages"] as! String)
+                    if let errorMessages = json["messages"] as? [String] {
+                        for value in errorMessages {
+                            error.append(value + "\n")
+                        }
+                        self.displayMessage("Error", messageText: error, goBack: true)
+                    } else {
+                        self.displayMessage("Error", messageText: "Unexpected error has occurred", goBack: true)
+                    }
                     
                 }
                 catch {
@@ -426,7 +496,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                 
             {
                 self.stopActivityIndicator()
-                self.displayMessage("Error", messageText: "No records found")
+                self.displayMessage("Error", messageText: "No records found", goBack: false)
             }
                 
                 
@@ -460,10 +530,23 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
         }
         
         else if let controller = segue.destination as? InstanceViewController {
-            controller.newInstance = true
-            controller.newInstancePrototype = searchDictionary["prototype"]!
-            controller.newInstanceVersion = searchDictionary["version"]!
-            controller.selectedItemsDictionary = selectedItemsDictionary;
+            if(segue.isKind(of: AppDelegate.self)) {
+                let delegate = (UIApplication.shared as! MyApplication)
+                if let parameters = delegate.requestedUrlInfo {
+                    if (parameters.keys.contains("version") && parameters.keys.contains("prototype")) {
+                        controller.newInstance = true
+                        controller.newInstancePrototype = parameters["prototype"]!
+                        controller.newInstanceVersion = parameters["version"]!
+                    } else if (parameters.keys.contains("code")) {
+                        controller.instanceCodeFromRequest = parameters["code"]!
+                    }
+                }
+            } else {
+                controller.newInstance = true
+                controller.newInstancePrototype = searchDictionary["prototype"]!
+                controller.newInstanceVersion = searchDictionary["version"]!
+                controller.selectedItemsDictionary = selectedItemsDictionary;
+            }
         }
         
     }

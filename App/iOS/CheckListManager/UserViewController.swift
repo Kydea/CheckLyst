@@ -26,6 +26,14 @@ class UserViewController: UIViewController {
         activityIndicator.hidesWhenStopped = true
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        let delegate = (UIApplication.shared as! MyApplication)
+        if (delegate.requestToOpenInstance) {
+            delegate.openInstance()
+        }
+    }
+    
     
     
     @IBAction func logoutFromPortal(_ sender: AnyObject) {

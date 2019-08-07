@@ -12,10 +12,6 @@ import UIKit
 class FirstCheckViewController: UIViewController {
     
     
-    
-    
-    
-    
     override func viewDidLoad() 
     {
         super.viewDidLoad()
