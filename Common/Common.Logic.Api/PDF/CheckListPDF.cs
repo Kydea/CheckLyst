@@ -89,7 +89,7 @@ namespace CheckListManager.Common.Logic.Api.PDF
 
                 try
                 {
-                    if (Attachment.ContentType == "images")
+                    if (Attachment.ContentType.StartsWith("image", StringComparison.InvariantCultureIgnoreCase))
                     {
                         Bitmap Image;
                         byte[] Data;
@@ -112,9 +112,10 @@ namespace CheckListManager.Common.Logic.Api.PDF
                         else
                             PDFImage.ScaleWidth = .4;
                     }
-                    else if (Attachment.ContentType == "images")
+                    else if (Attachment.ContentType.Equals("application/pdf", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        Container.AddPageBreak();
+                        RenderMigraDocument();
+
                         using (MemoryStream ms = new MemoryStream())
                         {
                             await Attachment.Content.CopyToAsync(ms);
@@ -134,6 +135,10 @@ namespace CheckListManager.Common.Logic.Api.PDF
                     ExceptionParagraph.SetFont(GenericFont);
                     ExceptionParagraph.AddText($"Error: {Exception.Message}");
                     ExceptionParagraph.Format.SpaceAfter = 10;
+                }
+                finally
+                {
+                    RenderMigraDocument();
                 }
             }
         }
