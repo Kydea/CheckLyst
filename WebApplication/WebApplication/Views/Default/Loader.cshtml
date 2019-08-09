@@ -14,12 +14,13 @@
 
         var url;
 
-        if ("@(ViewBag.AppMode)" != "True" && navigator.userAgent.match(/iPad/i) != null && "@(Model.StartsWith("Instances/Detail") || Model.StartsWith("Instances/Create"))" == "True")
+        if ("@(ViewBag.AppMode)" != "True" && navigator.userAgent.match(/iPad/i) != null && "@(Model.StartsWith("Instances/Detail") || Model.StartsWith("Instances/Create"))" == "True") {
             url = "checklyst://" + window.location.host + "/" + window.location.pathname;
-        else
+            window.location = url;
+        } else {
             url = "@Model@(ViewBag.AppMode ? "?AppUser=" + ViewBag.AppUser : string.Empty)";
-
-        matematici.navigator.open(url);
+            matematici.navigator.open(url);
+        }
 
         callback.call();
     };
@@ -27,5 +28,5 @@
     matematici.events.onPageUnload = function (callback) {
         matematici.loader.checkInitialCurtain();
         callback.call();
-    }    
+    }
 </script>
