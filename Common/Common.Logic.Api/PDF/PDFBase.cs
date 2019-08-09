@@ -1,5 +1,7 @@
 ﻿using CheckListManager.Common.Logic.Api.PDF.Helper;
 using MigraDoc.DocumentObjectModel;
+using MigraDoc.Rendering;
+using PdfSharp.Drawing;
 using PdfSharp.Pdf;
 using System.IO;
 using System.Threading.Tasks;
@@ -22,16 +24,17 @@ namespace CheckListManager.Common.Logic.Api.PDF
         public static Font TitleFont1 => FontHelper.GetInstance("Helvetica", 20, FontStyle.Bold, Yellow).Clone();
         public static Font TitleFont2 => FontHelper.GetInstance("Helvetica", 16, FontStyle.Bold, Green).Clone();
         public static Font TitleFont3 => FontHelper.GetInstance("Helvetica", 12, FontStyle.Bold, Green).Clone();
+        public static Font RedTitleFont => FontHelper.GetInstance("Helvetica", 12, FontStyle.Bold, Red).Clone();
         public static Font GenericFont => FontHelper.GetInstance("Helvetica", 10, FontStyle.Regular, Colors.Black).Clone();
         public static Font BoldFont => FontHelper.GetInstance("Helvetica", 10, FontStyle.Bold, DarkGray).Clone();
         public static Font GrayFont => FontHelper.GetInstance("Helvetica", 10, FontStyle.Regular, DarkGray).Clone();
-        public static Font NoteFont => FontHelper.GetInstance("Helvetica", 7, FontStyle.Regular, Colors.Black).Clone();
         public static Font SmallFont => FontHelper.GetInstance("Helvetica", 8, FontStyle.Regular, Colors.Black).Clone();
         public static Font SmallBoldFont => FontHelper.GetInstance("Helvetica", 8, FontStyle.Bold, Colors.Black).Clone();
 
         protected string Subject { get; private set; }
         protected Document MigraDocDocument { get; private set; }
         protected PdfDocument PdfDocument { get; private set; }
+        protected int RenderedPages { get; set; }
         public Section Container { get; private set; }
 
         public PDFBase(string Subject)
@@ -43,6 +46,30 @@ namespace CheckListManager.Common.Logic.Api.PDF
         {
             Container = MigraDocDocument.AddSection();
             await OnNewSectionAsync();
+        }
+
+        internal void RenderMigraDocument()
+        {
+            var pdfRenderer = new DocumentRenderer(MigraDocDocument);
+            pdfRenderer.PrepareDocument();
+
+            int pages = pdfRenderer.FormattedDocument.PageCount;
+            var startIndex = 1 + RenderedPages;
+
+            for (int i = startIndex; i <= pages; i++)
+            {
+                PageInfo pageInfo = pdfRenderer.FormattedDocument.GetPageInfo(i);
+
+                var page = PdfDocument.AddPage();
+                page.Width = pageInfo.Width;
+                page.Height = pageInfo.Height;
+                page.Orientation = pageInfo.Orientation;
+
+                using (XGraphics gfx = XGraphics.FromPdfPage(page))
+                    pdfRenderer.RenderPage(gfx, i);
+
+                RenderedPages++;
+            }
         }
 
         public async Task GenerateAsync(Stream Stream)
@@ -59,9 +86,9 @@ namespace CheckListManager.Common.Logic.Api.PDF
                 
                 await AddSectionAsync();
                 await OnGenerateAsync();
-
+                
                 // Render MigraDoc document into PDFsharp document
-                PdfDocument.RenderMigraDocument(Container.Document);
+                RenderMigraDocument();
 
                 await OnRenderAttachmentsAsync();
 

@@ -12,17 +12,19 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
 {
     public class FirstPage : PDFSection
     {
-        public FirstPage(CheckListPDF PDFBase, string FirstRow, string SecondRow, string ThirdRow, List<Tuple<string, string>> Rows) : base(PDFBase, 0)
+        public FirstPage(CheckListPDF PDFBase, string FirstRow, string SecondRow, string ThirdRow, List<Tuple<string, string>> Rows, string Exceptions) : base(PDFBase, 0)
         {
             this.FirstRow = FirstRow;
             this.SecondRow = SecondRow;
             this.ThirdRow = ThirdRow;
+            this.Exceptions = Exceptions;
             this.Rows = Rows;
         }
 
         private string FirstRow { get; }
         private string SecondRow { get; }
         private string ThirdRow { get; }
+        private string Exceptions { get; }
         private List<Tuple<string, string>> Rows { get; }
 
         public override Task RenderAsync(params object[] State)
@@ -68,6 +70,17 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             {
                 paragraph = PDFBase.Container.AddParagraph(ThirdRow);
                 paragraph.Format.SpaceBefore = 20;
+            }
+
+            if (!string.IsNullOrWhiteSpace(Exceptions))
+            {
+                paragraph = PDFBase.Container.AddParagraph("Exceptions");
+                paragraph.SetFont(PDFBase.RedTitleFont);
+                paragraph.Format.SpaceBefore = 20;
+
+                paragraph = PDFBase.Container.AddParagraph(Exceptions);
+                paragraph.SetFont(PDFBase.GenericFont);
+                paragraph.Format.SpaceBefore = 10;
             }
 
             return Task.CompletedTask;

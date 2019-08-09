@@ -2,14 +2,7 @@
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Tables;
 using MigraDoc.DocumentObjectModel.Shapes;
-using MigraDoc.Rendering;
-using PdfSharp.Drawing;
-using PdfSharp.Pdf;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Net;
 using System.IO;
 
@@ -17,27 +10,6 @@ namespace CheckListManager.Common.Logic.Api.PDF
 {
     public static class PDFExtension
     {
-        public static void RenderMigraDocument(this PdfDocument document, Document migraDocument)
-        {
-            var pdfRenderer = new DocumentRenderer(migraDocument);
-            pdfRenderer.PrepareDocument();
-
-            int pages = pdfRenderer.FormattedDocument.PageCount;
-
-            for (int i = 1; i <= pages; i++)
-            {
-                PageInfo pageInfo = pdfRenderer.FormattedDocument.GetPageInfo(i);
-
-                var page = document.AddPage();
-                page.Width = pageInfo.Width;
-                page.Height = pageInfo.Height;
-                page.Orientation = pageInfo.Orientation;
-
-                using (XGraphics gfx = XGraphics.FromPdfPage(page))
-                    pdfRenderer.RenderPage(gfx, i);
-            }
-        }
-
         public static Table CreateTable()
         {
             Table table = new Table();
@@ -86,16 +58,12 @@ namespace CheckListManager.Common.Logic.Api.PDF
             return paragraph;
         }
 
-        // WORK IN PROGRESS: THIS WORKS WITH THE 1.50 VERSION (BETA).
         public static Image AddImage(this Paragraph paragraph, byte[] image)
         {
             Image img = paragraph.AddImage($"base64:{Convert.ToBase64String(image)}");
             return img;
         }
 
-        // WORK IN PROGRESS: THIS WORKS WITH THE 1.50 VERSION (BETA).
-        // ALTERNATIVE (1): USE LOCAL IMAGE
-        // ALTERNATIVE (2): DOWNLOAD IMAGE, SAVE AS TEMP FILE, DELETE IMAGE
         public static Image AddImage(this Paragraph paragraph, Uri uri)
         {
             Image img = null;

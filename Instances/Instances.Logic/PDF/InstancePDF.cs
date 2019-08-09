@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using CheckListManager.Common.Core.Helpers;
 using CheckListManager.Common.Data;
@@ -50,8 +51,12 @@ namespace CheckListManager.Instances.Logic.PDF
                 new Tuple<string, string> ("Instance confirmation", Instance.InstanceState == InstanceState.Confirmed ? Instance.ModifiedOn?.ToLocalTime(TimeZone).ToString("yyyy-MM-dd HH:mm UTC zzz") : "N/A")
             };
 
-            return new FirstPage(this, Instance.InstanceCode, Instance.PrototypeDescription, FormatFormula(Instance.Instance.Description), Rows);
+            var Exceptions = new StringBuilder();
+            foreach (var Expression in Instance.Instance.Expressions.Values)
+                if (Expression.Exception && Expression.Value.Value as bool? == true)
+                    Exceptions.AppendLine(Expression.Description);
 
+            return new FirstPage(this, Instance.InstanceCode, Instance.PrototypeDescription, FormatFormula(Instance.Instance.Description), Rows, Exceptions.Length > 0 ? Exceptions.ToString() : null);
         }
 
         protected override Task<Template> GenerateTemplateAsync()
