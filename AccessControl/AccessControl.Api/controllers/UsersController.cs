@@ -96,7 +96,7 @@ namespace CheckListManager.AccessControl.Api.Controllers
             var Header = new string[] {
                 "Code",
                 "Name and surname",
-                "Email",
+                "E<mail",
                 "Enabled",
                 "Last login",
                 "Department",

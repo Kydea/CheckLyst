@@ -13,7 +13,13 @@ namespace CheckListManager.WebApplication.Controllers
             return ConditionalView();
         }
 
-        [Route("Detail")]
+		[Route("UsersList")]
+		public ActionResult UsersList()
+		{
+			return ConditionalView();
+		}
+
+		[Route("Detail")]
         public ActionResult Detail()
         {
             return PartialView();

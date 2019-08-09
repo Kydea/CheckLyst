@@ -1,0 +1,87 @@
+﻿<div id="AuditTrailPage">
+    <h1>Users Audit Trail</h1>
+
+    <div class="ActionBar">
+        <a id="ExportButton" class="Button" href="#">Export<i class="Icon fa fa-caret-down"></i></a>
+    </div>
+
+    <div class="ShadowPanel">
+        <div class="Accordion"></div>
+		<form id="Filters" action="@BaseUrl/Trail/UsersList">
+			<label class="Controls2">
+				<span>Date range</span>
+				<input type="text" name="from" class="DatePicker" />
+				<input type="text" name="to" class="DatePicker" />
+			</label>
+			<label>
+				<span>Action by</span>
+				<i class="Icon fal fa-user" />
+				<input type="text" name="actionBy" />
+			</label>
+			<label class="Clearing">
+				<span>User code</span>
+				<i class="Icon fal fa-user" />
+				<input type="text" name="user" />
+			</label>
+			<label>
+				<span>Email</span>
+				<i class="Icon fal fa-at" />
+				<input type="text" name="email" />
+			</label>
+			<label>
+				<span>Name and surname</span>
+				<i class="Icon fal fa-signature" />
+				<input type="text" name="name" />
+			</label>
+
+			<div class="Clearing"></div>
+		</form>
+
+        <table class="Grid">
+            <thead>
+				<tr>
+					<th>ID</th>
+					<th>Date</th>
+					<th>Action</th>
+					<th>Action by</th>
+					<th>User</th>
+				</tr>
+            </thead>
+            <tbody>
+				<tr class="Handler">
+					<td data-column="id"></td>
+					<td data-column="date" data-type="DateTimeOffset"></td>
+					<td data-column="action"></td>
+					<td data-column="actionBy" data-type="Text"></td>
+					<td data-column="user" data-type="Text"></td>
+				</tr>
+                <tr class="NoRecord"><td>(no record)</td></tr>
+            </tbody>
+        </table>
+        <div class="Paginator"></div>
+        <div class="Clearing"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    matematici.events.onPageLoad = function (callback) {
+        var searchPage = new matematici.SearchPage({
+            pageName: "Trail",
+            detailUrl: "@Url.Action("Detail")",
+            filterFormSelector: "form#Filters",
+            resultGridSelector: "div#Content table.Grid",
+            breadCrumbs: [
+                { content: "audit trail" }
+            ]
+        });
+
+        $("a#ExportButton").on("click", function () {
+            var form = searchPage.getForm();
+            form.trigger("Export", function (result) {
+				location = form.getElement().attr("action") + "/Export?Token=" + result.token;
+            })
+        });
+
+        callback.call();
+    };
+</script>
