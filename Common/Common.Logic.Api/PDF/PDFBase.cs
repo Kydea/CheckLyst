@@ -24,10 +24,10 @@ namespace CheckListManager.Common.Logic.Api.PDF
         public static Font TitleFont1 => FontHelper.GetInstance("Helvetica", 20, FontStyle.Bold, Yellow).Clone();
         public static Font TitleFont2 => FontHelper.GetInstance("Helvetica", 16, FontStyle.Bold, Green).Clone();
         public static Font TitleFont3 => FontHelper.GetInstance("Helvetica", 12, FontStyle.Bold, Green).Clone();
+        public static Font RedTitleFont => FontHelper.GetInstance("Helvetica", 12, FontStyle.Bold, Red).Clone();
         public static Font GenericFont => FontHelper.GetInstance("Helvetica", 10, FontStyle.Regular, Colors.Black).Clone();
         public static Font BoldFont => FontHelper.GetInstance("Helvetica", 10, FontStyle.Bold, DarkGray).Clone();
         public static Font GrayFont => FontHelper.GetInstance("Helvetica", 10, FontStyle.Regular, DarkGray).Clone();
-        public static Font NoteFont => FontHelper.GetInstance("Helvetica", 7, FontStyle.Regular, Colors.Black).Clone();
         public static Font SmallFont => FontHelper.GetInstance("Helvetica", 8, FontStyle.Regular, Colors.Black).Clone();
         public static Font SmallBoldFont => FontHelper.GetInstance("Helvetica", 8, FontStyle.Bold, Colors.Black).Clone();
 
