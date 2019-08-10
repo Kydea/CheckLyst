@@ -91,6 +91,8 @@ namespace CheckListManager.Common.Logic.Api.PDF
                 {
                     if (Attachment.ContentType.StartsWith("image", StringComparison.InvariantCultureIgnoreCase))
                     {
+                        Paragraph = Container.AddParagraph();
+
                         Bitmap Image;
                         byte[] Data;
                         using (MemoryStream ms = new MemoryStream())

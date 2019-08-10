@@ -447,6 +447,7 @@
     <Content Include="Views\Help\PrototypeEditor.cshtml" />
     <Content Include="Views\FTPServers\Detail.cshtml" />
     <Content Include="Views\FTPServers\List.cshtml" />
+    <Content Include="Views\Trail\UsersList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

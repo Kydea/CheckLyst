@@ -36,6 +36,9 @@
                         break;
                     case "Custom":
                         break;
+					case "Text":
+						cell.text(value);
+						break;
                     default:
                         cell.html(value);
                 }
