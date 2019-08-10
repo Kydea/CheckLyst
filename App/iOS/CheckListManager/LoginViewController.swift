@@ -14,6 +14,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate
 {
     
     @IBOutlet var accessoryButton: UIButton!
+    
     @IBOutlet var serverTextField: UITextField!
     
     @IBOutlet var userCodeTextField: UITextField!
@@ -125,6 +126,10 @@ class LoginViewController: UIViewController, UITextFieldDelegate
         
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+    }
     
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -217,7 +222,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate
         
         ServerConnection.loginOrRefreshToServer(["Company" : String(self.selectedCompany!.id),"Code":userCodeTextField.text!,"Password":passwordTextField.text!]){ (serverResponse) -> Void in
             
-            if(serverResponse.error != nil){
+            if(serverResponse.error != nil) {
                 
                 var errorMessage = "Connection error to the server"
                 var title = "Error"
@@ -333,31 +338,33 @@ class LoginViewController: UIViewController, UITextFieldDelegate
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if(segue.identifier == "ChooseServer") {
-            if let controller = segue.destination as? ChooseServerAndCompanyViewController {
+        if let controller = segue.destination as? ChooseServerAndCompanyViewController {
+            
+            if(sender as! String == "server") {
                 
-                if(sender as! String == "server") {
+                chooseDictionary.removeAllObjects()
                     
-                    chooseDictionary.removeAllObjects()
+                chooseDictionary = [
+                    "Production": (api:"https://checklystapi.jnj.com",frontEnd: "https://checklyst.jnj.com"),
+                    "Pre-Acceptance": (api:"http://10.157.83.252",frontEnd: "http://10.157.83.244"),
+                    "Acceptance": (api:"https://checklystqaapi.jnj.com", frontEnd: "https://checklystqa.jnj.com"),
+                    "Development": (api:"https://checklystdevapi.jnj.com", frontEnd: "https://checklystdev.jnj.com"),
+                    "Development 2": (api:"http://api.clm.matematici-aws.com",frontEnd:"http://clm.matematici-aws.com")
+                ]
                     
-                    chooseDictionary = [
-                        "Production": (api:"https://checklystapi.jnj.com",frontEnd: "https://checklyst.jnj.com"),
-                        "Pre-Acceptance": (api:"http://10.157.83.252",frontEnd: "http://10.157.83.244"),
-                        "Acceptance": (api:"https://checklystqaapi.jnj.com", frontEnd: "https://checklystqa.jnj.com"),
-                        "Development": (api:"https://checklystdevapi.jnj.com", frontEnd: "https://checklystdev.jnj.com"),
-                        "Development 2": (api:"http://api.clm.matematici-aws.com",frontEnd:"http://clm.matematici-aws.com")
-                    ]
-                    
-                    controller.serverFieldsDictionary = chooseDictionary as? Dictionary<String,(api:String, frontEnd:String)>
-                } else {
-                    controller.companyFieldsDictionary = chooseDictionary as? Dictionary<String,Dictionary<String, String>>
-                }
-                
-                controller.loginViewController = self
-                
-                controller.chooseServer = (sender as! String) == "server" ? true : false
-                
+                controller.serverFieldsDictionary = chooseDictionary as? Dictionary<String,(api:String, frontEnd:String)>
+            } else {
+                controller.companyFieldsDictionary = chooseDictionary as? Dictionary<String,Dictionary<String, String>>
             }
+                
+            controller.loginViewController = self
+                
+            controller.chooseServer = (sender as! String) == "server" ? true : false
+                
+        } else {
+            view.endEditing(true)
+            passwordTextField.text = ""
+            userCodeTextField.text = ""
         }
     }
     

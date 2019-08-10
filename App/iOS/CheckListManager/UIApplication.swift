@@ -132,7 +132,6 @@ import UIKit
                 if((topController as! TabViewController).selectedIndex == 1) {
                     if let navigationController = (topController as! TabViewController).viewControllers![(topController as! TabViewController).selectedIndex] as? UINavigationController {
                         if(navigationController.childViewControllers.count > 2) {
-                            print(navigationController.childViewControllers.debugDescription)
                             for controller in navigationController.childViewControllers {
                                 if controller.isKind(of: InstanceViewController.self) {
                                     return controller as? InstanceViewController
@@ -160,7 +159,9 @@ import UIKit
                     (topController as! TabViewController).selectedIndex = 1
                 }
                 
-                if let controller = (topController as! TabViewController).viewControllers![(topController as! TabViewController).selectedIndex] as? InstancesSearchViewController {
+                let tabBarController = (topController as! TabViewController)
+                
+                if let controller = tabBarController.viewControllers![tabBarController.selectedIndex].childViewControllers[0] as? InstancesSearchViewController {
                     requestToOpenInstance = false
                     controller.performSegue(withIdentifier: "openInstanceDirectly", sender: self)
                 }
@@ -180,19 +181,33 @@ import UIKit
             if topController.isKind(of: TabViewController.self)
             {
         
-                if((topController as! TabViewController).selectedIndex == 1) {
-                    if let navigationController = (topController as! TabViewController).viewControllers![(topController as! TabViewController).selectedIndex] as? UINavigationController {
+                let tabBarController = (topController as! TabViewController)
+                
+                if(tabBarController.selectedIndex == 1) {
+                    if let navigationController = tabBarController.viewControllers![tabBarController.selectedIndex] as? UINavigationController {
                         if(navigationController.childViewControllers.count > 2) {
                             navigationController.popViewController(animated: false)
                         }
                     }
                 }
+                
+                UserDefaults.standard.setValue(false, forKey: "logged")
+                UserDefaults.standard.setValue(nil, forKey: "access_token")
+                UserDefaults.standard.setValue(nil, forKey: "refresh_token")
+                UserDefaults.standard.setValue(nil, forKey: "roles")
+                
+                tabBarController.dismiss(animated: true, completion: nil)
             }
         }
-        UserDefaults.standard.setValue(false, forKey: "logged")
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        
+        
+        /*
+         Old way to go back to login
+         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let homeVC = storyboard.instantiateViewController(withIdentifier: "FirstCheck")
         UIApplication.shared.keyWindow?.rootViewController = homeVC
+        Better this way?
+         UIApplication.shared.keyWindow?.rootViewController?.navigationController?.popToRootViewController(animated: true)*/
     }
     
     func displayError(Title title:String, Message message:String) {

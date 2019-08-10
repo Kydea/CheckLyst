@@ -76,7 +76,7 @@ class SharedControllersProperty: NSObject {
                         (alert: UIAlertAction!) -> Void in
                         self.timer?.invalidate()
                     })
-                    let versionApp = Bundle.main.infoDictionary!["CFBundleShortVersionString"] as! String!
+                    let versionApp = Bundle.main.infoDictionary!["CFBundleShortVersionString"] as! String?
                     
                     let appVersion = UIAlertAction(title: "App version: \(versionApp ?? "undefined")", style: .default, handler: {
                         (alert: UIAlertAction!) -> Void in
