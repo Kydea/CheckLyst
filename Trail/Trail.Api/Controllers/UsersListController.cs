@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -53,25 +55,48 @@ namespace CheckListManager.Trail.Api.Controllers
         {
             var Data = await _redisCache.GetAsync<UsersListRequest>($"Token:{token}", "Download");
             await _redisCache.RemoveAsync($"Token:{token}", "Download");
-            var Header = new [] {
+            
+            var timeZone = (await _settingService.TimeZoneAsync(Data.CompanyId.Value)).MicrosoftCode;
+            var rows = await _listService.GetDataAsync(Data.CompanyId.Value, Data);
+
+            var permissions = rows.Select(r => r.Details.Functions.Count).Max();
+            
+            var headers = new List<string> {
                 "ID",
                 "Date",
-                "User",
                 "Action",
-                "CheckList code",
-                "Detail"
+                "Action By",
+                "User",
+                "Email",
             };
-            string timeZone = (await _settingService.TimeZoneAsync(Data.CompanyId.Value)).MicrosoftCode;
-                
-            var Rows = await _listService.GetDataAsync(Data.CompanyId.Value, Data);
-            return Content(HttpStatusCode.OK, Rows, new CSVFormatter<TrailMessage>(Header, "AuditTrail", tm => new string[] {
-                tm.Id.ToString(),
-                tm.Date.ToLocalTime(timeZone).ToString(),
-                tm.User,
-                tm.Action,
-                tm.CheckList,
-                tm.Information
-            }));
+            
+            headers.AddRange(Enumerable.Range(0, permissions).Select(i => $"Permission {i + 1}"));
+
+            string GetPermissionString(Dictionary<string, string> x)
+                => string.Join(" - ", x.Select(y => $"{y.Key}: {y.Value}"));
+            string GetPermissions(UsersListResponse row, int i)
+                => i < row.Details.Functions.Count ? GetPermissionString(row.Details.Functions[i]) : "";
+
+            return Content(HttpStatusCode.OK, rows, new CSVFormatter<UsersListResponse>(headers.ToArray(), "AuditTrail",
+                tm =>
+                {
+                    var columns = new List<string>
+                    {
+                        tm.Id.ToString(),
+                        tm.Date.ToLocalTime(timeZone).ToString(),
+                        tm.Action,
+                        tm.User,
+                        tm.AffectedUser,
+                        tm.Details.Email,
+                        tm.Details.NameAndSurname,
+                        !tm.Details.Enabled.HasValue ? "N/A" : tm.Details.Enabled.Value.ToString(),
+                    };
+                    
+                    columns.AddRange(Enumerable.Range(0, permissions).Select(i => GetPermissions(tm, i)));
+
+                    return columns.ToArray();
+                }
+            ));
         }
     }
 }

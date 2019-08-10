@@ -37,25 +37,25 @@ namespace CheckListManager.Trail.Logic.Services
             {
                 if (!string.IsNullOrEmpty(record.Information))
                 {
-                    UsersListResponse.UserInformation user;
+                    UsersListResponse.UserInformation userDetails;
                     try
                     {
-                        user = JsonConvert.DeserializeObject<UsersListResponse.UserInformation>(record.Information);
+                        userDetails = JsonConvert.DeserializeObject<UsersListResponse.UserInformation>(record.Information);
                     }
                     catch (Exception)
                     {
-                        user = new UsersListResponse.UserInformation
+                        userDetails = new UsersListResponse.UserInformation
                         {
                             Code = !record.Information.Contains("{") ? record.Information : ""
                         };
                     }
                     
-                    if ((string.IsNullOrEmpty(user.Code) && string.IsNullOrEmpty(form.User) ||
-                         user.Code != null && user.Code.ToUpper().Contains(form.User.ToUpper()))
-                        && (string.IsNullOrEmpty(user.Email) && string.IsNullOrEmpty(form.Email) ||
-                            user.Email != null && user.Email.ToUpper().Contains(form.Email.ToUpper()))
-                        && (string.IsNullOrEmpty(user.NameAndSurname) && string.IsNullOrEmpty(form.Name) ||
-                            user.NameAndSurname != null && user.NameAndSurname.ToUpper().Contains(form.Name.ToUpper())))
+                    if ((string.IsNullOrEmpty(userDetails.Code) && string.IsNullOrEmpty(form.User) ||
+                         userDetails.Code != null && userDetails.Code.ToUpper().Contains(form.User.ToUpper()))
+                        && (string.IsNullOrEmpty(userDetails.Email) && string.IsNullOrEmpty(form.Email) ||
+                            userDetails.Email != null && userDetails.Email.ToUpper().Contains(form.Email.ToUpper()))
+                        && (string.IsNullOrEmpty(userDetails.NameAndSurname) && string.IsNullOrEmpty(form.Name) ||
+                            userDetails.NameAndSurname != null && userDetails.NameAndSurname.ToUpper().Contains(form.Name.ToUpper())))
                     {
                         list.Add(new UsersListResponse
                         {
@@ -64,9 +64,10 @@ namespace CheckListManager.Trail.Logic.Services
                             Company = record.Company.Value,
                             Date = record.Date,
                             Action = record.Action,
-                            ActionBy = record.User,
-                            User = user.Code,
-                            Information = record.Information
+                            User = record.User,
+                            AffectedUser = userDetails.Code,
+                            Information = record.Information,
+                            Details = userDetails
                         });
                     }
                 }
