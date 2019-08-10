@@ -38,7 +38,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, UIGestureR
         activityIndicator.hidesWhenStopped = true
         activityIndicator.transform = CGAffineTransform(scaleX: 2.0, y: 2.0)
         
-        scanButtonIsVisible = false
+        scanButtonIsVisible = true
         
         for subview in webView.scrollView.subviews {
             if subview.classForCoder.description() == "WKContentView" {
@@ -50,6 +50,8 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, UIGestureR
             ServerConnection.baseFrontEndUrl + "/Instances/Detail/" + (instanceCodeFromRequest != nil ? instanceCodeFromRequest! : instance.code) + "?d=" + String(Int64(Date().timeIntervalSince1970 * 1000)) + "&AppUser=" + (UserDefaults.standard.string(forKey: "userCode"))! :
             ServerConnection.baseFrontEndUrl + "/Instances/Create/" + newInstancePrototype! + "/" + newInstanceVersion! + "?d=" + String(Int64(Date().timeIntervalSince1970 * 1000)) + "&AppUser=" + (UserDefaults.standard.string(forKey: "userCode"))!
         
+        
+        print(fullUrl)
         
         let url = URL(string: fullUrl)
         
@@ -63,7 +65,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, UIGestureR
         let bodyString = "roles=" + (UserDefaults.standard.value(forKey: "roles") as! String) +
             "&timeZone=" + (UserDefaults.standard.value(forKey: "timeZone") as! String) +
             "&decimalSeparator=" + (UserDefaults.standard.value(forKey: "decimalSeparator") as! String) + "&accessToken=" + (UserDefaults.standard.value(forKey: "access_token") as! String) + "&refreshToken=" + (UserDefaults.standard.value(forKey: "refresh_token") as! String)
-        print("request = " + bodyString)
+        
         request.httpBody = bodyString.data(using: String.Encoding.utf8)
         
         webView.load(request as URLRequest)
@@ -79,7 +81,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, UIGestureR
         
          inputAccessory = UIBarButtonItemGroup(barButtonItems: [UIBarButtonItem(barButtonSystemItem: .camera, target: self, action: #selector(scanItem(_:)))], representativeItem: nil)
         
-        self.scanButtonIsVisible = true;
+        self.contentView!.inputAssistantItem.trailingBarButtonGroups = [self.inputAccessory] as! [UIBarButtonItemGroup]
     }
     
     override func didReceiveMemoryWarning()
@@ -114,7 +116,6 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, UIGestureR
     
     func willEnterForeground()
     {
-        print("enter foreground")
         self.navigationController?.popViewController(animated: true)
     }
     
@@ -147,16 +148,6 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, UIGestureR
         self.present(alert, animated: false, completion: nil)
     }
     
-    /*func webView(_ webView: UIWebView, didFailLoadWithError error: Error) {
-        
-        unlockView()
-        let alert = UIAlertController(title: "Error", message: "Connection error to the server", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action) -> Void in
-            self.navigationController?.popViewController(animated: true)
-        }))
-        self.present(alert, animated: false, completion: nil)
-    }*/
-    
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         unlockView()
         
@@ -166,27 +157,13 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, UIGestureR
             (response, error) -> Void in
             if let value = response as? String {
                 if(value.contains("Security/Login")) {
-                    print("redirecting")
                     webView.isHidden = true
+                    print("redirecting")
                     self.app.logoutAndGoToLogin()
                 }
             }
         }
     }
-   
-    /*func webViewDidFinishLoad(_ webView: UIWebView) {
-        
-        unlockView()
-        
-        self.webView.isHidden = false
-        
-        if(webView.stringByEvaluatingJavaScript(from: "window.location.href")!.contains("Security/Login")){
-            print("redirecting")
-            webView.isHidden = true
-            app.logoutAndGoToLogin()
-        }
-        
-    }*/
     
     func shouldShowScanButton() {
         webView.evaluateJavaScript("document.activeElement.classList.contains(\"Scan\")") {
@@ -198,13 +175,17 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, UIGestureR
                         self.scanButtonIsVisible = true;
                         print("scan button on")
                     }
+                } else if (self.contentView != nil && self.scanButtonIsVisible) {
+                        self.contentView!.inputAssistantItem.trailingBarButtonGroups.removeAll()
+                        self.scanButtonIsVisible = false
+                        print("scan button off")
                 }
             }
         }
     }
     
     func refreshTokensByJSInjection(accessToken : String, refreshToken : String) {
-        webView.evaluateJavaScript("matematici.tokenManager.setTokens(\"\(accessToken)\",\"\(refreshToken)\")") {
+        webView.evaluateJavaScript("matematici.tokenManager.setTokens(\"\(accessToken)\",\"\(refreshToken)\")") /*{
             (response, error) -> Void in
             if let res = response {
                 print(res)
@@ -213,7 +194,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, UIGestureR
             } else {
                 print("Unexpected situation")
             }
-        }
+        }*/
     }
     
     func setValueForInputField(_ value : String) {

@@ -35,13 +35,17 @@ class QRCodeScannerViewController: UIViewController, QRScannerViewDelegate {
                 
                 // Add "OK" Button to alert, pressing it will bring you to the settings app
                 alert.addAction(UIAlertAction(title: "Settings", style: .default, handler: { action in
-                    UIApplication.shared.open(URL(string: UIApplicationOpenSettingsURLString)!)
+                    self.dismiss(animated: true) {
+                        UIApplication.shared.open(URL(string: UIApplicationOpenSettingsURLString)!)
+                    }
                 }))
                 alert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { action in
-                    self.dismiss(animated: true, completion: nil)
+                        self.dismiss(animated: true, completion: nil)
                 }))
                 // Show the alert with animation
-                self.present(alert, animated: true)
+                DispatchQueue.main.sync {
+                    self.present(alert, animated: true)
+                }
             }
         }
         
@@ -55,14 +59,14 @@ class QRCodeScannerViewController: UIViewController, QRScannerViewDelegate {
     }
     
     func qrScanningDidFail() {
-        print("camera failed")
+        //print("camera failed")
         let alert = UIAlertController(title: "Error", message: "Scanning Failed. Please try again", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
         self.present(alert, animated: false, completion: nil)
     }
     
     func qrScanningSucceededWithCode(_ str: String?) {
-        print("camera succeded " + (str ?? ""))
+        //print("camera succeded " + (str ?? ""))
         if (callback != nil && str != nil) {
             callback!(str!)
             self.dismiss(animated: true, completion: nil)
@@ -70,7 +74,7 @@ class QRCodeScannerViewController: UIViewController, QRScannerViewDelegate {
     }
     
     func qrScanningDidStop() {
-        print("camera stopped")
+        //print("camera stopped")
         self.dismiss(animated: true, completion: nil)
     }
 

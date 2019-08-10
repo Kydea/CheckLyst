@@ -46,8 +46,6 @@ class UserManualViewController: UIViewController, WKNavigationDelegate {
             
             let fullUrl = ServerConnection.baseFrontEndUrl + "/Help/App?AppUser="+(UserDefaults.standard.string(forKey: "userCode"))!+"&d=" + String(Int64(Date().timeIntervalSince1970 * 1000))
             
-            print(fullUrl)
-            
             let url = URL(string: fullUrl)
             
             let request = NSMutableURLRequest(url: url!)
@@ -55,8 +53,6 @@ class UserManualViewController: UIViewController, WKNavigationDelegate {
             request.httpMethod = "GET"
             
             request.timeoutInterval = 10
-            
-            //request.addValue((UserDefaults.standard.value(forKey: "token_type") as! String).capitalized + " " + (UserDefaults.standard.value(forKey: "access_token") as! String), forHTTPHeaderField: "Authorization")
             
             webView.load(request as URLRequest)
             
@@ -66,8 +62,6 @@ class UserManualViewController: UIViewController, WKNavigationDelegate {
         
     }
    
-    
-    
     override func viewDidLayoutSubviews() {
         
         webView.frame = CGRect(x: 0, y: 10, width: self.view.frame.size.width, height: self.view.frame.size.height)
@@ -85,7 +79,6 @@ class UserManualViewController: UIViewController, WKNavigationDelegate {
             (response, error) -> Void in
             if let value = response as? String {
                 if(value.contains("Security/Login")) {
-                    print("redirecting")
                     webView.isHidden = true
                     self.helpLoaded = false
                     self.app.logoutAndGoToLogin()
@@ -93,42 +86,6 @@ class UserManualViewController: UIViewController, WKNavigationDelegate {
             }
         }
     }
-    
-    
-    
-    /*func webViewDidFinishLoad(_ webView: UIWebView) {
-        
-        unlockView()
-        
-        helpLoaded = true
-        
-        if( webView.stringByEvaluatingJavaScript(from: "window.location.href")!.contains("Security/Login")){
-            
-            webView.isHidden = true
-            
-            helpLoaded = false
-            
-            logoutAndGoToLogin()
-        }
-    }*/
-    
-    
-    
-    
-    /*func webView(_ webView: UIWebView, didFailLoadWithError error: Error) {
-        
-        unlockView()
-        
-        let alert = UIAlertController(title: "Error", message: "Connection error to the server", preferredStyle: .alert)
-        
-        alert.addAction(UIAlertAction(title: "Ok", style: .destructive, handler: { (action) -> Void in
-            
-            self.tabBarController?.selectedIndex = 0
-            
-        }))
-        
-        self.present(alert, animated: false, completion: nil)
-    }*/
     
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
     unlockView()
@@ -138,14 +95,6 @@ class UserManualViewController: UIViewController, WKNavigationDelegate {
     }))
     self.present(alert, animated: false, completion: nil)
     }
-    
-    
-    func logoutAndGoToLogin()
-        
-    {
-        app.logoutAndGoToLogin()
-    }
-    
     
     func lockView()
     {

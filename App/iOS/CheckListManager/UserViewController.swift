@@ -16,6 +16,8 @@ class UserViewController: UIViewController {
     
     @IBOutlet var activityIndicator: UIActivityIndicatorView!
     
+    let app = (UIApplication.shared as! MyApplication)
+    
     override func viewDidLoad() {
         let infoBarButtonItem = SharedControllersProperty.instance.setInfoButton()
         self.navigationItem.rightBarButtonItem = infoBarButtonItem
@@ -26,11 +28,11 @@ class UserViewController: UIViewController {
         activityIndicator.hidesWhenStopped = true
     }
     
+    //TODO prova a cambiare l'hook su viewWillApper, magari è megli visivamente
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        let delegate = (UIApplication.shared as! MyApplication)
-        if (delegate.requestToOpenInstance) {
-            delegate.openInstance()
+        if (app.requestToOpenInstance) {
+            app.openInstance()
         }
     }
     
@@ -42,11 +44,7 @@ class UserViewController: UIViewController {
         
         ServerConnection.logoutFromServer(["data":["refreshToken":UserDefaults.standard.value(forKey: "refresh_token") as! String]]){ (serverResponse) -> Void in
             if(serverResponse.data != nil){
-                UserDefaults.standard.setValue(false, forKey: "logged")
-                UserDefaults.standard.setValue(nil, forKey: "access_token")
-                UserDefaults.standard.setValue(nil, forKey: "refresh_token")
-                UserDefaults.standard.setValue(nil, forKey: "roles")
-                self.performSegue(withIdentifier: "logoutSegue", sender: self)
+                self.app.logoutAndGoToLogin()
             }
             else
             {

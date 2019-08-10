@@ -84,7 +84,7 @@ open class ServerConnection {
     static func getUrlEncodedParam(_ param: String) -> String? {
         let allowedCharacterSet = CharacterSet(charactersIn: "!*'();:@&=+$,/?%#[] ").inverted
         if let value = param.addingPercentEncoding(withAllowedCharacters: allowedCharacterSet) {
-            print("enconded value is:", value)
+            //print("enconded value is:", value)
             return value;
         }
         return nil
@@ -93,7 +93,7 @@ open class ServerConnection {
     static func encodeParams(_ params: Dictionary<String, AnyObject>) -> Dictionary<String, AnyObject> {
         var dict : Dictionary<String, AnyObject> = Dictionary<String, AnyObject>()
         for (key, value) in params {
-            print(key, ":", value.description!)
+            //print(key, ":", value.description!)
             if let param = value as? String {
                 dict[key] = (getUrlEncodedParam(param) ?? param) as AnyObject
             } else if let param = value as? Dictionary<String, AnyObject> {
@@ -112,7 +112,7 @@ open class ServerConnection {
             
             let session = URLSession.shared
             
-            print("Parameters: \n", parameters.description)
+            //print("Parameters: \n", parameters.description)
             
             let params = encodeParams(parameters)
             
@@ -173,7 +173,7 @@ open class ServerConnection {
                         serverResponse.data = data
                         serverResponse.error = error as NSError?
                         
-                        print((data != nil) ? String(decoding: data!, as: UTF8.self) : "")
+                        //print((data != nil) ? String(decoding: data!, as: UTF8.self) : "")
                         
                         completion(serverResponse)
                     }

@@ -74,7 +74,6 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
     
     func fromSelectionToSearchDictionary()
     {
-        
         for field in searchDictionary.keys {
             let index = fieldIndexDictionary[field]!
             searchDictionary[field] = (field == "version") ? selectedItemsDictionary[index]!.value.components(separatedBy: " -")[0] : searchDictionary[field]
@@ -219,10 +218,6 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                             let index = self.fieldIndexDictionary["prototypeType"]!
                             let field = self.indexFieldDictionary[index]!
                             
-    //                        if prototypeTypes.count == 0 {
-    //                            //self.displayMessage("Error", messageText: "The user does not have instance grants on any prototype type of this department")
-    //                        }
-                            
                             self.indexArrayDictionary[index] = prototypeTypes
                             if let value = searchFields.fields.prototypeType?.value {
                                 self.selectedItemsDictionary[index] = self.findOPtionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
@@ -238,10 +233,6 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                             
                             let index = self.fieldIndexDictionary["prototype"]!
                             let field = self.indexFieldDictionary[index]!
-                            
-    //                        if prototype.count == 0 {
-    //                            //self.displayMessage("Error", messageText: "The user does not have instance grants on any prototype of this type")
-    //                        }
                             
                             self.indexArrayDictionary[self.fieldIndexDictionary["prototype"]!] = prototype
                             self.indexArrayDictionary[self.fieldIndexDictionary["prototype"]!]?.insert(Option(text: "All", value: ""), at: 0)
@@ -530,9 +521,14 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
         }
         
         else if let controller = segue.destination as? InstanceViewController {
-            if(segue.isKind(of: AppDelegate.self)) {
-                let delegate = (UIApplication.shared as! MyApplication)
-                if let parameters = delegate.requestedUrlInfo {
+            if((sender as AnyObject).isKind(of: MyApplication.self)) {
+                let app = sender as! MyApplication
+                if let parameters = app.requestedUrlInfo {
+                    
+                    for i in 0...7 {
+                        selectedItemsDictionary[i] = Option(text: "",value: "")
+                    }
+                    
                     if (parameters.keys.contains("version") && parameters.keys.contains("prototype")) {
                         controller.newInstance = true
                         controller.newInstancePrototype = parameters["prototype"]!
@@ -540,6 +536,8 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                     } else if (parameters.keys.contains("code")) {
                         controller.instanceCodeFromRequest = parameters["code"]!
                     }
+                    
+                    controller.selectedItemsDictionary = selectedItemsDictionary;
                 }
             } else {
                 controller.newInstance = true

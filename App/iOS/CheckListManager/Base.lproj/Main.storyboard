@@ -485,7 +485,6 @@
                     <connections>
                         <outlet property="activityIndicator" destination="r1S-7l-G7E" id="1uY-bO-h2A"/>
                         <outlet property="userCodeTextField" destination="K22-hO-6hb" id="BsH-Nz-ZYS"/>
-                        <segue destination="ypL-u9-hOc" kind="presentation" identifier="logoutSegue" id="6j3-zP-zDx"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Lwd-ZU-ilS" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -712,14 +711,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <activityIndicatorView opaque="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="R3u-YP-wuO">
-                                <rect key="frame" x="374" y="512" width="20" height="20"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="20" id="AaR-4O-gfV"/>
-                                    <constraint firstAttribute="height" constant="20" id="EYL-13-jWV"/>
-                                </constraints>
-                            </activityIndicatorView>
-                            <wkWebView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sDV-7B-eD1" customClass="CustomWKWebView" customModule="Checklyst" customModuleProvider="target">
+                            <wkWebView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sDV-7B-eD1">
                                 <rect key="frame" x="0.0" y="70" width="768" height="904"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <wkWebViewConfiguration key="configuration">
@@ -727,6 +719,13 @@
                                     <wkPreferences key="preferences"/>
                                 </wkWebViewConfiguration>
                             </wkWebView>
+                            <activityIndicatorView opaque="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="R3u-YP-wuO">
+                                <rect key="frame" x="374" y="512" width="20" height="20"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="20" id="AaR-4O-gfV"/>
+                                    <constraint firstAttribute="height" constant="20" id="EYL-13-jWV"/>
+                                </constraints>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
@@ -748,7 +747,7 @@
                     <connections>
                         <outlet property="activityIndicator" destination="R3u-YP-wuO" id="7Ye-Ks-b2V"/>
                         <outlet property="customBackButton" destination="d8g-73-n1R" id="C86-0N-VGP"/>
-                        <outlet property="webView" destination="sDV-7B-eD1" id="9Jh-56-h5z"/>
+                        <outlet property="webView" destination="sDV-7B-eD1" id="dLd-vW-1NY"/>
                         <segue destination="me8-qg-fhs" kind="unwind" identifier="goBackSearchInstances" unwindAction="unwindToSearchInstancesWithSender:" id="bIA-Us-Bky"/>
                         <segue destination="OoL-vf-MC3" kind="presentation" identifier="ScanSegue" id="R4e-93-VN0"/>
                     </connections>
@@ -1196,13 +1195,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <activityIndicatorView opaque="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="7SY-gU-cPQ">
-                                <rect key="frame" x="374" y="542" width="20" height="20"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="20" id="5Gj-2d-sWb"/>
-                                    <constraint firstAttribute="height" constant="20" id="B5s-mX-naY"/>
-                                </constraints>
-                            </activityIndicatorView>
                             <wkWebView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Z96-s9-jSy">
                                 <rect key="frame" x="0.0" y="110" width="768" height="884"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -1211,6 +1203,13 @@
                                     <wkPreferences key="preferences"/>
                                 </wkWebViewConfiguration>
                             </wkWebView>
+                            <activityIndicatorView opaque="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="7SY-gU-cPQ">
+                                <rect key="frame" x="374" y="542" width="20" height="20"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="20" id="5Gj-2d-sWb"/>
+                                    <constraint firstAttribute="height" constant="20" id="B5s-mX-naY"/>
+                                </constraints>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
@@ -1415,6 +1414,6 @@
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="wq3-Yy-xYd"/>
-        <segue reference="qFk-ul-dl4"/>
+        <segue reference="BVT-v2-to1"/>
     </inferredMetricsTieBreakers>
 </document>

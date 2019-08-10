@@ -96,7 +96,6 @@ class EditFieldViewController: UIViewController, UITableViewDataSource, UITableV
         
         {
           
-            print(fieldsArray![indexPath.row].text)
             fieldLabel?.text = fieldsArray![indexPath.row].text
         
             inputTextField?.isHidden = true

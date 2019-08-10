@@ -81,7 +81,7 @@ class ListInstancesTableViewController: UIViewController, UITableViewDataSource,
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
-        let cell = tableView.dequeueReusableCell(withIdentifier: "instanceCell") as! ListInstancesCell!
+        let cell = tableView.dequeueReusableCell(withIdentifier: "instanceCell") as! ListInstancesCell?
        
         cell?.preservesSuperviewLayoutMargins = false
     
@@ -131,7 +131,6 @@ class ListInstancesTableViewController: UIViewController, UITableViewDataSource,
         idLabel?.text = String(instance!.id)
         
         if (instance!.description?.classFormat != nil) {
-            print("description: " + instance!.description!.classFormat!.string)
             descrLabel?.attributedText = instance!.description?.classFormat
         } else {
             descrLabel?.text = instance!.description
