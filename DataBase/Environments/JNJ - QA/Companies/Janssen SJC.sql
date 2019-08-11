@@ -33,7 +33,9 @@ insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") valu
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'SignatureMessage', '[User], <br /> you have a pending workflow for the [CheckListType] [CheckListCode].'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'InstanceMessage', '[User], <br /> A signature has been issued for the instance [CheckListCode].'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'DecimalSeparator', ','),
-	(currval('"Infrastructure"."Companies_ID_seq"'), 'RequireUserReason', 'true');
+	(currval('"Infrastructure"."Companies_ID_seq"'), 'RequireUserReason', 'true'),
+	(currval('"Infrastructure"."Companies_ID_seq"'), 'PrototypesAttachmentMaxSizeBytes', '10485760'),
+	(currval('"Infrastructure"."Companies_ID_seq"'), 'InstancesAttachmentMaxSizeBytes', '10485760');
 
 insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
  (currval('"Infrastructure"."Companies_ID_seq"'),'PrototypesFtpConnection','{ Host": "AWSAZFIRL1234.jnj.com", "Port": 21, "Folder": "/CLFTP-Prototypes-SJ-QA", "UserName": "SA-JAC-CLFTP-SJ-QA", "Password": "@Ch3ck7yst", "UsePassive": "true", "EnableSSL": "true" }');

@@ -109,6 +109,18 @@ namespace CheckListManager.Common.Logic.Services
 	        return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<bool>(companyId, code), RegionName);
         }
 
+        public Task<int> PrototypesAttachmentMaxSizeBytesAsync(long companyId)
+        {
+	        const string code = "PrototypesAttachmentMaxSizeBytes";
+	        return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<int>(companyId, code), RegionName);
+        }
+
+        public Task<int> InstancesAttachmentMaxSizeBytesAsync(long companyId)
+        {
+	        const string code = "InstancesAttachmentMaxSizeBytes";
+	        return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<int>(companyId, code), RegionName);
+        }
+
         private async Task<T> Load<T>(long companyId, string code)
 		{
 			var configuration = await _settingRepository.GetAsync(companyId, code);

@@ -79,6 +79,7 @@
     <Compile Include="Cache\IMemoryCache.cs" />
     <Compile Include="Cache\MemoryCache.cs" />
     <Compile Include="Helpers\DateTimeOffsetHelper.cs" />
+    <Compile Include="Helpers\IntHelper.cs" />
     <Compile Include="Helpers\JsonHelper.cs" />
     <Compile Include="Helpers\ObjectHelper.cs" />
     <Compile Include="Network\IServiceClient.cs" />

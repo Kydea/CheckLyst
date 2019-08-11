@@ -855,6 +855,12 @@ namespace CheckListManager.Instances.Logic.Services
             {
                 throw new InstanceException("File type not supported");
             }
+
+            var maxSize = await _settingService.InstancesAttachmentMaxSizeBytesAsync(identity.CompanyId);
+            if (attachment.Buffer.Length > maxSize)
+            {
+                throw new InstanceException($"The file exceed the file size limit of {maxSize.BytesCountToString()}");
+            }
             
             var key = $"{GetAttachmentKeyPrefix(identity, cacheObject)}{itemId.Value}{extension}";
             using (var memoryStream = new MemoryStream(attachment.Buffer))

@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using CheckListManager.Prototypes.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Json;
 using System.Net;
+using CheckListManager.Common.Core.Helpers;
 using CheckListManager.Prototypes.Logic.PDF;
 using CheckListManager.Common.Logic.Api.Formatters;
 using CheckListManager.Common.Logic.Cache;
@@ -27,6 +28,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
         private readonly ICommonRepository _commonRepository;
         private readonly IConfigurationService _configurationService;
         private readonly IStorageService _storageService;
+        private readonly ISettingService _settingService;
 
         public PrototypeController(
             IPrototypeService prototypeService,
@@ -35,7 +37,8 @@ namespace CheckListManager.Prototypes.Api.Controllers
             IRedisCache redisCache,
             ICommonRepository commonRepository,
             IConfigurationService configurationService,
-            IStorageService storageService
+            IStorageService storageService,
+            ISettingService settingService
         )
         {
             _prototypeService = prototypeService;
@@ -45,6 +48,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
             _commonRepository = commonRepository;
             _configurationService = configurationService;
             _storageService = storageService;
+            _settingService = settingService;
         }
 
         [HttpPost]
@@ -258,6 +262,11 @@ namespace CheckListManager.Prototypes.Api.Controllers
                 if (!request.Attachment.MediaType.StartsWith("image/"))
                 {
                     throw new Exception("The file uploaded is not supported");
+                }
+                var maxSize = await _settingService.InstancesAttachmentMaxSizeBytesAsync(Identity.CompanyId);
+                if (request.Attachment.Buffer.Length > maxSize)
+                {
+                    throw new Exception($"The file exceed the file size limit of {maxSize.BytesCountToString()}");
                 }
                 
 		        return Ok(await _prototypeService.UploadAttachmentAsync(Identity, request));

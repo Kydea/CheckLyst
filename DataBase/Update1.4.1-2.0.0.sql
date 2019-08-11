@@ -163,3 +163,15 @@ values
 	('FTPServer created'),
 	('FTPServer updated'),
 	('FTPServer deleted');
+
+insert into "Configuration"."Settings" ("Code") values
+	('PrototypesAttachmentMaxSizeBytes'),
+	('InstancesAttachmentMaxSizeBytes');
+
+insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") 
+select "ID", 'PrototypesAttachmentMaxSizeBytes', '10485760' -- 10MB
+from "Infrastructure"."Companies";
+
+insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") 
+select "ID", 'InstancesAttachmentMaxSizeBytes', '10485760' -- 10MB
+from "Infrastructure"."Companies";
