@@ -1,5 +1,5 @@
 insert into "Infrastructure"."Companies"("Name", "TimeZone", "MaximumNumberOfPINFailure", "LoginFailedTimeout", "PINDaysLife", "MaximumNumberOfPasswordFailure", "PasswordDaysLife", "WarningUserInactivityDays", "MaximumUserInactivityDays") 
-values ('Janssen Shaffhausen', 'Europe/Zurich', 5, 20, 90, 20, 365, 335, 365); --see http://momentjs.com/timezone/docs/#/data-loading/
+values ('Janssen Shaffhausen', 'Europe/Rome', 5, 20, 90, 20, 365, 335, 365); --see http://momentjs.com/timezone/docs/#/data-loading/
 
 insert into "Infrastructure"."Departments" ("Company", "Name") values (currval('"Infrastructure"."Companies_ID_seq"'), '???');
 
@@ -40,6 +40,3 @@ insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") valu
 
 insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'InstancesFtpConnection', '{ "Host": "10.157.83.244", "Port": 21, "Folder": "/ChecklystInstances_dev_sch",  "UserName": "FtpDev", "Password": "AA_Latina_01", "UsePassive": "true", "EnableSSL": "false" }');
-  
-
-
