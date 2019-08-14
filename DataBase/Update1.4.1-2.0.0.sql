@@ -54,7 +54,7 @@ set
 where 
 	not "User" is null;
 
-alter  table "Infrastructure"."Companies" add "InactivityTimeoutSeconds" int not null default 900;
+alter table "Infrastructure"."Companies" add "InactivityTimeoutSeconds" int not null default 900;
 
 create table "Infrastructure"."FTPServers"
 (
