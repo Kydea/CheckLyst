@@ -1,9 +1,7 @@
-insert into "Infrastructure"."TimeZones"  ("Code", "MicrosoftCode")  values  ( 'Europe/Zurich' ,'W. Europe Standard Time' ) ;
+insert into "Infrastructure"."TimeZones"  ("Code", "MicrosoftCode")  values ( 'Europe/Zurich' ,'W. Europe Standard Time' ) ;
                                                                            
 insert into "Infrastructure"."Companies"("Name", "TimeZone", "MaximumNumberOfPINFailure", "LoginFailedTimeout", "PINDaysLife", "MaximumNumberOfPasswordFailure", "PasswordDaysLife", "WarningUserInactivityDays", "MaximumUserInactivityDays") 
 values ('Janssen Schaffhausen', 'Europe/Zurich', 5, 20, 90, 20, 365, 335, 365); --see http://momentjs.com/timezone/docs/#/data-loading/
-
-insert into "Infrastructure"."Departments" ("Company", "Name") values (currval('"Infrastructure"."Companies_ID_seq"'), '???');
 
 insert into "Security"."Users" ("Company", "Code", "Description", "Password", "PIN", "Enabled") 
 values (
