@@ -14,5 +14,7 @@ namespace CheckListManager.AccessControl.Logic.Messages.Users
         public Function[] GeneralFunctions { get; set; }
         public Function[] PrototypeFunctions { get; set; }
         public Function[] InstanceFunctions { get; set; }
+
+        public string Reason { get; set; }
     }
 }

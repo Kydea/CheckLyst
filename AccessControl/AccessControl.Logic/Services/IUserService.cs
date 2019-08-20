@@ -28,7 +28,7 @@ namespace CheckListManager.AccessControl.Logic.Services
         Task<UserResponse> LoadUserAsync(DefaultIdentity identity, UserRequest record);
         Task<UserResponse> AddUserAsync(DefaultIdentity identity, UserRequest request);
         Task<UserResponse> EditUserAsync(DefaultIdentity identity, UserRequest record);
-        Task<UserResponse> DeleteUserAsync(DefaultIdentity identity, string code);
+        Task<UserResponse> DeleteUserAsync(DefaultIdentity identity, UserRequest record);
 
 		Task CheckInactiveUsers(CancellationToken cancellationToken = default(CancellationToken));
 		Task CheckUnchangedPins(CancellationToken cancellationToken = default(CancellationToken));

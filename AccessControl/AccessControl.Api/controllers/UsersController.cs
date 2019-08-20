@@ -72,7 +72,7 @@ namespace CheckListManager.AccessControl.Api.Controllers
         [Authorize(Roles = "Users#Edit")]
         public async Task<IHttpActionResult> Delete(Message<UserRequest> request)
         {
-            return Ok(await _userService.DeleteUserAsync(Identity, request.Data.Code));
+            return Ok(await _userService.DeleteUserAsync(Identity, request.Data));
         }
 
         [HttpPost]
