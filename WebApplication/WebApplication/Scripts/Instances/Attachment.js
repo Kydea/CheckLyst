@@ -66,7 +66,7 @@
 		readOnly = !!model.readOnly;
 		key = model.key;
 		uploadButton.toggleClass("ReadOnly", readOnly);
-		viewButton.toggleClass("ReadOnly", readOnly);
+		//viewButton.toggleClass("ReadOnly", readOnly);
 
 		viewButton.toggle(!!model.key);
 
