@@ -12,7 +12,7 @@ namespace CheckListManager.Instances.Logic.Messages
         public const string Signature = nameof(Signature);
         public const string SignatureCheck = nameof(SignatureCheck);
         public const string SignatureCancelation = nameof(SignatureCancelation);
-        public const string UnlockPageUnlockPage = nameof(UnlockPageUnlockPage);
+        public const string UnlockPage = nameof(UnlockPage);
         public const string CountDown = nameof(CountDown);
         public const string SkipCountDown = nameof(SkipCountDown);
         public const string Refresh = nameof(Refresh);

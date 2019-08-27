@@ -764,7 +764,7 @@ namespace CheckListManager.Instances.Logic.Services
                     case EventTypes.SignatureCancelation:
                         await HandleSignatureCancellationAsync(cacheObject, identity, request);
                         break;
-                    case EventTypes.UnlockPageUnlockPage:
+                    case EventTypes.UnlockPage:
                         await HandleUnlockPageAsync(cacheObject, identity.Code, request.ItemId);
                         break;
                     case EventTypes.CountDown:
