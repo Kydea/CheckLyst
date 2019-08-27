@@ -378,11 +378,14 @@
 				|| matematici.tokenManager.checkRole("Prototypes#View#" + department + "#" + prototypeType + "#")
 			);
 
-		matematici.navigator.open(
-			!options.appMode && hasPermissionOnPrototype && (versionState == prototypes.Prototype.states.draft || versionState == prototypes.Prototype.states.simulation) ?
-				matematici.urls.prototypes.detail + "/" + prototype + "/" + version :
-				options.listUrl
-		);
+        if (options.appMode)
+            window.webkit.messageHandlers.instances.postMessage("quit");
+        else
+		    matematici.navigator.open(
+			    hasPermissionOnPrototype && (versionState == prototypes.Prototype.states.draft || versionState == prototypes.Prototype.states.simulation) ?
+				    matematici.urls.prototypes.detail + "/" + prototype + "/" + version :
+				    options.listUrl
+		    );
 	};
 
 	instance.save = function () {

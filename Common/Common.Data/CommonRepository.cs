@@ -127,7 +127,7 @@ namespace CheckListManager.Common.Data
                     && uf.Function == "View"
                     && uf.PrototypeType == null
                ));
-            return PrototypeVersionTags.Select(pv => pv.Code).ToListAsync();
+            return PrototypeVersionTags.Select(pv => pv.Code).Distinct().ToListAsync();
         }
 
         public Task<List<string>> GetVersionStatesAsync()
