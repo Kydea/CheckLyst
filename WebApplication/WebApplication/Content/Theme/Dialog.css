@@ -100,7 +100,7 @@ div.Dialog {
   div.Dialog.ImageViewer div.Container h2 {
     display: none; }
   div.Dialog.ImageViewer div.Container div.Content {
-    height: calc(100vh - 40px); }
+    max-height: calc(100vh - 40px); }
   div.Dialog.ImageViewer div.Container a.CloseButton {
     right: 50px;
     top: 30px; }
