@@ -29,9 +29,9 @@ div.Dialog {
         div.Content {
             overflow: auto;
 
-			label {
-				margin-bottom: 5px;
-			}
+            label {
+                margin-bottom: 5px;
+            }
         }
 
         div.Buttons {
@@ -157,6 +157,27 @@ div.Dialog {
                         color: $Color-Red-Light;
                     }
                 }
+            }
+        }
+    }
+
+    &.ImageViewer {
+        div.Container {
+            h2 {
+                display: none;
+            }
+
+            div.Content {
+                height: calc(100vh - 40px);
+            }
+
+            a.CloseButton {
+                right: 50px;
+                top: 30px;
+            }
+
+            div.Buttons {
+                display: none;
             }
         }
     }

@@ -50,7 +50,7 @@
                             matematici.imageViewer.show("Preview", url);
                         else if (model.fileType === "pdf") {
                             if (matematici.appMode)
-                                window.webkit.messageHandlers.instances.postMessage("pdf: " + url);
+                                window.webkit.messageHandlers.instances.postMessage("file: " + url);
                             else
                                 window.open(url);
                         }
