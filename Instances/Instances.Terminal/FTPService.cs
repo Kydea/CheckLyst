@@ -101,6 +101,7 @@ namespace CheckListManager.Instances.Terminal
 
             var cacheObject = await _instanceManagerService.GetAsync(message.Company, message.ID);
             cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(cacheObject.CompanyId), (await _settingService.TimeZoneAsync(cacheObject.CompanyId)).MicrosoftCode, cacheObject);
+            cacheObject.Instance.UpdateReadOnly(null, cacheObject.InstanceState);
 
             FTPConnectionSettings Settings;
             var FTPServer = await _commonRepository.GetInstancesFTPServerAsync(message.Company, cacheObject.PrototypeType);

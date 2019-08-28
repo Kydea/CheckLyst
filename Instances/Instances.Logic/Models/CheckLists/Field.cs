@@ -64,8 +64,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 ConversionError = !ValueType.Validate(ValueFormula.Value);
             if (ExternalSourceName != null)
             {
-                var Instance = CheckList as Instance;
-                string Value = Instance != null && ExternalSourceName != null && Instance.ExternalSourceRows.ContainsKey(ExternalSourceName) && Instance.ExternalSourceRows[ExternalSourceName].ContainsKey(ExternalSourceColumn) ?
+                string Value = CheckList is Instance Instance && ExternalSourceName != null && Instance.ExternalSourceRows.ContainsKey(ExternalSourceName) && Instance.ExternalSourceRows[ExternalSourceName].ContainsKey(ExternalSourceColumn) ?
                     Instance.ExternalSourceRows[ExternalSourceName][ExternalSourceColumn] :
                     null;
                 ConversionError = !ValueType.Validate(Value);

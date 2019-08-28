@@ -32,9 +32,17 @@ namespace CheckListManager.Instances.Logic.PDF
             return Value?.Replace("<span class='Null'></span>", string.Empty).Replace("<span class='Error'>", "[ #Error: ").Replace("</span>", " ]") ?? string.Empty;
         }
 
-        public override string GetFieldValue(ICheckListField Field)
+        public override string GetFieldValue(ICheckListField CheckListField)
         {
-            return FormatFormula(((Field)Field).RawValue);
+            var Field = (Field)CheckListField;
+            if (Field.ValueTypeName == "DateTime")
+            {
+                if (!DateTimeOffset.TryParseExact(Field.RawValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out var Date))
+                    return string.Empty;
+                return Date.ToLocalTime(TimeZone).ToString("yyyy-MM-dd HH:mm UTC zzz");
+            }
+            else
+                return FormatFormula(Field.RawValue);
         }
 
         protected override FirstPage GenerateFirstPage()
