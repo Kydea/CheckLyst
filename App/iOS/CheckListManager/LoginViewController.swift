@@ -353,8 +353,13 @@ class LoginViewController: UIViewController, UITextFieldDelegate
                 ]
                     
                 controller.serverFieldsDictionary = chooseDictionary as? Dictionary<String,(api:String, frontEnd:String)>
+                
+                controller.fieldNameString = "Select Server"
+                
             } else {
                 controller.companyFieldsDictionary = chooseDictionary as? Dictionary<String,Dictionary<String, String>>
+                
+                controller.fieldNameString = "Select Company"
             }
                 
             controller.loginViewController = self

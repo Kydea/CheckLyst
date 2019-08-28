@@ -20,16 +20,6 @@ class TabViewController: UITabBarController, UITabBarControllerDelegate {
  
         super.viewDidLoad()
         
-        let label = UILabel(frame: CGRect(x: 0, y: 0, width: 30, height: 22))
-        
-        label.font =  UIFont (name: "Flaticon", size: 20)
-        
-        label.text = "\u{f109}"
-        
-        let image = UIImage.imageWithLabel(label)
-        
-        self.tabBarItem.image = image
-        
         self.delegate = self;
         
     }

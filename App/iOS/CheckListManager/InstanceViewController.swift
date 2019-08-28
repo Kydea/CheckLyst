@@ -10,7 +10,7 @@
 import UIKit
 import WebKit
 
-class InstanceViewController: UIViewController, WKNavigationDelegate, UIGestureRecognizerDelegate {
+class InstanceViewController: UIViewController, WKNavigationDelegate, WKScriptMessageHandler, UIGestureRecognizerDelegate, UIDocumentInteractionControllerDelegate {
     
     let app = UIApplication.shared as! MyApplication
     var instance:Instance!
@@ -23,8 +23,10 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, UIGestureR
     var contentView : UIView?
     var scanButtonIsVisible : Bool = false
     var requestForScanning : Bool = false
+    var requestForDocument : Bool = false
+    let documentInteractionController = UIDocumentInteractionController()
     
-    @IBOutlet var webView: WKWebView!
+    @IBOutlet weak var webView: WKWebView!
     @IBOutlet var activityIndicator: UIActivityIndicatorView!
     @IBOutlet var customBackButton: UIBarButtonItem!
     
@@ -34,7 +36,9 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, UIGestureR
         super.viewDidLoad()
         let infoBarButtonItem = SharedControllersProperty.instance.setInfoButton()
         self.navigationItem.rightBarButtonItem = infoBarButtonItem
+        documentInteractionController.delegate = self
         webView.navigationDelegate = self
+        webView.configuration.userContentController.add(self, name: "instances")
         activityIndicator.hidesWhenStopped = true
         activityIndicator.transform = CGAffineTransform(scaleX: 2.0, y: 2.0)
         
@@ -51,7 +55,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, UIGestureR
             ServerConnection.baseFrontEndUrl + "/Instances/Create/" + newInstancePrototype! + "/" + newInstanceVersion! + "?d=" + String(Int64(Date().timeIntervalSince1970 * 1000)) + "&AppUser=" + (UserDefaults.standard.string(forKey: "userCode"))!
         
         
-        print(fullUrl)
+        //print(fullUrl)
         
         let url = URL(string: fullUrl)
         
@@ -67,6 +71,11 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, UIGestureR
             "&decimalSeparator=" + (UserDefaults.standard.value(forKey: "decimalSeparator") as! String) + "&accessToken=" + (UserDefaults.standard.value(forKey: "access_token") as! String) + "&refreshToken=" + (UserDefaults.standard.value(forKey: "refresh_token") as! String)
         
         request.httpBody = bodyString.data(using: String.Encoding.utf8)
+        
+       //For testing -> gives 10 seconds to open safari inspector
+        /*DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(10)) {
+            self.webView.load(request as URLRequest)
+        }*/
         
         webView.load(request as URLRequest)
         
@@ -101,7 +110,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, UIGestureR
         webView.scrollView.isScrollEnabled = false
         self.navigationItem.setHidesBackButton(true, animated:false)
         self.navigationItem.leftBarButtonItem = nil;
-        self.tabBarController!.tabBar.isUserInteractionEnabled = false
+        self.tabBarController?.tabBar.isUserInteractionEnabled = false
     }
     
     func unlockView()
@@ -111,7 +120,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, UIGestureR
         webView.scrollView.isScrollEnabled = true
         self.navigationItem.setHidesBackButton(false, animated:false)
         self.navigationItem.leftBarButtonItem = self.customBackButton;
-        self.tabBarController!.tabBar.isUserInteractionEnabled = true
+        self.tabBarController?.tabBar.isUserInteractionEnabled = true
     }
     
     func willEnterForeground()
@@ -123,15 +132,45 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, UIGestureR
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         requestForScanning = false
+        requestForDocument = false
     }
     
     override func viewWillDisappear(_ animated : Bool) {
         super.viewWillDisappear(animated)
-        if(!requestForScanning) {
+        if(!requestForScanning && !requestForDocument) {
             self.webView.evaluateJavaScript("instances.instance.close()", completionHandler: nil)
         }
     }
     
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        if message.name == "instances", let messageBody = message.body as? String {
+            if messageBody.hasPrefix("quit") {
+                self.app.goBackToList()
+            } else if messageBody.hasPrefix("file") {
+                activityIndicator.startAnimating()
+                let fileURL = String(messageBody.split(separator: " ")[1])
+                //print(fileURL)
+                FileManager.default.getFile(fileURL) { (url, error) -> Void in
+                    self.activityIndicator.stopAnimating()
+                    if url != nil {
+                        self.requestForDocument = true
+                        self.documentInteractionController.url = url!
+                        self.documentInteractionController.uti = url!.typeIdentifier ?? "public.data, public.content"
+                        self.documentInteractionController.name = url!.localizedName ?? url!.lastPathComponent
+                        self.documentInteractionController.presentPreview(animated: true)
+                    } else if error != nil {
+                        let alert = UIAlertController(title: "Error", message: "Connection error to the server", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+                        self.present(alert, animated: false, completion: nil)
+                    } else {
+                        let alert = UIAlertController(title: "Error", message: "Unable to retrieve document", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+                        self.present(alert, animated: false, completion: nil)
+                    }
+                }
+            }
+        }
+    }
     
     override func viewDidLayoutSubviews() {
         
@@ -158,7 +197,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, UIGestureR
             if let value = response as? String {
                 if(value.contains("Security/Login")) {
                     webView.isHidden = true
-                    print("redirecting")
+                    //print("redirecting")
                     self.app.logoutAndGoToLogin()
                 }
             }
@@ -173,12 +212,12 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, UIGestureR
                     if (self.inputAccessory != nil && self.contentView != nil && !self.scanButtonIsVisible) {
                         self.contentView!.inputAssistantItem.trailingBarButtonGroups = [self.inputAccessory] as! [UIBarButtonItemGroup]
                         self.scanButtonIsVisible = true;
-                        print("scan button on")
+                        //print("scan button on")
                     }
                 } else if (self.contentView != nil && self.scanButtonIsVisible) {
                         self.contentView!.inputAssistantItem.trailingBarButtonGroups.removeAll()
                         self.scanButtonIsVisible = false
-                        print("scan button off")
+                        //print("scan button off")
                 }
             }
         }
@@ -198,14 +237,16 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, UIGestureR
     }
     
     func setValueForInputField(_ value : String) {
-        webView.evaluateJavaScript("document.activeElement.value = \"\(value)\"") {
+        webView.evaluateJavaScript("$(document.activeElement).val(\"\(value)\").change(); ") {
             (response, error) -> Void in
             self.view.endEditing(true)
+            self.requestForScanning = false
         }
+        webView.evaluateJavaScript("document.activeElement")
     }
     
     @objc private func scanItem(_ sender: UIBarButtonItem) {
-        print("camera pressed")
+        //print("camera pressed")
         requestForScanning = true
         performSegue(withIdentifier: "ScanSegue", sender: self)
     }
@@ -233,7 +274,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, UIGestureR
         if (self.contentView != nil && scanButtonIsVisible) {
             self.contentView!.inputAssistantItem.trailingBarButtonGroups.removeAll()
             scanButtonIsVisible = false
-            print("scan button off")
+            //print("scan button off")
         }
     }
     
@@ -242,9 +283,27 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, UIGestureR
         
     }
     
+    func documentInteractionControllerViewControllerForPreview(_ controller: UIDocumentInteractionController) -> UIViewController {
+        guard let navVC = self.navigationController else {
+            return self
+        }
+        return navVC
+    }
+    
+    func documentInteractionControllerWillBeginPreview(_ controller: UIDocumentInteractionController) {
+        self.tabBarController?.tabBar.isHidden = true
+    }
+    
+    func documentInteractionControllerDidEndPreview(_ controller: UIDocumentInteractionController) {
+        requestForDocument = false
+        self.tabBarController?.tabBar.isHidden = false
+        FileManager.default.clearTemporaryDirectory()
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let controller = segue.destination as? QRCodeScannerViewController {
             controller.callback = self.setValueForInputField
+            controller.senderController = self
         }
     }
 }

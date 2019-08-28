@@ -204,6 +204,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                             self.indexArrayDictionary[index] = departments
                             
                             if let value = searchFields.fields.department?.value {
+                                print("value from search \(value)")
                                 self.selectedItemsDictionary[index] = self.findOPtionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
                             }
                         }
@@ -220,6 +221,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                             
                             self.indexArrayDictionary[index] = prototypeTypes
                             if let value = searchFields.fields.prototypeType?.value {
+                                print("value from search \(value)")
                                 self.selectedItemsDictionary[index] = self.findOPtionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
                             }
                         }
@@ -238,6 +240,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                             self.indexArrayDictionary[self.fieldIndexDictionary["prototype"]!]?.insert(Option(text: "All", value: ""), at: 0)
                             
                             if let value = searchFields.fields.prototype?.value {
+                                print("value from search \(value)")
                                 self.selectedItemsDictionary[index] = self.findOPtionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
                             }
                         }
@@ -257,6 +260,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                             self.indexArrayDictionary[self.fieldIndexDictionary["version"]!]?.insert(Option(text: "All", value: ""), at: 0)
                             
                             if let value = searchFields.fields.version?.value {
+                                print("value from search \(value)")
                                 self.selectedItemsDictionary[index] = self.findOPtionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
                             }
                         }
@@ -276,6 +280,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                             self.indexArrayDictionary[self.fieldIndexDictionary["tagCode"]!]?.insert(Option(text: "All", value: ""), at: 0)
                             
                             if let value = searchFields.fields.tagCode?.value {
+                                //print("value from search \(value)")
                                 self.selectedItemsDictionary[index] = self.findOPtionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
                             }
                         }
@@ -295,6 +300,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                             self.indexArrayDictionary[self.fieldIndexDictionary["state"]!]?.insert(Option(text: "All", value: ""), at: 0)
                             
                             if let value = searchFields.fields.state?.value {
+                                print("value from search \(value)")
                                 self.selectedItemsDictionary[index] = self.findOPtionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
                             }
                         }

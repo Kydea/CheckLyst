@@ -45,15 +45,17 @@
 		6828674622ED8B9700B222C8 /* String+HTML.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6828674522ED8B9700B222C8 /* String+HTML.swift */; };
 		6828674822ED8BCC00B222C8 /* UIColor+Conversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6828674722ED8BCC00B222C8 /* UIColor+Conversion.swift */; };
 		6828674A22ED8CEE00B222C8 /* String+Class.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6828674922ED8CEE00B222C8 /* String+Class.swift */; };
+		683A8A2B2316895200FB233E /* FileManager+Download.swift in Sources */ = {isa = PBXBuildFile; fileRef = 683A8A2A2316895200FB233E /* FileManager+Download.swift */; };
+		683A8A2D2316896600FB233E /* FileManager+TempDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 683A8A2C2316896600FB233E /* FileManager+TempDirectory.swift */; };
 		6857521322EF02DA006DF044 /* QRCodeScannerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6857521222EF02DA006DF044 /* QRCodeScannerViewController.swift */; };
 		6857521622EF1496006DF044 /* QRScannerViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6857521522EF1496006DF044 /* QRScannerViewDelegate.swift */; };
 		6857521822EF14C2006DF044 /* QRScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6857521722EF14C2006DF044 /* QRScannerView.swift */; };
-		685B4A5F22DFA6B500EAA68A /* CustomWKURLSchemeHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 685B4A5E22DFA6B500EAA68A /* CustomWKURLSchemeHandler.swift */; };
-		685B4A6122DFAB0E00EAA68A /* CustomWKWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 685B4A6022DFAB0E00EAA68A /* CustomWKWebView.swift */; };
+		68615CC722FEB0E200CF7522 /* String+Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68615CC622FEB0E200CF7522 /* String+Utility.swift */; };
 		686E4B591FF51D0F00A8AE22 /* FirstIstancesBindRequestJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 686E4B581FF51D0F00A8AE22 /* FirstIstancesBindRequestJSON.swift */; };
 		686E4B5B1FF5209500A8AE22 /* IstanceBindResponseJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 686E4B5A1FF5209500A8AE22 /* IstanceBindResponseJSON.swift */; };
 		686E4B5D1FF5250F00A8AE22 /* IstancesBindRequestJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 686E4B5C1FF5250E00A8AE22 /* IstancesBindRequestJSON.swift */; };
 		689253F522EC95840019D49B /* String+Size.swift in Sources */ = {isa = PBXBuildFile; fileRef = 689253F422EC95840019D49B /* String+Size.swift */; };
+		68E7ED9722FF0C1000FA4846 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68E7ED9622FF0C1000FA4846 /* WebKit.framework */; };
 		68F2ECD222F055A200DFE275 /* URL+Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68F2ECD122F055A200DFE275 /* URL+Utility.swift */; };
 /* End PBXBuildFile section */
 
@@ -119,15 +121,17 @@
 		6828674522ED8B9700B222C8 /* String+HTML.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+HTML.swift"; sourceTree = "<group>"; };
 		6828674722ED8BCC00B222C8 /* UIColor+Conversion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Conversion.swift"; sourceTree = "<group>"; };
 		6828674922ED8CEE00B222C8 /* String+Class.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Class.swift"; sourceTree = "<group>"; };
+		683A8A2A2316895200FB233E /* FileManager+Download.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FileManager+Download.swift"; sourceTree = "<group>"; };
+		683A8A2C2316896600FB233E /* FileManager+TempDirectory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FileManager+TempDirectory.swift"; sourceTree = "<group>"; };
 		6857521222EF02DA006DF044 /* QRCodeScannerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeScannerViewController.swift; sourceTree = "<group>"; };
 		6857521522EF1496006DF044 /* QRScannerViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRScannerViewDelegate.swift; sourceTree = "<group>"; };
 		6857521722EF14C2006DF044 /* QRScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRScannerView.swift; sourceTree = "<group>"; };
-		685B4A5E22DFA6B500EAA68A /* CustomWKURLSchemeHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomWKURLSchemeHandler.swift; sourceTree = "<group>"; };
-		685B4A6022DFAB0E00EAA68A /* CustomWKWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomWKWebView.swift; sourceTree = "<group>"; };
+		68615CC622FEB0E200CF7522 /* String+Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Utility.swift"; sourceTree = "<group>"; };
 		686E4B581FF51D0F00A8AE22 /* FirstIstancesBindRequestJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstIstancesBindRequestJSON.swift; sourceTree = "<group>"; };
 		686E4B5A1FF5209500A8AE22 /* IstanceBindResponseJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IstanceBindResponseJSON.swift; sourceTree = "<group>"; };
 		686E4B5C1FF5250E00A8AE22 /* IstancesBindRequestJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IstancesBindRequestJSON.swift; sourceTree = "<group>"; };
 		689253F422EC95840019D49B /* String+Size.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Size.swift"; sourceTree = "<group>"; };
+		68E7ED9622FF0C1000FA4846 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		68F2ECD122F055A200DFE275 /* URL+Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Utility.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -136,6 +140,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				68E7ED9722FF0C1000FA4846 /* WebKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -173,11 +178,10 @@
 		3303E0571D3A508000738377 /* Elements */ = {
 			isa = PBXGroup;
 			children = (
-				685B4A6022DFAB0E00EAA68A /* CustomWKWebView.swift */,
 				33D499481D2C4D8700B263D5 /* TabBar.swift */,
 				33D4994A1D2C4F1300B263D5 /* NavigationBar.swift */,
-				337DEB5C1D2EE865004B9773 /* Cells */,
 				6857521722EF14C2006DF044 /* QRScannerView.swift */,
+				337DEB5C1D2EE865004B9773 /* Cells */,
 			);
 			name = Elements;
 			sourceTree = "<group>";
@@ -208,6 +212,7 @@
 				338455DC1D191333003E23DE /* CheckListManagerTests */,
 				338455E71D191333003E23DE /* CheckListManagerUITests */,
 				338455C61D191333003E23DE /* Products */,
+				68E7ED9522FF0C0F00FA4846 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -303,7 +308,6 @@
 				33247B281E6023E200FA07BF /* ServerResponse.swift */,
 				33A66C451D1BB810006EBAD8 /* ServerConnection.swift */,
 				336AA7B01D3F59F900BB8ADA /* CustomUrProtocol.swift */,
-				685B4A5E22DFA6B500EAA68A /* CustomWKURLSchemeHandler.swift */,
 				3303E0561D3A503300738377 /* JSONClasses */,
 			);
 			name = Data;
@@ -325,8 +329,19 @@
 				6828674722ED8BCC00B222C8 /* UIColor+Conversion.swift */,
 				6828674922ED8CEE00B222C8 /* String+Class.swift */,
 				68F2ECD122F055A200DFE275 /* URL+Utility.swift */,
+				68615CC622FEB0E200CF7522 /* String+Utility.swift */,
+				683A8A2A2316895200FB233E /* FileManager+Download.swift */,
+				683A8A2C2316896600FB233E /* FileManager+TempDirectory.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		68E7ED9522FF0C0F00FA4846 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				68E7ED9622FF0C1000FA4846 /* WebKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -471,7 +486,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				685B4A6122DFAB0E00EAA68A /* CustomWKWebView.swift in Sources */,
 				33D598F41D1A6F1000A1DFEF /* Formatter.swift in Sources */,
 				6857521322EF02DA006DF044 /* QRCodeScannerViewController.swift in Sources */,
 				33247B2B1E6025EE00FA07BF /* ChooseServerAndCompanyViewController.swift in Sources */,
@@ -479,6 +493,7 @@
 				339F16CB1D19CC9A00D930D0 /* Instance.swift in Sources */,
 				686E4B5B1FF5209500A8AE22 /* IstanceBindResponseJSON.swift in Sources */,
 				338312551D30237D00984DA1 /* EditFieldViewController.swift in Sources */,
+				68615CC722FEB0E200CF7522 /* String+Utility.swift in Sources */,
 				33A4F4D21D25F036005FAED9 /* AppInfo.swift in Sources */,
 				336AA7B11D3F59FA00BB8ADA /* CustomUrProtocol.swift in Sources */,
 				686E4B5D1FF5250F00A8AE22 /* IstancesBindRequestJSON.swift in Sources */,
@@ -494,6 +509,7 @@
 				339F16C81D19CBC900D930D0 /* ListInstancesTableViewController.swift in Sources */,
 				338455F91D1968D1003E23DE /* InstancesSearchViewController.swift in Sources */,
 				33A4F4D01D25D76D005FAED9 /* SearchFieldsJSON.swift in Sources */,
+				683A8A2D2316896600FB233E /* FileManager+TempDirectory.swift in Sources */,
 				336AD40A1D21A40300916709 /* UserManualViewController.swift in Sources */,
 				68F2ECD222F055A200DFE275 /* URL+Utility.swift in Sources */,
 				6857521822EF14C2006DF044 /* QRScannerView.swift in Sources */,
@@ -501,12 +517,12 @@
 				6857521622EF1496006DF044 /* QRScannerViewDelegate.swift in Sources */,
 				689253F522EC95840019D49B /* String+Size.swift in Sources */,
 				33A66C4C1D1C0BA7006EBAD8 /* FirstCheckViewController.swift in Sources */,
+				683A8A2B2316895200FB233E /* FileManager+Download.swift in Sources */,
 				33A66C461D1BB810006EBAD8 /* ServerConnection.swift in Sources */,
 				6828674822ED8BCC00B222C8 /* UIColor+Conversion.swift in Sources */,
 				33D598F81D1A700500A1DFEF /* InstanceViewController.swift in Sources */,
 				33ED1E121D34F87F00186592 /* UIApplication.swift in Sources */,
 				686E4B591FF51D0F00A8AE22 /* FirstIstancesBindRequestJSON.swift in Sources */,
-				685B4A5F22DFA6B500EAA68A /* CustomWKURLSchemeHandler.swift in Sources */,
 				33ED1E101D34F86000186592 /* main.swift in Sources */,
 				33A66C491D1C0290006EBAD8 /* UserViewController.swift in Sources */,
 				338455CB1D191333003E23DE /* LoginViewController.swift in Sources */,

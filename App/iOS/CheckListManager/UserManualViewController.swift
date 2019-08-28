@@ -74,6 +74,7 @@ class UserManualViewController: UIViewController, WKNavigationDelegate {
         
         self.webView.isHidden = false
         
+        helpLoaded = true
         
         webView.evaluateJavaScript("window.location.href") {
             (response, error) -> Void in
@@ -89,11 +90,13 @@ class UserManualViewController: UIViewController, WKNavigationDelegate {
     
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
     unlockView()
-    let alert = UIAlertController(title: "Error", message: "Connection error to the server", preferredStyle: .alert)
-    alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action) -> Void in
-    self.tabBarController?.selectedIndex = 0
-    }))
-    self.present(alert, animated: false, completion: nil)
+        helpLoaded = false
+        
+        let alert = UIAlertController(title: "Error", message: "Connection error to the server", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action) -> Void in
+        self.tabBarController?.selectedIndex = 0
+        }))
+        self.present(alert, animated: false, completion: nil)
     }
     
     func lockView()
