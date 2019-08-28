@@ -180,6 +180,7 @@
     <Compile Include="PDF\CheckListPDF.cs" />
     <Compile Include="PDF\Helper\Font.cs" />
     <Compile Include="PDF\Helper\PdfTable.cs" />
+    <Compile Include="PDF\MigraDocBuilder.cs" />
     <Compile Include="PDF\PDFBase.cs" />
     <Compile Include="PDF\PDFSection.cs" />
     <Compile Include="PDF\PDFStyles.cs" />
