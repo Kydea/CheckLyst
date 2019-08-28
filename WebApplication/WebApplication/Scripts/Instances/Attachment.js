@@ -46,12 +46,14 @@
 						url += "&key=" + key;
 						url += "&Authorization=" + encodeURIComponent("Bearer " + matematici.tokenManager.getAccessToken());
 
-						if (model.fileType === "images") {
-							matematici.imageViewer.show("Preview", url);
-						}
-						if (model.fileType === "pdf") {
-							window.open(url);
-						}
+                        if (model.fileType === "images")
+                            matematici.imageViewer.show("Preview", url);
+                        else if (model.fileType === "pdf") {
+                            if (matematici.appMode)
+                                window.webkit.messageHandlers.instances.postMessage("pdf: " + url);
+                            else
+                                window.open(url);
+                        }
 					});
         };
 
