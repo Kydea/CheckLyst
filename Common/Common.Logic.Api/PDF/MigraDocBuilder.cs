@@ -13,27 +13,19 @@ namespace CheckListManager.Common.Logic.Api.PDF
 {
     public class MigraDocBuilder
     {
-        protected class PageMap
-        {
-            public int DocumentPage { get; set; }
-            public int PdfPage { get; set; }
-        }
-
         protected Document Document { get; }
 
         protected PdfDocument PdfDocument { get; }
-        
-        protected List<PageMap> PageMapping { get; }
+
+        protected List<int> ExcludeList { get; }
 
         protected int PdfPage { get; set; }
-
-        protected int DocumentPage { get; set; }
 
         public MigraDocBuilder()
         {
             Document = new Document();
+            ExcludeList = new List<int>();
             PdfDocument = new PdfDocument();
-            PageMapping = new List<PageMap>();
         }
 
         public Section AddSection()
@@ -41,10 +33,11 @@ namespace CheckListManager.Common.Logic.Api.PDF
             return Document.AddSection();
         }
 
-        protected PdfPage AddPage(PdfPage Page)
+        protected PdfPage AddPage(PdfPage PdfPage)
         {
-            PdfPage++;
-            return PdfDocument.AddPage(Page);
+            ExcludeList.Add(this.PdfPage++);
+            Document.LastSection.AddPageBreak();
+            return PdfDocument.AddPage(PdfPage);
         }
 
         public PdfPage Add(PdfPage Page)
@@ -71,25 +64,15 @@ namespace CheckListManager.Common.Logic.Api.PDF
         protected void Render()
         {
             var DocumentRenderer = GetDocumentRenderer();
-            int PageCount = DocumentRenderer.FormattedDocument.PageCount;
-            var StartIndex = 1 + DocumentPage;
+            var StartIndex = 1 + PdfPage;
 
-            for (int i = StartIndex; i <= PageCount; i++)
+            for (int i = StartIndex; i <= DocumentRenderer.FormattedDocument.PageCount; i++)
             {
                 PageInfo pageInfo = DocumentRenderer.FormattedDocument.GetPageInfo(i);
-
                 var page = PdfDocument.AddPage();
                 page.Width = pageInfo.Width;
                 page.Height = pageInfo.Height;
                 page.Orientation = pageInfo.Orientation;
-
-                PageMapping.Add(new PageMap()
-                {
-                    DocumentPage = DocumentPage + 1,
-                    PdfPage = PdfPage,
-                });
-
-                DocumentPage++;
                 PdfPage++;
             }
         }
@@ -100,12 +83,15 @@ namespace CheckListManager.Common.Logic.Api.PDF
 
             var DocumentRenderer = GetDocumentRenderer();
 
-            PageMapping.ForEach(map => {
-                var page = PdfDocument.Pages[map.PdfPage];
+            Enumerable
+                .Range(0, DocumentRenderer.FormattedDocument.PageCount)
+                .Where(index => !ExcludeList.Contains(index))
+                .ToList().ForEach(index => {
+                    var page = PdfDocument.Pages[index];
 
-                using (XGraphics gfx = XGraphics.FromPdfPage(page))
-                    DocumentRenderer.RenderPage(gfx, map.DocumentPage);
-            });
+                    using (XGraphics gfx = XGraphics.FromPdfPage(page))
+                        DocumentRenderer.RenderPage(gfx, index + 1);
+                });
 
             PdfDocument.Save(stream, false);
             PdfDocument.Close();
