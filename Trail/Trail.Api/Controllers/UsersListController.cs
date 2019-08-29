@@ -75,7 +75,8 @@ namespace CheckListManager.Trail.Api.Controllers
                 "Affected User",
                 "Email",
                 "Name And Surname",
-                "Enabled"
+                "Enabled",
+                "Reason"
             };
 
             var permissionHeaders = rows
