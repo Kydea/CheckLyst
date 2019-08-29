@@ -10,7 +10,7 @@
 import UIKit
 import WebKit
 
-class InstanceViewController: UIViewController, WKNavigationDelegate, WKScriptMessageHandler, UIGestureRecognizerDelegate, UIDocumentInteractionControllerDelegate {
+class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler, UIGestureRecognizerDelegate, UIDocumentInteractionControllerDelegate {
     
     let app = UIApplication.shared as! MyApplication
     var instance:Instance!
@@ -25,6 +25,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKScriptMe
     var requestForScanning : Bool = false
     var requestForDocument : Bool = false
     let documentInteractionController = UIDocumentInteractionController()
+    let supportedProtocols : Set = [ "http", "https", "mailto" ]
     
     @IBOutlet weak var webView: WKWebView!
     @IBOutlet var activityIndicator: UIActivityIndicatorView!
@@ -38,6 +39,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKScriptMe
         self.navigationItem.rightBarButtonItem = infoBarButtonItem
         documentInteractionController.delegate = self
         webView.navigationDelegate = self
+        webView.uiDelegate = self
         webView.configuration.userContentController.add(self, name: "instances")
         activityIndicator.hidesWhenStopped = true
         activityIndicator.transform = CGAffineTransform(scaleX: 2.0, y: 2.0)
@@ -202,6 +204,25 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKScriptMe
                 }
             }
         }
+    }
+    
+    func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+        if navigationAction.targetFrame == nil {
+            if let scheme = navigationAction.request.url?.scheme {
+                if supportedProtocols.contains(scheme) {
+                    UIApplication.shared.open(navigationAction.request.url!, options: [:])
+                } else {
+                    let alert = UIAlertController(title: "Error", message: "Protocol \(scheme) not supported", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+                    self.present(alert, animated: false, completion: nil)
+                }
+            } else {
+                let alert = UIAlertController(title: "Error", message: "Missing protocol", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+                self.present(alert, animated: false, completion: nil)
+            }
+        }
+        return nil
     }
     
     func shouldShowScanButton() {
