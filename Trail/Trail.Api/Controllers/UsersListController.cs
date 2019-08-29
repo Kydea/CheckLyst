@@ -103,6 +103,7 @@ namespace CheckListManager.Trail.Api.Controllers
                         tm.Details.Email,
                         tm.Details.NameAndSurname,
                         !tm.Details.Enabled.HasValue ? "N/A" : tm.Details.Enabled.Value.ToString(),
+                        tm.Details.Reason
                     };
 
                     foreach (var function in tm.Details.Functions)

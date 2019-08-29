@@ -28,6 +28,8 @@ namespace CheckListManager.Trail.Logic.Services
             
             public bool? Enabled { get; set; }
 
+            public string Reason { get; set; }
+
             public List<Permission> Functions { get; set; } = new List<Permission>();
 
         }
