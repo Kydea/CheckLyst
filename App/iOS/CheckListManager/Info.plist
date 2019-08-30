@@ -36,7 +36,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>8</string>
+	<string>9</string>
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -48,6 +48,10 @@
 	<string>Camera is needed for scanning features</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2015 Harlan Kellaway. All rights reserved.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Photo library access is needed to save images</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Photo library access is needed</string>
 	<key>NSPrincipalClass</key>
 	<string>MyApplication</string>
 	<key>UIAppFonts</key>

@@ -162,11 +162,11 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
                         self.documentInteractionController.presentPreview(animated: true)
                     } else if error != nil {
                         let alert = UIAlertController(title: "Error", message: "Connection error to the server", preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+                        alert.addAction(UIAlertAction(title: "Ok", style: .destructive, handler: nil))
                         self.present(alert, animated: false, completion: nil)
                     } else {
                         let alert = UIAlertController(title: "Error", message: "Unable to retrieve document", preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+                        alert.addAction(UIAlertAction(title: "Ok", style: .destructive, handler: nil))
                         self.present(alert, animated: false, completion: nil)
                     }
                 }

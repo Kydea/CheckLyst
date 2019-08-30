@@ -56,8 +56,8 @@ class ListInstancesTableViewController: UIViewController, UITableViewDataSource,
         
         var descriptionSize : CGFloat = 0
         
-        if let description = instance?.description {
-            descriptionSize = description.getHTMLStringHeight(font: UIFont(name: "Arial", size: 14.0)!)
+        if let description = instance?.description?.classFormat {
+            descriptionSize = description.string.getHTMLStringHeight(font: UIFont(name: "Arial", size: 14.0)!)
         }
         
         if(buttonTappedRows![indexPath.row])
@@ -133,7 +133,7 @@ class ListInstancesTableViewController: UIViewController, UITableViewDataSource,
         if (instance!.description?.classFormat != nil) {
             descrLabel?.attributedText = instance!.description?.classFormat
         } else {
-            descrLabel?.text = instance!.description
+            descrLabel?.text = ""
         }
         
         stateLabel?.text = instance!.state
