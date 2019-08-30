@@ -52,12 +52,15 @@ class ListInstancesTableViewController: UIViewController, UITableViewDataSource,
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
      {
         
+        let descrLabelWidth = UIScreen.main.bounds.size.width - 140
+            
+        
         let instance = instancesList[indexPath.row]
         
         var descriptionSize : CGFloat = 0
         
         if let description = instance?.description?.classFormat {
-            descriptionSize = description.string.getHTMLStringHeight(font: UIFont(name: "Arial", size: 14.0)!)
+            descriptionSize = description.height(withConstrainedWidth: descrLabelWidth)
         }
         
         if(buttonTappedRows![indexPath.row])

@@ -15,7 +15,9 @@ extension String {
         
         var string = self.replacingOccurrences(of: "<span class=\'Null\'></span>", with: "")
         
-        if (string.replacingOccurrences(of: "\n", with: "").count == 0) {
+        string = string.replacingOccurrences(of: "\n", with: "")
+        
+        if (string.count == 0) {
             return nil
         }
         
@@ -23,6 +25,6 @@ extension String {
         
         string = string.replacingOccurrences(of: "class=\'Error\'", with: "style=\"color:#\(UIColor(red: 255.0/255.0, green: 0, blue: 0, alpha: 1).hexString!); font-size: 14px; font-family: 'Arial', 'Helvetica';\"")
         
-        return string.replacingOccurrences(of: "\n", with: "<br />").html2Attributed
+        return string.html2Attributed
     }
 }
