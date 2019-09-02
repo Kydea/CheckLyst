@@ -103,7 +103,17 @@ div.Dialog {
     max-height: calc(100vh - 40px); }
   div.Dialog.ImageViewer div.Container a.CloseButton {
     right: 50px;
-    top: 30px; }
+    top: 30px;
+    border-radius: 50%;
+    background: #009688; }
+    div.Dialog.ImageViewer div.Container a.CloseButton i {
+      font-size: 20px;
+      color: white;
+      line-height: 30px; }
+      div.Dialog.ImageViewer div.Container a.CloseButton i::before {
+        content: "\f00d" !important; }
+    div.Dialog.ImageViewer div.Container a.CloseButton:hover {
+      background: #03c3b1; }
   div.Dialog.ImageViewer div.Container div.Buttons {
     display: none; }
   div.Dialog div.Array {
