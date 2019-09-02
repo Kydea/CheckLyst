@@ -126,21 +126,9 @@ namespace CheckListManager.Instances.Logic.Services
             return cacheObject;
         }
 
-        public async Task<InstanceCacheObject> GetAsync(long company, string userCode, string code)
+        public Task<InstanceCacheObject> GetAsync(long company, string userCode, string code)
         {
-            var cacheObject = await _instanceCache.GetAsync(code);
-            if (cacheObject == null)
-            {
-                var instance = await _instancesRepository.GetByCodeAsync(company, code);
-                if (instance == null)
-                    throw new InstanceException("Instance not found");
-
-                cacheObject = CreateInstanceFromDatabase(company, instance);
-            }
-            else
-                await _instanceCache.TouchInstanceAsync(code);
-
-            return cacheObject;
+            return GetAsync(company, code);
         }
 
         public async Task<InstanceCacheObject> GetAsync(long company, long ID)
@@ -152,6 +140,23 @@ namespace CheckListManager.Instances.Logic.Services
             return cacheObject;
         }
 
+        private async Task<InstanceCacheObject> GetAsync(long company, string code, bool includeData = true, bool touchInstance = true)
+        {
+            var cacheObject = await _instanceCache.GetAsync(code, includeData);
+            if (cacheObject == null)
+            {
+                var instance = await _instancesRepository.GetByCodeAsync(company, code);
+                if (instance == null)
+                    throw new InstanceException("Instance not found");
+
+                cacheObject = CreateInstanceFromDatabase(company, instance);
+            }
+            else if (touchInstance)
+                await _instanceCache.TouchInstanceAsync(code);
+
+            return cacheObject;
+        }
+        
         public async Task<InstanceCacheObject> CreateAsync(IDefaultIdentity identity, string userCode, long prototype, int? version)
         {
             try
@@ -683,7 +688,7 @@ namespace CheckListManager.Instances.Logic.Services
 
         public async Task<StorageFile> DownloadAttachmentAsync(IDefaultIdentity identity, string code, string key)
         {
-            var cacheObject = await _instanceCache.GetAsync(code, false);
+            var cacheObject = await GetAsync(identity.CompanyId, code, false, false);
             if (cacheObject == null)
                 throw new InstanceException("Instance not found");
             if (!HasPermission(identity, "View", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
