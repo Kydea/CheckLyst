@@ -131,6 +131,7 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
                     if (isNew)
                     {
                         await _infrastructureRepository.AddFTPServerAsync(identity, FTPServer);
+                        record.ID = FTPServer.ID;
                         await AuditAsync(identity, TrailAction.FtpServerCreated, record);
                     }
                     else

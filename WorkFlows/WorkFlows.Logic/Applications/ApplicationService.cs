@@ -332,6 +332,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     : $"{Instance.PrototypeName}.{Instance.Version}.{Instance.Year}.{Instance.Number}";
                 var information = new Dictionary<string, object>
                 {
+                    { "Action", request.Approved ? "Approve" : "Reject" },
                     { "Comment", request.Comment }
                 };
 
@@ -360,6 +361,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     : $"{Instance.PrototypeName}.{Instance.Version}.{Instance.Year}.{Instance.Number}";
                 var information = new Dictionary<string, object>
                 {
+                    { "Action", request.Approved ? "Approve" : "Reject" },
                     { "Comment", request.Comment },
                     { "ErrorMessage", e.Message }
                 };
