@@ -191,9 +191,9 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             PrototypeVersions PrototypeVersion = null;
             Instances Instance = null;
             
+            var SignResponse = new SignResponse();
             try
             {
-                var SignResponse = new SignResponse();
                 var Step = await _workFlowsRepository.GetWorkFlowApplicationStepAsync(identity, request.ApplicationStep);
                 var Steps = Step.WorkFlowApplications.WorkFlowApplicationSteps;
                 var FirstSignature = Steps.All(r => r.User == null);
@@ -330,6 +330,17 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 var checklistLabel = Instance == null
                     ? $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}"
                     : $"{Instance.PrototypeName}.{Instance.Version}.{Instance.Year}.{Instance.Number}";
+                var information = new Dictionary<string, object>
+                {
+                    { "Comment", request.Comment }
+                };
+
+                if (PrototypeVersion != null)
+                {
+                    information.Add("ValidFrom", SignResponse.ValidFrom ?? (object)"(now)");
+                    information.Add("ValidUntil", SignResponse.ValidUntil ?? (object)"(never expires)");
+                }
+                
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
                     Company = identity.CompanyId,
@@ -337,6 +348,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     Action = TrailAction.WorkflowSignatureIssued,
                     Date = DateTimeOffset.UtcNow,
                     CheckList = checklistLabel,
+                    Information = information.ToJson(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None })
                 });
                 
                 return SignResponse;
@@ -346,10 +358,18 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 var checklistLabel = Instance == null
                     ? $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}"
                     : $"{Instance.PrototypeName}.{Instance.Version}.{Instance.Year}.{Instance.Number}";
-                var information = new Dictionary<string, string>
+                var information = new Dictionary<string, object>
                 {
-                    { "Reason", e.Message }
+                    { "Comment", request.Comment },
+                    { "ErrorMessage", e.Message }
                 };
+                
+                if (PrototypeVersion != null)
+                {
+                    information.Add("ValidFrom", SignResponse.ValidFrom ?? (object)"(now)");
+                    information.Add("ValidUntil", SignResponse.ValidUntil ?? (object)"(never expires)");
+                }
+                
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
                     Company = identity.CompanyId,
