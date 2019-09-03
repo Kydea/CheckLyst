@@ -1163,7 +1163,7 @@ namespace CheckListManager.Instances.Logic.Services
                     var information = new Dictionary<string, string>
                     {
                         { "Id", request.ItemId.ToString() },
-                        { "Reason", e.Message }
+                        { "ErrorMessage", e.Message }
                     };
                     await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                     {
@@ -1214,59 +1214,81 @@ namespace CheckListManager.Instances.Logic.Services
 
         private async Task HandleSignatureCancellationAsync(InstanceCacheObject cacheObject, IDefaultIdentity identity, InstanceEventRequest request)
         {
-            if (!request.ItemId.HasValue)
-                throw new InstanceException("Item id not sent");
-
-            var signature = cacheObject.Instance.Items.ContainsKey(request.ItemId.Value) ? cacheObject.Instance.Items[request.ItemId.Value] as Signature : null;
-            if (signature == null)
-                throw new InstanceException("Signature not found");
-
-            if (!signature.Signed)
-                throw new Exception("The signature is not signed");
-
-            if (string.IsNullOrEmpty(request.Password))
-                throw new InstanceException("Provide your password");
-
-            if (string.IsNullOrWhiteSpace(request.Note))
-                throw new InstanceException("Provide a cancellation note");
-
-            if (cacheObject.Instance.ReadOnly)
-                throw new InstanceException("Invalid operation");
-
             try
             {
-                await _authenticationService.AuthenticateAsync(identity.Code, request.Password);
-            }
-            catch
-            {
-                throw new InstanceException("Authentication failed");
-            }
+                if (!request.ItemId.HasValue)
+                    throw new InstanceException("Item id not sent");
 
-            if (!HasPermission(identity, "Unsign", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType, signature.SignatureLevel))
-                throw new InstanceException($"The signature can be canceled by an user with function Unsign and level {signature.SignatureLevel}");
+                var signature = cacheObject.Instance.Items.ContainsKey(request.ItemId.Value) ? cacheObject.Instance.Items[request.ItemId.Value] as Signature : null;
+                if (signature == null)
+                    throw new InstanceException("Signature not found");
 
-            signature.Unsign(identity.Code, identity.Description, DateTimeOffset.UtcNow, request.Note, cacheObject.InstanceState);
-            var Now = DateTimeOffset.UtcNow;
-            cacheObject.ModifiedBy = identity.Code;
-            cacheObject.ModifiedOn = Now;
-            if (cacheObject.InstanceState == InstanceState.Progress)
-                await SaveAsync(cacheObject, identity, false, false, true, cacheObject.ModifiedBy, cacheObject.ModifiedOn);
-            await Update(cacheObject, request.Username);
+                if (!signature.Signed)
+                    throw new Exception("The signature is not signed");
 
-            if (!cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation))
-                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                if (string.IsNullOrEmpty(request.Password))
+                    throw new InstanceException("Provide your password");
+
+                if (string.IsNullOrWhiteSpace(request.Note))
+                    throw new InstanceException("Provide a cancellation note");
+
+                if (cacheObject.Instance.ReadOnly)
+                    throw new InstanceException("Invalid operation");
+
+                try
                 {
-                    Company = identity.CompanyId,
-                    User = identity.Code,
-                    Action = TrailAction.InstanceSignatureCanceled,
-                    Date = DateTimeOffset.UtcNow,
-                    CheckList = cacheObject.InstanceCode,
-                    Information = JsonConvert.SerializeObject(new
+                    await _authenticationService.AuthenticateAsync(identity.Code, request.Password);
+                }
+                catch
+                {
+                    throw new InstanceException("Authentication failed");
+                }
+
+                if (!HasPermission(identity, "Unsign", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType, signature.SignatureLevel))
+                    throw new InstanceException($"The signature can be canceled by an user with function Unsign and level {signature.SignatureLevel}");
+
+                signature.Unsign(identity.Code, identity.Description, DateTimeOffset.UtcNow, request.Note, cacheObject.InstanceState);
+                var Now = DateTimeOffset.UtcNow;
+                cacheObject.ModifiedBy = identity.Code;
+                cacheObject.ModifiedOn = Now;
+                if (cacheObject.InstanceState == InstanceState.Progress)
+                    await SaveAsync(cacheObject, identity, false, false, true, cacheObject.ModifiedBy, cacheObject.ModifiedOn);
+                await Update(cacheObject, request.Username);
+
+                if (!cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation))
+                    await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                     {
-                        Id = request.ItemId,
-                        request.Note
-                    })
-                });
+                        Company = identity.CompanyId,
+                        User = identity.Code,
+                        Action = TrailAction.InstanceSignatureCanceled,
+                        Date = DateTimeOffset.UtcNow,
+                        CheckList = cacheObject.InstanceCode,
+                        Information = JsonConvert.SerializeObject(new
+                        {
+                            Id = request.ItemId,
+                            request.Note
+                        })
+                    });
+            }
+            catch (Exception e)
+            {
+                if (!cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation))
+                    await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                    {
+                        Company = identity.CompanyId,
+                        User = identity.Code,
+                        Action = TrailAction.InstanceSignatureCanceledFailed,
+                        Date = DateTimeOffset.UtcNow,
+                        CheckList = cacheObject.InstanceCode,
+                        Information = JsonConvert.SerializeObject(new
+                        {
+                            Id = request.ItemId,
+                            request.Note,
+                            ErrorMessage = e.Message
+                        })
+                    });
+                throw;
+            }
         }
 
         private async Task HandleUnlockPageAsync(InstanceCacheObject cacheObject, string userCode, int? itemId)
