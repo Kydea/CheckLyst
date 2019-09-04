@@ -74,7 +74,15 @@ namespace CheckListManager.Prototypes.Terminal
                     {
                         Exported = Settings != null,
                         File = message.Message.Path,
-                        Server = Settings
+                        Server = new
+                        {
+                            Settings.Host,
+                            Settings.Port,
+                            Settings.Folder,
+                            Settings.EnableSSL,
+                            Settings.UsePassive,
+                            Settings.UserName,
+                        }
                     })
                 }, cancellationToken);
             }
