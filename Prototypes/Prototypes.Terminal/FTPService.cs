@@ -74,7 +74,7 @@ namespace CheckListManager.Prototypes.Terminal
                     {
                         Exported = Settings != null,
                         File = message.Message.Path,
-                        Server = new
+                        Server = Settings == null ? null : new
                         {
                             Settings.Host,
                             Settings.Port,
