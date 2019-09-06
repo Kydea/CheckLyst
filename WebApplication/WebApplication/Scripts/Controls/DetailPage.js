@@ -131,8 +131,8 @@
 				form.addChangeHandler(function () {
 					matematici.canClose = false;
 					matematici.save = function (callback, takeOpen) {
-						clickHandler($("#SaveButton"), data == null ? "Add" : "Edit", callback, takeOpen);
-					}
+						return clickHandler($("#SaveButton"), data == null ? "Add" : "Edit", callback, takeOpen);
+					};
 				});
 
             setTimeout(function () {
