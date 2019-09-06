@@ -107,21 +107,30 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 { "InstanceNumber", cacheObject.Number },
             };
 
+            //first evaluation
             foreach (var expression in Expressions.Values)
             {
                 expression.Parse(this);
                 expression.Evaluate(this);
             }
 
+            Update(DecimalSeparator, TimeZone, InstanceRuntimeValues);
+
+            //second evaluation, to consider expressions with item properties which depends by expression values, higher level dependencies and cycles are still a problem
+            foreach (var expression in Expressions.Values)
+                expression.Evaluate(this);
+
+            Update(DecimalSeparator, TimeZone, InstanceRuntimeValues);
+        }
+        
+        private void Update(string DecimalSeparator, string TimeZone, Dictionary<string, object> InstanceRuntimeValues)
+        {
             DescriptionFormula?.Update(this, InstanceRuntimeValues, DecimalSeparator, TimeZone, null);
             FileNameFormula?.Update(this, InstanceRuntimeValues, DecimalSeparator, TimeZone, null);
 
             Header.Update(DecimalSeparator, TimeZone);
             foreach (var page in Pages)
                 page.Update(DecimalSeparator, TimeZone);
-
-            foreach (var expression in Expressions.Values)
-                expression.Evaluate(this); //this second evaluation takes into account expression with item properties which depends by expression values, cycles are still a problem
         }
 
         public void UpdateReadOnly(string userCode, string state)
