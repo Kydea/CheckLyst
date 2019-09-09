@@ -143,19 +143,18 @@
 				});
 
 			setTimeout(function () {
-				if (data) form.setValues(data);
-
 				if (options.initHandler) options.initHandler(detailPage);
+				if (data) form.setValues(data);
 				if (options.completeHandler) options.completeHandler(detailPage);
-				title = matematici.popup.getTitle().html();
 
-				refresh(data);
+				title = matematici.popup.getTitle().html();
+				refresh(data, true);
 			}, 0);
 		},
 
-		refresh = function (d) {
+		refresh = function (d, avoidSetValues) {
 			data = d;
-			if (data) form.setValues(data);
+			if (data && !avoidSetValues) form.setValues(data);
 			matematici.popup.getTitle().html(title + (!data ? " (new)" : data.id ? " (ID: " + data.id + ")" : data.code ? " (Code: " + data.code + ")" : ""));
 		};
 
