@@ -143,6 +143,8 @@
 				});
 
 			setTimeout(function () {
+				if (data) form.setValues(data);
+
 				if (options.initHandler) options.initHandler(detailPage);
 				if (options.completeHandler) options.completeHandler(detailPage);
 				title = matematici.popup.getTitle().html();
