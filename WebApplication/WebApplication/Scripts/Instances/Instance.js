@@ -95,10 +95,10 @@
 
         showExceptions = function () {
             var message = "";
-            console.log(exceptions);
+
             for (var index in exceptions) {
                 var exception = exceptions[index];
-                message += exception.description + " (" + exception.code + ")<br />";
+                message += exception.description + " (" + exception.code + ")<br /><br />";
             }
 
             matematici.dialog.error("exceptions list", message);
