@@ -6,6 +6,7 @@
 		buttons = options.buttons || [],
 		form,
 		lastReason,
+		title,
 
 		clickHandler = function (button, event, callback, takeOpen) {
 			if (button.hasClass("ReadOnly")) return false;
@@ -23,8 +24,14 @@
 					}
 
 					if (result.valid) {
+						matematici.canClose = true;
 						matematici.popup.getResult().saved = true;
 						if (!takeOpen) matematici.popup.close();
+
+						if (!data && result.data) {
+							refresh(result.data);
+						}
+
 						matematici.blip.ok(callback);
 					}
 				}, options.parametersPrepareHandler && options.parametersPrepareHandler());
@@ -135,13 +142,19 @@
 					};
 				});
 
-            setTimeout(function () {
-                if (options.initHandler) options.initHandler(detailPage);
-				if (data) form.setValues(data);
-                if (options.completeHandler) options.completeHandler(detailPage);
+			setTimeout(function () {
+				if (options.initHandler) options.initHandler(detailPage);
+				if (options.completeHandler) options.completeHandler(detailPage);
+				title = matematici.popup.getTitle().html();
 
-                matematici.popup.getTitle().html(matematici.popup.getTitle().html() + (!data ? " (new)" : data.id ? " (ID: " + data.id + ")" : data.code ? " (Code: " + data.code + ")" : "" ))
+				refresh(data);
 			}, 0);
+		},
+
+		refresh = function (d) {
+			data = d;
+			if (data) form.setValues(data);
+			matematici.popup.getTitle().html(title + (!data ? " (new)" : data.id ? " (ID: " + data.id + ")" : data.code ? " (Code: " + data.code + ")" : ""));
 		};
 
 	this.getElement = function () {

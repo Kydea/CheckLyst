@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CheckListManager.Infrastructure.Logic.FTPServers
 {
-    public class FTPServersResponse : Form
+    public class FTPServersResponse : Form<FTPServersRow>
     {
     }
 }
