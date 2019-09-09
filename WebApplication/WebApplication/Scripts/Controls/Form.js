@@ -109,7 +109,8 @@
 			return value;
 		},
 
-		prepareRequest = function (parameters) {
+        prepareRequest = function (parameters) {
+            console.log(parameters);
 			parameters = parameters || {};
 			parameters.data = parameters.data || {};
 

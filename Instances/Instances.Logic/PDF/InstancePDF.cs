@@ -62,7 +62,10 @@ namespace CheckListManager.Instances.Logic.PDF
             var Exceptions = new StringBuilder();
             foreach (var Expression in Instance.Instance.Expressions.Values)
                 if (Expression.Exception && Expression.Value.Value as bool? == true)
+                {
                     Exceptions.AppendLine(Expression.Description);
+                    Exceptions.AppendLine();
+                }
 
             return new FirstPage(this, Instance.InstanceCode, Instance.PrototypeDescription, FormatFormula(Instance.Instance.Description), Rows, Exceptions.Length > 0 ? Exceptions.ToString() : null);
         }
