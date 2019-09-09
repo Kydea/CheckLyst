@@ -110,7 +110,6 @@
 		},
 
         prepareRequest = function (parameters) {
-            console.log(parameters);
 			parameters = parameters || {};
 			parameters.data = parameters.data || {};
 
@@ -127,7 +126,8 @@
 
             parameters.data["advancedSearch"] = options.searchPage && options.searchPage.isAdvancedSearchMode && options.searchPage.isAdvancedSearchMode();
 
-			return JSON.stringify(parameters);
+			var result = JSON.stringify(parameters);
+			return result;
 		},
 
 		prettifyObject = function (object, indentation) {
