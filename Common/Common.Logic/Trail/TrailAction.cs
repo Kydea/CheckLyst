@@ -27,6 +27,7 @@
         public const string InstanceSignatureIssued = "Instance signature issued";
         public const string InstanceSignatureFailed = "Instance signature failed";
         public const string InstanceSignatureCanceled = "Instance signature canceled";
+        public const string InstanceSignatureCanceledFailed = "Instance signature canceled failed";
         public const string InstanceValueChanged = "Instance value changed";
         public const string InstanceValueCopied = "Instance value copied";
         public const string InstanceIterationAdded = "Instance iteration added";

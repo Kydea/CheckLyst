@@ -1,4 +1,5 @@
 ﻿@import "_Library.scss";
+@import "FontAwesome/_variables.scss";
 
 body.Dialog {
     overflow: hidden;
@@ -174,6 +175,22 @@ div.Dialog {
             a.CloseButton {
                 right: 50px;
                 top: 30px;
+                border-radius: 50%;
+                background: $Color-Green-Regular;
+
+                i {
+                    font-size: 20px;
+                    color: white;
+                    line-height: 30px;
+
+                    &::before {
+                        content: fa-content($fa-var-times) !important;
+                    }
+                }
+
+                &:hover {
+                    background: $Color-Green-Light;
+                }
             }
 
             div.Buttons {

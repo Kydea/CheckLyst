@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using CheckListManager.Common.Core.Helpers;
 using CheckListManager.Common.Core.Web.Security;
@@ -21,6 +22,27 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
         private readonly ISettingService _settingService;
         private readonly IQueueService _queueService;
 
+        private readonly Func<Common.Data.FTPServers, FTPServersRow> _mapperFunc;
+        private readonly Expression<Func<Common.Data.FTPServers, FTPServersRow>> _mapper = d => new FTPServersRow
+        {
+            ID = d.ID,
+            Name = d.Name,
+            Host = d.Host,
+            Port = d.Port,
+            Folder = d.Folder,
+            UserName = d.UserName,
+            Password = d.Password,
+            SSL = d.SSL,
+            Passive = d.Passive,
+            PrototypesDefault = d.PrototypesDefault,
+            InstancesDefault = d.InstancesDefault,
+
+            CreatedBy = d.CreatedBy,
+            CreatedOn = d.CreatedOn,
+            ModifiedBy = d.ModifiedBy,
+            ModifiedOn = d.ModifiedOn
+        };
+
         public FTPServersService(
             IInfrastructureRepository infrastructureRepository,
             ISettingService settingService,
@@ -30,31 +52,15 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
             _infrastructureRepository = infrastructureRepository;
             _settingService = settingService;
             _queueService = queueService;
+
+            _mapperFunc = _mapper.Compile();
         }
 
         public async Task<PagingResponse<List<FTPServersRow>>> GetDataAsync(IDefaultIdentity identity, PagingRequest<FTPServersRequest> Form)
             => await _infrastructureRepository
                 .GetFTPServersAsync(
                     identity,
-                    d => new FTPServersRow
-                    {
-                        ID = d.ID,
-                        Name = d.Name,
-                        Host = d.Host,
-                        Port = d.Port,
-                        Folder = d.Folder,
-                        UserName = d.UserName,
-                        Password = d.Password,
-                        SSL = d.SSL,
-                        Passive = d.Passive,
-                        PrototypesDefault = d.PrototypesDefault,
-                        InstancesDefault = d.InstancesDefault,
-
-                        CreatedBy = d.CreatedBy,
-                        CreatedOn = d.CreatedOn,
-                        ModifiedBy = d.ModifiedBy,
-                        ModifiedOn = d.ModifiedOn
-                    },
+                    _mapper,
                     Form.Data.Name, Form.Data.Host, Form.CurrentPage, Form.ItemsPerPage
                 );
 
@@ -115,11 +121,12 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
             if (response.Valid)
                 try
                 {
+                    record.Port = record.Port ?? 21;
                     var FTPServer = new Common.Data.FTPServers
                     {
                         Name = record.Name,
                         Host = record.Host,
-                        Port = record.Port ?? 21,
+                        Port = record.Port.Value,
                         Folder = record.Folder,
                         UserName = record.UserName,
                         Password = record.Password,
@@ -131,12 +138,15 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
                     if (isNew)
                     {
                         await _infrastructureRepository.AddFTPServerAsync(identity, FTPServer);
+                        record.ID = FTPServer.ID;
+                        response.Data = _mapperFunc(FTPServer);
                         await AuditAsync(identity, TrailAction.FtpServerCreated, record);
                     }
                     else
                     {
                         FTPServer.ID = record.ID.Value;
                         await _infrastructureRepository.EditFTPServerAsync(identity, FTPServer);
+                        response.Data = _mapperFunc(FTPServer);
                         await AuditAsync(identity, TrailAction.FtpServerUpdated, record);
                     }
                 }

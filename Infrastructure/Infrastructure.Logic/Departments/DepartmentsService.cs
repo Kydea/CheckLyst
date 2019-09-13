@@ -98,6 +98,7 @@ namespace CheckListManager.Infrastructure.Logic.Departments
                     if (isNew)
                     {
                         await _infrastructureRepository.AddDepartmentAsync(identity, Department);
+                        record.ID = Department.ID;
                         await AuditAsync(identity, TrailAction.DepartmentCreated, record);
                     }
                     else

@@ -109,7 +109,7 @@
 			return value;
 		},
 
-		prepareRequest = function (parameters) {
+        prepareRequest = function (parameters) {
 			parameters = parameters || {};
 			parameters.data = parameters.data || {};
 
@@ -126,16 +126,21 @@
 
             parameters.data["advancedSearch"] = options.searchPage && options.searchPage.isAdvancedSearchMode && options.searchPage.isAdvancedSearchMode();
 
-			return JSON.stringify(parameters);
+			var result = JSON.stringify(parameters);
+			return result;
 		},
 
 		prettifyObject = function (object, indentation) {
-			if (object == null)
+			if (object === undefined)
 				return "";
+			else if (object === null)
+				return "(null)";
+			else if (object === "")
+				return "(empty)";
 			else if (typeof object == "object") {
 				var value = ""; 
 				for (var index in object) 
-					if (object[index] != null && object[index] != "")
+					if (object[index] !== undefined)
 						value += "\n" + Array(indentation + 1).join(" ") + index + ": " + prettifyObject(object[index], indentation + 4);
 				return value;
 			} else

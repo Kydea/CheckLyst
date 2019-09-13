@@ -175,3 +175,7 @@ from "Infrastructure"."Companies";
 insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") 
 select "ID", 'InstancesAttachmentMaxSizeBytes', '10485760' -- 10MB
 from "Infrastructure"."Companies";
+
+insert into "Trail"."Actions"
+values
+	('Instance signature canceled failed');

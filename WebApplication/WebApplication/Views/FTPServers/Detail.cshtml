@@ -124,7 +124,7 @@
                     matematici.dialog.show("warning", "There are unsaved changes.", [
                         {
                             text: "save", icon: "check", handler: function () {
-                                matematici.save(action, true);
+                                return matematici.save(action, true);
                             }
                         },
                         { text: "cancel", icon: "times", cancelButton: true }

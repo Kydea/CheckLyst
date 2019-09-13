@@ -35,6 +35,7 @@ values
 	('Instance signature issued'),
 	('Instance signature failed'),
 	('Instance signature canceled'),
+	('Instance signature canceled failed'),	
 	('Instance export completed'),
 	('Instance export failed'),
 	('Instance value changed'),
