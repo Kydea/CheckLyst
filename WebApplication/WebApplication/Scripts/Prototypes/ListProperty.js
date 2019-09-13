@@ -24,14 +24,14 @@
         valuePanel.addClass("Expression");
 
         if (options.readOnly) {
-            var input = $("<input />")
+            var label = $("<input />")
                 .attr({ type: "text", readOnly: true })
                 .val(model[property])
                 .appendTo(valuePanel);
 
             for (var index in values)
                 if (values[index].code == model[property])
-                    input.val(values[index].label);
+                    label.val(values[index].label);
         } else {
             input = $("<select />");
             if (!!options.nullable) input.data("nullable", true);
