@@ -125,12 +125,6 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         self.tabBarController?.tabBar.isUserInteractionEnabled = true
     }
     
-    func willEnterForeground()
-    {
-        self.navigationController?.popViewController(animated: true)
-    }
-    
-    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         requestForScanning = false
@@ -139,9 +133,10 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     
     override func viewWillDisappear(_ animated : Bool) {
         super.viewWillDisappear(animated)
-        if(!requestForScanning && !requestForDocument) {
-            self.webView.evaluateJavaScript("instances.instance.close()", completionHandler: nil)
-        }
+    }
+    
+    func closeInstance() {
+        self.webView.evaluateJavaScript("instances.instance.close(function(){})", completionHandler: nil)
     }
     
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
@@ -274,6 +269,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     
     
     @IBAction func goBackToSearchInstances(_ sender: Any) {
+        closeInstance()
         self.performSegue(withIdentifier: "goBackSearchInstances", sender: self)
     }
     

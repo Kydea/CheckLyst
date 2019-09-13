@@ -185,8 +185,12 @@ import UIKit
                 
                 if(tabBarController.selectedIndex == 1) {
                     if let navigationController = tabBarController.viewControllers![tabBarController.selectedIndex] as? UINavigationController {
-                        if(navigationController.childViewControllers.count > 2) {
-                            navigationController.popViewController(animated: false)
+                        
+                        for childController in navigationController.childViewControllers {
+                            if let instanceController = childController as? InstanceViewController {
+                                instanceController.closeInstance()
+                                //navigationController.popToRootViewController(animated: false)
+                            }
                         }
                     }
                 }
@@ -199,15 +203,6 @@ import UIKit
                 tabBarController.dismiss(animated: true, completion: nil)
             }
         }
-        
-        
-        /*
-         Old way to go back to login
-         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let homeVC = storyboard.instantiateViewController(withIdentifier: "FirstCheck")
-        UIApplication.shared.keyWindow?.rootViewController = homeVC
-        Better this way?
-         UIApplication.shared.keyWindow?.rootViewController?.navigationController?.popToRootViewController(animated: true)*/
     }
     
     func displayError(Title title:String, Message message:String) {
