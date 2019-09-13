@@ -189,7 +189,6 @@ import UIKit
                         for childController in navigationController.childViewControllers {
                             if let instanceController = childController as? InstanceViewController {
                                 instanceController.closeInstance()
-                                //navigationController.popToRootViewController(animated: false)
                             }
                         }
                     }
