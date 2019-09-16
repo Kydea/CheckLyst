@@ -23,6 +23,11 @@ class QRCodeScannerViewController: UIViewController, QRScannerViewDelegate {
         // Do any additional setup after loading the view.
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        senderController?.customBackButton.isEnabled = false
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         AVCaptureDevice.requestAccess(for: .video) { success in
@@ -52,8 +57,9 @@ class QRCodeScannerViewController: UIViewController, QRScannerViewDelegate {
         
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
+        senderController?.customBackButton.isEnabled = true
         if(scannerView.isRunning) {
             scannerView.stopScanning()
         }

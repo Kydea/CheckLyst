@@ -247,6 +247,11 @@ import UIKit
     }
     
     func goBackGround(){
+        if let controller = getInstanceWebView() {
+            controller.viewWillDisappear(false);
+            controller.navigationController?.popToRootViewController(animated: false)
+        }
+        
         UserDefaults.standard.set(Date(), forKey: "backgroundTime")
         if let timer = timer {
             timer.invalidate()
