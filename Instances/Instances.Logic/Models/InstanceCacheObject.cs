@@ -37,12 +37,12 @@ namespace CheckListManager.Instances.Logic.Models
 		public DateTimeOffset? ModifiedOn { get; set; }
 
         [JsonIgnore]
-        public string InstanceCode {
-            get
-            {
-                return $"{PrototypeName}.{Version}.{Year}.{Number}";
-            }
-        }
+        public string YearCode =>
+            VersionState == Common.Data.VersionState.Draft ? "Test" : Year == 0 ? "SE" : (Year?.ToString() ?? "?");
+
+        [JsonIgnore]
+        public string InstanceCode =>
+            $"{PrototypeName}.{Version}.{(YearCode)}.{Number?.ToString() ?? "?"}";
 
 		public void TrackChanges(string userCode)
 		{

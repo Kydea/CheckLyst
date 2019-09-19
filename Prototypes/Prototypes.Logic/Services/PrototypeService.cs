@@ -291,9 +291,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                 await _prototypeRepository.SaveChangesAsync();
                 
                 if (!request.AttachmentTemporaryKey.HasValue)
-                {
                     throw new Exception("AttachmentTemporaryKey has not been set. Impossible to clone the attachments");
-                }
                 
                 await CloneAttachmentsFromTempAsync(
                     request.AttachmentTemporaryKey.Value,
@@ -377,9 +375,7 @@ namespace CheckListManager.Prototypes.Logic.Services
             var instances = PrototypeVersion.Instances.ToList();
             var instancesDeleted = await _prototypeRepository.SetStateAsync(identity, PrototypeVersion, request.State, request.StateProposed);
             if (instancesDeleted)
-            {
                 await DeleteAttachmentFromInstancesAsync(identity, instances);
-            }
 
             if (request.StateProposed && request.State == VersionState.Approved) //we track both the state change and the proposed state for the workflow
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage

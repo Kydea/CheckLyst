@@ -11,6 +11,9 @@ using System;
 using CheckListManager.Common.Logic.Trail;
 using CheckListManager.Common.Core.Helpers;
 using CheckListManager.Common.Logic.Services;
+using System.Collections.Generic;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace CheckListManager.Trail.Api.Controllers
 {
@@ -63,15 +66,28 @@ namespace CheckListManager.Trail.Api.Controllers
                 "Detail"
             };
             string timeZone = (await _settingService.TimeZoneAsync(Data.CompanyId.Value)).MicrosoftCode;
-                
+
             var Rows = await _listService.GetDataAsync(Data.CompanyId.Value, Data);
-            return Content(HttpStatusCode.OK, Rows, new CSVFormatter<TrailMessage>(Header, "AuditTrail", tm => new string[] {
-                tm.Id.ToString(),
-                tm.Date.ToLocalTime(timeZone).ToString(),
-                tm.User,
-                tm.Action,
-                tm.CheckList,
-                tm.Information
+            return Content(HttpStatusCode.OK, Rows, new CSVFormatter<TrailMessage>(Header, "AuditTrail", tm =>
+            {
+                string information = null;
+                if (!string.IsNullOrWhiteSpace(tm.Information))
+                {
+                    var json = JObject.Parse(tm.Information);
+
+                    //parse information into a human readable string
+                }
+
+                var columns = new List<string> {
+                    tm.Id.ToString(),
+                    tm.Date.ToLocalTime(timeZone).ToString(),
+                    tm.User,
+                    tm.Action,
+                    tm.CheckList,
+                    tm.Information
+                };
+
+                return columns.ToArray();
             }));
         }
     }

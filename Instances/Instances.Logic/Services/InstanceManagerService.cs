@@ -288,16 +288,14 @@ namespace CheckListManager.Instances.Logic.Services
                 }
 
                 await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
-
-                if (!cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation))
-                    await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
-                    {
-                        Company = identity.CompanyId,
-                        User = identity.Code,
-                        Action = TrailAction.InstanceCreated,
-                        Date = DateTimeOffset.UtcNow,
-                        CheckList = cacheObject.InstanceCode
-                    });
+                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                {
+                    Company = identity.CompanyId,
+                    User = identity.Code,
+                    Action = TrailAction.InstanceCreated,
+                    Date = DateTimeOffset.UtcNow,
+                    CheckList = cacheObject.InstanceCode
+                });
 
                 return cacheObject;
             }
@@ -361,16 +359,15 @@ namespace CheckListManager.Instances.Logic.Services
                 cacheObject = await SaveAsync(cacheObject, identity, true, true, false, identity.Code, DateTimeOffset.UtcNow);
                 cacheObject.Instance.UpdateReadOnly(identity.Code, InstanceState.Completed);
 
-                if (!cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation))
-                    await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
-                    {
-                        Company = identity.CompanyId,
-                        User = identity.Code,
-                        Action = TrailAction.InstanceStateChanged,
-                        Date = DateTimeOffset.UtcNow,
-                        CheckList = cacheObject.InstanceCode,
-                        Information = cacheObject.InstanceState
-                    });
+                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                {
+                    Company = identity.CompanyId,
+                    User = identity.Code,
+                    Action = TrailAction.InstanceStateChanged,
+                    Date = DateTimeOffset.UtcNow,
+                    CheckList = cacheObject.InstanceCode,
+                    Information = cacheObject.InstanceState
+                });
 
                 return cacheObject;
             }
@@ -394,7 +391,7 @@ namespace CheckListManager.Instances.Logic.Services
                     throw new InstanceException("Instance not found");
                 if (!cacheObject.InstanceState.In(InstanceState.Draft, InstanceState.Progress))
                     throw new InstanceException("Instance state not valid");
-                if (cacheObject.VersionState == VersionState.Active && cacheObject.InstanceState == InstanceState.Progress && string.IsNullOrWhiteSpace(note))
+                if (!(cacheObject.VersionState == VersionState.Draft || cacheObject.VersionState == VersionState.InSimulation) && cacheObject.InstanceState == InstanceState.Progress && string.IsNullOrWhiteSpace(note))
                     throw new InstanceException("Provide a note for the deletion");
                 if (
                     !(cacheObject.InstanceState == InstanceState.Draft && HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
@@ -404,16 +401,15 @@ namespace CheckListManager.Instances.Logic.Services
 
                 await DeleteInstanceAsync(cacheObject, identity, note);
 
-                if (!cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation))
-                    await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
-                    {
-                        Company = identity.CompanyId,
-                        User = identity.Code,
-                        Action = TrailAction.InstanceStateChanged,
-                        Date = DateTimeOffset.UtcNow,
-                        CheckList = cacheObject.InstanceCode,
-                        Information = note
-                    });
+                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                {
+                    Company = identity.CompanyId,
+                    User = identity.Code,
+                    Action = TrailAction.InstanceStateChanged,
+                    Date = DateTimeOffset.UtcNow,
+                    CheckList = cacheObject.InstanceCode,
+                    Information = note
+                });
 
             }
             catch (InstanceException)
@@ -588,7 +584,15 @@ namespace CheckListManager.Instances.Logic.Services
                 if (row == null)
                     throw new InstanceException("Instance not found");
 
-                if (cacheObject.VersionState == VersionState.Active)
+                if (cacheObject.VersionState == VersionState.Draft || cacheObject.VersionState == VersionState.InSimulation)
+                {
+                    _instancesRepository.DeleteInstance(row);
+                    await _storageService.DeleteRecursiveAsync(
+                        _configurationService.InstancesStorageBucket,
+                        GetAttachmentKeyPrefix(identity, cacheObject)
+                    );
+                }
+                else
                 {
                     row.ModifiedOn = DateTimeOffset.UtcNow;
                     row.ModifiedBy = identity.Code;
@@ -601,14 +605,6 @@ namespace CheckListManager.Instances.Logic.Services
                         State = row.InstanceState,
                         Note = note
                     });
-                }
-                else
-                {
-                    _instancesRepository.DeleteInstance(row);
-                    await _storageService.DeleteRecursiveAsync(
-                        _configurationService.InstancesStorageBucket,
-                        GetAttachmentKeyPrefix(identity, cacheObject)
-                    );
                 }
 
                 await _instancesRepository.SaveChangesAsync();
@@ -1145,36 +1141,32 @@ namespace CheckListManager.Instances.Logic.Services
                     await SaveAsync(cacheObject, identity, false, false, true, cacheObject.ModifiedBy, cacheObject.ModifiedOn);
                 await Update(cacheObject, request.Username);
 
-                if (!cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation))
-                    await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
-                    {
-                        Company = identity.CompanyId,
-                        User = identity.Code,
-                        Action = TrailAction.InstanceSignatureIssued,
-                        Date = DateTimeOffset.UtcNow,
-                        CheckList = cacheObject.InstanceCode,
-                        Information = request.ItemId.ToString()
-                    });
+                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                {
+                    Company = identity.CompanyId,
+                    User = identity.Code,
+                    Action = TrailAction.InstanceSignatureIssued,
+                    Date = DateTimeOffset.UtcNow,
+                    CheckList = cacheObject.InstanceCode,
+                    Information = request.ItemId.ToString()
+                });
             }
             catch (Exception e)
             {
-                if (!cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation))
+                var information = new Dictionary<string, string>
                 {
-                    var information = new Dictionary<string, string>
-                    {
-                        { "Id", request.ItemId.ToString() },
-                        { "ErrorMessage", e.Message }
-                    };
-                    await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
-                    {
-                        Company = identity.CompanyId,
-                        User = identity.Code,
-                        Action = TrailAction.InstanceSignatureFailed,
-                        Date = DateTimeOffset.UtcNow,
-                        CheckList = cacheObject.InstanceCode,
-                        Information = information.ToJson(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None })
-                    });
-                }
+                    { "Id", request.ItemId.ToString() },
+                    { "ErrorMessage", e.Message }
+                };
+                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                {
+                    Company = identity.CompanyId,
+                    User = identity.Code,
+                    Action = TrailAction.InstanceSignatureFailed,
+                    Date = DateTimeOffset.UtcNow,
+                    CheckList = cacheObject.InstanceCode,
+                    Information = information.ToJson(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None })
+                });
                 
                 throw;
             }
@@ -1195,13 +1187,13 @@ namespace CheckListManager.Instances.Logic.Services
             var message = await _settingService.InstanceMessageAsync(identity.CompanyId);
             var webApplicationUrl = _configurationService.WebApplicationUrl;
             var checkListURL = $"{webApplicationUrl}/Instances/Detail/{cacheObject.Code}";
-            var checklistLabel = $"{cacheObject.PrototypeName}.{cacheObject.Version}.{(cacheObject.Year > 0 ? cacheObject.Year.ToString() : cacheObject.VersionState == VersionState.Draft ? "Test" : "SE")}.{cacheObject.Number?.ToString() ?? "?"}";
+            //var checklistLabel = $"{cacheObject.PrototypeName}.{cacheObject.Version}.{(cacheObject.Year > 0 ? cacheObject.Year.ToString() : cacheObject.VersionState == VersionState.Draft ? "Test" : "SE")}.{cacheObject.Number?.ToString() ?? "?"}";
             foreach (var Email in Emails)
                 await _queueService.SendObjectAsync(QueueName.Email,
                     new EmailMessage(identity.CompanyId, "Signature notification", message,
                         Email.Address, new List<Tuple<string, string>> {
                             new Tuple<string, string> ("User", Email.Description),
-                            new Tuple<string, string> ("CheckListCode", $"<a href='{checkListURL}' target='_blank'>{checklistLabel}</a>")
+                            new Tuple<string, string> ("CheckListCode", $"<a href='{checkListURL}' target='_blank'>{cacheObject.InstanceCode}</a>")
                     })
                     {
                         TrailMessage = new EmailTrailMessage(identity.Code, cacheObject.InstanceCode, new EmailTrailMessage.EmailTrailInformation
@@ -1255,38 +1247,36 @@ namespace CheckListManager.Instances.Logic.Services
                     await SaveAsync(cacheObject, identity, false, false, true, cacheObject.ModifiedBy, cacheObject.ModifiedOn);
                 await Update(cacheObject, request.Username);
 
-                if (!cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation))
-                    await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                {
+                    Company = identity.CompanyId,
+                    User = identity.Code,
+                    Action = TrailAction.InstanceSignatureCanceled,
+                    Date = DateTimeOffset.UtcNow,
+                    CheckList = cacheObject.InstanceCode,
+                    Information = JsonConvert.SerializeObject(new
                     {
-                        Company = identity.CompanyId,
-                        User = identity.Code,
-                        Action = TrailAction.InstanceSignatureCanceled,
-                        Date = DateTimeOffset.UtcNow,
-                        CheckList = cacheObject.InstanceCode,
-                        Information = JsonConvert.SerializeObject(new
-                        {
-                            Id = request.ItemId,
-                            request.Note
-                        })
-                    });
+                        Id = request.ItemId,
+                        request.Note
+                    })
+                });
             }
             catch (Exception e)
             {
-                if (!cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation))
-                    await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                {
+                    Company = identity.CompanyId,
+                    User = identity.Code,
+                    Action = TrailAction.InstanceSignatureCanceledFailed,
+                    Date = DateTimeOffset.UtcNow,
+                    CheckList = cacheObject.InstanceCode,
+                    Information = JsonConvert.SerializeObject(new
                     {
-                        Company = identity.CompanyId,
-                        User = identity.Code,
-                        Action = TrailAction.InstanceSignatureCanceledFailed,
-                        Date = DateTimeOffset.UtcNow,
-                        CheckList = cacheObject.InstanceCode,
-                        Information = JsonConvert.SerializeObject(new
-                        {
-                            Id = request.ItemId,
-                            request.Note,
-                            ErrorMessage = e.Message
-                        })
-                    });
+                        Id = request.ItemId,
+                        request.Note,
+                        ErrorMessage = e.Message
+                    })
+                });
                 throw;
             }
         }
@@ -1490,10 +1480,11 @@ namespace CheckListManager.Instances.Logic.Services
 
         private InstanceCacheObject CreateInstanceFromDatabase(long companyId, Common.Data.Instances instance)
         {
+            var instanceObject = JsonConvert.DeserializeObject<Instance>(instance.Data, _converter);
             var cacheObject = new InstanceCacheObject
             {
                 CompanyId = companyId,
-                Instance = JsonConvert.DeserializeObject<Instance>(instance.Data, _converter),
+                Instance = instanceObject,
                 Code = instance.Code,
                 Department = instance.Prototypes.Department,
                 DepartmentName = instance.Prototypes.Departments.Name,

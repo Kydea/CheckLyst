@@ -57,7 +57,6 @@
 											}, accessToken).done(function (result) {
                                                 instances.instance.update(result);
                                                 matematici.popup.close();
-                                                console.log(model);
                                                 if (model.sendEmail)
                                                     new instances.SignatureEmail(model.id).show();
                                             }).trigger();
