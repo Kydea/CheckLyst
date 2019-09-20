@@ -366,7 +366,7 @@ namespace CheckListManager.Instances.Logic.Services
                     Action = TrailAction.InstanceStateChanged,
                     Date = DateTimeOffset.UtcNow,
                     CheckList = cacheObject.InstanceCode,
-                    Information = cacheObject.InstanceState
+                    Information = JsonConvert.SerializeObject(new { State = cacheObject.InstanceState })
                 });
 
                 return cacheObject;
@@ -408,7 +408,7 @@ namespace CheckListManager.Instances.Logic.Services
                     Action = TrailAction.InstanceStateChanged,
                     Date = DateTimeOffset.UtcNow,
                     CheckList = cacheObject.InstanceCode,
-                    Information = note
+                    Information = JsonConvert.SerializeObject(new { State = InstanceState.Deleted, Note = note })
                 });
 
             }
@@ -1011,7 +1011,7 @@ namespace CheckListManager.Instances.Logic.Services
                     Action = TrailAction.InstanceIterationAdded,
                     Date = DateTimeOffset.UtcNow,
                     CheckList = cacheObject.InstanceCode,
-                    Information = Iteration.Id.ToString()
+                    Information = JsonConvert.SerializeObject(new { Id = Iteration.Id.ToString() })
                 });
                 await Update(cacheObject, userCode);
             }
@@ -1039,7 +1039,7 @@ namespace CheckListManager.Instances.Logic.Services
                     Action = TrailAction.InstanceIterationDeleted,
                     Date = DateTimeOffset.UtcNow,
                     CheckList = cacheObject.InstanceCode,
-                    Information = itemId.ToString()
+                    Information = JsonConvert.SerializeObject(new { Id = itemId.ToString() })
                 });
                 await Update(cacheObject, userCode);
             }
@@ -1067,7 +1067,7 @@ namespace CheckListManager.Instances.Logic.Services
                     Action = direction == 1 ? TrailAction.InstanceIterationMovedDown : TrailAction.InstanceIterationMovedUp,
                     Date = DateTimeOffset.UtcNow,
                     CheckList = cacheObject.InstanceCode,
-                    Information = itemId.ToString()
+                    Information = JsonConvert.SerializeObject(new { Id = itemId.ToString() })
                 });
                 await Update(cacheObject, userCode);
             }
@@ -1148,7 +1148,7 @@ namespace CheckListManager.Instances.Logic.Services
                     Action = TrailAction.InstanceSignatureIssued,
                     Date = DateTimeOffset.UtcNow,
                     CheckList = cacheObject.InstanceCode,
-                    Information = request.ItemId.ToString()
+                    Information = JsonConvert.SerializeObject(new { Id = request.ItemId.ToString() })
                 });
             }
             catch (Exception e)
