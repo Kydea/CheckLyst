@@ -148,7 +148,7 @@ namespace CheckListManager.Infrastructure.Logic.Departments
             {
                 record.ID,
                 record.Name,
-                record.Reason,
+                ReasonForChange = record.Reason,
             };
             return AuditAsync(identity, action, information);
         }
@@ -158,7 +158,7 @@ namespace CheckListManager.Infrastructure.Logic.Departments
             var information = new
             {
                 Id = id,
-                Reason = reason
+                ReasonForChange = reason
             };
             return AuditAsync(identity, action, information);
         }

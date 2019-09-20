@@ -279,7 +279,7 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
                 record.ObsolescenceWorkFlow,
                 record.InstancesFTPServer,
                 record.PrototypesFTPServer,
-                record.Reason,
+                ReasonForChange = record.Reason,
             };
             return AuditAsync(identity, action, information);
         }
@@ -289,7 +289,7 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
             var information = new
             {
                 Id = id,
-                Reason = reason
+                ReasonForChange = reason
             };
             return AuditAsync(identity, action, information);
         }

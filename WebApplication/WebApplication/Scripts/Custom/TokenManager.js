@@ -111,8 +111,8 @@
 				data: { data: { refreshToken: localStorage.refreshToken } },
 				type: "post",
 				suppressErrors: true
-			});
-		localStorage.clear();
+            });
+        localStorage.clear();
 	};
 
 	tokenManager.getCompany = function () {

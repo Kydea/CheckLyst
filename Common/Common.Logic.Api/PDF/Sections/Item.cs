@@ -183,7 +183,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                 else
                 {
                     var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.InstancesStorageBucket, AttachmentElement.Key);
-                    DrawText($"(see attachament {Index})", null, 10);
+                    DrawText($"(see attachment {Index})", null, 10);
                 }
             }
         }

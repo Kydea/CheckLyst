@@ -14,6 +14,7 @@ using CheckListManager.Common.Logic.Services;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Text;
 
 namespace CheckListManager.Trail.Api.Controllers
 {
@@ -50,6 +51,66 @@ namespace CheckListManager.Trail.Api.Controllers
             return Ok(new { Token = Token });
         }
 
+        private string PrettifyValue(object value)
+        {
+            return
+                value == null ? "(null)" :
+                value is string stringValue ? stringValue == string.Empty ? "(empty)" : stringValue :
+                value is DateTime dateTimeValue ? dateTimeValue.ToString("yyyy-MM-dd HH:mm") :
+                value is DateTimeOffset dateTimeOffsetValue ? dateTimeOffsetValue.ToString("yyyy-MM-dd HH:mm UTC zzz") :
+                value.ToString();
+        }
+
+        private void PrettifyObject(StringBuilder stringBuilder, JToken token, int indentation)
+        {
+            try
+            {
+                if (token is JValue jValue)
+                    stringBuilder.Append(PrettifyValue(jValue?.Value));
+                else if (token is JArray jArray)
+                    for (var index = 0; index < jArray.Count; ++index)
+                    {
+                        stringBuilder.Append($"\n{new string(' ', 4 * indentation)}{index + 1}: ");
+                        PrettifyObject(stringBuilder, jArray[index], indentation + 1);
+                    }
+                else if (token is JObject jObject)
+                    foreach (var child in jObject)
+                    {
+                        stringBuilder.Append($"\n{new string(' ', 4 * indentation)}{child.Key}: ");
+                        PrettifyObject(stringBuilder, child.Value, indentation + 1);
+                    }
+                else
+                    throw new Exception("Unexpected token type: " + token.GetType().Name);
+            }
+            catch (Exception exception)
+            {
+                stringBuilder.Append($"\n###Error: {exception.Message}");
+            }
+        }
+
+        private string PrettifyObject(string value, int indentation)
+        {
+            if (string.IsNullOrWhiteSpace(value)) return null;
+
+            try
+            {
+                var node = JsonConvert.DeserializeObject(value);
+
+                if (node is JObject jObject)
+                {
+                    var stringBuilder = new StringBuilder();
+                    PrettifyObject(stringBuilder, jObject, indentation);
+                    return stringBuilder.Length == 0 ? null : stringBuilder.ToString(1, stringBuilder.Length - 1); //discards the first character (line break)
+                }
+                else
+                    return PrettifyValue(node);
+            }
+            catch
+            {
+                return value;
+            }
+        }
+
         [HttpGet]
         [Route("Export")]
         [AllowAnonymous]
@@ -69,25 +130,13 @@ namespace CheckListManager.Trail.Api.Controllers
 
             var Rows = await _listService.GetDataAsync(Data.CompanyId.Value, Data);
             return Content(HttpStatusCode.OK, Rows, new CSVFormatter<TrailMessage>(Header, "AuditTrail", tm =>
-            {
-                string information = null;
-                if (!string.IsNullOrWhiteSpace(tm.Information))
-                {
-                    var json = JObject.Parse(tm.Information);
-
-                    //parse information into a human readable string
-                }
-
-                var columns = new List<string> {
+                new string[] {
                     tm.Id.ToString(),
                     tm.Date.ToLocalTime(timeZone).ToString(),
                     tm.User,
                     tm.Action,
                     tm.CheckList,
-                    tm.Information
-                };
-
-                return columns.ToArray();
+                    tm.Information == null ? null : PrettifyObject(tm.Information, 0)
             }));
         }
     }

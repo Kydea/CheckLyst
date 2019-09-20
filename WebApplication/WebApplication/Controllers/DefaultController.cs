@@ -1,10 +1,15 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Text;
 using System.Web.Mvc;
 
 namespace CheckListManager.WebApplication.Controllers
 {
     public class DefaultController : BaseController
-	{
+    {
         [AllowAnonymous]
         [Route("Error", Order = 1)]
         public ActionResult Error()
@@ -15,9 +20,9 @@ namespace CheckListManager.WebApplication.Controllers
         [AllowAnonymous]
         public ActionResult Loader(string url)
         {
-			//Load Balancer Healt Check
-	        if ("ping".Equals(url, StringComparison.InvariantCultureIgnoreCase))
-		        return Ping();
+            //Load Balancer Healt Check
+            if ("ping".Equals(url, StringComparison.InvariantCultureIgnoreCase))
+                return Ping();
 
             return ConditionalView("Loader", url ?? "Dashboard");
         }
@@ -31,11 +36,11 @@ namespace CheckListManager.WebApplication.Controllers
             return ConditionalView();
         }
 
-		[AllowAnonymous]
-		[Route("Ping")]
-		public ActionResult Ping()
-		{
-			return Json(new { ok = true }, JsonRequestBehavior.AllowGet);
-		}
-	}
+        [AllowAnonymous]
+        [Route("Ping")]
+        public ActionResult Ping()
+        {
+            return Json(new { ok = true }, JsonRequestBehavior.AllowGet);
+        }
+    }
 }

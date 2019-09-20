@@ -50,7 +50,6 @@
 			userCode = $("input[name=username]", form),
 			password = $("input[name=password]", form),
 			companies = {},
-			redirectUrl = localStorage.redirectUrl && localStorage.redirectUrl.indexOf("/Security/Login") < 0 ? localStorage.redirectUrl : null,
 
 			showError = function (message) {
 				error.html(" " + message).prepend($("<i />").addClass("fas fa-exclamation-triangle")).show()
@@ -93,8 +92,9 @@
                     matematici.tokenManager.login(result);
 					matematici.clock.resume();
 
-					getSettings(function () {
-						localStorage.removeItem("redirectUrl");
+                    getSettings(function () {
+                        var redirectUrl = localStorage.redirectUrl && localStorage.redirectUrl.indexOf("/Security/Login") < 0 ? localStorage.redirectUrl : null;
+                        localStorage.removeItem("redirectUrl");
 						matematici.navigator.open(redirectUrl || matematici.urls.dashboard);
 					});
 
@@ -103,7 +103,11 @@
                 });
         });
 
+        var savedValues = {
+            redirectUrl: localStorage.redirectUrl
+        };
         matematici.tokenManager.logout();
+        localStorage.redirectUrl = savedValues.redirectUrl;
 
         //closes all possibile pending light boxes
         matematici.popup.close();

@@ -311,7 +311,6 @@
     <Content Include="Content\Theme\FontAwesome\_stacked.scss" />
     <Content Include="Content\Theme\FontAwesome\_variables.scss" />
     <Content Include="Content\Theme\FontAwesome\_shims.scss" />
-    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Bold\Myriad Pro.scss" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Bold\MyriadPro-Bold.eot" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Bold\MyriadPro-Bold.woff" />
@@ -451,6 +450,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Properties\PublishProfiles\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Theme\ActionBar.scss" />

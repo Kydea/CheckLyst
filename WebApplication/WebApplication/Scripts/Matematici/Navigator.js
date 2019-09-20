@@ -44,8 +44,8 @@
         },
 
         navigate: function (path, relative) {
-            localStorage.redirectUrl = matematici.navigator.buildUrl(path, relative);
-            $.address.value(localStorage.redirectUrl);
+            var path = matematici.navigator.buildUrl(path, relative);
+            $.address.value(path);
         },
 
         open: function (path, relative, nocache, data) {
