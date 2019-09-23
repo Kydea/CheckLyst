@@ -29,6 +29,7 @@ using CheckListManager.Common.Logic.Trail;
 using CheckListManager.Common.Logic.FTP;
 using CheckListManager.Common.Logic.DataSources;
 using CheckListManager.Common.Logic;
+using CheckListManager.Common.Logic.Api.Instances;
 using MultipartDataMediaFormatter.Infrastructure;
 using CheckListManager.Common.Logic.Email;
 using CheckListManager.Common.Logic.Models;
@@ -693,6 +694,46 @@ namespace CheckListManager.Instances.Logic.Services
                 throw new InstanceException("Attachment key not valid");
             
             return await _storageService.GetAsync(_configurationService.InstancesStorageBucket, key);
+        }
+
+        public async Task InvalidateCacheAsync(DefaultIdentity identity, InvalidateCacheRequest request)
+        {
+            foreach (var code in request.Instances)
+            {
+                try
+                {
+                    var instance = await _instanceCache.GetAsync(code);
+                    if (instance != null)
+                    {
+                        if (instance.Prototype != request.Prototype || instance.Version != request.Version)
+                        {
+                            Logger.Warn(
+                                $"Incongruent instance prototype and version: Received {request.Prototype}-{request.Version}, expected: {instance.Prototype}-{instance.Version}");
+                        }
+
+                        if (instance.IsDirty)
+                        {
+                            await SaveAsync(
+                                instance,
+                                identity,
+                                true,
+                                false,
+                                false,
+                                instance.ModifiedBy,
+                                instance.ModifiedOn
+                            );
+                        }
+                    }
+                }
+                catch (InstanceException)
+                {
+                    // Ignored
+                }
+                catch (Exception e)
+                {
+                    Logger.Error(e);
+                }
+            }
         }
 
         #region Events
