@@ -723,6 +723,9 @@ namespace CheckListManager.Instances.Logic.Services
                                 instance.ModifiedBy,
                                 instance.ModifiedOn
                             );
+                            // Add back to the redis cache the object from the DB
+                            var cacheObject = await GetAsync(instance.CompanyId, instance.Code, true, false);
+                            await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
                         }
                     }
                 }
