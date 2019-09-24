@@ -1,23 +1,19 @@
 ﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
-using CheckListManager.Common.Logic.Api;
-using CheckListManager.Common.Logic.Api.Messages;
-using CheckListManager.Instances.Logic.Messages;
-using CheckListManager.Instances.Logic.Services;
-using CheckListManager.Instances.Logic.Exceptions;
-using CheckListManager.Common.Data;
-using CheckListManager.Common.Core.Helpers;
-using CheckListManager.Instances.Logic.Models;
-using CheckListManager.Common.Logic.Cache;
-using System.Net;
-using CheckListManager.Common.Logic.Api.Formatters;
-using CheckListManager.Common.Logic.Api.PDF;
-using CheckListManager.Instances.Logic.PDF;
-using CheckListManager.Common.Logic.Services;
-using System.Collections.Generic;
 using CheckListManager.Common.Core.Network;
+using CheckListManager.Common.Data;
+using CheckListManager.Common.Logic.Api;
+using CheckListManager.Common.Logic.Api.Formatters;
+using CheckListManager.Common.Logic.Api.Instances;
+using CheckListManager.Common.Logic.Api.Messages;
+using CheckListManager.Common.Logic.Cache;
+using CheckListManager.Common.Logic.Services;
 using CheckListManager.Instances.Data;
+using CheckListManager.Instances.Logic.Messages;
+using CheckListManager.Instances.Logic.PDF;
+using CheckListManager.Instances.Logic.Services;
 
 namespace CheckListManager.Instances.Api.Controllers
 {
@@ -309,6 +305,15 @@ namespace CheckListManager.Instances.Api.Controllers
             {
                 return Error(e);
             }
+        }
+
+        [HttpPost]
+        [Route("InvalidateCache")]
+        [Authorize(Roles = "Prototypes#Edit")]
+        public async Task<IHttpActionResult> InvalidateCache(InvalidateCacheRequest request)
+        {
+            await _instanceManagerService.InvalidateCacheAsync(Identity, request);
+            return Ok();
         }
     }
 }

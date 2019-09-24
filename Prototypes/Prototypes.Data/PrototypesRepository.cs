@@ -13,7 +13,7 @@ namespace CheckListManager.Prototypes.Data
 {
     public class PrototypesRepository : Repository, IPrototypesRepository
     {
-        IWorkFlowsService _workFlowsService;
+        private readonly IWorkFlowsService _workFlowsService;
 
         public PrototypesRepository(RelationalDatabaseEntities entities, IWorkFlowsService workFlowsService) : base(entities)
 		{
@@ -101,9 +101,10 @@ namespace CheckListManager.Prototypes.Data
             Entities.PrototypeVersionTags.RemoveRange(versionTags);
         }
 
-        public async Task<bool> SetStateAsync(DefaultIdentity defaultIdentity, PrototypeVersions prototypeVersion, string state, bool proposed)
+        public async Task<SetStateResult> SetStateAsync(DefaultIdentity defaultIdentity, PrototypeVersions prototypeVersion, string state, bool proposed)
         {
-            var instancesDeleted = false;
+            var result = new SetStateResult();
+            
             if (prototypeVersion.VersionState == VersionState.Draft && state == VersionState.InSimulation && !proposed)
             {
                 prototypeVersion.VersionState = state;
@@ -116,7 +117,8 @@ namespace CheckListManager.Prototypes.Data
                     User = defaultIdentity.Code
                 });
                 Entities.Instances.RemoveRange(prototypeVersion.Instances);
-                instancesDeleted = true;
+                result.HasInstancesDeleted = true;
+                result.HasToInvalidateCache = true;
             }
             else if (prototypeVersion.VersionState == VersionState.InSimulation && state == VersionState.Draft && !proposed)
             {
@@ -130,15 +132,14 @@ namespace CheckListManager.Prototypes.Data
                     User = defaultIdentity.Code
                 });
                 Entities.Instances.RemoveRange(prototypeVersion.Instances);
-                instancesDeleted = true;
+                result.HasInstancesDeleted = true;
+                result.HasToInvalidateCache = true;
             }
             else if (prototypeVersion.VersionState == VersionState.InSimulation && state == VersionState.Approved && proposed)
             {
                 var WorkFlow = prototypeVersion.Prototypes.PrototypeTypes.ApprovationWorkFlow;
                 if (WorkFlow == null)
                     throw new InvalidOperationException($"Approval workflow not found for prototype type {prototypeVersion.Prototypes.PrototypeTypes.Name} ({prototypeVersion.Prototypes.PrototypeType}).");
-
-                //we should check that any instance (simulation evidence) has been confirmed
 
                 var response = await _workFlowsService.CreateWorkFlowApplicationAsync(defaultIdentity, new CreateRequest
                 {
@@ -170,6 +171,8 @@ namespace CheckListManager.Prototypes.Data
                     User = defaultIdentity.Code,
                     WorkFlowApplication = response.ID
                 });
+                
+                result.HasToInvalidateCache = true;
             }
             else if ((prototypeVersion.VersionState == VersionState.Approved || prototypeVersion.VersionState == VersionState.Active) && state == VersionState.Obsolete && proposed)
             {
@@ -203,7 +206,7 @@ namespace CheckListManager.Prototypes.Data
 
             await SaveChangesAsync();
             
-            return instancesDeleted;
+            return result;
         }
 
         public async Task<List<PrototypeVersions>> GetPrototypeVersionsAsync(Expression<Func<PrototypeVersions, bool>> filters)

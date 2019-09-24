@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.IO;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using System.Threading;
+using CheckListManager.Common.Logic.Api.Instances;
 using NLog;
 using CheckListManager.Common.Logic.FTP;
 using CheckListManager.Common.Logic.Models;
@@ -32,6 +33,7 @@ namespace CheckListManager.Prototypes.Logic.Services
         private readonly ICommonRepository _commonRepository;
         private readonly IStorageService _storageService;
         private readonly IConfigurationService _configurationService;
+        private readonly IInstancesService _instancesService;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public PrototypeService(
@@ -40,7 +42,8 @@ namespace CheckListManager.Prototypes.Logic.Services
 	        IQueueService queueService,
 	        ICommonRepository commonRepository,
 			IStorageService storageService,
-            IConfigurationService configurationService
+            IConfigurationService configurationService,
+            IInstancesService instancesService
         )
         {
             _converter = converter;
@@ -49,6 +52,7 @@ namespace CheckListManager.Prototypes.Logic.Services
             _commonRepository = commonRepository;
             _storageService = storageService;
             _configurationService = configurationService;
+            _instancesService = instancesService;
         }
 
         public async Task<PrototypeResponse> OpenAsync(DefaultIdentity identity, PrototypeRequest request)
@@ -373,9 +377,15 @@ namespace CheckListManager.Prototypes.Logic.Services
                 throw new UnauthorizedAccessException();
 
             var instances = PrototypeVersion.Instances.ToList();
-            var instancesDeleted = await _prototypeRepository.SetStateAsync(identity, PrototypeVersion, request.State, request.StateProposed);
-            if (instancesDeleted)
+            var setStateResult = await _prototypeRepository.SetStateAsync(identity, PrototypeVersion, request.State, request.StateProposed);
+            if (setStateResult.HasInstancesDeleted)
                 await DeleteAttachmentFromInstancesAsync(identity, instances);
+            if (setStateResult.HasToInvalidateCache)
+                await _instancesService.InvalidateCacheAsync(new InvalidateCacheRequest(
+                    PrototypeVersion.Prototype,
+                    PrototypeVersion.Version,
+                    instances.Select(i => i.Code).ToList()
+                ));
 
             if (request.StateProposed && request.State == VersionState.Approved) //we track both the state change and the proposed state for the workflow
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
