@@ -141,8 +141,6 @@ namespace CheckListManager.Prototypes.Data
                 if (WorkFlow == null)
                     throw new InvalidOperationException($"Approval workflow not found for prototype type {prototypeVersion.Prototypes.PrototypeTypes.Name} ({prototypeVersion.Prototypes.PrototypeType}).");
 
-                //we should check that any instance (simulation evidence) has been confirmed
-
                 var response = await _workFlowsService.CreateWorkFlowApplicationAsync(defaultIdentity, new CreateRequest
                 {
                     WorkFlow = WorkFlow.Value,

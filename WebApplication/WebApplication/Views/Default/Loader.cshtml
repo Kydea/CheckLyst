@@ -12,9 +12,11 @@
             breadcrumbs: []
         });
 
-        var url;
+        var
+            url,
+            appMode = "@(ViewBag.AppMode)" == "True" 
 
-        if ("@(ViewBag.AppMode)" != "True" && navigator.userAgent.match(/iPad/i) != null && "@(Model.StartsWith("Instances/Detail") || Model.StartsWith("Instances/Create"))" == "True") {
+        if (!appMode && navigator.userAgent.match(/iPad/i) != null && "@(Model.StartsWith("Instances/Detail") || Model.StartsWith("Instances/Create"))" == "True") {
             url = "checklyst://" + window.location.host + "/" + window.location.pathname;
             window.location = url;
         } else {
