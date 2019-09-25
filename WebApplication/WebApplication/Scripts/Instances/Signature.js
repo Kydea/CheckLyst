@@ -58,9 +58,14 @@
                                                 instances.instance.update(result);
                                                 matematici.popup.close();
                                                 if (model.sendEmail) {
-                                                    if (model.sendEmailAddress)
-                                                        new instances.Event(instances.Events.sendEmail, itemId, { emails: model.sendEmailAddress.split(";") }).trigger();
-                                                    else
+                                                    if (model.sendEmailAddress) {
+                                                        var
+                                                            addresses = model.sendEmailAddress.split(";"),
+                                                            emails = [];
+                                                        for (var emailIndex in addresses)
+                                                            emails.push({ code: addresses[emailIndex], description: addresses[emailIndex], address: addresses[emailIndex] });
+                                                        new instances.Event(instances.Events.sendEmail, model.id, { emails: emails }).trigger();
+                                                    } else
                                                         new instances.SignatureEmail(model.id).show();
                                                 }
                                             }).trigger();
