@@ -25,6 +25,7 @@ using CheckListManager.Common.Logic.WorkFlows;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using CheckListManager.Common.Logic.Queue;
 using CheckListManager.Common.Logic.Trail;
 using CheckListManager.Common.Logic.FTP;
@@ -34,6 +35,7 @@ using CheckListManager.Common.Logic.Api.Instances;
 using MultipartDataMediaFormatter.Infrastructure;
 using CheckListManager.Common.Logic.Email;
 using CheckListManager.Common.Logic.Models;
+using CheckListManager.Instances.Logic.ImageUtilities;
 
 namespace CheckListManager.Instances.Logic.Services
 {
@@ -885,7 +887,7 @@ namespace CheckListManager.Instances.Logic.Services
                 if (!attachment.MediaType.StartsWith("image/"))
                     throw new InstanceException("The attachment has to be an image");
 
-				attachment.Buffer = FixImageOrientation(attachment.Buffer);
+				attachment.Buffer = ImageAdapter.ScaleImage(attachment.Buffer, 1920, 1280);
 			}
             else if (item.FileType == Attachment.FileTypes.Pdf)
             {
@@ -1546,37 +1548,6 @@ namespace CheckListManager.Instances.Logic.Services
             cacheObject.Instance.Setup(false);
             return cacheObject;
         }
-
-		private static byte[] FixImageOrientation(byte[] imageAttachment)
-		{
-			System.Drawing.Image image = (Bitmap)((new ImageConverter()).ConvertFrom(imageAttachment));
-			// 0x0112 is the EXIF byte address for the orientation tag
-			if (!image.PropertyIdList.Contains(0x0112))
-				return imageAttachment;
-
-			var orientationNumber = image.GetPropertyItem(0x0112).Value[0];
-
-			switch (orientationNumber)
-			{
-				// up is pointing to the right
-				case 8:
-					image.RotateFlip(RotateFlipType.Rotate270FlipNone);
-					break;
-				// up is pointing to the bottom (image is upside-down)
-				case 3:
-					image.RotateFlip(RotateFlipType.Rotate180FlipNone);
-					break;
-				// up is pointing to the left
-				case 6:
-					image.RotateFlip(RotateFlipType.Rotate90FlipNone);
-					break;
-				// up is pointing up (correct orientation)
-				case 1:
-					return imageAttachment;
-			}
-
-			return (byte[])new ImageConverter().ConvertTo(image, typeof(byte[]));
-		}
 
 		public async Task<List<HistoryRow>> History(DefaultIdentity identity, long id)
         {
