@@ -393,8 +393,8 @@
                         "If checked, the signature can be reverted by a signature manager."
                     ));
                     properties.push(new prototypes.Property(
-                        this, new prototypes.BooleanProperty(model, "sendEmail", state != prototypes.Prototype.states.draft), "Send email",
-                        "If checked, a list with all the possibile instance editor will be promped to the signer. The signer will be able to send an automatic email to any of those users."
+                        this, new prototypes.EmailProperty(model, state != prototypes.Prototype.states.draft), "Send email",
+                        "If the option 'distribution lists' is selected, an atuomatic email will be automatically sent to the specified distribution lists. If the option 'instance editors' is selected or the distribution list is left empty, all the possible instance editors will be prompted to the signer. The signer will be then able to send an automatic email to any of those users."
                     ));
                     properties.push(new prototypes.Property(
                         this, new prototypes.BooleanProperty(model, "acceptsPin", state != prototypes.Prototype.states.draft), "Accepts PIN",
@@ -447,7 +447,7 @@
 						this, new prototypes.ListProperty(
 							model,
 							"fileType",
-							/* The first element is the default one. If changing it, change also in CheckListManager.Prototypes.Logic.Models.CheckLists.Attachment */
+							/* The first element is the default one. To change it, change also in CheckListManager.Prototypes.Logic.Models.CheckLists.Attachment */
 							["images", "pdf"],
 							{ readOnly: state != prototypes.Prototype.states.draft }
 						), "File type",

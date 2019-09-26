@@ -78,6 +78,10 @@ namespace CheckListManager.Common.Logic.Api.PDF
 
         protected override async Task OnRenderAttachmentsAsync()
         {
+            DocumentBuilder.RenderPdfDocument();
+            await this.AddSectionAsync();
+            Container.RemovePageCount();
+
             int Index = 1;
             foreach (var Attachment in Attachments.Values)
             {
