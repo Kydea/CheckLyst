@@ -23,6 +23,11 @@ class QRCodeScannerViewController: UIViewController, QRScannerViewDelegate {
         // Do any additional setup after loading the view.
     }
     
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        self.scannerView.layer.connection?.videoOrientation = QRScannerView.AVOrientationFromDeviceOrientation(UIDevice.current.orientation)
+        super.viewWillTransition(to: size, with: coordinator)
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         senderController?.customBackButton.isEnabled = false

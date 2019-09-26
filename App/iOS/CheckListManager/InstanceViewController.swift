@@ -140,12 +140,8 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         super.viewWillDisappear(animated)
         
         if(self.presentedViewController is QRCodeScannerViewController) {
-            self.navigationController?.popViewController(animated: true)
+            self.presentedViewController?.dismiss(animated: false, completion: nil)
             requestForScanning = false
-        }
-        
-        if(!requestForScanning && !requestForDocument && (self.presentedViewController == nil || self.presentedViewController is QRCodeScannerViewController) && !isInstanceClosed) {
-            closeInstance()
         }
 
     }
@@ -286,6 +282,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     
     
     @IBAction func goBackToSearchInstances(_ sender: Any) {
+        self.closeInstance()
         self.performSegue(withIdentifier: "goBackSearchInstances", sender: self)
     }
     
