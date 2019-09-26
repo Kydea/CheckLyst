@@ -69,18 +69,14 @@ namespace CheckListManager.Trail.Logic.Services
                 {
                     var record = departments.FirstOrDefault(d => d.ID == department);
                     if (record != null)
-                    {
                         DepartmentDescription = record.Name;
-                    }
                 }
                 
                 if (!string.IsNullOrEmpty(PrototypeType) && int.TryParse(PrototypeType.Trim(), out var prototypeType))
                 {
                     var record = prototypeTypes.FirstOrDefault(p => p.ID == prototypeType);
                     if (record != null)
-                    {
                         PrototypeTypeDescription = record.Name;
-                    }
                 }
             }
         }

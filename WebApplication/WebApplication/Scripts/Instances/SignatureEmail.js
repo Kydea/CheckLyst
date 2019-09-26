@@ -30,7 +30,7 @@
                         emails[user.code] = user;
                     }
                 }
-                select.val(value); //select all by default
+                //select.val(value); //select all by default
 
                 new matematici.AutoComplete(select);
 

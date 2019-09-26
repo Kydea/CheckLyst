@@ -108,9 +108,7 @@ namespace CheckListManager.Trail.Api.Controllers
                     };
 
                     foreach (var function in tm.Details.Functions)
-                    {
                         function.SetValues(departments, prototypeTypes);
-                    }
 
                     foreach (var permission in permissionHeaders)
                     {

@@ -14,6 +14,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 		public string ButtonLabel { get; set; }
 		public bool Cancelable { get; set; }
 		public bool SendEmail { get; set; }
+		public string SendEmailAddress { get; set; }
         public List<SignatureRecord> History { get; } = new List<SignatureRecord>();
 		public string SignatureLevel { get; set; }
 		public bool Signed { get; set; }

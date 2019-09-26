@@ -164,7 +164,7 @@ namespace CheckListManager.DataSources.Logic.Detail
                 record.Class,
                 record.Parameters,
                 Password = new string('*', Math.Min(3, record.Password?.Length ?? 0)), // Avoid to log password from UI
-                record.Reason
+                ReasonForChange = record.Reason
             };
             return AuditAsync(identity, action, information);
         }
@@ -174,7 +174,7 @@ namespace CheckListManager.DataSources.Logic.Detail
             var information = new
             {
                 Code = code,
-                Reason = reason
+                ReasonForChange = reason
             };
             return AuditAsync(identity, action, information);
         }

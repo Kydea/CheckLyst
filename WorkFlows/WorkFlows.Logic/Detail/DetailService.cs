@@ -219,7 +219,7 @@ namespace CheckListManager.WorkFlows.Logic.Detail
             {
                 record.ID,
                 record.Description,
-                record.Reason,
+                ReasonForChange = record.Reason,
                 record.Steps
             };
             return AuditAsync(identity, action, information);
@@ -230,7 +230,7 @@ namespace CheckListManager.WorkFlows.Logic.Detail
             var information = new
             {
                 ID = id,
-                Reason = reason
+                ReasonForChange = reason
             };
             return AuditAsync(identity, action, information);
         }

@@ -506,7 +506,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                     PrototypeType = uf.PrototypeType.HasValue ? uf.PrototypeType + " " + uf.PrototypeTypes?.Name : null,
                     Level = uf.Tag
                 }),
-                user.Reason
+                ReasonForChange = user.Reason
             });
         }
 
@@ -612,7 +612,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                     Information = JsonConvert.SerializeObject(new
                     {
                         record.Code,
-                        record.Reason
+                        ReasonForChange = record.Reason
                     })
                 });
             }

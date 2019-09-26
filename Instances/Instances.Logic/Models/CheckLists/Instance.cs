@@ -48,8 +48,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             get => this;
             set => throw new NotImplementedException("Just for inheritance purpose");
         }
-
-
+        
         public void AddItem(ICheckListItem item)
         {
             if (item.Id == 0 || InCreation)
@@ -103,7 +102,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 { "InstancePrototype", cacheObject.Prototype },
                 { "InstancePrototypeName", cacheObject.PrototypeName },
                 { "InstanceVersion", cacheObject.Version },
-                { "InstanceYear", cacheObject.Year > 0 ? cacheObject.Year.ToString() : cacheObject.VersionState == VersionState.Draft ? "Test" : "SE" },
+                { "InstanceYear", cacheObject.YearCode },
                 { "InstanceNumber", cacheObject.Number },
             };
 

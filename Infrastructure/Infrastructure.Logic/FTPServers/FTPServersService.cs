@@ -216,7 +216,7 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
                 record.InstancesDefault,
                 record.PrototypesDefault,
                 record.SSL,
-                record.Reason,
+                ReasonForChange = record.Reason,
             };
             return AuditAsync(identity, action, information);
         }
@@ -226,7 +226,7 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
             var information = new
             {
                 Id = id,
-                Reason = reason
+                ReasonForChange = reason
             };
             return AuditAsync(identity, action, information);
         }

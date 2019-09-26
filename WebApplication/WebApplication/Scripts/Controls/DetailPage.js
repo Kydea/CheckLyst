@@ -44,7 +44,7 @@
 						.append(
 							$("<label />")
 								.attr("for", "DetailPageReasonInput")
-								.text("Type the reason of the changes for the audit trail")
+								.text("Reason for change")
 						)
 						.append(
 							input = $("<input />")

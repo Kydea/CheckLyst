@@ -21,6 +21,8 @@ namespace CheckListManager.Common.Logic.Api.PDF
 
         protected int PdfPage { get; set; }
 
+        protected int RenderedPages { get; set; }
+
         public MigraDocBuilder()
         {
             Document = new Document();
@@ -42,13 +44,13 @@ namespace CheckListManager.Common.Logic.Api.PDF
 
         public PdfPage Add(PdfPage Page)
         {
-            Render();
+            PrepareDocument();
             return AddPage(Page);
         }
 
         public void AddRange(IEnumerable<PdfPage> Pages)
         {
-            Render();
+            PrepareDocument();
 
             foreach (var Page in Pages)
                 AddPage(Page);
@@ -61,7 +63,7 @@ namespace CheckListManager.Common.Logic.Api.PDF
             return documentRenderer;
         }
 
-        protected void Render()
+        protected void PrepareDocument()
         {
             var DocumentRenderer = GetDocumentRenderer();
             var StartIndex = 1 + PdfPage;
@@ -77,22 +79,27 @@ namespace CheckListManager.Common.Logic.Api.PDF
             }
         }
 
-        public void Save(Stream stream)
+        public void RenderPdfDocument()
         {
-            Render();
-
+            PrepareDocument();
             var DocumentRenderer = GetDocumentRenderer();
 
             Enumerable
-                .Range(0, DocumentRenderer.FormattedDocument.PageCount)
+                .Range(RenderedPages, DocumentRenderer.FormattedDocument.PageCount - RenderedPages)
                 .Where(index => !ExcludeList.Contains(index))
                 .ToList().ForEach(index => {
                     var page = PdfDocument.Pages[index];
 
                     using (XGraphics gfx = XGraphics.FromPdfPage(page))
                         DocumentRenderer.RenderPage(gfx, index + 1);
-                });
 
+                    RenderedPages++;
+                });
+        }
+
+        public void Save(Stream stream)
+        {
+            RenderPdfDocument();
             PdfDocument.Save(stream, false);
             PdfDocument.Close();
         }

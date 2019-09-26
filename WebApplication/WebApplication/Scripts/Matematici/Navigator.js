@@ -22,6 +22,8 @@
 
         setLastPath: function (value) {
             lastPath = value;
+            if (value && value.toLowerCase().indexOf("/security/login") == -1 && value.toLowerCase().indexOf("/error") == -1)
+                localStorage.redirectUrl = value;
             return this;
         },
 
@@ -44,8 +46,8 @@
         },
 
         navigate: function (path, relative) {
-            localStorage.redirectUrl = matematici.navigator.buildUrl(path, relative);
-            $.address.value(localStorage.redirectUrl);
+            var path = matematici.navigator.buildUrl(path, relative);
+            $.address.value(path);
         },
 
         open: function (path, relative, nocache, data) {
@@ -127,10 +129,9 @@
                 else if (localStorage.accessToken && window.location && window.location.href.toLowerCase().indexOf("/dashboard") == -1) {
                     console.log("Access denied to the following resource: " + location.href);
                     window.location = matematici.urls.dashboard;
-                } else {
-                    localStorage.redirectUrl = location.pathname;
+                } else 
                     window.location = matematici.urls.accessControl.login;
-                }
+
                 return true;
             }
         },
