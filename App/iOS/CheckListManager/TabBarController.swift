@@ -68,7 +68,6 @@ class TabViewController: UITabBarController, UITabBarControllerDelegate {
         tabBarItems[2].image = tabBarItems[2].selectedImage?.imageWithColor(UIColor(red: 162.0/255, green: 194.0/255, blue: 205.0/255, alpha: 1.0)).withRenderingMode(UIImageRenderingMode.alwaysOriginal)
         
     }
- 
 }
 
 

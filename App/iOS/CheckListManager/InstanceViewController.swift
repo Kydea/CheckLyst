@@ -26,6 +26,8 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     var requestForDocument : Bool = false
     let documentInteractionController = UIDocumentInteractionController()
     let supportedProtocols : Set = [ "http", "https", "mailto" ]
+    var isInstanceClosed : Bool = false
+    
     
     @IBOutlet weak var webView: WKWebView!
     @IBOutlet var activityIndicator: UIActivityIndicatorView!
@@ -43,6 +45,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         webView.configuration.userContentController.add(self, name: "instances")
         activityIndicator.hidesWhenStopped = true
         activityIndicator.transform = CGAffineTransform(scaleX: 2.0, y: 2.0)
+        self.definesPresentationContext = true
         
         scanButtonIsVisible = true
         
@@ -129,15 +132,25 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         super.viewDidAppear(animated)
         requestForScanning = false
         requestForDocument = false
+        isInstanceClosed = false
     }
     
     override func viewWillDisappear(_ animated : Bool) {
+        print(self.presentedViewController.debugDescription)
         super.viewWillDisappear(animated)
+        
+        if(self.presentedViewController is QRCodeScannerViewController) {
+            self.presentedViewController?.dismiss(animated: false, completion: nil)
+            requestForScanning = false
+        }
+
     }
     
     func closeInstance() {
         self.webView.evaluateJavaScript("instances.instance.close(function(){})", completionHandler: nil)
+        isInstanceClosed = true
     }
+    
     
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         if message.name == "instances", let messageBody = message.body as? String {
@@ -269,7 +282,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     
     
     @IBAction func goBackToSearchInstances(_ sender: Any) {
-        closeInstance()
+        self.closeInstance()
         self.performSegue(withIdentifier: "goBackSearchInstances", sender: self)
     }
     
