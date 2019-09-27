@@ -890,7 +890,7 @@ namespace CheckListManager.Instances.Logic.Services
                 if (!attachment.MediaType.StartsWith("image/"))
                     throw new InstanceException("The attachment has to be an image");
 
-				attachment.Buffer = ImageAdapter.ScaleImage(attachment.Buffer, 1920, 1280);
+				attachment.Buffer = ImageAdapter.RotateAndCompressImage(attachment.Buffer);
 			}
             else if (item.FileType == Attachment.FileTypes.Pdf)
             {
