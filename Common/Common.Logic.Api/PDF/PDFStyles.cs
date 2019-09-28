@@ -23,6 +23,20 @@ namespace CheckListManager.Common.Logic.Api.PDF
             return table;
         }
 
+        public static void RemovePageCount(this Section section)
+        {
+            for (int index = 0; index < section.Footers.Primary.Elements.Count; index++)
+            {
+                DocumentObject Element = section.Footers.Primary.Elements[index];
+
+                if(Element.Tag is string Tag && Tag == "PageCount" && Element is Paragraph paragraph)
+                {
+                    paragraph.Elements.Clear();
+                    break;
+                }
+            }
+        }
+
         public static void Add(this Section section, PdfPTable Table)
         {
             section.Add(Table.Render(section));

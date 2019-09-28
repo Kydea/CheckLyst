@@ -64,6 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Exceptions\InstanceException.cs" />
+    <Compile Include="ImageUtilities\ImageAdapter.cs" />
     <Compile Include="List\InstanceException.cs" />
     <Compile Include="List\ListRow.cs" />
     <Compile Include="List\ListService.cs" />
