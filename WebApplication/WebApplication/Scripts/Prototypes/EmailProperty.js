@@ -16,19 +16,23 @@
         },
 
         valueChanged = function () {
-            var
-                email = valueInput.val().trim().split("; ").join(";").toLowerCase(),
-                re = /^(([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,25})+([;.](([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,25})+)*$/;
+            var condition = conditionSelect.val();
 
-            if (email.endsWith(";")) email = email.substring(0, email.length - 1);
+            if (condition == 1) {
+                var
+                    email = valueInput.val().trim().split("; ").join(";").toLowerCase(),
+                    re = /^(([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,25})+([;.](([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,25})+)*$/;
 
-            if (!re.test(email)) {
-                valueInput.focus();
-                new matematici.dialog.error("error", "Invalid email list. Provide a semicolon separated list of valid email addresses.");
-                return;
+                if (email.endsWith(";")) email = email.substring(0, email.length - 1);
+
+                if (!re.test(email)) {
+                    valueInput.focus();
+                    new matematici.dialog.error("error", "Invalid email list. Provide a semicolon separated list of valid email addresses.");
+                    return;
+                }
             }
 
-            model.sendEmailAddress = conditionSelect.val() == 1 ? email : null;
+            model.sendEmailAddress = condition == 1 ? email : null;
             matematici.canClose = false;
         };
 

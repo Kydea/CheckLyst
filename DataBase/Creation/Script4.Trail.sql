@@ -35,7 +35,7 @@ values
 	('Instance signature issued'),
 	('Instance signature failed'),
 	('Instance signature canceled'),
-	('Instance signature canceled failed'),	
+	('Instance signature cancelation failed'),	
 	('Instance export completed'),
 	('Instance export failed'),
 	('Instance value changed'),
@@ -45,6 +45,7 @@ values
 	('Instance iteration moved up'),
 	('Instance iteration moved down'),
 	('Instance external source row changed'),
+	('Instance downloaded'),
 
 	('Job error'),
 
@@ -62,6 +63,7 @@ values
 	('PrototypeType created'),
 	('PrototypeType updated'),
 	('PrototypeType deleted'),
+	('Prototype downloaded'),
 	
 	('Department created'),
 	('Department updated'),

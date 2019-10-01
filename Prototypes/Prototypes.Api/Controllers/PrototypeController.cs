@@ -15,6 +15,8 @@ using CheckListManager.Prototypes.Logic.PDF;
 using CheckListManager.Common.Logic.Api.Formatters;
 using CheckListManager.Common.Logic.Cache;
 using CheckListManager.Common.Logic.Services;
+using CheckListManager.Common.Logic.Queue;
+using CheckListManager.Common.Logic.Trail;
 
 namespace CheckListManager.Prototypes.Api.Controllers
 {
@@ -29,6 +31,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
         private readonly IConfigurationService _configurationService;
         private readonly IStorageService _storageService;
         private readonly ISettingService _settingService;
+        private readonly IQueueService _queueService;
 
         public PrototypeController(
             IPrototypeService prototypeService,
@@ -38,7 +41,8 @@ namespace CheckListManager.Prototypes.Api.Controllers
             ICommonRepository commonRepository,
             IConfigurationService configurationService,
             IStorageService storageService,
-            ISettingService settingService
+            ISettingService settingService,
+            IQueueService queueService
         )
         {
             _prototypeService = prototypeService;
@@ -49,6 +53,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
             _configurationService = configurationService;
             _storageService = storageService;
             _settingService = settingService;
+            _queueService = queueService;
         }
 
         [HttpPost]
@@ -232,6 +237,16 @@ namespace CheckListManager.Prototypes.Api.Controllers
                 _storageService,
                 _configurationService
             );
+
+            await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+            {
+                Company = Data.CompanyId.Value,
+                User = Data.UserCode,
+                Action = TrailAction.PrototypeDownloaded,
+                Date = DateTimeOffset.UtcNow,
+                CheckList = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}"
+            });
+
             return Content(HttpStatusCode.OK, PDF, new PDFFormatter("Prototype"));
         }
         

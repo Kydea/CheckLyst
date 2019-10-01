@@ -1310,7 +1310,7 @@ namespace CheckListManager.Instances.Logic.Services
                 {
                     Company = identity.CompanyId,
                     User = identity.Code,
-                    Action = TrailAction.InstanceSignatureCanceledFailed,
+                    Action = TrailAction.InstanceSignatureCancelationFailed,
                     Date = DateTimeOffset.UtcNow,
                     CheckList = cacheObject.InstanceCode,
                     Information = JsonConvert.SerializeObject(new
