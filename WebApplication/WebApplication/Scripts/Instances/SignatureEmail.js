@@ -38,12 +38,24 @@
                     title: "Email notification",
                     content: select.parent(),
                     buttons: [
-                        { text: "send", icon: "check", handler: function () { send(select); } },
+                        {
+                            text: "send", icon: "check", handler: function () {
+                                if (select.val())
+                                    send(select);
+                                else {
+                                    matematici.dialog.show("email notification", "No notification will be sent.", [
+                                        { text: "ok", icon: "check", handler: function () { matematici.popup.close(); } },
+                                        { text: "cancel", icon: "times", cancelButton: true }
+                                    ]);
+                                    return true;
+                                }
+                            }
+                        },
                         {
                             cancelButton: true, hidden: true, handler: function () {
                                 matematici.dialog.show("email notification", "No notification will be sent.", [
                                     { text: "ok", icon: "check", handler: function () { matematici.popup.close(); } },
-                                    { text: "cancel", icon: "times", cancelButton: true },
+                                    { text: "cancel", icon: "times", cancelButton: true }
                                 ]);
                                 return true;
                             }

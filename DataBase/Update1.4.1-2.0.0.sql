@@ -178,4 +178,9 @@ from "Infrastructure"."Companies";
 
 insert into "Trail"."Actions"
 values
-	('Instance signature canceled failed');
+	('Instance signature cancelation failed');
+
+insert into "Trail"."Actions"
+values
+	('Instance downloaded'),
+	('Prototype downloaded');

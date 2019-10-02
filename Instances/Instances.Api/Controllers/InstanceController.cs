@@ -9,7 +9,9 @@ using CheckListManager.Common.Logic.Api.Formatters;
 using CheckListManager.Common.Logic.Api.Instances;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Logic.Cache;
+using CheckListManager.Common.Logic.Queue;
 using CheckListManager.Common.Logic.Services;
+using CheckListManager.Common.Logic.Trail;
 using CheckListManager.Instances.Data;
 using CheckListManager.Instances.Logic.Messages;
 using CheckListManager.Instances.Logic.PDF;
@@ -27,9 +29,10 @@ namespace CheckListManager.Instances.Api.Controllers
         private readonly IConfigurationService _configurationService;
         private readonly ISettingService _settingService;
         private readonly IStorageService _storageService;
+        private readonly IQueueService _queueService;
         private readonly IServiceClient _client;
 
-        public InstanceController(IInstanceManagerService instanceManagerService, IRedisCache redisCache, ICommonRepository commonRepository, IInstancesRepository instancesRepository, IConfigurationService configurationService, ISettingService settingService, IStorageService storageService, IServiceClient client)
+        public InstanceController(IInstanceManagerService instanceManagerService, IRedisCache redisCache, ICommonRepository commonRepository, IInstancesRepository instancesRepository, IConfigurationService configurationService, ISettingService settingService, IStorageService storageService, IQueueService queueService, IServiceClient client)
         {
             _instanceManagerService = instanceManagerService;
             _redisCache = redisCache;
@@ -38,6 +41,7 @@ namespace CheckListManager.Instances.Api.Controllers
             _configurationService = configurationService;
             _settingService = settingService;
             _storageService = storageService;
+            _queueService = queueService;
             _client = client;
         }
 
@@ -258,6 +262,16 @@ namespace CheckListManager.Instances.Api.Controllers
             cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(Data.CompanyId.Value), (await _settingService.TimeZoneAsync(Data.CompanyId.Value)).MicrosoftCode, cacheObject);
             cacheObject.Instance.UpdateReadOnly(Data.UserCode, cacheObject.InstanceState);
             var PDF = new InstancePDF(Data.CompanyId.Value, Data.CompanyName, Data.TimeZone, _configurationService.PublicRepositoryUrl, cacheObject, _instancesRepository, _storageService, _configurationService);
+
+            await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+            {
+                Company = Data.CompanyId.Value,
+                User = Data.UserCode,
+                Action = TrailAction.InstanceDownloaded,
+                Date = DateTimeOffset.UtcNow,
+                CheckList = cacheObject.InstanceCode
+            });
+            
             return Content(HttpStatusCode.OK, PDF, new PDFFormatter(string.IsNullOrEmpty(cacheObject.Instance.FileName) ? "Instance" : cacheObject.Instance.FileName));
         }
 

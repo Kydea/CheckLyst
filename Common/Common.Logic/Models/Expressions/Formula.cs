@@ -51,8 +51,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                             string Format = Match.Groups["Format"].Value;
                             if (!string.IsNullOrWhiteSpace(Format))
                             {
-                                int Number;
-                                if (!int.TryParse(Format.Substring(2), out Number)) Number = -1;
+                                if (!int.TryParse(Format.Substring(2), out int Number)) Number = -1;
                                 Format =
                                     Number < 0 ? string.Empty :
                                     Format.StartsWith(":n") ? "0." + new string('0', Number) :

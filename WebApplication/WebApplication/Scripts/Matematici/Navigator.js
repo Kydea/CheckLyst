@@ -22,7 +22,7 @@
 
         setLastPath: function (value) {
             lastPath = value;
-            if (value && value.toLowerCase().indexOf("/security/login") == -1 && value.toLowerCase().indexOf("/error") == -1)
+            if (value && value.toLowerCase().indexOf("/security/login") == -1 && value.toLowerCase().indexOf("/error") == -1 && value.toLowerCase().indexOf("/dashboard") == -1)
                 localStorage.redirectUrl = value;
             return this;
         },
