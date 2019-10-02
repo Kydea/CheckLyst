@@ -17,13 +17,37 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
+        
         let navigationBarAppearace = UINavigationBar.appearance()
         
         UIApplication.shared.statusBarStyle = .lightContent
         
-        navigationBarAppearace.tintColor = UIColor.white
+        if #available(iOS 13.0, *) {
+            
+            let navBarAppearance = UINavigationBarAppearance()
+            let barButtonAppareance = UIBarButtonItemAppearance()
+            
+            barButtonAppareance.normal.titleTextAttributes = [NSAttributedStringKey.font:UIFont (name: "Flaticon", size: 20)!,NSAttributedStringKey.foregroundColor: UIColor(red: 153.0/255, green: 153.0/255, blue: 153.0/255, alpha: 1.0)]
+            barButtonAppareance.disabled.titleTextAttributes = [NSAttributedStringKey.font:UIFont (name: "Flaticon", size: 20)!,NSAttributedStringKey.foregroundColor: UIColor.clear]
+            
+            navBarAppearance.buttonAppearance = barButtonAppareance;
+            
+            navBarAppearance.backgroundColor = UIColor(red: 64.0/255, green: 64.0/255, blue: 64.0/255, alpha: 1.0)
+            
+            navigationBarAppearace.standardAppearance = navBarAppearance
+            navigationBarAppearace.compactAppearance = navBarAppearance
+            navigationBarAppearace.scrollEdgeAppearance = navBarAppearance
         
-        navigationBarAppearace.barTintColor = UIColor(red: 43.0/255, green: 43.0/255, blue: 43.0/255, alpha: 1.0)
+        } else {
+           
+            UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedStringKey.font:UIFont (name: "Flaticon", size: 20)!,NSAttributedStringKey.foregroundColor: UIColor(red: 153.0/255, green: 153.0/255, blue: 153.0/255, alpha: 1.0)], for:UIControlState())
+
+            UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedStringKey.font:UIFont (name: "Flaticon", size: 20)!,NSAttributedStringKey.foregroundColor: UIColor.clear], for:.disabled)
+            
+            navigationBarAppearace.barTintColor = UIColor(red: 43.0/255, green: 43.0/255, blue: 43.0/255, alpha: 1.0)
+        }
+        
+         navigationBarAppearace.tintColor = UIColor.white
         
         UITabBar.appearance().barTintColor = UIColor(red: 0.0/255, green: 150.0/255, blue: 136.0/255, alpha: 1.0)
         
@@ -36,10 +60,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         UITabBarItem.appearance().setTitleTextAttributes([NSAttributedStringKey.font:UIFont (name: "Flaticon", size: 15)!,NSAttributedStringKey.foregroundColor: UIColor(red: 3.0/255, green: 195.0/255, blue: 177.0/255, alpha: 1.0)], for:UIControlState())
 
-   
-        UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedStringKey.font:UIFont (name: "Flaticon", size: 20)!,NSAttributedStringKey.foregroundColor: UIColor(red: 153.0/255, green: 153.0/255, blue: 153.0/255, alpha: 1.0)], for:UIControlState())
-
-        UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedStringKey.font:UIFont (name: "Flaticon", size: 20)!,NSAttributedStringKey.foregroundColor: UIColor.clear], for:.disabled)
         
         URLProtocol.registerClass(CustomUrlprotocol.self)
         

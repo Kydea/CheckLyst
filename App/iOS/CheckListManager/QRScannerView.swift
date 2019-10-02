@@ -86,6 +86,7 @@ extension QRScannerView {
         
         self.layer.session = captureSession
         self.layer.videoGravity = .resizeAspectFill
+        self.layer.connection?.videoOrientation = QRScannerView.AVOrientationFromDeviceOrientation(UIDevice.current.orientation)
         
         captureSession?.startRunning()
     }

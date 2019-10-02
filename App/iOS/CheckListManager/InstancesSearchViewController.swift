@@ -53,8 +53,8 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
         self.tableView.isScrollEnabled = false
         activityIndicator.transform = CGAffineTransform(scaleX: 2.0, y: 2.0)
         activityIndicator.hidesWhenStopped = true
-        newInstanceButton.isEnabled = false
         newInstanceButton.title = "\u{f103} New Instance   "
+        newInstanceButton.isEnabled = false
         self.navigationItem.leftBarButtonItem = SharedControllersProperty.setLogo(self.navigationItem.leftBarButtonItem);
         
         for i in 0...7 {

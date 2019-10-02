@@ -19,7 +19,6 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     var newInstancePrototype: String?
     var newInstanceVersion: String?
     var selectedItemsDictionary = [Int:Option] ()
-    var inputAccessory : UIBarButtonItemGroup?
     var contentView : UIView?
     var scanButtonIsVisible : Bool = false
     var requestForScanning : Bool = false
@@ -27,6 +26,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     let documentInteractionController = UIDocumentInteractionController()
     let supportedProtocols : Set = [ "http", "https", "mailto" ]
     var isInstanceClosed : Bool = false
+    var scanButton : UIBarButtonItem?
     
     
     @IBOutlet weak var webView: WKWebView!
@@ -93,9 +93,10 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         tap.delegate = self
         self.view.addGestureRecognizer(tap)
         
-         inputAccessory = UIBarButtonItemGroup(barButtonItems: [UIBarButtonItem(barButtonSystemItem: .camera, target: self, action: #selector(scanItem(_:)))], representativeItem: nil)
         
-        self.contentView!.inputAssistantItem.trailingBarButtonGroups = [self.inputAccessory] as! [UIBarButtonItemGroup]
+        scanButton = UIBarButtonItem(barButtonSystemItem: .camera, target: self, action: #selector(scanItem(_:)))
+        
+        self.contentView!.inputAssistantItem.trailingBarButtonGroups = [UIBarButtonItemGroup(barButtonItems: [scanButton!], representativeItem: nil)] as! [UIBarButtonItemGroup]
     }
     
     override func didReceiveMemoryWarning()
@@ -238,13 +239,12 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
             (response, error) -> Void in
             if let value = response as? Bool {
                 if(value) {
-                    if (self.inputAccessory != nil && self.contentView != nil && !self.scanButtonIsVisible) {
-                        self.contentView!.inputAssistantItem.trailingBarButtonGroups = [self.inputAccessory] as! [UIBarButtonItemGroup]
+                    if (self.scanButton != nil && self.contentView != nil && !self.scanButtonIsVisible) {
+                        self.scanButton?.isEnabled = true;
                         self.scanButtonIsVisible = true;
-                        //print("scan button on")
                     }
                 } else if (self.contentView != nil && self.scanButtonIsVisible) {
-                        self.contentView!.inputAssistantItem.trailingBarButtonGroups.removeAll()
+                        self.scanButton?.isEnabled = false;
                         self.scanButtonIsVisible = false
                         //print("scan button off")
                 }
@@ -302,9 +302,8 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     
     @objc func keyboardDidHide(_ notification: Notification) {
         if (self.contentView != nil && scanButtonIsVisible) {
-            self.contentView!.inputAssistantItem.trailingBarButtonGroups.removeAll()
+            self.scanButton?.isEnabled = false;
             scanButtonIsVisible = false
-            //print("scan button off")
         }
     }
     
