@@ -273,12 +273,10 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
                 record.ID,
                 record.Name,
                 record.Department,
-                record.Function,
-                record.FunctionGroup,
                 record.ApprovationWorkFlow,
                 record.ObsolescenceWorkFlow,
-                record.InstancesFTPServer,
                 record.PrototypesFTPServer,
+                record.InstancesFTPServer,
                 ReasonForChange = record.Reason,
             };
             return AuditAsync(identity, action, information);
