@@ -28,12 +28,16 @@ namespace CheckListManager.WebApplication.Controllers
         }
 
         [Route("Dashboard")]
-        public ActionResult Dashboard(int? pageVersions, int? pageInstances)
+        public ActionResult Dashboard()
         {
-            //var Model = new ViewModels.Dashboard.DashboardModel(db);
-            //Model.PrototypesVersions.Set(PageVersions ?? 1);
-            //Model.Instances.Set(PageInstances ?? 1);
             return ConditionalView();
+        }
+
+        [HttpPost]
+        [Route]
+        public ActionResult RedirectToDashboard()
+        {
+            return RedirectToAction("Dashboard");
         }
 
         [AllowAnonymous]

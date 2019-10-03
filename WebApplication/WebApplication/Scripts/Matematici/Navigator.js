@@ -22,8 +22,17 @@
 
         setLastPath: function (value) {
             lastPath = value;
-            if (value && value.toLowerCase().indexOf("/security/login") == -1 && value.toLowerCase().indexOf("/error") == -1 && value.toLowerCase().indexOf("/dashboard") == -1)
+            if (
+                value
+                && value.toLowerCase() != "/"
+                && value.toLowerCase().indexOf("/?") != 0
+                && value.toLowerCase().indexOf("/security/login") == -1
+                && value.toLowerCase().indexOf("/error") == -1
+                && value.toLowerCase().indexOf("/dashboard") == -1
+            ) {
                 localStorage.redirectUrl = value;
+                console.log(value);
+            }
             return this;
         },
 
