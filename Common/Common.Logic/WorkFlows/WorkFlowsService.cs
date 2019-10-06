@@ -13,7 +13,7 @@ namespace CheckListManager.Common.Logic.WorkFlows
 {
 	public class WorkFlowsService : IWorkFlowsService
     {
-        private IServiceClient _client;
+        private readonly IServiceClient _client;
 
         public WorkFlowsService(IServiceClient client)
         {

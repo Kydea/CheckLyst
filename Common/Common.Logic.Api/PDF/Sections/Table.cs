@@ -263,7 +263,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                             else
                             {
                                 var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.PrototypesStorageBucket, Image.Key);
-                                Cell = NewCell($"{(string.IsNullOrEmpty(Image.Description) ? string.Empty : Image.Description + " ")}(see attachament {Index})");
+                                Cell = NewCell($"{(string.IsNullOrEmpty(Image.Description) ? string.Empty : Image.Description + " ")}(see attachment {Index})");
                             }
                             break;
                         case "Attachment":
@@ -271,7 +271,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                             if (Attachment.Key != null)
                             {
                                 var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.InstancesStorageBucket, Attachment.Key);
-                                Cell = NewCell($"{(string.IsNullOrEmpty(Attachment.Description) ? string.Empty : Attachment.Description + " ")}(see attachament {Index})");
+                                Cell = NewCell($"{(string.IsNullOrEmpty(Attachment.Description) ? string.Empty : Attachment.Description + " ")}(see attachment {Index})");
                             }
                             break;
                         default:

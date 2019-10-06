@@ -27,12 +27,14 @@
         public const string InstanceSignatureIssued = "Instance signature issued";
         public const string InstanceSignatureFailed = "Instance signature failed";
         public const string InstanceSignatureCanceled = "Instance signature canceled";
+        public const string InstanceSignatureCancelationFailed = "Instance signature cancelation failed";
         public const string InstanceValueChanged = "Instance value changed";
         public const string InstanceValueCopied = "Instance value copied";
         public const string InstanceIterationAdded = "Instance iteration added";
         public const string InstanceIterationDeleted = "Instance iteration deleted";
         public const string InstanceIterationMovedUp = "Instance iteration moved up";
         public const string InstanceIterationMovedDown = "Instance iteration moved down";
+        public const string InstanceDownloaded = "Instance downloaded";
 
         public const string InstanceExternalSourceRowChanged = "Instance external source row changed";
 
@@ -40,6 +42,7 @@
         public const string InstanceExportFailed = "Instance export failed";
         public const string PrototypeExportCompleted = "Prototype export completed";
         public const string PrototypeExportFailed = "Prototype export failed";
+        public const string PrototypeDownloaded = "Prototype downloaded";
 
         public const string JobError = "Job error";
         

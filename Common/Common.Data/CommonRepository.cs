@@ -61,6 +61,17 @@ namespace CheckListManager.Common.Data
                 ));
             return PrototypeTypes.ToListAsync();
         }
+
+        public async Task<List<Departments>> GetDepartmentsAsync(long companyId)
+        {
+            return await Entities.Departments.Where(d => d.Company == companyId).ToListAsync();
+        }
+
+        public async Task<List<PrototypeTypes>> GetPrototypeTypesAsync(long companyId)
+        {
+            return await Entities.PrototypeTypes.Where(pt => pt.Company == companyId).ToListAsync();
+        }
+
         public Task<List<Prototypes>> GetPrototypesAsync(IDefaultIdentity identity, long prototypeType, string functionGroup)
         {
             IQueryable<Prototypes> Prototypes = Entities.Prototypes.Where(p => p.Company == identity.CompanyId && p.PrototypeType == prototypeType);
@@ -116,7 +127,7 @@ namespace CheckListManager.Common.Data
                     && uf.Function == "View"
                     && uf.PrototypeType == null
                ));
-            return PrototypeVersionTags.Select(pv => pv.Code).ToListAsync();
+            return PrototypeVersionTags.Select(pv => pv.Code).Distinct().ToListAsync();
         }
 
         public Task<List<string>> GetVersionStatesAsync()

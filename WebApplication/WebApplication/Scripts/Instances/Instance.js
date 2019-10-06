@@ -95,10 +95,10 @@
 
         showExceptions = function () {
             var message = "";
-            console.log(exceptions);
+
             for (var index in exceptions) {
                 var exception = exceptions[index];
-                message += exception.description + " (" + exception.code + ")<br />";
+                message += exception.description + " (" + exception.code + ")<br /><br />";
             }
 
             matematici.dialog.error("exceptions list", message);
@@ -378,11 +378,14 @@
 				|| matematici.tokenManager.checkRole("Prototypes#View#" + department + "#" + prototypeType + "#")
 			);
 
-		matematici.navigator.open(
-			!options.appMode && hasPermissionOnPrototype && (versionState == prototypes.Prototype.states.draft || versionState == prototypes.Prototype.states.simulation) ?
-				matematici.urls.prototypes.detail + "/" + prototype + "/" + version :
-				options.listUrl
-		);
+        if (options.appMode)
+            window.webkit.messageHandlers.instances.postMessage("quit");
+        else
+		    matematici.navigator.open(
+			    hasPermissionOnPrototype && (versionState == prototypes.Prototype.states.draft || versionState == prototypes.Prototype.states.simulation) ?
+				    matematici.urls.prototypes.detail + "/" + prototype + "/" + version :
+				    options.listUrl
+		    );
 	};
 
 	instance.save = function () {

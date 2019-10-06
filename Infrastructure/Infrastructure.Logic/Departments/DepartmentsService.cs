@@ -98,6 +98,7 @@ namespace CheckListManager.Infrastructure.Logic.Departments
                     if (isNew)
                     {
                         await _infrastructureRepository.AddDepartmentAsync(identity, Department);
+                        record.ID = Department.ID;
                         await AuditAsync(identity, TrailAction.DepartmentCreated, record);
                     }
                     else
@@ -147,7 +148,7 @@ namespace CheckListManager.Infrastructure.Logic.Departments
             {
                 record.ID,
                 record.Name,
-                record.Reason,
+                ReasonForChange = record.Reason,
             };
             return AuditAsync(identity, action, information);
         }
@@ -157,7 +158,7 @@ namespace CheckListManager.Infrastructure.Logic.Departments
             var information = new
             {
                 Id = id,
-                Reason = reason
+                ReasonForChange = reason
             };
             return AuditAsync(identity, action, information);
         }

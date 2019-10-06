@@ -30,6 +30,13 @@
 
 <script type="text/javascript">
     matematici.events.onPageLoad = function (callback) {
+        @if (ViewBag.AppMode)
+        {
+            <text>
+                matematici.tokenManager.setUserCode("@ViewBag.AppUser", "@ViewBag.AppRoles", "@ViewBag.AppTimeZone", "@ViewBag.AppDecimalSeparator", "@ViewBag.AppAccessToken", "@ViewBag.AppRefreshToken");
+            </text>
+        }
+
         new matematici.Page({
             name: "InstanceManager",
             cssClass: "InstanceManager CheckList",
@@ -121,13 +128,6 @@
         matematici.events.onPageUnload = function (callback) {
             instance.close(callback);
         };
-
-        @if (ViewBag.AppMode)
-        {
-            <text>
-                matematici.tokenManager.setUserCode("@ViewBag.AppUser", "@ViewBag.AppRoles", "@ViewBag.AppTimeZone", "@ViewBag.AppDecimalSeparator", "@ViewBag.AppAccessToken", "@ViewBag.AppRefreshToken");
-            </text>
-        }
 
         callback.call();
     };

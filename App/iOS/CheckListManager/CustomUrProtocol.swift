@@ -46,10 +46,6 @@ class CustomUrlprotocol: URLProtocol, URLSessionDataDelegate, URLSessionTaskDele
         
         }
         
-        if (newRequest.url!.absoluteString.contains("/Instances/List")) {
-            (UIApplication.shared as! MyApplication).goBackToList()
-        }
-     
         URLProtocol.setProperty("true", forKey: CustomUrlprotocol.CustomKey, in: newRequest)
 
         let defaultConfigObj = URLSessionConfiguration.default

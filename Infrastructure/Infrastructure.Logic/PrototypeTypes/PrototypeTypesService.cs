@@ -185,7 +185,7 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
             if (response.Valid)
                 try
                 {
-                    await _infrastructureRepository.AddPrototypeTypeAsync(identity, new Common.Data.PrototypeTypes
+                    var prototypeType = await _infrastructureRepository.AddPrototypeTypeAsync(identity, new Common.Data.PrototypeTypes
                     {
                         Department = record.Department.Value,
                         Name = record.Name,
@@ -196,6 +196,7 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
                         InstancesFTPServerEnabled = record.InstancesFTPServer.HasValue,
                         InstancesFTPServer = record.InstancesFTPServer >= 0 ? record.InstancesFTPServer : default(long?)
                     });
+                    record.ID = prototypeType.ID;
                     await AuditAsync(identity, TrailAction.PrototypeTypeCreated, record);
                 }
                 catch (Exception Exception)
@@ -272,13 +273,11 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
                 record.ID,
                 record.Name,
                 record.Department,
-                record.Function,
-                record.FunctionGroup,
                 record.ApprovationWorkFlow,
                 record.ObsolescenceWorkFlow,
-                record.InstancesFTPServer,
                 record.PrototypesFTPServer,
-                record.Reason,
+                record.InstancesFTPServer,
+                ReasonForChange = record.Reason,
             };
             return AuditAsync(identity, action, information);
         }
@@ -288,7 +287,7 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
             var information = new
             {
                 Id = id,
-                Reason = reason
+                ReasonForChange = reason
             };
             return AuditAsync(identity, action, information);
         }

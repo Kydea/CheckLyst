@@ -97,7 +97,7 @@ import UIKit
                             self.isRefreshing = false
                             self.needToUpdateTokens = true
                             
-                            if let controller = self.getInstanceWebView() {
+                            if let controller = self.getInstanceWebViewIfVisible() {
                                 controller.refreshTokensByJSInjection(accessToken: UserDefaults.standard.value(forKey: "access_token") as! String, refreshToken: UserDefaults.standard.value(forKey: "refresh_token") as! String)
                             }
                             
@@ -119,7 +119,7 @@ import UIKit
         
     }
     
-    private func getInstanceWebView() -> InstanceViewController? {
+    private func getInstanceWebViewIfVisible() -> InstanceViewController? {
         if var topController = UIApplication.shared.keyWindow?.rootViewController {
             
             while let presentedViewController = topController.presentedViewController {
@@ -183,10 +183,11 @@ import UIKit
         
                 let tabBarController = (topController as! TabViewController)
                 
-                if(tabBarController.selectedIndex == 1) {
-                    if let navigationController = tabBarController.viewControllers![tabBarController.selectedIndex] as? UINavigationController {
-                        if(navigationController.childViewControllers.count > 2) {
-                            navigationController.popViewController(animated: false)
+                if let navigationController = tabBarController.viewControllers![1] as? UINavigationController {
+                        
+                    for childController in navigationController.childViewControllers {
+                        if let instanceController = childController as? InstanceViewController {
+                            instanceController.closeInstance()
                         }
                     }
                 }
@@ -199,15 +200,6 @@ import UIKit
                 tabBarController.dismiss(animated: true, completion: nil)
             }
         }
-        
-        
-        /*
-         Old way to go back to login
-         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let homeVC = storyboard.instantiateViewController(withIdentifier: "FirstCheck")
-        UIApplication.shared.keyWindow?.rootViewController = homeVC
-        Better this way?
-         UIApplication.shared.keyWindow?.rootViewController?.navigationController?.popToRootViewController(animated: true)*/
     }
     
     func displayError(Title title:String, Message message:String) {
@@ -253,6 +245,10 @@ import UIKit
     }
     
     func goBackGround(){
+        if let controller = getInstanceWebViewIfVisible() {
+            controller.viewWillDisappear(false);
+        }
+        
         UserDefaults.standard.set(Date(), forKey: "backgroundTime")
         if let timer = timer {
             timer.invalidate()

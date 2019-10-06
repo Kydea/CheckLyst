@@ -78,6 +78,10 @@ namespace CheckListManager.Common.Logic.Api.PDF
 
         protected override async Task OnRenderAttachmentsAsync()
         {
+            DocumentBuilder.RenderPdfDocument();
+            await this.AddSectionAsync();
+            Container.RemovePageCount();
+
             int Index = 1;
             foreach (var Attachment in Attachments.Values)
             {
@@ -116,18 +120,11 @@ namespace CheckListManager.Common.Logic.Api.PDF
                     }
                     else if (Attachment.ContentType.Equals("application/pdf", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        RenderMigraDocument();
-
                         using (MemoryStream ms = new MemoryStream())
                         {
                             await Attachment.Content.CopyToAsync(ms);
                             PdfDocument Document = PdfReader.Open(ms, PdfDocumentOpenMode.Import);
-
-                            for (int PageIndex = 0; PageIndex < Document.PageCount; PageIndex++)
-                            {
-                                var Page = Document.Pages[PageIndex];
-                                PdfDocument.AddPage(Page);
-                            }
+                            DocumentBuilder.AddRange(Enumerable.Range(0, Document.PageCount).Select(index => Document.Pages[index]));
                         }
                     }
                 }
@@ -137,10 +134,6 @@ namespace CheckListManager.Common.Logic.Api.PDF
                     ExceptionParagraph.SetFont(GenericFont);
                     ExceptionParagraph.AddText($"Error: {Exception.Message}");
                     ExceptionParagraph.Format.SpaceAfter = 10;
-                }
-                finally
-                {
-                    RenderMigraDocument();
                 }
             }
         }

@@ -51,6 +51,8 @@ extension String {
             
             if(keepReturn) {
                 value = self.replacingOccurrences(of: "\n", with: "<br />")
+            } else {
+                value = self.replacingOccurrences(of: "\n", with: "")
             }
             
             let htmlCSSString = "<style>" +
@@ -81,6 +83,8 @@ extension String {
             
             if(keepReturn) {
                 value = self.replacingOccurrences(of: "\n", with: "<br />")
+            } else {
+                value = self.replacingOccurrences(of: "\n", with: "")
             }
             
             let htmlCSSString = "<style>" +

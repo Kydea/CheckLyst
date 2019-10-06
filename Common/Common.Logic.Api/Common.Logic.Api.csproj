@@ -171,6 +171,9 @@
     <Compile Include="Formatters\FileFormatter.cs" />
     <Compile Include="Formatters\PDFFormatter.cs" />
     <Compile Include="Formatters\CSVFormatter.cs" />
+    <Compile Include="Instances\IInstancesService.cs" />
+    <Compile Include="Instances\InstancesService.cs" />
+    <Compile Include="Instances\InvalidateCacheRequest.cs" />
     <Compile Include="Messages\Message.cs" />
     <Compile Include="Messages\TokenRequest.cs" />
     <Compile Include="Messages\PagingRequest.cs" />
@@ -180,6 +183,7 @@
     <Compile Include="PDF\CheckListPDF.cs" />
     <Compile Include="PDF\Helper\Font.cs" />
     <Compile Include="PDF\Helper\PdfTable.cs" />
+    <Compile Include="PDF\MigraDocBuilder.cs" />
     <Compile Include="PDF\PDFBase.cs" />
     <Compile Include="PDF\PDFSection.cs" />
     <Compile Include="PDF\PDFStyles.cs" />

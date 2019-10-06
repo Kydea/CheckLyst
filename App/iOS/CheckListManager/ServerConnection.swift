@@ -80,6 +80,12 @@ open class ServerConnection {
         }
     }
     
+    static func getFile(_ fileUrl : String, completion: ((_ result:ServerResponse) -> Void)!) {
+        sendHTTPGetRequest(fileUrl) { (result) -> Void in
+            completion(result)
+        }
+    }
+    
     
     static func getUrlEncodedParam(_ param: String) -> String? {
         let allowedCharacterSet = CharacterSet(charactersIn: "!*'();:@&=+$,/?%#[] ").inverted
@@ -113,8 +119,9 @@ open class ServerConnection {
             let session = URLSession.shared
             
             //print("Parameters: \n", parameters.description)
-            
-            let params = encodeParams(parameters)
+            //rimuovendo l'encoding risolviamo il problema su State in Search
+            //before
+            //let params = encodeParams(parameters)
             
             request.httpMethod = "POST"
             
@@ -122,21 +129,23 @@ open class ServerConnection {
             
             
             
-            if (!params.isEmpty)
+            if (!parameters.isEmpty)
                 
             {
-                
-                
-                if((params["Password"]) != nil) {
+                if((parameters["Password"]) != nil) {
                     request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+                    
+                    let params = encodeParams(parameters)
                     
                     let bodyString = "grant_type=password" + "&companyId=" + (params["Company"] as! String) + "&username=" + (params["Code"] as! String) + "&password=" + (params["Password"] as! String)
                     
                     request.httpBody = bodyString.data(using: String.Encoding.utf8)
                     
-                } else if((params["Refresh_Token"]) != nil) {
+                } else if((parameters["Refresh_Token"]) != nil) {
                     
                     request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+                    
+                    let params = encodeParams(parameters)
                     
                     let bodyString = "grant_type=refresh_token&refresh_token=" + (params["Refresh_Token"] as! String)
                     
@@ -145,7 +154,7 @@ open class ServerConnection {
                 } else {
                     request.addValue("application/json", forHTTPHeaderField: "Content-Type")
                     
-                    request.httpBody = try  JSONSerialization.data(withJSONObject: params, options:[])
+                    request.httpBody = try  JSONSerialization.data(withJSONObject: parameters, options:[])
                 }
                 
             }

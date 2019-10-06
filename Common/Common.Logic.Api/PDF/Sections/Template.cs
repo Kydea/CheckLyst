@@ -37,6 +37,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             header.Format.Font = PDFBase.GrayFont;
 
             Paragraph footer = PDF.Container.Footers.Primary.AddParagraph();
+            footer.Tag = "PageCount";
             footer.Format.Font = PDFBase.GrayFont;
             footer.AddText("Page ");
             footer.AddPageField();

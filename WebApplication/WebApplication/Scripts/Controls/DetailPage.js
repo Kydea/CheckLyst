@@ -6,6 +6,7 @@
 		buttons = options.buttons || [],
 		form,
 		lastReason,
+		title,
 
 		clickHandler = function (button, event, callback, takeOpen) {
 			if (button.hasClass("ReadOnly")) return false;
@@ -23,8 +24,14 @@
 					}
 
 					if (result.valid) {
+						matematici.canClose = true;
 						matematici.popup.getResult().saved = true;
 						if (!takeOpen) matematici.popup.close();
+
+						if (!data && result.data) {
+							refresh(result.data);
+						}
+
 						matematici.blip.ok(callback);
 					}
 				}, options.parametersPrepareHandler && options.parametersPrepareHandler());
@@ -37,7 +44,7 @@
 						.append(
 							$("<label />")
 								.attr("for", "DetailPageReasonInput")
-								.text("Type the reason of the changes for the audit trail")
+								.text("Reason for change")
 						)
 						.append(
 							input = $("<input />")
@@ -131,17 +138,24 @@
 				form.addChangeHandler(function () {
 					matematici.canClose = false;
 					matematici.save = function (callback, takeOpen) {
-						clickHandler($("#SaveButton"), data == null ? "Add" : "Edit", callback, takeOpen);
-					}
+						return clickHandler($("#SaveButton"), data == null ? "Add" : "Edit", callback, takeOpen);
+					};
 				});
 
-            setTimeout(function () {
-                if (options.initHandler) options.initHandler(detailPage);
+			setTimeout(function () {
+				if (options.initHandler) options.initHandler(detailPage);
 				if (data) form.setValues(data);
-                if (options.completeHandler) options.completeHandler(detailPage);
+				if (options.completeHandler) options.completeHandler(detailPage);
 
-                matematici.popup.getTitle().html(matematici.popup.getTitle().html() + (!data ? " (new)" : data.id ? " (ID: " + data.id + ")" : data.code ? " (Code: " + data.code + ")" : "" ))
+				title = matematici.popup.getTitle().html();
+				refresh(data, true);
 			}, 0);
+		},
+
+		refresh = function (d, avoidSetValues) {
+			data = d;
+			if (data && !avoidSetValues) form.setValues(data);
+			matematici.popup.getTitle().html(title + (!data ? " (new)" : data.id ? " (ID: " + data.id + ")" : data.code ? " (Code: " + data.code + ")" : ""));
 		};
 
 	this.getElement = function () {

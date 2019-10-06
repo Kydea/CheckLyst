@@ -5,9 +5,8 @@
         title,
 
 		clickHandler = function () {
-			if (a.hasClass("ReadOnly") || a.hasClass("GreyYellowButton")) {
+			if (a.hasClass("ReadOnly") || a.hasClass("GreyYellowButton")) 
 				return;
-			}
 
 			var id = instances.instance.getPrototype();
 			var version = instances.instance.getVersion();
@@ -37,7 +36,7 @@
 		this.setFontSize(model.fontSize);
 
 		a.toggleClass("GreyYellowButton", !model.key || model.key === '');
-		a.toggleClass("ReadOnly", model.readOnly);
+		//a.toggleClass("ReadOnly", model.readOnly);
     };
 
     this.setColor = function (value) {

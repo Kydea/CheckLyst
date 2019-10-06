@@ -53,8 +53,8 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
         self.tableView.isScrollEnabled = false
         activityIndicator.transform = CGAffineTransform(scaleX: 2.0, y: 2.0)
         activityIndicator.hidesWhenStopped = true
-        newInstanceButton.isEnabled = false
         newInstanceButton.title = "\u{f103} New Instance   "
+        newInstanceButton.isEnabled = false
         self.navigationItem.leftBarButtonItem = SharedControllersProperty.setLogo(self.navigationItem.leftBarButtonItem);
         
         for i in 0...7 {
@@ -204,6 +204,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                             self.indexArrayDictionary[index] = departments
                             
                             if let value = searchFields.fields.department?.value {
+                                print("value from search \(value)")
                                 self.selectedItemsDictionary[index] = self.findOPtionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
                             }
                         }
@@ -220,6 +221,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                             
                             self.indexArrayDictionary[index] = prototypeTypes
                             if let value = searchFields.fields.prototypeType?.value {
+                                print("value from search \(value)")
                                 self.selectedItemsDictionary[index] = self.findOPtionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
                             }
                         }
@@ -238,6 +240,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                             self.indexArrayDictionary[self.fieldIndexDictionary["prototype"]!]?.insert(Option(text: "All", value: ""), at: 0)
                             
                             if let value = searchFields.fields.prototype?.value {
+                                print("value from search \(value)")
                                 self.selectedItemsDictionary[index] = self.findOPtionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
                             }
                         }
@@ -257,6 +260,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                             self.indexArrayDictionary[self.fieldIndexDictionary["version"]!]?.insert(Option(text: "All", value: ""), at: 0)
                             
                             if let value = searchFields.fields.version?.value {
+                                print("value from search \(value)")
                                 self.selectedItemsDictionary[index] = self.findOPtionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
                             }
                         }
@@ -276,6 +280,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                             self.indexArrayDictionary[self.fieldIndexDictionary["tagCode"]!]?.insert(Option(text: "All", value: ""), at: 0)
                             
                             if let value = searchFields.fields.tagCode?.value {
+                                //print("value from search \(value)")
                                 self.selectedItemsDictionary[index] = self.findOPtionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
                             }
                         }
@@ -295,6 +300,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                             self.indexArrayDictionary[self.fieldIndexDictionary["state"]!]?.insert(Option(text: "All", value: ""), at: 0)
                             
                             if let value = searchFields.fields.state?.value {
+                                print("value from search \(value)")
                                 self.selectedItemsDictionary[index] = self.findOPtionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
                             }
                         }

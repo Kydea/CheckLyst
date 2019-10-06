@@ -17,13 +17,37 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
+        
         let navigationBarAppearace = UINavigationBar.appearance()
         
         UIApplication.shared.statusBarStyle = .lightContent
         
-        navigationBarAppearace.tintColor = UIColor.white
+        if #available(iOS 13.0, *) {
+            
+            let navBarAppearance = UINavigationBarAppearance()
+            let barButtonAppareance = UIBarButtonItemAppearance()
+            
+            barButtonAppareance.normal.titleTextAttributes = [NSAttributedStringKey.font:UIFont (name: "Flaticon", size: 20)!,NSAttributedStringKey.foregroundColor: UIColor(red: 153.0/255, green: 153.0/255, blue: 153.0/255, alpha: 1.0)]
+            barButtonAppareance.disabled.titleTextAttributes = [NSAttributedStringKey.font:UIFont (name: "Flaticon", size: 20)!,NSAttributedStringKey.foregroundColor: UIColor.clear]
+            
+            navBarAppearance.buttonAppearance = barButtonAppareance;
+            
+            navBarAppearance.backgroundColor = UIColor(red: 64.0/255, green: 64.0/255, blue: 64.0/255, alpha: 1.0)
+            
+            navigationBarAppearace.standardAppearance = navBarAppearance
+            navigationBarAppearace.compactAppearance = navBarAppearance
+            navigationBarAppearace.scrollEdgeAppearance = navBarAppearance
         
-        navigationBarAppearace.barTintColor = UIColor(red: 43.0/255, green: 43.0/255, blue: 43.0/255, alpha: 1.0)
+        } else {
+           
+            UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedStringKey.font:UIFont (name: "Flaticon", size: 20)!,NSAttributedStringKey.foregroundColor: UIColor(red: 153.0/255, green: 153.0/255, blue: 153.0/255, alpha: 1.0)], for:UIControlState())
+
+            UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedStringKey.font:UIFont (name: "Flaticon", size: 20)!,NSAttributedStringKey.foregroundColor: UIColor.clear], for:.disabled)
+            
+            navigationBarAppearace.barTintColor = UIColor(red: 43.0/255, green: 43.0/255, blue: 43.0/255, alpha: 1.0)
+        }
+        
+         navigationBarAppearace.tintColor = UIColor.white
         
         UITabBar.appearance().barTintColor = UIColor(red: 0.0/255, green: 150.0/255, blue: 136.0/255, alpha: 1.0)
         
@@ -36,10 +60,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         UITabBarItem.appearance().setTitleTextAttributes([NSAttributedStringKey.font:UIFont (name: "Flaticon", size: 15)!,NSAttributedStringKey.foregroundColor: UIColor(red: 3.0/255, green: 195.0/255, blue: 177.0/255, alpha: 1.0)], for:UIControlState())
 
-   
-        UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedStringKey.font:UIFont (name: "Flaticon", size: 20)!,NSAttributedStringKey.foregroundColor: UIColor(red: 153.0/255, green: 153.0/255, blue: 153.0/255, alpha: 1.0)], for:UIControlState())
-
-        UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedStringKey.font:UIFont (name: "Flaticon", size: 20)!,NSAttributedStringKey.foregroundColor: UIColor.clear], for:.disabled)
         
         URLProtocol.registerClass(CustomUrlprotocol.self)
         
@@ -47,21 +67,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
+        /*must be here to catch all pauses*/
+        (UIApplication.shared as! MyApplication).goBackGround()
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
         
-        (UIApplication.shared as! MyApplication).goBackGround()
-        
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
-        
-        //(UIApplication.shared as! MyApplication).goForeGround()
         
         // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
     }
@@ -75,6 +93,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+        
     }
     
     

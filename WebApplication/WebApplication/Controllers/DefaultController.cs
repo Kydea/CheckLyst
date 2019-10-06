@@ -1,10 +1,15 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Text;
 using System.Web.Mvc;
 
 namespace CheckListManager.WebApplication.Controllers
 {
     public class DefaultController : BaseController
-	{
+    {
         [AllowAnonymous]
         [Route("Error", Order = 1)]
         public ActionResult Error()
@@ -15,27 +20,31 @@ namespace CheckListManager.WebApplication.Controllers
         [AllowAnonymous]
         public ActionResult Loader(string url)
         {
-			//Load Balancer Healt Check
-	        if ("ping".Equals(url, StringComparison.InvariantCultureIgnoreCase))
-		        return Ping();
+            //Load Balancer Healt Check
+            if ("ping".Equals(url, StringComparison.InvariantCultureIgnoreCase))
+                return Ping();
 
             return ConditionalView("Loader", url ?? "Dashboard");
         }
 
         [Route("Dashboard")]
-        public ActionResult Dashboard(int? pageVersions, int? pageInstances)
+        public ActionResult Dashboard()
         {
-            //var Model = new ViewModels.Dashboard.DashboardModel(db);
-            //Model.PrototypesVersions.Set(PageVersions ?? 1);
-            //Model.Instances.Set(PageInstances ?? 1);
             return ConditionalView();
         }
 
-		[AllowAnonymous]
-		[Route("Ping")]
-		public ActionResult Ping()
-		{
-			return Json(new { ok = true }, JsonRequestBehavior.AllowGet);
-		}
-	}
+        [HttpPost]
+        [Route]
+        public ActionResult RedirectToDashboard()
+        {
+            return RedirectToAction("Dashboard");
+        }
+
+        [AllowAnonymous]
+        [Route("Ping")]
+        public ActionResult Ping()
+        {
+            return Json(new { ok = true }, JsonRequestBehavior.AllowGet);
+        }
+    }
 }

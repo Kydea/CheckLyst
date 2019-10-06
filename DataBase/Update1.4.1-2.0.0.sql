@@ -54,7 +54,7 @@ set
 where 
 	not "User" is null;
 
-alter  table "Infrastructure"."Companies" add "InactivityTimeoutSeconds" int not null default 900;
+alter table "Infrastructure"."Companies" add "InactivityTimeoutSeconds" int not null default 900;
 
 create table "Infrastructure"."FTPServers"
 (
@@ -175,3 +175,12 @@ from "Infrastructure"."Companies";
 insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") 
 select "ID", 'InstancesAttachmentMaxSizeBytes', '10485760' -- 10MB
 from "Infrastructure"."Companies";
+
+insert into "Trail"."Actions"
+values
+	('Instance signature cancelation failed');
+
+insert into "Trail"."Actions"
+values
+	('Instance downloaded'),
+	('Prototype downloaded');

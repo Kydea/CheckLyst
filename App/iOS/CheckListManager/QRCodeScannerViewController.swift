@@ -13,6 +13,7 @@ class QRCodeScannerViewController: UIViewController, QRScannerViewDelegate {
     
 
     var callback : ((_ result : String) -> ())?
+    var senderController : InstanceViewController?
     
     @IBOutlet var scannerView: QRScannerView!
     
@@ -20,6 +21,16 @@ class QRCodeScannerViewController: UIViewController, QRScannerViewDelegate {
         super.viewDidLoad()
         scannerView.delegate = self
         // Do any additional setup after loading the view.
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        self.scannerView.layer.connection?.videoOrientation = QRScannerView.AVOrientationFromDeviceOrientation(UIDevice.current.orientation)
+        super.viewWillTransition(to: size, with: coordinator)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        senderController?.customBackButton.isEnabled = false
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -51,8 +62,9 @@ class QRCodeScannerViewController: UIViewController, QRScannerViewDelegate {
         
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
+        senderController?.customBackButton.isEnabled = true
         if(scannerView.isRunning) {
             scannerView.stopScanning()
         }
@@ -81,16 +93,7 @@ class QRCodeScannerViewController: UIViewController, QRScannerViewDelegate {
     @IBAction func closeScanner(_ sender: Any) {
         if(scannerView.isRunning) {
             scannerView.stopScanning()
+            senderController?.requestForScanning = false
         }
     }
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

@@ -10,6 +10,7 @@ using CheckListManager.AccessControl.Data;
 using CheckListManager.AccessControl.Logic.Authentication;
 using CheckListManager.AccessControl.Logic.Exceptions;
 using CheckListManager.AccessControl.Logic.Messages.Users;
+using CheckListManager.Common.Core.Helpers;
 using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Messages;
@@ -294,8 +295,10 @@ namespace CheckListManager.AccessControl.Logic.Services
             };
         }
 
-        private UserResponse Validate(UserRequest record)
+        private async Task<UserResponse> ValidateAsync(IDefaultIdentity identity, UserRequest record)
         {
+            var requireUserReason = await _settingService.RequireUserReasonAsync(identity.CompanyId);
+            
             var response = new UserResponse();
             if (string.IsNullOrWhiteSpace(record.Code))
                 response.Fields["Code"] = new Field
@@ -364,6 +367,21 @@ namespace CheckListManager.AccessControl.Logic.Services
                         }
                     }
                 };
+
+            if (requireUserReason && string.IsNullOrEmpty(record.Reason))
+            {
+                response.Fields["Reason"] = new Field
+                {
+                    ValidationMessages = new List<ValidationMessage>
+                    {
+                        new ValidationMessage
+                        {
+                            Level = ValidationMessage.LevelError,
+                            Message = "Reason is a required field"
+                        }
+                    }
+                };
+            }
 
             response.Valid = !response.Fields.Any();
             return response;
@@ -487,13 +505,14 @@ namespace CheckListManager.AccessControl.Logic.Services
                     Department = uf.Department.HasValue ? uf.Department + " " + uf.Departments?.Name : null,
                     PrototypeType = uf.PrototypeType.HasValue ? uf.PrototypeType + " " + uf.PrototypeTypes?.Name : null,
                     Level = uf.Tag
-                })
+                }),
+                ReasonForChange = user.Reason
             });
         }
 
         public async Task<UserResponse> AddUserAsync(DefaultIdentity identity, UserRequest record)
         {
-            var response = Validate(record);
+            var response = await ValidateAsync(identity, record);
             if (response.Valid)
                 try
                 {
@@ -535,7 +554,7 @@ namespace CheckListManager.AccessControl.Logic.Services
 
         public async Task<UserResponse> EditUserAsync(DefaultIdentity identity, UserRequest record)
         {
-            var response = Validate(record);
+            var response = await ValidateAsync(identity, record);
             if (response.Valid)
                 try
                 {
@@ -575,22 +594,26 @@ namespace CheckListManager.AccessControl.Logic.Services
             return response;
         }
 
-        public async Task<UserResponse> DeleteUserAsync(DefaultIdentity identity, string code)
+        public async Task<UserResponse> DeleteUserAsync(DefaultIdentity identity, UserRequest record)
         {
             var response = new UserResponse();
             try
             {
-                if (identity.Code == code)
+                if (identity.Code == record.Code)
                     throw new Exception("Users cannot delete themselves.");
 
-                await _userRepository.DeleteAsync(identity.CompanyId, code);
+                await _userRepository.DeleteAsync(identity.CompanyId, record.Code);
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
                     Company = identity.CompanyId,
                     User = identity.Code,
                     Action = TrailAction.UserDeleted,
                     Date = DateTimeOffset.UtcNow,
-                    Information = code
+                    Information = JsonConvert.SerializeObject(new
+                    {
+                        record.Code,
+                        ReasonForChange = record.Reason
+                    })
                 });
             }
             catch (Exception exception)

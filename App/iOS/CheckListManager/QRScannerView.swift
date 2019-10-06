@@ -34,6 +34,7 @@ class QRScannerView: UIView {
     override var layer: AVCaptureVideoPreviewLayer {
         return super.layer as! AVCaptureVideoPreviewLayer
     }
+    
 }
 extension QRScannerView {
     
@@ -85,6 +86,7 @@ extension QRScannerView {
         
         self.layer.session = captureSession
         self.layer.videoGravity = .resizeAspectFill
+        self.layer.connection?.videoOrientation = QRScannerView.AVOrientationFromDeviceOrientation(UIDevice.current.orientation)
         
         captureSession?.startRunning()
     }
@@ -95,6 +97,20 @@ extension QRScannerView {
     
     func found(code: String) {
         delegate?.qrScanningSucceededWithCode(code)
+    }
+    
+    class func AVOrientationFromDeviceOrientation(_ deviceOrientation : UIDeviceOrientation) -> AVCaptureVideoOrientation {
+        if  deviceOrientation == UIDeviceOrientation.landscapeLeft {
+            return AVCaptureVideoOrientation.landscapeRight;
+        } else if  deviceOrientation == UIDeviceOrientation.landscapeRight {
+            return AVCaptureVideoOrientation.landscapeLeft;
+        } else if( deviceOrientation == UIDeviceOrientation.portrait) {
+            return AVCaptureVideoOrientation.portrait;
+        } else if( deviceOrientation == UIDeviceOrientation.portraitUpsideDown) {
+            return AVCaptureVideoOrientation.portraitUpsideDown;
+        } else {
+            return AVCaptureVideoOrientation.init(rawValue: deviceOrientation.rawValue)!;
+        }
     }
     
 }

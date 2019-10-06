@@ -10,4 +10,9 @@ namespace CheckListManager.Common.Logic.DataEngine
 
         public bool Valid { get; set; } = true;
     }
+
+    public class Form<T> : Form
+    {
+        public T Data { get; set; }
+    }
 }

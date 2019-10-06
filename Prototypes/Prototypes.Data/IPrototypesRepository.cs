@@ -21,16 +21,8 @@ namespace CheckListManager.Prototypes.Data
         void AddPrototypeVersion(PrototypeVersions prototypeVersion);
         Task DeletePrototypeVersionAsync(DefaultIdentity defaultIdentity, long prototype, int version);
         void DeletePrototypeVersionTags(IEnumerable<PrototypeVersionTags> versionTags);
-
-        /// <summary>
-        /// Change status of a prototype version
-        /// </summary>
-        /// <param name="defaultIdentity"></param>
-        /// <param name="prototypeVersion"></param>
-        /// <param name="state"></param>
-        /// <param name="proposed"></param>
-        /// <returns>Returns true if during the state change, the related instances have been deleted, false otherwise</returns>
-        Task<bool> SetStateAsync(DefaultIdentity defaultIdentity, PrototypeVersions prototypeVersion, string state,
+        
+        Task<SetStateResult> SetStateAsync(DefaultIdentity defaultIdentity, PrototypeVersions prototypeVersion, string state,
             bool proposed);
 
         Task<List<PrototypeVersions>> GetPrototypeVersionsAsync(Expression<Func<PrototypeVersions, bool>> filters);

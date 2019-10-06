@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using CheckListManager.Common.Core.Helpers;
+using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api;
 using CheckListManager.Common.Logic.Api.Formatters;
 using CheckListManager.Common.Logic.Api.Messages;
@@ -21,12 +22,19 @@ namespace CheckListManager.Trail.Api.Controllers
         private readonly IUsersListService _listService;
         private readonly IRedisCache _redisCache;
         private readonly ISettingService _settingService;
+        private readonly ICommonRepository _commonRepository;
 
-        public UsersListController(IUsersListService listService, IRedisCache redisCache, ISettingService settingService)
+        public UsersListController(
+            IUsersListService listService,
+            IRedisCache redisCache,
+            ISettingService settingService,
+            ICommonRepository commonRepository
+        )
         {
             _listService = listService;
             _redisCache = redisCache;
             _settingService = settingService;
+            _commonRepository = commonRepository;
         }
 
         [HttpPost]
@@ -59,24 +67,30 @@ namespace CheckListManager.Trail.Api.Controllers
             var timeZone = (await _settingService.TimeZoneAsync(Data.CompanyId.Value)).MicrosoftCode;
             var rows = await _listService.GetDataAsync(Data.CompanyId.Value, Data);
 
-            var permissions = rows.Select(r => r.Details.Functions.Count).Max();
-            
             var headers = new List<string> {
                 "ID",
                 "Date",
                 "Action",
                 "Action By",
-                "User",
+                "Affected User",
                 "Email",
+                "Name And Surname",
+                "Enabled",
+                "Reason"
             };
+
+            var permissionHeaders = rows
+                .SelectMany(r => r.Details.Functions)
+                .OrderBy(s => s.Sorting)
+                .Select(s => s.FunctionGroup)
+                .Distinct()
+                .ToList();
             
-            headers.AddRange(Enumerable.Range(0, permissions).Select(i => $"Permission {i + 1}"));
+            headers.AddRange(permissionHeaders);
 
-            string GetPermissionString(Dictionary<string, string> x)
-                => string.Join(" - ", x.Select(y => $"{y.Key}: {y.Value}"));
-            string GetPermissions(UsersListResponse row, int i)
-                => i < row.Details.Functions.Count ? GetPermissionString(row.Details.Functions[i]) : "";
-
+            var departments = await _commonRepository.GetDepartmentsAsync(Data.CompanyId.Value);
+            var prototypeTypes = await _commonRepository.GetPrototypeTypesAsync(Data.CompanyId.Value);
+            
             return Content(HttpStatusCode.OK, rows, new CSVFormatter<UsersListResponse>(headers.ToArray(), "AuditTrail",
                 tm =>
                 {
@@ -90,9 +104,17 @@ namespace CheckListManager.Trail.Api.Controllers
                         tm.Details.Email,
                         tm.Details.NameAndSurname,
                         !tm.Details.Enabled.HasValue ? "N/A" : tm.Details.Enabled.Value.ToString(),
+                        tm.Details.Reason
                     };
-                    
-                    columns.AddRange(Enumerable.Range(0, permissions).Select(i => GetPermissions(tm, i)));
+
+                    foreach (var function in tm.Details.Functions)
+                        function.SetValues(departments, prototypeTypes);
+
+                    foreach (var permission in permissionHeaders)
+                    {
+                        var values = tm.Details.Functions.Where(f => f.FunctionGroup == permission);
+                        columns.Add(string.Join(" - ", values.Select(v => v.ToString())));
+                    }
 
                     return columns.ToArray();
                 }

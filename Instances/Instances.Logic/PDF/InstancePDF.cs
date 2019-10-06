@@ -32,9 +32,17 @@ namespace CheckListManager.Instances.Logic.PDF
             return Value?.Replace("<span class='Null'></span>", string.Empty).Replace("<span class='Error'>", "[ #Error: ").Replace("</span>", " ]") ?? string.Empty;
         }
 
-        public override string GetFieldValue(ICheckListField Field)
+        public override string GetFieldValue(ICheckListField CheckListField)
         {
-            return FormatFormula(((Field)Field).RawValue);
+            var Field = (Field)CheckListField;
+            if (Field.ValueTypeName == "DateTime")
+            {
+                if (!DateTimeOffset.TryParseExact(Field.RawValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out var Date))
+                    return string.Empty;
+                return Date.ToLocalTime(TimeZone).ToString("yyyy-MM-dd HH:mm UTC zzz");
+            }
+            else
+                return FormatFormula(Field.RawValue);
         }
 
         protected override FirstPage GenerateFirstPage()
@@ -54,7 +62,10 @@ namespace CheckListManager.Instances.Logic.PDF
             var Exceptions = new StringBuilder();
             foreach (var Expression in Instance.Instance.Expressions.Values)
                 if (Expression.Exception && Expression.Value.Value as bool? == true)
+                {
                     Exceptions.AppendLine(Expression.Description);
+                    Exceptions.AppendLine();
+                }
 
             return new FirstPage(this, Instance.InstanceCode, Instance.PrototypeDescription, FormatFormula(Instance.Instance.Description), Rows, Exceptions.Length > 0 ? Exceptions.ToString() : null);
         }

@@ -81,7 +81,7 @@ namespace CheckListManager.Infrastructure.Logic.Email
                 {
                     Action = TrailAction.EmailFailed,
                     Company = message.Message.Company,
-                    Information = exception.Message
+                    Information = exception.Message,
                 }, cancellationToken);
 
                 Logger.Error(exception);

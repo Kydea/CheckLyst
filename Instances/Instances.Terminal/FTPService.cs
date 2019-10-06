@@ -68,7 +68,15 @@ namespace CheckListManager.Instances.Terminal
                         {
                             Exported = Settings != null,
                             File = message.Message.Path,
-                            Server = Settings 
+                            Server = Settings == null ? null : new
+                            {
+                                Settings.Host,
+                                Settings.Port,
+                                Settings.Folder,
+                                Settings.EnableSSL,
+                                Settings.UsePassive,
+                                Settings.UserName,
+                            }
                         }
                     )
                 }, cancellationToken);
@@ -101,6 +109,7 @@ namespace CheckListManager.Instances.Terminal
 
             var cacheObject = await _instanceManagerService.GetAsync(message.Company, message.ID);
             cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(cacheObject.CompanyId), (await _settingService.TimeZoneAsync(cacheObject.CompanyId)).MicrosoftCode, cacheObject);
+            cacheObject.Instance.UpdateReadOnly(null, cacheObject.InstanceState);
 
             FTPConnectionSettings Settings;
             var FTPServer = await _commonRepository.GetInstancesFTPServerAsync(message.Company, cacheObject.PrototypeType);
