@@ -161,7 +161,7 @@ namespace CheckListManager.Instances.Logic.Services
             return cacheObject;
         }
         
-        public async Task<InstanceCacheObject> CreateAsync(IDefaultIdentity identity, string userCode, long prototype, int? version)
+        public async Task<InstanceCacheObject> CreateAsync(IDefaultIdentity identity, string userCode, long prototype, int? version, Dictionary<string, string> parameters)
         {
             try
             {
@@ -199,6 +199,10 @@ namespace CheckListManager.Instances.Logic.Services
                     CreatedOn = DateTimeOffset.UtcNow
                 };
                 cacheObject.Instance.Setup(true);
+                if (parameters != null)
+                    foreach (var parameter in parameters)
+                        if (cacheObject.Instance.Elements.TryGetValue(parameter.Key, out ICheckListElement element) && element is ICheckListItem item)
+                            await HandleValueChangeAsync(cacheObject, userCode, item.Id, parameter.Value);
 
                 await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
 

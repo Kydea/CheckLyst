@@ -52,7 +52,7 @@ namespace CheckListManager.Instances.Api.Controllers
         {
             try
             {
-                var cacheObject = await _instanceManagerService.CreateAsync(Identity, Identity.Code, request.Prototype, request.Version);
+                var cacheObject = await _instanceManagerService.CreateAsync(Identity, Identity.Code, request.Prototype, request.Version, request.Parameters);
                 var checkList = await _instanceManagerService.GetCheckListAsync(Identity, cacheObject, null);
                 var response = new InstanceResponse
                 {

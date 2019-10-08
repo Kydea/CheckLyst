@@ -29,10 +29,8 @@
                 && value.toLowerCase().indexOf("/security/login") == -1
                 && value.toLowerCase().indexOf("/error") == -1
                 && value.toLowerCase().indexOf("/dashboard") == -1
-            ) {
+            ) 
                 localStorage.redirectUrl = value;
-                console.log(value);
-            }
             return this;
         },
 
@@ -51,7 +49,7 @@
 
         buildUrl: function (path, relative) {
             if (relative) path = basePath + path;
-            return path + (path.indexOf("?") >= 0 ? "&" : "?") + "d=" + new Date().getTime();
+            return path; // + (path.indexOf("?") >= 0 ? "&" : "?") + "d=" + new Date().getTime();
         },
 
         navigate: function (path, relative) {
