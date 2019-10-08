@@ -149,7 +149,7 @@
                 //console.log("ajaxing " + e.path);
 
                 matematici.loader.show();
-                this.setLastPath(e.path);
+                this.setLastPath(e.value);
 
                 //highlight current menu
                 $(".MenuItem", matematici.elements.menu).removeClass("Current");
