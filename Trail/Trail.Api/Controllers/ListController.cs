@@ -121,7 +121,7 @@ namespace CheckListManager.Trail.Api.Controllers
             var Header = new string[] {
                 "ID",
                 "Date",
-                "User",
+                "Logged user code",
                 "Action",
                 "CheckList code",
                 "Detail"

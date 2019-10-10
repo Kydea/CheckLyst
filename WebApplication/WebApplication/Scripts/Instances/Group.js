@@ -188,8 +188,7 @@
 		if (iteratorOrder)
 			for (index in iteratorOrder) 
                 items[iteratorOrder[index]].appendElement();
-
-
+        
         var visibleChildren = $(model.showAsTable ? "tr.Iteration:not(.Removed)" : "> .Iteration:not(.Removed)", element);
         visibleChildren.removeClass("FirstIteration").removeClass("LastIteration");
 		visibleChildren.first().addClass("FirstIteration");

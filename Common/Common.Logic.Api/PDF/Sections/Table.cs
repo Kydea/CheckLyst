@@ -215,6 +215,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
         #endregion
 
         #region Table Rendering
+
         public async Task RenderTableRow(PdfPTable Table, List<ICheckListItem> Items, bool completeRow = true)
         {
             if (completeRow)
@@ -302,7 +303,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             public int RowsCount, ColumnsCount;
         }
 
-        RenderingTable Main = new RenderingTable();
+        private RenderingTable Main = new RenderingTable();
 
         public async Task<Size> CreateTableHeader(List<RenderingRow> Rows, int RowIndex, List<ICheckListItem> Items)
         {
@@ -360,6 +361,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
 
             return Table;
         }
+
         #endregion
 
         public override Task RenderChildrenAsync()

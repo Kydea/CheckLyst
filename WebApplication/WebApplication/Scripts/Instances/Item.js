@@ -13,13 +13,13 @@
             attachment: "Attachment"
         },
 
-        item,
+        typedItem,
 
         create = function () {
             element = (item.isTableContent() ? $("<td />") : $("<div />")).addClass("Element Item " + model.typeName);
             if (model.newLine) element.addClass("NewLine");
 
-            if (item = (
+            if (typedItem = (
                 model.typeName == typeNames.text ? new instances.Text(item, model) :
                 model.typeName == typeNames.field ? new instances.Field(item, model) :
                 model.typeName == typeNames.signature ? new instances.Signature(item, model) :
@@ -28,7 +28,7 @@
                 model.typeName == typeNames.attachment ? new instances.Attachment(item, model) :
                 null)) {
                 parent.getElement().append(element);
-                item.update(model);
+                typedItem.update(model);
             } else {
                 console.log(model);
                 alert("Invalid type name for item " + model.id + ": " + model.typeName);
@@ -41,11 +41,16 @@
         element
             .attr("data-code", model.code)
             .attr("data-id", model.id)
-            .toggleClass("Valid", model.valid)
-			.toggleClass("Hidden", model.hidden);
+            .toggleClass("Valid", model.valid);
+
+        if (item.isTableContent())
+            element.toggleClass("Invisible", model.hidden);
+        else
+            element.toggleClass("Hidden", model.hidden);
+
         if (model.countDownToValue)
 			new instances.CountDown(element, model.countDownToValue, model.id);
-        item.update(model)
+        typedItem.update(model)
         $("span.Error, span.Null", element).each(function () {
             var
                 span = $(this),

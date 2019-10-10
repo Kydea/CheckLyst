@@ -93,11 +93,8 @@
 					matematici.clock.resume();
 
                     getSettings(function () {
-                        var
-                            elapsedTime = localStorage.redirectTime ? new Date() - new Date(localStorage.redirectUrl) : null,
-                            redirectUrl = elapsedTime && elapsedTime < 10000 && localStorage.redirectUrl && localStorage.redirectUrl.indexOf("/Security/Login") < 0 ? localStorage.redirectUrl : null;
+                        var redirectUrl = localStorage.redirectUrl && localStorage.redirectUrl.indexOf("/Security/Login") < 0 ? localStorage.redirectUrl : null;
                         localStorage.removeItem("redirectUrl");
-                        localStorage.removeItem("redirectTime");
 						matematici.navigator.open(redirectUrl || matematici.urls.dashboard);
 					});
 
@@ -105,14 +102,11 @@
                     showError(jqXhr.responseJSON && jqXhr.responseJSON.error_description || jqXhr.responseJSON && jqXhr.responseJSON.messages && jqXhr.responseJSON.messages.join(' ') || errorThrown);
                 });
         });
-
-        var savedValues = {
-            redirectUrl: localStorage.redirectUrl,
-            redirectTime: localStorage.redirectTime
-        };
+        var savedValues = {};
+        if (localStorage.redirectTime && new Date() - new Date(localStorage.redirectTime) < 10000)
+            savedValues.redirectUrl = localStorage.redirectUrl;
         matematici.tokenManager.logout();
         localStorage.redirectUrl = savedValues.redirectUrl;
-        localStorage.redirectTime = savedValues.redirectTime;
 
         //closes all possibile pending light boxes
         matematici.popup.close();

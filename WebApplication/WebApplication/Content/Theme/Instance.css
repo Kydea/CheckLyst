@@ -287,6 +287,9 @@ div.Instance .Item.Attachment div.Information {
 div.Instance .Item.Hidden {
   display: none; }
 
+div.Instance .Item.Invisible {
+  visibility: hidden; }
+
 @media only screen and (max-width: 459px) {
   div.Instance .Item {
     width: calc(100% - 20px); }
