@@ -249,6 +249,10 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                                 var Value = CheckListPDF.GetFieldValue((ICheckListField)Item);
                                 Cell = NewCell(string.IsNullOrWhiteSpace(Value) ? " " : Value);
                             }
+
+                            if (Item.ReadOnly)
+                                Cell.Content.Format.Shading.Color = PDFBase.LightGray;
+
                             break;
                         case "Link":
                             var Link = (ICheckListLink)Item;

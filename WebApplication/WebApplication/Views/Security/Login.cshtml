@@ -94,7 +94,7 @@
 
                     getSettings(function () {
                         var
-                            elapsedTime = localStorage.redirectTime ? new Date() - localStorage.redirectUrl : null,
+                            elapsedTime = localStorage.redirectTime ? new Date() - new Date(localStorage.redirectUrl) : null,
                             redirectUrl = elapsedTime && elapsedTime < 10000 && localStorage.redirectUrl && localStorage.redirectUrl.indexOf("/Security/Login") < 0 ? localStorage.redirectUrl : null;
                         localStorage.removeItem("redirectUrl");
                         localStorage.removeItem("redirectTime");
