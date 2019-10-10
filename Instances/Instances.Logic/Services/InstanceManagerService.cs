@@ -960,11 +960,30 @@ namespace CheckListManager.Instances.Logic.Services
 
             if ((value ?? string.Empty) != (field.Value ?? string.Empty) && field.Validate(value))
             {
+                string
+                    oldFormattedValue = field.Value,
+                    formattedValue = value;
+
+                if (field.ValueTypeName == "DateTime")
+                {
+                    string TimeZone = (await _settingService.TimeZoneAsync(cacheObject.CompanyId)).MicrosoftCode;
+
+                    if (DateTimeOffset.TryParseExact(oldFormattedValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out var Date))
+                        oldFormattedValue = Date.Format(TimeZone);
+                    else
+                        oldFormattedValue = string.Empty;
+
+                    if (DateTimeOffset.TryParseExact(formattedValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out Date))
+                        formattedValue = Date.Format(TimeZone);
+                    else
+                        formattedValue = string.Empty;
+                }
+
                 field.History.Add(new FieldRecord
                 {
                     DateTime = DateTimeOffset.UtcNow,
                     User = userCode,
-                    Value = value
+                    Value = formattedValue
                 });
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
@@ -976,8 +995,8 @@ namespace CheckListManager.Instances.Logic.Services
                     Information = JsonConvert.SerializeObject(new
                     {
                         Id = itemId,
-                        OldValue = field.Value,
-                        NewValue = value,
+                        OldValue = oldFormattedValue,
+                        NewValue = formattedValue
                     })
                 });
                 field.Value = value;
@@ -1010,11 +1029,30 @@ namespace CheckListManager.Instances.Logic.Services
 
             if ((value ?? string.Empty) != (field.Value ?? string.Empty) && field.Validate(value))
             {
+                string
+                    oldFormattedValue = field.Value,
+                    formattedValue = value;
+
+                if (field.ValueTypeName == "DateTime")
+                {
+                    string TimeZone = (await _settingService.TimeZoneAsync(cacheObject.CompanyId)).MicrosoftCode;
+
+                    if (DateTimeOffset.TryParseExact(oldFormattedValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out var Date))
+                        oldFormattedValue = Date.Format(TimeZone);
+                    else
+                        oldFormattedValue = string.Empty;
+
+                    if (DateTimeOffset.TryParseExact(formattedValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out Date))
+                        formattedValue = Date.Format(TimeZone);
+                    else
+                        formattedValue = string.Empty;
+                }
+
                 field.History.Add(new FieldRecord
                 {
                     DateTime = DateTimeOffset.UtcNow,
                     User = userCode,
-                    Value = value
+                    Value = formattedValue
                 });
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
@@ -1026,8 +1064,8 @@ namespace CheckListManager.Instances.Logic.Services
                     Information = JsonConvert.SerializeObject(new
                     {
                         Id = itemId,
-                        OldValue = field.Value,
-                        NewValue = value,
+                        OldValue = oldFormattedValue,
+                        NewValue = formattedValue
                     })
                 });
                 field.Value = value;
