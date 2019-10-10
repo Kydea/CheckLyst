@@ -93,8 +93,11 @@
 					matematici.clock.resume();
 
                     getSettings(function () {
-                        var redirectUrl = localStorage.redirectUrl && localStorage.redirectUrl.indexOf("/Security/Login") < 0 ? localStorage.redirectUrl : null;
+                        var
+                            elapsedTime = localStorage.redirectTime ? new Date() - localStorage.redirectUrl : null,
+                            redirectUrl = elapsedTime && elapsedTime < 10000 && localStorage.redirectUrl && localStorage.redirectUrl.indexOf("/Security/Login") < 0 ? localStorage.redirectUrl : null;
                         localStorage.removeItem("redirectUrl");
+                        localStorage.removeItem("redirectTime");
 						matematici.navigator.open(redirectUrl || matematici.urls.dashboard);
 					});
 
@@ -104,10 +107,12 @@
         });
 
         var savedValues = {
-            redirectUrl: localStorage.redirectUrl
+            redirectUrl: localStorage.redirectUrl,
+            redirectTime: localStorage.redirectTime
         };
         matematici.tokenManager.logout();
         localStorage.redirectUrl = savedValues.redirectUrl;
+        localStorage.redirectTime = savedValues.redirectTime;
 
         //closes all possibile pending light boxes
         matematici.popup.close();

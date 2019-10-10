@@ -29,8 +29,10 @@
                 && value.toLowerCase().indexOf("/security/login") == -1
                 && value.toLowerCase().indexOf("/error") == -1
                 && value.toLowerCase().indexOf("/dashboard") == -1
-            ) 
+            ) {
                 localStorage.redirectUrl = value;
+                localStorage.redirectTime = new Date();
+            }
             return this;
         },
 

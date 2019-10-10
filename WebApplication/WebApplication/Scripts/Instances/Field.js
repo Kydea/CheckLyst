@@ -64,8 +64,8 @@
 				}, 0);
         },
 
-		change = function (value) {
-			if (model.valuesList || validate()) {
+        change = function (value) {
+            if (!model.readOnly && (model.valuesList || validate())) {
 				new instances.Event(instances.Events.valueChange, model.id, { value: value }).done(function (result) {
 					instances.instance.update(result);
 					next();
@@ -239,7 +239,9 @@
         	try {
 				b = $.parseJSON((model.rawValue || "").toLowerCase()); s = b.toString();
         	} catch (e) { }
-        	input.val(s);
+            input.val(s);
+
+            input.prop("disabled", readOnly);
 		} else 
 			input.val(model.rawValue);
 
