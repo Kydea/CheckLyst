@@ -65,7 +65,7 @@
         },
 
         change = function (value) {
-            if (!model.readOnly && (model.valuesList || validate())) {
+            if (model.valuesList || validate()) {
 				new instances.Event(instances.Events.valueChange, model.id, { value: value }).done(function (result) {
 					instances.instance.update(result);
 					next();
