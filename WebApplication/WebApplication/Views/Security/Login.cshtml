@@ -103,8 +103,7 @@
                 });
         });
         var savedValues = {};
-        if (localStorage.redirectTime && new Date() - new Date(localStorage.redirectTime) < 10000)
-            savedValues.redirectUrl = localStorage.redirectUrl;
+        savedValues.redirectUrl = false && localStorage.redirectTime && new Date() - new Date(localStorage.redirectTime) < 10000 ? localStorage.redirectUrl : "";
         matematici.tokenManager.logout();
         localStorage.redirectUrl = savedValues.redirectUrl;
 
