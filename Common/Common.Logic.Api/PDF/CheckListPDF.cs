@@ -66,7 +66,6 @@ namespace CheckListManager.Common.Logic.Api.PDF
             await AddSectionAsync();
 
             await OnRenderAttachmentsListAsync();
-            await AddSectionAsync();
 
             var Header = Model.Header;
             if (Header != null && Header is ICheckListGroup)
@@ -125,11 +124,15 @@ namespace CheckListManager.Common.Logic.Api.PDF
                 }
 
                 Container.Add(Table);
+                await AddSectionAsync();
             }
         }
 
         protected override async Task OnRenderAttachmentsAsync()
         {
+            if (!Attachments.Any())
+                return;
+
             DocumentBuilder.RenderPdfDocument();
             await this.AddSectionAsync();
             Container.RemovePageCount();
