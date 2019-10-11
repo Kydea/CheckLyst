@@ -857,11 +857,12 @@ namespace CheckListManager.Instances.Logic.Services
             }
             finally
             {
-				Logger.Info($"Handle Event {request.Type} timings:{Environment.NewLine}" +
-				            $"Initial get: {initialGetTime}{Environment.NewLine}" +
-				            $"Lock: {lockTime}{Environment.NewLine}" +
-				            $"Get: {getTime}{Environment.NewLine}" +
-				            $"Handle: {handleTime}{Environment.NewLine}");
+				Logger.Info(
+                    $"Handle Event {request.Type} timings:{Environment.NewLine}" +
+				    $"Initial get: {initialGetTime}{Environment.NewLine}" +
+				    $"Lock: {lockTime}{Environment.NewLine}" +
+				    $"Get: {getTime}{Environment.NewLine}" +
+				    $"Handle: {handleTime}{Environment.NewLine}");
                 lockObject?.Dispose();
             }
         }
@@ -906,21 +907,31 @@ namespace CheckListManager.Instances.Logic.Services
 
             var maxSize = await _settingService.InstancesAttachmentMaxSizeBytesAsync(identity.CompanyId);
             if (attachment.Buffer.Length > maxSize)
-            {
                 throw new InstanceException($"The file exceed the file size limit of {maxSize.BytesCountToString()}");
-            }
             
             var key = $"{GetAttachmentKeyPrefix(identity, cacheObject)}{itemId.Value}{extension}";
             using (var memoryStream = new MemoryStream(attachment.Buffer))
             {
                 var success = await _storageService.PutAsync(_configurationService.InstancesStorageBucket, key, memoryStream);
                 if (!success)
-                {
                     throw new InstanceException("Impossible to upload the attachment to the storage");
-                }
             }
 
             item.Key = key;
+
+            await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+            {
+                Company = cacheObject.CompanyId,
+                User = identity.Code,
+                Action = TrailAction.InstanceValueChanged,
+                Date = DateTimeOffset.UtcNow,
+                CheckList = cacheObject.InstanceCode,
+                Information = JsonConvert.SerializeObject(new
+                {
+                    Id = itemId,
+                    attachment.FileName
+                })
+            });
 
             await Update(cacheObject, identity.Code);
         }
@@ -985,6 +996,7 @@ namespace CheckListManager.Instances.Logic.Services
                     User = userCode,
                     Value = formattedValue
                 });
+
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
                     Company = cacheObject.CompanyId,
