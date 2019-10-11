@@ -71,10 +71,10 @@ namespace CheckListManager.Trail.Api.Controllers
                 "ID",
                 "Date",
                 "Action",
-                "Action By",
-                "Affected User",
+                "Logged user code",
+                "Affected user code",
                 "Email",
-                "Name And Surname",
+                "Name and surname",
                 "Enabled",
                 "Reason"
             };
