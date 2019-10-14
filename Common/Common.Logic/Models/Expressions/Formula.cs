@@ -94,7 +94,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                     {
                         var ExpressionValue = CheckList.GetExpressionValue(Key, IterationIndexes);
                         var Value = 
-                            CheckList.Expressions.ContainsKey(Key) && (ExpressionValue.Type == DataType.Error || ExpressionValue.IsNull)
+                            CheckList.Expressions.ContainsKey(Key) && (ExpressionValue == null || ExpressionValue.Type == DataType.Error || ExpressionValue.IsNull)
                             || !CheckList.Expressions.ContainsKey(Key) && !RuntimeValues.ContainsKey(Key);
                         return Value;
                     });

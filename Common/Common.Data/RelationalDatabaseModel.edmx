@@ -1810,7 +1810,7 @@
           <Property Name="Code" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Value" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Instances" Relationship="RelationalDatabaseModel.InstanceExpressionValues_Instance_fkey" FromRole="InstanceExpressionValues" ToRole="Instances" />
-          <Property Name="Description" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="Exception" Type="Boolean" Nullable="false" />
           <Property Name="Unique" Type="Boolean" Nullable="false" />
         </EntityType>
