@@ -151,10 +151,11 @@
 			if (field.data("type") == "DateTimeOffset") {
 				if (value == null || value == "")
 					field.val("").attr("title", "").data("date", null);
-				else {
+                else {
+                    console.log("Date!", value);
 					var
-						date = new Date(value),
-						formattedDate = matematici.dateFormatter.format(date, true);
+						date = moment.parseZone(value),
+						formattedDate = matematici.dateFormatter.format(date);
 					field.val(formattedDate.date + " " + formattedDate.time).attr("title", formattedDate.offset).data("date", date);
 				}
 			}
@@ -285,9 +286,7 @@
 
 	this.setValue = function (name, value) {
 		var field = fields.filter("[name=" + name + "]");
-		if (field.length) {
-			setFieldValue(field, value);
-		}
+		if (field.length) setFieldValue(field, value);
 	};
 
 	this.getOptions = function () {

@@ -1,7 +1,7 @@
 ﻿matematici.dateFormatter = {
-	format: function (dateTime, local) {
-		var
-			momentDate = moment(dateTime).tz(local && localStorage.timeZone || 'UTC'),
+	format: function (dateTime) {
+        var
+            momentDate = dateTime, //moment(dateTime); //.tz(local && localStorage.timeZone || 'UTC'),
 			valid = momentDate.isValid(),
 
 			date = function () {
@@ -25,7 +25,7 @@
             },
 
 			offset = function () {
-				var offset = valid && local ? momentDate.utcOffset() / 60 : 0;
+				var offset = valid ? momentDate.utcOffset() / 60 : 0;
 				return valid ? "UTC" + (offset == 0 ? "" : offset >= 0 ? " +" : " -") + (offset > 9 || offset < -9 || offset == 0 ? "" : "0") + (offset == 0 ? "" : Math.abs(offset) + ":00") : "";
 			};
 

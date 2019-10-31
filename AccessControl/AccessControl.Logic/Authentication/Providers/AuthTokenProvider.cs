@@ -113,8 +113,8 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
                 { "decimalSeparator", user.Companies.SettingValues.SingleOrDefault(c => c.Setting == "DecimalSeparator")?.Value ?? "*" },
                 { "code", user.Code },
 				{ "name", user.Description },
-                { "timeZone", user.Companies.TimeZone },
-                { "roles", String.Join(",", user.UserFunctions.Select(function => $"{function.FunctionGroup}#{function.Function}#{function.Department?.ToString() ?? string.Empty}#{function.PrototypeType?.ToString() ?? string.Empty}#{function.Tag ?? string.Empty}")) }
+                { "timeZone", user.Companies.TimeZones.MicrosoftCode },
+                { "roles", string.Join(",", user.UserFunctions.Select(function => $"{function.FunctionGroup}#{function.Function}#{function.Department?.ToString() ?? string.Empty}#{function.PrototypeType?.ToString() ?? string.Empty}#{function.Tag ?? string.Empty}")) }
             };
 		}
 	}

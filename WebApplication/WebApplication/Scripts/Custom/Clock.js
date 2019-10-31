@@ -8,45 +8,45 @@
 		selectors = [],
 		stopped,
 
-		refresh = function () {
-			var
-				serverTime = getTime(),
-				localTime = new Date();
-
-			for (var index = 0; index < selectors.length; ++index) {
-				var local = elements[index].hasClass("LocalTime");
-				elements[index].html(matematici.dateFormatter.both(local ? localTime : serverTime, local));
-			}
-		},
-
         check = function () {
 			return $.ajax({
 				url: matematici.urls.infrastructure.clock,
-				type: "post"
+                type: "post",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    localTime: new Date(),
+                    timeZone: localStorage.timeZone
+                })
 			});
 		},
 
 		update = function () {
 			check().done(function (result) {
-				var
-					serverTime = new Date(result.serverTime),
-					milliseconds = (60 - serverTime.getSeconds() + 1) * 1000;
+                serverTime = moment.parseZone(result.serverTime);
+                localTime = moment.parseZone(result.localTime);
+
+                var
+					milliseconds = (60 - serverTime.seconds() + 1) * 1000;
 
 				weak = false;
 				error = null;
-				offset = serverTime.getTime() - new Date().getTime();
+				offset = serverTime.diff(new moment());
 
 				//console.log(result);
-				//console.log("Server time: " + serverTime);
-				//console.log("Client time: " + new Date());
-				//console.log("offset: " + offset);
+				//console.log("Server time: ", serverTime);
+				//console.log("Local time: ", localTime);
+				//console.log("Client time: ", new moment());
+				//console.log("offset: ", offset);
 
 				setTimeout(function () {
 					if (!stopped)
 						update();
 				}, Math.max(milliseconds || 0, 10000));
 
-				refresh();
+                for (var index = 0; index < selectors.length; ++index) {
+                    var local = elements[index].hasClass("LocalTime");
+                    elements[index].html(matematici.dateFormatter.both(local ? localTime : serverTime));
+                }
 			}).fail(function (jqXHR, textStatus, errorThrown) {
 				weak = true;
 				error = errorThrown;
@@ -82,11 +82,6 @@
 		add: function (selector) {
 			selectors.push(selector);
 			elements.push($(selector));
-			refresh();
-		},
-
-		refresh: function () {
-			refresh();
 		},
 
 		remove: function (selector) {
