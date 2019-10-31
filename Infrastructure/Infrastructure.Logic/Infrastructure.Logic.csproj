@@ -78,6 +78,10 @@
     <Compile Include="PrototypeTypes\PrototypeTypesSyntheticRow.cs" />
     <Compile Include="PrototypeTypes\PrototypeTypesRow.cs" />
     <Compile Include="PrototypeTypes\PrototypeTypesService.cs" />
+    <Compile Include="Tools\DateTimeOffsetConversionRequest.cs" />
+    <Compile Include="Tools\DateTimeOffsetConversionRow.cs" />
+    <Compile Include="Tools\DateTimeOffsetConversionResponse.cs" />
+    <Compile Include="Tools\DateTimeOffsetConversionService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -114,5 +118,6 @@
       <Name>Infrastructure.Data</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

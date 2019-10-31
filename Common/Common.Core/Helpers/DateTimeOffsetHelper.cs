@@ -10,7 +10,7 @@ namespace CheckListManager.Common.Core.Helpers
             return TimeZoneInfo.ConvertTime(DateTimeOffset, TimeZoneInfo.FindSystemTimeZoneById(TimeZone));
         }
 
-        public static string Format(this DateTimeOffset DateTimeOffset, string TimeZone) =>
-            DateTimeOffset.ToLocalTime(TimeZone).ToString("yyyy-MM-dd HH:mm UTC zzz");
+        public static string Format(this DateTimeOffset DateTimeOffset, string TimeZone, string Format = null) =>
+            DateTimeOffset.ToLocalTime(TimeZone).ToString(Format ?? "yyyy-MM-dd HH:mm UTC zzz");
     }
 }
