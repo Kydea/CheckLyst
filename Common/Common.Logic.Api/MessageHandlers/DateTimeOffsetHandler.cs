@@ -16,6 +16,9 @@ namespace CheckListManager.Common.Logic.Api.MessageHandlers
 			
 			protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
 			{
+				var timeZone = request.Headers.GetValues("CompanyTimeZone").SingleOrDefault()
+				               ?? "SA Western Standard Time";
+				
 				var response = await base.SendAsync(request, cancellationToken);
 				if (response.Content is ObjectContent content)
 				{
@@ -23,7 +26,7 @@ namespace CheckListManager.Common.Logic.Api.MessageHandlers
 					{
 						if (value is DateTimeOffset dateTimeOffset)
 						{
-							propertyInfo.SetValue(container, dateTimeOffset.ToLocalTime("SA Western Standard Time"));
+							propertyInfo.SetValue(container, dateTimeOffset.ToLocalTime(timeZone));
 						}
 					});
 				}
