@@ -11,13 +11,13 @@ using System.Threading.Tasks;
 
 namespace CheckListManager.Common.Logic.Json
 {
-    public class DateTimeOffsetJsonConverter : AutofacJsonConverter<DateTimeOffset>
+    public class DateTimeOffsetJsonConverter : AutofacJsonConverter<DateTimeOffset?>
     {
         public DateTimeOffsetJsonConverter(ILifetimeScope scope) : base(scope)
         {
         }
 
-        protected override DateTimeOffset Create(Type objectType, JObject jsonObject) =>
+        protected override DateTimeOffset? Create(Type objectType, JObject jsonObject) =>
             throw new NotImplementedException();
 
         public override bool CanWrite => true;
@@ -28,10 +28,7 @@ namespace CheckListManager.Common.Logic.Json
         {
             //var request = Scope.Resolve<HttpRequestMessage>();
             var dateTimeOffset = value as DateTimeOffset?;
-            if (dateTimeOffset.HasValue)
-                serializer.Serialize(writer, dateTimeOffset.Value.ToLocalTime("SA Western Standard Time"));
-            else
-                writer.WriteNull();
+            JToken.FromObject(dateTimeOffset?.ToLocalTime("SA Western Standard Time")).WriteTo(writer);
         }
     }
 }
