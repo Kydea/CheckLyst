@@ -14,15 +14,14 @@
                 type: "post",
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify({
-                    localTime: new Date(),
-                    timeZone: localStorage.timeZone
+                    localTime: new Date()
                 })
 			});
 		},
 
 		update = function () {
 			check().done(function (result) {
-                serverTime = moment.parseZone(result.serverTime);
+                serverTime = moment.utc(result.serverTime);
                 localTime = moment.parseZone(result.localTime);
 
                 var

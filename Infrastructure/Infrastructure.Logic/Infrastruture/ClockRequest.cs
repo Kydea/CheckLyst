@@ -10,6 +10,5 @@ namespace CheckListManager.Infrastructure.Logic.Information
     public class ClockRequest
     {
         public DateTimeOffset LocalTime { get; set; }
-        public string TimeZone { get; set; }
     }
 }

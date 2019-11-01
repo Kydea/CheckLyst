@@ -34,7 +34,7 @@ namespace CheckListManager.Infrastructure.Api.Controllers
             return Ok(new
             {
                 ServerTime = DateTimeOffset.UtcNow,
-                LocalTime = request.LocalTime.ToLocalTime(request.TimeZone)
+                LocalTime = request.LocalTime.ToLocalTime(Request.Headers.GetValues("CompanyTimeZone").Single())
             });
         }
     }
