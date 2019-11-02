@@ -22,9 +22,11 @@ namespace CheckListManager.Common.Logic.Api.MessageHandlers
             if (response.Content is ObjectContent content && timeZone != null)
                 Traverse(content.Value, (propertyInfo, container, value) =>
                 {
-                    if (!propertyInfo.CanWrite) throw new Exception("Checklyst exception: readonly DateTimeOffset properties are not supported");
                     if (value is DateTimeOffset dateTimeOffset)
+                    {
+                        if (!propertyInfo.CanWrite) throw new Exception("Checklyst exception: readonly DateTimeOffset properties are not supported");
                         propertyInfo.SetValue(container, dateTimeOffset.ToLocalTime(timeZone));
+                    }
                 });
             return response;
         }
