@@ -516,7 +516,7 @@
 	};
 
 	prototype.save = function (callback) {
-		select();
+        select();
 		$.ajax({
 			url: element.data("action") + "Save",
 			type: "post",
@@ -524,7 +524,7 @@
 			data: JSON.stringify({
 				id: prototypeKey.id,
 				version: prototypeKey.version,
-				modifiedOn: concurrencyInformation.modifiedOn,
+				modifiedOn: moment.parseZone(concurrencyInformation.modifiedOn),
 				modifiedby: concurrencyInformation.modifiedBy,
 				validFrom: model.validFrom,
 				validUntil: model.validUntil,

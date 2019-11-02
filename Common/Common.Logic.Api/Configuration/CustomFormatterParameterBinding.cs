@@ -31,13 +31,11 @@ namespace CheckListManager.Common.Logic.Api.Configuration
 
         private IEnumerable<MediaTypeFormatter> GetFormatters(IEnumerable<MediaTypeFormatter> formatters, HttpRequestMessage request)
         {
-            var jsonFormatters = formatters.OfType<JsonMediaTypeFormatter>().ToList();
-            if (jsonFormatters.Count > 0)
-            {
-                return new[] { new CustomJsonFormatter(jsonFormatters[0], request) };
-            }
-
-            return formatters;
+            foreach (var formatter in formatters)
+                if (formatter is JsonMediaTypeFormatter jsonFormatter)
+                    yield return new CustomJsonFormatter(jsonFormatter, request);
+                else
+                    yield return formatter;
         }
     }
 }

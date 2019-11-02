@@ -33,15 +33,15 @@
 			calendar.setRange(min, max);
 			calendar.setDatePicker(datePicker);
 			var offset = element.offset();
-			//calendar.open(offset.top + element.outerHeight() + 5, offset.left);
+			calendar.open(offset.top + element.outerHeight() + 5, offset.left);
 
 			setTimeout(function () {
 				$(document).on("click.datePicker", close);
 			}, 0);
 		},
 
-		setDate = function (value, local) {
-			var formattedDate = matematici.dateFormatter.format(value, !!local);
+		setDate = function (value) {
+			var formattedDate = matematici.dateFormatter.format(value);
 			date = formattedDate.valid ? moment(value).toDate() : null;
 			element
 				.data("date", date)
@@ -113,9 +113,15 @@
 			parse();
 		};
 
-	this.setDate = function (value, local) {
+	this.setDate = function (value) {
 		setDate(value, local);
-	};
+    };
+
+    this.setValue = function (value) {
+        element.val(value);
+        parse();
+        element.change();
+    };
 
 	this.getDate = function () {
 		return date;

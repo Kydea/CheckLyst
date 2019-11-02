@@ -213,8 +213,8 @@
                     index = model.rawValue.indexOf(" "),
                     date = model.rawValue.substr(0, index),
                     time = model.rawValue.substr(index + 1),
-                    m = matematici.dateFormatter.parse(date, time, null, false);
-                formattedDate = matematici.dateFormatter.format(m, true);
+                    m = matematici.dateFormatter.parse(date, time, null);
+                formattedDate = matematici.dateFormatter.format(m);
                 input.val(formattedDate.date);
                 select.val(formattedDate.hours);
                 select2.val(formattedDate.minutes);

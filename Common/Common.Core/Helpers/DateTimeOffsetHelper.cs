@@ -28,10 +28,10 @@ namespace CheckListManager.Common.Core.Helpers
 
             if (Format == null || Format.Length == 0) Format = new string[] { DateFormat, $"{DateFormat} {TimeFormat}" };
 
-            var DateTime = System.DateTime.ParseExact(Value, Format, null, DateTimeStyles.None);
+            var DateTime = System.DateTime.SpecifyKind(System.DateTime.ParseExact(Value, Format, null, DateTimeStyles.None), DateTimeKind.Unspecified);
             var TimeZoneInfo = System.TimeZoneInfo.FindSystemTimeZoneById(TimeZone);
-            var UTCDateTimeOffset = System.TimeZoneInfo.ConvertTime(DateTime, TimeZoneInfo.Utc);
-            var DateTimeOffset = new DateTimeOffset(UTCDateTimeOffset, TimeSpan.Zero);
+            var UTCDateTime = TimeZoneInfo.ConvertTime(DateTime, TimeZoneInfo, TimeZoneInfo.Utc);
+            var DateTimeOffset = new DateTimeOffset(UTCDateTime, TimeSpan.Zero).ToLocalTime(TimeZone);
             Ambiguous = TimeZoneInfo.IsAmbiguousTime(DateTime);
             AmbiguousDateTimeOffsets = Ambiguous ? TimeZoneInfo.GetAmbiguousTimeOffsets(DateTime) : null;
 

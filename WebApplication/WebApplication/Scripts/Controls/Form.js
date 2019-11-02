@@ -152,7 +152,6 @@
 				if (value == null || value == "")
 					field.val("").attr("title", "").data("date", null);
                 else {
-                    console.log("Date!", value);
 					var
 						date = moment.parseZone(value),
 						formattedDate = matematici.dateFormatter.format(date);

@@ -12,15 +12,12 @@ namespace CheckListManager.Infrastructure.Logic.Tools
     {
         public DateTimeOffsetConversionRow(string Value, string Format, string TimeZone)
         {
-            var DateTime = System.DateTime.ParseExact(Value, Format ?? "yyyy-MM-dd HH:mm", null);
-            var TimeZoneInfo = System.TimeZoneInfo.FindSystemTimeZoneById(TimeZone);
-            var UTCDateTimeOffset = System.TimeZoneInfo.ConvertTime(DateTime, TimeZoneInfo.Utc);
-            DateTimeOffset = new DateTimeOffset(UTCDateTimeOffset, TimeSpan.Zero);
-            Ambiguous = TimeZoneInfo.IsAmbiguousTime(DateTime);
-            if (Ambiguous) AmbiguousDateTimeOffsets = TimeZoneInfo.GetAmbiguousTimeOffsets(DateTime);
+            DateTimeOffset = DateTimeOffsetHelper.Parse(Value, TimeZone, out var Ambiguous, out var AmbiguousDateTimeOffsets, Format);
+            this.Ambiguous = Ambiguous;
+            this.AmbiguousDateTimeOffsets = AmbiguousDateTimeOffsets;
         }
 
-        public DateTimeOffset DateTimeOffset { get; set; }
+        public DateTimeOffset? DateTimeOffset { get; set; }
         public bool Ambiguous { get; set; }
         public TimeSpan[] AmbiguousDateTimeOffsets { get; set; }
     }

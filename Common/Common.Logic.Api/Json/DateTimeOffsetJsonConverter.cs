@@ -38,7 +38,19 @@ namespace CheckListManager.Common.Logic.Api.Json
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             var timeZone = ((CustomJsonTextReader)reader).Request.Headers.TryGetValues("CompanyTimeZone", out var CompanyTimeZones) ? CompanyTimeZones.Single() : null;
-            return DateTimeOffsetHelper.Parse(reader.Value as string, timeZone, out var Ambiguous, out var TimeSpans);
+            if (reader.Value == null)
+                return null;
+            else if (reader.Value is DateTime dateTimeValue)
+            {
+                if (dateTimeValue.Kind == DateTimeKind.Local)
+                    return new DateTimeOffset(dateTimeValue).ToLocalTime(timeZone);
+                else
+                    return new DateTimeOffset(dateTimeValue, TimeSpan.Zero).ToLocalTime(timeZone);
+            }
+            else if (reader.Value is string stringValue)
+                return DateTimeOffsetHelper.Parse(stringValue, timeZone, out var Ambiguous, out var TimeSpans);
+            else
+                throw new ArgumentException("Invalid serialized DateTimeOffset type");
         }
 
         protected override DateTimeOffset? Create(Type objectType, JObject jsonObject)

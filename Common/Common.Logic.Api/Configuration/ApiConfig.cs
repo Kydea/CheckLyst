@@ -124,7 +124,6 @@ namespace CheckListManager.Common.Logic.Api.Configuration
 			_configuration.DependencyResolver
 				= new AutofacWebApiDependencyResolver(Container);
 
-            _configuration.Services.Replace(typeof(IContentNegotiator), new CustomContentNegotiator()); //before request parsing
             _configuration.Services.Replace(typeof(IContentNegotiator), new CustomContentNegotiator()); //before response creation
             _configuration.Services.Replace(typeof(IExceptionHandler), new DefaultExceptionHandler());
 

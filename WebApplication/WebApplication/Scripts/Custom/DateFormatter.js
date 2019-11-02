@@ -40,11 +40,11 @@
 		}
 	},
 
-    parse: function (yearOrDate, monthOrTime, day, local) {
+    parse: function (yearOrDate, monthOrTime, day) {
         var m = 
-            day != null ? moment.tz(yearOrDate + "-" + monthOrTime + "-" + day, matematici.dateFormatter.dateFormat, local && localStorage.timeZone || 'UTC') : //year, month, day
-                monthOrTime != null ? moment.tz(yearOrDate + " " + monthOrTime, matematici.dateFormatter.dateFormat + " " + matematici.dateFormatter.timeFormat, local && localStorage.timeZone || 'UTC') : //date, time
-                    moment.tz(yearOrDate, matematici.dateFormatter.dateFormat, local && localStorage.timeZone || 'UTC'); //date
+            day != null ? moment(yearOrDate + "-" + monthOrTime + "-" + day, matematici.dateFormatter.dateFormat) : //year, month, day
+                monthOrTime != null ? moment(yearOrDate + " " + monthOrTime, matematici.dateFormatter.dateFormat + " " + matematici.dateFormatter.timeFormat) : //date, time
+                    moment(yearOrDate, matematici.dateFormatter.dateFormat); //date
         return m;
 	},
 
