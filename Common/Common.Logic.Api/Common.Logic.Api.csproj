@@ -164,6 +164,7 @@
     <Compile Include="BaseApiController.cs" />
     <Compile Include="Configuration\ApiConfig.cs" />
     <Compile Include="Configuration\CustomContentNegotiator.cs" />
+    <Compile Include="Configuration\CustomFormatterParameterBinding.cs" />
     <Compile Include="Configuration\DefaultExceptionHandler.cs" />
     <Compile Include="Controllers\ReleaseInfoController.cs" />
     <Compile Include="ErrorResult.cs" />
