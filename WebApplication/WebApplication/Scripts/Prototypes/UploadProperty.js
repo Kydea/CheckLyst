@@ -59,7 +59,7 @@
 						version: prototypeKey.version,
 						attachmentTemporaryKey: prototypes.prototype.getAttachmentTemporaryKey() || '',
 						department: prototypeModel.department || '',
-						prototypeType: prototypes.prototype.getAttachmentTemporaryKey() || '',
+						prototypeType: prototypeModel.prototypeType || '',
 						key: model[property]
 					};
 
@@ -138,7 +138,7 @@
 	};
 
 	this.hasChanges = function () {
-		return !!model[property + "HasValue"];
+		return !!model[property];
 	};
 
 	this.setReadOnly = function (value) {

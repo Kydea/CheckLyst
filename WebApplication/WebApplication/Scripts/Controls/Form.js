@@ -150,12 +150,12 @@
 		setFieldValue = function (field, value) {
 			if (field.data("type") == "DateTimeOffset") {
 				if (value == null || value == "")
-					field.val("").attr("title", "").data("date", null);
+					field.val("").attr("title", "");
                 else {
 					var
 						date = moment.parseZone(value),
 						formattedDate = matematici.dateFormatter.format(date);
-					field.val(formattedDate.date + " " + formattedDate.time).attr("title", formattedDate.offset).data("date", date);
+					field.val(formattedDate.date + " " + formattedDate.time).attr("title", formattedDate.offset);
 				}
 			}
 			else if (field.data("type") == "JSON")
@@ -168,7 +168,7 @@
 			else if (field.attr("type") == "checkbox")
 				field.prop("checked", !!value)
 			else if (field.hasClass("DatePicker"))
-				field.data("datePicker").setDate(value, true);
+				field.data("datePicker").val(value);
 			else
 				field.val(value);
 		},
