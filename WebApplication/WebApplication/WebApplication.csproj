@@ -348,7 +348,7 @@
     <Content Include="Scripts\Libraries\knockout-3.3.0.js" />
     <Content Include="Scripts\Libraries\MicrosoftAjax.js" />
     <Content Include="Scripts\Libraries\modernizr-2.8.3.js" />
-    <Content Include="Scripts\Libraries\moment-0-with-locales-2.24.0.js" />
+    <Content Include="Scripts\Libraries\moment-2.24.0.js" />
     <Content Include="Scripts\Matematici\AnimationManager.js" />
     <Content Include="Scripts\Matematici\Breadcrumbs.js" />
     <Content Include="Scripts\Matematici\Blip.js" />
