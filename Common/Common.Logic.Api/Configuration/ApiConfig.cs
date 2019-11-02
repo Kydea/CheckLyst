@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Formatting;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Web.Compilation;
@@ -15,7 +16,7 @@ using Autofac.Integration.WebApi;
 using CheckListManager.Common.Core.Network;
 using CheckListManager.Common.Logic.Api.Authentication;
 using CheckListManager.Common.Logic.Api.Filters;
-using CheckListManager.Common.Logic.Api.MessageHandlers;
+using CheckListManager.Common.Logic.Api.Json;
 using CheckListManager.Common.Logic.Configuration;
 using Microsoft.Owin;
 using Microsoft.Owin.Cors;
@@ -124,6 +125,7 @@ namespace CheckListManager.Common.Logic.Api.Configuration
 				= new AutofacWebApiDependencyResolver(Container);
 
 			_configuration.Services.Replace(typeof(IExceptionHandler), new DefaultExceptionHandler());
+			_configuration.Services.Replace(typeof(IContentNegotiator), new CustomContentNegotiator());
 
 			_configuration.SuppressDefaultHostAuthentication();
 			_configuration.Filters.Add(new AuthorizeAttribute());
@@ -135,11 +137,9 @@ namespace CheckListManager.Common.Logic.Api.Configuration
 
 			_configuration.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
 			_configuration.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new CheckListJsonConverter(Container));
-            // _configuration.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new DateTimeOffsetJsonConverter(Container));
+            _configuration.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new DateTimeOffsetJsonConverter());
 
             OnConfigureWebApi(_configuration);
-            
-            _configuration.MessageHandlers.Add(new DateTimeOffsetHandler());
 		}
 
 		protected virtual void OnConfigureWebApi(HttpConfiguration configuration)
