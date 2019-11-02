@@ -176,6 +176,7 @@
     <Compile Include="Instances\InstancesService.cs" />
     <Compile Include="Instances\InvalidateCacheRequest.cs" />
     <Compile Include="Json\CustomJsonFormatter.cs" />
+    <Compile Include="Json\CustomJsonTextReader.cs" />
     <Compile Include="Json\CustomJsonTextWriter.cs" />
     <Compile Include="Json\DateTimeOffsetJsonConverter.cs" />
     <Compile Include="Messages\Message.cs" />

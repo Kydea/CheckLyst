@@ -18,16 +18,22 @@ namespace CheckListManager.Common.Logic.Api.Json
 
         public override JsonWriter CreateJsonWriter(Type type, Stream writeStream, Encoding effectiveEncoding)
         {
-            // Base class does validation
+            //base class does validation
             base.CreateJsonWriter(type, writeStream, effectiveEncoding);
 
             JsonWriter jsonWriter = new CustomJsonTextWriter(new StreamWriter(writeStream, effectiveEncoding), Request);
             if (Indent)
-            {
                 jsonWriter.Formatting = Formatting.Indented;
-            }
 
             return jsonWriter;
+        }
+
+        public override JsonReader CreateJsonReader(Type type, Stream readStream, Encoding effectiveEncoding)
+        {
+            //base class does validation
+            base.CreateJsonReader(type, readStream, effectiveEncoding);
+
+            return new CustomJsonTextReader(new StreamReader(readStream, effectiveEncoding), Request);
         }
     }
 }

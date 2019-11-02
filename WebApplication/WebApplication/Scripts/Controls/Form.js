@@ -119,7 +119,7 @@
                     field = $(this),
                     apply = options.searchPage && options.searchPage.isAdvancedSearchMode && options.searchPage.isAdvancedSearchMode() || field.closest("div.AdvancedSearch").length == 0;
                 parameters.data[field.attr("name")] =
-                    field.hasClass("DatePicker") || field.data("type") == "DateTimeOffset" ? (apply ? field.data("date") : null) :
+                    field.hasClass("DatePicker") || field.data("type") == "DateTimeOffset" ? (apply ? field.val() : null) :
 					field.attr("type") == "checkbox" ? (apply ? field.prop("checked") : false) :
                     (apply ? field.val() : "");
 			});

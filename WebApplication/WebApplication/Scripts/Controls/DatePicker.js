@@ -12,12 +12,6 @@
 			return !element.hasClass("Disabled") && !element.prop("readonly");
 		},
 
-		getCurrentDate = function () {
-			var today = new Date();
-			today.setHours(0, 0, 0, 0);
-			return today;
-		},
-
 		createCalendar = function () {
 			calendar = matematici.DatePicker.calendar = new matematici.Calendar();
 		},
@@ -39,7 +33,7 @@
 			calendar.setRange(min, max);
 			calendar.setDatePicker(datePicker);
 			var offset = element.offset();
-			calendar.open(offset.top + element.outerHeight() + 5, offset.left);
+			//calendar.open(offset.top + element.outerHeight() + 5, offset.left);
 
 			setTimeout(function () {
 				$(document).on("click.datePicker", close);
@@ -106,8 +100,10 @@
 				.insertBefore(element)
 				.on("click", function (e) {
 					e.preventDefault();
-					if (calendar.isVisible() && calendar.getDatePicker() == datePicker) close();
-					else open(e);
+                    if (calendar.isVisible() && calendar.getDatePicker() == datePicker)
+                        close();
+                    else
+                        open(e);
 				});
 
 			matematici.elements.window.on("resize", function () {
