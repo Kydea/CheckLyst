@@ -27,9 +27,9 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             return ArgumentValue.Type == DataType.Error ? ArgumentValue : null;
         }
 
-        public override TypedValue GetValue(IElementsBranch ElementsBranch)
+        public override TypedValue GetValue(IElementsBranch ElementsBranch, string TimeZone)
         {
-            var Value = Evaluate(Argument.GetValue(ElementsBranch));
+            var Value = Evaluate(Argument.GetValue(ElementsBranch, TimeZone));
             if (Value == null) throw new NullReferenceException("Software design error");
             return Value;
         }

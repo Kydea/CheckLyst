@@ -24,10 +24,10 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
 
         protected abstract TypedValue GetValue(List<TypedValue> Values);
 
-        public override TypedValue GetValue(IElementsBranch ElementsBranch)
+        public override TypedValue GetValue(IElementsBranch ElementsBranch, string TimeZone)
         {
             var Iterator = (ICheckListGroup)ElementsBranch.Elements[IteratorCode];
-            var Values = Iterator.Iterations.Where(x => !x.Removed).Select(Iteration => Argument.GetValue(Iteration)).ToList();
+            var Values = Iterator.Iterations.Where(x => !x.Removed).Select(Iteration => Argument.GetValue(Iteration, TimeZone)).ToList();
             return Values.FirstOrDefault(TypedValue => TypedValue.Type == DataType.Error) ?? GetValue(Values);
         }
     }

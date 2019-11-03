@@ -352,14 +352,7 @@
                         "The value of the field."
                     ));
                     properties.push(new prototypes.Property(
-                        this, new prototypes.ListProperty(model, "valueTypeName", [
-                            { label: "Text", code: "Text" },
-                            { label: "Boolean", code: "Boolean" },
-                            { label: "Number", code: "Number" },
-                            { label: "Date Time", code: "DateTime" },
-                            { label: "Date", code: "Date" },
-                            { label: "Time", code: "Time" },
-                        ], { readOnly: state != prototypes.Prototype.states.draft }).setHandler(function () {
+                        this, new prototypes.ValueTypeProperty(model, "valueTypeName", { readOnly: state != prototypes.Prototype.states.draft }).setHandler(function () {
                             prepareLinesCount();
                             if (model.valueTypeName != "Text" && model.linesCount > 1) {
                                 var element = item.getElement();

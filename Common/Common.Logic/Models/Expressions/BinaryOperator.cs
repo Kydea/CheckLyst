@@ -36,9 +36,9 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                 null;
         }
 
-        public override TypedValue GetValue(IElementsBranch ElementsBranch)
+        public override TypedValue GetValue(IElementsBranch ElementsBranch, string TimeZone)
         {
-            var Value = Evaluate(Left.GetValue(ElementsBranch), Right.GetValue(ElementsBranch));
+            var Value = Evaluate(Left.GetValue(ElementsBranch, TimeZone), Right.GetValue(ElementsBranch, TimeZone));
             if (Value == null) throw new NullReferenceException("Software design error");
             return Value;
         }

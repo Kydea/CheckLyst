@@ -113,7 +113,7 @@
                     div = $("<div />").addClass("Value").appendTo(element);
                 switch (item && item.type && item.type.typeName) {
                     case "DateTime":
-                        var formattedDate = matematici.dateFormatter.format(new Date(item.value), true);
+                        var formattedDate = matematici.dateFormatter.format(moment.parseZone(item.value));
                         div.html(formattedDate.date + " " + formattedDate.time).attr("title", formattedDate.offset);
                         break;
                     case "Boolean":

@@ -34,11 +34,14 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         [JsonIgnore]
         public DataType ValueType { get; private set; } = DataType.Text;
+
         public string ValueTypeName
         {
             get { return ValueType.TypeName; }
             set { ValueType = DataType.FromName(value); }
         }
+
+        public bool LocalTimeZone { get; set; }
 
         public override ICheckListItem Clone(ICheckListGroup parent)
         {
@@ -49,6 +52,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 Value = Value,
                 ValueFormula = ValueFormula == null ? null : new Formula(ValueFormula.RawValue),
                 ValueTypeName = ValueTypeName,
+                LocalTimeZone = LocalTimeZone,
                 ValuesList = ValuesList,
                 ExternalSourceName = ExternalSourceName,
                 ExternalSourceColumn = ExternalSourceColumn

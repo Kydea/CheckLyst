@@ -41,8 +41,10 @@ namespace CheckListManager.Common.Core.Network
 			_client.DefaultRequestHeaders.Authorization = incomingMessage.Headers.Authorization;
 			if (incomingMessage.Headers.TryGetValues(AwsTraceHeader, out var trace))
 				_client.DefaultRequestHeaders.TryAddWithoutValidation(AwsTraceHeader, trace.First());
+            if (incomingMessage.Headers.TryGetValues("CompanyTimeZone", out var companyTimeZone))
+                _client.DefaultRequestHeaders.TryAddWithoutValidation("CompanyTimeZone", companyTimeZone.Single());
 
-			_configured = true;
+            _configured = true;
 		}
 
 		public Task<HttpResponseMessage> GetAsync(string url)

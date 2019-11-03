@@ -48,9 +48,9 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
         public object RawValue => Value?.Value;
 
-        public void Evaluate(ICheckList instance)
+        public void Evaluate(ICheckList instance, string TimeZone)
         {
-            Value = Root.GetValue(instance);
+            Value = Root.GetValue(instance, TimeZone);
         }
 
         public DataType DataType => Root?.DataType ?? DataType.Error;

@@ -70,15 +70,15 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
             Check(Element, IteratorStack);
         }
 
-        protected virtual TypedValue GetValue(ICheckListElement Element)
+        protected virtual TypedValue GetValue(ICheckListElement Element, string TimeZone)
         {
             return new TypedValue(DataType.Boolean, Element.Valid);
         }
 
-        public override TypedValue GetValue(IElementsBranch ElementsBranch)
+        public override TypedValue GetValue(IElementsBranch ElementsBranch, string TimeZone)
         {
             var Element = ElementsBranch.Elements[Code];
-            return GetValue(Element);
+            return GetValue(Element, TimeZone);
         }
 
         public override string ToString()

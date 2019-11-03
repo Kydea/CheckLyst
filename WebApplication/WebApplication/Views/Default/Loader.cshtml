@@ -18,10 +18,7 @@
             instanceManager = "@(Model.StartsWith("Instances/Detail") || Model.StartsWith("Instances/Create"))" == "True",
             search = "";
 
-        if (instanceManager) {
-            search = window.location.search;
-            if (search == "") search = "?";
-        }
+        if (instanceManager) search = window.location.search;
 
         if (!appMode && navigator.userAgent.match(/iPad/i) != null && instanceManager) {
             url = "checklyst://" + window.location.host + "/" + window.location.pathname + search;
