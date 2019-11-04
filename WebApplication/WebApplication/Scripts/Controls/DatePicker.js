@@ -39,13 +39,6 @@
 			}, 0);
 		},
 
-		setDate = function (value) {
-			var formattedDate = matematici.dateFormatter.format(value);
-			element
-				.val(formattedDate.date)
-				.change();
-		},
-
 		close = function () {
 			calendar.close();
 			$(document).off("click.datePicker");

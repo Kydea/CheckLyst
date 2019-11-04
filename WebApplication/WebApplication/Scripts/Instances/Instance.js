@@ -130,7 +130,6 @@
         },
 
         showArray = function (tr) {
-            console.log($("td", tr).text());
             var content = navigateArray(tr.data("array"));
             matematici.dialog.show($("td", tr).eq(0).text(), content);
         },

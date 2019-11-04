@@ -29,12 +29,11 @@ namespace CheckListManager.Infrastructure.Api.Controllers
 
         [HttpPost]
         [Route("Clock")]
-        public IHttpActionResult Clock(ClockRequest request)
+        public IHttpActionResult Clock()
         {
             return Ok(new ClockResponse
             {
                 ServerTime = DateTimeOffset.UtcNow,
-                LocalTime = request.LocalTime //CheckListManager.Common.Logic.Api.MessageHandlers.DateTimeOffsetHandler will take this DateTimeOffset to the company time zone
             });
         }
     }

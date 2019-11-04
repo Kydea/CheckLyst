@@ -138,8 +138,15 @@ namespace CheckListManager.Prototypes.Api.Controllers
         [Authorize(Roles = "Prototypes#Edit")]
         public IHttpActionResult VerifyExpressions(PrototypeRequest request)
         {
-            return Ok(_prototypeService.VerifyExpressions(request));
-        }
+            try
+            {
+                return Ok(_prototypeService.VerifyExpressions(request));
+            }
+            catch (Exception e)
+            {
+                return Error(e);
+            }
+            }
 
         [HttpPost]
         [Route("Save")]

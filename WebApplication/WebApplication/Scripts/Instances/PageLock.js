@@ -3,7 +3,7 @@
         model = null,
 
         format = function (date) {
-            date = new Date(date);
+            date = moment.parseZone(date);
             return matematici.dateFormatter.both(date, true);
         },
 

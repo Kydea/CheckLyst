@@ -32,7 +32,7 @@ namespace CheckListManager.Common.Logic.Api.Configuration
         private IEnumerable<MediaTypeFormatter> GetFormatters(IEnumerable<MediaTypeFormatter> formatters, HttpRequestMessage request)
         {
             foreach (var formatter in formatters)
-                if (formatter is JsonMediaTypeFormatter jsonFormatter)
+                if (!(formatter is CustomJsonFormatter) && formatter is JsonMediaTypeFormatter jsonFormatter)
                     yield return new CustomJsonFormatter(jsonFormatter, request);
                 else
                     yield return formatter;

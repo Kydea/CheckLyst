@@ -13,9 +13,7 @@ namespace CheckListManager.Common.Logic.Api.Configuration
             var result = base.Negotiate(type, request, formatters);
 
             if (result.Formatter is JsonMediaTypeFormatter jsonFormatter)
-            {
                 result.Formatter = new CustomJsonFormatter(jsonFormatter, request);
-            }
 
             return result;
         }
