@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CheckListManager.Common.Core.Helpers;
 using CheckListManager.Common.Logic.Models;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.Expressions;
@@ -43,6 +44,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public bool LocalTimeZone { get; set; }
 
+        public int Offset { get; private set; }
+
         public override ICheckListItem Clone(ICheckListGroup parent)
         {
             var field = new Field
@@ -64,6 +67,13 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public override void Update(string DecimalSeparator, string TimeZone)
         {
             base.Update(DecimalSeparator, TimeZone);
+            DateTimeOffset? dateTimeOffset = null;
+            if (ValueType == DataType.Date)
+                dateTimeOffset = DateTimeOffsetHelper.Parse(Value, TimeZone, out var Ambiguous, out var AmbiguousDateTimeOffsets, DateTimeOffsetHelper.DateFormat);
+            else if (ValueType == DataType.DateTime)
+                dateTimeOffset = DateTimeOffsetHelper.Parse(Value, TimeZone, out var Ambiguous, out var AmbiguousDateTimeOffsets, $"{DateTimeOffsetHelper.DateFormat} {DateTimeOffsetHelper.TimeFormat}");
+            if (dateTimeOffset.HasValue) Offset = (int)dateTimeOffset.Value.Offset.TotalMinutes;
+
             ValueFormula?.Update(CheckList, RuntimeValues, DecimalSeparator, TimeZone, Iteration?.Indexes);
             if (ValueFormula != null && ValueFormula.HasValue)
                 ConversionError = !ValueType.Validate(ValueFormula.Value);

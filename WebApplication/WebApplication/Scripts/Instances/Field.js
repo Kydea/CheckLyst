@@ -251,7 +251,12 @@
 
         var rawValue = formattedDate ? formattedDate.date + " " + formattedDate.hours + ":" + formattedDate.minutes : model.rawValue;
         field.html(readOnly && rawValue ? rawValue.split('\n').join("<br />") : rawValue).attr("readonly", readOnly);
-        field.attr("title", rawValue + " " + (formattedDate && formattedDate.offset || ""));
+        if (model.valueTypeName == "DateTime" || model.valueTypeName == "Date")
+            if (rawValue)
+                rawValue += " UTC" + (!model.localTimeZone ? "" : (model.offset > 0 ? " +" : " -") + ("" + Math.abs(model.offset) / 60).padStart(2, "0") + ":00")
+            else
+                rawValue = model.localTimeZone ? "Company time zone" : "UTC";
+        element.attr("title", rawValue);
 
         this.setColor(model.color);
 		this.setFontSize(model.fontSize);
