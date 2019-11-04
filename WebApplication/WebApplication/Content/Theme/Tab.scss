@@ -38,7 +38,7 @@ div.TabContainer {
             padding: 0 20px;
             max-width: 100%;
 
-            i.fa.fa-lock {
+            i.fal.fa-lock {
                 margin-left: 5px;
                 font-size: 14px;
             }
@@ -58,7 +58,7 @@ div.TabContainer {
                 &:not(.Selected) {
                     color: $Color-Yellow-Regular;
 
-                    i.fa:not(.fa-lock) {
+                    i.fal:not(.fa-lock) {
                         color: white !important;
                     }
                 }
@@ -82,7 +82,6 @@ div.TabContainer {
     }
 
     &.MultiLine {
-        
     }
 }
 

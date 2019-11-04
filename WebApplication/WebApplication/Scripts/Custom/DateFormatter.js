@@ -48,20 +48,20 @@
         return m;
 	},
 
-	date: function (dateTime, local) {
-		return matematici.dateFormatter.format(dateTime, local).date;
+	date: function (dateTime) {
+		return matematici.dateFormatter.format(dateTime).date;
 	},
 
-	time: function (dateTime, local) {
-		return matematici.dateFormatter.format(dateTime, local).time;
+	time: function (dateTime) {
+		return matematici.dateFormatter.format(dateTime).time;
 	},
 
-    seconds: function (dateTime, local) {
-        return matematici.dateFormatter.format(dateTime, local).seconds;
+    seconds: function (dateTime) {
+        return matematici.dateFormatter.format(dateTime).seconds;
     },
 
-	both: function (dateTime, local) {
-		var format = matematici.dateFormatter.format(dateTime, local);
+	both: function (dateTime) {
+		var format = matematici.dateFormatter.format(dateTime);
 		return format.date + " " + format.time + " " + format.offset;
 	},
 

@@ -37,7 +37,11 @@ namespace CheckListManager.Common.Logic.Api.Json
         
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            var timeZone = ((CustomJsonTextReader)reader).Request.Headers.TryGetValues("CompanyTimeZone", out var CompanyTimeZones) ? CompanyTimeZones.Single() : null;
+            var customReader = (reader as CustomJsonTextReader);
+            var timeZone = customReader == null ? TimeZoneInfo.Utc.Id : customReader.Request.Headers.TryGetValues("CompanyTimeZone", out var CompanyTimeZones) ? CompanyTimeZones.Single() : null;
+            //var timeZone = ((CustomJsonTextReader)reader).Request.Headers.TryGetValues("CompanyTimeZone", out var CompanyTimeZones) ? CompanyTimeZones.Single() : null;
+            //should replace the previous two lines once fixed the cast exception for prototypes with signatures
+
             if (reader.Value == null)
                 return null;
             else if (reader.Value is DateTime dateTimeValue)

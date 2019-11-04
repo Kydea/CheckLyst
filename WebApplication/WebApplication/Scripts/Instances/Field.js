@@ -47,8 +47,11 @@
 			var value = model.valuesList ? select.val() || "" : (input.val() || "").trim();
 			if (!model.valuesList) {
                 if (value != "" && model.valueTypeName == "DateTime") {
-                    var momentDate = matematici.dateFormatter.parse(value, select.val() + ":" + select2.val(), null, true);
-                    value = matematici.dateFormatter.date(momentDate, false) + " " + matematici.dateFormatter.time(momentDate, false);
+                    var
+                        momentDate = matematici.dateFormatter.parse(value, select.val() + ":" + select2.val(), null),
+                        formattedDate = matematici.dateFormatter.format(momentDate);
+
+                    value = formattedDate.date + " " + formattedDate.time;
                 } else if (model.valueTypeName == "Time")
 					value = select.val() != "" && select2.val() != "" ? select.val() + ":" + select2.val() : "";
 				else if (model.valueTypeName == "Boolean")
