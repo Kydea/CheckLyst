@@ -372,9 +372,9 @@
     <Content Include="Scripts\Prototypes\Image.js" />
     <Content Include="Scripts\Prototypes\Attachment.js" />
     <Content Include="Scripts\Prototypes\Link.js" />
-    <Content Include="Scripts\Prototypes\ValueTypeListProperty.js" />
     <Content Include="Scripts\Prototypes\UploadProperty.js" />
     <Content Include="Scripts\Prototypes\CountDownToProperty.js" />
+    <Content Include="Scripts\Prototypes\ValueTypeProperty.js" />
     <Content Include="Scripts\Prototypes\WorkFlowProperty.js" />
     <Content Include="Scripts\Prototypes\ExpressionProperty.js" />
     <Content Include="Scripts\Prototypes\ExpressionsList.js" />
