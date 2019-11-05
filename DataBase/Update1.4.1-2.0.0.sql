@@ -184,3 +184,13 @@ insert into "Trail"."Actions"
 values
 	('Instance downloaded'),
 	('Prototype downloaded');
+
+insert into "Infrastructure"."TimeZones" values 
+	('Atlantic Standard Time', '1'),
+	('E. South America Standard Time', '2'),
+	('SA Western Standard Time', '3'),
+	('W. Europe Standard Time', '4');
+
+update "Infrastructure"."Companies" set "TimeZone" = (select "MicrosoftCode" from "Infrastructure"."TimeZones" where "Code" = "TimeZone");
+
+alter table "Infrastructure"."TimeZones" drop column "MicrosoftCode";

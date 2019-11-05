@@ -191,9 +191,6 @@
     <Compile Include="SettingValues.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="TimeZones.cs">
-      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="UserFunctions.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>

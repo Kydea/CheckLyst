@@ -18,7 +18,7 @@
             instanceManager = "@(Model.StartsWith("Instances/Detail") || Model.StartsWith("Instances/Create"))" == "True",
             search = "",
             iPad =
-                (userAgent.match(/(iPad)/) /* iOS pre 13 */ ||
+                (navigator.userAgent.match(/(iPad)/) /* iOS pre 13 */ ||
                 (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) /* iPad OS 13 */);
 
         if (instanceManager) search = window.location.search;
