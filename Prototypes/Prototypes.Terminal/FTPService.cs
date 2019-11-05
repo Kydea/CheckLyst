@@ -138,7 +138,7 @@ namespace CheckListManager.Prototypes.Terminal
             var PDF = new PrototypePDF(
                 Company.ID,
                 Company.Name,
-                Company.TimeZones.MicrosoftCode,
+                Company.TimeZone,
                 _configurationService.PublicRepositoryUrl,
                 PrototypeVersion,
                 CheckList,

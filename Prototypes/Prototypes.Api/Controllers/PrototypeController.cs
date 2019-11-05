@@ -218,7 +218,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
             var Company = await _commonRepository.GetCompanyAsync(Identity.CompanyId);
             request.CompanyId = Identity.CompanyId;
             request.CompanyName = Company.Name;
-            request.TimeZone = Company.TimeZones.MicrosoftCode;
+            request.TimeZone = Company.TimeZone;
             request.UserCode = Identity.Code;
             await _redisCache.SetAsync($"Token:{Token}", request, "Download", new TimeSpan(0, 1, 0));
             return Ok(new { Token });

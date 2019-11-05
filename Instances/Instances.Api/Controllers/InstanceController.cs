@@ -245,7 +245,7 @@ namespace CheckListManager.Instances.Api.Controllers
             var Company = await _commonRepository.GetCompanyAsync(Identity.CompanyId);
             request.CompanyId = Identity.CompanyId;
             request.CompanyName = Company.Name;
-            request.TimeZone = Company.TimeZones.MicrosoftCode;
+            request.TimeZone = Company.TimeZone;
             request.UserCode = Identity.Code;
             await _redisCache.SetAsync($"Token:{Token}", request, "Download", new TimeSpan(0, 1, 0));
             return Ok(new { Token });
@@ -259,7 +259,7 @@ namespace CheckListManager.Instances.Api.Controllers
             var Data = await _redisCache.GetAsync<InstanceRequest>($"Token:{Token}", "Download");
             await _redisCache.RemoveAsync($"Token:{Token}", "Download");
             var cacheObject = await _instanceManagerService.GetAsync(Data.CompanyId.Value, Data.UserCode, Data.Code);
-            cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(Data.CompanyId.Value), (await _settingService.TimeZoneAsync(Data.CompanyId.Value)).MicrosoftCode, cacheObject);
+            cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(Data.CompanyId.Value), (await _settingService.TimeZoneAsync(Data.CompanyId.Value)), cacheObject);
             cacheObject.Instance.UpdateReadOnly(Data.UserCode, cacheObject.InstanceState);
             var PDF = new InstancePDF(Data.CompanyId.Value, Data.CompanyName, Data.TimeZone, _configurationService.PublicRepositoryUrl, cacheObject, _instancesRepository, _storageService, _configurationService);
 

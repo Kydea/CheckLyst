@@ -97,6 +97,12 @@ namespace CheckListManager.Common.Logic.Services
             return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<string>(companyId, code), RegionName);
         }
 
+        public Task<string> TimeZoneAsync(long companyId)
+        {
+            const string code = "TimeZone";
+            return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await _settingRepository.GetTimeZoneAsync(companyId), RegionName);
+        }
+
         public Task<bool> RequireUserReasonAsync(long companyId)
         {
 	        const string code = "RequireUserReason";
