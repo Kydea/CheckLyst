@@ -21,15 +21,14 @@ extension URL {
     var getParametersForInstance: [String: String]? {
         var urlItems : Dictionary<String, String> = Dictionary()
         let values = self.path.split(separator: "/")
-        
-        if (values.contains("Create")) {
+        if values.contains("Create") {
             if let index = values.index(of: "Create") {
-                urlItems["prototype"] = String(values[index + 1])
-                urlItems["version"] = String(values[index + 2])
+                urlItems["prototype"] = values.count > 2 ? String(values[index + 1]) : ""
+                urlItems["version"] = values.count > 3 ? String(values[index + 2]) : ""
             }
-        } else {
+        } else if values.contains("Detail") {
             if let index = values.index(of: "Detail") {
-                urlItems["code"] = String(values[index + 1])
+                urlItems["code"] = values.count > 2 ? String(values[index + 1]) : ""
             }
         }
         

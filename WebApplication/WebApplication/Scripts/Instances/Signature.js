@@ -151,7 +151,7 @@
 
         if (model.signed) {
             user.val(model.signedBy + " - " + model.signerDescription);
-            var format = matematici.dateFormatter.format(model.signedOn, true);
+            var format = matematici.dateFormatter.format(moment.parseZone(model.signedOn));
             date.val(format.date);
             time.val(format.time + ":" + format.seconds);
             element.attr("title", user.val() + " | " + format.date + " " + " " + format.time + ":" + format.seconds + " " + format.offset);

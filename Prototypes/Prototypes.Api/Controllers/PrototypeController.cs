@@ -138,8 +138,15 @@ namespace CheckListManager.Prototypes.Api.Controllers
         [Authorize(Roles = "Prototypes#Edit")]
         public IHttpActionResult VerifyExpressions(PrototypeRequest request)
         {
-            return Ok(_prototypeService.VerifyExpressions(request));
-        }
+            try
+            {
+                return Ok(_prototypeService.VerifyExpressions(request));
+            }
+            catch (Exception e)
+            {
+                return Error(e);
+            }
+            }
 
         [HttpPost]
         [Route("Save")]
@@ -211,7 +218,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
             var Company = await _commonRepository.GetCompanyAsync(Identity.CompanyId);
             request.CompanyId = Identity.CompanyId;
             request.CompanyName = Company.Name;
-            request.TimeZone = Company.TimeZones.MicrosoftCode;
+            request.TimeZone = Company.TimeZone;
             request.UserCode = Identity.Code;
             await _redisCache.SetAsync($"Token:{Token}", request, "Download", new TimeSpan(0, 1, 0));
             return Ok(new { Token });

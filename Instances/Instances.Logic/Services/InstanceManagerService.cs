@@ -161,7 +161,7 @@ namespace CheckListManager.Instances.Logic.Services
             return cacheObject;
         }
         
-        public async Task<InstanceCacheObject> CreateAsync(IDefaultIdentity identity, string userCode, long prototype, int? version)
+        public async Task<InstanceCacheObject> CreateAsync(IDefaultIdentity identity, string userCode, long prototype, int? version, Dictionary<string, string> parameters)
         {
             try
             {
@@ -199,6 +199,10 @@ namespace CheckListManager.Instances.Logic.Services
                     CreatedOn = DateTimeOffset.UtcNow
                 };
                 cacheObject.Instance.Setup(true);
+                if (parameters != null)
+                    foreach (var parameter in parameters)
+                        if (cacheObject.Instance.Elements.TryGetValue(parameter.Key, out ICheckListElement element) && element is ICheckListItem item)
+                            await HandleValueChangeAsync(cacheObject, userCode, item.Id, parameter.Value);
 
                 await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
 
@@ -233,7 +237,7 @@ namespace CheckListManager.Instances.Logic.Services
                     throw new InstanceException("Access denied");
 
                 cacheObject.InstanceState = InstanceState.Progress;
-                cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(identity.CompanyId), (await _settingService.TimeZoneAsync(identity.CompanyId)).MicrosoftCode, cacheObject);
+                cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(identity.CompanyId), (await _settingService.TimeZoneAsync(identity.CompanyId)), cacheObject);
 
                 if (!cacheObject.Instance.Header.Valid)
                     throw new InstanceException("Header not valid");
@@ -268,7 +272,7 @@ namespace CheckListManager.Instances.Logic.Services
                         ((Page)cacheObject.Instance.Pages[0]).Lock = new Lock(identity.Code);
                     cacheObject.IsDirty = false;
 
-                    cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(identity.CompanyId), (await _settingService.TimeZoneAsync(identity.CompanyId)).MicrosoftCode, cacheObject); //new update to consider the database values 
+                    cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(identity.CompanyId), (await _settingService.TimeZoneAsync(identity.CompanyId)), cacheObject); //new update to consider the database values 
 
                     _instancesRepository.SaveChildren(row, CreateTags(cacheObject), CreateExpressionValues(cacheObject));
 
@@ -351,7 +355,7 @@ namespace CheckListManager.Instances.Logic.Services
                 if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
                     throw new InstanceException("Access denied");
 
-                cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(identity.CompanyId), (await _settingService.TimeZoneAsync(identity.CompanyId)).MicrosoftCode, cacheObject);
+                cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(identity.CompanyId), (await _settingService.TimeZoneAsync(identity.CompanyId)), cacheObject);
                 var InvalidItems = cacheObject.Instance.Items.Values.Where(i => !i.Removed && !i.Valid && !i.IteratorModelItem);
                 if (InvalidItems.Any())
                     throw new InstanceException($"The following items are not valid: {string.Join(", ", InvalidItems.Select(i => i.Id.ToString()))}");
@@ -505,7 +509,7 @@ namespace CheckListManager.Instances.Logic.Services
                     throw new InstanceException("Instance not found");
                 }
 
-                cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(cacheObject.CompanyId), (await _settingService.TimeZoneAsync(cacheObject.CompanyId)).MicrosoftCode, cacheObject);
+                cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(cacheObject.CompanyId), (await _settingService.TimeZoneAsync(cacheObject.CompanyId)), cacheObject);
                 row.Data = JsonConvert.SerializeObject(cacheObject.Instance, _converter);
                 row.Description = cacheObject.Instance.Description;
                 row.FileName =
@@ -637,7 +641,7 @@ namespace CheckListManager.Instances.Logic.Services
                     parameters = parameters,
                     page = page,
                     decimalSeparator = await _settingService.DecimalSeparatorAsync(identity.CompanyId),
-                    timeZone = (await _commonRepository.GetCompanyAsync(identity.CompanyId)).TimeZones.MicrosoftCode
+                    timeZone = (await _commonRepository.GetCompanyAsync(identity.CompanyId)).TimeZone
                 }, "S2S", new TimeSpan(0, 1, 0));
                 var response = await _client.PostAsync("DataSources/Data/GetDataSourceRows", new TokenRequest { token = token });
                 var responseData = await response.Content.ReadAsStringAsync();
@@ -853,11 +857,12 @@ namespace CheckListManager.Instances.Logic.Services
             }
             finally
             {
-				Logger.Info($"Handle Event {request.Type} timings:{Environment.NewLine}" +
-				            $"Initial get: {initialGetTime}{Environment.NewLine}" +
-				            $"Lock: {lockTime}{Environment.NewLine}" +
-				            $"Get: {getTime}{Environment.NewLine}" +
-				            $"Handle: {handleTime}{Environment.NewLine}");
+				Logger.Info(
+                    $"Handle Event {request.Type} timings:{Environment.NewLine}" +
+				    $"Initial get: {initialGetTime}{Environment.NewLine}" +
+				    $"Lock: {lockTime}{Environment.NewLine}" +
+				    $"Get: {getTime}{Environment.NewLine}" +
+				    $"Handle: {handleTime}{Environment.NewLine}");
                 lockObject?.Dispose();
             }
         }
@@ -902,21 +907,31 @@ namespace CheckListManager.Instances.Logic.Services
 
             var maxSize = await _settingService.InstancesAttachmentMaxSizeBytesAsync(identity.CompanyId);
             if (attachment.Buffer.Length > maxSize)
-            {
                 throw new InstanceException($"The file exceed the file size limit of {maxSize.BytesCountToString()}");
-            }
             
             var key = $"{GetAttachmentKeyPrefix(identity, cacheObject)}{itemId.Value}{extension}";
             using (var memoryStream = new MemoryStream(attachment.Buffer))
             {
                 var success = await _storageService.PutAsync(_configurationService.InstancesStorageBucket, key, memoryStream);
                 if (!success)
-                {
                     throw new InstanceException("Impossible to upload the attachment to the storage");
-                }
             }
 
             item.Key = key;
+
+            await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+            {
+                Company = cacheObject.CompanyId,
+                User = identity.Code,
+                Action = TrailAction.InstanceValueChanged,
+                Date = DateTimeOffset.UtcNow,
+                CheckList = cacheObject.InstanceCode,
+                Information = JsonConvert.SerializeObject(new
+                {
+                    Id = itemId,
+                    attachment.FileName
+                })
+            });
 
             await Update(cacheObject, identity.Code);
         }
@@ -956,12 +971,32 @@ namespace CheckListManager.Instances.Logic.Services
 
             if ((value ?? string.Empty) != (field.Value ?? string.Empty) && field.Validate(value))
             {
+                string
+                    oldFormattedValue = field.Value,
+                    formattedValue = value;
+
+                if (field.ValueTypeName == "DateTime")
+                {
+                    string TimeZone = (await _settingService.TimeZoneAsync(cacheObject.CompanyId));
+
+                    if (DateTimeOffset.TryParseExact(oldFormattedValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out var Date))
+                        oldFormattedValue = Date.Format(TimeZone);
+                    else
+                        oldFormattedValue = string.Empty;
+
+                    if (DateTimeOffset.TryParseExact(formattedValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out Date))
+                        formattedValue = Date.Format(TimeZone);
+                    else
+                        formattedValue = string.Empty;
+                }
+
                 field.History.Add(new FieldRecord
                 {
                     DateTime = DateTimeOffset.UtcNow,
                     User = userCode,
-                    Value = value
+                    Value = formattedValue
                 });
+
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
                     Company = cacheObject.CompanyId,
@@ -972,8 +1007,8 @@ namespace CheckListManager.Instances.Logic.Services
                     Information = JsonConvert.SerializeObject(new
                     {
                         Id = itemId,
-                        OldValue = field.Value,
-                        NewValue = value,
+                        OldValue = oldFormattedValue,
+                        NewValue = formattedValue
                     })
                 });
                 field.Value = value;
@@ -1006,11 +1041,30 @@ namespace CheckListManager.Instances.Logic.Services
 
             if ((value ?? string.Empty) != (field.Value ?? string.Empty) && field.Validate(value))
             {
+                string
+                    oldFormattedValue = field.Value,
+                    formattedValue = value;
+
+                if (field.ValueTypeName == "DateTime")
+                {
+                    string TimeZone = (await _settingService.TimeZoneAsync(cacheObject.CompanyId));
+
+                    if (DateTimeOffset.TryParseExact(oldFormattedValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out var Date))
+                        oldFormattedValue = Date.Format(TimeZone);
+                    else
+                        oldFormattedValue = string.Empty;
+
+                    if (DateTimeOffset.TryParseExact(formattedValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out Date))
+                        formattedValue = Date.Format(TimeZone);
+                    else
+                        formattedValue = string.Empty;
+                }
+
                 field.History.Add(new FieldRecord
                 {
                     DateTime = DateTimeOffset.UtcNow,
                     User = userCode,
-                    Value = value
+                    Value = formattedValue
                 });
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
@@ -1022,8 +1076,8 @@ namespace CheckListManager.Instances.Logic.Services
                     Information = JsonConvert.SerializeObject(new
                     {
                         Id = itemId,
-                        OldValue = field.Value,
-                        NewValue = value,
+                        OldValue = oldFormattedValue,
+                        NewValue = formattedValue
                     })
                 });
                 field.Value = value;
@@ -1131,7 +1185,7 @@ namespace CheckListManager.Instances.Logic.Services
             if (signature.Signed)
                 throw new Exception("The signature is already signed");
 
-            signature.TrySign(await _settingService.DecimalSeparatorAsync(cacheObject.CompanyId), (await _settingService.TimeZoneAsync(cacheObject.CompanyId)).MicrosoftCode, userCode);
+            signature.TrySign(await _settingService.DecimalSeparatorAsync(cacheObject.CompanyId), (await _settingService.TimeZoneAsync(cacheObject.CompanyId)), userCode);
         }
 
         private async Task HandleSignatureAsync(InstanceCacheObject cacheObject, IDefaultIdentity identity, InstanceEventRequest request)
@@ -1156,7 +1210,7 @@ namespace CheckListManager.Instances.Logic.Services
                 if (!request.Simple && string.IsNullOrEmpty(request.Pin))
                     throw new InstanceException("Provide your PIN");
 
-                signature.TrySign(await _settingService.DecimalSeparatorAsync(cacheObject.CompanyId), (await _settingService.TimeZoneAsync(cacheObject.CompanyId)).MicrosoftCode, identity.Code);
+                signature.TrySign(await _settingService.DecimalSeparatorAsync(cacheObject.CompanyId), (await _settingService.TimeZoneAsync(cacheObject.CompanyId)), identity.Code);
 
                 try
                 {
@@ -1453,7 +1507,7 @@ namespace CheckListManager.Instances.Logic.Services
                 || !HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType)
                 || cacheObject.Year == 0 && !cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation);
 
-            cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(identity.CompanyId), (await _settingService.TimeZoneAsync(identity.CompanyId)).MicrosoftCode, cacheObject);
+            cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(identity.CompanyId), (await _settingService.TimeZoneAsync(identity.CompanyId)), cacheObject);
             cacheObject.Instance.UpdateReadOnly(lockUser ?? identity.Code, cacheObject.InstanceState);
 
             return cacheObject.Instance;

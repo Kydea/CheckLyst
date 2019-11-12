@@ -1,6 +1,8 @@
-﻿using CheckListManager.Common.Logic.Api;
+﻿using CheckListManager.Common.Core.Helpers;
+using CheckListManager.Common.Logic.Api;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Infrastructure.Logic.Companies;
+using CheckListManager.Infrastructure.Logic.Information;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,9 +31,9 @@ namespace CheckListManager.Infrastructure.Api.Controllers
         [Route("Clock")]
         public IHttpActionResult Clock()
         {
-            return Ok(new
+            return Ok(new ClockResponse
             {
-                ServerTime = DateTimeOffset.UtcNow
+                ServerTime = DateTimeOffset.UtcNow,
             });
         }
     }

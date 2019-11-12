@@ -3,14 +3,13 @@ create schema "Infrastructure";
 create table "Infrastructure"."TimeZones"
 (
     "Code" varchar (100) primary key,
-    "MicrosoftCode" varchar (100) not null
 );
 
 insert into "Infrastructure"."TimeZones" values 
-	('Europe/Rome', 'W. Europe Standard Time'),
-	('America/Puerto_Rico', 'SA Western Standard Time'),
-	('America/Sao_Paulo', 'E. South America Standard Time'),
-  ('Europe/Zurich' ,'W. Europe Standard Time');
+	('Atlantic Standard Time'),
+	('E. South America Standard Time', '3'),
+	('SA Western Standard Time', '2'),
+	('W. Europe Standard Time', '1');
 
 create table "Infrastructure"."Companies"
 (

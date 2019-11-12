@@ -4,7 +4,7 @@
 		check,
 		datePicker,
 		change = function () {
-			var date = datePicker.getDate();
+			var date = datePicker.getValue();
         	if (check)
         	    for (var index in check)
         	        if (!check[index].action.call(this, date)) {
@@ -34,7 +34,7 @@
 		valuePanel.append($("<label >").append(input));
 		datePicker = new matematici.DatePicker(input);
 		if (!!model[property])
-			datePicker.setDate(new Date(model[property]), true);
+			datePicker.setValue(model[property]);
 		if (!options.readOnly)
 			input
 				.addClass("DatePicked")

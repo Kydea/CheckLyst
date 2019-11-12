@@ -6,7 +6,8 @@ namespace CheckListManager.Trail.Logic.Services
     public class UsersListRequest : Request
     {
         public long? CompanyId { get; set; }
-        
+        public string TimeZone { get; set; }
+
         public DateTimeOffset? From { get; set; }
         public DateTimeOffset? To { get; set; }
         public DateTimeOffset? WholeTo => To?.AddDays(1);

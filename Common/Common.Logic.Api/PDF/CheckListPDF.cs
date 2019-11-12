@@ -65,6 +65,8 @@ namespace CheckListManager.Common.Logic.Api.PDF
             await GenerateFirstPage().RenderAsync();
             await AddSectionAsync();
 
+            await OnRenderAttachmentsListAsync();
+
             var Header = Model.Header;
             if (Header != null && Header is ICheckListGroup)
                 await new Group(this, Header).RenderAsync();
@@ -76,8 +78,61 @@ namespace CheckListManager.Common.Logic.Api.PDF
             }
         }
 
+        private Task<List<ICheckListItem>> GetAttachmentsList()
+        {
+            List<ICheckListItem> AttachmentsList = new List<ICheckListItem>();
+            bool IsAttachment(ICheckListItem Item) => Item is ICheckListAttachmentBase; 
+
+            void Traverse(ICheckListGroup Group)
+            {
+                Group.Items.ForEach(Item =>
+                {
+                    if (IsAttachment(Item))
+                        AttachmentsList.Add(Item);
+                    else if (Item is ICheckListGroup checkListGroup)
+                        Traverse(checkListGroup);
+                });
+            };
+
+            if (Model.Header != null && Model.Header is ICheckListGroup Header)
+                Traverse(Header);
+
+            foreach (var Element in Model.Pages)
+                Element.Groups.ForEach(Traverse);
+
+            return Task.FromResult(AttachmentsList);
+        }
+
+        private async Task OnRenderAttachmentsListAsync()
+        {
+            var Attachments = await GetAttachmentsList();
+
+            if (Attachments.Any())
+            {
+                Container.AddPageBreak();
+                var Paragraph = Container.AddParagraph("Attachments").SetFont(TitleFont1);
+                Paragraph.Format.SpaceAfter = 10;
+
+                var Table = new PdfPTable(2);
+
+                int Index = 1;
+                foreach (var Attachment in Attachments)
+                {
+                    Table.AddCell(new PdfPCell(new Paragraph().SetText($"Attachment #{Index}", GenericFont).Padding(5)));
+                    Table.AddCell(new PdfPCell(new Paragraph().SetText(Attachment.Description, GenericFont).Padding(5)));
+                    Index++;
+                }
+
+                Container.Add(Table);
+                await AddSectionAsync();
+            }
+        }
+
         protected override async Task OnRenderAttachmentsAsync()
         {
+            if (!Attachments.Any())
+                return;
+
             DocumentBuilder.RenderPdfDocument();
             await this.AddSectionAsync();
             Container.RemovePageCount();

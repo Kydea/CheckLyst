@@ -3,7 +3,7 @@
         countDown = this,
         element,
         interval,
-        date = new Date(dateString),
+        date = moment.parseZone(dateString),
         lastHours = null, //for debug
 
         update = function () {
@@ -24,7 +24,7 @@
                 new instances.Event(instances.Events.countDown, itemId).trigger();
                 clear();
             } else {
-                $("span.Interval", element).html("<i class='fa fa-long-arrow-down'></i>" + matematici.dateFormatter.both(serverTime, true) + "<br />" + matematici.dateFormatter.both(date, true));
+                $("span.Interval", element).html("<i class='fa fa-long-arrow-down'></i>" + matematici.dateFormatter.both(serverTime) + "<br />" + matematici.dateFormatter.both(date));
 				$("span.Time", element).text(milliseconds >= 0 ? (hours > 0 ? hours + ":" : "") + (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds) : "00:00");
             }
         },
@@ -36,7 +36,7 @@
         },
 
         setup = function () {
-			var oldCountDown = parent.removeClass("CountDownOn").data("CountDown");
+            var oldCountDown = parent.removeClass("CountDownOn").data("CountDown");
 			if (oldCountDown)  oldCountDown.clear();
 
 			if (date > matematici.clock.getTime()) {

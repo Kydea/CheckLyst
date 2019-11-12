@@ -25,7 +25,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
                 DataType.DateTime;
         }
 
-        protected override TypedValue GetValue(ICheckListElement Element)
+        protected override TypedValue GetValue(ICheckListElement Element, string TimeZone)
         {
             var Signature = (ICheckListSignature)Element;
             return

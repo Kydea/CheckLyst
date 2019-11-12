@@ -119,7 +119,7 @@
                     field = $(this),
                     apply = options.searchPage && options.searchPage.isAdvancedSearchMode && options.searchPage.isAdvancedSearchMode() || field.closest("div.AdvancedSearch").length == 0;
                 parameters.data[field.attr("name")] =
-                    field.hasClass("DatePicker") || field.data("type") == "DateTimeOffset" ? (apply ? field.data("date") : null) :
+                    field.hasClass("DatePicker") || field.data("type") == "DateTimeOffset" ? (apply ? field.val() : null) :
 					field.attr("type") == "checkbox" ? (apply ? field.prop("checked") : false) :
                     (apply ? field.val() : "");
 			});
@@ -150,12 +150,12 @@
 		setFieldValue = function (field, value) {
 			if (field.data("type") == "DateTimeOffset") {
 				if (value == null || value == "")
-					field.val("").attr("title", "").data("date", null);
-				else {
+					field.val("").attr("title", "");
+                else {
 					var
-						date = new Date(value),
-						formattedDate = matematici.dateFormatter.format(date, true);
-					field.val(formattedDate.date + " " + formattedDate.time).attr("title", formattedDate.offset).data("date", date);
+						date = moment.parseZone(value),
+						formattedDate = matematici.dateFormatter.format(date);
+					field.val(formattedDate.date + " " + formattedDate.time).attr("title", formattedDate.offset);
 				}
 			}
 			else if (field.data("type") == "JSON")
@@ -168,7 +168,7 @@
 			else if (field.attr("type") == "checkbox")
 				field.prop("checked", !!value)
 			else if (field.hasClass("DatePicker"))
-				field.data("datePicker").setDate(value, true);
+				field.data("datePicker").val(value);
 			else
 				field.val(value);
 		},
@@ -285,9 +285,7 @@
 
 	this.setValue = function (name, value) {
 		var field = fields.filter("[name=" + name + "]");
-		if (field.length) {
-			setFieldValue(field, value);
-		}
+		if (field.length) setFieldValue(field, value);
 	};
 
 	this.getOptions = function () {

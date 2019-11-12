@@ -348,6 +348,7 @@
     <Content Include="Scripts\Libraries\knockout-3.3.0.js" />
     <Content Include="Scripts\Libraries\MicrosoftAjax.js" />
     <Content Include="Scripts\Libraries\modernizr-2.8.3.js" />
+    <Content Include="Scripts\Libraries\moment-2.24.0.js" />
     <Content Include="Scripts\Matematici\AnimationManager.js" />
     <Content Include="Scripts\Matematici\Breadcrumbs.js" />
     <Content Include="Scripts\Matematici\Blip.js" />
@@ -364,10 +365,6 @@
     <Content Include="Scripts\Matematici\Page.js" />
     <Content Include="Scripts\Matematici\Tab.js" />
     <Content Include="Scripts\Matematici\Touch.js" />
-    <Content Include="Scripts\Libraries\moment-1-with-locales.js" />
-    <Content Include="Scripts\Libraries\moment-0.js" />
-    <Content Include="Scripts\Libraries\moment-3-timezone-with-data.js" />
-    <Content Include="Scripts\Libraries\moment-2-timezone.js" />
     <Content Include="Scripts\Prototypes\EmailProperty.js" />
     <Content Include="Scripts\Prototypes\BooleanProperty.js" />
     <Content Include="Scripts\Custom\WorkFlowSignature.js" />
@@ -377,6 +374,7 @@
     <Content Include="Scripts\Prototypes\Link.js" />
     <Content Include="Scripts\Prototypes\UploadProperty.js" />
     <Content Include="Scripts\Prototypes\CountDownToProperty.js" />
+    <Content Include="Scripts\Prototypes\ValueTypeProperty.js" />
     <Content Include="Scripts\Prototypes\WorkFlowProperty.js" />
     <Content Include="Scripts\Prototypes\ExpressionProperty.js" />
     <Content Include="Scripts\Prototypes\ExpressionsList.js" />

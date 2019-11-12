@@ -14,13 +14,20 @@
 
         var
             url,
-            appMode = "@(ViewBag.AppMode)" == "True" 
+            appMode = "@(ViewBag.AppMode)" == "True",
+            instanceManager = "@(Model.StartsWith("Instances/Detail") || Model.StartsWith("Instances/Create"))" == "True",
+            search = "",
+            iPad =
+                (navigator.userAgent.match(/(iPad)/) /* iOS pre 13 */ ||
+                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) /* iPad OS 13 */);
 
-        if (!appMode && navigator.userAgent.match(/iPad/i) != null && "@(Model.StartsWith("Instances/Detail") || Model.StartsWith("Instances/Create"))" == "True") {
-            url = "checklyst://" + window.location.host + "/" + window.location.pathname;
+        if (instanceManager) search = window.location.search;
+
+        if (!appMode && iPad && instanceManager) {
+            url = "checklyst://" + window.location.host + "/" + window.location.pathname + search;
             window.location = url;
         } else {
-            url = "@Model@(ViewBag.AppMode ? "?AppUser=" + ViewBag.AppUser : string.Empty)";
+            url = "@Model" + (search || "?") + "@Html.Raw(ViewBag.AppMode ? "&AppUser=" + ViewBag.AppUser : string.Empty)";
             matematici.navigator.open(url);
         }
 

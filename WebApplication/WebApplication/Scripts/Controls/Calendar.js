@@ -73,9 +73,8 @@
                 )
                 .on("click", "td.Active", function () {
                     var item = $(this);
-					if (clickHandler) clickHandler(item);
-					var value = matematici.dateFormatter.parse(values.year, values.month, item.text(), true).toDate();
-					if (elements.datePicker) elements.datePicker.setDate(value, true);
+                    if (clickHandler) clickHandler(item);
+                    if (elements.datePicker) elements.datePicker.setValue(("" + values.year).padStart(4, "0") + "-" + ("" + values.month).padStart(2, "0") + "-" + ("" + item.text()).padStart(2, "0"));
                     if (popup) calendar.close();
                 })
                 .on("click", "a.PreviousMonth.Active", function () {
@@ -149,8 +148,15 @@
         elements.datePicker = value;
         var
             text = elements.datePicker.getValue(),
-            date = text == "" || !text ? getCurrentDate() : matematici.dateFormatter.parse(text, "00:00", null, false).toDate();
-        calendar.setMonth(date.getUTCMonth() + 1, date.getUTCFullYear());
+            tokens = text == "" || !text ? [] : text.split("-"),
+            year = tokens.length == 3 ? parseInt(tokens[0]) : NaN,
+            month = tokens.length == 3 ? parseInt(tokens[1]) : NaN;
+
+        if (isNaN(year) || isNaN(month) || year < 0 || year > 9999 || month < 1 || month > 12) {
+            var date = getCurrentDate();
+            calendar.setMonth(date.getUTCMonth() + 1, date.getUTCFullYear());
+        } else
+            calendar.setMonth(month, year);
     };
 
     this.open = function (top, left) {

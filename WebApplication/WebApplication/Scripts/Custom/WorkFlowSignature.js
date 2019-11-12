@@ -31,9 +31,9 @@
 				approved: approved,
 				applicationStep: options.applicationStep,
 				validFromNow: options.model ? validityStartType.filter(":checked").val() == "1" : false,
-				validFrom: options.model && validityStartType.filter(":checked").val() == "2" ? validityStart.data("date") && validityStart.data("date").toJSON() : null,
+				validFrom: options.model && validityStartType.filter(":checked").val() == "2" ? validityStart.val() : null,
 				validUntilNow: options.model ? validityEndType.filter(":checked").val() == "1" : false,
-				validUntil: options.model && validityEndType.filter(":checked").val() == "2" ? validityEnd.data("date") && validityEnd.data("date").toJSON() : null,
+				validUntil: options.model && validityEndType.filter(":checked").val() == "2" ? validityEnd.val() : null,
 				comment: $("textarea#Comment", element).val(),
 				password: $("input#Password", element).val(),
 				modifiedBy: options.concurrencyInformation.modifiedBy,
@@ -51,15 +51,15 @@
 			});
 
 			if (options.model) {
-				if (!model.validFromNow && !validityStart.data("date")) {
+				if (!model.validFromNow && !validityStart.val()) {
 					matematici.controls.setValidationMessages(validityStart, [{ message: "Specify a date" }])
 					error = true;
 				}
-				if (validityEndType.filter(":checked").val() == "2" && !validityEnd.data("date")) {
+				if (validityEndType.filter(":checked").val() == "2" && !validityEnd.val()) {
 					matematici.controls.setValidationMessages(validityEnd, [{ message: "Specify a date" }])
 					error = true;
 				}
-				if (!error && !model.validFromNow && validityEndType.filter(":checked").val() == "2" && validityEnd.data("date") <= validityStart.data("date")) {
+				if (!error && !model.validFromNow && validityEndType.filter(":checked").val() == "2" && validityEnd.val() <= validityStart.val()) {
 					matematici.controls.setValidationMessages(validityEnd, [{ message: "Validity end is before validity start" }])
 					error = true;
 				}
@@ -77,8 +77,9 @@
 
 			$.ajax({
 				url: matematici.urls.api + "/WorkFlows/Applications/Sign",
-				type: "post",
-				data: model
+                type: "post",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(model)
 			}).done(options.done);
 		},
 
@@ -90,7 +91,7 @@
 				ajax: {
 					url: matematici.urls.workflows.signature,
 					type: "POST",
-					callback: function () {
+                    callback: function () {
 						$("#Reason", element).val(options.reason);
 						$("#Username", element).val(matematici.tokenManager.getUserCode());
 
@@ -110,7 +111,7 @@
 
 							validityStartType.eq(options.model.validFrom ? 1 : 0).prop("checked", true);
 							if (options.model.validFrom)
-								validityStart.data("datePicker").setDate(options.model.validFrom, true);
+								validityStart.data("datePicker").setValue(options.model.validFrom);
 							if (options.model.state != prototypes.Prototype.states.approval) {
 								matematici.controls.setEditable(validityStart, false);
 								validityStartType.prop("disabled", true);
@@ -121,7 +122,7 @@
 
 							validityEndType.eq(options.model.state != prototypes.Prototype.states.approval ? 1 : options.model.validUntil ? 2 : 0).prop("checked", true);
 							if (options.model.validUntil)
-								validityEnd.data("datePicker").setDate(options.model.validUntil, true);
+                                validityEnd.data("datePicker").setValue(options.model.validUntil);
 							if (options.model.state == prototypes.Prototype.states.approval)
 								validityEndType.eq(1).parent().hide();
 

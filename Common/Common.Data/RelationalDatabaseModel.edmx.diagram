@@ -10,8 +10,6 @@
         <EntityTypeShape EntityType="RelationalDatabaseModel.Users" Width="1.5" PointX="5.25" PointY="4.625" IsExpanded="true" />
         <AssociationConnector Association="RelationalDatabaseModel.Departments_Company_fkey" ManuallyRouted="false" />
         <AssociationConnector Association="RelationalDatabaseModel.Users_Company_fkey" ManuallyRouted="false" />
-        <EntityTypeShape EntityType="RelationalDatabaseModel.TimeZones" Width="1.5" PointX="0.75" PointY="4.5" />
-        <AssociationConnector Association="RelationalDatabaseModel.Companies_TimeZone_fkey" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.UserSessions" Width="1.5" PointX="7.5" PointY="4.75" />
         <AssociationConnector Association="RelationalDatabaseModel.UserSessions_Company_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.UserSessions_User" />

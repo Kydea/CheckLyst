@@ -1,7 +1,7 @@
 ﻿matematici.dateFormatter = {
-	format: function (dateTime, local) {
-		var
-			momentDate = moment(dateTime).tz(local && localStorage.timeZone || 'UTC'),
+	format: function (dateTime) {
+        var
+            momentDate = dateTime, //moment(dateTime); //.tz(local && localStorage.timeZone || 'UTC'),
 			valid = momentDate.isValid(),
 
 			date = function () {
@@ -25,7 +25,7 @@
             },
 
 			offset = function () {
-				var offset = valid && local ? momentDate.utcOffset() / 60 : 0;
+				var offset = valid ? momentDate.utcOffset() / 60 : 0;
 				return valid ? "UTC" + (offset == 0 ? "" : offset >= 0 ? " +" : " -") + (offset > 9 || offset < -9 || offset == 0 ? "" : "0") + (offset == 0 ? "" : Math.abs(offset) + ":00") : "";
 			};
 
@@ -40,28 +40,28 @@
 		}
 	},
 
-    parse: function (yearOrDate, monthOrTime, day, local) {
+    parse: function (yearOrDate, monthOrTime, day) {
         var m = 
-            day != null ? moment.tz(yearOrDate + "-" + monthOrTime + "-" + day, matematici.dateFormatter.dateFormat, local && localStorage.timeZone || 'UTC') : //year, month, day
-                monthOrTime != null ? moment.tz(yearOrDate + " " + monthOrTime, matematici.dateFormatter.dateFormat + " " + matematici.dateFormatter.timeFormat, local && localStorage.timeZone || 'UTC') : //date, time
-                    moment.tz(yearOrDate, matematici.dateFormatter.dateFormat, local && localStorage.timeZone || 'UTC'); //date
+            day != null ? moment(yearOrDate + "-" + monthOrTime + "-" + day, matematici.dateFormatter.dateFormat) : //year, month, day
+                monthOrTime != null ? moment(yearOrDate + " " + monthOrTime, matematici.dateFormatter.dateFormat + " " + matematici.dateFormatter.timeFormat) : //date, time
+                    moment(yearOrDate, matematici.dateFormatter.dateFormat); //date
         return m;
 	},
 
-	date: function (dateTime, local) {
-		return matematici.dateFormatter.format(dateTime, local).date;
+	date: function (dateTime) {
+		return matematici.dateFormatter.format(dateTime).date;
 	},
 
-	time: function (dateTime, local) {
-		return matematici.dateFormatter.format(dateTime, local).time;
+	time: function (dateTime) {
+		return matematici.dateFormatter.format(dateTime).time;
 	},
 
-    seconds: function (dateTime, local) {
-        return matematici.dateFormatter.format(dateTime, local).seconds;
+    seconds: function (dateTime) {
+        return matematici.dateFormatter.format(dateTime).seconds;
     },
 
-	both: function (dateTime, local) {
-		var format = matematici.dateFormatter.format(dateTime, local);
+	both: function (dateTime) {
+		var format = matematici.dateFormatter.format(dateTime);
 		return format.date + " " + format.time + " " + format.offset;
 	},
 

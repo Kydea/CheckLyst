@@ -31,7 +31,7 @@
                 && value.toLowerCase().indexOf("/dashboard") == -1
             ) {
                 localStorage.redirectUrl = value;
-                console.log(value);
+                localStorage.redirectTime = new Date();
             }
             return this;
         },
@@ -51,7 +51,7 @@
 
         buildUrl: function (path, relative) {
             if (relative) path = basePath + path;
-            return path + (path.indexOf("?") >= 0 ? "&" : "?") + "d=" + new Date().getTime();
+            return path; // + (path.indexOf("?") >= 0 ? "&" : "?") + "d=" + new Date().getTime();
         },
 
         navigate: function (path, relative) {
@@ -151,7 +151,7 @@
                 //console.log("ajaxing " + e.path);
 
                 matematici.loader.show();
-                this.setLastPath(e.path);
+                this.setLastPath(e.value);
 
                 //highlight current menu
                 $(".MenuItem", matematici.elements.menu).removeClass("Current");

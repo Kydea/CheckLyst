@@ -163,6 +163,8 @@
     <Compile Include="Authentication\DefaultAuthenticationFilter.cs" />
     <Compile Include="BaseApiController.cs" />
     <Compile Include="Configuration\ApiConfig.cs" />
+    <Compile Include="Configuration\CustomContentNegotiator.cs" />
+    <Compile Include="Configuration\CustomFormatterParameterBinding.cs" />
     <Compile Include="Configuration\DefaultExceptionHandler.cs" />
     <Compile Include="Controllers\ReleaseInfoController.cs" />
     <Compile Include="ErrorResult.cs" />
@@ -174,6 +176,10 @@
     <Compile Include="Instances\IInstancesService.cs" />
     <Compile Include="Instances\InstancesService.cs" />
     <Compile Include="Instances\InvalidateCacheRequest.cs" />
+    <Compile Include="Json\CustomJsonFormatter.cs" />
+    <Compile Include="Json\CustomJsonTextReader.cs" />
+    <Compile Include="Json\CustomJsonTextWriter.cs" />
+    <Compile Include="Json\DateTimeOffsetJsonConverter.cs" />
     <Compile Include="Messages\Message.cs" />
     <Compile Include="Messages\TokenRequest.cs" />
     <Compile Include="Messages\PagingRequest.cs" />

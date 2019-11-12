@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using CheckListManager.Common.Core.Helpers;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -9,11 +10,11 @@ namespace CheckListManager.Common.Logic.Models.Expressions
     {
         public TypedValue(Type RawType, object Value) : this(DataType.FromType(RawType), Value.ToString()) { }
 
-        public TypedValue(DataType Type, string SerializedValue)
+        public TypedValue(DataType Type, string SerializedValue, string TimeZone)
         {
-            _Type = Type;
-            _SerializedValue = SerializedValue;
-            Parse();
+            this.Type = Type;
+            this.SerializedValue = SerializedValue;
+            Parse(TimeZone);
         }
 
         public TypedValue(DataType Type, object Value)
@@ -22,8 +23,8 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             {
                 if (Value == null)
                 {
-                    _Type = Type;
-                    this.Value = _SerializedValue = null;
+                    this.Type = Type;
+                    this.Value = SerializedValue = null;
                 }
                 else if
                 (
@@ -38,68 +39,43 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                     throw new Exception("Invalid class " + Value.GetType().Name + " for DataType " + Type.ToString());
                 else
                 {
-                    _Type = Type;
+                    this.Type = Type;
                     this.Value = Value;
-                    _SerializedValue = Value.ToString();
+                    SerializedValue = Value.ToString();
                 }
             }
             catch (Exception Exception)
             {
-                _Type = DataType.Error;
+                this.Type = DataType.Error;
                 this.Value = Exception.Message;
             }
         }
 
-        private void Parse()
+        private void Parse(string TimeZone)
         {
             try
             {
                 Value =
-                    string.IsNullOrWhiteSpace(_SerializedValue) ? null :
-                    Type == DataType.Boolean ? bool.Parse(_SerializedValue) : 
-                    Type == DataType.DateTime ? DateTimeOffset.ParseExact(_SerializedValue, new[] { "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm" }, null, DateTimeStyles.AssumeUniversal).ToUniversalTime() :
-                    Type == DataType.Date ? DateTimeOffset.ParseExact(_SerializedValue, new[] { "yyyy-MM-dd" }, null, DateTimeStyles.AssumeUniversal).ToUniversalTime() :
-                    Type == DataType.Time ? TimeSpan.ParseExact(_SerializedValue, new[] { "hh\\:mm" }, null) :
-                    Type == DataType.Number ? decimal.Parse(_SerializedValue.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture) :
-                    Type == DataType.Array ? JsonConvert.DeserializeObject<IEnumerable<TypedValue>>(_SerializedValue) :
-                    Type == DataType.Error ? _SerializedValue :
-                    (object)_SerializedValue;
+                    string.IsNullOrWhiteSpace(SerializedValue) ? null :
+                    Type == DataType.Boolean ? bool.Parse(SerializedValue) : 
+                    Type == DataType.DateTime ? DateTimeOffsetHelper.Parse(SerializedValue, TimeZone, out var Ambiguous, out var AmbiguousTimesSpans, $"{DateTimeOffsetHelper.DateFormat} {DateTimeOffsetHelper.TimeFormat}") :
+                    Type == DataType.Date ? DateTimeOffsetHelper.Parse(SerializedValue, TimeZone, out Ambiguous, out AmbiguousTimesSpans, DateTimeOffsetHelper.DateFormat) :
+                    Type == DataType.Time ? TimeSpan.ParseExact(SerializedValue, "hh\\:mm", null) :
+                    Type == DataType.Number ? decimal.Parse(SerializedValue.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture) :
+                    Type == DataType.Array ? JsonConvert.DeserializeObject<IEnumerable<TypedValue>>(SerializedValue) :
+                    Type == DataType.Error ? SerializedValue :
+                    (object)SerializedValue;
             }
             catch (Exception Exception)
             {
-                _Type = DataType.Error;
-                Value = _SerializedValue = Exception.Message;
+                Type = DataType.Error;
+                Value = SerializedValue = Exception.Message;
             }
         }
 
-        private DataType _Type;
-        public DataType Type
-        {
-            get
-            {
-                return _Type;
-            }
-            private set
-            {
-                _Type = value;
-                Parse();
-            }
-        }
+        public DataType Type { get; set; }
 
-        private string _SerializedValue;
-        public String SerializedValue
-        {
-            get
-            {
-                return _SerializedValue;
-            }
-
-            set
-            {
-                _SerializedValue = value;
-                Parse();
-            }
-        }
+        public string SerializedValue { get; private set; }
 
         public object Value
         {

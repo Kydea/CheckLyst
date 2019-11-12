@@ -110,14 +110,14 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             foreach (var expression in Expressions.Values)
             {
                 expression.Parse(this);
-                expression.Evaluate(this);
+                expression.Evaluate(this, TimeZone);
             }
 
             Update(DecimalSeparator, TimeZone, InstanceRuntimeValues);
 
             //second evaluation, to consider expressions with item properties which depends by expression values, higher level dependencies and cycles are still a problem
             foreach (var expression in Expressions.Values)
-                expression.Evaluate(this);
+                expression.Evaluate(this, TimeZone);
 
             Update(DecimalSeparator, TimeZone, InstanceRuntimeValues);
         }

@@ -28,7 +28,7 @@
 						td.addClass("Centered");
 					if (column.type == "DateTimeOffset") {
 						if (value) {
-							var formattedDate = matematici.dateFormatter.format(new Date(value), true);
+							var formattedDate = matematici.dateFormatter.format(moment.parseZone(value));
                             td.append($("<span />").html(formattedDate.date + " " + formattedDate.time + ":" + formattedDate.seconds).attr("title", formattedDate.offset));
 						}
 					} else if (value === true)

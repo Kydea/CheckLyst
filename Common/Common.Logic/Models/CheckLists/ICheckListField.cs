@@ -18,5 +18,6 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
 		[JsonIgnore]
 		DataType ValueType { get; }
 		string ValueTypeName { get; set; }
+        bool LocalTimeZone { get; set; }
     }
 }

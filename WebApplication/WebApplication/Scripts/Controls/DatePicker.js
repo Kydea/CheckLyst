@@ -2,7 +2,6 @@
 	var
 		datePicker = this,
 		element = $(selector),
-		date,
 		calendar = null,
 		min,
 		max,
@@ -10,12 +9,6 @@
 
 		isEnabled = function () {
 			return !element.hasClass("Disabled") && !element.prop("readonly");
-		},
-
-		getCurrentDate = function () {
-			var today = new Date();
-			today.setHours(0, 0, 0, 0);
-			return today;
 		},
 
 		createCalendar = function () {
@@ -46,15 +39,6 @@
 			}, 0);
 		},
 
-		setDate = function (value, local) {
-			var formattedDate = matematici.dateFormatter.format(value, !!local);
-			date = formattedDate.valid ? moment(value).toDate() : null;
-			element
-				.data("date", date)
-				.val(formattedDate.date)
-				.change();
-		},
-
 		close = function () {
 			calendar.close();
 			$(document).off("click.datePicker");
@@ -65,20 +49,15 @@
 				var value = element.val();
 				if (!!value) {
 					var momentDate = moment(value, matematici.dateFormatter.dateFormat);
-					date = momentDate.isValid() ? momentDate.toDate() : null;
 					element.val(momentDate.isValid() ? momentDate.format(matematici.dateFormatter.dateFormat) : "");
-				} else {
-					date = null;
+				} else
 					element.val("");
-				}
 				calendar.close();
 			}
 			catch (error) {
-				console.log(error, date, element.val());
-				date = null;
+				console.log(error, element.val());
 				element.val("");
 			}
-			element.data("date", date)
 		},
 
 		setup = function () {
@@ -106,8 +85,10 @@
 				.insertBefore(element)
 				.on("click", function (e) {
 					e.preventDefault();
-					if (calendar.isVisible() && calendar.getDatePicker() == datePicker) close();
-					else open(e);
+                    if (calendar.isVisible() && calendar.getDatePicker() == datePicker)
+                        close();
+                    else
+                        open(e);
 				});
 
 			matematici.elements.window.on("resize", function () {
@@ -117,12 +98,10 @@
 			parse();
 		};
 
-	this.setDate = function (value, local) {
-		setDate(value, local);
-	};
-
-	this.getDate = function () {
-		return date;
+    this.setValue = function (value) {
+        element.val(value);
+        parse();
+        element.change();
     };
 
     this.getValue = function () {

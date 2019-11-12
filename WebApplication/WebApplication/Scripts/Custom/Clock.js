@@ -1,56 +1,54 @@
 ﻿matematici.Clock = function () {
 	//gestire weak = true con colore rosso e tooltip con errore
 	var
-		offset = 0,
 		weak = true,
 		error = null,
 		elements = [],
 		selectors = [],
-		stopped,
-
-		refresh = function () {
-			var
-				serverTime = getTime(),
-				localTime = new Date();
-
-			for (var index = 0; index < selectors.length; ++index) {
-				var local = elements[index].hasClass("LocalTime");
-				elements[index].html(matematici.dateFormatter.both(local ? localTime : serverTime, local));
-			}
-		},
+        stopped,
+        utcTime,
+        localTime,
+        clientTime,
 
         check = function () {
 			return $.ajax({
 				url: matematici.urls.infrastructure.clock,
-				type: "post"
+                type: "post",
+                contentType: "application/json; charset=utf-8",
 			});
 		},
 
 		update = function () {
 			check().done(function (result) {
-				var
-					serverTime = new Date(result.serverTime),
-					milliseconds = (60 - serverTime.getSeconds() + 1) * 1000;
+                utcTime = moment.utc(result.serverTime);
+                localTime = moment.parseZone(result.serverTime);
+                clientTime = new moment();
+
+                var
+					milliseconds = (60 - utcTime.seconds() + 1) * 1000;
 
 				weak = false;
 				error = null;
-				offset = serverTime.getTime() - new Date().getTime();
 
 				//console.log(result);
-				//console.log("Server time: " + serverTime);
-				//console.log("Client time: " + new Date());
-				//console.log("offset: " + offset);
+				//console.log("Server time: ", serverTime);
+				//console.log("Local time: ", localTime);
+				//console.log("Client time: ", new moment());
+				//console.log("offset: ", offset);
 
 				setTimeout(function () {
 					if (!stopped)
 						update();
 				}, Math.max(milliseconds || 0, 10000));
 
-				refresh();
+                for (var index = 0; index < selectors.length; ++index) {
+                    var local = elements[index].hasClass("LocalTime");
+                    elements[index].html(matematici.dateFormatter.both(local ? localTime : utcTime));
+                }
 			}).fail(function (jqXHR, textStatus, errorThrown) {
 				weak = true;
 				error = errorThrown;
-				offset = 0;
+                clientTime = new moment();
 
 				setTimeout(function () {
 					if (!stopped)
@@ -59,10 +57,9 @@
 			});
 		},
 
-		getTime = function () {
-			var date = new Date();
-			date.setTime(new Date().getTime() + offset);
-			return date;
+        getTime = function () {
+            var momentDate = localTime.clone().add(new moment().diff(clientTime), "milliseconds");
+            return momentDate;
 		};
 
 	return {
@@ -82,11 +79,6 @@
 		add: function (selector) {
 			selectors.push(selector);
 			elements.push($(selector));
-			refresh();
-		},
-
-		refresh: function () {
-			refresh();
 		},
 
 		remove: function (selector) {

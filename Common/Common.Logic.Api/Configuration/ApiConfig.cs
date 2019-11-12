@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Formatting;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Web.Compilation;
@@ -15,6 +16,7 @@ using Autofac.Integration.WebApi;
 using CheckListManager.Common.Core.Network;
 using CheckListManager.Common.Logic.Api.Authentication;
 using CheckListManager.Common.Logic.Api.Filters;
+using CheckListManager.Common.Logic.Api.Json;
 using CheckListManager.Common.Logic.Configuration;
 using Microsoft.Owin;
 using Microsoft.Owin.Cors;
@@ -54,6 +56,8 @@ namespace CheckListManager.Common.Logic.Api.Configuration
 				.As<IServiceClient>()
 				.As<ServiceClient>()
 				.InstancePerDependency();
+
+			builder.RegisterInstance(_configuration);
 		}
 
 		private static ServiceClient ConfigureServiceClient(IComponentContext context, IEnumerable<Parameter> parameters)
@@ -120,9 +124,10 @@ namespace CheckListManager.Common.Logic.Api.Configuration
 			_configuration.DependencyResolver
 				= new AutofacWebApiDependencyResolver(Container);
 
-			_configuration.Services.Replace(typeof(IExceptionHandler), new DefaultExceptionHandler());
+            _configuration.Services.Replace(typeof(IContentNegotiator), new CustomContentNegotiator()); //before response creation
+            _configuration.Services.Replace(typeof(IExceptionHandler), new DefaultExceptionHandler());
 
-			_configuration.SuppressDefaultHostAuthentication();
+            _configuration.SuppressDefaultHostAuthentication();
 			_configuration.Filters.Add(new AuthorizeAttribute());
 			_configuration.Filters.Add(new DefaultAuthenticationFilter(OAuthDefaults.AuthenticationType));
 			_configuration.Filters.Add(new ArgumentNullValidationActionFilterAttribute());
@@ -132,8 +137,18 @@ namespace CheckListManager.Common.Logic.Api.Configuration
 
 			_configuration.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
 			_configuration.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new CheckListJsonConverter(Container));
+            _configuration.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new DateTimeOffsetJsonConverter(Container));
+            
+            _configuration.ParameterBindingRules.Insert(0, descriptor =>
+            {
+	            var formatters = _configuration.Formatters;
+	            var validators = _configuration.Services.GetBodyModelValidator();
 
-			OnConfigureWebApi(_configuration);
+	            return new CustomFormatterParameterBinding(descriptor, formatters, validators);
+	            
+            });
+
+            OnConfigureWebApi(_configuration);
 		}
 
 		protected virtual void OnConfigureWebApi(HttpConfiguration configuration)

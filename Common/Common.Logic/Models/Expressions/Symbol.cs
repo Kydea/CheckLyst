@@ -26,7 +26,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             }
         }
 
-        public abstract TypedValue GetValue(IElementsBranch ElementsBranch);
+        public abstract TypedValue GetValue(IElementsBranch ElementsBranch, string TimeZone);
 
         public abstract void Check(ICheckList Prototype, List<string> IteratorStack);
 

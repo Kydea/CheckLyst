@@ -105,21 +105,26 @@
             properties.push(new prototypes.Property(
                 this, new prototypes.DateProperty(model, "validFrom", { readOnly: state != prototypes.Prototype.states.draft }).setCheck([{
                     action: function (value) {
-                        return !value || value > new Date();
-                    },
+                        return !value || value > matematici.dateFormatter.date(new moment());
+                    }, 
                     message: "Specify a future date or leave empty"
+                }, {
+                        action: function (value) {
+                            return !model.validUntil || !value || model.validUntil.substring(0, 10) > value;
+                        },
+                        message: "Validity end must be greater than validity start"
                 }]), "Validity start",
                 "If specified, in this date, the version gets the state <b>active</b>, if the state of the version is <b>approved</b>. Otherwise the version get the state <b>active</b> immediately when approved."
             ));
             properties.push(new prototypes.Property(
                 this, new prototypes.DateProperty(model, "validUntil", { readOnly: state != prototypes.Prototype.states.draft }).setCheck([{
                     action: function (value) {
-                        return !value || value > new Date();
+                        return !value || value > matematici.dateFormatter.date(new moment());
                     },
                     message: "Specify a future date or leave empty"
                 }, {
                     action: function (value) {
-                        return !model.validFrom || !value || new Date(model.validFrom) < value;
+                        return !model.validFrom || !value || model.validFrom.substring(0, 10) < value;
                     },
                     message: "Validity end must be greater than validity start"
                 }]), "Validity end",
@@ -347,14 +352,7 @@
                         "The value of the field."
                     ));
                     properties.push(new prototypes.Property(
-                        this, new prototypes.ListProperty(model, "valueTypeName", [
-                            { label: "Text", code: "Text" },
-                            { label: "Boolean", code: "Boolean" },
-                            { label: "Number", code: "Number" },
-                            { label: "Date Time", code: "DateTime" },
-                            { label: "Date", code: "Date" },
-                            { label: "Time", code: "Time" },
-                        ], { readOnly: state != prototypes.Prototype.states.draft }).setHandler(function () {
+                        this, new prototypes.ValueTypeProperty(model, "valueTypeName", { readOnly: state != prototypes.Prototype.states.draft }).setHandler(function () {
                             prepareLinesCount();
                             if (model.valueTypeName != "Text" && model.linesCount > 1) {
                                 var element = item.getElement();

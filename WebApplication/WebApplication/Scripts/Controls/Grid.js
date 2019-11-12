@@ -28,7 +28,7 @@
             if (!!value) {
                 switch (type) {
                     case "DateTimeOffset":
-                        var formattedDate = matematici.dateFormatter.format(new Date(value), true);
+                        var formattedDate = matematici.dateFormatter.format(moment.parseZone(value));
                         cell.append($("<span />").html(formattedDate.date + " " + formattedDate.time).attr("title", formattedDate.offset));
                         break;
                     case "Boolean":

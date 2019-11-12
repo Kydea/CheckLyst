@@ -457,6 +457,10 @@ div.Instance {
             display: none;
         }
 
+        &.Invisible {
+            visibility: hidden;
+        }
+
         @media #{$Media-0-460} {
             width: calc(100% - #{$Metric-Control-Space});
 

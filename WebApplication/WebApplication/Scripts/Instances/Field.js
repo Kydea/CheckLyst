@@ -47,8 +47,11 @@
 			var value = model.valuesList ? select.val() || "" : (input.val() || "").trim();
 			if (!model.valuesList) {
                 if (value != "" && model.valueTypeName == "DateTime") {
-                    var momentDate = matematici.dateFormatter.parse(value, select.val() + ":" + select2.val(), null, true);
-                    value = matematici.dateFormatter.date(momentDate, false) + " " + matematici.dateFormatter.time(momentDate, false);
+                    var
+                        momentDate = matematici.dateFormatter.parse(value, select.val() + ":" + select2.val(), null),
+                        formattedDate = matematici.dateFormatter.format(momentDate);
+
+                    value = formattedDate.date + " " + formattedDate.time;
                 } else if (model.valueTypeName == "Time")
 					value = select.val() != "" && select2.val() != "" ? select.val() + ":" + select2.val() : "";
 				else if (model.valueTypeName == "Boolean")
@@ -64,8 +67,8 @@
 				}, 0);
         },
 
-		change = function (value) {
-			if (model.valuesList || validate()) {
+        change = function (value) {
+            if (model.valuesList || validate()) {
 				new instances.Event(instances.Events.valueChange, model.id, { value: value }).done(function (result) {
 					instances.instance.update(result);
 					next();
@@ -192,7 +195,8 @@
 			if (select2) new matematici.AutoComplete(select2).initialize();
         };
 
-	this.update = function (model) {
+    this.update = function (model) {
+        var formattedDate = null;
         readOnly = !!model.readOnly || !!model.externalSourceName;
         span.html(model.descriptionValue);
         element.toggleClass("Inactive", model.readOnly);
@@ -212,8 +216,8 @@
                     index = model.rawValue.indexOf(" "),
                     date = model.rawValue.substr(0, index),
                     time = model.rawValue.substr(index + 1),
-                    m = matematici.dateFormatter.parse(date, time, null, false),
-                    formattedDate = matematici.dateFormatter.format(m, true);
+                    m = matematici.dateFormatter.parse(date, time, null);
+                formattedDate = matematici.dateFormatter.format(m);
                 input.val(formattedDate.date);
                 select.val(formattedDate.hours);
                 select2.val(formattedDate.minutes);
@@ -239,13 +243,20 @@
         	try {
 				b = $.parseJSON((model.rawValue || "").toLowerCase()); s = b.toString();
         	} catch (e) { }
-        	input.val(s);
+            input.val(s);
+
+            input.prop("disabled", readOnly);
 		} else 
 			input.val(model.rawValue);
 
-        var rawValue = model.rawValue;
+        var rawValue = formattedDate ? formattedDate.date + " " + formattedDate.hours + ":" + formattedDate.minutes : model.rawValue;
         field.html(readOnly && rawValue ? rawValue.split('\n').join("<br />") : rawValue).attr("readonly", readOnly);
-        field.attr("title", rawValue);
+        if (model.valueTypeName == "DateTime" || model.valueTypeName == "Date")
+            if (rawValue)
+                rawValue += " UTC" + (!model.localTimeZone ? "" : (model.offset > 0 ? " +" : " -") + ("" + Math.abs(model.offset) / 60).padStart(2, "0") + ":00")
+            else
+                rawValue = model.localTimeZone ? "Company time zone" : "UTC";
+        element.attr("title", rawValue);
 
         this.setColor(model.color);
 		this.setFontSize(model.fontSize);

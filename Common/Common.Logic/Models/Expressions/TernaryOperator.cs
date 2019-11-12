@@ -33,11 +33,11 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             DataType = TruePart.DataType;
         }
 
-        public override TypedValue GetValue(IElementsBranch ElementsBranch)
+        public override TypedValue GetValue(IElementsBranch ElementsBranch, string TimeZone)
         {
-            var ConditionValue = Condition.GetValue(ElementsBranch);
-            var TrueValue = TruePart.GetValue(ElementsBranch);
-            var FalseValue = FalsePart.GetValue(ElementsBranch);
+            var ConditionValue = Condition.GetValue(ElementsBranch, TimeZone);
+            var TrueValue = TruePart.GetValue(ElementsBranch, TimeZone);
+            var FalseValue = FalsePart.GetValue(ElementsBranch, TimeZone);
             if (ConditionValue == null || TrueValue == null || FalseValue == null) throw new NullReferenceException("Software design error");
             if (ConditionValue.Type == DataType.Error) return ConditionValue;
             if (TrueValue.Type == DataType.Error) return TrueValue;

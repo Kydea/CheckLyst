@@ -15,7 +15,7 @@ namespace CheckListManager.Common.Logic.Models
 		public Type SystemType { get; }
 
         public string TypeName { get; }
-        
+
 		private DataType(DataTypeEnum rawValue, Type systemType, string typeName) : this (rawValue, systemType, typeName, null)
 		{
 		}
@@ -27,7 +27,7 @@ namespace CheckListManager.Common.Logic.Models
 
 			_compatibleTypes = new HashSet<Type>(compatibleTypes ?? new Type[0]) { systemType };
 			TypeName = typeName;
-		}
+        }
 
 		public static bool operator ==(DataType a, DataType b)
 		{

@@ -13,5 +13,6 @@ namespace CheckListManager.Trail.Logic.Services
         public string Action { get; set; }
         public string Information { get; set; }
         public long? CompanyId { get; set; }
+        public string TimeZone { get; set; }
     }
 }

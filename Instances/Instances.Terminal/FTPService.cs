@@ -108,7 +108,7 @@ namespace CheckListManager.Instances.Terminal
             //Settings = JsonConvert.DeserializeObject<FTPConnectionSettings>(SerializedSettings);
 
             var cacheObject = await _instanceManagerService.GetAsync(message.Company, message.ID);
-            cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(cacheObject.CompanyId), (await _settingService.TimeZoneAsync(cacheObject.CompanyId)).MicrosoftCode, cacheObject);
+            cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(cacheObject.CompanyId), (await _settingService.TimeZoneAsync(cacheObject.CompanyId)), cacheObject);
             cacheObject.Instance.UpdateReadOnly(null, cacheObject.InstanceState);
 
             FTPConnectionSettings Settings;
@@ -129,7 +129,7 @@ namespace CheckListManager.Instances.Terminal
 
             var Company = await _commonRepository.GetCompanyAsync(message.Company);
 
-            var PDF = new InstancePDF(Company.ID, Company.Name, Company.TimeZones.MicrosoftCode, _configurationService.PublicRepositoryUrl, cacheObject, _instancesRepository, _storageService, _configurationService);
+            var PDF = new InstancePDF(Company.ID, Company.Name, Company.TimeZone, _configurationService.PublicRepositoryUrl, cacheObject, _instancesRepository, _storageService, _configurationService);
             var MemoryStream = new MemoryStream();
             await PDF.GenerateAsync(MemoryStream);
 

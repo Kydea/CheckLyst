@@ -39,7 +39,7 @@ namespace CheckListManager.Instances.Logic.PDF
             {
                 if (!DateTimeOffset.TryParseExact(Field.RawValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out var Date))
                     return string.Empty;
-                return Date.ToLocalTime(TimeZone).ToString("yyyy-MM-dd HH:mm UTC zzz");
+                return Date.Format(TimeZone);
             }
             else
                 return FormatFormula(Field.RawValue);

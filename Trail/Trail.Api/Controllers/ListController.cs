@@ -47,6 +47,7 @@ namespace CheckListManager.Trail.Api.Controllers
         {
             var Token = Identity.Code + ":" + Guid.NewGuid();
             request.Data.CompanyId = Identity.CompanyId;
+            request.Data.TimeZone = Request.Headers.GetValues("CompanyTimeZone").Single();
             await _redisCache.SetAsync($"Token:{Token}", request.Data, "Download", new TimeSpan(0, 1, 0));
             return Ok(new { Token = Token });
         }
@@ -121,18 +122,17 @@ namespace CheckListManager.Trail.Api.Controllers
             var Header = new string[] {
                 "ID",
                 "Date",
-                "User",
+                "Logged user code",
                 "Action",
                 "CheckList code",
                 "Detail"
             };
-            string timeZone = (await _settingService.TimeZoneAsync(Data.CompanyId.Value)).MicrosoftCode;
 
             var Rows = await _listService.GetDataAsync(Data.CompanyId.Value, Data);
             return Content(HttpStatusCode.OK, Rows, new CSVFormatter<TrailMessage>(Header, "AuditTrail", tm =>
                 new string[] {
                     tm.Id.ToString(),
-                    tm.Date.ToLocalTime(timeZone).ToString(),
+                    tm.Date.ToLocalTime(Data.TimeZone).ToString(),
                     tm.User,
                     tm.Action,
                     tm.CheckList,

@@ -1,4 +1,4 @@
-﻿using System;
+﻿    using System;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
@@ -7,7 +7,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 		public Lock(string user)
 		{
 			User = user;
-			Date = DateTimeOffset.UtcNow;
+			LastUpdate = Date = DateTimeOffset.UtcNow;
 		}
 
         public Lock()
