@@ -27,7 +27,7 @@
             url = "checklyst://" + window.location.host + "/" + window.location.pathname + search;
             window.location = url;
         } else {
-            url = "@Model" + search + "@(ViewBag.AppMode ? "&AppUser=" + ViewBag.AppUser : string.Empty)";
+            url = "@Model" + (search || "?") + "@Html.Raw(ViewBag.AppMode ? "&AppUser=" + ViewBag.AppUser : string.Empty)";
             matematici.navigator.open(url);
         }
 
