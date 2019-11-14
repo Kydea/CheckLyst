@@ -144,6 +144,13 @@ div.PropertyPanel {
                 margin-top: $Metric-Control-Space;
             }
         }
+
+        &.ValueType {
+            label:last-child {
+                bottom: 10px;
+                position: absolute;
+            }
+        }
     }
 
     div.Information {

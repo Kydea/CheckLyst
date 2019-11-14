@@ -295,7 +295,8 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                     await RenderTableRow(Table, Element.Items);
             else
                 foreach (var Iteration in Element.Iterations)
-                    await RenderTableRow(Table, Iteration.Items);
+                    if (!Iteration.Removed)
+                        await RenderTableRow(Table, Iteration.Items);
         }
 
         public class Size

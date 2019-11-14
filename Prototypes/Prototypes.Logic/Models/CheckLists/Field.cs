@@ -36,6 +36,8 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             set { ValueType = DataType.FromName(value); }
         }
 
+        public string DefaultValue { get; set; }
+
         public bool LocalTimeZone { get; set; }
 
         public override ICheckListItem Clone(ICheckListGroup parent)
@@ -47,6 +49,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 Value = Value,
                 ValueFormula = ValueFormula == null ? null : new Formula(ValueFormula.RawValue),
                 ValueTypeName = ValueTypeName,
+                DefaultValue = DefaultValue,
                 LocalTimeZone = LocalTimeZone,
                 ValuesList = ValuesList,
                 ExternalSourceName = ExternalSourceName,

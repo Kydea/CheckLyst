@@ -84,6 +84,9 @@
         min-width: 200px; }
     div.PropertyPanel div.PropertyValue.CountDown label {
       margin-top: 20px; }
+    div.PropertyPanel div.PropertyValue.ValueType label:last-child {
+      bottom: 10px;
+      position: absolute; }
   div.PropertyPanel div.Information {
     position: absolute;
     overflow: auto;
