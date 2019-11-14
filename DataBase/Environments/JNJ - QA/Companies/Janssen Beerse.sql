@@ -1,5 +1,11 @@
+insert into "Infrastructure"."TimeZones"  ("Code", "MicrosoftCode")  values  ( 'Europe\Brussels' ,'W. Europe Standard Time' ) ;
+
 insert into "Infrastructure"."Companies"("Name", "TimeZone", "MaximumNumberOfPINFailure", "LoginFailedTimeout", "PINDaysLife", "MaximumNumberOfPasswordFailure", "PasswordDaysLife", "WarningUserInactivityDays", "MaximumUserInactivityDays") 
-values ('Janssen Beerse', 'Europe/Rome', 5, 20, 90, 20, 365, 335, 365); --see http://momentjs.com/timezone/docs/#/data-loading/
+values ('Janssen Beerse', 'Europe/Brussels', 5, 20, 90, 20, 365, 335, 365); --see http://momentjs.com/timezone/docs/#/data-loading/
+
+--update "Infrastructure"."Companies"  
+ --set "TimeZone" = ( 'Europe/Brussels' )
+ --where "ID" = 2;
 
 insert into "Infrastructure"."Departments" ("Company", "Name") values (currval('"Infrastructure"."Companies_ID_seq"'), 'Automation (P)');
 insert into "Infrastructure"."Departments" ("Company", "Name") values (currval('"Infrastructure"."Companies_ID_seq"'), 'Quality control (P)');
@@ -32,7 +38,18 @@ insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") valu
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'UserBlockWarningMessage', '[User], <br /> your account will soon be disabled if you do not login.'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'SignatureMessage', '[User], <br /> you have a pending workflow for the [CheckListType] [CheckListCode].'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'InstanceMessage', '[User], <br /> A signature has been issued for the instance [CheckListCode].'),
-	(currval('"Infrastructure"."Companies_ID_seq"'), 'DecimalSeparator', ','),
+	(currval('"Infrastructure"."Companies_ID_seq"'), 'DecimalSeparator', '.'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'RequireUserReason', 'true'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'PrototypesAttachmentMaxSizeBytes', '10485760'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'InstancesAttachmentMaxSizeBytes', '10485760');
+  
+  --update "Configuration"."SettingValues" 
+  --set "DecimalSeparator" = '.'
+ -- where "Company" = 2;  (2 -Beerse )
+  
+--insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values 
+-- (currval('"Infrastructure"."Companies_ID_seq"'),'PrototypesFtpConnection','{ "Host": "AWSAZFIRL1234.jnj.com", "Port": 21, "Folder": "/CLFTP-Prototypes-BEE-QA",  "UserName": "SA-JAC-CLFTP-BEE-QA", "Password": "@Ch3ck7yst", "UsePassive": "true", "EnableSSL": "true" }');
+ 
+insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values 
+ (2 ,'PrototypesFtpConnection','{ "Host": "AWSAZFIRL1234.jnj.com", "Port": 21, "Folder": "/CLFTP-Prototypes-BEE-QA",  "UserName": "SA-JAC-CLFTP-BEE-QA", "Password": "@Ch3ck7yst", "UsePassive": "true", "EnableSSL": "true" }');
+  
