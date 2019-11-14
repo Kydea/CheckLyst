@@ -109,5 +109,15 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         {
             return ValueType.Validate(value);
         }
+
+        public override void Setup()
+        {
+            base.Setup();
+            if (!string.IsNullOrEmpty(DefaultValue))
+            {
+                if (Validate(DefaultValue)) Value = DefaultValue;
+                DefaultValue = null;
+            }
+        }
     }
 }
