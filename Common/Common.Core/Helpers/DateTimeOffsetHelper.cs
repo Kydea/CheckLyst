@@ -17,6 +17,12 @@ namespace CheckListManager.Common.Core.Helpers
         public static string Format(this DateTimeOffset DateTimeOffset, string TimeZone, string Format = null) =>
             DateTimeOffset.ToLocalTime(TimeZone).ToString(Format ?? $"{DateFormat} {TimeFormat} UTC zzz");
 
+        public static string FormatOffset(int OffsetInMinutes)
+        {
+            var OffsetInHours = Math.Abs(OffsetInMinutes) / 60;
+            return $" UTC{(OffsetInMinutes == 0 ? string.Empty : (OffsetInMinutes > 0 ? " +" : " -") + (OffsetInHours > 9 ? OffsetInHours.ToString() : "0" + OffsetInHours) + ":00")}";
+        }
+
         public static DateTimeOffset? Parse(string Value, string TimeZone, out bool Ambiguous, out TimeSpan[] AmbiguousDateTimeOffsets, params string[] Format)
         {
             if (string.IsNullOrEmpty(Value))
@@ -35,7 +41,7 @@ namespace CheckListManager.Common.Core.Helpers
             Ambiguous = TimeZoneInfo.IsAmbiguousTime(DateTime);
             AmbiguousDateTimeOffsets = Ambiguous ? TimeZoneInfo.GetAmbiguousTimeOffsets(DateTime) : null;
 
-            return DateTimeOffset;  
+            return DateTimeOffset;
         }
     }
 }
