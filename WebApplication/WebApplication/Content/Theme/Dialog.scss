@@ -170,13 +170,44 @@ div.Dialog {
 
             div.Content {
                 max-height: calc(100vh - 40px);
+
+                img {
+                    display: block;
+                    position: relative;
+                    margin: auto;
+                }
+            }
+
+            div.ViewButtons {
+                position: absolute;
+                top: 20px;
+                left: 20px;
+
+                a {
+                    float: left;
+                    margin-top: 10px;
+                    margin-left: 10px;
+                    color: white;
+                    border-radius: 50%;
+                    background: $Color-Green-Regular;
+                    height: 30px;
+                    width: 30px;
+                    line-height: 30px;
+                    text-align: center;
+                    opacity: .5;
+
+                    &:hover {
+                        opacity: 1;
+                    }
+                }
             }
 
             a.CloseButton {
-                right: 50px;
+                right: 30px;
                 top: 30px;
                 border-radius: 50%;
                 background: $Color-Green-Regular;
+                opacity: .5;
 
                 i {
                     font-size: 20px;
@@ -189,13 +220,16 @@ div.Dialog {
                 }
 
                 &:hover {
-                    background: $Color-Green-Light;
+                    opacity: 1;
                 }
             }
 
             div.Buttons {
                 display: none;
             }
+        }
+
+        &.Maximized {
         }
     }
 

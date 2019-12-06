@@ -101,11 +101,34 @@ div.Dialog {
     display: none; }
   div.Dialog.ImageViewer div.Container div.Content {
     max-height: calc(100vh - 40px); }
+    div.Dialog.ImageViewer div.Container div.Content img {
+      display: block;
+      position: relative;
+      margin: auto; }
+  div.Dialog.ImageViewer div.Container div.ViewButtons {
+    position: absolute;
+    top: 20px;
+    left: 20px; }
+    div.Dialog.ImageViewer div.Container div.ViewButtons a {
+      float: left;
+      margin-top: 10px;
+      margin-left: 10px;
+      color: white;
+      border-radius: 50%;
+      background: #009688;
+      height: 30px;
+      width: 30px;
+      line-height: 30px;
+      text-align: center;
+      opacity: .5; }
+      div.Dialog.ImageViewer div.Container div.ViewButtons a:hover {
+        opacity: 1; }
   div.Dialog.ImageViewer div.Container a.CloseButton {
-    right: 50px;
+    right: 30px;
     top: 30px;
     border-radius: 50%;
-    background: #009688; }
+    background: #009688;
+    opacity: .5; }
     div.Dialog.ImageViewer div.Container a.CloseButton i {
       font-size: 20px;
       color: white;
@@ -113,7 +136,7 @@ div.Dialog {
       div.Dialog.ImageViewer div.Container a.CloseButton i::before {
         content: "\f00d" !important; }
     div.Dialog.ImageViewer div.Container a.CloseButton:hover {
-      background: #03c3b1; }
+      opacity: 1; }
   div.Dialog.ImageViewer div.Container div.Buttons {
     display: none; }
   div.Dialog div.Array {

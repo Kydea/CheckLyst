@@ -30,8 +30,7 @@ div.CheckListGrid div.Container {
       div.CheckListGrid div.Container table.Grid tr.Selected td i {
         display: block; }
     div.CheckListGrid div.Container table.Grid.ExpressionsList tr td {
-      width: 30px;
-      text-align: center; }
+      width: 30px; }
       div.CheckListGrid div.Container table.Grid.ExpressionsList tr td:first-child {
         width: 30px;
         text-align: center; }
