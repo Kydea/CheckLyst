@@ -2,9 +2,12 @@
     var
         input,
         handler,
+        setupValues,
         check,
         radioUTC,
         radioLocal,
+        defaultValueLabel,
+        defaultValue,
 
         values = [
             { label: "Text", code: "Text" },
@@ -12,13 +15,29 @@
             { label: "Number", code: "Number" },
             { label: "Date Time", code: "DateTime" },
             { label: "Date", code: "Date" },
-            { label: "Time", code: "Time" },
+            { label: "Time", code: "Time" }
         ],
+
+        setDefaultValueField = function () {
+            if (defaultValue) defaultValue.remove();
+
+            defaultValue =
+                true ? $("<input />").attr({ type: "text" }).attr('disabled', options.readOnly) : //gestire input specifici a seconda di model[property]
+                    null;
+
+            if (setupValues.valueType == model[property]) defaultValue.val(setupValues.defaultValue);
+            if (!options.readOnly)
+                defaultValue.on("change", function () {
+                    model.defaultValue = defaultValue.val();
+                });
+            defaultValueLabel.append(defaultValue);
+        },
 
         toggleRadioButtons = function () {
             var value = model[property] && model[property].indexOf("Date") == 0;
             radioUTC.toggle(value);
-            radioLocal.toggle(value)
+            radioLocal.toggle(value);
+            setDefaultValueField();
             return value;
         },
 
@@ -27,6 +46,7 @@
             matematici.canClose = false;
             var radioVisible = toggleRadioButtons();
             model.localTimeZone = radioVisible && $("input", radioLocal).prop("checked"); 
+            setDefaultValueField();
             if (handler) handler.call(this, model);
         };
 
@@ -41,7 +61,11 @@
     };
 
     this.create = function (valuePanel) {
-        valuePanel.addClass("Expression");
+        valuePanel.addClass("ValueType");
+        setupValues = {
+            valueType: model[property],
+            defaultValue: model.defaultValue
+        };
 
         if (options.readOnly) {
             var label = $("<input />")
@@ -83,11 +107,17 @@
             radioLocal.change(change);
         }
 
+        defaultValueLabel = $("<label />")
+            .text("default value")
+            .appendTo(valuePanel);
+
+        setDefaultValueField();
+
         toggleRadioButtons();
     }
 
     this.hasChanges = function () {
-        return !!model[property] && model[property] != values[0].code && model[property] != values[0];
+        return !!model[property] && model[property] != values[0].code && model[property] != values[0] || !!model.defaultValue;
     }
 
     this.refresh = function (newValues) {

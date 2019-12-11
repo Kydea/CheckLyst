@@ -42,6 +42,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             set { ValueType = DataType.FromName(value); }
         }
 
+        public string DefaultValue { get; set; }
+
         public bool LocalTimeZone { get; set; }
 
         public int Offset { get; private set; }
@@ -55,6 +57,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 Value = Value,
                 ValueFormula = ValueFormula == null ? null : new Formula(ValueFormula.RawValue),
                 ValueTypeName = ValueTypeName,
+                DefaultValue = DefaultValue,
                 LocalTimeZone = LocalTimeZone,
                 ValuesList = ValuesList,
                 ExternalSourceName = ExternalSourceName,
@@ -105,6 +108,16 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public bool Validate(string value)
         {
             return ValueType.Validate(value);
+        }
+
+        public override void Setup()
+        {
+            base.Setup();
+            if (!string.IsNullOrEmpty(DefaultValue))
+            {
+                if (Validate(DefaultValue)) Value = DefaultValue;
+                DefaultValue = null;
+            }
         }
     }
 }

@@ -36,11 +36,7 @@ namespace CheckListManager.Instances.Logic.PDF
         {
             var Field = (Field)CheckListField;
             if (Field.ValueTypeName == "DateTime")
-            {
-                if (!DateTimeOffset.TryParseExact(Field.RawValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out var Date))
-                    return string.Empty;
-                return Date.Format(TimeZone);
-            }
+                return Field.RawValue + DateTimeOffsetHelper.FormatOffset(Field.LocalTimeZone ? Field.Offset : 0);
             else
                 return FormatFormula(Field.RawValue);
         }

@@ -86,7 +86,12 @@ matematici.dialog = function () {
 			element.show();
 		};
 
-	return {
+    return {
+
+        center: function () {
+            autoCenter.center();
+        },
+        
 		close: function () {
 			if (element) {
 				if (closeHandler) closeHandler();
@@ -99,7 +104,7 @@ matematici.dialog = function () {
 				autoCenter.destroy();
 				closeHandler = null;
 			}
-		},
+        },
 
 		getData: function () {
 			return options.data;

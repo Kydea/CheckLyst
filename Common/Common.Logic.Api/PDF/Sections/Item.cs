@@ -45,7 +45,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
 
         public override async Task RenderAsync(params object[] State)
         {
-            if (!CheckListPDF.IsPrototype() && Element.Hidden) return;
+            if (!CheckListPDF.IsPrototype() && (Element.Hidden || (Element is ICheckListIteration iteration && iteration.Removed))) return;
 
             if (Element is ICheckListGroup GroupElement)
             {
@@ -80,7 +80,9 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                 if (FieldElement.ValueType.TypeName == "Boolean")
                 {
                     PdfPTable Table = new PdfPTable(1) { WidthPercentage = 3, HorizontalAlignment = RowAlignment.Left };
-                    var Cell = new PdfPCell(new Paragraph().SetText(FieldElement.Value == "true" ? "X" : string.Empty).SetFont(PDFBase.GenericFont).Padding(0)).SetHorizontalAlign(ParagraphAlignment.Center);
+                    if (!bool.TryParse(FieldElement.Value, out var Value))
+                        Value = false;
+                    var Cell = new PdfPCell(new Paragraph().SetText(Value ? "X" : string.Empty).SetFont(PDFBase.GenericFont).Padding(0)).SetHorizontalAlign(ParagraphAlignment.Center);
                     Table.AddCell(Cell);
                     if (!FieldElement.Valid)
                         Table.BorderColor = PDFBase.Red;
