@@ -36,3 +36,6 @@ insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") valu
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'RequireUserReason', 'true'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'PrototypesAttachmentMaxSizeBytes', '10485760'),
 	(currval('"Infrastructure"."Companies_ID_seq"'), 'InstancesAttachmentMaxSizeBytes', '10485760');
+
+insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") values
+	(currval('"Infrastructure"."Companies_ID_seq"'), 'PrototypesFtpConnection', '{ "Host": "AWSAZFIRL1238.jnj.com", "Port": 21, "Folder": "/CLFTP-Prototypes-BEE-PRD",  "UserName": "SA-JAC-CLFTP-BEE-PRD", "Password": "@Ch3ck7yst", "UsePassive": "true", "EnableSSL": "true" }');
