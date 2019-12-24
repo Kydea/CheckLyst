@@ -285,7 +285,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
                 {
                     throw new Exception("The file uploaded is not supported");
                 }
-                var maxSize = await _settingService.InstancesAttachmentMaxSizeBytesAsync(Identity.CompanyId);
+                var maxSize = await _settingService.PrototypesAttachmentMaxSizeBytesAsync(Identity.CompanyId);
                 if (request.Attachment.Buffer.Length > maxSize)
                 {
                     throw new Exception($"The file exceed the file size limit of {maxSize.BytesCountToString()}");
