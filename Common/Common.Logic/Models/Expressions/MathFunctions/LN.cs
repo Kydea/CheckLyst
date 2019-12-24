@@ -4,7 +4,7 @@ using CheckListManager.Common.Logic.Models.Expressions.Parsing;
 
 namespace CheckListManager.Common.Logic.Models.Expressions.MathFunctions
 {
-    public class LN : MathFunction
+    public class LN : UnaryMathFunction
     {
         protected override TypedValue EvaluateResult(TypedValue ArgumentValue)
         {

@@ -5,7 +5,7 @@ using CheckListManager.Common.Logic.Models.Expressions.Parsing;
 
 namespace CheckListManager.Common.Logic.Models.Expressions.MathFunctions
 {
-    public abstract class MathFunction : UnaryOperator
+    public abstract class UnaryMathFunction : UnaryOperator
     {
         public override void Check(ICheckList Prototype, List<string> IteratorStack)
         {

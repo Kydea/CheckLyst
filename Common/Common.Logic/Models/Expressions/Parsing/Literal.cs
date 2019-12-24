@@ -100,6 +100,15 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     Symbol = Log;
                     Operator = OperatorType.No;
                 }
+                else if (Value.ToLower() == "round")
+                {
+                    var Round = new MathFunctions.Round { Position = Position };
+                    ParseArgument(ref ExpressionValue, ref Position, 2);
+                    Round.Left = Arguments[0].Symbol;
+                    Round.Right = Arguments[1].Symbol;
+                    Symbol = Round;
+                    Operator = OperatorType.No;
+                }
 
                 //Ternary operator
                 else if (Value.ToLower() == "iif")
@@ -141,10 +150,27 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                         Symbol = new ElementProperties.ElementProperty(ElementProperties.ElementProperty.ElementProperties.Valid) { Code = Values[0], Position = Position };
                         break;
                     case "Sum":
-                        var Sum = new IteratorFunctions.Sum { IteratorCode = Values[0], Position = Position };
+                    case "Avg":
+                    case "StDev":
+                        var Measure = new IteratorFunctions.Measure(Values[1]) { IteratorCode = Values[0], Position = Position };
                         ParseArgument(ref ExpressionValue, ref Position, 1);
-                        Sum.Argument = Arguments[0].Symbol;
-                        Symbol = Sum;
+                        Measure.Argument = Arguments[0].Symbol;
+                        Symbol = Measure;
+                        break;
+                    case "Corr":
+                    case "Slope":
+                    case "Intercept":
+                        var GeometricFunction = new IteratorFunctions.GeometricFunction(Values[1]) { IteratorCode = Values[0], Position = Position };
+                        ParseArgument(ref ExpressionValue, ref Position, 1);
+                        GeometricFunction.Left  = Arguments[0].Symbol;
+                        GeometricFunction.Right = Arguments[1].Symbol;
+                        Symbol = GeometricFunction;
+                        break;
+                    case "Count":
+                        var Count = new IteratorFunctions.Count { IteratorCode = Values[0], Position = Position };
+                        ParseArgument(ref ExpressionValue, ref Position, 1);
+                        Count.Argument = Arguments[0].Symbol;
+                        Symbol = Count;
                         break;
                     case "Each":
                         var Each = new IteratorFunctions.Each { IteratorCode = Values[0], Position = Position };

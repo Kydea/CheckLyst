@@ -45,7 +45,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
         protected abstract string OperatorName { get; }
 
-        public sealed override string ToString()
+        public override string ToString()
         {
             return $"({Left?.ToString() ?? "#"} {OperatorName} {Right?.ToString() ?? "#"})";
         }

@@ -7,7 +7,7 @@ using CheckListManager.Common.Logic.Models.Expressions.Parsing;
 
 namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
 {
-    public abstract class IteratorFunction : UnaryOperator
+    public abstract class BinaryIteratorFunction : BinaryOperator
     {
         public override void Check(ICheckList Prototype, List<string> IteratorStack)
         {
@@ -22,13 +22,17 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
 
         public string IteratorCode { get; set; }
 
-        protected abstract TypedValue GetValue(List<TypedValue> Values);
+        protected abstract TypedValue GetValue(List<TypedValue> LeftValues, List<TypedValue> RigheValues);
 
         public override TypedValue GetValue(IElementsBranch ElementsBranch, string TimeZone)
         {
             var Iterator = (ICheckListGroup)ElementsBranch.Elements[IteratorCode];
-            var Values = Iterator.Iterations.Where(x => !x.Removed).Select(Iteration => Argument.GetValue(Iteration, TimeZone)).ToList();
-            return Values.FirstOrDefault(TypedValue => TypedValue.Type == DataType.Error) ?? GetValue(Values);
+            var LeftValues = Iterator.Iterations.Where(x => !x.Removed).Select(Iteration => Left.GetValue(Iteration, TimeZone)).ToList();
+            var RightValues = Iterator.Iterations.Where(x => !x.Removed).Select(Iteration => Right.GetValue(Iteration, TimeZone)).ToList();
+            return 
+                LeftValues.FirstOrDefault(TypedValue => TypedValue.Type == DataType.Error) ??
+                RightValues.FirstOrDefault(TypedValue => TypedValue.Type == DataType.Error) ??
+                GetValue(LeftValues, RightValues);
         }
     }
 }

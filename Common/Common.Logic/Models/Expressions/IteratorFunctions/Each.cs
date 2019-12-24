@@ -6,13 +6,8 @@ using CheckListManager.Common.Logic.Models.Expressions.Parsing;
 
 namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
 {
-    public class Each : IteratorFunction
+    public class Each : UnaryIteratorFunction
     {
-        public Each()
-        {
-
-        }
-
         public override void Check(ICheckList Prototype, List<string> IteratorStack)
         {
             base.Check(Prototype, IteratorStack);

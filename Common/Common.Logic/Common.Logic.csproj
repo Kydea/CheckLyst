@@ -135,9 +135,12 @@
     <Compile Include="Models\CheckLists\SignatureRecord.cs" />
     <Compile Include="Models\DataType.cs" />
     <Compile Include="Models\Expressions\AritmeticOperators\Power.cs" />
-    <Compile Include="Models\Expressions\IteratorFunctions\IteratorFunction.cs" />
+    <Compile Include="Models\Expressions\IteratorFunctions\BinaryIteratorFunction.cs" />
+    <Compile Include="Models\Expressions\IteratorFunctions\UnaryIteratorFunction.cs" />
     <Compile Include="Models\Expressions\IteratorFunctions\Each.cs" />
-    <Compile Include="Models\Expressions\IteratorFunctions\Sum.cs" />
+    <Compile Include="Models\Expressions\IteratorFunctions\Count.cs" />
+    <Compile Include="Models\Expressions\IteratorFunctions\GeometricFunction.cs" />
+    <Compile Include="Models\Expressions\IteratorFunctions\Measure.cs" />
     <Compile Include="Models\Expressions\AritmeticOperators\BinaryAritmeticOperator.cs" />
     <Compile Include="Models\Expressions\AritmeticOperators\Division.cs" />
     <Compile Include="Models\Expressions\AritmeticOperators\Minus.cs" />
@@ -157,7 +160,9 @@
     <Compile Include="Models\Expressions\Expression.cs" />
     <Compile Include="Models\Expressions\ExpressionValue.cs" />
     <Compile Include="Models\Expressions\Formula.cs" />
-    <Compile Include="Models\Expressions\MathFunctions\MathFunction.cs" />
+    <Compile Include="Models\Expressions\MathFunctions\BinaryMathFunction.cs" />
+    <Compile Include="Models\Expressions\MathFunctions\Round.cs" />
+    <Compile Include="Models\Expressions\MathFunctions\UnaryMathFunction.cs" />
     <Compile Include="Models\Expressions\MathFunctions\Cos.cs" />
     <Compile Include="Models\Expressions\MathFunctions\SqRt.cs" />
     <Compile Include="Models\Expressions\MathFunctions\Tan.cs" />
