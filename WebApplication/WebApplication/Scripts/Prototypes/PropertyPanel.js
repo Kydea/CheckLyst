@@ -206,7 +206,7 @@
                     ], { readOnly: state != prototypes.Prototype.states.draft }).setHandler(function (value) {
                         item.setColor(model.color);
                     }), "Color",
-                    "The color the text."
+                    "The color of the text."
                 ));
             }
 

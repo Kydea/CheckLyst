@@ -18,24 +18,25 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
             string[] Values = Value.Split('.');
             if (Values.Length == 1)
             {
+                var LowerValue = Value.ToLower();
                 //Constants
-                if (Value.ToLower() == "true")
+                if (LowerValue == "true")
                 {
                     Symbol = new Constant(new TypedValue(DataType.Boolean, true)) { Position = Position };
                     Operator = OperatorType.No;
                 }
-                else if (Value.ToLower() == "false")
+                else if (LowerValue == "false")
                 {
                     Symbol = new Constant(new TypedValue(DataType.Boolean, false)) { Position = Position };
                     Operator = OperatorType.No;
                 }
 
                 //Logic operators
-                else if (Value.ToLower() == "or")
+                else if (LowerValue == "or")
                     Symbol = new LogicOperators.Or { Position = Position };
-                else if (Value.ToLower() == "and")
+                else if (LowerValue == "and")
                     Symbol = new LogicOperators.And { Position = Position };
-                else if (Value.ToLower() == "not")
+                else if (LowerValue == "not")
                 {
                     Symbol = new LogicOperators.Not { Position = Position };
                     TokenOrderRightToLeft = true;
@@ -44,7 +45,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
 
                 //Math functions
 
-                else if (Value.ToLower() == "sqrt")
+                else if (LowerValue == "sqrt")
                 {
                     var SqRt = new MathFunctions.SqRt { Position = Position };
                     ParseArgument(ref ExpressionValue, ref Position, 1);
@@ -52,7 +53,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     Symbol = SqRt;
                     Operator = OperatorType.No;
                 }
-                else if (Value.ToLower() == "sin")
+                else if (LowerValue == "sin")
                 {
                     var Sin = new MathFunctions.Sin { Position = Position };
                     ParseArgument(ref ExpressionValue, ref Position, 1);
@@ -60,7 +61,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     Symbol = Sin;
                     Operator = OperatorType.No;
                 }
-                else if (Value.ToLower() == "cos")
+                else if (LowerValue == "cos")
                 {
                     var Cos = new MathFunctions.Cos { Position = Position };
                     ParseArgument(ref ExpressionValue, ref Position, 1);
@@ -68,7 +69,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     Symbol = Cos;
                     Operator = OperatorType.No;
                 }
-                else if (Value.ToLower() == "tan")
+                else if (LowerValue == "tan")
                 {
                     var Tan = new MathFunctions.Tan { Position = Position };
                     ParseArgument(ref ExpressionValue, ref Position, 1);
@@ -76,7 +77,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     Symbol = Tan;
                     Operator = OperatorType.No;
                 }
-                else if (Value.ToLower() == "atan")
+                else if (LowerValue == "atan")
                 {
                     var ATan = new MathFunctions.ATan { Position = Position };
                     ParseArgument(ref ExpressionValue, ref Position, 1);
@@ -84,7 +85,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     Symbol = ATan;
                     Operator = OperatorType.No;
                 }
-                else if (Value.ToLower() == "ln")
+                else if (LowerValue == "ln")
                 {
                     var LN = new MathFunctions.LN { Position = Position };
                     ParseArgument(ref ExpressionValue, ref Position, 1);
@@ -92,7 +93,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     Symbol = LN;
                     Operator = OperatorType.No;
                 }
-                else if (Value.ToLower() == "log")
+                else if (LowerValue == "log")
                 {
                     var Log = new MathFunctions.Log { Position = Position };
                     ParseArgument(ref ExpressionValue, ref Position, 1);
@@ -100,7 +101,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     Symbol = Log;
                     Operator = OperatorType.No;
                 }
-                else if (Value.ToLower() == "round")
+                else if (LowerValue == "round")
                 {
                     var Round = new MathFunctions.Round { Position = Position };
                     ParseArgument(ref ExpressionValue, ref Position, 2);
@@ -111,7 +112,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                 }
 
                 //Ternary operator
-                else if (Value.ToLower() == "iif")
+                else if (LowerValue == "iif")
                 {
                     var TernaryOperator = new Expressions.TernaryOperator { Position = Position };
                     ParseArgument(ref ExpressionValue, ref Position, 3);
@@ -161,7 +162,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     case "Slope":
                     case "Intercept":
                         var GeometricFunction = new IteratorFunctions.GeometricFunction(Values[1]) { IteratorCode = Values[0], Position = Position };
-                        ParseArgument(ref ExpressionValue, ref Position, 1);
+                        ParseArgument(ref ExpressionValue, ref Position, 2);
                         GeometricFunction.Left  = Arguments[0].Symbol;
                         GeometricFunction.Right = Arguments[1].Symbol;
                         Symbol = GeometricFunction;
@@ -205,7 +206,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
 
                 if (Character == '(') break;
 
-                if (!Char.IsWhiteSpace(Character) || Caret == ExpressionValue.Length)
+                if (!char.IsWhiteSpace(Character) || Caret == ExpressionValue.Length)
                     throw new ParseException("( expected", Caret);
             }
 

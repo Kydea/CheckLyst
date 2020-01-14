@@ -10,7 +10,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
     {
         protected override TypedValue GetValue(List<TypedValue> Values)
         {
-            return new TypedValue(DataType.Number, Values.Count());
+            return new TypedValue(DataType.Number, (decimal)Values.Count());
         }
 
         public override string ToString()

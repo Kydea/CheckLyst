@@ -29,43 +29,48 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
         private decimal Corr(List<TypedValue> LeftValues, List<TypedValue> RightValues)
         {
             var LeftAvg = LeftValues.Average(TypedValue => TypedValue.NumberValue);
-            var RightAvg = LeftValues.Average(TypedValue => TypedValue.NumberValue);
+            var RightAvg = RightValues.Average(TypedValue => TypedValue.NumberValue);
 
             decimal Result = 0;
             for(var Index = 0; Index < LeftValues.Count; ++Index)
-                Result += (LeftValues[0].NumberValue - LeftAvg) * (RightValues[0].NumberValue - RightAvg);
+                Result += (LeftValues[Index].NumberValue - LeftAvg) * (RightValues[Index].NumberValue - RightAvg);
 
-            return Result / (decimal)Math.Sqrt(
-                LeftValues.Sum(TypedValue => Math.Pow((double)(TypedValue.NumberValue - LeftAvg), 2))
-                * RightValues.Sum(TypedValue => Math.Pow((double)(TypedValue.NumberValue - RightAvg), 2))
+            decimal Denominator = (decimal)Math.Sqrt(
+               LeftValues.Sum(TypedValue => Math.Pow((double)(TypedValue.NumberValue - LeftAvg), 2))
+               * RightValues.Sum(TypedValue => Math.Pow((double)(TypedValue.NumberValue - RightAvg), 2))
             );
+
+            return Denominator == 0 ? 0 : Result / Denominator;
         }
 
-        private decimal Slope(List<TypedValue> LeftValues, List<TypedValue> RightValues, decimal? RightAvg)
+        private decimal Slope(List<TypedValue> LeftValues, List<TypedValue> RightValues, decimal? PreCalculatedLeftAvg, decimal? PreCalculatedRightAvg)
         {
-            var LeftAvg = LeftValues.Average(TypedValue => TypedValue.NumberValue);
-            var CalculaterRightAvg = RightAvg ?? LeftValues.Average(TypedValue => TypedValue.NumberValue);
+            var LeftAvg = PreCalculatedLeftAvg ?? LeftValues.Average(TypedValue => TypedValue.NumberValue);
+            var RightAvg = PreCalculatedRightAvg ?? RightValues.Average(TypedValue => TypedValue.NumberValue);
 
             decimal Result = 0;
             for (var Index = 0; Index < LeftValues.Count; ++Index)
-                Result += (LeftValues[0].NumberValue - LeftAvg) * (RightValues[0].NumberValue - CalculaterRightAvg);
+                Result += (LeftValues[Index].NumberValue - LeftAvg) * (RightValues[Index].NumberValue - RightAvg);
 
-            return Result / (decimal)LeftValues.Sum(TypedValue => Math.Pow((double)(TypedValue.NumberValue - LeftAvg), 2));
+            decimal Denominator = (decimal)LeftValues.Sum(TypedValue => Math.Pow((double)(TypedValue.NumberValue - LeftAvg), 2));
+            return Denominator == 0 ? 0 : Result / Denominator;
         }
 
         private decimal Intercept(List<TypedValue> LeftValues, List<TypedValue> RightValues)
         {
-            var RightAvg = LeftValues.Average(TypedValue => TypedValue.NumberValue);
+            decimal
+                LeftAvg = LeftValues.Average(TypedValue => TypedValue.NumberValue),
+                RightAvg = RightValues.Average(TypedValue => TypedValue.NumberValue);
 
-            return RightAvg - Slope(LeftValues, RightValues, RightAvg);
+            return RightAvg - LeftAvg * Slope(LeftValues, RightValues, LeftAvg, RightAvg);
         }
 
         protected override TypedValue GetValue(List<TypedValue> LeftValues, List<TypedValue> RightValues)
         {
             var Result =
-                LeftValues.Any(Value => Value.IsNull) || RightValues.Any(Value => Value.IsNull) ? default(decimal?) :
+                LeftValues.Count == 0 || LeftValues.Any(Value => Value.IsNull) || RightValues.Any(Value => Value.IsNull) ? default(decimal?) :
                 Function == "Corr" ? Corr(LeftValues, RightValues) :
-                Function == "Slope" ? Slope(LeftValues, RightValues, null) :
+                Function == "Slope" ? Slope(LeftValues, RightValues, null, null) :
                 Function == "Intercept" ? Intercept(LeftValues, RightValues) :
                 default(decimal?);
 

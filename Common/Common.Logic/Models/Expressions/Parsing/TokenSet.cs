@@ -87,9 +87,8 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     Tokens.RemoveAt(Token.Index + 1);
                     Operator = true;
                 }
-                else if (Token.Symbol is BinaryOperator)
+                else if (Token.Symbol is BinaryOperator BinaryOperator && !(Token.Symbol is MathFunctions.BinaryMathFunction) && !(Token.Symbol is IteratorFunctions.GeometricFunction)) 
                 {
-                    var BinaryOperator = (BinaryOperator)Token.Symbol;
                     if (Token.Index == 0)
                         throw new ParseException("Expected operand", Token.Position);
                     BinaryOperator.Left = Tokens[Token.Index - 1].Symbol;
@@ -122,10 +121,8 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     Tokens.RemoveAt(Token.Index - 1);
                     Operator = true;
                 }
-                else if (Token is Literal)
+                else if (Token is Literal Literal)
                 {
-                    var Literal = (Literal)Token;
-
                 }
 
                 Symbol = Token.Symbol;
