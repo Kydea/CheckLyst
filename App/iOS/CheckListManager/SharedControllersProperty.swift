@@ -110,6 +110,7 @@ class SharedControllersProperty: NSObject {
                 }
             }
             catch{
+                print(error)
             }
         }
     }
