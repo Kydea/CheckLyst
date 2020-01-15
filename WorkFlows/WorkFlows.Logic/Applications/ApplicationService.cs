@@ -95,7 +95,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     Action = TrailAction.PrototypeStateChanged,
                     Date = DateTimeOffset.UtcNow,
                     CheckList = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}",
-                    Information = State
+                    Information = JsonConvert.SerializeObject(new { State })
                 });
             }
         }
@@ -163,7 +163,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 Action = TrailAction.InstanceStateChanged,
                 Date = DateTimeOffset.UtcNow,
                 CheckList = $"{Instance.Prototypes.Name}.{Instance.Version}.{Instance.Year}.{Instance.Number}",
-                Information = State
+                Information = JsonConvert.SerializeObject(new { State })
             });
         }
 
