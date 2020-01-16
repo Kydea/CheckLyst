@@ -137,7 +137,6 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     }
     
     override func viewWillDisappear(_ animated : Bool) {
-        print(self.presentedViewController.debugDescription)
         super.viewWillDisappear(animated)
         
         if(self.presentedViewController is QRCodeScannerViewController) {

@@ -127,7 +127,9 @@ open class ServerConnection {
             
             request.timeoutInterval = 20
             
-            
+            if let companyTimeZone = UserDefaults.standard.string(forKey: "timeZone") {
+                request.addValue(companyTimeZone, forHTTPHeaderField: "companytimezone")
+            }
             
             if (!parameters.isEmpty)
                 
@@ -154,7 +156,7 @@ open class ServerConnection {
                 } else {
                     request.addValue("application/json", forHTTPHeaderField: "Content-Type")
                     
-                    request.httpBody = try  JSONSerialization.data(withJSONObject: parameters, options:[])
+                    request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options:[])
                 }
                 
             }
@@ -204,6 +206,10 @@ open class ServerConnection {
             let session = URLSession.shared
             request.httpMethod = "GET"
             request.timeoutInterval = 20
+            
+            if let companyTimeZone = UserDefaults.standard.string(forKey: "timeZone") {
+                request.addValue(companyTimeZone, forHTTPHeaderField: "companytimezone")
+            }
             
             let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
                 let priority = DispatchQoS.default.qosClass
