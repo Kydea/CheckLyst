@@ -32,26 +32,44 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public override bool Hidden => (Page?.Hidden ?? false) || base.Hidden;
         
+        public void CreateInstanceIterations()
+        {
+            if (Iterator && InstanceIterations > 0 && !IteratorModelItem)
+            {
+                for (int Index = 0; Index < InstanceIterations; ++Index)
+                    AddIteration();
+
+                foreach (var iteration in Iterations)
+                    iteration.CreateInstanceIterations();
+            }
+            if (!Iterator)
+                foreach (var Item in Items)
+                    if (Item is Group Group)
+                        Group.CreateInstanceIterations();
+        }
+
         public override void Setup()
 		{
 			base.Setup();
 			SetupItems();
 
-			if (Iterator)
-			{
-				foreach (var iteration in Iterations)
+            var Index = 0;
+            if (Iterator)
+				foreach (var Iteration in Iterations)
 				{
-					iteration.CheckList = CheckList;
-					iteration.Page = Page;
-					iteration.Group = this;
-					iteration.Setup();
-				}
+                    Iteration.Indexes.Clear();
+                    if (this.Iteration != null)
+                        this.Iteration.Indexes.ForEach(i => Iteration.Indexes.Add(i));
 
-                if (((Instance)CheckList).InCreation && InstanceIterations > 0 && !IteratorModelItem)
-                    for (int Index = 0; Index < InstanceIterations; ++Index)
-                        AddIteration();
-			}
-		}
+                    Iteration.Indexes.Add(Index); //0-base
+                    Iteration.Index = ++Index; //1-base
+
+                    Iteration.CheckList = CheckList;
+					Iteration.Page = Page;
+					Iteration.Group = this;
+					Iteration.Setup();
+                }
+        }
 
 		public override void Update(string DecimalSeparator, string TimeZone)
 		{
@@ -64,18 +82,11 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 				_valid = _valid && item.Valid;
 			}
 
-			var index = 0;
 			if (Iterator)
 			{
 				_valid = true;
 				foreach (var Iteration in Iterations)
 				{
-                    Iteration.Indexes.Clear();
-                    if (Iteration != null)
-                        Iteration.Indexes.ForEach(i => Iteration.Indexes.Add(i));
-
-                    Iteration.Indexes.Add(index); //0-base
-                    Iteration.Index = ++index; //1-base
                     Iteration.Update(DecimalSeparator, TimeZone);
 					_valid = _valid && (Iteration.Removed || Iteration.Valid);
 				}

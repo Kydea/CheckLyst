@@ -16,7 +16,13 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public override bool IsValidByDefault()
 			=> _valid;
 
-		public override void Setup()
+        public void CreateInstanceIterations()
+        {
+            foreach (var Group in Groups)
+                Group.CreateInstanceIterations();
+        }
+
+        public override void Setup()
 		{
 			base.Setup();
 

@@ -30,15 +30,13 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             //loads or setup for the first time the iteration
             var Loading = Id > 0;
             CheckList.AddItem(this);
+            IterationItem = true;
             if (Loading)
-            {
-                IterationItem = true;
                 foreach (var Item in Items)
                 {
                     Item.Iteration = this;
                     Item.IterationItem = true;
                 }
-            }
             else
                 foreach (var Item in Group.Items)
                 {

@@ -72,7 +72,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                     Format,
                     ValueKeys.Select(Key =>
                     {
-                        var ExpressionValue = CheckList.GetExpressionValue(Key, IterationIndexes);
+                        var ExpressionValue = CheckList.GetExpressionValue(Key, IterationIndexes, out var Error);
                         var Value =
                             ExpressionValue != null ?
                                 ExpressionValue.Type == DataType.Error ? ErrorValueLeft + ExpressionValue.ErrorValue + ErrorValueRight :
@@ -83,7 +83,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                                 ExpressionValue.Type == DataType.Time ? ExpressionValue.TimeSpanValue.ToString(@"hh\:mm\:ss") :
                                 ExpressionValue.Value :
                             RuntimeValues?.ContainsKey(Key) ?? false ? RuntimeValues[Key] :
-                            $"{ErrorValueLeft}Code not found: {Key}{ErrorValueRight}";
+                            $"{ErrorValueLeft}{Error}{ErrorValueRight}";
                         ++Index;
                         return Value;
                     }).ToArray());

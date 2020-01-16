@@ -14,6 +14,7 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
         bool DisableAdd { get; set; }
         bool DisableRemove { get; set; }
         bool DisableMove { get; set; }
+        void CreateInstanceIterations();
         void Traverse(Func<ICheckListItem, bool> condition, Action<ICheckListItem> action);
 	}
 }

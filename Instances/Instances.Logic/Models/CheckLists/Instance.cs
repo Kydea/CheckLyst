@@ -73,11 +73,13 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
             Header.CheckList = this;
             Header.Setup();
+            if (InCreation) Header.CreateInstanceIterations();
 
             foreach (var page in Pages)
             {
                 page.CheckList = this;
                 page.Setup();
+                if (InCreation) page.CreateInstanceIterations();
             }
 
             foreach (var expression in Expressions.Values)
@@ -157,19 +159,41 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             return GetExpressionValue(ExpressionCode, IterationIndexes);
         }
 
-        public TypedValue GetExpressionValue(string ExpressionCode, List<int> IterationIndexes)
+        public TypedValue GetExpressionValue(string ExpressionCode, List<int> IterationIndexes, out string Error)
         {
-            if (ExpressionCode == null || !CheckList.Expressions.ContainsKey(ExpressionCode)) return null;
+            Error = null;
+            if (ExpressionCode == null || !CheckList.Expressions.ContainsKey(ExpressionCode))
+            {
+                Error = $"Expression {ExpressionCode} not found";
+                return null;
+            }
 
             var Value = CheckList.Expressions[ExpressionCode].Value;
             var Index = 0;
             while (Value?.IsNull == false && Value?.Type == DataType.Array)
             {
                 IEnumerable<TypedValue> ArrayValue;
-                if (IterationIndexes == null || IterationIndexes.Count <= Index || (ArrayValue = Value.ArrayValue).Count() <= IterationIndexes[Index]) return null;
+                if (IterationIndexes == null)
+                {
+                    Error = $"The expression {ExpressionCode} returns an array";
+                    return null;
+                }
+                if (IterationIndexes.Count <= Index)
+                {
+                    Error = $"The depth of this iteration is {IterationIndexes.Count} and is less than the depth of the array returned by the expression {ExpressionCode}";
+                    return null;
+                }
+                if ((ArrayValue = Value.ArrayValue).Count() <= IterationIndexes[Index])
+                {
+                    Error = $"The expression {ExpressionCode} returns an array with less than {IterationIndexes[Index] + 1} values at level {Index}";
+                    return null;
+                }
                 Value = ArrayValue.ToList()[IterationIndexes[Index]];
+                ++Index;
             }
             return Value;
         }
+
+        public TypedValue GetExpressionValue(string ExpressionCode, List<int> IterationIndexes) => GetExpressionValue(ExpressionCode, IterationIndexes, out var Error);
     }
 }

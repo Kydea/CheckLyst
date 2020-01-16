@@ -23,7 +23,6 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
         Conditions ValidCondition { get; set; }
         string ValidExpressionCode { get; set; }
         string ValidityMessage { get; set; }
-
         void Setup();
         void Update(string DecimalSeparator, string TimeZone);
         void UpdateReadOnly(string userCode, bool readOnlyInstance);

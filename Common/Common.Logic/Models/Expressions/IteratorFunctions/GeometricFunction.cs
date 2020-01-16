@@ -22,8 +22,9 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
         public override void Check(ICheckList Prototype, List<string> IteratorStack)
         {
             base.Check(Prototype, IteratorStack);
-            if (DataType != DataType.Number)
-                throw new ParseException($"Operands of function {Function} must be numbers", Position);
+            if (Left.DataType != DataType.Number || Right.DataType != DataType.Number)
+                throw new ParseException("Operand of operator * must be numbers", Position);
+            DataType = DataType.Number;
         }
 
         private decimal Corr(List<TypedValue> LeftValues, List<TypedValue> RightValues)

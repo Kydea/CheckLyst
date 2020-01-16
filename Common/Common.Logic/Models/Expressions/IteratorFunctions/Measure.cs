@@ -24,6 +24,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
             base.Check(Prototype, IteratorStack);
             if (DataType != DataType.Number)
                 throw new ParseException($"Operands of function {Operation} must be numbers", Position);
+            DataType = DataType.Number;
         }
 
         private decimal StDev (List<TypedValue> Values)
