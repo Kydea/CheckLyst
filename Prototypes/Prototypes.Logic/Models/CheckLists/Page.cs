@@ -42,5 +42,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 Group.Check();
             }
         }
+
+        public void CreateInstanceIterations() { throw new NotImplementedException(); }
     }
 }
