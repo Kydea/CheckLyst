@@ -10,7 +10,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         public override ICheckListItem Clone(ICheckListGroup parent)
         {
-            var text = new Attachment { Group = parent };
+            var text = new Attachment { Group = parent, Key = Key, FileType = FileType };
             Copy(this, text);
             return text;
         }

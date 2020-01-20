@@ -226,7 +226,7 @@ $$
 declare
 	_Year varchar(4);
 	_Number int;
-	_Code varchar(50);
+	_Code varchar(200);
 	_Value text;
 begin
 	_Year = null;

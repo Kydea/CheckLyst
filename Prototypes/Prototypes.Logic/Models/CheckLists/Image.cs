@@ -8,7 +8,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         public override ICheckListItem Clone(ICheckListGroup parent)
         {
-            var text = new Image { Group = parent };
+            var text = new Image { Group = parent, Key = Key };
             Copy(this, text);
             return text;
         }

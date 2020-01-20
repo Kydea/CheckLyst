@@ -51,9 +51,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             foreach (var iteration in Iterations)
             {
                 if (condition(iteration))
-                {
                     action(iteration);
-                }
 
                 iteration.Traverse(condition, action);
             }
@@ -61,9 +59,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             foreach (var item in Items)
             {
                 if (condition(item))
-                {
                     action(item);
-                }
             }
         }
         

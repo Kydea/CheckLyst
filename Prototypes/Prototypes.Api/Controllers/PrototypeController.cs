@@ -301,7 +301,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
 
         [HttpGet]
         [Route("DownloadAttachment")]
-        [Authorize(Roles = "Prototypes#View")]
+        [AllowAnonymous]
         public async Task<IHttpActionResult> DownloadAttachment([FromUri]ProcessAttachmentRequest request)
         {
             try
