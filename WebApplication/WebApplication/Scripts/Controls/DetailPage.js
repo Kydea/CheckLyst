@@ -51,17 +51,17 @@
 								.attr("id", "DetailPageReasonInput")
 								.attr("type", "text")
 								.attr("autocomplete", "off")
-								.val(lastReason)
+                                //.val(lastReason) //we are currently asking the reason each time as desired by the customer, restore the old value to set last reason
 						),
 					buttons: [
 						{
 							text: "save", icon: "check", defaultButton: true, handler: function () {
-								if (input.val().trim() === "") {
+								if (input.val().trim() === "") 
 									input.addClass("Error");
-								} else {
+								else {
 									input.removeClass("Error");
 									form.setValue("reason", input.val());
-									save();
+                                    save();
 								}
 
 								return true;
@@ -117,7 +117,7 @@
 				}
 
 				buttons.push({
-					text: "save", defaultButton: true, icon: "save", id: "SaveButton", handler: function (e) {
+					text: "save", defaultButton: true, icon: "save", id: "SaveButton", handler: function () {
 						clickHandler($(this), data == null ? "Add" : "Edit");
 						return true;
 					}

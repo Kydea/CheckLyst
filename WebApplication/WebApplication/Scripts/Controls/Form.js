@@ -38,7 +38,7 @@
 					if (e.key != "Tab" && e.which !== 0 && !e.ctrlKey && !e.metaKey && !e.altKey) 
 						onChange($(this));
 				})
-				.on("change, paste", fieldsSelector, function (e) {
+				.on("change paste", fieldsSelector, function (e) {
 					onChange($(this));
 				})
 				.on("change", ".Trigger", function () {
@@ -190,7 +190,7 @@
 				else if (!fieldErrors) {
 					fieldErrors = true;
 					errors.append(
-						$("<div />").addClass("Error").text("Some field is not valid. Click on the error icon of the fields for more details.").prepend(
+						$("<div />").addClass("Error").text("Some fields are not valid. Click on the error icon of the fields for more details.").prepend(
                             $("<i />").addClass("fas fa-exclamation-triangle")
 						)
 					);
@@ -202,7 +202,7 @@
 			//updates the form
 			clearAllErrors();
 
-			$(fieldsSelector, element).each(function () { //i use jquery on fieldsSelector again to include the progammatically added fields
+            $(fieldsSelector, element).each(function () { //fieldsSelector used again to include the fields added progammatically
 				var
 					field = $(this),
 					fieldData = data.fields[field.attr("name")];
@@ -212,19 +212,21 @@
 					if (tagName == "SELECT" && fieldData.options !== undefined) {
 						var
 							value = field.val(),
-							autoComplete = field.data("autoComplete");
-						field.empty();
-						for (var index in fieldData.options) {
-							var option = fieldData.options[index];
-							field.append($("<option />").attr("value", option.value).text(option.text));
-						}
+                            autoComplete = field.data("autoComplete");
+                        if (!fieldData.fixed) {
+                            field.empty();
+                            for (var index in fieldData.options) {
+                                var option = fieldData.options[index];
+                                field.append($("<option />").attr("value", option.value).text(option.text));
+                            }
+                        }
 						if (fieldData.value != null)
 							field.val(fieldData.value);
 						else if (autoComplete.isNullable())
 							field.val(null);
 						autoComplete.refresh();
 						autoComplete.getControl().toggle(!fieldData.visibile);
-						matematici.controls.setEditable(autoComplete.getControl(), fieldData.editable && fieldData.options.length > 0 && !options.readOnly);
+                        matematici.controls.setEditable(autoComplete.getControl(), fieldData.editable && (fieldData.fixed || fieldData.options.length > 0) && !options.readOnly);
 					} else {
 						if (fieldData.value != null) setFieldValue(field, fieldData.value);
 						field.toggle(!fieldData.visibile);

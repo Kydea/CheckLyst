@@ -97,8 +97,11 @@
                     if (
                         matematici.tokenManager.checkRole("Prototypes#Preview#" + model.department + "##")
                         || matematici.tokenManager.checkRole("Prototypes#Preview#" + model.department + "#" + model.prototypeType)
-                    )
+                    ) {
                         previewButton.removeClass("Hidden");
+                        submitForApprovalButton.removeClass("Hidden");
+                        cancelSimulationButton.removeClass("Hidden");
+                    }
                     break;
                 case prototypes.Prototype.states.obsolete:
                     break;

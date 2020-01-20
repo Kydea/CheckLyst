@@ -12,7 +12,7 @@ $Page-Width: 20px;
 
     a {
         text-align: center;
-        width: $Page-Width;
+        min-width: $Page-Width;
         height: $Page-Width;
         line-height: $Page-Width;
         color: $Color-Green-Dark;

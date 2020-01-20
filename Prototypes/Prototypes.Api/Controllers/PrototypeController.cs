@@ -181,7 +181,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
 
         [HttpPost]
         [Route("SetState")]
-        [Authorize(Roles = "Prototypes#Edit")]
+        [Authorize(Roles = "Prototypes#Edit, Prototypes#Preview")]
         public async Task<IHttpActionResult> SetState(PrototypeRequest request)
         {
             try

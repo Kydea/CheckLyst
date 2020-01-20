@@ -66,9 +66,13 @@
         fixSteps = function () {
             var
                 steps = $("div.Step", formElement).each(function (index) {
-                    $(this).children("h3").text("Step " + (index + 1));
+                    var step = $(this);
+                    step.children("h3").text("Step " + (index + 1));
                     $("label.Reason input", this).attr("name", "reason" + index);
-                    $(this).children("hr").toggle(index > 0);
+                    step.data("index", index).children("hr").toggle(index > 0)
+                    $("select", this).each(function (signatureIndex) {
+                        $(this).attr("name", "signature" + index + "." + signatureIndex);
+                    });
                 }),
                 count = steps.size();
 
@@ -88,6 +92,10 @@
                 count = labels.size();
 
             labels.eq(0).next().toggle(count > 1);
+            $("a.Button.Add", step).toggle(count < 5);
+            $("select", step).each(function (signatureIndex) {
+                $(this).attr("name", "signature" + step.data("index") + "." + signatureIndex);
+            });
             resize();
         },
 
@@ -95,7 +103,9 @@
             var
                 step = $(button).parent(),
 
-                select = $("<select />").prop("multiple", true),
+                select = $("<select />").prop({
+                    multiple: true
+                }),
 
                 label =
                     $("<label />")
@@ -142,7 +152,7 @@
             step.append($("<label />").addClass("Clearing Reason").append($("<span />").text("Signature reason")).append($("<i />").addClass("Icon fal fa-pencil")).append(reason = $("<input />").attr({ type: "text" })));
             if (detailPage.isReadOnly()) matematici.controls.setEditable(reason, false);
 
-            var addUserButton = $("<a />").attr("href", "#").addClass("Button Icon").append($("<i />").addClass("Icon fal fa-plus")).on("click", function () {
+            var addUserButton = $("<a />").attr("href", "#").addClass("Button Icon Add").append($("<i />").addClass("Icon fal fa-plus")).on("click", function () {
                 addUser(addUserButton);
             });
             step.append(addUserButton);

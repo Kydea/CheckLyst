@@ -373,7 +373,15 @@ namespace CheckListManager.Prototypes.Logic.Services
         public async Task<PrototypeResponse> SetStateAsync(DefaultIdentity identity, PrototypeRequest request)
         {
             var PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(identity.CompanyId, request.ID, request.Version);
-            if (
+            if (PrototypeVersion.VersionState == VersionState.InSimulation && (request.State == VersionState.InApproval || request.State == VersionState.Draft))
+            {
+                if (
+                    !identity.HasPermission("Prototypes", "Preview", PrototypeVersion.Prototypes.Department) &&
+                    !identity.HasPermission("Prototypes", "Preview", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType)
+                )
+                    throw new UnauthorizedAccessException();
+            }
+            else if (
                 !identity.HasPermission("Prototypes", "Edit", PrototypeVersion.Prototypes.Department) &&
                 !identity.HasPermission("Prototypes", "Edit", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType)
             )

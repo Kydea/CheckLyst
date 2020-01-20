@@ -9,7 +9,7 @@ namespace CheckListManager.WebApplication.Controllers
     public class InstancesController : BaseController
 	{
         [Route("List")]
-        [Authorize(Roles = "FunctionGroup#Instances")]
+        [Authorize(Roles = "FunctionGroup#Instances,Prototypes#Preview")]
         public ActionResult List()
         {
             return ConditionalView("List");

@@ -34,7 +34,7 @@ namespace CheckListManager.WorkFlows.Logic.Detail
         private async Task<DetailResponse> Validate(IDefaultIdentity identity, DetailRequest record)
         {
             var requireUserReason = await _settingService.RequireUserReasonAsync(identity.CompanyId);
-            
+
             var response = new DetailResponse();
             bool Valid = true;
             if (string.IsNullOrWhiteSpace(record.Description))
@@ -74,6 +74,7 @@ namespace CheckListManager.WorkFlows.Logic.Detail
             }
             else if (record.Steps != null)
                 for (var Index = 0; Index < record.Steps.Count(); ++Index)
+                {
                     if (string.IsNullOrWhiteSpace(record.Steps[Index].Reason))
                         response.Fields[$"Reason{Index}"] = new Field
                         {
@@ -84,6 +85,20 @@ namespace CheckListManager.WorkFlows.Logic.Detail
                                 }
                             }
                         };
+
+                    for (var SignatureIndex = 0; SignatureIndex < record.Steps[Index].Signatures.Count(); ++SignatureIndex)
+                        if (record.Steps[Index].Signatures[SignatureIndex] == null)
+                            response.Fields[$"signature{Index}.{SignatureIndex}"] = new Field
+                            {
+                                Fixed = true,
+                                ValidationMessages = new List<ValidationMessage> {
+                                    new ValidationMessage {
+                                        Level = ValidationMessage.LevelError,
+                                        Message = "Mandatory field"
+                                    }
+                                }
+                            };
+                }
 
             response.Valid = Valid && !response.Fields.Any();
             return response;
@@ -188,7 +203,7 @@ namespace CheckListManager.WorkFlows.Logic.Detail
                     });
                     response.Valid = false;
                 }
-            
+
             return response;
         }
 

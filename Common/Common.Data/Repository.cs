@@ -12,56 +12,56 @@ using Npgsql;
 
 namespace CheckListManager.Common.Data
 {
-	public abstract class Repository : IRepository, IDisposable
-	{
-		private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+    public abstract class Repository : IRepository, IDisposable
+    {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-		protected readonly RelationalDatabaseEntities Entities;
+        protected readonly RelationalDatabaseEntities Entities;
 
-		protected Repository(RelationalDatabaseEntities entities)
-		{
-			Entities = entities;
-		}
+        protected Repository(RelationalDatabaseEntities entities)
+        {
+            Entities = entities;
+        }
 
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
-		protected virtual void Dispose(bool disposing)
-		{
-			if (disposing)
-				Entities?.Dispose();
-		}
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+                Entities?.Dispose();
+        }
 
-		public async Task<int> SaveChangesAsync()
-		{
-			try
-			{
-				return await Entities.SaveChangesAsync();
-			}
-			catch (DbUpdateException exception)
-			{
-				throw GetUpdateException(exception);
-			}
-			catch (DbEntityValidationException exception)
-			{
-				throw GetValidationErrors(exception);
-			}
-			catch (DBConcurrencyException)
-			{
-				throw;
-			}
-			catch (Exception e)
-			{
-				Logger.Error(e);
-				throw;
-			}
-		}
+        public async Task<int> SaveChangesAsync()
+        {
+            try
+            {
+                return await Entities.SaveChangesAsync();
+            }
+            catch (DbUpdateException exception)
+            {
+                throw GetUpdateException(exception);
+            }
+            catch (DbEntityValidationException exception)
+            {
+                throw GetValidationErrors(exception);
+            }
+            catch (DBConcurrencyException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e);
+                throw;
+            }
+        }
 
-		protected async Task<T> Call<T>(string name, params Parameter[] parameters)
-		{
+        protected async Task<T> Call<T>(string name, params Parameter[] parameters)
+        {
             try
             {
                 if (Entities.Database.Connection.State != ConnectionState.Open)
@@ -95,36 +95,42 @@ namespace CheckListManager.Common.Data
             {
                 throw new DatabaseException(Exception.Message, Exception.InnerException);
             }
-		}
+        }
 
-		private static DatabaseAggregateException GetValidationErrors(DbEntityValidationException exception)
-		{
-			var exceptions =
-				exception.EntityValidationErrors.SelectMany(
-					v => v.ValidationErrors.Select(e => new DatabaseException(e.ErrorMessage)));
-			
-			return new DatabaseAggregateException(exceptions);
-		}
+        private static DatabaseAggregateException GetValidationErrors(DbEntityValidationException exception)
+        {
+            var exceptions =
+                exception.EntityValidationErrors.SelectMany(
+                    v => v.ValidationErrors.Select(e => new DatabaseException(e.ErrorMessage)));
 
-		private static DatabaseException GetUpdateException(Exception updateException)
-		{
-			var exception = updateException;
-			var type = typeof(PostgresException);
-			while (exception.InnerException != null && exception.GetType() != type)
-				exception = exception.InnerException;
+            return new DatabaseAggregateException(exceptions);
+        }
 
-			if (exception != null)
-			{
-				switch (((PostgresException)exception).SqlState)
-				{
-					case "23505":
-						return new DatabaseException(DatabaseError.PrimaryKeyViolation, exception.Message, exception);
-					default:
-						return new DatabaseException(exception.Message, exception);
-				}
-			}
+        private static DatabaseException GetUpdateException(Exception updateException)
+        {
+            var exception = updateException;
+            var type = typeof(PostgresException);
+            while (exception.InnerException != null && exception.GetType() != type)
+                exception = exception.InnerException;
 
-			return new DatabaseException(updateException.Message, updateException);
-		}
-	}
+            if (exception != null)
+            {
+                var postgresException = (PostgresException)exception;
+                switch (postgresException.SqlState)
+                {
+                    case "23505":
+                        var constraintName = postgresException.ConstraintName;
+                        var tokens = constraintName.Split('_');
+                        return
+                            tokens.Length == 2 ?
+                                new DatabaseException(DatabaseError.PrimaryKeyViolation, $"Duplicated value for field {tokens[0]}.{tokens[1]}", exception) :
+                                new DatabaseException(DatabaseError.PrimaryKeyViolation, exception.Message, exception);
+                    default:
+                        return new DatabaseException(exception.Message, exception);
+                }
+            }
+
+            return new DatabaseException(updateException.Message, updateException);
+        }
+    }
 }
