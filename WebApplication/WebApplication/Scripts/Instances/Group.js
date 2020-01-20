@@ -152,7 +152,7 @@
             modelIndex = 0,
             newItems = [],
             newItemIndexes = {},
-            iteratorOrder = {};
+            reorder = false;
 
         update(model);
 
@@ -172,8 +172,8 @@
 
             newItemIndexes[itemModel.id] = index;
             newItems.push(item);
-            if (itemModel.typeName == "Iteration")
-                iteratorOrder[itemModel.index] = index;
+
+            if (itemModel.typeName == "Iteration") reorder = true;
         }
 
         /* elimina gli oggetti che non esistono più */
@@ -185,9 +185,9 @@
         itemIndexes = newItemIndexes;
 
         /* riordina gli oggetti iteration */
-		if (iteratorOrder)
-			for (index in iteratorOrder) 
-                items[iteratorOrder[index]].appendElement();
+        if (reorder)
+            for (index in items) 
+                items[index].appendElement();
         
         var visibleChildren = $(model.showAsTable ? "tr.Iteration:not(.Removed)" : "> .Iteration:not(.Removed)", element);
         visibleChildren.removeClass("FirstIteration").removeClass("LastIteration");

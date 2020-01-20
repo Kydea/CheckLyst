@@ -50,6 +50,8 @@ div.Prototype div.TabLabels {
     background-color: #fce6e8; }
   div.Prototype div.TabLabels > a:first-of-type + div.Commands a.Up {
     display: none; }
+  div.Prototype div.TabLabels > a:first-of-type + div.Commands:nth-last-child(2) a.Remove {
+    display: none; }
   div.Prototype div.TabLabels > a:nth-last-of-type(2) + div.Commands a.Down {
     display: none; }
   div.Prototype div.TabLabels > a.Add {

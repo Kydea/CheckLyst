@@ -85,6 +85,13 @@ div.Prototype {
                     a.Up {
                         display: none;
                     }
+
+                    &:nth-last-child(2) {
+                        //disable remove command for last page
+                        a.Remove {
+                            display: none;
+                        }
+                    }
                 }
             }
 
