@@ -71,7 +71,7 @@ namespace CheckListManager.Instances.Logic.List
                 prototypeType = prototypeType.HasValue && prototypeTypes.Any(d => d.ID == prototypeType.Value) ? form.PrototypeType.Value : prototypeTypes.FirstOrDefault()?.ID;
                 response.Fields["PrototypeType"] = new Field
                 {
-                    Options = prototypeTypes.OrderBy(x => x.Name).Select(pt => new Option(pt.ID.ToString(), pt.Name)),
+                    Options = prototypeTypes.OrderBy(x => x.Name).Select(pt => new Option(pt.ID.ToString(), pt.Name)).Distinct(),
                     Value = prototypeType?.ToString()
                 };
             }
@@ -79,10 +79,11 @@ namespace CheckListManager.Instances.Logic.List
             if (form.Source == null || form.Source == "department" || form.Source == "prototypeType")
             {
                 var prototypes = await _commonRepository.GetPrototypesAsync(identity, prototypeType ?? -1, "Instances", "View");
-                prototypes = prototypes.Union(await _commonRepository.GetPrototypesAsync(identity, prototypeType ?? -1, "Prototypes", "Preview")).Where(p => p.PrototypeVersions.Any(pv => pv.VersionState == VersionState.Draft || pv.VersionState == VersionState.InSimulation)).ToList();
+                var testPrototypes = (await _commonRepository.GetPrototypesAsync(identity, prototypeType ?? -1, "Prototypes", "Preview")).Where(p => p.PrototypeVersions.Any(pv => pv.VersionState == VersionState.Draft || pv.VersionState == VersionState.InSimulation));
+                prototypes = prototypes.Union(testPrototypes).ToList();
                 response.Fields["Prototype"] = new Field
                 {
-                    Options = prototypes.OrderBy(x => x.Name).Select(p => new Option(p.ID.ToString(), p.Name)),
+                    Options = prototypes.OrderBy(x => x.Name).Select(p => new Option(p.ID.ToString(), p.Name)).Distinct(),
                     Value = prototype.HasValue && prototypes.Any(p => p.ID == prototype.Value) ? prototype.ToString() : null
                 };
             }
@@ -90,10 +91,11 @@ namespace CheckListManager.Instances.Logic.List
             if (form.Source == null || form.Source == "department" || form.Source == "prototypeType" || form.Source == "prototype")
             {
                 var versions = await _commonRepository.GetPrototypeVersionsAsync(identity, prototype ?? -1, "Instances", "View");
-                versions = versions.Union(await _commonRepository.GetPrototypeVersionsAsync(identity, prototype ?? -1, "Prototypes", "Preview")).Where(pv => pv.VersionState == VersionState.Draft || pv.VersionState == VersionState.InSimulation).ToList();
+                var testVersions = (await _commonRepository.GetPrototypeVersionsAsync(identity, prototype ?? -1, "Prototypes", "Preview")).Where(pv => pv.VersionState == VersionState.Draft || pv.VersionState == VersionState.InSimulation);
+                versions = versions.Union(testVersions).ToList();
                 response.Fields["Version"] = new Field
                 {
-                    Options = versions.OrderBy(x => x.Description).Select(p => new Option(p.Version.ToString(), p.Description)),
+                    Options = versions.OrderBy(x => x.Description).Select(p => new Option(p.Version.ToString(), p.Description)).Distinct(),
                     Value = version.HasValue && versions.Any(v => v.Version == version.Value) ? version.Value.ToString() : null
                 };
             }
@@ -104,7 +106,7 @@ namespace CheckListManager.Instances.Logic.List
                 tags = tags.Union(await _commonRepository.GetPrototypeVersionTagsAsync(identity, prototype ?? -1, version, "Prototypes", "Preview")).ToList();
                 response.Fields["TagCode"] = new Field
                 {
-                    Options = tags.OrderBy(x => x).Select(t => new Option(t, t)),
+                    Options = tags.OrderBy(x => x).Select(t => new Option(t, t)).Distinct(),
                     Value = !string.IsNullOrEmpty(tag) && tags.Contains(tag) ? tag : null
                 };
 
