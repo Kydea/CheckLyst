@@ -149,7 +149,7 @@ a.Button {
   a.Button.Invalid {
     color: #cc0000; }
   a.Button.ReadOnly {
-    background-color: #ccc;
+    background-color: #ccc !important;
     box-shadow: none; }
     a.Button.ReadOnly i.Icon {
       color: white;

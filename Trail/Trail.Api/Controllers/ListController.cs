@@ -56,7 +56,7 @@ namespace CheckListManager.Trail.Api.Controllers
         {
             return
                 value == null ? "(null)" :
-                value is string stringValue ? stringValue == string.Empty ? "(empty)" : stringValue :
+                value is string stringValue ? stringValue == string.Empty ? "(empty)" : stringValue.Replace("\\\"", "'").Replace("\"", "'") :
                 value is DateTime dateTimeValue ? dateTimeValue.ToString("yyyy-MM-dd HH:mm") :
                 value is DateTimeOffset dateTimeOffsetValue ? dateTimeOffsetValue.ToString("yyyy-MM-dd HH:mm UTC zzz") :
                 value.ToString();
@@ -136,7 +136,7 @@ namespace CheckListManager.Trail.Api.Controllers
                     tm.User,
                     tm.Action,
                     tm.CheckList,
-                    tm.Information // == null ? null : PrettifyObject(tm.Information, 0)
+                    tm.Information == null ? null : PrettifyObject(tm.Information, 0)
             }));
         }
     }

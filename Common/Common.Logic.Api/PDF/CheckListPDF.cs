@@ -221,7 +221,7 @@ namespace CheckListManager.Common.Logic.Api.PDF
 
                 foreach (var Signature in Signatures)
                 {
-                    Table.AddCell(new PdfPCell(new Paragraph().SetText($"{Signature.User} - {Signature.Users?.Description}", GenericFont).Padding(5)));
+                    Table.AddCell(new PdfPCell(new Paragraph().SetText($"{Signature.User} - {Signature.UserDescription}", GenericFont).Padding(5)));
                     Table.AddCell(new PdfPCell(new Paragraph().SetText(Signature.Date?.ToLocalTime(TimeZone).ToString("yyyy-MM-dd"), GenericFont).Padding(5)));
                     Table.AddCell(new PdfPCell(new Paragraph().SetText(Signature.Date?.ToLocalTime(TimeZone).ToString("HH:mm UTC zzz"), GenericFont).Padding(5)));
                     Table.AddCell(new PdfPCell(new Paragraph().SetText((Signature.Step + 1).ToString(), GenericFont).Padding(5)));

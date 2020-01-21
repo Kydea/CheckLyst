@@ -217,7 +217,7 @@ a.Button {
     }
 
     &.ReadOnly {
-        background-color: $Color-Grey-Light;
+        background-color: $Color-Grey-Light !important;
         box-shadow: none;
 
         i.Icon {
