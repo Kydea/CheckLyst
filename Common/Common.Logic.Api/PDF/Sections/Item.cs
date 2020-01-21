@@ -114,6 +114,8 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             }
             else if (Element is ICheckListImage ImageElement)
             {
+                if (ImageElement.Key == null) return;
+
                 Paragraph Paragraph;
                 if (!string.IsNullOrEmpty(ImageElement.Description))
                 {
