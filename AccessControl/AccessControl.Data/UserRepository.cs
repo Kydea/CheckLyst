@@ -82,7 +82,9 @@ namespace CheckListManager.AccessControl.Data
                     f => f.Company == companyId &&
                         (code == string.Empty || f.User != null && f.User.ToUpper().Contains(code.ToUpper())) &&
                         (description == string.Empty || f.Users.Description != null && f.Users.Description.ToUpper().Contains(description.ToUpper()))
-                ).ToListAsync();
+                )
+                .OrderBy(x => x.User).ThenBy(x => x.Department).ThenBy(x => x.PrototypeType).ThenBy(x => x.FunctionGroup).ThenBy(x => x.Function)
+                .ToListAsync();
         }
 
         public Task<List<Users>> GetUsersAsync(long companyId, string code, string description, int skip, int take)

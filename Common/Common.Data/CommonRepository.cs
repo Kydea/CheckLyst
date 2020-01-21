@@ -30,7 +30,7 @@ namespace CheckListManager.Common.Data
                 InactivityTimeoutSeconds = c.InactivityTimeoutSeconds
             }).ToListAsync(), "CommonRepository");
 
-        public Task<List<Departments>> GetDepartmentsAsync(IDefaultIdentity identity, string functionGroup)
+        public Task<List<Departments>> GetDepartmentsAsync(IDefaultIdentity identity, string functionGroup, string function)
         {
             IQueryable<Departments> Departments = Entities.Departments.Where(d => d.Company == identity.CompanyId);
             if (functionGroup != null)
@@ -38,12 +38,12 @@ namespace CheckListManager.Common.Data
                     uf.Company == identity.CompanyId
                     && uf.User == identity.Code
                     && uf.FunctionGroup == functionGroup
-                    && uf.Function == "View"
+                    && uf.Function == function
                 ));
             return Departments.ToListAsync();
         }
 
-        public Task<List<PrototypeTypes>> GetPrototypeTypesAsync(IDefaultIdentity identity, long department, string functionGroup)
+        public Task<List<PrototypeTypes>> GetPrototypeTypesAsync(IDefaultIdentity identity, long department, string functionGroup, string function)
         {
             IQueryable<PrototypeTypes> PrototypeTypes = Entities.PrototypeTypes.Where(pt => pt.Company == identity.CompanyId && pt.Department == department);
             if (functionGroup != null)
@@ -51,12 +51,12 @@ namespace CheckListManager.Common.Data
                     uf.Company == identity.CompanyId
                     && uf.User == identity.Code
                     && uf.FunctionGroup == functionGroup
-                    && uf.Function == "View"
+                    && uf.Function == function
                 ) || pt.Departments.UserFunctions.Any(uf =>
                     uf.Company == identity.CompanyId
                     && uf.User == identity.Code
                     && uf.FunctionGroup == functionGroup
-                    && uf.Function == "View"
+                    && uf.Function == function
                     && uf.PrototypeType == null
                 ));
             return PrototypeTypes.ToListAsync();
@@ -72,7 +72,7 @@ namespace CheckListManager.Common.Data
             return await Entities.PrototypeTypes.Where(pt => pt.Company == companyId).ToListAsync();
         }
 
-        public Task<List<Prototypes>> GetPrototypesAsync(IDefaultIdentity identity, long prototypeType, string functionGroup)
+        public Task<List<Prototypes>> GetPrototypesAsync(IDefaultIdentity identity, long prototypeType, string functionGroup, string function)
         {
             IQueryable<Prototypes> Prototypes = Entities.Prototypes.Where(p => p.Company == identity.CompanyId && p.PrototypeType == prototypeType);
             if (functionGroup != null)
@@ -80,18 +80,18 @@ namespace CheckListManager.Common.Data
                     uf.Company == identity.CompanyId
                     && uf.User == identity.Code
                     && uf.FunctionGroup == functionGroup
-                    && uf.Function == "View"
+                    && uf.Function == function
                 ) || p.Departments.UserFunctions.Any(uf =>
                     uf.Company == identity.CompanyId
                     && uf.User == identity.Code
                     && uf.FunctionGroup == functionGroup
-                    && uf.Function == "View"
+                    && uf.Function == function
                     && uf.PrototypeType == null
                 ));
             return Prototypes.ToListAsync();
         }
 
-        public Task<List<ListItems.PrototypeVersion>> GetPrototypeVersionsAsync(IDefaultIdentity identity, long prototype, string functionGroup)
+        public Task<List<ListItems.PrototypeVersion>> GetPrototypeVersionsAsync(IDefaultIdentity identity, long prototype, string functionGroup, string function)
         {
             IQueryable<PrototypeVersions> PrototypeVersion = Entities.PrototypeVersions.Where(pv => pv.Prototypes.Company == identity.CompanyId && pv.Prototype == prototype);
             if (functionGroup != null)
@@ -99,19 +99,19 @@ namespace CheckListManager.Common.Data
                     uf.Company == identity.CompanyId
                     && uf.User == identity.Code
                     && uf.FunctionGroup == functionGroup
-                    && uf.Function == "View"
+                    && uf.Function == function
                 ) || pv.Prototypes.Departments.UserFunctions.Any(uf =>
                     uf.Company == identity.CompanyId
                     && uf.User == identity.Code
                     && uf.FunctionGroup == functionGroup
-                    && uf.Function == "View"
+                    && uf.Function == function
                     && uf.PrototypeType == null
                 ));
 
             return PrototypeVersion.Select(pv => new ListItems.PrototypeVersion { Version = pv.Version, VersionState = pv.VersionState }).ToListAsync();
         }
 
-        public Task<List<string>> GetPrototypeVersionTagsAsync(IDefaultIdentity identity, long prototype, int? version, string functionGroup)
+        public Task<List<string>> GetPrototypeVersionTagsAsync(IDefaultIdentity identity, long prototype, int? version, string functionGroup, string function)
         {
             IQueryable<PrototypeVersionTags> PrototypeVersionTags = Entities.PrototypeVersionTags.Where(pv => pv.PrototypeVersions.Prototypes.Company == identity.CompanyId && pv.Prototype == prototype && (version == null || pv.Version == version));
             if (functionGroup != null)
@@ -119,12 +119,12 @@ namespace CheckListManager.Common.Data
                     uf.Company == identity.CompanyId
                     && uf.User == identity.Code
                     && uf.FunctionGroup == functionGroup
-                    && uf.Function == "View"
+                    && uf.Function == function
                 ) || pvt.PrototypeVersions.Prototypes.Departments.UserFunctions.Any(uf =>
                     uf.Company == identity.CompanyId
                     && uf.User == identity.Code
                     && uf.FunctionGroup == functionGroup
-                    && uf.Function == "View"
+                    && uf.Function == function
                     && uf.PrototypeType == null
                ));
             return PrototypeVersionTags.Select(pv => pv.Code).Distinct().ToListAsync();

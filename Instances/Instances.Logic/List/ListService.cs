@@ -33,7 +33,8 @@ namespace CheckListManager.Instances.Logic.List
             {
                 //initial load
 
-                var departments = await _commonRepository.GetDepartmentsAsync(identity, "Instances");
+                var departments = await _commonRepository.GetDepartmentsAsync(identity, "Instances", "View");
+                departments = departments.Union(await _commonRepository.GetDepartmentsAsync(identity, "Prototypes", "Preview")).ToList();
                 department = department.HasValue && departments.Any(d => d.ID == department.Value) ? department.Value : departments.FirstOrDefault()?.ID;
                 response.Fields["Department"] = new Field
                 {
@@ -65,7 +66,8 @@ namespace CheckListManager.Instances.Logic.List
 
             if (form.Source == null || form.Source == "department")
             {
-                var prototypeTypes = await _commonRepository.GetPrototypeTypesAsync(identity, department ?? -1, "Instances");
+                var prototypeTypes = await _commonRepository.GetPrototypeTypesAsync(identity, department ?? -1, "Instances", "View");
+                prototypeTypes = prototypeTypes.Union(await _commonRepository.GetPrototypeTypesAsync(identity, department ?? -1, "Prototypes", "Preview")).ToList();
                 prototypeType = prototypeType.HasValue && prototypeTypes.Any(d => d.ID == prototypeType.Value) ? form.PrototypeType.Value : prototypeTypes.FirstOrDefault()?.ID;
                 response.Fields["PrototypeType"] = new Field
                 {
@@ -76,7 +78,8 @@ namespace CheckListManager.Instances.Logic.List
 
             if (form.Source == null || form.Source == "department" || form.Source == "prototypeType")
             {
-                var prototypes = await _commonRepository.GetPrototypesAsync(identity, prototypeType ?? -1, "Instances");
+                var prototypes = await _commonRepository.GetPrototypesAsync(identity, prototypeType ?? -1, "Instances", "View");
+                prototypes = prototypes.Union(await _commonRepository.GetPrototypesAsync(identity, prototypeType ?? -1, "Prototypes", "Preview")).Where(p => p.PrototypeVersions.Any(pv => pv.VersionState == VersionState.Draft || pv.VersionState == VersionState.InSimulation)).ToList();
                 response.Fields["Prototype"] = new Field
                 {
                     Options = prototypes.OrderBy(x => x.Name).Select(p => new Option(p.ID.ToString(), p.Name)),
@@ -86,7 +89,8 @@ namespace CheckListManager.Instances.Logic.List
 
             if (form.Source == null || form.Source == "department" || form.Source == "prototypeType" || form.Source == "prototype")
             {
-                var versions = await _commonRepository.GetPrototypeVersionsAsync(identity, prototype ?? -1, "Instances");
+                var versions = await _commonRepository.GetPrototypeVersionsAsync(identity, prototype ?? -1, "Instances", "View");
+                versions = versions.Union(await _commonRepository.GetPrototypeVersionsAsync(identity, prototype ?? -1, "Prototypes", "Preview")).Where(pv => pv.VersionState == VersionState.Draft || pv.VersionState == VersionState.InSimulation).ToList();
                 response.Fields["Version"] = new Field
                 {
                     Options = versions.OrderBy(x => x.Description).Select(p => new Option(p.Version.ToString(), p.Description)),
@@ -96,7 +100,8 @@ namespace CheckListManager.Instances.Logic.List
 
             if (form.Source == null || form.Source == "department" || form.Source == "prototypeType" || form.Source == "prototype" || form.Source == "version")
             {
-                var tags = await _commonRepository.GetPrototypeVersionTagsAsync(identity, prototype ?? -1, version, "Instances");
+                var tags = await _commonRepository.GetPrototypeVersionTagsAsync(identity, prototype ?? -1, version, "Instances", "View");
+                tags = tags.Union(await _commonRepository.GetPrototypeVersionTagsAsync(identity, prototype ?? -1, version, "Prototypes", "Preview")).ToList();
                 response.Fields["TagCode"] = new Field
                 {
                     Options = tags.OrderBy(x => x).Select(t => new Option(t, t)),

@@ -169,16 +169,22 @@
                 this, new prototypes.CountDownToProperty(model, "countDownToCode"), "Countdown to",
                 "Shows the countdown until the date and time are reached."
             ));
-            properties.push(new prototypes.Property(
-                this, new prototypes.ValidProperty(model), "Validity",
-                "Sets the condition under which the element is considered valid. By default pages and groups are valid if all the contained elements are valid, fields are valid if contains a value, signature are valid if signed. Text are always valid. Attachments are valid if contains a file."
-            ));
-            properties.push(new prototypes.Property(
-                this, new prototypes.SimpleValueProperty(model, "validityMessage", { readOnly: state != prototypes.Prototype.states.draft }), "Validity message",
-                "The error message to display to the user when the item is not valid to help him solve the problem."
-            ));
 
-
+            if (model.typeName != "Link" && model.typeName != "Text" && model.typeName != "Image") {
+                properties.push(new prototypes.Property(
+                    this, new prototypes.ValidProperty(model), "Validity",
+                    "Sets the condition under which the element is considered valid. By default pages and groups are valid if all the contained elements are valid, fields are valid if contains a value, signature are valid if signed. Text are always valid. Attachments are valid if contains a file."
+                ));
+                properties.push(new prototypes.Property(
+                    this, new prototypes.SimpleValueProperty(model, "validityMessage", { readOnly: state != prototypes.Prototype.states.draft }), "Validity message",
+                    "The error message to display to the user when the item is not valid to help him solve the problem."
+                ));
+                properties.push(new prototypes.Property(
+                    this, new prototypes.SignatureProperty(model, { readOnly: state != prototypes.Prototype.states.draft }), "Signature",
+                    "Determines which signature locks the element."
+                ));
+            }
+            
             if (model.typeName != "Page") {
                 properties.push(new prototypes.Property(
                     this, new prototypes.SimpleValueProperty(model, "fontSize", { number: true, readOnly: state != prototypes.Prototype.states.draft }).setCheck([
@@ -209,11 +215,6 @@
                     "The color of the text."
                 ));
             }
-
-            properties.push(new prototypes.Property(
-                this, new prototypes.SignatureProperty(model, { readOnly: state != prototypes.Prototype.states.draft }), "Signature",
-                "Determines which signature locks the element."
-            ));
 
             switch (model.typeName) {
                 case "Page":
@@ -424,12 +425,6 @@
                         this, new prototypes.UploadProperty(model, "key", { readOnly: state != prototypes.Prototype.states.draft }),
                         "Image",
                         "Upload the image to show."
-                    ));
-                    properties.push(new prototypes.Property(
-                        this, new prototypes.BooleanProperty(model, "newLine", state != prototypes.Prototype.states.draft).setHandler(function () {
-                            item.getElement().toggleClass("NewLine", model.newLine);
-                        }), "New line",
-                        "If checked, the field breaks the line."
                     ));
                     break;
                 case "Attachment":

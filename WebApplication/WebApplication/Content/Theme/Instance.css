@@ -281,8 +281,8 @@ div.Instance .Item.Link div.Information {
 div.Instance .Item.Image div.Information {
   display: none; }
 
-div.Instance .Item.Attachment div.Information {
-  display: none; }
+div.Instance .Item.Attachment a.Attachment {
+  margin-left: 20px; }
 
 div.Instance .Item.Hidden {
   display: none; }

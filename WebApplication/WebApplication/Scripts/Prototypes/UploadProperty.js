@@ -108,33 +108,34 @@
 	this.create = function (valuePanel) {
 		valuePanel.addClass("Upload");
 		options = options || {};
-		input = $("<input />")
-			.attr({ type: "file", readOnly: options.readOnly, accept: "image/*"  });
-		var form =
-			$("<form />")
-				.attr("enctype", "multipart/form-data")
-				.append($("<a />").attr("href", "#").addClass("Button").text("upload").append($("<i />").addClass("Icon fa fa-paperclip")).on("click", function () { input.click(); }))
-				.append(previewButton = $("<a />")
-					.attr("href", "#")
-					.addClass("Button")
-					.text("preview")
-					.append($("<i />").addClass("Icon fa fa-image"))
-					.on("click", preview)
-					.toggle(!!model[property])
-				)
-				.append(deleteButton = $("<a />")
-					.attr("href", "#")
-					.addClass("Button")
-					.text("delete")
-					.append($("<i />").addClass("Icon fa fa-trash-alt"))
-					.on("click", deleteImage)
-					.toggle(!!model[property])
-				)
-				.append(input);
-		input.on("change", change);
+		input = $("<input />").attr({ type: "file", readOnly: options.readOnly, accept: "image/*"  });
+        var form = $("<form />").attr("enctype", "multipart/form-data");
 
-		if (!options.readOnly)
-			valuePanel.append(form);
+        if (!options.readOnly)
+            form.append($("<a />").attr("href", "#").addClass("Button").text("upload").append($("<i />").addClass("Icon fa fa-paperclip")).on("click", function () { input.click(); }));
+
+        form.append(previewButton = $("<a />")
+            .attr("href", "#")
+            .addClass("Button")
+            .text("preview")
+            .append($("<i />").addClass("Icon fa fa-image"))
+            .on("click", preview)
+            .toggle(!!model[property])
+        );
+
+        if (!options.readOnly)
+            form.append(deleteButton = $("<a />")
+                .attr("href", "#")
+                .addClass("Button")
+                .text("delete")
+                .append($("<i />").addClass("Icon fa fa-trash-alt"))
+                .on("click", deleteImage)
+                .toggle(!!model[property])
+            );
+
+		form.append(input);
+        valuePanel.append(form);
+		input.on("change", change);
 	};
 
 	this.hasChanges = function () {

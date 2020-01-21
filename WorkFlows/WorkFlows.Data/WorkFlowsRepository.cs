@@ -105,8 +105,8 @@ namespace CheckListManager.WorkFlows.Data
                     && !defaultIdentity.HasPermission("Instances", "Edit", Instance.Prototypes.Department, Instance.Prototypes.PrototypeType)
                     && !defaultIdentity.HasPermission("Instances", "Edit", Instance.Prototypes.Department)
                 || PrototypeVersion != null 
-                    && !defaultIdentity.HasPermission("Prototypes", "Edit", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType)
-                    && !defaultIdentity.HasPermission("Prototypes", "Edit", PrototypeVersion.Prototypes.Department)
+                    && !defaultIdentity.HasPermission("Prototypes", "Preview", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType)
+                    && !defaultIdentity.HasPermission("Prototypes", "Preview", PrototypeVersion.Prototypes.Department)
             )
                 throw new Exception("Access denied");
 

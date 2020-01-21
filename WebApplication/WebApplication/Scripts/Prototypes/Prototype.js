@@ -93,6 +93,12 @@
                     approveButton.removeClass("Hidden");
                     break;
                 case prototypes.Prototype.states.draftReadOnly:
+                    if (
+                        matematici.tokenManager.checkRole("Prototypes#Preview#" + model.department + "##")
+                        || matematici.tokenManager.checkRole("Prototypes#Preview#" + model.department + "#" + model.prototypeType)
+                    )
+                        previewButton.removeClass("Hidden");
+                    break;
                 case prototypes.Prototype.states.simulationReadOnly:
                     if (
                         matematici.tokenManager.checkRole("Prototypes#Preview#" + model.department + "##")
@@ -113,6 +119,19 @@
 
             if ($("a:not(.Hidden)", buttonGroup).size() == 0)
                 buttonGroup.hide();
+        },
+
+        checkProfile = function () {
+            if (
+                prototypeKey.id >= 0
+                && !matematici.tokenManager.checkRole("Prototypes#Edit#" + model.department + "##")
+                && !matematici.tokenManager.checkRole("Prototypes#Edit#" + model.department + "#" + model.prototypeType)
+            ) {
+                if (model.state == prototypes.Prototype.states.draft)
+                    model.state = prototypes.Prototype.states.draftReadOnly;
+                if (model.state == prototypes.Prototype.states.simulation)
+                    model.state = prototypes.Prototype.states.simulationReadOnly;
+            }
         },
 
         update = function () {
@@ -390,7 +409,8 @@
 					concurrencyInformation = {
 						modifiedBy: result.modifiedBy,
 						modifiedOn: result.modifiedOn
-					};
+                    };
+                    checkProfile();
 					update();
 					setupActionBar();
 					if (!result.completed)
@@ -464,18 +484,8 @@
 					model.department = result.department;
 					model.prototypeType = result.prototypeType;
 					model.departmentName = result.departmentName;
-					model.prototypeTypeName = result.prototypeTypeName;
-
-					if (
-						result.id >= 0
-						&& !matematici.tokenManager.checkRole("Prototypes#Edit#" + result.department + "##")
-						&& !matematici.tokenManager.checkRole("Prototypes#Edit#" + result.department + "#" + result.prototypeType)
-					) {
-						if (model.state == prototypes.Prototype.states.draft)
-							model.state = prototypes.Prototype.states.draftReadOnly;
-						if (model.state == prototypes.Prototype.states.simulation)
-							model.state = prototypes.Prototype.states.simulationReadOnly;
-					}
+                    model.prototypeTypeName = result.prototypeTypeName;
+                    checkProfile();
 					update();
 					element.removeClass("Loading");
 				}
@@ -605,7 +615,8 @@
 			}).done(function (result) {
 				model.state = result.state;
 				model.proposedState = result.proposedState;
-				model.proposedDate = result.proposedDate;
+                model.proposedDate = result.proposedDate;
+                checkProfile();
 				update();
 				matematici.blip.ok();
 			});

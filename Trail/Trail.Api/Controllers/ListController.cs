@@ -49,7 +49,7 @@ namespace CheckListManager.Trail.Api.Controllers
             request.Data.CompanyId = Identity.CompanyId;
             request.Data.TimeZone = Request.Headers.GetValues("CompanyTimeZone").Single();
             await _redisCache.SetAsync($"Token:{Token}", request.Data, "Download", new TimeSpan(0, 1, 0));
-            return Ok(new { Token = Token });
+            return Ok(new { Token });
         }
 
         private string PrettifyValue(object value)
@@ -136,7 +136,7 @@ namespace CheckListManager.Trail.Api.Controllers
                     tm.User,
                     tm.Action,
                     tm.CheckList,
-                    tm.Information == null ? null : PrettifyObject(tm.Information, 0)
+                    tm.Information // == null ? null : PrettifyObject(tm.Information, 0)
             }));
         }
     }

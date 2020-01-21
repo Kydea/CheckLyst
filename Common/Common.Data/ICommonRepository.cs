@@ -8,13 +8,13 @@ namespace CheckListManager.Common.Data
     {
         Task<Companies> GetCompanyAsync(long id);
         Task<List<ListItems.Company>> GetCompaniesAsync();
-        Task<List<Departments>> GetDepartmentsAsync(IDefaultIdentity identity, string functionGroup);
-        Task<List<PrototypeTypes>> GetPrototypeTypesAsync(IDefaultIdentity identity, long department, string functionGroup);
+        Task<List<Departments>> GetDepartmentsAsync(IDefaultIdentity identity, string functionGroup, string function);
+        Task<List<PrototypeTypes>> GetPrototypeTypesAsync(IDefaultIdentity identity, long department, string functionGroup, string function);
         Task<List<Departments>> GetDepartmentsAsync(long companyId);
         Task<List<PrototypeTypes>> GetPrototypeTypesAsync(long companyId);
-        Task<List<Prototypes>> GetPrototypesAsync(IDefaultIdentity identity, long prototypeType, string functionGroup);
-        Task<List<ListItems.PrototypeVersion>> GetPrototypeVersionsAsync(IDefaultIdentity identity, long prototype, string functionGroup);
-        Task<List<string>> GetPrototypeVersionTagsAsync(IDefaultIdentity identity, long prototype, int? version, string functionGroup);
+        Task<List<Prototypes>> GetPrototypesAsync(IDefaultIdentity identity, long prototypeType, string functionGroup, string function);
+        Task<List<ListItems.PrototypeVersion>> GetPrototypeVersionsAsync(IDefaultIdentity identity, long prototype, string functionGroup, string function);
+        Task<List<string>> GetPrototypeVersionTagsAsync(IDefaultIdentity identity, long prototype, int? version, string functionGroup, string function);
         Task<List<string>> GetVersionStatesAsync();
         Task<List<string>> GetInstanceStatesAsync();
         Users GetUser(long CompanyID, string Code);

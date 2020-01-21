@@ -373,7 +373,7 @@ namespace CheckListManager.Prototypes.Logic.Services
         public async Task<PrototypeResponse> SetStateAsync(DefaultIdentity identity, PrototypeRequest request)
         {
             var PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(identity.CompanyId, request.ID, request.Version);
-            if (PrototypeVersion.VersionState == VersionState.InSimulation && (request.State == VersionState.InApproval || request.State == VersionState.Draft))
+            if (PrototypeVersion.VersionState == VersionState.InSimulation && (request.State == VersionState.Approved && request.StateProposed || request.State == VersionState.Draft))
             {
                 if (
                     !identity.HasPermission("Prototypes", "Preview", PrototypeVersion.Prototypes.Department) &&

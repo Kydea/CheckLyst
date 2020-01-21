@@ -115,6 +115,15 @@
                     .attr({ type: "text", readOnly: true })
                     .val(model.countDownToCode)
                     .appendTo(valuePanel);
+
+            $("<label />")
+                .text("offset (seconds)")
+                .appendTo(valuePanel);
+
+            $("<input />")
+                .attr({ type: "text", readOnly: true  })
+                .val(model.countDownOffset || "0")
+                .appendTo(valuePanel);
         }
     }
 

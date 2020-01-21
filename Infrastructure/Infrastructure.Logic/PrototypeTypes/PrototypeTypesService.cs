@@ -286,7 +286,7 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
         {
             var information = new
             {
-                Id = id,
+                ID = id,
                 ReasonForChange = reason
             };
             return AuditAsync(identity, action, information);

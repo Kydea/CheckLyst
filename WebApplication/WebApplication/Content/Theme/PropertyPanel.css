@@ -83,7 +83,11 @@
         clear: both;
         min-width: 200px; }
     div.PropertyPanel div.PropertyValue.CountDown label {
-      margin-top: 20px; }
+      margin-top: 20px;
+      position: static !important;
+      top: unset !important;
+      left: unset !important;
+      width: unset !important; }
     div.PropertyPanel div.PropertyValue.ValueType label:last-child {
       bottom: 10px;
       position: absolute; }

@@ -31,7 +31,7 @@ namespace CheckListManager.Prototypes.Logic.List
 
                 response.Fields["Name"] = new Field { Value = form.Name };
 
-                var departments = await _commonRepository.GetDepartmentsAsync(identity, "Prototypes");
+                var departments = await _commonRepository.GetDepartmentsAsync(identity, "Prototypes", "View");
                 response.Fields["Department"] = new Field
                 {
                     Options = departments.OrderBy(x => x.Name).Select(d => new Option(d.ID.ToString(), d.Name)),
@@ -48,7 +48,7 @@ namespace CheckListManager.Prototypes.Logic.List
 
             if (form.Source == null || form.Source == "department")
             {
-                var prototypeTypes = await _commonRepository.GetPrototypeTypesAsync(identity, department ?? -1, "Prototypes");
+                var prototypeTypes = await _commonRepository.GetPrototypeTypesAsync(identity, department ?? -1, "Prototypes", "View");
                 response.Fields["PrototypeType"] = new Field
                 {
                     Options = prototypeTypes.OrderBy(x => x.Name).Select(pt => new Option(pt.ID.ToString(), pt.Name)),

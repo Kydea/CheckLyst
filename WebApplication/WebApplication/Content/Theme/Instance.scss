@@ -449,8 +449,10 @@ div.Instance {
             display: none;
         }
 
-        &.Attachment div.Information {
-            display: none;
+        &.Attachment {
+            a.Attachment {
+                margin-left: 20px;
+            }
         }
 
         &.Hidden {
