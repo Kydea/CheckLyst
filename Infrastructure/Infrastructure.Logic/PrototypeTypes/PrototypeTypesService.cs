@@ -43,7 +43,7 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
             if (Form.Source == null)
             {
                 //initial load
-                var Departments = await _commonRepository.GetDepartmentsAsync(identity, null);
+                var Departments = await _commonRepository.GetDepartmentsAsync(identity, null, null);
                 Department = Form.Department.HasValue && Departments.Any(d => d.ID == Form.Department) ? Form.Department.Value : Departments.FirstOrDefault()?.ID;
                 response.Fields["Department"] = new Field
                 {

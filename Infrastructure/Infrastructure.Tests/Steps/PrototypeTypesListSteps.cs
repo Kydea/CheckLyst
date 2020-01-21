@@ -112,7 +112,7 @@ namespace CheckListManager.Infrastructure.Tests.Steps
         [Given(@"I click on a prototype type that is used for a prototype")]
         public async Task GivenIClickOnAPrototypeTypeThatIsUsedForAPrototype()
         {
-            List<PrototypeTypes> data = (await _commonRepository.GetPrototypeTypesAsync(_defaultIdentity, _context.Request.Department.Value, null))
+            List<PrototypeTypes> data = (await _commonRepository.GetPrototypeTypesAsync(_defaultIdentity, _context.Request.Department.Value, null, null))
                 .Where(pt => pt.Prototypes.Count != 0).ToList();
 
             // If you click on a prototype: Count > 0 (it's a must)
