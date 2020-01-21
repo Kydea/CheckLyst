@@ -81,25 +81,11 @@
             ]);
         },
 
-        checkExceptions = function () {
-            exceptions = [];
-            for (var index in expressions) {
-                var expression = expressions[index];
-                if (!!expression.exception && expression.rawValue) {
-                    var exception = { code: index, description: expression.description };
-                    exceptions.push(exception);
-                }
-            }
-            exceptionsButton.toggleClass("Hidden", exceptions.length == 0);
-        },
-
         showExceptions = function () {
             var message = "";
 
-            for (var index in exceptions) {
-                var exception = exceptions[index];
-                message += exception.description + " (" + exception.code + ")<br /><br />";
-            }
+            for (var index in exceptions) 
+                message += exceptions[index] + " (" + index + ")<br /><br />";
 
             matematici.dialog.error("exceptions list", message);
         },
@@ -155,7 +141,8 @@
             if (updateHandler) updateHandler(model);
             externalSources = model.externalSources;
             expressions = model.expressions;
-            checkExceptions();
+            exceptions = model.exceptions;
+            exceptionsButton.toggleClass("Hidden", Object.entries(exceptions).length === 0);
 
             expressionsButton.toggle(!!model.expressions);
         },
