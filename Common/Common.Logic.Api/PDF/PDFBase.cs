@@ -37,10 +37,11 @@ namespace CheckListManager.Common.Logic.Api.PDF
             this.Subject = Subject;
         }
 
-        public async Task AddSectionAsync()
+        public async Task<Section> AddSectionAsync()
         {
             Container = DocumentBuilder.AddSection();
             await OnNewSectionAsync();
+            return Container;
         }
 
         public async Task GenerateAsync(Stream Stream)

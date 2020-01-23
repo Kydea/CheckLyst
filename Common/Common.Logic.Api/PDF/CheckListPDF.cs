@@ -26,8 +26,7 @@ namespace CheckListManager.Common.Logic.Api.PDF
 
         public IStorageService StorageService { get; }
         public IConfigurationService ConfigurationService { get; }
-        private Dictionary<string, Models.StorageFile> Attachments { get; } = new Dictionary<string, Models.StorageFile>();
-        private Dictionary<string, int> AttachmentIndexes { get; } = new Dictionary<string, int>();
+        private Dictionary<string, AttachmentModel> Attachments { get; } = new Dictionary<string, AttachmentModel>();
 
         public CheckListPDF(long CompanyID, string CompanyName, string TimeZone, string Repository, ICheckList Model, IStorageService StorageService, IConfigurationService ConfigurationService) : base("CheckList")
         {
@@ -40,16 +39,21 @@ namespace CheckListManager.Common.Logic.Api.PDF
             this.ConfigurationService = ConfigurationService;
         }
 
-        public async Task<int> AddAttachmentAsync(string Bucket, string Key)
+        public async Task<int> AddAttachmentAsync(string Bucket, string Key, ICheckListItem Item)
         {
             var CompleteKey = Bucket + Key;
-            if (!AttachmentIndexes.ContainsKey(CompleteKey))
-            {
-                var StorageFile = await StorageService.GetAsync(Bucket, Key);
-                Attachments[CompleteKey] = StorageFile;
-                AttachmentIndexes[CompleteKey] = Attachments.Count;
-            }
-            return AttachmentIndexes[CompleteKey];
+
+            if (!Attachments.ContainsKey(CompleteKey))
+                Attachments[CompleteKey] = new AttachmentModel()
+                {
+                    File = await StorageService.GetAsync(Bucket, Key),
+                    Index = Attachments.Count + 1,
+                    Bucket = Bucket,
+                    Item = Item,
+                    Key = Key
+                };
+
+            return Attachments[CompleteKey].Index;
         }
 
         protected abstract FirstPage GenerateFirstPage();
@@ -63,9 +67,7 @@ namespace CheckListManager.Common.Logic.Api.PDF
         protected override async Task OnGenerateAsync()
         {
             await GenerateFirstPage().RenderAsync();
-            await AddSectionAsync();
-
-            await OnRenderAttachmentsListAsync();
+            await AddAttachmentListPageAsync();
 
             var Header = Model.Header;
             if (Header != null && Header is ICheckListGroup)
@@ -78,58 +80,40 @@ namespace CheckListManager.Common.Logic.Api.PDF
             }
         }
 
-        private Task<List<ICheckListItem>> GetAttachmentsList()
+        protected Section AttachmentsListPage { get; set; }
+
+        protected async Task AddAttachmentListPageAsync()
         {
-            List<ICheckListItem> AttachmentsList = new List<ICheckListItem>();
-            bool IsAttachment(ICheckListItem Item) => Item is ICheckListAttachmentBase; 
-
-            void Traverse(ICheckListGroup Group)
-            {
-                Group.Items.ForEach(Item =>
-                {
-                    if (IsAttachment(Item))
-                        AttachmentsList.Add(Item);
-                    else if (Item is ICheckListGroup checkListGroup)
-                        Traverse(checkListGroup);
-                });
-            };
-
-            if (Model.Header != null && Model.Header is ICheckListGroup Header)
-                Traverse(Header);
-
-            foreach (var Element in Model.Pages)
-                Element.Groups.ForEach(Traverse);
-
-            return Task.FromResult(AttachmentsList);
+            // crea una sezione vuota che, eventualmente, viene utilizzata per renderizzare l'elenco degli attachments.
+            AttachmentsListPage = await AddSectionAsync();
+            await AddSectionAsync();
         }
 
-        private async Task OnRenderAttachmentsListAsync()
+        private void OnRenderAttachmentsList()
         {
-            var Attachments = await GetAttachmentsList();
-
-            if (Attachments.Any())
+            if (!Attachments.Any())
+                AttachmentsListPage.Remove(); // remove empty page
+            else
             {
-                Container.AddPageBreak();
-                var Paragraph = Container.AddParagraph("Attachments").SetFont(TitleFont1);
+                AttachmentsListPage.AddPageBreak();
+                var Paragraph = AttachmentsListPage.AddParagraph("Attachments").SetFont(TitleFont1);
                 Paragraph.Format.SpaceAfter = 10;
 
                 var Table = new PdfPTable(2);
-
-                int Index = 1;
-                foreach (var Attachment in Attachments)
+                foreach (var Attachment in Attachments.Values)
                 {
-                    Table.AddCell(new PdfPCell(new Paragraph().SetText($"Attachment #{Index}", GenericFont).Padding(5)));
-                    Table.AddCell(new PdfPCell(new Paragraph().SetText(Attachment.Description, GenericFont).Padding(5)));
-                    Index++;
+                    Table.AddCell(new PdfPCell(new Paragraph().SetText($"Attachment #{Attachment.Index}", GenericFont).Padding(5)));
+                    Table.AddCell(new PdfPCell(new Paragraph().SetText(Attachment.Item.Description, GenericFont).Padding(5)));
                 }
 
-                Container.Add(Table);
-                await AddSectionAsync();
+                AttachmentsListPage.Add(Table);
             }
         }
 
         protected override async Task OnRenderAttachmentsAsync()
         {
+            OnRenderAttachmentsList();
+
             if (!Attachments.Any())
                 return;
 
@@ -137,18 +121,17 @@ namespace CheckListManager.Common.Logic.Api.PDF
             await this.AddSectionAsync();
             Container.RemovePageCount();
 
-            int Index = 1;
             foreach (var Attachment in Attachments.Values)
             {
                 Container.AddPageBreak();
                 Paragraph Paragraph = Container.AddParagraph();
                 Paragraph.SetFont(TitleFont1);
-                Paragraph.AddText($"Attachment {Index++}");
+                Paragraph.AddText($"Attachment {Attachment.Index}");
                 Paragraph.Format.SpaceAfter = 10;
 
                 try
                 {
-                    if (Attachment.ContentType.StartsWith("image", StringComparison.InvariantCultureIgnoreCase))
+                    if (Attachment.File.ContentType.StartsWith("image", StringComparison.InvariantCultureIgnoreCase))
                     {
                         Paragraph = Container.AddParagraph();
 
@@ -156,7 +139,7 @@ namespace CheckListManager.Common.Logic.Api.PDF
                         byte[] Data;
                         using (MemoryStream ms = new MemoryStream())
                         {
-                            await Attachment.Content.CopyToAsync(ms);
+                            await Attachment.File.Content.CopyToAsync(ms);
                             Image = new Bitmap(ms);
                             Data = ms.ToArray();
                         }
@@ -173,11 +156,11 @@ namespace CheckListManager.Common.Logic.Api.PDF
                         else
                             PDFImage.ScaleWidth = .4;
                     }
-                    else if (Attachment.ContentType.Equals("application/pdf", StringComparison.InvariantCultureIgnoreCase))
+                    else if (Attachment.File.ContentType.Equals("application/pdf", StringComparison.InvariantCultureIgnoreCase))
                     {
                         using (MemoryStream ms = new MemoryStream())
                         {
-                            await Attachment.Content.CopyToAsync(ms);
+                            await Attachment.File.Content.CopyToAsync(ms);
                             PdfDocument Document = PdfReader.Open(ms, PdfDocumentOpenMode.Import);
                             DocumentBuilder.AddRange(Enumerable.Range(0, Document.PageCount).Select(index => Document.Pages[index]));
                         }

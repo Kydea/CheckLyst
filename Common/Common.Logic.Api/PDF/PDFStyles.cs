@@ -37,6 +37,12 @@ namespace CheckListManager.Common.Logic.Api.PDF
             }
         }
 
+        public static void Remove(this Section Section)
+        {
+            var Document = Section.Document;
+            Document.Sections.RemoveObjectAt(Document.Sections.IndexOf(Section));
+        }
+
         public static void Add(this Section section, PdfPTable Table)
         {
             section.Add(Table.Render(section));

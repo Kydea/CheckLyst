@@ -267,7 +267,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                                 Cell = NewCell("(# no key)");
                             else
                             {
-                                var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.PrototypesStorageBucket, Image.Key);
+                                var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.PrototypesStorageBucket, Image.Key, Image);
                                 Cell = NewCell($"{(string.IsNullOrEmpty(Image.Description) ? string.Empty : Image.Description + " ")}(see attachment {Index})");
                             }
                             break;
@@ -275,7 +275,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                             var Attachment = (ICheckListAttachment)Item;
                             if (Attachment.Key != null)
                             {
-                                var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.InstancesStorageBucket, Attachment.Key);
+                                var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.InstancesStorageBucket, Attachment.Key, Attachment);
                                 Cell = NewCell($"{(string.IsNullOrEmpty(Attachment.Description) ? string.Empty : Attachment.Description + " ")}(see attachment {Index})");
                             }
                             break;

@@ -186,7 +186,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                 }
                 else
                 {
-                    var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.InstancesStorageBucket, AttachmentElement.Key);
+                    var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.InstancesStorageBucket, AttachmentElement.Key, AttachmentElement);
                     DrawText($"(see attachment {Index})", null, 10);
                 }
             }
