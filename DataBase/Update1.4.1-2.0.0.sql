@@ -194,3 +194,17 @@ insert into "Infrastructure"."TimeZones" values
 update "Infrastructure"."Companies" set "TimeZone" = (select "MicrosoftCode" from "Infrastructure"."TimeZones" where "Code" = "TimeZone");
 
 alter table "Infrastructure"."TimeZones" drop column "MicrosoftCode";
+
+--Set the values for prototypes and instances web services
+/*
+  	<system.web>
+		...
+		<httpRuntime ... maxQueryStringLength="4096" />
+		...
+	</system.web>
+    <security>
+      <requestFiltering>
+        <requestLimits maxQueryString="4096" />
+      </requestFiltering>
+    </security>
+*/
