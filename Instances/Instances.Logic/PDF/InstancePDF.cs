@@ -76,7 +76,7 @@ namespace CheckListManager.Instances.Logic.PDF
         {
             await base.OnGenerateAsync();
 
-            if (Instance.InstanceState == InstanceState.Confirmed)
+            if (Instance.InstanceState == InstanceState.Confirmed || Instance.InstanceState == InstanceState.Completed || Instance.InstanceState == InstanceState.Deleted)
             {
                 var Record = await InstancesRepository.GetByIDAsync(Instance.CompanyId, Instance.Id.Value);
 
