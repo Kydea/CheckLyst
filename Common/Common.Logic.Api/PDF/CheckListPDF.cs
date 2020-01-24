@@ -100,6 +100,7 @@ namespace CheckListManager.Common.Logic.Api.PDF
                 Paragraph.Format.SpaceAfter = 10;
 
                 var Table = new PdfPTable(2);
+                Table.SetWidths(25, 75);
                 foreach (var Attachment in Attachments.Values)
                 {
                     Table.AddCell(new PdfPCell(new Paragraph().SetText($"Attachment #{Attachment.Index}", GenericFont).Padding(5)));
