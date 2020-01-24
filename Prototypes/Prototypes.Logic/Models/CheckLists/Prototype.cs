@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using CheckListManager.Common.Logic;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.Expressions;
@@ -72,15 +73,19 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         public void Traverse(Func<ICheckListItem, bool> condition, Action<ICheckListItem> action)
         {
-            if (condition(Header))
-            {
-                action(Header);
-            }
-            
+            Header.Traverse(condition, action);
+
             foreach (var page in Pages)
-            {
                 page.Traverse(condition, action);
-            }
         }
+
+        public async Task TraverseAsync(Func<ICheckListItem, bool> condition, Func<ICheckListItem, Task> action)
+        {
+            await Header.TraverseAsync(condition, action);
+
+            foreach (var page in Pages)
+                await page.TraverseAsync(condition, action);
+        }
+
     }
 }

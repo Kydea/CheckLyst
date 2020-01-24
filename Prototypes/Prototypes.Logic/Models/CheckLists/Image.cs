@@ -1,4 +1,5 @@
 ﻿using CheckListManager.Common.Logic.Models.CheckLists;
+using Newtonsoft.Json;
 
 namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 {
@@ -6,11 +7,13 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 	{
 		public override string TypeName => "Image";
 
+        public bool Cloned { get; set; }
+
         public override ICheckListItem Clone(ICheckListGroup parent)
         {
-            var text = new Image { Group = parent, Key = Key };
-            Copy(this, text);
-            return text;
+            var Image = new Image { Group = parent, Key = Key };
+            Copy(this, Image);
+            return Image;
         }
 
         public string Key { get; set; }

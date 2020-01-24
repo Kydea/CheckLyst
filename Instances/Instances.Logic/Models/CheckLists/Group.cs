@@ -3,6 +3,7 @@ using System.Linq;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using System;
 using CheckListManager.Instances.Logic.Exceptions;
+using System.Threading.Tasks;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
@@ -201,6 +202,11 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         }
 
         public void Traverse(Func<ICheckListItem, bool> condition, Action<ICheckListItem> action)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task TraverseAsync(Func<ICheckListItem, bool> condition, Func<ICheckListItem, Task> action)
         {
             throw new NotImplementedException();
         }

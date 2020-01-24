@@ -10,7 +10,6 @@
         pageLock,
         model,
         prototypeKey,
-        attachmentTemporaryKey,
         concurrencyInformation,
         currentItem,
         itemHandler,
@@ -291,7 +290,27 @@
                 for (var index in element.items)
                     traverseForPaste(element.items[index]);
             else if (element.typeName == "Image")
-                element.key = null;
+                element.cloned = true;
+        },
+
+        traverseToUpateClones = function (element) {
+            if (element.typeName == "Prototype") {
+                traverseToUpateClones(element.header);
+                for (var index in element.pages)
+                    traverseToUpateClones(element.pages[index]);
+                update();
+            } else if (element.typeName == "Page")
+                for (var index in element.groups)
+                    traverseToUpateClones(element.groups[index]);
+            else if (element.typeName == "Group")
+                for (var index in element.items)
+                    traverseToUpateClones(element.items[index]);
+            else if (element.typeName == "Image" && element.cloned) {
+                element.cloned = false;
+                element.key = localStorage.company + "/" + prototypeKey.id + "-" + prototypeKey.version + "/" + element.itemId + ".jpg";
+            }
+
+            console.log(element);
         },
 
         paste = function () {
@@ -466,7 +485,6 @@
 						id: result.id,
 						version: result.version
 					};
-					attachmentTemporaryKey = result.attachmentTemporaryKey;
 					if (result.version > 0) model.version = result.version;
 					concurrencyInformation = {
 						modifiedBy: result.modifiedBy,
@@ -508,10 +526,6 @@
 		return prototypeKey;
 	};
 
-	prototype.getAttachmentTemporaryKey = function () {
-		return attachmentTemporaryKey;
-	};
-
 	prototype.setItemHandler = function (value) {
 		itemHandler = value;
 	};
@@ -546,13 +560,12 @@
 				description: model.description,
 				department: model.department,
 				prototypeType: model.prototypeType,
-				attachmentTemporaryKey: attachmentTemporaryKey,
-
 				checkList: model
 			})
 		}).done(function (result) {
 			matematici.canClose = true;
 			prototypeKey.id = result.id;
+            traverseToUpateClones(model);
 			if (model.version == null) {
 				matematici.navigator.setUrl(options.detailUrl + "/" + result.id + "/" + result.version);
 				model.version = prototypeKey.version = result.version;
@@ -560,7 +573,7 @@
 			concurrencyInformation = {
 				modifiedBy: result.modifiedBy,
 				modifiedOn: result.modifiedOn
-			};
+            };
 			setupActionBar();
 
 			if (callback)

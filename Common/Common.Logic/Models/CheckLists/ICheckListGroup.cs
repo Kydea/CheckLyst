@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CheckListManager.Common.Logic.Models.CheckLists
 {
@@ -16,5 +17,6 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
         bool DisableMove { get; set; }
         void CreateInstanceIterations();
         void Traverse(Func<ICheckListItem, bool> condition, Action<ICheckListItem> action);
-	}
+        Task TraverseAsync(Func<ICheckListItem, bool> condition, Func<ICheckListItem, Task> action);
+    }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using CheckListManager.Common.Logic.Models.CheckLists;
 
 namespace CheckListManager.Prototypes.Logic.Models.CheckLists
@@ -23,14 +24,13 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public void Traverse(Func<ICheckListItem, bool> condition, Action<ICheckListItem> action)
         {
             foreach (var group in Groups)
-            {
-                if (condition(group))
-                {
-                    action(group);
-                }
-
                 group.Traverse(condition, action);
-            }
+        }
+
+        public async Task TraverseAsync(Func<ICheckListItem, bool> condition, Func<ICheckListItem, Task> action)
+        {
+            foreach (var group in Groups)
+                await group.TraverseAsync(condition, action);
         }
 
         public override void Check()

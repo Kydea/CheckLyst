@@ -266,11 +266,8 @@ namespace CheckListManager.Prototypes.Api.Controllers
         {
             try
             {
-                if ((request.Id < 0 || request.Version < 0) && !request.AttachmentTemporaryKey.HasValue)
-                    throw new Exception("Temporary Key has to be specified when Id or Version are not available");
-
-                if (request.Id < 0 && (!request.Department.HasValue || !request.PrototypeType.HasValue))
-                    throw new Exception("Department and Prototype Type must have a value when the prototype is not yet saved");
+                if (request.Id < 0 || request.Version < 0)
+                    throw new Exception("Prototype not saved");
 
                 if (request.Attachment == null)
                     throw new Exception("No attachment has been uploaded");
@@ -297,12 +294,6 @@ namespace CheckListManager.Prototypes.Api.Controllers
         {
             try
             {
-                if ((request.Id < 0 || request.Version < 0) && !request.AttachmentTemporaryKey.HasValue)
-                    throw new Exception("Temporary Key has to be specified when Id or Version are not available");
-
-                if (request.Id < 0 && (!request.Department.HasValue || !request.PrototypeType.HasValue))
-                    throw new Exception("Department and Prototype Type must have a value when the prototype is not yet saved");
-
                 if (string.IsNullOrEmpty(request.Key))
                     throw new Exception("Key must have a value");
 
@@ -323,12 +314,6 @@ namespace CheckListManager.Prototypes.Api.Controllers
         {
             try
             {
-                if ((request.Id < 0 || request.Version < 0) && !request.AttachmentTemporaryKey.HasValue)
-                    throw new Exception("Temporary Key has to be specified when Id or Version are not available");
-
-                if (request.Id < 0 && (!request.Department.HasValue || !request.PrototypeType.HasValue))
-                    throw new Exception("Department and Prototype Type must have a value when the prototype is not yet saved");
-
                 if (string.IsNullOrEmpty(request.Key))
                     throw new Exception("Key must have a value");
 

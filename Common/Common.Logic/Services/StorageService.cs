@@ -51,21 +51,17 @@ namespace CheckListManager.Common.Logic.Services
             return await IterateAsync(bucketName, keyPrefix, async itemKey => await DeleteAsync(bucketName, itemKey));
         }
 
-        public async Task<bool> CloneAsync(string bucketName, string keyPrefix, string newKeyPrefix)
+        public async Task<bool> CloneAsync(string bucketName, string sourceKey, string destinationKey)
         {
-            return await IterateAsync(bucketName, keyPrefix, async itemKey =>
+            var response = await _s3.CopyObjectAsync(new CopyObjectRequest
             {
-                var key = $"{newKeyPrefix}{itemKey.Replace(keyPrefix, "")}";
-                var response = await _s3.CopyObjectAsync(new CopyObjectRequest
-                {
-                    SourceBucket = bucketName,
-                    DestinationBucket = bucketName,
-                    SourceKey = itemKey,
-                    DestinationKey = key
-                });
-
-                return response.HttpStatusCode == HttpStatusCode.OK;
+                SourceBucket = bucketName,
+                DestinationBucket = bucketName,
+                SourceKey = sourceKey,
+                DestinationKey = destinationKey
             });
+
+            return response.HttpStatusCode == HttpStatusCode.OK;
         }
 
         private async Task<bool> IterateAsync(string bucketName, string keyPrefix, Func<string, Task<bool>> action)
