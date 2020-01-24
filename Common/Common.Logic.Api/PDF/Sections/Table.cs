@@ -268,7 +268,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                             else
                             {
                                 var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.PrototypesStorageBucket, Image.Key, Image);
-                                Cell = NewCell($"{(string.IsNullOrEmpty(Image.Description) ? string.Empty : Image.Description + " ")}(see attachment {Index})");
+                                Cell = NewCell($"{(string.IsNullOrEmpty(Image.Description) ? "(empty) " : Image.Description + " ")}(see attachment {Index})");
                             }
                             break;
                         case "Attachment":
@@ -276,7 +276,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                             if (Attachment.Key != null)
                             {
                                 var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.InstancesStorageBucket, Attachment.Key, Attachment);
-                                Cell = NewCell($"{(string.IsNullOrEmpty(Attachment.Description) ? string.Empty : Attachment.Description + " ")}(see attachment {Index})");
+                                Cell = NewCell($"{(string.IsNullOrEmpty(Attachment.Description) ? "(empty) " : Attachment.Description + " ")}(see attachment {Index})");
                             }
                             break;
                         default:
@@ -340,7 +340,28 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                         Cell.Colspan = Size.ColumnsCount;
                 }
                 else
+                {
+                    if (Item.TypeName == "Image")
+                    {
+                        var Image = (ICheckListImage)Item;
+                        if (Image.Key != null)
+                        {
+                            var AttachmentIndex = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.PrototypesStorageBucket, Image.Key, Image);
+                            Cell.Text += $" (see attachment {AttachmentIndex})";
+                        }
+                    }
+                    else if (Item.TypeName == "Attachment")
+                    {
+                        var Attachment = (ICheckListAttachment)Item;
+                        if (Attachment.Key != null)
+                        {
+                            var AttachmentIndex = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.InstancesStorageBucket, Attachment.Key, Attachment);
+                            Cell.Text += $" (see attachment {AttachmentIndex})";
+                        }
+                    }
+
                     ColumnsCount++;
+                }
             }
 
             if (RowsCount > 1)

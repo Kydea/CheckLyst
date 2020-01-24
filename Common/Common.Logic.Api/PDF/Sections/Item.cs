@@ -116,12 +116,8 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             {
                 if (ImageElement.Key == null) return;
 
-                Paragraph Paragraph;
-                if (!string.IsNullOrEmpty(ImageElement.Description))
-                {
-                    Paragraph = DrawText(ImageElement.Description, PDFBase.BoldFont, 5);
-                    Paragraph.Format.Alignment = ParagraphAlignment.Center;
-                }
+                Paragraph Paragraph = DrawText(string.IsNullOrEmpty(ImageElement.Description) ? "(empty)" : ImageElement.Description, PDFBase.BoldFont, 5);
+                Paragraph.Format.Alignment = ParagraphAlignment.Center;
 
                 Paragraph = PDFBase.Container.AddParagraph();
                 Paragraph.Format.Alignment = ParagraphAlignment.Center;
@@ -152,9 +148,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             else if (Element is ICheckListAttachment AttachmentElement)
             {
                 if (AttachmentElement.Key == null) return;
-
-                if (!string.IsNullOrEmpty(AttachmentElement.Description))
-                    DrawText(AttachmentElement.Description, PDFBase.BoldFont, 5);
+                DrawText(string.IsNullOrEmpty(AttachmentElement.Description) ? "(empty)" : AttachmentElement.Description, PDFBase.BoldFont, 5);
 
                 if (AttachmentElement.FileType == "Image")
                 {

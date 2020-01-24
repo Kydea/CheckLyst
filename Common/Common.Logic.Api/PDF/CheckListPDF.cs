@@ -103,7 +103,7 @@ namespace CheckListManager.Common.Logic.Api.PDF
                 foreach (var Attachment in Attachments.Values)
                 {
                     Table.AddCell(new PdfPCell(new Paragraph().SetText($"Attachment #{Attachment.Index}", GenericFont).Padding(5)));
-                    Table.AddCell(new PdfPCell(new Paragraph().SetText(Attachment.Item.Description, GenericFont).Padding(5)));
+                    Table.AddCell(new PdfPCell(new Paragraph().SetText(Attachment.Description, GenericFont).Padding(5)));
                 }
 
                 AttachmentsListPage.Add(Table);
