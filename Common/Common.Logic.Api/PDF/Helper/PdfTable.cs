@@ -145,7 +145,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Helper
         public void AddCell(PdfPCell cell) => Rows.AddCell(cell);
         public void CompleteRow() => Rows.CompleteRow();
 
-        public void SetWidths(float[] widths)
+        public void SetWidths(params float[] widths)
         {
             if (widths.Length != Columns)
                 throw new Exception();
