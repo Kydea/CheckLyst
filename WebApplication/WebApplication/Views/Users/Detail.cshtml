@@ -1,159 +1,159 @@
 ﻿<div id="UsersDetailPage">
     <h2>User</h2>
 
-	<form id="Detail" action="@BaseUrl/AccessControl/Users">
-		<input type="hidden" name="reason" />
-		<div class="TabContainer">
-			<div class="TabLabels">
-				<a href="#">Details</a>
-				<a href="#">General grants</a>
-				<a href="#">Prototype grants</a>
-				<a href="#">Instance grants</a>
-			</div>
-			<div class="Tab">
-				<label>
-					<span>User code</span>
-					<i class="Icon fal fa-key" />
-					<input type="text" name="code" />
-				</label>
+    <form id="Detail" action="@BaseUrl/AccessControl/Users">
+        <input type="hidden" name="reason" />
+        <div class="TabContainer">
+            <div class="TabLabels">
+                <a href="#">Details</a>
+                <a href="#">General grants</a>
+                <a href="#">Prototype grants</a>
+                <a href="#">Instance grants</a>
+            </div>
+            <div class="Tab">
+                <label>
+                    <span>User code</span>
+                    <i class="Icon fal fa-key" />
+                    <input type="text" name="code" />
+                </label>
 
-				<label>
-					<span>Name and surname</span>
-					<i class="Icon fal fa-id-card" />
-					<input type="text" name="description" />
-				</label>
+                <label>
+                    <span>Name and surname</span>
+                    <i class="Icon fal fa-id-card" />
+                    <input type="text" name="description" />
+                </label>
 
-				<label>
-					<span>Email</span>
-					<i class="Icon fal fa-envelope" />
-					<input type="text" name="email" />
-				</label>
+                <label>
+                    <span>Email</span>
+                    <i class="Icon fal fa-envelope" />
+                    <input type="text" name="email" />
+                </label>
 
-				<label>
-					<span>Enabled</span>
-					<input type="checkbox" name="enabled" value="true" />
-				</label>
+                <label>
+                    <span>Enabled</span>
+                    <input type="checkbox" name="enabled" value="true" />
+                </label>
 
-				<label class="Clearing Hidden">
-					<span>Password</span>
-					<i class="Icon fal fa-lock" />
-					<input type="password" name="password" autocomplete="new-password" />
-				</label>
+                <label class="Clearing Hidden">
+                    <span>Password</span>
+                    <i class="Icon fal fa-lock" />
+                    <input type="password" name="password" autocomplete="new-password" />
+                </label>
 
-				<label class="Hidden">
-					<span>Password confirm</span>
-					<i class="Icon fal fa-lock" />
-					<input type="password" name="password2" autocomplete="new-password" />
-				</label>
+                <label class="Hidden">
+                    <span>Password confirm</span>
+                    <i class="Icon fal fa-lock" />
+                    <input type="password" name="password2" autocomplete="new-password" />
+                </label>
 
-				<label class="Clearing Hidden">
-					<span>Authentication code</span>
-					<i class="Icon fal fa-key" />
-					<input type="text" name="authenticationCode" />
-				</label>
+                <label class="Clearing Hidden">
+                    <span>Authentication code</span>
+                    <i class="Icon fal fa-key" />
+                    <input type="text" name="authenticationCode" />
+                </label>
 
-				<label class="Clearing Controls2">
-					<span>Creation</span>
-					<i class="Icon fal fa-user" />
-					<input type="text" name="createdBy" readonly="readonly" />
-					<i class="Icon fal fa-calendar-alt" />
-					<input type="text" name="createdOn" readonly="readonly" data-type="DateTimeOffset" />
-				</label>
+                <label class="Clearing Controls2">
+                    <span>Creation</span>
+                    <i class="Icon fal fa-user" />
+                    <input type="text" name="createdBy" readonly="readonly" />
+                    <i class="Icon fal fa-calendar-alt" />
+                    <input type="text" name="createdOn" readonly="readonly" data-type="DateTimeOffset" />
+                </label>
 
-				<label class="Controls2">
-					<span>Last edit</span>
-					<i class="Icon fal fa-user" />
-					<input type="text" name="modifiedBy" readonly="readonly" />
-					<i class="Icon fal fa-calendar-alt" />
-					<input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
-				</label>
+                <label class="Controls2">
+                    <span>Last edit</span>
+                    <i class="Icon fal fa-user" />
+                    <input type="text" name="modifiedBy" readonly="readonly" />
+                    <i class="Icon fal fa-calendar-alt" />
+                    <input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
+                </label>
 
-				<div class="Clearing"></div>
-			</div>
-			<div class="Tab">
-				<div class="Clearing GeneralFunction">
-					<h3>Data sources</h3>
-					<label class="Clearing Narrow">
-						Edit
-						<input type="checkbox" data-group="DataSources" data-function="Edit" />
-					</label>
-					<label class="Narrow">
-						View
-						<input type="checkbox" data-group="DataSources" data-function="View" />
-					</label>
-				</div>
-				<div class="GeneralFunction">
-					<h3>Departments</h3>
-					<label class="Clearing Narrow">
-						Edit
-						<input type="checkbox" data-group="Departments" data-function="Edit" />
-					</label>
-					<label class="Narrow">
-						View
-						<input type="checkbox" data-group="Departments" data-function="View" />
-					</label>
-				</div>
-				<div class="GeneralFunction">
-					<h3>Prototype types</h3>
-					<label class="Clearing Narrow">
-						Edit
-						<input type="checkbox" data-group="PrototypeTypes" data-function="Edit" />
-					</label>
-					<label class="Narrow">
-						View
-						<input type="checkbox" data-group="PrototypeTypes" data-function="View" />
-					</label>
-				</div>
-				<div class="GeneralFunction">
-					<h3>Audit trail</h3>
-					<label class="Clearing Narrow">
-						View
-						<input type="checkbox" data-group="Trail" data-function="View" />
-					</label>
-				</div>
-				<div class="GeneralFunction">
-					<h3>Users</h3>
-					<label class="Clearing Narrow">
-						Edit
-						<input type="checkbox" data-group="Users" data-function="Edit" />
-					</label>
-					<label class="Narrow">
-						View
-						<input type="checkbox" data-group="Users" data-function="View" />
-					</label>
-				</div>
-				<div class="GeneralFunction">
-					<h3>Workflows</h3>
-					<label class="Clearing Narrow">
-						Edit
-						<input type="checkbox" data-group="WorkFlows" data-function="Edit" />
-					</label>
-					<label class="Narrow">
-						View
-						<input type="checkbox" data-group="WorkFlows" data-function="View" />
-					</label>
-				</div>
-				<div class="GeneralFunction">
-					<h3>FTP Servers</h3>
-					<label class="Clearing Narrow">
-						Edit
-						<input type="checkbox" data-group="FTPServers" data-function="Edit" />
-					</label>
-					<label class="Narrow">
-						View
-						<input type="checkbox" data-group="FTPServers" data-function="View" />
-					</label>
-				</div>
-				<div class="Clearing"></div>
-			</div>
-			<div class="Tab">
-				<div class="Clearing"></div>
-			</div>
-			<div class="Tab">
-				<div class="Clearing"></div>
-			</div>
-		</div>
-	</form>
+                <div class="Clearing"></div>
+            </div>
+            <div class="Tab">
+                <div class="Clearing GeneralFunction">
+                    <h3>Data sources</h3>
+                    <label class="Clearing Narrow">
+                        Edit
+                        <input type="checkbox" data-group="DataSources" data-function="Edit" />
+                    </label>
+                    <label class="Narrow">
+                        View
+                        <input type="checkbox" data-group="DataSources" data-function="View" />
+                    </label>
+                </div>
+                <div class="GeneralFunction">
+                    <h3>Departments</h3>
+                    <label class="Clearing Narrow">
+                        Edit
+                        <input type="checkbox" data-group="Departments" data-function="Edit" />
+                    </label>
+                    <label class="Narrow">
+                        View
+                        <input type="checkbox" data-group="Departments" data-function="View" />
+                    </label>
+                </div>
+                <div class="GeneralFunction">
+                    <h3>Prototype types</h3>
+                    <label class="Clearing Narrow">
+                        Edit
+                        <input type="checkbox" data-group="PrototypeTypes" data-function="Edit" />
+                    </label>
+                    <label class="Narrow">
+                        View
+                        <input type="checkbox" data-group="PrototypeTypes" data-function="View" />
+                    </label>
+                </div>
+                <div class="GeneralFunction">
+                    <h3>Audit trail</h3>
+                    <label class="Clearing Narrow">
+                        View
+                        <input type="checkbox" data-group="Trail" data-function="View" />
+                    </label>
+                </div>
+                <div class="GeneralFunction">
+                    <h3>Users</h3>
+                    <label class="Clearing Narrow">
+                        Edit
+                        <input type="checkbox" data-group="Users" data-function="Edit" />
+                    </label>
+                    <label class="Narrow">
+                        View
+                        <input type="checkbox" data-group="Users" data-function="View" />
+                    </label>
+                </div>
+                <div class="GeneralFunction">
+                    <h3>Workflows</h3>
+                    <label class="Clearing Narrow">
+                        Edit
+                        <input type="checkbox" data-group="WorkFlows" data-function="Edit" />
+                    </label>
+                    <label class="Narrow">
+                        View
+                        <input type="checkbox" data-group="WorkFlows" data-function="View" />
+                    </label>
+                </div>
+                <div class="GeneralFunction">
+                    <h3>FTP Servers</h3>
+                    <label class="Clearing Narrow">
+                        Edit
+                        <input type="checkbox" data-group="FTPServers" data-function="Edit" />
+                    </label>
+                    <label class="Narrow">
+                        View
+                        <input type="checkbox" data-group="FTPServers" data-function="View" />
+                    </label>
+                </div>
+                <div class="Clearing"></div>
+            </div>
+            <div class="Tab">
+                <div class="Clearing"></div>
+            </div>
+            <div class="Tab">
+                <div class="Clearing"></div>
+            </div>
+        </div>
+    </form>
 
     <div class="Clearing"></div>
 </div>
@@ -340,19 +340,23 @@
         applyConstraintToPrototypeGrant = function (autoComplete, value, on) {
             var values = autoComplete.getValue();
             if (on) {
-                if (value == "Approve" || value == "Preview")
-                    Array.addElement(values, "View");
-                else if (value == "Edit") {
-                    Array.addElement(values, "View");
+                if (value == "Approve") {
                     Array.addElement(values, "Preview");
+                    Array.addElement(values, "View");
+                } else if (value == "Edit") {
+                    Array.addElement(values, "Preview");
+                    Array.addElement(values, "View");
+                } else if (value == "Preview") {
+                    Array.addElement(values, "View");
                 } else
                     values = null;
             } else {
                 if (value == "View")
                     values = [];
-                else if (value == "Preview")
+                else if (value == "Preview") {
+                    Array.removeElement(values, "Approve");
                     Array.removeElement(values, "Edit");
-                else 
+                }else
                     values = null;
             }
 
@@ -391,7 +395,7 @@
                 .on("click", "input[data-function=Edit]", function () {
                     var check = $(this);
                     setTimeout(function () {
-                        if (check.is(":checked")) 
+                        if (check.is(":checked"))
                             check.closest(".GeneralFunction").find("input[data-function=View]").prop("checked", true);
                     }, 0);
                 })
@@ -415,20 +419,20 @@
         completeHandler = function () {
             preparePrototypeTypes(detailPage.getSender().getElement().data("prototypeTypes"));
             //if (!detailPage.isNew())
-                detailPage.getForm().trigger("Load", function (result) {
-                    loading = true;
-                    detailPage.getForm().handleResult(result);
+            detailPage.getForm().trigger("Load", function (result) {
+                loading = true;
+                detailPage.getForm().handleResult(result);
 
-                    $("input[name=authenticationCode]").parent().toggle(result.showAuthenticationCode);
-                    $("input[name=password]").parent().toggleClass("Hidden", !result.showPassword);
-                    $("input[name=password2]").parent().toggleClass("Hidden", !result.showPassword);
-                    if (result.generalFunctions) buildGeneralFunctions(result.generalFunctions);
-                    if (result.prototypeFunctions) buildFunctions(result.prototypeFunctions, 2);
-                    if (result.instanceFunctions) buildFunctions(result.instanceFunctions, 3);
-                    fixQueryParameters(2);
-                    fixQueryParameters(3);
-                    loading = false;
-                });
+                $("input[name=authenticationCode]").parent().toggle(result.showAuthenticationCode);
+                $("input[name=password]").parent().toggleClass("Hidden", !result.showPassword);
+                $("input[name=password2]").parent().toggleClass("Hidden", !result.showPassword);
+                if (result.generalFunctions) buildGeneralFunctions(result.generalFunctions);
+                if (result.prototypeFunctions) buildFunctions(result.prototypeFunctions, 2);
+                if (result.instanceFunctions) buildFunctions(result.instanceFunctions, 3);
+                fixQueryParameters(2);
+                fixQueryParameters(3);
+                loading = false;
+            });
         },
 
         detailPage = new matematici.DetailPage({

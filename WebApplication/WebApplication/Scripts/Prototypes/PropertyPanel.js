@@ -12,15 +12,6 @@
         prototypeTypesList,
         properties,
 
-        drag = function (e) {
-            e.preventDefault();
-            var height = element.height() + dragY - e.pageY;
-            if (height > 100) {
-                element.height(Math.max(height, 100));
-                dragY = e.pageY;
-            }
-        },
-
         copyModel = function (source, destination) {
             for (var property in source)
                 destination[property] = source[property];
@@ -36,18 +27,26 @@
         copyModel(model, oldModel);
 
         matematici.popup.show({
-            title: "Properties - " + model.typeName + " - ID: " + model.id + (model.code && " - Code: " + model.code || ""),
+            title: "Properties - " + model.typeName + (model.id && " - ID: " + model.id || "") + (model.code && " - Code: " + model.code || ""),
             content: element,
             buttons: [{
                 icon: "check",
                 text: "apply",
                 handler: function () {
+                    if (model.typeName == "Image") {
+                        if (oldModel.key && !oldModel.cloned && !model.key)
+                            prototypes.prototype.deleteImage(oldModel.key);
+                        if (!oldModel.key && model.key) //in case the image was previously enqueued to be deleted...
+                            prototypes.prototype.ensureImageWillNotBeDeleted(model.key);
+                    }
                     $("input:not(.ReadOnly)", propertyValue).change();
                 }
             }, {
                 cancelButton: true,
                 hidden: true,
                 handler: function () {
+                    if (model.typeName == "Image" && !oldModel.key && model.key)
+                        prototypes.prototype.deleteImage(model.key);
                     copyModel(oldModel, model);
                     prototypes.prototype.update();
                 }
@@ -106,13 +105,13 @@
                 this, new prototypes.DateProperty(model, "validFrom", { readOnly: state != prototypes.Prototype.states.draft }).setCheck([{
                     action: function (value) {
                         return !value || value > matematici.dateFormatter.date(new moment());
-                    }, 
+                    },
                     message: "Specify a future date or leave empty"
                 }, {
-                        action: function (value) {
-                            return !model.validUntil || !value || model.validUntil.substring(0, 10) > value;
-                        },
-                        message: "Validity end must be greater than validity start"
+                    action: function (value) {
+                        return !model.validUntil || !value || model.validUntil.substring(0, 10) > value;
+                    },
+                    message: "Validity end must be greater than validity start"
                 }]), "Validity start",
                 "If specified, in this date, the version gets the state <b>active</b>, if the state of the version is <b>approved</b>. Otherwise the version get the state <b>active</b> immediately when approved."
             ));
@@ -184,7 +183,7 @@
                     "Determines which signature locks the element."
                 ));
             }
-            
+
             if (model.typeName != "Page") {
                 properties.push(new prototypes.Property(
                     this, new prototypes.SimpleValueProperty(model, "fontSize", { number: true, readOnly: state != prototypes.Prototype.states.draft }).setCheck([
@@ -437,13 +436,13 @@
                         "The label of the button."
                     ));
                     properties.push(new prototypes.Property(
-						this, new prototypes.ListProperty(
-							model,
-							"fileType",
-							/* The first element is the default one. To change it, change also in CheckListManager.Prototypes.Logic.Models.CheckLists.Attachment */
-							["images", "pdf"],
-							{ readOnly: state != prototypes.Prototype.states.draft }
-						), "File type",
+                        this, new prototypes.ListProperty(
+                            model,
+                            "fileType",
+                            /* The first element is the default one. To change it, change also in CheckListManager.Prototypes.Logic.Models.CheckLists.Attachment */
+                            ["images", "pdf"],
+                            { readOnly: state != prototypes.Prototype.states.draft }
+                        ), "File type",
                         "The file type of the attachment."
                     ));
                     break;

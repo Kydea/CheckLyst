@@ -8,91 +8,49 @@
 			if (!input[0].files.length) 
 				return;
 
-			var save = function () {
-				prototypes.prototype.save(function () {
-					var prototypeKey = prototypes.prototype.getPrototypeKey();
-					var prototypeModel = prototypes.prototype.getModel();
-					var formData = new FormData();
-					formData.append("attachment", input[0].files[0]);
-					formData.append("id", prototypeKey.id);
-					formData.append("version", prototypeKey.version);
-					formData.append("code", model.id);
+            var prototypeKey = prototypes.prototype.getPrototypeKey();
+            if (prototypeKey.version > 0) {
+                var formData = new FormData();
+                formData.append("attachment", input[0].files[0]);
+                formData.append("id", prototypeKey.id);
+                formData.append("version", prototypeKey.version);
+                formData.append("code", model.id);
 
-					$.ajax({
-						url: prototypes.prototype.getElement().data("action") + "UploadAttachment",
-						type: 'POST',
+                $.ajax({
+                    url: prototypes.prototype.getElement().data("action") + "UploadAttachment",
+                    type: 'POST',
 
-						data: formData,
-						cache: false,
-						contentType: false,
-						processData: false
-                    }).done(function (result) {
-                        model.cloned = false;
-						model[property] = result.key;
-						previewButton.toggle(true);
-						deleteButton.toggle(true);
-						matematici.canClose = false;
-						if (handler) handler.call(this, model);
-						prototypes.prototype.save();
-					}).always(function () {
-						input.val('');
-					});
-				});
-			};
-
-			matematici.dialog.show("warning", "The prototype will be saved. Do you want to proceed?", [
-				{ text: "yes", icon: "check", handler: save },
-				{ text: "no", icon: "times", cancelButton: true, handler: function () { input.val(''); } }
-			]);			
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false
+                }).done(function (result) {
+                    model.cloned = false;
+                    model[property] = result.key;
+                    previewButton.toggle(true);
+                    deleteButton.toggle(true);
+                }).always(function () {
+                    input.val('');
+                });
+            } else
+                matematici.dialog.error("erorr", "Save the prototype to create the record and enable the images uplaod");
 		},
 
 		deleteImage = function () {
-            var
-                done = function () {
-                    model[property] = null;
-                    previewButton.toggle(false);
-                    deleteButton.toggle(false);
-                    matematici.canClose = false;
-                    if (handler) handler.call(this, model);
-                    prototypes.prototype.save();
-                },
-                save = function () {
-				    prototypes.prototype.save(function () {
-					    var prototypeKey = prototypes.prototype.getPrototypeKey();
-					    var prototypeModel = prototypes.prototype.getModel();
-					    var formData = {
-						    id: prototypeKey.id,
-						    version: prototypeKey.version,
-						    key: model[property]
-					    };
-
-					    $.ajax({
-						    url: prototypes.prototype.getElement().data("action") + "DeleteAttachment",
-						    type: "POST",
-						    data: formData
-					    }).done(done);
-				    });
-                };
-
-            if (model.cloned) {
-                model.cloned = false;
-                done();
-            } else
-			    matematici.dialog.show("warning", "The prototype will be saved. Do you want to proceed?", [
-				    { text: "yes", icon: "check", handler: save },
-				    { text: "no", icon: "times", cancelButton: true }
-			    ]);			
+            model[property] = null;
+            model.cloned = false;
+            previewButton.toggle(false);
+            deleteButton.toggle(false);
 		},
 
 		preview = function () {
 			var prototypeKey = prototypes.prototype.getPrototypeKey();
-			var prototypeModel = prototypes.prototype.getModel();
-
-			var url = prototypes.prototype.getElement().data("action") + "DownloadAttachment?";
-			url += "id=" + prototypeKey.id;
-			url += "&version=" + prototypeKey.version;
-			url += "&key=" + model[property];
-			url += "&Authorization=" + encodeURIComponent("Bearer " + matematici.tokenManager.getAccessToken());
+            var url =
+                prototypes.prototype.getElement().data("action") + "DownloadAttachment?" +
+			    "id=" + prototypeKey.id +
+			    "&version=" + prototypeKey.version +
+			    "&key=" + model[property] +
+			    "&Authorization=" + encodeURIComponent("Bearer " + matematici.tokenManager.getAccessToken());
 
 			matematici.imageViewer.show("Preview", url);
 		};

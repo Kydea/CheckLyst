@@ -276,7 +276,7 @@ namespace CheckListManager.Prototypes.Logic.Services
             var CheckList = request.CheckList;
             Check(CheckList);
 
-            // get the new id
+            //Get the new id
             if (NewPrototype || NewVersion) await _prototypeRepository.SaveChangesAsync();
 
             await CloneImagesAsync(
@@ -285,6 +285,10 @@ namespace CheckListManager.Prototypes.Logic.Services
                 PrototypeVersion.Prototype,
                 PrototypeVersion.Version
             );
+
+            //Processes the deleted images attachment
+            foreach (var key in request.ImagesToDelete)
+                await DeleteAttachmentAsync(identity.CompanyId, PrototypeVersion.Prototype, PrototypeVersion.Version, key);
 
             PrototypeVersion.Description = request.Description;
             PrototypeVersion.Data = JsonConvert.SerializeObject(CheckList, _converter);
@@ -594,16 +598,17 @@ namespace CheckListManager.Prototypes.Logic.Services
             return await _storageService.GetAsync(_configurationService.PrototypesStorageBucket, key);
         }
 
-        public async Task DeleteAttachmentAsync(DefaultIdentity identity, ProcessAttachmentRequest request)
+        public async Task DeleteAttachmentAsync(long company, long prototype, int version, string key)
         {
-            await ValidateRequest(identity, request, false);
-
-            var startIndex = request.Key.IndexOf('/');
-            if (startIndex < 0)
-                throw new InvalidOperationException("Key format non valid");
-            var key = $"{identity.CompanyId}{request.Key.Substring(startIndex)}";
-
-            await _storageService.DeleteAsync(_configurationService.PrototypesStorageBucket, key);
+            if (key != null && key.StartsWith($"{company}/{prototype}-{version}/"))
+                try
+                {
+                    await _storageService.DeleteAsync(_configurationService.PrototypesStorageBucket, key);
+                }
+                catch
+                {
+                    //the deletion of the images can fail for example if the upload of that image failed
+                }
         }
 
         #endregion
@@ -611,7 +616,7 @@ namespace CheckListManager.Prototypes.Logic.Services
         private void MarkImagesAsCloned(Prototype prototype)
         {
             prototype.Traverse(
-                item => item is Image,
+                item => item is Image image && image.Key != null,
                 item =>
                 {
                     var image = (Image)item;

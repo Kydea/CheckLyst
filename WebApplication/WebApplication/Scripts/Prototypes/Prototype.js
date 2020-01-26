@@ -16,6 +16,7 @@
         commands,
         newItemsId = 1,
         dataSources,
+        imagesToDelete = [],
 
         getNewItemsId = function () {
             return newItemsId++;
@@ -23,32 +24,32 @@
 
         setNewItemsId = function (value) {
             newItemsId = Math.max(newItemsId, value + 1);
-        }
+        },
 
-    completeModel = function () {
-        var analyzeElement = function (node) {
-            switch (node.typeName) {
-                case "Group":
-                    for (var itemIndex in node.items || [])
-                        analyzeElement(node.items[itemIndex]);
-                    break;
-                case "Signature":
-                    if (node.code)
-                        model.signatures[node.code] = node;
-                    break;
+        completeModel = function () {
+            var analyzeElement = function (node) {
+                switch (node.typeName) {
+                    case "Group":
+                        for (var itemIndex in node.items || [])
+                            analyzeElement(node.items[itemIndex]);
+                        break;
+                    case "Signature":
+                        if (node.code)
+                            model.signatures[node.code] = node;
+                        break;
+                }
+            };
+
+            model.typeName = "Prototype";
+            model.signatures = {};
+
+            analyzeElement(model.header);
+            for (var pageIndex in model.pages || []) {
+                var page = model.pages[pageIndex];
+                for (var groupIndex in page.groups || [])
+                    analyzeElement(page.groups[groupIndex])
             }
-        };
-
-        model.typeName = "Prototype";
-        model.signatures = {};
-
-        analyzeElement(model.header);
-        for (var pageIndex in model.pages || []) {
-            var page = model.pages[pageIndex];
-            for (var groupIndex in page.groups || [])
-                analyzeElement(page.groups[groupIndex])
-        }
-    },
+        },
 
         setupActionBar = function () {
             var
@@ -548,6 +549,7 @@
                 description: model.description,
                 department: model.department,
                 prototypeType: model.prototypeType,
+                imagesToDelete: imagesToDelete,
                 checkList: model
             })
         }).done(function (result) {
@@ -555,6 +557,7 @@
             prototypeKey.id = result.id;
             model.header = result.checkList.header;
             model.pages = result.checkList.pages;
+            imagesToDelete = [];
             if (model.version == null) {
                 matematici.navigator.setUrl(options.detailUrl + "/" + result.id + "/" + result.version);
                 model.version = prototypeKey.version = result.version;
@@ -820,6 +823,14 @@
 
     prototype.quit = function () {
         matematici.navigator.open(options.listUrl);
+    };
+
+    prototype.deleteImage = function (key) {
+        imagesToDelete.push(key);
+    };
+
+    prototype.ensureImageWillNotBeDeleted = function (key) {
+        Array.removeElement(imagesToDelete, key);
     };
 
     prototype.getNewItemsId = getNewItemsId;

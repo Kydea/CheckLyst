@@ -195,6 +195,9 @@ update "Infrastructure"."Companies" set "TimeZone" = (select "MicrosoftCode" fro
 
 alter table "Infrastructure"."TimeZones" drop column "MicrosoftCode";
 
+drop index "Index_DataSources_Company_Code" on "DataSources"."DataSources";
+create unique index "DataSources_Code" on "DataSources"."DataSources" ("Company", "Code")
+
 --Set the values for prototypes and instances web services
 /*
   	<system.web>

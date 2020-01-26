@@ -1,5 +1,6 @@
 ﻿using CheckListManager.Prototypes.Logic.Models.CheckLists;
 using System;
+using System.Collections.Generic;
 
 namespace CheckListManager.Prototypes.Logic.Messages
 {
@@ -19,7 +20,7 @@ namespace CheckListManager.Prototypes.Logic.Messages
         public long? Department { get; set; }
         public long? PrototypeType { get; set; }
         public long? InstanceConfirmationWorkFlow { get; set; }
-
+        public List<string> ImagesToDelete { get; set; }
         public long? CompanyId { get; set; }
         public string CompanyName { get; set; }
         public string UserCode { get; set; }

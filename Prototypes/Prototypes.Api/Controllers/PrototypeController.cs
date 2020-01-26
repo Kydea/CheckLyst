@@ -307,25 +307,6 @@ namespace CheckListManager.Prototypes.Api.Controllers
             }
         }
 
-        [HttpPost]
-        [Route("DeleteAttachment")]
-        [Authorize(Roles = "Prototypes#Edit")]
-        public async Task<IHttpActionResult> DeleteAttachment(ProcessAttachmentRequest request)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(request.Key))
-                    throw new Exception("Key must have a value");
-
-                await _prototypeService.DeleteAttachmentAsync(Identity, request);
-                return Ok();
-            }
-            catch (Exception e)
-            {
-                return Error(e);
-            }
-        }
-
         #endregion
     }
 }

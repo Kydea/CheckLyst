@@ -141,6 +141,7 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
             if (!record.ApprovationWorkFlow.HasValue)
                 response.Fields["ApprovationWorkFlow"] = new Field
                 {
+                    Fixed = true,
                     ValidationMessages = new List<ValidationMessage> {
                         new ValidationMessage {
                             Level = ValidationMessage.LevelError,
@@ -152,6 +153,7 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
             if (!record.ObsolescenceWorkFlow.HasValue)
                 response.Fields["ObsolescenceWorkFlow"] = new Field
                 {
+                    Fixed = true,
                     ValidationMessages = new List<ValidationMessage> {
                         new ValidationMessage {
                             Level = ValidationMessage.LevelError,
