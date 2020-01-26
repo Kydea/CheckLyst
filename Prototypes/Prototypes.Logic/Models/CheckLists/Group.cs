@@ -5,15 +5,15 @@ using CheckListManager.Common.Logic.Models.CheckLists;
 
 namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 {
-	public class Group : Item, ICheckListGroup
-	{
-		public override string TypeName => "Group";
+    public class Group : Item, ICheckListGroup
+    {
+        public override string TypeName => "Group";
 
-		public virtual Dictionary<string, ICheckListElement> Elements { get; set; }
+        public virtual Dictionary<string, ICheckListElement> Elements { get; set; }
 
         public List<ICheckListItem> Items { get; set; } = new List<ICheckListItem>();
         public List<ICheckListIteration> Iterations { get; } = new List<ICheckListIteration>();
-		public bool Iterator { get; set; }
+        public bool Iterator { get; set; }
 
         public bool ShowAsTable { get; set; }
 
@@ -46,7 +46,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 Item.Setup();
             }
         }
-        
+
         public void Traverse(Func<ICheckListItem, bool> condition, Action<ICheckListItem> action)
         {
             if (condition(this))
@@ -54,9 +54,11 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
             foreach (var iteration in Iterations)
                 iteration.Traverse(condition, action);
-            
+
             foreach (var item in Items)
-                if (condition(item))
+                if (item is Group group)
+                    group.Traverse(condition, action);
+                else if (condition(item))
                     action(item);
         }
 
@@ -69,7 +71,9 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 await iteration.TraverseAsync(condition, action);
 
             foreach (var item in Items)
-                if (condition(item))
+                if (item is Group group)
+                    await group.TraverseAsync(condition, action);
+                else if (condition(item))
                     await action(item);
         }
 

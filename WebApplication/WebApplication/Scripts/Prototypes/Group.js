@@ -28,7 +28,7 @@
             matematici.canClose = false;
 
             if (!model.groups) model.groups = [];
-            var newGroup = groupModel || { typeName: "Group", id: prototypes.prototype.getNewItemId() };
+            var newGroup = groupModel || { typeName: "Group", id: prototypes.prototype.getNewItemsId() };
             model.groups.push(newGroup);
             prototypes.prototype.update();
         },
@@ -87,9 +87,11 @@
 
     this.update = function (value) {
     	model = value;
-		if (!model.itemId)
-			model.itemId = prototypes.prototype.getNewItemId();
-		element.attr("data-code", model.code).attr("id", "ItemId" + model.itemId);
+        if (model.id > 0)
+            prototypes.prototype.setNewItemsId(model.id);
+        else
+			model.id = prototypes.prototype.getNewItemsId();
+        element.attr("data-code", model.code).attr("id", "ItemId" + model.id).data("id", model.id);
 
 		update(model);
 

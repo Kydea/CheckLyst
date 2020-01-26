@@ -40,9 +40,11 @@
 
     this.update = function (value) {
         model = value;
-        if (!model.itemId)
-            model.itemId = prototypes.prototype.getNewItemId();
-        element.attr("data-code", model.code).attr("id", "ItemId" + model.itemId);
+        if (model.id > 0)
+            prototypes.prototype.setNewItemsId(model.id);
+        else
+            model.id = prototypes.prototype.getNewItemsId();
+        element.attr("data-code", model.code).attr("id", "ItemId" + model.id).data("id", model.id);
         specificItem.update(model)
     };
 

@@ -314,7 +314,8 @@ namespace CheckListManager.Prototypes.Logic.Services
                 ID = PrototypeVersion.Prototype,
                 Version = PrototypeVersion.Version,
                 ModifiedBy = PrototypeVersion.ModifiedBy,
-                ModifiedOn = PrototypeVersion.ModifiedOn
+                ModifiedOn = PrototypeVersion.ModifiedOn,
+                CheckList = CheckList
             };
         }
 
