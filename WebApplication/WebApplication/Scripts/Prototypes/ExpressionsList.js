@@ -20,7 +20,6 @@
 
             list[index] = list[index - 1];
             list[index - 1] = item;
-            console.log(list);
 
             row.insertBefore(row.prev());
         },
@@ -33,7 +32,6 @@
 
             list[index] = list[index + 1];
             list[index + 1] = item;
-            console.log(list);
 
             row.insertAfter(row.next());
         },
