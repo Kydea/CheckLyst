@@ -268,7 +268,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                             else
                             {
                                 var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.PrototypesStorageBucket, Image.Key, Image);
-                                Cell = NewCell($"{(string.IsNullOrEmpty(Image.Description) ? "(empty) " : Image.Description + " ")}(see attachment {Index})");
+                                Cell = NewCell($"{(string.IsNullOrEmpty(Image.Description) ? string.Empty : Image.Description + " ")}(see attachment {Index})");
                             }
                             break;
                         case "Attachment":
@@ -276,8 +276,10 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                             if (Attachment.Key != null)
                             {
                                 var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.InstancesStorageBucket, Attachment.Key, Attachment);
-                                Cell = NewCell($"{(string.IsNullOrEmpty(Attachment.Description) ? "(empty) " : Attachment.Description + " ")}(see attachment {Index})");
+                                Cell = NewCell($"{(string.IsNullOrEmpty(Attachment.Description) ? string.Empty : Attachment.Description + " ")}(see attachment {Index})");
                             }
+                            else if (string.IsNullOrEmpty(Attachment.Description))
+                                Cell = NewCell("(empty)"); // missing label and image
                             break;
                         default:
                             Cell = NewCell(Item.TypeName);
@@ -328,11 +330,11 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                 var Item = Items[Index];
                 var Cell = new RenderingCell();
                 Cell.AppendTo(Row);
-                Cell.Text = string.IsNullOrEmpty(Item.Description) ? "(empty)" : Item.Description;
 
                 if (Item.TypeName == "Group")
                 {
                     Cell.SubGroup = true;
+                    Cell.Text = string.IsNullOrEmpty(Item.Description) ? string.Empty : Item.Description;
                     var Size = await CreateTableHeader(Rows, RowIndex + 1, ((ICheckListGroup)Item).Items);
                     RowsCount = Math.Max(Size.RowsCount + 1, RowsCount);
                     ColumnsCount += Math.Max(Size.ColumnsCount, 1);
@@ -347,8 +349,11 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                         if (Image.Key != null)
                         {
                             var AttachmentIndex = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.PrototypesStorageBucket, Image.Key, Image);
-                            Cell.Text += $" (see attachment {AttachmentIndex})";
+                            Cell.Text = string.IsNullOrEmpty(Item.Description) ? string.Empty : Item.Description + " ";
+                            Cell.Text += $"(see attachment {AttachmentIndex})";
                         }
+                        else if (string.IsNullOrEmpty(Item.Description))
+                            Cell.Text = "(empty)"; // missing label and image
                     }
                     else if (Item.TypeName == "Attachment")
                     {
@@ -356,8 +361,11 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                         if (Attachment.Key != null)
                         {
                             var AttachmentIndex = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.InstancesStorageBucket, Attachment.Key, Attachment);
-                            Cell.Text += $" (see attachment {AttachmentIndex})";
+                            Cell.Text = string.IsNullOrEmpty(Item.Description) ? string.Empty : Item.Description + " ";
+                            Cell.Text += $"(see attachment {AttachmentIndex})";
                         }
+                        else if (string.IsNullOrEmpty(Item.Description))
+                            Cell.Text = "(empty)"; // missing label and attachment
                     }
 
                     ColumnsCount++;

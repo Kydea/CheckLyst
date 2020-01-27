@@ -148,10 +148,10 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             else if (Element is ICheckListAttachment AttachmentElement)
             {
                 if (AttachmentElement.Key == null) return;
-                DrawText(string.IsNullOrEmpty(AttachmentElement.Description) ? "(empty)" : AttachmentElement.Description, PDFBase.BoldFont, 5);
 
                 if (AttachmentElement.FileType == "Image")
                 {
+                    DrawText(AttachmentElement.Description, PDFBase.BoldFont, 5);
                     Paragraph Paragraph = PDFBase.Container.AddParagraph();
                     Paragraph.Format.Alignment = ParagraphAlignment.Center;
                     var StorageFile =
@@ -181,6 +181,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                 else
                 {
                     var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.InstancesStorageBucket, AttachmentElement.Key, AttachmentElement);
+                    DrawText(string.IsNullOrEmpty(AttachmentElement.Description) ? "(empty)" : AttachmentElement.Description, PDFBase.BoldFont, 5);
                     DrawText($"(see attachment {Index})", null, 10);
                 }
             }
