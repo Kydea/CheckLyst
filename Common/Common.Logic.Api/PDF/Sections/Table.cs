@@ -276,7 +276,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                             if (Attachment.Key != null)
                             {
                                 var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.InstancesStorageBucket, Attachment.Key, Attachment);
-                                Cell = NewCell($"{(string.IsNullOrEmpty(Attachment.Description) ? string.Empty : Attachment.Description + " ")}(see attachment {Index})");
+                                Cell = NewCell($"{(string.IsNullOrEmpty(Attachment.Description) ? "(empty) " : Attachment.Description + " ")}(see attachment {Index})");
                             }
                             else if (string.IsNullOrEmpty(Attachment.Description))
                                 Cell = NewCell("(empty)"); // missing label and image
@@ -361,7 +361,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                         if (Attachment.Key != null)
                         {
                             var AttachmentIndex = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.InstancesStorageBucket, Attachment.Key, Attachment);
-                            Cell.Text = string.IsNullOrEmpty(Item.Description) ? string.Empty : Item.Description + " ";
+                            Cell.Text = string.IsNullOrEmpty(Item.Description) ? "(empty) " : Item.Description + " ";
                             Cell.Text += $"(see attachment {AttachmentIndex})";
                         }
                         else if (string.IsNullOrEmpty(Item.Description))
