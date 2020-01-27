@@ -49,12 +49,14 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
             var LeftAvg = PreCalculatedLeftAvg ?? LeftValues.Average(TypedValue => TypedValue.NumberValue);
             var RightAvg = PreCalculatedRightAvg ?? RightValues.Average(TypedValue => TypedValue.NumberValue);
 
-            decimal Result = 0;
+            decimal Numerator = 0;
+            double Denominator = 0;
             for (var Index = 0; Index < LeftValues.Count; ++Index)
-                Result += (LeftValues[Index].NumberValue - LeftAvg) * (RightValues[Index].NumberValue - RightAvg);
-
-            decimal Denominator = (decimal)LeftValues.Sum(TypedValue => Math.Pow((double)(TypedValue.NumberValue - LeftAvg), 2));
-            return Denominator == 0 ? 0 : Result / Denominator;
+            {
+                Numerator += (RightValues[Index].NumberValue - RightAvg) * (LeftValues[Index].NumberValue - LeftAvg);
+                Denominator += Math.Pow((double)(RightValues[Index].NumberValue - RightAvg), 2);
+            }
+            return Denominator == 0 ? 0 : Numerator / (decimal)Denominator;
         }
 
         private decimal Intercept(List<TypedValue> LeftValues, List<TypedValue> RightValues)
@@ -63,7 +65,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
                 LeftAvg = LeftValues.Average(TypedValue => TypedValue.NumberValue),
                 RightAvg = RightValues.Average(TypedValue => TypedValue.NumberValue);
 
-            return RightAvg - LeftAvg * Slope(LeftValues, RightValues, LeftAvg, RightAvg);
+            return LeftAvg - RightAvg * Slope(LeftValues, RightValues, LeftAvg, RightAvg);
         }
 
         protected override TypedValue GetValue(List<TypedValue> LeftValues, List<TypedValue> RightValues)
