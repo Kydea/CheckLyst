@@ -330,11 +330,11 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                 var Item = Items[Index];
                 var Cell = new RenderingCell();
                 Cell.AppendTo(Row);
+                Cell.Text = Item.Description;
 
                 if (Item.TypeName == "Group")
                 {
                     Cell.SubGroup = true;
-                    Cell.Text = string.IsNullOrEmpty(Item.Description) ? string.Empty : Item.Description;
                     var Size = await CreateTableHeader(Rows, RowIndex + 1, ((ICheckListGroup)Item).Items);
                     RowsCount = Math.Max(Size.RowsCount + 1, RowsCount);
                     ColumnsCount += Math.Max(Size.ColumnsCount, 1);
@@ -349,20 +349,19 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                         if (Image.Key != null)
                         {
                             var AttachmentIndex = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.PrototypesStorageBucket, Image.Key, Image);
-                            Cell.Text = string.IsNullOrEmpty(Item.Description) ? string.Empty : Item.Description + " ";
-                            Cell.Text += $"(see attachment {AttachmentIndex})";
+                            Cell.Text = $"{(string.IsNullOrEmpty(Item.Description) ? string.Empty : Item.Description + " ")}(see attachment {AttachmentIndex})";
                         }
                         else if (string.IsNullOrEmpty(Item.Description))
                             Cell.Text = "(empty)"; // missing label and image
                     }
                     else if (Item.TypeName == "Attachment")
                     {
+                        
                         var Attachment = (ICheckListAttachment)Item;
                         if (Attachment.Key != null)
                         {
                             var AttachmentIndex = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.InstancesStorageBucket, Attachment.Key, Attachment);
-                            Cell.Text = string.IsNullOrEmpty(Item.Description) ? "(empty) " : Item.Description + " ";
-                            Cell.Text += $"(see attachment {AttachmentIndex})";
+                            Cell.Text = $"{(string.IsNullOrEmpty(Item.Description) ? "(empty) " : Item.Description + " ")}(see attachment {AttachmentIndex})";
                         }
                         else if (string.IsNullOrEmpty(Item.Description))
                             Cell.Text = "(empty)"; // missing label and attachment
