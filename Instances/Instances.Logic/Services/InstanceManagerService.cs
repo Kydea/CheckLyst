@@ -928,7 +928,7 @@ namespace CheckListManager.Instances.Logic.Services
                 CheckList = cacheObject.InstanceCode,
                 Information = JsonConvert.SerializeObject(new
                 {
-                    Id = itemId,
+                    ID = itemId,
                     attachment.FileName
                 })
             });
@@ -1006,7 +1006,7 @@ namespace CheckListManager.Instances.Logic.Services
                     CheckList = cacheObject.InstanceCode,
                     Information = JsonConvert.SerializeObject(new
                     {
-                        Id = itemId,
+                        ID = itemId,
                         OldValue = oldFormattedValue,
                         NewValue = formattedValue
                     })
@@ -1075,7 +1075,7 @@ namespace CheckListManager.Instances.Logic.Services
                     CheckList = cacheObject.InstanceCode,
                     Information = JsonConvert.SerializeObject(new
                     {
-                        Id = itemId,
+                        ID = itemId,
                         OldValue = oldFormattedValue,
                         NewValue = formattedValue
                     })
@@ -1108,7 +1108,7 @@ namespace CheckListManager.Instances.Logic.Services
                     Action = TrailAction.InstanceIterationAdded,
                     Date = DateTimeOffset.UtcNow,
                     CheckList = cacheObject.InstanceCode,
-                    Information = JsonConvert.SerializeObject(new { Id = Iteration.Id.ToString() })
+                    Information = JsonConvert.SerializeObject(new { ID = Iteration.Id.ToString() })
                 });
                 await Update(cacheObject, userCode);
             }
@@ -1136,7 +1136,7 @@ namespace CheckListManager.Instances.Logic.Services
                     Action = TrailAction.InstanceIterationDeleted,
                     Date = DateTimeOffset.UtcNow,
                     CheckList = cacheObject.InstanceCode,
-                    Information = JsonConvert.SerializeObject(new { Id = itemId.ToString() })
+                    Information = JsonConvert.SerializeObject(new { ID = itemId.ToString() })
                 });
                 await Update(cacheObject, userCode);
             }
@@ -1164,7 +1164,7 @@ namespace CheckListManager.Instances.Logic.Services
                     Action = direction == 1 ? TrailAction.InstanceIterationMovedDown : TrailAction.InstanceIterationMovedUp,
                     Date = DateTimeOffset.UtcNow,
                     CheckList = cacheObject.InstanceCode,
-                    Information = JsonConvert.SerializeObject(new { Id = itemId.ToString() })
+                    Information = JsonConvert.SerializeObject(new { ID = itemId.ToString() })
                 });
                 await Update(cacheObject, userCode);
             }
@@ -1245,7 +1245,7 @@ namespace CheckListManager.Instances.Logic.Services
                     Action = TrailAction.InstanceSignatureIssued,
                     Date = DateTimeOffset.UtcNow,
                     CheckList = cacheObject.InstanceCode,
-                    Information = JsonConvert.SerializeObject(new { Id = request.ItemId.ToString() })
+                    Information = JsonConvert.SerializeObject(new { ID = request.ItemId.ToString() })
                 });
             }
             catch (Exception e)
@@ -1353,7 +1353,7 @@ namespace CheckListManager.Instances.Logic.Services
                     CheckList = cacheObject.InstanceCode,
                     Information = JsonConvert.SerializeObject(new
                     {
-                        Id = request.ItemId,
+                        ID = request.ItemId,
                         request.Note
                     })
                 });
@@ -1369,7 +1369,7 @@ namespace CheckListManager.Instances.Logic.Services
                     CheckList = cacheObject.InstanceCode,
                     Information = JsonConvert.SerializeObject(new
                     {
-                        Id = request.ItemId,
+                        ID = request.ItemId,
                         request.Note,
                         ErrorMessage = e.Message
                     })
@@ -1475,7 +1475,7 @@ namespace CheckListManager.Instances.Logic.Services
                 CheckList = cacheObject.InstanceCode,
                 Information = JsonConvert.SerializeObject(new
                 {
-                    Id = itemId,
+                    ID = itemId,
                     Values = row
                 })
             });
