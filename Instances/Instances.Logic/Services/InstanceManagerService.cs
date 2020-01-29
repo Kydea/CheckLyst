@@ -1101,6 +1101,7 @@ namespace CheckListManager.Instances.Logic.Services
             if (!group.ReadOnly)
             {
                 var Iteration = group.AddIteration();
+                group.SetupIterationsIndexes();
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
                     Company = cacheObject.CompanyId,
@@ -1128,7 +1129,9 @@ namespace CheckListManager.Instances.Logic.Services
 
             if (!iteration.ReadOnly)
             {
-                ((Group)iteration.Group).Remove(iteration);
+                var group = (Group)iteration.Group;
+                group.Remove(iteration);
+                group.SetupIterationsIndexes();
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
                     Company = cacheObject.CompanyId,
@@ -1156,7 +1159,9 @@ namespace CheckListManager.Instances.Logic.Services
 
             if (!iteration.ReadOnly)
             {
-                ((Group)iteration.Group).Move(iteration, direction);
+                var group = (Group)iteration.Group;
+                group.Move(iteration, direction);
+                group.SetupIterationsIndexes();
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
                     Company = cacheObject.CompanyId,

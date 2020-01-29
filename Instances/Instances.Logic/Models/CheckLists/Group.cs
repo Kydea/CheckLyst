@@ -53,24 +53,33 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         {
             base.Setup();
             SetupItems();
-
-            var Index = 0;
             if (Iterator)
+            {
+                SetupIterationsIndexes();
                 foreach (var Iteration in Iterations)
                 {
-                    Iteration.Indexes.Clear();
-                    if (this.Iteration != null)
-                        this.Iteration.Indexes.ForEach(i => Iteration.Indexes.Add(i));
-
-                    Iteration.Indexes.Add(Index); //0-base
-                    Iteration.Index = Index + 1; //1-base
-                    if (!Iteration.Removed) ++Index;
-
                     Iteration.CheckList = CheckList;
                     Iteration.Page = Page;
                     Iteration.Group = this;
                     Iteration.Setup();
                 }
+            }
+        }
+
+        public void SetupIterationsIndexes()
+        {
+            var Index = 0;
+            foreach (var Iteration in Iterations)
+            {
+                Iteration.Indexes.Clear();
+                if (this.Iteration != null)
+                    this.Iteration.Indexes.ForEach(i => Iteration.Indexes.Add(i));
+
+                Iteration.Indexes.Add(Index); //0-base
+                Iteration.Index = Index + 1; //1-base
+                if (!Iteration.Removed) ++Index;
+            }
+
         }
 
         public override void Update(string DecimalSeparator, string TimeZone)
