@@ -234,7 +234,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
             Position = Caret + 1;
 
             if (Arguments.Count() != AcceptedArguments)
-                throw new ParseException($"The operator {Value} accets exactly {AcceptedArguments} arguments", this.Position);
+                throw new ParseException($"The operator {Value} accepts exactly {AcceptedArguments} arguments", this.Position);
         }
     }
 }
