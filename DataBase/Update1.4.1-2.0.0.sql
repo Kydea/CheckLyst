@@ -3,10 +3,9 @@ insert into "Configuration"."Configurations" ("Code", "Value") values
 	('PrototypesStorageBucket', <TBD>), --update Configuration - XXX.sql accordingly
 	('InstancesStorageBucket', <TBD>); --update Configuration - XXX.sql accordingly
 
-alter table "CheckLists"."InstanceExpressionValues" add 
-	"Description" varchar (100),
-	"Unique" boolean not null default true,
-	"Exception" boolean not null default false;
+alter table "CheckLists"."InstanceExpressionValues" add "Description" varchar (100);
+alter table "CheckLists"."InstanceExpressionValues" add	"Unique" boolean not null default true;
+alter table "CheckLists"."InstanceExpressionValues" add	"Exception" boolean not null default false;
 
 create or replace function "CheckLists"."ValidateUniqueExpressions"
 (
@@ -195,8 +194,8 @@ update "Infrastructure"."Companies" set "TimeZone" = (select "MicrosoftCode" fro
 
 alter table "Infrastructure"."TimeZones" drop column "MicrosoftCode";
 
-drop index "Index_DataSources_Company_Code" on "DataSources"."DataSources";
-create unique index "DataSources_Code" on "DataSources"."DataSources" ("Company", "Code")
+drop index "DataSources"."Index_DataSources_Company_Code";
+create unique index "DataSources_Code" on "DataSources"."DataSources" ("Company", "Code");
 
 --Set the values for prototypes and instances web services
 /*
