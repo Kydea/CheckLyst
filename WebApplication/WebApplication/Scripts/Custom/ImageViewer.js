@@ -67,7 +67,7 @@
                 }).on("error", function (e) {
                     matematici.loader.hide();
                     matematici.dialog.error("Error", "Unable to load the image");
-                }).attr("src", url);
+                }).attr("src", url + "&" + new Date().getTime());
             }
         }
     };

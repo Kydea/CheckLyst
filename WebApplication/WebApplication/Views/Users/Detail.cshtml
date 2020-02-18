@@ -423,7 +423,7 @@
                 loading = true;
                 detailPage.getForm().handleResult(result);
 
-                $("input[name=authenticationCode]").parent().toggle(result.showAuthenticationCode);
+                $("input[name=authenticationCode]").parent().toggleClass("Hidden", !result.showAuthenticationCode);
                 $("input[name=password]").parent().toggleClass("Hidden", !result.showPassword);
                 $("input[name=password2]").parent().toggleClass("Hidden", !result.showPassword);
                 if (result.generalFunctions) buildGeneralFunctions(result.generalFunctions);
