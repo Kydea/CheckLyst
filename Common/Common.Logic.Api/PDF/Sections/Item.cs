@@ -114,10 +114,10 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             }
             else if (Element is ICheckListImage ImageElement)
             {
-                if (ImageElement.Key == null) return;
-
                 Paragraph Paragraph = DrawText(string.IsNullOrEmpty(ImageElement.Description) ? "(empty)" : ImageElement.Description, PDFBase.BoldFont, 5);
                 Paragraph.Format.Alignment = ParagraphAlignment.Center;
+
+                if (ImageElement.Key == null) return;
 
                 Paragraph = PDFBase.Container.AddParagraph();
                 Paragraph.Format.Alignment = ParagraphAlignment.Center;
@@ -147,16 +147,14 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             }
             else if (Element is ICheckListAttachment AttachmentElement)
             {
-                if (AttachmentElement.Key == null) return;
-
-                if (AttachmentElement.FileType == "Image")
+                if (AttachmentElement.Key == null)
+                    DrawText(string.IsNullOrEmpty(AttachmentElement.Description) ? "(empty)" : AttachmentElement.Description, PDFBase.BoldFont, 5);
+                else if (AttachmentElement.FileType == "Image")
                 {
-                    DrawText(AttachmentElement.Description, PDFBase.BoldFont, 5);
+                    DrawText(string.IsNullOrEmpty(AttachmentElement.Description) ? "(empty)" : AttachmentElement.Description, PDFBase.BoldFont, 5);
                     Paragraph Paragraph = PDFBase.Container.AddParagraph();
                     Paragraph.Format.Alignment = ParagraphAlignment.Center;
-                    var StorageFile =
-                        await CheckListPDF.StorageService.GetAsync(
-                            CheckListPDF.ConfigurationService.InstancesStorageBucket, AttachmentElement.Key);
+                    var StorageFile = await CheckListPDF.StorageService.GetAsync(CheckListPDF.ConfigurationService.InstancesStorageBucket, AttachmentElement.Key);
                     byte[] Data;
                     Bitmap Image;
                     using (MemoryStream ms = new MemoryStream())
