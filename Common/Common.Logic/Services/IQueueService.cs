@@ -1,11 +1,10 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using CheckListManager.Common.Core.Services;
 using CheckListManager.Common.Logic.Queue;
 
 namespace CheckListManager.Common.Logic.Services
 {
-	public interface IQueueService : IService
+	public interface IQueueService
 	{
 		Task SendMessageAsync(string queueName, string message, CancellationToken cancellationToken = default(CancellationToken));
 		Task SendObjectAsync<T>(string queueName, T data, CancellationToken cancellationToken = default(CancellationToken));

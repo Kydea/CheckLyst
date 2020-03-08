@@ -38,6 +38,13 @@ namespace CheckListManager.Common.Logic.Services
         public string InstancesStorageBucket
 	        => _cache.GetOrAdd(nameof(InstancesStorageBucket), Load<string>, RegionName);
 
+        public string RabbitMqHostName
+	        => _cache.GetOrAdd(nameof(RabbitMqHostName), Load<string>, RegionName);
+        public string RabbitMqUsername
+	        => _cache.GetOrAdd(nameof(RabbitMqUsername), Load<string>, RegionName);
+        public string RabbitMqPassword
+	        => _cache.GetOrAdd(nameof(RabbitMqPassword), Load<string>, RegionName);
+
         private T Load<T>(string key)
 		{
 			using (var scope = _scope.BeginLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag))

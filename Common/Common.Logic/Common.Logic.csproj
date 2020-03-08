@@ -77,8 +77,16 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Diagnostics.Tracing.EventSource, Version=1.1.28.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <HintPath>..\..\packages\Microsoft.Diagnostics.Tracing.EventSource.Redist.1.1.28\lib\net46\Microsoft.Diagnostics.Tracing.EventSource.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="RabbitMQ.Client, Version=5.0.0.0, Culture=neutral, PublicKeyToken=89e7d7c5feba84ce">
+      <HintPath>..\..\packages\RabbitMQ.Client.5.1.2\lib\net451\RabbitMQ.Client.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="RedLock.StrongName, Version=1.7.5.0, Culture=neutral, PublicKeyToken=1dffde0a6c007f07, processorArchitecture=MSIL">
       <HintPath>..\..\packages\RedLock.net.StrongName.1.7.5\lib\net45\RedLock.StrongName.dll</HintPath>
@@ -88,6 +96,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Drawing" />
@@ -192,6 +201,7 @@
     <Compile Include="PascalCaseDictionary.cs" />
     <Compile Include="Services\ISettingService.cs" />
     <Compile Include="Services\IStorageService.cs" />
+    <Compile Include="Services\QueueServiceRabbitMq.cs" />
     <Compile Include="Services\SettingService.cs" />
     <Compile Include="Services\StorageService.cs" />
     <Compile Include="Trail\TrailAction.cs" />
@@ -215,7 +225,7 @@
     <Compile Include="Services\IConfigurationService.cs" />
     <Compile Include="Services\IHashService.cs" />
     <Compile Include="Services\IQueueService.cs" />
-    <Compile Include="Services\QueueService.cs" />
+    <Compile Include="Services\QueueServiceSqs.cs" />
     <Compile Include="Services\ServiceBase.cs" />
     <Compile Include="Services\SingletonServiceBase.cs" />
     <Compile Include="WorkFlows\WorkFlowsService.cs" />

@@ -10,7 +10,7 @@ using CheckListManager.Common.Logic.Queue;
 
 namespace CheckListManager.Common.Logic.Services
 {
-	public class QueueService : IQueueService, IDisposable
+	public class QueueServiceSqs : IQueueService, IDisposable
 	{
 		private const string QueueRegionName = "QueueService";
 
@@ -18,12 +18,11 @@ namespace CheckListManager.Common.Logic.Services
 		private readonly IMemoryCache _memoryCache;
         private readonly IConfigurationService _configurationService;
 
-        public QueueService(IAmazonSQS client, IMemoryCache memoryCache, IConfigurationService configurationService)
+        public QueueServiceSqs(IAmazonSQS client, IMemoryCache memoryCache, IConfigurationService configurationService)
 		{
 			_client = client;
 			_memoryCache = memoryCache;
             _configurationService = configurationService;
-
         }
 
 		public void Dispose()

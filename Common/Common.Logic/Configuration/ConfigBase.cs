@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -16,6 +17,7 @@ using CheckListManager.Common.Core.Services;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Cache;
 using CheckListManager.Common.Logic.Services;
+using RabbitMQ.Client;
 using RedLock;
 
 using Parameter = Autofac.Core.Parameter;
@@ -81,11 +83,6 @@ namespace CheckListManager.Common.Logic.Configuration
 				.SingleInstance()
 				.OnActivating(OnConfiguringRedis);
 
-			builder.RegisterType<AmazonSQSConfig>()
-				.AsSelf()
-				.SingleInstance()
-				.OnActivating(OnConfiguringSqs);
-
 			builder.RegisterAssemblyTypes(Assemblies)
 				.AssignableTo<IService>()
 				.AsImplementedInterfaces()
@@ -105,11 +102,6 @@ namespace CheckListManager.Common.Logic.Configuration
 				.AsImplementedInterfaces()
 				.InstancePerDependency();
 
-			builder.RegisterType<AmazonSQSClient>()
-				.As<IAmazonSQS>()
-				.AsSelf()
-				.InstancePerScope(UseInstancePerRequest);
-
 			builder.Register(ConfigureServiceClient)
 				.As<IServiceClient>()
 				.As<ServiceClient>()
@@ -124,6 +116,38 @@ namespace CheckListManager.Common.Logic.Configuration
 				.As<IStorageService>()
 				.AsSelf()
 				.InstancePerScope(UseInstancePerRequest);
+
+			var useRabbitMq = ConfigurationManager.AppSettings["QueueSystem"] == "RabbitMQ";
+			if (useRabbitMq)
+			{
+				builder.RegisterType<ConnectionFactory>()
+					.As<IConnectionFactory>()
+					.AsSelf()
+					.SingleInstance()
+					.OnActivating(OnConfiguringRabbitMq);
+				
+				builder.RegisterType<QueueServiceRabbitMq>()
+					.As<IQueueService>()
+					.AsSelf()
+					.InstancePerScope(UseInstancePerRequest);
+			}
+			else
+			{
+				builder.RegisterType<AmazonSQSConfig>()
+					.AsSelf()
+					.SingleInstance()
+					.OnActivating(OnConfiguringSqs);
+
+				builder.RegisterType<AmazonSQSClient>()
+					.As<IAmazonSQS>()
+					.AsSelf()
+					.InstancePerScope(UseInstancePerRequest);
+
+				builder.RegisterType<QueueServiceSqs>()
+					.As<IQueueService>()
+					.AsSelf()
+					.InstancePerScope(UseInstancePerRequest);
+			}
 		}
 
 		private static void OnConfiguringRedis(IActivatingEventArgs<RedisLockEndPoint> e)
@@ -136,6 +160,14 @@ namespace CheckListManager.Common.Logic.Configuration
 		{
 			var configuration = e.Context.Resolve<IConfigurationService>();
 			e.Instance.ServiceURL = configuration.SqsBaseUrl;
+		}
+
+		private static void OnConfiguringRabbitMq(IActivatingEventArgs<ConnectionFactory> e)
+		{
+			var configuration = e.Context.Resolve<IConfigurationService>();
+			e.Instance.HostName = configuration.RabbitMqHostName;
+			e.Instance.UserName = configuration.RabbitMqUsername;
+			e.Instance.Password = configuration.RabbitMqPassword;
 		}
 
 		private static ServiceClient ConfigureServiceClient(IComponentContext context, IEnumerable<Parameter> parameters)

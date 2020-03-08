@@ -10,7 +10,7 @@ namespace CheckListManager.Trail.Terminal
 		protected override void OnCreateMapper(IMapperConfigurationExpression mapperConfig)
 		{
 			base.OnCreateMapper(mapperConfig);
-
+			
 			mapperConfig.CreateMap<TrailMessage, Records>();
 		}
 	}
