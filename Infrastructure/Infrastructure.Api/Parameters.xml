@@ -6,4 +6,22 @@
 	<parameter name="AWSAccessKey" description="AWSAccessKey" defaultValue="AKIAISETYTF5XAR3ZNSA">
 		<parameterEntry kind="XmlFile" scope="\\web.config$" match="/configuration/appSettings/add[@key='AWSAccessKey']/@value" />
 	</parameter>
+	<parameter name="AWSSecretKey" description="AWSSecretKey" defaultValue="1rBhniu+qwxWrJAh5T45PkDsbnl5iw8ZMeumJmX2">
+		<parameterEntry kind="XmlFile" scope="\\web.config$" match="/configuration/appSettings/add[@key='AWSSecretKey']/@value" />
+	</parameter>
+	<parameter name="AWSRegion" description="AWSRegion" defaultValue="eu-west-1">
+		<parameterEntry kind="XmlFile" scope="\\web.config$" match="/configuration/appSettings/add[@key='AWSRegion']/@value" />
+	</parameter>
+	<parameter name="QueueSystem" description="QueueSystem" defaultValue="SQS">
+		<parameterEntry kind="XmlFile" scope="\\web.config$" match="/configuration/appSettings/add[@key='QueueSystem']/@value" />
+	</parameter>
+	<parameter name="RabbitMQHost" description="RabbitMQHost" defaultValue="">
+		<parameterEntry kind="XmlFile" scope="\\web.config$" match="/configuration/appSettings/add[@key='RabbitMQHost']/@value" />
+	</parameter>
+	<parameter name="RabbitMQUsername" description="RabbitMQUsername" defaultValue="">
+		<parameterEntry kind="XmlFile" scope="\\web.config$" match="/configuration/appSettings/add[@key='RabbitMQUsername']/@value" />
+	</parameter>
+	<parameter name="RabbitMQPassword" description="RabbitMQPassword" defaultValue="">
+		<parameterEntry kind="XmlFile" scope="\\web.config$" match="/configuration/appSettings/add[@key='RabbitMQPassword']/@value" />
+	</parameter>
 </parameters> 
