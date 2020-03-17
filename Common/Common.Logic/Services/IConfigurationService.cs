@@ -15,8 +15,5 @@ namespace CheckListManager.Common.Logic.Services
         int InstanceCloseTimeout { get; }
         string PrototypesStorageBucket { get; }
         string InstancesStorageBucket { get; }
-		string RabbitMqHostName { get; }
-		string RabbitMqUsername { get; }
-		string RabbitMqPassword { get; }
     }
 }

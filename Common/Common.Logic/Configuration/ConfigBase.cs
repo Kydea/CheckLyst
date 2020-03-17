@@ -117,7 +117,7 @@ namespace CheckListManager.Common.Logic.Configuration
 				.AsSelf()
 				.InstancePerScope(UseInstancePerRequest);
 
-			var useRabbitMq = ConfigurationManager.AppSettings["QueueSystem"] == "RabbitMQ";
+			var useRabbitMq = "RabbitMQ".Equals(ConfigurationManager.AppSettings["QueueSystem"], StringComparison.InvariantCultureIgnoreCase);
 			if (useRabbitMq)
 			{
 				builder.RegisterType<ConnectionFactory>()
@@ -164,10 +164,9 @@ namespace CheckListManager.Common.Logic.Configuration
 
 		private static void OnConfiguringRabbitMq(IActivatingEventArgs<ConnectionFactory> e)
 		{
-			var configuration = e.Context.Resolve<IConfigurationService>();
-			e.Instance.HostName = configuration.RabbitMqHostName;
-			e.Instance.UserName = configuration.RabbitMqUsername;
-			e.Instance.Password = configuration.RabbitMqPassword;
+			e.Instance.HostName = ConfigurationManager.AppSettings["RabbitMQHost"];
+			e.Instance.UserName = ConfigurationManager.AppSettings["RabbitMQUsername"];
+			e.Instance.Password = ConfigurationManager.AppSettings["RabbitMQPassword"];
 		}
 
 		private static ServiceClient ConfigureServiceClient(IComponentContext context, IEnumerable<Parameter> parameters)
