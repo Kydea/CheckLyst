@@ -156,7 +156,7 @@ namespace CheckListManager.Common.Logic.Configuration
 			e.Instance.EndPoint = new DnsEndPoint(configuration.RedisHost, configuration.RedisPort);
 		}
 
-		private static void OnConfiguringSqs(IActivatingEventArgs<AmazonSQSConfig> e)
+		public static void OnConfiguringSqs(IActivatingEventArgs<AmazonSQSConfig> e)
 		{
 			var configuration = e.Context.Resolve<IConfigurationService>();
 			e.Instance.ServiceURL = configuration.SqsBaseUrl;

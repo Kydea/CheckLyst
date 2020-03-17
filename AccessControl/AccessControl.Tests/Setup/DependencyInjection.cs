@@ -7,6 +7,8 @@ using Autofac;
 using CheckListManager.AccessControl.Api;
 using CheckListManager.Common.Core.Services;
 using CheckListManager.Common.Data;
+using CheckListManager.Common.Logic.Configuration;
+using CheckListManager.Common.Logic.Services;
 using SpecFlow.Autofac;
 
 namespace CheckListManager.AccessControl.Tests.Setup
@@ -40,6 +42,16 @@ namespace CheckListManager.AccessControl.Tests.Setup
 
 			builder.RegisterType<AmazonSQSClient>()
 				.As<IAmazonSQS>()
+				.AsSelf()
+				.InstancePerLifetimeScope();
+
+			builder.RegisterType<AmazonSQSConfig>()
+				.AsSelf()
+				.SingleInstance()
+				.OnActivating(ConfigBase.OnConfiguringSqs);
+
+			builder.RegisterType<QueueServiceSqs>()
+				.As<IQueueService>()
 				.AsSelf()
 				.InstancePerLifetimeScope();
 
