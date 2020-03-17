@@ -143,6 +143,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
+    <Content Include="Parameters.xml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
