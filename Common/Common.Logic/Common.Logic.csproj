@@ -104,6 +104,7 @@
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -203,7 +204,8 @@
     <Compile Include="Services\IStorageService.cs" />
     <Compile Include="Services\QueueServiceRabbitMq.cs" />
     <Compile Include="Services\SettingService.cs" />
-    <Compile Include="Services\StorageService.cs" />
+    <Compile Include="Services\StorageServiceFileSystem.cs" />
+    <Compile Include="Services\StorageServiceS3.cs" />
     <Compile Include="Trail\TrailAction.cs" />
     <Compile Include="Trail\TrailMessage.cs" />
     <Compile Include="Cache\IRedisCache.cs" />

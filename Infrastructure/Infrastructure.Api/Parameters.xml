@@ -24,4 +24,7 @@
 	<parameter name="RabbitMQPassword" description="RabbitMQPassword" defaultValue="">
 		<parameterEntry kind="XmlFile" scope="\\web.config$" match="/configuration/appSettings/add[@key='RabbitMQPassword']/@value" />
 	</parameter>
+	<parameter name="StorageSystem" description="StorageSystem" defaultValue="S3">
+		<parameterEntry kind="XmlFile" scope="\\web.config$" match="/configuration/appSettings/add[@key='StorageSystem']/@value" />
+	</parameter>
 </parameters> 

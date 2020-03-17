@@ -107,16 +107,6 @@ namespace CheckListManager.Common.Logic.Configuration
 				.As<ServiceClient>()
 				.InstancePerDependency();
 
-			builder.RegisterType<AmazonS3Client>()
-				.As<IAmazonS3>()
-				.AsSelf()
-				.InstancePerScope(UseInstancePerRequest);
-
-			builder.RegisterType<StorageService>()
-				.As<IStorageService>()
-				.AsSelf()
-				.InstancePerScope(UseInstancePerRequest);
-
 			var useRabbitMq = "RabbitMQ".Equals(ConfigurationManager.AppSettings["QueueSystem"], StringComparison.InvariantCultureIgnoreCase);
 			if (useRabbitMq)
 			{
@@ -145,6 +135,27 @@ namespace CheckListManager.Common.Logic.Configuration
 
 				builder.RegisterType<QueueServiceSqs>()
 					.As<IQueueService>()
+					.AsSelf()
+					.InstancePerScope(UseInstancePerRequest);
+			}
+			
+			var useFileSystem = "FileSystem".Equals(ConfigurationManager.AppSettings["StorageSystem"], StringComparison.InvariantCultureIgnoreCase);
+			if (useFileSystem)
+			{
+				builder.RegisterType<StorageServiceFileSystem>()
+					.As<IStorageService>()
+					.AsSelf()
+					.InstancePerScope(UseInstancePerRequest);
+			}
+			else
+			{
+				builder.RegisterType<AmazonS3Client>()
+					.As<IAmazonS3>()
+					.AsSelf()
+					.InstancePerScope(UseInstancePerRequest);
+
+				builder.RegisterType<StorageServiceS3>()
+					.As<IStorageService>()
 					.AsSelf()
 					.InstancePerScope(UseInstancePerRequest);
 			}

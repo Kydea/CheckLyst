@@ -8,11 +8,11 @@ using CheckListManager.Common.Logic.Models;
 
 namespace CheckListManager.Common.Logic.Services
 {
-    public class StorageService : IStorageService
+    public class StorageServiceS3 : IStorageService
     {
         private readonly IAmazonS3 _s3;
 
-        public StorageService(IAmazonS3 s3)
+        public StorageServiceS3(IAmazonS3 s3)
         {
             _s3 = s3;
         }
