@@ -3,11 +3,13 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Web;
 using CheckListManager.Common.Logic.Models;
+using NLog;
 
 namespace CheckListManager.Common.Logic.Services
 {
     public class StorageServiceFileSystem : IStorageService
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         public Task<StorageFile> GetAsync(string bucketName, string key)
         {
             var path = Path.Combine(bucketName, key);
@@ -32,8 +34,9 @@ namespace CheckListManager.Common.Logic.Services
 
                 return true;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Logger.Error(e, $"Error uploading file to {bucketName} {key}");
                 return false;
             }
         }
@@ -56,8 +59,9 @@ namespace CheckListManager.Common.Logic.Services
 
                 return Task.FromResult(true);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Logger.Error(e, $"Error deleting file {bucketName} {key}");
                 return Task.FromResult(false);
             }
         }
@@ -75,8 +79,9 @@ namespace CheckListManager.Common.Logic.Services
                 File.Copy(sourcePath, destinationPath);
                 return Task.FromResult(true);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Logger.Error(e, $"Error cloning {bucketName} {sourceKey} to {destinationKey}");
                 return Task.FromResult(false);
             }
         }
