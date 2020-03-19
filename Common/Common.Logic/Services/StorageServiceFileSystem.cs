@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Security.AccessControl;
 using System.Threading.Tasks;
 using System.Web;
 using CheckListManager.Common.Logic.Models;
@@ -26,6 +27,11 @@ namespace CheckListManager.Common.Logic.Services
             try
             {
                 var path = Path.Combine(bucketName, key);
+                var directory = Path.GetDirectoryName(path);
+                if (directory != null && !Directory.Exists(directory))
+                {
+                    Directory.CreateDirectory(directory);
+                }
                 using (var outputStream = File.OpenWrite(path))
                 {
                     await inputStream.CopyToAsync(outputStream);
@@ -73,6 +79,12 @@ namespace CheckListManager.Common.Logic.Services
         {
             var sourcePath = Path.Combine(bucketName, sourceKey);
             var destinationPath = Path.Combine(bucketName, destinationKey);
+            
+            var directory = Path.GetDirectoryName(destinationPath);
+            if (directory != null && !Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
 
             try
             {
