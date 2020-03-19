@@ -11,7 +11,7 @@ namespace CheckListManager.Common.Logic.Services
     public class StorageServiceFileSystem : IStorageService
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        public Task<StorageFile> GetAsync(string bucketName, string key)
+        public async Task<StorageFile> GetAsync(string bucketName, string key)
         {
             var path = Path.Combine(bucketName, key);
             if (!File.Exists(path))
@@ -19,7 +19,13 @@ namespace CheckListManager.Common.Logic.Services
                 throw new Exception($"File {path} not found");
             }
 
-            return Task.FromResult(new StorageFile(File.OpenRead(path), MimeMapping.GetMimeMapping(path)));
+            var ms = new MemoryStream();
+            using (var fileStream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
+            {
+                await fileStream.CopyToAsync(ms);
+                ms.Seek(0, SeekOrigin.Begin);
+            }
+            return new StorageFile(ms, MimeMapping.GetMimeMapping(path));
         }
 
         public async Task<bool> PutAsync(string bucketName, string key, Stream inputStream)
