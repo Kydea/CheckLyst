@@ -78,7 +78,7 @@ namespace CheckListManager.Instances.Logic.PDF
 
             if (Instance.InstanceState == InstanceState.Confirmed || Instance.InstanceState == InstanceState.Completed || Instance.InstanceState == InstanceState.Deleted)
             {
-                var Record = await InstancesRepository.GetByIDAsync(Instance.CompanyId, Instance.Id.Value);
+                var Record = await InstancesRepository.GetAsync(Instance.CompanyId, Instance.Id.Value);
 
                 var Signatures = Record
                     .InstancesHistory

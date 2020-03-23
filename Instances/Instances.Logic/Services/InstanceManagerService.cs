@@ -85,38 +85,18 @@ namespace CheckListManager.Instances.Logic.Services
             _storageService = storageService;
         }
 
-        public async Task<InstanceCacheObject> Open(IDefaultIdentity identity, string code)
+        public async Task PrepareForEditAsync(IDefaultIdentity identity, InstanceCacheObject cacheObject)
         {
-            var cacheObject = await _instanceCache.GetAsync(code);
-            if (cacheObject == null)
+            if (cacheObject.InstanceState == InstanceState.Progress)
             {
-                var instance = await _instancesRepository.GetByCodeAsync(identity.CompanyId, code);
-                if (instance == null)
-                    throw new InstanceException("Instance not found");
-
-                cacheObject = CreateInstanceFromDatabase(identity.CompanyId, instance);
-
-                if (!HasPermission(identity, "View", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
-                    throw new InstanceException("Access denied");
-
-                if (cacheObject.InstanceState == InstanceState.Progress)
+                Page page;
+                if (cacheObject.Instance.Pages.Any() && (page = (Page)cacheObject.Instance.Pages.First()).Lock == null && HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
                 {
-                    if (cacheObject.Instance.Pages.Any() && HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
-                        ((Page)cacheObject.Instance.Pages[0]).Lock = new Lock(identity.Code);
-                    await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
+                    UnlockPages(cacheObject.Instance, identity.Code);
+                    page.Lock = new Lock(identity.Code);
+                    cacheObject.NeedToCache = true;
                 }
             }
-            else if (cacheObject.Instance.Pages.Any() && ((Page)cacheObject.Instance.Pages.First()).Lock == null && HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
-            {
-                UnlockPages(cacheObject.Instance, identity.Code);
-                ((Page)cacheObject.Instance.Pages.First()).Lock = new Lock(identity.Code);
-                await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
-            }
-            else
-                await _instanceCache.TouchInstanceAsync(code);
-
-            if (!HasPermission(identity, "View", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
-                throw new InstanceException("Access denied");
 
             await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
             {
@@ -126,41 +106,33 @@ namespace CheckListManager.Instances.Logic.Services
                 Date = DateTimeOffset.UtcNow,
                 CheckList = cacheObject.InstanceCode
             });
-
-            return cacheObject;
         }
 
-        public Task<InstanceCacheObject> GetAsync(long company, string userCode, string code)
-        {
-            return GetAsync(company, code);
-        }
-
-        public async Task<InstanceCacheObject> GetAsync(long company, long ID)
-        {
-            var instance = await _instancesRepository.GetByIDAsync(company, ID);
-            if (instance == null)
-                throw new InstanceException("Instance not found");
-            var cacheObject = CreateInstanceFromDatabase(company, instance);
-            return cacheObject;
-        }
-
-        private async Task<InstanceCacheObject> GetAsync(long company, string code, bool includeData = true, bool touchInstance = true)
+        public async Task<InstanceCacheObject> GetCacheObjectAsync(long company, string code, bool includeData)
         {
             var cacheObject = await _instanceCache.GetAsync(code, includeData);
             if (cacheObject == null)
             {
-                var instance = await _instancesRepository.GetByCodeAsync(company, code);
+                var instance = await _instancesRepository.GetAsync(company, code);
                 if (instance == null)
                     throw new InstanceException("Instance not found");
 
                 cacheObject = CreateInstanceFromDatabase(company, instance);
+                if (cacheObject.InstanceState == InstanceState.Progress)
+                    cacheObject.NeedToCache = true;
             }
-            else if (touchInstance)
-                await _instanceCache.TouchInstanceAsync(code);
 
             return cacheObject;
         }
-        
+
+        public async Task SaveCacheObjectAsync(InstanceCacheObject cacheObject)
+        {
+            if (cacheObject.NeedToCache)
+                await _instanceCache.SetAsync(cacheObject);
+            else
+                await _instanceCache.TouchAsync(cacheObject.Code);
+        }
+
         public async Task<InstanceCacheObject> CreateAsync(IDefaultIdentity identity, string userCode, long prototype, int? version, Dictionary<string, string> parameters)
         {
             try
@@ -174,10 +146,7 @@ namespace CheckListManager.Instances.Logic.Services
                 if (!source.State.In(VersionState.Draft, VersionState.InSimulation, VersionState.Active))
                     throw new InstanceException($"Invalid state of the prototype version {prototype}.{version}: {source.State}"); //double check
 
-                if (
-                    !HasPermission(identity, "Create", source.State, source.Department, source.PrototypeType)
-                    && !HasPermission(identity, "Edit", source.State, source.Department, source.PrototypeType)
-                )
+                if (!HasPermission(identity, "Create", source.State, source.Department, source.PrototypeType))
                     throw new InstanceException("Access denied");
 
                 var cacheObject = new InstanceCacheObject
@@ -196,15 +165,14 @@ namespace CheckListManager.Instances.Logic.Services
                     VersionState = source.State,
                     InstanceState = InstanceState.Draft,
                     CreatedBy = userCode,
-                    CreatedOn = DateTimeOffset.UtcNow
+                    CreatedOn = DateTimeOffset.UtcNow,
+                    NeedToCache = true
                 };
                 cacheObject.Instance.Setup(true);
                 if (parameters != null)
                     foreach (var parameter in parameters)
                         if (cacheObject.Instance.Elements.TryGetValue(parameter.Key, out ICheckListElement element) && element is ICheckListItem item)
                             await HandleValueChangeAsync(cacheObject, userCode, item.Id, parameter.Value);
-
-                await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
 
                 return cacheObject;
             }
@@ -223,17 +191,12 @@ namespace CheckListManager.Instances.Logic.Services
         {
             try
             {
-                var cacheObject = await _instanceCache.GetAsync(code);
-                if (cacheObject == null)
-                    throw new InstanceException("Instance not found");
+                var cacheObject = await GetCacheObjectAsync(identity.CompanyId, code, true);
                 if (cacheObject.Id.HasValue)
                     throw new InstanceException("Instance already saved");
                 if (cacheObject.InstanceState != InstanceState.Draft)
                     throw new InstanceException("Instance state not valid");
-                if (
-                    !HasPermission(identity, "Create", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType)
-                    && !HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType)
-                )
+                if (!HasPermission(identity, "Create", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
                     throw new InstanceException("Access denied");
 
                 cacheObject.InstanceState = InstanceState.Progress;
@@ -266,11 +229,9 @@ namespace CheckListManager.Instances.Logic.Services
                     cacheObject.Id = row.ID;
                     cacheObject.Year = row.Year;
                     cacheObject.Number = row.Number;
-                    cacheObject.ModifiedOn = row.ModifiedOn;
-                    cacheObject.ModifiedBy = row.ModifiedBy;
                     if (cacheObject.Instance.Pages.Any())
                         ((Page)cacheObject.Instance.Pages[0]).Lock = new Lock(identity.Code);
-                    cacheObject.IsDirty = false;
+                    Update(cacheObject, identity.Code);
 
                     cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(identity.CompanyId), (await _settingService.TimeZoneAsync(identity.CompanyId)), cacheObject); //new update to consider the database values 
 
@@ -295,7 +256,6 @@ namespace CheckListManager.Instances.Logic.Services
                     throw;
                 }
 
-                await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
                     Company = identity.CompanyId,
@@ -322,14 +282,13 @@ namespace CheckListManager.Instances.Logic.Services
         {
             try
             {
-                var cacheObject = await _instanceCache.GetAsync(code, false);
-                if (cacheObject == null)
-                    throw new InstanceException("Instance not found");
+                var cacheObject = await GetCacheObjectAsync(identity.CompanyId, code, false);
                 if (cacheObject.InstanceState != InstanceState.Progress)
                     throw new InstanceException("Instance state not valid");
                 if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
                     throw new InstanceException("Access denied");
 
+                await _instanceCache.TouchAsync(cacheObject.Code);
                 await SaveAsync(cacheObject, identity, false, false, false, cacheObject.ModifiedBy, cacheObject.ModifiedOn);
             }
             catch (InstanceException)
@@ -347,9 +306,7 @@ namespace CheckListManager.Instances.Logic.Services
         {
             try
             {
-                var cacheObject = await _instanceCache.GetAsync(code);
-                if (cacheObject == null)
-                    throw new InstanceException("Instance not found");
+                var cacheObject = await GetCacheObjectAsync(identity.CompanyId, code, true);
                 if (cacheObject.InstanceState != InstanceState.Progress)
                     throw new InstanceException("Invalid instance state");
                 if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
@@ -394,10 +351,8 @@ namespace CheckListManager.Instances.Logic.Services
         {
             try
             {
-                var cacheObject = await _instanceCache.GetAsync(code, false);
+                var cacheObject = await GetCacheObjectAsync(identity.CompanyId, code, false);
                 if (cacheObject == null)
-                    throw new InstanceException("Instance not found");
-                if (!cacheObject.InstanceState.In(InstanceState.Draft, InstanceState.Progress))
                     throw new InstanceException("Instance state not valid");
                 if (!(cacheObject.VersionState == VersionState.Draft || cacheObject.VersionState == VersionState.InSimulation) && cacheObject.InstanceState == InstanceState.Progress && string.IsNullOrWhiteSpace(note))
                     throw new InstanceException("Provide a note for the deletion");
@@ -428,33 +383,6 @@ namespace CheckListManager.Instances.Logic.Services
             {
                 Logger.Error(e, "Unable to delete the instance");
                 throw new InstanceException("Unable to delete the instance", e);
-            }
-        }
-
-        private async Task SuspendAsync(InstanceCacheObject cacheObject, IDefaultIdentity identity)
-        {
-            try
-            {
-                switch (cacheObject.InstanceState)
-                {
-                    case InstanceState.Draft:
-                        await _instanceCache.RemoveAsync(cacheObject.Code);
-                        break;
-                    case InstanceState.Progress:
-                        await SaveAsync(cacheObject, identity, true, false, false, cacheObject.ModifiedBy, cacheObject.ModifiedOn);
-                        break;
-                    default:
-                        throw new InstanceException("Invalid state: " + cacheObject.InstanceState);
-                }
-            }
-            catch (InstanceException)
-            {
-                throw;
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e, "Unable to close the instance");
-                throw new InstanceException("Unable to close the instance", e);
             }
         }
 
@@ -496,13 +424,13 @@ namespace CheckListManager.Instances.Logic.Services
             {
                 if (!alreadyLocked)
                 {
-                    lockObject = await _instanceCache.LockInstanceAsync(cacheObject.Code);
+                    lockObject = await _instanceCache.LockAsync(cacheObject.Code);
                     if (!lockObject.IsAcquired)
                         throw new InstanceException("Instance is currently being updated by another user");
-                    cacheObject = await _instanceCache.GetAsync(cacheObject.Code);
+                    cacheObject = await _instanceCache.GetAsync(cacheObject.Code, true);
                 }
 
-                var row = await _instancesRepository.GetByCodeAsync(cacheObject.CompanyId, cacheObject.Code);
+                var row = await _instancesRepository.GetAsync(cacheObject.CompanyId, cacheObject.Code);
                 if (row == null)
                 {
                     await _instanceCache.RemoveAsync(cacheObject.Code);
@@ -574,7 +502,7 @@ namespace CheckListManager.Instances.Logic.Services
                 else
                     await Task.WhenAll(
                         _instancesRepository.SaveChangesAsync(),
-                        _instanceCache.TouchInstanceAsync(cacheObject.Code)
+                        _instanceCache.TouchAsync(cacheObject.Code)
                     );
                 return cacheObject;
             }
@@ -588,7 +516,7 @@ namespace CheckListManager.Instances.Logic.Services
         {
             if (cacheObject.InstanceState == InstanceState.Progress)
             {
-                var row = await _instancesRepository.GetByCodeAsync(cacheObject.CompanyId, cacheObject.Code);
+                var row = await _instancesRepository.GetAsync(cacheObject.CompanyId, cacheObject.Code);
                 if (row == null)
                     throw new InstanceException("Instance not found");
 
@@ -597,7 +525,7 @@ namespace CheckListManager.Instances.Logic.Services
                     _instancesRepository.DeleteInstance(row);
                     await _storageService.DeleteRecursiveAsync(
                         _configurationService.InstancesStorageBucket,
-                        GetAttachmentKeyPrefix(identity, cacheObject)
+                        GetAttachmentKeyPrefix(identity, cacheObject.Code)
                     );
                 }
                 else
@@ -624,15 +552,15 @@ namespace CheckListManager.Instances.Logic.Services
         {
             try
             {
-                var cacheObject = await _instanceCache.GetAsync(code, true);
-                if (cacheObject == null)
-                    throw new InstanceException("Instance not found");
+                var cacheObject = await GetCacheObjectAsync(identity.CompanyId, code, true);
                 if (cacheObject.InstanceState != InstanceState.Draft && cacheObject.InstanceState != InstanceState.Progress)
                     throw new InstanceException("Instance state not valid");
                 if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
                     throw new InstanceException("Access denied");
                 if (!cacheObject.Instance.ExternalSources.ContainsKey(externalSourceCode))
                     throw new InstanceException("Invalid external source");
+
+                await _instanceCache.TouchAsync(code);
 
                 var token = identity.Code + ":" + Guid.NewGuid();
                 await _redisCache.SetAsync($"Token:{token}", new DataRequest
@@ -665,15 +593,16 @@ namespace CheckListManager.Instances.Logic.Services
         {
             try
             {
-                var cacheObject = await _instanceCache.GetAsync(code, true);
-                if (cacheObject == null)
-                    throw new InstanceException("Instance not found");
+                var cacheObject = await GetCacheObjectAsync(identity.CompanyId, code, false);
                 if (cacheObject.InstanceState != InstanceState.Draft && cacheObject.InstanceState != InstanceState.Progress)
                     throw new InstanceException("Instance state not valid");
                 if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
                     throw new InstanceException("Access denied");
 
-                return (await _instancesRepository.GetInstanceEditors(cacheObject.Department, cacheObject.PrototypeType, cacheObject.VersionState)).Select(u => new InstanceEventRequest.Email {
+                await _instanceCache.TouchAsync(code);
+
+                return (await _instancesRepository.GetInstanceEditors(cacheObject.Department, cacheObject.PrototypeType, cacheObject.VersionState)).Select(u => new InstanceEventRequest.Email
+                {
                     Code = u.Code,
                     Description = u.Description,
                     Address = u.Email
@@ -690,36 +619,26 @@ namespace CheckListManager.Instances.Logic.Services
             }
         }
 
-        public async Task<StorageFile> DownloadAttachmentAsync(IDefaultIdentity identity, string code, string key)
+        public async Task<StorageFile> DownloadAttachmentAsync(IDefaultIdentity identity, string cacheObjectCode, string key)
         {
-            var cacheObject = await GetAsync(identity.CompanyId, code, false, false);
-            if (cacheObject == null)
-                throw new InstanceException("Instance not found");
-            if (!HasPermission(identity, "View", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
-                throw new InstanceException("Access denied");
-            if (key == null || !key.StartsWith(GetAttachmentKeyPrefix(identity, cacheObject)))
+            if (key == null || !key.StartsWith(GetAttachmentKeyPrefix(identity, cacheObjectCode)))
                 throw new InstanceException("Attachment key not valid");
-            
+
             return await _storageService.GetAsync(_configurationService.InstancesStorageBucket, key);
         }
 
         public async Task InvalidateCacheAsync(DefaultIdentity identity, InvalidateCacheRequest request)
         {
             foreach (var code in request.Instances)
-            {
                 try
                 {
-                    var instance = await _instanceCache.GetAsync(code);
+                    var instance = await _instanceCache.GetAsync(code, true);
                     if (instance != null)
                     {
                         if (instance.Prototype != request.Prototype || instance.Version != request.Version)
-                        {
-                            Logger.Warn(
-                                $"Incongruent instance prototype and version: Received {request.Prototype}-{request.Version}, expected: {instance.Prototype}-{instance.Version}");
-                        }
+                            Logger.Warn($"Incongruent instance prototype and version: Received {request.Prototype}-{request.Version}, expected: {instance.Prototype}-{instance.Version}");
 
-                        if (instance.IsDirty)
-                        {
+                        if (instance.NeedToSave)
                             await SaveAsync(
                                 instance,
                                 identity,
@@ -729,10 +648,6 @@ namespace CheckListManager.Instances.Logic.Services
                                 instance.ModifiedBy,
                                 instance.ModifiedOn
                             );
-                            // Add back to the redis cache the object from the DB
-                            var cacheObject = await GetAsync(instance.CompanyId, instance.Code, true, false);
-                            await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
-                        }
                     }
                 }
                 catch (InstanceException)
@@ -743,7 +658,6 @@ namespace CheckListManager.Instances.Logic.Services
                 {
                     Logger.Error(e);
                 }
-            }
         }
 
         #region Events
@@ -754,40 +668,44 @@ namespace CheckListManager.Instances.Logic.Services
 
             double initialGetTime = 0, lockTime = 0, getTime = 0, handleTime = 0;
 
-			try
+            try
             {
-	            var stopWatch = Stopwatch.StartNew();
-                var cacheObject = await _instanceCache.GetAsync(request.Code, false);
-				stopWatch.Stop();
-				initialGetTime = stopWatch.Elapsed.TotalMilliseconds;
+                var stopWatch = Stopwatch.StartNew();
+                var cacheObject = await GetCacheObjectAsync(identity.CompanyId, request.Code, false);
+                CheckViewPermission(identity, cacheObject);
+                stopWatch.Stop();
+                initialGetTime = stopWatch.Elapsed.TotalMilliseconds;
 
                 if (cacheObject == null)
                     throw new InstanceException("Instance not found");
 
                 if (cacheObject.InstanceState == InstanceState.Progress)
                 {
-					//Lock and reload the data to be sure it's the most recent one
-					stopWatch = Stopwatch.StartNew();
-					lockObject = await _instanceCache.LockInstanceAsync(request.Code);
-					stopWatch.Stop();
-					lockTime = stopWatch.Elapsed.TotalMilliseconds;
+                    //Lock and reload the data to be sure it's the most recent one
+                    stopWatch = Stopwatch.StartNew();
+                    lockObject = await _instanceCache.LockAsync(request.Code);
+                    stopWatch.Stop();
+                    lockTime = stopWatch.Elapsed.TotalMilliseconds;
                     if (!lockObject.IsAcquired)
                         throw new InstanceException("Instance is currently being updated by another user");
                 }
 
                 stopWatch = Stopwatch.StartNew();
-                cacheObject = await _instanceCache.GetAsync(request.Code);
+                cacheObject = await _instanceCache.GetAsync(request.Code, true);
                 stopWatch.Stop();
                 getTime = stopWatch.Elapsed.TotalMilliseconds;
 
-				var lockUser = request.Type == "Signature" ? request.Username : null; //A signer may sign also if the page is locked by the main user (the lock is for concurrency purpose, not for security)
-                await GetCheckListAsync(identity, cacheObject, lockUser);
+                var lockUser = request.Type == "Signature" ? request.Username : null; //A signer may sign also if the page is locked by the main user (the lock is for concurrency purpose, not for security)
+                await UpdateInstanceAsync(identity, cacheObject, lockUser);
+
+                if (!cacheObject.Instance.ReadOnly)
+                    await _instanceCache.TouchAsync(cacheObject.Code);
 
                 stopWatch = Stopwatch.StartNew();
-				switch (request.Type)
+                switch (request.Type)
                 {
                     case EventTypes.PageChange:
-                        await HandlePageChangeAsync(cacheObject, identity.Code, request.ItemId);
+                        HandlePageChangeAsync(cacheObject, identity.Code, request.ItemId);
                         break;
                     case EventTypes.ValueChange:
                         await HandleValueChangeAsync(cacheObject, identity.Code, request.ItemId, request.Value);
@@ -817,12 +735,12 @@ namespace CheckListManager.Instances.Logic.Services
                         await HandleSignatureCancellationAsync(cacheObject, identity, request);
                         break;
                     case EventTypes.UnlockPage:
-                        await HandleUnlockPageAsync(cacheObject, identity.Code, request.ItemId);
+                        HandleUnlockPageAsync(cacheObject, identity.Code, request.ItemId);
                         break;
                     case EventTypes.CountDown:
                         break;
                     case EventTypes.SkipCountDown:
-                        await HandleSkipCountDown(cacheObject, request.Username, request.ItemId);
+                        HandleSkipCountDown(cacheObject, request.Username, request.ItemId);
                         break;
                     case EventTypes.Refresh:
                         break;
@@ -841,10 +759,10 @@ namespace CheckListManager.Instances.Logic.Services
                     default:
                         throw new InstanceException($"Event type {request.Type} not handled.");
                 }
-				stopWatch.Stop();
-				handleTime = stopWatch.Elapsed.TotalMilliseconds;
+                stopWatch.Stop();
+                handleTime = stopWatch.Elapsed.TotalMilliseconds;
 
-				return cacheObject;
+                return cacheObject;
             }
             catch (InstanceException)
             {
@@ -857,12 +775,12 @@ namespace CheckListManager.Instances.Logic.Services
             }
             finally
             {
-				Logger.Info(
+                Logger.Info(
                     $"Handle Event {request.Type} timings:{Environment.NewLine}" +
-				    $"Initial get: {initialGetTime}{Environment.NewLine}" +
-				    $"Lock: {lockTime}{Environment.NewLine}" +
-				    $"Get: {getTime}{Environment.NewLine}" +
-				    $"Handle: {handleTime}{Environment.NewLine}");
+                    $"Initial get: {initialGetTime}{Environment.NewLine}" +
+                    $"Lock: {lockTime}{Environment.NewLine}" +
+                    $"Get: {getTime}{Environment.NewLine}" +
+                    $"Handle: {handleTime}{Environment.NewLine}");
                 lockObject?.Dispose();
             }
         }
@@ -876,7 +794,7 @@ namespace CheckListManager.Instances.Logic.Services
         {
             if (!itemId.HasValue)
                 throw new InstanceException("Item id not sent");
-            
+
             var item = cacheObject.Instance.Items.ContainsKey(itemId.Value) ? cacheObject.Instance.Items[itemId.Value] as Attachment : null;
             if (item == null)
                 throw new InstanceException($"Attachment {itemId} not found");
@@ -895,8 +813,8 @@ namespace CheckListManager.Instances.Logic.Services
                 if (!attachment.MediaType.StartsWith("image/"))
                     throw new InstanceException("The attachment has to be an image");
 
-				attachment.Buffer = ImageAdapter.RotateAndCompressImage(attachment.Buffer);
-			}
+                attachment.Buffer = ImageAdapter.RotateAndCompressImage(attachment.Buffer);
+            }
             else if (item.FileType == Attachment.FileTypes.Pdf)
             {
                 if (extension != ".pdf")
@@ -908,8 +826,8 @@ namespace CheckListManager.Instances.Logic.Services
             var maxSize = await _settingService.InstancesAttachmentMaxSizeBytesAsync(identity.CompanyId);
             if (attachment.Buffer.Length > maxSize)
                 throw new InstanceException($"The file exceed the file size limit of {maxSize.BytesCountToString()}");
-            
-            var key = $"{GetAttachmentKeyPrefix(identity, cacheObject)}{itemId.Value}{extension}";
+
+            var key = $"{GetAttachmentKeyPrefix(identity, cacheObject.Code)}{itemId.Value}{extension}";
             using (var memoryStream = new MemoryStream(attachment.Buffer))
             {
                 var success = await _storageService.PutAsync(_configurationService.InstancesStorageBucket, key, memoryStream);
@@ -933,13 +851,13 @@ namespace CheckListManager.Instances.Logic.Services
                 })
             });
 
-            await Update(cacheObject, identity.Code);
+            Update(cacheObject, identity.Code);
         }
 
-        private static string GetAttachmentKeyPrefix(IDefaultIdentity identity, InstanceCacheObject cacheObject)
-            => $"{identity.CompanyId}/{cacheObject.Code}/";
+        private static string GetAttachmentKeyPrefix(IDefaultIdentity identity, string cacheObjectCode)
+            => $"{identity.CompanyId}/{cacheObjectCode}/";
 
-        private async Task HandlePageChangeAsync(InstanceCacheObject cacheObject, string userCode, int? itemId)
+        private void HandlePageChangeAsync(InstanceCacheObject cacheObject, string userCode, int? itemId)
         {
             if (!itemId.HasValue)
                 throw new InstanceException("Item id not sent");
@@ -954,7 +872,7 @@ namespace CheckListManager.Instances.Logic.Services
             UnlockPages(cacheObject.Instance, userCode);
             if (page.Lock == null)
                 page.Lock = new Lock(userCode);
-            await Update(cacheObject, userCode);
+            Update(cacheObject, userCode);
         }
 
         private async Task HandleValueChangeAsync(InstanceCacheObject cacheObject, string userCode, int? itemId, string value)
@@ -1013,7 +931,7 @@ namespace CheckListManager.Instances.Logic.Services
                 });
                 field.Value = value;
 
-                await Update(cacheObject, userCode);
+                Update(cacheObject, userCode);
             }
         }
 
@@ -1082,7 +1000,7 @@ namespace CheckListManager.Instances.Logic.Services
                 });
                 field.Value = value;
 
-                await Update(cacheObject, userCode);
+                Update(cacheObject, userCode);
             }
         }
 
@@ -1111,7 +1029,7 @@ namespace CheckListManager.Instances.Logic.Services
                     CheckList = cacheObject.InstanceCode,
                     Information = JsonConvert.SerializeObject(new { ID = Iteration.Id.ToString() })
                 });
-                await Update(cacheObject, userCode);
+                Update(cacheObject, userCode);
             }
         }
 
@@ -1141,7 +1059,7 @@ namespace CheckListManager.Instances.Logic.Services
                     CheckList = cacheObject.InstanceCode,
                     Information = JsonConvert.SerializeObject(new { ID = itemId.ToString() })
                 });
-                await Update(cacheObject, userCode);
+                Update(cacheObject, userCode);
             }
         }
 
@@ -1171,7 +1089,7 @@ namespace CheckListManager.Instances.Logic.Services
                     CheckList = cacheObject.InstanceCode,
                     Information = JsonConvert.SerializeObject(new { ID = itemId.ToString() })
                 });
-                await Update(cacheObject, userCode);
+                Update(cacheObject, userCode);
             }
         }
 
@@ -1241,7 +1159,7 @@ namespace CheckListManager.Instances.Logic.Services
                 signature.Sign(identity.Code, identity.Description, Now);
                 if (cacheObject.InstanceState == InstanceState.Progress)
                     await SaveAsync(cacheObject, identity, false, false, true, cacheObject.ModifiedBy, cacheObject.ModifiedOn);
-                await Update(cacheObject, request.Username);
+                Update(cacheObject, request.Username);
 
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
@@ -1269,7 +1187,7 @@ namespace CheckListManager.Instances.Logic.Services
                     CheckList = cacheObject.InstanceCode,
                     Information = information.ToJson(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None })
                 });
-                
+
                 throw;
             }
         }
@@ -1347,7 +1265,7 @@ namespace CheckListManager.Instances.Logic.Services
                 cacheObject.ModifiedOn = Now;
                 if (cacheObject.InstanceState == InstanceState.Progress)
                     await SaveAsync(cacheObject, identity, false, false, true, cacheObject.ModifiedBy, cacheObject.ModifiedOn);
-                await Update(cacheObject, request.Username);
+                Update(cacheObject, request.Username);
 
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
@@ -1383,7 +1301,7 @@ namespace CheckListManager.Instances.Logic.Services
             }
         }
 
-        private async Task HandleUnlockPageAsync(InstanceCacheObject cacheObject, string userCode, int? itemId)
+        private void HandleUnlockPageAsync(InstanceCacheObject cacheObject, string userCode, int? itemId)
         {
             if (!itemId.HasValue)
                 throw new InstanceException("Item id not sent");
@@ -1394,10 +1312,10 @@ namespace CheckListManager.Instances.Logic.Services
 
             page.Lock = new Lock(userCode);
 
-            await Update(cacheObject, userCode);
+            Update(cacheObject, userCode);
         }
 
-        private async Task HandleSkipCountDown(InstanceCacheObject cacheObject, string userCode, int? itemId)
+        private void HandleSkipCountDown(InstanceCacheObject cacheObject, string userCode, int? itemId)
         {
             if (!itemId.HasValue)
                 throw new InstanceException("Item id not sent");
@@ -1405,7 +1323,7 @@ namespace CheckListManager.Instances.Logic.Services
             var element =
                 itemId > 0 ?
                     cacheObject.Instance.Items.ContainsKey(itemId.Value) ? (ICheckListElement)cacheObject.Instance.Items[itemId.Value] : null :
-                    cacheObject.Instance.Pages.Count > -itemId.Value ? (ICheckListElement)cacheObject.Instance.Pages[-itemId.Value] : null;
+                    cacheObject.Instance.Pages.Count > -itemId.Value ? cacheObject.Instance.Pages[-itemId.Value] : null;
 
             if (element == null)
                 throw new InstanceException("Element not found");
@@ -1414,18 +1332,18 @@ namespace CheckListManager.Instances.Logic.Services
                 throw new InvalidOperationException("A count down can be skipped only for preview and simulation instances");
 
             element.CountDownToCode = null;
-            await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
+            Update(cacheObject, userCode);
         }
 
         private async Task HandleQuitAsync(InstanceCacheObject cacheObject, IDefaultIdentity identity)
         {
             try
             {
-                if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
-                    throw new InstanceException("Access denied");
-
-                UnlockPages(cacheObject.Instance, identity.Code);
-                await Update(cacheObject, identity.Code);
+                if (!cacheObject.Instance.ReadOnly)
+                {
+                    UnlockPages(cacheObject.Instance, identity.Code);
+                    Update(cacheObject, identity.Code);
+                }
 
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
@@ -1447,13 +1365,16 @@ namespace CheckListManager.Instances.Logic.Services
             }
         }
 
-        private async Task Update(InstanceCacheObject cacheObject, string userCode)
+        private void Update(InstanceCacheObject cacheObject, string userCode)
         {
             foreach (Page Page in cacheObject.Instance.Pages)
                 if (Page.Lock != null && Page.Lock.User == userCode)
                     Page.Lock.LastUpdate = DateTimeOffset.Now;
-            cacheObject.TrackChanges(userCode);
-            await _instanceCache.SetAsync(cacheObject.Code, cacheObject);
+
+            cacheObject.NeedToSave = true;
+            cacheObject.NeedToCache = true;
+            cacheObject.ModifiedBy = userCode;
+            cacheObject.ModifiedOn = DateTimeOffset.UtcNow;
         }
 
         private async Task HandleExternalSourceRowChange(InstanceCacheObject cacheObject, IDefaultIdentity identity, int? itemId, int? rowIndex, Dictionary<string, string> row)
@@ -1485,10 +1406,17 @@ namespace CheckListManager.Instances.Logic.Services
                 })
             });
 
-            await Update(cacheObject, identity.Code);
+            Update(cacheObject, identity.Code);
         }
 
         #endregion
+
+        public void CheckViewPermission(IDefaultIdentity identity, InstanceCacheObject cacheObject)
+        {
+            if (!HasPermission(identity, "View", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
+                throw new InstanceException("Access denied");
+        }
+
 
         private bool HasPermission(IDefaultIdentity identity, string function, string PrototypeVersionState, long Department, long PrototypeType, string Tag = null)
         {
@@ -1505,7 +1433,7 @@ namespace CheckListManager.Instances.Logic.Services
                 );
         }
 
-        public async Task<Instance> GetCheckListAsync(IDefaultIdentity identity, InstanceCacheObject cacheObject, string lockUser)
+        public async Task<Instance> UpdateInstanceAsync(IDefaultIdentity identity, InstanceCacheObject cacheObject, string lockUser)
         {
             cacheObject.Instance.ReadOnly =
                 !cacheObject.InstanceState.In(InstanceState.Draft, InstanceState.Progress)
@@ -1521,18 +1449,27 @@ namespace CheckListManager.Instances.Logic.Services
         public async Task ClearPendingInstances(CancellationToken cancellationToken = new CancellationToken())
         {
             var score = DateTimeOffset.UtcNow.ToUnixTimeSeconds() - _configurationService.InstanceCloseTimeout * 60;
-            var codes = await _instanceCache.GetInstancesWithRangeAsync(stop: score);
+            var codes = await _instanceCache.GetInstancesInRangeAsync(stop: score);
 
             foreach (var code in codes)
-            {
                 try
                 {
                     var instance = await _instanceCache.GetAsync(code, false);
                     if (instance == null)
                         continue;
 
-                    if (instance.IsDirty)
-                        await SuspendAsync(instance, null);
+                    if (instance.NeedToSave)
+                        switch (instance.InstanceState)
+                        {
+                            case InstanceState.Draft:
+                                await _instanceCache.RemoveAsync(instance.Code);
+                                break;
+                            case InstanceState.Progress:
+                                await SaveAsync(instance, null, true, false, false, instance.ModifiedBy, instance.ModifiedOn);
+                                break;
+                            default:
+                                throw new InstanceException("Invalid state: " + instance.InstanceState);
+                        }
                     else
                         await _instanceCache.RemoveAsync(code);
                 }
@@ -1540,7 +1477,6 @@ namespace CheckListManager.Instances.Logic.Services
                 {
                     Logger.Error(exception);
                 }
-            }
         }
 
         private async Task<GetPrototypeResponse> GetPrototype(long prototype, int version)
@@ -1611,9 +1547,9 @@ namespace CheckListManager.Instances.Logic.Services
             return cacheObject;
         }
 
-		public async Task<List<HistoryRow>> History(DefaultIdentity identity, long id)
+        public async Task<List<HistoryRow>> History(DefaultIdentity identity, long id)
         {
-            var Instance = await _instancesRepository.GetByIDAsync(identity.CompanyId, id);
+            var Instance = await _instancesRepository.GetAsync(identity.CompanyId, id);
             if (Instance == null)
                 throw new InstanceException("Instance not found");
             if (!HasPermission(identity, "View", Instance.PrototypeVersions.VersionState, Instance.Prototypes.Department, Instance.Prototypes.PrototypeType))

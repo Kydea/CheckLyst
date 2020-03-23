@@ -13,9 +13,10 @@ namespace CheckListManager.Instances.Data
 	    Task<Common.Data.Instances> BeginCreateInstanceAsync(Common.Data.Instances instance);
 	    void EndCreateInstanceAsync(Common.Data.Instances instance);
 	    void CancelCreateInstanceAsync();
-	    Task<Common.Data.Instances> GetByCodeAsync(long companyId, string code);
-	    Task<Common.Data.Instances> GetByIDAsync(long companyId, long id);
-		Task<int> GetInstanceNumberAsync(long prototype, int version, int year);
+	    Task<Common.Data.Instances> GetAsync(long companyId, string code);
+	    Task<Common.Data.Instances> GetAsync(long companyId, long id);
+        Task<string> GetCodeAsync(long company, long iD);
+        Task<int> GetInstanceNumberAsync(long prototype, int version, int year);
 	    Task<List<Common.Data.Instances>> GetInstancesWithExpressions(long Prototype, int Version);
         void DeleteInstance(Common.Data.Instances instance);
         void SaveChildren(Common.Data.Instances instance, IEnumerable<InstanceTags> instanceTags, IEnumerable<InstanceExpressionValues> instanceExpressionValues);
