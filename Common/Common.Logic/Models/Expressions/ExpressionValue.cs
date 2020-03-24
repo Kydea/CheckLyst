@@ -12,10 +12,12 @@ namespace CheckListManager.Common.Logic.Models.Expressions
     {
         public string ExpressionCode { get; set; }
 
-        public override void Check(ICheckList Prototype, List<string> IteratorStack)
+        public override void Check(ICheckList Prototype, Expression Expression, List<string> IteratorStack)
         {
             if (!Prototype.Expressions.ContainsKey(ExpressionCode)) throw new ParseException("Expression not found: " + ExpressionCode, Position);
-            DataType = Prototype.Expressions[ExpressionCode].DataType;
+            var DependngExpression = Prototype.Expressions[ExpressionCode];
+            Expression.DependingNodes.Add(DependngExpression.DependencyNodeKey);
+            DataType = DependngExpression.DataType;
         }
 
         public override TypedValue GetValue(IElementsBranch ElementsBranch, string TimeZone)

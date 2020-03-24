@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using Newtonsoft.Json;
 
@@ -9,6 +10,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
     {
         public const int MAXIMUM_LENGTH = 10000;
 
+        public string Code { get; set; }
         public string SerializedValue { get; set; }
         public string Description { get; set; }
         public string Error { get; set; }
@@ -60,9 +62,13 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         public void Check(ICheckList prototype)
         {
             Error = null;
-            Root.Check(prototype, new List<string>());
+            Root.Check(prototype, this, new List<string>());
             if (Exception && Root.DataType != DataType.Boolean)
                 throw new Exception($"Exception expressions must be boolean");
         }
+
+        public DependencyNodeKey DependencyNodeKey => DependencyNodeKey
+        public List<DependencyNodeKey> DependentNodes { get; } = new List<DependencyNodeKey>();
+        public List<DependencyNodeKey> DependingNodes { get; } = new List<DependencyNodeKey>();
     }
 }

@@ -65,6 +65,7 @@ namespace CheckListManager.Prototypes.Logic.Services
 
             var Prototype = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converter);
             Prototype.Setup();
+            Prototype.Check();
 
             return await Task.FromResult(new PrototypeResponse
             {
@@ -100,6 +101,7 @@ namespace CheckListManager.Prototypes.Logic.Services
             var Prototype = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converter);
             MarkImagesAsCloned(Prototype);
             Prototype.Setup();
+            Prototype.Check();
 
             return await Task.FromResult(new PrototypeResponse
             {
@@ -148,6 +150,7 @@ namespace CheckListManager.Prototypes.Logic.Services
             var Prototype = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converter);
             MarkImagesAsCloned(Prototype);
             Prototype.Setup();
+            Prototype.Check();
 
             return await Task.FromResult(new PrototypeResponse
             {
@@ -167,6 +170,7 @@ namespace CheckListManager.Prototypes.Logic.Services
         public VerifyExpressionsResponse VerifyExpressions(PrototypeRequest request)
         {
             request.CheckList.Setup();
+            request.CheckList.Check();
             return new VerifyExpressionsResponse
             {
                 Valid = request.CheckList.Expressions.Values.All(e => e.Error == null),
@@ -174,7 +178,7 @@ namespace CheckListManager.Prototypes.Logic.Services
             };
         }
 
-        private void AddTags(Dictionary<String, PrototypeVersionTags> Tags, PrototypeRequest request, ICheckListGroup Group)
+        private void AddTags(Dictionary<string, PrototypeVersionTags> Tags, PrototypeRequest request, ICheckListGroup Group)
         {
             if (Group != null)
                 foreach (var Item in Group.Items)
@@ -195,7 +199,7 @@ namespace CheckListManager.Prototypes.Logic.Services
 
         private List<PrototypeVersionTags> CreateTags(PrototypeRequest request)
         {
-            var Tags = new Dictionary<String, PrototypeVersionTags>();
+            var Tags = new Dictionary<string, PrototypeVersionTags>();
             AddTags(Tags, request, request.CheckList.Header);
             return Tags.Values.ToList();
         }
@@ -273,14 +277,13 @@ namespace CheckListManager.Prototypes.Logic.Services
                 PrototypeVersion.ModifiedBy = identity.Code;
             }
 
-            var CheckList = request.CheckList;
-            Check(CheckList);
+            request.CheckList.Check();
 
             //Get the new id
             if (NewPrototype || NewVersion) await _prototypeRepository.SaveChangesAsync();
 
             await CloneImagesAsync(
-                CheckList,
+                request.CheckList,
                 identity.CompanyId,
                 PrototypeVersion.Prototype,
                 PrototypeVersion.Version
@@ -291,7 +294,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                 await DeleteAttachmentAsync(identity.CompanyId, PrototypeVersion.Prototype, PrototypeVersion.Version, key);
 
             PrototypeVersion.Description = request.Description;
-            PrototypeVersion.Data = JsonConvert.SerializeObject(CheckList, _converter);
+            PrototypeVersion.Data = JsonConvert.SerializeObject(request.CheckList, _converter);
             PrototypeVersion.ValidFrom = request.ValidFrom;
             PrototypeVersion.ValidUntil = request.ValidUntil;
             PrototypeVersion.InstanceConfirmationWorkFlow = request.InstanceConfirmationWorkFlow;
@@ -319,14 +322,8 @@ namespace CheckListManager.Prototypes.Logic.Services
                 Version = PrototypeVersion.Version,
                 ModifiedBy = PrototypeVersion.ModifiedBy,
                 ModifiedOn = PrototypeVersion.ModifiedOn,
-                CheckList = CheckList
+                CheckList = request.CheckList
             };
-        }
-
-        private void Check(Prototype CheckList)
-        {
-            foreach (Page Page in CheckList.Pages)
-                Page.Check();
         }
 
         public async Task DeleteAsync(DefaultIdentity identity, PrototypeRequest request)

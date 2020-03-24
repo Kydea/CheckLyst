@@ -9,6 +9,7 @@
         currentIndex,
         list = [],
         removeButton,
+        dependencyButton,
         verifyButton,
         expressionsInUse,
 
@@ -49,6 +50,7 @@
                         .children((used ? ":not(:nth-child(2))" : "") + ":not(:first-child):not(:last-child):not(:nth-last-child(2)):not(:nth-last-child(3)):not(:nth-last-child(4))").attr("contenteditable", true).eq(0).focus();
                 }
                 removeButton.toggle(currentIndex != null && !used);
+                dependencyButton.toggle(currentIndex != null && used);
             }
         },
 
@@ -96,7 +98,8 @@
                     dataType: list[index].dataType,
                     innerDataType: list[index].innerDataType,
                     unique: list[index].unique,
-                    exception: list[index].exception
+                    exception: list[index].exception,
+                    dependingNodes: list[index].dependingNodes
                 };
         },
 
@@ -255,6 +258,9 @@
                         }))
                         .append(removeButton = $("<a />").addClass("Button").text("remove").prepend($("<i />").addClass("Icon fa fa-trash-alt")).on("click", function () {
                             remove();
+                        }).hide())
+                        .append(dependencyButton = $("<a />").addClass("Button").text("dependencies").prepend($("<i />").addClass("Icon fa fa-sitemap")).on("click", function () {
+                            matematici.dependenciesDialog.show(model.expressions[list[currentIndex].code].dependingNodes);
                         }).hide());
 
 
@@ -268,7 +274,8 @@
                     dataType: model.expressions[code].dataType,
                     innerDataType: model.expressions[code].innerDataType,
                     unique: model.expressions[code].unique,
-                    exception: model.expressions[code].exception
+                    exception: model.expressions[code].exception,
+                    dependingNodes: model.expressions[code].dependingNodes
                 });
 
             expressionsInUse = {};

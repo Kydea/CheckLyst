@@ -54,7 +54,8 @@ div.Prototype {
 
     div.HeaderContainer {
         > div.Commands {
-            a.Up, a.Down, a.Add, a.Remove {
+            //prototype commands
+            a.Up, a.Down, a.Add, a.Remove, a.Dependencies {
                 display: none;
             }
         }
@@ -64,9 +65,10 @@ div.Prototype {
         margin-top: $Metric-Control-Space;
 
         div.Commands {
+            //page commands
             margin: 0;
 
-            a.Add {
+            a.Add, a.Dependencies {
                 display: none;
             }
         }
@@ -120,6 +122,10 @@ div.Prototype {
 
         > div.Commands {
             margin: 10px !important;
+
+            a.Dependencies {
+                display: none;
+            }
         }
 
         &.Current {
@@ -150,7 +156,14 @@ div.Prototype {
                     color: $Color-Green-Regular;
                 }
             }
+
+            div.Commands {
+                a.Dependencies {
+                    display: inline-block !important;
+                }
+            }
         }
+
 
         &.Text {
             p {
@@ -185,6 +198,10 @@ div.Prototype {
 
             a.Paste {
                 display: none !important;
+            }
+
+            a.Dependencies {
+                display: none;
             }
         }
     }

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.Expressions;
@@ -30,6 +32,8 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public ICheckListSignature Signature => null;
         [JsonIgnore]
         public bool Valid => true;
+
+        protected virtual DependencyNodeKey DependencyNodeKey => Code == null ? null : new DependencyNodeKey("element", Code);
 
         public virtual void Setup()
 		{
@@ -66,11 +70,57 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             throw new NotImplementedException();
         }
 
+        protected Expression GetExpression(string ExpressionCode, DependencyNodeKey DependencyNodeKey, params DataType[] DataType)
+        {
+            if (ExpressionCode == null) return null;
+            if (string.IsNullOrEmpty(ExpressionCode))
+                throw new Exception($"The {DependencyNodeKey} reference is missing");
+            if (!CheckList.Expressions.ContainsKey(ExpressionCode))
+                throw new Exception($"The {DependencyNodeKey} references to the inexistent expression {ExpressionCode}");
+            var Expression = CheckList.Expressions[ExpressionCode];
+            if (!DataType.Any(dt => dt == (Expression.InnerDataType ?? Expression.DataType)))
+                throw new Exception($"The {DependencyNodeKey} references to the expression {ExpressionCode} which value is not {string.Join(" or ", DataType.Select(dt => dt.TypeName))}");
+            return Expression;
+        }
+
+        protected Signature GetSignature(string SignatureCode, DependencyNodeKey DependencyNodeKey)
+        {
+            var BranchElements = GetBranchElements();
+            if (string.IsNullOrEmpty(SignatureCode))
+                throw new Exception($"The {DependencyNodeKey} reference is missing");
+            if (!BranchElements.ContainsKey(SignatureCode))
+                throw new Exception($"The {DependencyNodeKey} references to the inexistent signature {SignatureCode}");
+            if (!(BranchElements[SignatureCode] is Signature Signature))
+                throw new Exception($"The {DependencyNodeKey} references to a signature with code {SignatureCode} but it is not a signature");
+            return Signature;
+        }
+
         public virtual void Check()
         {
             var BranchElements = GetBranchElements();
-            if (!string.IsNullOrEmpty(SignatureCode) && (!BranchElements.ContainsKey(SignatureCode) || !(BranchElements[SignatureCode] is ICheckListSignature)))
-                SignatureCode = null;
+
+            var DependencyNodeKey = this.DependencyNodeKey.Clone("signature");
+            if (!string.IsNullOrEmpty(SignatureCode))
+                GetSignature(SignatureCode, DependencyNodeKey).DependingNodes.Add(DependencyNodeKey);
+
+            DependencyNodeKey = this.DependencyNodeKey.Clone("countdown");
+            if (CountDownCondition == Conditions.Expression)
+                GetExpression(CountDownToCode, DependencyNodeKey, DataType.DateTime, DataType.Date).DependingNodes.Add(DependencyNodeKey);
+
+            if (CountDownCondition == Conditions.Signature)
+                GetSignature(CountDownToCode, DependencyNodeKey).DependingNodes.Add(DependencyNodeKey);
+
+            DependencyNodeKey = this.DependencyNodeKey.Clone("hidden");
+            if (HiddenCondition == Conditions.Expression)
+                GetExpression(HiddenExpressionCode, DependencyNodeKey, DataType.Boolean).DependingNodes.Add(DependencyNodeKey);
+
+            DependencyNodeKey = this.DependencyNodeKey.Clone("read-only");
+            if (ReadOnlyCondition == Conditions.Expression || ReadOnlyCondition == Conditions.ExpressionOrDefault || ReadOnlyCondition == Conditions.ExpressionAndDefault)
+                GetExpression(ReadOnlyExpressionCode, DependencyNodeKey, DataType.Boolean).DependingNodes.Add(DependencyNodeKey);
+
+            DependencyNodeKey = this.DependencyNodeKey.Clone("validity");
+            if (ValidCondition == Conditions.Expression || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
+                GetExpression(ValidExpressionCode, DependencyNodeKey, DataType.Boolean).DependingNodes.Add(DependencyNodeKey);
         }
 
         public static void Copy(Element source, Element destination)

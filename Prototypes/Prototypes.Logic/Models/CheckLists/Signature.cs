@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.CheckLists;
 
 namespace CheckListManager.Prototypes.Logic.Models.CheckLists
@@ -19,6 +20,12 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 		public DateTimeOffset SignedOn { get; set; }
 		public string SignerDescription { get; set; }
 
+        public override void Setup()
+        {
+            base.Setup();
+            DependingNodes.Clear();
+        }
+
         public override ICheckListItem Clone(ICheckListGroup parent)
         {
             var signature = new Signature
@@ -33,6 +40,6 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             return signature;
         }
 
-
+        public List<DependencyNodeKey> DependingNodes { get; } = new List<DependencyNodeKey>();
     }
 }

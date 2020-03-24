@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.Expressions;
 
@@ -43,5 +44,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 		{
 			throw new NotImplementedException();
 		}
-	}
+
+        protected override DependencyNodeKey DependencyNodeKey => base.DependencyNodeKey ?? new DependencyNodeKey("item", Id);
+    }
 }

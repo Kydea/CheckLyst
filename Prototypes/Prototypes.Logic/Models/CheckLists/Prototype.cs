@@ -71,6 +71,16 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             }
         }
 
+        public void Check()
+        {
+            foreach (var Expression in Expressions.Values)
+                Expression.DependingNodes.Clear();
+
+            ((Group)Header).Check();
+            foreach (Page Page in Pages)
+                Page.Check();
+        }
+
         public void Traverse(Func<ICheckListItem, bool> condition, Action<ICheckListItem> action)
         {
             Header.Traverse(condition, action);

@@ -4,6 +4,7 @@ using CheckListManager.Common.Logic.Models.CheckLists;
 using System.Linq;
 using CheckListManager.Instances.Logic.Exceptions;
 using System.Threading.Tasks;
+using CheckListManager.Common.Logic.Dependency;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {

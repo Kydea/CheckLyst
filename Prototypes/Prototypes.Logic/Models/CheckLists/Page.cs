@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.CheckLists;
 
 namespace CheckListManager.Prototypes.Logic.Models.CheckLists
@@ -44,5 +45,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         }
 
         public void CreateInstanceIterations() { throw new NotImplementedException(); }
+
+        protected override DependencyNodeKey DependencyNodeKey => base.DependencyNodeKey ?? new DependencyNodeKey("page", Description);
     }
 }

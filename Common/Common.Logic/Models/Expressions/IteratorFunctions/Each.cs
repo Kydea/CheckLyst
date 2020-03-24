@@ -11,7 +11,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
         public override void Check(ICheckList Prototype, List<string> IteratorStack)
         {
             base.Check(Prototype, IteratorStack);
-            InnerDataType = DataType;
+            InnerDataType = Argument.InnerDataType ?? DataType;
             DataType = DataType.Array;
         }
 

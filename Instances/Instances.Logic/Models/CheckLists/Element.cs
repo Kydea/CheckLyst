@@ -17,7 +17,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             if (!(BranchElements[SignatureCode] is ICheckListSignature Signature))
                 throw new InstanceException((string.IsNullOrEmpty(Code) ? "An element" : $"The element {Code}") + $" references to a signature with code {SignatureCode} that is not a signature");
             return Signature;
-
         }
 
         public ICheckList CheckList { get; set; }
