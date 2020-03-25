@@ -53,7 +53,7 @@
                     body.children().eq(currentIndex).addClass("Selected").removeClass("Handler")
                         .children((used ? ":not(:nth-child(2))" : "") + ":not(:first-child):not(:last-child):not(:nth-last-child(2)):not(:nth-last-child(3)):not(:nth-last-child(4))").attr("contenteditable", true).eq(0).focus();
                 }
-                removeButton.toggle(currentIndex != null && !used);
+                removeButton.toggle(true || currentIndex != null && !used); //always enabled to avoid dead locks when a user delete a referenced item
                 dependencyButton.toggle(currentIndex != null && used);
             }
         },

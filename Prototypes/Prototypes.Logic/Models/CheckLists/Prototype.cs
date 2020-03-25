@@ -73,7 +73,18 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public void Check()
         {
             foreach (var Expression in Expressions.Values)
-                Expression.Check(this);
+                try
+                {
+                    Expression.Check(this);
+                }
+                catch (ParseException Exception)
+                {
+                    Expression.Error = $"{Exception.Message} (position {Exception.Position})";
+                }
+                catch (Exception Exception)
+                {
+                    Expression.Error = Exception.Message;
+                }
 
             ((Group)Header).Check();
             foreach (Page Page in Pages)
