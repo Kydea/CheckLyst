@@ -85,28 +85,7 @@ namespace CheckListManager.Instances.Logic.Services
             _storageService = storageService;
         }
 
-        public async Task PrepareForEditAsync(IDefaultIdentity identity, InstanceCacheObject cacheObject)
-        {
-            if (cacheObject.InstanceState == InstanceState.Progress)
-            {
-                Page page;
-                if (cacheObject.Instance.Pages.Any() && (page = (Page)cacheObject.Instance.Pages.First()).Lock == null && HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
-                {
-                    UnlockPages(cacheObject.Instance, identity.Code);
-                    page.Lock = new Lock(identity.Code);
-                    cacheObject.NeedToCache = true;
-                }
-            }
-
-            await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
-            {
-                Company = identity.CompanyId,
-                User = identity.Code,
-                Action = TrailAction.InstanceOpened,
-                Date = DateTimeOffset.UtcNow,
-                CheckList = cacheObject.InstanceCode
-            });
-        }
+        #region cache object task
 
         public async Task<InstanceCacheObject> GetCacheObjectAsync(long company, string code, bool includeData)
         {
@@ -133,7 +112,11 @@ namespace CheckListManager.Instances.Logic.Services
                 await _instanceCache.TouchAsync(cacheObject.Code);
         }
 
-        public async Task<InstanceCacheObject> CreateAsync(IDefaultIdentity identity, string userCode, long prototype, int? version, Dictionary<string, string> parameters)
+        #endregion
+
+        #region record tasks
+
+        public async Task<InstanceCacheObject> CreateInstanceAsync(IDefaultIdentity identity, string userCode, long prototype, int? version, Dictionary<string, string> parameters)
         {
             try
             {
@@ -187,7 +170,7 @@ namespace CheckListManager.Instances.Logic.Services
             }
         }
 
-        public async Task<InstanceCacheObject> OpenAsync(string code, IDefaultIdentity identity)
+        public async Task<InstanceCacheObject> OpenInstanceAsync(string code, IDefaultIdentity identity)
         {
             try
             {
@@ -231,7 +214,7 @@ namespace CheckListManager.Instances.Logic.Services
                     cacheObject.Number = row.Number;
                     if (cacheObject.Instance.Pages.Any())
                         ((Page)cacheObject.Instance.Pages[0]).Lock = new Lock(identity.Code);
-                    Update(cacheObject, identity.Code);
+                    TrackChanges(cacheObject, identity.Code);
 
                     cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(identity.CompanyId), (await _settingService.TimeZoneAsync(identity.CompanyId)), cacheObject); //new update to consider the database values 
 
@@ -278,7 +261,7 @@ namespace CheckListManager.Instances.Logic.Services
             }
         }
 
-        public async Task SaveAsync(string code, IDefaultIdentity identity)
+        public async Task SaveInstanceAsync(string code, IDefaultIdentity identity)
         {
             try
             {
@@ -302,7 +285,7 @@ namespace CheckListManager.Instances.Logic.Services
             }
         }
 
-        public async Task<InstanceCacheObject> CompleteAsync(string code, IDefaultIdentity identity)
+        public async Task<InstanceCacheObject> CompleteInstanceAsync(string code, IDefaultIdentity identity)
         {
             try
             {
@@ -347,7 +330,7 @@ namespace CheckListManager.Instances.Logic.Services
             }
         }
 
-        public async Task DeleteAsync(string code, IDefaultIdentity identity, string note)
+        public async Task DeleteInstanceAsync(string code, IDefaultIdentity identity, string note)
         {
             try
             {
@@ -548,6 +531,97 @@ namespace CheckListManager.Instances.Logic.Services
             await _instanceCache.RemoveAsync(cacheObject.Code);
         }
 
+        private async Task<GetPrototypeResponse> GetPrototype(long prototype, int version)
+        {
+            try
+            {
+                var httpResponse = await _client.PostAsync("Prototypes/Prototype/Open", new GetPrototypeRequest
+                {
+                    Id = prototype,
+                    Version = version
+                });
+
+                var responseData = await httpResponse.Content.ReadAsStringAsync();
+                if (httpResponse.StatusCode == HttpStatusCode.InternalServerError)
+                {
+                    var message = JsonConvert.DeserializeObject<ResponseMessage>(responseData);
+                    throw new InstanceException(message.Messages.FirstOrDefault() ?? "Unable to retrieve the prototype");
+                }
+                var response = JsonConvert.DeserializeObject<GetPrototypeResponse>(responseData, _converter);
+                return response;
+            }
+            catch (InstanceException e)
+            {
+                Logger.Error(e);
+                throw;
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, "Unable to retrieve the prototype");
+                throw new InstanceException("Unable to retrieve the prototype", e);
+            }
+        }
+
+        private InstanceCacheObject CreateInstanceFromDatabase(long companyId, Common.Data.Instances instance)
+        {
+            var instanceObject = JsonConvert.DeserializeObject<Instance>(instance.Data, _converter);
+            var cacheObject = new InstanceCacheObject
+            {
+                CompanyId = companyId,
+                Instance = instanceObject,
+                Code = instance.Code,
+                Department = instance.Prototypes.Department,
+                DepartmentName = instance.Prototypes.Departments.Name,
+                PrototypeType = instance.Prototypes.PrototypeType,
+                PrototypeTypeName = instance.Prototypes.PrototypeTypes.Name,
+                Prototype = instance.Prototype,
+                PrototypeName = instance.PrototypeName,
+                PrototypeDescription = instance.PrototypeVersions.Description,
+                Version = instance.Version,
+                VersionState = instance.PrototypeVersions.VersionState,
+                InstanceState = instance.InstanceState,
+                CreatedBy = instance.CreatedBy,
+                CreatedOn = instance.CreatedOn,
+                Id = instance.ID,
+                Year = instance.Year,
+                Number = instance.Number,
+                ModifiedOn = instance.ModifiedOn,
+                ModifiedBy = instance.ModifiedBy
+            };
+            cacheObject.Instance.Setup(false);
+            return cacheObject;
+        }
+
+        #endregion
+
+        #region security
+
+        public void CheckViewPermission(IDefaultIdentity identity, InstanceCacheObject cacheObject)
+        {
+            if (!HasPermission(identity, "View", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
+                throw new InstanceException("Access denied");
+        }
+
+
+        private bool HasPermission(IDefaultIdentity identity, string function, string PrototypeVersionState, long Department, long PrototypeType, string Tag = null)
+        {
+            return
+                PrototypeVersionState.In(VersionState.Draft, VersionState.InSimulation)
+                    && (
+                        identity.HasPermission("Prototypes", "Preview", Department)
+                        || identity.HasPermission("Prototypes", "Preview", Department, PrototypeType)
+                    )
+                || !PrototypeVersionState.In(VersionState.Draft, VersionState.InSimulation)
+                && (
+                    identity.HasPermission("Instances", function, Department, tag: Tag)
+                    || identity.HasPermission("Instances", function, Department, PrototypeType, Tag)
+                );
+        }
+
+        #endregion
+
+        #region actions
+
         public async Task<string> GetExternalSourceRows(string code, IDefaultIdentity identity, string externalSourceCode, Dictionary<string, string> parameters, int page)
         {
             try
@@ -627,6 +701,71 @@ namespace CheckListManager.Instances.Logic.Services
             return await _storageService.GetAsync(_configurationService.InstancesStorageBucket, key);
         }
 
+        public async Task ClearPendingInstances(CancellationToken cancellationToken = new CancellationToken())
+        {
+            var score = DateTimeOffset.UtcNow.ToUnixTimeSeconds() - _configurationService.InstanceCloseTimeout * 60;
+            var codes = await _instanceCache.GetInstancesInRangeAsync(stop: score);
+
+            foreach (var code in codes)
+                try
+                {
+                    var instance = await _instanceCache.GetAsync(code, false);
+                    if (instance == null)
+                        continue;
+
+                    if (instance.NeedToSave)
+                        switch (instance.InstanceState)
+                        {
+                            case InstanceState.Draft:
+                                await _instanceCache.RemoveAsync(instance.Code);
+                                break;
+                            case InstanceState.Progress:
+                                await SaveAsync(instance, null, true, false, false, instance.ModifiedBy, instance.ModifiedOn);
+                                break;
+                            default:
+                                throw new InstanceException("Invalid state: " + instance.InstanceState);
+                        }
+                    else
+                        await _instanceCache.RemoveAsync(code);
+                }
+                catch (Exception exception)
+                {
+                    Logger.Error(exception);
+                }
+        }
+
+        public async Task<List<HistoryRow>> History(DefaultIdentity identity, long id)
+        {
+            var Instance = await _instancesRepository.GetAsync(identity.CompanyId, id);
+            if (Instance == null)
+                throw new InstanceException("Instance not found");
+            if (!HasPermission(identity, "View", Instance.PrototypeVersions.VersionState, Instance.Prototypes.Department, Instance.Prototypes.PrototypeType))
+                throw new UnauthorizedAccessException();
+
+            return await Task.FromResult(Instance.InstancesHistory.OrderBy(h => h.ID).Select(h => new HistoryRow
+            {
+                ID = h.ID,
+                Date = h.Date,
+                User = $"{h.User} - {_commonRepository.GetUser(identity.CompanyId, h.User)?.Description ?? "(unknown user)"}",
+                State = h.WorkFlowApplications == null ? h.State : h.WorkFlowApplications.FinalState,
+                ProposedState = h.WorkFlowApplications == null ? null : InstanceState.Confirmed,
+                Approved = h.WorkFlowApplications?.Approved,
+                Note = h.Note,
+                Steps = h.WorkFlowApplications?.WorkFlowApplicationSteps.OrderBy(s => s.Step).ThenBy(s => s.ID).Select(s => new HistoryStep
+                {
+                    ID = s.ID,
+                    Step = s.Step + 1,
+                    Date = s.Date,
+                    User = s.User == null ? string.Empty : $"{s.User} - {s.UserDescription}",
+                    Level = $"({string.Join(", ", s.WorkFlowApplicationStepTags.Select(t => t.Tag))})",
+                    Reason = s.Reason,
+                    Comment = s.Comment,
+                    Approved = s.Approved,
+                    AppointedUser = s.User == null ? string.Join(", ", _commonRepository.GetAppointedUsers(identity.CompanyId, "Instances", "Confirm", Instance.Prototypes.Department, Instance.Prototypes.PrototypeType, s.WorkFlowApplicationStepTags.Select(t => t.Tag)).Select(u => u.Code)) : null
+                }).ToList()
+            }).ToList());
+        }
+
         public async Task InvalidateCacheAsync(DefaultIdentity identity, InvalidateCacheRequest request)
         {
             foreach (var code in request.Instances)
@@ -660,7 +799,52 @@ namespace CheckListManager.Instances.Logic.Services
                 }
         }
 
-        #region Events
+        #endregion
+
+        #region events
+
+        public async Task GetInstanceAsync(IDefaultIdentity identity, InstanceCacheObject cacheObject)
+        {
+            if (cacheObject.InstanceState == InstanceState.Progress)
+            {
+                Page page;
+                if (cacheObject.Instance.Pages.Any() && (page = (Page)cacheObject.Instance.Pages.First()).Lock == null && HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
+                {
+                    UnlockPages(cacheObject.Instance, identity.Code);
+                    page.Lock = new Lock(identity.Code);
+                    cacheObject.NeedToCache = true;
+                }
+            }
+
+            await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+            {
+                Company = identity.CompanyId,
+                User = identity.Code,
+                Action = TrailAction.InstanceOpened,
+                Date = DateTimeOffset.UtcNow,
+                CheckList = cacheObject.InstanceCode
+            });
+        }
+
+        public async Task<Instance> UpdateInstanceAsync(IDefaultIdentity identity, InstanceCacheObject cacheObject, string lockUser)
+        {
+            cacheObject.Instance.ReadOnly =
+                !cacheObject.InstanceState.In(InstanceState.Draft, InstanceState.Progress)
+                || !HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType)
+                || cacheObject.Year == 0 && !cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation);
+
+            cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(identity.CompanyId), (await _settingService.TimeZoneAsync(identity.CompanyId)), cacheObject);
+            cacheObject.Instance.UpdateReadOnly(lockUser ?? identity.Code, cacheObject.InstanceState);
+
+            return cacheObject.Instance;
+        }
+
+        private static void UnlockPages(ICheckList instance, string userCode)
+        {
+            foreach (var Page in instance.Pages.Cast<Page>())
+                if (Page.Lock?.User == userCode)
+                    Page.Lock = null;
+        }
 
         public async Task<InstanceCacheObject> HandleEventAsync(IDefaultIdentity identity, InstanceEventRequest request)
         {
@@ -851,7 +1035,7 @@ namespace CheckListManager.Instances.Logic.Services
                 })
             });
 
-            Update(cacheObject, identity.Code);
+            TrackChanges(cacheObject, identity.Code);
         }
 
         private static string GetAttachmentKeyPrefix(IDefaultIdentity identity, string cacheObjectCode)
@@ -872,7 +1056,7 @@ namespace CheckListManager.Instances.Logic.Services
             UnlockPages(cacheObject.Instance, userCode);
             if (page.Lock == null)
                 page.Lock = new Lock(userCode);
-            Update(cacheObject, userCode);
+            TrackChanges(cacheObject, userCode);
         }
 
         private async Task HandleValueChangeAsync(InstanceCacheObject cacheObject, string userCode, int? itemId, string value)
@@ -931,7 +1115,7 @@ namespace CheckListManager.Instances.Logic.Services
                 });
                 field.Value = value;
 
-                Update(cacheObject, userCode);
+                TrackChanges(cacheObject, userCode);
             }
         }
 
@@ -1000,7 +1184,7 @@ namespace CheckListManager.Instances.Logic.Services
                 });
                 field.Value = value;
 
-                Update(cacheObject, userCode);
+                TrackChanges(cacheObject, userCode);
             }
         }
 
@@ -1029,7 +1213,7 @@ namespace CheckListManager.Instances.Logic.Services
                     CheckList = cacheObject.InstanceCode,
                     Information = JsonConvert.SerializeObject(new { ID = Iteration.Id.ToString() })
                 });
-                Update(cacheObject, userCode);
+                TrackChanges(cacheObject, userCode);
             }
         }
 
@@ -1059,7 +1243,7 @@ namespace CheckListManager.Instances.Logic.Services
                     CheckList = cacheObject.InstanceCode,
                     Information = JsonConvert.SerializeObject(new { ID = itemId.ToString() })
                 });
-                Update(cacheObject, userCode);
+                TrackChanges(cacheObject, userCode);
             }
         }
 
@@ -1089,7 +1273,7 @@ namespace CheckListManager.Instances.Logic.Services
                     CheckList = cacheObject.InstanceCode,
                     Information = JsonConvert.SerializeObject(new { ID = itemId.ToString() })
                 });
-                Update(cacheObject, userCode);
+                TrackChanges(cacheObject, userCode);
             }
         }
 
@@ -1159,7 +1343,7 @@ namespace CheckListManager.Instances.Logic.Services
                 signature.Sign(identity.Code, identity.Description, Now);
                 if (cacheObject.InstanceState == InstanceState.Progress)
                     await SaveAsync(cacheObject, identity, false, false, true, cacheObject.ModifiedBy, cacheObject.ModifiedOn);
-                Update(cacheObject, request.Username);
+                TrackChanges(cacheObject, request.Username);
 
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
@@ -1223,7 +1407,6 @@ namespace CheckListManager.Instances.Logic.Services
                     });
         }
 
-
         private async Task HandleSignatureCancellationAsync(InstanceCacheObject cacheObject, IDefaultIdentity identity, InstanceEventRequest request)
         {
             try
@@ -1265,7 +1448,7 @@ namespace CheckListManager.Instances.Logic.Services
                 cacheObject.ModifiedOn = Now;
                 if (cacheObject.InstanceState == InstanceState.Progress)
                     await SaveAsync(cacheObject, identity, false, false, true, cacheObject.ModifiedBy, cacheObject.ModifiedOn);
-                Update(cacheObject, request.Username);
+                TrackChanges(cacheObject, request.Username);
 
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
@@ -1312,7 +1495,7 @@ namespace CheckListManager.Instances.Logic.Services
 
             page.Lock = new Lock(userCode);
 
-            Update(cacheObject, userCode);
+            TrackChanges(cacheObject, userCode);
         }
 
         private void HandleSkipCountDown(InstanceCacheObject cacheObject, string userCode, int? itemId)
@@ -1332,7 +1515,7 @@ namespace CheckListManager.Instances.Logic.Services
                 throw new InvalidOperationException("A count down can be skipped only for preview and simulation instances");
 
             element.CountDownToCode = null;
-            Update(cacheObject, userCode);
+            TrackChanges(cacheObject, userCode);
         }
 
         private async Task HandleQuitAsync(InstanceCacheObject cacheObject, IDefaultIdentity identity)
@@ -1342,7 +1525,7 @@ namespace CheckListManager.Instances.Logic.Services
                 if (!cacheObject.Instance.ReadOnly)
                 {
                     UnlockPages(cacheObject.Instance, identity.Code);
-                    Update(cacheObject, identity.Code);
+                    TrackChanges(cacheObject, identity.Code);
                 }
 
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
@@ -1365,7 +1548,7 @@ namespace CheckListManager.Instances.Logic.Services
             }
         }
 
-        private void Update(InstanceCacheObject cacheObject, string userCode)
+        private void TrackChanges(InstanceCacheObject cacheObject, string userCode)
         {
             foreach (Page Page in cacheObject.Instance.Pages)
                 if (Page.Lock != null && Page.Lock.User == userCode)
@@ -1406,177 +1589,9 @@ namespace CheckListManager.Instances.Logic.Services
                 })
             });
 
-            Update(cacheObject, identity.Code);
+            TrackChanges(cacheObject, identity.Code);
         }
 
         #endregion
-
-        public void CheckViewPermission(IDefaultIdentity identity, InstanceCacheObject cacheObject)
-        {
-            if (!HasPermission(identity, "View", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
-                throw new InstanceException("Access denied");
-        }
-
-
-        private bool HasPermission(IDefaultIdentity identity, string function, string PrototypeVersionState, long Department, long PrototypeType, string Tag = null)
-        {
-            return
-                PrototypeVersionState.In(VersionState.Draft, VersionState.InSimulation)
-                    && (
-                        identity.HasPermission("Prototypes", "Preview", Department)
-                        || identity.HasPermission("Prototypes", "Preview", Department, PrototypeType)
-                    )
-                || !PrototypeVersionState.In(VersionState.Draft, VersionState.InSimulation)
-                && (
-                    identity.HasPermission("Instances", function, Department, tag: Tag)
-                    || identity.HasPermission("Instances", function, Department, PrototypeType, Tag)
-                );
-        }
-
-        public async Task<Instance> UpdateInstanceAsync(IDefaultIdentity identity, InstanceCacheObject cacheObject, string lockUser)
-        {
-            cacheObject.Instance.ReadOnly =
-                !cacheObject.InstanceState.In(InstanceState.Draft, InstanceState.Progress)
-                || !HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType)
-                || cacheObject.Year == 0 && !cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation);
-
-            cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(identity.CompanyId), (await _settingService.TimeZoneAsync(identity.CompanyId)), cacheObject);
-            cacheObject.Instance.UpdateReadOnly(lockUser ?? identity.Code, cacheObject.InstanceState);
-
-            return cacheObject.Instance;
-        }
-
-        public async Task ClearPendingInstances(CancellationToken cancellationToken = new CancellationToken())
-        {
-            var score = DateTimeOffset.UtcNow.ToUnixTimeSeconds() - _configurationService.InstanceCloseTimeout * 60;
-            var codes = await _instanceCache.GetInstancesInRangeAsync(stop: score);
-
-            foreach (var code in codes)
-                try
-                {
-                    var instance = await _instanceCache.GetAsync(code, false);
-                    if (instance == null)
-                        continue;
-
-                    if (instance.NeedToSave)
-                        switch (instance.InstanceState)
-                        {
-                            case InstanceState.Draft:
-                                await _instanceCache.RemoveAsync(instance.Code);
-                                break;
-                            case InstanceState.Progress:
-                                await SaveAsync(instance, null, true, false, false, instance.ModifiedBy, instance.ModifiedOn);
-                                break;
-                            default:
-                                throw new InstanceException("Invalid state: " + instance.InstanceState);
-                        }
-                    else
-                        await _instanceCache.RemoveAsync(code);
-                }
-                catch (Exception exception)
-                {
-                    Logger.Error(exception);
-                }
-        }
-
-        private async Task<GetPrototypeResponse> GetPrototype(long prototype, int version)
-        {
-            try
-            {
-                var httpResponse = await _client.PostAsync("Prototypes/Prototype/Open", new GetPrototypeRequest
-                {
-                    Id = prototype,
-                    Version = version
-                });
-
-                var responseData = await httpResponse.Content.ReadAsStringAsync();
-                if (httpResponse.StatusCode == HttpStatusCode.InternalServerError)
-                {
-                    var message = JsonConvert.DeserializeObject<ResponseMessage>(responseData);
-                    throw new InstanceException(message.Messages.FirstOrDefault() ?? "Unable to retrieve the prototype");
-                }
-                var response = JsonConvert.DeserializeObject<GetPrototypeResponse>(responseData, _converter);
-                return response;
-            }
-            catch (InstanceException e)
-            {
-                Logger.Error(e);
-                throw;
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e, "Unable to retrieve the prototype");
-                throw new InstanceException("Unable to retrieve the prototype", e);
-            }
-        }
-
-        private static void UnlockPages(ICheckList instance, string userCode)
-        {
-            foreach (var Page in instance.Pages.Cast<Page>())
-                if (Page.Lock?.User == userCode)
-                    Page.Lock = null;
-        }
-
-        private InstanceCacheObject CreateInstanceFromDatabase(long companyId, Common.Data.Instances instance)
-        {
-            var instanceObject = JsonConvert.DeserializeObject<Instance>(instance.Data, _converter);
-            var cacheObject = new InstanceCacheObject
-            {
-                CompanyId = companyId,
-                Instance = instanceObject,
-                Code = instance.Code,
-                Department = instance.Prototypes.Department,
-                DepartmentName = instance.Prototypes.Departments.Name,
-                PrototypeType = instance.Prototypes.PrototypeType,
-                PrototypeTypeName = instance.Prototypes.PrototypeTypes.Name,
-                Prototype = instance.Prototype,
-                PrototypeName = instance.PrototypeName,
-                PrototypeDescription = instance.PrototypeVersions.Description,
-                Version = instance.Version,
-                VersionState = instance.PrototypeVersions.VersionState,
-                InstanceState = instance.InstanceState,
-                CreatedBy = instance.CreatedBy,
-                CreatedOn = instance.CreatedOn,
-                Id = instance.ID,
-                Year = instance.Year,
-                Number = instance.Number,
-                ModifiedOn = instance.ModifiedOn,
-                ModifiedBy = instance.ModifiedBy
-            };
-            cacheObject.Instance.Setup(false);
-            return cacheObject;
-        }
-
-        public async Task<List<HistoryRow>> History(DefaultIdentity identity, long id)
-        {
-            var Instance = await _instancesRepository.GetAsync(identity.CompanyId, id);
-            if (Instance == null)
-                throw new InstanceException("Instance not found");
-            if (!HasPermission(identity, "View", Instance.PrototypeVersions.VersionState, Instance.Prototypes.Department, Instance.Prototypes.PrototypeType))
-                throw new UnauthorizedAccessException();
-
-            return await Task.FromResult(Instance.InstancesHistory.OrderBy(h => h.ID).Select(h => new HistoryRow
-            {
-                ID = h.ID,
-                Date = h.Date,
-                User = $"{h.User} - {_commonRepository.GetUser(identity.CompanyId, h.User)?.Description ?? "(unknown user)"}",
-                State = h.WorkFlowApplications == null ? h.State : h.WorkFlowApplications.FinalState,
-                ProposedState = h.WorkFlowApplications == null ? null : InstanceState.Confirmed,
-                Approved = h.WorkFlowApplications?.Approved,
-                Note = h.Note,
-                Steps = h.WorkFlowApplications?.WorkFlowApplicationSteps.OrderBy(s => s.Step).ThenBy(s => s.ID).Select(s => new HistoryStep
-                {
-                    ID = s.ID,
-                    Step = s.Step + 1,
-                    Date = s.Date,
-                    User = s.User == null ? string.Empty : $"{s.User} - {s.UserDescription}",
-                    Level = $"({string.Join(", ", s.WorkFlowApplicationStepTags.Select(t => t.Tag))})",
-                    Reason = s.Reason,
-                    Comment = s.Comment,
-                    Approved = s.Approved,
-                    AppointedUser = s.User == null ? string.Join(", ", _commonRepository.GetAppointedUsers(identity.CompanyId, "Instances", "Confirm", Instance.Prototypes.Department, Instance.Prototypes.PrototypeType, s.WorkFlowApplicationStepTags.Select(t => t.Tag)).Select(u => u.Code)) : null
-                }).ToList()
-            }).ToList());
-        }
     }
 }

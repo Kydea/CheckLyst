@@ -15,14 +15,14 @@ namespace CheckListManager.Instances.Logic.Services
 	{
         Task<InstanceCacheObject> GetCacheObjectAsync(long company, string code, bool includeData);
         Task SaveCacheObjectAsync(InstanceCacheObject cacheObject);
-        Task PrepareForEditAsync(IDefaultIdentity identity, InstanceCacheObject cacheObject);
-        Task<InstanceCacheObject> CreateAsync(IDefaultIdentity identity, string userCode, long prototype, int? version, Dictionary<string, string> parameters);
-		Task<InstanceCacheObject> OpenAsync(string code, IDefaultIdentity identity);
-        Task SaveAsync(string code, IDefaultIdentity identity);
-        Task<InstanceCacheObject> CompleteAsync(string code, IDefaultIdentity identity);
-        Task DeleteAsync(string code, IDefaultIdentity identity, string note);
+        Task GetInstanceAsync(IDefaultIdentity identity, InstanceCacheObject cacheObject);
+        Task<InstanceCacheObject> CreateInstanceAsync(IDefaultIdentity identity, string userCode, long prototype, int? version, Dictionary<string, string> parameters);
+		Task<InstanceCacheObject> OpenInstanceAsync(string code, IDefaultIdentity identity);
+        Task SaveInstanceAsync(string code, IDefaultIdentity identity);
+        Task<InstanceCacheObject> CompleteInstanceAsync(string code, IDefaultIdentity identity);
+        Task DeleteInstanceAsync(string code, IDefaultIdentity identity, string note);
+        Task<Instance> UpdateInstanceAsync(IDefaultIdentity identity, InstanceCacheObject instance, string lockUser);
         Task<InstanceCacheObject> HandleEventAsync(IDefaultIdentity identity, InstanceEventRequest request);
-		Task<Instance> UpdateInstanceAsync(IDefaultIdentity identity, InstanceCacheObject instance, string lockUser);
         Task ClearPendingInstances(CancellationToken cancellationToken = default(CancellationToken));
         Task<List<HistoryRow>> History(DefaultIdentity identity, long id);
         Task<string> GetExternalSourceRows(string code, IDefaultIdentity identity, string dataSourceCode, Dictionary<string, string> parameters, int page);

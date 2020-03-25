@@ -64,9 +64,9 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
 
         }
 
-        public override void Check(ICheckList Prototype, Expression Expression, List<string> IteratorStack)
+        public override void Check(ICheckList CheckList, Expression Expression, List<string> IteratorStack)
         {
-            var Element = Check(Prototype, IteratorStack, Code, Position);
+            var Element = Check(CheckList, IteratorStack, Code, Position);
             Check(Element, IteratorStack);
         }
 

@@ -31,6 +31,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         }
         public string Description => DescriptionFormula?.Value;
 
+        public bool DependenciesCreated { get; set; }
+
         [JsonIgnore]
         public Formula FileNameFormula { get; set; }
         public string FileNameFormulaString
@@ -68,6 +70,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public void Setup(bool Creation)
         {
+            //this must be called after deserialization
             InCreation = Creation;
 
             if (Creation)
@@ -95,6 +98,16 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             InCreation = false;
         }
 
+        public void CreateDependencies()
+        {
+            //for back compatibility with 2.0.0 when dependency was not present
+            foreach (var expression in Expressions)
+            {
+                expression.Value.Code = expression.Key;
+                expression.Value.Check(this);
+            }
+        }
+
         public void Update(string DecimalSeparator, string TimeZone, InstanceCacheObject cacheObject = null)
         {
             Dictionary<string, object> InstanceRuntimeValues = cacheObject == null ? new Dictionary<string, object>() : new Dictionary<string, object> {
@@ -110,12 +123,12 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 { "InstanceNumber", cacheObject.Number },
             };
 
+            if (!DependenciesCreated)
+                CreateDependencies();
+
             //first evaluation
-            foreach (var expression in Expressions.Values)
-            {
-                expression.Parse(this);
-                expression.Evaluate(this, TimeZone);
-            }
+            foreach (var expression in Expressions)
+                expression.Value.Evaluate(this, TimeZone);
 
             Update(DecimalSeparator, TimeZone, InstanceRuntimeValues);
 

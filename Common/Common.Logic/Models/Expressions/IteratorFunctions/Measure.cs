@@ -19,9 +19,9 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
 
         private string Operation { get; }
 
-        public override void Check(ICheckList Prototype, Expression Expression, List<string> IteratorStack)
+        public override void Check(ICheckList CheckList, Expression Expression, List<string> IteratorStack)
         {
-            base.Check(Prototype, Expression, IteratorStack);
+            base.Check(CheckList, Expression, IteratorStack);
             if (DataType != DataType.Number)
                 throw new ParseException($"Operands of function {Operation} must be numbers", Position);
             DataType = DataType.Number;

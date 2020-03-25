@@ -52,7 +52,7 @@ namespace CheckListManager.Instances.Api.Controllers
         {
             try
             {
-                var cacheObject = await _instanceManagerService.CreateAsync(Identity, Identity.Code, request.Prototype, request.Version, request.Parameters);
+                var cacheObject = await _instanceManagerService.CreateInstanceAsync(Identity, Identity.Code, request.Prototype, request.Version, request.Parameters);
                 var instance = await _instanceManagerService.UpdateInstanceAsync(Identity, cacheObject, null);
                 await _instanceManagerService.SaveCacheObjectAsync(cacheObject);
                 var response = new InstanceResponse
@@ -87,7 +87,7 @@ namespace CheckListManager.Instances.Api.Controllers
         {
             try
             {
-                var cacheObject = await _instanceManagerService.OpenAsync(request.Code, Identity);
+                var cacheObject = await _instanceManagerService.OpenInstanceAsync(request.Code, Identity);
                 var instance = await _instanceManagerService.UpdateInstanceAsync(Identity, cacheObject, null);
                 await _instanceManagerService.SaveCacheObjectAsync(cacheObject);
 
@@ -116,7 +116,7 @@ namespace CheckListManager.Instances.Api.Controllers
         {
             try
             {
-                await _instanceManagerService.SaveAsync(request.Code, Identity);
+                await _instanceManagerService.SaveInstanceAsync(request.Code, Identity);
                 return Ok();
             }
             catch (Exception e)
@@ -132,7 +132,7 @@ namespace CheckListManager.Instances.Api.Controllers
         {
             try
             {
-                await _instanceManagerService.DeleteAsync(request.Code, Identity, request.Note);
+                await _instanceManagerService.DeleteInstanceAsync(request.Code, Identity, request.Note);
                 return Ok();
             }
             catch (Exception e)
@@ -148,7 +148,7 @@ namespace CheckListManager.Instances.Api.Controllers
         {
             try
             {
-                var cacheObject = await _instanceManagerService.CompleteAsync(request.Code, Identity);
+                var cacheObject = await _instanceManagerService.CompleteInstanceAsync(request.Code, Identity);
                 return Ok(new InstanceResponse
                 {
                     State = cacheObject.InstanceState,
@@ -170,7 +170,7 @@ namespace CheckListManager.Instances.Api.Controllers
             {
                 var cacheObject = await _instanceManagerService.GetCacheObjectAsync(Identity.CompanyId, request.Code, true);
                 _instanceManagerService.CheckViewPermission(Identity, cacheObject);
-                await _instanceManagerService.PrepareForEditAsync(Identity, cacheObject);
+                await _instanceManagerService.GetInstanceAsync(Identity, cacheObject);
                 var instance = await _instanceManagerService.UpdateInstanceAsync(Identity, cacheObject, null);
                 await _instanceManagerService.SaveCacheObjectAsync(cacheObject);
 

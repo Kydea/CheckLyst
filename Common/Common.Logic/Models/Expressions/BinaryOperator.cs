@@ -22,10 +22,10 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             }
         }
 
-        public override void Check(ICheckList Prototype, Expression Expression, List<string> IteratorStack)
+        public override void Check(ICheckList CheckList, Expression Expression, List<string> IteratorStack)
         {
-            Left.Check(Prototype, Expression, IteratorStack);
-            Right.Check(Prototype, Expression, IteratorStack);
+            Left.Check(CheckList, Expression, IteratorStack);
+            Right.Check(CheckList, Expression, IteratorStack);
         }
 
         protected virtual TypedValue Evaluate(TypedValue LeftValue, TypedValue RightValue)

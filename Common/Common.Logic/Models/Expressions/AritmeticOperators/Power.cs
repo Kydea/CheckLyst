@@ -7,9 +7,9 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ArithmeticOperators
 {
     public class Power : BinaryArithmeticOperator
     {
-        public override void Check(ICheckList Prototype, Expression Expression, List<string> IteratorStack)
+        public override void Check(ICheckList CheckList, Expression Expression, List<string> IteratorStack)
         {
-            base.Check(Prototype, Expression, IteratorStack);
+            base.Check(CheckList, Expression, IteratorStack);
 
             if (Left.DataType != DataType.Number || Right.DataType != DataType.Number)
                 throw new ParseException("Operand of operator ^ must be numbers", Position);
