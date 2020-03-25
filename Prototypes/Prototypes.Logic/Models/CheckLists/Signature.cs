@@ -23,7 +23,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public override void Setup()
         {
             base.Setup();
-            DependingNodes.Clear();
+            DependentNodes.Clear();
         }
 
         public override ICheckListItem Clone(ICheckListGroup parent)
@@ -40,6 +40,6 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             return signature;
         }
 
-        public List<DependencyNodeKey> DependingNodes { get; } = new List<DependencyNodeKey>();
+        public List<DependencyNodeKey> DependentNodes { get; } = new List<DependencyNodeKey>();
     }
 }

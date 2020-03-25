@@ -8,9 +8,9 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
 {
     public class Each : UnaryIteratorFunction
     {
-        public override void Check(ICheckList Prototype, List<string> IteratorStack)
+        public override void Check(ICheckList Prototype, Expression Expression, List<string> IteratorStack)
         {
-            base.Check(Prototype, IteratorStack);
+            base.Check(Prototype, Expression, IteratorStack);
             InnerDataType = Argument.InnerDataType ?? DataType;
             DataType = DataType.Array;
         }

@@ -43,8 +43,12 @@
                 currentIndex = index;
                 var used = false;
                 if (currentIndex != null) {
-                    var code = list[currentIndex].code;
-                    used = !!expressionsInUse[code];
+                    var
+                        item = list[currentIndex],
+                        code = item.code,
+                        dependingNodes = item.dependingNodes,
+                        dependentNodes = item.dependentNodes;
+                    used = !!expressionsInUse[code] || (dependingNodes && dependingNodes.length > 0) || (dependentNodes && dependentNodes.length > 0);
 
                     body.children().eq(currentIndex).addClass("Selected").removeClass("Handler")
                         .children((used ? ":not(:nth-child(2))" : "") + ":not(:first-child):not(:last-child):not(:nth-last-child(2)):not(:nth-last-child(3)):not(:nth-last-child(4))").attr("contenteditable", true).eq(0).focus();
@@ -99,7 +103,8 @@
                     innerDataType: list[index].innerDataType,
                     unique: list[index].unique,
                     exception: list[index].exception,
-                    dependingNodes: list[index].dependingNodes
+                    dependingNodes: list[index].dependingNodes,
+                    dependentNodes: list[index].dependentNodes
                 };
         },
 
@@ -152,6 +157,8 @@
                         list[index].innerDataType = result.expressions[list[index].code].innerDataType;
                         list[index].unique = result.expressions[list[index].code].unique;
                         list[index].exception = result.expressions[list[index].code].exception;
+                        list[index].dependingNodes = result.expressions[list[index].code].dependingNodes;
+                        list[index].dependentNodes = result.expressions[list[index].code].dependentNodes;
                     } catch (error) {
                         list[index].error = error;
                         list[index].dataType = "Error";
@@ -260,7 +267,7 @@
                             remove();
                         }).hide())
                         .append(dependencyButton = $("<a />").addClass("Button").text("dependencies").prepend($("<i />").addClass("Icon fa fa-sitemap")).on("click", function () {
-                            matematici.dependenciesDialog.show(model.expressions[list[currentIndex].code].dependingNodes);
+                            matematici.dependenciesDialog.show(list[currentIndex].dependingNodes, list[currentIndex].dependentNodes);
                         }).hide());
 
 
@@ -275,7 +282,8 @@
                     innerDataType: model.expressions[code].innerDataType,
                     unique: model.expressions[code].unique,
                     exception: model.expressions[code].exception,
-                    dependingNodes: model.expressions[code].dependingNodes
+                    dependingNodes: model.expressions[code].dependingNodes,
+                    dependentNodes: model.expressions[code].dependentNodes
                 });
 
             expressionsInUse = {};
@@ -286,6 +294,8 @@
                 for (var groupIndex in page.groups)
                     checkGroupExpressionsInUse(page.groups[groupIndex]);
             }
+
+            verify();
         };
 
     setup();

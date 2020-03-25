@@ -56,9 +56,8 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                     if (Expression.Value.Description?.Length > 100)
                         throw new Exception($"Expression descriptions must not exceed 100 characters");
 
-                    Expression.Value.Validate(this);
+                    Expression.Value.Validate(this, Expression.Key);
                     Expression.Value.Parse(this);
-                    Expression.Value.Check(this);
                 }
                 catch (ParseException Exception)
                 {
@@ -74,7 +73,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public void Check()
         {
             foreach (var Expression in Expressions.Values)
-                Expression.DependingNodes.Clear();
+                Expression.Check(this);
 
             ((Group)Header).Check();
             foreach (Page Page in Pages)

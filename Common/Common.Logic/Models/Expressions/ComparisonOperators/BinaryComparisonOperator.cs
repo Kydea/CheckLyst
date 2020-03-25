@@ -7,9 +7,9 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ComparisonOperators
 {
     public abstract class BinaryComparisonOperator : BinaryOperator
     {
-        public override void Check(ICheckList Prototype, List<string> IteratorStack)
+        public override void Check(ICheckList Prototype, Expression Expression, List<string> IteratorStack)
         {
-            base.Check(Prototype, IteratorStack);
+            base.Check(Prototype, Expression, IteratorStack);
 
             if (
                 Left.DataType != Right.DataType

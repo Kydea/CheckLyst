@@ -7,9 +7,9 @@ namespace CheckListManager.Common.Logic.Models.Expressions.LogicOperators
 {
     public class Not : UnaryOperator
     {
-        public override void Check(ICheckList Prototype, List<string> IteratorStack)
+        public override void Check(ICheckList Prototype, Expression Expression, List<string> IteratorStack)
         {
-            base.Check(Prototype, IteratorStack);
+            base.Check(Prototype, Expression, IteratorStack);
 
             if (Argument.DataType != DataType.Boolean)
                 throw new ParseException("Left operand of logic operators must be a boolean", Position);

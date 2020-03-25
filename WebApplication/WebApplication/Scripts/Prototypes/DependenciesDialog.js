@@ -1,14 +1,23 @@
 ﻿matematici.dependenciesDialog = function () {
     return {
-        show: function (list) {
+        show: function (dependingNodes, dependentNodes) {
             var content = $("<div />");
 
-            if (!list || list.length == 0)
+            if ((!dependingNodes || dependingNodes.length == 0) && (!dependentNodes || dependentNodes.length == 0))
                 content.append("(no dependency found)");
-            else
-                for (var dependency in list)
-                    content.append($("<div />").html(list[dependency].description));
-            matematici.dialog.show("dipendenze espressione", content);
+            else {
+                if (dependingNodes && dependingNodes.length > 0) {
+                    content.append($("<h3 />").html("in this element"));
+                    for (var dependency in dependingNodes)
+                        content.append($("<p />").html(dependingNodes[dependency].description));
+                }
+                if (dependentNodes && dependentNodes.length > 0) {
+                    content.append($("<h3 />").html("by this element"));
+                    for (var dependency in dependentNodes)
+                        content.append($("<p />").html(dependentNodes[dependency].description));
+                }
+            }
+            matematici.dialog.show("Dependencies", content);
         }
     }
 }();

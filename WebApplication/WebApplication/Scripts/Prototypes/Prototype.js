@@ -280,7 +280,7 @@
                     prototypes.propertyPanel.select(currentItem);
                     break;
                 case "dependencies":
-                    matematici.dependenciesDialog.show(currentItem.getModel().dependingNodes);
+                    matematici.dependenciesDialog.show(currentItem.getModel().dependingNodes, currentItem.getModel().dependentNodes);
                     break;
                 default:
                     alert("invalid command");

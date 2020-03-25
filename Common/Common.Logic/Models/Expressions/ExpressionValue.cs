@@ -15,9 +15,10 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         public override void Check(ICheckList Prototype, Expression Expression, List<string> IteratorStack)
         {
             if (!Prototype.Expressions.ContainsKey(ExpressionCode)) throw new ParseException("Expression not found: " + ExpressionCode, Position);
-            var DependngExpression = Prototype.Expressions[ExpressionCode];
-            Expression.DependingNodes.Add(DependngExpression.DependencyNodeKey);
-            DataType = DependngExpression.DataType;
+            var DependingExpression = Prototype.Expressions[ExpressionCode];
+            Expression.DependingNodes.Add(DependingExpression.DependencyNodeKey);
+            DependingExpression.DependentNodes.Add(Expression.DependencyNodeKey);
+            DataType = DependingExpression.DataType;
         }
 
         public override TypedValue GetValue(IElementsBranch ElementsBranch, string TimeZone)

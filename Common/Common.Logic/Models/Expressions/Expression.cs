@@ -22,13 +22,15 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             Symbols = new List<Symbol>();
         }
 
-        public void Validate(ICheckList checkList)
+        public void Validate(ICheckList checkList, string Code)
         {
             if (string.IsNullOrWhiteSpace(Description) && (Unique || Exception))
                 throw new Exception($"Unique expressions and exception expressions must have a description");
 
             if (SerializedValue?.Length >= MAXIMUM_LENGTH)
                 throw new Parsing.ParseException($"Expressions lengh must not exceed {MAXIMUM_LENGTH - 1} characters", MAXIMUM_LENGTH);
+
+            this.Code = Code;
         }
 
         public void Parse(ICheckList checkList)
@@ -62,12 +64,14 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         public void Check(ICheckList prototype)
         {
             Error = null;
+            DependingNodes.Clear();
+            DependentNodes.Clear();
             Root.Check(prototype, this, new List<string>());
             if (Exception && Root.DataType != DataType.Boolean)
                 throw new Exception($"Exception expressions must be boolean");
         }
 
-        public DependencyNodeKey DependencyNodeKey => DependencyNodeKey
+        public DependencyNodeKey DependencyNodeKey => new DependencyNodeKey("expression", Code);
         public List<DependencyNodeKey> DependentNodes { get; } = new List<DependencyNodeKey>();
         public List<DependencyNodeKey> DependingNodes { get; } = new List<DependencyNodeKey>();
     }

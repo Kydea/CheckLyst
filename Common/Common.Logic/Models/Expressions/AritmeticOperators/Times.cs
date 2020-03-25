@@ -7,9 +7,9 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ArithmeticOperators
 {
     public class Times : BinaryArithmeticOperator
     {
-        public override void Check(ICheckList Prototype, List<string> IteratorStack)
+        public override void Check(ICheckList Prototype, Expression Expression, List<string> IteratorStack)
         {
-            base.Check(Prototype, IteratorStack);
+            base.Check(Prototype, Expression, IteratorStack);
 
             if (Left.DataType != DataType.Number || Right.DataType != DataType.Number)
                 throw new ParseException("Operand of operator * must be numbers", Position);

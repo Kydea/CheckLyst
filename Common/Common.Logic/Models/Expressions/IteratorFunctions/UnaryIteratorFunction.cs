@@ -9,14 +9,14 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
 {
     public abstract class UnaryIteratorFunction : UnaryOperator
     {
-        public override void Check(ICheckList Prototype, List<string> IteratorStack)
+        public override void Check(ICheckList Prototype, Expression Expression, List<string> IteratorStack)
         {
             var Element = ElementProperties.ElementProperty.Check(Prototype, IteratorStack, IteratorCode, Position);
             if (!(Element is ICheckListGroup)) throw new ParseException("The element with code " + IteratorCode + " is not a Group", Position);
             if (!((ICheckListGroup)Element).Iterator) throw new ParseException("The group " + IteratorCode + " is not an Iterator", Position);
 
             IteratorStack.Add(IteratorCode);
-            base.Check(Prototype, IteratorStack);
+            base.Check(Prototype, Expression, IteratorStack);
             IteratorStack.RemoveAt(IteratorStack.Count - 1);
         }
 

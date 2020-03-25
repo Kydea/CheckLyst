@@ -16,9 +16,9 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             }
         }
 
-        public override void Check(ICheckList Prototype, List<string> IteratorStack)
+        public override void Check(ICheckList Prototype, Expression Expression, List<string> IteratorStack)
         {
-            Argument.Check(Prototype, IteratorStack);
+            Argument.Check(Prototype, Expression, IteratorStack);
             DataType = Argument.DataType;
         }
 

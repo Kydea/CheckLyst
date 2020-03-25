@@ -7,9 +7,9 @@ namespace CheckListManager.Common.Logic.Models.Expressions.MathFunctions
 {
     public abstract class BinaryMathFunction : BinaryOperator
     {
-        public override void Check(ICheckList Prototype, List<string> IteratorStack)
+        public override void Check(ICheckList Prototype, Expression Expression, List<string> IteratorStack)
         {
-            base.Check(Prototype, IteratorStack);
+            base.Check(Prototype, Expression, IteratorStack);
 
             if (Left.DataType != DataType.Number || Right.DataType != DataType.Number)
                 throw new ParseException("The arguments of a math functions must be a number", Position);

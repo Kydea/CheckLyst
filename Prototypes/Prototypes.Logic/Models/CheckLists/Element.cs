@@ -101,26 +101,26 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
             var DependencyNodeKey = this.DependencyNodeKey.Clone("signature");
             if (!string.IsNullOrEmpty(SignatureCode))
-                GetSignature(SignatureCode, DependencyNodeKey).DependingNodes.Add(DependencyNodeKey);
+                GetSignature(SignatureCode, DependencyNodeKey).DependentNodes.Add(DependencyNodeKey);
 
             DependencyNodeKey = this.DependencyNodeKey.Clone("countdown");
             if (CountDownCondition == Conditions.Expression)
-                GetExpression(CountDownToCode, DependencyNodeKey, DataType.DateTime, DataType.Date).DependingNodes.Add(DependencyNodeKey);
+                GetExpression(CountDownToCode, DependencyNodeKey, DataType.DateTime, DataType.Date).DependentNodes.Add(DependencyNodeKey);
 
             if (CountDownCondition == Conditions.Signature)
-                GetSignature(CountDownToCode, DependencyNodeKey).DependingNodes.Add(DependencyNodeKey);
+                GetSignature(CountDownToCode, DependencyNodeKey).DependentNodes.Add(DependencyNodeKey);
 
             DependencyNodeKey = this.DependencyNodeKey.Clone("hidden");
             if (HiddenCondition == Conditions.Expression)
-                GetExpression(HiddenExpressionCode, DependencyNodeKey, DataType.Boolean).DependingNodes.Add(DependencyNodeKey);
+                GetExpression(HiddenExpressionCode, DependencyNodeKey, DataType.Boolean).DependentNodes.Add(DependencyNodeKey);
 
             DependencyNodeKey = this.DependencyNodeKey.Clone("read-only");
             if (ReadOnlyCondition == Conditions.Expression || ReadOnlyCondition == Conditions.ExpressionOrDefault || ReadOnlyCondition == Conditions.ExpressionAndDefault)
-                GetExpression(ReadOnlyExpressionCode, DependencyNodeKey, DataType.Boolean).DependingNodes.Add(DependencyNodeKey);
+                GetExpression(ReadOnlyExpressionCode, DependencyNodeKey, DataType.Boolean).DependentNodes.Add(DependencyNodeKey);
 
             DependencyNodeKey = this.DependencyNodeKey.Clone("validity");
             if (ValidCondition == Conditions.Expression || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
-                GetExpression(ValidExpressionCode, DependencyNodeKey, DataType.Boolean).DependingNodes.Add(DependencyNodeKey);
+                GetExpression(ValidExpressionCode, DependencyNodeKey, DataType.Boolean).DependentNodes.Add(DependencyNodeKey);
         }
 
         public static void Copy(Element source, Element destination)
