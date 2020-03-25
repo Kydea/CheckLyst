@@ -16,6 +16,11 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             }
         }
 
+        public override void BuildDependencies(ICheckList CheckList, Expression Expression)
+        {
+            Argument.BuildDependencies(CheckList, Expression);
+        }
+
         public override void Check(ICheckList CheckList, Expression Expression, List<string> IteratorStack)
         {
             Argument.Check(CheckList, Expression, IteratorStack);

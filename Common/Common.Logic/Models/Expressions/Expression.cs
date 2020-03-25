@@ -17,6 +17,11 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         public bool Unique { get; set; }
         public bool Exception { get; set; }
 
+        [JsonIgnore]
+        public string CycleKey { get; set; }
+        [JsonIgnore]
+        public bool Checked { get; set; }
+
         public Expression()
         {
             Symbols = new List<Symbol>();
@@ -35,6 +40,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
         public void Parse(ICheckList checkList)
         {
+            Error = null;
             Root = new Parsing.TokenSet(SerializedValue, 0).Symbol;
             Root.Expression = this;
         }
@@ -57,15 +63,22 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             Value = Root.GetValue(instance, TimeZone);
         }
 
+        public void BuildDependencies(ICheckList checklist)
+        {
+            DependingNodes.Clear();
+            DependentNodes.Clear();
+
+            Root.BuildDependencies(checklist, this);
+        }
+
         public DataType DataType => Root?.DataType ?? DataType.Error;
 
         public DataType? InnerDataType => Root?.InnerDataType;
 
         public void Check(ICheckList checklist)
         {
-            Error = null;
-            DependingNodes.Clear();
-            DependentNodes.Clear();
+            if (Checked) return;
+            Checked = true;
             Root.Check(checklist, this, new List<string>());
             if (Exception && Root.DataType != DataType.Boolean)
                 throw new Exception($"Exception expressions must be boolean");

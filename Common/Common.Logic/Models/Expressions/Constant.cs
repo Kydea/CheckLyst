@@ -16,6 +16,10 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             this.Value = Value;
         }
 
+        public override void BuildDependencies(ICheckList CheckList, Expression Expression)
+        {
+        }
+
         public override void Check(ICheckList CheckList, Expression Expression, List<string> IteratorStack)
         {
             DataType = Value.Type;

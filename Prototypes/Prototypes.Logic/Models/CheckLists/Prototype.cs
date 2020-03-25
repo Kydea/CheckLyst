@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CheckListManager.Common.Logic;
 using CheckListManager.Common.Logic.Models.CheckLists;
@@ -35,6 +36,33 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         public ICheckList CheckList { get { return this; } set { throw new NotImplementedException("Just for inheritance purpose"); } }
 
+        private readonly List<Expression> Cycle = new List<Expression>();
+        private string CycleKey;
+
+        private void FindPath(Expression Expression)
+        {
+            Cycle.Add(Expression);
+            if (Expression.CycleKey == CycleKey)
+                throw new Exception($"Dependency cycle found: {string.Join(" > ", Cycle.Select(e => e.Code) )}" );
+            Expression.CycleKey = CycleKey;
+
+            foreach(var DependingNode in Expression.DependingNodes.Where(d => d.ClassName == "expression"))
+                FindPath(Expressions[DependingNode.ObjectCode]);
+
+            try
+            {
+                Expression.Check(this);
+            }
+            catch (ParseException Exception)
+            {
+                Expression.Error = $"{Exception.Message} (position {Exception.Position})";
+            }
+            catch (Exception Exception)
+            {
+                Expression.Error = Exception.Message;
+            }
+        }
+
         public void Setup()
         {
             Header.CheckList = this;
@@ -46,6 +74,8 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 Page.Setup();
             }
 
+
+            bool Error = false;
             foreach (var Expression in Expressions)
             {
                 try
@@ -62,33 +92,44 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 catch (ParseException Exception)
                 {
                     Expression.Value.Error = $"{Exception.Message} (position {Exception.Position})";
+                    Error = true;
                 }
                 catch (Exception Exception)
                 {
                     Expression.Value.Error = Exception.Message;
+                    Error = true;
                 }
             }
-        }
 
-        public void Check()
-        {
-            foreach (var Expression in Expressions.Values)
-                try
+            if (!Error)
+            {
+                foreach (var Expression in Expressions.Values)
+                    if (Expression.Error == null)
+                        try
+                        {
+                            Expression.BuildDependencies(this);
+                        }
+                        catch (ParseException Exception)
+                        {
+                            Expression.Error = $"{Exception.Message} (position {Exception.Position})";
+                        }
+                        catch (Exception Exception)
+                        {
+                            Expression.Error = Exception.Message;
+                        }
+
+
+                foreach (var Expression in Expressions.Values)
                 {
-                    Expression.Check(this);
-                }
-                catch (ParseException Exception)
-                {
-                    Expression.Error = $"{Exception.Message} (position {Exception.Position})";
-                }
-                catch (Exception Exception)
-                {
-                    Expression.Error = Exception.Message;
+                    Cycle.Clear();
+                    CycleKey = Expression.Code;
+                    FindPath(Expression);
                 }
 
-            ((Group)Header).Check();
-            foreach (Page Page in Pages)
-                Page.Check();
+                ((Group)Header).Check();
+                foreach (Page Page in Pages)
+                    Page.Check();
+            }
         }
 
         public void Traverse(Func<ICheckListItem, bool> condition, Action<ICheckListItem> action)

@@ -106,6 +106,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 expression.Value.Code = expression.Key;
                 expression.Value.Check(this);
             }
+
+            DependenciesCreated = true;
         }
 
         public void Update(string DecimalSeparator, string TimeZone, InstanceCacheObject cacheObject = null)
@@ -126,17 +128,17 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             if (!DependenciesCreated)
                 CreateDependencies();
 
-            //first evaluation
-            foreach (var expression in Expressions)
-                expression.Value.Evaluate(this, TimeZone);
+            ////first evaluation
+            //foreach (var expression in Expressions)
+            //    expression.Value.Evaluate(this, TimeZone);
 
-            Update(DecimalSeparator, TimeZone, InstanceRuntimeValues);
+            //Update(DecimalSeparator, TimeZone, InstanceRuntimeValues);
 
-            //second evaluation, to consider expressions with item properties which depends by expression values, higher level dependencies and cycles are still a problem
-            foreach (var expression in Expressions.Values)
-                expression.Evaluate(this, TimeZone);
+            ////second evaluation, to consider expressions with item properties which depends by expression values, higher level dependencies and cycles are still a problem
+            //foreach (var expression in Expressions.Values)
+            //    expression.Evaluate(this, TimeZone);
 
-            Update(DecimalSeparator, TimeZone, InstanceRuntimeValues);
+            //Update(DecimalSeparator, TimeZone, InstanceRuntimeValues);
         }
         
         private void Update(string DecimalSeparator, string TimeZone, Dictionary<string, object> InstanceRuntimeValues)

@@ -65,7 +65,6 @@ namespace CheckListManager.Prototypes.Logic.Services
 
             var Prototype = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converter);
             Prototype.Setup();
-            Prototype.Check();
 
             return await Task.FromResult(new PrototypeResponse
             {
@@ -101,7 +100,6 @@ namespace CheckListManager.Prototypes.Logic.Services
             var Prototype = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converter);
             MarkImagesAsCloned(Prototype);
             Prototype.Setup();
-            Prototype.Check();
 
             return await Task.FromResult(new PrototypeResponse
             {
@@ -150,7 +148,6 @@ namespace CheckListManager.Prototypes.Logic.Services
             var Prototype = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converter);
             MarkImagesAsCloned(Prototype);
             Prototype.Setup();
-            Prototype.Check();
 
             return await Task.FromResult(new PrototypeResponse
             {
@@ -170,7 +167,6 @@ namespace CheckListManager.Prototypes.Logic.Services
         public VerifyExpressionsResponse VerifyExpressions(PrototypeRequest request)
         {
             request.CheckList.Setup();
-            request.CheckList.Check();
             return new VerifyExpressionsResponse
             {
                 Valid = request.CheckList.Expressions.Values.All(e => e.Error == null),
@@ -207,6 +203,7 @@ namespace CheckListManager.Prototypes.Logic.Services
         public async Task<PrototypeResponse> SaveAsync(DefaultIdentity identity, PrototypeRequest request)
         {
             request.CheckList.Setup();
+
             var invalidExpression = request.CheckList.Expressions.FirstOrDefault(e => e.Value.Error != null);
             if (invalidExpression.Key != null)
                 throw new Exception($"The expression '{invalidExpression.Key}' contains the error: {invalidExpression.Value.Error}");
@@ -276,8 +273,6 @@ namespace CheckListManager.Prototypes.Logic.Services
                 PrototypeVersion.ModifiedOn = Now;
                 PrototypeVersion.ModifiedBy = identity.Code;
             }
-
-            request.CheckList.Check();
 
             //Get the new id
             if (NewPrototype || NewVersion) await _prototypeRepository.SaveChangesAsync();

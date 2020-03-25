@@ -23,6 +23,11 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
 
         public string Code { get; set; }
 
+        public override void BuildDependencies(ICheckList CheckList, Expression Expression)
+        {
+            //add Expression to element DependentNodes
+        }
+
         protected virtual void Check(ICheckListElement Element, List<string> IteratorStack)
         {
             if (Property == ElementProperties.Valid)
