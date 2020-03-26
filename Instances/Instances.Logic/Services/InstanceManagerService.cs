@@ -376,7 +376,7 @@ namespace CheckListManager.Instances.Logic.Services
                     if (Item is ICheckListGroup)
                         AddTags(Tags, InstanceID, (ICheckListGroup)Item);
                     else if (!string.IsNullOrWhiteSpace(Item.Description) && (Item.TypeName == "Field" || Item.TypeName == "Signature") && !Tags.ContainsKey(Item.Description))
-                        Tags[Item.Description] = (new InstanceTags { Instance = InstanceID, Tag = Item.Description, Value = (Item.TypeName == "Field" ? ((Field)Item).RawValue : ((ICheckListSignature)Item).SignedBy) ?? String.Empty });
+                        Tags[Item.Description] = new InstanceTags { Instance = InstanceID, Tag = Item.Description, Value = (Item.TypeName == "Field" ? ((Field)Item).RawValue : ((ICheckListSignature)Item).SignedBy) ?? string.Empty };
         }
 
         private IEnumerable<InstanceTags> CreateTags(InstanceCacheObject cacheObject)
@@ -1138,7 +1138,7 @@ namespace CheckListManager.Instances.Logic.Services
                 var previousIteration = field.Iteration.Group.Iterations[field.Iteration.Index - 2];
                 var ItemIndex = field.Iteration.Items.Contains(field) ? field.Iteration.Items.IndexOf(field) : -1;
                 var previousField = ItemIndex < 0 ? null : (Field)previousIteration.Items[field.Iteration.Items.IndexOf(field)];
-                value = previousField?.Value ?? String.Empty;
+                value = previousField?.Value ?? string.Empty;
             }
 
             if ((value ?? string.Empty) != (field.Value ?? string.Empty) && field.Validate(value))

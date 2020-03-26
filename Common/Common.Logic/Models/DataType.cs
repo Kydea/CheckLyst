@@ -8,24 +8,12 @@ namespace CheckListManager.Common.Logic.Models
 {
 	public struct DataType
 	{
-		private readonly DataTypeEnum _rawValue;
-		private readonly HashSet<Type> _compatibleTypes;
+		public DataTypeEnum RawValue { get; set; }
+        public string TypeName { get; set; }
 
-		[JsonIgnore]
-		public Type SystemType { get; }
-
-        public string TypeName { get; }
-
-		private DataType(DataTypeEnum rawValue, Type systemType, string typeName) : this (rawValue, systemType, typeName, null)
+		private DataType(DataTypeEnum rawValue, string typeName)
 		{
-		}
-
-		private DataType(DataTypeEnum rawValue, Type systemType, string typeName, params Type[] compatibleTypes)
-		{
-			_rawValue = rawValue;
-			SystemType = systemType;
-
-			_compatibleTypes = new HashSet<Type>(compatibleTypes ?? new Type[0]) { systemType };
+			RawValue = rawValue;
 			TypeName = typeName;
         }
 
@@ -41,12 +29,12 @@ namespace CheckListManager.Common.Logic.Models
 
 		public override bool Equals(object obj)
 		{
-			return obj is DataType && ((DataType)obj)._rawValue == _rawValue;
+			return obj is DataType && ((DataType)obj).RawValue == RawValue;
 		}
 
 		public override int GetHashCode()
 		{
-			return _rawValue.GetHashCode();
+			return RawValue.GetHashCode();
 		}
 
 		public bool Validate(string value)
@@ -55,15 +43,15 @@ namespace CheckListManager.Common.Logic.Models
 			{
 				if (string.IsNullOrEmpty(value)) return true;
 
-                if (_rawValue == DataTypeEnum.Boolean)
+                if (RawValue == DataTypeEnum.Boolean)
 	                return "true".Equals(value, StringComparison.InvariantCultureIgnoreCase) || "false".Equals(value, StringComparison.InvariantCultureIgnoreCase);
-				if (_rawValue == DataTypeEnum.Number)
+				if (RawValue == DataTypeEnum.Number)
 					return decimal.TryParse(value.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out _);
-                if (_rawValue == DataTypeEnum.Date)
+                if (RawValue == DataTypeEnum.Date)
                     return DateTimeOffset.TryParseExact(value, new[] { "yyyy-MM-dd" }, null, DateTimeStyles.AssumeUniversal, out _);
-                if (_rawValue == DataTypeEnum.DateTime)
+                if (RawValue == DataTypeEnum.DateTime)
 					return DateTimeOffset.TryParseExact(value, new[] { "yyyy-MM-dd HH:mm" }, null, DateTimeStyles.AssumeUniversal, out _);
-				if (_rawValue == DataTypeEnum.Time)
+				if (RawValue == DataTypeEnum.Time)
 					return TimeSpan.TryParseExact(value, "hh\\:mm", null, out _);
 
 				return true;
@@ -74,34 +62,14 @@ namespace CheckListManager.Common.Logic.Models
 			}
 		}
 
-		public static DataType Text = new DataType(DataTypeEnum.Text, typeof(string), "Text");
-		public static DataType Boolean = new DataType(DataTypeEnum.Boolean, typeof(bool), "Boolean");
-		public static DataType Number = new DataType(DataTypeEnum.Number, typeof(decimal), "Number", typeof(int), typeof(double), typeof(float));
-		public static DataType DateTime = new DataType(DataTypeEnum.DateTime, typeof(DateTimeOffset), "DateTime");
-		public static DataType Date = new DataType(DataTypeEnum.Date, typeof(DateTimeOffset), "Date");
-		public static DataType Time = new DataType(DataTypeEnum.Time, typeof(TimeSpan), "Time");
-        public static DataType Array = new DataType(DataTypeEnum.Array, typeof(IEnumerable<TypedValue>), "Array");
-        public static DataType Error = new DataType(DataTypeEnum.Error, typeof(string), "Error");
-
-		public static DataType FromType(Type type)
-		{
-			if (Text._compatibleTypes.Contains(type))
-				return Text;
-			if (Boolean._compatibleTypes.Contains(type))
-				return Boolean;
-			if (Number._compatibleTypes.Contains(type))
-				return Number;
-			if (DateTime._compatibleTypes.Contains(type))
-				return DateTime;
-			if (Date._compatibleTypes.Contains(type))
-				return DateTime;
-            if (Array._compatibleTypes.Contains(type))
-                return Array;
-            if (Time._compatibleTypes.Contains(type))
-				return Time;
-
-			throw new Exception("Type " + type.FullName + " not handled.");
-		}
+		public static DataType Text = new DataType(DataTypeEnum.Text, "Text");
+		public static DataType Boolean = new DataType(DataTypeEnum.Boolean, "Boolean");
+		public static DataType Number = new DataType(DataTypeEnum.Number, "Number");
+		public static DataType DateTime = new DataType(DataTypeEnum.DateTime, "DateTime");
+		public static DataType Date = new DataType(DataTypeEnum.Date, "Date");
+		public static DataType Time = new DataType(DataTypeEnum.Time, "Time");
+        public static DataType Array = new DataType(DataTypeEnum.Array, "Array");
+        public static DataType Error = new DataType(DataTypeEnum.Error, "Error");
 
         public static DataType FromName(string name)
         {
@@ -116,7 +84,7 @@ namespace CheckListManager.Common.Logic.Models
                 Text;
         }
 
-        private enum DataTypeEnum
+        public enum DataTypeEnum
 		{
 			Text, Boolean, Number, DateTime, Date, Time, Array, Error
 		}

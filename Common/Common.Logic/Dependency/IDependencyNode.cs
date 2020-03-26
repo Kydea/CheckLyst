@@ -12,7 +12,6 @@ namespace CheckListManager.Common.Logic.Dependency
     {
         List<DependencyNodeKey> DependentNodes { get; }
         List<DependencyNodeKey> DependingNodes { get; }
-
         DependencyNodeKey DependencyNodeKey { get; }
         void TraverseDependencyChain(ICheckList checkList, List<IDependencyNode> DependencyChain, string DependencyChainKey);
     }

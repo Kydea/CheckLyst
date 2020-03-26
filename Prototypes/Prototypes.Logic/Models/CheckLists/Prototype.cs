@@ -87,7 +87,6 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                     if (Expression.Error == null && !Expression.BuildDependencies(this))
                         Error = true;
 
-
                 if (Error) return;
 
                 ((Group)Header).BuildDependencies();

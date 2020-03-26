@@ -7,6 +7,7 @@ using System.Linq;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic;
 using CheckListManager.Common.Logic.Models;
+using CheckListManager.Instances.Logic.Exceptions;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
@@ -88,22 +89,23 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             foreach (var expression in Expressions.Values)
                 expression.Parse(this);
 
-            var InstanceElements = CheckList.Elements.Values.Where(Element => !(Element is ICheckListItem) || !((ICheckListItem)Element).IterationItem && !((ICheckListItem)Element).IteratorModelItem);
-
             if (ElementsList == null) //if (InCreation) //replaced with this more generic but less meaningful form for back compatibility with 1.4 when ElementList did not exist
                 ElementsList = Elements.Values.Where(Element => !(Element is ICheckListItem CheckListItem) || !CheckListItem.IterationItem && !CheckListItem.IteratorModelItem).ToList(); //pages and items outside iterators
 
+            if (!DependenciesCreated)
+                CreateDependencies();
             InCreation = false;
         }
 
         public void CreateDependencies()
         {
-            //for back compatibility with 2.0.0 when dependency was not present
-            foreach (var expression in Expressions)
-            {
-                expression.Value.Code = expression.Key;
-                expression.Value.Check(this);
-            }
+            foreach (var Expression in Expressions.Values)
+                if (!Expression.BuildDependencies(this))
+                    throw new InstanceException(Expression.Error);
+
+            ((Group)Header).BuildDependencies();
+            foreach (Page Page in Pages)
+                Page.BuildDependencies();
 
             DependenciesCreated = true;
         }
@@ -123,20 +125,17 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 { "InstanceNumber", cacheObject.Number },
             };
 
-            if (!DependenciesCreated)
-                CreateDependencies();
+            //first evaluation
+            foreach (var expression in Expressions)
+                expression.Value.Evaluate(this, TimeZone);
 
-            ////first evaluation
-            //foreach (var expression in Expressions)
-            //    expression.Value.Evaluate(this, TimeZone);
+            Update(DecimalSeparator, TimeZone, InstanceRuntimeValues);
 
-            //Update(DecimalSeparator, TimeZone, InstanceRuntimeValues);
+            //second evaluation, to consider expressions with item properties which depends by expression values, higher level dependencies and cycles are still a problem
+            foreach (var expression in Expressions.Values)
+                expression.Evaluate(this, TimeZone);
 
-            ////second evaluation, to consider expressions with item properties which depends by expression values, higher level dependencies and cycles are still a problem
-            //foreach (var expression in Expressions.Values)
-            //    expression.Evaluate(this, TimeZone);
-
-            //Update(DecimalSeparator, TimeZone, InstanceRuntimeValues);
+            Update(DecimalSeparator, TimeZone, InstanceRuntimeValues);
         }
         
         private void Update(string DecimalSeparator, string TimeZone, Dictionary<string, object> InstanceRuntimeValues)

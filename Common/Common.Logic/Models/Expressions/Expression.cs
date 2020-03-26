@@ -42,7 +42,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             DependentNodes.Clear();
             Root = new TokenSet(SerializedValue, 0).Symbol;
             Root.Expression = this;
-
+            Value = Value ?? new TypedValue(DataType.Error, null);
         }
 
         [JsonIgnore]
@@ -51,8 +51,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         [JsonIgnore]
         public List<Symbol> Symbols { get; }
 
-        [JsonIgnore]
-        public TypedValue Value { get; private set; }
+        public TypedValue Value { get; set; }
 
         public string TypeName => Value?.Type.TypeName;
 

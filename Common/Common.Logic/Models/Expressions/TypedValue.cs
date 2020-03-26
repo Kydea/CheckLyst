@@ -8,7 +8,10 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 {
     public class TypedValue
     {
-        public TypedValue(Type RawType, object Value) : this(DataType.FromType(RawType), Value.ToString()) { }
+        private TypedValue()
+        {
+
+        }
 
         public TypedValue(DataType Type, string SerializedValue, string TimeZone)
         {
@@ -75,12 +78,9 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
         public DataType Type { get; set; }
 
-        public string SerializedValue { get; private set; }
+        public string SerializedValue { get; set; }
 
-        public object Value
-        {
-            get; private set;
-        }
+        public object Value { get; set; }
 
         [JsonIgnore]
         public bool IsNull { get { return Value == null; } }

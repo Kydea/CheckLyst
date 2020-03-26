@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.Expressions;
 using Newtonsoft.Json;
@@ -16,7 +17,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             set => DescriptionFormula = string.IsNullOrEmpty(value) ? null : new Formula(value);
         }
         public string DescriptionValue { get => DescriptionFormula?.Value; }
-
         public ICheckListGroup Group { get; set; }
         public int Id { get; set; }
         public ICheckListIteration Iteration { get; set; }
@@ -72,8 +72,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public abstract ICheckListItem Clone(ICheckListGroup parent);
 
-        
-
         protected static void Copy(Item source, Item destination)
         {
             Element.Copy(source, destination);
@@ -86,5 +84,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             destination.Color = source.Color;
             destination.FontSize = source.FontSize;
         }
+
+        public override DependencyNodeKey DependencyNodeKey => base.DependencyNodeKey ?? new DependencyNodeKey("item", Id);
     }
 }

@@ -4,6 +4,7 @@ using CheckListManager.Common.Logic.Models.CheckLists;
 using System;
 using CheckListManager.Instances.Logic.Exceptions;
 using System.Threading.Tasks;
+using CheckListManager.Common.Logic.Dependency;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
@@ -219,6 +220,21 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public Task TraverseAsync(Func<ICheckListItem, bool> condition, Func<ICheckListItem, Task> action)
         {
             throw new NotImplementedException();
+        }
+
+        public override void BuildDependencies()
+        {
+            base.BuildDependencies();
+            foreach (Item Item in Items)
+                Item.BuildDependencies();
+        }
+
+        protected override IEnumerable<DependencyNodeKey> GetDependingNodes()
+        {
+            foreach (var DependencyNodeKey in base.GetDependingNodes())
+                yield return DependencyNodeKey;
+            foreach (Item Item in Items)
+                yield return Item.DependencyNodeKey;
         }
     }
 }

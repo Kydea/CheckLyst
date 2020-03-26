@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.CheckLists;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
@@ -67,6 +68,22 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public Task TraverseAsync(Func<ICheckListItem, bool> condition, Func<ICheckListItem, Task> action)
         {
             throw new NotImplementedException();
+        }
+
+        public override void BuildDependencies()
+        {
+            base.BuildDependencies();
+            foreach (Group Group in Groups)
+                Group.BuildDependencies();
+        }
+
+        public override DependencyNodeKey DependencyNodeKey => base.DependencyNodeKey ?? new DependencyNodeKey("page", Description);
+        protected override IEnumerable<DependencyNodeKey> GetDependingNodes()
+        {
+            foreach (var DependencyNodeKey in base.GetDependingNodes())
+                yield return DependencyNodeKey;
+            foreach (Group Group in Groups)
+                yield return Group.DependencyNodeKey;
         }
     }
 }

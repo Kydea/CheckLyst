@@ -118,20 +118,14 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         {
             base.BuildDependencies();
             foreach (Item Item in Items)
-            {
-                Item.CheckList = CheckList;
                 Item.BuildDependencies();
-            }
         }
 
         public override void Check()
         {
             base.Check();
             foreach (Item Item in Items)
-            {
-                Item.CheckList = CheckList;
                 Item.Check();
-            }
         }
 
         public void CreateInstanceIterations() { throw new NotImplementedException(); }

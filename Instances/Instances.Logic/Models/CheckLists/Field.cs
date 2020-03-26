@@ -19,16 +19,14 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public int LinesCount { get; set; }
         public string Value { get; set; }
 
-        public string RawValue => Value ?? (ConversionError ? null : ValueFormula?.Value);
-
         [JsonIgnore]
         public Formula ValueFormula { get; private set; }
-
         public string ValueFormulaString
         {
             get => ValueFormula?.RawValue;
             set => ValueFormula = string.IsNullOrEmpty(value) ? null : new Formula(value);
         }
+        public string RawValue => Value ?? (ConversionError ? null : ValueFormula?.Value);
 
         private List<string> _ValuesList;
         public List<string> ValuesList { get { return _ValuesList; } set { _ValuesList = value == null || !value.Any() ? null : value; } }

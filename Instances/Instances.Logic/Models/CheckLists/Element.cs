@@ -3,6 +3,8 @@ using CheckListManager.Common.Logic.Models.CheckLists;
 using System;
 using CheckListManager.Instances.Logic.Exceptions;
 using Newtonsoft.Json;
+using CheckListManager.Common.Logic.Dependency;
+using CheckListManager.Common.Logic.Models.Expressions;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
@@ -138,5 +140,80 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 			destination.ValidityMessage = source.ValidityMessage;
 			destination.SignatureCode = source.SignatureCode;
 		}
-	}
+
+        #region dependency
+
+        private Expression GetExpression(string ExpressionCode, DependencyNodeKey DependencyNodeKey)
+        {
+            if (ExpressionCode == null) return null;
+            if (string.IsNullOrEmpty(ExpressionCode))
+                throw new Exception($"The {DependencyNodeKey} reference is missing");
+            if (!CheckList.Expressions.ContainsKey(ExpressionCode))
+                throw new Exception($"The {DependencyNodeKey} references to the inexistent expression {ExpressionCode}");
+
+            var Expression = CheckList.Expressions[ExpressionCode];
+            DependingNodes.Add(Expression.DependencyNodeKey);
+            return Expression;
+        }
+
+        private Signature GetSignature(string SignatureCode, DependencyNodeKey DependencyNodeKey)
+        {
+            var BranchElements = GetBranchElements();
+            if (string.IsNullOrEmpty(SignatureCode))
+                throw new Exception($"The {DependencyNodeKey} reference is missing");
+            if (!BranchElements.ContainsKey(SignatureCode))
+                throw new Exception($"The {DependencyNodeKey} references to the inexistent signature {SignatureCode}");
+            if (!(BranchElements[SignatureCode] is Signature Signature))
+                throw new Exception($"The {DependencyNodeKey} references to a signature with code {SignatureCode} but it is not a signature");
+            return Signature;
+        }
+
+        public virtual void BuildDependencies()
+        {
+            var BranchElements = GetBranchElements();
+
+            var DependencyNodeKey = this.DependencyNodeKey.Clone("signature");
+            if (!string.IsNullOrEmpty(SignatureCode))
+                GetSignature(SignatureCode, DependencyNodeKey).DependentNodes.Add(DependencyNodeKey);
+
+            DependencyNodeKey = this.DependencyNodeKey.Clone("countdown");
+            if (CountDownCondition == Conditions.Expression)
+                GetExpression(CountDownToCode, DependencyNodeKey).DependentNodes.Add(DependencyNodeKey);
+
+            if (CountDownCondition == Conditions.Signature)
+                GetSignature(CountDownToCode, DependencyNodeKey).DependentNodes.Add(DependencyNodeKey);
+
+            DependencyNodeKey = this.DependencyNodeKey.Clone("hidden");
+            if (HiddenCondition == Conditions.Expression)
+                GetExpression(HiddenExpressionCode, DependencyNodeKey).DependentNodes.Add(DependencyNodeKey);
+
+            DependencyNodeKey = this.DependencyNodeKey.Clone("read-only");
+            if (ReadOnlyCondition == Conditions.Expression || ReadOnlyCondition == Conditions.ExpressionOrDefault || ReadOnlyCondition == Conditions.ExpressionAndDefault)
+                GetExpression(ReadOnlyExpressionCode, DependencyNodeKey).DependentNodes.Add(DependencyNodeKey);
+
+            DependencyNodeKey = this.DependencyNodeKey.Clone("validity");
+            if (ValidCondition == Conditions.Expression || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
+                GetExpression(ValidExpressionCode, DependencyNodeKey).DependentNodes.Add(DependencyNodeKey);
+        }
+
+        public virtual DependencyNodeKey DependencyNodeKey => string.IsNullOrEmpty(Code) ? null : new DependencyNodeKey("element", Code);
+        public List<DependencyNodeKey> DependentNodes { get; } = new List<DependencyNodeKey>();
+        public List<DependencyNodeKey> DependingNodes { get; } = new List<DependencyNodeKey>();
+        protected virtual IEnumerable<DependencyNodeKey> GetDependingNodes() => DependingNodes;
+
+        private string DependencyChainKey { get; set; }
+        public void TraverseDependencyChain(ICheckList checkList, List<IDependencyNode> DependencyChain, string DependencyChainKey)
+        {
+            if (this.DependencyChainKey == DependencyChainKey) return; //cycle break, for back compatibility
+            DependencyChain.Add(this);
+            this.DependencyChainKey = DependencyChainKey;
+
+            var DependingNodes = GetDependingNodes();
+            if (DependingNodes != null)
+                foreach (var DependingNodeKey in DependingNodes)
+                    DependingNodeKey.GetNode(checkList).TraverseDependencyChain(checkList, DependencyChain, DependencyChainKey);
+        }
+
+        #endregion
+    }
 }
