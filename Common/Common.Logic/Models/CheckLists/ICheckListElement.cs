@@ -1,10 +1,11 @@
-﻿using CheckListManager.Common.Logic.Models.Expressions;
+﻿using CheckListManager.Common.Logic.Dependency;
+using CheckListManager.Common.Logic.Models.Expressions;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace CheckListManager.Common.Logic.Models.CheckLists
 {
-    public interface ICheckListElement : ICheckListNode
+    public interface ICheckListElement : ICheckListNode, IDependencyNode
     {
         string Code { get; set; }
         Conditions CountDownCondition { get; set; }

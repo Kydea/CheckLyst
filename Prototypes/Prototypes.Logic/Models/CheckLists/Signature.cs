@@ -39,7 +39,5 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             Copy(this, signature);
             return signature;
         }
-
-        public List<DependencyNodeKey> DependentNodes { get; } = new List<DependencyNodeKey>();
     }
 }

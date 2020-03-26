@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.CheckLists;
 
 namespace CheckListManager.Prototypes.Logic.Models.CheckLists
@@ -113,6 +114,16 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             return group;
         }
 
+        public override void BuildDependencies()
+        {
+            base.BuildDependencies();
+            foreach (Item Item in Items)
+            {
+                Item.CheckList = CheckList;
+                Item.BuildDependencies();
+            }
+        }
+
         public override void Check()
         {
             base.Check();
@@ -124,5 +135,14 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         }
 
         public void CreateInstanceIterations() { throw new NotImplementedException(); }
+
+        protected override IEnumerable<DependencyNodeKey> GetDependingNodes()
+        {
+            foreach (var DependencyNodeKey in base.GetDependingNodes())
+                yield return DependencyNodeKey;
+            foreach (Item Item in Items)
+                yield return Item.DependencyNodeKey;
+        }
+
     }
 }

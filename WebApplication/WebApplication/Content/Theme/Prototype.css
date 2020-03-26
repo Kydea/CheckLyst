@@ -42,7 +42,7 @@ div.Prototype div.TabLabels {
   margin-top: 20px; }
   div.Prototype div.TabLabels div.Commands {
     margin: 0; }
-    div.Prototype div.TabLabels div.Commands a.Add, div.Prototype div.TabLabels div.Commands a.Dependencies {
+    div.Prototype div.TabLabels div.Commands a.Add {
       display: none; }
   div.Prototype div.TabLabels > a.Selected {
     cursor: pointer !important; }
@@ -67,8 +67,6 @@ div.Prototype div.Group {
   cursor: pointer; }
   div.Prototype div.Group > div.Commands {
     margin: 10px !important; }
-    div.Prototype div.Group > div.Commands a.Dependencies {
-      display: none; }
   div.Prototype div.Group.Current {
     background-color: #fce6e8; }
 
@@ -83,8 +81,6 @@ div.Prototype div.Item {
     cursor: pointer; }
     div.Prototype div.Item.Signature a.Button:not(.MiniIcon):hover i {
       color: #009688; }
-  div.Prototype div.Item.Signature div.Commands a.Dependencies {
-    display: inline-block !important; }
   div.Prototype div.Item.Text p {
     position: relative; }
   div.Prototype div.Item.Link a {
@@ -103,8 +99,6 @@ div.Prototype div.Item {
       display: none; }
     div.Prototype div.Item > div.Commands a.Paste {
       display: none !important; }
-    div.Prototype div.Item > div.Commands a.Dependencies {
-      display: none; }
 
 div.Prototype div.Element:first-of-type > div.Commands a.Up {
   display: none; }

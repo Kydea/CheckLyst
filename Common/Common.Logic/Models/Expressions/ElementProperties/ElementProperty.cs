@@ -23,9 +23,14 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
 
         public string Code { get; set; }
 
+        protected virtual string DependencyNodeKeyProperty => "Valid";
+
         public override void BuildDependencies(ICheckList CheckList, Expression Expression)
         {
-            //add Expression to element DependentNodes
+            if (!CheckList.Elements.ContainsKey(Code)) throw new ParseException($"Element with code {Code} not found", Position);
+            var DependingElement = CheckList.Elements[Code];
+            Expression.DependingNodes.Add(DependingElement.DependencyNodeKey.Clone(DependencyNodeKeyProperty));
+            DependingElement.DependentNodes.Add(Expression.DependencyNodeKey);
         }
 
         protected virtual void Check(ICheckListElement Element, List<string> IteratorStack)
@@ -34,12 +39,9 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
                 DataType = DataType.Boolean;
         }
 
-        public static ICheckListElement Check(ICheckList Prototype, List<string> IteratorStack, string Code, int Position)
+        public static ICheckListElement Check(ICheckList CheckList, List<string> IteratorStack, string Code, int Position)
         {
-            if (!Prototype.Elements.ContainsKey(Code))
-                throw new ParseException($"Element with code {Code} not found", Position);
-
-            var Element = Prototype.Elements[Code];
+            var Element = CheckList.Elements[Code];
             if (Element is ICheckListItem Item)
             {
                 int Index = -1;
@@ -66,7 +68,6 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
             }
 
             return Element;
-
         }
 
         public override void Check(ICheckList CheckList, Expression Expression, List<string> IteratorStack)

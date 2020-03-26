@@ -8,12 +8,18 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
     {
         public enum SignatureProperties { Signed, SignedBy, SignedOn }
 
-        private SignatureProperties Property;
+        private readonly SignatureProperties Property;
 
         public SignatureProperty(SignatureProperties Property)
         {
             this.Property = Property;
         }
+
+        protected override string DependencyNodeKeyProperty => 
+            Property == SignatureProperties.Signed ? "signed" :
+            Property == SignatureProperties.SignedBy ? "signed by" :
+            Property == SignatureProperties.SignedOn ? "signed on" :
+            null;
 
         protected override void Check(ICheckListElement Element, List<string> IteratorStack)
         {

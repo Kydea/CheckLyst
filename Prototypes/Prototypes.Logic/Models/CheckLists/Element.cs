@@ -9,22 +9,22 @@ using Newtonsoft.Json;
 
 namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 {
-	public abstract class Element : ICheckListElement
-	{
-		public ICheckList CheckList { get; set; }
-		public string Code { get; set; }
+    public abstract class Element : ICheckListElement
+    {
+        public ICheckList CheckList { get; set; }
+        public string Code { get; set; }
         public Conditions CountDownCondition { get; set; }
         public string CountDownToCode { get; set; }
         public int CountDownOffset { get; set; }
         public Conditions HiddenCondition { get; set; }
-		public string HiddenExpressionCode { get; set; }
-		public Conditions ReadOnlyCondition { get; set; }
-		public string ReadOnlyExpressionCode { get; set; }
-		public string SignatureCode { get; set; }
-		public bool ReadOnly { get; set; }
-		public Conditions ValidCondition { get; set; }
-		public string ValidExpressionCode { get; set; }
-		public string ValidityMessage { get; set; }
+        public string HiddenExpressionCode { get; set; }
+        public Conditions ReadOnlyCondition { get; set; }
+        public string ReadOnlyExpressionCode { get; set; }
+        public string SignatureCode { get; set; }
+        public bool ReadOnly { get; set; }
+        public Conditions ValidCondition { get; set; }
+        public string ValidExpressionCode { get; set; }
+        public string ValidityMessage { get; set; }
 
         [JsonIgnore]
         public bool Hidden => false;
@@ -33,57 +33,57 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         [JsonIgnore]
         public bool Valid => true;
 
-        protected virtual DependencyNodeKey DependencyNodeKey => Code == null ? null : new DependencyNodeKey("element", Code);
-
         public virtual void Setup()
-		{
+        {
             if (!string.IsNullOrEmpty(Code))
             {
                 if (CheckList.Elements.ContainsKey(Code))
                     throw new Exception($"Duplicated code {Code}");
                 CheckList.Elements[Code] = this;
             }
+            DependingNodes.Clear();
+            DependentNodes.Clear();
         }
 
         public void Update(string DecimalSeparator, string TimeZone)
-		{
-			throw new NotImplementedException();
-		}
+        {
+            throw new NotImplementedException();
+        }
 
-		public void UpdateReadOnly(string userCode, bool canEdit)
-		{
-			throw new NotImplementedException();
-		}
+        public void UpdateReadOnly(string userCode, bool canEdit)
+        {
+            throw new NotImplementedException();
+        }
 
-		public virtual bool IsValidByDefault()
-		{
-			return true;
-		}
+        public virtual bool IsValidByDefault()
+        {
+            return true;
+        }
 
-		protected virtual Dictionary<string, ICheckListElement> GetBranchElements()
-		{
-			return CheckList.Elements;
-		}
+        protected virtual Dictionary<string, ICheckListElement> GetBranchElements()
+        {
+            return CheckList.Elements;
+        }
 
         public string GetSignatureInformation()
         {
             throw new NotImplementedException();
         }
 
-        protected Expression GetExpression(string ExpressionCode, DependencyNodeKey DependencyNodeKey, params DataType[] DataType)
+        private Expression GetExpression(string ExpressionCode, DependencyNodeKey DependencyNodeKey)
         {
             if (ExpressionCode == null) return null;
             if (string.IsNullOrEmpty(ExpressionCode))
                 throw new Exception($"The {DependencyNodeKey} reference is missing");
             if (!CheckList.Expressions.ContainsKey(ExpressionCode))
                 throw new Exception($"The {DependencyNodeKey} references to the inexistent expression {ExpressionCode}");
+
             var Expression = CheckList.Expressions[ExpressionCode];
-            if (!DataType.Any(dt => dt == (Expression.InnerDataType ?? Expression.DataType)))
-                throw new Exception($"The {DependencyNodeKey} references to the expression {ExpressionCode} which value is not {string.Join(" or ", DataType.Select(dt => dt.TypeName))}");
+            DependingNodes.Add(Expression.DependencyNodeKey);
             return Expression;
         }
 
-        protected Signature GetSignature(string SignatureCode, DependencyNodeKey DependencyNodeKey)
+        private Signature GetSignature(string SignatureCode, DependencyNodeKey DependencyNodeKey)
         {
             var BranchElements = GetBranchElements();
             if (string.IsNullOrEmpty(SignatureCode))
@@ -95,7 +95,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             return Signature;
         }
 
-        public virtual void Check()
+        public virtual void BuildDependencies()
         {
             var BranchElements = GetBranchElements();
 
@@ -105,23 +105,67 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
             DependencyNodeKey = this.DependencyNodeKey.Clone("countdown");
             if (CountDownCondition == Conditions.Expression)
-                GetExpression(CountDownToCode, DependencyNodeKey, DataType.DateTime, DataType.Date).DependentNodes.Add(DependencyNodeKey);
+                GetExpression(CountDownToCode, DependencyNodeKey).DependentNodes.Add(DependencyNodeKey);
 
             if (CountDownCondition == Conditions.Signature)
                 GetSignature(CountDownToCode, DependencyNodeKey).DependentNodes.Add(DependencyNodeKey);
 
             DependencyNodeKey = this.DependencyNodeKey.Clone("hidden");
             if (HiddenCondition == Conditions.Expression)
-                GetExpression(HiddenExpressionCode, DependencyNodeKey, DataType.Boolean).DependentNodes.Add(DependencyNodeKey);
+                GetExpression(HiddenExpressionCode, DependencyNodeKey).DependentNodes.Add(DependencyNodeKey);
 
             DependencyNodeKey = this.DependencyNodeKey.Clone("read-only");
             if (ReadOnlyCondition == Conditions.Expression || ReadOnlyCondition == Conditions.ExpressionOrDefault || ReadOnlyCondition == Conditions.ExpressionAndDefault)
-                GetExpression(ReadOnlyExpressionCode, DependencyNodeKey, DataType.Boolean).DependentNodes.Add(DependencyNodeKey);
+                GetExpression(ReadOnlyExpressionCode, DependencyNodeKey).DependentNodes.Add(DependencyNodeKey);
 
             DependencyNodeKey = this.DependencyNodeKey.Clone("validity");
             if (ValidCondition == Conditions.Expression || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
-                GetExpression(ValidExpressionCode, DependencyNodeKey, DataType.Boolean).DependentNodes.Add(DependencyNodeKey);
+                GetExpression(ValidExpressionCode, DependencyNodeKey).DependentNodes.Add(DependencyNodeKey);
         }
+
+        private void CheckExpression(string ExpressionCode, params DataType[] DataType)
+        {
+            var Expression = CheckList.Expressions[ExpressionCode];
+            if (!DataType.Any(dt => dt == (Expression.InnerDataType ?? Expression.DataType)))
+                throw new Exception($"The {DependencyNodeKey} references to the expression {ExpressionCode} which value is not {string.Join(" or ", DataType.Select(dt => dt.TypeName))}");
+        }
+
+        private string DependencyChainKey { get; set; }
+        public void TraverseDependencyChain(ICheckList checkList, List<IDependencyNode> DependencyChain, string DependencyChainKey)
+        {
+            DependencyChain.Add(this);
+            if (this.DependencyChainKey == DependencyChainKey)
+                throw new Exception($"Dependency cycle found: {string.Join(" > ", DependencyChain.Select(e => e.DependencyNodeKey.Description))}");
+            this.DependencyChainKey = DependencyChainKey;
+
+            var DependingNodes = GetDependingNodes();
+            if (DependingNodes != null)
+                foreach (var DependingNodeKey in DependingNodes)
+                    DependingNodeKey.GetNode(checkList).TraverseDependencyChain(checkList, DependencyChain, DependencyChainKey);
+
+            Check();
+        }
+
+        private bool Checked { get; set; }
+        public virtual void Check()
+        {
+            if (Checked) return;
+            Checked = true;
+
+            if (CountDownCondition == Conditions.Expression)
+                CheckExpression(CountDownToCode, DataType.DateTime, DataType.Date);
+            if (HiddenCondition == Conditions.Expression)
+                CheckExpression(HiddenExpressionCode, DataType.Boolean);
+            if (ReadOnlyCondition == Conditions.Expression || ReadOnlyCondition == Conditions.ExpressionOrDefault || ReadOnlyCondition == Conditions.ExpressionAndDefault)
+                CheckExpression(ReadOnlyExpressionCode, DataType.Boolean);
+            if (ValidCondition == Conditions.Expression || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
+                CheckExpression(ValidExpressionCode, DataType.Boolean);
+        }
+
+        public virtual DependencyNodeKey DependencyNodeKey => string.IsNullOrEmpty(Code) ? null : new DependencyNodeKey("element", Code);
+        public List<DependencyNodeKey> DependentNodes { get; } = new List<DependencyNodeKey>();
+        public List<DependencyNodeKey> DependingNodes { get; } = new List<DependencyNodeKey>();
+        protected virtual IEnumerable<DependencyNodeKey> GetDependingNodes() => DependingNodes;
 
         public static void Copy(Element source, Element destination)
         {

@@ -27,6 +27,12 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         public abstract ICheckListItem Clone(ICheckListGroup parent);
 
+        public override void Setup()
+        {
+            base.Setup();
+            CheckList.AddItem(this);
+        }
+
         protected static void Copy(Item source, Item destination)
         {
             Element.Copy(source, destination);
@@ -45,6 +51,6 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 			throw new NotImplementedException();
 		}
 
-        protected override DependencyNodeKey DependencyNodeKey => base.DependencyNodeKey ?? new DependencyNodeKey("item", Id);
+        public override DependencyNodeKey DependencyNodeKey => base.DependencyNodeKey ?? new DependencyNodeKey("item", Id);
     }
 }

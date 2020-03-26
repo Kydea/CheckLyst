@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CheckListManager.Common.Logic.Models.CheckLists;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,7 +19,7 @@ namespace CheckListManager.Common.Logic.Dependency
             this.PropertyName = PropertyName;
         }
 
-        public DependencyNodeKey(string ClassName, long ObjectID, string PropertyName = null)
+        public DependencyNodeKey(string ClassName, int ObjectID, string PropertyName = null)
         {
             this.ClassName = ClassName;
             this.ObjectID = ObjectID;
@@ -28,7 +29,7 @@ namespace CheckListManager.Common.Logic.Dependency
         public string ClassName { get; set; }
         public string PropertyName { get; set; }
         public string ObjectCode { get; set; }
-        public long? ObjectID { get; set; }
+        public int? ObjectID { get; set; }
 
         public string Description => ToString();
 
@@ -48,6 +49,22 @@ namespace CheckListManager.Common.Logic.Dependency
 
         public override string ToString()
             => $"{(PropertyName == null ? string.Empty : $"property {PropertyName} of the ")}{ClassName} {ObjectCode ?? ObjectID?.ToString()}";
+
+        public IDependencyNode GetNode(ICheckList checkList)
+        {
+            switch (ClassName)
+            {
+                case "expression":
+                    return checkList.Expressions[ObjectCode];
+                case "element":
+                    return checkList.Elements[ObjectCode];
+                case "item":
+                    return ObjectID.HasValue ? checkList.Items[ObjectID.Value] : checkList.Elements[ObjectCode];
+                default:
+                    throw new Exception($"Invalid class name {ClassName}");
+            }
+
+        }
     }
 }
 

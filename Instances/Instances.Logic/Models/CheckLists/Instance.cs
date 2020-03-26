@@ -52,21 +52,19 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             get => this;
             set => throw new NotImplementedException("Just for inheritance purpose");
         }
-        
+
+        private int itemSequence;
         public void AddItem(ICheckListItem item)
         {
             if (item.Id == 0 || InCreation)
-                item.Id = ++_sequence;
+                item.Id = ++itemSequence;
             else
-                _sequence = Math.Max(_sequence, item.Id);
+                itemSequence = Math.Max(itemSequence, item.Id);
 
             Items.Add(item.Id, item);
         }
 
-        private int _sequence;
-
-        [JsonIgnore]
-        public Dictionary<int, ICheckListItem> Items { get; } = new Dictionary<int, ICheckListItem>(10);
+        public Dictionary<int, ICheckListItem> Items { get; } = new Dictionary<int, ICheckListItem>();
 
         public void Setup(bool Creation)
         {

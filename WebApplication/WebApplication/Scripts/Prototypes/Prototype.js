@@ -474,6 +474,11 @@
                 else {
                     model = result.checkList;
 
+                    if (model.exception) {
+                        console.log(model.exception);
+                        matematici.dialog.error("Error", model.exception && model.exception.Message || "unexpected error");
+                    }
+
                     prototypeKey = {
                         id: result.id,
                         version: result.version

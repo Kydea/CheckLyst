@@ -167,10 +167,13 @@ namespace CheckListManager.Prototypes.Logic.Services
         public VerifyExpressionsResponse VerifyExpressions(PrototypeRequest request)
         {
             request.CheckList.Setup();
+            if (request.CheckList.Exception != null)
+                throw request.CheckList.Exception;
+
             return new VerifyExpressionsResponse
             {
-                Valid = request.CheckList.Expressions.Values.All(e => e.Error == null),
-                Expressions = request.CheckList.Expressions
+                Valid = request.CheckList.Exception == null && request.CheckList.Expressions.Values.All(e => e.Error == null),
+                Expressions = request.CheckList.Expressions,
             };
         }
 
@@ -203,6 +206,8 @@ namespace CheckListManager.Prototypes.Logic.Services
         public async Task<PrototypeResponse> SaveAsync(DefaultIdentity identity, PrototypeRequest request)
         {
             request.CheckList.Setup();
+            if (request.CheckList.Exception != null)
+                throw request.CheckList.Exception;
 
             var invalidExpression = request.CheckList.Expressions.FirstOrDefault(e => e.Value.Error != null);
             if (invalidExpression.Key != null)

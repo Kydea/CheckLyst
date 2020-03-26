@@ -7,12 +7,12 @@
                 content.append("(no dependency found)");
             else {
                 if (dependingNodes && dependingNodes.length > 0) {
-                    content.append($("<h3 />").html("in this element"));
+                    content.append($("<h3 />").html("contained in this element"));
                     for (var dependency in dependingNodes)
                         content.append($("<p />").html(dependingNodes[dependency].description));
                 }
                 if (dependentNodes && dependentNodes.length > 0) {
-                    content.append($("<h3 />").html("by this element"));
+                    content.append($("<h3 />").html("containing this element"));
                     for (var dependency in dependentNodes)
                         content.append($("<p />").html(dependentNodes[dependency].description));
                 }

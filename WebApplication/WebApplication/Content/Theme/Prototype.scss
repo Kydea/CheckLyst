@@ -68,7 +68,7 @@ div.Prototype {
             //page commands
             margin: 0;
 
-            a.Add, a.Dependencies {
+            a.Add {
                 display: none;
             }
         }
@@ -122,10 +122,6 @@ div.Prototype {
 
         > div.Commands {
             margin: 10px !important;
-
-            a.Dependencies {
-                display: none;
-            }
         }
 
         &.Current {
@@ -154,12 +150,6 @@ div.Prototype {
 
                 i {
                     color: $Color-Green-Regular;
-                }
-            }
-
-            div.Commands {
-                a.Dependencies {
-                    display: inline-block !important;
                 }
             }
         }
@@ -198,10 +188,6 @@ div.Prototype {
 
             a.Paste {
                 display: none !important;
-            }
-
-            a.Dependencies {
-                display: none;
             }
         }
     }

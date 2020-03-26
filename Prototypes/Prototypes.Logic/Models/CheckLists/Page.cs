@@ -34,18 +34,29 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 await group.TraverseAsync(condition, action);
         }
 
+        public override void BuildDependencies()
+        {
+            base.BuildDependencies();
+            foreach (Group Group in Groups)
+                Group.BuildDependencies();
+        }
+
         public override void Check()
         {
             base.Check();
             foreach (Group Group in Groups)
-            {
-                Group.CheckList = CheckList;
                 Group.Check();
-            }
         }
 
         public void CreateInstanceIterations() { throw new NotImplementedException(); }
 
-        protected override DependencyNodeKey DependencyNodeKey => base.DependencyNodeKey ?? new DependencyNodeKey("page", Description);
+        public override DependencyNodeKey DependencyNodeKey => base.DependencyNodeKey ?? new DependencyNodeKey("page", Description);
+        protected override IEnumerable<DependencyNodeKey> GetDependingNodes()
+        {
+            foreach (var DependencyNodeKey in base.GetDependingNodes())
+                yield return DependencyNodeKey;
+            foreach (Group Group in Groups)
+                yield return Group.DependencyNodeKey;
+        }
     }
 }

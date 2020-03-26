@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.CheckLists;
+using CheckListManager.Common.Logic.Models.Expressions.Parsing;
 using Newtonsoft.Json;
 
 namespace CheckListManager.Common.Logic.Models.Expressions
 {
-    public class Expression
+    public class Expression : IDependencyNode
     {
         public const int MAXIMUM_LENGTH = 10000;
 
@@ -16,11 +18,6 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         public string Error { get; set; }
         public bool Unique { get; set; }
         public bool Exception { get; set; }
-
-        [JsonIgnore]
-        public string CycleKey { get; set; }
-        [JsonIgnore]
-        public bool Checked { get; set; }
 
         public Expression()
         {
@@ -33,7 +30,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                 throw new Exception($"Unique expressions and exception expressions must have a description");
 
             if (SerializedValue?.Length >= MAXIMUM_LENGTH)
-                throw new Parsing.ParseException($"Expressions lengh must not exceed {MAXIMUM_LENGTH - 1} characters", MAXIMUM_LENGTH);
+                throw new ParseException($"Expressions lengh must not exceed {MAXIMUM_LENGTH - 1} characters", MAXIMUM_LENGTH);
 
             this.Code = Code;
         }
@@ -41,8 +38,11 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         public void Parse(ICheckList checkList)
         {
             Error = null;
-            Root = new Parsing.TokenSet(SerializedValue, 0).Symbol;
+            DependingNodes.Clear();
+            DependentNodes.Clear();
+            Root = new TokenSet(SerializedValue, 0).Symbol;
             Root.Expression = this;
+
         }
 
         [JsonIgnore]
@@ -58,31 +58,71 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
         public object RawValue => Value?.Value;
 
-        public void Evaluate(ICheckList instance, string TimeZone)
+        public void Evaluate(ICheckList instance, string timeZone)
         {
-            Value = Root.GetValue(instance, TimeZone);
+            Value = Root.GetValue(instance, timeZone);
         }
 
-        public void BuildDependencies(ICheckList checklist)
+        public bool BuildDependencies(ICheckList checklist)
         {
-            DependingNodes.Clear();
-            DependentNodes.Clear();
+            try
+            {
+                Root.BuildDependencies(checklist, this);
+                return true;
+            }
+            catch (ParseException Exception)
+            {
+                Error = $"{Exception.Message} (position {Exception.Position})";
+                return false;
+            }
+            catch (Exception Exception)
+            {
+                Error = Exception.Message;
+                return false;
+            }
+        }
 
-            Root.BuildDependencies(checklist, this);
+        private string DependencyChainKey { get; set; }
+        public void TraverseDependencyChain(ICheckList CheckList, List<IDependencyNode> DependencyChain, string DependencyChainKey)
+        {
+            DependencyChain.Add(this);
+            if (this.DependencyChainKey == DependencyChainKey)
+                throw new Exception($"Dependency cycle found: {string.Join(" > ", DependencyChain.Select(e => e.DependencyNodeKey.Description))}");
+            this.DependencyChainKey = DependencyChainKey;
+
+            foreach (var DependingNodeKey in DependingNodes)
+                DependingNodeKey.GetNode(CheckList).TraverseDependencyChain(CheckList, DependencyChain, DependencyChainKey);
+
+            Check(CheckList);
+        }
+
+        private bool Checked { get; set; }
+        public bool Check(ICheckList CheckList)
+        {
+            try
+            {
+                if (Checked) return true;
+                Checked = true;
+                Root.Check(CheckList, this, new List<string>());
+                if (Exception && Root.DataType != DataType.Boolean)
+                    throw new Exception($"Exception expressions must be boolean");
+                return true;
+            }
+            catch (ParseException Exception)
+            {
+                Error = $"{Exception.Message} (position {Exception.Position})";
+                return false;
+            }
+            catch (Exception Exception)
+            {
+                Error = Exception.Message;
+                return false;
+            }
         }
 
         public DataType DataType => Root?.DataType ?? DataType.Error;
 
         public DataType? InnerDataType => Root?.InnerDataType;
-
-        public void Check(ICheckList checklist)
-        {
-            if (Checked) return;
-            Checked = true;
-            Root.Check(checklist, this, new List<string>());
-            if (Exception && Root.DataType != DataType.Boolean)
-                throw new Exception($"Exception expressions must be boolean");
-        }
 
         public DependencyNodeKey DependencyNodeKey => new DependencyNodeKey("expression", Code);
         public List<DependencyNodeKey> DependentNodes { get; } = new List<DependencyNodeKey>();

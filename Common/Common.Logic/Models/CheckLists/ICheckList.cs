@@ -14,6 +14,8 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
         PascalCaseDictionary<string, string> ExternalSources { get; }
         PascalCaseDictionary<string, PascalCaseDictionary<string, string>> ExternalSourceRows { get; }
 
+        [JsonIgnore]
+        Dictionary<int, ICheckListItem> Items { get; }
         void AddItem(ICheckListItem item);
 
         ICheckListGroup Header { get; }
