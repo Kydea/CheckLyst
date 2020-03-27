@@ -24,7 +24,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         public string Value { get; set; }
         public bool HasValue { get; set; } //has a value and ha no nulls or errors
 
-        public void Update(string RawValue)
+        public void BuildDependencies(string RawValue)
         {
             Format = 
                 string.IsNullOrWhiteSpace(RawValue) ?

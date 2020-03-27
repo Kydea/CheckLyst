@@ -33,13 +33,17 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             CheckList.AddItem(this);
         }
 
+        public override void BuildDependencies()
+        {
+            base.BuildDependencies();
+            DescriptionFormula.BuildDependencies(Description);
+        }
+
         public override void Update(string DecimalSeparator, string TimeZone)
         {
             if (Iteration != null)
                 RuntimeValues["IterationIndex"] = Iteration.Index;
 
-            //DescriptionFormula = new Formula(Description);
-            //DescriptionFormula.Update(Description);
             DescriptionFormula.Evaluate(CheckList, RuntimeValues, DecimalSeparator, TimeZone, Iteration?.Indexes);
         }
 

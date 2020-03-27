@@ -58,6 +58,12 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             return field;
         }
 
+        public override void BuildDependencies()
+        {
+            base.BuildDependencies();
+            ValueFormula.BuildDependencies(ValueFormulaString);
+        }
+
         public override void Update(string DecimalSeparator, string TimeZone)
         {
             base.Update(DecimalSeparator, TimeZone);
@@ -68,11 +74,10 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 dateTimeOffset = DateTimeOffsetHelper.Parse(Value, TimeZone, out var Ambiguous, out var AmbiguousDateTimeOffsets, $"{DateTimeOffsetHelper.DateFormat} {DateTimeOffsetHelper.TimeFormat}");
             if (dateTimeOffset.HasValue) Offset = (int)dateTimeOffset.Value.Offset.TotalMinutes;
 
-            //ValueFormula.Update(ValueFormulaString);
             ValueFormula.Evaluate(CheckList, RuntimeValues, DecimalSeparator, TimeZone, Iteration?.Indexes);
             if (ValueFormula.IsSet)
             {
-                ConversionError = !ValueFormula.HasValue && !ValueType.Validate(ValueFormula.Value);
+                ConversionError = ValueFormula.HasValue && !ValueType.Validate(ValueFormula.Value);
                 Value = ConversionError ? null : ValueFormula.Value;
             }
             if (ExternalSourceName != null)

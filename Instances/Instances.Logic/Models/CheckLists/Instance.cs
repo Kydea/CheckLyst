@@ -88,6 +88,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public void CreateDependencies()
         {
+            DescriptionFormula.BuildDependencies(DescriptionFormulaString);
+            FileNameFormula.BuildDependencies(FileNameFormulaString);
+
             foreach (var Expression in Expressions.Values)
                 if (!Expression.BuildDependencies(this))
                     throw new InstanceException(Expression.Error);
@@ -129,9 +132,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         
         private void Update(string DecimalSeparator, string TimeZone, Dictionary<string, object> InstanceRuntimeValues)
         {
-            //DescriptionFormula.Update(DescriptionFormulaString);
             DescriptionFormula.Evaluate(this, InstanceRuntimeValues, DecimalSeparator, TimeZone, null);
-            //FileNameFormula.Update(FileNameFormulaString);
             FileNameFormula.Evaluate(this, InstanceRuntimeValues, DecimalSeparator, TimeZone, null);
 
             Header.Update(DecimalSeparator, TimeZone);
