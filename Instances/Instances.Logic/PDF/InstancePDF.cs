@@ -36,9 +36,9 @@ namespace CheckListManager.Instances.Logic.PDF
         {
             var Field = (Field)CheckListField;
             if (Field.ValueTypeName == "DateTime")
-                return Field.RawValue + DateTimeOffsetHelper.FormatOffset(Field.LocalTimeZone ? Field.Offset : 0);
+                return Field.Value + DateTimeOffsetHelper.FormatOffset(Field.LocalTimeZone ? Field.Offset : 0);
             else
-                return FormatFormula(Field.RawValue);
+                return FormatFormula(Field.Value);
         }
 
         protected override FirstPage GenerateFirstPage()

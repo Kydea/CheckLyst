@@ -376,7 +376,7 @@ namespace CheckListManager.Instances.Logic.Services
                     if (Item is ICheckListGroup)
                         AddTags(Tags, InstanceID, (ICheckListGroup)Item);
                     else if (!string.IsNullOrWhiteSpace(Item.Description) && (Item.TypeName == "Field" || Item.TypeName == "Signature") && !Tags.ContainsKey(Item.Description))
-                        Tags[Item.Description] = new InstanceTags { Instance = InstanceID, Tag = Item.Description, Value = (Item.TypeName == "Field" ? ((Field)Item).RawValue : ((ICheckListSignature)Item).SignedBy) ?? string.Empty };
+                        Tags[Item.Description] = new InstanceTags { Instance = InstanceID, Tag = Item.Description, Value = (Item.TypeName == "Field" ? ((Field)Item).Value : ((ICheckListSignature)Item).SignedBy) ?? string.Empty };
         }
 
         private IEnumerable<InstanceTags> CreateTags(InstanceCacheObject cacheObject)

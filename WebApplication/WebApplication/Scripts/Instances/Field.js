@@ -203,19 +203,19 @@
         element.toggleClass("ReadOnly", readOnly);
 		input.attr("readonly", readOnly);
 		if (model.valuesList)
-			select.val(model.rawValue)
+			select.val(model.value)
 		else if (model.valueFormulaString)
-			input.val(model.rawValue);
+			input.val(model.value);
         else if (model.valueTypeName == "DateTime") {
-            if (!model.rawValue || model.rawValue == "") {
+            if (!model.value || model.value == "") {
                 input.val("");
                 select.val("");
                 select2.val("");
             } else {
                 var
-                    index = model.rawValue.indexOf(" "),
-                    date = model.rawValue.substr(0, index),
-                    time = model.rawValue.substr(index + 1),
+                    index = model.value.indexOf(" "),
+                    date = model.value.substr(0, index),
+                    time = model.value.substr(index + 1),
                     m = matematici.dateFormatter.parse(date, time, null);
                 formattedDate = matematici.dateFormatter.format(m);
                 input.val(formattedDate.date);
@@ -223,11 +223,11 @@
                 select2.val(formattedDate.minutes);
             }
         } else if (model.valueTypeName == "Time") {
-			input.val(model.rawValue);
-			var index = (model.rawValue || "").indexOf(":");
+			input.val(model.value);
+			var index = (model.value || "").indexOf(":");
         	if (index >= 0) {
-				select.val(model.rawValue.substr(0, index));
-				select2.val(model.rawValue.substr(index + 1));
+				select.val(model.value.substr(0, index));
+				select2.val(model.value.substr(index + 1));
         	} else {
         		select.val("");
         		select2.val("");
@@ -235,28 +235,28 @@
         } else if (model.valueTypeName == "Boolean") {
         	var b = false;
         	try {
-				b = $.parseJSON((model.rawValue || "false").toLowerCase());
+				b = $.parseJSON((model.value || "false").toLowerCase());
         	} catch (e) { }
         	input.prop("checked", b);
 
         	var s = "";
         	try {
-				b = $.parseJSON((model.rawValue || "").toLowerCase()); s = b.toString();
+				b = $.parseJSON((model.value || "").toLowerCase()); s = b.toString();
         	} catch (e) { }
             input.val(s);
 
             input.prop("disabled", readOnly);
 		} else 
-			input.val(model.rawValue);
+			input.val(model.value);
 
-        var rawValue = formattedDate ? formattedDate.date + " " + formattedDate.hours + ":" + formattedDate.minutes : model.rawValue;
-        field.html(readOnly && rawValue ? rawValue.split('\n').join("<br />") : rawValue).attr("readonly", readOnly);
+        var value = formattedDate ? formattedDate.date + " " + formattedDate.hours + ":" + formattedDate.minutes : model.value;
+        field.html(readOnly && value ? value.split('\n').join("<br />") : value).attr("readonly", readOnly);
         if (model.valueTypeName == "DateTime" || model.valueTypeName == "Date")
-            if (rawValue)
-                rawValue += " UTC" + (!model.localTimeZone ? "" : (model.offset > 0 ? " +" : " -") + ("" + Math.abs(model.offset) / 60).padStart(2, "0") + ":00")
+            if (value)
+                value += " UTC" + (!model.localTimeZone ? "" : (model.offset > 0 ? " +" : " -") + ("" + Math.abs(model.offset) / 60).padStart(2, "0") + ":00")
             else
-                rawValue = model.localTimeZone ? "Company time zone" : "UTC";
-        element.attr("title", rawValue);
+                value = model.localTimeZone ? "Company time zone" : "UTC";
+        field.attr("title", field.text());
 
         this.setColor(model.color);
 		this.setFontSize(model.fontSize);

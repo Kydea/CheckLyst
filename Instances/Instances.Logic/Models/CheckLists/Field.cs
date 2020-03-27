@@ -18,15 +18,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public List<FieldRecord> History { get; } = new List<FieldRecord>();
         public int LinesCount { get; set; }
         public string Value { get; set; }
-
-        [JsonIgnore]
-        public Formula ValueFormula { get; private set; }
-        public string ValueFormulaString
-        {
-            get => ValueFormula?.RawValue;
-            set => ValueFormula = string.IsNullOrEmpty(value) ? null : new Formula(value);
-        }
-        public string RawValue => Value ?? (ConversionError ? null : ValueFormula?.Value);
+        public Formula ValueFormula { get; } = new Formula();
+        public string ValueFormulaString { get; set; }
 
         private List<string> _ValuesList;
         public List<string> ValuesList { get { return _ValuesList; } set { _ValuesList = value == null || !value.Any() ? null : value; } }
@@ -53,7 +46,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 Group = parent,
                 LinesCount = LinesCount,
                 Value = Value,
-                ValueFormula = ValueFormula == null ? null : new Formula(ValueFormula.RawValue),
+                ValueFormulaString = ValueFormulaString,
                 ValueTypeName = ValueTypeName,
                 DefaultValue = DefaultValue,
                 LocalTimeZone = LocalTimeZone,
@@ -75,16 +68,22 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 dateTimeOffset = DateTimeOffsetHelper.Parse(Value, TimeZone, out var Ambiguous, out var AmbiguousDateTimeOffsets, $"{DateTimeOffsetHelper.DateFormat} {DateTimeOffsetHelper.TimeFormat}");
             if (dateTimeOffset.HasValue) Offset = (int)dateTimeOffset.Value.Offset.TotalMinutes;
 
-            ValueFormula?.Update(CheckList, RuntimeValues, DecimalSeparator, TimeZone, Iteration?.Indexes);
-            if (ValueFormula != null && ValueFormula.HasValue)
-                ConversionError = !ValueType.Validate(ValueFormula.Value);
+            //ValueFormula.Update(ValueFormulaString);
+            ValueFormula.Evaluate(CheckList, RuntimeValues, DecimalSeparator, TimeZone, Iteration?.Indexes);
+            if (ValueFormula.IsSet)
+            {
+                ConversionError = !ValueFormula.HasValue && !ValueType.Validate(ValueFormula.Value);
+                Value = ConversionError ? null : ValueFormula.Value;
+            }
             if (ExternalSourceName != null)
             {
-                string Value = CheckList is Instance Instance && ExternalSourceName != null && Instance.ExternalSourceRows.ContainsKey(ExternalSourceName) && Instance.ExternalSourceRows[ExternalSourceName].ContainsKey(ExternalSourceColumn) ?
+                var Instance = (Instance)CheckList;
+                string Value = 
+                    ExternalSourceName != null && Instance.ExternalSourceRows.ContainsKey(ExternalSourceName) && Instance.ExternalSourceRows[ExternalSourceName].ContainsKey(ExternalSourceColumn) ?
                     Instance.ExternalSourceRows[ExternalSourceName][ExternalSourceColumn] :
                     null;
                 ConversionError = !ValueType.Validate(Value);
-                if (!ConversionError) this.Value = Value;
+                this.Value = ConversionError ? null : Value;
             }
         }
 
@@ -95,12 +94,12 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public override bool IsValidByDefault()
         {
-            return ValueFormula?.HasValue ?? !string.IsNullOrEmpty(Value);
+            return ValueFormula.IsSet ? ValueFormula.HasValue : !string.IsNullOrEmpty(Value);
         }
 
         protected override bool IsReadOnlyByDefault()
         {
-            return base.IsReadOnlyByDefault() || ValueFormula != null; // || !string.IsNullOrEmpty(ExternalSourceName);
+            return base.IsReadOnlyByDefault() || ValueFormula.IsSet; // || !string.IsNullOrEmpty(ExternalSourceName);
         }
 
         public bool Validate(string value)

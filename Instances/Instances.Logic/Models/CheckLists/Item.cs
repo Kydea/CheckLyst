@@ -9,14 +9,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
     public abstract class Item : Element, ICheckListItem
     {
         public virtual string CssClass => TypeName;
-
-        [JsonIgnore]
-        public Formula DescriptionFormula { get; private set; }
-        public string Description {
-            get => DescriptionFormula?.RawValue;
-            set => DescriptionFormula = string.IsNullOrEmpty(value) ? null : new Formula(value);
-        }
-        public string DescriptionValue { get => DescriptionFormula?.Value; }
+        public Formula DescriptionFormula { get; } = new Formula();
+        public string Description { get; set; }
+        public string DescriptionValue { get => DescriptionFormula.Value; }
         public ICheckListGroup Group { get; set; }
         public int Id { get; set; }
         public ICheckListIteration Iteration { get; set; }
@@ -43,7 +38,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             if (Iteration != null)
                 RuntimeValues["IterationIndex"] = Iteration.Index;
 
-            DescriptionFormula?.Update(CheckList, RuntimeValues, DecimalSeparator, TimeZone, Iteration?.Indexes);
+            //DescriptionFormula = new Formula(Description);
+            //DescriptionFormula.Update(Description);
+            DescriptionFormula.Evaluate(CheckList, RuntimeValues, DecimalSeparator, TimeZone, Iteration?.Indexes);
         }
 
         public override bool Hidden => (Group?.Hidden ?? false) || base.Hidden;
@@ -78,7 +75,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             destination.Page = source.Page;
             destination.Description = source.Description;
             destination.NewLine = source.NewLine;
-            destination.DescriptionFormula = source.DescriptionFormula == null ? null : new Formula(source.DescriptionFormula.RawValue);
             destination.IterationItem = true;
             destination.IteratorModelItem = false;
             destination.Color = source.Color;

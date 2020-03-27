@@ -10,7 +10,6 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 	{
 		public virtual string CssClass => TypeName;
 		public string Description { get; set; }
-		public Formula DescriptionFormula { get; set; }
 		public ICheckListGroup Group { get; set; }
 		public int Id { get; set; }
 		public ICheckListIteration Iteration { get; set; }
@@ -39,7 +38,6 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             destination.Page = source.Page;
             destination.Description = source.Description;
             destination.NewLine = source.NewLine;
-            destination.DescriptionFormula = source.DescriptionFormula == null ? null : new Formula(source.DescriptionFormula.RawValue);
             destination.IterationItem = true;
             destination.IteratorModelItem = false;
             destination.Color = source.Color;

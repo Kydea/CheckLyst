@@ -14,6 +14,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
     public class Instance : ICheckList
     {
         public bool ReadOnly { get; set; }
+        public bool DependenciesCreated { get; set; }
         public Dictionary<string, ICheckListElement> Elements { get; set; } = new Dictionary<string, ICheckListElement>();
         public PascalCaseDictionary<string, Expression> Expressions { get; set; }
         public PascalCaseDictionary<string, string> Exceptions =>
@@ -23,25 +24,13 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public ICheckListGroup Header { get; set; }
         public List<ICheckListPage> Pages { get; set; }
 
-        [JsonIgnore]
-        public Formula DescriptionFormula { get; set; }
-        public string DescriptionFormulaString
-        {
-            get => DescriptionFormula?.RawValue;
-            set => DescriptionFormula = value == null ? null : new Formula(value);
-        }
-        public string Description => DescriptionFormula?.Value;
+        public Formula DescriptionFormula { get; } = new Formula();
+        public string DescriptionFormulaString { get; set; }
+        public string Description => DescriptionFormula.Value;
 
-        public bool DependenciesCreated { get; set; }
-
-        [JsonIgnore]
-        public Formula FileNameFormula { get; set; }
-        public string FileNameFormulaString
-        {
-            get => FileNameFormula?.RawValue;
-            set => FileNameFormula = value == null ? null : new Formula(value);
-        }
-        public string FileName => FileNameFormula?.Value;
+        public Formula FileNameFormula { get; } = new Formula();
+        public string FileNameFormulaString { get; set; }
+        public string FileName => FileNameFormula.Value;
 
         public bool FTPExport { get; set; }
 
@@ -140,8 +129,10 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         
         private void Update(string DecimalSeparator, string TimeZone, Dictionary<string, object> InstanceRuntimeValues)
         {
-            DescriptionFormula?.Update(this, InstanceRuntimeValues, DecimalSeparator, TimeZone, null);
-            FileNameFormula?.Update(this, InstanceRuntimeValues, DecimalSeparator, TimeZone, null);
+            //DescriptionFormula.Update(DescriptionFormulaString);
+            DescriptionFormula.Evaluate(this, InstanceRuntimeValues, DecimalSeparator, TimeZone, null);
+            //FileNameFormula.Update(FileNameFormulaString);
+            FileNameFormula.Evaluate(this, InstanceRuntimeValues, DecimalSeparator, TimeZone, null);
 
             Header.Update(DecimalSeparator, TimeZone);
             foreach (var page in Pages)

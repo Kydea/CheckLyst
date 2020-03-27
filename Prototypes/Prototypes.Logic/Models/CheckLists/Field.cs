@@ -16,14 +16,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 		public List<FieldRecord> History { get; } = new List<FieldRecord>();
 		public int LinesCount { get; set; }
 		public string Value { get; set; }
-
-        [JsonIgnore]
-        public Formula ValueFormula { get; private set; }
-		public string ValueFormulaString
-		{
-			get => ValueFormula?.RawValue;
-			set => ValueFormula = value == null ? null : new Formula(value);
-		}
+		public string ValueFormulaString { get; set; }
 
         private List<string> _ValuesList;
         public List<string> ValuesList { get { return _ValuesList; } set { _ValuesList = value == null || !value.Any() ? null : value; } }
@@ -47,7 +40,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 Group = parent,
                 LinesCount = LinesCount,
                 Value = Value,
-                ValueFormula = ValueFormula == null ? null : new Formula(ValueFormula.RawValue),
+                ValueFormulaString = ValueFormulaString,
                 ValueTypeName = ValueTypeName,
                 DefaultValue = DefaultValue,
                 LocalTimeZone = LocalTimeZone,

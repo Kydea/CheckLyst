@@ -17,31 +17,16 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             ErrorValueLeft = "<span class='Error'>",
             ErrorValueRight = "</span>";
 
-        private string Format;
-        private List<string> ValueKeys = new List<string>();
-        private List<string> Formats = new List<string>();
+        public string Format { get; set; }
+        public bool IsSet => Format != null;
+        public List<string> ValueKeys { get; } = new List<string>();
+        public List<string> TokenFormats { get; } = new List<string>();
+        public string Value { get; set; }
+        public bool HasValue { get; set; } //has a value and ha no nulls or errors
 
-        public Formula() { }
-
-        public Formula(string RawValue)
+        public void Update(string RawValue)
         {
-            this.RawValue = RawValue;
-        }
-
-        private string _RawValue;
-        public string RawValue
-        {
-            get { return _RawValue; }
-            set { _RawValue = value; Format = FormatValue(value); }
-        }
-
-        public string Value { get; private set; }
-
-        public bool HasValue { get; private set; }
-
-        private string FormatValue(string RawValue)
-        {
-            return
+            Format = 
                 string.IsNullOrWhiteSpace(RawValue) ?
                     null :
                     new Regex(@"(?<Start>\{)+(?<Property>[\w\-\.\[\]]+)(?<Format>:[^}]+)?(?<End>\})+", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)
@@ -57,12 +42,12 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                                     Format.StartsWith(":n") ? "0." + new string('0', Number) :
                                     string.Empty;
                             }
-                            Formats.Add(Format);
+                            TokenFormats.Add(Format);
                             return new string('{', Match.Groups["Start"].Captures.Count) + (ValueKeys.Count - 1) + new string('}', Match.Groups["End"].Captures.Count);
                         });
         }
 
-        public void Update(ICheckList CheckList, Dictionary<string, object> RuntimeValues, string DecimalSeparator, string TimeZone, List<int> IterationIndexes)
+        public void Evaluate(ICheckList CheckList, Dictionary<string, object> RuntimeValues, string DecimalSeparator, string TimeZone, List<int> IterationIndexes)
         {
             try
             {
@@ -77,7 +62,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                             ExpressionValue != null ?
                                 ExpressionValue.Type == DataType.Error ? ErrorValueLeft + ExpressionValue.ErrorValue + ErrorValueRight :
                                 ExpressionValue.IsNull ? NullValue :
-                                ExpressionValue.Type == DataType.Number ? ExpressionValue.NumberValue.ToString(Formats[Index]).Replace(".", DecimalSeparator).Replace(",", DecimalSeparator) :
+                                ExpressionValue.Type == DataType.Number ? ExpressionValue.NumberValue.ToString(TokenFormats[Index]).Replace(".", DecimalSeparator).Replace(",", DecimalSeparator) :
                                 ExpressionValue.Type == DataType.DateTime ? ExpressionValue.DateTimeValue.ToLocalTime(TimeZone).ToString("yyyy-MM-dd HH:mm:ss") :
                                 ExpressionValue.Type == DataType.Date ? ExpressionValue.DateTimeValue.ToString("yyyy-MM-dd") :
                                 ExpressionValue.Type == DataType.Time ? ExpressionValue.TimeSpanValue.ToString(@"hh\:mm\:ss") :
@@ -104,8 +89,6 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                 Value = $"{ErrorValueLeft}Invalid formula{ErrorValueRight}";
                 HasValue = false;
             }
-
         }
-
     }
 }
