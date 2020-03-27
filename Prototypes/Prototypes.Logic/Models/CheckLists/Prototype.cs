@@ -39,7 +39,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         public ICheckList CheckList { get { return this; } set { throw new NotImplementedException("Just for inheritance purpose"); } }
 
-        private readonly List<IDependencyNode> DependencyChain = new List<IDependencyNode>();
+        private readonly Stack<IDependencyNode> DependencyChain = new Stack<IDependencyNode>();
         private string DependencyChainKey;
 
         public void Setup()
@@ -56,56 +56,60 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 }
 
                 bool Error = false;
-                foreach (var Expression in Expressions)
-                {
+                foreach (var expression in Expressions)
                     try
                     {
-                        if (Expression.Key.Length > 50)
+                        if (expression.Key.Length > 50)
                             throw new Exception($"Expression codes must not exceed 50 characters");
 
-                        if (Expression.Value.Description?.Length > 100)
+                        if (expression.Value.Description?.Length > 100)
                             throw new Exception($"Expression descriptions must not exceed 100 characters");
 
-                        Expression.Value.Validate(this, Expression.Key);
-                        Expression.Value.Parse(this);
+                        expression.Value.Validate(this, expression.Key);
+                        expression.Value.Parse(this);
                     }
                     catch (ParseException Exception)
                     {
-                        Expression.Value.Error = $"{Exception.Message} (position {Exception.Position})";
+                        expression.Value.Error = $"{Exception.Message} (position {Exception.Position})";
                         Error = true;
                     }
                     catch (Exception Exception)
                     {
-                        Expression.Value.Error = Exception.Message;
+                        expression.Value.Error = Exception.Message;
                         Error = true;
                     }
-                }
 
-                if (Error) return;
+                if (Error)
+                    throw new Exception("Some expression is not valid");
 
-                foreach (var Expression in Expressions.Values)
-                    if (Expression.Error == null && !Expression.BuildDependencies(this))
+                foreach (var expression in Expressions.Values)
+                    if (expression.Error == null && !expression.BuildDependencies(this))
                         Error = true;
 
-                if (Error) return;
+                if (Error)
+                    throw new Exception("Some expression is not valid");
 
                 ((Group)Header).BuildDependencies();
                 foreach (Page Page in Pages)
                     Page.BuildDependencies();
 
-                foreach (var Expression in Expressions.Values)
+                foreach (var expression in Expressions.Values)
                 {
                     DependencyChain.Clear();
-                    DependencyChainKey = Expression.Code;
-                    Expression.TraverseDependencyChain(this, DependencyChain, DependencyChainKey);
+                    DependencyChainKey = expression.Code;
+                    if (expression.Error == null && !expression.TraverseDependencyChain(this, DependencyChain, DependencyChainKey, dn => ((Expression)dn).Check(this)))
+                        Error = true;
                 }
+
+                if (Error)
+                    throw new Exception("Some expression is not valid");
 
                 ((Group)Header).Check();
                 foreach (Page Page in Pages)
                     Page.Check();
 
-                foreach (var Expression in Expressions.Values)
-                    if (Expression.Error == null && !Expression.Check(this))
+                foreach (var expression in Expressions.Values)
+                    if (expression.Error == null && !expression.Check(this))
                         Error = true;
 
                 if (Error)

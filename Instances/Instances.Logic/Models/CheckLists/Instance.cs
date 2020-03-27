@@ -8,6 +8,7 @@ using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic;
 using CheckListManager.Common.Logic.Models;
 using CheckListManager.Instances.Logic.Exceptions;
+using CheckListManager.Common.Logic.Dependency;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
@@ -75,8 +76,11 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 if (InCreation) page.CreateInstanceIterations();
             }
 
-            foreach (var expression in Expressions.Values)
-                expression.Parse(this);
+            foreach (var expression in Expressions)
+            {
+                expression.Value.Code = expression.Key;
+                expression.Value.Parse(this);
+            }
 
             if (ElementsList == null) //if (InCreation) //replaced with this more generic but less meaningful form for back compatibility with 1.4 when ElementList did not exist
                 ElementsList = Elements.Values.Where(Element => !(Element is ICheckListItem CheckListItem) || !CheckListItem.IterationItem && !CheckListItem.IteratorModelItem).ToList(); //pages and items outside iterators
@@ -102,6 +106,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             DependenciesCreated = true;
         }
 
+        private readonly List<IDependencyNode> DependencyChain = new List<IDependencyNode>();
+        private string DependencyChainKey;
         public void Update(string DecimalSeparator, string TimeZone, InstanceCacheObject cacheObject = null)
         {
             Dictionary<string, object> InstanceRuntimeValues = cacheObject == null ? new Dictionary<string, object>() : new Dictionary<string, object> {
@@ -117,15 +123,15 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 { "InstanceNumber", cacheObject.Number },
             };
 
-            //first evaluation
+            foreach (var Expression in Expressions.Values)
+            {
+                DependencyChain.Clear();
+                DependencyChainKey = Expression.Code;
+                Expression.TraverseDependencyChain(this, DependencyChain, DependencyChainKey);
+            }
+
             foreach (var expression in Expressions)
                 expression.Value.Evaluate(this, TimeZone);
-
-            Update(DecimalSeparator, TimeZone, InstanceRuntimeValues);
-
-            //second evaluation, to consider expressions with item properties which depends by expression values, higher level dependencies and cycles are still a problem
-            foreach (var expression in Expressions.Values)
-                expression.Evaluate(this, TimeZone);
 
             Update(DecimalSeparator, TimeZone, InstanceRuntimeValues);
         }

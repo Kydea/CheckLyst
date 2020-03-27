@@ -79,7 +79,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 throw new Exception($"The {DependencyNodeKey} references to the inexistent expression {ExpressionCode}");
 
             var Expression = CheckList.Expressions[ExpressionCode];
-            DependingNodes.Add(Expression.DependencyNodeKey);
+            DependingNodes.Add(Expression.DependencyNodeKey.Clone(DependencyNodeKey.PropertyName));
             return Expression;
         }
 
@@ -131,19 +131,25 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         }
 
         private string DependencyChainKey { get; set; }
-        public void TraverseDependencyChain(ICheckList checkList, List<IDependencyNode> DependencyChain, string DependencyChainKey)
+        public bool TraverseDependencyChain(ICheckList checkList, Stack<IDependencyNode> DependencyChain, string DependencyChainKey, Func<IDependencyNode, bool> DependencyChainAction)
         {
-            DependencyChain.Add(this);
+            DependencyChain.Push(this);
             if (this.DependencyChainKey == DependencyChainKey)
-                throw new Exception($"Dependency cycle found: {string.Join(" > ", DependencyChain.Select(e => e.DependencyNodeKey.Description))}");
+                throw new Exception($"Dependency cycle found: {string.Join(" > ", DependencyChain.Reverse().Select(e => e.DependencyNodeKey.Description))}");
             this.DependencyChainKey = DependencyChainKey;
+
+            var Result = true;
 
             var DependingNodes = GetDependingNodes();
             if (DependingNodes != null)
                 foreach (var DependingNodeKey in DependingNodes)
-                    DependingNodeKey.GetNode(checkList).TraverseDependencyChain(checkList, DependencyChain, DependencyChainKey);
+                    if (!DependingNodeKey.GetNode(checkList).TraverseDependencyChain(checkList, DependencyChain, DependencyChainKey, DependencyChainAction))
+                        Result = false;
 
-            Check();
+            if (Result) Check();
+            DependencyChain.Pop();
+            this.DependencyChainKey = null;
+            return Result;
         }
 
         private bool Checked { get; set; }

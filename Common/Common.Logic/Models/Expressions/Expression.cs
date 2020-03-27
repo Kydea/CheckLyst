@@ -82,17 +82,22 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         }
 
         private string DependencyChainKey { get; set; }
-        public void TraverseDependencyChain(ICheckList CheckList, List<IDependencyNode> DependencyChain, string DependencyChainKey)
+        public bool TraverseDependencyChain(ICheckList CheckList, Stack<IDependencyNode> DependencyChain, string DependencyChainKey, Func<IDependencyNode, bool> DependencyChainAction)
         {
-            DependencyChain.Add(this);
+            DependencyChain.Push(this);
             if (this.DependencyChainKey == DependencyChainKey)
-                throw new Exception($"Dependency cycle found: {string.Join(" > ", DependencyChain.Select(e => e.DependencyNodeKey.Description))}");
+                throw new Exception($"Dependency cycle found: {string.Join(" > ", DependencyChain.Reverse().Select(e => e.DependencyNodeKey.Description))}");
             this.DependencyChainKey = DependencyChainKey;
 
+            var Result = true;
             foreach (var DependingNodeKey in DependingNodes)
-                DependingNodeKey.GetNode(CheckList).TraverseDependencyChain(CheckList, DependencyChain, DependencyChainKey);
+                if (!DependingNodeKey.GetNode(CheckList).TraverseDependencyChain(CheckList, DependencyChain, DependencyChainKey, DependencyChainAction))
+                    Result = false;
 
-            Check(CheckList);
+            if (!DependencyChainAction(this)) Result = false;
+            DependencyChain.Pop();
+            this.DependencyChainKey = null;
+            return Result;
         }
 
         private bool Checked { get; set; }

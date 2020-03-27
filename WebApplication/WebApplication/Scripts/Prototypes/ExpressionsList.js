@@ -168,6 +168,12 @@
                     updateModel();
                 }
 
+                if (result.checkListException) {
+                    valid = false;
+                    console.log(result.checkListException);
+                    matematici.dialog.error("Error", result.checkListException.Message);
+                }
+
                 button.toggleClass("Invalid", !valid);
                 if (handler) handler.call(this);
             });

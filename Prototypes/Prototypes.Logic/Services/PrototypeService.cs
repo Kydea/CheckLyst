@@ -167,13 +167,12 @@ namespace CheckListManager.Prototypes.Logic.Services
         public VerifyExpressionsResponse VerifyExpressions(PrototypeRequest request)
         {
             request.CheckList.Setup();
-            if (request.CheckList.Exception != null)
-                throw request.CheckList.Exception;
 
             return new VerifyExpressionsResponse
             {
-                Valid = request.CheckList.Exception == null && request.CheckList.Expressions.Values.All(e => e.Error == null),
+                CheckListException = request.CheckList.Exception,
                 Expressions = request.CheckList.Expressions,
+
             };
         }
 
