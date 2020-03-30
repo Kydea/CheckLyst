@@ -160,7 +160,7 @@ namespace CheckListManager.Instances.Logic.Services
 
             return cacheObject;
         }
-        
+
         public async Task<InstanceCacheObject> CreateAsync(IDefaultIdentity identity, string userCode, long prototype, int? version, Dictionary<string, string> parameters)
         {
             try
@@ -673,7 +673,8 @@ namespace CheckListManager.Instances.Logic.Services
                 if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
                     throw new InstanceException("Access denied");
 
-                return (await _instancesRepository.GetInstanceEditors(cacheObject.Department, cacheObject.PrototypeType, cacheObject.VersionState)).Select(u => new InstanceEventRequest.Email {
+                return (await _instancesRepository.GetInstanceEditors(cacheObject.Department, cacheObject.PrototypeType, cacheObject.VersionState)).Select(u => new InstanceEventRequest.Email
+                {
                     Code = u.Code,
                     Description = u.Description,
                     Address = u.Email
@@ -699,7 +700,7 @@ namespace CheckListManager.Instances.Logic.Services
                 throw new InstanceException("Access denied");
             if (key == null || !key.StartsWith(GetAttachmentKeyPrefix(identity, cacheObject)))
                 throw new InstanceException("Attachment key not valid");
-            
+
             return await _storageService.GetAsync(_configurationService.InstancesStorageBucket, key);
         }
 
@@ -754,23 +755,23 @@ namespace CheckListManager.Instances.Logic.Services
 
             double initialGetTime = 0, lockTime = 0, getTime = 0, handleTime = 0;
 
-			try
+            try
             {
-	            var stopWatch = Stopwatch.StartNew();
+                var stopWatch = Stopwatch.StartNew();
                 var cacheObject = await _instanceCache.GetAsync(request.Code, false);
-				stopWatch.Stop();
-				initialGetTime = stopWatch.Elapsed.TotalMilliseconds;
+                stopWatch.Stop();
+                initialGetTime = stopWatch.Elapsed.TotalMilliseconds;
 
                 if (cacheObject == null)
                     throw new InstanceException("Instance not found");
 
                 if (cacheObject.InstanceState == InstanceState.Progress)
                 {
-					//Lock and reload the data to be sure it's the most recent one
-					stopWatch = Stopwatch.StartNew();
-					lockObject = await _instanceCache.LockInstanceAsync(request.Code);
-					stopWatch.Stop();
-					lockTime = stopWatch.Elapsed.TotalMilliseconds;
+                    //Lock and reload the data to be sure it's the most recent one
+                    stopWatch = Stopwatch.StartNew();
+                    lockObject = await _instanceCache.LockInstanceAsync(request.Code);
+                    stopWatch.Stop();
+                    lockTime = stopWatch.Elapsed.TotalMilliseconds;
                     if (!lockObject.IsAcquired)
                         throw new InstanceException("Instance is currently being updated by another user");
                 }
@@ -780,11 +781,11 @@ namespace CheckListManager.Instances.Logic.Services
                 stopWatch.Stop();
                 getTime = stopWatch.Elapsed.TotalMilliseconds;
 
-				var lockUser = request.Type == "Signature" ? request.Username : null; //A signer may sign also if the page is locked by the main user (the lock is for concurrency purpose, not for security)
+                var lockUser = request.Type == "Signature" ? request.Username : null; //A signer may sign also if the page is locked by the main user (the lock is for concurrency purpose, not for security)
                 await GetCheckListAsync(identity, cacheObject, lockUser);
 
                 stopWatch = Stopwatch.StartNew();
-				switch (request.Type)
+                switch (request.Type)
                 {
                     case EventTypes.PageChange:
                         await HandlePageChangeAsync(cacheObject, identity.Code, request.ItemId);
@@ -841,10 +842,10 @@ namespace CheckListManager.Instances.Logic.Services
                     default:
                         throw new InstanceException($"Event type {request.Type} not handled.");
                 }
-				stopWatch.Stop();
-				handleTime = stopWatch.Elapsed.TotalMilliseconds;
+                stopWatch.Stop();
+                handleTime = stopWatch.Elapsed.TotalMilliseconds;
 
-				return cacheObject;
+                return cacheObject;
             }
             catch (InstanceException)
             {
@@ -857,12 +858,12 @@ namespace CheckListManager.Instances.Logic.Services
             }
             finally
             {
-				Logger.Info(
+                Logger.Info(
                     $"Handle Event {request.Type} timings:{Environment.NewLine}" +
-				    $"Initial get: {initialGetTime}{Environment.NewLine}" +
-				    $"Lock: {lockTime}{Environment.NewLine}" +
-				    $"Get: {getTime}{Environment.NewLine}" +
-				    $"Handle: {handleTime}{Environment.NewLine}");
+                    $"Initial get: {initialGetTime}{Environment.NewLine}" +
+                    $"Lock: {lockTime}{Environment.NewLine}" +
+                    $"Get: {getTime}{Environment.NewLine}" +
+                    $"Handle: {handleTime}{Environment.NewLine}");
                 lockObject?.Dispose();
             }
         }
@@ -876,7 +877,7 @@ namespace CheckListManager.Instances.Logic.Services
         {
             if (!itemId.HasValue)
                 throw new InstanceException("Item id not sent");
-            
+
             var item = cacheObject.Instance.Items.ContainsKey(itemId.Value) ? cacheObject.Instance.Items[itemId.Value] as Attachment : null;
             if (item == null)
                 throw new InstanceException($"Attachment {itemId} not found");
@@ -895,8 +896,8 @@ namespace CheckListManager.Instances.Logic.Services
                 if (!attachment.MediaType.StartsWith("image/"))
                     throw new InstanceException("The attachment has to be an image");
 
-				attachment.Buffer = ImageAdapter.RotateAndCompressImage(attachment.Buffer);
-			}
+                attachment.Buffer = ImageAdapter.RotateAndCompressImage(attachment.Buffer);
+            }
             else if (item.FileType == Attachment.FileTypes.Pdf)
             {
                 if (extension != ".pdf")
@@ -908,7 +909,7 @@ namespace CheckListManager.Instances.Logic.Services
             var maxSize = await _settingService.InstancesAttachmentMaxSizeBytesAsync(identity.CompanyId);
             if (attachment.Buffer.Length > maxSize)
                 throw new InstanceException($"The file exceed the file size limit of {maxSize.BytesCountToString()}");
-            
+
             var key = $"{GetAttachmentKeyPrefix(identity, cacheObject)}{itemId.Value}{extension}";
             using (var memoryStream = new MemoryStream(attachment.Buffer))
             {
@@ -979,15 +980,26 @@ namespace CheckListManager.Instances.Logic.Services
                 {
                     string TimeZone = (await _settingService.TimeZoneAsync(cacheObject.CompanyId));
 
-                    if (DateTimeOffset.TryParseExact(oldFormattedValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out var Date))
-                        oldFormattedValue = Date.Format(TimeZone);
-                    else
-                        oldFormattedValue = string.Empty;
+                    if (field.LocalTimeZone)
+                    {
+                        var dateTimeOffset = DateTimeOffsetHelper.Parse(oldFormattedValue, TimeZone, out var Ambiguous, out var AmbiguousDateTimeOffsets);
+                        oldFormattedValue = dateTimeOffset?.Format(TimeZone) ?? string.Empty;
 
-                    if (DateTimeOffset.TryParseExact(formattedValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out Date))
-                        formattedValue = Date.Format(TimeZone);
+                        dateTimeOffset = DateTimeOffsetHelper.Parse(formattedValue, TimeZone, out Ambiguous, out AmbiguousDateTimeOffsets);
+                        formattedValue = dateTimeOffset?.Format(TimeZone) ?? string.Empty;
+                    }
                     else
-                        formattedValue = string.Empty;
+                    {
+                        if (DateTimeOffset.TryParseExact(oldFormattedValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out var Date))
+                            oldFormattedValue = Date.Format(null);
+                        else
+                            oldFormattedValue = string.Empty;
+
+                        if (DateTimeOffset.TryParseExact(formattedValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out Date))
+                            formattedValue = Date.Format(null);
+                        else
+                            formattedValue = string.Empty;
+                    }
                 }
 
                 field.History.Add(new FieldRecord
@@ -1049,15 +1061,26 @@ namespace CheckListManager.Instances.Logic.Services
                 {
                     string TimeZone = (await _settingService.TimeZoneAsync(cacheObject.CompanyId));
 
-                    if (DateTimeOffset.TryParseExact(oldFormattedValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out var Date))
-                        oldFormattedValue = Date.Format(TimeZone);
-                    else
-                        oldFormattedValue = string.Empty;
+                    if (field.LocalTimeZone)
+                    {
+                        var dateTimeOffset = DateTimeOffsetHelper.Parse(oldFormattedValue, TimeZone, out var Ambiguous, out var AmbiguousDateTimeOffsets);
+                        oldFormattedValue = dateTimeOffset?.Format(TimeZone) ?? string.Empty;
 
-                    if (DateTimeOffset.TryParseExact(formattedValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out Date))
-                        formattedValue = Date.Format(TimeZone);
+                        dateTimeOffset = DateTimeOffsetHelper.Parse(formattedValue, TimeZone, out Ambiguous, out AmbiguousDateTimeOffsets);
+                        formattedValue = dateTimeOffset?.Format(TimeZone) ?? string.Empty;
+                    }
                     else
-                        formattedValue = string.Empty;
+                    {
+                        if (DateTimeOffset.TryParseExact(oldFormattedValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out var Date))
+                            oldFormattedValue = Date.Format(null);
+                        else
+                            oldFormattedValue = string.Empty;
+
+                        if (DateTimeOffset.TryParseExact(formattedValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out Date))
+                            formattedValue = Date.Format(null);
+                        else
+                            formattedValue = string.Empty;
+                    }
                 }
 
                 field.History.Add(new FieldRecord
@@ -1269,7 +1292,7 @@ namespace CheckListManager.Instances.Logic.Services
                     CheckList = cacheObject.InstanceCode,
                     Information = information.ToJson(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None })
                 });
-                
+
                 throw;
             }
         }
@@ -1611,7 +1634,7 @@ namespace CheckListManager.Instances.Logic.Services
             return cacheObject;
         }
 
-		public async Task<List<HistoryRow>> History(DefaultIdentity identity, long id)
+        public async Task<List<HistoryRow>> History(DefaultIdentity identity, long id)
         {
             var Instance = await _instancesRepository.GetByIDAsync(identity.CompanyId, id);
             if (Instance == null)
