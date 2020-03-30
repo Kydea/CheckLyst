@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.Expressions;
 using Newtonsoft.Json;
 
 namespace CheckListManager.Common.Logic.Models.CheckLists
 {
-    public interface ICheckList : IElementsBranch
+    public interface ICheckList : IElementsBranch, IDependencyNode
     {
         string DescriptionFormulaString { get; set; }
         string FileNameFormulaString { get; set; }
@@ -25,5 +26,8 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
         TypedValue GetExpressionValue(string ExpressionCode, ICheckListElement Element);
         TypedValue GetExpressionValue(string ExpressionCode, List<int> IterationIndexes);
         TypedValue GetExpressionValue(string ExpressionCode, List<int> IterationIndexes, out string Error);
+
+        [JsonIgnore]
+        int DependencyChainTraverseIndex { get; }
     }
 }

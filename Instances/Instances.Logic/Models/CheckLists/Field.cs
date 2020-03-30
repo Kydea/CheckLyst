@@ -61,12 +61,20 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public override void BuildDependencies()
         {
             base.BuildDependencies();
+            var DependencyNodeKey = this.DependencyNodeKey.Clone("value");
             ValueFormula.BuildDependencies(ValueFormulaString);
+            foreach (var Key in ValueFormula.ValueKeys)
+                if (CheckList.Expressions.TryGetValue(Key, out var Expression))
+                {
+                    Expression.DependentNodes.Add(DependencyNodeKey);
+                    DependingNodes.Add(Expression.DependencyNodeKey);
+                }
         }
 
-        public override void Update(string DecimalSeparator, string TimeZone)
+        protected override void OnUpdate(string DecimalSeparator, string TimeZone)
         {
-            base.Update(DecimalSeparator, TimeZone);
+            base.OnUpdate(DecimalSeparator, TimeZone);
+
             DateTimeOffset? dateTimeOffset = null;
             if (ValueType == DataType.Date)
                 dateTimeOffset = DateTimeOffsetHelper.Parse(Value, TimeZone, out var Ambiguous, out var AmbiguousDateTimeOffsets, DateTimeOffsetHelper.DateFormat);

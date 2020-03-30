@@ -19,7 +19,10 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public ICheckListGroup Header { get; set; }
         public List<ICheckListPage> Pages { get; } = new List<ICheckListPage>();
         public string DescriptionFormulaString { get; set; }
+        private Formula DescriptionFormula { get; } = new Formula();
         public string FileNameFormulaString { get; set; }
+        private Formula FileNameFormula { get; } = new Formula();
+
         public bool FTPExport { get; set; }
         public Exception Exception { get; set; }
 
@@ -67,6 +70,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
                         expression.Value.Validate(this, expression.Key);
                         expression.Value.Parse(this);
+                        expression.Value.ClearDependencies();
                     }
                     catch (ParseException Exception)
                     {
@@ -79,19 +83,8 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                         Error = true;
                     }
 
-                if (Error)
+                if (Error || !BuildDependencies())
                     throw new Exception("Some expression is not valid");
-
-                foreach (var expression in Expressions.Values)
-                    if (expression.Error == null && !expression.BuildDependencies(this))
-                        Error = true;
-
-                if (Error)
-                    throw new Exception("Some expression is not valid");
-
-                ((Group)Header).BuildDependencies();
-                foreach (Page Page in Pages)
-                    Page.BuildDependencies();
 
                 foreach (var expression in Expressions.Values)
                 {
@@ -121,6 +114,52 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             }
         }
 
+        private bool BuildDependencies()
+        {
+            var Result = true;
+            foreach (var expression in Expressions.Values)
+                if (expression.Error == null && !expression.BuildDependencies(this))
+                    Result = true;
+
+            if (Result)
+            {
+                var DependencyNodeKey = this.DependencyNodeKey.Clone("instance-description");
+                DescriptionFormula.BuildDependencies(DescriptionFormulaString);
+                foreach (var Key in DescriptionFormula.ValueKeys)
+                    if(Expressions.TryGetValue(Key, out var Expression))
+                    {
+                        Expression.DependentNodes.Add(DependencyNodeKey);
+                        DependingNodes.Add(Expression.DependencyNodeKey);
+                    }
+
+                DependencyNodeKey = this.DependencyNodeKey.Clone("instance-file-name");
+                FileNameFormula.BuildDependencies(FileNameFormulaString);
+                foreach (var Key in FileNameFormula.ValueKeys)
+                    if (Expressions.TryGetValue(Key, out var Expression))
+                    {
+                        Expression.DependentNodes.Add(DependencyNodeKey);
+                        DependingNodes.Add(Expression.DependencyNodeKey);
+                    }
+
+                ((Group)Header).BuildDependencies();
+                foreach (Page Page in Pages)
+                    Page.BuildDependencies();
+            }
+
+            return Result;
+        }
+
+        public int DependencyChainTraverseIndex => 1;
+        public DependencyNodeKey DependencyNodeKey => new DependencyNodeKey("checklist", null);
+        public HashSet<DependencyNodeKey> DependingNodes { get; } = new HashSet<DependencyNodeKey>();
+        public HashSet<DependencyNodeKey> DependentNodes { get; } = new HashSet<DependencyNodeKey>();
+
+        public bool TraverseDependencyChain(ICheckList checkList, Stack<IDependencyNode> DependencyChain, string DependencyChainKey, Func<IDependencyNode, bool> DependencyChainAction)
+        {
+            //The chelyst is always a leaf
+            return true;
+        }
+
         public void Traverse(Func<ICheckListItem, bool> condition, Action<ICheckListItem> action)
         {
             Header.Traverse(condition, action);
@@ -136,6 +175,5 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             foreach (var page in Pages)
                 await page.TraverseAsync(condition, action);
         }
-
     }
 }

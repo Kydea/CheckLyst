@@ -55,7 +55,7 @@ div.Prototype {
     div.HeaderContainer {
         > div.Commands {
             //prototype commands
-            a.Up, a.Down, a.Add, a.Remove, a.Dependencies {
+            a.Up, a.Down, a.Add, a.Remove {
                 display: none;
             }
         }

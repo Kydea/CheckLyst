@@ -1,4 +1,5 @@
 ﻿using CheckListManager.Common.Core.Helpers;
+using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using System;
 using System.Collections.Generic;
@@ -22,17 +23,21 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         public List<string> ValueKeys { get; } = new List<string>();
         public List<string> TokenFormats { get; } = new List<string>();
         public string Value { get; set; }
-        public bool HasValue { get; set; } //has a value and ha no nulls or errors
+        public bool HasValue { get; set; } //has a value and does not contains null or error values
 
         public void BuildDependencies(string RawValue)
         {
+            ValueKeys.Clear();
+            TokenFormats.Clear();
+            Value = null;
             Format = 
                 string.IsNullOrWhiteSpace(RawValue) ?
                     null :
                     new Regex(@"(?<Start>\{)+(?<Property>[\w\-\.\[\]]+)(?<Format>:[^}]+)?(?<End>\})+", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)
                         .Replace(RawValue, delegate (Match Match)
                         {
-                            ValueKeys.Add(Match.Groups["Property"].Value);
+                            var Key = Match.Groups["Property"].Value;
+                            ValueKeys.Add(Key);
                             string Format = Match.Groups["Format"].Value;
                             if (!string.IsNullOrWhiteSpace(Format))
                             {
@@ -47,8 +52,11 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                         });
         }
 
+        private int DependencyChainTraverseIndex { get; set; } = 0;
         public void Evaluate(ICheckList CheckList, Dictionary<string, object> RuntimeValues, string DecimalSeparator, string TimeZone, List<int> IterationIndexes)
         {
+            if (DependencyChainTraverseIndex == CheckList.DependencyChainTraverseIndex) return;
+            DependencyChainTraverseIndex = CheckList.DependencyChainTraverseIndex;
             try
             {
                 int Index = 0;

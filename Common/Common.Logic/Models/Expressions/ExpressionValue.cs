@@ -14,8 +14,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
         public override void BuildDependencies(ICheckList CheckList, Expression Expression)
         {
-            if (!CheckList.Expressions.ContainsKey(ExpressionCode)) throw new ParseException("Expression not found: " + ExpressionCode, Position);
-            var DependingExpression = CheckList.Expressions[ExpressionCode];
+            if (!CheckList.Expressions.TryGetValue(ExpressionCode, out var DependingExpression)) throw new ParseException("Expression not found: " + ExpressionCode, Position);
             Expression.DependingNodes.Add(DependingExpression.DependencyNodeKey);
             DependingExpression.DependentNodes.Add(Expression.DependencyNodeKey);
         }

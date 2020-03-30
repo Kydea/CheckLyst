@@ -35,7 +35,7 @@ div.Prototype div.Commands {
       div.Prototype div.Commands a.MiniIcon:hover i.fa, div.Prototype div.Commands a.MiniIcon:hover i.fal {
         color: #00877a !important; }
 
-div.Prototype div.HeaderContainer > div.Commands a.Up, div.Prototype div.HeaderContainer > div.Commands a.Down, div.Prototype div.HeaderContainer > div.Commands a.Add, div.Prototype div.HeaderContainer > div.Commands a.Remove, div.Prototype div.HeaderContainer > div.Commands a.Dependencies {
+div.Prototype div.HeaderContainer > div.Commands a.Up, div.Prototype div.HeaderContainer > div.Commands a.Down, div.Prototype div.HeaderContainer > div.Commands a.Add, div.Prototype div.HeaderContainer > div.Commands a.Remove {
   display: none; }
 
 div.Prototype div.TabLabels {

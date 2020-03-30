@@ -106,7 +106,7 @@ namespace CheckListManager.Instances.Logic.Services
 
         public async Task SaveCacheObjectAsync(InstanceCacheObject cacheObject)
         {
-            if (cacheObject.NeedToCache)
+            if (!cacheObject.Instance.CheckVersion(true) || cacheObject.NeedToCache)
                 await _instanceCache.SetAsync(cacheObject);
             else
                 await _instanceCache.TouchAsync(cacheObject.Code);
@@ -826,15 +826,22 @@ namespace CheckListManager.Instances.Logic.Services
             });
         }
 
-        public async Task<Instance> UpdateInstanceAsync(IDefaultIdentity identity, InstanceCacheObject cacheObject, string lockUser)
+        //DependencyChainTraverseIndex = null updates always (called on instance creation). DependencyChainTraverseIndex = n > 1 updates alse if no more than n - 1 updates already happened
+        public async Task<Instance> UpdateInstanceAsync(IDefaultIdentity identity, InstanceCacheObject cacheObject, string lockUser, int? DependencyChainTraverseIndex)
         {
             cacheObject.Instance.ReadOnly =
                 !cacheObject.InstanceState.In(InstanceState.Draft, InstanceState.Progress)
                 || !HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType)
                 || cacheObject.Year == 0 && !cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation);
 
-            cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(identity.CompanyId), (await _settingService.TimeZoneAsync(identity.CompanyId)), cacheObject);
-            cacheObject.Instance.UpdateReadOnly(lockUser ?? identity.Code, cacheObject.InstanceState);
+            if (cacheObject.Instance.DependencyChainTraverseIndex != DependencyChainTraverseIndex || !cacheObject.Instance.CheckVersion(false))
+            {
+                cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(identity.CompanyId), await _settingService.TimeZoneAsync(identity.CompanyId), cacheObject);
+                cacheObject.Instance.UpdateReadOnly(lockUser ?? identity.Code, cacheObject.InstanceState);
+
+                if (DependencyChainTraverseIndex.HasValue)
+                    cacheObject.Instance.DependencyChainTraverseIndex = DependencyChainTraverseIndex.Value;
+            }
 
             return cacheObject.Instance;
         }
@@ -879,8 +886,9 @@ namespace CheckListManager.Instances.Logic.Services
                 stopWatch.Stop();
                 getTime = stopWatch.Elapsed.TotalMilliseconds;
 
-                var lockUser = request.Type == "Signature" ? request.Username : null; //A signer may sign also if the page is locked by the main user (the lock is for concurrency purpose, not for security)
-                await UpdateInstanceAsync(identity, cacheObject, lockUser);
+                var lockUser = request.Type == "Signature" || request.Type == "SignatureCheck" ? request.Username : null; //A signer may sign also if the page is locked by the main user (the lock is for concurrency purpose, not for security)
+                //var lockUser = request.Type == "Signature" ? request.Username : null; 
+                await UpdateInstanceAsync(identity, cacheObject, lockUser, 1);
 
                 if (!cacheObject.Instance.ReadOnly)
                     await _instanceCache.TouchAsync(cacheObject.Code);
@@ -943,6 +951,9 @@ namespace CheckListManager.Instances.Logic.Services
                     default:
                         throw new InstanceException($"Event type {request.Type} not handled.");
                 }
+
+                await UpdateInstanceAsync(identity, cacheObject, lockUser, 2);
+
                 stopWatch.Stop();
                 handleTime = stopWatch.Elapsed.TotalMilliseconds;
 

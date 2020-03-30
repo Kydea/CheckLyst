@@ -5,6 +5,7 @@ using CheckListManager.Instances.Logic.Exceptions;
 using Newtonsoft.Json;
 using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.Expressions;
+using System.Linq;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
@@ -103,9 +104,17 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 				CheckList.Elements[Code] = this;
 		}
 
-		public abstract void Update(string DecimalSeparator, string TimeZone);
+        private int DependencyChainTraverseIndex { get; set; } = 0;
+        public void Update(string DecimalSeparator, string TimeZone)
+        {
+            if (DependencyChainTraverseIndex == CheckList.DependencyChainTraverseIndex) return;
+            OnUpdate(DecimalSeparator, TimeZone);
+            DependencyChainTraverseIndex = CheckList.DependencyChainTraverseIndex;
+        }
 
-		public bool ReadOnly { get; protected set; }
+        protected abstract void OnUpdate(string DecimalSeparator, string TimeZone);
+
+        public bool ReadOnly { get; protected set; }
 
 		protected virtual bool IsReadOnlyByDefault() => false;
 
@@ -148,10 +157,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             if (ExpressionCode == null) return null;
             if (string.IsNullOrEmpty(ExpressionCode))
                 throw new Exception($"The {DependencyNodeKey} reference is missing");
-            if (!CheckList.Expressions.ContainsKey(ExpressionCode))
+            if (!CheckList.Expressions.TryGetValue(ExpressionCode, out var Expression))
                 throw new Exception($"The {DependencyNodeKey} references to the inexistent expression {ExpressionCode}");
 
-            var Expression = CheckList.Expressions[ExpressionCode];
             DependingNodes.Add(Expression.DependencyNodeKey);
             return Expression;
         }
@@ -197,21 +205,35 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         }
 
         public virtual DependencyNodeKey DependencyNodeKey => string.IsNullOrEmpty(Code) ? null : new DependencyNodeKey("element", Code);
-        public List<DependencyNodeKey> DependentNodes { get; } = new List<DependencyNodeKey>();
-        public List<DependencyNodeKey> DependingNodes { get; } = new List<DependencyNodeKey>();
+        public HashSet<DependencyNodeKey> DependentNodes { get; } = new HashSet<DependencyNodeKey>();
+        public HashSet<DependencyNodeKey> DependingNodes { get; } = new HashSet<DependencyNodeKey>();
         protected virtual IEnumerable<DependencyNodeKey> GetDependingNodes() => DependingNodes;
 
         private string DependencyChainKey { get; set; }
-        public void TraverseDependencyChain(ICheckList checkList, List<IDependencyNode> DependencyChain, string DependencyChainKey)
+        public bool TraverseDependencyChain(ICheckList checkList, Stack<IDependencyNode> DependencyChain, string DependencyChainKey, Func<IDependencyNode, bool> DependencyChainAction)
         {
-            if (this.DependencyChainKey == DependencyChainKey) return; //cycle break, for back compatibility
-            DependencyChain.Add(this);
+            DependencyChain.Push(this);
+            if (this.DependencyChainKey == DependencyChainKey)
+                throw new Exception($"Dependency cycle found: {string.Join(" > ", DependencyChain.Reverse().Select(e => e.DependencyNodeKey.Description))}");
             this.DependencyChainKey = DependencyChainKey;
+
+            var Result = true;
 
             var DependingNodes = GetDependingNodes();
             if (DependingNodes != null)
                 foreach (var DependingNodeKey in DependingNodes)
-                    DependingNodeKey.GetNode(checkList).TraverseDependencyChain(checkList, DependencyChain, DependencyChainKey);
+                    if (!DependingNodeKey.GetNode(checkList).TraverseDependencyChain(checkList, DependencyChain, DependencyChainKey, DependencyChainAction))
+                        Result = false;
+
+            if (Result)
+            {
+                var Instance = (Instance)CheckList;
+                Update(Instance.DecimalSeparator, Instance.TimeZone);
+            }
+
+            DependencyChain.Pop();
+            this.DependencyChainKey = null;
+            return Result;
         }
 
         #endregion

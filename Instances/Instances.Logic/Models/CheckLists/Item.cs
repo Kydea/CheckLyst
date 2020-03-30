@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.Expressions;
@@ -37,9 +38,18 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         {
             base.BuildDependencies();
             DescriptionFormula.BuildDependencies(Description);
+
+            var DependencyNodeKey = this.DependencyNodeKey.Clone("description");
+            DescriptionFormula.BuildDependencies(Description);
+            foreach (var Key in DescriptionFormula.ValueKeys)
+                if (CheckList.Expressions.TryGetValue(Key, out var Expression))
+                {
+                    Expression.DependentNodes.Add(DependencyNodeKey);
+                    DependingNodes.Add(Expression.DependencyNodeKey);
+                }
         }
 
-        public override void Update(string DecimalSeparator, string TimeZone)
+        protected override void OnUpdate(string DecimalSeparator, string TimeZone)
         {
             if (Iteration != null)
                 RuntimeValues["IterationIndex"] = Iteration.Index;

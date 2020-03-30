@@ -136,19 +136,19 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                 switch (Values[1])
                 {
                     case "Signed":
-                        Symbol = new ElementProperties.SignatureProperty(ElementProperties.SignatureProperty.SignatureProperties.Signed) { Code = Values[0], Position = Position };
+                        Symbol = new ElementProperties.SignatureProperty(ElementProperties.SignatureProperty.SIGNED) { Code = Values[0], Position = Position };
                         break;
                     case "SignedBy":
-                        Symbol = new ElementProperties.SignatureProperty(ElementProperties.SignatureProperty.SignatureProperties.SignedBy) { Code = Values[0], Position = Position };
+                        Symbol = new ElementProperties.SignatureProperty(ElementProperties.SignatureProperty.SIGNED_BY) { Code = Values[0], Position = Position };
                         break;
                     case "SignedOn":
-                        Symbol = new ElementProperties.SignatureProperty(ElementProperties.SignatureProperty.SignatureProperties.SignedOn) { Code = Values[0], Position = Position };
+                        Symbol = new ElementProperties.SignatureProperty(ElementProperties.SignatureProperty.SIGNED_ON) { Code = Values[0], Position = Position };
                         break;
                     case "Value":
                         Symbol = new ElementProperties.FieldProperty { Code = Values[0], Position = Position };
                         break;
                     case "Valid":
-                        Symbol = new ElementProperties.ElementProperty(ElementProperties.ElementProperty.ElementProperties.Valid) { Code = Values[0], Position = Position };
+                        Symbol = new ElementProperties.ElementProperty { Code = Values[0], Position = Position };
                         break;
                     case "Sum":
                     case "Avg":

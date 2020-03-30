@@ -8,35 +8,26 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
 {
     public class ElementProperty : Symbol
     {
-        public enum ElementProperties { Valid }
-
-        private readonly ElementProperties Property;
-
-        protected ElementProperty()
+        public ElementProperty()
         {
-        }
-
-        public ElementProperty(ElementProperties Property)
-        {
-            this.Property = Property;
+            Property = "Valid";
         }
 
         public string Code { get; set; }
 
-        protected virtual string DependencyNodeKeyProperty => "Valid";
+        protected string Property { get; set; }
 
         public override void BuildDependencies(ICheckList CheckList, Expression Expression)
         {
             if (!CheckList.Elements.ContainsKey(Code)) throw new ParseException($"Element with code {Code} not found", Position);
             var DependingElement = CheckList.Elements[Code];
-            Expression.DependingNodes.Add(DependingElement.DependencyNodeKey.Clone(DependencyNodeKeyProperty));
+            Expression.DependingNodes.Add(DependingElement.DependencyNodeKey.Clone(Property));
             DependingElement.DependentNodes.Add(Expression.DependencyNodeKey);
         }
 
         protected virtual void Check(ICheckListElement Element, List<string> IteratorStack)
         {
-            if (Property == ElementProperties.Valid)
-                DataType = DataType.Boolean;
+            DataType = DataType.Boolean;
         }
 
         public static ICheckListElement Check(ICheckList CheckList, List<string> IteratorStack, string Code, int Position)
@@ -89,7 +80,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
 
         public override string ToString()
         {
-            return $"{Code}.Valid";
+            return $"{Code}.{Property}";
         }
     }
 }

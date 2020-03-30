@@ -14,5 +14,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             Copy(this, text);
             return text;
         }
+
+        protected override string DescriptionPropertyName => "content";
     }
 }

@@ -9,6 +9,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 	public abstract class Item : Element, ICheckListItem
 	{
 		public virtual string CssClass => TypeName;
+        private Formula DescriptionFormula { get; } = new Formula();
 		public string Description { get; set; }
 		public ICheckListGroup Group { get; set; }
 		public int Id { get; set; }
@@ -49,6 +50,21 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 			throw new NotImplementedException();
 		}
 
+
+        protected virtual string DescriptionPropertyName => "label";
         public override DependencyNodeKey DependencyNodeKey => base.DependencyNodeKey ?? new DependencyNodeKey("item", Id);
+        public override void BuildDependencies()
+        {
+            base.BuildDependencies();
+
+            var DependencyNodeKey = this.DependencyNodeKey.Clone(DescriptionPropertyName);
+            DescriptionFormula.BuildDependencies(Description);
+            foreach (var Key in DescriptionFormula.ValueKeys)
+                if (CheckList.Expressions.TryGetValue(Key, out var Expression))
+                {
+                    Expression.DependentNodes.Add(DependencyNodeKey);
+                    DependingNodes.Add(Expression.DependencyNodeKey);
+                }
+        }
     }
 }

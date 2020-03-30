@@ -170,7 +170,6 @@
 
                 if (result.checkListException) {
                     valid = false;
-                    console.log(result.checkListException);
                     matematici.dialog.error("Error", result.checkListException.Message);
                 }
 

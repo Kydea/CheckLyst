@@ -13,5 +13,5 @@ namespace CheckListManager.Instances.Logic.Services
 		Task TouchAsync(string code);
 		Task<LockObject> LockAsync(string code);
 		Task<string[]> GetInstancesInRangeAsync(double start = double.NegativeInfinity, double stop = double.PositiveInfinity);
-	}
+    }
 }

@@ -53,7 +53,7 @@ namespace CheckListManager.Instances.Api.Controllers
             try
             {
                 var cacheObject = await _instanceManagerService.CreateInstanceAsync(Identity, Identity.Code, request.Prototype, request.Version, request.Parameters);
-                var instance = await _instanceManagerService.UpdateInstanceAsync(Identity, cacheObject, null);
+                var instance = await _instanceManagerService.UpdateInstanceAsync(Identity, cacheObject, null, null);
                 await _instanceManagerService.SaveCacheObjectAsync(cacheObject);
                 var response = new InstanceResponse
                 {
@@ -88,7 +88,7 @@ namespace CheckListManager.Instances.Api.Controllers
             try
             {
                 var cacheObject = await _instanceManagerService.OpenInstanceAsync(request.Code, Identity);
-                var instance = await _instanceManagerService.UpdateInstanceAsync(Identity, cacheObject, null);
+                var instance = await _instanceManagerService.UpdateInstanceAsync(Identity, cacheObject, null, 1);
                 await _instanceManagerService.SaveCacheObjectAsync(cacheObject);
 
                 var response = new InstanceResponse
@@ -171,7 +171,7 @@ namespace CheckListManager.Instances.Api.Controllers
                 var cacheObject = await _instanceManagerService.GetCacheObjectAsync(Identity.CompanyId, request.Code, true);
                 _instanceManagerService.CheckViewPermission(Identity, cacheObject);
                 await _instanceManagerService.GetInstanceAsync(Identity, cacheObject);
-                var instance = await _instanceManagerService.UpdateInstanceAsync(Identity, cacheObject, null);
+                var instance = await _instanceManagerService.UpdateInstanceAsync(Identity, cacheObject, null, 1);
                 await _instanceManagerService.SaveCacheObjectAsync(cacheObject);
 
                 var response = new InstanceResponse
@@ -211,16 +211,15 @@ namespace CheckListManager.Instances.Api.Controllers
             try
             {
                 var cacheObject = await _instanceManagerService.HandleEventAsync(Identity, request);
-                var checkList = await _instanceManagerService.UpdateInstanceAsync(Identity, cacheObject, request.Type == "Signature" || request.Type == "SignatureCheck" ? request.Username : null);
                 await _instanceManagerService.SaveCacheObjectAsync(cacheObject);
                 var response = new InstanceResponse
                 {
                     Id = cacheObject.Id,
                     Code = cacheObject.Code,
-                    CheckList = checkList,
+                    CheckList = cacheObject.Instance,
                     State = cacheObject.InstanceState
                 };
-                if (!Identity.HasPermission("Trail") && cacheObject.VersionState != VersionState.Draft && cacheObject.VersionState != VersionState.InSimulation) checkList.HideExpressions = true;
+                if (!Identity.HasPermission("Trail") && cacheObject.VersionState != VersionState.Draft && cacheObject.VersionState != VersionState.InSimulation) cacheObject.Instance.HideExpressions = true;
                 return Ok(response);
             }
             catch (Exception e)
@@ -270,7 +269,6 @@ namespace CheckListManager.Instances.Api.Controllers
             var Data = await _redisCache.GetAsync<InstanceRequest>($"Token:{Token}", "Download");
             await _redisCache.RemoveAsync($"Token:{Token}", "Download");
             var cacheObject = await _instanceManagerService.GetCacheObjectAsync(Data.CompanyId.Value, Data.Code, true);
-            cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(Data.CompanyId.Value), (await _settingService.TimeZoneAsync(Data.CompanyId.Value)), cacheObject);
             cacheObject.Instance.UpdateReadOnly(Data.UserCode, cacheObject.InstanceState);
             var PDF = new InstancePDF(Data.CompanyId.Value, Data.CompanyName, Data.TimeZone, _configurationService.PublicRepositoryUrl, cacheObject, _instancesRepository, _storageService, _configurationService);
 

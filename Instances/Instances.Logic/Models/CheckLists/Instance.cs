@@ -15,7 +15,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
     public class Instance : ICheckList
     {
         public bool ReadOnly { get; set; }
-        public bool DependenciesCreated { get; set; }
         public Dictionary<string, ICheckListElement> Elements { get; set; } = new Dictionary<string, ICheckListElement>();
         public PascalCaseDictionary<string, Expression> Expressions { get; set; }
         public PascalCaseDictionary<string, string> Exceptions =>
@@ -37,11 +36,23 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         [JsonIgnore]
         public bool InCreation { get; private set; }
+        [JsonIgnore]
+        public int DependencyChainTraverseIndex { get; set; } = 1;
 
         public ICheckList CheckList
         {
             get => this;
             set => throw new NotImplementedException("Just for inheritance purpose");
+        }
+
+        public decimal InstanceModelVersion { get; set; }
+        private readonly decimal ModelVersion = 2.0m;
+        public bool CheckVersion(bool Save)
+        {
+            var Result = InstanceModelVersion == ModelVersion;
+            if (!Result && Save)
+                InstanceModelVersion = ModelVersion;
+            return Result;
         }
 
         private int itemSequence;
@@ -57,12 +68,12 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public Dictionary<int, ICheckListItem> Items { get; } = new Dictionary<int, ICheckListItem>();
 
-        public void Setup(bool Creation)
+        public void Setup(bool creation)
         {
-            //this must be called after deserialization
-            InCreation = Creation;
+            //Setup must be called after deserialization
+            InCreation = creation;
 
-            if (Creation)
+            if (creation)
                 ExternalSourceRows = new PascalCaseDictionary<string, PascalCaseDictionary<string, string>>(ExternalSources.ToDictionary(x => x.Key, x => new PascalCaseDictionary<string, string>()));
 
             Header.CheckList = this;
@@ -85,15 +96,33 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             if (ElementsList == null) //if (InCreation) //replaced with this more generic but less meaningful form for back compatibility with 1.4 when ElementList did not exist
                 ElementsList = Elements.Values.Where(Element => !(Element is ICheckListItem CheckListItem) || !CheckListItem.IterationItem && !CheckListItem.IteratorModelItem).ToList(); //pages and items outside iterators
 
-            if (!DependenciesCreated)
-                CreateDependencies();
+            if (!CheckVersion(false))
+                BuildDependencies();
             InCreation = false;
         }
 
-        public void CreateDependencies()
+        public void BuildDependencies()
         {
+            foreach(var Expression in Expressions.Values)
+                Expression.ClearDependencies();
+
+            var DependencyNodeKey = this.DependencyNodeKey.Clone("instance-description");
             DescriptionFormula.BuildDependencies(DescriptionFormulaString);
+            foreach (var Key in DescriptionFormula.ValueKeys)
+                if (Expressions.TryGetValue(Key, out var Expression))
+                {
+                    Expression.DependentNodes.Add(DependencyNodeKey);
+                    DependingNodes.Add(Expression.DependencyNodeKey);
+                }
+
+            DependencyNodeKey = this.DependencyNodeKey.Clone("instance-file-name");
             FileNameFormula.BuildDependencies(FileNameFormulaString);
+            foreach (var Key in FileNameFormula.ValueKeys)
+                if (Expressions.TryGetValue(Key, out var Expression))
+                {
+                    Expression.DependentNodes.Add(DependencyNodeKey);
+                    DependingNodes.Add(Expression.DependencyNodeKey);
+                }
 
             foreach (var Expression in Expressions.Values)
                 if (!Expression.BuildDependencies(this))
@@ -102,15 +131,21 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             ((Group)Header).BuildDependencies();
             foreach (Page Page in Pages)
                 Page.BuildDependencies();
-
-            DependenciesCreated = true;
         }
 
-        private readonly List<IDependencyNode> DependencyChain = new List<IDependencyNode>();
+        [JsonIgnore]
+        public string DecimalSeparator { get; private set; }
+        [JsonIgnore]
+        public string TimeZone { get; private set; }
+        public Dictionary<string, object> InstanceRuntimeValues { get; private set; }
+
+        private readonly Stack<IDependencyNode> DependencyChain = new Stack<IDependencyNode>();
         private string DependencyChainKey;
         public void Update(string DecimalSeparator, string TimeZone, InstanceCacheObject cacheObject = null)
         {
-            Dictionary<string, object> InstanceRuntimeValues = cacheObject == null ? new Dictionary<string, object>() : new Dictionary<string, object> {
+            this.DecimalSeparator = DecimalSeparator;
+            this.TimeZone = TimeZone;
+            InstanceRuntimeValues = cacheObject == null ? new Dictionary<string, object>() : new Dictionary<string, object> {
                 { "InstanceCompany", cacheObject.CompanyId },
                 { "InstanceDepartment", cacheObject.Department },
                 { "InstanceDepartmentName", cacheObject.DepartmentName },
@@ -127,17 +162,12 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             {
                 DependencyChain.Clear();
                 DependencyChainKey = Expression.Code;
-                Expression.TraverseDependencyChain(this, DependencyChain, DependencyChainKey);
+                Expression.TraverseDependencyChain(this, DependencyChain, DependencyChainKey, e => {
+                    ((Expression)e).Evaluate(this, TimeZone);
+                    return true;
+                });
             }
 
-            foreach (var expression in Expressions)
-                expression.Value.Evaluate(this, TimeZone);
-
-            Update(DecimalSeparator, TimeZone, InstanceRuntimeValues);
-        }
-        
-        private void Update(string DecimalSeparator, string TimeZone, Dictionary<string, object> InstanceRuntimeValues)
-        {
             DescriptionFormula.Evaluate(this, InstanceRuntimeValues, DecimalSeparator, TimeZone, null);
             FileNameFormula.Evaluate(this, InstanceRuntimeValues, DecimalSeparator, TimeZone, null);
 
@@ -207,5 +237,18 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         }
 
         public TypedValue GetExpressionValue(string ExpressionCode, List<int> IterationIndexes) => GetExpressionValue(ExpressionCode, IterationIndexes, out var Error);
+
+        public DependencyNodeKey DependencyNodeKey => new DependencyNodeKey("checklist", null);
+        public HashSet<DependencyNodeKey> DependentNodes { get; } = new HashSet<DependencyNodeKey>();
+        public HashSet<DependencyNodeKey> DependingNodes { get; } = new HashSet<DependencyNodeKey>();
+
+        public bool TraverseDependencyChain(ICheckList checkList, Stack<IDependencyNode> DependencyChain, string DependencyChainKey, Func<IDependencyNode, bool> DependencyChainAction)
+        {
+            DescriptionFormula.Evaluate(this, InstanceRuntimeValues, DecimalSeparator, TimeZone, null);
+            FileNameFormula.Evaluate(this, InstanceRuntimeValues, DecimalSeparator, TimeZone, null);
+
+            return true;
+        }
+
     }
 }

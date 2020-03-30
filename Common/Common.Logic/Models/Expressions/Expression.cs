@@ -19,6 +19,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         public bool Unique { get; set; }
         public bool Exception { get; set; }
 
+
         public Expression()
         {
             Symbols = new List<Symbol>();
@@ -38,8 +39,6 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         public void Parse(ICheckList checkList)
         {
             Error = null;
-            DependingNodes.Clear();
-            DependentNodes.Clear();
             Root = new TokenSet(SerializedValue, 0).Symbol;
             Root.Expression = this;
             Value = Value ?? new TypedValue(DataType.Error, null);
@@ -59,7 +58,16 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
         public void Evaluate(ICheckList instance, string timeZone)
         {
+            if (DendencyChainTraverseIndex == instance.DependencyChainTraverseIndex) return;
+
             Value = Root.GetValue(instance, timeZone);
+            DendencyChainTraverseIndex = instance.DependencyChainTraverseIndex;
+        }
+
+        public void ClearDependencies()
+        {
+            DependingNodes.Clear();
+            DependentNodes.Clear();
         }
 
         public bool BuildDependencies(ICheckList checklist)
@@ -100,13 +108,12 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             return Result;
         }
 
-        private bool Checked { get; set; }
         public bool Check(ICheckList CheckList)
         {
             try
             {
-                if (Checked) return true;
-                Checked = true;
+                if (DendencyChainTraverseIndex == CheckList.DependencyChainTraverseIndex) return true;
+                DendencyChainTraverseIndex = DendencyChainTraverseIndex;
                 Root.Check(CheckList, this, new List<string>());
                 if (Exception && Root.DataType != DataType.Boolean)
                     throw new Exception($"Exception expressions must be boolean");
@@ -128,8 +135,9 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
         public DataType? InnerDataType => Root?.InnerDataType;
 
+        private int DendencyChainTraverseIndex { get; set; } = 0;
         public DependencyNodeKey DependencyNodeKey => new DependencyNodeKey("expression", Code);
-        public List<DependencyNodeKey> DependentNodes { get; } = new List<DependencyNodeKey>();
-        public List<DependencyNodeKey> DependingNodes { get; } = new List<DependencyNodeKey>();
+        public HashSet<DependencyNodeKey> DependentNodes { get; } = new HashSet<DependencyNodeKey>();
+        public HashSet<DependencyNodeKey> DependingNodes { get; } = new HashSet<DependencyNodeKey>();
     }
 }

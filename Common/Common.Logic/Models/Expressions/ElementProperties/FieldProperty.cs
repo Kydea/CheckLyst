@@ -6,6 +6,11 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
 {
     public class FieldProperty : ElementProperty
     {
+        public FieldProperty()
+        {
+            Property = "Value";
+        }
+
         protected override void Check(ICheckListElement Element, List<string> IteratorStack)
         {
             if (!(Element is ICheckListField)) throw new Exception($"The element with code {Code} is not a Field");
@@ -16,11 +21,6 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
         {
             var Field = (ICheckListField)Element;
             return new TypedValue(Field.ValueType, Field.Value, Field.LocalTimeZone ? TimeZone : TimeZoneInfo.Utc.Id);
-        }
-
-        public override string ToString()
-        {
-            return $"{Code}.Value";
         }
     }
 }

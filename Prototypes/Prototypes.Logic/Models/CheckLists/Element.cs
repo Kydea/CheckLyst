@@ -41,8 +41,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                     throw new Exception($"Duplicated code {Code}");
                 CheckList.Elements[Code] = this;
             }
-            DependingNodes.Clear();
-            DependentNodes.Clear();
+            ClearDependencies();
         }
 
         public void Update(string DecimalSeparator, string TimeZone)
@@ -79,7 +78,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 throw new Exception($"The {DependencyNodeKey} references to the inexistent expression {ExpressionCode}");
 
             var Expression = CheckList.Expressions[ExpressionCode];
-            DependingNodes.Add(Expression.DependencyNodeKey.Clone(DependencyNodeKey.PropertyName));
+            DependingNodes.Add(Expression.DependencyNodeKey);
             return Expression;
         }
 
@@ -93,6 +92,12 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             if (!(BranchElements[SignatureCode] is Signature Signature))
                 throw new Exception($"The {DependencyNodeKey} references to a signature with code {SignatureCode} but it is not a signature");
             return Signature;
+        }
+
+        public void ClearDependencies()
+        {
+            DependingNodes.Clear();
+            DependentNodes.Clear();
         }
 
         public virtual void BuildDependencies()
@@ -152,11 +157,11 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             return Result;
         }
 
-        private bool Checked { get; set; }
+        private int DependencyChainTraverseIndex { get; set; } = 0;
         public virtual void Check()
         {
-            if (Checked) return;
-            Checked = true;
+            if (DependencyChainTraverseIndex == CheckList.DependencyChainTraverseIndex) return;
+            DependencyChainTraverseIndex = CheckList.DependencyChainTraverseIndex;
 
             if (CountDownCondition == Conditions.Expression)
                 CheckExpression(CountDownToCode, DataType.DateTime, DataType.Date);
@@ -169,8 +174,8 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         }
 
         public virtual DependencyNodeKey DependencyNodeKey => string.IsNullOrEmpty(Code) ? null : new DependencyNodeKey("element", Code);
-        public List<DependencyNodeKey> DependentNodes { get; } = new List<DependencyNodeKey>();
-        public List<DependencyNodeKey> DependingNodes { get; } = new List<DependencyNodeKey>();
+        public HashSet<DependencyNodeKey> DependentNodes { get; } = new HashSet<DependencyNodeKey>();
+        public HashSet<DependencyNodeKey> DependingNodes { get; } = new HashSet<DependencyNodeKey>();
         protected virtual IEnumerable<DependencyNodeKey> GetDependingNodes() => DependingNodes;
 
         public static void Copy(Element source, Element destination)

@@ -89,5 +89,5 @@ namespace CheckListManager.Instances.Logic.Services
 
 		public Task<string[]> GetInstancesInRangeAsync(double start = double.NegativeInfinity, double stop = double.PositiveInfinity)
 			=> _redisCache.SortedSetGetAsync("Instances", start, stop, RegionName);
-	}
+    }
 }

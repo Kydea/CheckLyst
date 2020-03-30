@@ -39,8 +39,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 			}
 		}
 
-		public override void Update(string DecimalSeparator, string TimeZone)
-		{
+        protected override void OnUpdate(string DecimalSeparator, string TimeZone)
+        {
 			_valid = true;
 			foreach (var group in Groups)
 			{

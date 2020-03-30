@@ -16,6 +16,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 		public List<FieldRecord> History { get; } = new List<FieldRecord>();
 		public int LinesCount { get; set; }
 		public string Value { get; set; }
+        public Formula ValueFormula { get; } = new Formula();
 		public string ValueFormulaString { get; set; }
 
         private List<string> _ValuesList;
@@ -51,5 +52,20 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             Copy(this, field);
             return field;
         }
+
+        public override void BuildDependencies()
+        {
+            base.BuildDependencies();
+
+            var DependencyNodeKey = this.DependencyNodeKey.Clone("Value");
+            ValueFormula.BuildDependencies(ValueFormulaString);
+            foreach (var Key in ValueFormula.ValueKeys)
+                if (CheckList.Expressions.TryGetValue(Key, out var Expression))
+                {
+                    Expression.DependentNodes.Add(DependencyNodeKey);
+                    DependingNodes.Add(Expression.DependencyNodeKey);
+                }
+        }
+
     }
 }

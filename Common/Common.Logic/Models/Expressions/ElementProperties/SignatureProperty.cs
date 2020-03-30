@@ -6,28 +6,20 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
 {
     public class SignatureProperty : ElementProperty
     {
-        public enum SignatureProperties { Signed, SignedBy, SignedOn }
+        public const string SIGNED = "Signed", SIGNED_BY = "SignedBy", SIGNED_ON = "SignedOn";
 
-        private readonly SignatureProperties Property;
-
-        public SignatureProperty(SignatureProperties Property)
+        public SignatureProperty(string Property)
         {
             this.Property = Property;
         }
-
-        protected override string DependencyNodeKeyProperty => 
-            Property == SignatureProperties.Signed ? "signed" :
-            Property == SignatureProperties.SignedBy ? "signed by" :
-            Property == SignatureProperties.SignedOn ? "signed on" :
-            null;
 
         protected override void Check(ICheckListElement Element, List<string> IteratorStack)
         {
             if (!(Element is ICheckListSignature)) throw new Exception($"The element with code {Code} is not an Signature");
             var Signature = (ICheckListSignature)Element;
             DataType =
-                Property == SignatureProperties.Signed ? DataType.Boolean :
-                Property == SignatureProperties.SignedBy ? DataType.Text :
+                Property == SIGNED ? DataType.Boolean :
+                Property == SIGNED_BY ? DataType.Text :
                 DataType.DateTime;
         }
 
@@ -35,15 +27,10 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
         {
             var Signature = (ICheckListSignature)Element;
             return
-                Property == SignatureProperties.Signed ? new TypedValue(DataType.Boolean, Signature.Signed) :
-                Property == SignatureProperties.SignedBy ? new TypedValue(DataType.Text, Signature.Signed ? Signature.SignedBy : null) :
-                Property == SignatureProperties.SignedOn ? new TypedValue(DataType.DateTime, Signature.Signed ? Signature.SignedOn : (DateTimeOffset?)null) :
+                Property == SIGNED ? new TypedValue(DataType.Boolean, Signature.Signed) :
+                Property == SIGNED_BY ? new TypedValue(DataType.Text, Signature.Signed ? Signature.SignedBy : null) :
+                Property == SIGNED_ON ? new TypedValue(DataType.DateTime, Signature.Signed ? Signature.SignedOn : (DateTimeOffset?)null) :
                 null;
-        }
-
-        public override string ToString()
-        {
-            return $"{Code}.{(Property == SignatureProperties.Signed ? "Signed" : Property == SignatureProperties.SignedBy ? "SignedBy" : Property == SignatureProperties.SignedOn ? "SignedOn" : "#")}";
         }
     }
 }

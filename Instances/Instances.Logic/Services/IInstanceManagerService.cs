@@ -21,7 +21,7 @@ namespace CheckListManager.Instances.Logic.Services
         Task SaveInstanceAsync(string code, IDefaultIdentity identity);
         Task<InstanceCacheObject> CompleteInstanceAsync(string code, IDefaultIdentity identity);
         Task DeleteInstanceAsync(string code, IDefaultIdentity identity, string note);
-        Task<Instance> UpdateInstanceAsync(IDefaultIdentity identity, InstanceCacheObject instance, string lockUser);
+        Task<Instance> UpdateInstanceAsync(IDefaultIdentity identity, InstanceCacheObject instance, string lockUser, int? dependencyChainTraverseIndex);
         Task<InstanceCacheObject> HandleEventAsync(IDefaultIdentity identity, InstanceEventRequest request);
         Task ClearPendingInstances(CancellationToken cancellationToken = default(CancellationToken));
         Task<List<HistoryRow>> History(DefaultIdentity identity, long id);

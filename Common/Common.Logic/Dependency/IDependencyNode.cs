@@ -10,8 +10,8 @@ namespace CheckListManager.Common.Logic.Dependency
 {
     public interface IDependencyNode
     {
-        List<DependencyNodeKey> DependentNodes { get; }
-        List<DependencyNodeKey> DependingNodes { get; }
+        HashSet<DependencyNodeKey> DependentNodes { get; }
+        HashSet<DependencyNodeKey> DependingNodes { get; }
         DependencyNodeKey DependencyNodeKey { get; }
         bool TraverseDependencyChain(ICheckList checkList, Stack<IDependencyNode> DependencyChain, string DependencyChainKey, Func<IDependencyNode, bool> DependencyChainAction);
     }
