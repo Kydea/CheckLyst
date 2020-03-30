@@ -15,7 +15,9 @@ namespace CheckListManager.Common.Core.Helpers
         }
 
         public static string Format(this DateTimeOffset DateTimeOffset, string TimeZone, string Format = null) =>
-            DateTimeOffset.ToLocalTime(TimeZone).ToString(Format ?? $"{DateFormat} {TimeFormat} UTC zzz");
+            TimeZone == null ?
+                DateTimeOffset.ToUniversalTime().ToString(Format ?? $"{DateFormat} {TimeFormat} UTC") :
+                DateTimeOffset.ToLocalTime(TimeZone).ToString(Format ?? $"{DateFormat} {TimeFormat} UTC zzz");
 
         public static string FormatOffset(int OffsetInMinutes)
         {
