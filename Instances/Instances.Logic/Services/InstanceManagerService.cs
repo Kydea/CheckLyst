@@ -1081,15 +1081,26 @@ namespace CheckListManager.Instances.Logic.Services
                 {
                     string TimeZone = (await _settingService.TimeZoneAsync(cacheObject.CompanyId));
 
-                    if (DateTimeOffset.TryParseExact(oldFormattedValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out var Date))
-                        oldFormattedValue = Date.Format(TimeZone);
-                    else
-                        oldFormattedValue = string.Empty;
+                    if (field.LocalTimeZone)
+                    {
+                        if (DateTimeOffset.TryParseExact(oldFormattedValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out var Date))
+                            oldFormattedValue = Date.Format(TimeZone);
+                        else
+                            oldFormattedValue = string.Empty;
 
-                    if (DateTimeOffset.TryParseExact(formattedValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out Date))
-                        formattedValue = Date.Format(TimeZone);
+                        if (DateTimeOffset.TryParseExact(formattedValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out Date))
+                            formattedValue = Date.Format(TimeZone);
+                        else
+                            formattedValue = string.Empty;
+                    }
                     else
-                        formattedValue = string.Empty;
+                    {
+                        var dateTimeOffset = DateTimeOffsetHelper.Parse(oldFormattedValue, TimeZone, out var Ambiguous, out var AmbiguousDateTimeOffsets, DateTimeOffsetHelper.DateFormat);
+                        oldFormattedValue = dateTimeOffset?.Format(TimeZone) ?? string.Empty;
+
+                        dateTimeOffset = DateTimeOffsetHelper.Parse(formattedValue, TimeZone, out Ambiguous, out AmbiguousDateTimeOffsets, DateTimeOffsetHelper.DateFormat);
+                        formattedValue = dateTimeOffset?.Format(TimeZone) ?? string.Empty;
+                    }
                 }
 
                 field.History.Add(new FieldRecord
@@ -1151,15 +1162,26 @@ namespace CheckListManager.Instances.Logic.Services
                 {
                     string TimeZone = (await _settingService.TimeZoneAsync(cacheObject.CompanyId));
 
-                    if (DateTimeOffset.TryParseExact(oldFormattedValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out var Date))
-                        oldFormattedValue = Date.Format(TimeZone);
-                    else
-                        oldFormattedValue = string.Empty;
+                    if (field.LocalTimeZone)
+                    {
+                        if (DateTimeOffset.TryParseExact(oldFormattedValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out var Date))
+                            oldFormattedValue = Date.Format(TimeZone);
+                        else
+                            oldFormattedValue = string.Empty;
 
-                    if (DateTimeOffset.TryParseExact(formattedValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out Date))
-                        formattedValue = Date.Format(TimeZone);
+                        if (DateTimeOffset.TryParseExact(formattedValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out Date))
+                            formattedValue = Date.Format(TimeZone);
+                        else
+                            formattedValue = string.Empty;
+                    }
                     else
-                        formattedValue = string.Empty;
+                    {
+                        var dateTimeOffset = DateTimeOffsetHelper.Parse(oldFormattedValue, TimeZone, out var Ambiguous, out var AmbiguousDateTimeOffsets, DateTimeOffsetHelper.DateFormat);
+                        oldFormattedValue = dateTimeOffset?.Format(TimeZone) ?? string.Empty;
+
+                        dateTimeOffset = DateTimeOffsetHelper.Parse(formattedValue, TimeZone, out Ambiguous, out AmbiguousDateTimeOffsets, DateTimeOffsetHelper.DateFormat);
+                        formattedValue = dateTimeOffset?.Format(TimeZone) ?? string.Empty;
+                    }
                 }
 
                 field.History.Add(new FieldRecord
