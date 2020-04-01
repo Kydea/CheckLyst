@@ -100,25 +100,13 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             }
         }
 
+        public bool Validate(string value) => ValueType.Validate(value);
+
         public bool ConversionError { get; set; }
 
-        public override bool Valid => !ConversionError && base.Valid;
         public override string ValidityMessage { get => ConversionError ? $"the value {ValueFormula.Value} could not be converted to {ValueType.TypeName}" : base.ValidityMessage; set => base.ValidityMessage = value; }
-
-        public override bool IsValidByDefault()
-        {
-            return ValueFormula.IsSet ? ValueFormula.HasValue : !string.IsNullOrEmpty(Value);
-        }
-
-        protected override bool IsReadOnlyByDefault()
-        {
-            return base.IsReadOnlyByDefault() || ValueFormula.IsSet; // || !string.IsNullOrEmpty(ExternalSourceName);
-        }
-
-        public bool Validate(string value)
-        {
-            return ValueType.Validate(value);
-        }
+        public override bool IsValidByDefault() => ValueFormula.IsSet ? ValueFormula.HasValue : (!ConversionError && !string.IsNullOrEmpty(Value));
+        protected override bool IsReadOnlyByDefault() => base.IsReadOnlyByDefault() || ValueFormula.IsSet; // || !string.IsNullOrEmpty(ExternalSourceName);
 
         public override void Setup()
         {

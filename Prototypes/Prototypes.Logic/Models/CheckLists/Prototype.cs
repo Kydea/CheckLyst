@@ -156,9 +156,11 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         public bool TraverseDependencyChain(ICheckList checkList, Stack<IDependencyNode> DependencyChain, string DependencyChainKey, Func<IDependencyNode, bool> DependencyChainAction)
         {
-            //The chelyst is always a leaf
+            //The checklyst is always a leaf
             return true;
         }
+
+        public void MarkNodeAsChanged(ICheckList checkList, List<IDependencyNode> roots) => throw new NotImplementedException();
 
         public void Traverse(Func<ICheckListItem, bool> condition, Action<ICheckListItem> action)
         {

@@ -10,13 +10,13 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 	{
 		private bool _valid;
 
+        public int Index { get; set; }
 		public string Description { get; set; }
 		public List<ICheckListGroup> Groups { get; set; } = new List<ICheckListGroup>();
 
 		public Lock Lock { get; set; }
 
-        public override bool IsValidByDefault()
-			=> _valid;
+        public override bool IsValidByDefault() => _valid;
 
         public void CreateInstanceIterations()
         {
@@ -43,10 +43,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         {
 			_valid = true;
 			foreach (var group in Groups)
-			{
-				group.Update(DecimalSeparator, TimeZone);
 				_valid = _valid && group.Valid;
-			}
 		}
 
 		public override void UpdateReadOnly(string userCode, bool ReadOnlyInstance)
@@ -77,7 +74,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 Group.BuildDependencies();
         }
 
-        public override DependencyNodeKey DependencyNodeKey => base.DependencyNodeKey ?? new DependencyNodeKey("page", Description);
+        public override DependencyNodeKey DependencyNodeKey => base.DependencyNodeKey ?? new DependencyNodeKey("page", Index);
         protected override IEnumerable<DependencyNodeKey> GetDependingNodes()
         {
             foreach (var DependencyNodeKey in base.GetDependingNodes())

@@ -86,10 +86,10 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         public bool IsNull { get { return Value == null; } }
 
         [JsonIgnore]
-        public bool BooleanValue { get { return (bool)(Value ?? false); } }
+        public bool BooleanValue { get { return Convert.ToBoolean(Value ?? false); } }
 
         [JsonIgnore]
-        public decimal NumberValue { get { return (decimal)(Value ?? 0m); } }
+        public decimal NumberValue { get { return Convert.ToDecimal(Value ?? 0m); } }
 
         [JsonIgnore]
         public DateTimeOffset DateTimeValue { get { return (DateTimeOffset)(Value ?? DateTimeOffset.MinValue); } }

@@ -13,9 +13,6 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
             return new TypedValue(DataType.Number, (decimal)Values.Count());
         }
 
-        public override string ToString()
-        {
-            return $"{IteratorCode}.Count({Argument?.ToString() ?? "#"})";
-        }
+        protected override string Property => "Count";
     }
 }

@@ -26,8 +26,5 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
         TypedValue GetExpressionValue(string ExpressionCode, ICheckListElement Element);
         TypedValue GetExpressionValue(string ExpressionCode, List<int> IterationIndexes);
         TypedValue GetExpressionValue(string ExpressionCode, List<int> IterationIndexes, out string Error);
-
-        [JsonIgnore]
-        int DependencyChainTraverseIndex { get; }
     }
 }

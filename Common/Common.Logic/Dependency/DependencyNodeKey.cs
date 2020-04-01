@@ -60,6 +60,10 @@ namespace CheckListManager.Common.Logic.Dependency
                     return checkList.Elements[ObjectCode];
                 case "item":
                     return ObjectID.HasValue ? checkList.Items[ObjectID.Value] : checkList.Elements[ObjectCode];
+                case "checklist":
+                    return checkList;
+                case "page":
+                    return checkList.Pages[ObjectID.Value];
                 default:
                     throw new Exception($"Invalid class name {ClassName}");
             }

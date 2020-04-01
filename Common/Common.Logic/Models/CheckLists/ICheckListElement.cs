@@ -11,7 +11,6 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
         Conditions CountDownCondition { get; set; }
         string CountDownToCode { get; set; }
         int CountDownOffset { get; set; } //in seconds
-        bool Hidden { get; }
         Conditions HiddenCondition { get; set; }
         string HiddenExpressionCode { get; set; }
         Conditions ReadOnlyCondition { get; set; }
@@ -19,8 +18,9 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
         [JsonIgnore]
         ICheckListSignature Signature { get; }
         string SignatureCode { get; set; }
-        bool Valid { get; }
+        bool Valid { get; set; }
         bool ReadOnly { get; }
+        bool Hidden { get; set; }
         Conditions ValidCondition { get; set; }
         string ValidExpressionCode { get; set; }
         string ValidityMessage { get; set; }

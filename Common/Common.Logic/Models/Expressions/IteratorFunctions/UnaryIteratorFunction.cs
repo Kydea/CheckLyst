@@ -9,6 +9,12 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
 {
     public abstract class UnaryIteratorFunction : UnaryOperator
     {
+        public override void BuildDependencies(ICheckList CheckList, Expression Expression)
+        {
+            if (!CheckList.Elements.ContainsKey(IteratorCode)) throw new ParseException($"Element with code {IteratorCode} not found", Position);
+            base.BuildDependencies(CheckList, Expression);
+        }
+
         public override void Check(ICheckList CheckList, Expression Expression, List<string> IteratorStack)
         {
             var Element = ElementProperties.ElementProperty.Check(CheckList, IteratorStack, IteratorCode, Position);
@@ -22,6 +28,8 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
 
         public string IteratorCode { get; set; }
 
+        protected abstract string Property { get; }
+
         protected abstract TypedValue GetValue(List<TypedValue> Values);
 
         public override TypedValue GetValue(IElementsBranch ElementsBranch, string TimeZone)
@@ -29,6 +37,11 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
             var Iterator = (ICheckListGroup)ElementsBranch.Elements[IteratorCode];
             var Values = Iterator.Iterations.Where(x => !x.Removed).Select(Iteration => Argument.GetValue(Iteration, TimeZone)).ToList();
             return Values.FirstOrDefault(TypedValue => TypedValue.Type == DataType.Error) ?? GetValue(Values);
+        }
+
+        public override string ToString()
+        {
+            return $"{IteratorCode}.{Property}({Argument?.ToString() ?? "#"})";
         }
     }
 }

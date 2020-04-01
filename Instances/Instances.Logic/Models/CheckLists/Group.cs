@@ -44,6 +44,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 foreach (var iteration in Iterations)
                     iteration.CreateInstanceIterations();
             }
+
             if (!Iterator)
                 foreach (var Item in Items)
                     if (Item is Group Group)
@@ -57,7 +58,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             if (Iterator)
             {
                 SetupIterationsIndexes();
-                foreach (var Iteration in Iterations)
+                foreach (var Iteration in Iterations.Where(i => !i.Removed))
                 {
                     Iteration.CheckList = CheckList;
                     Iteration.Page = Page;
@@ -88,21 +89,12 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             base.OnUpdate(DecimalSeparator, TimeZone);
 
             _valid = true;
-            foreach (var item in Items)
-            {
-                item.Update(DecimalSeparator, TimeZone);
-                _valid = _valid && item.Valid;
-            }
-
             if (Iterator)
-            {
-                _valid = true;
-                foreach (var Iteration in Iterations)
-                {
-                    Iteration.Update(DecimalSeparator, TimeZone);
-                    _valid = _valid && (Iteration.Removed || Iteration.Valid);
-                }
-            }
+                foreach (var Iteration in Iterations.Where(i => !i.Removed))
+                    _valid = _valid && Iteration.Valid;
+            else
+                foreach (var item in Items)
+                    _valid = _valid && item.Valid;
         }
 
         public override void UpdateReadOnly(string userCode, bool readOnlyInstance)
@@ -110,7 +102,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             base.UpdateReadOnly(userCode, readOnlyInstance);
 
             if (Iterator)
-                foreach (var iteration in Iterations)
+                foreach (var iteration in Iterations.Where(i => !i.Removed))
                     iteration.UpdateReadOnly(userCode, readOnlyInstance);
             else
                 foreach (var item in Items)
@@ -148,7 +140,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                     throw new InstanceException("The iteration contains issued signatures and cannot be removed");
 
             if (Iterator)
-                foreach (var Iteration in Iterations)
+                foreach (var Iteration in Iterations.Where(i => !i.Removed))
                     ((Iteration)Iteration).CheckSignatures();
         }
 
@@ -193,6 +185,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             };
             iteration.Setup();
             Iterations.Add(iteration);
+            iteration.BuildDependencies();
             return iteration;
         }
 
@@ -222,19 +215,39 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             throw new NotImplementedException();
         }
 
+        public override void ClearDependencies()
+        {
+            base.ClearDependencies();
+            foreach (Item Item in Items)
+                Item.ClearDependencies();
+
+            if (Iterator) //this is called only for instances existing before v. 2.0.0, because BuildDependencies is called only once per instance when no iteration exists
+                foreach (Iteration Iteration in Iterations.Where(i => !i.Removed))
+                    Iteration.BuildDependencies();
+        }
+
         public override void BuildDependencies()
         {
             base.BuildDependencies();
             foreach (Item Item in Items)
                 Item.BuildDependencies();
+
+            if (Iterator) //this is called only for instances existing before v. 2.0.0, because BuildDependencies is called only once per instance when no iteration exists
+                foreach (Iteration Iteration in Iterations.Where(i => !i.Removed))
+                    Iteration.BuildDependencies();
         }
 
         protected override IEnumerable<DependencyNodeKey> GetDependingNodes()
         {
             foreach (var DependencyNodeKey in base.GetDependingNodes())
                 yield return DependencyNodeKey;
+
             foreach (Item Item in Items)
                 yield return Item.DependencyNodeKey;
+
+            if (Iterator)
+                foreach (Iteration Iteration in Iterations.Where(i => !i.Removed))
+                    yield return Iteration.DependencyNodeKey;
         }
     }
 }

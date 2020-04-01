@@ -19,10 +19,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
         {
             return new TypedValue(DataType.Array, Values);
         }
-
-        public override string ToString()
-        {
-            return $"{IteratorCode}.Each({Argument?.ToString() ?? "#"})"; 
-        }
+ 
+        protected override string Property => "Eech";
     }
 }

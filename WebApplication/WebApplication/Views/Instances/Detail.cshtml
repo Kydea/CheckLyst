@@ -69,7 +69,7 @@
                                 td.append($("<span />").html(formattedValue).attr("title", formattedDate.offset));
                             }
                             return true;
-                        } else if (columnIndex == 1 && row.typeName == "Array") {
+                        } else if (columnIndex == 2 && row.typeName == "Array") {
                             $("<td />").text("(click to open)").appendTo(tr.addClass("Handler"));
                             tr.on("click", function () {
                                 instance.showArray($(this));

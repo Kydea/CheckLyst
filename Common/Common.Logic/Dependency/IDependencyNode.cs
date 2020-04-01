@@ -14,6 +14,7 @@ namespace CheckListManager.Common.Logic.Dependency
         HashSet<DependencyNodeKey> DependingNodes { get; }
         DependencyNodeKey DependencyNodeKey { get; }
         bool TraverseDependencyChain(ICheckList checkList, Stack<IDependencyNode> DependencyChain, string DependencyChainKey, Func<IDependencyNode, bool> DependencyChainAction);
+        void MarkNodeAsChanged(ICheckList checkList, List<IDependencyNode> roots);
     }
 }
 

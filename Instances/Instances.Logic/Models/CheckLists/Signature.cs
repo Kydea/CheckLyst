@@ -23,10 +23,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 		public DateTimeOffset SignedOn { get; set; }
 		public string SignerDescription { get; set; }
 
-        public override bool IsValidByDefault()
-        {
-            return Signed;
-        }
+        public override bool IsValidByDefault() => Signed;
 
         public override ICheckListItem Clone(ICheckListGroup parent)
 		{
@@ -50,7 +47,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         private void FindInvalidItem(ICheckListGroup Group)
         {
             if (Group.Iterator)
-                foreach (var Iteration in Group.Iterations)
+                foreach (var Iteration in Group.Iterations.Where(i => !i.Removed))
                     FindInvalidItem(Iteration);
             else
                 foreach (var Item in Group.Items)
@@ -60,7 +57,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                         CheckItem(Item);
         }
 
-        public void TrySign(string DecimalSeparator, string TimeZone, string UserCode)
+        public void TrySign(InstanceCacheObject cacheObject, string UserCode)
         {
             var Instance = (Instance)CheckList;
             try
@@ -68,7 +65,11 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 Signed = true;
                 SignedBy = UserCode;
                 SignedOn = DateTimeOffset.UtcNow;
-                Instance.Update(DecimalSeparator, TimeZone);
+
+                var roots = new List<IDependencyNode>();
+                MarkNodeAsChanged(cacheObject.Instance, roots);
+                cacheObject.Instance.UpdateNodes(roots);
+
                 if (!Valid) throw new InstanceException("Signature not valid. " + ValidityMessage);
                 if (Code != null)
                 {
@@ -82,7 +83,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             {
                 Signed = false;
                 SignedBy = null;
-                Instance.Update(DecimalSeparator, TimeZone);
             }
         }
 

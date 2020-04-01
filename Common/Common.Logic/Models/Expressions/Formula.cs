@@ -29,6 +29,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         {
             ValueKeys.Clear();
             TokenFormats.Clear();
+            Evaluated = false;
             Value = null;
             Format = 
                 string.IsNullOrWhiteSpace(RawValue) ?
@@ -52,11 +53,11 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                         });
         }
 
-        private int DependencyChainTraverseIndex { get; set; } = 0;
+        private bool Evaluated { get; set; }
         public void Evaluate(ICheckList CheckList, Dictionary<string, object> RuntimeValues, string DecimalSeparator, string TimeZone, List<int> IterationIndexes)
         {
-            if (DependencyChainTraverseIndex == CheckList.DependencyChainTraverseIndex) return;
-            DependencyChainTraverseIndex = CheckList.DependencyChainTraverseIndex;
+            if (Evaluated) return;
+            Evaluated = true;
             try
             {
                 int Index = 0;

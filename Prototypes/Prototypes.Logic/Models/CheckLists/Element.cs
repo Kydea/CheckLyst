@@ -21,17 +21,16 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public Conditions ReadOnlyCondition { get; set; }
         public string ReadOnlyExpressionCode { get; set; }
         public string SignatureCode { get; set; }
-        public bool ReadOnly { get; set; }
+        public bool ReadOnly { get; }
         public Conditions ValidCondition { get; set; }
         public string ValidExpressionCode { get; set; }
         public string ValidityMessage { get; set; }
-
         [JsonIgnore]
-        public bool Hidden => false;
+        public bool Hidden { get; set; }
         [JsonIgnore]
         public ICheckListSignature Signature => null;
         [JsonIgnore]
-        public bool Valid => true;
+        public bool Valid { get; set; }
 
         public virtual void Setup()
         {
@@ -147,8 +146,8 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
             var DependingNodes = GetDependingNodes();
             if (DependingNodes != null)
-                foreach (var DependingNodeKey in DependingNodes)
-                    if (!DependingNodeKey.GetNode(checkList).TraverseDependencyChain(checkList, DependencyChain, DependencyChainKey, DependencyChainAction))
+                foreach (var DependencyNodeKey in DependingNodes)
+                    if (!DependencyNodeKey.GetNode(checkList).TraverseDependencyChain(checkList, DependencyChain, DependencyChainKey, DependencyChainAction))
                         Result = false;
 
             if (Result) Check();
@@ -157,11 +156,14 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             return Result;
         }
 
-        private int DependencyChainTraverseIndex { get; set; } = 0;
+        public void MarkNodeAsChanged(ICheckList checkList, List<IDependencyNode> roots) => throw new NotImplementedException();
+
+
+        private bool Checked = false;
         public virtual void Check()
         {
-            if (DependencyChainTraverseIndex == CheckList.DependencyChainTraverseIndex) return;
-            DependencyChainTraverseIndex = CheckList.DependencyChainTraverseIndex;
+            if (Checked) return;
+            Checked = true;
 
             if (CountDownCondition == Conditions.Expression)
                 CheckExpression(CountDownToCode, DataType.DateTime, DataType.Date);

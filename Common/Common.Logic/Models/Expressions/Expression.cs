@@ -19,7 +19,6 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         public bool Unique { get; set; }
         public bool Exception { get; set; }
 
-
         public Expression()
         {
             Symbols = new List<Symbol>();
@@ -38,6 +37,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
         public void Parse(ICheckList checkList)
         {
+            Evaluated = false;
             Error = null;
             Root = new TokenSet(SerializedValue, 0).Symbol;
             Root.Expression = this;
@@ -56,12 +56,15 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
         public object RawValue => Value?.Value;
 
+        private bool Evaluated { get; set; } = true;
+
         public void Evaluate(ICheckList instance, string timeZone)
         {
-            if (DendencyChainTraverseIndex == instance.DependencyChainTraverseIndex) return;
+            if (Evaluated) return;
+            if (Root == null) Parse(instance);
 
             Value = Root.GetValue(instance, timeZone);
-            DendencyChainTraverseIndex = instance.DependencyChainTraverseIndex;
+            Evaluated = true; ;
         }
 
         public void ClearDependencies()
@@ -74,6 +77,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         {
             try
             {
+                if (Root == null) Parse(checklist);
                 Root.BuildDependencies(checklist, this);
                 return true;
             }
@@ -92,14 +96,16 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         private string DependencyChainKey { get; set; }
         public bool TraverseDependencyChain(ICheckList CheckList, Stack<IDependencyNode> DependencyChain, string DependencyChainKey, Func<IDependencyNode, bool> DependencyChainAction)
         {
+            if (Evaluated) return true;
+
             DependencyChain.Push(this);
             if (this.DependencyChainKey == DependencyChainKey)
                 throw new Exception($"Dependency cycle found: {string.Join(" > ", DependencyChain.Reverse().Select(e => e.DependencyNodeKey.Description))}");
             this.DependencyChainKey = DependencyChainKey;
 
             var Result = true;
-            foreach (var DependingNodeKey in DependingNodes)
-                if (!DependingNodeKey.GetNode(CheckList).TraverseDependencyChain(CheckList, DependencyChain, DependencyChainKey, DependencyChainAction))
+            foreach (var DependencyNodeKey in DependingNodes)
+                if (!DependencyNodeKey.GetNode(CheckList).TraverseDependencyChain(CheckList, DependencyChain, DependencyChainKey, DependencyChainAction))
                     Result = false;
 
             if (!DependencyChainAction(this)) Result = false;
@@ -108,12 +114,24 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             return Result;
         }
 
+        public void MarkNodeAsChanged(ICheckList checkList, List<IDependencyNode> roots)
+        {
+            if (!Evaluated) return;
+            Evaluated = false;
+            if (DependentNodes.Any())
+                foreach (var DependencyNodeKey in DependentNodes)
+                    DependencyNodeKey.GetNode(checkList).MarkNodeAsChanged(checkList, roots);
+            else
+                roots.Add(this);
+        }
+
+        private bool Checked = false;
         public bool Check(ICheckList CheckList)
         {
             try
             {
-                if (DendencyChainTraverseIndex == CheckList.DependencyChainTraverseIndex) return true;
-                DendencyChainTraverseIndex = DendencyChainTraverseIndex;
+                if (Checked) return true;
+                Checked = true;
                 Root.Check(CheckList, this, new List<string>());
                 if (Exception && Root.DataType != DataType.Boolean)
                     throw new Exception($"Exception expressions must be boolean");
@@ -135,7 +153,6 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
         public DataType? InnerDataType => Root?.InnerDataType;
 
-        private int DendencyChainTraverseIndex { get; set; } = 0;
         public DependencyNodeKey DependencyNodeKey => new DependencyNodeKey("expression", Code);
         public HashSet<DependencyNodeKey> DependentNodes { get; } = new HashSet<DependencyNodeKey>();
         public HashSet<DependencyNodeKey> DependingNodes { get; } = new HashSet<DependencyNodeKey>();

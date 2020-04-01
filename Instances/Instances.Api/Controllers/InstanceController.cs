@@ -53,7 +53,7 @@ namespace CheckListManager.Instances.Api.Controllers
             try
             {
                 var cacheObject = await _instanceManagerService.CreateInstanceAsync(Identity, Identity.Code, request.Prototype, request.Version, request.Parameters);
-                var instance = await _instanceManagerService.UpdateInstanceAsync(Identity, cacheObject, null, null);
+                await _instanceManagerService.UpdateInstanceAsync(Identity, cacheObject);
                 await _instanceManagerService.SaveCacheObjectAsync(cacheObject);
                 var response = new InstanceResponse
                 {
@@ -69,9 +69,9 @@ namespace CheckListManager.Instances.Api.Controllers
                     Version = cacheObject.Version,
                     VersionState = cacheObject.VersionState,
 
-                    CheckList = instance
+                    CheckList = cacheObject.Instance
                 };
-                if (!Identity.HasPermission("Trail") && cacheObject.VersionState != VersionState.Draft && cacheObject.VersionState != VersionState.InSimulation) instance.HideExpressions = true;
+                if (!Identity.HasPermission("Trail") && cacheObject.VersionState != VersionState.Draft && cacheObject.VersionState != VersionState.InSimulation) cacheObject.Instance.HideExpressions = true;
                 return Ok(response);
             }
             catch (Exception e)
@@ -88,7 +88,6 @@ namespace CheckListManager.Instances.Api.Controllers
             try
             {
                 var cacheObject = await _instanceManagerService.OpenInstanceAsync(request.Code, Identity);
-                var instance = await _instanceManagerService.UpdateInstanceAsync(Identity, cacheObject, null, 1);
                 await _instanceManagerService.SaveCacheObjectAsync(cacheObject);
 
                 var response = new InstanceResponse
@@ -98,9 +97,9 @@ namespace CheckListManager.Instances.Api.Controllers
                     Year = cacheObject.Year,
                     Number = cacheObject.Number,
 
-                    CheckList = instance
+                    CheckList = cacheObject.Instance
                 };
-                if (!Identity.HasPermission("Trail") && cacheObject.VersionState != VersionState.Draft && cacheObject.VersionState != VersionState.InSimulation) instance.HideExpressions = true;
+                if (!Identity.HasPermission("Trail") && cacheObject.VersionState != VersionState.Draft && cacheObject.VersionState != VersionState.InSimulation) cacheObject.Instance.HideExpressions = true;
                 return Ok(response);
             }
             catch (Exception e)
@@ -168,10 +167,10 @@ namespace CheckListManager.Instances.Api.Controllers
         {
             try
             {
-                var cacheObject = await _instanceManagerService.GetCacheObjectAsync(Identity.CompanyId, request.Code, true);
+                var cacheObject = await _instanceManagerService.GetCacheObjectAsync(Identity, request.Code, true);
                 _instanceManagerService.CheckViewPermission(Identity, cacheObject);
                 await _instanceManagerService.GetInstanceAsync(Identity, cacheObject);
-                var instance = await _instanceManagerService.UpdateInstanceAsync(Identity, cacheObject, null, 1);
+                cacheObject.Instance.UpdateReadOnly(Identity.Code, cacheObject.InstanceState);
                 await _instanceManagerService.SaveCacheObjectAsync(cacheObject);
 
                 var response = new InstanceResponse
@@ -182,7 +181,7 @@ namespace CheckListManager.Instances.Api.Controllers
                     Number = cacheObject.Number,
                     State = cacheObject.InstanceState,
 
-                    CheckList = instance,
+                    CheckList = cacheObject.Instance,
 
                     Department = cacheObject.Department,
                     DepartmentName = cacheObject.DepartmentName,
@@ -194,7 +193,7 @@ namespace CheckListManager.Instances.Api.Controllers
                     Version = cacheObject.Version,
                     VersionState = cacheObject.VersionState
                 };
-                if (!Identity.HasPermission("Trail") && cacheObject.VersionState != VersionState.Draft && cacheObject.VersionState != VersionState.InSimulation) instance.HideExpressions = true;
+                if (!Identity.HasPermission("Trail") && cacheObject.VersionState != VersionState.Draft && cacheObject.VersionState != VersionState.InSimulation) cacheObject.Instance.HideExpressions = true;
                 return Ok(response);
             }
             catch (Exception e)
@@ -248,7 +247,7 @@ namespace CheckListManager.Instances.Api.Controllers
         [Authorize(Roles = "Instances#View, Prototypes#Preview")]
         public async Task<IHttpActionResult> Download(InstanceRequest request)
         {
-            var cacheObject = await _instanceManagerService.GetCacheObjectAsync(Identity.CompanyId, request.Code, false); 
+            var cacheObject = await _instanceManagerService.GetCacheObjectAsync(Identity, request.Code, false); 
             _instanceManagerService.CheckViewPermission(Identity, cacheObject);
 
             var Token = Identity.Code + ":" + Guid.NewGuid();
@@ -321,7 +320,7 @@ namespace CheckListManager.Instances.Api.Controllers
         {
             try
             {
-                var cacheObject = await _instanceManagerService.GetCacheObjectAsync(Identity.CompanyId, code, false);
+                var cacheObject = await _instanceManagerService.GetCacheObjectAsync(Identity, code, false);
                 _instanceManagerService.CheckViewPermission(Identity, cacheObject);
                 var response = await _instanceManagerService.DownloadAttachmentAsync(Identity, cacheObject.Code, key);
                 return Content(HttpStatusCode.OK, response.Content, new FileFormatter(response.ContentType));

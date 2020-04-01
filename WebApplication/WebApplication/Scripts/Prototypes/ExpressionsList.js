@@ -72,9 +72,6 @@
                 .append($("<td />").addClass("UniqueColumn Centered").toggleClass("Off", !row.unique).append($("<i />").addClass("fa fa-key")))
                 .append($("<td />").addClass("ExceptionColumn Centered").toggleClass("Off", !row.exception).append($("<i />").addClass("fa fa-exclamation")))
                 .append($("<td />").addClass("Order Centered Inactive").append($("<i />").addClass("Up fa fa-caret-up")).append($("<i />").addClass("Down fa fa-caret-down")))
-
-            if (model.state == prototypes.Prototype.states.draft)
-                matematici.canClose = false;
         },
 
         update = function (row) {
@@ -89,7 +86,6 @@
             list.splice(currentIndex, 1);
             if (list.length == 0) noRecord.appendTo(body);
             select();
-            matematici.canClose = false;
         },
 
         updateModel = function () {
@@ -232,17 +228,26 @@
                     down(this);
                 }).on("click", "tr.Handler td:not(.Inactive)", function () {
                     select($(this).parent().prevAll().size());
-                }).on("focus", "td", function () {
+                }).on("click", "tr td:not(.Inactive)", function () {
                     verifyButton.show();
+                }).on("focus", "td", function () {
+                    var textBox = $(this);
+                    textBox.data("oldValue", textBox.text());
                 }).on("blur", "td", function () {
-                    list[currentIndex].valid = null;
+                    var textBox = $(this);
+                    if (textBox.data("oldValue") != textBox.text()) {
+                        matematici.canClose = false;
+                        list[currentIndex].valid = null;
+                    }
                     $("td.ValidColumn i", $(this).parent()).removeClass("fa-check fa-remove").addClass("fa-question");
                 }).on("click", "tr.Selected td.UniqueColumn", function () {
+                    matematici.canClose = false;
                     verifyButton.show();
                     $("td.ValidColumn i", $(this).parent()).removeClass("fa-check fa-remove").addClass("fa-question");
                     list[currentIndex].unique = !list[currentIndex].unique;
                     $(this).toggleClass("Off", !list[currentIndex].unique);
                 }).on("click", "tr.Selected td.ExceptionColumn", function () {
+                    matematici.canClose = false;
                     verifyButton.show();
                     $("td.ValidColumn i", $(this).parent()).removeClass("fa-check fa-remove").addClass("fa-question");
                     list[currentIndex].exception = !list[currentIndex].exception;
@@ -266,13 +271,35 @@
                         }))
                         .append($("<a />").addClass("Button").text("add").toggle(model.state == prototypes.Prototype.states.draft).prepend($("<i />").addClass("Icon fa fa-plus")).on("click", function () {
                             add({ code: "", expression: "", error: null });
+                            matematici.canClose = false;
                             select(list.length - 1);
                         }))
                         .append(removeButton = $("<a />").addClass("Button").text("remove").prepend($("<i />").addClass("Icon fa fa-trash-alt")).on("click", function () {
                             remove();
+                            matematici.canClose = false;
                         }).hide())
                         .append(dependencyButton = $("<a />").addClass("Button").text("dependencies").prepend($("<i />").addClass("Icon fa fa-sitemap")).on("click", function () {
-                            matematici.dependenciesDialog.show(list[currentIndex].dependingNodes, list[currentIndex].dependentNodes);
+                            var
+                                handler = function () {
+                                    var
+                                        model = list[currentIndex],
+                                        dependingNodes = model.dependingNodes,
+                                        dependentNodes = model.dependentNodes;
+                                    matematici.dependenciesDialog.show(dependingNodes, dependentNodes);
+                                };
+                            if (matematici.canClose)
+                                handler();
+                            else
+                                matematici.dialog.show("warning", "There are unsaved changes.", [
+                                    {
+                                        text: "save", icon: "check", handler: function () {
+                                            prototypes.prototype.save(function () {
+                                                verify(handler);
+                                            });
+                                        }
+                                    },
+                                    { text: "cancel", icon: "times", cancelButton: true }
+                                ]);
                         }).hide());
 
 
@@ -301,6 +328,8 @@
             }
 
             verify();
+
+            canClose = true;
         };
 
     setup();

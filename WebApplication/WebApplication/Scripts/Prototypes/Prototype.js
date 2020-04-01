@@ -280,7 +280,20 @@
                     prototypes.propertyPanel.select(currentItem);
                     break;
                 case "dependencies":
-                    matematici.dependenciesDialog.show(currentItem.getModel().dependingNodes, currentItem.getModel().dependentNodes);
+                    var
+                        model = currentItem.getModel(),
+                        dependingNodes = model.dependingNodes,
+                        dependentNodes = model.dependentNodes,
+                        handler = function () {
+                            matematici.dependenciesDialog.show(dependingNodes, dependentNodes);
+                        };
+                    if (matematici.canClose)
+                        handler();
+                    else
+                        matematici.dialog.show("warning", "There are unsaved changes.", [
+                            { text: "save", icon: "check", handler: function () { prototype.save(handler); } },
+                            { text: "cancel", icon: "times", cancelButton: true }
+                        ]);
                     break;
                 default:
                     alert("invalid command");

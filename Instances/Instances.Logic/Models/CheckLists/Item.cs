@@ -15,6 +15,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public string DescriptionValue { get => DescriptionFormula.Value; }
         public ICheckListGroup Group { get; set; }
         public int Id { get; set; }
+        public int? ClonedBy { get; set; }
         public ICheckListIteration Iteration { get; set; }
         public bool IterationItem { get; set; }
         public bool IteratorModelItem { get; set; }
@@ -49,18 +50,25 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 }
         }
 
+        protected override IEnumerable<DependencyNodeKey> GetDependentNodes()
+        {
+            foreach (var DependencyNodeKey in base.GetDependentNodes())
+                yield return DependencyNodeKey;
+            if (Group != null)
+                yield return Group.DependencyNodeKey;
+            else if (Page != null)
+                yield return Page.DependencyNodeKey;
+        }
+
         protected override void OnUpdate(string DecimalSeparator, string TimeZone)
         {
-            if (Iteration != null)
-                RuntimeValues["IterationIndex"] = Iteration.Index;
-
+            if (Iteration != null) RuntimeValues["IterationIndex"] = Iteration.Index;
             DescriptionFormula.Evaluate(CheckList, RuntimeValues, DecimalSeparator, TimeZone, Iteration?.Indexes);
         }
 
         public override bool Hidden => (Group?.Hidden ?? false) || base.Hidden;
 
-        protected override bool IsReadOnlyByDefault()
-            => Previous != null && !Previous.Valid;
+        protected override bool IsReadOnlyByDefault() => Previous != null && !Previous.Valid;
 
         public override void UpdateReadOnly(string userCode, bool readOnlyInstance)
         {
@@ -70,16 +78,11 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 base.UpdateReadOnly(userCode, readOnlyInstance);
         }
 
-        public override string GetSignatureInformation()
-            => base.GetSignatureInformation() ?? Group?.GetSignatureInformation() ?? Page?.GetSignatureInformation();
+        public override string GetSignatureInformation() => base.GetSignatureInformation() ?? Group?.GetSignatureInformation() ?? Page?.GetSignatureInformation();
 
-        protected override Dictionary<string, ICheckListElement> GetBranchElements()
-            => Iteration?.Elements ?? base.GetBranchElements();
+        protected override Dictionary<string, ICheckListElement> GetBranchElements() => Iteration?.Elements ?? base.GetBranchElements();
 
-        public virtual void Remove()
-        {
-            Removed = true;
-        }
+        public virtual void Remove() =>  Removed = true;
 
         public abstract ICheckListItem Clone(ICheckListGroup parent);
 
@@ -89,12 +92,13 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             destination.Page = source.Page;
             destination.Description = source.Description;
             destination.NewLine = source.NewLine;
+            destination.ClonedBy = source.Id;
             destination.IterationItem = true;
             destination.IteratorModelItem = false;
             destination.Color = source.Color;
             destination.FontSize = source.FontSize;
         }
 
-        public override DependencyNodeKey DependencyNodeKey => base.DependencyNodeKey ?? new DependencyNodeKey("item", Id);
+        public override DependencyNodeKey DependencyNodeKey => new DependencyNodeKey("item", Id);
     }
 }
