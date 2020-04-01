@@ -74,5 +74,15 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 return Result;
             }
         }
+
+        public override void BuildDependencies()
+        {
+            //this is called only for instances existing before v. 2.0.0, because BuildDependencies is called only once per instance
+            for (var Index = 0; Index < Items.Count(); ++Index)
+            {
+                var Item = (Item)Items[Index];
+                Item.ClonedBy = Group.Items[Index].Id;
+            }
+        }
     }
 }

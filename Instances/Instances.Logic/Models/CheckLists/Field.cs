@@ -54,6 +54,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 ExternalSourceName = ExternalSourceName,
                 ExternalSourceColumn = ExternalSourceColumn
             };
+            field.ValueFormula.BuildDependencies(ValueFormulaString);
             Copy(this, field);
             return field;
         }

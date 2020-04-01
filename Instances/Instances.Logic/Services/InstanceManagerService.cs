@@ -959,6 +959,8 @@ namespace CheckListManager.Instances.Logic.Services
                 if (AffectedElement != null)
                 {
                     var roots = new List<IDependencyNode>();
+                    if (AffectedElement is Item Item && Item.IterationItem)
+                        AffectedElement = (Item)Item.Iteration.Group.Items[Item.ItemIndex];
                     AffectedElement.MarkNodeAsChanged(cacheObject.Instance, roots);
 
                     cacheObject.Instance.UpdateNodes(roots);

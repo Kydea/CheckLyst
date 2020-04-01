@@ -50,8 +50,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 			throw new NotImplementedException();
 		}
 
-
-        protected virtual string DescriptionPropertyName => "label";
+        protected virtual string DescriptionPropertyName => "caption";
         public override DependencyNodeKey DependencyNodeKey => base.DependencyNodeKey ?? new DependencyNodeKey("item", Id);
         public override void BuildDependencies()
         {

@@ -162,7 +162,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         {
             ICheckListItem previous = null;
 
-            foreach (var item in Items)
+            int ItemIndex = 0;
+            foreach (Item item in Items)
             {
                 item.CheckList = CheckList;
                 item.Page = Page;
@@ -170,6 +171,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 item.Previous = previous;
                 item.IteratorModelItem = Iterator || IteratorModelItem;
                 item.Iteration = item.Iteration ?? Iteration;
+                item.ItemIndex = ItemIndex++;
                 item.Setup();
                 previous = item;
             }
@@ -185,7 +187,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             };
             iteration.Setup();
             Iterations.Add(iteration);
-            iteration.BuildDependencies();
             return iteration;
         }
 
@@ -220,10 +221,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             base.ClearDependencies();
             foreach (Item Item in Items)
                 Item.ClearDependencies();
-
-            if (Iterator) //this is called only for instances existing before v. 2.0.0, because BuildDependencies is called only once per instance when no iteration exists
-                foreach (Iteration Iteration in Iterations.Where(i => !i.Removed))
-                    Iteration.BuildDependencies();
         }
 
         public override void BuildDependencies()
@@ -244,10 +241,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
             foreach (Item Item in Items)
                 yield return Item.DependencyNodeKey;
-
-            if (Iterator)
-                foreach (Iteration Iteration in Iterations.Where(i => !i.Removed))
-                    yield return Iteration.DependencyNodeKey;
         }
     }
 }

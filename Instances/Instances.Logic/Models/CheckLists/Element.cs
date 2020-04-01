@@ -81,7 +81,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 ValidCondition == Conditions.True;
         }
 
-
         public bool ReadOnly { get; protected set; }
         public Conditions ReadOnlyCondition { get; set; }
         public string ReadOnlyExpressionCode { get; set; }
@@ -238,7 +237,15 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             if (Result)
             {
                 var Instance = (Instance)CheckList;
-                Update(Instance.DecimalSeparator, Instance.TimeZone);
+                if (this is Item Item && Item.IteratorModelItem)
+                    foreach (var Iteration in Item.Group.Iterations.Where(i => !i.Removed))
+                    {
+                        var IterationItem = (Item)Iteration.Items[Item.ItemIndex];
+                        IterationItem.Updated = false;
+                        IterationItem.Update(Instance.DecimalSeparator, Instance.TimeZone);
+                    }
+                else
+                    Update(Instance.DecimalSeparator, Instance.TimeZone);
             }
 
             DependencyChain.Pop();

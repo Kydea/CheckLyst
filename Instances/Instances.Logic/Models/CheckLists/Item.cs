@@ -15,7 +15,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public string DescriptionValue { get => DescriptionFormula.Value; }
         public ICheckListGroup Group { get; set; }
         public int Id { get; set; }
-        public int? ClonedBy { get; set; }
+        public int ClonedBy { get; set; } //id of the iterator model item from which this iteration item has been cloned
+        public int ItemIndex { get; set; } //the intex the item in the parent group
         public ICheckListIteration Iteration { get; set; }
         public bool IterationItem { get; set; }
         public bool IteratorModelItem { get; set; }
@@ -38,8 +39,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public override void BuildDependencies()
         {
             base.BuildDependencies();
-            DescriptionFormula.BuildDependencies(Description);
-
             var DependencyNodeKey = this.DependencyNodeKey.Clone("description");
             DescriptionFormula.BuildDependencies(Description);
             foreach (var Key in DescriptionFormula.ValueKeys)
@@ -97,8 +96,10 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             destination.IteratorModelItem = false;
             destination.Color = source.Color;
             destination.FontSize = source.FontSize;
+
+            destination.DescriptionFormula.BuildDependencies(source.Description);
         }
 
-        public override DependencyNodeKey DependencyNodeKey => new DependencyNodeKey("item", Id);
+        public override DependencyNodeKey DependencyNodeKey => base.DependencyNodeKey ?? new DependencyNodeKey("item", Id);
     }
 }

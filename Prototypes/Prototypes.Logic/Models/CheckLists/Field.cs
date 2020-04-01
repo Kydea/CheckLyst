@@ -67,5 +67,6 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 }
         }
 
+        protected override string DescriptionPropertyName => "label";
     }
 }
