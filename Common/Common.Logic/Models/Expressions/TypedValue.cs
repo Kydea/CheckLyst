@@ -1,8 +1,10 @@
 ﻿using CheckListManager.Common.Core.Helpers;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Runtime.Serialization;
 
 namespace CheckListManager.Common.Logic.Models.Expressions
 {
@@ -36,7 +38,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                     Type == DataType.Date && !(Value is DateTimeOffset) ||
                     Type == DataType.Time && !(Value is TimeSpan) ||
                     Type == DataType.Number && !(Value is decimal) ||
-                    Type == DataType.Array && !(Value is IEnumerable<TypedValue>) ||
+                    Type == DataType.Array && !(Value is List<TypedValue>) ||
                     Type == DataType.Text && !(Value is string)
                 )
                     throw new Exception("Invalid class " + Value.GetType().Name + " for DataType " + Type.ToString());
@@ -44,7 +46,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                 {
                     this.Type = Type;
                     this.Value = Value;
-                    SerializedValue = Value.ToString();
+                    SerializedValue = Type == DataType.Array ? null : Value.ToString();
                 }
             }
             catch (Exception Exception)
@@ -65,7 +67,6 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                     Type == DataType.Date ? DateTimeOffsetHelper.Parse(SerializedValue, TimeZone, out Ambiguous, out AmbiguousTimesSpans, DateTimeOffsetHelper.DateFormat) :
                     Type == DataType.Time ? TimeSpan.ParseExact(SerializedValue, "hh\\:mm", null) :
                     Type == DataType.Number ? decimal.Parse(SerializedValue.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture) :
-                    Type == DataType.Array ? JsonConvert.DeserializeObject<IEnumerable<TypedValue>>(SerializedValue) :
                     Type == DataType.Error ? SerializedValue :
                     (object)SerializedValue;
             }
@@ -104,6 +105,6 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         public string ErrorValue { get { return (string)Value; } }
 
         [JsonIgnore]
-        public IEnumerable<TypedValue> ArrayValue { get { return (IEnumerable<TypedValue>)Value; } }
+        public List<TypedValue> ArrayValue { get { return (List<TypedValue>)Value; } }
     }
 }

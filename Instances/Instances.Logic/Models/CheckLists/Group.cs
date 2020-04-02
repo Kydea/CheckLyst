@@ -91,7 +91,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             _valid = true;
             if (Iterator)
                 foreach (var Iteration in Iterations.Where(i => !i.Removed))
-                    _valid = _valid && Iteration.Valid;
+                    foreach (var item in Iteration.Items) //the iteration are never updated so they are considered transparent to validity
+                        _valid = _valid && item.Valid;
             else
                 foreach (var item in Items)
                     _valid = _valid && item.Valid;
@@ -241,6 +242,10 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
             foreach (Item Item in Items)
                 yield return Item.DependencyNodeKey;
+
+            if (Iterator)
+                foreach (Iteration Iteration in Iterations)
+                    yield return Iteration.DependencyNodeKey;
         }
     }
 }

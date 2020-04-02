@@ -175,8 +175,10 @@
         },
 
         close = function () {
-            element.remove();
-            matematici.elements.body.removeClass("CheckListGrid");
+            setTimeout(function () {
+                element.remove();
+                matematici.elements.body.removeClass("CheckListGrid");
+            }, 0); //handles the blur event handler of the text boxes
         },
 
         checkElementExpressionsInUse = function (element) {
@@ -220,10 +222,10 @@
                     .append(noRecord = $("<tr />").addClass("NoRecord")
                         .append($("<td />").attr("colspan", "6").text("(no record)"))
                     )
-                ).on("click", "tr.Handler td.Order i.Up", function (e) {
+                ).on("click", "tr td.Order i.Up", function (e) {
                     e.stopPropagation();
                     up(this);
-                }).on("click", "tr.Handler td.Order i.Down", function (e) {
+                }).on("click", "tr td.Order i.Down", function (e) {
                     e.stopPropagation();
                     down(this);
                 }).on("click", "tr.Handler td:not(.Inactive)", function () {

@@ -892,7 +892,7 @@ namespace CheckListManager.Instances.Logic.Services
 
                 stopWatch = Stopwatch.StartNew();
 
-                Element AffectedElement = null;
+                List<Element> AffectedElements = new List<Element>();
                 bool NeedToUpdateReadonly = false;
                 switch (request.Type)
                 {
@@ -901,31 +901,35 @@ namespace CheckListManager.Instances.Logic.Services
                         NeedToUpdateReadonly = true;
                         break;
                     case EventTypes.ValueChange:
-                        AffectedElement = await HandleValueChangeAsync(cacheObject, identity.Code, request.ItemId, request.Value);
+                        AffectedElements.Add(await HandleValueChangeAsync(cacheObject, identity.Code, request.ItemId, request.Value));
                         break;
                     case EventTypes.ValueCopy:
-                        AffectedElement = await HandleValueCopyAsync(cacheObject, identity.Code, request.ItemId);
+                        AffectedElements.Add(await HandleValueCopyAsync(cacheObject, identity.Code, request.ItemId));
                         break;
                     case EventTypes.Add:
-                        AffectedElement = await HandleAddAsync(cacheObject, identity.Code, request.ItemId);
+                        var Iteration = await HandleAddAsync(cacheObject, identity.Code, request.ItemId);
+                        if (Iteration != null) Iteration.GetAllChildren(AffectedElements);
                         break;
                     case EventTypes.Remove:
-                        AffectedElement = await HandleRemoveAsync(cacheObject, identity.Code, request.ItemId);
+                        Iteration = await HandleRemoveAsync(cacheObject, identity.Code, request.ItemId);
+                        if (Iteration != null) Iteration.GetAllChildren(AffectedElements);
                         break;
                     case EventTypes.Up:
-                        AffectedElement = await HandleMoveAsync(cacheObject, identity.Code, request.ItemId, -1);
+                        Iteration = await HandleMoveAsync(cacheObject, identity.Code, request.ItemId, -1);
+                        if (Iteration != null) Iteration.GetAllChildren(AffectedElements);
                         break;
                     case EventTypes.Down:
-                        AffectedElement = await HandleMoveAsync(cacheObject, identity.Code, request.ItemId, 1);
+                        Iteration = await HandleMoveAsync(cacheObject, identity.Code, request.ItemId, 1);
+                        if (Iteration != null) Iteration.GetAllChildren(AffectedElements);
                         break;
                     case EventTypes.SignatureCheck:
                         HandleSignatureCheckAsync(cacheObject, request.Username, request.ItemId);
                         break;
                     case EventTypes.Signature:
-                        AffectedElement = await HandleSignatureAsync(cacheObject, identity, request);
+                        AffectedElements.Add(await HandleSignatureAsync(cacheObject, identity, request));
                         break;
                     case EventTypes.SignatureCancelation:
-                        AffectedElement = await HandleSignatureCancellationAsync(cacheObject, identity, request);
+                        AffectedElements.Add(await HandleSignatureCancellationAsync(cacheObject, identity, request));
                         break;
                     case EventTypes.SendEmail:
                         await HandleEmailSend(cacheObject, identity, request.ItemId, request.Emails);
@@ -937,7 +941,7 @@ namespace CheckListManager.Instances.Logic.Services
                     case EventTypes.CountDown:
                         break;
                     case EventTypes.SkipCountDown:
-                        AffectedElement = HandleSkipCountDown(cacheObject, request.Username, request.ItemId);
+                        AffectedElements.Add(HandleSkipCountDown(cacheObject, request.Username, request.ItemId));
                         break;
                     case EventTypes.Refresh:
                         break;
@@ -950,19 +954,22 @@ namespace CheckListManager.Instances.Logic.Services
                         cacheObject.NeedToSave = true;
                         break;
                     case EventTypes.UploadAttachment:
-                        AffectedElement = await HandleUploadAttachment(cacheObject, identity, request.ItemId, request.Attachment);
+                        AffectedElements.Add(await HandleUploadAttachment(cacheObject, identity, request.ItemId, request.Attachment));
                         break;
                     default:
                         throw new InstanceException($"Event type {request.Type} not handled.");
                 }
 
-                if (AffectedElement != null)
+                if (AffectedElements.Any())
                 {
                     var roots = new List<IDependencyNode>();
-                    if (AffectedElement is Item AffectedItem)
-                        AffectedElement = AffectedItem.FindIteratorModelItem();
-                    AffectedElement.MarkNodeAsChanged(cacheObject.Instance, roots);
-
+                    foreach (var AffectedElement in AffectedElements)
+                    {
+                        if (AffectedElement is Item AffectedItem && AffectedItem.IterationItem)
+                            AffectedItem.FindIteratorModelItem().MarkNodeAsChanged(cacheObject.Instance, roots);
+                        else
+                            AffectedElement.MarkNodeAsChanged(cacheObject.Instance, roots);
+                    }
                     cacheObject.Instance.UpdateNodes(roots);
                     cacheObject.Instance.UpdateReadOnly(lockUser ?? identity.Code, cacheObject.InstanceState);
                 }
@@ -1170,7 +1177,7 @@ namespace CheckListManager.Instances.Logic.Services
             return field;
         }
 
-        private async Task<Element> HandleAddAsync(InstanceCacheObject cacheObject, string userCode, int? itemId)
+        private async Task<Iteration> HandleAddAsync(InstanceCacheObject cacheObject, string userCode, int? itemId)
         {
             if (!itemId.HasValue)
                 throw new InstanceException("Item id not sent");
@@ -1182,9 +1189,10 @@ namespace CheckListManager.Instances.Logic.Services
             if (!group.Iterator || group.DisableAdd)
                 throw new InstanceException("Invalid operation");
 
+            Iteration Iteration = null;
             if (!group.ReadOnly)
             {
-                var Iteration = group.AddIteration();
+                Iteration = group.AddIteration();
                 group.SetupIterationsIndexes();
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
@@ -1198,10 +1206,10 @@ namespace CheckListManager.Instances.Logic.Services
                 TrackChanges(cacheObject, userCode);
             }
 
-            return group;
+            return Iteration;
         }
 
-        private async Task<Element> HandleRemoveAsync(InstanceCacheObject cacheObject, string userCode, int? itemId)
+        private async Task<Iteration> HandleRemoveAsync(InstanceCacheObject cacheObject, string userCode, int? itemId)
         {
             if (!itemId.HasValue)
                 throw new InstanceException("Item id not sent");
@@ -1228,10 +1236,10 @@ namespace CheckListManager.Instances.Logic.Services
                 Information = JsonConvert.SerializeObject(new { ID = itemId.ToString() })
             });
             TrackChanges(cacheObject, userCode);
-            return group;
+            return iteration;
         }
 
-        private async Task<Element> HandleMoveAsync(InstanceCacheObject cacheObject, string userCode, int? itemId, int direction)
+        private async Task<Iteration> HandleMoveAsync(InstanceCacheObject cacheObject, string userCode, int? itemId, int direction)
         {
             if (!itemId.HasValue)
                 throw new InstanceException("Item id not sent");
@@ -1258,7 +1266,7 @@ namespace CheckListManager.Instances.Logic.Services
                 Information = JsonConvert.SerializeObject(new { ID = itemId.ToString() })
             });
             TrackChanges(cacheObject, userCode);
-            return group;
+            return iteration;
         }
 
         private void HandleSignatureCheckAsync(InstanceCacheObject cacheObject, string userCode, int? itemId)

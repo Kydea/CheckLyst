@@ -25,8 +25,22 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 });
         }
 
+        private void GetAllChildren(ICheckListGroup Group, List<Element> children)
+        {
+            if (!Group.Iterator)
+                Group.Items.ForEach(Item =>
+                {
+                    children.Add((Element)Item);
+                    if (Item is ICheckListGroup group) GetAllChildren(group, children);
+                });
+        }
+
+        public void GetAllChildren(List<Element> children) => GetAllChildren(this, children);
+
         public override void Setup()
         {
+            Instance = (Instance)CheckList;
+
             //loads or setup for the first time the iteration
             var Loading = Id > 0;
             CheckList.AddItem(this);
@@ -83,6 +97,11 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 var Item = (Item)Items[Index];
                 Item.ClonedBy = Group.Items[Index].Id;
             }
+        }
+
+        protected override void OnUpdate(string DecimalSeparator, string TimeZone)
+        {
+
         }
     }
 }

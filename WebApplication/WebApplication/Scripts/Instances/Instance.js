@@ -96,20 +96,22 @@
                 element.append($("<span />").addClass("Index").text(parseInt(index) + 1));
                 var
                     item = value[index],
-                    div = $("<div />").addClass("Value").appendTo(element);
-                switch (item && item.type && item.type.typeName) {
+                    div = $("<div />").addClass("Value").appendTo(element),
+                    itemValue = item && (item.value || item.Value),
+                    itemType = item && (item.type && item.type.typeName || item.Type && item.Type.TypeName);
+                switch (itemType) {
                     case "DateTime":
-                        var formattedDate = matematici.dateFormatter.format(moment.parseZone(item.value));
+                        var formattedDate = matematici.dateFormatter.format(moment.parseZone(itemValue));
                         div.html(formattedDate.date + " " + formattedDate.time).attr("title", formattedDate.offset);
                         break;
                     case "Boolean":
-                        div.addClass("Centered").append($("<i />").addClass("fa").addClass("fa-" + (item.value || item.value == true ? "check" : "times")));
+                        div.addClass("Centered").append($("<i />").addClass("fa").addClass("fa-" + (itemValue || itemValue == true ? "check" : "times")));
                         break;
                     case "Array":
-                        div.append(navigateArray(item.value));
+                        div.append(navigateArray(itemValue));
                         break;
                     default:
-                        div.html(item.value);
+                        div.html(itemValue);
                 }
             }
             return element;

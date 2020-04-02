@@ -117,6 +117,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             destination.DescriptionFormula.BuildDependencies(source.Description);
         }
 
-        public override DependencyNodeKey DependencyNodeKey => base.DependencyNodeKey ?? new DependencyNodeKey("item", Id);
+        public override DependencyNodeKey DependencyNodeKey => new DependencyNodeKey("item", Id);
     }
 }

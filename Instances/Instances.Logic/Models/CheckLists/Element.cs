@@ -23,7 +23,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         }
 
         [JsonIgnore]
-        public Instance Instance { get; private set; }
+        public Instance Instance { get; protected set; }
 
 		protected virtual Dictionary<string, ICheckListElement> GetBranchElements() => CheckList.Elements;
 

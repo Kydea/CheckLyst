@@ -88,8 +88,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             foreach (var expression in Expressions)
                 expression.Value.Code = expression.Key;
 
-            if (ElementsList == null) //if (InCreation) //replaced with this more generic but less meaningful form for back compatibility with 1.4 when ElementList did not exist
-                ElementsList = Elements.Values.Where(Element => !(Element is ICheckListItem CheckListItem) || !CheckListItem.IterationItem && !CheckListItem.IteratorModelItem).ToList(); //pages and items outside iterators
+            ElementsList = Elements.Values.Where(Element => !(Element is ICheckListItem CheckListItem) || !CheckListItem.IterationItem && !CheckListItem.IteratorModelItem).ToList(); //pages and items outside iterators
 
             if (InCreation || !CheckVersion(2, false)) //version 2 introduces dependencies
                 BuildDependencies();
@@ -241,7 +240,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             var Index = 0;
             while (Value?.IsNull == false && Value?.Type == DataType.Array)
             {
-                IEnumerable<TypedValue> ArrayValue;
+                List<TypedValue> ArrayValue;
                 if (IterationIndexes == null)
                 {
                     Error = $"The expression {ExpressionCode} returns an array";
