@@ -77,6 +77,16 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 base.UpdateReadOnly(userCode, readOnlyInstance);
         }
 
+        private Group FindIterator()
+        {
+            return (Group)(Iteration.Group.IterationItem ? ((Group)Iteration.Group).FindIterator() : (Group)Iteration.Group).Items[ItemIndex];
+        }
+
+        public Item FindIteratorModelItem()
+        {
+            return (Item)FindIterator().Items[ItemIndex];
+        }
+
         public override string GetSignatureInformation() => base.GetSignatureInformation() ?? Group?.GetSignatureInformation() ?? Page?.GetSignatureInformation();
 
         protected override Dictionary<string, ICheckListElement> GetBranchElements() => Iteration?.Elements ?? base.GetBranchElements();
