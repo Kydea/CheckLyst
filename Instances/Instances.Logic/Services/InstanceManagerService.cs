@@ -959,7 +959,7 @@ namespace CheckListManager.Instances.Logic.Services
                 if (AffectedElement != null)
                 {
                     var roots = new List<IDependencyNode>();
-                    if (AffectedElement is Item AffectedItem && AffectedItem.IterationItem)
+                    if (AffectedElement is Item AffectedItem)
                         AffectedElement = AffectedItem.FindIteratorModelItem();
                     AffectedElement.MarkNodeAsChanged(cacheObject.Instance, roots);
 

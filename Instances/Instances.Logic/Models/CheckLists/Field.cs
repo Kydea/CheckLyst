@@ -91,7 +91,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             }
             if (ExternalSourceName != null)
             {
-                var Instance = (Instance)CheckList;
                 string Value = 
                     ExternalSourceName != null && Instance.ExternalSourceRows.ContainsKey(ExternalSourceName) && Instance.ExternalSourceRows[ExternalSourceName].ContainsKey(ExternalSourceColumn) ?
                     Instance.ExternalSourceRows[ExternalSourceName][ExternalSourceColumn] :

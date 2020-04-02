@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.Expressions;
@@ -77,14 +78,20 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 base.UpdateReadOnly(userCode, readOnlyInstance);
         }
 
-        private Group FindIterator()
-        {
-            return (Group)(Iteration.Group.IterationItem ? ((Group)Iteration.Group).FindIterator() : (Group)Iteration.Group).Items[ItemIndex];
-        }
+        public Item FindIteratorModelItem() =>
+            IterationItem ? (Item)((Group)((Group)Iteration.Group).FindIteratorModelItem()).Items[ItemIndex] : this;
 
-        public Item FindIteratorModelItem()
+        public IEnumerable<Item> FindIterationItems()
         {
-            return (Item)FindIterator().Items[ItemIndex];
+            if (IteratorModelItem)
+            {
+                var IterationGroups = ((Group)Group).FindIterationItems();
+                var Iterations = IterationGroups.SelectMany(i => ((Group)i).Iterations);
+                foreach (var Iteration in Iterations.Where(i => !i.Removed))
+                    yield return (Item)Iteration.Items[ItemIndex];
+            }
+            else
+                yield return this;
         }
 
         public override string GetSignatureInformation() => base.GetSignatureInformation() ?? Group?.GetSignatureInformation() ?? Page?.GetSignatureInformation();

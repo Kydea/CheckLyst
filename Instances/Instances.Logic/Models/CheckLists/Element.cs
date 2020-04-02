@@ -34,7 +34,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 				CheckList.Elements[Code] = this;
 		}
 
-        private bool Updated { get; set; } = true;
+        protected bool Updated { get; set; } = true;
 
         public void Update(string DecimalSeparator, string TimeZone)
         {
@@ -235,18 +235,18 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                     Result = false;
 
             if (Result)
-            {
-                var Instance = (Instance)CheckList;
                 if (this is Item Item && Item.IteratorModelItem)
-                    foreach (var Iteration in Item.Group.Iterations.Where(i => !i.Removed))
+                {
+                    var IterationItems = Item.FindIterationItems();
+                    foreach (var IterationItem in IterationItems)
                     {
-                        var IterationItem = (Item)Iteration.Items[Item.ItemIndex];
                         IterationItem.Updated = false;
                         IterationItem.Update(Instance.DecimalSeparator, Instance.TimeZone);
                     }
+                    Updated = true;
+                }
                 else
                     Update(Instance.DecimalSeparator, Instance.TimeZone);
-            }
 
             DependencyChain.Pop();
             this.DependencyChainKey = null;

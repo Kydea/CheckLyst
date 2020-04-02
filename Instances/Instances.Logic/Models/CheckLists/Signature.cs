@@ -59,7 +59,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public void TrySign(InstanceCacheObject cacheObject, string UserCode)
         {
-            var Instance = (Instance)CheckList;
             try
             {
                 Signed = true;
