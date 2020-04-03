@@ -22,14 +22,15 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             return Signature;
         }
 
+
+        private Instance _instance;
         [JsonIgnore]
-        public Instance Instance { get; protected set; }
+        public Instance Instance => _instance ?? (_instance = (Instance)CheckList);
 
 		protected virtual Dictionary<string, ICheckListElement> GetBranchElements() => CheckList.Elements;
 
 		public virtual void Setup()
 		{
-            Instance = (Instance)CheckList;
             if (!string.IsNullOrEmpty(Code))
 				CheckList.Elements[Code] = this;
 		}

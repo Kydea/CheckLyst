@@ -39,8 +39,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public override void Setup()
         {
-            Instance = (Instance)CheckList;
-
             //loads or setup for the first time the iteration
             var Loading = Id > 0;
             CheckList.AddItem(this);
