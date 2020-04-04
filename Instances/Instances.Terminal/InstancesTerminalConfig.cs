@@ -3,6 +3,7 @@ using AutoMapper;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Json;
 using CheckListManager.Common.Logic.Models.CheckLists;
+using CheckListManager.Common.Logic.Models.Expressions;
 using CheckListManager.Common.Logic.Terminal.Configuration;
 using CheckListManager.Common.Logic.Trail;
 using CheckListManager.Instances.Logic.Models.CheckLists;
@@ -27,6 +28,12 @@ namespace CheckListManager.Instances.Terminal
 
             builder.RegisterType<CheckListJsonConverter>()
 				.AsSelf()
+				.As<CustomJsonConverter>()
+				.InstancePerDependency();
+
+            builder.RegisterType<TypedValueJsonConverter>()
+				.AsSelf()
+				.As<CustomJsonConverter>()
 				.InstancePerDependency();
 		}
 

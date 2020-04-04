@@ -41,7 +41,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                     Type == DataType.Array && !(Value is List<TypedValue>) ||
                     Type == DataType.Text && !(Value is string)
                 )
-                    throw new Exception("Invalid class " + Value.GetType().Name + " for DataType " + Type.ToString());
+                    throw new Exception("Invalid class " + Value.GetType().Name + " for DataType " + Type);
                 else
                 {
                     this.Type = Type;

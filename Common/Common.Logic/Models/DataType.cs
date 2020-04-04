@@ -3,19 +3,25 @@ using System.Collections.Generic;
 using System.Globalization;
 using CheckListManager.Common.Logic.Models.Expressions;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace CheckListManager.Common.Logic.Models
 {
 	public struct DataType
 	{
-		public DataTypeEnum RawValue { get; set; }
-        public string TypeName { get; set; }
+		private readonly Type _actualType;
+		public DataTypeEnum RawValue { get; }
+        public string TypeName { get; }
 
-		private DataType(DataTypeEnum rawValue, string typeName)
+		private DataType(DataTypeEnum rawValue, string typeName, Type actualType)
 		{
+			_actualType = actualType;
 			RawValue = rawValue;
 			TypeName = typeName;
-        }
+		}
+
+		public object FromJson(JToken token, JsonSerializer jsonSerializer)
+			=> token.ToObject(_actualType, jsonSerializer);
 
 		public static bool operator ==(DataType a, DataType b)
 		{
@@ -29,13 +35,15 @@ namespace CheckListManager.Common.Logic.Models
 
 		public override bool Equals(object obj)
 		{
-			return obj is DataType && ((DataType)obj).RawValue == RawValue;
+			return obj is DataType type && type.RawValue == RawValue;
 		}
 
 		public override int GetHashCode()
 		{
 			return RawValue.GetHashCode();
 		}
+
+		public override string ToString() => TypeName;
 
 		public bool Validate(string value)
 		{
@@ -62,14 +70,14 @@ namespace CheckListManager.Common.Logic.Models
 			}
 		}
 
-		public static DataType Text = new DataType(DataTypeEnum.Text, "Text");
-		public static DataType Boolean = new DataType(DataTypeEnum.Boolean, "Boolean");
-		public static DataType Number = new DataType(DataTypeEnum.Number, "Number");
-		public static DataType DateTime = new DataType(DataTypeEnum.DateTime, "DateTime");
-		public static DataType Date = new DataType(DataTypeEnum.Date, "Date");
-		public static DataType Time = new DataType(DataTypeEnum.Time, "Time");
-        public static DataType Array = new DataType(DataTypeEnum.Array, "Array");
-        public static DataType Error = new DataType(DataTypeEnum.Error, "Error");
+		public static DataType Text = new DataType(DataTypeEnum.Text, "Text", typeof(string));
+		public static DataType Boolean = new DataType(DataTypeEnum.Boolean, "Boolean", typeof(bool));
+		public static DataType Number = new DataType(DataTypeEnum.Number, "Number", typeof(decimal));
+		public static DataType DateTime = new DataType(DataTypeEnum.DateTime, "DateTime", typeof(DateTimeOffset));
+		public static DataType Date = new DataType(DataTypeEnum.Date, "Date", typeof(DateTimeOffset));
+		public static DataType Time = new DataType(DataTypeEnum.Time, "Time", typeof(TimeSpan));
+        public static DataType Array = new DataType(DataTypeEnum.Array, "Array", typeof(List<TypedValue>));
+        public static DataType Error = new DataType(DataTypeEnum.Error, "Error", typeof(string));
 
         public static DataType FromName(string name)
         {
