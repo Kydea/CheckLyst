@@ -46,7 +46,7 @@ namespace CheckListManager.Instances.Logic.Services
 
         private readonly IServiceClient _client;
         private readonly IInstancesRepository _instancesRepository;
-        private readonly CheckListJsonConverter _converter;
+        private readonly JsonConverter[] _converters;
         private readonly IInstanceCacheService _instanceCache;
         private readonly IConfigurationService _configurationService;
         private readonly ISettingService _settingService;
@@ -60,7 +60,7 @@ namespace CheckListManager.Instances.Logic.Services
         public InstanceManagerService(
             IServiceClient client,
             IInstancesRepository instancesRepository,
-            CheckListJsonConverter converter,
+            CustomJsonConverter[] converters,
             IInstanceCacheService instanceCache,
             IConfigurationService configurationService,
             ISettingService settingService,
@@ -74,7 +74,7 @@ namespace CheckListManager.Instances.Logic.Services
         {
             _client = client;
             _instancesRepository = instancesRepository;
-            _converter = converter;
+            _converters = converters.ToArray<JsonConverter>();
             _instanceCache = instanceCache;
             _configurationService = configurationService;
             _settingService = settingService;
@@ -199,7 +199,7 @@ namespace CheckListManager.Instances.Logic.Services
                 var row = new Common.Data.Instances
                 {
                     Company = identity.CompanyId,
-                    Data = JsonConvert.SerializeObject(cacheObject.Instance, _converter),
+                    Data = JsonConvert.SerializeObject(cacheObject.Instance, _converters),
                     Code = code,
                     Description = cacheObject.Instance.Description,
                     InstanceState = cacheObject.InstanceState,
@@ -431,7 +431,7 @@ namespace CheckListManager.Instances.Logic.Services
                 if (!cacheObject.Instance.CheckVersion(2, true)) //version 2 introduces persistency
                     cacheObject.Instance.UpdateAll(await _settingService.DecimalSeparatorAsync(cacheObject.CompanyId), (await _settingService.TimeZoneAsync(cacheObject.CompanyId)), cacheObject);
 
-                row.Data = JsonConvert.SerializeObject(cacheObject.Instance, _converter);
+                row.Data = JsonConvert.SerializeObject(cacheObject.Instance, _converters);
                 row.Description = cacheObject.Instance.Description;
                 row.FileName =
                     !cacheObject.Instance.FTPExport ? null :
@@ -557,7 +557,7 @@ namespace CheckListManager.Instances.Logic.Services
                     var message = JsonConvert.DeserializeObject<ResponseMessage>(responseData);
                     throw new InstanceException(message.Messages.FirstOrDefault() ?? "Unable to retrieve the prototype");
                 }
-                var response = JsonConvert.DeserializeObject<GetPrototypeResponse>(responseData, _converter);
+                var response = JsonConvert.DeserializeObject<GetPrototypeResponse>(responseData, _converters);
                 return response;
             }
             catch (InstanceException e)
@@ -574,7 +574,7 @@ namespace CheckListManager.Instances.Logic.Services
 
         private InstanceCacheObject CreateInstanceFromDatabase(long companyId, Common.Data.Instances instance)
         {
-            var instanceObject = JsonConvert.DeserializeObject<Instance>(instance.Data, _converter);
+            var instanceObject = JsonConvert.DeserializeObject<Instance>(instance.Data, _converters);
             var cacheObject = new InstanceCacheObject
             {
                 CompanyId = companyId,

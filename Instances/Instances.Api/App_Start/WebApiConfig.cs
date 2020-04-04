@@ -28,6 +28,12 @@ namespace CheckListManager.Instances.Api
 
             builder.RegisterType<CheckListJsonConverter>()
 			    .AsSelf()
+			    .As<CustomJsonConverter>()
+			    .InstancePerDependency();
+
+            builder.RegisterType<TypedValueJsonConverter>()
+			    .AsSelf()
+			    .As<CustomJsonConverter>()
 			    .InstancePerDependency();
 	    }
 
@@ -44,6 +50,7 @@ namespace CheckListManager.Instances.Api
 		    base.OnConfigureWebApi(configuration);
 
 		    configuration.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new CheckListJsonConverter(Container));
+		    configuration.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new TypedValueJsonConverter());
 		    configuration.Formatters.Add(new FormMultipartEncodedMediaTypeFormatter(new MultipartFormatterSettings()));
 	    }
 

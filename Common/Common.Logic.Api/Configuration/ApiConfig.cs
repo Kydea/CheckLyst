@@ -138,6 +138,7 @@ namespace CheckListManager.Common.Logic.Api.Configuration
 			_configuration.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
 			_configuration.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new CheckListJsonConverter(Container));
             _configuration.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new DateTimeOffsetJsonConverter(Container));
+			_configuration.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new TypedValueJsonConverter());
             
             _configuration.ParameterBindingRules.Insert(0, descriptor =>
             {

@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using CheckListManager.Common.Logic.Cache;
 using CheckListManager.Common.Logic.Json;
 using CheckListManager.Instances.Logic.Exceptions;
 using CheckListManager.Instances.Logic.Models;
 using CheckListManager.Instances.Logic.Models.CheckLists;
+using Newtonsoft.Json;
 using NLog;
 
 namespace CheckListManager.Instances.Logic.Services
@@ -16,12 +18,12 @@ namespace CheckListManager.Instances.Logic.Services
 		private const string RegionName = "Instance";
 
 		private readonly IRedisCache _redisCache;
-		private readonly CheckListJsonConverter _converter;
+		private readonly JsonConverter[] _converters;
 
-		public InstanceCacheService(IRedisCache redisCache, CheckListJsonConverter converter)
+		public InstanceCacheService(IRedisCache redisCache, CustomJsonConverter[] converters)
 		{
 			_redisCache = redisCache;
-			_converter = converter;
+			_converters = converters.ToArray<JsonConverter>();
 		}
 
 		public async Task<InstanceCacheObject> GetAsync(string code, bool includeData)
@@ -29,7 +31,7 @@ namespace CheckListManager.Instances.Logic.Services
 			var cacheObject = await _redisCache.GetAsync<InstanceCacheObject>($"Instance:{code}:Metadata", RegionName);
 			if (cacheObject != null && includeData)
 			{
-				cacheObject.Instance = await _redisCache.GetAsync<Instance>($"Instance:{code}:Data", RegionName, _converter);
+				cacheObject.Instance = await _redisCache.GetAsync<Instance>($"Instance:{code}:Data", RegionName, _converters);
 				if (cacheObject.Instance == null) throw new InstanceException("Instance data missing");
 				cacheObject.Instance.Setup(false);
 			}
