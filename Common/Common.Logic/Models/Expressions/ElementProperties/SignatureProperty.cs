@@ -1,17 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.CheckLists;
 
 namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
 {
     public class SignatureProperty : ElementProperty
     {
-        public const string SIGNED = "Signed", SIGNED_BY = "SignedBy", SIGNED_ON = "SignedOn";
+        public const string SIGNED = "property Signed", SIGNED_BY = "property SignedBy", SIGNED_ON = "property SignedOn";
 
         public SignatureProperty(string Property)
         {
             this.Property = Property;
         }
+
+        protected override DependencyNodeKey.Processes Process => DependencyNodeKey.Processes.Other;
 
         protected override void Check(ICheckListElement Element, List<string> IteratorStack)
         {

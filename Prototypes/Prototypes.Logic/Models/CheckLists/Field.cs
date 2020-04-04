@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.Expressions;
@@ -57,7 +58,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         {
             base.BuildDependencies();
 
-            var DependencyNodeKey = this.DependencyNodeKey.Clone("Value");
+            DependencyNodeKey DependencyNodeKey = this.DependencyNodeKey.Clone(DependencyNodeKey.Processes.Value, "value");
             ValueFormula.BuildDependencies(ValueFormulaString);
             foreach (var Key in ValueFormula.ValueKeys)
                 if (CheckList.Expressions.TryGetValue(Key, out var Expression))

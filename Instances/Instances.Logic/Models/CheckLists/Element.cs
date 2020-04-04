@@ -21,8 +21,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 throw new InstanceException((string.IsNullOrEmpty(Code) ? "An element" : $"The element {Code}") + $" references to a signature with code {SignatureCode} that is not a signature");
             return Signature;
         }
-
-
+        
         private Instance _instance;
         [JsonIgnore]
         public Instance Instance => _instance ?? (_instance = (Instance)CheckList);
@@ -35,20 +34,32 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 				CheckList.Elements[Code] = this;
 		}
 
-        protected bool Updated { get; set; } = true;
+        private HashSet<DependencyNodeKey.Processes> NeedToUpdate { get; } = new HashSet<DependencyNodeKey.Processes>();
 
         public void Update(string DecimalSeparator, string TimeZone)
         {
-            if (Updated) return;
-
-            OnUpdate(DecimalSeparator, TimeZone);
-            UpdateValid();
-            UpdateCountDownTo();
-            UpdateHidden();
-            Updated = true;
+            if (NeedToUpdate.Contains(DependencyNodeKey.Processes.Value))
+            {
+                UpdateValue();
+                NeedToUpdate.Remove(DependencyNodeKey.Processes.Value);
+            }
+            if (NeedToUpdate.Contains(DependencyNodeKey.Processes.Validity))
+            {
+                UpdateValid();
+                NeedToUpdate.Remove(DependencyNodeKey.Processes.Validity);
+            }
+            if (NeedToUpdate.Contains(DependencyNodeKey.Processes.Hidden))
+            {
+                UpdateHidden();
+                NeedToUpdate.Remove(DependencyNodeKey.Processes.Hidden);
+            }
+            if (NeedToUpdate.Contains(DependencyNodeKey.Processes.Other))
+            {
+                UpdateCountDownTo();
+                UpdateOther();
+                NeedToUpdate.Remove(DependencyNodeKey.Processes.Other);
+            }
         }
-
-        protected abstract void OnUpdate(string DecimalSeparator, string TimeZone);
 
         #region Properties
 
@@ -60,19 +71,15 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public string SignatureCode { get; set; }
         public virtual string GetSignatureInformation() => Signature != null && Signature.Signed ? string.Format("by {0} on {1:yyyy-MM-dd HH:mm}", Signature.SignedBy, Signature.SignedOn) : null;
 
+        protected abstract void UpdateValue();
+
         public virtual bool Valid { get; set; }
         public Conditions ValidCondition { get; set; }
         public string ValidExpressionCode { get; set; }
         public virtual string ValidityMessage { get; set; }
         public virtual bool IsValidByDefault() => true;
-        private void UpdateValid()
+        protected virtual void UpdateValid()
         {
-            if (Hidden)
-            {
-                Valid = true;
-                return;
-            }
-
             var expressionValue = CheckList?.GetExpressionValue(ValidExpressionCode, this)?.Value as bool? == true;
             Valid = 
                 ValidCondition == Conditions.Default && IsValidByDefault() ||
@@ -134,6 +141,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 || HiddenCondition == Conditions.True;
         }
 
+        protected abstract void UpdateOther();
+
         public static void Copy(Element source, Element destination)
 		{
 			destination.CheckList = source.CheckList;
@@ -153,15 +162,13 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         #region dependency
 
-        private Expression GetExpression(string ExpressionCode, DependencyNodeKey DependencyNodeKey)
+        private Expression GetExpression(string ExpressionCode, DependencyNodeKey DependencyNodeKey, DependencyNodeKey.Processes Process)
         {
-            if (ExpressionCode == null) return null;
             if (string.IsNullOrEmpty(ExpressionCode))
                 throw new Exception($"The {DependencyNodeKey} reference is missing");
             if (!CheckList.Expressions.TryGetValue(ExpressionCode, out var Expression))
                 throw new Exception($"The {DependencyNodeKey} references to the inexistent expression {ExpressionCode}");
-
-            DependingNodes.Add(Expression.DependencyNodeKey);
+            DependingNodes.Add(Expression.DependencyNodeKey.Clone(Process, null));
             return Expression;
         }
 
@@ -174,6 +181,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 throw new Exception($"The {DependencyNodeKey} references to the inexistent signature {SignatureCode}");
             if (!(BranchElements[SignatureCode] is Signature Signature))
                 throw new Exception($"The {DependencyNodeKey} references to a signature with code {SignatureCode} but it is not a signature");
+            DependingNodes.Add(Signature.DependencyNodeKey.Clone(DependencyNodeKey.Processes.Other, "property Signed"));
             return Signature;
         }
 
@@ -185,54 +193,67 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public virtual void BuildDependencies()
         {
-            var BranchElements = GetBranchElements();
-            Updated = false;
+            NeedToUpdate.Add(DependencyNodeKey.Processes.Value);
+            NeedToUpdate.Add(DependencyNodeKey.Processes.Value);
+            NeedToUpdate.Add(DependencyNodeKey.Processes.Value);
+            NeedToUpdate.Add(DependencyNodeKey.Processes.Value);
 
-            var DependencyNodeKey = this.DependencyNodeKey.Clone("signature");
             if (!string.IsNullOrEmpty(SignatureCode))
+            {
+                DependencyNodeKey DependencyNodeKey = this.DependencyNodeKey.Clone(DependencyNodeKey.Processes.Other, "property signature");
                 GetSignature(SignatureCode, DependencyNodeKey).DependentNodes.Add(DependencyNodeKey);
+            }
 
-            DependencyNodeKey = this.DependencyNodeKey.Clone("countdown");
             if (CountDownCondition == Conditions.Expression)
-                GetExpression(CountDownToCode, DependencyNodeKey).DependentNodes.Add(DependencyNodeKey);
+            {
+                DependencyNodeKey DependencyNodeKey = this.DependencyNodeKey.Clone(DependencyNodeKey.Processes.Other, "property countdown");
+                GetExpression(CountDownToCode, DependencyNodeKey, DependencyNodeKey.Processes.Other).DependentNodes.Add(DependencyNodeKey);
+            }
 
             if (CountDownCondition == Conditions.Signature)
+            {
+                DependencyNodeKey DependencyNodeKey = this.DependencyNodeKey.Clone(DependencyNodeKey.Processes.Other, "property countdown");
                 GetSignature(CountDownToCode, DependencyNodeKey).DependentNodes.Add(DependencyNodeKey);
+            }
 
-            DependencyNodeKey = this.DependencyNodeKey.Clone("hidden");
             if (HiddenCondition == Conditions.Expression)
-                GetExpression(HiddenExpressionCode, DependencyNodeKey).DependentNodes.Add(DependencyNodeKey);
+            {
+                DependencyNodeKey DependencyNodeKey = this.DependencyNodeKey.Clone(DependencyNodeKey.Processes.Hidden, "property hidden");
+                GetExpression(HiddenExpressionCode, DependencyNodeKey, DependencyNodeKey.Processes.Hidden).DependentNodes.Add(DependencyNodeKey);
+            }
 
-            DependencyNodeKey = this.DependencyNodeKey.Clone("read-only");
             if (ReadOnlyCondition == Conditions.Expression || ReadOnlyCondition == Conditions.ExpressionOrDefault || ReadOnlyCondition == Conditions.ExpressionAndDefault)
-                GetExpression(ReadOnlyExpressionCode, DependencyNodeKey).DependentNodes.Add(DependencyNodeKey);
+            {
+                DependencyNodeKey DependencyNodeKey = this.DependencyNodeKey.Clone(DependencyNodeKey.Processes.ReadOnly, "property read-only");
+                GetExpression(ReadOnlyExpressionCode, DependencyNodeKey, DependencyNodeKey.Processes.ReadOnly).DependentNodes.Add(DependencyNodeKey);
+            }
 
-            DependencyNodeKey = this.DependencyNodeKey.Clone("validity");
             if (ValidCondition == Conditions.Expression || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
-                GetExpression(ValidExpressionCode, DependencyNodeKey).DependentNodes.Add(DependencyNodeKey);
+            {
+                DependencyNodeKey DependencyNodeKey = this.DependencyNodeKey.Clone(DependencyNodeKey.Processes.Validity, "validity");
+                GetExpression(ValidExpressionCode, DependencyNodeKey, DependencyNodeKey.Processes.Validity).DependentNodes.Add(DependencyNodeKey);
+            }
         }
 
         public virtual DependencyNodeKey DependencyNodeKey => string.IsNullOrEmpty(Code) ? null : new DependencyNodeKey("element", Code);
         public HashSet<DependencyNodeKey> DependentNodes { get; } = new HashSet<DependencyNodeKey>();
         public HashSet<DependencyNodeKey> DependingNodes { get; } = new HashSet<DependencyNodeKey>();
 
-        private string DependencyChainKey { get; set; }
-
-        protected virtual IEnumerable<DependencyNodeKey> GetDependingNodes() => DependingNodes;
-        public bool TraverseDependencyChain(ICheckList checkList, Stack<IDependencyNode> DependencyChain, string DependencyChainKey, Func<IDependencyNode, bool> DependencyChainAction)
+        private HashSet<DependencyNodeKey.Processes> DependencyChainProcesses = new HashSet<DependencyNodeKey.Processes>();
+        public bool TraverseDependencyChain(ICheckList CheckList, Stack<string> DependencyChain, DependencyNodeKey.Processes Process, Func<IDependencyNode, bool> DependencyChainAction)
         {
-            if (Updated) return true;
+            if (!NeedToUpdate.Contains(Process)) return true;
 
-            DependencyChain.Push(this);
-            if (this.DependencyChainKey == DependencyChainKey)
-                throw new Exception($"Dependency cycle found: {string.Join(" > ", DependencyChain.Reverse().Select(e => e.DependencyNodeKey.Description))}");
-            this.DependencyChainKey = DependencyChainKey;
+            DependencyChain.Push(DependencyNodeKey.Clone(Process, null).ToString());
+            if (DependencyChainProcesses.Contains(Process))
+                throw new Exception($"Dependency cycle found: {string.Join(" > ", DependencyChain.Reverse())}");
+            DependencyChainProcesses.Add(Process);
 
             var Result = true;
-
-            var DependingNodes = GetDependingNodes();
-            foreach (var DependencyNodeKey in DependingNodes)
-                if (!DependencyNodeKey.GetNode(checkList).TraverseDependencyChain(checkList, DependencyChain, DependencyChainKey, DependencyChainAction))
+            if (Process == DependencyNodeKey.Processes.Validity)
+                TraverseDependencyChain(CheckList, DependencyChain, DependencyNodeKey.Processes.Hidden, DependencyChainAction);
+            foreach (var DependencyNodeKey in DependingNodes.Where(n => n.Process == Process))
+                if (!DependencyNodeKey.GetNode(CheckList).TraverseDependencyChain(CheckList, DependencyChain, DependencyNodeKey.Process, DependencyChainAction))
                     Result = false;
 
             if (Result)
@@ -241,30 +262,31 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                     var IterationItems = Item.FindIterationItems();
                     foreach (var IterationItem in IterationItems)
                     {
-                        IterationItem.Updated = false;
+                        IterationItem.NeedToUpdate.Add(Process);
                         IterationItem.Update(Instance.DecimalSeparator, Instance.TimeZone);
                     }
-                    Updated = true;
+                    NeedToUpdate.Remove(Process);
                 }
                 else
                     Update(Instance.DecimalSeparator, Instance.TimeZone);
 
             DependencyChain.Pop();
-            this.DependencyChainKey = null;
+            DependencyChainProcesses.Remove(Process);
             return Result;
         }
 
-        protected virtual IEnumerable<DependencyNodeKey> GetDependentNodes() => DependentNodes;
-        public void MarkNodeAsChanged(ICheckList checkList, List<IDependencyNode> roots)
+        public void MarkNodeAsChanged(ICheckList CheckList, List<IDependencyNode> Roots, DependencyNodeKey.Processes Process)
         {
-            if (!Updated) return;
-            Updated = false;
-            var DependentNodes = GetDependentNodes();
+            if (Process == DependencyNodeKey.Processes.ReadOnly || NeedToUpdate.Contains(Process)) return;
+            NeedToUpdate.Add(Process);
+
+            if (Process == DependencyNodeKey.Processes.Hidden)
+                MarkNodeAsChanged(CheckList, Roots, DependencyNodeKey.Processes.Validity);
             if (DependentNodes.Any())
-                foreach (var DependencyNodeKey in DependentNodes)
-                    DependencyNodeKey.GetNode(checkList).MarkNodeAsChanged(checkList, roots);
+                foreach (var DependencyNodeKey in DependentNodes.Where(n => n.Process == Process))
+                    DependencyNodeKey.GetNode(CheckList).MarkNodeAsChanged(CheckList, Roots, Process);
             else
-                roots.Add(this);
+                Roots.Add(this);
         }
 
         #endregion

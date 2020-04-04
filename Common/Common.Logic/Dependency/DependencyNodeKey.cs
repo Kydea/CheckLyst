@@ -9,6 +9,8 @@ namespace CheckListManager.Common.Logic.Dependency
 {
     public class DependencyNodeKey
     {
+        public enum Processes { Value, Validity, ReadOnly, Hidden, Other }
+
         public DependencyNodeKey()
         { }
 
@@ -27,28 +29,39 @@ namespace CheckListManager.Common.Logic.Dependency
         }
 
         public string ClassName { get; set; }
-        public string PropertyName { get; set; }
         public string ObjectCode { get; set; }
         public int? ObjectID { get; set; }
+        public Processes Process { get; private set; } = Processes.Other;
+        public string PropertyName { get; set; }
 
         public string Description => ToString();
 
-        public string Key => $"{ClassName}-{ObjectCode ?? ObjectID?.ToString()}-{PropertyName}";
+        public string Key => $"{ClassName}-{ObjectCode ?? ObjectID?.ToString()}-{Process}-{PropertyName}";
 
-        public DependencyNodeKey Clone(string PropertyName)
-            => new DependencyNodeKey { ClassName = ClassName, ObjectCode = ObjectCode, ObjectID = ObjectID, PropertyName = PropertyName };
+        public DependencyNodeKey Clone(Processes Process, string PropertyName)
+            => new DependencyNodeKey { ClassName = ClassName, ObjectCode = ObjectCode, ObjectID = ObjectID, Process = Process, PropertyName = PropertyName };
 
         public override bool Equals(object o)
             => Equals(o as DependencyNodeKey);
 
         public bool Equals(DependencyNodeKey o)
-            => o != null && o.ClassName == ClassName && o.PropertyName == PropertyName && o.ObjectCode == ObjectCode && o.ObjectID == ObjectID;
+            => o != null && o.ClassName == ClassName && o.ObjectCode == ObjectCode && o.ObjectID == ObjectID && Process == o.Process && o.PropertyName == PropertyName;
 
         public override int GetHashCode()
             => Key.GetHashCode();
 
         public override string ToString()
-            => $"{(PropertyName == null ? string.Empty : $"property {PropertyName} of the ")}{ClassName} {ObjectCode ?? ObjectID?.ToString()}";
+            => $"{(PropertyName == null ? string.Empty : $"{PropertyName} of the ")}{ClassName} {ObjectCode ?? ObjectID?.ToString()}{ProcessDescription}";
+
+        private string ProcessDescription
+            => 
+                ClassName == "expressionNO" ? string.Empty : 
+                Process == Processes.Hidden ? " (Hidden)" :
+                Process == Processes.ReadOnly ? " (ReadOnly)" :
+                Process == Processes.Value ? " (Value)" :
+                Process == Processes.Validity ? " (Validity)" :
+                string.Empty;
+
 
         public IDependencyNode GetNode(ICheckList checkList)
         {
@@ -59,15 +72,15 @@ namespace CheckListManager.Common.Logic.Dependency
                 case "element":
                     return checkList.Elements[ObjectCode];
                 case "item":
+                case "group":
                     return ObjectID.HasValue ? checkList.Items[ObjectID.Value] : checkList.Elements[ObjectCode];
                 case "checklist":
                     return checkList;
                 case "page":
-                    return checkList.Pages[ObjectID.Value];
+                    return ObjectID.HasValue ? checkList.Pages[ObjectID.Value] : checkList.Elements[ObjectCode];
                 default:
                     throw new Exception($"Invalid class name {ClassName}");
             }
-
         }
     }
 }

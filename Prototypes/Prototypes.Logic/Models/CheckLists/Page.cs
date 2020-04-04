@@ -8,7 +8,8 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 {
 	public class Page : Element, ICheckListPage
 	{
-		public string Description { get; set; }
+        public int Index { get; set; }
+        public string Description { get; set; }
 		public List<ICheckListGroup> Groups { get; set; } = new List<ICheckListGroup>();
         public bool IsLocked { get; set; }
 
@@ -38,7 +39,20 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         {
             base.BuildDependencies();
             foreach (Group Group in Groups)
+            {
+                if (HiddenCondition == Conditions.False || HiddenCondition == Conditions.Expression)
+                {
+                    Group.DependingNodes.Add(DependencyNodeKey.Clone(DependencyNodeKey.Processes.Hidden, "child"));
+                    DependentNodes.Add(Group.DependencyNodeKey.Clone(DependencyNodeKey.Processes.Hidden, "parent"));
+                }
+
+                if (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
+                {
+                    DependingNodes.Add(Group.DependencyNodeKey.Clone(DependencyNodeKey.Processes.Validity, "parent"));
+                    Group.DependentNodes.Add(DependencyNodeKey.Clone(DependencyNodeKey.Processes.Validity, "child"));
+                }
                 Group.BuildDependencies();
+            }
         }
 
         public override void Check()
@@ -50,13 +64,6 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         public void CreateInstanceIterations() { throw new NotImplementedException(); }
 
-        public override DependencyNodeKey DependencyNodeKey => base.DependencyNodeKey ?? new DependencyNodeKey("page", Description);
-        protected override IEnumerable<DependencyNodeKey> GetDependingNodes()
-        {
-            foreach (var DependencyNodeKey in base.GetDependingNodes())
-                yield return DependencyNodeKey;
-            foreach (Group Group in Groups)
-                yield return Group.DependencyNodeKey;
-        }
+        public override DependencyNodeKey DependencyNodeKey => Code == null ? new DependencyNodeKey("page", Index) : new DependencyNodeKey("page", Code);
     }
 }

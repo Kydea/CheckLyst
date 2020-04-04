@@ -13,8 +13,8 @@ namespace CheckListManager.Common.Logic.Dependency
         HashSet<DependencyNodeKey> DependentNodes { get; }
         HashSet<DependencyNodeKey> DependingNodes { get; }
         DependencyNodeKey DependencyNodeKey { get; }
-        bool TraverseDependencyChain(ICheckList checkList, Stack<IDependencyNode> DependencyChain, string DependencyChainKey, Func<IDependencyNode, bool> DependencyChainAction);
-        void MarkNodeAsChanged(ICheckList checkList, List<IDependencyNode> roots);
+        bool TraverseDependencyChain(ICheckList checkList, Stack<string> DependencyChain, DependencyNodeKey.Processes Process, Func<IDependencyNode, bool> DependencyChainAction);
+        void MarkNodeAsChanged(ICheckList checkList, List<IDependencyNode> roots, DependencyNodeKey.Processes Process);
     }
 }
 

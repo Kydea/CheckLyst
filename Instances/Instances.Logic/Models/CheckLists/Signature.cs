@@ -66,8 +66,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 SignedOn = DateTimeOffset.UtcNow;
 
                 var roots = new List<IDependencyNode>();
-                MarkNodeAsChanged(cacheObject.Instance, roots);
-                cacheObject.Instance.UpdateNodes(roots);
+                MarkNodeAsChanged(cacheObject.Instance, roots, DependencyNodeKey.Processes.Other);
+                cacheObject.Instance.UpdateNodes(roots, DependencyNodeKey.Processes.Other);
 
                 if (!Valid) throw new InstanceException("Signature not valid. " + ValidityMessage);
                 if (Code != null)

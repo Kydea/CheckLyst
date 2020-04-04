@@ -42,8 +42,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         public ICheckList CheckList { get { return this; } set { throw new NotImplementedException("Just for inheritance purpose"); } }
 
-        private readonly Stack<IDependencyNode> DependencyChain = new Stack<IDependencyNode>();
-        private string DependencyChainKey;
+        private readonly Stack<string> DependencyChain = new Stack<string>();
 
         public void Setup()
         {
@@ -52,8 +51,10 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 Exception = null;
                 Header.CheckList = this;
                 Header.Setup();
-                foreach (var Page in Pages)
+                int Index = 0;
+                foreach (Page Page in Pages)
                 {
+                    Page.Index = Index++;
                     Page.CheckList = this;
                     Page.Setup();
                 }
@@ -89,8 +90,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 foreach (var expression in Expressions.Values)
                 {
                     DependencyChain.Clear();
-                    DependencyChainKey = expression.Code;
-                    if (expression.Error == null && !expression.TraverseDependencyChain(this, DependencyChain, DependencyChainKey, dn => ((Expression)dn).Check(this)))
+                    if (expression.Error == null && !expression.TraverseDependencyChain(this, DependencyChain, DependencyNodeKey.Processes.Other, dn => ((Expression)dn).Check(this)))
                         Error = true;
                 }
 
@@ -123,7 +123,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
             if (Result)
             {
-                var DependencyNodeKey = this.DependencyNodeKey.Clone("instance-description");
+                DependencyNodeKey DependencyNodeKey = this.DependencyNodeKey.Clone(DependencyNodeKey.Processes.Other, "instance-description");
                 DescriptionFormula.BuildDependencies(DescriptionFormulaString);
                 foreach (var Key in DescriptionFormula.ValueKeys)
                     if(Expressions.TryGetValue(Key, out var Expression))
@@ -132,7 +132,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                         DependingNodes.Add(Expression.DependencyNodeKey);
                     }
 
-                DependencyNodeKey = this.DependencyNodeKey.Clone("instance-file-name");
+                DependencyNodeKey = this.DependencyNodeKey.Clone(DependencyNodeKey.Processes.Other, "instance-file-name");
                 FileNameFormula.BuildDependencies(FileNameFormulaString);
                 foreach (var Key in FileNameFormula.ValueKeys)
                     if (Expressions.TryGetValue(Key, out var Expression))
@@ -154,13 +154,10 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public HashSet<DependencyNodeKey> DependingNodes { get; } = new HashSet<DependencyNodeKey>();
         public HashSet<DependencyNodeKey> DependentNodes { get; } = new HashSet<DependencyNodeKey>();
 
-        public bool TraverseDependencyChain(ICheckList checkList, Stack<IDependencyNode> DependencyChain, string DependencyChainKey, Func<IDependencyNode, bool> DependencyChainAction)
-        {
-            //The checklyst is always a leaf
-            return true;
-        }
+        public bool TraverseDependencyChain(ICheckList checkList, Stack<string> DependencyChain, DependencyNodeKey.Processes Process, Func<IDependencyNode, bool> DependencyChainAction)
+            => true;
 
-        public void MarkNodeAsChanged(ICheckList checkList, List<IDependencyNode> roots) => throw new NotImplementedException();
+        public void MarkNodeAsChanged(ICheckList checkList, List<IDependencyNode> roots, DependencyNodeKey.Processes Process) => throw new NotImplementedException();
 
         public void Traverse(Func<ICheckListItem, bool> condition, Action<ICheckListItem> action)
         {

@@ -84,10 +84,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         }
 
-        protected override void OnUpdate(string DecimalSeparator, string TimeZone)
+        protected override void UpdateValid()
         {
-            base.OnUpdate(DecimalSeparator, TimeZone);
-
             _valid = true;
             if (Iterator)
                 foreach (var Iteration in Iterations.Where(i => !i.Removed))
@@ -96,6 +94,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             else
                 foreach (var item in Items)
                     _valid = _valid && item.Valid;
+
+            base.UpdateValid();
         }
 
         public override void UpdateReadOnly(string userCode, bool readOnlyInstance)
@@ -104,10 +104,10 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
             if (Iterator)
                 foreach (var iteration in Iterations.Where(i => !i.Removed))
-                    iteration.UpdateReadOnly(userCode, readOnlyInstance);
+                    ((Iteration)iteration).UpdateReadOnly(userCode, readOnlyInstance);
             else
                 foreach (var item in Items)
-                    item.UpdateReadOnly(userCode, readOnlyInstance);
+                    ((Item)item).UpdateReadOnly(userCode, readOnlyInstance);
 
         }
 
@@ -228,24 +228,25 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         {
             base.BuildDependencies();
             foreach (Item Item in Items)
+            {
+                if (HiddenCondition == Conditions.False || HiddenCondition == Conditions.Expression)
+                {
+                    Item.DependingNodes.Add(DependencyNodeKey.Clone(DependencyNodeKey.Processes.Hidden, "child"));
+                    DependentNodes.Add(Item.DependencyNodeKey.Clone(DependencyNodeKey.Processes.Hidden, "parent"));
+                }
+
+                if (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
+                {
+                    DependingNodes.Add(Item.DependencyNodeKey.Clone(DependencyNodeKey.Processes.Validity, "parent"));
+                    Item.DependentNodes.Add(DependencyNodeKey.Clone(DependencyNodeKey.Processes.Validity, "child"));
+                }
+
                 Item.BuildDependencies();
+            }
 
             if (Iterator) //this is called only for instances existing before v. 2.0.0, because BuildDependencies is called only once per instance when no iteration exists
                 foreach (Iteration Iteration in Iterations.Where(i => !i.Removed))
                     Iteration.BuildDependencies();
-        }
-
-        protected override IEnumerable<DependencyNodeKey> GetDependingNodes()
-        {
-            foreach (var DependencyNodeKey in base.GetDependingNodes())
-                yield return DependencyNodeKey;
-
-            foreach (Item Item in Items)
-                yield return Item.DependencyNodeKey;
-
-            if (Iterator)
-                foreach (Iteration Iteration in Iterations)
-                    yield return Iteration.DependencyNodeKey;
         }
     }
 }

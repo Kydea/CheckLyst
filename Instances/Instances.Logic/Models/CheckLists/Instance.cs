@@ -116,7 +116,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 if (!Expression.BuildDependencies(this))
                     throw new InstanceException(Expression.Error);
 
-            var DependencyNodeKey = this.DependencyNodeKey.Clone("instance-description");
+            DependencyNodeKey DependencyNodeKey = this.DependencyNodeKey.Clone(DependencyNodeKey.Processes.Other, "instance-description");
             DescriptionFormula.BuildDependencies(DescriptionFormulaString);
             foreach (var Key in DescriptionFormula.ValueKeys)
                 if (Expressions.TryGetValue(Key, out var Expression))
@@ -125,7 +125,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                     DependingNodes.Add(Expression.DependencyNodeKey);
                 }
 
-            DependencyNodeKey = this.DependencyNodeKey.Clone("instance-file-name");
+            DependencyNodeKey = this.DependencyNodeKey.Clone(DependencyNodeKey.Processes.Other, "instance-file-name");
             FileNameFormula.BuildDependencies(FileNameFormulaString);
             foreach (var Key in FileNameFormula.ValueKeys)
                 if (Expressions.TryGetValue(Key, out var Expression))
@@ -159,42 +159,28 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         }
 
 
-        private readonly Stack<IDependencyNode> DependencyChain = new Stack<IDependencyNode>();
-        private string DependencyChainKey;
+        private readonly Stack<string> DependencyChain = new Stack<string>();
         public void UpdateAll(string DecimalSeparator, string TimeZone, InstanceCacheObject cacheObject = null)
         {
             if (cacheObject != null) UpdateInstanceRuntimeValues(cacheObject);
             this.DecimalSeparator = DecimalSeparator;
             this.TimeZone = TimeZone;
 
-            UpdateNodes(Expressions.Values);
+            UpdateNodes(Expressions.Values, DependencyNodeKey.Processes.Other);
 
             /* traverse all to update the nodes not dependent by an expression */
             Update(false);
-            Header.Update(DecimalSeparator, TimeZone);
+            ((Group)Header).Update(DecimalSeparator, TimeZone);
             foreach (var page in Pages)
-                page.Update(DecimalSeparator, TimeZone);
+                ((Page)page).Update(DecimalSeparator, TimeZone);
         }
 
-        public void UpdateNodes(IEnumerable<IDependencyNode> Nodes)
+        public void UpdateNodes(IEnumerable<IDependencyNode> Nodes, DependencyNodeKey.Processes Process)
         {
             foreach (var Node in Nodes)
             {
                 DependencyChain.Clear();
-                if (Node is Expression Expression)
-                    DependencyChainKey = $"Expression {Expression.Code}";
-                else if (Node is Item Item)
-                    DependencyChainKey = $"Item {Item.Id}";
-                else if (Node is Page Page)
-                    DependencyChainKey = $"Page {Page.Index}";
-                else if (Node is Instance)
-                    DependencyChainKey = $"Instance";
-                else if (Node is null)
-                    throw new NullReferenceException(nameof(Node));
-                else
-                    throw new ArgumentException($"invalid class {Node.GetType().Name}");
-
-                Node.TraverseDependencyChain(this, DependencyChain, DependencyChainKey, e => {
+                Node.TraverseDependencyChain(this, DependencyChain, Process, e => {
                     ((Expression)e).Evaluate(this, TimeZone);
                     return true;
                 });
@@ -204,9 +190,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public void UpdateReadOnly(string userCode, string state)
         {
-            Header.UpdateReadOnly(userCode, ReadOnly || state != InstanceState.Draft);
+            ((Group)Header).UpdateReadOnly(userCode, ReadOnly || state != InstanceState.Draft);
             foreach (var page in Pages)
-                page.UpdateReadOnly(userCode, ReadOnly || state != InstanceState.Progress);
+                ((Page)page).UpdateReadOnly(userCode, ReadOnly || state != InstanceState.Progress);
         }
 
         public bool HideExpressions { get; set; }
@@ -268,26 +254,26 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public HashSet<DependencyNodeKey> DependentNodes { get; } = new HashSet<DependencyNodeKey>();
         public HashSet<DependencyNodeKey> DependingNodes { get; } = new HashSet<DependencyNodeKey>();
 
-        public bool TraverseDependencyChain(ICheckList checkList, Stack<IDependencyNode> DependencyChain, string DependencyChainKey, Func<IDependencyNode, bool> DependencyChainAction)
+        public bool TraverseDependencyChain(ICheckList checkList, Stack<string> DependencyChain, DependencyNodeKey.Processes Process, Func<IDependencyNode, bool> DependencyChainAction)
         {
             if (Updated) return true;
 
             foreach (var DependencyNodeKey in DependingNodes)
-                DependencyNodeKey.GetNode(checkList).TraverseDependencyChain(checkList, DependencyChain, DependencyChainKey, DependencyChainAction);
+                DependencyNodeKey.GetNode(checkList).TraverseDependencyChain(checkList, DependencyChain, Process, DependencyChainAction);
 
             Update(false);
             return true;
         }
 
-        public void MarkNodeAsChanged(ICheckList checkList, List<IDependencyNode> roots)
+        public void MarkNodeAsChanged(ICheckList CheckList, List<IDependencyNode> Roots, DependencyNodeKey.Processes Process)
         {
             if (!Updated) return;
             Updated = false;
             if (DependentNodes.Any())
                 foreach (var DependencyNodeKey in DependentNodes)
-                    DependencyNodeKey.GetNode(checkList).MarkNodeAsChanged(checkList, roots);
+                    DependencyNodeKey.GetNode(CheckList).MarkNodeAsChanged(CheckList, Roots, Process);
             else
-                roots.Add(this);
+                Roots.Add(this);
         }
 
         private bool Updated { get; set; } = true;

@@ -6,15 +6,15 @@ using CheckListManager.Common.Logic.Models.CheckLists;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
-	public class Page : Element, ICheckListPage
-	{
-		private bool _valid;
+    public class Page : Element, ICheckListPage
+    {
+        private bool _valid;
 
         public int Index { get; set; }
-		public string Description { get; set; }
-		public List<ICheckListGroup> Groups { get; set; } = new List<ICheckListGroup>();
+        public string Description { get; set; }
+        public List<ICheckListGroup> Groups { get; set; } = new List<ICheckListGroup>();
 
-		public Lock Lock { get; set; }
+        public Lock Lock { get; set; }
 
         public override bool IsValidByDefault() => _valid;
 
@@ -25,28 +25,37 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         }
 
         public override void Setup()
-		{
-			base.Setup();
+        {
+            base.Setup();
 
-			ICheckListGroup previous = null;
-			foreach (var group in Groups)
-			{
-				group.CheckList = CheckList;
-				group.Page = this;
-				group.Previous = previous;
-				group.Setup();
-				previous = group;
-			}
-		}
+            ICheckListGroup previous = null;
+            foreach (var group in Groups)
+            {
+                group.CheckList = CheckList;
+                group.Page = this;
+                group.Previous = previous;
+                group.Setup();
+                previous = group;
+            }
+        }
+        protected override void UpdateValue()
+        {
+        }
 
-        protected override void OnUpdate(string DecimalSeparator, string TimeZone)
+        protected override void UpdateOther()
+        {
+        }
+
+        protected override void UpdateValid()
         {
 			_valid = true;
 			foreach (var group in Groups)
 				_valid = _valid && group.Valid;
-		}
 
-		public override void UpdateReadOnly(string userCode, bool ReadOnlyInstance)
+            base.UpdateValid();
+        }
+
+        public override void UpdateReadOnly(string userCode, bool ReadOnlyInstance)
 		{
             if (Lock?.User != userCode || ReadOnlyInstance)
                 ReadOnly = true;
@@ -54,7 +63,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 base.UpdateReadOnly(userCode, ReadOnlyInstance);
 
             foreach (var group in Groups)
-				group.UpdateReadOnly(userCode, ReadOnlyInstance);
+				((Group)group).UpdateReadOnly(userCode, ReadOnlyInstance);
 		}
 
         public void Traverse(Func<ICheckListItem, bool> condition, Action<ICheckListItem> action)
@@ -71,16 +80,22 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         {
             base.BuildDependencies();
             foreach (Group Group in Groups)
+            {
+                if (HiddenCondition == Conditions.False || HiddenCondition == Conditions.Expression)
+                {
+                    Group.DependingNodes.Add(DependencyNodeKey.Clone(DependencyNodeKey.Processes.Hidden, "child"));
+                    DependentNodes.Add(Group.DependencyNodeKey.Clone(DependencyNodeKey.Processes.Hidden, "parent"));
+                }
+
+                if (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
+                {
+                    DependingNodes.Add(Group.DependencyNodeKey.Clone(DependencyNodeKey.Processes.Validity, "parent"));
+                    Group.DependentNodes.Add(DependencyNodeKey.Clone(DependencyNodeKey.Processes.Validity, "child"));
+                }
                 Group.BuildDependencies();
+            }
         }
 
         public override DependencyNodeKey DependencyNodeKey => base.DependencyNodeKey ?? new DependencyNodeKey("page", Index);
-        protected override IEnumerable<DependencyNodeKey> GetDependingNodes()
-        {
-            foreach (var DependencyNodeKey in base.GetDependingNodes())
-                yield return DependencyNodeKey;
-            foreach (Group Group in Groups)
-                yield return Group.DependencyNodeKey;
-        }
     }
 }

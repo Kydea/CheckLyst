@@ -118,7 +118,21 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         {
             base.BuildDependencies();
             foreach (Item Item in Items)
+            {
+                if (HiddenCondition == Conditions.False || HiddenCondition == Conditions.Expression)
+                {
+                    Item.DependingNodes.Add(DependencyNodeKey.Clone(DependencyNodeKey.Processes.Hidden, "child"));
+                    DependentNodes.Add(Item.DependencyNodeKey.Clone(DependencyNodeKey.Processes.Hidden, "parent"));
+                }
+
+                if (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
+                {
+                    DependingNodes.Add(Item.DependencyNodeKey.Clone(DependencyNodeKey.Processes.Validity, "parent"));
+                    Item.DependentNodes.Add(DependencyNodeKey.Clone(DependencyNodeKey.Processes.Validity, "child"));
+                }
+
                 Item.BuildDependencies();
+            }
         }
 
         public override void Check()
@@ -130,13 +144,6 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         public void CreateInstanceIterations() { throw new NotImplementedException(); }
 
-        protected override IEnumerable<DependencyNodeKey> GetDependingNodes()
-        {
-            foreach (var DependencyNodeKey in base.GetDependingNodes())
-                yield return DependencyNodeKey;
-            foreach (Item Item in Items)
-                yield return Item.DependencyNodeKey;
-        }
-
+        public override DependencyNodeKey DependencyNodeKey => Code == null ? new DependencyNodeKey("group", Id) : new DependencyNodeKey("group", Code);
     }
 }

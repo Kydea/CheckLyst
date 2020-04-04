@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using CheckListManager.Common.Core.Helpers;
+using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.Expressions;
@@ -62,7 +63,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public override void BuildDependencies()
         {
             base.BuildDependencies();
-            var DependencyNodeKey = this.DependencyNodeKey.Clone("value");
+
+            DependencyNodeKey DependencyNodeKey = this.DependencyNodeKey.Clone(DependencyNodeKey.Processes.Value, "value");
             ValueFormula.BuildDependencies(ValueFormulaString);
             foreach (var Key in ValueFormula.ValueKeys)
                 if (CheckList.Expressions.TryGetValue(Key, out var Expression))
@@ -72,18 +74,20 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 }
         }
 
-        protected override void OnUpdate(string DecimalSeparator, string TimeZone)
+        protected override void UpdateValue()
         {
-            base.OnUpdate(DecimalSeparator, TimeZone);
+            base.UpdateValue();
 
             DateTimeOffset? dateTimeOffset = null;
             if (ValueType == DataType.Date)
-                dateTimeOffset = DateTimeOffsetHelper.Parse(Value, TimeZone, out var Ambiguous, out var AmbiguousDateTimeOffsets, DateTimeOffsetHelper.DateFormat);
+                dateTimeOffset = DateTimeOffsetHelper.Parse(Value, Instance.TimeZone, out var Ambiguous, out var AmbiguousDateTimeOffsets, DateTimeOffsetHelper.DateFormat);
             else if (ValueType == DataType.DateTime)
-                dateTimeOffset = DateTimeOffsetHelper.Parse(Value, TimeZone, out var Ambiguous, out var AmbiguousDateTimeOffsets, $"{DateTimeOffsetHelper.DateFormat} {DateTimeOffsetHelper.TimeFormat}");
+                dateTimeOffset = DateTimeOffsetHelper.Parse(Value, Instance.TimeZone, out var Ambiguous, out var AmbiguousDateTimeOffsets, $"{DateTimeOffsetHelper.DateFormat} {DateTimeOffsetHelper.TimeFormat}");
             if (dateTimeOffset.HasValue) Offset = (int)dateTimeOffset.Value.Offset.TotalMinutes;
 
-            ValueFormula.Evaluate(CheckList, RuntimeValues, DecimalSeparator, TimeZone, Iteration?.Indexes);
+            Dictionary<string, object> RuntimeValues = new Dictionary<string, object>();
+            if (Iteration != null) RuntimeValues["IterationIndex"] = Iteration.Index;
+            ValueFormula.Evaluate(CheckList, RuntimeValues, Instance.DecimalSeparator, Instance.TimeZone, Iteration?.Indexes);
             if (ValueFormula.IsSet)
             {
                 ConversionError = ValueFormula.HasValue && !ValueType.Validate(ValueFormula.Value);

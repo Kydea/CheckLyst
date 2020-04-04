@@ -97,7 +97,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             }
         }
 
-        protected override void OnUpdate(string DecimalSeparator, string TimeZone)
+        protected override void UpdateValid()
         {
 
         }

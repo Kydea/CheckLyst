@@ -19,7 +19,6 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 		public virtual bool NewLine { get; set; }
 		public ICheckListPage Page { get; set; }
 		public ICheckListItem Previous { get; set; }
-		public Dictionary<string, object> RuntimeValues { get; } = new Dictionary<string, object>();
 		public abstract string TypeName { get; }
         public int FontSize { get; set; }
         public string Color { get; set; }
@@ -51,12 +50,12 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 		}
 
         protected virtual string DescriptionPropertyName => "caption";
-        public override DependencyNodeKey DependencyNodeKey => base.DependencyNodeKey ?? new DependencyNodeKey("item", Id);
+        public override DependencyNodeKey DependencyNodeKey => Code == null ? new DependencyNodeKey("item", Id) : new DependencyNodeKey("item", Code);
         public override void BuildDependencies()
         {
             base.BuildDependencies();
 
-            var DependencyNodeKey = this.DependencyNodeKey.Clone(DescriptionPropertyName);
+            DependencyNodeKey DependencyNodeKey = this.DependencyNodeKey.Clone(DependencyNodeKey.Processes.Other, DescriptionPropertyName);
             DescriptionFormula.BuildDependencies(Description);
             foreach (var Key in DescriptionFormula.ValueKeys)
                 if (CheckList.Expressions.TryGetValue(Key, out var Expression))

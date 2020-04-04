@@ -893,6 +893,7 @@ namespace CheckListManager.Instances.Logic.Services
                 stopWatch = Stopwatch.StartNew();
 
                 List<Element> AffectedElements = new List<Element>();
+                DependencyNodeKey.Processes Process = DependencyNodeKey.Processes.Other;
                 bool NeedToUpdateReadonly = false;
                 switch (request.Type)
                 {
@@ -902,9 +903,11 @@ namespace CheckListManager.Instances.Logic.Services
                         break;
                     case EventTypes.ValueChange:
                         AffectedElements.Add(await HandleValueChangeAsync(cacheObject, identity.Code, request.ItemId, request.Value));
+                        Process = DependencyNodeKey.Processes.Value;
                         break;
                     case EventTypes.ValueCopy:
                         AffectedElements.Add(await HandleValueCopyAsync(cacheObject, identity.Code, request.ItemId));
+                        Process = DependencyNodeKey.Processes.Value;
                         break;
                     case EventTypes.Add:
                         var Iteration = await HandleAddAsync(cacheObject, identity.Code, request.ItemId);
@@ -966,11 +969,11 @@ namespace CheckListManager.Instances.Logic.Services
                     foreach (var AffectedElement in AffectedElements)
                     {
                         if (AffectedElement is Item AffectedItem && AffectedItem.IterationItem)
-                            AffectedItem.FindIteratorModelItem().MarkNodeAsChanged(cacheObject.Instance, roots);
+                            AffectedItem.FindIteratorModelItem().MarkNodeAsChanged(cacheObject.Instance, roots, Process);
                         else
-                            AffectedElement.MarkNodeAsChanged(cacheObject.Instance, roots);
+                            AffectedElement.MarkNodeAsChanged(cacheObject.Instance, roots, Process);
                     }
-                    cacheObject.Instance.UpdateNodes(roots);
+                    cacheObject.Instance.UpdateNodes(roots, Process);
                     cacheObject.Instance.UpdateReadOnly(lockUser ?? identity.Code, cacheObject.InstanceState);
                 }
                 else if (NeedToUpdateReadonly)

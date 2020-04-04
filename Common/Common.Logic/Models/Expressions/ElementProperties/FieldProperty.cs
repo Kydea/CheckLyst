@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.CheckLists;
 
 namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
@@ -8,8 +9,9 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
     {
         public FieldProperty()
         {
-            Property = "Value";
+            Property = "property Value";
         }
+        protected override DependencyNodeKey.Processes Process => DependencyNodeKey.Processes.Value;
 
         protected override void Check(ICheckListElement Element, List<string> IteratorStack)
         {

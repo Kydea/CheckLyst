@@ -24,7 +24,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public virtual bool NewLine { get; set; }
         public ICheckListPage Page { get; set; }
         public ICheckListItem Previous { get; set; }
-        public Dictionary<string, object> RuntimeValues { get; } = new Dictionary<string, object>();
         public abstract string TypeName { get; }
         public int FontSize { get; set; }
         public string Color { get; set; }
@@ -40,7 +39,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public override void BuildDependencies()
         {
             base.BuildDependencies();
-            var DependencyNodeKey = this.DependencyNodeKey.Clone("description");
+
+            DependencyNodeKey DependencyNodeKey = this.DependencyNodeKey.Clone(DependencyNodeKey.Processes.Other, "description");
             DescriptionFormula.BuildDependencies(Description);
             foreach (var Key in DescriptionFormula.ValueKeys)
                 if (CheckList.Expressions.TryGetValue(Key, out var Expression))
@@ -50,20 +50,15 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 }
         }
 
-        protected override IEnumerable<DependencyNodeKey> GetDependentNodes()
+        protected override void UpdateValue()
         {
-            foreach (var DependencyNodeKey in base.GetDependentNodes())
-                yield return DependencyNodeKey;
-            if (Group != null)
-                yield return Group.DependencyNodeKey;
-            else if (Page != null)
-                yield return Page.DependencyNodeKey;
         }
 
-        protected override void OnUpdate(string DecimalSeparator, string TimeZone)
+        protected override void UpdateOther()
         {
+            Dictionary<string, object> RuntimeValues = new Dictionary<string, object>();
             if (Iteration != null) RuntimeValues["IterationIndex"] = Iteration.Index;
-            DescriptionFormula.Evaluate(CheckList, RuntimeValues, DecimalSeparator, TimeZone, Iteration?.Indexes);
+            DescriptionFormula.Evaluate(CheckList, RuntimeValues, Instance.DecimalSeparator, Instance.TimeZone, Iteration?.Indexes);
         }
 
         public override bool Hidden => (Group?.Hidden ?? false) || base.Hidden;
@@ -94,7 +89,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 yield return this;
         }
 
-        public override string GetSignatureInformation() => base.GetSignatureInformation() ?? Group?.GetSignatureInformation() ?? Page?.GetSignatureInformation();
+        public override string GetSignatureInformation() => base.GetSignatureInformation() ?? ((Group)Group)?.GetSignatureInformation() ?? ((Page)Page)?.GetSignatureInformation();
 
         protected override Dictionary<string, ICheckListElement> GetBranchElements() => Iteration?.Elements ?? base.GetBranchElements();
 

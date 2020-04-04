@@ -93,36 +93,36 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             }
         }
 
-        private string DependencyChainKey { get; set; }
-        public bool TraverseDependencyChain(ICheckList CheckList, Stack<IDependencyNode> DependencyChain, string DependencyChainKey, Func<IDependencyNode, bool> DependencyChainAction)
+        private bool DependencyChainTouched = false;
+        public bool TraverseDependencyChain(ICheckList CheckList, Stack<string> DependencyChain, DependencyNodeKey.Processes Process, Func<IDependencyNode, bool> DependencyChainAction)
         {
             if (Evaluated) return true;
 
-            DependencyChain.Push(this);
-            if (this.DependencyChainKey == DependencyChainKey)
-                throw new Exception($"Dependency cycle found: {string.Join(" > ", DependencyChain.Reverse().Select(e => e.DependencyNodeKey.Description))}");
-            this.DependencyChainKey = DependencyChainKey;
+            DependencyChain.Push(DependencyNodeKey.ToString());
+            if (DependencyChainTouched)
+                throw new Exception($"Dependency cycle found: {string.Join(" > ", DependencyChain.Reverse())}");
+            DependencyChainTouched = true;
 
             var Result = true;
             foreach (var DependencyNodeKey in DependingNodes)
-                if (!DependencyNodeKey.GetNode(CheckList).TraverseDependencyChain(CheckList, DependencyChain, DependencyChainKey, DependencyChainAction))
+                if (!DependencyNodeKey.GetNode(CheckList).TraverseDependencyChain(CheckList, DependencyChain, DependencyNodeKey.Process, DependencyChainAction))
                     Result = false;
 
             if (!DependencyChainAction(this)) Result = false;
             DependencyChain.Pop();
-            this.DependencyChainKey = null;
+            DependencyChainTouched = false;
             return Result;
         }
 
-        public void MarkNodeAsChanged(ICheckList checkList, List<IDependencyNode> roots)
+        public void MarkNodeAsChanged(ICheckList CheckList, List<IDependencyNode> Roots, DependencyNodeKey.Processes Process)
         {
             if (!Evaluated) return;
             Evaluated = false;
             if (DependentNodes.Any())
                 foreach (var DependencyNodeKey in DependentNodes)
-                    DependencyNodeKey.GetNode(checkList).MarkNodeAsChanged(checkList, roots);
+                    DependencyNodeKey.GetNode(CheckList).MarkNodeAsChanged(CheckList, Roots, DependencyNodeKey.Process);
             else
-                roots.Add(this);
+                Roots.Add(this);
         }
 
         private bool Checked = false;
