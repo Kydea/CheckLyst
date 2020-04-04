@@ -97,8 +97,8 @@
                 var
                     item = value[index],
                     div = $("<div />").addClass("Value").appendTo(element),
-                    itemValue = item && (item.value || item.Value),
-                    itemType = item && (item.type && item.type.typeName || item.Type && item.Type.TypeName);
+                    itemValue = item && item.value,
+                    itemType = item && item.type && item.type.typeName;
                 switch (itemType) {
                     case "DateTime":
                         var formattedDate = matematici.dateFormatter.format(moment.parseZone(itemValue));
