@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CheckListManager.Common.Logic.Cache;
 using CheckListManager.Common.Logic.Json;
+using CheckListManager.Common.Logic.Services;
 using CheckListManager.Instances.Logic.Exceptions;
 using CheckListManager.Instances.Logic.Models;
 using CheckListManager.Instances.Logic.Models.CheckLists;
@@ -18,11 +19,13 @@ namespace CheckListManager.Instances.Logic.Services
 		private const string RegionName = "Instance";
 
 		private readonly IRedisCache _redisCache;
+        private readonly ISettingService _settingService;
 		private readonly JsonConverter[] _converters;
 
-		public InstanceCacheService(IRedisCache redisCache, CustomJsonConverter[] converters)
+		public InstanceCacheService(IRedisCache redisCache, ISettingService settingService, CustomJsonConverter[] converters)
 		{
 			_redisCache = redisCache;
+            _settingService = settingService;
 			_converters = converters.ToArray<JsonConverter>();
 		}
 
@@ -33,7 +36,7 @@ namespace CheckListManager.Instances.Logic.Services
 			{
 				cacheObject.Instance = await _redisCache.GetAsync<Instance>($"Instance:{code}:Data", RegionName, _converters);
 				if (cacheObject.Instance == null) throw new InstanceException("Instance data missing");
-				cacheObject.Instance.Setup(false);
+				cacheObject.Instance.Setup(cacheObject, await _settingService.DecimalSeparatorAsync(cacheObject.CompanyId), await _settingService.TimeZoneAsync(cacheObject.CompanyId), false);
 			}
 
 			return cacheObject;
