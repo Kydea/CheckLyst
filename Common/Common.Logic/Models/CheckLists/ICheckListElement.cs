@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace CheckListManager.Common.Logic.Models.CheckLists
 {
-    public interface ICheckListElement : ICheckListNode, IDependencyNode
+    public interface ICheckListElement : ICheckListNode
     {
         string Code { get; set; }
         Conditions CountDownCondition { get; set; }

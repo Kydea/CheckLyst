@@ -8,8 +8,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
     public class Page : Element, ICheckListPage
     {
-        private bool _valid;
-
         public int Index { get; set; }
         public string Description { get; set; }
         public List<ICheckListGroup> Groups { get; set; } = new List<ICheckListGroup>();
@@ -36,13 +34,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 previous = group;
             }
         }
-        protected override void UpdateValue()
-        {
-        }
-
-        protected override void UpdateOther()
-        {
-        }
 
         protected override void UpdateValid()
         {
@@ -67,36 +58,22 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 				((Group)group).UpdateReadOnly(userCode, ReadOnlyInstance);
 		}
 
-        public void Traverse(Func<ICheckListItem, bool> condition, Action<ICheckListItem> action)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task TraverseAsync(Func<ICheckListItem, bool> condition, Func<ICheckListItem, Task> action)
-        {
-            throw new NotImplementedException();
-        }
-
         public override void BuildDependencies()
         {
             base.BuildDependencies();
             foreach (Group Group in Groups)
             {
                 if (HiddenCondition == Conditions.False || HiddenCondition == Conditions.Expression)
-                {
-                    Group.DependingNodes.Add(DependencyNodeKey.Clone(DependencyNodeKey.Processes.Hidden, "child"));
-                    DependentNodes.Add(Group.DependencyNodeKey.Clone(DependencyNodeKey.Processes.Hidden, "parent"));
-                }
+                    Group.AddDependingRelation(DependencyRelation.Properties.Hidden, this, DependencyRelation.Properties.Hidden);
 
                 if (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
-                {
-                    DependingNodes.Add(Group.DependencyNodeKey.Clone(DependencyNodeKey.Processes.Validity, "parent"));
-                    Group.DependentNodes.Add(DependencyNodeKey.Clone(DependencyNodeKey.Processes.Validity, "child"));
-                }
+                    AddDependingRelation(DependencyRelation.Properties.Validity, Group, DependencyRelation.Properties.Validity);
+
                 Group.BuildDependencies();
             }
         }
 
-        public override DependencyNodeKey DependencyNodeKey => base.DependencyNodeKey ?? new DependencyNodeKey("page", Index);
+        public override string DependencyClassName => "page";
+        public override int? DependencyObjectID => Index;
     }
 }

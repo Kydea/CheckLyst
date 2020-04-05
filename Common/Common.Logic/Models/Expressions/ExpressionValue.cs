@@ -1,4 +1,5 @@
-﻿using CheckListManager.Common.Logic.Models.CheckLists;
+﻿using CheckListManager.Common.Logic.Dependency;
+using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.Expressions.Parsing;
 using System;
 using System.Collections.Generic;
@@ -15,8 +16,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         public override void BuildDependencies(ICheckList CheckList, Expression Expression)
         {
             if (!CheckList.Expressions.TryGetValue(ExpressionCode, out var DependingExpression)) throw new ParseException("Expression not found: " + ExpressionCode, Position);
-            Expression.DependingNodes.Add(DependingExpression.DependencyNodeKey);
-            DependingExpression.DependentNodes.Add(Expression.DependencyNodeKey);
+            Expression.AddDependingRelation(DependencyRelation.Properties.Value, DependingExpression, DependencyRelation.Properties.Value);
         }
 
         public override void Check(ICheckList CheckList, Expression Expression, List<string> IteratorStack)

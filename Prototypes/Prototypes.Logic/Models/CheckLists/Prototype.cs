@@ -10,7 +10,7 @@ using CheckListManager.Common.Logic.Models.Expressions.Parsing;
 
 namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 {
-    public class Prototype : ICheckList
+    public class Prototype : DependencyNode, ICheckList
     {
         public Dictionary<string, ICheckListElement> Elements { get; } = new Dictionary<string, ICheckListElement>();
         public PascalCaseDictionary<string, Expression> Expressions { get; set; } = new PascalCaseDictionary<string, Expression>();
@@ -42,8 +42,6 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         public ICheckList CheckList { get { return this; } set { throw new NotImplementedException("Just for inheritance purpose"); } }
 
-        private readonly Stack<string> DependencyChain = new Stack<string>();
-
         public void Setup()
         {
             try
@@ -72,6 +70,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                         expression.Value.Validate(this, expression.Key);
                         expression.Value.Parse(this);
                         expression.Value.ClearDependencies();
+                        expression.Value.DependencyChainAction = e => e.Check(this);
                     }
                     catch (ParseException Exception)
                     {
@@ -87,12 +86,13 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 if (Error || !BuildDependencies())
                     throw new Exception("Some expression is not valid");
 
+
                 foreach (var expression in Expressions.Values)
-                {
-                    DependencyChain.Clear();
-                    if (expression.Error == null && !expression.TraverseDependencyChain(this, DependencyChain, DependencyNodeKey.Processes.Other, dn => ((Expression)dn).Check(this)))
-                        Error = true;
-                }
+                    if (expression.Error == null)
+                    {
+                        expression.UpdateChain(this, DependencyRelation.Properties.Value);
+                        Error = expression.Error != null;
+                    }
 
                 if (Error)
                     throw new Exception("Some expression is not valid");
@@ -114,6 +114,8 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             }
         }
 
+        public override bool Update(DependencyRelation.Properties Property) => true;
+
         private bool BuildDependencies()
         {
             var Result = true;
@@ -123,23 +125,15 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
             if (Result)
             {
-                DependencyNodeKey DependencyNodeKey = this.DependencyNodeKey.Clone(DependencyNodeKey.Processes.Other, "instance-description");
                 DescriptionFormula.BuildDependencies(DescriptionFormulaString);
                 foreach (var Key in DescriptionFormula.ValueKeys)
-                    if(Expressions.TryGetValue(Key, out var Expression))
-                    {
-                        Expression.DependentNodes.Add(DependencyNodeKey);
-                        DependingNodes.Add(Expression.DependencyNodeKey);
-                    }
+                    if (Expressions.TryGetValue(Key, out var Expression))
+                        AddDependingRelation(DependencyRelation.Properties.Formula, Expression, DependencyRelation.Properties.Value);
 
-                DependencyNodeKey = this.DependencyNodeKey.Clone(DependencyNodeKey.Processes.Other, "instance-file-name");
                 FileNameFormula.BuildDependencies(FileNameFormulaString);
                 foreach (var Key in FileNameFormula.ValueKeys)
                     if (Expressions.TryGetValue(Key, out var Expression))
-                    {
-                        Expression.DependentNodes.Add(DependencyNodeKey);
-                        DependingNodes.Add(Expression.DependencyNodeKey);
-                    }
+                        AddDependingRelation(DependencyRelation.Properties.Formula, Expression, DependencyRelation.Properties.Value);
 
                 ((Group)Header).BuildDependencies();
                 foreach (Page Page in Pages)
@@ -149,29 +143,21 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             return Result;
         }
 
-        public int DependencyChainTraverseIndex => 1;
-        public DependencyNodeKey DependencyNodeKey => new DependencyNodeKey("checklist", null);
-        public HashSet<DependencyNodeKey> DependingNodes { get; } = new HashSet<DependencyNodeKey>();
-        public HashSet<DependencyNodeKey> DependentNodes { get; } = new HashSet<DependencyNodeKey>();
-
-        public bool TraverseDependencyChain(ICheckList checkList, Stack<string> DependencyChain, DependencyNodeKey.Processes Process, Func<IDependencyNode, bool> DependencyChainAction)
-            => true;
-
-        public void MarkNodeAsChanged(ICheckList checkList, List<IDependencyNode> roots, DependencyNodeKey.Processes Process) => throw new NotImplementedException();
+        public override string DependencyClassName => "checklist";
 
         public void Traverse(Func<ICheckListItem, bool> condition, Action<ICheckListItem> action)
         {
-            Header.Traverse(condition, action);
+            ((Group)Header).Traverse(condition, action);
 
-            foreach (var page in Pages)
+            foreach (Page page in Pages)
                 page.Traverse(condition, action);
         }
 
         public async Task TraverseAsync(Func<ICheckListItem, bool> condition, Func<ICheckListItem, Task> action)
         {
-            await Header.TraverseAsync(condition, action);
+            await ((Group)Header).TraverseAsync(condition, action);
 
-            foreach (var page in Pages)
+            foreach (Page page in Pages)
                 await page.TraverseAsync(condition, action);
         }
     }

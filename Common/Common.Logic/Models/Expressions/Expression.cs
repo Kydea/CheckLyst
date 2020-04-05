@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace CheckListManager.Common.Logic.Models.Expressions
 {
-    public class Expression : IDependencyNode
+    public class Expression : DependencyNode
     {
         public const int MAXIMUM_LENGTH = 10000;
 
@@ -37,7 +37,6 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
         public void Parse(ICheckList checkList)
         {
-            Evaluated = false;
             Error = null;
             Root = new TokenSet(SerializedValue, 0).Symbol;
             Root.Expression = this;
@@ -56,22 +55,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
         public object RawValue => Value?.Value;
 
-        private bool Evaluated { get; set; } = true;
-
-        public void Evaluate(ICheckList instance, string timeZone)
-        {
-            if (Evaluated) return;
-            if (Root == null) Parse(instance);
-
-            Value = Root.GetValue(instance, timeZone);
-            Evaluated = true; ;
-        }
-
-        public void ClearDependencies()
-        {
-            DependingNodes.Clear();
-            DependentNodes.Clear();
-        }
+        public Func<Expression, bool> DependencyChainAction { private get; set; }
 
         public bool BuildDependencies(ICheckList checklist)
         {
@@ -93,45 +77,10 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             }
         }
 
-        private bool DependencyChainTouched = false;
-        public bool TraverseDependencyChain(ICheckList CheckList, Stack<string> DependencyChain, DependencyNodeKey.Processes Process, Func<IDependencyNode, bool> DependencyChainAction)
-        {
-            if (Evaluated) return true;
-
-            DependencyChain.Push(DependencyNodeKey.ToString());
-            if (DependencyChainTouched)
-                throw new Exception($"Dependency cycle found: {string.Join(" > ", DependencyChain.Reverse())}");
-            DependencyChainTouched = true;
-
-            var Result = true;
-            foreach (var DependencyNodeKey in DependingNodes)
-                if (!DependencyNodeKey.GetNode(CheckList).TraverseDependencyChain(CheckList, DependencyChain, DependencyNodeKey.Process, DependencyChainAction))
-                    Result = false;
-
-            if (!DependencyChainAction(this)) Result = false;
-            DependencyChain.Pop();
-            DependencyChainTouched = false;
-            return Result;
-        }
-
-        public void MarkNodeAsChanged(ICheckList CheckList, List<IDependencyNode> Roots, DependencyNodeKey.Processes Process)
-        {
-            if (!Evaluated) return;
-            Evaluated = false;
-            if (DependentNodes.Any())
-                foreach (var DependencyNodeKey in DependentNodes)
-                    DependencyNodeKey.GetNode(CheckList).MarkNodeAsChanged(CheckList, Roots, DependencyNodeKey.Process);
-            else
-                Roots.Add(this);
-        }
-
-        private bool Checked = false;
         public bool Check(ICheckList CheckList)
         {
             try
             {
-                if (Checked) return true;
-                Checked = true;
                 Root.Check(CheckList, this, new List<string>());
                 if (Exception && Root.DataType != DataType.Boolean)
                     throw new Exception($"Exception expressions must be boolean");
@@ -149,12 +98,23 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             }
         }
 
+        public void Evaluate(ICheckList instance, string TimeZone)
+        {
+            if (Root == null) Parse(instance);
+            Value = Root.GetValue(instance, TimeZone);
+        }
+
+        public override bool Update(DependencyRelation.Properties Property)
+        {
+            if (Property != DependencyRelation.Properties.Value) throw new ArgumentException();
+            return DependencyChainAction(this);
+        }
+
         public DataType DataType => Root?.DataType ?? DataType.Error;
 
         public DataType? InnerDataType => Root?.InnerDataType;
 
-        public DependencyNodeKey DependencyNodeKey => new DependencyNodeKey("expression", Code);
-        public HashSet<DependencyNodeKey> DependentNodes { get; } = new HashSet<DependencyNodeKey>();
-        public HashSet<DependencyNodeKey> DependingNodes { get; } = new HashSet<DependencyNodeKey>();
+        public override string DependencyClassName => "expression";
+        public override string DependencyObjectCode => Code;
     }
 }

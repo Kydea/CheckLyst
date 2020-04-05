@@ -53,7 +53,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             if (condition(this))
                 action(this);
 
-            foreach (var iteration in Iterations)
+            foreach (Iteration iteration in Iterations)
                 iteration.Traverse(condition, action);
 
             foreach (var item in Items)
@@ -68,7 +68,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             if (condition(this))
                 await action(this);
 
-            foreach (var iteration in Iterations)
+            foreach (Iteration iteration in Iterations)
                 await iteration.TraverseAsync(condition, action);
 
             foreach (var item in Items)
@@ -120,16 +120,10 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             foreach (Item Item in Items)
             {
                 if (HiddenCondition == Conditions.False || HiddenCondition == Conditions.Expression)
-                {
-                    Item.DependingNodes.Add(DependencyNodeKey.Clone(DependencyNodeKey.Processes.Hidden, "child"));
-                    DependentNodes.Add(Item.DependencyNodeKey.Clone(DependencyNodeKey.Processes.Hidden, "parent"));
-                }
+                    Item.AddDependingRelation(DependencyRelation.Properties.Hidden, this, DependencyRelation.Properties.Hidden);
 
                 if (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
-                {
-                    DependingNodes.Add(Item.DependencyNodeKey.Clone(DependencyNodeKey.Processes.Validity, "parent"));
-                    Item.DependentNodes.Add(DependencyNodeKey.Clone(DependencyNodeKey.Processes.Validity, "child"));
-                }
+                    AddDependingRelation(DependencyRelation.Properties.Validity, Item, DependencyRelation.Properties.Validity);
 
                 Item.BuildDependencies();
             }
@@ -144,6 +138,6 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         public void CreateInstanceIterations() { throw new NotImplementedException(); }
 
-        public override DependencyNodeKey DependencyNodeKey => Code == null ? new DependencyNodeKey("group", Id) : new DependencyNodeKey("group", Code);
+        public override string DependencyClassName => "group";
     }
 }

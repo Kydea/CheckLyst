@@ -88,15 +88,28 @@ namespace CheckListManager.Instances.Logic.Services
 
         #region cache object task
 
-        public async Task<InstanceCacheObject> GetCacheObjectAsync(IDefaultIdentity identity, string code, bool includeData)
+        public async Task<InstanceCacheObject> GetCacheObjectForDownloadAsync(long company, string code, bool includeData)
         {
-            var cacheObject = await GetCacheObjectAsync(identity.CompanyId, code, includeData);
-            if (includeData && !cacheObject.Instance.CheckVersion(2, false)) //version 2 introduces persistency
-                await UpdateInstanceAsync(identity, cacheObject);
+            var cacheObject = await GetCacheObjectAsync(company, code, includeData);
+            cacheObject.Instance.UpdateReadOnly(null, cacheObject.InstanceState);
             return cacheObject;
         }
 
-        public async Task<InstanceCacheObject> GetCacheObjectAsync(long company, string code, bool includeData)
+        public async Task<InstanceCacheObject> GetCacheObjectForEditAsync(IDefaultIdentity identity, string code, bool includeData)
+        {
+            var cacheObject = await GetCacheObjectAsync(identity.CompanyId, code, includeData);
+            if (includeData)
+            {
+                cacheObject.Instance.ReadOnly =
+                    !cacheObject.InstanceState.In(InstanceState.Draft, InstanceState.Progress)
+                    || !HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType)
+                    || cacheObject.Year == 0 && !cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation);
+                cacheObject.Instance.UpdateReadOnly(identity.Code, cacheObject.InstanceState);
+            }
+            return cacheObject;
+        }
+
+        private async Task<InstanceCacheObject> GetCacheObjectAsync(long company, string code, bool includeData)
         {
             var cacheObject = await _instanceCache.GetAsync(code, includeData);
             if (cacheObject == null)
@@ -105,10 +118,13 @@ namespace CheckListManager.Instances.Logic.Services
                 if (instance == null)
                     throw new InstanceException("Instance not found");
 
-                cacheObject = CreateInstanceFromDatabase(company, instance);
+                cacheObject = await CreateInstanceFromDatabase(company, instance);
                 if (cacheObject.InstanceState == InstanceState.Progress)
                     cacheObject.NeedToCache = true;
             }
+
+            if (includeData && !cacheObject.Instance.CheckVersion(2, false)) //version 2 introduces persistency
+                cacheObject.Instance.UpdateAll(cacheObject);
 
             return cacheObject;
         }
@@ -160,11 +176,15 @@ namespace CheckListManager.Instances.Logic.Services
                     CreatedOn = DateTimeOffset.UtcNow,
                     NeedToCache = true
                 };
-                cacheObject.Instance.Setup(true);
+
+                cacheObject.Instance.Setup(cacheObject, await _settingService.DecimalSeparatorAsync(cacheObject.CompanyId), await _settingService.TimeZoneAsync(cacheObject.CompanyId), true);
                 if (parameters != null)
                     foreach (var parameter in parameters)
                         if (cacheObject.Instance.Elements.TryGetValue(parameter.Key, out ICheckListElement element) && element is ICheckListItem item)
                             await HandleValueChangeAsync(cacheObject, userCode, item.Id, parameter.Value);
+
+                cacheObject.Instance.UpdateAll(cacheObject);
+                cacheObject.Instance.UpdateReadOnly(identity.Code, cacheObject.InstanceState);
 
                 return cacheObject;
             }
@@ -183,7 +203,7 @@ namespace CheckListManager.Instances.Logic.Services
         {
             try
             {
-                var cacheObject = await GetCacheObjectAsync(identity, code, true);
+                var cacheObject = await GetCacheObjectForEditAsync(identity, code, true);
                 if (cacheObject.Id.HasValue)
                     throw new InstanceException("Instance already saved");
                 if (cacheObject.InstanceState != InstanceState.Draft)
@@ -224,7 +244,7 @@ namespace CheckListManager.Instances.Logic.Services
                     TrackChanges(cacheObject, identity.Code);
 
                     cacheObject.Instance.UpdateInstanceRuntimeValues(cacheObject);
-                    cacheObject.Instance.Update(true);
+                    cacheObject.Instance.Update(DependencyRelation.Properties.Formula);
                     cacheObject.Instance.UpdateReadOnly(identity.Code, InstanceState.Progress);
 
                     _instancesRepository.SaveChildren(row, CreateTags(cacheObject), CreateExpressionValues(cacheObject));
@@ -274,7 +294,7 @@ namespace CheckListManager.Instances.Logic.Services
         {
             try
             {
-                var cacheObject = await GetCacheObjectAsync(identity, code, false);
+                var cacheObject = await GetCacheObjectForEditAsync(identity, code, false);
                 if (cacheObject.InstanceState != InstanceState.Progress)
                     throw new InstanceException("Instance state not valid");
                 if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
@@ -298,7 +318,7 @@ namespace CheckListManager.Instances.Logic.Services
         {
             try
             {
-                var cacheObject = await GetCacheObjectAsync(identity, code, true);
+                var cacheObject = await GetCacheObjectForEditAsync(identity, code, true);
                 if (cacheObject.InstanceState != InstanceState.Progress)
                     throw new InstanceException("Invalid instance state");
                 if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
@@ -342,7 +362,7 @@ namespace CheckListManager.Instances.Logic.Services
         {
             try
             {
-                var cacheObject = await GetCacheObjectAsync(identity, code, false);
+                var cacheObject = await GetCacheObjectForEditAsync(identity, code, false);
                 if (cacheObject == null)
                     throw new InstanceException("Instance state not valid");
                 if (!(cacheObject.VersionState == VersionState.Draft || cacheObject.VersionState == VersionState.InSimulation) && cacheObject.InstanceState == InstanceState.Progress && string.IsNullOrWhiteSpace(note))
@@ -429,7 +449,7 @@ namespace CheckListManager.Instances.Logic.Services
                 }
 
                 if (!cacheObject.Instance.CheckVersion(2, true)) //version 2 introduces persistency
-                    cacheObject.Instance.UpdateAll(await _settingService.DecimalSeparatorAsync(cacheObject.CompanyId), (await _settingService.TimeZoneAsync(cacheObject.CompanyId)), cacheObject);
+                    cacheObject.Instance.UpdateAll(cacheObject);
 
                 row.Data = JsonConvert.SerializeObject(cacheObject.Instance, _converters);
                 row.Description = cacheObject.Instance.Description;
@@ -572,7 +592,7 @@ namespace CheckListManager.Instances.Logic.Services
             }
         }
 
-        private InstanceCacheObject CreateInstanceFromDatabase(long companyId, Common.Data.Instances instance)
+        private async Task<InstanceCacheObject> CreateInstanceFromDatabase(long companyId, Common.Data.Instances instance)
         {
             var instanceObject = JsonConvert.DeserializeObject<Instance>(instance.Data, _converters);
             var cacheObject = new InstanceCacheObject
@@ -598,7 +618,7 @@ namespace CheckListManager.Instances.Logic.Services
                 ModifiedOn = instance.ModifiedOn,
                 ModifiedBy = instance.ModifiedBy
             };
-            cacheObject.Instance.Setup(false);
+            cacheObject.Instance.Setup(cacheObject, await _settingService.DecimalSeparatorAsync(companyId), await _settingService.TimeZoneAsync(companyId), false);
             return cacheObject;
         }
 
@@ -636,7 +656,7 @@ namespace CheckListManager.Instances.Logic.Services
         {
             try
             {
-                var cacheObject = await GetCacheObjectAsync(identity, code, true);
+                var cacheObject = await GetCacheObjectForEditAsync(identity, code, true);
                 if (cacheObject.InstanceState != InstanceState.Draft && cacheObject.InstanceState != InstanceState.Progress)
                     throw new InstanceException("Instance state not valid");
                 if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
@@ -677,7 +697,7 @@ namespace CheckListManager.Instances.Logic.Services
         {
             try
             {
-                var cacheObject = await GetCacheObjectAsync(identity, code, false);
+                var cacheObject = await GetCacheObjectForEditAsync(identity, code, false);
                 if (cacheObject.InstanceState != InstanceState.Draft && cacheObject.InstanceState != InstanceState.Progress)
                     throw new InstanceException("Instance state not valid");
                 if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
@@ -836,17 +856,6 @@ namespace CheckListManager.Instances.Logic.Services
             });
         }
 
-        public async Task UpdateInstanceAsync(IDefaultIdentity identity, InstanceCacheObject cacheObject)
-        {
-            cacheObject.Instance.ReadOnly =
-                !cacheObject.InstanceState.In(InstanceState.Draft, InstanceState.Progress)
-                || !HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType)
-                || cacheObject.Year == 0 && !cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation);
-
-            cacheObject.Instance.UpdateAll(await _settingService.DecimalSeparatorAsync(identity.CompanyId), await _settingService.TimeZoneAsync(identity.CompanyId), cacheObject);
-            cacheObject.Instance.UpdateReadOnly(identity.Code, cacheObject.InstanceState);
-        }
-
         private static void UnlockPages(ICheckList instance, string userCode)
         {
             foreach (var Page in instance.Pages.Cast<Page>())
@@ -863,7 +872,7 @@ namespace CheckListManager.Instances.Logic.Services
             try
             {
                 var stopWatch = Stopwatch.StartNew();
-                var cacheObject = await GetCacheObjectAsync(identity, request.Code, false);
+                var cacheObject = await GetCacheObjectForEditAsync(identity, request.Code, false);
                 CheckViewPermission(identity, cacheObject);
                 stopWatch.Stop();
                 initialGetTime = stopWatch.Elapsed.TotalMilliseconds;
@@ -893,20 +902,20 @@ namespace CheckListManager.Instances.Logic.Services
                 stopWatch = Stopwatch.StartNew();
 
                 List<Element> AffectedElements = new List<Element>();
-                DependencyNodeKey.Processes Process = DependencyNodeKey.Processes.Other;
+                DependencyRelation.Properties? Property = null;
                 switch (request.Type)
                 {
                     case EventTypes.PageChange:
                         HandlePageChangeAsync(cacheObject, identity.Code, request.ItemId);
-                        Process = DependencyNodeKey.Processes.ReadOnly;
+                        Property = DependencyRelation.Properties.ReadOnly;
                         break;
                     case EventTypes.ValueChange:
                         AffectedElements.Add(await HandleValueChangeAsync(cacheObject, identity.Code, request.ItemId, request.Value));
-                        Process = DependencyNodeKey.Processes.Value;
+                        Property = DependencyRelation.Properties.Value;
                         break;
                     case EventTypes.ValueCopy:
                         AffectedElements.Add(await HandleValueCopyAsync(cacheObject, identity.Code, request.ItemId));
-                        Process = DependencyNodeKey.Processes.Value;
+                        Property = DependencyRelation.Properties.Value;
                         break;
                     case EventTypes.Add:
                         var Iteration = await HandleAddAsync(cacheObject, identity.Code, request.ItemId);
@@ -929,29 +938,30 @@ namespace CheckListManager.Instances.Logic.Services
                         break;
                     case EventTypes.Signature:
                         AffectedElements.Add(await HandleSignatureAsync(cacheObject, identity, request));
-                        Process = DependencyNodeKey.Processes.Validity;
+                        Property = DependencyRelation.Properties.Signature;
                         break;
                     case EventTypes.SignatureCancelation:
                         AffectedElements.Add(await HandleSignatureCancellationAsync(cacheObject, identity, request));
-                        Process = DependencyNodeKey.Processes.Validity;
+                        Property = DependencyRelation.Properties.Signature;
                         break;
                     case EventTypes.SendEmail:
                         await HandleEmailSend(cacheObject, identity, request.ItemId, request.Emails);
                         break;
                     case EventTypes.UnlockPage:
                         HandleUnlockPageAsync(cacheObject, identity.Code, request.ItemId);
-                        Process = DependencyNodeKey.Processes.ReadOnly;
+                        Property = DependencyRelation.Properties.ReadOnly;
                         break;
                     case EventTypes.CountDown:
                         break;
                     case EventTypes.SkipCountDown:
                         AffectedElements.Add(HandleSkipCountDown(cacheObject, request.Username, request.ItemId));
+                        Property = DependencyRelation.Properties.CountDown;
                         break;
                     case EventTypes.Refresh:
                         break;
                     case EventTypes.Quit:
                         await HandleQuitAsync(cacheObject, identity);
-                        Process = DependencyNodeKey.Processes.ReadOnly;
+                        Property = DependencyRelation.Properties.ReadOnly;
                         break;
                     case EventTypes.ExternalSourceRowChange:
                         await HandleExternalSourceRowChange(cacheObject, identity, request.ItemId, request.RowIndex, request.Row);
@@ -959,7 +969,7 @@ namespace CheckListManager.Instances.Logic.Services
                         break;
                     case EventTypes.UploadAttachment:
                         AffectedElements.Add(await HandleUploadAttachment(cacheObject, identity, request.ItemId, request.Attachment));
-                        Process = DependencyNodeKey.Processes.Validity;
+                        Property = DependencyRelation.Properties.Validity;
                         break;
                     default:
                         throw new InstanceException($"Event type {request.Type} not handled.");
@@ -967,18 +977,18 @@ namespace CheckListManager.Instances.Logic.Services
 
                 if (AffectedElements.Any())
                 {
-                    var roots = new List<IDependencyNode>();
+                    var roots = new List<Tuple<DependencyNode, DependencyRelation.Properties>>();
                     foreach (var AffectedElement in AffectedElements)
                     {
                         if (AffectedElement is Item AffectedItem && AffectedItem.IterationItem)
-                            AffectedItem.FindIteratorModelItem().MarkNodeAsChanged(cacheObject.Instance, roots, Process);
+                            AffectedItem.FindIteratorModelItem().MarkNodeAsChanged(cacheObject.Instance, roots, Property.Value);
                         else
-                            AffectedElement.MarkNodeAsChanged(cacheObject.Instance, roots, Process);
+                            AffectedElement.MarkNodeAsChanged(cacheObject.Instance, roots, Property.Value);
                     }
-                    cacheObject.Instance.UpdateNodes(roots, Process);
+                    DependencyNode.UpdateNodes(cacheObject.Instance, roots);
                     cacheObject.Instance.UpdateReadOnly(lockUser ?? identity.Code, cacheObject.InstanceState);
                 }
-                else if (Process == DependencyNodeKey.Processes.ReadOnly)
+                else if (Property == DependencyRelation.Properties.ReadOnly)
                     cacheObject.Instance.UpdateReadOnly(lockUser, cacheObject.InstanceState);
 
                 stopWatch.Stop();
@@ -1289,7 +1299,7 @@ namespace CheckListManager.Instances.Logic.Services
             if (signature.Signed)
                 throw new Exception("The signature is already signed");
 
-            signature.TrySign(cacheObject, userCode);
+            signature.TrySign(userCode);
         }
 
         private async Task<Element> HandleSignatureAsync(InstanceCacheObject cacheObject, IDefaultIdentity identity, InstanceEventRequest request)
@@ -1314,7 +1324,7 @@ namespace CheckListManager.Instances.Logic.Services
                 if (!request.Simple && string.IsNullOrEmpty(request.Pin))
                     throw new InstanceException("Provide your PIN");
 
-                signature.TrySign(cacheObject, identity.Code);
+                signature.TrySign(identity.Code);
 
                 try
                 {

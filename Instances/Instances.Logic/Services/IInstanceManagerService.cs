@@ -13,8 +13,8 @@ namespace CheckListManager.Instances.Logic.Services
 {
 	public interface IInstanceManagerService : IService
 	{
-        Task<InstanceCacheObject> GetCacheObjectAsync(long company, string code, bool includeData);
-        Task<InstanceCacheObject> GetCacheObjectAsync(IDefaultIdentity identity, string code, bool includeData);
+        Task<InstanceCacheObject> GetCacheObjectForDownloadAsync(long company, string code, bool includeData);
+        Task<InstanceCacheObject> GetCacheObjectForEditAsync(IDefaultIdentity identity, string code, bool includeData);
         Task SaveCacheObjectAsync(InstanceCacheObject cacheObject);
         Task GetInstanceAsync(IDefaultIdentity identity, InstanceCacheObject cacheObject);
         Task<InstanceCacheObject> CreateInstanceAsync(IDefaultIdentity identity, string userCode, long prototype, int? version, Dictionary<string, string> parameters);
@@ -22,7 +22,6 @@ namespace CheckListManager.Instances.Logic.Services
         Task SaveInstanceAsync(string code, IDefaultIdentity identity);
         Task<InstanceCacheObject> CompleteInstanceAsync(string code, IDefaultIdentity identity);
         Task DeleteInstanceAsync(string code, IDefaultIdentity identity, string note);
-        Task UpdateInstanceAsync(IDefaultIdentity identity, InstanceCacheObject instance);
         Task<InstanceCacheObject> HandleEventAsync(IDefaultIdentity identity, InstanceEventRequest request);
         Task ClearPendingInstances(CancellationToken cancellationToken = default(CancellationToken));
         Task<List<HistoryRow>> History(DefaultIdentity identity, long id);

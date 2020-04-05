@@ -11,7 +11,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
         {
             Property = "property Value";
         }
-        protected override DependencyNodeKey.Processes Process => DependencyNodeKey.Processes.Value;
+        protected override DependencyRelation.Properties DependencyProperty => DependencyRelation.Properties.Value;
 
         protected override void Check(ICheckListElement Element, List<string> IteratorStack)
         {

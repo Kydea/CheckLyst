@@ -214,9 +214,27 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             iteration.Remove();
         }
 
-        public void Traverse(Func<ICheckListItem, bool> condition, Action<ICheckListItem> action)
+        public void Traverse(Func<Item, bool> condition1, Action<Item> action1, Func<Item, bool> condition2 = null, Action<Item> action2 = null)
         {
-            throw new NotImplementedException();
+            if (condition1 != null && condition1(this))
+                action1(this);
+
+            foreach (Iteration iteration in Iterations)
+                iteration.Traverse(condition1, action1, condition2, action2);
+
+            foreach (Item item in Items)
+                if (item is Group group)
+                    group.Traverse(condition1, action1, condition2, action2);
+                else
+                {
+                    if (condition1 != null && condition1(item))
+                        action1(item);
+                    if (condition2 != null && condition2(item))
+                        action2(item);
+                }
+
+            if (condition2 != null && condition2(this))
+                action2(this);
         }
 
         public Task TraverseAsync(Func<ICheckListItem, bool> condition, Func<ICheckListItem, Task> action)
@@ -237,16 +255,10 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             foreach (Item Item in Items)
             {
                 if (HiddenCondition == Conditions.False || HiddenCondition == Conditions.Expression)
-                {
-                    Item.DependingNodes.Add(DependencyNodeKey.Clone(DependencyNodeKey.Processes.Hidden, "child"));
-                    DependentNodes.Add(Item.DependencyNodeKey.Clone(DependencyNodeKey.Processes.Hidden, "parent"));
-                }
+                    Item.AddDependingRelation(DependencyRelation.Properties.Hidden, this, DependencyRelation.Properties.Hidden);
 
                 if (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
-                {
-                    DependingNodes.Add(Item.DependencyNodeKey.Clone(DependencyNodeKey.Processes.Validity, "parent"));
-                    Item.DependentNodes.Add(DependencyNodeKey.Clone(DependencyNodeKey.Processes.Validity, "child"));
-                }
+                    AddDependingRelation(DependencyRelation.Properties.Validity, Item, DependencyRelation.Properties.Validity);
 
                 Item.BuildDependencies();
             }

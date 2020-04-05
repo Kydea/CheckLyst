@@ -31,34 +31,50 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public override void Setup()
         {
-            if (!IterationItem)
-                base.Setup();
+            if (!IterationItem) base.Setup();
             CheckList.AddItem(this);
+        }
+
+        protected Dictionary<string, object> GetRuntimeValues()
+        {
+            Dictionary<string, object> RuntimeValues = new Dictionary<string, object>();
+            if (Iteration != null) RuntimeValues["IterationIndex"] = Iteration.Index;
+            return RuntimeValues;
         }
 
         public override void BuildDependencies()
         {
             base.BuildDependencies();
 
-            DependencyNodeKey DependencyNodeKey = this.DependencyNodeKey.Clone(DependencyNodeKey.Processes.Other, "description");
             DescriptionFormula.BuildDependencies(Description);
             foreach (var Key in DescriptionFormula.ValueKeys)
                 if (CheckList.Expressions.TryGetValue(Key, out var Expression))
+                    AddDependingRelation(DependencyRelation.Properties.Formula, Expression, DependencyRelation.Properties.Value);
+        }
+
+        public override bool Update(DependencyRelation.Properties Property)
+        {
+            if (IteratorModelItem)
+            {
+                var IterationItems = FindIterationItems();
+                foreach (var IterationItem in IterationItems)
                 {
-                    Expression.DependentNodes.Add(DependencyNodeKey);
-                    DependingNodes.Add(Expression.DependencyNodeKey);
+                    IterationItem.NeedToUpdate.Add(Property);
+                    IterationItem.Update(Property);
                 }
+                NeedToUpdate.Remove(Property);
+            }
+            else if (Property == DependencyRelation.Properties.Formula)
+                UpdateFormula();
+            else
+                base.Update(Property);
+
+            return true;
         }
 
-        protected override void UpdateValue()
+        protected virtual void UpdateFormula()
         {
-        }
-
-        protected override void UpdateOther()
-        {
-            Dictionary<string, object> RuntimeValues = new Dictionary<string, object>();
-            if (Iteration != null) RuntimeValues["IterationIndex"] = Iteration.Index;
-            DescriptionFormula.Evaluate(CheckList, RuntimeValues, Instance.DecimalSeparator, Instance.TimeZone, Iteration?.Indexes);
+            DescriptionFormula.Evaluate(CheckList, GetRuntimeValues(), Instance.DecimalSeparator, Instance.TimeZone, Iteration?.Indexes);
         }
 
         protected override void UpdateHidden()
@@ -117,6 +133,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             destination.DescriptionFormula.BuildDependencies(source.Description);
         }
 
-        public override DependencyNodeKey DependencyNodeKey => new DependencyNodeKey("item", Id);
+        public override string DependencyClassName => "item";
+        public override int? DependencyObjectID => Id;
     }
 }

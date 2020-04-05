@@ -59,32 +59,15 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         {
             base.BuildDependencies();
 
-            DependencyNodeKey DependencyNodeKey = this.DependencyNodeKey.Clone(DependencyNodeKey.Processes.Value, "value");
+            base.BuildDependencies();
+
             ValueFormula.BuildDependencies(ValueFormulaString);
             foreach (var Key in ValueFormula.ValueKeys)
                 if (CheckList.Expressions.TryGetValue(Key, out var Expression))
-                {
-                    Expression.DependentNodes.Add(DependencyNodeKey);
-                    DependingNodes.Add(Expression.DependencyNodeKey);
-                }
+                    AddDependingRelation(DependencyRelation.Properties.Value, Expression, DependencyRelation.Properties.Value);
+
+            if (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
+                AddDependingRelation(DependencyRelation.Properties.Validity, this, DependencyRelation.Properties.Value);
         }
-
-        protected override bool OnTraverseDependencyChain(ICheckList CheckList, Stack<string> DependencyChain, DependencyNodeKey.Processes Process, Func<IDependencyNode, bool> DependencyChainAction)
-        {
-            var Result = true;
-            if (
-                Process == DependencyNodeKey.Processes.Validity
-                && (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
-                && !TraverseDependencyChain(CheckList, DependencyChain, DependencyNodeKey.Processes.Hidden, DependencyChainAction)
-            )
-                Result = false;
-
-            if (!base.OnTraverseDependencyChain(CheckList, DependencyChain, Process, DependencyChainAction))
-                Result = false;
-
-            return Result;
-        }
-
-        protected override string DescriptionPropertyName => "label";
     }
 }

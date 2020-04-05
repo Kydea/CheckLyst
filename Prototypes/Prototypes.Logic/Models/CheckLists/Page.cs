@@ -25,13 +25,13 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         
         public void Traverse(Func<ICheckListItem, bool> condition, Action<ICheckListItem> action)
         {
-            foreach (var group in Groups)
+            foreach (Group group in Groups)
                 group.Traverse(condition, action);
         }
 
         public async Task TraverseAsync(Func<ICheckListItem, bool> condition, Func<ICheckListItem, Task> action)
         {
-            foreach (var group in Groups)
+            foreach (Group group in Groups)
                 await group.TraverseAsync(condition, action);
         }
 
@@ -41,16 +41,11 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             foreach (Group Group in Groups)
             {
                 if (HiddenCondition == Conditions.False || HiddenCondition == Conditions.Expression)
-                {
-                    Group.DependingNodes.Add(DependencyNodeKey.Clone(DependencyNodeKey.Processes.Hidden, "child"));
-                    DependentNodes.Add(Group.DependencyNodeKey.Clone(DependencyNodeKey.Processes.Hidden, "parent"));
-                }
+                    Group.AddDependingRelation(DependencyRelation.Properties.Hidden, this, DependencyRelation.Properties.Hidden);
 
                 if (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
-                {
-                    DependingNodes.Add(Group.DependencyNodeKey.Clone(DependencyNodeKey.Processes.Validity, "parent"));
-                    Group.DependentNodes.Add(DependencyNodeKey.Clone(DependencyNodeKey.Processes.Validity, "child"));
-                }
+                    AddDependingRelation(DependencyRelation.Properties.Validity, Group, DependencyRelation.Properties.Validity);
+
                 Group.BuildDependencies();
             }
         }
@@ -64,6 +59,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         public void CreateInstanceIterations() { throw new NotImplementedException(); }
 
-        public override DependencyNodeKey DependencyNodeKey => Code == null ? new DependencyNodeKey("page", Index) : new DependencyNodeKey("page", Code);
+        public override string DependencyClassName => "page";
+        public override int? DependencyObjectID => Index;
     }
 }

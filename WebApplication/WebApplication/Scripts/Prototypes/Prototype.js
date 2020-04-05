@@ -282,11 +282,8 @@
                 case "dependencies":
                     var
                         handler = function () {
-                            var
-                                model = currentItem.getModel(),
-                                dependingNodes = model.dependingNodes,
-                                dependentNodes = model.dependentNodes;
-                            matematici.dependenciesDialog.show(dependingNodes, dependentNodes);
+                            var model = currentItem.getModel();
+                            matematici.dependenciesDialog.show(model.dependingRelations, model.dependentRelations);
                         };
                     if (matematici.canClose)
                         handler();

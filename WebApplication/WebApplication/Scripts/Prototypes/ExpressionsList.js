@@ -283,11 +283,8 @@
                         .append(dependencyButton = $("<a />").addClass("Button").text("dependencies").prepend($("<i />").addClass("Icon fa fa-sitemap")).on("click", function () {
                             var
                                 handler = function () {
-                                    var
-                                        model = list[currentIndex],
-                                        dependingNodes = model.dependingNodes,
-                                        dependentNodes = model.dependentNodes;
-                                    matematici.dependenciesDialog.show(dependingNodes, dependentNodes);
+                                    var model = list[currentIndex];
+                                    matematici.dependenciesDialog.show(model.dependingRelations, model.dependentRelations);
                                 };
                             if (matematici.canClose)
                                 handler();

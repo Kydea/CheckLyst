@@ -12,7 +12,7 @@ using CheckListManager.Common.Logic.Dependency;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
-    public class Instance : ICheckList
+    public class Instance : DependencyNode, ICheckList
     {
         public bool ReadOnly { get; set; }
         public Dictionary<string, ICheckListElement> Elements { get; set; } = new Dictionary<string, ICheckListElement>();
@@ -37,11 +37,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         [JsonIgnore]
         public bool InCreation { get; private set; }
 
-        public ICheckList CheckList
-        {
-            get => this;
-            set => throw new NotImplementedException("Just for inheritance purpose");
-        }
+        public ICheckList CheckList { get => this; set => throw new NotImplementedException(); }
 
         public decimal InstanceModelVersion { get; set; }
         private readonly decimal ModelVersion = 2.0m;
@@ -66,10 +62,14 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public Dictionary<int, ICheckListItem> Items { get; } = new Dictionary<int, ICheckListItem>();
 
-        public void Setup(bool creation)
+        public void Setup(InstanceCacheObject cacheObject, string DecimalSeparator, string TimeZone, bool creation)
         {
             //Setup must be called after deserialization
             InCreation = creation;
+
+            UpdateInstanceRuntimeValues(cacheObject);
+            this.DecimalSeparator = DecimalSeparator;
+            this.TimeZone = TimeZone;
 
             if (creation)
                 ExternalSourceRows = new PascalCaseDictionary<string, PascalCaseDictionary<string, string>>(ExternalSources.ToDictionary(x => x.Key, x => new PascalCaseDictionary<string, string>()));
@@ -86,7 +86,14 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             }
 
             foreach (var expression in Expressions)
+            {
                 expression.Value.Code = expression.Key;
+                expression.Value.DependencyChainAction = e =>
+                {
+                    e.Evaluate(this, TimeZone);
+                    return true;
+                };
+            }
 
             ElementsList = Elements.Values.Where(Element => !(Element is ICheckListItem CheckListItem) || !CheckListItem.IterationItem && !CheckListItem.IteratorModelItem).ToList(); //pages and items outside iterators
 
@@ -97,12 +104,11 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public void BuildDependencies()
         {
-            Updated = false;
+            NeedToUpdate.Add(DependencyRelation.Properties.Formula);
             foreach (var Expression in Expressions.Values)
                 Expression.ClearDependencies();
 
-            DependingNodes.Clear();
-            DependentNodes.Clear();
+            ClearDependencies();
 
             ((Group)Header).ClearDependencies();
             int Index = 0;
@@ -116,23 +122,15 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 if (!Expression.BuildDependencies(this))
                     throw new InstanceException(Expression.Error);
 
-            DependencyNodeKey DependencyNodeKey = this.DependencyNodeKey.Clone(DependencyNodeKey.Processes.Other, "instance-description");
             DescriptionFormula.BuildDependencies(DescriptionFormulaString);
             foreach (var Key in DescriptionFormula.ValueKeys)
                 if (Expressions.TryGetValue(Key, out var Expression))
-                {
-                    Expression.DependentNodes.Add(DependencyNodeKey);
-                    DependingNodes.Add(Expression.DependencyNodeKey);
-                }
+                    AddDependingRelation(DependencyRelation.Properties.Formula, Expression, DependencyRelation.Properties.Value);
 
-            DependencyNodeKey = this.DependencyNodeKey.Clone(DependencyNodeKey.Processes.Other, "instance-file-name");
             FileNameFormula.BuildDependencies(FileNameFormulaString);
             foreach (var Key in FileNameFormula.ValueKeys)
                 if (Expressions.TryGetValue(Key, out var Expression))
-                {
-                    Expression.DependentNodes.Add(DependencyNodeKey);
-                    DependingNodes.Add(Expression.DependencyNodeKey);
-                }
+                    AddDependingRelation(DependencyRelation.Properties.Formula, Expression, DependencyRelation.Properties.Value);
 
             ((Group)Header).BuildDependencies();
             foreach (Page Page in Pages)
@@ -159,33 +157,58 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         }
 
 
-        private readonly Stack<string> DependencyChain = new Stack<string>();
-        public void UpdateAll(string DecimalSeparator, string TimeZone, InstanceCacheObject cacheObject = null)
+        public void UpdateAll(InstanceCacheObject cacheObject = null)
         {
-            if (cacheObject != null) UpdateInstanceRuntimeValues(cacheObject);
-            this.DecimalSeparator = DecimalSeparator;
-            this.TimeZone = TimeZone;
+            Stack<Tuple<DependencyNode, DependencyRelation.Properties>> DependencyChain = new Stack<Tuple<DependencyNode, DependencyRelation.Properties>>();
+            var Roots = new List<Tuple<DependencyNode, DependencyRelation.Properties>>();
 
-            UpdateNodes(Expressions.Values, DependencyNodeKey.Processes.Other);
+            MarkNodeAsChanged(this, Roots, DependencyRelation.Properties.Formula);
 
-            /* traverse all to update the nodes not dependent by an expression */
-            Update(false);
-            ((Group)Header).Update();
-            foreach (var page in Pages)
-                ((Page)page).Update();
-        }
+            foreach (var Expression in Expressions.Values)
+                Expression.MarkNodeAsChanged(this, Roots, DependencyRelation.Properties.Value);
 
-        public void UpdateNodes(IEnumerable<IDependencyNode> Nodes, DependencyNodeKey.Processes Process)
-        {
-            foreach (var Node in Nodes)
+            ((Group)Header).Traverse(
+                Item => true,
+                Item =>
+                {
+                    if (Item is Field)
+                        Item.MarkNodeAsChanged(this, Roots, DependencyRelation.Properties.Value);
+                    else if (Item is Signature)
+                        NeedToUpdate.Add(DependencyRelation.Properties.Signature);
+
+                    NeedToUpdate.Add(DependencyRelation.Properties.Validity);
+                    NeedToUpdate.Add(DependencyRelation.Properties.Hidden);
+                    NeedToUpdate.Add(DependencyRelation.Properties.CountDown);
+                    NeedToUpdate.Add(DependencyRelation.Properties.Formula);
+                }
+            );
+
+            foreach (Page Page in Pages)
             {
-                DependencyChain.Clear();
-                Node.TraverseDependencyChain(this, DependencyChain, Process, e => {
-                    ((Expression)e).Evaluate(this, TimeZone);
-                    return true;
-                });
+                NeedToUpdate.Add(DependencyRelation.Properties.Validity);
+                NeedToUpdate.Add(DependencyRelation.Properties.Hidden);
+                NeedToUpdate.Add(DependencyRelation.Properties.CountDown);
+                NeedToUpdate.Add(DependencyRelation.Properties.Formula);
+
+                foreach(Group Group in Page.Groups)
+                    Group.Traverse(
+                        Item => true,
+                        Item =>
+                        {
+                            if (Item is Field)
+                                Item.MarkNodeAsChanged(this, Roots, DependencyRelation.Properties.Value);
+                            else if (Item is Signature)
+                                NeedToUpdate.Add(DependencyRelation.Properties.Signature);
+
+                            NeedToUpdate.Add(DependencyRelation.Properties.Validity);
+                            NeedToUpdate.Add(DependencyRelation.Properties.Hidden);
+                            NeedToUpdate.Add(DependencyRelation.Properties.CountDown);
+                            NeedToUpdate.Add(DependencyRelation.Properties.Formula);
+                        }
+                    );
             }
 
+            UpdateNodes(this, Roots);
         }
 
         public void UpdateReadOnly(string userCode, string state)
@@ -207,7 +230,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public TypedValue GetExpressionValue(string ExpressionCode, ICheckListElement Element)
         {
-            if (ExpressionCode == null || !CheckList.Expressions.ContainsKey(ExpressionCode)) return null;
+            if (ExpressionCode == null || !Expressions.ContainsKey(ExpressionCode)) return null;
 
             var IterationIndexes = (Element as ICheckListItem)?.Iteration?.Indexes;
             return GetExpressionValue(ExpressionCode, IterationIndexes);
@@ -216,13 +239,13 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public TypedValue GetExpressionValue(string ExpressionCode, List<int> IterationIndexes, out string Error)
         {
             Error = null;
-            if (ExpressionCode == null || !CheckList.Expressions.ContainsKey(ExpressionCode))
+            if (ExpressionCode == null || !Expressions.ContainsKey(ExpressionCode))
             {
                 Error = $"Expression {ExpressionCode} not found";
                 return null;
             }
 
-            var Value = CheckList.Expressions[ExpressionCode].Value;
+            var Value = Expressions[ExpressionCode].Value;
             var Index = 0;
             while (Value?.IsNull == false && Value?.Type == DataType.Array)
             {
@@ -250,42 +273,16 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public TypedValue GetExpressionValue(string ExpressionCode, List<int> IterationIndexes) => GetExpressionValue(ExpressionCode, IterationIndexes, out var Error);
 
-        public DependencyNodeKey DependencyNodeKey => new DependencyNodeKey("checklist", null);
-        public HashSet<DependencyNodeKey> DependentNodes { get; } = new HashSet<DependencyNodeKey>();
-        public HashSet<DependencyNodeKey> DependingNodes { get; } = new HashSet<DependencyNodeKey>();
+        public override string DependencyClassName => "checklist";
 
-        public bool TraverseDependencyChain(ICheckList checkList, Stack<string> DependencyChain, DependencyNodeKey.Processes Process, Func<IDependencyNode, bool> DependencyChainAction)
+        public override bool Update(DependencyRelation.Properties Property)
         {
-            if (Updated) return true;
-
-            foreach (var DependencyNodeKey in DependingNodes)
-                DependencyNodeKey.GetNode(checkList).TraverseDependencyChain(checkList, DependencyChain, Process, DependencyChainAction);
-
-            Update(false);
-            return true;
-        }
-
-        public void MarkNodeAsChanged(ICheckList CheckList, List<IDependencyNode> Roots, DependencyNodeKey.Processes Process)
-        {
-            if (!Updated) return;
-            Updated = false;
-            if (DependentNodes.Any())
-                foreach (var DependencyNodeKey in DependentNodes)
-                    DependencyNodeKey.GetNode(CheckList).MarkNodeAsChanged(CheckList, Roots, Process);
-            else
-                Roots.Add(this);
-        }
-
-        private bool Updated { get; set; } = true;
-
-        public void Update(bool Force)
-        {
-            if (Updated && !Force) return;
+            if (Property != DependencyRelation.Properties.Formula) throw new ArgumentException();
 
             DescriptionFormula.Evaluate(this, InstanceRuntimeValues, DecimalSeparator, TimeZone, null);
             FileNameFormula.Evaluate(this, InstanceRuntimeValues, DecimalSeparator, TimeZone, null);
-            Updated = true;
 
+            return true;
         }
 
     }

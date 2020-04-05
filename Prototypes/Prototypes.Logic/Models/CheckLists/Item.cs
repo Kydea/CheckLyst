@@ -49,20 +49,17 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 			throw new NotImplementedException();
 		}
 
-        protected virtual string DescriptionPropertyName => "caption";
-        public override DependencyNodeKey DependencyNodeKey => Code == null ? new DependencyNodeKey("item", Id) : new DependencyNodeKey("item", Code);
         public override void BuildDependencies()
         {
             base.BuildDependencies();
 
-            DependencyNodeKey DependencyNodeKey = this.DependencyNodeKey.Clone(DependencyNodeKey.Processes.Other, DescriptionPropertyName);
             DescriptionFormula.BuildDependencies(Description);
             foreach (var Key in DescriptionFormula.ValueKeys)
                 if (CheckList.Expressions.TryGetValue(Key, out var Expression))
-                {
-                    Expression.DependentNodes.Add(DependencyNodeKey);
-                    DependingNodes.Add(Expression.DependencyNodeKey);
-                }
+                    AddDependingRelation(DependencyRelation.Properties.Formula, Expression, DependencyRelation.Properties.Value);
         }
+
+        public override string DependencyClassName => "item";
+        public override int? DependencyObjectID => Id;
     }
 }

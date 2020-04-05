@@ -63,21 +63,19 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public override void BuildDependencies()
         {
             base.BuildDependencies();
+            NeedToUpdate.Add(DependencyRelation.Properties.Value);
 
-            DependencyNodeKey DependencyNodeKey = this.DependencyNodeKey.Clone(DependencyNodeKey.Processes.Value, "value");
             ValueFormula.BuildDependencies(ValueFormulaString);
             foreach (var Key in ValueFormula.ValueKeys)
                 if (CheckList.Expressions.TryGetValue(Key, out var Expression))
-                {
-                    Expression.DependentNodes.Add(DependencyNodeKey);
-                    DependingNodes.Add(Expression.DependencyNodeKey);
-                }
+                    AddDependingRelation(DependencyRelation.Properties.Value, Expression, DependencyRelation.Properties.Value);
+
+            if (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
+                AddDependingRelation(DependencyRelation.Properties.Validity, this, DependencyRelation.Properties.Value);
         }
 
-        protected override void UpdateValue()
+        private void UpdateValue()
         {
-            base.UpdateValue();
-
             DateTimeOffset? dateTimeOffset = null;
             if (ValueType == DataType.Date)
                 dateTimeOffset = DateTimeOffsetHelper.Parse(Value, Instance.TimeZone, out var Ambiguous, out var AmbiguousDateTimeOffsets, DateTimeOffsetHelper.DateFormat);
@@ -85,9 +83,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 dateTimeOffset = DateTimeOffsetHelper.Parse(Value, Instance.TimeZone, out var Ambiguous, out var AmbiguousDateTimeOffsets, $"{DateTimeOffsetHelper.DateFormat} {DateTimeOffsetHelper.TimeFormat}");
             if (dateTimeOffset.HasValue) Offset = (int)dateTimeOffset.Value.Offset.TotalMinutes;
 
-            Dictionary<string, object> RuntimeValues = new Dictionary<string, object>();
-            if (Iteration != null) RuntimeValues["IterationIndex"] = Iteration.Index;
-            ValueFormula.Evaluate(CheckList, RuntimeValues, Instance.DecimalSeparator, Instance.TimeZone, Iteration?.Indexes);
+            ValueFormula.Evaluate(CheckList, GetRuntimeValues(), Instance.DecimalSeparator, Instance.TimeZone, Iteration?.Indexes);
             if (ValueFormula.IsSet)
             {
                 ConversionError = ValueFormula.HasValue && !ValueType.Validate(ValueFormula.Value);
@@ -105,6 +101,17 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             }
         }
 
+        public override bool Update(DependencyRelation.Properties Property)
+        {
+            if (Property == DependencyRelation.Properties.Value)
+            {
+                UpdateValue();
+                return true;
+            }
+            else
+                return base.Update(Property);
+        }
+
         public bool Validate(string value) => ValueType.Validate(value);
 
         public bool ConversionError { get; set; }
@@ -112,41 +119,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public override string ValidityMessage { get => ConversionError ? $"the value {ValueFormula.Value} could not be converted to {ValueType.TypeName}" : base.ValidityMessage; set => base.ValidityMessage = value; }
         public override bool IsValidByDefault() => !ConversionError && (ValueFormula.IsSet ? ValueFormula.HasValue : !string.IsNullOrEmpty(Value));
         protected override bool IsReadOnlyByDefault() => base.IsReadOnlyByDefault() || ValueFormula.IsSet; // || !string.IsNullOrEmpty(ExternalSourceName);
-
-        protected override bool OnTraverseDependencyChain(ICheckList CheckList, Stack<string> DependencyChain, DependencyNodeKey.Processes Process, Func<IDependencyNode, bool> DependencyChainAction)
-        {
-            var Result = true;
-            if (
-                Process == DependencyNodeKey.Processes.Validity 
-                && (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
-                && !TraverseDependencyChain(CheckList, DependencyChain, DependencyNodeKey.Processes.Value, DependencyChainAction)
-            )
-                Result = false;
-
-            if (!base.OnTraverseDependencyChain(CheckList, DependencyChain, Process, DependencyChainAction))
-                Result = false;
-
-            return Result;
-        }
-
-        protected override bool OnMarkNodeAsChanged(ICheckList CheckList, List<IDependencyNode> Roots, DependencyNodeKey.Processes Process)
-        {
-            var Marked = false;
-
-            if (
-                Process == DependencyNodeKey.Processes.Value
-                && (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
-            )
-            {
-                MarkNodeAsChanged(CheckList, Roots, DependencyNodeKey.Processes.Validity);
-                Marked = true;
-            }
-
-            if (base.OnMarkNodeAsChanged(CheckList, Roots, Process))
-                Marked = true;
-
-            return Marked;
-        }
 
         public override void Setup()
         {

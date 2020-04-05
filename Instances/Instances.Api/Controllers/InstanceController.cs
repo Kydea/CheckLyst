@@ -53,7 +53,6 @@ namespace CheckListManager.Instances.Api.Controllers
             try
             {
                 var cacheObject = await _instanceManagerService.CreateInstanceAsync(Identity, Identity.Code, request.Prototype, request.Version, request.Parameters);
-                await _instanceManagerService.UpdateInstanceAsync(Identity, cacheObject);
                 await _instanceManagerService.SaveCacheObjectAsync(cacheObject);
                 var response = new InstanceResponse
                 {
@@ -167,7 +166,7 @@ namespace CheckListManager.Instances.Api.Controllers
         {
             try
             {
-                var cacheObject = await _instanceManagerService.GetCacheObjectAsync(Identity, request.Code, true);
+                var cacheObject = await _instanceManagerService.GetCacheObjectForEditAsync(Identity, request.Code, true);
                 _instanceManagerService.CheckViewPermission(Identity, cacheObject);
                 await _instanceManagerService.GetInstanceAsync(Identity, cacheObject);
                 cacheObject.Instance.UpdateReadOnly(Identity.Code, cacheObject.InstanceState);
@@ -247,7 +246,7 @@ namespace CheckListManager.Instances.Api.Controllers
         [Authorize(Roles = "Instances#View, Prototypes#Preview")]
         public async Task<IHttpActionResult> Download(InstanceRequest request)
         {
-            var cacheObject = await _instanceManagerService.GetCacheObjectAsync(Identity, request.Code, false); 
+            var cacheObject = await _instanceManagerService.GetCacheObjectForEditAsync(Identity, request.Code, false); 
             _instanceManagerService.CheckViewPermission(Identity, cacheObject);
 
             var Token = Identity.Code + ":" + Guid.NewGuid();
@@ -267,8 +266,7 @@ namespace CheckListManager.Instances.Api.Controllers
         {
             var Data = await _redisCache.GetAsync<InstanceRequest>($"Token:{Token}", "Download");
             await _redisCache.RemoveAsync($"Token:{Token}", "Download");
-            var cacheObject = await _instanceManagerService.GetCacheObjectAsync(Data.CompanyId.Value, Data.Code, true);
-            cacheObject.Instance.UpdateReadOnly(Data.UserCode, cacheObject.InstanceState);
+            var cacheObject = await _instanceManagerService.GetCacheObjectForDownloadAsync(Data.CompanyId.Value, Data.Code, true);
             var PDF = new InstancePDF(Data.CompanyId.Value, Data.CompanyName, Data.TimeZone, _configurationService.PublicRepositoryUrl, cacheObject, _instancesRepository, _storageService, _configurationService);
 
             await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
@@ -320,7 +318,7 @@ namespace CheckListManager.Instances.Api.Controllers
         {
             try
             {
-                var cacheObject = await _instanceManagerService.GetCacheObjectAsync(Identity, code, false);
+                var cacheObject = await _instanceManagerService.GetCacheObjectForEditAsync(Identity, code, false);
                 _instanceManagerService.CheckViewPermission(Identity, cacheObject);
                 var response = await _instanceManagerService.DownloadAttachmentAsync(Identity, cacheObject.Code, key);
                 return Content(HttpStatusCode.OK, response.Content, new FileFormatter(response.ContentType));

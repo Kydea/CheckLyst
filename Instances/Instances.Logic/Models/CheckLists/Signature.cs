@@ -57,7 +57,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                         CheckItem(Item);
         }
 
-        public void TrySign(InstanceCacheObject cacheObject, string UserCode)
+        public void TrySign(string UserCode)
         {
             try
             {
@@ -65,9 +65,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 SignedBy = UserCode;
                 SignedOn = DateTimeOffset.UtcNow;
 
-                var roots = new List<IDependencyNode>();
-                MarkNodeAsChanged(cacheObject.Instance, roots, DependencyNodeKey.Processes.Other);
-                cacheObject.Instance.UpdateNodes(roots, DependencyNodeKey.Processes.Other);
+                UpdateChain(Instance, DependencyRelation.Properties.Signature);
 
                 if (!Valid) throw new InstanceException("Signature not valid. " + ValidityMessage);
                 if (Code != null)

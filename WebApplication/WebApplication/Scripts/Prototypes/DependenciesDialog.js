@@ -1,20 +1,20 @@
 ﻿matematici.dependenciesDialog = function () {
     return {
-        show: function (dependingNodes, dependentNodes) {
+        show: function (dependingRelations, dependentRelations) {
             var content = $("<div />");
 
-            if ((!dependingNodes || dependingNodes.length == 0) && (!dependentNodes || dependentNodes.length == 0))
+            if ((!dependingRelations || dependingRelations.length == 0) && (!dependentRelations || dependentRelations.length == 0))
                 content.append("(no dependency found)");
             else {
-                if (dependingNodes && dependingNodes.length > 0) {
+                if (dependingRelations && dependingRelations.length > 0) {
                     content.append($("<h3 />").html("contained in this element"));
-                    for (var dependency in dependingNodes)
-                        content.append($("<p />").html(dependingNodes[dependency].description));
+                    for (var dependency in dependingRelations)
+                        content.append($("<p />").html(dependingRelations[dependency].description));
                 }
-                if (dependentNodes && dependentNodes.length > 0) {
+                if (dependentRelations && dependentRelations.length > 0) {
                     content.append($("<h3 />").html("containing this element"));
-                    for (var dependency in dependentNodes)
-                        content.append($("<p />").html(dependentNodes[dependency].description));
+                    for (var dependency in dependentRelations)
+                        content.append($("<p />").html(dependentRelations[dependency].description));
                 }
             }
             matematici.dialog.show("Dependencies", content);
