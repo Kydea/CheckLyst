@@ -93,9 +93,10 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 ConversionError = ValueFormula.HasValue && !ValueType.Validate(ValueFormula.Value);
                 Value = ConversionError ? null : ValueFormula.Value;
             }
+
             if (ExternalSourceName != null)
             {
-                string Value = 
+                string Value =
                     ExternalSourceName != null && Instance.ExternalSourceRows.ContainsKey(ExternalSourceName) && Instance.ExternalSourceRows[ExternalSourceName].ContainsKey(ExternalSourceColumn) ?
                     Instance.ExternalSourceRows[ExternalSourceName][ExternalSourceColumn] :
                     null;
@@ -111,6 +112,41 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public override string ValidityMessage { get => ConversionError ? $"the value {ValueFormula.Value} could not be converted to {ValueType.TypeName}" : base.ValidityMessage; set => base.ValidityMessage = value; }
         public override bool IsValidByDefault() => !ConversionError && (ValueFormula.IsSet ? ValueFormula.HasValue : !string.IsNullOrEmpty(Value));
         protected override bool IsReadOnlyByDefault() => base.IsReadOnlyByDefault() || ValueFormula.IsSet; // || !string.IsNullOrEmpty(ExternalSourceName);
+
+        protected override bool OnTraverseDependencyChain(ICheckList CheckList, Stack<string> DependencyChain, DependencyNodeKey.Processes Process, Func<IDependencyNode, bool> DependencyChainAction)
+        {
+            var Result = true;
+            if (
+                Process == DependencyNodeKey.Processes.Validity 
+                && (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
+                && !TraverseDependencyChain(CheckList, DependencyChain, DependencyNodeKey.Processes.Value, DependencyChainAction)
+            )
+                Result = false;
+
+            if (!base.OnTraverseDependencyChain(CheckList, DependencyChain, Process, DependencyChainAction))
+                Result = false;
+
+            return Result;
+        }
+
+        protected override bool OnMarkNodeAsChanged(ICheckList CheckList, List<IDependencyNode> Roots, DependencyNodeKey.Processes Process)
+        {
+            var Marked = false;
+
+            if (
+                Process == DependencyNodeKey.Processes.Value
+                && (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
+            )
+            {
+                MarkNodeAsChanged(CheckList, Roots, DependencyNodeKey.Processes.Validity);
+                Marked = true;
+            }
+
+            if (base.OnMarkNodeAsChanged(CheckList, Roots, Process))
+                Marked = true;
+
+            return Marked;
+        }
 
         public override void Setup()
         {

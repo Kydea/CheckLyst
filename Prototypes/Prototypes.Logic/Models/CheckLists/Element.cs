@@ -125,6 +125,23 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         }
 
         private HashSet<DependencyNodeKey.Processes> DependencyChainProcesses = new HashSet<DependencyNodeKey.Processes>();
+        protected virtual bool OnTraverseDependencyChain(ICheckList CheckList, Stack<string> DependencyChain, DependencyNodeKey.Processes Process, Func<IDependencyNode, bool> DependencyChainAction)
+        {
+            var Result = true;
+
+            if (
+                Process == DependencyNodeKey.Processes.Validity
+                && !TraverseDependencyChain(CheckList, DependencyChain, DependencyNodeKey.Processes.Hidden, DependencyChainAction)
+            )
+                Result = false;
+
+            foreach (var DependencyNodeKey in DependingNodes.Where(n => n.Process == Process))
+                if (!DependencyNodeKey.GetNode(CheckList).TraverseDependencyChain(CheckList, DependencyChain, DependencyNodeKey.Process, DependencyChainAction))
+                    Result = false;
+
+            return Result;
+        }
+
         public bool TraverseDependencyChain(ICheckList checkList, Stack<string> DependencyChain, DependencyNodeKey.Processes Process, Func<IDependencyNode, bool> DependencyChainAction)
         {
             //look for cycles
@@ -135,12 +152,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 throw new Exception($"Dependency cycle found: {string.Join(" > ", DependencyChain.Reverse())}");
             DependencyChainProcesses.Add(Process);
 
-            var Result = true;
-            if (Process == DependencyNodeKey.Processes.Validity)
-                TraverseDependencyChain(checkList, DependencyChain, DependencyNodeKey.Processes.Hidden, DependencyChainAction);
-            foreach (var DependencyNodeKey in DependingNodes.Where(n => n.Process == Process))
-                if (!DependencyNodeKey.GetNode(checkList).TraverseDependencyChain(checkList, DependencyChain, Process, DependencyChainAction))
-                    Result = false;
+            var Result = OnTraverseDependencyChain(CheckList, DependencyChain, Process, DependencyChainAction);
 
             DependencyChain.Pop();
             DependencyChainProcesses.Remove(Process);

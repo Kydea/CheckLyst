@@ -36,7 +36,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         private HashSet<DependencyNodeKey.Processes> NeedToUpdate { get; } = new HashSet<DependencyNodeKey.Processes>();
 
-        public void Update(string DecimalSeparator, string TimeZone)
+        public void Update()
         {
             if (NeedToUpdate.Contains(DependencyNodeKey.Processes.Value))
             {
@@ -80,12 +80,13 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public virtual bool IsValidByDefault() => true;
         protected virtual void UpdateValid()
         {
-            var expressionValue = CheckList?.GetExpressionValue(ValidExpressionCode, this)?.Value as bool? == true;
+            var ExpressionValue = CheckList?.GetExpressionValue(ValidExpressionCode, this)?.Value as bool? == true;
             Valid = 
+                Hidden ||
                 ValidCondition == Conditions.Default && IsValidByDefault() ||
-                ValidCondition == Conditions.Expression && expressionValue ||
-                ValidCondition == Conditions.ExpressionOrDefault && (expressionValue || IsValidByDefault()) ||
-                ValidCondition == Conditions.ExpressionAndDefault && expressionValue && IsValidByDefault() ||
+                ValidCondition == Conditions.Expression && ExpressionValue ||
+                ValidCondition == Conditions.ExpressionOrDefault && (ExpressionValue || IsValidByDefault()) ||
+                ValidCondition == Conditions.ExpressionAndDefault && ExpressionValue && IsValidByDefault() ||
                 ValidCondition == Conditions.True;
         }
 
@@ -131,10 +132,10 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             CountDownToValue = Value;
         }
 
-        public virtual bool Hidden { get; set; }
+        public bool Hidden { get; set; }
         public Conditions HiddenCondition { get; set; }
         public string HiddenExpressionCode { get; set; }
-        private void UpdateHidden()
+        protected virtual void UpdateHidden()
         {
             Hidden =
                 HiddenCondition == Conditions.Expression && CheckList?.GetExpressionValue(HiddenExpressionCode, this)?.Value as bool? == true
@@ -156,6 +157,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 			destination.ValidCondition = source.ValidCondition;
 			destination.ValidityMessage = source.ValidityMessage;
 			destination.SignatureCode = source.SignatureCode;
+            destination.MarkAllUpdateFlags();
         }
 
         #endregion
@@ -191,12 +193,17 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             DependentNodes.Clear();
         }
 
-        public virtual void BuildDependencies()
+        public void MarkAllUpdateFlags()
         {
             NeedToUpdate.Add(DependencyNodeKey.Processes.Value);
-            NeedToUpdate.Add(DependencyNodeKey.Processes.Value);
-            NeedToUpdate.Add(DependencyNodeKey.Processes.Value);
-            NeedToUpdate.Add(DependencyNodeKey.Processes.Value);
+            NeedToUpdate.Add(DependencyNodeKey.Processes.Validity);
+            NeedToUpdate.Add(DependencyNodeKey.Processes.Hidden);
+            NeedToUpdate.Add(DependencyNodeKey.Processes.Other);
+        }
+
+        public virtual void BuildDependencies()
+        {
+            MarkAllUpdateFlags();
 
             if (!string.IsNullOrEmpty(SignatureCode))
             {
@@ -240,6 +247,23 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public HashSet<DependencyNodeKey> DependingNodes { get; } = new HashSet<DependencyNodeKey>();
 
         private HashSet<DependencyNodeKey.Processes> DependencyChainProcesses = new HashSet<DependencyNodeKey.Processes>();
+        protected virtual bool OnTraverseDependencyChain(ICheckList CheckList, Stack<string> DependencyChain, DependencyNodeKey.Processes Process, Func<IDependencyNode, bool> DependencyChainAction)
+        {
+            var Result = true;
+
+            if (
+                Process == DependencyNodeKey.Processes.Validity 
+                && !TraverseDependencyChain(CheckList, DependencyChain, DependencyNodeKey.Processes.Hidden, DependencyChainAction)
+            )
+                Result = false;
+
+            foreach (var DependencyNodeKey in DependingNodes.Where(n => n.Process == Process))
+                if (!DependencyNodeKey.GetNode(CheckList).TraverseDependencyChain(CheckList, DependencyChain, DependencyNodeKey.Process, DependencyChainAction))
+                    Result = false;
+
+            return Result;
+        }
+
         public bool TraverseDependencyChain(ICheckList CheckList, Stack<string> DependencyChain, DependencyNodeKey.Processes Process, Func<IDependencyNode, bool> DependencyChainAction)
         {
             if (!NeedToUpdate.Contains(Process)) return true;
@@ -249,12 +273,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 throw new Exception($"Dependency cycle found: {string.Join(" > ", DependencyChain.Reverse())}");
             DependencyChainProcesses.Add(Process);
 
-            var Result = true;
-            if (Process == DependencyNodeKey.Processes.Validity)
-                TraverseDependencyChain(CheckList, DependencyChain, DependencyNodeKey.Processes.Hidden, DependencyChainAction);
-            foreach (var DependencyNodeKey in DependingNodes.Where(n => n.Process == Process))
-                if (!DependencyNodeKey.GetNode(CheckList).TraverseDependencyChain(CheckList, DependencyChain, DependencyNodeKey.Process, DependencyChainAction))
-                    Result = false;
+            var Result = OnTraverseDependencyChain(CheckList, DependencyChain, Process, DependencyChainAction);
 
             if (Result)
                 if (this is Item Item && Item.IteratorModelItem)
@@ -263,16 +282,35 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                     foreach (var IterationItem in IterationItems)
                     {
                         IterationItem.NeedToUpdate.Add(Process);
-                        IterationItem.Update(Instance.DecimalSeparator, Instance.TimeZone);
+                        IterationItem.Update();
                     }
                     NeedToUpdate.Remove(Process);
                 }
                 else
-                    Update(Instance.DecimalSeparator, Instance.TimeZone);
+                    Update();
 
             DependencyChain.Pop();
             DependencyChainProcesses.Remove(Process);
             return Result;
+        }
+
+        protected virtual bool OnMarkNodeAsChanged(ICheckList CheckList, List<IDependencyNode> Roots, DependencyNodeKey.Processes Process)
+        {
+            var Marked = false;
+
+            if (Process == DependencyNodeKey.Processes.Hidden)
+            {
+                MarkNodeAsChanged(CheckList, Roots, DependencyNodeKey.Processes.Validity);
+                Marked = true;
+            }
+            if (DependentNodes.Any())
+            {
+                foreach (var DependencyNodeKey in DependentNodes.Where(n => n.Process == Process))
+                    DependencyNodeKey.GetNode(CheckList).MarkNodeAsChanged(CheckList, Roots, Process);
+                Marked = true;
+            }
+
+            return Marked;
         }
 
         public void MarkNodeAsChanged(ICheckList CheckList, List<IDependencyNode> Roots, DependencyNodeKey.Processes Process)
@@ -280,12 +318,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             if (Process == DependencyNodeKey.Processes.ReadOnly || NeedToUpdate.Contains(Process)) return;
             NeedToUpdate.Add(Process);
 
-            if (Process == DependencyNodeKey.Processes.Hidden)
-                MarkNodeAsChanged(CheckList, Roots, DependencyNodeKey.Processes.Validity);
-            if (DependentNodes.Any())
-                foreach (var DependencyNodeKey in DependentNodes.Where(n => n.Process == Process))
-                    DependencyNodeKey.GetNode(CheckList).MarkNodeAsChanged(CheckList, Roots, Process);
-            else
+            if (!OnMarkNodeAsChanged(CheckList, Roots, Process))
                 Roots.Add(this);
         }
 

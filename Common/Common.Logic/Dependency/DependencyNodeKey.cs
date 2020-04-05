@@ -1,4 +1,5 @@
 ﻿using CheckListManager.Common.Logic.Models.CheckLists;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +32,7 @@ namespace CheckListManager.Common.Logic.Dependency
         public string ClassName { get; set; }
         public string ObjectCode { get; set; }
         public int? ObjectID { get; set; }
+        [JsonProperty]
         public Processes Process { get; private set; } = Processes.Other;
         public string PropertyName { get; set; }
 

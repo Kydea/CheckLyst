@@ -10,8 +10,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
     public class Group : Item, ICheckListGroup
     {
-        private bool _valid;
-
         public override string TypeName => "Group";
 
         public List<ICheckListItem> Items { get; set; } = new List<ICheckListItem>();
@@ -30,9 +28,12 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public bool DisableMove { get; set; }
 
-        public override bool IsValidByDefault() => _valid;
-
-        public override bool Hidden => (Page?.Hidden ?? false) || base.Hidden;
+        protected override void UpdateHidden()
+        {
+            base.UpdateHidden();
+            if (!Hidden && Page != null)
+                Hidden = Hidden || Page.Hidden;
+        }
 
         public void CreateInstanceIterations()
         {
@@ -86,16 +87,22 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         protected override void UpdateValid()
         {
-            _valid = true;
+            base.UpdateValid();
+            if (!Valid) return;
+
             if (Iterator)
                 foreach (var Iteration in Iterations.Where(i => !i.Removed))
                     foreach (var item in Iteration.Items) //the iteration are never updated so they are considered transparent to validity
-                        _valid = _valid && item.Valid;
+                    {
+                        Valid = Valid && item.Valid;
+                        if (!Valid) return;
+                    }
             else
                 foreach (var item in Items)
-                    _valid = _valid && item.Valid;
-
-            base.UpdateValid();
+                {
+                    Valid = Valid && item.Valid;
+                    if (!Valid) return;
+                }
         }
 
         public override void UpdateReadOnly(string userCode, bool readOnlyInstance)

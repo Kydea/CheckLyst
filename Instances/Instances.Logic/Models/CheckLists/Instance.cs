@@ -170,9 +170,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
             /* traverse all to update the nodes not dependent by an expression */
             Update(false);
-            ((Group)Header).Update(DecimalSeparator, TimeZone);
+            ((Group)Header).Update();
             foreach (var page in Pages)
-                ((Page)page).Update(DecimalSeparator, TimeZone);
+                ((Page)page).Update();
         }
 
         public void UpdateNodes(IEnumerable<IDependencyNode> Nodes, DependencyNodeKey.Processes Process)

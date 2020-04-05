@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models;
@@ -66,6 +67,22 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                     Expression.DependentNodes.Add(DependencyNodeKey);
                     DependingNodes.Add(Expression.DependencyNodeKey);
                 }
+        }
+
+        protected override bool OnTraverseDependencyChain(ICheckList CheckList, Stack<string> DependencyChain, DependencyNodeKey.Processes Process, Func<IDependencyNode, bool> DependencyChainAction)
+        {
+            var Result = true;
+            if (
+                Process == DependencyNodeKey.Processes.Validity
+                && (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
+                && !TraverseDependencyChain(CheckList, DependencyChain, DependencyNodeKey.Processes.Hidden, DependencyChainAction)
+            )
+                Result = false;
+
+            if (!base.OnTraverseDependencyChain(CheckList, DependencyChain, Process, DependencyChainAction))
+                Result = false;
+
+            return Result;
         }
 
         protected override string DescriptionPropertyName => "label";

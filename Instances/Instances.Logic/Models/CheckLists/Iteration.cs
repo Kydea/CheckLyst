@@ -89,6 +89,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public override void BuildDependencies()
         {
+            //the iterations are considerend "transparent" object, for validity, visibility, etc.
+
             //this is called only for instances existing before v. 2.0.0, because BuildDependencies is called only once per instance
             for (var Index = 0; Index < Items.Count(); ++Index)
             {

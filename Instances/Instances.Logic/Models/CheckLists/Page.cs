@@ -16,8 +16,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public Lock Lock { get; set; }
 
-        public override bool IsValidByDefault() => _valid;
-
         public void CreateInstanceIterations()
         {
             foreach (var Group in Groups)
@@ -48,11 +46,14 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         protected override void UpdateValid()
         {
-			_valid = true;
-			foreach (var group in Groups)
-				_valid = _valid && group.Valid;
-
             base.UpdateValid();
+            if (!Valid) return;
+
+            foreach (var group in Groups)
+            {
+                Valid = Valid && group.Valid;
+                if (!Valid) return;
+            }
         }
 
         public override void UpdateReadOnly(string userCode, bool ReadOnlyInstance)

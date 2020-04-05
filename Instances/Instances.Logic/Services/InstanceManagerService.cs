@@ -894,12 +894,11 @@ namespace CheckListManager.Instances.Logic.Services
 
                 List<Element> AffectedElements = new List<Element>();
                 DependencyNodeKey.Processes Process = DependencyNodeKey.Processes.Other;
-                bool NeedToUpdateReadonly = false;
                 switch (request.Type)
                 {
                     case EventTypes.PageChange:
                         HandlePageChangeAsync(cacheObject, identity.Code, request.ItemId);
-                        NeedToUpdateReadonly = true;
+                        Process = DependencyNodeKey.Processes.ReadOnly;
                         break;
                     case EventTypes.ValueChange:
                         AffectedElements.Add(await HandleValueChangeAsync(cacheObject, identity.Code, request.ItemId, request.Value));
@@ -930,16 +929,18 @@ namespace CheckListManager.Instances.Logic.Services
                         break;
                     case EventTypes.Signature:
                         AffectedElements.Add(await HandleSignatureAsync(cacheObject, identity, request));
+                        Process = DependencyNodeKey.Processes.Validity;
                         break;
                     case EventTypes.SignatureCancelation:
                         AffectedElements.Add(await HandleSignatureCancellationAsync(cacheObject, identity, request));
+                        Process = DependencyNodeKey.Processes.Validity;
                         break;
                     case EventTypes.SendEmail:
                         await HandleEmailSend(cacheObject, identity, request.ItemId, request.Emails);
                         break;
                     case EventTypes.UnlockPage:
                         HandleUnlockPageAsync(cacheObject, identity.Code, request.ItemId);
-                        NeedToUpdateReadonly = true;
+                        Process = DependencyNodeKey.Processes.ReadOnly;
                         break;
                     case EventTypes.CountDown:
                         break;
@@ -950,7 +951,7 @@ namespace CheckListManager.Instances.Logic.Services
                         break;
                     case EventTypes.Quit:
                         await HandleQuitAsync(cacheObject, identity);
-                        NeedToUpdateReadonly = true;
+                        Process = DependencyNodeKey.Processes.ReadOnly;
                         break;
                     case EventTypes.ExternalSourceRowChange:
                         await HandleExternalSourceRowChange(cacheObject, identity, request.ItemId, request.RowIndex, request.Row);
@@ -958,6 +959,7 @@ namespace CheckListManager.Instances.Logic.Services
                         break;
                     case EventTypes.UploadAttachment:
                         AffectedElements.Add(await HandleUploadAttachment(cacheObject, identity, request.ItemId, request.Attachment));
+                        Process = DependencyNodeKey.Processes.Validity;
                         break;
                     default:
                         throw new InstanceException($"Event type {request.Type} not handled.");
@@ -976,7 +978,7 @@ namespace CheckListManager.Instances.Logic.Services
                     cacheObject.Instance.UpdateNodes(roots, Process);
                     cacheObject.Instance.UpdateReadOnly(lockUser ?? identity.Code, cacheObject.InstanceState);
                 }
-                else if (NeedToUpdateReadonly)
+                else if (Process == DependencyNodeKey.Processes.ReadOnly)
                     cacheObject.Instance.UpdateReadOnly(lockUser, cacheObject.InstanceState);
 
                 stopWatch.Stop();

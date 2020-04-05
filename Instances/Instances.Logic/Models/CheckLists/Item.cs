@@ -61,7 +61,12 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             DescriptionFormula.Evaluate(CheckList, RuntimeValues, Instance.DecimalSeparator, Instance.TimeZone, Iteration?.Indexes);
         }
 
-        public override bool Hidden => (Group?.Hidden ?? false) || base.Hidden;
+        protected override void UpdateHidden()
+        {
+            base.UpdateHidden();
+            if (!Hidden && Group != null)
+                Hidden = Hidden || Group.Hidden;
+        }
 
         protected override bool IsReadOnlyByDefault() => Previous != null && !Previous.Valid;
 
