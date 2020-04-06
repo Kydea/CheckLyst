@@ -15,8 +15,11 @@ namespace CheckListManager.Common.Logic.Dependency
         [JsonProperty]
         private HashSet<DependencyRelation> DependingRelations { get; } = new HashSet<DependencyRelation>();
 
+        [JsonIgnore]
         public abstract string DependencyClassName { get; }
+        [JsonIgnore]
         public virtual string DependencyObjectCode { get; }
+        [JsonIgnore]
         public virtual int? DependencyObjectID { get; }
 
         public virtual void ClearDependencies()
@@ -98,8 +101,6 @@ namespace CheckListManager.Common.Logic.Dependency
             UpdateNodesChains(CheckList, Property, new DependencyNode[] { this });
         }
 
-        private static readonly Stack<Tuple<DependencyNode, DependencyRelation.Properties>> DependencyChain = new Stack<Tuple<DependencyNode, DependencyRelation.Properties>>();
-
         public static void UpdateNodes(ICheckList CheckList, IEnumerable<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)
         {
             foreach (var Relation in Roots)
@@ -110,10 +111,7 @@ namespace CheckListManager.Common.Logic.Dependency
         {
             var Roots = new List<Tuple<DependencyNode, DependencyRelation.Properties>>();
             foreach (var Node in Nodes)
-            {
-                DependencyChain.Clear();
                 Node.MarkNodeAsChanged(CheckList, Roots, Property);
-            }
             UpdateNodes(CheckList, Roots);
         }
     }

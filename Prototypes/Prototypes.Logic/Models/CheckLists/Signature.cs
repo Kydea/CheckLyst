@@ -20,6 +20,13 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 		public DateTimeOffset SignedOn { get; set; }
 		public string SignerDescription { get; set; }
 
+        public override void BuildDependencies()
+        {
+            base.BuildDependencies();
+            if (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
+                AddDependingRelation(DependencyRelation.Properties.Validity, this, DependencyRelation.Properties.Signature);
+        }
+
         public override ICheckListItem Clone(ICheckListGroup parent)
         {
             var signature = new Signature

@@ -934,11 +934,11 @@ namespace CheckListManager.Instances.Logic.Services
                         break;
                     case EventTypes.Signature:
                         AffectedElements.Add(await HandleSignatureAsync(cacheObject, identity, request));
-                        Property = DependencyRelation.Properties.Validity;
+                        Property = DependencyRelation.Properties.Signature;
                         break;
                     case EventTypes.SignatureCancelation:
                         AffectedElements.Add(await HandleSignatureCancellationAsync(cacheObject, identity, request));
-                        Property = DependencyRelation.Properties.Validity;
+                        Property = DependencyRelation.Properties.Signature;
                         break;
                     case EventTypes.SendEmail:
                         await HandleEmailSend(cacheObject, identity, request.ItemId, request.Emails);

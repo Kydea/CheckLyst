@@ -25,6 +25,21 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public override bool IsValidByDefault() => Signed;
 
+        public override void BuildDependencies()
+        {
+            base.BuildDependencies();
+            if (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
+                AddDependingRelation(DependencyRelation.Properties.Validity, this, DependencyRelation.Properties.Signature);
+        }
+
+        public override bool Update(DependencyRelation.Properties Property)
+        {
+            if (Property == DependencyRelation.Properties.Signature)
+                return true;
+            else
+                return base.Update(Property);
+        }
+
         public override ICheckListItem Clone(ICheckListGroup parent)
 		{
 			var signature = new Signature
@@ -65,7 +80,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 SignedBy = UserCode;
                 SignedOn = DateTimeOffset.UtcNow;
 
-                UpdateChain(Instance, DependencyRelation.Properties.Validity);
+                UpdateChain(Instance, DependencyRelation.Properties.Signature);
 
                 if (!Valid) throw new InstanceException("Signature not valid. " + ValidityMessage);
                 if (Code != null)

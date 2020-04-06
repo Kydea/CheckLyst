@@ -59,8 +59,6 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         {
             base.BuildDependencies();
 
-            base.BuildDependencies();
-
             ValueFormula.BuildDependencies(ValueFormulaString);
             foreach (var Key in ValueFormula.ValueKeys)
                 if (CheckList.Expressions.TryGetValue(Key, out var Expression))
