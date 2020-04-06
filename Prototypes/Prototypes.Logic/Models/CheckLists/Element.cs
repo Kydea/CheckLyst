@@ -40,13 +40,6 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                     throw new Exception($"Duplicated code {Code}");
                 CheckList.Elements[Code] = this;
             }
-            NeedToUpdate.Add(DependencyRelation.Properties.Value);
-            NeedToUpdate.Add(DependencyRelation.Properties.Validity);
-            NeedToUpdate.Add(DependencyRelation.Properties.Hidden);
-            NeedToUpdate.Add(DependencyRelation.Properties.ReadOnly);
-            NeedToUpdate.Add(DependencyRelation.Properties.Signature);
-            NeedToUpdate.Add(DependencyRelation.Properties.Formula);
-            NeedToUpdate.Add(DependencyRelation.Properties.CountDown);
             ClearDependencies();
         }
 

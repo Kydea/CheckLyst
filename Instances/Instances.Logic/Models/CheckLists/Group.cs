@@ -72,7 +72,11 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public void SetupIterationsIndexes()
         {
             var Index = 0;
-            foreach (var Iteration in Iterations)
+            foreach (Item Item in Items.Where(i => !i.IteratorModelItem))
+                if (Item is Group Group)
+                    Group.SetupIterationsIndexes();
+
+            foreach (Iteration Iteration in Iterations)
             {
                 Iteration.Indexes.Clear();
                 if (this.Iteration != null)
@@ -81,6 +85,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 Iteration.Indexes.Add(Index); //0-base
                 Iteration.Index = Index + 1; //1-base
                 if (!Iteration.Removed) ++Index;
+
+                Iteration.SetupIterationsIndexes();
             }
 
         }
@@ -214,33 +220,17 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             iteration.Remove();
         }
 
-        public void Traverse(Func<Item, bool> condition1, Action<Item> action1, Func<Item, bool> condition2 = null, Action<Item> action2 = null)
+        public override void MarkAllAsChanged(List<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)
         {
-            if (condition1 != null && condition1(this))
-                action1(this);
+            base.MarkAllAsChanged(Roots);
 
             foreach (Iteration iteration in Iterations)
-                iteration.Traverse(condition1, action1, condition2, action2);
+                iteration.MarkAllAsChanged(Roots);
 
             foreach (Item item in Items)
-                if (item is Group group)
-                    group.Traverse(condition1, action1, condition2, action2);
-                else
-                {
-                    if (condition1 != null && condition1(item))
-                        action1(item);
-                    if (condition2 != null && condition2(item))
-                        action2(item);
-                }
-
-            if (condition2 != null && condition2(this))
-                action2(this);
+                item.MarkAllAsChanged(Roots);
         }
 
-        public Task TraverseAsync(Func<ICheckListItem, bool> condition, Func<ICheckListItem, Task> action)
-        {
-            throw new NotImplementedException();
-        }
 
         public override void ClearDependencies()
         {

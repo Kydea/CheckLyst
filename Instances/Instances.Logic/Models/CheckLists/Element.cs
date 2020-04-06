@@ -54,6 +54,12 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             return true;
         }
 
+        public override string ToString() =>
+            this is Page Page ? $"page {Page.Index}" :
+            this is Group Group ? $"group {Code ?? Group.Id.ToString()}" :
+            this is Item Item ? $"item {Code ?? Item.Id.ToString()}" :
+            throw new ArgumentException();
+
         #region Properties
 
         public string Code { get; set; }
@@ -150,7 +156,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         #endregion
 
-        #region dependency
+        #region Dependency
 
         private Expression GetExpression(string ExpressionCode, DependencyRelation.Properties SourceProperty, string PropertyName)
         {
@@ -197,6 +203,14 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
             AddDependingRelation(DependencyRelation.Properties.Validity, this, DependencyRelation.Properties.Hidden);
         }
+
+        public virtual void MarkAllAsChanged(List<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)
+        {
+            MarkNodeAsChanged(CheckList, Roots, DependencyRelation.Properties.Validity);
+            MarkNodeAsChanged(CheckList, Roots, DependencyRelation.Properties.Hidden);
+            MarkNodeAsChanged(CheckList, Roots, DependencyRelation.Properties.CountDown);
+        }
+
 
         public override string DependencyClassName => "element";
 

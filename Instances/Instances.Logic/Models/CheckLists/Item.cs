@@ -110,6 +110,12 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 yield return this;
         }
 
+        public override void MarkAllAsChanged(List<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)
+        {
+            base.MarkAllAsChanged(Roots);
+            MarkNodeAsChanged(CheckList, Roots, DependencyRelation.Properties.Formula);
+        }
+
         public override string GetSignatureInformation() => base.GetSignatureInformation() ?? ((Group)Group)?.GetSignatureInformation() ?? ((Page)Page)?.GetSignatureInformation();
 
         protected override Dictionary<string, ICheckListElement> GetBranchElements() => Iteration?.Elements ?? base.GetBranchElements();
@@ -135,5 +141,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public override string DependencyClassName => "item";
         public override int? DependencyObjectID => Id;
+        public override string DependencyObjectCode => IterationItem ? null : Code;
     }
 }

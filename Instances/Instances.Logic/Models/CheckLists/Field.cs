@@ -63,7 +63,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public override void BuildDependencies()
         {
             base.BuildDependencies();
-            NeedToUpdate.Add(DependencyRelation.Properties.Value);
 
             ValueFormula.BuildDependencies(ValueFormulaString);
             foreach (var Key in ValueFormula.ValueKeys)
@@ -110,6 +109,12 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             }
             else
                 return base.Update(Property);
+        }
+
+        public override void MarkAllAsChanged(List<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)
+        {
+            base.MarkAllAsChanged(Roots);
+            MarkNodeAsChanged(CheckList, Roots, DependencyRelation.Properties.Value);
         }
 
         public bool Validate(string value) => ValueType.Validate(value);

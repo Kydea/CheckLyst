@@ -90,7 +90,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 foreach (var expression in Expressions.Values)
                     if (expression.Error == null)
                     {
-                        expression.UpdateChain(this, DependencyRelation.Properties.Value);
+                        expression.TestDependencyChain(this, DependencyRelation.Properties.Value);
                         Error = expression.Error != null;
                     }
 

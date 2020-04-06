@@ -918,31 +918,27 @@ namespace CheckListManager.Instances.Logic.Services
                         Property = DependencyRelation.Properties.Value;
                         break;
                     case EventTypes.Add:
-                        var Iteration = await HandleAddAsync(cacheObject, identity.Code, request.ItemId);
-                        if (Iteration != null) Iteration.GetAllChildren(AffectedElements);
+                        (await HandleAddAsync(cacheObject, identity.Code, request.ItemId))?.GetAllChildren(AffectedElements);
                         break;
                     case EventTypes.Remove:
-                        Iteration = await HandleRemoveAsync(cacheObject, identity.Code, request.ItemId);
-                        if (Iteration != null) Iteration.GetAllChildren(AffectedElements);
+                        (await HandleRemoveAsync(cacheObject, identity.Code, request.ItemId))?.GetAllChildren(AffectedElements);
                         break;
                     case EventTypes.Up:
-                        Iteration = await HandleMoveAsync(cacheObject, identity.Code, request.ItemId, -1);
-                        if (Iteration != null) Iteration.GetAllChildren(AffectedElements);
+                        (await HandleMoveAsync(cacheObject, identity.Code, request.ItemId, -1))?.GetAllChildren(AffectedElements);
                         break;
                     case EventTypes.Down:
-                        Iteration = await HandleMoveAsync(cacheObject, identity.Code, request.ItemId, 1);
-                        if (Iteration != null) Iteration.GetAllChildren(AffectedElements);
+                        (await HandleMoveAsync(cacheObject, identity.Code, request.ItemId, 1))?.GetAllChildren(AffectedElements);
                         break;
                     case EventTypes.SignatureCheck:
                         HandleSignatureCheckAsync(cacheObject, request.Username, request.ItemId);
                         break;
                     case EventTypes.Signature:
                         AffectedElements.Add(await HandleSignatureAsync(cacheObject, identity, request));
-                        Property = DependencyRelation.Properties.Signature;
+                        Property = DependencyRelation.Properties.Validity;
                         break;
                     case EventTypes.SignatureCancelation:
                         AffectedElements.Add(await HandleSignatureCancellationAsync(cacheObject, identity, request));
-                        Property = DependencyRelation.Properties.Signature;
+                        Property = DependencyRelation.Properties.Validity;
                         break;
                     case EventTypes.SendEmail:
                         await HandleEmailSend(cacheObject, identity, request.ItemId, request.Emails);
@@ -975,15 +971,24 @@ namespace CheckListManager.Instances.Logic.Services
                         throw new InstanceException($"Event type {request.Type} not handled.");
                 }
 
+                AffectedElements = AffectedElements.Where(x => x != null).ToList();
                 if (AffectedElements.Any())
                 {
                     var roots = new List<Tuple<DependencyNode, DependencyRelation.Properties>>();
                     foreach (var AffectedElement in AffectedElements)
                     {
                         if (AffectedElement is Item AffectedItem && AffectedItem.IterationItem)
-                            AffectedItem.FindIteratorModelItem().MarkNodeAsChanged(cacheObject.Instance, roots, Property.Value);
-                        else
+                        { 
+                            var IteratorModel = AffectedItem.FindIteratorModelItem();
+                            if (Property.HasValue)
+                                IteratorModel.MarkNodeAsChanged(cacheObject.Instance, roots, Property.Value);
+                            else
+                                IteratorModel.MarkAllAsChanged(roots);
+                        }
+                        else if (Property.HasValue)
                             AffectedElement.MarkNodeAsChanged(cacheObject.Instance, roots, Property.Value);
+                        else
+                            AffectedElement.MarkAllAsChanged(roots);
                     }
                     DependencyNode.UpdateNodes(cacheObject.Instance, roots);
                     cacheObject.Instance.UpdateReadOnly(lockUser ?? identity.Code, cacheObject.InstanceState);

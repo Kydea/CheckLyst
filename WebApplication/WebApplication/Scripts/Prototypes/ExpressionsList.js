@@ -46,9 +46,9 @@
                     var
                         item = list[currentIndex],
                         code = item.code,
-                        dependingNodes = item.dependingNodes,
-                        dependentNodes = item.dependentNodes;
-                    used = !!expressionsInUse[code] || (dependingNodes && dependingNodes.length > 0) || (dependentNodes && dependentNodes.length > 0);
+                        dependingRelations = item.dependingRelations,
+                        dependentRelations = item.dependentRelations;
+                    used = !!expressionsInUse[code] || (dependingRelations && dependingRelations.length > 0) || (dependentRelations && dependentRelations.length > 0);
 
                     body.children().eq(currentIndex).addClass("Selected").removeClass("Handler")
                         .children((used ? ":not(:nth-child(2))" : "") + ":not(:first-child):not(:last-child):not(:nth-last-child(2)):not(:nth-last-child(3)):not(:nth-last-child(4))").attr("contenteditable", true).eq(0).focus();
@@ -99,8 +99,8 @@
                     innerDataType: list[index].innerDataType,
                     unique: list[index].unique,
                     exception: list[index].exception,
-                    dependingNodes: list[index].dependingNodes,
-                    dependentNodes: list[index].dependentNodes
+                    dependingRelations: list[index].dependingRelations,
+                    dependentRelations: list[index].dependentRelations
                 };
         },
 
@@ -153,8 +153,8 @@
                         list[index].innerDataType = result.expressions[list[index].code].innerDataType;
                         list[index].unique = result.expressions[list[index].code].unique;
                         list[index].exception = result.expressions[list[index].code].exception;
-                        list[index].dependingNodes = result.expressions[list[index].code].dependingNodes;
-                        list[index].dependentNodes = result.expressions[list[index].code].dependentNodes;
+                        list[index].dependingRelations = result.expressions[list[index].code].dependingRelations;
+                        list[index].dependentRelations = result.expressions[list[index].code].dependentRelations;
                     } catch (error) {
                         list[index].error = error;
                         list[index].dataType = "Error";
@@ -313,8 +313,8 @@
                     innerDataType: model.expressions[code].innerDataType,
                     unique: model.expressions[code].unique,
                     exception: model.expressions[code].exception,
-                    dependingNodes: model.expressions[code].dependingNodes,
-                    dependentNodes: model.expressions[code].dependentNodes
+                    dependingRelations: model.expressions[code].dependingRelations,
+                    dependentRelations: model.expressions[code].dependentRelations
                 });
 
             expressionsInUse = {};

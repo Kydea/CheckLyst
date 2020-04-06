@@ -52,20 +52,31 @@ namespace CheckListManager.Common.Logic.Dependency
         }
 
         private HashSet<DependencyRelation.Properties> DependencyChainTouchedProcesses = new HashSet<DependencyRelation.Properties>();
-        public bool TraverseDependencyChain(ICheckList CheckList, DependencyRelation.Properties Property, Stack<Tuple<DependencyNode, DependencyRelation.Properties>> DependencyChain)
+        public bool TraverseDependencyChain(ICheckList CheckList, DependencyRelation.Properties Property)
+            => TraverseDependencyChain(CheckList, Property, null, false);
+        public bool TestDependencyChain(ICheckList CheckList, DependencyRelation.Properties Property)
+            => TraverseDependencyChain(CheckList, Property, new Stack<Tuple<DependencyNode, DependencyRelation.Properties>>(), true);
+        private bool TraverseDependencyChain(ICheckList CheckList, DependencyRelation.Properties Property, Stack<Tuple<DependencyNode, DependencyRelation.Properties>> DependencyChain, bool TestCycles)
         {
-            if (!NeedToUpdate.Contains(Property)) return true;
+            if (!TestCycles)
+            { 
+                if (!NeedToUpdate.Contains(Property)) return true;
+                NeedToUpdate.Remove(Property);
+            }
 
             var Result = true;
             try
             {
-                DependencyChain.Push(new Tuple<DependencyNode, DependencyRelation.Properties>(this, Property));
-                if (DependencyChainTouchedProcesses.Contains(Property))
-                    throw new Exception($"Dependency cycle found: {string.Join("> ", DependencyChain.Reverse().Select(x => $"{DependencyRelation.GetPropertyDescription(x.Item2)} of {x.Item1.DependencyClassName} {x.Item1.DependencyObjectCode ?? x.Item1.DependencyObjectID?.ToString()} "))}");
-                DependencyChainTouchedProcesses.Add(Property);
+                if (TestCycles)
+                {
+                    DependencyChain.Push(new Tuple<DependencyNode, DependencyRelation.Properties>(this, Property));
+                    if (DependencyChainTouchedProcesses.Contains(Property))
+                        throw new Exception($"Dependency cycle found: {string.Join("> ", DependencyChain.Reverse().Select(x => $"{DependencyRelation.GetPropertyDescription(x.Item2)} of {x.Item1.DependencyClassName} {x.Item1.DependencyObjectCode ?? x.Item1.DependencyObjectID?.ToString()} "))}");
+                    DependencyChainTouchedProcesses.Add(Property);
+                }
 
                 foreach (var DependingRelation in DependingRelations.Where(n => n.SourceProperty == Property))
-                    if (!DependingRelation.GetNode(CheckList).TraverseDependencyChain(CheckList, DependingRelation.DestinationProperty, DependencyChain))
+                    if (!DependingRelation.GetNode(CheckList).TraverseDependencyChain(CheckList, DependingRelation.DestinationProperty, DependencyChain, TestCycles))
                         Result = false;
 
                 if (Result)
@@ -73,9 +84,11 @@ namespace CheckListManager.Common.Logic.Dependency
             }
             finally
             {
-                NeedToUpdate.Remove(DependencyRelation.Properties.Value);
-                DependencyChain.Pop();
-                DependencyChainTouchedProcesses.Remove(Property);
+                if (TestCycles)
+                {
+                    DependencyChain.Pop();
+                    DependencyChainTouchedProcesses.Remove(Property);
+                }
             }
             return Result;
         }
@@ -90,10 +103,7 @@ namespace CheckListManager.Common.Logic.Dependency
         public static void UpdateNodes(ICheckList CheckList, IEnumerable<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)
         {
             foreach (var Relation in Roots)
-            {
-                DependencyChain.Clear();
-                Relation.Item1.TraverseDependencyChain(CheckList, Relation.Item2, DependencyChain);
-            }
+                Relation.Item1.TraverseDependencyChain(CheckList, Relation.Item2);
         }
 
         public static void UpdateNodesChains(ICheckList CheckList, DependencyRelation.Properties Property, IEnumerable<DependencyNode> Nodes)

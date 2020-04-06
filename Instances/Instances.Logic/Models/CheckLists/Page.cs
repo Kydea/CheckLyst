@@ -73,6 +73,13 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             }
         }
 
+        public override void MarkAllAsChanged(List<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)
+        {
+            base.MarkAllAsChanged(Roots);
+            foreach (Group Group in Groups)
+                Group.MarkAllAsChanged(Roots);
+        }
+
         public override string DependencyClassName => "page";
         public override int? DependencyObjectID => Index;
     }

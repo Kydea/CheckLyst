@@ -116,5 +116,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
         public override string DependencyClassName => "expression";
         public override string DependencyObjectCode => Code;
+
+        public override string ToString() => $"expression {Code}";
     }
 }

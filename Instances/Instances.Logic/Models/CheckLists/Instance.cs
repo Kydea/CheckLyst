@@ -104,7 +104,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public void BuildDependencies()
         {
-            NeedToUpdate.Add(DependencyRelation.Properties.Formula);
             foreach (var Expression in Expressions.Values)
                 Expression.ClearDependencies();
 
@@ -167,46 +166,10 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             foreach (var Expression in Expressions.Values)
                 Expression.MarkNodeAsChanged(this, Roots, DependencyRelation.Properties.Value);
 
-            ((Group)Header).Traverse(
-                Item => true,
-                Item =>
-                {
-                    if (Item is Field)
-                        Item.MarkNodeAsChanged(this, Roots, DependencyRelation.Properties.Value);
-                    else if (Item is Signature)
-                        NeedToUpdate.Add(DependencyRelation.Properties.Signature);
-
-                    NeedToUpdate.Add(DependencyRelation.Properties.Validity);
-                    NeedToUpdate.Add(DependencyRelation.Properties.Hidden);
-                    NeedToUpdate.Add(DependencyRelation.Properties.CountDown);
-                    NeedToUpdate.Add(DependencyRelation.Properties.Formula);
-                }
-            );
+            ((Group)Header).MarkAllAsChanged(Roots);
 
             foreach (Page Page in Pages)
-            {
-                NeedToUpdate.Add(DependencyRelation.Properties.Validity);
-                NeedToUpdate.Add(DependencyRelation.Properties.Hidden);
-                NeedToUpdate.Add(DependencyRelation.Properties.CountDown);
-                NeedToUpdate.Add(DependencyRelation.Properties.Formula);
-
-                foreach(Group Group in Page.Groups)
-                    Group.Traverse(
-                        Item => true,
-                        Item =>
-                        {
-                            if (Item is Field)
-                                Item.MarkNodeAsChanged(this, Roots, DependencyRelation.Properties.Value);
-                            else if (Item is Signature)
-                                NeedToUpdate.Add(DependencyRelation.Properties.Signature);
-
-                            NeedToUpdate.Add(DependencyRelation.Properties.Validity);
-                            NeedToUpdate.Add(DependencyRelation.Properties.Hidden);
-                            NeedToUpdate.Add(DependencyRelation.Properties.CountDown);
-                            NeedToUpdate.Add(DependencyRelation.Properties.Formula);
-                        }
-                    );
-            }
+                Page.MarkAllAsChanged(Roots);
 
             UpdateNodes(this, Roots);
         }
