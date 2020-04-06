@@ -15,11 +15,26 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
         }
 
-        public TypedValue(DataType Type, string SerializedValue, string TimeZone)
+        public TypedValue(DataType Type, string Value, string TimeZone)
         {
-            this.Type = Type;
-            this.SerializedValue = SerializedValue;
-            Parse(TimeZone);
+            try
+            {
+                this.Value =
+                    string.IsNullOrWhiteSpace(Value) ? null :
+                    Type == DataType.Boolean ? bool.Parse(Value) :
+                    Type == DataType.DateTime ? DateTimeOffsetHelper.Parse(Value, TimeZone, out var Ambiguous, out var AmbiguousTimesSpans, $"{DateTimeOffsetHelper.DateFormat} {DateTimeOffsetHelper.TimeFormat}") :
+                    Type == DataType.Date ? DateTimeOffsetHelper.Parse(Value, TimeZone, out Ambiguous, out AmbiguousTimesSpans, DateTimeOffsetHelper.DateFormat) :
+                    Type == DataType.Time ? TimeSpan.ParseExact(Value, "hh\\:mm", null) :
+                    Type == DataType.Number ? decimal.Parse(Value.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture) :
+                    Type == DataType.Error ? Value :
+                    (object)Value;
+                this.Type = Type;
+            }
+            catch (Exception Exception)
+            {
+                this.Value = Exception.Message;
+                this.Type = DataType.Error;
+            }
         }
 
         public TypedValue(DataType Type, object Value)
@@ -29,7 +44,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                 if (Value == null)
                 {
                     this.Type = Type;
-                    this.Value = SerializedValue = null;
+                    this.Value = null;
                 }
                 else if
                 (
@@ -46,7 +61,6 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                 {
                     this.Type = Type;
                     this.Value = Value;
-                    SerializedValue = Type == DataType.Array ? null : Value.ToString();
                 }
             }
             catch (Exception Exception)
@@ -56,30 +70,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             }
         }
 
-        private void Parse(string TimeZone)
-        {
-            try
-            {
-                Value =
-                    string.IsNullOrWhiteSpace(SerializedValue) ? null :
-                    Type == DataType.Boolean ? bool.Parse(SerializedValue) : 
-                    Type == DataType.DateTime ? DateTimeOffsetHelper.Parse(SerializedValue, TimeZone, out var Ambiguous, out var AmbiguousTimesSpans, $"{DateTimeOffsetHelper.DateFormat} {DateTimeOffsetHelper.TimeFormat}") :
-                    Type == DataType.Date ? DateTimeOffsetHelper.Parse(SerializedValue, TimeZone, out Ambiguous, out AmbiguousTimesSpans, DateTimeOffsetHelper.DateFormat) :
-                    Type == DataType.Time ? TimeSpan.ParseExact(SerializedValue, "hh\\:mm", null) :
-                    Type == DataType.Number ? decimal.Parse(SerializedValue.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture) :
-                    Type == DataType.Error ? SerializedValue :
-                    (object)SerializedValue;
-            }
-            catch (Exception Exception)
-            {
-                Type = DataType.Error;
-                Value = SerializedValue = Exception.Message;
-            }
-        }
-
         public DataType Type { get; set; }
-
-        public string SerializedValue { get; set; }
 
         public object Value { get; set; }
 

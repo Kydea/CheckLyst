@@ -421,7 +421,7 @@ namespace CheckListManager.Instances.Logic.Services
                 Instance = cacheObject.Id.Value,
                 Code = e.Key,
                 Description = e.Value.Description,
-                Value = e.Value.Value.SerializedValue,
+                Value = e.Value.Value.Type == DataType.Array ? null : e.Value.Value.Value.ToString(),
                 Exception = e.Value.Exception,
                 Unique = e.Value.Unique
             });
