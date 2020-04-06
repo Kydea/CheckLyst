@@ -10,13 +10,13 @@ namespace CheckListManager.Common.Logic.Models
 	public struct DataType
 	{
 		private readonly Type _actualType;
-		public DataTypeEnum RawValue { get; }
+        private readonly DataTypeEnum _rawValue;
         public string TypeName { get; }
 
 		private DataType(DataTypeEnum rawValue, string typeName, Type actualType)
 		{
 			_actualType = actualType;
-			RawValue = rawValue;
+			_rawValue = rawValue;
 			TypeName = typeName;
 		}
 
@@ -35,12 +35,12 @@ namespace CheckListManager.Common.Logic.Models
 
 		public override bool Equals(object obj)
 		{
-			return obj is DataType type && type.RawValue == RawValue;
+			return obj is DataType type && type._rawValue == _rawValue;
 		}
 
 		public override int GetHashCode()
 		{
-			return RawValue.GetHashCode();
+			return _rawValue.GetHashCode();
 		}
 
 		public override string ToString() => TypeName;
@@ -51,15 +51,15 @@ namespace CheckListManager.Common.Logic.Models
 			{
 				if (string.IsNullOrEmpty(value)) return true;
 
-                if (RawValue == DataTypeEnum.Boolean)
+                if (_rawValue == DataTypeEnum.Boolean)
 	                return "true".Equals(value, StringComparison.InvariantCultureIgnoreCase) || "false".Equals(value, StringComparison.InvariantCultureIgnoreCase);
-				if (RawValue == DataTypeEnum.Number)
+				if (_rawValue == DataTypeEnum.Number)
 					return decimal.TryParse(value.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out _);
-                if (RawValue == DataTypeEnum.Date)
+                if (_rawValue == DataTypeEnum.Date)
                     return DateTimeOffset.TryParseExact(value, new[] { "yyyy-MM-dd" }, null, DateTimeStyles.AssumeUniversal, out _);
-                if (RawValue == DataTypeEnum.DateTime)
+                if (_rawValue == DataTypeEnum.DateTime)
 					return DateTimeOffset.TryParseExact(value, new[] { "yyyy-MM-dd HH:mm" }, null, DateTimeStyles.AssumeUniversal, out _);
-				if (RawValue == DataTypeEnum.Time)
+				if (_rawValue == DataTypeEnum.Time)
 					return TimeSpan.TryParseExact(value, "hh\\:mm", null, out _);
 
 				return true;

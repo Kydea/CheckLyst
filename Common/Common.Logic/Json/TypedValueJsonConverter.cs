@@ -13,8 +13,7 @@ namespace CheckListManager.Common.Logic.Json
 
         public override bool CanConvert(Type objectType) => typeof(TypedValue).IsAssignableFrom(objectType);
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
-            JsonSerializer serializer)
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             var jobject = JObject.Load(reader);
 

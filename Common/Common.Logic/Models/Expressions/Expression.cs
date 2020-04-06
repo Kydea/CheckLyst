@@ -51,8 +51,6 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
         public TypedValue Value { get; set; }
 
-        public string TypeName => Value?.Type.TypeName;
-
         public Func<Expression, bool> DependencyChainAction { private get; set; }
 
         public bool BuildDependencies(ICheckList checklist)
