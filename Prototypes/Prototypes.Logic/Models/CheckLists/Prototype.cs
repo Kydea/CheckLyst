@@ -28,9 +28,11 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public bool FTPExport { get; set; }
         public Exception Exception { get; set; }
 
+        private int itemSequence;
         public Dictionary<int, ICheckListItem> Items { get; } = new Dictionary<int, ICheckListItem>();
         public void AddItem(ICheckListItem item)
         {
+            item.Id = ++itemSequence;
             Items.Add(item.Id, item);
         }
 
