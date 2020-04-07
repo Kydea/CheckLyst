@@ -273,6 +273,7 @@
                         }))
                         .append($("<a />").addClass("Button").text("add").toggle(model.state == prototypes.Prototype.states.draft).prepend($("<i />").addClass("Icon fa fa-plus")).on("click", function () {
                             add({ code: "", expression: "", error: null });
+                            verifyButton.show();
                             matematici.canClose = false;
                             select(list.length - 1);
                         }))
@@ -283,7 +284,7 @@
                         .append(dependencyButton = $("<a />").addClass("Button").text("dependencies").prepend($("<i />").addClass("Icon fa fa-sitemap")).on("click", function () {
                             var
                                 handler = function () {
-                                    var model = list[currentIndex];
+                                    var model = prototypes.prototype.getModel().expression[list[currentIndex].code];
                                     matematici.dependenciesDialog.show(model.dependingRelations, model.dependentRelations);
                                 };
                             if (matematici.canClose)

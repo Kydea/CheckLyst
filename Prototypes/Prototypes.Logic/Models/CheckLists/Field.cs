@@ -66,6 +66,15 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
             if (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
                 AddDependingRelation(DependencyRelation.Properties.Validity, this, DependencyRelation.Properties.Value);
+
+            if (ExternalSourceName != null)
+            {
+                if (!CheckList.ExternalSourceDependencyNodes.TryGetValue(ExternalSourceName, out var ExternalSourceNode))
+                    throw new Exception($"The property value references to the inexistent external source {ExternalSourceName} for {this}");
+
+                AddDependingRelation(DependencyRelation.Properties.Value, CheckList.ExternalSourceDependencyNodes[ExternalSourceName], DependencyRelation.Properties.Value);
+            }
         }
+
     }
 }

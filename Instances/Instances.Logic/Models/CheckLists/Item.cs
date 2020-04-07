@@ -110,10 +110,29 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 yield return this;
         }
 
+        public override void MarkNodeAsChanged(ICheckList CheckList, List<Tuple<DependencyNode, DependencyRelation.Properties>> Roots, DependencyRelation.Properties Property)
+        {
+            if (IterationItem)
+            {
+                var IteratorModel = FindIteratorModelItem();
+                IteratorModel.MarkNodeAsChanged(CheckList, Roots, Property);
+            }
+            else 
+                base.MarkNodeAsChanged(CheckList, Roots, Property);
+        }
+
         public override void MarkAllAsChanged(List<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)
         {
-            base.MarkAllAsChanged(Roots);
-            MarkNodeAsChanged(CheckList, Roots, DependencyRelation.Properties.Formula);
+            if (IterationItem)
+            {
+                var IteratorModel = FindIteratorModelItem();
+                IteratorModel.MarkAllAsChanged(Roots);
+            }
+            else
+            {
+                base.MarkAllAsChanged(Roots);
+                MarkNodeAsChanged(CheckList, Roots, DependencyRelation.Properties.Formula);
+            }
         }
 
         public override string GetSignatureInformation() => base.GetSignatureInformation() ?? ((Group)Group)?.GetSignatureInformation() ?? ((Page)Page)?.GetSignatureInformation();

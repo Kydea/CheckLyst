@@ -7,15 +7,17 @@ using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.Expressions;
 using CheckListManager.Common.Logic.Models.Expressions.Parsing;
+using Newtonsoft.Json;
 
 namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 {
     public class Prototype : DependencyNode, ICheckList
     {
         public Dictionary<string, ICheckListElement> Elements { get; } = new Dictionary<string, ICheckListElement>();
-        public PascalCaseDictionary<string, Expression> Expressions { get; set; } = new PascalCaseDictionary<string, Expression>();
-        public PascalCaseDictionary<string, string> ExternalSources { get; set; } = new PascalCaseDictionary<string, string>();
+        public PascalCaseDictionary<string, Expression> Expressions { get; } = new PascalCaseDictionary<string, Expression>();
+        public PascalCaseDictionary<string, string> ExternalSources { get; } = new PascalCaseDictionary<string, string>();
         public PascalCaseDictionary<string, PascalCaseDictionary<string, string>> ExternalSourceRows { get; }
+        public PascalCaseDictionary<string, ExternalSourceDependencyNode> ExternalSourceDependencyNodes { get; } = new PascalCaseDictionary<string, ExternalSourceDependencyNode>();
         public ICheckListGroup Header { get; set; }
         public List<ICheckListPage> Pages { get; } = new List<ICheckListPage>();
         public string DescriptionFormulaString { get; set; }
@@ -56,6 +58,10 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                     Page.CheckList = this;
                     Page.Setup();
                 }
+
+                ExternalSourceDependencyNodes.Clear();
+                foreach (string ExternalSource in ExternalSources.Keys)
+                    ExternalSourceDependencyNodes.Add(ExternalSource, new ExternalSourceDependencyNode { Code = ExternalSource });
 
                 bool Error = false;
                 foreach (var expression in Expressions)

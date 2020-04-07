@@ -73,6 +73,8 @@ namespace CheckListManager.Common.Logic.Dependency
                     return (DependencyNode)checkList;
                 case "page":
                     return (DependencyNode)(ObjectID.HasValue ? checkList.Pages[ObjectID.Value] : checkList.Elements[ObjectCode]);
+                case "external source":
+                    return checkList.ExternalSourceDependencyNodes[ObjectCode];
                 default:
                     throw new Exception($"Invalid class name {ClassName}");
             }

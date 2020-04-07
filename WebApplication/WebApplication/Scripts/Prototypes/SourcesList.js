@@ -10,6 +10,7 @@
         list = [],
         currentIndex,
         removeButton,
+        dependencyButton,
 
         up = function (icon) {
             var
@@ -45,6 +46,7 @@
                     body.children().eq(currentIndex).addClass("Selected").removeClass("Handler")
                         .children(":first-child").attr("contenteditable", true).focus();
                 removeButton.toggle(currentIndex != null);
+                dependencyButton.toggle(currentIndex != null);
             }
         },
 
@@ -68,9 +70,6 @@
                 .append($("<td />").addClass("CodeColumn").text(row.code))
                 .append(value)
                 .append($("<td />").addClass("Order Centered Inactive").append($("<i />").addClass("Up fa fa-caret-up")).append($("<i />").addClass("Down fa fa-caret-down")));
-
-            if (model.state == prototypes.Prototype.states.draft)
-                matematici.canClose = false;
         },
 
         remove = function () {
@@ -108,10 +107,14 @@
                     model.externalSources[row.children("td").eq(0).text()] = $("select", row).val();
                 });
             }
-            element.remove();
+            setTimeout(function () {
+                element.remove();
+                matematici.elements.body.removeClass("CheckListGrid");
+            }, 0); //handles the blur event handler of the text boxes
         },
 
         setup = function () {
+            matematici.elements.body.addClass("CheckListGrid");
             element = $("<div />").addClass("CheckListGrid").appendTo(matematici.elements.body);
             container = $("<div />").addClass("Container").appendTo(element).on("click", function (e) {
                 e.preventDefault();
@@ -138,7 +141,6 @@
                     select($(this).parent().prevAll().size());
                 });
 
-
             var
                 buttons =
                     $("<div />").addClass("Buttons").appendTo(container)
@@ -146,11 +148,30 @@
                             close();
                         }))
                         .append($("<a />").addClass("Button").text("add").toggle(model.state == prototypes.Prototype.states.draft).prepend($("<i />").addClass("Icon fa fa-plus")).on("click", function () {
+                            matematici.canClose = false;
                             add({ code: "" });
                             select(body.children().size() - 1);
                         }))
                         .append(removeButton = $("<a />").addClass("Button").text("remove").prepend($("<i />").addClass("Icon fa fa-minus")).on("click", function () {
                             remove();
+                        }).hide())
+                        .append(dependencyButton = $("<a />").addClass("Button").text("dependencies").prepend($("<i />").addClass("Icon fa fa-sitemap")).on("click", function () {
+                            var
+                                handler = function () {
+                                    var model = prototypes.prototype.getModel().externalSourceDependencyNodes[list[currentIndex].code];
+                                    matematici.dependenciesDialog.show(model.dependingRelations, model.dependentRelations);
+                                };
+                            if (matematici.canClose)
+                                handler();
+                            else
+                                matematici.dialog.show("warning", "There are unsaved changes.", [
+                                    {
+                                        text: "save", icon: "check", handler: function () {
+                                            prototypes.prototype.save(handler);
+                                        }
+                                    },
+                                    { text: "cancel", icon: "times", cancelButton: true }
+                                ]);
                         }).hide());
 
             sources = $("<select />");

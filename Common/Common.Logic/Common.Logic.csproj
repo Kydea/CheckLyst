@@ -122,6 +122,7 @@
     <Compile Include="Authentication\AuthenticateRequest.cs" />
     <Compile Include="Authentication\AuthorizeResponse.cs" />
     <Compile Include="DataSources\DataRequest.cs" />
+    <Compile Include="Models\CheckLists\ExternalSourceDependencyNode.cs" />
     <Compile Include="Dependency\DependencyRelation.cs" />
     <Compile Include="Dependency\DependencyNode.cs" />
     <Compile Include="Email\EmailTrailMessage.cs" />

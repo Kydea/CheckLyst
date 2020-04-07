@@ -901,7 +901,7 @@ namespace CheckListManager.Instances.Logic.Services
 
                 stopWatch = Stopwatch.StartNew();
 
-                List<Element> AffectedElements = new List<Element>();
+                List<DependencyNode> AffectedElements = new List<DependencyNode>();
                 DependencyRelation.Properties? Property = null;
                 switch (request.Type)
                 {
@@ -960,8 +960,8 @@ namespace CheckListManager.Instances.Logic.Services
                         Property = DependencyRelation.Properties.ReadOnly;
                         break;
                     case EventTypes.ExternalSourceRowChange:
-                        await HandleExternalSourceRowChange(cacheObject, identity, request.ItemId, request.RowIndex, request.Row);
-                        cacheObject.NeedToSave = true;
+                        AffectedElements.Add(await HandleExternalSourceRowChange(cacheObject, identity, request.ItemId, request.RowIndex, request.Row));
+                        Property = DependencyRelation.Properties.Value;
                         break;
                     case EventTypes.UploadAttachment:
                         AffectedElements.Add(await HandleUploadAttachment(cacheObject, identity, request.ItemId, request.Attachment));
@@ -976,20 +976,11 @@ namespace CheckListManager.Instances.Logic.Services
                 {
                     var roots = new List<Tuple<DependencyNode, DependencyRelation.Properties>>();
                     foreach (var AffectedElement in AffectedElements)
-                    {
-                        if (AffectedElement is Item AffectedItem && AffectedItem.IterationItem)
-                        { 
-                            var IteratorModel = AffectedItem.FindIteratorModelItem();
-                            if (Property.HasValue)
-                                IteratorModel.MarkNodeAsChanged(cacheObject.Instance, roots, Property.Value);
-                            else
-                                IteratorModel.MarkAllAsChanged(roots);
-                        }
-                        else if (Property.HasValue)
+                        if (Property.HasValue)
                             AffectedElement.MarkNodeAsChanged(cacheObject.Instance, roots, Property.Value);
                         else
-                            AffectedElement.MarkAllAsChanged(roots);
-                    }
+                            ((Element)AffectedElement).MarkAllAsChanged(roots);
+
                     DependencyNode.UpdateNodes(cacheObject.Instance, roots);
                     cacheObject.Instance.UpdateReadOnly(lockUser ?? identity.Code, cacheObject.InstanceState);
                 }
@@ -1578,7 +1569,7 @@ namespace CheckListManager.Instances.Logic.Services
             cacheObject.ModifiedOn = DateTimeOffset.UtcNow;
         }
 
-        private async Task HandleExternalSourceRowChange(InstanceCacheObject cacheObject, IDefaultIdentity identity, int? itemId, int? rowIndex, Dictionary<string, string> row)
+        private async Task<ExternalSourceDependencyNode> HandleExternalSourceRowChange(InstanceCacheObject cacheObject, IDefaultIdentity identity, int? itemId, int? rowIndex, Dictionary<string, string> row)
         {
             if (!itemId.HasValue)
                 throw new InstanceException("Item id not sent");
@@ -1587,8 +1578,8 @@ namespace CheckListManager.Instances.Logic.Services
             if (field == null)
                 throw new InstanceException($"Field {itemId} not found");
 
-            if (field.ReadOnly)
-                return;
+            if (field.ReadOnly || !cacheObject.Instance.ExternalSourceDependencyNodes.TryGetValue(field.ExternalSourceName, out var ExternalSourceDependencyNode))
+                return null;
 
             if (cacheObject.Instance.ExternalSourceRows == null) cacheObject.Instance.ExternalSourceRows = new PascalCaseDictionary<string, PascalCaseDictionary<string, string>>();
             cacheObject.Instance.ExternalSourceRows[field.ExternalSourceName] = new PascalCaseDictionary<string, string>(row);
@@ -1608,6 +1599,7 @@ namespace CheckListManager.Instances.Logic.Services
             });
 
             TrackChanges(cacheObject, identity.Code);
+            return ExternalSourceDependencyNode;
         }
 
         private async Task<Element> HandleUploadAttachment(

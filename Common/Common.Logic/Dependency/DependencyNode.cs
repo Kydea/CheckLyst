@@ -38,7 +38,7 @@ namespace CheckListManager.Common.Logic.Dependency
 
         public abstract bool Update(DependencyRelation.Properties Property);
 
-        public void MarkNodeAsChanged(ICheckList CheckList, List<Tuple<DependencyNode, DependencyRelation.Properties>> Roots, DependencyRelation.Properties Property)
+        public virtual void MarkNodeAsChanged(ICheckList CheckList, List<Tuple<DependencyNode, DependencyRelation.Properties>> Roots, DependencyRelation.Properties Property)
         {
             if (Property == DependencyRelation.Properties.ReadOnly) return; //readonly is not stateless and is always updated for each node
             if (NeedToUpdate.Contains(Property)) return; //Node already marked for this process

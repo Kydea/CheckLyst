@@ -210,8 +210,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             MarkNodeAsChanged(CheckList, Roots, DependencyRelation.Properties.Hidden);
             MarkNodeAsChanged(CheckList, Roots, DependencyRelation.Properties.CountDown);
         }
-
-
+        
         public override string DependencyClassName => "element";
 
         #endregion

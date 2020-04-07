@@ -27,7 +27,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 });
         }
 
-        private void GetAllChildren(ICheckListGroup Group, List<Element> children)
+        private void GetAllChildren(ICheckListGroup Group, List<DependencyNode> children)
         {
             if (!Group.Iterator)
                 Group.Items.ForEach(Item =>
@@ -37,7 +37,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 });
         }
 
-        public void GetAllChildren(List<Element> children) => GetAllChildren(this, children);
+        public void GetAllChildren(List<DependencyNode> children) => GetAllChildren(this, children);
 
         public override void Setup()
         {

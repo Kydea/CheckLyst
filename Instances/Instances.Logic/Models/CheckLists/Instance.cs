@@ -15,12 +15,13 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
     public class Instance : DependencyNode, ICheckList
     {
         public bool ReadOnly { get; set; }
-        public Dictionary<string, ICheckListElement> Elements { get; set; } = new Dictionary<string, ICheckListElement>();
+        public Dictionary<string, ICheckListElement> Elements { get; } = new Dictionary<string, ICheckListElement>();
         public PascalCaseDictionary<string, Expression> Expressions { get; set; }
         public PascalCaseDictionary<string, string> Exceptions =>
             Expressions == null ? null : new PascalCaseDictionary<string, string>(Expressions.Where(e => e.Value?.Exception == true && e.Value?.Value?.Value as bool? == true).ToDictionary(k => k.Key, v => v.Value?.Description));
         public PascalCaseDictionary<string, string> ExternalSources { get; set; }
         public PascalCaseDictionary<string, PascalCaseDictionary<string, string>> ExternalSourceRows { get; set; }
+        public PascalCaseDictionary<string, ExternalSourceDependencyNode> ExternalSourceDependencyNodes { get; } = new PascalCaseDictionary<string, ExternalSourceDependencyNode>();
         public ICheckListGroup Header { get; set; }
         public List<ICheckListPage> Pages { get; set; }
 
@@ -104,6 +105,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public void BuildDependencies()
         {
+            foreach (string ExternalSource in ExternalSources.Keys)
+                ExternalSourceDependencyNodes.Add(ExternalSource, new ExternalSourceDependencyNode { Code = ExternalSource });
+
             foreach (var Expression in Expressions.Values)
                 Expression.ClearDependencies();
 
@@ -154,7 +158,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 { "InstanceNumber", cacheObject.Number },
             };
         }
-
 
         public void UpdateAll(InstanceCacheObject cacheObject = null)
         {

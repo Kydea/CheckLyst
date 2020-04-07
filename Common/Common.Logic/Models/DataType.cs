@@ -89,7 +89,8 @@ namespace CheckListManager.Common.Logic.Models
 				name == "Time" ? Time :
                 name == "Array" ? Array :
 				name == "Error" ? Error :
-				name == "Text" || !strict ? Text : throw new InvalidOperationException($"DataType {name} not valid");
+				name == "Text" || !strict ? Text : 
+                throw new InvalidOperationException($"DataType {name} not valid");
         }
 
         public enum DataTypeEnum
