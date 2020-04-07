@@ -31,10 +31,10 @@ namespace CheckListManager.Instances.Api
 			    .As<CustomJsonConverter>()
 			    .InstancePerDependency();
 
-            //builder.RegisterType<TypedValueJsonConverter>()
-            //    .AsSelf()
-            //    .As<CustomJsonConverter>()
-            //    .InstancePerDependency();
+            builder.RegisterType<TypedValueJsonConverter>()
+                .AsSelf()
+                .As<CustomJsonConverter>()
+                .InstancePerDependency();
         }
 
 	    private static void RegisterChecklistItem<TClass, TInterface>(ContainerBuilder builder) where TClass : TInterface

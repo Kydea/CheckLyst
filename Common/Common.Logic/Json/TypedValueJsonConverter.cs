@@ -17,7 +17,7 @@ namespace CheckListManager.Common.Logic.Json
         {
             var jobject = JObject.Load(reader);
 
-            var dataType = DataType.FromName(jobject["Type"].Value<string>("TypeName"));
+            var dataType = DataType.FromName(jobject["Type"].Value<string>("TypeName"), true);
             var value = dataType.FromJson(jobject["Value"], serializer);
 
             return new TypedValue(dataType, value);
