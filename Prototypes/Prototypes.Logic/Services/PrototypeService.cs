@@ -570,7 +570,8 @@ namespace CheckListManager.Prototypes.Logic.Services
             await ValidateRequest(identity, request);
 	        var extension = Path.GetExtension(request.Attachment.FileName);
 
-            var key = $"{identity.CompanyId}/{request.Id}-{request.Version}/{request.Code}{extension}";
+            var imageName = request.Code ?? Guid.NewGuid().ToString();
+            var key = $"{identity.CompanyId}/{request.Id}-{request.Version}/{imageName}{extension}";
 
             using (var memoryStream = new MemoryStream(request.Attachment.Buffer))
             {
@@ -579,7 +580,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                     throw new Exception("Error uploading the attachment");
             }
 
-			return new UploadAttachmentResponse { Key = key };
+			return new UploadAttachmentResponse { Key = key, ImageName = imageName };
         }
 
         public async Task<StorageFile> DownloadAttachmentAsync(DefaultIdentity identity, ProcessAttachmentRequest request)
@@ -628,7 +629,8 @@ namespace CheckListManager.Prototypes.Logic.Services
                 async item =>
                 {
                     var image = (Image)item;
-                    string Key = $"{companyId}/{prototypeId}-{version}/{image.Id}{Path.GetExtension(image.Key)}";
+                    image.ImageName = image.ImageName ?? Guid.NewGuid().ToString();
+                    var Key = $"{companyId}/{prototypeId}-{version}/{image.ImageName}{Path.GetExtension(image.Key)}";
 
                     if (!await _storageService.CloneAsync(_configurationService.PrototypesStorageBucket, image.Key, Key))
                         throw new Exception($"Could not clone the file of the image {image.Id}-{image.Description ?? "(no label)"} from {image.Key} to {Key}");

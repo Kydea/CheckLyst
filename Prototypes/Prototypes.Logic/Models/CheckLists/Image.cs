@@ -16,6 +16,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             return Image;
         }
 
+        public string ImageName { get; set; }
         public string Key { get; set; }
     }
 }
