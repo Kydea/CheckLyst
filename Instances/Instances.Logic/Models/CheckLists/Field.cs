@@ -55,7 +55,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 ExternalSourceName = ExternalSourceName,
                 ExternalSourceColumn = ExternalSourceColumn
             };
-            field.ValueFormula.BuildDependencies(ValueFormulaString);
+            field.ValueFormula.IsSet = ValueFormula.IsSet;
             Copy(this, field);
             return field;
         }
@@ -64,20 +64,24 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         {
             base.BuildDependencies();
 
-            ValueFormula.BuildDependencies(ValueFormulaString);
-            foreach (var Key in ValueFormula.ValueKeys)
-                if (CheckList.Expressions.TryGetValue(Key, out var Expression))
-                    AddDependingRelation(DependencyRelation.Properties.Value, Expression, DependencyRelation.Properties.Value);
+            ValueFormula.BuildDependencies(ValueFormulaString, IterationItem ? ((Field)FindIteratorModelItem()).ValueFormula : null);
 
-            if (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
-                AddDependingRelation(DependencyRelation.Properties.Validity, this, DependencyRelation.Properties.Value);
-
-            if (ExternalSourceName != null)
+            if (!IterationItem)
             {
-                if (!CheckList.ExternalSourceDependencyNodes.TryGetValue(ExternalSourceName, out var ExternalSourceDependencyNode))
-                    throw new Exception($"The property value references to the inexistent external source {ExternalSourceName} for {this}");
+                foreach (var Key in ValueFormula.ValueKeys)
+                    if (CheckList.Expressions.TryGetValue(Key, out var Expression))
+                        AddDependingRelation(DependencyRelation.Properties.Value, Expression, DependencyRelation.Properties.Value);
 
-                AddDependingRelation(DependencyRelation.Properties.Value, ExternalSourceDependencyNode, DependencyRelation.Properties.Value);
+                if (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
+                    AddDependingRelation(DependencyRelation.Properties.Validity, this, DependencyRelation.Properties.Value);
+
+                if (ExternalSourceName != null)
+                {
+                    if (!CheckList.ExternalSourceDependencyNodes.TryGetValue(ExternalSourceName, out var ExternalSourceDependencyNode))
+                        throw new Exception($"The property value references to the inexistent external source {ExternalSourceName} for {this}");
+
+                    AddDependingRelation(DependencyRelation.Properties.Value, ExternalSourceDependencyNode, DependencyRelation.Properties.Value);
+                }
             }
         }
 
@@ -90,7 +94,11 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 dateTimeOffset = DateTimeOffsetHelper.Parse(Value, Instance.TimeZone, out var Ambiguous, out var AmbiguousDateTimeOffsets, $"{DateTimeOffsetHelper.DateFormat} {DateTimeOffsetHelper.TimeFormat}");
             if (dateTimeOffset.HasValue) Offset = (int)dateTimeOffset.Value.Offset.TotalMinutes;
 
-            ValueFormula.Evaluate(CheckList, GetRuntimeValues(), Instance.DecimalSeparator, Instance.TimeZone, Iteration?.Indexes);
+            if (IterationItem)
+                ValueFormula.Evaluate(CheckList, GetRuntimeValues(), Instance.DecimalSeparator, Instance.TimeZone, Iteration?.Indexes, ((Field)FindIteratorModelItem()).ValueFormula);
+            else
+                ValueFormula.Evaluate(CheckList, GetRuntimeValues(), Instance.DecimalSeparator, Instance.TimeZone, Iteration?.Indexes);
+
             if (ValueFormula.IsSet)
             {
                 ConversionError = ValueFormula.HasValue && !ValueType.Validate(ValueFormula.Value);
@@ -108,15 +116,12 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             }
         }
 
-        public override bool Update(DependencyRelation.Properties Property)
+        protected override void OnUpdate(DependencyRelation.Properties Property)
         {
             if (Property == DependencyRelation.Properties.Value)
-            {
                 UpdateValue();
-                return true;
-            }
             else
-                return base.Update(Property);
+                base.OnUpdate(Property);
         }
 
         public override void MarkAllAsChanged(List<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)

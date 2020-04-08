@@ -91,14 +91,13 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public override void BuildDependencies()
         {
-            //the iterations are considerend "transparent" object, for validity, visibility, etc.
-
             //this is called only for instances existing before v. 2.0.0, because BuildDependencies is called only once per instance
             for (var Index = 0; Index < Items.Count(); ++Index)
             {
                 var Item = (Item)Items[Index];
                 Item.ClonedBy = Group.Items[Index].Id;
             }
+            base.BuildDependencies();
         }
 
         public override void MarkAllAsChanged(List<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)

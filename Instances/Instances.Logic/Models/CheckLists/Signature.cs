@@ -32,12 +32,12 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 AddDependingRelation(DependencyRelation.Properties.Validity, this, DependencyRelation.Properties.Signature);
         }
 
-        public override bool Update(DependencyRelation.Properties Property)
+        protected override void OnUpdate(DependencyRelation.Properties Property)
         {
             if (Property == DependencyRelation.Properties.Signature)
-                return true;
+                return;
             else
-                return base.Update(Property);
+                base.OnUpdate(Property);
         }
 
         public override ICheckListItem Clone(ICheckListGroup parent)

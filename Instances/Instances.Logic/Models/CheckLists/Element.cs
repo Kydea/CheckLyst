@@ -158,27 +158,17 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         #region Dependency
 
-        private Expression GetExpression(string ExpressionCode, DependencyRelation.Properties SourceProperty, string PropertyName)
+        private void GetExpression(string ExpressionCode, DependencyRelation.Properties SourceProperty, string PropertyName)
         {
-            if (string.IsNullOrEmpty(ExpressionCode))
-                throw new Exception($"The property {PropertyName} reference is missing for {this}");
-            if (!CheckList.Expressions.TryGetValue(ExpressionCode, out var Expression))
-                throw new Exception($"The property {PropertyName} references to the inexistent expression {ExpressionCode} for {this}");
-            AddDependingRelation(SourceProperty, Expression, DependencyRelation.Properties.Value);
-            return Expression;
+            if (!string.IsNullOrEmpty(ExpressionCode) && CheckList.Expressions.TryGetValue(ExpressionCode, out var Expression))
+                AddDependingRelation(SourceProperty, Expression, DependencyRelation.Properties.Value);
         }
 
-        private Signature GetSignature(string SignatureCode, DependencyRelation.Properties SourceProperty, string PropertyName)
+        private void GetSignature(string SignatureCode, DependencyRelation.Properties SourceProperty, string PropertyName)
         {
             var BranchElements = GetBranchElements();
-            if (string.IsNullOrEmpty(SignatureCode))
-                throw new Exception($"The property {PropertyName} reference is missing for {this}");
-            if (!BranchElements.ContainsKey(SignatureCode))
-                throw new Exception($"The property {PropertyName} references to the inexistent signature {SignatureCode} for {this}");
-            if (!(BranchElements[SignatureCode] is Signature Signature))
-                throw new Exception($"The property {PropertyName} references to the element {SignatureCode} which is not a signature for {this}");
-            AddDependingRelation(SourceProperty, Signature, DependencyRelation.Properties.Signature);
-            return Signature;
+            if (!string.IsNullOrEmpty(SignatureCode) && BranchElements.ContainsKey(SignatureCode) && (BranchElements[SignatureCode] is Signature Signature))
+                AddDependingRelation(SourceProperty, Signature, DependencyRelation.Properties.Signature);
         }
 
         public virtual void BuildDependencies()

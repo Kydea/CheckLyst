@@ -53,7 +53,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         {
             base.BuildDependencies();
 
-            DescriptionFormula.BuildDependencies(Description);
+            DescriptionFormula.BuildDependencies(Description, null);
             foreach (var Key in DescriptionFormula.ValueKeys)
                 if (CheckList.Expressions.TryGetValue(Key, out var Expression))
                     AddDependingRelation(DependencyRelation.Properties.Formula, Expression, DependencyRelation.Properties.Value);

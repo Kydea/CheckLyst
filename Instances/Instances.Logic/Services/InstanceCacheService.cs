@@ -44,6 +44,7 @@ namespace CheckListManager.Instances.Logic.Services
 
 		public async Task SetAsync(InstanceCacheObject cacheObject)
 		{
+            return;
 			try
 			{
 				_redisCache.BeginTransaction();

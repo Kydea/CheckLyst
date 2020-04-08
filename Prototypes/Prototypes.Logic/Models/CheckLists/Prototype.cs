@@ -133,12 +133,12 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
             if (Result)
             {
-                DescriptionFormula.BuildDependencies(DescriptionFormulaString);
+                DescriptionFormula.BuildDependencies(DescriptionFormulaString, null);
                 foreach (var Key in DescriptionFormula.ValueKeys)
                     if (Expressions.TryGetValue(Key, out var Expression))
                         AddDependingRelation(DependencyRelation.Properties.Formula, Expression, DependencyRelation.Properties.Value);
 
-                FileNameFormula.BuildDependencies(FileNameFormulaString);
+                FileNameFormula.BuildDependencies(FileNameFormulaString, null);
                 foreach (var Key in FileNameFormula.ValueKeys)
                     if (Expressions.TryGetValue(Key, out var Expression))
                         AddDependingRelation(DependencyRelation.Properties.Formula, Expression, DependencyRelation.Properties.Value);

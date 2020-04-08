@@ -801,21 +801,21 @@ namespace CheckListManager.Instances.Logic.Services
             foreach (var code in request.Instances)
                 try
                 {
-                    var instance = await _instanceCache.GetAsync(code, true);
-                    if (instance != null)
+                    var cacheObject = await _instanceCache.GetAsync(code, false);
+                    if (cacheObject != null)
                     {
-                        if (instance.Prototype != request.Prototype || instance.Version != request.Version)
-                            Logger.Warn($"Incongruent instance prototype and version: Received {request.Prototype}-{request.Version}, expected: {instance.Prototype}-{instance.Version}");
+                        if (cacheObject.Prototype != request.Prototype || cacheObject.Version != request.Version)
+                            Logger.Warn($"Incongruent instance prototype and version: Received {request.Prototype}-{request.Version}, expected: {cacheObject.Prototype}-{cacheObject.Version}");
 
-                        if (instance.NeedToSave)
+                        if (cacheObject.NeedToSave)
                             await SaveAsync(
-                                instance,
+                                cacheObject,
                                 identity,
                                 true,
                                 false,
                                 false,
-                                instance.ModifiedBy,
-                                instance.ModifiedOn
+                                cacheObject.ModifiedBy,
+                                cacheObject.ModifiedOn
                             );
                     }
                 }

@@ -45,7 +45,7 @@ namespace CheckListManager.Common.Logic.Dependency
 
             NeedToUpdate.Add(Property);
 
-            var DependentRelations = this.DependentRelations.Where(n => n.SourceProperty == Property);
+            var DependentRelations = this.DependentRelations.Where(x => x.SourceProperty == Property && x.DestinationProperty != DependencyRelation.Properties.ReadOnly); //readonly is not stateless and is always updated for each node
             if (DependentRelations.Any())
                 foreach (var DependentRelation in DependentRelations)
                     DependentRelation.GetNode(CheckList).MarkNodeAsChanged(CheckList, Roots, DependentRelation.DestinationProperty);

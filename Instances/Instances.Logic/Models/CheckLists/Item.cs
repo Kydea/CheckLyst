@@ -21,6 +21,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public ICheckListIteration Iteration { get; set; }
         public bool IterationItem { get; set; }
         public bool IteratorModelItem { get; set; }
+        public int IteratorModelItemId { get; set; }
         public virtual bool NewLine { get; set; }
         public ICheckListPage Page { get; set; }
         public ICheckListItem Previous { get; set; }
@@ -44,15 +45,28 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public override void BuildDependencies()
         {
-            base.BuildDependencies();
+            if (!(this is Iteration))
+                DescriptionFormula.BuildDependencies(Description, Iteration == null ? null : FindIteratorModelItem().DescriptionFormula);
 
-            DescriptionFormula.BuildDependencies(Description);
-            foreach (var Key in DescriptionFormula.ValueKeys)
-                if (CheckList.Expressions.TryGetValue(Key, out var Expression))
-                    AddDependingRelation(DependencyRelation.Properties.Formula, Expression, DependencyRelation.Properties.Value);
+            if (!IterationItem)
+            {
+                foreach (var Key in DescriptionFormula.ValueKeys)
+                    if (CheckList.Expressions.TryGetValue(Key, out var Expression))
+                        AddDependingRelation(DependencyRelation.Properties.Formula, Expression, DependencyRelation.Properties.Value);
+
+                base.BuildDependencies();
+            }
         }
 
-        public override bool Update(DependencyRelation.Properties Property)
+        protected virtual void OnUpdate(DependencyRelation.Properties Property)
+        {
+            if (Property == DependencyRelation.Properties.Formula)
+                UpdateFormula();
+            else
+                base.Update(Property);
+        }
+
+        public sealed override bool Update(DependencyRelation.Properties Property)
         {
             if (IteratorModelItem)
             {
@@ -60,21 +74,23 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 foreach (var IterationItem in IterationItems)
                 {
                     IterationItem.NeedToUpdate.Add(Property);
-                    IterationItem.Update(Property);
+                    IterationItem.OnUpdate(Property);
                 }
                 NeedToUpdate.Remove(Property);
             }
-            else if (Property == DependencyRelation.Properties.Formula)
-                UpdateFormula();
             else
-                base.Update(Property);
+                OnUpdate(Property);
 
             return true;
         }
 
         protected virtual void UpdateFormula()
         {
-            DescriptionFormula.Evaluate(CheckList, GetRuntimeValues(), Instance.DecimalSeparator, Instance.TimeZone, Iteration?.Indexes);
+            if (IterationItem)
+                DescriptionFormula.Evaluate(CheckList, GetRuntimeValues(), Instance.DecimalSeparator, Instance.TimeZone, Iteration?.Indexes, FindIteratorModelItem().DescriptionFormula);
+            else
+                DescriptionFormula.Evaluate(CheckList, GetRuntimeValues(), Instance.DecimalSeparator, Instance.TimeZone, Iteration?.Indexes);
+
         }
 
         protected override void UpdateHidden()
@@ -94,8 +110,18 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 base.UpdateReadOnly(userCode, readOnlyInstance);
         }
 
-        public Item FindIteratorModelItem() =>
-            IterationItem ? (Item)((Group)((Group)Iteration.Group).FindIteratorModelItem()).Items[ItemIndex] : this;
+        public Item FindIteratorModelItem()
+        {
+            Item IteratorModelItem;
+            if (IteratorModelItemId > 0)
+                IteratorModelItem = (Item)Instance.Items[IteratorModelItemId];
+            else
+            {
+                IteratorModelItem = IterationItem ? (Item)((Group)((Group)Iteration.Group).FindIteratorModelItem()).Items[ItemIndex] : this;
+                IteratorModelItemId = IteratorModelItem.Id;
+            }
+            return IteratorModelItem;
+        }
 
         public IEnumerable<Item> FindIterationItems()
         {
@@ -155,7 +181,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             destination.Color = source.Color;
             destination.FontSize = source.FontSize;
 
-            destination.DescriptionFormula.BuildDependencies(source.Description);
+            destination.DescriptionFormula.IsSet = source.FindIteratorModelItem().DescriptionFormula.IsSet;
         }
 
         public override string DependencyClassName => "item";

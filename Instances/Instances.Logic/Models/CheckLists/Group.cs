@@ -244,12 +244,14 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             base.BuildDependencies();
             foreach (Item Item in Items)
             {
-                if (HiddenCondition == Conditions.False || HiddenCondition == Conditions.Expression)
-                    Item.AddDependingRelation(DependencyRelation.Properties.Hidden, this, DependencyRelation.Properties.Hidden);
+                if (!IterationItem)
+                {
+                    if (HiddenCondition == Conditions.False || HiddenCondition == Conditions.Expression)
+                        Item.AddDependingRelation(DependencyRelation.Properties.Hidden, this, DependencyRelation.Properties.Hidden);
 
-                if (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
-                    AddDependingRelation(DependencyRelation.Properties.Validity, Item, DependencyRelation.Properties.Validity);
-
+                    if (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
+                        AddDependingRelation(DependencyRelation.Properties.Validity, Item, DependencyRelation.Properties.Validity);
+                }
                 Item.BuildDependencies();
             }
 
