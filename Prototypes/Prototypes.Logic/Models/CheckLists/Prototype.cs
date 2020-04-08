@@ -129,7 +129,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             var Result = true;
             foreach (var expression in Expressions.Values)
                 if (expression.Error == null && !expression.BuildDependencies(this))
-                    Result = true;
+                    Result = false;
 
             if (Result)
             {
