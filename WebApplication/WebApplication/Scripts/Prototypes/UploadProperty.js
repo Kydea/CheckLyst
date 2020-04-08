@@ -14,7 +14,7 @@
                 formData.append("attachment", input[0].files[0]);
                 formData.append("id", prototypeKey.id);
                 formData.append("version", prototypeKey.version);
-                formData.append("code", model.id);
+				if (model.imageName) formData.append("code", model.imageName);
 
                 $.ajax({
                     url: prototypes.prototype.getElement().data("action") + "UploadAttachment",
@@ -25,7 +25,8 @@
                     contentType: false,
                     processData: false
                 }).done(function (result) {
-                    model.cloned = false;
+					model.cloned = false;
+					model.imageName = result.imageName;
                     model[property] = result.key;
                     previewButton.toggle(true);
                     deleteButton.toggle(true);
