@@ -71,11 +71,11 @@ namespace CheckListManager.Common.Logic.Models
 		}
 
 		public static DataType Text = new DataType(DataTypeEnum.Text, "Text", typeof(string));
-		public static DataType Boolean = new DataType(DataTypeEnum.Boolean, "Boolean", typeof(bool));
-		public static DataType Number = new DataType(DataTypeEnum.Number, "Number", typeof(decimal));
-		public static DataType DateTime = new DataType(DataTypeEnum.DateTime, "DateTime", typeof(DateTimeOffset));
-		public static DataType Date = new DataType(DataTypeEnum.Date, "Date", typeof(DateTimeOffset));
-		public static DataType Time = new DataType(DataTypeEnum.Time, "Time", typeof(TimeSpan));
+		public static DataType Boolean = new DataType(DataTypeEnum.Boolean, "Boolean", typeof(bool?));
+		public static DataType Number = new DataType(DataTypeEnum.Number, "Number", typeof(decimal?));
+		public static DataType DateTime = new DataType(DataTypeEnum.DateTime, "DateTime", typeof(DateTimeOffset?));
+		public static DataType Date = new DataType(DataTypeEnum.Date, "Date", typeof(DateTimeOffset?));
+		public static DataType Time = new DataType(DataTypeEnum.Time, "Time", typeof(TimeSpan?));
         public static DataType Array = new DataType(DataTypeEnum.Array, "Array", typeof(List<TypedValue>));
         public static DataType Error = new DataType(DataTypeEnum.Error, "Error", typeof(string));
 
