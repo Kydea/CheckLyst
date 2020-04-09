@@ -36,8 +36,9 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
         protected override TypedValue GetValue(List<TypedValue> Values)
         {
             var Result =
-                Values.Count == 0 || Values.Any(Value => Value.IsNull) ? default(decimal?) :
+                Values.Any(Value => Value.IsNull) ? default(decimal?) :
                 Property == "Sum" ? Values.Sum(TypedValue => TypedValue.NumberValue) :
+                Values.Count == 0 ? default(decimal?) :
                 Property == "Avg" ? Values.Average(TypedValue => TypedValue.NumberValue) :
                 Property == "StDev" ? StDev(Values) :
                 default(decimal?);
