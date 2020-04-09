@@ -135,10 +135,10 @@
     <Compile Include="Models\CheckLists\SignatureRecord.cs" />
     <Compile Include="Models\DataType.cs" />
     <Compile Include="Models\Expressions\AritmeticOperators\Power.cs" />
+    <Compile Include="Models\Expressions\ElementProperties\IteratorProperty.cs" />
     <Compile Include="Models\Expressions\IteratorFunctions\BinaryIteratorFunction.cs" />
     <Compile Include="Models\Expressions\IteratorFunctions\UnaryIteratorFunction.cs" />
     <Compile Include="Models\Expressions\IteratorFunctions\Each.cs" />
-    <Compile Include="Models\Expressions\IteratorFunctions\Count.cs" />
     <Compile Include="Models\Expressions\IteratorFunctions\GeometricFunction.cs" />
     <Compile Include="Models\Expressions\IteratorFunctions\Measure.cs" />
     <Compile Include="Models\Expressions\AritmeticOperators\BinaryAritmeticOperator.cs" />
