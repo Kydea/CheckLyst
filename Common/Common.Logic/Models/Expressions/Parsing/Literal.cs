@@ -150,6 +150,9 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     case "Valid":
                         Symbol = new ElementProperties.ElementProperty { Code = Values[0], Position = Position };
                         break;
+                    case "Count":
+                        Symbol = new ElementProperties.IteratorProperty { Code = Values[0], Position = Position };
+                        break;
                     case "Sum":
                     case "Avg":
                     case "StDev":
@@ -166,12 +169,6 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                         GeometricFunction.Left  = Arguments[0].Symbol;
                         GeometricFunction.Right = Arguments[1].Symbol;
                         Symbol = GeometricFunction;
-                        break;
-                    case "Count":
-                        var Count = new IteratorFunctions.Count { IteratorCode = Values[0], Position = Position };
-                        ParseArgument(ref ExpressionValue, ref Position, 1);
-                        Count.Argument = Arguments[0].Symbol;
-                        Symbol = Count;
                         break;
                     case "Each":
                         var Each = new IteratorFunctions.Each { IteratorCode = Values[0], Position = Position };
