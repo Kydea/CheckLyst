@@ -11,8 +11,6 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
 		List<FieldRecord> History { get; }
 		int LinesCount { get; set; }
 		string Value { get; set; }
-		[JsonIgnore]
-		Formula ValueFormula { get; }
 		string ValueFormulaString { get; set; }
 		List<string> ValuesList { get; set; }
 		[JsonIgnore]

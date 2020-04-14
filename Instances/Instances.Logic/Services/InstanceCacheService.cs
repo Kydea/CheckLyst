@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using CheckListManager.Common.Logic.Cache;
 using CheckListManager.Common.Logic.Json;
+using CheckListManager.Common.Logic.Services;
 using CheckListManager.Instances.Logic.Exceptions;
 using CheckListManager.Instances.Logic.Models;
 using CheckListManager.Instances.Logic.Models.CheckLists;
+using Newtonsoft.Json;
 using NLog;
 
 namespace CheckListManager.Instances.Logic.Services
@@ -16,42 +19,42 @@ namespace CheckListManager.Instances.Logic.Services
 		private const string RegionName = "Instance";
 
 		private readonly IRedisCache _redisCache;
-		private readonly CheckListJsonConverter _converter;
+        private readonly ISettingService _settingService;
+		private readonly JsonConverter[] _converters;
 
-		public InstanceCacheService(IRedisCache redisCache, CheckListJsonConverter converter)
+		public InstanceCacheService(IRedisCache redisCache, ISettingService settingService, CustomJsonConverter[] converters)
 		{
 			_redisCache = redisCache;
-			_converter = converter;
+            _settingService = settingService;
+			_converters = converters.ToArray<JsonConverter>();
 		}
 
-		public async Task<InstanceCacheObject> GetAsync(string code, bool includeData = true)
+		public async Task<InstanceCacheObject> GetAsync(string code, bool includeData)
 		{
-			var instance = await _redisCache.GetAsync<InstanceCacheObject>($"Instance:{code}:Metadata", RegionName);
-			if (instance != null && includeData)
+			var cacheObject = await _redisCache.GetAsync<InstanceCacheObject>($"Instance:{code}:Metadata", RegionName);
+			if (cacheObject != null && includeData)
 			{
-				instance.Instance = await _redisCache.GetAsync<Instance>($"Instance:{code}:Data", RegionName, _converter);
-				if (instance.Instance == null)
-					throw new InstanceException("Instance data missing");
-
-				instance.Instance.Setup(false);
+				cacheObject.Instance = await _redisCache.GetAsync<Instance>($"Instance:{code}:Data", RegionName, _converters);
+				if (cacheObject.Instance == null) throw new InstanceException("Instance data missing");
+				cacheObject.Instance.Setup(cacheObject, await _settingService.DecimalSeparatorAsync(cacheObject.CompanyId), await _settingService.TimeZoneAsync(cacheObject.CompanyId), false);
 			}
 
-			return instance;
+			return cacheObject;
 		}
 
-		public async Task SetAsync(string code, InstanceCacheObject instance)
+		public async Task SetAsync(InstanceCacheObject cacheObject)
 		{
 			try
 			{
 				_redisCache.BeginTransaction();
 
-				await _redisCache.SetAsync($"Instance:{code}:Metadata", instance, RegionName);
-				if (instance.Instance != null)
-					await _redisCache.SetAsync($"Instance:{code}:Data", instance.Instance, RegionName);
+				await _redisCache.SetAsync($"Instance:{cacheObject.Code}:Metadata", cacheObject, RegionName);
+				if (cacheObject.Instance != null)
+					await _redisCache.SetAsync($"Instance:{cacheObject.Code}:Data", cacheObject.Instance, RegionName);
 
 				var score = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
-				await _redisCache.SortedSetElementInsertAsync("Instances", instance.Code, score, RegionName);
+				await _redisCache.SortedSetElementInsertAsync("Instances", cacheObject.Code, score, RegionName);
 
 				await _redisCache.CommitTransactionAsync();
 			}
@@ -83,16 +86,13 @@ namespace CheckListManager.Instances.Logic.Services
 			}
 		}
 
-		public Task TouchInstanceAsync(string code, double? score = null)
-		{
-			score = score ?? DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-			return _redisCache.SortedSetElementInsertAsync("Instances", code, score.Value, RegionName);
-		}
+		public Task TouchAsync(string code)
+			=>_redisCache.SortedSetElementInsertAsync("Instances", code, DateTimeOffset.UtcNow.ToUnixTimeSeconds(), RegionName);
 
-		public Task<LockObject> LockInstanceAsync(string code)
+		public Task<LockObject> LockAsync(string code)
 			=> _redisCache.LockAsync($"Instance:{code}:Lock", RegionName);
 
-		public Task<string[]> GetInstancesWithRangeAsync(double start = double.NegativeInfinity, double stop = double.PositiveInfinity)
+		public Task<string[]> GetInstancesInRangeAsync(double start = double.NegativeInfinity, double stop = double.PositiveInfinity)
 			=> _redisCache.SortedSetGetAsync("Instances", start, stop, RegionName);
-	}
+    }
 }

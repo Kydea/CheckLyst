@@ -1,20 +1,40 @@
 ﻿using CheckListManager.Common.Core.Helpers;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Runtime.Serialization;
 
 namespace CheckListManager.Common.Logic.Models.Expressions
 {
     public class TypedValue
     {
-        public TypedValue(Type RawType, object Value) : this(DataType.FromType(RawType), Value.ToString()) { }
-
-        public TypedValue(DataType Type, string SerializedValue, string TimeZone)
+        private TypedValue()
         {
-            this.Type = Type;
-            this.SerializedValue = SerializedValue;
-            Parse(TimeZone);
+
+        }
+
+        public TypedValue(DataType Type, string Value, string TimeZone)
+        {
+            try
+            {
+                this.Value =
+                    string.IsNullOrWhiteSpace(Value) ? null :
+                    Type == DataType.Boolean ? bool.Parse(Value) :
+                    Type == DataType.DateTime ? DateTimeOffsetHelper.Parse(Value, TimeZone, out var Ambiguous, out var AmbiguousTimesSpans, $"{DateTimeOffsetHelper.DateFormat} {DateTimeOffsetHelper.TimeFormat}") :
+                    Type == DataType.Date ? DateTimeOffsetHelper.Parse(Value, TimeZone, out Ambiguous, out AmbiguousTimesSpans, DateTimeOffsetHelper.DateFormat) :
+                    Type == DataType.Time ? TimeSpan.ParseExact(Value, "hh\\:mm", null) :
+                    Type == DataType.Number ? decimal.Parse(Value.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture) :
+                    Type == DataType.Error ? Value :
+                    (object)Value;
+                this.Type = Type;
+            }
+            catch (Exception Exception)
+            {
+                this.Value = Exception.Message;
+                this.Type = DataType.Error;
+            }
         }
 
         public TypedValue(DataType Type, object Value)
@@ -24,7 +44,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                 if (Value == null)
                 {
                     this.Type = Type;
-                    this.Value = SerializedValue = null;
+                    this.Value = null;
                 }
                 else if
                 (
@@ -33,15 +53,14 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                     Type == DataType.Date && !(Value is DateTimeOffset) ||
                     Type == DataType.Time && !(Value is TimeSpan) ||
                     Type == DataType.Number && !(Value is decimal) ||
-                    Type == DataType.Array && !(Value is IEnumerable<TypedValue>) ||
+                    Type == DataType.Array && !(Value is List<TypedValue>) ||
                     Type == DataType.Text && !(Value is string)
                 )
-                    throw new Exception("Invalid class " + Value.GetType().Name + " for DataType " + Type.ToString());
+                    throw new Exception("Invalid class " + Value.GetType().Name + " for DataType " + Type);
                 else
                 {
                     this.Type = Type;
                     this.Value = Value;
-                    SerializedValue = Value.ToString();
                 }
             }
             catch (Exception Exception)
@@ -51,45 +70,18 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             }
         }
 
-        private void Parse(string TimeZone)
-        {
-            try
-            {
-                Value =
-                    string.IsNullOrWhiteSpace(SerializedValue) ? null :
-                    Type == DataType.Boolean ? bool.Parse(SerializedValue) : 
-                    Type == DataType.DateTime ? DateTimeOffsetHelper.Parse(SerializedValue, TimeZone, out var Ambiguous, out var AmbiguousTimesSpans, $"{DateTimeOffsetHelper.DateFormat} {DateTimeOffsetHelper.TimeFormat}") :
-                    Type == DataType.Date ? DateTimeOffsetHelper.Parse(SerializedValue, TimeZone, out Ambiguous, out AmbiguousTimesSpans, DateTimeOffsetHelper.DateFormat) :
-                    Type == DataType.Time ? TimeSpan.ParseExact(SerializedValue, "hh\\:mm", null) :
-                    Type == DataType.Number ? decimal.Parse(SerializedValue.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture) :
-                    Type == DataType.Array ? JsonConvert.DeserializeObject<IEnumerable<TypedValue>>(SerializedValue) :
-                    Type == DataType.Error ? SerializedValue :
-                    (object)SerializedValue;
-            }
-            catch (Exception Exception)
-            {
-                Type = DataType.Error;
-                Value = SerializedValue = Exception.Message;
-            }
-        }
-
         public DataType Type { get; set; }
 
-        public string SerializedValue { get; private set; }
-
-        public object Value
-        {
-            get; private set;
-        }
+        public object Value { get; set; }
 
         [JsonIgnore]
         public bool IsNull { get { return Value == null; } }
 
         [JsonIgnore]
-        public bool BooleanValue { get { return (bool)(Value ?? false); } }
+        public bool BooleanValue { get { return Convert.ToBoolean(Value ?? false); } }
 
         [JsonIgnore]
-        public decimal NumberValue { get { return (decimal)(Value ?? 0m); } }
+        public decimal NumberValue { get { return Convert.ToDecimal(Value ?? 0m); } }
 
         [JsonIgnore]
         public DateTimeOffset DateTimeValue { get { return (DateTimeOffset)(Value ?? DateTimeOffset.MinValue); } }
@@ -104,6 +96,6 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         public string ErrorValue { get { return (string)Value; } }
 
         [JsonIgnore]
-        public IEnumerable<TypedValue> ArrayValue { get { return (IEnumerable<TypedValue>)Value; } }
+        public List<TypedValue> ArrayValue { get { return (List<TypedValue>)Value; } }
     }
 }

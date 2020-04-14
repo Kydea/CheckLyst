@@ -9,6 +9,7 @@
         currentIndex,
         list = [],
         removeButton,
+        dependencyButton,
         verifyButton,
         expressionsInUse,
 
@@ -42,13 +43,18 @@
                 currentIndex = index;
                 var used = false;
                 if (currentIndex != null) {
-                    var code = list[currentIndex].code;
-                    used = !!expressionsInUse[code];
+                    var
+                        item = list[currentIndex],
+                        code = item.code,
+                        dependingRelations = item.dependingRelations,
+                        dependentRelations = item.dependentRelations;
+                    used = !!expressionsInUse[code] || (dependingRelations && dependingRelations.length > 0) || (dependentRelations && dependentRelations.length > 0);
 
                     body.children().eq(currentIndex).addClass("Selected").removeClass("Handler")
                         .children((used ? ":not(:nth-child(2))" : "") + ":not(:first-child):not(:last-child):not(:nth-last-child(2)):not(:nth-last-child(3)):not(:nth-last-child(4))").attr("contenteditable", true).eq(0).focus();
                 }
-                removeButton.toggle(currentIndex != null && !used);
+                removeButton.toggle(true || currentIndex != null && !used); //always enabled to avoid dead locks when a user delete a referenced item
+                dependencyButton.toggle(currentIndex != null && used);
             }
         },
 
@@ -66,9 +72,6 @@
                 .append($("<td />").addClass("UniqueColumn Centered").toggleClass("Off", !row.unique).append($("<i />").addClass("fa fa-key")))
                 .append($("<td />").addClass("ExceptionColumn Centered").toggleClass("Off", !row.exception).append($("<i />").addClass("fa fa-exclamation")))
                 .append($("<td />").addClass("Order Centered Inactive").append($("<i />").addClass("Up fa fa-caret-up")).append($("<i />").addClass("Down fa fa-caret-down")))
-
-            if (model.state == prototypes.Prototype.states.draft)
-                matematici.canClose = false;
         },
 
         update = function (row) {
@@ -83,7 +86,6 @@
             list.splice(currentIndex, 1);
             if (list.length == 0) noRecord.appendTo(body);
             select();
-            matematici.canClose = false;
         },
 
         updateModel = function () {
@@ -96,7 +98,9 @@
                     dataType: list[index].dataType,
                     innerDataType: list[index].innerDataType,
                     unique: list[index].unique,
-                    exception: list[index].exception
+                    exception: list[index].exception,
+                    dependingRelations: list[index].dependingRelations,
+                    dependentRelations: list[index].dependentRelations
                 };
         },
 
@@ -149,6 +153,8 @@
                         list[index].innerDataType = result.expressions[list[index].code].innerDataType;
                         list[index].unique = result.expressions[list[index].code].unique;
                         list[index].exception = result.expressions[list[index].code].exception;
+                        list[index].dependingRelations = result.expressions[list[index].code].dependingRelations;
+                        list[index].dependentRelations = result.expressions[list[index].code].dependentRelations;
                     } catch (error) {
                         list[index].error = error;
                         list[index].dataType = "Error";
@@ -158,14 +164,21 @@
                     updateModel();
                 }
 
+                if (result.checkListException) {
+                    valid = false;
+                    matematici.dialog.error("Error", result.checkListException.Message);
+                }
+
                 button.toggleClass("Invalid", !valid);
                 if (handler) handler.call(this);
             });
         },
 
         close = function () {
-            element.remove();
-            matematici.elements.body.removeClass("CheckListGrid");
+            setTimeout(function () {
+                element.remove();
+                matematici.elements.body.removeClass("CheckListGrid");
+            }, 0); //handles the blur event handler of the text boxes
         },
 
         checkElementExpressionsInUse = function (element) {
@@ -209,25 +222,34 @@
                     .append(noRecord = $("<tr />").addClass("NoRecord")
                         .append($("<td />").attr("colspan", "6").text("(no record)"))
                     )
-                ).on("click", "tr.Handler td.Order i.Up", function (e) {
+                ).on("click", "tr td.Order i.Up", function (e) {
                     e.stopPropagation();
                     up(this);
-                }).on("click", "tr.Handler td.Order i.Down", function (e) {
+                }).on("click", "tr td.Order i.Down", function (e) {
                     e.stopPropagation();
                     down(this);
                 }).on("click", "tr.Handler td:not(.Inactive)", function () {
                     select($(this).parent().prevAll().size());
-                }).on("focus", "td", function () {
+                }).on("click", "tr td:not(.Inactive)", function () {
                     verifyButton.show();
+                }).on("focus", "td", function () {
+                    var textBox = $(this);
+                    textBox.data("oldValue", textBox.text());
                 }).on("blur", "td", function () {
-                    list[currentIndex].valid = null;
+                    var textBox = $(this);
+                    if (textBox.data("oldValue") != textBox.text()) {
+                        matematici.canClose = false;
+                        list[currentIndex].valid = null;
+                    }
                     $("td.ValidColumn i", $(this).parent()).removeClass("fa-check fa-remove").addClass("fa-question");
                 }).on("click", "tr.Selected td.UniqueColumn", function () {
+                    matematici.canClose = false;
                     verifyButton.show();
                     $("td.ValidColumn i", $(this).parent()).removeClass("fa-check fa-remove").addClass("fa-question");
                     list[currentIndex].unique = !list[currentIndex].unique;
                     $(this).toggleClass("Off", !list[currentIndex].unique);
                 }).on("click", "tr.Selected td.ExceptionColumn", function () {
+                    matematici.canClose = false;
                     verifyButton.show();
                     $("td.ValidColumn i", $(this).parent()).removeClass("fa-check fa-remove").addClass("fa-question");
                     list[currentIndex].exception = !list[currentIndex].exception;
@@ -251,10 +273,33 @@
                         }))
                         .append($("<a />").addClass("Button").text("add").toggle(model.state == prototypes.Prototype.states.draft).prepend($("<i />").addClass("Icon fa fa-plus")).on("click", function () {
                             add({ code: "", expression: "", error: null });
+                            verifyButton.show();
+                            matematici.canClose = false;
                             select(list.length - 1);
                         }))
                         .append(removeButton = $("<a />").addClass("Button").text("remove").prepend($("<i />").addClass("Icon fa fa-trash-alt")).on("click", function () {
                             remove();
+                            matematici.canClose = false;
+                        }).hide())
+                        .append(dependencyButton = $("<a />").addClass("Button").text("dependencies").prepend($("<i />").addClass("Icon fa fa-sitemap")).on("click", function () {
+                            var
+                                handler = function () {
+                                    var model = prototypes.prototype.getModel().expression[list[currentIndex].code];
+                                    matematici.dependenciesDialog.show(model.dependingRelations, model.dependentRelations);
+                                };
+                            if (matematici.canClose)
+                                handler();
+                            else
+                                matematici.dialog.show("warning", "There are unsaved changes.", [
+                                    {
+                                        text: "save", icon: "check", handler: function () {
+                                            prototypes.prototype.save(function () {
+                                                verify(handler);
+                                            });
+                                        }
+                                    },
+                                    { text: "cancel", icon: "times", cancelButton: true }
+                                ]);
                         }).hide());
 
 
@@ -268,7 +313,9 @@
                     dataType: model.expressions[code].dataType,
                     innerDataType: model.expressions[code].innerDataType,
                     unique: model.expressions[code].unique,
-                    exception: model.expressions[code].exception
+                    exception: model.expressions[code].exception,
+                    dependingRelations: model.expressions[code].dependingRelations,
+                    dependentRelations: model.expressions[code].dependentRelations
                 });
 
             expressionsInUse = {};
@@ -279,6 +326,10 @@
                 for (var groupIndex in page.groups)
                     checkGroupExpressionsInUse(page.groups[groupIndex]);
             }
+
+            verify();
+
+            canClose = true;
         };
 
     setup();

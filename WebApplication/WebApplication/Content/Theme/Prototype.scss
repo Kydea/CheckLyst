@@ -54,6 +54,7 @@ div.Prototype {
 
     div.HeaderContainer {
         > div.Commands {
+            //prototype commands
             a.Up, a.Down, a.Add, a.Remove {
                 display: none;
             }
@@ -64,6 +65,7 @@ div.Prototype {
         margin-top: $Metric-Control-Space;
 
         div.Commands {
+            //page commands
             margin: 0;
 
             a.Add {
@@ -151,6 +153,7 @@ div.Prototype {
                 }
             }
         }
+
 
         &.Text {
             p {

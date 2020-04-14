@@ -4,13 +4,12 @@ using CheckListManager.Common.Logic.Models.CheckLists;
 using System;
 using CheckListManager.Instances.Logic.Exceptions;
 using System.Threading.Tasks;
+using CheckListManager.Common.Logic.Dependency;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
     public class Group : Item, ICheckListGroup
     {
-        private bool _valid;
-
         public override string TypeName => "Group";
 
         public List<ICheckListItem> Items { get; set; } = new List<ICheckListItem>();
@@ -29,9 +28,12 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public bool DisableMove { get; set; }
 
-        public override bool IsValidByDefault() => _valid;
-
-        public override bool Hidden => (Page?.Hidden ?? false) || base.Hidden;
+        protected override void UpdateHidden()
+        {
+            base.UpdateHidden();
+            if (!Hidden && Page != null)
+                Hidden = Hidden || Page.Hidden;
+        }
 
         public void CreateInstanceIterations()
         {
@@ -43,6 +45,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 foreach (var iteration in Iterations)
                     iteration.CreateInstanceIterations();
             }
+
             if (!Iterator)
                 foreach (var Item in Items)
                     if (Item is Group Group)
@@ -56,7 +59,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             if (Iterator)
             {
                 SetupIterationsIndexes();
-                foreach (var Iteration in Iterations)
+                foreach (var Iteration in Iterations.Where(i => !i.Removed))
                 {
                     Iteration.CheckList = CheckList;
                     Iteration.Page = Page;
@@ -69,7 +72,11 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public void SetupIterationsIndexes()
         {
             var Index = 0;
-            foreach (var Iteration in Iterations)
+            foreach (Item Item in Items.Where(i => !i.IteratorModelItem))
+                if (Item is Group Group)
+                    Group.SetupIterationsIndexes();
+
+            foreach (Iteration Iteration in Iterations)
             {
                 Iteration.Indexes.Clear();
                 if (this.Iteration != null)
@@ -78,30 +85,30 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 Iteration.Indexes.Add(Index); //0-base
                 Iteration.Index = Index + 1; //1-base
                 if (!Iteration.Removed) ++Index;
+
+                Iteration.SetupIterationsIndexes();
             }
 
         }
 
-        public override void Update(string DecimalSeparator, string TimeZone)
+        protected override void UpdateValid()
         {
-            base.Update(DecimalSeparator, TimeZone);
-
-            _valid = true;
-            foreach (var item in Items)
-            {
-                item.Update(DecimalSeparator, TimeZone);
-                _valid = _valid && item.Valid;
-            }
+            base.UpdateValid();
+            if (!Valid) return;
 
             if (Iterator)
-            {
-                _valid = true;
-                foreach (var Iteration in Iterations)
+                foreach (var Iteration in Iterations.Where(i => !i.Removed))
+                    foreach (var item in Iteration.Items) //the iteration are never updated so they are considered transparent to validity
+                    {
+                        Valid = Valid && item.Valid;
+                        if (!Valid) return;
+                    }
+            else
+                foreach (var item in Items)
                 {
-                    Iteration.Update(DecimalSeparator, TimeZone);
-                    _valid = _valid && (Iteration.Removed || Iteration.Valid);
+                    Valid = Valid && item.Valid;
+                    if (!Valid) return;
                 }
-            }
         }
 
         public override void UpdateReadOnly(string userCode, bool readOnlyInstance)
@@ -109,11 +116,11 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             base.UpdateReadOnly(userCode, readOnlyInstance);
 
             if (Iterator)
-                foreach (var iteration in Iterations)
-                    iteration.UpdateReadOnly(userCode, readOnlyInstance);
+                foreach (var iteration in Iterations.Where(i => !i.Removed))
+                    ((Iteration)iteration).UpdateReadOnly(userCode, readOnlyInstance);
             else
                 foreach (var item in Items)
-                    item.UpdateReadOnly(userCode, readOnlyInstance);
+                    ((Item)item).UpdateReadOnly(userCode, readOnlyInstance);
 
         }
 
@@ -147,7 +154,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                     throw new InstanceException("The iteration contains issued signatures and cannot be removed");
 
             if (Iterator)
-                foreach (var Iteration in Iterations)
+                foreach (var Iteration in Iterations.Where(i => !i.Removed))
                     ((Iteration)Iteration).CheckSignatures();
         }
 
@@ -169,7 +176,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         {
             ICheckListItem previous = null;
 
-            foreach (var item in Items)
+            int ItemIndex = 0;
+            foreach (Item item in Items)
             {
                 item.CheckList = CheckList;
                 item.Page = Page;
@@ -177,6 +185,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 item.Previous = previous;
                 item.IteratorModelItem = Iterator || IteratorModelItem;
                 item.Iteration = item.Iteration ?? Iteration;
+                item.ItemIndex = ItemIndex++;
                 item.Setup();
                 previous = item;
             }
@@ -211,14 +220,44 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             iteration.Remove();
         }
 
-        public void Traverse(Func<ICheckListItem, bool> condition, Action<ICheckListItem> action)
+        public override void MarkAllAsChanged(List<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)
         {
-            throw new NotImplementedException();
+            base.MarkAllAsChanged(Roots);
+
+            foreach (Iteration iteration in Iterations)
+                iteration.MarkAllAsChanged(Roots);
+
+            foreach (Item item in Items)
+                item.MarkAllAsChanged(Roots);
         }
 
-        public Task TraverseAsync(Func<ICheckListItem, bool> condition, Func<ICheckListItem, Task> action)
+
+        public override void ClearDependencies()
         {
-            throw new NotImplementedException();
+            base.ClearDependencies();
+            foreach (Item Item in Items)
+                Item.ClearDependencies();
+        }
+
+        public override void BuildDependencies()
+        {
+            base.BuildDependencies();
+            foreach (Item Item in Items)
+            {
+                if (!IterationItem)
+                {
+                    if (HiddenCondition == Conditions.False || HiddenCondition == Conditions.Expression)
+                        Item.AddDependingRelation(DependencyRelation.Properties.Hidden, this, DependencyRelation.Properties.Hidden);
+
+                    if (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
+                        AddDependingRelation(DependencyRelation.Properties.Validity, Item, DependencyRelation.Properties.Validity);
+                }
+                Item.BuildDependencies();
+            }
+
+            if (Iterator) //this is called only for instances existing before v. 2.0.0, because BuildDependencies is called only once per instance when no iteration exists
+                foreach (Iteration Iteration in Iterations.Where(i => !i.Removed))
+                    Iteration.BuildDependencies();
         }
     }
 }

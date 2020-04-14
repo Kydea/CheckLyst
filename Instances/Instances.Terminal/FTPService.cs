@@ -107,10 +107,8 @@ namespace CheckListManager.Instances.Terminal
             //if (string.IsNullOrWhiteSpace(SerializedSettings)) return;
             //Settings = JsonConvert.DeserializeObject<FTPConnectionSettings>(SerializedSettings);
 
-            var cacheObject = await _instanceManagerService.GetAsync(message.Company, message.ID);
-            cacheObject.Instance.Update(await _settingService.DecimalSeparatorAsync(cacheObject.CompanyId), (await _settingService.TimeZoneAsync(cacheObject.CompanyId)), cacheObject);
-            cacheObject.Instance.UpdateReadOnly(null, cacheObject.InstanceState);
-
+            string code = await _instancesRepository.GetCodeAsync(message.Company, message.ID);
+            var cacheObject = await _instanceManagerService.GetCacheObjectForDownloadAsync(message.Company, code, true);
             FTPConnectionSettings Settings;
             var FTPServer = await _commonRepository.GetInstancesFTPServerAsync(message.Company, cacheObject.PrototypeType);
             if (FTPServer == null)

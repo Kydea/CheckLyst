@@ -167,14 +167,16 @@ namespace CheckListManager.Prototypes.Logic.Services
         public VerifyExpressionsResponse VerifyExpressions(PrototypeRequest request)
         {
             request.CheckList.Setup();
+
             return new VerifyExpressionsResponse
             {
-                Valid = request.CheckList.Expressions.Values.All(e => e.Error == null),
-                Expressions = request.CheckList.Expressions
+                CheckListException = request.CheckList.Exception,
+                Expressions = request.CheckList.Expressions,
+
             };
         }
 
-        private void AddTags(Dictionary<String, PrototypeVersionTags> Tags, PrototypeRequest request, ICheckListGroup Group)
+        private void AddTags(Dictionary<string, PrototypeVersionTags> Tags, PrototypeRequest request, ICheckListGroup Group)
         {
             if (Group != null)
                 foreach (var Item in Group.Items)
@@ -195,7 +197,7 @@ namespace CheckListManager.Prototypes.Logic.Services
 
         private List<PrototypeVersionTags> CreateTags(PrototypeRequest request)
         {
-            var Tags = new Dictionary<String, PrototypeVersionTags>();
+            var Tags = new Dictionary<string, PrototypeVersionTags>();
             AddTags(Tags, request, request.CheckList.Header);
             return Tags.Values.ToList();
         }
@@ -203,6 +205,9 @@ namespace CheckListManager.Prototypes.Logic.Services
         public async Task<PrototypeResponse> SaveAsync(DefaultIdentity identity, PrototypeRequest request)
         {
             request.CheckList.Setup();
+            if (request.CheckList.Exception != null)
+                throw request.CheckList.Exception;
+
             var invalidExpression = request.CheckList.Expressions.FirstOrDefault(e => e.Value.Error != null);
             if (invalidExpression.Key != null)
                 throw new Exception($"The expression '{invalidExpression.Key}' contains the error: {invalidExpression.Value.Error}");
@@ -273,14 +278,11 @@ namespace CheckListManager.Prototypes.Logic.Services
                 PrototypeVersion.ModifiedBy = identity.Code;
             }
 
-            var CheckList = request.CheckList;
-            Check(CheckList);
-
             //Get the new id
             if (NewPrototype || NewVersion) await _prototypeRepository.SaveChangesAsync();
 
             await CloneImagesAsync(
-                CheckList,
+                request.CheckList,
                 identity.CompanyId,
                 PrototypeVersion.Prototype,
                 PrototypeVersion.Version
@@ -291,7 +293,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                 await DeleteAttachmentAsync(identity.CompanyId, PrototypeVersion.Prototype, PrototypeVersion.Version, key);
 
             PrototypeVersion.Description = request.Description;
-            PrototypeVersion.Data = JsonConvert.SerializeObject(CheckList, _converter);
+            PrototypeVersion.Data = JsonConvert.SerializeObject(request.CheckList, _converter);
             PrototypeVersion.ValidFrom = request.ValidFrom;
             PrototypeVersion.ValidUntil = request.ValidUntil;
             PrototypeVersion.InstanceConfirmationWorkFlow = request.InstanceConfirmationWorkFlow;
@@ -319,14 +321,8 @@ namespace CheckListManager.Prototypes.Logic.Services
                 Version = PrototypeVersion.Version,
                 ModifiedBy = PrototypeVersion.ModifiedBy,
                 ModifiedOn = PrototypeVersion.ModifiedOn,
-                CheckList = CheckList
+                CheckList = request.CheckList
             };
-        }
-
-        private void Check(Prototype CheckList)
-        {
-            foreach (Page Page in CheckList.Pages)
-                Page.Check();
         }
 
         public async Task DeleteAsync(DefaultIdentity identity, PrototypeRequest request)
@@ -574,7 +570,8 @@ namespace CheckListManager.Prototypes.Logic.Services
             await ValidateRequest(identity, request);
 	        var extension = Path.GetExtension(request.Attachment.FileName);
 
-            var key = $"{identity.CompanyId}/{request.Id}-{request.Version}/{request.Code}{extension}";
+            var imageName = request.Code ?? Guid.NewGuid().ToString();
+            var key = $"{identity.CompanyId}/{request.Id}-{request.Version}/{imageName}{extension}";
 
             using (var memoryStream = new MemoryStream(request.Attachment.Buffer))
             {
@@ -583,7 +580,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                     throw new Exception("Error uploading the attachment");
             }
 
-			return new UploadAttachmentResponse { Key = key };
+			return new UploadAttachmentResponse { Key = key, ImageName = imageName };
         }
 
         public async Task<StorageFile> DownloadAttachmentAsync(DefaultIdentity identity, ProcessAttachmentRequest request)
@@ -632,7 +629,8 @@ namespace CheckListManager.Prototypes.Logic.Services
                 async item =>
                 {
                     var image = (Image)item;
-                    string Key = $"{companyId}/{prototypeId}-{version}/{image.Id}{Path.GetExtension(image.Key)}";
+                    image.ImageName = image.ImageName ?? Guid.NewGuid().ToString();
+                    var Key = $"{companyId}/{prototypeId}-{version}/{image.ImageName}{Path.GetExtension(image.Key)}";
 
                     if (!await _storageService.CloneAsync(_configurationService.PrototypesStorageBucket, image.Key, Key))
                         throw new Exception($"Could not clone the file of the image {image.Id}-{image.Description ?? "(no label)"} from {image.Key} to {Key}");

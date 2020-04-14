@@ -14,16 +14,16 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
         public Measure(string Operation)
         {
             if (!Operation.In(Operation)) throw new ArgumentException($"Invalid operation {Operation}");
-            this.Operation = Operation;
+            Property = Operation;
         }
 
-        private string Operation { get; }
+        protected override string Property { get; }
 
-        public override void Check(ICheckList Prototype, List<string> IteratorStack)
+        public override void Check(ICheckList CheckList, Expression Expression, List<string> IteratorStack)
         {
-            base.Check(Prototype, IteratorStack);
+            base.Check(CheckList, Expression, IteratorStack);
             if (DataType != DataType.Number)
-                throw new ParseException($"Operands of function {Operation} must be numbers", Position);
+                throw new ParseException($"Operands of function {Property} must be numbers", Position);
             DataType = DataType.Number;
         }
 
@@ -37,18 +37,13 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
         {
             var Result =
                 Values.Any(Value => Value.IsNull) ? default(decimal?) :
-                Operation == "Sum" ? Values.Sum(TypedValue => TypedValue.NumberValue) :
+                Property == "Sum" ? Values.Sum(TypedValue => TypedValue.NumberValue) :
                 Values.Count == 0 ? default(decimal?) :
-                Operation == "Avg" ? Values.Average(TypedValue => TypedValue.NumberValue) :
-                Operation == "StDev" ? StDev(Values) :
+                Property == "Avg" ? Values.Average(TypedValue => TypedValue.NumberValue) :
+                Property == "StDev" ? StDev(Values) :
                 default(decimal?);
 
             return new TypedValue(DataType.Number, Result);
-        }
-
-        public override string ToString()
-        {
-            return $"{IteratorCode}.{Operation}({Argument?.ToString() ?? "#"})";
         }
     }
 }

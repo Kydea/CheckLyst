@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.CheckLists;
 
 namespace CheckListManager.Prototypes.Logic.Models.CheckLists
@@ -52,7 +53,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             if (condition(this))
                 action(this);
 
-            foreach (var iteration in Iterations)
+            foreach (Iteration iteration in Iterations)
                 iteration.Traverse(condition, action);
 
             foreach (var item in Items)
@@ -67,7 +68,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             if (condition(this))
                 await action(this);
 
-            foreach (var iteration in Iterations)
+            foreach (Iteration iteration in Iterations)
                 await iteration.TraverseAsync(condition, action);
 
             foreach (var item in Items)
@@ -113,16 +114,30 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             return group;
         }
 
+        public override void BuildDependencies()
+        {
+            base.BuildDependencies();
+            foreach (Item Item in Items)
+            {
+                if (HiddenCondition == Conditions.False || HiddenCondition == Conditions.Expression)
+                    Item.AddDependingRelation(DependencyRelation.Properties.Hidden, this, DependencyRelation.Properties.Hidden);
+
+                if (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
+                    AddDependingRelation(DependencyRelation.Properties.Validity, Item, DependencyRelation.Properties.Validity);
+
+                Item.BuildDependencies();
+            }
+        }
+
         public override void Check()
         {
             base.Check();
             foreach (Item Item in Items)
-            {
-                Item.CheckList = CheckList;
                 Item.Check();
-            }
         }
 
         public void CreateInstanceIterations() { throw new NotImplementedException(); }
+
+        public override string DependencyClassName => "group";
     }
 }

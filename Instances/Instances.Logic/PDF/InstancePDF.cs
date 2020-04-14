@@ -36,9 +36,9 @@ namespace CheckListManager.Instances.Logic.PDF
         {
             var Field = (Field)CheckListField;
             if (Field.ValueTypeName == "DateTime")
-                return Field.RawValue + DateTimeOffsetHelper.FormatOffset(Field.LocalTimeZone ? Field.Offset : 0);
+                return Field.Value + DateTimeOffsetHelper.FormatOffset(Field.LocalTimeZone ? Field.Offset : 0);
             else
-                return FormatFormula(Field.RawValue);
+                return FormatFormula(Field.Value);
         }
 
         protected override FirstPage GenerateFirstPage()
@@ -78,7 +78,7 @@ namespace CheckListManager.Instances.Logic.PDF
 
             if (Instance.InstanceState == InstanceState.Confirmed || Instance.InstanceState == InstanceState.Completed || Instance.InstanceState == InstanceState.Deleted)
             {
-                var Record = await InstancesRepository.GetByIDAsync(Instance.CompanyId, Instance.Id.Value);
+                var Record = await InstancesRepository.GetAsync(Instance.CompanyId, Instance.Id.Value);
 
                 var Signatures = Record
                     .InstancesHistory

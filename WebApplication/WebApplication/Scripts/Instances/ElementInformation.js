@@ -19,7 +19,9 @@
         },
 
         addItem = function (icon, value) {
-            if (value != null) panel.append($("<div />").append($("<span />").html(value).attr({ title: value }).prepend($("<i />").addClass("fa fa-fw fa-" + icon))));
+            var span = $("<span />").html(value);
+            span.attr({ title: span.text() });
+            if (value != null) panel.append($("<div />").append(span.prepend($("<i />").addClass("fa fa-fw fa-" + icon))));
         };
 
     this.update = function (model) {
@@ -40,10 +42,10 @@
                         { name: "note", label: "Note" },
                         { name: "action", label: "Action" },
                     ] : [
-                            { name: "dateTime", label: "Date/Time", type: "DateTimeOffset" },
-                            { name: "user", label: "User" },
-                            { name: "value", label: "Value" }
-                        ];
+                        { name: "dateTime", label: "Date/Time", type: "DateTimeOffset" },
+                        { name: "user", label: "User" },
+                        { name: "value", label: "Value" }
+                    ];
                 //back compatbility before icon change for signature history
                 new matematici.CheckListGrid(model.history, null, null, columns, function (checkListGrid, rowIndex, row) {
                     row.action = row.action && row.action.replace("fi fi-fw flaticon-check", "fal fa-check").replace("fi fi-fw flaticon-trash-o", "fal fa-trash");

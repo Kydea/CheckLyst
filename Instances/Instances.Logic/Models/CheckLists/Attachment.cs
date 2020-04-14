@@ -19,10 +19,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             return attachment;
         }
 
-        public override bool IsValidByDefault()
-        {
-            return !string.IsNullOrEmpty(Key);
-        }
+        public override bool IsValidByDefault() => !string.IsNullOrEmpty(Key);
         
         public string Key { get; set; }
         public string FileType { get; set; }

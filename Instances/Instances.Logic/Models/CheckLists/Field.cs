@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using CheckListManager.Common.Core.Helpers;
+using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.Expressions;
@@ -18,17 +19,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public List<FieldRecord> History { get; } = new List<FieldRecord>();
         public int LinesCount { get; set; }
         public string Value { get; set; }
-
-        public string RawValue => Value ?? (ConversionError ? null : ValueFormula?.Value);
-
-        [JsonIgnore]
-        public Formula ValueFormula { get; private set; }
-
-        public string ValueFormulaString
-        {
-            get => ValueFormula?.RawValue;
-            set => ValueFormula = string.IsNullOrEmpty(value) ? null : new Formula(value);
-        }
+        public Formula ValueFormula { get; } = new Formula();
+        public string ValueFormulaString { get; set; }
 
         private List<string> _ValuesList;
         public List<string> ValuesList { get { return _ValuesList; } set { _ValuesList = value == null || !value.Any() ? null : value; } }
@@ -55,7 +47,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 Group = parent,
                 LinesCount = LinesCount,
                 Value = Value,
-                ValueFormula = ValueFormula == null ? null : new Formula(ValueFormula.RawValue),
+                ValueFormulaString = ValueFormulaString,
                 ValueTypeName = ValueTypeName,
                 DefaultValue = DefaultValue,
                 LocalTimeZone = LocalTimeZone,
@@ -63,52 +55,88 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 ExternalSourceName = ExternalSourceName,
                 ExternalSourceColumn = ExternalSourceColumn
             };
+            field.ValueFormula.IsSet = ValueFormula.IsSet;
             Copy(this, field);
             return field;
         }
 
-        public override void Update(string DecimalSeparator, string TimeZone)
+        public override void BuildDependencies()
         {
-            base.Update(DecimalSeparator, TimeZone);
-            DateTimeOffset? dateTimeOffset = null;
-            if (ValueType == DataType.Date)
-                dateTimeOffset = DateTimeOffsetHelper.Parse(Value, TimeZone, out var Ambiguous, out var AmbiguousDateTimeOffsets, DateTimeOffsetHelper.DateFormat);
-            else if (ValueType == DataType.DateTime)
-                dateTimeOffset = DateTimeOffsetHelper.Parse(Value, TimeZone, out var Ambiguous, out var AmbiguousDateTimeOffsets, $"{DateTimeOffsetHelper.DateFormat} {DateTimeOffsetHelper.TimeFormat}");
-            if (dateTimeOffset.HasValue) Offset = (int)dateTimeOffset.Value.Offset.TotalMinutes;
+            base.BuildDependencies();
 
-            ValueFormula?.Update(CheckList, RuntimeValues, DecimalSeparator, TimeZone, Iteration?.Indexes);
-            if (ValueFormula != null && ValueFormula.HasValue)
-                ConversionError = !ValueType.Validate(ValueFormula.Value);
-            if (ExternalSourceName != null)
+            ValueFormula.BuildDependencies(ValueFormulaString, IterationItem ? ((Field)FindIteratorModelItem()).ValueFormula : null);
+
+            if (!IterationItem)
             {
-                string Value = CheckList is Instance Instance && ExternalSourceName != null && Instance.ExternalSourceRows.ContainsKey(ExternalSourceName) && Instance.ExternalSourceRows[ExternalSourceName].ContainsKey(ExternalSourceColumn) ?
-                    Instance.ExternalSourceRows[ExternalSourceName][ExternalSourceColumn] :
-                    null;
-                ConversionError = !ValueType.Validate(Value);
-                if (!ConversionError) this.Value = Value;
+                foreach (var Key in ValueFormula.ValueKeys)
+                    if (CheckList.Expressions.TryGetValue(Key, out var Expression))
+                        AddDependingRelation(DependencyRelation.Properties.Value, Expression, DependencyRelation.Properties.Value);
+
+                if (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
+                    AddDependingRelation(DependencyRelation.Properties.Validity, this, DependencyRelation.Properties.Value);
+
+                if (ExternalSourceName != null)
+                {
+                    if (!CheckList.ExternalSourceDependencyNodes.TryGetValue(ExternalSourceName, out var ExternalSourceDependencyNode))
+                        throw new Exception($"The property value references to the inexistent external source {ExternalSourceName} for {this}");
+
+                    AddDependingRelation(DependencyRelation.Properties.Value, ExternalSourceDependencyNode, DependencyRelation.Properties.Value);
+                }
             }
         }
 
+        private void UpdateValue()
+        {
+            DateTimeOffset? dateTimeOffset = null;
+            if (ValueType == DataType.Date)
+                dateTimeOffset = DateTimeOffsetHelper.Parse(Value, Instance.TimeZone, out var Ambiguous, out var AmbiguousDateTimeOffsets, DateTimeOffsetHelper.DateFormat);
+            else if (ValueType == DataType.DateTime)
+                dateTimeOffset = DateTimeOffsetHelper.Parse(Value, Instance.TimeZone, out var Ambiguous, out var AmbiguousDateTimeOffsets, $"{DateTimeOffsetHelper.DateFormat} {DateTimeOffsetHelper.TimeFormat}");
+            if (dateTimeOffset.HasValue) Offset = (int)dateTimeOffset.Value.Offset.TotalMinutes;
+
+            if (IterationItem)
+                ValueFormula.Evaluate(CheckList, GetRuntimeValues(), Instance.DecimalSeparator, Instance.TimeZone, Iteration?.Indexes, ((Field)FindIteratorModelItem()).ValueFormula);
+            else
+                ValueFormula.Evaluate(CheckList, GetRuntimeValues(), Instance.DecimalSeparator, Instance.TimeZone, Iteration?.Indexes);
+
+            if (ValueFormula.IsSet)
+            {
+                ConversionError = ValueFormula.HasValue && !ValueType.Validate(ValueFormula.Value);
+                Value = ConversionError ? null : ValueFormula.Value;
+            }
+
+            if (ExternalSourceName != null)
+            {
+                string Value =
+                    ExternalSourceName != null && Instance.ExternalSourceRows.ContainsKey(ExternalSourceName) && Instance.ExternalSourceRows[ExternalSourceName].ContainsKey(ExternalSourceColumn) ?
+                    Instance.ExternalSourceRows[ExternalSourceName][ExternalSourceColumn] :
+                    null;
+                ConversionError = !ValueType.Validate(Value);
+                this.Value = ConversionError ? null : Value;
+            }
+        }
+
+        protected override void OnUpdate(DependencyRelation.Properties Property)
+        {
+            if (Property == DependencyRelation.Properties.Value)
+                UpdateValue();
+            else
+                base.OnUpdate(Property);
+        }
+
+        public override void MarkAllAsChanged(List<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)
+        {
+            base.MarkAllAsChanged(Roots);
+            MarkNodeAsChanged(CheckList, Roots, DependencyRelation.Properties.Value);
+        }
+
+        public bool Validate(string value) => ValueType.Validate(value);
+
         public bool ConversionError { get; set; }
 
-        public override bool Valid => !ConversionError && base.Valid;
         public override string ValidityMessage { get => ConversionError ? $"the value {ValueFormula.Value} could not be converted to {ValueType.TypeName}" : base.ValidityMessage; set => base.ValidityMessage = value; }
-
-        public override bool IsValidByDefault()
-        {
-            return ValueFormula?.HasValue ?? !string.IsNullOrEmpty(Value);
-        }
-
-        protected override bool IsReadOnlyByDefault()
-        {
-            return base.IsReadOnlyByDefault() || ValueFormula != null; // || !string.IsNullOrEmpty(ExternalSourceName);
-        }
-
-        public bool Validate(string value)
-        {
-            return ValueType.Validate(value);
-        }
+        public override bool IsValidByDefault() => !ConversionError && (ValueFormula.IsSet ? ValueFormula.HasValue : !string.IsNullOrEmpty(Value));
+        protected override bool IsReadOnlyByDefault() => base.IsReadOnlyByDefault() || ValueFormula.IsSet; // || !string.IsNullOrEmpty(ExternalSourceName);
 
         public override void Setup()
         {

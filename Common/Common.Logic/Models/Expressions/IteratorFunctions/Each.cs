@@ -8,10 +8,10 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
 {
     public class Each : UnaryIteratorFunction
     {
-        public override void Check(ICheckList Prototype, List<string> IteratorStack)
+        public override void Check(ICheckList CheckList, Expression Expression, List<string> IteratorStack)
         {
-            base.Check(Prototype, IteratorStack);
-            InnerDataType = DataType;
+            base.Check(CheckList, Expression, IteratorStack);
+            InnerDataType = Argument.InnerDataType ?? DataType;
             DataType = DataType.Array;
         }
 
@@ -19,10 +19,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
         {
             return new TypedValue(DataType.Array, Values);
         }
-
-        public override string ToString()
-        {
-            return $"{IteratorCode}.Each({Argument?.ToString() ?? "#"})"; 
-        }
+ 
+        protected override string Property => "Eech";
     }
 }

@@ -47,6 +47,10 @@ body:not(.Login) {
             font-size: 16px;
             color: $Color-Green-Dark;
             clear: both;
+
+            &:first-child {
+                margin-top: 0;
+            }
         }
 
         h4 {

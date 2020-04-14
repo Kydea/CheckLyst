@@ -7,9 +7,9 @@ namespace CheckListManager.Common.Logic.Models.Expressions.LogicOperators
 {
     public abstract class BiaryLogicOperator : BinaryOperator
     {
-        public override void Check(ICheckList Prototype, List<string> IteratorStack)
+        public override void Check(ICheckList CheckList, Expression Expression, List<string> IteratorStack)
         {
-            base.Check(Prototype, IteratorStack);
+            base.Check(CheckList, Expression, IteratorStack);
 
             if (Left.DataType != DataType.Boolean)
                 throw new ParseException("Left operand of logic operators must be a boolean", Position);

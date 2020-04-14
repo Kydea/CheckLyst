@@ -31,10 +31,10 @@
 							var formattedDate = matematici.dateFormatter.format(moment.parseZone(value));
                             td.append($("<span />").html(formattedDate.date + " " + formattedDate.time + ":" + formattedDate.seconds).attr("title", formattedDate.offset));
 						}
-					} else if (value === true)
-						td.append($("<i />").addClass("fa fa-check"));
+                    } else if (value === true)
+                        td.append($("<i />").addClass("fa fa-check")).addClass("Centered");
 					else if (value === false)
-						td.append($("<i />").addClass("fa fa-times"));
+                        td.append($("<i />").addClass("fa fa-times")).addClass("Centered");
 					else
 						td.html(value)
 					tr.append(td);

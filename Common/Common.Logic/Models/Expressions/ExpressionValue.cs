@@ -1,4 +1,5 @@
-﻿using CheckListManager.Common.Logic.Models.CheckLists;
+﻿using CheckListManager.Common.Logic.Dependency;
+using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.Expressions.Parsing;
 using System;
 using System.Collections.Generic;
@@ -12,10 +13,15 @@ namespace CheckListManager.Common.Logic.Models.Expressions
     {
         public string ExpressionCode { get; set; }
 
-        public override void Check(ICheckList Prototype, List<string> IteratorStack)
+        public override void BuildDependencies(ICheckList CheckList, Expression Expression)
         {
-            if (!Prototype.Expressions.ContainsKey(ExpressionCode)) throw new ParseException("Expression not found: " + ExpressionCode, Position);
-            DataType = Prototype.Expressions[ExpressionCode].DataType;
+            if (!CheckList.Expressions.TryGetValue(ExpressionCode, out var DependingExpression)) throw new ParseException("Expression not found: " + ExpressionCode, Position);
+            Expression.AddDependingRelation(DependencyRelation.Properties.Value, DependingExpression, DependencyRelation.Properties.Value);
+        }
+
+        public override void Check(ICheckList CheckList, Expression Expression, List<string> IteratorStack)
+        {
+            DataType = CheckList.Expressions[ExpressionCode].DataType;
         }
 
         public override TypedValue GetValue(IElementsBranch ElementsBranch, string TimeZone)

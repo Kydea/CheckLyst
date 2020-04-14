@@ -15,10 +15,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         [JsonIgnore]
         public virtual Expression Expression
         {
-            get
-            {
-                return _Expression;
-            }
+            get => _Expression;
             set
             {
                 _Expression = value;
@@ -27,15 +24,11 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         }
 
         public abstract TypedValue GetValue(IElementsBranch ElementsBranch, string TimeZone);
-
-        public abstract void Check(ICheckList Prototype, List<string> IteratorStack);
-
+        public abstract void BuildDependencies(ICheckList CheckList, Expression Expression);
+        public abstract void Check(ICheckList CheckList, Expression Expression, List<string> IteratorStack);
         public override abstract string ToString();
-
         public DataType DataType { get; protected set; }
-
         public DataType? InnerDataType { get; protected set; }
-
         public int Position { get; set; }
     }
 }

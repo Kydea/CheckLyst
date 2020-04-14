@@ -7,14 +7,11 @@ namespace CheckListManager.Instances.Logic.Services
 {
 	public interface IInstanceCacheService : IService
 	{
-		Task<InstanceCacheObject> GetAsync(string code, bool includeData = true);
-		Task SetAsync(string code, InstanceCacheObject instance);
+		Task<InstanceCacheObject> GetAsync(string code, bool includeData);
+		Task SetAsync(InstanceCacheObject cacheObject);
 		Task RemoveAsync(string code);
-
-		Task TouchInstanceAsync(string code, double? score = null);
-
-		Task<LockObject> LockInstanceAsync(string code);
-
-		Task<string[]> GetInstancesWithRangeAsync(double start = double.NegativeInfinity, double stop = double.PositiveInfinity);
-	}
+		Task TouchAsync(string code);
+		Task<LockObject> LockAsync(string code);
+		Task<string[]> GetInstancesInRangeAsync(double start = double.NegativeInfinity, double stop = double.PositiveInfinity);
+    }
 }

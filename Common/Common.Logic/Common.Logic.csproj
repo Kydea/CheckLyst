@@ -122,6 +122,9 @@
     <Compile Include="Authentication\AuthenticateRequest.cs" />
     <Compile Include="Authentication\AuthorizeResponse.cs" />
     <Compile Include="DataSources\DataRequest.cs" />
+    <Compile Include="Models\CheckLists\ExternalSourceDependencyNode.cs" />
+    <Compile Include="Dependency\DependencyRelation.cs" />
+    <Compile Include="Dependency\DependencyNode.cs" />
     <Compile Include="Email\EmailTrailMessage.cs" />
     <Compile Include="ExternalSources\DataRequest.cs" />
     <Compile Include="FTP\InstancesFTPMessage.cs" />
@@ -129,6 +132,8 @@
     <Compile Include="Email\EmailMessage.cs" />
     <Compile Include="Json\AutofacJsonConverter.cs" />
     <Compile Include="Json\CheckListJsonConverter.cs" />
+    <Compile Include="Json\CustomJsonConverter.cs" />
+    <Compile Include="Json\TypedValueJsonConverter.cs" />
     <Compile Include="Models\CheckLists\Conditions.cs" />
     <Compile Include="Models\CheckLists\ICheckListAttachmentBase.cs" />
     <Compile Include="Models\CheckLists\ICheckListField.cs" />
