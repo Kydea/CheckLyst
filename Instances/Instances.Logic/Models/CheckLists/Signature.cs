@@ -4,6 +4,7 @@ using CheckListManager.Common.Logic.Models.CheckLists;
 using System.Linq;
 using CheckListManager.Instances.Logic.Exceptions;
 using System.Threading.Tasks;
+using CheckListManager.Common.Logic.Dependency;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
@@ -22,9 +23,21 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 		public DateTimeOffset SignedOn { get; set; }
 		public string SignerDescription { get; set; }
 
-        public override bool IsValidByDefault()
+        public override bool IsValidByDefault() => Signed;
+
+        public override void BuildDependencies()
         {
-            return Signed;
+            base.BuildDependencies();
+            if (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
+                AddDependingRelation(DependencyRelation.Properties.Validity, this, DependencyRelation.Properties.Signature);
+        }
+
+        protected override void OnUpdate(DependencyRelation.Properties Property)
+        {
+            if (Property == DependencyRelation.Properties.Signature)
+                return;
+            else
+                base.OnUpdate(Property);
         }
 
         public override ICheckListItem Clone(ICheckListGroup parent)
@@ -49,7 +62,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         private void FindInvalidItem(ICheckListGroup Group)
         {
             if (Group.Iterator)
-                foreach (var Iteration in Group.Iterations)
+                foreach (var Iteration in Group.Iterations.Where(i => !i.Removed))
                     FindInvalidItem(Iteration);
             else
                 foreach (var Item in Group.Items)
@@ -59,15 +72,16 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                         CheckItem(Item);
         }
 
-        public void TrySign(string DecimalSeparator, string TimeZone, string UserCode)
+        public void TrySign(string UserCode)
         {
-            var Instance = (Instance)CheckList;
             try
             {
                 Signed = true;
                 SignedBy = UserCode;
                 SignedOn = DateTimeOffset.UtcNow;
-                Instance.Update(DecimalSeparator, TimeZone);
+
+                UpdateChain(Instance, DependencyRelation.Properties.Signature);
+
                 if (!Valid) throw new InstanceException("Signature not valid. " + ValidityMessage);
                 if (Code != null)
                 {
@@ -81,7 +95,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             {
                 Signed = false;
                 SignedBy = null;
-                Instance.Update(DecimalSeparator, TimeZone);
             }
         }
 

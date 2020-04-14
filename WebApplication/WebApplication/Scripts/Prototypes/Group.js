@@ -86,12 +86,14 @@
     };
 
     this.update = function (value) {
-    	model = value;
-        if (model.id > 0)
-            prototypes.prototype.setNewItemsId(model.id);
-        else
-			model.id = prototypes.prototype.getNewItemsId();
-        element.attr("data-code", model.code).attr("id", "ItemId" + model.id).data("id", model.id);
+        model = value;
+        if (!group.isPage()) {
+            if (model.id > 0)
+                prototypes.prototype.setNewItemsId(model.id);
+            else
+                model.id = prototypes.prototype.getNewItemsId();
+            element.attr("data-code", model.code).attr("id", "ItemId" + model.id).data("id", model.id);
+        }
 
 		update(model);
 

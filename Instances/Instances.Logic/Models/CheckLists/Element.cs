@@ -3,10 +3,13 @@ using CheckListManager.Common.Logic.Models.CheckLists;
 using System;
 using CheckListManager.Instances.Logic.Exceptions;
 using Newtonsoft.Json;
+using CheckListManager.Common.Logic.Dependency;
+using CheckListManager.Common.Logic.Models.Expressions;
+using System.Linq;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
-    public abstract class Element : ICheckListElement
+    public abstract class Element : DependencyNode, ICheckListElement
     {
         private ICheckListSignature GetSignature(string SignatureCode)
         {
@@ -17,84 +20,13 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             if (!(BranchElements[SignatureCode] is ICheckListSignature Signature))
                 throw new InstanceException((string.IsNullOrEmpty(Code) ? "An element" : $"The element {Code}") + $" references to a signature with code {SignatureCode} that is not a signature");
             return Signature;
-
         }
+        
+        private Instance _instance;
+        [JsonIgnore]
+        public Instance Instance => _instance ?? (_instance = (Instance)CheckList);
 
-        public ICheckList CheckList { get; set; }
-        public string Code { get; set; }
-
-        public Conditions CountDownCondition { get; set; }
-        public DateTimeOffset? CountDownToValue {
-            get
-            {
-                DateTimeOffset? Value;
-                if (string.IsNullOrEmpty(CountDownToCode))
-                    Value = null;
-                else if (CountDownCondition == Conditions.Signature)
-                {
-                    var Signature = GetSignature(CountDownToCode);
-                    Value = Signature.Signed ? Signature.SignedOn : default(DateTimeOffset?);
-                }
-                else 
-                    Value = CheckList?.GetExpressionValue(CountDownToCode, this)?.Value as DateTimeOffset?;
-
-                if (Value.HasValue) Value = Value.Value.AddSeconds(CountDownOffset);
-                return Value;
-            }
-        }
-        public string CountDownToCode { get; set; }
-        public int CountDownOffset { get; set; }
-
-        public virtual bool Hidden
-        {
-            get
-            {
-                return
-                    HiddenCondition == Conditions.Expression && CheckList?.GetExpressionValue(HiddenExpressionCode, this)?.Value as bool? == true
-                    || HiddenCondition == Conditions.True;
-            }
-        }
-        public Conditions HiddenCondition { get; set; }
-        public string HiddenExpressionCode { get; set; }
-
-        public Conditions ReadOnlyCondition { get; set; }
-        public string ReadOnlyExpressionCode { get; set; }
-
-        public ICheckListSignature Signature => GetSignature(SignatureCode);
-
-        public string SignatureCode { get; set; }
-        public virtual string GetSignatureInformation()
-            => Signature != null && Signature.Signed ? string.Format("by {0} on {1:yyyy-MM-dd HH:mm}", Signature.SignedBy, Signature.SignedOn) : null;
-
-        public virtual bool Valid
-		{
-			get
-			{
-				if (Hidden) return true;
-
-                var expressionValue = CheckList?.GetExpressionValue(ValidExpressionCode, this)?.Value as bool? == true;
-				return
-					ValidCondition == Conditions.Default && IsValidByDefault() ||
-					ValidCondition == Conditions.Expression && expressionValue ||
-					ValidCondition == Conditions.ExpressionOrDefault && (expressionValue || IsValidByDefault()) ||
-					ValidCondition == Conditions.ExpressionAndDefault && expressionValue && IsValidByDefault() ||
-					ValidCondition == Conditions.True;
-			}
-		}
-
-		public Conditions ValidCondition { get; set; }
-		public string ValidExpressionCode { get; set; }
-		public virtual string ValidityMessage { get; set; }
-
-		public virtual bool IsValidByDefault()
-		{
-			return true;
-		}
-
-		protected virtual Dictionary<string, ICheckListElement> GetBranchElements()
-		{
-			return CheckList.Elements;
-		}
+		protected virtual Dictionary<string, ICheckListElement> GetBranchElements() => CheckList.Elements;
 
 		public virtual void Setup()
 		{
@@ -102,13 +34,64 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 				CheckList.Elements[Code] = this;
 		}
 
-		public abstract void Update(string DecimalSeparator, string TimeZone);
+        public override bool Update(DependencyRelation.Properties Property)
+        {
+            switch (Property)
+            {
+                case DependencyRelation.Properties.Validity:
+                    UpdateValid();
+                    break;
+                case DependencyRelation.Properties.Hidden:
+                    UpdateHidden();
+                    break;
+                case DependencyRelation.Properties.CountDown:
+                    UpdateCountDownTo();
+                    break;
+                default:
+                    throw new ArgumentException();
+            }
 
-		public bool ReadOnly { get; protected set; }
+            return true;
+        }
 
-		protected virtual bool IsReadOnlyByDefault() => false;
+        public override string ToString() =>
+            this is Page Page ? $"page {Page.Index}" :
+            this is Group Group ? $"group {Code ?? Group.Id.ToString()}" :
+            this is Item Item ? $"item {Code ?? Item.Id.ToString()}" :
+            throw new ArgumentException();
 
-		public virtual void UpdateReadOnly(string userCode, bool readOnlyInstance)
+        #region Properties
+
+        public string Code { get; set; }
+
+        public ICheckList CheckList { get; set; }
+
+        public ICheckListSignature Signature => GetSignature(SignatureCode);
+        public string SignatureCode { get; set; }
+        public virtual string GetSignatureInformation() => Signature != null && Signature.Signed ? string.Format("by {0} on {1:yyyy-MM-dd HH:mm}", Signature.SignedBy, Signature.SignedOn) : null;
+
+        public virtual bool Valid { get; set; }
+        public Conditions ValidCondition { get; set; }
+        public string ValidExpressionCode { get; set; }
+        public virtual string ValidityMessage { get; set; }
+        public virtual bool IsValidByDefault() => true;
+        protected virtual void UpdateValid()
+        {
+            var ExpressionValue = CheckList?.GetExpressionValue(ValidExpressionCode, this)?.Value as bool? == true;
+            Valid = 
+                Hidden ||
+                ValidCondition == Conditions.Default && IsValidByDefault() ||
+                ValidCondition == Conditions.Expression && ExpressionValue ||
+                ValidCondition == Conditions.ExpressionOrDefault && (ExpressionValue || IsValidByDefault()) ||
+                ValidCondition == Conditions.ExpressionAndDefault && ExpressionValue && IsValidByDefault() ||
+                ValidCondition == Conditions.True;
+        }
+
+        public bool ReadOnly { get; protected set; }
+        public Conditions ReadOnlyCondition { get; set; }
+        public string ReadOnlyExpressionCode { get; set; }
+        protected virtual bool IsReadOnlyByDefault() => false;
+        public virtual void UpdateReadOnly(string userCode, bool readOnlyInstance)
 		{
 			if (readOnlyInstance)
 			{
@@ -125,7 +108,38 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 				ReadOnlyCondition == Conditions.True;
 		}
 
-		public static void Copy(Element source, Element destination)
+        public Conditions CountDownCondition { get; set; }
+        public DateTimeOffset? CountDownToValue { get; set; }
+        public string CountDownToCode { get; set; }
+        public int CountDownOffset { get; set; }
+        private void UpdateCountDownTo()
+        {
+            DateTimeOffset? Value;
+            if (string.IsNullOrEmpty(CountDownToCode))
+                Value = null;
+            else if (CountDownCondition == Conditions.Signature)
+            {
+                var Signature = GetSignature(CountDownToCode);
+                Value = Signature.Signed ? Signature.SignedOn : default(DateTimeOffset?);
+            }
+            else
+                Value = CheckList?.GetExpressionValue(CountDownToCode, this)?.Value as DateTimeOffset?;
+
+            if (Value.HasValue) Value = Value.Value.AddSeconds(CountDownOffset);
+            CountDownToValue = Value;
+        }
+
+        public bool Hidden { get; set; }
+        public Conditions HiddenCondition { get; set; }
+        public string HiddenExpressionCode { get; set; }
+        protected virtual void UpdateHidden()
+        {
+            Hidden =
+                HiddenCondition == Conditions.Expression && CheckList?.GetExpressionValue(HiddenExpressionCode, this)?.Value as bool? == true
+                || HiddenCondition == Conditions.True;
+        }
+
+        public static void Copy(Element source, Element destination)
 		{
 			destination.CheckList = source.CheckList;
 			destination.Code = source.Code;
@@ -138,6 +152,57 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 			destination.ValidCondition = source.ValidCondition;
 			destination.ValidityMessage = source.ValidityMessage;
 			destination.SignatureCode = source.SignatureCode;
-		}
-	}
+        }
+
+        #endregion
+
+        #region Dependency
+
+        private void GetExpression(string ExpressionCode, DependencyRelation.Properties SourceProperty, string PropertyName)
+        {
+            if (!string.IsNullOrEmpty(ExpressionCode) && CheckList.Expressions.TryGetValue(ExpressionCode, out var Expression))
+                AddDependingRelation(SourceProperty, Expression, DependencyRelation.Properties.Value);
+        }
+
+        private void GetSignature(string SignatureCode, DependencyRelation.Properties SourceProperty, string PropertyName)
+        {
+            var BranchElements = GetBranchElements();
+            if (!string.IsNullOrEmpty(SignatureCode) && BranchElements.ContainsKey(SignatureCode) && (BranchElements[SignatureCode] is Signature Signature))
+                AddDependingRelation(SourceProperty, Signature, DependencyRelation.Properties.Signature);
+        }
+
+        public virtual void BuildDependencies()
+        {
+            if (!string.IsNullOrEmpty(SignatureCode))
+                GetSignature(SignatureCode, DependencyRelation.Properties.ReadOnly, "signature");
+
+            if (CountDownCondition == Conditions.Expression)
+                GetExpression(CountDownToCode, DependencyRelation.Properties.CountDown, "countdown");
+
+            if (CountDownCondition == Conditions.Signature)
+                GetSignature(CountDownToCode, DependencyRelation.Properties.CountDown, "signature");
+
+            if (ValidCondition == Conditions.Expression || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
+                GetExpression(ValidExpressionCode, DependencyRelation.Properties.Validity, "valid");
+
+            if (HiddenCondition == Conditions.Expression)
+                GetExpression(HiddenExpressionCode, DependencyRelation.Properties.Hidden, "hidden");
+
+            if (ReadOnlyCondition == Conditions.Expression || ReadOnlyCondition == Conditions.ExpressionOrDefault || ReadOnlyCondition == Conditions.ExpressionAndDefault)
+                GetExpression(ReadOnlyExpressionCode, DependencyRelation.Properties.ReadOnly, "read-only");
+
+            AddDependingRelation(DependencyRelation.Properties.Validity, this, DependencyRelation.Properties.Hidden);
+        }
+
+        public virtual void MarkAllAsChanged(List<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)
+        {
+            MarkNodeAsChanged(CheckList, Roots, DependencyRelation.Properties.Validity);
+            MarkNodeAsChanged(CheckList, Roots, DependencyRelation.Properties.Hidden);
+            MarkNodeAsChanged(CheckList, Roots, DependencyRelation.Properties.CountDown);
+        }
+        
+        public override string DependencyClassName => "element";
+
+        #endregion
+    }
 }

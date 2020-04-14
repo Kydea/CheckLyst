@@ -28,8 +28,14 @@ namespace CheckListManager.Instances.Api
 
             builder.RegisterType<CheckListJsonConverter>()
 			    .AsSelf()
+			    .As<CustomJsonConverter>()
 			    .InstancePerDependency();
-	    }
+
+            builder.RegisterType<TypedValueJsonConverter>()
+                .AsSelf()
+                .As<CustomJsonConverter>()
+                .InstancePerDependency();
+        }
 
 	    private static void RegisterChecklistItem<TClass, TInterface>(ContainerBuilder builder) where TClass : TInterface
 	    {
@@ -44,7 +50,7 @@ namespace CheckListManager.Instances.Api
 		    base.OnConfigureWebApi(configuration);
 
 		    configuration.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new CheckListJsonConverter(Container));
-		    configuration.Formatters.Add(new FormMultipartEncodedMediaTypeFormatter(new MultipartFormatterSettings()));
+            configuration.Formatters.Add(new FormMultipartEncodedMediaTypeFormatter(new MultipartFormatterSettings()));
 	    }
 
 	    #region Static

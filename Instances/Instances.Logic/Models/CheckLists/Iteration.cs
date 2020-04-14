@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using Newtonsoft.Json;
 
@@ -24,6 +26,18 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                     if (Item is ICheckListGroup group) AddAvailableSubItem(group);
                 });
         }
+
+        private void GetAllChildren(ICheckListGroup Group, List<DependencyNode> children)
+        {
+            if (!Group.Iterator)
+                Group.Items.ForEach(Item =>
+                {
+                    children.Add((Element)Item);
+                    if (Item is ICheckListGroup group) GetAllChildren(group, children);
+                });
+        }
+
+        public void GetAllChildren(List<DependencyNode> children) => GetAllChildren(this, children);
 
         public override void Setup()
         {
@@ -73,6 +87,28 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 ((Instance)CheckList).ElementsList.ForEach(x => Result.Add(x.Code, x));
                 return Result;
             }
+        }
+
+        public override void BuildDependencies()
+        {
+            //this is called only for instances existing before v. 2.0.0, because BuildDependencies is called only once per instance
+            for (var Index = 0; Index < Items.Count(); ++Index)
+            {
+                var Item = (Item)Items[Index];
+                Item.ClonedBy = Group.Items[Index].Id;
+            }
+            base.BuildDependencies();
+        }
+
+        public override void MarkAllAsChanged(List<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)
+        {
+            foreach (Item item in Items)
+                item.MarkAllAsChanged(Roots);
+        }
+
+        protected override void UpdateValid()
+        {
+
         }
     }
 }

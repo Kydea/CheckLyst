@@ -147,7 +147,8 @@
 
             commands = $("<div />").addClass("Commands")
                 .append($("<a />").attr("title", "properties").attr("data-command", "properties").addClass("Button MiniIcon Properties").append($("<i />").addClass("fal fa-cogs")))
-                .append($("<a />").attr("title", "copy").attr("data-command", "copy").addClass("Button MiniIcon Copy").append($("<i />").addClass("fal fa-copy")));
+                .append($("<a />").attr("title", "copy").attr("data-command", "copy").addClass("Button MiniIcon Copy").append($("<i />").addClass("fal fa-copy")))
+                .append($("<a />").attr("title", "dependencies").attr("data-command", "dependencies").addClass("Button MiniIcon Dependencies").append($("<i />").addClass("fal fa-sitemap")));
             if (model.state == prototypes.Prototype.states.draft)
                 commands
                     .append($("<a />").attr("title", "paste").attr("data-command", "paste").addClass("Button MiniIcon Paste").append($("<i />").addClass("fal fa-paste")))
@@ -161,7 +162,7 @@
 
             tab.clear();
             for (var index in model.pages)
-                tab.add(model.pages[index].description, "Page" + model.pages[index].id);
+                tab.add(model.pages[index].description, "Page" + index);
 
             if (model.state == prototypes.Prototype.states.draft) tab.add($("<span />").prepend($("<i >").addClass("Add fal fa-plus")), null, "Add");
             page.setIndex(pageIndex = pageIndex >= model.pages.length ? model.pages.length - 1 : pageIndex ? pageIndex : 0);
@@ -277,6 +278,20 @@
                     break;
                 case "properties":
                     prototypes.propertyPanel.select(currentItem);
+                    break;
+                case "dependencies":
+                    var
+                        handler = function () {
+                            var model = currentItem.getModel();
+                            matematici.dependenciesDialog.show(model.dependingRelations, model.dependentRelations);
+                        };
+                    if (matematici.canClose)
+                        handler();
+                    else
+                        matematici.dialog.show("warning", "There are unsaved changes.", [
+                            { text: "save", icon: "check", handler: function () { prototype.save(/*handler*/); } },
+                            { text: "cancel", icon: "times", cancelButton: true }
+                        ]);
                     break;
                 default:
                     alert("invalid command");
@@ -470,6 +485,11 @@
                 else {
                     model = result.checkList;
 
+                    if (model.exception) {
+                        console.log(model.exception);
+                        matematici.dialog.error("Error", model.exception && model.exception.Message || "unexpected error");
+                    }
+
                     prototypeKey = {
                         id: result.id,
                         version: result.version
@@ -532,6 +552,8 @@
     };
 
     prototype.save = function (callback) {
+        var currentItemId = currentItem && (currentItem.isPage && currentItem.isPage() && $("a.Current", element).attr("id") || $("div.Current", element).attr("id")); //saves current item
+
         select();
         $.ajax({
             url: element.data("action") + "Save",
@@ -567,6 +589,12 @@
                 modifiedOn: result.modifiedOn
             };
             update();
+
+            if (currentItemId) {
+                //restores current item
+                currentItem = null;
+                $("#" + currentItemId, element).removeClass("Current").removeClass("Selected").click(); //Selected is for the tab when current item is a page
+            }
 
             if (callback)
                 callback.call();

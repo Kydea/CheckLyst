@@ -6,7 +6,7 @@ namespace CheckListManager.Instances.Logic.Models
 {
 	public class InstanceCacheObject
 	{
-		public long CompanyId { get; set; }
+        public long CompanyId { get; set; }
 
 		public string Code { get; set; }
         public long Department { get; set; }
@@ -29,7 +29,9 @@ namespace CheckListManager.Instances.Logic.Models
 		public string Description { get; set; }
 		public string InstanceState { get; set; }
 
-		public bool IsDirty { get; set; }
+        [JsonIgnore]
+        public bool NeedToCache { get; set; }
+		public bool NeedToSave { get; set; }
 
 		public string CreatedBy { get; set; }
 		public DateTimeOffset CreatedOn { get; set; }
@@ -43,12 +45,5 @@ namespace CheckListManager.Instances.Logic.Models
         [JsonIgnore]
         public string InstanceCode =>
             $"{PrototypeName}.{Version}.{(YearCode)}.{Number?.ToString() ?? "?"}";
-
-		public void TrackChanges(string userCode)
-		{
-			IsDirty = true;
-			ModifiedBy = userCode;
-			ModifiedOn = DateTimeOffset.UtcNow;
-		}
-	}
+    }
 }

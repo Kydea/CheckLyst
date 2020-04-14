@@ -5,7 +5,7 @@ using Newtonsoft.Json.Linq;
 
 namespace CheckListManager.Common.Logic.Json
 {
-	public abstract class AutofacJsonConverter<TBase> : JsonConverter
+	public abstract class AutofacJsonConverter<TBase> : CustomJsonConverter
 	{
 		protected ILifetimeScope Scope { get; }
 

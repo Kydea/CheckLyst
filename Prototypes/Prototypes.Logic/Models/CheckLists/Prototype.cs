@@ -1,28 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CheckListManager.Common.Logic;
+using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.Expressions;
 using CheckListManager.Common.Logic.Models.Expressions.Parsing;
+using Newtonsoft.Json;
 
 namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 {
-    public class Prototype : ICheckList
+    public class Prototype : DependencyNode, ICheckList
     {
         public Dictionary<string, ICheckListElement> Elements { get; } = new Dictionary<string, ICheckListElement>();
-        public PascalCaseDictionary<string, Expression> Expressions { get; set; } = new PascalCaseDictionary<string, Expression>();
-        public PascalCaseDictionary<string, string> ExternalSources { get; set; } = new PascalCaseDictionary<string, string>();
+        public PascalCaseDictionary<string, Expression> Expressions { get; } = new PascalCaseDictionary<string, Expression>();
+        public PascalCaseDictionary<string, string> ExternalSources { get; } = new PascalCaseDictionary<string, string>();
         public PascalCaseDictionary<string, PascalCaseDictionary<string, string>> ExternalSourceRows { get; }
+        public PascalCaseDictionary<string, ExternalSourceDependencyNode> ExternalSourceDependencyNodes { get; } = new PascalCaseDictionary<string, ExternalSourceDependencyNode>();
         public ICheckListGroup Header { get; set; }
         public List<ICheckListPage> Pages { get; } = new List<ICheckListPage>();
         public string DescriptionFormulaString { get; set; }
+        private Formula DescriptionFormula { get; } = new Formula();
         public string FileNameFormulaString { get; set; }
-        public bool FTPExport { get; set; }
+        private Formula FileNameFormula { get; } = new Formula();
 
+        public bool FTPExport { get; set; }
+        public Exception Exception { get; set; }
+
+        private int itemSequence;
+        public Dictionary<int, ICheckListItem> Items { get; } = new Dictionary<int, ICheckListItem>();
         public void AddItem(ICheckListItem item)
         {
-            throw new NotImplementedException(); //only for instances
+            item.Id = ++itemSequence;
+            Items.Add(item.Id, item);
         }
 
         public TypedValue GetExpressionValue(string ExpressionCode, ICheckListElement Element)
@@ -37,55 +48,125 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         public void Setup()
         {
-            Header.CheckList = this;
-            Header.Setup();
-
-            foreach (var Page in Pages)
+            try
             {
-                Page.CheckList = this;
-                Page.Setup();
+                Exception = null;
+                Header.CheckList = this;
+                Header.Setup();
+                int Index = 0;
+                foreach (Page Page in Pages)
+                {
+                    Page.Index = Index++;
+                    Page.CheckList = this;
+                    Page.Setup();
+                }
+
+                ExternalSourceDependencyNodes.Clear();
+                foreach (string ExternalSource in ExternalSources.Keys)
+                    ExternalSourceDependencyNodes.Add(ExternalSource, new ExternalSourceDependencyNode { Code = ExternalSource });
+
+                bool Error = false;
+                foreach (var expression in Expressions)
+                    try
+                    {
+                        if (expression.Key.Length > 50)
+                            throw new Exception($"Expression codes must not exceed 50 characters");
+
+                        if (expression.Value.Description?.Length > 100)
+                            throw new Exception($"Expression descriptions must not exceed 100 characters");
+
+                        expression.Value.Validate(this, expression.Key);
+                        expression.Value.Parse(this);
+                        expression.Value.ClearDependencies();
+                        expression.Value.DependencyChainAction = e => e.Check(this);
+                    }
+                    catch (ParseException Exception)
+                    {
+                        expression.Value.Error = $"{Exception.Message} (position {Exception.Position})";
+                        Error = true;
+                    }
+                    catch (Exception Exception)
+                    {
+                        expression.Value.Error = Exception.Message;
+                        Error = true;
+                    }
+
+                if (Error || !BuildDependencies())
+                    throw new Exception("Some expression is not valid");
+
+
+                foreach (var expression in Expressions.Values)
+                    if (expression.Error == null)
+                    {
+                        expression.TestDependencyChain(this, DependencyRelation.Properties.Value);
+                        Error = expression.Error != null;
+                    }
+
+                if (Error)
+                    throw new Exception("Some expression is not valid");
+
+                ((Group)Header).Check();
+                foreach (Page Page in Pages)
+                    Page.Check();
+
+                foreach (var expression in Expressions.Values)
+                    if (expression.Error == null && !expression.Check(this))
+                        Error = true;
+
+                if (Error)
+                    throw new Exception("Some expression is not valid");
             }
-
-            foreach (var Expression in Expressions)
+            catch (Exception Exception)
             {
-                try
-                {
-                    if (Expression.Key.Length > 50)
-                        throw new Exception($"Expression codes must not exceed 50 characters");
-
-                    if (Expression.Value.Description?.Length > 100)
-                        throw new Exception($"Expression descriptions must not exceed 100 characters");
-
-                    Expression.Value.Validate(this);
-                    Expression.Value.Parse(this);
-                    Expression.Value.Check(this);
-                }
-                catch (ParseException Exception)
-                {
-                    Expression.Value.Error = $"{Exception.Message} (position {Exception.Position})";
-                }
-                catch (Exception Exception)
-                {
-                    Expression.Value.Error = Exception.Message;
-                }
+                this.Exception = Exception;
             }
         }
 
+        public override bool Update(DependencyRelation.Properties Property) => true;
+
+        private bool BuildDependencies()
+        {
+            var Result = true;
+            foreach (var expression in Expressions.Values)
+                if (expression.Error == null && !expression.BuildDependencies(this))
+                    Result = false;
+
+            if (Result)
+            {
+                DescriptionFormula.BuildDependencies(DescriptionFormulaString, null);
+                foreach (var Key in DescriptionFormula.ValueKeys)
+                    if (Expressions.TryGetValue(Key, out var Expression))
+                        AddDependingRelation(DependencyRelation.Properties.Formula, Expression, DependencyRelation.Properties.Value);
+
+                FileNameFormula.BuildDependencies(FileNameFormulaString, null);
+                foreach (var Key in FileNameFormula.ValueKeys)
+                    if (Expressions.TryGetValue(Key, out var Expression))
+                        AddDependingRelation(DependencyRelation.Properties.Formula, Expression, DependencyRelation.Properties.Value);
+
+                ((Group)Header).BuildDependencies();
+                foreach (Page Page in Pages)
+                    Page.BuildDependencies();
+            }
+
+            return Result;
+        }
+
+        public override string DependencyClassName => "checklist";
+
         public void Traverse(Func<ICheckListItem, bool> condition, Action<ICheckListItem> action)
         {
-            Header.Traverse(condition, action);
+            ((Group)Header).Traverse(condition, action);
 
-            foreach (var page in Pages)
+            foreach (Page page in Pages)
                 page.Traverse(condition, action);
         }
 
         public async Task TraverseAsync(Func<ICheckListItem, bool> condition, Func<ICheckListItem, Task> action)
         {
-            await Header.TraverseAsync(condition, action);
+            await ((Group)Header).TraverseAsync(condition, action);
 
-            foreach (var page in Pages)
+            foreach (Page page in Pages)
                 await page.TraverseAsync(condition, action);
         }
-
     }
 }

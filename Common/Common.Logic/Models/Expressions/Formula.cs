@@ -1,5 +1,7 @@
 ﻿using CheckListManager.Common.Core.Helpers;
+using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.CheckLists;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -17,95 +19,113 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             ErrorValueLeft = "<span class='Error'>",
             ErrorValueRight = "</span>";
 
-        private string Format;
-        private List<string> ValueKeys = new List<string>();
-        private List<string> Formats = new List<string>();
+        [JsonProperty]
+        private string Format { get; set; }
+        public bool IsSet { get; set; }
+        public List<string> ValueKeys { get; } = new List<string>();
+        [JsonProperty]
+        private List<string> TokenFormats { get; } = new List<string>();
+        public string Value { get; set; }
+        public bool HasValue { get; set; } //has a value and does not contains null or error values
 
-        public Formula() { }
-
-        public Formula(string RawValue)
+        public void BuildDependencies(string RawValue, Formula BaseFormula)
         {
-            this.RawValue = RawValue;
-        }
-
-        private string _RawValue;
-        public string RawValue
-        {
-            get { return _RawValue; }
-            set { _RawValue = value; Format = FormatValue(value); }
-        }
-
-        public string Value { get; private set; }
-
-        public bool HasValue { get; private set; }
-
-        private string FormatValue(string RawValue)
-        {
-            return
-                string.IsNullOrWhiteSpace(RawValue) ?
-                    null :
-                    new Regex(@"(?<Start>\{)+(?<Property>[\w\-\.\[\]]+)(?<Format>:[^}]+)?(?<End>\})+", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)
-                        .Replace(RawValue, delegate (Match Match)
-                        {
-                            ValueKeys.Add(Match.Groups["Property"].Value);
-                            string Format = Match.Groups["Format"].Value;
-                            if (!string.IsNullOrWhiteSpace(Format))
+            if (BaseFormula == null)
+            {
+                ValueKeys.Clear();
+                TokenFormats.Clear();
+                Value = null;
+                Format =
+                    string.IsNullOrWhiteSpace(RawValue) ?
+                        null :
+                        new Regex(@"(?<Start>\{)+(?<Property>[\w\-\.\[\]]+)(?<Format>:[^}]+)?(?<End>\})+", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)
+                            .Replace(RawValue, delegate (Match Match)
                             {
-                                if (!int.TryParse(Format.Substring(2), out int Number)) Number = -1;
-                                Format =
-                                    Number < 0 ? string.Empty :
-                                    Format.StartsWith(":n") ? "0." + new string('0', Number) :
-                                    string.Empty;
-                            }
-                            Formats.Add(Format);
-                            return new string('{', Match.Groups["Start"].Captures.Count) + (ValueKeys.Count - 1) + new string('}', Match.Groups["End"].Captures.Count);
-                        });
+                                var Key = Match.Groups["Property"].Value;
+                                ValueKeys.Add(Key);
+                                string Format = Match.Groups["Format"].Value;
+                                if (!string.IsNullOrWhiteSpace(Format))
+                                {
+                                    if (!int.TryParse(Format.Substring(2), out int Number)) Number = -1;
+                                    Format =
+                                        Number < 0 ? string.Empty :
+                                        Format.StartsWith(":n") ? "0." + new string('0', Number) :
+                                        string.Empty;
+                                }
+                                TokenFormats.Add(Format);
+                                return new string('{', Match.Groups["Start"].Captures.Count) + (ValueKeys.Count - 1) + new string('}', Match.Groups["End"].Captures.Count);
+                            });
+                IsSet = Format != null;
+            }
+            else
+                IsSet = BaseFormula.IsSet;
         }
 
-        public void Update(ICheckList CheckList, Dictionary<string, object> RuntimeValues, string DecimalSeparator, string TimeZone, List<int> IterationIndexes)
+        private bool Evaluated { get; set; }
+        private void Evaluate(ICheckList CheckList, Dictionary<string, object> RuntimeValues, string DecimalSeparator, string TimeZone, List<int> IterationIndexes, string Format, List<string> ValueKeys, List<string> TokenFormats)
         {
+            int Index = 0;
+            Value = Format == null ? null : string.Format(
+                CultureInfo.InvariantCulture,
+                Format,
+                ValueKeys.Select(Key =>
+                {
+                    var ExpressionValue = CheckList.GetExpressionValue(Key, IterationIndexes, out var Error);
+                    var Value =
+                        ExpressionValue != null ?
+                            ExpressionValue.Type == DataType.Error ? ErrorValueLeft + ExpressionValue.ErrorValue + ErrorValueRight :
+                            ExpressionValue.IsNull ? NullValue :
+                            ExpressionValue.Type == DataType.Number ? ExpressionValue.NumberValue.ToString(TokenFormats[Index]).Replace(".", DecimalSeparator).Replace(",", DecimalSeparator) :
+                            ExpressionValue.Type == DataType.DateTime ? ExpressionValue.DateTimeValue.ToLocalTime(TimeZone).ToString("yyyy-MM-dd HH:mm:ss") :
+                            ExpressionValue.Type == DataType.Date ? ExpressionValue.DateTimeValue.ToString("yyyy-MM-dd") :
+                            ExpressionValue.Type == DataType.Time ? ExpressionValue.TimeSpanValue.ToString(@"hh\:mm\:ss") :
+                            ExpressionValue.Value :
+                        RuntimeValues?.ContainsKey(Key) ?? false ? RuntimeValues[Key] :
+                        $"{ErrorValueLeft}{Error}{ErrorValueRight}";
+                    ++Index;
+                    return Value;
+                }).ToArray());
+
+            HasValue =
+                !string.IsNullOrEmpty(Format)
+                && !ValueKeys.Any(Key =>
+                {
+                    var ExpressionValue = CheckList.GetExpressionValue(Key, IterationIndexes);
+                    var Value =
+                        CheckList.Expressions.ContainsKey(Key) && (ExpressionValue == null || ExpressionValue.Type == DataType.Error || ExpressionValue.IsNull)
+                        || !CheckList.Expressions.ContainsKey(Key) && !RuntimeValues.ContainsKey(Key);
+                    return Value;
+                });
+        }
+
+        public void Evaluate(ICheckList CheckList, Dictionary<string, object> RuntimeValues, string DecimalSeparator, string TimeZone, List<int> IterationIndexes, Formula BaseFormula)
+        {
+            if (Evaluated) return;
+            Evaluated = true;
             try
             {
-                int Index = 0;
-                Value = Format == null ? null : string.Format(
-                    CultureInfo.InvariantCulture,
-                    Format,
-                    ValueKeys.Select(Key =>
-                    {
-                        var ExpressionValue = CheckList.GetExpressionValue(Key, IterationIndexes, out var Error);
-                        var Value =
-                            ExpressionValue != null ?
-                                ExpressionValue.Type == DataType.Error ? ErrorValueLeft + ExpressionValue.ErrorValue + ErrorValueRight :
-                                ExpressionValue.IsNull ? NullValue :
-                                ExpressionValue.Type == DataType.Number ? ExpressionValue.NumberValue.ToString(Formats[Index]).Replace(".", DecimalSeparator).Replace(",", DecimalSeparator) :
-                                ExpressionValue.Type == DataType.DateTime ? ExpressionValue.DateTimeValue.ToLocalTime(TimeZone).ToString("yyyy-MM-dd HH:mm:ss") :
-                                ExpressionValue.Type == DataType.Date ? ExpressionValue.DateTimeValue.ToString("yyyy-MM-dd") :
-                                ExpressionValue.Type == DataType.Time ? ExpressionValue.TimeSpanValue.ToString(@"hh\:mm\:ss") :
-                                ExpressionValue.Value :
-                            RuntimeValues?.ContainsKey(Key) ?? false ? RuntimeValues[Key] :
-                            $"{ErrorValueLeft}{Error}{ErrorValueRight}";
-                        ++Index;
-                        return Value;
-                    }).ToArray());
-
-                HasValue =
-                    !string.IsNullOrEmpty(Format)
-                    && !ValueKeys.Any(Key =>
-                    {
-                        var ExpressionValue = CheckList.GetExpressionValue(Key, IterationIndexes);
-                        var Value = 
-                            CheckList.Expressions.ContainsKey(Key) && (ExpressionValue == null || ExpressionValue.Type == DataType.Error || ExpressionValue.IsNull)
-                            || !CheckList.Expressions.ContainsKey(Key) && !RuntimeValues.ContainsKey(Key);
-                        return Value;
-                    });
+                Evaluate(CheckList, RuntimeValues, DecimalSeparator, TimeZone, IterationIndexes, BaseFormula.Format, BaseFormula.ValueKeys, BaseFormula.TokenFormats);
             }
             catch
             {
                 Value = $"{ErrorValueLeft}Invalid formula{ErrorValueRight}";
                 HasValue = false;
             }
-
         }
 
+        public void Evaluate(ICheckList CheckList, Dictionary<string, object> RuntimeValues, string DecimalSeparator, string TimeZone, List<int> IterationIndexes)
+        {
+            if (Evaluated) return;
+            Evaluated = true;
+            try
+            {
+                Evaluate(CheckList, RuntimeValues, DecimalSeparator, TimeZone, IterationIndexes, Format, ValueKeys, TokenFormats);
+            }
+            catch
+            {
+                Value = $"{ErrorValueLeft}Invalid formula{ErrorValueRight}";
+                HasValue = false;
+            }
+        }
     }
 }

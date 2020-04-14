@@ -10,14 +10,14 @@
                 condition = !!value ? conditionSelect.val() : 0,
                 error;
 
-            if (condition == 1) {
+            if (condition == 3) {
                 if (!value)
                     error = "select an expression";
                 else if (expressions[value].error)
                     error = "the expression is not valid";
                 else if (!prototypes.propertyPanel.checkDataType(expressions[value], "DateTime"))
                     error = "the expression result must be a date";
-            } else if (condition == 2) {
+            } else if (condition == 6) {
                 if (!value)
                     error = "select a signature";
             }

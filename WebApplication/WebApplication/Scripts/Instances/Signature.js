@@ -77,7 +77,7 @@
                         },
 
                         trySign = function (code, accessToken) {
-                            new instances.Event(instances.Events.signatureCheck, model.id, { userName: code }).done(function (result) {
+                            new instances.Event(instances.Events.signatureCheck, model.id, { userName: code }).done(function () {
                                 sign(code, accessToken);
                             }).trigger();
                         };

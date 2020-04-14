@@ -21,11 +21,18 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             }
         }
 
-        public override void Check(ICheckList Prototype, List<string> IteratorStack)
+        public override void BuildDependencies(ICheckList CheckList, Expression Expression)
         {
-            Condition.Check(Prototype, IteratorStack);
-            TruePart.Check(Prototype, IteratorStack);
-            FalsePart.Check(Prototype, IteratorStack);
+            Condition.BuildDependencies(CheckList, Expression);
+            TruePart.BuildDependencies(CheckList, Expression);
+            FalsePart.BuildDependencies(CheckList, Expression);
+        }
+
+        public override void Check(ICheckList CheckList, Expression Expression, List<string> IteratorStack)
+        {
+            Condition.Check(CheckList, Expression, IteratorStack);
+            TruePart.Check(CheckList, Expression, IteratorStack);
+            FalsePart.Check(CheckList, Expression, IteratorStack);
 
             if (Condition.DataType != DataType.Boolean) throw new ParseException("The condition must be a boolean", Position);
             if (TruePart.DataType != FalsePart.DataType) throw new ParseException("The 'true part' and 'false part' must implement the same type", Position);

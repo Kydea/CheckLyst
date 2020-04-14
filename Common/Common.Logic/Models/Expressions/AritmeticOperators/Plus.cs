@@ -7,9 +7,9 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ArithmeticOperators
 {
     public class Plus : BinaryArithmeticOperator
     {
-        public override void Check(ICheckList Prototype, List<string> IteratorStack)
+        public override void Check(ICheckList CheckList, Expression Expression, List<string> IteratorStack)
         {
-            base.Check(Prototype, IteratorStack);
+            base.Check(CheckList, Expression, IteratorStack);
 
             if (Right.DataType != DataType.Number)
                 throw new ParseException("Right operand of operator + must be a number", Position);

@@ -35,6 +35,8 @@ body:not(.Login) div#Content h3, body:not(.Login) div.Popup h3, body:not(.Login)
   font-size: 16px;
   color: #00877a;
   clear: both; }
+  body:not(.Login) div#Content h3:first-child, body:not(.Login) div.Popup h3:first-child, body:not(.Login) div.Dialog h3:first-child {
+    margin-top: 0; }
 
 body:not(.Login) div#Content h4, body:not(.Login) div.Popup h4, body:not(.Login) div.Dialog h4 {
   margin: 20px 0;

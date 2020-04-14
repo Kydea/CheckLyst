@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.Expressions.Parsing;
 
@@ -8,33 +9,31 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
 {
     public class ElementProperty : Symbol
     {
-        public enum ElementProperties { Valid }
-
-        private readonly ElementProperties Property;
-
-        protected ElementProperty()
+        public ElementProperty()
         {
-        }
-
-        public ElementProperty(ElementProperties Property)
-        {
-            this.Property = Property;
+            Property = "property Valid";
         }
 
         public string Code { get; set; }
 
-        protected virtual void Check(ICheckListElement Element, List<string> IteratorStack)
+        protected string Property { get; set; }
+        protected virtual DependencyRelation.Properties DependencyProperty => DependencyRelation.Properties.Validity;
+
+        public override void BuildDependencies(ICheckList CheckList, Expression Expression)
         {
-            if (Property == ElementProperties.Valid)
-                DataType = DataType.Boolean;
+            if (!CheckList.Elements.ContainsKey(Code)) throw new ParseException($"Element with code {Code} not found", Position);
+            var DependingElement = (DependencyNode)CheckList.Elements[Code];
+            Expression.AddDependingRelation(DependencyRelation.Properties.Value, DependingElement, DependencyProperty);
         }
 
-        public static ICheckListElement Check(ICheckList Prototype, List<string> IteratorStack, string Code, int Position)
+        protected virtual void Check(ICheckListElement Element, List<string> IteratorStack)
         {
-            if (!Prototype.Elements.ContainsKey(Code))
-                throw new ParseException($"Element with code {Code} not found", Position);
+            DataType = DataType.Boolean;
+        }
 
-            var Element = Prototype.Elements[Code];
+        public static ICheckListElement Check(ICheckList CheckList, List<string> IteratorStack, string Code, int Position)
+        {
+            var Element = CheckList.Elements[Code];
             if (Element is ICheckListItem Item)
             {
                 int Index = -1;
@@ -61,19 +60,16 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
             }
 
             return Element;
-
         }
 
-        public override void Check(ICheckList Prototype, List<string> IteratorStack)
+        public override void Check(ICheckList CheckList, Expression Expression, List<string> IteratorStack)
         {
-            var Element = Check(Prototype, IteratorStack, Code, Position);
+            var Element = Check(CheckList, IteratorStack, Code, Position);
             Check(Element, IteratorStack);
         }
 
         protected virtual TypedValue GetValue(ICheckListElement Element, string TimeZone)
-        {
-            return new TypedValue(DataType.Boolean, Element.Valid);
-        }
+            => new TypedValue(DataType.Boolean, Element.Valid);
 
         public override TypedValue GetValue(IElementsBranch ElementsBranch, string TimeZone)
         {
@@ -82,8 +78,6 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
         }
 
         public override string ToString()
-        {
-            return $"{Code}.Valid";
-        }
+            => $"{Code}.{Property}";
     }
 }

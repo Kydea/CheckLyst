@@ -20,7 +20,6 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
 		ICheckListPage Page { get; set; }
 		[JsonIgnore]
 		ICheckListItem Previous { get; set; }
-		Dictionary<string, object> RuntimeValues { get; }
 		string TypeName { get; }
 		ICheckListItem Clone(ICheckListGroup parent);
         int FontSize { get; set; }

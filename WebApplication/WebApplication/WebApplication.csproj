@@ -366,6 +366,7 @@
     <Content Include="Scripts\Matematici\Page.js" />
     <Content Include="Scripts\Matematici\Tab.js" />
     <Content Include="Scripts\Matematici\Touch.js" />
+    <Content Include="Scripts\Prototypes\DependenciesDialog.js" />
     <Content Include="Scripts\Prototypes\EmailProperty.js" />
     <Content Include="Scripts\Prototypes\BooleanProperty.js" />
     <Content Include="Scripts\Custom\WorkFlowSignature.js" />
@@ -450,7 +451,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-	<Folder Include="Properties\PublishProfiles\" />
+    <Folder Include="Properties\PublishProfiles\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Theme\ActionBar.scss" />
