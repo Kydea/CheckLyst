@@ -32,7 +32,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         {
             base.UpdateHidden();
             if (!Hidden && Page != null)
-                Hidden = Hidden || Page.Hidden;
+                Hidden = Page.Hidden;
         }
 
         public void CreateInstanceIterations()
@@ -94,7 +94,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         protected override void UpdateValid()
         {
             base.UpdateValid();
-            if (!Valid) return;
+            if (!Valid || ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionAndDefault || ValidCondition == Conditions.ExpressionOrDefault) return;
 
             if (Iterator)
                 foreach (var Iteration in Iterations.Where(i => !i.Removed))

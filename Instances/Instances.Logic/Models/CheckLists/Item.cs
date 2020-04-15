@@ -97,7 +97,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         {
             base.UpdateHidden();
             if (!Hidden && Group != null)
-                Hidden = Hidden || Group.Hidden;
+                Hidden = Group.Hidden;
         }
 
         protected override bool IsReadOnlyByDefault() => Previous != null && !Previous.Valid;
