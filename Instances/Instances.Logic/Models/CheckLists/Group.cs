@@ -91,24 +91,22 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         }
 
-        protected override void UpdateValid()
+        public override bool IsValidByDefault()
         {
-            base.UpdateValid();
-            if (!Valid || ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionAndDefault || ValidCondition == Conditions.ExpressionOrDefault) return;
-
             if (Iterator)
+            {
                 foreach (var Iteration in Iterations.Where(i => !i.Removed))
                     foreach (var item in Iteration.Items) //the iteration are never updated so they are considered transparent to validity
-                    {
-                        Valid = Valid && item.Valid;
-                        if (!Valid) return;
-                    }
+                        if (!Valid)
+                            return false;
+            }
             else
+            {
                 foreach (var item in Items)
-                {
-                    Valid = Valid && item.Valid;
-                    if (!Valid) return;
-                }
+                    if (!Valid)
+                        return false;
+            }
+            return true;
         }
 
         public override void UpdateReadOnly(string userCode, bool readOnlyInstance)

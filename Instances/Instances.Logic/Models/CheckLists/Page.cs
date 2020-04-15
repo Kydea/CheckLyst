@@ -35,16 +35,12 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             }
         }
 
-        protected override void UpdateValid()
+        public override bool IsValidByDefault()
         {
-            base.UpdateValid();
-            if (!Valid || ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionAndDefault || ValidCondition == Conditions.ExpressionOrDefault) return;
-
             foreach (var group in Groups)
-            {
-                Valid = Valid && group.Valid;
-                if (!Valid) return;
-            }
+                if (!Valid)
+                    return false;
+            return true;
         }
 
         public override void UpdateReadOnly(string userCode, bool ReadOnlyInstance)
