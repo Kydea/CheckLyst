@@ -97,13 +97,13 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             {
                 foreach (var Iteration in Iterations.Where(i => !i.Removed))
                     foreach (var item in Iteration.Items) //the iteration are never updated so they are considered transparent to validity
-                        if (!Valid)
+                        if (!item.Valid)
                             return false;
             }
             else
             {
                 foreach (var item in Items)
-                    if (!Valid)
+                    if (!item.Valid)
                         return false;
             }
             return true;

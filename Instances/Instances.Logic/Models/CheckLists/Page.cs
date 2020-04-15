@@ -38,7 +38,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public override bool IsValidByDefault()
         {
             foreach (var group in Groups)
-                if (!Valid)
+                if (!group.Valid)
                     return false;
             return true;
         }
