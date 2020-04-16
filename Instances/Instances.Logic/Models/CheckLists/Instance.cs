@@ -105,6 +105,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public void BuildDependencies()
         {
+            ExternalSourceDependencyNodes.Clear();
             foreach (string ExternalSource in ExternalSources.Keys)
                 ExternalSourceDependencyNodes.Add(ExternalSource, new ExternalSourceDependencyNode { Code = ExternalSource });
 

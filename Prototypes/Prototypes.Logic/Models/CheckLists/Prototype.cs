@@ -24,7 +24,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         private Formula DescriptionFormula { get; } = new Formula();
         public string FileNameFormulaString { get; set; }
         private Formula FileNameFormula { get; } = new Formula();
-
+        
         public bool FTPExport { get; set; }
         public Exception Exception { get; set; }
 
