@@ -17,10 +17,18 @@ namespace CheckListManager.Common.Logic.Json
         {
             var jobject = JObject.Load(reader);
 
-            var dataType = DataType.FromName(jobject["Type"].Value<string>("TypeName"), true);
-            var value = dataType.FromJson(jobject["Value"], serializer);
+            var type = (JObject)jobject.GetValue("Type", StringComparison.InvariantCultureIgnoreCase);
+            var typeName = type.GetValue("TypeName", StringComparison.InvariantCultureIgnoreCase).Value<string>();
 
-            return new TypedValue(dataType, value);
+            if (typeName != null)
+            {
+                var dataType = DataType.FromName(typeName, true);
+                var value = dataType.FromJson(jobject.GetValue("Value", StringComparison.InvariantCultureIgnoreCase), serializer);
+
+                return new TypedValue(dataType, value);
+            }
+
+            return null;
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
