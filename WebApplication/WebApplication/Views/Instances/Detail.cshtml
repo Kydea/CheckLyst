@@ -60,8 +60,8 @@
                 .add("<i class='Icon fa fa-calculator'></i>", function () {
                     new matematici.CheckListGrid(instance.getExpressions(), null, function (tr, row, rowIndex, columnIndex, passedValue) {
                         var
-                            typeName = row.value && row.value.type && row.value.type.typeName,
-                            value = row.value && row.value.value;
+                            typeName = row.typeName,
+                            value = row.value;
 
                         if (columnIndex == 2) {
                             var td = $("<td />").appendTo(tr);
@@ -69,7 +69,7 @@
                                 if (value) {
                                     var
                                         formattedDate = matematici.dateFormatter.format(moment.parseZone(value)),
-                                        formattedValue = row.typeName == "DateTime" ? formattedDate.date + " " + formattedDate.time + ":" + formattedDate.seconds : formattedDate.date;
+                                        formattedValue = typeName == "DateTime" ? formattedDate.date + " " + formattedDate.time + ":" + formattedDate.seconds : formattedDate.date;
 
                                     td.append($("<span />").html(formattedValue).attr("title", formattedDate.offset));
                                 }
@@ -87,7 +87,7 @@
                             return true;
                         } else if (columnIndex == 3) {
                             var td = $("<td />").appendTo(tr);
-                            td.html(row.value && row.value.type && row.value.type.typeName);
+                            td.html(row.typeName);
                             return true;
                         }
                         return false;

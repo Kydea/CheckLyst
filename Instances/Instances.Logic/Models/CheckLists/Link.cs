@@ -20,5 +20,12 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             Copy(this, text);
             return text;
         }
+
+        public override dynamic GetViewModel()
+        {
+            var ItemModel = base.GetViewModel();
+            ItemModel.Url = Url;
+            return ItemModel;
+        }
     }
 }

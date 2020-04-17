@@ -40,6 +40,31 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public int Offset { get; private set; }
 
+        public override dynamic GetViewModel()
+        {
+            var ItemModel = base.GetViewModel();
+            ItemModel.ValueFormulaString = ValueFormulaString;
+            ItemModel.ValueTypeName = ValueTypeName;
+            ItemModel.Value = Value;
+            ItemModel.LinesCount = LinesCount;
+
+            if (ValuesList != null)
+                ItemModel.ValueList = ValuesList;
+
+            if (ExternalSourceName != null)
+            {
+                ItemModel.ExternalSourceName = ExternalSourceName;
+                ItemModel.ExternalSourceColumn = ExternalSourceColumn;
+            }
+            if (History.Any())
+                ItemModel.History = History.Select(x => new {
+                    x.DateTime,
+                    x.User,
+                    x.Value
+                });
+            return ItemModel;
+        }
+
         public override ICheckListItem Clone(ICheckListGroup parent)
         {
             var field = new Field

@@ -30,13 +30,12 @@
         };
 
     this.update = function (model) {
-        span.html(title = model.description ? model.description : "show image");
+        span.html(title = model.descriptionValue || "show image");
 
         this.setColor(model.color);
 		this.setFontSize(model.fontSize);
 
 		a.toggleClass("GreyYellowButton", !model.key || model.key === '');
-		//a.toggleClass("ReadOnly", model.readOnly);
     };
 
     this.setColor = function (value) {

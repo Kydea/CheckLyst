@@ -184,6 +184,19 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             destination.DescriptionFormula.IsSet = source.FindIteratorModelItem().DescriptionFormula.IsSet;
         }
 
+        public override dynamic GetViewModel()
+        {
+            var elementModel = base.GetViewModel();
+            elementModel.DescriptionValue = DescriptionValue;
+            elementModel.Id = Id;
+            elementModel.TypeName = TypeName;
+            elementModel.NewLine = NewLine;
+            elementModel.Color = Color;
+            elementModel.FontSize = FontSize;
+
+            return elementModel;
+        }
+
         public override string DependencyClassName => "item";
         public override int? DependencyObjectID => Id;
         public override string DependencyObjectCode => IterationItem ? null : Code;

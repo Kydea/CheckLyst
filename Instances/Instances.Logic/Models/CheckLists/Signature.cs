@@ -23,6 +23,33 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 		public DateTimeOffset SignedOn { get; set; }
 		public string SignerDescription { get; set; }
 
+        public override dynamic GetViewModel()
+        {
+            var ItemModel = base.GetViewModel();
+            ItemModel.Cancelable = Cancelable;
+            ItemModel.AcceptsPin = AcceptsPin;
+            ItemModel.SendEmail = SendEmail;
+            ItemModel.SendEmailAddress = SendEmailAddress;
+            ItemModel.ButtonLabel = ButtonLabel;
+            ItemModel.Signed = Signed;
+            if (Signed)
+            {
+                ItemModel.SignedBy = SignedBy;
+                ItemModel.SignedOn = SignedOn;
+                ItemModel.SignerDescription = SignerDescription;
+            }
+
+            if (History.Any())
+                ItemModel.History = History.Select(x => new {
+                    x.DateTime,
+                    x.User,
+                    x.Signature,
+                    x.Note,
+                    x.Action
+                });
+            return ItemModel;
+        }
+
         public override bool IsValidByDefault() => Signed;
 
         public override void BuildDependencies()

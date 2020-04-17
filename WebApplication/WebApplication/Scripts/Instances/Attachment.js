@@ -59,7 +59,7 @@
 
     this.update = function (model) {
 		uploadButton
-            .html(model.description || "upload")
+            .html(model.descriptionValue || "upload")
             .append($("<i />").addClass("Icon fa fa-paperclip"));
 
         this.setColor(model.color);

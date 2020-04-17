@@ -29,5 +29,13 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             public const string Images = "images";
             public const string Pdf = "pdf";
         }
+
+        public override dynamic GetViewModel()
+        {
+            var ItemModel = base.GetViewModel();
+            ItemModel.Key = Key;
+            ItemModel.FileType = FileType;
+            return ItemModel;
+        }
     }
 }

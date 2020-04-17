@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.CheckLists;
@@ -13,6 +14,14 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public List<ICheckListGroup> Groups { get; set; } = new List<ICheckListGroup>();
 
         public Lock Lock { get; set; }
+
+        public override dynamic GetViewModel()
+        {
+            var ElementModel = base.GetViewModel();
+            ElementModel.Groups = Groups.Where(g => !g.Hidden).Select(g => ((Group)g).GetViewModel());
+            ElementModel.Lock = Lock;
+            return ElementModel;
+        }
 
         public void CreateInstanceIterations()
         {

@@ -11,7 +11,7 @@
         check,
 
         setup = function () {
-            label = $("<label />").addClass("Controls3").append($("<span />").addClass("Label").html(model.descriptionValue ? model.descriptionValue : "(no description)"));
+            label = $("<label />").addClass("Controls3").append($("<span />").addClass("Label").html(model.descriptionValue || "(no description)"));
             if (!item.isTableContent())
                 label.appendTo(element);
 

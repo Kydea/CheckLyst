@@ -68,9 +68,8 @@ namespace CheckListManager.Instances.Api.Controllers
                     Version = cacheObject.Version,
                     VersionState = cacheObject.VersionState,
 
-                    CheckList = cacheObject.Instance
+                    CheckList = cacheObject.Instance.GetViewModel(Identity, cacheObject)
                 };
-                if (!Identity.HasPermission("Trail") && cacheObject.VersionState != VersionState.Draft && cacheObject.VersionState != VersionState.InSimulation) cacheObject.Instance.HideExpressions = true;
                 return Ok(response);
             }
             catch (Exception e)
@@ -96,9 +95,8 @@ namespace CheckListManager.Instances.Api.Controllers
                     Year = cacheObject.Year,
                     Number = cacheObject.Number,
 
-                    CheckList = cacheObject.Instance
+                    CheckList = cacheObject.Instance.GetViewModel(Identity, cacheObject)
                 };
-                if (!Identity.HasPermission("Trail") && cacheObject.VersionState != VersionState.Draft && cacheObject.VersionState != VersionState.InSimulation) cacheObject.Instance.HideExpressions = true;
                 return Ok(response);
             }
             catch (Exception e)
@@ -150,7 +148,7 @@ namespace CheckListManager.Instances.Api.Controllers
                 return Ok(new InstanceResponse
                 {
                     State = cacheObject.InstanceState,
-                    CheckList = cacheObject.Instance
+                    CheckList = cacheObject.Instance.GetViewModel(Identity, cacheObject)
                 });
             }
             catch (Exception e)
@@ -180,7 +178,7 @@ namespace CheckListManager.Instances.Api.Controllers
                     Number = cacheObject.Number,
                     State = cacheObject.InstanceState,
 
-                    CheckList = cacheObject.Instance,
+                    CheckList = cacheObject.Instance.GetViewModel(Identity, cacheObject),
 
                     Department = cacheObject.Department,
                     DepartmentName = cacheObject.DepartmentName,
@@ -192,7 +190,6 @@ namespace CheckListManager.Instances.Api.Controllers
                     Version = cacheObject.Version,
                     VersionState = cacheObject.VersionState
                 };
-                if (!Identity.HasPermission("Trail") && cacheObject.VersionState != VersionState.Draft && cacheObject.VersionState != VersionState.InSimulation) cacheObject.Instance.HideExpressions = true;
                 return Ok(response);
             }
             catch (Exception e)
@@ -214,10 +211,9 @@ namespace CheckListManager.Instances.Api.Controllers
                 {
                     Id = cacheObject.Id,
                     Code = cacheObject.Code,
-                    CheckList = cacheObject.Instance,
+                    CheckList = cacheObject.Instance.GetViewModel(Identity, cacheObject),
                     State = cacheObject.InstanceState
                 };
-                if (!Identity.HasPermission("Trail") && cacheObject.VersionState != VersionState.Draft && cacheObject.VersionState != VersionState.InSimulation) cacheObject.Instance.HideExpressions = true;
                 return Ok(response);
             }
             catch (Exception e)

@@ -19,6 +19,6 @@ namespace CheckListManager.Instances.Logic.Messages
         public int Version { get; set; }
         public string VersionState { get; set; }
 
-        public Instance CheckList { get; set; }
+        public dynamic CheckList { get; set; }
 	}
 }

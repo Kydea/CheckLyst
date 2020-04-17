@@ -29,7 +29,7 @@
         addItem("tags", model.id + (model.code ? " - " + model.code : ""));
         addItem(model.valid ? "thumbs-up" : "thumbs-down", model.valid ? "valid" : model.validityMessage || "not valid");
         if (!model.readOnly) addItem("edit", "editable");
-        var formulaParser = $("<span />").html(model.rawValue);
+        var formulaParser = $("<span />").html(model.value);
         addItem("calculator", model.valueFormulaString ? model.valueFormulaString + ": <strong>" + formulaParser.text() + "</strong>" : null);
         addItem("link", (model.externalSourceName ? model.externalSourceName + "." + model.externalSourceColumn : null));
         if (model.history && model.history.length > 0)

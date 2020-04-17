@@ -9,7 +9,7 @@
 
     this.update = function (model) {
         a
-            .html(model.description ? model.description : "(no label)")
+            .html(model.descriptionValue || "(no label)")
             .attr("href", model.url);
 
         this.setColor(model.color);

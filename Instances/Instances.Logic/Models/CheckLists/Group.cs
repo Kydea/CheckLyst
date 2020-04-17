@@ -28,6 +28,19 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public bool DisableMove { get; set; }
 
+        public override dynamic GetViewModel()
+        {
+            var ItemModel = base.GetViewModel();
+            ItemModel.Items = Items.Where(i => !i.Hidden).Select(i => ((Item)i).GetViewModel());
+            ItemModel.Iterator = Iterator;
+            if (Iterator) ItemModel.Iterations = Iterations.Select(i => ((Iteration)i).GetViewModel());
+            ItemModel.ShowAsTable = ShowAsTable;
+            ItemModel.DisableAdd = DisableAdd;
+            ItemModel.DisableRemove = DisableRemove;
+            ItemModel.DisableMove = DisableMove;
+            return ItemModel;
+        }
+
         protected override void UpdateHidden()
         {
             base.UpdateHidden();

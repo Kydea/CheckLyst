@@ -60,6 +60,17 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             this is Item Item ? $"item {Code ?? Item.Id.ToString()}" :
             throw new ArgumentException();
 
+
+        public virtual dynamic GetViewModel()
+            => new
+            {
+                Code,
+                Valid,
+                ValidityMessage,
+                ReadOnly,
+                CountDownToValue,
+            };
+
         #region Properties
 
         public string Code { get; set; }

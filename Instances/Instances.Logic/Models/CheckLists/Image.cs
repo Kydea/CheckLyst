@@ -13,6 +13,13 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             return image;
         }
 
+        public override dynamic GetViewModel()
+        {
+            var ItemModel = base.GetViewModel();
+            ItemModel.Key = Key;
+            return ItemModel;
+        }
+
         public string Key { get; set; }
     }
 }
