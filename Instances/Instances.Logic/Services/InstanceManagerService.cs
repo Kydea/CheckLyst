@@ -221,7 +221,7 @@ namespace CheckListManager.Instances.Logic.Services
                     Company = identity.CompanyId,
                     Data = JsonConvert.SerializeObject(cacheObject.Instance, _converters),
                     Code = code,
-                    Description = cacheObject.Instance.Description,
+                    Description = cacheObject.Instance.DescriptionFormula.Value,
                     InstanceState = cacheObject.InstanceState,
                     Prototype = cacheObject.Prototype,
                     PrototypeName = cacheObject.PrototypeName,
@@ -452,10 +452,10 @@ namespace CheckListManager.Instances.Logic.Services
                     cacheObject.Instance.UpdateAll(cacheObject);
 
                 row.Data = JsonConvert.SerializeObject(cacheObject.Instance, _converters);
-                row.Description = cacheObject.Instance.Description;
+                row.Description = cacheObject.Instance.DescriptionFormula.Value;
                 row.FileName =
                     !cacheObject.Instance.FTPExport ? null :
-                    !string.IsNullOrWhiteSpace(cacheObject.Instance.FileName) ? cacheObject.Instance.FileName :
+                    !string.IsNullOrWhiteSpace(cacheObject.Instance.FileNameFormula.Value) ? cacheObject.Instance.FileNameFormula.Value :
                     $"Instance{cacheObject.InstanceCode}";
                 row.ModifiedOn = ModifiedOn;
                 row.ModifiedBy = ModifiedBy;

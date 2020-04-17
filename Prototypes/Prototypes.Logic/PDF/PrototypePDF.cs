@@ -68,6 +68,8 @@ namespace CheckListManager.Prototypes.Logic.PDF
 
         public override string GetFieldValue(ICheckListField Field) => new string('\n', Field.LinesCount);
 
+        public override string GetItemDescription(ICheckListItem Item) => Item.Description;
+
         public override bool IsPrototype() => true;
 
         public override void RenderGroup(ICheckListGroup Group)

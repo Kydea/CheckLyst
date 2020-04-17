@@ -47,6 +47,10 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
         {
             if (!CheckListPDF.IsPrototype() && (Element.Hidden || (Element is ICheckListIteration iteration && iteration.Removed))) return;
 
+            string Description = null;
+            if (Element is ICheckListItem CheckListItem)
+                Description = CheckListPDF.GetItemDescription(CheckListItem);
+
             if (Element is ICheckListGroup GroupElement)
             {
                 if (GroupElement.ShowAsTable)
@@ -56,13 +60,13 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             }
             else if (Element is ICheckListText Text)
             {
-                if (!string.IsNullOrEmpty(Text.Description))
-                    DrawText(Text.Description, null, 10);
+                if (!string.IsNullOrEmpty(Description))
+                    DrawText(Description, null, 10);
             }
             else if (Element is ICheckListSignature SignatureElement)
             {
-                if (!string.IsNullOrEmpty(SignatureElement.Description))
-                    DrawText(SignatureElement.Description, PDFBase.BoldFont, 5);
+                if (!string.IsNullOrEmpty(Description))
+                    DrawText(Description, PDFBase.BoldFont, 5);
 
                 if (SignatureElement.History.Count > 0)
                     foreach (var Sign in SignatureElement.History)
@@ -75,7 +79,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             }
             else if (Element is ICheckListField FieldElement)
             {
-                DrawText(string.IsNullOrEmpty(FieldElement.Description) ? "(no description)" : FieldElement.Description, PDFBase.BoldFont, 5);
+                DrawText(string.IsNullOrEmpty(Description) ? "(no description)" : Description, PDFBase.BoldFont, 5);
 
                 if (FieldElement.ValueType.TypeName == "Boolean")
                 {
@@ -109,12 +113,12 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             }
             else if (Element is ICheckListLink LinkElement)
             {
-                var Paragraph = DrawText(null, PDFBase.GenericFont, 10).AddHyperlink(LinkElement.Url, HyperlinkType.Web).AddFormattedText(string.IsNullOrEmpty(LinkElement.Description) ? "(link)" : LinkElement.Description);
+                var Paragraph = DrawText(null, PDFBase.GenericFont, 10).AddHyperlink(LinkElement.Url, HyperlinkType.Web).AddFormattedText(string.IsNullOrEmpty(Description) ? "(link)" : Description);
                 Paragraph.Font.Underline = Underline.Single;
             }
             else if (Element is ICheckListImage ImageElement)
             {
-                Paragraph Paragraph = DrawText(string.IsNullOrEmpty(ImageElement.Description) ? "(empty)" : ImageElement.Description, PDFBase.BoldFont, 5);
+                Paragraph Paragraph = DrawText(string.IsNullOrEmpty(Description) ? "(empty)" : Description, PDFBase.BoldFont, 5);
                 Paragraph.Format.Alignment = ParagraphAlignment.Center;
 
                 if (ImageElement.Key == null) return;
@@ -148,10 +152,10 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             else if (Element is ICheckListAttachment AttachmentElement)
             {
                 if (AttachmentElement.Key == null)
-                    DrawText(string.IsNullOrEmpty(AttachmentElement.Description) ? "(empty)" : AttachmentElement.Description, PDFBase.BoldFont, 5);
+                    DrawText(string.IsNullOrEmpty(Description) ? "(empty)" : Description, PDFBase.BoldFont, 5);
                 else if (AttachmentElement.FileType == "Image")
                 {
-                    DrawText(string.IsNullOrEmpty(AttachmentElement.Description) ? "(empty)" : AttachmentElement.Description, PDFBase.BoldFont, 5);
+                    DrawText(string.IsNullOrEmpty(Description) ? "(empty)" : Description, PDFBase.BoldFont, 5);
                     Paragraph Paragraph = PDFBase.Container.AddParagraph();
                     Paragraph.Format.Alignment = ParagraphAlignment.Center;
                     var StorageFile = await CheckListPDF.StorageService.GetAsync(CheckListPDF.ConfigurationService.InstancesStorageBucket, AttachmentElement.Key);
@@ -179,7 +183,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                 else
                 {
                     var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.InstancesStorageBucket, AttachmentElement.Key, AttachmentElement);
-                    DrawText(string.IsNullOrEmpty(AttachmentElement.Description) ? "(empty)" : AttachmentElement.Description, PDFBase.BoldFont, 5);
+                    DrawText(string.IsNullOrEmpty(Description) ? "(empty)" : Description, PDFBase.BoldFont, 5);
                     DrawText($"(see attachment {Index})", null, 10);
                 }
             }

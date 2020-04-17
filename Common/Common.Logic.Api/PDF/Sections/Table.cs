@@ -48,9 +48,10 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                 return;
 
             var GroupElement = (ICheckListGroup)Element;
+            var Description = CheckListPDF.GetItemDescription(GroupElement);
 
-            if (!string.IsNullOrEmpty(GroupElement.Description))
-                DrawText(GroupElement.Description, Indentation == 1 ? PDFBase.TitleFont1 : Indentation == 2 ? PDFBase.TitleFont2 : PDFBase.TitleFont3, 10);
+            if (!string.IsNullOrEmpty(Description))
+                DrawText(Description, Indentation == 1 ? PDFBase.TitleFont1 : Indentation == 2 ? PDFBase.TitleFont2 : PDFBase.TitleFont3, 10);
 
             PdfPTable Table = await RenderTableHeader(GroupElement);
             await RenderTableBody(Table, GroupElement);
@@ -227,6 +228,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                 else
                 {
                     PdfPCell Cell = new PdfPCell(new Paragraph());
+                    var Description = CheckListPDF.GetItemDescription(Item);
                     switch (Item.TypeName)
                     {
                         case "Signature":
@@ -240,7 +242,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
 
                             break;
                         case "Text":
-                            Cell = NewCell(string.IsNullOrWhiteSpace(Item.Description) ? "(no description)" : Item.Description);
+                            Cell = NewCell(string.IsNullOrWhiteSpace(Description) ? "(no description)" : Description);
                             break;
                         case "Field":
                             if (CheckListPDF.IsPrototype())
@@ -258,7 +260,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                         case "Link":
                             var Link = (ICheckListLink)Item;
                             Cell = NewCell(string.Empty);
-                            var Paragraph = Cell.Content.AddHyperlink(Link.Url, HyperlinkType.Web).AddFormattedText(string.IsNullOrWhiteSpace(Item.Description) ? "(link)" : Item.Description);
+                            var Paragraph = Cell.Content.AddHyperlink(Link.Url, HyperlinkType.Web).AddFormattedText(string.IsNullOrWhiteSpace(Description) ? "(link)" : Description);
                             Paragraph.Font.Underline = Underline.Single;
                             break;
                         case "Image":
@@ -268,7 +270,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                             else
                             {
                                 var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.PrototypesStorageBucket, Image.Key, Image);
-                                Cell = NewCell($"{(string.IsNullOrEmpty(Image.Description) ? string.Empty : Image.Description + " ")}(see attachment {Index})");
+                                Cell = NewCell($"{(string.IsNullOrEmpty(Description) ? string.Empty : Description + " ")}(see attachment {Index})");
                             }
                             break;
                         case "Attachment":
@@ -276,9 +278,9 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                             if (Attachment.Key != null)
                             {
                                 var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.InstancesStorageBucket, Attachment.Key, Attachment);
-                                Cell = NewCell($"{(string.IsNullOrEmpty(Attachment.Description) ? "(empty) " : Attachment.Description + " ")}(see attachment {Index})");
+                                Cell = NewCell($"{(string.IsNullOrEmpty(Description) ? "(empty) " : Description + " ")}(see attachment {Index})");
                             }
-                            else if (string.IsNullOrEmpty(Attachment.Description))
+                            else if (string.IsNullOrEmpty(Description))
                                 Cell = NewCell("(empty)"); // missing label and image
                             break;
                         default:
@@ -330,7 +332,8 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                 var Item = Items[Index];
                 var Cell = new RenderingCell();
                 Cell.AppendTo(Row);
-                Cell.Text = Item.Description;
+                var Description = CheckListPDF.GetItemDescription(Item);
+                Cell.Text = Description;
 
                 if (Item.TypeName == "Group")
                 {
@@ -349,9 +352,9 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                         if (Image.Key != null)
                         {
                             var AttachmentIndex = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.PrototypesStorageBucket, Image.Key, Image);
-                            Cell.Text = $"{(string.IsNullOrEmpty(Item.Description) ? string.Empty : Item.Description + " ")}(see attachment {AttachmentIndex})";
+                            Cell.Text = $"{(string.IsNullOrEmpty(Description) ? string.Empty : Description + " ")}(see attachment {AttachmentIndex})";
                         }
-                        else if (string.IsNullOrEmpty(Item.Description))
+                        else if (string.IsNullOrEmpty(Description))
                             Cell.Text = "(empty)"; // missing label and image
                     }
                     else if (Item.TypeName == "Attachment")
@@ -361,9 +364,9 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                         if (Attachment.Key != null)
                         {
                             var AttachmentIndex = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.InstancesStorageBucket, Attachment.Key, Attachment);
-                            Cell.Text = $"{(string.IsNullOrEmpty(Item.Description) ? "(empty) " : Item.Description + " ")}(see attachment {AttachmentIndex})";
+                            Cell.Text = $"{(string.IsNullOrEmpty(Description) ? "(empty) " : Description + " ")}(see attachment {AttachmentIndex})";
                         }
-                        else if (string.IsNullOrEmpty(Item.Description))
+                        else if (string.IsNullOrEmpty(Description))
                             Cell.Text = "(empty)"; // missing label and attachment
                     }
 

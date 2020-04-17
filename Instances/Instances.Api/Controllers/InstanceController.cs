@@ -278,7 +278,7 @@ namespace CheckListManager.Instances.Api.Controllers
                 CheckList = cacheObject.InstanceCode
             });
             
-            return Content(HttpStatusCode.OK, PDF, new PDFFormatter(string.IsNullOrEmpty(cacheObject.Instance.FileName) ? "Instance" : cacheObject.Instance.FileName));
+            return Content(HttpStatusCode.OK, PDF, new PDFFormatter(string.IsNullOrEmpty(cacheObject.Instance.FileNameFormula.Value) ? "Instance" : cacheObject.Instance.FileNameFormula.Value));
         }
 
         [HttpPost]

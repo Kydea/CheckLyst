@@ -62,6 +62,8 @@ namespace CheckListManager.Common.Logic.Api.PDF
 
         public abstract string GetFieldValue(ICheckListField Field);
 
+        public abstract string GetItemDescription(ICheckListItem Item);
+
         public abstract bool IsPrototype();
 
         protected override async Task OnGenerateAsync()

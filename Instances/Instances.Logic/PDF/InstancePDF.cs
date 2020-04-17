@@ -41,6 +41,12 @@ namespace CheckListManager.Instances.Logic.PDF
                 return FormatFormula(Field.Value);
         }
 
+        public override string GetItemDescription(ICheckListItem CheckListItem)
+        {
+            var Item = (Models.CheckLists.Item)CheckListItem;
+            return FormatFormula(Item.DescriptionFormula.Value);
+        }
+
         protected override FirstPage GenerateFirstPage()
         {
             var Rows = new List<Tuple<string, string>> {
@@ -63,7 +69,7 @@ namespace CheckListManager.Instances.Logic.PDF
                     Exceptions.AppendLine();
                 }
 
-            return new FirstPage(this, Instance.InstanceCode, Instance.PrototypeDescription, FormatFormula(Instance.Instance.Description), Rows, Exceptions.Length > 0 ? Exceptions.ToString() : null);
+            return new FirstPage(this, Instance.InstanceCode, Instance.PrototypeDescription, FormatFormula(Instance.Instance.DescriptionFormula.Value), Rows, Exceptions.Length > 0 ? Exceptions.ToString() : null);
         }
 
         protected override Task<Template> GenerateTemplateAsync()
