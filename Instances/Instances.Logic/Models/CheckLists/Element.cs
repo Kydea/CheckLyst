@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.Expressions;
 using System.Linq;
+using System.Dynamic;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
@@ -62,14 +63,15 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
 
         public virtual dynamic GetViewModel()
-            => new
-            {
-                Code,
-                Valid,
-                ValidityMessage,
-                ReadOnly,
-                CountDownToValue,
-            };
+        {
+            dynamic ViewModel = new ExpandoObject();
+            ViewModel.Code = Code;
+            ViewModel.Valid = Valid;
+            ViewModel.ValidityMessage = ValidityMessage;
+            ViewModel.ReadOnly = ReadOnly;
+            ViewModel.CountDownToValue = CountDownToValue;
+            return ViewModel;
+        }
 
         #region Properties
 

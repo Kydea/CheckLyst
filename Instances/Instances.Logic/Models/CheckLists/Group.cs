@@ -31,7 +31,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public override dynamic GetViewModel()
         {
             var ItemModel = base.GetViewModel();
-            ItemModel.Items = Items.Where(i => !i.Hidden).Select(i => ((Item)i).GetViewModel());
+            ItemModel.Items = Items.Where(i => ShowAsTable || !i.Hidden).Select(i => ((Item)i).GetViewModel());
             ItemModel.Iterator = Iterator;
             if (Iterator) ItemModel.Iterations = Iterations.Select(i => ((Iteration)i).GetViewModel());
             ItemModel.ShowAsTable = ShowAsTable;

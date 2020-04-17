@@ -18,6 +18,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public override dynamic GetViewModel()
         {
             var ElementModel = base.GetViewModel();
+            ElementModel.Description = Description;
             ElementModel.Groups = Groups.Where(g => !g.Hidden).Select(g => ((Group)g).GetViewModel());
             ElementModel.Lock = Lock;
             return ElementModel;

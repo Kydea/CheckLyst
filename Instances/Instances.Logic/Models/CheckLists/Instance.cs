@@ -17,28 +17,25 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
     {
         public dynamic GetViewModel(IDefaultIdentity identity, InstanceCacheObject cacheObject)
         {
-            dynamic ViewModel = new
-            {
-                ReadOnly,
-                Exceptions,
-                ExternalSources,
-                Header = ((Group)Header).GetViewModel(),
-                Pages = Pages.Select(p => ((Page)p).GetViewModel())
-            };
-
+            var Expressions = new PascalCaseDictionary<string, dynamic>(this.Expressions.Count);
             if (identity.HasPermission("Trail") || cacheObject.VersionState == VersionState.Draft || cacheObject.VersionState == VersionState.InSimulation)
-            {
-                var Expressions = new PascalCaseDictionary<string, dynamic>(this.Expressions.Count);
                 foreach (var Expression in this.Expressions.Values)
                     Expressions[Expression.Code] = new {
                         Expression.Description,
                         Expression.Value?.Type.TypeName,
                         Expression.Value?.Value
                     };
-                ViewModel.Expressions = Expressions;
-            }
 
-            return ViewModel;
+            return new
+            {
+                ReadOnly,
+                Exceptions,
+                ExternalSources,
+                Header = ((Group)Header).GetViewModel(),
+                Pages = Pages.Select(p => ((Page)p).GetViewModel()),
+                Description,
+                Expressions = Expressions.Any() ? Expressions : null
+            };
         }
 
 

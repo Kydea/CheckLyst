@@ -44,9 +44,9 @@
             .toggleClass("Valid", model.valid);
 
         if (item.isTableContent())
-            element.toggleClass("Invisible", model.hidden);
+            element.toggleClass("Invisible", !!model.hidden);
         else
-            element.toggleClass("Hidden", model.hidden);
+            element.toggleClass("Hidden", !!model.hidden);
 
         if (model.countDownToValue)
 			new instances.CountDown(element, model.countDownToValue, model.id);

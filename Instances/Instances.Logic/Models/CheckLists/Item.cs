@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.CheckLists;
@@ -193,6 +194,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             elementModel.NewLine = NewLine;
             elementModel.Color = Color;
             elementModel.FontSize = FontSize;
+
+            if (Hidden) elementModel.Hidden = true;
 
             return elementModel;
         }
