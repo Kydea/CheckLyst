@@ -76,6 +76,13 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 Group.MarkAllAsChanged(Roots);
         }
 
+        public override void ClearDependencies()
+        {
+            base.ClearDependencies();
+            foreach (Group Group in Groups)
+                Group.ClearDependencies();
+        }
+
         public override string DependencyClassName => "page";
         public override int? DependencyObjectID => Index;
     }
