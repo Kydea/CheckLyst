@@ -8,7 +8,7 @@ namespace CheckListManager.Common.Logic.Cache
 	{
 		public RedisSetup(IConfigurationService configuration)
 		{
-			Connection = new Lazy<IConnectionMultiplexer>(() => ConnectionMultiplexer.Connect($"{configuration.RedisHost}:{configuration.RedisPort},abortConnect=false"));
+			Connection = new Lazy<IConnectionMultiplexer>(() => ConnectionMultiplexer.Connect($"{configuration.RedisHost}:{configuration.RedisPort},abortConnect=false,syncTimeout=60000"));
 		}
 
 		public Lazy<IConnectionMultiplexer> Connection { get; }
