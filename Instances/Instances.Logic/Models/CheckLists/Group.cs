@@ -31,13 +31,17 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public override dynamic GetViewModel()
         {
             var ItemModel = base.GetViewModel();
-            ItemModel.Items = Items.Where(i => ShowAsTable || !i.Hidden).Select(i => ((Item)i).GetViewModel());
-            ItemModel.Iterator = Iterator;
-            if (Iterator) ItemModel.Iterations = Iterations.Select(i => ((Iteration)i).GetViewModel());
-            ItemModel.ShowAsTable = ShowAsTable;
-            ItemModel.DisableAdd = DisableAdd;
-            ItemModel.DisableRemove = DisableRemove;
-            ItemModel.DisableMove = DisableMove;
+            if (Iterator)
+            {
+                ItemModel.Iterator = true;
+                ItemModel.Iterations = Iterations.Select(i => ((Iteration)i).GetViewModel());
+                if (DisableAdd) ItemModel.DisableAdd = true;
+                if (DisableRemove) ItemModel.DisableRemove = true;
+                if (DisableMove) ItemModel.DisableMove = true;
+            }
+            else
+                ItemModel.Items = Items.Where(i => ShowAsTable || !i.Hidden).Select(i => ((Item)i).GetViewModel());
+            if (ShowAsTable) ItemModel.ShowAsTable = true;
             return ItemModel;
         }
 

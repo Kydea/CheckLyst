@@ -82,8 +82,8 @@
     };
 
     this.setFontSize = function (value) {
-		uploadButton.css({ fontSize: model.fontSize == 0 ? "" : model.fontSize + "px" });
-		viewButton.css({ fontSize: model.fontSize == 0 ? "" : model.fontSize + "px" });
+		uploadButton.css({ fontSize: model.fontSize && model.fontSize + "px" });
+		viewButton.css({ fontSize: model.fontSize && model.fontSize + "px" });
     };
 
     setup();

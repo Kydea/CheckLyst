@@ -17,7 +17,7 @@
     };
 
     this.setFontSize = function (value) {
-        p.css({ fontSize: model.fontSize == 0 ? "" : model.fontSize + "px" });
+        p.css({ fontSize: model.fontSize && model.fontSize + "px" });
     };
 
     setup();

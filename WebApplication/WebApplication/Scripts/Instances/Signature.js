@@ -46,7 +46,7 @@
                                         url: matematici.urls.accessControl.signature
                                     },
                                     data: {
-                                        showPaddle: model.acceptsPin,
+                                        showPaddle: !!model.acceptsPin,
                                         username: code,
                                         signHandler: function (panel) {
                                             new instances.Event(instances.Events.signature, model.id, {
@@ -184,7 +184,7 @@
     };
 
     this.setFontSize = function (value) {
-        label.css({ fontSize: model.fontSize == 0 ? "" : model.fontSize + "px" });
+        label.css({ fontSize: model.fontSize && model.fontSize + "px" });
     }
 
     setup();

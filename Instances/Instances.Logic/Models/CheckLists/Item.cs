@@ -191,11 +191,14 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             elementModel.DescriptionValue = DescriptionValue;
             elementModel.Id = Id;
             elementModel.TypeName = TypeName;
-            elementModel.NewLine = NewLine;
-            elementModel.Color = Color;
-            elementModel.FontSize = FontSize;
-
-            if (Hidden) elementModel.Hidden = true;
+            if (NewLine)
+                elementModel.NewLine = NewLine;
+            if (!string.IsNullOrEmpty(Color))
+                elementModel.Color = Color;
+            if (FontSize > 0)
+                elementModel.FontSize = FontSize;
+            if (Hidden)
+                elementModel.Hidden = true;
 
             return elementModel;
         }

@@ -267,7 +267,7 @@
     };
 
     this.setFontSize = function (value) {
-        label.css({ fontSize: model.fontSize == 0 ? "" : model.fontSize + "px" });
+        label.css({ fontSize: model.fontSize && model.fontSize + "px" });
     };
 
     setup();

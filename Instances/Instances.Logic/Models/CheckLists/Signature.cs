@@ -26,11 +26,17 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public override dynamic GetViewModel()
         {
             var ItemModel = base.GetViewModel();
-            ItemModel.Cancelable = Cancelable;
-            ItemModel.AcceptsPin = AcceptsPin;
-            ItemModel.SendEmail = SendEmail;
-            ItemModel.SendEmailAddress = SendEmailAddress;
-            ItemModel.ButtonLabel = ButtonLabel;
+            if (Cancelable)
+                ItemModel.Cancelable = Cancelable;
+            if (AcceptsPin)
+                ItemModel.AcceptsPin = AcceptsPin;
+            if (SendEmail)
+            {
+                ItemModel.SendEmail = SendEmail;
+                ItemModel.SendEmailAddress = SendEmailAddress;
+            }
+            if (!string.IsNullOrEmpty(ButtonLabel))
+                ItemModel.ButtonLabel = ButtonLabel;
             ItemModel.Signed = Signed;
             if (Signed)
             {

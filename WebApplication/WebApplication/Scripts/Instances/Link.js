@@ -22,7 +22,7 @@
     };
 
     this.setFontSize = function (value) {
-        a.css({ fontSize: model.fontSize == 0 ? "" : model.fontSize + "px" });
+        a.css({ fontSize: model.fontSize && model.fontSize + "px" });
     };
 
     setup();
