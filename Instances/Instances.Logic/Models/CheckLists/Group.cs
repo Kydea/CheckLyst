@@ -274,5 +274,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 foreach (Iteration Iteration in Iterations.Where(i => !i.Removed))
                     Iteration.BuildDependencies();
         }
+
+        public override string ToString() => $"group {Code ?? Id.ToString()}";
     }
 }

@@ -139,5 +139,6 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public void CreateInstanceIterations() { throw new NotImplementedException(); }
 
         public override string DependencyClassName => "group";
+        public override string ToString() => $"group {Code ?? Id.ToString()}";
     }
 }

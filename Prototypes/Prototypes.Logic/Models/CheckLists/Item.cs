@@ -61,5 +61,6 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         public override string DependencyClassName => "item";
         public override int? DependencyObjectID => Id;
+        public override string ToString() => $"item {Code ?? Id.ToString()}";
     }
 }

@@ -129,12 +129,6 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             destination.SignatureCode = source.SignatureCode;
         }
 
-        public override string ToString() =>
-            this is Page Page ? $"page {Page.Index}" :
-            this is Group Group ? $"group {Code ?? Group.Id.ToString()}" :
-            this is Item Item ? $"item {Code ?? Item.Id.ToString()}" :
-            throw new ArgumentException();
-
         public override string DependencyObjectCode => Code;
     }
 }

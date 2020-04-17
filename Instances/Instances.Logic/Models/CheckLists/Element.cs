@@ -55,13 +55,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             return true;
         }
 
-        public override string ToString() =>
-            this is Page Page ? $"page {Page.Index}" :
-            this is Group Group ? $"group {Code ?? Group.Id.ToString()}" :
-            this is Item Item ? $"item {Code ?? Item.Id.ToString()}" :
-            throw new ArgumentException();
-
-
         public virtual dynamic GetViewModel()
         {
             dynamic ViewModel = new ExpandoObject();
