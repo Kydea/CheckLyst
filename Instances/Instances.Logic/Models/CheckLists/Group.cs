@@ -39,8 +39,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 if (DisableRemove) ItemModel.DisableRemove = true;
                 if (DisableMove) ItemModel.DisableMove = true;
             }
-            else
-                ItemModel.Items = Items.Where(i => ShowAsTable || !i.Hidden).Select(i => ((Item)i).GetViewModel());
+
+            ItemModel.Items = Items.Where(i => ShowAsTable || !i.Hidden).Select(i => ((Item)i).GetViewModel());
             if (ShowAsTable) ItemModel.ShowAsTable = true;
             return ItemModel;
         }
