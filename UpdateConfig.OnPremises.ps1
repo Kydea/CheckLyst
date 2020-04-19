@@ -1,4 +1,4 @@
-﻿$connectionString = "metadata=res://*/RelationalDatabaseModel.csdl|res://*/RelationalDatabaseModel.ssdl|res://*/RelationalDatabaseModel.msl;provider=Npgsql;provider connection string=&quot;Host=db-02.clm.internal;Database=CheckListManager;Username=CheckListManager;Password=CheckListManager01;Persist Security Info=True&quot;"
+﻿$connectionString = 'metadata=res://*/RelationalDatabaseModel.csdl|res://*/RelationalDatabaseModel.ssdl|res://*/RelationalDatabaseModel.msl;provider=Npgsql;provider connection string="Host=db-02.clm.internal;Database=CheckListManager;Username=CheckListManager;Password=CheckListManager01;Persist Security Info=True"'
 $awsAccessKey = "-"
 $awsSecretKey = "-"
 $awsRegion = "-"
