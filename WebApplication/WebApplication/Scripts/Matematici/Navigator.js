@@ -126,8 +126,6 @@
 
             matematici.navigator.resetForm();
 
-            matematici.AnimationManager.toggle(true);
-
             matematici.events.onPageLoad.call(null, callback);
         },
 
@@ -164,8 +162,6 @@
                             return true;
                         }
                     });
-
-                matematici.AnimationManager.toggle(false);
 
                 $("document, html").animate({ scrollTop: 0 }, 500, function () {
                     matematici.events.onPageUnload(function () {

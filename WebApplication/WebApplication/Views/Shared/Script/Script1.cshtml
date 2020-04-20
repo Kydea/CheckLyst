@@ -64,8 +64,6 @@
     matematici.elements.menu = $("nav", matematici.elements.header);
     matematici.elements.footer = $("footer");
 
-    matematici.logo.init();
-
     matematici.clock = new matematici.Clock(matematici.isLoginPage); //@@(ViewBag.AppMode ? "true" : "matematici.isLoginPage"));
 
     matematici.elements.window.on("beforeunload", function () {
@@ -90,8 +88,6 @@
 
     matematici.clock.add("span.ServerTime");
     matematici.clock.add("span.LocalTime");
-
-    matematici.AnimationManager.toggle(true);
 
     matematici.menu.toggleItemsByRole();
 
