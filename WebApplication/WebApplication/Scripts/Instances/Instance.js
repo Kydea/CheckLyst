@@ -2,8 +2,8 @@
     var
         instance = this,
         title = $("h2", element),
-        header = new instances.Group($("div#Header", element), "Group"),
-        page = new instances.Group($("div.Page", element), "Page"),
+        header = new instances.Group($("div#Header", element)[0], "Group"),
+        page = new instances.Group($("div.Page", element)[0], "Page"),
         versionState,
         code,
         id,
@@ -33,7 +33,7 @@
         Button,
 
         setupInstanceDescription = function () {
-            header.getElement().prepend(instanceDescription = $("<div />").addClass("InstanceDescription"));
+            $(header.getElement()).prepend(instanceDescription = $("<div />").addClass("InstanceDescription"));
         },
 
         setupTab = function (pages) {
@@ -135,10 +135,13 @@
             if (model.header)
                 header.update(model.header);
             else
-                header.getElement().hide();
+                $(header.getElement()).hide();
             var pageIndex = tab.getCurrentItem().index;
             page.setPageIndex(pageIndex);
+            matematici.profiler.start();
             page.update(model.pages[pageIndex]);
+            matematici.profiler.stop();
+            matematici.profiler.log();
 
             if (updateHandler) updateHandler(model);
             externalSources = model.externalSources;
@@ -524,7 +527,7 @@
     };
 
     instance.initialize = function () {
-        instanceElementInformation = new instances.ElementInformation(element);
+        instanceElementInformation = new instances.ElementInformation(element[0]);
         tab = new matematici.Tab($("div.TabContainer", element)).addHandler(function (item) {
             if (state == instances.Instance.states.draft || state == instances.Instance.states.progress) {
                 page.clear();

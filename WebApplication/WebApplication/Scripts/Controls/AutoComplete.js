@@ -75,7 +75,6 @@ matematici.AutoComplete = function (selector) {
 			element.data("autoComplete", autoComplete);
 			multiple = element.prop("multiple");
 			label = $("<input />").addClass("AutoComplete").attr({ type: "text" }).insertAfter(element);
-			var width = label.outerWidth();
 			input = $("<input />").addClass("AutoComplete-Filter Scan").attr({ type: "text" }).hide().insertAfter(label);
 			list = $("<div />").addClass("AutoComplete-List").insertAfter(input);
 			icon = $("<i />").addClass("AutoComplete fa fa-caret-down").insertAfter(input);

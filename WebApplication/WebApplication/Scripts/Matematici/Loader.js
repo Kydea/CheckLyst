@@ -36,8 +36,10 @@
 		_refreshComponents = function () {
 			setTimeout(function () {
 				$("select.AutoComplete").each(function (index) {
-					var select = $(this);
-					select.data("autoComplete").refresh();
+                    var
+                        select = $(this),
+                        autoComplete = select.data("autoComplete");
+                    if (autoComplete) autoComplete.refresh();
 				});
 
 				$(".TabContainer").each(function (index) {

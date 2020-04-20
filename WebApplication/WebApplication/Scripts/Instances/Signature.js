@@ -11,6 +11,7 @@
         check,
 
         setup = function () {
+            return;
             label = $("<label />").addClass("Controls3").append($("<span />").addClass("Label").html(model.descriptionValue || "(no description)"));
             if (!item.isTableContent())
                 label.appendTo(element);
@@ -145,6 +146,7 @@
         };
 
     this.update = function (model) {
+        return;
         button.text(model.buttonLabel ? model.buttonLabel : "Signature").prepend($("<i >").addClass("Icon fa fa-check"));
         button.toggleClass("ReadOnly", model.readOnly);
         if (cancelButton) cancelButton.toggleClass("ReadOnly", model.readOnly);

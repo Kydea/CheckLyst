@@ -1,4 +1,4 @@
-﻿instances.Group = function (element, typeName, parent, previous, setupModel) {
+﻿instances.Group = function (element, typeName, parent, setupModel) {
     var
         group = this,
         items = [],
@@ -11,7 +11,8 @@
         table = false,
         tableContent = false,
         readOnly,
-		tableElement,
+        tableElement,
+        tableBody,
 		pageIndex,
 
 		createTableHeader = function (rows, rowIndex, items) {
@@ -61,10 +62,11 @@
             tableContent = !parent.isPage() && (parent.isTable() || parent.isTableContent());
 			table = !tableContent && setupModel.showAsTable;
             subRow = !parent.isTable() && tableContent; 
-            element = parent.isTable() ? $("<tr />") : subRow ? parent.getElement() : $("<div />");
+            element = parent.isTable() ? document.createElement("tr") : subRow ? parent.getElement() : document.createElement("div");
 
             if (table) {
-                tableElement = $("<table />").addClass("Grid").appendTo($("<div />").addClass("TableContainer").appendTo(element)).append($("<thead />")).append($("<tbody />"));
+                tableBody = document.createElement("tbody");
+                tableElement = $("<table />").addClass("Grid").appendTo($("<div />").addClass("TableContainer").appendTo(element)).append($("<thead />")).append(tableBody);
                 createTableHeader([], 0, setupModel.items);
             }
 
@@ -74,75 +76,114 @@
         setup = function () {
             if (!element) create();
 
-            element.addClass("Element " + typeName);
+            element.className = "Element " + typeName;
 
             if (!group.isPage()) {
-
-                title = $("<h3 />");
+                title = document.createElement("h3");
                 if (table)
-                    title.insertBefore(tableElement);
+                    tableElement[0].parentNode.insertBefore(title, tableElement[0]);
                 else if (!tableContent)
-                    title.appendTo(element);
+                    element.appendChild(title);
 
-				if (group.isIteration()) 
-                    iterationCommands = $(tableContent ? "<td />" : "<div />").addClass("IterationCommands").appendTo(element)
-                        .append($("<a />").attr("href", "#").addClass("Up").toggleClass("Hidden", !!parent.getSetupModel().disableMove).append($("<i />").addClass("fal fa-caret-up")).on("click", function () {
+                if (group.isIteration() && (!parent.getSetupModel().disableMove || !parent.getSetupModel().disableRemove)) {
+                    iterationCommands = document.createElement(tableContent ? "td" : "div");
+                    iterationCommands.className = "IterationCommands";
+                    if (!parent.getSetupModel().disableMove) {
+                        var a = document.createElement("a");
+                        a.className = "Up";
+                        a.addEventListener("click", function () {
                             new instances.Event(instances.Events.up, id).trigger();
-                        }))
-                        .append($("<a />").attr("href", "#").addClass("Down").toggleClass("Hidden", !!parent.getSetupModel().disableMove).append($("<i />").addClass("fal fa-caret-down")).on("click", function () {
+                        });
+                        var i = document.createElement("i");
+                        i.className = "fal fa-caret-up";
+                        a.appendChild(i);
+                        iterationCommands.appendChild(a);
+
+                        a = document.createElement("a");
+                        a.className = "Down";
+                        a.addEventListener("click", function () {
                             new instances.Event(instances.Events.down, id).trigger();
-                        }))
-                        .append($("<a />").attr("href", "#").addClass("Remove").toggleClass("Hidden", !!parent.getSetupModel().disableRemove).append($("<i />").addClass("fal fa-trash-alt")).on("click", function () {
+                        });
+                        var i = document.createElement("i");
+                        i.className = "fal fa-caret-Down";
+                        a.appendChild(i);
+                        iterationCommands.appendChild(a);
+                    }
+
+                    if (!parent.getSetupModel().disableRemove) {
+                        var a = document.createElement("a");
+                        a.className = "Remove";
+                        a.addEventListener("click", function () {
                             new instances.Event(instances.Events.remove, id).trigger();
-                        }));
+                        });
+                        var i = document.createElement("i");
+                        i.className = "fal fa-trash-alt";
+                        a.appendChild(i);
+                        iterationCommands.appendChild(a);
+                    }
+
+                    element.appendChild(iterationCommands);
+                }
+
 				if (group.isGroup() && !group.isTableContent()) {
                     elementInformation = new instances.ElementInformation(element);
-					addButton = $("<div />").addClass("Item NewLine").toggleClass("Hidden", setupModel && setupModel.disableAdd).appendTo(element)
-						.append($("<a />").attr("href", "#").addClass("Button AddIteration").toggleClass("Disabled", setupModel && setupModel.disableAdd).text("Add").prepend($("<i />").addClass("Icon fa fa-plus")).on("click", function () {
+                    if (setupModel && setupModel.iterator && !setupModel.disableAdd) {
+                        addButton = document.createElement("div");
+                        addButton.className = "Item NewLing";
+                        var a = document.createElement("a");
+                        a.setAttribute("href", "#");
+                        a.className = "Button AddIteration";
+                        var i = document.createElement("i");
+                        i.className = "Icon fa fa-plus";
+                        a.appendChild(i);
+                        a.innetHTML += "Add"
+                        a.addEventListener("click", function () {
                             if (!readOnly) new instances.Event(instances.Events.add, id).trigger();
-                        }));
+                        });
+                        addButton.appendChild(a);
+                        element.appendChild(addButton);
+                    }
                 }
             }
         },
 
         update = function (model) {
             readOnly = !!model.readOnly;
-			if (title) title.html(model.descriptionValue);
-            if (addButton) addButton.toggle(model.iterator && !model.disableAdd);
+			if (title) title.innerHTML = model.descriptionValue;
 			if (!group.isPage()) id = model.id;
-            element
-				.toggleClass("Hidden", model.hidden || !!model.removed && !instances.instance.areRemovedIterationsVisible())
-				.toggleClass("Removed", !!model.removed)
-				.toggleClass("ReadOnly", readOnly)
-				.toggleClass("Valid", model.valid)
-                .attr("data-code", model.code).attr("data-id", model.id);
-			if (model.countDownToValue) new instances.CountDown(element, model.countDownToValue, group.isPage() ? -group.getPageIndex() : model.id);
+            element.classList.toggle("Hidden", model.hidden || !!model.removed && !instances.instance.areRemovedIterationsVisible());
+            element.classList.toggle("Removed", !!model.removed);
+            element.classList.toggle("ReadOnly", readOnly);
+            element.classList.toggle("Valid", model.valid);
+            element.setAttribute("data-code", model.code);
+            element.setAttribute("data-id", model.id);
+
+            if (model.countDownToValue) new instances.CountDown(element, model.countDownToValue, group.isPage() ? -group.getPageIndex() : model.id);
             group.setColor(model.color);
             group.setFontSize(model.fontSize);
 
-            if (addButton) addButton.children("a").toggleClass("ReadOnly", readOnly);
-            if (iterationCommands) iterationCommands.toggle(!readOnly);
+            if (addButton) addButton.childNodes[0].classList.toggle("ReadOnly", readOnly);
+            if (iterationCommands) iterationCommands.setAttribute("display", readOnly ? "none" : "block");
             if (elementInformation) elementInformation.update(model);
         };
 
     this.appendElement = function () {
-        if (parent.isPage()) 
-            element.appendTo(parent.getElement());
-        else if (parent.isTable()) 
-            element.appendTo($("tbody", parent.getElement()));
+        if (parent.isPage())
+            parent.getElement().appendChild(element);
+        else if (parent.isTable())
+            parent.getTableBody().appendChild(element);
         else if (!subRow)
-			element.appendTo(parent.getElement());
-		element.removeClass("FirstIteration").removeClass("LastIteration")
+            parent.getElement().appendChild(element);
+        element.classList.remove("FirstIteration");
+        element.classList.remove("LastIteration");
     };
 
     this.setColor = function (value) {
-        if (title)
-            title.css({ color: value });
+        if (title) title.style.color = value;
     };
 
     this.setFontSize = function (value) {
-        if (title)
-            title.css({ fontSize: value == 0 ? "" : value + "px" });
+        if (title) title.style.fontSize = value && value + "px";
     };
 
     this.update = function (model) {
@@ -164,7 +205,7 @@
 				itemModel = children[index];
 
             if (!itemIndexes[itemModel.id]) 
-                item = itemModel.typeName == "Group" || itemModel.typeName == "Iteration" ? new instances.Group(null, itemModel.typeName, this, index == 0 ? null : newItems[index - 1], itemModel) : new instances.Item(itemModel, this);
+                item = itemModel.typeName == "Group" || itemModel.typeName == "Iteration" ? new instances.Group(null, itemModel.typeName, this, itemModel) : new instances.Item(itemModel, this);
             else
                 item = items[itemIndexes[itemModel.id]];
 
@@ -185,19 +226,20 @@
         itemIndexes = newItemIndexes;
 
         /* riordina gli oggetti iteration */
-        if (reorder)
+        /*
+        if (reorder) {
             for (index in items) 
                 items[index].appendElement();
-        
-        var visibleChildren = $(model.showAsTable ? "tr.Iteration:not(.Removed)" : "> .Iteration:not(.Removed)", element);
-        visibleChildren.removeClass("FirstIteration").removeClass("LastIteration");
-		visibleChildren.first().addClass("FirstIteration");
-		visibleChildren.last().addClass("LastIteration");
 
-		if (iterationCommands) iterationCommands.appendTo(element);
+            var visibleChildren = $(model.showAsTable ? "tr.Iteration:not(.Removed)" : "> .Iteration:not(.Removed)", element);
+            visibleChildren.removeClass("FirstIteration").removeClass("LastIteration");
+		    visibleChildren.first().addClass("FirstIteration");
+		    visibleChildren.last().addClass("LastIteration");
+        }
+        */
 
-        element.append(addButton);
-
+        if (iterationCommands) element.appendChild(iterationCommands);
+        if (addButton) element.appendChild(addButton);
     };
 
     this.getSetupModel = function () {
@@ -217,6 +259,10 @@
 
     this.getElement = function () {
         return element;
+    };
+
+    this.getTableBody = function () {
+        return tableBody;
     };
 
     this.isPage = function () {
