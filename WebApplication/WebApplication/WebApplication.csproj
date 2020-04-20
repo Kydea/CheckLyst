@@ -352,7 +352,6 @@
     <Content Include="Scripts\Libraries\MicrosoftAjax.js" />
     <Content Include="Scripts\Libraries\modernizr-2.8.3.js" />
     <Content Include="Scripts\Libraries\moment-2.24.0.js" />
-    <Content Include="Scripts\Matematici\AnimationManager.js" />
     <Content Include="Scripts\Matematici\Breadcrumbs.js" />
     <Content Include="Scripts\Matematici\Blip.js" />
     <Content Include="Scripts\Matematici\Clipboard.js" />
@@ -362,7 +361,6 @@
     <Content Include="Scripts\Matematici\Extensions.js" />
     <Content Include="Scripts\Matematici\Hamburger.js" />
     <Content Include="Scripts\Matematici\Loader.js" />
-    <Content Include="Scripts\Matematici\Matematici.js" />
     <Content Include="Scripts\Matematici\Menu.js" />
     <Content Include="Scripts\Matematici\Navigator.js" />
     <Content Include="Scripts\Matematici\Page.js" />
