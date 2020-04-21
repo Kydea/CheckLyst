@@ -1,112 +1,105 @@
-﻿matematici.DatePicker = function (selector) {
-	var
-		datePicker = this,
-		element = $(selector),
-		calendar = null,
-		min,
-		max,
-		needToParse = false,
+﻿matematici.DatePicker = function (node, min, max) {
+    var
+        datePicker = this,
+        needToParse,
 
-		isEnabled = function () {
-			return !element.hasClass("Disabled") && !element.prop("readonly");
-		},
+        isEnabled = function () {
+            return !node.classList.contains("Disabled") && !node.hasAttribute("readonly");
+        },
 
-		createCalendar = function () {
-			calendar = matematici.DatePicker.calendar = new matematici.Calendar();
-		},
+        open = function (e) {
+            if (!isEnabled()) return;
 
-		open = function (e) {
-			if (!isEnabled()) return;
+            e.preventDefault();
+            e.stopPropagation();
 
-			e.preventDefault();
-			e.stopPropagation();
+            matematici.elements.window.on("resize.datePicker", close);
+            node.focus();
+            node.select();
 
-			element.focus().select();
+            if (matematici.calendar == null)
+                matematici.calendar = new matematici.Calendar();
+            else if (matematici.calendar.isVisible() && matematici.calendar.getDatePicker() == datePicker)
+                return;
 
-			if (calendar == null)
-				createCalendar();
-			else if (calendar.isVisible() && calendar.getDatePicker() == datePicker)
-				return;
+            matematici.calendar.setDates(null);
+            matematici.calendar.setRange(min, max);
+            matematici.calendar.setDatePicker(datePicker);
 
-			calendar.setDates(null);
-			calendar.setRange(min, max);
-			calendar.setDatePicker(datePicker);
-			var offset = element.offset();
-			calendar.open(offset.top + element.outerHeight() + 5, offset.left);
+            var offset = node.getBoundingClientRect();
+            matematici.calendar.open(offset.top + node.offsetHeight + 5, offset.left);
 
-			setTimeout(function () {
-				$(document).on("click.datePicker", close);
-			}, 0);
-		},
+            setTimeout(function () {
+                $(document).on("click.datePicker", close);
+            }, 0);
+        },
 
-		close = function () {
-			calendar.close();
-			$(document).off("click.datePicker");
-		},
+        close = function () {
+            matematici.calendar.close();
+            matematici.elements.window.off("resize.datePicker");
+            $(document).off("click.datePicker");
+        },
 
-		parse = function () {
-			try {
-				var value = element.val();
-				if (!!value) {
-					var momentDate = moment(value, matematici.dateFormatter.dateFormat);
-					element.val(momentDate.isValid() ? momentDate.format(matematici.dateFormatter.dateFormat) : "");
-				} else
-					element.val("");
-				calendar.close();
-			}
-			catch (error) {
-				console.log(error, element.val());
-				element.val("");
-			}
-		},
+        parse = function () {
+            try {
+                var value = node.value;
+                if (!!value) {
+                    var momentDate = moment(value, matematici.dateFormatter.dateFormat);
+                    node.value = momentDate.isValid() ? momentDate.format(matematici.dateFormatter.dateFormat) : "";
+                } else
+                    node.value = "";
+            } catch (error) {
+                console.log(error, node.value);
+                node.value = "";
+            }
+            if (matematici.calendar) matematici.calendar.close();
+        },
 
-		setup = function () {
-			if (!matematici.DatePicker.calendar) createCalendar();
-			calendar = matematici.DatePicker.calendar
+        initialize = function () {
+            node.setAttribute("autocomplete", "off");
+            node.addEventListener("change", function () {
+                if (needToParse) parse();
+            });
+            node.addEventListener("focus", function () { needToParse = true; });
+            node.addEventListener("blur", function () { needToParse = false; });
+            node.addEventListener("click", open);
 
-			var
-				minAttribute = element.data("min"),
-				maxAttribute = element.data("max");
-			if (minAttribute) min = new Date(minAttribute);
-			if (maxAttribute) max = new Date(maxAttribute);
+            var i = document.createElement("i");
+            i.className = "Icon fal fa-calendar-alt";
+            i.addEventListener("click", function (e) {
+                e.preventDefault();
+                if (matematici.calendar.isVisible() && matematici.calendar.getDatePicker() == datePicker)
+                    close();
+                else
+                    open(e);
+            });
+            node.parentNode.insertBefore(i, node);
 
-            element
-                .data("datePicker", datePicker)
-                .attr({ autocomplete: "off" })
-                .on("change", function () {
-                    if (needToParse) parse();
-                })
-                .on("focus", function () { needToParse = true; })
-                .on("blur", function () { needToParse = false; })
-                .on("click", open);
-
-			$("<i />")
-				.addClass("Icon fal fa-calendar-alt")
-				.insertBefore(element)
-				.on("click", function (e) {
-					e.preventDefault();
-                    if (calendar.isVisible() && calendar.getDatePicker() == datePicker)
-                        close();
-                    else
-                        open(e);
-				});
-
-			matematici.elements.window.on("resize", function () {
-				close();
-			});
-
-			parse();
-		};
+            matematici.DatePicker.map.set(node, datePicker);
+            parse();
+        };
 
     this.setValue = function (value) {
-        element.val(value);
+        node.value = value;
         parse();
-        element.change();
+        node.dispatchEvent(new Event('change', { 'bubbles': true }));
     };
 
     this.getValue = function () {
-        return element.val();
+        return node.value;
     };
 
-	setup();
+    initialize();
 };
+
+matematici.DatePicker.map = new WeakMap();
+matematici.DatePicker.get = function (node) {
+    return matematici.DatePicker.map.get(node);
+};
+
+matematici.destroyers.push(function (context) {
+    matematici.DatePicker.map = new WeakMap();
+    matematici.DatePicker.current = null;
+});
+
+

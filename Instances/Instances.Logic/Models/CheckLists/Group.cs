@@ -40,7 +40,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 if (DisableMove) ItemModel.DisableMove = true;
             }
 
-            ItemModel.Items = Items.Where(i => ShowAsTable || !i.Hidden).Select(i => ((Item)i).GetViewModel());
+            ItemModel.Items = Items.Select(i => ((Item)i).GetViewModel());
             if (ShowAsTable) ItemModel.ShowAsTable = true;
             return ItemModel;
         }

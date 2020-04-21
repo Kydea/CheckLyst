@@ -1,5 +1,4 @@
 ﻿matematici.Calendar = function (selector) {
-
     var
         calendar = this,
         dates = [],
@@ -207,4 +206,3 @@ matematici.Calendar.translations = {
         days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
     }
 }
-

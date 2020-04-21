@@ -120,7 +120,7 @@
         },
 
         keyDown = function (e) {
-            if (e.key == 9) //tab
+            if (e.keyCode == 9 || e.key == "Tab")
                 goToNext = true;
         },
 

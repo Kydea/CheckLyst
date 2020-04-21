@@ -75,7 +75,7 @@
                                     matematici.checkListGrid.close();
                                 }).data("array", value);
                             } else if (typeName == "Boolean") {
-                                td.addClass("Centered").append($("<i />").addClass("fa").addClass("fa-" + (value || value == true ? "check" : "times")));
+                                if (value != null) td.addClass("Centered").append($("<i />").addClass("fa").addClass("fa-" + (value ? "check" : "times")));
                             } else
                                 td.html(value);
                             return true;

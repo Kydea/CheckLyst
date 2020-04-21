@@ -138,10 +138,7 @@
                 $(header.getElement()).hide();
             var pageIndex = tab.getCurrentItem().index;
             page.setPageIndex(pageIndex);
-            matematici.profiler.start();
             page.update(model.pages[pageIndex]);
-            matematici.profiler.stop();
-            matematici.profiler.log();
 
             if (updateHandler) updateHandler(model);
             externalSources = model.externalSources;

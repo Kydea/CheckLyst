@@ -32,7 +32,7 @@
 		input = $("<input />")
 			.attr({ type: "text", readOnly: options.readOnly });
 		valuePanel.append($("<label >").append(input));
-		datePicker = new matematici.DatePicker(input);
+		datePicker = new matematici.DatePicker(input[0]);
 		if (!!model[property])
 			datePicker.setValue(model[property]);
 		if (!options.readOnly)

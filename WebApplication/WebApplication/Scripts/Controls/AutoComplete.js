@@ -88,13 +88,6 @@
             labelNode.classList = "AutoComplete";
             parent.insertBefore(labelNode, node.nextSibling);
 
-            parent.addEventListener("click", function (e) {
-                if (e.target.tagName != "INPUT") {
-                    $("input:visible", this).eq(0).focus();
-                    e.stopPropagation();
-                }
-            });
-
             labelNode.addEventListener("focus", function () {
                 showList();
                 setTimeout(function () {

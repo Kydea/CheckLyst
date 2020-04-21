@@ -129,14 +129,14 @@
                     elementInformation = new instances.ElementInformation(element);
                     if (setupModel && setupModel.iterator && !setupModel.disableAdd) {
                         addButton = document.createElement("div");
-                        addButton.className = "Item NewLing";
+                        addButton.className = "Item NewLine";
                         var a = document.createElement("a");
                         a.setAttribute("href", "#");
                         a.className = "Button AddIteration";
                         var i = document.createElement("i");
                         i.className = "Icon fa fa-plus";
                         a.appendChild(i);
-                        a.innetHTML += "Add"
+                        a.innerHTML += "Add"
                         a.addEventListener("click", function () {
                             if (!readOnly) new instances.Event(instances.Events.add, id).trigger();
                         });
@@ -189,15 +189,13 @@
     this.update = function (model) {
         var
             index,
-            itemIndex = 0,
-            modelIndex = 0,
             newItems = [],
             newItemIndexes = {},
-            reorder = false;
+            lastItem = null;
 
         update(model);
 
-        /* istanzia i nuovi oggetti, aggiorna ricorsivamente Groups per le pagine, Items per i gruppi e Iterations per gli iteratori */
+        /* aggiorna ricorsivamente: Groups per le pagine, Items per i gruppi e Iterations per gli iteratori; crea le nuove iterazioni  */
         var children = model.groups ? model.groups : model.iterator ? model.iterations : model.items;
         for (index in children) {
             var
@@ -210,36 +208,29 @@
                 item = items[itemIndexes[itemModel.id]];
 
             item.update(itemModel);
+            if (model.iterator) {
+                if (!model.disableMove)
+                    item.appendElement();
+                if (!itemModel.removed) {
+                    if (lastItem == null) //first visible items
+                        item.getElement().classList.add("FirstIteration")
+                    lastItem = item;
+                }
+            }
 
             newItemIndexes[itemModel.id] = index;
             newItems.push(item);
-
-            if (itemModel.typeName == "Iteration") reorder = true;
         }
-
-        /* elimina gli oggetti che non esistono più */
-        for (index in itemIndexes)
-            if (!newItemIndexes[index])
-                items[itemIndexes[index]].delete();
 
         items = newItems;
         itemIndexes = newItemIndexes;
 
-        /* riordina gli oggetti iteration */
-        /*
-        if (reorder) {
-            for (index in items) 
-                items[index].appendElement();
-
-            var visibleChildren = $(model.showAsTable ? "tr.Iteration:not(.Removed)" : "> .Iteration:not(.Removed)", element);
-            visibleChildren.removeClass("FirstIteration").removeClass("LastIteration");
-		    visibleChildren.first().addClass("FirstIteration");
-		    visibleChildren.last().addClass("LastIteration");
-        }
-        */
+        if (lastItem)
+            lastItem.getElement().classList.add("LastIteration")
 
         if (iterationCommands) element.appendChild(iterationCommands);
         if (addButton) element.appendChild(addButton);
+
     };
 
     this.getSetupModel = function () {
@@ -247,7 +238,7 @@
     };
 
     this.clear = function () {
-        element.empty();
+        element.innerHTML = "";
         items = [];
         itemIndexes = {};
     };

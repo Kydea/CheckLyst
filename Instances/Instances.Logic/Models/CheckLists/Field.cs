@@ -56,6 +56,10 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 ItemModel.ExternalSourceName = ExternalSourceName;
                 ItemModel.ExternalSourceColumn = ExternalSourceColumn;
             }
+
+            if (LocalTimeZone)
+                ItemModel.LocalTimeZone = LocalTimeZone;    
+
             if (History.Any())
                 ItemModel.History = History.Select(x => new {
                     x.DateTime,

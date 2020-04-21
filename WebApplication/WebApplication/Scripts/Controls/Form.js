@@ -48,7 +48,7 @@
 			fields.each(function () {
 				var field = $(this);
 				if (field.hasClass("DatePicker"))
-					new matematici.DatePicker(field);
+					new matematici.DatePicker(this);
 
 				if (options.readOnly)
 					matematici.controls.setEditable(field, false);
@@ -168,8 +168,6 @@
 				}
 			else if (field.attr("type") == "checkbox")
 				field.prop("checked", !!value)
-			else if (field.hasClass("DatePicker"))
-				field.data("datePicker").val(value);
 			else
 				field.val(value);
 		},

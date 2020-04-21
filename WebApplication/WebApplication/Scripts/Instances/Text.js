@@ -3,21 +3,23 @@
         p,
 
         setup = function () {
-            p = $("<p />").addClass("Description").appendTo(item.getElement());
+            p = document.createElement("p");
+            p.className = "Description";
+            item.getElement().appendChild(p);
         };
 
     this.update = function (model) {
-		p.html(model.descriptionValue ? model.descriptionValue.split('\n').join('<br />') : "(no description)");
+		p.innerHTML = model.descriptionValue ? model.descriptionValue.split('\n').join('<br />') : "(no description)";
         this.setColor(model.color);
         this.setFontSize(model.fontSize);
     };
 
-    this.setColor = function (value) {
-        p.css({ color: model.color });
+    this.setColor = function () {
+        p.style.color = model.color;
     };
 
-    this.setFontSize = function (value) {
-        p.css({ fontSize: model.fontSize && model.fontSize + "px" });
+    this.setFontSize = function () {
+        p.style.fontSize = model.fontSize && model.fontSize + "px";
     };
 
     setup();

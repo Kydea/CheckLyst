@@ -1,28 +1,35 @@
 ﻿instances.Link = function (item, model) {
     var
-        p,
+        i, a, 
 
         setup = function () {
-            i = $("<i >").addClass("Icon Link fa fa-caret-right").appendTo(item.getElement());
-            a = $("<a />").attr("target", "_blank").addClass("Link").appendTo(item.getElement());
+            var element = item.getElement();
+
+            i = document.createElement("i");
+            i.className = "Icon Link fa fa-caret-right";
+            element.appendChild(i);
+
+            a = document.createElement("a");
+            a.className = "Link";
+            a.setAttribute("target", "_blank");
+            element.appendChild(a);
         };
 
     this.update = function (model) {
-        a
-            .html(model.descriptionValue || "(no label)")
-            .attr("href", model.url);
+        a.innerHTML = model.descriptionValue || "(no label)";
+        a.setAttribute("href", model.url);
 
         this.setColor(model.color);
         this.setFontSize(model.fontSize);
     };
 
-    this.setColor = function (value) {
-        i.css({ color: model.color });
-        a.css({ color: model.color });
+    this.setColor = function () {
+        i.style.color = model.color;
+        a.style.color = model.color;
     };
 
-    this.setFontSize = function (value) {
-        a.css({ fontSize: model.fontSize && model.fontSize + "px" });
+    this.setFontSize = function () {
+        a.style.fontSize = model.fontSize && model.fontSize + "px";
     };
 
     setup();
