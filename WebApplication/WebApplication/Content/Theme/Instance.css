@@ -404,10 +404,14 @@ div.Instance table.Grid {
       display: none; }
     div.Instance table.Grid tbody tr td.IterationCommands {
       white-space: nowrap;
-      text-align: center; }
+      text-align: center;
+      width: 10px;
+      padding: 3px; }
       div.Instance table.Grid tbody tr td.IterationCommands > a.Up, div.Instance table.Grid tbody tr td.IterationCommands a.Down, div.Instance table.Grid tbody tr td.IterationCommands a.Remove {
         display: inline-block;
         float: none; }
+      div.Instance table.Grid tbody tr td.IterationCommands.Inactive a {
+        display: none !important; }
   div.Instance table.Grid tbody tr:nth-child(odd) td.Inactive {
     background-color: #f5f5f5; }
   div.Instance table.Grid tbody tr:nth-child(even) td.Inactive {

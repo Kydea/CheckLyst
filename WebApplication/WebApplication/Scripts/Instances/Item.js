@@ -18,7 +18,7 @@
         create = function () {
             element = document.createElement(item.isTableContent() ? "td" : "div");
             element.className = "Element Item " + model.typeName;
-            if (model.newLine) element.className += " NewLine";
+            if (model.newLine) element.classList.add("NewLine");
             element.setAttribute("data-code", model.code);
             element.setAttribute("data-id", model.id);
 

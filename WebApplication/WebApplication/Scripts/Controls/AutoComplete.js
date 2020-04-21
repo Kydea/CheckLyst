@@ -201,7 +201,7 @@
         checkReadOnly = function () {
             if (node.classList.contains("ReadOnly")) {
                 readOnly = true;
-                labelNode.className += " ReadOnly";
+                labelNode.classList.add("ReadOnly");
                 labelNode.readOnly = true;
                 iconNode.remove();
                 if (open) setTimeout(hideList, 0);

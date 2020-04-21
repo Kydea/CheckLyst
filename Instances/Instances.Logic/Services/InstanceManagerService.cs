@@ -1057,6 +1057,14 @@ namespace CheckListManager.Instances.Logic.Services
 
                     if (field.LocalTimeZone)
                     {
+                        var dateTimeOffset = DateTimeOffsetHelper.Parse(oldFormattedValue, TimeZone, out var Ambiguous, out var AmbiguousDateTimeOffsets);
+                        oldFormattedValue = dateTimeOffset?.Format(TimeZone) ?? string.Empty;
+
+                        dateTimeOffset = DateTimeOffsetHelper.Parse(formattedValue, TimeZone, out Ambiguous, out AmbiguousDateTimeOffsets);
+                        formattedValue = dateTimeOffset?.Format(TimeZone) ?? string.Empty;
+                    }
+                    else
+                    {
                         if (DateTimeOffset.TryParseExact(oldFormattedValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out var Date))
                             oldFormattedValue = Date.Format(TimeZone);
                         else
@@ -1066,14 +1074,6 @@ namespace CheckListManager.Instances.Logic.Services
                             formattedValue = Date.Format(TimeZone);
                         else
                             formattedValue = string.Empty;
-                    }
-                    else
-                    {
-                        var dateTimeOffset = DateTimeOffsetHelper.Parse(oldFormattedValue, TimeZone, out var Ambiguous, out var AmbiguousDateTimeOffsets, DateTimeOffsetHelper.DateFormat);
-                        oldFormattedValue = dateTimeOffset?.Format(TimeZone) ?? string.Empty;
-
-                        dateTimeOffset = DateTimeOffsetHelper.Parse(formattedValue, TimeZone, out Ambiguous, out AmbiguousDateTimeOffsets, DateTimeOffsetHelper.DateFormat);
-                        formattedValue = dateTimeOffset?.Format(TimeZone) ?? string.Empty;
                     }
                 }
 

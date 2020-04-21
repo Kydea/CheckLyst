@@ -72,9 +72,11 @@
 
         change = function () {
             if (model.valuesList || validate()) {
+                var handleGoToNext = goToNext;
+                goToNext = false;
                 new instances.Event(instances.Events.valueChange, model.id, { value: getValue() }).done(function (result) {
                     instances.instance.update(result);
-                    if (goToNext) next();
+                    if (handleGoToNext) next();
                 }).trigger();
             }
         },
@@ -120,8 +122,12 @@
         },
 
         keyDown = function (e) {
-            if (e.keyCode == 9 || e.key == "Tab")
+            if (e.keyCode == 9 || e.key == "Tab") {
                 goToNext = true;
+                input.blur();
+                setTimeout(function () { if (goToNext) next(); }, 0);
+                e.preventDefault();
+            }
         },
 
         setup = function () {
@@ -142,13 +148,13 @@
 
             if (!model.valueFormulaString) {
                 if (!model.valuesList) {
-                    if (model.valueTypeName == "Date" || model.valueTypeName == "DateTime") 
+                    if (model.valueTypeName == "Date" || model.valueTypeName == "DateTime")
                         new matematici.DatePicker(input);
                     else if (model.valueTypeName == "Boolean") {
-                        element.className += " Boolean";
+                        element.classList.add("Boolean");
                         input.setAttribute("type", "checkbox");
                     } else
-                        input.className += " Scan";
+                        input.classList.add("Scan");
 
                     input.addEventListener("focus", focus);
                     input.addEventListener("change", change);
@@ -164,7 +170,7 @@
                 }
 
                 if (model.valuesList) {
-                    element.className += " List";
+                    element.classList.add("List");
                     for (var index in model.valuesList) {
                         var option = document.createElement("option");
                         option.text = option.value = model.valuesList[index];
@@ -178,13 +184,13 @@
                                 new instances.ExternalSources(model.id, model.externalSourceName);
                         };
 
-                    element.className += " ExternalSource";
+                    element.classList.add("ExternalSource");
                     input.addEventListener("click", call);
                     icon.className = "ExternalSourceLink fa fa-link";
                     icon.addEventListener("click", call);
                     element.append(icon);
                 } else if (model.valueTypeName == "DateTime" || model.valueTypeName == "Time") {
-                    element.className += " " + model.valueTypeName;
+                    element.classList.add(model.valueTypeName);
                     for (var i = 0; i < 24; i++) {
                         var option = document.createElement("option");
                         option.text = (i < 10 ? "0" : "") + i;
@@ -205,7 +211,7 @@
                     }
                 }
                 else if (model.valueTypeName == "Date")
-                    element.calssName += model.valueTypeName;
+                    element.classList.add(model.valueTypeName);
             }
 
             field = document.createElement("div");
@@ -213,7 +219,7 @@
             (item.isTableContent() ? element : label).append(field);
 
             if (model.linesCount > 0)
-                element.className += " MultiLine";
+                element.classList.add("MultiLine");
             if (model.linesCount > 1) {
                 input.style.height = 20 * model.linesCount + 12 + "px";
                 field.style.height = 20 * model.linesCount + 12 + "px";
@@ -239,7 +245,7 @@
         element.classList.toggle("Inactive", model.readOnly);
         element.classList.toggle("ReadOnly", readOnly);
         input.readOnly = readOnly;
-        if (readOnly) 
+        if (readOnly)
             field.setAttribute("readonly", "readonly");
         else
             field.removeAttribute("readonly");
@@ -284,12 +290,14 @@
         var value = formattedDate ? formattedDate.date + " " + formattedDate.hours + ":" + formattedDate.minutes : model.value;
         field.innerHTML = readOnly && value ? value.split('\n').join("<br />") : value;
 
-        if (model.valueTypeName == "DateTime" || model.valueTypeName == "Date")
+        if (model.valueTypeName == "DateTime" || model.valueTypeName == "Date") {
             if (value)
                 value += " UTC" + (!model.localTimeZone ? "" : (model.offset > 0 ? " +" : " -") + ("" + Math.abs(model.offset) / 60).padStart(2, "0") + ":00")
             else
                 value = model.localTimeZone ? "Company time zone" : "UTC";
-        field.setAttribute("title", field.textContent);
+            field.setAttribute("title", value);
+        } else
+            field.setAttribute("title", field.textContent);
 
         if (autoComplete) autoComplete.setValue(select.value);
         if (autoComplete2) autoComplete2.setValue(select2.value);

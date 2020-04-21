@@ -102,7 +102,11 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
             Header.CheckList = this;
             Header.Setup();
-            if (InCreation) Header.CreateInstanceIterations();
+            if (InCreation)
+            {
+                Header.CreateInstanceIterations();
+                ((Group)Header).SetupIterationsIndexes();
+            }
 
             foreach (var page in Pages)
             {

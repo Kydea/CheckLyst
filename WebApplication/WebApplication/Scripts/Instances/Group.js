@@ -105,7 +105,7 @@
                             new instances.Event(instances.Events.down, id).trigger();
                         });
                         var i = document.createElement("i");
-                        i.className = "fal fa-caret-Down";
+                        i.className = "fal fa-caret-down";
                         a.appendChild(i);
                         iterationCommands.appendChild(a);
                     }
@@ -163,7 +163,12 @@
             group.setFontSize(model.fontSize);
 
             if (addButton) addButton.childNodes[0].classList.toggle("ReadOnly", readOnly);
-            if (iterationCommands) iterationCommands.setAttribute("display", readOnly ? "none" : "block");
+            if (iterationCommands) {
+                if (tableContent)
+                    iterationCommands.classList.toggle("Inactive", readOnly);
+                else
+                    iterationCommands.style.display = readOnly ? "none" : "";
+            }
             if (elementInformation) elementInformation.update(model);
         };
 

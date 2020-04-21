@@ -26,8 +26,11 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public void CreateInstanceIterations()
         {
-            foreach (var Group in Groups)
+            foreach (Group Group in Groups)
+            {
                 Group.CreateInstanceIterations();
+                Group.SetupIterationsIndexes();
+            }
         }
 
         public override void Setup()

@@ -652,10 +652,18 @@ div.Instance {
                     &.IterationCommands {
                         white-space: nowrap;
                         text-align: center;
+                        width: 10px;
+                        padding: 3px;
 
                         > a.Up, a.Down, a.Remove {
                             display: inline-block;
                             float: none;
+                        }
+
+                        &.Inactive {
+                            a {
+                                display: none !important;
+                            }
                         }
                     }
                 }
