@@ -43,7 +43,7 @@
         if (options.readOnly)
             $("<input />").attr({ type: "text", readOnly: true }).val(model.signatureCode).appendTo(valuePanel);
         else {
-            input = $("<select />").data("nullable", true);
+            input = $("<select />").attr("data-nullable", "");
             for (var signatureCode in prototypes.prototype.getModel().signatures)
                 input.append($("<option />").attr({ value: signatureCode, selected: signatureCode == model.signatureCode }).text(signatureCode));
             input.on("change", change);

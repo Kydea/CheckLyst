@@ -1,150 +1,127 @@
-﻿/// estendere per lista da web service
+﻿matematici.AutoComplete = function (node) {
+    //this is a light version of autocomplete whitout jquery in initialization used only in instances to make the process faster
 
-matematici.AutoComplete = function (selector) {
-	var
-		autoComplete = this,
-        element = $(selector).addClass("AutoComplete"),
-        fullHeight = $(selector).hasClass("FullHeight"),
-		options = $("option", element),
-		items,
-		currentItem,
-		label,
-		input,
-		list,
-		icon,
-		noRow,
-		oldValue,
-		multiple,
-		open,
-		readOnly,
+    var
+        autoComplete = this,
+        initialized = false,
+        element,
+        valuesMap,
+        options,
+        fullHeight,
+        items,
+        currentItem,
+        iconNode,
+        icon,
+        labelNode,
+        label,
+        input,
+        list,
+        noRow,
+        oldValue,
+        multiple,
+        open,
+        readOnly,
 
-		isNullable = function () {
-			return !!element.data("nullable");
-		},
+        deferredInitialization = function () {
+            //all the initialization needed only after first show list
 
-		setValue = function () {
-			var value = element.val();
-			if (multiple) {
-				texts = [];
-				items.each(function () {
-					var item = $(this).removeClass("Selected");
-					for (var index in value)
-						if (item.data("value") == value[index]) {
-							item.addClass("Selected");
-							texts.push(item.text());
-							continue;
-						}
-				});
-				var text = texts.join(", ");
-				label.val(text).attr("title", text);
-			}
-			else
-				items.each(function (index) {
-					if ($(this).data("value") == value) {
-						setCurrentItem(index);
-						return false;
-					}
-				});
-		},
+            element = $(node);
+            icon = $(iconNode);
+            label = $(labelNode);
+            input = $("<input />").addClass("AutoComplete-Filter Scan").attr({ type: "text" }).hide().insertAfter(label);
+            list = $("<div />").addClass("AutoComplete-List").insertAfter(input);
+            noRow = $("<i />").addClass("fa fa-minus");
 
-		setWidth = function () {
-			var width = label.outerWidth(), position = label.position();
-			input.width(width - parseInt(input.css("padding-left")) - parseInt(input.css("padding-right")) - parseInt(input.css("border-left-width")) - parseInt(input.css("border-right-width")));
-			items.each(function () {
-				var itemWidth = $(this).outerWidth();
-				if (itemWidth > width)
-					width = itemWidth;
-			});
-			list.outerWidth(width);
+            input
+                .on("keydown", function (e) {
+                    if (e.which == 38 || e.which == 40) { //up and down
+                        e.preventDefault();
+                        if (!multiple) setCurrentItem(currentItem + (e.which == 38 ? -1 : 1) || 0);
+                    } else if (e.which == 13) { //return
+                        e.preventDefault();
+                        e.stopPropagation();
+                        hideList();
+                    } else if (e.which == 27) { //esc
+                        e.preventDefault();
+                        e.stopPropagation();
+                        hideList();
+                    }
 
-			var labelPosition = {
-				'left': position.left + parseInt(label.css('marginLeft'), 10),
-				'top': position.top + label.outerHeight(true)
-			};
+                })
+                .on("keyup", function (e) {
+                    if (e.which < 37 || e.which > 40) { //arrow keys
+                        updateList();
+                        if (!multiple) setCurrentItem(0);
+                    }
+                });
 
-			input.css({ top: label.offset().top + label.outerHeight(), left: label.offset().left });
-			list.css({ top: label.offset().top + input.outerHeight(), left: label.offset().left });
+            list
+                .on("click", "a", function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (multiple)
+                        toggleItem($(this).prevAll().size());
+                    else {
+                        setCurrentItem($(this).prevAll().size());
+                        hideList();
+                    }
+                });
 
-			icon.css({
-				'left': labelPosition.left + width - 24,
-				'top': position.top + parseInt(label.css('marginTop'), 10)
-			});
-		},
+            initialized = true;
+        },
 
-		initialize = function () {
-			element.data("autoComplete", autoComplete);
-			multiple = element.prop("multiple");
-			label = $("<input />").addClass("AutoComplete").attr({ type: "text" }).insertAfter(element);
-			input = $("<input />").addClass("AutoComplete-Filter Scan").attr({ type: "text" }).hide().insertAfter(label);
-			list = $("<div />").addClass("AutoComplete-List").insertAfter(input);
-			icon = $("<i />").addClass("AutoComplete fa fa-caret-down").insertAfter(input);
-			noRow = $("<i />").addClass("fa fa-minus");
-			element.parent("label")
-				.on("click", function (e) {
-					if (e.target.tagName != "INPUT") {
-						$("input:visible", this).eq(0).focus();
-						e.stopPropagation();
-					}
-				});
-			label
-				.on("focus", function () {
-					showList();
-					setTimeout(function () {
-						input.focus();
-						input.select();
-					}, 0);
-				})
-				.on("click", function (e) {
-					e.stopPropagation();
-				});
-			input
-				.on("keydown", function (e) {
-					if (e.which == 38 || e.which == 40) { //up and down
-						e.preventDefault();
-						if (!multiple) setCurrentItem(currentItem + (e.which == 38 ? -1 : 1) || 0);
-					} else if (e.which == 13) { //return
-						e.preventDefault();
-						e.stopPropagation();
-						hideList();
-					} else if (e.which == 27) { //esc
-						e.preventDefault();
-						e.stopPropagation();
-						hideList();
-					}
+        initialize = function (value) {
+            matematici.AutoComplete.map.set(node, autoComplete);
+            matematici.AutoComplete.list.push(autoComplete);
 
-				})
-				.on("keyup", function (e) {
-					if (e.which < 37 || e.which > 40) { //arrow keys
-						updateList();
-						if (!multiple) setCurrentItem(0);
-					}
-				});
-			list
-				.on("click", "a", function (e) {
-					e.preventDefault();
-					e.stopPropagation();
-					if (multiple)
-						toggleItem($(this).prevAll().size());
-					else {
-						setCurrentItem($(this).prevAll().size());
-						hideList();
-					}
-				});
-			icon.
-				on("click", function (e) {
-					if (open)
-						hideList();
-					else
-						label.focus();
-					e.preventDefault();
-					e.stopPropagation();
-				});
-			updateList();
-			setValue();
+            multiple = node.hasAttribute("multiple");
 
+            node.classList.add("AutoComplete");
+            var parent = node.parentNode;
+
+            iconNode = document.createElement("i");
+            iconNode.className = "AutoComplete fa fa-caret-down";
+            parent.insertBefore(iconNode, node.nextSibling);
+
+            labelNode = document.createElement("input");
+            labelNode.setAttribute("type", "text");
+            labelNode.classList = "AutoComplete";
+            parent.insertBefore(labelNode, node.nextSibling);
+
+            parent.addEventListener("click", function (e) {
+                if (e.target.tagName != "INPUT") {
+                    $("input:visible", this).eq(0).focus();
+                    e.stopPropagation();
+                }
+            });
+
+            labelNode.addEventListener("focus", function () {
+                showList();
+                setTimeout(function () {
+                    if (!initialized) deferredInitialization();
+                    input.focus();
+                    input.select();
+                }, 0);
+            });
+            labelNode.addEventListener("click", function (e) {
+                e.stopPropagation();
+            });
+
+            iconNode.addEventListener("click", function (e) {
+                if (open)
+                    hideList();
+                else
+                    labelNode.focus();
+                e.preventDefault();
+                e.stopPropagation();
+            });
+
+            setValue();
             checkReadOnly();
 
+            fullHeight = node.classList.contains("FullHeight");
             if (fullHeight) {
+                deferredInitialization();
                 label.hide();
                 icon.addClass("FullHeight");
                 input.addClass("FullHeight");
@@ -152,17 +129,97 @@ matematici.AutoComplete = function (selector) {
             }
 
             matematici.elements.window.on("resize", setWidth);
-		},
+        },
 
-		checkReadOnly = function () {
-            if (element.hasClass("ReadOnly")) {
+        isNullable = function () {
+            return node.getAttribute("data-nullable") != null;
+        },
+
+        createMap = function () {
+            valuesMap = new Map();
+
+            for (var index = 0; index < node.options.length; ++index) {
+                var option = node.options[index];
+                valuesMap.set(option.value, option.text);
+            }
+        },
+
+        setValue = function () {
+            var
+                value = node.value,
+                texts = [],
+                text;
+
+            if (value == null || value == "")
+                text = "";
+            else {
+                if (valuesMap == null) createMap();
+                if (multiple) {
+                    for (var index = 0, length = node.options.length; index < length; index++) {
+                        var option = node.options[index];
+                        if (option.selected)
+                            texts.push(option.text);
+                    }
+                    text = texts.join(", ");
+                } else
+                    text = value && valuesMap.get(value) || "";
+            }
+
+            labelNode.value = text;
+            labelNode.setAttribute("title", text);
+
+            if (!open) return;
+
+            if (multiple) {
+                value = element.val();
+                texts = [];
+                items.each(function () {
+                    var item = $(this).removeClass("Selected");
+                    for (var index in value)
+                        if (item.data("value") == value[index]) {
+                            item.addClass("Selected");
+                            continue;
+                        }
+                });
+            } else if (items)
+                items.each(function (index) {
+                    if ($(this).data("value") == value) {
+                        setCurrentItem(index);
+                        return false;
+                    }
+                });
+        },
+
+        resizeList = function () {
+            if (fullHeight) return;
+            var width = labelNode.offsetWidth;
+            input.width(width - parseInt(input.css("padding-left")) - parseInt(input.css("padding-right")) - parseInt(input.css("border-left-width")) - parseInt(input.css("border-right-width")));
+            list.outerWidth(width);
+            input.css({ top: label.offset().top + label.outerHeight(), left: label.offset().left });
+            list.css({ top: label.offset().top + input.outerHeight(), left: label.offset().left });
+        },
+
+        setWidth = function () {
+            if (open) resizeList();
+            iconNode.style.left = labelNode.offsetLeft + labelNode.offsetWidth - 24 + "px";
+            iconNode.style.top = labelNode.offsetTop + "px";
+        },
+
+        checkReadOnly = function () {
+            if (node.classList.contains("ReadOnly")) {
                 readOnly = true;
-                label.addClass("ReadOnly").prop("readonly", true);
-                icon.remove();
+                labelNode.className += " ReadOnly";
+                labelNode.readOnly = true;
+                iconNode.remove();
+                if (open) setTimeout(hideList, 0);
             } else {
                 readOnly = false;
-                label.removeClass("ReadOnly").prop("readonly", false);
-                icon.insertAfter(input);
+                labelNode.classList.remove("ReadOnly");
+                labelNode.readOnly = false;
+                if (input)
+                    icon.insertAfter(input);
+                else
+                    labelNode.parentNode.insertBefore(iconNode, labelNode.nextSibling);
             }
 		},
 
@@ -212,14 +269,16 @@ matematici.AutoComplete = function (selector) {
 			}
 		},
 
-		showList = function () {
+        showList = function () {
+            if (!initialized) deferredInitialization();
 			if (readOnly) return;
 
-			if (oldValue == null) oldValue = element.val() || "";
-			$("select.AutoComplete.Open").each(function () {
-				$(this).data("autoComplete").hideList();
-			});
+            if (oldValue == null) oldValue = node.value || "";
 
+            if (matematici.AutoComplete.current) matematici.AutoComplete.current.hideList();
+            matematici.AutoComplete.current = autoComplete;
+            options = $("option", element);
+            updateList();
 			open = true;
 			element.addClass("Open");
 			label.addClass("Open");
@@ -228,8 +287,9 @@ matematici.AutoComplete = function (selector) {
 			matematici.elements.body.append(list);
 			input.css({ top: label.offset().top + label.outerHeight(), left: label.offset().left });
 			list.css({ top: label.offset().top + input.outerHeight(), left: label.offset().left });
+            resizeList();
 			list.show();
-			setValue();
+            setValue();
 			setTimeout(function () {
 				$(document).on("click.autocomplete", hideList)
 				$(document).on("keydown.autocomplete", function (e) {
@@ -250,25 +310,26 @@ matematici.AutoComplete = function (selector) {
 			if (!multiple) setCurrentItem(null);
 			label.removeClass("Open");
 			element.removeClass("Open");
-			open = false;
-			if (oldValue != (element.val() || "")) element.change();
+            open = false;
+            if (oldValue != (node.value || "")) node.dispatchEvent(new Event('change', { 'bubbles': true }));
 			oldValue = null;
 			input.insertAfter(label);
-			list.insertAfter(label);
+            list.insertAfter(label);
+            matematici.AutoComplete.current = null;
 		},
 
 		updateList = function () {
-			list.empty();
-			if (isNullable())
-				list.append($("<a />").addClass("None").attr("href", "#").append($("<i />").text(element.data("nullable") === true ? "(none)" : element.data("nullable"))));
+            list.empty();
+            var nullValue = node.getAttribute("data-nullable");
+            if (nullValue) 
+                list.append($("<a />").addClass("None").attr("href", "#").append($("<i />").text(nullValue === "" ? "(none)" : nullValue)));
 
-			var count = 0;
 			options
 				.each(function () {
 					var
 						option = $(this),
 						filter = input.val().toUpperCase();
-					if (filter == "" || option.text().toUpperCase().indexOf(filter) >= 0) {
+					if (filter == "" || option.text().toUpperCase().indexOf(filter) >= 0)
 						list.append(
 							$("<a />")
 								.attr("href", "#")
@@ -277,8 +338,6 @@ matematici.AutoComplete = function (selector) {
 								.attr("title", option.text())
 								.toggleClass("Selected", option.prop("selected"))
 						);
-						++count;
-					}
 				});
 
 			items = $("a", list);
@@ -287,48 +346,66 @@ matematici.AutoComplete = function (selector) {
 			setWidth();
 		};
 
-	this.refresh = function () {
-		icon.show();
-		options = $("option", element);
-		updateList();
-		setValue();
-	};
+    autoComplete.refresh = function () {
+        iconNode.style.display = "block";
+        setWidth();
+        setValue();
+    };
 
-	this.getControl = function () {
+    autoComplete.refreshValues = function () {
+        valuesMap = null;
+        setValue();
+    };
+
+    autoComplete.getControl = function () {
 		return label;
     };
 
-    this.getValue = function () {
+    autoComplete.getValue = function () {
         return element.val();
     }
 
-	this.setValue = function (value) {
-		element.val(value);
-		setValue();
+    autoComplete.setValue = function (values) {
+        if (Array.isArray(values)) {
+            var valuesSet = new Set(values);
+            for (var optionIndex = 0, optionsCount = node.options.length; optionIndex < optionsCount; ++optionIndex) {
+                var option = node.options[optionIndex];
+                option.selected = valuesSet.has(option.value);
+            }
+        } else
+            node.value = values;
+        setValue();
 	};
 
-	this.isNullable = isNullable;
+    autoComplete.isNullable = isNullable;
 
-	this.hideList = hideList;
+    autoComplete.hideList = hideList;
 
-	this.initialize = initialize;
+    autoComplete.initialize = initialize;
 
-	this.destroy = destroy;
+    autoComplete.destroy = destroy;
 
-	this.checkReadOnly = checkReadOnly;
+    autoComplete.checkReadOnly = checkReadOnly;
+};
 
+matematici.AutoComplete.map = new WeakMap();
+matematici.AutoComplete.list = [];
+matematici.AutoComplete.current = null;
+matematici.AutoComplete.get = function (select) {
+    return matematici.AutoComplete.map.get(select);
 };
 
 matematici.initializers.push(function (context) {
-	$("select", context).each(function () {
-		if (!$(this).data("autoComplete"))
-			new matematici.AutoComplete(this).initialize();
-	});
+    $("select", context).each(function () {
+        if (!matematici.AutoComplete.map.has(this))
+            new matematici.AutoComplete(this).initialize();
+    });
 });
 
 matematici.destroyers.push(function (context) {
-    $("select.AutoComplete", context).each(function () {
-        var autoComplete = $(this).data("autoComplete");
-        if (autoComplete) autoComplete.destroy();
-	});
+    for (var index in matematici.AutoComplete.list)
+        matematici.AutoComplete.list[index].destroy();
+    matematici.AutoComplete.map = new WeakMap();
+    matematici.AutoComplete.list = [];
+    matematici.AutoComplete.current = null;
 });

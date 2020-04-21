@@ -36,9 +36,9 @@
 				}).done(function (result) {
 					var columns = result.columns;
 					for (index in columns)
-						$("<option />").appendTo(sourceColumn).text(columns[index]).attr("value", columns[index]);
-					sourceName.data("autoComplete").refresh();
-					sourceColumn.data("autoComplete").refresh();
+                        $("<option />").appendTo(sourceColumn).text(columns[index]).attr("value", columns[index]);
+                    matematici.AutoComplete.get(sourceName[0]).refresh();
+                    matematici.AutoComplete.get(sourceColumn[0]).refresh();
 					if (column)
 						sourceColumn.val(column);
 					else
@@ -47,8 +47,8 @@
 				});
 			else
 				setTimeout(function () {
-					sourceName.data("autoComplete").refresh();
-					sourceColumn.data("autoComplete").refresh();
+                    matematici.AutoComplete.get(sourceName[0]).refresh();
+                    matematici.AutoComplete.get(sourceColumn[0]).refresh();
 				}, 0);
 		},
 

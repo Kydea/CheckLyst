@@ -48,7 +48,7 @@
                     valueSelect.append($("<option />").attr({ value: signatureCode }).text(signatureCode));
 
             setTimeout(function () {
-                var autoComplete = valueSelect.data("autoComplete");
+                var autoComplete = matematici.AutoComplete.get(valueSelect[0]);
                 valueSelect.toggleClass("ReadOnly", condition == 0);
                 autoComplete.setValue(model.countDownToCode);
                 autoComplete.refresh();
@@ -85,7 +85,7 @@
 
             valueSelect = $("<select />")
                 .on("change", valueChanged)
-                .data("nullable", "-")
+                .attr("data-nullable", "-")
                 .appendTo(valuePanel);
 
             $("<label />")

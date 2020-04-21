@@ -223,7 +223,6 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Parameters.xml" />
-    <Content Include="Scripts\Controls\AutoComplete.js" />
     <Content Include="Scripts\Controls\Calendar.js" />
     <Content Include="Scripts\Controls\Controls.js" />
     <Content Include="Scripts\Controls\DatePicker.js" />
@@ -234,7 +233,7 @@
     <Content Include="Scripts\Custom\AutoCenter.js" />
     <Content Include="Scripts\Custom\Accordion.js" />
     <Content Include="Scripts\Custom\ImageViewer.js" />
-    <Content Include="Scripts\Instances\InstanceAutoComplete.js" />
+    <Content Include="Scripts\Controls\AutoComplete.js" />
     <Content Include="Scripts\Matematici\Profiler.js" />
     <Content Include="Scripts\Custom\TokenManager.js" />
     <Content Include="Scripts\Custom\ActionBar.js" />

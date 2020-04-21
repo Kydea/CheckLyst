@@ -42,8 +42,8 @@
 
 	this.unselect = function () {
 		element.removeClass("Selected");
-		$("select", propertyPanel.getPropertyValue()).each(function () {
-			$(this).data("autoComplete").destroy();
+        $("select", propertyPanel.getPropertyValue()).each(function () {
+            matematici.AutoComplete.get(this).destroy();
 		});
 
 		propertyPanel.getPropertyValue().empty();

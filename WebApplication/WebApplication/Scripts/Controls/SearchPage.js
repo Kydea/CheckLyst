@@ -33,9 +33,7 @@
 
                 setTimeout(function () {
                     $("select.AutoComplete", advancedSearchPanel).each(function (index) {
-                        var
-                            select = $(this),
-                            autoComplete = select.data("autoComplete");
+                        var autoComplete = matematici.AutoComplete.get(this);
                         if (autoComplete) autoComplete.refresh();
                     });
                 }, 0);

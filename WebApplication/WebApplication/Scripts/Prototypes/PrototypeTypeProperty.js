@@ -39,8 +39,8 @@
 			} else 
 				prototypeType.val(null).change();
 
-			setTimeout(function () {
-				prototypeType.data("autoComplete").refresh();
+            setTimeout(function () {
+                matematici.AutoComplete.get(prototypeType[0]).refresh();
 			}, 0);
 		};
 
@@ -54,7 +54,7 @@
         $("<i />").addClass("Icon fal fa-industry").appendTo(label);
 		department =
 			$("<select />")
-				.data("nullable", true)
+                .attr("data-nullable", "")
 				.on("change", function () { refreshPrototypeTypes(null); })
 				.appendTo(label);
 
@@ -65,7 +65,7 @@
 		$("<i />").addClass("Icon fal fa-folder").appendTo(label);
 		prototypeType =
 			$("<select />")
-				.data("nullable", true)
+				.attr("data-nullable", "")
 				.on("change", function () {
 					model.department = department.val();
 					model.departmentName = department.next().val();

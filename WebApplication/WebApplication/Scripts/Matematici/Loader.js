@@ -36,9 +36,7 @@
 		_refreshComponents = function () {
 			setTimeout(function () {
 				$("select.AutoComplete").each(function (index) {
-                    var
-                        select = $(this),
-                        autoComplete = select.data("autoComplete");
+                    var autoComplete = matematici.AutoComplete.get(this);
                     if (autoComplete) autoComplete.refresh();
 				});
 

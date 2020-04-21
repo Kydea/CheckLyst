@@ -39,7 +39,7 @@
         if (options.readOnly)
             $("<input />").attr({ type: "text", readOnly: true }).val(model[property]).appendTo(valuePanel);
         else {
-			input = $("<select />").data("nullable", true);
+			input = $("<select />").attr("data-nullable", "");
             expressions = prototypes.prototype.getModel().expressions;
             for (var index in expressions)
 				input.append($("<option />").attr({ value: index }).text(index));

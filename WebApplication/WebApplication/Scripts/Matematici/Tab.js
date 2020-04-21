@@ -59,10 +59,8 @@
 				resize();
 
 			$("select.AutoComplete").each(function (index) {
-				var
-					select = $(this),
-					autoComplete = select.data("autoComplete");
-				if (autoComplete) autoComplete.refresh();
+                var autoComplete = matematici.AutoComplete.get(this);
+                if (autoComplete) autoComplete.refresh();
             });
 
             return currentItem;

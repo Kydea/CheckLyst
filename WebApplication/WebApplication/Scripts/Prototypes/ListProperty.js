@@ -34,7 +34,7 @@
                     label.val(values[index].label);
         } else {
             input = $("<select />");
-            if (!!options.nullable) input.data("nullable", true);
+            if (!!options.nullable) input.attr("data-nullable", "");
             input.empty();
             for (var index in values) {
                 var

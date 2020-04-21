@@ -49,7 +49,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             ItemModel.LinesCount = LinesCount;
 
             if (ValuesList != null)
-                ItemModel.ValueList = ValuesList;
+                ItemModel.ValuesList = ValuesList;
 
             if (ExternalSourceName != null)
             {

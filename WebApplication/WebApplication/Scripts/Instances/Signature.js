@@ -127,6 +127,7 @@
             var span = document.createElement("span");
             span.className = "Label";
             span.innerHTML = model.descriptionValue || "(no description)";
+            label.appendChild(span);
             if (!item.isTableContent()) element.appendChild(label);
 
             check = document.createElement("i");
@@ -164,10 +165,10 @@
             parent.appendChild(time);
 
             exclamation = document.createElement("i");
-            exclamation.className = "Icon fa-exclamation";
+            exclamation.className = "fa fa-exclamation";
             exclamation.setAttribute("title", "This signature has been canceled, see the history");
             exclamation.style.display = "none";
-            element.appendChild(exclamation);
+            span.appendChild(exclamation);
 
             button = document.createElement("a");
             button.className = "Button SignButton";
@@ -183,7 +184,7 @@
                 i.className = "Icon fa fa-times";
                 cancelButton.appendChild(i);
                 cancelButton.innerHTML += "Cancel signature";
-                button.addEventListener("click", unsign);
+                cancelButton.addEventListener("click", unsign);
                 element.appendChild(cancelButton);
             }
         };
@@ -204,7 +205,7 @@
             var format = matematici.dateFormatter.format(moment.parseZone(model.signedOn));
             date.value = format.date;
             time.value = format.time + ":" + format.seconds;
-            element.setAttribute(title, user.val() + " | " + format.date + " " + " " + format.time + ":" + format.seconds + " " + format.offset);
+            element.setAttribute("title", user.value + " | " + format.date + " " + " " + format.time + ":" + format.seconds + " " + format.offset);
             if (cancelButton) {
                 cancelButton.style.display = "inline-block";
                 button.style.display = "none";
@@ -223,7 +224,7 @@
             }
         }
 
-        exclamation.style.display = model.history && model.history.length > 1 ? "block" : "none";
+        exclamation.style.display = model.history && model.history.length > 1 ? "" : "none";
 
         this.setColor(model.color);
         this.setFontSize(model.fontSize);

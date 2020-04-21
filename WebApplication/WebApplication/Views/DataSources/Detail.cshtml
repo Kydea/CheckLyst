@@ -352,8 +352,6 @@
         $("input, select", detailPage.getElement()).each(function () {
             var field = $(this);
             matematici.controls.setEditable(field, false);
-            if (field.hasClass("AutoComplete"))
-                field.data("autoComplete.")
         });
     } else
         tab.addHandler(function (item) {

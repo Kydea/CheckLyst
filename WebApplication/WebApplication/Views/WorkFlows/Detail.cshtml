@@ -125,7 +125,7 @@
                 select.append($("<option />").text(matematici.profiles[index]).attr("value", matematici.profiles[index]));
 
             if (detailPage.isReadOnly()) matematici.controls.setEditable(select, false);
-            var autoComplete = new matematici.AutoComplete(select);
+            var autoComplete = new matematici.AutoComplete(select[0]);
             autoComplete.initialize();
             fixStep(step);
             setTimeout(function () {

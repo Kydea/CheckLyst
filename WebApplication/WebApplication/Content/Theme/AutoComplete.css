@@ -72,7 +72,8 @@ div.AutoComplete-List {
     display: block;
     position: static;
     margin-top: 0;
-    max-height: 500px; }
+    max-height: 500px;
+    width: 100% !important; }
 
 i.AutoComplete {
   line-height: 36px;

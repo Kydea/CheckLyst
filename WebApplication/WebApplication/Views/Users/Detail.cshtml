@@ -197,7 +197,7 @@
                 prototypeTypeSelect.append($("<option />").text(prototypeTypes[index].name).attr("value", prototypeTypes[index].id));
             prototypeTypeSelect.val("");
             setTimeout(function () {
-                prototypeTypeSelect.data("autoComplete").refresh();
+                matematici.AutoComplete.get(prototypeTypeSelect[0]).refresh();
             }, 0);
         },
 
@@ -214,16 +214,16 @@
             $("<label />").appendTo(div).append($("<span />").text("Department")).append($("<i />").addClass("Icon fal fa-industry")).append(select1).addClass("Clearing");
             for (var index in departments)
                 select1.append($("<option />").text(departments[index].name).attr("value", departments[index].code));
-            var autoComplete1 = new matematici.AutoComplete(select1);
+            var autoComplete1 = new matematici.AutoComplete(select1[0]);
             autoComplete1.initialize();
             select1.on("change", function () {
                 refreshPrototypeTypes(select1, select2);
             });
 
-            select2 = $("<select />").data("nullable", "(all)");
+            select2 = $("<select />").attr("data-nullable", "(all)");
             if (detailPage.isReadOnly()) matematici.controls.setEditable(select2, false);
             $("<label />").appendTo(div).append($("<span />").text("Prototype type")).append($("<i />").addClass("Icon fal fa-folder")).append(select2);
-            var autoComplete2 = new matematici.AutoComplete(select2);
+            var autoComplete2 = new matematici.AutoComplete(select2[0]);
             autoComplete2.initialize();
             refreshPrototypeTypes(select1, select2);
 
@@ -233,16 +233,16 @@
             var list = tabItem.index == 2 ? prototypeFunctions : instanceFunctions;
             for (var index in list)
                 select3.append($("<option />").text(list[index]).attr("value", list[index]));
-            var autoComplete3 = new matematici.AutoComplete(select3);
+            var autoComplete3 = new matematici.AutoComplete(select3[0]);
             autoComplete3.initialize();
 
-            var select4 = $("<select />").data("nullable", true);
+            var select4 = $("<select />").attr("data-nullable", true);
             if (detailPage.isReadOnly()) matematici.controls.setEditable(select4, false);
             $("<label />").appendTo(div).append($("<span />").text("Level")).append($("<i />").addClass("Icon fal fa-users")).append(select4);
             for (var index in matematici.profiles)
                 select4.append($("<option />").text(matematici.profiles[index]).attr("value", matematici.profiles[index]));
             select4.val(null);
-            var autoComplete4 = new matematici.AutoComplete(select4);
+            var autoComplete4 = new matematici.AutoComplete(select4[0]);
             autoComplete4.initialize();
 
             setTimeout(function () {
@@ -408,11 +408,11 @@
                 });
 
             tab.getItem(2).tab.on("toggle", "select.AutoComplete", function (e, value, on) {
-                applyConstraintToPrototypeGrant($(this).data("autoComplete"), value, on);
+                applyConstraintToPrototypeGrant(matematici.AutoComplete.get(this), value, on);
             });
 
             tab.getItem(3).tab.on("toggle", "select.AutoComplete", function (e, value, on) {
-                applyConstraintToInstanceGrant($(this).data("autoComplete"), value, on);
+                applyConstraintToInstanceGrant(matematici.AutoComplete.get(this), value, on);
             });
         },
 
@@ -491,8 +491,6 @@
         $("input[name], select[name]", detailPage.getElement()).each(function () {
             var field = $(this);
             matematici.controls.setEditable(field, false);
-            if (field.hasClass("AutoComplete"))
-                field.data("autoComplete.")
         });
         $("input[type=checkbox]", detailPage.getElement()).prop("disabled", true);
     } else

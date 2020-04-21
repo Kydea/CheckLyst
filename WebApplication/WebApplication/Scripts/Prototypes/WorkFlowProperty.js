@@ -32,7 +32,7 @@
 
     this.create = function (valuePanel) {
         valuePanel.addClass("Expression");
-		input = $("<select />").data("nullable", true);
+		input = $("<select />").attr("data-nullable", "");
 		valuePanel.append(input);
 		loadWorkFlows();
 		if (options.readOnly)

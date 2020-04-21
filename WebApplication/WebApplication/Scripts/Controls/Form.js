@@ -53,7 +53,8 @@
 				if (options.readOnly)
 					matematici.controls.setEditable(field, false);
 
-				if (field.data("autoComplete")) field.data("autoComplete").checkReadOnly();
+                if (field.hasClass("AutoComplete")) 
+                    matematici.AutoComplete.get(field[0]).checkReadOnly();
 			});
 
 			if (options.bindEvent)
@@ -210,9 +211,7 @@
 				if (fieldData) {
 					var tagName = field[0].tagName;
 					if (tagName == "SELECT" && fieldData.options !== undefined) {
-						var
-							value = field.val(),
-                            autoComplete = field.data("autoComplete");
+						var autoComplete = matematici.AutoComplete.get(field[0]);
                         if (!fieldData.fixed) {
                             field.empty();
                             for (var index in fieldData.options) {
@@ -224,9 +223,11 @@
 							field.val(fieldData.value);
 						else if (autoComplete.isNullable())
 							field.val(null);
-						autoComplete.refresh();
-						autoComplete.getControl().toggle(!fieldData.visibile);
-                        matematici.controls.setEditable(autoComplete.getControl(), fieldData.editable && (fieldData.fixed || fieldData.options.length > 0) && !options.readOnly);
+                        autoComplete.refresh();
+                        autoComplete.refreshValues();
+                        var control = $(autoComplete.getControl());
+						control.toggle(!fieldData.visibile);
+                        matematici.controls.setEditable(control, fieldData.editable && (fieldData.fixed || fieldData.options.length > 0) && !options.readOnly);
 					} else {
 						if (fieldData.value != null) setFieldValue(field, fieldData.value);
 						field.toggle(!fieldData.visibile);

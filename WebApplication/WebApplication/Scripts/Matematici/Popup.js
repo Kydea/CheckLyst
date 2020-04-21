@@ -10,7 +10,7 @@ matematici.popup = function () {
 
 		ajax = function () {
 			if (options.errorHandler)
-				options.aiax.suppressErrors = true;
+				options.ajax.suppressErrors = true;
 			$.ajax(options.ajax)
 				.done(function (result) {
 					options.content = result;
