@@ -901,7 +901,7 @@ namespace CheckListManager.Instances.Logic.Services
 
                 stopWatch = Stopwatch.StartNew();
 
-                List<DependencyNode> AffectedElements = new List<DependencyNode>();
+                DependencyNode AffectedElement = null;
                 DependencyRelation.Properties? Property = null;
                 switch (request.Type)
                 {
@@ -910,34 +910,38 @@ namespace CheckListManager.Instances.Logic.Services
                         Property = DependencyRelation.Properties.ReadOnly;
                         break;
                     case EventTypes.ValueChange:
-                        AffectedElements.Add(await HandleValueChangeAsync(cacheObject, identity.Code, request.ItemId, request.Value));
+                        AffectedElement = await HandleValueChangeAsync(cacheObject, identity.Code, request.ItemId, request.Value);
                         Property = DependencyRelation.Properties.Value;
                         break;
                     case EventTypes.ValueCopy:
-                        AffectedElements.Add(await HandleValueCopyAsync(cacheObject, identity.Code, request.ItemId));
+                        AffectedElement = await HandleValueCopyAsync(cacheObject, identity.Code, request.ItemId);
                         Property = DependencyRelation.Properties.Value;
                         break;
                     case EventTypes.Add:
-                        (await HandleAddAsync(cacheObject, identity.Code, request.ItemId))?.GetAllChildren(AffectedElements);
+                        AffectedElement = await HandleAddAsync(cacheObject, identity.Code, request.ItemId);
+                        Property = DependencyRelation.Properties.Iterations;
                         break;
                     case EventTypes.Remove:
-                        (await HandleRemoveAsync(cacheObject, identity.Code, request.ItemId))?.GetAllChildren(AffectedElements);
+                        AffectedElement = await HandleRemoveAsync(cacheObject, identity.Code, request.ItemId);
+                        Property = DependencyRelation.Properties.Iterations;
                         break;
                     case EventTypes.Up:
-                        (await HandleMoveAsync(cacheObject, identity.Code, request.ItemId, -1))?.GetAllChildren(AffectedElements);
+                        AffectedElement = await HandleMoveAsync(cacheObject, identity.Code, request.ItemId, -1);
+                        Property = DependencyRelation.Properties.Iterations;
                         break;
                     case EventTypes.Down:
-                        (await HandleMoveAsync(cacheObject, identity.Code, request.ItemId, 1))?.GetAllChildren(AffectedElements);
+                        AffectedElement = await HandleMoveAsync(cacheObject, identity.Code, request.ItemId, 1);
+                        Property = DependencyRelation.Properties.Iterations;
                         break;
                     case EventTypes.SignatureCheck:
                         HandleSignatureCheckAsync(cacheObject, request.Username, request.ItemId);
                         break;
                     case EventTypes.Signature:
-                        AffectedElements.Add(await HandleSignatureAsync(cacheObject, identity, request));
+                        AffectedElement = await HandleSignatureAsync(cacheObject, identity, request);
                         Property = DependencyRelation.Properties.Signature;
                         break;
                     case EventTypes.SignatureCancelation:
-                        AffectedElements.Add(await HandleSignatureCancellationAsync(cacheObject, identity, request));
+                        AffectedElement = await HandleSignatureCancellationAsync(cacheObject, identity, request);
                         Property = DependencyRelation.Properties.Signature;
                         break;
                     case EventTypes.SendEmail:
@@ -950,7 +954,7 @@ namespace CheckListManager.Instances.Logic.Services
                     case EventTypes.CountDown:
                         break;
                     case EventTypes.SkipCountDown:
-                        AffectedElements.Add(HandleSkipCountDown(cacheObject, request.Username, request.ItemId));
+                        AffectedElement = HandleSkipCountDown(cacheObject, request.Username, request.ItemId);
                         Property = DependencyRelation.Properties.CountDown;
                         break;
                     case EventTypes.Refresh:
@@ -960,27 +964,35 @@ namespace CheckListManager.Instances.Logic.Services
                         Property = DependencyRelation.Properties.ReadOnly;
                         break;
                     case EventTypes.ExternalSourceRowChange:
-                        AffectedElements.Add(await HandleExternalSourceRowChange(cacheObject, identity, request.ItemId, request.RowIndex, request.Row));
+                        AffectedElement = await HandleExternalSourceRowChange(cacheObject, identity, request.ItemId, request.RowIndex, request.Row);
                         Property = DependencyRelation.Properties.Value;
                         break;
                     case EventTypes.UploadAttachment:
-                        AffectedElements.Add(await HandleUploadAttachment(cacheObject, identity, request.ItemId, request.Attachment));
+                        AffectedElement = await HandleUploadAttachment(cacheObject, identity, request.ItemId, request.Attachment);
                         Property = DependencyRelation.Properties.Validity;
                         break;
                     default:
                         throw new InstanceException($"Event type {request.Type} not handled.");
                 }
 
-                AffectedElements = AffectedElements.Where(x => x != null).ToList();
-                if (AffectedElements.Any())
+                var roots = new List<Tuple<DependencyNode, DependencyRelation.Properties>>();
+                if (Property == DependencyRelation.Properties.Iterations)
                 {
-                    var roots = new List<Tuple<DependencyNode, DependencyRelation.Properties>>();
-                    foreach (var AffectedElement in AffectedElements)
-                        if (Property.HasValue)
-                            AffectedElement.MarkNodeAsChanged(cacheObject.Instance, roots, Property.Value);
-                        else
-                            ((Element)AffectedElement).MarkAllAsChanged(roots);
+                    var Iteration = (Iteration)AffectedElement;
+                    var IterationChildren = new List<DependencyNode>();
+                    Iteration.GetAllChildren(IterationChildren);
+                    IterationChildren = IterationChildren.Where(x => x != null).ToList();
 
+                    if (IterationChildren.Any())
+                        foreach (Element Child in IterationChildren)
+                            Child.MarkAllAsChanged(roots);
+
+                    AffectedElement = (Group)Iteration.Group;
+                }
+
+                if (AffectedElement != null)
+                {
+                    AffectedElement.MarkNodeAsChanged(cacheObject.Instance, roots, Property.Value);
                     DependencyNode.UpdateNodes(cacheObject.Instance, roots);
                     cacheObject.Instance.UpdateReadOnly(lockUser ?? identity.Code, cacheObject.InstanceState);
                 }

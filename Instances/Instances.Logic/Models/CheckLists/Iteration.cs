@@ -103,7 +103,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public override void MarkAllAsChanged(List<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)
         {
             foreach (Item item in Items)
-                item.MarkAllAsChanged(Roots);
+                if (!item.IteratorModelItem)
+                    item.MarkAllAsChanged(Roots);
         }
 
         protected override void UpdateValid()

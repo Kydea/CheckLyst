@@ -1,23 +1,49 @@
 ﻿matematici.dependenciesDialog = function () {
-    return {
-        show: function (dependingRelations, dependentRelations) {
-            var content = $("<div />");
+    var
+        renderDependency = function (dependency) {
+            return $("<p />").append($("<a />").attr("href", "#").data("dependency", dependency).html(dependency.description));
+        },
+        navigate = function (e) {
+            e.preventDefault();
+            var dependency = $(this).data("dependency");
+            matematici.dialog.close();
+            setTimeout(function () {
+                switch (dependency.className) {
+                    case "expression":
+                        new prototypes.ExpressionsList();
+                        break;
+                    case "external source":
+                        new prototypes.SourcesList();
+                        break;
+                    case "page":
+                        prototypes.prototype.selectById("Page", dependency.objectID);
+                        break;
+                    default:
+                        prototypes.prototype.selectById("ItemId", dependency.objectID);
+                        break;
+                }
+            }, 0);
+        };
 
+    return {
+        show: function (title, dependingRelations, dependentRelations) {
+            var content = $("<div />").on("click", "a", navigate);
             if ((!dependingRelations || dependingRelations.length == 0) && (!dependentRelations || dependentRelations.length == 0))
                 content.append("(no dependency found)");
             else {
                 if (dependingRelations && dependingRelations.length > 0) {
                     content.append($("<h3 />").html("contained in this element"));
                     for (var dependency in dependingRelations)
-                        content.append($("<p />").html(dependingRelations[dependency].description));
+                        content.append(renderDependency(dependingRelations[dependency]));
                 }
                 if (dependentRelations && dependentRelations.length > 0) {
                     content.append($("<h3 />").html("containing this element"));
                     for (var dependency in dependentRelations)
-                        content.append($("<p />").html(dependentRelations[dependency].description));
+                        content.append($("<p />").html(dependentRelations[dependency]));
                 }
             }
-            matematici.dialog.show("Dependencies", content);
+            matematici.dialog.show("Dependencies - " + title, content);
+            matematici.dialog.setWidth(800);
         }
     }
 }();

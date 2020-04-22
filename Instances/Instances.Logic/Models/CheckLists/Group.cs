@@ -45,6 +45,13 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             return ItemModel;
         }
 
+        protected override void OnUpdate(DependencyRelation.Properties Property)
+        {
+            if (Property != DependencyRelation.Properties.Iterations) //at the moment this is handled directly into InstanceManagerService
+                base.OnUpdate(Property);
+        }
+
+
         protected override void UpdateHidden()
         {
             base.UpdateHidden();
@@ -181,7 +188,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 item.Remove();
 
             if (Iterator)
-                foreach (var iteration in Iterations)
+                foreach (var iteration in Iterations.Where(i => !i.Removed))
                     iteration.Remove();
 
             base.Remove();
@@ -239,11 +246,12 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         {
             base.MarkAllAsChanged(Roots);
 
-            foreach (Iteration iteration in Iterations)
+            foreach (Iteration iteration in Iterations.Where(i => !i.Removed))
                 iteration.MarkAllAsChanged(Roots);
 
             foreach (Item item in Items)
-                item.MarkAllAsChanged(Roots);
+                if (!item.IteratorModelItem)
+                    item.MarkAllAsChanged(Roots);
         }
 
 
@@ -267,7 +275,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                     if (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
                         AddDependingRelation(DependencyRelation.Properties.Validity, Item, DependencyRelation.Properties.Validity);
                 }
-                Item.BuildDependencies();
+
+                if (!(IterationItem && Item.IteratorModelItem)) //the cloned iterator model items are ignored
+                    Item.BuildDependencies();
             }
 
             if (Iterator) //this is called only for instances existing before v. 2.0.0, because BuildDependencies is called only once per instance when no iteration exists

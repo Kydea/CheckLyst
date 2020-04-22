@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.Expressions.Parsing;
 
@@ -11,7 +12,9 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
     {
         public override void BuildDependencies(ICheckList CheckList, Expression Expression)
         {
-            if (!CheckList.Elements.ContainsKey(IteratorCode)) throw new ParseException($"Element with code {IteratorCode} not found", Position);
+            if (!CheckList.Elements.TryGetValue(IteratorCode, out var Iterator)) throw new ParseException($"Element with code {IteratorCode} not found", Position);
+            var DependingElement = (DependencyNode)Iterator;
+            Expression.AddDependingRelation(DependencyRelation.Properties.Value, DependingElement, DependencyRelation.Properties.Iterations);
             base.BuildDependencies(CheckList, Expression);
         }
 

@@ -199,6 +199,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 elementModel.FontSize = FontSize;
             if (Hidden)
                 elementModel.Hidden = true;
+            if (Removed)
+                elementModel.Removed = true;
 
             return elementModel;
         }

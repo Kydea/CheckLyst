@@ -34,7 +34,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         {
             base.Setup();
 
-            foreach (var Item in Items)
+            foreach (Item Item in Items)
             {
                 Item.CheckList = CheckList;
                 Item.Group = this;
@@ -44,6 +44,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                     ShowAsTable = false;
                     Iterator = false;
                 }
+                Item.PageIndex = PageIndex;
                 Item.Setup();
             }
         }

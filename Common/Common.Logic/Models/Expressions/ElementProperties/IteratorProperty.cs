@@ -1,4 +1,5 @@
-﻿using CheckListManager.Common.Logic.Models.CheckLists;
+﻿using CheckListManager.Common.Logic.Dependency;
+using CheckListManager.Common.Logic.Models.CheckLists;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,8 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
             var Iterator = (ICheckListGroup)ElementsBranch.Elements[Code];
             return new TypedValue(DataType.Number, (decimal)Iterator.Iterations.Where(x => !x.Removed).Count());
         }
+
+        protected override DependencyRelation.Properties DependencyProperty => DependencyRelation.Properties.Iterations;
 
         public override string ToString()
         {

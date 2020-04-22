@@ -16,9 +16,10 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public override void Setup()
         {
             base.Setup();
-            foreach (var Group in Groups)
+            foreach (Group Group in Groups)
             {
                 Group.CheckList = CheckList;
+                Group.PageIndex = Index;
                 Group.Setup();
             }
         }

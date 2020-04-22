@@ -54,12 +54,14 @@
             noRecord.remove();
             list.push(row);
 
-            var value = $("<td />").addClass("SourceColumn");
+            var value = $("<td />").addClass("SourceColumn").css("position", "relative");
             if (model.state == prototypes.Prototype.states.draft) {
                 var select = sources.clone().val(row.source);
                 value.append(select);
                 setTimeout(function () {
-                    new matematici.AutoComplete(select).initialize();
+                    var autoComplete = new matematici.AutoComplete(select[0]);
+                    autoComplete.initialize();
+                    autoComplete.refresh();
                 }, 0)
             } else
                 value.text(row.source);
@@ -158,8 +160,10 @@
                         .append(dependencyButton = $("<a />").addClass("Button").text("dependencies").prepend($("<i />").addClass("Icon fa fa-sitemap")).on("click", function () {
                             var
                                 handler = function () {
-                                    var model = prototypes.prototype.getModel().externalSourceDependencyNodes[list[currentIndex].code];
-                                    matematici.dependenciesDialog.show(model.dependingRelations, model.dependentRelations);
+                                    var
+                                        code = list[currentIndex].code,
+                                        model = prototypes.prototype.getModel().externalSourceDependencyNodes[code];
+                                    matematici.dependenciesDialog.show("Source " + code, model.dependingRelations, model.dependentRelations);
                                 };
                             if (matematici.canClose)
                                 handler();

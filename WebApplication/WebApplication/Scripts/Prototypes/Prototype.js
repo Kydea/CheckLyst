@@ -184,13 +184,22 @@
                     break;
                 }
 
-            if (currentItemId) {
-                //restores current item
-                currentItem = null;
-                $("#" + currentItemId, element).removeClass("Current").removeClass("Selected").click(); //Selected is for the tab when current item is a page
-            }
+            if (currentItemId) { selectByElementId(currentItemId) };
 
             setupActionBar();
+        },
+
+        selectById = function (className, id) {
+            if (currentItem) select(null, null);
+            currentItem = null;
+            var result = {};
+            if (className != "Page") findItem(model, id, result);
+            if (result.item && result.page) $("#Page" + result.page, element).click();
+            selectByElementId(className + id);
+        },
+
+        selectByElementId = function (elementId) {
+            $("#" + elementId, element).removeClass("Current").removeClass("Selected").click(); //class "Selected" is for the tab when current item is a page
         },
 
         select = function (event, item) {
@@ -282,8 +291,10 @@
                 case "dependencies":
                     var
                         handler = function () {
-                            var model = currentItem.getModel();
-                            matematici.dependenciesDialog.show(model.dependingRelations, model.dependentRelations);
+                            var
+                                model = currentItem.getModel(),
+                                title = model.typeName + (model.id && " - ID: " + model.id || "") + (model.code && " - Code: " + model.code || "")
+                            matematici.dependenciesDialog.show(title, model.dependingRelations, model.dependentRelations);
                         };
                     if (matematici.canClose)
                         handler();
@@ -311,6 +322,24 @@
                     traverseForPaste(element.items[index]);
             else if (element.typeName == "Image")
                 element.cloned = true;
+        },
+
+        findItem = function (element, itemId, result) {
+            if (element.id == itemId) {
+                result.item = element;
+                return;
+            }
+
+            if (element.typeName == "Group")
+                for (var index in element.items)
+                    findItem(element.items[index], itemId, result);
+            else if (element.typeName == "Prototype")
+                for (var index in element.pages) {
+                    var page = element.pages[index];
+                    result.page = index;
+                    for (var index in page.groups)
+                        findItem(page.groups[index], itemId, result);
+                }
         },
 
         paste = function () {
@@ -864,6 +893,7 @@
     prototype.getNewItemsId = getNewItemsId;
     prototype.setNewItemsId = setNewItemsId;
     prototypes.prototype = prototype;
+    prototype.selectById = selectById;
     prototype.select = select;
     prototype.completeModel = completeModel;
 

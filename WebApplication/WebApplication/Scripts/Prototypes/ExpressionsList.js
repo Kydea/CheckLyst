@@ -1,4 +1,4 @@
-﻿prototypes.ExpressionsList = function (button) {
+﻿prototypes.ExpressionsList = function () {
     var
         model = prototypes.prototype.getModel(),
         element,
@@ -169,7 +169,7 @@
                     matematici.dialog.error("Error", result.checkListException.Message);
                 }
 
-                button.toggleClass("Invalid", !valid);
+                $("div.ActionBar a.ExpressionListButton").toggleClass("Invalid", !valid);
                 if (handler) handler.call(this);
             });
         },
@@ -284,8 +284,10 @@
                         .append(dependencyButton = $("<a />").addClass("Button").text("dependencies").prepend($("<i />").addClass("Icon fa fa-sitemap")).on("click", function () {
                             var
                                 handler = function () {
-                                    var model = prototypes.prototype.getModel().expressions[list[currentIndex].code];
-                                    matematici.dependenciesDialog.show(model.dependingRelations, model.dependentRelations);
+                                    var
+                                        code = list[currentIndex].code,
+                                        model = prototypes.prototype.getModel().expressions[code];
+                                    matematici.dependenciesDialog.show("Expression " + code, model.dependingRelations, model.dependentRelations);
                                 };
                             if (matematici.canClose)
                                 handler();
