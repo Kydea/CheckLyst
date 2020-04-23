@@ -15,6 +15,24 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
     public class Instance : DependencyNode, ICheckList
     {
+        #region versioning 
+
+        //history
+        /*
+            2.0: dependencies and persistence
+        */
+        private const decimal ModelVersion = 2.0m;
+        public decimal InstanceModelVersion { get; set; }
+        public bool CheckVersion(decimal? ReferenceModelVersion, bool Save)
+        {
+            var Result = InstanceModelVersion >= (ReferenceModelVersion ?? ModelVersion);
+            if (!Result && Save)
+                InstanceModelVersion = ModelVersion;
+            return Result;
+        }
+
+        #endregion
+
         public dynamic GetViewModel(IDefaultIdentity identity, InstanceCacheObject cacheObject)
         {
             var Expressions = new PascalCaseDictionary<string, dynamic>(this.Expressions.Count);
@@ -64,16 +82,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public bool InCreation { get; private set; }
 
         public ICheckList CheckList { get => this; set => throw new NotImplementedException(); }
-
-        public decimal InstanceModelVersion { get; set; }
-        private readonly decimal ModelVersion = 2.0m;
-        public bool CheckVersion(decimal? ReferenceModelVersion, bool Save)
-        {
-            var Result = InstanceModelVersion >= (ReferenceModelVersion ?? ModelVersion);
-            if (!Result && Save)
-                InstanceModelVersion = ModelVersion;
-            return Result;
-        }
 
         private int itemSequence;
         public void AddItem(ICheckListItem item)

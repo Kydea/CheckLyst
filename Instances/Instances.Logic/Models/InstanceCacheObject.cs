@@ -6,6 +6,19 @@ namespace CheckListManager.Instances.Logic.Models
 {
 	public class InstanceCacheObject
 	{
+        #region versioning
+
+        //history
+        /*
+            2.0: zip compression
+        */
+        private const decimal ModelVersion = 2.0m;
+        public decimal CacheObjectVersion { get; set; }
+        public bool CheckVersion(decimal? ReferenceModelVersion) => CacheObjectVersion >= (ReferenceModelVersion ?? ModelVersion);
+        public void SetModelVersion() { CacheObjectVersion = ModelVersion; }
+        
+        #endregion
+
         public long CompanyId { get; set; }
 
 		public string Code { get; set; }
@@ -39,11 +52,9 @@ namespace CheckListManager.Instances.Logic.Models
 		public DateTimeOffset? ModifiedOn { get; set; }
 
         [JsonIgnore]
-        public string YearCode =>
-            VersionState == Common.Data.VersionState.Draft ? "Test" : Year == 0 ? "SE" : (Year?.ToString() ?? "?");
+        public string YearCode => VersionState == Common.Data.VersionState.Draft ? "Test" : Year == 0 ? "SE" : (Year?.ToString() ?? "?");
 
         [JsonIgnore]
-        public string InstanceCode =>
-            $"{PrototypeName}.{Version}.{(YearCode)}.{Number?.ToString() ?? "?"}";
+        public string InstanceCode => $"{PrototypeName}.{Version}.{(YearCode)}.{Number?.ToString() ?? "?"}";
     }
 }

@@ -38,7 +38,16 @@ namespace CheckListManager.Common.Logic.Cache
 		public async Task<T> GetAsync<T>(string key, string regionName = null, params JsonConverter[] converters)
 			=> (await Database.Value.StringGetAsync(ResolveKey(key, regionName))).ToString().ToObject<T>(converters);
 
-		public object GetOrAdd(string key, Func<string, object> addFunction, string regionName = null, TimeSpan? expiry = null)
+        public async Task<T> GetWithCompressionAsync<T>(string key, string regionName = null, params JsonConverter[] converters)
+        {
+            var base64Value = (await Database.Value.StringGetAsync(ResolveKey(key, regionName))).ToString();
+            var bytes = Convert.FromBase64String(base64Value);
+            var jsonValue = System.Text.Encoding.UTF8.GetString(CompressionHelper.Uncompress(bytes, true));
+
+            return jsonValue.ToObject<T>(converters);
+        }
+
+        public object GetOrAdd(string key, Func<string, object> addFunction, string regionName = null, TimeSpan? expiry = null)
 		{
 			var result = Get(key, regionName);
 			if (result == null)
@@ -126,7 +135,22 @@ namespace CheckListManager.Common.Logic.Cache
 			}
 		}
 
-		public void Remove(string key, string regionName = null)
+        public async Task SetWithCompressionAsync(string key, object value, string regionName = null, TimeSpan? expiry = null, params JsonConverter[] converters)
+        {
+            if (value != null)
+            {
+                var jsonValue = value.ToJson(converters);
+                var bytes = CompressionHelper.Compress(System.Text.Encoding.UTF8.GetBytes(jsonValue), true);
+                var base64Value = Convert.ToBase64String(bytes);
+
+                if (_transaction == null)
+                    await Database.Value.StringSetAsync(ResolveKey(key, regionName), base64Value, expiry, flags: CommandFlags.FireAndForget);
+                else
+                    await _transaction.StringSetAsync(ResolveKey(key, regionName), base64Value, expiry, flags: CommandFlags.FireAndForget);
+            }
+        }
+
+        public void Remove(string key, string regionName = null)
 		{
 			Database.Value.KeyDelete(ResolveKey(key, regionName), CommandFlags.FireAndForget);
 		}

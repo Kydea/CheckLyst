@@ -34,8 +34,12 @@ namespace CheckListManager.Instances.Logic.Services
 			var cacheObject = await _redisCache.GetAsync<InstanceCacheObject>($"Instance:{code}:Metadata", RegionName);
 			if (cacheObject != null && includeData)
 			{
-				cacheObject.Instance = await _redisCache.GetAsync<Instance>($"Instance:{code}:Data", RegionName, _converters);
-				if (cacheObject.Instance == null) throw new InstanceException("Instance data missing");
+                cacheObject.Instance =
+                    cacheObject.CheckVersion(2.0m) ?
+                    await _redisCache.GetWithCompressionAsync<Instance>($"Instance:{code}:Data", RegionName, _converters) :
+                    await _redisCache.GetAsync<Instance>($"Instance:{code}:Data", RegionName, _converters);
+
+                if (cacheObject.Instance == null) throw new InstanceException("Instance data missing");
 				cacheObject.Instance.Setup(cacheObject, await _settingService.DecimalSeparatorAsync(cacheObject.CompanyId), await _settingService.TimeZoneAsync(cacheObject.CompanyId), false);
 			}
 
@@ -48,9 +52,10 @@ namespace CheckListManager.Instances.Logic.Services
 			{
 				_redisCache.BeginTransaction();
 
-				await _redisCache.SetAsync($"Instance:{cacheObject.Code}:Metadata", cacheObject, RegionName);
+                cacheObject.SetModelVersion();
+                await _redisCache.SetAsync($"Instance:{cacheObject.Code}:Metadata", cacheObject, RegionName);
 				if (cacheObject.Instance != null)
-					await _redisCache.SetAsync($"Instance:{cacheObject.Code}:Data", cacheObject.Instance, RegionName);
+					await _redisCache.SetWithCompressionAsync($"Instance:{cacheObject.Code}:Data", cacheObject.Instance, RegionName);
 
 				var score = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 

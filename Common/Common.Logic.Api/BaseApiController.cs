@@ -5,10 +5,12 @@ using CheckListManager.Common.Logic.Api.Messages;
 using System;
 using CheckListManager.Common.Data.Exceptions;
 using CheckListManager.Common.Data;
+using CheckListManager.Common.Logic.Api.Filters;
 
 namespace CheckListManager.Common.Logic.Api
 {
-	public class BaseApiController : ApiController
+    [Compression]
+    public class BaseApiController : ApiController
 	{
 		private DefaultIdentity _identity;
 

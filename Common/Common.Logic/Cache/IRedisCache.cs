@@ -11,7 +11,10 @@ namespace CheckListManager.Common.Logic.Cache
 		Task<T> GetAsync<T>(string key, string regionName = null, params JsonConverter[] converters);
 		Task SetAsync(string key, object value, string regionName = null, TimeSpan? expiry = null, params JsonConverter[] converters);
 
-		Task<LockObject> LockAsync(string key, string regionName = null, TimeSpan? expiry = null, TimeSpan? wait = null,
+        Task<T> GetWithCompressionAsync<T>(string key, string regionName = null, params JsonConverter[] converters);
+        Task SetWithCompressionAsync(string key, object value, string regionName = null, TimeSpan? expiry = null, params JsonConverter[] converters);
+
+        Task<LockObject> LockAsync(string key, string regionName = null, TimeSpan? expiry = null, TimeSpan? wait = null,
 			TimeSpan? retry = null, CancellationToken cancellationToken = default(CancellationToken));
 
 		Task<long> IncrementAsync(string key, string regionName = null);
