@@ -188,7 +188,7 @@
             $("<label />").appendTo(div).append($("<span />").text("Type")).append(select);
             for (var index in parameterTypes)
                 select.append($("<option />").text(parameterTypes[index]).attr("value", parameterTypes[index]));
-            var autoComplete = new matematici.AutoComplete(select);
+            var autoComplete = new matematici.AutoComplete(select[0]);
             autoComplete.initialize();
 
             setTimeout(function () {

@@ -3,6 +3,7 @@
         renderDependency = function (dependency) {
             return $("<p />").append($("<a />").attr("href", "#").data("dependency", dependency).html(dependency.description));
         },
+
         navigate = function (e) {
             e.preventDefault();
             var dependency = $(this).data("dependency");
@@ -39,7 +40,7 @@
                 if (dependentRelations && dependentRelations.length > 0) {
                     content.append($("<h3 />").html("containing this element"));
                     for (var dependency in dependentRelations)
-                        content.append($("<p />").html(dependentRelations[dependency]));
+                        content.append(renderDependency(dependentRelations[dependency]));
                 }
             }
             matematici.dialog.show("Dependencies - " + title, content);

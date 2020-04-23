@@ -108,10 +108,11 @@
                 e.ctrlKey || e.altKey
                 || e.key == '-'
                 || e.key >= '0' && e.key <= '9'
+                || e.key == localStorage.decimalSeparator
             )
                 return;
 
-            if (model.valueTypeName == "Number" && (e.key == ',' || e.key == '.') && e.key != localStorage.decimalSeparator) {
+            if (model.valueTypeName == "Number" && (e.key == ',' || e.key == '.')) {
                 e.preventDefault();
                 matematici.dialog.error("Error", "Invalid decimal separator, use the character " + localStorage.decimalSeparator + " instead");
                 return;

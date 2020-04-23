@@ -53,8 +53,10 @@
 				if (options.readOnly)
 					matematici.controls.setEditable(field, false);
 
-                if (field.hasClass("AutoComplete")) 
-                    matematici.AutoComplete.get(field[0]).checkReadOnly();
+                if (field.hasClass("AutoComplete")) {
+                    var autoComplete = matematici.AutoComplete.get(field[0]);
+                    if (autoComplete) autoComplete.checkReadOnly();
+                }
 			});
 
 			if (options.bindEvent)
