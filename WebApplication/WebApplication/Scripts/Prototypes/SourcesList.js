@@ -39,7 +39,7 @@
         },
 
         select = function (index) {
-            if (currentIndex != null) body.children().eq(currentIndex).removeClass("Selected").addClass("Handler").children().attr("contenteditable", false);
+            if (currentIndex != null) body.children().eq(currentIndex).filter(":not(.NoRecord)").removeClass("Selected").addClass("Handler").children().attr("contenteditable", false);
             if (model.state == prototypes.Prototype.states.draft) {
                 currentIndex = index;
                 if (currentIndex != null)
@@ -118,10 +118,10 @@
         setup = function () {
             matematici.elements.body.addClass("CheckListGrid");
             element = $("<div />").addClass("CheckListGrid").appendTo(matematici.elements.body);
-            container = $("<div />").addClass("Container").appendTo(element).on("click", function (e) {
+            container = $("<div />").addClass("ScrollablePanel").appendTo($("<div />").addClass("Container").appendTo(element).on("click", function (e) {
                 e.preventDefault();
                 e.stopPropagation();
-            });
+            }));
             table = $("<table />").addClass("Grid SourcesList").appendTo(container)
                 .append($("<thead />")
                     .append($("<tr />")
@@ -145,7 +145,7 @@
 
             var
                 buttons =
-                    $("<div />").addClass("Buttons").appendTo(container)
+                    $("<div />").addClass("Buttons").appendTo(container.parent())
                         .append($("<a />").addClass("Button").text("close").prepend($("<i />").addClass("Icon fa fa-times")).on("click", function () {
                             close();
                         }))

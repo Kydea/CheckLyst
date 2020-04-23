@@ -19,7 +19,6 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 		public virtual bool NewLine { get; set; }
 		public ICheckListPage Page { get; set; }
         public virtual int? PageIndex { get; set; }
-        public ICheckListItem Previous { get; set; }
 		public abstract string TypeName { get; }
         public int FontSize { get; set; }
         public string Color { get; set; }

@@ -5,8 +5,9 @@ div.CheckListGrid div.Container {
   background-color: white;
   border: solid 1px #ccc;
   padding: 20px;
-  box-shadow: rgba(0, 0, 0, 0.15) 0 0 15px 2px;
-  overflow: auto; }
+  box-shadow: rgba(0, 0, 0, 0.15) 0 0 15px 2px; }
+  div.CheckListGrid div.Container > div.ScrollablePanel {
+    overflow: auto; }
   div.CheckListGrid div.Container h2 {
     margin: 0;
     padding-bottom: 30px; }
@@ -54,7 +55,8 @@ div.CheckListGrid div.Container {
     div.CheckListGrid div.Container table.Grid.SourcesList td {
       width: 50%; }
   div.CheckListGrid div.Container div.Buttons {
-    padding-top: 20px; }
+    padding-top: 20px;
+    position: sticky; }
     div.CheckListGrid div.Container div.Buttons a {
       float: right;
       margin-left: 10px;
@@ -71,15 +73,16 @@ div.CheckListGrid div.Container {
     background-color: rgba(102, 102, 102, 0.7); }
     div.CheckListGrid div.Container {
       position: absolute;
-      width: 90%;
-      max-height: 90%;
+      width: calc(90vw - 60px);
       top: 50%;
       left: 50%;
       -moz-transform: translate(-50%, -50%);
       -ms-transform: translate(-50%, -50%);
       -o-transform: translate(-50%, -50%);
       -webkit-transform: translate(-50%, -50%);
-      transform: translate(-50%, -50%); } }
+      transform: translate(-50%, -50%); }
+    div.CheckListGrid div.ScrollablePanel {
+      max-height: calc(90vh - 60px); } }
 
 @media only screen and (max-width: 759px) {
   div.CheckListGrid div.Container {

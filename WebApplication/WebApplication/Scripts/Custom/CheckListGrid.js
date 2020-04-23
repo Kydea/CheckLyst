@@ -9,8 +9,8 @@
         setup = function () {
             matematici.checkListGrid = checkListGrid;
 			matematici.elements.body.addClass("CheckListGrid");
-			element = $("<div />").addClass("CheckListGrid").appendTo(matematici.elements.body);
-			container = $("<div />").addClass("Container").appendTo(element);
+            element = $("<div />").addClass("CheckListGrid").appendTo(matematici.elements.body);
+            container = $("<div />").addClass("ScrollablePanel").appendTo($("<div />").addClass("Container").appendTo(element));
 
 			renderValues();
 		},
@@ -30,10 +30,10 @@
 						if (value) {
 							var formattedDate = matematici.dateFormatter.format(moment.parseZone(value));
                             td.append($("<span />").html(formattedDate.date + " " + formattedDate.time + ":" + formattedDate.seconds).attr("title", formattedDate.offset));
-						}
-                    } else if (value === true)
+                        }
+                    } else if (value === true || column.type == "Boolean" && value && value.toLowerCase() == "true")
                         td.append($("<i />").addClass("fa fa-check")).addClass("Centered");
-					else if (value === false)
+                    else if (value === false || column.type == "Boolean" && value && value.toLowerCase() == "false")
                         td.append($("<i />").addClass("fa fa-times")).addClass("Centered");
 					else
 						td.html(value)
@@ -63,14 +63,14 @@
 
 			var
 				buttons =
-					$("<div />").addClass("Buttons").appendTo(container)
+					$("<div />").addClass("Buttons").appendTo(container.parent())
 						.append($("<a />").addClass("Button").text("close").prepend($("<i />").addClass("Icon fa fa-times")).on("click", function () {
 							checkListGrid.close();
 						}));
 
 			if (values.length == 0) {
 				tr.append($("<th />").text("-"));
-				body.append($("<tr />").addClass("NoRecord").append($("<td />").attr("colspan", 1).text("(no record)")))
+                body.append($("<tr />").addClass("NoRecord").append($("<td />").attr("colspan", 1).text("(no record)")))
 			} else {
 				if (columns) {
 					for (var column in columns) 

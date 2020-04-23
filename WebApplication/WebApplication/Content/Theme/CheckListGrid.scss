@@ -11,7 +11,10 @@ div.CheckListGrid {
         border: solid 1px $Color-Grey-Light;
         padding: 20px;
         box-shadow: $Box-Shadow;
-        overflow: auto;
+
+        > div.ScrollablePanel {
+            overflow: auto;
+        }
 
         h2 {
             margin: 0;
@@ -113,6 +116,7 @@ div.CheckListGrid {
 
         div.Buttons {
             padding-top: 20px;
+            position: sticky;
 
             a {
                 float: right;
@@ -133,8 +137,7 @@ div.CheckListGrid {
 
         div.Container {
             position: absolute;
-            width: 90%;
-            max-height: 90%;
+            width: calc(90vw - 60px);
             top: 50%;
             left: 50%;
             -moz-transform: translate(-50%, -50%);
@@ -142,6 +145,10 @@ div.CheckListGrid {
             -o-transform: translate(-50%, -50%);
             -webkit-transform: translate(-50%, -50%);
             transform: translate(-50%, -50%);
+        }
+
+        div.ScrollablePanel {
+            max-height: calc(90vh - 60px);
         }
     }
 

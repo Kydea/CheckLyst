@@ -209,7 +209,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 item.Iteration = item.Iteration ?? Iteration;
                 item.ItemIndex = ItemIndex++;
                 item.Setup();
-                previous = item;
+                if (!(item is Text || item is Image || item is Link))
+                    previous = item;
             }
         }
 

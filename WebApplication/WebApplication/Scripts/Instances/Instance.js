@@ -136,7 +136,15 @@
                 header.update(model.header);
             else
                 $(header.getElement()).hide();
-            var pageIndex = tab.getCurrentItem().index;
+
+            var pageIndex;
+            var pageLabels = tab.getLabels();
+            for (pageIndex in model.pages)
+                pageLabels.eq(pageIndex).toggle(!model.pages[pageIndex].hidden);
+
+            model.pages[pageIndex]
+
+            pageIndex = tab.getCurrentItem().index;
             page.setPageIndex(pageIndex);
             page.update(model.pages[pageIndex]);
 

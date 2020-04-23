@@ -34,12 +34,16 @@
                         ] : [
                             { name: "dateTime", label: "Date/Time", type: "DateTimeOffset" },
                             { name: "user", label: "User" },
-                            { name: "value", label: "Value" }
+                            { name: "value", label: "Value", type: "Boolean" }
                         ];
                     //back compatbility before icon change for signature history
                     new matematici.CheckListGrid(model.history, null, null, columns, function (checkListGrid, rowIndex, row) {
                         row.action = row.action && row.action.replace("fi fi-fw flaticon-check", "fal fa-check").replace("fi fi-fw flaticon-trash-o", "fal fa-trash");
                     });
+                })));
+            if (model.typeName == "Field" && !model.readOnly)
+                panel.append($("<div />").append($("<a />").attr("href", "#").text("clear value").prepend($("<i />").addClass("fa fas fa-power-off")).on("click", function (e) {
+                    new instances.Event(instances.Events.valueChange, model.id, { value: null }).trigger();
                 })));
         },
 

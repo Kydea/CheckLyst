@@ -75,7 +75,7 @@ namespace CheckListManager.Common.Logic.Api.PDF
             if (Header != null && Header is ICheckListGroup)
                 await new Group(this, Header).RenderAsync();
 
-            foreach (var Element in Model.Pages)
+            foreach (var Element in Model.Pages.Where(e => !e.Hidden))
             {
                 Container.AddPageBreak();
                 await new Page(this, Element).RenderAsync();

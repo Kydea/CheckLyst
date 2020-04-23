@@ -25,6 +25,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public int IteratorModelItemId { get; set; }
         public virtual bool NewLine { get; set; }
         public ICheckListPage Page { get; set; }
+        [JsonIgnore]
         public ICheckListItem Previous { get; set; }
         public abstract string TypeName { get; }
         public int FontSize { get; set; }

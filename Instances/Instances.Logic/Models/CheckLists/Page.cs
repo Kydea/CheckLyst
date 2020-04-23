@@ -21,6 +21,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             ElementModel.Description = Description;
             ElementModel.Groups = Groups.Where(g => !g.Hidden).Select(g => ((Group)g).GetViewModel());
             ElementModel.Lock = Lock;
+            if (Hidden) ElementModel.Hidden = true;
             return ElementModel;
         }
 
@@ -38,7 +39,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             base.Setup();
 
             ICheckListGroup previous = null;
-            foreach (var group in Groups)
+            foreach (Group group in Groups)
             {
                 group.CheckList = CheckList;
                 group.Page = this;
