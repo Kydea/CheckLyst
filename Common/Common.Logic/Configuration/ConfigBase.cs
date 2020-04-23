@@ -173,7 +173,7 @@ namespace CheckListManager.Common.Logic.Configuration
 			e.Instance.ServiceURL = configuration.SqsBaseUrl;
 		}
 
-		private static void OnConfiguringRabbitMq(IActivatingEventArgs<ConnectionFactory> e)
+		public static void OnConfiguringRabbitMq(IActivatingEventArgs<ConnectionFactory> e)
 		{
 			e.Instance.HostName = ConfigurationManager.AppSettings["RabbitMQHost"];
 			e.Instance.UserName = ConfigurationManager.AppSettings["RabbitMQUsername"];
