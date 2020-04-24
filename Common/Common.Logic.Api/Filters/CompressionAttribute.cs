@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
@@ -25,21 +26,21 @@ namespace CheckListManager.Common.Logic.Api.Filters
                 var content = actionContext.Response.Content;
                 if (content != null)
                 {
+                    var contentType = actionContext.Response.Content.Headers.ContentType;
+                    var contentDisposition = actionContext.Response.Content.Headers.ContentDisposition;
                     var byteArray = await content.ReadAsByteArrayAsync();
                     if (acceptEncoding.Contains("gzip"))
                     {
                         actionContext.Response.Content = new ByteArrayContent(CompressionHelper.Compress(byteArray, true));
-                        actionContext.Response.Content.Headers.Remove("Content-Type");
                         actionContext.Response.Content.Headers.Add("Content-encoding", "gzip");
-                        actionContext.Response.Content.Headers.Add("Content-Type", "application/json");
                     }
                     else
                     {
                         actionContext.Response.Content = new ByteArrayContent(CompressionHelper.Compress(byteArray, false));
-                        actionContext.Response.Content.Headers.Remove("Content-Type");
                         actionContext.Response.Content.Headers.Add("Content-encoding", "deflate");
-                        actionContext.Response.Content.Headers.Add("Content-Type", "application/json");
                     }
+                    if (contentType != null) actionContext.Response.Content.Headers.ContentType = contentType;
+                    if (contentDisposition != null) actionContext.Response.Content.Headers.ContentDisposition = contentDisposition;
                 }
             }
             
