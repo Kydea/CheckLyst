@@ -1,5 +1,6 @@
-﻿instances.CountDown = function (parent, dateString, itemId) {
+﻿instances.CountDown = function (node, dateString, itemId) {
     var
+        parent = $(node),
         countDown = this,
         element,
         interval,
