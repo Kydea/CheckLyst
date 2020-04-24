@@ -23,12 +23,6 @@ namespace CheckListManager.Common.Logic.Cache
 			Database = new Lazy<IDatabase>(() => redisSetup.Connection.Value.GetDatabase());
 		}
 
-		public object Get(string key, string regionName = null)
-			=> Database.Value.StringGet(ResolveKey(key, regionName)).ToString().ToObject();
-
-		public T Get<T>(string key, string regionName = null)
-			=> Database.Value.StringGet(ResolveKey(key, regionName)).ToString().ToObject<T>();
-
 		public async Task<object> GetAsync(string key, string regionName = null)
 			=> (await Database.Value.StringGetAsync(ResolveKey(key, regionName))).ToString().ToObject();
 
@@ -46,30 +40,6 @@ namespace CheckListManager.Common.Logic.Cache
 
             return jsonValue.ToObject<T>(converters);
         }
-
-        public object GetOrAdd(string key, Func<string, object> addFunction, string regionName = null, TimeSpan? expiry = null)
-		{
-			var result = Get(key, regionName);
-			if (result == null)
-			{
-				result = addFunction(key);
-				Set(key, result, regionName, expiry);
-			}
-
-			return result;
-		}
-
-		public T GetOrAdd<T>(string key, Func<string, T> addFunction, string regionName = null, TimeSpan? expiry = null)
-		{
-			var result = Get<T>(key, regionName);
-			if (result == null)
-			{
-				result = addFunction(key);
-				Set(key, result, regionName, expiry);
-			}
-
-			return result;
-		}
 
 		public async Task<object> GetOrAddAsync(string key, Func<string, object> addFunction, string regionName = null, TimeSpan? expiry = null)
 		{
@@ -105,12 +75,6 @@ namespace CheckListManager.Common.Logic.Cache
 			}
 
 			return result;
-		}
-
-		public void Set(string key, object value, string regionName = null, TimeSpan? expiry = null)
-		{
-			if (value != null)
-				Database.Value.StringSet(ResolveKey(key, regionName), value.ToJson(), expiry, flags: CommandFlags.FireAndForget);
 		}
 
 		public async Task SetAsync(string key, object value, string regionName = null, TimeSpan? expiry = null)
@@ -149,11 +113,6 @@ namespace CheckListManager.Common.Logic.Cache
                     await _transaction.StringSetAsync(ResolveKey(key, regionName), base64Value, expiry, flags: CommandFlags.FireAndForget);
             }
         }
-
-        public void Remove(string key, string regionName = null)
-		{
-			Database.Value.KeyDelete(ResolveKey(key, regionName), CommandFlags.FireAndForget);
-		}
 
 		public Task RemoveAsync(string key, string regionName = null)
 		{

@@ -1,7 +1,10 @@
-﻿namespace CheckListManager.Common.Core.Cache
+﻿using System;
+
+namespace CheckListManager.Common.Core.Cache
 {
 	public interface IMemoryCache : ICache
 	{
-		//TODO: add Set overlow to pass CacheItemPolicy
+		T GetOrAdd<T>(string key, Func<string, T> addFunction, string regionName = null, TimeSpan? expiry = null);
+		void Set(string key, object value, string regionName = null, TimeSpan? expiry = null);
 	}
 }
