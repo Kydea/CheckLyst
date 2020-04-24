@@ -36,7 +36,7 @@ namespace CheckListManager.Common.Logic.Cache
         {
             var base64Value = (await Database.Value.StringGetAsync(ResolveKey(key, regionName))).ToString();
             var bytes = Convert.FromBase64String(base64Value);
-            var jsonValue = System.Text.Encoding.UTF8.GetString(CompressionHelper.Uncompress(bytes, true));
+            var jsonValue = System.Text.Encoding.UTF8.GetString(CompressionHelper.Decompress(bytes, true));
 
             return jsonValue.ToObject<T>(converters);
         }

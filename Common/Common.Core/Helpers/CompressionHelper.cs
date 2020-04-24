@@ -22,7 +22,7 @@ namespace CheckListManager.Common.Core.Helpers
             }
         }
 
-        public static byte[] Uncompress(byte[] data, bool useGZipCompression)
+        public static byte[] Decompress(byte[] data, bool useGZipCompression)
         {
             CompressionMode compressionMode = CompressionMode.Decompress;
             using (var compressedStream = new MemoryStream(data))
