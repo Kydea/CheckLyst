@@ -107,9 +107,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                     item.MarkAllAsChanged(Roots);
         }
 
-        protected override void UpdateValid()
-        {
-
-        }
+        public override bool Valid => true;
     }
 }

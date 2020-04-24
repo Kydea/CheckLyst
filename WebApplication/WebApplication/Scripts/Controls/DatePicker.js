@@ -26,8 +26,10 @@
             matematici.calendar.setRange(min, max);
             matematici.calendar.setDatePicker(datePicker);
 
-            var offset = node.getBoundingClientRect();
-            matematici.calendar.open(offset.top + node.offsetHeight + 5, offset.left);
+            var
+                bodyOffset = document.body.getBoundingClientRect(),
+                offset = node.getBoundingClientRect();
+            matematici.calendar.open(offset.top - bodyOffset.top + node.offsetHeight + 5, offset.left - bodyOffset.left);
 
             setTimeout(function () {
                 $(document).on("click.datePicker", close);

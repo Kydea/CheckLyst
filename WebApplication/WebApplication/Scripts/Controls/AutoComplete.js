@@ -188,8 +188,8 @@
             var width = labelNode.offsetWidth;
             input.width(width - parseInt(input.css("padding-left")) - parseInt(input.css("padding-right")) - parseInt(input.css("border-left-width")) - parseInt(input.css("border-right-width")));
             list.outerWidth(width);
-            input.css({ top: label.offset().top + label.outerHeight(), left: label.offset().left });
-            list.css({ top: label.offset().top + input.outerHeight(), left: label.offset().left });
+            input.css({ top: label.offset().top + label.outerHeight() + 1, left: label.offset().left });
+            list.css({ top: label.offset().top + input.outerHeight() + 1, left: label.offset().left });
         },
 
         setWidth = function () {
@@ -278,8 +278,6 @@
 			input.show();
 			matematici.elements.body.append(input);
 			matematici.elements.body.append(list);
-			input.css({ top: label.offset().top + label.outerHeight(), left: label.offset().left });
-			list.css({ top: label.offset().top + input.outerHeight(), left: label.offset().left });
             resizeList();
 			list.show();
             setValue();
