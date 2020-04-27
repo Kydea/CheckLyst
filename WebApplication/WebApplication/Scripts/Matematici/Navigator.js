@@ -32,6 +32,7 @@
             ) {
                 localStorage.redirectUrl = value;
                 localStorage.redirectTime = new Date();
+                console.log("redirect to " + value);
             }
             return this;
         },

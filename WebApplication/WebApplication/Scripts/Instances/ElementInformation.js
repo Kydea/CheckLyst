@@ -3,6 +3,7 @@
         element,
         panel,
         model,
+        needToUpdate,
 
         addItem = function (icon, value) {
             var span = $("<span />").html(value);
@@ -22,6 +23,7 @@
             var formulaParser = $("<span />").html(model.value);
             addItem("calculator", model.valueFormulaString ? model.valueFormulaString + ": <strong>" + formulaParser.text() + "</strong>" : null);
             addItem("link", (model.externalSourceName ? model.externalSourceName + "." + model.externalSourceColumn : null));
+
             if (model.history && model.history.length > 0)
                 panel.append($("<div />").append($("<a />").attr("href", "#").text("history").prepend($("<i />").addClass("fa fa-fw fa-list-ul")).on("click", function (e) {
                     var columns =
@@ -41,6 +43,7 @@
                         row.action = row.action && row.action.replace("fi fi-fw flaticon-check", "fal fa-check").replace("fi fi-fw flaticon-trash-o", "fal fa-trash");
                     });
                 })));
+
             if (model.typeName == "Field" && !model.readOnly)
                 panel.append($("<div />").append($("<a />").attr("href", "#").text("clear value").prepend($("<i />").addClass("fa fas fa-power-off")).on("click", function (e) {
                     new instances.Event(instances.Events.valueChange, model.id, { value: null }).trigger();
@@ -51,7 +54,7 @@
             e.stopPropagation();
             e.preventDefault();
 
-            setContent();
+            if (needToUpdate) setContent();
             if (instances.ElementInformation.current && instances.ElementInformation.current != element) instances.ElementInformation.current.classList.remove("Active");
             element.classList.toggle("Active");
             if (element.classList.contains("Active")) instances.ElementInformation.current = element;
@@ -75,7 +78,7 @@
 
     this.update = function (m) {
         model = m;
-        panel = null;
+        needToUpdate = true;
     }
 
     setup();

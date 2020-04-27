@@ -9,8 +9,10 @@
         element = item.getElement(),
         label,
         check,
+        readOnly = model.readOnly,
 
         sign = function () {
+            if (readOnly) return;
             var
                 signers = matematici.tokenManager.getSigners(),
                 mainUser = matematici.tokenManager.getUserCode(),
@@ -131,7 +133,7 @@
             if (!item.isTableContent()) element.appendChild(label);
 
             check = document.createElement("i");
-            check.className = "Icon fal fa-check";
+            check.className = "Icon fa fa-check";
             check.style.display = "none";
             element.appendChild(check);
 
@@ -190,6 +192,8 @@
         };
 
     this.update = function (model) {
+        readOnly = model.readOnly;
+
         var icon = document.createElement("i");
         icon.className = "Icon fa fa-check";
 

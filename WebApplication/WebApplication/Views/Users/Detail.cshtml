@@ -236,7 +236,7 @@
             var autoComplete3 = new matematici.AutoComplete(select3[0]);
             autoComplete3.initialize();
 
-            var select4 = $("<select />").attr("data-nullable", true);
+            var select4 = $("<select />").attr("data-nullable", "");
             if (detailPage.isReadOnly()) matematici.controls.setEditable(select4, false);
             $("<label />").appendTo(div).append($("<span />").text("Level")).append($("<i />").addClass("Icon fal fa-users")).append(select4);
             for (var index in matematici.profiles)

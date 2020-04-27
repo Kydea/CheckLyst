@@ -645,7 +645,7 @@ div.Instance {
                         left: 2px;
                     }
 
-                    &:not(.Image):not(.Attachment) i.Icon {
+                    &:not(.Signature):not(.Image):not(.Attachment) i.Icon {
                         display: none;
                     }
 

@@ -208,10 +208,6 @@ namespace CheckListManager.Prototypes.Logic.Services
             if (request.CheckList.Exception != null)
                 throw request.CheckList.Exception;
 
-            var invalidExpression = request.CheckList.Expressions.FirstOrDefault(e => e.Value.Error != null);
-            if (invalidExpression.Key != null)
-                throw new Exception($"The expression '{invalidExpression.Key}' contains the error: {invalidExpression.Value.Error}");
-
             if (string.IsNullOrWhiteSpace(request.Name)) throw new Exception("Specify a name");
             if (!request.Department.HasValue) throw new Exception("Specify a department");
             if (!request.PrototypeType.HasValue) throw new Exception("Specify a prototype type");

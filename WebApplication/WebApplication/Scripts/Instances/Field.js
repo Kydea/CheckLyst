@@ -97,13 +97,6 @@
         },
 
         keyPress = function (e) {
-            //f8
-            if (e.which == 119) {
-                e.preventDefault();
-                valueCopy();
-                return;
-            }
-
             if (
                 e.ctrlKey || e.altKey
                 || e.key == '-'
@@ -123,11 +116,18 @@
         },
 
         keyDown = function (e) {
+            if (e.keyCode == 119 || e.key == "F8") {
+                e.preventDefault();
+                valueCopy();
+                return;
+            }
+
             if (e.keyCode == 9 || e.key == "Tab") {
+                e.preventDefault();
                 goToNext = true;
                 input.blur();
                 setTimeout(function () { if (goToNext) next(); }, 0);
-                e.preventDefault();
+                return;
             }
         },
 
@@ -165,7 +165,7 @@
 
                 if (model.valuesList || model.valueTypeName == "DateTime" || model.valueTypeName == "Time") {
                     select = document.createElement("select");
-                    select.setAttribute("data-nullable", "true");
+                    select.setAttribute("data-nullable", "-");
                     select.addEventListener("change", change);
                     (item.isTableContent() ? element : label).appendChild(select);
                 }
@@ -200,7 +200,7 @@
                     }
 
                     select2 = document.createElement("select");
-                    select2.setAttribute("data-nullable", "true");
+                    select2.setAttribute("data-nullable", "-");
                     select2.addEventListener("change", change);
                     (item.isTableContent() ? element : label).appendChild(select2);
 
@@ -226,14 +226,15 @@
                 field.style.height = 20 * model.linesCount + 12 + "px";
             }
 
-            copyButton = document.createElement("a");
-            copyButton.className = "Copy fal fa-clone";
-            copyButton.setAttribute("href", "#");
-            copyButton.setAttribute("title", "F8");
-            copyButton.addEventListener("mousedown", valueCopy);
+            if (!item.isTableContent() || !item.getParent().isSubRow()) {
+                copyButton = document.createElement("a");
+                copyButton.className = "Copy fal fa-clone";
+                copyButton.setAttribute("href", "#");
+                copyButton.setAttribute("title", "F8");
+                copyButton.addEventListener("mousedown", valueCopy);
 
-            if (!item.isTableContent() || !item.getParent().isSubRow())
                 (item.isTableContent() ? element : label).appendChild(copyButton);
+            }
 
             if (select) (autoComplete = new matematici.AutoComplete(select)).initialize();
             if (select2) (autoComplete2 = new matematici.AutoComplete(select2)).initialize();
