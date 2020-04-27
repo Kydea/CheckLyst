@@ -133,6 +133,8 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
             if (Result)
             {
+                ClearDependencies();
+
                 DescriptionFormula.BuildDependencies(DescriptionFormulaString, null);
                 foreach (var Key in DescriptionFormula.ValueKeys)
                     if (Expressions.TryGetValue(Key, out var Expression))

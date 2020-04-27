@@ -608,6 +608,8 @@
             prototypeKey.id = result.id;
             model.header = result.checkList.header;
             model.pages = result.checkList.pages;
+            model.dependingRelations = result.checkList.dependingRelations;
+            model.dependentRelations = result.checkList.dependentRelations;
             imagesToDelete = [];
             if (model.version == null) {
                 matematici.navigator.setUrl(options.detailUrl + "/" + result.id + "/" + result.version);
