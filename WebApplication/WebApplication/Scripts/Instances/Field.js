@@ -11,7 +11,7 @@
         element = item.getElement(),
         copyButton,
         readOnly = false,
-        goToNext = false,
+        goToNext = 0,
 
         validate = function () {
             if (model.valueTypeName == "DateTime" || model.valueTypeName == "Date") {
@@ -63,20 +63,32 @@
             return value;
         },
 
-        next = function () {
+        next = function (direction) {
             if (model.valueTypeName != "DateTime" && model.valueTypeName != "Time")
                 setTimeout(function () {
-                    $("input:visible", $(element).next()).eq(0).focus();
+                    var nextControl = (direction == 1 ? $("input:visible", $(element).next()) : $("input:visible", $(element).prev())).eq(0);
+                    if (nextControl.length == 1)
+                        nextControl.focus();
+                    else {
+                        var group = element;
+                        while ((group = $(group).parent().closest(".Group")).length == 1) {
+                            nextControl = (direction == 1 ? $("input:visible:first", group.next(":not(.ReadOnly)")) : $("input:visible:last", group.prev(":not(.ReadOnly)")));
+                            if (nextControl.length == 1) {
+                                nextControl.focus();
+                                return;
+                            }
+                        }
+                    }
                 }, 0);
         },
 
         change = function () {
             if (model.valuesList || validate()) {
                 var handleGoToNext = goToNext;
-                goToNext = false;
+                goToNext = 0;
                 new instances.Event(instances.Events.valueChange, model.id, { value: getValue() }).done(function (result) {
                     instances.instance.update(result);
-                    if (handleGoToNext) next();
+                    if (handleGoToNext) next(handleGoToNext);
                 }).trigger();
             }
         },
@@ -93,7 +105,7 @@
         },
 
         focus = function () {
-            goToNext = false;
+            goToNext = 0;
         },
 
         keyPress = function (e) {
@@ -124,9 +136,9 @@
 
             if (e.keyCode == 9 || e.key == "Tab") {
                 e.preventDefault();
-                goToNext = true;
+                goToNext = e.shiftKey ? -1 : 1;
                 input.blur();
-                setTimeout(function () { if (goToNext) next(); }, 0);
+                setTimeout(function () { if (goToNext) next(goToNext); }, 0);
                 return;
             }
         },

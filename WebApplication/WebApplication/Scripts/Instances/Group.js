@@ -93,7 +93,7 @@
                 else if (!tableContent)
                     element.appendChild(title);
 
-                if (group.isIteration() && (!parent.getSetupModel().disableMove || !parent.getSetupModel().disableRemove)) {
+                if (group.isIteration()) {
                     iterationCommands = document.createElement(tableContent ? "td" : "div");
                     iterationCommands.className = "IterationCommands";
                     if (!parent.getSetupModel().disableMove) {
