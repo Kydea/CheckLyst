@@ -12,6 +12,10 @@ namespace CheckListManager.Common.Logic.Services
 {
     public class QueueServiceRabbitMq : IQueueService, IDisposable
     {
+        private const int MessageTtl = 60 * 60 * 1000; // 1H
+        private const string DefaultExchange = "";
+        private const string DeadRoutingSuffix = "-dead";
+        
         private readonly IConnection _connection;
         private readonly IModel _channel;
 
@@ -36,9 +40,24 @@ namespace CheckListManager.Common.Logic.Services
             }
         }
 
-        private void QueueDeclare(IModel channel, string queueName)
+        private static string DeadLetterQueue(string queueName) => $"{queueName}{DeadRoutingSuffix}";
+
+        private static void QueueDeclare(IModel channel, string queueName)
         {
+            var arguments = new Dictionary<string, object>
+            {
+                { "x-message-ttl", MessageTtl },
+                { "x-dead-letter-exchange", DefaultExchange },
+                { "x-dead-letter-routing-key", DeadLetterQueue(queueName) }
+            };
+
             channel.QueueDeclare(queueName,
+                true,
+                false,
+                false,
+                arguments);
+
+            channel.QueueDeclare(DeadLetterQueue(queueName),
                 true,
                 false,
                 false,
@@ -51,7 +70,7 @@ namespace CheckListManager.Common.Logic.Services
             QueueDeclare(_channel, queueName);
             var body = Encoding.UTF8.GetBytes(message);
 
-            _channel.BasicPublish("",
+            _channel.BasicPublish(DefaultExchange,
                 queueName,
                 null,
                 body);
