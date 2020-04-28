@@ -312,8 +312,8 @@
 		updateList = function () {
             list.empty();
             var nullValue = node.getAttribute("data-nullable");
-            if (nullValue) 
-                list.append($("<a />").addClass("None").attr("href", "#").append($("<i />").text(nullValue === "" ? "(none)" : nullValue)));
+            if (nullValue != null) 
+                list.append($("<a />").addClass("None").attr("href", "#").append($("<i />").text(nullValue == "" ? "(none)" : nullValue)));
 
 			options
 				.each(function () {
