@@ -34,7 +34,7 @@
             for (var index = 0; index < items.length; ++index) {
                 var
                     item = items[index],
-                    cell = $("<th />").appendTo(row).text(item.description);
+                    cell = $("<th />").appendTo(row).text(item.descriptionValue);
 
                 if (item.typeName == "Group") {
                     cell.addClass("SubGroup");

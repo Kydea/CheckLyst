@@ -105,7 +105,6 @@
         });
         var savedValues = {};
         savedValues.redirectUrl = localStorage.redirectTime && new Date() - new Date(localStorage.redirectTime) < 10000 ? localStorage.redirectUrl : "";
-        console.log("redirect to " + localStorage.redirectTime, "saved url: " + savedValues.redirectUrl);
         matematici.tokenManager.logout();
         localStorage.redirectUrl = savedValues.redirectUrl;
 

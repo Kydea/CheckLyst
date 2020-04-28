@@ -70,7 +70,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public sealed override bool Update(DependencyRelation.Properties Property)
         {
-            if (IteratorModelItem)
+            if (IteratorModelItem && !(Property == DependencyRelation.Properties.Formula && Group.ShowAsTable))
             {
                 var IterationItems = FindIterationItems();
                 foreach (var IterationItem in IterationItems)
