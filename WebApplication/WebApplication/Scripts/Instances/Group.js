@@ -43,8 +43,15 @@
                     columnsCount += size.columnsCount;
                     if (size.columnsCount > 1)
                         cell.attr("colspan", size.columnsCount);
-                } else
+                } else 
                     columnsCount++;
+            }
+
+            for (var index = 0; index < columnsCount; ++index) {
+                var
+                    cell = row.children().eq(index),
+                    cols = cell.attr("colspan") || 1;
+                cell.css("width", 100 / (rowIndex + 1) / columnsCount * cols + "%");
             }
 
             //commands column
@@ -76,7 +83,8 @@
         setup = function () {
             if (!element) create();
 
-            element.className = "Element " + typeName;
+            element.classList.add("Element");
+            element.classList.add(typeName);
 
             if (!group.isPage()) {
                 title = document.createElement("h3");
@@ -201,12 +209,15 @@
         update(model);
 
         /* aggiorna ricorsivamente: Groups per le pagine, Items per i gruppi e Iterations per gli iteratori; crea le nuove iterazioni  */
-        var children = model.groups ? model.groups : model.iterator ? model.iterations : model.items;
+        var
+            children = model.groups ? model.groups : model.iterator ? model.iterations : model.items,
+            even = true;
+        
         for (index in children) {
             var
                 item,
 				itemModel = children[index];
-
+            
             if (!itemIndexes[itemModel.id]) 
                 item = itemModel.typeName == "Group" || itemModel.typeName == "Iteration" ? new instances.Group(null, itemModel.typeName, this, itemModel) : new instances.Item(itemModel, this);
             else
@@ -214,12 +225,24 @@
 
             item.update(itemModel);
             if (model.iterator) {
+                var itemElement = item.getElement();
                 if (!model.disableMove)
                     item.appendElement();
                 if (!itemModel.removed) {
                     if (lastItem == null) //first visible items
-                        item.getElement().classList.add("FirstIteration")
+                        itemElement.classList.add("FirstIteration")
                     lastItem = item;
+                }
+
+                if (!itemModel.removed) {
+                    if (even) {
+                        itemElement.classList.remove("Odd")
+                        itemElement.classList.add("Even")
+                    } else {
+                        itemElement.classList.remove("Even")
+                        itemElement.classList.add("Odd")
+                    }
+                    even = !even;
                 }
             }
 

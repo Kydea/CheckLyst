@@ -70,7 +70,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public sealed override bool Update(DependencyRelation.Properties Property)
         {
-            if (IteratorModelItem && !(Property == DependencyRelation.Properties.Formula && Group.ShowAsTable))
+            if (IteratorModelItem)
             {
                 var IterationItems = FindIterationItems();
                 foreach (var IterationItem in IterationItems)
@@ -80,7 +80,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 }
                 NeedToUpdate.Remove(Property);
             }
-            else
+
+            if (!IteratorModelItem || Property == DependencyRelation.Properties.Formula) //needed for the header of the table, could be imporved by checking if an ancestor is a table
                 OnUpdate(Property);
 
             return true;
@@ -119,7 +120,10 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 IteratorModelItem = (Item)Instance.Items[IteratorModelItemId];
             else
             {
-                IteratorModelItem = IterationItem ? (Item)((Group)((Group)Iteration.Group).FindIteratorModelItem()).Items[ItemIndex] : this;
+                IteratorModelItem = 
+                    !IterationItem ? this :
+                    Group is Iteration Iteration ? (Item)((Group)((Group)Iteration.Group).FindIteratorModelItem()).Items[ItemIndex] : 
+                    (Item)((Group)((Group)Group).FindIteratorModelItem()).Items[ItemIndex];
                 IteratorModelItemId = IteratorModelItem.Id;
             }
             return IteratorModelItem;
@@ -129,10 +133,17 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         {
             if (IteratorModelItem)
             {
-                var IterationGroups = ((Group)Group).FindIterationItems();
-                var Iterations = IterationGroups.SelectMany(i => ((Group)i).Iterations);
-                foreach (var Iteration in Iterations.Where(i => !i.Removed))
-                    yield return (Item)Iteration.Items[ItemIndex];
+                var Group = (Group)this.Group;
+                var IterationGroups = Group.FindIterationItems();
+                if (Group.Iterator)
+                {
+                    var Iterations = IterationGroups.SelectMany(i => ((Group)i).Iterations);
+                    foreach (var Iteration in Iterations.Where(i => !i.Removed))
+                        yield return (Item)Iteration.Items[ItemIndex];
+                }
+                else
+                    foreach (Group IterationGroup in IterationGroups)
+                        yield return (Item)IterationGroup.Items[ItemIndex];
             }
             else
                 yield return this;

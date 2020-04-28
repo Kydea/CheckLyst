@@ -138,7 +138,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             base.UpdateReadOnly(userCode, readOnlyInstance);
 
             if (Iterator)
-                foreach (var iteration in Iterations.Where(i => !i.Removed))
+                foreach (var iteration in Iterations)
                     ((Iteration)iteration).UpdateReadOnly(userCode, readOnlyInstance);
             else
                 foreach (var item in Items)

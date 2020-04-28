@@ -136,7 +136,7 @@ div.Instance .Group .Iteration {
     display: block; }
   div.Instance .Group .Iteration > h3 {
     display: none; }
-  div.Instance .Group .Iteration.Removed label, div.Instance .Group .Iteration.Removed input, div.Instance .Group .Iteration.Removed select {
+  div.Instance .Group .Iteration.Removed label, div.Instance .Group .Iteration.Removed input, div.Instance .Group .Iteration.Removed select, div.Instance .Group .Iteration.Removed td {
     color: #cc0000 !important; }
   div.Instance .Group .Iteration.FirstIteration > .IterationCommands a.Up {
     display: none; }
@@ -412,7 +412,9 @@ div.Instance table.Grid {
         float: none; }
       div.Instance table.Grid tbody tr td.IterationCommands.Inactive a {
         display: none !important; }
-  div.Instance table.Grid tbody tr:nth-child(odd) td.Inactive {
+  div.Instance table.Grid tbody tr.Odd td.Inactive {
     background-color: #f5f5f5; }
-  div.Instance table.Grid tbody tr:nth-child(even) td.Inactive {
+  div.Instance table.Grid tbody tr.Even td.Inactive {
     background-color: #ebebeb; }
+  div.Instance table.Grid tbody tr.Removed td {
+    background-color: #fce6e8; }

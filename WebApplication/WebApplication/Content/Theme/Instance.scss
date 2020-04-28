@@ -200,7 +200,7 @@ div.Instance {
             }
 
             &.Removed {
-                label, input, select {
+                label, input, select, td {
                     color: $Color-Red-Regular !important;
                 }
             }
@@ -668,15 +668,21 @@ div.Instance {
                     }
                 }
 
-                &:nth-child(odd) {
+                &.Odd {
                     td.Inactive {
                         background-color: $Color-Silver-Light;
                     }
                 }
 
-                &:nth-child(even) {
+                &.Even {
                     td.Inactive {
                         background-color: $Color-Silver-Dark;
+                    }
+                }
+
+                &.Removed {
+                    td {
+                        background-color: $Color-Pink;
                     }
                 }
             }
