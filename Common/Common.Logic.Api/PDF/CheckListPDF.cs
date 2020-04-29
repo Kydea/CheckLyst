@@ -44,14 +44,18 @@ namespace CheckListManager.Common.Logic.Api.PDF
             var CompleteKey = Bucket + Key;
 
             if (!Attachments.ContainsKey(CompleteKey))
-                Attachments[CompleteKey] = new AttachmentModel()
+            {
+                var Description = GetItemDescription(Item);
+                Attachments[CompleteKey] = new AttachmentModel
                 {
                     File = await StorageService.GetAsync(Bucket, Key),
                     Index = Attachments.Count + 1,
                     Bucket = Bucket,
                     Item = Item,
-                    Key = Key
+                    Key = Key,
+                    Description = string.IsNullOrEmpty(Description) ? "(empty)" : Description
                 };
+            }
 
             return Attachments[CompleteKey].Index;
         }
