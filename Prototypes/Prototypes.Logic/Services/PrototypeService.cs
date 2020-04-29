@@ -625,7 +625,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                 async item =>
                 {
                     var image = (Image)item;
-                    image.ImageName = image.ImageName ?? Guid.NewGuid().ToString();
+                    image.ImageName = image.ImageName == null || image.Cloned ? Guid.NewGuid().ToString() : image.ImageName;
                     var Key = $"{companyId}/{prototypeId}-{version}/{image.ImageName}{Path.GetExtension(image.Key)}";
 
                     if (!await _storageService.CloneAsync(_configurationService.PrototypesStorageBucket, image.Key, Key))
