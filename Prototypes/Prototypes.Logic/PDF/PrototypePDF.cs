@@ -60,7 +60,10 @@ namespace CheckListManager.Prototypes.Logic.PDF
                 new Tuple<string, string>("Prototype state", PrototypeVersion.VersionState),
                 new Tuple<string, string>("Valid from", PrototypeVersion.ValidFrom?.ToLocalTime(TimeZone).ToString("yyyy-MM-dd HH:mm UTC zzz") ?? "N/A"),
                 new Tuple<string, string>("Valid until", PrototypeVersion.ValidUntil?.ToLocalTime(TimeZone).ToString("yyyy-MM-dd HH:mm UTC zzz") ?? "N/A")
-            }, null);
+            }, null)
+            {
+                ColumnsWidths = new float[] { 20.23f, 100 - 20.23f }
+            };
         }
 
         protected override Task<Template> GenerateTemplateAsync() => Task.FromResult(new Template(this,

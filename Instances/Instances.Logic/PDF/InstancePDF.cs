@@ -69,7 +69,10 @@ namespace CheckListManager.Instances.Logic.PDF
                     Exceptions.AppendLine();
                 }
 
-            return new FirstPage(this, Instance.InstanceCode, Instance.PrototypeDescription, FormatFormula(Instance.Instance.DescriptionFormula.Value), Rows, Exceptions.Length > 0 ? Exceptions.ToString() : null);
+            return new FirstPage(this, Instance.InstanceCode, Instance.PrototypeDescription, FormatFormula(Instance.Instance.DescriptionFormula.Value), Rows, Exceptions.Length > 0 ? Exceptions.ToString() : null)
+            {
+                ColumnsWidths = new float[] { 23.66f, 100 - 23.66f }
+            };
         }
 
         protected override Task<Template> GenerateTemplateAsync()
