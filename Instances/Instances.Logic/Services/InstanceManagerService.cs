@@ -896,7 +896,8 @@ namespace CheckListManager.Instances.Logic.Services
                 stopWatch.Stop();
                 getTime = stopWatch.Elapsed.TotalMilliseconds;
 
-                var lockUser = request.Type == "Signature" || request.Type == "SignatureCheck" ? request.Username : identity.Code; //A signer may sign also if the page is locked by the main user (the lock is for concurrency purpose, not for security)
+                //A signer may sign also if the page is locked by the main user (the lock is for concurrency purpose, not for security), NB: SignatureCheck is before the choice of signer
+                var lockUser = request.Type == "Signature" ? request.Username : identity.Code; 
                 cacheObject.Instance.UpdateReadOnly(lockUser, cacheObject.InstanceState);
 
                 stopWatch = Stopwatch.StartNew();
