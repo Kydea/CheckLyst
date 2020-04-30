@@ -7,6 +7,8 @@ $rabbitMQHost = "rabbitmq.clm.internal"
 $rabbitMQUsername = "CheckListManager"
 $rabbitMQPassword = "CheckListManager01"
 $storageSystem = "FileSystem"
+$system = "AbbVie"
+$environment = "Local"
 
 
-.\UpdateConfig.ps1 -ConnectionString $connectionString -AWSAccessKey $awsAccessKey -AWSSecretKey $awsSecretKey -AWSRegion $awsRegion -QueueSystem $queueSystem -RabbitMQHost $rabbitMQHost -RabbitMQUsername $rabbitMQUsername -RabbitMQPassword $rabbitMQPassword -StorageSystem $storageSystem
+.\UpdateConfig.ps1 -ConnectionString $connectionString -AWSAccessKey $awsAccessKey -AWSSecretKey $awsSecretKey -AWSRegion $awsRegion -QueueSystem $queueSystem -RabbitMQHost $rabbitMQHost -RabbitMQUsername $rabbitMQUsername -RabbitMQPassword $rabbitMQPassword -StorageSystem $storageSystem -System $system -Environment $environment
