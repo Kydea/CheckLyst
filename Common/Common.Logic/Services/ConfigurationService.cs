@@ -38,6 +38,9 @@ namespace CheckListManager.Common.Logic.Services
         public string InstancesStorageBucket
 	        => _cache.GetOrAdd(nameof(InstancesStorageBucket), Load<string>, RegionName);
 
+        public string NotificationsEmailAddress
+	        => _cache.GetOrAdd(nameof(NotificationsEmailAddress), Load<string>, RegionName);
+
         private T Load<T>(string key)
 		{
 			using (var scope = _scope.BeginLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag))

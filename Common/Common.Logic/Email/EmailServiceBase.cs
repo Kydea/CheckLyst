@@ -15,14 +15,20 @@ namespace CheckListManager.Common.Logic.Email
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly ISettingService _settingService;
         private readonly ICommonRepository _commonRepository;
+        private readonly IConfigurationService _configurationService;
 
         private readonly string _system;
         private readonly string _environment;
 
-        public EmailServiceBase(ISettingService settingService, ICommonRepository commonRepository)
+        public EmailServiceBase(
+            ISettingService settingService,
+            ICommonRepository commonRepository,
+            IConfigurationService configurationService)
         {
             _settingService = settingService;
             _commonRepository = commonRepository;
+            _configurationService = configurationService;
+
             _system = ConfigurationManager.AppSettings["System"];
             _environment = ConfigurationManager.AppSettings["Environment"];
         }
@@ -70,7 +76,7 @@ namespace CheckListManager.Common.Logic.Email
                     companyId.Value,
                     GetSubject("INFO", subject),
                     content,
-                    ""
+                    _configurationService.NotificationsEmailAddress
                 );
                 
                 await SendInternal(message);
@@ -97,7 +103,7 @@ namespace CheckListManager.Common.Logic.Email
                     companyId.Value,
                     GetSubject("CRITICAL", "Error"),
                     GetExceptionContent(exception),
-                    ""
+                    _configurationService.NotificationsEmailAddress
                 );
                 
                 await SendInternal(message);
@@ -131,7 +137,6 @@ namespace CheckListManager.Common.Logic.Email
 
             mailMessage.IsBodyHtml = true;
             mailMessage.Subject = "CheckLyst - " + message.Subject;
-
 
             var username = await _settingService.SmtpUsernameAsync(message.Company);
 

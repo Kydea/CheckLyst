@@ -19,7 +19,11 @@ namespace CheckListManager.Infrastructure.Logic.Email
 
         private readonly IQueueService _queueService;
 
-        public EmailService(IQueueService queueService, ISettingService settingService, ICommonRepository commonRepository) : base(settingService, commonRepository)
+        public EmailService(
+            IQueueService queueService,
+            ISettingService settingService,
+            ICommonRepository commonRepository,
+            IConfigurationService configurationService) : base(settingService, commonRepository, configurationService)
         {
             _queueService = queueService;
         }
