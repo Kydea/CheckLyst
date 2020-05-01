@@ -87,7 +87,7 @@ namespace CheckListManager.Common.Logic.Email
             }
         }
 
-        public async Task LogError(Exception exception)
+        public async Task LogError(Exception exception, string subject = null)
         {
             if (exception == null)
             {
@@ -101,7 +101,7 @@ namespace CheckListManager.Common.Logic.Email
                 
                 var message = new EmailMessage(
                     companyId.Value,
-                    GetSubject("CRITICAL", "Error"),
+                    GetSubject("CRITICAL", subject ?? "Error"),
                     GetExceptionContent(exception),
                     _configurationService.NotificationsEmailAddress
                 );
