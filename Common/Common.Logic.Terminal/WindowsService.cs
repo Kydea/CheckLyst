@@ -58,7 +58,6 @@ namespace CheckListManager.Common.Logic.Terminal
 
 			try
 			{
-				Container?.Dispose();
 				var result = OnStop(hostControl);
 				Notify($"{GetType().Name} STOP", $"{GetType().Name} Stopped at {DateTime.UtcNow}");
 				return result;
@@ -68,6 +67,10 @@ namespace CheckListManager.Common.Logic.Terminal
 				Notify($"{GetType().Name} Failed to STOP", exception);
 				Logger.Fatal(exception);
 				return false;
+			}
+			finally
+			{
+				Container?.Dispose();
 			}
 		}
 
