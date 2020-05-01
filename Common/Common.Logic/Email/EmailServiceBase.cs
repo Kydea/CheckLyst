@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Configuration;
+using System.Linq;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
+using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Services;
 using NLog;
 
@@ -11,21 +14,97 @@ namespace CheckListManager.Common.Logic.Email
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly ISettingService _settingService;
+        private readonly ICommonRepository _commonRepository;
 
-        public EmailServiceBase(ISettingService settingService)
+        private readonly string _system;
+        private readonly string _environment;
+
+        public EmailServiceBase(ISettingService settingService, ICommonRepository commonRepository)
         {
             _settingService = settingService;
+            _commonRepository = commonRepository;
+            _system = ConfigurationManager.AppSettings["System"];
+            _environment = ConfigurationManager.AppSettings["Environment"];
         }
 
-        public async Task Send(EmailMessage message)
+        private static string GetExceptionContent(Exception exception)
+        {
+            var sb = new StringBuilder();
+
+            while (exception != null)
+            {
+                sb.AppendLine($"{exception.Message}<br />");
+                sb.AppendLine($"{exception.StackTrace}<br />");
+
+                if (exception.InnerException != null)
+                {
+                    sb.AppendLine("<br /><br />");
+                    sb.AppendLine("---------------------");
+                    sb.AppendLine("<br /><br />");
+                }
+
+                exception = exception.InnerException;
+            }
+            
+            
+            return sb.ToString();
+        }
+
+        private string GetSubject(string level, string subject)
+            => $"{_system} / {_environment} - {level} - {subject}";
+
+        private async Task<long?> GetCompanyId()
+        {
+            var company = (await _commonRepository.GetCompaniesAsync()).FirstOrDefault();
+            return company?.ID;
+        }
+
+        public async Task LogInfo(string subject, string content)
         {
             try
             {
+                var companyId = await GetCompanyId();
+                if (companyId == null) return;
+                
+                var message = new EmailMessage(
+                    companyId.Value,
+                    GetSubject("INFO", subject),
+                    content,
+                    ""
+                );
+                
                 await SendInternal(message);
             }
-            catch (Exception exception)
+            catch (Exception e)
             {
-                Logger.Warn(exception);
+                Logger.Warn(e);
+            }
+        }
+
+        public async Task LogError(Exception exception)
+        {
+            if (exception == null)
+            {
+                return;
+            }
+            
+            try
+            {
+                var companyId = await GetCompanyId();
+                if (companyId == null) return;
+                
+                var message = new EmailMessage(
+                    companyId.Value,
+                    GetSubject("CRITICAL", "Error"),
+                    GetExceptionContent(exception),
+                    ""
+                );
+                
+                await SendInternal(message);
+            }
+            catch (Exception e)
+            {
+                Logger.Warn(e);
             }
         }
         

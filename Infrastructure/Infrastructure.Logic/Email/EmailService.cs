@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CheckListManager.Common.Core.Helpers;
+using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Email;
 using CheckListManager.Common.Logic.Queue;
 using CheckListManager.Common.Logic.Services;
@@ -18,7 +19,7 @@ namespace CheckListManager.Infrastructure.Logic.Email
 
         private readonly IQueueService _queueService;
 
-        public EmailService(IQueueService queueService, ISettingService settingService) : base(settingService)
+        public EmailService(IQueueService queueService, ISettingService settingService, ICommonRepository commonRepository) : base(settingService, commonRepository)
         {
             _queueService = queueService;
         }
