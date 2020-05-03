@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Autofac;
 using CheckListManager.Common.Logic.Email;
 using CheckListManager.Common.Logic.Terminal.Configuration;
@@ -32,12 +33,12 @@ namespace CheckListManager.Common.Logic.Terminal
 				CancellationTokenSource = new CancellationTokenSource();
 
 				var result = OnStart(hostControl);
-				Notify($"{GetType().Name} START", $"{GetType().Name} Started at {DateTime.UtcNow}");
+				NotifyAsync($"{GetType().Name} START", $"{GetType().Name} Started at {DateTime.UtcNow}").Wait();
 				return result;
 			}
 			catch (Exception exception)
 			{
-				Notify($"{GetType().Name} Failed to START", exception);
+				NotifyAsync($"{GetType().Name} Failed to START", exception).Wait();
 				Logger.Fatal(exception);
 				return false;
 			}
@@ -59,12 +60,12 @@ namespace CheckListManager.Common.Logic.Terminal
 			try
 			{
 				var result = OnStop(hostControl);
-				Notify($"{GetType().Name} STOP", $"{GetType().Name} Stopped at {DateTime.UtcNow}");
+				NotifyAsync($"{GetType().Name} STOP", $"{GetType().Name} Stopped at {DateTime.UtcNow}").Wait();
 				return result;
 			}
 			catch (Exception exception)
 			{
-				Notify($"{GetType().Name} Failed to STOP", exception);
+				NotifyAsync($"{GetType().Name} Failed to STOP", exception).Wait();
 				Logger.Fatal(exception);
 				return false;
 			}
@@ -74,16 +75,16 @@ namespace CheckListManager.Common.Logic.Terminal
 			}
 		}
 
-		private void Notify(string subject, string content)
+		private Task NotifyAsync(string subject, string content)
 		{
 			var service = Container.Resolve<IEmailServiceBase>();
-			service.LogInfoAsync(subject, content);
+			return service.LogInfoAsync(subject, content);
 		}
 
-		private void Notify(string subject, Exception exception)
+		private Task NotifyAsync(string subject, Exception exception)
 		{
 			var service = Container.Resolve<IEmailServiceBase>();
-			service.LogErrorAsync(exception, subject);
+			return service.LogErrorAsync(exception, subject);
 		}
 
 		protected abstract bool OnStart(HostControl hostControl);
