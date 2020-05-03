@@ -77,13 +77,13 @@ namespace CheckListManager.Common.Logic.Terminal
 		private void Notify(string subject, string content)
 		{
 			var service = Container.Resolve<IEmailServiceBase>();
-			service.LogInfo(subject, content);
+			service.LogInfoAsync(subject, content);
 		}
 
 		private void Notify(string subject, Exception exception)
 		{
 			var service = Container.Resolve<IEmailServiceBase>();
-			service.LogError(exception, subject);
+			service.LogErrorAsync(exception, subject);
 		}
 
 		protected abstract bool OnStart(HostControl hostControl);

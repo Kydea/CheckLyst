@@ -65,7 +65,7 @@ namespace CheckListManager.Common.Logic.Email
             return company?.ID;
         }
 
-        public async Task LogInfo(string subject, string content)
+        public async Task LogInfoAsync(string subject, string content)
         {
             try
             {
@@ -87,7 +87,7 @@ namespace CheckListManager.Common.Logic.Email
             }
         }
 
-        public async Task LogError(Exception exception, string subject = null)
+        public async Task LogErrorAsync(Exception exception, string subject = null)
         {
             if (exception == null)
             {

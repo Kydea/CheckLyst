@@ -6,6 +6,7 @@ using Amazon.SQS;
 using Amazon.SQS.Model;
 using CheckListManager.Common.Core.Cache;
 using CheckListManager.Common.Core.Helpers;
+using CheckListManager.Common.Logic.Email;
 using CheckListManager.Common.Logic.Queue;
 
 namespace CheckListManager.Common.Logic.Services
@@ -18,13 +19,19 @@ namespace CheckListManager.Common.Logic.Services
 		private readonly IAmazonSQS _client;
 		private readonly IMemoryCache _memoryCache;
         private readonly IConfigurationService _configurationService;
+        private readonly IEmailServiceBase _emailService;
 
-        public QueueServiceSqs(IAmazonSQS client, IMemoryCache memoryCache, IConfigurationService configurationService)
+        public QueueServiceSqs(
+	        IAmazonSQS client,
+	        IMemoryCache memoryCache,
+	        IConfigurationService configurationService,
+	        IEmailServiceBase emailService)
 		{
 			_client = client;
 			_memoryCache = memoryCache;
             _configurationService = configurationService;
-        }
+            _emailService = emailService;
+		}
 
 		public void Dispose()
 		{
@@ -55,16 +62,24 @@ namespace CheckListManager.Common.Logic.Services
 
 		public async Task<QueueMessage[]> ReceiveMessagesAsync(string queueName, int maxNumberOfMessages = 10, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			maxNumberOfMessages = Math.Min(Math.Max(maxNumberOfMessages, 1), 10);
-
-			var queueUrl = await GetQueueUrlAsync(queueName);
-			var request = new ReceiveMessageRequest { QueueUrl = queueUrl, MaxNumberOfMessages = maxNumberOfMessages };
-
-			return await WithTimeout(async token =>
+			try
 			{
-				var response = await _client.ReceiveMessageAsync(request, token);
-				return response.Messages.Select(m => new QueueMessage(m.ReceiptHandle, m.Body)).ToArray();
-			});
+				maxNumberOfMessages = Math.Min(Math.Max(maxNumberOfMessages, 1), 10);
+
+				var queueUrl = await GetQueueUrlAsync(queueName);
+				var request = new ReceiveMessageRequest { QueueUrl = queueUrl, MaxNumberOfMessages = maxNumberOfMessages };
+
+				return await WithTimeout(async token =>
+				{
+					var response = await _client.ReceiveMessageAsync(request, token);
+					return response.Messages.Select(m => new QueueMessage(m.ReceiptHandle, m.Body)).ToArray();
+				});
+			}
+			catch (Exception e)
+			{
+				await _emailService.LogErrorAsync(e, "Failed to receive messages");
+				throw;
+			}
 		}
 
 		public async Task<QueueMessage<T>[]> ReceiveObjectsAsync<T>(string queueName, int maxNumberOfMessages = 10, CancellationToken cancellationToken = default(CancellationToken))

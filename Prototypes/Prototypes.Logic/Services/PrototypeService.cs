@@ -16,6 +16,7 @@ using System.IO;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using System.Threading;
 using CheckListManager.Common.Logic.Api.Instances;
+using CheckListManager.Common.Logic.Email;
 using NLog;
 using CheckListManager.Common.Logic.FTP;
 using CheckListManager.Common.Logic.Models;
@@ -31,6 +32,7 @@ namespace CheckListManager.Prototypes.Logic.Services
         private readonly IStorageService _storageService;
         private readonly IConfigurationService _configurationService;
         private readonly IInstancesService _instancesService;
+        private readonly IEmailServiceBase _emailService;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public PrototypeService(
@@ -40,7 +42,8 @@ namespace CheckListManager.Prototypes.Logic.Services
 	        ICommonRepository commonRepository,
 			IStorageService storageService,
             IConfigurationService configurationService,
-            IInstancesService instancesService
+            IInstancesService instancesService,
+            IEmailServiceBase emailService
         )
         {
             _converter = converter;
@@ -50,6 +53,7 @@ namespace CheckListManager.Prototypes.Logic.Services
             _storageService = storageService;
             _configurationService = configurationService;
             _instancesService = instancesService;
+            _emailService = emailService;
         }
 
         public async Task<PrototypeResponse> OpenAsync(DefaultIdentity identity, PrototypeRequest request)
@@ -533,7 +537,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                             Exception = Exception.Message
                         })
                     }, CancellationToken);
-
+                    await _emailService.LogErrorAsync(Exception, "Error updating prototype version state");
                 }
         }
         

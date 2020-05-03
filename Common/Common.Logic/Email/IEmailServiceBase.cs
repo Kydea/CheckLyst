@@ -6,7 +6,7 @@ namespace CheckListManager.Common.Logic.Email
 {
     public interface IEmailServiceBase : IService
     {
-        Task LogInfo(string subject, string content);
-        Task LogError(Exception exception, string subject = null);
+        Task LogInfoAsync(string subject, string content);
+        Task LogErrorAsync(Exception exception, string subject = null);
     }
 }

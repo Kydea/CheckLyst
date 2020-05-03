@@ -14,7 +14,7 @@ namespace CheckListManager.Trail.Terminal
             Add(new IntervalSchedulerStrategy(RunAsync, 5));
 		}
 
-		protected async Task RunAsync()
+		private async Task RunAsync()
 		{
 			using (var scope = Container.BeginLifetimeScope())
 			{
