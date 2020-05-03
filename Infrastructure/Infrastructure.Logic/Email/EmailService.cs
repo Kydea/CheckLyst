@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CheckListManager.Common.Core.Helpers;
-using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Email;
 using CheckListManager.Common.Logic.Queue;
 using CheckListManager.Common.Logic.Services;
@@ -13,7 +12,7 @@ using NLog;
 
 namespace CheckListManager.Infrastructure.Logic.Email
 {
-    public class EmailService : EmailServiceBase, IEmailService
+    public class EmailService : EmailServiceInternal, IEmailService
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
@@ -21,9 +20,7 @@ namespace CheckListManager.Infrastructure.Logic.Email
 
         public EmailService(
             IQueueService queueService,
-            ISettingService settingService,
-            ICommonRepository commonRepository,
-            IConfigurationService configurationService) : base(settingService, commonRepository, configurationService)
+            ISettingService settingService) : base(settingService)
         {
             _queueService = queueService;
         }
