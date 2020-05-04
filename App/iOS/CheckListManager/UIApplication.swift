@@ -9,6 +9,7 @@
 
 import Foundation
 import UIKit
+import CoreData
 
 @objc(MyApplication) class MyApplication: UIApplication, UIApplicationDelegate {
     
@@ -75,7 +76,7 @@ import UIKit
     
     func refreshToken(_ expireDate:Date) {
     
-        timeToExpire = expireDate.timeIntervalSinceNow
+        timeToExpire = expireDate.timeIntervalSinceNow;
         
         if(timeToExpire <= timeBeforeTokenExpires && !isWarningPresented && !isRefreshing) {
         
@@ -167,6 +168,46 @@ import UIKit
                 }
             }
         }
+    }
+    
+    func setupNewServer(_ server:String, managedObjectContext: NSManagedObjectContext) {
+        ServerConnection.getApiServerRequest(server: server) { (serverResponse) -> Void in
+            if (serverResponse.error != nil) {
+                self.displayError(Title: "Error", Message: "Connection error to the server\n\(String(describing: serverResponse.error))")
+            } else if (serverResponse.data != nil) {
+                do {
+                    let json = try JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
+                    let apiServer = json["API"] as! String
+                    Server.addServerUrl(urlFrontEnd: server, urlApi: apiServer, managedObjectContext: managedObjectContext)
+                    Server.setNewServer(urlFrontEnd: server, urlApi: apiServer, managedObjectContext: managedObjectContext)
+                    
+                   
+                    
+                    
+                } catch {
+                    self.displayError(Title: "Error", Message: "Cannot parse response")
+                    print("Error deserializing JSON: \(error)")
+                }
+            }
+        }
+    }
+    
+    func searchPresentedController(controllerClass: AnyClass?) -> UIViewController? {
+        if var topController = UIApplication.shared.keyWindow?.rootViewController {
+        
+            while let presentedViewController = topController.presentedViewController {
+                topController = presentedViewController
+            }
+            
+            if let searchClass = controllerClass {
+                if topController.isKind(of: searchClass) {
+                    return topController
+                }
+            }
+           
+        }
+        
+        return nil
     }
     
     func logoutAndGoToLogin()

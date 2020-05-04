@@ -9,6 +9,12 @@
 import Foundation
 
 extension URL {
+    
+    enum ChecklystURLTypes : String {
+        case Create, Detail, Setup, Undefined
+    
+    }
+    
     var queryParameters: [String: String]? {
         guard
             let components = URLComponents(url: self, resolvingAgainstBaseURL: true),
@@ -33,6 +39,20 @@ extension URL {
         }
         
         return urlItems
+    }
+    
+    var getCallType : ChecklystURLTypes {
+        switch(self.path.split(separator: "/")) {
+            case let values where values.contains("Create"):
+                return .Create
+            case let values where values.contains("Detail"):
+                return .Detail
+            case let values where values.contains("Setup"):
+                return .Setup
+            default:
+                return .Undefined
+        }
+        
     }
     
     var typeIdentifier: String? {

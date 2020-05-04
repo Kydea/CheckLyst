@@ -23,11 +23,21 @@ class LoginViewController: UIViewController, UITextFieldDelegate
     
     @IBOutlet var passwordTextField: UITextField!
     
+    @IBOutlet var ChooseServerButton: UIButton!
+    
     @IBOutlet var activityIndicator: UIActivityIndicatorView!
     
     var isEditingServer = false
     
-    var chooseDictionary : NSMutableDictionary = [:]
+    var companyChooseDictionary : NSMutableDictionary = [:]
+    
+    fileprivate var _selectedServerUrl : String?
+    
+    var selectedServerUrl : String { return _selectedServerUrl ?? ServerConnection.baseUrl }
+    
+    fileprivate var _selectedServerFrontEndUrl : String?
+    
+    var selectedServerFrontEndUrl : String { return _selectedServerFrontEndUrl ?? ServerConnection.baseFrontEndUrl }
     
     var selectedCompany : Company?
     
@@ -41,8 +51,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate
         super.viewDidLoad()
         
         serverTextField.delegate = self
-        
-        serverTextField.text = (Server.getServer((UIApplication.shared.delegate as! AppDelegate).managedObjectContext)?.serverFrontEndUrl)!
         
         userCodeTextField.delegate = self
         
@@ -61,8 +69,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate
         
         activityIndicator.transform = CGAffineTransform(scaleX: 2.0, y: 2.0)
         
-        serverTextField.addTarget(self, action: #selector(LoginViewController.chooseServer(_:)), for: UIControlEvents.touchDown)
-        
     }
     
     @IBAction func chooseServer(_ sender: Any) {
@@ -71,49 +77,53 @@ class LoginViewController: UIViewController, UITextFieldDelegate
     
     @IBAction func chooseCompany(_ sender: Any) {
         
-        activityIndicator.startAnimating()
-        
-        self.view.isUserInteractionEnabled = false
-        
-        ServerConnection.getCompaniesRequest(){ (serverResponse) -> Void in
+        if (!self.isEditingServer) {
+            activityIndicator.startAnimating()
             
-            if(serverResponse.error != nil){
-                
-                let errorMessage = "Connection error to the server"
-                let title = "Error"
-                
-                
-                self.showSimpleErrorAlert(title, message: errorMessage)
-            }
+            self.view.isUserInteractionEnabled = false
             
-            do{
+            ServerConnection.getCompaniesRequest(server: selectedServerUrl){ (serverResponse) -> Void in
                 
-                if serverResponse.data != nil
-                {
-                    let json = try JSONDecoder().decode([Company].self, from: serverResponse.data!)
+                if(serverResponse.error != nil){
                     
-                    self.chooseDictionary.removeAllObjects()
+                    let errorMessage = "Connection error to the server"
+                    let title = "Error"
                     
-                    for company in json {
-                        self.chooseDictionary.addEntries(from: [company.name : ["id" : String(company.id), "inactivityTimeoutSeconds" : String(company.inactivityTimeoutSeconds)]])
-                    }
                     
-                    self.activityIndicator.stopAnimating()
-                    
-                    self.view.isUserInteractionEnabled = true
-                    
-                    self.performSegue(withIdentifier: "ChooseServer", sender: "company")
-                    
+                    self.showSimpleErrorAlert(title, message: errorMessage)
                 }
                 
-            } catch {
-                print("Error deserializing JSON: \(error)")
+                do{
+                    
+                    if serverResponse.data != nil
+                    {
+                        let json = try JSONDecoder().decode([Company].self, from: serverResponse.data!)
+                        
+                        self.companyChooseDictionary.removeAllObjects()
+                        
+                        for company in json {
+                            self.companyChooseDictionary.addEntries(from: [company.name : ["id" : String(company.id), "inactivityTimeoutSeconds" : String(company.inactivityTimeoutSeconds)]])
+                        }
+                        
+                        self.activityIndicator.stopAnimating()
+                        
+                        self.view.isUserInteractionEnabled = true
+                        
+                        self.performSegue(withIdentifier: "ChooseServer", sender: "company")
+                        
+                    }
+                    
+                } catch {
+                    print("Error deserializing JSON: \(error)")
+                }
+                
+                self.activityIndicator.stopAnimating()
+                
+                self.view.isUserInteractionEnabled = true
+                
             }
-            
-            self.activityIndicator.stopAnimating()
-            
-            self.view.isUserInteractionEnabled = true
-            
+        } else {
+            self.serverTextField.endEditing(true);
         }
     }
     
@@ -128,7 +138,9 @@ class LoginViewController: UIViewController, UITextFieldDelegate
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+        let showServerHistory = Server.any(managedObjectContext: self.context)
+        self.ChooseServerButton.isHidden = !showServerHistory
+        self.serverTextField.text = showServerHistory ? ServerConnection.baseFrontEndUrl : ""
     }
     
     
@@ -169,7 +181,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate
             if(serverTextField.text!.hasPrefix("https"))
                 
             {
-                
                 performLogin()
             }
                 
@@ -220,7 +231,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate
         
         self.view.isUserInteractionEnabled = false
         
-        ServerConnection.loginOrRefreshToServer(["Company" : String(self.selectedCompany!.id),"Code":userCodeTextField.text!,"Password":passwordTextField.text!]){ (serverResponse) -> Void in
+        ServerConnection.loginOrRefreshToServer(server: selectedServerUrl, ["Company" : String(self.selectedCompany!.id),"Code":userCodeTextField.text!,"Password":passwordTextField.text!]){ (serverResponse) -> Void in
             
             if(serverResponse.error != nil) {
                 
@@ -251,6 +262,11 @@ class LoginViewController: UIViewController, UITextFieldDelegate
                     if(json["error"] == nil)
                         
                     {
+                        
+                        Server.addServerUrl(urlFrontEnd: self.selectedServerFrontEndUrl, urlApi: self.selectedServerUrl, managedObjectContext: self.context)
+                        Server.setNewServer(urlFrontEnd: self.selectedServerFrontEndUrl, urlApi: self.selectedServerUrl, managedObjectContext: self.context)
+                        
+                        self.ChooseServerButton.isHidden = false
                         
                         self.setUserInformation(userInfo: json)
                         
@@ -341,23 +357,14 @@ class LoginViewController: UIViewController, UITextFieldDelegate
         if let controller = segue.destination as? ChooseServerAndCompanyViewController {
             
             if(sender as! String == "server") {
-                
-                chooseDictionary.removeAllObjects()
                     
-                chooseDictionary = [
-                    "Production": (api:"https://checklystapi.jnj.com",frontEnd: "https://checklyst.jnj.com"),
-                    "Pre-Acceptance": (api:"http://10.157.83.252",frontEnd: "http://10.157.83.244"),
-                    "Acceptance": (api:"https://checklystqaapi.jnj.com", frontEnd: "https://checklystqa.jnj.com"),
-                    "Development": (api:"https://checklystdevapi.jnj.com", frontEnd: "https://checklystdev.jnj.com"),
-                    "Development 2": (api:"http://api.clm.matematici-aws.com",frontEnd:"http://clm.matematici-aws.com")
-                ]
-                    
-                controller.serverFieldsDictionary = chooseDictionary as? Dictionary<String,(api:String, frontEnd:String)>
+                let serverChooseDictionary = Server.getServers(context)
+                controller.serverFieldsDictionary = serverChooseDictionary
                 
                 controller.fieldNameString = "Select Server"
                 
             } else {
-                controller.companyFieldsDictionary = chooseDictionary as? Dictionary<String,Dictionary<String, String>>
+                controller.companyFieldsDictionary = companyChooseDictionary as? Dictionary<String,Dictionary<String, String>>
                 
                 controller.fieldNameString = "Select Company"
             }
@@ -377,6 +384,36 @@ class LoginViewController: UIViewController, UITextFieldDelegate
     func textFieldDidEndEditing(_ textField: UITextField) {
         if(textField.isEqual(serverTextField)){
             isEditingServer = false
+            if (!textField.text!.isEmpty) {
+                activityIndicator.startAnimating()
+                self.view.isUserInteractionEnabled = false
+                
+                ServerConnection.getApiServerRequest(server: serverTextField.text!) { (serverResponse) -> Void in
+                    if (serverResponse.error != nil) {
+                        self.showSimpleErrorAlert("Error", message: "Connection error to the server\n\(String(describing: serverResponse.error))")
+                    } else if (serverResponse.data != nil) {
+                        do {
+                            let json = try JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
+                            self._selectedServerFrontEndUrl = self.serverTextField.text!
+                            self._selectedServerUrl = (json["API"] as! String)
+                            self.companyTextField.text = ""
+                            
+                        } catch {
+                            self.showSimpleErrorAlert("Error", message: "Cannot parse response")
+                           print("Error deserializing JSON: \(error)")
+                        }
+                    }
+                    
+                    self.activityIndicator.stopAnimating()
+                    self.view.isUserInteractionEnabled = true
+                }
+            }
+        }
+    }
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        if(textField.isEqual(serverTextField)){
+            isEditingServer = true
         }
     }
     

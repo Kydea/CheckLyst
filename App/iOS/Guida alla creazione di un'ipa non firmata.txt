@@ -1,0 +1,14 @@
+Nella root folder dell'app lanciare il seguente comando da terminale.
+
+xcodebuild -project Checklyst.xcodeproj -scheme CheckListManager -configuration Release clean archive -archivePath buildArchive/Checklyst.xcarchive CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
+
+Estrarre Checklyst.app dall'archivio appena generato:
+Show package contents sull'archivio;
+Products->Applications->Checklyst.app
+
+Creare l'ipa:
+Creare una cartella Payload;
+Copiare Checklyst.app nella cartella Payload;
+Comprimere Payload;
+Rinominare Payload.zip in Checklyst.ipa;
+

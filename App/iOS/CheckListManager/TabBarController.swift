@@ -23,7 +23,6 @@ class TabViewController: UITabBarController, UITabBarControllerDelegate {
         self.delegate = self;
         
     }
-
     
     override func viewDidAppear(_ animated: Bool) {
         

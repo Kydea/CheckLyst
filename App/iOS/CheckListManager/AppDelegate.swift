@@ -47,7 +47,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             navigationBarAppearace.barTintColor = UIColor(red: 43.0/255, green: 43.0/255, blue: 43.0/255, alpha: 1.0)
         }
         
-         navigationBarAppearace.tintColor = UIColor.white
+        navigationBarAppearace.tintColor = UIColor.white
         
         UITabBar.appearance().barTintColor = UIColor(red: 0.0/255, green: 150.0/255, blue: 136.0/255, alpha: 1.0)
         
@@ -115,8 +115,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let coordinator = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
         let url = self.applicationDocumentsDirectory.appendingPathComponent("CheckListManager.sqlite")
         var failureReason = "There was an error creating or loading the application's saved data."
+        let options = [NSMigratePersistentStoresAutomaticallyOption: true, NSInferMappingModelAutomaticallyOption: true]
         do {
-            try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: url, options: nil)
+            try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: url, options: options)
         } catch {
             // Report any error we got.
             var dict = [String: AnyObject]()
@@ -158,20 +159,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
+    //MARK: - Application URL Responder
+    
     func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
-        
-        //print(url.path)
-        
         let mApp = (app as! MyApplication)
-        mApp.requestToOpenInstance = true
-        mApp.requestedUrlInfo = url.getParametersForInstance
-        if let logged = UserDefaults.standard.string(forKey: "logged") {
-            if (NSString(string:logged).boolValue) {
-               mApp.openInstance()
+        //print(url.path)
+        if (url.getCallType == .Create ||
+            url.getCallType == .Detail) {
+            mApp.requestToOpenInstance = true
+            mApp.requestedUrlInfo = url.getParametersForInstance
+            if let logged = UserDefaults.standard.string(forKey: "logged") {
+                if (NSString(string:logged).boolValue) {
+                   mApp.openInstance()
+                }
+            } else {
+                mApp.logoutAndGoToLogin()
             }
-        } else {
-            mApp.logoutAndGoToLogin()
         }
+        
+        if (url.getCallType == .Setup) {
+            let server = "https://" + url.host!
+            mApp.setupNewServer(server, managedObjectContext: managedObjectContext)
+        }
+        
         return true
     }
     
