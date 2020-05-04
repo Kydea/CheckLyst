@@ -10,11 +10,13 @@ namespace CheckListManager.Infrastructure.Logic.Companies
     {
         private readonly ICommonRepository _commonRepository;
         private readonly ISettingService _settingService;
+        private readonly IConfigurationService _configurationService;
 
-        public CompaniesService(ICommonRepository commonRepository, ISettingService settingService)
+        public CompaniesService(ICommonRepository commonRepository, ISettingService settingService, IConfigurationService configurationService)
         {
             _commonRepository = commonRepository;
             _settingService = settingService;
+            _configurationService = configurationService;
         }
 
         public async Task<List<Company>> GetDataAsync()
@@ -24,7 +26,8 @@ namespace CheckListManager.Infrastructure.Logic.Companies
         {
             var response = new CompanySettingsResponse
             {
-                RequireUserReason = await _settingService.RequireUserReasonAsync(companyId)
+                RequireUserReason = await _settingService.RequireUserReasonAsync(companyId),
+                WebApplicationUrl = _configurationService.WebApplicationUrl
             };
 
             return response;

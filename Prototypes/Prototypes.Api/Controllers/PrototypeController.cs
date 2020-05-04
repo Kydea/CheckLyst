@@ -298,8 +298,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
                     throw new Exception("Key must have a value");
 
                 var response = await _prototypeService.DownloadAttachmentAsync(Identity, request);
-                return Content(HttpStatusCode.OK, response.Content,
-                    new FileFormatter(response.ContentType, request.FormatAsBase64));
+                return Content(HttpStatusCode.OK, response.Content, new FileFormatter(response.ContentType, request.FormatAsBase64));
             }
             catch (Exception e)
             {
