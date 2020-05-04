@@ -61,7 +61,7 @@ namespace CheckListManager.Infrastructure.Api.Controllers
             QRCodeGenerator qrGenerator = new QRCodeGenerator();
             QRCodeData qrCodeData = qrGenerator.CreateQrCode(Url, QRCodeGenerator.ECCLevel.Q);
             QRCode qrCode = new QRCode(qrCodeData);
-            Bitmap qrCodeImage = qrCode.GetGraphic(10);
+            Bitmap qrCodeImage = qrCode.GetGraphic(4);
 
             var Stream = new MemoryStream();
             qrCodeImage.Save(Stream, System.Drawing.Imaging.ImageFormat.Png);
