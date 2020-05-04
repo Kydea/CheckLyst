@@ -37,10 +37,11 @@ namespace CheckListManager.AccessControl.Logic.Services
         private readonly IQueueService _queueService;
         private readonly IRedisCache _cache;
         private readonly ISettingService _settingService;
+        private readonly IEmailServiceBase _emailService;
 
         public UserService(IUserRepository userRepository, IUserSessionRepository userSessionRepository,
             IHashService hashService, IQueueService queueService, IRedisCache cache, ISettingService settingService,
-            IConfigurationService configurationService)
+            IConfigurationService configurationService, IEmailServiceBase emailService)
         {
             _userRepository = userRepository;
             _userSessionRepository = userSessionRepository;
@@ -48,6 +49,7 @@ namespace CheckListManager.AccessControl.Logic.Services
             _queueService = queueService;
             _cache = cache;
             _settingService = settingService;
+            _emailService = emailService;
         }
 
         public async Task<Users> AuthenticateAsync(long? companyId, string code, string password)
@@ -652,6 +654,7 @@ namespace CheckListManager.AccessControl.Logic.Services
             }
             catch (Exception e)
             {
+                await _emailService.LogErrorAsync(e, "Failed to disable inactive users");
                 Logger.Error(e);
             }
 
@@ -689,6 +692,7 @@ namespace CheckListManager.AccessControl.Logic.Services
             }
             catch (Exception e)
             {
+                await _emailService.LogErrorAsync(e, "Failed to clear users pin");
                 Logger.Error(e);
             }
         }

@@ -34,7 +34,7 @@
                     input.val('');
                 });
             } else
-                matematici.dialog.error("erorr", "Save the prototype to create the record and enable the images uplaod");
+                matematici.dialog.error("erorr", "Save the prototype to create the record and enable the images upload");
 		},
 
 		deleteImage = function () {

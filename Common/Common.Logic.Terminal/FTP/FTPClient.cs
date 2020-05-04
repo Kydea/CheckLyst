@@ -34,7 +34,7 @@ namespace CheckListManager.Common.Logic.Terminal.FTP
             FtpWebRequest FtpWebRequest = (FtpWebRequest)WebRequest.Create(Uri);
             FtpWebRequest.Credentials = new NetworkCredential(Settings.UserName, Settings.Password);
             FtpWebRequest.Method = Method == Methods.Deletion ? WebRequestMethods.Ftp.DeleteFile : WebRequestMethods.Ftp.UploadFile;
-
+            FtpWebRequest.KeepAlive = false;
             FtpWebRequest.UsePassive = Settings.UsePassive;
             FtpWebRequest.EnableSsl = Settings.EnableSSL;
 
@@ -55,8 +55,11 @@ namespace CheckListManager.Common.Logic.Terminal.FTP
             FtpWebRequest FtpWebRequest = (FtpWebRequest)WebRequest.Create(Uri);
             FtpWebRequest.Credentials = new NetworkCredential(Settings.UserName, Settings.Password);
             FtpWebRequest.Method = WebRequestMethods.Ftp.ListDirectory;
+            FtpWebRequest.KeepAlive = false;
+            FtpWebRequest.UsePassive = Settings.UsePassive;
+            FtpWebRequest.EnableSsl = Settings.EnableSSL;
 
-            using (FtpWebResponse Response = (FtpWebResponse)(await FtpWebRequest.GetResponseAsync()))
+            using (FtpWebResponse Response = (FtpWebResponse)await FtpWebRequest.GetResponseAsync())
             using (Stream ResponseStream = Response.GetResponseStream())
             {
                 StreamReader Reader = new StreamReader(ResponseStream);
