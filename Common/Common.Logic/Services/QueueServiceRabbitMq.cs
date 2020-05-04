@@ -43,35 +43,10 @@ namespace CheckListManager.Common.Logic.Services
                 _connection.Dispose();
             }
         }
-
-        private static string DeadLetterQueue(string queueName) => $"{queueName}{DeadRoutingSuffix}";
-
-        private static void QueueDeclare(IModel channel, string queueName)
-        {
-            var arguments = new Dictionary<string, object>
-            {
-                { "x-message-ttl", MessageTtl },
-                { "x-dead-letter-exchange", DefaultExchange },
-                { "x-dead-letter-routing-key", DeadLetterQueue(queueName) }
-            };
-
-            channel.QueueDeclare(queueName,
-                true,
-                false,
-                false,
-                arguments);
-
-            channel.QueueDeclare(DeadLetterQueue(queueName),
-                true,
-                false,
-                false,
-                null);
-        }
         
         public Task SendMessageAsync(string queueName, string message,
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            QueueDeclare(_channel, queueName);
             var body = Encoding.UTF8.GetBytes(message);
 
             _channel.BasicPublish(DefaultExchange,
@@ -91,8 +66,6 @@ namespace CheckListManager.Common.Logic.Services
             {
                 var list = new List<T>();
             
-                QueueDeclare(_channel, queueName);
-                
                 var consumer = new EventingBasicConsumer(_channel);
                 consumer.Received += (model, ea) =>
                 {
