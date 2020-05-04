@@ -66,6 +66,7 @@ namespace CheckListManager.Infrastructure.Api.Controllers
             var Stream = new MemoryStream();
             qrCodeImage.Save(Stream, System.Drawing.Imaging.ImageFormat.Png);
 
+            Stream.Seek(0, SeekOrigin.Begin);
             return Content(HttpStatusCode.OK, Stream, new FileFormatter("image/jpeg"));
         }
     }
