@@ -35,20 +35,10 @@ namespace CheckListManager.Common.Logic.Services
                 _connection.Dispose();
             }
         }
-
-        private void QueueDeclare(IModel channel, string queueName)
-        {
-            channel.QueueDeclare(queueName,
-                true,
-                false,
-                false,
-                null);
-        }
         
         public Task SendMessageAsync(string queueName, string message,
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            QueueDeclare(_channel, queueName);
             var body = Encoding.UTF8.GetBytes(message);
 
             _channel.BasicPublish("",
@@ -66,8 +56,6 @@ namespace CheckListManager.Common.Logic.Services
         {
             var list = new List<T>();
             
-            QueueDeclare(_channel, queueName);
-                
             var consumer = new EventingBasicConsumer(_channel);
             consumer.Received += (model, ea) =>
             {
