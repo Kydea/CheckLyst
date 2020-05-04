@@ -63,12 +63,10 @@ namespace CheckListManager.Infrastructure.Api.Controllers
             QRCode qrCode = new QRCode(qrCodeData);
             Bitmap qrCodeImage = qrCode.GetGraphic(10);
 
-            using (var Stream = new MemoryStream())
-            {
-                qrCodeImage.Save(Stream, System.Drawing.Imaging.ImageFormat.Png);
-                return Content(HttpStatusCode.OK, Stream, new FileFormatter("image/jpeg"));
-            }
+            var Stream = new MemoryStream();
+            qrCodeImage.Save(Stream, System.Drawing.Imaging.ImageFormat.Png);
 
+            return Content(HttpStatusCode.OK, Stream, new FileFormatter("image/jpeg"));
         }
     }
 }
