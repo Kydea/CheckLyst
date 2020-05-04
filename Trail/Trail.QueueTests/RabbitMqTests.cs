@@ -37,5 +37,24 @@ namespace CheckListManager.Trail.QueueTests
                 _queueService.DeleteMessageAsync("tests", message.MessageHandle).Wait();
             }
         }
+
+        [Test]
+        public void CanHaveMultipleConsumers()
+        {
+            _queueService.SendMessageAsync("tests", "Test Message").Wait();
+            var messages = _queueService.ReceiveMessagesAsync("tests").Result;
+            
+            Assert.IsTrue(messages.Length > 0);
+            Assert.AreEqual("Test Message", messages[0].Message);
+            
+            var messages2 = _queueService.ReceiveMessagesAsync("tests").Result;
+            
+            Assert.IsFalse(messages2.Length > 0);
+
+            foreach (var message in messages)
+            {
+                _queueService.DeleteMessageAsync("tests", message.MessageHandle).Wait();
+            }
+        }
     }
 }
