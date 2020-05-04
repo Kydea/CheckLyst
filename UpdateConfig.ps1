@@ -16,7 +16,11 @@ param (
 	[parameter(Mandatory=$true)]
 	[String]$RabbitMQPassword,
 	[parameter(Mandatory=$true)]
-	[String]$StorageSystem
+	[String]$StorageSystem,
+	[parameter(Mandatory=$true)]
+	[String]$System,
+	[parameter(Mandatory=$true)]
+	[String]$Environment
 )
 
 $files = dir "$PSScriptRoot\*" -include ('App.config', 'Web.Config', 'ConnectionStrings.Config') -recurse
@@ -59,6 +63,14 @@ foreach ($file in $files) {
     $setting = $config.SelectSingleNode("/configuration/appSettings/add[@key='StorageSystem']")
     if ($setting) {
         $setting.value = $StorageSystem
+    }
+    $setting = $config.SelectSingleNode("/configuration/appSettings/add[@key='System']")
+    if ($setting) {
+        $setting.value = $System
+    }
+    $setting = $config.SelectSingleNode("/configuration/appSettings/add[@key='Environment']")
+    if ($setting) {
+        $setting.value = $Environment
     }
 
     $config.Save($file.FullName)

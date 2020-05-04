@@ -7,6 +7,8 @@ $rabbitMQHost = "-"
 $rabbitMQUsername = "-"
 $rabbitMQPassword = "-"
 $storageSystem = "S3"
+$system = "JNJ"
+$environment = "Local"
 
 
-.\UpdateConfig.ps1 -ConnectionString $connectionString -AWSAccessKey $awsAccessKey -AWSSecretKey $awsSecretKey -AWSRegion $awsRegion -QueueSystem $queueSystem -RabbitMQHost $rabbitMQHost -RabbitMQUsername $rabbitMQUsername -RabbitMQPassword $rabbitMQPassword -StorageSystem $storageSystem
+.\UpdateConfig.ps1 -ConnectionString $connectionString -AWSAccessKey $awsAccessKey -AWSSecretKey $awsSecretKey -AWSRegion $awsRegion -QueueSystem $queueSystem -RabbitMQHost $rabbitMQHost -RabbitMQUsername $rabbitMQUsername -RabbitMQPassword $rabbitMQPassword -StorageSystem $storageSystem -System $system -Environment $environment

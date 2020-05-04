@@ -31,9 +31,16 @@ open class ServerConnection {
         }
     }
     
-    static func getCompaniesRequest(_ completion: ((_ result:ServerResponse) -> Void)!){
+    static func getCompaniesRequest(server serverUrl:String = baseUrl,_ completion: ((_ result:ServerResponse) -> Void)!){
         
-        ServerConnection.sendHTTPRequest(baseUrl+"/Infrastructure/Companies/GetData", parameters: [:] as Dictionary<String, AnyObject>){ (result) -> Void in
+        ServerConnection.sendHTTPRequest(serverUrl+"/Infrastructure/Companies/GetData", parameters: [:] as Dictionary<String, AnyObject>){ (result) -> Void in
+            completion(result)
+        }
+    }
+    
+    static func getApiServerRequest(server serverUrl:String = baseUrl, _ completion: ((_ result:ServerResponse) -> Void)!){
+        
+        ServerConnection.sendHTTPRequest(serverUrl+"/settings", parameters: [:] as Dictionary<String, AnyObject>){ (result) -> Void in
             completion(result)
         }
     }
@@ -52,8 +59,8 @@ open class ServerConnection {
     }
     
     
-    static func loginOrRefreshToServer(_ params : Dictionary<String, String>, completion: ((_ result:ServerResponse) -> Void)!){
-        sendHTTPRequest(baseUrl+"/AccessControl/Access/Token", parameters: params as Dictionary<String, AnyObject>){ (result) -> Void in
+    static func loginOrRefreshToServer(server serverUrl:String = baseUrl,_ params : Dictionary<String, String>, completion: ((_ result:ServerResponse) -> Void)!){
+        sendHTTPRequest(serverUrl+"/AccessControl/Access/Token", parameters: params as Dictionary<String, AnyObject>){ (result) -> Void in
             completion(result)
         }
     }

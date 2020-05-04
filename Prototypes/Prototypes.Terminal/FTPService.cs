@@ -11,6 +11,7 @@ using System.IO;
 using CheckListManager.Prototypes.Data;
 using CheckListManager.Common.Logic.Terminal.FTP;
 using CheckListManager.Common.Data;
+using CheckListManager.Common.Logic.Email;
 using CheckListManager.Prototypes.Logic.PDF;
 using CheckListManager.Prototypes.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Json;
@@ -28,6 +29,7 @@ namespace CheckListManager.Prototypes.Terminal
         private readonly ICommonRepository _commonRepository;
         private readonly IConfigurationService _configurationService;
         private readonly IStorageService _storageService;
+        private readonly IEmailServiceBase _emailService;
 
         public FTPService(
             CheckListJsonConverter converter,
@@ -36,7 +38,8 @@ namespace CheckListManager.Prototypes.Terminal
             IPrototypesRepository prototypesRepository,
             ICommonRepository commonRepository,
             IConfigurationService configurationService,
-            IStorageService storageService
+            IStorageService storageService,
+            IEmailServiceBase emailService
         )
         {
             _converter = converter;
@@ -46,6 +49,7 @@ namespace CheckListManager.Prototypes.Terminal
             _commonRepository = commonRepository;
             _configurationService = configurationService;
             _storageService = storageService;
+            _emailService = emailService;
         }
 
         public async Task ProcessFTPMessagesAsync(CancellationToken cancellationToken = default(CancellationToken))
@@ -103,6 +107,8 @@ namespace CheckListManager.Prototypes.Terminal
                 }, cancellationToken);
 
                 Logger.Error(exception);
+
+                await _emailService.LogErrorAsync(exception, "Error Sending FTP file");
             }
         }
 

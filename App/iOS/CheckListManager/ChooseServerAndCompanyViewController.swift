@@ -17,7 +17,7 @@ class ChooseServerAndCompanyViewController: UIViewController, UITableViewDelegat
     
     var companyFieldsDictionary: [String:[String: String]]?
     
-    var serverFieldsDictionary: [String:(api: String, frontEnd: String)]?
+    var serverFieldsDictionary: [Server]?
     
     var rowIndex : Int?
     
@@ -34,6 +34,8 @@ class ChooseServerAndCompanyViewController: UIViewController, UITableViewDelegat
     var chooseServer : Bool!
     
     @IBOutlet var fieldNameLabel: UILabel!
+    
+    let context = ((UIApplication.shared.delegate as! AppDelegate).managedObjectContext)
     
     
     
@@ -80,7 +82,7 @@ class ChooseServerAndCompanyViewController: UIViewController, UITableViewDelegat
         inputTextField = cell!.contentView.viewWithTag(2) as? UITextField
         
         
-        fieldLabel?.text = chooseServer ? Array(serverFieldsDictionary!.keys).reversed()[indexPath.row] : Array(companyFieldsDictionary!.keys)[indexPath.row]
+        fieldLabel?.text = chooseServer ? serverFieldsDictionary![indexPath.row].serverFrontEndUrl : Array(companyFieldsDictionary!.keys)[indexPath.row]
         inputTextField?.isHidden = true
         
         
@@ -97,11 +99,11 @@ class ChooseServerAndCompanyViewController: UIViewController, UITableViewDelegat
         if(chooseServer!) {
             
             
-            let url = serverFieldsDictionary![Array(serverFieldsDictionary!.keys).reversed()[indexPath.row]]!
+            let server = serverFieldsDictionary![indexPath.row]
             
-            loginViewController?.serverTextField.text = url.frontEnd
+            loginViewController?.serverTextField.text = server.serverFrontEndUrl
             
-            Server.setNewServerUrl(url, managedObjectContext: (UIApplication.shared.delegate as! AppDelegate).managedObjectContext)
+            loginViewController?.textFieldDidEndEditing(loginViewController!.serverTextField)
             
         } else {
             loginViewController?.companyTextField.text = Array(companyFieldsDictionary!.keys)[indexPath.row]

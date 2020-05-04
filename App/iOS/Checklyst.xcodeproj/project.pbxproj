@@ -77,6 +77,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2B23FEBC245B023300643C50 /* serverStorage 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "serverStorage 2.xcdatamodel"; sourceTree = "<group>"; };
 		33247B281E6023E200FA07BF /* ServerResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerResponse.swift; sourceTree = "<group>"; };
 		33247B2A1E6025EE00FA07BF /* ChooseServerAndCompanyViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChooseServerAndCompanyViewController.swift; sourceTree = "<group>"; };
 		336AA7B01D3F59F900BB8ADA /* CustomUrProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomUrProtocol.swift; sourceTree = "<group>"; };
@@ -702,11 +703,12 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 16;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = ZMGD2SE799;
 				INFOPLIST_FILE = CheckListManager/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 2.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.matematici.jnj.enterprise.checklistmanager;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -725,11 +727,12 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 16;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = ZMGD2SE799;
 				INFOPLIST_FILE = CheckListManager/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 2.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.matematici.jnj.enterprise.checklistmanager;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -841,9 +844,10 @@
 		33CF258D1D382FB3004D7611 /* serverStorage.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				2B23FEBC245B023300643C50 /* serverStorage 2.xcdatamodel */,
 				33CF258E1D382FB3004D7611 /* serverStorage.xcdatamodel */,
 			);
-			currentVersion = 33CF258E1D382FB3004D7611 /* serverStorage.xcdatamodel */;
+			currentVersion = 2B23FEBC245B023300643C50 /* serverStorage 2.xcdatamodel */;
 			name = serverStorage.xcdatamodeld;
 			path = CheckListManager/serverStorage.xcdatamodeld;
 			sourceTree = "<group>";

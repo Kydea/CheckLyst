@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CheckListManager.Common.Core.Helpers;
+using CheckListManager.Common.Logic.Email;
 using CheckListManager.Common.Logic.Queue;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -12,6 +13,8 @@ namespace CheckListManager.Common.Logic.Services
 {
     public class QueueServiceRabbitMq : IQueueService, IDisposable
     {
+        private readonly IEmailServiceBase _emailService;
+        private const int ConsumerLifeSpan = 5000; // 5 Secs
         private const int MessageTtl = 60 * 60 * 1000; // 1H
         private const string DefaultExchange = "";
         private const string DeadRoutingSuffix = "-dead";
@@ -19,8 +22,9 @@ namespace CheckListManager.Common.Logic.Services
         private readonly IConnection _connection;
         private readonly IModel _channel;
 
-        public QueueServiceRabbitMq(IConnectionFactory connectionFactory)
+        public QueueServiceRabbitMq(IConnectionFactory connectionFactory, IEmailServiceBase emailService)
         {
+            _emailService = emailService;
             _connection = connectionFactory.CreateConnection();
             _channel = _connection.CreateModel();
         }
@@ -39,35 +43,10 @@ namespace CheckListManager.Common.Logic.Services
                 _connection.Dispose();
             }
         }
-
-        private static string DeadLetterQueue(string queueName) => $"{queueName}{DeadRoutingSuffix}";
-
-        private static void QueueDeclare(IModel channel, string queueName)
-        {
-            var arguments = new Dictionary<string, object>
-            {
-                { "x-message-ttl", MessageTtl },
-                { "x-dead-letter-exchange", DefaultExchange },
-                { "x-dead-letter-routing-key", DeadLetterQueue(queueName) }
-            };
-
-            channel.QueueDeclare(queueName,
-                true,
-                false,
-                false,
-                arguments);
-
-            channel.QueueDeclare(DeadLetterQueue(queueName),
-                true,
-                false,
-                false,
-                null);
-        }
         
         public Task SendMessageAsync(string queueName, string message,
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            QueueDeclare(_channel, queueName);
             var body = Encoding.UTF8.GetBytes(message);
 
             _channel.BasicPublish(DefaultExchange,
@@ -83,25 +62,31 @@ namespace CheckListManager.Common.Logic.Services
 
         private async Task<T[]> ReceiveAsync<T>(string queueName, Func<string, BasicDeliverEventArgs, T> handler, CancellationToken cancellationToken)
         {
-            var list = new List<T>();
-            
-            QueueDeclare(_channel, queueName);
-                
-            var consumer = new EventingBasicConsumer(_channel);
-            consumer.Received += (model, ea) =>
+            try
             {
-                var body = ea.Body;
-                var message = Encoding.UTF8.GetString(body);
-                list.Add(handler(message, ea));
-            };
-            var tag = _channel.BasicConsume(queueName,
-                false,
-                consumer);
+                var list = new List<T>();
             
-            await Task.Delay(2000, cancellationToken);
-            _channel.BasicCancel(tag);
+                var consumer = new EventingBasicConsumer(_channel);
+                consumer.Received += (model, ea) =>
+                {
+                    var body = ea.Body;
+                    var message = Encoding.UTF8.GetString(body);
+                    list.Add(handler(message, ea));
+                };
+                var tag = _channel.BasicConsume(queueName,
+                    false,
+                    consumer);
             
-            return list.ToArray();
+                await Task.Delay(ConsumerLifeSpan, cancellationToken);
+                _channel.BasicCancel(tag);
+            
+                return list.ToArray();
+            }
+            catch (Exception e)
+            {
+                await _emailService.LogErrorAsync(e, "Failed to receive messages");
+                throw;
+            }
         }
 
         public Task<QueueMessage[]> ReceiveMessagesAsync(string queueName, int maxNumberOfMessages = 10,

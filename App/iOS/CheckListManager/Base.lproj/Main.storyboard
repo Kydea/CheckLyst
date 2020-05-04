@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14868" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="ypL-u9-hOc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="ypL-u9-hOc">
     <device id="ipad9_7" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
         <deployment version="4608" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14824"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16086"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -127,11 +127,13 @@
                                             <activityIndicatorView opaque="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="Bso-d8-QKU">
                                                 <rect key="frame" x="374" y="472" width="20" height="20"/>
                                             </activityIndicatorView>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="k3B-CX-4lm" userLabel="ChooseServerButton">
-                                                <rect key="frame" x="90" y="189" width="588" height="30"/>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="k3B-CX-4lm" userLabel="ChooseServerButton">
+                                                <rect key="frame" x="650" y="189" width="22" height="30"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="30" id="Orc-07-Gge"/>
                                                 </constraints>
+                                                <color key="tintColor" red="0.01176470588" green="0.76470588240000004" blue="0.69411764710000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <state key="normal" image="rectangle.stack" catalog="system"/>
                                                 <connections>
                                                     <action selector="chooseServer:" destination="HEh-jm-TWD" eventType="touchUpInside" id="fbe-St-mMi"/>
                                                 </connections>
@@ -187,9 +189,8 @@
                                             <constraint firstItem="oO3-ZG-ebK" firstAttribute="leading" secondItem="rJB-ku-q53" secondAttribute="leading" constant="90" id="mee-Wd-7bF"/>
                                             <constraint firstItem="i6T-zC-tMg" firstAttribute="leading" secondItem="rJB-ku-q53" secondAttribute="leading" constant="90" id="nBP-6A-bGp"/>
                                             <constraint firstItem="0y7-gW-3uS" firstAttribute="top" secondItem="i6T-zC-tMg" secondAttribute="bottom" constant="40" id="pT5-os-GRJ"/>
-                                            <constraint firstItem="k3B-CX-4lm" firstAttribute="leading" secondItem="rJB-ku-q53" secondAttribute="leading" constant="90" id="qbV-me-bvz"/>
                                             <constraint firstItem="gwW-ea-myp" firstAttribute="leading" secondItem="rJB-ku-q53" secondAttribute="leading" constant="90" id="r02-mO-ISr"/>
-                                            <constraint firstAttribute="trailing" secondItem="k3B-CX-4lm" secondAttribute="trailing" constant="90" id="r7Y-4P-hvw"/>
+                                            <constraint firstAttribute="trailing" secondItem="k3B-CX-4lm" secondAttribute="trailing" constant="96" id="r7Y-4P-hvw"/>
                                             <constraint firstItem="l8B-v2-ExN" firstAttribute="leading" secondItem="rJB-ku-q53" secondAttribute="leading" constant="90" id="rfs-tI-HDx"/>
                                             <constraint firstItem="bPO-3t-10z" firstAttribute="top" secondItem="rJB-ku-q53" secondAttribute="top" constant="-590" id="t7y-O0-GAH"/>
                                             <constraint firstItem="XOh-vx-3ue" firstAttribute="top" secondItem="0y7-gW-3uS" secondAttribute="bottom" constant="40" id="uhi-so-m7j"/>
@@ -219,6 +220,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="Cn6-cf-MXX"/>
                     <connections>
+                        <outlet property="ChooseServerButton" destination="k3B-CX-4lm" id="FwW-zS-XjH"/>
                         <outlet property="activityIndicator" destination="Bso-d8-QKU" id="spx-xA-aJF"/>
                         <outlet property="companyTextField" destination="i6T-zC-tMg" id="qN9-sX-Xc6"/>
                         <outlet property="passwordTextField" destination="XOh-vx-3ue" id="Wou-AZ-CMp"/>
@@ -1407,4 +1409,7 @@
         <segue reference="wq3-Yy-xYd"/>
         <segue reference="BVT-v2-to1"/>
     </inferredMetricsTieBreakers>
+    <resources>
+        <image name="rectangle.stack" catalog="system" width="128" height="122"/>
+    </resources>
 </document>

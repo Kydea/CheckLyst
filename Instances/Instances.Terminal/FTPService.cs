@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Net.Mail;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CheckListManager.Common.Logic.FTP;
@@ -15,6 +13,7 @@ using CheckListManager.Instances.Data;
 using CheckListManager.Instances.Logic.Services;
 using CheckListManager.Instances.Logic.PDF;
 using CheckListManager.Common.Data;
+using CheckListManager.Common.Logic.Email;
 
 namespace CheckListManager.Instances.Terminal
 {
@@ -29,8 +28,17 @@ namespace CheckListManager.Instances.Terminal
         private readonly IInstancesRepository _instancesRepository;
         private readonly IConfigurationService _configurationService;
         private readonly IStorageService _storageService;
+        private readonly IEmailServiceBase _emailService;
 
-        public FTPService(IQueueService queueService, ISettingService settingService, IInstanceManagerService instanceManagerService, ICommonRepository commonRepository, IInstancesRepository instancesRepository, IConfigurationService configurationService, IStorageService storageService)
+        public FTPService(
+            IQueueService queueService,
+            ISettingService settingService,
+            IInstanceManagerService instanceManagerService,
+            ICommonRepository commonRepository,
+            IInstancesRepository instancesRepository,
+            IConfigurationService configurationService,
+            IStorageService storageService,
+            IEmailServiceBase emailService)
 		{
 			_queueService = queueService;
 			_settingService = settingService;
@@ -39,6 +47,7 @@ namespace CheckListManager.Instances.Terminal
             _instancesRepository = instancesRepository;
             _configurationService = configurationService;
             _storageService = storageService;
+            _emailService = emailService;
         }
 
         public async Task ProcessFTPMessagesAsync(CancellationToken cancellationToken = default(CancellationToken))
@@ -95,6 +104,7 @@ namespace CheckListManager.Instances.Terminal
                         Error = exception.Message
                     })
                 }, cancellationToken);
+                await _emailService.LogErrorAsync(exception, "Error sending FTP file");
 
                 Logger.Error(exception);
 			}

@@ -1,9 +1,9 @@
 //
 //  Server+CoreDataProperties.swift
-//  CheckListManager
+//  Checklyst
 //
-//  Created by Simone Testa on 10/05/2018.
-//  Copyright © 2018 Johnson&Johnson. All rights reserved.
+//  Created by Matematici Developer on 30/04/2020.
+//  Copyright © 2020 Johnson&Johnson. All rights reserved.
 //
 //
 
@@ -13,7 +13,7 @@ import CoreData
 
 extension Server {
 
-    @NSManaged public var serverUrl: String?
     @NSManaged public var serverFrontEndUrl: String?
+    @NSManaged public var serverUrl: String?
 
 }

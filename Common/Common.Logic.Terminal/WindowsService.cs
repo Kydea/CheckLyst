@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Autofac;
+using CheckListManager.Common.Logic.Email;
 using CheckListManager.Common.Logic.Terminal.Configuration;
 using NLog;
 using Topshelf;
@@ -30,10 +32,13 @@ namespace CheckListManager.Common.Logic.Terminal
 
 				CancellationTokenSource = new CancellationTokenSource();
 
-				return OnStart(hostControl);
+				var result = OnStart(hostControl);
+				NotifyAsync($"{GetType().Name} START", $"{GetType().Name} Started at {DateTime.UtcNow}").Wait();
+				return result;
 			}
 			catch (Exception exception)
 			{
+				NotifyAsync($"{GetType().Name} Failed to START", exception).Wait();
 				Logger.Fatal(exception);
 				return false;
 			}
@@ -54,14 +59,32 @@ namespace CheckListManager.Common.Logic.Terminal
 
 			try
 			{
-				Container?.Dispose();
-				return OnStop(hostControl);
+				var result = OnStop(hostControl);
+				NotifyAsync($"{GetType().Name} STOP", $"{GetType().Name} Stopped at {DateTime.UtcNow}").Wait();
+				return result;
 			}
 			catch (Exception exception)
 			{
+				NotifyAsync($"{GetType().Name} Failed to STOP", exception).Wait();
 				Logger.Fatal(exception);
 				return false;
 			}
+			finally
+			{
+				Container?.Dispose();
+			}
+		}
+
+		private Task NotifyAsync(string subject, string content)
+		{
+			var service = Container.Resolve<IEmailServiceBase>();
+			return service.LogInfoAsync(subject, content);
+		}
+
+		private Task NotifyAsync(string subject, Exception exception)
+		{
+			var service = Container.Resolve<IEmailServiceBase>();
+			return service.LogErrorAsync(exception, subject);
 		}
 
 		protected abstract bool OnStart(HostControl hostControl);

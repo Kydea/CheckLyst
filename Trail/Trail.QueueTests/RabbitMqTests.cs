@@ -1,11 +1,14 @@
+using CheckListManager.Common.Logic.Email;
 using CheckListManager.Common.Logic.Services;
+using NSubstitute;
 using NUnit.Framework;
 using RabbitMQ.Client;
 
-namespace Trail.QueueTests
+namespace CheckListManager.Trail.QueueTests
 {
     public class RabbitMqTests
     {
+        private readonly IEmailServiceBase _emailService = Substitute.For<IEmailServiceBase>();
         private QueueServiceRabbitMq _queueService;
 
         [SetUp]
@@ -17,7 +20,7 @@ namespace Trail.QueueTests
                 UserName = "CheckListManager",
                 Password = "CheckListManager01"
             };
-            _queueService = new QueueServiceRabbitMq(connectionFactory);
+            _queueService = new QueueServiceRabbitMq(connectionFactory, _emailService);
         }
 
         [Test]

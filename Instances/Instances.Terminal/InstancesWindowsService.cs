@@ -15,7 +15,7 @@ namespace CheckListManager.Instances.Terminal
             Add(new IntervalSchedulerStrategy(SendFTPFiles, 60) { RunAtStartup = true });
         }
 
-        protected async Task ClearPendingInstances()
+		private async Task ClearPendingInstances()
 		{
 			using (var scope = Container.BeginLifetimeScope())
 			{
@@ -24,7 +24,7 @@ namespace CheckListManager.Instances.Terminal
 			}
 		}
 
-        protected async Task SendFTPFiles()
+		private async Task SendFTPFiles()
         {
             using (var scope = Container.BeginLifetimeScope())
             {

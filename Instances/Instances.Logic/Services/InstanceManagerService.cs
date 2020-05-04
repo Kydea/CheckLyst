@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Net;
-using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
 using CheckListManager.Common.Core.Helpers;
@@ -25,7 +24,6 @@ using CheckListManager.Common.Logic.WorkFlows;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Compression;
 using CheckListManager.Common.Logic.Queue;
 using CheckListManager.Common.Logic.Trail;
 using CheckListManager.Common.Logic.FTP;
@@ -56,6 +54,7 @@ namespace CheckListManager.Instances.Logic.Services
         private readonly ICommonRepository _commonRepository;
         private readonly IRedisCache _redisCache;
         private readonly IStorageService _storageService;
+        private readonly IEmailServiceBase _emailService;
 
         public InstanceManagerService(
             IServiceClient client,
@@ -69,7 +68,8 @@ namespace CheckListManager.Instances.Logic.Services
             IQueueService queueService,
             ICommonRepository commonRepository,
             IRedisCache redisCache,
-            IStorageService storageService
+            IStorageService storageService,
+            IEmailServiceBase emailService
         )
         {
             _client = client;
@@ -84,6 +84,7 @@ namespace CheckListManager.Instances.Logic.Services
             _commonRepository = commonRepository;
             _redisCache = redisCache;
             _storageService = storageService;
+            _emailService = emailService;
         }
 
         #region cache object task
@@ -760,6 +761,7 @@ namespace CheckListManager.Instances.Logic.Services
                 }
                 catch (Exception exception)
                 {
+                    await _emailService.LogErrorAsync(exception, "Failed to clear pending instance");
                     Logger.Error(exception);
                 }
         }
