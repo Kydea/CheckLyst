@@ -135,8 +135,8 @@
         settings = matematici.tokenManager.getCompanySettings(),
         url = settings && settings.webApplicationUrl;
     url =
-        url && url.startsWith("http://") ? settings.webApplicationUrl.replace("http://", "checklist://") + "/setup/http" :
-            url && url.startsWith("https://") ? settings.webApplicationUrl.replace("https://", "checklist://") + "/setup/https" :
+        url && url.startsWith("http://") ? settings.webApplicationUrl.replace("http://", "checklyst://") + "/setup/http" :
+            url && url.startsWith("https://") ? settings.webApplicationUrl.replace("https://", "checklyst://") + "/setup/https" :
                 "invalid prodocol";
     $("#QRCode").attr("href", url);
 </script>
