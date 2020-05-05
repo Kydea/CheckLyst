@@ -1,19 +1,25 @@
 ﻿<h3>Mobile App</h3>
-<h4>Setup</h4>
+<h4>Login</h4>
 @if (ViewBag.AppMode)
 {
-<p>
-    Frame the following qr code from another iPad camera with the application installed on to quickly setup it.
-</p>
+    <p>
+        To set the server address, frame the following qr code the camera of the iPad you want to setup (the application must be already installed).
+    </p>
 }
 else
 {
     <p>
-        <a id="QRCode" href="Error" target="_blank">Click here</a> from the browser of the iPad with the application installed on or just frame the following qr code from the ipad camera.
+        To set the server address, <a id="QRCode" href="Error" target="_blank">click here</a> from the browser of the iPad you want to setup (the application must be already installed) or just frame the following qr code from the ipad camera.
     </p>
 }
 <p>
     <img src="@BaseUrl/Infrastructure/Information/SetupQRCode" />
+</p>
+<p>
+    To set the server address manually, type the full web application url in the server address text box (example: https://server.address.com or http://10.10.10.10) and click on the button "verify".
+</p>
+<p>
+    Select your company and fill your username and password, then click on the button "login".
 </p>
 
 <h4>Navigation Bar</h4>
