@@ -1,9 +1,17 @@
 ﻿<h3>Mobile App</h3>
 <h4>Setup</h4>
+@if (ViewBag.AppMode)
+{
 <p>
-    <a id="QRCode" href="Error" target="_blank">Click here</a> from the browser of the iPad with the application installed on or just frame the following qr code from the ipad camera.
+    Frame the following qr code from another iPad camera with the application installed on to quickly setup it.
 </p>
-
+}
+else
+{
+    <p>
+        <a id="QRCode" href="Error" target="_blank">Click here</a> from the browser of the iPad with the application installed on or just frame the following qr code from the ipad camera.
+    </p>
+}
 <p>
     <img src="@BaseUrl/Infrastructure/Information/SetupQRCode" />
 </p>
@@ -129,14 +137,16 @@
         matematici.elements.body.addClass("OnlyHelp");
     </script>
 }
-
-<script type="text/javascript">
-    var
-        settings = matematici.tokenManager.getCompanySettings(),
-        url = settings && settings.webApplicationUrl;
-    url =
-        url && url.startsWith("http://") ? settings.webApplicationUrl.replace("http://", "checklyst://") + "/setup/http" :
-            url && url.startsWith("https://") ? settings.webApplicationUrl.replace("https://", "checklyst://") + "/setup/https" :
-                "invalid prodocol";
-    $("#QRCode").attr("href", url);
-</script>
+else
+{
+    <script type="text/javascript">
+        var
+            settings = matematici.tokenManager.getCompanySettings(),
+            url = settings && settings.webApplicationUrl;
+        url =
+            url && url.startsWith("http://") ? settings.webApplicationUrl.replace("http://", "checklyst://") + "/setup/http" :
+                url && url.startsWith("https://") ? settings.webApplicationUrl.replace("https://", "checklyst://") + "/setup/https" :
+                    "invalid prodocol";
+        $("#QRCode").attr("href", url);
+    </script>
+}
