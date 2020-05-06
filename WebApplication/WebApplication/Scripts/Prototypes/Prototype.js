@@ -193,7 +193,7 @@
             if (currentItem) select(null, null);
             currentItem = null;
             var result = {};
-            if (className != "Page") findItem(model, id, result);
+            if (className != "Page") findItem(model, id, null, result);
             if (result.item && result.page) $("#Page" + result.page, element).click();
             selectByElementId(className + id);
         },
@@ -293,7 +293,7 @@
                         handler = function () {
                             var
                                 model = currentItem.getModel(),
-                                title = model.typeName + (model.id && " - ID: " + model.id || "") + (model.code && " - Code: " + model.code || "")
+                                title = model.typeName + (model.id && " - ID: " + model.id || model.index && " - Index: " + (parseInt(model.index) + 1)) + (model.code && " - Code: " + model.code || "")
                             matematici.dependenciesDialog.show(title, model.dependingRelations, model.dependentRelations);
                         };
                     if (matematici.canClose)
@@ -324,21 +324,25 @@
                 element.cloned = true;
         },
 
-        findItem = function (element, itemId, result) {
+        findItem = function (element, itemId, pageIndex, result) {
             if (element.id == itemId) {
+                result.page = pageIndex;
                 result.item = element;
                 return;
             }
 
             if (element.typeName == "Group")
-                for (var index in element.items)
-                    findItem(element.items[index], itemId, result);
+                for (var index in element.items) {
+                    findItem(element.items[index], itemId, null, result);
+                    if (result.item) return;
+                }
             else if (element.typeName == "Prototype")
                 for (var index in element.pages) {
                     var page = element.pages[index];
-                    result.page = index;
-                    for (var index in page.groups)
-                        findItem(page.groups[index], itemId, result);
+                    for (var index in page.groups) {
+                        findItem(page.groups[index], itemId, index, result);
+                        if (result.item) return;
+                    }
                 }
         },
 

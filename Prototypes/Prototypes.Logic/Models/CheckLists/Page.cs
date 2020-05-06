@@ -62,6 +62,6 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         public override string DependencyClassName => "page";
         public override int? DependencyObjectID => Index;
-        public override string ToString() => $"page {Index}";
+        public override string ToString() => $"page {Index + 1}";
     }
 }

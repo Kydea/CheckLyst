@@ -34,7 +34,8 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         public virtual void Setup()
         {
-            if (!string.IsNullOrEmpty(Code))
+            Code = string.IsNullOrEmpty(Code) ? null : Code;
+            if (Code != null)
             {
                 if (CheckList.Elements.ContainsKey(Code))
                     throw new Exception($"Duplicated code {Code}");

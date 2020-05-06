@@ -104,10 +104,14 @@
                 });
         });
         var savedValues = {};
-        savedValues.redirectUrl = localStorage.redirectTime && new Date() - new Date(localStorage.redirectTime) < 10000 ? localStorage.redirectUrl : "";
+        if (localStorage.redirectTime && new Date() - new Date(localStorage.redirectTime) < 10000) {
+            savedValues.redirectUrl = localStorage.redirectUrl;
+            savedValues.redirectTime = localStorage.redirectTime;
+        }
         console.log("saving redirection url", savedValues, localStorage.redirectUrl, new Date() - new Date(localStorage.redirectTime), localStorage.redirectTime);
         matematici.tokenManager.logout();
         localStorage.redirectUrl = savedValues.redirectUrl;
+        localStorage.redirectTime = savedValues.redirectTime;
 
         //closes all possibile pending light boxes
         matematici.popup.close();

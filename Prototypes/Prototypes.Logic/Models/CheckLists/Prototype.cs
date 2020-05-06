@@ -53,7 +53,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 Exception = null;
                 Header.CheckList = this;
                 Header.Setup();
-                int Index = 1;
+                int Index = 0;
                 foreach (Page Page in Pages)
                 {
                     Page.Index = Index++;

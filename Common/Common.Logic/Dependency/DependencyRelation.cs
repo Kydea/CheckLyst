@@ -42,7 +42,10 @@ namespace CheckListManager.Common.Logic.Dependency
             => $"{SourceProperty}-{ClassName}-{ObjectCode ?? ObjectID?.ToString()}-{DestinationProperty}".GetHashCode();
 
         public override string ToString()
-            => $"{GetPropertyDescription (SourceProperty)} > {GetPropertyDescription(DestinationProperty)} of {ClassName} {ObjectCode ?? ObjectID?.ToString()}";
+        {
+            var ObjectID = ObjectCode == null && this.ObjectID.HasValue && ClassName == "page" ? this.ObjectID.Value + 1 : this.ObjectID;
+            return $"{GetPropertyDescription(SourceProperty)} > {GetPropertyDescription(DestinationProperty)} of {ClassName} {ObjectCode ?? ObjectID?.ToString()}";
+        }
 
         public string Description => ToString(); //used in the fronted
 
