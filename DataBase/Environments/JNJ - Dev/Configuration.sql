@@ -8,5 +8,6 @@ insert into "Configuration"."Configurations" ("Code", "Value") values
 	('PublicRepositoryUrl', 'http://10.157.83.244/content/media/'),
 	('InstanceCloseTimeout', '4320'), --3 days, expressed in minutes
 	('PrototypesStorageBucket', '???'),
-	('InstancesStorageBucket', '???');
+	('InstancesStorageBucket', '???'),
+	('NotificationsEmailAddress', '???');
 

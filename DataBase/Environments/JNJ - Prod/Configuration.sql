@@ -8,5 +8,6 @@ insert into "Configuration"."Configurations" ("Code", "Value") values
 	('PublicRepositoryUrl', 'https://checklyst.jnj.com/content/media/'),
 	('InstanceCloseTimeout', '4320'); --3 days, expressed in minutes
 	('PrototypesStorageBucket', '???'),
-	('InstancesStorageBucket', '???');
+	('InstancesStorageBucket', '???'),
+	('NotificationsEmailAddress', '???');
   
