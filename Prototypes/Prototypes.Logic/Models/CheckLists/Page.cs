@@ -41,7 +41,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             base.BuildDependencies();
             foreach (Group Group in Groups)
             {
-                if (HiddenCondition == Conditions.False || HiddenCondition == Conditions.Expression)
+                if (HiddenCondition != Conditions.True || HiddenCondition == Conditions.Expression)
                     Group.AddDependingRelation(DependencyRelation.Properties.Hidden, this, DependencyRelation.Properties.Hidden);
 
                 if (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)

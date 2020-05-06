@@ -270,7 +270,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             {
                 if (!IterationItem)
                 {
-                    if (HiddenCondition == Conditions.False || HiddenCondition == Conditions.Expression)
+                    if (HiddenCondition != Conditions.True || HiddenCondition == Conditions.Expression)
                         Item.AddDependingRelation(DependencyRelation.Properties.Hidden, this, DependencyRelation.Properties.Hidden);
 
                     if (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
