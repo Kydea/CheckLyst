@@ -94,8 +94,9 @@
 					matematici.clock.resume();
 
                     getSettings(function () {
-                        var redirectUrl = localStorage.redirectUrl && localStorage.redirectUrl.indexOf("/Security/Login") < 0 ? localStorage.redirectUrl : null;
+                        var redirectUrl = localStorage.redirectUrl && localStorage.redirectUrl != "undefined" && localStorage.redirectUrl != "/undefined" && localStorage.redirectUrl.indexOf("/Security/Login") < 0 ? localStorage.redirectUrl : null;
                         localStorage.removeItem("redirectUrl");
+                        localStorage.removeItem("redirectTime");
 						matematici.navigator.open(redirectUrl || matematici.urls.dashboard);
 					});
 
@@ -103,12 +104,13 @@
                     showError(jqXhr.responseJSON && jqXhr.responseJSON.error_description || jqXhr.responseJSON && jqXhr.responseJSON.messages && jqXhr.responseJSON.messages.join(' ') || errorThrown);
                 });
         });
+
         var savedValues = {};
-        if (localStorage.redirectTime && new Date() - new Date(localStorage.redirectTime) < 10000) {
+        if (localStorage.redirectUrl && localStorage.redirectTime && new Date() - new Date(localStorage.redirectTime) < 10000) {
             savedValues.redirectUrl = localStorage.redirectUrl;
             savedValues.redirectTime = localStorage.redirectTime;
         }
-        console.log("saving redirection url", savedValues, localStorage.redirectUrl, new Date() - new Date(localStorage.redirectTime), localStorage.redirectTime);
+        console.log("saving redirection url", { localStorageUrl: localStorage.redirectUrl, elapsedTime: new Date() - new Date(localStorage.redirectTime), redirectTime: localStorage.redirectTime, savedValues: savedValues });
         matematici.tokenManager.logout();
         localStorage.redirectUrl = savedValues.redirectUrl;
         localStorage.redirectTime = savedValues.redirectTime;
