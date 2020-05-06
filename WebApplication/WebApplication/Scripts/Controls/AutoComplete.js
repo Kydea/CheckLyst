@@ -119,6 +119,8 @@
                 icon.addClass("FullHeight");
                 input.addClass("FullHeight");
                 list.insertAfter(input).addClass("FullHeight");
+                options = $("option", element);
+                updateList();
             }
 
             matematici.elements.window.on("resize", setWidth);
