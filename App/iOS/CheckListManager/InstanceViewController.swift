@@ -78,11 +78,11 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         request.httpBody = bodyString.data(using: String.Encoding.utf8)
         
        //For testing -> gives 10 seconds to open safari inspector
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(10)) {
+       /* DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(10)) {
             self.webView.load(request as URLRequest)
-        }
+        }*/
         
-        //webView.load(request as URLRequest)
+        webView.load(request as URLRequest)
         
         self.lockView()
         NotificationCenter.default.addObserver(self, selector: #selector(InstanceViewController.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)

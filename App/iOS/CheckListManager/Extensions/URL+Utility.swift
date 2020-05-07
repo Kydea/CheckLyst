@@ -36,6 +36,10 @@ extension URL {
             if let index = values.index(of: "Detail") {
                 urlItems["code"] = values.count > 2 ? String(values[index + 1]) : ""
             }
+        } else if values.contains("setup") {
+            if let index = values.index(of: "setup") {
+                urlItems["schema"] = values.count > 2 ? String(values[index + 1]) : "https"
+            }
         }
         
         return urlItems
@@ -47,7 +51,7 @@ extension URL {
                 return .Create
             case let values where values.contains("Detail"):
                 return .Detail
-            case let values where values.contains("Setup"):
+            case let values where values.contains("setup"):
                 return .Setup
             default:
                 return .Undefined

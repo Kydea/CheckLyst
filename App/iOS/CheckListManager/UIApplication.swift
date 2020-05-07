@@ -62,12 +62,14 @@ import CoreData
         let logged = NSString(string:UserDefaults.standard.string(forKey: "logged")!).boolValue
         
         if(logged)
-            
         {
             let expireDate = UserDefaults.standard.value(forKey: "token_expires") as! Date
-            
+            let date = Date()
             if(expireDate < Date() && !isWarningPresented) {
-                self.displayError(Title: "Session Expired", Message: "Your session is expired, you'll be redirected to login section.")
+                self.displayMessage(Title: "Session Expired", Message: "Your session is expired, you'll be redirected to login section.") {
+                    () -> Void in
+                    self.logoutAndGoToLogin()
+                }
             } else {
                 self.refreshToken(expireDate)
             }
@@ -104,14 +106,20 @@ import CoreData
                             
                         } else {
                             
-                            self.displayError(Title: "Error", Message: "Something has gone wrong, you'll be redirected to login section.")
+                            self.displayMessage(Title: "Session Expired", Message: "Your session is expired, you'll be redirected to login section.") {
+                                () -> Void in
+                                self.logoutAndGoToLogin()
+                            }
                             
                             self.isRefreshing = false
                         }
                     }
                 } catch {
                     print("Error deserializing JSON: \(error)")
-                    self.displayError(Title: "Error", Message: "Something has gone wrong, you'll be redirected to login section.")
+                    self.displayMessage(Title: "Session Expired", Message: "Your session is expired, you'll be redirected to login section.") {
+                        () -> Void in
+                        self.logoutAndGoToLogin()
+                    }
                 }
                 
             }
@@ -173,19 +181,35 @@ import CoreData
     func setupNewServer(_ server:String, managedObjectContext: NSManagedObjectContext) {
         ServerConnection.getApiServerRequest(server: server) { (serverResponse) -> Void in
             if (serverResponse.error != nil) {
-                self.displayError(Title: "Error", Message: "Connection error to the server\n\(String(describing: serverResponse.error))")
+                self.displayMessage(Title: "Error", Message: "Connection error to the server")
             } else if (serverResponse.data != nil) {
                 do {
                     let json = try JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
                     let apiServer = json["API"] as! String
-                    Server.addServerUrl(urlFrontEnd: server, urlApi: apiServer, managedObjectContext: managedObjectContext)
-                    Server.setNewServer(urlFrontEnd: server, urlApi: apiServer, managedObjectContext: managedObjectContext)
+                    let logged = NSString(string:UserDefaults.standard.string(forKey: "logged")!).boolValue
+
                     
-                   
-                    
+                    self.displayMessage(Title: "Server Configuration", Message: "You are setting up a new server.\(logged ? "\nYou'll be redirected to login section." : "")\nAre you sure?", canDecline: true) {
+                        () -> Void in
+                        
+                        Server.addServerUrl(urlFrontEnd: server, urlApi: apiServer, managedObjectContext: managedObjectContext)
+                        Server.setNewServer(urlFrontEnd: server, urlApi: apiServer, managedObjectContext: managedObjectContext)
+                        
+                        self.logoutAndGoToLogin()
+                        
+                        if let controller = self.searchPresentedController(controllerClass: UIViewController.self) {
+                                    
+                            
+                            for childController in controller.childViewControllers {
+                                        if let loginViewController = childController as? LoginViewController {
+                                            loginViewController.viewWillAppear(false)
+                                }
+                            }
+                        }
+                    }
                     
                 } catch {
-                    self.displayError(Title: "Error", Message: "Cannot parse response")
+                    self.displayMessage(Title: "Error", Message: "Cannot parse response")
                     print("Error deserializing JSON: \(error)")
                 }
             }
@@ -243,13 +267,20 @@ import CoreData
         }
     }
     
-    func displayError(Title title:String, Message message:String) {
+    func displayMessage(Title title:String, Message message:String, canDecline:Bool = false, ConfirmHandler:(()->Void)? = nil) {
         
         self.displayAlert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        self.displayAlert!.addAction(UIAlertAction(title: "Ok", style: .destructive, handler: { (action) -> Void in
-            self.isWarningPresented = false
-            self.logoutAndGoToLogin()
+        
+        self.displayAlert!.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action) -> Void in
+            if let handler = ConfirmHandler {
+                handler()
+                self.isWarningPresented = false
+            }
         }))
+        
+        if(canDecline) {
+            self.displayAlert!.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
+        }
         
         if var topController = UIApplication.shared.keyWindow?.rootViewController {
             
