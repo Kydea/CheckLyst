@@ -390,19 +390,20 @@ class LoginViewController: UIViewController, UITextFieldDelegate
                 
                 ServerConnection.getApiServerRequest(server: serverTextField.text!) { (serverResponse) -> Void in
                     if (serverResponse.error != nil) {
-                        self.showSimpleErrorAlert("Error", message: "Connection error to the server\n\(String(describing: serverResponse.error))")
+                        self.showSimpleErrorAlert("Error", message: "Connection error to the server")
                     } else if (serverResponse.data != nil) {
                         do {
                             let json = try JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
                             self._selectedServerFrontEndUrl = self.serverTextField.text!
                             self._selectedServerUrl = (json["API"] as! String)
-                            self.companyTextField.text = ""
                             
                         } catch {
                             self.showSimpleErrorAlert("Error", message: "Cannot parse response")
                            print("Error deserializing JSON: \(error)")
+                        self.companyTextField.text = ""
                         }
                     }
+                    
                     
                     self.activityIndicator.stopAnimating()
                     self.view.isUserInteractionEnabled = true

@@ -178,8 +178,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         if (url.getCallType == .Setup) {
-            let server = "https://" + url.host!
-            mApp.setupNewServer(server, managedObjectContext: managedObjectContext)
+            if let params = url.getParametersForInstance {
+                let server = "\(params["schema"]!)://\(url.host!)"
+                mApp.setupNewServer(server, managedObjectContext: managedObjectContext)
+            }
         }
         
         return true

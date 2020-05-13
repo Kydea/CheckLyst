@@ -54,6 +54,11 @@ class UserManualViewController: UIViewController, WKNavigationDelegate {
             
             request.timeoutInterval = 10
             
+            //For testing -> gives 10 seconds to open safari inspector
+            /*DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(10)) {
+                self.webView.load(request as URLRequest)
+            }*/
+            
             webView.load(request as URLRequest)
             
             self.lockView()
