@@ -113,7 +113,6 @@
     <Compile Include="Configuration\TerminalConfig.cs" />
     <Compile Include="FTP\SFTPClient.cs" />
     <Compile Include="FTP\Methods.cs" />
-    <Compile Include="FTP\IFTPClient.cs" />
     <Compile Include="FTP\FTPClient.cs" />
     <Compile Include="FTP\FTPConnectionSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
