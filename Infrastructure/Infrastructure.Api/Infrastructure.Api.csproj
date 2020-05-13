@@ -110,6 +110,9 @@
     <Reference Include="RedLock.StrongName, Version=1.7.5.0, Culture=neutral, PublicKeyToken=1dffde0a6c007f07, processorArchitecture=MSIL">
       <HintPath>..\..\packages\RedLock.net.StrongName.1.7.5\lib\net45\RedLock.StrongName.dll</HintPath>
     </Reference>
+    <Reference Include="Renci.SshNet, Version=2016.1.0.0, Culture=neutral, PublicKeyToken=1cee9f8bde3db106, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SSH.NET.2016.1.0\lib\net40\Renci.SshNet.dll</HintPath>
+    </Reference>
     <Reference Include="StackExchange.Redis.StrongName, Version=1.2.6.0, Culture=neutral, PublicKeyToken=c219ff1ca8c2ce46, processorArchitecture=MSIL">
       <HintPath>..\..\packages\StackExchange.Redis.StrongName.1.2.6\lib\net46\StackExchange.Redis.StrongName.dll</HintPath>
     </Reference>

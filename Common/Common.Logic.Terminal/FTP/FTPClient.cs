@@ -11,8 +11,6 @@ namespace CheckListManager.Common.Logic.Terminal.FTP
 
     public class FTPClient
     {
-        public enum Methods { Upload, Deletion };
-
         public async Task ActionAsync(byte[] Bytes, string Path, string FileName, FTPConnectionSettings Settings, Methods Method)
         {
             string Status = "(unset)";
@@ -64,7 +62,7 @@ namespace CheckListManager.Common.Logic.Terminal.FTP
             {
                 StreamReader Reader = new StreamReader(ResponseStream);
                 string Names = Reader.ReadToEnd();
-                return Names;   
+                return Names;
             }
         }
     }
