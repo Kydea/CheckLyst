@@ -14,30 +14,12 @@ class Server: NSManagedObject {
     
     // Insert code here to add functionality to your managed object subclass
     
-    static func setupWithManagedObjectContext(_ managedObjectContext : NSManagedObjectContext) -> Void {
+    static func setNewServer(urlFrontEnd:String, apiUrl:String, managedObjectContext: NSManagedObjectContext) -> Bool {
         
-        if Server.any(managedObjectContext: managedObjectContext) {
+        if Server.getServerFromUrlFrontEnd(urlFrontEnd, managedObjectContext) != nil {
             
-            let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Server")
-            do {
-                
-                let server = (try managedObjectContext.fetch(request) as? [Server])!.first!
-                setNewServer(urlFrontEnd: server.serverFrontEndUrl!, urlApi: server.serverUrl!, managedObjectContext: managedObjectContext)
-                
-            } catch {
-                
-            }
-        }
-        
-    }
-    
-    static func setNewServer(urlFrontEnd:String, urlApi:String, managedObjectContext: NSManagedObjectContext) -> Bool {
-        
-        
-        if let server = Server.getServerFromUrlFrontEnd(urlFrontEnd, managedObjectContext) {
-            
-            UserDefaults.standard.setValue(server.serverFrontEndUrl, forKey: "serverFrontEndUrl")
-            UserDefaults.standard.setValue(server.serverUrl, forKey: "serverUrl")
+            UserDefaults.standard.setValue(urlFrontEnd, forKey: "serverFrontEndUrl")
+            UserDefaults.standard.setValue(apiUrl, forKey: "serverUrl")
             
             return true;
         }
@@ -46,13 +28,44 @@ class Server: NSManagedObject {
         
     }
     
-    static func addServerUrl(urlFrontEnd:String, urlApi:String, managedObjectContext: NSManagedObjectContext) -> Bool {
+    static func unsetCurrentServer(managedObjectContext: NSManagedObjectContext) -> Bool {
+        
+        if  (isSetServer(managedObjectContext: managedObjectContext))  {
+            
+            UserDefaults.standard.removeObject(forKey: "serverFrontEndUrl")
+            UserDefaults.standard.removeObject(forKey: "serverUrl")
+            
+            return true;
+        }
+        
+        return false
+        
+    }
+    
+    static func isSetServer(managedObjectContext: NSManagedObjectContext) -> Bool {
+           
+        return UserDefaults.standard.object(forKey: "serverFrontEndUrl") != nil && UserDefaults.standard.object(forKey: "serverUrl") != nil
+           
+    }
+    
+    static func getFrontEndServer(managedObjectContext: NSManagedObjectContext) -> String? {
+           
+        return UserDefaults.standard.string(forKey: "serverFrontEndUrl")
+           
+    }
+    
+    static func getApiServer(managedObjectContext: NSManagedObjectContext) -> String? {
+           
+        return UserDefaults.standard.string(forKey: "serverUrl")
+           
+    }
+    
+    static func addServerUrl(urlFrontEnd:String, managedObjectContext: NSManagedObjectContext) -> Bool {
         
         if (!Server.any(NSPredicate(format: "serverFrontEndUrl = %@", urlFrontEnd), managedObjectContext: managedObjectContext)) {
         
             let server = Server(entity: Server.entity(), insertInto: managedObjectContext)
             server.serverFrontEndUrl = urlFrontEnd
-            server.serverUrl = urlApi
         }
         
         do {
@@ -69,7 +82,6 @@ class Server: NSManagedObject {
     
     static func getServerFromUrlFrontEnd(_ urlFrontEnd:String, _ managedObjectContext: NSManagedObjectContext) -> Server? {
         
-        
         let predicate = NSPredicate(format: "serverFrontEndUrl = %@", urlFrontEnd)
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Server")
         request.predicate = predicate
@@ -85,27 +97,20 @@ class Server: NSManagedObject {
         
     }
     
-    static func getServer(_ managedObjectContext: NSManagedObjectContext) -> Server? {
-        
-        if let serverFrontEndUrl = UserDefaults.standard.string(forKey: "serverFrontEndUrl") {
-                return Server.getServerFromUrlFrontEnd(serverFrontEndUrl, managedObjectContext)
-        }
-        return nil
-    }
-    
     static func getServers(_ managedObjectContext: NSManagedObjectContext) -> [Server]? {
            
-           let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Server")
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Server")
         
-           do {
+        do {
                
-               return (try managedObjectContext.fetch(request) as? [Server])
+            return (try managedObjectContext.fetch(request) as? [Server])
                
-           } catch {
+        } catch {
                
-               return nil
-           }
-       }
+            return nil
+        
+        }
+    }
     
     static func any(_ predicate: NSPredicate? = nil, managedObjectContext : NSManagedObjectContext) -> Bool {
         

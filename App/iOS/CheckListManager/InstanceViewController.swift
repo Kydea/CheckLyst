@@ -12,7 +12,7 @@ import WebKit
 
 class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler, UIGestureRecognizerDelegate, UIDocumentInteractionControllerDelegate {
     
-    let app = UIApplication.shared as! MyApplication
+    let appDelegate = UIApplication.shared as! MyApplication
     var instance:Instance!
     var instanceCodeFromRequest : String?
     var newInstance = false
@@ -155,7 +155,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         if message.name == "instances", let messageBody = message.body as? String {
             if messageBody.hasPrefix("quit") {
-                self.app.goBackToList()
+                self.appDelegate.goBackToList()
             } else if messageBody.hasPrefix("file") {
                 activityIndicator.startAnimating()
                 let fileURL = String(messageBody.split(separator: " ")[1])
@@ -169,13 +169,9 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
                         self.documentInteractionController.name = url!.localizedName ?? url!.lastPathComponent
                         self.documentInteractionController.presentPreview(animated: true)
                     } else if error != nil {
-                        let alert = UIAlertController(title: "Error", message: "Connection error to the server", preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "Ok", style: .destructive, handler: nil))
-                        self.present(alert, animated: false, completion: nil)
+                        self.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server")
                     } else {
-                        let alert = UIAlertController(title: "Error", message: "Unable to retrieve document", preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "Ok", style: .destructive, handler: nil))
-                        self.present(alert, animated: false, completion: nil)
+                        self.appDelegate.displayMessage(Title: "Error", Message: "Unable to retrieve document")
                     }
                 }
             }
@@ -190,11 +186,9 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
         unlockView()
-        let alert = UIAlertController(title: "Error", message: "Connection error to the server", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action) -> Void in
+        self.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server") { () -> Void in
             self.navigationController?.popViewController(animated: true)
-        }))
-        self.present(alert, animated: false, completion: nil)
+        }
     }
     
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
@@ -207,8 +201,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
             if let value = response as? String {
                 if(value.contains("Security/Login")) {
                     webView.isHidden = true
-                    //print("redirecting")
-                    self.app.logoutAndGoToLogin()
+                    self.appDelegate.logoutAndGoToLogin()
                 }
             }
         }
@@ -220,14 +213,10 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
                 if supportedProtocols.contains(scheme) {
                     UIApplication.shared.open(navigationAction.request.url!, options: [:])
                 } else {
-                    let alert = UIAlertController(title: "Error", message: "Protocol \(scheme) not supported", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-                    self.present(alert, animated: false, completion: nil)
+                    self.appDelegate.displayMessage(Title: "Error", Message: "Protocol \(scheme) not supported")
                 }
             } else {
-                let alert = UIAlertController(title: "Error", message: "Missing protocol", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-                self.present(alert, animated: false, completion: nil)
+                self.appDelegate.displayMessage(Title: "Error", Message: "Missing protocol")
             }
         }
         return nil
@@ -245,7 +234,6 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
                 } else if (self.contentView != nil && self.scanButtonIsVisible) {
                         self.scanButton?.isEnabled = false;
                         self.scanButtonIsVisible = false
-                        //print("scan button off")
                 }
             }
         }
@@ -274,7 +262,6 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     }
     
     @objc private func scanItem(_ sender: UIBarButtonItem) {
-        //print("camera pressed")
         requestForScanning = true
         performSegue(withIdentifier: "ScanSegue", sender: self)
     }

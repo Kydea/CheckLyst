@@ -11,11 +11,9 @@ import UIKit
 
 open class ServerConnection {
     
+    static var baseUrl : String { return Server.getApiServer(managedObjectContext: (UIApplication.shared.delegate as! AppDelegate).managedObjectContext)! }
     
-    static var baseUrl : String { return (Server.getServer((UIApplication.shared.delegate as! AppDelegate).managedObjectContext)?.serverUrl)! }
-    
-    static var baseFrontEndUrl : String { return (Server.getServer((UIApplication.shared.delegate as! AppDelegate).managedObjectContext)?.serverFrontEndUrl)! }
-    
+    static var baseFrontEndUrl : String { return Server.getFrontEndServer(managedObjectContext: (UIApplication.shared.delegate as! AppDelegate).managedObjectContext)! }
     
     static func bindListWithParams(_ params : Dictionary<String, Dictionary<String, String?>>, completion: ((_ result:ServerResponse) -> Void)!){
         

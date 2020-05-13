@@ -10,13 +10,9 @@ import Foundation
 import UIKit
 
 
-class EditFieldViewController: UIViewController, UITableViewDataSource, UITableViewDelegate
-    
-    
-{
+class EditFieldViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     @IBOutlet var tableView: UITableView!
-    
     
     @IBOutlet var okButton: UIButton!
  

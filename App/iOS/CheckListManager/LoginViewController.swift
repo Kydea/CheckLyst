@@ -25,35 +25,60 @@ class LoginViewController: UIViewController, UITextFieldDelegate
     
     @IBOutlet var ChooseServerButton: UIButton!
     
+    @IBOutlet var EditServerButton: UIButton!
+    
     @IBOutlet var activityIndicator: UIActivityIndicatorView!
+    
+    @IBOutlet var companyView: UIView!
+    
+    @IBOutlet var userCodeView: UIView!
+    
+    @IBOutlet var passwordView: UIView!
+    
+    @IBOutlet var loginButton: UIButton!
+    
+    @IBOutlet var verifyServerButton: UIButton!
     
     var isEditingServer = false
     
     var companyChooseDictionary : NSMutableDictionary = [:]
     
-    fileprivate var _selectedServerUrl : String?
+    fileprivate var _typedServerUrl : String?
     
-    var selectedServerUrl : String { return _selectedServerUrl ?? ServerConnection.baseUrl }
+    var selectedServerUrl : String {
+        set(newValue) {
+            _typedServerUrl = newValue
+        }
+        get {
+            return _typedServerUrl ?? ServerConnection.baseUrl
+            
+        }
+    }
     
-    fileprivate var _selectedServerFrontEndUrl : String?
+    fileprivate var _typedServerFrontEndUrl : String?
     
-    var selectedServerFrontEndUrl : String { return _selectedServerFrontEndUrl ?? ServerConnection.baseFrontEndUrl }
+    var selectedServerFrontEndUrl : String {
+        set(newValue) {
+            _typedServerFrontEndUrl = newValue
+        }
+        get {
+            return _typedServerFrontEndUrl ?? ServerConnection.baseFrontEndUrl
+            
+        }
+    }
     
     var selectedCompany : Company?
     
     let context = ((UIApplication.shared.delegate as! AppDelegate).managedObjectContext)
     
+    let appDelegate = UIApplication.shared as! MyApplication
     
-    override func viewDidLoad()
-        
-    {
+    override func viewDidLoad() {
         
         super.viewDidLoad()
         
         serverTextField.delegate = self
-        
         userCodeTextField.delegate = self
-        
         passwordTextField.delegate = self
         
         self.navigationItem.leftBarButtonItem = SharedControllersProperty.setLogo(self.navigationItem.leftBarButtonItem);
@@ -62,68 +87,121 @@ class LoginViewController: UIViewController, UITextFieldDelegate
         NotificationCenter.default.addObserver(self, selector: #selector(LoginViewController.keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(LoginViewController.dismissKeyboard))
-        
         view.addGestureRecognizer(tap)
         
         activityIndicator.hidesWhenStopped = true
-        
         activityIndicator.transform = CGAffineTransform(scaleX: 2.0, y: 2.0)
         
     }
     
+    @IBAction func verifyServer(_ sender: Any) {
+        
+        if (serverTextField.text!.isEmpty) {
+            self.appDelegate.displayMessage(Title: "Error", Message: "Type a server address") { () -> Void in
+                self.serverTextField.becomeFirstResponder()
+            }
+        } else {
+            
+            activityIndicator.startAnimating()
+            self.view.isUserInteractionEnabled = false
+            
+            ServerConnection.getApiServerRequest(server: serverTextField.text!) { (serverResponse) -> Void in
+                
+                if (serverResponse.error != nil) {
+                    
+                    self.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server \(self.serverTextField.text!) .")
+                
+                } else if (serverResponse.data != nil) {
+                   
+                    do {
+                        
+                        let json = try JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
+                        self._typedServerFrontEndUrl = self.serverTextField.text!
+                        self._typedServerUrl = (json["API"] as! String)
+                        self.toggleLogin(true, withAnimation: true)
+                        
+                    } catch {
+                        
+                        self.appDelegate.displayMessage(Title: "Error", Message: "Cannot parse response")
+                        print("Error deserializing JSON: \(error)")
+                        self.companyTextField.text = ""
+                        self.selectedCompany = nil
+                    
+                    }
+                
+                }
+                
+                self.activityIndicator.stopAnimating()
+                self.view.isUserInteractionEnabled = true
+            
+            }
+        
+        }
+    
+    }
+    
     @IBAction func chooseServer(_ sender: Any) {
+        
         performSegue(withIdentifier: "ChooseServer", sender: "server")
+    
+    }
+    
+    @IBAction func editServer(_ sender: Any) {
+        
+        self.appDelegate.displayMessage(Title: "Server Configuration", Message: "You are editing the server address.\nAre you sure?", canDecline: true) { () -> Void in
+            
+            self.toggleLogin(false, withAnimation: true)
+            self.selectedCompany = nil
+            self.companyTextField.text = ""
+            self.serverTextField.text = ""
+            Server.unsetCurrentServer(managedObjectContext: self.context)
+        
+        }
+        
     }
     
     @IBAction func chooseCompany(_ sender: Any) {
         
-        if (!self.isEditingServer) {
-            activityIndicator.startAnimating()
+        activityIndicator.startAnimating()
+        
+        self.view.isUserInteractionEnabled = false
+        
+        ServerConnection.getCompaniesRequest(server: selectedServerUrl){ (serverResponse) -> Void in
             
-            self.view.isUserInteractionEnabled = false
+            if(serverResponse.error != nil) {
+                
+                self.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server")
+            }
             
-            ServerConnection.getCompaniesRequest(server: selectedServerUrl){ (serverResponse) -> Void in
+            do{
                 
-                if(serverResponse.error != nil){
+                if serverResponse.data != nil
+                {
+                    let json = try JSONDecoder().decode([Company].self, from: serverResponse.data!)
                     
-                    let errorMessage = "Connection error to the server"
-                    let title = "Error"
+                    self.companyChooseDictionary.removeAllObjects()
                     
-                    
-                    self.showSimpleErrorAlert(title, message: errorMessage)
-                }
-                
-                do{
-                    
-                    if serverResponse.data != nil
-                    {
-                        let json = try JSONDecoder().decode([Company].self, from: serverResponse.data!)
-                        
-                        self.companyChooseDictionary.removeAllObjects()
-                        
-                        for company in json {
-                            self.companyChooseDictionary.addEntries(from: [company.name : ["id" : String(company.id), "inactivityTimeoutSeconds" : String(company.inactivityTimeoutSeconds)]])
-                        }
-                        
-                        self.activityIndicator.stopAnimating()
-                        
-                        self.view.isUserInteractionEnabled = true
-                        
-                        self.performSegue(withIdentifier: "ChooseServer", sender: "company")
-                        
+                    for company in json {
+                        self.companyChooseDictionary.addEntries(from: [company.name : ["id" : String(company.id), "inactivityTimeoutSeconds" : String(company.inactivityTimeoutSeconds)]])
                     }
                     
-                } catch {
-                    print("Error deserializing JSON: \(error)")
+                    self.activityIndicator.stopAnimating()
+                    
+                    self.view.isUserInteractionEnabled = true
+                    
+                    self.performSegue(withIdentifier: "ChooseServer", sender: "company")
+                    
                 }
                 
-                self.activityIndicator.stopAnimating()
-                
-                self.view.isUserInteractionEnabled = true
-                
+            } catch {
+                self.appDelegate.displayMessage(Title: "Error", Message: "Cannot parse response")
+                print("Error deserializing JSON: \(error)")
             }
-        } else {
-            self.serverTextField.endEditing(true);
+            
+            self.activityIndicator.stopAnimating()
+            
+            self.view.isUserInteractionEnabled = true
+            
         }
     }
     
@@ -137,15 +215,18 @@ class LoginViewController: UIViewController, UITextFieldDelegate
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        
         super.viewWillAppear(animated)
-        let showServerHistory = Server.any(managedObjectContext: self.context)
-        self.ChooseServerButton.isHidden = !showServerHistory
-        self.serverTextField.text = showServerHistory ? ServerConnection.baseFrontEndUrl : ""
+        let showServer = Server.isSetServer(managedObjectContext: self.context) || _typedServerFrontEndUrl != nil
+        if(showServer) {
+            self.serverTextField.text = selectedServerFrontEndUrl
+        }
+        self.toggleLogin(showServer, withAnimation: false)
+        
     }
     
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        
         
         textField.resignFirstResponder()
         
@@ -156,12 +237,9 @@ class LoginViewController: UIViewController, UITextFieldDelegate
     
     @objc func keyboardWillShow(_ notification: Notification) {
         
-        
         if view.frame.origin.y == 0{
-            self.view.frame.origin.y -= 190
+            self.view.frame.origin.y -= 150
         }
-        
-        
         
     }
     
@@ -169,7 +247,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate
     @objc func keyboardWillHide(_ notification: Notification) {
         
         if view.frame.origin.y != 0 {
-            self.view.frame.origin.y += 190
+            self.view.frame.origin.y += 150
         }
         
     }
@@ -178,55 +256,37 @@ class LoginViewController: UIViewController, UITextFieldDelegate
         
         if(companyTextField.text! != "" && userCodeTextField.text! != "" && passwordTextField.text! != "") {
             
-            if(serverTextField.text!.hasPrefix("https"))
+            if(serverTextField.text!.hasPrefix("https")) {
                 
-            {
                 performLogin()
-            }
+            
+            } else {
                 
-                
-            else
-                
-            {
-                
-                let alert = UIAlertController(title: "Warning", message: "You are connecting to an insecure server, are you really sure?", preferredStyle: .alert)
-                
-                
-                
-                alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
-                
-                alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (action) -> Void in
-                    
+                self.appDelegate.displayMessage(Title: "Warning", Message: "You are connecting to an insecure server, are you really sure?", canDecline: true) { () -> Void in
                     self.performLogin()
-                    
-                }))
-                
-                
-                self.present(alert, animated: true, completion: nil)
-                
+                }
+            
             }
         } else if(companyTextField.text! == "" ) {
             
-            self.showSimpleErrorAlert("Error", message: "Select a company")
+            self.appDelegate.displayMessage(Title: "Error", Message: "Select a company")
             
         } else if(userCodeTextField.text! == "") {
             
-            self.showSimpleErrorAlert("Error", message: "Select a user code")
+            self.appDelegate.displayMessage(Title: "Error", Message: "Select a user code")
             
         } else if(passwordTextField.text! == "") {
             
-            self.showSimpleErrorAlert("Error", message: "Select a password")
+            self.appDelegate.displayMessage(Title: "Error", Message: "Select a password")
             
         }
-        
         
     }
     
     
     
-    func performLogin()
+    func performLogin() {
         
-    {
         activityIndicator.startAnimating()
         
         self.view.isUserInteractionEnabled = false
@@ -238,35 +298,28 @@ class LoginViewController: UIViewController, UITextFieldDelegate
                 var errorMessage = "Connection error to the server"
                 var title = "Error"
                 
-                if(serverResponse.error!.code == -1009){
+                if(serverResponse.error!.code == -1009) {
                     errorMessage = "Connection error to the server"
-                }
+                } else if(NSString(string:UserDefaults.standard.string(forKey: "invalidCertificate")!).boolValue == true) {
                     
-                else if(NSString(string:UserDefaults.standard.string(forKey: "invalidCertificate")!).boolValue == true)
-                    
-                {
                     title = "Security Error"
                     errorMessage = "Invalid SSL Certificate"
+                
                 }
                 
-                self.showSimpleErrorAlert(title, message: errorMessage)
+                self.appDelegate.displayMessage(Title: title, Message: errorMessage)
             }
             
             do{
                 
-                if serverResponse.data != nil
-                {
+                if serverResponse.data != nil {
+                    
                     let json = try JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
                     
-                    
-                    if(json["error"] == nil)
+                    if(json["error"] == nil) {
                         
-                    {
-                        
-                        Server.addServerUrl(urlFrontEnd: self.selectedServerFrontEndUrl, urlApi: self.selectedServerUrl, managedObjectContext: self.context)
-                        Server.setNewServer(urlFrontEnd: self.selectedServerFrontEndUrl, urlApi: self.selectedServerUrl, managedObjectContext: self.context)
-                        
-                        self.ChooseServerButton.isHidden = false
+                        Server.addServerUrl(urlFrontEnd: self.selectedServerFrontEndUrl, managedObjectContext: self.context)
+                        Server.setNewServer(urlFrontEnd: self.selectedServerFrontEndUrl, apiUrl: self.selectedServerUrl, managedObjectContext: self.context)
                         
                         self.setUserInformation(userInfo: json)
                         
@@ -274,18 +327,18 @@ class LoginViewController: UIViewController, UITextFieldDelegate
                         
                         self.getClient()
                         
-                    }
+                    } else {
                         
-                    else
-                        
-                    {
                         let okMex = (json["error"] == nil)
                         let messageMex = !okMex ? json["error_description"] as! String : ""
-                        self.showSimpleErrorAlert("Error", message: messageMex)
+                        self.appDelegate.displayMessage(Title: "Error", Message: messageMex)
+                    
                     }
                     
                 }
+            
             } catch {
+                self.appDelegate.displayMessage(Title: "Error", Message: "Cannot parse response")
                 print("Error deserializing JSON: \(error)")
             }
             
@@ -296,64 +349,45 @@ class LoginViewController: UIViewController, UITextFieldDelegate
         
     }
     
-    
-    func showSimpleErrorAlert(_ title : String, message: String)
-    {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+    func getClient() {
         
-        alert.addAction(UIAlertAction(title: "Ok", style: .destructive, handler:nil))
-        
-        self.present(alert, animated: false, completion: nil)
-    }
-    
-    
-    func getClient()
-    {
         ServerConnection.sendGetClientRequest(["data":["code":UserDefaults.standard.value(forKey: "userCode") as! String, "description":""]]){ (serverResponse) -> Void in
-            if(serverResponse.data != nil && serverResponse.error == nil)
-            {
+            
+            if(serverResponse.data != nil && serverResponse.error == nil) {
+                
                 self.performSegue(withIdentifier: "loggedSegue", sender: self)
+            
+            } else {
+               
+                self.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server")
+            
             }
-            else
-            {
-                self.showSimpleErrorAlert("Error", message: "Connection error to the server")
-            }
+            
         }
+        
     }
     
     func setUserInformation(userInfo json:[String:Any]) {
         
         UserDefaults.standard.setValue(json["code"], forKey: "userCode")
-        
         UserDefaults.standard.setValue(true, forKey: "logged")
-        
         UserDefaults.standard.setValue(json["access_token"], forKey: "access_token")
-        
         UserDefaults.standard.setValue(json["refresh_token"], forKey: "refresh_token")
-        
         UserDefaults.standard.setValue(json["token_type"], forKey: "token_type")
-        
         UserDefaults.standard.setValue(json["roles"], forKey: "roles")
-        
         UserDefaults.standard.setValue((json["expires_in"] as! Int).description, forKey: "expires_in")
-        
         UserDefaults.standard.setValue(json["company"], forKey: "company")
-        
         UserDefaults.standard.setValue(json["name"], forKey: "name")
-        
         UserDefaults.standard.setValue(json["timeZone"], forKey: "timeZone")
-        
         UserDefaults.standard.setValue(self.companyTextField.text!, forKey: "companyName")
-        
         UserDefaults.standard.setValue(self.selectedCompany!.inactivityTimeoutSeconds, forKey: "inactivityTimeoutSeconds")
-        
         UserDefaults.standard.setValue(Date() + (json["expires_in"] as! TimeInterval), forKey: "token_expires")
-        
         UserDefaults.standard.setValue(json["decimalSeparator"], forKey: "decimalSeparator")
         
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
         if let controller = segue.destination as? ChooseServerAndCompanyViewController {
             
             if(sender as! String == "server") {
@@ -374,48 +408,65 @@ class LoginViewController: UIViewController, UITextFieldDelegate
             controller.chooseServer = (sender as! String) == "server" ? true : false
                 
         } else {
+           
             view.endEditing(true)
             passwordTextField.text = ""
             userCodeTextField.text = ""
+            _typedServerFrontEndUrl = nil
+            _typedServerUrl = nil
+        
         }
+        
     }
     
     
     func textFieldDidEndEditing(_ textField: UITextField) {
-        if(textField.isEqual(serverTextField)){
+        
+        if(textField.isEqual(serverTextField)) {
             isEditingServer = false
-            if (!textField.text!.isEmpty) {
-                activityIndicator.startAnimating()
-                self.view.isUserInteractionEnabled = false
-                
-                ServerConnection.getApiServerRequest(server: serverTextField.text!) { (serverResponse) -> Void in
-                    if (serverResponse.error != nil) {
-                        self.showSimpleErrorAlert("Error", message: "Connection error to the server")
-                    } else if (serverResponse.data != nil) {
-                        do {
-                            let json = try JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
-                            self._selectedServerFrontEndUrl = self.serverTextField.text!
-                            self._selectedServerUrl = (json["API"] as! String)
-                            
-                        } catch {
-                            self.showSimpleErrorAlert("Error", message: "Cannot parse response")
-                           print("Error deserializing JSON: \(error)")
-                        self.companyTextField.text = ""
-                        }
-                    }
-                    
-                    
-                    self.activityIndicator.stopAnimating()
-                    self.view.isUserInteractionEnabled = true
-                }
-            }
         }
+    
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
+        
         if(textField.isEqual(serverTextField)){
             isEditingServer = true
         }
+        
+    }
+    
+    func toggleLogin(_ value:Bool, withAnimation animation:Bool) {
+        
+        if(animation) {
+            
+            UIView.animate(withDuration: 0.3){
+                
+                self.passwordView.isHidden = !value
+                self.userCodeView.isHidden = !value
+                self.companyView.isHidden = !value
+            
+            }
+            
+            self.loginButton.isHidden = !value
+            self.verifyServerButton.isHidden = value
+            self.serverTextField.isEnabled = !value
+            self.ChooseServerButton.isHidden = Server.any(managedObjectContext: self.context) ? value : true
+            self.EditServerButton.isHidden = !value
+        
+        } else {
+            
+            self.companyView.isHidden = !value
+            self.userCodeView.isHidden = !value
+            self.passwordView.isHidden = !value
+            self.loginButton.isHidden = !value
+            self.verifyServerButton.isHidden = value
+            self.serverTextField.isEnabled = !value
+            self.ChooseServerButton.isHidden = Server.any(managedObjectContext: self.context) ? value : true
+            self.EditServerButton.isHidden = !value
+            
+        }
+        
     }
     
     @objc func dismissKeyboard() {

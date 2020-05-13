@@ -2,9 +2,8 @@
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19E266" minimumToolsVersion="Xcode 7.0" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Server" representedClassName=".Server" syncable="YES">
         <attribute name="serverFrontEndUrl" attributeType="String" syncable="YES"/>
-        <attribute name="serverUrl" attributeType="String" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Server" positionX="-63" positionY="-18" width="128" height="73"/>
+        <element name="Server" positionX="-63" positionY="-18" width="128" height="58"/>
     </elements>
 </model>

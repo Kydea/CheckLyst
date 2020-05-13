@@ -52,9 +52,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UITabBar.appearance().barTintColor = UIColor(red: 0.0/255, green: 150.0/255, blue: 136.0/255, alpha: 1.0)
         
         UITabBar.appearance().tintColor = UIColor.white
-        
-        Server.setupWithManagedObjectContext(managedObjectContext)
-        
 
         UITabBarItem.appearance().setTitleTextAttributes([NSAttributedStringKey.font:UIFont (name: "Flaticon", size: 15)!,NSAttributedStringKey.foregroundColor: UIColor.white], for:.selected)
         
@@ -62,6 +59,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         
         URLProtocol.registerClass(CustomUrlprotocol.self)
+        
+        UpdateManager.shared.startUpdates()
         
         return true
     }

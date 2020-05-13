@@ -14,6 +14,7 @@ class QRCodeScannerViewController: UIViewController, QRScannerViewDelegate {
 
     var callback : ((_ result : String) -> ())?
     var senderController : InstanceViewController?
+    let appDelegate = UIApplication.shared as! MyApplication
     
     @IBOutlet var scannerView: QRScannerView!
     
@@ -71,10 +72,7 @@ class QRCodeScannerViewController: UIViewController, QRScannerViewDelegate {
     }
     
     func qrScanningDidFail() {
-        //print("camera failed")
-        let alert = UIAlertController(title: "Error", message: "Scanning Failed. Please try again", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-        self.present(alert, animated: false, completion: nil)
+        self.appDelegate.displayMessage(Title: "Error", Message: "Scanning Failed. Please try again")
     }
     
     func qrScanningSucceededWithCode(_ str: String?) {

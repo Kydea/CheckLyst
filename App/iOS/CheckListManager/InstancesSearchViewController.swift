@@ -11,8 +11,6 @@ import UIKit
 
 class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITextFieldDelegate, UITabBarDelegate, UITableViewDataSource, UITableViewDelegate {
     
-    
-
     @IBOutlet var tableView: UITableView!
     @IBOutlet var activityIndicator: UIActivityIndicatorView!
     @IBOutlet var scrollView: UIScrollView!
@@ -34,16 +32,16 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
     [0:"department", 1:"prototypeType", 2:"prototype", 3:"version", 4:"description", 5:"tagCode", 6:"tagValue", 7:"state"]
     
     var selectedItemsDictionary = [Int:Option] ()
-    
     var indexArrayDictionary = [Int:[Option?]] ()
-    
     var statesArray: [String] = []
     
     var numberOfPages = 0
+    var itemsPerPage = 0
+    var totalItems = 0
     
+    let appDelegate = UIApplication.shared as! MyApplication
     
-    override func viewDidLoad()
-    {
+    override func viewDidLoad() {
         super.viewDidLoad()
         
         let infoBarButtonItem = SharedControllersProperty.instance.setInfoButton()
@@ -63,8 +61,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
     }
     
     
-    override func viewDidAppear(_ animated: Bool)
-    {
+    override func viewDidAppear(_ animated: Bool) {
         fromSelectionToSearchDictionary()
         fillSearchFields()
     }
@@ -72,8 +69,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
     
     
     
-    func fromSelectionToSearchDictionary()
-    {
+    func fromSelectionToSearchDictionary() {
         for field in searchDictionary.keys {
             let index = fieldIndexDictionary[field]!
             searchDictionary[field] = (field == "version") ? selectedItemsDictionary[index]!.value.components(separatedBy: " -")[0] : searchDictionary[field]
@@ -93,8 +89,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
     
     
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
-    {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "searchCell")
         cell!.preservesSuperviewLayoutMargins = false
@@ -120,78 +115,85 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
         var blocked: Bool = indexArrayDictionary[indexPath.row] != nil && indexArrayDictionary[indexPath.row]!.count <= 1 ? true : false
 
         
-        if(selectedItemsDictionary[fieldIndexDictionary["version"]!]?.text == "" && indexPath.row == fieldIndexDictionary["tagCode"]!)
-        {
+        if (selectedItemsDictionary[fieldIndexDictionary["version"]!]?.text == "" && indexPath.row == fieldIndexDictionary["tagCode"]!) {
             blocked = true
             selectedItemsDictionary[fieldIndexDictionary["tagCode"]!]?.text = ""
             fieldValue?.text = ""
         }
         
-        if(indexPath.row == fieldIndexDictionary["description"]) {
+        if (indexPath.row == fieldIndexDictionary["description"]) {
             if(selectedItemsDictionary[fieldIndexDictionary["description"]!]?.text == "") {
                 selectedItemsDictionary[fieldIndexDictionary["description"]!]?.text = "Insert"
             }
         }
   
-        if(indexPath.row == fieldIndexDictionary["tagValue"])
-        {
-            if((selectedItemsDictionary[fieldIndexDictionary["tagCode"]!]?.text == "All" || selectedItemsDictionary[fieldIndexDictionary["tagCode"]!]?.text == ""))
-            {
+        if (indexPath.row == fieldIndexDictionary["tagValue"]) {
+            if((selectedItemsDictionary[fieldIndexDictionary["tagCode"]!]?.text == "All" || selectedItemsDictionary[fieldIndexDictionary["tagCode"]!]?.text == "")) {
+                
                 selectedItemsDictionary[fieldIndexDictionary["tagValue"]!]?.text = ""
                 fieldValue?.text = ""
                 blocked = true
-            }
+            
+            } else if(selectedItemsDictionary[fieldIndexDictionary["tagValue"]!]?.text == "") {
                 
-            else if(selectedItemsDictionary[fieldIndexDictionary["tagValue"]!]?.text == "")
-            {
                 blocked = false
                 selectedItemsDictionary[fieldIndexDictionary["tagValue"]!]?.text = "Insert"
                 fieldValue?.text = "Insert"
+            
             }
         }
         
-        if(blocked){
+        if (blocked) {
+            
             cell?.isUserInteractionEnabled = false
             fieldValue!.isEnabled = false;
             accessoryButton.setTitle("\u{f100}", for: UIControlState())
+        
         }
         
-        if(!isList){
+        if (!isList) {
+            
             accessoryButton.setTitle("", for: UIControlState())
+        
         }
+        
         return cell!
     }
     
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        
         textField.resignFirstResponder()
         return true
+    
     }
     
 
     
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+      
         performSegue(withIdentifier: "editFieldSegue", sender: indexPath)
+    
     }
     
     
-    func fillSearchFields()
-    {
+    func fillSearchFields() {
+        
         self.startActivityIndicator()
         
         ServerConnection.bindListWithParams(["data" : searchDictionary]) { (serverResponse) -> Void in
             
-            do
-            {
-                if(serverResponse.data != nil)
-                {
+            do {
+                
+                if (serverResponse.data != nil) {
                     
                     let searchFields = try JSONDecoder().decode(IstanceBindResponseJSON.self, from: serverResponse.data!)
                     
-                    if(searchFields.valid) {
+                    if (searchFields.valid) {
 
                         if (searchFields.fields.department != nil) {
+                
                             guard let departments = searchFields.fields.department?.options else {
                                 print("No departments")
                                 self.stopActivityIndicator()
@@ -204,12 +206,15 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                             self.indexArrayDictionary[index] = departments
                             
                             if let value = searchFields.fields.department?.value {
+                            
                                 print("value from search \(value)")
-                                self.selectedItemsDictionary[index] = self.findOPtionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
+                                self.selectedItemsDictionary[index] = self.findOptionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
+                            
                             }
                         }
                         
-                        if(searchFields.fields.prototypeType != nil) {
+                        if (searchFields.fields.prototypeType != nil) {
+                           
                             guard let prototypeTypes = searchFields.fields.prototypeType?.options else {
                                 print("No prototypeTypes")
                                 self.stopActivityIndicator()
@@ -220,13 +225,17 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                             let field = self.indexFieldDictionary[index]!
                             
                             self.indexArrayDictionary[index] = prototypeTypes
+                            
                             if let value = searchFields.fields.prototypeType?.value {
+                            
                                 print("value from search \(value)")
-                                self.selectedItemsDictionary[index] = self.findOPtionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
+                                self.selectedItemsDictionary[index] = self.findOptionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
+                            
                             }
                         }
                         
-                        if(searchFields.fields.prototype != nil) {
+                        if (searchFields.fields.prototype != nil) {
+                            
                             guard let prototype = searchFields.fields.prototype?.options else {
                                 print("No prototype")
                                 self.stopActivityIndicator()
@@ -240,12 +249,14 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                             self.indexArrayDictionary[self.fieldIndexDictionary["prototype"]!]?.insert(Option(text: "All", value: ""), at: 0)
                             
                             if let value = searchFields.fields.prototype?.value {
+                            
                                 print("value from search \(value)")
-                                self.selectedItemsDictionary[index] = self.findOPtionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
+                                self.selectedItemsDictionary[index] = self.findOptionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
+                           
                             }
                         }
                         
-                        if(searchFields.fields.version != nil) {
+                        if (searchFields.fields.version != nil) {
                         
                             guard let versions = searchFields.fields.version?.options else {
                                 print("No versions")
@@ -260,12 +271,14 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                             self.indexArrayDictionary[self.fieldIndexDictionary["version"]!]?.insert(Option(text: "All", value: ""), at: 0)
                             
                             if let value = searchFields.fields.version?.value {
+                               
                                 print("value from search \(value)")
-                                self.selectedItemsDictionary[index] = self.findOPtionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
+                                self.selectedItemsDictionary[index] = self.findOptionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
+                            
                             }
                         }
                         
-                        if(searchFields.fields.tagCode != nil) {
+                        if (searchFields.fields.tagCode != nil) {
                         
                             guard let tags = searchFields.fields.tagCode?.options else {
                                 print("No tags")
@@ -280,12 +293,14 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                             self.indexArrayDictionary[self.fieldIndexDictionary["tagCode"]!]?.insert(Option(text: "All", value: ""), at: 0)
                             
                             if let value = searchFields.fields.tagCode?.value {
+                              
                                 //print("value from search \(value)")
-                                self.selectedItemsDictionary[index] = self.findOPtionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
+                                self.selectedItemsDictionary[index] = self.findOptionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
+                            
                             }
                         }
                         
-                        if(searchFields.fields.state != nil) {
+                        if (searchFields.fields.state != nil) {
                             
                             guard let states = searchFields.fields.state?.options else {
                                 print("No state")
@@ -301,31 +316,31 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                             
                             if let value = searchFields.fields.state?.value {
                                 print("value from search \(value)")
-                                self.selectedItemsDictionary[index] = self.findOPtionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
+                                self.selectedItemsDictionary[index] = self.findOptionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
                             }
                         }
                     
                         self.setLabelTitles()
+                    
                     } else {
+                       
                         var error = String()
                         let validationMessages = searchFields.validationMessages
                         if (validationMessages.count > 0) {
                             for value in validationMessages {
                                 error.append(value! + "\n")
                             }
-                            self.displayMessage("Error", messageText: error, goBack: false)
+                            self.appDelegate.displayMessage(Title: "Error", Message: error)
                             self.tableView.isUserInteractionEnabled = false
                             self.searchInstanceButton.isUserInteractionEnabled = false
                         }
+                    
                     }
+                } else {
+                    self.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server") { () -> Void in self.tabBarController?.selectedIndex = 0 }
                 }
+            } catch {
                 
-                else
-                {
-                    self.displayMessage("Error", messageText: "Connection error to the server", goBack: true)
-                }
-            }
-            catch {
                 print(error)
                 
                 do {
@@ -337,16 +352,14 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                         for value in errorMessages {
                             error.append(value + "\n")
                         }
-                        self.displayMessage("Error", messageText: error, goBack: true)
-                    } else if let error = json["message"] as? String{
-                        self.displayMessage("Error", messageText: error, goBack: true)
+                        self.appDelegate.displayMessage(Title: "Error", Message: error) { () -> Void in self.tabBarController?.selectedIndex = 0 }
+                    } else if let error = json["message"] as? String {
+                        self.appDelegate.displayMessage(Title: "Error", Message: error) { () -> Void in self.tabBarController?.selectedIndex = 0 }
                     } else {
-                        self.displayMessage("Error", messageText: "Unexpected error has occurred", goBack: true)
+                        self.appDelegate.displayMessage(Title: "Error", Message: "Unexpected error has occurred") { () -> Void in self.tabBarController?.selectedIndex = 0 }
                     }
     
-                }
-                    
-                catch {
+                } catch {
                     
                     print(error)
                     
@@ -357,8 +370,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
         }
     }
     
-    func findOPtionInIndexArrayDictionaryForValue(_ value:String, inField field:String, andIndex index:Int) -> Option?
-    {
+    func findOptionInIndexArrayDictionaryForValue(_ value:String, inField field:String, andIndex index:Int) -> Option? {
         for element in indexArrayDictionary[index]! {
             if(element!.value == value) {
                 return element
@@ -377,7 +389,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
             
             let field = indexFieldDictionary[index]!
             
-            if let option = findOPtionInIndexArrayDictionaryForValue(self.searchDictionary[field]!!, inField: field, andIndex: index)
+            if let option = findOptionInIndexArrayDictionaryForValue(self.searchDictionary[field]!!, inField: field, andIndex: index)
             {
                 if(field == "department") { selectedDepartemnt = option.value }
                 if(field == "prototypeType") { selectedPrototypeType = option.value }
@@ -400,53 +412,33 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
         self.tableView.reloadData()
     }
     
-
-    func displayMessage(_ messageTitle:String, messageText:String, goBack back:Bool)
-        
-    {
-        let alert = UIAlertController(title: messageTitle, message: messageText, preferredStyle: .alert)
-        if(back) {
-            alert.addAction(UIAlertAction(title: "Ok", style: .destructive) {
-                UIAlertAction in
-                self.tabBarController?.selectedIndex = 0
-            })
-        } else {
-            alert.addAction(UIAlertAction(title: "Ok", style: .destructive, handler: nil))
-        }
-        self.present(alert, animated: false, completion: nil)
-    }
-    
     func checkRoles(role:String) -> Bool {
         let roles = (UserDefaults.standard.value(forKey: "roles") as! String)
         return roles.contains(role)
     }
     
-
-    
-    @IBAction func searchInstances(_ sender: AnyObject)
-        
-    {
+    @IBAction func searchInstances(_ sender: AnyObject) {
         
         self.startActivityIndicator()
         /*Needed to avoid the first call with all parameters set to "" (this is experienced when the user start search without changing filters at the first time)*/
         if(searchDictionary["department"]!! == "" || searchDictionary["prototypeType"]!! == "") {
+        
             self.fromSelectionToSearchDictionary()
+        
         }
+        
         self.listInstances = []
-        self.getResearchResultForPage(currentPage: 1)
+        self.getResearchResultForFirstPage()
         
     }
     
-    func getResearchResultForPage(currentPage:Int) {
+    func getResearchResultForFirstPage() {
         
-        ServerConnection.getListInstancesWithParams(["CurrentPage" : String(currentPage), "data" : searchDictionary]) { (serverResponse) -> Void in
+        ServerConnection.getListInstancesWithParams(["CurrentPage" : "1", "data" : searchDictionary]) { (serverResponse) -> Void in
             
-            do
-            {
+            do {
                 
-                if(serverResponse.data != nil)
-                    
-                {
+                if(serverResponse.data != nil) {
                     
                     let listIstancesJSON = try JSONDecoder().decode(ListIstancesJSON.self, from: serverResponse.data!)
 
@@ -454,55 +446,57 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                     
                     self.numberOfPages = listIstancesJSON.pagesCount
                     
-                }
+                    self.itemsPerPage = listIstancesJSON.itemsPerPage
                     
-                else
-                {
-                    self.displayMessage("Error", messageText: "Connection error to the server", goBack: true)
+                    self.totalItems = listIstancesJSON.count
+                    
                     self.stopActivityIndicator()
                     
-                    return;
-                }
-            }
+                } else {
+                    
+                    self.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server") { () -> Void in self.tabBarController?.selectedIndex = 0 }
+                    self.stopActivityIndicator()
                 
-            catch {
+                }
+            } catch {
                 
                 print(error)
                 
                 do {
+                    
                     var error = String()
                     let json = try JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
+                    
                     if let errorMessages = json["messages"] as? [String] {
+                    
                         for value in errorMessages {
                             error.append(value + "\n")
                         }
-                        self.displayMessage("Error", messageText: error, goBack: true)
+                        
+                        self.appDelegate.displayMessage(Title: "Error", Message: error) { () -> Void in self.tabBarController?.selectedIndex = 0 }
+                    
                     } else {
-                        self.displayMessage("Error", messageText: "Unexpected error has occurred", goBack: true)
+                        
+                        self.appDelegate.displayMessage(Title: "Error", Message: "Unexpected error has occurred") { () -> Void in self.tabBarController?.selectedIndex = 0 }
+                    
                     }
                     
-                }
-                catch {
+                } catch {
                     
                     print(error)
                     
                 }
             }
             
-            if(self.listInstances.count == 0)
-                
-            {
+            if (self.listInstances.count == 0) {
+            
                 self.stopActivityIndicator()
-                self.displayMessage("Error", messageText: "No records found", goBack: false)
-            }
-                
-                
-            else if(currentPage == self.numberOfPages)
-            {
-                self.stopActivityIndicator()
-                self.performSegue(withIdentifier: "instanceDetailsSegue", sender: self)
+                self.appDelegate.displayMessage(Title: "Error", Message: "No records found")
+            
             } else {
-                self.getResearchResultForPage(currentPage: currentPage + 1)
+                
+                self.performSegue(withIdentifier: "instanceDetailsSegue", sender: self)
+            
             }
         }
     }
@@ -510,8 +504,8 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
-        if let controller = segue.destination as? EditFieldViewController
-        {
+        if let controller = segue.destination as? EditFieldViewController {
+            
             let indexPath = sender as! IndexPath
             controller.fieldsArray = indexArrayDictionary[indexPath.row] as? [Option]
             controller.searchViewController = self
@@ -519,15 +513,19 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
             controller.isListField = (indexTextDictionary[indexPath.row] == "Description" || indexTextDictionary[indexPath.row] == "Tags Value") ? false : true
             controller.fieldNameString = indexTextDictionary[indexPath.row]
             controller.indexFieldDictionary = indexFieldDictionary
-        }
+        
+        } else if let controller = segue.destination as? ListInstancesTableViewController {
             
-        else if let controller = segue.destination as? ListInstancesTableViewController {
             controller.instancesList = self.listInstances as! [Instance]
             controller.selectedItemsDictionary = selectedItemsDictionary;
-        }
+            controller.numberOfPages = self.numberOfPages
+            controller.searchDictionary = self.searchDictionary
+            controller.itemsPerPage = self.itemsPerPage
+            controller.totalItems = self.totalItems
         
-        else if let controller = segue.destination as? InstanceViewController {
-            if((sender as AnyObject).isKind(of: MyApplication.self)) {
+        } else if let controller = segue.destination as? InstanceViewController {
+            if ((sender as AnyObject).isKind(of: MyApplication.self)) {
+                
                 let app = sender as! MyApplication
                 if let parameters = app.requestedUrlInfo {
                     
@@ -536,43 +534,56 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                     }
                     
                     if (parameters.keys.contains("version") && parameters.keys.contains("prototype")) {
+                        
                         controller.newInstance = true
                         controller.newInstancePrototype = parameters["prototype"]!
                         controller.newInstanceVersion = parameters["version"]!
+                    
                     } else if (parameters.keys.contains("code")) {
+                       
                         controller.instanceCodeFromRequest = parameters["code"]!
+                    
                     }
                     
                     controller.selectedItemsDictionary = selectedItemsDictionary;
                 }
             } else {
+                
                 controller.newInstance = true
                 controller.newInstancePrototype = searchDictionary["prototype"]!
                 controller.newInstanceVersion = searchDictionary["version"]!
                 controller.selectedItemsDictionary = selectedItemsDictionary;
+            
             }
         }
         
     }
     
     @IBAction func unwindToSearchInstances(sender: UIStoryboardSegue) {
+        
         if let sourceViewController = sender.source as? InstanceViewController {
+            
             selectedItemsDictionary = sourceViewController.selectedItemsDictionary
+        
         }
+        
     }
     
-    func startActivityIndicator(){
+    func startActivityIndicator() {
+        
         activityIndicator.startAnimating()
         activityIndicator.layer.zPosition = 1
         scrollView.isUserInteractionEnabled = false
+    
     }
     
     
-    func stopActivityIndicator()
-    {
+    func stopActivityIndicator() {
+        
         self.activityIndicator.stopAnimating()
         self.activityIndicator.layer.zPosition = 0
         self.scrollView.isUserInteractionEnabled = true
+    
     }
     
 }

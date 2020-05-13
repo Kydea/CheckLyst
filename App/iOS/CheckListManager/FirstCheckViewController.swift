@@ -12,8 +12,7 @@ import UIKit
 class FirstCheckViewController: UIViewController {
     
     
-    override func viewDidLoad() 
-    {
+    override func viewDidLoad() {
         super.viewDidLoad()
         
         self.navigationItem.leftBarButtonItem = SharedControllersProperty.setLogo(self.navigationItem.leftBarButtonItem);

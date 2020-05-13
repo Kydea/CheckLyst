@@ -17,7 +17,7 @@ class UserManualViewController: UIViewController, WKNavigationDelegate {
     
     @IBOutlet var activityIndicator: UIActivityIndicatorView!
     
-    let app = UIApplication.shared as! MyApplication
+    let appDelegate = UIApplication.shared as! MyApplication
     
     var helpLoaded : Bool = false
     
@@ -87,21 +87,16 @@ class UserManualViewController: UIViewController, WKNavigationDelegate {
                 if(value.contains("Security/Login")) {
                     webView.isHidden = true
                     self.helpLoaded = false
-                    self.app.logoutAndGoToLogin()
+                    self.appDelegate.logoutAndGoToLogin()
                 }
             }
         }
     }
     
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-    unlockView()
+        unlockView()
         helpLoaded = false
-        
-        let alert = UIAlertController(title: "Error", message: "Connection error to the server", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action) -> Void in
-        self.tabBarController?.selectedIndex = 0
-        }))
-        self.present(alert, animated: false, completion: nil)
+        self.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server")
     }
     
     func lockView()

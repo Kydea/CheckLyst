@@ -64,8 +64,7 @@ import CoreData
         if(logged)
         {
             let expireDate = UserDefaults.standard.value(forKey: "token_expires") as! Date
-            let date = Date()
-            if(expireDate < Date() && !isWarningPresented) {
+            if(expireDate < Date() && !self.isWarningPresented) {
                 self.displayMessage(Title: "Session Expired", Message: "Your session is expired, you'll be redirected to login section.") {
                     () -> Void in
                     self.logoutAndGoToLogin()
@@ -80,7 +79,7 @@ import CoreData
     
         timeToExpire = expireDate.timeIntervalSinceNow;
         
-        if(timeToExpire <= timeBeforeTokenExpires && !isWarningPresented && !isRefreshing) {
+        if(timeToExpire <= timeBeforeTokenExpires && !self.isWarningPresented && !isRefreshing) {
         
             isRefreshing = true
             
@@ -192,14 +191,15 @@ import CoreData
                     self.displayMessage(Title: "Server Configuration", Message: "You are setting up a new server.\(logged ? "\nYou'll be redirected to login section." : "")\nAre you sure?", canDecline: true) {
                         () -> Void in
                         
-                        Server.addServerUrl(urlFrontEnd: server, urlApi: apiServer, managedObjectContext: managedObjectContext)
-                        Server.setNewServer(urlFrontEnd: server, urlApi: apiServer, managedObjectContext: managedObjectContext)
+                        Server.addServerUrl(urlFrontEnd: server, managedObjectContext: managedObjectContext)
+                        Server.setNewServer(urlFrontEnd: server, apiUrl: apiServer, managedObjectContext: managedObjectContext)
                         
-                        self.logoutAndGoToLogin()
+                        if(logged) {
+                            self.logoutAndGoToLogin()
+                        }
                         
                         if let controller = self.searchPresentedController(controllerClass: UIViewController.self) {
-                                    
-                            
+                                                                
                             for childController in controller.childViewControllers {
                                         if let loginViewController = childController as? LoginViewController {
                                             loginViewController.viewWillAppear(false)
@@ -290,7 +290,7 @@ import CoreData
             
             if topController.isKind(of: UIViewController.self)
             {
-                topController.present(self.displayAlert!, animated: false, completion: nil)
+                topController.present(self.displayAlert!, animated: true, completion: nil)
                 self.isWarningPresented = true
             }
         }
