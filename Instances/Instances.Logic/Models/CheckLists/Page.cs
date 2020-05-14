@@ -19,7 +19,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         {
             var ElementModel = base.GetViewModel();
             ElementModel.Description = Description;
-            ElementModel.Groups = Groups.Where(g => !g.Hidden).Select(g => ((Group)g).GetViewModel());
+            ElementModel.Groups = Groups.Select(g => ((Group)g).GetViewModel());
             ElementModel.Lock = Lock;
             if (Hidden) ElementModel.Hidden = true;
             return ElementModel;
