@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 namespace CheckListManager.Common.Logic.Terminal.FTP
 {
 
-    public class FTPClient
+    public class FTPClient : IFTPClient
     {
-        public async Task ActionAsync(byte[] Bytes, string Path, string FileName, FTPConnectionSettings Settings, Methods Method)
+        public async Task ActionAsync(byte[] Bytes, string Path, string FileName, FTPConnectionSettings Settings, FTPMethods Method)
         {
             string Status = "(unset)";
 
@@ -31,7 +31,7 @@ namespace CheckListManager.Common.Logic.Terminal.FTP
             var Uri = $"ftp://{Settings.Host}:{Settings.Port}/{System.Uri.EscapeDataString(Path + FileName)}.pdf";
             FtpWebRequest FtpWebRequest = (FtpWebRequest)WebRequest.Create(Uri);
             FtpWebRequest.Credentials = new NetworkCredential(Settings.UserName, Settings.Password);
-            FtpWebRequest.Method = Method == Methods.Deletion ? WebRequestMethods.Ftp.DeleteFile : WebRequestMethods.Ftp.UploadFile;
+            FtpWebRequest.Method = Method == FTPMethods.Deletion ? WebRequestMethods.Ftp.DeleteFile : WebRequestMethods.Ftp.UploadFile;
             FtpWebRequest.KeepAlive = false;
             FtpWebRequest.UsePassive = Settings.UsePassive;
             FtpWebRequest.EnableSsl = Settings.EnableSSL;
@@ -39,7 +39,7 @@ namespace CheckListManager.Common.Logic.Terminal.FTP
             //if (???)
             //    ServicePointManager.ServerCertificateValidationCallback = (sender, cert, chain, errors) => true;
 
-            if (Method == Methods.Upload)
+            if (Method == FTPMethods.Upload)
                 using (Stream RequestStream = await FtpWebRequest.GetRequestStreamAsync())
                     await RequestStream.WriteAsync(Bytes, 0, Bytes.Count());
 

@@ -111,6 +111,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\TerminalConfig.cs" />
+    <Compile Include="FTP\FTPClientBuilder.cs" />
+    <Compile Include="FTP\IFTPClient.cs" />
     <Compile Include="FTP\SFTPClient.cs" />
     <Compile Include="FTP\Methods.cs" />
     <Compile Include="FTP\FTPClient.cs" />

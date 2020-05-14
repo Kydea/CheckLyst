@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace CheckListManager.Common.Logic.Terminal.FTP
 {
 
-    public class SFTPClient
+    public class SFTPClient : IFTPClient
     {
         private ConnectionInfo GetConnectionInfo(string Host, int Port, string UserName, string Key)
         {
@@ -22,7 +22,7 @@ namespace CheckListManager.Common.Logic.Terminal.FTP
             }
         }
 
-        public void ActionAsync(byte[] Bytes, string Path, string FileName, FTPConnectionSettings Settings, Methods Method)
+        public Task ActionAsync(byte[] Bytes, string Path, string FileName, FTPConnectionSettings Settings, FTPMethods Method)
         {
             if (string.IsNullOrEmpty(Path))
                 Path = string.Empty;
@@ -40,14 +40,16 @@ namespace CheckListManager.Common.Logic.Terminal.FTP
             using (SftpClient client = new SftpClient(GetConnectionInfo(Settings.Host, Settings.Port, Settings.UserName, null)))
             {
                 client.Connect();
-                if (Method == Methods.Upload)
+                if (Method == FTPMethods.Upload)
                     using (var MemoryStream = new MemoryStream(Bytes))
                         client.UploadFile(MemoryStream, $"{Path}/{FileName}", false);
 
             }
+
+            return Task.CompletedTask;
         }
 
-        public string TestAsync(FTPConnectionSettings Settings)
+        public Task<string> TestAsync(FTPConnectionSettings Settings)
         {
             var Path = Settings.Folder;
             if (string.IsNullOrEmpty(Path))
@@ -61,7 +63,7 @@ namespace CheckListManager.Common.Logic.Terminal.FTP
             using (SftpClient client = new SftpClient(GetConnectionInfo(Settings.Host, Settings.Port, Settings.UserName, null)))
             {
                 client.Connect();
-                return string.Join(Environment.NewLine, client.ListDirectory(Path).Select(f => f.Name));
+                return Task.FromResult(string.Join(Environment.NewLine, client.ListDirectory(Path).Select(f => f.Name)));
             }
         }
     }

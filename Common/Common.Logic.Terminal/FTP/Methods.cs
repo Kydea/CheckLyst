@@ -8,5 +8,5 @@ using System.Threading.Tasks;
 
 namespace CheckListManager.Common.Logic.Terminal.FTP
 {
-    public enum Methods { Upload, Deletion };
+    public enum FTPMethods { Upload, Deletion };
 }
