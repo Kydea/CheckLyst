@@ -79,8 +79,10 @@
                                                                     <constraint firstAttribute="width" constant="30" id="36I-oi-1qu"/>
                                                                     <constraint firstAttribute="height" constant="30" id="n6N-L6-hep"/>
                                                                 </constraints>
+                                                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                                                 <color key="tintColor" red="0.01176470588" green="0.76470588240000004" blue="0.69411764710000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                                <state key="normal" image="rectangle.stack" catalog="system"/>
+                                                                <inset key="imageEdgeInsets" minX="5" minY="5" maxX="5" maxY="5"/>
+                                                                <state key="normal" image="HistoryStack"/>
                                                                 <connections>
                                                                     <action selector="chooseServer:" destination="HEh-jm-TWD" eventType="touchUpInside" id="3UA-pq-NBd"/>
                                                                 </connections>
@@ -92,7 +94,8 @@
                                                                     <constraint firstAttribute="height" constant="30" id="mWZ-X3-Sf2"/>
                                                                 </constraints>
                                                                 <color key="tintColor" red="0.01176470588" green="0.76470588240000004" blue="0.69411764710000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                                <state key="normal" image="pencil" catalog="system"/>
+                                                                <inset key="imageEdgeInsets" minX="5" minY="5" maxX="5" maxY="5"/>
+                                                                <state key="normal" image="Pencil"/>
                                                                 <connections>
                                                                     <action selector="editServer:" destination="HEh-jm-TWD" eventType="touchUpInside" id="Lol-P0-OmH"/>
                                                                 </connections>
@@ -1220,9 +1223,9 @@
                                                 <constraint firstAttribute="bottom" secondItem="G8y-3m-wJQ" secondAttribute="bottom" constant="20" id="DOw-cb-eSd"/>
                                                 <constraint firstAttribute="bottom" secondItem="hrf-12-laU" secondAttribute="bottom" constant="20" id="E04-GC-eHd"/>
                                                 <constraint firstAttribute="bottomMargin" secondItem="hrf-12-laU" secondAttribute="bottom" constant="20" id="KTi-Fz-lsq"/>
-                                                <constraint firstAttribute="trailing" secondItem="G8y-3m-wJQ" secondAttribute="trailing" constant="40" id="Lc5-j5-rJm"/>
                                                 <constraint firstItem="hrf-12-laU" firstAttribute="top" secondItem="wNz-Z7-j9c" secondAttribute="top" constant="20" id="QKu-i2-GGB"/>
                                                 <constraint firstItem="hrf-12-laU" firstAttribute="leading" secondItem="wNz-Z7-j9c" secondAttribute="leading" constant="40" id="STz-ly-1rM"/>
+                                                <constraint firstAttribute="trailing" secondItem="G8y-3m-wJQ" secondAttribute="trailing" constant="40" id="YUt-fO-Isr"/>
                                             </constraints>
                                             <variation key="default">
                                                 <mask key="constraints">
@@ -1486,11 +1489,11 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="bW4-j5-PrF"/>
+        <segue reference="NKc-6S-8bD"/>
         <segue reference="qFk-ul-dl4"/>
     </inferredMetricsTieBreakers>
     <resources>
-        <image name="pencil" catalog="system" width="128" height="113"/>
-        <image name="rectangle.stack" catalog="system" width="128" height="122"/>
+        <image name="HistoryStack" width="30" height="29"/>
+        <image name="Pencil" width="30" height="29"/>
     </resources>
 </document>

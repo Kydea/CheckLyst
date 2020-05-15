@@ -19,28 +19,39 @@ class QRCodeScannerViewController: UIViewController, QRScannerViewDelegate {
     @IBOutlet var scannerView: QRScannerView!
     
     override func viewDidLoad() {
+        
         super.viewDidLoad()
         scannerView.delegate = self
-        // Do any additional setup after loading the view.
+
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        
         self.scannerView.layer.connection?.videoOrientation = QRScannerView.AVOrientationFromDeviceOrientation(UIDevice.current.orientation)
         super.viewWillTransition(to: size, with: coordinator)
+    
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        
         super.viewWillAppear(animated)
         senderController?.customBackButton.isEnabled = false
+    
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        
         super.viewDidAppear(animated)
+        
         AVCaptureDevice.requestAccess(for: .video) { success in
             if success { // if request is granted (success is true)
+        
                 if(!self.scannerView.isRunning) {
-                        self.scannerView.startScanning()
-                    }
+                
+                    self.scannerView.startScanning()
+                
+                }
+            
             } else { // if request is denied (success is false)
                 // Create Alert
                 let alert = UIAlertController(title: "Checklyst", message: "Need camera permission for scanning", preferredStyle: .alert)
@@ -51,47 +62,67 @@ class QRCodeScannerViewController: UIViewController, QRScannerViewDelegate {
                         UIApplication.shared.open(URL(string: UIApplicationOpenSettingsURLString)!)
                     }
                 }))
+            
                 alert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { action in
                         self.dismiss(animated: true, completion: nil)
                 }))
                 // Show the alert with animation
                 DispatchQueue.main.sync {
+                
                     self.present(alert, animated: true)
+                
                 }
+            
             }
+        
         }
         
     }
     
     override func viewWillDisappear(_ animated: Bool) {
+        
         super.viewDidDisappear(animated)
         senderController?.customBackButton.isEnabled = true
+        
         if(scannerView.isRunning) {
+        
             scannerView.stopScanning()
+    
         }
+   
     }
     
     func qrScanningDidFail() {
+        
         self.appDelegate.displayMessage(Title: "Error", Message: "Scanning Failed. Please try again")
+        
     }
     
     func qrScanningSucceededWithCode(_ str: String?) {
-        //print("camera succeded " + (str ?? ""))
+
         if (callback != nil && str != nil) {
+
             callback!(str!)
             self.dismiss(animated: true, completion: nil)
+
         }
+
     }
     
     func qrScanningDidStop() {
-        //print("camera stopped")
+
         self.dismiss(animated: true, completion: nil)
+
     }
 
     @IBAction func closeScanner(_ sender: Any) {
+
         if(scannerView.isRunning) {
+
             scannerView.stopScanning()
             senderController?.requestForScanning = false
+
         }
+
     }
 }

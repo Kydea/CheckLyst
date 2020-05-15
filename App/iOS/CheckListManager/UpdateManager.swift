@@ -51,33 +51,27 @@ class UpdateManager: NSObject {
     // MARK: - Update from 2.0.0 to 2.1.0
     
     fileprivate func updateFrom2_0_0to2_1_0() {
+    
+        let chooseDictionary = [
+            "https://checklyst.jnj.com":"https://checklystapi.jnj.com",
+            "http://10.157.83.244":"http://10.157.83.252",
+            "https://checklystqa.jnj.com":"https://checklystqaapi.jnj.com",
+            "https://checklystdev.jnj.com":"https://checklystdevapi.jnj.com",
+            "http://clm.matematici-aws.com":"http://api.clm.matematici-aws.com"]
+       
         if Server.any(managedObjectContext: managedObjectContext) && !Server.isSetServer(managedObjectContext: managedObjectContext) {
            
             let server = Server.getServers(managedObjectContext)!.first!
-            ServerConnection.getApiServerRequest(server: server.serverFrontEndUrl!) { (serverResponse) -> Void in
+            
+            if let storedApiServer = chooseDictionary[server.serverFrontEndUrl!] {
+                Server.setNewServer(urlFrontEnd: server.serverFrontEndUrl!, apiUrl: storedApiServer, managedObjectContext: self.managedObjectContext)
+            }
+            
+            if let controller = (UIApplication.shared as! MyApplication).searchPresentedController(controllerClass: UIViewController.self) {
                 
-                if (serverResponse.error == nil && serverResponse.data != nil) {
-                    do {
-                        
-                        let json = try JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
-                        
-                        let apiServer = (json["API"] as! String)
-                        
-                        Server.setNewServer(urlFrontEnd: server.serverFrontEndUrl!, apiUrl: apiServer, managedObjectContext: self.managedObjectContext)
-                        
-                        if let controller = (UIApplication.shared as! MyApplication).searchPresentedController(controllerClass: UIViewController.self) {
-                            
-                            for childController in controller.childViewControllers {
-                                if let loginViewController = childController as? LoginViewController {
-                                    loginViewController.viewWillAppear(false)
-                                }
-                            }
-                        }
-                        
-                    } catch {
-                        
-                        print("Error deserializing JSON: \(error)")
-                        
+                for childController in controller.childViewControllers {
+                    if let loginViewController = childController as? LoginViewController {
+                        loginViewController.viewWillAppear(false)
                     }
                 }
             }
