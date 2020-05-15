@@ -11,8 +11,7 @@ import Foundation
 import UIKit
 import CoreData
 
-class ListInstancesTableViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITableViewDataSourcePrefetching
-{
+class ListInstancesTableViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITableViewDataSourcePrefetching {
     
     var instancesList: [Instance?] = []
     var numberOfPages = 0
@@ -31,33 +30,38 @@ class ListInstancesTableViewController: UIViewController, UITableViewDataSource,
     @IBOutlet var tableView: UITableView!
     
     override func viewDidLoad() {
+        
         let infoBarButtonItem = SharedControllersProperty.instance.setInfoButton()
         self.navigationItem.rightBarButtonItem = infoBarButtonItem
         buttonTappedRows = [Bool](repeating: false, count: instancesList.count)
         self.tableView.tableFooterView =  UIView()
+    
     }
 
     override func viewDidAppear(_ animated: Bool) {
+        
         super.viewDidAppear(animated);
         
     }
     
-    
     func numberOfSections(in tableView: UITableView) -> Int {
+        
         return 1
-    }
     
- 
+    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
         return self.totalItems
+    
     }
     
- 
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
-     {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        
         if isLoadingCell(for: indexPath) {
+            
             return 0
+        
         }
         
         let descrLabelWidth = UIScreen.main.bounds.size.width - 140
@@ -71,24 +75,21 @@ class ListInstancesTableViewController: UIViewController, UITableViewDataSource,
         }
         
         
-        if(buttonTappedRows![indexPath.row])
+        if(buttonTappedRows![indexPath.row]) {
             
-        {
             return instance!.description != nil ? 239.0 + descriptionSize :  239.0
-        }
-        else if(instance!.description != nil)
-        {
-        return 95 + descriptionSize
+        
+        } else if(instance!.description != nil) {
+        
+            return 95 + descriptionSize
             
-        }
-        else
-        {
+        } else {
+            
             return 95
+        
         }
+    
     }
-    
-    
-     
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
@@ -142,7 +143,6 @@ class ListInstancesTableViewController: UIViewController, UITableViewDataSource,
             
             let departmentPrototypeTypeLabel = cell?.contentView.viewWithTag(18) as? UILabel
             
-           
             codeLabel?.text = String(instance!.prototypeName) + "." + String(instance!.version) + "." + String(instance!.year) + "." + String(instance!.number)
             
             departmentPrototypeTypeLabel?.text = instance!.departmentName + " / " + instance!.prototypeTypeName
@@ -150,9 +150,13 @@ class ListInstancesTableViewController: UIViewController, UITableViewDataSource,
             idLabel?.text = String(instance!.id)
             
             if (instance!.description?.classFormat != nil) {
+                
                 descrLabel?.attributedText = instance!.description?.classFormat
+           
             } else {
+            
                 descrLabel?.text = ""
+            
             }
             
             stateLabel?.text = instance!.state
@@ -160,31 +164,26 @@ class ListInstancesTableViewController: UIViewController, UITableViewDataSource,
             createdByLabel?.text = instance!.createdBy
 
             
-            if(instance!.createdOn != nil)
+            if(instance!.createdOn != nil) {
                 
-            {
                 createdOnLabel?.text = Formatter.instance.stringFromServerToReadbleString(instance!.createdOn!)
-            }
-
-            else
+            
+            } else {
                 
-            {
                 createdOnLabel?.text = "no date"
 
             }
 
             modifiedbyLabel?.text = instance!.modifiedBy
      
-            if(instance!.modifiedOn != nil)
-                
-            {
+            if(instance!.modifiedOn != nil) {
+             
                 modifiedOnLabel?.text = Formatter.instance.stringFromServerToReadbleString(instance!.modifiedOn!)
-            }
-     
-            else
+           
+            } else {
                 
-            {
                 modifiedOnLabel?.text = "no date"
+            
             }
         
         }
@@ -201,30 +200,39 @@ class ListInstancesTableViewController: UIViewController, UITableViewDataSource,
     }
     
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
-          if indexPaths.contains(where: isLoadingCell) {
+          
+        if indexPaths.contains(where: isLoadingCell) {
+        
             getResearchResultForPage(page: self.lastDownloadedPage + 1)
-          }
+          
+        }
+    
     }
     
-    func isLoadingCell(for indexPath: IndexPath) -> Bool {
+    fileprivate func isLoadingCell(for indexPath: IndexPath) -> Bool {
+    
         return indexPath.row >= instancesList.count
+    
     }
 
-    func visibleIndexPathsToReload(intersecting indexPaths: [IndexPath]) -> [IndexPath] {
+    fileprivate func visibleIndexPathsToReload(intersecting indexPaths: [IndexPath]) -> [IndexPath] {
+       
         let indexPathsForVisibleRows = tableView.indexPathsForVisibleRows ?? []
         let indexPathsIntersection = Set(indexPathsForVisibleRows).intersection(indexPaths)
         return Array(indexPathsIntersection)
+    
     }
     
-    private func calculateIndexPathsToReload(from newIstances: [Instance]) -> [IndexPath] {
+    fileprivate func calculateIndexPathsToReload(from newIstances: [Instance]) -> [IndexPath] {
+       
         let startIndex = instancesList.count - newIstances.count
         let endIndex = startIndex + newIstances.count
         return (startIndex..<endIndex).map { IndexPath(row: $0, section: 0) }
+    
     }
     
     @objc func accessoryButtonTapped(_ sender : AnyObject){
     
-        
         var paths: [IndexPath] = []
         
         let oldIndexPath = IndexPath(row: infoButtonTappedRow, section: 0)
@@ -232,7 +240,9 @@ class ListInstancesTableViewController: UIViewController, UITableViewDataSource,
         paths.append(IndexPath(row: sender.tag, section: 0))
         
         if(oldIndexPath.row != -1) {
+            
             paths.append(oldIndexPath)
+       
         }
         
         if(infoButtonTappedRow != -1 && infoButtonTappedRow != sender.tag) {
@@ -260,7 +270,9 @@ class ListInstancesTableViewController: UIViewController, UITableViewDataSource,
     func getResearchResultForPage(page:Int) {
         
         if (isFetching) {
+            
             return
+       
         }
         
         isFetching = true
@@ -298,15 +310,25 @@ class ListInstancesTableViewController: UIViewController, UITableViewDataSource,
                 print(error)
                 
                 do {
+                   
                     var error = String()
+                    
                     let json = try JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
+                    
                     if let errorMessages = json["messages"] as? [String] {
+                    
                         for value in errorMessages {
+                        
                             error.append(value + "\n")
+                        
                         }
+                        
                         self.appDelegate.displayMessage(Title: "Error", Message: error) { () -> Void in self.tabBarController?.selectedIndex = 0 }
+                    
                     } else {
+                    
                         self.appDelegate.displayMessage(Title: "Error", Message: "Unexpected error has occurred") { () -> Void in self.tabBarController?.selectedIndex = 0 }
+                    
                     }
                     
                     self.isFetching = false

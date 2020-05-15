@@ -83,8 +83,10 @@ class LoginViewController: UIViewController, UITextFieldDelegate
         
         self.navigationItem.leftBarButtonItem = SharedControllersProperty.setLogo(self.navigationItem.leftBarButtonItem);
         
-        NotificationCenter.default.addObserver(self, selector: #selector(LoginViewController.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(LoginViewController.keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(LoginViewController.keyboardWillShow(_:)), name: .UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(LoginViewController.keyboardWillHide(_:)), name: .UIKeyboardWillHide, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(LoginViewController.newServerConfiguration(_:)), name: .NewServerConfiguration, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(LoginViewController.serverHasBeenConfigured(_:)), name: .ServerHasBeenConfigured, object: nil)
         
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(LoginViewController.dismissKeyboard))
         view.addGestureRecognizer(tap)
@@ -151,10 +153,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate
         self.appDelegate.displayMessage(Title: "Server Configuration", Message: "You are editing the server address.\nAre you sure?", canDecline: true) { () -> Void in
             
             self.toggleLogin(false, withAnimation: true)
-            self.selectedCompany = nil
-            self.companyTextField.text = ""
-            self.serverTextField.text = ""
-            Server.unsetCurrentServer(managedObjectContext: self.context)
+            self.prepareServerForNewConfiguration()
         
         }
         
@@ -473,6 +472,30 @@ class LoginViewController: UIViewController, UITextFieldDelegate
         
         view.endEditing(true)
         
+    }
+    
+    func prepareServerForNewConfiguration() {
+        
+        self.selectedCompany = nil
+        self.companyTextField.text = ""
+        self.serverTextField.text = ""
+        self._typedServerFrontEndUrl = nil
+        Server.unsetCurrentServer(managedObjectContext: self.context)
+        
+    }
+    
+    @objc func newServerConfiguration(_ notification:Notification) {
+
+        self.activityIndicator.startAnimating()
+        prepareServerForNewConfiguration()
+
+    }
+    
+    @objc func serverHasBeenConfigured(_ notification:Notification) {
+
+        self.activityIndicator.stopAnimating()
+        self.viewWillAppear(true)
+
     }
     
 }

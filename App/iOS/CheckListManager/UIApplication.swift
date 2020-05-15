@@ -178,39 +178,36 @@ import CoreData
     }
     
     func setupNewServer(_ server:String, managedObjectContext: NSManagedObjectContext) {
-        ServerConnection.getApiServerRequest(server: server) { (serverResponse) -> Void in
-            if (serverResponse.error != nil) {
-                self.displayMessage(Title: "Error", Message: "Connection error to the server")
-            } else if (serverResponse.data != nil) {
-                do {
-                    let json = try JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
-                    let apiServer = json["API"] as! String
-                    let logged = NSString(string:UserDefaults.standard.string(forKey: "logged")!).boolValue
-
-                    
-                    self.displayMessage(Title: "Server Configuration", Message: "You are setting up a new server.\(logged ? "\nYou'll be redirected to login section." : "")\nAre you sure?", canDecline: true) {
-                        () -> Void in
+        
+        let logged = NSString(string:UserDefaults.standard.string(forKey: "logged")!).boolValue
+        
+        self.displayMessage(Title: "Server Configuration", Message: "You are setting up a new server.\(logged ? "\nYou'll be redirected to login section." : "")\nAre you sure?", canDecline: true) { () -> Void in
+            
+            if(logged) {
+                self.logoutAndGoToLogin()
+            }
+        
+            NotificationCenter.default.post(name: .NewServerConfiguration, object: nil)
+            
+            ServerConnection.getApiServerRequest(server: server) { (serverResponse) -> Void in
+                
+                if (serverResponse.error != nil) {
+                    self.displayMessage(Title: "Error", Message: "Connection error to the server")
+                } else if (serverResponse.data != nil) {
+                   
+                    do {
+                        let json = try JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
+                        let apiServer = json["API"] as! String
                         
                         Server.addServerUrl(urlFrontEnd: server, managedObjectContext: managedObjectContext)
                         Server.setNewServer(urlFrontEnd: server, apiUrl: apiServer, managedObjectContext: managedObjectContext)
                         
-                        if(logged) {
-                            self.logoutAndGoToLogin()
-                        }
+                        NotificationCenter.default.post(name: .ServerHasBeenConfigured, object: nil)
                         
-                        if let controller = self.searchPresentedController(controllerClass: UIViewController.self) {
-                                                                
-                            for childController in controller.childViewControllers {
-                                        if let loginViewController = childController as? LoginViewController {
-                                            loginViewController.viewWillAppear(false)
-                                }
-                            }
-                        }
+                    } catch {
+                        self.displayMessage(Title: "Error", Message: "Cannot parse response")
+                        print("Error deserializing JSON: \(error)")
                     }
-                    
-                } catch {
-                    self.displayMessage(Title: "Error", Message: "Cannot parse response")
-                    print("Error deserializing JSON: \(error)")
                 }
             }
         }

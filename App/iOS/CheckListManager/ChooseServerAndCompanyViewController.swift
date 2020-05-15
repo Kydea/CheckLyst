@@ -37,9 +37,6 @@ class ChooseServerAndCompanyViewController: UIViewController, UITableViewDelegat
     
     let context = ((UIApplication.shared.delegate as! AppDelegate).managedObjectContext)
     
-    
-    
-    
     override func viewDidLoad() {
         
         fieldNameLabel?.text = fieldNameString
@@ -48,32 +45,22 @@ class ChooseServerAndCompanyViewController: UIViewController, UITableViewDelegat
         
     }
     
-    
-    
-    
-    
     func numberOfSections(in tableView: UITableView) -> Int {
         
         return 1
         
     }
     
-    
-    
-    
-    
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        
         return (chooseServer ? serverFieldsDictionary?.count : companyFieldsDictionary?.count) ?? 1
+    
     }
     
     
     
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "searchCell")
         
@@ -97,7 +84,6 @@ class ChooseServerAndCompanyViewController: UIViewController, UITableViewDelegat
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         if(chooseServer!) {
-            
             
             let server = serverFieldsDictionary![indexPath.row]
             
