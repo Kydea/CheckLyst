@@ -1,6 +1,6 @@
 ﻿instances.Link = function (item, model) {
     var
-        i, a, 
+        i, a,
 
         setup = function () {
             var element = item.getElement();
@@ -11,13 +11,18 @@
 
             a = document.createElement("a");
             a.className = "Link";
-            a.setAttribute("target", "_blank");
             element.appendChild(a);
         };
 
     this.update = function (model) {
         a.innerHTML = model.descriptionValue || "(no label)";
-        a.setAttribute("href", model.url);
+        if (!!model.url) {
+            a.setAttribute("target", "_blank");
+            a.setAttribute("href", model.url);
+        } else {
+            a.removeAttribute("target");
+            a.setAttribute("href", "#");
+        }
 
         this.setColor(model.color);
         this.setFontSize(model.fontSize);
