@@ -104,7 +104,7 @@
                 if (!checkCodes()) return;
 
                 model.externalSources = {};
-                body.children().each(function () {
+                body.children(":not(.NoRecord)").each(function () {
                     var row = $(this);
                     model.externalSources[row.children("td").eq(0).text()] = $("select", row).val();
                 });
