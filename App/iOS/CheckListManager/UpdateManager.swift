@@ -42,15 +42,15 @@ class UpdateManager: NSObject {
     }
     
     func startUpdates() {
-        if ((self.userAppVersion == 0 || self.userAppVersion == 200) && self.currentAppVersion == 210) {
-            updateFrom2_0_0to2_1_0()
+        if ((self.userAppVersion == 0 || self.userAppVersion == 200) && self.currentAppVersion == 220) {
+            updateFrom2_0_0to2_2_0()
         }
         updateUserAppVersion()
     }
     
-    // MARK: - Update from 2.0.0 to 2.1.0
+    // MARK: - Update from 2.0.0 to 2.2.0
     
-    fileprivate func updateFrom2_0_0to2_1_0() {
+    fileprivate func updateFrom2_0_0to2_2_0() {
     
         let chooseDictionary = [
             "https://checklyst.jnj.com":"https://checklystapi.jnj.com",
