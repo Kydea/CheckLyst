@@ -16,6 +16,10 @@
           <Property Name="Description" Type="varchar" MaxLength="100" />
           <Property Name="Exception" Type="bool" Nullable="false" />
           <Property Name="Unique" Type="bool" Nullable="false" />
+          <Property Name="Notification" Type="bool" Nullable="false" />
+          <Property Name="NotificationNote" Type="varchar" MaxLength="100" />
+          <Property Name="NotificationEmail" Type="varchar" MaxLength="100" />
+          <Property Name="Notified" Type="bool" Nullable="false" />
         </EntityType>
         <EntityType Name="InstanceNumerators">
           <Key>
@@ -1763,6 +1767,10 @@
           <Property Name="Description" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="Exception" Type="Boolean" Nullable="false" />
           <Property Name="Unique" Type="Boolean" Nullable="false" />
+          <Property Name="Notification" Type="Boolean" Nullable="false" />
+          <Property Name="NotificationNote" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="NotificationEmail" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Notified" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="InstanceNumerators">
           <Key>
@@ -2895,6 +2903,10 @@
           <EntitySetMapping Name="InstanceExpressionValues">
             <EntityTypeMapping TypeName="RelationalDatabaseModel.InstanceExpressionValues">
               <MappingFragment StoreEntitySet="InstanceExpressionValues">
+                <ScalarProperty Name="Notified" ColumnName="Notified" />
+                <ScalarProperty Name="NotificationEmail" ColumnName="NotificationEmail" />
+                <ScalarProperty Name="NotificationNote" ColumnName="NotificationNote" />
+                <ScalarProperty Name="Notification" ColumnName="Notification" />
                 <ScalarProperty Name="Unique" ColumnName="Unique" />
                 <ScalarProperty Name="Exception" ColumnName="Exception" />
                 <ScalarProperty Name="Description" ColumnName="Description" />

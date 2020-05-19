@@ -209,6 +209,10 @@ create table "CheckLists"."InstanceExpressionValues"
 	"Description" varchar (100),
 	"Unique" boolean not null,
 	"Exception" boolean not null,
+	"Notification" boolean not null, 
+	"NotificationNote" varchar (100), 
+	"NotificationEmail" varchar (100), 
+	"Notified" boolean not null,
 
 	constraint "PK_InstanceExpressionValues" primary key ("Instance", "Code"),
 
@@ -216,7 +220,8 @@ create table "CheckLists"."InstanceExpressionValues"
 );
 
 create index "Index_InstanceExpressionValues_Code" on "CheckLists"."InstanceExpressionValues"("Instance", "Code");
-
+create index "Index_InstanceExpressionValues_Notifications" on "CheckLists"."InstanceExpressionValues"("Instance", "Code", "Value") where "Notification" and not "Notified";
+	
 create or replace function "CheckLists"."ValidateUniqueExpressions"
 (
 	_Instance bigint

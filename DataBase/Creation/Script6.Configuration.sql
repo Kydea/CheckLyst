@@ -39,6 +39,7 @@ insert into "Configuration"."Settings" ("Code") values
 	('UserBlockWarningMessage'),
 	('SignatureMessage'),
 	('InstanceMessage'),
+	('NotificationMessage'),
 	('DecimalSeparator'),
 	('RequireUserReason');
 
