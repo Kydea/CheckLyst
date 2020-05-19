@@ -223,7 +223,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     }
     
     func shouldShowScanButton() {
-        webView.evaluateJavaScript("document.activeElement.classList.contains(\"Scan\")") {
+        webView.evaluateJavaScript("document.activeElement.classList.contains(\"Scan\");") {
             (response, error) -> Void in
             if let value = response as? Bool {
                 if(value) {
@@ -253,12 +253,11 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     }
     
     func setValueForInputField(_ value : String) {
-        webView.evaluateJavaScript("$(document.activeElement).val(\"\(value)\").change(); ") {
+        webView.evaluateJavaScript("document.activeElement.value = \"\(value)\";document.activeElement.dispatchEvent(new Event(\"change\"));") {
             (response, error) -> Void in
             self.view.endEditing(true)
             self.requestForScanning = false
         }
-        webView.evaluateJavaScript("document.activeElement")
     }
     
     @objc private func scanItem(_ sender: UIBarButtonItem) {
