@@ -306,17 +306,18 @@
         var value = formattedDate ? formattedDate.date + " " + formattedDate.hours + ":" + formattedDate.minutes : model.value;
         field.innerHTML = readOnly && value ? value.split('\n').join("<br />") : value;
 
+        if (autoComplete) autoComplete.setValue(select.value);
+        if (autoComplete2) autoComplete2.setValue(select2.value);
+
         if (model.valueTypeName == "DateTime" || model.valueTypeName == "Date") {
             if (value)
                 value += " UTC" + (!model.localTimeZone ? "" : (model.offset > 0 ? " +" : " -") + ("" + Math.abs(model.offset) / 60).padStart(2, "0") + ":00")
             else
                 value = model.localTimeZone ? "Company time zone" : "UTC";
             field.setAttribute("title", value);
-        } else
+            input.setAttribute("title", value);
+        } else 
             field.setAttribute("title", field.textContent);
-
-        if (autoComplete) autoComplete.setValue(select.value);
-        if (autoComplete2) autoComplete2.setValue(select2.value);
 
         this.setColor(model.color);
         this.setFontSize(model.fontSize);

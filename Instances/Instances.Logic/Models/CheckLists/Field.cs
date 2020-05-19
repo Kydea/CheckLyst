@@ -38,6 +38,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public bool LocalTimeZone { get; set; }
 
+        [JsonProperty]
         public int Offset { get; private set; }
 
         public override dynamic GetViewModel()
@@ -58,7 +59,10 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             }
 
             if (LocalTimeZone)
-                ItemModel.LocalTimeZone = LocalTimeZone;    
+            {
+                ItemModel.LocalTimeZone = LocalTimeZone;
+                ItemModel.Offset = Offset;
+            }
 
             if (History.Any())
                 ItemModel.History = History.Select(x => new {
