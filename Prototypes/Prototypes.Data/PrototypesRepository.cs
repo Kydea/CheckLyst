@@ -151,7 +151,7 @@ namespace CheckListManager.Prototypes.Data
 
                 prototypeVersion.VersionState = VersionState.InApproval;
                 prototypeVersion.ProposedState = state;
-                prototypeVersion.ProposedDate = DateTimeOffset.Now;
+                prototypeVersion.ProposedDate = DateTimeOffset.UtcNow;
 
                 prototypeVersion.PrototypeVersionsHistory.Add(new PrototypeVersionsHistory
                 {
@@ -189,7 +189,7 @@ namespace CheckListManager.Prototypes.Data
                 });
 
                 prototypeVersion.ProposedState = state;
-                prototypeVersion.ProposedDate = DateTimeOffset.Now;
+                prototypeVersion.ProposedDate = DateTimeOffset.UtcNow;
 
                 prototypeVersion.PrototypeVersionsHistory.Add(new PrototypeVersionsHistory
                 {

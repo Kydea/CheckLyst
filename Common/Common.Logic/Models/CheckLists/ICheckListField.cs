@@ -4,8 +4,8 @@ using Newtonsoft.Json;
 
 namespace CheckListManager.Common.Logic.Models.CheckLists
 {
-	public interface ICheckListField : ICheckListItem
-	{
+	public interface ICheckListField : ICheckListEditableItem
+    {
 		string ExternalSourceColumn { get; set; }
 		string ExternalSourceName { get; set; }
 		List<FieldRecord> History { get; }

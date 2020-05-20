@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace CheckListManager.Common.Logic.Models.CheckLists
 {
-    public interface ICheckListSignature : ICheckListItem
+    public interface ICheckListSignature : ICheckListEditableItem
     {
         bool AcceptsPin { get; set; }
         string ButtonLabel { get; set; }

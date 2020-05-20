@@ -1,12 +1,14 @@
 ﻿using CheckListManager.Common.Logic.Models.CheckLists;
+using System;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
     public class Attachment : Item, ICheckListAttachment
     {
         public override string TypeName => "Attachment";
-
         public override bool NewLine => true;
+        public string ModifiedBy { get; set; }
+        public DateTimeOffset? ModifiedOn { get; set; }
 
         public override ICheckListItem Clone(ICheckListGroup parent)
         {

@@ -18,6 +18,10 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         public string Error { get; set; }
         public bool Unique { get; set; }
         public bool Exception { get; set; }
+        public bool Notification { get; set; }
+        public string NotificationEmail { get; set; }
+        public string NotificationNote { get; set; }
+        public bool Notified { get; set; }
 
         public Expression()
         {
@@ -26,8 +30,8 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
         public void Validate(ICheckList checkList, string Code)
         {
-            if (string.IsNullOrWhiteSpace(Description) && (Unique || Exception))
-                throw new Exception($"Unique expressions and exception expressions must have a description");
+            if (string.IsNullOrWhiteSpace(Description) && (Unique || Exception || Notification))
+                throw new Exception($"Unique, exception and notification expressions must have a description");
 
             if (SerializedValue?.Length >= MAXIMUM_LENGTH)
                 throw new ParseException($"Expressions lengh must not exceed {MAXIMUM_LENGTH - 1} characters", MAXIMUM_LENGTH);
@@ -78,8 +82,8 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             try
             {
                 Root.Check(CheckList, this, new List<string>());
-                if (Exception && Root.DataType != DataType.Boolean)
-                    throw new Exception($"Exception expressions must be boolean");
+                if ((Exception || Notification) && Root.DataType != DataType.Boolean && Root.DataType != DataType.Date && Root.DataType != DataType.DateTime)
+                    throw new Exception($"Exception and notification expressions must be boolean or date or date-time");
                 return true;
             }
             catch (ParseException Exception)
@@ -97,7 +101,18 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         public void Evaluate(ICheckList instance, string TimeZone)
         {
             if (Root == null) Parse(instance);
-            Value = Root.GetValue(instance, TimeZone);
+            var NewValue = Root.GetValue(instance, TimeZone);
+            if (
+                Notification 
+                && !(Value.IsNull && NewValue.IsNull)
+                && (
+                    (Value.IsNull ^ NewValue.IsNull)
+                    || Value.Type == DataType.Boolean && Value.BooleanValue != NewValue.BooleanValue
+                    || Value.Type == DataType.Date && Value.DateTimeValue != NewValue.DateTimeValue
+                    || Value.Type == DataType.DateTime && Value.DateTimeValue != NewValue.DateTimeValue
+                )
+            ) Notified = false; //when the value changes the notification is reset
+            Value = NewValue;
         }
 
         public override bool Update(DependencyRelation.Properties Property)

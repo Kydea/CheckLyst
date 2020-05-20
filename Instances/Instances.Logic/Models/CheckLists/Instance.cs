@@ -10,6 +10,7 @@ using CheckListManager.Common.Logic.Models;
 using CheckListManager.Instances.Logic.Exceptions;
 using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Core.Web.Security;
+using CheckListManager.Common.Logic.Services;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
@@ -61,7 +62,14 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public Dictionary<string, ICheckListElement> Elements { get; } = new Dictionary<string, ICheckListElement>();
         public PascalCaseDictionary<string, Expression> Expressions { get; set; }
         public PascalCaseDictionary<string, string> Exceptions =>
-            Expressions == null ? null : new PascalCaseDictionary<string, string>(Expressions.Where(e => e.Value?.Exception == true && e.Value?.Value?.Value as bool? == true).ToDictionary(k => k.Key, v => v.Value?.Description));
+            Expressions == null ? null : new PascalCaseDictionary<string, string>(Expressions.Where(e => 
+                e.Value?.Exception == true 
+                && (
+                    e.Value.Value.Type == DataType.Boolean && e.Value.Value.BooleanValue
+                    || e.Value.Value.Type == DataType.Date && e.Value.Value.DateTimeValue <= DateTimeOffset.UtcNow
+                    || e.Value.Value.Type == DataType.DateTime && e.Value.Value.DateTimeValue <= DateTimeOffset.UtcNow
+                )
+           ).ToDictionary(k => k.Key, v => v.Value?.Description));
         public PascalCaseDictionary<string, string> ExternalSources { get; set; }
         public PascalCaseDictionary<string, PascalCaseDictionary<string, string>> ExternalSourceRows { get; set; }
         public PascalCaseDictionary<string, ExternalSourceDependencyNode> ExternalSourceDependencyNodes { get; } = new PascalCaseDictionary<string, ExternalSourceDependencyNode>();
@@ -281,5 +289,14 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
             return true;
         }
+
+        public static string GetYearCode(string VersionState, int? Year) => 
+            VersionState == Common.Data.VersionState.Draft ? "Test" : Year == 0 ? "SE" : (Year?.ToString() ?? "?");
+
+        public static string GetCode(string PrototypeName, int Version, string VersionState, int? Year, int? Number) =>
+            $"{PrototypeName}.{Version}.{GetYearCode(VersionState, Year)}.{Number?.ToString() ?? "?"}";
+
+        public static string GetUrl(IConfigurationService configurationService, string Code) =>
+            $"{configurationService.WebApplicationUrl}/Instances/Detail/{Code}";
     }
 }

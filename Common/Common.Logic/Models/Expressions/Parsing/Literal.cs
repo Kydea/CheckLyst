@@ -147,6 +147,12 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     case "Value":
                         Symbol = new ElementProperties.FieldProperty { Code = Values[0], Position = Position };
                         break;
+                    case "ModifiedBy":
+                        Symbol = new ElementProperties.EditableElementProperty(ElementProperties.EditableElementProperty.MODIFIED_BY) { Code = Values[0], Position = Position };
+                        break;
+                    case "ModifiedOn":
+                        Symbol = new ElementProperties.EditableElementProperty(ElementProperties.EditableElementProperty.MODIFIED_ON) { Code = Values[0], Position = Position };
+                        break;
                     case "Valid":
                         Symbol = new ElementProperties.ElementProperty { Code = Values[0], Position = Position };
                         break;

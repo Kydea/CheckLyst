@@ -47,8 +47,7 @@ namespace CheckListManager.Common.Logic.Email
 
             var secure = !string.IsNullOrEmpty(username);
 
-            var smtpClient = new SmtpClient(await _settingService.SmtpHostAsync(message.Company),
-                await _settingService.SmtpPortAsync(message.Company))
+            var smtpClient = new SmtpClient(await _settingService.SmtpHostAsync(message.Company), await _settingService.SmtpPortAsync(message.Company))
             {
                 UseDefaultCredentials = true,
                 EnableSsl = secure

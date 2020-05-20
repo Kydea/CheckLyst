@@ -17,6 +17,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public string ExternalSourceColumn { get; set; }
         public string ExternalSourceName { get; set; }
         public List<FieldRecord> History { get; } = new List<FieldRecord>();
+        public string ModifiedBy { get; set; }
+        public DateTimeOffset? ModifiedOn { get; set; }
         public int LinesCount { get; set; }
         public string Value { get; set; }
         public Formula ValueFormula { get; } = new Formula();

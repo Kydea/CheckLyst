@@ -417,15 +417,40 @@ namespace CheckListManager.Instances.Logic.Services
 
         private IEnumerable<InstanceExpressionValues> CreateExpressionValues(InstanceCacheObject cacheObject)
         {
-            return cacheObject.Instance.Expressions.Where(Expression => Expression.Value.Exception && Expression.Value.Value.BooleanValue || Expression.Value.Unique && !Expression.Value.Value.IsNull).Select(e => new InstanceExpressionValues
-            {
-                Instance = cacheObject.Id.Value,
-                Code = e.Key,
-                Description = e.Value.Description,
-                Value = e.Value.Value.Type == DataType.Array ? null : e.Value.Value.Value.ToString(),
-                Exception = e.Value.Exception,
-                Unique = e.Value.Unique
-            });
+            return cacheObject.Instance.Expressions.Where(
+                Expression =>
+                    !Expression.Value.Value.IsNull
+                    &&
+                    (
+                        Expression.Value.Exception && (
+                            Expression.Value.Value.Type == DataType.Boolean && Expression.Value.Value.BooleanValue
+                            || (Expression.Value.Value.Type == DataType.Date || Expression.Value.Value.Type == DataType.DateTime) && Expression.Value.Value.DateTimeValue < DateTimeOffset.UtcNow
+                        )
+                        || Expression.Value.Unique
+                        || Expression.Value.Notification && !Expression.Value.Notified && (Expression.Value.Value.Type != DataType.Boolean || Expression.Value.Value.BooleanValue)
+                    )
+                ).Select(e => new InstanceExpressionValues
+                {
+                    Instance = cacheObject.Id.Value,
+                    Code = e.Key,
+                    Description = e.Value.Description,
+                    Value =
+                        e.Value.Value.Type == DataType.Array ? null :
+                        e.Value.Value.Type == DataType.Boolean ? e.Value.Value.BooleanValue.ToString() :
+                        e.Value.Value.Type == DataType.Date || e.Value.Value.Type == DataType.DateTime ? e.Value.Value.DateTimeValue.Format(null) :
+                        e.Value.Value.Value.ToString(),
+
+                    Exception = e.Value.Exception,
+                    Unique = e.Value.Unique,
+                    Notification = e.Value.Notification,
+                    NotificationEmail = e.Value.Notification ? e.Value.NotificationEmail : null,
+                    NotificationNote = e.Value.Notification ? e.Value.NotificationNote : null,
+                    Notified = e.Value.Notification && e.Value.Notified,
+                    NotificationDate =
+                        !e.Value.Notification ? default(DateTimeOffset?) :
+                        e.Value.Value.Type == DataType.Boolean ? DateTimeOffset.UtcNow :
+                        e.Value.Value.DateTimeValue
+                });
         }
 
         private async Task<InstanceCacheObject> SaveAsync(InstanceCacheObject cacheObject, IDefaultIdentity identity, bool close, bool complete, bool alreadyLocked, string ModifiedBy, DateTimeOffset? ModifiedOn)
@@ -831,6 +856,63 @@ namespace CheckListManager.Instances.Logic.Services
                 }
         }
 
+        public async Task SendNotificationsAsync(CancellationToken cancellationToken)
+        {
+            var Notifications = await _instancesRepository.GetNotifications();
+            foreach (var Notification in Notifications)
+                try
+                {
+                    if (cancellationToken.IsCancellationRequested) return;
+
+                    var InstanceCode = Instance.GetCode(Notification.Instances.PrototypeName, Notification.Instances.Version, Notification.Instances.PrototypeVersions.VersionState, Notification.Instances.Year, Notification.Instances.Number);
+
+                    await _queueService.SendObjectAsync(QueueName.Email, new EmailMessage(
+                        Notification.Instances.Company,
+                        "Notification",
+                        await _settingService.UserBlockMessageAsync(Notification.Instances.Company),
+                        Notification.NotificationEmail,
+                        new List<Tuple<string, string>>
+                        {
+                            new Tuple<string, string>("Code", Notification.Code),
+                            new Tuple<string, string>("Description", Notification.Description),
+                            new Tuple<string, string>("Note", Notification.NotificationNote),
+                            new Tuple<string, string>("Value", Notification.Value),
+                            new Tuple<string, string>("Link", $"<a href='{Instance.GetUrl(_configurationService, Notification.Instances.Code)}' target='_blank'>{InstanceCode}</a>")
+                        }
+                    )
+                    {
+                        TrailMessage = new EmailTrailMessage(
+                            "(system)",
+                            InstanceCode,
+                            null
+                        )
+                    }, cancellationToken);
+
+                    Notification.Notified = true;
+
+                    await _instancesRepository.SaveChangesAsync();
+                }
+                catch (Exception Exception)
+                {
+                    Logger.Error(Exception);
+                    await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                    {
+                        Company = Notification.Instances.Company,
+                        Action = TrailAction.JobError,
+                        User = "(system)",
+                        Date = DateTimeOffset.UtcNow,
+                        CheckList = Instance.GetCode(Notification.Instances.PrototypeName, Notification.Instances.Version, Notification.Instances.PrototypeVersions.VersionState, Notification.Instances.Year, Notification.Instances.Number),
+                        Information = JsonConvert.SerializeObject(new
+                        {
+                            Job = "SendNotifications",
+                            Exception = Exception.Message
+                        })
+                    }, cancellationToken);
+                    await _emailService.LogErrorAsync(Exception, "Error sending notification");
+                }
+        }
+
+
         #endregion
 
         #region events
@@ -899,7 +981,7 @@ namespace CheckListManager.Instances.Logic.Services
                 getTime = stopWatch.Elapsed.TotalMilliseconds;
 
                 //A signer may sign also if the page is locked by the main user (the lock is for concurrency purpose, not for security), NB: SignatureCheck is before the choice of signer
-                var lockUser = request.Type == "Signature" ? request.Username : identity.Code; 
+                var lockUser = request.Type == "Signature" ? request.Username : identity.Code;
                 cacheObject.Instance.UpdateReadOnly(lockUser, cacheObject.InstanceState);
 
                 stopWatch = Stopwatch.StartNew();
@@ -1092,10 +1174,12 @@ namespace CheckListManager.Instances.Logic.Services
                     }
                 }
 
+                field.ModifiedBy = userCode;
+                field.ModifiedOn = DateTimeOffset.UtcNow;
                 field.History.Add(new FieldRecord
                 {
-                    DateTime = DateTimeOffset.UtcNow,
-                    User = userCode,
+                    DateTime = field.ModifiedOn.Value,
+                    User = field.ModifiedBy,
                     Value = formattedValue
                 });
 
@@ -1175,12 +1259,15 @@ namespace CheckListManager.Instances.Logic.Services
                     }
                 }
 
+                field.ModifiedBy = userCode;
+                field.ModifiedOn = DateTimeOffset.UtcNow;
                 field.History.Add(new FieldRecord
                 {
-                    DateTime = DateTimeOffset.UtcNow,
-                    User = userCode,
+                    DateTime = field.ModifiedOn.Value,
+                    User = field.ModifiedBy,
                     Value = formattedValue
                 });
+
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
                     Company = cacheObject.CompanyId,
@@ -1220,6 +1307,8 @@ namespace CheckListManager.Instances.Logic.Services
             {
                 Iteration = group.AddIteration();
                 group.SetupIterationsIndexes();
+                group.ModifiedBy = userCode;
+                group.ModifiedOn = DateTimeOffset.UtcNow;
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
                     Company = cacheObject.CompanyId,
@@ -1252,6 +1341,8 @@ namespace CheckListManager.Instances.Logic.Services
             var group = (Group)iteration.Group;
             group.Remove(iteration);
             group.SetupIterationsIndexes();
+            group.ModifiedBy = userCode;
+            group.ModifiedOn = DateTimeOffset.UtcNow;
             await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
             {
                 Company = cacheObject.CompanyId,
@@ -1282,6 +1373,8 @@ namespace CheckListManager.Instances.Logic.Services
             var group = (Group)iteration.Group;
             group.Move(iteration, direction);
             group.SetupIterationsIndexes();
+            group.ModifiedBy = userCode;
+            group.ModifiedOn = DateTimeOffset.UtcNow;
             await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
             {
                 Company = cacheObject.CompanyId,
@@ -1488,9 +1581,7 @@ namespace CheckListManager.Instances.Logic.Services
                 throw new Exception("The signature is not signed");
 
             var message = await _settingService.InstanceMessageAsync(identity.CompanyId);
-            var webApplicationUrl = _configurationService.WebApplicationUrl;
-            var checkListURL = $"{webApplicationUrl}/Instances/Detail/{cacheObject.Code}";
-            //var checklistLabel = $"{cacheObject.PrototypeName}.{cacheObject.Version}.{(cacheObject.Year > 0 ? cacheObject.Year.ToString() : cacheObject.VersionState == VersionState.Draft ? "Test" : "SE")}.{cacheObject.Number?.ToString() ?? "?"}";
+            var checkListURL = Instance.GetUrl(_configurationService, cacheObject.Code);
             foreach (var Email in Emails)
                 await _queueService.SendObjectAsync(QueueName.Email,
                     new EmailMessage(identity.CompanyId, "Signature notification", message,
@@ -1576,7 +1667,7 @@ namespace CheckListManager.Instances.Logic.Services
         {
             foreach (Page Page in cacheObject.Instance.Pages)
                 if (Page.Lock != null && Page.Lock.User == userCode)
-                    Page.Lock.LastUpdate = DateTimeOffset.Now;
+                    Page.Lock.LastUpdate = DateTimeOffset.UtcNow;
 
             cacheObject.NeedToSave = true;
             cacheObject.NeedToCache = true;
@@ -1666,6 +1757,9 @@ namespace CheckListManager.Instances.Logic.Services
             }
 
             item.Key = key;
+            item.ModifiedBy = identity.Code;
+            item.ModifiedOn = DateTimeOffset.UtcNow;
+
 
             await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
             {

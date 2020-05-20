@@ -15,18 +15,14 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public List<ICheckListItem> Items { get; set; } = new List<ICheckListItem>();
         public List<ICheckListIteration> Iterations { get; } = new List<ICheckListIteration>();
         public bool Iterator { get; set; }
-
         public bool ShowAsTable { get; set; }
-
         public int InstanceIterations { get; set; }
-
         public int PrototypeIterations { get; set; }
-
         public bool DisableAdd { get; set; }
-
         public bool DisableRemove { get; set; }
-
         public bool DisableMove { get; set; }
+        public string ModifiedBy { get; set; }
+        public DateTimeOffset? ModifiedOn { get; set; }
 
         public override dynamic GetViewModel()
         {

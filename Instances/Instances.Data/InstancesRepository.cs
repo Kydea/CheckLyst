@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using CheckListManager.Common.Core.Helpers;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Messages;
 
@@ -162,5 +163,13 @@ namespace CheckListManager.Instances.Data
 
             return await Users;
         }
+
+        public async Task<List<InstanceExpressionValues>> GetNotifications() =>
+            await 
+                Entities.InstanceExpressionValues
+                    .Include(i => i.Instances)
+                    .Include(i => i.Instances.PrototypeVersions)
+                    .Where(n => n.Notification && !n.Notified && n.NotificationDate <= DateTimeOffset.UtcNow)
+                    .ToListAsync();
     }
 }

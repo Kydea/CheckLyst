@@ -15,14 +15,21 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
 		public string ExternalSourceColumn { get; set; }
 		public string ExternalSourceName { get; set; }
-		public List<FieldRecord> History { get; } = new List<FieldRecord>();
-		public int LinesCount { get; set; }
+
+        public int LinesCount { get; set; }
 		public string Value { get; set; }
         public Formula ValueFormula { get; } = new Formula();
 		public string ValueFormulaString { get; set; }
 
         private List<string> _ValuesList;
         public List<string> ValuesList { get { return _ValuesList; } set { _ValuesList = value == null || !value.Any() ? null : value; } }
+
+        [JsonIgnore]
+        public List<FieldRecord> History { get; } = new List<FieldRecord>();
+        [JsonIgnore]
+        public string ModifiedBy { get; }
+        [JsonIgnore]
+        public DateTimeOffset? ModifiedOn { get; }
 
         [JsonIgnore]
         public DataType ValueType { get; private set; } = DataType.Text;

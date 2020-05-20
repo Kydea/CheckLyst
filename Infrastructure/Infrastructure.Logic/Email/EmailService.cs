@@ -38,8 +38,7 @@ namespace CheckListManager.Infrastructure.Logic.Email
             }
         }
 
-        private async Task ProcessMessageAsync(QueueMessage<EmailMessage> message,
-            CancellationToken cancellationToken = default(CancellationToken))
+        private async Task ProcessMessageAsync(QueueMessage<EmailMessage> message, CancellationToken cancellationToken = default(CancellationToken))
         {
             try
             {
@@ -69,9 +68,7 @@ namespace CheckListManager.Infrastructure.Logic.Email
                     await Task.WhenAll(deleteTask, trailTask);
                 }
                 else
-                {
                     await deleteTask;
-                }
             }
             catch (Exception exception)
             {

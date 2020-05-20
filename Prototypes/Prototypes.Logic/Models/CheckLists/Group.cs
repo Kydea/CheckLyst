@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.CheckLists;
+using Newtonsoft.Json;
 
 namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 {
@@ -27,6 +28,11 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public bool DisableRemove { get; set; }
 
         public bool DisableMove { get; set; }
+
+        [JsonIgnore]
+        public string ModifiedBy { get; }
+        [JsonIgnore]
+        public DateTimeOffset? ModifiedOn { get; }
 
         private bool InTable { get; set; }
 

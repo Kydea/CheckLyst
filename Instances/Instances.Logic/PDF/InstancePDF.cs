@@ -7,6 +7,7 @@ using CheckListManager.Common.Core.Helpers;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.PDF;
 using CheckListManager.Common.Logic.Api.PDF.Sections;
+using CheckListManager.Common.Logic.Models;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Services;
 using CheckListManager.Instances.Data;
@@ -63,7 +64,14 @@ namespace CheckListManager.Instances.Logic.PDF
 
             var Exceptions = new StringBuilder();
             foreach (var Expression in Instance.Instance.Expressions.Values)
-                if (Expression.Exception && Expression.Value.Value as bool? == true)
+                if (
+                    Expression.Exception 
+                    && (
+                        Expression.Value.Type == DataType.Boolean && Expression.Value.BooleanValue
+                        || Expression.Value.Type == DataType.Date && Expression.Value.DateTimeValue <= DateTimeOffset.UtcNow
+                        || Expression.Value.Type == DataType.DateTime && Expression.Value.DateTimeValue <= DateTimeOffset.UtcNow
+                    )
+                )
                 {
                     Exceptions.AppendLine(Expression.Description);
                     Exceptions.AppendLine();

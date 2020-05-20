@@ -52,9 +52,9 @@ namespace CheckListManager.Instances.Logic.Models
 		public DateTimeOffset? ModifiedOn { get; set; }
 
         [JsonIgnore]
-        public string YearCode => VersionState == Common.Data.VersionState.Draft ? "Test" : Year == 0 ? "SE" : (Year?.ToString() ?? "?");
+        public string YearCode => Instance.GetYearCode(VersionState, Year);
 
         [JsonIgnore]
-        public string InstanceCode => $"{PrototypeName}.{Version}.{(YearCode)}.{Number?.ToString() ?? "?"}";
+        public string InstanceCode => Instance.GetCode(PrototypeName, Version, VersionState, Year, Number);
     }
 }

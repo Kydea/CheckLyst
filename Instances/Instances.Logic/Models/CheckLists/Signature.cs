@@ -21,7 +21,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 		public bool Signed { get; set; }
 		public string SignedBy { get; set; }
 		public DateTimeOffset SignedOn { get; set; }
-		public string SignerDescription { get; set; }
+        public string ModifiedBy => SignedBy;
+        public DateTimeOffset? ModifiedOn { get; private set; } //being nullable can't just inherit SignedOn
+        public string SignerDescription { get; set; }
 
         public override dynamic GetViewModel()
         {
@@ -111,7 +113,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             {
                 Signed = true;
                 SignedBy = UserCode;
-                SignedOn = DateTimeOffset.UtcNow;
+                ModifiedOn = SignedOn = DateTimeOffset.UtcNow;
 
                 UpdateChain(Instance, DependencyRelation.Properties.Signature);
 
@@ -136,7 +138,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             Signed = true;
             SignedBy = UserCode;
             SignerDescription = UserDescription;
-            SignedOn = Now;
+            ModifiedOn = SignedOn = Now;
 
             History.Add(new SignatureRecord { DateTime = SignedOn, User = UserCode, Signature = SignerDescription });
         }
@@ -151,7 +153,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 if (ReadOnly)
                     throw new Exception("This signature not editable"); //Signature is still readonly after unsigned, may be locked by another signature or a special condition
 
-                SignedOn = Now;
+                ModifiedOn = SignedOn = Now;
 
                 History.Add(new SignatureRecord { DateTime = SignedOn, User = UserCode, Signature = UserDescription , Note = Note });
             }

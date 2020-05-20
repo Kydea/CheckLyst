@@ -65,6 +65,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\Common.Core\Common.Core.csproj">
+      <Project>{31de9c2f-fb9d-472c-b28a-3c1edeff10dc}</Project>
+      <Name>Common.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Common\Common.Data\Common.Data.csproj">
       <Project>{91482922-D6BA-4DF1-9A9C-88F3087A7B5D}</Project>
       <Name>Common.Data</Name>
@@ -74,5 +78,6 @@
       <Name>Common.Logic.Api</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

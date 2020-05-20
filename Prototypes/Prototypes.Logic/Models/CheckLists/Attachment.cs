@@ -1,4 +1,6 @@
 ﻿using CheckListManager.Common.Logic.Models.CheckLists;
+using Newtonsoft.Json;
+using System;
 
 namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 {
@@ -17,5 +19,11 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         public string Key { get; set; }
         public string FileType { get; set; } = "images";
+
+        [JsonIgnore]
+        public string ModifiedBy { get; }
+        [JsonIgnore]
+        public DateTimeOffset? ModifiedOn { get; }
+
     }
 }

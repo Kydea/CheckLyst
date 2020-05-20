@@ -78,7 +78,7 @@ namespace CheckListManager.Common.Core.Cache
         public void Set(string key, object value, string regionName = null, TimeSpan? expiry = null)
         {
             if (value != null)
-                _storage.Set(ResolveKey(key, regionName), value, new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.Add(expiry ?? new TimeSpan(0, 30, 0)) });
+                _storage.Set(ResolveKey(key, regionName), value, new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.UtcNow.Add(expiry ?? new TimeSpan(0, 30, 0)) });
         }
 
         public async Task SetAsync(string key, object value, string regionName = null, TimeSpan? expiry = null)

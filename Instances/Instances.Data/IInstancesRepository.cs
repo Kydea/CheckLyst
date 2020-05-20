@@ -23,5 +23,6 @@ namespace CheckListManager.Instances.Data
         Task ValidateUniqueExpressions(long instance);
         Task<int?> GetActivePrototypeVersion(long prototype);
         Task<List<Users>> GetInstanceEditors(long department, long prototypeType, string versionState);
+        Task<List<InstanceExpressionValues>> GetNotifications();
     }
 }
