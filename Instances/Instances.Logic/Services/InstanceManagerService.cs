@@ -301,8 +301,12 @@ namespace CheckListManager.Instances.Logic.Services
                 if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
                     throw new InstanceException("Access denied");
 
-                await _instanceCache.TouchAsync(cacheObject.Code);
-                await SaveAsync(cacheObject, identity, false, false, false, cacheObject.ModifiedBy, cacheObject.ModifiedOn);
+                if (cacheObject.NeedToSave)
+                {
+                    await SaveAsync(cacheObject, identity, false, false, false, cacheObject.ModifiedBy, cacheObject.ModifiedOn);
+                    cacheObject.NeedToCache = true;
+                }
+                await SaveCacheObjectAsync(cacheObject);
             }
             catch (InstanceException)
             {
@@ -477,6 +481,7 @@ namespace CheckListManager.Instances.Logic.Services
                 if (!cacheObject.Instance.CheckVersion(2, true)) //version 2 introduces persistency
                     cacheObject.Instance.UpdateAll(cacheObject);
 
+                cacheObject.NeedToSave = false;
                 row.Data = JsonConvert.SerializeObject(cacheObject.Instance, _converters);
                 row.Description = cacheObject.Instance.DescriptionFormula.Value;
                 row.FileName =
