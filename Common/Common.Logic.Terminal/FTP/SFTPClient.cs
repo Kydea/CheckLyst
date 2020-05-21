@@ -13,13 +13,18 @@ namespace CheckListManager.Common.Logic.Terminal.FTP
 
     public class SFTPClient : IFTPClient
     {
-        private ConnectionInfo GetConnectionInfo(string Host, int Port, string UserName, string Key)
+        private ConnectionInfo GetConnectionInfo(string Host, int Port, string UserName, string Password, string Key)
         {
-            using (var MemoryStream = new MemoryStream(Encoding.ASCII.GetBytes(Key)))
+            var AuthenticationMethods = new List<AuthenticationMethod>();
+            if (!string.IsNullOrEmpty(Password))
+                AuthenticationMethods.Add(new PasswordAuthenticationMethod(UserName, Password));
+            if (!string.IsNullOrWhiteSpace(Key))
             {
-                var keyFiles = new[] { new PrivateKeyFile(MemoryStream) };
-                return new ConnectionInfo(Host, Port, UserName, new PrivateKeyAuthenticationMethod(UserName, keyFiles));
+                var KeyFiles = new[] { new PrivateKeyFile(new MemoryStream(Encoding.ASCII.GetBytes(Key.Trim()))) };
+                AuthenticationMethods.Add(new PrivateKeyAuthenticationMethod(UserName, KeyFiles));
             }
+
+            return new ConnectionInfo(Host, Port, UserName, AuthenticationMethods.ToArray());
         }
 
         public Task ActionAsync(byte[] Bytes, string Path, string FileName, FTPConnectionSettings Settings, FTPMethods Method)
@@ -37,7 +42,7 @@ namespace CheckListManager.Common.Logic.Terminal.FTP
                 .Replace(':', '-').Replace('*', '-').Replace('?', '-')
                 .Replace('"', '\'') ?? "";
 
-            using (SftpClient client = new SftpClient(GetConnectionInfo(Settings.Host, Settings.Port, Settings.UserName, null)))
+            using (SftpClient client = new SftpClient(GetConnectionInfo(Settings.Host, Settings.Port, Settings.UserName, Settings.Password, null)))
             {
                 client.Connect();
                 if (Method == FTPMethods.Upload)
@@ -60,7 +65,7 @@ namespace CheckListManager.Common.Logic.Terminal.FTP
                 if (!Path.StartsWith("/")) Path = "/" + Path;
             }
 
-            using (SftpClient client = new SftpClient(GetConnectionInfo(Settings.Host, Settings.Port, Settings.UserName, null)))
+            using (SftpClient client = new SftpClient(GetConnectionInfo(Settings.Host, Settings.Port, Settings.UserName, Settings.Password, null)))
             {
                 client.Connect();
                 return Task.FromResult(string.Join(Environment.NewLine, client.ListDirectory(Path).Select(f => f.Name)));

@@ -53,6 +53,8 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.KeyTextBox = new System.Windows.Forms.TextBox();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.PasswordTextBox = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -94,6 +96,8 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.PasswordTextBox);
+            this.splitContainer1.Panel1.Controls.Add(this.label7);
             this.splitContainer1.Panel1.Controls.Add(this.RemoteFileNameTextBox);
             this.splitContainer1.Panel1.Controls.Add(this.label6);
             this.splitContainer1.Panel1.Controls.Add(this.BrowseButton);
@@ -119,7 +123,7 @@
             // 
             // RemoteFileNameTextBox
             // 
-            this.RemoteFileNameTextBox.Location = new System.Drawing.Point(86, 133);
+            this.RemoteFileNameTextBox.Location = new System.Drawing.Point(86, 159);
             this.RemoteFileNameTextBox.Name = "RemoteFileNameTextBox";
             this.RemoteFileNameTextBox.Size = new System.Drawing.Size(221, 20);
             this.RemoteFileNameTextBox.TabIndex = 13;
@@ -127,7 +131,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(3, 136);
+            this.label6.Location = new System.Drawing.Point(3, 162);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(63, 13);
             this.label6.TabIndex = 12;
@@ -135,7 +139,7 @@
             // 
             // BrowseButton
             // 
-            this.BrowseButton.Location = new System.Drawing.Point(313, 105);
+            this.BrowseButton.Location = new System.Drawing.Point(313, 131);
             this.BrowseButton.Name = "BrowseButton";
             this.BrowseButton.Size = new System.Drawing.Size(75, 23);
             this.BrowseButton.TabIndex = 11;
@@ -145,7 +149,7 @@
             // 
             // LocalFileNameTextBox
             // 
-            this.LocalFileNameTextBox.Location = new System.Drawing.Point(86, 107);
+            this.LocalFileNameTextBox.Location = new System.Drawing.Point(86, 133);
             this.LocalFileNameTextBox.Name = "LocalFileNameTextBox";
             this.LocalFileNameTextBox.Size = new System.Drawing.Size(221, 20);
             this.LocalFileNameTextBox.TabIndex = 10;
@@ -153,7 +157,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(3, 110);
+            this.label5.Location = new System.Drawing.Point(3, 136);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(52, 13);
             this.label5.TabIndex = 9;
@@ -161,7 +165,7 @@
             // 
             // PathTextBox
             // 
-            this.PathTextBox.Location = new System.Drawing.Point(86, 81);
+            this.PathTextBox.Location = new System.Drawing.Point(86, 107);
             this.PathTextBox.Name = "PathTextBox";
             this.PathTextBox.Size = new System.Drawing.Size(221, 20);
             this.PathTextBox.TabIndex = 8;
@@ -169,7 +173,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(3, 84);
+            this.label4.Location = new System.Drawing.Point(3, 110);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(71, 13);
             this.label4.TabIndex = 7;
@@ -181,6 +185,7 @@
             this.UserTextBox.Name = "UserTextBox";
             this.UserTextBox.Size = new System.Drawing.Size(221, 20);
             this.UserTextBox.TabIndex = 6;
+            this.UserTextBox.Text = "Ftpdevcl";
             // 
             // label3
             // 
@@ -223,6 +228,7 @@
             this.HostTextBox.Name = "HostTextBox";
             this.HostTextBox.Size = new System.Drawing.Size(221, 20);
             this.HostTextBox.TabIndex = 1;
+            this.HostTextBox.Text = "sapftpeur2a.jnj.com";
             // 
             // panel1
             // 
@@ -306,6 +312,23 @@
             this.KeyTextBox.Size = new System.Drawing.Size(786, 660);
             this.KeyTextBox.TabIndex = 0;
             // 
+            // PasswordTextBox
+            // 
+            this.PasswordTextBox.Location = new System.Drawing.Point(86, 81);
+            this.PasswordTextBox.Name = "PasswordTextBox";
+            this.PasswordTextBox.Size = new System.Drawing.Size(221, 20);
+            this.PasswordTextBox.TabIndex = 15;
+            this.PasswordTextBox.Text = "Latina@1";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(3, 84);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(56, 13);
+            this.label7.TabIndex = 14;
+            this.label7.Text = "Password:";
+            // 
             // SFTP
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -356,6 +379,8 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog;
         private System.Windows.Forms.TextBox RemoteFileNameTextBox;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.TextBox PasswordTextBox;
+        private System.Windows.Forms.Label label7;
     }
 }
 
