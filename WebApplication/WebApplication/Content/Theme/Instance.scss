@@ -552,7 +552,7 @@ div.Instance {
                     position: relative;
 
                     &.Field {
-                        padding: 0;
+                        padding: 1px;
 
                         input[type=checkbox] {
                             display: block;
@@ -635,6 +635,7 @@ div.Instance {
                         overflow: hidden;
                         text-overflow: ellipsis;
                         max-width: 100%;
+                        padding: 0;
 
                         a + a {
                             margin-left: 10px;
@@ -642,7 +643,7 @@ div.Instance {
                     }
 
                     > div.Information {
-                        left: 2px;
+                        left: 3px;
                     }
 
                     &:not(.Signature):not(.Image):not(.Attachment) i.Icon {

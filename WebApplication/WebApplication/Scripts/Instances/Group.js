@@ -3,6 +3,7 @@
         group = this,
         items = [],
         itemIndexes = {}, //items[itemIndex[n]] is the item item with id == n
+        tableHeaderCells = {},
         title,
         iterationCommands,
         addButton,
@@ -13,9 +14,33 @@
         readOnly,
         tableElement,
         tableBody,
-		pageIndex,
+        pageIndex,
 
-		createTableHeader = function (rows, rowIndex, items) {
+        updateTableHeaderCell = function (cell, description) {
+            cell.html(description);
+            var errorSpans = cell[0].querySelectorAll("span.Error, span.Null");
+            for (var index = 0; index < errorSpans.length; ++index) {
+                var
+                    errorSpan = errorSpans[index],
+                    i = document.createElement("i");
+
+                i.className = "fas fa-exclamation-triangle";
+                i.setAttribute("title", errorSpan.textContent || "no value");
+                errorSpan.innerHTML = "";
+                errorSpan.appendChild(i);
+            }
+        },
+
+        updateTableHeader = function (model) {
+            for (var index in model.items) {
+                itemModel = model.items[index];
+                updateTableHeaderCell(tableHeaderCells[itemModel.id], itemModel.descriptionValue);
+                if (itemModel.typeName == "Group")
+                    updateTableHeader(itemModel);
+            }
+        },
+
+        createTableHeader = function (rows, rowIndex, items) {
             var
                 rowsCount = 1,
                 columnsCount = 0,
@@ -34,7 +59,11 @@
             for (var index = 0; index < items.length; ++index) {
                 var
                     item = items[index],
-                    cell = $("<th />").appendTo(row).text(item.descriptionValue);
+                    cell = $("<th />").appendTo(row);
+
+                updateTableHeaderCell(cell, item.descriptionValue);
+
+                tableHeaderCells[item.id] = cell;
 
                 if (item.typeName == "Group") {
                     cell.addClass("SubGroup");
@@ -51,11 +80,18 @@
                 var
                     cell = row.children().eq(index),
                     cols = cell.attr("colspan") || 1;
-                cell.css("width", 100 / (rowIndex + 1) / columnsCount * cols + "%");
             }
 
-            //commands column
             if (rowIndex == 0) {
+                var width = 100 / columnsCount;
+                for (var index in tableHeaderCells) {
+                    var
+                        cell = tableHeaderCells[index],
+                        cols = parseInt(cell.attr("colspan")) || 1;
+                    cell.css("width", width * cols + "%");
+                }
+
+                //commands column
                 $("<th />").appendTo(row);
                 columnsCount++;
             }
@@ -204,7 +240,9 @@
             index,
             newItems = [],
             newItemIndexes = {},
-            lastItem = null;
+            lastItem = null,
+            item,
+            itemModel;
 
         update(model);
 
@@ -214,9 +252,7 @@
             even = true;
         
         for (index in children) {
-            var
-                item,
-				itemModel = children[index];
+		    itemModel = children[index];
             
             if (!itemIndexes[itemModel.id]) 
                 item = itemModel.typeName == "Group" || itemModel.typeName == "Iteration" ? new instances.Group(null, itemModel.typeName, this, itemModel) : new instances.Item(itemModel, this);
@@ -249,6 +285,8 @@
             newItemIndexes[itemModel.id] = index;
             newItems.push(item);
         }
+
+        if (model.iterator && model.showAsTable) updateTableHeader(model);
 
         items = newItems;
         itemIndexes = newItemIndexes;

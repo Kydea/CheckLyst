@@ -73,8 +73,6 @@
                         var group = element;
                         while ((group = $(group).parent().closest(".Group, .Iteration")).length == 1) {
                             nextControl = (direction == 1 ? $("input:visible:first", group.next(":not(.ReadOnly)")) : $("input:visible:last", group.prev(":not(.ReadOnly)")));
-                            console.log(group.next(":not(.ReadOnly)"));
-                            console.log(nextControl);
                             if (nextControl.length == 1) {
                                 nextControl.focus();
                                 return;

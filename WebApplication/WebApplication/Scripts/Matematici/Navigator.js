@@ -30,7 +30,6 @@
                 && value.toLowerCase().indexOf("/error") == -1
                 && value.toLowerCase().indexOf("/dashboard") == -1
             ) {
-                console.log("redirection needed", value);
                 localStorage.redirectUrl = value;
                 localStorage.redirectTime = new Date();
             }

@@ -348,7 +348,7 @@ div.Instance table.Grid {
     float: none !important;
     position: relative; }
     div.Instance table.Grid tbody tr td.Field {
-      padding: 0; }
+      padding: 1px; }
       div.Instance table.Grid tbody tr td.Field input[type=checkbox] {
         display: block;
         margin: 0 auto; }
@@ -395,11 +395,12 @@ div.Instance table.Grid {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 100%; }
+      max-width: 100%;
+      padding: 0; }
       div.Instance table.Grid tbody tr td.Image a + a, div.Instance table.Grid tbody tr td.Attachment a + a {
         margin-left: 10px; }
     div.Instance table.Grid tbody tr td > div.Information {
-      left: 2px; }
+      left: 3px; }
     div.Instance table.Grid tbody tr td:not(.Signature):not(.Image):not(.Attachment) i.Icon {
       display: none; }
     div.Instance table.Grid tbody tr td.IterationCommands {

@@ -243,11 +243,14 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         {
             base.MarkAllAsChanged(Roots);
 
-            foreach (Iteration iteration in Iterations.Where(i => !i.Removed))
+            var Iterations = this.Iterations.Where(i => !i.Removed);
+            bool AnyIteration = Iterations.Any();
+
+            foreach (Iteration iteration in Iterations)
                 iteration.MarkAllAsChanged(Roots);
 
             foreach (Item item in Items)
-                if (!item.IteratorModelItem)
+                if (!item.IteratorModelItem || !AnyIteration) //when there is no iteration the table header must be marked explicitely, could be imporved by checking if an ancestor is a table
                     item.MarkAllAsChanged(Roots);
         }
 

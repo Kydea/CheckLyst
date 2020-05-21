@@ -110,7 +110,6 @@
             savedValues.redirectUrl = localStorage.redirectUrl;
             savedValues.redirectTime = localStorage.redirectTime;
         }
-        console.log("saving redirection url", { localStorageUrl: localStorage.redirectUrl, elapsedTime: new Date() - new Date(localStorage.redirectTime), redirectTime: localStorage.redirectTime, savedValues: savedValues });
         matematici.tokenManager.logout();
         localStorage.redirectUrl = savedValues.redirectUrl;
         localStorage.redirectTime = savedValues.redirectTime;
