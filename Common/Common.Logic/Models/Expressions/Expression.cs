@@ -103,7 +103,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             if (Root == null) Parse(instance);
             var NewValue = Root.GetValue(instance, TimeZone);
             if (
-                Notification 
+                Notification
                 && !(Value.IsNull && NewValue.IsNull)
                 && (
                     (Value.IsNull ^ NewValue.IsNull)
@@ -111,7 +111,11 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                     || Value.Type == DataType.Date && Value.DateTimeValue != NewValue.DateTimeValue
                     || Value.Type == DataType.DateTime && Value.DateTimeValue != NewValue.DateTimeValue
                 )
-            ) Notified = false; //when the value changes the notification is reset
+            )
+            {
+                instance.NeedToSaveExpressionValues = true;
+                Notified = false; //when the value changes the notification is reset
+            }
             Value = NewValue;
         }
 

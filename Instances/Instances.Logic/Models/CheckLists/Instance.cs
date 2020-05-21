@@ -88,6 +88,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         [JsonIgnore]
         public bool InCreation { get; private set; }
+        public bool NeedToSaveExpressionValues { get; set; }
 
         public ICheckList CheckList { get => this; set => throw new NotImplementedException(); }
 

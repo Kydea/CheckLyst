@@ -123,12 +123,21 @@ namespace CheckListManager.Instances.Data
             Entities.Instances.Remove(instance);
         }
 
-        public void SaveChildren(Common.Data.Instances instance, IEnumerable<InstanceTags> instanceTags, IEnumerable<InstanceExpressionValues> instanceExpressionValues)
+        public void SaveChildren(long instanceID, IEnumerable<InstanceTags> instanceTags, IEnumerable<InstanceExpressionValues> instanceExpressionValues)
         {
-            Entities.InstanceTags.RemoveRange(Entities.InstanceTags.Where(x => x.Instance == instance.ID));
-            Entities.InstanceTags.AddRange(instanceTags);
+            SaveTags(instanceID, instanceTags);
+            SaveExpressionValues(instanceID, instanceExpressionValues);
+        }
 
-            Entities.InstanceExpressionValues.RemoveRange(instance.InstanceExpressionValues);
+        public void SaveTags(long instanceID, IEnumerable<InstanceTags> instanceTags)
+        {
+            Entities.InstanceTags.RemoveRange(Entities.InstanceTags.Where(x => x.Instance == instanceID));
+            Entities.InstanceTags.AddRange(instanceTags);
+        }
+
+        public void SaveExpressionValues(long instanceID, IEnumerable<InstanceExpressionValues> instanceExpressionValues)
+        {
+            Entities.InstanceExpressionValues.RemoveRange(Entities.InstanceExpressionValues.Where(x => x.Instance == instanceID));
             Entities.InstanceExpressionValues.AddRange(instanceExpressionValues);
         }
 

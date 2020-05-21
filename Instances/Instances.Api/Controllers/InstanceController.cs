@@ -90,7 +90,7 @@ namespace CheckListManager.Instances.Api.Controllers
 
                 var response = new InstanceResponse
                 {
-                    Id = cacheObject.Id,
+                    Id = cacheObject.ID,
                     State = cacheObject.InstanceState,
                     Year = cacheObject.Year,
                     Number = cacheObject.Number,
@@ -172,7 +172,7 @@ namespace CheckListManager.Instances.Api.Controllers
 
                 var response = new InstanceResponse
                 {
-                    Id = cacheObject.Id,
+                    Id = cacheObject.ID,
                     Code = cacheObject.Code,
                     Year = cacheObject.Year,
                     Number = cacheObject.Number,
@@ -209,7 +209,7 @@ namespace CheckListManager.Instances.Api.Controllers
                 await _instanceManagerService.SaveCacheObjectAsync(cacheObject);
                 var response = new InstanceResponse
                 {
-                    Id = cacheObject.Id,
+                    Id = cacheObject.ID,
                     Code = cacheObject.Code,
                     CheckList = cacheObject.Instance.GetViewModel(Identity, cacheObject),
                     State = cacheObject.InstanceState

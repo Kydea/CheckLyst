@@ -19,7 +19,9 @@ namespace CheckListManager.Instances.Data
         Task<int> GetInstanceNumberAsync(long prototype, int version, int year);
 	    Task<List<Common.Data.Instances>> GetInstancesWithExpressions(long Prototype, int Version);
         void DeleteInstance(Common.Data.Instances instance);
-        void SaveChildren(Common.Data.Instances instance, IEnumerable<InstanceTags> instanceTags, IEnumerable<InstanceExpressionValues> instanceExpressionValues);
+        void SaveChildren(long instanceID, IEnumerable<InstanceTags> instanceTags, IEnumerable<InstanceExpressionValues> instanceExpressionValues);
+        void SaveTags(long instanceID, IEnumerable<InstanceTags> instanceTags);
+        void SaveExpressionValues(long instanceID, IEnumerable<InstanceExpressionValues> instanceExpressionValues);
         Task ValidateUniqueExpressions(long instance);
         Task<int?> GetActivePrototypeVersion(long prototype);
         Task<List<Users>> GetInstanceEditors(long department, long prototypeType, string versionState);

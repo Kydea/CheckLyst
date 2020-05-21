@@ -132,6 +132,8 @@ namespace CheckListManager.Instances.Logic.Services
 
         public async Task SaveCacheObjectAsync(InstanceCacheObject cacheObject)
         {
+            if (cacheObject.NeedToSaveExpressionValues && cacheObject.ID.HasValue)
+                _instancesRepository.SaveExpressionValues(cacheObject.ID.Value, CreateExpressionValues(cacheObject));
             if (!cacheObject.Instance.CheckVersion(null, true) || cacheObject.NeedToCache)
                 await _instanceCache.SetAsync(cacheObject);
             else
@@ -205,7 +207,7 @@ namespace CheckListManager.Instances.Logic.Services
             try
             {
                 var cacheObject = await GetCacheObjectForEditAsync(identity, code, true);
-                if (cacheObject.Id.HasValue)
+                if (cacheObject.ID.HasValue)
                     throw new InstanceException("Instance already saved");
                 if (cacheObject.InstanceState != InstanceState.Draft)
                     throw new InstanceException("Instance state not valid");
@@ -238,7 +240,7 @@ namespace CheckListManager.Instances.Logic.Services
                 {
                     row = await _instancesRepository.BeginCreateInstanceAsync(row);
 
-                    cacheObject.Id = row.ID;
+                    cacheObject.ID = row.ID;
                     cacheObject.Year = row.Year;
                     cacheObject.Number = row.Number;
                     if (cacheObject.Instance.Pages.Any()) ((Page)cacheObject.Instance.Pages[0]).Lock = new Lock(identity.Code);
@@ -248,7 +250,7 @@ namespace CheckListManager.Instances.Logic.Services
                     cacheObject.Instance.Update(DependencyRelation.Properties.Formula);
                     cacheObject.Instance.UpdateReadOnly(identity.Code, InstanceState.Progress);
 
-                    _instancesRepository.SaveChildren(row, CreateTags(cacheObject), CreateExpressionValues(cacheObject));
+                    _instancesRepository.SaveChildren(row.ID, CreateTags(cacheObject), CreateExpressionValues(cacheObject));
 
                     await _instancesRepository.SaveChangesAsync();
 
@@ -415,7 +417,7 @@ namespace CheckListManager.Instances.Logic.Services
         private IEnumerable<InstanceTags> CreateTags(InstanceCacheObject cacheObject)
         {
             var Tags = new Dictionary<string, InstanceTags>();
-            AddTags(Tags, cacheObject.Id.Value, cacheObject.Instance?.Header);
+            AddTags(Tags, cacheObject.ID.Value, cacheObject.Instance?.Header);
             return Tags.Values;
         }
 
@@ -435,7 +437,7 @@ namespace CheckListManager.Instances.Logic.Services
                     )
                 ).Select(e => new InstanceExpressionValues
                 {
-                    Instance = cacheObject.Id.Value,
+                    Instance = cacheObject.ID.Value,
                     Code = e.Key,
                     Description = e.Value.Description,
                     Value =
@@ -491,7 +493,7 @@ namespace CheckListManager.Instances.Logic.Services
                 row.ModifiedOn = ModifiedOn;
                 row.ModifiedBy = ModifiedBy;
 
-                _instancesRepository.SaveChildren(row, CreateTags(cacheObject), CreateExpressionValues(cacheObject));
+                _instancesRepository.SaveChildren(row.ID, CreateTags(cacheObject), CreateExpressionValues(cacheObject));
 
                 if (complete)
                 {
@@ -643,7 +645,7 @@ namespace CheckListManager.Instances.Logic.Services
                 InstanceState = instance.InstanceState,
                 CreatedBy = instance.CreatedBy,
                 CreatedOn = instance.CreatedOn,
-                Id = instance.ID,
+                ID = instance.ID,
                 Year = instance.Year,
                 Number = instance.Number,
                 ModifiedOn = instance.ModifiedOn,
