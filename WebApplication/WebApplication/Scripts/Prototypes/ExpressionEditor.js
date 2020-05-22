@@ -1,7 +1,7 @@
 ﻿prototypes.ExpressionEditor = function (expression, confirmHandler, deleteHendler, dependencyHandler) {
     var
         expressionEditor = this,
-        canClose = true,
+        edited = false,
         form,
 
         toggleNotification = function () {
@@ -14,11 +14,12 @@
         },
 
         showDependencies = function () {
-            dependencyHandler();
+            if (!confirm())
+                dependencyHandler();
         },
 
         cancel = function () {
-            if (canClose)
+            if (!edited)
                 return false;
 
             matematici.dialog.show("warning", "Warning: the chnges to the expression will be lost.", [
@@ -29,14 +30,16 @@
         },
 
         confirm = function () {
+            if (!edited) return false;
+
             var
-                expression = {},
+                expression = { edited: edited },
                 notificationCheck = $("input[name=notification]", form),
                 code = $("input[name=code]", form).val();
 
             if (!matematici.codeRegularExpression.test(code)) {
                 matematici.dialog.error("Invalid code", "The code " + code + " is not valid");
-                return false;
+                return true;
             }
 
             if (!notificationCheck.prop("checked")) {
@@ -74,7 +77,7 @@
             if (prototypes.prototype.getModel().state == prototypes.Prototype.states.draft) {
                 $("input[name=code]", form).keyfilter(/^[$A-Z_0-9]*$/i);
                 form
-                    .on("change", "input, textarea", function () { canClose = false; })
+                    .on("change", "input, textarea", function () { edited = true; })
                     .on("change", "input[name=notification]", toggleNotification);
             } else
                 $("input, textarea", form).each(function () {

@@ -84,6 +84,10 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                 Root.Check(CheckList, this, new List<string>());
                 if ((Exception || Notification) && Root.DataType != DataType.Boolean && Root.DataType != DataType.Date && Root.DataType != DataType.DateTime)
                     throw new Exception($"Exception and notification expressions must be boolean or date or date-time");
+
+                if (Unique && Root.DataType == DataType.Array)
+                    throw new Exception($"Unique exception cannot be arrays");
+
                 return true;
             }
             catch (ParseException Exception)

@@ -23,7 +23,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
             return new TypedValue(DataType.Number, (decimal)Iterator.Iterations.Where(x => !x.Removed).Count());
         }
 
-        protected override DependencyRelation.Properties DependencyProperty => DependencyRelation.Properties.Iterations;
+        protected override DependencyRelation.Properties GetDependencyProperty(DependencyNode DependingElement) => DependencyRelation.Properties.Iterations;
 
         public override string ToString()
         {

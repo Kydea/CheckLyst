@@ -17,13 +17,14 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
         public string Code { get; set; }
 
         protected string Property { get; set; }
-        protected virtual DependencyRelation.Properties DependencyProperty => DependencyRelation.Properties.Validity;
+        protected virtual DependencyRelation.Properties GetDependencyProperty(DependencyNode DependingElement) => DependencyRelation.Properties.Validity;
 
         public override void BuildDependencies(ICheckList CheckList, Expression Expression)
         {
             if (!CheckList.Elements.ContainsKey(Code)) throw new ParseException($"Element with code {Code} not found", Position);
             var DependingElement = (DependencyNode)CheckList.Elements[Code];
-            Expression.AddDependingRelation(DependencyRelation.Properties.Value, DependingElement, DependencyProperty);
+            var Property = GetDependencyProperty(DependingElement);
+            Expression.AddDependingRelation(DependencyRelation.Properties.Value, DependingElement, Property);
         }
 
         protected virtual void Check(ICheckListElement Element, List<string> IteratorStack)

@@ -28,7 +28,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public bool FTPExport { get; set; }
         public Exception Exception { get; set; }
 
-        public bool NeedToSaveExpressionValues { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public bool NeedToSaveExpressionValues { get; set; }
 
         private int itemSequence;
         public Dictionary<int, ICheckListItem> Items { get; } = new Dictionary<int, ICheckListItem>();
@@ -101,7 +101,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                     if (expression.Error == null)
                     {
                         expression.TestDependencyChain(this, DependencyRelation.Properties.Value);
-                        Error = expression.Error != null;
+                        Error |= expression.Error != null;
                     }
 
                 if (Error)

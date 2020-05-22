@@ -14,7 +14,8 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
             this.Property = Property;
         }
 
-        protected override DependencyRelation.Properties DependencyProperty => DependencyRelation.Properties.Value;
+        protected override DependencyRelation.Properties GetDependencyProperty(DependencyNode DependingElement) =>
+            DependingElement is ICheckListGroup ? DependencyRelation.Properties.Iterations : DependencyRelation.Properties.Value;
 
         protected override void Check(ICheckListElement Element, List<string> IteratorStack)
         {

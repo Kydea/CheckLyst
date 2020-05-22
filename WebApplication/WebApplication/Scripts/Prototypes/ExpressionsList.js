@@ -11,6 +11,7 @@
         verifyButton,
         openButton,
         orderBar,
+        valid = true,
 
         getRow = function (index) {
             return $("tr", tableBody).eq(index);
@@ -23,11 +24,15 @@
 
         showDependencies = function () {
             var
+                openAgain = function () {
+                    open(currentIndex);
+                },
                 handler = function () {
                     var
                         code = list[currentIndex].code,
                         model = prototypes.prototype.getModel().expressions[code];
-                    matematici.dependenciesDialog.show("Expression " + (code || "(new)"), model.dependingRelations, model.dependentRelations);
+                    if (valid)
+                        matematici.dependenciesDialog.show("Expression " + (code || "(new)"), model.dependingRelations, model.dependentRelations, openAgain);
                 };
             if (matematici.canClose)
                 handler();
@@ -40,7 +45,7 @@
                             });
                         }
                     },
-                    { text: "cancel", icon: "times", cancelButton: true }
+                    { text: "cancel", icon: "times", cancelButton: true, handler: openAgain }
                 ]);
         },
 
@@ -103,7 +108,7 @@
                 if (index) {
                     list[index] = row;
                     update(index);
-                } else 
+                } else
                     select(insert(row, currentIndex));
             }, remove, showDependencies);
         },
@@ -146,7 +151,7 @@
             commands.find(".Valid")
                 .removeClass("fa-check fa-times fa-question Off")
                 .attr("title", row.error || "")
-                .addClass(row.valid == null ? "fa-check Off" : row.valid ? "fa-check" : "fa-times");
+                .addClass(row.edited ? "fa-question Off" : row.error ? "fa-times" : "fa-check");
 
             commands.find(".Unique").toggleClass("Off", !row.unique);
             commands.find(".Exception").toggleClass("Off", !row.exception);
@@ -170,19 +175,15 @@
                 contentType: "application/json",
                 data: JSON.stringify({ checkList: model })
             }).done(function (result) {
-                var valid = true;
+                valid = true;
                 for (var index in list) {
-                    var expressionValidity;
-                    try {
-                        expressionValidity = list[index].valid = result.expressions[list[index].code].error == null;
-                        list[index] = result.expressions[list[index].code];
-                    } catch (error) {
-                        list[index].error = error;
-                        list[index].dataType = "Error";
-                    }
-                    valid &= expressionValidity;
-                    update(index);
+                    var row = list[index] = result.expressions[list[index].code]
+                    valid &= (row.error == null);
 
+                    getRow(index).find("i.Valid")
+                        .removeClass("fa-check fa-times fa-question Off")
+                        .attr("title", row.error || "")
+                        .addClass(row.error == null ? "fa-check" : "fa-times");
                     model.expressions = result.expressions;
                 }
 
@@ -191,7 +192,7 @@
                     matematici.dialog.error("Error", result.checkListException.Message);
                 }
 
-                $("div.ActionBar a.ExpressionListButton").toggleClass("Invalid", !valid);
+                $("div.ActionBar a.ExpressionsList").toggleClass("Invalid", !valid);
                 if (handler) handler.call(this);
             });
         },
@@ -250,13 +251,15 @@
             var
                 buttons =
                     $("<div />").addClass("Buttons").appendTo(container.parent())
-                        .append($("<a />").addClass("Button").text("close").prepend($("<i />").addClass("Icon fa fa-times")).on("click", function () {
+                        .append($("<a />").addClass("Button CancelButton").text("close").prepend($("<i />").addClass("Icon fa fa-times")).on("click", function () {
                             if (verifyButton.is(":visible"))
                                 verify(function () {
                                     close();
                                 });
-                            else
+                            else {
+                                updatePrototype();
                                 close();
+                            }
                         }))
                         .append(openButton = $("<a />").addClass("Button").text("open").hide().prepend($("<i />").addClass("Icon fa fa-edit")).on("click", function () {
                             open(currentIndex);

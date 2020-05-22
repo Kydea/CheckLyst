@@ -27,7 +27,7 @@
         };
 
     return {
-        show: function (title, dependingRelations, dependentRelations) {
+        show: function (title, dependingRelations, dependentRelations, handler) {
             var content = $("<div />").on("click", "a", navigate);
             if ((!dependingRelations || dependingRelations.length == 0) && (!dependentRelations || dependentRelations.length == 0))
                 content.append("(no dependency found)");
@@ -43,7 +43,7 @@
                         content.append(renderDependency(dependentRelations[dependency]));
                 }
             }
-            matematici.dialog.show("Dependencies - " + title, content);
+            matematici.dialog.show("Dependencies - " + title, content, { text: "ok", icon: "check", handler: handler });
             matematici.dialog.setWidth(800);
         }
     }
