@@ -25,7 +25,7 @@ div.Popup {
       text-transform: uppercase;
       font-weight: normal; }
     div.Popup div.Container div.Buttons {
-      margin-top: 40px; }
+      margin-top: 20px; }
       div.Popup div.Container div.Buttons a {
         min-width: 100px;
         float: right;

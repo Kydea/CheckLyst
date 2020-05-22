@@ -1,0 +1,59 @@
+﻿body.PrototypeEditor div.CheckListGrid div.Container > div {
+  position: relative; }
+  body.PrototypeEditor div.CheckListGrid div.Container > div div.ScrollablePanel {
+    width: calc(100% - 25px); }
+    body.PrototypeEditor div.CheckListGrid div.Container > div div.ScrollablePanel table.ExpressionsList tr td {
+      width: 50%; }
+      body.PrototypeEditor div.CheckListGrid div.Container > div div.ScrollablePanel table.ExpressionsList tr td:first-child {
+        padding: 0;
+        text-align: center;
+        width: 30px; }
+        body.PrototypeEditor div.CheckListGrid div.Container > div div.ScrollablePanel table.ExpressionsList tr td:first-child i {
+          display: none;
+          font-size: 16px; }
+      body.PrototypeEditor div.CheckListGrid div.Container > div div.ScrollablePanel table.ExpressionsList tr td:last-child {
+        width: 30px;
+        text-align: center;
+        white-space: nowrap; }
+        body.PrototypeEditor div.CheckListGrid div.Container > div div.ScrollablePanel table.ExpressionsList tr td:last-child i {
+          font-size: 14px;
+          display: inline !important; }
+          body.PrototypeEditor div.CheckListGrid div.Container > div div.ScrollablePanel table.ExpressionsList tr td:last-child i.fa-times {
+            color: #cc0000 !important; }
+          body.PrototypeEditor div.CheckListGrid div.Container > div div.ScrollablePanel table.ExpressionsList tr td:last-child i.fa-check {
+            color: #009688 !important; }
+          body.PrototypeEditor div.CheckListGrid div.Container > div div.ScrollablePanel table.ExpressionsList tr td:last-child i.Off {
+            opacity: .1;
+            color: black !important; }
+          body.PrototypeEditor div.CheckListGrid div.Container > div div.ScrollablePanel table.ExpressionsList tr td:last-child i + i {
+            margin-left: 10px; }
+    body.PrototypeEditor div.CheckListGrid div.Container > div div.ScrollablePanel table.ExpressionsList tr.Selected td:first-child i {
+      display: inline; }
+  body.PrototypeEditor div.CheckListGrid div.Container > div div.OrderBar {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 20px; }
+    body.PrototypeEditor div.CheckListGrid div.Container > div div.OrderBar a {
+      position: absolute;
+      top: 50%;
+      border: solid 1px #009688;
+      width: 20px;
+      height: 20px;
+      display: block;
+      text-align: center; }
+      body.PrototypeEditor div.CheckListGrid div.Container > div div.OrderBar a i {
+        font-size: 16px;
+        color: #009688 !important; }
+      body.PrototypeEditor div.CheckListGrid div.Container > div div.OrderBar a.Off {
+        opacity: .3; }
+      body.PrototypeEditor div.CheckListGrid div.Container > div div.OrderBar a:hover:not(.Off) {
+        background-color: #ebebeb; }
+      body.PrototypeEditor div.CheckListGrid div.Container > div div.OrderBar a:first-child {
+        margin-top: -10px;
+        border-radius: 3px 3px 0 0;
+        border-bottom: 0; }
+      body.PrototypeEditor div.CheckListGrid div.Container > div div.OrderBar a:last-child {
+        margin-top: 10px;
+        border-radius: 0 0 3px 3px; }

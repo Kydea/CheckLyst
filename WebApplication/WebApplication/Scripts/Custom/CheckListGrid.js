@@ -11,6 +11,8 @@
 			matematici.elements.body.addClass("CheckListGrid");
             element = $("<div />").addClass("CheckListGrid").appendTo(matematici.elements.body);
             container = $("<div />").addClass("ScrollablePanel").appendTo($("<div />").addClass("Container").appendTo(element));
+            autoCenter = new matematici.AutoCenter(container.parent());
+            autoCenter.initialize();
 
 			renderValues();
 		},
@@ -115,6 +117,7 @@
 	}
 
 	checkListGrid.close = function () {
+        autoCenter.destroy();
 		element.remove();
 		matematici.elements.body.removeClass("CheckListGrid");
         matematici.checkListGrid = null;

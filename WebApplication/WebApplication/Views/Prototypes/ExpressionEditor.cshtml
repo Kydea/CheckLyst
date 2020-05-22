@@ -1,0 +1,57 @@
+﻿<div id="ExpressionEditor">
+    <h2>Expression Editor</h2>
+
+    <form id="Detail">
+        <label>
+            <span>Code</span>
+            <i class="Icon fal fa-key" />
+            <input type="text" name="code" autocomplete="off" />
+        </label>
+
+        <label class="Clearing Width300">
+            <span>Description</span>
+            <i class="Icon fal fa-calendar-alt" />
+            <input type="text" name="description" autocomplete="off"/>
+        </label>
+
+        <label class="Clearing">
+            <span>Unique</span>
+            <input type="checkbox" name="unique" />
+        </label>
+
+        <label>
+            <span>Exception</span>
+            <input type="checkbox" name="exception" />
+        </label>
+
+        <label>
+            <span>Notification</span>
+            <input type="checkbox" name="notification" />
+        </label>
+
+        <label class="Clearing Width300">
+            <span>Notification email</span>
+            <i class="Icon fal fa-envelope" />
+            <input type="text" name="notificationEmail" autocomplete="off"/>
+        </label>
+
+        <label class="Clearing Width300">
+            <span>Notification note</span>
+            <i class="Icon fal fa-edit" />
+            <input type="text" name="notificationNote" autocomplete="off"/>
+        </label>
+
+        <label class="Clearing Width300">
+            <span>Expression</span>
+            <textarea type="text" name="serializedValue" style="height: 200px" />
+        </label>
+    </form>
+</div>
+
+<script type="text/javascript">
+    var
+        expressionEditor = matematici.popup.getData(),
+        form = $("div#ExpressionEditor form#Detail");
+
+    expressionEditor.fill(form);
+</script>

@@ -162,5 +162,9 @@
   {
     "outputFile": "Content/Theme/Dashboard.css",
     "inputFile": "Content/Theme/Dashboard.scss"
+  },
+  {
+    "outputFile": "Content/Theme/ExpressionEditor.css",
+    "inputFile": "Content/Theme/ExpressionEditor.scss"
   }
 ]

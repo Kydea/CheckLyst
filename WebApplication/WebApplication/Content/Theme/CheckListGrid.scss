@@ -12,8 +12,10 @@ div.CheckListGrid {
         padding: 20px;
         box-shadow: $Box-Shadow;
 
-        > div.ScrollablePanel {
+        div.ScrollablePanel {
             overflow: auto;
+            position: relative;
+            border: solid 1px $Color-Grey-Regular;
         }
 
         h2 {
@@ -44,6 +46,10 @@ div.CheckListGrid {
             tr {
                 th {
                     text-align: center;
+
+                    &:first-child {
+                        border-left: none !important;
+                    }
                 }
 
                 &.Selected {
@@ -57,56 +63,6 @@ div.CheckListGrid {
                 }
             }
 
-            &.ExpressionsList {
-                tr {
-                    td {
-                        width: 30px;
-
-                        &:first-child {
-                            width: 30px;
-                            text-align: center;
-
-                            i {
-                                display: none;
-                                font-size: 16px;
-                            }
-                        }
-
-                        &.CodeColumn {
-                            width: 10%;
-                        }
-
-                        &.DescriptionColumn {
-                            width: 20%;
-                        }
-
-                        &.ExpressionColumn {
-                            width: 70%;
-                        }
-
-                        i {
-                            font-size: 14px;
-
-                            &.fa-times {
-                                color: $Color-Red-Regular !important;
-                            }
-
-                            &.fa-check {
-                                color: $Color-Green-Regular !important;
-                            }
-                        }
-                    }
-
-                    &.Selected {
-                        td {
-                            i {
-                                display: block;
-                            }
-                        }
-                    }
-                }
-            }
-
             &.SourcesList {
                 td {
                     width: 50%;
@@ -115,8 +71,7 @@ div.CheckListGrid {
         }
 
         div.Buttons {
-            padding-top: 20px;
-            position: sticky;
+            padding-top: 10px;
 
             a {
                 float: right;
@@ -136,15 +91,9 @@ div.CheckListGrid {
         background-color: rgba(102, 102, 102, .7);
 
         div.Container {
-            position: absolute;
+            position: relative;
+            margin: auto;
             width: calc(90vw - 60px);
-            top: 50%;
-            left: 50%;
-            -moz-transform: translate(-50%, -50%);
-            -ms-transform: translate(-50%, -50%);
-            -o-transform: translate(-50%, -50%);
-            -webkit-transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
         }
 
         div.ScrollablePanel {

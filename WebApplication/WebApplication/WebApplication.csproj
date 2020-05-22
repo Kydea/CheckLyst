@@ -134,6 +134,9 @@
     <Content Include="Content\Theme\Dialog.css">
       <DependentUpon>Dialog.scss</DependentUpon>
     </Content>
+    <Content Include="Content\Theme\ExpressionEditor.css">
+      <DependentUpon>ExpressionEditor.scss</DependentUpon>
+    </Content>
     <Content Include="Content\Theme\FixedHeader.css">
       <DependentUpon>FixedHeader.scss</DependentUpon>
     </Content>
@@ -335,6 +338,7 @@
     <Content Include="Content\Theme\Fonts\MyriadPro\Regular\MyriadPro-Regular.woff" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Regular\MyriadPro-Regular.woff2" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Semibold\Myriad Pro Semibold.scss" />
+    <Content Include="Content\Theme\ExpressionEditor.scss" />
     <None Include="Scripts\Libraries\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\Libraries\jquery-2.1.4.js" />
     <Content Include="Scripts\Libraries\jquery-ui-1.11.4.js" />
@@ -370,6 +374,7 @@
     <Content Include="Scripts\Prototypes\BooleanProperty.js" />
     <Content Include="Scripts\Custom\WorkFlowSignature.js" />
     <Content Include="Scripts\Prototypes\DateProperty.js" />
+    <Content Include="Scripts\Prototypes\ExpressionEditor.js" />
     <Content Include="Scripts\Prototypes\Image.js" />
     <Content Include="Scripts\Prototypes\Attachment.js" />
     <Content Include="Scripts\Prototypes\Link.js" />
@@ -447,6 +452,7 @@
     <Content Include="Views\FTPServers\Detail.cshtml" />
     <Content Include="Views\FTPServers\List.cshtml" />
     <Content Include="Views\Trail\UsersList.cshtml" />
+    <Content Include="Views\Prototypes\ExpressionEditor.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

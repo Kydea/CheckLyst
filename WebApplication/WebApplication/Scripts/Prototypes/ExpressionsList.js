@@ -1,140 +1,168 @@
 ﻿prototypes.ExpressionsList = function () {
     var
         model = prototypes.prototype.getModel(),
+        autoCenter,
         element,
-        container,
         table,
-        body,
+        tableBody,
         noRecord,
         currentIndex,
         list = [],
-        removeButton,
-        dependencyButton,
         verifyButton,
-        expressionsInUse,
+        openButton,
+        orderBar,
 
-        up = function (icon) {
-            var
-                row = $(icon).closest("tr"),
-                index = row.prevAll().length,
-                item = list[index];
-
-            list[index] = list[index - 1];
-            list[index - 1] = item;
-
-            row.insertBefore(row.prev());
+        getRow = function (index) {
+            return $("tr", tableBody).eq(index);
         },
 
-        down = function (icon) {
-            var
-                row = $(icon).closest("tr"),
-                index = row.prevAll().length,
-                item = list[row.prevAll().length];
+        toggleMoveButton = function () {
+            orderBar.children().eq(0).toggleClass("Off", currentIndex == null || currentIndex == 0);
+            orderBar.children().eq(1).toggleClass("Off", currentIndex == null || currentIndex == list.length - 1);
+        },
 
-            list[index] = list[index + 1];
-            list[index + 1] = item;
+        showDependencies = function () {
+            var
+                handler = function () {
+                    var
+                        code = list[currentIndex].code,
+                        model = prototypes.prototype.getModel().expressions[code];
+                    matematici.dependenciesDialog.show("Expression " + (code || "(new)"), model.dependingRelations, model.dependentRelations);
+                };
+            if (matematici.canClose)
+                handler();
+            else
+                matematici.dialog.show("warning", "There are unsaved changes.", [
+                    {
+                        text: "save", icon: "check", handler: function () {
+                            prototypes.prototype.save(function () {
+                                verify(handler);
+                            });
+                        }
+                    },
+                    { text: "cancel", icon: "times", cancelButton: true }
+                ]);
+        },
+
+        up = function () {
+            var
+                item = list[currentIndex],
+                row = getRow(currentIndex);
+
+            list[currentIndex] = list[currentIndex - 1];
+            list[currentIndex - 1] = item;
+
+            row.insertBefore(row.prev());
+            --currentIndex;
+
+            toggleMoveButton();
+            matematici.canClose = false;
+        },
+
+        down = function () {
+            var
+                item = list[currentIndex],
+                row = getRow(currentIndex);
+
+            list[currentIndex] = list[currentIndex + 1];
+            list[currentIndex + 1] = item;
 
             row.insertAfter(row.next());
+            ++currentIndex;
+
+            toggleMoveButton();
+            matematici.canClose = false;
         },
 
         select = function (index) {
-            if (currentIndex != null) body.children().eq(currentIndex).filter(":not(.NoRecord)").removeClass("Selected").addClass("Handler").children().slice(0, 2).attr("contenteditable", false);
-            if (model.state == prototypes.Prototype.states.draft) {
-                currentIndex = index;
-                var used = false;
-                if (currentIndex != null) {
-                    var
-                        item = list[currentIndex],
-                        code = item.code,
-                        dependingRelations = item.dependingRelations,
-                        dependentRelations = item.dependentRelations;
-                    used = !!expressionsInUse[code] || (dependingRelations && dependingRelations.length > 0) || (dependentRelations && dependentRelations.length > 0);
-
-                    body.children().eq(currentIndex).addClass("Selected").removeClass("Handler")
-                        .children((used ? ":not(:nth-child(2))" : "") + ":not(:first-child):not(:last-child):not(:nth-last-child(2)):not(:nth-last-child(3)):not(:nth-last-child(4))").attr("contenteditable", true).eq(0).focus();
-                }
-                removeButton.toggle(true || currentIndex != null && !used); //always enabled to avoid dead locks when a user delete a referenced item
-                dependencyButton.toggle(currentIndex != null && used);
+            if (currentIndex != null) {
+                getRow(currentIndex).removeClass("Selected");
+                if (currentIndex == index) open(currentIndex);
             }
-        },
+            currentIndex = index;
+            if (currentIndex != null)
+                getRow(currentIndex).addClass("Selected");
 
-        add = function (row) {
-            noRecord.remove();
-            list.push(row);
-            row.node = $("<tr />")
-                .addClass("Handler")
-                .appendTo(table)
-                .append($("<td />").append($("<i />").addClass("fa fa-caret-right")))
-                .append($("<td />").addClass("CodeColumn").text(row.code))
-                .append($("<td />").addClass("DescriptionColumn").text(row.description))
-                .append($("<td />").addClass("ExpressionColumn").text(row.expression))
-                .append($("<td />").addClass("ValidColumn Centered").append($("<i />").attr("title", row.error || "").addClass("fa" + (row.valid == null ? "" : " fa-" + (row.valid ? "check" : "times")))))
-                .append($("<td />").addClass("UniqueColumn Centered").toggleClass("Off", !row.unique).append($("<i />").addClass("fa fa-key")))
-                .append($("<td />").addClass("ExceptionColumn Centered").toggleClass("Off", !row.exception).append($("<i />").addClass("fa fa-exclamation")))
-                .append($("<td />").addClass("Order Centered Inactive").append($("<i />").addClass("Up fa fa-caret-up")).append($("<i />").addClass("Down fa fa-caret-down")))
-        },
-
-        update = function (row) {
-            row.node.find(".ValidColumn i")
-                .removeClass("fa-check fa-times fa-question")
-                .attr("title", row.error || "")
-                .addClass("fa-" + (row.valid ? "check" : "times"));
+            toggleMoveButton();
+            openButton.toggle(model.state == prototypes.Prototype.states.draft && currentIndex != null);
         },
 
         remove = function () {
-            body.children().eq(currentIndex).remove();
+            matematici.canClose = false;
+            verifyButton.show();
+            getRow(currentIndex).remove();
             list.splice(currentIndex, 1);
             if (list.length == 0) noRecord.appendTo(body);
             select();
         },
 
-        updateModel = function () {
+        open = function (index) {
+            new prototypes.ExpressionEditor(list[index], function (row) {
+                matematici.canClose = false;
+                verifyButton.show();
+                if (index) {
+                    list[index] = row;
+                    update(index);
+                } else 
+                    select(insert(row, currentIndex));
+            }, remove, showDependencies);
+        },
+
+        insert = function (row, index) {
+            noRecord.remove();
+            var tr = $("<tr />")
+                .addClass("Handler")
+                .append($("<td />").append($("<i />").addClass("fa fa-caret-right")).attr("title", row.serializedValue))
+                .append($("<td />").addClass("CodeColumn"))
+                .append($("<td />").addClass("DescriptionColumn"))
+                .append($("<td />").addClass("Centered")
+                    .append($("<i />").addClass("Valid fal"))
+                    .append($("<i />").attr("title", "Unique").addClass("Unique fal fa-key"))
+                    .append($("<i />").attr("title", "Exception").addClass("Exception fal fa-exclamation"))
+                    .append($("<i />").attr("title", "Notification").addClass("Notification fal fa-bell"))
+                );
+
+            if (index == null) {
+                list.push(row);
+                tr.appendTo(tableBody)
+                update(list.length - 1);
+                return list.length - 1;
+            } else {
+                list.splice(index + 1, 0, row);
+                tr.insertAfter(getRow(index));
+                update(index + 1);
+                return index + 1;
+            }
+        },
+
+        update = function (index) {
+            var
+                row = list[index],
+                cells = $("td", getRow(index)),
+                commands = cells.last();
+
+            cells.filter(".CodeColumn").text(row.code).attr("title", row.serializedValue);
+            cells.filter(".DescriptionColumn").text(row.description).attr("title", row.serializedValue);
+            commands.find(".Valid")
+                .removeClass("fa-check fa-times fa-question Off")
+                .attr("title", row.error || "")
+                .addClass(row.valid == null ? "fa-check Off" : row.valid ? "fa-check" : "fa-times");
+
+            commands.find(".Unique").toggleClass("Off", !row.unique);
+            commands.find(".Exception").toggleClass("Off", !row.exception);
+            commands.find(".Notification").toggleClass("Off", !row.notification);
+        },
+
+        updatePrototype = function () {
             model.expressions = {};
             for (var index in list)
-                model.expressions[list[index].code] = {
-                    serializedValue: list[index].expression,
-                    description: list[index].description,
-                    error: list[index].error,
-                    dataType: list[index].dataType,
-                    innerDataType: list[index].innerDataType,
-                    unique: list[index].unique,
-                    exception: list[index].exception,
-                    dependingRelations: list[index].dependingRelations,
-                    dependentRelations: list[index].dependentRelations
-                };
-        },
-
-        checkCodes = function () {
-            for (var index in list) {
-                var code = list[index].node.find(".CodeColumn").text();
-                code = code.replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, function (match, index) {
-                    if (+match === 0) return ""; // or if (/\s+/.test(match)) for white spaces
-                    //return index == 0 ? match.toLowerCase() : match.toUpperCase();
-                    return match;
-                });
-                list[index].node.find(".CodeColumn").text(code);
-                if (!matematici.codeRegularExpression.test(code)) {
-                    matematici.dialog.error("Invalid code", "The code " + code + " is not valid");
-                    return false;
-                }
-            }
-            return true;
-        },
-
-        map = function () {
-            for (var index in list) {
-                list[index].code = list[index].node.find(".CodeColumn").text();
-                list[index].description = list[index].node.find(".DescriptionColumn").text();
-                list[index].expression = list[index].node.find(".ExpressionColumn").text();
-            }
-            updateModel();
+                model.expressions[list[index].code] = list[index];
         },
 
         verify = function (handler) {
             verifyButton.hide();
 
-            if (!checkCodes()) return;
-            map();
+            updatePrototype();
 
             $.ajax({
                 url: matematici.urls.api + "/Prototypes/Prototype/VerifyExpressions",
@@ -147,21 +175,15 @@
                     var expressionValidity;
                     try {
                         expressionValidity = list[index].valid = result.expressions[list[index].code].error == null;
-                        list[index].description = result.expressions[list[index].code].description;
-                        list[index].error = result.expressions[list[index].code].error;
-                        list[index].dataType = result.expressions[list[index].code].dataType;
-                        list[index].innerDataType = result.expressions[list[index].code].innerDataType;
-                        list[index].unique = result.expressions[list[index].code].unique;
-                        list[index].exception = result.expressions[list[index].code].exception;
-                        list[index].dependingRelations = result.expressions[list[index].code].dependingRelations;
-                        list[index].dependentRelations = result.expressions[list[index].code].dependentRelations;
+                        list[index] = result.expressions[list[index].code];
                     } catch (error) {
                         list[index].error = error;
                         list[index].dataType = "Error";
                     }
                     valid &= expressionValidity;
-                    update(list[index]);
-                    updateModel();
+                    update(index);
+
+                    model.expressions = result.expressions;
                 }
 
                 if (result.checkListException) {
@@ -175,87 +197,55 @@
         },
 
         close = function () {
-            setTimeout(function () {
-                element.remove();
-                matematici.elements.body.removeClass("CheckListGrid");
-            }, 0); //handles the blur event handler of the text boxes
-        },
-
-        checkElementExpressionsInUse = function (element) {
-            if (element.hiddenExpressionCode) expressionsInUse[element.hiddenExpressionCode] = true;
-            if (element.readOnlyExpressionCode) expressionsInUse[element.readOnlyExpressionCode] = true;
-            if (element.validExpressionCode) expressionsInUse[element.validExpressionCode] = true;
-            if (element.countDownCondition != 6 && element.countDownToCode) expressionsInUse[element.countDownToCode] = true;
-        },
-
-        checkGroupExpressionsInUse = function (group) {
-            checkElementExpressionsInUse(group);
-            for (var itemIndex in group.items) {
-                var item = group.items[itemIndex]
-                if (item.type == "Group")
-                    checkElementExpressionsInUse(item);
-                else
-                    checkGroupExpressionsInUse(item);
-            }
+            element.remove();
+            matematici.elements.body.removeClass("CheckListGrid");
+            autoCenter.destroy();
         },
 
         setup = function () {
             matematici.elements.body.addClass("CheckListGrid");
+
             element = $("<div />").addClass("CheckListGrid").appendTo(matematici.elements.body);
-            container = $("<div />").addClass("ScrollablePanel").appendTo($("<div />").addClass("Container").appendTo(element).on("click", function (e) {
+            var container = $("<div />").appendTo($("<div />").addClass("Container").appendTo(element).on("click", function (e) {
                 e.preventDefault();
                 e.stopPropagation();
             }));
-            table = $("<table />").addClass("Grid ExpressionsList").appendTo(container)
+
+            autoCenter = new matematici.AutoCenter(container.parent());
+            autoCenter.initialize();
+
+            orderBar = $("<div />")
+                .appendTo(container)
+                .addClass("OrderBar")
+                .append($("<a />").addClass("Icon Up").append($("<i />").addClass("fa fa-caret-up")))
+                .append($("<a />").addClass("Icon Down").append($("<i />").addClass("fa fa-caret-down")))
+                .on("click", "a.Up:not(.Off)", function (e) {
+                    e.preventDefault();
+                    up();
+                }).on("click", "a.Down:not(.Off)", function (e) {
+                    e.preventDefault();
+                    down();
+                });
+
+            toggleMoveButton();
+
+            var scrollablePanel = $("<div />").addClass("ScrollablePanel").appendTo(container);
+
+            table = $("<table />").addClass("Grid ExpressionsList").appendTo(scrollablePanel)
                 .append($("<thead />")
                     .append($("<tr />")
                         .append($("<th />"))
                         .append($("<th />").text("code"))
                         .append($("<th />").text("description"))
-                        .append($("<th />").text("expression"))
-                        .append($("<th />").text("valid"))
-                        .append($("<th />").text("unique"))
-                        .append($("<th />").text("exception"))
                         .append($("<th />"))
                     )
-                ).append(body = $("<tbody />")
+                ).append(tableBody = $("<tbody />")
                     .append(noRecord = $("<tr />").addClass("NoRecord")
                         .append($("<td />").addClass("NoRecord").attr("colspan", "8").text("(no record)"))
                     )
-                ).on("click", "tr td.Order i.Up", function (e) {
-                    e.stopPropagation();
-                    up(this);
-                }).on("click", "tr td.Order i.Down", function (e) {
-                    e.stopPropagation();
-                    down(this);
-                }).on("click", "tr.Handler td:not(.Inactive)", function () {
+                ).on("click", "tr.Handler td:not(.Inactive)", function () {
                     select($(this).parent().prevAll().size());
-                }).on("click", "tr:not(.NoRecord) td:not(.Inactive)", function () {
-                    verifyButton.show();
-                }).on("focus", "td", function () {
-                    var textBox = $(this);
-                    textBox.data("oldValue", textBox.text());
-                }).on("blur", "td", function () {
-                    var textBox = $(this);
-                    if (textBox.data("oldValue") != textBox.text()) {
-                        matematici.canClose = false;
-                        list[currentIndex].valid = null;
-                    }
-                    $("td.ValidColumn i", $(this).parent()).removeClass("fa-check fa-remove").addClass("fa-question");
-                }).on("click", "tr.Selected td.UniqueColumn", function () {
-                    matematici.canClose = false;
-                    verifyButton.show();
-                    $("td.ValidColumn i", $(this).parent()).removeClass("fa-check fa-remove").addClass("fa-question");
-                    list[currentIndex].unique = !list[currentIndex].unique;
-                    $(this).toggleClass("Off", !list[currentIndex].unique);
-                }).on("click", "tr.Selected td.ExceptionColumn", function () {
-                    matematici.canClose = false;
-                    verifyButton.show();
-                    $("td.ValidColumn i", $(this).parent()).removeClass("fa-check fa-remove").addClass("fa-question");
-                    list[currentIndex].exception = !list[currentIndex].exception;
-                    $(this).toggleClass("Off", !list[currentIndex].exception);
                 });
-
 
             var
                 buttons =
@@ -268,70 +258,18 @@
                             else
                                 close();
                         }))
-                        .append(verifyButton = $("<a />").addClass("Button").text("verify").toggle(model.state == prototypes.Prototype.states.draft).prepend($("<i />").addClass("Icon fa fa-check")).on("click", function () {
+                        .append(openButton = $("<a />").addClass("Button").text("open").hide().prepend($("<i />").addClass("Icon fa fa-edit")).on("click", function () {
+                            open(currentIndex);
+                        }))
+                        .append(verifyButton = $("<a />").addClass("Button").text("verify").hide().prepend($("<i />").addClass("Icon fa fa-check")).on("click", function () {
                             verify();
                         }))
                         .append($("<a />").addClass("Button").text("add").toggle(model.state == prototypes.Prototype.states.draft).prepend($("<i />").addClass("Icon fa fa-plus")).on("click", function () {
-                            add({ code: "", expression: "", error: null });
-                            verifyButton.show();
-                            matematici.canClose = false;
-                            select(list.length - 1);
-                        }))
-                        .append(removeButton = $("<a />").addClass("Button").text("remove").prepend($("<i />").addClass("Icon fa fa-trash-alt")).on("click", function () {
-                            remove();
-                            matematici.canClose = false;
-                        }).hide())
-                        .append(dependencyButton = $("<a />").addClass("Button").text("dependencies").prepend($("<i />").addClass("Icon fa fa-sitemap")).on("click", function () {
-                            var
-                                handler = function () {
-                                    var
-                                        code = list[currentIndex].code,
-                                        model = prototypes.prototype.getModel().expressions[code];
-                                    matematici.dependenciesDialog.show("Expression " + code, model.dependingRelations, model.dependentRelations);
-                                };
-                            if (matematici.canClose)
-                                handler();
-                            else
-                                matematici.dialog.show("warning", "There are unsaved changes.", [
-                                    {
-                                        text: "save", icon: "check", handler: function () {
-                                            prototypes.prototype.save(function () {
-                                                verify(handler);
-                                            });
-                                        }
-                                    },
-                                    { text: "cancel", icon: "times", cancelButton: true }
-                                ]);
-                        }).hide());
-
+                            open();
+                        }));
 
             for (var code in model.expressions)
-                add({
-                    code: code,
-                    expression: model.expressions[code].serializedValue,
-                    description: model.expressions[code].description,
-                    error: model.expressions[code].error,
-                    valid: model.expressions[code].error == null,
-                    dataType: model.expressions[code].dataType,
-                    innerDataType: model.expressions[code].innerDataType,
-                    unique: model.expressions[code].unique,
-                    exception: model.expressions[code].exception,
-                    dependingRelations: model.expressions[code].dependingRelations,
-                    dependentRelations: model.expressions[code].dependentRelations
-                });
-
-            expressionsInUse = {};
-            checkGroupExpressionsInUse(model.header);
-            for (var pageIndex in model.pages) {
-                var page = model.pages[pageIndex];
-                checkElementExpressionsInUse(page);
-                for (var groupIndex in page.groups)
-                    checkGroupExpressionsInUse(page.groups[groupIndex]);
-            }
-
-            verify();
-
-            canClose = true;
+                insert(model.expressions[code]);
         };
 
     setup();

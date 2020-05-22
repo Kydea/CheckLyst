@@ -110,6 +110,7 @@
                 });
             }
             setTimeout(function () {
+                autoCenter.destroy();
                 element.remove();
                 matematici.elements.body.removeClass("CheckListGrid");
             }, 0); //handles the blur event handler of the text boxes
@@ -122,6 +123,9 @@
                 e.preventDefault();
                 e.stopPropagation();
             }));
+            autoCenter = new matematici.AutoCenter(container.parent());
+            autoCenter.initialize();
+
             table = $("<table />").addClass("Grid SourcesList").appendTo(container)
                 .append($("<thead />")
                     .append($("<tr />")

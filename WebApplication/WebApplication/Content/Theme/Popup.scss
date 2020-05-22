@@ -34,7 +34,7 @@ div.Popup {
         }
 
         div.Buttons {
-            margin-top: 2 * $Metric-Control-Space;
+            margin-top: $Metric-Control-Space;
 
             a {
                 min-width: 100px;
