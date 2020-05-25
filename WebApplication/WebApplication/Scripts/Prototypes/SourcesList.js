@@ -169,17 +169,7 @@
                                         model = prototypes.prototype.getModel().externalSourceDependencyNodes[code];
                                     matematici.dependenciesDialog.show("Source " + code, model.dependingRelations, model.dependentRelations);
                                 };
-                            if (matematici.canClose)
-                                handler();
-                            else
-                                matematici.dialog.show("warning", "There are unsaved changes.", [
-                                    {
-                                        text: "save", icon: "check", handler: function () {
-                                            prototypes.prototype.save(handler);
-                                        }
-                                    },
-                                    { text: "cancel", icon: "times", cancelButton: true }
-                                ]);
+                            prototypes.prototype.verify(handler);
                         }).hide());
 
             sources = $("<select />");

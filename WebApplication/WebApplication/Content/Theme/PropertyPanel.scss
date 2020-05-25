@@ -5,8 +5,7 @@ div.PropertyPanel {
     background-color: white;
     display: none;
     position: relative;
-    //margin: -#{$Metric-Control-Space / 2} -#{$Metric-Control-Space} -#{2 * $Metric-Control-Space};
-    margin-bottom: -#{2 * $Metric-Control-Space};
+    margin-bottom: -$Metric-Control-Space;
 
     div.PropertyList {
         position: absolute;

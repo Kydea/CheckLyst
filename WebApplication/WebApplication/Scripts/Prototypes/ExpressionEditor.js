@@ -1,4 +1,4 @@
-﻿prototypes.ExpressionEditor = function (expression, confirmHandler, deleteHendler, dependencyHandler) {
+﻿prototypes.ExpressionEditor = function (expression, confirmHandler, deleteHandler) {
     var
         expressionEditor = this,
         edited = false,
@@ -13,16 +13,11 @@
             matematici.controls.setEditable($("input[name=notificationNote]", form), notifictatonOn);
         },
 
-        showDependencies = function () {
-            if (!confirm())
-                dependencyHandler();
-        },
-
         cancel = function () {
             if (!edited)
                 return false;
 
-            matematici.dialog.show("warning", "Warning: the chnges to the expression will be lost.", [
+            matematici.dialog.show("warning", "Warning: the changes to the expression will be lost.", [
                 { text: "discard the changes", icon: "exclamation", handler: matematici.popup.close },
                 { text: "cancel", hidden: true, icon: "remove", cancelButton: true }
             ]);
@@ -33,7 +28,7 @@
             if (!edited) return false;
 
             var
-                expression = { edited: edited },
+                expression = {},
                 notificationCheck = $("input[name=notification]", form),
                 code = $("input[name=code]", form).val();
 
@@ -62,7 +57,7 @@
             matematici.dialog.show("warning", "Warning: the expression will be deleted.", [
                 {
                     text: "confirm", icon: "check", handler: function () {
-                        deleteHendler();
+                        deleteHandler();
                         matematici.popup.close();
                     }
                 },
@@ -103,9 +98,8 @@
             buttons.push({ cancelButton: true, hidden: true, handler: cancel });
 
             if (prototypes.prototype.getModel().state == prototypes.Prototype.states.draft) {
-                buttons.push({ text: "confirm", icon: "save", handler: confirm });
                 buttons.push({ text: "delete", icon: "trash-alt", handler: remove });
-                buttons.push({ text: "dependencies", icon: "sitemap", handler: showDependencies });
+                buttons.push({ text: "confirm", icon: "save", handler: confirm });
             }
 
             matematici.popup.show({

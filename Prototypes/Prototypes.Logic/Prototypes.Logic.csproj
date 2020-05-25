@@ -98,7 +98,6 @@
     <Compile Include="Messages\HistoryRow.cs" />
     <Compile Include="Messages\UploadAttachmentRequest.cs" />
     <Compile Include="Messages\UploadAttachmentResponse.cs" />
-    <Compile Include="Messages\VerifyExpressionsResponse.cs" />
     <Compile Include="Messages\PrototypeResponse.cs" />
     <Compile Include="Models\CheckLists\Element.cs" />
     <Compile Include="Models\CheckLists\Field.cs" />

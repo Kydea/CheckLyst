@@ -15,7 +15,7 @@ namespace CheckListManager.Prototypes.Logic.Services
         Task<PrototypeResponse> CreateAsync(DefaultIdentity identity, PrototypeRequest request);
         Task CheckNewVersionAsync(DefaultIdentity identity, PrototypeRequest request);
         Task<PrototypeResponse> VersionAsync(DefaultIdentity identity, PrototypeRequest request);
-        VerifyExpressionsResponse VerifyExpressions(PrototypeRequest request);
+        PrototypeResponse Verify(PrototypeRequest request);
         Task<PrototypeResponse> SaveAsync(DefaultIdentity identity, PrototypeRequest request);
         Task DeleteAsync(DefaultIdentity identity, PrototypeRequest request);
         Task<PrototypeResponse> SetStateAsync(DefaultIdentity identity, PrototypeRequest request);

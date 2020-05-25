@@ -138,6 +138,36 @@
             }
         },
 
+        updateDependencies = function (model, newModel) {
+            model.dependingRelations = newModel.dependingRelations;
+            model.dependentRelations = newModel.dependentRelations;
+            model.error = newModel.error;
+            model.exception = newModel.exception;
+
+            switch (model.typeName) {
+                case "Prototype":
+                    updateDependencies(model.header, newModel.header);
+                    for (var index in model.pages)
+                        updateDependencies(model.pages[index], newModel.pages[index]);
+
+                    for (var index in model.expressions)
+                        updateDependencies(model.expressions[index], newModel.expressions[index]);
+
+                    for (var index in model.dataSources)
+                        updateDependencies(model.dataSources[index], newModel.dataSources[index]);
+
+                    break;
+                case "Page":
+                    for (var index in model.groups)
+                        updateDependencies(model.groups[index], newModel.groups[index]);
+                    break;
+                case "Group":
+                    for (var index in model.items)
+                        updateDependencies(model.items[index], newModel.items[index]);
+                    break;
+            }
+        },
+
         update = function () {
             var
                 currentItemId = currentItem && (currentItem.isPage && currentItem.isPage() && $("a.Current", element).attr("id") || $("div.Current", element).attr("id")); //saves current item
@@ -296,13 +326,8 @@
                                 title = model.typeName + (model.id && " - ID: " + model.id || model.index && " - Index: " + (parseInt(model.index) + 1)) + (model.code && " - Code: " + model.code || "")
                             matematici.dependenciesDialog.show(title, model.dependingRelations, model.dependentRelations);
                         };
-                    if (matematici.canClose)
-                        handler();
-                    else
-                        matematici.dialog.show("warning", "There are unsaved changes.", [
-                            { text: "save", icon: "check", handler: function () { prototype.save(/*handler*/); } },
-                            { text: "cancel", icon: "times", cancelButton: true }
-                        ]);
+
+                    prototype.verify(handler);
                     break;
                 default:
                     alert("invalid command");
@@ -584,6 +609,21 @@
         model.pages = value;
     };
 
+    prototype.verify = function (callback) {
+        if (matematici.canClose)
+            callback();
+        else
+            $.ajax({
+                url: element.data("action") + "verify",
+                type: "post",
+                contentType: "application/json",
+                data: JSON.stringify({ checkList: model })
+            }).done(function (result) {
+                updateDependencies(model, result.checkList);
+                callback();
+            });
+    },
+
     prototype.save = function (callback) {
         var currentItemId = currentItem && (currentItem.isPage && currentItem.isPage() && $("a.Current", element).attr("id") || $("div.Current", element).attr("id")); //saves current item
 
@@ -799,7 +839,12 @@
             var oldModel = model;
             try {
                 model = JSON.parse($("textarea", matematici.dialog.getElement()).val());
-                model.name = model.department = model.prototypeType = model.version = model.validFrom = model.validUntil = null;
+                model.name = oldModel.name;
+                model.department = oldModel.department;
+                model.prototypeType = oldModel.prototypeType;
+                model.version = oldModel.version;
+                model.validFrom = oldModel.validFrom;
+                model.validUntil = oldModel.validUntil;
                 model.state = prototypes.Prototype.states.draft;
                 update();
                 matematici.blip.ok();

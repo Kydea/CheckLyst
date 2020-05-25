@@ -8,8 +8,8 @@
         noRecord,
         currentIndex,
         list = [],
-        verifyButton,
         openButton,
+        dependenciesButton,
         orderBar,
         valid = true,
 
@@ -24,29 +24,10 @@
 
         showDependencies = function () {
             var
-                openAgain = function () {
-                    open(currentIndex);
-                },
-                handler = function () {
-                    var
-                        code = list[currentIndex].code,
-                        model = prototypes.prototype.getModel().expressions[code];
-                    if (valid)
-                        matematici.dependenciesDialog.show("Expression " + (code || "(new)"), model.dependingRelations, model.dependentRelations, openAgain);
-                };
-            if (matematici.canClose)
-                handler();
-            else
-                matematici.dialog.show("warning", "There are unsaved changes.", [
-                    {
-                        text: "save", icon: "check", handler: function () {
-                            prototypes.prototype.save(function () {
-                                verify(handler);
-                            });
-                        }
-                    },
-                    { text: "cancel", icon: "times", cancelButton: true, handler: openAgain }
-                ]);
+                code = list[currentIndex].code,
+                model = prototypes.prototype.getModel().expressions[code];
+            if (valid)
+                matematici.dependenciesDialog.show("Expression " + (code || "(new)"), model.dependingRelations, model.dependentRelations);
         },
 
         up = function () {
@@ -90,11 +71,12 @@
 
             toggleMoveButton();
             openButton.toggle(model.state == prototypes.Prototype.states.draft && currentIndex != null);
+            dependenciesButton.show();
         },
 
         remove = function () {
             matematici.canClose = false;
-            verifyButton.show();
+            verify();
             getRow(currentIndex).remove();
             list.splice(currentIndex, 1);
             if (list.length == 0) noRecord.appendTo(body);
@@ -104,12 +86,12 @@
         open = function (index) {
             new prototypes.ExpressionEditor(list[index], function (row) {
                 matematici.canClose = false;
-                verifyButton.show();
                 if (index) {
                     list[index] = row;
                     update(index);
                 } else
                     select(insert(row, currentIndex));
+                verify();
             }, remove, showDependencies);
         },
 
@@ -151,7 +133,7 @@
             commands.find(".Valid")
                 .removeClass("fa-check fa-times fa-question Off")
                 .attr("title", row.error || "")
-                .addClass(row.edited ? "fa-question Off" : row.error ? "fa-times" : "fa-check");
+                .addClass(row.error ? "fa-times" : "fa-check");
 
             commands.find(".Unique").toggleClass("Off", !row.unique);
             commands.find(".Exception").toggleClass("Off", !row.exception);
@@ -165,35 +147,29 @@
         },
 
         verify = function (handler) {
-            verifyButton.hide();
-
             updatePrototype();
+            prototypes.prototype.verify(function () {
+                var
+                    valid = true,
+                    model = prototypes.prototype.getModel();
 
-            $.ajax({
-                url: matematici.urls.api + "/Prototypes/Prototype/VerifyExpressions",
-                type: "post",
-                contentType: "application/json",
-                data: JSON.stringify({ checkList: model })
-            }).done(function (result) {
-                valid = true;
                 for (var index in list) {
-                    var row = list[index] = result.expressions[list[index].code]
-                    valid &= (row.error == null);
+                    var error = list[index].error = model.expressions[list[index].code].error;
+                    valid &= (error == null);
 
                     getRow(index).find("i.Valid")
                         .removeClass("fa-check fa-times fa-question Off")
-                        .attr("title", row.error || "")
-                        .addClass(row.error == null ? "fa-check" : "fa-times");
-                    model.expressions = result.expressions;
+                        .attr("title", error || "")
+                        .addClass(error == null ? "fa-check" : "fa-times");
                 }
 
-                if (result.checkListException) {
+                if (model.exception) {
                     valid = false;
-                    matematici.dialog.error("Error", result.checkListException.Message);
+                    matematici.dialog.error("Error", model.exception.Message);
                 }
 
                 $("div.ActionBar a.ExpressionsList").toggleClass("Invalid", !valid);
-                if (handler) handler.call(this);
+                if (handler && valid) handler.call(this);
             });
         },
 
@@ -252,23 +228,17 @@
                 buttons =
                     $("<div />").addClass("Buttons").appendTo(container.parent())
                         .append($("<a />").addClass("Button CancelButton").text("close").prepend($("<i />").addClass("Icon fa fa-times")).on("click", function () {
-                            if (verifyButton.is(":visible"))
-                                verify(function () {
-                                    close();
-                                });
-                            else {
-                                updatePrototype();
-                                close();
-                            }
+                            updatePrototype();
+                            close();
                         }))
                         .append(openButton = $("<a />").addClass("Button").text("open").hide().prepend($("<i />").addClass("Icon fa fa-edit")).on("click", function () {
                             open(currentIndex);
                         }))
-                        .append(verifyButton = $("<a />").addClass("Button").text("verify").hide().prepend($("<i />").addClass("Icon fa fa-check")).on("click", function () {
-                            verify();
-                        }))
                         .append($("<a />").addClass("Button").text("add").toggle(model.state == prototypes.Prototype.states.draft).prepend($("<i />").addClass("Icon fa fa-plus")).on("click", function () {
                             open();
+                        }))
+                        .append(dependenciesButton = $("<a />").addClass("Button").text("dependencies").hide().prepend($("<i />").addClass("Icon fa fa-sitemap")).on("click", function () {
+                            showDependencies();
                         }));
 
             for (var code in model.expressions)

@@ -168,16 +168,15 @@ namespace CheckListManager.Prototypes.Logic.Services
             });
         }
 
-        public VerifyExpressionsResponse VerifyExpressions(PrototypeRequest request)
+        public PrototypeResponse Verify(PrototypeRequest request)
         {
             request.CheckList.Setup();
 
-            return new VerifyExpressionsResponse
+            return new PrototypeResponse
             {
-                CheckListException = request.CheckList.Exception,
-                Expressions = request.CheckList.Expressions,
-
+                CheckList = request.CheckList
             };
+
         }
 
         private void AddTags(Dictionary<string, PrototypeVersionTags> Tags, PrototypeRequest request, ICheckListGroup Group)
