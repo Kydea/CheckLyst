@@ -141,17 +141,22 @@
         updateDependencies = function (model, newModel) {
             model.dependingRelations = newModel.dependingRelations;
             model.dependentRelations = newModel.dependentRelations;
-            model.error = newModel.error;
-            model.exception = newModel.exception;
 
             switch (model.typeName) {
                 case "Prototype":
                     updateDependencies(model.header, newModel.header);
+                    model.exception = newModel.exception;
                     for (var index in model.pages)
                         updateDependencies(model.pages[index], newModel.pages[index]);
 
-                    for (var index in model.expressions)
-                        updateDependencies(model.expressions[index], newModel.expressions[index]);
+                    for (var index in model.expressions) {
+                        var
+                            expression = model.expressions[index],
+                            newExpression = newModel.expressions[index];
+                        expression.error = newExpression.error;
+                        expression.dataType = newExpression.dataType;
+                        updateDependencies(expression, newExpression);
+                    }
 
                     for (var index in model.dataSources)
                         updateDependencies(model.dataSources[index], newModel.dataSources[index]);

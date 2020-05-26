@@ -94,7 +94,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                     }
 
                 if (Error || !BuildDependencies())
-                    throw new Exception("Some expression is not valid");
+                    throw new Exception("Some expressions are not valid");
 
 
                 foreach (var expression in Expressions.Values)
@@ -105,7 +105,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                     }
 
                 if (Error)
-                    throw new Exception("Some expression is not valid");
+                    throw new Exception("Some expressions are not valid");
 
                 ((Group)Header).Check();
                 foreach (Page Page in Pages)
@@ -116,7 +116,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                         Error = true;
 
                 if (Error)
-                    throw new Exception("Some expression is not valid");
+                    throw new Exception("Some expressions are not valid");
             }
             catch (Exception Exception)
             {

@@ -290,7 +290,7 @@
                 var hours = model.value.substr(0, index);
                 select.value = hours;
                 var minutes = model.value.substr(index + 1);
-                select2.value == minutes;
+                select2.value = minutes;
             } else {
                 select.value = "";
                 select2.value = "";

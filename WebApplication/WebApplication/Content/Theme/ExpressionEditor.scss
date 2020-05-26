@@ -24,6 +24,11 @@ body.PrototypeEditor {
                                 }
                             }
 
+                            &:nth-last-child(2) {
+                                white-space: nowrap;
+                                width: 30px;
+                            }
+
                             &:last-child {
                                 width: 30px;
                                 text-align: center;

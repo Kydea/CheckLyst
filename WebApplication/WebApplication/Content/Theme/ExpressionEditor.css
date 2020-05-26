@@ -11,6 +11,9 @@
         body.PrototypeEditor div.CheckListGrid div.Container > div div.ScrollablePanel table.ExpressionsList tr td:first-child i {
           display: none;
           font-size: 16px; }
+      body.PrototypeEditor div.CheckListGrid div.Container > div div.ScrollablePanel table.ExpressionsList tr td:nth-last-child(2) {
+        white-space: nowrap;
+        width: 30px; }
       body.PrototypeEditor div.CheckListGrid div.Container > div div.ScrollablePanel table.ExpressionsList tr td:last-child {
         width: 30px;
         text-align: center;

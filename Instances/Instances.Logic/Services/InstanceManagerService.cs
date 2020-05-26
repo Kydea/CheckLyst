@@ -875,7 +875,7 @@ namespace CheckListManager.Instances.Logic.Services
                     await _queueService.SendObjectAsync(QueueName.Email, new EmailMessage(
                         Notification.Instances.Company,
                         "Notification",
-                        await _settingService.UserBlockMessageAsync(Notification.Instances.Company),
+                        await _settingService.NotificationMessageAsync(Notification.Instances.Company),
                         Notification.NotificationEmail,
                         new List<Tuple<string, string>>
                         {

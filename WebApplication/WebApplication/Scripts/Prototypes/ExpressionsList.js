@@ -86,11 +86,12 @@
         open = function (index) {
             new prototypes.ExpressionEditor(list[index], function (row) {
                 matematici.canClose = false;
-                if (index) {
+                if (index == null) 
+                    select(insert(row, currentIndex));
+                else {
                     list[index] = row;
                     update(index);
-                } else
-                    select(insert(row, currentIndex));
+                }
                 verify();
             }, remove, showDependencies);
         },
@@ -102,6 +103,7 @@
                 .append($("<td />").append($("<i />").addClass("fa fa-caret-right")).attr("title", row.serializedValue))
                 .append($("<td />").addClass("CodeColumn"))
                 .append($("<td />").addClass("DescriptionColumn"))
+                .append($("<td />").addClass("DataTypeColumn"))
                 .append($("<td />").addClass("Centered")
                     .append($("<i />").addClass("Valid fal"))
                     .append($("<i />").attr("title", "Unique").addClass("Unique fal fa-key"))
@@ -130,6 +132,7 @@
 
             cells.filter(".CodeColumn").text(row.code).attr("title", row.serializedValue);
             cells.filter(".DescriptionColumn").text(row.description).attr("title", row.serializedValue);
+            cells.filter(".DataTypeColumn").text(row.dataType && row.dataType.typeName).attr("title", row.serializedValue);
             commands.find(".Valid")
                 .removeClass("fa-check fa-times fa-question Off")
                 .attr("title", row.error || "")
@@ -154,13 +157,19 @@
                     model = prototypes.prototype.getModel();
 
                 for (var index in list) {
-                    var error = list[index].error = model.expressions[list[index].code].error;
+                    var
+                        row = model.expressions[list[index].code],
+                        error = list[index].error = row.error,
+                        cells = getRow(index);
+
                     valid &= (error == null);
 
-                    getRow(index).find("i.Valid")
+                    cells.find("i.Valid")
                         .removeClass("fa-check fa-times fa-question Off")
                         .attr("title", error || "")
                         .addClass(error == null ? "fa-check" : "fa-times");
+
+                    cells.find(".DataTypeColumn").text(row.dataType.typeName);
                 }
 
                 if (model.exception) {
@@ -214,6 +223,7 @@
                         .append($("<th />"))
                         .append($("<th />").text("code"))
                         .append($("<th />").text("description"))
+                        .append($("<th />").text("data type"))
                         .append($("<th />"))
                     )
                 ).append(tableBody = $("<tbody />")
