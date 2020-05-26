@@ -133,7 +133,10 @@ namespace CheckListManager.Instances.Logic.Services
         public async Task SaveCacheObjectAsync(InstanceCacheObject cacheObject)
         {
             if (cacheObject.NeedToSaveExpressionValues && cacheObject.ID.HasValue)
+            {
                 _instancesRepository.SaveExpressionValues(cacheObject.ID.Value, CreateExpressionValues(cacheObject));
+                await _instancesRepository.SaveChangesAsync();
+            }
             if (!cacheObject.Instance.CheckVersion(null, true) || cacheObject.NeedToCache)
                 await _instanceCache.SetAsync(cacheObject);
             else
@@ -305,10 +308,11 @@ namespace CheckListManager.Instances.Logic.Services
 
                 if (cacheObject.NeedToSave)
                 {
+                    cacheObject = await GetCacheObjectForEditAsync(identity, code, true);
                     await SaveAsync(cacheObject, identity, false, false, false, cacheObject.ModifiedBy, cacheObject.ModifiedOn);
                     cacheObject.NeedToCache = true;
+                    await SaveCacheObjectAsync(cacheObject);
                 }
-                await SaveCacheObjectAsync(cacheObject);
             }
             catch (InstanceException)
             {
