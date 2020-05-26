@@ -982,7 +982,7 @@ namespace CheckListManager.Instances.Logic.Services
                 }
 
                 stopWatch = Stopwatch.StartNew();
-                cacheObject = await _instanceCache.GetAsync(request.Code, true);
+                cacheObject = await GetCacheObjectForEditAsync(identity, request.Code, true);
                 stopWatch.Stop();
                 getTime = stopWatch.Elapsed.TotalMilliseconds;
 
