@@ -620,29 +620,37 @@
     prototype.verify = function (callback) {
         if (matematici.canClose)
             callback();
-        else
+        else {
+            var
+                array = pako.gzip(JSON.stringify(model)),
+                base64CheckList = btoa(String.fromCharCode.apply(null, new Uint8Array(array))),
+                data = JSON.stringify({
+                    base64CheckList: base64CheckList
+                }); 
+
             $.ajax({
                 url: element.data("action") + "verify",
                 type: "post",
                 contentType: "application/json",
-                data: JSON.stringify({ checkList: model })
+                data: data
             }).done(function (result) {
-                if (result.checkList.exception) matematici.dialog.error("Error", result.checkList.exception);
+                if (result.checkList.exception) matematici.dialog.error("Error", result.checkList.exception.Message);
 
                 updateDependencies(model, result.checkList);
                 callback();
             });
+        }
     };
 
     prototype.save = function (callback) {
         var currentItemId = currentItem && (currentItem.isPage && currentItem.isPage() && $("a.Current", element).attr("id") || $("div.Current", element).attr("id")); //saves current item
 
         select();
-        $.ajax({
-            url: element.data("action") + "Save",
-            type: "post",
-            contentType: "application/json",
-            data: JSON.stringify({
+
+        var
+            array = pako.gzip(JSON.stringify(model)),
+            base64CheckList = btoa(String.fromCharCode.apply(null, new Uint8Array(array))),
+            data = JSON.stringify({
                 id: prototypeKey.id,
                 version: prototypeKey.version,
                 modifiedOn: moment.parseZone(concurrencyInformation.modifiedOn),
@@ -651,12 +659,18 @@
                 validUntil: model.validUntil,
                 instanceConfirmationWorkFlow: model.instanceConfirmationWorkFlow,
                 name: model.name,
-                description: model.description,
+                description: model.description, 
                 department: model.department,
                 prototypeType: model.prototypeType,
                 imagesToDelete: imagesToDelete,
-                checkList: model
-            })
+                base64CheckList: base64CheckList
+            }); 
+
+        $.ajax({
+            url: element.data("action") + "Save",
+            type: "post",
+            contentType: "application/json",
+            data: data //pako.gzip(data, { to: 'string' })
         }).done(function (result) {
             if (result.checkList.exception) {
                 matematici.dialog.error("Error", result.checkList.exception.Message);

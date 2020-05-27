@@ -17,6 +17,7 @@ using CheckListManager.Common.Logic.Cache;
 using CheckListManager.Common.Logic.Services;
 using CheckListManager.Common.Logic.Queue;
 using CheckListManager.Common.Logic.Trail;
+using System.Linq;
 
 namespace CheckListManager.Prototypes.Api.Controllers
 {
@@ -140,6 +141,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
         {
             try
             {
+                request.Parse(_converter);
                 return Ok(_prototypeService.Verify(request));
             }
             catch (Exception e)
@@ -155,6 +157,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
         {
             try
             {
+                request.Parse(_converter);
                 return Ok(await _prototypeService.SaveAsync(Identity, request));
             }
             catch (Exception e)
