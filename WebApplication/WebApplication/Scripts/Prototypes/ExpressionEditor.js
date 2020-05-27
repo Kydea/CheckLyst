@@ -1,5 +1,6 @@
-﻿prototypes.ExpressionEditor = function (expression, confirmHandler, deleteHandler) {
+﻿prototypes.ExpressionEditor = function (expressions, expressionIndex, confirmHandler, deleteHandler) {
     var
+        expression = expressions[expressionIndex],
         expressionEditor = this,
         edited = false,
         form,
@@ -36,6 +37,12 @@
                 matematici.dialog.error("Invalid code", "The code " + code + " is not valid");
                 return true;
             }
+
+            for (var index in expressions)
+                if (index != expressionIndex && code == expressions[index].code) {
+                    matematici.dialog.error("Duplicated code", "The code " + code + " is duplicated");
+                    return true;
+                }
 
             if (!notificationCheck.prop("checked")) {
                 $("input[name=notificationEmail]", form).val(null);

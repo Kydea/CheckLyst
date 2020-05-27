@@ -84,7 +84,7 @@
         },
 
         open = function (index) {
-            new prototypes.ExpressionEditor(list[index], function (row) {
+            new prototypes.ExpressionEditor(list, index, function (row) {
                 matematici.canClose = false;
                 if (index == null) 
                     select(insert(row, currentIndex));
