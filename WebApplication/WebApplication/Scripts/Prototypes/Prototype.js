@@ -363,14 +363,14 @@
 
             if (element.typeName == "Group")
                 for (var index in element.items) {
-                    findItem(element.items[index], itemId, null, result);
+                    findItem(element.items[index], itemId, pageIndex, result);
                     if (result.item) return;
                 }
             else if (element.typeName == "Prototype")
-                for (var index in element.pages) {
-                    var page = element.pages[index];
-                    for (var index in page.groups) {
-                        findItem(page.groups[index], itemId, index, result);
+                for (var pageIndex in element.pages) {
+                    var page = element.pages[pageIndex];
+                    for (var groupIndex in page.groups) {
+                        findItem(page.groups[groupIndex], itemId, pageIndex, result);
                         if (result.item) return;
                     }
                 }
