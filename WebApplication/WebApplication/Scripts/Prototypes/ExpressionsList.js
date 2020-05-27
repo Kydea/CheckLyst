@@ -172,12 +172,7 @@
                     cells.find(".DataTypeColumn").text(row.dataType.typeName);
                 }
 
-                if (model.exception) {
-                    valid = false;
-                    matematici.dialog.error("Error", model.exception.Message);
-                }
-
-                $("div.ActionBar a.ExpressionsList").toggleClass("Invalid", !valid);
+                if (model.exception) valid = false;
                 if (handler && valid) handler.call(this);
             });
         },

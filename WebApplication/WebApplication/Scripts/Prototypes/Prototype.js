@@ -149,14 +149,17 @@
                     for (var index in model.pages)
                         updateDependencies(model.pages[index], newModel.pages[index]);
 
+                    var invalid = false;
                     for (var index in model.expressions) {
                         var
                             expression = model.expressions[index],
                             newExpression = newModel.expressions[index];
                         expression.error = newExpression.error;
+                        if (expression.error) invalid = true;
                         expression.dataType = newExpression.dataType;
                         updateDependencies(expression, newExpression);
                     }
+                    $("div.ActionBar a.ExpressionsList").toggleClass("Invalid", invalid);
 
                     for (var index in model.dataSources)
                         updateDependencies(model.dataSources[index], newModel.dataSources[index]);
@@ -624,10 +627,12 @@
                 contentType: "application/json",
                 data: JSON.stringify({ checkList: model })
             }).done(function (result) {
+                if (result.checkList.exception) matematici.dialog.error("Error", result.checkList.exception);
+
                 updateDependencies(model, result.checkList);
                 callback();
             });
-    },
+    };
 
     prototype.save = function (callback) {
         var currentItemId = currentItem && (currentItem.isPage && currentItem.isPage() && $("a.Current", element).attr("id") || $("div.Current", element).attr("id")); //saves current item
@@ -653,33 +658,40 @@
                 checkList: model
             })
         }).done(function (result) {
-            matematici.canClose = true;
-            prototypeKey.id = result.id;
-            model.header = result.checkList.header;
-            model.pages = result.checkList.pages;
-            model.dependingRelations = result.checkList.dependingRelations;
-            model.dependentRelations = result.checkList.dependentRelations;
-            imagesToDelete = [];
-            if (model.version == null) {
-                matematici.navigator.setUrl(options.detailUrl + "/" + result.id + "/" + result.version);
-                model.version = prototypeKey.version = result.version;
-            }
-            concurrencyInformation = {
-                modifiedBy: result.modifiedBy,
-                modifiedOn: result.modifiedOn
-            };
-            update();
+            if (result.checkList.exception) {
+                matematici.dialog.error("Error", result.checkList.exception.Message);
+                updateDependencies(model, result.checkList);
+            } else {
+                matematici.canClose = true;
+                prototypeKey.id = result.id;
+                model.header = result.checkList.header;
+                model.pages = result.checkList.pages;
+                model.dependingRelations = result.checkList.dependingRelations;
+                model.dependentRelations = result.checkList.dependentRelations;
+                imagesToDelete = [];
+                if (model.version == null) {
+                    matematici.navigator.setUrl(options.detailUrl + "/" + result.id + "/" + result.version);
+                    model.version = prototypeKey.version = result.version;
+                }
+                concurrencyInformation = {
+                    modifiedBy: result.modifiedBy,
+                    modifiedOn: result.modifiedOn
+                };
+                update();
 
-            if (currentItemId) {
-                //restores current item
-                currentItem = null;
-                $("#" + currentItemId, element).removeClass("Current").removeClass("Selected").click(); //Selected is for the tab when current item is a page
-            }
+                if (currentItemId) {
+                    //restores current item
+                    currentItem = null;
+                    $("#" + currentItemId, element).removeClass("Current").removeClass("Selected").click(); //Selected is for the tab when current item is a page
+                }
 
-            if (callback)
-                callback.call();
-            else
-                matematici.blip.ok();
+                $("div.ActionBar a.ExpressionsList").removeClass("Invalid");
+
+                if (callback)
+                    callback.call();
+                else
+                    matematici.blip.ok();
+            }
         });
     };
 

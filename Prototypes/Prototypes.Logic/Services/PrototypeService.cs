@@ -209,7 +209,10 @@ namespace CheckListManager.Prototypes.Logic.Services
         {
             request.CheckList.Setup();
             if (request.CheckList.Exception != null)
-                throw request.CheckList.Exception;
+                return new PrototypeResponse
+                {
+                    CheckList = request.CheckList
+                };
 
             if (string.IsNullOrWhiteSpace(request.Name)) throw new Exception("Specify a name");
             if (!request.Department.HasValue) throw new Exception("Specify a department");
