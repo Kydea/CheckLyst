@@ -185,8 +185,8 @@
 
             commands = $("<div />").addClass("Commands")
                 .append($("<a />").attr("title", "properties").attr("data-command", "properties").addClass("Button MiniIcon Properties").append($("<i />").addClass("fal fa-cogs")))
-                .append($("<a />").attr("title", "copy").attr("data-command", "copy").addClass("Button MiniIcon Copy").append($("<i />").addClass("fal fa-copy")))
-                .append($("<a />").attr("title", "dependencies").attr("data-command", "dependencies").addClass("Button MiniIcon Dependencies").append($("<i />").addClass("fal fa-sitemap")));
+                .append($("<a />").attr("title", "dependencies").attr("data-command", "dependencies").addClass("Button MiniIcon Dependencies").append($("<i />").addClass("fal fa-sitemap")))
+                .append($("<a />").attr("title", "copy").attr("data-command", "copy").addClass("Button MiniIcon Copy").append($("<i />").addClass("fal fa-copy")));
             if (model.state == prototypes.Prototype.states.draft)
                 commands
                     .append($("<a />").attr("title", "paste").attr("data-command", "paste").addClass("Button MiniIcon Paste").append($("<i />").addClass("fal fa-paste")))
