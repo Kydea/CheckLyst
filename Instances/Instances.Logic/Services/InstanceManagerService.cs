@@ -875,28 +875,29 @@ namespace CheckListManager.Instances.Logic.Services
                     if (cancellationToken.IsCancellationRequested) return;
 
                     var InstanceCode = Instance.GetCode(Notification.Instances.PrototypeName, Notification.Instances.Version, Notification.Instances.PrototypeVersions.VersionState, Notification.Instances.Year, Notification.Instances.Number);
-
-                    await _queueService.SendObjectAsync(QueueName.Email, new EmailMessage(
-                        Notification.Instances.Company,
-                        "Notification",
-                        await _settingService.NotificationMessageAsync(Notification.Instances.Company),
-                        Notification.NotificationEmail,
-                        new List<Tuple<string, string>>
-                        {
-                            new Tuple<string, string>("Code", Notification.Code),
-                            new Tuple<string, string>("Description", Notification.Description),
-                            new Tuple<string, string>("Note", Notification.NotificationNote),
-                            new Tuple<string, string>("Value", Notification.Value),
-                            new Tuple<string, string>("Link", $"<a href='{Instance.GetUrl(_configurationService, Notification.Instances.Code)}' target='_blank'>{InstanceCode}</a>")
-                        }
-                    )
-                    {
-                        TrailMessage = new EmailTrailMessage(
-                            "(system)",
-                            InstanceCode,
-                            null
+                    var Emails = Notification.NotificationEmail.Split(';');
+                    foreach (var Email in Emails)
+                        await _queueService.SendObjectAsync(QueueName.Email, new EmailMessage(
+                            Notification.Instances.Company,
+                            "Notification",
+                            await _settingService.NotificationMessageAsync(Notification.Instances.Company),
+                            Email.Trim(),
+                            new List<Tuple<string, string>>
+                            {
+                                new Tuple<string, string>("Code", Notification.Code),
+                                new Tuple<string, string>("Description", Notification.Description),
+                                new Tuple<string, string>("Note", Notification.NotificationNote),
+                                new Tuple<string, string>("Value", Notification.Value),
+                                new Tuple<string, string>("Link", $"<a href='{Instance.GetUrl(_configurationService, Notification.Instances.Code)}' target='_blank'>{InstanceCode}</a>")
+                            }
                         )
-                    }, cancellationToken);
+                        {
+                            TrailMessage = new EmailTrailMessage(
+                                "(system)",
+                                InstanceCode,
+                                null
+                            )
+                        }, cancellationToken);
 
                     Notification.Notified = true;
 

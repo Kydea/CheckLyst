@@ -44,7 +44,20 @@
                     return true;
                 }
 
-            if (!notificationCheck.prop("checked")) {
+            if (notificationCheck.prop("checked")) {
+                var
+                    emailInput = $("input[name=notificationEmail]", form),
+                    email = emailInput.val().trim().split("; ").join(";").toLowerCase(),
+                    re = /^(([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,25})+([;.](([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,25})+)*$/;
+
+                if (email.endsWith(";")) email = email.substring(0, email.length - 1);
+
+                if (email == "" || !re.test(email)) {
+                    emailInput.focus();
+                    new matematici.dialog.error("error", "Invalid email list. Provide a semicolon separated list of valid email addresses.");
+                    return true;
+                }
+            } else {
                 $("input[name=notificationEmail]", form).val(null);
                 $("input[name=notificationNote]", form).val(null);
             }
