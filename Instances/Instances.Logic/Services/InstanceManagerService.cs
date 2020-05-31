@@ -427,7 +427,7 @@ namespace CheckListManager.Instances.Logic.Services
 
         private IEnumerable<InstanceExpressionValues> CreateExpressionValues(InstanceCacheObject cacheObject)
         {
-            return cacheObject.Instance.Expressions.Where(
+            var Result = cacheObject.Instance.Expressions.Where(
                 Expression =>
                     !Expression.Value.Value.IsNull
                     &&
@@ -460,6 +460,9 @@ namespace CheckListManager.Instances.Logic.Services
                         e.Value.Value.Type == DataType.Boolean ? DateTimeOffset.UtcNow :
                         e.Value.Value.DateTimeValue
                 });
+            cacheObject.Instance.Expressions.Values.Where(e => e.Notification && e.Notification).ToList().ForEach(e => e.Notified = true);
+            cacheObject.NeedToCache = true;
+            return Result;
         }
 
         private async Task<InstanceCacheObject> SaveAsync(InstanceCacheObject cacheObject, IDefaultIdentity identity, bool close, bool complete, bool alreadyLocked, string ModifiedBy, DateTimeOffset? ModifiedOn)
