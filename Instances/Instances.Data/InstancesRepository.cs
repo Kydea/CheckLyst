@@ -123,33 +123,30 @@ namespace CheckListManager.Instances.Data
             Entities.Instances.Remove(instance);
         }
 
-        public void SaveChildren(long instanceID, List<InstanceTags> instanceTags, List<InstanceExpressionValues> instanceExpressionValues)
+        public void SaveChildren(long instanceID, IEnumerable<InstanceTags> instanceTags, IEnumerable<InstanceExpressionValues> instanceExpressionValues)
         {
             SaveTags(instanceID, instanceTags);
             SaveExpressionValues(instanceID, instanceExpressionValues);
         }
 
-        public void SaveTags(long instanceID, List<InstanceTags> instanceTags)
+        public void SaveTags(long instanceID, IEnumerable<InstanceTags> instanceTags)
         {
             Entities.InstanceTags.RemoveRange(Entities.InstanceTags.Where(x => x.Instance == instanceID));
             Entities.InstanceTags.AddRange(instanceTags);
         }
 
-        public void SaveExpressionValues(long instanceID, List<InstanceExpressionValues> instanceExpressionValues)
+        public void SaveExpressionValues(long instanceID, IEnumerable<InstanceExpressionValues> instanceExpressionValues)
         {
             //Notified flag synchronization
             var OldExpressionValues = Entities.InstanceExpressionValues.Where(x => x.Instance == instanceID);
             var OldNotifications = OldExpressionValues.Where(e => e.Notification).ToDictionary(k => k.Code, v => v);
-            instanceExpressionValues.ForEach(iv =>
+            instanceExpressionValues.Where(iv => iv.Notification).ToList().ForEach(iv =>
             {
-                if (iv.Notification)
-                {
-                    OldNotifications.TryGetValue(iv.Code, out var ov);
-                    iv.Notified =
-                        iv.Notified //the value has not changed since last save
-                        && ov.Notified //last notification has not been sent yet
-                    ;
-                }
+                OldNotifications.TryGetValue(iv.Code, out var ov);
+                iv.Notified =
+                    iv.Notified //the value has not changed since last save
+                    && ov.Notified //last notification has not been sent yet
+                ;
             });
 
             Entities.InstanceExpressionValues.RemoveRange(OldExpressionValues);
