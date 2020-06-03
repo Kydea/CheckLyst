@@ -141,10 +141,10 @@
         updateDependencies = function (model, newModel) {
             model.dependingRelations = newModel.dependingRelations;
             model.dependentRelations = newModel.dependentRelations;
-            model.id = newModel.id;
 
             switch (model.typeName) {
                 case "Prototype":
+                    newItemsId = model.itemIDSequence;
                     updateDependencies(model.header, newModel.header);
                     model.exception = newModel.exception;
                     for (var index in model.pages)
@@ -178,6 +178,7 @@
         },
 
         update = function () {
+            newItemsId = model.itemIDSequence;
             var
                 currentItemId = currentItem && (currentItem.isPage && currentItem.isPage() && $("a.Current", element).attr("id") || $("div.Current", element).attr("id")); //saves current item
 
@@ -635,10 +636,12 @@
                 contentType: "application/json",
                 data: data
             }).done(function (result) {
-                if (result.checkList.exception) matematici.dialog.error("Error", result.checkList.exception.Message);
-
-                updateDependencies(model, result.checkList);
-                callback();
+                if (result.checkList.exception)
+                    matematici.dialog.error("Error", result.checkList.exception.Message);
+                else {
+                    updateDependencies(model, result.checkList);
+                    callback();
+                }
             });
         }
     };

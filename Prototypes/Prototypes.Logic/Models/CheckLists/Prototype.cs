@@ -24,17 +24,22 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         private Formula DescriptionFormula { get; } = new Formula();
         public string FileNameFormulaString { get; set; }
         private Formula FileNameFormula { get; } = new Formula();
+        private bool PreserveID { get; set; }
         
         public bool FTPExport { get; set; }
         public Exception Exception { get; set; }
 
         public bool NeedToSaveExpressionValues { get; set; }
 
-        private int itemSequence;
+        [JsonProperty]
+        private int ItemIDSequence { get; set; }
         public Dictionary<int, ICheckListItem> Items { get; } = new Dictionary<int, ICheckListItem>();
         public void AddItem(ICheckListItem item)
         {
-            item.Id = ++itemSequence;
+            if (PreserveID)
+                ItemIDSequence = Math.Max(item.Id + 1, ItemIDSequence);
+            else
+                item.Id = ItemIDSequence++;
             Items.Add(item.Id, item);
         }
 
@@ -48,13 +53,15 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         public ICheckList CheckList { get { return this; } set { throw new NotImplementedException("Just for inheritance purpose"); } }
 
-        public void Setup()
+        public void Setup(bool PreserveID)
         {
             try
             {
                 Exception = null;
+                this.PreserveID = PreserveID;
+                if (!PreserveID) ItemIDSequence = 1;
                 Header.CheckList = this;
-                Header.Setup();
+                ((Group)Header).Setup();
                 int Index = 0;
                 foreach (Page Page in Pages)
                 {

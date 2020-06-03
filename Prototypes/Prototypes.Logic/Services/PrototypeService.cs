@@ -68,7 +68,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                 throw new UnauthorizedAccessException();
 
             var Prototype = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converter);
-            Prototype.Setup();
+            Prototype.Setup(false);
 
             return await Task.FromResult(new PrototypeResponse
             {
@@ -103,7 +103,7 @@ namespace CheckListManager.Prototypes.Logic.Services
 
             var Prototype = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converter);
             MarkImagesAsCloned(Prototype);
-            Prototype.Setup();
+            Prototype.Setup(false);
 
             return await Task.FromResult(new PrototypeResponse
             {
@@ -151,7 +151,7 @@ namespace CheckListManager.Prototypes.Logic.Services
 
             var Prototype = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converter);
             MarkImagesAsCloned(Prototype);
-            Prototype.Setup();
+            Prototype.Setup(false);
 
             return await Task.FromResult(new PrototypeResponse
             {
@@ -170,7 +170,7 @@ namespace CheckListManager.Prototypes.Logic.Services
 
         public PrototypeResponse Verify(PrototypeRequest request)
         {
-            request.CheckList.Setup();
+            request.CheckList.Setup(true);
 
             return new PrototypeResponse
             {
@@ -207,7 +207,7 @@ namespace CheckListManager.Prototypes.Logic.Services
 
         public async Task<PrototypeResponse> SaveAsync(DefaultIdentity identity, PrototypeRequest request)
         {
-            request.CheckList.Setup();
+            request.CheckList.Setup(false);
             if (request.CheckList.Exception != null)
                 return new PrototypeResponse
                 {
