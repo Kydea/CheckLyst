@@ -143,6 +143,7 @@
     <Compile Include="Json\TypedValueJsonConverter.cs" />
     <Compile Include="Models\CheckLists\Conditions.cs" />
     <Compile Include="Models\CheckLists\ICheckListAttachmentBase.cs" />
+    <Compile Include="Models\CheckLists\ICheckListValitityElement.cs" />
     <Compile Include="Models\CheckLists\ICheckListEditableItem.cs" />
     <Compile Include="Models\CheckLists\ICheckListField.cs" />
     <Compile Include="Models\CheckLists\ICheckListGroup.cs" />
@@ -162,6 +163,7 @@
     <Compile Include="Models\CheckLists\SignatureRecord.cs" />
     <Compile Include="Models\DataType.cs" />
     <Compile Include="Models\Expressions\AritmeticOperators\Power.cs" />
+    <Compile Include="Models\Expressions\ElementProperties\ValidityElementProperty.cs" />
     <Compile Include="Models\Expressions\ElementProperties\IteratorProperty.cs" />
     <Compile Include="Models\Expressions\ElementProperties\EditableElementProperty.cs" />
     <Compile Include="Models\Expressions\IteratorFunctions\BinaryIteratorFunction.cs" />

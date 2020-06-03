@@ -17,6 +17,8 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
             DataType = DataType.Number;
         }
 
+        protected override TypedValue GetValue(ICheckListElement Element, string TimeZone) => throw new NotImplementedException();
+
         public override TypedValue GetValue(IElementsBranch ElementsBranch, string TimeZone)
         {
             var Iterator = (ICheckListGroup)ElementsBranch.Elements[Code];

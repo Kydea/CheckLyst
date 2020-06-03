@@ -7,17 +7,16 @@ using CheckListManager.Common.Logic.Models.Expressions.Parsing;
 
 namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
 {
-    public class ElementProperty : Symbol
+    public abstract class ElementProperty : Symbol
     {
         public ElementProperty()
         {
-            Property = "property Valid";
         }
 
         public string Code { get; set; }
 
         protected string Property { get; set; }
-        protected virtual DependencyRelation.Properties GetDependencyProperty(DependencyNode DependingElement) => DependencyRelation.Properties.Validity;
+        protected abstract DependencyRelation.Properties GetDependencyProperty(DependencyNode DependingElement);
 
         public override void BuildDependencies(ICheckList CheckList, Expression Expression)
         {
@@ -27,10 +26,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
             Expression.AddDependingRelation(DependencyRelation.Properties.Value, DependingElement, Property);
         }
 
-        protected virtual void Check(ICheckListElement Element, List<string> IteratorStack)
-        {
-            DataType = DataType.Boolean;
-        }
+        protected abstract void Check(ICheckListElement Element, List<string> IteratorStack);
 
         public static ICheckListElement Check(ICheckList CheckList, List<string> IteratorStack, string Code, int Position)
         {
@@ -69,8 +65,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
             Check(Element, IteratorStack);
         }
 
-        protected virtual TypedValue GetValue(ICheckListElement Element, string TimeZone)
-            => new TypedValue(DataType.Boolean, Element.Valid);
+        protected abstract TypedValue GetValue(ICheckListElement Element, string TimeZone);
 
         public override TypedValue GetValue(IElementsBranch ElementsBranch, string TimeZone)
         {

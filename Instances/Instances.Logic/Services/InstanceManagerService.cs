@@ -335,7 +335,7 @@ namespace CheckListManager.Instances.Logic.Services
                 if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
                     throw new InstanceException("Access denied");
 
-                var InvalidItems = cacheObject.Instance.Items.Values.Where(i => !i.Removed && !i.Valid && !i.IteratorModelItem);
+                var InvalidItems = cacheObject.Instance.Items.Values.Where(i => !i.Removed && !i.IteratorModelItem && i is ICheckListValidityElement checkListValidityElement && !checkListValidityElement.Valid);
                 if (InvalidItems.Any())
                     throw new InstanceException($"The following items are not valid: {string.Join(", ", InvalidItems.Select(i => i.Id.ToString()))}");
 
@@ -459,8 +459,8 @@ namespace CheckListManager.Instances.Logic.Services
                         !e.Value.Notification ? default(DateTimeOffset?) :
                         e.Value.Value.Type == DataType.Boolean ? DateTimeOffset.UtcNow :
                         e.Value.Value.DateTimeValue
-                });
-            cacheObject.Instance.Expressions.Values.Where(e => e.Notification && e.Notification).ToList().ForEach(e => e.Notified = true);
+                }).ToList();
+            cacheObject.Instance.Expressions.Values.Where(e => e.Notification).ToList().ForEach(e => e.Notified = true);
             cacheObject.NeedToCache = true;
             return Result;
         }

@@ -18,12 +18,8 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
         [JsonIgnore]
         ICheckListSignature Signature { get; }
         string SignatureCode { get; set; }
-        bool Valid { get; set; }
         bool ReadOnly { get; }
         bool Hidden { get; set; }
-        Conditions ValidCondition { get; set; }
-        string ValidExpressionCode { get; set; }
-        string ValidityMessage { get; set; }
         void Setup();
     }
 }

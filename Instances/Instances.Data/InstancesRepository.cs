@@ -145,7 +145,7 @@ namespace CheckListManager.Instances.Data
                 OldNotifications.TryGetValue(iv.Code, out var ov);
                 iv.Notified =
                     iv.Notified //the value has not changed since last save
-                    && ov.Notified //last notification has not been sent yet
+                    && ov != null && ov.Notified //last notification has not been sent yet
                 ;
             });
 

@@ -154,7 +154,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                         Symbol = new ElementProperties.EditableElementProperty(ElementProperties.EditableElementProperty.MODIFIED_ON) { Code = Values[0], Position = Position };
                         break;
                     case "Valid":
-                        Symbol = new ElementProperties.ElementProperty { Code = Values[0], Position = Position };
+                        Symbol = new ElementProperties.ValidityElementProperty { Code = Values[0], Position = Position };
                         break;
                     case "Count":
                         Symbol = new ElementProperties.IteratorProperty { Code = Values[0], Position = Position };

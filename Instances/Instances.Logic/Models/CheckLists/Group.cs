@@ -117,13 +117,13 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             {
                 foreach (var Iteration in Iterations.Where(i => !i.Removed))
                     foreach (var item in Iteration.Items) //the iteration are never updated so they are considered transparent to validity
-                        if (!item.Valid)
+                        if (item is ICheckListValidityElement checkListValidityElement && !checkListValidityElement.Valid)
                             return false;
             }
             else
             {
                 foreach (var item in Items)
-                    if (!item.Valid)
+                    if (item is ICheckListValidityElement checkListValidityElement && !checkListValidityElement.Valid)
                         return false;
             }
             return true;
@@ -192,7 +192,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         protected void SetupItems()
         {
-            ICheckListItem previous = null;
+            ICheckListValidityElement previous = null;
 
             int ItemIndex = 0;
             foreach (Item item in Items)
@@ -205,8 +205,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 item.Iteration = item.Iteration ?? Iteration;
                 item.ItemIndex = ItemIndex++;
                 item.Setup();
-                if (!(item is Text || item is Image || item is Link))
-                    previous = item;
+                if (item is ICheckListValidityElement checkListValidityElement)
+                    previous = checkListValidityElement;
             }
         }
 
@@ -272,7 +272,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                     if (HiddenCondition != Conditions.True || HiddenCondition == Conditions.Expression)
                         Item.AddDependingRelation(DependencyRelation.Properties.Hidden, this, DependencyRelation.Properties.Hidden);
 
-                    if (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
+                    if (Item is ICheckListEditableItem && (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault))
                         AddDependingRelation(DependencyRelation.Properties.Validity, Item, DependencyRelation.Properties.Validity);
                 }
 

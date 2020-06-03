@@ -92,7 +92,8 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             if (ValidCondition == Conditions.Expression || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
                 GetExpression(ValidExpressionCode, DependencyRelation.Properties.Validity, "valid");
 
-            AddDependingRelation(DependencyRelation.Properties.Validity, this, DependencyRelation.Properties.Hidden);
+            if (this is ICheckListValidityElement)
+                AddDependingRelation(DependencyRelation.Properties.Validity, this, DependencyRelation.Properties.Hidden);
         }
 
         public override bool Update(DependencyRelation.Properties Property) => true;

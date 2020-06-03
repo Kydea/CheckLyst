@@ -10,6 +10,7 @@
         header,
         container,
         body,
+        autoCenter,
 
         filterChanged = function () {
             next.hide();
@@ -24,9 +25,20 @@
                 );
         },
 
+        close = function () {
+            autoCenter.destroy();
+            matematici.elements.body.removeClass("CheckListGrid");
+            matematici.checkListGrid = null;
+            element.remove();
+        },
+
         setup = function () {
+            matematici.elements.body.addClass("CheckListGrid");
             element = $("<div />").addClass("CheckListGrid").appendTo(matematici.elements.body);
             container = $("<div />").addClass("Container").appendTo(element);
+            autoCenter = new matematici.AutoCenter(container);
+            autoCenter.initialize();
+
             $("<h2 />").text(name).appendTo(container);
             parameters = $("<div />").addClass("Parameters").appendTo(container);
             $("<table />").addClass("Grid").appendTo(container)
@@ -44,12 +56,12 @@
                         data[index] = { key: columns[index], value: row[index] };
 
                     new instances.Event(instances.Events.externalSourceRowChange, itemId, { rowIndex: tr.data("index"), row: data }).trigger();
-                    element.remove();
+                    close();
                 });
 
             $("<div />").addClass("Buttons").appendTo(container)
                 .append($("<a />").addClass("Button").text("close").prepend($("<i />").addClass("Icon fa fa-times")).on("click", function () {
-                    element.remove();
+                    close();
                 }))
 				.append(next = $("<a />").addClass("Button").text("next").prepend($("<i />").addClass("Icon fa fa-caret-right")).on("click", function () {
                     ++page;
@@ -80,6 +92,8 @@
                 for (var column in columns)
                     if (columns[column][0] != "_")
                         header.append($("<th />").text(columns[column].split("_").join(" ")));
+
+                autoCenter.center();
 			});
         },
 
@@ -108,6 +122,8 @@
                         if (columns[column][0] != "_")
                             tr.append($("<td />").html(rows[row][column])).data({ index: parseInt(row) + 20 * page, row: rows[row] });
                 }
+
+            autoCenter.center();
         },
 
 		load = function () {

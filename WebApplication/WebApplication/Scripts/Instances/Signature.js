@@ -8,6 +8,7 @@
         exclamation,
         element = item.getElement(),
         label,
+        span,
         check,
         readOnly = model.readOnly,
 
@@ -126,7 +127,7 @@
         setup = function () {
             label = document.createElement("label");
             label.className = "Controls3";
-            var span = document.createElement("span");
+            span = document.createElement("span");
             span.className = "Label";
             span.innerHTML = model.descriptionValue || "(no description)";
             label.appendChild(span);
@@ -196,6 +197,8 @@
 
         var icon = document.createElement("i");
         icon.className = "Icon fa fa-check";
+
+        span.innerHTML = model.descriptionValue || "(no description)";
 
         button.textContent = "";
         button.appendChild(icon);

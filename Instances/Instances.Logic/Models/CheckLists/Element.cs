@@ -34,7 +34,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             Code = string.IsNullOrEmpty(Code) ? null : Code;
             if (Code != null)
 				CheckList.Elements[Code] = this;
-		}
+            if (!(this is ICheckListValidityElement))
+                Valid = true;
+        }
 
         public override bool Update(DependencyRelation.Properties Property)
         {
@@ -198,12 +200,14 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             if (ReadOnlyCondition == Conditions.Expression || ReadOnlyCondition == Conditions.ExpressionOrDefault || ReadOnlyCondition == Conditions.ExpressionAndDefault)
                 GetExpression(ReadOnlyExpressionCode, DependencyRelation.Properties.ReadOnly, "read-only");
 
-            AddDependingRelation(DependencyRelation.Properties.Validity, this, DependencyRelation.Properties.Hidden);
+            if (this is ICheckListValidityElement)
+                AddDependingRelation(DependencyRelation.Properties.Validity, this, DependencyRelation.Properties.Hidden);
         }
 
         public virtual void MarkAllAsChanged(List<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)
         {
-            MarkNodeAsChanged(CheckList, Roots, DependencyRelation.Properties.Validity);
+            if (this is ICheckListValidityElement)
+                MarkNodeAsChanged(CheckList, Roots, DependencyRelation.Properties.Validity);
             MarkNodeAsChanged(CheckList, Roots, DependencyRelation.Properties.Hidden);
             MarkNodeAsChanged(CheckList, Roots, DependencyRelation.Properties.CountDown);
         }
