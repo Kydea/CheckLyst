@@ -141,6 +141,7 @@
         updateDependencies = function (model, newModel) {
             model.dependingRelations = newModel.dependingRelations;
             model.dependentRelations = newModel.dependentRelations;
+            model.id = newModel.id;
 
             switch (model.typeName) {
                 case "Prototype":
