@@ -437,7 +437,7 @@ namespace CheckListManager.Instances.Logic.Services
                             || (Expression.Value.Value.Type == DataType.Date || Expression.Value.Value.Type == DataType.DateTime) && Expression.Value.Value.DateTimeValue < DateTimeOffset.UtcNow
                         )
                         || Expression.Value.Unique && Expression.Value.Value.Type != DataType.Array
-                        || Expression.Value.Notification && !Expression.Value.Notified && (Expression.Value.Value.Type != DataType.Boolean || Expression.Value.Value.BooleanValue)
+                        || Expression.Value.Notification && (Expression.Value.Value.Type != DataType.Boolean || Expression.Value.Value.BooleanValue)
                     )
                 ).Select(e => new InstanceExpressionValues
                 {
