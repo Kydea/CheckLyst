@@ -65,7 +65,8 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 int Index = 0;
                 foreach (Page Page in Pages)
                 {
-                    Page.Index = Index++;
+                    if (!PreserveID)
+                        Page.Index = Index++;
                     Page.CheckList = this;
                     Page.Setup();
                 }

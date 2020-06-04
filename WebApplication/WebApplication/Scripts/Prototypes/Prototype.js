@@ -333,7 +333,7 @@
                         handler = function () {
                             var
                                 model = currentItem.getModel(),
-                                title = model.typeName + (model.id && " - ID: " + model.id || model.index && " - Index: " + (parseInt(model.index) + 1)) + (model.code && " - Code: " + model.code || "")
+                                title = model.typeName + (model.index != null && " - Index: " + (parseInt(model.index) + 1) || model.id != null && " - ID: " + model.id) + (model.code && " - Code: " + model.code || "")
                             matematici.dependenciesDialog.show(title, model.dependingRelations, model.dependentRelations);
                         };
 
@@ -426,7 +426,12 @@
 
         addPage = function () {
             if (!model.pages) model.pages = [];
-            model.pages.push({ typeName: "Page", description: "(page)", id: getNewItemsId() });
+            var pageIndex = 0;
+            for (var index in model.pages)
+                if (pageIndex < model.pages[index].index)
+                    pageIndex = model.pages[index].index;
+
+            model.pages.push({ typeName: "Page", description: "(page)", index: pageIndex + 1 });
         },
 
         sign = function (action, grid, rows, row) {
