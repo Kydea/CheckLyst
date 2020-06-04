@@ -631,13 +631,16 @@ namespace CheckListManager.Prototypes.Logic.Services
                 async item =>
                 {
                     var image = (Image)item;
-                    image.ImageName = Guid.NewGuid().ToString();
-                    var Key = $"{companyId}/{prototypeId}-{version}/{image.ImageName}{Path.GetExtension(image.Key)}";
+                    if (image.Key != null)
+                    {
+                        image.ImageName = Guid.NewGuid().ToString();
+                        var Key = $"{companyId}/{prototypeId}-{version}/{image.ImageName}{Path.GetExtension(image.Key)}";
 
-                    if (!await _storageService.CloneAsync(_configurationService.PrototypesStorageBucket, image.Key, Key))
-                        throw new Exception($"Could not clone the file of the image {image.Id}-{image.Description ?? "(no label)"} from {image.Key} to {Key}");
+                        if (!await _storageService.CloneAsync(_configurationService.PrototypesStorageBucket, image.Key, Key))
+                            throw new Exception($"Could not clone the file of the image {image.Id}-{image.Description ?? "(no label)"} from {image.Key} to {Key}");
 
-                    image.Key = Key;
+                        image.Key = Key;
+                    }
                     image.Cloned = false;
                 }
             );
