@@ -14,16 +14,16 @@
         currentItem,
         itemHandler,
         commands,
-        newItemsId = 1,
         dataSources,
         imagesToDelete = [],
 
         getNewItemsId = function () {
-            return newItemsId++;
+            if (!model.itemIDSequence) model.itemIDSequence = 1;
+            return model.itemIDSequence++;
         },
 
         setNewItemsId = function (value) {
-            newItemsId = Math.max(newItemsId, value + 1);
+            model.itemIDSequence = Math.max(model.itemIDSequence, value + 1);
         },
 
         completeModel = function () {
@@ -144,7 +144,7 @@
 
             switch (model.typeName) {
                 case "Prototype":
-                    newItemsId = model.itemIDSequence;
+                    model.itemIDSequence = newModel.itemIDSequence;
                     updateDependencies(model.header, newModel.header);
                     model.exception = newModel.exception;
                     for (var index in model.pages)
@@ -178,7 +178,6 @@
         },
 
         update = function () {
-            newItemsId = model.itemIDSequence;
             var
                 currentItemId = currentItem && (currentItem.isPage && currentItem.isPage() && $("a.Current", element).attr("id") || $("div.Current", element).attr("id")); //saves current item
 
