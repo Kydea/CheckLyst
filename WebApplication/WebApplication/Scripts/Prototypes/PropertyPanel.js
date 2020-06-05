@@ -27,7 +27,7 @@
         copyModel(model, oldModel);
 
         matematici.popup.show({
-            title: "Properties - " + model.typeName + (model.index != null && " - Index: " + (parseInt(model.index) + 1) || model.id != null && " - ID: " + model.id) + (model.code && " - Code: " + model.code || ""),
+            title: "Properties - " + model.typeName + (model.index != null && " - Index: " + (parseInt(model.index) + 1) || model.id != null && " - ID: " + model.id || "") + (model.code && " - Code: " + model.code || ""),
             content: element,
             buttons: [{
                 icon: "check",

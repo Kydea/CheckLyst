@@ -332,7 +332,7 @@
                         handler = function () {
                             var
                                 model = currentItem.getModel(),
-                                title = model.typeName + (model.index != null && " - Index: " + (parseInt(model.index) + 1) || model.id != null && " - ID: " + model.id) + (model.code && " - Code: " + model.code || "")
+                                title = model.typeName + (model.index != null && " - Index: " + (parseInt(model.index) + 1) || model.id != null && " - ID: " + model.id || "") + (model.code && " - Code: " + model.code || "")
                             matematici.dependenciesDialog.show(title, model.dependingRelations, model.dependentRelations);
                         };
 
