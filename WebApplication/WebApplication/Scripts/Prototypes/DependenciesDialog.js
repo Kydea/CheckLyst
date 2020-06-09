@@ -11,7 +11,8 @@
             setTimeout(function () {
                 switch (dependency.className) {
                     case "expression":
-                        new prototypes.ExpressionsList();
+                        var expressionsList = matematici.expressionsList || new prototypes.ExpressionsList();
+                        expressionsList.select(dependency.objectCode);
                         break;
                     case "external source":
                         new prototypes.SourcesList();

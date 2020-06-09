@@ -1,5 +1,6 @@
 ﻿prototypes.ExpressionsList = function () {
     var
+        expressionsList = this,
         model = prototypes.prototype.getModel(),
         autoCenter,
         element,
@@ -76,9 +77,9 @@
 
         remove = function () {
             matematici.canClose = false;
-            verify();
             getRow(currentIndex).remove();
             list.splice(currentIndex, 1);
+            verify();
             if (list.length == 0) noRecord.appendTo(body);
             select();
         },
@@ -151,7 +152,7 @@
 
         verify = function (handler) {
             updatePrototype();
-            prototypes.prototype.verify(function () {
+            prototypes.prototype.verify(function (error) {
                 var
                     valid = true,
                     model = prototypes.prototype.getModel();
@@ -181,10 +182,12 @@
             element.remove();
             matematici.elements.body.removeClass("CheckListGrid");
             autoCenter.destroy();
+            matematici.expressionsList = null;
         },
 
         setup = function () {
             matematici.elements.body.addClass("CheckListGrid");
+            matematici.expressionsList = expressionsList;
 
             element = $("<div />").addClass("CheckListGrid").appendTo(matematici.elements.body);
             var container = $("<div />").appendTo($("<div />").addClass("Container").appendTo(element).on("click", function (e) {
@@ -249,6 +252,14 @@
             for (var code in model.expressions)
                 insert(model.expressions[code]);
         };
+
+    this.select = function (code) {
+        for (var item in list)
+            if (list[item].code == code) {
+                select(item);
+                return;
+            }
+    },
 
     setup();
 };

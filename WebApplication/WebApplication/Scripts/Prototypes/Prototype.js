@@ -329,7 +329,8 @@
                     break;
                 case "dependencies":
                     var
-                        handler = function () {
+                        handler = function (error) {
+                            if (error) return;
                             var
                                 model = currentItem.getModel(),
                                 title = model.typeName + (model.index != null && " - Index: " + (parseInt(model.index) + 1) || model.id != null && " - ID: " + model.id || "") + (model.code && " - Code: " + model.code || "")
@@ -632,7 +633,7 @@
                 base64CheckList = btoa(String.fromCharCode.apply(null, new Uint8Array(array))),
                 data = JSON.stringify({
                     base64CheckList: base64CheckList
-                }); 
+                });
 
             $.ajax({
                 url: element.data("action") + "verify",
@@ -640,12 +641,9 @@
                 contentType: "application/json",
                 data: data
             }).done(function (result) {
-                if (result.checkList.exception)
-                    matematici.dialog.error("Error", result.checkList.exception.Message);
-                else {
-                    updateDependencies(model, result.checkList);
-                    callback();
-                }
+                if (result.checkList.exception) matematici.dialog.error("Error", result.checkList.exception.Message);
+                updateDependencies(model, result.checkList);
+                callback(result.checkList.exception);
             });
         }
     };
@@ -667,12 +665,12 @@
                 validUntil: model.validUntil,
                 instanceConfirmationWorkFlow: model.instanceConfirmationWorkFlow,
                 name: model.name,
-                description: model.description, 
+                description: model.description,
                 department: model.department,
                 prototypeType: model.prototypeType,
                 imagesToDelete: imagesToDelete,
                 base64CheckList: base64CheckList
-            }); 
+            });
 
         $.ajax({
             url: element.data("action") + "Save",

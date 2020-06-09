@@ -163,7 +163,8 @@
                         }).hide())
                         .append(dependencyButton = $("<a />").addClass("Button").text("dependencies").prepend($("<i />").addClass("Icon fa fa-sitemap")).on("click", function () {
                             var
-                                handler = function () {
+                                handler = function (error) {
+                                    if (error) return;
                                     var
                                         code = list[currentIndex].code,
                                         model = prototypes.prototype.getModel().externalSourceDependencyNodes[code];
