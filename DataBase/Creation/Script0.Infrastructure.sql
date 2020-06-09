@@ -63,6 +63,7 @@ create table "Infrastructure"."FTPServers"
     "Name" varchar (50) not null,
     "Host" varchar(500) not null,
     "Port" int not null default 21,
+    "Protocol" varchar(50) not null,
     "Folder" varchar(500),
     "UserName" varchar(100),
     "Password" varchar(100),

@@ -37,6 +37,7 @@ namespace CheckListManager.Common.Data
         public System.DateTimeOffset CreatedOn { get; set; }
         public string ModifiedBy { get; set; }
         public Nullable<System.DateTimeOffset> ModifiedOn { get; set; }
+        public string Protocol { get; set; }
     
         public virtual Companies Companies { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

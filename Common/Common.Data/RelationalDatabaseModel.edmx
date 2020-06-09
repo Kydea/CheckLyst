@@ -264,6 +264,7 @@
           <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
           <Property Name="ModifiedBy" Type="varchar" MaxLength="60" />
           <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
+          <Property Name="Protocol" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="FunctionGroups">
           <Key>
@@ -2784,6 +2785,7 @@
           <NavigationProperty Name="Companies" Relationship="RelationalDatabaseModel.FTPServers_Company_fkey" FromRole="FTPServers" ToRole="Companies" />
           <NavigationProperty Name="PrototypeTypes" Relationship="RelationalDatabaseModel.PrototypeTypes_InstancesFTPServer_fkey" FromRole="FTPServers" ToRole="PrototypeTypes" />
           <NavigationProperty Name="PrototypeTypes1" Relationship="RelationalDatabaseModel.PrototypeTypes_PrototypesFTPServer_fkey" FromRole="FTPServers" ToRole="PrototypeTypes" />
+          <Property Name="Protocol" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="FTPServers_Company_fkey">
           <End Type="RelationalDatabaseModel.Companies" Role="Companies" Multiplicity="0..1">
@@ -3279,6 +3281,7 @@
           <EntitySetMapping Name="FTPServers">
             <EntityTypeMapping TypeName="RelationalDatabaseModel.FTPServers">
               <MappingFragment StoreEntitySet="FTPServers">
+                <ScalarProperty Name="Protocol" ColumnName="Protocol" />
                 <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
                 <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
                 <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />

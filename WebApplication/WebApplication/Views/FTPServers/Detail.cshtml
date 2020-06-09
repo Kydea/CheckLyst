@@ -18,9 +18,9 @@
         <label>
             <span>Protocol</span>
             <i class="Icon fal fa-cogs" />
-            <select name="protocol AutoComplete" data-nullable="-">
-                <option value="ftp">FTP(s)</option>
-                <option value="sftp">SFTP</option>
+            <select name="protocol" class="AutoComplete">
+                <option value="FTP">FTP</option>
+                <option value="SFTP">SFTP</option>
             </select>
         </label>
 
@@ -97,12 +97,22 @@
 
 <script type="text/javascript">
     var
-        formSelector = "form#Detail";
+        formSelector = "form#Detail",
+        protocolChange = function (select) {
+            var ftp = select.val() == "FTP";
+            matematici.controls.setEditable($("input[name=passive]", formSelector), ftp);
+            matematici.controls.setEditable($("input[name=ssl]", formSelector), ftp);
+        };
 
     new matematici.DetailPage({
         formSelector: formSelector,
         initHandler: function () {
             $("input[name=port]").keyfilter(/[\d]/);
+
+            $(formSelector).on("change", "select[name=protocol]", function () { protocolChange($(this)); });
+        },
+        completeHandler: function () {
+            protocolChange($("select[name=protocol]", formSelector));
         },
         buttons: [{
             icon: "cog",

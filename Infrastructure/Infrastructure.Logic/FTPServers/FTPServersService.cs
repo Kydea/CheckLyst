@@ -27,6 +27,7 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
         {
             ID = d.ID,
             Name = d.Name,
+            Protocol = d.Protocol,
             Host = d.Host,
             Port = d.Port,
             Folder = d.Folder,
@@ -139,6 +140,7 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
                     {
                         Name = record.Name,
                         Host = record.Host,
+                        Protocol = record.Protocol,
                         Port = record.Port.Value,
                         Folder = record.Folder,
                         UserName = record.UserName,
@@ -204,6 +206,7 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
             {
                 Host = record.Host,
                 Folder = record.Folder,
+                Protocol = record.Protocol,
                 Port = record.Port,
                 EnableSSL = record.SSL,
                 UsePassive = record.Passive,
@@ -212,9 +215,9 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
             };
 
             string result =
-                true ? //record.Protocol == "sftp" ?
-                await new FTPClient().TestAsync(settings) :
-                new SFTPClient().TestAsync(settings);
+                record.Protocol == "SFTP" ?
+                await new SFTPClient().TestAsync(settings) :
+                await new FTPClient().TestAsync(settings);
 
             return result;
         }
