@@ -156,7 +156,7 @@ namespace CheckListManager.Prototypes.Terminal
             await PDF.GenerateAsync(MemoryStream);
             var ftpClient = new FTPClient();
 
-            await ftpClient.ActionAsync(MemoryStream.ToArray(), Settings.Folder, $"{message.Path}{(message.State == VersionState.Obsolete ? "#O" : string.Empty)}", Settings, FTPClient.Methods.Upload);
+            await ftpClient.ActionAsync(MemoryStream.ToArray(), Settings.Folder, $"{message.Path}{(message.State == VersionState.Obsolete ? "#O" : string.Empty)}", Settings, FTPMethods.Upload);
             return Settings;
         }
     }
