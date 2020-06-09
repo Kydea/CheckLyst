@@ -82,6 +82,9 @@
       <HintPath>..\..\packages\NLog.4.7.0\lib\net45\NLog.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Renci.SshNet, Version=2016.1.0.0, Culture=neutral, PublicKeyToken=1cee9f8bde3db106, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SSH.NET.2016.1.0\lib\net40\Renci.SshNet.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
@@ -108,6 +111,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\TerminalConfig.cs" />
+    <Compile Include="FTP\FTPClientBuilder.cs" />
+    <Compile Include="FTP\IFTPClient.cs" />
+    <Compile Include="FTP\SFTPClient.cs" />
+    <Compile Include="FTP\Methods.cs" />
     <Compile Include="FTP\FTPClient.cs" />
     <Compile Include="FTP\FTPConnectionSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

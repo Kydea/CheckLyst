@@ -141,9 +141,9 @@ namespace CheckListManager.Instances.Terminal
             var MemoryStream = new MemoryStream();
             await PDF.GenerateAsync(MemoryStream);
 
-            var ftpClient = new FTPClient();
+            var ftpClient = FTPClientBuilder.Create("FTP");
 
-            await ftpClient.ActionAsync(MemoryStream.ToArray(), Settings.Folder, message.Path, Settings, FTPClient.Methods.Upload);
+            await ftpClient.ActionAsync(MemoryStream.ToArray(), Settings.Folder, message.Path, Settings, FTPMethods.Upload);
             return Settings;
         }
     }

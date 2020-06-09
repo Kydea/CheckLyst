@@ -94,7 +94,6 @@ namespace SFTP
             if (string.IsNullOrWhiteSpace(HostTextBox.Text)) throw new Exception("Provide a host");
             if (string.IsNullOrWhiteSpace(PortTextBox.Text)) throw new Exception("Provide a port");
             if (string.IsNullOrWhiteSpace(UserTextBox.Text)) throw new Exception("Provide a user");
-            if (string.IsNullOrWhiteSpace(KeyTextBox.Text)) throw new Exception("Provide a key");
             if (string.IsNullOrWhiteSpace(PathTextBox.Text)) throw new Exception("Provide a remote path");
 
             if (!int.TryParse(PortTextBox.Text, out var port)) throw new Exception("Invalid port number");
@@ -102,14 +101,19 @@ namespace SFTP
             //var keyFile = @"C:\\Matematici\\TestSFTP.ppk";
             //var keyFiles = new[] { new PrivateKeyFile(@"C:\\Matematici\\TestSFTP.pem") };
 
-            var keyFiles = new[] { new PrivateKeyFile(new MemoryStream(Encoding.ASCII.GetBytes(KeyTextBox.Text.Trim()))) };
+            var AuthenticationMethods = new List<AuthenticationMethod>();
+            if (!string.IsNullOrEmpty(PasswordTextBox.Text))
+                AuthenticationMethods.Add(new PasswordAuthenticationMethod(UserTextBox.Text, PasswordTextBox.Text));
+            if (!string.IsNullOrEmpty(KeyTextBox.Text))
+            {
+                var keyFiles = new[] { new PrivateKeyFile(new MemoryStream(Encoding.ASCII.GetBytes(KeyTextBox.Text.Trim()))) };
+                AuthenticationMethods.Add(new PrivateKeyAuthenticationMethod(UserTextBox.Text, keyFiles));
+            }
             return new ConnectionInfo(
                 HostTextBox.Text,
                 port,
                 UserTextBox.Text,
-                //new PasswordAuthenticationMethod(username, password),
-                //new PrivateKeyAuthenticationMethod(keyFile)
-                new PrivateKeyAuthenticationMethod(UserTextBox.Text, keyFiles)
+                AuthenticationMethods.ToArray()
             );
         }
 

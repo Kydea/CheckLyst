@@ -69,6 +69,19 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
             var requireUserReason = await _settingService.RequireUserReasonAsync(identity.CompanyId);
             
             var response = new FTPServersResponse();
+            if (string.IsNullOrWhiteSpace(record.Protocol))
+            {
+                response.Fields["Protocol"] = new Field
+                {
+                    ValidationMessages = new List<ValidationMessage> {
+                        new ValidationMessage {
+                            Level = ValidationMessage.LevelError,
+                            Message = "Protocol is a required field"
+                        }
+                    }
+                };
+                response.Valid = false;
+            }
             if (string.IsNullOrWhiteSpace(record.Name))
             {
                 response.Fields["Name"] = new Field
@@ -187,8 +200,8 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
         public async Task<string> Test(IDefaultIdentity identity, long id)
         {
             var record = await _infrastructureRepository.GetFTPServerAsync(identity, id);
-
-            var result = await new FTPClient().TestAsync(new FTPConnectionSettings {
+            var settings = new FTPConnectionSettings
+            {
                 Host = record.Host,
                 Folder = record.Folder,
                 Port = record.Port,
@@ -196,7 +209,12 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
                 UsePassive = record.Passive,
                 UserName = record.UserName,
                 Password = record.Password
-            });
+            };
+
+            string result =
+                true ? //record.Protocol == "sftp" ?
+                await new FTPClient().TestAsync(settings) :
+                new SFTPClient().TestAsync(settings);
 
             return result;
         }
@@ -207,6 +225,7 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
             {
                 record.ID,
                 record.Name,
+                record.Protocol,
                 record.Host,
                 record.Port,
                 record.Folder,

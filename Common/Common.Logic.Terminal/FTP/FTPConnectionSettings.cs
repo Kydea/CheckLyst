@@ -11,6 +11,7 @@ namespace CheckListManager.Common.Logic.Terminal.FTP
 
     public class FTPConnectionSettings
     {
+        public string Protocol { get; set; }
         public string Host { get; set; }
         public int Port { get; set; }
         public bool UsePassive { get; set; }
