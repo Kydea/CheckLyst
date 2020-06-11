@@ -251,6 +251,7 @@
           <Property Name="ID" Type="int8" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Company" Type="int8" />
           <Property Name="Name" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Protocol" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Host" Type="varchar" MaxLength="500" Nullable="false" />
           <Property Name="Port" Type="int4" Nullable="false" />
           <Property Name="Folder" Type="varchar" MaxLength="500" />
@@ -258,13 +259,13 @@
           <Property Name="Password" Type="varchar" MaxLength="100" />
           <Property Name="Passive" Type="bool" Nullable="false" />
           <Property Name="SSL" Type="bool" Nullable="false" />
+          <Property Name="Key" Type="varchar" />
           <Property Name="PrototypesDefault" Type="bool" Nullable="false" />
           <Property Name="InstancesDefault" Type="bool" Nullable="false" />
           <Property Name="CreatedBy" Type="varchar" MaxLength="60" />
           <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
           <Property Name="ModifiedBy" Type="varchar" MaxLength="60" />
           <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
-          <Property Name="Protocol" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="FunctionGroups">
           <Key>
@@ -2769,6 +2770,7 @@
           <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Company" Type="Int64" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Protocol" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Host" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="Port" Type="Int32" Nullable="false" />
           <Property Name="Folder" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
@@ -2776,6 +2778,7 @@
           <Property Name="Password" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="Passive" Type="Boolean" Nullable="false" />
           <Property Name="SSL" Type="Boolean" Nullable="false" />
+          <Property Name="Key" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="PrototypesDefault" Type="Boolean" Nullable="false" />
           <Property Name="InstancesDefault" Type="Boolean" Nullable="false" />
           <Property Name="CreatedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
@@ -2785,7 +2788,6 @@
           <NavigationProperty Name="Companies" Relationship="RelationalDatabaseModel.FTPServers_Company_fkey" FromRole="FTPServers" ToRole="Companies" />
           <NavigationProperty Name="PrototypeTypes" Relationship="RelationalDatabaseModel.PrototypeTypes_InstancesFTPServer_fkey" FromRole="FTPServers" ToRole="PrototypeTypes" />
           <NavigationProperty Name="PrototypeTypes1" Relationship="RelationalDatabaseModel.PrototypeTypes_PrototypesFTPServer_fkey" FromRole="FTPServers" ToRole="PrototypeTypes" />
-          <Property Name="Protocol" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="FTPServers_Company_fkey">
           <End Type="RelationalDatabaseModel.Companies" Role="Companies" Multiplicity="0..1">
@@ -3281,13 +3283,13 @@
           <EntitySetMapping Name="FTPServers">
             <EntityTypeMapping TypeName="RelationalDatabaseModel.FTPServers">
               <MappingFragment StoreEntitySet="FTPServers">
-                <ScalarProperty Name="Protocol" ColumnName="Protocol" />
                 <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
                 <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
                 <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="InstancesDefault" ColumnName="InstancesDefault" />
                 <ScalarProperty Name="PrototypesDefault" ColumnName="PrototypesDefault" />
+                <ScalarProperty Name="Key" ColumnName="Key" />
                 <ScalarProperty Name="SSL" ColumnName="SSL" />
                 <ScalarProperty Name="Passive" ColumnName="Passive" />
                 <ScalarProperty Name="Password" ColumnName="Password" />
@@ -3295,6 +3297,7 @@
                 <ScalarProperty Name="Folder" ColumnName="Folder" />
                 <ScalarProperty Name="Port" ColumnName="Port" />
                 <ScalarProperty Name="Host" ColumnName="Host" />
+                <ScalarProperty Name="Protocol" ColumnName="Protocol" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Company" ColumnName="Company" />
                 <ScalarProperty Name="ID" ColumnName="ID" />

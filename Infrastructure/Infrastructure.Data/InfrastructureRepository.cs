@@ -100,14 +100,15 @@ namespace CheckListManager.Infrastructure.Data
         {
             var ExistingFTPServer = await GetFTPServerAsync(identity, ftpServer.ID);
             ExistingFTPServer.Name = ftpServer.Name;
-            ExistingFTPServer.Host = ftpServer.Host;
             ExistingFTPServer.Protocol = ftpServer.Protocol;
+            ExistingFTPServer.Host = ftpServer.Host;
             ExistingFTPServer.Port = ftpServer.Port;
             ExistingFTPServer.Folder = ftpServer.Folder;
             ExistingFTPServer.UserName = ftpServer.UserName;
             ExistingFTPServer.Password = ftpServer.Password;
             ExistingFTPServer.Passive = ftpServer.Passive && ftpServer.Protocol == "FTP";
             ExistingFTPServer.SSL = ftpServer.SSL && ftpServer.Protocol == "FTP";
+            ExistingFTPServer.Key = ftpServer.Protocol == "SFTP" ? ftpServer.Key : null;
             ExistingFTPServer.PrototypesDefault = ftpServer.PrototypesDefault;
             ExistingFTPServer.InstancesDefault = ftpServer.InstancesDefault;
             ExistingFTPServer.ModifiedOn = DateTimeOffset.UtcNow;

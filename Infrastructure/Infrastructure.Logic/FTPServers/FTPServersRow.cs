@@ -18,6 +18,7 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
         public string Password { get; set; }
         public bool Passive { get; set; }
         public bool SSL { get; set; }
+        public string Key { get; set; }
         public bool PrototypesDefault { get; set; }
         public bool InstancesDefault { get; set; }
         public string CreatedBy { get; set; }

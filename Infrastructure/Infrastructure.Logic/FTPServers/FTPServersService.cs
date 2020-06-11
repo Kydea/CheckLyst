@@ -34,6 +34,7 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
             UserName = d.UserName,
             Password = d.Password,
             SSL = d.SSL,
+            Key = d.Key,
             Passive = d.Passive,
             PrototypesDefault = d.PrototypesDefault,
             InstancesDefault = d.InstancesDefault,
@@ -147,6 +148,7 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
                         Password = record.Password,
                         Passive = record.Passive,
                         SSL = record.SSL,
+                        Key = record.Key,
                         PrototypesDefault = record.PrototypesDefault,
                         InstancesDefault = record.InstancesDefault
                     };
@@ -208,10 +210,11 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
                 Folder = record.Folder,
                 Protocol = record.Protocol,
                 Port = record.Port,
-                EnableSSL = record.SSL,
                 UsePassive = record.Passive,
+                EnableSSL = record.SSL,
                 UserName = record.UserName,
-                Password = record.Password
+                Password = record.Password,
+                Key = record.Key
             };
 
             string result =
@@ -235,9 +238,10 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
                 record.UserName,
                 Password = new string('*', Math.Min(3, record.Password?.Length ?? 0)), // Avoid to log password from UI
                 record.Passive,
+                record.SSL,
+                Key = string.IsNullOrEmpty(record.Key) ? null : "***",
                 record.InstancesDefault,
                 record.PrototypesDefault,
-                record.SSL,
                 ReasonForChange = record.Reason,
             };
             return AuditAsync(identity, action, information);

@@ -24,6 +24,7 @@ namespace CheckListManager.Common.Data
         public long ID { get; set; }
         public Nullable<long> Company { get; set; }
         public string Name { get; set; }
+        public string Protocol { get; set; }
         public string Host { get; set; }
         public int Port { get; set; }
         public string Folder { get; set; }
@@ -31,14 +32,14 @@ namespace CheckListManager.Common.Data
         public string Password { get; set; }
         public bool Passive { get; set; }
         public bool SSL { get; set; }
+        public string Key { get; set; }
         public bool PrototypesDefault { get; set; }
         public bool InstancesDefault { get; set; }
         public string CreatedBy { get; set; }
         public System.DateTimeOffset CreatedOn { get; set; }
         public string ModifiedBy { get; set; }
         public Nullable<System.DateTimeOffset> ModifiedOn { get; set; }
-        public string Protocol { get; set; }
-    
+
         public virtual Companies Companies { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PrototypeTypes> PrototypeTypes { get; set; }

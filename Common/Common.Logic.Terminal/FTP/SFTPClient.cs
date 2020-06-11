@@ -42,7 +42,7 @@ namespace CheckListManager.Common.Logic.Terminal.FTP
                 .Replace(':', '-').Replace('*', '-').Replace('?', '-')
                 .Replace('"', '\'') ?? "";
 
-            using (SftpClient client = new SftpClient(GetConnectionInfo(Settings.Host, Settings.Port, Settings.UserName, Settings.Password, null)))
+            using (SftpClient client = new SftpClient(GetConnectionInfo(Settings.Host, Settings.Port, Settings.UserName, Settings.Password, Settings.Key)))
             {
                 client.Connect();
                 if (Method == FTPMethods.Upload)
@@ -65,7 +65,7 @@ namespace CheckListManager.Common.Logic.Terminal.FTP
                 if (!Path.StartsWith("/")) Path = "/" + Path;
             }
 
-            using (SftpClient client = new SftpClient(GetConnectionInfo(Settings.Host, Settings.Port, Settings.UserName, Settings.Password, null)))
+            using (SftpClient client = new SftpClient(GetConnectionInfo(Settings.Host, Settings.Port, Settings.UserName, Settings.Password, Settings.Key)))
             {
                 client.Connect();
                 return Task.FromResult(string.Join(Environment.NewLine, client.ListDirectory(Path).Select(f => f.Name)));

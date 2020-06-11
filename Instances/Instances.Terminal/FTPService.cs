@@ -126,13 +126,15 @@ namespace CheckListManager.Instances.Terminal
 
             Settings = new FTPConnectionSettings
             {
+                Protocol = FTPServer.Protocol,
                 Host = FTPServer.Host,
                 Port = FTPServer.Port,
                 Folder = FTPServer.Folder,
                 EnableSSL = FTPServer.SSL,
                 UsePassive = FTPServer.Passive,
                 UserName = FTPServer.UserName,
-                Password = FTPServer.Password
+                Password = FTPServer.Password,
+                Key = FTPServer.Key
             };
 
             var Company = await _commonRepository.GetCompanyAsync(message.Company);
@@ -141,7 +143,7 @@ namespace CheckListManager.Instances.Terminal
             var MemoryStream = new MemoryStream();
             await PDF.GenerateAsync(MemoryStream);
 
-            var ftpClient = FTPClientBuilder.Create("FTP");
+            var ftpClient = FTPClientBuilder.Create(FTPServer.Protocol);
 
             await ftpClient.ActionAsync(MemoryStream.ToArray(), Settings.Folder, message.Path, Settings, FTPMethods.Upload);
             return Settings;

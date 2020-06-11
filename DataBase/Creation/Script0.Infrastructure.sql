@@ -61,14 +61,15 @@ create table "Infrastructure"."FTPServers"
 	"Company" bigint references "Infrastructure"."Companies" on delete cascade,
 
     "Name" varchar (50) not null,
+    "Protocol" varchar(50) not null,
     "Host" varchar(500) not null,
     "Port" int not null default 21,
-    "Protocol" varchar(50) not null,
     "Folder" varchar(500),
     "UserName" varchar(100),
     "Password" varchar(100),
     "Passive" boolean not null, 
     "SSL" boolean not null, 
+    "Key" text,
     "PrototypesDefault" boolean not null, 
     "InstancesDefault" boolean not null, 
 
