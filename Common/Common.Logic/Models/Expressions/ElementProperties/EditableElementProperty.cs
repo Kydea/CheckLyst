@@ -15,7 +15,10 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
         }
 
         protected override DependencyRelation.Properties GetDependencyProperty(DependencyNode DependingElement) =>
-            DependingElement is ICheckListGroup ? DependencyRelation.Properties.Iterations : DependencyRelation.Properties.Value;
+            DependingElement is ICheckListGroup ? DependencyRelation.Properties.Iterations :
+            DependingElement is ICheckListSignature ? DependencyRelation.Properties.Signature :
+            DependingElement is ICheckListAttachment ? DependencyRelation.Properties.Validity :
+            DependencyRelation.Properties.Value;
 
         protected override void Check(ICheckListElement Element, List<string> IteratorStack)
         {
