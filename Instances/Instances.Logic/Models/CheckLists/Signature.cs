@@ -136,6 +136,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public void Sign(string UserCode, string UserDescription, DateTimeOffset Now)
         {
             Signed = true;
+
             SignedBy = UserCode;
             SignerDescription = UserDescription;
             ModifiedOn = SignedOn = Now;
@@ -153,6 +154,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 if (ReadOnly)
                     throw new Exception("This signature not editable"); //Signature is still readonly after unsigned, may be locked by another signature or a special condition
 
+                SignedBy = UserCode;
+                SignerDescription = UserDescription;
                 ModifiedOn = SignedOn = Now;
 
                 History.Add(new SignatureRecord { DateTime = SignedOn, User = UserCode, Signature = UserDescription , Note = Note });
