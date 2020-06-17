@@ -27,8 +27,12 @@
                     message += jqxhr.responseJSON.messages[index] + "<br />";
             else if (jqxhr.responseJSON && jqxhr.responseJSON.error_description)
                 message = jqxhr.responseJSON.error_description;
-            else
+            else if (thrownError)
                 message = thrownError;
+            else if (jqxhr.status)
+                message = "HTTP error " + jqxhr.status;
+            else
+                message = "Unexpected error";
 
             lastError = { message, detail: data, extra: { event, jqxhr, settings, thrownError } };
 
