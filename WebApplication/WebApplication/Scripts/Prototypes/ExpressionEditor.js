@@ -70,11 +70,27 @@
                 expression[this.name] = this.checked;
             });
 
-            confirmHandler(expression);
+            if (expressions[expressionIndex].dependentRelations && expressions[expressionIndex].dependentRelations.length > 0 && code != expressions[expressionIndex].code) {
+                var message = "WARNING: the expression is referenced by " + expressions[expressionIndex].dependentRelations.length + " element(s). If you change the code from '" + expressions[expressionIndex].code + "', the referencing elements will have to be fixed to save the proptotype."
+                matematici.dialog.show("warning", message, [
+                    {
+                        text: "confirm", icon: "check", handler: function () {
+                            confirmHandler(expression);
+                            matematici.popup.close();
+                        }
+                    },
+                    { text: "cancel", hidden: true, icon: "remove", cancelButton: true }
+                ]);
+                return true;
+            } else
+                confirmHandler(expression);
         },
 
         remove = function () {
-            matematici.dialog.show("warning", "Warning: the expression will be deleted.", [
+            var message = expression.dependentRelations && expression.dependentRelations.length == 0 ?
+                "Warning: the expression will be deleted." :
+                "WARNING: the expression is referenced by " + expression.dependentRelations.length + " element(s). After the deletion of this expression, the referencing elements will have to be fixed to save the proptotype.";
+            matematici.dialog.show("warning", message, [
                 {
                     text: "confirm", icon: "check", handler: function () {
                         deleteHandler();
