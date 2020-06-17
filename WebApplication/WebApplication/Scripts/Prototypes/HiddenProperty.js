@@ -9,17 +9,18 @@
                 value = input.val(),
                 error;
 
-            if (input.prop("selectedIndex") > 2 && expressions[value].error)
+            if (input.prop("selectedIndex") > 1 && expressions[value].error)
                 error = "the expression is not valid";
-            else if (input.prop("selectedIndex") > 2 && !prototypes.propertyPanel.checkDataType(expressions[value], "Boolean"))
+            else if (input.prop("selectedIndex") > 1 && !prototypes.propertyPanel.checkDataType(expressions[value], "Boolean"))
                 error = "the expression result must be a boolean";
 
             if (error) {
                 new matematici.dialog.error("error", error);
-                input.val("");
+                input.prop("selectedIndex", 0);
+                matematici.AutoComplete.get(input[0]).setError(value);
             }
 
-            var index = input.prop("selectedIndex")
+            var index = input.prop("selectedIndex");
             model.hiddenExpressionCode = index > 1 ? value : null;
             model.hiddenCondition = index == 0 ? 2 : index == 1 ? 1 : 3;
             matematici.canClose = false;
@@ -36,8 +37,16 @@
                 .append($("<option />").attr("value", "2").text("(false)").attr("selected", model.hiddenCondition == 2))
                 .append($("<option />").attr("value", "1").text("(true)").attr("selected", model.hiddenCondition == 1));
 
-            for (var index in expressions)
+            var found = model.hiddenCondition == 1 || model.hiddenCondition == 2;
+            for (var index in expressions) {
                 input.append($("<option />").attr({ value: index, selected: model.hiddenCondition > 2 && index == model.hiddenExpressionCode }).text(index));
+                if (model.hiddenCondition > 2 && index == model.hiddenExpressionCode) found = true;
+            }
+
+            if (!found) {
+                input.prop("selectedIndex", 0);
+                input.attr("data-error", model.hiddenExpressionCode);
+            }
 
             input.on("change", inputChanged);
         } else

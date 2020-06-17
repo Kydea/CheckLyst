@@ -21,6 +21,7 @@
         multiple,
         open,
         readOnly,
+        error = false,
 
         deferredInitialization = function () {
             //all the initialization needed only after first show list
@@ -123,6 +124,9 @@
                 updateList();
             }
 
+            if (node.hasAttribute("data-error")) 
+                setError(node.getAttribute("data-error"));
+
             matematici.elements.window.on("resize", setWidth);
         },
 
@@ -160,6 +164,8 @@
                     text = value && valuesMap.get(value) || "";
             }
 
+            error = false;
+            labelNode.classList.toggle("Red", false);
             labelNode.value = text;
             labelNode.setAttribute("title", text);
 
@@ -216,57 +222,57 @@
                 else
                     labelNode.parentNode.insertBefore(iconNode, labelNode.nextSibling);
             }
-		},
+        },
 
-		destroy = function () {
-			matematici.elements.window.off("resize", setWidth);
-		},
+        destroy = function () {
+            matematici.elements.window.off("resize", setWidth);
+        },
 
-		toggleItem = function (index) {
+        toggleItem = function (index) {
             var
                 item = items.eq(index),
                 value = item.data("value"),
                 option = options.filter("[value='" + value + "']"),
-				on = !option.prop("selected");
+                on = !option.prop("selected");
 
-			items.eq(index).toggleClass("Selected", on);
-			option.prop('selected', on);
+            items.eq(index).toggleClass("Selected", on);
+            option.prop('selected', on);
 
-			var texts = [];
-			options.each(function () {
-				var option = $(this);
-				if (option.prop("selected"))
-					texts.push(option.text());
-			});
-			var text = texts.join(", ");
+            var texts = [];
+            options.each(function () {
+                var option = $(this);
+                if (option.prop("selected"))
+                    texts.push(option.text());
+            });
+            var text = texts.join(", ");
             label.val(text).attr("title", text);
 
-            element.trigger("toggle", [ value, on ]);
-		},
+            element.trigger("toggle", [value, on]);
+        },
 
-		setCurrentItem = function (value) {
-			if (currentItem != null) items.eq(currentItem).removeClass("Selected");
-			currentItem = items.size() == 0 ? null : value < 0 ? 0 : items.size() <= value ? items.size() - 1 : value;
-			if (currentItem != null) {
-				var
-					item = items.eq(currentItem).addClass("Selected"),
-					itemHeight = item.outerHeight(),
-					scroll = list.scrollTop(),
-					listHeight = list.height(),
-					top = currentItem * itemHeight;
-				if (top < scroll)
-					list.scrollTop(top);
-				else if (top + itemHeight - listHeight > scroll)
-					list.scrollTop(top + itemHeight - listHeight);
+        setCurrentItem = function (value) {
+            if (currentItem != null) items.eq(currentItem).removeClass("Selected");
+            currentItem = items.size() == 0 ? null : value < 0 ? 0 : items.size() <= value ? items.size() - 1 : value;
+            if (currentItem != null) {
+                var
+                    item = items.eq(currentItem).addClass("Selected"),
+                    itemHeight = item.outerHeight(),
+                    scroll = list.scrollTop(),
+                    listHeight = list.height(),
+                    top = currentItem * itemHeight;
+                if (top < scroll)
+                    list.scrollTop(top);
+                else if (top + itemHeight - listHeight > scroll)
+                    list.scrollTop(top + itemHeight - listHeight);
 
-				element.val(item.data("value"));
+                element.val(item.data("value"));
                 label.val(item.hasClass("None") ? "" : item.text());
-			}
-		},
+            }
+        },
 
         showList = function () {
             if (!initialized) deferredInitialization();
-			if (readOnly) return;
+            if (readOnly) return;
 
             if (oldValue == null) oldValue = node.value || "";
 
@@ -274,42 +280,48 @@
             matematici.AutoComplete.current = autoComplete;
             options = $("option", element);
             updateList();
-			open = true;
-			element.addClass("Open");
-			label.addClass("Open");
-			input.show();
-			matematici.elements.body.append(input);
-			matematici.elements.body.append(list);
+            open = true;
+            element.addClass("Open");
+            label.addClass("Open");
+            input.show();
+            matematici.elements.body.append(input);
+            matematici.elements.body.append(list);
             resizeList();
-			list.show();
+            list.show();
             setValue();
-			setTimeout(function () {
-				$(document).on("click.autocomplete", hideList)
-				$(document).on("keydown.autocomplete", function (e) {
-					if (e.which == 13)
-						hideList();
-				});
+            setTimeout(function () {
+                $(document).on("click.autocomplete", hideList)
+                $(document).on("keydown.autocomplete", function (e) {
+                    if (e.which == 13)
+                        hideList();
+                });
                 matematici.elements.body.children(".Popup").on("scroll.autocomplete", hideList);
-			}, 0);
-		},
+            }, 0);
+        },
 
-		hideList = function () {
-			$(document)
-				.off("click.autocomplete")
-				.off("keydown.autocomplete");
+        hideList = function () {
+            $(document)
+                .off("click.autocomplete")
+                .off("keydown.autocomplete");
             matematici.elements.body.children(".Popup").off("scroll.autocomplete");
-			list.hide();
-			input.hide();
-			if (!multiple) setCurrentItem(null);
-			label.removeClass("Open");
-			element.removeClass("Open");
+            list.hide();
+            input.hide();
+            if (!multiple) setCurrentItem(null);
+            label.removeClass("Open");
+            element.removeClass("Open");
             open = false;
             if (oldValue != (node.value || "")) node.dispatchEvent(new Event('change', { 'bubbles': true }));
-			oldValue = null;
-			input.insertAfter(label);
+            oldValue = null;
+            input.insertAfter(label);
             list.insertAfter(label);
             matematici.AutoComplete.current = null;
-		},
+        },
+
+        setError = function (value) {
+            error = !!value;
+            labelNode.classList.toggle("Red", error);
+            if (error) labelNode.value = value;
+        },
 
 		updateList = function () {
             list.empty();
@@ -342,7 +354,8 @@
     autoComplete.refresh = function () {
         iconNode.style.display = "block";
         setWidth();
-        setValue();
+        if (!error)
+            setValue();
     };
 
     autoComplete.refreshValues = function () {
@@ -355,7 +368,7 @@
     };
 
     autoComplete.getValue = function () {
-        return element.val();
+        return element && element.val() || node.value;
     }
 
     autoComplete.setValue = function (values) {
@@ -379,6 +392,8 @@
     autoComplete.destroy = destroy;
 
     autoComplete.checkReadOnly = checkReadOnly;
+
+    autoComplete.setError = setError;
 };
 
 matematici.AutoComplete.map = new WeakMap();

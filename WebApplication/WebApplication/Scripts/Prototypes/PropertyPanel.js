@@ -485,7 +485,7 @@
     };
 
     propertyPanel.checkDataType = function (expression, typeName) {
-        return expression.dataType.typeName == typeName || expression.innerDataType && expression.innerDataType.typeName == typeName;
+        return expression.innerDataType && expression.innerDataType.typeName == typeName || expression.dataType.typeName == typeName;
     };
 
     prototypes.propertyPanel = propertyPanel;

@@ -62,7 +62,9 @@
                     new prototypes.SourcesList();
                 }, "Icon SourcesList")
                 .add("<i class='Icon fal fa-calculator'></i>", function () {
-                    new prototypes.ExpressionsList();
+                    prototypes.prototype.verify(function () {
+                        new prototypes.ExpressionsList();
+                    });
                 }, "Icon ExpressionsList"),
 
             buttonGroup = new matematici.ButtonGroup("span.ButtonGroup")

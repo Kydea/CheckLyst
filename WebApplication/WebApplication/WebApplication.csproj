@@ -383,7 +383,6 @@
     <Content Include="Scripts\Prototypes\CountDownToProperty.js" />
     <Content Include="Scripts\Prototypes\ValueTypeProperty.js" />
     <Content Include="Scripts\Prototypes\WorkFlowProperty.js" />
-    <Content Include="Scripts\Prototypes\ExpressionProperty.js" />
     <Content Include="Scripts\Prototypes\ExpressionsList.js" />
     <Content Include="Scripts\Prototypes\Field.js" />
     <Content Include="Scripts\Prototypes\Group.js" />

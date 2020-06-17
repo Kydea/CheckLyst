@@ -25,9 +25,11 @@
             var offset = parseInt(offsetInput.val() || 0);
             offsetInput.val(offset)
 
-            if (error)
+            if (error) {
                 new matematici.dialog.error("error", error);
-            else {
+                valueSelect.prop("selectedIndex", 0);
+                matematici.AutoComplete.get(valueSelect[0]).setError(value);
+            } else {
                 model.countDownCondition = condition;
                 model.countDownToCode = condition > 0 ? value : null;
                 model.countDownOffset = condition > 0 ? offset : 0;
@@ -56,6 +58,9 @@
 
                 matematici.controls.setEditable(offsetInput, condition > 0);
                 offsetInput.val(model.countDownOffset)
+
+                if (autoComplete.getValue() != model.countDownToCode)
+                    autoComplete.setError(model.countDownToCode);
             }, 0);
         },
 

@@ -150,21 +150,16 @@
                     for (var index in model.pages)
                         updateDependencies(model.pages[index], newModel.pages[index]);
 
-                    for (var index in model.externalSourceDependencyNodes) {
-                        var
-                            externalSource = model.externalSourceDependencyNodes[index],
-                            newExternalSource = newModel.externalSourceDependencyNodes[index];
-                        updateDependencies(externalSource, newExternalSource);
-                    }
+                    model.externalSourceDependencyNodes = newModel.externalSourceDependencyNodes;
 
                     var invalid = false;
                     for (var index in model.expressions) {
                         var
                             expression = model.expressions[index],
                             newExpression = newModel.expressions[index];
-                        expression.error = newExpression.error;
-                        if (expression.error) invalid = true;
                         expression.dataType = newExpression.dataType;
+                        expression.error = newExpression.error || (newExpression.dataType && newExpression.dataType.typeName ? null : "the expression could not be evaluated");
+                        if (expression.error) invalid = true;
                         updateDependencies(expression, newExpression);
                     }
                     $("div.ActionBar a.ExpressionsList").toggleClass("Invalid", invalid);

@@ -15,6 +15,10 @@ input.AutoComplete {
         //default focus for chrome
         outline: 5px auto -webkit-focus-ring-color;
     }
+
+    &.Red {
+        color: $Color-Red-Regular;
+    }
 }
 
 input.AutoComplete-Filter {

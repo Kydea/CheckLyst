@@ -8,6 +8,8 @@ input.AutoComplete {
     border-bottom-left-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
     outline: 5px auto -webkit-focus-ring-color; }
+  input.AutoComplete.Red {
+    color: #cc0000; }
 
 input.AutoComplete-Filter {
   min-width: unset !important;

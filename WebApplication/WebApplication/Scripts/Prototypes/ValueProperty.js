@@ -103,8 +103,12 @@
 				$("<option />").appendTo(sourceName).text(index).attr("value", index);
 
 			if (externalSource) {
-				sourceName.val(model.externalSourceName);
-				sourceChanged(model.externalSourceColumn);
+                sourceName.val(model.externalSourceName);
+                if (sourceName.val() != model.externalSourceName) {
+                    sourceName.val(null);
+                    sourceName.attr("data-error", model.externalSourceName);
+                } else
+				    sourceChanged(model.externalSourceColumn);
 				input.hide();
 			} else {
 				sourceName.parent().hide();
@@ -118,8 +122,8 @@
 				.val(
 				empty ? "empty" :
 					externalSource ? "external source" :
-						formula ? "formula" :
-							"comma separated values"
+				    formula ? "formula" :
+					"comma separated values"
 				)
 				.appendTo(valuePanel);
 
