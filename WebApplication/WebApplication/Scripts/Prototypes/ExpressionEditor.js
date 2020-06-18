@@ -1,6 +1,7 @@
 ﻿prototypes.ExpressionEditor = function (expressions, expressionIndex, confirmHandler, deleteHandler) {
     var
         expression = expressions[expressionIndex],
+        newRecord = !expression,
         expressionEditor = this,
         edited = false,
         form,
@@ -70,7 +71,7 @@
                 expression[this.name] = this.checked;
             });
 
-            if (expressions[expressionIndex].dependentRelations && expressions[expressionIndex].dependentRelations.length > 0 && code != expressions[expressionIndex].code) {
+            if (!newRecord && expressions[expressionIndex].dependentRelations && expressions[expressionIndex].dependentRelations.length > 0 && code != expressions[expressionIndex].code) {
                 var message = "WARNING: the expression is referenced by " + expressions[expressionIndex].dependentRelations.length + " element(s). If you change the code from '" + expressions[expressionIndex].code + "', the referencing elements will have to be fixed to save the proptotype."
                 matematici.dialog.show("warning", message, [
                     {
@@ -87,7 +88,7 @@
         },
 
         remove = function () {
-            var message = expression.dependentRelations && expression.dependentRelations.length == 0 ?
+            var message = newRecord || expression.dependentRelations && expression.dependentRelations.length == 0 ?
                 "Warning: the expression will be deleted." :
                 "WARNING: the expression is referenced by " + expression.dependentRelations.length + " element(s). After the deletion of this expression, the referencing elements will have to be fixed to save the proptotype.";
             matematici.dialog.show("warning", message, [
@@ -115,7 +116,7 @@
                     matematici.controls.setEditable($(this), false);
                 });
 
-            if (expression) {
+            if (!newRecord) {
                 $("input[type=text], textarea", form).each(function () {
                     this.value = expression[this.name];
                 });
