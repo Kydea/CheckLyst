@@ -80,7 +80,7 @@
             getRow(currentIndex).remove();
             list.splice(currentIndex, 1);
             verify();
-            if (list.length == 0) noRecord.appendTo(body);
+            if (list.length == 0) noRecord.appendTo(tableBody);
             select();
         },
 

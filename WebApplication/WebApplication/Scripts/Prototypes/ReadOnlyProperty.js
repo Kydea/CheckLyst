@@ -48,16 +48,14 @@
                 .append($("<option />").attr("value", "1").text("(true)").attr("selected", model.readOnlyCondition == 1))
                 .append($("<option />").attr("value", "2").text("(false)").attr("selected", model.readOnlyCondition == 2));
 
-            var found = model.hiddenCondition <= 2;
+            var found = model.readOnlyCondition <= 2;
             for (var index in expressions) {
                 input.append($("<option />").attr({ value: index, selected: model.readOnlyCondition > 2 && index == model.readOnlyExpressionCode }).text(index));
                 if (model.readOnlyCondition > 2 && index == model.readOnlyExpressionCode) found = true;
             }
 
-            if (!found) {
-                input.prop("selectedIndex", 0);
-                input.attr("data-error", model.hiddenExpressionCode);
-            }
+            if (!found) 
+                input.attr("data-error", model.readOnlyExpressionCode);
 
             input.on("change", inputChanged);
         } else {

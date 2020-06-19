@@ -43,10 +43,8 @@
                 if (model.hiddenCondition > 2 && index == model.hiddenExpressionCode) found = true;
             }
 
-            if (!found) {
-                input.prop("selectedIndex", 0);
+            if (!found) 
                 input.attr("data-error", model.hiddenExpressionCode);
-            }
 
             input.on("change", inputChanged);
         } else

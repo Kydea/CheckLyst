@@ -48,16 +48,14 @@
                 .append($("<option />").attr("value", "1").text("(true)").attr("selected", model.validCondition == 1))
                 .append($("<option />").attr("value", "2").text("(false)").attr("selected", model.validCondition == 2));
 
-            var found = model.hiddenCondition <= 2;
+            var found = model.validCondition <= 2;
             for (var index in expressions) {
                 input.append($("<option />").attr({ value: index, selected: model.validCondition > 2 && index == model.validExpressionCode }).text(index));
-                if (model.hiddenCondition > 2 && index == model.hiddenExpressionCode) found = true;
+                if (model.validCondition > 2 && index == model.validExpressionCode) found = true;
             }
 
-            if (!found) {
-                input.prop("selectedIndex", 0);
-                input.attr("data-error", model.hiddenExpressionCode);
-            }
+            if (!found) 
+                input.attr("data-error", model.validExpressionCode);
 
             input.on("change", inputChanged);
         } else {

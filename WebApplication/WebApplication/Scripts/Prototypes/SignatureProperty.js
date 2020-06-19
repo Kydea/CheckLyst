@@ -24,10 +24,8 @@
                 if (signatureCode == model.signatureCode) found = true;
             }
 
-            if (!found) {
-                input.val(null);
-                input.attr("data-error", model.hiddenExpressionCode);
-            }
+            if (!found) 
+                input.attr("data-error", model.signatureCode);
 
             input.on("change", change);
 			valuePanel.append(input);

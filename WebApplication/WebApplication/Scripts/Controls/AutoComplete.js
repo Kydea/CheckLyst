@@ -164,8 +164,6 @@
                     text = value && valuesMap.get(value) || "";
             }
 
-            error = false;
-            labelNode.classList.toggle("Red", false);
             labelNode.value = text;
             labelNode.setAttribute("title", text);
 
@@ -310,7 +308,13 @@
             label.removeClass("Open");
             element.removeClass("Open");
             open = false;
-            if (oldValue != (node.value || "")) node.dispatchEvent(new Event('change', { 'bubbles': true }));
+            if (error || oldValue != (node.value || "")) {
+                if (error) {
+                    error = false;
+                    labelNode.classList.toggle("Red", false);
+                }
+                node.dispatchEvent(new Event('change', { 'bubbles': true }));
+            }
             oldValue = null;
             input.insertAfter(label);
             list.insertAfter(label);

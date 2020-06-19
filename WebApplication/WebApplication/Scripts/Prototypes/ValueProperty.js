@@ -104,10 +104,9 @@
 
 			if (externalSource) {
                 sourceName.val(model.externalSourceName);
-                if (sourceName.val() != model.externalSourceName) {
-                    sourceName.val(null);
+                if (sourceName.val() != model.externalSourceName) 
                     sourceName.attr("data-error", model.externalSourceName);
-                } else
+                else
 				    sourceChanged(model.externalSourceColumn);
 				input.hide();
 			} else {

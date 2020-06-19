@@ -17,6 +17,20 @@
         dataSources,
         imagesToDelete = [],
 
+        toBase64 = function (arrayBuffer, callback) {
+            var blob = new Blob([arrayBuffer])
+
+            var reader = new FileReader();
+            reader.onload = function (event) {
+                var
+                    base64 = event.target.result,
+                    binaryIndex = base64.indexOf("base64,");
+                callback(base64.substring(binaryIndex + 7));
+            };
+
+            reader.readAsDataURL(blob);
+        },
+
         getNewItemsId = function () {
             if (!model.itemIDSequence) model.itemIDSequence = 1;
             return model.itemIDSequence++;
@@ -629,21 +643,26 @@
         else {
             var
                 array = pako.gzip(JSON.stringify(model)),
-                base64CheckList = btoa(String.fromCharCode.apply(null, new Uint8Array(array))),
-                data = JSON.stringify({
-                    base64CheckList: base64CheckList
-                });
+                handler = function () {
+                    base64CheckList = btoa(String.fromCharCode.apply(null, new Uint8Array(array))),
+                        data = JSON.stringify({
+                            base64CheckList: base64CheckList
+                        });
 
-            $.ajax({
-                url: element.data("action") + "verify",
-                type: "post",
-                contentType: "application/json",
-                data: data
-            }).done(function (result) {
-                if (result.checkList.exception) matematici.dialog.error("Error", result.checkList.exception.Message);
-                updateDependencies(model, result.checkList);
-                callback(result.checkList.exception);
-            });
+                    $.ajax({
+                        url: element.data("action") + "verify",
+                        type: "post",
+                        contentType: "application/json",
+                        data: data
+                    }).done(function (result) {
+                        if (result.checkList.exception) matematici.dialog.error("Error", result.checkList.exception.Message);
+                        updateDependencies(model, result.checkList);
+                        callback(result.checkList.exception);
+                    });
+
+                }
+
+            toBase64(array, handler);
         }
     };
 
@@ -654,64 +673,72 @@
 
         var
             array = pako.gzip(JSON.stringify(model)),
-            base64CheckList = btoa(String.fromCharCode.apply(null, new Uint8Array(array))),
-            data = JSON.stringify({
-                id: prototypeKey.id,
-                version: prototypeKey.version,
-                modifiedOn: moment.parseZone(concurrencyInformation.modifiedOn),
-                modifiedby: concurrencyInformation.modifiedBy,
-                validFrom: model.validFrom,
-                validUntil: model.validUntil,
-                instanceConfirmationWorkFlow: model.instanceConfirmationWorkFlow,
-                name: model.name,
-                description: model.description,
-                department: model.department,
-                prototypeType: model.prototypeType,
-                imagesToDelete: imagesToDelete,
-                base64CheckList: base64CheckList
-            });
+            handler = function (base64CheckList) {
+                var
+                    //base64CheckList = btoa(String.fromCharCode.apply(null, new Uint8Array(array))),
+                    data = JSON.stringify({
+                        id: prototypeKey.id,
+                        version: prototypeKey.version,
+                        modifiedOn: moment.parseZone(concurrencyInformation.modifiedOn),
+                        modifiedby: concurrencyInformation.modifiedBy,
+                        validFrom: model.validFrom,
+                        validUntil: model.validUntil,
+                        instanceConfirmationWorkFlow: model.instanceConfirmationWorkFlow,
+                        name: model.name,
+                        description: model.description,
+                        department: model.department,
+                        prototypeType: model.prototypeType,
+                        imagesToDelete: imagesToDelete,
+                        base64CheckList: base64CheckList
+                    });
 
-        $.ajax({
-            url: element.data("action") + "Save",
-            type: "post",
-            contentType: "application/json",
-            data: data //pako.gzip(data, { to: 'string' })
-        }).done(function (result) {
-            if (result.checkList.exception) {
-                matematici.dialog.error("Error", result.checkList.exception.Message);
-                updateDependencies(model, result.checkList);
-            } else {
-                matematici.canClose = true;
-                prototypeKey.id = result.id;
-                model.header = result.checkList.header;
-                model.pages = result.checkList.pages;
-                model.dependingRelations = result.checkList.dependingRelations;
-                model.dependentRelations = result.checkList.dependentRelations;
-                imagesToDelete = [];
-                if (model.version == null) {
-                    matematici.navigator.setUrl(options.detailUrl + "/" + result.id + "/" + result.version);
-                    model.version = prototypeKey.version = result.version;
-                }
-                concurrencyInformation = {
-                    modifiedBy: result.modifiedBy,
-                    modifiedOn: result.modifiedOn
-                };
-                update();
+                $.ajax({
+                    url: element.data("action") + "Save",
+                    type: "post",
+                    contentType: "application/json",
+                    data: data //pako.gzip(data, { to: 'string' })
+                }).done(function (result) {
+                    if (result.checkList.exception) {
+                        matematici.dialog.error("Error", result.checkList.exception.Message);
+                        updateDependencies(model, result.checkList);
+                    } else {
+                        matematici.canClose = true;
+                        prototypeKey.id = result.id;
+                        model.expressions = result.checkList.expressions;
+                        model.externalSourceDependencyNodes = result.checkList.externalSourceDependencyNodes;
+                        model.header = result.checkList.header;
+                        model.pages = result.checkList.pages;
+                        model.dependingRelations = result.checkList.dependingRelations;
+                        model.dependentRelations = result.checkList.dependentRelations;
+                        model.itemIDSequence = result.checkList.itemIDSequence;
+                        imagesToDelete = [];
+                        if (model.version == null) {
+                            matematici.navigator.setUrl(options.detailUrl + "/" + result.id + "/" + result.version);
+                            model.version = prototypeKey.version = result.version;
+                        }
+                        concurrencyInformation = {
+                            modifiedBy: result.modifiedBy,
+                            modifiedOn: result.modifiedOn
+                        };
+                        update();
 
-                if (currentItemId) {
-                    //restores current item
-                    currentItem = null;
-                    $("#" + currentItemId, element).removeClass("Current").removeClass("Selected").click(); //Selected is for the tab when current item is a page
-                }
+                        if (currentItemId) {
+                            //restores current item
+                            currentItem = null;
+                            $("#" + currentItemId, element).removeClass("Current").removeClass("Selected").click(); //Selected is for the tab when current item is a page
+                        }
 
-                $("div.ActionBar a.ExpressionsList").removeClass("Invalid");
+                        $("div.ActionBar a.ExpressionsList").removeClass("Invalid");
 
-                if (callback)
-                    callback.call();
-                else
-                    matematici.blip.ok();
-            }
-        });
+                        if (callback)
+                            callback.call();
+                        else
+                            matematici.blip.ok();
+                    }
+                });
+            };
+
+        toBase64(array, handler);
     };
 
     prototype.delete = function () {
@@ -882,8 +909,10 @@
                 model.validFrom = oldModel.validFrom;
                 model.validUntil = oldModel.validUntil;
                 model.state = prototypes.Prototype.states.draft;
+                model.itemIDSequence = 0;
                 update();
-                matematici.blip.ok();
+                matematici.canClose = false;
+                prototype.verify(function () { matematici.blip.ok(); })
             } catch (error) {
                 matematici.dialog.error("Error", error);
                 model = oldModel;
