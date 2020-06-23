@@ -90,7 +90,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 GetExpression(ReadOnlyExpressionCode, DependencyRelation.Properties.ReadOnly, "read-only");
 
             if (ValidCondition == Conditions.Expression || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
-                GetExpression(ValidExpressionCode, DependencyRelation.Properties.Validity, "valid");
+                GetExpression(ValidExpressionCode, DependencyRelation.Properties.Validity, "validity");
 
             if (this is ICheckListValidityElement)
                 AddDependingRelation(DependencyRelation.Properties.Validity, this, DependencyRelation.Properties.Hidden);
