@@ -100,7 +100,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         {
             base.UpdateHidden();
             if (!Hidden && Group != null)
-                Hidden = Group.Hidden;
+                Hidden = Group.Hidden || Group is Iteration && Group.Group.Hidden;
         }
 
         protected override bool IsReadOnlyByDefault() => Previous != null && !Previous.Valid;
