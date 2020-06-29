@@ -407,7 +407,7 @@
     };
 
     instance.delete = function () {
-        if (versionState == prototypes.Prototype.states.active && state == instances.Instance.states.progress)
+        if (!(versionState == prototypes.Prototype.states.draft || versionState == prototypes.Prototype.states.simulation) && state == instances.Instance.states.progress)
             matematici.dialog.show("Instance deletion", "Instance will be set as deleted. Provide a note for the deletion", [
                 {
                     text: "Confirm", icon: "check", handler: function () {
