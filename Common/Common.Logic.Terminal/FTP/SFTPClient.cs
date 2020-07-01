@@ -47,7 +47,7 @@ namespace CheckListManager.Common.Logic.Terminal.FTP
                 client.Connect();
                 if (Method == FTPMethods.Upload)
                     using (var MemoryStream = new MemoryStream(Bytes))
-                        client.UploadFile(MemoryStream, $"{Path}/{FileName}", false);
+                        client.UploadFile(MemoryStream, $"{Path}/{FileName}.pdf", false);
 
             }
 
