@@ -1,13 +1,13 @@
-﻿matematici.Index = function () {
+﻿matematici.Page = function () {
     var
-        index = this,
+        page = this,
 
         setup = function () {
-            document.body.className = "index";
+            document.body.className = "page";
             var tokenExpiration = parseInt(sessionStorage.tokenExpiration);
             if (sessionStorage.tokenExpiration == null || isNaN(tokenExpiration) || new Date(tokenExpiration) < new Date()) {
                 console.log("Token expired");
-                location = "login";
+                location = ".";
             }
         };
 

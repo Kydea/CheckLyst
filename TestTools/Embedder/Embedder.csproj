@@ -137,7 +137,8 @@
     <Content Include="Content\Default.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
-    <Content Include="Scripts\Index.js" />
+    <Content Include="Scripts\SearchEngine.js" />
+    <Content Include="Scripts\Page.js" />
     <Content Include="Scripts\Login.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -150,7 +151,7 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Layout.cshtml" />
     <Content Include="Views\Default\Login.cshtml" />
-    <Content Include="Views\Default\Index.cshtml" />
+    <Content Include="Views\Default\SearchEngine.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -158,6 +159,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <Content Include="Views\Default\Instance.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

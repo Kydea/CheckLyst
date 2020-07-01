@@ -9,13 +9,19 @@ namespace Embedder.Controllers
     public class DefaultController : Controller
     {
         [Route]
-        public ActionResult Index()
+        public ActionResult Login()
         {
             return View();
         }
 
-        [Route("login")]
-        public ActionResult Login()
+        [Route("search-engine")]
+        public ActionResult SearchEngine()
+        {
+            return View();
+        }
+
+        [Route("instance")]
+        public ActionResult Instance()
         {
             return View();
         }

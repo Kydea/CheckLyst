@@ -9,7 +9,7 @@
             sessionStorage.refreshToken = response.refresh_token;
             var now = new Date();
             sessionStorage.tokenExpiration = now.setSeconds(now.getSeconds() + parseInt(response.expires_in));
-            location = ".";
+            location = "search-engine";
         },
 
         send = function () {
