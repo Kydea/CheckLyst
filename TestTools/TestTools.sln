@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestSAP", "TestSAP\TestSAP.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFTP", "SFTP\SFTP.csproj", "{686CAA87-9D11-4B73-9585-EC9E1EC8B46A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Embedder", "Embedder\Embedder.csproj", "{15DE52C6-357E-44E6-9D71-3143933B77BD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,18 @@ Global
 		{686CAA87-9D11-4B73-9585-EC9E1EC8B46A}.Release|x64.Build.0 = Release|Any CPU
 		{686CAA87-9D11-4B73-9585-EC9E1EC8B46A}.Release|x86.ActiveCfg = Release|Any CPU
 		{686CAA87-9D11-4B73-9585-EC9E1EC8B46A}.Release|x86.Build.0 = Release|Any CPU
+		{15DE52C6-357E-44E6-9D71-3143933B77BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15DE52C6-357E-44E6-9D71-3143933B77BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15DE52C6-357E-44E6-9D71-3143933B77BD}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{15DE52C6-357E-44E6-9D71-3143933B77BD}.Debug|x64.Build.0 = Debug|Any CPU
+		{15DE52C6-357E-44E6-9D71-3143933B77BD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{15DE52C6-357E-44E6-9D71-3143933B77BD}.Debug|x86.Build.0 = Debug|Any CPU
+		{15DE52C6-357E-44E6-9D71-3143933B77BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15DE52C6-357E-44E6-9D71-3143933B77BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15DE52C6-357E-44E6-9D71-3143933B77BD}.Release|x64.ActiveCfg = Release|Any CPU
+		{15DE52C6-357E-44E6-9D71-3143933B77BD}.Release|x64.Build.0 = Release|Any CPU
+		{15DE52C6-357E-44E6-9D71-3143933B77BD}.Release|x86.ActiveCfg = Release|Any CPU
+		{15DE52C6-357E-44E6-9D71-3143933B77BD}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
