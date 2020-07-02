@@ -37,7 +37,7 @@ create table "Security"."UserSessions"
 (
 	"Code" varchar (250) primary key, --refresh token
 
-	"Company" bigint,
+	"Company" bigint not null,
 	"User" varchar (60),
 	constraint "UserSessions_User" foreign key ("Company", "User") references "Security"."Users" on update cascade on delete cascade,
 
