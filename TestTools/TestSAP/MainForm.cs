@@ -29,72 +29,105 @@ namespace TestSAP
 
             public RfcConfigParameters GetParameters(string destinationName)
             {
-                var Parameters = new RfcConfigParameters();
-                if (destinationName == "RSV")
-                {
-                    Parameters.Add(RfcConfigParameters.Client, "100");
-                    Parameters.Add(RfcConfigParameters.MessageServerHost, "ITSGPSG2.jnj.com");
-                    Parameters.Add(RfcConfigParameters.MessageServerService, "3664");
-                    Parameters.Add(RfcConfigParameters.SystemID, "RSV");
-                    Parameters.Add(RfcConfigParameters.LogonGroup, "PSGA_ECC");
-                    Parameters.Add(RfcConfigParameters.User, "CHECKLYST");
-                    Parameters.Add(RfcConfigParameters.Password, "Test@12");
-                    Parameters.Add(RfcConfigParameters.Language, "EN");
-                }
-                else if (destinationName == "RQV")
-                {
-                    Parameters.Add(RfcConfigParameters.Client, "100");
-                    Parameters.Add(RfcConfigParameters.MessageServerHost, "dbciRQV.jnj.com");
-                    Parameters.Add(RfcConfigParameters.MessageServerService, "3650");
-                    Parameters.Add(RfcConfigParameters.SystemID, "RQV");
-                    Parameters.Add(RfcConfigParameters.LogonGroup, "PSGA_ECC");
-                    Parameters.Add(RfcConfigParameters.User, "checklist");
-                    Parameters.Add(RfcConfigParameters.Password, "Test@12");
-                    Parameters.Add(RfcConfigParameters.Language, "EN");
-                }
-                else if (destinationName == "RAE")
-                {
-                    Parameters.Add(RfcConfigParameters.Client, "050");
-                    Parameters.Add(RfcConfigParameters.MessageServerHost, "dbcirae.jnj.com");
-                    Parameters.Add(RfcConfigParameters.MessageServerService, "3601");
-                    Parameters.Add(RfcConfigParameters.SystemID, "RAE");
-                    Parameters.Add(RfcConfigParameters.LogonGroup, "COMMON");
-                    Parameters.Add(RfcConfigParameters.User, "CPICITLABPI"); //DBL_PPRLATDW //CPICITLABPI //APEZZOLI
-                    Parameters.Add(RfcConfigParameters.Password, "lat_web0"); //ITS_pw2014 //lat_web0 //Alessia,2
-                    Parameters.Add(RfcConfigParameters.Language, "EN");
-                }
-                else if (destinationName == "RPE")
-                {
-                    Parameters.Add(RfcConfigParameters.Client, "050");
-                    Parameters.Add(RfcConfigParameters.MessageServerHost, "dbcirpe.jnj.com");
-                    Parameters.Add(RfcConfigParameters.MessageServerService, "3600");
-                    Parameters.Add(RfcConfigParameters.SystemID, "RPE");
-                    Parameters.Add(RfcConfigParameters.LogonGroup, "COMMON");
-                    Parameters.Add(RfcConfigParameters.User, "APEZZOLI");
-                    Parameters.Add(RfcConfigParameters.Password, "Alessia,2");
-                    Parameters.Add(RfcConfigParameters.Language, "EN");
-                }
-                else
-                    throw new ArgumentException();
+                return parameters;
 
-                return Parameters;
+                //var Parameters = new RfcConfigParameters();
+                //if (destinationName == "RSV")
+                //{
+                //    Parameters.Add(RfcConfigParameters.Client, "100");
+                //    Parameters.Add(RfcConfigParameters.MessageServerHost, "ITSGPSG2.jnj.com");
+                //    Parameters.Add(RfcConfigParameters.MessageServerService, "3664");
+                //    Parameters.Add(RfcConfigParameters.SystemID, "RSV");
+                //    Parameters.Add(RfcConfigParameters.LogonGroup, "PSGA_ECC");
+                //    Parameters.Add(RfcConfigParameters.User, "CHECKLYST");
+                //    Parameters.Add(RfcConfigParameters.Password, "Test@12");
+                //    Parameters.Add(RfcConfigParameters.Language, "EN");
+                //}
+                //else if (destinationName == "RQV")
+                //{
+                //    Parameters.Add(RfcConfigParameters.Client, "100");
+                //    Parameters.Add(RfcConfigParameters.MessageServerHost, "dbciRQV.jnj.com");
+                //    Parameters.Add(RfcConfigParameters.MessageServerService, "3650");
+                //    Parameters.Add(RfcConfigParameters.SystemID, "RQV");
+                //    Parameters.Add(RfcConfigParameters.LogonGroup, "PSGA_ECC");
+                //    Parameters.Add(RfcConfigParameters.User, "checklist");
+                //    Parameters.Add(RfcConfigParameters.Password, "Test@12");
+                //    Parameters.Add(RfcConfigParameters.Language, "EN");
+                //}
+                //else if (destinationName == "RAE")
+                //{
+                //    Parameters.Add(RfcConfigParameters.Client, "050");
+                //    Parameters.Add(RfcConfigParameters.MessageServerHost, "dbcirae.jnj.com");
+                //    Parameters.Add(RfcConfigParameters.MessageServerService, "3601");
+                //    Parameters.Add(RfcConfigParameters.SystemID, "RAE");
+                //    Parameters.Add(RfcConfigParameters.LogonGroup, "COMMON");
+                //    Parameters.Add(RfcConfigParameters.User, "CPICITLABPI"); //DBL_PPRLATDW //CPICITLABPI //APEZZOLI
+                //    Parameters.Add(RfcConfigParameters.Password, "lat_web0"); //ITS_pw2014 //lat_web0 //Alessia,2
+                //    Parameters.Add(RfcConfigParameters.Language, "EN");
+                //}
+                //else if (destinationName == "RPE")
+                //{
+                //    Parameters.Add(RfcConfigParameters.Client, "050");
+                //    Parameters.Add(RfcConfigParameters.MessageServerHost, "dbcirpe.jnj.com");
+                //    Parameters.Add(RfcConfigParameters.MessageServerService, "3600");
+                //    Parameters.Add(RfcConfigParameters.SystemID, "RPE");
+                //    Parameters.Add(RfcConfigParameters.LogonGroup, "COMMON");
+                //    Parameters.Add(RfcConfigParameters.User, "APEZZOLI");
+                //    Parameters.Add(RfcConfigParameters.Password, "Alessia,2");
+                //    Parameters.Add(RfcConfigParameters.Language, "EN");
+                //}
+                //else if (destinationName == "RDG")
+                //{
+                //    Parameters.Add(RfcConfigParameters.Client, "100");
+                //    Parameters.Add(RfcConfigParameters.MessageServerHost, "csRDG.jnj.com");
+                //    Parameters.Add(RfcConfigParameters.MessageServerService, "3610");
+                //    Parameters.Add(RfcConfigParameters.SystemID, "RDG");
+                //    Parameters.Add(RfcConfigParameters.LogonGroup, "COMMON");
+                //    Parameters.Add(RfcConfigParameters.User, "CR5ECRDGCHK");
+                //    Parameters.Add(RfcConfigParameters.Password, "Welcome@20");
+                //    Parameters.Add(RfcConfigParameters.Language, "EN");
+                //}
+                //else
+                //    throw new ArgumentException();
+
+                //return Parameters;
             }
         }
 
         private RfcDestination destination;
         private RfcRepository repository;
+        private static RfcConfigParameters parameters;
 
         protected override void OnLoad(EventArgs e)
         {
             try
             {
-                RfcDestinationManager.RegisterDestinationConfiguration(new Configuration());
-                destination = RfcDestinationManager.GetDestination("RSV");
-                repository = destination.Repository;
+                var Login = new Login();
+                if (Login.ShowDialog() == DialogResult.OK)
+                {
+                    parameters = new RfcConfigParameters
+                    {
+                        { RfcConfigParameters.Client, Login.Client.Text },
+                        { RfcConfigParameters.MessageServerHost, Login.Host.Text },
+                        { RfcConfigParameters.MessageServerService, Login.Service.Text },
+                        { RfcConfigParameters.SystemID, Login.ID.Text },
+                        { RfcConfigParameters.LogonGroup, Login.Group.Text },
+                        { RfcConfigParameters.User, Login.User.Text },
+                        { RfcConfigParameters.Password, Login.Password.Text },
+                        { RfcConfigParameters.Language, Login.Language.Text }
+                    };
+
+                    //RfcDestinationManager.RegisterDestinationConfiguration(new Configuration());
+                    RfcDestinationManager.RegisterDestinationConfiguration(new Configuration());
+                    destination = RfcDestinationManager.GetDestination(Login.ID.Text);
+                    Text = Text + " " + Login.ID.Text;
+                    repository = destination.Repository;
+                }
             }
             catch (Exception Exception)
             {
                 MessageBox.Show(Exception.Message, "Error");
+                Close();
             }
         }
 
@@ -213,7 +246,7 @@ namespace TestSAP
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void Button1_Click(object sender, EventArgs e)
         {
             LoadData();
         }
