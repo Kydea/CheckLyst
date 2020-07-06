@@ -9,7 +9,8 @@ insert into "Infrastructure"."TimeZones" values
 	('Atlantic Standard Time'),
 	('E. South America Standard Time'),
 	('SA Western Standard Time'),
-	('W. Europe Standard Time');
+	('W. Europe Standard Time'),
+    ('Mexico Standard Time'); 
 
 create table "Infrastructure"."Companies"
 (
