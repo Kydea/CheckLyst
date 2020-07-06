@@ -10,12 +10,12 @@ namespace CheckListManager.ExternalSources.Logic.SAP
 {
     public class Source : SourceBase
     {
-        private Object Lock = new System.Object();
+        private readonly object Lock = new object();
 
         private static SAPConfiguration SAPConfiguration { get; set; }
 
         private RfcDestination Destination { get; set; }
-        private SAPParameters SAPParameters { get;set;}
+        private SAPParameters SAPParameters { get; set; }
 
         public override void Parse(string Data)
         {
@@ -34,6 +34,11 @@ namespace CheckListManager.ExternalSources.Logic.SAP
             }
 
             Destination = RfcDestinationManager.GetDestination(Code);
+        }
+
+        public override void Test()
+        {
+            var Repository = Destination.Repository;
         }
 
         public override void Dispose()
@@ -74,11 +79,6 @@ namespace CheckListManager.ExternalSources.Logic.SAP
                 default:
                     throw new NotSupportedException($"Source name {SAPParameters.FunctionName}");
             }
-        }
-
-        public override void Test()
-        {
-            var Repository = Destination.Repository;
         }
 
         public override void PrepareMetaData()
