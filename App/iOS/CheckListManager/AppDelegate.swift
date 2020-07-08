@@ -175,7 +175,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 mApp.logoutAndGoToLogin()
             }
         }
-        
+
         if (url.getCallType == .Setup) {
             if let params = url.getParametersForInstance {
                 let server = "\(params["schema"]!)://\(url.host!)"
