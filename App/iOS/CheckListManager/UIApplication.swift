@@ -181,6 +181,12 @@ import CoreData
         
         let logged = NSString(string:UserDefaults.standard.string(forKey: "logged")!).boolValue
         
+        //needed to trigger segue before alert presentation, otherwise segue won't perform
+        if let vc = self.searchPresentedController(controllerClass: FirstCheckViewController.self) {
+            let segue = (logged) ? "tabBarSegue" : "loginSegue"
+            vc.performSegue(withIdentifier: segue, sender: self)
+        }
+        
         self.displayMessage(Title: "Server Configuration", Message: "You are setting up a new server.\(logged ? "\nYou'll be redirected to login section." : "")\nAre you sure?", canDecline: true) { () -> Void in
             
             if(logged) {

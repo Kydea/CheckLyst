@@ -18,16 +18,13 @@ class FirstCheckViewController: UIViewController {
         self.navigationItem.leftBarButtonItem = SharedControllersProperty.setLogo(self.navigationItem.leftBarButtonItem);
     }
     
-    
-
-    
     override func viewDidAppear(_ animated: Bool) {
         
         super.viewDidAppear(animated)
         
         let logged = UserDefaults.standard.value(forKey: "logged") as! Bool 
         let segue = (logged) ? "tabBarSegue" : "loginSegue"
-    
+        
         self.performSegue(withIdentifier: segue, sender: self)
 
     }
