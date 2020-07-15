@@ -199,6 +199,7 @@
         icon.className = "Icon fa fa-check";
 
         span.innerHTML = model.descriptionValue || "(no description)";
+        span.appendChild(exclamation);
 
         button.textContent = "";
         button.appendChild(icon);
