@@ -10,7 +10,7 @@ insert into "Infrastructure"."TimeZones" values
 	('E. South America Standard Time'),
 	('SA Western Standard Time'),
 	('W. Europe Standard Time'),
-    ('Mexico Standard Time'); 
+    ('Central Standard Time (Mexico)'); 
 
 create table "Infrastructure"."Companies"
 (
