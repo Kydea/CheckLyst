@@ -13,7 +13,7 @@ create table "WorkFlows"."WorkFlows"
 	"ModifiedOn" timestamptz
 );
 
-create unique index "WorkFlows_Description" on "CheckLists"."WorkFlows" ("Company", upper("Description"));
+create unique index "WorkFlows_Description" on "WorkFlows"."WorkFlows" ("Company", upper("Description"));
 
 create table "WorkFlows"."WorkFlowSteps"
 (
