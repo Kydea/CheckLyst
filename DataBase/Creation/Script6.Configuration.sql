@@ -41,7 +41,9 @@ insert into "Configuration"."Settings" ("Code") values
 	('InstanceMessage'),
 	('NotificationMessage'),
 	('DecimalSeparator'),
-	('RequireUserReason');
+	('RequireUserReason'),
+	('PrototypesAttachmentMaxSizeBytes'),
+	('InstancesAttachmentMaxSizeBytes');
 
 create table "Configuration"."SettingValues"
 (
