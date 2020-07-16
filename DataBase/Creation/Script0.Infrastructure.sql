@@ -38,7 +38,7 @@ create table "Infrastructure"."Companies"
 	"ModifiedOn" timestamptz
 );
 
-insert into "Infrastructure"."Companies"("Name", "TimeZone") values ('(CheckListManager)', 'Europe/Rome');
+insert into "Infrastructure"."Companies"("Name", "TimeZone") values ('(CheckListManager)', 'W. Europe Standard Time');
 
 create table "Infrastructure"."Departments"
 (
