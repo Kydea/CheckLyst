@@ -644,7 +644,8 @@
             var
                 array = pako.gzip(JSON.stringify(model)),
                 handler = function () {
-                    base64CheckList = btoa(String.fromCharCode.apply(null, new Uint8Array(array))),
+                    var
+                        //base64CheckList = btoa(String.fromCharCode.apply(null, new Uint8Array(array))),
                         data = JSON.stringify({
                             base64CheckList: base64CheckList
                         });

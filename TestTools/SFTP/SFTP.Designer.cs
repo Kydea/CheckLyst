@@ -31,6 +31,8 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.PasswordTextBox = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.RemoteFileNameTextBox = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.BrowseButton = new System.Windows.Forms.Button();
@@ -53,8 +55,6 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.KeyTextBox = new System.Windows.Forms.TextBox();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.PasswordTextBox = new System.Windows.Forms.TextBox();
-            this.label7 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -121,6 +121,22 @@
             this.splitContainer1.SplitterWidth = 10;
             this.splitContainer1.TabIndex = 0;
             // 
+            // PasswordTextBox
+            // 
+            this.PasswordTextBox.Location = new System.Drawing.Point(86, 81);
+            this.PasswordTextBox.Name = "PasswordTextBox";
+            this.PasswordTextBox.Size = new System.Drawing.Size(221, 20);
+            this.PasswordTextBox.TabIndex = 15;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(3, 84);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(56, 13);
+            this.label7.TabIndex = 14;
+            this.label7.Text = "Password:";
+            // 
             // RemoteFileNameTextBox
             // 
             this.RemoteFileNameTextBox.Location = new System.Drawing.Point(86, 159);
@@ -185,7 +201,6 @@
             this.UserTextBox.Name = "UserTextBox";
             this.UserTextBox.Size = new System.Drawing.Size(221, 20);
             this.UserTextBox.TabIndex = 6;
-            this.UserTextBox.Text = "Ftpdevcl";
             // 
             // label3
             // 
@@ -202,7 +217,6 @@
             this.PortTextBox.Name = "PortTextBox";
             this.PortTextBox.Size = new System.Drawing.Size(221, 20);
             this.PortTextBox.TabIndex = 4;
-            this.PortTextBox.Text = "22";
             // 
             // label2
             // 
@@ -228,7 +242,6 @@
             this.HostTextBox.Name = "HostTextBox";
             this.HostTextBox.Size = new System.Drawing.Size(221, 20);
             this.HostTextBox.TabIndex = 1;
-            this.HostTextBox.Text = "sapftpeur2a.jnj.com";
             // 
             // panel1
             // 
@@ -311,23 +324,6 @@
             this.KeyTextBox.Name = "KeyTextBox";
             this.KeyTextBox.Size = new System.Drawing.Size(786, 660);
             this.KeyTextBox.TabIndex = 0;
-            // 
-            // PasswordTextBox
-            // 
-            this.PasswordTextBox.Location = new System.Drawing.Point(86, 81);
-            this.PasswordTextBox.Name = "PasswordTextBox";
-            this.PasswordTextBox.Size = new System.Drawing.Size(221, 20);
-            this.PasswordTextBox.TabIndex = 15;
-            this.PasswordTextBox.Text = "Latina@1";
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(3, 84);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(56, 13);
-            this.label7.TabIndex = 14;
-            this.label7.Text = "Password:";
             // 
             // SFTP
             // 

@@ -116,7 +116,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="SFTP_TemporaryKey.pfx" />
+    <None Include="2020.pfx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
