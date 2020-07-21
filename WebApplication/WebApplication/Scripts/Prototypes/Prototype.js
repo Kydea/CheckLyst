@@ -660,7 +660,6 @@
                         updateDependencies(model, result.checkList);
                         callback(result.checkList.exception);
                     });
-
                 }
 
             toBase64(array, handler);
