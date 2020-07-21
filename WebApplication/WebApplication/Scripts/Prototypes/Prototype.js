@@ -643,7 +643,7 @@
         else {
             var
                 array = pako.gzip(JSON.stringify(model)),
-                handler = function () {
+                handler = function (base64CheckList) {
                     var
                         //base64CheckList = btoa(String.fromCharCode.apply(null, new Uint8Array(array))),
                         data = JSON.stringify({
