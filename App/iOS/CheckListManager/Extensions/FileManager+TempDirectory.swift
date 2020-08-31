@@ -23,7 +23,7 @@ extension FileManager {
         }
     }
     
-    func deleteFileinTemporaryDirectory(_ url : URL) {
+    func deleteFileinTemporaryDirectory(atURL url : URL) {
         do {
             let tmpDirURL = FileManager.default.temporaryDirectory
             let tmpDirectory = try contentsOfDirectory(atPath: tmpDirURL.path)

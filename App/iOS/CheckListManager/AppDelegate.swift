@@ -58,7 +58,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UITabBarItem.appearance().setTitleTextAttributes([NSAttributedStringKey.font:UIFont (name: "Flaticon", size: 15)!,NSAttributedStringKey.foregroundColor: UIColor(red: 3.0/255, green: 195.0/255, blue: 177.0/255, alpha: 1.0)], for:UIControlState())
 
         
-        URLProtocol.registerClass(CustomUrlprotocol.self)
+        //URLProtocol.registerClass(CustomUrlprotocol.self)
         
         UpdateManager.shared.startUpdates()
         
@@ -83,8 +83,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
     }
 
-    func applicationDidBecomeActive(_ application: UIApplication) {
-        
+    func applicationDidBecomeActive(_ application: UIApplication) {        
         (UIApplication.shared as! MyApplication).backFromBackGround()
         
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.

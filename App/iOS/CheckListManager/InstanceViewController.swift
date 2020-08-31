@@ -97,6 +97,8 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         scanButton = UIBarButtonItem(barButtonSystemItem: .camera, target: self, action: #selector(scanItem(_:)))
         
         self.contentView!.inputAssistantItem.trailingBarButtonGroups = [UIBarButtonItemGroup(barButtonItems: [scanButton!], representativeItem: nil)] as! [UIBarButtonItemGroup]
+        
+        FileManager.default.clearTemporaryDirectory()
     }
     
     override func didReceiveMemoryWarning()
@@ -160,7 +162,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
                 activityIndicator.startAnimating()
                 let fileURL = String(messageBody.split(separator: " ")[1])
                 //print(fileURL)
-                FileManager.default.getFile(fileURL) { (url, error) -> Void in
+                FileManager.default.downloadFile(fileURL) { (url, error) -> Void in
                     self.activityIndicator.stopAnimating()
                     if url != nil {
                         self.requestForDocument = true
@@ -311,7 +313,6 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     func documentInteractionControllerDidEndPreview(_ controller: UIDocumentInteractionController) {
         requestForDocument = false
         self.tabBarController?.tabBar.isHidden = false
-        FileManager.default.clearTemporaryDirectory()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

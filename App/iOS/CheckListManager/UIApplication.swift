@@ -105,17 +105,22 @@ import CoreData
                             
                         } else {
                             
-                            self.displayMessage(Title: "Session Expired", Message: "Your session is expired, you'll be redirected to login section.") {
+                            self.displayMessage(Title: "Error", Message: "Something has gone wrong while refreshing token: \(String(describing: json["error"])).\n You'll be redirected to login section.") {
                                 () -> Void in
                                 self.logoutAndGoToLogin()
                             }
                             
                             self.isRefreshing = false
                         }
+                    } else if serverResponse.error != nil {
+                        self.displayMessage(Title: "Error", Message: "Something has gone wrong while refreshing token: Connection error to the server.\n You'll be redirected to login section.") {
+                            () -> Void in
+                            self.logoutAndGoToLogin()
+                        }
                     }
                 } catch {
                     print("Error deserializing JSON: \(error)")
-                    self.displayMessage(Title: "Session Expired", Message: "Your session is expired, you'll be redirected to login section.") {
+                    self.displayMessage(Title: "Error", Message: "Something has gone wrong while refreshing token: Cannot parse response.\n You'll be redirected to login section.") {
                         () -> Void in
                         self.logoutAndGoToLogin()
                     }
