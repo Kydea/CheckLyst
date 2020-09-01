@@ -18,8 +18,8 @@ extension FileManager {
         
         if FileManager.default.fileExists(atPath: targetURL.path), let modificationDate =
             FileManager.default.getFileModificationDate(atPath: targetURL.path), modificationDate.timeIntervalSince(Date()) > -20 {
-            
-            completition(targetURL, nil, nil)
+            let data = FileManager.default.contents(atPath: targetURL.path)
+            completition(targetURL, nil, data)
             
         } else {
             ServerConnection.getFile(url) { (serverResponse) -> Void in

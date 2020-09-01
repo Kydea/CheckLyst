@@ -165,14 +165,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
                 FileManager.default.downloadFile(fileURL) { (url, error, data) -> Void in
                     self.activityIndicator.stopAnimating()
                     if url != nil {
-                        if let file = data, let dataString = String(bytes: file, encoding: .utf8), dataString.contains("message") || dataString.count < 100 {
-                            let token = UserDefaults.standard.string(forKey: "token_type")! + " " + UserDefaults.standard.string(forKey: "access_token")!
-                            let message = "Can't display file.\nThis message has been copied to clipboard, paste it on a note to share it with IT team, thank you.\n-- Content ---\n" + dataString + "\n-- URL --\n" + fileURL + "\n-- Token --\n" + token;
-                            UIPasteboard.general.string = message;
-                            let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
-                            alert.addAction(UIAlertAction(title: "Ok", style: .destructive, handler: nil))
-                            self.present(alert, animated: false, completion: nil)
-                        } else {
+                        if self.checkFile(file: data, url: fileURL) {
                             self.requestForDocument = true
                             self.documentInteractionController.url = url!
                             self.documentInteractionController.uti = url!.typeIdentifier ?? "public.data, public.content"
@@ -268,6 +261,24 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
             (response, error) -> Void in
             self.view.endEditing(true)
             self.requestForScanning = false
+        }
+    }
+    
+    func checkFile(file data : Data?, url : String) -> Bool {
+        if let file = data {
+            if let dataString = String(bytes: file, encoding: .utf8), dataString.contains("message") || dataString.count < 100 {
+                let token = UserDefaults.standard.string(forKey: "token_type")! + " " + UserDefaults.standard.string(forKey: "access_token")!
+                let message = "Can't display file.\nThis message has been copied to clipboard, paste it on a note to share it with IT team, thank you.\n-- Content ---\n" + dataString + "\n-- URL --\n" + url + "\n-- Token --\n" + token;
+                UIPasteboard.general.string = message;
+                let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Ok", style: .destructive, handler: nil))
+                self.present(alert, animated: false, completion: nil)
+                return false
+            } else {
+                return true
+            }
+        } else {
+            return false
         }
     }
     
