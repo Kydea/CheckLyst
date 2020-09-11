@@ -534,10 +534,9 @@
     instance.initialize = function () {
         instanceElementInformation = new instances.ElementInformation(element[0]);
         tab = new matematici.Tab($("div.TabContainer", element)).addHandler(function (item) {
-            if (state == instances.Instance.states.draft || state == instances.Instance.states.progress) {
-                page.clear();
+            page.clear();
+            if (state == instances.Instance.states.draft || state == instances.Instance.states.progress) 
                 new instances.Event(instances.Events.pageChange, item.index).trigger();
-            }
             else
                 update(lastResult);
         });
