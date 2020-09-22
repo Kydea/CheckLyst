@@ -479,6 +479,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate
         self.selectedCompany = nil
         self.companyTextField.text = ""
         self.serverTextField.text = ""
+        self.userCodeTextField.text = ""
+        self.passwordTextField.text = ""
         self._typedServerFrontEndUrl = nil
         Server.unsetCurrentServer(managedObjectContext: self.context)
         
