@@ -8,10 +8,7 @@
 
 import UIKit
 
-class LoginViewController: UIViewController, UITextFieldDelegate
-    
-    
-{
+class LoginViewController: UIViewController, UITextFieldDelegate {
     
     @IBOutlet var accessoryButton: UIButton!
     
