@@ -171,7 +171,7 @@ namespace CheckListManager.Common.Logic.Api.PDF
                             await Attachment.File.Content.CopyToAsync(ms);
                             PdfDocument Document = PdfReader.Open(ms, PdfDocumentOpenMode.Import);
 
-                            var PhaseParagraph = Container.AddParagraph("PHASE 2 - SECTION B SPECIFICATION - UHLMANN MASTER RECIPE");
+                            var PhaseParagraph = Container.AddParagraph(Attachment.Description);
                             PhaseParagraph.Format.SpaceAfter = 15;
                             PhaseParagraph.Format.SpaceBefore = 30;
 
