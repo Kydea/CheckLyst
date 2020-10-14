@@ -109,7 +109,7 @@ namespace CheckListManager.Common.Logic.Api.PDF
                 Table.SetWidths(25, 75);
                 foreach (var Attachment in Attachments.Values)
                 {
-                    Table.AddCell(new PdfPCell(new Paragraph().SetText($"Attachment #{Attachment.Index}", GenericFont).Padding(5)));
+                    Table.AddCell(new PdfPCell(new Paragraph().SetText($"Attachment {Attachment.Index}", GenericFont).Padding(5)));
                     Table.AddCell(new PdfPCell(new Paragraph().SetText(Attachment.Description, GenericFont).Padding(5)));
                 }
 
@@ -181,9 +181,9 @@ namespace CheckListManager.Common.Logic.Api.PDF
 
                             var Description = Container.AddParagraph();
                             Description.AddText("This page is the cover of ");
-                            Description.AddFormattedText($"Attachment # {Attachment.Index} ", TextFormat.Bold);
+                            Description.AddFormattedText($"Attachment {Attachment.Index} ", TextFormat.Bold);
                             Description.AddText("and as such it is intentionally left blank, it only reports the description and number of pages of ");
-                            Description.AddFormattedText($"Attachment # {Attachment.Index}", TextFormat.Bold);
+                            Description.AddFormattedText($"Attachment {Attachment.Index}", TextFormat.Bold);
 
                             DocumentBuilder.AddRange(Enumerable.Range(0, Document.PageCount).Select(index => Document.Pages[index]));
                         }
