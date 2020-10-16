@@ -70,7 +70,7 @@ namespace CheckListManager.ExternalSources.Logic.SQL
 
         private void ValidateParameter(Parameter Parameter)
         {
-            //we carrently accept only text parameter
+            //we currently accept only text parameter
             if (Parameter.ParameterType != "Text")
                 throw new Exception("Invalid parameter type: " + Parameter.ParameterType);
         }
