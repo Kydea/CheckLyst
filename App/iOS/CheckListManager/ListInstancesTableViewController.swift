@@ -93,10 +93,9 @@ class ListInstancesTableViewController: UIViewController, UITableViewDataSource,
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
-        let cell = tableView.dequeueReusableCell(withIdentifier: "instanceCell") as! ListInstancesCell?
-        cell?.layoutMargins = UIEdgeInsetsMake(0.0, 0.0, 0.0, 40.0)
-        cell?.preservesSuperviewLayoutMargins = false
-        cell?.separatorInset = UIEdgeInsetsMake(0.0, 40.0, 0.0, 40.0)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "instanceCell") as? ListInstancesCell
+        
+        cell?.setLayout()
         
         if !isLoadingCell(for: indexPath) {
           

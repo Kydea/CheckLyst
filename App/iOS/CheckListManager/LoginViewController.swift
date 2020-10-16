@@ -287,7 +287,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         
         self.view.isUserInteractionEnabled = false
         
-        ServerConnection.loginOrRefreshToServer(server: selectedServerUrl, ["Company" : String(self.selectedCompany!.id),"Code":userCodeTextField.text!,"Password":passwordTextField.text!]){ (serverResponse) -> Void in
+        ServerConnection.loginOrRefreshToServer(server: selectedServerUrl, ["Company" : String(self.selectedCompany!.id),"Code":userCodeTextField.text!,"Password":passwordTextField.text!]) { (serverResponse) -> Void in
             
             if(serverResponse.error != nil) {
                 
@@ -328,6 +328,9 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                         let okMex = (json["error"] == nil)
                         let messageMex = !okMex ? json["error_description"] as! String : ""
                         self.appDelegate.displayMessage(Title: "Error", Message: messageMex)
+                        
+                        self.activityIndicator.stopAnimating()
+                        self.view.isUserInteractionEnabled = true
                     
                     }
                     
@@ -336,11 +339,10 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             } catch {
                 self.appDelegate.displayMessage(Title: "Error", Message: "Cannot parse response")
                 print("Error deserializing JSON: \(error)")
+                self.activityIndicator.stopAnimating()
+                self.view.isUserInteractionEnabled = true
             }
             
-            self.activityIndicator.stopAnimating()
-            
-            self.view.isUserInteractionEnabled = true
         }
         
     }
@@ -348,6 +350,9 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     func getClient() {
         
         ServerConnection.sendGetClientRequest(["data":["code":UserDefaults.standard.value(forKey: "userCode") as! String, "description":""]]){ (serverResponse) -> Void in
+            
+            self.activityIndicator.stopAnimating()
+            self.view.isUserInteractionEnabled = true
             
             if(serverResponse.data != nil && serverResponse.error == nil) {
                 

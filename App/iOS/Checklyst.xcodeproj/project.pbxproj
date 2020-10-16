@@ -10,6 +10,7 @@
 		2B4D15BC246E7C89004E5F46 /* Notification+AppNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B4D15BB246E7C89004E5F46 /* Notification+AppNames.swift */; };
 		2B4DB71D24F90BC80046D83A /* FileManager+Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B4DB71C24F90BC80046D83A /* FileManager+Utility.swift */; };
 		2B9BEDA2246AE9EF00E27FA1 /* UpdateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9BEDA1246AE9EF00E27FA1 /* UpdateManager.swift */; };
+		2BF8EFC62539A388005EA883 /* BaseTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BF8EFC52539A388005EA883 /* BaseTableViewCell.swift */; };
 		33247B291E6023E200FA07BF /* ServerResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33247B281E6023E200FA07BF /* ServerResponse.swift */; };
 		33247B2B1E6025EE00FA07BF /* ChooseServerAndCompanyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33247B2A1E6025EE00FA07BF /* ChooseServerAndCompanyViewController.swift */; };
 		336AA7B11D3F59FA00BB8ADA /* CustomUrProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 336AA7B01D3F59F900BB8ADA /* CustomUrProtocol.swift */; };
@@ -84,6 +85,7 @@
 		2B4D15BB246E7C89004E5F46 /* Notification+AppNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Notification+AppNames.swift"; sourceTree = "<group>"; };
 		2B4DB71C24F90BC80046D83A /* FileManager+Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FileManager+Utility.swift"; sourceTree = "<group>"; };
 		2B9BEDA1246AE9EF00E27FA1 /* UpdateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateManager.swift; sourceTree = "<group>"; };
+		2BF8EFC52539A388005EA883 /* BaseTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTableViewCell.swift; sourceTree = "<group>"; };
 		33247B281E6023E200FA07BF /* ServerResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerResponse.swift; sourceTree = "<group>"; };
 		33247B2A1E6025EE00FA07BF /* ChooseServerAndCompanyViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChooseServerAndCompanyViewController.swift; sourceTree = "<group>"; };
 		336AA7B01D3F59F900BB8ADA /* CustomUrProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomUrProtocol.swift; sourceTree = "<group>"; };
@@ -209,6 +211,7 @@
 			children = (
 				337DEB5D1D2EE899004B9773 /* ListInstancesCell.swift */,
 				338312521D301B7F00984DA1 /* InstanceSearchCell.swift */,
+				2BF8EFC52539A388005EA883 /* BaseTableViewCell.swift */,
 			);
 			name = Cells;
 			sourceTree = "<group>";
@@ -536,6 +539,7 @@
 				33ED1E121D34F87F00186592 /* UIApplication.swift in Sources */,
 				686E4B591FF51D0F00A8AE22 /* FirstIstancesBindRequestJSON.swift in Sources */,
 				33ED1E101D34F86000186592 /* main.swift in Sources */,
+				2BF8EFC62539A388005EA883 /* BaseTableViewCell.swift in Sources */,
 				33A66C491D1C0290006EBAD8 /* UserViewController.swift in Sources */,
 				338455CB1D191333003E23DE /* LoginViewController.swift in Sources */,
 				33D499491D2C4D8700B263D5 /* TabBar.swift in Sources */,
