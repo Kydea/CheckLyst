@@ -574,7 +574,8 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
         if let sourceViewController = sender.source as? InstanceViewController {
             
             selectedItemsDictionary = sourceViewController.selectedItemsDictionary
-        
+            sourceViewController.navigationController?.popViewController(animated: false)
+            
         }
         
     }

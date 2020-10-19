@@ -97,7 +97,7 @@
     matematici.menu.toggleItemsByRole();
 
     matematici.userPanel.update();
-    if (matematici.tokenManager.getAccessToken() && !matematici.appMode)
+    if (matematici.tokenManager.getAccessToken()) // && !matematici.appMode)
         matematici.clock.resume();
 
     matematici.elements.body.on("keydown", function (e) {

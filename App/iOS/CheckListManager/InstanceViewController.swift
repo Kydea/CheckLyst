@@ -290,6 +290,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     
     @IBAction func goBackToSearchInstances(_ sender: Any) {
         self.closeInstance()
+        webView.configuration.userContentController.removeScriptMessageHandler(forName: "instances")
         self.performSegue(withIdentifier: "goBackSearchInstances", sender: self)
     }
     
