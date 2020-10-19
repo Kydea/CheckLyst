@@ -11,9 +11,9 @@
             var
                 serverTime = matematici.clock.getTime(),
                 milliseconds = date - serverTime,
-                seconds = parseInt(milliseconds / 1000 % 60),
-                minutes = parseInt((milliseconds - seconds * 1000) / 1000 / 60 % 60),
-                hours = parseInt((milliseconds - seconds * 1000 - minutes * 60000) / 1000 / 60 / 60);
+                seconds = Math.floor(milliseconds / 1000 % 60),
+                minutes = Math.floor((milliseconds - seconds * 1000) / 1000 / 60 % 60),
+                hours = Math.floor((milliseconds - seconds * 1000 - minutes * 60000) / 1000 / 60 / 60);
 
             // \/ debug \/
             if (lastHours != hours)
