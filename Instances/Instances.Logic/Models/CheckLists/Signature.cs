@@ -16,10 +16,10 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 		public bool Cancelable { get; set; }
 		public bool SendEmail { get; set; }
 		public string SendEmailAddress { get; set; }
-        public List<SignatureRecord> History { get; } = new List<SignatureRecord>();
 		public string SignatureLevel { get; set; }
 		public bool Signed { get; set; }
-		public string SignedBy { get; set; }
+        public List<SignatureRecord> History { get; } = new List<SignatureRecord>();
+        public string SignedBy { get; set; }
 		public DateTimeOffset SignedOn { get; set; }
         public string ModifiedBy => SignedBy;
         public DateTimeOffset? ModifiedOn { get; private set; } //being nullable can't just inherit SignedOn
@@ -82,7 +82,10 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 				Group = parent,
 				ButtonLabel = ButtonLabel,
 				Cancelable = Cancelable,
-				AcceptsPin = AcceptsPin
+				AcceptsPin = AcceptsPin,
+                SignatureLevel = SignatureLevel,
+                SendEmail = SendEmail,
+                SendEmailAddress = SendEmailAddress
 			};
 
 			Copy(this, signature);

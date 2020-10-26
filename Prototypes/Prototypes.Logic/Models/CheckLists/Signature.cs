@@ -14,9 +14,9 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 		public bool Cancelable { get; set; }
         public bool SendEmail { get; set; }
         public string SendEmailAddress { get; set; }
+        public string SignatureLevel { get; set; }
         [JsonIgnore]
         public List<SignatureRecord> History { get; } = new List<SignatureRecord>();
-		public string SignatureLevel { get; set; }
         [JsonIgnore]
         public bool Signed { get; set; }
         [JsonIgnore]
