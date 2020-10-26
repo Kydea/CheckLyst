@@ -97,6 +97,8 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         scanButton = UIBarButtonItem(barButtonSystemItem: .camera, target: self, action: #selector(scanItem(_:)))
         
         self.contentView!.inputAssistantItem.trailingBarButtonGroups = [UIBarButtonItemGroup(barButtonItems: [scanButton!], representativeItem: nil)] as! [UIBarButtonItemGroup]
+        
+        FileManager.default.clearTemporaryDirectory()
     }
     
     override func didReceiveMemoryWarning()
@@ -160,14 +162,16 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
                 activityIndicator.startAnimating()
                 let fileURL = String(messageBody.split(separator: " ")[1])
                 //print(fileURL)
-                FileManager.default.getFile(fileURL) { (url, error) -> Void in
+                FileManager.default.downloadFile(fileURL) { (url, error, data) -> Void in
                     self.activityIndicator.stopAnimating()
                     if url != nil {
-                        self.requestForDocument = true
-                        self.documentInteractionController.url = url!
-                        self.documentInteractionController.uti = url!.typeIdentifier ?? "public.data, public.content"
-                        self.documentInteractionController.name = url!.localizedName ?? url!.lastPathComponent
-                        self.documentInteractionController.presentPreview(animated: true)
+                        if self.checkFile(file: data, url: fileURL) {
+                            self.requestForDocument = true
+                            self.documentInteractionController.url = url!
+                            self.documentInteractionController.uti = url!.typeIdentifier ?? "public.data, public.content"
+                            self.documentInteractionController.name = url!.localizedName ?? url!.lastPathComponent
+                            self.documentInteractionController.presentPreview(animated: true)
+                        }
                     } else if error != nil {
                         self.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server")
                     } else {
@@ -260,6 +264,24 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         }
     }
     
+    func checkFile(file data : Data?, url : String) -> Bool {
+        if let file = data {
+            if let dataString = String(bytes: file, encoding: .utf8), dataString.contains("message") || dataString.count < 100 {
+                let token = UserDefaults.standard.string(forKey: "token_type")! + " " + UserDefaults.standard.string(forKey: "access_token")!
+                let message = "Can't display file.\nThis message has been copied to clipboard, paste it on a note to share it with IT team, thank you.\n-- Content ---\n" + dataString + "\n-- URL --\n" + url + "\n-- Token --\n" + token;
+                UIPasteboard.general.string = message;
+                let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Ok", style: .destructive, handler: nil))
+                self.present(alert, animated: false, completion: nil)
+                return false
+            } else {
+                return true
+            }
+        } else {
+            return false
+        }
+    }
+    
     @objc private func scanItem(_ sender: UIBarButtonItem) {
         requestForScanning = true
         performSegue(withIdentifier: "ScanSegue", sender: self)
@@ -268,6 +290,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     
     @IBAction func goBackToSearchInstances(_ sender: Any) {
         self.closeInstance()
+        webView.configuration.userContentController.removeScriptMessageHandler(forName: "instances")
         self.performSegue(withIdentifier: "goBackSearchInstances", sender: self)
     }
     
@@ -311,7 +334,6 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     func documentInteractionControllerDidEndPreview(_ controller: UIDocumentInteractionController) {
         requestForDocument = false
         self.tabBarController?.tabBar.isHidden = false
-        FileManager.default.clearTemporaryDirectory()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

@@ -17,48 +17,48 @@ open class ServerConnection {
     
     static func bindListWithParams(_ params : Dictionary<String, Dictionary<String, String?>>, completion: ((_ result:ServerResponse) -> Void)!){
         
-        ServerConnection.sendHTTPRequest(baseUrl+"/Instances/List/Bind", parameters: params as Dictionary<String, AnyObject>){ (result) -> Void in
+        ServerConnection.sendHTTPRequest(baseUrl+"/Instances/List/Bind", parameters: params as Dictionary<String, AnyObject>, isAuthenticated: true){ (result) -> Void in
             completion(result)
         }
     }
     
     static func getListInstancesWithParams(_ params : Dictionary<String, Any>, completion: ((_ result:ServerResponse) -> Void)!){
         
-        ServerConnection.sendHTTPRequest(baseUrl+"/Instances/List/GetData", parameters: params as Dictionary<String, AnyObject>){ (result) -> Void in
+        ServerConnection.sendHTTPRequest(baseUrl+"/Instances/List/GetData", parameters: params as Dictionary<String, AnyObject>, isAuthenticated: true){ (result) -> Void in
             completion(result)
         }
     }
     
     static func getCompaniesRequest(server serverUrl:String = baseUrl,_ completion: ((_ result:ServerResponse) -> Void)!){
         
-        ServerConnection.sendHTTPRequest(serverUrl+"/Infrastructure/Companies/GetData", parameters: [:] as Dictionary<String, AnyObject>){ (result) -> Void in
+        ServerConnection.sendHTTPRequest(serverUrl+"/Infrastructure/Companies/GetData", parameters: [:] as Dictionary<String, AnyObject>, isAuthenticated: false){ (result) -> Void in
             completion(result)
         }
     }
     
     static func getApiServerRequest(server serverUrl:String = baseUrl, _ completion: ((_ result:ServerResponse) -> Void)!){
         
-        ServerConnection.sendHTTPRequest(serverUrl+"/settings", parameters: [:] as Dictionary<String, AnyObject>){ (result) -> Void in
+        ServerConnection.sendHTTPRequest(serverUrl+"/settings", parameters: [:] as Dictionary<String, AnyObject>, isAuthenticated: false){ (result) -> Void in
             completion(result)
         }
     }
     
     static func getAppInfo(_ completion: ((_ result:ServerResponse) -> Void)!){
         
-        ServerConnection.sendHTTPRequest(baseUrl+"/Infrastructure/Information/Get", parameters: [:] as Dictionary<String, AnyObject>){ (result) -> Void in
+        ServerConnection.sendHTTPRequest(baseUrl+"/Infrastructure/Information/Get", parameters: [:] as Dictionary<String, AnyObject>, isAuthenticated: true){ (result) -> Void in
             completion(result)
         }
     }
     
     static func sendGetClientRequest(_ params : Dictionary<String, Dictionary<String, String>>, completion: ((_ result:ServerResponse) -> Void)!){
-        sendHTTPRequest(baseUrl+"/AccessControl/Users/GetData", parameters: params as Dictionary<String, AnyObject>){ (result) -> Void in
+        sendHTTPRequest(baseUrl+"/AccessControl/Users/GetData", parameters: params as Dictionary<String, AnyObject>, isAuthenticated: true){ (result) -> Void in
             completion(result)
         }
     }
     
     
     static func loginOrRefreshToServer(server serverUrl:String = baseUrl,_ params : Dictionary<String, String>, completion: ((_ result:ServerResponse) -> Void)!){
-        sendHTTPRequest(serverUrl+"/AccessControl/Access/Token", parameters: params as Dictionary<String, AnyObject>){ (result) -> Void in
+        sendHTTPRequest(serverUrl+"/AccessControl/Access/Token", parameters: params as Dictionary<String, AnyObject>, isAuthenticated: false){ (result) -> Void in
             completion(result)
         }
     }
@@ -66,27 +66,27 @@ open class ServerConnection {
     
     static func logoutFromServer(_ params : Dictionary<String, Dictionary<String, String>>,_ completion: ((_ result:ServerResponse) -> Void)!){
         
-        sendHTTPRequest(baseUrl+"/AccessControl/Access/Logout", parameters: params as Dictionary<String, AnyObject>){ (result) -> Void in
+        sendHTTPRequest(baseUrl+"/AccessControl/Access/Logout", parameters: params as Dictionary<String, AnyObject>, isAuthenticated: true){ (result) -> Void in
             completion(result)
         }
     }
     
     
     static func closeInstance(_ params : Dictionary<String, String>, completion: ((_ result:ServerResponse) -> Void)!){
-        sendHTTPRequest(baseUrl+"/CheckList/Close", parameters: params as Dictionary<String, AnyObject>){ (result) -> Void in
+        sendHTTPRequest(baseUrl+"/CheckList/Close", parameters: params as Dictionary<String, AnyObject>, isAuthenticated: true){ (result) -> Void in
             completion(result)
         }
     }
     
     static func sendClockRequest(_ params : Dictionary<String, AnyObject>, completion: ((_ result:ServerResponse) -> Void)!) {
         
-        sendHTTPRequest(baseUrl+"/Server/Clock", parameters: params){ (result) -> Void in
+        sendHTTPRequest(baseUrl+"/Server/Clock", parameters: params, isAuthenticated: true){ (result) -> Void in
             completion(result)
         }
     }
     
     static func getFile(_ fileUrl : String, completion: ((_ result:ServerResponse) -> Void)!) {
-        sendHTTPGetRequest(fileUrl) { (result) -> Void in
+        sendHTTPGetRequest(fileUrl, isAuthenticated: false) { (result) -> Void in
             completion(result)
         }
     }
@@ -114,11 +114,10 @@ open class ServerConnection {
         return dict
     }
     
-    static func sendHTTPRequest(_ urlPath: String,parameters : Dictionary<String, AnyObject>, completion: ((_ result:ServerResponse) -> Void)!){
+    static func sendHTTPRequest(_ urlPath: String,parameters : Dictionary<String, AnyObject>,  isAuthenticated : Bool, completion: ((_ result:ServerResponse) -> Void)!){
         
         do {
-            
-            
+
             let request = NSMutableURLRequest(url: URL(string: urlPath)!)
             
             let session = URLSession.shared
@@ -136,8 +135,11 @@ open class ServerConnection {
                 request.addValue(companyTimeZone, forHTTPHeaderField: "companytimezone")
             }
             
+            if isAuthenticated, let tokenType = UserDefaults.standard.string(forKey: "token_type"), let token = UserDefaults.standard.string(forKey: "access_token") {
+                request.addValue(tokenType.capitalized + " " + token, forHTTPHeaderField: "Authorization")
+            }
+            
             if (!parameters.isEmpty)
-                
             {
                 if((parameters["Password"]) != nil) {
                     request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
@@ -204,7 +206,7 @@ open class ServerConnection {
     
     
     
-    static func sendHTTPGetRequest(_ urlPath: String, completion: ((_ result:ServerResponse) -> Void)!){
+    static func sendHTTPGetRequest(_ urlPath: String, isAuthenticated : Bool, completion: ((_ result:ServerResponse) -> Void)!){
         
         do{
             let request = NSMutableURLRequest(url: URL(string: urlPath)!)
@@ -216,6 +218,10 @@ open class ServerConnection {
                 request.addValue(companyTimeZone, forHTTPHeaderField: "companytimezone")
             }
             
+            if isAuthenticated, let tokenType = UserDefaults.standard.string(forKey: "token_type"), let token = UserDefaults.standard.string(forKey: "access_token") {
+                request.addValue(tokenType.capitalized + " " + token, forHTTPHeaderField: "Authorization")
+            }
+ 
             let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
                 let priority = DispatchQoS.default.qosClass
                 DispatchQueue.global(qos: priority).async {

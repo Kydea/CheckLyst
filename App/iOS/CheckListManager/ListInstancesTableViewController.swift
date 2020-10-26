@@ -93,13 +93,11 @@ class ListInstancesTableViewController: UIViewController, UITableViewDataSource,
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
-        let cell = tableView.dequeueReusableCell(withIdentifier: "instanceCell") as! ListInstancesCell?
+        let cell = tableView.dequeueReusableCell(withIdentifier: "instanceCell") as? ListInstancesCell
         
-        if isLoadingCell(for: indexPath) {
-            
-            cell?.contentView.isHidden = true
+        cell?.setLayout()
         
-        } else {
+        if !isLoadingCell(for: indexPath) {
           
             cell?.contentView.isHidden = false
             

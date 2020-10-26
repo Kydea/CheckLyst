@@ -91,8 +91,10 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "searchCell")
-        cell!.preservesSuperviewLayoutMargins = false
+        let cell = tableView.dequeueReusableCell(withIdentifier: "searchCell") as? InstanceSearchCell
+        
+        cell?.setLayout()
+        
         let accessoryButton = UIButton(type: .roundedRect)
         accessoryButton.tag = indexPath.row
         accessoryButton.titleLabel?.font = UIFont (name: "Flaticon", size: 25)
@@ -100,6 +102,8 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
         accessoryButton.setTitle("\u{f104}", for: UIControlState())
         accessoryButton.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
         accessoryButton.contentMode = .scaleAspectFit
+        accessoryButton.tag = indexPath.row
+        accessoryButton.addTarget(self, action: #selector(InstancesSearchViewController.accessoryButtonTapped(_:)), for: .touchUpInside)
         cell!.accessoryView = accessoryButton as UIView
         let fieldLabel = cell!.contentView.viewWithTag(1) as? UILabel
         fieldLabel?.text = indexTextDictionary[indexPath.row]
@@ -177,6 +181,12 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
     
     }
     
+    @objc func accessoryButtonTapped(_ sender : AnyObject) {
+        
+        let indexPath = IndexPath(row: sender.tag, section: 0)
+        performSegue(withIdentifier: "editFieldSegue", sender: indexPath)
+
+    }
     
     func fillSearchFields() {
         
@@ -452,6 +462,17 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                     
                     self.stopActivityIndicator()
                     
+                    if (self.listInstances.count == 0) {
+                    
+                        self.stopActivityIndicator()
+                        self.appDelegate.displayMessage(Title: "Error", Message: "No records found")
+                    
+                    } else {
+                        
+                        self.performSegue(withIdentifier: "instanceDetailsSegue", sender: self)
+                    
+                    }
+                    
                 } else {
                     
                     self.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server") { () -> Void in self.tabBarController?.selectedIndex = 0 }
@@ -486,17 +507,6 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                     print(error)
                     
                 }
-            }
-            
-            if (self.listInstances.count == 0) {
-            
-                self.stopActivityIndicator()
-                self.appDelegate.displayMessage(Title: "Error", Message: "No records found")
-            
-            } else {
-                
-                self.performSegue(withIdentifier: "instanceDetailsSegue", sender: self)
-            
             }
         }
     }
@@ -564,7 +574,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
         if let sourceViewController = sender.source as? InstanceViewController {
             
             selectedItemsDictionary = sourceViewController.selectedItemsDictionary
-        
+            
         }
         
     }
