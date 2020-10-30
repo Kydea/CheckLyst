@@ -229,23 +229,29 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                 {
                     PdfPCell Cell = new PdfPCell(new Paragraph());
                     var Description = CheckListPDF.GetItemDescription(Item);
+
                     switch (Item.TypeName)
                     {
                         case "Signature":
                             var Signature = (ICheckListSignature)Item;
-                            Signatures.Add(Signature);
 
                             if (CheckListPDF.IsPrototype())
-                                Cell = NewCell((++VisibleSignaturesCount).ToString());
-                            else
+                            {
+                                Signatures.Add(Signature);
+                                Cell = NewCell("").SetHorizontalAlign(ParagraphAlignment.Center);
+                            }
+                            else if (!Item.Hidden)
+                            {
+                                Signatures.Add(Signature);
                                 Cell = Signature.History.Count > 0 ? NewCell(string.IsNullOrEmpty(Signature.History.OrderByDescending(x => x.DateTime).FirstOrDefault().Note) ? "Signed" : "Canceled").AddNote(" " + (++VisibleSignaturesCount).ToString()) : NewCell("");
+                            }
 
                             break;
                         case "Text":
-                            Cell = NewCell(string.IsNullOrWhiteSpace(Description) ? "(no description)" : Description);
+                            Cell = NewCell(Item.Hidden ? string.Empty : Description);
                             break;
                         case "Field":
-                            if (CheckListPDF.IsPrototype())
+                            if (CheckListPDF.IsPrototype() || Item.Hidden)
                                 Cell = NewCell("").SetHorizontalAlign(ParagraphAlignment.Center);
                             else
                             {
@@ -260,17 +266,22 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                         case "Link":
                             var Link = (ICheckListLink)Item;
                             Cell = NewCell(string.Empty);
-                            var Paragraph = Cell.Content.AddHyperlink(Link.Url, HyperlinkType.Web).AddFormattedText(string.IsNullOrWhiteSpace(Description) ? "(link)" : Description);
-                            Paragraph.Font.Underline = Underline.Single;
+
+                            if (!Item.Hidden)
+                            {
+                                var Paragraph = Cell.Content.AddHyperlink(Link.Url, HyperlinkType.Web).AddFormattedText(string.IsNullOrWhiteSpace(Description) ? "(link)" : Description);
+                                Paragraph.Font.Underline = Underline.Single;
+                            }
+                            
                             break;
                         case "Image":
                             var Image = (ICheckListImage)Item;
                             if (Image.Key == null)
-                                Cell = NewCell("(# no key)");
+                                Cell = NewCell(Item.Hidden ? string.Empty :"(# no key)");
                             else
                             {
                                 var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.PrototypesStorageBucket, Image.Key, Image);
-                                Cell = NewCell($"{(string.IsNullOrEmpty(Description) ? string.Empty : Description + " ")}(see attachment {Index})");
+                                Cell = NewCell(Item.Hidden ? string.Empty : $"{(string.IsNullOrEmpty(Description) ? string.Empty : Description + " ")}(see attachment {Index})");
                             }
                             break;
                         case "Attachment":
@@ -278,13 +289,12 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                             if (Attachment.Key != null)
                             {
                                 var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.InstancesStorageBucket, Attachment.Key, Attachment);
-                                Cell = NewCell($"{(string.IsNullOrEmpty(Description) ? "(empty) " : Description + " ")}(see attachment {Index})");
+                                Cell = NewCell(Item.Hidden ? string.Empty : $"{(string.IsNullOrEmpty(Description) ? string.Empty : Description + " ")}(see attachment {Index})");
                             }
-                            else if (string.IsNullOrEmpty(Description))
-                                Cell = NewCell("(empty)"); // missing label and image
+
                             break;
                         default:
-                            Cell = NewCell(Item.TypeName);
+                            Cell = NewCell(Item.Hidden ? string.Empty : Item.TypeName);
                             break;
                     }
 
@@ -333,11 +343,11 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                 var Cell = new RenderingCell();
                 Cell.AppendTo(Row);
                 var Description = CheckListPDF.GetItemDescription(Item);
-                Cell.Text = Description;
 
                 if (Item.TypeName == "Group")
                 {
                     Cell.SubGroup = true;
+                    Cell.Text = Description;
                     var Size = await CreateTableHeader(Rows, RowIndex + 1, ((ICheckListGroup)Item).Items);
                     RowsCount = Math.Max(Size.RowsCount + 1, RowsCount);
                     ColumnsCount += Math.Max(Size.ColumnsCount, 1);
@@ -354,20 +364,23 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                             var AttachmentIndex = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.PrototypesStorageBucket, Image.Key, Image);
                             Cell.Text = $"{(string.IsNullOrEmpty(Description) ? string.Empty : Description + " ")}(see attachment {AttachmentIndex})";
                         }
-                        else if (string.IsNullOrEmpty(Description))
-                            Cell.Text = "(empty)"; // missing label and image
+                        else if (!string.IsNullOrEmpty(Description))
+                            Cell.Text = Description;
                     }
                     else if (Item.TypeName == "Attachment")
                     {
-                        
                         var Attachment = (ICheckListAttachment)Item;
                         if (Attachment.Key != null)
                         {
                             var AttachmentIndex = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.InstancesStorageBucket, Attachment.Key, Attachment);
-                            Cell.Text = $"{(string.IsNullOrEmpty(Description) ? "(empty) " : Description + " ")}(see attachment {AttachmentIndex})";
+                            Cell.Text = $"{(string.IsNullOrEmpty(Description) ? string.Empty : Description + " ")}(see attachment {AttachmentIndex})";
                         }
-                        else if (string.IsNullOrEmpty(Description))
-                            Cell.Text = "(empty)"; // missing label and attachment
+                        else if (!string.IsNullOrEmpty(Description))
+                            Cell.Text = Description;
+                    }
+                    else if (Item.TypeName != "Text" && Item.TypeName != "Link")
+                    {
+                        Cell.Text = Description;
                     }
 
                     ColumnsCount++;
