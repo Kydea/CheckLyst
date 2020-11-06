@@ -276,20 +276,22 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                             break;
                         case "Image":
                             var Image = (ICheckListImage)Item;
-                            if (Image.Key == null)
+                            if (Image.Key == null || Item.Hidden)
                                 Cell = NewCell(Item.Hidden ? string.Empty :"(# no key)");
-                            else
+                            else if (Image.Key != null)
                             {
                                 var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.PrototypesStorageBucket, Image.Key, Image);
-                                Cell = NewCell(Item.Hidden ? string.Empty : $"{(string.IsNullOrEmpty(Description) ? string.Empty : Description + " ")}(see attachment {Index})");
+                                Cell = NewCell($"(see attachment {Index})");
                             }
                             break;
                         case "Attachment":
                             var Attachment = (ICheckListAttachment)Item;
-                            if (Attachment.Key != null)
+                            if (Attachment.Key == null || Item.Hidden)
+                                Cell = NewCell(string.Empty);
+                            else if (Attachment.Key != null)
                             {
                                 var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.InstancesStorageBucket, Attachment.Key, Attachment);
-                                Cell = NewCell(Item.Hidden ? string.Empty : $"{(string.IsNullOrEmpty(Description) ? string.Empty : Description + " ")}(see attachment {Index})");
+                                Cell = NewCell($"(see attachment {Index})");
                             }
 
                             break;
@@ -354,37 +356,10 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                     if (Size.ColumnsCount > 1)
                         Cell.Colspan = Size.ColumnsCount;
                 }
-                else
-                {
-                    if (Item.TypeName == "Image")
-                    {
-                        var Image = (ICheckListImage)Item;
-                        if (Image.Key != null)
-                        {
-                            var AttachmentIndex = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.PrototypesStorageBucket, Image.Key, Image);
-                            Cell.Text = $"{(string.IsNullOrEmpty(Description) ? string.Empty : Description + " ")}(see attachment {AttachmentIndex})";
-                        }
-                        else if (!string.IsNullOrEmpty(Description))
-                            Cell.Text = Description;
-                    }
-                    else if (Item.TypeName == "Attachment")
-                    {
-                        var Attachment = (ICheckListAttachment)Item;
-                        if (Attachment.Key != null)
-                        {
-                            var AttachmentIndex = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.InstancesStorageBucket, Attachment.Key, Attachment);
-                            Cell.Text = $"{(string.IsNullOrEmpty(Description) ? string.Empty : Description + " ")}(see attachment {AttachmentIndex})";
-                        }
-                        else if (!string.IsNullOrEmpty(Description))
-                            Cell.Text = Description;
-                    }
-                    else if (Item.TypeName != "Text" && Item.TypeName != "Link")
-                    {
-                        Cell.Text = Description;
-                    }
+                else if (Item.TypeName != "Text" && Item.TypeName != "Link")
+                    Cell.Text = Description;
 
-                    ColumnsCount++;
-                }
+                ColumnsCount++;
             }
 
             if (RowsCount > 1)
