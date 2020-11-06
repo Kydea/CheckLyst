@@ -559,7 +559,9 @@ namespace CheckListManager.Prototypes.Logic.Services
             
             if (
                 !identity.HasPermission("Prototypes", function, department) &&
-                !identity.HasPermission("Prototypes", function, department, prototypeType)
+                !identity.HasPermission("Prototypes", function, department, prototypeType) &&
+                !identity.HasPermission("Instances", function, department) &&
+                !identity.HasPermission("Instances", function, department, prototypeType)
             )
                 throw new UnauthorizedAccessException();
 
