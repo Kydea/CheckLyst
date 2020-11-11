@@ -265,21 +265,24 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     }
     
     func checkFile(file data : Data?, url : String) -> Bool {
-        if let file = data {
-            if let dataString = String(bytes: file, encoding: .utf8), dataString.contains("message") || dataString.count < 100 {
-                let token = UserDefaults.standard.string(forKey: "token_type")! + " " + UserDefaults.standard.string(forKey: "access_token")!
-                let message = "Can't display file.\nThis message has been copied to clipboard, paste it on a note to share it with IT team, thank you.\n-- Content ---\n" + dataString + "\n-- URL --\n" + url + "\n-- Token --\n" + token;
-                UIPasteboard.general.string = message;
-                let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Ok", style: .destructive, handler: nil))
-                self.present(alert, animated: false, completion: nil)
-                return false
-            } else {
-                return true
-            }
-        } else {
+        
+        guard let file = data else {
+            self.appDelegate.displayMessage(Title: "Error", Message: "Can't display file\nFile is empty")
             return false
         }
+        
+        if let json = try? JSONSerialization.jsonObject(with: file, options: .allowFragments) as! [String:Any], let messages = json["messages"] as? [String] {
+            self.appDelegate.displayMessage(Title: "Error", Message: "Can't display file\n\(messages.joined(separator: "\n"))")
+            return false
+        }
+        
+        if let dataString = String(bytes: file, encoding: .utf8) {
+            self.appDelegate.displayMessage(Title: "Error", Message: "Can't display file\n\(dataString)")
+            return false
+        }
+        
+        return true
+    
     }
     
     @objc private func scanItem(_ sender: UIBarButtonItem) {

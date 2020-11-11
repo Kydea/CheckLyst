@@ -15,7 +15,7 @@ open class ServerConnection {
     
     static var baseFrontEndUrl : String { return Server.getFrontEndServer(managedObjectContext: (UIApplication.shared.delegate as! AppDelegate).managedObjectContext)! }
     
-    static func bindListWithParams(_ params : Dictionary<String, Dictionary<String, String?>>, completion: ((_ result:ServerResponse) -> Void)!){
+    static func bindListWithParams(_ params : Dictionary<String, Dictionary<String, Any?>>, completion: ((_ result:ServerResponse) -> Void)!){
         
         ServerConnection.sendHTTPRequest(baseUrl+"/Instances/List/Bind", parameters: params as Dictionary<String, AnyObject>, isAuthenticated: true){ (result) -> Void in
             completion(result)

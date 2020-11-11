@@ -23,7 +23,7 @@ class ListInstancesTableViewController: UIViewController, UITableViewDataSource,
     var infoButtonTappedRow = -1
     var selectedInstance: Instance?
     var selectedItemsDictionary = [Int:Option] ()
-    var searchDictionary : Dictionary<String, String?>?
+    var searchDictionary : Dictionary<String, Any?>?
     let appDelegate = UIApplication.shared as! MyApplication
     var isFetching = false
     

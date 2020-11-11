@@ -17,7 +17,7 @@ extension FileManager {
         let targetURL = tempDirectoryURL.appendingPathComponent(filename != nil ? filename! : "tempFile")
         
         if FileManager.default.fileExists(atPath: targetURL.path), let modificationDate =
-            FileManager.default.getFileModificationDate(atPath: targetURL.path), modificationDate.timeIntervalSince(Date()) > -20 {
+            FileManager.default.getFileModificationDate(atPath: targetURL.path), modificationDate.timeIntervalSince(Date()) > -60 {
             let data = FileManager.default.contents(atPath: targetURL.path)
             completition(targetURL, nil, data)
             

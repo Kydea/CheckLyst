@@ -23,13 +23,15 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
     [0:"Departments", 1:"Prototype Types", 2:"Prototype", 3:"Version", 4:"Description", 5:"Tags", 6:"Tags Value" ,7:"States"]
     
     /*  values sent to the server like query    */
-    var searchDictionary : Dictionary<String, String?> = ["department" : "", "description" : "", "prototype" : "", "prototypeType": "", "state" : "", "tagCode" : "", "tagValue" : "", "version" : ""]
+    var searchDictionary : Dictionary<String, Any?> = ["department" : "", "description" : "", "prototype" : "", "prototypeType": "", "state" : "", "tagCode" : "", "tagValue" : "", "version" : "", "from" : nil, "to" : nil, "advancedSearch" : false, "source" : nil]
     
     var fieldIndexDictionary =
     ["department":0, "prototypeType":1, "prototype":2, "version":3, "description":4, "tagCode":5, "tagValue":6 ,"state":7]
     
     var indexFieldDictionary =
     [0:"department", 1:"prototypeType", 2:"prototype", 3:"version", 4:"description", 5:"tagCode", 6:"tagValue", 7:"state"]
+    
+    let allowedSearchFieldValues = ["department","prototypeType","prototype","version"]
     
     var selectedItemsDictionary = [Int:Option] ()
     var indexArrayDictionary = [Int:[Option?]] ()
@@ -71,9 +73,10 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
     
     func fromSelectionToSearchDictionary() {
         for field in searchDictionary.keys {
-            let index = fieldIndexDictionary[field]!
-            searchDictionary[field] = (field == "version") ? selectedItemsDictionary[index]!.value.components(separatedBy: " -")[0] : searchDictionary[field]
-            searchDictionary[field] = (searchDictionary[field] == nil) ? "" : selectedItemsDictionary[fieldIndexDictionary[field]!]!.value
+            if let index = fieldIndexDictionary[field] {
+                searchDictionary[field] = (field == "version") ? selectedItemsDictionary[index]!.value.components(separatedBy: " -")[0] : searchDictionary[field]
+                searchDictionary[field] = (searchDictionary[field] == nil) ? "" : selectedItemsDictionary[fieldIndexDictionary[field]!]!.value
+            }
         }
     }
     
@@ -399,7 +402,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
             
             let field = indexFieldDictionary[index]!
             
-            if let option = findOptionInIndexArrayDictionaryForValue(self.searchDictionary[field]!!, inField: field, andIndex: index)
+            if let option = findOptionInIndexArrayDictionaryForValue(self.searchDictionary[field]!! as! String, inField: field, andIndex: index)
             {
                 if(field == "department") { selectedDepartemnt = option.value }
                 if(field == "prototypeType") { selectedPrototypeType = option.value }
@@ -431,7 +434,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
         
         self.startActivityIndicator()
         /*Needed to avoid the first call with all parameters set to "" (this is experienced when the user start search without changing filters at the first time)*/
-        if(searchDictionary["department"]!! == "" || searchDictionary["prototypeType"]!! == "") {
+        if(searchDictionary["department"]!! as! String == "" || searchDictionary["prototypeType"]!! as! String == "") {
         
             self.fromSelectionToSearchDictionary()
         
@@ -523,6 +526,10 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
             controller.isListField = (indexTextDictionary[indexPath.row] == "Description" || indexTextDictionary[indexPath.row] == "Tags Value") ? false : true
             controller.fieldNameString = indexTextDictionary[indexPath.row]
             controller.indexFieldDictionary = indexFieldDictionary
+            if let sourceValue = indexFieldDictionary[indexPath.row], allowedSearchFieldValues.contains(sourceValue)
+            {
+                searchDictionary["source"] = sourceValue
+            }
         
         } else if let controller = segue.destination as? ListInstancesTableViewController {
             
@@ -560,8 +567,8 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
             } else {
                 
                 controller.newInstance = true
-                controller.newInstancePrototype = searchDictionary["prototype"]!
-                controller.newInstanceVersion = searchDictionary["version"]!
+                controller.newInstancePrototype = searchDictionary["prototype"]! as! String
+                controller.newInstanceVersion = searchDictionary["version"]! as! String
                 controller.selectedItemsDictionary = selectedItemsDictionary;
             
             }
