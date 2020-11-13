@@ -16,7 +16,21 @@ extension FileManager {
         let tempDirectoryURL = FileManager.default.temporaryDirectory
         let targetURL = tempDirectoryURL.appendingPathComponent(filename != nil ? filename! : "tempFile")
         
-        if FileManager.default.fileExists(atPath: targetURL.path), let modificationDate =
+        ServerConnection.getFile(url) { (serverResponse) -> Void in
+            if(serverResponse.data != nil) {
+                do {
+                    try serverResponse.data!.write(to: targetURL, options: .atomic)
+                    completition(targetURL, nil, serverResponse.data)
+                } catch let error {
+                    NSLog("Unable to copy file: \(error)")
+                    completition(nil, nil,nil)
+                }
+            } else {
+                completition(nil, serverResponse.error, nil)
+            }
+        }
+        //Meccanismo di cache sospeso, va raffinato
+        /*if FileManager.default.fileExists(atPath: targetURL.path), let modificationDate =
             FileManager.default.getFileModificationDate(atPath: targetURL.path), modificationDate.timeIntervalSince(Date()) > -60 {
             let data = FileManager.default.contents(atPath: targetURL.path)
             completition(targetURL, nil, data)
@@ -35,6 +49,6 @@ extension FileManager {
                     completition(nil, serverResponse.error, nil)
                 }
             }
-        }
+        }*/
     }
 }
