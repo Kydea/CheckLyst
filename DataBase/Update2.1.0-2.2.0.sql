@@ -1,4 +1,4 @@
---update Configuration - XXX.sql accordingly, the url must be specified without final slash
+--update Configuration - XXX.sql accordingly
 insert into "Configuration"."Configurations" ("Code", "Value") values
 	('NotificationsEmailAddress', <TBD>); 
 
@@ -13,7 +13,6 @@ create index "Index_InstanceExpressionValues_Notifications" on "CheckLists"."Ins
 --take into the environment / companies scripts
 insert into "Configuration"."Settings" ("Code") values
 	('NotificationMessage');
-
 
 --take into the environment / companies scripts
 insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") 
