@@ -133,6 +133,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             {
                 Signed = false;
                 SignedBy = null;
+                Instance.NeedToSaveExpressionValues = false; //reverts the flag in case of notification expressions changed to true
             }
         }
 

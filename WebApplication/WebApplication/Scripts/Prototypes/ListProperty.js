@@ -50,7 +50,9 @@
     }
 
     this.hasChanges = function () {
-        return !!model[property] && model[property] != values[0].code && model[property] != values[0];
+        var value = !!options.nullable && !!model[property]
+            || !options.nullable && !!model[property] && model[property] != values[0].code && model[property] != values[0];
+        return value;
     }
 
     this.refresh = function (newValues) {

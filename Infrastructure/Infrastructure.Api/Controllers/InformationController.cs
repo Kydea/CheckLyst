@@ -55,8 +55,8 @@ namespace CheckListManager.Infrastructure.Api.Controllers
         public IHttpActionResult SetupQRCode()
         {
             var Url = _configurationService.WebApplicationUrl;
-            var ProtocolTolen = Url != null && Url.StartsWith("http://") ? "http" : "https";
-            Url = $"{Url?.Replace($"{ProtocolTolen}://", "checklyst://")}/setup/{ProtocolTolen}";
+            var Protocol = Url != null && Url.StartsWith("http://") ? "http" : "https";
+            Url = $"{Url?.Replace($"{Protocol}://", "checklyst://")}/setup/{Protocol}";
 
             QRCodeGenerator qrGenerator = new QRCodeGenerator();
             QRCodeData qrCodeData = qrGenerator.CreateQrCode(Url, QRCodeGenerator.ECCLevel.Q);
