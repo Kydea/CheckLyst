@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Oracle.ManagedDataAccess.Client;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -11,6 +12,7 @@ namespace CheckListManager.ExternalSources.Logic.SQL
 {
     public class Source : SourceBase
     {
+        private const string ORACLE = "Oracle", POSTGRES = "Postgres", SQL_SERVER = "SQL Server";
         private SQLParameters SQLParameters { get; set; }
 
         public override void Parse(string Data)
@@ -34,32 +36,32 @@ namespace CheckListManager.ExternalSources.Logic.SQL
         private DbConnection GetConnection()
         {
             return
-                SQLParameters.DBMS == "Oracle" ?
-                    (DbConnection)new OracleConnection(GetConnectionString()) :
+                SQLParameters.DBMS == ORACLE ? new OracleConnection(GetConnectionString()) :
+                SQLParameters.DBMS == POSTGRES ? (DbConnection)new NpgsqlConnection(GetConnectionString()) :
                     new SqlConnection(GetConnectionString());
         }
 
         private DbCommand GetCommand(DbConnection Connection)
         {
             return
-                SQLParameters.DBMS == "Oracle" ?
-                    (DbCommand)new OracleCommand(SQLParameters.Query, (OracleConnection)Connection) :
+                SQLParameters.DBMS == ORACLE ? new OracleCommand(SQLParameters.Query, (OracleConnection)Connection) :
+                SQLParameters.DBMS == POSTGRES ? (DbCommand)new NpgsqlCommand(SQLParameters.Query, (NpgsqlConnection)Connection) :
                     new SqlCommand(SQLParameters.Query, (SqlConnection)Connection);
         }
 
         private DbDataAdapter GetDataAdapter(DbCommand Command)
         {
             return
-                SQLParameters.DBMS == "Oracle" ?
-                    (DbDataAdapter)new OracleDataAdapter((OracleCommand)Command) :
+                SQLParameters.DBMS == ORACLE ? new OracleDataAdapter((OracleCommand)Command) :
+                SQLParameters.DBMS == POSTGRES ? (DbDataAdapter)new NpgsqlDataAdapter((NpgsqlCommand)Command) :
                     new SqlDataAdapter((SqlCommand)Command);
         }
 
         private DbParameter GetDbParameter(string Name, object Value)
         {
             return
-                SQLParameters.DBMS == "Oracle" ?
-                    (DbParameter)new OracleParameter(Name, Value) :
+                SQLParameters.DBMS == ORACLE ? new OracleParameter(Name, Value) :
+                SQLParameters.DBMS == POSTGRES ? (DbParameter)new NpgsqlParameter(Name, Value) :
                     new SqlParameter(Name, Value);
         }
 
