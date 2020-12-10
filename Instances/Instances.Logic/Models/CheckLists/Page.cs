@@ -9,6 +9,12 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
     public class Page : Element, ICheckListPage
     {
+
+        public Page()
+        {
+            PageBreak = true;
+        }
+
         public int Index { get; set; }
         public string Description { get; set; }
         public List<ICheckListGroup> Groups { get; set; } = new List<ICheckListGroup>();
