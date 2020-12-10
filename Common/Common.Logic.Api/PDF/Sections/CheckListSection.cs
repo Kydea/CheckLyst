@@ -16,7 +16,11 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
 
         public CheckListPDF CheckListPDF { get; }
 
-        public override Task RenderAsync(params Object[] State) => Task.CompletedTask;
+        public override Task RenderAsync()
+        {
+            if (Element.PageBreak) PDFBase.Container.AddPageBreak();
+            return Task.CompletedTask;
+        }
 
         public virtual Task RenderChildrenAsync() => Task.CompletedTask;
     }

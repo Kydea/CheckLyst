@@ -444,7 +444,7 @@
                 if (pageIndex < model.pages[index].index)
                     pageIndex = model.pages[index].index;
 
-            model.pages.push({ typeName: "Page", description: "(page)", index: pageIndex + 1 });
+            model.pages.push({ typeName: "Page", description: "(page)", index: pageIndex + 1, pageBreak: true });
         },
 
         sign = function (action, grid, rows, row) {

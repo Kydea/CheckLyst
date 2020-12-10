@@ -93,7 +93,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 DescriptionFormula.Evaluate(CheckList, GetRuntimeValues(), Instance.DecimalSeparator, Instance.TimeZone, Iteration?.Indexes, FindIteratorModelItem().DescriptionFormula);
             else
                 DescriptionFormula.Evaluate(CheckList, GetRuntimeValues(), Instance.DecimalSeparator, Instance.TimeZone, Iteration?.Indexes);
-
         }
 
         protected override void UpdateHidden()

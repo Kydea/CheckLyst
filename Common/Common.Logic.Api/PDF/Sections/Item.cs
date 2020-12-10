@@ -43,9 +43,11 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             DrawText("\n");
         }
 
-        public override async Task RenderAsync(params object[] State)
+        public override async Task RenderAsync()
         {
             if (!CheckListPDF.IsPrototype() && (Element.Hidden || (Element is ICheckListIteration iteration && iteration.Removed))) return;
+
+            await base.RenderAsync();
 
             string Description = null;
             if (Element is ICheckListItem CheckListItem)

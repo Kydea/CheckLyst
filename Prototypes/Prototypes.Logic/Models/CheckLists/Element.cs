@@ -31,6 +31,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public ICheckListSignature Signature => null;
         [JsonIgnore]
         public bool Valid { get; set; }
+        public bool PageBreak { get; set; }
 
         public virtual void Setup()
         {

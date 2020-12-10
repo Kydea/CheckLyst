@@ -28,7 +28,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
         public float[] ColumnsWidths { get; set; }
         private List<Tuple<string, string>> Rows { get; }
 
-        public override Task RenderAsync(params object[] State)
+        public override Task RenderAsync()
         {
             PDFBase.Container.Headers = null;
             PDFBase.Container.PageSetup.TopMargin = 36;

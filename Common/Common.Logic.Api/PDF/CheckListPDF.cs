@@ -80,10 +80,7 @@ namespace CheckListManager.Common.Logic.Api.PDF
                 await new Group(this, Header).RenderAsync();
 
             foreach (var Element in Model.Pages.Where(e => !e.Hidden))
-            {
-                Container.AddPageBreak();
                 await new Page(this, Element).RenderAsync();
-            }
         }
 
         protected Section AttachmentsListPage { get; set; }
@@ -125,7 +122,7 @@ namespace CheckListManager.Common.Logic.Api.PDF
                 return;
 
             DocumentBuilder.RenderPdfDocument();
-            await this.AddSectionAsync();
+            await AddSectionAsync();
             Container.RemovePageCount();
 
             foreach (var Attachment in Attachments.Values)

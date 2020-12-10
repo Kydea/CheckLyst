@@ -11,10 +11,12 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
         public Group(CheckListPDF PDFBase, ICheckListGroup Group, int Indentation = 1) : base(PDFBase, Group, Indentation)
         { }
 
-        public override async Task RenderAsync(params object[] State)
+        public override async Task RenderAsync()
         {
             if (Element == null)
                 return;
+
+            await base.RenderAsync();
 
             var GroupElement = (ICheckListGroup)Element;
             var Description = CheckListPDF.GetItemDescription(GroupElement);

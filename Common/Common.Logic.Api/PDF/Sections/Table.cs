@@ -42,10 +42,11 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             TimeZone = PDFBase.TimeZone;
         }
 
-        public override async Task RenderAsync(params object[] State)
+        public override async Task RenderAsync()
         {
-            if (Element == null)
-                return;
+            if (Element == null) return;
+
+            await base.RenderAsync();
 
             var GroupElement = (ICheckListGroup)Element;
             var Description = CheckListPDF.GetItemDescription(GroupElement);

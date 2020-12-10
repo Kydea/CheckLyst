@@ -21,5 +21,6 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
         bool ReadOnly { get; }
         bool Hidden { get; set; }
         void Setup();
+        bool PageBreak { get; set; }
     }
 }

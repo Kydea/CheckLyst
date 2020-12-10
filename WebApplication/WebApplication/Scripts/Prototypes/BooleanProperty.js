@@ -1,4 +1,4 @@
-﻿prototypes.BooleanProperty = function (model, property, readOnly) {
+﻿prototypes.BooleanProperty = function (model, property, readOnly, defaultValue) {
     var
         input,
         handler,
@@ -24,7 +24,7 @@
     };
 
     this.hasChanges = function () {
-        return !!model[property];
+        return !!model[property] == !defaultValue;
     };
 
     this.setReadOnly = function (value) {

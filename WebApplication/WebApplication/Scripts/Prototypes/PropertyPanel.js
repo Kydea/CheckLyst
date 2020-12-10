@@ -141,6 +141,11 @@
                 itemIndex = item.getIndex();
 
             properties.push(new prototypes.Property(
+                this, new prototypes.BooleanProperty(model, "pageBreak", state != prototypes.Prototype.states.draft, model.typeName == "Page"), "Page break",
+                "Forces a page break in the pdf version of the checklist before the element."
+            ));
+
+            properties.push(new prototypes.Property(
                 this, new prototypes.SimpleValueProperty(model, "code", {
                     readOnly: state != prototypes.Prototype.states.draft,
                     code: true
@@ -155,6 +160,7 @@
                 }]), "Code",
                 "Uniquely identifies an element. Can be left empty. Use only if a reference to the element is needed is some expression."
             ));
+
             if (model.typeName != "Text" && model.typeName != "Link" && model.typeName != "Image")
                 properties.push(new prototypes.Property(
                     this, new prototypes.ReadOnlyProperty(model), "Read-only",
@@ -407,7 +413,7 @@
                         "The label of the link."
                     ));
                     properties.push(new prototypes.Property(
-                        this, new prototypes.SimpleValueProperty(model, "url", { readOnly: state != prototypes.Prototype.states.draft }).setHandler(function () {
+                        this, new prototypes.SimpleValueProperty(model, "url", { readOnly: state != prototypes.Prototype.states.draft, fullHeight: true }).setHandler(function () {
                             $("a.Link", item.getElement()).attr("href", model.url);
                         }), "Url",
                         "The url to open."
