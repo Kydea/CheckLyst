@@ -302,7 +302,9 @@
                         matematici.dialog.show("warning", "There are unsaved changes.", [
                             {
                                 text: "save", icon: "check", handler: function () {
-                                    matematici.save(action, true);
+                                    setTimeout(function () {
+                                        matematici.save(action, true);
+                                    }, 0);
                                 }
                             },
                             { text: "cancel", icon: "times", cancelButton: true }

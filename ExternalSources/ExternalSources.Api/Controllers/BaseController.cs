@@ -1,8 +1,11 @@
 ﻿using System.Threading.Tasks;
 using System.Web.Http;
-using System;
-using System.Net.Http;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Formatting;
+using System.Threading;
+using System.Web.Http.ExceptionHandling;
+using System;
 using NLog;
 using CheckListManager.ExternalSources.Logic;
 using Newtonsoft.Json;
@@ -30,7 +33,7 @@ namespace CheckListManager.ExternalSources.Api.Controllers
             catch (Exception e)
             {
                 Logger.Error(e, "External source error");
-                throw;
+                return Content(HttpStatusCode.InternalServerError, e.Message);
             }
         }
 

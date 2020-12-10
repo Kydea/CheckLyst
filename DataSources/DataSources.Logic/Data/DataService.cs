@@ -118,13 +118,15 @@ namespace CheckListManager.DataSources.Logic.Data
             {
                 var response = await _client.PostAsync("ExternalSources/" + Action, Data);
                 var responseData = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode != System.Net.HttpStatusCode.OK)
+
+                if (response.StatusCode == System.Net.HttpStatusCode.InternalServerError)
                     throw new Exception(responseData);
+
                 return responseData;
             }
             catch (Exception e)
             {
-                throw new Exception("External source error", e);
+                throw new Exception($"External source error: {e.Message}", e);
             }
 
         }
