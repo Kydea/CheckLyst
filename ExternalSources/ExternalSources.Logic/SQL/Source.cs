@@ -24,8 +24,8 @@ namespace CheckListManager.ExternalSources.Logic.SQL
         private string GetConnectionString()
         {
             var ConnectionString =
-                SQLParameters.DBMS == "Oracle" ?
-                    (DbConnectionStringBuilder)new OracleConnectionStringBuilder() :
+                SQLParameters.DBMS == ORACLE ? new OracleConnectionStringBuilder() :
+                SQLParameters.DBMS == POSTGRES ? (DbConnectionStringBuilder)new NpgsqlConnectionStringBuilder() :
                     new SqlConnectionStringBuilder();
 
             ConnectionString.ConnectionString = SQLParameters.ConnectionString;
