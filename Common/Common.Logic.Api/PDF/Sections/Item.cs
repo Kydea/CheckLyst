@@ -47,12 +47,6 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
         {
             if (!CheckListPDF.IsPrototype() && (Element.Hidden || (Element is ICheckListIteration iteration && iteration.Removed))) return;
 
-            await base.RenderAsync();
-
-            string Description = null;
-            if (Element is ICheckListItem CheckListItem)
-                Description = CheckListPDF.GetItemDescription(CheckListItem);
-
             if (Element is ICheckListGroup GroupElement)
             {
                 if (GroupElement.ShowAsTable)
@@ -60,7 +54,13 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                 else
                     await new Group((CheckListPDF)PDFBase, GroupElement, Indentation + 1).RenderAsync();
             }
-            else if (Element is ICheckListText Text)
+            else await base.RenderAsync();
+
+            string Description = null;
+            if (Element is ICheckListItem CheckListItem)
+                Description = CheckListPDF.GetItemDescription(CheckListItem);
+
+            if (Element is ICheckListText Text)
             {
                 if (!string.IsNullOrEmpty(Description))
                     DrawText(Description, null, 10);
