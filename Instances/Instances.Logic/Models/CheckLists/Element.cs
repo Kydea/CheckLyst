@@ -141,6 +141,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public bool Hidden { get; set; }
         public Conditions HiddenCondition { get; set; }
         public string HiddenExpressionCode { get; set; }
+
+        public virtual bool PageBreak { get; set; }
+
         protected virtual void UpdateHidden()
         {
             Hidden =
@@ -161,8 +164,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 			destination.ValidCondition = source.ValidCondition;
 			destination.ValidityMessage = source.ValidityMessage;
 			destination.SignatureCode = source.SignatureCode;
+            destination.PageBreak = source.PageBreak;
         }
-        public virtual bool PageBreak { get; set; }
 
         #endregion
 
