@@ -15,11 +15,8 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
             DataType = DataType.Array;
         }
 
-        protected override TypedValue GetValue(List<TypedValue> Values)
-        {
-            return new TypedValue(DataType.Array, Values);
-        }
+        protected override TypedValue GetValue(ICheckListGroup Iterator, List<TypedValue> Values) => new TypedValue(DataType.Array, Values);
  
-        protected override string Property => "Eech";
+        protected override string Property => "Each";
     }
 }

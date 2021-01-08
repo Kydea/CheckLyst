@@ -24,7 +24,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
             DataType = DataType.Boolean;
         }
 
-        protected override TypedValue GetValue(ICheckListElement Element, string TimeZone)
+        protected override TypedValue GetValue(ICheckListElement Element, Dictionary<string, int> IterationIndexes, string TimeZone)
             => new TypedValue(DataType.Boolean, ((ICheckListValidityElement)Element).Valid);
     }
 }

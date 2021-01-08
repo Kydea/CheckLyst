@@ -123,6 +123,7 @@
         },
 
         update = function (result) {
+            matematici.elements.document.scrollTop(0);
             lastResult = result;
             var model = result.checkList;
             versionState = result.versionState || versionState;

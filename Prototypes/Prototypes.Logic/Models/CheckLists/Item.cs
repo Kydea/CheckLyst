@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.Expressions;
+using Newtonsoft.Json;
 
 namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 {
@@ -14,6 +15,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 		public ICheckListGroup Group { get; set; }
 		public int Id { get; set; }
 		public ICheckListIteration Iteration { get; set; }
+        [JsonIgnore]
 		public bool IterationItem { get; set; }
 		public bool IteratorModelItem { get; set; }
 		public virtual bool NewLine { get; set; }

@@ -11,12 +11,13 @@ namespace CheckListManager.Common.Logic.Models.Expressions
     public class Expression : DependencyNode
     {
         public const int MAXIMUM_LENGTH = 10000;
+        public enum Uniqueness { no, uniqueOverInProgressInstances, uniqueOverAllInstances }
 
         public string Code { get; set; }
         public string SerializedValue { get; set; }
         public string Description { get; set; }
         public string Error { get; set; }
-        public bool Unique { get; set; }
+        public Uniqueness Unique { get; set; }
         public bool Exception { get; set; }
         public bool Notification { get; set; }
         public string NotificationEmail { get; set; }
@@ -30,7 +31,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
         public void Validate(ICheckList checkList, string Code)
         {
-            if (string.IsNullOrWhiteSpace(Description) && (Unique || Exception || Notification))
+            if (string.IsNullOrWhiteSpace(Description) && (Unique != Uniqueness.no || Exception || Notification))
                 throw new Exception($"Unique, exception and notification expressions must have a description");
 
             if (SerializedValue?.Length >= MAXIMUM_LENGTH)
@@ -85,8 +86,8 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                 if ((Exception || Notification) && Root.DataType != DataType.Boolean && Root.DataType != DataType.Date && Root.DataType != DataType.DateTime)
                     throw new Exception($"Exception and notification expressions must be boolean or date or date-time");
 
-                if (Unique && Root.DataType == DataType.Array)
-                    throw new Exception($"Unique exception cannot be arrays");
+                if (Unique != Uniqueness.no && Root.DataType == DataType.Array)
+                    throw new Exception($"Unique expressions cannot be arrays");
 
                 return true;
             }
@@ -105,7 +106,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         public void Evaluate(ICheckList instance, string TimeZone)
         {
             if (Root == null) Parse(instance);
-            var NewValue = Root.GetValue(instance, TimeZone);
+            var NewValue = Root.GetValue(instance, new Dictionary<string, int>(), TimeZone);
             if (
                 Notification
                 && !(Value.IsNull && NewValue.IsNull)

@@ -436,7 +436,7 @@ namespace CheckListManager.Instances.Logic.Services
                             Expression.Value.Value.Type == DataType.Boolean && Expression.Value.Value.BooleanValue
                             || (Expression.Value.Value.Type == DataType.Date || Expression.Value.Value.Type == DataType.DateTime) && Expression.Value.Value.DateTimeValue < DateTimeOffset.UtcNow
                         )
-                        || Expression.Value.Unique && Expression.Value.Value.Type != DataType.Array
+                        || Expression.Value.Unique != Common.Logic.Models.Expressions.Expression.Uniqueness.no && Expression.Value.Value.Type != DataType.Array
                         || Expression.Value.Notification && (Expression.Value.Value.Type != DataType.Boolean || Expression.Value.Value.BooleanValue)
                     )
                 ).Select(e => new InstanceExpressionValues
@@ -448,9 +448,8 @@ namespace CheckListManager.Instances.Logic.Services
                         e.Value.Value.Type == DataType.Boolean ? e.Value.Value.BooleanValue.ToString() :
                         e.Value.Value.Type == DataType.Date || e.Value.Value.Type == DataType.DateTime ? e.Value.Value.DateTimeValue.Format(null) :
                         e.Value.Value.Value.ToString(),
-
                     Exception = e.Value.Exception,
-                    Unique = e.Value.Unique,
+                    Unique = (int)e.Value.Unique,
                     Notification = e.Value.Notification,
                     NotificationEmail = e.Value.Notification ? e.Value.NotificationEmail : null,
                     NotificationNote = e.Value.Notification ? e.Value.NotificationNote : null,

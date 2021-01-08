@@ -30,7 +30,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
                 throw new ArgumentException();
         }
 
-        protected override TypedValue GetValue(ICheckListElement Element, string TimeZone)
+        protected override TypedValue GetValue(ICheckListElement Element, Dictionary<string, int> IterationIndexes, string TimeZone)
         {
             var EditableItem = (ICheckListEditableItem)Element;
             return

@@ -14,12 +14,17 @@
             <input type="text" name="description" autocomplete="off" maxlength="100" />
         </label>
 
-        <label class="Clearing">
+        <label class="Clearing Width300">
             <span>Unique</span>
-            <input type="checkbox" name="unique" />
+            <i class="Icon fal fa-key" />
+            <select name="unique">
+                <option value="0">no</option>
+                <option value="1">unique over in progress instances</option>
+                <option value="2">unique over in instances in any state</option>
+            </select>
         </label>
 
-        <label>
+        <label class="Clearing">
             <span>Exception</span>
             <input type="checkbox" name="exception" />
         </label>

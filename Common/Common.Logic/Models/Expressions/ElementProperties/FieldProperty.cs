@@ -19,7 +19,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
             DataType = ((ICheckListField)Element).ValueType;
         }
 
-        protected override TypedValue GetValue(ICheckListElement Element, string TimeZone)
+        protected override TypedValue GetValue(ICheckListElement Element, Dictionary<string, int> IterationIndexes, string TimeZone)
         {
             var Field = (ICheckListField)Element;
             return new TypedValue(Field.ValueType, Field.Value, Field.LocalTimeZone ? TimeZone : TimeZoneInfo.Utc.Id);

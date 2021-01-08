@@ -161,7 +161,9 @@ namespace CheckListManager.Prototypes.Logic.Services
                 Name = PrototypeVersion.Prototypes.Name,
                 Description = PrototypeVersion.Description,
                 PrototypeType = PrototypeVersion.Prototypes.PrototypeType,
+                PrototypeTypeName = PrototypeVersion.Prototypes.PrototypeTypes.Name,
                 Department = PrototypeVersion.Prototypes.Department,
+                DepartmentName = PrototypeVersion.Prototypes.Departments.Name,
                 InstanceConfirmationWorkFlow = PrototypeVersion.InstanceConfirmationWorkFlow,
 
                 State = VersionState.Draft

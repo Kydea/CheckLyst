@@ -65,12 +65,12 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
             Check(Element, IteratorStack);
         }
 
-        protected abstract TypedValue GetValue(ICheckListElement Element, string TimeZone);
+        protected abstract TypedValue GetValue(ICheckListElement Element, Dictionary<string, int> IterationIndexes, string TimeZone);
 
-        public override TypedValue GetValue(IElementsBranch ElementsBranch, string TimeZone)
+        public override TypedValue GetValue(IElementsBranch ElementsBranch, Dictionary<string, int> IterationIndexes, string TimeZone)
         {
             var Element = ElementsBranch.Elements[Code];
-            return GetValue(Element, TimeZone);
+            return GetValue(Element, IterationIndexes, TimeZone);
         }
 
         public override string ToString()

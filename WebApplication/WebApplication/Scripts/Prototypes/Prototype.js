@@ -239,6 +239,7 @@
             if (currentItemId) { selectByElementId(currentItemId) };
 
             setupActionBar();
+            setupBreadcrumbs();
         },
 
         selectById = function (className, id) {
@@ -531,6 +532,15 @@
                 }
             });
             return true;
+        },
+
+        setupBreadcrumbs = function () {
+            matematici.breadcrumbs.set([
+                { content: model.departmentName || "?", label: "department" },
+                { content: model.prototypeTypeName || "?", label: "prototype type" },
+                { content: (model.name || "?") + "." + (model.version || "?"), label: "code" },
+                { content: model.state, label: "state" }
+            ]);
         },
 
         setup = function () {

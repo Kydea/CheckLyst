@@ -71,6 +71,10 @@
                 expression[this.name] = this.checked;
             });
 
+            $("select", form).each(function () {
+                expression[this.name] = this.value;
+            });
+
             if (!newRecord && expressions[expressionIndex].dependentRelations && expressions[expressionIndex].dependentRelations.length > 0 && code != expressions[expressionIndex].code) {
                 var message = "WARNING: the expression is referenced by " + expressions[expressionIndex].dependentRelations.length + " element(s). If you change the code from '" + expressions[expressionIndex].code + "', the referencing elements will have to be fixed to save the proptotype."
                 matematici.dialog.show("warning", message, [
@@ -109,7 +113,7 @@
             if (prototypes.prototype.getModel().state == prototypes.Prototype.states.draft) {
                 $("input[name=code]", form).keyfilter(/^[$A-Z_0-9]*$/i);
                 form
-                    .on("change", "input, textarea", function () { edited = true; })
+                    .on("change", "input, textarea, select", function () { edited = true; })
                     .on("change", "input[name=notification]", toggleNotification);
             } else
                 $("input, textarea", form).each(function () {
@@ -123,6 +127,10 @@
 
                 $("input[type=checkbox]", form).each(function () {
                     this.checked = this.value = expression[this.name];
+                });
+
+                $("select", form).each(function () {
+                    this.value = expression[this.name];
                 });
             }
 

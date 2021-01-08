@@ -6,6 +6,7 @@ using CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions;
 using CheckListManager.Common.Logic.Models.Expressions.ElementProperties;
 using CheckListManager.Common.Logic.Models.Expressions.LogicOperators;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace CheckListManager.Common.Logic.Models.Expressions
 {
@@ -23,7 +24,17 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             }
         }
 
-        public abstract TypedValue GetValue(IElementsBranch ElementsBranch, string TimeZone);
+        public static List<TypedValue> GetIteratorValues(ICheckListGroup Iterator, Symbol Argument, Dictionary<string, int> IterationIndexes, string TimeZone)
+        {
+            IterationIndexes[Iterator.Code] = 0;
+            return Iterator.Iterations.Where(x => !x.Removed).Select(Iteration => {
+                var Value = Argument.GetValue(Iteration, IterationIndexes, TimeZone);
+                IterationIndexes[Iterator.Code]++;
+                return Value;
+            }).ToList();
+        }
+
+        public abstract TypedValue GetValue(IElementsBranch ElementsBranch, Dictionary<string, int> IterationIndexes, string TimeZone);
         public abstract void BuildDependencies(ICheckList CheckList, Expression Expression);
         public abstract void Check(ICheckList CheckList, Expression Expression, List<string> IteratorStack);
         public override abstract string ToString();

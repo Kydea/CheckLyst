@@ -33,7 +33,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
             return (decimal)Math.Sqrt(Values.Sum(TypedValue => Math.Pow((double)(TypedValue.NumberValue - Avg), 2)) / Values.Count);
         }
 
-        protected override TypedValue GetValue(List<TypedValue> Values)
+        protected override TypedValue GetValue(ICheckListGroup Iterator, List<TypedValue> Values)
         {
             var Result =
                 Values.Any(Value => Value.IsNull) ? default(decimal?) :

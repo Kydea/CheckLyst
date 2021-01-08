@@ -19,7 +19,7 @@ namespace CheckListManager.Common.Data
         public string Value { get; set; }
         public string Description { get; set; }
         public bool Exception { get; set; }
-        public bool Unique { get; set; }
+        public int Unique { get; set; }
         public bool Notification { get; set; }
         public string NotificationNote { get; set; }
         public string NotificationEmail { get; set; }

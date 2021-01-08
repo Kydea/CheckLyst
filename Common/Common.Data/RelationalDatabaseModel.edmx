@@ -15,7 +15,7 @@
           <Property Name="Value" Type="text" Nullable="false" />
           <Property Name="Description" Type="varchar" MaxLength="100" />
           <Property Name="Exception" Type="bool" Nullable="false" />
-          <Property Name="Unique" Type="bool" Nullable="false" />
+          <Property Name="Unique" Type="int4" Nullable="false" />
           <Property Name="Notification" Type="bool" Nullable="false" />
           <Property Name="NotificationNote" Type="varchar" MaxLength="100" />
           <Property Name="NotificationEmail" Type="varchar" MaxLength="100" />
@@ -1769,7 +1769,7 @@
           <NavigationProperty Name="Instances" Relationship="RelationalDatabaseModel.InstanceExpressionValues_Instance_fkey" FromRole="InstanceExpressionValues" ToRole="Instances" />
           <Property Name="Description" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="Exception" Type="Boolean" Nullable="false" />
-          <Property Name="Unique" Type="Boolean" Nullable="false" />
+          <Property Name="Unique" Type="Int32" Nullable="false" />
           <Property Name="Notification" Type="Boolean" Nullable="false" />
           <Property Name="NotificationNote" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="NotificationEmail" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />

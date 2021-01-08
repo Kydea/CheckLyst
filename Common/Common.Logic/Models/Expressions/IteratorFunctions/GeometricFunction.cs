@@ -23,7 +23,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
         {
             base.Check(CheckList, Expression, IteratorStack);
             if (Left.DataType != DataType.Number || Right.DataType != DataType.Number)
-                throw new ParseException("Operand of operator * must be numbers", Position);
+                throw new ParseException($"Operand of functio {Function} must be numbers", Position);
             DataType = DataType.Number;
         }
 
@@ -81,10 +81,5 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
         }
 
         protected override string OperatorName => Function;
-
-        public override string ToString()
-        {
-            return $"{OperatorName} ({Left?.ToString() ?? "#"}, {Right?.ToString() ?? "#"})";
-        }
     }
 }

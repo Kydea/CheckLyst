@@ -24,24 +24,34 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
             if (!(Element is ICheckListGroup Group)) throw new ParseException("The element with code " + IteratorCode + " is not a Group", Position);
             if (!Group.Iterator) throw new ParseException("The group " + IteratorCode + " is not an Iterator", Position);
 
-            IteratorStack.Add(IteratorCode);
-            base.Check(CheckList, Expression, IteratorStack);
-            IteratorStack.RemoveAt(IteratorStack.Count - 1);
+            if (Group.IterationItem)
+            {
+                IteratorStack.Add(IteratorCode);
+                base.Check(CheckList, Expression, IteratorStack);
+                IteratorStack.RemoveAt(IteratorStack.Count - 1);
+            }
+            else
+                base.Check(CheckList, Expression, new List<string> { IteratorCode });
         }
 
         public string IteratorCode { get; set; }
 
         protected abstract TypedValue GetValue(List<TypedValue> LeftValues, List<TypedValue> RigheValues);
 
-        public override TypedValue GetValue(IElementsBranch ElementsBranch, string TimeZone)
+        public override TypedValue GetValue(IElementsBranch ElementsBranch, Dictionary<string, int> IterationIndexes, string TimeZone)
         {
             var Iterator = (ICheckListGroup)ElementsBranch.Elements[IteratorCode];
-            var LeftValues = Iterator.Iterations.Where(x => !x.Removed).Select(Iteration => Left.GetValue(Iteration, TimeZone)).ToList();
-            var RightValues = Iterator.Iterations.Where(x => !x.Removed).Select(Iteration => Right.GetValue(Iteration, TimeZone)).ToList();
-            return 
+            var LeftValues = GetIteratorValues(Iterator, Left, IterationIndexes, TimeZone);
+            var RightValues = GetIteratorValues(Iterator, Right, IterationIndexes, TimeZone);
+            return
                 LeftValues.FirstOrDefault(TypedValue => TypedValue.Type == DataType.Error) ??
                 RightValues.FirstOrDefault(TypedValue => TypedValue.Type == DataType.Error) ??
                 GetValue(LeftValues, RightValues);
+        }
+
+        public override string ToString()
+        {
+            return $"{IteratorCode}.{OperatorName} ({Left?.ToString() ?? "#"}, {Right?.ToString() ?? "#"})";
         }
     }
 }

@@ -1,0 +1,121 @@
+create schema "Documents";
+
+create table "Documents"."DocumentTypes"
+(
+	"ID" bigserial primary key,
+	"Code" varchar (50) not null,
+
+	"Company" bigint references "Infrastructure"."Companies" on delete cascade,
+
+	"CreatedBy" varchar (60),
+	"CreatedOn" timestamptz not null default current_timestamp,
+	"ModifiedBy" varchar (60),
+	"ModifiedOn" timestamptz
+);
+
+create unique index "DocumentTypes_Code" on "Documents"."DocumentTypes" ("Company", upper("Code"));
+
+create table "Documents"."DocumentElementTypes"
+(
+	"Code" varchar(20) primary key
+)
+
+insert into "Documents"."DocumentElementTypes" values ('Tag'), ('Block');
+
+create table "Documents"."DocumentTypeElements"
+(
+	"ID" bigserial primary key,
+	"DocumentType" bigint not null references "Infrastructure"."DocumentTypes",
+	"Description" text not null,
+	"ElementType" varchar (20) references "Documents"."DocumentElementTypes",
+	"Required" boolean not null,
+
+	"Order" bigint not null,
+
+	"CreatedBy" varchar (60),
+	"CreatedOn" timestamptz not null default current_timestamp,
+	"ModifiedBy" varchar (60),
+	"ModifiedOn" timestamptz
+);
+
+create unique index "DocumentTypes_Code" on "Documents"."DocumentTypes" ("Company", upper("Code"));
+
+create table "Documents"."Documents"
+(
+	"ID" bigserial primary key,
+	"DocumentType" bigint not null references "Infrastructure"."DocumentTypes",
+	"Code" varchar (20) not null,
+	"Company" bigint not null references "Infrastructure"."Companies",
+
+	"Title" varchar (100) not null,
+
+	"CreatedBy" varchar (60),
+	"CreatedOn" timestamptz not null default current_timestamp,
+	"ModifiedBy" varchar (60),
+	"ModifiedOn" timestamptz
+);
+
+create unique index "Documents_Code" on "Documents"."Documents" ("Company", "DocumentType", upper("Code"), "Version");
+
+create table "Documents"."DocumentVersions"
+(
+	"Document" bigint references "Infrastructure"."Documents",
+	"Version" int not null,
+
+	constraint PK_DocumentVersions primary key ("Document", "Version"),
+
+	"Title" varchar (100) not null,
+   
+	"CreatedBy" varchar (60),
+	"CreatedOn" timestamptz not null default current_timestamp,
+	"ModifiedBy" varchar (60),
+	"ModifiedOn" timestamptz
+);
+
+create table "Documents"."DocumentElements"
+(
+	"ID" bigserial primary key,
+
+	"Document" bigint not null references "Infrastructure"."Documents",
+	"ElementType" varchar (20) references "Documents"."DocumentElementTypes",
+	"Required" boolean not null,
+
+	"Parent" bigint references "Document"."DocumentElements" on delete cascade,
+	"Level" bigint not null,
+);
+
+create table "Documents"."DocumentElementValues"
+(
+	"ID" bigserial primary key,
+
+	"DocumentElement" bigint not null references "Documents"."DocumentElements" on delete cascade,
+	"DocumentVersion" bigint not null references "Documents"."DocumentVersions",
+
+	"Code" varchar (10) not null,
+	"Order" bigint not null,
+
+	"Title" varchar (100) not null,
+	"Content" text,
+
+	"Deleted" boolean,
+	"ChangeReason" text,
+
+	"CreatedBy" varchar (60),
+	"CreatedOn" timestamptz not null default current_timestamp
+);
+
+alter table "WorkFlows"."WorkFlowApplications" add constraint "WorkFlowApplications_DocumentVersion" foreign key ("Document", "DocumentVersopn") references "Documents"."DocumentVersions" on delete cascade;
+
+--in prototypes mettiamo fk a documents
+
+--search form come da template cartaceo, con tag specifici per tipo documento
+--ui detail simile a prototype con gruppi (sezioni), sottogruppi (sotto-sezioni) e text, 
+--properties e pepertyxxx in cartella a sé
+--proprietà documento: documen type (readonly dopo il primo salva?), versione, tag, proprietà del document type read only
+--proprietà (sotto)gruppi: codice, flag mandatory (bloccato), flag gerarchico (bloccato), page break (default true), history (calcolata dalle righe)
+--proprietà text: codice, history, versione???, page break (default false)
+--codice automatico: {path[,separator]}-{order}
+--nel new release preservare history
+--da capire:
+	--riferimenti incrociati con stesso documento
+	--riferimenti incrociati con altri documenti

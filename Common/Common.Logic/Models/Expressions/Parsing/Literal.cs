@@ -144,6 +144,9 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     case "SignedOn":
                         Symbol = new ElementProperties.SignatureProperty(ElementProperties.SignatureProperty.SIGNED_ON) { Code = Values[0], Position = Position };
                         break;
+                    case "HistoryLength":
+                        Symbol = new ElementProperties.SignatureProperty(ElementProperties.SignatureProperty.HISTORY_LENGTH) { Code = Values[0], Position = Position };
+                        break;
                     case "Value":
                         Symbol = new ElementProperties.FieldProperty { Code = Values[0], Position = Position };
                         break;
@@ -157,7 +160,8 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                         Symbol = new ElementProperties.ValidityElementProperty { Code = Values[0], Position = Position };
                         break;
                     case "Count":
-                        Symbol = new ElementProperties.IteratorProperty { Code = Values[0], Position = Position };
+                    case "IterationIndex":
+                        Symbol = new ElementProperties.IteratorProperty(Values[1]) { Code = Values[0], Position = Position };
                         break;
                     case "Sum":
                     case "Avg":
@@ -172,7 +176,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     case "Intercept":
                         var GeometricFunction = new IteratorFunctions.GeometricFunction(Values[1]) { IteratorCode = Values[0], Position = Position };
                         ParseArgument(ref ExpressionValue, ref Position, 2);
-                        GeometricFunction.Left  = Arguments[0].Symbol;
+                        GeometricFunction.Left = Arguments[0].Symbol;
                         GeometricFunction.Right = Arguments[1].Symbol;
                         Symbol = GeometricFunction;
                         break;
@@ -181,6 +185,13 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                         ParseArgument(ref ExpressionValue, ref Position, 1);
                         Each.Argument = Arguments[0].Symbol;
                         Symbol = Each;
+                        break;
+                    case "IterationValue":
+                        var IterationValue = new IteratorFunctions.IterationValue { IteratorCode = Values[0], Position = Position };
+                        ParseArgument(ref ExpressionValue, ref Position, 2);
+                        IterationValue.Left = Arguments[0].Symbol;
+                        IterationValue.Right = Arguments[1].Symbol;
+                        Symbol = IterationValue;
                         break;
                     default:
                         throw new ParseException("Invalid property: " + Value, Position);

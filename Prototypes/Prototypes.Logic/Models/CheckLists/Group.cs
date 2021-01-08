@@ -51,6 +51,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                     Iterator = false;
                 }
                 Item.PageIndex = PageIndex;
+                Item.IterationItem = Iterator || IterationItem; //the item is contained in an iterator at some level
                 Item.Setup();
             }
         }
@@ -146,6 +147,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public void CreateInstanceIterations() { throw new NotImplementedException(); }
 
         public override string DependencyClassName => "group";
+
         public override string ToString() => $"group {Code ?? Id.ToString()}";
     }
 }
