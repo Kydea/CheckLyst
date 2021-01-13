@@ -18,11 +18,20 @@
             { label: "Time", code: "Time" }
         ],
 
+        defaultValueKeyDown = function (e) {
+            if (model[property] == "Number" && (e.key < "0" || e.key > "9") && e.key != "-" && e.key != localStorage.decimalSeparator)
+                e.preventDefault();
+        },
+
+        defaultValueChange = function () {
+        },
+
         setDefaultValueField = function () {
             if (defaultValue) defaultValue.remove();
 
             defaultValue =
-                true ? $("<input />").attr({ type: "text" }).attr('disabled', options.readOnly) : //gestire input specifici a seconda di model[property]
+                true ?
+                    $("<input />").attr({ type: "text" }).attr('disabled', options.readOnly).keydown(defaultValueKeyDown).change(defaultValueChange) : //gestire input specifici a seconda di model[property]
                     null;
 
             if (setupValues.valueType == model[property]) defaultValue.val(setupValues.defaultValue);
