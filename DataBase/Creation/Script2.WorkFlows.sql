@@ -105,7 +105,7 @@ create table "WorkFlows"."WorkFlowApplicationSteps"
 	"ID" bigserial primary key,
 
 	"WorkFlowApplication" bigint,
-	constraint "WorkFlows_WorkFlowApplication" foreign key ("WorkFlowApplication") references "WorkFlows"."WorkFlowApplications" on delete cascade
+	constraint "WorkFlows_WorkFlowApplication" foreign key ("WorkFlowApplication") references "WorkFlows"."WorkFlowApplications" on delete cascade,
 	"Step" int not null,
 	"Reason" varchar (50) not null,
 

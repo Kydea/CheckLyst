@@ -168,6 +168,7 @@
     <Compile Include="Models\Expressions\ElementProperties\EditableElementProperty.cs" />
     <Compile Include="Models\Expressions\IteratorFunctions\BinaryIteratorFunction.cs" />
     <Compile Include="Models\Expressions\IteratorFunctions\IterationValue.cs" />
+    <Compile Include="Models\Expressions\IteratorFunctions\Ispection.cs" />
     <Compile Include="Models\Expressions\IteratorFunctions\UnaryIteratorFunction.cs" />
     <Compile Include="Models\Expressions\IteratorFunctions\Each.cs" />
     <Compile Include="Models\Expressions\IteratorFunctions\GeometricFunction.cs" />

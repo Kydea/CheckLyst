@@ -47,7 +47,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                                 if (!string.IsNullOrWhiteSpace(Format))
                                 {
                                     Format = Format.Substring(1);
-                                    if (Format.StartsWith("n") && !int.TryParse(Format.Substring(1), out int Number))
+                                    if (Format.StartsWith("n") && int.TryParse(Format.Substring(1), out int Number))
                                         Format = $"0.{new string('0', Number)}";
                                 }
                                 TokenFormats.Add(Format);
@@ -69,17 +69,31 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                 ValueKeys.Select(Key =>
                 {
                     var ExpressionValue = CheckList.GetExpressionValue(Key, IterationIndexes, out var Error);
-                    var Value =
-                        ExpressionValue != null ?
-                            ExpressionValue.Type == DataType.Error ? ErrorValueLeft + ExpressionValue.ErrorValue + ErrorValueRight :
-                            ExpressionValue.IsNull ? NullValue :
-                            ExpressionValue.Type == DataType.Number ? ExpressionValue.NumberValue.ToString(TokenFormats[Index]).Replace(".", DecimalSeparator).Replace(",", DecimalSeparator) :
+
+                    object Value;
+
+                    if (ExpressionValue == null)
+                        Value = RuntimeValues != null && RuntimeValues.ContainsKey(Key) ? RuntimeValues[Key] : $"{ErrorValueLeft}{Error}{ErrorValueRight}";
+                    else if (ExpressionValue.Type == DataType.Error)
+                        Value = ErrorValueLeft + ExpressionValue.ErrorValue + ErrorValueRight;
+                    else if (ExpressionValue.IsNull)
+                        Value = NullValue;
+                    else if (ExpressionValue.Type == DataType.Number)
+                    {
+                        var NumberFormatInfo = new NumberFormatInfo
+                        {
+                            NumberDecimalSeparator = DecimalSeparator,
+                            NumberGroupSeparator = DecimalSeparator == "," ? "." : ","
+                        };
+                        Value = ExpressionValue.NumberValue.ToString(TokenFormats[Index], NumberFormatInfo);
+                    }
+                    else
+                        Value =
                             ExpressionValue.Type == DataType.DateTime ? ExpressionValue.DateTimeValue.ToLocalTime(TimeZone).ToString(TokenFormats[Index] ?? "yyyy-MM-dd HH:mm:ss") :
                             ExpressionValue.Type == DataType.Date ? ExpressionValue.DateTimeValue.ToString(TokenFormats[Index] ?? "yyyy-MM-dd") :
                             ExpressionValue.Type == DataType.Time ? ExpressionValue.TimeSpanValue.ToString(TokenFormats[Index] ?? @"hh\:mm\:ss") :
-                            ExpressionValue.Value :
-                        RuntimeValues?.ContainsKey(Key) ?? false ? RuntimeValues[Key] :
-                        $"{ErrorValueLeft}{Error}{ErrorValueRight}";
+                            ExpressionValue.Value;
+
                     ++Index;
                     return Value;
                 }).ToArray());

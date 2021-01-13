@@ -2,7 +2,7 @@ create schema "Infrastructure";
 
 create table "Infrastructure"."TimeZones"
 (
-    "Code" varchar (100) primary key,
+    "Code" varchar (100) primary key
 );
 
 insert into "Infrastructure"."TimeZones" values 

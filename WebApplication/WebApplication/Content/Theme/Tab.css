@@ -2,7 +2,7 @@
   position: -webkit-sticky;
   position: sticky;
   top: 35px;
-  z-index: 100;
+  z-index: 28;
   background: white;
   transition: height .3s;
   display: none;
@@ -54,11 +54,11 @@
     width: 100%;
     opacity: 0;
     transition: opacity .5s;
-    z-index: 50;
+    z-index: 28;
     padding-right: 20px; }
     div.TabContainer .Tab.Selected {
       opacity: 1;
-      z-index: 51; }
+      z-index: 29; }
 
 div.ShadowPanel div.TabContainer {
   margin-bottom: 20px;

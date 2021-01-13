@@ -171,6 +171,13 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                         Measure.Argument = Arguments[0].Symbol;
                         Symbol = Measure;
                         break;
+                    case "Any":
+                    case "All":
+                        var Ispection = new IteratorFunctions.Ispection(Values[1]) { IteratorCode = Values[0], Position = Position };
+                        ParseArgument(ref ExpressionValue, ref Position, 1);
+                        Ispection.Argument = Arguments[0].Symbol;
+                        Symbol = Ispection;
+                        break;
                     case "Corr":
                     case "Slope":
                     case "Intercept":

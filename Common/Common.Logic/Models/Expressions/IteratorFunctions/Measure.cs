@@ -41,7 +41,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
                 Values.Count == 0 ? default(decimal?) :
                 Property == "Avg" ? Values.Average(TypedValue => TypedValue.NumberValue) :
                 Property == "StDev" ? StDev(Values) :
-                default(decimal?);
+                throw new ArgumentException();
 
             return new TypedValue(DataType.Number, Result);
         }
