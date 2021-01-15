@@ -50,7 +50,7 @@ div.Instance .Element div.Information {
   content: "";
   display: block;
   position: absolute;
-  z-index: 31;
+  z-index: 28;
   top: 10px;
   right: 10px;
   height: 6px;
@@ -109,7 +109,7 @@ div.Instance .Group .Iteration {
   div.Instance .Group .Iteration > .IterationCommands {
     float: right;
     position: relative;
-    z-index: 30; }
+    z-index: 29; }
     div.Instance .Group .Iteration > .IterationCommands a {
       float: left;
       display: block;

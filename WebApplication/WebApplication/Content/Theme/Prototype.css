@@ -6,7 +6,7 @@ div.Prototype a.Add.Button {
 
 div.Prototype div.Commands {
   position: absolute;
-  z-index: 31;
+  z-index: 28;
   right: 0;
   top: 0;
   margin: 20px !important;
