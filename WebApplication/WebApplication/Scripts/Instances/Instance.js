@@ -123,7 +123,6 @@
         },
 
         update = function (result) {
-            matematici.elements.document.scrollTop(0);
             lastResult = result;
             var model = result.checkList;
             versionState = result.versionState || versionState;
@@ -536,6 +535,7 @@
         instanceElementInformation = new instances.ElementInformation(element[0]);
         tab = new matematici.Tab($("div.TabContainer", element)).addHandler(function (item) {
             page.clear();
+            matematici.elements.document.scrollTop(0);
             if (state == instances.Instance.states.draft || state == instances.Instance.states.progress) 
                 new instances.Event(instances.Events.pageChange, item.index).trigger();
             else
