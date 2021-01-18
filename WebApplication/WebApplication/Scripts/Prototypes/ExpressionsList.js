@@ -138,8 +138,6 @@
                 .removeClass("fa-check fa-times fa-question Off")
                 .attr("title", row.error || "")
                 .addClass(row.error ? "fa-times" : "fa-check");
-
-            console.log(row.code, row.unique);
             commands.find(".Unique").toggleClass("Off", row.unique == 0);
             commands.find(".Exception").toggleClass("Off", !row.exception);
             commands.find(".Notification").toggleClass("Off", !row.notification);

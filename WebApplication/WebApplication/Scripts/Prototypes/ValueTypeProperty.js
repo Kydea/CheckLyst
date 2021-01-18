@@ -19,7 +19,7 @@
         ],
 
         defaultValueKeyDown = function (e) {
-            if (model[property] == "Number" && (e.key < "0" || e.key > "9") && e.key != "-" && e.key != localStorage.decimalSeparator)
+            if (model[property] == "Number" && (e.key == "." || e.key == ",") && e.key != localStorage.decimalSeparator)
                 e.preventDefault();
         },
 

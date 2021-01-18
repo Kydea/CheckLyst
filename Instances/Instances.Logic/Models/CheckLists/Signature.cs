@@ -117,6 +117,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 Signed = true;
                 SignedBy = UserCode;
                 ModifiedOn = SignedOn = DateTimeOffset.UtcNow;
+                History.Add(new SignatureRecord ()); 
 
                 UpdateChain(Instance, DependencyRelation.Properties.Signature);
 
@@ -133,6 +134,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             {
                 Signed = false;
                 SignedBy = null;
+                History.RemoveAt(History.Count - 1);
                 Instance.NeedToSaveExpressionValues = false; //reverts the flag in case of notification expressions changed to true
             }
         }
