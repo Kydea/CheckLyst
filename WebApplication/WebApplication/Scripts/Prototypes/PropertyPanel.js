@@ -140,10 +140,12 @@
                 siblings = !!parent && parent.getChildren(),
                 itemIndex = item.getIndex();
 
-            properties.push(new prototypes.Property(
-                this, new prototypes.BooleanProperty(model, "pageBreak", state != prototypes.Prototype.states.draft, model.typeName == "Page"), "Page break",
-                "Forces a page break in the pdf version of the checklist before the element."
-            ));
+            console.log(model);
+            if (model.typeName != "Group" || model.pageIndex != null) //header excluded
+                properties.push(new prototypes.Property(
+                    this, new prototypes.BooleanProperty(model, "pageBreak", state != prototypes.Prototype.states.draft, model.typeName == "Page"), "Page break",
+                    "Forces a page break in the pdf version of the checklist before the element."
+                ));
 
             properties.push(new prototypes.Property(
                 this, new prototypes.SimpleValueProperty(model, "code", {
