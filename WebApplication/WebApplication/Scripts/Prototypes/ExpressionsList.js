@@ -106,11 +106,11 @@
                 .append($("<td />").addClass("DescriptionColumn"))
                 .append($("<td />").addClass("DataTypeColumn"))
                 .append($("<td />").addClass("Centered")
-                    .append($("<i />").addClass("Valid fal"))
-                    .append($("<i />").attr("title", "Unique").addClass("Unique fal fa-key"))
-                    .append($("<i />").attr("title", "Exception").addClass("Exception fal fa-exclamation"))
-                    .append($("<i />").attr("title", "Notification").addClass("Notification fal fa-bell"))
-                );
+                .append($("<i />").addClass("Valid fal"))
+                .append($("<i />").attr("title", "Unique").addClass("Unique fal fa-key"))
+                .append($("<i />").attr("title", "Exception").addClass("Exception fal fa-exclamation"))
+                .append($("<i />").attr("title", "Notification").addClass("Notification fal fa-bell"))
+            );
 
             if (index == null) {
                 list.push(row);
@@ -139,7 +139,8 @@
                 .attr("title", row.error || "")
                 .addClass(row.error ? "fa-times" : "fa-check");
 
-            commands.find(".Unique").toggleClass("Off", !row.unique);
+            console.log(row.code, row.unique);
+            commands.find(".Unique").toggleClass("Off", row.unique == 0);
             commands.find(".Exception").toggleClass("Off", !row.exception);
             commands.find(".Notification").toggleClass("Off", !row.notification);
         },

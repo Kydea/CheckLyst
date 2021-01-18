@@ -250,11 +250,13 @@ begin
 		inner join "CheckLists"."InstanceExpressionValues" iev2 on i2."ID" = iev2."Instance" and iev1."Code" = iev2."Code" and iev1."Value" = iev2."Value"
 	where
 		i1."ID" = _Instance
+		and i2."InstanceState" <> 'Deleted'
+		and (i1."Year" = 0 or i2."Year" <> 0) --exclude the old simulation evidences if the simulation phase is over
 		and (iev1."Unique" = 2 or i2."InstanceState" = 'In progress')
 	limit 1;
 	
 	if not _Year is null then
-		raise 'The value % for the expression % has been found in the in progress instance % - %', _Value, _Code, _Year, _Number;
+		raise 'The value % for the expression % has been found in the instance %.%', _Value, _Code, _Year, _Number;
 	end if;
 																	   
 	return 0;

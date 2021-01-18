@@ -116,7 +116,7 @@
                     .on("change", "input, textarea, select", function () { edited = true; })
                     .on("change", "input[name=notification]", toggleNotification);
             } else
-                $("input, textarea", form).each(function () {
+                $("input, textarea, select", form).each(function () {
                     matematici.controls.setEditable($(this), false);
                 });
 
