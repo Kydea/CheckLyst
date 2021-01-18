@@ -163,7 +163,7 @@
                         }
                     });
 
-                $("document, html").animate({ scrollTop: 0 }, 500, function () {
+                $("document, html").animate({ scrollTop: 0 }, 300, function () {
                     matematici.events.onPageUnload(function () {
 
                         if (landing)

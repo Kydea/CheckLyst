@@ -534,12 +534,19 @@
     instance.initialize = function () {
         instanceElementInformation = new instances.ElementInformation(element[0]);
         tab = new matematici.Tab($("div.TabContainer", element)).addHandler(function (item) {
-            page.clear();
-            matematici.elements.document.scrollTop(0);
-            if (state == instances.Instance.states.draft || state == instances.Instance.states.progress) 
-                new instances.Event(instances.Events.pageChange, item.index).trigger();
-            else
-                update(lastResult);
+            var
+                scroll = matematici.elements.document.scrollTop(),
+                pageIndex = page.getPageIndex(),
+                top = page.getElement().offsetTop + 110;
+            if (item.index == pageIndex && scroll > top)
+                $("document, html").animate({ scrollTop: top }, 300);
+            else {
+                page.clear();
+                if (state == instances.Instance.states.draft || state == instances.Instance.states.progress)
+                    new instances.Event(instances.Events.pageChange, item.index).trigger();
+                else
+                    update(lastResult);
+            }
         });
         load();
     };
