@@ -16,7 +16,8 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         public string Code { get; set; }
         public string SerializedValue { get; set; }
         public string Description { get; set; }
-        public string Error { get; set; }
+        private string _Error;
+        public string Error { get => _Error; set { _Error = value; if (value != null) Root = null; } }
         public Uniqueness Unique { get; set; }
         public bool Exception { get; set; }
         public bool Notification { get; set; }

@@ -131,13 +131,15 @@
                 cells = $("td", getRow(index)),
                 commands = cells.last();
 
+            console.log(row);
+
             cells.filter(".CodeColumn").text(row.code).attr("title", row.serializedValue);
             cells.filter(".DescriptionColumn").text(row.description).attr("title", row.serializedValue);
             cells.filter(".DataTypeColumn").text(row.dataType && row.dataType.typeName).attr("title", row.serializedValue);
             commands.find(".Valid")
                 .removeClass("fa-check fa-times fa-question Off")
-                .attr("title", row.error || "")
-                .addClass(row.error ? "fa-times" : "fa-check");
+                .attr("title", row.dataType == null || row.dataType.typeName == null ? "The expression could not be evaluated" : row.error)
+                .addClass(row.dataType == null || row.dataType.typeName == null ? "fa-question" : row.error ? "fa-times" : "fa-check");
             commands.find(".Unique").toggleClass("Off", row.unique == 0);
             commands.find(".Exception").toggleClass("Off", !row.exception);
             commands.find(".Notification").toggleClass("Off", !row.notification);
@@ -167,7 +169,7 @@
                     cells.find("i.Valid")
                         .removeClass("fa-check fa-times fa-question Off")
                         .attr("title", error || "")
-                        .addClass(error == null ? "fa-check" : "fa-times");
+                        .addClass(row.dataType == null || row.dataType.typeName == null ? "fa-question" : error == null ? "fa-check" : "fa-times");
 
                     cells.find(".DataTypeColumn").text(row.dataType.typeName);
                 }

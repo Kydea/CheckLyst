@@ -172,7 +172,7 @@
                             expression = model.expressions[index],
                             newExpression = newModel.expressions[index];
                         expression.dataType = newExpression.dataType;
-                        expression.error = newExpression.error || (newExpression.dataType && newExpression.dataType.typeName ? null : "the expression could not be evaluated");
+                        expression.error = newExpression.error;
                         if (expression.error) invalid = true;
                         updateDependencies(expression, newExpression);
                     }
