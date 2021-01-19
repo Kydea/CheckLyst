@@ -140,7 +140,6 @@
                 siblings = !!parent && parent.getChildren(),
                 itemIndex = item.getIndex();
 
-            console.log(model);
             if (model.typeName != "Group" || model.pageIndex != null) //header excluded
                 properties.push(new prototypes.Property(
                     this, new prototypes.BooleanProperty(model, "pageBreak", state != prototypes.Prototype.states.draft, model.typeName == "Page"), "Page break",

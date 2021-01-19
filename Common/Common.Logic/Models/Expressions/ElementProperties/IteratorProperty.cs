@@ -32,7 +32,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
             var Iterator = (ICheckListGroup)Element;
             return
                 Property == "Count" ? new TypedValue(DataType.Number, (decimal)Iterator.Iterations.Where(x => !x.Removed).Count()) :
-                Property == "IterationIndex" ? new TypedValue(DataType.Number, (decimal)IterationIndexes[Iterator.Code]) :
+                Property == "IterationIndex" ? new TypedValue(DataType.Number, (decimal)IterationIndexes[Iterator.Code] + 1) :
                 throw new ArgumentException();
         }
 

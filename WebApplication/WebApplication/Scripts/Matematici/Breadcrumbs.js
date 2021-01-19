@@ -26,8 +26,9 @@
 		}
 
 		if (fixedElement) fixedElement.remove();
-		fixedElement = element.clone().addClass("Fixed").insertBefore(element);
-		fixedElement.toggleClass("Visible", false);
+        fixedElement = element.clone().addClass("Fixed").insertBefore(element);
+        onScroll();
+		//fixedElement.toggleClass("Visible", false);
 	}
 
 	setup();

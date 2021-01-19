@@ -26,10 +26,11 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
         public static List<TypedValue> GetIteratorValues(ICheckListGroup Iterator, Symbol Argument, Dictionary<string, int> IterationIndexes, string TimeZone)
         {
-            IterationIndexes[Iterator.Code] = 0;
+            var NewIterationIndexes = new Dictionary<string, int>(IterationIndexes); //creates a clone, because Irerator.Code is contextual and expires at the end of the evaluation
+            NewIterationIndexes[Iterator.Code] = 0;
             return Iterator.Iterations.Where(x => !x.Removed).Select(Iteration => {
-                var Value = Argument.GetValue(Iteration, IterationIndexes, TimeZone);
-                IterationIndexes[Iterator.Code]++;
+                var Value = Argument.GetValue(Iteration, NewIterationIndexes, TimeZone);
+                NewIterationIndexes[Iterator.Code]++;
                 return Value;
             }).ToList();
         }

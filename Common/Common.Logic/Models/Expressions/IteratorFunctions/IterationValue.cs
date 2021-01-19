@@ -17,10 +17,10 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
 
             Left.Check(CheckList, Expression, IteratorStack);
 
-            //extracts the peace where the iteration is
             var IteratorIndex = IteratorStack.IndexOf(IteratorCode);
-            var NewIteratorkStack = IteratorStack.GetRange(0, IteratorIndex + 1);
-            Right.Check(CheckList, Expression, NewIteratorkStack);
+            IteratorStack.Add(IteratorCode);
+            Right.Check(CheckList, Expression, IteratorStack);
+            IteratorStack.RemoveAt(IteratorStack.Count - 1);
 
             if (Left.DataType != DataType.Number)
                 throw new ParseException("The first operand of the function IterationValue must be a number", Position);
@@ -34,10 +34,9 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
             var Iterator = (ICheckListGroup)ElementsBranch.Elements[IteratorCode];
             var LeftValue = Left.GetValue(ElementsBranch, IterationIndexes, TimeZone);
             if (LeftValue.Type == DataType.Error || LeftValue.IsNull) return LeftValue;
-            var Index = LeftValue.NumberValue;
+            var Index = LeftValue.NumberValue - 1;
 
-            //the second arguments create a new iterator context
-            var RightValues = GetIteratorValues(Iterator, Right, new Dictionary<string, int>(), TimeZone);
+            var RightValues = GetIteratorValues(Iterator, Right, IterationIndexes, TimeZone);
             return
                 Math.Truncate(Index) != Index || Index < 0 || Index >= RightValues.Count ? new TypedValue(DataType.Number, null) :
                 RightValues[(int)Index];
