@@ -168,7 +168,7 @@
                                     var
                                         code = list[currentIndex].code,
                                         model = prototypes.prototype.getModel().externalSourceDependencyNodes[code];
-                                    matematici.dependenciesDialog.show("Source " + code, model.dependingRelations, model.dependentRelations);
+                                    matematici.dependenciesDialog.show("Source " + code, model && model.dependingRelations, model && model.dependentRelations);
                                 };
                             prototypes.prototype.verify(handler);
                         }).hide());
