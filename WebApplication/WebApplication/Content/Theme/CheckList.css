@@ -19,7 +19,7 @@ div.CheckList .HeaderContainer {
   div.CheckList .HeaderContainer div.Group {
     background-color: white; }
 
-div.CheckList span.Error i.fa {
+div.CheckList span.Error i.fa, div.CheckList span.Error i.fal, div.CheckList span.Error i.fas {
   color: #cc0000; }
 
 div.CheckList span.Null {
