@@ -32,7 +32,8 @@ div.Dialog {
           margin-left: 0; }
       div.Dialog div.Container div.Buttons textarea {
         min-height: 60px;
-        resize: vertical; }
+        resize: vertical;
+        padding-top: 10px; }
       div.Dialog div.Container div.Buttons::after {
         content: "";
         visibility: hidden;

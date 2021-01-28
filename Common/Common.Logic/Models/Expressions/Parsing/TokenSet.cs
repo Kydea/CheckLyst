@@ -24,7 +24,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
             {
                 Token Token = null;
                 var Character = ExpressionString[Caret];
-                if (Char.IsWhiteSpace(Character))
+                if (char.IsWhiteSpace(Character))
                     Caret++;
                 else if (Character == '(')
                     Add(Token = ParseParenteses(ref ExpressionValue, ref Caret, '(', ')'));

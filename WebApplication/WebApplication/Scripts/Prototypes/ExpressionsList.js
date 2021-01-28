@@ -131,8 +131,6 @@
                 cells = $("td", getRow(index)),
                 commands = cells.last();
 
-            console.log(row);
-
             cells.filter(".CodeColumn").text(row.code).attr("title", row.serializedValue);
             cells.filter(".DescriptionColumn").text(row.description).attr("title", row.serializedValue);
             cells.filter(".DataTypeColumn").text(row.dataType && row.dataType.typeName).attr("title", row.serializedValue);

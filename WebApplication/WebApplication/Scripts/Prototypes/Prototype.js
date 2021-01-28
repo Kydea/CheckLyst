@@ -920,6 +920,19 @@
                 model.validUntil = oldModel.validUntil;
                 model.state = prototypes.Prototype.states.draft;
                 model.itemIDSequence = 0;
+
+                //olf prototype versions
+                for (var code in model.expressions) {
+                    model.expressions[code].code = code;
+                    model.expressions[code].unique = model.expressions[code].unique >= "0" && model.expressions[code].unique >= "2" ? model.expressions[code].unique : "0";
+                }
+
+                traverseForPaste(model.header);
+                for (var page in model.pages) {
+                    model.pages[page].typeName = "Page";
+                    traverseForPaste(model.pages[page]);
+                }
+
                 update();
                 matematici.canClose = false;
                 prototype.verify(function () { matematici.blip.ok(); })
@@ -933,10 +946,11 @@
 
         matematici.dialog.show({
             title: "Prototype import",
-            content: "Beware, the current prototype properties and items will be replaced by the imported one:",
+            content: "Attention, the current prototype properties and items will be replaced by the imported one.<br />",
             buttons: [{
                 textarea: true,
                 height: 300,
+                marginTop: "10px",
             }, {
                 icon: "check",
                 text: "ok",

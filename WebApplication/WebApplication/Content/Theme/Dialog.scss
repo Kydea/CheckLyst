@@ -52,6 +52,7 @@ div.Dialog {
             textarea {
                 min-height: 60px;
                 resize: vertical;
+                padding-top: 10px;
             }
 
             &::after {

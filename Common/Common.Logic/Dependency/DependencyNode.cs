@@ -35,6 +35,7 @@ namespace CheckListManager.Common.Logic.Dependency
         }
 
         protected HashSet<DependencyRelation.Properties> NeedToUpdate { get; } = new HashSet<DependencyRelation.Properties>();
+        protected HashSet<DependencyRelation.Properties> Checked { get; } = new HashSet<DependencyRelation.Properties>();
 
         public abstract bool Update(DependencyRelation.Properties Property);
 
@@ -51,7 +52,6 @@ namespace CheckListManager.Common.Logic.Dependency
                     DependentRelation.GetNode(CheckList).MarkNodeAsChanged(CheckList, Roots, DependentRelation.DestinationProperty);
             else
                 Roots.Add(new Tuple<DependencyNode, DependencyRelation.Properties>(this, Property));
-
         }
 
         private HashSet<DependencyRelation.Properties> DependencyChainTouchedProcesses = new HashSet<DependencyRelation.Properties>();
@@ -61,8 +61,15 @@ namespace CheckListManager.Common.Logic.Dependency
             => TraverseDependencyChain(CheckList, Property, new Stack<Tuple<DependencyNode, DependencyRelation.Properties>>(), true);
         private bool TraverseDependencyChain(ICheckList CheckList, DependencyRelation.Properties Property, Stack<Tuple<DependencyNode, DependencyRelation.Properties>> DependencyChain, bool TestCycles)
         {
-            if (!TestCycles)
-            { 
+            if (TestCycles)
+            {
+                //checks the cycle just once
+                if (Checked.Contains(Property)) return true;
+                Checked.Add(Property);
+            }
+            else
+            {
+                //process only the updated properties
                 if (!NeedToUpdate.Contains(Property)) return true;
                 NeedToUpdate.Remove(Property);
             }
