@@ -373,6 +373,18 @@
                 element.cloned = true;
         },
 
+        traverseForImport = function (element) {
+            element.id = getNewItemsId();
+            if (element.typeName == "Page")
+                for (var index in element.groups)
+                    traverseForImport(element.groups[index]);
+            else if (element.typeName == "Group")
+                for (var index in element.items)
+                    traverseForImport(element.items[index]);
+            else if (element.typeName == "Image")
+                element.cloned = true;
+        },
+
         findItem = function (element, itemId, pageIndex, result) {
             if (element.id == itemId) {
                 result.page = pageIndex;
@@ -921,16 +933,18 @@
                 model.state = prototypes.Prototype.states.draft;
                 model.itemIDSequence = 0;
 
-                //olf prototype versions
+                //prototype from versions < 2.2
                 for (var code in model.expressions) {
-                    model.expressions[code].code = code;
-                    model.expressions[code].unique = model.expressions[code].unique >= "0" && model.expressions[code].unique >= "2" ? model.expressions[code].unique : "0";
+                    var expression = model.expressions[code];
+                    if (code == "h_SAP_Issued_quantity") console.log(expression)
+                    expression.code = code;
+                    expression.unique = expression.unique >= "0" && expression.unique >= "2" ? expression.unique : "0";
                 }
 
-                traverseForPaste(model.header);
+                traverseForImport(model.header);
                 for (var page in model.pages) {
                     model.pages[page].typeName = "Page";
-                    traverseForPaste(model.pages[page]);
+                    traverseForImport(model.pages[page]);
                 }
 
                 update();
