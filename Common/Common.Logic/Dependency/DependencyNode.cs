@@ -61,13 +61,7 @@ namespace CheckListManager.Common.Logic.Dependency
             => TraverseDependencyChain(CheckList, Property, new Stack<Tuple<DependencyNode, DependencyRelation.Properties>>(), true);
         private bool TraverseDependencyChain(ICheckList CheckList, DependencyRelation.Properties Property, Stack<Tuple<DependencyNode, DependencyRelation.Properties>> DependencyChain, bool TestCycles)
         {
-            if (TestCycles)
-            {
-                //checks the cycle just once
-                if (Checked.Contains(Property)) return true;
-                Checked.Add(Property);
-            }
-            else
+            if (!TestCycles)
             {
                 //process only the updated properties
                 if (!NeedToUpdate.Contains(Property)) return true;
@@ -83,6 +77,10 @@ namespace CheckListManager.Common.Logic.Dependency
                     if (DependencyChainTouchedProcesses.Contains(Property))
                         throw new Exception($"Dependency cycle found: {string.Join("> ", DependencyChain.Reverse().Select(x => $"{DependencyRelation.GetPropertyDescription(x.Item2)} of {x.Item1.DependencyClassName} {x.Item1.DependencyObjectCode ?? x.Item1.DependencyObjectID?.ToString()} "))}");
                     DependencyChainTouchedProcesses.Add(Property);
+
+                    //checks the cycle just once per node
+                    if (Checked.Contains(Property)) return true;
+                    Checked.Add(Property);
                 }
 
                 foreach (var DependingRelation in DependingRelations.Where(n => n.SourceProperty == Property))
