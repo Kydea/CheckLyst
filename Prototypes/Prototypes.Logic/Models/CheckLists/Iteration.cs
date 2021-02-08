@@ -1,4 +1,5 @@
 ﻿using CheckListManager.Common.Logic.Models.CheckLists;
+using CheckListManager.Common.Logic.Models.Expressions;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,10 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public int Index { get; set; }
 
         [JsonIgnore]
-        public List<int> Indexes { get; set; } 
+        public List<int> Indexes { get; set; }
+
+        [JsonIgnore]
+        public TypedValue ReccurencyValue { get; set; }
 
         public override void Setup()
         {

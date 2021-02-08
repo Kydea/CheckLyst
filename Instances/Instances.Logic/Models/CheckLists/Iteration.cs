@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.CheckLists;
+using CheckListManager.Common.Logic.Models.Expressions;
 using Newtonsoft.Json;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
@@ -16,6 +17,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         [JsonIgnore]
         public List<int> Indexes { get; set; } = new List<int>();
+
+        [JsonIgnore]
+        public TypedValue ReccurencyValue { get; set; }
 
         private void AddAvailableSubItem(ICheckListGroup Group)
         {

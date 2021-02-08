@@ -200,6 +200,13 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                         IterationValue.Right = Arguments[1].Symbol;
                         Symbol = IterationValue;
                         break;
+                    case "RecurrenceTerm":
+                        var RecurrenceTerm = new IteratorFunctions.RecurrenceTerm { IteratorCode = Values[0], Position = Position };
+                        ParseArgument(ref ExpressionValue, ref Position, 2);
+                        RecurrenceTerm.Left = Arguments[0].Symbol;
+                        RecurrenceTerm.Right = Arguments[1].Symbol;
+                        Symbol = RecurrenceTerm;
+                        break;
                     default:
                         throw new ParseException("Invalid property: " + Value, Position);
                 }

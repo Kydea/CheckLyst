@@ -167,6 +167,7 @@
     <Compile Include="Models\Expressions\ElementProperties\IteratorProperty.cs" />
     <Compile Include="Models\Expressions\ElementProperties\EditableElementProperty.cs" />
     <Compile Include="Models\Expressions\IteratorFunctions\BinaryIteratorFunction.cs" />
+    <Compile Include="Models\Expressions\IteratorFunctions\RecurrenceTerm.cs" />
     <Compile Include="Models\Expressions\IteratorFunctions\IterationValue.cs" />
     <Compile Include="Models\Expressions\IteratorFunctions\Ispection.cs" />
     <Compile Include="Models\Expressions\IteratorFunctions\UnaryIteratorFunction.cs" />

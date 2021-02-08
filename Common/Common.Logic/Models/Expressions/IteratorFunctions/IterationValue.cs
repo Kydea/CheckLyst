@@ -17,7 +17,6 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
 
             Left.Check(CheckList, Expression, IteratorStack);
 
-            var IteratorIndex = IteratorStack.IndexOf(IteratorCode);
             IteratorStack.Add(IteratorCode);
             Right.Check(CheckList, Expression, IteratorStack);
             IteratorStack.RemoveAt(IteratorStack.Count - 1);
