@@ -3,6 +3,13 @@ alter table "CheckLists"."InstanceExpressionValues" alter "Unique" type int usin
 
 --Script3.CheckLists.sql > create or replace function "CheckLists"."ValidateUniqueExpressions"...
 
+
+
+
+
+
+--RICONTROLLARE DA QUI IN POI
+
 --Script8.Documents.sql
 
 alter table "WorkFlows"."WorkFlowApplications" add "Document" bigint;
