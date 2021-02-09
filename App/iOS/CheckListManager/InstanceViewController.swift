@@ -293,7 +293,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     
     @IBAction func goBackToSearchInstances(_ sender: Any) {
         self.closeInstance()
-        webView.configuration.userContentController.removeScriptMessageHandler(forName: "instances")
+        self.cleanWebViewController()
         self.performSegue(withIdentifier: "goBackSearchInstances", sender: self)
     }
     
@@ -321,6 +321,14 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     @objc func dismissKeyboard() {
         self.view.endEditing(true)
         
+    }
+    
+    func cleanWebViewController() {
+        webView.configuration.userContentController.removeScriptMessageHandler(forName: "instances")
+        webView.uiDelegate = nil
+        webView.navigationDelegate = nil
+        documentInteractionController.delegate = nil
+        webView.load(URLRequest(url: URL(string: "about:blank")!))
     }
     
     func documentInteractionControllerViewControllerForPreview(_ controller: UIDocumentInteractionController) -> UIViewController {
