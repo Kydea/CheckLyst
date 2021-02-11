@@ -17,6 +17,10 @@ class Formatter: NSObject {
     
     fileprivate let dateToDateTimeFormatter : DateFormatter
     
+    fileprivate let testDateFormatter : DateFormatter
+    
+    fileprivate let testTimeFormatter : DateFormatter
+    
     fileprivate let dateToTimeFormatter : DateFormatter
     
     fileprivate let stringToDateFormatter : DateFormatter
@@ -40,6 +44,10 @@ class Formatter: NSObject {
         
         self.instanceDateTimeFormatter = DateFormatter()
         
+        self.testDateFormatter = DateFormatter()
+        
+        self.testTimeFormatter = DateFormatter()
+        
         self.dateToDateTimeFormatter.dateFormat = "EEE, dd MMM yyyy HH:mm:ss zzz"
         self.dateToDateTimeFormatter.locale = Locale(identifier: "en_US")
         self.dateToTimeFormatter.dateFormat = "HH:mm"
@@ -50,6 +58,10 @@ class Formatter: NSObject {
         self.infoTSFormatter.dateFormat = "yyyy-MM-dd HH:mm"
         
         self.instanceDateTimeFormatter.dateFormat = "yyyy-MM-dd HH:mm"
+        
+        self.testDateFormatter.dateFormat = "dd-MM-yyyy HH:mm:ss.SSS"
+        
+        self.testTimeFormatter.dateFormat = "HH:mm:ss"
         
     }
     
@@ -65,8 +77,12 @@ class Formatter: NSObject {
         return self.dateToDateTimeFormatter.date(from: date)!
     }
     
-    
-    
+    func stringFromTestDate(_ date: Date, timeOnly: Bool = false) -> String {
+        if (timeOnly) {
+            return self.testTimeFormatter.string(from: date)
+        }
+        return self.testDateFormatter.string(from: date)
+    }
     
     func dateToTimeString(_ date: Date) -> String {
         

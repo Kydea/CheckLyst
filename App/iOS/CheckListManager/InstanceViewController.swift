@@ -27,6 +27,8 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     let supportedProtocols : Set = [ "http", "https", "mailto" ]
     var isInstanceClosed : Bool = false
     var scanButton : UIBarButtonItem?
+    var creationTime: Date?
+    var currentAccessToken: String?
     
     
     @IBOutlet weak var webView: WKWebView!
@@ -37,6 +39,9 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     override func viewDidLoad()
     {
         super.viewDidLoad()
+        creationTime = Date()
+        currentAccessToken = (UserDefaults.standard.value(forKey: "access_token") as! String)
+        self.appDelegate.currentWebViewCreationTime = creationTime
         let infoBarButtonItem = SharedControllersProperty.instance.setInfoButton()
         self.navigationItem.rightBarButtonItem = infoBarButtonItem
         documentInteractionController.delegate = self
@@ -93,7 +98,6 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         tap.delegate = self
         self.view.addGestureRecognizer(tap)
         
-        
         scanButton = UIBarButtonItem(barButtonSystemItem: .camera, target: self, action: #selector(scanItem(_:)))
         
         self.contentView!.inputAssistantItem.trailingBarButtonGroups = [UIBarButtonItemGroup(barButtonItems: [scanButton!], representativeItem: nil)] as! [UIBarButtonItemGroup]
@@ -149,7 +153,8 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     }
     
     func closeInstance() {
-        self.webView.evaluateJavaScript("instances.instance.close(function(){})", completionHandler: nil)
+        self.webView.evaluateJavaScript("instances.instance.close(function(){})")
+        self.cleanWebViewController()
         isInstanceClosed = true
     }
     
@@ -157,6 +162,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         if message.name == "instances", let messageBody = message.body as? String {
             if messageBody.hasPrefix("quit") {
+                self.cleanWebViewController()
                 self.appDelegate.goBackToList()
             } else if messageBody.hasPrefix("file") {
                 activityIndicator.startAnimating()
@@ -205,7 +211,11 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
             if let value = response as? String {
                 if(value.contains("Security/Login")) {
                     webView.isHidden = true
-                    self.appDelegate.logoutAndGoToLogin()
+                    let message = String(format: "Current WKWebView creationTime: %@\nLogout WKWebView creationTime: %@\nCurrent accessToken: %@\nLogout WKWebView accessToken: %@\n", Formatter.instance.stringFromTestDate( self.appDelegate.currentWebViewCreationTime!), Formatter.instance.stringFromTestDate(self.creationTime!), (UserDefaults.standard.value(forKey: "access_token") as? String) ?? "nil", self.currentAccessToken ?? "nil")
+                    try? message.write(to: FileManager.default.getDocumentsDirectory().appendingPathComponent("error.log"), atomically: true, encoding: .utf8)
+                    self.appDelegate.displayMessage(Title: "Security Error", Message: message) { [weak self] in
+                        self?.appDelegate.logoutAndGoToLogin()
+                    }
                 }
             }
         }
@@ -244,16 +254,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     }
     
     func refreshTokensByJSInjection(accessToken : String, refreshToken : String) {
-        webView.evaluateJavaScript("matematici.tokenManager.setTokens(\"\(accessToken)\",\"\(refreshToken)\")") /*{
-            (response, error) -> Void in
-            if let res = response {
-                print(res)
-            } else if let err = error {
-                print(err)
-            } else {
-                print("Unexpected situation")
-            }
-        }*/
+        webView.evaluateJavaScript("matematici.tokenManager.setTokens(\"\(accessToken)\",\"\(refreshToken)\")")
     }
     
     func setValueForInputField(_ value : String) {
@@ -292,9 +293,10 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     
     
     @IBAction func goBackToSearchInstances(_ sender: Any) {
+       
         self.closeInstance()
-        self.cleanWebViewController()
         self.performSegue(withIdentifier: "goBackSearchInstances", sender: self)
+       
     }
     
     @objc func keyboardWillShow(_ notification: Notification) {
