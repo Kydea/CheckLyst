@@ -26,4 +26,9 @@ extension FileManager {
     func getFileModificationDate(atPath path : String) -> Date? {
         return getAttribute(FileAttributeKey.modificationDate, fromFile: path) as? Date
     }
+    
+    func getDocumentsDirectory() -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        return paths[0]
+    }
 }

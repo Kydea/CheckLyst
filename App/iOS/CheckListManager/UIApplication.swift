@@ -18,15 +18,19 @@ import CoreData
     var isWarningPresented = false
     let timeBeforeTokenExpires = 120.0 /* 2 minutes */
     var isRefreshing = false
+    var isInactivityCatched = false
     var requestToOpenInstance = false
     var needToUpdateTokens = false
     
     var timer : Timer?
     var inactivityTimer : Timer?
+    var inactivityStartingTime : Date?
     
     let defaultInactivityTime = 900.0 /* 15 minutes */
     
     var requestedUrlInfo : Dictionary<String, String>?
+    
+    var currentWebViewCreationTime: Date?
     
     var inactivityInterval : TimeInterval {
         return (UserDefaults.standard.value(forKey: "inactivityTimeoutSeconds") as? Double) ?? defaultInactivityTime
@@ -308,11 +312,12 @@ import CoreData
     func refreshInactivityTimer(timeToExpireActivity: Double) {
         let logged = NSString(string:UserDefaults.standard.string(forKey: "logged")!).boolValue
         
-        if(logged){
+        if(logged && !isInactivityCatched){
             if let timer = inactivityTimer {
                 timer.invalidate()
             }
             inactivityTimer = Timer.scheduledTimer(timeInterval: timeToExpireActivity, target: UIApplication.shared, selector: #selector(MyApplication.inactivityHasDetected), userInfo: nil, repeats: true)
+            inactivityStartingTime = Date()
         }
     }
     
@@ -320,8 +325,12 @@ import CoreData
         if let timer = inactivityTimer {
             timer.invalidate()
         }
-        
-        self.logoutAndGoToLogin()
+        isInactivityCatched = true
+        let message = String(format: "No activity detected since %@", Formatter.instance.stringFromTestDate(inactivityStartingTime!, timeOnly: true))
+        self.displayMessage(Title: "Inactivity", Message: message) {
+            self.logoutAndGoToLogin()
+            self.isInactivityCatched = false
+        }
     }
     
     func goBackGround(){
