@@ -327,9 +327,9 @@ import CoreData
         }
         isInactivityCatched = true
         let message = String(format: "No activity detected since %@", Formatter.instance.stringFromTestDate(inactivityStartingTime!, timeOnly: true))
-        self.displayMessage(Title: "Inactivity", Message: message) {
-            self.logoutAndGoToLogin()
-            self.isInactivityCatched = false
+        self.displayMessage(Title: "Inactivity", Message: message) { [weak self] in
+            self?.logoutAndGoToLogin()
+            self?.isInactivityCatched = false
         }
     }
     

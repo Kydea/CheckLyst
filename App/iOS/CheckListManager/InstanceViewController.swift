@@ -153,7 +153,8 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     }
     
     func closeInstance() {
-        self.webView.evaluateJavaScript("instances.instance.close(function(){})", completionHandler: nil)
+        self.webView.evaluateJavaScript("instances.instance.close(function(){})")
+        self.cleanWebViewController()
         isInstanceClosed = true
     }
     
@@ -161,6 +162,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         if message.name == "instances", let messageBody = message.body as? String {
             if messageBody.hasPrefix("quit") {
+                self.cleanWebViewController()
                 self.appDelegate.goBackToList()
             } else if messageBody.hasPrefix("file") {
                 activityIndicator.startAnimating()
@@ -293,7 +295,6 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     @IBAction func goBackToSearchInstances(_ sender: Any) {
        
         self.closeInstance()
-        self.cleanWebViewController()
         self.performSegue(withIdentifier: "goBackSearchInstances", sender: self)
        
     }
