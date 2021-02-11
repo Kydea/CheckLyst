@@ -130,7 +130,7 @@
 				$("<label />").text("Source").append($("<input />").attr({ type: "text", readOnly: true }).val(model.externalSourceName)).appendTo(valuePanel);
 				$("<label />").text("Column").append($("<input />").attr({ type: "text", readOnly: true }).val(model.externalSourceColumn)).appendTo(valuePanel);
 			} else if (!empty)
-				input = $("<textarea />").appendTo(valuePanel).attr({ type: "text" }).val(model.valueFormulaString || (model.valuesList && model.valuesList.join()));
+                input = $("<textarea />").appendTo(valuePanel).attr({ type: "text", readOnly: true }).val(model.valueFormulaString || (model.valuesList && model.valuesList.join()));
 		}
 	}
 

@@ -27,7 +27,6 @@ values
 	('Prototype export completed'),
 	('Prototype export failed'),
 
-
 	('Instance created'),
 	('Instance opened'),
 	('Instance quitted'),

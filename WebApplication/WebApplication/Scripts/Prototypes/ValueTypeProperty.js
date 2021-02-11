@@ -31,7 +31,7 @@
 
             defaultValue =
                 true ?
-                    $("<input />").attr({ type: "text" }).attr('disabled', options.readOnly).keydown(defaultValueKeyDown).change(defaultValueChange) : //gestire input specifici a seconda di model[property]
+                    $("<input />").attr({ type: "text" }).attr('readonly', options.readOnly).keydown(defaultValueKeyDown).change(defaultValueChange) : //gestire input specifici a seconda di model[property]
                     null;
 
             if (setupValues.valueType == model[property]) defaultValue.val(setupValues.defaultValue);
