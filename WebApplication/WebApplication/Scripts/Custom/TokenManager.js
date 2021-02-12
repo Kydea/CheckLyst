@@ -21,6 +21,8 @@
 			});
 
             setInterval(function () {
+                alert("refresh token check");
+                console.log("refresh token check");
                 if (localStorage.refreshToken && new Date() - new Date(localStorage.lastActivity) > (parseInt(localStorage.inactivityTimeoutSeconds) * 1000 || 900000)) {
                     //alert("last activity performed on " + localStorage.lastActivity + ", redirecting to login page");
 					localStorage.refreshToken = null;
@@ -57,7 +59,7 @@
 					saveSigners(signers);
 				}
 
-			}, 60000);
+			}, 10000);
 		},
 
 		setMainUser = function (result) {
