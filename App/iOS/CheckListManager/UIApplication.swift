@@ -103,7 +103,11 @@ import CoreData
                             self.isRefreshing = false
                             self.needToUpdateTokens = true
                             
-                            if let controller = self.getInstanceWebViewIfVisible() {
+                            if let controller = self.getWebViewInstance(ofKind: InstanceViewController.self) as? InstanceViewController {
+                                controller.refreshTokensByJSInjection(accessToken: UserDefaults.standard.value(forKey: "access_token") as! String, refreshToken: UserDefaults.standard.value(forKey: "refresh_token") as! String)
+                            }
+                            
+                            if let controller = self.getWebViewInstance(ofKind: UserManualViewController.self) as? UserManualViewController {
                                 controller.refreshTokensByJSInjection(accessToken: UserDefaults.standard.value(forKey: "access_token") as! String, refreshToken: UserDefaults.standard.value(forKey: "refresh_token") as! String)
                             }
                             
@@ -136,22 +140,20 @@ import CoreData
         
     }
     
-    private func getInstanceWebViewIfVisible() -> InstanceViewController? {
+    private func getWebViewInstance<T: UIViewController>(ofKind kind:AnyClass) -> T? {
         if var topController = UIApplication.shared.keyWindow?.rootViewController {
             
             while let presentedViewController = topController.presentedViewController {
                 topController = presentedViewController
             }
             
-            if topController.isKind(of: TabViewController.self)
-            {
-                
-                if((topController as! TabViewController).selectedIndex == 1) {
-                    if let navigationController = (topController as! TabViewController).viewControllers![(topController as! TabViewController).selectedIndex] as? UINavigationController {
-                        if(navigationController.childViewControllers.count > 2) {
-                            for controller in navigationController.childViewControllers {
-                                if controller.isKind(of: InstanceViewController.self) {
-                                    return controller as? InstanceViewController
+            if let tabController = topController as? TabViewController {
+                if let navigationControllers = tabController.viewControllers {
+                    for navigationController in navigationControllers {
+                        if let nController = navigationController as? UINavigationController {
+                            for controller in nController.childViewControllers {
+                                if controller.isKind(of: kind.self) {
+                                    return controller as? T
                                 }
                             }
                         }
@@ -159,6 +161,7 @@ import CoreData
                 }
             }
         }
+        
         return nil
     }
     
@@ -334,7 +337,7 @@ import CoreData
     }
     
     func goBackGround(){
-        if let controller = getInstanceWebViewIfVisible() {
+        if let controller = self.getWebViewInstance(ofKind: InstanceViewController.self) as? InstanceViewController  {
             controller.viewWillDisappear(false);
         }
         
@@ -346,12 +349,6 @@ import CoreData
             timer.invalidate()
         }
         timeToExpire = 0
-    }
-    
-    
-    func goForeGround()
-    {
-        timer = Timer.scheduledTimer(timeInterval: 1.0, target: UIApplication.shared, selector: #selector(MyApplication.timerAction), userInfo: nil, repeats: true)
     }
     
     func backFromBackGround() {

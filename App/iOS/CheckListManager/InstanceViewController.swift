@@ -201,6 +201,20 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         }
     }
     
+    func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String,
+                 initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
+
+        let alertController = UIAlertController(title: message,
+                                                message: nil,
+                                                preferredStyle: .alert)
+
+        alertController.addAction(UIAlertAction(title: "OK", style: .cancel) {
+            _ in completionHandler()}
+        )
+
+        self.present(alertController, animated: true, completion: nil)
+    }
+    
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         unlockView()
         
@@ -211,7 +225,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
             if let value = response as? String {
                 if(value.contains("Security/Login")) {
                     webView.isHidden = true
-                    let message = String(format: "Current WKWebView creationTime: %@\nLogout WKWebView creationTime: %@\nCurrent accessToken: %@\nLogout WKWebView accessToken: %@\n", Formatter.instance.stringFromTestDate( self.appDelegate.currentWebViewCreationTime!), Formatter.instance.stringFromTestDate(self.creationTime!), (UserDefaults.standard.value(forKey: "access_token") as? String) ?? "nil", self.currentAccessToken ?? "nil")
+                    let message = String(format: "InstanceViewController\nCurrent WKWebView creationTime: %@\nLogout WKWebView creationTime: %@\nCurrent accessToken: %@\nLogout WKWebView accessToken: %@\n", Formatter.instance.stringFromTestDate( self.appDelegate.currentWebViewCreationTime!), Formatter.instance.stringFromTestDate(self.creationTime!), (UserDefaults.standard.value(forKey: "access_token") as? String) ?? "nil", self.currentAccessToken ?? "nil")
                     try? message.write(to: FileManager.default.getDocumentsDirectory().appendingPathComponent("error.log"), atomically: true, encoding: .utf8)
                     self.appDelegate.displayMessage(Title: "Security Error", Message: message) { [weak self] in
                         self?.appDelegate.logoutAndGoToLogin()
@@ -255,6 +269,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     
     func refreshTokensByJSInjection(accessToken : String, refreshToken : String) {
         webView.evaluateJavaScript("matematici.tokenManager.setTokens(\"\(accessToken)\",\"\(refreshToken)\")")
+        self.currentAccessToken = accessToken
     }
     
     func setValueForInputField(_ value : String) {
@@ -293,10 +308,8 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     
     
     @IBAction func goBackToSearchInstances(_ sender: Any) {
-       
         self.closeInstance()
         self.performSegue(withIdentifier: "goBackSearchInstances", sender: self)
-       
     }
     
     @objc func keyboardWillShow(_ notification: Notification) {

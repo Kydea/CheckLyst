@@ -21,6 +21,9 @@ class UserManualViewController: UIViewController, WKNavigationDelegate {
     
     var helpLoaded : Bool = false
     
+    var creationTime: Date?
+    var currentAccessToken: String?
+    
     override func viewDidLoad()
         
     {
@@ -29,6 +32,9 @@ class UserManualViewController: UIViewController, WKNavigationDelegate {
         self.navigationItem.rightBarButtonItem = infoBarButtonItem
         
         self.navigationItem.leftBarButtonItem = SharedControllersProperty.setLogo(self.navigationItem.leftBarButtonItem);
+        
+        creationTime = Date()
+        currentAccessToken = (UserDefaults.standard.value(forKey: "access_token") as! String)
         
         webView.navigationDelegate = self
         
@@ -87,7 +93,11 @@ class UserManualViewController: UIViewController, WKNavigationDelegate {
                 if(value.contains("Security/Login")) {
                     webView.isHidden = true
                     self.helpLoaded = false
-                    self.appDelegate.logoutAndGoToLogin()
+                    let message = String(format: "UserManualViewController\nCurrent WKWebView creationTime: %@\nLogout WKWebView creationTime: %@\nCurrent accessToken: %@\nLogout WKWebView accessToken: %@\n", Formatter.instance.stringFromTestDate( self.appDelegate.currentWebViewCreationTime!), Formatter.instance.stringFromTestDate(self.creationTime!), (UserDefaults.standard.value(forKey: "access_token") as? String) ?? "nil", self.currentAccessToken ?? "nil")
+                    try? message.write(to: FileManager.default.getDocumentsDirectory().appendingPathComponent("error.log"), atomically: true, encoding: .utf8)
+                    self.appDelegate.displayMessage(Title: "Security Error", Message: message) { [weak self] in
+                        self?.appDelegate.logoutAndGoToLogin()
+                    }
                 }
             }
         }
@@ -112,6 +122,12 @@ class UserManualViewController: UIViewController, WKNavigationDelegate {
         activityIndicator.stopAnimating()
         self.tabBarController!.tabBar.isUserInteractionEnabled = true
         webView.scrollView.isScrollEnabled = true
+    }
+    
+    func refreshTokensByJSInjection(accessToken : String, refreshToken : String) {
+        if webView != nil {
+            webView.evaluateJavaScript("matematici.tokenManager.setTokens(\"\(accessToken)\",\"\(refreshToken)\")")
+        }
     }
     
 }
