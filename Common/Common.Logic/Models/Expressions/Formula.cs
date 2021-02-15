@@ -44,7 +44,9 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                                 var Key = Match.Groups["Property"].Value;
                                 ValueKeys.Add(Key);
                                 string Format = Match.Groups["Format"].Value;
-                                if (!string.IsNullOrWhiteSpace(Format))
+                                if (string.IsNullOrWhiteSpace(Format))
+                                    Format = null;
+                                else
                                 {
                                     Format = Format.Substring(1);
                                     if (Format.StartsWith("n") && int.TryParse(Format.Substring(1), out int Number))
@@ -85,7 +87,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                             NumberDecimalSeparator = DecimalSeparator,
                             NumberGroupSeparator = DecimalSeparator == "," ? "." : ","
                         };
-                        Value = ExpressionValue.NumberValue.ToString(TokenFormats[Index], NumberFormatInfo);
+                        Value = ExpressionValue.NumberValue.ToString(TokenFormats[Index] ?? "", NumberFormatInfo);
                     }
                     else
                         Value =
