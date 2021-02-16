@@ -93,11 +93,15 @@ class UserManualViewController: UIViewController, WKNavigationDelegate {
                 if(value.contains("Security/Login")) {
                     webView.isHidden = true
                     self.helpLoaded = false
-                    let message = String(format: "UserManualViewController\nCurrent WKWebView creationTime: %@\nLogout WKWebView creationTime: %@\nCurrent accessToken: %@\nLogout WKWebView accessToken: %@\n", Formatter.instance.stringFromTestDate( self.appDelegate.currentWebViewCreationTime!), Formatter.instance.stringFromTestDate(self.creationTime!), (UserDefaults.standard.value(forKey: "access_token") as? String) ?? "nil", self.currentAccessToken ?? "nil")
-                    try? message.write(to: FileManager.default.getDocumentsDirectory().appendingPathComponent("error.log"), atomically: true, encoding: .utf8)
-                    self.appDelegate.displayMessage(Title: "Security Error", Message: message) { [weak self] in
-                        self?.appDelegate.logoutAndGoToLogin()
-                    }
+                    #if DEBUG
+                        let message = String(format: "UserManualViewController\nCurrent WKWebView creationTime: %@\nLogout WKWebView creationTime: %@\nCurrent accessToken: %@\nLogout WKWebView accessToken: %@\n", Formatter.instance.stringFromTestDate( self.appDelegate.currentWebViewCreationTime!), Formatter.instance.stringFromTestDate(self.creationTime!), (UserDefaults.standard.value(forKey: "access_token") as? String) ?? "nil", self.currentAccessToken ?? "nil")
+                        try? message.write(to: FileManager.default.getDocumentsDirectory().appendingPathComponent("error.log"), atomically: true, encoding: .utf8)
+                        self.appDelegate.displayMessage(Title: "Security Error", Message: message) { [weak self] in
+                            self?.appDelegate.logoutAndGoToLogin()
+                        }
+                    #else
+                        self.appDelegate.logoutAndGoToLogin()
+                    #endif
                 }
             }
         }

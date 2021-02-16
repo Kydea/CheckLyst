@@ -329,11 +329,16 @@ import CoreData
             timer.invalidate()
         }
         isInactivityCatched = true
-        let message = String(format: "No activity detected since %@", Formatter.instance.stringFromTestDate(inactivityStartingTime!, timeOnly: true))
-        self.displayMessage(Title: "Inactivity", Message: message) { [weak self] in
-            self?.logoutAndGoToLogin()
-            self?.isInactivityCatched = false
-        }
+        #if DEBUG
+            let message = String(format: "No activity detected since %@", Formatter.instance.stringFromTestDate(inactivityStartingTime!, timeOnly: true))
+            self.displayMessage(Title: "Inactivity", Message: message) { [weak self] in
+                self?.logoutAndGoToLogin()
+                self?.isInactivityCatched = false
+            }
+        #else
+            self.logoutAndGoToLogin()
+            self.isInactivityCatched = false
+        #endif
     }
     
     func goBackGround(){
@@ -360,7 +365,17 @@ import CoreData
             if let lastActiveTime = UserDefaults.standard.value(forKey: "backgroundTime") as? Date {
                 
                 if(lastActiveTime.addingTimeInterval(inactivityInterval) < Date()) {
-                    self.logoutAndGoToLogin()
+                    self.isInactivityCatched = true
+                    #if DEBUG
+                        let message = String(format: "No activity detected since %@", Formatter.instance.stringFromTestDate(inactivityStartingTime!, timeOnly: true))
+                        self.displayMessage(Title: "Inactivity", Message: message) { [weak self] in
+                            self?.logoutAndGoToLogin()
+                            self?.isInactivityCatched = false
+                        }
+                    #else
+                        self.logoutAndGoToLogin()
+                        self.isInactivityCatched = false
+                    #endif
                 } else {
                     self.refreshInactivityTimer(timeToExpireActivity: lastActiveTime.addingTimeInterval(inactivityInterval).timeIntervalSince(Date()))
                 }
@@ -384,7 +399,6 @@ import CoreData
     override init() {
         super.init()
         UserDefaults.standard.setValue(false, forKey: "logged")
-        timer = Timer.scheduledTimer(timeInterval: 1.0, target: UIApplication.shared, selector: #selector(MyApplication.timerAction), userInfo: nil, repeats: true)
     }
 }
 
