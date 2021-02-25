@@ -130,6 +130,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             destination.ValidCondition = source.ValidCondition;
             destination.ValidityMessage = source.ValidityMessage;
             destination.SignatureCode = source.SignatureCode;
+            destination.PageBreak = source.PageBreak;
         }
 
         public override string DependencyObjectCode => Code;
