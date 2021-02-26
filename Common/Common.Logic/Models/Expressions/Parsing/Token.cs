@@ -46,8 +46,8 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     Value.StartsWith("<") || Value.StartsWith(">") ? 5 : //Relational
                     Value == "+" || Value == "-" ? 4 : //Additive
                     Value == "*" || Value == "/" || Value == "%" ? 3 : //Multiplicative
-                    Value == "^" ? 2 : //Multiplicative
-                    this.Value != null ? 1 : //literal and numbers
+                    Value == "^" ? 2 : //Power
+                    this.Value != null ? 1 : //Literals and numbers
                     0; //Paranteses (Token set) and unexpected tokens,
             }
         }
