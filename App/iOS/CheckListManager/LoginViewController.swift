@@ -321,6 +321,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                         
                         (UIApplication.shared as! MyApplication).refreshInactivityTimer(timeToExpireActivity: (UIApplication.shared as! MyApplication).inactivityInterval)
                         
+                        (UIApplication.shared as! MyApplication).startTokenTimer()
+                        
                         self.getClient()
                         
                     } else {
@@ -371,7 +373,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     func setUserInformation(userInfo json:[String:Any]) {
         
         UserDefaults.standard.setValue(json["code"], forKey: "userCode")
-        UserDefaults.standard.setValue(true, forKey: "logged")
         UserDefaults.standard.setValue(json["access_token"], forKey: "access_token")
         UserDefaults.standard.setValue(json["refresh_token"], forKey: "refresh_token")
         UserDefaults.standard.setValue(json["token_type"], forKey: "token_type")

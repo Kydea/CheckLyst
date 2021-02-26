@@ -38,8 +38,7 @@ class CustomUrlprotocol: URLProtocol, URLSessionDataDelegate, URLSessionTaskDele
 
         let newRequest = (self.request as NSURLRequest).mutableCopy() as! NSMutableURLRequest
         
-        if (UserDefaults.standard.value(forKey: "access_token") != nil
-            && (UserDefaults.standard.value(forKey: "logged") as! Bool)
+        if ((UserDefaults.standard.existKey("access_token"))
             && !newRequest.url!.absoluteString.contains("AccessControl/Access/Token") ) {
             
             newRequest.addValue((UserDefaults.standard.value(forKey: "token_type") as! String).capitalized + " " + (UserDefaults.standard.value(forKey: "access_token") as! String), forHTTPHeaderField: "Authorization")

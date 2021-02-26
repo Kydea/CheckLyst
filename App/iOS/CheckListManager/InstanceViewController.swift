@@ -18,6 +18,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     var newInstance = false
     var newInstancePrototype: String?
     var newInstanceVersion: String?
+    var newInstanceFieldsValues: String?
     var selectedItemsDictionary = [Int:Option] ()
     var contentView : UIView?
     var scanButtonIsVisible : Bool = false
@@ -60,9 +61,11 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
             }
         }
         
+        
+        
         let fullUrl = !newInstance ?
             ServerConnection.baseFrontEndUrl + "/Instances/Detail/" + (instanceCodeFromRequest != nil ? instanceCodeFromRequest! : instance.code) + "?d=" + String(Int64(Date().timeIntervalSince1970 * 1000)) + "&AppUser=" + (UserDefaults.standard.string(forKey: "userCode"))! :
-            ServerConnection.baseFrontEndUrl + "/Instances/Create/" + newInstancePrototype! + "/" + newInstanceVersion! + "?d=" + String(Int64(Date().timeIntervalSince1970 * 1000)) + "&AppUser=" + (UserDefaults.standard.string(forKey: "userCode"))!
+            ServerConnection.baseFrontEndUrl + "/Instances/Create/" + newInstancePrototype! + "/" + newInstanceVersion! + "?" + (newInstanceFieldsValues! != "" ? newInstanceFieldsValues! + "&" : "") + "d=" + String(Int64(Date().timeIntervalSince1970 * 1000)) + "&AppUser=" + (UserDefaults.standard.string(forKey: "userCode"))!
         
         
         //print(fullUrl)
@@ -199,20 +202,6 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         self.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server") { () -> Void in
             self.navigationController?.popViewController(animated: true)
         }
-    }
-    
-    func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String,
-                 initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
-
-        let alertController = UIAlertController(title: message,
-                                                message: nil,
-                                                preferredStyle: .alert)
-
-        alertController.addAction(UIAlertAction(title: "OK", style: .cancel) {
-            _ in completionHandler()}
-        )
-
-        self.present(alertController, animated: true, completion: nil)
     }
     
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {

@@ -555,6 +555,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                         controller.newInstance = true
                         controller.newInstancePrototype = parameters["prototype"]!
                         controller.newInstanceVersion = parameters["version"]!
+                        controller.newInstanceFieldsValues = parameters["fieldsValues"]!
                     
                     } else if (parameters.keys.contains("code")) {
                        

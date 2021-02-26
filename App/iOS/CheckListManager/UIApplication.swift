@@ -19,6 +19,7 @@ import CoreData
     let timeBeforeTokenExpires = 120.0 /* 2 minutes */
     var isRefreshing = false
     var isInactivityCatched = false
+    var isTokenExpired = false
     var requestToOpenInstance = false
     var needToUpdateTokens = false
     
@@ -63,19 +64,10 @@ import CoreData
     
     @objc func timerAction() {
         
-        let logged = NSString(string:UserDefaults.standard.string(forKey: "logged")!).boolValue
-        
-        if(logged)
-        {
-            let expireDate = UserDefaults.standard.value(forKey: "token_expires") as! Date
-            if(expireDate < Date() && !self.isWarningPresented) {
-                self.displayMessage(Title: "Session Expired", Message: "Your session is expired, you'll be redirected to login section.") {
-                    () -> Void in
-                    self.logoutAndGoToLogin()
-                }
-            } else {
-                self.refreshToken(expireDate)
-            }
+        let logged = UserDefaults.standard.existKey("access_token")
+        let expireDate = UserDefaults.standard.date(forKey: "token_expires")
+        if(logged) {
+            self.refreshToken(expireDate!)
         }
     }
     
@@ -191,7 +183,7 @@ import CoreData
     
     func setupNewServer(_ server:String, managedObjectContext: NSManagedObjectContext) {
         
-        let logged = NSString(string:UserDefaults.standard.string(forKey: "logged")!).boolValue
+        let logged = UserDefaults.standard.existKey("access_token")
         
         //needed to trigger segue before alert presentation, otherwise segue won't perform
         if let vc = self.searchPresentedController(controllerClass: FirstCheckViewController.self) {
@@ -249,9 +241,20 @@ import CoreData
         return nil
     }
     
-    func logoutAndGoToLogin()
+    func logoutAndGoToLogin() {
         
-    {
+        UserDefaults.standard.setValue(nil, forKey: "access_token")
+        UserDefaults.standard.setValue(nil, forKey: "refresh_token")
+        UserDefaults.standard.setValue(nil, forKey: "roles")
+        
+        if let timer = timer {
+            timer.invalidate()
+        }
+        
+        if let timer = inactivityTimer {
+            timer.invalidate()
+        }
+        
         if var topController = UIApplication.shared.keyWindow?.rootViewController {
             
             while let presentedViewController = topController.presentedViewController {
@@ -272,13 +275,13 @@ import CoreData
                     }
                 }
                 
-                UserDefaults.standard.setValue(false, forKey: "logged")
-                UserDefaults.standard.setValue(nil, forKey: "access_token")
-                UserDefaults.standard.setValue(nil, forKey: "refresh_token")
-                UserDefaults.standard.setValue(nil, forKey: "roles")
-                
                 tabBarController.dismiss(animated: true, completion: nil)
             }
+            #if DEBUG
+                if let firstCheckViewController = topController as? FirstCheckViewController {
+                    firstCheckViewController.performSegue(withIdentifier: "loginSegue", sender: firstCheckViewController)
+                }
+            #endif
         }
     }
     
@@ -313,7 +316,7 @@ import CoreData
     }
     
     func refreshInactivityTimer(timeToExpireActivity: Double) {
-        let logged = NSString(string:UserDefaults.standard.string(forKey: "logged")!).boolValue
+        let logged = UserDefaults.standard.existKey("access_token")
         
         if(logged && !isInactivityCatched){
             if let timer = inactivityTimer {
@@ -321,6 +324,17 @@ import CoreData
             }
             inactivityTimer = Timer.scheduledTimer(timeInterval: timeToExpireActivity, target: UIApplication.shared, selector: #selector(MyApplication.inactivityHasDetected), userInfo: nil, repeats: true)
             inactivityStartingTime = Date()
+        }
+    }
+    
+    func startTokenTimer() {
+        let logged = UserDefaults.standard.existKey("access_token")
+        
+        if(logged && !isTokenExpired){
+            if let timer = timer {
+                timer.invalidate()
+            }
+            timer = Timer.scheduledTimer(timeInterval: 1.0, target: UIApplication.shared, selector: #selector(MyApplication.timerAction), userInfo: nil, repeats: true)
         }
     }
     
@@ -357,17 +371,15 @@ import CoreData
     }
     
     func backFromBackGround() {
-        let logged = NSString(string:UserDefaults.standard.string(forKey: "logged")!).boolValue
-        
-        timer = Timer.scheduledTimer(timeInterval: 1.0, target: UIApplication.shared, selector: #selector(MyApplication.timerAction), userInfo: nil, repeats: true)
+        let logged = UserDefaults.standard.existKey("access_token")
         
         if(logged){
-            if let lastActiveTime = UserDefaults.standard.value(forKey: "backgroundTime") as? Date {
+            if let lastActiveTime = UserDefaults.standard.date(forKey: "backgroundTime") {
                 
                 if(lastActiveTime.addingTimeInterval(inactivityInterval) < Date()) {
                     self.isInactivityCatched = true
                     #if DEBUG
-                        let message = String(format: "No activity detected since %@", Formatter.instance.stringFromTestDate(inactivityStartingTime!, timeOnly: true))
+                        let message = String(format: "No activity detected since %@", Formatter.instance.stringFromTestDate(inactivityStartingTime ?? Date(), timeOnly: true))
                         self.displayMessage(Title: "Inactivity", Message: message) { [weak self] in
                             self?.logoutAndGoToLogin()
                             self?.isInactivityCatched = false
@@ -378,6 +390,19 @@ import CoreData
                     #endif
                 } else {
                     self.refreshInactivityTimer(timeToExpireActivity: lastActiveTime.addingTimeInterval(inactivityInterval).timeIntervalSince(Date()))
+                }
+            }
+            
+            if let expireDate = UserDefaults.standard.date(forKey: "token_expires") {
+                if(expireDate < Date() && !self.isWarningPresented) {
+                    self.isTokenExpired = true
+                    self.displayMessage(Title: "Session Expired", Message: "Your session is expired, you'll be redirected to login section.") { [weak self]
+                        () -> Void in
+                        self?.logoutAndGoToLogin()
+                        self?.isTokenExpired = false
+                    }
+                } else {
+                    self.startTokenTimer()
                 }
             }
         }
@@ -398,7 +423,10 @@ import CoreData
     
     override init() {
         super.init()
-        UserDefaults.standard.setValue(false, forKey: "logged")
+        #if DEBUG
+            let message = "App started at: \(Formatter.instance.stringFromTestDate(Date()))"
+            try? message.write(to: FileManager.default.getDocumentsDirectory().appendingPathComponent("app_start.log"), atomically: true, encoding: .utf8)
+        #endif
     }
 }
 

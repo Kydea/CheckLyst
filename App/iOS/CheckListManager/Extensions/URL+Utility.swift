@@ -27,10 +27,13 @@ extension URL {
     var getParametersForInstance: [String: String]? {
         var urlItems : Dictionary<String, String> = Dictionary()
         let values = self.path.split(separator: "/")
+        let queryParametersString = self.absoluteString.split(separator: "?")
+        let fieldValues = queryParametersString.count == 2 ? String(queryParametersString[1]) : nil
         if values.contains("Create") {
             if let index = values.index(of: "Create") {
                 urlItems["prototype"] = values.count > 2 ? String(values[index + 1]) : ""
                 urlItems["version"] = values.count > 3 ? String(values[index + 2]) : ""
+                urlItems["fieldsValues"] = fieldValues ?? ""
             }
         } else if values.contains("Detail") {
             if let index = values.index(of: "Detail") {

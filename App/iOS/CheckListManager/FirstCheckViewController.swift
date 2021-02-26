@@ -10,8 +10,7 @@ import Foundation
 import UIKit
 
 class FirstCheckViewController: UIViewController {
-    
-    
+        
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -22,7 +21,7 @@ class FirstCheckViewController: UIViewController {
         
         super.viewDidAppear(animated)
         
-        let logged = UserDefaults.standard.value(forKey: "logged") as! Bool 
+        let logged = UserDefaults.standard.existKey("access_token")
         let segue = (logged) ? "tabBarSegue" : "loginSegue"
         
         self.performSegue(withIdentifier: segue, sender: self)
