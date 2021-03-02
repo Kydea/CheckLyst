@@ -42,7 +42,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
             var Index = IterationIndexes[Iterator.Code];
             if (Delta <= 0 || Delta > Index) return Right.GetValue(ElementsBranch, IterationIndexes, TimeZone); //default recurrency relation value
 
-            return Iterator.Iterations[Index - (int)Delta].ReccurencyValue;
+            return Iterator.Iterations.Where(x => !x.Removed).ElementAt(Index - (int)Delta).ReccurencyValue;
         }
 
         protected override string OperatorName => "IterationValue";
