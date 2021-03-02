@@ -63,31 +63,28 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                 }
             }
 
-            //Expression symbol connection
+            //Operators (including literals with no arguments) connection
             var TokenIndex = 0;
             while (TokenIndex < TokenIndexes.Count())
             {
                 var Token = TokenIndexes.ElementAt(TokenIndex).Key;
-                if (Token is TokenSet || Token is Text || Token is Number || !Tokens.Contains(Token))
+
+                if (Token.Operator == OperatorType.No || !Tokens.Contains(Token))
                 {
                     ++TokenIndex;
                     continue;
                 }
 
-                bool Operator = false;
-
-                if (Token.Symbol is UnaryOperator && Token.Symbol is LogicOperators.Not)
+                if (Token.Symbol is UnaryOperator UnaryOperator)
                 {
-                    var UnaryOperator = (UnaryOperator)Token.Symbol;
                     if (Token.Index == Tokens.Count - 1)
                         throw new ParseException("Expected operand", ExpressionValue.Length);
 
                     var Operand = Tokens[Token.Index + 1];
                     UnaryOperator.Argument = Operand.Symbol;
                     Tokens.RemoveAt(Token.Index + 1);
-                    Operator = true;
                 }
-                else if (Token.Symbol is BinaryOperator BinaryOperator && !(Token.Symbol is MathFunctions.BinaryMathFunction) && !(Token.Symbol is IteratorFunctions.GeometricFunction) && !(Token.Symbol is IteratorFunctions.IterationValue) && !(Token.Symbol is IteratorFunctions.RecurrenceTerm)) 
+                else if (Token.Symbol is BinaryOperator BinaryOperator)
                 {
                     if (Token.Index == 0)
                         throw new ParseException("Expected operand", Token.Position);
@@ -99,11 +96,9 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
 
                     Tokens.RemoveAt(Token.Index + 1);
                     Tokens.RemoveAt(Token.Index - 1);
-                    Operator = true;
                 }
-                else if (Token.Symbol is Expressions.TernaryOperator && Token.Value == null) //iif operator is a function and then it is already connected
+                else if (Token.Symbol is Expressions.TernaryOperator TernaryOperator)
                 {
-                    var TernaryOperator = (Expressions.TernaryOperator)Token.Symbol;
                     if (Token.Index == 0)
                         throw new ParseException("Expected operand", Token.Position);
                     TernaryOperator.Condition = Tokens[Token.Index - 1].Symbol;
@@ -119,17 +114,14 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     Tokens.RemoveAt(Token.Index + 2);
                     Tokens.RemoveAt(Token.Index + 1);
                     Tokens.RemoveAt(Token.Index - 1);
-                    Operator = true;
                 }
-                else if (Token is Literal Literal)
-                {
-                }
+                else
+                    throw new ParseException($"Unexpected operator {Token.ToString()}", ExpressionValue.Length);
 
                 Symbol = Token.Symbol;
 
-                if (Operator)
-                    for (int Order = 0; Order < Tokens.Count; ++Order)
-                        Tokens[Order].Index = Order;
+                for (int Order = 0; Order < Tokens.Count; ++Order)
+                    Tokens[Order].Index = Order;
 
                 ++TokenIndex;
             }
