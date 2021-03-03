@@ -30,7 +30,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     Add(Token = ParseParenteses(ref ExpressionValue, ref Caret, '(', ')'));
                 else if (Character == '?')
                 {
-                    Add(Token = new TernaryOperator(ref Caret, Tokens.Count));
+                    Add(Token = new ConditionalOperator(ref Caret, Tokens.Count));
                     Add(ParseParenteses(ref ExpressionValue, ref Caret, '?', ':'));
                 }
                 else if (Character >= 'a' && Character <= 'z' || Character >= 'A' && Character <= 'Z')
@@ -97,19 +97,19 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     Tokens.RemoveAt(Token.Index + 1);
                     Tokens.RemoveAt(Token.Index - 1);
                 }
-                else if (Token.Symbol is Expressions.TernaryOperator TernaryOperator)
+                else if (Token.Symbol is Expressions.ConditionalOperator ConditionalOperator)
                 {
                     if (Token.Index == 0)
                         throw new ParseException("Expected operand", Token.Position);
-                    TernaryOperator.Condition = Tokens[Token.Index - 1].Symbol;
+                    ConditionalOperator.Condition = Tokens[Token.Index - 1].Symbol;
 
                     if (Token.Index == Tokens.Count - 1)
                         throw new ParseException("Expected operand", Tokens[Token.Index + 1].Position);
-                    TernaryOperator.TruePart = Tokens[Token.Index + 1].Symbol;
+                    ConditionalOperator.TruePart = Tokens[Token.Index + 1].Symbol;
 
                     if (Token.Index == Tokens.Count - 2)
                         throw new ParseException("Expected operand", Tokens[Token.Index + 2].Position);
-                    TernaryOperator.FalsePart = Tokens[Token.Index + 2].Symbol;
+                    ConditionalOperator.FalsePart = Tokens[Token.Index + 2].Symbol;
 
                     Tokens.RemoveAt(Token.Index + 2);
                     Tokens.RemoveAt(Token.Index + 1);

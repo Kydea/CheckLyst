@@ -7,7 +7,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
 {
     public class Literal : Token
     {
-        private const int MAX_ARGUMENTS = 3;
+        private const int MAX_ARGUMENTS = 6;
 
         public Literal(ref string ExpressionValue, ref int Position, int Index) : base(
             ref ExpressionValue, ref Position, Index, (c, i) =>
@@ -56,6 +56,22 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     }
 
                     //functions
+                    else if (LowerValue == "dateincrement")
+                    {
+                        var DateIncrement = new Functions.DateIncrement { Position = Position };
+                        CheckArguments(4);
+                        DateIncrement.Arguments.AddRange(Arguments.Select(a => a.Symbol));
+                        Symbol = DateIncrement;
+                        Operator = OperatorType.No;
+                    }
+                    else if (LowerValue == "datetimeincrement")
+                    {
+                        var DateTimeIncrement = new Functions.DateTimeIncrement { Position = Position };
+                        CheckArguments(6);
+                        DateTimeIncrement.Arguments.AddRange(Arguments.Select(a => a.Symbol));
+                        Symbol = DateTimeIncrement;
+                        Operator = OperatorType.No;
+                    }
                     else if (LowerValue == "error")
                     {
                         var Error = new Functions.Error { Position = Position };
@@ -81,7 +97,32 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                         Symbol = Null;
                         Operator = OperatorType.No;
                     }
-                    
+                    else if (LowerValue == "date")
+                    {
+                        var Date = new Functions.Date { Position = Position };
+                        CheckArguments(3);
+                        Date.Arguments.AddRange(Arguments.Select(a => a.Symbol));
+                        Symbol = Date;
+                        Operator = OperatorType.No;
+                    }
+                    else if (LowerValue == "datetime")
+                    {
+                        var DateTime = new Functions.DateTime { Position = Position };
+                        CheckArguments(5);
+                        DateTime.Arguments.AddRange(Arguments.Select(a => a.Symbol));
+                        Symbol = DateTime;
+                        Operator = OperatorType.No;
+                    }
+                    else if (LowerValue == "time")
+                    {
+                        var Time = new Functions.Time { Position = Position };
+                        CheckArguments(2);
+                        Time.Left = Arguments[0].Symbol;
+                        Time.Right = Arguments[1].Symbol;
+                        Symbol = Time;
+                        Operator = OperatorType.No;
+                    }
+
                     //Math functions
                     else if (LowerValue == "sqrt")
                     {
@@ -149,15 +190,15 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                         Operator = OperatorType.No;
                     }
 
-                    //Ternary operator
+                    //Conditional operator
                     else if (LowerValue == "iif")
                     {
-                        var TernaryOperator = new Expressions.TernaryOperator { Position = Position };
+                        var ConditionalOperator = new Expressions.ConditionalOperator { Position = Position };
                         CheckArguments(3);
-                        TernaryOperator.Condition = Arguments[0].Symbol;
-                        TernaryOperator.TruePart = Arguments[1].Symbol;
-                        TernaryOperator.FalsePart = Arguments[2].Symbol;
-                        Symbol = TernaryOperator;
+                        ConditionalOperator.Condition = Arguments[0].Symbol;
+                        ConditionalOperator.TruePart = Arguments[1].Symbol;
+                        ConditionalOperator.FalsePart = Arguments[2].Symbol;
+                        Symbol = ConditionalOperator;
                         Operator = OperatorType.No;
                     }
 
