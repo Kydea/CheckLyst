@@ -170,10 +170,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             url.getCallType == .Detail) {
             mApp.requestToOpenInstance = true
             mApp.requestedUrlInfo = url.getParametersForInstance
-            if UserDefaults.standard.existKey("access_token") {
-                   mApp.openInstance()
-            } else {
-                mApp.logoutAndGoToLogin()
+            mApp.backFromBackGround()
+            if UserDefaults.standard.existKey("access_token") && !mApp.isTokenExpired && !mApp.isInactivityCatched {
+                mApp.openInstance()
             }
         }
 

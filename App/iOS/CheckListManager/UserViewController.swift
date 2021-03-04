@@ -46,9 +46,14 @@ class UserViewController: UIViewController {
     
     @IBAction func logoutFromPortal(_ sender: AnyObject) {
         
+        guard let refreshToken = UserDefaults.standard.value(forKey: "refresh_token") as? String else {
+            self.appDelegate.logoutAndGoToLogin()
+            return
+        }
+        
         activityIndicator.startAnimating()
         
-        ServerConnection.logoutFromServer(["data":["refreshToken":UserDefaults.standard.value(forKey: "refresh_token") as! String]]){ (serverResponse) -> Void in
+        ServerConnection.logoutFromServer(["data":["refreshToken":refreshToken]]){ (serverResponse) -> Void in
         
             if(serverResponse.data != nil){
                 

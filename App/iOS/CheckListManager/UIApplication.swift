@@ -275,13 +275,23 @@ import CoreData
                     }
                 }
                 
-                tabBarController.dismiss(animated: true, completion: nil)
-            }
-            #if DEBUG
-                if let firstCheckViewController = topController as? FirstCheckViewController {
-                    firstCheckViewController.performSegue(withIdentifier: "loginSegue", sender: firstCheckViewController)
+                tabBarController.dismiss(animated: true) {
+                    if var topController = UIApplication.shared.keyWindow?.rootViewController {
+                        
+                        while let presentedViewController = topController.presentedViewController {
+                            topController = presentedViewController
+                        }
+                        
+                        if let firstCheckViewController = topController as? FirstCheckViewController {
+                            firstCheckViewController.performSegue(withIdentifier: "loginSegue", sender: firstCheckViewController)
+                        }
+                    }
                 }
-            #endif
+            }
+            
+            if let firstCheckViewController = topController as? FirstCheckViewController {
+                firstCheckViewController.performSegue(withIdentifier: "loginSegue", sender: firstCheckViewController)
+            }
         }
     }
     
@@ -373,7 +383,7 @@ import CoreData
     func backFromBackGround() {
         let logged = UserDefaults.standard.existKey("access_token")
         
-        if(logged){
+        if logged && !self.isTokenExpired && !self.isInactivityCatched {
             if let lastActiveTime = UserDefaults.standard.date(forKey: "backgroundTime") {
                 
                 if(lastActiveTime.addingTimeInterval(inactivityInterval) < Date()) {

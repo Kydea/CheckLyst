@@ -570,6 +570,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                 controller.newInstance = true
                 controller.newInstancePrototype = searchDictionary["prototype"]! as! String
                 controller.newInstanceVersion = searchDictionary["version"]! as! String
+                controller.newInstanceFieldsValues = ""
                 controller.selectedItemsDictionary = selectedItemsDictionary;
             
             }
