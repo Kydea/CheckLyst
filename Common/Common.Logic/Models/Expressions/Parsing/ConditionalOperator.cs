@@ -7,7 +7,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
 {
     public class ConditionalOperator : Token
     {
-        public ConditionalOperator(ref int Position, int Index) : base(Position, Index)
+        public ConditionalOperator(Position Position, int Index) : base(Position, Index)
         {
             Symbol = new Expressions.ConditionalOperator { Position = Position };
         }

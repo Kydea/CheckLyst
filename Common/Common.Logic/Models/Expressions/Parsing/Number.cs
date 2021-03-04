@@ -7,10 +7,10 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
 {
     public class Number : Token
     {
-        public Number(ref string ExpressionValue, ref int Position, int Index) :
+        public Number(ref string ExpressionValue, Position Position, int Index) :
             base
             (
-                ref ExpressionValue, ref Position, Index, (c, i) =>
+                ref ExpressionValue, Position, Index, (c, i) =>
                     c >= '0' && c <= '9'
                     || c == '.'
                     || (c == '+' || c == '-') && i == 0

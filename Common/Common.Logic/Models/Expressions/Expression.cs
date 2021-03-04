@@ -17,7 +17,17 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         public string SerializedValue { get; set; }
         public string Description { get; set; }
         private string _Error;
-        public string Error { get => _Error; set { _Error = value; if (value != null) Root = null; } }
+        public string Error
+        {
+            get => _Error; set
+            {
+                _Error = value;
+                ErrorPosition = null;
+                if (value != null)
+                    Root = null;
+            }
+        }
+        public Position ErrorPosition { get; set; }
         public Uniqueness Unique { get; set; }
         public bool Exception { get; set; }
         public bool Notification { get; set; }
@@ -36,7 +46,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                 throw new Exception($"Unique, exception and notification expressions must have a description");
 
             if (SerializedValue?.Length >= MAXIMUM_LENGTH)
-                throw new ParseException($"Expressions lengh must not exceed {MAXIMUM_LENGTH - 1} characters", MAXIMUM_LENGTH);
+                throw new Exception($"Expressions length must not exceed {MAXIMUM_LENGTH - 1} characters");
 
             this.Code = Code;
         }
@@ -44,7 +54,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         public void Parse(ICheckList checkList)
         {
             Error = null;
-            Root = new TokenSet(SerializedValue, 0).Symbol;
+            Root = new TokenSet(SerializedValue, new Position()).Symbol;
             Root.Expression = this;
             Value = Value ?? new TypedValue(DataType.Error, null);
         }
@@ -69,7 +79,8 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             }
             catch (ParseException Exception)
             {
-                Error = $"{Exception.Message} (position {Exception.Position})";
+                Error = Exception.Message;
+                ErrorPosition = Exception.Position;
                 return false;
             }
             catch (Exception Exception)
@@ -94,7 +105,8 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             }
             catch (ParseException Exception)
             {
-                Error = $"{Exception.Message} (position {Exception.Position})";
+                Error = Exception.Message;
+                ErrorPosition = Exception.Position;
                 return false;
             }
             catch (Exception Exception)

@@ -1,10 +1,15 @@
-﻿prototypes.ExpressionEditor = function (expressions, expressionIndex, confirmHandler, deleteHandler) {
+﻿prototypes.ExpressionEditor = function (expressions, expressionIndex, confirmHandler, deleteHandler, verifyHandler) {
     var
         expression = expressions[expressionIndex],
         newRecord = !expression,
         expressionEditor = this,
         edited = false,
+        editor,
         form,
+
+        getCode = function () {
+            return $("input[name=code]", form).val()
+        },
 
         toggleNotification = function () {
             var
@@ -26,13 +31,11 @@
             return true;
         },
 
-        confirm = function () {
-            if (!edited) return false;
-
+        map = function () {
             var
                 expression = {},
                 notificationCheck = $("input[name=notification]", form),
-                code = $("input[name=code]", form).val();
+                code = getCode();
 
             if (!matematici.codeRegularExpression.test(code)) {
                 matematici.dialog.error("Invalid code", "The code " + code + " is not valid");
@@ -63,7 +66,7 @@
                 $("input[name=notificationNote]", form).val(null);
             }
 
-            $("input[type=text], textarea", form).each(function () {
+            $("input[type=text]", form).each(function () {
                 expression[this.name] = this.value;
             });
 
@@ -75,7 +78,17 @@
                 expression[this.name] = this.value;
             });
 
-            if (!newRecord && expressions[expressionIndex].dependentRelations && expressions[expressionIndex].dependentRelations.length > 0 && code != expressions[expressionIndex].code) {
+            expression["serializedValue"] = editor.getValue();
+
+            return expression;
+        },
+
+        confirm = function () {
+            if (!edited) return false;
+
+            var expression = map();
+
+            if (!newRecord && expressions[expressionIndex].dependentRelations && expressions[expressionIndex].dependentRelations.length > 0 && getCode() != expressions[expressionIndex].code) {
                 var message = "WARNING: the expression is referenced by " + expressions[expressionIndex].dependentRelations.length + " element(s). If you change the code from '" + expressions[expressionIndex].code + "', the referencing elements will have to be fixed to save the proptotype."
                 matematici.dialog.show("warning", message, [
                     {
@@ -107,21 +120,24 @@
             return true;
         },
 
+        verify = function () {
+            var expression = map();
+            verifyHandler(expressionEditor, expression);
+            return true;
+        },
+
+        setError = function (position, text) {
+            editor.setError(position, text);
+        },
+
         fill = function (f) {
             form = f;
-
-            if (prototypes.prototype.getModel().state == prototypes.Prototype.states.draft) {
-                $("input[name=code]", form).keyfilter(/^[$A-Z_0-9]*$/i);
-                form
-                    .on("change", "input, textarea, select", function () { edited = true; })
-                    .on("change", "input[name=notification]", toggleNotification);
-            } else
-                $("input, textarea, select", form).each(function () {
-                    matematici.controls.setEditable($(this), false);
-                });
+            editor = new matematici.ExpressionEditor("AceExpressionEditor");
 
             if (!newRecord) {
-                $("input[type=text], textarea", form).each(function () {
+                editor.setValue(expression["serializedValue"]);
+
+                $("input[type=text]", form).each(function () {
                     this.value = expression[this.name];
                 });
 
@@ -134,15 +150,32 @@
                 });
             }
 
+            if (prototypes.prototype.getModel().state == prototypes.Prototype.states.draft) {
+                $("input[name=code]", form).keyfilter(/^[$A-Z_0-9]*$/i);
+                form
+                    .on("change", "input, select", function () { edited = true; })
+                    .on("change", "input[name=notification]", toggleNotification);
+
+                editor.setChangeHandler(function (delta) { edited = true; })
+            } else {
+                $("input, select", form).each(function () {
+                    matematici.controls.setEditable($(this), false);
+                });
+                editor.setReadOnly(true);
+            }
+
             toggleNotification();
+            editor.setError(expression.errorPosition, expression.error);
         },
 
         setup = function () {
+
             var buttons = [];
 
             buttons.push({ cancelButton: true, hidden: true, handler: cancel });
 
             if (prototypes.prototype.getModel().state == prototypes.Prototype.states.draft) {
+                buttons.push({ text: "verify", icon: "question", handler: verify });
                 buttons.push({ text: "delete", icon: "trash-alt", handler: remove });
                 buttons.push({ text: "confirm", icon: "save", handler: confirm });
             }
@@ -157,6 +190,7 @@
         };
 
     this.fill = fill;
+    this.setError = setError;
 
     setup();
 };

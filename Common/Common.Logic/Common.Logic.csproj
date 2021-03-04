@@ -214,6 +214,7 @@
     <Compile Include="Models\Expressions\Parsing\Literal.cs" />
     <Compile Include="Models\Expressions\Parsing\Number.cs" />
     <Compile Include="Models\Expressions\Parsing\Operator.cs" />
+    <Compile Include="Models\Expressions\Parsing\Position.cs" />
     <Compile Include="Models\Expressions\Parsing\ParseException.cs" />
     <Compile Include="Models\Expressions\Parsing\ConditionalOperator.cs" />
     <Compile Include="Models\Expressions\Parsing\Text.cs" />

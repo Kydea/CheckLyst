@@ -9,8 +9,8 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
     {
         private const int MAX_ARGUMENTS = 6;
 
-        public Literal(ref string ExpressionValue, ref int Position, int Index) : base(
-            ref ExpressionValue, ref Position, Index, (c, i) =>
+        public Literal(ref string ExpressionValue, Position Position, int Index) : base(
+            ref ExpressionValue, Position, Index, (c, i) =>
                 c >= 'a' && c <= 'z'
                 || c >= 'A' && c <= 'Z'
                 || c >= '0' && c <= '9'
@@ -49,7 +49,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                 else
                 {
                     //Expression value
-                    if (!ParseArgument(ref ExpressionValue, ref Position))
+                    if (!ParseArgument(ref ExpressionValue, Position))
                     {
                         Symbol = new ExpressionValue { ExpressionCode = Value, Position = Position };
                         Operator = OperatorType.No;
@@ -243,14 +243,14 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     case "Avg":
                     case "StDev":
                         var Measure = new IteratorFunctions.Measure(Values[1]) { IteratorCode = Values[0], Position = Position };
-                        ParseArgument(ref ExpressionValue, ref Position, 1);
+                        ParseArgument(ref ExpressionValue, Position, 1);
                         Measure.Argument = Arguments[0].Symbol;
                         Symbol = Measure;
                         break;
                     case "Any":
                     case "All":
                         var Ispection = new IteratorFunctions.Ispection(Values[1]) { IteratorCode = Values[0], Position = Position };
-                        ParseArgument(ref ExpressionValue, ref Position, 1);
+                        ParseArgument(ref ExpressionValue, Position, 1);
                         Ispection.Argument = Arguments[0].Symbol;
                         Symbol = Ispection;
                         break;
@@ -258,27 +258,27 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     case "Slope":
                     case "Intercept":
                         var GeometricFunction = new IteratorFunctions.GeometricFunction(Values[1]) { IteratorCode = Values[0], Position = Position };
-                        ParseArgument(ref ExpressionValue, ref Position, 2);
+                        ParseArgument(ref ExpressionValue, Position, 2);
                         GeometricFunction.Left = Arguments[0].Symbol;
                         GeometricFunction.Right = Arguments[1].Symbol;
                         Symbol = GeometricFunction;
                         break;
                     case "Each":
                         var Each = new IteratorFunctions.Each { IteratorCode = Values[0], Position = Position };
-                        ParseArgument(ref ExpressionValue, ref Position, 1);
+                        ParseArgument(ref ExpressionValue, Position, 1);
                         Each.Argument = Arguments[0].Symbol;
                         Symbol = Each;
                         break;
                     case "IterationValue":
                         var IterationValue = new IteratorFunctions.IterationValue { IteratorCode = Values[0], Position = Position };
-                        ParseArgument(ref ExpressionValue, ref Position, 2);
+                        ParseArgument(ref ExpressionValue, Position, 2);
                         IterationValue.Left = Arguments[0].Symbol;
                         IterationValue.Right = Arguments[1].Symbol;
                         Symbol = IterationValue;
                         break;
                     case "RecurrenceTerm":
                         var RecurrenceTerm = new IteratorFunctions.RecurrenceTerm { IteratorCode = Values[0], Position = Position };
-                        ParseArgument(ref ExpressionValue, ref Position, 2);
+                        ParseArgument(ref ExpressionValue, Position, 2);
                         RecurrenceTerm.Left = Arguments[0].Symbol;
                         RecurrenceTerm.Right = Arguments[1].Symbol;
                         Symbol = RecurrenceTerm;
@@ -294,29 +294,26 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
 
         public List<TokenSet> Arguments { get; private set; }
 
-        private bool ParseArgument(ref string ExpressionValue, ref int Position, int? ArgumentsCount = null)
+        private bool ParseArgument(ref string ExpressionValue, Position Position, int? ArgumentsCount = null)
         {
-            int
-                Caret = Position,
-                ArgumentPosition,
-                Depth = 1;
+            int Depth = 1;
 
-            if (Caret >= ExpressionValue.Length)
-                return ArgumentsCount.HasValue ? throw new ParseException("( expected", Caret) : false;
+            if (Position.Index >= ExpressionValue.Length)
+                return ArgumentsCount.HasValue ? throw new ParseException("( expected", Position) : false;
 
             while (true)
             {
-                var Character = ExpressionValue[Caret];
-                ++Caret;
+                var Character = ExpressionValue[Position.Index];
+                Position.Increment(Character == '\n');
 
                 if (Character == '(') break;
 
-                if (!char.IsWhiteSpace(Character) || Caret == ExpressionValue.Length)
-                    return ArgumentsCount.HasValue ? throw new ParseException("( expected", Caret) : false;
+                if (!char.IsWhiteSpace(Character) || Position.Index == ExpressionValue.Length)
+                    return ArgumentsCount.HasValue ? throw new ParseException("( expected", Position) : false;
             }
 
             Arguments = new List<TokenSet>();
-            ArgumentPosition = Caret;
+            var Caret = Position.Index;
 
             while (Caret < ExpressionValue.Length && Depth > 0)
             {
@@ -328,19 +325,17 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
 
                 if (Depth == 1 && Character == ',' || Depth == 0)
                 {
-                    Arguments.Add(new TokenSet(ExpressionValue, ArgumentPosition, Caret));
-                    ArgumentPosition = Caret + 1;
+                    Arguments.Add(new TokenSet(ExpressionValue, Position, Caret));
+                    Position.Increment(false);
                 }
 
                 ++Caret;
             }
 
-            if (Depth > 0) throw new ParseException(") expected", Caret);
+            if (Depth > 0) throw new ParseException(") expected", Position);
 
             if (Arguments.Count() > MAX_ARGUMENTS)
                 throw new ParseException($"Too many arguments", Position);
-
-            Position = Caret;
 
             if (ArgumentsCount.HasValue) CheckArguments(ArgumentsCount.Value);
             return true;

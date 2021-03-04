@@ -7,7 +7,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
 {
     public class TokenSet : Token, IComparer<Token>
     {
-        public TokenSet(string ExpressionString, int Position, int? EndIndex = null, TokenSet Parent = null, int? Index = null) : base(Position, Index ?? -1)
+        public TokenSet(string ExpressionString, Position Position, int? EndIndex = null, TokenSet Parent = null, int? Index = null) : base(Position, Index ?? -1)
         {
             Operator = OperatorType.No;
             Tokens = new List<Token>();
@@ -15,45 +15,44 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
 
             //Token parse and functions connection
             var ExpressionValue = ExpressionString ?? string.Empty;
-            var Caret = Position;
             if (!EndIndex.HasValue) EndIndex = ExpressionValue.Length;
 
             Token LastToken = null;
 
-            while (Caret < EndIndex)
+            while (Position.Index < EndIndex)
             {
                 Token Token = null;
-                var Character = ExpressionString[Caret];
+                var Character = ExpressionString[Position.Index];
                 if (char.IsWhiteSpace(Character))
-                    Caret++;
+                    Position.Increment(Character == '\n');
                 else if (Character == '(')
-                    Add(Token = ParseParenteses(ref ExpressionValue, ref Caret, '(', ')'));
+                    Add(Token = ParseParenteses(ref ExpressionValue, Position, '(', ')'));
                 else if (Character == '?')
                 {
-                    Add(Token = new ConditionalOperator(ref Caret, Tokens.Count));
-                    Add(ParseParenteses(ref ExpressionValue, ref Caret, '?', ':'));
+                    Add(Token = new ConditionalOperator(Position, Tokens.Count));
+                    Add(ParseParenteses(ref ExpressionValue, Position, '?', ':'));
                 }
                 else if (Character >= 'a' && Character <= 'z' || Character >= 'A' && Character <= 'Z')
-                    Add(Token = new Literal(ref ExpressionValue, ref Caret, Tokens.Count));
+                    Add(Token = new Literal(ref ExpressionValue, Position, Tokens.Count));
                 else if (
                    Character >= '0' && Character <= '9'
                    || Character == '.'
                    || (Character == '+' || Character == '-') && !Tokens.Any()
                 )
-                    Add(Token = new Number(ref ExpressionValue, ref Caret, Tokens.Count));
+                    Add(Token = new Number(ref ExpressionValue, Position, Tokens.Count));
                 else if (Parsing.Operator.OPERATORS_CHARACTERS.Contains(Character.ToString()))
-                    Add(Token = new Operator(ref ExpressionValue, ref Caret, Tokens.Count));
+                    Add(Token = new Operator(ref ExpressionValue, Position, Tokens.Count));
                 else if (Character == '\'' || Character == '"')
-                    Add(LastToken = new Text(ref ExpressionValue, ref Caret, Tokens.Count, Character));
+                    Add(LastToken = new Text(ref ExpressionValue, Position, Tokens.Count, Character));
                 else
-                    throw new ParseException("Invalid character " + Character, Caret);
+                    throw new ParseException("Invalid character " + Character, Position);
 
                 if (Token != null)
                 {
                     if (LastToken != null)
                     {
                         if ((Token.Operator == OperatorType.Left || Token.Operator == OperatorType.Both) && (LastToken.Operator == OperatorType.Right || LastToken.Operator == OperatorType.Both))
-                            throw new ParseException("Unexpected token " + Token.Value, Caret);
+                            throw new ParseException("Unexpected token " + Token.Value, Position);
 
                         if ((Token.Operator == OperatorType.Right || Token.Operator == OperatorType.No) && (LastToken.Operator == OperatorType.Left || LastToken.Operator == OperatorType.No))
                             throw new ParseException("Operator expected", Token.Position);
@@ -78,7 +77,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                 if (Token.Symbol is UnaryOperator UnaryOperator)
                 {
                     if (Token.Index == Tokens.Count - 1)
-                        throw new ParseException("Expected operand", ExpressionValue.Length);
+                        throw new ParseException("Expected operand", Position);
 
                     var Operand = Tokens[Token.Index + 1];
                     UnaryOperator.Argument = Operand.Symbol;
@@ -91,7 +90,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     BinaryOperator.Left = Tokens[Token.Index - 1].Symbol;
 
                     if (Token.Index == Tokens.Count - 1)
-                        throw new ParseException("Expected operand", ExpressionValue.Length);
+                        throw new ParseException("Expected operand", Position);
                     BinaryOperator.Right = Tokens[Token.Index + 1].Symbol;
 
                     Tokens.RemoveAt(Token.Index + 1);
@@ -116,7 +115,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     Tokens.RemoveAt(Token.Index - 1);
                 }
                 else
-                    throw new ParseException($"Unexpected operator {Token.ToString()}", ExpressionValue.Length);
+                    throw new ParseException($"Unexpected operator {Token.ToString()}", Position);
 
                 Symbol = Token.Symbol;
 
@@ -130,10 +129,11 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                 Symbol = Tokens[0].Symbol;
         }
 
-        private TokenSet ParseParenteses(ref string ExpressionValue, ref int Position, char LeftParenteses, char RightParenteses)
+        private TokenSet ParseParenteses(ref string ExpressionValue, Position Position, char LeftParenteses, char RightParenteses)
         {
+            Position.Increment(false);
             int
-                Caret = Position + 1,
+                Caret = Position.Index,
                 Depth = 1;
 
             while (Caret < ExpressionValue.Length && Depth > 0)
@@ -146,11 +146,11 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
 
                 ++Caret;
             }
+                
+            if (Depth > 0) throw new ParseException($"{RightParenteses} expected", Position);
 
-            if (Depth > 0) throw new ParseException(RightParenteses + " expected", Caret);
-
-            var TokenSet = new TokenSet(ExpressionValue, Position + 1, Caret - 1, this, Tokens.Count);
-            Position = Caret;
+            var TokenSet = new TokenSet(ExpressionValue, Position, Caret - 1, this, Tokens.Count);
+            Position.Increment(false);
 
             return TokenSet;
         }
@@ -163,7 +163,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
         {
             return
                 (Token1.TokenOrder - Token2.TokenOrder) * Expression.MAXIMUM_LENGTH
-                + (Token1.TokenOrderRightToLeft ? Token2.Position - Token1.Position : Token1.Position - Token2.Position);
+                + (Token1.TokenOrderRightToLeft ? Token2.Position.Index - Token1.Position.Index : Token1.Position.Index - Token2.Position.Index);
         }
 
         private void Add(Token Token)

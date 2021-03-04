@@ -39,6 +39,9 @@ textarea {
   textarea[readonly], textarea.ReadOnly {
     background-color: #f5f5f5; }
 
+pre {
+  border: solid 1px #ccc; }
+
 a.Button {
   text-transform: uppercase;
   color: white;
@@ -231,7 +234,7 @@ form label, div.CheckList label, div.PropertyPanel div.PropertyValue label, div.
     padding: 0;
     margin: 0;
     width: unset; }
-  form label input, form label select, form label textarea, form label div.Input, div.CheckList label input, div.CheckList label select, div.CheckList label textarea, div.CheckList label div.Input, div.PropertyPanel div.PropertyValue label input, div.PropertyPanel div.PropertyValue label select, div.PropertyPanel div.PropertyValue label textarea, div.PropertyPanel div.PropertyValue label div.Input, div.Module label input, div.Module label select, div.Module label textarea, div.Module label div.Input {
+  form label input, form label select, form label textarea, form label div.Input, form label pre, div.CheckList label input, div.CheckList label select, div.CheckList label textarea, div.CheckList label div.Input, div.CheckList label pre, div.PropertyPanel div.PropertyValue label input, div.PropertyPanel div.PropertyValue label select, div.PropertyPanel div.PropertyValue label textarea, div.PropertyPanel div.PropertyValue label div.Input, div.PropertyPanel div.PropertyValue label pre, div.Module label input, div.Module label select, div.Module label textarea, div.Module label div.Input, div.Module label pre {
     margin-top: 5px; }
   form label input[type=checkbox], div.CheckList label input[type=checkbox], div.PropertyPanel div.PropertyValue label input[type=checkbox], div.Module label input[type=checkbox] {
     display: block;

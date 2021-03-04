@@ -173,6 +173,7 @@
                             newExpression = newModel.expressions[index];
                         expression.dataType = newExpression.dataType;
                         expression.error = newExpression.error;
+                        expression.errorPosition = newExpression.errorPosition;
                         if (expression.error) invalid = true;
                         updateDependencies(expression, newExpression);
                     }

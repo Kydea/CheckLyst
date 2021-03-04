@@ -75,26 +75,63 @@
             dependenciesButton.show();
         },
 
+        open = function (index) {
+            new prototypes.ExpressionEditor(list, index,
+                function (row) {
+                    matematici.canClose = false;
+                    if (index == null)
+                        select(insert(row, currentIndex));
+                    else {
+                        list[index] = row;
+                        update(index);
+                    }
+                    verify();
+                }, remove,
+                function (editor, row) {
+                    var
+                        oldRow,
+                        newIndex,
+                        oldCanClose = matematici.canClose;
+                    if (index == null) 
+                        newIndex = insertItem(row, currentIndex);
+                    else {
+                        oldRow = list[index];
+                        list[index] = row;
+                    }
+                    matematici.canClose = false;
+                    verify(null, function () {
+                        var expression = prototypes.prototype.getModel().expressions[row.code];
+                        editor.setError(expression.errorPosition, expression.error);
+                    });
+                    matematici.canClose = oldCanClose;
+                    if (index == null)
+                        removeItem(newIndex);
+                    else 
+                        list[index] = oldRow;
+                });
+        },
+
+        removeItem = function (index) {
+            list.splice(index, 1);
+        },
+
         remove = function () {
             matematici.canClose = false;
             getRow(currentIndex).remove();
-            list.splice(currentIndex, 1);
+            removeItem(currentIndex);
             verify();
             if (list.length == 0) noRecord.appendTo(tableBody);
             select();
         },
 
-        open = function (index) {
-            new prototypes.ExpressionEditor(list, index, function (row) {
-                matematici.canClose = false;
-                if (index == null) 
-                    select(insert(row, currentIndex));
-                else {
-                    list[index] = row;
-                    update(index);
-                }
-                verify();
-            }, remove, showDependencies);
+        insertItem = function (row, index) {
+            if (index == null) {
+                list.push(row);
+                return list.length - 1;
+            } else {
+                list.splice(index + 1, 0, row);
+                return index + 1;
+            }
         },
 
         insert = function (row, index) {
@@ -106,19 +143,19 @@
                 .append($("<td />").addClass("DescriptionColumn"))
                 .append($("<td />").addClass("DataTypeColumn"))
                 .append($("<td />").addClass("Centered")
-                .append($("<i />").addClass("Valid fal"))
-                .append($("<i />").attr("title", "Unique").addClass("Unique fal fa-key"))
-                .append($("<i />").attr("title", "Exception").addClass("Exception fal fa-exclamation"))
-                .append($("<i />").attr("title", "Notification").addClass("Notification fal fa-bell"))
+                    .append($("<i />").addClass("Valid fal"))
+                    .append($("<i />").attr("title", "Unique").addClass("Unique fal fa-key"))
+                    .append($("<i />").attr("title", "Exception").addClass("Exception fal fa-exclamation"))
+                    .append($("<i />").attr("title", "Notification").addClass("Notification fal fa-bell"))
             );
 
+            insertItem(row, index);
+
             if (index == null) {
-                list.push(row);
                 tr.appendTo(tableBody)
                 update(list.length - 1);
                 return list.length - 1;
             } else {
-                list.splice(index + 1, 0, row);
                 tr.insertAfter(getRow(index));
                 update(index + 1);
                 return index + 1;
@@ -149,7 +186,7 @@
                 model.expressions[list[index].code] = list[index];
         },
 
-        verify = function (handler) {
+        verify = function (okHandler, alwaysHandler) {
             updatePrototype();
             prototypes.prototype.verify(function (error) {
                 var
@@ -169,11 +206,12 @@
                         .attr("title", error || "")
                         .addClass(row.dataType == null || row.dataType.typeName == null ? "fa-question" : error == null ? "fa-check" : "fa-times");
 
-                    cells.find(".DataTypeColumn").text(row.dataType.typeName);
+                    cells.find(".DataTypeColumn").text(row.dataType && row.dataType.typeName);
                 }
 
                 if (model.exception) valid = false;
-                if (handler && valid) handler.call(this);
+                if (okHandler && valid) okHandler.call(this);
+                if (alwaysHandler) alwaysHandler.call(this);
             });
         },
 
@@ -260,5 +298,5 @@
             }
     },
 
-    setup();
+        setup();
 };

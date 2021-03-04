@@ -52,6 +52,10 @@ textarea {
     }
 }
 
+pre {
+    border: solid 1px $Color-Grey-Light;
+}
+
 a.Button {
     text-transform: uppercase;
     color: white;
@@ -338,7 +342,7 @@ form, div.CheckList, div.PropertyPanel div.PropertyValue, div.Module {
             width: unset;
         }
 
-        input, select, textarea, div.Input {
+        input, select, textarea, div.Input, pre {
             margin-top: 5px;
         }
 
