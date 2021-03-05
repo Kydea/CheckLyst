@@ -126,8 +126,8 @@
             return true;
         },
 
-        setError = function (position, text) {
-            editor.setError(position, text);
+        setError = function (position, text, type) {
+            editor.setError(position, text, type);
         },
 
         fill = function (f) {
@@ -165,7 +165,10 @@
             }
 
             toggleNotification();
-            editor.setError(expression.errorPosition, expression.error);
+            if (expression.error)
+                editor.setError(expression.errorPosition, expression.error, "error");
+            else if (!expression.dataType || !expression.dataType.typeName)
+                editor.setError(null, "this expression could not be evalutate because of errors in other expressions", "warning");
         },
 
         setup = function () {

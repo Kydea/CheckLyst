@@ -13,12 +13,15 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
 
         public Position() : this(0, 0, 0) { }
 
-        public Position (int Index, int Row, int Column)
+        public Position(Position Position) : this(Position.Index, Position.Row, Position.Column) { }
+
+        private Position(int Index, int Row, int Column)
         {
             this.Index = Index;
             this.Row = Row;
             this.Column = Column;
         }
+
 
         public void Increment(bool Row)
         {

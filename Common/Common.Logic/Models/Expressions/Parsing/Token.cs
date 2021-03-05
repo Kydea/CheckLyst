@@ -12,7 +12,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
 
         protected Token(Position Position, int Index)
         {
-            this.Position = new Position(Position.Index, Position.Row, Position.Column);
+            this.Position = new Position(Position);
             this.Index = Index;
         }
 

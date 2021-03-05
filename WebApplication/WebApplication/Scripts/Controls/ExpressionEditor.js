@@ -51,21 +51,6 @@
 
             languageTools.setCompleters([completer])
             editor.commands.on('afterExec', execHandler);
-
-            editor.session.setValue("jsdsjidsjdasasji\njsdsjidsjdasasji\ndjsdsjidsjdasasji");
-
-            editor.session.setAnnotations([{
-                row: 0,
-                column: 0,
-                text: "test at line 1, row 6",
-                type: "error"
-            }, {
-                row: 0,
-                column: 0,
-                text: "test line 1, row 6",
-                type: "warning"
-            }]);
-
         };
 
     this.setReadOnly = function (value) {
@@ -84,14 +69,14 @@
         editor.session.on('change', value);
     };
 
-    this.setError = function (position, text) {
+    this.setError = function (position, text, type) {
         editor.session.clearAnnotations();
         if (text) {
             var annotation = {
                 row: position && position.row || 0,
                 column: position && position.column || 0,
-                text: text + (position && (" at row " + position.row + ", column " + position.column)),
-                type: "error" //"warning", "information"
+                text: text + (position && (" at row " + (position.row + 1) + ", column " + (position.column + 1)) || ""),
+                type: type
             }
             editor.session.setAnnotations([annotation]);
             console.log(annotation);

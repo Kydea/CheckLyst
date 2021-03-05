@@ -25,23 +25,23 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                 //Constants
                 if (LowerValue == "true")
                 {
-                    Symbol = new Constant(new TypedValue(DataType.Boolean, true)) { Position = Position };
+                    Symbol = new Constant(new TypedValue(DataType.Boolean, true)) { Position = this.Position };
                     Operator = OperatorType.No;
                 }
                 else if (LowerValue == "false")
                 {
-                    Symbol = new Constant(new TypedValue(DataType.Boolean, false)) { Position = Position };
+                    Symbol = new Constant(new TypedValue(DataType.Boolean, false)) { Position = this.Position };
                     Operator = OperatorType.No;
                 }
 
                 //Logic operators
                 else if (LowerValue == "or")
-                    Symbol = new LogicOperators.Or { Position = Position };
+                    Symbol = new LogicOperators.Or { Position = this.Position };
                 else if (LowerValue == "and")
-                    Symbol = new LogicOperators.And { Position = Position };
+                    Symbol = new LogicOperators.And { Position = this.Position };
                 else if (LowerValue == "not")
                 {
-                    Symbol = new LogicOperators.Not { Position = Position };
+                    Symbol = new LogicOperators.Not { Position = this.Position };
                     TokenOrderRightToLeft = true;
                     Operator = OperatorType.Right;
                 }
@@ -51,14 +51,14 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     //Expression value
                     if (!ParseArgument(ref ExpressionValue, Position))
                     {
-                        Symbol = new ExpressionValue { ExpressionCode = Value, Position = Position };
+                        Symbol = new ExpressionValue { ExpressionCode = Value, Position = this.Position };
                         Operator = OperatorType.No;
                     }
 
                     //functions
                     else if (LowerValue == "dateincrement")
                     {
-                        var DateIncrement = new Functions.DateIncrement { Position = Position };
+                        var DateIncrement = new Functions.DateIncrement { Position = this.Position };
                         CheckArguments(4);
                         DateIncrement.Arguments.AddRange(Arguments.Select(a => a.Symbol));
                         Symbol = DateIncrement;
@@ -66,7 +66,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     }
                     else if (LowerValue == "datetimeincrement")
                     {
-                        var DateTimeIncrement = new Functions.DateTimeIncrement { Position = Position };
+                        var DateTimeIncrement = new Functions.DateTimeIncrement { Position = this.Position };
                         CheckArguments(6);
                         DateTimeIncrement.Arguments.AddRange(Arguments.Select(a => a.Symbol));
                         Symbol = DateTimeIncrement;
@@ -74,7 +74,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     }
                     else if (LowerValue == "error")
                     {
-                        var Error = new Functions.Error { Position = Position };
+                        var Error = new Functions.Error { Position = this.Position };
                         CheckArguments(1);
                         Error.Argument = Arguments[0].Symbol;
                         Symbol = Error;
@@ -82,7 +82,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     }
                     else if (LowerValue == "format")
                     {
-                        var Format = new Functions.Format { Position = Position };
+                        var Format = new Functions.Format { Position = this.Position };
                         CheckArguments(2);
                         Format.Left = Arguments[0].Symbol;
                         Format.Right = Arguments[1].Symbol;
@@ -91,7 +91,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     }
                     else if (LowerValue == "null")
                     {
-                        var Null = new Functions.Null { Position = Position };
+                        var Null = new Functions.Null { Position = this.Position };
                         CheckArguments(1);
                         Null.Argument = Arguments[0].Symbol;
                         Symbol = Null;
@@ -99,7 +99,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     }
                     else if (LowerValue == "date")
                     {
-                        var Date = new Functions.Date { Position = Position };
+                        var Date = new Functions.Date { Position = this.Position };
                         CheckArguments(3);
                         Date.Arguments.AddRange(Arguments.Select(a => a.Symbol));
                         Symbol = Date;
@@ -107,7 +107,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     }
                     else if (LowerValue == "datetime")
                     {
-                        var DateTime = new Functions.DateTime { Position = Position };
+                        var DateTime = new Functions.DateTime { Position = this.Position };
                         CheckArguments(5);
                         DateTime.Arguments.AddRange(Arguments.Select(a => a.Symbol));
                         Symbol = DateTime;
@@ -115,7 +115,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     }
                     else if (LowerValue == "time")
                     {
-                        var Time = new Functions.Time { Position = Position };
+                        var Time = new Functions.Time { Position = this.Position };
                         CheckArguments(2);
                         Time.Left = Arguments[0].Symbol;
                         Time.Right = Arguments[1].Symbol;
@@ -126,7 +126,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     //Math functions
                     else if (LowerValue == "sqrt")
                     {
-                        var SqRt = new MathFunctions.SqRt { Position = Position };
+                        var SqRt = new MathFunctions.SqRt { Position = this.Position };
                         CheckArguments(1);
                         SqRt.Argument = Arguments[0].Symbol;
                         Symbol = SqRt;
@@ -134,7 +134,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     }
                     else if (LowerValue == "sin")
                     {
-                        var Sin = new MathFunctions.Sin { Position = Position };
+                        var Sin = new MathFunctions.Sin { Position = this.Position };
                         CheckArguments(1);
                         Sin.Argument = Arguments[0].Symbol;
                         Symbol = Sin;
@@ -142,7 +142,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     }
                     else if (LowerValue == "cos")
                     {
-                        var Cos = new MathFunctions.Cos { Position = Position };
+                        var Cos = new MathFunctions.Cos { Position = this.Position };
                         CheckArguments(1);
                         Cos.Argument = Arguments[0].Symbol;
                         Symbol = Cos;
@@ -150,7 +150,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     }
                     else if (LowerValue == "tan")
                     {
-                        var Tan = new MathFunctions.Tan { Position = Position };
+                        var Tan = new MathFunctions.Tan { Position = this.Position };
                         CheckArguments(1);
                         Tan.Argument = Arguments[0].Symbol;
                         Symbol = Tan;
@@ -158,7 +158,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     }
                     else if (LowerValue == "atan")
                     {
-                        var ATan = new MathFunctions.ATan { Position = Position };
+                        var ATan = new MathFunctions.ATan { Position = this.Position };
                         CheckArguments(1);
                         ATan.Argument = Arguments[0].Symbol;
                         Symbol = ATan;
@@ -166,7 +166,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     }
                     else if (LowerValue == "ln")
                     {
-                        var LN = new MathFunctions.LN { Position = Position };
+                        var LN = new MathFunctions.LN { Position = this.Position };
                         CheckArguments(1);
                         LN.Argument = Arguments[0].Symbol;
                         Symbol = LN;
@@ -174,7 +174,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     }
                     else if (LowerValue == "log")
                     {
-                        var Log = new MathFunctions.Log { Position = Position };
+                        var Log = new MathFunctions.Log { Position = this.Position };
                         CheckArguments(1);
                         Log.Argument = Arguments[0].Symbol;
                         Symbol = Log;
@@ -182,7 +182,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     }
                     else if (LowerValue == "round")
                     {
-                        var Round = new MathFunctions.Round { Position = Position };
+                        var Round = new MathFunctions.Round { Position = this.Position };
                         CheckArguments(2);
                         Round.Left = Arguments[0].Symbol;
                         Round.Right = Arguments[1].Symbol;
@@ -193,7 +193,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     //Conditional operator
                     else if (LowerValue == "iif")
                     {
-                        var ConditionalOperator = new Expressions.ConditionalOperator { Position = Position };
+                        var ConditionalOperator = new Expressions.ConditionalOperator { Position = this.Position };
                         CheckArguments(3);
                         ConditionalOperator.Condition = Arguments[0].Symbol;
                         ConditionalOperator.TruePart = Arguments[1].Symbol;
@@ -212,44 +212,44 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                 switch (Values[1])
                 {
                     case "Signed":
-                        Symbol = new ElementProperties.SignatureProperty(ElementProperties.SignatureProperty.SIGNED) { Code = Values[0], Position = Position };
+                        Symbol = new ElementProperties.SignatureProperty(ElementProperties.SignatureProperty.SIGNED) { Code = Values[0], Position = this.Position };
                         break;
                     case "SignedBy":
-                        Symbol = new ElementProperties.SignatureProperty(ElementProperties.SignatureProperty.SIGNED_BY) { Code = Values[0], Position = Position };
+                        Symbol = new ElementProperties.SignatureProperty(ElementProperties.SignatureProperty.SIGNED_BY) { Code = Values[0], Position = this.Position };
                         break;
                     case "SignedOn":
-                        Symbol = new ElementProperties.SignatureProperty(ElementProperties.SignatureProperty.SIGNED_ON) { Code = Values[0], Position = Position };
+                        Symbol = new ElementProperties.SignatureProperty(ElementProperties.SignatureProperty.SIGNED_ON) { Code = Values[0], Position = this.Position };
                         break;
                     case "HistoryLength":
-                        Symbol = new ElementProperties.SignatureProperty(ElementProperties.SignatureProperty.HISTORY_LENGTH) { Code = Values[0], Position = Position };
+                        Symbol = new ElementProperties.SignatureProperty(ElementProperties.SignatureProperty.HISTORY_LENGTH) { Code = Values[0], Position = this.Position };
                         break;
                     case "Value":
-                        Symbol = new ElementProperties.FieldProperty { Code = Values[0], Position = Position };
+                        Symbol = new ElementProperties.FieldProperty { Code = Values[0], Position = this.Position };
                         break;
                     case "ModifiedBy":
-                        Symbol = new ElementProperties.EditableElementProperty(ElementProperties.EditableElementProperty.MODIFIED_BY) { Code = Values[0], Position = Position };
+                        Symbol = new ElementProperties.EditableElementProperty(ElementProperties.EditableElementProperty.MODIFIED_BY) { Code = Values[0], Position = this.Position };
                         break;
                     case "ModifiedOn":
-                        Symbol = new ElementProperties.EditableElementProperty(ElementProperties.EditableElementProperty.MODIFIED_ON) { Code = Values[0], Position = Position };
+                        Symbol = new ElementProperties.EditableElementProperty(ElementProperties.EditableElementProperty.MODIFIED_ON) { Code = Values[0], Position = this.Position };
                         break;
                     case "Valid":
-                        Symbol = new ElementProperties.ValidityElementProperty { Code = Values[0], Position = Position };
+                        Symbol = new ElementProperties.ValidityElementProperty { Code = Values[0], Position = this.Position };
                         break;
                     case "Count":
                     case "IterationIndex":
-                        Symbol = new ElementProperties.IteratorProperty(Values[1]) { Code = Values[0], Position = Position };
+                        Symbol = new ElementProperties.IteratorProperty(Values[1]) { Code = Values[0], Position = this.Position };
                         break;
                     case "Sum":
                     case "Avg":
                     case "StDev":
-                        var Measure = new IteratorFunctions.Measure(Values[1]) { IteratorCode = Values[0], Position = Position };
+                        var Measure = new IteratorFunctions.Measure(Values[1]) { IteratorCode = Values[0], Position = this.Position };
                         ParseArgument(ref ExpressionValue, Position, 1);
                         Measure.Argument = Arguments[0].Symbol;
                         Symbol = Measure;
                         break;
                     case "Any":
                     case "All":
-                        var Ispection = new IteratorFunctions.Ispection(Values[1]) { IteratorCode = Values[0], Position = Position };
+                        var Ispection = new IteratorFunctions.Ispection(Values[1]) { IteratorCode = Values[0], Position = this.Position };
                         ParseArgument(ref ExpressionValue, Position, 1);
                         Ispection.Argument = Arguments[0].Symbol;
                         Symbol = Ispection;
@@ -257,27 +257,27 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     case "Corr":
                     case "Slope":
                     case "Intercept":
-                        var GeometricFunction = new IteratorFunctions.GeometricFunction(Values[1]) { IteratorCode = Values[0], Position = Position };
+                        var GeometricFunction = new IteratorFunctions.GeometricFunction(Values[1]) { IteratorCode = Values[0], Position = this.Position };
                         ParseArgument(ref ExpressionValue, Position, 2);
                         GeometricFunction.Left = Arguments[0].Symbol;
                         GeometricFunction.Right = Arguments[1].Symbol;
                         Symbol = GeometricFunction;
                         break;
                     case "Each":
-                        var Each = new IteratorFunctions.Each { IteratorCode = Values[0], Position = Position };
+                        var Each = new IteratorFunctions.Each { IteratorCode = Values[0], Position = this.Position };
                         ParseArgument(ref ExpressionValue, Position, 1);
                         Each.Argument = Arguments[0].Symbol;
                         Symbol = Each;
                         break;
                     case "IterationValue":
-                        var IterationValue = new IteratorFunctions.IterationValue { IteratorCode = Values[0], Position = Position };
+                        var IterationValue = new IteratorFunctions.IterationValue { IteratorCode = Values[0], Position = this.Position };
                         ParseArgument(ref ExpressionValue, Position, 2);
                         IterationValue.Left = Arguments[0].Symbol;
                         IterationValue.Right = Arguments[1].Symbol;
                         Symbol = IterationValue;
                         break;
                     case "RecurrenceTerm":
-                        var RecurrenceTerm = new IteratorFunctions.RecurrenceTerm { IteratorCode = Values[0], Position = Position };
+                        var RecurrenceTerm = new IteratorFunctions.RecurrenceTerm { IteratorCode = Values[0], Position = new Position(Position) };
                         ParseArgument(ref ExpressionValue, Position, 2);
                         RecurrenceTerm.Left = Arguments[0].Symbol;
                         RecurrenceTerm.Right = Arguments[1].Symbol;
@@ -304,12 +304,17 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
             while (true)
             {
                 var Character = ExpressionValue[Position.Index];
-                Position.Increment(Character == '\n');
 
-                if (Character == '(') break;
+                if (Character == '(')
+                {
+                    Position.Increment(false);
+                    break;
+                }
 
-                if (!char.IsWhiteSpace(Character) || Position.Index == ExpressionValue.Length)
+                if (!char.IsWhiteSpace(Character) || Position.Index + 1 == ExpressionValue.Length)
                     return ArgumentsCount.HasValue ? throw new ParseException("( expected", Position) : false;
+
+                Position.Increment(Character == '\n');
             }
 
             Arguments = new List<TokenSet>();

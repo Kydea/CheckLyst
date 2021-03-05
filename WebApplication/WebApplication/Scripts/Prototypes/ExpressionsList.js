@@ -101,7 +101,13 @@
                     matematici.canClose = false;
                     verify(null, function () {
                         var expression = prototypes.prototype.getModel().expressions[row.code];
-                        editor.setError(expression.errorPosition, expression.error);
+                        console.log(expression.dataType, !expression.dataType);
+                        if (expression.error)
+                            editor.setError(expression.errorPosition, expression.error, "error");
+                        else if (!expression.dataType || !expression.dataType.typeName)
+                            editor.setError(null, "this expression could not be evalutate because of errors in other expressions", "warning");
+                        else
+                            editor.setError(null, null);
                     });
                     matematici.canClose = oldCanClose;
                     if (index == null)

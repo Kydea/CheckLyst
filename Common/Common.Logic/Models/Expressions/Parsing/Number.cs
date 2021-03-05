@@ -19,7 +19,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
             if (!decimal.TryParse(Value, out decimal DecimalValue))
                 throw new ParseException("Invalid number: " + Value, Position);
 
-            Symbol = new Constant(new TypedValue(DataType.Number, DecimalValue)) { Position = Position };
+            Symbol = new Constant(new TypedValue(DataType.Number, DecimalValue)) { Position = new Position(Position) };
             Operator = OperatorType.No;
         }
     }

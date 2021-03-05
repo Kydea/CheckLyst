@@ -9,7 +9,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
     {
         public ConditionalOperator(Position Position, int Index) : base(Position, Index)
         {
-            Symbol = new Expressions.ConditionalOperator { Position = Position };
+            Symbol = new Expressions.ConditionalOperator { Position = new Position(Position) };
         }
 
         public override string ToString()

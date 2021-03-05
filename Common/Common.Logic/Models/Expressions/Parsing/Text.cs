@@ -18,7 +18,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
 
             Value = ExpressionValue.Substring(this.Position.Index + 1, Position.Index - this.Position.Index);
             Position.Increment(false);
-            Symbol = new Constant(new TypedValue(DataType.Text, Value)) { Position = Position };
+            Symbol = new Constant(new TypedValue(DataType.Text, Value)) { Position = new Position(Position) };
             Operator = OperatorType.No;
         }
     }

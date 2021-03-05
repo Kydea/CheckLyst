@@ -44,7 +44,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                 TokenOrderRightToLeft = true;
             }
 
-            Symbol.Position = Position;
+            Symbol.Position = new Position(Position);
         }
     }
 
