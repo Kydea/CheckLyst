@@ -29,16 +29,10 @@
                     var
                         range = session.getAWordRange(pos.row, pos.column - 1),
                         word = session.getTextRange(range);
-                    callback(null, [
-                        { name: "name1", value: word, score: 100, meta: "meta1" }
-                    ]);
+                    callback(null, matematici.ExpressionEditorConstants.properties.field);
                 } else
                     //literals
-                    callback(null, [
-                        { name: "name1", value: "value1", score: 100, meta: "meta1" },
-                        { name: "name2", value: "value2", score: 100, meta: "meta2" },
-                        { name: "name3", value: "value3", score: 100, meta: "meta2" }
-                    ]);
+                    callback(null, matematici.ExpressionEditorConstants.tokens);
             }
         },
 
@@ -85,3 +79,26 @@
 
     setup();
 }
+
+//[{ name: "...", value: "...", score: 100, meta: "..." }]
+
+matematici.ExpressionEditorConstants = {};
+
+matematici.ExpressionEditorConstants.functionCodes = [
+    "DateIncrement", "DateTimeIncrement", "Error", "IIf"
+]
+matematici.ExpressionEditorConstants.tokens = matematici.ExpressionEditorConstants.functionCodes.map(function (value) { return { name: value, value: value, score: 100, meta: "keyword" } });
+
+matematici.ExpressionEditorConstants.operatorCodes = [
+    "and", "or", "not"
+]
+matematici.ExpressionEditorConstants.tokens.concat(matematici.ExpressionEditorConstants.operatorCodes.map(function (value) { return { name: value, value: value, score: 100, meta: "operator" } }))
+
+matematici.ExpressionEditorConstants.properties = {};
+matematici.ExpressionEditorConstants.propertieCodes = {
+    field: ["Value", "Valid", "Error", "ModifiedBy", "ModifiedOn"]
+}
+matematici.ExpressionEditorConstants.properties.field = matematici.ExpressionEditorConstants.propertieCodes.field.map(function (value) { return { name: value, value: value, score: 100, meta: "field property" } });
+
+console.log(matematici.ExpressionEditorConstants.properties.tokens);
+console.log(matematici.ExpressionEditorConstants.properties.field);
