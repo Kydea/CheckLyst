@@ -252,7 +252,9 @@
     <Content Include="Scripts\Ace\keybinding-sublime.js" />
     <Content Include="Scripts\Ace\keybinding-vim.js" />
     <Content Include="Scripts\Ace\keybinding-vscode.js" />
+    <Content Include="Scripts\Ace\snippets\expression.js" />
     <Content Include="Scripts\Ace\mode-expression.js" />
+    <Content Include="Scripts\Ace\theme-expression.js" />
     <Content Include="Scripts\Ace\worker-base.js" />
     <Content Include="Scripts\Controls\Calendar.js" />
     <Content Include="Scripts\Controls\Controls.js" />

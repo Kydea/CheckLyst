@@ -20,7 +20,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
 
         protected override void Check(ICheckListElement Element, List<string> IteratorStack)
         {
-            if (!(Element is ICheckListValidityElement)) throw new Exception($"The element with code {Code} is a validity element");
+            if (!(Element is ICheckListValidityElement)) throw new Exception($"The element with code {Code} is not a validity element");
             DataType = DataType.Boolean;
         }
 

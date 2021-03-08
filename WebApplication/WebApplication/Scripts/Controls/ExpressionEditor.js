@@ -3,7 +3,10 @@
         languageTools = ace.require("ace/ext/language_tools"),
         autoComplete = ace.require("ace/autocomplete").Autocomplete,
         utility = ace.require("ace/autocomplete/util"),
+        snippetManager = ace.require("ace/snippets").snippetManager,
+        lang = ace.require("ace/lib/lang"),
         editor = ace.edit(id),
+        elementCodes,
 
         execHandler = function (e) {
             var editor = e.editor;
@@ -14,7 +17,14 @@
             }
             else if (e.command.name === "insertstring") {
                 var prefix = utility.getCompletionPrefix(editor);
-                if ((prefix || e.args == ".") && !hasCompleter) {
+                if (prefix && !hasCompleter) {
+                    var completer = autoComplete.for(editor);
+                    completer.autoInsert = false;
+                    completer.showPopup(editor);
+                }
+                else if (e.args === ".") {
+                    if (hasCompleter)
+                        editor.completer.detach();
                     var completer = autoComplete.for(editor);
                     completer.autoInsert = false;
                     completer.showPopup(editor);
@@ -22,17 +32,72 @@
             }
         },
 
-        completer = {
+        customCompleter = {
             getCompletions: function (editor, session, pos, prefix, callback) {
-                if (prefix.length == 0 && pos.column > 1) {
-                    //properties
-                    var
-                        range = session.getAWordRange(pos.row, pos.column - 1),
-                        word = session.getTextRange(range);
-                    callback(null, matematici.ExpressionEditorConstants.properties.field);
-                } else
-                    //literals
-                    callback(null, matematici.ExpressionEditorConstants.tokens);
+                var method = prefix.length == 0 && pos.column > 1; //following a dot
+
+                var scopes = [];
+                var token = session.getTokenAt(pos.row, pos.column);
+                if (token && token.type.match(/(tag-name|tag-open|tag-whitespace|attribute-name|attribute-value)\.xml$/))
+                    scopes.push('html-tag');
+                else
+                    scopes = snippetManager.getActiveScopes(editor);
+
+                var snippetMap = snippetManager.snippetMap;
+                var completions = [];
+                scopes.forEach(function (scope) {
+                    var snippets = snippetMap[scope] || [];
+                    for (var i = snippets.length; i--;) {
+                        var
+                            s = snippets[i],
+                            caption = s.name || s.tabTrigger,
+                            matches = !method && !s.interface;
+
+                        if (!matches) {
+                            var
+                                range = session.getAWordRange(pos.row, pos.column - 1),
+                                word = session.getTextRange(range),
+                                element = word && prototypes.prototype.findItemByCode(word);
+
+                            matches = element &&
+                                (
+                                    s.interface == "ValidityItem"
+                                    || s.interface == "Field" && element.typeName == "Field"
+                                    || s.interface == "EditableItem" && (element.typeName == "Attachment" || element.typeName == "Field" || element.typeName == "Groupd" || element.typeName == "Signature")
+                                    || s.interface == "Iterator" && (element.typeName == "Group" && element.iterator)
+                                    || s.interface == "Signature" && element.typeName == "Signature"
+                                );
+                        }
+
+                        if (matches)
+                            completions.push({
+                                caption: caption,
+                                snippet: s.content,
+                                meta: s.meta,
+                                type: "snippet",
+                                comment: s.comment
+                            });
+                    }
+                }, this);
+
+                if (!method)
+                    for (var index in elementCodes) {
+                        var element = elementCodes[index];
+                        completions.push({
+                            name: "#" + element.code,
+                            value: element.code,
+                            meta: element.type
+                        });
+                    }
+                callback(null, completions);
+            },
+            getDocTooltip: function (item) {
+                if (item.type == "snippet" && !item.docHTML && item.comment) {
+                    item.docHTML = [
+                        "<strong>", lang.escapeHTML(item.caption), "</strong><br></br>",  
+                        lang.escapeHTML(item.comment)
+                    ].join("");
+                }
             }
         },
 
@@ -40,11 +105,15 @@
             editor.session.setMode("ace/mode/expression");
             editor.setOptions({
                 enableBasicAutocompletion: true,
+                enableSnippets: true
             });
+            editor.setTheme("ace/theme/expression")
             editor.setShowPrintMargin(false);
 
-            languageTools.setCompleters([completer])
+            languageTools.setCompleters([customCompleter])
             editor.commands.on('afterExec', execHandler);
+
+            elementCodes = prototypes.prototype.getElementCodes();
         };
 
     this.setReadOnly = function (value) {
@@ -73,32 +142,25 @@
                 type: type
             }
             editor.session.setAnnotations([annotation]);
-            console.log(annotation);
         }
     };
 
     setup();
 }
 
-//[{ name: "...", value: "...", score: 100, meta: "..." }]
-
-matematici.ExpressionEditorConstants = {};
-
-matematici.ExpressionEditorConstants.functionCodes = [
-    "DateIncrement", "DateTimeIncrement", "Error", "IIf"
-]
-matematici.ExpressionEditorConstants.tokens = matematici.ExpressionEditorConstants.functionCodes.map(function (value) { return { name: value, value: value, score: 100, meta: "keyword" } });
-
-matematici.ExpressionEditorConstants.operatorCodes = [
-    "and", "or", "not"
-]
-matematici.ExpressionEditorConstants.tokens.concat(matematici.ExpressionEditorConstants.operatorCodes.map(function (value) { return { name: value, value: value, score: 100, meta: "operator" } }))
-
+/*
 matematici.ExpressionEditorConstants.properties = {};
-matematici.ExpressionEditorConstants.propertieCodes = {
+matematici.ExpressionEditorConstants.propertiesCodes = {
     field: ["Value", "Valid", "Error", "ModifiedBy", "ModifiedOn"]
 }
-matematici.ExpressionEditorConstants.properties.field = matematici.ExpressionEditorConstants.propertieCodes.field.map(function (value) { return { name: value, value: value, score: 100, meta: "field property" } });
+matematici.ExpressionEditorConstants.properties.field = matematici.ExpressionEditorConstants.propertiesCodes.field.map(function (value) { return { name: value, value: value, meta: "field property" } });
 
-console.log(matematici.ExpressionEditorConstants.properties.tokens);
-console.log(matematici.ExpressionEditorConstants.properties.field);
+matematici.ExpressionEditorConstants.propertiesCodes = {
+    validityElement: ["Valid"],
+    editableItem: ["ModifiedBy", "ModifiedOn"],
+    field: ["Value"],
+    signature: ["Signed", "SignedBy", "SignedOn", "ModifiedBy", "ModifiedOn", "HistoryLength", "HistoryLength"],
+    iterator: ["Count", "IterationIndex", ],
+}
+matematici.ExpressionEditorConstants.properties.field = matematici.ExpressionEditorConstants.propertiesCodes.field.map(function (value) { return { name: value, value: value, meta: "field property" } });
+*/

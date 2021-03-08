@@ -89,7 +89,7 @@
             var expression = map();
 
             if (!newRecord && expressions[expressionIndex].dependentRelations && expressions[expressionIndex].dependentRelations.length > 0 && getCode() != expressions[expressionIndex].code) {
-                var message = "WARNING: the expression is referenced by " + expressions[expressionIndex].dependentRelations.length + " element(s). If you change the code from '" + expressions[expressionIndex].code + "', the referencing elements will have to be fixed to save the proptotype."
+                var message = "WARNING: the expression is referenced by " + expressions[expressionIndex].dependentRelations.length + " element(s). If you change the code from '" + expressions[expressionIndex].code + "', the referencing elements will have to be fixed."
                 matematici.dialog.show("warning", message, [
                     {
                         text: "confirm", icon: "check", handler: function () {

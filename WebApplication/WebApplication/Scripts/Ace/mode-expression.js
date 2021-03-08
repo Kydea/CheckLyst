@@ -161,6 +161,7 @@ ace.define("ace/mode/expression", ["require", "exports", "module", "ace/lib/oop"
 
     (function () {
         this.$id = "ace/mode/expression";
+        this.snippetFileId = "ace/snippets/expression";
     }).call(Mode.prototype);
 
     exports.Mode = Mode;

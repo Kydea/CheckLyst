@@ -386,6 +386,50 @@
                 element.cloned = true;
         },
 
+        findItemByCode = function (code, element) {
+            if (!element) {
+                var item = findItemByCode(code, model.header);
+                if (item) return item;
+                for (var pageIndex in model.pages) {
+                    var page = model.pages[pageIndex];
+                    for (var groupIndex in page.groups) {
+                        var item = findItemByCode(code, page.groups[groupIndex]);
+                        if (item) return item;
+                    }
+                }
+            } else if (element.code == code)
+                return element;
+            else if (element.typeName == "Group")
+                for (var index in element.items) {
+                    var item = findItemByCode(code, element.items[index]);
+                    if (item) return item;
+                }
+        },
+
+        getElementCodes = function (element, codes) {
+            if (!element) {
+                codes = [];
+                getElementCodes(model.header, codes);
+                for (var pageIndex in model.pages) {
+                    var page = model.pages[pageIndex];
+
+                    if (page.code)
+                        codes.push({ code: element.code, type: "item (Page)" });
+
+                    for (var groupIndex in page.groups)
+                        getElementCodes(page.groups[groupIndex], codes);
+                }
+                return codes;
+            } else {
+                if (element.code)
+                    codes.push({ code: element.code, type: "item (" + element.typeName + ")"});
+
+                if (element.typeName == "Group")
+                    for (var index in element.items)
+                        getElementCodes(element.items[index], codes);
+            }
+        },
+
         findItem = function (element, itemId, pageIndex, result) {
             if (element.id == itemId) {
                 result.page = pageIndex;
@@ -1051,9 +1095,11 @@
     prototype.selectById = selectById;
     prototype.select = select;
     prototype.completeModel = completeModel;
+    prototype.findItemByCode = findItemByCode;
+    prototype.getElementCodes = getElementCodes;
 
     setup();
-}
+};
 
 prototypes.Prototype.states = {
     draft: "Draft",
@@ -1064,4 +1110,4 @@ prototypes.Prototype.states = {
     approved: "Approved",
     active: "Active",
     obsolete: "Obsolete"
-}
+};
