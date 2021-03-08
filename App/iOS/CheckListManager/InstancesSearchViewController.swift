@@ -64,6 +64,10 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
     
     
     override func viewDidAppear(_ animated: Bool) {
+        if appDelegate.requestToOpenInstance {
+            appDelegate.openInstance()
+            return
+        }
         fromSelectionToSearchDictionary()
         fillSearchFields()
     }
@@ -546,8 +550,10 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                 let app = sender as! MyApplication
                 if let parameters = app.requestedUrlInfo {
                     
-                    for i in 0...7 {
-                        selectedItemsDictionary[i] = Option(text: "",value: "")
+                    if selectedItemsDictionary.count == 0  {
+                        for i in 0...7 {
+                            selectedItemsDictionary[i] = Option(text: "",value: "")
+                        }
                     }
                     
                     if (parameters.keys.contains("version") && parameters.keys.contains("prototype")) {
@@ -581,9 +587,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
     @IBAction func unwindToSearchInstances(sender: UIStoryboardSegue) {
         
         if let sourceViewController = sender.source as? InstanceViewController {
-            
             selectedItemsDictionary = sourceViewController.selectedItemsDictionary
-            
         }
         
     }

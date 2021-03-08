@@ -61,8 +61,6 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
             }
         }
         
-        
-        
         let fullUrl = !newInstance ?
             ServerConnection.baseFrontEndUrl + "/Instances/Detail/" + (instanceCodeFromRequest != nil ? instanceCodeFromRequest! : instance.code) + "?d=" + String(Int64(Date().timeIntervalSince1970 * 1000)) + "&AppUser=" + (UserDefaults.standard.string(forKey: "userCode"))! :
             ServerConnection.baseFrontEndUrl + "/Instances/Create/" + newInstancePrototype! + "/" + newInstanceVersion! + "?" + (newInstanceFieldsValues! != "" ? newInstanceFieldsValues! + "&" : "") + "d=" + String(Int64(Date().timeIntervalSince1970 * 1000)) + "&AppUser=" + (UserDefaults.standard.string(forKey: "userCode"))!
@@ -230,9 +228,16 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     
     func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
         if navigationAction.targetFrame == nil {
-            if let scheme = navigationAction.request.url?.scheme {
+            if let url = navigationAction.request.url, let scheme = url.scheme {
                 if supportedProtocols.contains(scheme) {
-                    UIApplication.shared.open(navigationAction.request.url!, options: [:])
+                    if (url.getCallType == .Create ||
+                        url.getCallType == .Detail) {
+                        appDelegate.requestToOpenInstance = true
+                        appDelegate.requestedUrlInfo = url.getParametersForInstance
+                        self.goBackToSearchInstances(self)
+                    } else {
+                        UIApplication.shared.open(navigationAction.request.url!, options: [:])
+                    }
                 } else {
                     self.appDelegate.displayMessage(Title: "Error", Message: "Protocol \(scheme) not supported")
                 }

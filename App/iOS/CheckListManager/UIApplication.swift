@@ -382,7 +382,7 @@ import CoreData
     
     func backFromBackGround() {
         let logged = UserDefaults.standard.existKey("access_token")
-        
+
         if logged && !self.isTokenExpired && !self.isInactivityCatched {
             if let lastActiveTime = UserDefaults.standard.date(forKey: "backgroundTime") {
                 
@@ -403,8 +403,11 @@ import CoreData
                 }
             }
             
+            //avoid to run token sync if inactivity is catched, user is already logged out due to inactivity or just a warning is already displayed
+            if self.isInactivityCatched || !UserDefaults.standard.existKey("access_token") || self.isWarningPresented { return }
+            
             if let expireDate = UserDefaults.standard.date(forKey: "token_expires") {
-                if(expireDate < Date() && !self.isWarningPresented) {
+                if(expireDate < Date()) {
                     self.isTokenExpired = true
                     self.displayMessage(Title: "Session Expired", Message: "Your session is expired, you'll be redirected to login section.") { [weak self]
                         () -> Void in
