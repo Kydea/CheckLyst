@@ -16,23 +16,40 @@
     border-bottom: solid 1px #ccc;
     background: #f5f5f5;
     padding-top: 1px; }
-    div.PropertyPanel div.PropertyList a {
-      background: white;
-      display: block;
-      padding: 4px 10px;
-      text-decoration: none;
-      border-bottom: solid 1px #ccc; }
-      div.PropertyPanel div.PropertyList a i.fa-caret-right {
-        visibility: hidden;
-        padding-right: 5px;
-        font-size: 12px; }
-      div.PropertyPanel div.PropertyList a:hover {
-        text-decoration: none !important; }
-      div.PropertyPanel div.PropertyList a.Selected i.fa-caret-right {
-        visibility: visible; }
-      div.PropertyPanel div.PropertyList a.Changed {
-        font-weight: bold;
-        color: #00877a !important; }
+    div.PropertyPanel div.PropertyList table {
+      border-collapse: collapse;
+      border-spacing: 0;
+      width: 100%; }
+      div.PropertyPanel div.PropertyList table tbody tr {
+        background: white;
+        border-bottom: solid 1px #ccc; }
+        div.PropertyPanel div.PropertyList table tbody tr td a {
+          display: block;
+          padding: 4px 10px;
+          text-decoration: none;
+          white-space: nowrap; }
+          div.PropertyPanel div.PropertyList table tbody tr td a i.fa-caret-right {
+            visibility: hidden;
+            padding-right: 5px;
+            font-size: 12px; }
+          div.PropertyPanel div.PropertyList table tbody tr td a:hover {
+            text-decoration: none !important; }
+          div.PropertyPanel div.PropertyList table tbody tr td a.Selected i.fa-caret-right {
+            visibility: visible; }
+          div.PropertyPanel div.PropertyList table tbody tr td a.Changed {
+            font-weight: bold;
+            color: #00877a !important; }
+        div.PropertyPanel div.PropertyList table tbody tr td:first-child {
+          width: 100%;
+          border-right: solid 1px #ccc; }
+        div.PropertyPanel div.PropertyList table tbody tr td:last-child {
+          max-width: 180px;
+          overflow: hidden; }
+          div.PropertyPanel div.PropertyList table tbody tr td:last-child a {
+            color: #666;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap; }
   div.PropertyPanel div.PropertyValue {
     position: absolute;
     width: calc(50% - 20px);

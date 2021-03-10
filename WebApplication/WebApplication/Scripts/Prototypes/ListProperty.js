@@ -1,26 +1,15 @@
 ﻿prototypes.ListProperty = function (model, property, values, options) {
     var
+        base,
         input,
-        handler,
-        check,
 
         change = function () {
             model[property] = input.val();
-            matematici.canClose = false;
-            if (handler) handler.call(this, model);
+            base.updateModel(model);
         };
 
-    this.setCheck = function (value) {
-        check = value;
-        return this;
-    };
-
-    this.setHandler = function (value) {
-        handler = value;
-        return this;
-    };
-
-    this.create = function (valuePanel) {
+    this.create = function (valuePanel, baseClass) {
+        base = baseClass;
         valuePanel.addClass("Expression");
 
         if (options.readOnly) {
@@ -57,6 +46,15 @@
 
     this.refresh = function (newValues) {
         values = newValues;
+    }
+
+    this.setValue = function (node) {
+        var label = options.nullable ? "" : values[0].label || values[0];
+        if (this.hasChanges())
+            for (var index in values)
+                if (values[index] == model[property] || values[index].code == model[property])
+                    label = values[index].label || values[index];
+        node.text(label);
     }
 }
 

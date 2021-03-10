@@ -20,32 +20,61 @@ div.PropertyPanel {
         background: $Color-Silver-Light;
         padding-top: 1px;
 
-        a {
-            background: white;
-            display: block;
-            padding: 4px 10px;
-            text-decoration: none;
-            border-bottom: solid 1px $Color-Grey-Light;
+        table {
+            border-collapse: collapse;
+            border-spacing: 0;
+            width: 100%;
 
-            i.fa-caret-right {
-                visibility: hidden;
-                padding-right: 5px;
-                font-size: 12px;
-            }
+            tbody tr {
+                background: white;
+                border-bottom: solid 1px $Color-Grey-Light;
 
-            &:hover {
-                text-decoration: none !important;
-            }
+                td {
+                    a {
+                        display: block;
+                        padding: 4px 10px;
+                        text-decoration: none;
+                        white-space: nowrap;
 
-            &.Selected {
-                i.fa-caret-right {
-                    visibility: visible;
+                        i.fa-caret-right {
+                            visibility: hidden;
+                            padding-right: 5px;
+                            font-size: 12px;
+                        }
+
+                        &:hover {
+                            text-decoration: none !important;
+                        }
+
+                        &.Selected {
+                            i.fa-caret-right {
+                                visibility: visible;
+                            }
+                        }
+
+                        &.Changed {
+                            font-weight: bold;
+                            color: $Color-Green-Dark !important;
+                        }
+                    }
+
+                    &:first-child {
+                        width: 100%;
+                        border-right: solid 1px $Color-Grey-Light;
+                    }
+
+                    &:last-child {
+                        max-width: 180px;
+                        overflow: hidden;
+
+                        a {
+                            color: $Color-Grey-Dark;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            white-space: nowrap;
+                        }
+                    }
                 }
-            }
-
-            &.Changed {
-                font-weight: bold;
-                color: $Color-Green-Dark !important;
             }
         }
     }

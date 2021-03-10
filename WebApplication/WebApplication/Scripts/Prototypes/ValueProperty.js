@@ -1,5 +1,6 @@
 ﻿prototypes.ValueProperty = function (model) {
-	var
+    var
+        base,
 		sourceName,
 		sourceColumn,
 		input,
@@ -19,7 +20,7 @@
 			for (var valueIndex in model.valuesList)
 				if (model.valuesList[valueIndex])
 					model.valuesList[valueIndex] = model.valuesList[valueIndex].trim();
-			matematici.canClose = false;
+            base.updateModel(model);
 		},
 
 		sourceChanged = function (column) {
@@ -69,7 +70,8 @@
 			empty = !externalSource && !formula && !list;
 		};
 
-	this.create = function (valuePanel) {
+    this.create = function (valuePanel, baseClass) {
+        base = baseClass();
 		refresh();
 		valuePanel.addClass("Value");
 

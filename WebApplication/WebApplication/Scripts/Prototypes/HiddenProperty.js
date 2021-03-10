@@ -1,5 +1,6 @@
 ﻿prototypes.HiddenProperty = function (model) {
     var
+        base,
         input,
         expressions,
         editable = prototypes.prototype.getModel().state == prototypes.Prototype.states.draft,
@@ -23,10 +24,11 @@
             var index = input.prop("selectedIndex");
             model.hiddenExpressionCode = index > 1 ? value : null;
             model.hiddenCondition = index == 0 ? 2 : index == 1 ? 1 : 3;
-            matematici.canClose = false;
+            base.updateModel(model);
         };
 
-    this.create = function (valuePanel) {
+    this.create = function (valuePanel, baseClass) {
+        base = baseClass;
         valuePanel.addClass("HiddenProperty");
 		expressions = prototypes.prototype.getModel().expressions;
 

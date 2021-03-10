@@ -302,7 +302,7 @@
                 select(item);
                 return;
             }
-    },
+    };
 
-        setup();
+    setup();
 };

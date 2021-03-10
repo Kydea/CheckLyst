@@ -1,5 +1,6 @@
 ﻿prototypes.ValidProperty = function (model) {
     var
+        base,
         insteadRadio, orRadio, andRadio,
         input,
         expressions,
@@ -9,7 +10,7 @@
             if (!editable) return;
             var index = input.prop("selectedIndex");
             model.validCondition = index <= 2 ? index : insteadRadio.is(":checked") ? 3 : andRadio.is(":checked") ? 4 : 5;
-            matematici.canClose = false;
+            base.updateModel(model);
         },
 
         inputChanged = function () {
@@ -38,7 +39,8 @@
             radioClicked();
         };
 
-    this.create = function (valuePanel) {
+    this.create = function (valuePanel, baseClass) {
+        base = baseClass;
         valuePanel.addClass("Valid");
         expressions = prototypes.prototype.getModel().expressions;
         if (editable) {

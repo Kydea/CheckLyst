@@ -1,10 +1,11 @@
 ﻿prototypes.SignatureProperty = function (model, options) {
     var
+        base,
         input,
 
         change = function () {
             model.signatureCode = input.val();
-            matematici.canClose = false;
+            base.updateModel(model);
         };
 
     this.setCheck = function (value) {
@@ -12,7 +13,8 @@
         return this;
     };
 
-    this.create = function (valuePanel) {
+    this.create = function (valuePanel, baseClass) {
+        base = baseClass;
         valuePanel.addClass("Signature");
         if (options.readOnly)
             $("<input />").attr({ type: "text", readOnly: true }).val(model.signatureCode).appendTo(valuePanel);
@@ -35,6 +37,10 @@
 
     this.hasChanges = function () {
         return !!model.signatureCode;
+    }
+
+    this.setValue = function (node) {
+        node.text(model.signatureCode);
     }
 }
 

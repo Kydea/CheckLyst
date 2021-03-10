@@ -1,5 +1,6 @@
 ﻿prototypes.EmailProperty = function (model, readOnly) {
     var
+        base,
         conditionSelect, valueInput,
 
         toggleControls = function () {
@@ -10,7 +11,7 @@
             var condition = conditionSelect.val();
             model.sendEmail = condition != 0;
             if (condition != 1) model.sendEmailAddress = null;
-            matematici.canClose = false;
+            base.updateModel(model);
 
             toggleControls();
         },
@@ -36,7 +37,8 @@
             matematici.canClose = false;
         };
 
-    this.create = function (valuePanel) {
+    this.create = function (valuePanel, baseClass) {
+        base = baseClass;
         valuePanel.addClass("Email");
         if (readOnly) {
             $("<input />")

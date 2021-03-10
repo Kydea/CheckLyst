@@ -1,5 +1,6 @@
 ﻿prototypes.CountDownToProperty = function (model) {
     var
+        base,
         conditionSelect, valueSelect, offsetInput,
         expressions,
         editable = prototypes.prototype.getModel().state == prototypes.Prototype.states.draft,
@@ -35,7 +36,7 @@
                 model.countDownOffset = condition > 0 ? offset : 0;
             }
 
-            matematici.canClose = false;
+            base.updateModel(model);
         },
 
         toggleControls = function () {
@@ -76,7 +77,9 @@
             check();
         };
 
-    this.create = function (valuePanel) {
+    this.create = function (valuePanel, baseClass) {
+        base = baseClass;
+
         valuePanel.addClass("CountDown");
         expressions = prototypes.prototype.getModel().expressions;
 

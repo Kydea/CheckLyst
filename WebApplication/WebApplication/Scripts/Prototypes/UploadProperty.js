@@ -1,9 +1,9 @@
 ﻿prototypes.UploadProperty = function (model, property, options) {
-	var
+    var
+        base,
 		input,
 		previewButton,
 		deleteButton,
-		handler,
 		change = function () {
 			if (!input[0].files.length) 
 				return;
@@ -30,6 +30,7 @@
                     model[property] = result.key;
                     previewButton.toggle(true);
                     deleteButton.toggle(true);
+                    base.updateModel(model);
                 }).always(function () {
                     input.val('');
                 });
@@ -42,6 +43,7 @@
             model.cloned = false;
             previewButton.toggle(false);
             deleteButton.toggle(false);
+            base.updateModel(model);
 		},
 
 		preview = function () {
@@ -56,12 +58,8 @@
 			matematici.imageViewer.show("Preview", url);
 		};
 
-	this.setHandler = function (value) {
-		handler = value;
-		return this;
-	};
-
-	this.create = function (valuePanel) {
+    this.create = function (valuePanel, baseClass) {
+        base = baseClass;
 		valuePanel.addClass("Upload");
 		options = options || {};
 		input = $("<input />").attr({ type: "file", readOnly: options.readOnly, accept: "image/*"  });

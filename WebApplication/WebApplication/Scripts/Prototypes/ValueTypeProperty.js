@@ -1,9 +1,8 @@
 ﻿prototypes.ValueTypeProperty = function (model, property, options) {
     var
+        base,
         input,
-        handler,
         setupValues,
-        check,
         radioUTC,
         radioLocal,
         defaultValueLabel,
@@ -52,24 +51,14 @@
 
         change = function () {
             model[property] = input.val();
-            matematici.canClose = false;
             var radioVisible = toggleRadioButtons();
             model.localTimeZone = radioVisible && $("input", radioLocal).prop("checked"); 
             setDefaultValueField();
-            if (handler) handler.call(this, model);
+            base.updateModel(model);
         };
 
-    this.setCheck = function (value) {
-        check = value;
-        return this;
-    };
-
-    this.setHandler = function (value) {
-        handler = value;
-        return this;
-    };
-
-    this.create = function (valuePanel) {
+    this.create = function (valuePanel, baseClass) {
+        base = baseClass;
         valuePanel.addClass("ValueType");
         setupValues = {
             valueType: model[property],
