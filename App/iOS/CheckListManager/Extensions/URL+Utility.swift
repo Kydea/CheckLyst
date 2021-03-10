@@ -15,6 +15,13 @@ extension URL {
     
     }
     
+    var schemeHost: String? {
+        guard let scheme = self.scheme, let host = self.host else {
+            return nil
+        }
+        return scheme + "://" + host
+    }
+    
     var queryParameters: [String: String]? {
         guard
             let components = URLComponents(url: self, resolvingAgainstBaseURL: true),

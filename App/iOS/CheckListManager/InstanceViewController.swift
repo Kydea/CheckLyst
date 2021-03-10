@@ -230,11 +230,13 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         if navigationAction.targetFrame == nil {
             if let url = navigationAction.request.url, let scheme = url.scheme {
                 if supportedProtocols.contains(scheme) {
-                    if (url.getCallType == .Create ||
-                        url.getCallType == .Detail) {
-                        appDelegate.requestToOpenInstance = true
-                        appDelegate.requestedUrlInfo = url.getParametersForInstance
-                        self.goBackToSearchInstances(self)
+                    if url.schemeHost == ServerConnection.baseFrontEndUrl {
+                        if (url.getCallType == .Create ||
+                            url.getCallType == .Detail) {
+                            appDelegate.requestToOpenInstance = true
+                            appDelegate.requestedUrlInfo = url.getParametersForInstance
+                            self.goBackToSearchInstances(self)
+                        }
                     } else {
                         UIApplication.shared.open(navigationAction.request.url!, options: [:])
                     }
