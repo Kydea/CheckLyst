@@ -108,6 +108,14 @@
     div.PropertyPanel div.PropertyValue.ValueType label:last-child {
       bottom: 10px;
       position: absolute; }
+    div.PropertyPanel div.PropertyValue div.ButtonsPanel {
+      position: absolute;
+      width: calc(100% - 20px);
+      bottom: 0; }
+      div.PropertyPanel div.PropertyValue div.ButtonsPanel a {
+        margin-bottom: 10px;
+        margin-left: 10px;
+        float: right; }
   div.PropertyPanel div.Information {
     position: absolute;
     overflow: auto;

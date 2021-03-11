@@ -90,26 +90,14 @@
                 function (editor, row) {
                     var
                         oldRow,
-                        newIndex,
-                        oldCanClose = matematici.canClose;
+                        newIndex;
                     if (index == null) 
                         newIndex = insertItem(row, currentIndex);
                     else {
                         oldRow = list[index];
                         list[index] = row;
                     }
-                    matematici.canClose = false;
-                    verify(null, function () {
-                        var expression = prototypes.prototype.getModel().expressions[row.code];
-                        console.log(expression.dataType, !expression.dataType);
-                        if (expression.error)
-                            editor.setError(expression.errorPosition, expression.error, "error");
-                        else if (!expression.dataType || !expression.dataType.typeName)
-                            editor.setError(null, "this expression could not be evalutate because of errors in other expressions", "warning");
-                        else
-                            editor.setError(null, null);
-                    });
-                    matematici.canClose = oldCanClose;
+                    verify(editor.setError);
                     if (index == null)
                         removeItem(newIndex);
                     else 
@@ -192,20 +180,16 @@
                 model.expressions[list[index].code] = list[index];
         },
 
-        verify = function (okHandler, alwaysHandler) {
+        verify = function (handler) {
             updatePrototype();
             prototypes.prototype.verify(function (error) {
-                var
-                    valid = true,
-                    model = prototypes.prototype.getModel();
+                var model = prototypes.prototype.getModel();
 
                 for (var index in list) {
                     var
                         row = model.expressions[list[index].code],
                         error = list[index].error = row.error,
                         cells = getRow(index);
-
-                    valid &= (error == null);
 
                     cells.find("i.Valid")
                         .removeClass("fa-check fa-times fa-question Off")
@@ -215,9 +199,7 @@
                     cells.find(".DataTypeColumn").text(row.dataType && row.dataType.typeName);
                 }
 
-                if (model.exception) valid = false;
-                if (okHandler && valid) okHandler.call(this);
-                if (alwaysHandler) alwaysHandler.call(this);
+                if (handler) handler.call(this);
             });
         },
 

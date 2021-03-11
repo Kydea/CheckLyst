@@ -407,9 +407,11 @@
     <Content Include="Scripts\Custom\WorkFlowSignature.js" />
     <Content Include="Scripts\Prototypes\DateProperty.js" />
     <Content Include="Scripts\Prototypes\ExpressionEditor.js" />
+    <Content Include="Scripts\Prototypes\ExpressionPropertyBase.js" />
     <Content Include="Scripts\Prototypes\Image.js" />
     <Content Include="Scripts\Prototypes\Attachment.js" />
     <Content Include="Scripts\Prototypes\Link.js" />
+    <Content Include="Scripts\Prototypes\ExpressionProperty.js" />
     <Content Include="Scripts\Prototypes\UploadProperty.js" />
     <Content Include="Scripts\Prototypes\CountDownToProperty.js" />
     <Content Include="Scripts\Prototypes\ValueTypeProperty.js" />
@@ -424,13 +426,11 @@
     <Content Include="Scripts\Prototypes\PropertyPanel.js" />
     <Content Include="Scripts\Prototypes\Prototype.js" />
     <Content Include="Scripts\Prototypes\PrototypeTypeProperty.js" />
-    <Content Include="Scripts\Prototypes\ReadOnlyProperty.js" />
     <Content Include="Scripts\Prototypes\Signature.js" />
     <Content Include="Scripts\Prototypes\SignatureProperty.js" />
     <Content Include="Scripts\Prototypes\SimpleValueProperty.js" />
     <Content Include="Scripts\Prototypes\SourcesList.js" />
     <Content Include="Scripts\Prototypes\Text.js" />
-    <Content Include="Scripts\Prototypes\ValidProperty.js" />
     <Content Include="Scripts\Prototypes\ValueProperty.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

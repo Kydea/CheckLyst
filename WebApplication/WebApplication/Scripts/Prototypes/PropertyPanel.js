@@ -11,6 +11,7 @@
         currentProperty,
         prototypeTypesList,
         properties,
+        item,
 
         copyModel = function (source, destination) {
             for (var property in source)
@@ -18,8 +19,9 @@
         };
 
     propertyPanel.select = function (value) {
+        if (!!value) item = value;
+
         var
-            item = value,
             model = item.getModel(),
             state = prototypes.prototype.getModel().state,
             oldModel = {};
@@ -473,6 +475,9 @@
         properties.sort(function (a, b) { return a.getCaption().localeCompare(b.getCaption()); });
         for (var property in properties)
             properties[property].setup();
+
+        if (!value)
+            propertyPanel.setCurrentProperty()
     };
 
     propertyPanel.getPropertyList = function () {
@@ -485,6 +490,10 @@
 
     propertyPanel.getInformation = function () {
         return information;
+    };
+
+    propertyPanel.getCurrentProperty = function () {
+        return currentProperty;
     };
 
     propertyPanel.setCurrentProperty = function (value) {

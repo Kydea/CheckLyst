@@ -1,4 +1,4 @@
-﻿prototypes.ExpressionEditor = function (expressions, expressionIndex, confirmHandler, deleteHandler, verifyHandler) {
+﻿prototypes.ExpressionEditor = function (expressions, expressionIndex, confirmHandler, deleteHandler, verifyHandler, cancelHandler) {
     var
         expression = expressions[expressionIndex],
         newRecord = !expression,
@@ -21,11 +21,17 @@
         },
 
         cancel = function () {
-            if (!edited)
-                return false;
+            if (!edited) {
+                if (cancelHandler) {
+                    cancelHandler();
+                    return true;
+                }
+                else
+                    return false;
+            }
 
             matematici.dialog.show("warning", "Warning: the changes to the expression will be lost.", [
-                { text: "discard the changes", icon: "exclamation", handler: matematici.popup.close },
+                { text: "discard the changes", icon: "exclamation", handler: cancelHandler || matematici.popup.close },
                 { text: "cancel", hidden: true, icon: "remove", cancelButton: true }
             ]);
             return true;
@@ -126,8 +132,14 @@
             return true;
         },
 
-        setError = function (position, text, type) {
-            editor.setError(position, text, type);
+        setError = function () {
+            var expression = prototypes.prototype.getModel().expressions[getCode()];
+            if (expression.error)
+                editor.setError(expression.errorPosition, expression.error, "error");
+            else if (!expression.dataType || !expression.dataType.typeName)
+                editor.setError(null, "this expression could not be evalutate because of errors in other expressions", "warning");
+            else
+                editor.setError(null, null);
         },
 
         fill = function (f) {
@@ -165,12 +177,7 @@
             }
 
             toggleNotification();
-            if (expression) {
-                if (expression.error)
-                    editor.setError(expression.errorPosition, expression.error, "error");
-                else if (!expression.dataType || !expression.dataType.typeName)
-                    editor.setError(null, "this expression could not be evalutate because of errors in other expressions", "warning");
-            }
+            if (expression) setError();
         },
 
         setup = function () {
@@ -181,7 +188,8 @@
 
             if (prototypes.prototype.getModel().state == prototypes.Prototype.states.draft) {
                 buttons.push({ text: "verify", icon: "question", handler: verify });
-                buttons.push({ text: "delete", icon: "trash-alt", handler: remove });
+                if (!!deleteHandler)
+                    buttons.push({ text: "delete", icon: "trash-alt", handler: remove });
                 buttons.push({ text: "confirm", icon: "save", handler: confirm });
             }
 

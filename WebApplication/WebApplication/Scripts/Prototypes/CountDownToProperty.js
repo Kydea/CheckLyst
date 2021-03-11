@@ -4,6 +4,7 @@
         conditionSelect, valueSelect, offsetInput,
         expressions,
         editable = prototypes.prototype.getModel().state == prototypes.Prototype.states.draft,
+        expressionPropertyBase,
 
         check = function () {
             var
@@ -43,10 +44,12 @@
             var condition = conditionSelect.val();
 
             valueSelect.empty();
-            if (condition == 3)
+            if (condition == 3) {
                 for (var expressionCode in expressions)
                     valueSelect.append($("<option />").attr({ value: expressionCode }).text(expressionCode));
-            else if (condition == 6)
+
+                
+            } else if (condition == 6)
                 for (var signatureCode in prototypes.prototype.getModel().signatures)
                     valueSelect.append($("<option />").attr({ value: signatureCode }).text(signatureCode));
 
@@ -63,6 +66,8 @@
                 if (autoComplete.getValue() != model.countDownToCode)
                     autoComplete.setError(model.countDownToCode);
             }, 0);
+
+            expressionPropertyBase.toggleButtons(condition == 3, model[expressionCode]);
         },
 
         conditionChanged = function () {
@@ -82,6 +87,8 @@
 
         valuePanel.addClass("CountDown");
         expressions = prototypes.prototype.getModel().expressions;
+        expressionPropertyBase = new prototypes.ExpressionPropertyBase(model, "countDownToCode");
+        expressionPropertyBase.addExpressionButtons(valuePanel);
 
         if (editable) {
             conditionSelect = $("<select />")
@@ -95,6 +102,8 @@
                 .on("change", valueChanged)
                 .attr("data-nullable", "-")
                 .appendTo(valuePanel);
+
+            expressionPropertyBase.setSelect(valueSelect);
 
             $("<label />")
                 .text("offset (seconds)")
@@ -129,14 +138,20 @@
                 .appendTo(valuePanel);
 
             $("<input />")
-                .attr({ type: "text", readOnly: true  })
+                .attr({ type: "text", readOnly: true })
                 .val(model.countDownOffset || "0")
                 .appendTo(valuePanel);
+
+            expressionPropertyBase.toggleButtons(model.countDownCondition != 6 && !!model.countDownToCode, model.countDownToCode);
         }
-    }
+    };
 
     this.hasChanges = function () {
         return !!model.countDownToCode;
-    }
+    };
+
+    this.getExpressionsSelect = function () {
+        return valuePanel;
+    };
 }
 

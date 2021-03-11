@@ -352,7 +352,10 @@
                             matematici.dependenciesDialog.show(title, model.dependingRelations, model.dependentRelations);
                         };
 
-                    prototype.verify(handler);
+                    if (matematici.canClose)
+                        handler()
+                    else
+                        prototype.verify(handler);
                     break;
                 default:
                     alert("invalid command");
@@ -705,32 +708,26 @@
     };
 
     prototype.verify = function (callback) {
-        if (matematici.canClose)
-            callback();
-        else {
-            var
-                array = pako.gzip(JSON.stringify(model)),
-                handler = function (base64CheckList) {
-                    var
-                        //base64CheckList = btoa(String.fromCharCode.apply(null, new Uint8Array(array))),
-                        data = JSON.stringify({
-                            base64CheckList: base64CheckList
-                        });
-
-                    $.ajax({
-                        url: element.data("action") + "verify",
-                        type: "post",
-                        contentType: "application/json",
-                        data: data
-                    }).done(function (result) {
-                        if (result.checkList.exception) matematici.dialog.error("Error", result.checkList.exception.Message);
-                        updateDependencies(model, result.checkList);
-                        callback(result.checkList.exception);
+        var
+            array = pako.gzip(JSON.stringify(model)),
+            handler = function (base64CheckList) {
+                var
+                    data = JSON.stringify({
+                        base64CheckList: base64CheckList
                     });
-                }
+                $.ajax({
+                    url: element.data("action") + "verify",
+                    type: "post",
+                    contentType: "application/json",
+                    data: data
+                }).done(function (result) {
+                    if (result.checkList.exception) matematici.dialog.error("Error", result.checkList.exception.Message);
+                    updateDependencies(model, result.checkList);
+                    callback(result.checkList.exception);
+                });
+            }
 
-            toBase64(array, handler);
-        }
+        toBase64(array, handler);
     };
 
     prototype.save = function (callback) {

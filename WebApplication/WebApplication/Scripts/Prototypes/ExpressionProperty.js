@@ -3,33 +3,24 @@
         base,
         insteadRadio, orRadio, andRadio,
         input,
-        expressions,
         editable = prototypes.prototype.getModel().state == prototypes.Prototype.states.draft,
         condition = property + "Condition",
         expressionCode = property + "ExpressionCode",
+        expressionPropertyBase,
 
         radioClicked = function () {
             if (!editable) return;
             var index = input.prop("selectedIndex");
             model[condition] = index <= 2 ? index : insteadRadio.is(":checked") ? 3 : andRadio.is(":checked") ? 4 : 5;
+            expressionPropertyBase.toggleButtons(true, model[condition] <= 2 ? null : model[expressionCode]);
             base.updateModel(model);
         },
 
         inputChanged = function () {
-            var
-                value = input.val(),
-                error;
+            var value = input.val();
 
-            if (input.prop("selectedIndex") > 2 && expressions[value].error)
-                error = "the expression is not valid";
-            else if (input.prop("selectedIndex") > 2 && !prototypes.propertyPanel.checkDataType(expressions[value], "Boolean"))
-                error = "the expression result must be a boolean";
-
-            if (error) {
-                new matematici.dialog.error("error", error);
-                input.prop("selectedIndex", 0);
-                matematici.AutoComplete.get(input[0]).setError(value);
-            }
+            if (input.prop("selectedIndex") > 2)
+                expressionPropertyBase.check(value);
 
             var index = input.prop("selectedIndex")
             insteadRadio.parent().toggle(index > 2);
@@ -44,7 +35,9 @@
     this.create = function (valuePanel, baseClass) {
         base = baseClass;
         valuePanel.addClass("Expression");
-        expressions = prototypes.prototype.getModel().expressions;
+        expressionPropertyBase = new prototypes.ExpressionPropertyBase(model, expressionCode);
+        expressionPropertyBase.addExpressionButtons(valuePanel);
+
         if (editable) {
             input = $("<select />")
                 .appendTo(valuePanel)
@@ -52,14 +45,12 @@
                 .append($("<option />").attr("value", "1").text("(true)").attr("selected", model[condition] == 1))
                 .append($("<option />").attr("value", "2").text("(false)").attr("selected", model[condition] == 2));
 
-            var found = model[condition] <= 2;
-            for (var index in expressions) {
-                input.append($("<option />").attr({ value: index, selected: model[condition] > 2 && index == model[expressionCode] }).text(index));
-                if (model[condition] > 2 && index == model[expressionCode]) found = true;
-            }
+            expressionPropertyBase.setSelect(input);
 
-            if (!found) 
-                input.attr("data-error", model[expressionCode]);
+            var found = model[condition] <= 2 | expressionPropertyBase.fill(found ? null : model[expressionCode]);
+            if (!found) input.attr("data-error", model[expressionCode]);
+
+            expressionPropertyBase.toggleButtons(true, model[condition] <= 2 ? null : model[expressionCode]);
 
             input.on("change", inputChanged);
         } else {
@@ -76,6 +67,8 @@
             //for css consistency
             $("<div />").appendTo(valuePanel);
             $("<div />").appendTo(valuePanel);
+
+            expressionPropertyBase.toggleButtons(model[condition] > 2, model[expressionCode]);
         }
         $("<label />").text("instead of default").prepend(insteadRadio = $("<input />").on("click", radioClicked).attr({ type: "radio", name: "ReadOnly", value: "instead" }).attr('disabled', !editable).prop("checked", model[condition] == 3)).appendTo(valuePanel).toggle(model[condition] > 2);
         $("<label />").text("and default").prepend(andRadio = $("<input />").on("click", radioClicked).attr({ type: "radio", name: "ReadOnly", value: "and" }).attr('disabled', !editable).prop("checked", model[condition] == 4)).appendTo(valuePanel).toggle(model[condition] > 2);
@@ -84,6 +77,10 @@
 
     this.hasChanges = function () {
         return model[condition] && model[condition] !== 0;
+    }
+
+    this.getExpressionsSelect = function () {
+        return input;
     }
 }
 
