@@ -71,7 +71,7 @@
 		};
 
     this.create = function (valuePanel, baseClass) {
-        base = baseClass();
+        base = baseClass;
 		refresh();
 		valuePanel.addClass("Value");
 
