@@ -205,6 +205,15 @@ namespace CheckListManager.Instances.Logic.Services
             }
         }
 
+        private void CheckInvalidItems(ICheckListItem Item, List<string> InvalidItems)
+        {
+            if (!Item.Removed && !Item.IteratorModelItem && Item is ICheckListValidityElement checkListValidityElement && !checkListValidityElement.Valid)
+                InvalidItems.Add(Item.ToString());
+            if (Item is ICheckListGroup checkListGroup)
+                foreach (var Child in checkListGroup.Items)
+                    CheckInvalidItems(Child, InvalidItems);
+        }
+
         public async Task<InstanceCacheObject> OpenInstanceAsync(string code, IDefaultIdentity identity)
         {
             try
@@ -217,8 +226,10 @@ namespace CheckListManager.Instances.Logic.Services
                 if (!HasPermission(identity, "Create", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
                     throw new InstanceException("Access denied");
 
-                if (!cacheObject.Instance.Header.Valid)
-                    throw new InstanceException("Header not valid");
+                var InvalidItems = new List<string>();
+                CheckInvalidItems(cacheObject.Instance.Header, InvalidItems);
+                if (InvalidItems.Any())
+                    throw new InstanceException($"The following items are not valid: {string.Join(", ", InvalidItems)}");
 
                 cacheObject.InstanceState = InstanceState.Progress;
 
@@ -337,7 +348,7 @@ namespace CheckListManager.Instances.Logic.Services
 
                 var InvalidItems = cacheObject.Instance.Items.Values.Where(i => !i.Removed && !i.IteratorModelItem && i is ICheckListValidityElement checkListValidityElement && !checkListValidityElement.Valid);
                 if (InvalidItems.Any())
-                    throw new InstanceException($"The following items are not valid: {string.Join(", ", InvalidItems.Select(i => i.Id.ToString()))}");
+                    throw new InstanceException($"The following items are not valid: {string.Join(", ", InvalidItems.Select(i => i.ToString()))}");
 
                 var InvalidPage = cacheObject.Instance.Pages.FirstOrDefault(p => !p.Valid);
                 if (InvalidPage != null)

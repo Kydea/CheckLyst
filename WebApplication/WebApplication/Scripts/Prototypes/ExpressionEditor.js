@@ -165,10 +165,12 @@
             }
 
             toggleNotification();
-            if (expression.error)
-                editor.setError(expression.errorPosition, expression.error, "error");
-            else if (!expression.dataType || !expression.dataType.typeName)
-                editor.setError(null, "this expression could not be evalutate because of errors in other expressions", "warning");
+            if (expression) {
+                if (expression.error)
+                    editor.setError(expression.errorPosition, expression.error, "error");
+                else if (!expression.dataType || !expression.dataType.typeName)
+                    editor.setError(null, "this expression could not be evalutate because of errors in other expressions", "warning");
+            }
         },
 
         setup = function () {

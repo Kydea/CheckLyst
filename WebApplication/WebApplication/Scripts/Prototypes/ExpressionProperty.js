@@ -1,15 +1,17 @@
-﻿prototypes.ReadOnlyProperty = function (model) {
+﻿prototypes.ExpressionProperty = function (model, property) {
     var
         base,
         insteadRadio, orRadio, andRadio,
         input,
         expressions,
         editable = prototypes.prototype.getModel().state == prototypes.Prototype.states.draft,
+        condition = property + "Condition",
+        expressionCode = property + "ExpressionCode",
 
         radioClicked = function () {
             if (!editable) return;
             var index = input.prop("selectedIndex");
-            model.readOnlyCondition = index <= 2 ? index : insteadRadio.is(":checked") ? 3 : andRadio.is(":checked") ? 4 : 5;
+            model[condition] = index <= 2 ? index : insteadRadio.is(":checked") ? 3 : andRadio.is(":checked") ? 4 : 5;
             base.updateModel(model);
         },
 
@@ -33,7 +35,7 @@
             insteadRadio.parent().toggle(index > 2);
             andRadio.parent().toggle(index > 2);
             orRadio.parent().toggle(index > 2);
-            model.readOnlyExpressionCode = index > 2 ? value : null;
+            model[expressionCode] = index > 2 ? value : null;
             if (!insteadRadio.is(":checked") && !andRadio.is(":checked") && !orRadio.is(":checked"))
                 insteadRadio.prop("checked", true);
             radioClicked();
@@ -46,28 +48,28 @@
         if (editable) {
             input = $("<select />")
                 .appendTo(valuePanel)
-                .append($("<option />").attr("value", "0").text("(default)").attr("selected", model.readOnlyCondition == 0))
-                .append($("<option />").attr("value", "1").text("(true)").attr("selected", model.readOnlyCondition == 1))
-                .append($("<option />").attr("value", "2").text("(false)").attr("selected", model.readOnlyCondition == 2));
+                .append($("<option />").attr("value", "0").text("(default)").attr("selected", model[condition] == 0))
+                .append($("<option />").attr("value", "1").text("(true)").attr("selected", model[condition] == 1))
+                .append($("<option />").attr("value", "2").text("(false)").attr("selected", model[condition] == 2));
 
-            var found = model.readOnlyCondition <= 2;
+            var found = model[condition] <= 2;
             for (var index in expressions) {
-                input.append($("<option />").attr({ value: index, selected: model.readOnlyCondition > 2 && index == model.readOnlyExpressionCode }).text(index));
-                if (model.readOnlyCondition > 2 && index == model.readOnlyExpressionCode) found = true;
+                input.append($("<option />").attr({ value: index, selected: model[condition] > 2 && index == model[expressionCode] }).text(index));
+                if (model[condition] > 2 && index == model[expressionCode]) found = true;
             }
 
             if (!found) 
-                input.attr("data-error", model.readOnlyExpressionCode);
+                input.attr("data-error", model[expressionCode]);
 
             input.on("change", inputChanged);
         } else {
             $("<input />")
                 .attr({ type: "text", readOnly: true })
                 .val(
-                    model.readOnlyCondition == 0 ? "(default)" :
-                    model.readOnlyCondition == 1 ? "(true)" :
-                    model.readOnlyCondition == 2 ? "(false)" :
-                    model.readOnlyExpressionCode
+                    model[condition] == 0 ? "(default)" :
+                    model[condition] == 1 ? "(true)" :
+                    model[condition] == 2 ? "(false)" :
+                    model[expressionCode]
                 )
                 .appendTo(valuePanel);
 
@@ -75,13 +77,13 @@
             $("<div />").appendTo(valuePanel);
             $("<div />").appendTo(valuePanel);
         }
-        $("<label />").text("instead of default").prepend(insteadRadio = $("<input />").on("click", radioClicked).attr({ type: "radio", name: "ReadOnly", value: "instead" }).attr('disabled', !editable).prop("checked", model.readOnlyCondition == 3)).appendTo(valuePanel).toggle(model.readOnlyCondition > 2);
-        $("<label />").text("and default").prepend(andRadio = $("<input />").on("click", radioClicked).attr({ type: "radio", name: "ReadOnly", value: "and" }).attr('disabled', !editable).prop("checked", model.readOnlyCondition == 4)).appendTo(valuePanel).toggle(model.readOnlyCondition > 2);
-        $("<label />").text("or default").prepend(orRadio = $("<input />").on("click", radioClicked).attr({ type: "radio", name: "ReadOnly", value: "or" }).attr('disabled', !editable).prop("checked", model.readOnlyCondition == 5)).appendTo(valuePanel).toggle(model.readOnlyCondition > 2);
+        $("<label />").text("instead of default").prepend(insteadRadio = $("<input />").on("click", radioClicked).attr({ type: "radio", name: "ReadOnly", value: "instead" }).attr('disabled', !editable).prop("checked", model[condition] == 3)).appendTo(valuePanel).toggle(model[condition] > 2);
+        $("<label />").text("and default").prepend(andRadio = $("<input />").on("click", radioClicked).attr({ type: "radio", name: "ReadOnly", value: "and" }).attr('disabled', !editable).prop("checked", model[condition] == 4)).appendTo(valuePanel).toggle(model[condition] > 2);
+        $("<label />").text("or default").prepend(orRadio = $("<input />").on("click", radioClicked).attr({ type: "radio", name: "ReadOnly", value: "or" }).attr('disabled', !editable).prop("checked", model[condition] == 5)).appendTo(valuePanel).toggle(model[condition] > 2);
     }
 
     this.hasChanges = function () {
-        return model.readOnlyCondition && model.readOnlyCondition !== 0;
+        return model[condition] && model[condition] !== 0;
     }
 }
 

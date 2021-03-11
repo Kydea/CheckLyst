@@ -1,7 +1,7 @@
 ﻿@import "_Library.scss";
 
 div.PropertyPanel {
-    height: 350px;
+    height: 400px;
     background-color: white;
     display: none;
     position: relative;
@@ -83,7 +83,7 @@ div.PropertyPanel {
         position: absolute;
         width: calc(50% - #{$Metric-Control-Space});
         left: 50%;
-        height: calc(50% - #{$Metric-Control-Space / 2});
+        height: calc(60% - #{$Metric-Control-Space / 2});
         padding: 10px;
         background: $Color-Silver-Dark;
         margin-left: $Metric-Control-Space;
@@ -188,10 +188,10 @@ div.PropertyPanel {
     div.Information {
         position: absolute;
         overflow: auto;
-        height: calc(50% - #{$Metric-Control-Space / 2});
+        height: calc(40% - #{$Metric-Control-Space / 2});
         width: 50%;
         left: 50%;
-        top: calc(50% + #{$Metric-Control-Space / 2});
+        top: calc(60% + #{$Metric-Control-Space / 2});
         padding: 10px;
         line-height: 1.4;
         background: $Color-Silver-Dark;

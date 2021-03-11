@@ -1,5 +1,5 @@
 ﻿div.PropertyPanel {
-  height: 350px;
+  height: 400px;
   background-color: white;
   display: none;
   position: relative;
@@ -54,7 +54,7 @@
     position: absolute;
     width: calc(50% - 20px);
     left: 50%;
-    height: calc(50% - 10px);
+    height: calc(60% - 10px);
     padding: 10px;
     background: #ebebeb;
     margin-left: 20px; }
@@ -111,10 +111,10 @@
   div.PropertyPanel div.Information {
     position: absolute;
     overflow: auto;
-    height: calc(50% - 10px);
+    height: calc(40% - 10px);
     width: 50%;
     left: 50%;
-    top: calc(50% + 10px);
+    top: calc(60% + 10px);
     padding: 10px;
     line-height: 1.4;
     background: #ebebeb;
