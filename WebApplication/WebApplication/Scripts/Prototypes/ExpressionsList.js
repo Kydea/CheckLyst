@@ -1,4 +1,4 @@
-﻿prototypes.ExpressionsList = function () {
+﻿prototypes.ExpressionsList = function (options) {
     var
         expressionsList = this,
         model = prototypes.prototype.getModel(),
@@ -9,8 +9,7 @@
         noRecord,
         currentIndex,
         list = [],
-        openButton,
-        dependenciesButton,
+        useButton, openButton, dependenciesButton,
         orderBar,
         valid = true,
 
@@ -71,7 +70,9 @@
                 getRow(currentIndex).addClass("Selected");
 
             toggleMoveButton();
-            openButton.toggle(model.state == prototypes.Prototype.states.draft && currentIndex != null);
+            var hasSelection = model.state == prototypes.Prototype.states.draft && currentIndex != null;
+            openButton.toggle(hasSelection);
+            if (useButton) useButton.toggle(hasSelection);
             dependenciesButton.show();
         },
 
@@ -91,7 +92,7 @@
                     var
                         oldRow,
                         newIndex;
-                    if (index == null) 
+                    if (index == null)
                         newIndex = insertItem(row, currentIndex);
                     else {
                         oldRow = list[index];
@@ -100,7 +101,7 @@
                     verify(editor.setError);
                     if (index == null)
                         removeItem(newIndex);
-                    else 
+                    else
                         list[index] = oldRow;
                 });
         },
@@ -141,7 +142,7 @@
                     .append($("<i />").attr("title", "Unique").addClass("Unique fal fa-key"))
                     .append($("<i />").attr("title", "Exception").addClass("Exception fal fa-exclamation"))
                     .append($("<i />").attr("title", "Notification").addClass("Notification fal fa-bell"))
-            );
+                );
 
             insertItem(row, index);
 
@@ -208,6 +209,11 @@
             matematici.elements.body.removeClass("CheckListGrid");
             autoCenter.destroy();
             matematici.expressionsList = null;
+            if (options && options.closeHandler) options.closeHandler();
+        },
+
+        use = function () {
+            options.useHandler(list[currentIndex]);
         },
 
         setup = function () {
@@ -273,6 +279,13 @@
                         .append(dependenciesButton = $("<a />").addClass("Button").text("dependencies").hide().prepend($("<i />").addClass("Icon fa fa-sitemap")).on("click", function () {
                             showDependencies();
                         }));
+
+            if (options && options.useHandler)
+                buttons.append(useButton = $("<a />").addClass("Button").text("use").hide().prepend($("<i />").addClass("Icon fa fa-check")).on("click", function () {
+                    use();
+                    close();
+                }))
+
 
             for (var code in model.expressions)
                 insert(model.expressions[code]);

@@ -11,13 +11,6 @@
         select,
         editor,
 
-        verify = function (handler) {
-            prototypes.prototype.verify(function (error) {
-                editor.setError();
-                if (handler) handler(error);
-            });
-        },
-
         hidePropertyPanel = function () {
             currentProperty = prototypes.propertyPanel.getCurrentProperty();
             matematici.popup.close();
@@ -30,32 +23,22 @@
             select = currentProperty.getType().getExpressionsSelect();
         },
 
-        changeExpression = function (row) {
-            matematici.canClose = false;
-            expressions[row.code] = row;
-            verify(function () {
-                resumePropertyPanel();
-                if (expressionPropertyBase.check(row.code))
-                    model[property] = row.code;
-            });
-        },
-
-        viewExpression = function (e) {
+        clickHandler= function (e) {
             e.preventDefault();
             hidePropertyPanel();
-            verifyHandler = function (editor, row) {
-                var oldValue = expressions[row.code];
-                expressions[row.code] = row;
-                verify(function () {
-                    expressions[row.code] = oldValue;
+            prototypes.prototype.verify(function () {
+                new prototypes.ExpressionsList({
+                    closeHandler: resumePropertyPanel,
+                    useHandler: function (expression) {
+                        currentProperty.getType().setExpressionCode(expression.code);
+                    }
                 });
-            };
-            editor = new prototypes.ExpressionList(expressionsValues, expressionsKeys.indexOf(expressionCode), changeExpression, null, verifyHandler, resumePropertyPanel);
+            });
         },
 
         setup = function () {
             var buttonsPanel = $("<div />").addClass("ButtonsPanel").appendTo(valuePanel);
-            buttonsPanel.append(viewButton = $("<a />").addClass("Icon Button").attr({ href: "#" }).text("Expression editor").prepend($("<i />").addClass("Icon fal fa-calculator")).on("click", viewExpression));
+            buttonsPanel.append(viewButton = $("<a />").addClass("Icon Button").attr({ href: "#" }).prepend($("<i />").addClass("Icon fal fa-calculator")).on("click", clickHandler));
         };
 
     this.fill = function (value) {
@@ -69,7 +52,9 @@
 
     this.check = function (value) {
         var error;
-        if (expressions[value].error)
+        if (expressions[value] == undefined)
+            error = "expression not found";
+        else if (expressions[value].error)
             error = "the expression is not valid";
         else if (!prototypes.propertyPanel.checkDataType(expressions[value], "Boolean"))
             error = "the expression result must be a boolean";
@@ -77,7 +62,11 @@
         if (error) {
             new matematici.dialog.error("error", error);
             select.prop("selectedIndex", 0);
-            matematici.AutoComplete.get(select[0]).setError(value);
+            var autoComplete = matematici.AutoComplete.get(select[0]);
+            if (autoComplete)
+                autoComplete.setError(value);
+            else
+                select.attr("data-error", value)
         }
 
         return !error;

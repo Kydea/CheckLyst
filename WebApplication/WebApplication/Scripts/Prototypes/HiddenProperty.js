@@ -31,8 +31,8 @@
 
             expressionPropertyBase.setSelect(input);
 
-            var found = model[condition] <= 2 | expressionPropertyBase.fill(found ? null : model[expressionCode]);
-            if (!found) input.attr("data-error", model.hiddenExpressionCode);
+            expressionPropertyBase.fill(model[condition] <= 2 ? null : model[expressionCode]);
+            if (model[condition] > 2) expressionPropertyBase.check(model[expressionCode]);
 
             input.on("change", inputChanged);
         } else
@@ -53,5 +53,9 @@
     this.getExpressionsSelect = function () {
         return input;
     }
-}
 
+    this.setExpressionCode = function (value) {
+        model[condition] = 3;
+        model[expressionCode] = value;
+    };
+}

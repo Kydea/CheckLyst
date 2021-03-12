@@ -52,7 +52,7 @@ ace.define("ace/snippets/expression", ["require", "exports", "module"], function
         },
         {
             content: "Error (${1:error message})",
-            name: "DateTimeIncrement",
+            name: "Error",
             scope: "expression",
             meta: "function",
             comment: "returns an error with the provided description"
@@ -183,15 +183,15 @@ ace.define("ace/snippets/expression", ["require", "exports", "module"], function
             name: "ModifiedBy",
             scope: "expression",
             meta: "property",
-            interface: "EditabileItems",
+            interface: "EditableItem",
             comment: "returns the user code of last edit"
         },
         {
             content: "ModifiedOn",
-            name: "ModifiedBy",
+            name: "ModifiedOn",
             scope: "expression",
             meta: "property",
-            interface: "EditabileItems",
+            interface: "EditableItem",
             comment: "returns the date and time of last edit"
         },
 
@@ -205,7 +205,7 @@ ace.define("ace/snippets/expression", ["require", "exports", "module"], function
         },
         {
             content: "SignedOn",
-            name: "Signed",
+            name: "SignedOn",
             scope: "expression",
             meta: "property",
             interface: "Signature",
@@ -213,7 +213,7 @@ ace.define("ace/snippets/expression", ["require", "exports", "module"], function
         },
         {
             content: "SignedBy",
-            name: "Signed",
+            name: "SignedBy",
             scope: "expression",
             meta: "property",
             interface: "Signature",

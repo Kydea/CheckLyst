@@ -60,13 +60,13 @@
                                 element = word && prototypes.prototype.findItemByCode(word);
 
                             matches = element &&
-                                (
-                                    s.interface == "ValidityItem"
-                                    || s.interface == "Field" && element.typeName == "Field"
-                                    || s.interface == "EditableItem" && (element.typeName == "Attachment" || element.typeName == "Field" || element.typeName == "Groupd" || element.typeName == "Signature")
-                                    || s.interface == "Iterator" && (element.typeName == "Group" && element.iterator)
-                                    || s.interface == "Signature" && element.typeName == "Signature"
-                                );
+                            (
+                                s.interface == "ValidityItem"
+                                || s.interface == "Field" && element.typeName == "Field"
+                                || s.interface == "EditableItem" && (element.typeName == "Attachment" || element.typeName == "Field" || element.typeName == "Group" || element.typeName == "Signature")
+                                || s.interface == "Iterator" && (element.typeName == "Group" && element.iterator)
+                                || s.interface == "Signature" && element.typeName == "Signature"
+                            );
                         }
 
                         if (matches)

@@ -34,8 +34,7 @@
     this.create = function (valuePanel, baseClass) {
         base = baseClass;
         valuePanel.addClass("Expression");
-        expressionPropertyBase = new prototypes.ExpressionPropertyBase(model, expressionCode);
-        expressionPropertyBase.addExpressionButton(valuePanel);
+        expressionPropertyBase = new prototypes.ExpressionPropertyBase(model, expressionCode, valuePanel);
 
         if (editable) {
             input = $("<select />")
@@ -46,8 +45,8 @@
 
             expressionPropertyBase.setSelect(input);
 
-            var found = model[condition] <= 2 | expressionPropertyBase.fill(found ? null : model[expressionCode]);
-            if (!found) input.attr("data-error", model[expressionCode]);
+            expressionPropertyBase.fill(model[condition] <= 2 ? null : model[expressionCode]);
+            if (model[condition] > 2) expressionPropertyBase.check(model[expressionCode]);
 
             input.on("change", inputChanged);
         } else {
@@ -72,10 +71,15 @@
 
     this.hasChanges = function () {
         return model[condition] && model[condition] !== 0;
-    }
+    };
 
     this.getExpressionsSelect = function () {
         return input;
-    }
+    };
+
+    this.setExpressionCode = function (value) {
+        model[condition] = 3;
+        model[expressionCode] = value;
+    };
 }
 

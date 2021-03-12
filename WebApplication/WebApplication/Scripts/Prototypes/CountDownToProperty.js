@@ -6,15 +6,16 @@
         editable = prototypes.prototype.getModel().state == prototypes.Prototype.states.draft,
         expressionPropertyBase,
 
-        check = function () {
+        check = function (value, ignoreNull) {
             var
-                value = valueSelect.val(),
-                condition = !!value ? conditionSelect.val() : 0,
+                condition = conditionSelect.val(),
                 error;
 
             if (condition == 3) {
                 if (!value)
                     error = "select an expression";
+                else if (expressions[value] == undefined)
+                    error = "expression not found";
                 else if (expressions[value].error)
                     error = "the expression is not valid";
                 else if (!prototypes.propertyPanel.checkDataType(expressions[value], "DateTime"))
@@ -22,6 +23,8 @@
             } else if (condition == 6) {
                 if (!value)
                     error = "select a signature";
+                else if (prototypes.prototype.getModel().signatures[value] == undefined)
+                    error = "signature not found";
             }
 
             var offset = parseInt(offsetInput.val() || 0);
@@ -30,7 +33,11 @@
             if (error) {
                 new matematici.dialog.error("error", error);
                 valueSelect.prop("selectedIndex", 0);
-                matematici.AutoComplete.get(valueSelect[0]).setError(value);
+                var autoComplete = matematici.AutoComplete.get(valueSelect[0]);
+                if (autoComplete)
+                    autoComplete.setError(value);
+                else
+                    valueSelect.attr("data-error", value);
             } else {
                 model.countDownCondition = condition;
                 model.countDownToCode = condition > 0 ? value : null;
@@ -40,16 +47,14 @@
             base.updateModel(model);
         },
 
-        toggleControls = function () {
+        toggleControls = function (checkValues) {
             var condition = conditionSelect.val();
 
             valueSelect.empty();
-            if (condition == 3) {
+            if (condition == 3) 
                 for (var expressionCode in expressions)
                     valueSelect.append($("<option />").attr({ value: expressionCode }).text(expressionCode));
-
-                
-            } else if (condition == 6)
+            else if (condition == 6)
                 for (var signatureCode in prototypes.prototype.getModel().signatures)
                     valueSelect.append($("<option />").attr({ value: signatureCode }).text(signatureCode));
 
@@ -63,8 +68,7 @@
                 matematici.controls.setEditable(offsetInput, condition > 0);
                 offsetInput.val(model.countDownOffset)
 
-                if (autoComplete.getValue() != model.countDownToCode)
-                    autoComplete.setError(model.countDownToCode);
+                if (checkValues && condition > 0) check(model.countDownToCode);
             }, 0);
         },
 
@@ -73,11 +77,11 @@
             model.countDownToCode = null;
             model.countDownOffset = 0;
 
-            toggleControls();
+            toggleControls(false);
         },
 
         valueChanged = function () {
-            check();
+            check(valueSelect.val());
         };
 
     this.create = function (valuePanel, baseClass) {
@@ -113,7 +117,7 @@
                 .val(model.countDownOffset || "0")
                 .appendTo(valuePanel);
 
-            toggleControls();
+            toggleControls(true);
         } else {
             $("<input />")
                 .attr({ type: "text", readOnly: true })
@@ -147,6 +151,11 @@
 
     this.getExpressionsSelect = function () {
         return valuePanel;
+    };
+
+    this.setExpressionCode = function (value) {
+        model.countDownCondition = 3;
+        model.countDownToCode = value;
     };
 }
 
