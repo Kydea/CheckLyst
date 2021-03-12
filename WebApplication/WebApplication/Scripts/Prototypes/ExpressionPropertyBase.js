@@ -1,4 +1,4 @@
-﻿prototypes.ExpressionPropertyBase = function (model, property) {
+﻿prototypes.ExpressionPropertyBase = function (model, property, valuePanel) {
     var
         expressionPropertyBase = this,
         expressions = prototypes.prototype.getModel().expressions,
@@ -50,19 +50,12 @@
                     expressions[row.code] = oldValue;
                 });
             };
-            editor = new prototypes.ExpressionEditor(expressionsValues, expressionsKeys.indexOf(expressionCode), changeExpression, null, verifyHandler, resumePropertyPanel);
+            editor = new prototypes.ExpressionList(expressionsValues, expressionsKeys.indexOf(expressionCode), changeExpression, null, verifyHandler, resumePropertyPanel);
         },
 
-        addExpression = function (e) {
-            e.preventDefault();
-            hidePropertyPanel();
-            verifyHandler = function (editor, row) {
-                expressions[row.code] = row;
-                verify(function () {
-                    delete expressions[row.code];
-                });
-            };
-            editor = new prototypes.ExpressionEditor(expressionsValues, null, changeExpression, null, verifyHandler, resumePropertyPanel);
+        setup = function () {
+            var buttonsPanel = $("<div />").addClass("ButtonsPanel").appendTo(valuePanel);
+            buttonsPanel.append(viewButton = $("<a />").addClass("Icon Button").attr({ href: "#" }).text("Expression editor").prepend($("<i />").addClass("Icon fal fa-calculator")).on("click", viewExpression));
         };
 
     this.fill = function (value) {
@@ -90,20 +83,16 @@
         return !error;
     };
 
-    this.addExpressionButtons = function (valuePanel) {
-        var buttonsPanel = $("<div />").addClass("ButtonsPanel").appendTo(valuePanel);
-        buttonsPanel.append(viewButton = $("<a />").addClass("Button").attr({ href: "#" }).text("view").prepend($("<i />").addClass("Icon fal fa-calculator")).on("click", viewExpression));
-        buttonsPanel.append(addButton = $("<a />").addClass("Button").attr({ href: "#" }).text("add").prepend($("<i />").addClass("Icon fal fa-calculator")).on("click", addExpression));
-    };
-
     this.toggleButtons = function (visible, expression) {
         expressionCode = expression;
         viewButton.toggle(visible && !!expression);
         addButton.toggle(visible && !expression);
-    }
+    };
 
     this.setSelect = function (value) {
         select = value;
-    }
+    };
+
+    setup();
 }
 

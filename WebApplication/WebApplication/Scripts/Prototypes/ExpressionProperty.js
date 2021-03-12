@@ -12,7 +12,6 @@
             if (!editable) return;
             var index = input.prop("selectedIndex");
             model[condition] = index <= 2 ? index : insteadRadio.is(":checked") ? 3 : andRadio.is(":checked") ? 4 : 5;
-            expressionPropertyBase.toggleButtons(true, model[condition] <= 2 ? null : model[expressionCode]);
             base.updateModel(model);
         },
 
@@ -36,7 +35,7 @@
         base = baseClass;
         valuePanel.addClass("Expression");
         expressionPropertyBase = new prototypes.ExpressionPropertyBase(model, expressionCode);
-        expressionPropertyBase.addExpressionButtons(valuePanel);
+        expressionPropertyBase.addExpressionButton(valuePanel);
 
         if (editable) {
             input = $("<select />")
@@ -49,8 +48,6 @@
 
             var found = model[condition] <= 2 | expressionPropertyBase.fill(found ? null : model[expressionCode]);
             if (!found) input.attr("data-error", model[expressionCode]);
-
-            expressionPropertyBase.toggleButtons(true, model[condition] <= 2 ? null : model[expressionCode]);
 
             input.on("change", inputChanged);
         } else {
@@ -67,8 +64,6 @@
             //for css consistency
             $("<div />").appendTo(valuePanel);
             $("<div />").appendTo(valuePanel);
-
-            expressionPropertyBase.toggleButtons(model[condition] > 2, model[expressionCode]);
         }
         $("<label />").text("instead of default").prepend(insteadRadio = $("<input />").on("click", radioClicked).attr({ type: "radio", name: "ReadOnly", value: "instead" }).attr('disabled', !editable).prop("checked", model[condition] == 3)).appendTo(valuePanel).toggle(model[condition] > 2);
         $("<label />").text("and default").prepend(andRadio = $("<input />").on("click", radioClicked).attr({ type: "radio", name: "ReadOnly", value: "and" }).attr('disabled', !editable).prop("checked", model[condition] == 4)).appendTo(valuePanel).toggle(model[condition] > 2);

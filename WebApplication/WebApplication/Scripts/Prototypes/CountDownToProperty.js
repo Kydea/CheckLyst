@@ -66,8 +66,6 @@
                 if (autoComplete.getValue() != model.countDownToCode)
                     autoComplete.setError(model.countDownToCode);
             }, 0);
-
-            expressionPropertyBase.toggleButtons(condition == 3, model[expressionCode]);
         },
 
         conditionChanged = function () {
@@ -87,8 +85,7 @@
 
         valuePanel.addClass("CountDown");
         expressions = prototypes.prototype.getModel().expressions;
-        expressionPropertyBase = new prototypes.ExpressionPropertyBase(model, "countDownToCode");
-        expressionPropertyBase.addExpressionButtons(valuePanel);
+        expressionPropertyBase = new prototypes.ExpressionPropertyBase(model, "countDownToCode", valuePanel);
 
         if (editable) {
             conditionSelect = $("<select />")
@@ -141,8 +138,6 @@
                 .attr({ type: "text", readOnly: true })
                 .val(model.countDownOffset || "0")
                 .appendTo(valuePanel);
-
-            expressionPropertyBase.toggleButtons(model.countDownCondition != 6 && !!model.countDownToCode, model.countDownToCode);
         }
     };
 

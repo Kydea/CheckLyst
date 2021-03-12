@@ -21,8 +21,7 @@
     this.create = function (valuePanel, baseClass) {
         base = baseClass;
         valuePanel.addClass("HiddenProperty");
-        expressionPropertyBase = new prototypes.ExpressionPropertyBase(model, expressionCode);
-        expressionPropertyBase.addExpressionButtons(valuePanel);
+        expressionPropertyBase = new prototypes.ExpressionPropertyBase(model, expressionCode, valuePanel);
 
         if (editable) {
             input = $("<select />")
@@ -35,10 +34,8 @@
             var found = model[condition] <= 2 | expressionPropertyBase.fill(found ? null : model[expressionCode]);
             if (!found) input.attr("data-error", model.hiddenExpressionCode);
 
-            expressionPropertyBase.toggleButtons(true, model[condition] <= 2 ? null : model[expressionCode]);
-
             input.on("change", inputChanged);
-        } else {
+        } else
             $("<input />")
                 .attr({ type: "text", readOnly: true })
                 .val(
@@ -47,9 +44,6 @@
                             model.hiddenExpressionCode
                 )
                 .appendTo(valuePanel);
-
-            expressionPropertyBase.toggleButtons(model[condition] > 2, model[expressionCode]);
-        }
     }
 
     this.hasChanges = function () {
