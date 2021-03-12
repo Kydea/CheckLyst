@@ -70,10 +70,10 @@
                 getRow(currentIndex).addClass("Selected");
 
             toggleMoveButton();
-            var hasSelection = model.state == prototypes.Prototype.states.draft && currentIndex != null;
-            openButton.toggle(hasSelection);
-            if (useButton) useButton.toggle(hasSelection);
-            dependenciesButton.show();
+            var editable = model.state == prototypes.Prototype.states.draft && currentIndex != null;
+            openButton.toggle(editable);
+            if (useButton) useButton.toggle(editable);
+            dependenciesButton.toggle(currentIndex != null);
         },
 
         open = function (index) {
@@ -221,7 +221,7 @@
             matematici.expressionsList = expressionsList;
 
             element = $("<div />").addClass("CheckListGrid").appendTo(matematici.elements.body);
-            var container = $("<div />").appendTo($("<div />").addClass("Container").appendTo(element).on("click", function (e) {
+            var container = $("<div />").appendTo($("<div />").addClass("Container ExpressionsList").appendTo(element).on("click", function (e) {
                 e.preventDefault();
                 e.stopPropagation();
             }));
@@ -246,7 +246,7 @@
 
             var scrollablePanel = $("<div />").addClass("ScrollablePanel").appendTo(container);
 
-            table = $("<table />").addClass("Grid ExpressionsList").appendTo(scrollablePanel)
+            table = $("<table />").addClass("Grid").appendTo(scrollablePanel)
                 .append($("<thead />")
                     .append($("<tr />")
                         .append($("<th />"))
@@ -257,7 +257,7 @@
                     )
                 ).append(tableBody = $("<tbody />")
                     .append(noRecord = $("<tr />").addClass("NoRecord")
-                        .append($("<td />").addClass("NoRecord").attr("colspan", "8").text("(no record)"))
+                        .append($("<td />").addClass("NoRecord").attr("colspan", "8").text("(no expression)"))
                     )
                 ).on("click", "tr.Handler td:not(.Inactive)", function () {
                     select($(this).parent().prevAll().size());

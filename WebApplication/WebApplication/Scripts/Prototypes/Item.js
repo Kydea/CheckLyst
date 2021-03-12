@@ -24,12 +24,12 @@
 
             if (specificItem = (
                 model.typeName == typeNames.text ? new prototypes.Text(item, model) :
-                model.typeName == typeNames.field ? new prototypes.Field(item, model) :
-                model.typeName == typeNames.signature ? new prototypes.Signature(item, model) :
-                model.typeName == typeNames.link ? new prototypes.Link(item, model) :
-                model.typeName == typeNames.image ? new prototypes.Image(item, model) :
-                model.typeName == typeNames.attachment ? new prototypes.Attachment(item, model) :
-                null)) {
+                    model.typeName == typeNames.field ? new prototypes.Field(item, model) :
+                        model.typeName == typeNames.signature ? new prototypes.Signature(item, model) :
+                            model.typeName == typeNames.link ? new prototypes.Link(item, model) :
+                                model.typeName == typeNames.image ? new prototypes.Image(item, model) :
+                                    model.typeName == typeNames.attachment ? new prototypes.Attachment(item, model) :
+                                        null)) {
                 parent.getElement().append(element);
                 specificItem.update(model);
             } else {
@@ -76,5 +76,9 @@
         return model;
     };
 
+    this.toString = function () {
+        return model.typeName + (model.index != null && " - Index: " + (parseInt(model.index) + 1) || model.id != null && " - ID: " + model.id || "") + (model.code && " - Code: " + model.code || "")
+    };
+
     create();
-}
+};

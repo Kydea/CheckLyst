@@ -348,7 +348,7 @@
                             if (error) return;
                             var
                                 model = currentItem.getModel(),
-                                title = model.typeName + (model.index != null && " - Index: " + (parseInt(model.index) + 1) || model.id != null && " - ID: " + model.id || "") + (model.code && " - Code: " + model.code || "")
+                                title = currentItem.toString(); // model.typeName + (model.index != null && " - Index: " + (parseInt(model.index) + 1) || model.id != null && " - ID: " + model.id || "") + (model.code && " - Code: " + model.code || "")
                             matematici.dependenciesDialog.show(title, model.dependingRelations, model.dependentRelations);
                         };
 
@@ -793,6 +793,7 @@
                         }
 
                         $("div.ActionBar a.ExpressionsList").removeClass("Invalid");
+                        $("div.ActionBar a.ItemsList").removeClass("Invalid");
 
                         if (callback)
                             callback.call();

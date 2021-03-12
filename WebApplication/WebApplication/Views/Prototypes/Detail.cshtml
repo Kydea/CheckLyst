@@ -68,7 +68,15 @@
                         prototypes.prototype.verify(function () {
                             new prototypes.ExpressionsList();
                         });
-                }, "Icon ExpressionsList"),
+                }, "Icon ExpressionsList")
+                .add("<i class='Icon fa fa-cubes'></i>", function () {
+                    if (matematici.canClose)
+                        new prototypes.ItemsList();
+                    else
+                        prototypes.prototype.verify(function () {
+                            new prototypes.ItemsList();
+                        });
+                }, "Icon ItemsList"),
 
             buttonGroup = new matematici.ButtonGroup("span.ButtonGroup")
                 .add("Quit", function () {
