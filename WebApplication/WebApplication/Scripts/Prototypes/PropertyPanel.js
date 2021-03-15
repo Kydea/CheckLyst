@@ -18,7 +18,7 @@
                 destination[property] = source[property];
         };
 
-    propertyPanel.select = function (value) {
+    propertyPanel.select = function (value, options) {
         if (!!value) item = value;
 
         var
@@ -42,6 +42,7 @@
                             prototypes.prototype.ensureImageWillNotBeDeleted(model.key);
                     }
                     $("input:not(.ReadOnly)", propertyValue).change();
+                    options && options.okHandler && options.okHandler();
                 }
             }, {
                 cancelButton: true,

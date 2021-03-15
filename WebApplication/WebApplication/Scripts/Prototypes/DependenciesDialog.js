@@ -17,6 +17,9 @@
                     case "external source":
                         new prototypes.SourcesList();
                         break;
+                    case "checklist":
+                        prototypes.prototype.select(null, prototypes.prototype);
+                        break;
                     case "page":
                         prototypes.prototype.selectById("Page", dependency.objectID);
                         break;

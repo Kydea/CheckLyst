@@ -60,6 +60,7 @@
             analyzeElement(model.header);
             for (var pageIndex in model.pages || []) {
                 var page = model.pages[pageIndex];
+                page.typeName = "Page";
                 for (var groupIndex in page.groups || [])
                     analyzeElement(page.groups[groupIndex])
             }
@@ -247,9 +248,13 @@
             if (currentItem) select(null, null);
             currentItem = null;
             var result = {};
-            if (className != "Page") findItem(model, id, null, result);
-            if (result.item && result.page) $("#Page" + result.page, element).click();
-            selectByElementId(className + id);
+            if (className == "Prototype") 
+                selectByElementId("Prototype");
+            else {
+                if (className != "Page") findItem(model, id, null, result);
+                if (result.item && result.page) $("#Page" + result.page, element).click();
+                selectByElementId(className + id);
+            }
         },
 
         selectByElementId = function (elementId) {
@@ -425,7 +430,7 @@
                 return codes;
             } else {
                 if (element.code)
-                    codes.push({ code: element.code, type: "item (" + element.typeName + ")"});
+                    codes.push({ code: element.code, type: "item (" + element.typeName + ")" });
 
                 if (element.typeName == "Group")
                     for (var index in element.items)
@@ -1095,6 +1100,7 @@
     prototype.completeModel = completeModel;
     prototype.findItemByCode = findItemByCode;
     prototype.getElementCodes = getElementCodes;
+    prototype.getCurrentItem = function () { return currentItem; };
 
     setup();
 };

@@ -7,7 +7,7 @@
         table,
         tableBody,
         currentIndex,
-        items = {},
+        items = [],
         openButton, dependenciesButton,
         valid = true,
 
@@ -17,7 +17,7 @@
 
         showDependencies = function () {
             var
-                item = prototypes.prototype.getModel().items[id],
+                item = prototypes.prototype.getCurrentItem(),
                 model = item.getModel(),
                 title = item.toString();
 
@@ -28,7 +28,7 @@
         select = function (index) {
             if (currentIndex != null) {
                 getRow(currentIndex).removeClass("Selected");
-                if (currentIndex == index) open(currentIndex);
+                if (currentIndex == index) open();
             }
             currentIndex = index;
             if (currentIndex != null)
@@ -37,13 +37,25 @@
             openButton.toggle(currentIndex != null);
             dependenciesButton.toggle(currentIndex != null);
             if (currentIndex != null) {
-                var item = items[tableBody.children().eq(index).data("code")];
-                prototypes.prototype.selectById(item.typeName, item.index || item.id);
+                var item = items[currentIndex];
+                if (item.typeName == "Prototype")
+                    prototypes.prototype.select(null, prototypes.prototype);
+                else
+                    prototypes.prototype.selectById(item.typeName == "Page" ? "Page" : "ItemId", item.typeName == "Page" ? item.index : item.id);
             }
         },
 
-        open = function (index) {
-            prototypes.propertyPanel.select();
+        open = function () {
+            var currentItem = prototypes.prototype.getCurrentItem();
+            prototypes.propertyPanel.select(currentItem, {
+                okHandler: function () {
+                    var
+                        model = currentItem.getModel(),
+                        tr = $("tr.Selected", tableBody);
+                    $("td.CodeColumn", tr).text(model.code);
+                    $("td.DescriptionColumn", tr).text(model.description);
+                }
+            });
         },
 
         close = function () {
@@ -53,14 +65,14 @@
             matematici.itemsList = null;
         },
 
-        add = function (item, code) {
-            items[code] = model;
+        add = function (item) {
+            items.push(item);
             $("<tr />")
                 .appendTo(tableBody)
-                .addClass("Handler").data({ code: code })
+                .addClass("Handler")
                 .append($("<td />").append($("<i />").addClass("fa fa-caret-right")))
-                .append($("<td />").addClass("ItemTypeColumn").text(item.typeName))
-                .append($("<td />").addClass("IdColumn").text(item.id || item.index && (item.index + 1) || ""))
+                .append($("<td />").addClass("ItemTypeColumn").text(item.typeName == "Prototype" ? "Checklist" : item.typeName))
+                .append($("<td />").addClass("IdColumn").text(item.id || item.index != null && (item.index + 1) || ""))
                 .append($("<td />").addClass("CodeColumn").text(item.code))
                 .append($("<td />").addClass("DescriptionColumn").text(item.description))
                 .append($("<td />").addClass("Centered")
@@ -69,23 +81,17 @@
         },
 
         traverse = function (model) {
+            add(model);
             if (model.typeName == "Prototype") {
-                items = {}
-                add(model, "prototype");
-                tableBody.empty();
                 traverse(model.header);
                 for (var index in model.pages)
                     traverse(model.pages[index]);
-            } else if (model.typeName == "Page") {
-                add(model, "page" + index);
+            } else if (model.typeName == "Page") 
                 for (var index in model.groups)
                     traverse(model.groups[index]);
-            } else if (model.typeName == "Group") {
-                add(model, "item" + model.id);
+            else if (model.typeName == "Group") 
                 for (var index in model.items)
                     traverse(model.items[index]);
-            } else
-                add(model, "item" + model.id);
         },
 
         setup = function () {
@@ -125,8 +131,8 @@
                         .append($("<a />").addClass("Button CancelButton").text("close").prepend($("<i />").addClass("Icon fa fa-times")).on("click", function () {
                             close();
                         }))
-                        .append(openButton = $("<a />").addClass("Button").text("open").hide().prepend($("<i />").addClass("Icon fa fa-edit")).on("click", function () {
-                            open(currentIndex);
+                        .append(openButton = $("<a />").addClass("Button").text("properties").hide().prepend($("<i />").addClass("Icon fa fa-edit")).on("click", function () {
+                            open();
                         }))
                         .append(dependenciesButton = $("<a />").addClass("Button").text("dependencies").hide().prepend($("<i />").addClass("Icon fa fa-sitemap")).on("click", function () {
                             showDependencies();
