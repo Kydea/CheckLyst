@@ -36,10 +36,14 @@
 
             openButton.toggle(currentIndex != null);
             dependenciesButton.toggle(currentIndex != null);
+            if (currentIndex != null) {
+                var item = items[tableBody.children().eq(index).data("code")];
+                prototypes.prototype.selectById(item.typeName, item.index || item.id);
+            }
         },
 
         open = function (index) {
-            prototypes.propertyPanel.select(items[tableBody.children().eq(index).data("id")]);
+            prototypes.propertyPanel.select();
         },
 
         close = function () {
@@ -50,12 +54,10 @@
         },
 
         add = function (item, code) {
-            items[code] = {
-                getModel: function () { return model; }
-            };
+            items[code] = model;
             $("<tr />")
                 .appendTo(tableBody)
-                .addClass("Handler").data("id", code)
+                .addClass("Handler").data({ code: code })
                 .append($("<td />").append($("<i />").addClass("fa fa-caret-right")))
                 .append($("<td />").addClass("ItemTypeColumn").text(item.typeName))
                 .append($("<td />").addClass("IdColumn").text(item.id || item.index && (item.index + 1) || ""))
