@@ -32,8 +32,8 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ArithmeticOperators
         protected override TypedValue EvaluateResult(TypedValue LeftValue, TypedValue RightValue)
         {
             return
-                Left.DataType == DataType.Text && Right.DataType == DataType.Text ? new TypedValue(DataType.Text, LeftValue.TextValue + RightValue.TextValue) :
-                Left.DataType == DataType.Number ? new TypedValue(DataType.Number, LeftValue.IsNull || RightValue.IsNull ? (decimal?)null : LeftValue.NumberValue + RightValue.NumberValue) :
+                LeftValue.Type == DataType.Text && RightValue.Type == DataType.Text ? new TypedValue(DataType.Text, LeftValue.TextValue + RightValue.TextValue) :
+                LeftValue.Type == DataType.Number ? new TypedValue(DataType.Number, LeftValue.IsNull || RightValue.IsNull ? (decimal?)null : LeftValue.NumberValue + RightValue.NumberValue) :
                 new TypedValue(DataType.DateTime, LeftValue.IsNull || RightValue.IsNull ? (DateTimeOffset?)null : LeftValue.DateTimeValue.AddSeconds((double)RightValue.NumberValue));
         }
 
