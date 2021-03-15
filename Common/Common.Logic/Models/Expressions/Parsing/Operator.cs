@@ -7,11 +7,11 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
 {
     public class Operator : Token
     {
-        public const string OPERATORS_CHARACTERS = "+-*/=?:&|!><^";
-        public Operator(ref string ExpressionValue, ref int Position, int Index) :
+        public const string OPERATORS_CHARACTERS = "+-*/=&|!><^";
+        public Operator(ref string ExpressionValue, Position Position, int Index) :
             base
             (
-                ref ExpressionValue, ref Position, Index, (c, i) =>
+                ref ExpressionValue, Position, Index, (c, i) =>
                     OPERATORS_CHARACTERS.Contains(c.ToString())
             )
         {
@@ -44,7 +44,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                 TokenOrderRightToLeft = true;
             }
 
-            Symbol.Position = Position;
+            Symbol.Position = new Position(Position);
         }
     }
 

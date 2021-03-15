@@ -7,6 +7,7 @@ using CheckListManager.Common.Logic.Models.Expressions.ElementProperties;
 using CheckListManager.Common.Logic.Models.Expressions.LogicOperators;
 using Newtonsoft.Json;
 using System.Linq;
+using CheckListManager.Common.Logic.Models.Expressions.Parsing;
 
 namespace CheckListManager.Common.Logic.Models.Expressions
 {
@@ -41,6 +42,6 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         public override abstract string ToString();
         public DataType DataType { get; protected set; }
         public DataType? InnerDataType { get; protected set; }
-        public int Position { get; set; }
+        public Position Position { get; set; }
     }
 }

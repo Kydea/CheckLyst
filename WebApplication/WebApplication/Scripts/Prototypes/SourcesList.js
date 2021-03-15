@@ -170,7 +170,10 @@
                                         model = prototypes.prototype.getModel().externalSourceDependencyNodes[code];
                                     matematici.dependenciesDialog.show("Source " + code, model && model.dependingRelations, model && model.dependentRelations);
                                 };
-                            prototypes.prototype.verify(handler);
+                            if (matematici.canClose)
+                                handler()
+                            else
+                                prototypes.prototype.verify(handler);
                         }).hide());
 
             sources = $("<select />");

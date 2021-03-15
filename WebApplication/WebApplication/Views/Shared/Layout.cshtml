@@ -10,6 +10,9 @@
     <meta name="keywords" content="[Keywords]" />
     @Html.Partial("Script/Script0")
     @Styles.Render("~/Content/Theme/Styles")
+
+    <script src="/Scripts/Ace/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/Scripts/Ace/ext-language_tools.js" type="text/javascript" charset="utf-8"></script>
 </head>
 <body class="@ViewBag.BodyCssClass @(ViewBag.AppMode ? "AppMode" : string.Empty)">
     <div id="InitialCurtain"></div>

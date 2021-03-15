@@ -12,7 +12,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.LogicOperators
             base.Check(CheckList, Expression, IteratorStack);
 
             if (Argument.DataType != DataType.Boolean)
-                throw new ParseException("Left operand of logic operators must be a boolean", Position);
+                throw new ParseException("The operand of logic operators must be a boolean", Position);
 
             DataType = DataType.Boolean;
 

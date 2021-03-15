@@ -1,5 +1,4 @@
 matematici.popup = function () {
-
 	var
 		element,
 		container,

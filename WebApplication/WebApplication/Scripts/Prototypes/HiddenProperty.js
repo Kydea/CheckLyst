@@ -1,50 +1,38 @@
 ﻿prototypes.HiddenProperty = function (model) {
     var
+        base,
         input,
-        expressions,
         editable = prototypes.prototype.getModel().state == prototypes.Prototype.states.draft,
+        condition = "hiddenCondition",
+        expressionCode = "hiddenExpressionCode",
 
         inputChanged = function () {
-            var
-                value = input.val(),
-                error;
+            var value = input.val();
 
-            if (input.prop("selectedIndex") > 1 && expressions[value].error)
-                error = "the expression is not valid";
-            else if (input.prop("selectedIndex") > 1 && !prototypes.propertyPanel.checkDataType(expressions[value], "Boolean"))
-                error = "the expression result must be a boolean";
-
-            if (error) {
-                new matematici.dialog.error("error", error);
-                input.prop("selectedIndex", 0);
-                matematici.AutoComplete.get(input[0]).setError(value);
-            }
+            if (input.prop("selectedIndex") > 1)
+                expressionPropertyBase.check(value);
 
             var index = input.prop("selectedIndex");
             model.hiddenExpressionCode = index > 1 ? value : null;
             model.hiddenCondition = index == 0 ? 2 : index == 1 ? 1 : 3;
-            matematici.canClose = false;
+            base.updateModel(model);
         };
 
-    this.create = function (valuePanel) {
+    this.create = function (valuePanel, baseClass) {
+        base = baseClass;
         valuePanel.addClass("HiddenProperty");
-		expressions = prototypes.prototype.getModel().expressions;
+        expressionPropertyBase = new prototypes.ExpressionPropertyBase(model, expressionCode, valuePanel);
 
-        if (editable)
-        {
+        if (editable) {
             input = $("<select />")
                 .appendTo(valuePanel)
                 .append($("<option />").attr("value", "2").text("(false)").attr("selected", model.hiddenCondition == 2))
                 .append($("<option />").attr("value", "1").text("(true)").attr("selected", model.hiddenCondition == 1));
 
-            var found = model.hiddenCondition == 1 || model.hiddenCondition == 2;
-            for (var index in expressions) {
-                input.append($("<option />").attr({ value: index, selected: model.hiddenCondition > 2 && index == model.hiddenExpressionCode }).text(index));
-                if (model.hiddenCondition > 2 && index == model.hiddenExpressionCode) found = true;
-            }
+            expressionPropertyBase.setSelect(input);
 
-            if (!found) 
-                input.attr("data-error", model.hiddenExpressionCode);
+            expressionPropertyBase.fill(model[condition] <= 2 ? null : model[expressionCode]);
+            if (model[condition] > 2) expressionPropertyBase.check(model[expressionCode]);
 
             input.on("change", inputChanged);
         } else
@@ -52,8 +40,8 @@
                 .attr({ type: "text", readOnly: true })
                 .val(
                     model.hiddenCondition == 2 ? "(false)" :
-                    model.hiddenCondition == 1 ? "(true)" :
-                    model.hiddenExpressionCode
+                        model.hiddenCondition == 1 ? "(true)" :
+                            model.hiddenExpressionCode
                 )
                 .appendTo(valuePanel);
     }
@@ -61,5 +49,13 @@
     this.hasChanges = function () {
         return model.hiddenCondition && model.hiddenCondition !== 2;
     }
-}
 
+    this.getExpressionsSelect = function () {
+        return input;
+    }
+
+    this.setExpressionCode = function (value) {
+        model[condition] = 3;
+        model[expressionCode] = value;
+    };
+}

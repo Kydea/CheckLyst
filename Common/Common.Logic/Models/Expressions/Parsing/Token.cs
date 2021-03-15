@@ -10,19 +10,18 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
     {
         public enum OperatorType { No, Right, Left, Both }
 
-        protected Token(int Position, int Index)
+        protected Token(Position Position, int Index)
         {
-            this.Position = Position;
+            this.Position = new Position(Position);
             this.Index = Index;
         }
 
-        protected Token(ref string ExpressionValue, ref int Position, int Index, Func<char, int, bool> Test) : this(Position, Index)
+        protected Token(ref string ExpressionValue, Position Position, int Index, Func<char, int, bool> Test) : this(Position, Index)
         {
-            var StartPosition = Position;
-            while (Position < ExpressionValue.Length && Test(ExpressionValue[Position], Position - StartPosition))
-                ++Position;
+            while (Position.Index < ExpressionValue.Length && Test(ExpressionValue[Position.Index], Position.Index - this.Position.Index))
+                Position.Increment(false);
 
-            Value = ExpressionValue.Substring(this.Position, Position - this.Position);
+            Value = ExpressionValue.Substring(this.Position.Index, Position.Index - this.Position.Index);
         }
 
         public override string ToString()
@@ -58,7 +57,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
 
         public string Value { get; protected set; }
 
-        public int Position { get; private set; }
+        public Position Position { get; private set; }
 
         public int Index { get; set; }
 

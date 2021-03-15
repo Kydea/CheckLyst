@@ -5,11 +5,11 @@ using System.Web;
 
 namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
 {
-    public class TernaryOperator : Token
+    public class ConditionalOperator : Token
     {
-        public TernaryOperator(ref int Position, int Index) : base(Position, Index)
+        public ConditionalOperator(Position Position, int Index) : base(Position, Index)
         {
-            Symbol = new Expressions.TernaryOperator { Position = Position };
+            Symbol = new Expressions.ConditionalOperator { Position = new Position(Position) };
         }
 
         public override string ToString()

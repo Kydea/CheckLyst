@@ -1,7 +1,7 @@
 ﻿prototypes.SimpleValueProperty = function (model, property, options) {
     var
+        base,
         input,
-        handler,
         check,
         change = function () {
             var value = input.val();
@@ -13,21 +13,16 @@
                         return;
                     }
             model[property] = value;
-            matematici.canClose = false;
-            if (handler) handler.call(this, model);
+            base.updateModel(model);
         };
-
-    this.setHandler = function (value) {
-        handler = value;
-        return this;
-    };
 
     this.setCheck = function (value) {
         check = value;
         return this;
     };
 
-    this.create = function (valuePanel) {
+    this.create = function (valuePanel, baseClass) {
+        base = baseClass;
         valuePanel.addClass("SimpleValue");
         options = options || {};
 		input = $(options.fullHeight ? "<textarea />" : "<input />")
@@ -52,5 +47,8 @@
     this.setReadOnly = function (value) {
         options.readOnly = value
     };
-}
 
+    this.setValue = function (node) {
+        node.text(this.hasChanges() ? model[property] : "");
+    };
+}

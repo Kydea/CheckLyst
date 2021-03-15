@@ -1,8 +1,10 @@
 ﻿prototypes.DateProperty = function (model, property, options) {
     var
+        base,
         input,
 		check,
-		datePicker,
+        datePicker,
+
 		change = function () {
 			var date = datePicker.getValue();
         	if (check)
@@ -19,7 +21,7 @@
         		input.val("");
 			}
 
-            matematici.canClose = false;
+            base.updateModel(model);
         };
 
     this.setCheck = function (value) {
@@ -27,7 +29,8 @@
         return this;
     };
 
-    this.create = function (valuePanel) {
+    this.create = function (valuePanel, baseClass) {
+        base = baseClass;
     	valuePanel.addClass("Date");
 		input = $("<input />")
 			.attr({ type: "text", readOnly: options.readOnly });
@@ -44,5 +47,8 @@
     this.hasChanges = function () {
         return !!model[property];
     }
-}
 
+    this.setValue = function (node) {
+        node.text(model[property]);
+    }
+}

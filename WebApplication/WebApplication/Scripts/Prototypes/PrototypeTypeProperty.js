@@ -1,5 +1,6 @@
 ﻿prototypes.PrototypeTypeProperty = function (model, options) {
-	var
+    var
+        base,
 		input,
 		handler,
 		department,
@@ -45,7 +46,8 @@
 		};
 
 
-	this.create = function (valuePanel) {
+    this.create = function (valuePanel, baseClass) {
+        base = baseClass;
 		valuePanel.addClass("PrototypeType");
 
 		preparePrototypeTypes();
@@ -72,7 +74,7 @@
 					model.prototypeType = prototypeType.val();
 					model.prototypeTypeName = prototypeType.next().val();
 					if (!options.readOnly)
-						matematici.canClose = false;
+                        base.updateModel(model);
 				})
 				.appendTo(label);
 
@@ -87,6 +89,6 @@
 
 	this.hasChanges = function () {
 		return !!(model.department || model.prototypeType);
-	}
+    }
 }
 

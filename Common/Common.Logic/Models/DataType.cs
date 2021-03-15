@@ -23,25 +23,13 @@ namespace CheckListManager.Common.Logic.Models
 		public object FromJson(JToken token, JsonSerializer jsonSerializer)
 			=> token.ToObject(_actualType, jsonSerializer);
 
-		public static bool operator ==(DataType a, DataType b)
-		{
-			return a.Equals(b);
-		}
+		public static bool operator ==(DataType a, DataType b) => a.Equals(b);
 
-		public static bool operator !=(DataType a, DataType b)
-		{
-			return !a.Equals(b);
-		}
+        public static bool operator !=(DataType a, DataType b) => !a.Equals(b);
 
-		public override bool Equals(object obj)
-		{
-			return obj is DataType type && type._rawValue == _rawValue;
-		}
+		public override bool Equals(object obj) => obj is DataType type && type._rawValue == _rawValue;
 
-		public override int GetHashCode()
-		{
-			return _rawValue.GetHashCode();
-		}
+		public override int GetHashCode() => _rawValue.GetHashCode();
 
 		public override string ToString() => TypeName;
 

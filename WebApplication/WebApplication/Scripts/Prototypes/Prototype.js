@@ -173,6 +173,7 @@
                             newExpression = newModel.expressions[index];
                         expression.dataType = newExpression.dataType;
                         expression.error = newExpression.error;
+                        expression.errorPosition = newExpression.errorPosition;
                         if (expression.error) invalid = true;
                         updateDependencies(expression, newExpression);
                     }
@@ -347,11 +348,14 @@
                             if (error) return;
                             var
                                 model = currentItem.getModel(),
-                                title = model.typeName + (model.index != null && " - Index: " + (parseInt(model.index) + 1) || model.id != null && " - ID: " + model.id || "") + (model.code && " - Code: " + model.code || "")
+                                title = currentItem.toString(); // model.typeName + (model.index != null && " - Index: " + (parseInt(model.index) + 1) || model.id != null && " - ID: " + model.id || "") + (model.code && " - Code: " + model.code || "")
                             matematici.dependenciesDialog.show(title, model.dependingRelations, model.dependentRelations);
                         };
 
-                    prototype.verify(handler);
+                    if (matematici.canClose)
+                        handler()
+                    else
+                        prototype.verify(handler);
                     break;
                 default:
                     alert("invalid command");
@@ -383,6 +387,50 @@
                     traverseForImport(element.items[index]);
             else if (element.typeName == "Image")
                 element.cloned = true;
+        },
+
+        findItemByCode = function (code, element) {
+            if (!element) {
+                var item = findItemByCode(code, model.header);
+                if (item) return item;
+                for (var pageIndex in model.pages) {
+                    var page = model.pages[pageIndex];
+                    for (var groupIndex in page.groups) {
+                        var item = findItemByCode(code, page.groups[groupIndex]);
+                        if (item) return item;
+                    }
+                }
+            } else if (element.code == code)
+                return element;
+            else if (element.typeName == "Group")
+                for (var index in element.items) {
+                    var item = findItemByCode(code, element.items[index]);
+                    if (item) return item;
+                }
+        },
+
+        getElementCodes = function (element, codes) {
+            if (!element) {
+                codes = [];
+                getElementCodes(model.header, codes);
+                for (var pageIndex in model.pages) {
+                    var page = model.pages[pageIndex];
+
+                    if (page.code)
+                        codes.push({ code: element.code, type: "item (Page)" });
+
+                    for (var groupIndex in page.groups)
+                        getElementCodes(page.groups[groupIndex], codes);
+                }
+                return codes;
+            } else {
+                if (element.code)
+                    codes.push({ code: element.code, type: "item (" + element.typeName + ")"});
+
+                if (element.typeName == "Group")
+                    for (var index in element.items)
+                        getElementCodes(element.items[index], codes);
+            }
         },
 
         findItem = function (element, itemId, pageIndex, result) {
@@ -660,32 +708,26 @@
     };
 
     prototype.verify = function (callback) {
-        if (matematici.canClose)
-            callback();
-        else {
-            var
-                array = pako.gzip(JSON.stringify(model)),
-                handler = function (base64CheckList) {
-                    var
-                        //base64CheckList = btoa(String.fromCharCode.apply(null, new Uint8Array(array))),
-                        data = JSON.stringify({
-                            base64CheckList: base64CheckList
-                        });
-
-                    $.ajax({
-                        url: element.data("action") + "verify",
-                        type: "post",
-                        contentType: "application/json",
-                        data: data
-                    }).done(function (result) {
-                        if (result.checkList.exception) matematici.dialog.error("Error", result.checkList.exception.Message);
-                        updateDependencies(model, result.checkList);
-                        callback(result.checkList.exception);
+        var
+            array = pako.gzip(JSON.stringify(model)),
+            handler = function (base64CheckList) {
+                var
+                    data = JSON.stringify({
+                        base64CheckList: base64CheckList
                     });
-                }
+                $.ajax({
+                    url: element.data("action") + "verify",
+                    type: "post",
+                    contentType: "application/json",
+                    data: data
+                }).done(function (result) {
+                    if (result.checkList.exception) matematici.dialog.error("Error", result.checkList.exception.Message);
+                    updateDependencies(model, result.checkList);
+                    callback(result.checkList.exception);
+                });
+            }
 
-            toBase64(array, handler);
-        }
+        toBase64(array, handler);
     };
 
     prototype.save = function (callback) {
@@ -751,6 +793,7 @@
                         }
 
                         $("div.ActionBar a.ExpressionsList").removeClass("Invalid");
+                        $("div.ActionBar a.ItemsList").removeClass("Invalid");
 
                         if (callback)
                             callback.call();
@@ -1050,9 +1093,11 @@
     prototype.selectById = selectById;
     prototype.select = select;
     prototype.completeModel = completeModel;
+    prototype.findItemByCode = findItemByCode;
+    prototype.getElementCodes = getElementCodes;
 
     setup();
-}
+};
 
 prototypes.Prototype.states = {
     draft: "Draft",
@@ -1063,4 +1108,4 @@ prototypes.Prototype.states = {
     approved: "Approved",
     active: "Active",
     obsolete: "Obsolete"
-}
+};

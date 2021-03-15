@@ -11,25 +11,41 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ArithmeticOperators
         {
             base.Check(CheckList, Expression, IteratorStack);
 
-            if (
-                !(Left.DataType == DataType.Number && Right.DataType == DataType.Number)
-                && !((Left.DataType == DataType.DateTime || Left.DataType == DataType.Date) && (Right.DataType == DataType.DateTime || Right.DataType == DataType.Date))
-                && !(Left.DataType == DataType.Time && Right.DataType == DataType.Time)
-            )
-                throw new ParseException("Operands of operator - must be both numbers or both date/time", Position);
-
-            DataType = DataType.Number;
+            if (Left.DataType == DataType.Number)
+            {
+                if (Right.DataType != DataType.Number)
+                    throw new ParseException("Right operand of operator - must be a number when left operand is a number", Position);
+                DataType = DataType.Number;
+            }
+            else if (Left.DataType == DataType.Time)
+            {
+                if (Right.DataType == DataType.Number)
+                    DataType = Left.DataType;
+                if (Right.DataType == DataType.Time)
+                    DataType = DataType.Number;
+                else
+                    throw new ParseException($"Right operand of operator - must be a number or a time when left operand is a time", Position);
+            }
+            else if (Left.DataType == DataType.DateTime || Left.DataType == DataType.Date)
+            {
+                if (Right.DataType == DataType.Number)
+                    DataType = Left.DataType;
+                if (Right.DataType == DataType.DateTime || Right.DataType == DataType.Date)
+                    DataType = DataType.Number;
+                else
+                    throw new ParseException($"Right operand of operator - must be a number or a date or a date/time when left operand is a date or a date/time", Position);
+            }
+            else
+                throw new ParseException($"The operator - cannot be applied to a {Left.DataType} and a {Right.DataType}", Position);
         }
 
-        protected override TypedValue EvaluateResult(TypedValue LeftValue, TypedValue RightValue)
-        {
-            return new TypedValue(DataType.Number,
-                LeftValue.IsNull || RightValue.IsNull ? (decimal?)null :
-                LeftValue.Type == DataType.Time ? (decimal)(LeftValue.TimeSpanValue - RightValue.TimeSpanValue).TotalSeconds :
-                LeftValue.Type == DataType.Number ? LeftValue.NumberValue - RightValue.NumberValue :
-                (decimal)(LeftValue.DateTimeValue - RightValue.DateTimeValue).TotalSeconds
-            );
-        }
+        protected override TypedValue EvaluateResult(TypedValue LeftValue, TypedValue RightValue) =>
+            LeftValue.IsNull || RightValue.IsNull ? new TypedValue(DataType, (decimal?)null) :
+            LeftValue.Type == DataType.Number ? new TypedValue(DataType, LeftValue.NumberValue - RightValue.NumberValue) :
+            LeftValue.Type == DataType.Time && RightValue.Type == DataType.Time ? new TypedValue(DataType, (decimal)(LeftValue.TimeSpanValue - RightValue.TimeSpanValue).TotalSeconds) :
+            LeftValue.Type == DataType.Time ? new TypedValue(DataType, LeftValue.TimeSpanValue.Add(-TimeSpan.FromSeconds((int)RightValue.NumberValue))) :
+            RightValue.Type == DataType.Number ? new TypedValue(DataType, LeftValue.DateTimeValue.AddSeconds((int)RightValue.NumberValue)) :
+            new TypedValue(DataType, (decimal)(LeftValue.DateTimeValue - RightValue.DateTimeValue).TotalSeconds);
 
         protected override string OperatorName => "-";
     }

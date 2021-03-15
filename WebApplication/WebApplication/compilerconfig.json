@@ -164,7 +164,11 @@
     "inputFile": "Content/Theme/Dashboard.scss"
   },
   {
-    "outputFile": "Content/Theme/ExpressionEditor.css",
-    "inputFile": "Content/Theme/ExpressionEditor.scss"
+    "outputFile": "Content/Theme/ItemsList.css",
+    "inputFile": "Content/Theme/ItemsList.scss"
+  },
+  {
+    "outputFile": "Content/Theme/ExpressionsList.css",
+    "inputFile": "Content/Theme/ExpressionsList.scss"
   }
 ]

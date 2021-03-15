@@ -28,7 +28,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
 
         protected abstract void Check(ICheckListElement Element, List<string> IteratorStack);
 
-        public static ICheckListElement Check(ICheckList CheckList, List<string> IteratorStack, string Code, int Position)
+        public static ICheckListElement Check(ICheckList CheckList, List<string> IteratorStack, string Code, Position Position)
         {
             var Element = CheckList.Elements[Code];
             if (Element is ICheckListItem Item)

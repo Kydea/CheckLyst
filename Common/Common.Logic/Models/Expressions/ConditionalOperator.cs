@@ -5,7 +5,7 @@ using CheckListManager.Common.Logic.Models.Expressions.Parsing;
 
 namespace CheckListManager.Common.Logic.Models.Expressions
 {
-    public class TernaryOperator : Symbol
+    public class ConditionalOperator : Symbol
     {
         public Symbol Condition { get; set; }
 

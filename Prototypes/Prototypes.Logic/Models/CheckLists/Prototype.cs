@@ -92,7 +92,8 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                     }
                     catch (ParseException Exception)
                     {
-                        expression.Value.Error = $"{Exception.Message} (position {Exception.Position})";
+                        expression.Value.Error = Exception.Message;
+                        expression.Value.ErrorPosition = Exception.Position;
                         Error = true;
                     }
                     catch (Exception Exception)
