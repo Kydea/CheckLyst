@@ -62,8 +62,10 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             return field;
         }
 
-        public override void BuildDependencies()
+        public override bool BuildDependencies()
         {
+            var Result = true;
+
             base.BuildDependencies();
 
             ValueFormula.BuildDependencies(ValueFormulaString, null);
@@ -77,10 +79,15 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             if (ExternalSourceName != null)
             {
                 if (!CheckList.ExternalSourceDependencyNodes.TryGetValue(ExternalSourceName, out var ExternalSourceNode))
-                    throw new Exception($"The property value references to the inexistent external source {ExternalSourceName} for {this}");
+                {
+                    Errors.Add(new Configuration.Error("value", $"External source {ExternalSourceName} not found"));
+                    Result = false;
+                }
 
                 AddDependingRelation(DependencyRelation.Properties.Value, CheckList.ExternalSourceDependencyNodes[ExternalSourceName], DependencyRelation.Properties.Value);
             }
+
+            return Result;
         }
 
     }

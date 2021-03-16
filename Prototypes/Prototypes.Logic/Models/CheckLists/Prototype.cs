@@ -25,9 +25,10 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public string FileNameFormulaString { get; set; }
         private Formula FileNameFormula { get; } = new Formula();
         private bool PreserveID { get; set; }
-        
         public bool FTPExport { get; set; }
-        public Exception Exception { get; set; }
+        public List<Configuration.Error> Errors { get; } = new List<Configuration.Error>();
+        public bool Valid { get; set; }
+
 
         public bool NeedToSaveExpressionValues { get; set; }
 
@@ -55,82 +56,63 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         public void Setup(bool PreserveID)
         {
-            try
+            Valid = true;
+            this.PreserveID = PreserveID;
+            if (!PreserveID) ItemIDSequence = 1;
+
+            Header.CheckList = this;
+            Valid &= ((Group)Header).Setup();
+            int Index = 0;
+            foreach (Page Page in Pages)
             {
-                Exception = null;
-                this.PreserveID = PreserveID;
-                if (!PreserveID) ItemIDSequence = 1;
-                Header.CheckList = this;
-                ((Group)Header).Setup();
-                int Index = 0;
-                foreach (Page Page in Pages)
+                if (!PreserveID)
+                    Page.Index = Index++;
+                Page.CheckList = this;
+                Valid &= Page.Setup();
+            }
+
+            ExternalSourceDependencyNodes.Clear();
+            foreach (string ExternalSource in ExternalSources.Keys)
+                ExternalSourceDependencyNodes.Add(ExternalSource, new ExternalSourceDependencyNode { Code = ExternalSource });
+
+            foreach (var expression in Expressions)
+                try
                 {
-                    if (!PreserveID)
-                        Page.Index = Index++;
-                    Page.CheckList = this;
-                    Page.Setup();
+                    if (expression.Key.Length > 50)
+                        throw new Exception($"Expression codes must not exceed 50 characters");
+
+                    if (expression.Value.Description?.Length > 100)
+                        throw new Exception($"Expression descriptions must not exceed 100 characters");
+
+                    expression.Value.Validate(this, expression.Key);
+                    expression.Value.Parse(this);
+                    expression.Value.ClearDependencies();
+                    expression.Value.DependencyChainAction = e => e.Check(this);
+                }
+                catch (ParseException Exception)
+                {
+                    expression.Value.Error = Exception.Message;
+                    expression.Value.ErrorPosition = Exception.Position;
+                    Valid = false;
+                }
+                catch (Exception Exception)
+                {
+                    expression.Value.Error = Exception.Message;
+                    Valid = false;
                 }
 
-                ExternalSourceDependencyNodes.Clear();
-                foreach (string ExternalSource in ExternalSources.Keys)
-                    ExternalSourceDependencyNodes.Add(ExternalSource, new ExternalSourceDependencyNode { Code = ExternalSource });
+            Valid &= BuildDependencies();
 
-                bool Error = false;
-                foreach (var expression in Expressions)
-                    try
-                    {
-                        if (expression.Key.Length > 50)
-                            throw new Exception($"Expression codes must not exceed 50 characters");
+            foreach (var expression in Expressions.Values)
+                if (expression.Error == null)
+                {
+                    expression.TestDependencyChain(this, DependencyRelation.Properties.Value);
+                    Valid &= expression.Error == null;
+                }
 
-                        if (expression.Value.Description?.Length > 100)
-                            throw new Exception($"Expression descriptions must not exceed 100 characters");
-
-                        expression.Value.Validate(this, expression.Key);
-                        expression.Value.Parse(this);
-                        expression.Value.ClearDependencies();
-                        expression.Value.DependencyChainAction = e => e.Check(this);
-                    }
-                    catch (ParseException Exception)
-                    {
-                        expression.Value.Error = Exception.Message;
-                        expression.Value.ErrorPosition = Exception.Position;
-                        Error = true;
-                    }
-                    catch (Exception Exception)
-                    {
-                        expression.Value.Error = Exception.Message;
-                        Error = true;
-                    }
-
-                if (Error || !BuildDependencies())
-                    throw new Exception("Some expressions are not valid");
-
-
-                foreach (var expression in Expressions.Values)
-                    if (expression.Error == null)
-                    {
-                        expression.TestDependencyChain(this, DependencyRelation.Properties.Value);
-                        Error |= expression.Error != null;
-                    }
-
-                if (Error)
-                    throw new Exception("Some expressions are not valid");
-
-                ((Group)Header).Check();
-                foreach (Page Page in Pages)
-                    Page.Check();
-
-                foreach (var expression in Expressions.Values)
-                    if (expression.Error == null && !expression.Check(this))
-                        Error = true;
-
-                if (Error)
-                    throw new Exception("Some expressions are not valid");
-            }
-            catch (Exception Exception)
-            {
-                this.Exception = Exception;
-            }
+            Valid &= ((Group)Header).Check();
+            foreach (Page Page in Pages)
+                Valid &= Page.Check();
         }
 
         public override bool Update(DependencyRelation.Properties Property) => true;
@@ -156,9 +138,9 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                     if (Expressions.TryGetValue(Key, out var Expression))
                         AddDependingRelation(DependencyRelation.Properties.Formula, Expression, DependencyRelation.Properties.Value);
 
-                ((Group)Header).BuildDependencies();
+                Result &= ((Group)Header).BuildDependencies();
                 foreach (Page Page in Pages)
-                    Page.BuildDependencies();
+                    Result &= Page.BuildDependencies();
             }
 
             return Result;

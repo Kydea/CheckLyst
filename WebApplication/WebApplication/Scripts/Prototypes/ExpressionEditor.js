@@ -45,13 +45,13 @@
 
             if (!matematici.codeRegularExpression.test(code)) {
                 matematici.dialog.error("Invalid code", "The code " + code + " is not valid");
-                return true;
+                return null;
             }
 
             for (var index in expressions)
                 if (index != expressionIndex && code == expressions[index].code) {
                     matematici.dialog.error("Duplicated code", "The code " + code + " is duplicated");
-                    return true;
+                    return null;
                 }
 
             if (notificationCheck.prop("checked")) {
@@ -65,7 +65,7 @@
                 if (email == "" || !re.test(email)) {
                     emailInput.focus();
                     new matematici.dialog.error("error", "Invalid email list. Provide a semicolon separated list of valid email addresses.");
-                    return true;
+                    return null;
                 }
             } else {
                 $("input[name=notificationEmail]", form).val(null);
@@ -94,6 +94,8 @@
 
             var expression = map();
 
+            if (expression == null) return true;
+
             if (!newRecord && expressions[expressionIndex].dependentRelations && expressions[expressionIndex].dependentRelations.length > 0 && getCode() != expressions[expressionIndex].code) {
                 var message = "WARNING: the expression is referenced by " + expressions[expressionIndex].dependentRelations.length + " element(s). If you change the code from '" + expressions[expressionIndex].code + "', the referencing elements will have to be fixed."
                 matematici.dialog.show("warning", message, [
@@ -117,7 +119,7 @@
             matematici.dialog.show("warning", message, [
                 {
                     text: "confirm", icon: "check", handler: function () {
-                        deleteHandler();
+                        if (!newRecord) deleteHandler();
                         matematici.popup.close();
                     }
                 },
@@ -128,7 +130,7 @@
 
         verify = function () {
             var expression = map();
-            verifyHandler(expressionEditor, expression);
+            if (expression != null) verifyHandler(expressionEditor, expression);
             return true;
         },
 

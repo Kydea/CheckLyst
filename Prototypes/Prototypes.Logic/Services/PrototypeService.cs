@@ -36,11 +36,11 @@ namespace CheckListManager.Prototypes.Logic.Services
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public PrototypeService(
-	        CheckListJsonConverter converter,
-	        IPrototypesRepository prototypeRepository,
-	        IQueueService queueService,
-	        ICommonRepository commonRepository,
-			IStorageService storageService,
+            CheckListJsonConverter converter,
+            IPrototypesRepository prototypeRepository,
+            IQueueService queueService,
+            ICommonRepository commonRepository,
+            IStorageService storageService,
             IConfigurationService configurationService,
             IInstancesService instancesService,
             IEmailServiceBase emailService
@@ -119,7 +119,8 @@ namespace CheckListManager.Prototypes.Logic.Services
         {
             var Prototype = new Prototype
             {
-                Header = new Group { Description = "(header)" }
+                Header = new Group { Description = "(header)" },
+                Valid = true
             };
 
             Page Page;
@@ -209,21 +210,35 @@ namespace CheckListManager.Prototypes.Logic.Services
 
         public async Task<PrototypeResponse> SaveAsync(DefaultIdentity identity, PrototypeRequest request)
         {
+            if (
+                request.Department.HasValue && !identity.HasPermission("Prototypes", "Edit", request.Department.Value) &&
+                request.PrototypeType.HasValue && !identity.HasPermission("Prototypes", "Edit", request.Department.Value, request.PrototypeType.Value)
+            )
+                throw new UnauthorizedAccessException();
+
+            request.CheckList.Errors.Clear();
             request.CheckList.Setup(false);
-            if (request.CheckList.Exception != null)
+            if (string.IsNullOrWhiteSpace(request.Name))
+            {
+                request.CheckList.Errors.Add(new Models.CheckLists.Configuration.Error("name", "Specify a name"));
+                request.CheckList.Valid = false;
+            }
+            if (!request.Department.HasValue)
+            {
+                request.CheckList.Errors.Add(new Models.CheckLists.Configuration.Error("department", "Specify a department"));
+                request.CheckList.Valid = false;
+            }
+            if (!request.PrototypeType.HasValue)
+            {
+                request.CheckList.Errors.Add(new Models.CheckLists.Configuration.Error("prototype-type", "Specify a prototype type"));
+                request.CheckList.Valid = false;
+            }
+
+            if (!request.CheckList.Valid)
                 return new PrototypeResponse
                 {
                     CheckList = request.CheckList
                 };
-
-            if (string.IsNullOrWhiteSpace(request.Name)) throw new Exception("Specify a name");
-            if (!request.Department.HasValue) throw new Exception("Specify a department");
-            if (!request.PrototypeType.HasValue) throw new Exception("Specify a prototype type");
-            if (
-                !identity.HasPermission("Prototypes", "Edit", request.Department.Value) &&
-                !identity.HasPermission("Prototypes", "Edit", request.Department.Value, request.PrototypeType.Value)
-            )
-                throw new UnauthorizedAccessException();
 
             bool
                 NewPrototype = request.ID < 0,
@@ -274,7 +289,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                 PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(identity.CompanyId, request.ID, request.Version);
                 if (PrototypeVersion.VersionState != VersionState.Draft) throw new Exception($"The version {request.ID}.{request.Version} is not editable");
                 if (
-                    (PrototypeVersion.ModifiedOn?.UtcDateTime.Ticks ?? 0) - (request.ModifiedOn?.UtcDateTime.Ticks ?? 0) > 10000 /*ignored under milliseconds*/ 
+                    (PrototypeVersion.ModifiedOn?.UtcDateTime.Ticks ?? 0) - (request.ModifiedOn?.UtcDateTime.Ticks ?? 0) > 10000 /*ignored under milliseconds*/
                     || PrototypeVersion.ModifiedBy != request.ModifiedBy
                 ) throw new Exception($"Concurrency error: the prototype has already been modified by the user {request.ModifiedBy}"); //the db approximate some tick, we take 10 as maximum
 
@@ -511,7 +526,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                             await _prototypeRepository.SaveChangesAsync();
                         }
                     }
-            
+
                     await _queueService.SendObjectAsync(QueueName.PrototypesFTP, new PrototypesFTPMessage
                     {
                         Company = PrototypeVersion.Prototypes.Company,
@@ -544,7 +559,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                     await _emailService.LogErrorAsync(Exception, "Error updating prototype version state");
                 }
         }
-        
+
         #region Attachment
 
         private async Task ValidateRequest(
@@ -558,7 +573,7 @@ namespace CheckListManager.Prototypes.Logic.Services
             var prototypeType = prototypeVersion.Prototypes.PrototypeType;
 
             var function = isEdit ? "Edit" : "View";
-            
+
             if (
                 !identity.HasPermission("Prototypes", function, department) &&
                 !identity.HasPermission("Prototypes", function, department, prototypeType) &&
@@ -574,7 +589,7 @@ namespace CheckListManager.Prototypes.Logic.Services
         public async Task<UploadAttachmentResponse> UploadAttachmentAsync(DefaultIdentity identity, UploadAttachmentRequest request)
         {
             await ValidateRequest(identity, request);
-	        var extension = Path.GetExtension(request.Attachment.FileName);
+            var extension = Path.GetExtension(request.Attachment.FileName);
 
             var imageName = request.Code ?? Guid.NewGuid().ToString();
             var key = $"{identity.CompanyId}/{request.Id}-{request.Version}/{imageName}{extension}";
@@ -586,7 +601,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                     throw new Exception("Error uploading the attachment");
             }
 
-			return new UploadAttachmentResponse { Key = key, ImageName = imageName };
+            return new UploadAttachmentResponse { Key = key, ImageName = imageName };
         }
 
         public async Task<StorageFile> DownloadAttachmentAsync(DefaultIdentity identity, ProcessAttachmentRequest request)
@@ -597,7 +612,7 @@ namespace CheckListManager.Prototypes.Logic.Services
             if (startIndex < 0)
                 throw new InvalidOperationException("Key format non valid");
             var key = $"{identity.CompanyId}{request.Key.Substring(startIndex)}";
-            
+
             return await _storageService.GetAsync(_configurationService.PrototypesStorageBucket, key);
         }
 

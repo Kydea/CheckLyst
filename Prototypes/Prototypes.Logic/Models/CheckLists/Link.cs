@@ -13,14 +13,16 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         public string Url { get; set; }
 
-        public override void BuildDependencies()
+        public override bool BuildDependencies()
         {
-            base.BuildDependencies();
+            var Result = base.BuildDependencies();
 
             UrlFormula.BuildDependencies(Url, null);
             foreach (var Key in UrlFormula.ValueKeys)
                 if (CheckList.Expressions.TryGetValue(Key, out var Expression))
                     AddDependingRelation(DependencyRelation.Properties.Formula, Expression, DependencyRelation.Properties.Value);
+
+            return Result;
         }
 
         public override ICheckListItem Clone(ICheckListGroup parent)

@@ -38,4 +38,15 @@ div.Blip {
             }
         }
     }
+
+    &.Warning {
+        background-color: rgba(255, 102, 0, .7);
+
+        div.Container {
+            i {
+                color: $Color-Yellow-Regular;
+                font-size: 30px;
+            }
+        }
+    }
 }

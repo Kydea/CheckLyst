@@ -13,9 +13,10 @@ matematici.blip = function () {
 			var container = $("<div />").addClass("Container").appendTo(element);
 			container.append($("<i />").addClass("fal fa-" + options.icon));
 			matematici.elements.body.addClass("Blip");
-			element.fadeIn(300);
-			callback = options.callback;
-			//setTimeout(close, 2000);
+            element.fadeIn(300);
+
+            callback = options.callback;
+            if (options.timeout) setTimeout(close, options.timeout + 300);
 		},
 
 		close = function () {
@@ -32,16 +33,22 @@ matematici.blip = function () {
 			show(options);
 		},
 
-		ok: function (callback) {
+        ok: function (callback) {
 			show({
 				icon: "check", callback: callback
 			});
 		},
 
-		ko: function (callback) {
+        ko: function (callback) {
 			show({
 				cssClass: "Error", icon: "exclamation", callback: callback
 			});
-		}
+        }, 
+
+        warning: function () {
+            show({
+                cssClass: "Warning", icon: "exclamation", timeout: 100
+            });
+        }
 	};
 }();

@@ -7,7 +7,6 @@
         propertyList = $("tbody", element.children("div.PropertyList")),
         propertyValue = element.children("div.PropertyValue"),
         information = element.children("div.Information"),
-        dragY,
         currentProperty,
         prototypeTypesList,
         properties,
@@ -99,8 +98,7 @@
             ));
             properties.push(new prototypes.Property(
                 this, new prototypes.SimpleValueProperty(model, "state", { readOnly: true, defaultValue: prototypes.Prototype.states.draft }), "State",
-                "The state of the prototype. This property is not editable. " +
-                "Use the action <strong>buttons</strong> to change the state of the version."
+                "The state of the prototype. This property is not editable. Use the action <strong>buttons</strong> to change the state of the version."
             ));
             properties.push(new prototypes.Property(this, new prototypes.PrototypeTypeProperty(model, {
                 readOnly: state != prototypes.Prototype.states.draft || prototypes.prototype.getPrototypeKey().version > 0 || prototypes.prototype.getPrototypeKey().id > 0

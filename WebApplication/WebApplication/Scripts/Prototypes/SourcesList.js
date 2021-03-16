@@ -163,12 +163,13 @@
                         }).hide())
                         .append(dependencyButton = $("<a />").addClass("Button").text("dependencies").prepend($("<i />").addClass("Icon fa fa-sitemap")).on("click", function () {
                             var
-                                handler = function (error) {
-                                    if (error) return;
-                                    var
-                                        code = list[currentIndex].code,
-                                        model = prototypes.prototype.getModel().externalSourceDependencyNodes[code];
-                                    matematici.dependenciesDialog.show("Source " + code, model && model.dependingRelations, model && model.dependentRelations);
+                                handler = function (valid) {
+                                    if (valid) {
+                                        var
+                                            code = list[currentIndex].code,
+                                            model = prototypes.prototype.getModel().externalSourceDependencyNodes[code];
+                                        matematici.dependenciesDialog.show("Source " + code, model && model.dependingRelations, model && model.dependentRelations);
+                                    }
                                 };
                             if (matematici.canClose)
                                 handler()

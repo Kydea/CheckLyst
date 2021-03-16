@@ -19,7 +19,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         [JsonIgnore]
         public TypedValue ReccurencyValue { get; set; }
 
-        public override void Setup()
+        public override bool Setup()
         {
             foreach (var Item in Group.Items)
             {
@@ -27,6 +27,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 Clone.Iteration = this;
                 Items.Add(Clone);
             }
+            return true;
         }
 
     }

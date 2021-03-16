@@ -154,14 +154,13 @@
         },
 
         updateDependencies = function (model, newModel) {
-            model.dependingRelations = newModel.dependingRelations;
-            model.dependentRelations = newModel.dependentRelations;
-
             switch (model.typeName) {
                 case "Prototype":
                     model.itemIDSequence = newModel.itemIDSequence;
+                    $("div.ActionBar a.ItemsList").toggleClass("Invalid", false);
+
                     updateDependencies(model.header, newModel.header);
-                    model.exception = newModel.exception;
+
                     for (var index in model.pages)
                         updateDependencies(model.pages[index], newModel.pages[index]);
 
@@ -190,6 +189,12 @@
                         updateDependencies(model.items[index], newModel.items[index]);
                     break;
             }
+
+            model.dependingRelations = newModel.dependingRelations;
+            model.dependentRelations = newModel.dependentRelations;
+            model.errors = newModel.errors;
+            if (model.errors && model.errors.length > 0) $("div.ActionBar a.ItemsList").addClass("Invalid");
+
         },
 
         update = function () {
@@ -349,12 +354,13 @@
                     break;
                 case "dependencies":
                     var
-                        handler = function (error) {
-                            if (error) return;
-                            var
-                                model = currentItem.getModel(),
-                                title = currentItem.toString(); // model.typeName + (model.index != null && " - Index: " + (parseInt(model.index) + 1) || model.id != null && " - ID: " + model.id || "") + (model.code && " - Code: " + model.code || "")
-                            matematici.dependenciesDialog.show(title, model.dependingRelations, model.dependentRelations);
+                        handler = function (valid) {
+                            if (valid) {
+                                var
+                                    model = currentItem.getModel(),
+                                    title = currentItem.toString(); // model.typeName + (model.index != null && " - Index: " + (parseInt(model.index) + 1) || model.id != null && " - ID: " + model.id || "") + (model.code && " - Code: " + model.code || "")
+                                matematici.dependenciesDialog.show(title, model.dependingRelations, model.dependentRelations);
+                            }
                         };
 
                     if (matematici.canClose)
@@ -646,10 +652,7 @@
                 else {
                     model = result.checkList;
 
-                    if (model.exception) {
-                        console.log(model.exception);
-                        matematici.dialog.error("Error", model.exception && model.exception.Message || "unexpected error");
-                    }
+                    if (!model.valid) matematici.blip.warning();
 
                     prototypeKey = {
                         id: result.id,
@@ -726,9 +729,9 @@
                     contentType: "application/json",
                     data: data
                 }).done(function (result) {
-                    if (result.checkList.exception) matematici.dialog.error("Error", result.checkList.exception.Message);
+                    if (!result.checkList.valid) matematici.blip.warning();
                     updateDependencies(model, result.checkList);
-                    callback(result.checkList.exception);
+                    callback(result.checkList.valid);
                 });
             }
 
@@ -765,10 +768,10 @@
                     url: element.data("action") + "Save",
                     type: "post",
                     contentType: "application/json",
-                    data: data //pako.gzip(data, { to: 'string' })
+                    data: data
                 }).done(function (result) {
-                    if (result.checkList.exception) {
-                        matematici.dialog.error("Error", result.checkList.exception.Message);
+                    if (!result.checkList.valid) {
+                        matematici.blip.ko();
                         updateDependencies(model, result.checkList);
                     } else {
                         matematici.canClose = true;
@@ -997,7 +1000,7 @@
 
                 update();
                 matematici.canClose = false;
-                prototype.verify(function () { matematici.blip.ok(); })
+                prototype.verify(function (valid) { if (valid) matematici.blip.ok(); })
             } catch (error) {
                 matematici.dialog.error("Error", error);
                 model = oldModel;

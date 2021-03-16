@@ -37,8 +37,11 @@
           div.PropertyPanel div.PropertyList table tbody tr td a.Selected i.fa-caret-right {
             visibility: visible; }
           div.PropertyPanel div.PropertyList table tbody tr td a.Changed {
-            font-weight: bold;
-            color: #00877a !important; }
+            font-weight: bold; }
+            div.PropertyPanel div.PropertyList table tbody tr td a.Changed:not(.Error) {
+              color: #00877a !important; }
+          div.PropertyPanel div.PropertyList table tbody tr td a.Error {
+            color: #cc0000 !important; }
         div.PropertyPanel div.PropertyList table tbody tr td:first-child {
           width: 100%;
           border-right: solid 1px #ccc; }
@@ -128,6 +131,10 @@
     background: #ebebeb;
     width: calc(50% - 20px);
     margin-left: 20px; }
+    div.PropertyPanel div.Information p.Error {
+      color: #cc0000; }
+      div.PropertyPanel div.Information p.Error i {
+        margin-right: 5px; }
 
 div.Popup div.PropertyPanel {
   display: block; }

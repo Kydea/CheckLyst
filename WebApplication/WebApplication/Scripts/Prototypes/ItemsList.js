@@ -38,6 +38,7 @@
             dependenciesButton.toggle(currentIndex != null);
             if (currentIndex != null) {
                 var item = items[currentIndex];
+                prototypes.prototype.select();
                 if (item.typeName == "Prototype")
                     prototypes.prototype.select(null, prototypes.prototype);
                 else
@@ -45,15 +46,30 @@
             }
         },
 
+        toggleErrors = function (tr, model) {
+            var errorMessage = "";
+            for (var index in model.errors) {
+                var error = model.errors[index];
+                errorMessage += error.property + ": " + error.message + "\n";
+            }
+                
+            $("i.Valid", tr)
+                .removeClass("fa-check fa-times")
+                .attr("title", errorMessage)
+                .addClass(model.errors.length == 0 ? "fa-check" : "fa-times");
+        },
+
         open = function () {
-            var currentItem = prototypes.prototype.getCurrentItem();
-            prototypes.propertyPanel.select(currentItem, {
+            prototypes.propertyPanel.select(prototypes.prototype.getCurrentItem(), {
                 okHandler: function () {
                     var
-                        model = currentItem.getModel(),
+                        model = prototypes.prototype.getCurrentItem().getModel(),
                         tr = $("tr.Selected", tableBody);
                     $("td.CodeColumn", tr).text(model.code);
                     $("td.DescriptionColumn", tr).text(model.description);
+                    toggleErrors(tr, model);
+
+                    $("div.ActionBar a.ItemsList").toggleClass("Invalid", $("tr i.Valid.fa-times", tableBody).length > 0);
                 }
             });
         },
@@ -67,7 +83,7 @@
 
         add = function (item) {
             items.push(item);
-            $("<tr />")
+            var tr = $("<tr />")
                 .appendTo(tableBody)
                 .addClass("Handler")
                 .append($("<td />").append($("<i />").addClass("fa fa-caret-right")))
@@ -75,9 +91,9 @@
                 .append($("<td />").addClass("IdColumn").text(item.id || item.index != null && (item.index + 1) || ""))
                 .append($("<td />").addClass("CodeColumn").text(item.code))
                 .append($("<td />").addClass("DescriptionColumn").text(item.description))
-                .append($("<td />").addClass("Centered")
-                    .append($("<i />").addClass("Valid fal"))
-                );
+                .append($("<td />").addClass("Centered").append($("<i />").addClass("Valid fal")))
+
+                toggleErrors(tr, item);
         },
 
         traverse = function (model) {

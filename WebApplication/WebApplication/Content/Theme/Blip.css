@@ -26,3 +26,8 @@
     div.Blip.Error div.Container i {
       color: #cc0000;
       font-size: 30px; }
+  div.Blip.Warning {
+    background-color: rgba(255, 102, 0, 0.7); }
+    div.Blip.Warning div.Container i {
+      color: #ffba00;
+      font-size: 30px; }

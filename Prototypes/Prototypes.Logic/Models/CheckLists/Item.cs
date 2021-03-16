@@ -28,10 +28,11 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         public abstract ICheckListItem Clone(ICheckListGroup parent);
 
-        public override void Setup()
+        public override bool Setup()
         {
-            base.Setup();
+            var Result = base.Setup();
             CheckList.AddItem(this);
+            return Result;
         }
 
         protected static void Copy(Item source, Item destination)
@@ -51,14 +52,16 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 			throw new NotImplementedException();
 		}
 
-        public override void BuildDependencies()
+        public override bool BuildDependencies()
         {
-            base.BuildDependencies();
+            var Result = base.BuildDependencies();
 
             DescriptionFormula.BuildDependencies(Description, null);
             foreach (var Key in DescriptionFormula.ValueKeys)
                 if (CheckList.Expressions.TryGetValue(Key, out var Expression))
                     AddDependingRelation(DependencyRelation.Properties.Formula, Expression, DependencyRelation.Properties.Value);
+
+            return Result;
         }
 
         public override string DependencyClassName => "item";

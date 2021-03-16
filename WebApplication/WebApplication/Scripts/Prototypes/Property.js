@@ -1,8 +1,18 @@
 ﻿prototypes.Property = function (propertyPanel, type, caption, information, handler) {
     var
         property = this,
+        selected = false,
         element,
         value,
+        errors = [],
+
+        updateInformation = function () {
+            var informationPanel = propertyPanel.getInformation();
+            informationPanel.html(information ? information : "");
+            for (var index in errors)
+                informationPanel.append($("<p />").addClass("Error").text(errors[index]).prepend($("<i />").addClass("fal fa-exclamation-triangle")));
+
+        },
 
         setup = function () {
             $("<tr />").appendTo(propertyPanel.getPropertyList())
@@ -42,9 +52,10 @@
     };
 
     this.select = function () {
+        selected = true;
         element.addClass("Selected");
         type.create(propertyPanel.getPropertyValue().removeClass().addClass("PropertyValue").empty(), this);
-        propertyPanel.getInformation().html(information ? information : "");
+        updateInformation();
 
         $("select", propertyPanel.getPropertyValue()).each(function () {
             var autoComplete = new matematici.AutoComplete(this);
@@ -56,6 +67,7 @@
     };
 
     this.unselect = function () {
+        selected = false;
         element.removeClass("Selected");
         $("select", propertyPanel.getPropertyValue()).each(function () {
             matematici.AutoComplete.get(this).destroy();
@@ -80,9 +92,32 @@
 
         value.empty();
         if (type.setValue)
-            type.setValue(value);
+            type.setValue(value, property);
         else if (type.hasChanges())
             value.text("...");
+
+        if (type.setError) type.setError(property.setError);
+    };
+
+    this.setError = function (errorList, properties) {
+        errors = [];
+        if (errorList) {
+            if (!Array.isArray(properties))
+                properties = [properties];
+
+            for (var propertyIndex in properties) {
+                var property = properties[propertyIndex];
+                for (var errorIndex in errorList) {
+                    var error = errorList[errorIndex];
+                    if (error.property == property)
+                        errors.push(error.message);
+                }
+            }
+        }
+
+        element.toggleClass("Error", errors.length > 0);
+
+        if (selected) updateInformation();
     };
 
     this.setup = setup;

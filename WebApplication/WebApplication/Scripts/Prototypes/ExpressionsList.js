@@ -183,7 +183,7 @@
 
         verify = function (handler) {
             updatePrototype();
-            prototypes.prototype.verify(function (error) {
+            prototypes.prototype.verify(function () {
                 var model = prototypes.prototype.getModel();
 
                 for (var index in list) {

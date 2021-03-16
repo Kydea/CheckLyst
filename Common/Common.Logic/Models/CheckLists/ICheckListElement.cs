@@ -20,7 +20,7 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
         string SignatureCode { get; set; }
         bool ReadOnly { get; }
         bool Hidden { get; set; }
-        void Setup();
+        bool Setup();
         bool PageBreak { get; set; }
     }
 }

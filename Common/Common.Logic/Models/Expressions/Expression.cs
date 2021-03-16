@@ -19,7 +19,8 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         private string _Error;
         public string Error
         {
-            get => _Error; set
+            get => _Error;
+            set
             {
                 _Error = value;
                 ErrorPosition = null;

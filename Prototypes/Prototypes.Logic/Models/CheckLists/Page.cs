@@ -18,15 +18,17 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 		public List<ICheckListGroup> Groups { get; set; } = new List<ICheckListGroup>();
         public bool IsLocked { get; set; }
 
-        public override void Setup()
+        public override bool Setup()
         {
-            base.Setup();
+            var Result = base.Setup();
             foreach (Group Group in Groups)
             {
                 Group.CheckList = CheckList;
                 Group.PageIndex = Index;
-                Group.Setup();
+                Result &= Group.Setup();
             }
+
+            return Result;
         }
         
         public void Traverse(Func<ICheckListItem, bool> condition, Action<ICheckListItem> action)
@@ -41,9 +43,9 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 await group.TraverseAsync(condition, action);
         }
 
-        public override void BuildDependencies()
+        public override bool BuildDependencies()
         {
-            base.BuildDependencies();
+            var Result = base.BuildDependencies();
             foreach (Group Group in Groups)
             {
                 if (HiddenCondition != Conditions.True || HiddenCondition == Conditions.Expression)
@@ -52,15 +54,19 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 if (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
                     AddDependingRelation(DependencyRelation.Properties.Validity, Group, DependencyRelation.Properties.Validity);
 
-                Group.BuildDependencies();
+                Result &= Group.BuildDependencies();
             }
+
+            return Result;
         }
 
-        public override void Check()
+        public override bool Check()
         {
-            base.Check();
+            var Result = base.Check();
             foreach (Group Group in Groups)
-                Group.Check();
+                Result &= Group.Check();
+
+            return Result;
         }
 
         public void CreateInstanceIterations() { throw new NotImplementedException(); }

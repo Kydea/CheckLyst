@@ -3,17 +3,24 @@
         base,
         input,
         check,
+
         change = function () {
             var value = input.val();
             if (value == "" && options.number) value = 0;
-            if (check) 
-                for(var index in check)
+            if (check)
+                for (var index in check)
                     if (!check[index].action.call(this, value)) {
                         new matematici.dialog.error("error", check[index].message);
                         return;
                     }
             model[property] = value;
             base.updateModel(model);
+            if (property == "name" && value) {
+                for (var index = model.errors.length - 1; index >= 0; --index)
+                    if (model.errors[index].property == "name") 
+                        model.errors.splice(index, 1);
+                base.setError();
+            }
         };
 
     this.setCheck = function (value) {
@@ -50,5 +57,9 @@
 
     this.setValue = function (node) {
         node.text(this.hasChanges() ? model[property] : "");
+    };
+
+    this.setError = function(handler) {
+        if (property == "name") handler(model.errors, "name");
     };
 }

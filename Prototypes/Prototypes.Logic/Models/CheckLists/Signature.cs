@@ -30,11 +30,13 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         [JsonIgnore]
         public DateTimeOffset? ModifiedOn { get; }
 
-        public override void BuildDependencies()
+        public override bool BuildDependencies()
         {
-            base.BuildDependencies();
+            var Result = base.BuildDependencies();
             if (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
                 AddDependingRelation(DependencyRelation.Properties.Validity, this, DependencyRelation.Properties.Signature);
+
+            return Result;
         }
 
         public override ICheckListItem Clone(ICheckListGroup parent)

@@ -13,6 +13,10 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
     {
         public ICheckList CheckList { get; set; }
         public string Code { get; set; }
+
+        public List<Configuration.Error> Errors { get; } = new List<Configuration.Error>();
+
+
         public Conditions CountDownCondition { get; set; }
         public string CountDownToCode { get; set; }
         public int CountDownOffset { get; set; }
@@ -33,16 +37,26 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public bool Valid { get; set; }
         public bool PageBreak { get; set; }
 
-        public virtual void Setup()
+        public virtual bool Setup()
         {
+            var Result = true;
             Code = string.IsNullOrEmpty(Code) ? null : Code;
+            Errors.Clear();
             if (Code != null)
             {
-                if (CheckList.Elements.ContainsKey(Code))
-                    throw new Exception($"Duplicated code {Code}");
-                CheckList.Elements[Code] = this;
+                if (CheckList.Elements.TryGetValue(Code, out var SameCodeElement))
+                {
+                    var Error = new Configuration.Error("code", $"Duplicated code {Code}");
+                    Errors.Add(Error);
+                    ((Element)SameCodeElement).Errors.Add(Error);
+                    Result = false;
+                }
+                else
+                    CheckList.Elements[Code] = this;
             }
             ClearDependencies();
+
+            return Result;
         }
 
         protected virtual Dictionary<string, ICheckListElement> GetBranchElements()
@@ -50,72 +64,92 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             return CheckList.Elements;
         }
 
-        private Expression GetExpression(string ExpressionCode, DependencyRelation.Properties SourceProperty, string PropertyName)
+        private bool GetExpression(string ExpressionCode, DependencyRelation.Properties SourceProperty, string PropertyName)
         {
+            var Result = false;
             if (string.IsNullOrEmpty(ExpressionCode))
-                throw new Exception($"The property {PropertyName} reference is missing for {this}");
-            if (!CheckList.Expressions.TryGetValue(ExpressionCode, out var Expression))
-                throw new Exception($"The property {PropertyName} references to the inexistent expression {ExpressionCode} for {this}");
-            AddDependingRelation(SourceProperty, Expression, DependencyRelation.Properties.Value);
-            return Expression;
+                Errors.Add(new Configuration.Error(PropertyName, $"Expression code expected"));
+            else if (!CheckList.Expressions.TryGetValue(ExpressionCode, out var Expression))
+                Errors.Add(new Configuration.Error(PropertyName, $"Expression {ExpressionCode} not found"));
+            else
+            {
+                AddDependingRelation(SourceProperty, Expression, DependencyRelation.Properties.Value);
+                Result = true;
+            }
+
+            return Result;
         }
 
-        private Signature GetSignature(string SignatureCode, DependencyRelation.Properties SourceProperty, string PropertyName)
+        private bool GetSignature(string SignatureCode, DependencyRelation.Properties SourceProperty, string PropertyName)
         {
+            var Result = false;
             var BranchElements = GetBranchElements();
             if (string.IsNullOrEmpty(SignatureCode))
-                throw new Exception($"The property {PropertyName} reference is missing for {this}");
-            if (!BranchElements.ContainsKey(SignatureCode))
-                throw new Exception($"The property {PropertyName} references to the inexistent signature {SignatureCode} for {this}");
-            if (!(BranchElements[SignatureCode] is Signature Signature))
-                throw new Exception($"The property {PropertyName} references to the element {SignatureCode} which is not a signature for {this}");
-            AddDependingRelation(SourceProperty, Signature, DependencyRelation.Properties.Signature);
-            return Signature;
+                Errors.Add(new Configuration.Error(PropertyName, $"Signature code expected"));
+            else if (!BranchElements.ContainsKey(SignatureCode))
+                Errors.Add(new Configuration.Error(PropertyName, "Signature {SignatureCode} not found"));
+            else if (!(BranchElements[SignatureCode] is Signature Signature))
+                Errors.Add(new Configuration.Error(PropertyName, $"The element {SignatureCode} is not a signature"));
+            else
+            {
+                AddDependingRelation(SourceProperty, Signature, DependencyRelation.Properties.Signature);
+                Result = true;
+            }
+            return Result;
         }
 
-        public virtual void BuildDependencies()
+        public virtual bool BuildDependencies()
         {
+            var Result = true;
             if (!string.IsNullOrEmpty(SignatureCode))
-                GetSignature(SignatureCode, DependencyRelation.Properties.ReadOnly, "signature");
+                Result &= GetSignature(SignatureCode, DependencyRelation.Properties.ReadOnly, "signature");
 
             if (CountDownCondition == Conditions.Expression)
-                GetExpression(CountDownToCode, DependencyRelation.Properties.CountDown, "countdown");
+                Result &= GetExpression(CountDownToCode, DependencyRelation.Properties.CountDown, "countdown");
 
             if (CountDownCondition == Conditions.Signature)
-                GetSignature(CountDownToCode, DependencyRelation.Properties.CountDown, "signature");
+                Result &= GetSignature(CountDownToCode, DependencyRelation.Properties.CountDown, "signature");
 
             if (HiddenCondition == Conditions.Expression)
-                GetExpression(HiddenExpressionCode, DependencyRelation.Properties.Hidden, "hidden");
+                Result &= GetExpression(HiddenExpressionCode, DependencyRelation.Properties.Hidden, "hidden");
 
             if (ReadOnlyCondition == Conditions.Expression || ReadOnlyCondition == Conditions.ExpressionOrDefault || ReadOnlyCondition == Conditions.ExpressionAndDefault)
-                GetExpression(ReadOnlyExpressionCode, DependencyRelation.Properties.ReadOnly, "read-only");
+                Result &= GetExpression(ReadOnlyExpressionCode, DependencyRelation.Properties.ReadOnly, "read-only");
 
             if (ValidCondition == Conditions.Expression || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
-                GetExpression(ValidExpressionCode, DependencyRelation.Properties.Validity, "validity");
+                Result &= GetExpression(ValidExpressionCode, DependencyRelation.Properties.Validity, "validity");
 
             if (this is ICheckListValidityElement)
                 AddDependingRelation(DependencyRelation.Properties.Validity, this, DependencyRelation.Properties.Hidden);
+
+            return Result;
         }
 
         public override bool Update(DependencyRelation.Properties Property) => true;
 
-        private void CheckExpression(string ExpressionCode, params DataType[] DataType)
+        private bool CheckExpression(string Property, string ExpressionCode, params DataType[] DataType)
         {
             var Expression = CheckList.Expressions[ExpressionCode];
             if (!DataType.Any(dt => dt == (Expression.InnerDataType ?? Expression.DataType)))
-                throw new Exception($"The {this} references to the expression {ExpressionCode} which value is not {string.Join(" or ", DataType.Select(dt => dt.TypeName))}");
+            {
+                Errors.Add(new Configuration.Error(Property, $"the expression {ExpressionCode} is not of type {string.Join(" or ", DataType.Select(dt => dt.TypeName))}"));
+                return false;
+            }
+            return true;
         }
 
-        public virtual void Check()
+        public virtual bool Check()
         {
+            var Result = true;
             if (CountDownCondition == Conditions.Expression)
-                CheckExpression(CountDownToCode, DataType.DateTime, DataType.Date);
+                Result &= CheckExpression("countdown", CountDownToCode, DataType.DateTime, DataType.Date);
             if (HiddenCondition == Conditions.Expression)
-                CheckExpression(HiddenExpressionCode, DataType.Boolean);
+                Result &= CheckExpression("hidden", HiddenExpressionCode, DataType.Boolean);
             if (ReadOnlyCondition == Conditions.Expression || ReadOnlyCondition == Conditions.ExpressionOrDefault || ReadOnlyCondition == Conditions.ExpressionAndDefault)
-                CheckExpression(ReadOnlyExpressionCode, DataType.Boolean);
+                Result &= CheckExpression("read-only", ReadOnlyExpressionCode, DataType.Boolean);
             if (ValidCondition == Conditions.Expression || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
-                CheckExpression(ValidExpressionCode, DataType.Boolean);
+                Result &= CheckExpression("validity", ValidExpressionCode, DataType.Boolean);
+            return Result;
         }
 
         public static void Copy(Element source, Element destination)

@@ -36,9 +36,9 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         private bool InTable { get; set; }
 
-        public override void Setup()
+        public override bool Setup()
         {
-            base.Setup();
+            var Result = base.Setup();
 
             foreach (Item Item in Items)
             {
@@ -52,8 +52,10 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 }
                 Item.PageIndex = PageIndex;
                 Item.IterationItem = Iterator || IterationItem; //the item is contained in an iterator at some level
-                Item.Setup();
+                Result &= Item.Setup();
             }
+
+            return Result;
         }
 
         public void Traverse(Func<ICheckListItem, bool> condition, Action<ICheckListItem> action)
@@ -122,9 +124,9 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             return group;
         }
 
-        public override void BuildDependencies()
+        public override bool BuildDependencies()
         {
-            base.BuildDependencies();
+            var Result = base.BuildDependencies();
             foreach (Item Item in Items)
             {
                 if (HiddenCondition != Conditions.True || HiddenCondition == Conditions.Expression)
@@ -133,15 +135,18 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 if (Item is ICheckListEditableItem && (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault))
                     AddDependingRelation(DependencyRelation.Properties.Validity, Item, DependencyRelation.Properties.Validity);
 
-                Item.BuildDependencies();
+                Result &= Item.BuildDependencies();
             }
+
+            return Result;
         }
 
-        public override void Check()
+        public override bool Check()
         {
-            base.Check();
+            var Result = base.Check();
             foreach (Item Item in Items)
-                Item.Check();
+                Result &= Item.Check();
+            return Result;
         }
 
         public void CreateInstanceIterations() { throw new NotImplementedException(); }

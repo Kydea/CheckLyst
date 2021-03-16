@@ -54,7 +54,14 @@ div.PropertyPanel {
 
                         &.Changed {
                             font-weight: bold;
-                            color: $Color-Green-Dark !important;
+
+                            &:not(.Error) {
+                                color: $Color-Green-Dark !important;
+                            }
+                        }
+
+                        &.Error {
+                            color: $Color-Red-Regular !important;
                         }
                     }
 
@@ -209,6 +216,14 @@ div.PropertyPanel {
         background: $Color-Silver-Dark;
         width: calc(50% - #{$Metric-Control-Space});
         margin-left: $Metric-Control-Space;
+
+        p.Error {
+            color: $Color-Red-Regular;
+
+            i {
+                margin-right: 5px;
+            }
+        }
     }
 }
 

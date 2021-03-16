@@ -57,7 +57,15 @@
 		department =
 			$("<select />")
                 .attr("data-nullable", "")
-				.on("change", function () { refreshPrototypeTypes(null); })
+                .on("change", function () {
+                    refreshPrototypeTypes(null);
+                    if (!!model.department) {
+                        for (var index = model.errors.length - 1; index >= 0; --index)
+                            if (model.errors[index].property == "department")
+                                model.errors.splice(index, 1);
+                        base.setError(model.errors, "prototype-type");
+                    }
+                })
 				.appendTo(label);
 
 		for (var index in departments)
@@ -75,6 +83,13 @@
 					model.prototypeTypeName = prototypeType.next().val();
 					if (!options.readOnly)
                         base.updateModel(model);
+
+                    if (!!model.prototypeType) {
+                        for (var index = model.errors.length - 1; index >= 0; --index)
+                            if (model.errors[index].property == "department" || model.errors[index].property == "prototype-type")
+                                model.errors.splice(index, 1);
+                        base.setError();
+                    }
 				})
 				.appendTo(label);
 
@@ -90,5 +105,9 @@
 	this.hasChanges = function () {
 		return !!(model.department || model.prototypeType);
     }
+
+    this.setError = function (handler) {
+        handler(model.errors, [ "department", "prototype-type" ]);
+    };
 }
 
