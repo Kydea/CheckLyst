@@ -18,8 +18,8 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Functions
 
         protected override string OperatorName => nameof(Time);
 
-        protected override TypedValue Evaluate(TypedValue LeftValue, TypedValue RightValue) =>
-            base.Evaluate(LeftValue, RightValue) ??
+        protected override TypedValue Evaluate(TypedValue LeftValue, TypedValue RightValue, string TimeZone) =>
+            base.Evaluate(LeftValue, RightValue, TimeZone) ??
             new TypedValue(DataType.Time, new TimeSpan((int)LeftValue.NumberValue, (int)RightValue.NumberValue, 0));
     }
 }

@@ -7,6 +7,7 @@ namespace CheckListManager.Common.Core.Helpers
     {
         public static readonly string DateFormat = "yyyy-MM-dd";
         public static readonly string TimeFormat = "HH:mm";
+        public static readonly string[] DateTimeFormats = { "yyyy-MM-dd HH:mm", "yyyy-MM-dd HH:mm:ss" };
 
         public static DateTimeOffset ToLocalTime(this DateTimeOffset DateTimeOffset, string TimeZone)
         {
@@ -34,7 +35,7 @@ namespace CheckListManager.Common.Core.Helpers
                 return null;
             }
 
-            if (Format == null || Format.Length == 0) Format = new string[] { DateFormat, $"{DateFormat} {TimeFormat}" };
+            if (Format == null || Format.Length == 0) Format = new string[] { DateFormat, $"{DateFormat} {TimeFormat}", $"{DateFormat} {TimeFormat}" };
 
             var DateTime = System.DateTime.SpecifyKind(System.DateTime.ParseExact(Value, Format, null, DateTimeStyles.None), DateTimeKind.Unspecified);
             var TimeZoneInfo = System.TimeZoneInfo.FindSystemTimeZoneById(TimeZone);

@@ -115,7 +115,7 @@
             }
         }
 
-        element.toggleClass("Error", errors.length > 0);
+        element.toggleClass("Error", model.errors && errors.length > 0);
 
         if (selected) updateInformation();
     };

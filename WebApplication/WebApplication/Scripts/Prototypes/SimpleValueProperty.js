@@ -15,7 +15,7 @@
                     }
             model[property] = value;
             base.updateModel(model);
-            if (property == "name" && value) {
+            if (property == "name" && value && model.errors) {
                 for (var index = model.errors.length - 1; index >= 0; --index)
                     if (model.errors[index].property == "name") 
                         model.errors.splice(index, 1);

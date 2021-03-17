@@ -43,7 +43,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public void GetAllChildren(List<DependencyNode> children) => GetAllChildren(this, children);
 
-        public override void Setup()
+        public override bool Setup()
         {
             //loads or setup for the first time the iteration
             var Loading = Id > 0;
@@ -66,6 +66,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
             ElementsList = new List<ICheckListElement>();
             AddAvailableSubItem(this);
+
+            return true;
         }
 
         [JsonIgnore]

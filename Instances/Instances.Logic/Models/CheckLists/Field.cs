@@ -122,13 +122,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         private void UpdateValue()
         {
-            DateTimeOffset? dateTimeOffset = null;
-            if (ValueType == DataType.Date)
-                dateTimeOffset = DateTimeOffsetHelper.Parse(Value, Instance.TimeZone, out var Ambiguous, out var AmbiguousDateTimeOffsets, DateTimeOffsetHelper.DateFormat);
-            else if (ValueType == DataType.DateTime)
-                dateTimeOffset = DateTimeOffsetHelper.Parse(Value, Instance.TimeZone, out var Ambiguous, out var AmbiguousDateTimeOffsets, $"{DateTimeOffsetHelper.DateFormat} {DateTimeOffsetHelper.TimeFormat}");
-            if (dateTimeOffset.HasValue) Offset = (int)dateTimeOffset.Value.Offset.TotalMinutes;
-
             if (IterationItem)
                 ValueFormula.Evaluate(CheckList, GetRuntimeValues(), Instance.DecimalSeparator, Instance.TimeZone, Iteration?.Indexes, ((Field)FindIteratorModelItem()).ValueFormula);
             else
@@ -149,6 +142,22 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 ConversionError = !ValueType.Validate(Value);
                 this.Value = ConversionError ? null : Value;
             }
+
+            if (!ConversionError)
+                try
+                {
+                    DateTimeOffset? dateTimeOffset = null;
+                    if (ValueType == DataType.Date)
+                        dateTimeOffset = DateTimeOffsetHelper.Parse(Value, Instance.TimeZone, out var Ambiguous, out var AmbiguousDateTimeOffsets, DateTimeOffsetHelper.DateFormat);
+                    else if (ValueType == DataType.DateTime)
+                        dateTimeOffset = DateTimeOffsetHelper.Parse(Value, Instance.TimeZone, out var Ambiguous, out var AmbiguousDateTimeOffsets, DateTimeOffsetHelper.DateTimeFormats);
+                    if (dateTimeOffset.HasValue) Offset = (int)dateTimeOffset.Value.Offset.TotalMinutes;
+                }
+                catch(FormatException)
+                {
+                    ConversionError = true;
+                    Value = null;
+                }
         }
 
         protected override void OnUpdate(DependencyRelation.Properties Property)
@@ -173,14 +182,15 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public override bool IsValidByDefault() => !ConversionError && (ValueFormula.IsSet ? ValueFormula.HasValue : !string.IsNullOrEmpty(Value));
         protected override bool IsReadOnlyByDefault() => base.IsReadOnlyByDefault() || ValueFormula.IsSet; // || !string.IsNullOrEmpty(ExternalSourceName);
 
-        public override void Setup()
+        public override bool Setup()
         {
-            base.Setup();
+            var Result = base.Setup();
             if (!string.IsNullOrEmpty(DefaultValue))
             {
                 if (Validate(DefaultValue)) Value = DefaultValue;
                 DefaultValue = null;
             }
+            return Result;
         }
     }
 }

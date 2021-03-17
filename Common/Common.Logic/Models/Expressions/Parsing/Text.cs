@@ -9,6 +9,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
     {
         public Text(ref string ExpressionValue, Position Position, int Index, char Separator) : base(Position, Index)
         {
+            Position.Increment(false);
             while (Position.Index == this.Position.Index || ExpressionValue[Position.Index] != Separator)
             {
                 Position.Increment(ExpressionValue[Position.Index] == '\n');
@@ -16,7 +17,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                     throw new ParseException($"{Separator} expected", this.Position);
             }
 
-            Value = ExpressionValue.Substring(this.Position.Index + 1, Position.Index - this.Position.Index);
+            Value = ExpressionValue.Substring(this.Position.Index + 1, Position.Index - this.Position.Index - 1);
             Position.Increment(false);
             Symbol = new Constant(new TypedValue(DataType.Text, Value)) { Position = new Position(Position) };
             Operator = OperatorType.No;

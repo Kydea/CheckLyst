@@ -129,8 +129,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         private bool CheckExpression(string Property, string ExpressionCode, params DataType[] DataType)
         {
-            var Expression = CheckList.Expressions[ExpressionCode];
-            if (!DataType.Any(dt => dt == (Expression.InnerDataType ?? Expression.DataType)))
+            if (CheckList.Expressions.TryGetValue(ExpressionCode, out var Expression) && !DataType.Any(dt => dt == (Expression.InnerDataType ?? Expression.DataType)))
             {
                 Errors.Add(new Configuration.Error(Property, $"the expression {ExpressionCode} is not of type {string.Join(" or ", DataType.Select(dt => dt.TypeName))}"));
                 return false;

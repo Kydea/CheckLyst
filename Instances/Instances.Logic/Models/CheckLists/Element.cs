@@ -29,13 +29,14 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
 		protected virtual Dictionary<string, ICheckListElement> GetBranchElements() => CheckList.Elements;
 
-		public virtual void Setup()
+		public virtual bool Setup()
 		{
             Code = string.IsNullOrEmpty(Code) ? null : Code;
             if (Code != null)
 				CheckList.Elements[Code] = this;
             if (!(this is ICheckListValidityElement))
                 Valid = true;
+            return true;
         }
 
         public override bool Update(DependencyRelation.Properties Property)

@@ -59,7 +59,7 @@
                 .attr("data-nullable", "")
                 .on("change", function () {
                     refreshPrototypeTypes(null);
-                    if (!!model.department) {
+                    if (!!model.department && model.errors) {
                         for (var index = model.errors.length - 1; index >= 0; --index)
                             if (model.errors[index].property == "department")
                                 model.errors.splice(index, 1);
@@ -84,7 +84,7 @@
 					if (!options.readOnly)
                         base.updateModel(model);
 
-                    if (!!model.prototypeType) {
+                    if (!!model.prototypeType && model.errors) {
                         for (var index = model.errors.length - 1; index >= 0; --index)
                             if (model.errors[index].property == "department" || model.errors[index].property == "prototype-type")
                                 model.errors.splice(index, 1);

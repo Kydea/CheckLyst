@@ -72,9 +72,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                         Group.CreateInstanceIterations();
         }
 
-        public override void Setup()
+        public override bool Setup()
         {
-            base.Setup();
+            var Result = base.Setup();
             SetupItems();
             if (Iterator)
             {
@@ -87,6 +87,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                     Iteration.Setup();
                 }
             }
+
+            return Result;
         }
 
         public void SetupIterationsIndexes()

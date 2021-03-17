@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using CheckListManager.Common.Core.Helpers;
 using CheckListManager.Common.Logic.Models.Expressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -44,9 +45,9 @@ namespace CheckListManager.Common.Logic.Models
 				if (_rawValue == DataTypeEnum.Number)
 					return decimal.TryParse(value.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out _);
                 if (_rawValue == DataTypeEnum.Date)
-                    return DateTimeOffset.TryParseExact(value, new[] { "yyyy-MM-dd" }, null, DateTimeStyles.AssumeUniversal, out _);
+                    return DateTimeOffset.TryParseExact(value, DateTimeOffsetHelper.DateFormat, null, DateTimeStyles.AssumeUniversal, out _);
                 if (_rawValue == DataTypeEnum.DateTime)
-					return DateTimeOffset.TryParseExact(value, new[] { "yyyy-MM-dd HH:mm" }, null, DateTimeStyles.AssumeUniversal, out _);
+					return DateTimeOffset.TryParseExact(value, DateTimeOffsetHelper.DateTimeFormats, null, DateTimeStyles.AssumeUniversal, out _);
 				if (_rawValue == DataTypeEnum.Time)
 					return TimeSpan.TryParseExact(value, "hh\\:mm", null, out _);
 

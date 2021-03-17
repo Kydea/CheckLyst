@@ -40,9 +40,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             }
         }
 
-        public override void Setup()
+        public override bool Setup()
         {
-            base.Setup();
+            var Result = base.Setup();
 
             ICheckListGroup previous = null;
             foreach (Group group in Groups)
@@ -53,6 +53,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 group.Setup();
                 previous = group;
             }
+
+            return Result;
         }
 
         public override bool IsValidByDefault()

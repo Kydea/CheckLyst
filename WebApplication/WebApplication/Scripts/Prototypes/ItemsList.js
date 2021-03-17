@@ -56,7 +56,7 @@
             $("i.Valid", tr)
                 .removeClass("fa-check fa-times")
                 .attr("title", errorMessage)
-                .addClass(model.errors.length == 0 ? "fa-check" : "fa-times");
+                .addClass(!model.errors || model.errors.length == 0 ? "fa-check" : "fa-times");
         },
 
         open = function () {

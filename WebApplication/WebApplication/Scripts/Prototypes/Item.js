@@ -45,7 +45,7 @@
         else
             model.id = prototypes.prototype.getNewItemsId();
         element.attr("data-code", model.code).attr("id", "ItemId" + model.id).data("id", model.id);
-        if (model.errors.length > 0) $("div.ActionBar a.Button.ItemsList").addClass("Invalid");
+        if (model.errors && model.errors.length > 0) $("div.ActionBar a.Button.ItemsList").addClass("Invalid");
         specificItem.update(model)
     };
 

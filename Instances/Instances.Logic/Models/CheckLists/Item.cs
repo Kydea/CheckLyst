@@ -32,10 +32,12 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public string Color { get; set; }
         public bool Removed { get; set; }
 
-        public override void Setup()
+        public override bool Setup()
         {
-            if (!IterationItem) base.Setup();
+            var Result = true;
+            if (!IterationItem) Result = base.Setup();
             CheckList.AddItem(this);
+            return Result;
         }
 
         protected Dictionary<string, object> GetRuntimeValues()

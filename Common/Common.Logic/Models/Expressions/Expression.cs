@@ -120,7 +120,16 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         public void Evaluate(ICheckList instance, string TimeZone)
         {
             if (Root == null) Parse(instance);
-            var NewValue = Root.GetValue(instance, new Dictionary<string, int>(), TimeZone);
+            TypedValue NewValue;
+            try
+            {
+                NewValue = Root.GetValue(instance, new Dictionary<string, int>(), TimeZone);
+            }
+            catch(Exception Exception)
+            {
+                NewValue = new TypedValue(DataType.Error, Exception.Message);
+            }
+
             if (
                 Notification
                 && !(Value.IsNull && NewValue.IsNull)
