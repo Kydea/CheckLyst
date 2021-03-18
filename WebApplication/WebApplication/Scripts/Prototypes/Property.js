@@ -99,7 +99,7 @@
         if (type.setError) type.setError(property.setError);
     };
 
-    this.setError = function (errorList, properties) {
+    this.setError = function (errorList, properties, errorMessage) {
         errors = [];
         if (errorList) {
             if (!Array.isArray(properties))
@@ -107,15 +107,26 @@
 
             for (var propertyIndex in properties) {
                 var property = properties[propertyIndex];
-                for (var errorIndex in errorList) {
-                    var error = errorList[errorIndex];
-                    if (error.property == property)
-                        errors.push(error.message);
+                for (var index = errorList.length - 1; index >= 0; --index) {
+                    var error = errorList[index];
+                    if (error.property == property) {
+                        if (errorMessage === null)
+                            errorList.splice(index, 1);
+                        else {
+                            if (errorMessage !== undefined) error.message = errorMessage;
+                            errors.push(error.message);
+                        }
+                    }
+                }
+                if (errors.length == 0 && !!errorMessage) {
+                    var error = { property: property, message: errorMessage };
+                    errorList.push(error);
+                    errors.push(error.message);
                 }
             }
         }
 
-        element.toggleClass("Error", model.errors && errors.length > 0);
+        element.toggleClass("Error", errors.length > 0);
 
         if (selected) updateInformation();
     };

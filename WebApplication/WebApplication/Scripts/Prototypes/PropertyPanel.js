@@ -168,7 +168,7 @@
 
             if (model.typeName != "Text" && model.typeName != "Link" && model.typeName != "Image")
                 properties.push(new prototypes.Property(
-                    this, new prototypes.ExpressionProperty(model, "readOnly"), "Read-only",
+                    this, new prototypes.ExpressionProperty(model, "readOnly", "read-only"), "Read-only",
                     "Determines if the element is editable by the operator or not."
                 ));
             properties.push(new prototypes.Property(
@@ -182,7 +182,7 @@
 
             if (model.typeName != "Link" && model.typeName != "Text" && model.typeName != "Image") {
                 properties.push(new prototypes.Property(
-                    this, new prototypes.ExpressionProperty(model, "valid"), "Validity",
+                    this, new prototypes.ExpressionProperty(model, "valid", "validity"), "Validity",
                     "Sets the condition under which the element is considered valid. By default pages and groups are valid if all the contained elements are valid, fields and attachments are valid if not empty, signature are valid if signed. Text are always valid. Attachments are valid if contains a file."
                 ));
                 properties.push(new prototypes.Property(

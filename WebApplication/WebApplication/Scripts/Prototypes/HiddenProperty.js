@@ -11,6 +11,8 @@
 
             if (input.prop("selectedIndex") > 1)
                 expressionPropertyBase.check(value);
+            else
+                base.setError(model.errors, "hidden", null);
 
             var index = input.prop("selectedIndex");
             model.hiddenExpressionCode = index > 1 ? value : null;
@@ -21,7 +23,7 @@
     this.create = function (valuePanel, baseClass) {
         base = baseClass;
         valuePanel.addClass("HiddenProperty");
-        expressionPropertyBase = new prototypes.ExpressionPropertyBase(model, expressionCode, valuePanel);
+        expressionPropertyBase = new prototypes.ExpressionPropertyBase(model, expressionCode, valuePanel, base, "hidden");
 
         if (editable) {
             input = $("<select />")
@@ -57,5 +59,9 @@
     this.setExpressionCode = function (value) {
         model[condition] = 3;
         model[expressionCode] = value;
+    };
+
+    this.setError = function (handler) {
+        handler(model.errors, "hidden");
     };
 }

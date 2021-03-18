@@ -21,6 +21,7 @@
 				if (model.valuesList[valueIndex])
 					model.valuesList[valueIndex] = model.valuesList[valueIndex].trim();
             base.updateModel(model);
+            base.setError(model.errors, "value", null);
 		},
 
 		sourceChanged = function (column) {
@@ -50,7 +51,9 @@
 				setTimeout(function () {
                     matematici.AutoComplete.get(sourceName[0]).refresh();
                     matematici.AutoComplete.get(sourceColumn[0]).refresh();
-				}, 0);
+                }, 0);
+
+            base.setError(model.errors, "value", null);
 		},
 
 		selectChanged = function () {
@@ -58,7 +61,8 @@
 			input.toggle(index >= 2);
 			sourceName.parent().toggle(index == 1);
 			sourceColumn.parent().toggle(index == 1);
-			if (index == 1) sourceChanged();
+            if (index == 1) sourceChanged();
+            base.setError(model.errors, "value", null);
 			valueChanged();
 		},
 
@@ -106,9 +110,9 @@
 
 			if (externalSource) {
                 sourceName.val(model.externalSourceName);
-                if (sourceName.val() != model.externalSourceName) 
+                if (sourceName.val() != model.externalSourceName) {
                     sourceName.attr("data-error", model.externalSourceName);
-                else
+                } else
 				    sourceChanged(model.externalSourceColumn);
 				input.hide();
 			} else {
@@ -140,5 +144,9 @@
 		refresh();
 		return !empty;
 	}
+
+    this.setError = function (handler) {
+        handler(model.errors, "value");
+    };
 }
 

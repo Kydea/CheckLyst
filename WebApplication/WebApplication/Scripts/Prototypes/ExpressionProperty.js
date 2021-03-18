@@ -1,4 +1,4 @@
-﻿prototypes.ExpressionProperty = function (model, property) {
+﻿prototypes.ExpressionProperty = function (model, property, errorCode) {
     var
         base,
         insteadRadio, orRadio, andRadio,
@@ -20,6 +20,8 @@
 
             if (input.prop("selectedIndex") > 2)
                 expressionPropertyBase.check(value);
+            else
+                base.setError(model.errors, errorCode, null);
 
             var index = input.prop("selectedIndex")
             insteadRadio.parent().toggle(index > 2);
@@ -34,7 +36,7 @@
     this.create = function (valuePanel, baseClass) {
         base = baseClass;
         valuePanel.addClass("Expression");
-        expressionPropertyBase = new prototypes.ExpressionPropertyBase(model, expressionCode, valuePanel);
+        expressionPropertyBase = new prototypes.ExpressionPropertyBase(model, expressionCode, valuePanel, base, errorCode);
 
         if (editable) {
             input = $("<select />")
@@ -80,6 +82,10 @@
     this.setExpressionCode = function (value) {
         model[condition] = 3;
         model[expressionCode] = value;
+    };
+
+    this.setError = function (handler) {
+        handler(model.errors, errorCode);
     };
 }
 

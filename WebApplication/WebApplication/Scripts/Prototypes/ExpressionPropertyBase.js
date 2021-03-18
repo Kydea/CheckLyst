@@ -1,4 +1,4 @@
-﻿prototypes.ExpressionPropertyBase = function (model, property, valuePanel) {
+﻿prototypes.ExpressionPropertyBase = function (model, property, valuePanel, base, errorCode) {
     var
         expressionPropertyBase = this,
         expressions = prototypes.prototype.getModel().expressions,
@@ -51,7 +51,7 @@
     };
 
     this.check = function (value) {
-        var error;
+        var error = null;
         if (expressions[value] == undefined)
             error = "expression not found";
         else if (expressions[value].error)
@@ -60,14 +60,14 @@
             error = "the expression result must be a boolean";
 
         if (error) {
-            new matematici.dialog.error("error", error);
-            select.prop("selectedIndex", 0);
             var autoComplete = matematici.AutoComplete.get(select[0]);
             if (autoComplete)
                 autoComplete.setError(value);
             else
                 select.attr("data-error", value)
         }
+
+        base.setError(model.errors, errorCode, error);
 
         return !error;
     };

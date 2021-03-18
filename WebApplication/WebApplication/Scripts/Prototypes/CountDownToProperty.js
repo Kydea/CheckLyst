@@ -9,7 +9,7 @@
         check = function (value, ignoreNull) {
             var
                 condition = conditionSelect.val(),
-                error;
+                error = null;
 
             if (condition == 3) {
                 if (!value)
@@ -25,14 +25,13 @@
                     error = "select a signature";
                 else if (prototypes.prototype.getModel().signatures[value] == undefined)
                     error = "signature not found";
-            }
+            } else
+                base.setError(model.errors, "count-down", null);
 
             var offset = parseInt(offsetInput.val() || 0);
             offsetInput.val(offset)
 
             if (error) {
-                new matematici.dialog.error("error", error);
-                valueSelect.prop("selectedIndex", 0);
                 var autoComplete = matematici.AutoComplete.get(valueSelect[0]);
                 if (autoComplete)
                     autoComplete.setError(value);
@@ -44,6 +43,7 @@
                 model.countDownOffset = condition > 0 ? offset : 0;
             }
 
+            base.setError(model.errors, "countdown", error);
             base.updateModel(model);
         },
 
@@ -51,7 +51,7 @@
             var condition = conditionSelect.val();
 
             valueSelect.empty();
-            if (condition == 3) 
+            if (condition == 3)
                 for (var expressionCode in expressions)
                     valueSelect.append($("<option />").attr({ value: expressionCode }).text(expressionCode));
             else if (condition == 6)
@@ -123,8 +123,8 @@
                 .attr({ type: "text", readOnly: true })
                 .val(
                     model.countDownCondition == 0 && !model.countDownToCode ? "(not set)" :
-                    model.countDownCondition != 6 && !!model.countDownToCode ? "expression" :
-                    "signature"
+                        model.countDownCondition != 6 && !!model.countDownToCode ? "expression" :
+                            "signature"
                 )
                 .appendTo(valuePanel);
 
@@ -157,5 +157,9 @@
         model.countDownCondition = 3;
         model.countDownToCode = value;
     };
-}
+
+    this.setError = function (handler) {
+        handler(model.errors, "countdown");
+    };
+};
 
