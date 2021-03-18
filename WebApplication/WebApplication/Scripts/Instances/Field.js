@@ -263,9 +263,12 @@
             field.setAttribute("readonly", "readonly");
         else
             field.removeAttribute("readonly");
+
         if (model.valuesList)
             select.value = model.value;
         else if (model.valueFormulaString)
+            input.value = model.value;
+        else if (model.externalSourceName && model.externalSourceColumn)
             input.value = model.value;
         else if (model.valueTypeName == "DateTime") {
             if (!model.value || model.value == "") {

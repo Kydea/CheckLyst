@@ -31,10 +31,13 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ArithmeticOperators
 
         protected override TypedValue EvaluateResult(TypedValue LeftValue, TypedValue RightValue)
         {
+            DataType = LeftValue.Type == DataType.Date ? DataType.DateTime : LeftValue.Type;
+
             return
-                LeftValue.Type == DataType.Text && RightValue.Type == DataType.Text ? new TypedValue(DataType.Text, LeftValue.TextValue + RightValue.TextValue) :
-                LeftValue.Type == DataType.Number ? new TypedValue(DataType.Number, LeftValue.IsNull || RightValue.IsNull ? (decimal?)null : LeftValue.NumberValue + RightValue.NumberValue) :
-                new TypedValue(DataType.DateTime, LeftValue.IsNull || RightValue.IsNull ? (DateTimeOffset?)null : LeftValue.DateTimeValue.AddSeconds((double)RightValue.NumberValue));
+                LeftValue.Type == DataType.Text ? new TypedValue(DataType, LeftValue.TextValue + RightValue.TextValue) :
+                LeftValue.Type == DataType.Number ? new TypedValue(DataType, LeftValue.IsNull || RightValue.IsNull ? (decimal?)null : LeftValue.NumberValue + RightValue.NumberValue) :
+                LeftValue.Type == DataType.Time ? new TypedValue(DataType, LeftValue.IsNull || RightValue.IsNull ? (TimeSpan?)null : LeftValue.TimeSpanValue.Add(TimeSpan.FromSeconds((double)RightValue.NumberValue))) :
+                new TypedValue(DataType, LeftValue.IsNull || RightValue.IsNull ? (DateTimeOffset?)null : LeftValue.DateTimeValue.AddSeconds((double)RightValue.NumberValue));
         }
 
         protected override string OperatorName => "+";

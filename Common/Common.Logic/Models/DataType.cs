@@ -36,20 +36,20 @@ namespace CheckListManager.Common.Logic.Models
 
 		public bool Validate(string value)
 		{
-			try
-			{
-				if (string.IsNullOrEmpty(value)) return true;
+            try
+            {
+                if (string.IsNullOrEmpty(value)) return true;
 
                 if (_rawValue == DataTypeEnum.Boolean)
-	                return "true".Equals(value, StringComparison.InvariantCultureIgnoreCase) || "false".Equals(value, StringComparison.InvariantCultureIgnoreCase);
-				if (_rawValue == DataTypeEnum.Number)
-					return decimal.TryParse(value.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out _);
+                    return "true".Equals(value, StringComparison.InvariantCultureIgnoreCase) || "false".Equals(value, StringComparison.InvariantCultureIgnoreCase);
+                if (_rawValue == DataTypeEnum.Number)
+                    return decimal.TryParse(value.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out _);
                 if (_rawValue == DataTypeEnum.Date)
                     return DateTimeOffset.TryParseExact(value, DateTimeOffsetHelper.DateFormat, null, DateTimeStyles.AssumeUniversal, out _);
                 if (_rawValue == DataTypeEnum.DateTime)
-					return DateTimeOffset.TryParseExact(value, DateTimeOffsetHelper.DateTimeFormats, null, DateTimeStyles.AssumeUniversal, out _);
-				if (_rawValue == DataTypeEnum.Time)
-					return TimeSpan.TryParseExact(value, "hh\\:mm", null, out _);
+                    return DateTimeOffset.TryParseExact(value, DateTimeOffsetHelper.DateTimeFormats, null, DateTimeStyles.AssumeUniversal, out _);
+                if (_rawValue == DataTypeEnum.Time)
+                    return TimeSpan.TryParseExact(value, new string[] { "hh\\:mm", "hh\\:mm\\:ss" }, null, out _);
 
 				return true;
 			}

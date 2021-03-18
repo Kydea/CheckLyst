@@ -113,6 +113,7 @@
                 autoCenter.destroy();
                 element.remove();
                 matematici.elements.body.removeClass("CheckListGrid");
+                prototypes.prototype.verify();
             }, 0); //handles the blur event handler of the text boxes
         },
 
@@ -163,18 +164,9 @@
                         }).hide())
                         .append(dependencyButton = $("<a />").addClass("Button").text("dependencies").prepend($("<i />").addClass("Icon fa fa-sitemap")).on("click", function () {
                             var
-                                handler = function (valid) {
-                                    if (valid) {
-                                        var
-                                            code = list[currentIndex].code,
-                                            model = prototypes.prototype.getModel().externalSourceDependencyNodes[code];
-                                        matematici.dependenciesDialog.show("Source " + code, model && model.dependingRelations, model && model.dependentRelations);
-                                    }
-                                };
-                            if (matematici.canClose)
-                                handler()
-                            else
-                                prototypes.prototype.verify(handler);
+                                code = list[currentIndex].code,
+                                model = prototypes.prototype.getModel().externalSourceDependencyNodes[code];
+                            matematici.dependenciesDialog.show("Source " + code, model && model.dependingRelations, model && model.dependentRelations);
                         }).hide());
 
             sources = $("<select />");

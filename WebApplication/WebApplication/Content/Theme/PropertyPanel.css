@@ -132,7 +132,8 @@
     width: calc(50% - 20px);
     margin-left: 20px; }
     div.PropertyPanel div.Information p.Error {
-      color: #cc0000; }
+      color: #cc0000;
+      margin: 0 0 1em 0; }
       div.PropertyPanel div.Information p.Error i {
         margin-right: 5px; }
 

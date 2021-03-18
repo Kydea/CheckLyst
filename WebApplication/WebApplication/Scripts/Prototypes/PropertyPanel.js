@@ -15,7 +15,22 @@
         copyModel = function (source, destination) {
             for (var property in source)
                 destination[property] = source[property];
+        },
+
+        confirm = function () {
+            if (model.typeName == "Image") {
+                if (oldModel.key && !oldModel.cloned && !model.key)
+                    prototypes.prototype.deleteImage(oldModel.key);
+                if (!oldModel.key && model.key) //in case the image was previously enqueued to be deleted...
+                    prototypes.prototype.ensureImageWillNotBeDeleted(model.key);
+            }
+            $("input:not(.ReadOnly)", propertyValue).change();
+            options && options.okHandler && options.okHandler();
+
+            prototypes.prototype.verify();
         };
+
+    propertyPanel.confirm = confirm;
 
     propertyPanel.select = function (value, options) {
         if (!!value) item = value;
@@ -33,16 +48,7 @@
             buttons: [{
                 icon: "check",
                 text: "apply",
-                handler: function () {
-                    if (model.typeName == "Image") {
-                        if (oldModel.key && !oldModel.cloned && !model.key)
-                            prototypes.prototype.deleteImage(oldModel.key);
-                        if (!oldModel.key && model.key) //in case the image was previously enqueued to be deleted...
-                            prototypes.prototype.ensureImageWillNotBeDeleted(model.key);
-                    }
-                    $("input:not(.ReadOnly)", propertyValue).change();
-                    options && options.okHandler && options.okHandler();
-                }
+                handler: confirm
             }, {
                 cancelButton: true,
                 hidden: true,

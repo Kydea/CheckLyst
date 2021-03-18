@@ -354,20 +354,9 @@
                     break;
                 case "dependencies":
                     var
-                        handler = function (valid) {
-                            if (valid) {
-                                var
-                                    model = currentItem.getModel(),
-                                    title = currentItem.toString(); // model.typeName + (model.index != null && " - Index: " + (parseInt(model.index) + 1) || model.id != null && " - ID: " + model.id || "") + (model.code && " - Code: " + model.code || "")
-                                matematici.dependenciesDialog.show(title, model.dependingRelations, model.dependentRelations);
-                            }
-                        };
-
-                    if (matematici.canClose)
-                        handler()
-                    else
-                        prototype.verify(handler);
-                    break;
+                        model = currentItem.getModel(),
+                        title = currentItem.toString();
+                    matematici.dependenciesDialog.show(title, model.dependingRelations, model.dependentRelations);
                 default:
                     alert("invalid command");
                     console.log(this);

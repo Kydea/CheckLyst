@@ -62,20 +62,10 @@
                     new prototypes.SourcesList();
                 }, "Icon SourcesList")
                 .add("<i class='Icon fal fa-calculator'></i>", function () {
-                    if (matematici.canClose)
-                        new prototypes.ExpressionsList();
-                    else
-                        prototypes.prototype.verify(function () {
-                            new prototypes.ExpressionsList();
-                        });
+                    new prototypes.ExpressionsList();
                 }, "Icon ExpressionsList")
                 .add("<i class='Icon fa fa-cubes'></i>", function () {
-                    if (matematici.canClose)
-                        new prototypes.ItemsList();
-                    else
-                        prototypes.prototype.verify(function () {
-                            new prototypes.ItemsList();
-                        });
+                    new prototypes.ItemsList();
                 }, "Icon ItemsList"),
 
             buttonGroup = new matematici.ButtonGroup("span.ButtonGroup")

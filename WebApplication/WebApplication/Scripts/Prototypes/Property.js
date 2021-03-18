@@ -8,10 +8,9 @@
 
         updateInformation = function () {
             var informationPanel = propertyPanel.getInformation();
-            informationPanel.html(information ? information : "");
             for (var index in errors)
                 informationPanel.append($("<p />").addClass("Error").text(errors[index]).prepend($("<i />").addClass("fal fa-exclamation-triangle")));
-
+            informationPanel.append(information ? information : "");
         },
 
         setup = function () {

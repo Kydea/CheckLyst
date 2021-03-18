@@ -14,13 +14,16 @@ div.Blip {
 
     div.Container {
         position: fixed;
-        border-radius: 15px;
+        border-radius: 50%;
         top: 50%;
         left: 50%;
-        width: unset;
-        padding: 20px;
+        width: 70px;
+        height: 70px;
+        line-height: 70px;
+        text-align: center;
         background-color: white;
         box-shadow: $Box-Shadow;
+        font-size: 30px;
 
         i {
             color: $Color-Green-Regular;
@@ -34,7 +37,6 @@ div.Blip {
         div.Container {
             i {
                 color: $Color-Red-Regular;
-                font-size: 30px;
             }
         }
     }
@@ -45,7 +47,6 @@ div.Blip {
         div.Container {
             i {
                 color: $Color-Yellow-Regular;
-                font-size: 30px;
             }
         }
     }

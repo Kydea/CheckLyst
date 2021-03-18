@@ -13,6 +13,7 @@
 
         hidePropertyPanel = function () {
             currentProperty = prototypes.propertyPanel.getCurrentProperty();
+            prototypes.propertyPanel.confirm();
             matematici.popup.close();
         },
 
@@ -26,13 +27,12 @@
         clickHandler= function (e) {
             e.preventDefault();
             hidePropertyPanel();
-            prototypes.prototype.verify(function () {
-                new prototypes.ExpressionsList({
-                    closeHandler: resumePropertyPanel,
-                    useHandler: function (expression) {
-                        currentProperty.getType().setExpressionCode(expression.code);
-                    }
-                });
+
+            new prototypes.ExpressionsList({
+                closeHandler: resumePropertyPanel,
+                useHandler: function (expression) {
+                    currentProperty.getType().setExpressionCode(expression.code);
+                }
             });
         },
 

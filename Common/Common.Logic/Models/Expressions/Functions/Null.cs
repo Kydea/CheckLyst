@@ -14,7 +14,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Functions
         }
 
         protected override TypedValue Evaluate(TypedValue ArgumentValue)
-            => new TypedValue(DataType, null);
+            => new TypedValue(ArgumentValue.Type, null);
 
         public override string ToString() =>
             $"Null({Argument?.ToString() ?? "#"})";
