@@ -13,8 +13,8 @@ namespace CheckListManager.Common.Logic.Email
 		public EmailMessage(long company, string subject, string content, string to, List<Tuple<string, string>> parameters = null)
 		{
 			Company = company;
-            Subject = subject;
-            Content = content;
+            Subject = subject ?? string.Empty;
+            Content = content ?? string.Empty;
 
             if (parameters != null)
                 foreach (var parameter in parameters)

@@ -8,7 +8,6 @@ div.CheckListGrid {
 
     div.Container {
         background-color: white;
-        border: solid 1px $Color-Grey-Light;
         padding: 20px;
         box-shadow: $Box-Shadow;
 
@@ -19,8 +18,12 @@ div.CheckListGrid {
         }
 
         h2 {
-            margin: 0;
-            padding-bottom: $Metric-Separator-Extended;
+            margin: -20px -20px 20px;
+            background: $Color-Green-Regular;
+            padding: $Metric-Control-Space;
+            color: white;
+            text-transform: uppercase;
+            font-weight: normal;
         }
 
         div.Parameters {
@@ -79,6 +82,25 @@ div.CheckListGrid {
                 margin-top: 10px;
             }
         }
+
+        a.CloseButton {
+            position: absolute;
+            top: 15px;
+            right: 0;
+            color: white;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+
+            i {
+                font-size: 30px;
+            }
+
+            &:hover {
+                color: $Color-Grey-Light;
+            }
+        }
     }
 
     @media #{$Media-Extended} {
@@ -94,10 +116,15 @@ div.CheckListGrid {
             position: relative;
             margin: auto;
             width: calc(90vw - 60px);
+            border-radius: 15px 15px 0 0;
+
+            h2 {
+                border-radius: 15px 15px 0 0;
+            }
         }
 
         div.ScrollablePanel {
-            max-height: calc(90vh - 60px);
+            max-height: calc(100vh - 200px);
         }
     }
 

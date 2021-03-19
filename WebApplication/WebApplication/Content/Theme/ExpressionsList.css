@@ -34,7 +34,7 @@
 body.PrototypeEditor div.CheckListGrid div.Container.ExpressionsList div.OrderBar {
   position: absolute;
   right: 0;
-  top: 0;
+  top: 84px;
   bottom: 0;
   width: 20px; }
   body.PrototypeEditor div.CheckListGrid div.Container.ExpressionsList div.OrderBar a {
@@ -53,11 +53,10 @@ body.PrototypeEditor div.CheckListGrid div.Container.ExpressionsList div.OrderBa
     body.PrototypeEditor div.CheckListGrid div.Container.ExpressionsList div.OrderBar a:hover:not(.Off) {
       background-color: #ebebeb; }
     body.PrototypeEditor div.CheckListGrid div.Container.ExpressionsList div.OrderBar a:first-child {
-      margin-top: -10px;
+      margin-top: -20px;
       border-radius: 3px 3px 0 0;
       border-bottom: 0; }
     body.PrototypeEditor div.CheckListGrid div.Container.ExpressionsList div.OrderBar a:last-child {
-      margin-top: 10px;
       border-radius: 0 0 3px 3px; }
 
 body.PrototypeEditor div.CheckListGrid div.Container > div {

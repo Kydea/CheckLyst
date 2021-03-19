@@ -123,6 +123,15 @@
             autoCenter = new matematici.AutoCenter(container.parent());
             autoCenter.initialize();
 
+            container.append($("<h2 />").html("Items list"));
+
+            container
+                .append($("<a />").attr("href", "#").addClass("CloseButton CancelButton")
+                    .append($("<i />").addClass("fas fa-times-circle"))
+                    .on("click", function () {
+                        close();
+                    }));
+
             var scrollablePanel = $("<div />").addClass("ScrollablePanel").appendTo(container);
 
             table = $("<table />").addClass("Grid").appendTo(scrollablePanel)
@@ -144,9 +153,6 @@
             var
                 buttons =
                     $("<div />").addClass("Buttons").appendTo(container.parent())
-                        .append($("<a />").addClass("Button CancelButton").text("close").prepend($("<i />").addClass("Icon fa fa-times")).on("click", function () {
-                            close();
-                        }))
                         .append(openButton = $("<a />").addClass("Button").text("properties").hide().prepend($("<i />").addClass("Icon fa fa-edit")).on("click", function () {
                             open();
                         }))

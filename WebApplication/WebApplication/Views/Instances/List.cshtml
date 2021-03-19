@@ -110,29 +110,29 @@
     matematici.events.onPageLoad = function (callback) {
         var
             formSelector = "form#Filters",
-            formElement = $(formSelector);
+            formElement = $(formSelector),
 
-        new matematici.SearchPage({
-            pageName: "Instances",
-            detailUrl: "@Url.Action("Detail")",
-            filterFormSelector: formSelector,
-            resultGridSelector: "div#Content table.Grid",
-            bindEvent: "Bind",
-            readOnly: true,
-            breadCrumbs: [
-                { content: "instances" }
-            ],
-            rowClickHandler: function (row) {
-                matematici.navigator.open("@Url.Action("Detail")/" + encodeURIComponent(row.data("values").code));
-            },
-            setCellValueHandler: function (cell, data, column, type, value) {
-                if (column == "exceptions" && value)
-                    for (var index in value) {
-                        var exception = value[index];
-                        cell.addClass("Red").append($("<span />").addClass("Block").text(exception.description));
-                    }
-            }
-        });
+            searchPage = new matematici.SearchPage({
+                pageName: "Instances",
+                detailUrl: "@Url.Action("Detail")",
+                filterFormSelector: formSelector,
+                resultGridSelector: "div#Content table.Grid",
+                bindEvent: "Bind",
+                readOnly: true,
+                breadCrumbs: [
+                    { content: "instances" }
+                ],
+                rowClickHandler: function (row) {
+                    matematici.navigator.open("@Url.Action("Detail")/" + encodeURIComponent(row.data("values").code));
+                },
+                setCellValueHandler: function (cell, data, column, type, value) {
+                    if (column == "exceptions" && value)
+                        for (var index in value) {
+                            var exception = value[index];
+                            cell.addClass("Red").append($("<span />").addClass("Block").text(exception.description));
+                        }
+                }
+            });
 
         $("#LinkButton").on("click", function () {
             var
@@ -164,6 +164,8 @@
                 prototypeName = $("select[name=prototype]", formElement).next().val(),
                 department = $("select[name=department]", formElement).val(),
                 prototypeType = $("select[name=prototypeType]", formElement).val();
+
+            searchPage.getForm().saveForm();
 
             if (!prototypeName)
                 matematici.dialog.error("Error", "Select a prototype to create a new instance.");

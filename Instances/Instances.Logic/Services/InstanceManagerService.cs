@@ -805,14 +805,14 @@ namespace CheckListManager.Instances.Logic.Services
                                 await SaveAsync(instance, null, true, false, false, instance.ModifiedBy, instance.ModifiedOn);
                                 break;
                             default:
-                                throw new InstanceException("Invalid state: " + instance.InstanceState);
+                                throw new InstanceException($"Invalid state: {instance.InstanceState}");
                         }
                     else
                         await _instanceCache.RemoveAsync(code);
                 }
                 catch (Exception exception)
                 {
-                    await _emailService.LogErrorAsync(exception, "Failed to clear pending instance");
+                    await _emailService.LogErrorAsync(exception, $"Failed to clear pending instance with code: {code}");
                     Logger.Error(exception);
                 }
         }

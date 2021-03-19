@@ -229,6 +229,16 @@
             autoCenter = new matematici.AutoCenter(container.parent());
             autoCenter.initialize();
 
+            container.append($("<h2 />").html("Expressions list"));
+
+            container
+                .append($("<a />").attr("href", "#").addClass("CloseButton CancelButton")
+                    .append($("<i />").addClass("fas fa-times-circle"))
+                    .on("click", function () {
+                        updatePrototype();
+                        close();
+                    }));
+
             orderBar = $("<div />")
                 .appendTo(container)
                 .addClass("OrderBar")
@@ -245,6 +255,8 @@
             toggleMoveButton();
 
             var scrollablePanel = $("<div />").addClass("ScrollablePanel").appendTo(container);
+
+
 
             table = $("<table />").addClass("Grid").appendTo(scrollablePanel)
                 .append($("<thead />")
@@ -266,10 +278,6 @@
             var
                 buttons =
                     $("<div />").addClass("Buttons").appendTo(container.parent())
-                        .append($("<a />").addClass("Button CancelButton").text("close").prepend($("<i />").addClass("Icon fa fa-times")).on("click", function () {
-                            updatePrototype();
-                            close();
-                        }))
                         .append(openButton = $("<a />").addClass("Button").text("open").hide().prepend($("<i />").addClass("Icon fa fa-edit")).on("click", function () {
                             open(currentIndex);
                         }))
@@ -285,7 +293,6 @@
                     use();
                     close();
                 }))
-
 
             for (var code in model.expressions)
                 insert(model.expressions[code]);

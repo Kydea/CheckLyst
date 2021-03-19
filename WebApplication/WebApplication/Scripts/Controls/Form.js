@@ -297,7 +297,9 @@
 
 	this.handleResult = handleResult;
 
-	this.onChange = onChange;
+    this.onChange = onChange;
+
+    this.saveForm = saveForm;
 
 	this.addChangeHandler = function (handler) {
 		changeHandlers.push(handler);

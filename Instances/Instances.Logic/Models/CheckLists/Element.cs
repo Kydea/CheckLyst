@@ -148,8 +148,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         protected virtual void UpdateHidden()
         {
             Hidden =
-                HiddenCondition == Conditions.Expression && CheckList?.GetExpressionValue(HiddenExpressionCode, this)?.Value as bool? == true
-                || HiddenCondition == Conditions.True;
+                HiddenCondition == Conditions.True
+                || HiddenCondition == Conditions.Expression && CheckList?.GetExpressionValue(HiddenExpressionCode, this)?.Value as bool? == true;
         }
 
         public static void Copy(Element source, Element destination)

@@ -335,6 +335,7 @@
                             text: "confirm", icon: "check", handler: function () {
                                 parent.getChildren().splice(itemIndex, 1);
                                 update();
+                                prototype.verify();
                                 matematici.canClose = false;
                             }
                         },
@@ -357,6 +358,7 @@
                         model = currentItem.getModel(),
                         title = currentItem.toString();
                     matematici.dependenciesDialog.show(title, model.dependingRelations, model.dependentRelations);
+                    break;
                 default:
                     alert("invalid command");
                     console.log(this);

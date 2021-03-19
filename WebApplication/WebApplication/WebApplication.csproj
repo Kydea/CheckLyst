@@ -269,6 +269,7 @@
     <Content Include="Scripts\Controls\ButtonGroup.js" />
     <Content Include="Scripts\Custom\AutoCenter.js" />
     <Content Include="Scripts\Custom\Accordion.js" />
+    <Content Include="Scripts\Custom\GridFiltersBar.js" />
     <Content Include="Scripts\Custom\ImageViewer.js" />
     <Content Include="Scripts\Controls\AutoComplete.js" />
     <Content Include="Scripts\Libraries\pako.1.0.11.js" />

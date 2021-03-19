@@ -271,7 +271,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             {
                 if (!IterationItem)
                 {
-                    if (HiddenCondition != Conditions.True || HiddenCondition == Conditions.Expression)
+                    if (HiddenCondition != Conditions.True)
                         Item.AddDependingRelation(DependencyRelation.Properties.Hidden, this, DependencyRelation.Properties.Hidden);
 
                     if (Item is ICheckListEditableItem && (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault))

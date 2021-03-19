@@ -12,7 +12,6 @@ matematici.dialog = function () {
 				var textArea = $("<textarea />").addClass("Textarea");
 				button.content = $("<div />");
                 button.content.prepend(textArea);
-				if (button.text) button.content.prepend($("<label />").text(button.text));
 				if (button.val) textArea.val(button.val);
 				if (button.readOnly) textArea.prop("readonly", true).addClass("ReadOnly");
 				if (button.handler) textArea.on("click", button.handler);
@@ -32,15 +31,13 @@ matematici.dialog = function () {
 				if (button.hidden) button.content.hide();
 				if (button.defaultButton) button.content.addClass("DefaultButton");
 				if (button.title) button.content.attr("title", button.title);
-				if (button.cancelButton) {
+				if (button.cancelButton) 
 					container
-						.append($("<a />").attr("href", "#").addClass("CloseButton")
+                        .append($("<a />").attr("href", "#").addClass("CloseButton CancelButton")
                             .append($("<i />").addClass("fas fa-times-circle"))
 							.on("click", function () {
 								button.content.click();
 							}));
-					button.content.addClass("CancelButton");
-				}
 				if (button.id) button.content.attr("id");
 
 				buttons.prepend(button.content);

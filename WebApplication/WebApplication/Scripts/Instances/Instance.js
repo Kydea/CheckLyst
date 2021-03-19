@@ -408,7 +408,7 @@
 
     instance.delete = function () {
         if (!(versionState == prototypes.Prototype.states.draft || versionState == prototypes.Prototype.states.simulation) && state == instances.Instance.states.progress)
-            matematici.dialog.show("Instance deletion", "Instance will be set as deleted. Provide a note for the deletion", [
+            matematici.dialog.show("Instance deletion", "Instance will be set as deleted. Provide a note for the deletion.", [
                 {
                     text: "Confirm", icon: "check", handler: function () {
                         send("Delete", $("textarea.Textarea", $(this).closest("div.Dialog")).val(), function () {
@@ -418,7 +418,10 @@
                     }
                 },
                 { icon: "times", hidden: true, cancelButton: true },
-                { textarea: true, text: "Note" }
+                {
+                    textarea: true,
+                    marginTop: "10px"
+                }
             ]);
         else
             matematici.dialog.show("Instance deletion", "The instance will be deleted", [

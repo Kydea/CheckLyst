@@ -119,15 +119,30 @@
 
         setup = function () {
             matematici.elements.body.addClass("CheckListGrid");
+
+
             element = $("<div />").addClass("CheckListGrid").appendTo(matematici.elements.body);
-            container = $("<div />").addClass("ScrollablePanel").appendTo($("<div />").addClass("Container").appendTo(element).on("click", function (e) {
+            var container = $("<div />").appendTo($("<div />").addClass("Container SourcesList").appendTo(element).on("click", function (e) {
                 e.preventDefault();
                 e.stopPropagation();
             }));
+
             autoCenter = new matematici.AutoCenter(container.parent());
             autoCenter.initialize();
 
-            table = $("<table />").addClass("Grid SourcesList").appendTo(container)
+            container.append($("<h2 />").html("Data sources list"));
+
+            container
+                .append($("<a />").attr("href", "#").addClass("CloseButton CancelButton")
+                    .append($("<i />").addClass("fas fa-times-circle"))
+                    .on("click", function () {
+                        close();
+                        prototypes.prototype.verify();
+                    }));
+
+            var scrollablePanel = $("<div />").addClass("ScrollablePanel").appendTo(container);
+
+            table = $("<table />").addClass("Grid SourcesList").appendTo(scrollablePanel)
                 .append($("<thead />")
                     .append($("<tr />")
                         .append($("<th />").text("code"))
@@ -151,9 +166,6 @@
             var
                 buttons =
                     $("<div />").addClass("Buttons").appendTo(container.parent())
-                        .append($("<a />").addClass("Button CancelButton").text("close").prepend($("<i />").addClass("Icon fa fa-times")).on("click", function () {
-                            close();
-                        }))
                         .append($("<a />").addClass("Button").text("add").toggle(model.state == prototypes.Prototype.states.draft).prepend($("<i />").addClass("Icon fa fa-plus")).on("click", function () {
                             matematici.canClose = false;
                             add({ code: "" });

@@ -356,7 +356,8 @@
 		};
 
     autoComplete.refresh = function () {
-        iconNode.style.display = "block";
+        if (labelNode.offsetParent !== null) //is visible
+            iconNode.style.display = "block";
         setWidth();
         if (!error)
             setValue();
