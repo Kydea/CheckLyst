@@ -13,6 +13,7 @@
         item,
         model, 
         oldModel,
+        options,
 
         copyModel = function (source, destination) {
             for (var property in source)
@@ -34,12 +35,13 @@
 
     propertyPanel.confirm = confirm;
 
-    propertyPanel.select = function (value, options) {
+    propertyPanel.select = function (value, o) {
         if (!!value) item = value;
 
         var state = prototypes.prototype.getModel().state;
-        model = item.getModel(),
+        model = item.getModel();
         oldModel = {};
+        options = o;
 
         copyModel(model, oldModel);
 

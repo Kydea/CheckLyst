@@ -720,9 +720,9 @@
                 }).done(function (result) {
                     if (!result.checkList.valid) matematici.blip.warning();
                     updateDependencies(model, result.checkList);
-                    callback(result.checkList.valid);
+                    if (callback) callback(result.checkList.valid);
                 });
-            }
+            };
 
         toBase64(array, handler);
     };
