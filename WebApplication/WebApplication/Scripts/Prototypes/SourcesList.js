@@ -4,13 +4,21 @@
         element,
         container,
         table,
-        body,
+        tableBody,
         sources,
         noRecord,
         list = [],
         currentIndex,
         removeButton,
         dependencyButton,
+        filtersBar,
+
+        toggleNoRecord = function () {
+            if ($("tr:not(.NoRecord):visible", tableBody).length == 0)
+                noRecord.appendTo(tableBody);
+            else
+                noRecord.remove();
+        },
 
         up = function (icon) {
             var
@@ -39,11 +47,11 @@
         },
 
         select = function (index) {
-            if (currentIndex != null) body.children().eq(currentIndex).filter(":not(.NoRecord)").removeClass("Selected").addClass("Handler").children().attr("contenteditable", false);
+            if (currentIndex != null) tableBody.children().eq(currentIndex).filter(":not(.NoRecord)").removeClass("Selected").addClass("Handler").children().attr("contenteditable", false);
             if (model.state == prototypes.Prototype.states.draft) {
                 currentIndex = index;
                 if (currentIndex != null)
-                    body.children().eq(currentIndex).addClass("Selected").removeClass("Handler")
+                    tableBody.children().eq(currentIndex).addClass("Selected").removeClass("Handler")
                         .children(":first-child").attr("contenteditable", true).focus();
                 removeButton.toggle(currentIndex != null);
                 dependencyButton.toggle(currentIndex != null);
@@ -72,13 +80,16 @@
                 .append($("<td />").addClass("CodeColumn").text(row.code))
                 .append(value)
                 .append($("<td />").addClass("Order Centered Inactive").append($("<i />").addClass("Up fa fa-caret-up")).append($("<i />").addClass("Down fa fa-caret-down")));
+
+            colorRows();
         },
 
         remove = function () {
-            body.children().eq(currentIndex).remove();
+            tableBody.children().eq(currentIndex).remove();
             list.splice(currentIndex, 1);
-            if (list.length == 0) noRecord.appendTo(body);
+            toggleNoRecord();
             select();
+            colorRows();
             matematici.canClose = false;
         },
 
@@ -104,7 +115,7 @@
                 if (!checkCodes()) return;
 
                 model.externalSources = {};
-                body.children(":not(.NoRecord)").each(function () {
+                tableBody.children(":not(.NoRecord)").each(function () {
                     var row = $(this);
                     model.externalSources[row.children("td").eq(0).text()] = $("select", row).val();
                 });
@@ -117,20 +128,48 @@
             }, 0); //handles the blur event handler of the text boxes
         },
 
+        colorRows = function () {
+            var
+                filtering = filtersBar.isFiltering(),
+                even = false;
+            $("tr:visible", tableBody).each(function () {
+                $(this).toggleClass("Even", filtering && even).toggleClass("Odd", filtering && !even);
+                even = !even;
+            });
+        },
+
+        filter = function (filtering, keyword, flags) {
+            var
+                rows = $("tr", tableBody),
+                even = false;
+            for (var index in list) {
+                var
+                    item = list[index],
+                    visible = keyword == null;
+                if (!visible && flags[0]) visible = !!item.code && item.code.indexOf(keyword) >= 0;
+                if (!visible && flags[1]) visible = !!item.source && item.source.indexOf(keyword) >= 0;
+                rows.eq(index).toggle(visible).toggleClass("Even", filtering && even).toggleClass("Odd", filtering && !even);
+                if (visible) even = !even;
+            }
+            select();
+            toggleNoRecord();
+        },
+
         setup = function () {
             matematici.elements.body.addClass("CheckListGrid");
 
 
             element = $("<div />").addClass("CheckListGrid").appendTo(matematici.elements.body);
-            var container = $("<div />").appendTo($("<div />").addClass("Container SourcesList").appendTo(element).on("click", function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }));
+            var container = $("<div />").appendTo($("<div />").addClass("Container SourcesList").appendTo(element));
 
             autoCenter = new matematici.AutoCenter(container.parent());
             autoCenter.initialize();
 
             container.append($("<h2 />").html("Data sources list"));
+
+            filtersBar = new matematici.GridFiltersBar(container, filter);
+            filtersBar.addFlag("code", true);
+            filtersBar.addFlag("description", true);
 
             container
                 .append($("<a />").attr("href", "#").addClass("CloseButton CancelButton")
@@ -149,7 +188,7 @@
                         .append($("<th />").text("source"))
                         .append($("<th />"))
                     )
-                ).append(body = $("<tbody />")
+                ).append(tableBody = $("<tbody />")
                     .append(noRecord = $("<tr />").addClass("NoRecord")
                         .append($("<td />").attr("colspan", "3").text("(no record)"))
                     )
@@ -169,7 +208,7 @@
                         .append($("<a />").addClass("Button").text("add").toggle(model.state == prototypes.Prototype.states.draft).prepend($("<i />").addClass("Icon fa fa-plus")).on("click", function () {
                             matematici.canClose = false;
                             add({ code: "" });
-                            select(body.children().size() - 1);
+                            select(tableBody.children().size() - 1);
                         }))
                         .append(removeButton = $("<a />").addClass("Button").text("remove").prepend($("<i />").addClass("Icon fa fa-minus")).on("click", function () {
                             remove();

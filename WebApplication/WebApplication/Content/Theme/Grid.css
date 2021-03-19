@@ -76,8 +76,10 @@
     color: #ff3333; }
   table.Grid tbody tr.SubRow.Green td {
     color: #009688; }
-  table.Grid tbody tr.NoRecord td {
-    color: #999;
-    text-align: center; }
+  table.Grid tbody tr.NoRecord {
+    background-color: white !important; }
+    table.Grid tbody tr.NoRecord td {
+      color: #999;
+      text-align: center; }
   table.Grid:not(.AdvancedSearch) .AdvancedSearch {
     display: none; }

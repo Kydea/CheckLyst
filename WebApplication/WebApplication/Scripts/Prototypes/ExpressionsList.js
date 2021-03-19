@@ -11,6 +11,7 @@
         list = [],
         useButton, openButton, dependenciesButton,
         orderBar,
+        filtersBar,
         valid = true,
 
         getRow = function (index) {
@@ -18,8 +19,15 @@
         },
 
         toggleMoveButton = function () {
-            orderBar.children().eq(0).toggleClass("Off", currentIndex == null || currentIndex == 0);
-            orderBar.children().eq(1).toggleClass("Off", currentIndex == null || currentIndex == list.length - 1);
+            orderBar.children().eq(0).toggleClass("Off", currentIndex == null || currentIndex == 0 || filtersBar.isFiltering());
+            orderBar.children().eq(1).toggleClass("Off", currentIndex == null || currentIndex == list.length - 1 || filtersBar.isFiltering());
+        },
+
+        toggleNoRecord = function () {
+            if ($("tr:not(.NoRecord):visible", tableBody).length == 0)
+                noRecord.appendTo(tableBody);
+            else
+                noRecord.remove();
         },
 
         showDependencies = function () {
@@ -114,8 +122,9 @@
             matematici.canClose = false;
             getRow(currentIndex).remove();
             removeItem(currentIndex);
+            toggleNoRecord();
             verify();
-            if (list.length == 0) noRecord.appendTo(tableBody);
+            colorRows();
             select();
         },
 
@@ -155,6 +164,8 @@
                 update(index + 1);
                 return index + 1;
             }
+
+            colorRows();
         },
 
         update = function (index) {
@@ -216,20 +227,55 @@
             options.useHandler(list[currentIndex]);
         },
 
+        colorRows = function () {
+            var
+                filtering = filtersBar.isFiltering(),
+                even = false;
+            $("tr:visible", tableBody).each(function () {
+                $(this).toggleClass("Even", filtering && even).toggleClass("Odd", filtering && !even);
+                even = !even;
+            });
+        },
+
+        filter = function (filtering, keyword, flags) {
+            var
+                rows = $("tr", tableBody),
+                even = false;
+            for (var index in list) {
+                var
+                    expression = list[index],
+                    visible = keyword == null;
+                if (!visible && flags[0]) visible = !!expression.code && expression.code.indexOf(keyword) >= 0;
+                if (!visible && flags[1]) visible = !!expression.description && expression.description.indexOf(keyword) >= 0;
+                if (!visible && flags[2]) visible = !!expression.serializedValue && expression.serializedValue.indexOf(keyword) >= 0;
+                if (visible && !flags[3]) visible = expression.error == null;
+                if (visible && !flags[4]) visible = expression.error != null;
+                console.log(flags, expression);
+                rows.eq(index).toggle(visible).toggleClass("Even", filtering && even).toggleClass("Odd", filtering && !even);
+                if (visible) even = !even;
+            }
+            select();
+            toggleNoRecord();
+            toggleMoveButton();
+        },
+
         setup = function () {
             matematici.elements.body.addClass("CheckListGrid");
             matematici.expressionsList = expressionsList;
 
             element = $("<div />").addClass("CheckListGrid").appendTo(matematici.elements.body);
-            var container = $("<div />").appendTo($("<div />").addClass("Container ExpressionsList").appendTo(element).on("click", function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }));
+            var container = $("<div />").appendTo($("<div />").addClass("Container ExpressionsList").appendTo(element));
 
             autoCenter = new matematici.AutoCenter(container.parent());
             autoCenter.initialize();
 
             container.append($("<h2 />").html("Expressions list"));
+            filtersBar = new matematici.GridFiltersBar(container, filter);
+            filtersBar.addFlag("code", true);
+            filtersBar.addFlag("description", true);
+            filtersBar.addFlag("expression", true);
+            filtersBar.addFlag($("<i />").addClass("fal fa-times"), true, true);
+            filtersBar.addFlag($("<i />").addClass("fal fa-check"), true, true);
 
             container
                 .append($("<a />").attr("href", "#").addClass("CloseButton CancelButton")
@@ -255,8 +301,6 @@
             toggleMoveButton();
 
             var scrollablePanel = $("<div />").addClass("ScrollablePanel").appendTo(container);
-
-
 
             table = $("<table />").addClass("Grid").appendTo(scrollablePanel)
                 .append($("<thead />")

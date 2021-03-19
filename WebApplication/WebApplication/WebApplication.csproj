@@ -156,6 +156,9 @@
     <Content Include="Content\Theme\Grid.css">
       <DependentUpon>Grid.scss</DependentUpon>
     </Content>
+    <Content Include="Content\Theme\GridFiltersBar.css">
+      <DependentUpon>GridFiltersBar.scss</DependentUpon>
+    </Content>
     <Content Include="Content\Theme\Hamburger.css">
       <DependentUpon>Hamburger.scss</DependentUpon>
     </Content>
@@ -376,6 +379,7 @@
     <Content Include="Content\Theme\Fonts\MyriadPro\Semibold\Myriad Pro Semibold.scss" />
     <Content Include="Content\Theme\ExpressionsList.scss" />
     <Content Include="Content\Theme\ItemsList.scss" />
+    <Content Include="Content\Theme\GridFiltersBar.scss" />
     <None Include="Scripts\Libraries\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\Libraries\jquery-2.1.4.js" />
     <Content Include="Scripts\Libraries\jquery-ui-1.11.4.js" />

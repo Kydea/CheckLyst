@@ -170,5 +170,9 @@
   {
     "outputFile": "Content/Theme/ExpressionsList.css",
     "inputFile": "Content/Theme/ExpressionsList.scss"
+  },
+  {
+    "outputFile": "Content/Theme/GridFiltersBar.css",
+    "inputFile": "Content/Theme/GridFiltersBar.scss"
   }
 ]

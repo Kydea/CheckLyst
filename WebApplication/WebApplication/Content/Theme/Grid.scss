@@ -152,6 +152,8 @@ table.Grid {
             }
 
             &.NoRecord {
+                background-color: white !important;
+
                 td {
                     color: $Color-Grey-Regular;
                     text-align: center;
