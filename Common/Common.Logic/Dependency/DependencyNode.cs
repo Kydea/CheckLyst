@@ -1,4 +1,5 @@
 ﻿using CheckListManager.Common.Logic.Models.CheckLists;
+using CheckListManager.Common.Logic.Models.Expressions;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -75,7 +76,15 @@ namespace CheckListManager.Common.Logic.Dependency
                 {
                     DependencyChain.Push(new Tuple<DependencyNode, DependencyRelation.Properties>(this, Property));
                     if (DependencyChainTouchedProcesses.Contains(Property))
-                        throw new Exception($"Dependency cycle found: {string.Join("> ", DependencyChain.Reverse().Select(x => $"{DependencyRelation.GetPropertyDescription(x.Item2)} of {x.Item1.DependencyClassName} {x.Item1.DependencyObjectCode ?? x.Item1.DependencyObjectID?.ToString()} "))}");
+                    {
+                        var ErrorMessage = $"Dependency cycle found: {string.Join("> ", DependencyChain.Reverse().Select(x => $"{DependencyRelation.GetPropertyDescription(x.Item2)} of {x.Item1.DependencyClassName} {x.Item1.DependencyObjectCode ?? x.Item1.DependencyObjectID?.ToString()} "))}";
+                        DependencyChain.ToList().ForEach(x =>
+                        {
+                            if (x.Item1 is Expression Expression) Expression.Error = ErrorMessage;
+                        });
+                        return false;
+                        //throw new Exception($"Dependency cycle found: {string.Join("> ", DependencyChain.Reverse().Select(x => $"{DependencyRelation.GetPropertyDescription(x.Item2)} of {x.Item1.DependencyClassName} {x.Item1.DependencyObjectCode ?? x.Item1.DependencyObjectID?.ToString()} "))}");
+                    }
                     DependencyChainTouchedProcesses.Add(Property);
 
                     //checks the cycle just once per node

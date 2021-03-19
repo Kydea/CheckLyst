@@ -95,6 +95,8 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         {
             try
             {
+                if (Error != null) return false;
+
                 Root.Check(CheckList, this, new List<string>());
                 if ((Exception || Notification) && Root.DataType != DataType.Boolean && Root.DataType != DataType.Date && Root.DataType != DataType.DateTime)
                     throw new Exception($"Exception and notification expressions must be boolean or date or date-time");

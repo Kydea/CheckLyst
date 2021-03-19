@@ -7,7 +7,7 @@
         errors = [],
 
         updateInformation = function () {
-            var informationPanel = propertyPanel.getInformation();
+            var informationPanel = propertyPanel.getInformation().empty();
             for (var index in errors)
                 informationPanel.append($("<p />").addClass("Error").text(errors[index]).prepend($("<i />").addClass("fal fa-exclamation-triangle")));
             informationPanel.append(information ? information : "");

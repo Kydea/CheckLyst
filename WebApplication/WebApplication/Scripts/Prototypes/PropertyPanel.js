@@ -520,7 +520,7 @@
     };
 
     propertyPanel.checkDataType = function (expression, typeName) {
-        return expression.innerDataType && expression.innerDataType.typeName == typeName || expression.dataType.typeName == typeName;
+        return expression.innerDataType && expression.innerDataType.typeName == typeName || expression.dataType && expression.dataType.typeName == typeName;
     };
 
     prototypes.propertyPanel = propertyPanel;

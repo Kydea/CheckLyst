@@ -39,7 +39,10 @@
 
         map = function () {
             var
-                expression = {},
+                expression = {
+                    dependingRelations: [],
+                    dependentRelations: []
+                },
                 notificationCheck = $("input[name=notification]", form),
                 code = getCode();
 
