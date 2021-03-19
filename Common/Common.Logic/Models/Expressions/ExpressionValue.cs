@@ -21,7 +21,13 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
         public override void Check(ICheckList CheckList, Expression Expression, List<string> IteratorStack)
         {
-            DataType = CheckList.Expressions[ExpressionCode].DataType;
+            var ReferencedException = CheckList.Expressions[ExpressionCode];
+            if (ReferencedException.Error != null)
+            {
+                DataType = DataType.Unknown;
+                throw new UnknowDataTypeException(Position);
+            }
+            DataType = ReferencedException.DataType;
         }
 
         public override TypedValue GetValue(IElementsBranch ElementsBranch, Dictionary<string, int> IterationIndexes, string TimeZone)

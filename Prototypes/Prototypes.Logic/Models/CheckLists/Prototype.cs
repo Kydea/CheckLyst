@@ -76,18 +76,14 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 ExternalSourceDependencyNodes.Add(ExternalSource, new ExternalSourceDependencyNode { Code = ExternalSource });
 
             foreach (var expression in Expressions)
+            {
+                expression.Value.DependencyChainAction = e => e.Check(this);
+                expression.Value.ClearDependencies();
+
                 try
                 {
-                    if (expression.Key.Length > 50)
-                        throw new Exception($"Expression codes must not exceed 50 characters");
-
-                    if (expression.Value.Description?.Length > 100)
-                        throw new Exception($"Expression descriptions must not exceed 100 characters");
-
                     expression.Value.Validate(this, expression.Key);
                     expression.Value.Parse(this);
-                    expression.Value.ClearDependencies();
-                    expression.Value.DependencyChainAction = e => e.Check(this);
                 }
                 catch (ParseException Exception)
                 {
@@ -100,6 +96,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                     expression.Value.Error = Exception.Message;
                     Valid = false;
                 }
+            }
 
             Valid &= BuildDependencies();
 

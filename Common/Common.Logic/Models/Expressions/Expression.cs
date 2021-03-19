@@ -43,18 +43,21 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
         public void Validate(ICheckList checkList, string Code)
         {
+            Error = null;
+            this.Code = Code;
+
             if (string.IsNullOrWhiteSpace(Description) && (Unique != Uniqueness.no || Exception || Notification))
                 throw new Exception($"Unique, exception and notification expressions must have a description");
-
             if (SerializedValue?.Length >= MAXIMUM_LENGTH)
                 throw new Exception($"Expressions length must not exceed {MAXIMUM_LENGTH - 1} characters");
-
-            this.Code = Code;
+            if (Code.Length > 50)
+                throw new Exception($"Expression codes must not exceed 50 characters");
+            if (Description?.Length > 100)
+                throw new Exception($"Expression descriptions must not exceed 100 characters");
         }
 
         public void Parse(ICheckList checkList)
         {
-            Error = null;
             Root = new TokenSet(SerializedValue, new Position()).Symbol;
             Root.Expression = this;
             Value = Value ?? new TypedValue(DataType.Error, null);
@@ -105,6 +108,11 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                     throw new Exception($"Unique expressions cannot be arrays");
 
                 return true;
+            }
+            catch (UnknowDataTypeException Exception)
+            {
+                ErrorPosition = Exception.Position;
+                return false;
             }
             catch (ParseException Exception)
             {

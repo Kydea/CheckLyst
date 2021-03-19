@@ -168,7 +168,7 @@
             cells.filter(".DataTypeColumn").text(row.dataType && row.dataType.typeName).attr("title", row.serializedValue);
             commands.find(".Valid")
                 .removeClass("fa-check fa-times fa-question Off")
-                .attr("title", row.dataType == null || row.dataType.typeName == null ? "The expression could not be evaluated" : row.error)
+                .attr("title", row.dataType == null || row.dataType.typeName == null ? "The expression type could not be evaluated" : row.error)
                 .addClass(row.dataType == null || row.dataType.typeName == null ? "fa-question" : row.error ? "fa-times" : "fa-check");
             commands.find(".Unique").toggleClass("Off", row.unique == 0);
             commands.find(".Exception").toggleClass("Off", !row.exception);
@@ -194,7 +194,7 @@
 
                     cells.find("i.Valid")
                         .removeClass("fa-check fa-times fa-question Off")
-                        .attr("title", error || "")
+                        .attr("title", row.dataType == null || row.dataType.typeName == null ? "The expression type could not be evaluated" : row.error)
                         .addClass(row.dataType == null || row.dataType.typeName == null ? "fa-question" : error == null ? "fa-check" : "fa-times");
 
                     cells.find(".DataTypeColumn").text(row.dataType && row.dataType.typeName);

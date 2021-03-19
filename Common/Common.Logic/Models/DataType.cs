@@ -67,6 +67,7 @@ namespace CheckListManager.Common.Logic.Models
 		public static DataType Time = new DataType(DataTypeEnum.Time, "Time", typeof(TimeSpan?));
         public static DataType Array = new DataType(DataTypeEnum.Array, "Array", typeof(List<TypedValue>));
         public static DataType Error = new DataType(DataTypeEnum.Error, "Error", typeof(string));
+        public static DataType Unknown = new DataType(DataTypeEnum.Unkown, null, null);
 
         public static DataType FromName(string name, bool strict = false)
         {
@@ -78,13 +79,14 @@ namespace CheckListManager.Common.Logic.Models
 				name == "Time" ? Time :
                 name == "Array" ? Array :
 				name == "Error" ? Error :
-				name == "Text" || !strict ? Text : 
+				name == "Text" ? Text : 
+                name == "Unknown" || !strict ? Unknown :
                 throw new InvalidOperationException($"DataType {name} not valid");
         }
 
         public enum DataTypeEnum
 		{
-			Text, Boolean, Number, DateTime, Date, Time, Array, Error
+			Text, Boolean, Number, DateTime, Date, Time, Array, Error, Unkown
 		}
 	}
 }
