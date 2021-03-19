@@ -11,6 +11,8 @@
         prototypeTypesList,
         properties,
         item,
+        model, 
+        oldModel,
 
         copyModel = function (source, destination) {
             for (var property in source)
@@ -35,10 +37,9 @@
     propertyPanel.select = function (value, options) {
         if (!!value) item = value;
 
-        var
-            model = item.getModel(),
-            state = prototypes.prototype.getModel().state,
-            oldModel = {};
+        var state = prototypes.prototype.getModel().state;
+        model = item.getModel(),
+        oldModel = {};
 
         copyModel(model, oldModel);
 
