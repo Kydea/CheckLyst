@@ -54,6 +54,8 @@
                 else
                     prototypes.prototype.selectById(item.typeName == "Page" ? "Page" : "ItemId", item.typeName == "Page" ? item.index : item.id);
             }
+
+            autoCenter.center();
         },
 
         toggleErrors = function (tr, model) {

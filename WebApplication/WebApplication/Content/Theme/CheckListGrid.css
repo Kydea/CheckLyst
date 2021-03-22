@@ -75,8 +75,12 @@ div.CheckListGrid div.Container {
       border-radius: 15px 15px 0 0; }
       div.CheckListGrid div.Container h2 {
         border-radius: 15px 15px 0 0; }
+      div.CheckListGrid div.Container div.Buttons::after {
+        content: "";
+        display: table;
+        clear: both; }
     div.CheckListGrid div.ScrollablePanel {
-      max-height: calc(100vh - 200px); } }
+      max-height: calc(100vh - 240px); } }
 
 @media only screen and (max-width: 759px) {
   div.CheckListGrid div.Container {

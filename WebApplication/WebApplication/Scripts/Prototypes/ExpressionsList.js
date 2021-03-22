@@ -82,6 +82,8 @@
             openButton.toggle(editable);
             if (useButton) useButton.toggle(editable);
             dependenciesButton.toggle(currentIndex != null);
+
+            autoCenter.center();
         },
 
         open = function (index) {

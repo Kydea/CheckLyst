@@ -121,10 +121,18 @@ div.CheckListGrid {
             h2 {
                 border-radius: 15px 15px 0 0;
             }
+
+            div.Buttons {
+                &::after {
+                    content: "";
+                    display: table;
+                    clear: both;
+                }
+            }
         }
 
         div.ScrollablePanel {
-            max-height: calc(100vh - 200px);
+            max-height: calc(100vh - 240px); //overridden by js (autoCenter.js)
         }
     }
 
