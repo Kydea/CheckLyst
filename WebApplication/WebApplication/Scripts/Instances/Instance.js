@@ -72,11 +72,15 @@
             return versionState == prototypes.Prototype.states.draft ? "test" : versionState == prototypes.Prototype.states.simulation || year == 0 ? "SE" : year || "?";
         },
 
+        getInstanceCode = function () {
+            return prototypeName + "." + version + "." + getFormattedYear() + "." + (number || "?");
+        },
+
         setupBreadcrumbs = function () {
             matematici.breadcrumbs.set([
                 { content: departmentName, label: "department" },
                 { content: prototypeTypeName, label: "prototype type" },
-                { content: prototypeName + "." + version + "." + getFormattedYear() + "." + (number || "?"), label: "code" },
+                { content: getInstanceCode(), label: "code" },
                 { content: state, label: "state" }
             ]);
         },
@@ -263,7 +267,7 @@
             }
 
             workFlowSignature = new matematici.WorkFlowSignature({
-                title: "Instance confirmation",
+                title: "Instance " + getInstanceCode(),
                 reason: row.reason,
                 url: element.data("signature"),
                 instance: id,
@@ -464,7 +468,7 @@
                 { name: "user", label: "User" },
                 { name: "approved", label: "Approved", align: "center" },
             ];
-            new matematici.CheckListGrid(result.steps,
+            new matematici.CheckListGrid("Instance " + getInstanceCode(), result.steps,
                 function (grid, row) {
                     return sign(grid, result.steps, row);
                 },
@@ -509,7 +513,7 @@
                     }
                     return true;
                 },
-                checkListGrid = new matematici.CheckListGrid(result, null, null, columns, rowRenderHandler),
+                checkListGrid = new matematici.CheckListGrid("Instance " + getInstanceCode(), result, null, null, columns, rowRenderHandler),
                 parameters = checkListGrid.getParameters(),
                 attributes = { type: "text", readonly: "readonly" };
 

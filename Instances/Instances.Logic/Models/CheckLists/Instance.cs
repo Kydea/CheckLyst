@@ -65,9 +65,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             Expressions == null ? null : new PascalCaseDictionary<string, string>(Expressions.Where(e => 
                 e.Value?.Exception == true 
                 && (
-                    e.Value.Value.Type == DataType.Boolean && e.Value.Value.BooleanValue
-                    || e.Value.Value.Type == DataType.Date && e.Value.Value.DateTimeValue <= DateTimeOffset.UtcNow
-                    || e.Value.Value.Type == DataType.DateTime && e.Value.Value.DateTimeValue <= DateTimeOffset.UtcNow
+                    e.Value.Value?.Type == DataType.Boolean && e.Value.Value.BooleanValue
+                    || e.Value.Value?.Type == DataType.Date && e.Value.Value.DateTimeValue <= DateTimeOffset.UtcNow
+                    || e.Value.Value?.Type == DataType.DateTime && e.Value.Value.DateTimeValue <= DateTimeOffset.UtcNow
                 )
            ).ToDictionary(k => k.Key, v => v.Value?.Description));
         public PascalCaseDictionary<string, string> ExternalSources { get; set; }

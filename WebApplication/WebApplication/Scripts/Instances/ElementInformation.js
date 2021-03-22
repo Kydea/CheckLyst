@@ -39,7 +39,7 @@
                             { name: "value", label: "Value", type: "Boolean" }
                         ];
                     //back compatbility before icon change for signature history
-                    new matematici.CheckListGrid(model.history, null, null, columns, function (checkListGrid, rowIndex, row) {
+                    new matematici.CheckListGrid("History", model.history, null, null, columns, function (checkListGrid, rowIndex, row) {
                         row.action = row.action && row.action.replace("fi fi-fw flaticon-check", "fal fa-check").replace("fi fi-fw flaticon-trash-o", "fal fa-trash");
                     });
                 })));

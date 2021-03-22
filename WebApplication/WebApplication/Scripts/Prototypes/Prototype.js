@@ -253,7 +253,7 @@
             if (currentItem) select(null, null);
             currentItem = null;
             var result = {};
-            if (className == "Prototype") 
+            if (className == "Prototype")
                 selectByElementId("Prototype");
             else {
                 if (className != "Page") findItem(model, id, null, result);
@@ -560,7 +560,7 @@
             }
 
             workFlowSignature = new matematici.WorkFlowSignature({
-                title: action,
+                title: getPrototypeCode() + " " + action,
                 reason: row.reason,
                 url: element.data("signature"),
                 prototype: prototypeKey.id,
@@ -596,11 +596,15 @@
             return true;
         },
 
+        getPrototypeCode = function () {
+            return (model.name || "?") + "." + (model.version || "?");
+        },
+
         setupBreadcrumbs = function () {
             matematici.breadcrumbs.set([
                 { content: model.departmentName || "?", label: "department" },
                 { content: model.prototypeTypeName || "?", label: "prototype type" },
-                { content: (model.name || "?") + "." + (model.version || "?"), label: "code" },
+                { content: getPrototypeCode(), label: "code" },
                 { content: model.state, label: "state" }
             ]);
         },
@@ -887,7 +891,7 @@
                 { name: "user", label: "User" },
                 { name: "approved", label: "Approved", align: "center" },
             ];
-            new matematici.CheckListGrid(result.steps,
+            new matematici.CheckListGrid("Prototype " + getPrototypeCode(), result.steps,
                 function (grid, row) {
                     return sign(result.action, grid, result.steps, row);
                 },
@@ -950,7 +954,7 @@
                     }
                     return true;
                 },
-                checkListGrid = new matematici.CheckListGrid(result, null, null, columns, rowRenderHandler),
+                checkListGrid = new matematici.CheckListGrid("Prototype " + getPrototypeCode(), result, null, null, columns, rowRenderHandler),
                 parameters = checkListGrid.getParameters(),
                 attributes = { type: "text", readonly: "readonly" };
 

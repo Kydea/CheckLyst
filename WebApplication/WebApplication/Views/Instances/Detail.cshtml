@@ -52,7 +52,7 @@
 
             actionBar = new matematici.ActionBar("div.ActionBar")
                 .add("<i class='Icon fa fa-calculator'></i>", function () {
-                    new matematici.CheckListGrid(instance.getExpressions(), null, function (tr, row, rowIndex, columnIndex, passedValue) {
+                    new matematici.CheckListGrid("Expressions list", instance.getExpressions(), null, function (tr, row, rowIndex, columnIndex, passedValue) {
                         var
                             typeName = row.typeName,
                             value = row.value;

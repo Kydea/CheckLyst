@@ -1,4 +1,4 @@
-﻿matematici.CheckListGrid = function (values, handler, renderHandler, columns, rowRenderHandler) {
+﻿matematici.CheckListGrid = function (title, values, handler, renderHandler, columns, rowRenderHandler) {
 	var
 		checkListGrid = this,
 		element,
@@ -10,7 +10,7 @@
             matematici.checkListGrid = checkListGrid;
 			matematici.elements.body.addClass("CheckListGrid");
             element = $("<div />").addClass("CheckListGrid").appendTo(matematici.elements.body);
-            container = $("<div />").addClass("ScrollablePanel").appendTo($("<div />").addClass("Container").appendTo(element));
+            container = $("<div />").addClass("ScrollablePanel").appendTo($("<div />").append($("<h2 />").html(title)).addClass("Container").appendTo(element));
             autoCenter = new matematici.AutoCenter(container.parent());
             autoCenter.initialize();
 
@@ -123,7 +123,11 @@
         matematici.checkListGrid = null;
 	}
 
-	checkListGrid.addRow = addRow;
+    checkListGrid.getTitle = function () {
+        return title;
+    };
+
+    checkListGrid.addRow = addRow;
 
 	setup();
 }
