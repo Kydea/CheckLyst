@@ -23,6 +23,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public bool IterationItem { get; set; }
         public bool IteratorModelItem { get; set; }
         public int IteratorModelItemId { get; set; }
+        public bool TableContent { get; set; }
         public virtual bool NewLine { get; set; }
         public ICheckListPage Page { get; set; }
         [JsonIgnore]
@@ -36,6 +37,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         {
             var Result = true;
             if (!IterationItem) Result = base.Setup();
+            TableContent = Group != null && (Group.ShowAsTable || ((Group)Group).TableContent);
             CheckList.AddItem(this);
             return Result;
         }
@@ -83,7 +85,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 NeedToUpdate.Remove(Property);
             }
 
-            if (!IteratorModelItem || Property == DependencyRelation.Properties.Formula) //needed for the header of the table, could be imporved by checking if an ancestor is a table
+            if (!IteratorModelItem || Property == DependencyRelation.Properties.Formula && TableContent) //needed for the headers of the table
                 OnUpdate(Property);
 
             return true;
@@ -201,7 +203,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public override dynamic GetViewModel()
         {
             var elementModel = base.GetViewModel();
-            elementModel.DescriptionValue = DescriptionValue;
+            elementModel.DescriptionValue = TableContent ? FindIteratorModelItem().DescriptionValue : DescriptionValue;
             elementModel.Id = Id;
             elementModel.TypeName = TypeName;
             if (NewLine)
