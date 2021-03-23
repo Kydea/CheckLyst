@@ -18,7 +18,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         public int LinesCount { get; set; }
 		public string Value { get; set; }
-        public Formula ValueFormula { get; } = new Formula();
+        private Formula ValueFormula { get; } = new Formula();
 		public string ValueFormulaString { get; set; }
 
         private List<string> _ValuesList;

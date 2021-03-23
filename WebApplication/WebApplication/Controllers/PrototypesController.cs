@@ -43,5 +43,11 @@ namespace CheckListManager.WebApplication.Controllers
         {
             return ConditionalView("ExpressionEditor");
         }
+
+        [Route("ScriptEditor")]
+        public ActionResult ScriptEditor()
+        {
+            return ConditionalView("ScriptEditor");
+        }
     }
 }

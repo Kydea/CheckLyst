@@ -258,18 +258,21 @@
     <Content Include="Scripts\Ace\keybinding-sublime.js" />
     <Content Include="Scripts\Ace\keybinding-vim.js" />
     <Content Include="Scripts\Ace\keybinding-vscode.js" />
+    <Content Include="Scripts\Ace\mode-json.js" />
     <Content Include="Scripts\Ace\snippets\expression.js" />
     <Content Include="Scripts\Ace\mode-expression.js" />
-    <Content Include="Scripts\Ace\theme-expression.js" />
+    <Content Include="Scripts\Ace\theme-custom.js" />
     <Content Include="Scripts\Ace\worker-base.js" />
+    <Content Include="Scripts\Ace\worker-json.js" />
     <Content Include="Scripts\Controls\Calendar.js" />
     <Content Include="Scripts\Controls\Controls.js" />
     <Content Include="Scripts\Controls\DatePicker.js" />
-    <Content Include="Scripts\Controls\ExpressionEditor.js" />
+    <Content Include="Scripts\Custom\ExpressionEditor.js" />
     <Content Include="Scripts\Controls\Grid.js" />
     <Content Include="Scripts\Controls\DetailPage.js" />
     <Content Include="Scripts\Controls\SearchPage.js" />
     <Content Include="Scripts\Controls\ButtonGroup.js" />
+    <Content Include="Scripts\Custom\ScriptEditor.js" />
     <Content Include="Scripts\Custom\AutoCenter.js" />
     <Content Include="Scripts\Custom\Accordion.js" />
     <Content Include="Scripts\Custom\GridFiltersBar.js" />
@@ -494,6 +497,7 @@
     <Content Include="Views\FTPServers\List.cshtml" />
     <Content Include="Views\Trail\UsersList.cshtml" />
     <Content Include="Views\Prototypes\ExpressionEditor.cshtml" />
+    <Content Include="Views\Prototypes\ScriptEditor.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

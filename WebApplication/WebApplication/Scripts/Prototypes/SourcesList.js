@@ -176,7 +176,6 @@
                     .append($("<i />").addClass("fas fa-times-circle"))
                     .on("click", function () {
                         close();
-                        prototypes.prototype.verify();
                     }));
 
             var scrollablePanel = $("<div />").addClass("ScrollablePanel").appendTo(container);
@@ -205,6 +204,9 @@
             var
                 buttons =
                     $("<div />").addClass("Buttons").appendTo(container.parent())
+                        .append($("<a />").addClass("Button").text("close").prepend($("<i />").addClass("Icon fa fa-check")).on("click", function () {
+                            close();
+                        }))
                         .append($("<a />").addClass("Button").text("add").toggle(model.state == prototypes.Prototype.states.draft).prepend($("<i />").addClass("Icon fa fa-plus")).on("click", function () {
                             matematici.canClose = false;
                             add({ code: "" });

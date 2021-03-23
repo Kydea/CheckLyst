@@ -107,13 +107,17 @@
                 enableBasicAutocompletion: true,
                 enableSnippets: true
             });
-            editor.setTheme("ace/theme/expression")
+            editor.setTheme("ace/theme/custom")
             editor.setShowPrintMargin(false);
 
             languageTools.setCompleters([customCompleter])
             editor.commands.on('afterExec', execHandler);
 
             elementCodes = prototypes.prototype.getElementCodes();
+
+            setTimeout(function () {
+                editor.focus();
+            }, 0);
         };
 
     this.setReadOnly = function (value) {
@@ -147,20 +151,3 @@
 
     setup();
 }
-
-/*
-matematici.ExpressionEditorConstants.properties = {};
-matematici.ExpressionEditorConstants.propertiesCodes = {
-    field: ["Value", "Valid", "Error", "ModifiedBy", "ModifiedOn"]
-}
-matematici.ExpressionEditorConstants.properties.field = matematici.ExpressionEditorConstants.propertiesCodes.field.map(function (value) { return { name: value, value: value, meta: "field property" } });
-
-matematici.ExpressionEditorConstants.propertiesCodes = {
-    validityElement: ["Valid"],
-    editableItem: ["ModifiedBy", "ModifiedOn"],
-    field: ["Value"],
-    signature: ["Signed", "SignedBy", "SignedOn", "ModifiedBy", "ModifiedOn", "HistoryLength", "HistoryLength"],
-    iterator: ["Count", "IterationIndex", ],
-}
-matematici.ExpressionEditorConstants.properties.field = matematici.ExpressionEditorConstants.propertiesCodes.field.map(function (value) { return { name: value, value: value, meta: "field property" } });
-*/

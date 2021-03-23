@@ -30,6 +30,9 @@ a {
   a.Right {
     float: right; }
 
+pre {
+  margin: 0; }
+
 i.fa, i.fal {
   font-size: 16px; }
 

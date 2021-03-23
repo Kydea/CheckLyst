@@ -186,7 +186,6 @@
         },
 
         setup = function () {
-
             var buttons = [];
 
             buttons.push({ cancelButton: true, hidden: true, handler: cancel });

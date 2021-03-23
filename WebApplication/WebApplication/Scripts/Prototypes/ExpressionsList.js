@@ -252,7 +252,6 @@
                 if (!visible && flags[2]) visible = !!expression.serializedValue && expression.serializedValue.indexOf(keyword) >= 0;
                 if (visible && !flags[3]) visible = expression.error == null;
                 if (visible && !flags[4]) visible = expression.error != null;
-                console.log(flags, expression);
                 rows.eq(index).toggle(visible).toggleClass("Even", filtering && even).toggleClass("Odd", filtering && !even);
                 if (visible) even = !even;
             }
@@ -322,23 +321,30 @@
                 });
 
             var
-                buttons =
-                    $("<div />").addClass("Buttons").appendTo(container.parent())
-                        .append(openButton = $("<a />").addClass("Button").text("open").hide().prepend($("<i />").addClass("Icon fa fa-edit")).on("click", function () {
-                            open(currentIndex);
-                        }))
-                        .append($("<a />").addClass("Button").text("add").toggle(model.state == prototypes.Prototype.states.draft).prepend($("<i />").addClass("Icon fa fa-plus")).on("click", function () {
-                            open();
-                        }))
-                        .append(dependenciesButton = $("<a />").addClass("Button").text("dependencies").hide().prepend($("<i />").addClass("Icon fa fa-sitemap")).on("click", function () {
-                            showDependencies();
-                        }));
+                buttons = $("<div />").addClass("Buttons").appendTo(container.parent());
 
             if (options && options.useHandler)
                 buttons.append(useButton = $("<a />").addClass("Button").text("use").hide().prepend($("<i />").addClass("Icon fa fa-check")).on("click", function () {
+                    updatePrototype();
                     use();
                     close();
+                }));
+            else
+                buttons.append($("<a />").addClass("Button DefaultButton").text("close").prepend($("<i />").addClass("Icon fa fa-check")).on("click", function () {
+                    updatePrototype();
+                    close();
+                }));
+
+            buttons
+                .append(openButton = $("<a />").addClass("Button").text("open").hide().prepend($("<i />").addClass("Icon fa fa-edit")).on("click", function () {
+                    open(currentIndex);
                 }))
+                .append($("<a />").addClass("Button").text("add").toggle(model.state == prototypes.Prototype.states.draft).prepend($("<i />").addClass("Icon fa fa-plus")).on("click", function () {
+                    open();
+                }))
+                .append(dependenciesButton = $("<a />").addClass("Button").text("dependencies").hide().prepend($("<i />").addClass("Icon fa fa-sitemap")).on("click", function () {
+                    showDependencies();
+                }));
 
             for (var code in model.expressions)
                 insert(model.expressions[code]);

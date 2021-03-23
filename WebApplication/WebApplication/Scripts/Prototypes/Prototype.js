@@ -379,18 +379,6 @@
                 element.cloned = true;
         },
 
-        traverseForImport = function (element) {
-            element.id = getNewItemsId();
-            if (element.typeName == "Page")
-                for (var index in element.groups)
-                    traverseForImport(element.groups[index]);
-            else if (element.typeName == "Group")
-                for (var index in element.items)
-                    traverseForImport(element.items[index]);
-            else if (element.typeName == "Image")
-                element.cloned = true;
-        },
-
         findItemByCode = function (code, element) {
             if (!element) {
                 var item = findItemByCode(code, model.header);
@@ -965,84 +953,8 @@
         });
     };
 
-    prototype.import = function () {
-        var handler = function () {
-            var oldModel = model;
-            try {
-                model = JSON.parse($("textarea", matematici.dialog.getElement()).val());
-                model.name = oldModel.name;
-                model.department = oldModel.department;
-                model.prototypeType = oldModel.prototypeType;
-                model.version = oldModel.version;
-                model.validFrom = oldModel.validFrom;
-                model.validUntil = oldModel.validUntil;
-                model.state = prototypes.Prototype.states.draft;
-                model.itemIDSequence = 0;
-
-                //prototype from versions < 2.2
-                for (var code in model.expressions) {
-                    var expression = model.expressions[code];
-                    if (code == "h_SAP_Issued_quantity") console.log(expression)
-                    expression.code = code;
-                    expression.unique = expression.unique >= "0" && expression.unique >= "2" ? expression.unique : "0";
-                }
-
-                traverseForImport(model.header);
-                for (var page in model.pages) {
-                    model.pages[page].typeName = "Page";
-                    traverseForImport(model.pages[page]);
-                }
-
-                update();
-                matematici.canClose = false;
-                prototype.verify(function (valid) { if (valid) matematici.blip.ok(); })
-            } catch (error) {
-                matematici.dialog.error("Error", error);
-                model = oldModel;
-                update();
-                return true;
-            }
-        };
-
-        matematici.dialog.show({
-            title: "Prototype import",
-            content: "Attention, the current prototype properties and items will be replaced by the imported one.<br />",
-            buttons: [{
-                textarea: true,
-                height: 300,
-                marginTop: "10px",
-            }, {
-                icon: "check",
-                text: "ok",
-                handler: handler
-            }, {
-                icon: "times",
-                text: "cancel",
-                cancelButton: true
-            }]
-        });
-    };
-
-    prototype.export = function () {
-        matematici.dialog.show({
-            title: "Click to copy",
-            buttons: [{
-                textarea: true,
-                val: JSON.stringify(model),
-                readOnly: true,
-                height: 300,
-                handler: function () {
-                    $(this).select();
-                    document.execCommand("copy");
-                    matematici.blip.ok(matematici.dialog.close());
-                }
-            }, {
-                hidden: true,
-                cancelButton: true
-            }]
-        });
-
-        matematici.dialog.setWidth(600);
+    prototype.scriptEditor = function () {
+        new matematici.ScriptEditor();
     };
 
     prototype.download = function () {
@@ -1088,6 +1000,21 @@
 
     prototype.ensureImageWillNotBeDeleted = function (key) {
         Array.removeElement(imagesToDelete, key);
+    };
+
+    prototype.setModel = function (newModel) {
+        newModel.name = model.name;
+        newModel.department = model.department;
+        newModel.prototypeType = model.prototypeType;
+        newModel.version = model.version;
+        newModel.validFrom = model.validFrom;
+        newModel.validUntil = model.validUntil;
+        newModel.state = prototypes.Prototype.states.draft;
+        newModel.itemIDSequence = 0;
+        model = newModel;
+        update();
+        matematici.canClose = false;
+        prototype.verify(function (valid) { if (valid) matematici.blip.ok(); })
     };
 
     prototype.getNewItemsId = getNewItemsId;

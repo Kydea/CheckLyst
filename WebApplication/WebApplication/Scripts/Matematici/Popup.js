@@ -149,7 +149,11 @@ matematici.popup = function () {
 
 		getElement: function () {
 			return element;
-		},
+        },
+
+        getButtonsBar: function () {
+            return container.children("div.Buttons");
+        },
 
 		getResult: function () {
 			return result;
