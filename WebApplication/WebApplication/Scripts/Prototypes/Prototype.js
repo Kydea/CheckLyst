@@ -419,7 +419,7 @@
                     var page = model.pages[pageIndex];
 
                     if (page.code)
-                        codes.push({ code: element.code, type: "item (Page)" });
+                        codes.push({ code: page.code, type: "item (Page)" });
 
                     for (var groupIndex in page.groups)
                         getElementCodes(page.groups[groupIndex], codes);
