@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CheckListManager.Common.Logic.Dependency;
+using CheckListManager.Common.Logic.Models;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using Newtonsoft.Json;
 
@@ -16,24 +17,22 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public List<ICheckListItem> Items { get; set; } = new List<ICheckListItem>();
         public List<ICheckListIteration> Iterations { get; } = new List<ICheckListIteration>();
         public bool Iterator { get; set; }
-
         public bool ShowAsTable { get; set; }
-
         public int InstanceIterations { get; set; }
-
         public int PrototypeIterations { get; set; }
-
-        public bool DisableAdd { get; set; }
-
-        public bool DisableRemove { get; set; }
-
-        public bool DisableMove { get; set; }
-
+        public bool DisableAdd { set { AddIterationCondition = value ? Conditions.False : Conditions.True; } } //for compatibility with version < 3.0
+        public bool DisableRemove { set { RemoveIterationCondition = value ? Conditions.False : Conditions.True; } } //for compatibility with version < 3.0
+        public bool DisableMove { set { MoveIterationCondition = value ? Conditions.False : Conditions.True; } } //for compatibility with version < 3.0
+        public Conditions AddIterationCondition { get; set; } = Conditions.True;
+        public string AddIterationExpressionCode { get; set; }
+        public Conditions RemoveIterationCondition { get; set; } = Conditions.True;
+        public string RemoveIterationExpressionCode { get; set; }
+        public Conditions MoveIterationCondition { get; set; } = Conditions.True;
+        public string MoveIterationExpressionCode { get; set; }
         [JsonIgnore]
         public string ModifiedBy { get; }
         [JsonIgnore]
         public DateTimeOffset? ModifiedOn { get; }
-
         private bool InTable { get; set; }
 
         public override bool Setup()
@@ -112,9 +111,12 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 ShowAsTable = ShowAsTable,
                 InstanceIterations = InstanceIterations,
                 PrototypeIterations = PrototypeIterations,
-                DisableAdd = DisableAdd,
-                DisableRemove = DisableRemove,
-                DisableMove = DisableMove,
+                AddIterationCondition = AddIterationCondition,
+                AddIterationExpressionCode = AddIterationExpressionCode,
+                RemoveIterationCondition = RemoveIterationCondition,
+                RemoveIterationExpressionCode = RemoveIterationExpressionCode,
+                MoveIterationCondition = MoveIterationCondition,
+                MoveIterationExpressionCode = MoveIterationExpressionCode,
                 Group = parent
             };
             foreach (var item in Items)
@@ -127,6 +129,16 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public override bool BuildDependencies()
         {
             var Result = base.BuildDependencies();
+
+            if (AddIterationCondition == Conditions.Expression)
+                Result &= GetExpression(AddIterationExpressionCode, DependencyRelation.Properties.AddIteration, "add-iteration");
+
+            if (RemoveIterationCondition == Conditions.Expression)
+                Result &= GetExpression(RemoveIterationExpressionCode, DependencyRelation.Properties.RemoveIteration, "remove-iteration");
+
+            if (MoveIterationCondition == Conditions.Expression)
+                Result &= GetExpression(MoveIterationExpressionCode, DependencyRelation.Properties.MoveIteration, "move-iteration");
+
             foreach (Item Item in Items)
             {
                 if (HiddenCondition != Conditions.True || HiddenCondition == Conditions.Expression)
@@ -144,6 +156,16 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public override bool Check()
         {
             var Result = base.Check();
+
+            if (AddIterationCondition == Conditions.Expression)
+                Result &= CheckExpression("add-iteration", AddIterationExpressionCode, DataType.Boolean);
+
+            if (RemoveIterationCondition == Conditions.Expression)
+                Result &= CheckExpression("remove-iteration", RemoveIterationExpressionCode, DataType.Boolean);
+
+            if (MoveIterationCondition == Conditions.Expression)
+                Result &= CheckExpression("move-iteration", MoveIterationExpressionCode, DataType.Boolean);
+
             foreach (Item Item in Items)
                 Result &= Item.Check();
             return Result;

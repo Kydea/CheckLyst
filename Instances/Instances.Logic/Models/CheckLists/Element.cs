@@ -97,7 +97,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 ValidCondition == Conditions.True;
         }
 
-        public bool ReadOnly { get; protected set; }
+        public bool ReadOnly { get; protected set; } //set is protected because this property is not persistent
         public Conditions ReadOnlyCondition { get; set; }
         public string ReadOnlyExpressionCode { get; set; }
         protected virtual bool IsReadOnlyByDefault() => false;
@@ -172,7 +172,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         #region Dependency
 
-        private void GetExpression(string ExpressionCode, DependencyRelation.Properties SourceProperty, string PropertyName)
+        protected void GetExpression(string ExpressionCode, DependencyRelation.Properties SourceProperty, string PropertyName)
         {
             if (!string.IsNullOrEmpty(ExpressionCode) && CheckList.Expressions.TryGetValue(ExpressionCode, out var Expression))
                 AddDependingRelation(SourceProperty, Expression, DependencyRelation.Properties.Value);

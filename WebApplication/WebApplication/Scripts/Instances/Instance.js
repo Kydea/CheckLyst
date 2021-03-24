@@ -30,6 +30,7 @@
         lastResult,
         deleted,
         removedIterationsVisible = false,
+        model,
         Button,
 
         setupInstanceDescription = function () {
@@ -128,7 +129,7 @@
 
         update = function (result) {
             lastResult = result;
-            var model = result.checkList;
+            model = result.checkList;
             versionState = result.versionState || versionState;
 
             if (result.prototypeDescription) title.text(result.prototypeDescription);
@@ -569,8 +570,11 @@
             callback();
     };
 
-    instance.destroy = function () {
+    instance.getModel = function () {
+        return model;
     };
+
+    instance.destroy = function () { };
 
     instance.showExceptions = showExceptions;
 

@@ -7,6 +7,9 @@
         title,
         iterationCommands,
         addButton,
+        upButton,
+        downButton,
+        removeButton,
         id,
         elementInformation,
         table = false,
@@ -132,46 +135,43 @@
                 if (group.isIteration()) {
                     iterationCommands = document.createElement(tableContent ? "td" : "div");
                     iterationCommands.className = "IterationCommands";
-                    if (!parent.getSetupModel().disableMove) {
-                        var a = document.createElement("a");
-                        a.className = "Up";
-                        a.addEventListener("click", function () {
-                            new instances.Event(instances.Events.up, id).trigger();
-                        });
-                        var i = document.createElement("i");
-                        i.className = "fal fa-caret-up";
-                        a.appendChild(i);
-                        iterationCommands.appendChild(a);
 
-                        a = document.createElement("a");
-                        a.className = "Down";
-                        a.addEventListener("click", function () {
-                            new instances.Event(instances.Events.down, id).trigger();
-                        });
-                        var i = document.createElement("i");
-                        i.className = "fal fa-caret-down";
-                        a.appendChild(i);
-                        iterationCommands.appendChild(a);
-                    }
+                    upButton = document.createElement("a");
+                    upButton.className = "Up";
+                    upButton.addEventListener("click", function () {
+                        new instances.Event(instances.Events.up, id).trigger();
+                    });
+                    var i = document.createElement("i");
+                    i.className = "fal fa-caret-up";
+                    upButton.appendChild(i);
+                    iterationCommands.appendChild(upButton);
 
-                    if (!parent.getSetupModel().disableRemove) {
-                        var a = document.createElement("a");
-                        a.className = "Remove";
-                        a.addEventListener("click", function () {
-                            new instances.Event(instances.Events.remove, id).trigger();
-                        });
-                        var i = document.createElement("i");
-                        i.className = "fal fa-trash-alt";
-                        a.appendChild(i);
-                        iterationCommands.appendChild(a);
-                    }
+                    downButton = document.createElement("a");
+                    downButton.className = "Down";
+                    downButton.addEventListener("click", function () {
+                        new instances.Event(instances.Events.down, id).trigger();
+                    });
+                    var i = document.createElement("i");
+                    i.className = "fal fa-caret-down";
+                    downButton.appendChild(i);
+                    iterationCommands.appendChild(downButton);
+
+                    removeButton = document.createElement("a");
+                    removeButton.className = "Remove";
+                    removeButton.addEventListener("click", function () {
+                        new instances.Event(instances.Events.remove, id).trigger();
+                    });
+                    var i = document.createElement("i");
+                    i.className = "fal fa-trash-alt";
+                    removeButton.appendChild(i);
+                    iterationCommands.appendChild(removeButton);
 
                     element.appendChild(iterationCommands);
                 }
 
 				if (group.isGroup() && !group.isTableContent()) {
                     elementInformation = new instances.ElementInformation(element);
-                    if (setupModel && setupModel.iterator && !setupModel.disableAdd) {
+                    if (setupModel && setupModel.iterator) {
                         addButton = document.createElement("div");
                         addButton.className = "Item NewLine";
                         var a = document.createElement("a");
@@ -201,6 +201,12 @@
             element.classList.toggle("Valid", model.valid);
             element.setAttribute("data-code", model.code);
             element.setAttribute("data-id", model.id);
+            if (model.iterator) {
+                addButton.classList.toggle("Hidden", !model.addIterationButton);
+                element.classList.toggle("HideRemoveButton", !model.removeIterationButton);
+                element.classList.toggle("HideMoveButton", !model.moveIterationButton);
+                element.classList.toggle("HideMoveButton", !model.moveIterationButton);
+            }
 
             if (model.countDownToValue) new instances.CountDown(element, model.countDownToValue, group.isPage() ? -group.getPageIndex() : model.id);
             group.setColor(model.color);
@@ -262,7 +268,7 @@
             item.update(itemModel);
             if (model.iterator) {
                 var itemElement = item.getElement();
-                if (!model.disableMove)
+                if (model.moveIterationButton)
                     item.appendElement();
                 if (!itemModel.removed) {
                     if (lastItem == null) //first visible items

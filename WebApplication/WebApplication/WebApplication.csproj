@@ -432,7 +432,6 @@
     <Content Include="Scripts\Prototypes\ExpressionsList.js" />
     <Content Include="Scripts\Prototypes\Field.js" />
     <Content Include="Scripts\Prototypes\Group.js" />
-    <Content Include="Scripts\Prototypes\HiddenProperty.js" />
     <Content Include="Scripts\Prototypes\Item.js" />
     <Content Include="Scripts\Prototypes\ListProperty.js" />
     <Content Include="Scripts\Prototypes\Property.js" />

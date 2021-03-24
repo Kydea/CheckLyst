@@ -224,6 +224,18 @@ div.Instance {
             }
         }
 
+        &.HideRemoveButton > .Iteration > .IterationCommands {
+            a.Remove {
+                display: none;
+            }
+        }
+
+        &.HideMoveButton > .Iteration > .IterationCommands {
+            a.Up, a.Down {
+                display: none;
+            }
+        }
+
         > div.Information {
 
             div.Panel {

@@ -11,7 +11,7 @@
         prototypeTypesList,
         properties,
         item,
-        model, 
+        model,
         oldModel,
         options,
 
@@ -45,8 +45,10 @@
 
         copyModel(model, oldModel);
 
+        var name = model.typeName;
+
         matematici.popup.show({
-            title: "Properties - " + model.typeName + (model.index != null && " - Index: " + (parseInt(model.index) + 1) || model.id != null && " - ID: " + model.id || "") + (model.code && " - Code: " + model.code || ""),
+            title: "Properties - " + (name == "Prototype" ? "Checklist" : name) + (model.index != null && " - Index: " + (parseInt(model.index) + 1) || model.id != null && " - ID: " + model.id || "") + (model.code && " - Code: " + model.code || ""),
             content: element,
             buttons: [{
                 icon: "check",
@@ -152,7 +154,7 @@
                 itemIndex = item.getIndex(),
                 isHeader = model.typeName == "Group" && parent.getModel().header === model;
 
-            if (!isHeader) 
+            if (!isHeader)
                 properties.push(new prototypes.Property(
                     this, new prototypes.BooleanProperty(model, "pageBreak", state != prototypes.Prototype.states.draft, model.typeName == "Page"), "Page break",
                     "Forces a page break in the pdf version of the checklist before the element."
@@ -177,11 +179,11 @@
 
             if (model.typeName != "Text" && model.typeName != "Link" && model.typeName != "Image")
                 properties.push(new prototypes.Property(
-                    this, new prototypes.ExpressionProperty(model, "readOnly", "read-only"), "Read-only",
+                    this, new prototypes.ExpressionProperty(model, "readOnly", "read-only", true, true, 0), "Read-only",
                     "Determines if the element is editable by the operator or not."
                 ));
             properties.push(new prototypes.Property(
-                this, new prototypes.HiddenProperty(model, "hidden", state != prototypes.Prototype.states.draft), "Hidden",
+                this, new prototypes.ExpressionProperty(model, "hidden", "hidden", false, false, 2), "Hidden",
                 "Determines if the element is visible or not."
             ));
             properties.push(new prototypes.Property(
@@ -191,7 +193,7 @@
 
             if (model.typeName != "Link" && model.typeName != "Text" && model.typeName != "Image") {
                 properties.push(new prototypes.Property(
-                    this, new prototypes.ExpressionProperty(model, "valid", "validity"), "Validity",
+                    this, new prototypes.ExpressionProperty(model, "valid", "validity", true, true, 0), "Validity",
                     "Sets the condition under which the element is considered valid. By default pages and groups are valid if all the contained elements are valid, fields and attachments are valid if not empty, signature are valid if signed. Text are always valid. Attachments are valid if contains a file."
                 ));
                 properties.push(new prototypes.Property(
@@ -215,7 +217,7 @@
                             message: "invalid value"
                         }
                     ]), "Font size",
-                    "The size in pixel of the text (empty or 0 for the default font size).", 
+                    "The size in pixel of the text (empty or 0 for the default font size).",
                     function () { item.setFontSize(model.fontSize); }
                 ));
                 properties.push(new prototypes.Property(
@@ -227,7 +229,7 @@
                         { label: "Green", code: "#009688" },
                         { label: "Grey", code: "#999" },
                         { label: "Yellow", code: "#ffba00" }
-                    ], { readOnly: state != prototypes.Prototype.states.draft }), 
+                    ], { readOnly: state != prototypes.Prototype.states.draft }),
                     "Color",
                     "The color of the text.",
                     function (value) { item.setColor(model.color); }
@@ -237,7 +239,7 @@
             switch (model.typeName) {
                 case "Page":
                     properties.push(new prototypes.Property(
-                        this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }), 
+                        this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }),
                         "Caption",
                         "The caption of the page.",
                         function () { $("div.TabLabels a.Selected", prototypes.prototype.getTab().getElement()).text(model.description); }
@@ -245,7 +247,7 @@
                     break;
                 case "Group":
                     properties.push(new prototypes.Property(
-                        this, new prototypes.SimpleValueProperty(model, "description", { fullHeight: true, readOnly: state != prototypes.Prototype.states.draft }), 
+                        this, new prototypes.SimpleValueProperty(model, "description", { fullHeight: true, readOnly: state != prototypes.Prototype.states.draft }),
                         "Caption",
                         "The caption of the group.",
                         function () { item.getElement().children("h3").text(model.description); }
@@ -262,22 +264,22 @@
                             this, new prototypes.BooleanProperty(model, "iterator", state != prototypes.Prototype.states.draft), "Iterator",
                             "Determines if the group is an iterator.",
                             function () {
-                                showAsTable.getType().setReadOnly(!model.iterator);
-                                instanceIterationsNumber.getType().setReadOnly(!model.iterator);
-                                prototypeIterationsNumber.getType().setReadOnly(!model.iterator);
-                                disableAdd.getType().setReadOnly(!model.iterator);
-                                disableRemove.getType().setReadOnly(!model.iterator);
-                                disableMove.getType().setReadOnly(!model.iterator);
+                                var itaratorCommandsEnabled = prototypes.prototype.getModel().state == prototypes.Prototype.states.draft && model.iterator;
+                                showAsTable.getType().setReadOnly(!itaratorCommandsEnabled);
+                                instanceIterationsNumber.getType().setReadOnly(!itaratorCommandsEnabled);
+                                prototypeIterationsNumber.getType().setReadOnly(!itaratorCommandsEnabled);
+                                addIteration.getType().setReadOnly(!itaratorCommandsEnabled);
+                                removeIteration.getType().setReadOnly(!itaratorCommandsEnabled);
+                                moveIteration.getType().setReadOnly(!itaratorCommandsEnabled);
 
                                 if (!model.iterator) {
                                     model.instanceIterationsNumber = 0;
                                     model.prototypeIterationsNumber = 0;
 
-                                    model.showAsTable =
-                                        model.disableAdd =
-                                        model.disableRemove =
-                                        model.disableMove =
-                                        false;
+                                    model.showAsTable = false;
+                                    model.addIterationCondition = 1;
+                                    model.removeIterationCondition = 1;
+                                    model.moveIterationCondition = 1
                                 }
                             }
                         ));
@@ -300,29 +302,29 @@
                         );
                         properties.push(prototypeIterationsNumber);
 
-                        var disableAdd = new prototypes.Property(
-                            this, new prototypes.BooleanProperty(model, "disableAdd", state != prototypes.Prototype.states.draft || !model.iterator), "Disable add",
-                            "Disable the add button of the iterator."
+                        var addIteration = new prototypes.Property(
+                            this, new prototypes.ExpressionProperty(model, "addIteration", "add-iteration", false, false, 1), "Add iteration",
+                            "Defines if the add button of the iterator is present."
                         );
-                        properties.push(disableAdd);
+                        properties.push(addIteration);
 
-                        var disableRemove = new prototypes.Property(
-                            this, new prototypes.BooleanProperty(model, "disableRemove", state != prototypes.Prototype.states.draft || !model.iterator), "Disable remove",
-                            "Disable the remove button of the iterator."
+                        var removeIteration = new prototypes.Property(
+                            this, new prototypes.ExpressionProperty(model, "removeIteration", "remove-iteration", false, false, 1), "Remove iteration",
+                            "Defines if the remove button of the iterator is present."
                         );
-                        properties.push(disableRemove);
+                        properties.push(removeIteration);
 
-                        var disableMove = new prototypes.Property(
-                            this, new prototypes.BooleanProperty(model, "disableMove", state != prototypes.Prototype.states.draft || !model.iterator), "Disable move",
-                            "Disable the move up and move down buttons of the iterator."
+                        var moveIteration = new prototypes.Property(
+                            this, new prototypes.ExpressionProperty(model, "moveIteration", "move-iteration", false, false, 1), "Move iteration",
+                            "Defines if the mover button of the iterator is present."
                         );
-                        properties.push(disableMove);
+                        properties.push(moveIteration);
                     }
 
                     break;
                 case "Text":
                     properties.push(new prototypes.Property(
-                        this, new prototypes.SimpleValueProperty(model, "description", { fullHeight: true, readOnly: state != prototypes.Prototype.states.draft }), 
+                        this, new prototypes.SimpleValueProperty(model, "description", { fullHeight: true, readOnly: state != prototypes.Prototype.states.draft }),
                         "Content",
                         "The content of the text.",
                         function () { $("p", item.getElement()).html((model.description || '').split('\n').join('<br />')); }
@@ -330,7 +332,7 @@
                     break;
                 case "Field":
                     properties.push(new prototypes.Property(
-                        this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }), 
+                        this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }),
                         "Label",
                         "The label of the item.",
                         function () { $("label", item.getElement()).children("span").text(model.description); }
@@ -354,7 +356,7 @@
 
                     if (!model.linesCount) model.linesCount = 0;
                     properties.push(new prototypes.Property(
-                        this, linesCountProperty = new prototypes.ListProperty(model, "linesCount", linesCountItems, { readOnly: state != prototypes.Prototype.states.draft }), 
+                        this, linesCountProperty = new prototypes.ListProperty(model, "linesCount", linesCountItems, { readOnly: state != prototypes.Prototype.states.draft }),
                         "Size",
                         "The size of the field.",
                         function () {
@@ -364,7 +366,7 @@
                         }
                     ));
                     properties.push(new prototypes.Property(
-                        this, new prototypes.BooleanProperty(model, "newLine", state != prototypes.Prototype.states.draft), 
+                        this, new prototypes.BooleanProperty(model, "newLine", state != prototypes.Prototype.states.draft),
                         "New line",
                         "If checked, the field breaks the line.",
                         function () { item.getElement().toggleClass("NewLine", model.newLine); }
@@ -374,7 +376,7 @@
                         "The value of the field."
                     ));
                     properties.push(new prototypes.Property(
-                        this, new prototypes.ValueTypeProperty(model, "valueTypeName", { readOnly: state != prototypes.Prototype.states.draft }), 
+                        this, new prototypes.ValueTypeProperty(model, "valueTypeName", { readOnly: state != prototypes.Prototype.states.draft }),
                         "Value type",
                         "The data type returned by field. Data type affects the behaviour of the field and restricts the allowed inputs.",
                         function () {
@@ -391,13 +393,13 @@
                     break;
                 case "Signature":
                     properties.push(new prototypes.Property(
-                        this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }), 
+                        this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }),
                         "Label",
                         "The label (cause) of the signature.",
                         function () { $("label", item.getElement()).children("span").text(model.description); }
                     ));
                     properties.push(new prototypes.Property(
-                        this, new prototypes.SimpleValueProperty(model, "buttonLabel", { readOnly: state != prototypes.Prototype.states.draft }), 
+                        this, new prototypes.SimpleValueProperty(model, "buttonLabel", { readOnly: state != prototypes.Prototype.states.draft }),
                         "Button label",
                         "The label of the button.",
                         function () {
@@ -427,13 +429,13 @@
                     break;
                 case "Link":
                     properties.push(new prototypes.Property(
-                        this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }), 
+                        this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }),
                         "Label",
                         "The label of the link.",
                         function () { $("a.Link", item.getElement()).html((model.description || '(no label)')); }
                     ));
                     properties.push(new prototypes.Property(
-                        this, new prototypes.SimpleValueProperty(model, "url", { readOnly: state != prototypes.Prototype.states.draft, fullHeight: true }), 
+                        this, new prototypes.SimpleValueProperty(model, "url", { readOnly: state != prototypes.Prototype.states.draft, fullHeight: true }),
                         "Url",
                         "The url to open.",
                         function () { $("a.Link", item.getElement()).attr("href", model.url); }
@@ -441,7 +443,7 @@
                     break;
                 case "Image":
                     properties.push(new prototypes.Property(
-                        this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }), 
+                        this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }),
                         "Label",
                         "The label of the button.",
                         function () { $("a.Button span", item.getElement()).html((model.description || 'open image')); }
@@ -454,7 +456,7 @@
                     break;
                 case "Attachment":
                     properties.push(new prototypes.Property(
-                        this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }), 
+                        this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }),
                         "Label",
                         "The label of the button.",
                         function () {

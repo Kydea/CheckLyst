@@ -145,6 +145,12 @@ div.Instance .Group .Iteration {
   div.Instance .Group .Iteration.LastIteration > .IterationCommands a.Down {
     display: none; }
 
+div.Instance .Group.HideRemoveButton > .Iteration > .IterationCommands a.Remove {
+  display: none; }
+
+div.Instance .Group.HideMoveButton > .Iteration > .IterationCommands a.Up, div.Instance .Group.HideMoveButton > .Iteration > .IterationCommands a.Down {
+  display: none; }
+
 div.Instance .Group > div.Information div.Panel {
   right: 0;
   border-radius: 10px 0 10px 10px; }

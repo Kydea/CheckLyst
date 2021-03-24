@@ -1326,7 +1326,7 @@ namespace CheckListManager.Instances.Logic.Services
             if (group == null)
                 throw new InstanceException("Group not found");
 
-            if (!group.Iterator || group.DisableAdd)
+            if (!group.Iterator || !group.AddIterationButton)
                 throw new InstanceException("Invalid operation");
 
             Iteration Iteration = null;
@@ -1360,7 +1360,7 @@ namespace CheckListManager.Instances.Logic.Services
             if (iteration == null)
                 throw new InstanceException("Group not found");
 
-            if (iteration.Group.DisableRemove)
+            if (!iteration.Group.Iterator || !((Group)iteration.Group).RemoveIterationButton)
                 throw new InstanceException("Invalid operation");
 
             if (iteration.ReadOnly) return null;
@@ -1392,7 +1392,7 @@ namespace CheckListManager.Instances.Logic.Services
             if (iteration == null)
                 throw new InstanceException("Group not found");
 
-            if (iteration.Group.DisableMove)
+            if (!iteration.Group.Iterator || !((Group)iteration.Group).MoveIterationButton)
                 throw new InstanceException("Invalid operation");
 
             if (iteration.ReadOnly) return null;

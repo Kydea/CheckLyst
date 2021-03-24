@@ -20,17 +20,18 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public Conditions CountDownCondition { get; set; }
         public string CountDownToCode { get; set; }
         public int CountDownOffset { get; set; }
+        [JsonIgnore]
+        public bool Hidden { get; }
         public Conditions HiddenCondition { get; set; } = Conditions.False;
         public string HiddenExpressionCode { get; set; }
+        [JsonIgnore]
+        public bool ReadOnly { get; }
         public Conditions ReadOnlyCondition { get; set; }
         public string ReadOnlyExpressionCode { get; set; }
         public string SignatureCode { get; set; }
-        public bool ReadOnly { get; }
         public Conditions ValidCondition { get; set; }
         public string ValidExpressionCode { get; set; }
         public string ValidityMessage { get; set; }
-        [JsonIgnore]
-        public bool Hidden { get; set; }
         [JsonIgnore]
         public ICheckListSignature Signature => null;
         [JsonIgnore]
@@ -64,7 +65,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             return CheckList.Elements;
         }
 
-        private bool GetExpression(string ExpressionCode, DependencyRelation.Properties SourceProperty, string PropertyName)
+        protected bool GetExpression(string ExpressionCode, DependencyRelation.Properties SourceProperty, string PropertyName)
         {
             var Result = false;
             if (string.IsNullOrEmpty(ExpressionCode))
@@ -127,7 +128,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         public override bool Update(DependencyRelation.Properties Property) => true;
 
-        private bool CheckExpression(string Property, string ExpressionCode, params DataType[] DataType)
+        protected bool CheckExpression(string Property, string ExpressionCode, params DataType[] DataType)
         {
             if (CheckList.Expressions.TryGetValue(ExpressionCode, out var Expression) && !DataType.Any(dt => dt == (Expression.InnerDataType ?? Expression.DataType)))
             {
