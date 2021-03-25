@@ -324,7 +324,7 @@ form {
 
 form, div.CheckList, div.PropertyPanel div.PropertyValue, div.Module {
 
-    label {
+    label, p.Label {
         $Label-Width: 200px;
 
         float: left;

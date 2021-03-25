@@ -9,10 +9,11 @@
         };
 
     this.create = function (valuePanel, baseClass) {
+        if (!options) options = {};
         base = baseClass;
         valuePanel.addClass("Expression");
 
-        if (options.readOnly) {
+        if (options.readOnly || prototypes.prototype.getModel().state != prototypes.Prototype.states.draft) {
             var label = $("<input />")
                 .attr({ type: "text", readOnly: true })
                 .val(model[property])
@@ -39,6 +40,7 @@
     }
 
     this.hasChanges = function () {
+        if (!options) options = {};
         var value = !!options.nullable && !!model[property]
             || !options.nullable && !!model[property] && model[property] != values[0].code && model[property] != values[0];
         return value;
@@ -55,6 +57,10 @@
                 if (values[index] == model[property] || values[index].code == model[property])
                     label = values[index].label || values[index];
         node.text(label);
-    }
+    };
+
+    this.setReadOnly = function (value) {
+        options.readOnly = value;
+    };
 }
 

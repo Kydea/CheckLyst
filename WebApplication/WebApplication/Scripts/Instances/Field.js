@@ -256,6 +256,7 @@
         var formattedDate = null;
         readOnly = !!model.readOnly || !!model.externalSourceName;
         span.innerHTML = model.descriptionValue;
+        if (model.descriptionValue) span.setAttribute("title", model.descriptionValue);
         element.classList.toggle("Inactive", model.readOnly);
         element.classList.toggle("ReadOnly", readOnly);
         input.readOnly = readOnly;

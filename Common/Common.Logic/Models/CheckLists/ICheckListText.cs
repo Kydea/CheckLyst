@@ -2,6 +2,7 @@
 {
 	public interface ICheckListText : ICheckListItem
 	{
-        //int Size { get; set; }
+        int Height { get; set; }
+        int Width { get; set; }
     }
 }

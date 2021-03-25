@@ -105,8 +105,26 @@ div.CheckList div.Item {
   div.CheckList div.Item.Field.Boolean input[value=""] {
     opacity: 0.6; }
   div.CheckList div.Item.Text {
-    width: calc(100% - 20px);
     font-size: 13px; }
+    div.CheckList div.Item.Text p {
+      max-width: 100%;
+      padding-top: 0 !important;
+      margin: 0;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical; }
+    div.CheckList div.Item.Text.Wide {
+      width: calc(100% - 20px); }
+    div.CheckList div.Item.Text.SingleRow {
+      position: relative; }
+      div.CheckList div.Item.Text.SingleRow p {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-height: 54px; }
+        div.CheckList div.Item.Text.SingleRow p.Ellipsis::after {
+          content: "...";
+          position: absolute;
+          right: 0;
+          bottom: 0; }
   div.CheckList div.Item.Signature {
     width: calc(100% - 20px); }
     div.CheckList div.Item.Signature > a.Button {
@@ -149,9 +167,6 @@ div.CheckList div.Item {
       max-width: 100%;
       overflow: hidden;
       text-overflow: ellipsis; }
-
-div.CheckList .Item p.Description {
-  margin: 0; }
 
 div.CheckList.Loading .TabContainer, div.CheckList.Loading .Page {
   display: none !important; }

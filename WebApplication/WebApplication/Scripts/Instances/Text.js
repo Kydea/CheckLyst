@@ -3,8 +3,16 @@
         p,
 
         setup = function () {
+            var element = item.getElement();
             p = document.createElement("p");
-            p.className = "Description";
+            if (model.width == 1)
+                element.classList.add("Label SingleWidth")
+            else if (model.width == 2)
+                element.classList.add("Label DoubleWidth")
+
+            if (model.heigth == 1)
+                element.classList.add("SingleRow")
+
             item.getElement().appendChild(p);
         };
 

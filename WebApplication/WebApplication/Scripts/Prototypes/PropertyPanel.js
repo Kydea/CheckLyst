@@ -143,7 +143,7 @@
                 "If specified, in this date, the version gets the state <b>obsolete</b>, if the state of the version is <b>active</b>."
             ));
             properties.push(new prototypes.Property(
-                this, new prototypes.BooleanProperty(model, "ftpExport", state != prototypes.Prototype.states.draft),
+                this, new prototypes.BooleanProperty(model, "ftpExport"),
                 "FTP Export", "When checked, the instances are exported to the FTP server, once confirmed."
             ));
 
@@ -156,7 +156,7 @@
 
             if (!isHeader)
                 properties.push(new prototypes.Property(
-                    this, new prototypes.BooleanProperty(model, "pageBreak", state != prototypes.Prototype.states.draft, model.typeName == "Page"), "Page break",
+                    this, new prototypes.BooleanProperty(model, "pageBreak", model.typeName == "Page"), "Page break",
                     "Forces a page break in the pdf version of the checklist before the element."
                 ));
 
@@ -229,7 +229,7 @@
                         { label: "Green", code: "#009688" },
                         { label: "Grey", code: "#999" },
                         { label: "Yellow", code: "#ffba00" }
-                    ], { readOnly: state != prototypes.Prototype.states.draft }),
+                    ]),
                     "Color",
                     "The color of the text.",
                     function (value) { item.setColor(model.color); }
@@ -261,7 +261,7 @@
 
                     if (!tableContent && !isHeader) {
                         properties.push(new prototypes.Property(
-                            this, new prototypes.BooleanProperty(model, "iterator", state != prototypes.Prototype.states.draft), "Iterator",
+                            this, new prototypes.BooleanProperty(model, "iterator"), "Iterator",
                             "Determines if the group is an iterator.",
                             function () {
                                 var itaratorCommandsEnabled = prototypes.prototype.getModel().state == prototypes.Prototype.states.draft && model.iterator;
@@ -285,7 +285,7 @@
                         ));
 
                         var showAsTable = new prototypes.Property(
-                            this, new prototypes.BooleanProperty(model, "showAsTable", state != prototypes.Prototype.states.draft || !model.iterator), "Show as table",
+                            this, new prototypes.BooleanProperty(model, "showAsTable", !model.iterator), "Show as table",
                             "Displays the group as a table."
                         );
                         properties.push(showAsTable);
@@ -323,12 +323,49 @@
 
                     break;
                 case "Text":
+                    var widthBaseProperty, widthProperty, heightBaseProperty, heightProperty, newLineBaseProperty, newLineProperty;
                     properties.push(new prototypes.Property(
                         this, new prototypes.SimpleValueProperty(model, "description", { fullHeight: true, readOnly: state != prototypes.Prototype.states.draft }),
                         "Content",
                         "The content of the text.",
                         function () { $("p", item.getElement()).html((model.description || '').split('\n').join('<br />')); }
                     ));
+                    properties.push(newLineBaseProperty = new prototypes.Property(
+                        this, newLineProperty = new prototypes.BooleanProperty(model, "newLine", model.width == 0, true),
+                        "New line",
+                        "If checked, the field breaks the line. Available only if the width is not set on auto.",
+                        function () { item.getElement().toggleClass("NewLine", model.newLine); }
+                    ));
+                    properties.push(heightBaseProperty = new prototypes.Property(
+                        this, heightProperty = new prototypes.ListProperty(model, "height", [
+                            { label: "Auto", code: "0" },
+                            { label: "Fixed standard height", code: "1" },
+                        ], { readOnly: model.width == 0 }),
+                        "Height",
+                        "The height of the text. Available only if the width is not set on auto.",
+                        function () { item.getSpecificItem().setSize(); }
+                    ));
+                    properties.push(new prototypes.Property(
+                        this, widthProperty = new prototypes.ListProperty(model, "width", [
+                            { label: "Auto", code: "0" },
+                            { label: "Single width", code: "1" },
+                            { label: "Double width", code: "2" }
+                        ]),
+                        "Width",
+                        "The width of the text.",
+                        function () {
+                            item.getSpecificItem().setSize();
+                            if (model.width == 0) {
+                                model.height = 0;
+                                model.newLine = true;
+                                heightBaseProperty.setValue();
+                                newLineBaseProperty.setValue();
+                            }
+                            newLineProperty.setReadOnly(state != prototypes.Prototype.states.draft || model.width == 0)
+                            heightProperty.setReadOnly(state != prototypes.Prototype.states.draft || model.width == 0)
+                        }
+                    ));
+
                     break;
                 case "Field":
                     properties.push(new prototypes.Property(
@@ -343,7 +380,7 @@
                         linesCountItems,
                         prepareLinesCount = function () {
                             linesCountItems = [
-                                { label: "Standard width", code: "0" },
+                                { label: "Single width", code: "0" },
                                 { label: "Double width", code: "-1" },
                                 { label: "Full width", code: "1" }
                             ];
@@ -357,7 +394,7 @@
 
                     if (!model.linesCount) model.linesCount = 0;
                     properties.push(new prototypes.Property(
-                        this, linesCountProperty = new prototypes.ListProperty(model, "linesCount", linesCountItems, { readOnly: state != prototypes.Prototype.states.draft }),
+                        this, linesCountProperty = new prototypes.ListProperty(model, "linesCount", linesCountItems),
                         "Size",
                         "The size of the field.",
                         function () {
@@ -365,7 +402,7 @@
                         }
                     ));
                     properties.push(new prototypes.Property(
-                        this, new prototypes.BooleanProperty(model, "newLine", state != prototypes.Prototype.states.draft),
+                        this, new prototypes.BooleanProperty(model, "newLine"),
                         "New line",
                         "If checked, the field breaks the line.",
                         function () { item.getElement().toggleClass("NewLine", model.newLine); }
@@ -410,11 +447,11 @@
                     ));
                     properties.push(new prototypes.Property(
                         this, new prototypes.ListProperty(model, "signatureLevel", matematici.profiles,
-                            { readOnly: state != prototypes.Prototype.states.draft, nullable: true }), "Signature level",
+                            { nullable: true }), "Signature level",
                         "If has a value only users with that level can sign."
                     ));
                     properties.push(new prototypes.Property(
-                        this, new prototypes.BooleanProperty(model, "cancelable", state != prototypes.Prototype.states.draft), "Cancelable",
+                        this, new prototypes.BooleanProperty(model, "cancelable"), "Cancelable",
                         "If checked, the signature can be reverted by a signature manager."
                     ));
                     properties.push(new prototypes.Property(
@@ -422,7 +459,7 @@
                         "If the option 'distribution lists' is selected, an atuomatic email will be automatically sent to the specified distribution lists. If the option 'instance editors' is selected or the distribution list is left empty, all the possible instance editors will be prompted to the signer. The signer will be then able to send an automatic email to any of those users."
                     ));
                     properties.push(new prototypes.Property(
-                        this, new prototypes.BooleanProperty(model, "acceptsPin", state != prototypes.Prototype.states.draft), "Accepts PIN",
+                        this, new prototypes.BooleanProperty(model, "acceptsPin"), "Accepts PIN",
                         "If checked, the signature users can issue this signature using their PIN."
                     ));
                     break;
@@ -469,8 +506,7 @@
                             model,
                             "fileType",
                             /* The first element is the default one. To change it, change also in CheckListManager.Prototypes.Logic.Models.CheckLists.Attachment */
-                            ["images", "pdf"],
-                            { readOnly: state != prototypes.Prototype.states.draft }
+                            ["images", "pdf"]
                         ), "File type",
                         "The file type of the attachment."
                     ));
