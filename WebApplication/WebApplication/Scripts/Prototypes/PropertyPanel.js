@@ -156,7 +156,7 @@
 
             if (!isHeader)
                 properties.push(new prototypes.Property(
-                    this, new prototypes.BooleanProperty(model, "pageBreak", model.typeName == "Page"), "Page break",
+                    this, new prototypes.BooleanProperty(model, "pageBreak", false, model.typeName == "Page"), "Page break",
                     "Forces a page break in the pdf version of the checklist before the element."
                 ));
 
