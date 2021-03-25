@@ -70,6 +70,8 @@ div.CheckList div.Group {
 
 div.CheckList div.Item {
   margin: 0 0 20px; }
+  div.CheckList div.Item label.Controls2 input, div.CheckList div.Item label.Controls2 div.Input {
+    width: 100% !important; }
   div.CheckList div.Item.MultiLine {
     clear: both;
     width: calc(100% - 20px); }

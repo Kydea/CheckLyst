@@ -231,8 +231,8 @@
             field.className = "Input";
             (item.isTableContent() ? element : label).append(field);
 
-            if (model.linesCount > 0)
-                element.classList.add("MultiLine");
+            label.classList.toggle("Controls2", model.linesCount == -1);
+            element.classList.toggle("MultiLine", model.linesCount > 0);
             if (model.linesCount > 1) {
                 input.style.height = 20 * model.linesCount + 12 + "px";
                 field.style.height = 20 * model.linesCount + 12 + "px";

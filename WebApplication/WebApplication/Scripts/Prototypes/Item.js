@@ -57,6 +57,10 @@
         specificItem.setFontSize(value);
     };
 
+    this.getSpecificItem = function () {
+        return specificItem;
+    };
+
     this.setIndex = function (value) {
         index = value;
     }

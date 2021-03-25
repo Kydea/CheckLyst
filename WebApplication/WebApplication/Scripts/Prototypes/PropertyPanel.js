@@ -338,12 +338,13 @@
                         function () { $("label", item.getElement()).children("span").text(model.description); }
                     ));
 
-                    let
+                    var
                         linesCountProperty,
                         linesCountItems,
                         prepareLinesCount = function () {
                             linesCountItems = [
                                 { label: "Standard width", code: "0" },
+                                { label: "Double width", code: "-1" },
                                 { label: "Full width", code: "1" }
                             ];
 
@@ -360,9 +361,7 @@
                         "Size",
                         "The size of the field.",
                         function () {
-                            var element = item.getElement();
-                            element.toggleClass("MultiLine", model.linesCount > 0);
-                            $("div.Input", element).outerHeight(model.linesCount < 2 ? 36 : 20 * model.linesCount + 12);
+                            item.getSpecificItem().setSize();
                         }
                     ));
                     properties.push(new prototypes.Property(
