@@ -99,7 +99,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             if (Iterator)
             {
                 SetupIterationsIndexes();
-                foreach (var Iteration in Iterations.Where(i => !i.Removed))
+                foreach (var Iteration in Iterations/*.Where(i => !i.Removed)*/)
                 {
                     Iteration.CheckList = CheckList;
                     Iteration.Page = Page;
