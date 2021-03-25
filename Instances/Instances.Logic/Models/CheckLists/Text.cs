@@ -8,9 +8,16 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
 		public override bool NewLine => true;
 
-		public override ICheckListItem Clone(ICheckListGroup parent)
+        public int Height { get; set; }
+        public int Width { get; set; }
+
+        public override ICheckListItem Clone(ICheckListGroup parent)
 		{
-			var text = new Text { Group = parent };
+            var text = new Text {
+                Group = parent,
+                Width = Width,
+                Height = Height
+            };
 			Copy(this, text);
 			return text;
 		}
