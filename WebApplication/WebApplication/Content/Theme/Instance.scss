@@ -224,15 +224,31 @@ div.Instance {
             }
         }
 
-        &.HideRemoveButton > .Iteration > .IterationCommands {
-            a.Remove {
-                display: none;
+        &.HideRemoveButton {
+            > .Iteration > .IterationCommands {
+                a.Remove {
+                    display: none;
+                }
+            }
+
+            > .TableContainer .IterationCommands {
+                a.Remove {
+                    display: none;
+                }
             }
         }
 
-        &.HideMoveButton > .Iteration > .IterationCommands {
-            a.Up, a.Down {
-                display: none;
+        &.HideMoveButton {
+            > .Iteration > .IterationCommands {
+                a.Up, a.Down {
+                    display: none;
+                }
+            }
+
+            > .TableContainer .IterationCommands {
+                a.Up, a.Down {
+                    display: none;
+                }
             }
         }
 
