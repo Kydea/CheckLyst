@@ -5,15 +5,15 @@
         setup = function () {
             var element = item.getElement();
             p = document.createElement("p");
-            if (model.width == 1)
-                element.classList.add("Label SingleWidth")
-            else if (model.width == 2)
-                element.classList.add("Label DoubleWidth")
 
-            if (model.heigth == 1)
-                element.classList.add("SingleRow")
-
-            item.getElement().appendChild(p);
+            element.classList.toggle("Wide", model.width == 0);
+            element.classList.toggle("SingleRow", model.height == 1);
+            p.classList.toggle("Label", model.width > 0)
+            p.classList.toggle("Controls2", model.width == 2);
+            var ellipsis = model.height == 1 && p.offsetHeight < p.scrollHeight;
+            p.classList.toggle("Ellipsis", ellipsis);
+            p.setAttribute("title", ellipsis ? model.description : null);
+            element.appendChild(p);
         };
 
     this.update = function (model) {

@@ -260,6 +260,7 @@
                         }
 
                     if (!tableContent && !isHeader) {
+                        var instanceIterationsNumber, prototypeIterationsNumber, showAsTable, addIteration, removeIteration, moveIteration;
                         properties.push(new prototypes.Property(
                             this, new prototypes.BooleanProperty(model, "iterator"), "Iterator",
                             "Determines if the group is an iterator.",
@@ -280,41 +281,48 @@
                                     model.addIterationCondition = 1;
                                     model.removeIterationCondition = 1;
                                     model.moveIterationCondition = 1
+
+                                    instanceIterationsNumber.setValue();
+                                    prototypeIterationsNumber.setValue();
+                                    showAsTable.setValue();
+                                    addIteration.setValue();
+                                    removeIteration.setValue();
+                                    moveIteration.setValue();
                                 }
                             }
                         ));
 
-                        var showAsTable = new prototypes.Property(
+                        showAsTable = new prototypes.Property(
                             this, new prototypes.BooleanProperty(model, "showAsTable", !model.iterator), "Show as table",
                             "Displays the group as a table."
                         );
                         properties.push(showAsTable);
 
-                        var instanceIterationsNumber = new prototypes.Property(
+                        instanceIterationsNumber = new prototypes.Property(
                             this, new prototypes.SimpleValueProperty(model, "instanceIterations", { number: true, readOnly: state != prototypes.Prototype.states.draft || !model.iterator }), "Instance iterations",
                             "Creates the specified number of iterations automatically for new instances."
                         );
                         properties.push(instanceIterationsNumber);
 
-                        var prototypeIterationsNumber = new prototypes.Property(
+                        prototypeIterationsNumber = new prototypes.Property(
                             this, new prototypes.SimpleValueProperty(model, "prototypeIterations", { number: true, readOnly: state != prototypes.Prototype.states.draft || !model.iterator }), "Prototype iterations",
                             "Creates the specified number of iterations automatically int the PDF version."
                         );
                         properties.push(prototypeIterationsNumber);
 
-                        var addIteration = new prototypes.Property(
+                        addIteration = new prototypes.Property(
                             this, new prototypes.ExpressionProperty(model, "addIteration", "add-iteration", false, false, 1), "Add iteration",
                             "Defines if the add button of the iterator is present."
                         );
                         properties.push(addIteration);
 
-                        var removeIteration = new prototypes.Property(
+                        removeIteration = new prototypes.Property(
                             this, new prototypes.ExpressionProperty(model, "removeIteration", "remove-iteration", false, false, 1), "Remove iteration",
                             "Defines if the remove button of the iterator is present."
                         );
                         properties.push(removeIteration);
 
-                        var moveIteration = new prototypes.Property(
+                        moveIteration = new prototypes.Property(
                             this, new prototypes.ExpressionProperty(model, "moveIteration", "move-iteration", false, false, 1), "Move iteration",
                             "Defines if the mover button of the iterator is present."
                         );
