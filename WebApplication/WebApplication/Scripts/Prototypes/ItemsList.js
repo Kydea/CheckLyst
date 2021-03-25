@@ -1,4 +1,5 @@
-﻿prototypes.ItemsList = function () {
+﻿
+prototypes.ItemsList = function () {
     var
         itemsList = this,
         model = prototypes.prototype.getModel(),
@@ -76,9 +77,11 @@
                 okHandler: function () {
                     var
                         model = prototypes.prototype.getCurrentItem().getModel(),
-                        tr = $("tr.Selected", tableBody);
-                    $("td.CodeColumn", tr).text(model.code);
-                    $("td.DescriptionColumn", tr).text(model.description);
+                        tr = $("tr.Selected", tableBody),
+                        code = model.code = "",
+                        description = model.description || "";
+                    $("td.CodeColumn", tr).text(code.length > 47 ? code.substr(0, 47) + "..." : code).attr("title", code);
+                    $("td.DescriptionColumn", tr).text(description.length > 47 ? description.substr(0, 47) + "..." : description).attr("title", description);
                     toggleErrors(tr, model);
 
                     $("div.ActionBar a.ItemsList").toggleClass("Invalid", $("tr i.Valid.fa-times", tableBody).length > 0);
@@ -95,15 +98,18 @@
 
         add = function (item) {
             items.push(item);
-            var tr = $("<tr />")
-                .appendTo(tableBody)
-                .addClass("Handler")
-                .append($("<td />").append($("<i />").addClass("fa fa-caret-right")))
-                .append($("<td />").addClass("ItemTypeColumn").text(item.typeName == "Prototype" ? "Checklist" : item.typeName))
-                .append($("<td />").addClass("IdColumn").text(item.id || item.index != null && (item.index + 1) || ""))
-                .append($("<td />").addClass("CodeColumn").text(item.code))
-                .append($("<td />").addClass("DescriptionColumn").text(item.description))
-                .append($("<td />").addClass("Centered").append($("<i />").addClass("Valid fal")))
+            var
+                code = item.code || "",
+                description = item.description || "",
+                tr = $("<tr />")
+                    .appendTo(tableBody)
+                    .addClass("Handler")
+                    .append($("<td />").append($("<i />").addClass("fa fa-caret-right")))
+                    .append($("<td />").addClass("ItemTypeColumn").text(item.typeName == "Prototype" ? "Checklist" : item.typeName))
+                    .append($("<td />").addClass("IdColumn").text(item.id || item.index != null && (item.index + 1) || ""))
+                    .append($("<td />").addClass("CodeColumn").text(code.length > 47 ? code.substr(0, 47) + "..." : code).attr("title", code))
+                    .append($("<td />").addClass("DescriptionColumn").text(description.length > 47 ? description.substr(0, 47) + "..." : description).attr("title", description))
+                    .append($("<td />").addClass("Centered").append($("<i />").addClass("Valid fal")));
 
             toggleErrors(tr, item);
         },
