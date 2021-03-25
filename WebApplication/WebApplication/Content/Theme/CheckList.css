@@ -120,11 +120,6 @@ div.CheckList div.Item {
         overflow: hidden;
         text-overflow: ellipsis;
         max-height: 54px; }
-        div.CheckList div.Item.Text.SingleRow p.Ellipsis::after {
-          content: "...";
-          position: absolute;
-          right: 0;
-          bottom: 0; }
   div.CheckList div.Item.Signature {
     width: calc(100% - 20px); }
     div.CheckList div.Item.Signature > a.Button {

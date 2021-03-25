@@ -418,8 +418,23 @@ div.Instance {
             right: auto;
         }
 
-        &.Text div.Information {
-            display: none;
+        &.Text {
+            div.Information {
+                display: none;
+            }
+
+            a.Ellipsis {
+                background: white;
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                cursor: pointer;
+
+                i {
+                    font-size: 12px !important;
+                    padding: 2px;
+                }
+            }
         }
 
         &.Signature {

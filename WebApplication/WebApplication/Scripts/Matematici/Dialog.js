@@ -115,8 +115,8 @@ matematici.dialog = function () {
 		show: function (titleOrSettings, content, buttons) {
 			if (content || buttons) {
 				options.title = titleOrSettings;
-				options.content = content || "";
-				options.buttons = buttons || { text: "ok", icon: "check" };
+                options.content = content || "";
+                options.buttons = buttons || { text: "ok", icon: "check", defaultButton: true, cancelButton: true };
 			} else if (titleOrSettings)
 				options = titleOrSettings;
 

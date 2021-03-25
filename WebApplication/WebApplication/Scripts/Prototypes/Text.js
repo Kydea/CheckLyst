@@ -9,7 +9,7 @@
             p.toggleClass("Label", model.width > 0).toggleClass("Controls2", model.width == 2);
             var ellipsis = model.height == 1 && p[0].offsetHeight < p[0].scrollHeight;
             p.toggleClass("Ellipsis", ellipsis);
-            p.attr("title", ellipsis ? model.description : null);
+            p.attr("title", ellipsis ? model.description : "");
         },
 
         setup = function () {

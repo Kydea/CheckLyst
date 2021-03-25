@@ -83,6 +83,11 @@ div.Prototype div.Item {
       color: #009688; }
   div.Prototype div.Item.Text p {
     position: relative; }
+    div.Prototype div.Item.Text p.Ellipsis::after {
+      content: "...";
+      position: absolute;
+      right: 0;
+      bottom: 0; }
   div.Prototype div.Item.Link a {
     position: relative; }
   div.Prototype div.Item.Current::before {

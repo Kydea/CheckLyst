@@ -196,13 +196,6 @@ div.CheckList {
                     overflow: hidden;
                     text-overflow: ellipsis;
                     max-height: 54px;
-
-                    &.Ellipsis::after {
-                        content: "...";
-                        position: absolute;
-                        right: 0;
-                        bottom: 0;
-                    }
                 }
             }
         }

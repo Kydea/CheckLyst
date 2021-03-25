@@ -263,6 +263,16 @@ div.Instance .Item div.Information {
 div.Instance .Item.Text div.Information {
   display: none; }
 
+div.Instance .Item.Text a.Ellipsis {
+  background: white;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  cursor: pointer; }
+  div.Instance .Item.Text a.Ellipsis i {
+    font-size: 12px !important;
+    padding: 2px; }
+
 div.Instance .Item.Signature a.Button i.fa-exclamation {
   position: absolute;
   color: red;

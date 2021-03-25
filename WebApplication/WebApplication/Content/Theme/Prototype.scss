@@ -158,6 +158,13 @@ div.Prototype {
         &.Text {
             p {
                 position: relative;
+
+                &.Ellipsis::after {
+                    content: "...";
+                    position: absolute;
+                    right: 0;
+                    bottom: 0;
+                }
             }
         }
 
