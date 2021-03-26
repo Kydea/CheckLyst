@@ -201,6 +201,7 @@
     <Compile Include="Models\Expressions\Expression.cs" />
     <Compile Include="Models\Expressions\ExpressionValue.cs" />
     <Compile Include="Models\Expressions\Formula.cs" />
+    <Compile Include="Models\Expressions\MathFunctions\Abs.cs" />
     <Compile Include="Models\Expressions\MathFunctions\BinaryMathFunction.cs" />
     <Compile Include="Models\Expressions\MathFunctions\Round.cs" />
     <Compile Include="Models\Expressions\MathFunctions\UnaryMathFunction.cs" />

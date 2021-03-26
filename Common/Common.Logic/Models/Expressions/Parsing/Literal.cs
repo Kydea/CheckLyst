@@ -156,6 +156,14 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                         Symbol = Tan;
                         Operator = OperatorType.No;
                     }
+                    else if (LowerValue == "abs")
+                    {
+                        var Abs = new MathFunctions.Abs { Position = this.Position };
+                        CheckArguments(1);
+                        Abs.Argument = Arguments[0].Symbol;
+                        Symbol = Abs;
+                        Operator = OperatorType.No;
+                    }
                     else if (LowerValue == "atan")
                     {
                         var ATan = new MathFunctions.ATan { Position = this.Position };
