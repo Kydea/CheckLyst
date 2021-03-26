@@ -207,6 +207,8 @@ namespace CheckListManager.Instances.Api.Controllers
             {
                 var cacheObject = await _instanceManagerService.HandleEventAsync(Identity, request);
                 await _instanceManagerService.SaveCacheObjectAsync(cacheObject);
+                if (request.Type == EventTypes.Quit) await _instanceManagerService.SaveInstanceAsync(request.Code, Identity);
+
                 var response = new InstanceResponse
                 {
                     Id = cacheObject.ID,
