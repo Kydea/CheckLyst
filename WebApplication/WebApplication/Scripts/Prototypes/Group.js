@@ -3,8 +3,8 @@
         group = this,
         title,
         model,
-		index,
-		addButton,
+        index,
+        addButton,
 
         create = function () {
             element = $("<div />");
@@ -19,8 +19,15 @@
             matematici.canClose = false;
 
             if (!model.items) model.items = [];
-            var newItem = itemModel || { typeName: typeName };
-            model.items.push(newItem);
+            if (itemModel == null) {
+                itemModel = { typeName: typeName };
+                //default values
+                if (typeName == "Text") {
+                    itemModel.newLine = true;
+                    itemModel.height = itemModel.width = 0;
+                }
+            }
+            model.items.push(itemModel);
             prototypes.prototype.update();
         },
 
@@ -49,31 +56,31 @@
                     .addClass("Button Add")
                     .text("Add group")
                     .prepend($("<i >").addClass("Icon Add fa fa-plus")).on("click", function () { addGroup(); });
-            else 
+            else
                 title = $("<h3 />").appendTo(element);
-		},
+        },
 
         update = function (model) {
             if (group.isPage())
                 model.typeName = "Page";
-            if (title) 
+            if (title)
                 title.text(model.description ? model.description : "(no title)")
             group.setColor(model.color);
             group.setFontSize(model.fontSize);
-		};
+        };
 
-	this.add = function () {
-		matematici.dialog.popupMenu([
-			{ text: "cancel", icon: "times", cancelButton: true },
+    this.add = function () {
+        matematici.dialog.popupMenu([
+            { text: "cancel", icon: "times", cancelButton: true },
             { text: "attachment", icon: "paperclip", handler: addElement, data: "Attachment" },
             { text: "image", icon: "image", handler: addElement, data: "Image" },
             { text: "link", icon: "link", handler: addElement, data: "Link" },
-			{ text: "signature", icon: "check", handler: addElement, data: "Signature" },
-			{ text: "field", icon: "i-cursor", handler: addElement, data: "Field" },
-			{ text: "text", icon: "align-left", handler: addElement, data: "Text" },
-			{ text: "group", icon: "list-ul", handler: addElement, data: "Group" }
-		]);
-	}
+            { text: "signature", icon: "check", handler: addElement, data: "Signature" },
+            { text: "field", icon: "i-cursor", handler: addElement, data: "Field" },
+            { text: "text", icon: "align-left", handler: addElement, data: "Text" },
+            { text: "group", icon: "list-ul", handler: addElement, data: "Group" }
+        ]);
+    }
 
     this.setColor = function (value) {
         if (title)
@@ -95,27 +102,27 @@
             element.attr("data-code", model.code).attr("id", "ItemId" + model.id).data("id", model.id);
         }
 
-		update(model);
+        update(model);
 
-    	/* disegna il prototypo */
-    	var
+        /* disegna il prototypo */
+        var
             children = group.getChildren(),
             previous = null;
 
-    	for (var index in children) {
-    	    var
+        for (var index in children) {
+            var
                 itemModel = children[index],
                 item =
                     itemModel.typeName == "Group" ? new prototypes.Group(null, itemModel.typeName, this, previous) :
-                    new prototypes.Item(itemModel, this);
+                        new prototypes.Item(itemModel, this);
 
-    	    item.setIndex(parseInt(index));
-    	    item.update(itemModel);
-    	    previous = item;
-		}
+            item.setIndex(parseInt(index));
+            item.update(itemModel);
+            previous = item;
+        }
 
-		if (addButton && prototypes.prototype.getModel().state == prototypes.Prototype.states.draft)
-			addButton.appendTo(element);
+        if (addButton && prototypes.prototype.getModel().state == prototypes.Prototype.states.draft)
+            addButton.appendTo(element);
     };
 
     this.clear = function () {
@@ -161,13 +168,13 @@
     };
 
     this.getChildren = function () {
-    	return model.groups || model.items;
+        return model.groups || model.items;
     };
 
     this.setChildren = function (value) {
         if (group.isPage())
             model.groups = value;
-        else 
+        else
             model.items = value;
     };
 

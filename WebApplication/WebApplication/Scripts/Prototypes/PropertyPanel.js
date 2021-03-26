@@ -351,7 +351,14 @@
                         ], { readOnly: model.width == 0 }),
                         "Height",
                         "The height of the text. Available only if the width is not set on auto.",
-                        function () { item.getSpecificItem().setSize(); }
+                        function () {
+                            if (model.height == 0) {
+                                model.newLine = true;
+                                newLineBaseProperty.setValue();
+                            }
+                            newLineProperty.setReadOnly(state != prototypes.Prototype.states.draft || model.height == 0)
+                            item.getSpecificItem().setSize();
+                        }
                     ));
                     properties.push(new prototypes.Property(
                         this, widthProperty = new prototypes.ListProperty(model, "width", [
@@ -362,15 +369,15 @@
                         "Width",
                         "The width of the text.",
                         function () {
-                            item.getSpecificItem().setSize();
                             if (model.width == 0) {
                                 model.height = 0;
                                 model.newLine = true;
                                 heightBaseProperty.setValue();
                                 newLineBaseProperty.setValue();
                             }
-                            newLineProperty.setReadOnly(state != prototypes.Prototype.states.draft || model.width == 0)
-                            heightProperty.setReadOnly(state != prototypes.Prototype.states.draft || model.width == 0)
+                            newLineProperty.setReadOnly(state != prototypes.Prototype.states.draft || model.height == 0);
+                            heightProperty.setReadOnly(state != prototypes.Prototype.states.draft || model.width == 0);
+                            item.getSpecificItem().setSize();
                         }
                     ));
 

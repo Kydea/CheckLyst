@@ -4,10 +4,14 @@
         p,
         ellipsis,
 
+        parsedText = function () {
+            return model.descriptionValue ? model.descriptionValue.split('\n').join('<br />') : "(no description)";
+        },
+
         showMore = function () {
-            matematici.dialog.show("Full content", model.descriptionValue);
+            matematici.dialog.show("Full content", parsedText());
             matematici.dialog.setWidth("900px");
-        };
+        },
 
         setup = function () {
             element = item.getElement();
@@ -32,7 +36,7 @@
         };
 
     this.update = function (model) {
-		p.innerHTML = model.descriptionValue ? model.descriptionValue.split('\n').join('<br />') : "(no description)";
+        p.innerHTML = parsedText();
         this.setColor(model.color);
         this.setFontSize(model.fontSize);
         ellipsis.classList.toggle("Hidden", model.height == 0 || p.offsetHeight >= p.scrollHeight);

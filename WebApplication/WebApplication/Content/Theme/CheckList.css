@@ -114,12 +114,14 @@ div.CheckList div.Item {
       -webkit-box-orient: vertical; }
     div.CheckList div.Item.Text.Wide {
       width: calc(100% - 20px); }
+    div.CheckList div.Item.Text:not(.Wide) {
+      min-height: 54px; }
     div.CheckList div.Item.Text.SingleRow {
       position: relative; }
       div.CheckList div.Item.Text.SingleRow p {
         overflow: hidden;
         text-overflow: ellipsis;
-        max-height: 54px; }
+        height: 54px; }
   div.CheckList div.Item.Signature {
     width: calc(100% - 20px); }
     div.CheckList div.Item.Signature > a.Button {

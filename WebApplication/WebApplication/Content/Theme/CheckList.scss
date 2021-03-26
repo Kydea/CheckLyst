@@ -189,13 +189,17 @@ div.CheckList {
                 width: calc(100% - #{$Metric-Control-Space});
             }
 
+            &:not(.Wide) {
+                min-height: 54px;
+            }
+
             &.SingleRow {
                 position: relative;
 
                 p {
                     overflow: hidden;
                     text-overflow: ellipsis;
-                    max-height: 54px;
+                    height: 54px;
                 }
             }
         }

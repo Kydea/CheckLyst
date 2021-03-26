@@ -4,6 +4,7 @@
 
         setSize = function () {
             var element = item.getElement();
+            element.toggleClass("NewLine", model.newLine);
             element.toggleClass("Wide", model.width == 0);
             element.toggleClass("SingleRow", model.height == 1);
             p.toggleClass("Label", model.width > 0).toggleClass("Controls2", model.width == 2);
@@ -14,6 +15,7 @@
 
         setup = function () {
             p = $("<p />").appendTo(item.getElement());
+            setSize();
         };
 
     this.update = function (model) {
