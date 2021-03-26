@@ -300,6 +300,7 @@
                         hideList();
                 });
                 matematici.elements.body.children(".Popup").on("scroll.autocomplete", hideList);
+                node.dispatchEvent(new Event('showList', { 'bubbles': true }))
             }, 0);
         },
 
@@ -325,6 +326,7 @@
             input.insertAfter(label);
             list.insertAfter(label);
             matematici.AutoComplete.current = null;
+            node.dispatchEvent(new Event('hideList', { 'bubbles': true }))
         },
 
         setError = function (value) {

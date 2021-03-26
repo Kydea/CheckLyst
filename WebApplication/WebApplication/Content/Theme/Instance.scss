@@ -190,8 +190,10 @@ div.Instance {
             }
 
             .Item.Field:not(.Boolean) {
-                :focus ~ .Copy {
-                    display: block;
+                :focus, .Focused {
+                    ~ .Copy {
+                        display: block;
+                    }
                 }
             }
 

@@ -132,7 +132,7 @@ div.Instance .Group .Iteration {
   div.Instance .Group .Iteration > * {
     float: left;
     margin: 20px 0 0 20px !important; }
-  div.Instance .Group .Iteration .Item.Field:not(.Boolean) :focus ~ .Copy {
+  div.Instance .Group .Iteration .Item.Field:not(.Boolean) :focus ~ .Copy, div.Instance .Group .Iteration .Item.Field:not(.Boolean) .Focused ~ .Copy {
     display: block; }
   div.Instance .Group .Iteration > h3 {
     display: none; }

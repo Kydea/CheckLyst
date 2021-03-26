@@ -238,18 +238,27 @@
                 field.style.height = 20 * model.linesCount + 12 + "px";
             }
 
+            if (select) (autoComplete = new matematici.AutoComplete(select)).initialize();
+            if (select2) (autoComplete2 = new matematici.AutoComplete(select2)).initialize();
+
             if (!item.isTableContent() || !item.getParent().isSubRow()) {
                 copyButton = document.createElement("a");
                 copyButton.className = "Copy fal fa-clone";
                 copyButton.setAttribute("href", "#");
                 copyButton.setAttribute("title", "F8");
                 copyButton.addEventListener("mousedown", valueCopy);
+                if (autoComplete) {
+                    select.addEventListener("showList", function () { field.classList.add("Focused"); });
+                    select.addEventListener("hideList", function () { field.classList.remove("Focused"); });
+                }
+                if (autoComplete2) {
+                    select2.addEventListener("showList", function () { field.classList.add("Focused"); });
+                    select2.addEventListener("hideList", function () { field.classList.remove("Focused"); });
+                }
 
                 (item.isTableContent() ? element : label).appendChild(copyButton);
             }
 
-            if (select) (autoComplete = new matematici.AutoComplete(select)).initialize();
-            if (select2) (autoComplete2 = new matematici.AutoComplete(select2)).initialize();
         };
 
     this.update = function (model) {

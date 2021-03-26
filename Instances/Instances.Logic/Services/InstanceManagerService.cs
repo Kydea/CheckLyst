@@ -1278,10 +1278,10 @@ namespace CheckListManager.Instances.Logic.Services
                     }
                     else
                     {
-                        var dateTimeOffset = DateTimeOffsetHelper.Parse(oldFormattedValue, TimeZone, out var Ambiguous, out var AmbiguousDateTimeOffsets, DateTimeOffsetHelper.DateFormat);
+                        var dateTimeOffset = DateTimeOffsetHelper.Parse(oldFormattedValue, TimeZone, out var Ambiguous, out var AmbiguousDateTimeOffsets, DateTimeOffsetHelper.DateTimeFormats);
                         oldFormattedValue = dateTimeOffset?.Format(TimeZone) ?? string.Empty;
 
-                        dateTimeOffset = DateTimeOffsetHelper.Parse(formattedValue, TimeZone, out Ambiguous, out AmbiguousDateTimeOffsets, DateTimeOffsetHelper.DateFormat);
+                        dateTimeOffset = DateTimeOffsetHelper.Parse(formattedValue, TimeZone, out Ambiguous, out AmbiguousDateTimeOffsets, DateTimeOffsetHelper.DateTimeFormats);
                         formattedValue = dateTimeOffset?.Format(TimeZone) ?? string.Empty;
                     }
                 }
