@@ -88,7 +88,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             if (string.IsNullOrEmpty(SignatureCode))
                 Errors.Add(new Configuration.Error(PropertyName, $"Signature code expected"));
             else if (!BranchElements.ContainsKey(SignatureCode))
-                Errors.Add(new Configuration.Error(PropertyName, "Signature {SignatureCode} not found"));
+                Errors.Add(new Configuration.Error(PropertyName, $"Signature {SignatureCode} not found"));
             else if (!(BranchElements[SignatureCode] is Signature Signature))
                 Errors.Add(new Configuration.Error(PropertyName, $"The element {SignatureCode} is not a signature"));
             else

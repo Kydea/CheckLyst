@@ -92,15 +92,20 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public ICheckList CheckList { get => this; set => throw new NotImplementedException(); }
 
-        private int itemSequence;
+        [JsonProperty]
+        private int ItemSequence { get; set; }
+
         public void AddItem(ICheckListItem item)
         {
             if (item.Id == 0 || InCreation)
-                item.Id = ++itemSequence;
-            else
-                itemSequence = Math.Max(itemSequence, item.Id);
+                item.Id = ++ItemSequence;
+            else if (item.Id > ItemSequence) //for version < 3.0.0
+                ItemSequence = item.Id;
 
-            Items.Add(item.Id, item);
+            if (Items.TryGetValue(item.Id, out var RemovedItem) && RemovedItem.Removed) //for version < 3.0.0
+                Items[item.Id] = item;
+            else
+                Items.Add(item.Id, item);
         }
 
         public Dictionary<int, ICheckListItem> Items { get; } = new Dictionary<int, ICheckListItem>();
