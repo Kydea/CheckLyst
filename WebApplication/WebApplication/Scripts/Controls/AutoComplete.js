@@ -194,8 +194,14 @@
             var width = labelNode.offsetWidth;
             input.width(width - parseInt(input.css("padding-left")) - parseInt(input.css("padding-right")) - parseInt(input.css("border-left-width")) - parseInt(input.css("border-right-width")));
             list.outerWidth(width);
-            input.css({ top: label.offset().top + label.outerHeight() + 1, left: label.offset().left });
-            list.css({ top: label.offset().top + input.outerHeight() + 1, left: label.offset().left });
+            var
+                top = label.offset().top + label.outerHeight() + 1,
+                left = label.offset().left;
+
+            if (top + list.outerHeight() > (window.innerHeight || document.documentElement.clientHeight))
+                top = label.offset().top - list.outerHeight() - input.outerHeight();
+            input.css({ top: top, left: left });
+            list.css({ top: top, left: left });
         },
 
         setWidth = function () {
