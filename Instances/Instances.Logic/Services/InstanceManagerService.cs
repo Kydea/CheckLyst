@@ -1552,12 +1552,9 @@ namespace CheckListManager.Instances.Logic.Services
                     throw new InstanceException($"The signature can be canceled by an user with function Unsign and level {signature.SignatureLevel}");
 
                 signature.Unsign(identity.Code, identity.Description, DateTimeOffset.UtcNow, request.Note, cacheObject.InstanceState);
-                var Now = DateTimeOffset.UtcNow;
-                cacheObject.ModifiedBy = identity.Code;
-                cacheObject.ModifiedOn = Now;
+                TrackChanges(cacheObject, identity.Code);
                 if (cacheObject.InstanceState == InstanceState.Progress)
                     await SaveAsync(cacheObject, identity, false, false, true, cacheObject.ModifiedBy, cacheObject.ModifiedOn);
-                TrackChanges(cacheObject, request.Username);
 
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {

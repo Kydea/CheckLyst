@@ -94,7 +94,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         private void CheckItem(ICheckListItem Item)
         {
-            if (Item.SignatureCode == Code && !Item.Removed && Item is ICheckListValidityElement checkListValidityElement && !checkListValidityElement.Valid) throw new InstanceException($"The item {(string.IsNullOrEmpty(Item.Description) ? Item.Id.ToString() : $"{Item.Description} (id: {Item.Id})")} is not valid");
+            if (Item.SignatureCode == Code && !Item.Removed && !Item.IteratorModelItem && Item is ICheckListValidityElement checkListValidityElement && !checkListValidityElement.Valid) throw new InstanceException($"The item {(string.IsNullOrEmpty(Item.Description) ? Item.Id.ToString() : $"{Item.Description} (id: {Item.Id})")} is not valid");
         }
 
         private void FindInvalidItem(ICheckListGroup Group)
@@ -104,8 +104,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                     FindInvalidItem(Iteration);
             else
                 foreach (var Item in Group.Items)
-                    if (Item is ICheckListGroup)
-                        FindInvalidItem((ICheckListGroup)Item);
+                    if (Item is ICheckListGroup group)
+                        FindInvalidItem(group);
                     else
                         CheckItem(Item);
         }
