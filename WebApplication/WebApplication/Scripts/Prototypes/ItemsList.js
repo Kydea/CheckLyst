@@ -77,11 +77,9 @@ prototypes.ItemsList = function () {
                 okHandler: function () {
                     var
                         model = prototypes.prototype.getCurrentItem().getModel(),
-                        tr = $("tr.Selected", tableBody),
-                        code = model.code = "",
-                        description = model.description || "";
-                    $("td.CodeColumn", tr).text(code.length > 47 ? code.substr(0, 47) + "..." : code).attr("title", code);
-                    $("td.DescriptionColumn", tr).text(description.length > 47 ? description.substr(0, 47) + "..." : description).attr("title", description);
+                        tr = $("tr.Selected", tableBody);
+                    $("td.CodeColumn div", tr).text(model.code).attr("title", model.code);
+                    $("td.DescriptionColumn div", tr).text(model.description).attr("title", model.description);
                     toggleErrors(tr, model);
 
                     $("div.ActionBar a.ItemsList").toggleClass("Invalid", $("tr i.Valid.fa-times", tableBody).length > 0);
@@ -99,16 +97,14 @@ prototypes.ItemsList = function () {
         add = function (item) {
             items.push(item);
             var
-                code = item.code || "",
-                description = item.description || "",
                 tr = $("<tr />")
                     .appendTo(tableBody)
                     .addClass("Handler")
                     .append($("<td />").append($("<i />").addClass("fa fa-caret-right")))
                     .append($("<td />").addClass("ItemTypeColumn").text(item.typeName == "Prototype" ? "Checklist" : item.typeName))
                     .append($("<td />").addClass("IdColumn").text(item.id || item.index != null && (item.index + 1) || ""))
-                    .append($("<td />").addClass("CodeColumn").text(code.length > 47 ? code.substr(0, 47) + "..." : code).attr("title", code))
-                    .append($("<td />").addClass("DescriptionColumn").text(description.length > 47 ? description.substr(0, 47) + "..." : description).attr("title", description))
+                    .append($("<td />").addClass("CodeColumn").append($("<div />").text(item.code).attr("title", item.code)))
+                    .append($("<td />").addClass("DescriptionColumn").append($("<div />").text(item.description).attr("title", item.description)))
                     .append($("<td />").addClass("Centered").append($("<i />").addClass("Valid fal")));
 
             toggleErrors(tr, item);

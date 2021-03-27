@@ -1,14 +1,20 @@
 ﻿body.PrototypeEditor div.CheckListGrid div.Container.ItemsList div.ScrollablePanel table tr td {
   white-space: nowrap;
   width: 30px; }
+  body.PrototypeEditor div.CheckListGrid div.Container.ItemsList div.ScrollablePanel table tr td div {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; }
   body.PrototypeEditor div.CheckListGrid div.Container.ItemsList div.ScrollablePanel table tr td:first-child {
     padding: 0;
     text-align: center; }
     body.PrototypeEditor div.CheckListGrid div.Container.ItemsList div.ScrollablePanel table tr td:first-child i {
       display: none;
       font-size: 16px; }
-  body.PrototypeEditor div.CheckListGrid div.Container.ItemsList div.ScrollablePanel table tr td:nth-child(5) {
-    width: 50%; }
+  body.PrototypeEditor div.CheckListGrid div.Container.ItemsList div.ScrollablePanel table tr td:nth-child(4) div {
+    width: calc(15vw - 9px); }
+  body.PrototypeEditor div.CheckListGrid div.Container.ItemsList div.ScrollablePanel table tr td:nth-child(5) div {
+    width: calc(15vw - 9px); }
   body.PrototypeEditor div.CheckListGrid div.Container.ItemsList div.ScrollablePanel table tr td:last-child {
     text-align: center; }
     body.PrototypeEditor div.CheckListGrid div.Container.ItemsList div.ScrollablePanel table tr td:last-child i {

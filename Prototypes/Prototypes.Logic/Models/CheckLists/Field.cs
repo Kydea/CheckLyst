@@ -64,9 +64,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         public override bool BuildDependencies()
         {
-            var Result = true;
-
-            base.BuildDependencies();
+            var Result = base.BuildDependencies();
 
             ValueFormula.BuildDependencies(ValueFormulaString, null);
             foreach (var Key in ValueFormula.ValueKeys)

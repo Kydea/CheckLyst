@@ -11,6 +11,12 @@ body.PrototypeEditor {
                                 white-space: nowrap;
                                 width: 30px;
 
+                                div {
+                                    overflow: hidden;
+                                    text-overflow: ellipsis;
+                                    white-space: nowrap;
+                                }
+
                                 &:first-child {
                                     padding: 0;
                                     text-align: center;
@@ -21,8 +27,16 @@ body.PrototypeEditor {
                                     }
                                 }
 
+                                &:nth-child(4) {
+                                    div {
+                                        width: calc(15vw - #{60 * 0.15}px);
+                                    }
+                                }
+
                                 &:nth-child(5) {
-                                    width: 50%;
+                                    div {
+                                        width: calc(15vw - #{60 * 0.15}px);
+                                    }
                                 }
 
                                 &:last-child {

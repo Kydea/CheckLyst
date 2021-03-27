@@ -71,7 +71,7 @@ div.CheckListGrid div.Container {
     div.CheckListGrid div.Container {
       position: relative;
       margin: auto;
-      width: calc(90vw - 60px);
+      width: calc(100vw - 60px);
       border-radius: 15px 15px 0 0; }
       div.CheckListGrid div.Container h2 {
         border-radius: 15px 15px 0 0; }

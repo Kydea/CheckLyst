@@ -170,7 +170,7 @@
                     },
                     message: "Invalid code"
                 }]), "Code",
-                "Uniquely identifies an element. Can be left empty. Use only if a reference to the element is needed is some expression.",
+                "Uniquely identifies an element. Can be left empty. Use only if a reference to the element is needed.",
                 function (value) {
                     item.getElement().data("code", model.code);
                     prototypes.prototype.completeModel();
