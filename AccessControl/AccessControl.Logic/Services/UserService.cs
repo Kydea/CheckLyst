@@ -646,7 +646,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                                 user.Email,
                                 new List<Tuple<string, string>> { new Tuple<string, string>("User", user.Description) })
                             {
-                                TrailMessage = new EmailTrailMessage(user.Code, null, null)
+                                TrailMessage = new EmailTrailMessage(user.Code, null, null, null)
                             }, cancellationToken);
                 }
 
@@ -670,7 +670,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                                 user.Email,
                                 new List<Tuple<string, string>> { new Tuple<string, string>("User", user.Description) })
                             {
-                                TrailMessage = new EmailTrailMessage(user.Code, null, null)
+                                TrailMessage = new EmailTrailMessage(user.Code, null, null, null)
                             }, cancellationToken);
                 }
             }
