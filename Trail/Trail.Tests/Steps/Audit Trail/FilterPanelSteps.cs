@@ -33,16 +33,26 @@ namespace CheckListManager.Trail.Tests.Steps.Audit_Trail
         public async Task GivenIWantTheTrailsOfUser()
         {
             _context.User = (await _trailRepositoryExtended.GetFirstAsync()).User;
-            _context.CheckList = String.Empty;
+            _context.CheckListCode = string.Empty;
+            _context.CheckListID = null;
         }
         
         [Given(@"I want a list of trails identified with a specific checklist code")]
         public async Task GivenIWantAListOfTrailsIdentifiedWithChecklistCode()
         {
-            _context.User = String.Empty;
-            _context.CheckList = (await _trailRepositoryExtended.GetFirstAsync(r => !String.IsNullOrEmpty(r.CheckList))).CheckList;
+            _context.User = string.Empty;
+            _context.CheckListCode = (await _trailRepositoryExtended.GetFirstAsync(r => !string.IsNullOrEmpty(r.CheckListCode))).CheckListCode;
+            _context.CheckListID = null;
         }
-        
+
+        [Given(@"I want a list of trails identified with a specific checklist ID")]
+        public async Task GivenIWantAListOfTrailsIdentifiedWithChecklistID()
+        {
+            _context.User = string.Empty;
+            _context.CheckListCode = string.Empty;
+            _context.CheckListID = (await _trailRepositoryExtended.GetFirstAsync(r => r.CheckListID.HasValue)).CheckListID;
+        }
+
         [When(@"I send the search request")]
         public async Task WhenISendTheSearchRequest()
         {
@@ -53,9 +63,10 @@ namespace CheckListManager.Trail.Tests.Steps.Audit_Trail
                 Data = new ListRequest()
                 {
                     User = _context.User,
-                    Action = String.Empty,
-                    Information = String.Empty,
-                    CheckList = _context.CheckList
+                    Action = string.Empty,
+                    Information = string.Empty,
+                    CheckListCode = _context.CheckListCode,
+                    CheckListID = _context.CheckListID
                 }
             })).Data;
         }
@@ -69,7 +80,13 @@ namespace CheckListManager.Trail.Tests.Steps.Audit_Trail
         [Then(@"the result should be a list of records with the same checklist code")]
         public void ThenTheResultShouldBeAListOfRecordsWithTheSameChecklistCode()
         {
-            _context.Response.ForEach(trail => Assert.IsTrue(trail.CheckList.ToUpper().Contains(_context.CheckList.ToUpper())));
+            _context.Response.ForEach(trail => Assert.IsTrue(trail.CheckListCode.ToUpper().Contains(_context.CheckListCode.ToUpper())));
+        }
+
+        [Then(@"the result should be a list of records with the same checklist ud")]
+        public void ThenTheResultShouldBeAListOfRecordsWithTheSameChecklistID()
+        {
+            _context.Response.ForEach(trail => Assert.IsTrue(trail.CheckListID == _context.CheckListID));
         }
     }
 }

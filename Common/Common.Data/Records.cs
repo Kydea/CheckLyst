@@ -20,7 +20,8 @@ namespace CheckListManager.Common.Data
         public System.DateTimeOffset Date { get; set; }
         public string Action { get; set; }
         public string Information { get; set; }
-        public string CheckList { get; set; }
+        public string CheckListCode { get; set; }
+        public Nullable<long> CheckListID { get; set; }
     
         public virtual Actions Actions { get; set; }
     }

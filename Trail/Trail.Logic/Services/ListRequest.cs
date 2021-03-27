@@ -9,7 +9,8 @@ namespace CheckListManager.Trail.Logic.Services
         public DateTimeOffset? To { get; set; }
         public DateTimeOffset? WholeTo { get { return To?.AddDays(1); } }
         public string User { get; set; }
-        public string CheckList { get; set; }
+        public string CheckListCode { get; set; }
+        public long? CheckListID { get; set; }
         public string Action { get; set; }
         public string Information { get; set; }
         public long? CompanyId { get; set; }

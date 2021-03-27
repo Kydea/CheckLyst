@@ -254,7 +254,8 @@ namespace CheckListManager.Prototypes.Api.Controllers
                 User = Data.UserCode,
                 Action = TrailAction.PrototypeDownloaded,
                 Date = DateTimeOffset.UtcNow,
-                CheckList = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}"
+                CheckListCode = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}",
+                CheckListID = PrototypeVersion.Prototype
             });
 
             return Content(HttpStatusCode.OK, PDF, new PDFFormatter("Prototype"));

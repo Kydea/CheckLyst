@@ -20,11 +20,12 @@ namespace CheckListManager.Trail.Tests.Data
             => Entities.Records
                 .Select(p => new TrailMessage()
                 {
-                    Id = p.ID,
+                    ID = p.ID,
                     Date = p.Date,
                     User = p.User,
                     Action = p.Action,
-                    CheckList = p.CheckList,
+                    CheckListCode = p.CheckListCode,
+                    CheckListID = p.CheckListID,
                     Information = p.Information
                 }).ToListAsync();
 

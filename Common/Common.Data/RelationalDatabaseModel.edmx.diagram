@@ -38,8 +38,6 @@
         <EntityTypeShape EntityType="RelationalDatabaseModel.FunctionGroups" Width="1.5" PointX="11.625" PointY="23.625" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.Functions" Width="1.5" PointX="13.875" PointY="23.5" />
         <AssociationConnector Association="RelationalDatabaseModel.Functions_FunctionGroup_fkey" />
-        <EntityTypeShape EntityType="RelationalDatabaseModel.Records" Width="1.5" PointX="15.125" PointY="1.5" />
-        <AssociationConnector Association="RelationalDatabaseModel.Records_Action_fkey" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.Prototypes" Width="1.5" PointX="10.625" PointY="3.375" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.PrototypeTypes" Width="1.5" PointX="10.875" PointY="7.875" />
         <AssociationConnector Association="RelationalDatabaseModel.Prototypes_Company_fkey" />
@@ -91,6 +89,8 @@
         <AssociationConnector Association="RelationalDatabaseModel.FTPServers_Company_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.PrototypeTypes_InstancesFTPServer_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.PrototypeTypes_PrototypesFTPServer_fkey" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.Records" Width="1.5" PointX="14.75" PointY="0.75" />
+        <AssociationConnector Association="RelationalDatabaseModel.Records_Action_fkey" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

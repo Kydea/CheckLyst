@@ -94,7 +94,8 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     User = identity.Code,
                     Action = TrailAction.PrototypeStateChanged,
                     Date = DateTimeOffset.UtcNow,
-                    CheckList = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}",
+                    CheckListCode = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}",
+                    CheckListID = PrototypeVersion.Prototype,
                     Information = State
                 });
             }
@@ -162,7 +163,8 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 User = identity.Code,
                 Action = TrailAction.InstanceStateChanged,
                 Date = DateTimeOffset.UtcNow,
-                CheckList = $"{Instance.Prototypes.Name}.{Instance.Version}.{Instance.Year}.{Instance.Number}",
+                CheckListCode = $"{Instance.Prototypes.Name}.{Instance.Version}.{Instance.Year}.{Instance.Number}",
+                CheckListID = Instance.ID,
                 Information = JsonConvert.SerializeObject(new { State })
             });
         }
@@ -348,7 +350,8 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     User = identity.Code,
                     Action = TrailAction.WorkflowSignatureIssued,
                     Date = DateTimeOffset.UtcNow,
-                    CheckList = checklistLabel,
+                    CheckListCode = checklistLabel,
+                    CheckListID = Instance?.ID ?? PrototypeVersion.Prototype,
                     Information = information.ToJson(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None })
                 });
                 
@@ -378,7 +381,8 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     User = identity.Code,
                     Action = TrailAction.WorkflowSignatureFailed,
                     Date = DateTimeOffset.UtcNow,
-                    CheckList = checklistLabel,
+                    CheckListCode = checklistLabel,
+                    CheckListID = Instance?.ID ?? PrototypeVersion.Prototype,
                     Information = information.ToJson(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None })
                 });
                 

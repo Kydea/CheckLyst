@@ -251,7 +251,6 @@
           <Property Name="ID" Type="int8" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Company" Type="int8" />
           <Property Name="Name" Type="varchar" MaxLength="50" Nullable="false" />
-          <Property Name="Protocol" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Host" Type="varchar" MaxLength="500" Nullable="false" />
           <Property Name="Port" Type="int4" Nullable="false" />
           <Property Name="Folder" Type="varchar" MaxLength="500" />
@@ -259,13 +258,14 @@
           <Property Name="Password" Type="varchar" MaxLength="100" />
           <Property Name="Passive" Type="bool" Nullable="false" />
           <Property Name="SSL" Type="bool" Nullable="false" />
-          <Property Name="Key" Type="varchar" />
           <Property Name="PrototypesDefault" Type="bool" Nullable="false" />
           <Property Name="InstancesDefault" Type="bool" Nullable="false" />
           <Property Name="CreatedBy" Type="varchar" MaxLength="60" />
           <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
           <Property Name="ModifiedBy" Type="varchar" MaxLength="60" />
           <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
+          <Property Name="Protocol" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Key" Type="text" />
         </EntityType>
         <EntityType Name="FunctionGroups">
           <Key>
@@ -369,7 +369,8 @@
           <Property Name="Date" Type="timestamptz" Precision="7" Nullable="false" />
           <Property Name="Action" Type="varchar" MaxLength="100" />
           <Property Name="Information" Type="text" />
-          <Property Name="CheckList" Type="varchar" MaxLength="100" />
+          <Property Name="CheckListCode" Type="varchar" MaxLength="100" />
+          <Property Name="CheckListID" Type="int8" />
         </EntityType>
         <EntityType Name="WorkFlowActions">
           <Key>
@@ -1549,11 +1550,6 @@
             <End Role="FunctionGroups" EntitySet="FunctionGroups" />
             <End Role="Functions" EntitySet="Functions" />
           </AssociationSet>
-          <EntitySet Name="Records" EntityType="RelationalDatabaseModel.Records" />
-          <AssociationSet Name="Records_Action_fkey" Association="RelationalDatabaseModel.Records_Action_fkey">
-            <End Role="Actions" EntitySet="Actions" />
-            <End Role="Records" EntitySet="Records" />
-          </AssociationSet>
           <EntitySet Name="Prototypes" EntityType="RelationalDatabaseModel.Prototypes" />
           <EntitySet Name="PrototypeTypes" EntityType="RelationalDatabaseModel.PrototypeTypes" />
           <AssociationSet Name="Prototypes_Company_fkey" Association="RelationalDatabaseModel.Prototypes_Company_fkey">
@@ -1715,6 +1711,11 @@
           <AssociationSet Name="PrototypeTypes_PrototypesFTPServer_fkey" Association="RelationalDatabaseModel.PrototypeTypes_PrototypesFTPServer_fkey">
             <End Role="FTPServers" EntitySet="FTPServers" />
             <End Role="PrototypeTypes" EntitySet="PrototypeTypes" />
+          </AssociationSet>
+          <EntitySet Name="Records" EntityType="RelationalDatabaseModel.Records" />
+          <AssociationSet Name="Records_Action_fkey" Association="RelationalDatabaseModel.Records_Action_fkey">
+            <End Role="Actions" EntitySet="Actions" />
+            <End Role="Records" EntitySet="Records" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="UserSessions">
@@ -2060,31 +2061,6 @@
             </Principal>
             <Dependent Role="Functions">
               <PropertyRef Name="FunctionGroup" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityType Name="Records">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Company" Type="Int64" />
-          <Property Name="User" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
-          <Property Name="Date" Type="DateTimeOffset" Nullable="false" Precision="7" />
-          <Property Name="Action" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="Information" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="CheckList" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Actions" Relationship="RelationalDatabaseModel.Records_Action_fkey" FromRole="Records" ToRole="Actions" />
-        </EntityType>
-        <Association Name="Records_Action_fkey">
-          <End Type="RelationalDatabaseModel.Actions" Role="Actions" Multiplicity="0..1" />
-          <End Type="RelationalDatabaseModel.Records" Role="Records" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Actions">
-              <PropertyRef Name="Code" />
-            </Principal>
-            <Dependent Role="Records">
-              <PropertyRef Name="Action" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2827,6 +2803,32 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Records">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Company" Type="Int64" />
+          <Property Name="User" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="Date" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="Action" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Information" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CheckListCode" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="CheckListID" Type="Int64" />
+          <NavigationProperty Name="Actions" Relationship="RelationalDatabaseModel.Records_Action_fkey" FromRole="Records" ToRole="Actions" />
+        </EntityType>
+        <Association Name="Records_Action_fkey">
+          <End Type="RelationalDatabaseModel.Actions" Role="Actions" Multiplicity="0..1" />
+          <End Type="RelationalDatabaseModel.Records" Role="Records" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Actions">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="Records">
+              <PropertyRef Name="Action" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -3068,19 +3070,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Records">
-            <EntityTypeMapping TypeName="RelationalDatabaseModel.Records">
-              <MappingFragment StoreEntitySet="Records">
-                <ScalarProperty Name="CheckList" ColumnName="CheckList" />
-                <ScalarProperty Name="Information" ColumnName="Information" />
-                <ScalarProperty Name="Action" ColumnName="Action" />
-                <ScalarProperty Name="Date" ColumnName="Date" />
-                <ScalarProperty Name="User" ColumnName="User" />
-                <ScalarProperty Name="Company" ColumnName="Company" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Prototypes">
             <EntityTypeMapping TypeName="RelationalDatabaseModel.Prototypes">
               <MappingFragment StoreEntitySet="Prototypes">
@@ -3299,6 +3288,20 @@
                 <ScalarProperty Name="Host" ColumnName="Host" />
                 <ScalarProperty Name="Protocol" ColumnName="Protocol" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Company" ColumnName="Company" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Records">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.Records">
+              <MappingFragment StoreEntitySet="Records">
+                <ScalarProperty Name="CheckListID" ColumnName="CheckListID" />
+                <ScalarProperty Name="CheckListCode" ColumnName="CheckListCode" />
+                <ScalarProperty Name="Information" ColumnName="Information" />
+                <ScalarProperty Name="Action" ColumnName="Action" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="User" ColumnName="User" />
                 <ScalarProperty Name="Company" ColumnName="Company" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>

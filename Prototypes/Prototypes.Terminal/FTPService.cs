@@ -87,7 +87,8 @@ namespace CheckListManager.Prototypes.Terminal
                 {
                     Action = TrailAction.PrototypeExportCompleted,
                     Company = message.Message.Company,
-                    CheckList = $"{message.Message.PrototypeName}.{message.Message.Version}",
+                    CheckListCode = $"{message.Message.PrototypeName}.{message.Message.Version}",
+                    CheckListID = message.Message.Prototype,
                     Information = JsonConvert.SerializeObject(Information)
                 }, cancellationToken);
             }
@@ -97,7 +98,8 @@ namespace CheckListManager.Prototypes.Terminal
                 {
                     Action = TrailAction.PrototypeExportFailed,
                     Company = message.Message.Company,
-                    CheckList = $"{message.Message.PrototypeName}.{message.Message.Version}",
+                    CheckListCode = $"{message.Message.PrototypeName}.{message.Message.Version}",
+                    CheckListID = message.Message.Prototype,
                     Information = JsonConvert.SerializeObject(new
                     {
                         Exported = false,

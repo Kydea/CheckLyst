@@ -273,7 +273,8 @@ namespace CheckListManager.Instances.Api.Controllers
                 User = Data.UserCode,
                 Action = TrailAction.InstanceDownloaded,
                 Date = DateTimeOffset.UtcNow,
-                CheckList = cacheObject.InstanceCode
+                CheckListCode = cacheObject.InstanceCode,
+                CheckListID = cacheObject.ID
             });
             
             return Content(HttpStatusCode.OK, PDF, new PDFFormatter(string.IsNullOrEmpty(cacheObject.Instance.FileNameFormula.Value) ? "Instance" : cacheObject.Instance.FileNameFormula.Value));

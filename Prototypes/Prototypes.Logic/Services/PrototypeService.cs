@@ -331,7 +331,8 @@ namespace CheckListManager.Prototypes.Logic.Services
                     User = identity.Code,
                     Action = TrailAction.PrototypeCreated,
                     Date = DateTimeOffset.UtcNow,
-                    CheckList = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}"
+                    CheckListCode = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}",
+                    CheckListID = PrototypeVersion.Prototype
                 });
 
             return new PrototypeResponse
@@ -363,7 +364,8 @@ namespace CheckListManager.Prototypes.Logic.Services
                 User = identity.Code,
                 Action = TrailAction.PrototypeDeleted,
                 Date = DateTimeOffset.UtcNow,
-                CheckList = CheckListCode
+                CheckListCode = CheckListCode,
+                CheckListID = PrototypeVersion.Prototype
             });
         }
 
@@ -402,7 +404,8 @@ namespace CheckListManager.Prototypes.Logic.Services
                     User = identity.Code,
                     Action = TrailAction.PrototypeStateChanged,
                     Date = DateTimeOffset.UtcNow,
-                    CheckList = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}",
+                    CheckListCode = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}",
+                    CheckListID = PrototypeVersion.Prototype,
                     Information = VersionState.InApproval
                 });
 
@@ -412,7 +415,8 @@ namespace CheckListManager.Prototypes.Logic.Services
                 User = identity.Code,
                 Action = request.StateProposed ? TrailAction.PrototypeStateChangeProposed : TrailAction.PrototypeStateChanged,
                 Date = DateTimeOffset.UtcNow,
-                CheckList = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}",
+                CheckListCode = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}",
+                CheckListID = PrototypeVersion.Prototype,
                 Information = request.State
             });
 
@@ -489,7 +493,8 @@ namespace CheckListManager.Prototypes.Logic.Services
                 Action = TrailAction.PrototypeStateAutoChanged,
                 User = "(system)",
                 Date = Date,
-                CheckList = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}",
+                CheckListCode = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}",
+                CheckListID = PrototypeVersion.Prototype,
                 Information = State
             });
         }
@@ -549,7 +554,8 @@ namespace CheckListManager.Prototypes.Logic.Services
                         Action = TrailAction.JobError,
                         User = "(system)",
                         Date = DateTimeOffset.UtcNow,
-                        CheckList = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}",
+                        CheckListCode = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}",
+                        CheckListID = PrototypeVersion.Prototype,
                         Information = JsonConvert.SerializeObject(new
                         {
                             Job = "UpdatePrototypes",

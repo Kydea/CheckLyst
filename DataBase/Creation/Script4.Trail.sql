@@ -82,7 +82,8 @@ create table "Trail"."Records"
     "Action" varchar (100) references "Trail"."Actions",
 	"Information" text,
 
-	"CheckList" varchar (100)
+	"CheckListCode" varchar (100),
+	"CheckListID" bigint
 );
 
 create index "Index_Records_CheckList" on "Trail"."Records" ("Company", "CheckList");

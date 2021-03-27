@@ -12,7 +12,9 @@ namespace CheckListManager.Trail.Tests.Contexts
     {
         public string User { get; set; }
 
-        public string CheckList { get; set; }
+        public string CheckListCode { get; set; }
+
+        public long? CheckListID { get; set; }
 
         public List<TrailMessage> Response { get; set; }
     }
