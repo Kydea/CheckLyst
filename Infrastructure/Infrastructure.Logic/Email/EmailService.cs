@@ -58,7 +58,8 @@ namespace CheckListManager.Infrastructure.Logic.Email
                         User = message.Message.TrailMessage.User,
                         Action = TrailAction.EmailSent,
                         Date = DateTimeOffset.UtcNow,
-                        CheckList = message.Message.TrailMessage.CheckList,
+                        CheckListCode = message.Message.TrailMessage.CheckListCode,
+                        CheckListID = message.Message.TrailMessage.CheckListID,
                         Information = message.Message.TrailMessage.Information.ToJson(new JsonSerializerSettings
                         {
                             TypeNameHandling = TypeNameHandling.None

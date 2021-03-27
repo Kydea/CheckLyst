@@ -444,7 +444,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                                     $"<a href='{checkListURL}' target='_blank'>{checklistLabel}</a>"),
                             })
                         {
-                            TrailMessage = new EmailTrailMessage(identity.Code, checklistLabel, null)
+                            TrailMessage = new EmailTrailMessage(identity.Code, checklistLabel, Instance?.ID ?? PrototypeVersion.Prototype, null)
                         });
                 }
         }

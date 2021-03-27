@@ -914,6 +914,7 @@ namespace CheckListManager.Instances.Logic.Services
                             TrailMessage = new EmailTrailMessage(
                                 "(system)",
                                 InstanceCode,
+                                Notification.Instance,
                                 null
                             )
                         }, cancellationToken);
@@ -1628,7 +1629,7 @@ namespace CheckListManager.Instances.Logic.Services
                             new Tuple<string, string> ("CheckListCode", $"<a href='{checkListURL}' target='_blank'>{cacheObject.InstanceCode}</a>")
                     })
                     {
-                        TrailMessage = new EmailTrailMessage(identity.Code, cacheObject.InstanceCode, new EmailTrailMessage.EmailTrailInformation
+                        TrailMessage = new EmailTrailMessage(identity.Code, cacheObject.InstanceCode, cacheObject.ID, new EmailTrailMessage.EmailTrailInformation
                         {
                             Id = itemId.Value.ToString()
                         })
