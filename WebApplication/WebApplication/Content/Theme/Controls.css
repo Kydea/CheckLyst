@@ -194,6 +194,12 @@ form {
     margin-left: 20px; }
   form.AdvancedSearch {
     padding-bottom: 56px; }
+  form > a.FiltersLinkButton {
+    top: 10px;
+    right: 10px;
+    position: absolute; }
+    form > a.FiltersLinkButton i {
+      font-size: 12px; }
   form div.AdvancedSearch {
     display: none;
     clear: both; }

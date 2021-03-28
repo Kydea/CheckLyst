@@ -281,6 +281,16 @@ form {
         padding-bottom: $Metric-Control-Height + $Metric-Control-Space;
     }
 
+    > a.FiltersLinkButton {
+        top: 10px;
+        right: 10px;
+        position: absolute;
+
+        i {
+            font-size: 12px;
+        }
+    }
+
     div.AdvancedSearch {
         display: none;
         clear: both;

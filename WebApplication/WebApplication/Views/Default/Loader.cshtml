@@ -16,18 +16,18 @@
             url,
             appMode = "@(ViewBag.AppMode)" == "True",
             instanceManager = "@(Model.StartsWith("Instances/Detail") || Model.StartsWith("Instances/Create"))" == "True",
-            search = "",
+            search = window.location.search,
             iPad =
                 (navigator.userAgent.match(/(iPad)/) /* iOS pre 13 */ ||
                 (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) /* iPad OS 13 */);
-
-        if (instanceManager) search = window.location.search;
 
         if (!appMode && iPad && instanceManager) {
             url = "checklyst://" + window.location.host + "/" + window.location.pathname + search;
             window.location = url;
         } else {
-            url = "@Model" + (search || "?") + "@Html.Raw(ViewBag.AppMode ? "&AppUser=" + ViewBag.AppUser : string.Empty)";
+            var appUser = "@Html.Raw(ViewBag.AppMode ? "AppUser=" + ViewBag.AppUser : string.Empty)";
+            if (appUser != "") search = search == "" ? "?" + appUser : search + "&" + appUser;
+            url = "@Model" + search;
             matematici.navigator.open(url);
         }
 

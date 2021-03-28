@@ -144,7 +144,7 @@
         },
 
         changePage: function (e) {
-            //console.log("change", e.path, fullSupport, landing);
+            //console.log("change", e, fullSupport, landing);
             if (!fullSupport || !landing) {
                 //console.log("ajaxing " + e.path);
 
