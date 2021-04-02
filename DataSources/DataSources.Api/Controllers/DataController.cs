@@ -63,5 +63,17 @@ namespace CheckListManager.DataSources.Api.Controllers
 
             return Ok(await _dataService.GetDataSourceRowsAsync(Identity.CompanyId, Data));
         }
+
+        [HttpPost]
+        [Route("Export")]
+        public async Task<IHttpActionResult> Export(TokenRequest tokenRequest)
+        {
+            var Data = await _redisCache.GetAsync<ExportRequest>($"Token:{tokenRequest.token}", "S2S");
+            await _redisCache.RemoveAsync($"Token:{tokenRequest.token}", "S2S");
+
+            await _dataService.ExportAsync(Identity.CompanyId, Data);
+
+            return Ok();
+        }
     }
 }

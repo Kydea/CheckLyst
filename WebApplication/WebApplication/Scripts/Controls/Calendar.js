@@ -135,7 +135,7 @@
                             for (index in attributes[datesIndex].data)
                                 cell.data(index, attributes[datesIndex].data[index]);
                         }
-                        date = new Date(date.setDate(date.getDate() + 1));
+                        date = new Date(date.setUTCDate(date.getUTCDate() + 1));
                     }
                 }
             }

@@ -748,6 +748,40 @@ namespace CheckListManager.Instances.Logic.Services
             }
         }
 
+        public async Task ExportSingedIterators(InstanceCacheObject cacheObject, IDefaultIdentity identity, Signature signature)
+        {
+            foreach (var Element in signature.GetBranchElements().Values)
+                if (Element is Group Group && Group.SignatureCode == signature.Code && Group.DumpExternalSourceName != null)
+                    try
+                    {
+                        var Iterations = Group.Iterations.Select(i => i.Items.Where(i2 => i2.Code != null && i2 is Field).Select(i2 => (Item)i2));
+                        if (Iterations.Any() && Iterations.First().Any())
+                        {
+                            var Names = Iterations.First().Select(i2 => i2.Code).ToList();
+                            var Records = Iterations.Select(i => i.Select(i2 => ((Field)i2).Value).ToList()).ToList();
+
+                            var token = identity.Code + ":" + Guid.NewGuid();
+                            await _redisCache.SetAsync($"Token:{token}", new ExportRequest
+                            {
+                                Code = cacheObject.Instance.ExternalSources[Group.DumpExternalSourceName],
+                                Names = Names,
+                                Records = Records,
+                                DecimalSeparator = await _settingService.DecimalSeparatorAsync(identity.CompanyId),
+                                TimeZone = (await _commonRepository.GetCompanyAsync(identity.CompanyId)).TimeZone
+                            }, "S2S", new TimeSpan(0, 1, 0));
+                            var response = await _client.PostAsync("DataSources/Data/Export", new TokenRequest { token = token });
+                            var responseData = await response.Content.ReadAsStringAsync();
+                            if (response.StatusCode != HttpStatusCode.OK)
+                                throw new Exception(responseData);
+                        }
+                    }
+                    catch (Exception Exception)
+                    {
+                        Logger.Error(Exception, $"Error while exporting the content of {Element}");
+                        throw new InstanceException($"Error while exporting the content of {Element}", Exception);
+                    }
+        }
+
         public async Task<List<InstanceEventRequest.Email>> GetInstanceEditors(string code, IDefaultIdentity identity)
         {
             try
@@ -1490,6 +1524,8 @@ namespace CheckListManager.Instances.Logic.Services
                 cacheObject.ModifiedBy = identity.Code;
                 cacheObject.ModifiedOn = Now;
                 signature.Sign(identity.Code, identity.Description, Now);
+                await ExportSingedIterators(cacheObject, identity, signature);
+
                 if (cacheObject.InstanceState == InstanceState.Progress)
                     await SaveAsync(cacheObject, identity, false, false, true, cacheObject.ModifiedBy, cacheObject.ModifiedOn);
                 TrackChanges(cacheObject, request.Username);

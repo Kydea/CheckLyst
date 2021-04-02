@@ -111,6 +111,11 @@
     div.PropertyPanel div.PropertyValue.ValueType label:last-child {
       bottom: 10px;
       position: absolute; }
+    div.PropertyPanel div.PropertyValue.Signature label.DumpExternalDataSource {
+      position: absolute;
+      bottom: 10px; }
+      div.PropertyPanel div.PropertyValue.Signature label.DumpExternalDataSource span {
+        position: static !important; }
     div.PropertyPanel div.PropertyValue div.ButtonsPanel {
       position: absolute;
       width: calc(100% - 20px);

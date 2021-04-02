@@ -27,9 +27,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         [JsonIgnore]
         public Instance Instance => _instance ?? (_instance = (Instance)CheckList);
 
-		protected virtual Dictionary<string, ICheckListElement> GetBranchElements() => CheckList.Elements;
+        public virtual Dictionary<string, ICheckListElement> GetBranchElements() => CheckList.Elements;
 
-		public virtual bool Setup()
+        public virtual bool Setup()
 		{
             Code = string.IsNullOrEmpty(Code) ? null : Code;
             if (Code != null)

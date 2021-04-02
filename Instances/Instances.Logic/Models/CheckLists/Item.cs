@@ -179,7 +179,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public override string GetSignatureInformation() => base.GetSignatureInformation() ?? ((Group)Group)?.GetSignatureInformation() ?? ((Page)Page)?.GetSignatureInformation();
 
-        protected override Dictionary<string, ICheckListElement> GetBranchElements() => Iteration?.Elements ?? base.GetBranchElements();
+        public override Dictionary<string, ICheckListElement> GetBranchElements() => Iteration?.Elements ?? base.GetBranchElements();
 
         public virtual void Remove() =>  Removed = true;
 

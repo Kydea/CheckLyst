@@ -174,6 +174,7 @@
                 function (value) {
                     item.getElement().data("code", model.code);
                     prototypes.prototype.completeModel();
+                    if (!model.code && model.dumpExternalSourceName) model.dumpExternalSourceName = null;
                 }
             ));
 
@@ -202,7 +203,7 @@
                 ));
                 properties.push(new prototypes.Property(
                     this, new prototypes.SignatureProperty(model, { readOnly: state != prototypes.Prototype.states.draft }), "Signature",
-                    "Determines which signature locks the element."
+                    "Determines which signature locks the element. For iterators with a code, it is present alse a Source on which perform a data export when the signature is issued."
                 ));
             }
 
@@ -281,6 +282,7 @@
                                     model.addIterationCondition = 1;
                                     model.removeIterationCondition = 1;
                                     model.moveIterationCondition = 1
+                                    model.dumpExternalSourceName = null;
 
                                     instanceIterationsNumber.setValue();
                                     prototypeIterationsNumber.setValue();

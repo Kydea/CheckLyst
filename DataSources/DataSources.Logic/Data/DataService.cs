@@ -40,7 +40,7 @@ namespace CheckListManager.DataSources.Logic.Data
             if (Record == null)
                 throw new Exception($"Invalid external source");
 
-            var Data = await CallExternalSource("GetMetaData", new Common.Logic.ExternalSources.DataRequest
+            var Data = await CallExternalSource("GetMetaData", new ExternalSources.DataRequest
             {
                 code = $"{Company}.{Record.Code}",
                 className = Record.Class,
@@ -58,7 +58,7 @@ namespace CheckListManager.DataSources.Logic.Data
                     Company,
                     ds => new DataSource
                     {
-                        Code = ds.Code, 
+                        Code = ds.Code,
                     },
                     wf => wf.Company == Company,
                     p => p.Code,
@@ -77,7 +77,8 @@ namespace CheckListManager.DataSources.Logic.Data
                 1
             )).Data.SingleOrDefault();
 
-            await CallExternalSource("Test", new Common.Logic.ExternalSources.DataRequest {
+            await CallExternalSource("Test", new ExternalSources.DataRequest
+            {
                 code = $"{Company}.{Record.Code}",
                 className = Record.Class,
                 password = Record.Password,
@@ -90,7 +91,7 @@ namespace CheckListManager.DataSources.Logic.Data
         {
             var Record = (await _dataSourcesRepository.GetDataSourcesAsync(
                 Company,
-                ds => new Common.Logic.ExternalSources.DataRequest
+                ds => new ExternalSources.DataRequest
                 {
                     code = ds.Code,
                     className = ds.Class,
@@ -112,7 +113,33 @@ namespace CheckListManager.DataSources.Logic.Data
             return await CallExternalSource("GetData", Record);
         }
 
-        private async Task<string> CallExternalSource(string Action, Common.Logic.ExternalSources.DataRequest Data)
+        public async Task ExportAsync(long Company, ExportRequest Request)
+        {
+            var Record = (await _dataSourcesRepository.GetDataSourcesAsync(
+                Company,
+                ds => new ExternalSources.DataRequest
+                {
+                    code = ds.Code,
+                    className = ds.Class,
+                    password = ds.Password,
+                    version = ds.ModifiedOn ?? ds.CreatedOn,
+                    data = ds.Data
+                },
+                wf => wf.Company == Company && wf.Code == Request.Code,
+                p => p.Code,
+                1,
+                1
+            )).Data.SingleOrDefault();
+
+            Record.names = Request.Names;
+            Record.records = Request.Records;
+            Record.decimalSeparator = Request.DecimalSeparator;
+            Record.timeZone = Request.TimeZone;
+
+            await CallExternalSource("Export", Record);
+        }
+
+        private async Task<string> CallExternalSource<T>(string Action, T Data)
         {
             try
             {

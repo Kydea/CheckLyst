@@ -13,5 +13,6 @@ namespace CheckListManager.DataSources.Logic.Data
         Task<PagingResponse<List<DataSource>>> GetDataSourcesAsync(long Company, PagingRequest<DataRequest> form);
         Task TestAsync(long Company, string Code);
         Task<string> GetDataSourceRowsAsync(long Company, Common.Logic.DataSources.DataRequest form);
+        Task ExportAsync(long Company, ExportRequest form);
     }
 }

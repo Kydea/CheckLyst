@@ -33,6 +33,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public string ModifiedBy { get; }
         [JsonIgnore]
         public DateTimeOffset? ModifiedOn { get; }
+        public string DumpExternalSourceName { get; set; }
         private bool InTable { get; set; }
 
         public override bool Setup()
@@ -117,6 +118,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 RemoveIterationExpressionCode = RemoveIterationExpressionCode,
                 MoveIterationCondition = MoveIterationCondition,
                 MoveIterationExpressionCode = MoveIterationExpressionCode,
+                DumpExternalSourceName = DumpExternalSourceName,
                 Group = parent
             };
             foreach (var item in Items)
@@ -148,6 +150,24 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                     AddDependingRelation(DependencyRelation.Properties.Validity, Item, DependencyRelation.Properties.Validity);
 
                 Result &= Item.BuildDependencies();
+
+                if (DumpExternalSourceName != null)
+                {
+                    if (!CheckList.ExternalSourceDependencyNodes.TryGetValue(DumpExternalSourceName, out var ExternalSourceNode))
+                    {
+                        Errors.Add(new Configuration.Error("signature", $"External source {DumpExternalSourceName} not found"));
+                        Result = false;
+                    }
+
+                    var Signature = (Signature)CheckList.Elements[SignatureCode];
+                    if (Signature.Cancelable)
+                    {
+                        Errors.Add(new Configuration.Error("signature", $"The referenced signature is cancelable and cannot be used to export"));
+                        Result = false;
+                    }
+
+                    AddDependingRelation(DependencyRelation.Properties.Value, CheckList.ExternalSourceDependencyNodes[DumpExternalSourceName], DependencyRelation.Properties.Value);
+                }
             }
 
             return Result;

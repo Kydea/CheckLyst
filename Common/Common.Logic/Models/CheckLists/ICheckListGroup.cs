@@ -21,7 +21,7 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
         string RemoveIterationExpressionCode { get; set; }
         Conditions MoveIterationCondition { get; set; }
         string MoveIterationExpressionCode { get; set; }
-
+        string DumpExternalSourceName { get; set; }
 
         void CreateInstanceIterations();
     }

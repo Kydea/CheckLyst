@@ -32,6 +32,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public string MoveIterationExpressionCode { get; set; }
         public string ModifiedBy { get; set; }
         public DateTimeOffset? ModifiedOn { get; set; }
+        public string DumpExternalSourceName { get; set; }
 
         public override dynamic GetViewModel()
         {
@@ -43,6 +44,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 ItemModel.AddIterationButton = AddIterationButton;
                 ItemModel.RemoveIterationButton = RemoveIterationButton;
                 ItemModel.MoveIterationButton = MoveIterationButton;
+                if (DumpExternalSourceName != null) ItemModel.DumpExternalSourceName = DumpExternalSourceName;
             }
 
             ItemModel.Items = Items.Select(i => ((Item)i).GetViewModel());
@@ -179,6 +181,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 RemoveIterationExpressionCode = RemoveIterationExpressionCode,
                 MoveIterationCondition = MoveIterationCondition,
                 MoveIterationExpressionCode = MoveIterationExpressionCode,
+                DumpExternalSourceName = DumpExternalSourceName,
                 Group = parent
             };
             foreach (var item in Items)

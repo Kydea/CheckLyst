@@ -191,6 +191,17 @@ div.PropertyPanel {
             }
         }
 
+        &.Signature {
+            label.DumpExternalDataSource {
+                position: absolute;
+                bottom: 10px;
+
+                span {
+                    position: static !important;
+                }
+            }
+        }
+
         div.ButtonsPanel {
             position: absolute;
             width: calc(100% - 20px);

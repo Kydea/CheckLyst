@@ -9,6 +9,7 @@ using System;
 using NLog;
 using CheckListManager.ExternalSources.Logic;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace CheckListManager.ExternalSources.Api.Controllers
 {
@@ -76,6 +77,35 @@ namespace CheckListManager.ExternalSources.Api.Controllers
                     {
                         Rows = Source.GetData(request.parameters, request.page, request.decimalSeparator, request.timeZone)
                     });
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, "External source error");
+                throw;
+            }
+        }
+
+        [HttpPost]
+        [Route("Export")]
+        public IHttpActionResult Export(ExternalSourceRequest request)
+        {
+            try
+            {
+                Logger.Info("ExternalSource/Export parameters:\n" + JsonConvert.SerializeObject(request));
+                using (var Source = SourceBase.Build(request.className, request.code, request.password, request.version, request.data))
+                {
+                    Source.Open();
+
+                    foreach (var Record in request.records)
+                    {
+                        var Parameters = new Dictionary<string, string>();
+                        for (var Index = 0; Index < request.names.Count; ++Index)
+                            Parameters.Add(request.names[Index], Record[Index]);
+                        Source.GetData(Parameters, request.page, request.decimalSeparator, request.timeZone);
+                    }
+
+                    return Ok();
                 }
             }
             catch (Exception e)
