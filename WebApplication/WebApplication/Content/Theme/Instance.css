@@ -163,7 +163,8 @@ div.Instance .Group > div.Information div.Panel {
 
 div.Instance .Group.CountDownOn {
   height: 163px !important;
-  border: none; }
+  border: none;
+  overflow: hidden; }
 
 div.Instance .Item label span.Label {
   padding-left: 8px; }
