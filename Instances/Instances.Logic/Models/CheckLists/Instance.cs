@@ -57,6 +57,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             };
         }
 
+        public DateTimeOffset? StateChangedOn { get; set; }
 
         public bool ReadOnly { get; set; }
         public Dictionary<string, ICheckListElement> Elements { get; } = new Dictionary<string, ICheckListElement>();
@@ -289,7 +290,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public override bool Update(DependencyRelation.Properties Property)
         {
-            if (Property != DependencyRelation.Properties.Formula) throw new ArgumentException();
+            if (Property == DependencyRelation.Properties.Formula) throw new ArgumentException();
 
             DescriptionFormula.Evaluate(this, InstanceRuntimeValues, DecimalSeparator, TimeZone, null);
             FileNameFormula.Evaluate(this, InstanceRuntimeValues, DecimalSeparator, TimeZone, null);

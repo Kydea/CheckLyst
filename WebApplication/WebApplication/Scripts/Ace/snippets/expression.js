@@ -37,56 +37,63 @@ ace.define("ace/snippets/expression", ["require", "exports", "module"], function
 
         //functions
         {
-            content: "DateIncrement (${1:date/date-time}, ${2:years}, ${3:months}, ${4:days})",
+            content: "DateIncrement(${1:date/date-time}, ${2:years}, ${3:months}, ${4:days})",
             name: "DateIncrement",
             scope: "expression",
             meta: "function",
             comment: "returns the provided date or date-time (the latter is truncated to the corresponding date value) incremented by the provided years, months and days"
         },
         {
-            content: "DateTimeIncrement (${1:date/date-time}, ${2:years}, ${3:months}, ${4:days}, ${5:hours}, ${6:minutes})",
+            content: "DateTimeIncrement(${1:date/date-time}, ${2:years}, ${3:months}, ${4:days}, ${5:hours}, ${6:minutes})",
             name: "DateTimeIncrement",
             scope: "expression",
             meta: "function",
             comment: "returns the provided date (considered as date time woth 0 hours and minutes) or date-time incremented by the provided years, months, days, hours and minutes"
         },
         {
-            content: "Error (${1:error message})",
+            content: "Error(${1:error message})",
             name: "Error",
             scope: "expression",
             meta: "function",
             comment: "returns an error with the provided description"
         },
         {
-            content: "Format (${1:value}, ${2:format})",
+            content: "Format(${1:value}, ${2:format})",
             name: "Format",
             scope: "expression",
             meta: "function",
             comment: "returns the value formatted as string using the provided format"
         },
         {
-            content: "Null (${1:argument})",
+            content: "Null(${1:argument})",
             name: "Null",
             scope: "expression",
             meta: "function",
             comment: "returns a value null of with the same data type of the provided argument"
         },
         {
-            content: "Date (${1:year}, ${2:month}, ${3:day})",
+            content: "Date(${1:year}, ${2:month}, ${3:day})",
             name: "Date",
             scope: "expression",
             meta: "function",
             comment: "returns a date with the provided year, month and day"
         },
         {
-            content: "DateTime (${1:year}, ${2:month}, ${3:day}, ${4:hour}, ${3:minute})",
+            content: "DateTime(${1:year}, ${2:month}, ${3:day}, ${4:hour}, ${3:minute})",
             name: "DateTime",
             scope: "expression",
             meta: "function",
             comment: "returns a date-time with the provided year, month, day, hour and minute"
         },
         {
-            content: "Time (${1:hour}, ${2:minute})",
+            content: "InstanceStateChangeDate()",
+            name: "InstanceStateChangeDate",
+            scope: "expression",
+            meta: "function",
+            comment: "returns the date and time when the instance state changed to in-progress"
+        },
+        {
+            content: "Time(${1:hour}, ${2:minute})",
             name: "Time",
             scope: "expression",
             meta: "function",
@@ -95,56 +102,56 @@ ace.define("ace/snippets/expression", ["require", "exports", "module"], function
 
         //math function
         {
-            content: "Atan (${1:argument})",
+            content: "Atan(${1:argument})",
             name: "Atan",
             scope: "expression",
             meta: "math function",
             comment: "returns the arctangent of the argument"
         },
         {
-            content: "Cos (${1:argument})",
+            content: "Cos(${1:argument})",
             name: "Cos",
             scope: "expression",
             meta: "math function",
             comment: "returns the cosine of the argument"
         },
         {
-            content: "Ln (${1:argument})",
+            content: "Ln(${1:argument})",
             name: "Ln",
             scope: "expression",
             meta: "math function",
             comment: "returns the natural logarithm of the argument"
         },
         {
-            content: "Log (${1:argument})",
+            content: "Log(${1:argument})",
             name: "Log",
             scope: "expression",
             meta: "math function",
             comment: "returns the base-10 logarithm of the argument"
         },
         {
-            content: "Round (${1:number}, ${1:decimals})",
+            content: "Round(${1:number}, ${1:decimals})",
             name: "Round",
             scope: "expression",
             meta: "math function",
             comment: "returns the number rounded to the provided number of decimals"
         },
         {
-            content: "Sin (${1:argument})",
+            content: "Sin(${1:argument})",
             name: "Sin",
             scope: "expression",
             meta: "math function",
             comment: "returns the sin of the argument"
         },
         {
-            content: "Sqrt (${1:argument})",
+            content: "Sqrt(${1:argument})",
             name: "Sqrt",
             scope: "expression",
             meta: "math function",
             comment: "returns the square root of the argument"
         },
         {
-            content: "Tan (${1:argument})",
+            content: "Tan(${1:argument})",
             name: "Tan",
             scope: "expression",
             meta: "math function",
@@ -153,7 +160,7 @@ ace.define("ace/snippets/expression", ["require", "exports", "module"], function
 
         //conditional operator
         {
-            content: "iif (${1:condition}, ${2:true part}, ${3:false part})",
+            content: "iif(${1:condition}, ${2:true part}, ${3:false part})",
             name: "iif",
             scope: "expression",
             meta: "operator"

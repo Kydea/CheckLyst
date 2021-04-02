@@ -232,6 +232,7 @@ namespace CheckListManager.Instances.Logic.Services
                     throw new InstanceException($"The following items are not valid: {string.Join(", ", InvalidItems)}");
 
                 cacheObject.InstanceState = InstanceState.Progress;
+                cacheObject.Instance.StateChangedOn = DateTime.UtcNow;
 
                 var row = new Common.Data.Instances
                 {
@@ -262,6 +263,11 @@ namespace CheckListManager.Instances.Logic.Services
 
                     cacheObject.Instance.UpdateInstanceRuntimeValues(cacheObject);
                     cacheObject.Instance.Update(DependencyRelation.Properties.Formula);
+
+                    var roots = new List<Tuple<DependencyNode, DependencyRelation.Properties>>();
+                    cacheObject.Instance.MarkNodeAsChanged(cacheObject.Instance, roots, DependencyRelation.Properties.StateChange);
+                    DependencyNode.UpdateNodes(cacheObject.Instance, roots);
+
                     cacheObject.Instance.UpdateReadOnly(identity.Code, InstanceState.Progress);
 
                     _instancesRepository.SaveChildren(row.ID, CreateTags(cacheObject), CreateExpressionValues(cacheObject));
