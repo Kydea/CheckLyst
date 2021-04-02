@@ -17,6 +17,8 @@
             base.updateModel(model);
             if (property == "name" && value && model.errors) 
                 base.setError(model.errors, "name", null);
+            if (property == "code")
+                base.setError(model.errors, "code", null);
         };
 
     this.setCheck = function (value) {
@@ -56,6 +58,6 @@
     };
 
     this.setError = function(handler) {
-        if (property == "name") handler(model.errors, "name");
+        if (property == "name" || property == "code") handler(model.errors, property);
     };
 }

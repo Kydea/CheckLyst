@@ -26,7 +26,7 @@
                 else if (prototypes.prototype.getModel().signatures[value] == undefined)
                     error = "signature not found";
             } else
-                base.setError(model.errors, "count-down", null);
+                base.setError(model.errors, "countdown", null);
 
             var offset = parseInt(offsetInput.val() || 0);
             offsetInput.val(offset)

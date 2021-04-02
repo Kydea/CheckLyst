@@ -748,7 +748,7 @@ namespace CheckListManager.Instances.Logic.Services
             }
         }
 
-        public async Task ExportSingedIterators(InstanceCacheObject cacheObject, IDefaultIdentity identity, Signature signature)
+        private async Task ExportSignedIterators(InstanceCacheObject cacheObject, IDefaultIdentity identity, Signature signature)
         {
             foreach (var Element in signature.GetBranchElements().Values)
                 if (Element is Group Group && Group.SignatureCode == signature.Code && Group.DumpExternalSourceName != null)
@@ -1524,7 +1524,7 @@ namespace CheckListManager.Instances.Logic.Services
                 cacheObject.ModifiedBy = identity.Code;
                 cacheObject.ModifiedOn = Now;
                 signature.Sign(identity.Code, identity.Description, Now);
-                await ExportSingedIterators(cacheObject, identity, signature);
+                await ExportSignedIterators(cacheObject, identity, signature);
 
                 if (cacheObject.InstanceState == InstanceState.Progress)
                     await SaveAsync(cacheObject, identity, false, false, true, cacheObject.ModifiedBy, cacheObject.ModifiedOn);

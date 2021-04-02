@@ -18,6 +18,11 @@
         copyModel = function (source, destination) {
             for (var property in source)
                 destination[property] = source[property];
+            if (source.errors) {
+                destination.errors = [];
+                for (var error in source.errors)
+                    destination.errors.push(source.errors[error]);
+            }
         },
 
         confirm = function () {
@@ -28,9 +33,8 @@
                     prototypes.prototype.ensureImageWillNotBeDeleted(model.key);
             }
             $("input:not(.ReadOnly)", propertyValue).change();
-            options && options.okHandler && options.okHandler();
 
-            prototypes.prototype.verify();
+            prototypes.prototype.verify(options && options.okHandler);
         };
 
     propertyPanel.confirm = confirm;

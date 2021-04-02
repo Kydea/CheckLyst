@@ -75,14 +75,9 @@ prototypes.ItemsList = function () {
         open = function () {
             prototypes.propertyPanel.select(prototypes.prototype.getCurrentItem(), {
                 okHandler: function () {
-                    var
-                        model = prototypes.prototype.getCurrentItem().getModel(),
-                        tr = $("tr.Selected", tableBody);
-                    $("td.CodeColumn div", tr).text(model.code).attr("title", model.code);
-                    $("td.DescriptionColumn div", tr).text(model.description).attr("title", model.description);
-                    toggleErrors(tr, model);
-
-                    $("div.ActionBar a.ItemsList").toggleClass("Invalid", $("tr i.Valid.fa-times", tableBody).length > 0);
+                    tableBody.empty();
+                    items = [];
+                    traverse(model = prototypes.prototype.getModel());
                 }
             });
         },

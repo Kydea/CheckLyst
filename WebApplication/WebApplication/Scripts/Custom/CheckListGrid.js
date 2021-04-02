@@ -2,7 +2,8 @@
 	var
 		checkListGrid = this,
 		element,
-		container,
+        container,
+        titleBar,
 		parameters,
 		body,
 
@@ -10,7 +11,7 @@
             matematici.checkListGrid = checkListGrid;
 			matematici.elements.body.addClass("CheckListGrid");
             element = $("<div />").addClass("CheckListGrid").appendTo(matematici.elements.body);
-            container = $("<div />").addClass("ScrollablePanel").appendTo($("<div />").append($("<h2 />").html(title)).addClass("Container").appendTo(element));
+            container = $("<div />").addClass("ScrollablePanel").appendTo($("<div />").append(titleBar = $("<h2 />").html(title)).addClass("Container").appendTo(element));
             autoCenter = new matematici.AutoCenter(container.parent());
             autoCenter.initialize();
 
@@ -49,9 +50,6 @@
 		renderValues = function () {
 			var tr;
 			container.empty();
-
-			if (parameters)
-				container.append(parameters);
 
 			$("<table />").addClass("Grid").appendTo(container)
 				.append($("<thead />")
@@ -111,8 +109,8 @@
 		renderValues();
 	};
 
-	checkListGrid.getParameters = function () {
-		container.prepend(parameters = $("<div />").addClass("Parameters Module"));
+    checkListGrid.getParameters = function () {
+        parameters = $("<div />").addClass("Parameters Module").insertAfter(titleBar);
 		return parameters;
 	}
 

@@ -23,12 +23,13 @@
         inputChanged = function () {
             var value = input.val();
 
-            if (input.prop("selectedIndex") > 2)
+            var index = input.prop("selectedIndex");
+
+            if (showDefault && index > 2 || !showDefault && index > 1)
                 expressionPropertyBase.check(value);
             else
                 base.setError(model.errors, errorCode, null);
 
-            var index = input.prop("selectedIndex");
             insteadRadio.parent().toggle(showRadioButtons && index > 2);
             andRadio.parent().toggle(showRadioButtons && index > 2);
             orRadio.parent().toggle(showRadioButtons && index > 2);

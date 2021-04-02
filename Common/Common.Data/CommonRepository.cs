@@ -88,6 +88,8 @@ namespace CheckListManager.Common.Data
                     && uf.Function == function
                     && uf.PrototypeType == null
                 ));
+            if (functionGroup == "Instances")
+                Prototypes = Prototypes.Where(p => p.PrototypeVersions.Any(pv => pv.VersionState == VersionState.Draft || pv.VersionState == VersionState.InSimulation));
             return Prototypes.ToListAsync();
         }
 

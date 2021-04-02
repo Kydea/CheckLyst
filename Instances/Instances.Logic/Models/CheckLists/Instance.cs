@@ -208,6 +208,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 { "InstanceVersion", cacheObject.Version },
                 { "InstanceYear", cacheObject.YearCode },
                 { "InstanceNumber", cacheObject.Number },
+                { "InstanceNumber", cacheObject.Number },
             };
         }
 

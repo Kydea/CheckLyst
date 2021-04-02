@@ -109,7 +109,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 Result &= GetExpression(CountDownToCode, DependencyRelation.Properties.CountDown, "countdown");
 
             if (CountDownCondition == Conditions.Signature)
-                Result &= GetSignature(CountDownToCode, DependencyRelation.Properties.CountDown, "signature");
+                Result &= GetSignature(CountDownToCode, DependencyRelation.Properties.CountDown, "countdown");
 
             if (HiddenCondition == Conditions.Expression)
                 Result &= GetExpression(HiddenExpressionCode, DependencyRelation.Properties.Hidden, "hidden");

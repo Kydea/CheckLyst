@@ -6,6 +6,7 @@ using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Logic.DataEngine;
 using CheckListManager.Instances.Data;
 using CheckListManager.Common.Core.Web.Security;
+using CheckListManager.Common.Data.ListItems;
 
 namespace CheckListManager.Instances.Logic.List
 {
@@ -18,6 +19,31 @@ namespace CheckListManager.Instances.Logic.List
         {
             _commonRepository = commonRepository;
             _instancesRepository = instancesRepository;
+        }
+
+
+        private class DepartmentComparer : IEqualityComparer<Departments>
+        {
+            public bool Equals(Departments x, Departments y) => x.ID == y.ID;
+            public int GetHashCode(Departments x) => x.ID.GetHashCode();
+        }
+
+        private class PrototypeTypeComparer : IEqualityComparer<PrototypeTypes>
+        {
+            public bool Equals(PrototypeTypes x, PrototypeTypes y) => x.ID == y.ID;
+            public int GetHashCode(PrototypeTypes x) => x.ID.GetHashCode();
+        }
+
+        private class PrototypeComparer : IEqualityComparer<Prototypes>
+        {
+            public bool Equals(Prototypes x, Prototypes y) => x.ID == y.ID;
+            public int GetHashCode(Prototypes x) => x.ID.GetHashCode();
+        }
+
+        private class PrototypeVersionComparer : IEqualityComparer<PrototypeVersion>
+        {
+            public bool Equals(PrototypeVersion x, PrototypeVersion y) => x.Version == y.Version;
+            public int GetHashCode(PrototypeVersion x) => x.Version;
         }
 
         public async Task<ListResponse> BindAsync(DefaultIdentity identity, ListRequest form)
@@ -34,7 +60,7 @@ namespace CheckListManager.Instances.Logic.List
                 //initial load
 
                 var departments = await _commonRepository.GetDepartmentsAsync(identity, "Instances", "View");
-                departments = departments.Union(await _commonRepository.GetDepartmentsAsync(identity, "Prototypes", "Preview")).ToList();
+                departments = departments.Union(await _commonRepository.GetDepartmentsAsync(identity, "Prototypes", "Preview"), new DepartmentComparer()).ToList();
                 department = department.HasValue && departments.Any(d => d.ID == department.Value) ? department.Value : departments.FirstOrDefault()?.ID;
                 response.Fields["Department"] = new Field
                 {
@@ -67,7 +93,7 @@ namespace CheckListManager.Instances.Logic.List
             if (form.Source == null || form.Source == "department")
             {
                 var prototypeTypes = await _commonRepository.GetPrototypeTypesAsync(identity, department ?? -1, "Instances", "View");
-                prototypeTypes = prototypeTypes.Union(await _commonRepository.GetPrototypeTypesAsync(identity, department ?? -1, "Prototypes", "Preview")).ToList();
+                prototypeTypes = prototypeTypes.Union(await _commonRepository.GetPrototypeTypesAsync(identity, department ?? -1, "Prototypes", "Preview"), new PrototypeTypeComparer()).ToList();
                 prototypeType = prototypeType.HasValue && prototypeTypes.Any(d => d.ID == prototypeType.Value) ? form.PrototypeType.Value : prototypeTypes.FirstOrDefault()?.ID;
                 response.Fields["PrototypeType"] = new Field
                 {
@@ -79,8 +105,9 @@ namespace CheckListManager.Instances.Logic.List
             if (form.Source == null || form.Source == "department" || form.Source == "prototypeType")
             {
                 var prototypes = await _commonRepository.GetPrototypesAsync(identity, prototypeType ?? -1, "Instances", "View");
-                var testPrototypes = (await _commonRepository.GetPrototypesAsync(identity, prototypeType ?? -1, "Prototypes", "Preview")).Where(p => p.PrototypeVersions.Any(pv => pv.VersionState == VersionState.Draft || pv.VersionState == VersionState.InSimulation));
-                prototypes = prototypes.Union(testPrototypes).ToList();
+                var testPrototypes = await _commonRepository.GetPrototypesAsync(identity, prototypeType ?? -1, "Prototypes", "Preview");
+                prototypes = prototypes.Union(testPrototypes, new PrototypeComparer()).ToList();
+
                 response.Fields["Prototype"] = new Field
                 {
                     Options = prototypes.OrderBy(x => x.Name).Select(p => new Option(p.ID.ToString(), p.Name)).Distinct(),
@@ -92,7 +119,7 @@ namespace CheckListManager.Instances.Logic.List
             {
                 var versions = await _commonRepository.GetPrototypeVersionsAsync(identity, prototype ?? -1, "Instances", "View");
                 var testVersions = (await _commonRepository.GetPrototypeVersionsAsync(identity, prototype ?? -1, "Prototypes", "Preview")).Where(pv => pv.VersionState == VersionState.Draft || pv.VersionState == VersionState.InSimulation);
-                versions = versions.Union(testVersions).ToList();
+                versions = versions.Union(testVersions, new PrototypeVersionComparer()).ToList();
                 response.Fields["Version"] = new Field
                 {
                     Options = versions.OrderBy(x => x.Description).Select(p => new Option(p.Version.ToString(), p.Description)).Distinct(),

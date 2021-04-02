@@ -141,6 +141,27 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             if (MoveIterationCondition == Conditions.Expression)
                 Result &= GetExpression(MoveIterationExpressionCode, DependencyRelation.Properties.MoveIteration, "move-iteration");
 
+            if (DumpExternalSourceName != null)
+            {
+                var DumpResult = true;
+                if (!CheckList.ExternalSourceDependencyNodes.TryGetValue(DumpExternalSourceName, out var ExternalSourceNode))
+                {
+                    Errors.Add(new Configuration.Error("export-source", $"External source {DumpExternalSourceName} not found"));
+                    DumpResult = false;
+                }
+
+                if (CheckList.Elements.TryGetValue(SignatureCode, out var SignatureElement) && SignatureElement is Signature Signature && Signature.Cancelable)
+                {
+                    Errors.Add(new Configuration.Error("export-source", $"The referenced signature is cancelable and cannot be used to export"));
+                    DumpResult = false;
+                }
+
+                if (DumpResult)
+                    AddDependingRelation(DependencyRelation.Properties.Value, CheckList.ExternalSourceDependencyNodes[DumpExternalSourceName], DependencyRelation.Properties.Value);
+
+                Result &= DumpResult;
+            }
+
             foreach (Item Item in Items)
             {
                 if (HiddenCondition != Conditions.True || HiddenCondition == Conditions.Expression)
@@ -150,24 +171,6 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                     AddDependingRelation(DependencyRelation.Properties.Validity, Item, DependencyRelation.Properties.Validity);
 
                 Result &= Item.BuildDependencies();
-
-                if (DumpExternalSourceName != null)
-                {
-                    if (!CheckList.ExternalSourceDependencyNodes.TryGetValue(DumpExternalSourceName, out var ExternalSourceNode))
-                    {
-                        Errors.Add(new Configuration.Error("signature", $"External source {DumpExternalSourceName} not found"));
-                        Result = false;
-                    }
-
-                    var Signature = (Signature)CheckList.Elements[SignatureCode];
-                    if (Signature.Cancelable)
-                    {
-                        Errors.Add(new Configuration.Error("signature", $"The referenced signature is cancelable and cannot be used to export"));
-                        Result = false;
-                    }
-
-                    AddDependingRelation(DependencyRelation.Properties.Value, CheckList.ExternalSourceDependencyNodes[DumpExternalSourceName], DependencyRelation.Properties.Value);
-                }
             }
 
             return Result;
