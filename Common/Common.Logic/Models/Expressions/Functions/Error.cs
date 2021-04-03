@@ -17,7 +17,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Functions
             DataType = DataType.Error;
         }
 
-        protected override TypedValue Evaluate(TypedValue ArgumentValue)
+        protected override TypedValue Evaluate(IElementsBranch ElementsBranch, TypedValue ArgumentValue)
             => new TypedValue(DataType.Error, ArgumentValue.TextValue);
 
         public override string ToString() =>

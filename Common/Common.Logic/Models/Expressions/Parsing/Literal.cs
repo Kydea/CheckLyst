@@ -122,6 +122,14 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                         Symbol = Time;
                         Operator = OperatorType.No;
                     }
+                    else if (LowerValue == "statedatetime")
+                    {
+                        var StateDateTime = new Functions.StateDateTime { Position = this.Position };
+                        CheckArguments(1);
+                        StateDateTime.Argument = Arguments[0].Symbol;
+                        Symbol = StateDateTime;
+                        Operator = OperatorType.No;
+                    }
 
                     //Math functions
                     else if (LowerValue == "sqrt")

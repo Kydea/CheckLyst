@@ -13,7 +13,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Functions
             DataType = Argument.DataType;
         }
 
-        protected override TypedValue Evaluate(TypedValue ArgumentValue)
+        protected override TypedValue Evaluate(IElementsBranch ElementsBranch, TypedValue ArgumentValue)
             => new TypedValue(ArgumentValue.Type, null);
 
         public override string ToString() =>

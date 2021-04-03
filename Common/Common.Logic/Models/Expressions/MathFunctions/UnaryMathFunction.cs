@@ -19,7 +19,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.MathFunctions
 
         protected abstract TypedValue EvaluateResult(TypedValue ArgumentValue);
 
-        protected override TypedValue Evaluate(TypedValue ArgumentValue) =>
-            base.Evaluate(ArgumentValue) ?? (ArgumentValue.IsNull ? ArgumentValue : EvaluateResult(ArgumentValue));
+        protected override TypedValue Evaluate(IElementsBranch ElementsBranch, TypedValue ArgumentValue) =>
+            base.Evaluate(ElementsBranch, ArgumentValue) ?? (ArgumentValue.IsNull ? ArgumentValue : EvaluateResult(ArgumentValue));
     }
 }

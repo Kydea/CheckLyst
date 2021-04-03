@@ -14,7 +14,7 @@ using CheckListManager.Common.Logic.Services;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
-    public class Instance : DependencyNode, ICheckList
+    public class Instance : DependencyNode, IInstance
     {
         #region versioning 
 
@@ -57,7 +57,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             };
         }
 
-        public DateTimeOffset? StateChangedOn { get; set; }
+        public DateTimeOffset CreatedOn { get; set; }
+        public DateTimeOffset? InProgressOn { get; set; }
 
         public bool ReadOnly { get; set; }
         public Dictionary<string, ICheckListElement> Elements { get; } = new Dictionary<string, ICheckListElement>();
@@ -121,7 +122,10 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             this.TimeZone = TimeZone;
 
             if (creation)
+            {
                 ExternalSourceRows = new PascalCaseDictionary<string, PascalCaseDictionary<string, string>>(ExternalSources.ToDictionary(x => x.Key, x => new PascalCaseDictionary<string, string>()));
+                CreatedOn = cacheObject.CreatedOn;
+            }
 
             Header.CheckList = this;
             Header.Setup();
@@ -208,8 +212,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 { "InstancePrototypeName", cacheObject.PrototypeName },
                 { "InstanceVersion", cacheObject.Version },
                 { "InstanceYear", cacheObject.YearCode },
-                { "InstanceNumber", cacheObject.Number },
-                { "InstanceNumber", cacheObject.Number },
+                { "InstanceNumber", cacheObject.Number }
             };
         }
 
@@ -290,10 +293,17 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public override bool Update(DependencyRelation.Properties Property)
         {
-            if (Property == DependencyRelation.Properties.Formula) throw new ArgumentException();
-
-            DescriptionFormula.Evaluate(this, InstanceRuntimeValues, DecimalSeparator, TimeZone, null);
-            FileNameFormula.Evaluate(this, InstanceRuntimeValues, DecimalSeparator, TimeZone, null);
+            switch (Property)
+            {
+                case DependencyRelation.Properties.Formula:
+                    DescriptionFormula.Evaluate(this, InstanceRuntimeValues, DecimalSeparator, TimeZone, null);
+                    FileNameFormula.Evaluate(this, InstanceRuntimeValues, DecimalSeparator, TimeZone, null);
+                    break;
+                case DependencyRelation.Properties.StateChange:
+                    break;
+                default:
+                    throw new ArgumentException();
+            }
 
             return true;
         }

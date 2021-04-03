@@ -65,7 +65,6 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
         [JsonIgnore]
         public Symbol Root { get; private set; }
-
         [JsonIgnore]
         public List<Symbol> Symbols { get; }
 
@@ -127,13 +126,13 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             }
         }
 
-        public void Evaluate(ICheckList instance, string TimeZone)
+        public void Evaluate(ICheckList Instance, string TimeZone)
         {
-            if (Root == null) Parse(instance);
+            if (Root == null) Parse(Instance);
             TypedValue NewValue;
             try
             {
-                NewValue = Root.GetValue(instance, new Dictionary<string, int>(), TimeZone);
+                NewValue = Root.GetValue(Instance, new Dictionary<string, int>(), TimeZone);
             }
             catch(Exception Exception)
             {
@@ -151,7 +150,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                 )
             )
             {
-                instance.NeedToSaveExpressionValues = true;
+                Instance.NeedToSaveExpressionValues = true;
                 Notified = false; //when the value changes the notification is reset
             }
             Value = NewValue;
@@ -169,6 +168,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
         public override string DependencyClassName => "expression";
         public override string DependencyObjectCode => Code;
+
 
         public override string ToString() => $"expression {Code}";
     }

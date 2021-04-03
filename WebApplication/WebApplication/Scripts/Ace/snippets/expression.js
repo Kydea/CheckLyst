@@ -86,11 +86,11 @@ ace.define("ace/snippets/expression", ["require", "exports", "module"], function
             comment: "returns a date-time with the provided year, month, day, hour and minute"
         },
         {
-            content: "InstanceStateChangeDate()",
-            name: "InstanceStateChangeDate",
+            content: "StateDateTime(${1:state})",
+            name: "StateDateTime",
             scope: "expression",
             meta: "function",
-            comment: "returns the date and time when the instance state changed to in-progress"
+            comment: "returns the date and time when the instance got the state \"Draft\" or \"In progress\""
         },
         {
             content: "Time(${1:hour}, ${2:minute})",

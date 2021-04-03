@@ -232,7 +232,7 @@ namespace CheckListManager.Instances.Logic.Services
                     throw new InstanceException($"The following items are not valid: {string.Join(", ", InvalidItems)}");
 
                 cacheObject.InstanceState = InstanceState.Progress;
-                cacheObject.Instance.StateChangedOn = DateTime.UtcNow;
+                cacheObject.Instance.InProgressOn = DateTime.UtcNow;
 
                 var row = new Common.Data.Instances
                 {
