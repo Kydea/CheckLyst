@@ -61,6 +61,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         {
             var ItemModel = base.GetViewModel();
             ItemModel.Url = UrlFormula.Value;
+            ItemModel.ElementType = ElementType;
+            ItemModel.ElementCode = ElementCode;
+            ItemModel.ElementId = ElementCode == null ? default(int?) : ((Item)GetBranchElements()[ElementCode]).Id;
             return ItemModel;
         }
     }

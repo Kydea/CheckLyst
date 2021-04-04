@@ -1,6 +1,11 @@
 ﻿instances.Link = function (item, model) {
     var
-        i, a,
+        i, a, linkedItem,
+
+        click = function (e) {
+            e.preventDefault();
+            if (!linkedItem.trigger()) matematici.dialog.show("warning", "The " + model.elementType + " " + model.elementCode + " is not enabled");
+        },
 
         setup = function () {
             var element = item.getElement();
@@ -12,16 +17,26 @@
             a = document.createElement("a");
             a.className = "Link";
             element.appendChild(a);
+
+            if (model.elementType == "Attachment" || model.elementType == "Image") {
+                linkedItem = instances.instance.getItems()[model.elementId].getTypedItem();
+                a.addEventListener("click", click);
+                a.setAttribute("href", "#");
+                a.setAttribute("title", model.elementType + " " + model.elementCode);
+            }
         };
 
     this.update = function (model) {
         a.innerHTML = model.descriptionValue || "(no label)";
-        if (!!model.url) {
-            a.setAttribute("target", "_blank");
-            a.setAttribute("href", model.url);
-        } else {
-            a.removeAttribute("target");
-            a.setAttribute("href", "#");
+
+        if (!linkedItem) {
+            if (!!model.url) {
+                a.setAttribute("target", "_blank");
+                a.setAttribute("href", model.url);
+            } else {
+                a.removeAttribute("target");
+                a.setAttribute("href", "#");
+            }
         }
 
         this.setColor(model.color);

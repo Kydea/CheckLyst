@@ -194,7 +194,10 @@
         update = function (model) {
             readOnly = !!model.readOnly;
 			if (title) title.innerHTML = model.descriptionValue;
-			if (!group.isPage()) id = model.id;
+            if (!group.isPage()) {
+                id = model.id;
+                instances.instance.getItems()[id] = group;
+            }
             element.classList.toggle("Hidden", model.hidden || !!model.removed && !instances.instance.areRemovedIterationsVisible());
             element.classList.toggle("Removed", !!model.removed);
             element.classList.toggle("ReadOnly", readOnly);

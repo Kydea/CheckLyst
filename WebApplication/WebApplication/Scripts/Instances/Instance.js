@@ -1,6 +1,7 @@
 ﻿instances.Instance = function (element, options) {
     var
         instance = this,
+        items = [],
         title = $("h2", element),
         header = new instances.Group($("div#Header", element)[0], "Group"),
         page = new instances.Group($("div.Page", element)[0], "Page"),
@@ -95,7 +96,7 @@
             matematici.dialog.error("exceptions list", message);
         },
 
-        navigateArray = function (value) {
+        traverseArray = function (value) {
             var element = $("<div />").addClass("Array");
             for (var index in value) {
                 element.append($("<span />").addClass("Index").text(parseInt(index) + 1));
@@ -113,7 +114,7 @@
                         div.addClass("Centered").append($("<i />").addClass("fa").addClass("fa-" + (itemValue || itemValue == true ? "check" : "times")));
                         break;
                     case "Array":
-                        div.append(navigateArray(itemValue));
+                        div.append(traverseArray(itemValue));
                         break;
                     default:
                         div.html(itemValue);
@@ -123,13 +124,14 @@
         },
 
         showArray = function (tr) {
-            var content = navigateArray(tr.data("array"));
+            var content = traverseArray(tr.data("array"));
             matematici.dialog.show($("td", tr).eq(0).text(), content);
         },
 
         update = function (result) {
             lastResult = result;
             model = result.checkList;
+            items = [];
             versionState = result.versionState || versionState;
 
             if (result.prototypeDescription) title.text(result.prototypeDescription);
@@ -574,10 +576,12 @@
         return model;
     };
 
+    instance.getItems = function () {
+        return items;
+    };
+
     instance.destroy = function () { };
-
     instance.showExceptions = showExceptions;
-
     instance.initialize();
 };
 

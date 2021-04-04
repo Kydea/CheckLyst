@@ -6,7 +6,7 @@
 
 		clickHandler = function () {
 			if (a.hasClass("ReadOnly") || a.hasClass("GreyYellowButton")) 
-				return;
+				return false;
 
 			var id = instances.instance.getPrototype();
 			var version = instances.instance.getVersion();
@@ -21,7 +21,8 @@
 			url += "&key=" + model.key;
 			url += "&Authorization=" + encodeURIComponent("Bearer " + matematici.tokenManager.getAccessToken());
 
-			matematici.imageViewer.show(title, url);
+            matematici.imageViewer.show(title, url);
+            return true;
         },
 
         setup = function () {
@@ -45,6 +46,8 @@
     this.setFontSize = function (value) {
         a.css({ fontSize: model.fontSize && model.fontSize + "px" });
     };
+
+    this.trigger = clickHandler;
 
 	setup();
 }

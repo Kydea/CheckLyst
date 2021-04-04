@@ -17,6 +17,22 @@
             }).trigger();
         },
 
+        view = function () {
+            var url = matematici.urls.instances.api + "/DownloadAttachment?";
+            url += "code=" + instances.instance.getCode();
+            url += "&key=" + key;
+            url += "&Authorization=" + encodeURIComponent("Bearer " + matematici.tokenManager.getAccessToken());
+
+            if (model.fileType === "images")
+                matematici.imageViewer.show("Preview", url);
+            else if (model.fileType === "pdf") {
+                if (matematici.appMode)
+                    window.webkit.messageHandlers.instances.postMessage("file: " + url);
+                else
+                    window.open(url);
+            }
+        },
+
         setup = function () {
             var element = item.getElement();
             input = document.createElement("input");
@@ -41,21 +57,7 @@
             var i = document.createElement("i");
             i.className = "Icon fa fa-eye";
             viewButton.appendChild(i);
-            viewButton.addEventListener("click", function () {
-                var url = matematici.urls.instances.api + "/DownloadAttachment?";
-                url += "code=" + instances.instance.getCode();
-                url += "&key=" + key;
-                url += "&Authorization=" + encodeURIComponent("Bearer " + matematici.tokenManager.getAccessToken());
-
-                if (model.fileType === "images")
-                    matematici.imageViewer.show("Preview", url);
-                else if (model.fileType === "pdf") {
-                    if (matematici.appMode)
-                        window.webkit.messageHandlers.instances.postMessage("file: " + url);
-                    else
-                        window.open(url);
-                }
-            });
+            viewButton.addEventListener("click", view);
             element.appendChild(viewButton);
         };
 
@@ -87,6 +89,18 @@
         uploadButton.style.fontSize = model.fontSize && model.fontSize + "px";
         viewButton.style.fontSize = model.fontSize && model.fontSize + "px";
     };
+
+    this.trigger = function () {
+        if (model.key) {
+            view();
+            return true;
+        } else if (readOnly)
+            return false;
+        else {
+            input.click();
+            return true;
+        }
+    }
 
     setup();
 }

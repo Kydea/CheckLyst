@@ -42,6 +42,7 @@
         };
 
     this.update = function (model) {
+        instances.instance.getItems()[model.id] = item;
         element.classList.toggle("Valid", model.valid);
 
         if (item.isTableContent())
@@ -74,11 +75,15 @@
 
     this.getParent = function () {
         return parent;
-    }
+    };
 
     this.isTableContent = function () {
         return parent.isTableContent() || parent.isTable();
-    }
+    };
+
+    this.getTypedItem = function () {
+        return typedItem;
+    };
 
     create();
 }
