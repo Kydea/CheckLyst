@@ -19,6 +19,22 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         {
             var Result = base.BuildDependencies();
 
+            switch (ElementType)
+            {
+                case null:
+                    break;
+                case "Image":
+                    Result &= BindElement<Image>(ElementCode, DependencyRelation.Properties.Value, DependencyRelation.Properties.Code, "link");
+                    break;
+                case "Attachment":
+                    Result &= BindElement<Attachment>(ElementCode, DependencyRelation.Properties.Value, DependencyRelation.Properties.Code, "link");
+                    break;
+                default:
+                    Errors.Add(new Configuration.Error("link", $"Invalid element type {ElementType}"));
+                    Result = false;
+                    break;
+            }
+
             UrlFormula.BuildDependencies(Url, null);
             foreach (var Key in UrlFormula.ValueKeys)
                 if (CheckList.Expressions.TryGetValue(Key, out var Expression))

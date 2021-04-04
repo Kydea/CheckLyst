@@ -95,6 +95,6 @@
     };
 
     this.setError = function(handler) {
-        handler(model.errors, "elementCode");
+        handler(model.errors, "link");
     };
 }

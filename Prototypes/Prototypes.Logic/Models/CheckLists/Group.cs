@@ -133,13 +133,13 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             var Result = base.BuildDependencies();
 
             if (AddIterationCondition == Conditions.Expression)
-                Result &= GetExpression(AddIterationExpressionCode, DependencyRelation.Properties.AddIteration, "add-iteration");
+                Result &= BindExpression(AddIterationExpressionCode, DependencyRelation.Properties.AddIteration, "add-iteration");
 
             if (RemoveIterationCondition == Conditions.Expression)
-                Result &= GetExpression(RemoveIterationExpressionCode, DependencyRelation.Properties.RemoveIteration, "remove-iteration");
+                Result &= BindExpression(RemoveIterationExpressionCode, DependencyRelation.Properties.RemoveIteration, "remove-iteration");
 
             if (MoveIterationCondition == Conditions.Expression)
-                Result &= GetExpression(MoveIterationExpressionCode, DependencyRelation.Properties.MoveIteration, "move-iteration");
+                Result &= BindExpression(MoveIterationExpressionCode, DependencyRelation.Properties.MoveIteration, "move-iteration");
 
             if (DumpExternalSourceName != null)
             {
