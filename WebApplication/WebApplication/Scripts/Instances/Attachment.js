@@ -91,7 +91,7 @@
     };
 
     this.trigger = function () {
-        if (model.key) {
+        if (key) {
             view();
             return true;
         } else if (readOnly)
