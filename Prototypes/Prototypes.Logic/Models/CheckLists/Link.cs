@@ -12,6 +12,8 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public override bool NewLine => true;
 
         public string Url { get; set; }
+        public string ElementType { get; set; }
+        public string ElementCode { get; set; }
 
         public override bool BuildDependencies()
         {
@@ -30,7 +32,9 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             var text = new Link
             {
                 Group = parent,
-                Url = Url
+                Url = Url,
+                ElementType = ElementType,
+                ElementCode = ElementCode
             };
             Copy(this, text);
             return text;

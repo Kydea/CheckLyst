@@ -425,6 +425,7 @@
     <Content Include="Scripts\Prototypes\Attachment.js" />
     <Content Include="Scripts\Prototypes\Link.js" />
     <Content Include="Scripts\Prototypes\ExpressionProperty.js" />
+    <Content Include="Scripts\Prototypes\LinkProperty.js" />
     <Content Include="Scripts\Prototypes\UploadProperty.js" />
     <Content Include="Scripts\Prototypes\CountDownToProperty.js" />
     <Content Include="Scripts\Prototypes\ValueTypeProperty.js" />

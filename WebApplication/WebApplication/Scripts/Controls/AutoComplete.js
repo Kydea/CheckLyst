@@ -376,6 +376,12 @@
         setValue();
     };
 
+    autoComplete.toggle = function (value) {
+        matematici.test = labelNode;
+        labelNode.style.display = value ? "block" : "none";
+        iconNode.style.display = value ? "block" : "none";
+    };
+
     autoComplete.getControl = function () {
 		return label;
     };
@@ -397,15 +403,10 @@
 	};
 
     autoComplete.isNullable = isNullable;
-
     autoComplete.hideList = hideList;
-
     autoComplete.initialize = initialize;
-
     autoComplete.destroy = destroy;
-
     autoComplete.checkReadOnly = checkReadOnly;
-
     autoComplete.setError = setError;
 };
 

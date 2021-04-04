@@ -3,5 +3,7 @@
 	public interface ICheckListLink : ICheckListItem
 	{
         string Url { get; set; }
-	}
+        string ElementType { get; set; }
+        string ElementCode { get; set; }
+    }
 }

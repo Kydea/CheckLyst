@@ -116,6 +116,11 @@
       bottom: 10px; }
       div.PropertyPanel div.PropertyValue.Signature label.DumpExternalDataSource span {
         position: static !important; }
+    div.PropertyPanel div.PropertyValue.Link label {
+      display: block;
+      position: static;
+      width: 100%;
+      margin-bottom: 5px; }
     div.PropertyPanel div.PropertyValue div.ButtonsPanel {
       position: absolute;
       width: calc(100% - 20px);

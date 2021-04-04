@@ -492,10 +492,9 @@
                         function () { $("a.Link", item.getElement()).html((model.description || '(no label)')); }
                     ));
                     properties.push(new prototypes.Property(
-                        this, new prototypes.SimpleValueProperty(model, "url", { readOnly: state != prototypes.Prototype.states.draft, fullHeight: true }),
-                        "Url",
-                        "The url to open.",
-                        function () { $("a.Link", item.getElement()).attr("href", model.url); }
+                        this, new prototypes.LinkProperty(model),
+                        "Link target",
+                        "The url/image/attachment to open."
                     ));
                     break;
                 case "Image":
