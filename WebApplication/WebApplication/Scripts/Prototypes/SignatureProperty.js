@@ -44,7 +44,7 @@
         } else {
             input = $("<select />").attr("data-nullable", "").appendTo(valuePanel);
             var found = false;
-            for (var signatureCode in prototypes.prototype.getModel().signatures) {
+            for (var signatureCode in prototypes.prototype.getElements(["Signature"])) {
                 input.append($("<option />").attr({ value: signatureCode, selected: signatureCode == model.signatureCode }).text(signatureCode));
                 if (signatureCode == model.signatureCode) found = true;
             }

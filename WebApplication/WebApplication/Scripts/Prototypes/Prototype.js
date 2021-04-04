@@ -9,6 +9,7 @@
         tab,
         pageLock,
         model,
+        elements,
         prototypeKey,
         concurrencyInformation,
         currentItem,
@@ -42,20 +43,17 @@
 
         completeModel = function () {
             var analyzeElement = function (node) {
+                if (node.code) elements[node.code] = node;
                 switch (node.typeName) {
                     case "Group":
                         for (var itemIndex in node.items || [])
                             analyzeElement(node.items[itemIndex]);
                         break;
-                    case "Signature":
-                        if (node.code)
-                            model.signatures[node.code] = node;
-                        break;
                 }
             };
 
             model.typeName = "Prototype";
-            model.signatures = {};
+            elements = {};
 
             analyzeElement(model.header);
             for (var pageIndex in model.pages || []) {
@@ -379,48 +377,19 @@
                 element.cloned = true;
         },
 
-        findItemByCode = function (code, element) {
-            if (!element) {
-                var item = findItemByCode(code, model.header);
-                if (item) return item;
-                for (var pageIndex in model.pages) {
-                    var page = model.pages[pageIndex];
-                    for (var groupIndex in page.groups) {
-                        var item = findItemByCode(code, page.groups[groupIndex]);
-                        if (item) return item;
-                    }
-                }
-            } else if (element.code == code)
-                return element;
-            else if (element.typeName == "Group")
-                for (var index in element.items) {
-                    var item = findItemByCode(code, element.items[index]);
-                    if (item) return item;
-                }
+        getElement = function (code, filters) {
+            var element = arguments.length == 0 ? element : elements[code];
+            return element && (!filters || filters.includes(element.typeName)) ? element : null;
         },
 
-        getElementCodes = function (element, codes) {
-            if (!element) {
-                codes = [];
-                getElementCodes(model.header, codes);
-                for (var pageIndex in model.pages) {
-                    var page = model.pages[pageIndex];
-
-                    if (page.code)
-                        codes.push({ code: page.code, type: "item (Page)" });
-
-                    for (var groupIndex in page.groups)
-                        getElementCodes(page.groups[groupIndex], codes);
-                }
-                return codes;
-            } else {
-                if (element.code)
-                    codes.push({ code: element.code, type: "item (" + element.typeName + ")" });
-
-                if (element.typeName == "Group")
-                    for (var index in element.items)
-                        getElementCodes(element.items[index], codes);
+        getElements = function (filters) {
+            var result = {};
+            for (var code in elements) {
+                var element = elements[code];
+                if (!filters || filters.includes(element.typeName))
+                    result[code] = element;
             }
+            return result;
         },
 
         findItem = function (element, itemId, pageIndex, result) {
@@ -665,10 +634,6 @@
                 }
             });
         };
-
-    prototype.getElement = function () {
-        return element;
-    };
 
     prototype.getTab = function () {
         return tab;
@@ -1023,9 +988,9 @@
     prototype.selectById = selectById;
     prototype.select = select;
     prototype.completeModel = completeModel;
-    prototype.findItemByCode = findItemByCode;
-    prototype.getElementCodes = getElementCodes;
     prototype.getCurrentItem = function () { return currentItem; };
+    prototype.getElements = getElements;
+    prototype.getElement = getElement;
 
     setup();
 };

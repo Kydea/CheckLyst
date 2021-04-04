@@ -23,7 +23,7 @@
             } else if (condition == 6) {
                 if (!value)
                     error = "select a signature";
-                else if (prototypes.prototype.getModel().signatures[value] == undefined)
+                else if (prototypes.prototype.getElement(value, ["Signature"]) == null)
                     error = "signature not found";
             } else
                 base.setError(model.errors, "countdown", null);
@@ -55,7 +55,7 @@
                 for (var expressionCode in expressions)
                     valueSelect.append($("<option />").attr({ value: expressionCode }).text(expressionCode));
             else if (condition == 6)
-                for (var signatureCode in prototypes.prototype.getModel().signatures)
+                for (var signatureCode in prototypes.prototype.getElements(["Signature"]))
                     valueSelect.append($("<option />").attr({ value: signatureCode }).text(signatureCode));
 
             setTimeout(function () {

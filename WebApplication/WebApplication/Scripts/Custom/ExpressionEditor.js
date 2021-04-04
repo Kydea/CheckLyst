@@ -6,7 +6,6 @@
         snippetManager = ace.require("ace/snippets").snippetManager,
         lang = ace.require("ace/lib/lang"),
         editor = ace.edit(id),
-        elementCodes,
 
         execHandler = function (e) {
             var editor = e.editor;
@@ -57,7 +56,7 @@
                             var
                                 range = session.getAWordRange(pos.row, pos.column - 1),
                                 word = session.getTextRange(range),
-                                element = word && prototypes.prototype.findItemByCode(word);
+                                element = word && prototypes.prototype.getElement(word);
 
                             matches = element &&
                             (
@@ -80,15 +79,17 @@
                     }
                 }, this);
 
-                if (!method)
-                    for (var index in elementCodes) {
-                        var element = elementCodes[index];
+                if (!method) {
+                    var elements = prototypes.prototype.getElements();
+                    for (var index in elements) {
+                        var element = elements[index];
                         completions.push({
                             name: "#" + element.code,
                             value: element.code,
                             meta: element.type
                         });
                     }
+                }
                 callback(null, completions);
             },
             getDocTooltip: function (item) {
@@ -112,8 +113,6 @@
 
             languageTools.setCompleters([customCompleter])
             editor.commands.on('afterExec', execHandler);
-
-            elementCodes = prototypes.prototype.getElementCodes();
 
             setTimeout(function () {
                 editor.focus();
