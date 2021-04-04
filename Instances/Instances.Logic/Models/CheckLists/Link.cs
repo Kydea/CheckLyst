@@ -19,6 +19,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public string Url { get; set; }
         public Formula UrlFormula { get; } = new Formula();
+        public string ElementType { get; set; }
+        public string ElementCode { get; set; }
+
 
         protected override void UpdateFormula()
         {

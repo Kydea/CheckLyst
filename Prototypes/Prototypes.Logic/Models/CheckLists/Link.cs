@@ -19,6 +19,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         {
             var Result = base.BuildDependencies();
 
+            //these dependencies are just for the prototype editing convenience as the code cannot change
             switch (ElementType)
             {
                 case null:
