@@ -1,65 +1,74 @@
 ﻿matematici.TokenManager = function () {
-	var
-		tokenManager = this,
-		cautionTimeOffset = 120000, //ms
+    var
+        tokenManager = this,
+        cautionTimeOffset = 120000, //ms
+        warningTimeout,
 
-		refreshAccessToken = function (user, accessToken, refreshToken, successHandler, failHandler, index) {
-			console.info("refreshing access token for " + user, new Date());
+        refreshAccessToken = function (user, accessToken, refreshToken, successHandler, failHandler, index) {
+            console.info("refreshing access token for " + user, new Date());
 
             $.ajax(matematici.urls.accessControl.token, {
-				global: false,
-				data: { grant_type: "refresh_token", refresh_token: refreshToken },
-				type: "post",
-				accessToken: accessToken
+                global: false,
+                data: { grant_type: "refresh_token", refresh_token: refreshToken },
+                type: "post",
+                accessToken: accessToken
             }).done(function (result) { successHandler(result, index); }).fail(function () { failHandler(index); });
-		},
+        },
+
+        logout = function () {
+            localStorage.refreshToken = null;
+            matematici.canClose = true;
+            window.location = matematici.urls.accessControl.login;
+        },
+
+        setInactivityTimeout = function () {
+            if (warningTimeout) clearTimeout(warningTimeout);
+            if (localStorage.refreshToken) {
+                var
+                    milliseconds = parseInt(localStorage.inactivityTimeoutSeconds) * 1000 || 900000,
+                    countdownLength = Math.min(milliseconds, 60000);
+
+                warningTimeout = setTimeout(function () {
+                    if (localStorage.refreshToken) matematici.blip.countdown(countdownLength, logout);
+                }, milliseconds - countdownLength);
+            }
+        },
 
         setup = function () {
-            localStorage.lastActivity = new Date();
-			matematici.elements.document.on("mousedown keydown	", function () {
-				localStorage.lastActivity = new Date();
-			});
+            matematici.elements.document.on("mousedown keydown	", setInactivityTimeout);
+            setInactivityTimeout();
 
-            if (!matematici.appMode)
-                setInterval(function () {
-                    if (localStorage.refreshToken && new Date() - new Date(localStorage.lastActivity) > (parseInt(localStorage.inactivityTimeoutSeconds) * 1000 || 900000)) {
-                        //alert("last activity performed on " + localStorage.lastActivity + ", redirecting to login page");
-					    localStorage.refreshToken = null;
-                        matematici.canClose = true;
-                        window.location = matematici.urls.accessControl.login;
-					    return;
-				    }
+            setInterval(function () {
+                //the access token is refreshed, when a refresh token is present, [cautionTimeOffset] milliseconds before the expiration 
+                if (localStorage.refreshToken && new Date().getTime() > localStorage.accessTokenExpiration - cautionTimeOffset)
+                    refreshAccessToken(tokenManager.getUserCode(), localStorage.accessToken, localStorage.refreshToken, setMainUser, function () {
+                        matematici.dialog.error("system error", "Access token refresh failed, please login again.");
+                        console.log("Access token refresh failed.");
+                    });
 
-				    //the access token is refreshed, when a refresh token is present, [cautionTimeOffset] milliseconds before the expiration 
-				    if (localStorage.refreshToken && new Date().getTime() > localStorage.accessTokenExpiration - cautionTimeOffset)
-					    refreshAccessToken(tokenManager.getUserCode(), localStorage.accessToken, localStorage.refreshToken, setMainUser, function () {
-						    matematici.dialog.error("system error", "Access token refresh failed, please login again.");
-						    console.log("Access token refresh failed.");
-					    });
+                var
+                    signers = tokenManager.getSigners(),
+                    expiredSigner = [];
 
-				    var
-					    signers = tokenManager.getSigners(),
-					    expiredSigner = [];
+                for (var index in signers) {
+                    var signer = signers[index];
+                    if (signer.refreshToken && new Date().getTime() > signer.accessTokenExpiration - cautionTimeOffset)
+                        refreshAccessToken(signer.code, signer.accessToken, signer.refreshToken, function (result, index) {
+                            updateSigner(index, result);
+                        }, function (index) {
+                            console.log("Access token refresh failed.");
+                            expiredSigner.push(index);
+                        }, index);
+                }
+                if (expiredSigner.length > 0) {
+                    for (var index = expiredSigner.length - 1; index >= 0; --index)
+                        Array.remove(signers, expiredSigner[index]);
 
-				    for (var index in signers) {
-					    var signer = signers[index];
-					    if (signer.refreshToken && new Date().getTime() > signer.accessTokenExpiration - cautionTimeOffset)
-                            refreshAccessToken(signer.code, signer.accessToken, signer.refreshToken, function (result, index) {
-							    updateSigner(index, result);
-                            }, function (index) {
-							    console.log("Access token refresh failed.");
-							    expiredSigner.push(index);
-						    }, index);
-				    }
-				    if (expiredSigner.length > 0) {
-					    for (var index = expiredSigner.length - 1; index >= 0; --index)
-						    Array.remove(signers, expiredSigner[index]);
+                    saveSigners(signers);
+                }
 
-					    saveSigners(signers);
-				    }
-
-			    }, 60000);
-		    },
+            }, 60000);
+        },
 
 		setMainUser = function (result) {
 			localStorage.company = result.company;
@@ -104,9 +113,9 @@
 
 	tokenManager.getRefreshToken = function () {
 		return localStorage.refreshToken;
-	};
+    };
 
-	tokenManager.logout = function () {
+	tokenManager.notifyLogout = function () {
 		if (localStorage.accessToken != null)
 			$.ajax(matematici.urls.accessControl.logout, {
 				data: { data: { refreshToken: localStorage.refreshToken } },
@@ -214,5 +223,5 @@
 		}
     };
 
-	setup();
+    if (!matematici.appMode) setup();
 }
