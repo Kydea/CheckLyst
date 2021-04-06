@@ -25,6 +25,7 @@
                     if (!(
                         value[index] >= "0" && value[index] <= "9"
                         || value[index] == "-"
+                        || value[index] == "e" || value[index] == "E"
                         || value[index] == localStorage.decimalSeparator
                     )) {
                         input.value = "";
@@ -112,6 +113,7 @@
             if (
                 e.ctrlKey || e.altKey
                 || e.key == '-'
+                || e.key == 'e' || e.key == 'E'
                 || e.key >= '0' && e.key <= '9'
                 || e.key == localStorage.decimalSeparator
             )
