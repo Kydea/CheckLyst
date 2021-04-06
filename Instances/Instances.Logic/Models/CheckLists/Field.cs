@@ -37,6 +37,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         }
 
         public string DefaultValue { get; set; }
+        public string Format { get; set; }
+        public int? Precision { get; set; }
 
         public bool LocalTimeZone { get; set; }
 
@@ -85,6 +87,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 ValueFormulaString = ValueFormulaString,
                 ValueTypeName = ValueTypeName,
                 DefaultValue = DefaultValue,
+                Format = Format,
+                Precision = Precision,
                 LocalTimeZone = LocalTimeZone,
                 ValuesList = ValuesList,
                 ExternalSourceName = ExternalSourceName,

@@ -7,6 +7,8 @@
         radioLocal,
         defaultValueLabel,
         defaultValue,
+        precisionInput,
+        formatInput,
 
         values = [
             { label: "Text", code: "Text" },
@@ -50,10 +52,15 @@
         },
 
         change = function () {
-            model[property] = input.val();
-            var radioVisible = toggleRadioButtons();
+            var
+                value = model[property] = input.val(),
+                number = value == "Number",
+                radioVisible = toggleRadioButtons();
             model.localTimeZone = radioVisible && $("input", radioLocal).prop("checked"); 
             setDefaultValueField();
+            precisionInput.parent().toggle(number);
+            formatInput.parent().toggle(number);
+            if (!number) model.format = model.precision = null;
             base.updateModel(model);
         };
 
@@ -76,18 +83,15 @@
                     label.val(values[index].label);
         } else {
             input = $("<select />");
-            if (!!options.nullable) input.attr("data-nullable", "");
-            input.empty();
             for (var index in values) {
                 var
-                    string = typeof (values[index]) == "string",
-                    value = string ? values[index] : values[index].code,
-                    label = string ? values[index] : values[index].label;
-                input.append($("<option />").attr({ value: value, selected: value == model[property] }).text(label));
+                    value = values[index],
+                    code = value.code,
+                    label = value.label;
+                input.append($("<option />").attr({ value: code, selected: code == model[property] }).text(label));
             }
             input.on("change", change);
             valuePanel.append(input);
-            if (!!options.nullable && !model[property]) input.val(null);
         }
 
         radioUTC = $("<label />")
@@ -105,8 +109,32 @@
             radioLocal.change(change);
         }
 
+        precisionInput = $("<input />")
+            .attr("type", "text")
+            .val(model.precision)
+            .on("change", function () { model.precision = this.value; });
+
+        $("<label />")
+            .addClass("Precision")
+            .text("Allowed decimals")
+            .appendTo(valuePanel)
+            .append(precisionInput);
+
+        formatInput = $("<input />")
+            .attr("type", "text")
+            .val(model.format)
+            .on("change", function () { model.format = this.value; });
+
+        $("<label />")
+            .addClass("Format")
+            .text("format")
+            .appendTo(valuePanel)
+            .append(formatInput);
+
         defaultValueLabel = $("<label />")
+            .addClass("DefaultValue")
             .text("default value")
+            .keyfilter(/^[0-9]*$/i)
             .appendTo(valuePanel);
 
         setDefaultValueField();

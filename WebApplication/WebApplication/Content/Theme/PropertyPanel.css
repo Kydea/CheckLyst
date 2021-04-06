@@ -108,7 +108,16 @@
       top: unset !important;
       left: unset !important;
       width: unset !important; }
-    div.PropertyPanel div.PropertyValue.ValueType label:last-child {
+    div.PropertyPanel div.PropertyValue.ValueType label.Precision {
+      bottom: 75px;
+      position: absolute;
+      width: calc(50% - 15px); }
+    div.PropertyPanel div.PropertyValue.ValueType label.Format {
+      bottom: 75px;
+      position: absolute;
+      width: calc(50% - 15px);
+      right: 10px; }
+    div.PropertyPanel div.PropertyValue.ValueType label.DefaultValue {
       bottom: 10px;
       position: absolute; }
     div.PropertyPanel div.PropertyValue.Signature label.DumpExternalDataSource {
