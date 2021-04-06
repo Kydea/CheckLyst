@@ -34,24 +34,34 @@ namespace CheckListManager.Common.Logic.Models
 
 		public override string ToString() => TypeName;
 
-		public bool Validate(string value)
+		public bool TryParse(string value, out object result)
 		{
+            result = null;
+            if (string.IsNullOrEmpty(value)) return true;
+
             try
             {
-                if (string.IsNullOrEmpty(value)) return true;
-
-                if (_rawValue == DataTypeEnum.Boolean)
-                    return "true".Equals(value, StringComparison.InvariantCultureIgnoreCase) || "false".Equals(value, StringComparison.InvariantCultureIgnoreCase);
-                if (_rawValue == DataTypeEnum.Number)
-                    return decimal.TryParse(value.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out _);
-                if (_rawValue == DataTypeEnum.Date)
-                    return DateTimeOffset.TryParseExact(value, DateTimeOffsetHelper.DateFormat, null, DateTimeStyles.AssumeUniversal, out _);
-                if (_rawValue == DataTypeEnum.DateTime)
-                    return DateTimeOffset.TryParseExact(value, DateTimeOffsetHelper.DateTimeFormats, null, DateTimeStyles.AssumeUniversal, out _);
-                if (_rawValue == DataTypeEnum.Time)
-                    return TimeSpan.TryParseExact(value, new string[] { "hh\\:mm", "hh\\:mm\\:ss" }, null, out _);
-
-				return true;
+                switch (_rawValue)
+                {
+                    case DataTypeEnum.Boolean:
+                        result = "true".Equals(value, StringComparison.InvariantCultureIgnoreCase) ? true : "false".Equals(value, StringComparison.InvariantCultureIgnoreCase) ? false : default(bool?);
+                        return result != null;
+                    case DataTypeEnum.Number:
+                        result = decimal.TryParse(value.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out var decimalResult) ? decimalResult : default(decimal?);
+                        return result != null;
+                    case DataTypeEnum.Date:
+                        result = DateTimeOffset.TryParseExact(value, DateTimeOffsetHelper.DateFormat, null, DateTimeStyles.AssumeUniversal, out var dateTimeOffsetResult) ? dateTimeOffsetResult : default(DateTimeOffset?);
+                        return result != null;
+                    case DataTypeEnum.DateTime:
+                        result = DateTimeOffset.TryParseExact(value, DateTimeOffsetHelper.DateTimeFormats, null, DateTimeStyles.AssumeUniversal, out dateTimeOffsetResult) ? dateTimeOffsetResult : default(DateTimeOffset?);
+                        return result != null;
+                    case DataTypeEnum.Time:
+                        result = TimeSpan.TryParseExact(value, new string[] { "hh\\:mm", "hh\\:mm\\:ss" }, null, out var timeSpanResult) ? timeSpanResult : default(TimeSpan?);
+                        return result != null;
+                    default:
+                        result = value;
+                        return true;
+                }
 			}
 			catch
 			{

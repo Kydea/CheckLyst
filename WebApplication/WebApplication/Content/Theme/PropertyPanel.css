@@ -111,12 +111,7 @@
     div.PropertyPanel div.PropertyValue.ValueType label.Precision {
       bottom: 75px;
       position: absolute;
-      width: calc(50% - 15px); }
-    div.PropertyPanel div.PropertyValue.ValueType label.Format {
-      bottom: 75px;
-      position: absolute;
-      width: calc(50% - 15px);
-      right: 10px; }
+      width: calc(100% - 20px); }
     div.PropertyPanel div.PropertyValue.ValueType label.DefaultValue {
       bottom: 10px;
       position: absolute; }

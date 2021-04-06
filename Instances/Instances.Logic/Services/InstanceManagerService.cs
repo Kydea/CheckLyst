@@ -1215,7 +1215,7 @@ namespace CheckListManager.Instances.Logic.Services
             if (field.ReadOnly)
                 return null;
 
-            if ((value ?? string.Empty) != (field.Value ?? string.Empty) && field.Validate(value))
+            if ((value ?? string.Empty) != (field.Value ?? string.Empty) && field.ValueType.TryParse(value, out var parsedValue))
             {
                 string
                     oldFormattedValue = field.Value,
@@ -1245,6 +1245,11 @@ namespace CheckListManager.Instances.Logic.Services
                         else
                             formattedValue = string.Empty;
                     }
+                }
+                else if (field.ValueTypeName == "Number" && field.Precision.HasValue && parsedValue is decimal decimalValue)
+                {
+                    var roundedValue = field.Precision.HasValue ? Math.Round(decimalValue, field.Precision.Value) : decimalValue;
+                    formattedValue = value = roundedValue.ToString().Replace(".", cacheObject.Instance.DecimalSeparator).Replace(",", cacheObject.Instance.DecimalSeparator);
                 }
 
                 field.ModifiedBy = userCode;
@@ -1301,7 +1306,7 @@ namespace CheckListManager.Instances.Logic.Services
                 value = previousField?.Value ?? string.Empty;
             }
 
-            if ((value ?? string.Empty) != (field.Value ?? string.Empty) && field.Validate(value))
+            if ((value ?? string.Empty) != (field.Value ?? string.Empty) && field.ValueType.TryParse(value, out var parsedValue))
             {
                 string
                     oldFormattedValue = field.Value,
@@ -1331,6 +1336,11 @@ namespace CheckListManager.Instances.Logic.Services
                         dateTimeOffset = DateTimeOffsetHelper.Parse(formattedValue, TimeZone, out Ambiguous, out AmbiguousDateTimeOffsets, DateTimeOffsetHelper.DateTimeFormats);
                         formattedValue = dateTimeOffset?.Format(TimeZone) ?? string.Empty;
                     }
+                }
+                else if (field.ValueTypeName == "Number" && field.Precision.HasValue && parsedValue is decimal decimalValue)
+                {
+                    var roundedValue = field.Precision.HasValue ? Math.Round(decimalValue, field.Precision.Value) : decimalValue;
+                    formattedValue = value = roundedValue.ToString().Replace(".", cacheObject.Instance.DecimalSeparator).Replace(",", cacheObject.Instance.DecimalSeparator);
                 }
 
                 field.ModifiedBy = userCode;

@@ -37,7 +37,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         }
 
         public string DefaultValue { get; set; }
-        public string Format { get; set; }
         public int? Precision { get; set; }
 
         public bool LocalTimeZone { get; set; }
@@ -87,7 +86,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 ValueFormulaString = ValueFormulaString,
                 ValueTypeName = ValueTypeName,
                 DefaultValue = DefaultValue,
-                Format = Format,
                 Precision = Precision,
                 LocalTimeZone = LocalTimeZone,
                 ValuesList = ValuesList,
@@ -131,10 +129,15 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             else
                 ValueFormula.Evaluate(CheckList, GetRuntimeValues(), Instance.DecimalSeparator, Instance.TimeZone, Iteration?.Indexes);
 
+            object ConvertedValue = null;
             if (ValueFormula.IsSet)
             {
-                ConversionError = ValueFormula.HasValue && !ValueType.Validate(ValueFormula.Value);
-                Value = ConversionError ? null : ValueFormula.Value;
+                var Value = ValueFormula.Value;
+                ConversionError = ValueFormula.HasValue && !ValueType.TryParse(Value, out ConvertedValue);
+                if (Precision.HasValue && !ConversionError && ConvertedValue is decimal decimalValue)
+                    Value = Math.Round(decimalValue, Precision.Value).ToString();
+
+                this.Value = ConversionError ? null : Value;
             }
 
             if (ExternalSourceName != null)
@@ -143,7 +146,10 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                     ExternalSourceName != null && Instance.ExternalSourceRows.ContainsKey(ExternalSourceName) && Instance.ExternalSourceRows[ExternalSourceName].ContainsKey(ExternalSourceColumn) ?
                     Instance.ExternalSourceRows[ExternalSourceName][ExternalSourceColumn] :
                     null;
-                ConversionError = !ValueType.Validate(Value);
+                ConversionError = !ValueType.TryParse(Value, out ConvertedValue);
+                if (Precision.HasValue && !ConversionError && ConvertedValue is decimal decimalValue)
+                    Value = Math.Round(decimalValue, Precision.Value).ToString();
+
                 this.Value = ConversionError ? null : Value;
             }
 
@@ -178,8 +184,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             MarkNodeAsChanged(CheckList, Roots, DependencyRelation.Properties.Value);
         }
 
-        public bool Validate(string value) => ValueType.Validate(value);
-
         public bool ConversionError { get; set; }
 
         public override string ValidityMessage { get => ConversionError ? $"the value {ValueFormula.Value} could not be converted to {ValueType.TypeName}" : base.ValidityMessage; set => base.ValidityMessage = value; }
@@ -191,7 +195,12 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             var Result = base.Setup();
             if (!string.IsNullOrEmpty(DefaultValue))
             {
-                if (Validate(DefaultValue)) Value = DefaultValue;
+                if (ValueType.TryParse(DefaultValue, out var Object))
+                {
+                    Value = DefaultValue;
+                    if (Precision.HasValue && Object is decimal DecimalValue)
+                        Value = Math.Round(DecimalValue, Precision.Value).ToString();
+                }
                 DefaultValue = null;
             }
             return Result;

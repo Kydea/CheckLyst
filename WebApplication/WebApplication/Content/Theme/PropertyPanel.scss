@@ -188,14 +188,7 @@ div.PropertyPanel {
             label.Precision {
                 bottom: 75px;
                 position: absolute;
-                width: calc(50% - 15px);
-            }
-
-            label.Format {
-                bottom: 75px;
-                position: absolute;
-                width: calc(50% - 15px);
-                right: 10px;
+                width: calc(100% - 20px);
             }
 
             label.DefaultValue {

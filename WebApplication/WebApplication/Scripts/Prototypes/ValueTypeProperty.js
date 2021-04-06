@@ -8,7 +8,6 @@
         defaultValueLabel,
         defaultValue,
         precisionInput,
-        formatInput,
 
         values = [
             { label: "Text", code: "Text" },
@@ -59,8 +58,7 @@
             model.localTimeZone = radioVisible && $("input", radioLocal).prop("checked"); 
             setDefaultValueField();
             precisionInput.parent().toggle(number);
-            formatInput.parent().toggle(number);
-            if (!number) model.format = model.precision = null;
+            if (!number) model.precision = null;
             base.updateModel(model);
         };
 
@@ -111,6 +109,7 @@
 
         precisionInput = $("<input />")
             .attr("type", "text")
+            .keyfilter(/^[0-9]*$/i)
             .val(model.precision)
             .on("change", function () { model.precision = this.value; });
 
@@ -120,21 +119,9 @@
             .appendTo(valuePanel)
             .append(precisionInput);
 
-        formatInput = $("<input />")
-            .attr("type", "text")
-            .val(model.format)
-            .on("change", function () { model.format = this.value; });
-
-        $("<label />")
-            .addClass("Format")
-            .text("format")
-            .appendTo(valuePanel)
-            .append(formatInput);
-
         defaultValueLabel = $("<label />")
             .addClass("DefaultValue")
             .text("default value")
-            .keyfilter(/^[0-9]*$/i)
             .appendTo(valuePanel);
 
         setDefaultValueField();
