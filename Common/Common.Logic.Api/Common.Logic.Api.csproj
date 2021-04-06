@@ -195,6 +195,7 @@
     <Compile Include="Messages\ResponseMessage.cs" />
     <Compile Include="PDF\AttachmentModel.cs" />
     <Compile Include="PDF\CheckListPDF.cs" />
+    <Compile Include="PDF\FontResolver.cs" />
     <Compile Include="PDF\Helper\Font.cs" />
     <Compile Include="PDF\Helper\PdfTable.cs" />
     <Compile Include="PDF\MigraDocBuilder.cs" />
@@ -232,6 +233,8 @@
     <None Include="app.config" />
     <None Include="Common.Logic.Api.snk" />
     <None Include="packages.config" />
+    <EmbeddedResource Include="PDF\Fonts\ARIALUNI.TTF" />
+    <EmbeddedResource Include="PDF\Fonts\ARIALUNIB.ttf" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Services\" />
