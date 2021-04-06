@@ -391,16 +391,19 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
 
             Arguments = new List<TokenSet>();
             var Caret = Position.Index;
+            bool InQuote = false;
 
             while (Caret < ExpressionValue.Length && Depth > 0)
             {
                 var Character = ExpressionValue[Caret];
-                if (Character == '(')
+                if (!InQuote && Character == '(')
                     ++Depth;
-                else if (Character == ')')
+                else if (!InQuote && Character == ')')
                     --Depth;
+                else if (Character == '"')
+                    InQuote = !InQuote; 
 
-                if (Depth == 1 && Character == ',' || Depth == 0)
+                if (!InQuote && Depth == 1 && Character == ',' || Depth == 0)
                 {
                     Arguments.Add(new TokenSet(ExpressionValue, Position, Caret));
                     Position.Increment(false);
