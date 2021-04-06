@@ -47,10 +47,11 @@ namespace CheckListManager.Common.Logic.Api.PDF
 
         public async Task GenerateAsync(Stream Stream)
         {
-            GlobalFontSettings.FontResolver = new FontResolver();
-
             try
             {
+                if (!(GlobalFontSettings.FontResolver is FontResolver))
+                    GlobalFontSettings.FontResolver = new FontResolver();
+
                 DocumentBuilder = new MigraDocBuilder()
                 {
                     Unicode = true // allow unicode charset
