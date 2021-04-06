@@ -58,13 +58,6 @@ ace.define("ace/snippets/expression", ["require", "exports", "module"], function
             comment: "returns an error with the provided description"
         },
         {
-            content: "Format(${1:value}, ${2:format})",
-            name: "Format",
-            scope: "expression",
-            meta: "function",
-            comment: "returns the value formatted as string using the provided format"
-        },
-        {
             content: "Null(${1:argument})",
             name: "Null",
             scope: "expression",
@@ -100,7 +93,107 @@ ace.define("ace/snippets/expression", ["require", "exports", "module"], function
             comment: "returns a time with the provided hour and minute"
         },
 
-        //math function
+        //string funtions
+        {
+            content: "Format(${1:value}, ${2:format})",
+            name: "Format",
+            scope: "expression",
+            meta: "function",
+            comment: "returns the value formatted as string using the provided format"
+        },
+        {
+            content: "StringLength(${1:value})",
+            name: "StringLength",
+            scope: "expression",
+            meta: "function",
+            comment: "returns the number of characters in value"
+        },
+        {
+            content: "StringToLowerCase(${1:value})",
+            name: "StringToLowerCase",
+            scope: "expression",
+            meta: "function",
+            comment: "returns the value converted to lower case"
+        },
+        {
+            content: "StringToUpperCase(${1:value})",
+            name: "StringToUpperCase",
+            scope: "expression",
+            meta: "function",
+            comment: "returns the value converted to upper case"
+        },
+        {
+            content: "StringFind(${1:value}, ${2:keyword})",
+            name: "StringFind",
+            scope: "expression",
+            meta: "function",
+            comment: "returns the position of keyword into value, -1 if the keyword is not found"
+        },
+        {
+            content: "StringReplace(${1:value}, ${2:keyword}, ${3:new-keyword})",
+            name: "StringReplace",
+            scope: "expression",
+            meta: "function",
+            comment: "returns the provided value with all the occurrences of keyword replaced by new-keyword"
+        },
+        {
+            content: "Substring(${1:value}, ${2:initial-position}, ${3:length})",
+            name: "Substring",
+            scope: "expression",
+            meta: "function",
+            comment: "returns length characters (or all the characters if length is not provided) starting from initial-position"
+        },
+        {
+            content: "StringRight(${1:value}, ${2:length})",
+            name: "StringRight",
+            scope: "expression",
+            meta: "function",
+            comment: "returns the last length characters to the right of value"
+        },
+        {
+            content: "StringLeftPad(${1:value}, ${2:length}, ${3:pattern})",
+            name: "StringLeftPad",
+            scope: "expression",
+            meta: "function",
+            comment: "returns the concatenation of copies of pattern (or of spaces if pattern is omitted) to the left of value until the length is greater or equals to length"
+        },
+        {
+            content: "StringRightPad(${1:value}, ${2:length}, ${3:pattern})",
+            name: "StringRightPad",
+            scope: "expression",
+            meta: "function",
+            comment: "returns the concatenation of copies of pattern (or of spaces if pattern is omitted) to the right of value until the length is greater or equals to length"
+        },
+        {
+            content: "StringLeftTrim(${1:value}, ${2:pattern})",
+            name: "StringLeftTrim",
+            scope: "expression",
+            meta: "function",
+            comment: "returns the provided value, trimmered on the left of the longest sequence of concatenation of pattern (of spaces if pattern is not provided) possible"
+        },
+        {
+            content: "StringRightTrim(${1:value}, ${2:pattern})",
+            name: "StringRightTrim",
+            scope: "expression",
+            meta: "function",
+            comment: "returns the provided value, trimmered on the right of the longest sequence of concatenation of pattern (of spaces if pattern is not provided) possible"
+        },
+        {
+            content: "StringTrim(${1:value}, ${2:pattern})",
+            name: "StringTrim",
+            scope: "expression",
+            meta: "function",
+            comment: "returns the provided value, trimmered both sides of the longest sequence of concatenation of pattern (of spaces if pattern is not provided) possible"
+        },
+        {
+            content: "StringToNumber(${1:value})",
+            name: "StringToNumber",
+            scope: "expression",
+            meta: "function",
+            comment: "returns the provided value converted to number"
+        },
+    
+        //math functions
         {
             content: "Atan(${1:argument})",
             name: "Atan",
