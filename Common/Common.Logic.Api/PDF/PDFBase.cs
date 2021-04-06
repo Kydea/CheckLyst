@@ -1,5 +1,6 @@
 ﻿using CheckListManager.Common.Logic.Api.PDF.Helper;
 using MigraDoc.DocumentObjectModel;
+using PdfSharp.Fonts;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -18,15 +19,15 @@ namespace CheckListManager.Common.Logic.Api.PDF
         public static Border DefaultBorder => new Border { Color = Gray, Style = BorderStyle.Single };
         public static Border RedBorder => new Border { Color = Red, Style = BorderStyle.Single };
        
-        public static Font TitleFont1 => FontHelper.GetInstance("Helvetica", 20, FontStyle.Bold, Yellow).Clone();
-        public static Font TitleFont2 => FontHelper.GetInstance("Helvetica", 16, FontStyle.Bold, Green).Clone();
-        public static Font TitleFont3 => FontHelper.GetInstance("Helvetica", 12, FontStyle.Bold, Green).Clone();
-        public static Font RedTitleFont => FontHelper.GetInstance("Helvetica", 12, FontStyle.Bold, Red).Clone();
-        public static Font GenericFont => FontHelper.GetInstance("Helvetica", 10, FontStyle.Regular, Colors.Black).Clone();
-        public static Font BoldFont => FontHelper.GetInstance("Helvetica", 10, FontStyle.Bold, DarkGray).Clone();
-        public static Font GrayFont => FontHelper.GetInstance("Helvetica", 10, FontStyle.Regular, DarkGray).Clone();
-        public static Font SmallFont => FontHelper.GetInstance("Helvetica", 8, FontStyle.Regular, Colors.Black).Clone();
-        public static Font SmallBoldFont => FontHelper.GetInstance("Helvetica", 8, FontStyle.Bold, Colors.Black).Clone();
+        public static Font TitleFont1 => FontHelper.GetInstance("Arial Unicode MS", 20, FontStyle.Bold, Yellow).Clone();
+        public static Font TitleFont2 => FontHelper.GetInstance("Arial Unicode MS", 16, FontStyle.Bold, Green).Clone();
+        public static Font TitleFont3 => FontHelper.GetInstance("Arial Unicode MS", 12, FontStyle.Bold, Green).Clone();
+        public static Font RedTitleFont => FontHelper.GetInstance("Arial Unicode MS", 12, FontStyle.Bold, Red).Clone();
+        public static Font GenericFont => FontHelper.GetInstance("Arial Unicode MS", 10, FontStyle.Regular, Colors.Black).Clone();
+        public static Font BoldFont => FontHelper.GetInstance("Arial Unicode MS", 10, FontStyle.Bold, DarkGray).Clone();
+        public static Font GrayFont => FontHelper.GetInstance("Arial Unicode MS", 10, FontStyle.Regular, DarkGray).Clone();
+        public static Font SmallFont => FontHelper.GetInstance("Arial Unicode MS", 8, FontStyle.Regular, Colors.Black).Clone();
+        public static Font SmallBoldFont => FontHelper.GetInstance("Arial Unicode MS", 8, FontStyle.Bold, Colors.Black).Clone();
 
         protected string Subject { get; private set; }
         public Section Container { get; private set; }
@@ -46,9 +47,14 @@ namespace CheckListManager.Common.Logic.Api.PDF
 
         public async Task GenerateAsync(Stream Stream)
         {
+            GlobalFontSettings.FontResolver = new FontResolver();
+
             try
             {
-                DocumentBuilder = new MigraDocBuilder();
+                DocumentBuilder = new MigraDocBuilder()
+                {
+                    Unicode = true // allow unicode charset
+                };
                 
                 await AddSectionAsync();
                 await OnGenerateAsync();

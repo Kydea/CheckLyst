@@ -23,6 +23,8 @@ namespace CheckListManager.Common.Logic.Api.PDF
 
         protected int RenderedPages { get; set; }
 
+        public bool Unicode { get; set; }
+
         public MigraDocBuilder()
         {
             Document = new Document();
@@ -91,7 +93,10 @@ namespace CheckListManager.Common.Logic.Api.PDF
                     var page = PdfDocument.Pages[index];
 
                     using (XGraphics gfx = XGraphics.FromPdfPage(page))
+                    {
+                        gfx.MUH = Unicode ? PdfFontEncoding.Unicode : PdfFontEncoding.WinAnsi;
                         DocumentRenderer.RenderPage(gfx, index + 1);
+                    }
 
                     RenderedPages++;
                 });
