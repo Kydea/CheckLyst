@@ -378,8 +378,8 @@
         },
 
         getElement = function (code, filters) {
-            var element = arguments.length == 0 ? element : elements[code];
-            return element && (!filters || filters.includes(element.typeName)) ? element : null;
+            var result = arguments.length == 0 ? element : elements[code];
+            return result && (!filters || filters.includes(result.typeName)) ? result : null;
         },
 
         getElements = function (filters) {
