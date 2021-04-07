@@ -17,11 +17,11 @@ namespace CheckListManager.Common.Logic.Api.PDF
 
             switch (name)
             {
-                case "arial unicode ms":
+                case "noto sans sc":
                     if (isBold)
-                        return new FontResolverInfo("ArialUnicodeMS#b");
+                        return new FontResolverInfo("NotoSansSC#b");
 
-                    return new FontResolverInfo("ArialUnicodeMS#");
+                    return new FontResolverInfo("NotoSansSC#");
             }
 
             return PlatformFontResolver.ResolveTypeface(familyName, isBold, isItalic);
@@ -31,10 +31,10 @@ namespace CheckListManager.Common.Logic.Api.PDF
         {
             switch (faceName)
             {
-                case "ArialUnicodeMS#":
+                case "NotoSansSC#":
                     return FontResolverHelper.ArialUnicodeMS.Regular;
 
-                case "ArialUnicodeMS#b":
+                case "NotoSansSC#b":
                     return FontResolverHelper.ArialUnicodeMS.Bold;
             }
 
@@ -46,8 +46,8 @@ namespace CheckListManager.Common.Logic.Api.PDF
     {
         public static FontFamily ArialUnicodeMS => new FontFamily
         {
-            Regular = LoadFont("CheckListManager.Common.Logic.Api.PDF.Fonts.ARIALUNI.TTF"),
-            Bold = LoadFont("CheckListManager.Common.Logic.Api.PDF.Fonts.ARIALUNIB.ttf")
+            Regular = LoadFont("CheckListManager.Common.Logic.Api.PDF.Fonts.NotoSansSC-Regular.otf"),
+            Bold = LoadFont("CheckListManager.Common.Logic.Api.PDF.Fonts.NotoSansSC-Bold.otf")
         };
 
         /// <summary>
