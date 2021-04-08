@@ -108,7 +108,7 @@
         }
 
         precisionInput = $("<input />")
-            .attr("type", "text")
+            .attr({ type: "text", readOnly: options.readOnly })
             .keyfilter(/^[0-9]*$/i)
             .val(model.precision)
             .on("change", function () { model.precision = this.value; });

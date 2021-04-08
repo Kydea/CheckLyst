@@ -20,7 +20,8 @@
 
         addFilter = function (parameter) {
             parameters
-                .append($("<label />").text(parameter.label)
+                .append($("<label />")
+                    .append($("<span />").text(parameter.label))
                     .append($("<input />").attr({ type: "text", id: parameter.name }).on("change, keydown", filterChanged))
                 );
         },
@@ -40,7 +41,7 @@
             autoCenter.initialize();
 
             $("<h2 />").text(name).appendTo(container);
-            parameters = $("<div />").addClass("Parameters").appendTo(container);
+            parameters = $("<div />").addClass("Parameters Module").appendTo(container);
             $("<table />").addClass("Grid").appendTo(container)
                 .append($("<thead />")
                     .append(header = $("<tr />"))
