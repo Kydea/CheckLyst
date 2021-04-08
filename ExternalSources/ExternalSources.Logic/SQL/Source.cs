@@ -97,8 +97,8 @@ namespace CheckListManager.ExternalSources.Logic.SQL
 
                 foreach (var Parameter in Parameters)
                 {
-                    var Value = Values != null && (Values.TryGetValue(Parameter.Name, out var value) || Parameter.Name.StartsWith("@") && Values.TryGetValue(Parameter.Name.Substring(1), out value)) ? value : GetDefaultParameterValue(Parameter);
-                    Command.Parameters.Add(GetDbParameter(Parameter.Name, Value));
+                    var Value = Values != null && (Values.TryGetValue(Parameter.Name, out var value) || Parameter.Name.StartsWith("@") && Values.TryGetValue(Parameter.Name.Substring(1), out value)) ? value : null;
+                    Command.Parameters.Add(GetDbParameter(Parameter.Name, Value ?? GetDefaultParameterValue(Parameter)));
                 }
                 DataAdapter.Fill(DataSet, FirstRowIndex, MaxRowsCount, "Source");
 

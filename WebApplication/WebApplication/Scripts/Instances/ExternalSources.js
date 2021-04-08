@@ -36,13 +36,16 @@
         setup = function () {
             matematici.elements.body.addClass("CheckListGrid");
             element = $("<div />").addClass("CheckListGrid").appendTo(matematici.elements.body);
-            container = $("<div />").addClass("Container").appendTo(element);
-            autoCenter = new matematici.AutoCenter(container);
+            var container = $("<div />").appendTo($("<div />").addClass("Container ExternalSources").appendTo(element));
+
+            autoCenter = new matematici.AutoCenter(container.parent());
             autoCenter.initialize();
 
             $("<h2 />").text(name).appendTo(container);
             parameters = $("<div />").addClass("Parameters Module").appendTo(container);
-            $("<table />").addClass("Grid").appendTo(container)
+
+            var scrollablePanel = $("<div />").addClass("ScrollablePanel").appendTo(container);
+            $("<table />").addClass("Grid").appendTo(scrollablePanel)
                 .append($("<thead />")
                     .append(header = $("<tr />"))
                 ).append(
@@ -61,7 +64,7 @@
                 });
 
             $("<div />").addClass("Buttons").appendTo(container)
-                .append($("<a />").addClass("Button").text("close").prepend($("<i />").addClass("Icon fa fa-times")).on("click", function () {
+                .append($("<a />").addClass("CancelButton Button").text("close").prepend($("<i />").addClass("Icon fa fa-times")).on("click", function () {
                     close();
                 }))
 				.append(next = $("<a />").addClass("Button").text("next").prepend($("<i />").addClass("Icon fa fa-caret-right")).on("click", function () {
@@ -72,7 +75,7 @@
                     --page;
                     load();
                 }).hide())
-				.append(search = $("<a />").addClass("Button").text("search").prepend($("<i />").addClass("Icon fa fa-search")).on("click", function () {
+				.append(search = $("<a />").addClass("DefaultButton Button").text("search").prepend($("<i />").addClass("Icon fa fa-search")).on("click", function () {
                     load();
                 }));
 

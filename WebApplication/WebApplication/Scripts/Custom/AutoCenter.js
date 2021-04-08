@@ -6,11 +6,8 @@
 
         center = function () {
             if (scrollablePanel) {
-                var maxHeight =
-                    80 //padding + margin
-                    + scrollablePanel.siblings("h2").outerHeight()
-                    + scrollablePanel.siblings(".GridFiltersBar").outerHeight()
-                    + scrollablePanel.parent().siblings(".Buttons").outerHeight()
+                var maxHeight = 80; //padding + margin
+                scrollablePanel.siblings().map(function () { maxHeight += $(this).outerHeight(); });
                 scrollablePanel.css("max-height", "calc(100vh - " + maxHeight + "px)");
             }
             element.css("top", (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) < 760 ? 0 : Math.max(parseInt((element.parent().height() - element.outerHeight()) / 2), 0));
