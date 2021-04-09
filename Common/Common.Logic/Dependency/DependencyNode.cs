@@ -11,8 +11,7 @@ namespace CheckListManager.Common.Logic.Dependency
 {
     public abstract class DependencyNode
     {
-        [JsonProperty]
-        private HashSet<DependencyRelation> DependentRelations { get; } = new HashSet<DependencyRelation>();
+        public HashSet<DependencyRelation> DependentRelations { get; } = new HashSet<DependencyRelation>();
         [JsonProperty]
         private HashSet<DependencyRelation> DependingRelations { get; } = new HashSet<DependencyRelation>();
 
@@ -40,7 +39,7 @@ namespace CheckListManager.Common.Logic.Dependency
 
         public abstract bool Update(DependencyRelation.Properties Property);
 
-        public virtual void MarkNodeAsChanged(ICheckList CheckList, List<Tuple<DependencyNode, DependencyRelation.Properties>> Roots, DependencyRelation.Properties Property)
+        public virtual void MarkNodeAsChanged(ICheckList CheckList, HashSet<Tuple<DependencyNode, DependencyRelation.Properties>> Roots, DependencyRelation.Properties Property)
         {
             if (Property == DependencyRelation.Properties.ReadOnly) return; //readonly is not stateless and is always updated for each node
             if (NeedToUpdate.Contains(Property)) return; //Node already marked for this process
@@ -55,6 +54,9 @@ namespace CheckListManager.Common.Logic.Dependency
                 Roots.Add(new Tuple<DependencyNode, DependencyRelation.Properties>(this, Property));
         }
 
+        public virtual void MarkNodeAsUnchanged(DependencyRelation.Properties Property) =>
+            NeedToUpdate.Remove(Property);
+
         private HashSet<DependencyRelation.Properties> DependencyChainTouchedProcesses = new HashSet<DependencyRelation.Properties>();
         public bool TraverseDependencyChain(ICheckList CheckList, DependencyRelation.Properties Property)
             => TraverseDependencyChain(CheckList, Property, null, false);
@@ -66,7 +68,7 @@ namespace CheckListManager.Common.Logic.Dependency
             {
                 //process only the updated properties
                 if (!NeedToUpdate.Contains(Property)) return true;
-                NeedToUpdate.Remove(Property);
+                MarkNodeAsUnchanged(Property);
             }
 
             var Result = true;
@@ -115,19 +117,29 @@ namespace CheckListManager.Common.Logic.Dependency
             UpdateNodesChains(CheckList, Property, new DependencyNode[] { this });
         }
 
+        public static void UpdateNodesChains(ICheckList CheckList, DependencyRelation.Properties Property, IEnumerable<DependencyNode> Nodes)
+        {
+            var Roots = new HashSet<Tuple<DependencyNode, DependencyRelation.Properties>>();
+            foreach (var Node in Nodes)
+                Node.MarkNodeAsChanged(CheckList, Roots, Property);
+            UpdateNodes(CheckList, Roots);
+        }
+
         public static void UpdateNodes(ICheckList CheckList, IEnumerable<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)
         {
             foreach (var Relation in Roots)
                 Relation.Item1.TraverseDependencyChain(CheckList, Relation.Item2);
         }
 
-        public static void UpdateNodesChains(ICheckList CheckList, DependencyRelation.Properties Property, IEnumerable<DependencyNode> Nodes)
-        {
-            var Roots = new List<Tuple<DependencyNode, DependencyRelation.Properties>>();
-            foreach (var Node in Nodes)
-                Node.MarkNodeAsChanged(CheckList, Roots, Property);
-            UpdateNodes(CheckList, Roots);
-        }
+        public override bool Equals(object o)
+            => Equals(o as DependencyNode);
+
+        public bool Equals(DependencyNode o)
+            => o != null && o.DependencyClassName == DependencyClassName && o.DependencyObjectCode == DependencyObjectCode && o.DependencyObjectID == DependencyObjectID;
+
+        public override int GetHashCode()
+            => $"{DependencyClassName}-{DependencyObjectCode ?? DependencyObjectID?.ToString()}".GetHashCode();
+
     }
 }
 

@@ -91,7 +91,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             }
         }
 
-        public override void MarkAllAsChanged(List<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)
+        public override void MarkAllAsChanged(HashSet<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)
         {
             base.MarkAllAsChanged(Roots);
             foreach (Group Group in Groups)

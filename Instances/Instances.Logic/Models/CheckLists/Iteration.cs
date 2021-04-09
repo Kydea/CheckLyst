@@ -106,7 +106,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             base.BuildDependencies();
         }
 
-        public override void MarkAllAsChanged(List<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)
+        public override void MarkAllAsChanged(HashSet<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)
         {
             foreach (Item item in Items)
                 if (!item.IteratorModelItem)

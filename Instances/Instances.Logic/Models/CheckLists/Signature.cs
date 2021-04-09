@@ -69,10 +69,14 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         protected override void OnUpdate(DependencyRelation.Properties Property)
         {
-            if (Property == DependencyRelation.Properties.Signature)
-                return;
-            else
-                base.OnUpdate(Property);
+            switch (Property)
+            {
+                case DependencyRelation.Properties.Signature:
+                    break;
+                default:
+                    base.OnUpdate(Property);
+                    break;
+            }
         }
 
         public override ICheckListItem Clone(ICheckListGroup parent)

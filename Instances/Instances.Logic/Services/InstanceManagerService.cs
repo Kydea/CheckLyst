@@ -264,9 +264,9 @@ namespace CheckListManager.Instances.Logic.Services
                     cacheObject.Instance.UpdateInstanceRuntimeValues(cacheObject);
                     cacheObject.Instance.Update(DependencyRelation.Properties.Formula);
 
-                    var roots = new List<Tuple<DependencyNode, DependencyRelation.Properties>>();
-                    cacheObject.Instance.MarkNodeAsChanged(cacheObject.Instance, roots, DependencyRelation.Properties.StateChange);
-                    DependencyNode.UpdateNodes(cacheObject.Instance, roots);
+                    var Roots = new HashSet<Tuple<DependencyNode, DependencyRelation.Properties>>();
+                    cacheObject.Instance.MarkNodeAsChanged(cacheObject.Instance, Roots, DependencyRelation.Properties.StateChange);
+                    DependencyNode.UpdateNodes(cacheObject.Instance, Roots);
 
                     cacheObject.Instance.UpdateReadOnly(identity.Code, InstanceState.Progress);
 
@@ -436,7 +436,7 @@ namespace CheckListManager.Instances.Logic.Services
                         AddTags(Tags, InstanceID, (ICheckListGroup)Item);
                     else if (!string.IsNullOrWhiteSpace(Item.Description) && (Item.TypeName == "Field" || Item.TypeName == "Signature") && !Tags.ContainsKey(Item.Description))
                     {
-                        var Description = Item.Description.Length > 47 ? Item.Description.Substring(0, 47) + "..." : Item.Description; 
+                        var Description = Item.Description.Length > 47 ? Item.Description.Substring(0, 47) + "..." : Item.Description;
                         Tags[Description] = new InstanceTags { Instance = InstanceID, Tag = Description, Value = (Item.TypeName == "Field" ? ((Field)Item).Value : ((ICheckListSignature)Item).SignedBy) ?? string.Empty };
                     }
         }
@@ -1060,6 +1060,7 @@ namespace CheckListManager.Instances.Logic.Services
                 stopWatch = Stopwatch.StartNew();
 
                 DependencyNode AffectedElement = null;
+                IEnumerable<DependencyNode> AffectedElements = null;
                 DependencyRelation.Properties? Property = null;
                 switch (request.Type)
                 {
@@ -1122,7 +1123,7 @@ namespace CheckListManager.Instances.Logic.Services
                         Property = DependencyRelation.Properties.ReadOnly;
                         break;
                     case EventTypes.ExternalSourceRowChange:
-                        AffectedElement = await HandleExternalSourceRowChange(cacheObject, identity, request.ItemId, request.RowIndex, request.Row);
+                        AffectedElements = await HandleExternalSourceRowChange(cacheObject, identity, request.ItemId, request.Row);
                         Property = DependencyRelation.Properties.Value;
                         break;
                     case EventTypes.UploadAttachment:
@@ -1133,7 +1134,7 @@ namespace CheckListManager.Instances.Logic.Services
                         throw new InstanceException($"Event type {request.Type} not handled.");
                 }
 
-                var roots = new List<Tuple<DependencyNode, DependencyRelation.Properties>>();
+                var Roots = new HashSet<Tuple<DependencyNode, DependencyRelation.Properties>>();
                 if (Property == DependencyRelation.Properties.Iterations)
                 {
                     var Iteration = (Iteration)AffectedElement;
@@ -1143,15 +1144,19 @@ namespace CheckListManager.Instances.Logic.Services
 
                     if (IterationChildren.Any())
                         foreach (Element Child in IterationChildren)
-                            Child.MarkAllAsChanged(roots);
+                            Child.MarkAllAsChanged(Roots);
 
                     AffectedElement = (Group)Iteration.Group;
                 }
 
-                if (AffectedElement != null)
+                if (AffectedElements == null && AffectedElement != null)
+                    AffectedElements = new List<DependencyNode> { AffectedElement };
+
+                if (AffectedElements != null)
                 {
-                    AffectedElement.MarkNodeAsChanged(cacheObject.Instance, roots, Property.Value);
-                    DependencyNode.UpdateNodes(cacheObject.Instance, roots);
+                    foreach (var Element in AffectedElements)
+                        Element.MarkNodeAsChanged(cacheObject.Instance, Roots, Property.Value);
+                    DependencyNode.UpdateNodes(cacheObject.Instance, Roots);
                     cacheObject.Instance.UpdateReadOnly(lockUser ?? identity.Code, cacheObject.InstanceState);
                 }
                 else if (Property == DependencyRelation.Properties.ReadOnly)
@@ -1767,7 +1772,7 @@ namespace CheckListManager.Instances.Logic.Services
             cacheObject.ModifiedOn = DateTimeOffset.UtcNow;
         }
 
-        private async Task<ExternalSourceDependencyNode> HandleExternalSourceRowChange(InstanceCacheObject cacheObject, IDefaultIdentity identity, int? itemId, int? rowIndex, Dictionary<string, string> row)
+        private async Task<List<Item>> HandleExternalSourceRowChange(InstanceCacheObject cacheObject, IDefaultIdentity identity, int? itemId, Dictionary<string, string> row)
         {
             if (!itemId.HasValue)
                 throw new InstanceException("Item id not sent");
@@ -1779,8 +1784,31 @@ namespace CheckListManager.Instances.Logic.Services
             if (field.ReadOnly || !cacheObject.Instance.ExternalSourceDependencyNodes.TryGetValue(field.ExternalSourceName, out var ExternalSourceDependencyNode))
                 return null;
 
-            if (cacheObject.Instance.ExternalSourceRows == null) cacheObject.Instance.ExternalSourceRows = new PascalCaseDictionary<string, PascalCaseDictionary<string, string>>();
-            cacheObject.Instance.ExternalSourceRows[field.ExternalSourceName] = new PascalCaseDictionary<string, string>(row);
+            ExternalSourceDependencyNode.Values = row;
+            var AffectedElements = field.IterationItem ? null : new List<Item>();
+
+            foreach (var ExternalSourceDependencyRelation in ExternalSourceDependencyNode.DependentRelations)
+                if (field.IterationItem)
+                {
+                    var IteratorModelItem = (Item)ExternalSourceDependencyRelation.GetNode(cacheObject.Instance);
+                    foreach (Item IterationItem in IteratorModelItem.FindIterationItems(field.Iteration))
+                    {
+                        //the siblings are update directly
+                        IterationItem.Update(DependencyRelation.Properties.Value);
+
+                        //the iterator model item aremared as changed and then jumped to avoid all the iterations are updated
+                        IteratorModelItem = IterationItem.FindIteratorModelItem();
+                        var Roots = new HashSet<Tuple<DependencyNode, DependencyRelation.Properties>>();
+                        IteratorModelItem.MarkNodeAsChanged(cacheObject.Instance, Roots, DependencyRelation.Properties.Value);
+                        IteratorModelItem.MarkNodeAsUnchanged(DependencyRelation.Properties.Value);
+                        DependencyNode.UpdateNodes(cacheObject.Instance, Roots);
+                    }
+                }
+                else
+                {
+                    var AffectedField = (Field)ExternalSourceDependencyRelation.GetNode(cacheObject.Instance);
+                    if (!AffectedField.IteratorModelItem) AffectedElements.Add(AffectedField); //for external sources the iteration act as scope
+                }
 
             await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
             {
@@ -1798,7 +1826,7 @@ namespace CheckListManager.Instances.Logic.Services
             });
 
             TrackChanges(cacheObject, identity.Code);
-            return ExternalSourceDependencyNode;
+            return AffectedElements;
         }
 
         private async Task<Element> HandleUploadAttachment(
@@ -1852,7 +1880,6 @@ namespace CheckListManager.Instances.Logic.Services
             item.Key = key;
             item.ModifiedBy = identity.Code;
             item.ModifiedOn = DateTimeOffset.UtcNow;
-
 
             await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
             {

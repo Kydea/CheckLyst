@@ -14,12 +14,12 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
 
         public override string DependencyObjectCode => Code;
 
-        public override bool Update(DependencyRelation.Properties Property)
-        {
-            if (Property != DependencyRelation.Properties.Value) throw new ArgumentException();
-            return true;
-        }
+        public override bool Update(DependencyRelation.Properties Property) => throw new ArgumentException();
+        public override void MarkNodeAsChanged(ICheckList CheckList, HashSet<Tuple<DependencyNode, DependencyRelation.Properties>> Roots, DependencyRelation.Properties Property) => throw new ArgumentException();
 
         public string Code { get; set; }
+
+        [JsonIgnore]
+        public Dictionary<string, string> Values { get; set; }
     }
 }

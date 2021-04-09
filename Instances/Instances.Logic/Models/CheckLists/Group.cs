@@ -54,20 +54,30 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         protected override void OnUpdate(DependencyRelation.Properties Property)
         {
-            if (Property == DependencyRelation.Properties.AddIteration)
-                AddIterationButton =
-                    AddIterationCondition == Conditions.True
-                    || AddIterationCondition == Conditions.Expression && CheckList?.GetExpressionValue(AddIterationExpressionCode, this)?.Value as bool? == true;
-            else if (Property == DependencyRelation.Properties.RemoveIteration)
-                RemoveIterationButton =
-                    RemoveIterationCondition == Conditions.True
-                    || RemoveIterationCondition == Conditions.Expression && CheckList?.GetExpressionValue(RemoveIterationExpressionCode, this)?.Value as bool? == true;
-            else if (Property == DependencyRelation.Properties.MoveIteration)
-                MoveIterationButton =
-                    MoveIterationCondition == Conditions.True
-                    || MoveIterationCondition == Conditions.Expression && CheckList?.GetExpressionValue(MoveIterationExpressionCode, this)?.Value as bool? == true;
-            else if (Property != DependencyRelation.Properties.Iterations) //at the moment this is handled directly into InstanceManagerService
-                base.OnUpdate(Property);
+            switch (Property)
+            {
+                case DependencyRelation.Properties.AddIteration:
+                    AddIterationButton =
+                        AddIterationCondition == Conditions.True
+                        || AddIterationCondition == Conditions.Expression && CheckList?.GetExpressionValue(AddIterationExpressionCode, this)?.Value as bool? == true;
+                    break;
+                case DependencyRelation.Properties.RemoveIteration:
+                    RemoveIterationButton =
+                        RemoveIterationCondition == Conditions.True
+                        || RemoveIterationCondition == Conditions.Expression && CheckList?.GetExpressionValue(RemoveIterationExpressionCode, this)?.Value as bool? == true;
+                    break;
+                case DependencyRelation.Properties.MoveIteration:
+                    MoveIterationButton =
+                        MoveIterationCondition == Conditions.True
+                        || MoveIterationCondition == Conditions.Expression && CheckList?.GetExpressionValue(MoveIterationExpressionCode, this)?.Value as bool? == true;
+                    break;
+                case DependencyRelation.Properties.Iterations:
+                    //at the moment this is handled directly into InstanceManagerService
+                    break;
+                default:
+                    base.OnUpdate(Property);
+                    break;
+            }
         }
 
         protected override void UpdateHidden()
@@ -267,7 +277,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             iteration.Remove();
         }
 
-        public override void MarkAllAsChanged(List<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)
+        public override void MarkAllAsChanged(HashSet<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)
         {
             base.MarkAllAsChanged(Roots);
             if (Iterator)

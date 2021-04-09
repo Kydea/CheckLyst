@@ -16,7 +16,6 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public Dictionary<string, ICheckListElement> Elements { get; } = new Dictionary<string, ICheckListElement>();
         public PascalCaseDictionary<string, Expression> Expressions { get; } = new PascalCaseDictionary<string, Expression>();
         public PascalCaseDictionary<string, string> ExternalSources { get; } = new PascalCaseDictionary<string, string>();
-        public PascalCaseDictionary<string, PascalCaseDictionary<string, string>> ExternalSourceRows { get; }
         public PascalCaseDictionary<string, ExternalSourceDependencyNode> ExternalSourceDependencyNodes { get; } = new PascalCaseDictionary<string, ExternalSourceDependencyNode>();
         public ICheckListGroup Header { get; set; }
         public List<ICheckListPage> Pages { get; } = new List<ICheckListPage>();

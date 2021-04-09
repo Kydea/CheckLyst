@@ -580,6 +580,45 @@
         return items;
     };
 
+    instance.getSimplifiedModel = function (node, index) {
+        //for debug 
+        var result = {};
+        if (node == undefined) {
+            //instance
+            result.header = instance.getSimplifiedModel(model.header);
+            result.pages = [];
+            for (var index in model.pages) 
+                result.pages.push(instance.getSimplifiedModel(model.pages[index], index));
+        } else if (index != undefined) {
+            //page
+            result.index = index;
+            if (node.code) result.code = node.code;
+            if (node.description) result.description = node.description;
+            result.groups = [];
+            for (var index in node.groups)
+                result.groups.push(instance.getSimplifiedModel(node.groups[index]));
+        } else if (node.typeName == "Group" || node.typeName == "Iteration") {
+            //group
+            result.id = node.id;
+            if (node.code) code: node.code;
+            result.items = [];
+            for (var index in node.items)
+                result.items.push(instance.getSimplifiedModel(node.items[index]))
+            if (node.iterator) {
+                result.iterations = [];
+                for (var index in node.iterations)
+                    result.iterations.push(instance.getSimplifiedModel(node.iterations[index]))
+            }
+        } else {
+            //item
+            result.id = node.id;
+            if (node.code) result.code = node.code;
+            if (node.description) result.description = node.description;
+        }
+
+        return result;
+    };
+
     instance.destroy = function () { };
     instance.showExceptions = showExceptions;
     instance.initialize();

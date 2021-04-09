@@ -132,25 +132,21 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             object ConvertedValue = null;
             if (ValueFormula.IsSet)
             {
-                var Value = ValueFormula.Value;
-                ConversionError = ValueFormula.HasValue && !ValueType.TryParse(Value, out ConvertedValue);
+                var FormulaValue = ValueFormula.Value;
+                ConversionError = ValueFormula.HasValue && !ValueType.TryParse(FormulaValue, out ConvertedValue);
                 if (Precision.HasValue && !ConversionError && ConvertedValue is decimal decimalValue)
-                    Value = Math.Round(decimalValue, Precision.Value).ToString();
+                    FormulaValue = Math.Round(decimalValue, Precision.Value).ToString();
 
-                this.Value = ConversionError ? null : Value;
+                Value = ConversionError ? null : FormulaValue;
             }
 
-            if (ExternalSourceName != null)
+            if (ExternalSourceName != null && Instance.ExternalSourceDependencyNodes.TryGetValue(ExternalSourceName, out var ExternalSourceDependencyNode) && ExternalSourceDependencyNode.Values != null && ExternalSourceDependencyNode.Values.TryGetValue(ExternalSourceColumn, out var ExternalSourceValue))
             {
-                string Value =
-                    ExternalSourceName != null && Instance.ExternalSourceRows.ContainsKey(ExternalSourceName) && Instance.ExternalSourceRows[ExternalSourceName].ContainsKey(ExternalSourceColumn) ?
-                    Instance.ExternalSourceRows[ExternalSourceName][ExternalSourceColumn] :
-                    null;
-                ConversionError = !ValueType.TryParse(Value, out ConvertedValue);
+                ConversionError = !ValueType.TryParse(ExternalSourceValue, out ConvertedValue);
                 if (Precision.HasValue && !ConversionError && ConvertedValue is decimal decimalValue)
-                    Value = Math.Round(decimalValue, Precision.Value).ToString();
+                    ExternalSourceValue = Math.Round(decimalValue, Precision.Value).ToString();
 
-                this.Value = ConversionError ? null : Value;
+                Value = ConversionError ? null : ExternalSourceValue;
             }
 
             if (!ConversionError)
@@ -172,13 +168,18 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         protected override void OnUpdate(DependencyRelation.Properties Property)
         {
-            if (Property == DependencyRelation.Properties.Value)
-                UpdateValue();
-            else
-                base.OnUpdate(Property);
+            switch (Property)
+            {
+                case DependencyRelation.Properties.Value:
+                    UpdateValue();
+                    break;
+                default:
+                    base.OnUpdate(Property);
+                    break;
+            }
         }
 
-        public override void MarkAllAsChanged(List<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)
+        public override void MarkAllAsChanged(HashSet<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)
         {
             base.MarkAllAsChanged(Roots);
             MarkNodeAsChanged(CheckList, Roots, DependencyRelation.Properties.Value);

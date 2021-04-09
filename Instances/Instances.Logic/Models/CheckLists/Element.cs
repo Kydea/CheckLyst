@@ -209,7 +209,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 AddDependingRelation(DependencyRelation.Properties.Validity, this, DependencyRelation.Properties.Hidden);
         }
 
-        public virtual void MarkAllAsChanged(List<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)
+        public virtual void MarkAllAsChanged(HashSet<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)
         {
             if (this is ICheckListValidityElement)
                 MarkNodeAsChanged(CheckList, Roots, DependencyRelation.Properties.Validity);

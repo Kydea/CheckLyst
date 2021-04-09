@@ -14,7 +14,6 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
 
         PascalCaseDictionary<string, Expression> Expressions { get; }
         PascalCaseDictionary<string, string> ExternalSources { get; }
-        PascalCaseDictionary<string, PascalCaseDictionary<string, string>> ExternalSourceRows { get; }
         PascalCaseDictionary<string, ExternalSourceDependencyNode> ExternalSourceDependencyNodes { get; }
 
         [JsonIgnore]

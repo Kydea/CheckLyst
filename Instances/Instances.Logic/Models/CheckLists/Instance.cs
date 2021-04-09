@@ -73,7 +73,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 )
            ).ToDictionary(k => k.Key, v => v.Value?.Description));
         public PascalCaseDictionary<string, string> ExternalSources { get; set; }
-        public PascalCaseDictionary<string, PascalCaseDictionary<string, string>> ExternalSourceRows { get; set; }
         public PascalCaseDictionary<string, ExternalSourceDependencyNode> ExternalSourceDependencyNodes { get; } = new PascalCaseDictionary<string, ExternalSourceDependencyNode>();
         public ICheckListGroup Header { get; set; }
         public List<ICheckListPage> Pages { get; set; }
@@ -122,10 +121,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             this.TimeZone = TimeZone;
 
             if (creation)
-            {
-                ExternalSourceRows = new PascalCaseDictionary<string, PascalCaseDictionary<string, string>>(ExternalSources.ToDictionary(x => x.Key, x => new PascalCaseDictionary<string, string>()));
                 CreatedOn = cacheObject.CreatedOn;
-            }
 
             Header.CheckList = this;
             Header.Setup();
@@ -219,7 +215,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public void UpdateAll(InstanceCacheObject cacheObject = null)
         {
             Stack<Tuple<DependencyNode, DependencyRelation.Properties>> DependencyChain = new Stack<Tuple<DependencyNode, DependencyRelation.Properties>>();
-            var Roots = new List<Tuple<DependencyNode, DependencyRelation.Properties>>();
+            var Roots = new HashSet<Tuple<DependencyNode, DependencyRelation.Properties>>();
 
             MarkNodeAsChanged(this, Roots, DependencyRelation.Properties.Formula);
 

@@ -66,10 +66,15 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         protected virtual void OnUpdate(DependencyRelation.Properties Property)
         {
-            if (Property == DependencyRelation.Properties.Formula)
-                UpdateFormula();
-            else
-                base.Update(Property);
+            switch (Property)
+            {
+                case DependencyRelation.Properties.Formula:
+                    UpdateFormula();
+                    break;
+                default:
+                    base.Update(Property);
+                    break;
+            }
         }
 
         public sealed override bool Update(DependencyRelation.Properties Property)
@@ -132,27 +137,29 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             return IteratorModelItem;
         }
 
-        public IEnumerable<Item> FindIterationItems()
+        public IEnumerable<Item> FindIterationItems(ICheckListIteration SpecificIteration = null)
         {
             if (IteratorModelItem)
             {
                 var Group = (Group)this.Group;
                 var IterationGroups = Group.FindIterationItems();
-                if (Group.Iterator)
+                if (!Group.Iterator)
+                    foreach (Group IterationGroup in IterationGroups)
+                        yield return (Item)IterationGroup.Items[ItemIndex];
+                else if (SpecificIteration != null)
+                    yield return (Item)SpecificIteration.Items[ItemIndex];
+                else 
                 {
                     var Iterations = IterationGroups.SelectMany(i => ((Group)i).Iterations);
                     foreach (var Iteration in Iterations.Where(i => !i.Removed))
                         yield return (Item)Iteration.Items[ItemIndex];
                 }
-                else
-                    foreach (Group IterationGroup in IterationGroups)
-                        yield return (Item)IterationGroup.Items[ItemIndex];
             }
             else
                 yield return this;
         }
 
-        public override void MarkNodeAsChanged(ICheckList CheckList, List<Tuple<DependencyNode, DependencyRelation.Properties>> Roots, DependencyRelation.Properties Property)
+        public override void MarkNodeAsChanged(ICheckList CheckList, HashSet<Tuple<DependencyNode, DependencyRelation.Properties>> Roots, DependencyRelation.Properties Property)
         {
             if (IterationItem)
             {
@@ -163,7 +170,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 base.MarkNodeAsChanged(CheckList, Roots, Property);
         }
 
-        public override void MarkAllAsChanged(List<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)
+        public override void MarkAllAsChanged(HashSet<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)
         {
             if (IterationItem)
             {
