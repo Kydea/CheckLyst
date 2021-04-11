@@ -30,6 +30,10 @@
             scrollablePanel.on("scroll", scroll);
         };
 
+    gridFixedHeader.getTableHeader = function () {
+        return tableHeader;
+    };
+
     gridFixedHeader.resize = resize;
     gridFixedHeader.refresh = refresh;
 

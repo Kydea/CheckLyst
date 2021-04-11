@@ -9,10 +9,32 @@
         search,
         header,
         container,
+        table,
         tableBody,
         autoCenter,
         fixedHeader,
+        selectionCheckBox,
+        totalRows = 0,
         selectedRows = 0,
+
+        toggleSelection = function () {
+            var value = selectionCheckBox.prop("indeterminate") ? null : selectionCheckBox.prop("checked");
+            $("tr td:first-child input", tableBody).each(function () {
+                this.checked = value == true;
+                this.indeterminate = value == null;
+            });
+            selectedRows = value ? totalRows : 0;
+            selectionCheckBox.indeterminate = false;
+            selectionCheckBox.value = value != true;
+        },
+
+        refreshFixedHeader = function () {
+            if (fixedHeader)
+                fixedHeader.refresh();
+            else
+                fixedHeader = new matematici.GridFixedHeader(table);
+            if (multiSelection) $("th:first-child", fixedHeader.getTableHeader()).append(selectionCheckBox = $("<input />").attr("type", "checkbox").on("click", toggleSelection))
+        },
 
         filterChanged = function () {
             next.hide();
@@ -37,7 +59,8 @@
         toggleRow = function (tr) {
             var value = checkBox = $("input", tr).prop("checked");
             selectedRows += value ? 1 : -1;
-            console.log(selectedRows);
+            selectionCheckBox.prop("indeterminate",  totalRows > selectedRows && selectedRows > 0);
+            selectionCheckBox.prop("checked", totalRows == selectedRows);
         },
 
         selectRow = function (tr) {
@@ -75,14 +98,14 @@
             $("<h2 />").text(name).appendTo(container);
             parameters = $("<div />").addClass("Parameters Module").appendTo(container);
 
-            var
-                scrollablePanel = $("<div />").addClass("ScrollablePanel").appendTo(container).hide(),
-                table = $("<table />").addClass("Grid").appendTo(scrollablePanel)
-                    .append($("<thead />")
-                        .append(header = $("<tr />"))
-                    ).append(
-                        tableBody = $("<tbody />")
-                    ).on("click", "tr.Handler", rowClicked);
+            var scrollablePanel = $("<div />").addClass("ScrollablePanel").appendTo(container).hide();
+
+            table = $("<table />").addClass("Grid").appendTo(scrollablePanel)
+                .append($("<thead />")
+                    .append(header = $("<tr />"))
+                ).append(
+                    tableBody = $("<tbody />")
+                ).on("click", "tr.Handler", rowClicked);
 
             $("<div />").addClass("Buttons").appendTo(container)
                 .append(search = $("<a />").addClass("DefaultButton Button").text("search").prepend($("<i />").addClass("Icon fa fa-search")).on("click", function () {
@@ -110,7 +133,7 @@
 
                 toggleNoRecord(true);
                 scrollablePanel.show();
-                fixedHeader = new matematici.GridFixedHeader(table);
+                refreshFixedHeader();
 
                 autoCenter.center();
             });
@@ -151,10 +174,12 @@
         },
 
         fill = function (rows) {
-            if (page = 0)
+            if (page = 0) {
                 tableBody.empty();
+                totalRows = 0;
+            }
 
-            if (rows && rows.length)
+            if (rows && rows.length) {
                 for (var row in rows) {
                     var tr = $("<tr />").appendTo(tableBody).addClass("Handler");
                     if (multiSelection) tr.append($("<td />").append($("<input />").attr({ type: "checkbox" }).on("click", function (e) {
@@ -165,10 +190,12 @@
                         if (columns[column][0] != "_")
                             tr.append($("<td />").html(rows[row][column])).data({ index: parseInt(row) + 20 * page, row: rows[row] });
                 }
+                totalRows += rows.length;
+            }
 
             toggleNoRecord(page == 0 && (!rows || !rows.length));
             toggleNext(rows.length >= 20);
-            fixedHeader.refresh();
+            refreshFixedHeader();
             autoCenter.center();
         },
 
