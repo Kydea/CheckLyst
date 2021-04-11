@@ -6,10 +6,12 @@
         tableHeaderCells = {},
         title,
         iterationCommands,
-        addButton,
         upButton,
         downButton,
         removeButton,
+        actionButtonsBar,
+        addButton,
+        importButton,
         id,
         elementInformation,
         table = false,
@@ -172,20 +174,49 @@
 				if (group.isGroup() && !group.isTableContent()) {
                     elementInformation = new instances.ElementInformation(element);
                     if (setupModel && setupModel.iterator) {
-                        addButton = document.createElement("div");
-                        addButton.className = "Item NewLine";
-                        var a = document.createElement("a");
-                        a.setAttribute("href", "#");
-                        a.className = "Button AddIteration";
+                        actionButtonsBar = document.createElement("div");
+                        actionButtonsBar.className = "Item NewLine ActionButtonsBar";
+                        element.appendChild(actionButtonsBar);
+
+                        addButton = document.createElement("a");
+                        addButton.setAttribute("href", "#");
+                        addButton.className = "Button AddIteration";
                         var i = document.createElement("i");
                         i.className = "Icon fa fa-plus";
-                        a.appendChild(i);
-                        a.innerHTML += "Add"
-                        a.addEventListener("click", function () {
+                        addButton.appendChild(i);
+                        addButton.innerHTML += "Add"
+                        addButton.addEventListener("click", function () {
                             if (!readOnly) new instances.Event(instances.Events.add, id).trigger();
                         });
-                        addButton.appendChild(a);
-                        element.appendChild(addButton);
+                        actionButtonsBar.appendChild(addButton);
+
+                        if (setupModel && setupModel.externalSources) {
+                            importButton = document.createElement("a");
+                            importButton.setAttribute("href", "#");
+                            importButton.className = "Button Import";
+                            var i = document.createElement("i");
+                            i.className = "Icon fa fa-file-import";
+                            importButton.appendChild(i);
+                            importButton.innerHTML += "Import"
+                            importButton.addEventListener("click", function () {
+                                if (!readOnly) {
+                                    var buttons = [{ text: "Cancel", icon: "times", cancelButton: true }];
+                                    for (var externalSourceIndex in setupModel.externalSources.sort().reverse()) {
+                                        var externalSource = setupModel.externalSources[externalSourceIndex]
+                                        buttons.push({
+                                            text: externalSource,
+                                            icon: "file-import",
+                                            handler: function () {
+                                                new instances.ExternalSources(id, externalSource, true);
+                                                //new instances.Event(instances.Events.import, id, { value: externalSource }).trigger();
+                                            }
+                                        });
+                                    }
+                                    matematici.dialog.popupMenu(buttons);
+                                }
+                            });
+                            actionButtonsBar.appendChild(importButton);
+                        }
                     }
                 }
             }
@@ -205,7 +236,7 @@
             element.setAttribute("data-code", model.code);
             element.setAttribute("data-id", model.id);
             if (model.iterator) {
-                addButton.classList.toggle("Hidden", !model.addIterationButton);
+                actionButtonsBar.classList.toggle("Hidden", !model.addIterationButton);
                 element.classList.toggle("HideRemoveButton", !model.removeIterationButton);
                 element.classList.toggle("HideMoveButton", !model.moveIterationButton);
                 element.classList.toggle("HideMoveButton", !model.moveIterationButton);
@@ -215,7 +246,9 @@
             group.setColor(model.color);
             group.setFontSize(model.fontSize);
 
-            if (addButton) addButton.childNodes[0].classList.toggle("ReadOnly", readOnly);
+            if (actionButtonsBar)
+                for (var actionButtonIndex = 0; actionButtonIndex < actionButtonsBar.childNodes.length; ++actionButtonIndex)
+                    actionButtonsBar.childNodes[actionButtonIndex].classList.toggle("ReadOnly", readOnly);
             if (iterationCommands) {
                 if (tableContent)
                     iterationCommands.classList.toggle("Inactive", readOnly);
@@ -304,7 +337,7 @@
             lastItem.getElement().classList.add("LastIteration")
 
         if (iterationCommands) element.appendChild(iterationCommands);
-        if (addButton) element.appendChild(addButton);
+        if (actionButtonsBar) element.appendChild(actionButtonsBar);
 
     };
 

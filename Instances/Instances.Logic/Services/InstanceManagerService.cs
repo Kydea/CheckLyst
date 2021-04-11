@@ -1130,6 +1130,9 @@ namespace CheckListManager.Instances.Logic.Services
                         AffectedElement = await HandleUploadAttachment(cacheObject, identity, request.ItemId, request.Attachment);
                         Property = DependencyRelation.Properties.Validity;
                         break;
+                    case EventTypes.Import:
+                        throw new InstanceException(request.ItemId + ": " + request.Value);
+                        //break;
                     default:
                         throw new InstanceException($"Event type {request.Type} not handled.");
                 }

@@ -174,5 +174,13 @@
   {
     "outputFile": "Content/Theme/GridFiltersBar.css",
     "inputFile": "Content/Theme/GridFiltersBar.scss"
+  },
+  {
+    "outputFile": "Content/Theme/ExternalSources.css",
+    "inputFile": "Content/Theme/ExternalSources.scss"
+  },
+  {
+    "outputFile": "Content/Theme/GridFixedHeader.css",
+    "inputFile": "Content/Theme/GridFixedHeader.scss"
   }
 ]

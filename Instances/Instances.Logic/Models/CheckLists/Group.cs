@@ -14,6 +14,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public List<ICheckListItem> Items { get; set; } = new List<ICheckListItem>();
         public List<ICheckListIteration> Iterations { get; } = new List<ICheckListIteration>();
+        public HashSet<string> ExternalSources { get; } = new HashSet<string>();
         public bool Iterator { get; set; }
         public bool ShowAsTable { get; set; }
         public int InstanceIterations { get; set; }
@@ -45,6 +46,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 ItemModel.RemoveIterationButton = RemoveIterationButton;
                 ItemModel.MoveIterationButton = MoveIterationButton;
                 if (DumpExternalSourceName != null) ItemModel.DumpExternalSourceName = DumpExternalSourceName;
+                if (ExternalSources.Any()) ItemModel.ExternalSources = ExternalSources;
             }
 
             ItemModel.Items = Items.Select(i => ((Item)i).GetViewModel());

@@ -1,36 +1,36 @@
-﻿body.PrototypeEditor div.CheckListGrid div.Container.ItemsList div.ScrollablePanel table tr td {
+﻿body.PrototypeEditor div.CheckListGrid div.Container.ItemsList table tr td {
   white-space: nowrap;
   width: 30px; }
-  body.PrototypeEditor div.CheckListGrid div.Container.ItemsList div.ScrollablePanel table tr td div {
+  body.PrototypeEditor div.CheckListGrid div.Container.ItemsList table tr td div {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap; }
-  body.PrototypeEditor div.CheckListGrid div.Container.ItemsList div.ScrollablePanel table tr td:first-child {
+  body.PrototypeEditor div.CheckListGrid div.Container.ItemsList table tr td:first-child {
     padding: 0;
     text-align: center; }
-    body.PrototypeEditor div.CheckListGrid div.Container.ItemsList div.ScrollablePanel table tr td:first-child i {
+    body.PrototypeEditor div.CheckListGrid div.Container.ItemsList table tr td:first-child i {
       display: none;
       font-size: 16px; }
-  body.PrototypeEditor div.CheckListGrid div.Container.ItemsList div.ScrollablePanel table tr td:nth-child(4) div {
+  body.PrototypeEditor div.CheckListGrid div.Container.ItemsList table tr td:nth-child(4) div {
     width: calc(15vw - 9px); }
-  body.PrototypeEditor div.CheckListGrid div.Container.ItemsList div.ScrollablePanel table tr td:nth-child(5) div {
+  body.PrototypeEditor div.CheckListGrid div.Container.ItemsList table tr td:nth-child(5) div {
     width: calc(15vw - 9px); }
-  body.PrototypeEditor div.CheckListGrid div.Container.ItemsList div.ScrollablePanel table tr td:last-child {
+  body.PrototypeEditor div.CheckListGrid div.Container.ItemsList table tr td:last-child {
     text-align: center; }
-    body.PrototypeEditor div.CheckListGrid div.Container.ItemsList div.ScrollablePanel table tr td:last-child i {
+    body.PrototypeEditor div.CheckListGrid div.Container.ItemsList table tr td:last-child i {
       font-size: 14px;
       display: inline !important; }
-      body.PrototypeEditor div.CheckListGrid div.Container.ItemsList div.ScrollablePanel table tr td:last-child i.fa-times {
+      body.PrototypeEditor div.CheckListGrid div.Container.ItemsList table tr td:last-child i.fa-times {
         color: #cc0000 !important; }
-      body.PrototypeEditor div.CheckListGrid div.Container.ItemsList div.ScrollablePanel table tr td:last-child i.fa-check {
+      body.PrototypeEditor div.CheckListGrid div.Container.ItemsList table tr td:last-child i.fa-check {
         color: #009688 !important; }
-      body.PrototypeEditor div.CheckListGrid div.Container.ItemsList div.ScrollablePanel table tr td:last-child i.Off {
+      body.PrototypeEditor div.CheckListGrid div.Container.ItemsList table tr td:last-child i.Off {
         opacity: .1;
         color: black !important; }
-      body.PrototypeEditor div.CheckListGrid div.Container.ItemsList div.ScrollablePanel table tr td:last-child i + i {
+      body.PrototypeEditor div.CheckListGrid div.Container.ItemsList table tr td:last-child i + i {
         margin-left: 10px; }
 
-body.PrototypeEditor div.CheckListGrid div.Container.ItemsList div.ScrollablePanel table tr.Selected td:first-child i {
+body.PrototypeEditor div.CheckListGrid div.Container.ItemsList table tr.Selected td:first-child i {
   display: inline; }
 
 body.PrototypeEditor div.CheckListGrid div.Container > div {

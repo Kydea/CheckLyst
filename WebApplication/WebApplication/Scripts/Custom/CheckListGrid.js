@@ -1,17 +1,21 @@
 ﻿matematici.CheckListGrid = function (title, values, handler, renderHandler, columns, rowRenderHandler) {
 	var
 		checkListGrid = this,
-		element,
+        element,
         container,
+        scrollablePanel,
         titleBar,
 		parameters,
-		body,
+        body,
+        fixedHeader,
 
         setup = function () {
             matematici.checkListGrid = checkListGrid;
 			matematici.elements.body.addClass("CheckListGrid");
             element = $("<div />").addClass("CheckListGrid").appendTo(matematici.elements.body);
-            container = $("<div />").addClass("ScrollablePanel").appendTo($("<div />").append(titleBar = $("<h2 />").html(title)).addClass("Container").appendTo(element));
+            container = $("<div />").appendTo($("<div />").addClass("Container").appendTo(element));
+            titleBar = $("<h2 />").html(title).appendTo(container);
+            scrollablePanel = $("<div />").addClass("ScrollablePanel").appendTo(container);
             autoCenter = new matematici.AutoCenter(container.parent());
             autoCenter.initialize();
 
@@ -49,9 +53,9 @@
 
 		renderValues = function () {
 			var tr;
-			container.empty();
+			scrollablePanel.empty();
 
-			$("<table />").addClass("Grid").appendTo(container)
+			var table = $("<table />").addClass("Grid").appendTo(scrollablePanel)
 				.append($("<thead />")
 					.append(tr = $("<tr />"))
 				).append(
@@ -63,7 +67,7 @@
 
 			var
 				buttons =
-					$("<div />").addClass("Buttons").appendTo(container.parent())
+					$("<div />").addClass("Buttons").appendTo(container)
 						.append($("<a />").addClass("Button CancelButton").text("close").prepend($("<i />").addClass("Icon fa fa-times")).on("click", function () {
 							checkListGrid.close();
 						}));
@@ -91,7 +95,7 @@
 							tr.append($("<th />").text(label));
 					}
 
-					var rows = isArray ? values.slice(1) : values;
+                    var rows = isArray ? values.slice(1) : values;
 					for (var row in rows) {
 						tr = $("<tr />").data("row", rows[row]).appendTo(body).toggleClass("Handler", !!handler);
 						for (var column in rows[row]) {
@@ -101,7 +105,8 @@
 						}
 					}
 				}
-			}
+            }
+            fixedHeader = new matematici.GridFixedHeader(table);
 		};
 
 	checkListGrid.setValues = function (v) {
@@ -123,6 +128,11 @@
 
     checkListGrid.getTitle = function () {
         return title;
+    };
+
+    checkListGrid.refresh = function () {
+        if (fixedHeader)
+            fixedHeader.refresh();
     };
 
     checkListGrid.addRow = addRow;

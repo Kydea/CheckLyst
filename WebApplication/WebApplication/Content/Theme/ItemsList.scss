@@ -5,72 +5,73 @@ body.PrototypeEditor {
         div.Container {
             &.ItemsList {
                 div.ScrollablePanel {
-                    table {
-                        tr {
-                            td {
+                }
+
+                table {
+                    tr {
+                        td {
+                            white-space: nowrap;
+                            width: 30px;
+
+                            div {
+                                overflow: hidden;
+                                text-overflow: ellipsis;
                                 white-space: nowrap;
-                                width: 30px;
+                            }
 
-                                div {
-                                    overflow: hidden;
-                                    text-overflow: ellipsis;
-                                    white-space: nowrap;
-                                }
+                            &:first-child {
+                                padding: 0;
+                                text-align: center;
 
-                                &:first-child {
-                                    padding: 0;
-                                    text-align: center;
-
-                                    i {
-                                        display: none;
-                                        font-size: 16px;
-                                    }
-                                }
-
-                                &:nth-child(4) {
-                                    div {
-                                        width: calc(15vw - #{60 * 0.15}px);
-                                    }
-                                }
-
-                                &:nth-child(5) {
-                                    div {
-                                        width: calc(15vw - #{60 * 0.15}px);
-                                    }
-                                }
-
-                                &:last-child {
-                                    text-align: center;
-
-                                    i {
-                                        font-size: 14px;
-                                        display: inline !important;
-
-                                        &.fa-times {
-                                            color: $Color-Red-Regular !important;
-                                        }
-
-                                        &.fa-check {
-                                            color: $Color-Green-Regular !important;
-                                        }
-
-                                        &.Off {
-                                            opacity: .1;
-                                            color: black !important;
-                                        }
-
-                                        & + i {
-                                            margin-left: 10px;
-                                        }
-                                    }
+                                i {
+                                    display: none;
+                                    font-size: 16px;
                                 }
                             }
 
-                            &.Selected {
-                                td:first-child {
-                                    i {
-                                        display: inline;
+                            &:nth-child(4) {
+                                div {
+                                    width: calc(15vw - #{60 * 0.15}px);
+                                }
+                            }
+
+                            &:nth-child(5) {
+                                div {
+                                    width: calc(15vw - #{60 * 0.15}px);
+                                }
+                            }
+
+                            &:last-child {
+                                text-align: center;
+
+                                i {
+                                    font-size: 14px;
+                                    display: inline !important;
+
+                                    &.fa-times {
+                                        color: $Color-Red-Regular !important;
                                     }
+
+                                    &.fa-check {
+                                        color: $Color-Green-Regular !important;
+                                    }
+
+                                    &.Off {
+                                        opacity: .1;
+                                        color: black !important;
+                                    }
+
+                                    & + i {
+                                        margin-left: 10px;
+                                    }
+                                }
+                            }
+                        }
+
+                        &.Selected {
+                            td:first-child {
+                                i {
+                                    display: inline;
                                 }
                             }
                         }

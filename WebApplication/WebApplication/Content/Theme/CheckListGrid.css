@@ -5,6 +5,8 @@ div.CheckListGrid div.Container {
   background-color: white;
   padding: 20px;
   box-shadow: rgba(0, 0, 0, 0.15) 0 0 15px 2px; }
+  div.CheckListGrid div.Container > div {
+    position: relative; }
   div.CheckListGrid div.Container div.ScrollablePanel {
     overflow: auto;
     position: relative;

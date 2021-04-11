@@ -11,6 +11,10 @@ div.CheckListGrid {
         padding: 20px;
         box-shadow: $Box-Shadow;
 
+        > div {
+            position: relative;
+        }
+
         div.ScrollablePanel {
             overflow: auto;
             position: relative;

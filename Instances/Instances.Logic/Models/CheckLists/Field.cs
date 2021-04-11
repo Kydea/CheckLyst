@@ -118,6 +118,13 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                         throw new Exception($"The property value references to the inexistent external source {ExternalSourceName} for {this}");
 
                     AddDependingRelation(DependencyRelation.Properties.Value, ExternalSourceDependencyNode, DependencyRelation.Properties.Value);
+                    if (IteratorModelItem)
+                    {
+                        var Parent = Group;
+                        while (!Parent.Iterator)
+                            Parent = Parent.Group;
+                        ((Group)Parent).ExternalSources.Add(ExternalSourceName);
+                    }
                 }
             }
         }

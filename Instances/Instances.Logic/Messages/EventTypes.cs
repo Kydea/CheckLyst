@@ -19,7 +19,7 @@ namespace CheckListManager.Instances.Logic.Messages
         public const string Quit = nameof(Quit);
         public const string ExternalSourceRowChange = nameof(ExternalSourceRowChange);
         public const string SendEmail = nameof(SendEmail);
-        
         public const string UploadAttachment = nameof(UploadAttachment);
+        public const string Import = nameof(Import);
     }
 }

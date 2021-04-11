@@ -157,7 +157,7 @@ matematici.dialog = function () {
 
 		setCloseHandler: function (value) {
 			setCloseHandler(value);
-		}
+        }
 	};
 
 }();
@@ -207,6 +207,10 @@ matematici.dialog = function () {
 
     or:
         error(settings)
+        see show(...)
+
+    or: 
+        popupMenu(buttons)
         see show(...)
 
  */

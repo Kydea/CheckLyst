@@ -196,7 +196,7 @@
                         icon = document.createElement("i"),
                         call = function () {
                             if (!element.classList.contains("Inactive"))
-                                new instances.ExternalSources(model.id, model.externalSourceName);
+                                new instances.ExternalSources(model.id, model.externalSourceName, false);
                         };
 
                     element.classList.add("ExternalSource");

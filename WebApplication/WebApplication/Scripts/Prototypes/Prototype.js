@@ -905,6 +905,7 @@
 
                         $("td", tr).eq(0).addClass(rowIndex % 2 == 0 ? "Odd" : "Even");
                     }
+                    checkListGrid.refresh();
                     return true;
                 },
                 checkListGrid = new matematici.CheckListGrid("Prototype " + getPrototypeCode(), result, null, null, columns, rowRenderHandler),

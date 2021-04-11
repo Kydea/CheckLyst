@@ -137,6 +137,9 @@
     <Content Include="Content\Theme\ExpressionsList.css">
       <DependentUpon>ExpressionsList.scss</DependentUpon>
     </Content>
+    <Content Include="Content\Theme\ExternalSources.css">
+      <DependentUpon>ExternalSources.scss</DependentUpon>
+    </Content>
     <Content Include="Content\Theme\FixedHeader.css">
       <DependentUpon>FixedHeader.scss</DependentUpon>
     </Content>
@@ -158,6 +161,9 @@
     </Content>
     <Content Include="Content\Theme\GridFiltersBar.css">
       <DependentUpon>GridFiltersBar.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\GridFixedHeader.css">
+      <DependentUpon>GridFixedHeader.scss</DependentUpon>
     </Content>
     <Content Include="Content\Theme\Hamburger.css">
       <DependentUpon>Hamburger.scss</DependentUpon>
@@ -272,6 +278,7 @@
     <Content Include="Scripts\Controls\DetailPage.js" />
     <Content Include="Scripts\Controls\SearchPage.js" />
     <Content Include="Scripts\Controls\ButtonGroup.js" />
+    <Content Include="Scripts\Custom\GridFixedHeader.js" />
     <Content Include="Scripts\Custom\ScriptEditor.js" />
     <Content Include="Scripts\Custom\AutoCenter.js" />
     <Content Include="Scripts\Custom\Accordion.js" />
@@ -383,6 +390,8 @@
     <Content Include="Content\Theme\ExpressionsList.scss" />
     <Content Include="Content\Theme\ItemsList.scss" />
     <Content Include="Content\Theme\GridFiltersBar.scss" />
+    <Content Include="Content\Theme\ExternalSources.scss" />
+    <Content Include="Content\Theme\GridFixedHeader.scss" />
     <None Include="Scripts\Libraries\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\Libraries\jquery-2.1.4.js" />
     <Content Include="Scripts\Libraries\jquery-ui-1.11.4.js" />

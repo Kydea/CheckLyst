@@ -159,6 +159,23 @@ table.Grid {
                     text-align: center;
                 }
             }
+
+            &.Next {
+                background-color: $Color-Silver-Light !important;
+                border-top: solid 1px $Color-Grey-Light;
+                cursor: pointer;
+
+                td {
+                    color: $Color-Grey-Regular;
+                    text-align: center;
+                    height: 30px;
+                    padding: 0 !important;
+                }
+
+                &:hover {
+                    background-color: $Color-Silver-Dark !important;
+                }
+            }
         }
     }
 

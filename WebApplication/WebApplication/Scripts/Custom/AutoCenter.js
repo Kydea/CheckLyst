@@ -9,13 +9,16 @@
                 var maxHeight = 80; //padding + margin
                 scrollablePanel.siblings().map(function () { maxHeight += $(this).outerHeight(); });
                 scrollablePanel.css("max-height", "calc(100vh - " + maxHeight + "px)");
+                var fixedHeader = scrollablePanel.data("GridFixedHeader");
+                if (fixedHeader && fixedHeader.resize) fixedHeader.resize();
+
             }
             element.css("top", (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) < 760 ? 0 : Math.max(parseInt((element.parent().height() - element.outerHeight()) / 2), 0));
         },
 
         initialize = function () {
             matematici.elements.window.on("resize", center);
-            scrollablePanel = element.hasClass("Container") && element.parent().hasClass("CheckListGrid") ? element.children().first().children().filter(".ScrollablePanel") : null;
+            scrollablePanel = element.hasClass("Container") && element.parent().hasClass("CheckListGrid") ? $(".ScrollablePanel", element) : null;
             if (scrollablePanel && scrollablePanel.length == 0) scrollablePanel = null;
             center();
             element.show();

@@ -12,6 +12,7 @@
         useButton, openButton, dependenciesButton,
         orderBar,
         filtersBar,
+        fixedHeader,
         valid = true,
 
         getRow = function (index) {
@@ -141,33 +142,38 @@
         },
 
         insert = function (row, index) {
-            noRecord.remove();
-            var tr = $("<tr />")
-                .addClass("Handler")
-                .append($("<td />").append($("<i />").addClass("fa fa-caret-right")).attr("title", row.serializedValue))
-                .append($("<td />").addClass("CodeColumn"))
-                .append($("<td />").addClass("DescriptionColumn"))
-                .append($("<td />").addClass("DataTypeColumn"))
-                .append($("<td />").addClass("Centered")
-                    .append($("<i />").addClass("Valid fal"))
-                    .append($("<i />").attr("title", "Unique").addClass("Unique fal fa-key"))
-                    .append($("<i />").attr("title", "Exception").addClass("Exception fal fa-exclamation"))
-                    .append($("<i />").attr("title", "Notification").addClass("Notification fal fa-bell"))
-                );
+            var
+                result,
+                tr = $("<tr />")
+                    .addClass("Handler")
+                    .append($("<td />").append($("<i />").addClass("fa fa-caret-right")).attr("title", row.serializedValue))
+                    .append($("<td />").addClass("CodeColumn"))
+                    .append($("<td />").addClass("DescriptionColumn"))
+                    .append($("<td />").addClass("DataTypeColumn"))
+                    .append($("<td />").addClass("Centered")
+                        .append($("<i />").addClass("Valid fal"))
+                        .append($("<i />").attr("title", "Unique").addClass("Unique fal fa-key"))
+                        .append($("<i />").attr("title", "Exception").addClass("Exception fal fa-exclamation"))
+                        .append($("<i />").attr("title", "Notification").addClass("Notification fal fa-bell"))
+                    );
 
+            noRecord.remove();
             insertItem(row, index);
 
             if (index == null) {
                 tr.appendTo(tableBody)
                 update(list.length - 1);
-                return list.length - 1;
+                result = list.length - 1;
             } else {
                 tr.insertAfter(getRow(index));
                 update(index + 1);
-                return index + 1;
+                result = index + 1;
             }
 
             colorRows();
+            fixedHeader.refresh();
+
+            return result;
         },
 
         update = function (index) {
@@ -258,6 +264,7 @@
             select();
             toggleNoRecord();
             toggleMoveButton();
+            fixedHeader.refresh();
         },
 
         setup = function () {
@@ -348,6 +355,8 @@
 
             for (var code in model.expressions)
                 insert(model.expressions[code]);
+
+            fixedHeader = new matematici.GridFixedHeader(table);
         };
 
     this.select = function (code) {

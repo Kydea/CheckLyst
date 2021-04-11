@@ -1,5 +1,4 @@
-﻿
-prototypes.ItemsList = function () {
+﻿prototypes.ItemsList = function () {
     var
         itemsList = this,
         model = prototypes.prototype.getModel(),
@@ -13,6 +12,7 @@ prototypes.ItemsList = function () {
         openButton,
         dependenciesButton,
         filtersBar,
+        fixedHeader,
         valid = true,
 
         getRow = function (index) {
@@ -146,6 +146,7 @@ prototypes.ItemsList = function () {
             }
             select();
             toggleNoRecord();
+            fixedHeader.refresh();
         },
 
         setup = function () {
@@ -206,6 +207,8 @@ prototypes.ItemsList = function () {
                         }));
 
             traverse(model);
+
+            fixedHeader = new matematici.GridFixedHeader(table);
         };
 
     setup();

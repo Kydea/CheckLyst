@@ -11,6 +11,7 @@
         currentIndex,
         removeButton,
         dependencyButton,
+        fixedHeader,
         filtersBar,
 
         toggleNoRecord = function () {
@@ -91,6 +92,7 @@
             select();
             colorRows();
             matematici.canClose = false;
+            fixedHeader.refresh();
         },
 
         checkCodes = function () {
@@ -153,6 +155,7 @@
             }
             select();
             toggleNoRecord();
+            fixedHeader.refresh();
         },
 
         setup = function () {
@@ -210,6 +213,7 @@
                         .append($("<a />").addClass("Button").text("add").toggle(model.state == prototypes.Prototype.states.draft).prepend($("<i />").addClass("Icon fa fa-plus")).on("click", function () {
                             matematici.canClose = false;
                             add({ code: "" });
+                            fixedHeader.refresh();
                             select(tableBody.children().size() - 1);
                         }))
                         .append(removeButton = $("<a />").addClass("Button").text("remove").prepend($("<i />").addClass("Icon fa fa-minus")).on("click", function () {
@@ -232,6 +236,8 @@
                     code: code,
                     source: model.externalSources[code]
                 });
+
+            fixedHeader = new matematici.GridFixedHeader(table);
         };
 
     setup();

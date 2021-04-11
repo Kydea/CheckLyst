@@ -566,6 +566,12 @@ div.Instance {
             overflow: auto;
             width: calc(100% - #{$Metric-Control-Space});
         }
+
+        div.ActionButtonsBar {
+            a + a {
+                margin-left: $Metric-Control-Space;
+            }
+        }
     }
 
     .InstanceDescription {
