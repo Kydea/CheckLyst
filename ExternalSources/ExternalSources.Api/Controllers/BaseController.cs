@@ -75,7 +75,9 @@ namespace CheckListManager.ExternalSources.Api.Controllers
                     Source.Open();
                     return Ok(new
                     {
-                        Rows = Source.GetData(request.parameters, request.page, request.decimalSeparator, request.timeZone)
+                        Rows = request.page > 4 ? //limited to maximum 5 pages
+                            null : 
+                            Source.GetData(request.parameters, request.page, request.decimalSeparator, request.timeZone)
                     });
                 }
             }

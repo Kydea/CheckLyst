@@ -1127,7 +1127,7 @@ namespace CheckListManager.Instances.Logic.Services
                         Property = DependencyRelation.Properties.Value;
                         break;
                     case EventTypes.Import:
-                        await HandleImport(cacheObject, identity, request.ItemId, request.Columns, request.Rows);
+                        await HandleImport(cacheObject, identity, request.ItemId, request.Value, request.Columns, request.Rows);
                         break;
                     case EventTypes.UploadAttachment:
                         AffectedElement = await HandleUploadAttachment(cacheObject, identity, request.ItemId, request.Attachment);
@@ -1833,9 +1833,70 @@ namespace CheckListManager.Instances.Logic.Services
             return AffectedElements;
         }
 
-        private async Task HandleImport(InstanceCacheObject cacheObject, IDefaultIdentity identity, int? itemId, List<string> columns, List<List<string>> rows)
+        private async Task HandleImport(InstanceCacheObject cacheObject, IDefaultIdentity identity, int? itemId, string externalSourceName, List<string> columns, List<List<string>> rows)
         {
-            
+            if (!itemId.HasValue)
+                throw new InstanceException("Item id not sent");
+
+            var group = cacheObject.Instance.Items.ContainsKey(itemId.Value) ? cacheObject.Instance.Items[itemId.Value] as Group : null;
+            if (group == null)
+                throw new InstanceException($"Group {itemId} not found");
+
+            if (group.ReadOnly || !cacheObject.Instance.ExternalSourceDependencyNodes.TryGetValue(externalSourceName, out var ExternalSourceDependencyNode))
+                return;
+
+            var rowDictionary = columns.ToDictionary(k => k, v => default(string));
+            var iterations = new List<int>(rows.Count);
+
+            foreach (var row in rows)
+            {
+                var iteration = group.AddIteration();
+                iterations.Add(iteration.Id);
+                for (var index = 0; index < rows.Count; ++index)
+                    rowDictionary[columns[index]] = row[index];
+                ExternalSourceDependencyNode.Values = rowDictionary;
+
+                foreach (var ExternalSourceDependencyRelation in ExternalSourceDependencyNode.DependentRelations)
+                {
+                    var IteratorModelItem = (Item)ExternalSourceDependencyRelation.GetNode(cacheObject.Instance);
+                    Item IterationItem = IteratorModelItem.FindIterationItems(iteration).Single();
+
+                    //the siblings are update directly
+                    IterationItem.Update(DependencyRelation.Properties.Value);
+
+                    //the iterator model item are marked as changed and then skipped to avoid all the iterations of the iterator are updated
+                    IteratorModelItem = IterationItem.FindIteratorModelItem();
+                    var Roots = new HashSet<Tuple<DependencyNode, DependencyRelation.Properties>>();
+                    IteratorModelItem.MarkNodeAsChanged(cacheObject.Instance, Roots, DependencyRelation.Properties.Value);
+                    IteratorModelItem.MarkNodeAsUnchanged(DependencyRelation.Properties.Value);
+                    DependencyNode.UpdateNodes(cacheObject.Instance, Roots);
+                }
+            }
+
+            //call audit trail only after the rest of the process has worked
+            for (var rowIndex = 0; rowIndex < rows.Count; ++rowIndex)
+            {
+                for (var columnIndex = 0; columnIndex < rows.Count; ++columnIndex)
+                    rowDictionary[columns[columnIndex]] = rows[rowIndex][columnIndex];
+
+                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                {
+                    Company = cacheObject.CompanyId,
+                    User = identity.Code,
+                    Action = TrailAction.InstanceExternalSourceRowImported,
+                    Date = DateTimeOffset.UtcNow,
+                    CheckListCode = cacheObject.InstanceCode,
+                    CheckListID = cacheObject.ID,
+                    Information = JsonConvert.SerializeObject(new
+                    {
+                        Iteration = iterations[rowIndex],
+                        Source = externalSourceName,
+                        Values = rowDictionary
+                    })
+                });
+            }
+
+            TrackChanges(cacheObject, identity.Code);
         }
 
         private async Task<Element> HandleUploadAttachment(

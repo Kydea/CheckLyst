@@ -167,6 +167,7 @@
         toggleNext = function (value) {
             if (!next)
                 next = $("<tr />").addClass("Next").append($("<td />").attr("colspan", header.children().size()).append($("<i />").addClass("Icon fa fa-angle-double-down")));
+
             if (value)
                 next.appendTo(tableBody);
             else
@@ -175,16 +176,22 @@
 
         confirm = function () {
             var
-                columns = [],
-                rows = [];
+                data = {
+                    value: name,
+                    columns: [],
+                    rows: []
+                };
 
             for (var index = 0; index < columns.length; ++index)
-                columns.push(columns[index]);
+                data.columns.push(columns[index]);
 
             $("tr td:first-child input:checked", tableBody).each(function () {
-                rows.push($(this).parent().parent().data("row"));
+                data.rows.push($(this).parent().parent().data("row"));
             });
-            new instances.Event(instances.Events.import, itemId, { columns: columns, rows: rows }).trigger();
+            new instances.Event(instances.Events.import, itemId, data).done(function (result) {
+                instances.instance.update(result);
+                close();
+            }).trigger();
         },
 
         load = function () {
@@ -213,7 +220,7 @@
                 }
 
                 toggleNoRecord(page == 0 && (!rows || !rows.length));
-                toggleNext(rows.length >= 20);
+                toggleNext(rows && rows.length >= 20 && page < 4);
                 refreshFixedHeader();
                 autoCenter.center();
 

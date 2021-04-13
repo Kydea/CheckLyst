@@ -37,6 +37,7 @@
         public const string InstanceDownloaded = "Instance downloaded";
 
         public const string InstanceExternalSourceRowChanged = "Instance external source row changed";
+        public const string InstanceExternalSourceRowImported = "Instance external source row imported";
 
         public const string InstanceExportCompleted = "Instance export completed";
         public const string InstanceExportFailed = "Instance export failed";

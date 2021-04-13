@@ -44,6 +44,7 @@ values
 	('Instance iteration moved up'),
 	('Instance iteration moved down'),
 	('Instance external source row changed'),
+	('Instance external source row imported'),
 	('Instance downloaded'),
 
 	('Job error'),
