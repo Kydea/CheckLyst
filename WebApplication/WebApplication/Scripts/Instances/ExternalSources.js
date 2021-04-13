@@ -6,7 +6,8 @@
         columns,
         noRecord,
         next,
-        search,
+        searchButton,
+        confirmButton,
         header,
         container,
         table,
@@ -26,6 +27,7 @@
             selectedRows = value ? totalRows : 0;
             selectionCheckBox.indeterminate = false;
             selectionCheckBox.value = value != true;
+            confirmButton.toggle(selectedRows > 0);
         },
 
         refreshFixedHeader = function () {
@@ -36,16 +38,11 @@
             if (multiSelection) $("th:first-child", fixedHeader.getTableHeader()).append(selectionCheckBox = $("<input />").attr("type", "checkbox").on("click", toggleSelection))
         },
 
-        filterChanged = function () {
-            next.hide();
-            page = 0;
-        },
-
         addFilter = function (parameter) {
             parameters
                 .append($("<label />")
                     .append($("<span />").text(parameter.label))
-                    .append($("<input />").attr({ type: "text", id: parameter.name }).on("change, keydown", filterChanged))
+                    .append($("<input />").attr({ type: "text", id: parameter.name }))
                 );
         },
 
@@ -59,8 +56,9 @@
         toggleRow = function (tr) {
             var value = checkBox = $("input", tr).prop("checked");
             selectedRows += value ? 1 : -1;
-            selectionCheckBox.prop("indeterminate",  totalRows > selectedRows && selectedRows > 0);
+            selectionCheckBox.prop("indeterminate", totalRows > selectedRows && selectedRows > 0);
             selectionCheckBox.prop("checked", totalRows == selectedRows);
+            confirmButton.toggle(selectedRows > 0);
         },
 
         selectRow = function (tr) {
@@ -100,17 +98,23 @@
 
             var scrollablePanel = $("<div />").addClass("ScrollablePanel").appendTo(container).hide();
 
-            table = $("<table />").addClass("Grid").appendTo(scrollablePanel)
-                .append($("<thead />")
-                    .append(header = $("<tr />"))
-                ).append(
-                    tableBody = $("<tbody />")
-                ).on("click", "tr.Handler", rowClicked);
+            table = $("<table />")
+                .addClass("Grid")
+                .appendTo(scrollablePanel)
+                .append($("<thead />").append(header = $("<tr />")))
+                .append(tableBody = $("<tbody />"))
+                .on("click", "tr.Handler", rowClicked)
+                .on("click", "tr.Next", function () {
+                    ++page;
+                    load();
+                });
 
             $("<div />").addClass("Buttons").appendTo(container)
-                .append(search = $("<a />").addClass("DefaultButton Button").text("search").prepend($("<i />").addClass("Icon fa fa-search")).on("click", function () {
+                .append(searchButton = $("<a />").addClass("DefaultButton Button").text("search").prepend($("<i />").addClass("Icon fa fa-search")).on("click", function () {
+                    page = 0;
                     load();
-                }));
+                }))
+                .append(confirmButton = $("<a />").addClass("Button").text("confirm").prepend($("<i />").addClass("Icon fa fa-file-import")).on("click", confirm).hide());
 
             $.ajax({
                 type: "post",
@@ -162,41 +166,25 @@
 
         toggleNext = function (value) {
             if (!next)
-                next = $("<tr />").addClass("Next").append($("<td />").attr("colspan", header.children().size()).append($("<i />").addClass("Icon fa fa-angle-double-down"))).on("click", function () {
-                    ++page;
-                    load();
-                });
-
+                next = $("<tr />").addClass("Next").append($("<td />").attr("colspan", header.children().size()).append($("<i />").addClass("Icon fa fa-angle-double-down")));
             if (value)
                 next.appendTo(tableBody);
             else
                 next.remove();
         },
 
-        fill = function (rows) {
-            if (page = 0) {
-                tableBody.empty();
-                totalRows = 0;
-            }
+        confirm = function () {
+            var
+                columns = [],
+                rows = [];
 
-            if (rows && rows.length) {
-                for (var row in rows) {
-                    var tr = $("<tr />").appendTo(tableBody).addClass("Handler");
-                    if (multiSelection) tr.append($("<td />").append($("<input />").attr({ type: "checkbox" }).on("click", function (e) {
-                        e.stopPropagation();
-                        toggleRow($(this).parent());
-                    })));
-                    for (var column in rows[row])
-                        if (columns[column][0] != "_")
-                            tr.append($("<td />").html(rows[row][column])).data({ index: parseInt(row) + 20 * page, row: rows[row] });
-                }
-                totalRows += rows.length;
-            }
+            for (var index = 0; index < columns.length; ++index)
+                columns.push(columns[index]);
 
-            toggleNoRecord(page == 0 && (!rows || !rows.length));
-            toggleNext(rows.length >= 20);
-            refreshFixedHeader();
-            autoCenter.center();
+            $("tr td:first-child input:checked", tableBody).each(function () {
+                rows.push($(this).parent().parent().data("row"));
+            });
+            new instances.Event(instances.Events.import, itemId, { columns: columns, rows: rows }).trigger();
         },
 
         load = function () {
@@ -204,7 +192,31 @@
                 method: "post",
                 data: { data: { instanceCode: instances.instance.getCode(), parameters: getValues(), externalSourceCode: name, page: page } }
             }).done(function (result) {
-                fill(JSON.parse(result).rows);
+                if (page == 0) {
+                    tableBody.empty();
+                    totalRows = 0;
+                }
+
+                var rows = JSON.parse(result).rows;
+                if (rows && rows.length) {
+                    for (var row in rows) {
+                        var tr = $("<tr />").appendTo(tableBody).addClass("Handler");
+                        if (multiSelection) tr.append($("<td />").append($("<input />").attr({ type: "checkbox" }).on("click", function (e) {
+                            e.stopPropagation();
+                            toggleRow($(this).parent());
+                        })));
+                        for (var column in rows[row])
+                            if (columns[column][0] != "_")
+                                tr.append($("<td />").html(rows[row][column])).data({ index: parseInt(row) + 20 * page, row: rows[row] });
+                    }
+                    totalRows += rows.length;
+                }
+
+                toggleNoRecord(page == 0 && (!rows || !rows.length));
+                toggleNext(rows.length >= 20);
+                refreshFixedHeader();
+                autoCenter.center();
+
             });
         };
 

@@ -18,6 +18,8 @@ namespace CheckListManager.Instances.Logic.Messages
 		public string Pin { get; set; }		
 		public string Note { get; set; }
         public Dictionary<string, string> Row { get; set; }
+        public List<string> Columns { get; set; }
+        public List<List<string>> Rows { get; set; }
         public HttpFile Attachment { get; set; }
         public List<Email> Emails { get; set; }
 

@@ -318,7 +318,7 @@
 
                         addIteration = new prototypes.Property(
                             this, new prototypes.ExpressionProperty(model, "addIteration", "add-iteration", false, false, 1), "Add iteration",
-                            "Defines if the add button of the iterator is present."
+                            "Defines if the buttons add and import of the iterator are present."
                         );
                         properties.push(addIteration);
 

@@ -760,7 +760,7 @@ namespace CheckListManager.Instances.Logic.Services
                 if (Element is Group Group && Group.SignatureCode == signature.Code && Group.DumpExternalSourceName != null)
                     try
                     {
-                        var Iterations = Group.Iterations.Select(i => i.Items.Where(i2 => i2.Code != null && i2 is Field).Select(i2 => (Item)i2));
+                        var Iterations = Group.Iterations.Where(i => !i.Removed).Select(i => i.Items.Where(i2 => i2.Code != null && i2 is Field).Select(i2 => (Item)i2));
                         if (Iterations.Any() && Iterations.First().Any())
                         {
                             var Names = Iterations.First().Select(i2 => i2.Code).ToList();
@@ -1126,13 +1126,13 @@ namespace CheckListManager.Instances.Logic.Services
                         AffectedElements = await HandleExternalSourceRowChange(cacheObject, identity, request.ItemId, request.Row);
                         Property = DependencyRelation.Properties.Value;
                         break;
+                    case EventTypes.Import:
+                        await HandleImport(cacheObject, identity, request.ItemId, request.Columns, request.Rows);
+                        break;
                     case EventTypes.UploadAttachment:
                         AffectedElement = await HandleUploadAttachment(cacheObject, identity, request.ItemId, request.Attachment);
                         Property = DependencyRelation.Properties.Validity;
                         break;
-                    case EventTypes.Import:
-                        throw new InstanceException(request.ItemId + ": " + request.Value);
-                        //break;
                     default:
                         throw new InstanceException($"Event type {request.Type} not handled.");
                 }
@@ -1775,6 +1775,8 @@ namespace CheckListManager.Instances.Logic.Services
             cacheObject.ModifiedOn = DateTimeOffset.UtcNow;
         }
 
+        //private void 
+
         private async Task<List<Item>> HandleExternalSourceRowChange(InstanceCacheObject cacheObject, IDefaultIdentity identity, int? itemId, Dictionary<string, string> row)
         {
             if (!itemId.HasValue)
@@ -1794,18 +1796,17 @@ namespace CheckListManager.Instances.Logic.Services
                 if (field.IterationItem)
                 {
                     var IteratorModelItem = (Item)ExternalSourceDependencyRelation.GetNode(cacheObject.Instance);
-                    foreach (Item IterationItem in IteratorModelItem.FindIterationItems(field.Iteration))
-                    {
-                        //the siblings are update directly
-                        IterationItem.Update(DependencyRelation.Properties.Value);
+                    Item IterationItem = IteratorModelItem.FindIterationItems(field.Iteration).Single();
 
-                        //the iterator model item aremared as changed and then jumped to avoid all the iterations are updated
-                        IteratorModelItem = IterationItem.FindIteratorModelItem();
-                        var Roots = new HashSet<Tuple<DependencyNode, DependencyRelation.Properties>>();
-                        IteratorModelItem.MarkNodeAsChanged(cacheObject.Instance, Roots, DependencyRelation.Properties.Value);
-                        IteratorModelItem.MarkNodeAsUnchanged(DependencyRelation.Properties.Value);
-                        DependencyNode.UpdateNodes(cacheObject.Instance, Roots);
-                    }
+                    //the siblings are update directly
+                    IterationItem.Update(DependencyRelation.Properties.Value);
+
+                    //the iterator model item are marked as changed and then skipped to avoid all the iterations of the iterator are updated
+                    IteratorModelItem = IterationItem.FindIteratorModelItem();
+                    var Roots = new HashSet<Tuple<DependencyNode, DependencyRelation.Properties>>();
+                    IteratorModelItem.MarkNodeAsChanged(cacheObject.Instance, Roots, DependencyRelation.Properties.Value);
+                    IteratorModelItem.MarkNodeAsUnchanged(DependencyRelation.Properties.Value);
+                    DependencyNode.UpdateNodes(cacheObject.Instance, Roots);
                 }
                 else
                 {
@@ -1830,6 +1831,11 @@ namespace CheckListManager.Instances.Logic.Services
 
             TrackChanges(cacheObject, identity.Code);
             return AffectedElements;
+        }
+
+        private async Task HandleImport(InstanceCacheObject cacheObject, IDefaultIdentity identity, int? itemId, List<string> columns, List<List<string>> rows)
+        {
+            
         }
 
         private async Task<Element> HandleUploadAttachment(
