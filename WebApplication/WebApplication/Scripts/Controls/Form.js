@@ -64,7 +64,7 @@
                 if (event)
                     options.applyButton.on("click", function (e) {
                         if (options.applyButton.hasClass("ReadOnly")) return;
-                        saveForm();
+                        if (element.attr("id") == "Filters") saveForm(); //enhance for example with a class or data-persisten="true"
                         bind(event, handler, prepareRequest({ data: { source: options.applyButton.attr("id") } }));
                     });
                 else if (handler)
@@ -196,7 +196,7 @@
             var advancedSearch = options.searchPage && options.searchPage.isAdvancedSearchMode && options.searchPage.isAdvancedSearchMode();
             if (includeNulls || advancedSearch)
                 data["advancedSearch"] = advancedSearch;
-        } 
+        },
 
         prepareRequest = function (parameters) {
             parameters = parameters || {};

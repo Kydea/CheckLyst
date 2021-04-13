@@ -149,16 +149,15 @@
         classSelect = $("select.SourceClass", formElement),
 
         parameterTypes = [
-            "Text"
-            //"Number",
-            //"Date"
+            "Text",
+            "Number",
+            "Boolean",
+            "Date",
+            "DateTime",
+            "Time"
         ],
 
         fixQueryParameters = function (tabIndex) {
-            steps = $("div.QueryParameter", tab.getItem(tabIndex).tab).each(function (index) {
-                $(this).children("hr").toggle(index > 0);
-            });
-
             resize();
         },
 
@@ -173,8 +172,6 @@
             var
                 tabItem = tabIndex && tab.getItem(tabIndex) || tab.getCurrentItem(),
                 div = $("<div />").addClass("QueryParameter").insertBefore(tabItem.tab.children("div.Clearing"));
-
-            $("<hr />").appendTo(div)
 
             var input1 = $("<input />").attr("type", "text");
             if (detailPage.isReadOnly()) matematici.controls.setEditable(input1, false);

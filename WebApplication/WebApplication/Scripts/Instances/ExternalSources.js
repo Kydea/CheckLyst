@@ -17,6 +17,7 @@
         selectionCheckBox,
         totalRows = 0,
         selectedRows = 0,
+        inputs = [];
 
         toggleSelection = function () {
             var value = selectionCheckBox.prop("indeterminate") ? null : selectionCheckBox.prop("checked");
@@ -39,11 +40,9 @@
         },
 
         addFilter = function (parameter) {
-            parameters
-                .append($("<label />")
-                    .append($("<span />").text(parameter.label))
-                    .append($("<input />").attr({ type: "text", id: parameter.name }))
-                );
+            var label = $("<label />").append($("<span />").text(parameter.label));
+            inputs.push(new matematici.input(label[0], parameter.parameterType, { name: parameter.name }))
+            parameters.append(label);
         },
 
         close = function () {
@@ -145,13 +144,13 @@
 
         getValues = function () {
             var values = {};
-            $("input", parameters).each(function (index) {
-                var input = $(this);
+            for (var index in inputs) {
+                var input = inputs[index];
                 values[index] = {
-                    key: input.attr("id"),
-                    value: input.val()
+                    key: input.getOption("name"),
+                    value: input.getValue()
                 }
-            });
+            }
             return values;
         },
 
