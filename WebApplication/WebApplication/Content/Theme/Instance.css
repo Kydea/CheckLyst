@@ -170,9 +170,9 @@ div.Instance .Item label span.Label {
   padding-left: 8px; }
 
 div.Instance .Item.Field input[type=checkbox] {
-  height: 16px;
-  width: 16px;
-  margin: 15px 0 10px; }
+  height: 36px;
+  line-height: 36px;
+  vertical-align: middle; }
 
 div.Instance .Item.Field div.Input {
   display: none; }
@@ -186,20 +186,20 @@ div.Instance .Item.Field.ExternalSource.Inactive i.fa-link {
 div.Instance .Item.Field.ExternalSource:not(.Inactive) div.Input {
   cursor: pointer !important; }
 
-div.Instance .Item.Field.DateTime label {
-  width: 420px; }
-
 div.Instance .Item.Field.DateTime input {
   float: left;
-  width: calc(50% + 10px); }
+  width: 120px;
+  border-radius: 5px 0 0 5px; }
 
 div.Instance .Item.Field.DateTime input.AutoComplete {
   float: left;
-  width: calc(25% - 5px);
-  border-right: solid 1px #ccc;
-  border-radius: 5px;
+  width: 55px;
+  border-left: 0;
+  border-radius: 0 5px 5px 0;
   padding-left: 5px !important;
   padding-right: 0 !important; }
+  div.Instance .Item.Field.DateTime input.AutoComplete:nth-child(5) {
+    border-radius: 0; }
 
 div.Instance .Item.Field.Time input.Description {
   display: none; }
@@ -207,10 +207,13 @@ div.Instance .Item.Field.Time input.Description {
 div.Instance .Item.Field.Time input.AutoComplete {
   float: left;
   width: 50%;
-  border-right: solid 1px #ccc;
-  border-radius: 5px;
+  border-left: 0;
+  border-radius: 0 5px 5px 0;
   padding-left: 5px !important;
   padding-right: 0 !important; }
+  div.Instance .Item.Field.Time input.AutoComplete:nth-child(4) {
+    border-radius: 5px 0 0 5px;
+    border-left: solid 1px #ccc; }
 
 div.Instance .Item.Field.ReadOnly input {
   display: none; }

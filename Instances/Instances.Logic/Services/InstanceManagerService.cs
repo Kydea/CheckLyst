@@ -1124,10 +1124,11 @@ namespace CheckListManager.Instances.Logic.Services
                         break;
                     case EventTypes.ExternalSourceRowChange:
                         AffectedElements = await HandleExternalSourceRowChange(cacheObject, identity, request.ItemId, request.Row);
-                        Property = DependencyRelation.Properties.Value;
+                        Property = AffectedElements == null ? DependencyRelation.Properties.ReadOnly : DependencyRelation.Properties.Value;
                         break;
                     case EventTypes.Import:
                         await HandleImport(cacheObject, identity, request.ItemId, request.Value, request.Columns, request.Rows);
+                        Property = DependencyRelation.Properties.ReadOnly;
                         break;
                     case EventTypes.UploadAttachment:
                         AffectedElement = await HandleUploadAttachment(cacheObject, identity, request.ItemId, request.Attachment);

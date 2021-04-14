@@ -277,13 +277,13 @@ div.Instance {
         }
 
         &.Field {
-            $Label-Width: 200px;
+            $Label-Width: 230px;
 
             input {
                 &[type=checkbox] {
-                    height: 16px;
-                    width: 16px;
-                    margin: 5px + ($Metric-Control-Height - 16px) / 2 0 ($Metric-Control-Height - 16px) / 2;
+                    height: 36px;
+                    line-height: 36px;
+                    vertical-align: middle;
                 }
             }
 
@@ -312,22 +312,23 @@ div.Instance {
             }
 
             &.DateTime {
-                label {
-                    width: $Label-Width * 2 + $Metric-Control-Space;
-                }
-
                 input {
                     float: left;
-                    width: calc(50% + #{$Metric-Control-Space / 2});
+                    width: 120px;
+                    border-radius: 5px 0 0 5px;
                 }
 
                 input.AutoComplete {
                     float: left;
-                    width: calc(25% - #{$Metric-Control-Space / 4});
-                    border-right: solid 1px $Color-Grey-Light;
-                    border-radius: 5px;
+                    width: 55px;
+                    border-left: 0;
+                    border-radius: 0 5px 5px 0;
                     padding-left: 5px !important;
                     padding-right: 0 !important;
+
+                    &:nth-child(5) {
+                        border-radius: 0;
+                    }
                 }
             }
 
@@ -340,10 +341,15 @@ div.Instance {
                 input.AutoComplete {
                     float: left;
                     width: 50%;
-                    border-right: solid 1px $Color-Grey-Light;
-                    border-radius: 5px;
+                    border-left: 0;
+                    border-radius: 0 5px 5px 0;
                     padding-left: 5px !important;
                     padding-right: 0 !important;
+
+                    &:nth-child(4) {
+                        border-radius: 5px 0 0 5px;
+                        border-left: solid 1px $Color-Grey-Light;
+                    }
                 }
             }
 

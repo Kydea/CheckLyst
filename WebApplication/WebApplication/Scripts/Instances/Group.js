@@ -202,13 +202,13 @@
                                 if (!readOnly) {
                                     var buttons = [{ text: "Cancel", icon: "times", cancelButton: true }];
                                     for (var externalSourceIndex in setupModel.externalSources.sort().reverse()) {
-                                        var externalSource = setupModel.externalSources[externalSourceIndex]
                                         buttons.push({
-                                            text: externalSource,
+                                            text: setupModel.externalSources[externalSourceIndex],
                                             icon: "file-import",
-                                            handler: function () {
-                                                new instances.ExternalSources(id, externalSource, true);
-                                                //new instances.Event(instances.Events.import, id, { value: externalSource }).trigger();
+                                            data: setupModel.externalSources[externalSourceIndex],
+                                            handler: function (name) {
+                                                console.log("<" + name + ">");
+                                                new instances.ExternalSources(id, name, true);
                                             }
                                         });
                                     }

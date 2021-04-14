@@ -13,40 +13,6 @@
         readOnly = false,
         goToNext = 0,
 
-        validate = function () {
-            if (model.valueTypeName == "DateTime" || model.valueTypeName == "Date") {
-                if (!/^$|\d\d\d\d\-\d\d\-\d\d/ig.test(input.value)) {
-                    input.value = "";
-                    return false;
-                }
-            } else if (model.valueTypeName == "Number") {
-                var value = input.value;
-                for (var index = 0; index < value.length; ++index)
-                    if (!(
-                        value[index] >= "0" && value[index] <= "9"
-                        || value[index] == "-"
-                        || value[index] == "e" || value[index] == "E"
-                        || value[index] == localStorage.decimalSeparator
-                    )) {
-                        input.value = "";
-                        return false;
-                    }
-            }
-
-            if (model.valueTypeName == "DateTime")
-                return (
-                    ((input.value || "").trim() != "" && (select.value || "").trim() != "" && (select2.value || "").trim() != "")
-                    || ((input.value || "").trim() == "" && (select.value || "").trim() == "" && (select2.value || "").trim() == "")
-                );
-            else if (model.valueTypeName == "Time")
-                return (
-                    ((select.value || "").trim() != "" && (select2.value || "").trim() != "")
-                    || ((select.value || "").trim() == "" && (select2.value || "").trim() == "")
-                );
-
-            return true;
-        },
-
         getValue = function () {
             var value = model.valuesList ? select.value || "" : (input.value || "").trim();
             if (!model.valuesList) {
@@ -84,7 +50,8 @@
         },
 
         change = function () {
-            if (model.valuesList || validate()) {
+            var valid = model.valuesList || matematici.TypedInput.validate(model.valueTypeName, input, select, select2);
+            if (valid) {
                 var handleGoToNext = goToNext;
                 goToNext = 0;
                 new instances.Event(instances.Events.valueChange, model.id, { value: getValue() }).done(function (result) {
@@ -110,23 +77,7 @@
         },
 
         keyPress = function (e) {
-            if (
-                e.ctrlKey || e.altKey
-                || e.key == '-'
-                || e.key == 'e' || e.key == 'E'
-                || e.key >= '0' && e.key <= '9'
-                || e.key == localStorage.decimalSeparator
-            )
-                return;
-
-            if (model.valueTypeName == "Number" && (e.key == ',' || e.key == '.')) {
-                e.preventDefault();
-                matematici.dialog.error("Error", "Invalid decimal separator, use the character " + localStorage.decimalSeparator + " instead");
-                return;
-            }
-
-            if (model.valueTypeName == "Number" || model.valueTypeName == "Date" || model.valueTypeName == "DateTime")
-                e.preventDefault();
+            matematici.TypedInput.keyPress(model.valueTypeName, e);
         },
 
         keyDown = function (e) {
@@ -240,8 +191,8 @@
                 field.style.height = 20 * model.linesCount + 12 + "px";
             }
 
-            if (select) (autoComplete = new matematici.AutoComplete(select)).initialize();
-            if (select2) (autoComplete2 = new matematici.AutoComplete(select2)).initialize();
+            if (select) (autoComplete = new matematici.AutoComplete(select, { noCheck: model.valueTypeName == "DateTime" })).initialize();
+            if (select2) (autoComplete2 = new matematici.AutoComplete(select2, { noCheck: model.valueTypeName == "DateTime" })).initialize();
 
             if (!item.isTableContent() || !item.getParent().isSubRow()) {
                 copyButton = document.createElement("a");

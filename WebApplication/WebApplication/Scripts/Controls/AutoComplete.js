@@ -1,4 +1,4 @@
-﻿matematici.AutoComplete = function (node) {
+﻿matematici.AutoComplete = function (node, options) {
     //this is a light version of autocomplete whitout jquery in initialization used only in instances to make the process faster
 
     var
@@ -31,6 +31,7 @@
             label = $(labelNode);
             input = $("<input />").addClass("AutoComplete-Filter Scan").attr({ type: "text" }).hide().insertAfter(label);
             list = $("<div />").addClass("AutoComplete-List").insertAfter(input);
+            if (options && options.noCheck) list.addClass("NoCheck");
             noRow = $("<i />").addClass("fa fa-minus");
 
             input
@@ -206,7 +207,7 @@
 
         setWidth = function () {
             if (open) resizeList();
-            iconNode.style.left = labelNode.offsetLeft + labelNode.offsetWidth - 24 + "px";
+            iconNode.style.left = labelNode.offsetLeft + labelNode.offsetWidth - 21 + "px";
             iconNode.style.top = labelNode.offsetTop + "px";
         },
 
@@ -384,6 +385,10 @@
 
     autoComplete.getControl = function () {
 		return label;
+    };
+
+    autoComplete.getLabelNode = function () {
+        return labelNode;
     };
 
     autoComplete.getValue = function () {

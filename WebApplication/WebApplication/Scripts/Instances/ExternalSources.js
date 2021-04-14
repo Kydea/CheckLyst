@@ -3,6 +3,7 @@
         element,
         page = 0,
         parameters,
+        parameterValues = {},
         columns,
         noRecord,
         next,
@@ -17,7 +18,7 @@
         selectionCheckBox,
         totalRows = 0,
         selectedRows = 0,
-        inputs = [];
+        inputs = [],
 
         toggleSelection = function () {
             var value = selectionCheckBox.prop("indeterminate") ? null : selectionCheckBox.prop("checked");
@@ -41,7 +42,7 @@
 
         addFilter = function (parameter) {
             var label = $("<label />").append($("<span />").text(parameter.label));
-            inputs.push(new matematici.input(label[0], parameter.parameterType, { name: parameter.name }))
+            inputs.push(new matematici.TypedInput(label[0], parameter.parameterType, { name: parameter.name }))
             parameters.append(label);
         },
 
@@ -111,7 +112,7 @@
             $("<div />").addClass("Buttons").appendTo(container)
                 .append(searchButton = $("<a />").addClass("DefaultButton Button").text("search").prepend($("<i />").addClass("Icon fa fa-search")).on("click", function () {
                     page = 0;
-                    load();
+                    if (setParameterValues()) load();
                 }))
                 .append(confirmButton = $("<a />").addClass("Button").text("confirm").prepend($("<i />").addClass("Icon fa fa-file-import")).on("click", confirm).hide());
 
@@ -142,16 +143,19 @@
             });
         },
 
-        getValues = function () {
-            var values = {};
+        setParameterValues = function () {
+            parameterValues = {};
+            var valid = true;
             for (var index in inputs) {
                 var input = inputs[index];
-                values[index] = {
+                if (!input.validate()) valid = false;
+                parameterValues[index] = {
                     key: input.getOption("name"),
                     value: input.getValue()
                 }
             }
-            return values;
+            if (!valid) parameterValues = {};
+            return valid;
         },
 
         toggleNoRecord = function (value) {
@@ -196,7 +200,7 @@
         load = function () {
             $.ajax(matematici.urls.instances.api + "/GetExternalSourceRows", {
                 method: "post",
-                data: { data: { instanceCode: instances.instance.getCode(), parameters: getValues(), externalSourceCode: name, page: page } }
+                data: { data: { instanceCode: instances.instance.getCode(), parameters: parameterValues, externalSourceCode: name, page: page } }
             }).done(function (result) {
                 if (page == 0) {
                     tableBody.empty();

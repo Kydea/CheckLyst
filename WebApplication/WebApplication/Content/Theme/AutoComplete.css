@@ -3,7 +3,7 @@
 
 input.AutoComplete {
   text-overflow: ellipsis;
-  padding-right: 36px !important; }
+  padding-right: 28px !important; }
   input.AutoComplete.Open {
     border-bottom-left-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
@@ -63,6 +63,10 @@ div.AutoComplete-List {
     div.AutoComplete-List a.None i {
       font-style: normal;
       color: #666; }
+  div.AutoComplete-List.NoCheck a.Selected {
+    padding-right: 10px; }
+    div.AutoComplete-List.NoCheck a.Selected::after {
+      content: none; }
   div.AutoComplete-List i {
     display: block;
     text-align: center;

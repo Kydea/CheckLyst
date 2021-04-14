@@ -7,7 +7,7 @@ select.AutoComplete {
 
 input.AutoComplete {
     text-overflow: ellipsis;
-    padding-right: $Metric-Control-Height !important;
+    padding-right: 28px !important;
 
     &.Open {
         border-bottom-left-radius: 0 !important;
@@ -89,6 +89,16 @@ div.AutoComplete-List {
         }
     }
 
+    &.NoCheck {
+        a.Selected {
+            padding-right: 10px;
+
+            &::after {
+                content: none;
+            }
+        }
+    }
+
     i {
         display: block;
         text-align: center;
@@ -113,7 +123,6 @@ i.AutoComplete {
     position: absolute !important;
     margin: 0 !important;
     display: none; //shown by matematici.loader
-
     &.FullHeight {
         display: none !important;
     }

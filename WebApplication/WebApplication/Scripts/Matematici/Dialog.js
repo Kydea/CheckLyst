@@ -20,12 +20,11 @@ matematici.dialog = function () {
 				container.append(button.content);
 			} else if (button.text || button.hidden) {
 				button.content = $("<a />").addClass("Button").text((button.icon ? " " : "") + button.text).on("click", function () {
-					if (button.handler) {
-						if (!button.handler.call(this, button.data)) {
-							matematici.dialog.close();
-						}
-					} else
+					if (!button.handler)
+                        matematici.dialog.close();
+				    else if (!button.handler.call(this, button.data)) {
 						matematici.dialog.close();
+					}
 				});
                 if (button.icon) button.content.prepend($("<i />").addClass("Icon " + (options.iconPrefix || "fa") + " fa-" + button.icon));
 				if (button.hidden) button.content.hide();

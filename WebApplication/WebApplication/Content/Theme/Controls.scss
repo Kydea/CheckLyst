@@ -1,10 +1,54 @@
 ﻿@import "Library";
 
-$Inline-Form-Label-Width: 200px;
+$Inline-Form-Label-Width: 230px;
 
 label {
     display: block;
     font-size: 13px;
+
+    &.Boolean {
+        input {
+            height: 36px;
+            line-height: 36px;
+            vertical-align: middle;
+        }
+    }
+
+    &.DateTime {
+        input:nth-child(3) {
+            width: 120px;
+            display: inline-block;
+            border-radius: 5px 0 0 5px;
+        }
+
+        input.AutoComplete {
+            width: 55px;
+            display: inline-block;
+            border-radius: 0;
+            border-left: 0;
+
+            &:nth-last-child(2) {
+                border-radius: 0 5px 5px 0;
+            }
+        }
+    }
+
+    &.Time {
+        input.AutoComplete {
+            width: 50%;
+            display: inline-block;
+            border-radius: 5px 0 0 5px;
+
+            &:nth-last-child(2) {
+                border-radius: 0 5px 5px 0;
+                border-left: 0;
+            }
+        }
+    }
+
+    *.Error {
+        color: $Color-Red-Regular;
+    }
 }
 
 div.Input {
@@ -14,7 +58,7 @@ div.Input {
 
 input[type=text], input[type=range], input[type=number], input[type=password], input[type=email], input[type=file], select, div.Input {
     display: block;
-    border-radius: 3px;
+    border-radius: 5px;
     border: solid 1px $Color-Grey-Light;
     background: white;
     width: 100%;
@@ -30,15 +74,15 @@ input[type=text], input[type=range], input[type=number], input[type=password], i
 }
 
 input.Error, select.Error {
-	border-color: $Color-Red-Regular;
-	outline-color: $Color-Red-Light;
+    border-color: $Color-Red-Regular;
+    outline-color: $Color-Red-Light;
 }
 
 textarea {
     height: 88px;
     line-height: 20px;
     display: block;
-    border-radius: 3px;
+    border-radius: 5px;
     border: solid 1px $Color-Grey-Light;
     background: white;
     width: 100%;
@@ -335,7 +379,7 @@ form {
 form, div.CheckList, div.PropertyPanel div.PropertyValue, div.Module {
 
     label, p.Label {
-        $Label-Width: 200px;
+        $Label-Width: 230px;
 
         float: left;
         margin-top: $Metric-Control-Space;
