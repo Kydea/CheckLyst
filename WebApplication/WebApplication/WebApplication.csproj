@@ -273,7 +273,7 @@
     <Content Include="Scripts\Controls\Calendar.js" />
     <Content Include="Scripts\Controls\Controls.js" />
     <Content Include="Scripts\Controls\DatePicker.js" />
-    <Content Include="Scripts\Controls\Input.js" />
+    <Content Include="Scripts\Controls\TypedInput.js" />
     <Content Include="Scripts\Custom\ExpressionEditor.js" />
     <Content Include="Scripts\Controls\Grid.js" />
     <Content Include="Scripts\Controls\DetailPage.js" />
