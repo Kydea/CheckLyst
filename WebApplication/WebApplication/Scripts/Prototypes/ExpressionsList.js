@@ -2,8 +2,8 @@
     var
         expressionsList = this,
         model = prototypes.prototype.getModel(),
-        autoCenter,
         element,
+        autoCenter,
         table,
         tableBody,
         noRecord,
@@ -13,7 +13,6 @@
         orderBar,
         filtersBar,
         fixedHeader,
-        valid = true,
 
         getRow = function (index) {
             return $("tr", tableBody).eq(index);
@@ -35,8 +34,7 @@
             var
                 code = list[currentIndex].code,
                 model = prototypes.prototype.getModel().expressions[code];
-            if (valid)
-                matematici.dependenciesDialog.show("Expression " + (code || "(new)"), model.dependingRelations, model.dependentRelations);
+            matematici.dependenciesDialog.show("Expression " + (code || "(new)"), model.dependingRelations, model.dependentRelations);
         },
 
         up = function () {
@@ -171,7 +169,7 @@
             }
 
             colorRows();
-            fixedHeader.refresh();
+            fixedHeader && fixedHeader.refresh();
 
             return result;
         },
@@ -213,7 +211,7 @@
 
                     cells.find("i.Valid")
                         .removeClass("fa-check fa-times fa-question Off")
-                        .attr("title", row.dataType == null || row.dataType.typeName == null ? "The expression type could not be evaluated" : row.error)
+                        .attr("title", row.dataType == null || row.dataType.typeName == null ? "The expression type could not be evaluated" : error)
                         .addClass(row.dataType == null || row.dataType.typeName == null ? "fa-question" : error == null ? "fa-check" : "fa-times");
 
                     cells.find(".DataTypeColumn").text(row.dataType && row.dataType.typeName);
@@ -264,7 +262,7 @@
             select();
             toggleNoRecord();
             toggleMoveButton();
-            fixedHeader.refresh();
+            fixedHeader && fixedHeader.refresh();
         },
 
         setup = function () {

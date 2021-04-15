@@ -7,6 +7,7 @@ using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.Expressions;
 using CheckListManager.Common.Logic.Models.Expressions.Parsing;
+using CheckListManager.Common.Logic.Models.ExternalSources;
 using Newtonsoft.Json;
 
 namespace CheckListManager.Prototypes.Logic.Models.CheckLists
@@ -15,8 +16,8 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
     {
         public Dictionary<string, ICheckListElement> Elements { get; } = new Dictionary<string, ICheckListElement>();
         public PascalCaseDictionary<string, Expression> Expressions { get; } = new PascalCaseDictionary<string, Expression>();
-        public PascalCaseDictionary<string, string> ExternalSources { get; } = new PascalCaseDictionary<string, string>();
-        public PascalCaseDictionary<string, ExternalSourceDependencyNode> ExternalSourceDependencyNodes { get; } = new PascalCaseDictionary<string, ExternalSourceDependencyNode>();
+        public PascalCaseDictionary<string, string> ExternalSources { get; } = new PascalCaseDictionary<string, string>(); //obsolete from v 3.0.0
+        public PascalCaseDictionary<string, ExternalSource> ExternalSourceDependencyNodes { get; } = new PascalCaseDictionary<string, ExternalSource>();
         public ICheckListGroup Header { get; set; }
         public List<ICheckListPage> Pages { get; } = new List<ICheckListPage>();
         public string DescriptionFormulaString { get; set; }
@@ -70,9 +71,14 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 Valid &= Page.Setup();
             }
 
-            ExternalSourceDependencyNodes.Clear();
-            foreach (string ExternalSource in ExternalSources.Keys)
-                ExternalSourceDependencyNodes.Add(ExternalSource, new ExternalSourceDependencyNode { Code = ExternalSource });
+            //back compatibility for v. < 3.0.0
+            if (ExternalSources.Any())
+            {
+                ExternalSourceDependencyNodes.Clear();
+                foreach (string ExternalSource in ExternalSources.Keys)
+                    ExternalSourceDependencyNodes.Add(ExternalSource, new ExternalSource { Code = ExternalSource, DataSource = ExternalSources[ExternalSource] });
+                ExternalSources.Clear();
+            }
 
             foreach (var expression in Expressions)
             {

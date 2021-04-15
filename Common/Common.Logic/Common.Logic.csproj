@@ -130,7 +130,8 @@
     <Compile Include="DataSources\ExportRequest.cs" />
     <Compile Include="Email\EmailServiceBase.cs" />
     <Compile Include="Email\IEmailServiceBase.cs" />
-    <Compile Include="Models\CheckLists\ExternalSourceDependencyNode.cs" />
+    <Compile Include="Models\ExternalSources\Parameter.cs" />
+    <Compile Include="Models\ExternalSources\ExternalSource.cs" />
     <Compile Include="Dependency\DependencyRelation.cs" />
     <Compile Include="Dependency\DependencyNode.cs" />
     <Compile Include="Email\EmailTrailMessage.cs" />

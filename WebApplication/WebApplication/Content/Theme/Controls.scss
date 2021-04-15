@@ -374,6 +374,22 @@ form {
             background-color: $Color-Grey-Light-Over;
         }
     }
+
+    > label.GridLabel {
+        float: none;
+        clear: both;
+    }
+
+    > table.Grid {
+        margin-top: 3px;
+        margin-left: $Metric-Control-Space;
+        width: calc(100% - #{$Metric-Control-Space});
+        border: solid 1px $Color-Grey-Regular;
+
+        td {
+            position: relative;
+        }
+    }
 }
 
 form, div.CheckList, div.PropertyPanel div.PropertyValue, div.Module {

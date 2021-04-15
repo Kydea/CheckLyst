@@ -1853,7 +1853,7 @@ namespace CheckListManager.Instances.Logic.Services
             {
                 var iteration = group.AddIteration();
                 iterations.Add(iteration.Id);
-                for (var index = 0; index < rows.Count; ++index)
+                for (var index = 0; index < columns.Count; ++index)
                     rowDictionary[columns[index]] = row[index];
                 ExternalSourceDependencyNode.Values = rowDictionary;
 

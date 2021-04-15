@@ -11,6 +11,7 @@ using CheckListManager.Instances.Logic.Exceptions;
 using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Logic.Services;
+using CheckListManager.Common.Logic.Models.ExternalSources;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
@@ -39,7 +40,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             var Expressions = new PascalCaseDictionary<string, dynamic>(this.Expressions.Count);
             if (identity.HasPermission("Trail") || cacheObject.VersionState == VersionState.Draft || cacheObject.VersionState == VersionState.InSimulation)
                 foreach (var Expression in this.Expressions.Values)
-                    Expressions[Expression.Code] = new {
+                    Expressions[Expression.Code] = new
+                    {
                         Expression.Description,
                         Expression.Value?.Type.TypeName,
                         Expression.Value?.Value
@@ -64,8 +66,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public Dictionary<string, ICheckListElement> Elements { get; } = new Dictionary<string, ICheckListElement>();
         public PascalCaseDictionary<string, Expression> Expressions { get; set; }
         public PascalCaseDictionary<string, string> Exceptions =>
-            Expressions == null ? null : new PascalCaseDictionary<string, string>(Expressions.Where(e => 
-                e.Value?.Exception == true 
+            Expressions == null ? null : new PascalCaseDictionary<string, string>(Expressions.Where(e =>
+                e.Value?.Exception == true
                 && (
                     e.Value.Value?.Type == DataType.Boolean && e.Value.Value.BooleanValue
                     || e.Value.Value?.Type == DataType.Date && e.Value.Value.DateTimeValue <= DateTimeOffset.UtcNow
@@ -73,7 +75,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 )
            ).ToDictionary(k => k.Key, v => v.Value?.Description));
         public PascalCaseDictionary<string, string> ExternalSources { get; set; }
-        public PascalCaseDictionary<string, ExternalSourceDependencyNode> ExternalSourceDependencyNodes { get; } = new PascalCaseDictionary<string, ExternalSourceDependencyNode>();
+        public PascalCaseDictionary<string, ExternalSource> ExternalSourceDependencyNodes { get; } = new PascalCaseDictionary<string, ExternalSource>();
         public ICheckListGroup Header { get; set; }
         public List<ICheckListPage> Pages { get; set; }
 
@@ -159,7 +161,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         {
             ExternalSourceDependencyNodes.Clear();
             foreach (string ExternalSource in ExternalSources.Keys)
-                ExternalSourceDependencyNodes.Add(ExternalSource, new ExternalSourceDependencyNode { Code = ExternalSource });
+                ExternalSourceDependencyNodes.Add(ExternalSource, new ExternalSource { Code = ExternalSource });
 
             foreach (var Expression in Expressions.Values)
                 Expression.ClearDependencies();
@@ -196,7 +198,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public string DecimalSeparator { get; set; }
         public string TimeZone { get; set; }
         public Dictionary<string, object> InstanceRuntimeValues { get; private set; } = new Dictionary<string, object>();
-        public void UpdateInstanceRuntimeValues (InstanceCacheObject cacheObject)
+        public void UpdateInstanceRuntimeValues(InstanceCacheObject cacheObject)
         {
             InstanceRuntimeValues = new Dictionary<string, object> {
                 { "InstanceCompany", cacheObject.CompanyId },
@@ -304,7 +306,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             return true;
         }
 
-        public static string GetYearCode(string VersionState, int? Year) => 
+        public static string GetYearCode(string VersionState, int? Year) =>
             VersionState == Common.Data.VersionState.Draft ? "Test" : Year == 0 ? "SE" : (Year?.ToString() ?? "?");
 
         public static string GetCode(string PrototypeName, int Version, string VersionState, int? Year, int? Number) =>

@@ -229,6 +229,12 @@
     <Content Include="Content\Theme\Signature.css">
       <DependentUpon>Signature.scss</DependentUpon>
     </Content>
+    <Content Include="Content\Theme\SourceEditor.css">
+      <DependentUpon>SourceEditor.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\SourcesList.css">
+      <DependentUpon>SourcesList.scss</DependentUpon>
+    </Content>
     <Content Include="Content\Theme\Tab.css">
       <DependentUpon>Tab.scss</DependentUpon>
     </Content>
@@ -393,6 +399,8 @@
     <Content Include="Content\Theme\GridFiltersBar.scss" />
     <Content Include="Content\Theme\ExternalSources.scss" />
     <Content Include="Content\Theme\GridFixedHeader.scss" />
+    <Content Include="Content\Theme\SourcesList.scss" />
+    <Content Include="Content\Theme\SourceEditor.scss" />
     <None Include="Scripts\Libraries\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\Libraries\jquery-2.1.4.js" />
     <Content Include="Scripts\Libraries\jquery-ui-1.11.4.js" />
@@ -428,6 +436,7 @@
     <Content Include="Scripts\Prototypes\BooleanProperty.js" />
     <Content Include="Scripts\Custom\WorkFlowSignature.js" />
     <Content Include="Scripts\Prototypes\DateProperty.js" />
+    <Content Include="Scripts\Prototypes\SourceEditor.js" />
     <Content Include="Scripts\Prototypes\ExpressionEditor.js" />
     <Content Include="Scripts\Prototypes\ExpressionPropertyBase.js" />
     <Content Include="Scripts\Prototypes\ItemsList.js" />
@@ -508,6 +517,7 @@
     <Content Include="Views\Trail\UsersList.cshtml" />
     <Content Include="Views\Prototypes\ExpressionEditor.cshtml" />
     <Content Include="Views\Prototypes\ScriptEditor.cshtml" />
+    <Content Include="Views\Prototypes\SourceEditor.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

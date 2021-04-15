@@ -15,7 +15,8 @@
                         expressionsList.select(dependency.objectCode);
                         break;
                     case "external source":
-                        new prototypes.SourcesList();
+                        var sourcesList = new prototypes.SourcesList();
+                        sourcesList.select(dependency.objectCode);
                         break;
                     case "checklist":
                         prototypes.prototype.select(null, prototypes.prototype);

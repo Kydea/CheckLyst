@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.Expressions;
+using CheckListManager.Common.Logic.Models.ExternalSources;
 using Newtonsoft.Json;
 
 namespace CheckListManager.Common.Logic.Models.CheckLists
@@ -14,7 +15,7 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
 
         PascalCaseDictionary<string, Expression> Expressions { get; }
         PascalCaseDictionary<string, string> ExternalSources { get; }
-        PascalCaseDictionary<string, ExternalSourceDependencyNode> ExternalSourceDependencyNodes { get; }
+        PascalCaseDictionary<string, ExternalSource> ExternalSourceDependencyNodes { get; }
 
         [JsonIgnore]
         Dictionary<int, ICheckListItem> Items { get; }

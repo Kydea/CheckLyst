@@ -39,8 +39,6 @@ div.CheckListGrid div.Container {
       font-weight: bold; }
       div.CheckListGrid div.Container table.Grid tr.Selected td i {
         display: block; }
-    div.CheckListGrid div.Container table.Grid.SourcesList td {
-      width: 50%; }
   div.CheckListGrid div.Container div.Buttons {
     padding-top: 10px; }
     div.CheckListGrid div.Container div.Buttons a {
@@ -60,6 +58,33 @@ div.CheckListGrid div.Container {
       font-size: 30px; }
     div.CheckListGrid div.Container a.CloseButton:hover {
       color: #ccc; }
+  div.CheckListGrid div.Container div.OrderBar {
+    position: absolute;
+    right: 0;
+    top: 124px;
+    bottom: 0;
+    width: 20px; }
+    div.CheckListGrid div.Container div.OrderBar a {
+      position: absolute;
+      top: 50%;
+      border: solid 1px #009688;
+      width: 20px;
+      height: 20px;
+      display: block;
+      text-align: center; }
+      div.CheckListGrid div.Container div.OrderBar a i {
+        font-size: 16px;
+        color: #009688 !important; }
+      div.CheckListGrid div.Container div.OrderBar a.Off {
+        opacity: .3; }
+      div.CheckListGrid div.Container div.OrderBar a:hover:not(.Off) {
+        background-color: #ebebeb; }
+      div.CheckListGrid div.Container div.OrderBar a:first-child {
+        margin-top: -20px;
+        border-radius: 3px 3px 0 0;
+        border-bottom: 0; }
+      div.CheckListGrid div.Container div.OrderBar a:last-child {
+        border-radius: 0 0 3px 3px; }
 
 @media only screen and (min-width: 760px) {
   div.CheckListGrid {

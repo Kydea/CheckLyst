@@ -126,7 +126,7 @@
 
 			matematici.popup.setButtons(buttons);
 
-			matematici.popup.setWidth(options.width || "460px");
+			matematici.popup.setWidth(options.width || "520px");
 
 			form = new matematici.Form(options.formSelector, {
 				applyButton: "#SaveButton",

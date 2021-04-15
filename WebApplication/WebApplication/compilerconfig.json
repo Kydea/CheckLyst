@@ -182,5 +182,13 @@
   {
     "outputFile": "Content/Theme/GridFixedHeader.css",
     "inputFile": "Content/Theme/GridFixedHeader.scss"
+  },
+  {
+    "outputFile": "Content/Theme/SourcesList.css",
+    "inputFile": "Content/Theme/SourcesList.scss"
+  },
+  {
+    "outputFile": "Content/Theme/SourceEditor.css",
+    "inputFile": "Content/Theme/SourceEditor.scss"
   }
 ]

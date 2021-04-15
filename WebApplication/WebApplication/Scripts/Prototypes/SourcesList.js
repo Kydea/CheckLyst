@@ -1,18 +1,27 @@
 ﻿prototypes.SourcesList = function () {
     var
+        sourcesList = this,
         model = prototypes.prototype.getModel(),
         element,
-        container,
+        autoCenter,
         table,
         tableBody,
-        sources,
         noRecord,
-        list = [],
         currentIndex,
-        removeButton,
-        dependencyButton,
-        fixedHeader,
+        list = [],
+        addButton, openButton, dependenciesButton,
+        orderBar,
         filtersBar,
+        fixedHeader,
+
+        getRow = function (index) {
+            return $("tr", tableBody).eq(index);
+        },
+
+        toggleMoveButton = function () {
+            orderBar.children().eq(0).toggleClass("Off", currentIndex == null || currentIndex == 0 || filtersBar.isFiltering());
+            orderBar.children().eq(1).toggleClass("Off", currentIndex == null || currentIndex == list.length - 1 || filtersBar.isFiltering());
+        },
 
         toggleNoRecord = function () {
             if ($("tr:not(.NoRecord):visible", tableBody).length == 0)
@@ -21,113 +30,191 @@
                 noRecord.remove();
         },
 
-        up = function (icon) {
+        showDependencies = function () {
             var
-                row = $(icon).closest("tr"),
-                index = row.prevAll().length,
-                item = list[index];
+                code = list[currentIndex].code,
+                model = prototypes.prototype.getModel().externalSourceDependencyNodes[code];
+            matematici.dependenciesDialog.show("Source " + code, model && model.dependingRelations, model && model.dependentRelations);
+        },
 
-            list[index] = list[index - 1];
-            list[index - 1] = item;
-            console.log(list);
+        up = function () {
+            var
+                item = list[currentIndex],
+                row = getRow(currentIndex);
+
+            list[currentIndex] = list[currentIndex - 1];
+            list[currentIndex - 1] = item;
 
             row.insertBefore(row.prev());
+            --currentIndex;
+
+            toggleMoveButton();
+            matematici.canClose = false;
         },
 
         down = function (icon) {
             var
-                row = $(icon).closest("tr"),
-                index = row.prevAll().length,
-                item = list[row.prevAll().length];
+                item = list[currentIndex],
+                row = getRow(currentIndex);
 
-            list[index] = list[index + 1];
-            list[index + 1] = item;
-            console.log(list);
+            list[currentIndex] = list[currentIndex + 1];
+            list[currentIndex + 1] = item;
 
             row.insertAfter(row.next());
+            ++currentIndex;
+
+            toggleMoveButton();
+            matematici.canClose = false;
         },
 
         select = function (index) {
-            if (currentIndex != null) tableBody.children().eq(currentIndex).filter(":not(.NoRecord)").removeClass("Selected").addClass("Handler").children().attr("contenteditable", false);
-            if (model.state == prototypes.Prototype.states.draft) {
-                currentIndex = index;
-                if (currentIndex != null)
-                    tableBody.children().eq(currentIndex).addClass("Selected").removeClass("Handler")
-                        .children(":first-child").attr("contenteditable", true).focus();
-                removeButton.toggle(currentIndex != null);
-                dependencyButton.toggle(currentIndex != null);
+            if (currentIndex != null) {
+                getRow(currentIndex).removeClass("Selected");
+                if (currentIndex == index) open(currentIndex);
             }
+            currentIndex = index;
+            if (currentIndex != null)
+                getRow(currentIndex).addClass("Selected");
+
+            toggleMoveButton();
+            var editable = model.state == prototypes.Prototype.states.draft && currentIndex != null;
+            openButton.toggle(editable);
+            dependenciesButton.toggle(currentIndex != null);
+
+            autoCenter.center();
         },
 
-        add = function (row) {
-            noRecord.remove();
-            list.push(row);
+        open = function (index) {
+            new prototypes.SourceEditor(list, index,
+                function (row) {
+                    matematici.canClose = false;
+                    if (index == null)
+                        select(insert(row, currentIndex));
+                    else {
+                        list[index] = row;
+                        update(index);
+                    }
+                    verify();
+                }, remove,
+                function (editor, row) {
+                    var
+                        oldRow,
+                        newIndex;
+                    if (index == null)
+                        newIndex = insertItem(row, currentIndex);
+                    else {
+                        oldRow = list[index];
+                        list[index] = row;
+                    }
+                    verify(editor.setError);
+                    if (index == null)
+                        removeItem(newIndex);
+                    else
+                        list[index] = oldRow;
+                });
+        },
 
-            var value = $("<td />").addClass("SourceColumn").css("position", "relative");
-            if (model.state == prototypes.Prototype.states.draft) {
-                var select = sources.clone().val(row.source);
-                value.append(select);
-                setTimeout(function () {
-                    var autoComplete = new matematici.AutoComplete(select[0]);
-                    autoComplete.initialize();
-                    autoComplete.refresh();
-                }, 0)
-            } else
-                value.text(row.source);
-
-            row.node = $("<tr />")
-                .addClass("Handler")
-                .appendTo(table)
-                .append($("<td />").addClass("CodeColumn").text(row.code))
-                .append(value)
-                .append($("<td />").addClass("Order Centered Inactive").append($("<i />").addClass("Up fa fa-caret-up")).append($("<i />").addClass("Down fa fa-caret-down")));
-
-            colorRows();
+        removeItem = function (index) {
+            list.splice(index, 1);
         },
 
         remove = function () {
-            tableBody.children().eq(currentIndex).remove();
-            list.splice(currentIndex, 1);
-            toggleNoRecord();
-            select();
-            colorRows();
             matematici.canClose = false;
-            fixedHeader.refresh();
+            getRow(currentIndex).remove();
+            removeItem(currentIndex);
+            toggleNoRecord();
+            verify();
+            colorRows();
+            select();
         },
 
-        checkCodes = function () {
-            for (var index in list) {
-                var code = list[index].node.find(".CodeColumn").text();
-                code = code.replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, function (match, index) {
-                    if (+match === 0) return ""; // or if (/\s+/.test(match)) for white spaces
-                    //return index == 0 ? match.toLowerCase() : match.toUpperCase();
-                    return match;
-                });
-                list[index].node.find(".CodeColumn").text(code);
-                if (!matematici.codeRegularExpression.test(code)) {
-                    matematici.dialog.error("Invalid code", "The code " + code + " is not valid");
-                    return false;
-                }
+        insertItem = function (row, index) {
+            if (index == null) {
+                list.push(row);
+                return list.length - 1;
+            } else {
+                list.splice(index + 1, 0, row);
+                return index + 1;
             }
-            return true;
+        },
+
+        insert = function (row, index) {
+            var
+                result,
+                tr = $("<tr />")
+                    .addClass("Handler")
+                    .append($("<td />").append($("<i />").addClass("fa fa-caret-right")).attr("title", row.serializedValue))
+                    .append($("<td />").addClass("CodeColumn"))
+                    .append($("<td />").addClass("DataSourceColumn"))
+                    .append($("<td />").addClass("Centered")
+                        .append($("<i />").addClass("Valid fal"))
+                    );
+
+            noRecord.remove();
+            insertItem(row, index);
+
+            if (index == null) {
+                tr.appendTo(tableBody)
+                update(list.length - 1);
+                result = list.length - 1;
+            } else {
+                tr.insertAfter(getRow(index));
+                update(index + 1);
+                result = index + 1;
+            }
+
+            colorRows();
+            fixedHeader && fixedHeader.refresh();
+
+            return result;
+        },
+
+        update = function (index) {
+            var
+                row = list[index],
+                cells = $("td", getRow(index)),
+                commands = cells.last();
+
+            cells.filter(".CodeColumn").text(row.code).attr("title", row.code);
+            cells.filter(".DataSourceColumn").text(row.dataSource).attr("title", row.dataSource);
+            commands.find(".Valid")
+                .removeClass("fa-check fa-times")
+                .attr("title", row.error)
+                .addClass(row.error ? "fa-times" : "fa-check");
+        },
+
+        updatePrototype = function () {
+            model.externalSourceDependencyNodes = {};
+            for (var index in list)
+                model.externalSourceDependencyNodes[list[index].code] = list[index];
+        },
+
+        verify = function (handler) {
+            updatePrototype();
+            prototypes.prototype.verify(function () {
+                var model = prototypes.prototype.getModel();
+
+                for (var index in list) {
+                    var
+                        row = model.externalSourceDependencyNodes[list[index].code],
+                        error = list[index].error = row.error,
+                        cells = getRow(index);
+
+                    cells.find("i.Valid")
+                        .removeClass("fa-check fa-times")
+                        .attr("title", error)
+                        .addClass(error == null ? "fa-check" : "fa-times");
+                }
+
+                if (handler) handler.call(this);
+            });
         },
 
         close = function () {
-            if (model.state == prototypes.Prototype.states.draft) {
-                if (!checkCodes()) return;
-
-                model.externalSources = {};
-                tableBody.children(":not(.NoRecord)").each(function () {
-                    var row = $(this);
-                    model.externalSources[row.children("td").eq(0).text()] = $("select", row).val();
-                });
-            }
-            setTimeout(function () {
-                autoCenter.destroy();
-                element.remove();
-                matematici.elements.body.removeClass("CheckListGrid");
-                prototypes.prototype.verify();
-            }, 0); //handles the blur event handler of the text boxes
+            element.remove();
+            matematici.elements.body.removeClass("CheckListGrid");
+            autoCenter.destroy();
+            matematici.sourcesList = null;
         },
 
         colorRows = function () {
@@ -160,7 +247,7 @@
 
         setup = function () {
             matematici.elements.body.addClass("CheckListGrid");
-
+            matematici.sourcesList = sourcesList;
 
             element = $("<div />").addClass("CheckListGrid").appendTo(matematici.elements.body);
             var container = $("<div />").appendTo($("<div />").addClass("Container SourcesList").appendTo(element));
@@ -169,7 +256,6 @@
             autoCenter.initialize();
 
             container.append($("<h2 />").html("Data sources list"));
-
             filtersBar = new matematici.GridFiltersBar(container, filter);
             filtersBar.addFlag("code", true);
             filtersBar.addFlag("description", true);
@@ -178,29 +264,40 @@
                 .append($("<a />").attr("href", "#").addClass("CloseButton CancelButton")
                     .append($("<i />").addClass("fas fa-times-circle"))
                     .on("click", function () {
+                        updatePrototype();
                         close();
                     }));
 
+            orderBar = $("<div />")
+                .appendTo(container)
+                .addClass("OrderBar")
+                .append($("<a />").addClass("Icon Up").append($("<i />").addClass("fa fa-caret-up")))
+                .append($("<a />").addClass("Icon Down").append($("<i />").addClass("fa fa-caret-down")))
+                .on("click", "a.Up:not(.Off)", function (e) {
+                    e.preventDefault();
+                    up();
+                }).on("click", "a.Down:not(.Off)", function (e) {
+                    e.preventDefault();
+                    down();
+                });
+
+            toggleMoveButton();
+
             var scrollablePanel = $("<div />").addClass("ScrollablePanel").appendTo(container);
 
-            table = $("<table />").addClass("Grid SourcesList").appendTo(scrollablePanel)
+            table = $("<table />").addClass("Grid").appendTo(scrollablePanel)
                 .append($("<thead />")
                     .append($("<tr />")
+                        .append($("<th />"))
                         .append($("<th />").text("code"))
                         .append($("<th />").text("source"))
                         .append($("<th />"))
                     )
                 ).append(tableBody = $("<tbody />")
                     .append(noRecord = $("<tr />").addClass("NoRecord")
-                        .append($("<td />").attr("colspan", "3").text("(no record)"))
+                        .append($("<td />").addClass("NoRecord").attr("colspan", "3").text("(no record)"))
                     )
-                ).on("click", "tr.Handler td.Order i.Up", function (e) {
-                    e.stopPropagation();
-                    up(this);
-                }).on("click", "tr.Handler td.Order i.Down", function (e) {
-                    e.stopPropagation();
-                    down(this);
-                }).on("click", "tr.Handler td:not(.Inactive)", function () {
+                ).on("click", "tr.Handler td:not(.Inactive)", function () {
                     select($(this).parent().prevAll().size());
                 });
 
@@ -210,35 +307,29 @@
                         .append($("<a />").addClass("Button").text("close").prepend($("<i />").addClass("Icon fa fa-check")).on("click", function () {
                             close();
                         }))
-                        .append($("<a />").addClass("Button").text("add").toggle(model.state == prototypes.Prototype.states.draft).prepend($("<i />").addClass("Icon fa fa-plus")).on("click", function () {
-                            matematici.canClose = false;
-                            add({ code: "" });
-                            fixedHeader.refresh();
-                            select(tableBody.children().size() - 1);
+                        .append(openButton = $("<a />").addClass("Button").text("open").hide().prepend($("<i />").addClass("Icon fa fa-edit")).on("click", function () {
+                            open(currentIndex);
                         }))
-                        .append(removeButton = $("<a />").addClass("Button").text("remove").prepend($("<i />").addClass("Icon fa fa-minus")).on("click", function () {
-                            remove();
-                        }).hide())
-                        .append(dependencyButton = $("<a />").addClass("Button").text("dependencies").prepend($("<i />").addClass("Icon fa fa-sitemap")).on("click", function () {
-                            var
-                                code = list[currentIndex].code,
-                                model = prototypes.prototype.getModel().externalSourceDependencyNodes[code];
-                            matematici.dependenciesDialog.show("Source " + code, model && model.dependingRelations, model && model.dependentRelations);
-                        }).hide());
+                        .append($("<a />").addClass("Button").text("add").toggle(model.state == prototypes.Prototype.states.draft).prepend($("<i />").addClass("Icon fa fa-plus")).on("click", function () {
+                            open();
+                        }))
+                        .append(dependenciesButton = $("<a />").addClass("Button").text("dependencies").hide().prepend($("<i />").addClass("Icon fa fa-sitemap")).on("click", function () {
+                            showDependencies();
+                        }));
 
-            sources = $("<select />");
-            var dataSources = prototypes.prototype.getDataSources();
-            for (index in dataSources)
-                $("<option />").appendTo(sources).text(dataSources[index].code).val(dataSources[index].code);
-
-            for (var code in model.externalSources)
-                add({
-                    code: code,
-                    source: model.externalSources[code]
-                });
+            for (var code in model.externalSourceDependencyNodes)
+                insert(model.externalSourceDependencyNodes[code]);
 
             fixedHeader = new matematici.GridFixedHeader(table);
         };
+
+    this.select = function (code) {
+        for (var item in list)
+            if (list[item].code == code) {
+                select(item);
+                return;
+            }
+    };
 
     setup();
 }
