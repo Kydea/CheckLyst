@@ -84,6 +84,19 @@
             autoCenter.center();
         },
 
+        toggleErrors = function (tr, model) {
+            var errorMessage = "";
+            for (var index in model.errors) {
+                var error = model.errors[index];
+                errorMessage += error.property + ": " + error.message + "\n";
+            }
+
+            $("i.Valid", tr)
+                .removeClass("fa-check fa-times")
+                .attr("title", errorMessage)
+                .addClass(!model.errors || model.errors.length == 0 ? "fa-check" : "fa-times");
+        },
+
         open = function (index) {
             new prototypes.SourceEditor(list, index,
                 function (row) {
@@ -95,23 +108,7 @@
                         update(index);
                     }
                     verify();
-                }, remove,
-                function (editor, row) {
-                    var
-                        oldRow,
-                        newIndex;
-                    if (index == null)
-                        newIndex = insertItem(row, currentIndex);
-                    else {
-                        oldRow = list[index];
-                        list[index] = row;
-                    }
-                    verify(editor.setError);
-                    if (index == null)
-                        removeItem(newIndex);
-                    else
-                        list[index] = oldRow;
-                });
+                }, remove);
         },
 
         removeItem = function (index) {
@@ -171,16 +168,15 @@
 
         update = function (index) {
             var
+                tr = getRow(index),
                 row = list[index],
-                cells = $("td", getRow(index)),
+                cells = $("td", tr),
                 commands = cells.last();
 
             cells.filter(".CodeColumn").text(row.code).attr("title", row.code);
             cells.filter(".DataSourceColumn").text(row.dataSource).attr("title", row.dataSource);
-            commands.find(".Valid")
-                .removeClass("fa-check fa-times")
-                .attr("title", row.error)
-                .addClass(row.error ? "fa-times" : "fa-check");
+
+            toggleErrors(tr, row);
         },
 
         updatePrototype = function () {
@@ -235,8 +231,10 @@
                 var
                     item = list[index],
                     visible = keyword == null;
-                if (!visible && flags[0]) visible = !!item.code && item.code.indexOf(keyword) >= 0;
-                if (!visible && flags[1]) visible = !!item.source && item.source.indexOf(keyword) >= 0;
+                if (!visible && flags[0]) visible = !!item.code && item.code.toLowerCase().indexOf(keyword.toLowerCase()) >= 0;
+                if (!visible && flags[1]) visible = !!item.dataSource && item.dataSource.toLowerCase().indexOf(keyword.toLowerCase()) >= 0;
+                if (visible && !flags[2]) visible = !item.errors || item.errors.length == 0;
+                if (visible && !flags[3]) visible = item.errors && item.errors.length > 0;
                 rows.eq(index).toggle(visible).toggleClass("Even", filtering && even).toggleClass("Odd", filtering && !even);
                 if (visible) even = !even;
             }
@@ -258,7 +256,9 @@
             container.append($("<h2 />").html("Data sources list"));
             filtersBar = new matematici.GridFiltersBar(container, filter);
             filtersBar.addFlag("code", true);
-            filtersBar.addFlag("description", true);
+            filtersBar.addFlag("source", true);
+            filtersBar.addFlag($("<i />").addClass("fal fa-times"), true, true);
+            filtersBar.addFlag($("<i />").addClass("fal fa-check"), true, true);
 
             container
                 .append($("<a />").attr("href", "#").addClass("CloseButton CancelButton")
@@ -305,6 +305,7 @@
                 buttons =
                     $("<div />").addClass("Buttons").appendTo(container)
                         .append($("<a />").addClass("Button").text("close").prepend($("<i />").addClass("Icon fa fa-check")).on("click", function () {
+                            updatePrototype();
                             close();
                         }))
                         .append(openButton = $("<a />").addClass("Button").text("open").hide().prepend($("<i />").addClass("Icon fa fa-edit")).on("click", function () {

@@ -99,7 +99,6 @@
     <Compile Include="Messages\UploadAttachmentRequest.cs" />
     <Compile Include="Messages\UploadAttachmentResponse.cs" />
     <Compile Include="Messages\PrototypeResponse.cs" />
-    <Compile Include="Models\CheckLists\Configuration\Error.cs" />
     <Compile Include="Models\CheckLists\Element.cs" />
     <Compile Include="Models\CheckLists\Field.cs" />
     <Compile Include="Models\CheckLists\Group.cs" />
@@ -148,6 +147,8 @@
       <Name>Trail.Data</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Models\CheckLists\Configuration\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

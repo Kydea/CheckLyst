@@ -9,10 +9,8 @@
                 var occupiedHeight = 80; //padding + margin
                 scrollablePanel.siblings().map(function () {
                     var sibling = $(this);
-                    if (sibling.css("position") != "absolute") {
+                    if (sibling.css("position") != "absolute") 
                         occupiedHeight += sibling.outerHeight();
-                        console.log(sibling, sibling.outerHeight());
-                    }
                 });
                 scrollablePanel.css("max-height", "calc(100vh - " + occupiedHeight + "px)");
                 var fixedHeader = scrollablePanel.data("GridFixedHeader");

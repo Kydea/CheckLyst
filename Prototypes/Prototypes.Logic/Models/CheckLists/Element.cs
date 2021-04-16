@@ -14,8 +14,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public ICheckList CheckList { get; set; }
         public string Code { get; set; }
 
-        public List<Configuration.Error> Errors { get; } = new List<Configuration.Error>();
-
+        public List<ConfigurationError> Errors { get; } = new List<ConfigurationError>();
 
         public Conditions CountDownCondition { get; set; }
         public string CountDownToCode { get; set; }
@@ -47,7 +46,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             {
                 if (CheckList.Elements.TryGetValue(Code, out var SameCodeElement))
                 {
-                    var Error = new Configuration.Error("code", $"Duplicated code {Code}");
+                    var Error = new ConfigurationError("code", $"Duplicated code {Code}");
                     Errors.Add(Error);
                     ((Element)SameCodeElement).Errors.Add(Error);
                     Result = false;
@@ -69,9 +68,9 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         {
             var Result = false;
             if (string.IsNullOrEmpty(ExpressionCode))
-                Errors.Add(new Configuration.Error(ErrorCode, $"Expression code expected"));
+                Errors.Add(new ConfigurationError(ErrorCode, $"Expression code expected"));
             else if (!CheckList.Expressions.TryGetValue(ExpressionCode, out var Expression))
-                Errors.Add(new Configuration.Error(ErrorCode, $"Expression {ExpressionCode} not found"));
+                Errors.Add(new ConfigurationError(ErrorCode, $"Expression {ExpressionCode} not found"));
             else
             {
                 AddDependingRelation(SourceProperty, Expression, DependencyRelation.Properties.Value);
@@ -86,11 +85,11 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             var Result = false;
             var BranchElements = GetBranchElements();
             if (string.IsNullOrEmpty(Code))
-                Errors.Add(new Configuration.Error(ErrorCode, $"Code expected"));
+                Errors.Add(new ConfigurationError(ErrorCode, $"Code expected"));
             else if (!BranchElements.ContainsKey(Code))
-                Errors.Add(new Configuration.Error(ErrorCode, $"Element {Code} not found"));
+                Errors.Add(new ConfigurationError(ErrorCode, $"Element {Code} not found"));
             else if (!(BranchElements[Code] is T Element))
-                Errors.Add(new Configuration.Error(ErrorCode, $"The element {Code} is not of type {typeof(T).Name}"));
+                Errors.Add(new ConfigurationError(ErrorCode, $"The element {Code} is not of type {typeof(T).Name}"));
             else
             {
                 AddDependingRelation(SourceProperty, Element, DestinationProperty);
@@ -132,7 +131,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         {
             if (CheckList.Expressions.TryGetValue(ExpressionCode, out var Expression) && !DataType.Any(dt => dt == (Expression.InnerDataType ?? Expression.DataType)))
             {
-                Errors.Add(new Configuration.Error(Property, $"The expression {ExpressionCode} is not of type {string.Join(" or ", DataType.Select(dt => dt.TypeName))}"));
+                Errors.Add(new ConfigurationError(Property, $"The expression {ExpressionCode} is not of type {string.Join(" or ", DataType.Select(dt => dt.TypeName))}"));
                 return false;
             }
             return true;

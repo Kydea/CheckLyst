@@ -220,17 +220,17 @@ namespace CheckListManager.Prototypes.Logic.Services
             request.CheckList.Setup(false);
             if (string.IsNullOrWhiteSpace(request.Name))
             {
-                request.CheckList.Errors.Add(new Models.CheckLists.Configuration.Error("name", "Specify a name"));
+                request.CheckList.Errors.Add(new ConfigurationError("name", "Specify a name"));
                 request.CheckList.Valid = false;
             }
             if (!request.Department.HasValue)
             {
-                request.CheckList.Errors.Add(new Models.CheckLists.Configuration.Error("department", "Specify a department"));
+                request.CheckList.Errors.Add(new ConfigurationError("department", "Specify a department"));
                 request.CheckList.Valid = false;
             }
             if (!request.PrototypeType.HasValue)
             {
-                request.CheckList.Errors.Add(new Models.CheckLists.Configuration.Error("prototype-type", "Specify a prototype type"));
+                request.CheckList.Errors.Add(new ConfigurationError("prototype-type", "Specify a prototype type"));
                 request.CheckList.Valid = false;
             }
 

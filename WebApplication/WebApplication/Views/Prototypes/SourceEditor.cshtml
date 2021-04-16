@@ -28,17 +28,16 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
+                <tr class="Parameter">
                     <td></td>
                     <td>
-                        <select>
-                            <option>not bound</option>
-                            <option>expression</option>
-                            <option>field</option>
+                        <select name="binding" data-nullable="(not bound)">
+                            <option value="expression">expression</option>
+                            <option value="field">field</option>
                         </select>
                     </td>
                     <td>
-                        <select></select>
+                        <select name="code"></select>
                     </td>
                     <td><input type="checkbox" name="hidden" /></td>
                     <td><input type="checkbox" name="readOnly" /></td>

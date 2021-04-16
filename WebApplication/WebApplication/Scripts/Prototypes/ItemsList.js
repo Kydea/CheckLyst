@@ -137,8 +137,8 @@
                 var
                     item = items[index],
                     visible = keyword == null;
-                if (!visible && flags[0]) visible = !!item.code && item.code.indexOf(keyword) >= 0;
-                if (!visible && flags[1]) visible = !!item.description && item.description.indexOf(keyword) >= 0;
+                if (!visible && flags[0]) visible = !!item.code && item.code.toLowerCase().indexOf(keyword.toLowerCase()) >= 0;
+                if (!visible && flags[1]) visible = !!item.description && item.description.toLowerCase().indexOf(keyword.toLowerCase()) >= 0;
                 if (visible && !flags[2]) visible = !item.errors || item.errors.length == 0;
                 if (visible && !flags[3]) visible = item.errors && item.errors.length > 0;
                 rows.eq(index).toggle(visible).toggleClass("Even", filtering && even).toggleClass("Odd", filtering && !even);

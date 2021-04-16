@@ -251,9 +251,9 @@
                 var
                     expression = list[index],
                     visible = keyword == null;
-                if (!visible && flags[0]) visible = !!expression.code && expression.code.indexOf(keyword) >= 0;
-                if (!visible && flags[1]) visible = !!expression.description && expression.description.indexOf(keyword) >= 0;
-                if (!visible && flags[2]) visible = !!expression.serializedValue && expression.serializedValue.indexOf(keyword) >= 0;
+                if (!visible && flags[0]) visible = !!expression.code && expression.code.toLowerCase().indexOf(keyword.toLowerCase()) >= 0;
+                if (!visible && flags[1]) visible = !!expression.description && expression.description.toLowerCase().indexOf(keyword.toLowerCase()) >= 0;
+                if (!visible && flags[2]) visible = !!expression.serializedValue && expression.serializedValue.toLowerCase().indexOf(keyword.toLowerCase()) >= 0;
                 if (visible && !flags[3]) visible = expression.error == null;
                 if (visible && !flags[4]) visible = expression.error != null;
                 rows.eq(index).toggle(visible).toggleClass("Even", filtering && even).toggleClass("Odd", filtering && !even);

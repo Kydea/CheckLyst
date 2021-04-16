@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CheckListManager.Prototypes.Logic.Models.CheckLists.Configuration
+namespace CheckListManager.Common.Logic.Models.CheckLists
 {
-    public class Error
+    public class ConfigurationError
     {
-        public Error(string Property, string Message)
+        public ConfigurationError(string Property, string Message)
         {
             this.Property = Property;
             this.Message = Message;

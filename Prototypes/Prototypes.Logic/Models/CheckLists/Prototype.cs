@@ -26,9 +26,8 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         private Formula FileNameFormula { get; } = new Formula();
         private bool PreserveID { get; set; }
         public bool FTPExport { get; set; }
-        public List<Configuration.Error> Errors { get; } = new List<Configuration.Error>();
+        public List<ConfigurationError> Errors { get; } = new List<ConfigurationError>();
         public bool Valid { get; set; }
-
 
         public bool NeedToSaveExpressionValues { get; set; }
 
@@ -71,7 +70,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 Valid &= Page.Setup();
             }
 
-            //back compatibility for v. < 3.0.0
+            //for v. < 3.0.0
             if (ExternalSources.Any())
             {
                 ExternalSourceDependencyNodes.Clear();
@@ -124,6 +123,10 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             var Result = true;
             foreach (var expression in Expressions.Values)
                 if (expression.Error == null && !expression.BuildDependencies(this))
+                    Result = false;
+
+            foreach (var source in ExternalSourceDependencyNodes.Values)
+                if (!source.BuildDependencies(this))
                     Result = false;
 
             if (Result)

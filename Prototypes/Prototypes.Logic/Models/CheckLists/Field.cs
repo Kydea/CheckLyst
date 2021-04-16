@@ -80,7 +80,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             {
                 if (!CheckList.ExternalSourceDependencyNodes.TryGetValue(ExternalSourceName, out var ExternalSourceNode))
                 {
-                    Errors.Add(new Configuration.Error("value", $"External source {ExternalSourceName} not found"));
+                    Errors.Add(new ConfigurationError("value", $"External source {ExternalSourceName} not found"));
                     Result = false;
                 }
                 else

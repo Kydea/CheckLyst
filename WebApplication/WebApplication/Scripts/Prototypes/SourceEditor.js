@@ -1,4 +1,4 @@
-﻿prototypes.SourceEditor = function (sources, sourceIndex, confirmHandler, deleteHandler, verifyHandler, cancelHandler) {
+﻿prototypes.SourceEditor = function (sources, sourceIndex, confirmHandler, deleteHandler, cancelHandler) {
     var
         source = sources[sourceIndex],
         newRecord = !source,
@@ -37,7 +37,8 @@
             var
                 source = {
                     dependingRelations: [],
-                    dependentRelations: []
+                    dependentRelations: [],
+                    parameters: {}
                 },
                 code = getCode();
 
@@ -62,6 +63,25 @@
 
             $("div.Fields select", form).each(function () {
                 source[this.name] = this.value;
+            });
+
+            $("tr.Parameter", tableBody).each(function () {
+                var
+                    tr = $(this),
+                    parameterName = tr.data("name"),
+                    bindingType = $("select[name=binding]", tr).val(),
+                    bindingCode = $("select[name=code]", tr).val(),
+                    hidden = $("input[name=hidden]", tr).prop("checked"),
+                    readOnly = $("input[name=readOnly]", tr).prop("checked"),
+                    parameter = bindingType == null && !hidden && !readOnly ? null : {
+                        name: parameterName,
+                        expressionCode: bindingType == "expression" ? bindingCode : null,
+                        elementCode: bindingType == "field" ? bindingCode : null,
+                        hidden: hidden,
+                        readOnly: readOnly
+                    };
+
+                if (parameter) source.parameters[parameterName] = parameter;
             });
 
             return source;
@@ -106,12 +126,6 @@
             return true;
         },
 
-        verify = function () {
-            var source = map();
-            if (source != null) verifyHandler(sourceEditor, source);
-            return true;
-        },
-
         setError = function () {
             //TODO
         },
@@ -127,53 +141,87 @@
                         code: dataSourceSelect.val()
                     })
                 }).done(function (result) {
-                    console.log(source);
                     tableBody.empty();
                     dataSourceParameters = result.parameters;
-                    var handlerdParameters = new Map();
+                    var handledParameters = new Set();
                     if (dataSourceParameters && dataSourceParameters.length)
                         for (var parameterIndex in dataSourceParameters) {
-                            var dataSourceParameter = dataSourceParameters[parameterIndex];
-                            var parameterRow = parameterPrototype.clone();
-                            var cells = $("td", parameterRow);
-                            cells[0].textContent = dataSourceParameter.label;
+                            var
+                                dataSourceParameter = dataSourceParameters[parameterIndex],
+                                parameterRow = parameterPrototype.clone().appendTo(tableBody).data("name", dataSourceParameter.name),
+                                cells = $("td", parameterRow),
+                                bindingSelect = cells.eq(1).children("select")[0],
+                                bindingAutoComplete = new matematici.AutoComplete(bindingSelect),
+                                codeSelect = cells.eq(2).children("select")[0],
+                                codeAutoComplete = new matematici.AutoComplete(codeSelect),
+                                parameter = source.parameters && source.parameters[dataSourceParameter.name] && source.parameters[dataSourceParameter.name];
 
-                            if (source.parameters && source.parameters[dataSourceParameter.code]) {
-                                var parameterRow = source.parameters[dataSourceParameter.code];
-                                handlerdParameters.push(dataSourceParameter.code);
-                            }
-                            tableBody.append(parameterRow);
+                            cells.eq(0).text(dataSourceParameter.name);
+                            bindingAutoComplete.initialize();
+                            bindingAutoComplete.setValue(parameter && parameter.expressionCode ? "expression" : parameter && parameter.elementCode ? "field" : null);
+                            codeAutoComplete.initialize();
+                            bindingChanged.call(bindingSelect)
+                            
+                            if (parameter) {
+                                handledParameters.add(dataSourceParameter.name);
+                                var code = parameter.expressionCode || parameter.elementCode;
+                                codeAutoComplete.setValue(code);
+                                if (!codeAutoComplete.getValue()) codeAutoComplete.setError(code);
+                                $("input", cells.eq(3)).prop("checked", parameter.hidden);
+                                $("input", cells.eq(4)).prop("checked", parameter.readOnly);
+                            } else
+                                codeAutoComplete.setValue(null);
                         }
                     else
                         tableBody.append(noRecord);
 
                     if (source.parameters)
                         for (var parameterIndex in source.parameters) {
-                            var parameter = source.parameters[paramter];
-                            if (!handlerdParameters.has(parameter.code)) {
-                                var parameter = parameterPrototype.clone();
-                                var cells = $("td", parameterRow);
-                                cells.eq(0).text(parameter.code).addClass("Error");
+                            var parameter = source.parameters[parameterIndex];
+                            if (!handledParameters.has(parameter.name)) {
+                                var
+                                    parameterRow = parameterPrototype.clone().appendTo(tableBody),
+                                    cells = $("td", parameterRow);
+                                cells.eq(0).text(parameter.name).addClass("Red");
                                 cells.eq(1).empty();
                                 cells.eq(2).empty();
                                 cells.eq(3).empty();
                                 cells.eq(4).empty();
                             }
                         }
-
-                    /*
-                    if (column)
-                        sourceColumn.val(column);
-                    else
-                        sourceColumn[0].selectedIndex = 0;
-
-
-                    for (index in columns)
-                        $("<option />").appendTo(sourceColumn).text(columns[index]).attr("value", columns[index]);
-                    var autoComplete = new matematici.AutoComplete(select);
-                    autoComplete.initialize();
-                    */
                 });
+        },
+
+        bindingChanged = function () {
+            var
+                value = this.value,
+                codes = [],
+                codeSelect = $("select", this.parentElement.nextElementSibling),
+                autoComplete = matematici.AutoComplete.get(codeSelect[0]);
+
+            matematici.controls.setEditable(codeSelect, !!value);
+
+            codeSelect.empty();
+            if (value == "expression") {
+                var expressions = prototypes.prototype.getModel().expressions;
+                for (var expressionIndex in expressions)
+                    codes.push(expressions[expressionIndex].code);
+            } else if (value == "field") {
+                var fields = prototypes.prototype.getElements("Field");
+                for (var fieldIndex in fields) 
+                    codes.push(fieldIndex);
+            }
+
+            if (value)
+                for (var index in codes) {
+                    var option = document.createElement("option");
+                    option.setAttribute("value", codes[index]);
+                    option.textContent = codes[index];
+                    codeSelect.append(option);
+                }
+
+            autoComplete.refreshValues();
+            autoComplete.checkReadOnly();
         },
 
         fill = function (f) {
@@ -202,7 +250,9 @@
 
             if (prototypes.prototype.getModel().state == prototypes.Prototype.states.draft) {
                 $("input[name=code]", form).keyfilter(/^[$A-Z_0-9]*$/i);
-                form.on("change", "input, select", function () { edited = true; });
+                form
+                    .on("change", "input, select", function () { edited = true; })
+                    .on("change", "select[name=binding]", bindingChanged);
             } else
                 $("input, select", form).each(function () {
                     matematici.controls.setEditable($(this), false);
@@ -223,9 +273,7 @@
             buttons.push({ cancelButton: true, hidden: true, handler: cancel });
 
             if (prototypes.prototype.getModel().state == prototypes.Prototype.states.draft) {
-                buttons.push({ text: "verify", icon: "question", handler: verify });
-                if (!!deleteHandler)
-                    buttons.push({ text: "delete", icon: "trash-alt", handler: remove });
+                buttons.push({ text: "delete", icon: "trash-alt", handler: remove });
                 buttons.push({ text: "confirm", icon: "save", handler: confirm });
             }
 

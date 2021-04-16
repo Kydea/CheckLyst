@@ -177,6 +177,18 @@
                     }
                     $("div.ActionBar a.ExpressionsList").toggleClass("Invalid", invalid);
 
+                    invalid = false;
+                    for (var index in model.externalSourceDependencyNodes) {
+                        var
+                            source = model.externalSourceDependencyNodes[index],
+                            newSource = newModel.externalSourceDependencyNodes[index];
+                        model.dependingRelations = newModel.dependingRelations;
+                        model.dependentRelations = newModel.dependentRelations;
+                        source.errors = newSource.errors;
+                        if (source.errors && source.errors.length) invalid = true;
+                    }
+                    $("div.ActionBar a.SourcesList").toggleClass("Invalid", invalid);
+
                     break;
                 case "Page":
                     for (var index in model.groups)

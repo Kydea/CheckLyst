@@ -31,7 +31,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                     Result &= BindElement<Attachment>(ElementCode, DependencyRelation.Properties.Value, DependencyRelation.Properties.Code, "link");
                     break;
                 default:
-                    Errors.Add(new Configuration.Error("link", $"Invalid element type {ElementType}"));
+                    Errors.Add(new ConfigurationError("link", $"Invalid element type {ElementType}"));
                     Result = false;
                     break;
             }

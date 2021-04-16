@@ -146,13 +146,13 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 var DumpResult = true;
                 if (!CheckList.ExternalSourceDependencyNodes.TryGetValue(DumpExternalSourceName, out var ExternalSourceNode))
                 {
-                    Errors.Add(new Configuration.Error("export-source", $"External source {DumpExternalSourceName} not found"));
+                    Errors.Add(new ConfigurationError("export-source", $"External source {DumpExternalSourceName} not found"));
                     DumpResult = false;
                 }
 
                 if (CheckList.Elements.TryGetValue(SignatureCode, out var SignatureElement) && SignatureElement is Signature Signature && Signature.Cancelable)
                 {
-                    Errors.Add(new Configuration.Error("export-source", $"The referenced signature is cancelable and cannot be used to export"));
+                    Errors.Add(new ConfigurationError("export-source", $"The referenced signature is cancelable and cannot be used to export"));
                     DumpResult = false;
                 }
 
