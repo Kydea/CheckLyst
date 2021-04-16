@@ -30,7 +30,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.StringFunctions
                 ArgumentValues[1].IsNull ? ArgumentValues[1] :
                 new TypedValue(
                     DataType.Number,
-                    ArgumentValues[0].TextValue.IndexOf(ArgumentValues[1].TextValue, ArgumentValues[2].IsNull ? 0 : (int)ArgumentValues[2].NumberValue)
+                    (decimal)ArgumentValues[0].TextValue.IndexOf(ArgumentValues[1].TextValue, ArgumentValues[2].IsNull ? 0 : (int)ArgumentValues[2].NumberValue)
                 )
             );
     }
