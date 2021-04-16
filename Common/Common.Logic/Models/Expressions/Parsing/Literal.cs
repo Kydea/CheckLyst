@@ -229,12 +229,13 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                             Symbol = Substring;
                             Operator = OperatorType.No;
                             break;
+                        case "stringleft":
                         case "stringright":
-                            var Right = new StringFunctions.Right { Position = this.Position };
+                            var Extreme = new StringFunctions.Extreme(LowerValue) { Position = this.Position };
                             CheckArguments(2);
-                            Right.Left = Arguments[0].Symbol;
-                            Right.Right = Arguments[1].Symbol;
-                            Symbol = Right;
+                            Extreme.Left = Arguments[0].Symbol;
+                            Extreme.Right = Arguments[1].Symbol;
+                            Symbol = Extreme;
                             Operator = OperatorType.No;
                             break;
                         case "stringleftpad":
@@ -431,7 +432,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
         {
             if (Arguments.Count() < Min)
                 throw new ParseException($"The operator {Value} accepts at least {Min} arguments", Position);
-            if (Arguments.Count() > Min)
+            if (Arguments.Count() > Max)
                 throw new ParseException($"The operator {Value} accepts maximum {Max} arguments", Position);
         }
     }

@@ -176,7 +176,7 @@
     <Compile Include="Models\Expressions\StringFunctions\NumberValue.cs" />
     <Compile Include="Models\Expressions\StringFunctions\Pad.cs" />
     <Compile Include="Models\Expressions\StringFunctions\Trim.cs" />
-    <Compile Include="Models\Expressions\StringFunctions\Right.cs" />
+    <Compile Include="Models\Expressions\StringFunctions\Extreme.cs" />
     <Compile Include="Models\Expressions\StringFunctions\Substring.cs" />
     <Compile Include="Models\Expressions\StringFunctions\Replace.cs" />
     <Compile Include="Models\Expressions\StringFunctions\Find.cs" />

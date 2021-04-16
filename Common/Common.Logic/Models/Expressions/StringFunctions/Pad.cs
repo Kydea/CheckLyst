@@ -15,8 +15,8 @@ namespace CheckListManager.Common.Logic.Models.Expressions.StringFunctions
 
         public Pad(string FunctionName)
         {
-            Direction = FunctionName == "stringleftpad" ? Directions.Left : FunctionName == "stringleftpad" ? Directions.Right : throw new ArgumentException();
-            this.FunctionName = Direction == Directions.Left ? "StringLeftPad" : "StringLeftPad";
+            Direction = FunctionName == "stringleftpad" ? Directions.Left : FunctionName == "stringrightpad" ? Directions.Right : throw new ArgumentException();
+            this.FunctionName = Direction == Directions.Left ? "StringLeftPad" : "StringRightPad";
         }
 
         public override void Check(ICheckList CheckList, Expression Expression, List<string> IteratorStack)

@@ -123,11 +123,11 @@ ace.define("ace/snippets/expression", ["require", "exports", "module"], function
             comment: "returns the value converted to upper case"
         },
         {
-            content: "StringFind(${1:value}, ${2:keyword})",
+            content: "StringFind(${1:value}, ${2:keyword}, {2:initial-position})",
             name: "StringFind",
             scope: "expression",
             meta: "function",
-            comment: "returns the position of keyword into value, -1 if the keyword is not found"
+            comment: "returns the position of keyword into value, -1 if the keyword is not found, the search is performed starting from initial-position if provided"
         },
         {
             content: "StringReplace(${1:value}, ${2:keyword}, ${3:new-keyword})",
@@ -149,6 +149,13 @@ ace.define("ace/snippets/expression", ["require", "exports", "module"], function
             scope: "expression",
             meta: "function",
             comment: "returns the last length characters to the right of value"
+        },
+        {
+            content: "StringLeft(${1:value}, ${2:length})",
+            name: "StringLeft",
+            scope: "expression",
+            meta: "function",
+            comment: "returns the first length characters to the left of value"
         },
         {
             content: "StringLeftPad(${1:value}, ${2:length}, ${3:pattern})",
