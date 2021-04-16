@@ -74,7 +74,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                     || e.Value.Value?.Type == DataType.DateTime && e.Value.Value.DateTimeValue <= DateTimeOffset.UtcNow
                 )
            ).ToDictionary(k => k.Key, v => v.Value?.Description));
-        public PascalCaseDictionary<string, string> ExternalSources { get; set; }
+        public PascalCaseDictionary<string, string> ExternalSources { get; set; } //obsolete
         public PascalCaseDictionary<string, ExternalSource> ExternalSourceDependencyNodes { get; } = new PascalCaseDictionary<string, ExternalSource>();
         public ICheckListGroup Header { get; set; }
         public List<ICheckListPage> Pages { get; set; }
@@ -152,16 +152,27 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
             ElementsList = Elements.Values.Where(Element => !(Element is ICheckListItem CheckListItem) || !CheckListItem.IterationItem && !CheckListItem.IteratorModelItem).ToList(); //pages and items outside iterators
 
+            if (ExternalSources.Any()) //external sources (just strings) have been replaced by DataSources (complex objects)
+                BuildDataSources();
+
             if (InCreation || !CheckVersion(2, false)) //version 2 introduces dependencies
                 BuildDependencies();
-            InCreation = false;
+
+                InCreation = false;
         }
 
-        public void BuildDependencies()
+        private void BuildDataSources()
         {
             ExternalSourceDependencyNodes.Clear();
-            foreach (string ExternalSource in ExternalSources.Keys)
-                ExternalSourceDependencyNodes.Add(ExternalSource, new ExternalSource { Code = ExternalSource });
+            foreach (string DataSource in ExternalSources.Keys)
+                ExternalSourceDependencyNodes.Add(DataSource, new ExternalSource { Code = DataSource, DataSource = ExternalSources[DataSource] });
+            ExternalSources.Clear();
+        }
+
+        private void BuildDependencies()
+        {
+            foreach (var ExternalSourceDependencyNode in ExternalSourceDependencyNodes.Values)
+                ExternalSourceDependencyNode.BuildDependencies(this);
 
             foreach (var Expression in Expressions.Values)
                 Expression.ClearDependencies();

@@ -74,8 +74,8 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             if (ExternalSources.Any())
             {
                 ExternalSourceDependencyNodes.Clear();
-                foreach (string ExternalSource in ExternalSources.Keys)
-                    ExternalSourceDependencyNodes.Add(ExternalSource, new ExternalSource { Code = ExternalSource, DataSource = ExternalSources[ExternalSource] });
+                foreach (string DataSource in ExternalSources.Keys)
+                    ExternalSourceDependencyNodes.Add(DataSource, new ExternalSource { Code = DataSource, DataSource = ExternalSources[DataSource] });
                 ExternalSources.Clear();
             }
 
