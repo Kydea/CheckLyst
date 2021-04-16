@@ -195,7 +195,7 @@
 
             var
                 buttons =
-                    $("<div />").addClass("Buttons").appendTo(container.parent())
+                    $("<div />").addClass("Buttons").appendTo(container)
                         .append($("<a />").addClass("Button").text("close").prepend($("<i />").addClass("Icon fa fa-check")).on("click", function () {
                             close();
                         }))

@@ -326,7 +326,7 @@
                 });
 
             var
-                buttons = $("<div />").addClass("Buttons").appendTo(container.parent());
+                buttons = $("<div />").addClass("Buttons").appendTo(container);
 
             if (options && options.useHandler)
                 buttons.append(useButton = $("<a />").addClass("Button").text("use").hide().prepend($("<i />").addClass("Icon fa fa-check")).on("click", function () {
