@@ -35,6 +35,7 @@ using CheckListManager.Common.Logic.Email;
 using CheckListManager.Common.Logic.Models;
 using CheckListManager.Instances.Logic.ImageUtilities;
 using CheckListManager.Common.Logic.Dependency;
+using CheckListManager.Common.Logic.Models.Expressions;
 
 namespace CheckListManager.Instances.Logic.Services
 {
@@ -713,7 +714,7 @@ namespace CheckListManager.Instances.Logic.Services
 
         #region actions
 
-        public async Task<string> GetExternalSource(string code, IDefaultIdentity identity, string externalSourceCode)
+        public async Task<ExternalSourceResponse> GetExternalSource(string code, IDefaultIdentity identity, string externalSourceCode, int itemId)
         {
             try
             {
@@ -722,24 +723,44 @@ namespace CheckListManager.Instances.Logic.Services
                     throw new InstanceException("Instance state not valid");
                 if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
                     throw new InstanceException("Access denied");
-                if (!cacheObject.Instance.ExternalSources.ContainsKey(externalSourceCode))
+                if (!cacheObject.Instance.ExternalSources.TryGetValue(externalSourceCode, out var externalSource))
                     throw new InstanceException("Invalid external source");
 
+                if (!cacheObject.Instance.Items.TryGetValue(itemId, out var item))
+                    throw new InstanceException($"Item {itemId} not found");
+
+                if (!(item is Group group)) group = (Group)item.Group;
+                
                 await _instanceCache.TouchAsync(code);
 
-                var token = identity.Code + ":" + Guid.NewGuid();
-                await _redisCache.SetAsync($"Token:{token}", new DataRequest
-                {
-                    code = cacheObject.Instance.ExternalSources[externalSourceCode].DataSource,
-                    decimalSeparator = await _settingService.DecimalSeparatorAsync(identity.CompanyId),
-                    timeZone = (await _commonRepository.GetCompanyAsync(identity.CompanyId)).TimeZone
-                }, "S2S", new TimeSpan(0, 1, 0));
-                var response = await _client.PostAsync("DataSources/Data/GetDataSource", new TokenRequest { token = token });
+                var response = await _client.PostAsync("DataSources/Data/GetDataSource", new { code = cacheObject.Instance.ExternalSources[externalSourceCode].DataSource });
                 var responseData = await response.Content.ReadAsStringAsync();
                 if (response.StatusCode != HttpStatusCode.OK)
                     throw new Exception(responseData);
 
-                return JsonConvert.DeserializeObject<string>(responseData);
+                var DataSource = JsonConvert.DeserializeObject<DataSource>(responseData);
+
+                return new ExternalSourceResponse
+                {
+                    Columns = DataSource.Columns,
+                    Parameters = DataSource.Parameters.Select(p => {
+                        if (!externalSource.Parameters.TryGetValue(p.Name, out var InstanceParameter)) InstanceParameter = null;
+                        var Value =
+                            InstanceParameter?.ExpressionCode != null && cacheObject.Instance.Expressions.TryGetValue(InstanceParameter.ExpressionCode, out var expression) ? expression.Value?.Value?.ToString() :
+                            InstanceParameter?.ElementCode != null && group.GetBranchElements().TryGetValue(InstanceParameter.ElementCode, out var element) && element is Field field ? field.Value :
+                            null;
+
+                        return new ExternalSourceResponse.Parameter
+                        {
+                            Name = p.Name,
+                            Label = p.Label,
+                            ParameterType = p.ParameterType,
+                            Hidden = InstanceParameter?.Hidden ?? false,
+                            ReadOnly = InstanceParameter?.ReadOnly ?? false,
+                            Value = Value
+                        };
+                    }).ToList()
+                };
             }
             catch (InstanceException)
             {

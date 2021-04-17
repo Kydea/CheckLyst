@@ -51,7 +51,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             {
                 ReadOnly,
                 Exceptions,
-                ExternalSources = ExternalSources.Values.Select(s => s.GetViewModel()),
+                ExternalSources = ExternalSources.ToDictionary(k => k.Key, v => v.Value.GetViewModel()),
                 Header = ((Group)Header).GetViewModel(),
                 Pages = Pages.Select(p => ((Page)p).GetViewModel()),
                 Description,

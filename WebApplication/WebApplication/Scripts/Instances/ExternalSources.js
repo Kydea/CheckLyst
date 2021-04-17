@@ -41,10 +41,11 @@
         },
 
         addFilter = function (parameter) {
-            var label = $("<label />").append($("<span />").text(parameter.label));
-            inputs.push(new matematici.TypedInput(label[0], parameter.parameterType, { name: parameter.name }))
-            console.log(parameter);
-            parameters.append(label);
+            if (!parameter.hidden) {
+                var label = $("<label />").append($("<span />").text(parameter.label));
+                inputs.push(new matematici.TypedInput(label[0], parameter.parameterType, { name: parameter.name, value: parameter.value, readOnly: parameter.readOnly }))
+                parameters.append(label);
+            }
         },
 
         close = function () {
@@ -117,19 +118,13 @@
                 }))
                 .append(confirmButton = $("<a />").addClass("Button").text("confirm").prepend($("<i />").addClass("Icon fa fa-file-import")).on("click", confirm).hide());
 
-            var externalSource = instances.instance.getExternalSources()[name];
-            $.ajax({
-                type: "post",
-                url: matematici.urls.dataSources.api + "/Data/GetDataSource",
-                dataType: "json",
-                contentType: "application/json; charset=utf-8",
-                data: JSON.stringify({
-                    code: externalSource.dataSource
-                })
+            $.ajax(matematici.urls.instances.api + "/GetExternalSource", {
+                method: "post",
+                data: { instanceCode: instances.instance.getCode(), externalSourceCode: name, itemId: itemId }
             }).done(function (result) {
-                for (var index in result.parameters) 
+                for (var index in result.parameters)
                     addFilter(result.parameters[index]);
-                
+
                 columns = result.columns;
 
                 if (multiSelection) header.append($("<th />"));

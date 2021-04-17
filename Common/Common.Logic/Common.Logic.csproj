@@ -127,7 +127,9 @@
     <Compile Include="Authentication\AuthenticateRequest.cs" />
     <Compile Include="Authentication\AuthorizeResponse.cs" />
     <Compile Include="DataSources\DataRequest.cs" />
+    <Compile Include="DataSources\DataSource.cs" />
     <Compile Include="DataSources\ExportRequest.cs" />
+    <Compile Include="DataSources\Parameter.cs" />
     <Compile Include="Email\EmailServiceBase.cs" />
     <Compile Include="Email\IEmailServiceBase.cs" />
     <Compile Include="Json\ExternalSourceJsonConverter.cs" />

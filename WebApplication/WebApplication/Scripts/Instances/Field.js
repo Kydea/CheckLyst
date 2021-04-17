@@ -233,39 +233,8 @@
             input.value = model.value;
         else if (model.externalSourceName && model.externalSourceColumn)
             input.value = model.value;
-        else if (model.valueTypeName == "DateTime") {
-            if (!model.value || model.value == "") {
-                input.value = "";
-                select.value = "";
-                select2.value = "";
-            } else {
-                var
-                    index = model.value.indexOf(" "),
-                    date = model.value.substr(0, index),
-                    time = model.value.substr(index + 1),
-                    m = matematici.dateFormatter.parse(date, time, null);
-                formattedDate = matematici.dateFormatter.format(m);
-                input.value = formattedDate.date;
-                select.value = formattedDate.hours;
-                select2.value = formattedDate.minutes;
-            }
-        } else if (model.valueTypeName == "Time") {
-            input.value = model.value;
-            var index = (model.value || "").indexOf(":");
-            if (index >= 0) {
-                var hours = model.value.substr(0, index);
-                select.value = hours;
-                var minutes = model.value.substr(index + 1);
-                select2.value = minutes;
-            } else {
-                select.value = "";
-                select2.value = "";
-            }
-        } else if (model.valueTypeName == "Boolean") {
-            input.checked = input.value = model.value && model.value.toLowerCase() == "true";
-            input.disabled = readOnly;
-        } else
-            input.value = model.value;
+        else
+            matematici.TypedInput.setValue(model.valueTypeName, input, select, select2, model.value);
 
         var value = formattedDate ? formattedDate.date + " " + formattedDate.hours + ":" + formattedDate.minutes : model.value;
         field.innerHTML = readOnly && value ? value.split('\n').join("<br />") : value;
@@ -282,6 +251,9 @@
             input.setAttribute("title", value);
         } else 
             field.setAttribute("title", field.textContent);
+
+        if (model.valueTypeName == "Boolean")
+            input.disabled = readOnly;
 
         this.setColor(model.color);
         this.setFontSize(model.fontSize);

@@ -87,7 +87,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\DataRequest.cs" />
-    <Compile Include="Data\Parameter.cs" />
     <Compile Include="Detail\IDetailService.cs" />
     <Compile Include="Detail\DetailRequest.cs" />
     <Compile Include="Detail\DetailResponse.cs" />
@@ -100,7 +99,6 @@
     <Compile Include="List\IListService.cs" />
     <Compile Include="List\ListResponse.cs" />
     <Compile Include="List\ListRequest.cs" />
-    <Compile Include="Data\DataSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -283,11 +283,11 @@ namespace CheckListManager.Instances.Api.Controllers
         [HttpPost]
         [Route("GetExternalSource")]
         [Authorize(Roles = "Instances#View, Prototypes#Preview")]
-        public async Task<IHttpActionResult> GetExternalSource(PagingRequest<ExternalSourceRequest> request)
+        public async Task<IHttpActionResult> GetExternalSource(ExternalSourceRequest request)
         {
             try
             {
-                return Ok(await _instanceManagerService.GetExternalSource(request.Data.InstanceCode, Identity, request.Data.ExternalSourceCode));
+                return Ok(await _instanceManagerService.GetExternalSource(request.InstanceCode, Identity, request.ExternalSourceCode, request.ItemId));
             }
             catch (Exception e)
             {

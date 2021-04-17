@@ -24,7 +24,12 @@
             return value;
         },
 
+        setValue = function (value) {
+            matematici.TypedInput.setValue(type, input, hoursSelect, minutesSelect, value);
+        },
+
         setup = function () {
+            var readOnly = options && options.readOnly;
             container.classList.add(type);
             if (type != "Time") {
                 input = document.createElement("input");
@@ -35,6 +40,7 @@
                 input.addEventListener("change", function (e) {
                     matematici.TypedInput.validate(type, input, hoursSelect, minutesSelect);
                 });
+                if (readOnly) matematici.controls.setEditable($(input), false);
                 container.appendChild(input);
 
                 if (type == "Date" || type == "DateTime")
@@ -54,6 +60,7 @@
                     matematici.TypedInput.validate(type, input, hoursSelect, minutesSelect);
                 });
                 hoursSelect.value = null;
+                if (readOnly) matematici.controls.setEditable($(hoursSelect), false);
                 container.appendChild(hoursSelect);
                 new matematici.AutoComplete(hoursSelect, { noCheck: type != "Time" }).initialize();
 
@@ -69,9 +76,12 @@
                     matematici.TypedInput.validate(type, input, hoursSelect, minutesSelect);
                 });
                 minutesSelect.value = null;
+                if (readOnly) matematici.controls.setEditable($(minutesSelect), false);
                 container.appendChild(minutesSelect);
                 new matematici.AutoComplete(minutesSelect, { noCheck: type != "Time" }).initialize();
             }
+
+            if (options && options.value) setValue(options.value);
         };
 
     typedInput.getInput = function () {
@@ -94,9 +104,44 @@
         return matematici.TypedInput.validate(type, input, hoursSelect, minutesSelect, true);
     };
 
+    typedInput.setValue = setValue;
     typedInput.getValue = getValue;
 
     setup();
+};
+
+matematici.TypedInput.setValue = function (type, input, hoursSelect, minutesSelect, value) {
+    if (type == "DateTime") {
+        if (!value || value == "") {
+            input.value = "";
+            hoursSelect.value = "";
+            minutesSelect.value = "";
+        } else {
+            var
+                index = value.indexOf(" "),
+                date = value.substr(0, index),
+                time = value.substr(index + 1),
+                m = matematici.dateFormatter.parse(date, time, null);
+            formattedDate = matematici.dateFormatter.format(m);
+            input.value = formattedDate.date;
+            hoursSelect.value = formattedDate.hours;
+            minutesSelect.value = formattedDate.minutes;
+        }
+    } else if (type == "Time") {
+        var index = (value || "").indexOf(":");
+        if (index >= 0) {
+            var hours = value.substr(0, index);
+            hoursSelect.value = hours;
+            var minutes = value.substr(index + 1);
+            minutesSelect.value = minutes;
+        } else {
+            hoursSelect.value = "";
+            minutesSelect.value = "";
+        }
+    } else if (type == "Boolean")
+        input.checked = input.value = value && value.toLowerCase() == "true";
+    else
+        input.value = value;
 };
 
 matematici.TypedInput.toggleError = function (input, hoursSelect, minutesSelect, valid) {

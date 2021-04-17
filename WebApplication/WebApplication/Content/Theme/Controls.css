@@ -14,13 +14,13 @@
     display: inline-block;
     border-radius: 0;
     border-left: 0; }
-    label.DateTime input.AutoComplete:nth-last-child(2) {
+    label.DateTime input.AutoComplete:nth-last-child(2), label.DateTime input.AutoComplete:nth-last-child(1) {
       border-radius: 0 5px 5px 0; }
   label.Time input.AutoComplete {
     width: 50%;
     display: inline-block;
     border-radius: 5px 0 0 5px; }
-    label.Time input.AutoComplete:nth-last-child(2) {
+    label.Time input.AutoComplete:nth-last-child(2), label.Time input.AutoComplete:nth-last-child(1) {
       border-radius: 0 5px 5px 0;
       border-left: 0; }
   label *.Error {
