@@ -14,8 +14,7 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
         bool FTPExport { get; set; }
 
         PascalCaseDictionary<string, Expression> Expressions { get; }
-        PascalCaseDictionary<string, string> ExternalSources { get; }
-        PascalCaseDictionary<string, ExternalSource> ExternalSourceDependencyNodes { get; }
+        PascalCaseDictionary<string, ExternalSource> ExternalSources { get; }
 
         [JsonIgnore]
         Dictionary<int, ICheckListItem> Items { get; }

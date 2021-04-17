@@ -713,6 +713,45 @@ namespace CheckListManager.Instances.Logic.Services
 
         #region actions
 
+        public async Task<string> GetExternalSource(string code, IDefaultIdentity identity, string externalSourceCode)
+        {
+            try
+            {
+                var cacheObject = await GetCacheObjectForEditAsync(identity, code, true);
+                if (cacheObject.InstanceState != InstanceState.Draft && cacheObject.InstanceState != InstanceState.Progress)
+                    throw new InstanceException("Instance state not valid");
+                if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
+                    throw new InstanceException("Access denied");
+                if (!cacheObject.Instance.ExternalSources.ContainsKey(externalSourceCode))
+                    throw new InstanceException("Invalid external source");
+
+                await _instanceCache.TouchAsync(code);
+
+                var token = identity.Code + ":" + Guid.NewGuid();
+                await _redisCache.SetAsync($"Token:{token}", new DataRequest
+                {
+                    code = cacheObject.Instance.ExternalSources[externalSourceCode].DataSource,
+                    decimalSeparator = await _settingService.DecimalSeparatorAsync(identity.CompanyId),
+                    timeZone = (await _commonRepository.GetCompanyAsync(identity.CompanyId)).TimeZone
+                }, "S2S", new TimeSpan(0, 1, 0));
+                var response = await _client.PostAsync("DataSources/Data/GetDataSource", new TokenRequest { token = token });
+                var responseData = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode != HttpStatusCode.OK)
+                    throw new Exception(responseData);
+
+                return JsonConvert.DeserializeObject<string>(responseData);
+            }
+            catch (InstanceException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, "Unable to retrieve the external source data");
+                throw new InstanceException("Unable to retrieve the external source data", e);
+            }
+        }
+
         public async Task<string> GetExternalSourceRows(string code, IDefaultIdentity identity, string externalSourceCode, Dictionary<string, string> parameters, int page)
         {
             try
@@ -730,7 +769,7 @@ namespace CheckListManager.Instances.Logic.Services
                 var token = identity.Code + ":" + Guid.NewGuid();
                 await _redisCache.SetAsync($"Token:{token}", new DataRequest
                 {
-                    code = cacheObject.Instance.ExternalSources[externalSourceCode],
+                    code = cacheObject.Instance.ExternalSources[externalSourceCode].DataSource,
                     parameters = parameters,
                     page = page,
                     decimalSeparator = await _settingService.DecimalSeparatorAsync(identity.CompanyId),
@@ -769,7 +808,7 @@ namespace CheckListManager.Instances.Logic.Services
                             var token = identity.Code + ":" + Guid.NewGuid();
                             await _redisCache.SetAsync($"Token:{token}", new ExportRequest
                             {
-                                Code = cacheObject.Instance.ExternalSources[Group.DumpExternalSourceName],
+                                //Code = cacheObject.Instance.ExternalSources[Group.DumpExternalSourceName],
                                 Names = Names,
                                 Records = Records,
                                 DecimalSeparator = await _settingService.DecimalSeparatorAsync(identity.CompanyId),

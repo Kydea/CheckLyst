@@ -16,8 +16,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
     {
         public Dictionary<string, ICheckListElement> Elements { get; } = new Dictionary<string, ICheckListElement>();
         public PascalCaseDictionary<string, Expression> Expressions { get; } = new PascalCaseDictionary<string, Expression>();
-        public PascalCaseDictionary<string, string> ExternalSources { get; } = new PascalCaseDictionary<string, string>(); //obsolete from v 3.0.0
-        public PascalCaseDictionary<string, ExternalSource> ExternalSourceDependencyNodes { get; } = new PascalCaseDictionary<string, ExternalSource>();
+        public PascalCaseDictionary<string, ExternalSource> ExternalSources { get; } = new PascalCaseDictionary<string, ExternalSource>();
         public ICheckListGroup Header { get; set; }
         public List<ICheckListPage> Pages { get; } = new List<ICheckListPage>();
         public string DescriptionFormulaString { get; set; }
@@ -70,15 +69,6 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 Valid &= Page.Setup();
             }
 
-            //for v. < 3.0.0
-            if (ExternalSources.Any())
-            {
-                ExternalSourceDependencyNodes.Clear();
-                foreach (string DataSource in ExternalSources.Keys)
-                    ExternalSourceDependencyNodes.Add(DataSource, new ExternalSource { Code = DataSource, DataSource = ExternalSources[DataSource] });
-                ExternalSources.Clear();
-            }
-
             foreach (var expression in Expressions)
             {
                 expression.Value.DependencyChainAction = e => e.Check(this);
@@ -125,7 +115,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 if (expression.Error == null && !expression.BuildDependencies(this))
                     Result = false;
 
-            foreach (var source in ExternalSourceDependencyNodes.Values)
+            foreach (var source in ExternalSources.Values)
                 if (!source.BuildDependencies(this))
                     Result = false;
 

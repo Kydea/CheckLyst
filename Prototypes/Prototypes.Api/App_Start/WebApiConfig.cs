@@ -28,10 +28,16 @@ namespace CheckListManager.Prototypes.Api
 
             builder.RegisterType<CheckListJsonConverter>()
 			    .AsSelf()
-			    .InstancePerDependency();
-	    }
+                .As<CustomJsonConverter>()
+                .InstancePerDependency();
 
-	    protected override void OnConfigureWebApi(HttpConfiguration configuration)
+            builder.RegisterType<ExternalSourceJsonConverter>()
+                .AsSelf()
+                .As<CustomJsonConverter>()
+                .InstancePerDependency();
+        }
+
+        protected override void OnConfigureWebApi(HttpConfiguration configuration)
 	    {
 		    base.OnConfigureWebApi(configuration);
 

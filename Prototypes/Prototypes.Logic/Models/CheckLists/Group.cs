@@ -144,7 +144,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             if (DumpExternalSourceName != null)
             {
                 var DumpResult = true;
-                if (!CheckList.ExternalSourceDependencyNodes.TryGetValue(DumpExternalSourceName, out var ExternalSourceNode))
+                if (!CheckList.ExternalSources.TryGetValue(DumpExternalSourceName, out var ExternalSourceNode))
                 {
                     Errors.Add(new ConfigurationError("export-source", $"External source {DumpExternalSourceName} not found"));
                     DumpResult = false;
@@ -157,7 +157,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 }
 
                 if (DumpResult)
-                    AddDependingRelation(DependencyRelation.Properties.Value, CheckList.ExternalSourceDependencyNodes[DumpExternalSourceName], DependencyRelation.Properties.Value);
+                    AddDependingRelation(DependencyRelation.Properties.Value, CheckList.ExternalSources[DumpExternalSourceName], DependencyRelation.Properties.Value);
 
                 Result &= DumpResult;
             }

@@ -11,12 +11,12 @@ namespace CheckListManager.Prototypes.Logic.Messages
         public Prototype CheckList { get; private set; }
         public string Base64CheckList { get; set; }
 
-        public void Parse(JsonConverter converter)
+        public void Parse(JsonConverter[] converters)
         {
             var bytes = Convert.FromBase64String(Base64CheckList);
             var decompressed = CompressionHelper.Decompress(bytes, true);
             var json = System.Text.Encoding.UTF8.GetString(decompressed);
-            CheckList = json.ToObject<Prototype>(converter);
+            CheckList = json.ToObject<Prototype>(converters);
         }
 
         public long ID { get; set; }

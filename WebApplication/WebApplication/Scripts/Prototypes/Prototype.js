@@ -162,7 +162,7 @@
                     for (var index in model.pages)
                         updateDependencies(model.pages[index], newModel.pages[index]);
 
-                    model.externalSourceDependencyNodes = newModel.externalSourceDependencyNodes;
+                    model.externalSources = newModel.externalSources;
 
                     var invalid = false;
                     for (var index in model.expressions) {
@@ -178,10 +178,10 @@
                     $("div.ActionBar a.ExpressionsList").toggleClass("Invalid", invalid);
 
                     invalid = false;
-                    for (var index in model.externalSourceDependencyNodes) {
+                    for (var index in model.externalSources) {
                         var
-                            source = model.externalSourceDependencyNodes[index],
-                            newSource = newModel.externalSourceDependencyNodes[index];
+                            source = model.externalSources[index],
+                            newSource = newModel.externalSources[index];
                         model.dependingRelations = newModel.dependingRelations;
                         model.dependentRelations = newModel.dependentRelations;
                         source.errors = newSource.errors;
@@ -737,7 +737,7 @@
                         matematici.canClose = true;
                         prototypeKey.id = result.id;
                         model.expressions = result.checkList.expressions;
-                        model.externalSourceDependencyNodes = result.checkList.externalSourceDependencyNodes;
+                        model.externalSources = result.checkList.externalSources;
                         model.header = result.checkList.header;
                         model.pages = result.checkList.pages;
                         model.dependingRelations = result.checkList.dependingRelations;

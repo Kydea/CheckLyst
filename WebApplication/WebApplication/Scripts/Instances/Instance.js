@@ -24,7 +24,7 @@
         pageLock,
         updateHandler,
         externalSources = {},
-        expressions = [],
+        expressions = {},
         exceptions = [],
         expressionsButton,
         exceptionsButton,

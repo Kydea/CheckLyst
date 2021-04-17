@@ -78,13 +78,13 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
             if (ExternalSourceName != null)
             {
-                if (!CheckList.ExternalSourceDependencyNodes.TryGetValue(ExternalSourceName, out var ExternalSourceNode))
+                if (!CheckList.ExternalSources.TryGetValue(ExternalSourceName, out var ExternalSourceNode))
                 {
                     Errors.Add(new ConfigurationError("value", $"External source {ExternalSourceName} not found"));
                     Result = false;
                 }
                 else
-                    AddDependingRelation(DependencyRelation.Properties.Value, CheckList.ExternalSourceDependencyNodes[ExternalSourceName], DependencyRelation.Properties.Value);
+                    AddDependingRelation(DependencyRelation.Properties.Value, CheckList.ExternalSources[ExternalSourceName], DependencyRelation.Properties.Value);
             }
 
             return Result;

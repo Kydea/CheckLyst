@@ -130,6 +130,7 @@
     <Compile Include="DataSources\ExportRequest.cs" />
     <Compile Include="Email\EmailServiceBase.cs" />
     <Compile Include="Email\IEmailServiceBase.cs" />
+    <Compile Include="Json\ExternalSourceJsonConverter.cs" />
     <Compile Include="Models\CheckLists\ConfigurationError.cs" />
     <Compile Include="Models\ExternalSources\Parameter.cs" />
     <Compile Include="Models\ExternalSources\ExternalSource.cs" />

@@ -114,7 +114,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
                 if (ExternalSourceName != null)
                 {
-                    if (!CheckList.ExternalSourceDependencyNodes.TryGetValue(ExternalSourceName, out var ExternalSourceDependencyNode))
+                    if (!CheckList.ExternalSources.TryGetValue(ExternalSourceName, out var ExternalSourceDependencyNode))
                         throw new Exception($"The property value references to the inexistent external source {ExternalSourceName} for {this}");
 
                     AddDependingRelation(DependencyRelation.Properties.Value, ExternalSourceDependencyNode, DependencyRelation.Properties.Value);

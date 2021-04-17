@@ -33,7 +33,7 @@
         showDependencies = function () {
             var
                 code = list[currentIndex].code,
-                model = prototypes.prototype.getModel().externalSourceDependencyNodes[code];
+                model = prototypes.prototype.getModel().externalSources[code];
             matematici.dependenciesDialog.show("Source " + code, model && model.dependingRelations, model && model.dependentRelations);
         },
 
@@ -180,9 +180,9 @@
         },
 
         updatePrototype = function () {
-            model.externalSourceDependencyNodes = {};
+            model.externalSources = {};
             for (var index in list)
-                model.externalSourceDependencyNodes[list[index].code] = list[index];
+                model.externalSources[list[index].code] = list[index];
         },
 
         verify = function (handler) {
@@ -192,7 +192,7 @@
 
                 for (var index in list) {
                     var
-                        row = model.externalSourceDependencyNodes[list[index].code],
+                        row = model.externalSources[list[index].code],
                         error = list[index].error = row.error,
                         cells = getRow(index);
 
@@ -318,8 +318,8 @@
                             showDependencies();
                         }));
 
-            for (var code in model.externalSourceDependencyNodes)
-                insert(model.externalSourceDependencyNodes[code]);
+            for (var code in model.externalSources)
+                insert(model.externalSources[code]);
 
             fixedHeader = new matematici.GridFixedHeader(table);
         };

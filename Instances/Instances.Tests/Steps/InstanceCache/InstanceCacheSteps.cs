@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using CheckListManager.Common.Logic.Cache;
 using CheckListManager.Common.Logic.Json;
 using CheckListManager.Instances.Logic.Models;
@@ -16,14 +17,14 @@ namespace CheckListManager.Instances.Tests.Steps.InstanceCache
 	{
 		private readonly InstanceCacheContext _context;
 		private readonly IInstanceCacheService _instanceCache;
-		private readonly CheckListJsonConverter _converter;
+		private readonly JsonConverter[] _converters;
 		private readonly IRedisCache _redisCache;
 
-		public InstanceCacheSteps(InstanceCacheContext context, IInstanceCacheService instanceCache, CheckListJsonConverter converter, IRedisCache redisCache)
+		public InstanceCacheSteps(InstanceCacheContext context, IInstanceCacheService instanceCache, CustomJsonConverter[] converters, IRedisCache redisCache)
 		{
 			_context = context;
 			_instanceCache = instanceCache;
-			_converter = converter;
+			_converters = converters.ToArray<JsonConverter>();
 			_redisCache = redisCache;
 		}
 
@@ -40,7 +41,7 @@ namespace CheckListManager.Instances.Tests.Steps.InstanceCache
 			_context.Object = new InstanceCacheObject
 			{
 				Code = _context.Code,
-				Instance = JsonConvert.DeserializeObject<Instance>(_context.PrototypeSource, _converter)
+				Instance = JsonConvert.DeserializeObject<Instance>(_context.PrototypeSource, _converters)
 			};
 		}
 

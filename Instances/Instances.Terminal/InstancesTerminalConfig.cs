@@ -35,9 +35,14 @@ namespace CheckListManager.Instances.Terminal
 				.AsSelf()
 				.As<CustomJsonConverter>()
 				.InstancePerDependency();
-		}
 
-		private static void RegisterChecklistItem<TClass, TInterface>(ContainerBuilder builder) where TClass : TInterface
+            builder.RegisterType<ExternalSourceJsonConverter>()
+                .AsSelf()
+                .As<CustomJsonConverter>()
+                .InstancePerDependency();
+        }
+
+        private static void RegisterChecklistItem<TClass, TInterface>(ContainerBuilder builder) where TClass : TInterface
 		{
 			builder.RegisterType<TClass>()
 				.As<TInterface>()

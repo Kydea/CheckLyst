@@ -25,7 +25,7 @@ namespace CheckListManager.Prototypes.Logic.Services
 {
     public class PrototypeService : IPrototypeService
     {
-        private readonly CheckListJsonConverter _converter;
+        private readonly JsonConverter[] _converters;
         private readonly IPrototypesRepository _prototypeRepository;
         private readonly IQueueService _queueService;
         private readonly ICommonRepository _commonRepository;
@@ -36,7 +36,7 @@ namespace CheckListManager.Prototypes.Logic.Services
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public PrototypeService(
-            CheckListJsonConverter converter,
+            CustomJsonConverter[] converters,
             IPrototypesRepository prototypeRepository,
             IQueueService queueService,
             ICommonRepository commonRepository,
@@ -46,7 +46,7 @@ namespace CheckListManager.Prototypes.Logic.Services
             IEmailServiceBase emailService
         )
         {
-            _converter = converter;
+            _converters = converters;
             _prototypeRepository = prototypeRepository;
             _queueService = queueService;
             _commonRepository = commonRepository;
@@ -67,7 +67,7 @@ namespace CheckListManager.Prototypes.Logic.Services
             )
                 throw new UnauthorizedAccessException();
 
-            var Prototype = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converter);
+            var Prototype = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converters);
             Prototype.Setup(false);
 
             return await Task.FromResult(new PrototypeResponse
@@ -101,7 +101,7 @@ namespace CheckListManager.Prototypes.Logic.Services
             )
                 throw new UnauthorizedAccessException();
 
-            var Prototype = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converter);
+            var Prototype = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converters);
             MarkImagesAsCloned(Prototype);
             Prototype.Setup(false);
 
@@ -150,7 +150,7 @@ namespace CheckListManager.Prototypes.Logic.Services
             )
                 throw new UnauthorizedAccessException();
 
-            var Prototype = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converter);
+            var Prototype = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converters);
             MarkImagesAsCloned(Prototype);
             Prototype.Setup(false);
 
@@ -312,7 +312,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                 await DeleteAttachmentAsync(identity.CompanyId, PrototypeVersion.Prototype, PrototypeVersion.Version, key);
 
             PrototypeVersion.Description = request.Description;
-            PrototypeVersion.Data = JsonConvert.SerializeObject(request.CheckList, _converter);
+            PrototypeVersion.Data = JsonConvert.SerializeObject(request.CheckList, _converters);
             PrototypeVersion.ValidFrom = request.ValidFrom;
             PrototypeVersion.ValidUntil = request.ValidUntil;
             PrototypeVersion.InstanceConfirmationWorkFlow = request.InstanceConfirmationWorkFlow;

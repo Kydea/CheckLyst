@@ -27,6 +27,12 @@ namespace CheckListManager.Prototypes.Terminal
 
             builder.RegisterType<CheckListJsonConverter>()
                 .AsSelf()
+                .As<CustomJsonConverter>()
+                .InstancePerDependency();
+
+            builder.RegisterType<ExternalSourceJsonConverter>()
+                .AsSelf()
+                .As<CustomJsonConverter>()
                 .InstancePerDependency();
         }
 

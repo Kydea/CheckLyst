@@ -207,7 +207,6 @@
                                             icon: "file-import",
                                             data: setupModel.externalSources[externalSourceIndex],
                                             handler: function (name) {
-                                                console.log("<" + name + ">");
                                                 new instances.ExternalSources(id, name, true);
                                             }
                                         });

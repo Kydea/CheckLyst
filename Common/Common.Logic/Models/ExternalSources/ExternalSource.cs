@@ -40,5 +40,11 @@ namespace CheckListManager.Common.Logic.Models.ExternalSources
             return Result;
         }
 
+        public object GetViewModel() =>
+            new
+            {
+                Code,
+                DataSource
+            };
     }
 }

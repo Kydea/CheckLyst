@@ -15,6 +15,7 @@ using CheckListManager.Common.Logic.Email;
 using CheckListManager.Prototypes.Logic.PDF;
 using CheckListManager.Prototypes.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Json;
+using System.Linq;
 
 namespace CheckListManager.Prototypes.Terminal
 {
@@ -22,7 +23,7 @@ namespace CheckListManager.Prototypes.Terminal
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private readonly CheckListJsonConverter _converter;
+        private readonly JsonConverter[] _converters;
         private readonly IQueueService _queueService;
         private readonly ISettingService _settingService;
         private readonly IPrototypesRepository _prototypesRepository;
@@ -32,7 +33,7 @@ namespace CheckListManager.Prototypes.Terminal
         private readonly IEmailServiceBase _emailService;
 
         public FTPService(
-            CheckListJsonConverter converter,
+            CustomJsonConverter[] converters,
             IQueueService queueService,
             ISettingService settingService,
             IPrototypesRepository prototypesRepository,
@@ -42,7 +43,7 @@ namespace CheckListManager.Prototypes.Terminal
             IEmailServiceBase emailService
         )
         {
-            _converter = converter;
+            _converters = converters.ToArray<JsonConverter>();
             _queueService = queueService;
             _settingService = settingService;
             _prototypesRepository = prototypesRepository;
@@ -143,7 +144,7 @@ namespace CheckListManager.Prototypes.Terminal
 
             var Company = await _commonRepository.GetCompanyAsync(message.Company);
 
-            var CheckList = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converter);
+            var CheckList = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converters);
 
             var PDF = new PrototypePDF(
                 Company.ID,

@@ -26,7 +26,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
     {
         private readonly IPrototypeService _prototypeService;
         private readonly IPrototypesRepository _prototypesRepository;
-        private readonly CheckListJsonConverter _converter;
+        private readonly JsonConverter[] _converters;
         private readonly IRedisCache _redisCache;
         private readonly ICommonRepository _commonRepository;
         private readonly IConfigurationService _configurationService;
@@ -37,7 +37,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
         public PrototypeController(
             IPrototypeService prototypeService,
             IPrototypesRepository prototypesRepository,
-            CheckListJsonConverter converter,
+            CustomJsonConverter[] converters,
             IRedisCache redisCache,
             ICommonRepository commonRepository,
             IConfigurationService configurationService,
@@ -48,7 +48,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
         {
             _prototypeService = prototypeService;
             _prototypesRepository = prototypesRepository;
-            _converter = converter;
+            _converters = converters.ToArray<JsonConverter>();
             _redisCache = redisCache;
             _commonRepository = commonRepository;
             _configurationService = configurationService;
@@ -141,7 +141,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
         {
             try
             {
-                request.Parse(_converter);
+                request.Parse(_converters);
                 return Ok(_prototypeService.Verify(request));
             }
             catch (Exception e)
@@ -157,7 +157,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
         {
             try
             {
-                request.Parse(_converter);
+                request.Parse(_converters);
                 return Ok(await _prototypeService.SaveAsync(Identity, request));
             }
             catch (Exception e)
@@ -235,7 +235,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
             var Data = await _redisCache.GetAsync<PrototypeRequest>($"Token:{Token}", "Download");
             await _redisCache.RemoveAsync($"Token:{Token}", "Download");
             var PrototypeVersion = await _prototypesRepository.GetPrototypeVersionAsync(Data.CompanyId.Value, Data.ID, Data.Version);
-            var CheckList = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converter);
+            var CheckList = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converters);
 
             var PDF = new PrototypePDF(
                 Data.CompanyId.Value,
