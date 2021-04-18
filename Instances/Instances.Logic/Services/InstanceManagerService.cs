@@ -1888,13 +1888,13 @@ namespace CheckListManager.Instances.Logic.Services
             if (field == null)
                 throw new InstanceException($"Field {itemId} not found");
 
-            if (field.ReadOnly || !cacheObject.Instance.ExternalSourceDependencyNodes.TryGetValue(field.ExternalSourceName, out var ExternalSourceDependencyNode))
+            if (field.ReadOnly || !cacheObject.Instance.ExternalSources.TryGetValue(field.ExternalSourceName, out var ExternalSource))
                 return null;
 
-            ExternalSourceDependencyNode.Values = row;
+            ExternalSource.Values = row;
             var AffectedElements = field.IterationItem ? null : new List<Item>();
 
-            foreach (var ExternalSourceDependencyRelation in ExternalSourceDependencyNode.DependentRelations)
+            foreach (var ExternalSourceDependencyRelation in ExternalSource.DependentRelations)
                 if (field.IterationItem)
                 {
                     var IteratorModelItem = (Item)ExternalSourceDependencyRelation.GetNode(cacheObject.Instance);
@@ -1944,7 +1944,7 @@ namespace CheckListManager.Instances.Logic.Services
             if (group == null)
                 throw new InstanceException($"Group {itemId} not found");
 
-            if (group.ReadOnly || !cacheObject.Instance.ExternalSourceDependencyNodes.TryGetValue(externalSourceName, out var ExternalSourceDependencyNode))
+            if (group.ReadOnly || !cacheObject.Instance.ExternalSources.TryGetValue(externalSourceName, out var ExternalSource))
                 return;
 
             var rowDictionary = columns.ToDictionary(k => k, v => default(string));
@@ -1956,9 +1956,9 @@ namespace CheckListManager.Instances.Logic.Services
                 iterations.Add(iteration.Id);
                 for (var index = 0; index < columns.Count; ++index)
                     rowDictionary[columns[index]] = row[index];
-                ExternalSourceDependencyNode.Values = rowDictionary;
+                ExternalSource.Values = rowDictionary;
 
-                foreach (var ExternalSourceDependencyRelation in ExternalSourceDependencyNode.DependentRelations)
+                foreach (var ExternalSourceDependencyRelation in ExternalSource.DependentRelations)
                 {
                     var IteratorModelItem = (Item)ExternalSourceDependencyRelation.GetNode(cacheObject.Instance);
                     Item IterationItem = IteratorModelItem.FindIterationItems(iteration).Single();

@@ -74,8 +74,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                     || e.Value.Value?.Type == DataType.DateTime && e.Value.Value.DateTimeValue <= DateTimeOffset.UtcNow
                 )
            ).ToDictionary(k => k.Key, v => v.Value?.Description));
-        public PascalCaseDictionary<string, ExternalSource> ExternalSources { get; set; } //obsolete
-        public PascalCaseDictionary<string, ExternalSource> ExternalSourceDependencyNodes { get; } = new PascalCaseDictionary<string, ExternalSource>();
+        public PascalCaseDictionary<string, ExternalSource> ExternalSources { get; set; }
         public ICheckListGroup Header { get; set; }
         public List<ICheckListPage> Pages { get; set; }
 
@@ -160,8 +159,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         private void BuildDependencies()
         {
-            foreach (var ExternalSourceDependencyNode in ExternalSourceDependencyNodes.Values)
-                ExternalSourceDependencyNode.BuildDependencies(this);
+            foreach (var ExternalSource in ExternalSources.Values)
+                ExternalSource.BuildDependencies(this);
 
             foreach (var Expression in Expressions.Values)
                 Expression.ClearDependencies();
