@@ -23,8 +23,8 @@ namespace CheckListManager.Common.Logic.Models.Expressions.StringFunctions
         {
             base.Check(CheckList, Expression, IteratorStack);
 
-            if (Left.DataType != DataType.Text) throw new ParseException("The left argument of StringRight must be a text", Position);
-            if (Right.DataType != DataType.Text) throw new ParseException("The right argument of StringRight must be a text", Position);
+            if (Left.DataType != DataType.Text) throw new ParseException($"The left argument of {FunctionName} must be a text", Position);
+            if (Right.DataType != DataType.Text) throw new ParseException($"The right argument of {FunctionName} must be a text", Position);
 
             DataType = DataType.Text;
         }
@@ -41,7 +41,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.StringFunctions
                         Text = Text.Substring(Pattern.Length);
                 if (Direction != Directions.Left)
                     while (Text.EndsWith(Pattern))
-                        Text = Text.Substring(Text.Length - Pattern.Length);
+                        Text = Text.Substring(0, Text.Length - Pattern.Length);
                 Result = new TypedValue(DataType.Text, Text);
             }
             return Result;

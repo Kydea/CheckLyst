@@ -47,6 +47,11 @@
                 return null;
             }
 
+            if (!$("select[name=dataSource]", form).val()) {
+                matematici.dialog.error("error", "no source selected");
+                return null;
+            }
+
             for (var index in sources)
                 if (index != sourceIndex && code == sources[index].code) {
                     matematici.dialog.error("Duplicated code", "The code " + code + " is duplicated");
@@ -154,14 +159,14 @@
                                 bindingAutoComplete = new matematici.AutoComplete(bindingSelect),
                                 codeSelect = cells.eq(2).children("select")[0],
                                 codeAutoComplete = new matematici.AutoComplete(codeSelect),
-                                parameter = source.parameters && source.parameters[dataSourceParameter.name] && source.parameters[dataSourceParameter.name];
+                                parameter = source && source.parameters && source.parameters[dataSourceParameter.name] && source.parameters[dataSourceParameter.name];
 
                             cells.eq(0).text(dataSourceParameter.name);
                             bindingAutoComplete.initialize();
                             bindingAutoComplete.setValue(parameter && parameter.expressionCode ? "expression" : parameter && parameter.elementCode ? "field" : null);
                             codeAutoComplete.initialize();
                             bindingChanged.call(bindingSelect)
-                            
+
                             if (parameter) {
                                 handledParameters.add(dataSourceParameter.name);
                                 var code = parameter.expressionCode || parameter.elementCode;
@@ -175,7 +180,7 @@
                     else
                         tableBody.append(noRecord);
 
-                    if (source.parameters)
+                    if (source && source.parameters)
                         for (var parameterIndex in source.parameters) {
                             var parameter = source.parameters[parameterIndex];
                             if (!handledParameters.has(parameter.name)) {
@@ -190,6 +195,8 @@
                             }
                         }
                 });
+            else
+                tableBody.empty().append(noRecord);
         },
 
         bindingChanged = function () {
@@ -208,7 +215,7 @@
                     codes.push(expressions[expressionIndex].code);
             } else if (value == "field") {
                 var fields = prototypes.prototype.getElements("Field");
-                for (var fieldIndex in fields) 
+                for (var fieldIndex in fields)
                     codes.push(fieldIndex);
             }
 
@@ -262,9 +269,15 @@
             parameterPrototype = rows.eq(0).remove();
             noRecord = rows.eq(1).remove();
 
-            setupParameters();
-
-            if (source) setError();
+            if (source) {
+                setError();
+                setupParameters();
+            } else {
+                tableBody.append(noRecord);
+                setTimeout(function () {
+                    matematici.AutoComplete.get(dataSourceSelect[0]).setValue(null);
+                }, 0);
+            }
         },
 
         setup = function () {

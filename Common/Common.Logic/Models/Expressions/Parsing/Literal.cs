@@ -248,7 +248,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                             Operator = OperatorType.No;
                             break;
                         case "stringlefttrim":
-                        case "stringrigthtrim":
+                        case "stringrighttrim":
                         case "stringtrim":
                             var Trim = new StringFunctions.Trim(LowerValue) { Position = this.Position };
                             CheckArguments(1, 2);
