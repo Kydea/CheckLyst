@@ -42,7 +42,11 @@
 
         addFilter = function (parameter) {
             if (!parameter.hidden) {
-                var label = $("<label />").append($("<span />").text(parameter.label));
+                var
+                    span = $("<span />").text(parameter.label),
+                    label = $("<label />").append(span);
+                if (parameter.error)
+                    span.append($("<i />").addClass("fa fa-exclamation").attr("title", parameter.error));
                 inputs.push(new matematici.TypedInput(label[0], parameter.parameterType, { name: parameter.name, value: parameter.value, readOnly: parameter.readOnly }))
                 parameters.append(label);
             }
@@ -122,8 +126,12 @@
                 method: "post",
                 data: { instanceCode: instances.instance.getCode(), externalSourceCode: name, itemId: itemId }
             }).done(function (result) {
-                for (var index in result.parameters)
-                    addFilter(result.parameters[index]);
+                var hasEditableParameters = false;
+                for (var index in result.parameters) {
+                    var parameter = result.parameters[index];
+                    addFilter(parameter);
+                    if (!parameter.hidden && !parameter.readOnly) hasEditableParameters = true;
+                }
 
                 columns = result.columns;
 
@@ -136,7 +144,10 @@
                 scrollablePanel.show();
                 refreshFixedHeader();
 
-                autoCenter.center();
+                if (hasEditableParameters)
+                    autoCenter.center();
+                else
+                    searchButton.click();
             });
         },
 
@@ -197,7 +208,7 @@
         load = function () {
             $.ajax(matematici.urls.instances.api + "/GetExternalSourceRows", {
                 method: "post",
-                data: { data: { instanceCode: instances.instance.getCode(), parameters: parameterValues, externalSourceCode: name, page: page } }
+                data: { data: { instanceCode: instances.instance.getCode(), parameters: parameterValues, itemId: itemId, externalSourceCode: name, page: page } }
             }).done(function (result) {
                 if (page == 0) {
                     tableBody.empty();

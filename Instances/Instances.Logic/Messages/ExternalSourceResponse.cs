@@ -16,6 +16,7 @@ namespace CheckListManager.Instances.Logic.Messages
             public string Value { get; set; }
             public bool ReadOnly { get; set; }
             public bool Hidden { get; set; }
+            public string Error { get; set; }
         }
     }
 }

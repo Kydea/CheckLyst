@@ -28,6 +28,8 @@ namespace CheckListManager.Common.Logic.Models.ExternalSources
                 ElementCode = null;
                 if (!CheckList.Expressions.TryGetValue(ExpressionCode, out var Expression))
                     Error = $"Expression {ExpressionCode} not found";
+                else if (Expression.DataType == DataType.Array)
+                    Error = $"Expression {ExpressionCode} is an array";
                 else
                     ExternalSource.AddDependingRelation(DependencyRelation.Properties.Parameter, Expression, DependencyRelation.Properties.Value);
 

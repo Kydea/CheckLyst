@@ -36,6 +36,7 @@ using CheckListManager.Common.Logic.Models;
 using CheckListManager.Instances.Logic.ImageUtilities;
 using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.Expressions;
+using CheckListManager.Common.Logic.Models.ExternalSources;
 
 namespace CheckListManager.Instances.Logic.Services
 {
@@ -714,6 +715,65 @@ namespace CheckListManager.Instances.Logic.Services
 
         #region actions
 
+        private async Task<DataSource> GetExternalSource(InstanceCacheObject cacheObject, string externalSourceCode)
+        {
+            var response = await _client.PostAsync("DataSources/Data/GetDataSource", new { code = cacheObject.Instance.ExternalSources[externalSourceCode].DataSource });
+            var responseData = await response.Content.ReadAsStringAsync();
+            if (response.StatusCode != HttpStatusCode.OK)
+                throw new Exception(responseData);
+
+            var DataSource = JsonConvert.DeserializeObject<DataSource>(responseData);
+
+            return DataSource;
+        }
+
+        private List<ExternalSourceResponse.Parameter> GetExternalSourceParameters(InstanceCacheObject cacheObject, ExternalSource externalSource, DataSource dataSource, Item item)
+        {
+            return dataSource.Parameters.Select(p =>
+            {
+                if (!externalSource.Parameters.TryGetValue(p.Name, out var InstanceParameter)) InstanceParameter = null;
+
+                string Value = null;
+                string Error = null;
+                string Binding = null;
+                if (InstanceParameter?.ExpressionCode != null)
+                {
+                    Binding = $"expression {InstanceParameter.ExpressionCode}";
+                    if (cacheObject.Instance.Expressions.TryGetValue(InstanceParameter.ExpressionCode, out var Expression))
+                        Value = Expression.Value?.Value?.ToString();
+                    else
+                        Error = $"Expression {InstanceParameter.ExpressionCode} not found";
+                }
+                else if (InstanceParameter?.ElementCode != null)
+                {
+                    Binding = $"field {InstanceParameter.ElementCode}";
+                    if (!item.GetBranchElements().TryGetValue(InstanceParameter.ElementCode, out var Element))
+                        Error = $"Element {InstanceParameter.ElementCode} not found";
+                    else if (!(Element is Field Field))
+                        Error = $"Element {InstanceParameter.ElementCode} is not a Field";
+                    else
+                        Value = Field.Value;
+                }
+
+                if (Value != null && !DataType.FromName(p.ParameterType).TryParse(Value, out _))
+                {
+                    Error = $"The value {Value} of the {Binding} is not a valid {p.ParameterType}";
+                    Value = null;
+                }
+
+                return new ExternalSourceResponse.Parameter
+                {
+                    Name = p.Name,
+                    Label = p.Label,
+                    ParameterType = p.ParameterType,
+                    Hidden = InstanceParameter?.Hidden ?? false,
+                    ReadOnly = InstanceParameter?.ReadOnly ?? false,
+                    Value = Value,
+                    Error = Error
+                };
+            }).ToList();
+        }
+
         public async Task<ExternalSourceResponse> GetExternalSource(string code, IDefaultIdentity identity, string externalSourceCode, int itemId)
         {
             try
@@ -725,41 +785,18 @@ namespace CheckListManager.Instances.Logic.Services
                     throw new InstanceException("Access denied");
                 if (!cacheObject.Instance.ExternalSources.TryGetValue(externalSourceCode, out var externalSource))
                     throw new InstanceException("Invalid external source");
-
                 if (!cacheObject.Instance.Items.TryGetValue(itemId, out var item))
                     throw new InstanceException($"Item {itemId} not found");
-
-                if (!(item is Group group)) group = (Group)item.Group;
-                
+               
                 await _instanceCache.TouchAsync(code);
 
-                var response = await _client.PostAsync("DataSources/Data/GetDataSource", new { code = cacheObject.Instance.ExternalSources[externalSourceCode].DataSource });
-                var responseData = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode != HttpStatusCode.OK)
-                    throw new Exception(responseData);
-
-                var DataSource = JsonConvert.DeserializeObject<DataSource>(responseData);
+                var dataSource = await GetExternalSource(cacheObject, externalSourceCode);
+                var parameters = GetExternalSourceParameters(cacheObject, externalSource, dataSource, (Item)item);
 
                 return new ExternalSourceResponse
                 {
-                    Columns = DataSource.Columns,
-                    Parameters = DataSource.Parameters.Select(p => {
-                        if (!externalSource.Parameters.TryGetValue(p.Name, out var InstanceParameter)) InstanceParameter = null;
-                        var Value =
-                            InstanceParameter?.ExpressionCode != null && cacheObject.Instance.Expressions.TryGetValue(InstanceParameter.ExpressionCode, out var expression) ? expression.Value?.Value?.ToString() :
-                            InstanceParameter?.ElementCode != null && group.GetBranchElements().TryGetValue(InstanceParameter.ElementCode, out var element) && element is Field field ? field.Value :
-                            null;
-
-                        return new ExternalSourceResponse.Parameter
-                        {
-                            Name = p.Name,
-                            Label = p.Label,
-                            ParameterType = p.ParameterType,
-                            Hidden = InstanceParameter?.Hidden ?? false,
-                            ReadOnly = InstanceParameter?.ReadOnly ?? false,
-                            Value = Value
-                        };
-                    }).ToList()
+                    Columns = dataSource.Columns,
+                    Parameters = parameters
                 };
             }
             catch (InstanceException)
@@ -773,7 +810,7 @@ namespace CheckListManager.Instances.Logic.Services
             }
         }
 
-        public async Task<string> GetExternalSourceRows(string code, IDefaultIdentity identity, string externalSourceCode, Dictionary<string, string> parameters, int page)
+        public async Task<string> GetExternalSourceRows(string code, IDefaultIdentity identity, string externalSourceCode, int itemId, Dictionary<string, string> clientParameters, int page)
         {
             try
             {
@@ -782,10 +819,16 @@ namespace CheckListManager.Instances.Logic.Services
                     throw new InstanceException("Instance state not valid");
                 if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
                     throw new InstanceException("Access denied");
-                if (!cacheObject.Instance.ExternalSources.ContainsKey(externalSourceCode))
+                if (!cacheObject.Instance.ExternalSources.TryGetValue(externalSourceCode, out var externalSource))
                     throw new InstanceException("Invalid external source");
+                if (!cacheObject.Instance.Items.TryGetValue(itemId, out var item))
+                    throw new InstanceException($"Item {itemId} not found");
 
                 await _instanceCache.TouchAsync(code);
+
+                var dataSource = await GetExternalSource(cacheObject, externalSourceCode);
+                var dataSourceParameters = GetExternalSourceParameters(cacheObject, externalSource, dataSource, (Item)item);
+                var parameters = dataSourceParameters.ToDictionary(k => k.Name, v => !v.ReadOnly && !v.Hidden && clientParameters.TryGetValue(v.Name, out var clientValue) ? clientValue : v.Error == null ? v.Value : null);
 
                 var token = identity.Code + ":" + Guid.NewGuid();
                 await _redisCache.SetAsync($"Token:{token}", new DataRequest
@@ -1835,8 +1878,6 @@ namespace CheckListManager.Instances.Logic.Services
             cacheObject.ModifiedBy = userCode;
             cacheObject.ModifiedOn = DateTimeOffset.UtcNow;
         }
-
-        //private void 
 
         private async Task<List<Item>> HandleExternalSourceRowChange(InstanceCacheObject cacheObject, IDefaultIdentity identity, int? itemId, Dictionary<string, string> row)
         {

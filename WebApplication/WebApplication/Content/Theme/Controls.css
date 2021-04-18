@@ -1,6 +1,10 @@
 ﻿label {
   display: block;
   font-size: 13px; }
+  label > span:first-child > i.fa-exclamation {
+    color: #cc0000;
+    font-size: inherit;
+    margin-left: 5px; }
   label.Boolean input {
     height: 36px;
     line-height: 36px;
