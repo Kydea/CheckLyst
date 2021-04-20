@@ -787,7 +787,7 @@ namespace CheckListManager.Instances.Logic.Services
                     throw new InstanceException("Invalid external source");
                 if (!cacheObject.Instance.Items.TryGetValue(itemId, out var item))
                     throw new InstanceException($"Item {itemId} not found");
-               
+
                 await _instanceCache.TouchAsync(code);
 
                 var dataSource = await GetExternalSource(cacheObject, externalSourceCode);
@@ -1315,6 +1315,84 @@ namespace CheckListManager.Instances.Logic.Services
             TrackChanges(cacheObject, userCode);
         }
 
+        private async Task<Field> HandleValueChangeAsync(InstanceCacheObject cacheObject, string userCode, Field field, string value, int? itemId, string Action)
+        {
+            if ((value ?? string.Empty) == (field.Value ?? string.Empty)) return null;
+
+            string
+                oldFormattedValue = field.Value,
+                formattedValue = value;
+
+            field.ConversionError = false;
+            if (field.ValueType == DataType.DateTime)
+            {
+                string TimeZone = cacheObject.Instance.TimeZone;
+
+                if (field.LocalTimeZone)
+                {
+                    var dateTimeOffset = DateTimeOffsetHelper.Parse(oldFormattedValue, TimeZone, out var Ambiguous, out var AmbiguousDateTimeOffsets);
+                    oldFormattedValue = dateTimeOffset?.Format(TimeZone) ?? string.Empty;
+
+                    dateTimeOffset = DateTimeOffsetHelper.Parse(formattedValue, TimeZone, out Ambiguous, out AmbiguousDateTimeOffsets);
+                    formattedValue = dateTimeOffset?.Format(TimeZone) ?? string.Empty;
+                }
+                else
+                {
+                    if (DateTimeOffset.TryParseExact(oldFormattedValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out var Date))
+                        oldFormattedValue = Date.Format(TimeZone);
+                    else
+                        oldFormattedValue = string.Empty;
+
+                    if (DateTimeOffset.TryParseExact(formattedValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out Date))
+                        formattedValue = Date.Format(TimeZone);
+                    else
+                        formattedValue = string.Empty;
+                }
+            }
+            else if (field.ValueType == DataType.Number)
+            {
+                DecimalHelper.Parse(value, field.Precision, field.ScientificNotation, cacheObject.Instance.DecimalSeparator, out _, out formattedValue);
+                if (formattedValue == null)
+                {
+                    field.ConversionError = true;
+                    formattedValue = value;
+                }
+            }
+            else if (!field.ValueType.TryParse(value, out var parsedValue))
+                field.ConversionError = true;
+
+            field.ModifiedBy = userCode;
+            field.ModifiedOn = DateTimeOffset.UtcNow;
+            field.History.Add(new FieldRecord
+            {
+                DateTime = field.ModifiedOn.Value,
+                User = field.ModifiedBy,
+                Value = formattedValue,
+                TypedValue = value
+            });
+
+            await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+            {
+                Company = cacheObject.CompanyId,
+                User = userCode,
+                Action = Action,
+                Date = DateTimeOffset.UtcNow,
+                CheckListCode = cacheObject.InstanceCode,
+                CheckListID = cacheObject.ID,
+                Information = JsonConvert.SerializeObject(new
+                {
+                    ID = itemId,
+                    OldValue = oldFormattedValue,
+                    NewValue = formattedValue
+                })
+            });
+            field.Value = formattedValue;
+
+            TrackChanges(cacheObject, userCode);
+
+            return field;
+        }
+
         private async Task<Element> HandleValueChangeAsync(InstanceCacheObject cacheObject, string userCode, int? itemId, string value)
         {
             if (!itemId.HasValue)
@@ -1327,73 +1405,7 @@ namespace CheckListManager.Instances.Logic.Services
             if (field.ReadOnly)
                 return null;
 
-            if ((value ?? string.Empty) != (field.Value ?? string.Empty) && field.ValueType.TryParse(value, out var parsedValue))
-            {
-                string
-                    oldFormattedValue = field.Value,
-                    formattedValue = value;
-
-                if (field.ValueTypeName == "DateTime")
-                {
-                    string TimeZone = (await _settingService.TimeZoneAsync(cacheObject.CompanyId));
-
-                    if (field.LocalTimeZone)
-                    {
-                        var dateTimeOffset = DateTimeOffsetHelper.Parse(oldFormattedValue, TimeZone, out var Ambiguous, out var AmbiguousDateTimeOffsets);
-                        oldFormattedValue = dateTimeOffset?.Format(TimeZone) ?? string.Empty;
-
-                        dateTimeOffset = DateTimeOffsetHelper.Parse(formattedValue, TimeZone, out Ambiguous, out AmbiguousDateTimeOffsets);
-                        formattedValue = dateTimeOffset?.Format(TimeZone) ?? string.Empty;
-                    }
-                    else
-                    {
-                        if (DateTimeOffset.TryParseExact(oldFormattedValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out var Date))
-                            oldFormattedValue = Date.Format(TimeZone);
-                        else
-                            oldFormattedValue = string.Empty;
-
-                        if (DateTimeOffset.TryParseExact(formattedValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out Date))
-                            formattedValue = Date.Format(TimeZone);
-                        else
-                            formattedValue = string.Empty;
-                    }
-                }
-                else if (field.ValueTypeName == "Number" && field.Precision.HasValue && parsedValue is decimal decimalValue)
-                {
-                    var roundedValue = field.Precision.HasValue ? Math.Round(decimalValue, field.Precision.Value) : decimalValue;
-                    formattedValue = value = roundedValue.ToString().Replace(".", cacheObject.Instance.DecimalSeparator).Replace(",", cacheObject.Instance.DecimalSeparator);
-                }
-
-                field.ModifiedBy = userCode;
-                field.ModifiedOn = DateTimeOffset.UtcNow;
-                field.History.Add(new FieldRecord
-                {
-                    DateTime = field.ModifiedOn.Value,
-                    User = field.ModifiedBy,
-                    Value = formattedValue
-                });
-
-                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
-                {
-                    Company = cacheObject.CompanyId,
-                    User = userCode,
-                    Action = TrailAction.InstanceValueChanged,
-                    Date = DateTimeOffset.UtcNow,
-                    CheckListCode = cacheObject.InstanceCode,
-                    CheckListID = cacheObject.ID,
-                    Information = JsonConvert.SerializeObject(new
-                    {
-                        ID = itemId,
-                        OldValue = oldFormattedValue,
-                        NewValue = formattedValue
-                    })
-                });
-                field.Value = value;
-
-                TrackChanges(cacheObject, userCode);
-            }
-
-            return field;
+            return await HandleValueChangeAsync(cacheObject, userCode, field, value, itemId, TrailAction.InstanceValueChanged);
         }
 
         private async Task<Element> HandleValueCopyAsync(InstanceCacheObject cacheObject, string userCode, int? itemId)
@@ -1418,73 +1430,7 @@ namespace CheckListManager.Instances.Logic.Services
                 value = previousField?.Value ?? string.Empty;
             }
 
-            if ((value ?? string.Empty) != (field.Value ?? string.Empty) && field.ValueType.TryParse(value, out var parsedValue))
-            {
-                string
-                    oldFormattedValue = field.Value,
-                    formattedValue = value;
-
-                if (field.ValueTypeName == "DateTime")
-                {
-                    string TimeZone = (await _settingService.TimeZoneAsync(cacheObject.CompanyId));
-
-                    if (field.LocalTimeZone)
-                    {
-                        if (DateTimeOffset.TryParseExact(oldFormattedValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out var Date))
-                            oldFormattedValue = Date.Format(TimeZone);
-                        else
-                            oldFormattedValue = string.Empty;
-
-                        if (DateTimeOffset.TryParseExact(formattedValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out Date))
-                            formattedValue = Date.Format(TimeZone);
-                        else
-                            formattedValue = string.Empty;
-                    }
-                    else
-                    {
-                        var dateTimeOffset = DateTimeOffsetHelper.Parse(oldFormattedValue, TimeZone, out var Ambiguous, out var AmbiguousDateTimeOffsets, DateTimeOffsetHelper.DateTimeFormats);
-                        oldFormattedValue = dateTimeOffset?.Format(TimeZone) ?? string.Empty;
-
-                        dateTimeOffset = DateTimeOffsetHelper.Parse(formattedValue, TimeZone, out Ambiguous, out AmbiguousDateTimeOffsets, DateTimeOffsetHelper.DateTimeFormats);
-                        formattedValue = dateTimeOffset?.Format(TimeZone) ?? string.Empty;
-                    }
-                }
-                else if (field.ValueTypeName == "Number" && field.Precision.HasValue && parsedValue is decimal decimalValue)
-                {
-                    var roundedValue = field.Precision.HasValue ? Math.Round(decimalValue, field.Precision.Value) : decimalValue;
-                    formattedValue = value = roundedValue.ToString().Replace(".", cacheObject.Instance.DecimalSeparator).Replace(",", cacheObject.Instance.DecimalSeparator);
-                }
-
-                field.ModifiedBy = userCode;
-                field.ModifiedOn = DateTimeOffset.UtcNow;
-                field.History.Add(new FieldRecord
-                {
-                    DateTime = field.ModifiedOn.Value,
-                    User = field.ModifiedBy,
-                    Value = formattedValue
-                });
-
-                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
-                {
-                    Company = cacheObject.CompanyId,
-                    User = userCode,
-                    Action = TrailAction.InstanceValueCopied,
-                    Date = DateTimeOffset.UtcNow,
-                    CheckListCode = cacheObject.InstanceCode,
-                    CheckListID = cacheObject.ID,
-                    Information = JsonConvert.SerializeObject(new
-                    {
-                        ID = itemId,
-                        OldValue = oldFormattedValue,
-                        NewValue = formattedValue
-                    })
-                });
-                field.Value = value;
-
-                TrackChanges(cacheObject, userCode);
-            }
-
-            return field;
+            return await HandleValueChangeAsync(cacheObject, userCode, field, value, itemId, TrailAction.InstanceValueCopied);
         }
 
         private async Task<Iteration> HandleAddAsync(InstanceCacheObject cacheObject, string userCode, int? itemId)

@@ -47,7 +47,7 @@ namespace CheckListManager.Common.Logic.Models
                         result = "true".Equals(value, StringComparison.InvariantCultureIgnoreCase) ? true : "false".Equals(value, StringComparison.InvariantCultureIgnoreCase) ? false : default(bool?);
                         return result != null;
                     case DataTypeEnum.Number:
-                        result = decimal.TryParse(value.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out var decimalResult) ? decimalResult : default(decimal?);
+                        result = DecimalHelper.Parse(value);
                         return result != null;
                     case DataTypeEnum.Date:
                         result = DateTimeOffset.TryParseExact(value, DateTimeOffsetHelper.DateFormat, null, DateTimeStyles.AssumeUniversal, out var dateTimeOffsetResult) ? dateTimeOffsetResult : default(DateTimeOffset?);

@@ -118,7 +118,7 @@
                 }
 
                 if (container.size() == 0) {
-                    container = $("div.Popup");
+                    container = $("div.Popup, div.CheckListGrid");
                     button = $(selector, container);
                 }
 
@@ -126,7 +126,7 @@
                     button = $(selector);
 
                 if (button.size() > 0) {
-                    button.first().click();
+                    button.last().click();
                     e.preventDefault();
                 }
 

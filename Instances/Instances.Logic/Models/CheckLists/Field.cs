@@ -38,6 +38,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public string DefaultValue { get; set; }
         public int? Precision { get; set; }
+        public bool ScientificNotation { get; set; }
 
         public bool LocalTimeZone { get; set; }
 
@@ -71,7 +72,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 ItemModel.History = History.Select(x => new {
                     x.DateTime,
                     x.User,
-                    x.Value
+                    x.Value,
+                    x.TypedValue
                 });
             return ItemModel;
         }
@@ -87,6 +89,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 ValueTypeName = ValueTypeName,
                 DefaultValue = DefaultValue,
                 Precision = Precision,
+                ScientificNotation = ScientificNotation,
                 LocalTimeZone = LocalTimeZone,
                 ValuesList = ValuesList,
                 ExternalSourceName = ExternalSourceName,
@@ -140,21 +143,35 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             if (ValueFormula.IsSet)
             {
                 var FormulaValue = ValueFormula.Value;
-                ConversionError = ValueFormula.HasValue && !ValueType.TryParse(FormulaValue, out ConvertedValue);
-                if (Precision.HasValue && !ConversionError && ConvertedValue is decimal decimalValue)
-                    FormulaValue = Math.Round(decimalValue, Precision.Value).ToString();
-
-                Value = ConversionError ? null : FormulaValue;
+                if (ValueType == DataType.Number)
+                {
+                    DecimalHelper.Parse(FormulaValue, Precision, ScientificNotation, Instance.DecimalSeparator, out _, out var FormattedFormulaValue);
+                    Value = FormattedFormulaValue;
+                    ConversionError = FormattedFormulaValue == null;
+                }
+                else
+                {
+                    ConversionError = ValueFormula.HasValue && !ValueType.TryParse(FormulaValue, out ConvertedValue);
+                    Value = ConversionError ? null : FormulaValue;
+                }
             }
 
             if (ExternalSourceName != null && Instance.ExternalSources.TryGetValue(ExternalSourceName, out var ExternalSource))
             {
-                if (ExternalSource.Values == null || !ExternalSource.Values.TryGetValue(ExternalSourceColumn, out var ExternalSourceValue)) ExternalSourceValue = null;
-                ConversionError = !ValueType.TryParse(ExternalSourceValue, out ConvertedValue);
-                if (Precision.HasValue && !ConversionError && ConvertedValue is decimal decimalValue)
-                    ExternalSourceValue = Math.Round(decimalValue, Precision.Value).ToString();
+                if (ExternalSource.Values == null || !ExternalSource.Values.TryGetValue(ExternalSourceColumn, out var ExternalSourceValue))
+                    ExternalSourceValue = null;
 
-                Value = ConversionError ? null : ExternalSourceValue;
+                if (ExternalSourceValue != null && ValueType == DataType.Number)
+                {
+                    DecimalHelper.Parse(ExternalSourceValue, Precision, ScientificNotation, Instance.DecimalSeparator, out _, out var FormattedExternalSourceValue);
+                    Value = FormattedExternalSourceValue;
+                    ConversionError = FormattedExternalSourceValue == null;
+                }
+                else
+                {
+                    ConversionError = !ValueType.TryParse(ExternalSourceValue, out ConvertedValue);
+                    Value = ConversionError ? null : ExternalSourceValue;
+                }
             }
 
             if (!ConversionError)
@@ -197,20 +214,16 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public override string ValidityMessage { get => ConversionError ? $"the value {ValueFormula.Value} could not be converted to {ValueType.TypeName}" : base.ValidityMessage; set => base.ValidityMessage = value; }
         public override bool IsValidByDefault() => !ConversionError && (ValueFormula.IsSet ? ValueFormula.HasValue : !string.IsNullOrEmpty(Value));
-        protected override bool IsReadOnlyByDefault() => base.IsReadOnlyByDefault() || ValueFormula.IsSet; // || !string.IsNullOrEmpty(ExternalSourceName);
+        protected override bool IsReadOnlyByDefault() => base.IsReadOnlyByDefault() || ValueFormula.IsSet;
 
         public override bool Setup()
         {
             var Result = base.Setup();
             if (!string.IsNullOrEmpty(DefaultValue))
             {
-                if (ValueType.TryParse(DefaultValue, out var Object))
-                {
-                    Value = DefaultValue;
-                    if (Precision.HasValue && Object is decimal DecimalValue)
-                        Value = Math.Round(DecimalValue, Precision.Value).ToString();
-                }
+                DecimalHelper.Parse(DefaultValue, Precision, ScientificNotation, Instance.DecimalSeparator, out _, out var FormattedDefaultValue);
                 DefaultValue = null;
+                Value = FormattedDefaultValue;
             }
             return Result;
         }

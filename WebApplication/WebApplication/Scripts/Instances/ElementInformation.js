@@ -13,7 +13,7 @@
 
         setContent = function () {
             if (panel)
-                panel.empty();            
+                panel.empty();
             else
                 panel = $("<div />").addClass("Panel").appendTo(element).on("click", click);
 
@@ -36,7 +36,8 @@
                         ] : [
                             { name: "dateTime", label: "Date/Time", type: "DateTimeOffset" },
                             { name: "user", label: "User" },
-                            { name: "value", label: "Value", type: "Boolean" }
+                            { name: "value", label: "Applied value" },
+                            { name: "typedValue", label: "Typed value" }
                         ];
                     //back compatbility before icon change for signature history
                     new matematici.CheckListGrid("History", model.history, null, null, columns, function (checkListGrid, rowIndex, row) {

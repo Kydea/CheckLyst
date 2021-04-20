@@ -50,15 +50,12 @@
         },
 
         change = function () {
-            var valid = model.valuesList || matematici.TypedInput.validate(model.valueTypeName, input, select, select2);
-            if (valid) {
-                var handleGoToNext = goToNext;
-                goToNext = 0;
-                new instances.Event(instances.Events.valueChange, model.id, { value: getValue() }).done(function (result) {
-                    instances.instance.update(result);
-                    if (handleGoToNext) next(handleGoToNext);
-                }).trigger();
-            }
+            var handleGoToNext = goToNext;
+            goToNext = 0;
+            new instances.Event(instances.Events.valueChange, model.id, { value: getValue() }).done(function (result) {
+                instances.instance.update(result);
+                if (handleGoToNext) next(handleGoToNext);
+            }).trigger();
         },
 
         valueCopy = function (e) {
