@@ -37,7 +37,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public override dynamic GetViewModel()
         {
             var ItemModel = base.GetViewModel();
-            var Target = !GetBranchElements().TryGetValue(this.Target, out var Item) || !(Item is Attachment Attachment) ? null : Attachment;
+            var Target = this.Target == null || !GetBranchElements().TryGetValue(this.Target, out var Item) || !(Item is Attachment Attachment) ? null : Attachment;
             ItemModel.Key = Target?.Key ?? Key;
             ItemModel.FileType = Target?.FileType ?? FileType;
             return ItemModel;
