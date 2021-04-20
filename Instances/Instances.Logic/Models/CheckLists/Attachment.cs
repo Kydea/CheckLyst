@@ -15,7 +15,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             var attachment = new Attachment
             {
                 Group = parent,
-                FileType = FileType
+                FileType = FileType,
+                Target = Target
             };
             Copy(this, attachment);
             return attachment;
@@ -25,6 +26,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         
         public string Key { get; set; }
         public string FileType { get; set; }
+        public string Target { get; set; }
 
         public class FileTypes
         {
@@ -35,8 +37,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public override dynamic GetViewModel()
         {
             var ItemModel = base.GetViewModel();
-            ItemModel.Key = Key;
-            ItemModel.FileType = FileType;
+            var Target = !GetBranchElements().TryGetValue(this.Target, out var Item) || !(Item is Attachment Attachment) ? null : Attachment;
+            ItemModel.Key = Target?.Key ?? Key;
+            ItemModel.FileType = Target?.FileType ?? FileType;
             return ItemModel;
         }
     }

@@ -12,13 +12,14 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         public override ICheckListItem Clone(ICheckListGroup parent)
         {
-            var text = new Attachment { Group = parent, Key = Key, FileType = FileType };
+            var text = new Attachment { Group = parent, Key = Key, FileType = FileType, Target = Target };
             Copy(this, text);
             return text;
         }
 
         public string Key { get; set; }
         public string FileType { get; set; } = "images";
+        public string Target { get; set; }
 
         [JsonIgnore]
         public string ModifiedBy { get; }

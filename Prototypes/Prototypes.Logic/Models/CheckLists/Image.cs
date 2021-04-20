@@ -11,12 +11,13 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         public override ICheckListItem Clone(ICheckListGroup parent)
         {
-            var Image = new Image { Group = parent, Key = Key };
+            var Image = new Image { Group = parent, Key = Key, Target = Target };
             Copy(this, Image);
             return Image;
         }
 
         public string ImageName { get; set; }
         public string Key { get; set; }
+        public string Target { get; set; }
     }
 }

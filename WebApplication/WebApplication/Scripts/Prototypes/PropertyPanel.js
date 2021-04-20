@@ -492,9 +492,10 @@
                         function () { $("a.Link", item.getElement()).html((model.description || '(no label)')); }
                     ));
                     properties.push(new prototypes.Property(
-                        this, new prototypes.LinkProperty(model),
-                        "Link target",
-                        "The url/image/attachment to open."
+                        this, new prototypes.SimpleValueProperty(model, "url", { readOnly: state != prototypes.Prototype.states.draft, fullHeight: true }),
+                        "Url",
+                        "The url to open.",
+                        function () { $("a.Link", item.getElement()).attr("href", model.url); }
                     ));
                     break;
                 case "Image":
@@ -508,6 +509,11 @@
                         this, new prototypes.UploadProperty(model, "key", { readOnly: state != prototypes.Prototype.states.draft }),
                         "Image",
                         "Upload the image to show."
+                    ));
+                    properties.push(new prototypes.Property(
+                        this, new prototypes.TargetProperty(model, "Image"),
+                        "Target",
+                        "It the target is specified, the button will show the image of the specified item."
                     ));
                     break;
                 case "Attachment":
@@ -529,6 +535,11 @@
                             ["images", "pdf"]
                         ), "File type",
                         "The file type of the attachment."
+                    ));
+                    properties.push(new prototypes.Property(
+                        this, new prototypes.TargetProperty(model, "Attachment"),
+                        "Target",
+                        "It the target is specified, the attachment will be linked to the specified item."
                     ));
                     break;
                 default:
