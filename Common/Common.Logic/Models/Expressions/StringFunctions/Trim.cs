@@ -34,7 +34,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.StringFunctions
             var Result = base.Evaluate(LeftValue, RightValue, TimeZone);
             if (Result == null)
             {
-                var Text = LeftValue.TextValue;
+                var Text = LeftValue.TextValue ?? string.Empty;
                 var Pattern = RightValue.IsNull ? " " : RightValue.TextValue;
                 if (Direction != Directions.Right)
                     while (Text.StartsWith(Pattern))
