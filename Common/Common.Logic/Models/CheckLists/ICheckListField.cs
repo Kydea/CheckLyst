@@ -18,6 +18,7 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
 		string ValueTypeName { get; set; }
         string DefaultValue { get; set; }
         int? Precision { get; set; }
+        bool ScientificNotation { get; set; }
         bool LocalTimeZone { get; set; }
     }
 }

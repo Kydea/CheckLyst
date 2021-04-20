@@ -41,6 +41,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         public string DefaultValue { get; set; }
         public int? Precision { get; set; }
+        public bool ScientificNotation { get; set; }
 
         public bool LocalTimeZone { get; set; }
 
@@ -55,6 +56,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 ValueTypeName = ValueTypeName,
                 DefaultValue = DefaultValue,
                 Precision = Precision,
+                ScientificNotation = ScientificNotation,
                 LocalTimeZone = LocalTimeZone,
                 ValuesList = ValuesList,
                 ExternalSourceName = ExternalSourceName,
