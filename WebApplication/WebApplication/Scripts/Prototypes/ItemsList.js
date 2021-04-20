@@ -144,9 +144,9 @@
                 rows.eq(index).toggle(visible).toggleClass("Even", filtering && even).toggleClass("Odd", filtering && !even);
                 if (visible) even = !even;
             }
-            select();
             toggleNoRecord();
             fixedHeader.refresh();
+            select();
         },
 
         setup = function () {
