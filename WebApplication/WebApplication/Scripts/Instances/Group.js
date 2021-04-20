@@ -207,7 +207,7 @@
                                             icon: "file-import",
                                             data: setupModel.externalSources[externalSourceIndex],
                                             handler: function (name) {
-                                                new instances.ExternalSources(id, name, true);
+                                                new matematici.ExternalSourcesSearchForm(id, name, true);
                                             }
                                         });
                                     }

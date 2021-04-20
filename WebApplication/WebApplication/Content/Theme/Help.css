@@ -11,7 +11,7 @@ body.Help {
     right: 0;
     bottom: 0;
     left: 0;
-    z-index: 105;
+    z-index: 104;
     background-color: rgba(102, 102, 102, 0.7); }
     body.Help div.Help div.Container {
       padding: 20px;

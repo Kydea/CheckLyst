@@ -1,4 +1,4 @@
-﻿instances.ExternalSources = function (itemId, name, multiSelection) {
+﻿matematici.ExternalSourcesSearchForm = function (itemId, name, multiSelection) {
     var
         element,
         page = 0,
@@ -122,9 +122,14 @@
                 }))
                 .append(confirmButton = $("<a />").addClass("Button").text("confirm").prepend($("<i />").addClass("Icon fa fa-file-import")).on("click", confirm).hide());
 
-            $.ajax(matematici.urls.instances.api + "/GetExternalSource", {
+            var
+                url = instances.instance ? matematici.urls.instances.api + "/GetExternalSource" : matematici.urls.dataSources.api + "/Data/GetDataSource",
+                data = instances.instance ?
+                    { instanceCode: instances.instance.getCode(), externalSourceCode: name, itemId: itemId } :
+                    { code: name };
+            $.ajax(url, {
                 method: "post",
-                data: { instanceCode: instances.instance.getCode(), externalSourceCode: name, itemId: itemId }
+                data: data
             }).done(function (result) {
                 var hasEditableParameters = false;
                 for (var index in result.parameters) {
@@ -206,9 +211,15 @@
         },
 
         load = function () {
-            $.ajax(matematici.urls.instances.api + "/GetExternalSourceRows", {
+            var
+                url = instances.instance ? matematici.urls.instances.api + "/GetExternalSourceRows" : matematici.urls.dataSources.api + "/Data/Test",
+                data = instances.instance ?
+                    { data: { instanceCode: instances.instance.getCode(), parameters: parameterValues, itemId: itemId, externalSourceCode: name, page: page } } :
+                    { code: name, parameters: parameterValues, page: page, decimalSeparator: localStorage.decimalSeparator, timeZone: localStorage.timeZone };
+
+            $.ajax(url, {
                 method: "post",
-                data: { data: { instanceCode: instances.instance.getCode(), parameters: parameterValues, itemId: itemId, externalSourceCode: name, page: page } }
+                data: data
             }).done(function (result) {
                 if (page == 0) {
                     tableBody.empty();
@@ -218,7 +229,8 @@
                 var rows = JSON.parse(result).rows;
                 if (rows && rows.length) {
                     for (var row in rows) {
-                        var tr = $("<tr />").appendTo(tableBody).addClass("Handler");
+                        var tr = $("<tr />").appendTo(tableBody);
+                        if (instances.instance) tr.addClass("Handler");
                         if (multiSelection) tr.append($("<td />").append($("<input />").attr({ type: "checkbox" }).on("click", function (e) {
                             e.stopPropagation();
                             toggleRow($(this).parent());

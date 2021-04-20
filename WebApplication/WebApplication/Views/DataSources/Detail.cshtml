@@ -2,142 +2,142 @@
     <h2>Data Source</h2>
 
     <form id="Detail" action="@BaseUrl/DataSources/List">
-		<input type="hidden" name="reason" />
-		<div class="TabContainer">
-			<div class="TabLabels">
-				<a href="#">Details</a>
-				<a href="#" class="Parameters SAP">Parameters</a>
-				<a href="#" class="Parameters SQL">Connection</a>
-				<a href="#" class="Parameters SQL">Parameters</a>
-			</div>
-			<div class="Tab">
-				<label>
-					<span>Code</span>
-					<i class="Icon fal fa-key" />
-					<input type="text" name="code" class="Code" />
-				</label>
+        <input type="hidden" name="reason" />
+        <div class="TabContainer">
+            <div class="TabLabels">
+                <a href="#">Details</a>
+                <a href="#" class="Parameters SAP">Parameters</a>
+                <a href="#" class="Parameters SQL">Connection</a>
+                <a href="#" class="Parameters SQL">Parameters</a>
+            </div>
+            <div class="Tab">
+                <label>
+                    <span>Code</span>
+                    <i class="Icon fal fa-key" />
+                    <input type="text" name="code" class="Code" />
+                </label>
 
-				<label>
-					<span>Source class</span>
-					<i class="Icon fal fa-chart-network" />
-					<select class="AutoComplete SourceClass" name="class">
-						<option value="SAP">SAP</option>
-						<option value="SQL">SQL</option>
-					</select>
-				</label>
+                <label>
+                    <span>Source class</span>
+                    <i class="Icon fal fa-chart-network" />
+                    <select class="AutoComplete SourceClass" name="class">
+                        <option value="SAP">SAP</option>
+                        <option value="SQL">SQL</option>
+                    </select>
+                </label>
 
-				<label>
-					<span>Description</span>
-					<i class="Icon fal fa-align-left" />
-					<input type="text" name="description" />
-				</label>
+                <label>
+                    <span>Description</span>
+                    <i class="Icon fal fa-align-left" />
+                    <input type="text" name="description" />
+                </label>
 
-				<label class="Clearing Controls2">
-					<span>Creation</span>
-					<i class="Icon fal fa-user" />
-					<input type="text" name="createdBy" readonly="readonly" />
-					<i class="Icon fal fa-calendar-alt" />
-					<input type="text" name="createdOn" readonly="readonly" data-type="DateTimeOffset" />
-				</label>
+                <label class="Clearing Controls2">
+                    <span>Creation</span>
+                    <i class="Icon fal fa-user" />
+                    <input type="text" name="createdBy" readonly="readonly" />
+                    <i class="Icon fal fa-calendar-alt" />
+                    <input type="text" name="createdOn" readonly="readonly" data-type="DateTimeOffset" />
+                </label>
 
-				<label class="Clearing Controls2">
-					<span>Last edit</span>
-					<i class="Icon fal fa-user" />
-					<input type="text" name="modifiedBy" readonly="readonly" />
-					<i class="Icon fal fa-calendar-alt" />
-					<input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
-				</label>
-			</div>
-			<div class="Tab">
-				<label>
-					<span>User</span>
-					<i class="Icon fal fa-user" />
-					<input type="text" name="user" maxlength="200" />
-				</label>
+                <label class="Clearing Controls2">
+                    <span>Last edit</span>
+                    <i class="Icon fal fa-user" />
+                    <input type="text" name="modifiedBy" readonly="readonly" />
+                    <i class="Icon fal fa-calendar-alt" />
+                    <input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
+                </label>
+            </div>
+            <div class="Tab">
+                <label>
+                    <span>User</span>
+                    <i class="Icon fal fa-user" />
+                    <input type="text" name="user" maxlength="200" />
+                </label>
 
-				<label>
-					<span>Password</span>
-					<i class="Icon fal fa-lock" />
-					<input type="password" maxlength="50" />
-				</label>
+                <label>
+                    <span>Password</span>
+                    <i class="Icon fal fa-lock" />
+                    <input type="password" maxlength="50" />
+                </label>
 
-				<label>
-					<span>Query</span>
-					<i class="Icon fal fa-cogs" />
-					<select class="AutoComplete" name="functionName" data-nullable="-">
-						<option value="PO Header">PO Header</option>
-					</select>
-				</label>
+                <label>
+                    <span>Query</span>
+                    <i class="Icon fal fa-cogs" />
+                    <select class="AutoComplete" name="functionName" data-nullable="-">
+                        <option value="PO Header">PO Header</option>
+                    </select>
+                </label>
 
-				<label>
-					<span>Client</span>
-					<i class="Icon fal fa-chart-network" />
-					<input type="text" name="client" maxlength="200" />
-				</label>
+                <label>
+                    <span>Client</span>
+                    <i class="Icon fal fa-chart-network" />
+                    <input type="text" name="client" maxlength="200" />
+                </label>
 
-				<label>
-					<span>Message server host</span>
-					<i class="Icon fal fa-chart-network" />
-					<input type="text" name="messageServerHost" maxlength="200" />
-				</label>
+                <label>
+                    <span>Message server host</span>
+                    <i class="Icon fal fa-chart-network" />
+                    <input type="text" name="messageServerHost" maxlength="200" />
+                </label>
 
-				<label>
-					<span>Message server service</span>
-					<i class="Icon fal fa-chart-network" />
-					<input type="text" name="messageServerService" maxlength="200" />
-				</label>
+                <label>
+                    <span>Message server service</span>
+                    <i class="Icon fal fa-chart-network" />
+                    <input type="text" name="messageServerService" maxlength="200" />
+                </label>
 
-				<label>
-					<span>System ID</span>
-					<i class="Icon fal fa-chart-network" />
-					<input type="text" name="systemID" maxlength="200" />
-				</label>
+                <label>
+                    <span>System ID</span>
+                    <i class="Icon fal fa-chart-network" />
+                    <input type="text" name="systemID" maxlength="200" />
+                </label>
 
-				<label>
-					<span>Logon group</span>
-					<i class="Icon fal fa-users" />
-					<input type="text" name="logonGroup" maxlength="200" />
-				</label>
+                <label>
+                    <span>Logon group</span>
+                    <i class="Icon fal fa-users" />
+                    <input type="text" name="logonGroup" maxlength="200" />
+                </label>
 
-				<label>
-					<span>Language</span>
-					<i class="Icon fal fa-align-left" />
-					<input type="text" name="language" maxlength="200" />
-				</label>
-			</div>
-			<div class="Tab">
-				<label>
-					<span>DBMS</span>
-					<i class="Icon fal fa-chart-network" />
+                <label>
+                    <span>Language</span>
+                    <i class="Icon fal fa-align-left" />
+                    <input type="text" name="language" maxlength="200" />
+                </label>
+            </div>
+            <div class="Tab">
+                <label>
+                    <span>DBMS</span>
+                    <i class="Icon fal fa-chart-network" />
                     <select class="AutoComplete" name="dbms">
                         <option value="SQL Server">SQL Server</option>
                         <option value="Oracle">Oracle</option>
                         <option value="Postgres">Postgres</option>
                     </select>
-				</label>
+                </label>
 
-				<label class="Width300">
-					<span>Connection string</span>
-					<i class="Icon fal fa-user" />
-					<input type="text" name="connectionString" maxlength="500" />
-				</label>
+                <label class="Width300">
+                    <span>Connection string</span>
+                    <i class="Icon fal fa-user" />
+                    <input type="text" name="connectionString" maxlength="500" />
+                </label>
 
-				<label>
-					<span>Password</span>
-					<i class="Icon fal fa-lock" />
-					<input type="password" maxlength="50" />
-				</label>
+                <label>
+                    <span>Password</span>
+                    <i class="Icon fal fa-lock" />
+                    <input type="password" maxlength="50" />
+                </label>
 
-				<label class="Width300">
-					<span>Query</span>
-					<textarea name="query" maxlength="10000" style="height: 200px" />
-				</label>
-			</div>
-			<div class="Tab">
-				<div class="Clearing"></div>
-			</div>
-			<div class="Clearing"></div>
-		</div>
+                <label class="Width300">
+                    <span>Query</span>
+                    <textarea name="query" maxlength="10000" style="height: 200px" />
+                </label>
+            </div>
+            <div class="Tab">
+                <div class="Clearing"></div>
+            </div>
+            <div class="Clearing"></div>
+        </div>
     </form>
 </div>
 
@@ -269,6 +269,29 @@
             if (parameters && parameters.queryParameters) buildQueryParameters(parameters.queryParameters);
         },
 
+        testHandler = function () {
+            var action = function () {
+                new matematici.ExternalSourcesSearchForm(null, codeInput.val(), false);
+            }
+
+            if (matematici.canClose)
+                action();
+            else
+                matematici.dialog.show("warning", "There are unsaved changes.", [
+                    {
+                        text: "save", icon: "check", handler: function () {
+                            setTimeout(function () {
+                                matematici.save(action, true);
+                            }, 0);
+                        }
+                    },
+                    { text: "cancel", icon: "times", cancelButton: true }
+                ]);
+
+
+            return true;
+        },
+
         detailPage = new matematici.DetailPage({
             takeOpenOnSave: true,
             formSelector: formSelector,
@@ -281,35 +304,7 @@
                 text: "test",
                 ahidden: true,
                 id: "TestButton",
-                handler: function () {
-                    var action = function () {
-                        $.ajax({
-                            type: "post",
-                            url: "@BaseUrl/DataSources/Data/Test",
-                            contentType: "application/json; charset=utf-8",
-                            data: JSON.stringify({ code: codeInput.val() })
-                        }).done(function (result) {
-                            console.log("test result", result);
-                            matematici.dialog.show("Connection test", "Test succesfully completed");
-                        });
-                    }
-                    if (matematici.canClose)
-                        action();
-                    else
-                        matematici.dialog.show("warning", "There are unsaved changes.", [
-                            {
-                                text: "save", icon: "check", handler: function () {
-                                    setTimeout(function () {
-                                        matematici.save(action, true);
-                                    }, 0);
-                                }
-                            },
-                            { text: "cancel", icon: "times", cancelButton: true }
-                        ]);
-
-
-                    return true;
-                }
+                handler: testHandler
             }, {
                 icon: "plus",
                 text: "parameter",

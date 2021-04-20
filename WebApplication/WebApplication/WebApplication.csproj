@@ -310,7 +310,7 @@
     <Content Include="Scripts\Instances\ElementInformation.js" />
     <Content Include="Scripts\Instances\Event.js" />
     <Content Include="Scripts\Instances\SignatureEmail.js" />
-    <Content Include="Scripts\Instances\ExternalSources.js" />
+    <Content Include="Scripts\Custom\ExternalSourcesSearchForm.js" />
     <Content Include="Scripts\Instances\Field.js" />
     <Content Include="Scripts\Instances\Group.js" />
     <Content Include="Scripts\Instances\Attachment.js" />

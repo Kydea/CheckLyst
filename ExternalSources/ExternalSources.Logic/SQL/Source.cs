@@ -70,13 +70,6 @@ namespace CheckListManager.ExternalSources.Logic.SQL
             return Parameter.ParameterType == "Text" ? "" : Parameter.ParameterType == "Number" ? "-1" : "01/01/1900";
         }
 
-        private void ValidateParameter(Parameter Parameter)
-        {
-            //we currently accept only text parameter
-            if (Parameter.ParameterType != "Text")
-                throw new Exception("Invalid parameter type: " + Parameter.ParameterType);
-        }
-
         private string Format(object Value, string DecimalSeparator, string TimeZone)
         {
             return
@@ -112,15 +105,6 @@ namespace CheckListManager.ExternalSources.Logic.SQL
 
         public override void Dispose()
         {
-        }
-
-        public override void Test()
-        {
-            var DataSet = LoadData(null, 0, 0);
-            if (DataSet.Tables.Count == 0) throw new Exception("The query returns no table");
-            if (DataSet.Tables.Count > 1) throw new Exception("The query returns more than one table");
-            foreach (var Parameter in Parameters)
-                ValidateParameter(Parameter);
         }
 
         public override void PrepareMetaData()

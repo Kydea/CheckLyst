@@ -15,7 +15,6 @@ namespace CheckListManager.ExternalSources.Logic
 
         public abstract void Dispose();
 
-        public abstract void Test();
         public abstract void PrepareMetaData();
         public abstract IEnumerable<List<string>> GetData(Dictionary<string, string> Parameters, int Page, string DecimalSeparator, string TimeZone);
 

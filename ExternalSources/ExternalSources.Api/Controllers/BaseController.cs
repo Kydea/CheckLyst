@@ -18,27 +18,6 @@ namespace CheckListManager.ExternalSources.Api.Controllers
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         [HttpPost]
-        [Route("Test")]
-        public IHttpActionResult Test(ExternalSourceRequest request)
-        {
-            try
-            {
-                Logger.Info("ExternalSource/Test parameters:\n" + JsonConvert.SerializeObject(request));
-                using (var Source = SourceBase.Build(request.className, request.code, request.password, request.version, request.data))
-                {
-                    Source.Open();
-                    Source.Test();
-                    return Ok();
-                }
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e, "External source error");
-                return Content(HttpStatusCode.InternalServerError, e.Message);
-            }
-        }
-
-        [HttpPost]
         [Route("GetMetaData")]
         public IHttpActionResult GetMetaData(ExternalSourceRequest request)
         {

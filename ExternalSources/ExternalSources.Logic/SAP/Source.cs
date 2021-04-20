@@ -36,11 +36,6 @@ namespace CheckListManager.ExternalSources.Logic.SAP
             Destination = RfcDestinationManager.GetDestination(Code);
         }
 
-        public override void Test()
-        {
-            var Repository = Destination.Repository;
-        }
-
         public override void Dispose()
         {
         }

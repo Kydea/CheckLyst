@@ -7,6 +7,8 @@ using CheckListManager.Common.Logic.DataEngine;
 using System;
 using CheckListManager.Common.Logic.Cache;
 using CheckListManager.Common.Logic.DataSources;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace CheckListManager.DataSources.Api.Controllers
 {
@@ -30,28 +32,12 @@ namespace CheckListManager.DataSources.Api.Controllers
             return Ok(await _dataService.GetDataSourceAsync(Identity.CompanyId, request.Code)); 
         }
 
-        [Authorize(Roles = "Prototypes#View")]
+        [Authorize(Roles = "Prototypes#View, DataSources#Edit")]
         [HttpPost]
         [Route("GetDataSources")]
         public async Task<IHttpActionResult> GetDataSources(PagingRequest<Logic.Data.DataRequest> request)
         {
             return Ok(await _dataService.GetDataSourcesAsync(Identity.CompanyId, request));
-        }
-
-        [Authorize(Roles = "DataSources#View")]
-        [HttpPost]
-        [Route("Test")]
-        public async Task<IHttpActionResult> Test(Logic.Data.DataRequest request)
-        {
-            try
-            {
-                await _dataService.TestAsync(Identity.CompanyId, request.Code);
-                return Ok();
-            }
-            catch(Exception Exception)
-            {
-                return Error(Exception);
-            }
         }
 
         [HttpPost]
@@ -62,6 +48,22 @@ namespace CheckListManager.DataSources.Api.Controllers
             await _redisCache.RemoveAsync($"Token:{tokenRequest.token}", "S2S");
 
             return Ok(await _dataService.GetDataSourceRowsAsync(Identity.CompanyId, Data));
+        }
+
+        [Authorize(Roles = "DataSources#Edit")]
+        [HttpPost]
+        [Route("Test")]
+        public async Task<IHttpActionResult> Test(Common.Logic.DataSources.DataRequest request)
+        {
+            try
+            {
+                var JsonString = await _dataService.GetDataSourceRowsAsync(Identity.CompanyId, request);
+                return Ok(JsonString);
+            }
+            catch (Exception Exception)
+            {
+                return Error(Exception);
+            }
         }
 
         [HttpPost]

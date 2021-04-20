@@ -66,27 +66,6 @@ namespace CheckListManager.DataSources.Logic.Data
                     Form.ItemsPerPage
                 );
 
-        public async Task TestAsync(long Company, string Code)
-        {
-            var Record = (await _dataSourcesRepository.GetDataSourcesAsync(
-                Company,
-                ds => ds,
-                wf => wf.Company == Company && wf.Code == Code,
-                p => p.Code,
-                1,
-                1
-            )).Data.SingleOrDefault();
-
-            await CallExternalSource("Test", new ExternalSources.DataRequest
-            {
-                code = $"{Company}.{Record.Code}",
-                className = Record.Class,
-                password = Record.Password,
-                data = Record.Data,
-                version = Record.ModifiedOn ?? Record.CreatedOn
-            });
-        }
-
         public async Task<string> GetDataSourceRowsAsync(long Company, Common.Logic.DataSources.DataRequest Request)
         {
             var Record = (await _dataSourcesRepository.GetDataSourcesAsync(
