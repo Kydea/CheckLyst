@@ -1,5 +1,6 @@
-﻿instances.Text = function (item, model) {
+﻿instances.Text = function (item, m) {
     var
+        model = m,
         element,
         p,
         ellipsis,
@@ -9,7 +10,7 @@
         },
 
         showMore = function () {
-            matematici.dialog.show("Full content", parsedText());
+            matematici.dialog.show("Full content", parsedText(model));
             matematici.dialog.setWidth("900px");
         },
 
@@ -35,10 +36,11 @@
             ellipsis.appendChild(i);
         };
 
-    this.update = function (model) {
+    this.update = function (m) {
+        model = m;
         p.innerHTML = parsedText();
-        this.setColor(model.color);
-        this.setFontSize(model.fontSize);
+        this.setColor();
+        this.setFontSize();
         ellipsis.classList.toggle("Hidden", model.height == 0 || p.offsetHeight >= p.scrollHeight);
     };
 
