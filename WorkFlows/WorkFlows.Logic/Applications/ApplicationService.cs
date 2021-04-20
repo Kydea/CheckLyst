@@ -188,7 +188,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             await SetInstanceState(identity, Instance, InstanceState.Deleted);
         }
 
-        public async Task<SignResponse> SignAsync(DefaultIdentity identity, SignRequest request)
+        public async Task<SignResponse> SignAsync(DefaultIdentity identity, SignRequest request, string timeZone)
         {
             PrototypeVersions PrototypeVersion = null;
             Instances Instance = null;
@@ -274,8 +274,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                         if (FirstSignature)
                         {
                             if (Step.WorkFlowApplications.WorkFlowAction == WorkFlowAction.PrototypeToApproved)
-                                PrototypeVersion.ValidFrom =
-                                    request.ValidFromNow ? (DateTimeOffset?)null : request.ValidFrom.Value;
+                                PrototypeVersion.ValidFrom = request.ValidFromNow ? default(DateTimeOffset?) : request.ValidFrom.Value;
 
                             PrototypeVersion.ValidUntil = request.ValidUntilNow ? null : request.ValidUntil;
                         }
@@ -340,8 +339,8 @@ namespace CheckListManager.WorkFlows.Logic.Applications
 
                 if (PrototypeVersion != null)
                 {
-                    information.Add("ValidFrom", SignResponse.ValidFrom ?? (object)"(now)");
-                    information.Add("ValidUntil", SignResponse.ValidUntil ?? (object)"(never expires)");
+                    information.Add("ValidFrom", SignResponse.ValidFrom?.ToLocalTime(timeZone) ?? (object)"(now)");
+                    information.Add("ValidUntil", SignResponse.ValidUntil?.ToLocalTime(timeZone) ?? (object)"(never expires)");
                 }
                 
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
@@ -371,8 +370,8 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 
                 if (PrototypeVersion != null)
                 {
-                    information.Add("ValidFrom", SignResponse.ValidFrom ?? (object)"(now)");
-                    information.Add("ValidUntil", SignResponse.ValidUntil ?? (object)"(never expires)");
+                    information.Add("ValidFrom", SignResponse.ValidFrom?.ToLocalTime(timeZone) ?? (object)"(now)");
+                    information.Add("ValidUntil", SignResponse.ValidUntil?.ToLocalTime(timeZone) ?? (object)"(never expires)");
                 }
                 
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage

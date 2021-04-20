@@ -539,7 +539,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                         PrototypeName = PrototypeVersion.Prototypes.Name,
                         Version = PrototypeVersion.Version,
                         State = State,
-                        Path = $"{(PrototypeVersion.Prototypes.Companies.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.Departments.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.PrototypeTypes.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.Name?.Replace('#', '-') ?? "")}#{PrototypeVersion.Version}#{(PrototypeVersion.Description?.Replace('#', '-') ?? "")}"
+                        Path = $"{PrototypeVersion.Prototypes.Companies.Name?.Replace('#', '-') ?? ""}#{PrototypeVersion.Prototypes.Departments.Name?.Replace('#', '-') ?? ""}#{PrototypeVersion.Prototypes.PrototypeTypes.Name?.Replace('#', '-') ?? ""}#{PrototypeVersion.Prototypes.Name?.Replace('#', '-') ?? ""}#{PrototypeVersion.Version}#{PrototypeVersion.Description?.Replace('#', '-') ?? ""}"
                     }, CancellationToken);
 
                     await SetPrototypeVersionState(PrototypeVersion, State, UtcNow);

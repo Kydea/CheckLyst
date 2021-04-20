@@ -1,4 +1,5 @@
 ﻿using CheckListManager.Common.Core.Web.Security;
+using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api;
 using CheckListManager.Common.Logic.WorkFlows;
 using CheckListManager.WorkFlows.Logic.Applications;
@@ -12,10 +13,12 @@ namespace CheckListManager.WorkFlows.Api.Controllers
     public class ApplicationsController : BaseApiController
     {
         private readonly IApplicationService _applicationService;
+        private readonly ICommonRepository _commonRepository;
 
-        public ApplicationsController(IApplicationService applicationService)
+        public ApplicationsController(IApplicationService applicationService, ICommonRepository commonRepository)
         {
             _applicationService = applicationService;
+            _commonRepository = commonRepository;
         }
 
         [HttpPost]
@@ -48,7 +51,8 @@ namespace CheckListManager.WorkFlows.Api.Controllers
         {
             try
             {
-                return Ok(await _applicationService.SignAsync(Identity, request));
+                var Company = await _commonRepository.GetCompanyAsync(Identity.CompanyId);
+                return Ok(await _applicationService.SignAsync(Identity, request, Company.TimeZone));
             }
             catch(Exception Exception)
             {
