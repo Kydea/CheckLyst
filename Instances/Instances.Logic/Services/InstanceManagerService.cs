@@ -731,7 +731,7 @@ namespace CheckListManager.Instances.Logic.Services
         {
             return dataSource.Parameters.Select(p =>
             {
-                if (!externalSource.Parameters.TryGetValue(p.Name, out var InstanceParameter)) InstanceParameter = null;
+                if (externalSource.Parameters == null || !externalSource.Parameters.TryGetValue(p.Name, out var InstanceParameter)) InstanceParameter = null;
 
                 string Value = null;
                 string Error = null;
