@@ -11,7 +11,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public string ModifiedBy { get; set; }
         public DateTimeOffset? ModifiedOn { get; set; }
 
-        private Attachment GetTarget() =>
+        public Attachment GetTarget() =>
             this.Target == null || !GetBranchElements().TryGetValue(this.Target, out var Item) || !(Item is Attachment Attachment) ? this : Attachment;
 
         public override ICheckListItem Clone(ICheckListGroup parent)
@@ -43,7 +43,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             base.BuildDependencies();
 
             if (Target != null)
-                BindElement<Attachment>(Target, DependencyRelation.Properties.Value, DependencyRelation.Properties.Value);
+                BindElement<Attachment>(Target, DependencyRelation.Properties.Validity, DependencyRelation.Properties.Validity);
         }
 
         public override dynamic GetViewModel()

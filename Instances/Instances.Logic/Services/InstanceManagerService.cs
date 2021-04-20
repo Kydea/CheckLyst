@@ -2005,31 +2005,32 @@ namespace CheckListManager.Instances.Logic.Services
             InstanceCacheObject cacheObject,
             IDefaultIdentity identity,
             int? itemId,
-            HttpFile attachment
+            HttpFile file
         )
         {
             if (!itemId.HasValue)
                 throw new InstanceException("Item id not sent");
 
-            var item = cacheObject.Instance.Items.ContainsKey(itemId.Value) ? cacheObject.Instance.Items[itemId.Value] as Attachment : null;
-            if (item == null)
+            if (!cacheObject.Instance.Items.TryGetValue(itemId.Value, out var item) || !(item is Attachment attachment))
                 throw new InstanceException($"Attachment {itemId} not found");
 
             if (item.ReadOnly)
                 return null;
 
-            if (attachment == null)
+            if (file == null)
                 throw new InstanceException("No attachment has been uploaded");
 
-            var extension = Path.GetExtension(attachment.FileName);
-            if (item.FileType == Attachment.FileTypes.Images)
+            attachment = attachment.GetTarget();
+
+            var extension = Path.GetExtension(file.FileName);
+            if (attachment.FileType == Attachment.FileTypes.Images)
             {
-                if (!attachment.MediaType.StartsWith("image/"))
+                if (!file.MediaType.StartsWith("image/"))
                     throw new InstanceException("The attachment has to be an image");
 
-                attachment.Buffer = ImageAdapter.RotateAndCompressImage(attachment.Buffer);
+                file.Buffer = ImageAdapter.RotateAndCompressImage(file.Buffer);
             }
-            else if (item.FileType == Attachment.FileTypes.Pdf)
+            else if (attachment.FileType == Attachment.FileTypes.Pdf)
             {
                 if (extension != ".pdf")
                     throw new InstanceException("The attachment has to be a pdf document");
@@ -2038,20 +2039,20 @@ namespace CheckListManager.Instances.Logic.Services
                 throw new InstanceException("File type not supported");
 
             var maxSize = await _settingService.InstancesAttachmentMaxSizeBytesAsync(identity.CompanyId);
-            if (attachment.Buffer.Length > maxSize)
+            if (file.Buffer.Length > maxSize)
                 throw new InstanceException($"The file exceed the file size limit of {maxSize.BytesCountToString()}");
 
-            var key = $"{GetAttachmentKeyPrefix(identity, cacheObject.Code)}{itemId.Value}{extension}";
-            using (var memoryStream = new MemoryStream(attachment.Buffer))
+            var key = $"{GetAttachmentKeyPrefix(identity, cacheObject.Code)}{attachment.Id}{extension}";
+            using (var memoryStream = new MemoryStream(file.Buffer))
             {
                 var success = await _storageService.PutAsync(_configurationService.InstancesStorageBucket, key, memoryStream);
                 if (!success)
                     throw new InstanceException("Impossible to upload the attachment to the storage");
             }
 
-            item.Key = key;
-            item.ModifiedBy = identity.Code;
-            item.ModifiedOn = DateTimeOffset.UtcNow;
+            attachment.Key = key;
+            attachment.ModifiedBy = identity.Code;
+            attachment.ModifiedOn = DateTimeOffset.UtcNow;
 
             await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
             {
@@ -2064,13 +2065,13 @@ namespace CheckListManager.Instances.Logic.Services
                 Information = JsonConvert.SerializeObject(new
                 {
                     ID = itemId,
-                    attachment.FileName
+                    file.FileName
                 })
             });
 
             TrackChanges(cacheObject, identity.Code);
 
-            return item;
+            return attachment;
         }
 
         #endregion
