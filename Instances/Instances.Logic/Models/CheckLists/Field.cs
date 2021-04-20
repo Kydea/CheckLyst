@@ -147,8 +147,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 Value = ConversionError ? null : FormulaValue;
             }
 
-            if (ExternalSourceName != null && Instance.ExternalSources.TryGetValue(ExternalSourceName, out var ExternalSource) && ExternalSource.Values != null && ExternalSource.Values.TryGetValue(ExternalSourceColumn, out var ExternalSourceValue))
+            if (ExternalSourceName != null && Instance.ExternalSources.TryGetValue(ExternalSourceName, out var ExternalSource))
             {
+                if (ExternalSource.Values == null || !ExternalSource.Values.TryGetValue(ExternalSourceColumn, out var ExternalSourceValue)) ExternalSourceValue = null;
                 ConversionError = !ValueType.TryParse(ExternalSourceValue, out ConvertedValue);
                 if (Precision.HasValue && !ConversionError && ConvertedValue is decimal decimalValue)
                     ExternalSourceValue = Math.Round(decimalValue, Precision.Value).ToString();

@@ -46,7 +46,10 @@
 
             if (model.typeName == "Field" && !model.readOnly)
                 panel.append($("<div />").append($("<a />").attr("href", "#").text("clear value").prepend($("<i />").addClass("fa fas fa-power-off")).on("click", function (e) {
-                    new instances.Event(instances.Events.valueChange, model.id, { value: null }).trigger();
+                    if (model.externalSourceName && model.externalSourceColumn)
+                        new instances.Event(instances.Events.externalSourceRowChange, model.id, { row: [] }).trigger();
+                    else
+                        new instances.Event(instances.Events.valueChange, model.id, { value: null }).trigger();
                 })));
         },
 
