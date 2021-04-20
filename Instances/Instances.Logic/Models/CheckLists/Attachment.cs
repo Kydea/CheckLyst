@@ -11,6 +11,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public string ModifiedBy { get; set; }
         public DateTimeOffset? ModifiedOn { get; set; }
 
+        private Attachment GetTarget() =>
+            this.Target == null || !GetBranchElements().TryGetValue(this.Target, out var Item) || !(Item is Attachment Attachment) ? this : Attachment;
+
         public override ICheckListItem Clone(ICheckListGroup parent)
         {
             var attachment = new Attachment
@@ -23,7 +26,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             return attachment;
         }
 
-        public override bool IsValidByDefault() => !string.IsNullOrEmpty(Key);
+        public override bool IsValidByDefault() => !string.IsNullOrEmpty(GetTarget().Key);
         
         public string Key { get; set; }
         public string FileType { get; set; }
@@ -46,9 +49,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public override dynamic GetViewModel()
         {
             var ItemModel = base.GetViewModel();
-            var Target = this.Target == null || !GetBranchElements().TryGetValue(this.Target, out var Item) || !(Item is Attachment Attachment) ? null : Attachment;
-            ItemModel.Key = Target?.Key ?? Key;
-            ItemModel.FileType = Target?.FileType ?? FileType;
+            var Target = GetTarget();
+            ItemModel.Key = Target.Key;
+            ItemModel.FileType = Target.FileType;
             return ItemModel;
         }
     }
