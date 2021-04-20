@@ -329,11 +329,11 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             if (Iterator)
             {
                 if (AddIterationCondition == Conditions.Expression)
-                    GetExpression(AddIterationExpressionCode, DependencyRelation.Properties.AddIteration, "add-iteration");
+                    BindExpression(AddIterationExpressionCode, DependencyRelation.Properties.AddIteration, "add-iteration");
                 if (RemoveIterationCondition == Conditions.Expression)
-                    GetExpression(RemoveIterationExpressionCode, DependencyRelation.Properties.RemoveIteration, "remove-iteration");
+                    BindExpression(RemoveIterationExpressionCode, DependencyRelation.Properties.RemoveIteration, "remove-iteration");
                 if (MoveIterationCondition == Conditions.Expression)
-                    GetExpression(MoveIterationExpressionCode, DependencyRelation.Properties.MoveIteration, "move-iteration");
+                    BindExpression(MoveIterationExpressionCode, DependencyRelation.Properties.MoveIteration, "move-iteration");
             }
 
             if (Iterator) //this is called only for instances existing before v. 2.0.0, because BuildDependencies is called only once per instance when no iteration exists

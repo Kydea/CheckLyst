@@ -172,38 +172,38 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         #region Dependency
 
-        protected void GetExpression(string ExpressionCode, DependencyRelation.Properties SourceProperty, string PropertyName)
+        protected void BindExpression(string ExpressionCode, DependencyRelation.Properties SourceProperty, string PropertyName)
         {
             if (!string.IsNullOrEmpty(ExpressionCode) && CheckList.Expressions.TryGetValue(ExpressionCode, out var Expression))
                 AddDependingRelation(SourceProperty, Expression, DependencyRelation.Properties.Value);
         }
 
-        private void GetSignature(string SignatureCode, DependencyRelation.Properties SourceProperty, string PropertyName)
+        protected void BindElement<T>(string Code, DependencyRelation.Properties SourceProperty, DependencyRelation.Properties DestinationProperty) where T : Element
         {
             var BranchElements = GetBranchElements();
-            if (!string.IsNullOrEmpty(SignatureCode) && BranchElements.ContainsKey(SignatureCode) && (BranchElements[SignatureCode] is Signature Signature))
-                AddDependingRelation(SourceProperty, Signature, DependencyRelation.Properties.Signature);
+            if (!string.IsNullOrEmpty(Code) && BranchElements.ContainsKey(Code) && BranchElements[Code] is T Element)
+                AddDependingRelation(SourceProperty, Element, DestinationProperty);
         }
 
         public virtual void BuildDependencies()
         {
             if (!string.IsNullOrEmpty(SignatureCode))
-                GetSignature(SignatureCode, DependencyRelation.Properties.ReadOnly, "signature");
+                BindElement<Signature>(SignatureCode, DependencyRelation.Properties.ReadOnly, DependencyRelation.Properties.Signature);
 
             if (CountDownCondition == Conditions.Expression)
-                GetExpression(CountDownToCode, DependencyRelation.Properties.CountDown, "countdown");
+                BindExpression(CountDownToCode, DependencyRelation.Properties.CountDown, "countdown");
 
             if (CountDownCondition == Conditions.Signature)
-                GetSignature(CountDownToCode, DependencyRelation.Properties.CountDown, "signature");
+                BindElement<Signature>(CountDownToCode, DependencyRelation.Properties.CountDown, DependencyRelation.Properties.Signature);
 
             if (ValidCondition == Conditions.Expression || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
-                GetExpression(ValidExpressionCode, DependencyRelation.Properties.Validity, "valid");
+                BindExpression(ValidExpressionCode, DependencyRelation.Properties.Validity, "valid");
 
             if (HiddenCondition == Conditions.Expression)
-                GetExpression(HiddenExpressionCode, DependencyRelation.Properties.Hidden, "hidden");
+                BindExpression(HiddenExpressionCode, DependencyRelation.Properties.Hidden, "hidden");
 
             if (ReadOnlyCondition == Conditions.Expression || ReadOnlyCondition == Conditions.ExpressionOrDefault || ReadOnlyCondition == Conditions.ExpressionAndDefault)
-                GetExpression(ReadOnlyExpressionCode, DependencyRelation.Properties.ReadOnly, "read-only");
+                BindExpression(ReadOnlyExpressionCode, DependencyRelation.Properties.ReadOnly, "read-only");
 
             if (this is ICheckListValidityElement)
                 AddDependingRelation(DependencyRelation.Properties.Validity, this, DependencyRelation.Properties.Hidden);

@@ -1,4 +1,5 @@
-﻿using CheckListManager.Common.Logic.Models.CheckLists;
+﻿using CheckListManager.Common.Logic.Dependency;
+using CheckListManager.Common.Logic.Models.CheckLists;
 using Newtonsoft.Json;
 using System;
 
@@ -9,6 +10,16 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 		public override string TypeName => "Attachment";
 
 		public override bool NewLine => true;
+
+        public override bool BuildDependencies()
+        {
+            var Result =  base.BuildDependencies();
+
+            if (Target != null)
+                Result &= BindElement<Attachment>(Target, DependencyRelation.Properties.Value, DependencyRelation.Properties.Value, "target");
+
+            return Result;
+        }
 
         public override ICheckListItem Clone(ICheckListGroup parent)
         {

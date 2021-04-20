@@ -1,4 +1,5 @@
-﻿using CheckListManager.Common.Logic.Models.CheckLists;
+﻿using CheckListManager.Common.Logic.Dependency;
+using CheckListManager.Common.Logic.Models.CheckLists;
 using Newtonsoft.Json;
 
 namespace CheckListManager.Prototypes.Logic.Models.CheckLists
@@ -8,6 +9,17 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 		public override string TypeName => "Image";
 
         public bool Cloned { get; set; }
+
+        public override bool BuildDependencies()
+        {
+            var Result = base.BuildDependencies();
+
+            //this dependency is just for prototype editors as there is no possibile change in the instances
+            if(Target != null)
+                Result &= BindElement<Image>(Target, DependencyRelation.Properties.Value, DependencyRelation.Properties.Value, "target");
+
+            return Result;
+        }
 
         public override ICheckListItem Clone(ICheckListGroup parent)
         {

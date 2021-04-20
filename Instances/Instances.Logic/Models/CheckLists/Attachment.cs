@@ -1,4 +1,5 @@
-﻿using CheckListManager.Common.Logic.Models.CheckLists;
+﻿using CheckListManager.Common.Logic.Dependency;
+using CheckListManager.Common.Logic.Models.CheckLists;
 using System;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
@@ -32,6 +33,14 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         {
             public const string Images = "images";
             public const string Pdf = "pdf";
+        }
+
+        public override void BuildDependencies()
+        {
+            base.BuildDependencies();
+
+            if (Target != null)
+                BindElement<Attachment>(Target, DependencyRelation.Properties.Value, DependencyRelation.Properties.Value);
         }
 
         public override dynamic GetViewModel()
