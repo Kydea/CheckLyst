@@ -1,5 +1,7 @@
 /* suspended */
 
+create schema "Documents"; --initial error to avoid the script could be lounched
+create schema "Documents";
 create schema "Documents";
 
 create table "Documents"."DocumentTypes"
