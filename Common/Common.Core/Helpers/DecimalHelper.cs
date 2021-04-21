@@ -23,7 +23,7 @@ namespace CheckListManager.Common.Core.Helpers
                     var Coefficent = (double)Result / Math.Pow(10, Exponent);
                     if (Precision.HasValue) Coefficent = Math.Round(Coefficent, Precision.Value);
                     Result = (decimal)(Coefficent * Math.Pow(10, Exponent));
-                    FormattedResult = Coefficent + "e" + (Exponent >= 0 ? "+" : "-") + Exponent;
+                    FormattedResult = Coefficent + "e" + (Exponent >= 0 ? "+" : string.Empty) + Exponent;
                 }
                 else
                 {
