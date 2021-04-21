@@ -91,12 +91,15 @@ div.Instance {
                 border-radius: 0 10px 10px 10px;
                 box-shadow: $Box-Shadow;
                 line-height: 1.5em;
+                font-size: 12px;
                 width: 200px;
 
                 i.fa {
-                    margin-left: -30px;
+                    margin-left: -20px;
                     color: $Color-Grey-Dark;
                     position: absolute;
+                    font-size: 12px;
+                    margin-top: 5px;
 
                     &.fa-thumbs-up {
                         color: green;
@@ -109,10 +112,10 @@ div.Instance {
 
                 span, a {
                     display: block;
-                    padding: 2px;
+                    padding-top: 5px;
                     color: black !important;
                     float: none;
-                    margin: 5px 0 0 30px;
+                    margin-left: 20px;
                     overflow: hidden;
                     text-overflow: ellipsis;
                 }

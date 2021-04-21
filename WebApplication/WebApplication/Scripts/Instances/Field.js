@@ -50,6 +50,9 @@
         },
 
         change = function () {
+            if (!model.valuesList && (model.valueTypeName == "Date" || model.valueTypeName == "DateTime" || model.valueTypeName == "Time") && !matematici.TypedInput.validate(model.valueTypeName, input, select, select2))
+                return;
+
             var handleGoToNext = goToNext;
             goToNext = 0;
             new instances.Event(instances.Events.valueChange, model.id, { value: getValue() }).done(function (result) {

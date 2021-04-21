@@ -68,21 +68,24 @@ div.Instance .Element div.Information {
     border-radius: 0 10px 10px 10px;
     box-shadow: rgba(0, 0, 0, 0.15) 0 0 15px 2px;
     line-height: 1.5em;
+    font-size: 12px;
     width: 200px; }
     div.Instance .Element div.Information div.Panel i.fa {
-      margin-left: -30px;
+      margin-left: -20px;
       color: #666;
-      position: absolute; }
+      position: absolute;
+      font-size: 12px;
+      margin-top: 5px; }
       div.Instance .Element div.Information div.Panel i.fa.fa-thumbs-up {
         color: green; }
       div.Instance .Element div.Information div.Panel i.fa.fa-thumbs-down {
         color: red; }
     div.Instance .Element div.Information div.Panel span, div.Instance .Element div.Information div.Panel a {
       display: block;
-      padding: 2px;
+      padding-top: 5px;
       color: black !important;
       float: none;
-      margin: 5px 0 0 30px;
+      margin-left: 20px;
       overflow: hidden;
       text-overflow: ellipsis; }
   div.Instance .Element div.Information.Active {

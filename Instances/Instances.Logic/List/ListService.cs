@@ -61,7 +61,6 @@ namespace CheckListManager.Instances.Logic.List
 
                 var departments = await _commonRepository.GetDepartmentsAsync(identity, "Instances", "View");
                 departments = departments.Union(await _commonRepository.GetDepartmentsAsync(identity, "Prototypes", "Preview"), new DepartmentComparer()).ToList();
-                department = department.HasValue && departments.Any(d => d.ID == department.Value) ? department.Value : departments.FirstOrDefault()?.ID;
                 response.Fields["Department"] = new Field
                 {
                     Options = departments.OrderBy(x => x.Name).Select(d => new Option(d.ID.ToString(), d.Name)),
@@ -94,10 +93,9 @@ namespace CheckListManager.Instances.Logic.List
             {
                 var prototypeTypes = await _commonRepository.GetPrototypeTypesAsync(identity, department ?? -1, "Instances", "View");
                 prototypeTypes = prototypeTypes.Union(await _commonRepository.GetPrototypeTypesAsync(identity, department ?? -1, "Prototypes", "Preview"), new PrototypeTypeComparer()).ToList();
-                prototypeType = prototypeType.HasValue && prototypeTypes.Any(d => d.ID == prototypeType.Value) ? form.PrototypeType.Value : prototypeTypes.FirstOrDefault()?.ID;
                 response.Fields["PrototypeType"] = new Field
                 {
-                    Options = prototypeTypes.OrderBy(x => x.Name).Select(pt => new Option(pt.ID.ToString(), pt.Name)).Distinct(),
+                    Options = prototypeTypes.OrderBy(x => x.Name).Select(pt => new Option(pt.ID.ToString(), $"{pt.Name} ({pt.Departments.Name})")).Distinct(),
                     Value = prototypeType?.ToString()
                 };
             }

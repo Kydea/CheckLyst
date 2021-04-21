@@ -63,10 +63,13 @@ div.AutoComplete-List {
     div.AutoComplete-List a.None i {
       font-style: normal;
       color: #666; }
-  div.AutoComplete-List.NoCheck a.Selected {
-    padding-right: 10px; }
-    div.AutoComplete-List.NoCheck a.Selected::after {
-      content: none; }
+  div.AutoComplete-List.NoCheck a {
+    padding: 0 5px !important;
+    text-align: center; }
+    div.AutoComplete-List.NoCheck a.Selected {
+      padding-right: 5px !important; }
+      div.AutoComplete-List.NoCheck a.Selected::after {
+        content: none; }
   div.AutoComplete-List i {
     display: block;
     text-align: center;

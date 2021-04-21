@@ -51,10 +51,9 @@ namespace CheckListManager.Prototypes.Logic.List
                 var prototypeTypes = await _commonRepository.GetPrototypeTypesAsync(identity, department ?? -1, "Prototypes", "View");
                 response.Fields["PrototypeType"] = new Field
                 {
-                    Options = prototypeTypes.OrderBy(x => x.Name).Select(pt => new Option(pt.ID.ToString(), pt.Name)),
+                    Options = prototypeTypes.OrderBy(x => x.Name).Select(pt => new Option(pt.ID.ToString(), $"{pt.Name} ({pt.Departments.Name})")),
                     Value = form.PrototypeType.HasValue && prototypeTypes.Any(pt => pt.ID == form.PrototypeType) ? form.PrototypeType.Value.ToString() : null
                 };
-
             }
 
             return response;

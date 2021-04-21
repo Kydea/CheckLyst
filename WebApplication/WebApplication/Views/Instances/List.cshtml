@@ -9,14 +9,14 @@
     <div class="ShadowPanel">
         <div class="Accordion"></div>
         <form id="Filters" action="@BaseUrl/Instances/List">
-            <label class="Controls2">
+            <label class="Controls1-2">
                 <span>Department / prototype type</span>
                 <i class="Icon fal fa-industry" />
-                <select name="department" class="Trigger" />
+                <select name="department" class="Trigger" data-nullable="(all)" />
                 <i class="Icon fal fa-folder" />
-                <select name="prototypeType" class="Trigger" />
+                <select name="prototypeType" class="Trigger" data-nullable="(all)" />
             </label>
-            <label class="Controls2">
+            <label class="Controls2-1">
                 <span>Prototype / version</span>
                 <i class="Icon fal fa-file-invoice" />
                 <select name="prototype" class="Trigger" data-nullable="(all)" />
@@ -158,30 +158,21 @@
 
         $("#AddButton").on("click", function () {
             var
-                version = $("select[name=version]", formElement).val(),
-                versionName = $("select[name=version]", formElement).next().val(),
                 prototype = $("select[name=prototype]", formElement).val(),
-                prototypeName = $("select[name=prototype]", formElement).next().val(),
-                department = $("select[name=department]", formElement).val(),
-                prototypeType = $("select[name=prototypeType]", formElement).val();
+                prototypeName = $("select[name=prototype]", formElement).next().val();
 
             searchPage.getForm().saveForm();
 
             if (!prototypeName)
                 matematici.dialog.error("Error", "Select a prototype to create a new instance.");
-            else if (!versionName)
-                matematici.dialog.error("Error", "Select an active prototype version to create a new instance.");
-            else if (!versionName.endsWith(" Active"))
-                matematici.dialog.error("Error", "The selected prototype version is not active.");
-            else if (
-                !matematici.tokenManager.checkRole("Instances#Create#" + department + "##")
-                && !matematici.tokenManager.checkRole("Instances#Create#" + department + "#" + prototypeType + "#")
-                || !matematici.tokenManager.checkRole("Instances#Edit#" + department + "##")
-                && !matematici.tokenManager.checkRole("Instances#Edit#" + department + "#" + prototypeType + "#")
-            )
-                matematici.dialog.error("Error", "Permission denied.");
-            else 
-                matematici.navigator.open("@Url.Action("Create")/" + prototype + "/" + version);
+            else
+                $.ajax({
+                    url: matematici.urls.instances.api + "/CheckCreationGrants",
+                    type: "post",
+                    data: { prototype: prototype }
+                }).done(function () {
+                    matematici.navigator.open("@Url.Action("Create")/" + prototype);
+                });
         });
         callback.call();
     };

@@ -45,7 +45,7 @@ namespace CheckListManager.Common.Data
 
         public Task<List<PrototypeTypes>> GetPrototypeTypesAsync(IDefaultIdentity identity, long department, string functionGroup, string function)
         {
-            IQueryable<PrototypeTypes> PrototypeTypes = Entities.PrototypeTypes.Where(pt => pt.Company == identity.CompanyId && pt.Department == department);
+            IQueryable<PrototypeTypes> PrototypeTypes = Entities.PrototypeTypes.Where(pt => pt.Company == identity.CompanyId && (department < 0 || pt.Department == department));
             if (functionGroup != null)
                 PrototypeTypes = PrototypeTypes.Where(pt => pt.UserFunctions.Any(uf =>
                     uf.Company == identity.CompanyId
@@ -74,7 +74,7 @@ namespace CheckListManager.Common.Data
 
         public Task<List<Prototypes>> GetPrototypesAsync(IDefaultIdentity identity, long prototypeType, string functionGroup, string function)
         {
-            IQueryable<Prototypes> Prototypes = Entities.Prototypes.Where(p => p.Company == identity.CompanyId && p.PrototypeType == prototypeType);
+            IQueryable<Prototypes> Prototypes = Entities.Prototypes.Where(p => p.Company == identity.CompanyId && (prototypeType < 0 || p.PrototypeType == prototypeType));
             if (functionGroup != null)
                 Prototypes = Prototypes.Where(p => p.PrototypeTypes.UserFunctions.Any(uf =>
                     uf.Company == identity.CompanyId

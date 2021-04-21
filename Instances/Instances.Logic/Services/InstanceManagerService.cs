@@ -149,27 +149,33 @@ namespace CheckListManager.Instances.Logic.Services
 
         #region record tasks
 
-        public async Task<InstanceCacheObject> CreateInstanceAsync(IDefaultIdentity identity, string userCode, long prototype, int? version, Dictionary<string, string> parameters)
+        public async Task<GetPrototypeResponse> CheckCreationGrantsAsync(IDefaultIdentity identity, long prototype, int? version)
+        {
+            if (!version.HasValue)
+                version = await _instancesRepository.GetActivePrototypeVersion(prototype);
+            if (!version.HasValue)
+                throw new InstanceException($"The prototype {prototype} has no active version");
+
+            var source = await GetPrototype(prototype, version.Value);
+            if (!source.State.In(VersionState.Draft, VersionState.InSimulation, VersionState.Active))
+                throw new InstanceException($"Invalid state of the prototype version {prototype}.{version}: {source.State}");
+
+            if (!HasPermission(identity, "Create", source.State, source.Department, source.PrototypeType))
+                throw new InstanceException("Access denied");
+
+            return source;
+        }
+
+        public async Task<InstanceCacheObject> CreateInstanceAsync(IDefaultIdentity identity, long prototype, int? version, Dictionary<string, string> parameters)
         {
             try
             {
-                if (!version.HasValue)
-                    version = await _instancesRepository.GetActivePrototypeVersion(prototype);
-                if (!version.HasValue)
-                    throw new InstanceException($"The prototype {prototype} has no active version");
-
-                var source = await GetPrototype(prototype, version.Value);
-                if (!source.State.In(VersionState.Draft, VersionState.InSimulation, VersionState.Active))
-                    throw new InstanceException($"Invalid state of the prototype version {prototype}.{version}: {source.State}"); //double check
-
-                if (!HasPermission(identity, "Create", source.State, source.Department, source.PrototypeType))
-                    throw new InstanceException("Access denied");
-
+                var source = await CheckCreationGrantsAsync(identity, prototype, version);
                 var cacheObject = new InstanceCacheObject
                 {
                     CompanyId = identity.CompanyId,
                     Instance = source.CheckList,
-                    Code = $"{prototype:X}-{version:X}-{Guid.NewGuid()}",
+                    Code = $"{prototype:X}-{source.Version.Value:X}-{Guid.NewGuid()}",
                     Department = source.Department,
                     DepartmentName = source.DepartmentName,
                     PrototypeType = source.PrototypeType,
@@ -177,10 +183,10 @@ namespace CheckListManager.Instances.Logic.Services
                     Prototype = prototype,
                     PrototypeName = source.Name,
                     PrototypeDescription = source.Description,
-                    Version = version.Value,
+                    Version = source.Version.Value,
                     VersionState = source.State,
                     InstanceState = InstanceState.Draft,
-                    CreatedBy = userCode,
+                    CreatedBy = identity.Code,
                     CreatedOn = DateTimeOffset.UtcNow,
                     NeedToCache = true
                 };
@@ -189,7 +195,7 @@ namespace CheckListManager.Instances.Logic.Services
                 if (parameters != null)
                     foreach (var parameter in parameters)
                         if (cacheObject.Instance.Elements.TryGetValue(parameter.Key, out ICheckListElement element) && element is ICheckListItem item)
-                            await HandleValueChangeAsync(cacheObject, userCode, item.Id, parameter.Value);
+                            await HandleValueChangeAsync(cacheObject, identity.Code, item.Id, parameter.Value);
 
                 cacheObject.Instance.UpdateAll(cacheObject);
                 cacheObject.Instance.UpdateReadOnly(identity.Code, cacheObject.InstanceState);
@@ -641,6 +647,7 @@ namespace CheckListManager.Instances.Logic.Services
                     throw new InstanceException(message.Messages.FirstOrDefault() ?? "Unable to retrieve the prototype");
                 }
                 var response = JsonConvert.DeserializeObject<GetPrototypeResponse>(responseData, _converters);
+                response.Version = version;
                 return response;
             }
             catch (InstanceException e)
@@ -1321,7 +1328,8 @@ namespace CheckListManager.Instances.Logic.Services
 
             string
                 oldFormattedValue = field.Value,
-                formattedValue = value;
+                formattedValue = value,
+                loggedValue = value;
 
             field.ConversionError = false;
             if (field.ValueType == DataType.DateTime)
@@ -1330,11 +1338,16 @@ namespace CheckListManager.Instances.Logic.Services
 
                 if (field.LocalTimeZone)
                 {
-                    var dateTimeOffset = DateTimeOffsetHelper.Parse(oldFormattedValue, TimeZone, out var Ambiguous, out var AmbiguousDateTimeOffsets);
-                    oldFormattedValue = dateTimeOffset?.Format(TimeZone) ?? string.Empty;
-
-                    dateTimeOffset = DateTimeOffsetHelper.Parse(formattedValue, TimeZone, out Ambiguous, out AmbiguousDateTimeOffsets);
-                    formattedValue = dateTimeOffset?.Format(TimeZone) ?? string.Empty;
+                    DateTimeOffset? dateTimeOffset;
+                    try
+                    {
+                        dateTimeOffset = DateTimeOffsetHelper.Parse(oldFormattedValue, TimeZone, out _, out _);
+                        oldFormattedValue = dateTimeOffset?.Format(TimeZone) ?? string.Empty;
+                    }
+                    catch { }
+                    dateTimeOffset = DateTimeOffsetHelper.Parse(formattedValue, TimeZone, out _, out _);
+                    loggedValue = dateTimeOffset?.Format(TimeZone) ?? string.Empty;
+                    if (!dateTimeOffset.HasValue) formattedValue = string.Empty;
                 }
                 else
                 {
@@ -1344,9 +1357,9 @@ namespace CheckListManager.Instances.Logic.Services
                         oldFormattedValue = string.Empty;
 
                     if (DateTimeOffset.TryParseExact(formattedValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out Date))
-                        formattedValue = Date.Format(TimeZone);
+                        loggedValue = Date.Format(TimeZone);
                     else
-                        formattedValue = string.Empty;
+                        formattedValue = loggedValue = string.Empty;
                 }
             }
             else if (field.ValueType == DataType.Number)
@@ -1357,6 +1370,8 @@ namespace CheckListManager.Instances.Logic.Services
                     field.ConversionError = true;
                     formattedValue = value;
                 }
+
+                loggedValue = formattedValue;
             }
             else if (!field.ValueType.TryParse(value, out var parsedValue))
                 field.ConversionError = true;
@@ -1367,7 +1382,7 @@ namespace CheckListManager.Instances.Logic.Services
             {
                 DateTime = field.ModifiedOn.Value,
                 User = field.ModifiedBy,
-                Value = formattedValue,
+                Value = loggedValue,
                 TypedValue = value
             });
 
@@ -1383,7 +1398,7 @@ namespace CheckListManager.Instances.Logic.Services
                 {
                     ID = itemId,
                     OldValue = oldFormattedValue,
-                    NewValue = formattedValue
+                    NewValue = loggedValue
                 })
             });
             field.Value = formattedValue;

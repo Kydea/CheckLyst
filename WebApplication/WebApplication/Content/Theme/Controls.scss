@@ -510,7 +510,7 @@ form, div.CheckList, div.PropertyPanel div.PropertyValue, div.Module {
                 }
             }
 
-            &.Controls2, &.Controls3 {
+            &.Controls2, &.Controls3, &.Controls1-2, &.Controls2-1 {
                 > *:not(span) {
                     float: left;
                 }
@@ -549,7 +549,8 @@ form, div.CheckList, div.PropertyPanel div.PropertyValue, div.Module {
                 }
 
                 i.Icon ~ i.Icon {
-                    left: calc(50% + #{$Metric-Control-Space / 2}),
+                    left: calc(50% + #{$Metric-Control-Space / 2});
+                    border-radius: 0 !important;
                 }
             }
 
@@ -582,6 +583,68 @@ form, div.CheckList, div.PropertyPanel div.PropertyValue, div.Module {
 
                 i.Icon ~ i.Icon ~ i.Icon {
                     left: calc(66.66% + #{$Metric-Control-Space * 2 / 3});
+                }
+            }
+
+            &.Controls1-2 {
+                width: $Label-Width * 3 + $Metric-Control-Space * 2;
+
+                > *:not(span):not(.Icon):not(.fa) {
+                    width: calc(33.33% + #{$Metric-Control-Space / 2});
+
+                    &:last-child {
+                        //last input
+                        width: calc(66.67% - #{$Metric-Control-Space / 2});
+                    }
+                }
+
+                input, select {
+                    ~ select + input {
+                        //last auto complete
+                        width: calc(66.67% - #{$Metric-Control-Space / 2}) !important;
+                        border-right: solid 1px $Color-Grey-Light;
+                        border-radius: 0 5px 5px 0 !important;
+                    }
+                }
+
+                i.Icon ~ i.Icon {
+                    left: calc(33.33% + #{$Metric-Control-Space / 2});
+                    border-radius: 0 !important;
+                }
+
+                i.Icon ~ i.Icon ~ i.Icon {
+                    left: calc(100% + #{$Metric-Control-Space / 2});
+                }
+            }
+
+            &.Controls2-1 {
+                width: $Label-Width * 3 + $Metric-Control-Space * 2;
+
+                > *:not(span):not(.Icon):not(.fa) {
+                    width: calc(66.67% + #{$Metric-Control-Space / 2});
+
+                    &:last-child {
+                        //last input
+                        width: calc(33.33% - #{$Metric-Control-Space / 2});
+                    }
+                }
+
+                input, select {
+                    ~ select + input {
+                        //last auto complete
+                        width: calc(33.33% - #{$Metric-Control-Space / 2}) !important;
+                        border-right: solid 1px $Color-Grey-Light;
+                        border-radius: 0 5px 5px 0 !important;
+                    }
+                }
+
+                i.Icon ~ i.Icon {
+                    left: calc(66.67% + #{$Metric-Control-Space / 2});
+                    border-radius: 0 !important;
+                }
+
+                i.Icon ~ i.Icon ~ i.Icon {
+                    left: calc(100% + #{$Metric-Control-Space / 2});
                 }
             }
         }

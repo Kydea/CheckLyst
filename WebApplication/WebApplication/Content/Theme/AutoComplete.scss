@@ -90,11 +90,16 @@ div.AutoComplete-List {
     }
 
     &.NoCheck {
-        a.Selected {
-            padding-right: 10px;
+        a {
+            padding: 0 5px !important;
+            text-align: center;
 
-            &::after {
-                content: none;
+            &.Selected {
+                padding-right: 5px !important;
+
+                &::after {
+                    content: none;
+                }
             }
         }
     }

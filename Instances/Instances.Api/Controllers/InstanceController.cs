@@ -46,13 +46,29 @@ namespace CheckListManager.Instances.Api.Controllers
         }
 
         [HttpPost]
+        [Route("CheckCreationGrants")]
+        [Authorize(Roles = "Instances#Create, Prototypes#Preview")]
+        public async Task<IHttpActionResult> CheckCreationGrants(CreateInstanceRequest request)
+        {
+            try
+            {
+                await _instanceManagerService.CheckCreationGrantsAsync(Identity, request.Prototype, request.Version);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return Error(e);
+            }
+        }
+
+        [HttpPost]
         [Route("Create")]
         [Authorize(Roles = "Instances#Create, Prototypes#Preview")]
         public async Task<IHttpActionResult> Create(CreateInstanceRequest request)
         {
             try
             {
-                var cacheObject = await _instanceManagerService.CreateInstanceAsync(Identity, Identity.Code, request.Prototype, request.Version, request.Parameters);
+                var cacheObject = await _instanceManagerService.CreateInstanceAsync(Identity, request.Prototype, request.Version, request.Parameters);
                 await _instanceManagerService.SaveCacheObjectAsync(cacheObject);
                 var response = new InstanceResponse
                 {
