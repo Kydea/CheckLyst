@@ -40,7 +40,8 @@ namespace CheckListManager.Instances.Data
 
 			var count = await Entities.Instances
 				.Where(filters)
-				.CountAsync();
+                .Where(i => i.Prototypes.Company == companyId)
+                .CountAsync();
 
 			return new PagingResponse<List<TResult>>
 			{

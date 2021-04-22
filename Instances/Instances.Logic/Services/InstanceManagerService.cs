@@ -1940,23 +1940,6 @@ namespace CheckListManager.Instances.Logic.Services
 
                         DependencyNode.UpdateNodes(cacheObject.Instance, Roots);
                     }
-                /*
-                foreach (var ExternalSourceDependencyRelation in ExternalSource.DependentRelations)
-                {
-                    var IteratorModelItem = (Item)ExternalSourceDependencyRelation.GetNode(cacheObject.Instance);
-                    Item IterationItem = IteratorModelItem.FindIterationItems(iteration).Single();
-
-                    //the siblings are update directly
-                    IterationItem.Update(DependencyRelation.Properties.Value);
-
-                    //the iterator model item are marked as changed and then skipped to avoid all the iterations of the iterator are updated
-                    IteratorModelItem = IterationItem.FindIteratorModelItem();
-                    var Roots = new HashSet<Tuple<DependencyNode, DependencyRelation.Properties>>();
-                    IteratorModelItem.MarkNodeAsChanged(cacheObject.Instance, Roots, DependencyRelation.Properties.Value);
-                    IteratorModelItem.MarkNodeAsUnchanged(DependencyRelation.Properties.Value);
-                    DependencyNode.UpdateNodes(cacheObject.Instance, Roots);
-                }
-                */
             }
 
             //call audit trail only after the rest of the process has worked
