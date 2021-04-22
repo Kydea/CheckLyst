@@ -45,7 +45,11 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         protected Dictionary<string, object> GetRuntimeValues()
         {
             Dictionary<string, object> RuntimeValues = new Dictionary<string, object>();
-            if (Iteration != null) RuntimeValues["IterationIndex"] = Iteration.Index;
+            if (Iteration != null)
+            {
+                RuntimeValues["IterationIndex"] = Iteration.Index;
+                RuntimeValues["IterationIdentifier"] = Iteration.Identifier;
+            }
             return RuntimeValues;
         }
 

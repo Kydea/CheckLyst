@@ -141,12 +141,10 @@ namespace CheckListManager.Common.Logic.Configuration
 			
 			var useFileSystem = "FileSystem".Equals(ConfigurationManager.AppSettings["StorageSystem"], StringComparison.InvariantCultureIgnoreCase);
 			if (useFileSystem)
-			{
 				builder.RegisterType<StorageServiceFileSystem>()
 					.As<IStorageService>()
 					.AsSelf()
 					.InstancePerScope(UseInstancePerRequest);
-			}
 			else
 			{
 				builder.RegisterType<AmazonS3Client>()

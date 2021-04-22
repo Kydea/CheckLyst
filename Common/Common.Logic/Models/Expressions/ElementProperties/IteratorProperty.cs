@@ -11,8 +11,6 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
 {
     public class IteratorProperty : ElementProperty
     {
-        private readonly string[] Properties = { "Count", "IterationIndex" };
-
         public IteratorProperty(string Property)
         {
             this.Property = Property;

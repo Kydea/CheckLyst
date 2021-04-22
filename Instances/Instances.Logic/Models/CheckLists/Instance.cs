@@ -96,6 +96,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         [JsonProperty]
         private int ItemSequence { get; set; }
+        public int IterationSequence { get; set; }
 
         public void AddItem(ICheckListItem item)
         {
