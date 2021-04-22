@@ -23,7 +23,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ArithmeticOperators
             {
                 if (Right.DataType != DataType.Number)
                     throw new ParseException($"Right operand of operator + must be a number when left operand is a {Left.DataType}", Position);
-                DataType = Left.DataType;
+                DataType = Left.DataType == DataType.Time ? DataType.Time : DataType.DateTime;
             }
             else 
                 throw new ParseException($"The operator + cannot be applied to a {Left.DataType} and a {Right.DataType}", Position);

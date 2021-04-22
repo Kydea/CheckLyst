@@ -20,7 +20,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ArithmeticOperators
             else if (Left.DataType == DataType.Time)
             {
                 if (Right.DataType == DataType.Number)
-                    DataType = Left.DataType;
+                    DataType = DataType.Time;
                 else if (Right.DataType == DataType.Time)
                     DataType = DataType.Number;
                 else
@@ -29,7 +29,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ArithmeticOperators
             else if (Left.DataType == DataType.DateTime || Left.DataType == DataType.Date)
             {
                 if (Right.DataType == DataType.Number)
-                    DataType = Left.DataType;
+                    DataType = DataType.DateTime;
                 else if (Right.DataType == DataType.DateTime || Right.DataType == DataType.Date)
                     DataType = DataType.Number;
                 else
