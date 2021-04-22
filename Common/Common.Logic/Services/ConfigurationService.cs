@@ -23,8 +23,8 @@ namespace CheckListManager.Common.Logic.Services
 		public int RedisPort => _cache.GetOrAdd("RedisPort", Load<int>, RegionName);
 		public string SqsBaseUrl => _cache.GetOrAdd("SqsBaseUrl", Load<string>, RegionName);
         public string SqsPrefix => _cache.GetOrAdd("SqsPrefix", Load<string>, RegionName);
-        //public string ApiBaseUrl => _cache.GetOrAdd("ApiBaseUrl", Load<string>, RegionName); //"http://localhost/API/";
-        public string ApiBaseUrl => "http://localhost/API/";
+        public string ApiBaseUrl => _cache.GetOrAdd("ApiBaseUrl", Load<string>, RegionName);
+        //public string ApiBaseUrl => "http://localhost/API/";
         public string WebApplicationUrl => _cache.GetOrAdd("WebApplicationUrl", Load<string>, RegionName);
         public string PublicRepositoryUrl => _cache.GetOrAdd("PublicRepositoryUrl", Load<string>, RegionName);
         public int InstanceCloseTimeout => _cache.GetOrAdd("InstanceCloseTimeout", Load<int>, RegionName);
