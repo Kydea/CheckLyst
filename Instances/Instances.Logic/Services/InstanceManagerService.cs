@@ -879,7 +879,7 @@ namespace CheckListManager.Instances.Logic.Services
                             var token = identity.Code + ":" + Guid.NewGuid();
                             await _redisCache.SetAsync($"Token:{token}", new ExportRequest
                             {
-                                //Code = cacheObject.Instance.ExternalSources[Group.DumpExternalSourceName],
+                                Code = cacheObject.Instance.ExternalSources[Group.DumpExternalSourceName].DataSource,
                                 Names = Names,
                                 Records = Records,
                                 DecimalSeparator = await _settingService.DecimalSeparatorAsync(identity.CompanyId),
