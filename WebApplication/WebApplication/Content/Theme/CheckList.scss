@@ -114,12 +114,6 @@ div.CheckList {
     div.Item {
         margin: 0 0 20px;
 
-        label.Controls2 {
-            input, div.Input {
-                width: 100% !important;
-            }
-        }
-
         &.MultiLine {
             clear: both;
             width: calc(100% - #{$Metric-Control-Space});
@@ -170,6 +164,12 @@ div.CheckList {
             &.Boolean {
                 input[value=""] {
                     opacity: 0.6;
+                }
+            }
+
+            label.Controls2 {
+                div.Input {
+                    width: 100% !important;
                 }
             }
         }

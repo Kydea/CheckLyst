@@ -70,8 +70,6 @@ div.CheckList div.Group {
 
 div.CheckList div.Item {
   margin: 0 0 20px; }
-  div.CheckList div.Item label.Controls2 input, div.CheckList div.Item label.Controls2 div.Input {
-    width: 100% !important; }
   div.CheckList div.Item.MultiLine {
     clear: both;
     width: calc(100% - 20px); }
@@ -104,6 +102,8 @@ div.CheckList div.Item {
     clear: both; }
   div.CheckList div.Item.Field.Boolean input[value=""] {
     opacity: 0.6; }
+  div.CheckList div.Item.Field label.Controls2 div.Input {
+    width: 100% !important; }
   div.CheckList div.Item.Text {
     font-size: 13px; }
     div.CheckList div.Item.Text p {

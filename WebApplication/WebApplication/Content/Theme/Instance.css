@@ -204,6 +204,15 @@ div.Instance .Item.Field.DateTime input.AutoComplete {
   div.Instance .Item.Field.DateTime input.AutoComplete:nth-child(5) {
     border-radius: 0; }
 
+div.Instance .Item.Field.DateTime label.Controls2 input:not(.AutoComplete), div.Instance .Item.Field.DateTime label.FullWidth input:not(.AutoComplete) {
+  width: 50% !important;
+  border: solid 1px #ccc !important;
+  border-radius: 5px 0 0 5px !important; }
+
+div.Instance .Item.Field.DateTime label.Controls2 input.AutoComplete, div.Instance .Item.Field.DateTime label.FullWidth input.AutoComplete {
+  float: left;
+  width: 25% !important; }
+
 div.Instance .Item.Field.Time input.Description {
   display: none; }
 
@@ -217,6 +226,14 @@ div.Instance .Item.Field.Time input.AutoComplete {
   div.Instance .Item.Field.Time input.AutoComplete:nth-child(4) {
     border-radius: 5px 0 0 5px;
     border-left: solid 1px #ccc; }
+
+div.Instance .Item.Field.Text label.Controls2 input, div.Instance .Item.Field.Number label.Controls2 input, div.Instance .Item.Field.Date label.Controls2 input {
+  width: 100% !important;
+  border: solid 1px #ccc !important;
+  border-radius: 5px !important; }
+
+div.Instance .Item.Field.Boolean input {
+  width: unset !important; }
 
 div.Instance .Item.Field.ReadOnly input {
   display: none; }
@@ -242,6 +259,11 @@ div.Instance .Item.Field.ReadOnly .AutoComplete, div.Instance .Item.Field.ReadOn
 
 div.Instance .Item.Field.ReadOnly.MultiLine div.Input {
   line-height: 20px; }
+
+div.Instance .Item.Field.List label.Controls2 input.AutoComplete {
+  width: 100% !important;
+  border: solid 1px #ccc !important;
+  border-radius: 5px !important; }
 
 div.Instance .Item.Field .ExternalSourceLink {
   position: absolute;

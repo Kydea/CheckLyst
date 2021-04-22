@@ -333,6 +333,19 @@ div.Instance {
                         border-radius: 0;
                     }
                 }
+
+                label.Controls2, label.FullWidth {
+                    input:not(.AutoComplete) {
+                        width: 50% !important;
+                        border: solid 1px $Color-Grey-Light !important;
+                        border-radius: 5px 0 0 5px !important;
+                    }
+
+                    input.AutoComplete {
+                        float: left;
+                        width: 25% !important;
+                    }
+                }
             }
 
             &.Time {
@@ -353,6 +366,22 @@ div.Instance {
                         border-radius: 5px 0 0 5px;
                         border-left: solid 1px $Color-Grey-Light;
                     }
+                }
+            }
+
+            &.Text, &.Number, &.Date {
+                label.Controls2 {
+                    input {
+                        width: 100% !important;
+                        border: solid 1px $Color-Grey-Light !important;
+                        border-radius: 5px !important;
+                    }
+                }
+            }
+
+            &.Boolean {
+                input {
+                    width: unset !important;
                 }
             }
 
@@ -397,6 +426,16 @@ div.Instance {
                 }
             }
 
+            &.List {
+                label.Controls2 {
+                    input.AutoComplete {
+                        width: 100% !important;
+                        border: solid 1px $Color-Grey-Light !important;
+                        border-radius: 5px !important;
+                    }
+                }
+            }
+
             .ExternalSourceLink {
                 position: absolute;
                 top: 26px;
@@ -408,7 +447,6 @@ div.Instance {
                     text-decoration: none;
                 }
             }
-
 
             .Copy {
                 position: absolute;

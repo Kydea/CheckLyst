@@ -176,7 +176,7 @@
                         select2.add(option);
                     }
                 }
-                else if (model.valueTypeName == "Date")
+                else //if (model.valueTypeName == "Date")
                     element.classList.add(model.valueTypeName);
             }
 
@@ -185,6 +185,7 @@
             (item.isTableContent() ? element : label).append(field);
 
             label.classList.toggle("Controls2", model.linesCount == -1);
+            label.classList.toggle("FullWidth", model.linesCount > 0)
             element.classList.toggle("MultiLine", model.linesCount > 0);
             if (model.linesCount > 1) {
                 input.style.height = 20 * model.linesCount + 12 + "px";

@@ -137,6 +137,9 @@ div.Prototype {
         }
 
         &.Field {
+            div.Input {
+                width: 100% !important;
+            }
         }
 
         &.Signature {
