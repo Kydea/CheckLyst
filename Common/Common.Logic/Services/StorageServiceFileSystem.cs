@@ -15,9 +15,7 @@ namespace CheckListManager.Common.Logic.Services
         {
             var path = Path.Combine(bucketName, key);
             if (!File.Exists(path))
-            {
                 throw new Exception($"File {path} not found");
-            }
 
             var ms = new MemoryStream();
             using (var fileStream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))

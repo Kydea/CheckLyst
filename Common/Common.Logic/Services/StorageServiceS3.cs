@@ -21,9 +21,7 @@ namespace CheckListManager.Common.Logic.Services
         {
             var response = await _s3.GetObjectAsync(bucketName, key);
             if (response.HttpStatusCode == HttpStatusCode.NotFound)
-            {
-                throw new Exception($"File {key} not found");
-            }
+                throw new Exception($"S3 file not found (bucket: {bucketName}, key: {key})");
 
             return new StorageFile(response.ResponseStream, response.Headers.ContentType);
         }
