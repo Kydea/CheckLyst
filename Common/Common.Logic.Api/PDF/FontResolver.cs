@@ -17,11 +17,11 @@ namespace CheckListManager.Common.Logic.Api.PDF
 
             switch (name)
             {
-                case "noto sans sc":
-                    if (isBold)
-                        return new FontResolverInfo("NotoSansSC#b");
+                case "arial unicode ms":
+                    if (isBold || isItalic)
+                        return new FontResolverInfo("ArialUnicodeMS#", isBold && isItalic ? PdfSharp.Drawing.XStyleSimulations.BoldItalicSimulation : isBold ? PdfSharp.Drawing.XStyleSimulations.BoldSimulation : PdfSharp.Drawing.XStyleSimulations.ItalicSimulation);
 
-                    return new FontResolverInfo("NotoSansSC#");
+                    return new FontResolverInfo("ArialUnicodeMS#");
             }
 
             return PlatformFontResolver.ResolveTypeface(familyName, isBold, isItalic);
@@ -31,11 +31,8 @@ namespace CheckListManager.Common.Logic.Api.PDF
         {
             switch (faceName)
             {
-                case "NotoSansSC#":
-                    return FontResolverHelper.ArialUnicodeMS.Regular;
-
-                case "NotoSansSC#b":
-                    return FontResolverHelper.ArialUnicodeMS.Bold;
+                case "ArialUnicodeMS#":
+                    return FontResolverHelper.ArialUnicodeMS;
             }
 
             return null;
@@ -44,11 +41,7 @@ namespace CheckListManager.Common.Logic.Api.PDF
 
     public static class FontResolverHelper
     {
-        public static FontFamily ArialUnicodeMS => new FontFamily
-        {
-            Regular = LoadFont("CheckListManager.Common.Logic.Api.PDF.Fonts.NotoSansSC-Regular.otf"),
-            Bold = LoadFont("CheckListManager.Common.Logic.Api.PDF.Fonts.NotoSansSC-Bold.otf")
-        };
+        public static byte[] ArialUnicodeMS => LoadFont("CheckListManager.Common.Logic.Api.PDF.Fonts.ARIALUNI.TTF");
 
         /// <summary>
         /// Returns the specified font from an embedded resource.
@@ -67,13 +60,6 @@ namespace CheckListManager.Common.Logic.Api.PDF
                 stream.Read(data, 0, count);
                 return data;
             }
-        }
-
-        public class FontFamily
-        {
-            public byte[] Regular { get; set; }
-            public byte[] Bold { get; set; }
-            public byte[] Italic { get; set; }
         }
     }
 }

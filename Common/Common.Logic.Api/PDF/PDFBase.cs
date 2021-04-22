@@ -8,6 +8,7 @@ namespace CheckListManager.Common.Logic.Api.PDF
 {
     public abstract class PDFBase
     {
+        public static readonly string DefaultFontFamily = "Arial Unicode MS";
 
         public static readonly Color Red = Colors.Red;
         public static readonly Color LightGray = Color.FromRgb(235, 235, 235);
@@ -19,15 +20,15 @@ namespace CheckListManager.Common.Logic.Api.PDF
         public static Border DefaultBorder => new Border { Color = Gray, Style = BorderStyle.Single };
         public static Border RedBorder => new Border { Color = Red, Style = BorderStyle.Single };
        
-        public static Font TitleFont1 => FontHelper.GetInstance("Noto Sans SC", 20, FontStyle.Bold, Yellow).Clone();
-        public static Font TitleFont2 => FontHelper.GetInstance("Noto Sans SC", 16, FontStyle.Bold, Green).Clone();
-        public static Font TitleFont3 => FontHelper.GetInstance("Noto Sans SC", 12, FontStyle.Bold, Green).Clone();
-        public static Font RedTitleFont => FontHelper.GetInstance("Noto Sans SC", 12, FontStyle.Bold, Red).Clone();
-        public static Font GenericFont => FontHelper.GetInstance("Noto Sans SC", 10, FontStyle.Regular, Colors.Black).Clone();
-        public static Font BoldFont => FontHelper.GetInstance("Noto Sans SC", 10, FontStyle.Bold, DarkGray).Clone();
-        public static Font GrayFont => FontHelper.GetInstance("Noto Sans SC", 10, FontStyle.Regular, DarkGray).Clone();
-        public static Font SmallFont => FontHelper.GetInstance("Noto Sans SC", 8, FontStyle.Regular, Colors.Black).Clone();
-        public static Font SmallBoldFont => FontHelper.GetInstance("Noto Sans SC", 8, FontStyle.Bold, Colors.Black).Clone();
+        public static Font TitleFont1 => FontHelper.GetInstance(DefaultFontFamily, 20, FontStyle.Bold, Yellow).Clone();
+        public static Font TitleFont2 => FontHelper.GetInstance(DefaultFontFamily, 16, FontStyle.Bold, Green).Clone();
+        public static Font TitleFont3 => FontHelper.GetInstance(DefaultFontFamily, 12, FontStyle.Bold, Green).Clone();
+        public static Font RedTitleFont => FontHelper.GetInstance(DefaultFontFamily, 12, FontStyle.Bold, Red).Clone();
+        public static Font GenericFont => FontHelper.GetInstance(DefaultFontFamily, 10, FontStyle.Regular, Colors.Black).Clone();
+        public static Font BoldFont => FontHelper.GetInstance(DefaultFontFamily, 10, FontStyle.Bold, DarkGray).Clone();
+        public static Font GrayFont => FontHelper.GetInstance(DefaultFontFamily, 10, FontStyle.Regular, DarkGray).Clone();
+        public static Font SmallFont => FontHelper.GetInstance(DefaultFontFamily, 8, FontStyle.Regular, Colors.Black).Clone();
+        public static Font SmallBoldFont => FontHelper.GetInstance(DefaultFontFamily, 8, FontStyle.Bold, Colors.Black).Clone();
 
         protected string Subject { get; private set; }
         public Section Container { get; private set; }

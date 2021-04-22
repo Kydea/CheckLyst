@@ -233,8 +233,7 @@
     <None Include="app.config" />
     <None Include="Common.Logic.Api.snk" />
     <None Include="packages.config" />
-    <EmbeddedResource Include="PDF\Fonts\NotoSansSC-Bold.otf" />
-    <EmbeddedResource Include="PDF\Fonts\NotoSansSC-Regular.otf" />
+    <EmbeddedResource Include="PDF\Fonts\ARIALUNI.TTF" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Services\" />
@@ -243,7 +242,7 @@
     <Analyzer Include="..\..\packages\AWSSDK.SQS.3.3.102.103\analyzers\dotnet\cs\AWSSDK.SQS.CodeAnalysis.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="PDF\Fonts\OFL.txt" />
+    <Content Include="PDF\Fonts\README.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
