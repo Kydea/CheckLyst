@@ -25,6 +25,7 @@ namespace CheckListManager.Common.Logic.Models.ExternalSources
         public bool BuildDependencies(ICheckList checklist)
         {
             var Result = true;
+            ClearDependencies();
             Errors.Clear();
             if (Parameters != null)
                 foreach (var Parameter in Parameters.Values)

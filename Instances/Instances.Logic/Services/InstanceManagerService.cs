@@ -1237,8 +1237,8 @@ namespace CheckListManager.Instances.Logic.Services
                         Property = AffectedElements == null ? DependencyRelation.Properties.ReadOnly : DependencyRelation.Properties.Value;
                         break;
                     case EventTypes.Import:
-                        await HandleImport(cacheObject, identity, request.ItemId, request.Value, request.Columns, request.Rows);
-                        Property = DependencyRelation.Properties.ReadOnly;
+                        AffectedElements = await HandleImport(cacheObject, identity, request.ItemId, request.Value, request.Columns, request.Rows);
+                        Property = DependencyRelation.Properties.Iterations;
                         break;
                     case EventTypes.UploadAttachment:
                         AffectedElement = await HandleUploadAttachment(cacheObject, identity, request.ItemId, request.Attachment);
@@ -1249,22 +1249,26 @@ namespace CheckListManager.Instances.Logic.Services
                 }
 
                 var Roots = new HashSet<Tuple<DependencyNode, DependencyRelation.Properties>>();
-                if (Property == DependencyRelation.Properties.Iterations)
-                {
-                    var Iteration = (Iteration)AffectedElement;
-                    var IterationChildren = new List<DependencyNode>();
-                    Iteration.GetAllChildren(IterationChildren);
-                    IterationChildren = IterationChildren.Where(x => x != null).ToList();
-
-                    if (IterationChildren.Any())
-                        foreach (Element Child in IterationChildren)
-                            Child.MarkAllAsChanged(Roots);
-
-                    AffectedElement = (Group)Iteration.Group;
-                }
-
                 if (AffectedElements == null && AffectedElement != null)
                     AffectedElements = new List<DependencyNode> { AffectedElement };
+
+                if (Property == DependencyRelation.Properties.Iterations)
+                {
+                    foreach (var Element in AffectedElements)
+                    {
+                        var Iteration = (Iteration)Element;
+                        var IterationChildren = new List<DependencyNode>();
+                        Iteration.GetAllChildren(IterationChildren);
+                        IterationChildren = IterationChildren.Where(x => x != null).ToList();
+
+                        if (IterationChildren.Any())
+                            foreach (Element Child in IterationChildren)
+                                Child.MarkAllAsChanged(Roots);
+                    }
+
+                    if (AffectedElements.Any()) 
+                        AffectedElements = new List<Element> { (Group)((Iteration)AffectedElements.First()).Group }; //updates the headers
+                }
 
                 if (AffectedElements != null)
                 {
@@ -1896,7 +1900,7 @@ namespace CheckListManager.Instances.Logic.Services
             return AffectedElements;
         }
 
-        private async Task HandleImport(InstanceCacheObject cacheObject, IDefaultIdentity identity, int? itemId, string externalSourceName, List<string> columns, List<List<string>> rows)
+        private async Task<List<Iteration>> HandleImport(InstanceCacheObject cacheObject, IDefaultIdentity identity, int? itemId, string externalSourceName, List<string> columns, List<List<string>> rows)
         {
             if (!itemId.HasValue)
                 throw new InstanceException("Item id not sent");
@@ -1906,15 +1910,15 @@ namespace CheckListManager.Instances.Logic.Services
                 throw new InstanceException($"Group {itemId} not found");
 
             if (group.ReadOnly || !cacheObject.Instance.ExternalSources.TryGetValue(externalSourceName, out var ExternalSource))
-                return;
+                return null;
 
             var rowDictionary = columns.ToDictionary(k => k, v => default(string));
-            var iterations = new List<int>(rows.Count);
+            var iterations = new List<Iteration>(rows.Count);
 
             foreach (var row in rows)
             {
                 var iteration = group.AddIteration();
-                iterations.Add(iteration.Id);
+                iterations.Add(iteration);
                 for (var index = 0; index < columns.Count; ++index)
                     rowDictionary[columns[index]] = row[index];
                 ExternalSource.Values = rowDictionary;
@@ -1952,7 +1956,7 @@ namespace CheckListManager.Instances.Logic.Services
                     CheckListID = cacheObject.ID,
                     Information = JsonConvert.SerializeObject(new
                     {
-                        Iteration = iterations[rowIndex],
+                        Iteration = iterations[rowIndex].Id,
                         Source = externalSourceName,
                         Values = rowDictionary
                     })
@@ -1960,6 +1964,7 @@ namespace CheckListManager.Instances.Logic.Services
             }
 
             TrackChanges(cacheObject, identity.Code);
+            return iterations;
         }
 
         private async Task<Element> HandleUploadAttachment(

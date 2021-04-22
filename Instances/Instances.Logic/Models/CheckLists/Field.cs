@@ -156,9 +156,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 }
             }
 
-            if (ExternalSourceName != null && Instance.ExternalSources.TryGetValue(ExternalSourceName, out var ExternalSource))
+            if (ExternalSourceName != null && Instance.ExternalSources.TryGetValue(ExternalSourceName, out var ExternalSource) && ExternalSource.Values != null)
             {
-                if (ExternalSource.Values == null || !ExternalSource.Values.TryGetValue(ExternalSourceColumn, out var ExternalSourceValue))
+                if (!ExternalSource.Values.TryGetValue(ExternalSourceColumn, out var ExternalSourceValue))
                     ExternalSourceValue = null;
 
                 if (ExternalSourceValue != null && ValueType == DataType.Number)

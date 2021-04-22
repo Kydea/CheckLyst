@@ -25,15 +25,16 @@
 		},
 
 		sourceChanged = function (column) {
-			sourceColumn.empty();
-			if (!!sourceName.val() && !!prototypes.prototype.getModel().externalSources[sourceName.val()])
+            sourceColumn.empty();
+            var sourceCode = sourceName.val();
+            if (!!sourceCode && !!prototypes.prototype.getModel().externalSources[sourceCode])
 				$.ajax({
 					type: "post",
 					url: matematici.urls.dataSources.api + "/Data/GetDataSource",
 					dataType: "json",
 					contentType: "application/json; charset=utf-8",
-					data: JSON.stringify({
-						code: prototypes.prototype.getModel().externalSources[sourceName.val()]
+                    data: JSON.stringify({
+                        code: prototypes.prototype.getModel().externalSources[sourceCode].dataSource
 					})
 				}).done(function (result) {
 					var columns = result.columns;
