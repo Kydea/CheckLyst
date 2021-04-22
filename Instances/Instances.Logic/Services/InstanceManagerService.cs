@@ -1237,8 +1237,8 @@ namespace CheckListManager.Instances.Logic.Services
                         Property = AffectedElements == null ? DependencyRelation.Properties.ReadOnly : DependencyRelation.Properties.Value;
                         break;
                     case EventTypes.Import:
-                        AffectedElements = await HandleImport(cacheObject, identity, request.ItemId, request.Value, request.Columns, request.Rows);
-                        Property = DependencyRelation.Properties.Iterations;
+                        await HandleImport(cacheObject, identity, request.ItemId, request.Value, request.Columns, request.Rows);
+                        Property = DependencyRelation.Properties.ReadOnly;
                         break;
                     case EventTypes.UploadAttachment:
                         AffectedElement = await HandleUploadAttachment(cacheObject, identity, request.ItemId, request.Attachment);
@@ -1249,26 +1249,22 @@ namespace CheckListManager.Instances.Logic.Services
                 }
 
                 var Roots = new HashSet<Tuple<DependencyNode, DependencyRelation.Properties>>();
-                if (AffectedElements == null && AffectedElement != null)
-                    AffectedElements = new List<DependencyNode> { AffectedElement };
-
                 if (Property == DependencyRelation.Properties.Iterations)
                 {
-                    foreach (var Element in AffectedElements)
-                    {
-                        var Iteration = (Iteration)Element;
-                        var IterationChildren = new List<DependencyNode>();
-                        Iteration.GetAllChildren(IterationChildren);
-                        IterationChildren = IterationChildren.Where(x => x != null).ToList();
+                    var Iteration = (Iteration)AffectedElement;
+                    var IterationChildren = new List<DependencyNode>();
+                    Iteration.GetAllChildren(IterationChildren);
+                    IterationChildren = IterationChildren.Where(x => x != null).ToList();
 
-                        if (IterationChildren.Any())
-                            foreach (Element Child in IterationChildren)
-                                Child.MarkAllAsChanged(Roots);
-                    }
+                    if (IterationChildren.Any())
+                        foreach (Element Child in IterationChildren)
+                            Child.MarkAllAsChanged(Roots);
 
-                    if (AffectedElements.Any()) 
-                        AffectedElements = new List<Element> { (Group)((Iteration)AffectedElements.First()).Group }; //updates the headers
+                    AffectedElement = (Group)Iteration.Group;
                 }
+
+                if (AffectedElements == null && AffectedElement != null)
+                    AffectedElements = new List<DependencyNode> { AffectedElement };
 
                 if (AffectedElements != null)
                 {
@@ -1900,7 +1896,7 @@ namespace CheckListManager.Instances.Logic.Services
             return AffectedElements;
         }
 
-        private async Task<List<Iteration>> HandleImport(InstanceCacheObject cacheObject, IDefaultIdentity identity, int? itemId, string externalSourceName, List<string> columns, List<List<string>> rows)
+        private async Task HandleImport(InstanceCacheObject cacheObject, IDefaultIdentity identity, int? itemId, string externalSourceName, List<string> columns, List<List<string>> rows)
         {
             if (!itemId.HasValue)
                 throw new InstanceException("Item id not sent");
@@ -1910,19 +1906,41 @@ namespace CheckListManager.Instances.Logic.Services
                 throw new InstanceException($"Group {itemId} not found");
 
             if (group.ReadOnly || !cacheObject.Instance.ExternalSources.TryGetValue(externalSourceName, out var ExternalSource))
-                return null;
+                return;
 
             var rowDictionary = columns.ToDictionary(k => k, v => default(string));
-            var iterations = new List<Iteration>(rows.Count);
+            var iterationsId = new List<int>(rows.Count);
 
             foreach (var row in rows)
             {
                 var iteration = group.AddIteration();
-                iterations.Add(iteration);
+                iterationsId.Add(iteration.Id);
                 for (var index = 0; index < columns.Count; ++index)
                     rowDictionary[columns[index]] = row[index];
                 ExternalSource.Values = rowDictionary;
 
+                var IterationChildren = new List<DependencyNode>();
+                iteration.GetAllChildren(IterationChildren);
+                IterationChildren = IterationChildren.Where(x => x != null).ToList();
+
+                if (IterationChildren.Any())
+                    foreach (Element Child in IterationChildren)
+                    {
+                        var Roots = new HashSet<Tuple<DependencyNode, DependencyRelation.Properties>>();
+
+                        //the children of the added iterations are all marked as changed
+                        Child.MarkAllAsChanged(Roots); 
+
+                        //the fields boudn to the external source are update directly
+                        if (Child is Field Field && Field.ExternalSourceName == ExternalSource.Code) Field.Update(DependencyRelation.Properties.Value);
+
+                        //the iterator model item are marked as changed by the iteration child involved and then skipped to avoid all the iterations of the iterator are updated with last value
+                        var IteratorModelItem = ((Item)Child).FindIteratorModelItem();
+                        IteratorModelItem.MarkNodeAsUnchanged(DependencyRelation.Properties.Value);
+
+                        DependencyNode.UpdateNodes(cacheObject.Instance, Roots);
+                    }
+                /*
                 foreach (var ExternalSourceDependencyRelation in ExternalSource.DependentRelations)
                 {
                     var IteratorModelItem = (Item)ExternalSourceDependencyRelation.GetNode(cacheObject.Instance);
@@ -1938,6 +1956,7 @@ namespace CheckListManager.Instances.Logic.Services
                     IteratorModelItem.MarkNodeAsUnchanged(DependencyRelation.Properties.Value);
                     DependencyNode.UpdateNodes(cacheObject.Instance, Roots);
                 }
+                */
             }
 
             //call audit trail only after the rest of the process has worked
@@ -1956,7 +1975,7 @@ namespace CheckListManager.Instances.Logic.Services
                     CheckListID = cacheObject.ID,
                     Information = JsonConvert.SerializeObject(new
                     {
-                        Iteration = iterations[rowIndex].Id,
+                        Iteration = iterationsId[rowIndex],
                         Source = externalSourceName,
                         Values = rowDictionary
                     })
@@ -1964,7 +1983,6 @@ namespace CheckListManager.Instances.Logic.Services
             }
 
             TrackChanges(cacheObject, identity.Code);
-            return iterations;
         }
 
         private async Task<Element> HandleUploadAttachment(
