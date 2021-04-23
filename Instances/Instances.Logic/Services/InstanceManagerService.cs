@@ -166,11 +166,44 @@ namespace CheckListManager.Instances.Logic.Services
             return source;
         }
 
+        private void AddSimulationNote(Instance instance)
+        {
+            var SimulationPage = new Page()
+            {
+                Description = "Simulation notes",
+                Groups = new List<ICheckListGroup>
+                {
+                    new Group
+                    {
+                        Description = "Simulation notes",
+                        Items = new List<ICheckListItem>
+                        {
+                            new Field
+                            {
+                                Description = "Reason",
+                                LinesCount = 5
+                            },
+                            new Field
+                            {
+                                Description = "Result",
+                                LinesCount = 5
+                            }
+
+                        }
+                    }
+                }
+            };
+            instance.Pages.Add(SimulationPage);
+        }
+
         public async Task<InstanceCacheObject> CreateInstanceAsync(IDefaultIdentity identity, long prototype, int? version, Dictionary<string, string> parameters)
         {
             try
             {
                 var source = await CheckCreationGrantsAsync(identity, prototype, version);
+                if (source.State == VersionState.InSimulation)
+                    AddSimulationNote(source.CheckList);
+
                 var cacheObject = new InstanceCacheObject
                 {
                     CompanyId = identity.CompanyId,
@@ -1929,7 +1962,7 @@ namespace CheckListManager.Instances.Logic.Services
                         var Roots = new HashSet<Tuple<DependencyNode, DependencyRelation.Properties>>();
 
                         //the children of the added iterations are all marked as changed
-                        Child.MarkAllAsChanged(Roots); 
+                        Child.MarkAllAsChanged(Roots);
 
                         //the fields boudn to the external source are update directly
                         if (Child is Field Field && Field.ExternalSourceName == ExternalSource.Code) Field.Update(DependencyRelation.Properties.Value);
