@@ -15,10 +15,15 @@
                 <i class="Icon fal fa-folder" />
                 <select name="prototypeType" data-nullable="(all)" />
             </label>
-            <label>
+            <label class="Clearing">
                 <span>Prototype name</span>
                 <i class="Icon fal fa-file-invoice" />
                 <input type="text" name="name" />
+            </label>
+            <label>
+                <span>Prototype ID</span>
+                <i class="Icon fal fa-key" />
+                <input type="text" name="id" class="mask-pint" maxlength="18" />
             </label>
             <label class="Width200 Clearing">
                 <span>Changing state</span>
@@ -144,6 +149,8 @@
             addButton = $("#AddButton").on("click", function (e) {
                 matematici.navigator.open("@Url.Action("Create")");
             });
+
+        $("input[name=id]").keyfilter(/[\d]/);
 
         if (!editor)
             addButton.remove();

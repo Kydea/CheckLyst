@@ -9,6 +9,7 @@ namespace CheckListManager.Instances.Logic.List
         public long? PrototypeType { get; set; }
         public long? Prototype { get; set; }
         public int? Version { get; set; }
+        public long? ID { get; set; }
         public string Description { get; set; }
         public int? Year { get; set; }
         public int? Number { get; set; }

@@ -174,7 +174,8 @@ namespace CheckListManager.Instances.Logic.List
                     ModifiedOn = i.ModifiedOn
                 },
                 i =>
-                    (form.Data.Description == string.Empty || i.Description != null && i.Description.ToUpper().Contains(form.Data.Description.ToUpper()))
+                    (form.Data.ID == null || i.ID == form.Data.ID)
+                    && (form.Data.Description == string.Empty || i.Description != null && i.Description.ToUpper().Contains(form.Data.Description.ToUpper()))
                     && (form.Data.Department == null || i.Prototypes.Department == form.Data.Department)
                     && (form.Data.PrototypeType == null || i.Prototypes.PrototypeType == form.Data.PrototypeType)
                     && (form.Data.Prototype == null || i.Prototype == form.Data.Prototype)

@@ -84,6 +84,7 @@ namespace CheckListManager.Prototypes.Logic.List
                 },
                 p =>
                     p.Prototypes.Company == identity.CompanyId
+                    && (form.Data.ID == null || p.Prototype == form.Data.ID)
                     && (form.Data.Department == null || p.Prototypes.Department == form.Data.Department)
                     && (form.Data.PrototypeType == null || p.Prototypes.PrototypeType == form.Data.PrototypeType)
                     && (form.Data.State == string.Empty || p.VersionState == form.Data.State)
