@@ -786,8 +786,10 @@ div.Instance {
                 }
 
                 &.Removed {
+                    background-color: $Color-Pink !important;
+
                     td {
-                        background-color: $Color-Pink;
+                        background-color: $Color-Pink !important;
                     }
                 }
             }
