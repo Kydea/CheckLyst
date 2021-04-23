@@ -430,6 +430,9 @@ div.Instance table.Grid {
         background: none; }
       div.Instance table.Grid tbody tr td.Field:not(.DateTime):not(.Time) input[type=text]:focus {
         padding-right: 28px !important; }
+      div.Instance table.Grid tbody tr td.Field .ExternalSourceLink {
+        top: 0 !important;
+        line-height: 38px; }
     div.Instance table.Grid tbody tr td.Signature {
       text-align: center;
       width: 100px; }
