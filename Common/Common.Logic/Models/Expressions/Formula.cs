@@ -19,6 +19,27 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             ErrorValueLeft = "<span class='Error'>",
             ErrorValueRight = "</span>";
 
+        private readonly NumberFormatInfo 
+            CommaNumberFormatInfor = new NumberFormatInfo
+            {
+                NumberDecimalSeparator = ",",
+                NumberGroupSeparator = ".",
+                PercentDecimalSeparator = ",",
+                PercentGroupSeparator = ".",
+                CurrencyDecimalSeparator = ",",
+                CurrencyGroupSeparator = "."
+            }, 
+            DotNumberFormatInfor = new NumberFormatInfo
+            {
+                NumberDecimalSeparator = ".",
+                NumberGroupSeparator = ",",
+                PercentDecimalSeparator = ".",
+                PercentGroupSeparator = ",",
+                CurrencyDecimalSeparator = ".",
+                CurrencyGroupSeparator = ","
+            };
+
+
         [JsonProperty]
         private string Format { get; set; }
         public bool IsSet { get; set; }
@@ -81,14 +102,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                     else if (ExpressionValue.IsNull)
                         Value = NullValue;
                     else if (ExpressionValue.Type == DataType.Number)
-                    {
-                        var NumberFormatInfo = new NumberFormatInfo
-                        {
-                            NumberDecimalSeparator = DecimalSeparator,
-                            NumberGroupSeparator = DecimalSeparator == "," ? "." : ","
-                        };
-                        Value = ExpressionValue.NumberValue.ToString(TokenFormats[Index] ?? "", NumberFormatInfo);
-                    }
+                        Value = ExpressionValue.NumberValue.ToString(TokenFormats[Index] ?? "", DecimalSeparator == "," ? CommaNumberFormatInfor : DotNumberFormatInfor);
                     else
                         Value =
                             ExpressionValue.Type == DataType.DateTime ? ExpressionValue.DateTimeValue.ToLocalTime(TimeZone).ToString(TokenFormats[Index] ?? "yyyy-MM-dd HH:mm:ss") :
