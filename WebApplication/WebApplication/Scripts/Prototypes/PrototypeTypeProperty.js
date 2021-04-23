@@ -1,22 +1,41 @@
 ﻿prototypes.PrototypeTypeProperty = function (model, options) {
     var
         base,
-        input,
-        handler,
+        valuePanel,
         department,
         prototypeType,
+        prototypeTypes,
         departments,
+
+        loadPrototypeTypes = function () {
+            $.ajax({
+                type: "post",
+                url: matematici.urls.api + "/Infrastructure/PrototypeTypes/GetSyntheticData",
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    data: {
+                        name: "",
+                        functionGroup: "Prototypes",
+                        function: "Edit"
+                    },
+                    itemsPerPage: 1000
+                })
+            }).done(function (result) {
+                prototypeTypes = result.data;
+                setup();
+            });
+        },
 
         preparePrototypeTypes = function () {
             departments = [];
 
             var
-                data = prototypes.propertyPanel.getPrototypeTypesList(),
                 departmentID = null,
                 department;
 
-            for (var index in data) {
-                var record = data[index];
+            for (var index in prototypeTypes) {
+                var record = prototypeTypes[index];
                 if (departmentID != record.department) {
                     departments.push(department = { code: record.department, name: record.departmentName, prototypeTypes: [] });
                     departmentID = record.department;
@@ -43,57 +62,64 @@
             setTimeout(function () {
                 matematici.AutoComplete.get(prototypeType[0]).refresh();
             }, 0);
+        },
+
+        setup = function () {
+            preparePrototypeTypes();
+
+            var label = $("<label />").appendTo(valuePanel);
+            $("<i />").addClass("Icon fal fa-industry").appendTo(label);
+            department =
+                $("<select />")
+                    .attr("data-nullable", "")
+                    .on("change", function () {
+                        refreshPrototypeTypes(null);
+                        if (!!model.department && model.errors) {
+                            base.setError(model.errors, "department", null);
+                            base.setError(model.errors, "prototype-type");
+                        }
+                    })
+                    .appendTo(label);
+
+            for (var index in departments)
+                department.append($("<option />").text(departments[index].name).attr("value", departments[index].code));
+
+            label = $("<label />").appendTo(valuePanel);
+            $("<i />").addClass("Icon fal fa-folder").appendTo(label);
+            prototypeType =
+                $("<select />")
+                    .attr("data-nullable", "")
+                    .on("change", function () {
+                        model.department = department.val();
+                        model.departmentName = department.next().val();
+                        model.prototypeType = prototypeType.val();
+                        model.prototypeTypeName = prototypeType.next().val();
+                        if (!options.readOnly)
+                            base.updateModel(model);
+
+                        if (!!model.prototypeType && model.errors)
+                            base.setError(model.errors, ["department", "prototype-type"], null);
+                    })
+                    .appendTo(label);
+
+            department.val(model.department);
+            if (!!model.department) refreshPrototypeTypes(model.prototypeType);
+
+            if (options.readOnly) {
+                matematici.controls.setEditable(department, false);
+                matematici.controls.setEditable(prototypeType, false);
+            } 
+
+            new matematici.AutoComplete(department[0]).initialize();
+            new matematici.AutoComplete(prototypeType[0]).initialize();
         };
 
 
-    this.create = function (valuePanel, baseClass) {
+    this.create = function (vp, baseClass) {
         base = baseClass;
+        valuePanel = vp;
         valuePanel.addClass("PrototypeType");
-
-        preparePrototypeTypes();
-
-        var label = $("<label />").appendTo(valuePanel);
-        $("<i />").addClass("Icon fal fa-industry").appendTo(label);
-        department =
-            $("<select />")
-                .attr("data-nullable", "")
-                .on("change", function () {
-                    refreshPrototypeTypes(null);
-                    if (!!model.department && model.errors) {
-                        base.setError(model.errors, "department", null);
-                        base.setError(model.errors, "prototype-type");
-                    }
-                })
-                .appendTo(label);
-
-        for (var index in departments)
-            department.append($("<option />").text(departments[index].name).attr("value", departments[index].code));
-
-        label = $("<label />").appendTo(valuePanel);
-        $("<i />").addClass("Icon fal fa-folder").appendTo(label);
-        prototypeType =
-            $("<select />")
-                .attr("data-nullable", "")
-                .on("change", function () {
-                    model.department = department.val();
-                    model.departmentName = department.next().val();
-                    model.prototypeType = prototypeType.val();
-                    model.prototypeTypeName = prototypeType.next().val();
-                    if (!options.readOnly)
-                        base.updateModel(model);
-
-                    if (!!model.prototypeType && model.errors) 
-                        base.setError(model.errors, ["department", "prototype-type"], null);
-                })
-                .appendTo(label);
-
-        department.val(model.department);
-        if (!!model.department) refreshPrototypeTypes(model.prototypeType);
-
-        if (options.readOnly) {
-            matematici.controls.setEditable(department, false);
-            matematici.controls.setEditable(prototypeType, false);
-        }
+        loadPrototypeTypes();
     }
 
     this.hasChanges = function () {

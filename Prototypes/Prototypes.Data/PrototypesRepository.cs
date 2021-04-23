@@ -20,7 +20,22 @@ namespace CheckListManager.Prototypes.Data
             _workFlowsService = workFlowsService;
         }
 
-        public async Task<PagingResponse<List<TResult>>> GetPrototypesAsync<TResult, TKey>(
+        public async Task<List<TResult>> GetPrototypesAsync<TResult, TKey>(
+            long companyId,
+            Expression<Func<Common.Data.Prototypes, TResult>> select,
+            Expression<Func<Common.Data.Prototypes, bool>> filters,
+            Expression<Func<Common.Data.Prototypes, TKey>> order
+        )
+        {
+            var data = await Entities.Prototypes
+                .Where(filters)
+                .OrderBy(order)
+                .Select(select)
+                .ToListAsync();
+            return data;
+        }
+
+        public async Task<PagingResponse<List<TResult>>> GetPrototypeVersionsAsync<TResult, TKey>(
             long companyId,
             Expression<Func<PrototypeVersions, TResult>> select,
             Expression<Func<PrototypeVersions, bool>> filters,

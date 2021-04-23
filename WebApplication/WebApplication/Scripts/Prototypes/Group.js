@@ -75,6 +75,7 @@
             { text: "attachment", icon: "paperclip", handler: addElement, data: "Attachment" },
             { text: "image", icon: "image", handler: addElement, data: "Image" },
             { text: "link", icon: "link", handler: addElement, data: "Link" },
+            { text: "instance link", icon: "file-invoice", handler: addElement, data: "InstanceLink" },
             { text: "signature", icon: "check", handler: addElement, data: "Signature" },
             { text: "field", icon: "i-cursor", handler: addElement, data: "Field" },
             { text: "text", icon: "align-left", handler: addElement, data: "Text" },

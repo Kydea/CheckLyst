@@ -62,7 +62,7 @@ namespace CheckListManager.Prototypes.Logic.List
         public async Task<PagingResponse<List<ListRow>>> GetDataAsync(IDefaultIdentity identity, PagingRequest<ListRequest> form)
         {
             if (form.Data.State == null) form.Data.State = string.Empty;
-            return await _prototypesRepository.GetPrototypesAsync(
+            return await _prototypesRepository.GetPrototypeVersionsAsync(
                 identity.CompanyId,
                 p => new ListRow
                 {
@@ -105,9 +105,38 @@ namespace CheckListManager.Prototypes.Logic.List
                         )
                     ),
                 p => p.Prototype,
-                    form.CurrentPage,
-                    form.ItemsPerPage
-                );
+                form.CurrentPage,
+                form.ItemsPerPage
+            );
+        }
+
+        public async Task<List<SyntheticListRow>> GetSyntheticDataAsync(IDefaultIdentity identity)
+        {
+            return await _prototypesRepository.GetPrototypesAsync(
+                identity.CompanyId,
+                p => new SyntheticListRow
+                {
+                    Name = p.Name,
+                    Description = p.Description
+                },
+                p =>
+                    p.Company == identity.CompanyId
+                    && (
+                        p.PrototypeTypes.UserFunctions.Any(uf =>
+                            uf.Company == identity.CompanyId
+                            && uf.User == identity.Code
+                            && uf.FunctionGroup == "Prototypes"
+                            && uf.Function == "View"
+                        ) || p.Departments.UserFunctions.Any(uf =>
+                            uf.Company == identity.CompanyId
+                            && uf.User == identity.Code
+                            && uf.FunctionGroup == "Prototypes"
+                            && uf.Function == "View"
+                            && uf.PrototypeType == null
+                        )
+                    ),
+                p => p.Name
+            );
         }
     }
 }

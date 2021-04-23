@@ -109,24 +109,6 @@
                     prototype.save();
                 }, "Save");
 
-        //Loads departments and prototype types
-        $.ajax({
-            type: "post",
-            url: "@BaseUrl/Infrastructure/PrototypeTypes/GetSyntheticData",
-            dataType: "json",
-            contentType: "application/json; charset=utf-8",
-            data: JSON.stringify({
-                data: {
-                    name: "",
-                    functionGroup: "Prototypes",
-                    function: "Edit"
-                },
-                itemsPerPage: 1000
-            })
-        }).done(function (result) {
-            propertyPanel.setPrototypeTypesList(result.data);
-        });
-
         //Loads data sources
         $.ajax({
             type: "post",

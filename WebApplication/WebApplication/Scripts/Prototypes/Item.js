@@ -10,6 +10,7 @@
             text: "Text",
             field: "Field",
             signature: "Signature",
+            instanceLink: "InstanceLink",
             link: "Link",
             image: "Image",
             attachment: "Attachment"
@@ -26,10 +27,11 @@
                 model.typeName == typeNames.text ? new prototypes.Text(item, model) :
                     model.typeName == typeNames.field ? new prototypes.Field(item, model) :
                         model.typeName == typeNames.signature ? new prototypes.Signature(item, model) :
-                            model.typeName == typeNames.link ? new prototypes.Link(item, model) :
-                                model.typeName == typeNames.image ? new prototypes.Image(item, model) :
-                                    model.typeName == typeNames.attachment ? new prototypes.Attachment(item, model) :
-                                        null)) {
+                            model.typeName == typeNames.instanceLink ? new prototypes.InstanceLink(item, model) :
+                                model.typeName == typeNames.link ? new prototypes.Link(item, model) :
+                                    model.typeName == typeNames.image ? new prototypes.Image(item, model) :
+                                        model.typeName == typeNames.attachment ? new prototypes.Attachment(item, model) :
+                                            null)) {
                 parent.getElement().append(element);
                 specificItem.update(model);
             } else {

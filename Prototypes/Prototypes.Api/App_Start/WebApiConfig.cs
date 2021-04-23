@@ -21,6 +21,7 @@ namespace CheckListManager.Prototypes.Api
 		    RegisterChecklistItem<Iteration, ICheckListIteration>(builder);
 		    RegisterChecklistItem<Page, ICheckListPage>(builder);
 		    RegisterChecklistItem<Signature, ICheckListSignature>(builder);
+		    RegisterChecklistItem<InstanceLink, ICheckListInstanceLink>(builder);
             RegisterChecklistItem<Text, ICheckListText>(builder);
             RegisterChecklistItem<Link, ICheckListLink>(builder);
             RegisterChecklistItem<Image, ICheckListImage>(builder);

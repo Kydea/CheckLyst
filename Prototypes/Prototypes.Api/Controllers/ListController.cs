@@ -31,5 +31,13 @@ namespace CheckListManager.Prototypes.Api.Controllers
 		{
 			return Ok(await _listService.GetDataAsync(Identity, request));
 		}
-	}
+
+        [HttpPost]
+        [Route("GetSyntheticData")]
+        [Authorize(Roles = "Prototypes#View")]
+        public async Task<IHttpActionResult> GetSyntheticData()
+        {
+            return Ok(await _listService.GetSyntheticDataAsync(Identity));
+        }
+    }
 }

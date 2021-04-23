@@ -9,7 +9,7 @@ namespace CheckListManager.Prototypes.Logic.List
     public interface IListService: IService
     {
         Task<ListResponse> BindAsync(DefaultIdentity identity, ListRequest form);
-
         Task<PagingResponse<List<ListRow>>> GetDataAsync(IDefaultIdentity identity, PagingRequest<ListRequest> form);
+        Task<List<SyntheticListRow>> GetSyntheticDataAsync(IDefaultIdentity identity);
     }
 }

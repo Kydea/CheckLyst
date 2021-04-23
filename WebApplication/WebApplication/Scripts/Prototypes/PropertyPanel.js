@@ -467,8 +467,7 @@
                         }
                     ));
                     properties.push(new prototypes.Property(
-                        this, new prototypes.ListProperty(model, "signatureLevel", matematici.profiles,
-                            { nullable: true }), "Signature level",
+                        this, new prototypes.ListProperty(model, "signatureLevel", matematici.profiles, { nullable: true }), "Signature level",
                         "If has a value only users with that level can sign."
                     ));
                     properties.push(new prototypes.Property(
@@ -482,6 +481,28 @@
                     properties.push(new prototypes.Property(
                         this, new prototypes.BooleanProperty(model, "acceptsPin"), "Accepts PIN",
                         "If checked, the signature users can issue this signature using their PIN."
+                    ));
+                    break;
+                case "InstanceLink":
+                    properties.push(new prototypes.Property(
+                        this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }),
+                        "Label",
+                        "The label of the instance link.",
+                        function () { $("label", item.getElement()).children("span").text(model.description); }
+                    ));
+                    properties.push(new prototypes.Property(
+                        this, new prototypes.PrototypeProperty(model),
+                        "Prototype",
+                        "The prototype of the linked checklist."
+                    ));
+                    properties.push(new prototypes.Property(
+                        this, new prototypes.ListProperty(model, "actions", [
+                            { label: "Link and create instances", code: "0" },
+                            { label: "Create instances", code: "1" },
+                            { label: "Link instances", code: "2" }
+                        ]),
+                        "Actions",
+                        "The actions available."
                     ));
                     break;
                 case "Link":
@@ -577,14 +598,6 @@
         currentProperty = currentProperty == value ? null : value;
         prototypes.prototype.setItemHandler(null);
         if (currentProperty) currentProperty.select();
-    };
-
-    propertyPanel.setPrototypeTypesList = function (data) {
-        prototypeTypesList = data;
-    };
-
-    propertyPanel.getPrototypeTypesList = function () {
-        return prototypeTypesList;
     };
 
     propertyPanel.checkDataType = function (expression, typeName) {
