@@ -263,22 +263,21 @@ namespace CheckListManager.AccessControl.Logic.Services
 
         public async Task<List<UserFunctions>> GetFunctionsAsync(long companyId, UsersRequest request)
         {
-            return await _userRepository.GetFunctionsAsync(companyId, request.Code, request.Description);
+            return await _userRepository.GetFunctionsAsync(companyId, request.Code, request.Description, request.CorporateID);
         }
 
-        public async Task<PagingResponse<List<UsersResponse>>> GetUsersAsync(long companyId,
-            PagingRequest<UsersRequest> request)
+        public async Task<PagingResponse<List<UsersResponse>>> GetUsersAsync(long companyId, PagingRequest<UsersRequest> request)
         {
             var take = request.ItemsPerPage;
-            var users = await _userRepository.GetUsersAsync(companyId, request.Data.Code, request.Data.Description,
-                request.Skip, take);
-            var count = await _userRepository.CountUsersAsync(companyId, request.Data.Code, request.Data.Description);
+            var users = await _userRepository.GetUsersAsync(companyId, request.Data.Code, request.Data.Description, request.Data.CorporateID, request.Skip, take);
+            var count = await _userRepository.CountUsersAsync(companyId, request.Data.Code, request.Data.Description, request.Data.CorporateID);
 
             var response = users.Select(u => new UsersResponse
             {
                 Code = u.Code,
                 Description = u.Description,
                 Email = u.Email,
+                CorporateID = u.CorporateID,
                 Enabled = u.Enabled,
                 AuthenticationCode = u.AuthenticationCode,
                 LastLoginOn = u.LastLoginOn,
@@ -498,6 +497,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                 user.Code,
                 user.AuthenticationCode,
                 user.Email,
+                user.CorporateID,
                 NameAndSurname = user.Description,
                 user.Enabled,
                 Functions = userFunctions.Select(uf => new
@@ -523,6 +523,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                         Code = record.Code,
                         Description = record.Description,
                         Email = record.Email,
+                        CorporateID = record.CorporateID,
                         Password = _hashService.HashStringToBytes(record.Password),
                         AuthenticationCode = record.AuthenticationCode,
                         Enabled = record.Enabled
@@ -565,6 +566,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                         Code = record.Code,
                         Description = record.Description,
                         Email = record.Email,
+                        CorporateID = record.CorporateID,
                         Password = _hashService.HashStringToBytes(record.Password),
                         Enabled = record.Enabled,
                         AuthenticationCode = record.AuthenticationCode

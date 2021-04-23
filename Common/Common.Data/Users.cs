@@ -42,6 +42,7 @@ namespace CheckListManager.Common.Data
         public Nullable<System.DateTimeOffset> LastLoginFailedOn { get; set; }
         public int NumberOfPasswordAttempts { get; set; }
         public int NumberOfPINAttempts { get; set; }
+        public string CorporateID { get; set; }
     
         public virtual Companies Companies { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

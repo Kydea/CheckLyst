@@ -35,6 +35,7 @@ namespace CheckListManager.AccessControl.Data
             if (existingUser == null) throw new DatabaseException($"User {user.Code} not found");
             existingUser.Description = user.Description;
             existingUser.Email = user.Email;
+            existingUser.CorporateID = user.CorporateID;
             if (user.Password != null) existingUser.Password = user.Password;
             existingUser.Enabled = user.Enabled;
             if (user.Enabled) existingUser.NumberOfPasswordAttempts = 0;
@@ -65,38 +66,39 @@ namespace CheckListManager.AccessControl.Data
         }
 
 
-        private IQueryable<Users> Get(long companyId, string code, string description)
+        private IQueryable<Users> Get(long companyId, string code, string description, string corporateID)
         {
             return Entities.Users
                 .Where(
                     u => u.Company == companyId &&
                         (code == string.Empty || u.Code != null && u.Code.ToUpper().Contains(code.ToUpper())) &&
-                        (description == string.Empty || u.Description != null && u.Description.ToUpper().Contains(description.ToUpper()))
+                        (description == string.Empty || u.Description != null && u.Description.ToUpper().Contains(description.ToUpper())) &&
+                        (corporateID == string.Empty || u.CorporateID != null && u.CorporateID.ToUpper().Contains(corporateID.ToUpper()))
                 );
         }
 
-        public async Task<List<UserFunctions>> GetFunctionsAsync(long companyId, string code, string description)
+        public async Task<List<UserFunctions>> GetFunctionsAsync(long companyId, string code, string description, string corporateID)
         {
             return await Entities.UserFunctions
                 .Where(
                     f => f.Company == companyId &&
                         (code == string.Empty || f.User != null && f.User.ToUpper().Contains(code.ToUpper())) &&
-                        (description == string.Empty || f.Users.Description != null && f.Users.Description.ToUpper().Contains(description.ToUpper()))
+                        (description == string.Empty || f.Users.Description != null && f.Users.Description.ToUpper().Contains(description.ToUpper())) &&
+                        (corporateID == string.Empty || f.Users.CorporateID != null && f.Users.CorporateID.ToUpper().Contains(corporateID.ToUpper()))
                 )
                 .OrderBy(x => x.User).ThenBy(x => x.Department).ThenBy(x => x.PrototypeType).ThenBy(x => x.FunctionGroup).ThenBy(x => x.Function)
                 .ToListAsync();
         }
 
-        public Task<List<Users>> GetUsersAsync(long companyId, string code, string description, int skip, int take)
-            => Get(companyId, code, description)
+        public Task<List<Users>> GetUsersAsync(long companyId, string code, string description, string corporateID, int skip, int take)
+            => Get(companyId, code, description, corporateID)
                 .OrderBy(u => u.Code)
                 .Skip(skip)
                 .Take(take)
                 .ToListAsync();
 
-        public Task<int> CountUsersAsync(long companyId, string code, string description)
-            => Get(companyId, code, description)
-                .CountAsync();
+        public Task<int> CountUsersAsync(long companyId, string code, string description, string corporateID)
+            => Get(companyId, code, description, corporateID).CountAsync();
 
         public async Task UserLoginCompleteAsync(Users user)
         {

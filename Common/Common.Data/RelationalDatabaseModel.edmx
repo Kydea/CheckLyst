@@ -341,6 +341,7 @@
           <Property Name="LastLoginFailedOn" Type="timestamptz" Precision="7" />
           <Property Name="NumberOfPasswordAttempts" Type="int4" Nullable="false" />
           <Property Name="NumberOfPINAttempts" Type="int4" Nullable="false" />
+          <Property Name="CorporateID" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="UserSessions">
           <Key>
@@ -1450,6 +1451,7 @@
           <NavigationProperty Name="UserFunctions" Relationship="RelationalDatabaseModel.UserFunctions_User" FromRole="Users" ToRole="UserFunctions" />
           <Property Name="NumberOfPasswordAttempts" Type="Int32" Nullable="false" />
           <Property Name="NumberOfPINAttempts" Type="Int32" Nullable="false" />
+          <Property Name="CorporateID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="Departments_Company_fkey">
           <End Role="Companies" Type="Self.Companies" Multiplicity="0..1">
@@ -2875,6 +2877,7 @@
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="RelationalDatabaseModel.Users">
               <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="CorporateID" ColumnName="CorporateID" />
                 <ScalarProperty Name="NumberOfPINAttempts" ColumnName="NumberOfPINAttempts" />
                 <ScalarProperty Name="NumberOfPasswordAttempts" ColumnName="NumberOfPasswordAttempts" />
                 <ScalarProperty Name="LastLoginFailedOn" ColumnName="LastLoginFailedOn" />

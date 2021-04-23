@@ -10,6 +10,7 @@ create table "Security"."Users"
 	"Description" varchar (100) not null,
 	"AuthenticationCode" text, --json with connection information used to authenticate users with ldap or other company systems
 	"Email" text,
+	"CorporateID" varchar(50),
 	"Enabled" boolean not null default false,
 
     "Password" bytea,
