@@ -130,7 +130,7 @@
 
                 <label class="Width300">
                     <span>Query</span>
-                    <textarea name="query" maxlength="10000" style="height: 200px" />
+                    <pre id="AceExpressionEditor" style="height: 200px"></pre>
                 </label>
             </div>
             <div class="Tab">
@@ -147,6 +147,8 @@
         formElement = $(formSelector),
         codeInput = $("input.Code", formElement),
         classSelect = $("select.SourceClass", formElement),
+        editor,
+        justLoaded = false,
 
         parameterTypes = [
             "Text",
@@ -228,6 +230,9 @@
                 password = password || $("*[type=password]", tabPage.tab).val();
             });
 
+            if (classSelect.val() == "SQL")
+                parameters.query = editor.getValue();
+
             $("div.QueryParameter", tab.getItem(3).tab).each(function () {
                 var
                     record = {},
@@ -266,7 +271,13 @@
                 });
             });
 
-            if (parameters && parameters.queryParameters) buildQueryParameters(parameters.queryParameters);
+            if (parameters) {
+                if (parameters.queryParameters) buildQueryParameters(parameters.queryParameters);
+                if (parameters.query) {
+                    justLoaded = true;
+                    editor.setValue(parameters.query, -1);
+                }
+            }
         },
 
         testHandler = function () {
@@ -334,6 +345,52 @@
 
         toggleTabs = function () {
             $(".TabLabels a.Parameters", tab.getElement()).hide().filter("." + classSelect.val()).show();
+        },
+
+        setupSQLEditor = function () {
+            editor = ace.edit("AceExpressionEditor");
+            editor.session.setMode("ace/mode/sql");
+            editor.setTheme("ace/theme/custom")
+            editor.setShowPrintMargin(false);
+            editor.setReadOnly(detailPage.isReadOnly());
+            editor.setOptions({
+                enableBasicAutocompletion: true
+            });
+            editor.on("input", function () {
+                if (justLoaded)
+                    justLoaded = false;
+                else
+                    matematici.canClose = false;
+            });
+
+            var document = editor.session.doc
+            document.applyAnyDelta = document.applyAnyDelta || document.applyDelta
+            document.applyDelta = function (delta) {
+                let joinedLines = delta.lines.join("\n")
+
+                if (delta.action == "insert" && this.$maxLength
+                    && this.getValue().length + joinedLines.length > this.$maxLength) {
+
+                    let newPasteLength = this.$maxLength - this.getValue().length
+                    if (newPasteLength > 0) {
+                        delta.lines = joinedLines.substr(0, newPasteLength).split("\n")
+                        if (delta.lines.length == 1 && delta.start.row == delta.end.row) {
+                            delta.end = {
+                                row: delta.start.row,
+                                column: delta.start.column + newPasteLength
+                            }
+                        } else {
+                            delta.end = {
+                                row: delta.start.row + delta.lines.length,
+                                column: delta.lines[delta.lines.length - 1].length
+                            }
+                        }
+                    } else return false;
+                }
+                return this.applyAnyDelta(delta);
+            }
+
+            document.$maxLength = 10000
         };
 
     classSelect.on("change", toggleTabs);
@@ -352,4 +409,6 @@
         tab.addHandler(function (item) {
             addQueryParameterButton.toggle(item.index > 2);
         });
+
+    setupSQLEditor();
 </script>
