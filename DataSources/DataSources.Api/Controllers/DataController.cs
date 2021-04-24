@@ -29,7 +29,14 @@ namespace CheckListManager.DataSources.Api.Controllers
         [Route("GetDataSource")]
         public async Task<IHttpActionResult> GetDataSource(Logic.Data.DataRequest request)
         {
-            return Ok(await _dataService.GetDataSourceAsync(Identity.CompanyId, request.Code)); 
+            try
+            {
+                return Ok(await _dataService.GetDataSourceAsync(Identity.CompanyId, request.Code));
+            }
+            catch (Exception Exception)
+            {
+                return Error(Exception);
+            }
         }
 
         [Authorize(Roles = "Prototypes#View, DataSources#Edit")]

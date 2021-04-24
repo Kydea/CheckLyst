@@ -10,6 +10,8 @@ using NLog;
 using CheckListManager.ExternalSources.Logic;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Text;
+using System.Linq;
 
 namespace CheckListManager.ExternalSources.Api.Controllers
 {
@@ -17,10 +19,28 @@ namespace CheckListManager.ExternalSources.Api.Controllers
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
+        private void BuildExceptionMessage(StringBuilder Message, Exception Exception)
+        {
+            var message = new StringBuilder();
+            if (Exception is AggregateException AggregateException)
+            {
+                AggregateException.InnerExceptions.ToList().ForEach(e =>
+                {
+                    Message.Append(" - ");
+                    BuildExceptionMessage(Message, e);
+                });
+            }
+            else
+                Message.Append(Exception.Message);
+        }
+
         private IHttpActionResult Error(Exception Exception)
         {
             Logger.Error(Exception, "External source error");
-            return Content(HttpStatusCode.InternalServerError, Exception.Message);
+
+            var Message = new StringBuilder();
+            BuildExceptionMessage(Message, Exception);
+            return Content(HttpStatusCode.InternalServerError, Message);
         }
 
         [HttpPost]
