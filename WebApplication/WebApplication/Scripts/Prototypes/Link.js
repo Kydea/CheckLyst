@@ -5,7 +5,7 @@
         setup = function () {
             var element = item.getElement();
             i = $("<i >").addClass("Icon Link fa fa-caret-right").appendTo(element);
-            a = $("<a />").addClass("Link").appendTo(element);
+            a = $("<a />").addClass("Link Placeholder").appendTo(element);
         };
 
     this.update = function (model) {

@@ -125,6 +125,28 @@
       position: static;
       width: 100%;
       margin-bottom: 5px; }
+    div.PropertyPanel div.PropertyValue.Parameters {
+      padding: 0;
+      overflow: auto; }
+      div.PropertyPanel div.PropertyValue.Parameters table tbody tr td:last-child {
+        width: 20px;
+        text-align: center; }
+      div.PropertyPanel div.PropertyValue.Parameters table tbody tr:last-child a {
+        display: none; }
+    div.PropertyPanel div.PropertyValue table.Grid {
+      margin-top: 0;
+      font-size: 12px;
+      border: solid 1px #ccc; }
+      div.PropertyPanel div.PropertyValue table.Grid thead tr th {
+        padding: 2px 10px;
+        height: 25px; }
+      div.PropertyPanel div.PropertyValue table.Grid tbody tr td {
+        position: relative;
+        padding: 0; }
+        div.PropertyPanel div.PropertyValue table.Grid tbody tr td input, div.PropertyPanel div.PropertyValue table.Grid tbody tr td select {
+          font-size: 12px; }
+      div.PropertyPanel div.PropertyValue table.Grid i.fa, div.PropertyPanel div.PropertyValue table.Grid i.fal, div.PropertyPanel div.PropertyValue table.Grid i.fab {
+        font-size: 14px; }
     div.PropertyPanel div.PropertyValue div.ButtonsPanel {
       position: absolute;
       width: calc(100% - 20px);

@@ -8,8 +8,8 @@
             element.append(label);
             $("<i />").addClass("Icon fal fa-file-invoice").appendTo(label);
             $("<input />").addClass("User").attr({ type: "text", readonly: true }).appendTo(label);
-            $("<a />").addClass("Button InstanceLinkButton").attr({ href: "#" }).appendTo(element).text("Create");
-            $("<a />").addClass("Button InstanceLinkButton").attr({ href: "#" }).appendTo(element).text("Select");
+            $("<a />").addClass("Button InstanceLinkButton Placeholder").attr({ href: "#" }).appendTo(element).text("Create");
+            $("<a />").addClass("Button InstanceLinkButton Placeholder").attr({ href: "#" }).appendTo(element).text("Select");
         };
 
     this.update = function (model) {
@@ -17,11 +17,11 @@
         this.setFontSize(model.fontSize);
     };
 
-    this.setColor = function (value) {
+    this.setColor = function () {
         label.css({ color: model.color });
     };
 
-    this.setFontSize = function (value) {
+    this.setFontSize = function () {
         label.css({ fontSize: model.fontSize == 0 ? "" : model.fontSize + "px" });
     };
 

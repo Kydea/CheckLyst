@@ -136,27 +136,20 @@ div.Prototype {
             cursor: pointer;
         }
 
+        input {
+            cursor: pointer;
+            outline: none;
+        }
+
+        a.Placeholder {
+            cursor: pointer;
+        }
+
         &.Field {
             div.Input {
                 width: 100% !important;
             }
         }
-
-        &.Signature {
-            input {
-                cursor: pointer;
-            }
-
-            a.Button:not(.MiniIcon):hover {
-                background-color: $Color-Green-Regular;
-                cursor: pointer;
-
-                i {
-                    color: $Color-Green-Regular;
-                }
-            }
-        }
-
 
         &.Text {
             p {

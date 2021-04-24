@@ -48,7 +48,7 @@
                         content.append(renderDependency(dependentRelations[dependency]));
                 }
             }
-            matematici.dialog.show("Dependencies - " + title, content, { text: "ok", icon: "check", handler: handler });
+            matematici.dialog.show("Dependencies - " + title, content, { text: "ok", icon: "check", handler: handler, defaultButton: true, cancelButton: true });
             matematici.dialog.setWidth(800);
         }
     }

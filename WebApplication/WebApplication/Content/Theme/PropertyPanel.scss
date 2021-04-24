@@ -217,6 +217,60 @@ div.PropertyPanel {
             }
         }
 
+        &.Parameters {
+            padding: 0;
+            overflow: auto;
+
+            table {
+                tbody {
+                    tr {
+                        td:last-child {
+                            width: 20px;
+                            text-align: center;
+                        }
+
+                        &:last-child {
+                            a {
+                                display: none;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        table.Grid {
+            margin-top: 0;
+            font-size: 12px;
+            border: solid 1px $Color-Grey-Light;
+
+            thead {
+                tr {
+                    th {
+                        padding: 2px 10px;
+                        height: 25px;
+                    }
+                }
+            }
+
+            tbody {
+                tr {
+                    td {
+                        position: relative;
+                        padding: 0;
+
+                        input, select {
+                            font-size: 12px;
+                        }
+                    }
+                }
+            }
+
+            i.fa, i.fal, i.fab {
+                font-size: 14px;
+            }
+        }
+
         div.ButtonsPanel {
             position: absolute;
             width: calc(100% - 20px);

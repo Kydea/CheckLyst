@@ -155,11 +155,14 @@ a.Button {
         text-decoration: none !important;
 
         &:not(.ReadOnly) {
-            background-color: $Color-Green-Light;
             color: white;
 
-            i.Icon {
-                color: $Color-Green-Light;
+            &:not(.Placeholder) {
+                background-color: $Color-Green-Light;
+
+                i.Icon {
+                    color: $Color-Green-Light;
+                }
             }
         }
     }
@@ -236,7 +239,7 @@ a.Button {
             background-color: white;
         }
 
-        &:hover {
+        &:hover:not(.Placeholder) {
             background-color: $Color-Green-Regular;
 
             i.Icon {
@@ -257,7 +260,7 @@ a.Button {
             background-color: white;
         }
 
-        &:hover {
+        &:hover:not(.Placeholder) {
             background-color: $Color-Yellow-Regular;
 
             i.Icon {

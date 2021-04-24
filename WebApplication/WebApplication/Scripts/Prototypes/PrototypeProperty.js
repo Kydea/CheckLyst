@@ -1,23 +1,19 @@
 ﻿prototypes.PrototypeProperty = function (model) {
     var
         base,
-        prototypesList,
         prototypeSelect,
         readOnly = prototypes.prototype.getModel().state != prototypes.Prototype.states.draft,
 
         loadPrototypes = function () {
             $.ajax({
                 type: "post",
-                url: matematici.urls.api + "/Prototypes/List/GetSyntheticData",
-                dataType: "json",
-                contentType: "application/json; charset=utf-8"
+                url: matematici.urls.api + "/Prototypes/List/GetSyntheticData"
             }).done(function (result) {
-                prototypesList = result;
-                setup();
+                setup(result);
             });
         },
 
-        setup = function () {
+        setup = function (prototypesList) {
             var label = $("<label />").appendTo(valuePanel);
             $("<i />").addClass("Icon fal fa-file-invoice").appendTo(label);
             prototypeSelect =

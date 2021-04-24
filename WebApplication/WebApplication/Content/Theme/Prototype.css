@@ -74,15 +74,13 @@ div.Prototype div.Item {
   cursor: pointer; }
   div.Prototype div.Item label {
     cursor: pointer; }
+  div.Prototype div.Item input {
+    cursor: pointer;
+    outline: none; }
+  div.Prototype div.Item a.Placeholder {
+    cursor: pointer; }
   div.Prototype div.Item.Field div.Input {
     width: 100% !important; }
-  div.Prototype div.Item.Signature input {
-    cursor: pointer; }
-  div.Prototype div.Item.Signature a.Button:not(.MiniIcon):hover {
-    background-color: #009688;
-    cursor: pointer; }
-    div.Prototype div.Item.Signature a.Button:not(.MiniIcon):hover i {
-      color: #009688; }
   div.Prototype div.Item.Text p {
     position: relative; }
     div.Prototype div.Item.Text p.Ellipsis::after {

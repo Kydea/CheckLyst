@@ -66,6 +66,7 @@
     };
 
     this.unselect = function () {
+        type.destroy && type.destroy();
         selected = false;
         element.removeClass("Selected");
         $("select", propertyPanel.getPropertyValue()).each(function () {

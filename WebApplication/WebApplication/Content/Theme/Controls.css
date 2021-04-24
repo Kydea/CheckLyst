@@ -111,10 +111,11 @@ a.Button {
   a.Button:hover, a.Button.Selected {
     text-decoration: none !important; }
     a.Button:hover:not(.ReadOnly), a.Button.Selected:not(.ReadOnly) {
-      background-color: #03c3b1;
       color: white; }
-      a.Button:hover:not(.ReadOnly) i.Icon, a.Button.Selected:not(.ReadOnly) i.Icon {
-        color: #03c3b1; }
+      a.Button:hover:not(.ReadOnly):not(.Placeholder), a.Button.Selected:not(.ReadOnly):not(.Placeholder) {
+        background-color: #03c3b1; }
+        a.Button:hover:not(.ReadOnly):not(.Placeholder) i.Icon, a.Button.Selected:not(.ReadOnly):not(.Placeholder) i.Icon {
+          color: #03c3b1; }
   a.Button.Icon {
     min-width: 0;
     width: 36px;
@@ -162,9 +163,9 @@ a.Button {
       background-color: #009688; }
     a.Button.GreyGreenButton::after {
       background-color: white; }
-    a.Button.GreyGreenButton:hover {
+    a.Button.GreyGreenButton:hover:not(.Placeholder) {
       background-color: #009688; }
-      a.Button.GreyGreenButton:hover i.Icon {
+      a.Button.GreyGreenButton:hover:not(.Placeholder) i.Icon {
         color: #009688; }
   a.Button.GreyYellowButton {
     background-color: #999; }
@@ -173,9 +174,9 @@ a.Button {
       background-color: #ffba00; }
     a.Button.GreyYellowButton::after {
       background-color: white; }
-    a.Button.GreyYellowButton:hover {
+    a.Button.GreyYellowButton:hover:not(.Placeholder) {
       background-color: #ffba00; }
-      a.Button.GreyYellowButton:hover i.Icon {
+      a.Button.GreyYellowButton:hover:not(.Placeholder) i.Icon {
         color: white; }
   a.Button.Invalid {
     color: #cc0000; }

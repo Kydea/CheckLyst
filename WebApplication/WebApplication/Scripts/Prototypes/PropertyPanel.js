@@ -33,6 +33,7 @@
                     prototypes.prototype.ensureImageWillNotBeDeleted(model.key);
             }
             $("input:not(.ReadOnly)", propertyValue).change();
+            currentProperty && currentProperty.getType().destroy && currentProperty.getType().destroy();
 
             prototypes.prototype.verify(options && options.okHandler);
         };
@@ -484,6 +485,7 @@
                     ));
                     break;
                 case "InstanceLink":
+                    var parametersProperty;
                     properties.push(new prototypes.Property(
                         this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }),
                         "Label",
@@ -493,7 +495,13 @@
                     properties.push(new prototypes.Property(
                         this, new prototypes.PrototypeProperty(model),
                         "Prototype",
-                        "The prototype of the linked checklist."
+                        "The prototype of the linked checklist.",
+                        function () {
+                            if (!model.prototypeName) {
+                                model.parameters = null;
+                                parametersProperty.setValue();
+                            }
+                        }
                     ));
                     properties.push(new prototypes.Property(
                         this, new prototypes.ListProperty(model, "actions", [
@@ -502,7 +510,18 @@
                             { label: "Link instances", code: "2" }
                         ]),
                         "Actions",
-                        "The actions available."
+                        "The actions available.",
+                        function () {
+                            if (!model.prototypeName) {
+                                model.parameters = null;
+                                parametersProperty.setValue();
+                            }
+                        }
+                    ));
+                    properties.push(parametersProperty = new prototypes.Property(
+                        this, new prototypes.ParametersProperty(model),
+                        "Parameters",
+                        "The parameters to pass to the created instances."
                     ));
                     break;
                 case "Link":

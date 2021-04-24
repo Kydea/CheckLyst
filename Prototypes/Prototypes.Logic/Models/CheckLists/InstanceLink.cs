@@ -2,6 +2,8 @@
 using CheckListManager.Common.Logic.Models.CheckLists;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 {
@@ -11,7 +13,18 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         public override ICheckListItem Clone(ICheckListGroup parent)
         {
-            var CheckList = new InstanceLink { Group = parent, PrototypeName = PrototypeName, Actions = Actions };
+            var CheckList = new InstanceLink
+            {
+                Group = parent,
+                PrototypeName = PrototypeName,
+                Actions = Actions,
+                Parameters = Parameters.Select(p => new InstanceLinkParameter
+                {
+                    Name = p.Name,
+                    ElementCode = p.ElementCode,
+                    ExpressionCode = p.ExpressionCode
+                }).ToList()
+            };
             Copy(this, CheckList);
             return CheckList;
         }
@@ -24,6 +37,18 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 Errors.Add(new ConfigurationError("prototype", $"Specify a prototype"));
                 Result = false;
             }
+
+            if (Parameters != null)
+                foreach (var Parameter in Parameters)
+                {
+                    Parameter.BuildDependencies(CheckList, this);
+                    if (Parameter.Error != null)
+                    {
+                        Errors.Add(new ConfigurationError("parameter", Parameter.Error));
+                        Result = false;
+                    }
+                }
+
             return Result;
         }
 
@@ -34,5 +59,6 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         public string PrototypeName { get; set; }
         public InstanceLinkActions Actions { get; set; }
+        public List<InstanceLinkParameter> Parameters { get; set; }
     }
 }

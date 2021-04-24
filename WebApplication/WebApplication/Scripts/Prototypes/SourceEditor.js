@@ -131,10 +131,6 @@
             return true;
         },
 
-        setError = function () {
-            //TODO
-        },
-
         setupParameters = function () {
             if (dataSourceSelect.val())
                 $.ajax({
@@ -269,10 +265,9 @@
             parameterPrototype = rows.eq(0).remove();
             noRecord = rows.eq(1).remove();
 
-            if (source) {
-                setError();
+            if (source) 
                 setupParameters();
-            } else {
+            else {
                 tableBody.append(noRecord);
                 setTimeout(function () {
                     matematici.AutoComplete.get(dataSourceSelect[0]).setValue(null);
@@ -300,7 +295,6 @@
         };
 
     this.fill = fill;
-    this.setError = setError;
 
     setup();
 };

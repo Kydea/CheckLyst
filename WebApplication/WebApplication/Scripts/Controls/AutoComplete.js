@@ -378,7 +378,6 @@
     };
 
     autoComplete.toggle = function (value) {
-        matematici.test = labelNode;
         labelNode.style.display = value ? "block" : "none";
         iconNode.style.display = value ? "block" : "none";
     };
