@@ -40,7 +40,7 @@ namespace CheckListManager.ExternalSources.Api.Controllers
 
             var Message = new StringBuilder();
             BuildExceptionMessage(Message, Exception);
-            return Content(HttpStatusCode.InternalServerError, Message);
+            return Content(HttpStatusCode.InternalServerError, Message.ToString());
         }
 
         [HttpPost]
