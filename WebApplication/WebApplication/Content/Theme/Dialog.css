@@ -97,7 +97,7 @@ div.Dialog {
     div.Dialog.Error div.Buttons a:hover {
       background-color: #ff3333 !important; }
       div.Dialog.Error div.Buttons a:hover i {
-        color: #ff3333; }
+        color: #ff3333 !important; }
   div.Dialog.ImageViewer div.Container h2 {
     display: none; }
   div.Dialog.ImageViewer div.Container div.Content {
