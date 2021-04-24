@@ -17,6 +17,12 @@ namespace CheckListManager.ExternalSources.Api.Controllers
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
+        private IHttpActionResult Error(Exception Exception)
+        {
+            Logger.Error(Exception, "External source error");
+            return Content(HttpStatusCode.InternalServerError, Exception.Message);
+        }
+
         [HttpPost]
         [Route("GetMetaData")]
         public IHttpActionResult GetMetaData(ExternalSourceRequest request)
@@ -37,8 +43,7 @@ namespace CheckListManager.ExternalSources.Api.Controllers
             }
             catch (Exception e)
             {
-                Logger.Error(e, "External source error");
-                throw;
+                return Error(e);
             }
         }
 
@@ -62,8 +67,7 @@ namespace CheckListManager.ExternalSources.Api.Controllers
             }
             catch (Exception e)
             {
-                Logger.Error(e, "External source error");
-                throw;
+                return Error(e);
             }
         }
 
@@ -91,9 +95,9 @@ namespace CheckListManager.ExternalSources.Api.Controllers
             }
             catch (Exception e)
             {
-                Logger.Error(e, "External source error");
-                throw;
+                return Error(e);
             }
         }
+
     }
 }
