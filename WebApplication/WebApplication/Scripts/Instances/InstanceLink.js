@@ -10,7 +10,31 @@
         span,
 
         attach = function () {
-
+            $.ajax({
+                url: matematici.urls.api + "/Instances/List/GetData",
+                type: "post",
+                data: {
+                    data: {
+                        prototypeName: model.prototypeName
+                    }
+                }
+            }).done(function (result) {
+                var
+                    columns = [
+                        { label: "ID", name: "state" },
+                        { label: "Code", name: "code" },
+                        { label: "State", name: "state" },
+                        { label: "Year", name: "year" },
+                        { label: "Number", name: "number" },
+                        { label: "Description", name: "description" },
+                        { label: "Prototype version", name: "prototypeVersion" },
+                        { label: "Created on", name: "createOn", type: "DateTimeOffset" },
+                        { label: "Created by", name: "createdBy" },
+                        { label: "Modified on", name: "modifiedOn", type: "DateTimeOffset" },
+                        { label: "Modified by", name: "modifiedBy" },
+                    ],
+                    checkListGrid = new matematici.CheckListGrid("Instances of prototype " + model.prototypeName, result.data, null, null, columns);
+            });
         },
 
         detach = function () {

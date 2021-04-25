@@ -20,7 +20,8 @@
                 $("<select />")
                     .attr("data-nullable", "")
                     .on("change", function () {
-                        model.prototypeName = prototypeSelect.val();
+                        model.prototypeID = prototypeSelect.val();
+                        model.prototypeName = prototypeSelect.next().val();
                         if (!readOnly)
                             base.updateModel(model);
 
@@ -30,14 +31,14 @@
                     .appendTo(label);
 
             for (var index in prototypesList)
-                prototypeSelect.append($("<option />").text(prototypesList[index].name).attr("value", prototypesList[index].name));
+                prototypeSelect.append($("<option />").text(prototypesList[index].name).attr("value", prototypesList[index].id));
 
             if (readOnly)
                 matematici.controls.setEditable(prototypeSelect, false);
 
             var autoComplete = new matematici.AutoComplete(prototypeSelect[0]);
             autoComplete.initialize();
-            autoComplete.setValue(model.prototypeName);
+            autoComplete.setValue(model.prototypeID);
         };
 
 

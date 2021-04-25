@@ -14,6 +14,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 		public override string TypeName => "InstanceLink";
 		public InstanceLinkActions Actions { get; set; }
 		public string PrototypeName { get; set; }
+		public long? PrototypeID { get; set; }
         public List<InstanceLinkRecord> History { get; } = new List<InstanceLinkRecord>();
         public string ModifiedBy { get; private set; }
         public DateTimeOffset? ModifiedOn { get; private set; }
@@ -23,6 +24,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         {
             var ItemModel = base.GetViewModel();
             ItemModel.PrototypeName = PrototypeName;
+            ItemModel.PrototypeID = PrototypeID;
             ItemModel.Actions = Actions;
             ItemModel.Record = Record;
 
@@ -77,8 +79,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 			var instanceLink = new InstanceLink
 			{
 				Group = parent,
-                PrototypeName = PrototypeName
-			};
+                PrototypeName = PrototypeName,
+                PrototypeID = PrototypeID
+            };
 
 			Copy(this, instanceLink);
 			return instanceLink;

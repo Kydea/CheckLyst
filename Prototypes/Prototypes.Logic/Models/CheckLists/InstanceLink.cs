@@ -17,6 +17,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             {
                 Group = parent,
                 PrototypeName = PrototypeName,
+                PrototypeID = PrototypeID,
                 Actions = Actions,
                 Parameters = Parameters.Select(p => new InstanceLinkParameter
                 {
@@ -58,6 +59,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public DateTimeOffset? ModifiedOn { get; }
 
         public string PrototypeName { get; set; }
+        public long? PrototypeID { get; set; }
         public InstanceLinkActions Actions { get; set; }
         public List<InstanceLinkParameter> Parameters { get; set; }
     }

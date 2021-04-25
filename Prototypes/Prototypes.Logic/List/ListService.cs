@@ -116,8 +116,8 @@ namespace CheckListManager.Prototypes.Logic.List
                 identity.CompanyId,
                 p => new SyntheticListRow
                 {
-                    Name = p.Name,
-                    Description = p.Description
+                    ID = p.ID,
+                    Name = p.Name
                 },
                 p =>
                     p.Company == identity.CompanyId
