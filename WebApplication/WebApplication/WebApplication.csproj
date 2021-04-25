@@ -271,6 +271,7 @@
     <Content Include="Scripts\Ace\keybinding-vim.js" />
     <Content Include="Scripts\Ace\keybinding-vscode.js" />
     <Content Include="Scripts\Ace\mode-json.js" />
+    <Content Include="Scripts\Ace\mode-sql.js" />
     <Content Include="Scripts\Ace\snippets\expression.js" />
     <Content Include="Scripts\Ace\mode-expression.js" />
     <Content Include="Scripts\Ace\theme-custom.js" />
@@ -431,6 +432,7 @@
     <Content Include="Scripts\Matematici\Page.js" />
     <Content Include="Scripts\Matematici\Tab.js" />
     <Content Include="Scripts\Matematici\Touch.js" />
+    <Content Include="Scripts\Prototypes\ParametersProperty.js" />
     <Content Include="Scripts\Prototypes\DependenciesDialog.js" />
     <Content Include="Scripts\Prototypes\EmailProperty.js" />
     <Content Include="Scripts\Prototypes\BooleanProperty.js" />

@@ -133,6 +133,7 @@
     <Compile Include="Email\EmailServiceBase.cs" />
     <Compile Include="Email\IEmailServiceBase.cs" />
     <Compile Include="Json\ExternalSourceJsonConverter.cs" />
+    <Compile Include="Models\CheckLists\InstanceLinkRecord.cs" />
     <Compile Include="Models\CheckLists\InstanceLinkParameter.cs" />
     <Compile Include="Models\CheckLists\InstanceLinkActions.cs" />
     <Compile Include="Models\CheckLists\ConfigurationError.cs" />
