@@ -227,10 +227,6 @@ div.CheckList {
                     margin-left: $Metric-Control-Space;
                     float: right;
                 }
-
-                @media #{$Media-Mobile} {
-                    display: block;
-                }
             }
         }
 

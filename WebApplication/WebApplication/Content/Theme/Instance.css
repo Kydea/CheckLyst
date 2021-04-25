@@ -63,31 +63,33 @@ div.Instance .Element div.Information {
     display: none;
     position: absolute;
     background-color: rgba(255, 255, 255, 0.9);
-    padding: 5px 10px 10px;
+    padding: 10px;
     border: solid 1px #ccc;
     border-radius: 0 10px 10px 10px;
     box-shadow: rgba(0, 0, 0, 0.15) 0 0 15px 2px;
     line-height: 1.5em;
     font-size: 12px;
-    width: 200px; }
-    div.Instance .Element div.Information div.Panel i.fa {
+    width: 228px; }
+    div.Instance .Element div.Information div.Panel i.fa, div.Instance .Element div.Information div.Panel i.fal {
       margin-left: -20px;
       color: #666;
       position: absolute;
       font-size: 12px;
-      margin-top: 5px; }
-      div.Instance .Element div.Information div.Panel i.fa.fa-thumbs-up {
+      line-height: 1.5; }
+      div.Instance .Element div.Information div.Panel i.fa.fa-thumbs-up, div.Instance .Element div.Information div.Panel i.fal.fa-thumbs-up {
         color: green; }
-      div.Instance .Element div.Information div.Panel i.fa.fa-thumbs-down {
+      div.Instance .Element div.Information div.Panel i.fa.fa-thumbs-down, div.Instance .Element div.Information div.Panel i.fal.fa-thumbs-down {
         color: red; }
-    div.Instance .Element div.Information div.Panel span, div.Instance .Element div.Information div.Panel a {
+    div.Instance .Element div.Information div.Panel div span, div.Instance .Element div.Information div.Panel div a {
       display: block;
-      padding-top: 5px;
+      padding-bottom: 5px;
       color: black !important;
       float: none;
       margin-left: 20px;
       overflow: hidden;
       text-overflow: ellipsis; }
+    div.Instance .Element div.Information div.Panel div:last-child span, div.Instance .Element div.Information div.Panel div:last-child a {
+      padding-bottom: 0; }
   div.Instance .Element div.Information.Active {
     z-index: 32; }
     div.Instance .Element div.Information.Active div.Panel {

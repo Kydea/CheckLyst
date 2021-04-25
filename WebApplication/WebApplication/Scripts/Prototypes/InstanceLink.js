@@ -4,12 +4,20 @@
         element = item.getElement(),
 
         setup = function () {
-            label = $("<label />").append($("<span />").html(model.description ? model.description : "(no description)"));
+            label = $("<label />").addClass("Controls3").append($("<span />").html(model.description || "(no description)"));
             element.append(label);
+            $("<i />").addClass("Icon fal fa-key").appendTo(label);
+            $("<input />").addClass("User").attr({ type: "text", readonly: true }).appendTo(label);
+            $("<i />").addClass("Icon fal fa-layer-group").appendTo(label);
+            $("<input />").addClass("User").attr({ type: "text", readonly: true }).appendTo(label);
             $("<i />").addClass("Icon fal fa-file-invoice").appendTo(label);
             $("<input />").addClass("User").attr({ type: "text", readonly: true }).appendTo(label);
-            $("<a />").addClass("Button InstanceLinkButton Placeholder").attr({ href: "#" }).appendTo(element).text("Create");
-            $("<a />").addClass("Button InstanceLinkButton Placeholder").attr({ href: "#" }).appendTo(element).text("Select");
+            $("<a />")
+                .addClass("Button GreyYellowButton  Placeholder")
+                .attr({ href: "#" })
+                .appendTo(element)
+                .text("Actions")
+                .prepend($("<i >").addClass("Icon fal fa-cog"));
         };
 
     this.update = function (model) {

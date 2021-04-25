@@ -138,9 +138,6 @@ div.CheckList div.Item {
         div.CheckList div.Item.InstanceLink > a.Button {
           margin-left: 20px;
           float: right; } }
-      @media only screen and (max-width: 759px) {
-        div.CheckList div.Item.InstanceLink > a.Button {
-          display: block; } }
   div.CheckList div.Item.Image {
     width: calc(100% - 20px); }
     div.CheckList div.Item.Image a.Image {

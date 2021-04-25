@@ -8,6 +8,7 @@
             text: "Text",
             field: "Field",
             signature: "Signature",
+            instanceLink: "InstanceLink",
             link: "Link",
             image: "Image",
             attachment: "Attachment"
@@ -26,6 +27,7 @@
                 model.typeName == typeNames.text ? new instances.Text(item, model) :
                 model.typeName == typeNames.field ? new instances.Field(item, model) :
                 model.typeName == typeNames.signature ? new instances.Signature(item, model) :
+                model.typeName == typeNames.instanceLink ? new instances.InstanceLink(item, model) :
                 model.typeName == typeNames.link ? new instances.Link(item, model) :
                 model.typeName == typeNames.image ? new instances.Image(item, model) :
                 model.typeName == typeNames.attachment ? new instances.Attachment(item, model) :

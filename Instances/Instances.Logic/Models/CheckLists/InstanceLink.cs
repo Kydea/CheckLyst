@@ -22,7 +22,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public override dynamic GetViewModel()
         {
             var ItemModel = base.GetViewModel();
+            ItemModel.PrototypeName = PrototypeName;
             ItemModel.Actions = Actions;
+            ItemModel.Record = Record;
 
             if (History.Any())
                 ItemModel.History = History.Select(x => new {
@@ -45,16 +47,29 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 AddDependingRelation(DependencyRelation.Properties.Validity, this, DependencyRelation.Properties.Value);
         }
 
+        private void UpdateValue()
+        {
+            if (!Record.ID.HasValue)
+                Record = new InstanceLinkRecord { Code = $"{PrototypeName}.?.?.?" };
+        }
+
         protected override void OnUpdate(DependencyRelation.Properties Property)
         {
             switch (Property)
             {
                 case DependencyRelation.Properties.Value:
+                    UpdateValue();
                     break;
                 default:
                     base.OnUpdate(Property);
                     break;
             }
+        }
+
+        public override void MarkAllAsChanged(HashSet<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)
+        {
+            base.MarkAllAsChanged(Roots);
+            MarkNodeAsChanged(CheckList, Roots, DependencyRelation.Properties.Value);
         }
 
         public override ICheckListItem Clone(ICheckListGroup parent)

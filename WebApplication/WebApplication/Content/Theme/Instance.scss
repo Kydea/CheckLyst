@@ -86,20 +86,20 @@ div.Instance {
                 display: none;
                 position: absolute;
                 background-color: rgba(255, 255, 255, .9);
-                padding: 5px 10px 10px;
+                padding: 10px;
                 border: solid 1px $Color-Grey-Light;
                 border-radius: 0 10px 10px 10px;
                 box-shadow: $Box-Shadow;
                 line-height: 1.5em;
                 font-size: 12px;
-                width: 200px;
+                width: 228px;
 
-                i.fa {
+                i.fa, i.fal {
                     margin-left: -20px;
                     color: $Color-Grey-Dark;
                     position: absolute;
                     font-size: 12px;
-                    margin-top: 5px;
+                    line-height: 1.5;
 
                     &.fa-thumbs-up {
                         color: green;
@@ -110,14 +110,22 @@ div.Instance {
                     }
                 }
 
-                span, a {
-                    display: block;
-                    padding-top: 5px;
-                    color: black !important;
-                    float: none;
-                    margin-left: 20px;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
+                div {
+                    span, a {
+                        display: block;
+                        padding-bottom: 5px;
+                        color: black !important;
+                        float: none;
+                        margin-left: 20px;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    }
+
+                    &:last-child {
+                        span, a {
+                            padding-bottom: 0;
+                        }
+                    }
                 }
             }
 

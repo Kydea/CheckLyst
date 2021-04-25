@@ -8,7 +8,7 @@
         addItem = function (icon, value) {
             var span = $("<span />").html(value);
             span.attr({ title: span.text() });
-            if (value != null) panel.append($("<div />").append(span.prepend($("<i />").addClass("fa fa-fw fa-" + icon))));
+            if (value != null) panel.append($("<div />").append(span.prepend($("<i />").addClass("fal fa-fw fa-" + icon))));
         },
 
         setContent = function () {
@@ -23,6 +23,7 @@
             var formulaParser = $("<span />").html(model.value);
             addItem("calculator", model.valueFormulaString ? model.valueFormulaString + ": <strong>" + formulaParser.text() + "</strong>" : null);
             addItem("link", (model.externalSourceName ? model.externalSourceName + "." + model.externalSourceColumn : null));
+            addItem("file-invoice", model.prototypeName);
 
             if (model.history && model.history.length > 0)
                 panel.append($("<div />").append($("<a />").attr("href", "#").text("history").prepend($("<i />").addClass("fa fa-fw fa-list-ul")).on("click", function (e) {
