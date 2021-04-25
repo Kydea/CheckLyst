@@ -59,8 +59,13 @@
             new instances.Event(instances.Events.attachInstance, model.id).trigger();
         },
 
+        open = function () {
+            matematici.navigator.open(matematici.urls.instances.detail + "/" + model.attachedInstanceCode);
+        },
+
         create = function () {
             localStorage.parentInstanceCode = instances.instance.getCode();
+            localStorage.parentInstanceLinkID = model.id;
             matematici.navigator.open(matematici.urls.instances.create + "/" + model.prototypeID);
         },
 
@@ -76,8 +81,9 @@
                     { text: "Cancel", icon: "times", cancelButton: true }
                 ];
 
-            if (model.attachedInstance != null) {
+            if (model.attachedInstanceID != null) {
                 buttons.push({ text: "Detach", icon: "unlink", handler: detach });
+                buttons.push({ text: "Open", icon: "folder-open", handler: open });
                 if (model.state != instances.Instance.states.confirmed)
                     buttons.push({ text: "Refresh values", icon: "sync", handler: refresh });
             } else {

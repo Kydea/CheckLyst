@@ -93,14 +93,13 @@ namespace CheckListManager.Instances.Data
         public void CancelCreateInstanceAsync()
         {
             Entities.Database.CurrentTransaction?.Rollback();
-
         }
 
         public Task<Common.Data.Instances> GetAsync(long companyId, string code)
 			=> Entities.Instances.SingleOrDefaultAsync(i => i.Prototypes.Company == companyId && i.Code == code);
 
         public Task<Common.Data.Instances> GetAsync(long companyId, long id)
-            => Entities.Instances.SingleOrDefaultAsync(i => i.Prototypes.Company == companyId && i.ID == id);
+            => Entities.Instances.Include(i => i.PrototypeVersions).SingleOrDefaultAsync(i => i.Prototypes.Company == companyId && i.ID == id);
 
         public Task<string> GetCodeAsync(long companyId, long id)
             => Entities.Instances.Where(i => i.Prototypes.Company == companyId && i.ID == id).Select(i => i.Code).SingleOrDefaultAsync();

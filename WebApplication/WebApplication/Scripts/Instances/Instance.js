@@ -168,11 +168,13 @@
             var
                 newInstance = options.code == "",
                 parameters = [],
-                parentInstanceCode;
+                parentInstanceCode,
+                parentInstanceLinkID;
 
             if (newInstance) {
                 //set the link to the parent instance
                 parentInstanceCode = localStorage.parentInstanceCode;
+                parentInstanceLinkID = localStorage.parentInstanceLinkID;
 
                 //set the items default
                 var tokens = window.location.search.substring(1).split('&');
@@ -188,6 +190,7 @@
             }
 
             localStorage.removeItem("parentInstanceCode");
+            localStorage.removeItem("parentInstanceLinkID");
 
             $.ajax({
                 url: matematici.urls.instances.api + "/" + (newInstance ? "Create" : "Get"),
@@ -197,7 +200,8 @@
                     prototype: options.prototype,
                     version: options.version == "-1" ? null : options.version,
                     parameters: parameters,
-                    parentInstanceCode: parentInstanceCode
+                    parentInstanceCode: parentInstanceCode,
+                    parentInstanceLinkID: parentInstanceLinkID
                 },
                 onErrorClosed: parentInstanceCode ? function () {
                     matematici.navigator.open(matematici.urls.instances.detail + "/" + parentInstanceCode);

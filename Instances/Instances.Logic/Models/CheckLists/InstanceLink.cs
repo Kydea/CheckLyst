@@ -18,7 +18,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public List<InstanceLinkRecord> History { get; } = new List<InstanceLinkRecord>();
         public string ModifiedBy { get; private set; }
         public DateTimeOffset? ModifiedOn { get; private set; }
-        public long? AttachedInstance { get; set; }
+        public long? AttachedInstanceID { get; set; }
+        public string AttachedInstanceCode { get; set; }
         public InstanceLinkRecord Record { get; set; }
 
         public override dynamic GetViewModel()
@@ -26,7 +27,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             var ItemModel = base.GetViewModel();
             ItemModel.PrototypeName = PrototypeName;
             ItemModel.PrototypeID = PrototypeID;
-            ItemModel.AttachedInstance = AttachedInstance;
+            ItemModel.AttachedInstanceID = AttachedInstanceID;
+            ItemModel.AttachedInstanceCode = AttachedInstanceCode;
             ItemModel.Actions = Actions;
             ItemModel.Record = Record;
 
@@ -89,9 +91,10 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 			return instanceLink;
 		}
 
-        public void Attach(long? instance, InstanceLinkRecord record)
+        public void Attach(long? id, string code, InstanceLinkRecord record)
         {
-            AttachedInstance = instance;
+            AttachedInstanceID = id;
+            AttachedInstanceCode = code;
             Record = record;
             History.Add(record);
             ModifiedBy = record.User;

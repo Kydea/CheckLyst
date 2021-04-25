@@ -87,6 +87,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public string FileNameFormulaString { get; set; }
         public string FileName => FileNameFormula.Value;
         public string ParentInstanceCode { get; set; }
+        public int? ParentInstanceLinkID { get; set; }
 
         public bool FTPExport { get; set; }
 

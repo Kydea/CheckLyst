@@ -336,6 +336,39 @@ ace.define("ace/snippets/expression", ["require", "exports", "module"], function
         },
 
         {
+            content: "InstanceState",
+            name: "InstanceState",
+            scope: "expression",
+            meta: "property",
+            interface: "InstanceLink",
+            comment: "returns the state of the linked instance"
+        },
+        {
+            content: "InstanceDescription",
+            name: "InstanceDescription",
+            scope: "expression",
+            meta: "property",
+            interface: "InstanceLink",
+            comment: "returns the description of the linked instance"
+        },
+        {
+            content: "InstanceID",
+            name: "InstanceID",
+            scope: "expression",
+            meta: "property",
+            interface: "InstanceLink",
+            comment: "returns the description of the linked instance"
+        },
+        {
+            content: "InstanceCode",
+            name: "InstanceCode",
+            scope: "expression",
+            meta: "property",
+            interface: "InstanceLink",
+            comment: "returns the code of the linked instance"
+        },
+
+        {
             content: "Count",
             name: "Count",
             scope: "expression",

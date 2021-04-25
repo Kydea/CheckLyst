@@ -196,7 +196,7 @@ namespace CheckListManager.Instances.Logic.Services
             instance.Pages.Add(SimulationPage);
         }
 
-        public async Task<InstanceCacheObject> CreateInstanceAsync(IDefaultIdentity identity, long prototype, int? version, Dictionary<string, string> parameters, string parentInstanceCode)
+        public async Task<InstanceCacheObject> CreateInstanceAsync(IDefaultIdentity identity, long prototype, int? version, Dictionary<string, string> parameters, string parentInstanceCode, int? parentInstanceLinkID)
         {
             try
             {
@@ -225,6 +225,7 @@ namespace CheckListManager.Instances.Logic.Services
                 };
 
                 cacheObject.Instance.ParentInstanceCode = parentInstanceCode;
+                cacheObject.Instance.ParentInstanceLinkID = parentInstanceLinkID;
                 cacheObject.Instance.Setup(cacheObject, await _settingService.DecimalSeparatorAsync(cacheObject.CompanyId), await _settingService.TimeZoneAsync(cacheObject.CompanyId), true);
                 if (parameters != null)
                     foreach (var parameter in parameters)
@@ -343,6 +344,8 @@ namespace CheckListManager.Instances.Logic.Services
                     CheckListID = cacheObject.ID
                 });
 
+                await UpdateParentInstance(cacheObject, identity);
+
                 return cacheObject;
             }
             catch (InstanceException)
@@ -434,7 +437,7 @@ namespace CheckListManager.Instances.Logic.Services
         {
             try
             {
-                var cacheObject = await GetCacheObjectForEditAsync(identity, code, false);
+                var cacheObject = await GetCacheObjectForEditAsync(identity, code, true);
                 if (cacheObject == null)
                     throw new InstanceException("Instance state not valid");
                 if (!(cacheObject.VersionState == VersionState.Draft || cacheObject.VersionState == VersionState.InSimulation) && cacheObject.InstanceState == InstanceState.Progress && string.IsNullOrWhiteSpace(note))
@@ -529,6 +532,24 @@ namespace CheckListManager.Instances.Logic.Services
             return Result;
         }
 
+        private async Task UpdateParentInstance(InstanceCacheObject cacheObject, IDefaultIdentity identity)
+        {
+            if (cacheObject.Instance.ParentInstanceCode != null)
+                try
+                {
+                    //tries to update the parent instance link
+                    var parentCacheObject = await HandleEventAsync(identity, new InstanceEventRequest
+                    {
+                        Code = cacheObject.Instance.ParentInstanceCode,
+                        ItemId = cacheObject.Instance.ParentInstanceLinkID,
+                        Instance = cacheObject.ID,
+                        Type = EventTypes.RefreshAttachedInstance
+                    });
+                    await SaveCacheObjectAsync(parentCacheObject);
+                }
+                catch { }
+        }
+
         private async Task<InstanceCacheObject> SaveAsync(InstanceCacheObject cacheObject, IDefaultIdentity identity, bool close, bool complete, bool alreadyLocked, string ModifiedBy, DateTimeOffset? ModifiedOn)
         {
             LockObject lockObject = null;
@@ -620,6 +641,9 @@ namespace CheckListManager.Instances.Logic.Services
                         _instancesRepository.SaveChangesAsync(),
                         _instanceCache.TouchAsync(cacheObject.Code)
                     );
+
+                await UpdateParentInstance(cacheObject, identity);
+
                 return cacheObject;
             }
             finally
@@ -660,6 +684,7 @@ namespace CheckListManager.Instances.Logic.Services
                 }
 
                 await _instancesRepository.SaveChangesAsync();
+                await UpdateParentInstance(cacheObject, identity);
             }
             await _instanceCache.RemoveAsync(cacheObject.Code);
         }
@@ -1283,7 +1308,7 @@ namespace CheckListManager.Instances.Logic.Services
                         Property = DependencyRelation.Properties.Value;
                         break;
                     case EventTypes.RefreshAttachedInstance:
-                        AffectedElement = await HandleRefreshAttachedInstance(cacheObject, identity, request.ItemId);
+                        AffectedElement = await HandleRefreshAttachedInstance(cacheObject, identity, request.ItemId, request.Instance);
                         Property = DependencyRelation.Properties.Value;
                         break;
                     default:
@@ -2101,7 +2126,7 @@ namespace CheckListManager.Instances.Logic.Services
 
             var instanceRecord = instance.HasValue ? await _instancesRepository.GetAsync(identity.CompanyId, instance.Value) : null;
 
-            instanceLink.Attach(instance, 
+            instanceLink.Attach(instance, instanceRecord?.Code,
                 instance.HasValue ? new InstanceLinkRecord
                 {
                     ID = instanceRecord.ID,
@@ -2143,7 +2168,8 @@ namespace CheckListManager.Instances.Logic.Services
         private async Task<Element> HandleRefreshAttachedInstance(
             InstanceCacheObject cacheObject,
             IDefaultIdentity identity,
-            int? itemId
+            int? itemId,
+            long? instance
         )
         {
             if (!itemId.HasValue)
@@ -2155,22 +2181,34 @@ namespace CheckListManager.Instances.Logic.Services
             if (item.ReadOnly)
                 return null;
 
-            if (!instanceLink.AttachedInstance.HasValue)
+            if (instanceLink.AttachedInstanceID.HasValue && instance.HasValue && instanceLink.AttachedInstanceID.Value != instance.Value)
+                return null; //the parent instance detached the child which is trying to update it
+
+            if (!instanceLink.AttachedInstanceID.HasValue && instance.HasValue)
+                instanceLink.AttachedInstanceID = instance; //the first refresh from the child instance is an attach as a matter of fact
+
+            if (!instanceLink.AttachedInstanceID.HasValue)
                 throw new InstanceException("No instance attached");
 
-            var instanceRecord = await _instancesRepository.GetAsync(identity.CompanyId, instanceLink.AttachedInstance.Value);
+            var instanceRecord = await _instancesRepository.GetAsync(identity.CompanyId, instanceLink.AttachedInstanceID.Value);
 
-            instanceLink.Attach(instanceLink.AttachedInstance.Value,
-                new InstanceLinkRecord
-                {
-                    ID = instanceRecord.ID,
-                    Code = Instance.GetCode(instanceRecord.PrototypeName, instanceRecord.Version, instanceRecord.PrototypeVersions.VersionState, instanceRecord.Year, instanceRecord.Number),
-                    Description = instanceRecord.Description,
-                    State = instanceRecord.InstanceState,
-                    DateTime = DateTimeOffset.UtcNow,
-                    User = identity.Code
-                }
-             );
+            var newInstanceLinkRecord = new InstanceLinkRecord
+            {
+                ID = instanceRecord.ID,
+                Code = Instance.GetCode(instanceRecord.PrototypeName, instanceRecord.Version, instanceRecord.PrototypeVersions.VersionState, instanceRecord.Year, instanceRecord.Number),
+                Description = instanceRecord.Description,
+                State = instanceRecord.InstanceState,
+                DateTime = DateTimeOffset.UtcNow,
+                User = identity.Code
+            };
+
+            if (
+                instanceLink.Record.Description == newInstanceLinkRecord.Description
+                && instanceLink.Record.State == newInstanceLinkRecord.State
+            )
+                return null; //no changes found
+            
+            instanceLink.Attach(instanceLink.AttachedInstanceID.Value, instanceRecord.Code, newInstanceLinkRecord);
 
             await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
             {
