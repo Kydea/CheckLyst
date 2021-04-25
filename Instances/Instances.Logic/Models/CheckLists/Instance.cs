@@ -55,6 +55,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 Header = ((Group)Header).GetViewModel(),
                 Pages = Pages.Select(p => ((Page)p).GetViewModel()),
                 Description,
+                ParentInstanceCode,
                 Expressions = Expressions.Any() ? Expressions : null
             };
         }
@@ -85,6 +86,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public Formula FileNameFormula { get; } = new Formula();
         public string FileNameFormulaString { get; set; }
         public string FileName => FileNameFormula.Value;
+        public string ParentInstanceCode { get; set; }
 
         public bool FTPExport { get; set; }
 

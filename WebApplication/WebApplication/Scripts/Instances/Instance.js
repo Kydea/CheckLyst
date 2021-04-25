@@ -90,7 +90,7 @@
         showExceptions = function () {
             var message = "";
 
-            for (var index in exceptions) 
+            for (var index in exceptions)
                 message += exceptions[index] + " (" + index + ")<br /><br />";
 
             matematici.dialog.error("exceptions list", message);
@@ -167,9 +167,13 @@
         load = function () {
             var
                 newInstance = options.code == "",
-                parameters = [];
+                parameters = [],
+                parentInstanceCode;
 
             if (newInstance) {
+                //set the link to the parent instance
+                parentInstanceCode = localStorage.parentInstanceCode;
+
                 //set the items default
                 var tokens = window.location.search.substring(1).split('&');
 
@@ -183,6 +187,8 @@
                 }
             }
 
+            localStorage.removeItem("parentInstanceCode");
+
             $.ajax({
                 url: matematici.urls.instances.api + "/" + (newInstance ? "Create" : "Get"),
                 type: "post",
@@ -190,8 +196,12 @@
                     code: options.code,
                     prototype: options.prototype,
                     version: options.version == "-1" ? null : options.version,
-                    parameters: parameters
-                }
+                    parameters: parameters,
+                    parentInstanceCode: parentInstanceCode
+                },
+                onErrorClosed: parentInstanceCode ? function () {
+                    matematici.navigator.open(matematici.urls.instances.detail + "/" + parentInstanceCode);
+                } : null
             }).done(function (result) {
                 id = result.id;
                 state = result.state;
@@ -392,21 +402,27 @@
     };
 
     instance.quit = function () {
-        var hasPermissionOnPrototype =
-            hasPermission(null)
-            && (
-                matematici.tokenManager.checkRole("Prototypes#View#" + department + "##")
-                || matematici.tokenManager.checkRole("Prototypes#View#" + department + "#" + prototypeType + "#")
-            );
+        var
+            hasParent = model.parentInstanceCode,
+            hasPermissionOnPrototype = hasPermission(null)
+                && (
+                    matematici.tokenManager.checkRole("Prototypes#View#" + department + "##")
+                    || matematici.tokenManager.checkRole("Prototypes#View#" + department + "#" + prototypeType + "#")
+                ) && (versionState == prototypes.Prototype.states.draft || versionState == prototypes.Prototype.states.simulation);
 
         if (options.appMode)
             window.webkit.messageHandlers.instances.postMessage("quit");
-        else
-            matematici.navigator.open(
-                hasPermissionOnPrototype && (versionState == prototypes.Prototype.states.draft || versionState == prototypes.Prototype.states.simulation) ?
-                    matematici.urls.prototypes.detail + "/" + prototype + "/" + version :
-                    options.listUrl
-            );
+        else if (hasParent || hasPermissionOnPrototype) {
+            var buttons = [
+                { text: "Open instances list", icon: "fa-layer-group", cancelButton: true, handler: function () { matematici.navigator.open(options.listUrl); } }
+            ];
+            if (hasPermissionOnPrototype)
+                buttons.push({ text: "Open parent prototype", icon: "fa-layer-group", handler: function () { matematici.navigator.open(matematici.urls.prototypes.detail + "/" + prototype + "/" + version); } })
+            if (hasParent)
+                buttons.push({ text: "Open parent instance", icon: "fa-layer-group", handler: function () { matematici.navigator.open(matematici.urls.instances.detail + "/" + model.parentInstanceCode); } })
+            matematici.dialog.popupMenu(buttons);
+        } else
+            matematici.navigator.open(options.listUrl);
     };
 
     instance.save = function () {
@@ -563,7 +579,7 @@
     };
 
     instance.close = function (callback) {
-        if (!deleted && hasPermission("Edit")) {
+        if (id != null && !deleted && hasPermission("Edit")) {
             new instances.Event(instances.Events.quit, null, null, null, true).done(function () {
                 callback();
             }).error(function () {
@@ -588,7 +604,7 @@
             //instance
             result.header = instance.getSimplifiedModel(model.header);
             result.pages = [];
-            for (var index in model.pages) 
+            for (var index in model.pages)
                 result.pages.push(instance.getSimplifiedModel(model.pages[index], index));
         } else if (index != undefined) {
             //page

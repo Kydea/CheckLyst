@@ -18,7 +18,7 @@ namespace CheckListManager.Instances.Logic.Services
         Task SaveCacheObjectAsync(InstanceCacheObject cacheObject);
         Task GetInstanceAsync(IDefaultIdentity identity, InstanceCacheObject cacheObject);
         Task<GetPrototypeResponse> CheckCreationGrantsAsync(IDefaultIdentity identity, long prototype, int? version);
-        Task<InstanceCacheObject> CreateInstanceAsync(IDefaultIdentity identity, long prototype, int? version, Dictionary<string, string> parameters);
+        Task<InstanceCacheObject> CreateInstanceAsync(IDefaultIdentity identity, long prototype, int? version, Dictionary<string, string> parameters, string parentInstanceCode);
 		Task<InstanceCacheObject> OpenInstanceAsync(string code, IDefaultIdentity identity);
         Task SaveInstanceAsync(string code, IDefaultIdentity identity);
         Task<InstanceCacheObject> CompleteInstanceAsync(string code, IDefaultIdentity identity);

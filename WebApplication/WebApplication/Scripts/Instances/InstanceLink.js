@@ -60,7 +60,8 @@
         },
 
         create = function () {
-            matematici.navigator.open()
+            localStorage.parentInstanceCode = instances.instance.getCode();
+            matematici.navigator.open(matematici.urls.instances.create + "/" + model.prototypeID);
         },
 
         refresh = function () {
@@ -81,7 +82,7 @@
                     buttons.push({ text: "Refresh values", icon: "sync", handler: refresh });
             } else {
                 if (model.actions != 2)
-                    buttons.push({ text: "Create", icon: "plus", href: matematici.urls.instances.create + "/" + model.prototypeID, target: "_blank" });
+                    buttons.push({ text: "Create", icon: "plus", handler: create });
                 if (model.actions != 1)
                     buttons.push({ text: "Attach", icon: "link", handler: attach });
             }

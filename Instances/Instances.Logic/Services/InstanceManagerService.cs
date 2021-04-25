@@ -196,7 +196,7 @@ namespace CheckListManager.Instances.Logic.Services
             instance.Pages.Add(SimulationPage);
         }
 
-        public async Task<InstanceCacheObject> CreateInstanceAsync(IDefaultIdentity identity, long prototype, int? version, Dictionary<string, string> parameters)
+        public async Task<InstanceCacheObject> CreateInstanceAsync(IDefaultIdentity identity, long prototype, int? version, Dictionary<string, string> parameters, string parentInstanceCode)
         {
             try
             {
@@ -224,6 +224,7 @@ namespace CheckListManager.Instances.Logic.Services
                     NeedToCache = true
                 };
 
+                cacheObject.Instance.ParentInstanceCode = parentInstanceCode;
                 cacheObject.Instance.Setup(cacheObject, await _settingService.DecimalSeparatorAsync(cacheObject.CompanyId), await _settingService.TimeZoneAsync(cacheObject.CompanyId), true);
                 if (parameters != null)
                     foreach (var parameter in parameters)
