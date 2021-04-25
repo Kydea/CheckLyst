@@ -1277,6 +1277,10 @@ namespace CheckListManager.Instances.Logic.Services
                         AffectedElement = await HandleUploadAttachment(cacheObject, identity, request.ItemId, request.Attachment);
                         Property = DependencyRelation.Properties.Validity;
                         break;
+                    case EventTypes.AttachInstance:
+                        AffectedElement = await HandleAttachInstance(cacheObject, identity, request.ItemId, request.Instance);
+                        Property = DependencyRelation.Properties.Value;
+                        break;
                     default:
                         throw new InstanceException($"Event type {request.Type} not handled.");
                 }
@@ -2072,6 +2076,47 @@ namespace CheckListManager.Instances.Logic.Services
             TrackChanges(cacheObject, identity.Code);
 
             return attachment;
+        }
+
+        private async Task<Element> HandleAttachInstance(
+            InstanceCacheObject cacheObject,
+            IDefaultIdentity identity,
+            int? itemId,
+            long? instance
+        )
+        {
+            if (!itemId.HasValue)
+                throw new InstanceException("Item id not sent");
+
+            if (!cacheObject.Instance.Items.TryGetValue(itemId.Value, out var item) || !(item is InstanceLink instanceLink))
+                throw new InstanceException($"Instance link {itemId} not found");
+
+            if (item.ReadOnly)
+                return null;
+
+            if (!instance.HasValue)
+                throw new InstanceException("Instance id not sent");
+
+            instanceLink.Attach(identity.Code, instance.Value);
+
+            await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+            {
+                Company = cacheObject.CompanyId,
+                User = identity.Code,
+                Action = TrailAction.InstanceValueChanged,
+                Date = DateTimeOffset.UtcNow,
+                CheckListCode = cacheObject.InstanceCode,
+                CheckListID = cacheObject.ID,
+                Information = JsonConvert.SerializeObject(new
+                {
+                    ID = itemId,
+                    instance.Value
+                })
+            });
+
+            TrackChanges(cacheObject, identity.Code);
+
+            return instanceLink;
         }
 
         #endregion

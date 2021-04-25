@@ -11,6 +11,7 @@ namespace CheckListManager.Instances.Logic.Messages
 		[Required]
 		public string Type { get; set; }
 		public int? ItemId { get; set; }
+		public long? Instance { get; set; }
         public string Value { get; set; }
 		public bool Simple { get; set; }
 		public string Username { get; set; }

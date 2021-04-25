@@ -146,6 +146,7 @@ namespace CheckListManager.Instances.Logic.List
 
         public async Task<PagingResponse<List<ListRow>>> GetDataAsync(long company, PagingRequest<ListRequest> form)
         {
+            form.Data.Description = form.Data.Description ?? string.Empty;
             form.Data.State = form.Data.State ?? string.Empty;
             form.Data.TagCode = form.Data.TagCode ?? string.Empty;
             form.Data.TagValue = form.Data.TagValue ?? string.Empty;

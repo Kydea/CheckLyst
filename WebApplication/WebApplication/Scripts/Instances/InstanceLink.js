@@ -10,19 +10,23 @@
         span,
 
         attach = function () {
+            var handler = function (grid, row) {
+                new instances.Event(instances.Events.attachInstance, model.id, { instance: row.id }).trigger();
+            };
+
             $.ajax({
                 url: matematici.urls.api + "/Instances/List/GetData",
                 type: "post",
                 data: {
                     data: {
-                        prototypeName: model.prototypeName
+                        prototype: model.prototypeID
                     }
                 }
             }).done(function (result) {
                 var
                     columns = [
-                        { label: "ID", name: "state" },
-                        { label: "Code", name: "code" },
+                        { label: "ID", name: "id" },
+                        { label: "Code", name: "instanceCode" },
                         { label: "State", name: "state" },
                         { label: "Year", name: "year" },
                         { label: "Number", name: "number" },
@@ -32,8 +36,8 @@
                         { label: "Created by", name: "createdBy" },
                         { label: "Modified on", name: "modifiedOn", type: "DateTimeOffset" },
                         { label: "Modified by", name: "modifiedBy" },
-                    ],
-                    checkListGrid = new matematici.CheckListGrid("Instances of prototype " + model.prototypeName, result.data, null, null, columns);
+                    ];
+                new matematici.CheckListGrid("Instances of prototype " + model.prototypeName, result.data, handler, null, columns);
             });
         },
 
@@ -57,7 +61,7 @@
                     { text: "Cancel", icon: "times", cancelButton: true }
                 ];
 
-            if (model.code) {
+            if (model.attachedInstance != null) {
                 buttons.push({ text: "Detach", icon: "chain-broken", handler: detach });
                 if (model.state != instances.Instance.states.confirmed)
                     buttons.push({ text: "Refresh values", icon: "refresh", handler: refresh });
