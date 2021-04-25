@@ -36,8 +36,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                     x.Code,
                     x.Description,
                     x.State,
-                    x.CreateBy,
-                    x.CreateOn
+                    x.User,
+                    x.DateTime
                 });
             return ItemModel;
         }
@@ -89,11 +89,13 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 			return instanceLink;
 		}
 
-        public void Attach(string userCode, long instance)
+        public void Attach(long? instance, InstanceLinkRecord record)
         {
             AttachedInstance = instance;
-            ModifiedBy = userCode;
-            ModifiedOn = DateTimeOffset.UtcNow;
+            Record = record;
+            History.Add(record);
+            ModifiedBy = record.User;
+            ModifiedOn = record.DateTime;
         }
     }
 }

@@ -22,5 +22,6 @@ namespace CheckListManager.Instances.Logic.Messages
         public const string UploadAttachment = nameof(UploadAttachment);
         public const string Import = nameof(Import);
         public const string AttachInstance = nameof(AttachInstance);
+        public const string RefreshAttachedInstance = nameof(RefreshAttachedInstance);
     }
 }

@@ -9,8 +9,8 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
         public string Code { get; set; }
         public string State { get; set; }
         public string Description { get; set; }
-        public DateTimeOffset? CreateOn { get; set; }
-        public DateTimeOffset? CreateBy { get; set; }
+        public DateTimeOffset? DateTime { get; set; }
+        public string User { get; set; }
         public PascalCaseDictionary<string, string> Tags { get; set; }
 	}
 }

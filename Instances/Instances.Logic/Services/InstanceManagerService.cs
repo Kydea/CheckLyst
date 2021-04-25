@@ -1281,6 +1281,10 @@ namespace CheckListManager.Instances.Logic.Services
                         AffectedElement = await HandleAttachInstance(cacheObject, identity, request.ItemId, request.Instance);
                         Property = DependencyRelation.Properties.Value;
                         break;
+                    case EventTypes.RefreshAttachedInstance:
+                        AffectedElement = await HandleRefreshAttachedInstance(cacheObject, identity, request.ItemId);
+                        Property = DependencyRelation.Properties.Value;
+                        break;
                     default:
                         throw new InstanceException($"Event type {request.Type} not handled.");
                 }
@@ -2094,10 +2098,23 @@ namespace CheckListManager.Instances.Logic.Services
             if (item.ReadOnly)
                 return null;
 
-            if (!instance.HasValue)
-                throw new InstanceException("Instance id not sent");
+            var instanceRecord = instance.HasValue ? await _instancesRepository.GetAsync(identity.CompanyId, instance.Value) : null;
 
-            instanceLink.Attach(identity.Code, instance.Value);
+            instanceLink.Attach(instance, 
+                instance.HasValue ? new InstanceLinkRecord
+                {
+                    ID = instanceRecord.ID,
+                    Code = Instance.GetCode(instanceRecord.PrototypeName, instanceRecord.Version, instanceRecord.PrototypeVersions.VersionState, instanceRecord.Year, instanceRecord.Number),
+                    Description = instanceRecord.Description,
+                    State = instanceRecord.InstanceState,
+                    DateTime = DateTimeOffset.UtcNow,
+                    User = identity.Code
+                } : new InstanceLinkRecord
+                {
+                    DateTime = DateTimeOffset.UtcNow,
+                    User = identity.Code
+                }
+             );
 
             await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
             {
@@ -2110,7 +2127,65 @@ namespace CheckListManager.Instances.Logic.Services
                 Information = JsonConvert.SerializeObject(new
                 {
                     ID = itemId,
-                    instance.Value
+                    Instance = instanceRecord?.ID,
+                    Code = instanceRecord == null ? null : Instance.GetCode(instanceRecord.PrototypeName, instanceRecord.Version, instanceRecord.PrototypeVersions.VersionState, instanceRecord.Year, instanceRecord.Number),
+                    instanceRecord?.Description,
+                    State = instanceRecord?.InstanceState
+                })
+            });
+
+            TrackChanges(cacheObject, identity.Code);
+
+            return instanceLink;
+        }
+
+        private async Task<Element> HandleRefreshAttachedInstance(
+            InstanceCacheObject cacheObject,
+            IDefaultIdentity identity,
+            int? itemId
+        )
+        {
+            if (!itemId.HasValue)
+                throw new InstanceException("Item id not sent");
+
+            if (!cacheObject.Instance.Items.TryGetValue(itemId.Value, out var item) || !(item is InstanceLink instanceLink))
+                throw new InstanceException($"Instance link {itemId} not found");
+
+            if (item.ReadOnly)
+                return null;
+
+            if (!instanceLink.AttachedInstance.HasValue)
+                throw new InstanceException("No instance attached");
+
+            var instanceRecord = await _instancesRepository.GetAsync(identity.CompanyId, instanceLink.AttachedInstance.Value);
+
+            instanceLink.Attach(instanceLink.AttachedInstance.Value,
+                new InstanceLinkRecord
+                {
+                    ID = instanceRecord.ID,
+                    Code = Instance.GetCode(instanceRecord.PrototypeName, instanceRecord.Version, instanceRecord.PrototypeVersions.VersionState, instanceRecord.Year, instanceRecord.Number),
+                    Description = instanceRecord.Description,
+                    State = instanceRecord.InstanceState,
+                    DateTime = DateTimeOffset.UtcNow,
+                    User = identity.Code
+                }
+             );
+
+            await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+            {
+                Company = cacheObject.CompanyId,
+                User = identity.Code,
+                Action = TrailAction.InstanceValueChanged,
+                Date = DateTimeOffset.UtcNow,
+                CheckListCode = cacheObject.InstanceCode,
+                CheckListID = cacheObject.ID,
+                Information = JsonConvert.SerializeObject(new
+                {
+                    ID = itemId,
+                    Instance = instanceRecord.ID,
+                    Code = Instance.GetCode(instanceRecord.PrototypeName, instanceRecord.Version, instanceRecord.PrototypeVersions.VersionState, instanceRecord.Year, instanceRecord.Number),
+                    instanceRecord.Description,
+                    State = instanceRecord.InstanceState
                 })
             });
 

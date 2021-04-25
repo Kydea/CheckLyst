@@ -24,7 +24,7 @@
             addItem("calculator", model.valueFormulaString ? model.valueFormulaString + ": <strong>" + formulaParser.text() + "</strong>" : null);
             addItem("link", (model.externalSourceName ? model.externalSourceName + "." + model.externalSourceColumn : null));
             addItem("file-invoice", model.prototypeName);
-            addItem("key", model.attachedInstance);
+            addItem("layer-group", model.attachedInstance);
 
             if (model.history && model.history.length > 0)
                 panel.append($("<div />").append($("<a />").attr("href", "#").text("history").prepend($("<i />").addClass("fa fa-fw fa-list-ul")).on("click", function (e) {
@@ -34,7 +34,14 @@
                             { name: "user", label: "User" },
                             { name: "signature", label: "Signature" },
                             { name: "note", label: "Note" },
-                            { name: "action", label: "Action" },
+                            { name: "action", label: "Action" }
+                        ] : model.typeName == "InstanceLink" ? [
+                            { name: "dateTime", label: "Date/Time", type: "DateTimeOffset" },
+                            { name: "user", label: "User" },
+                            { name: "id", label: "ID" },
+                            { name: "code", label: "Code" },
+                            { name: "state", label: "State" },
+                            { name: "description", label: "description" },
                         ] : [
                             { name: "dateTime", label: "Date/Time", type: "DateTimeOffset" },
                             { name: "user", label: "User" },

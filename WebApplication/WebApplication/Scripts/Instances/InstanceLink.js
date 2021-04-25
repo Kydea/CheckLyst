@@ -8,11 +8,15 @@
         element = item.getElement(),
         label,
         span,
+        checkListGrid,
 
-        attach = function () {
-            var handler = function (grid, row) {
-                new instances.Event(instances.Events.attachInstance, model.id, { instance: row.id }).trigger();
-            };
+        attach = function (page) {
+            var
+                handler = function (grid, row) {
+                    new instances.Event(instances.Events.attachInstance, model.id, { instance: row.id }).trigger();
+                };
+
+            if (page == null) page = 1;
 
             $.ajax({
                 url: matematici.urls.api + "/Instances/List/GetData",
@@ -20,7 +24,8 @@
                 data: {
                     data: {
                         prototype: model.prototypeID
-                    }
+                    },
+                    currentPage: page
                 }
             }).done(function (result) {
                 var
@@ -37,20 +42,29 @@
                         { label: "Modified on", name: "modifiedOn", type: "DateTimeOffset" },
                         { label: "Modified by", name: "modifiedBy" },
                     ];
-                new matematici.CheckListGrid("Instances of prototype " + model.prototypeName, result.data, handler, null, columns);
+
+                if (page == 1)
+                    checkListGrid = new matematici.CheckListGrid("Instances of prototype " + model.prototypeName, result.data, handler, null, columns, null);
+                else
+                    for (var index in result.data)
+                        checkListGrid.addRow(result.data[index]);
+
+                checkListGrid.setNextHandler(result.pagesCount <= result.currentPage ? null : function () {
+                    attach(page + 1)
+                });
             });
         },
 
         detach = function () {
-
+            new instances.Event(instances.Events.attachInstance, model.id).trigger();
         },
 
         create = function () {
-
+            matematici.navigator.open()
         },
 
         refresh = function () {
-
+            new instances.Event(instances.Events.refreshAttachedInstance, model.id).trigger();
         },
 
         action = function () {
@@ -62,12 +76,12 @@
                 ];
 
             if (model.attachedInstance != null) {
-                buttons.push({ text: "Detach", icon: "chain-broken", handler: detach });
+                buttons.push({ text: "Detach", icon: "unlink", handler: detach });
                 if (model.state != instances.Instance.states.confirmed)
-                    buttons.push({ text: "Refresh values", icon: "refresh", handler: refresh });
+                    buttons.push({ text: "Refresh values", icon: "sync", handler: refresh });
             } else {
                 if (model.actions != 2)
-                    buttons.push({ text: "Create", icon: "plus", handler: create });
+                    buttons.push({ text: "Create", icon: "plus", href: matematici.urls.instances.create + "/" + model.prototypeID, target: "_blank" });
                 if (model.actions != 1)
                     buttons.push({ text: "Attach", icon: "link", handler: attach });
             }
