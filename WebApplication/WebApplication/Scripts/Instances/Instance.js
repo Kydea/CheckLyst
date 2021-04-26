@@ -418,7 +418,8 @@
             window.webkit.messageHandlers.instances.postMessage("quit");
         else if (hasParent || hasPermissionOnPrototype) {
             var buttons = [
-                { text: "Open instances list", icon: "fa-layer-group", cancelButton: true, handler: function () { matematici.navigator.open(options.listUrl); } }
+                { text: "Cancel", icon: "fa-times", cancelButton: true },
+                { text: "Open instances list", icon: "fa-layer-group", handler: function () { matematici.navigator.open(options.listUrl); } }
             ];
             if (hasPermissionOnPrototype)
                 buttons.push({ text: "Open parent prototype", icon: "fa-layer-group", handler: function () { matematici.navigator.open(matematici.urls.prototypes.detail + "/" + prototype + "/" + version); } })

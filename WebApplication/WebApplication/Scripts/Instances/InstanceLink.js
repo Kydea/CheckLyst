@@ -45,10 +45,11 @@
 
                 if (page == 1)
                     checkListGrid = new matematici.CheckListGrid("Instances of prototype " + model.prototypeName, result.data, handler, null, columns, null);
-                else
+                else {
                     for (var index in result.data)
                         checkListGrid.addRow(result.data[index]);
-
+                    checkListGrid.center();
+                }
                 checkListGrid.setNextHandler(result.pagesCount <= result.currentPage ? null : function () {
                     attach(page + 1)
                 });
