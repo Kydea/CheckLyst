@@ -153,6 +153,7 @@
         button.classList.toggle("ReadOnly", model.readOnly);
 
         code.value = model.record.code;
+        code.setAttribute("title", model.record.code || "");
         description.value = model.record.description;
         description.setAttribute("title", model.record.description || "");
         state.value = model.record.state;
