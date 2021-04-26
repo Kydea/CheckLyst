@@ -248,6 +248,20 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                             }
 
                             break;
+                        case "InstanceLink":
+                            if (CheckListPDF.IsPrototype() || Item.Hidden)
+                                Cell = NewCell("").SetHorizontalAlign(ParagraphAlignment.Center);
+                            else
+                            {
+                                var InstanceLink = (ICheckListInstanceLink)Item;
+                                var Value = InstanceLink.Record.Code;
+                                Cell = NewCell(string.IsNullOrWhiteSpace(Value) ? $"{InstanceLink.PrototypeName}.?.?.?" : Value);
+                            }
+
+                            if (Item.ReadOnly)
+                                Cell.Content.Format.Shading.Color = PDFBase.LightGray;
+
+                            break;
                         case "Text":
                             Cell = NewCell(Item.Hidden ? string.Empty : Description);
                             break;

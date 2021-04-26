@@ -9,6 +9,7 @@
         label,
         span,
         checkListGrid,
+        cog,
 
         attach = function (page) {
             var
@@ -115,7 +116,6 @@
             matematici.dialog.popupMenu(buttons);
         },
 
-
         setup = function () {
             label = document.createElement("label");
             label.className = "Controls3";
@@ -153,13 +153,13 @@
             state.readOnly = true;
             parent.appendChild(state);
 
-            i = document.createElement("i");
-            i.className = "Icon fa fa-cog";
+            cog = document.createElement("i");
+            cog.className = "Icon fa fa-cog";
             button = document.createElement("a");
             button.className = "Button GreyYellowButton";
             button.setAttribute("href", "#");
             button.addEventListener("click", action);
-            button.appendChild(i);
+            button.appendChild(cog);
             button.innerHTML += "Actions";
             element.appendChild(button);
         };
@@ -177,8 +177,12 @@
         description.setAttribute("title", model.record.description || "");
         state.value = model.record.state;
 
-        if (item.isTableContent())
+        if (item.isTableContent()) {
             description.style.display = "none";
+            button.textContent = model.record.code;
+            button.setAttribute("title", model.record.code || "");
+            button.appendChild(cog);
+        }
 
         this.setColor(model.color);
         this.setFontSize(model.fontSize);

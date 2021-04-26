@@ -36,7 +36,28 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             Table.AddCell(new PdfPCell(new Paragraph().SetText(Date == null ? " " : Signature).Padding(5)));
             Table.CompleteRow();
 
-            if (!Valid)
+            if (!Valid && !CheckListPDF.IsPrototype())
+                Table.BorderColor = PDFBase.Red;
+
+            PDFBase.Container.Add(Table);
+            DrawText("\n");
+        }
+
+        private void DrawInstanceLink(bool Valid, string InstanceCode = null, string InstanceDescription = null, string InstanceState = null)
+        {
+            PdfPTable Table = new PdfPTable(3) { WidthPercentage = 100 };
+
+            Table.AddCell(new PdfPCell(new Paragraph().SetText("Instance code").SetFont(PDFBase.BoldFont).Padding(5)));
+            Table.AddCell(new PdfPCell(new Paragraph().SetText("Instance description").SetFont(PDFBase.BoldFont).Padding(5)));
+            Table.AddCell(new PdfPCell(new Paragraph().SetText("Instance state").SetFont(PDFBase.BoldFont).Padding(5)));
+            Table.CompleteRow();
+
+            Table.AddCell(new PdfPCell(new Paragraph().SetText(InstanceCode).Padding(5)));
+            Table.AddCell(new PdfPCell(new Paragraph().SetText(InstanceDescription).Padding(5)));
+            Table.AddCell(new PdfPCell(new Paragraph().SetText(InstanceState).Padding(5)));
+            Table.CompleteRow();
+
+            if (!Valid && !CheckListPDF.IsPrototype())
                 Table.BorderColor = PDFBase.Red;
 
             PDFBase.Container.Add(Table);
@@ -79,6 +100,13 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                 else
                     DrawSignature("Signed by", SignatureElement.Valid);
             }
+            else if (Element is ICheckListInstanceLink InstanceLink)
+            {
+                if (!string.IsNullOrEmpty(Description))
+                    DrawText(Description, PDFBase.BoldFont, 5);
+
+                DrawInstanceLink(InstanceLink.Valid, InstanceLink.Record.Code ?? $"{InstanceLink.PrototypeName}.?.?.?", InstanceLink.Record.Description, InstanceLink.Record.State);
+            }
             else if (Element is ICheckListField FieldElement)
             {
                 if (!string.IsNullOrEmpty(Description))
@@ -91,7 +119,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                         Value = false;
                     var Cell = new PdfPCell(new Paragraph().SetText(Value ? "X" : string.Empty).SetFont(PDFBase.GenericFont).Padding(0)).SetHorizontalAlign(ParagraphAlignment.Center);
                     Table.AddCell(Cell);
-                    if (!FieldElement.Valid)
+                    if (!FieldElement.Valid && !CheckListPDF.IsPrototype())
                         Table.BorderColor = PDFBase.Red;
                     if (FieldElement.ReadOnly)
                         Cell.Content.Format.Shading.Color = PDFBase.LightGray;
@@ -104,10 +132,10 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                     var Paragraph = DrawText(CheckListPDF.GetFieldValue(FieldElement), PDFBase.GenericFont, 10);
                     Paragraph.Format.LeftIndent = 5;
                     Paragraph.Format.RightIndent = 5;
-                    Paragraph.Format.Borders.Top = FieldElement.Valid ? PDFBase.DefaultBorder : PDFBase.RedBorder;
-                    Paragraph.Format.Borders.Right = FieldElement.Valid ? PDFBase.DefaultBorder : PDFBase.RedBorder;
-                    Paragraph.Format.Borders.Bottom = FieldElement.Valid ? PDFBase.DefaultBorder : PDFBase.RedBorder;
-                    Paragraph.Format.Borders.Left = FieldElement.Valid ? PDFBase.DefaultBorder : PDFBase.RedBorder;
+                    Paragraph.Format.Borders.Top = FieldElement.Valid || CheckListPDF.IsPrototype() ? PDFBase.DefaultBorder : PDFBase.RedBorder;
+                    Paragraph.Format.Borders.Right = FieldElement.Valid || CheckListPDF.IsPrototype() ? PDFBase.DefaultBorder : PDFBase.RedBorder;
+                    Paragraph.Format.Borders.Bottom = FieldElement.Valid || CheckListPDF.IsPrototype() ? PDFBase.DefaultBorder : PDFBase.RedBorder;
+                    Paragraph.Format.Borders.Left = FieldElement.Valid || CheckListPDF.IsPrototype() ? PDFBase.DefaultBorder : PDFBase.RedBorder;
                     Paragraph.Format.Borders.DistanceFromLeft = Paragraph.Format.Borders.DistanceFromRight = 5;
                     Paragraph.Format.Borders.DistanceFromTop = Paragraph.Format.Borders.DistanceFromBottom = 5;
                     if (FieldElement.ReadOnly)

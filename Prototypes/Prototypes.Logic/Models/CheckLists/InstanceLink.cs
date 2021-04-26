@@ -19,7 +19,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 PrototypeName = PrototypeName,
                 PrototypeID = PrototypeID,
                 Actions = Actions,
-                Parameters = Parameters.Select(p => new InstanceLinkParameter
+                Parameters = Parameters?.Select(p => new InstanceLinkParameter
                 {
                     Name = p.Name,
                     ElementCode = p.ElementCode,
