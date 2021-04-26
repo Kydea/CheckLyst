@@ -67,7 +67,26 @@
         create = function () {
             localStorage.parentInstanceCode = instances.instance.getCode();
             localStorage.parentInstanceLinkID = model.id;
-            matematici.navigator.open(matematici.urls.instances.create + "/" + model.prototypeID);
+
+            $.ajax({
+                url: matematici.urls.api + "/Instances/Instance/GetInstanceLinkParameters",
+                type: "post",
+                data: {
+                    instanceCode: instances.instance.getCode(),
+                    itemId: model.id
+                }
+            }).done(function (result) {
+                var query = "";
+                if (result.parameters)
+                    for (var parameterIndex in result.parameters) {
+                        var parameter = result.parameters[parameterIndex];
+                        if (query != "") query += "&";
+                        query += encodeURIComponent(parameter.name) + "=" + encodeURIComponent(parameter.value);
+                    }
+                if (query != "") query = "?" + query;
+                console.log(matematici.urls.instances.create + "/" + model.prototypeID + query);
+                matematici.navigator.open(matematici.urls.instances.create + "/" + model.prototypeID + query);
+            });
         },
 
         refresh = function () {

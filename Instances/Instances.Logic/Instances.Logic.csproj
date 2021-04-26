@@ -78,6 +78,7 @@
     <Compile Include="List\ListResponse.cs" />
     <Compile Include="List\ListRequest.cs" />
     <Compile Include="Messages\EventTypes.cs" />
+    <Compile Include="Messages\InstanceLinkParametersResponse.cs" />
     <Compile Include="Messages\ExternalSourceResponse.cs" />
     <Compile Include="Messages\ExternalSourceRequest.cs" />
     <Compile Include="Messages\GetPrototypeRequest.cs" />

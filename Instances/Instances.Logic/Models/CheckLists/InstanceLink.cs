@@ -21,6 +21,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public long? AttachedInstanceID { get; set; }
         public string AttachedInstanceCode { get; set; }
         public InstanceLinkRecord Record { get; set; }
+        public List<InstanceLinkParameter> Parameters { get; set; }
 
         public override dynamic GetViewModel()
         {
@@ -41,6 +42,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                     x.User,
                     x.DateTime
                 });
+
             return ItemModel;
         }
 

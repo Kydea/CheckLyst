@@ -297,6 +297,21 @@ namespace CheckListManager.Instances.Api.Controllers
         }
 
         [HttpPost]
+        [Route("GetInstanceLinkParameters")]
+        [Authorize(Roles = "Instances#View, Prototypes#Preview")]
+        public async Task<IHttpActionResult> GetInstanceLinkParameters(ExternalSourceRequest request)
+        {
+            try
+            {
+                return Ok(await _instanceManagerService.GetInstanceLinkParameters(request.InstanceCode, Identity, request.ItemId));
+            }
+            catch (Exception e)
+            {
+                return Error(e);
+            }
+        }
+
+        [HttpPost]
         [Route("GetExternalSource")]
         [Authorize(Roles = "Instances#View, Prototypes#Preview")]
         public async Task<IHttpActionResult> GetExternalSource(ExternalSourceRequest request)

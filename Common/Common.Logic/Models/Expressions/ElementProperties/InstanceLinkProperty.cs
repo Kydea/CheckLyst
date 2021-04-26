@@ -14,7 +14,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
             this.Property = Property;
         }
 
-        protected override DependencyRelation.Properties GetDependencyProperty(DependencyNode DependingElement) => DependencyRelation.Properties.Signature;
+        protected override DependencyRelation.Properties GetDependencyProperty(DependencyNode DependingElement) => DependencyRelation.Properties.Value;
 
         protected override void Check(ICheckListElement Element, List<string> IteratorStack)
         {
@@ -34,7 +34,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
                 Property == INSTANCE_STATE ? new TypedValue(DataType.Text, InstanceLink.Record.State) :
                 Property == INSTANCE_DESCRIPTION ? new TypedValue(DataType.Text, InstanceLink.Record.Description) :
                 Property == INSTANCE_ID ? new TypedValue(DataType.Number, (decimal?)InstanceLink.Record.ID) :
-                Property == INSTANCE_CODE ? new TypedValue(DataType.Text , InstanceLink.Record.Code) :
+                Property == INSTANCE_CODE ? new TypedValue(DataType.Text , InstanceLink.Record.ID.HasValue ? InstanceLink.Record.Code : null) :
                 throw new ArgumentException();
         }
     }

@@ -840,6 +840,65 @@ namespace CheckListManager.Instances.Logic.Services
             }).ToList();
         }
 
+        public async Task<InstanceLinkParametersResponse> GetInstanceLinkParameters(string code, IDefaultIdentity identity, int itemId)
+        {
+            try
+            {
+                var cacheObject = await GetCacheObjectForEditAsync(identity, code, true);
+                if (cacheObject.InstanceState != InstanceState.Draft && cacheObject.InstanceState != InstanceState.Progress)
+                    throw new InstanceException("Instance state not valid");
+                if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
+                    throw new InstanceException("Access denied");
+                if (!cacheObject.Instance.Items.TryGetValue(itemId, out var item) || !(item is InstanceLink instanceLink))
+                    throw new InstanceException($"InstanceLink {itemId} not found");
+
+                await _instanceCache.TouchAsync(code);
+
+                return new InstanceLinkParametersResponse
+                {
+                    Parameters = instanceLink.Parameters?.Select(p =>
+                    {
+                        string Value = null;
+                        string Error = null;
+                        if (p.ExpressionCode != null)
+                        {
+                            if (cacheObject.Instance.Expressions.TryGetValue(p.ExpressionCode, out var Expression))
+                                Value = Expression.Value?.Value?.ToString();
+                            else
+                                Error = $"Expression {p.ExpressionCode} not found";
+                        }
+                        else if (p?.ElementCode != null)
+                        {
+                            if (!instanceLink.GetBranchElements().TryGetValue(p.ElementCode, out var Element))
+                                Error = $"Element {p.ElementCode} not found";
+                            else if (!(Element is Field Field))
+                                Error = $"Element {p.ElementCode} is not a Field";
+                            else
+                                Value = Field.Value;
+                        }
+                        else
+                            Value = p.Value;
+
+                        return new InstanceLinkParametersResponse.Parameter
+                        {
+                            Name = p.Name,
+                            Value = Value,
+                            Error = Error
+                        };
+                    }).ToList()
+                };
+            }
+            catch (InstanceException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, "Unable to retrieve the external source data");
+                throw new InstanceException("Unable to retrieve the external source data", e);
+            }
+        }
+
         public async Task<ExternalSourceResponse> GetExternalSource(string code, IDefaultIdentity identity, string externalSourceCode, int itemId)
         {
             try
