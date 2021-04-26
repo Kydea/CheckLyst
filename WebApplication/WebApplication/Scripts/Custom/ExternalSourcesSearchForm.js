@@ -123,8 +123,8 @@
                 .append(confirmButton = $("<a />").addClass("Button").text("confirm").prepend($("<i />").addClass("Icon fa fa-file-import")).on("click", confirm).hide());
 
             var
-                url = instances.instance ? matematici.urls.instances.api + "/GetExternalSource" : matematici.urls.dataSources.api + "/Data/GetDataSource",
-                data = instances.instance ?
+                url = itemId != null ? matematici.urls.instances.api + "/GetExternalSource" : matematici.urls.dataSources.api + "/Data/GetDataSource",
+                data = itemId != null ?
                     { instanceCode: instances.instance.getCode(), externalSourceCode: name, itemId: itemId } :
                     { code: name };
             $.ajax(url, {
@@ -212,8 +212,8 @@
 
         load = function () {
             var
-                url = instances.instance ? matematici.urls.instances.api + "/GetExternalSourceRows" : matematici.urls.dataSources.api + "/Data/Test",
-                data = instances.instance ?
+                url = itemId != null ? matematici.urls.instances.api + "/GetExternalSourceRows" : matematici.urls.dataSources.api + "/Data/Test",
+                data = itemId != null ?
                     { data: { instanceCode: instances.instance.getCode(), parameters: parameterValues, itemId: itemId, externalSourceCode: name, page: page } } :
                     { code: name, parameters: parameterValues, page: page, decimalSeparator: localStorage.decimalSeparator, timeZone: localStorage.timeZone };
 
@@ -230,7 +230,7 @@
                 if (rows && rows.length) {
                     for (var row in rows) {
                         var tr = $("<tr />").appendTo(tableBody);
-                        if (instances.instance) tr.addClass("Handler");
+                        if (itemId != null) tr.addClass("Handler");
                         if (multiSelection) tr.append($("<td />").append($("<input />").attr({ type: "checkbox" }).on("click", function (e) {
                             e.stopPropagation();
                             toggleRow($(this).parent());

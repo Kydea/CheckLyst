@@ -592,6 +592,7 @@
             }).trigger();
         } else
             callback();
+        instances.instance = null;
     };
 
     instance.getModel = function () {
