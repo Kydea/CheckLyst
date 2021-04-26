@@ -9,5 +9,6 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
         string PrototypeName { get; set; }
         long? PrototypeID { get; set; }
         InstanceLinkActions Actions { get; set; }
+        InstanceLinkRecord Record { get; set; }
     }
 }

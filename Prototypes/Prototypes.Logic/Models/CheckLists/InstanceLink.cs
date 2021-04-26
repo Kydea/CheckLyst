@@ -61,6 +61,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public string PrototypeName { get; set; }
         public long? PrototypeID { get; set; }
         public InstanceLinkActions Actions { get; set; }
+        public InstanceLinkRecord Record { get; set; }
         public List<InstanceLinkParameter> Parameters { get; set; }
     }
 }
