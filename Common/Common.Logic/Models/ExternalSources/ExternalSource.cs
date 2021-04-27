@@ -13,7 +13,9 @@ namespace CheckListManager.Common.Logic.Models.ExternalSources
     {
         public override string DependencyClassName => "external source";
         public override string DependencyObjectCode => Code;
-        public override bool Update(DependencyRelation.Properties Property) => throw new ArgumentException();
+        public override bool Update(DependencyRelation.Properties Property) =>
+            Property == DependencyRelation.Properties.Value ? true : throw new ArgumentException();
+
         public override void MarkNodeAsChanged(ICheckList CheckList, HashSet<Tuple<DependencyNode, DependencyRelation.Properties>> Roots, DependencyRelation.Properties Property) => throw new ArgumentException();
         public string Code { get; set; }
         public string DataSource { get; set; }
