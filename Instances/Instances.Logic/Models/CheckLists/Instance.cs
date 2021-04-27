@@ -235,11 +235,11 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             UpdateNodes(this, Roots);
         }
 
-        public void UpdateReadOnly(string userCode, string state)
+        public void UpdateReadOnly(string userCode, string state, bool ignoreLock)
         {
             ((Group)Header).UpdateReadOnly(userCode, ReadOnly || state != InstanceState.Draft);
             foreach (var page in Pages)
-                ((Page)page).UpdateReadOnly(userCode, ReadOnly || state != InstanceState.Progress);
+                ((Page)page).UpdateReadOnly(userCode, ReadOnly || state != InstanceState.Progress, ignoreLock);
         }
 
         [JsonIgnore]

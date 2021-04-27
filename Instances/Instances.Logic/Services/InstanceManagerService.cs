@@ -94,7 +94,7 @@ namespace CheckListManager.Instances.Logic.Services
         public async Task<InstanceCacheObject> GetCacheObjectForDownloadAsync(long company, string code, bool includeData)
         {
             var cacheObject = await GetCacheObjectAsync(company, code, includeData);
-            cacheObject.Instance.UpdateReadOnly(null, cacheObject.InstanceState);
+            cacheObject.Instance.UpdateReadOnly(null, cacheObject.InstanceState, false);
             return cacheObject;
         }
 
@@ -107,7 +107,7 @@ namespace CheckListManager.Instances.Logic.Services
                     !cacheObject.InstanceState.In(InstanceState.Draft, InstanceState.Progress)
                     || !HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType)
                     || cacheObject.Year == 0 && !cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation);
-                cacheObject.Instance.UpdateReadOnly(identity.Code, cacheObject.InstanceState);
+                cacheObject.Instance.UpdateReadOnly(identity.Code, cacheObject.InstanceState, false);
             }
             return cacheObject;
         }
@@ -233,7 +233,7 @@ namespace CheckListManager.Instances.Logic.Services
                             await HandleValueChangeAsync(cacheObject, identity.Code, item.Id, parameter.Value);
 
                 cacheObject.Instance.UpdateAll(cacheObject);
-                cacheObject.Instance.UpdateReadOnly(identity.Code, cacheObject.InstanceState);
+                cacheObject.Instance.UpdateReadOnly(identity.Code, cacheObject.InstanceState, false);
 
                 return cacheObject;
             }
@@ -311,7 +311,7 @@ namespace CheckListManager.Instances.Logic.Services
                     cacheObject.Instance.MarkNodeAsChanged(cacheObject.Instance, Roots, DependencyRelation.Properties.StateChange);
                     DependencyNode.UpdateNodes(cacheObject.Instance, Roots);
 
-                    cacheObject.Instance.UpdateReadOnly(identity.Code, InstanceState.Progress);
+                    cacheObject.Instance.UpdateReadOnly(identity.Code, InstanceState.Progress, false);
 
                     _instancesRepository.SaveChildren(row.ID, CreateTags(cacheObject), CreateExpressionValues(cacheObject));
 
@@ -344,7 +344,7 @@ namespace CheckListManager.Instances.Logic.Services
                     CheckListID = cacheObject.ID
                 });
 
-                await UpdateParentInstance(cacheObject, identity);
+                await UpdateParentInstance(cacheObject, identity, false);
 
                 return cacheObject;
             }
@@ -407,7 +407,7 @@ namespace CheckListManager.Instances.Logic.Services
                     throw new InstanceException($"The page {InvalidPage.Description} is not valid{(InvalidPage.ValidityMessage == null ? string.Empty : $": {InvalidPage.ValidityMessage}")}");
 
                 cacheObject = await SaveAsync(cacheObject, identity, true, true, false, identity.Code, DateTimeOffset.UtcNow);
-                cacheObject.Instance.UpdateReadOnly(identity.Code, InstanceState.Completed);
+                cacheObject.Instance.UpdateReadOnly(identity.Code, InstanceState.Completed, false);
 
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
@@ -532,7 +532,7 @@ namespace CheckListManager.Instances.Logic.Services
             return Result;
         }
 
-        private async Task UpdateParentInstance(InstanceCacheObject cacheObject, IDefaultIdentity identity)
+        private async Task UpdateParentInstance(InstanceCacheObject cacheObject, IDefaultIdentity identity, bool Refresh)
         {
             if (cacheObject.Instance.ParentInstanceCode != null)
                 try
@@ -543,7 +543,7 @@ namespace CheckListManager.Instances.Logic.Services
                         Code = cacheObject.Instance.ParentInstanceCode,
                         ItemId = cacheObject.Instance.ParentInstanceLinkID,
                         Instance = cacheObject.ID,
-                        Type = EventTypes.RefreshAttachedInstance
+                        Type = Refresh ? EventTypes.RefreshAttachedInstance : EventTypes.AttachInstance
                     });
                     await SaveCacheObjectAsync(parentCacheObject);
                 }
@@ -642,7 +642,7 @@ namespace CheckListManager.Instances.Logic.Services
                         _instanceCache.TouchAsync(cacheObject.Code)
                     );
 
-                await UpdateParentInstance(cacheObject, identity);
+                await UpdateParentInstance(cacheObject, identity, true);
 
                 return cacheObject;
             }
@@ -684,7 +684,7 @@ namespace CheckListManager.Instances.Logic.Services
                 }
 
                 await _instancesRepository.SaveChangesAsync();
-                await UpdateParentInstance(cacheObject, identity);
+                await UpdateParentInstance(cacheObject, identity, true);
             }
             await _instanceCache.RemoveAsync(cacheObject.Code);
         }
@@ -1283,7 +1283,7 @@ namespace CheckListManager.Instances.Logic.Services
 
                 //A signer may sign also if the page is locked by the main user (the lock is for concurrency purpose, not for security), NB: SignatureCheck is before the choice of signer
                 var lockUser = request.Type == "Signature" ? request.Username : identity.Code;
-                cacheObject.Instance.UpdateReadOnly(lockUser, cacheObject.InstanceState);
+                cacheObject.Instance.UpdateReadOnly(lockUser, cacheObject.InstanceState, request.Type == EventTypes.AttachInstance || request.Type == EventTypes.RefreshAttachedInstance);
 
                 stopWatch = Stopwatch.StartNew();
 
@@ -1397,10 +1397,10 @@ namespace CheckListManager.Instances.Logic.Services
                     foreach (var Element in AffectedElements)
                         Element.MarkNodeAsChanged(cacheObject.Instance, Roots, Property.Value);
                     DependencyNode.UpdateNodes(cacheObject.Instance, Roots);
-                    cacheObject.Instance.UpdateReadOnly(lockUser ?? identity.Code, cacheObject.InstanceState);
+                    cacheObject.Instance.UpdateReadOnly(lockUser ?? identity.Code, cacheObject.InstanceState, false);
                 }
                 else if (Property == DependencyRelation.Properties.ReadOnly)
-                    cacheObject.Instance.UpdateReadOnly(lockUser, cacheObject.InstanceState);
+                    cacheObject.Instance.UpdateReadOnly(lockUser, cacheObject.InstanceState, false);
 
                 stopWatch.Stop();
                 handleTime = stopWatch.Elapsed.TotalMilliseconds;
@@ -2181,7 +2181,7 @@ namespace CheckListManager.Instances.Logic.Services
                 throw new InstanceException($"Instance link {itemId} not found");
 
             if (item.ReadOnly)
-                return null;
+                return !instance.HasValue ? throw new InstanceException($"The Instance Link {itemId} is not editable and cannot be linked to the instance {instance.Value}") : default(Element);
 
             var instanceRecord = instance.HasValue ? await _instancesRepository.GetAsync(identity.CompanyId, instance.Value) : null;
 
@@ -2240,14 +2240,11 @@ namespace CheckListManager.Instances.Logic.Services
             if (item.ReadOnly)
                 return null;
 
-            if (instanceLink.AttachedInstanceID.HasValue && instance.HasValue && instanceLink.AttachedInstanceID.Value != instance.Value)
-                return null; //the parent instance detached the child which is trying to update it
-
-            if (!instanceLink.AttachedInstanceID.HasValue && instance.HasValue)
-                instanceLink.AttachedInstanceID = instance; //the first refresh from the child instance is an attach as a matter of fact
-
             if (!instanceLink.AttachedInstanceID.HasValue)
                 throw new InstanceException("No instance attached");
+
+            if (instanceLink.AttachedInstanceID.Value != instance.Value)
+                return null; //the parent instance is not attached to the child {instance} anymore
 
             var instanceRecord = await _instancesRepository.GetAsync(identity.CompanyId, instanceLink.AttachedInstanceID.Value);
 
@@ -2266,7 +2263,7 @@ namespace CheckListManager.Instances.Logic.Services
                 && instanceLink.Record.State == newInstanceLinkRecord.State
             )
                 return null; //no changes found
-            
+
             instanceLink.Attach(instanceLink.AttachedInstanceID.Value, instanceRecord.Code, newInstanceLinkRecord);
 
             await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage

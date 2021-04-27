@@ -85,7 +85,6 @@
                         query += encodeURIComponent(parameter.name) + "=" + encodeURIComponent(parameter.value);
                     }
                 if (query != "") query = "?" + query;
-                console.log(matematici.urls.instances.create + "/" + model.prototypeID + query);
                 matematici.navigator.open(matematici.urls.instances.create + "/" + model.prototypeID + query);
             });
         },

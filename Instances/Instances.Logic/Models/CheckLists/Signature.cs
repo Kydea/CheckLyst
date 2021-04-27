@@ -160,9 +160,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             {
                 Signed = false;
                 var Instance = ((Instance)CheckList);
-                Instance.UpdateReadOnly(UserCode, InstanceState);
+                Instance.UpdateReadOnly(UserCode, InstanceState, false);
                 if (ReadOnly)
-                    throw new Exception("This signature not editable"); //Signature is still readonly after unsigned, may be locked by another signature or a special condition
+                    throw new Exception("This signature not editable"); //Signature is still readonly after unsign, may be locked by another signature or a special condition
 
                 SignedBy = UserCode;
                 SignerDescription = UserDescription;
