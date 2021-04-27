@@ -360,7 +360,7 @@
                 if (justLoaded)
                     justLoaded = false;
                 else
-                    matematici.canClose = false;
+                    detailPage.getForm().onChange($(this));
             });
 
             var document = editor.session.doc

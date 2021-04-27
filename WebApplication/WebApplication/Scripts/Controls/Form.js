@@ -52,7 +52,10 @@
             if (options.applyButton) {
                 $("<a />")
                     .addClass("FiltersLinkButton")
-                    .attr({ href: "#" })
+                    .attr({
+                        href: "#",
+                        title: "link to precompile the filters with the current values"
+                    })
                     .append($("<i >").addClass("fa fa-link"))
                     .appendTo(element)
                     .on("click", popupLink);
