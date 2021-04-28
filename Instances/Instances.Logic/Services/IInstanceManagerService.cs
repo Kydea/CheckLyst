@@ -8,6 +8,7 @@ using CheckListManager.Instances.Logic.Models.CheckLists;
 using System.Collections.Generic;
 using CheckListManager.Common.Logic.Api.Instances;
 using CheckListManager.Common.Logic.Models;
+using CheckListManager.Instances.Data.ListItems;
 
 namespace CheckListManager.Instances.Logic.Services
 {
@@ -29,6 +30,7 @@ namespace CheckListManager.Instances.Logic.Services
         Task<InstanceLinkParametersResponse> GetInstanceLinkParameters(string code, IDefaultIdentity identity, int itemId);
         Task<ExternalSourceResponse> GetExternalSource(string code, IDefaultIdentity identity, string dataSourceCode, int itemId);
         Task<string> GetExternalSourceRows(string code, IDefaultIdentity identity, string externalSourceCode, int itemId, Dictionary<string, string> parameters, int page);
+        Task<List<InstanceRelation>> GetParentInstances(string code, IDefaultIdentity identity);
         Task<List<InstanceEventRequest.Email>> GetInstanceEditors(string code, IDefaultIdentity identity);
         Task<StorageFile> DownloadAttachmentAsync(IDefaultIdentity identity, string cacheObjectCode, string key);
         Task InvalidateCacheAsync(DefaultIdentity identity, InvalidateCacheRequest request);

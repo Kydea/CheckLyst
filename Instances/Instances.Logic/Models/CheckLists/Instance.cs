@@ -12,6 +12,7 @@ using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Logic.Services;
 using CheckListManager.Common.Logic.Models.ExternalSources;
+using CheckListManager.Instances.Data.ListItems;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
@@ -47,11 +48,25 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                         Expression.Value?.Value
                     };
 
+            var ChildInstances = this.ChildInstances.Keys.Select(i =>
+            {
+                var InstanceLink = (InstanceLink)cacheObject.Instance.Items[i];
+                return new InstanceRelation
+                {
+                    Item = i,
+                    InstanceCode = InstanceLink.Record.Code,
+                    Description = InstanceLink.Record.Description,
+                    Code = InstanceLink.AttachedInstanceCode,
+                    RelationType = InstanceRelation.RelationTypes.Child
+                };
+            });
+
             return new
             {
                 ReadOnly,
                 Exceptions,
                 ExternalSources = ExternalSources.ToDictionary(k => k.Key, v => v.Value.GetViewModel()),
+                ChildInstances,
                 Header = ((Group)Header).GetViewModel(),
                 Pages = Pages.Select(p => ((Page)p).GetViewModel()),
                 Description,
@@ -86,8 +101,12 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public Formula FileNameFormula { get; } = new Formula();
         public string FileNameFormulaString { get; set; }
         public string FileName => FileNameFormula.Value;
+
+        //ParentInstanceCode and ParentInstanceLinkID are used to keep the parent/child relationship for instances still in draft (not saved)
         public string ParentInstanceCode { get; set; }
         public int? ParentInstanceLinkID { get; set; }
+
+        public Dictionary<int, long> ChildInstances { get; } = new Dictionary<int, long>();
 
         public bool FTPExport { get; set; }
 

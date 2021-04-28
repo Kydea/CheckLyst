@@ -62,7 +62,7 @@
         },
 
         open = function () {
-            matematici.navigator.open(matematici.urls.instances.detail + "/" + model.attachedInstanceCode);
+            instances.instance.openInstance(model.attachedInstanceCode, true);
         },
 
         create = function () {

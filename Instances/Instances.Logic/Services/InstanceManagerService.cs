@@ -37,6 +37,7 @@ using CheckListManager.Instances.Logic.ImageUtilities;
 using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.Expressions;
 using CheckListManager.Common.Logic.Models.ExternalSources;
+using CheckListManager.Instances.Data.ListItems;
 
 namespace CheckListManager.Instances.Logic.Services
 {
@@ -314,6 +315,9 @@ namespace CheckListManager.Instances.Logic.Services
                     cacheObject.Instance.UpdateReadOnly(identity.Code, InstanceState.Progress, false);
 
                     _instancesRepository.SaveChildren(row.ID, CreateTags(cacheObject), CreateExpressionValues(cacheObject));
+
+                    foreach (var Relation in cacheObject.Instance.ChildInstances)
+                        _instancesRepository.AddRelation(row.ID, Relation.Key, Relation.Value);
 
                     await _instancesRepository.SaveChangesAsync();
 
@@ -977,9 +981,41 @@ namespace CheckListManager.Instances.Logic.Services
             }
             catch (Exception e)
             {
-                Logger.Error(e, "Unable to retrieve the external source data");
-                throw new InstanceException("Unable to retrieve the external source data", e);
+                Logger.Error(e, "Unable to retrieve the external source rows");
+                throw new InstanceException("Unable to retrieve the external source rows", e);
             }
+        }
+
+        public async Task<List<InstanceRelation>> GetParentInstances(string code, IDefaultIdentity identity)
+        {
+            var cacheObject = await GetCacheObjectAsync(identity.CompanyId, code, true);
+            if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
+                throw new InstanceException("Access denied");
+
+            var list = new List<InstanceRelation>();
+            if (cacheObject.ID.HasValue)
+                list = await _instancesRepository.GetParentInstances(cacheObject.ID.Value);
+            if (cacheObject.Instance.ParentInstanceCode != null && cacheObject.Instance.ParentInstanceLinkID.HasValue && !list.Any(r => r.Code == cacheObject.Instance.ParentInstanceCode))
+                try
+                {
+                    var parentCacheObject = await GetCacheObjectAsync(identity.CompanyId, cacheObject.Instance.ParentInstanceCode, true);
+                    list.Add(new InstanceRelation
+                    {
+                        Prototype = parentCacheObject.PrototypeName,
+                        Version = parentCacheObject.Version,
+                        Year = parentCacheObject.Year,
+                        Number = parentCacheObject.Number,
+                        VersionState = parentCacheObject.VersionState,
+                        Description = parentCacheObject.Instance.Description,
+                        ID = parentCacheObject.ID,
+                        Item = cacheObject.Instance.ParentInstanceLinkID.Value,
+                        Code = cacheObject.Code,
+                        RelationType = InstanceRelation.RelationTypes.Parent
+                    });
+                }
+                catch { } //the child ignores if the parent instance has been deleted
+            list.ForEach(r => r.InstanceCode = Instance.GetCode(r.Prototype, r.Version, r.VersionState, r.Year, r.Number));
+            return list;
         }
 
         private async Task ExportSignedIterators(InstanceCacheObject cacheObject, IDefaultIdentity identity, Signature signature)
@@ -2199,7 +2235,26 @@ namespace CheckListManager.Instances.Logic.Services
                     DateTime = DateTimeOffset.UtcNow,
                     User = identity.Code
                 }
-             );
+            );
+
+            if (instance.HasValue)
+            {
+                if (cacheObject.ID.HasValue)
+                {
+                    _instancesRepository.AddRelation(cacheObject.ID.Value, itemId.Value, instance.Value);
+                    await _instancesRepository.SaveChangesAsync();
+                }
+                cacheObject.Instance.ChildInstances[itemId.Value] = instance.Value;
+            }
+            else
+            {
+                if (cacheObject.ID.HasValue)
+                {
+                    await _instancesRepository.DeleteRelation(cacheObject.ID.Value, itemId.Value);
+                    await _instancesRepository.SaveChangesAsync();
+                }
+                cacheObject.Instance.ChildInstances.Remove(itemId.Value);
+            }
 
             await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
             {

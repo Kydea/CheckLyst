@@ -21,6 +21,8 @@ namespace CheckListManager.Common.Data
             this.InstanceTags = new HashSet<InstanceTags>();
             this.WorkFlowApplications = new HashSet<WorkFlowApplications>();
             this.InstancesHistory = new HashSet<InstancesHistory>();
+            this.InstanceRelations = new HashSet<InstanceRelations>();
+            this.InstanceRelations1 = new HashSet<InstanceRelations>();
         }
     
         public long ID { get; set; }
@@ -53,5 +55,9 @@ namespace CheckListManager.Common.Data
         public virtual ICollection<WorkFlowApplications> WorkFlowApplications { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<InstancesHistory> InstancesHistory { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<InstanceRelations> InstanceRelations { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<InstanceRelations> InstanceRelations1 { get; set; }
     }
 }

@@ -91,6 +91,9 @@
         <AssociationConnector Association="RelationalDatabaseModel.PrototypeTypes_PrototypesFTPServer_fkey" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.Records" Width="1.5" PointX="14.75" PointY="0.75" />
         <AssociationConnector Association="RelationalDatabaseModel.Records_Action_fkey" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.InstanceRelations" Width="1.5" PointX="18" PointY="7.875" />
+        <AssociationConnector Association="RelationalDatabaseModel.InstanceRelations_Child_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.InstanceRelations_Parent_fkey" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

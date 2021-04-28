@@ -132,6 +132,9 @@
     <Compile Include="InstanceNumerators.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="InstanceRelations.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Instances.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>

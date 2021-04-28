@@ -222,7 +222,7 @@ create table "CheckLists"."InstanceExpressionValues"
 
 create index "Index_InstanceExpressionValues_Code" on "CheckLists"."InstanceExpressionValues"("Instance", "Code");
 create index "Index_InstanceExpressionValues_Notifications" on "CheckLists"."InstanceExpressionValues"("Value", "Instance", "Code") where "Notification" and not "Notified";
-	
+
 create or replace function "CheckLists"."ValidateUniqueExpressions"
 (
 	_Instance bigint
@@ -264,23 +264,35 @@ end
 $$
 language plpgsql;
 
-create table "CheckLists"."PrototypeVersionsHistory"
+create table "CheckLists"."InstanceRelations"
 (
-	"ID" bigserial primary key,
+	"Parent" bigint references "CheckLists"."Instances" on delete cascade,
+	"Item" int,
+	"Child" bigint references "CheckLists"."Instances" on delete cascade,
 
-	"Prototype" bigint not null,
-    "Version" int not null,
-    constraint "PrototypeVersionsHistory_PrototypeVersion" foreign key ("Prototype", "Version") references "CheckLists"."PrototypeVersions" on delete cascade,
+	constraint "PK_InstanceRelations" primary key ("Parent", "Item", "Child"),
 
-	"Date" timestamptz not null default current_timestamp,
+	constraint "InstanceRelations_SelfReference" check ("Parent" <> "Child"),
 
-	"State" varchar (100) not null,
-	"User" varchar (60) not null,
-
-	"WorkFlowApplication" bigint references "WorkFlows"."WorkFlowApplications"
+	"CreatedBy" varchar (60),
+	"CreatedOn" timestamptz not null default current_timestamp,
+	"ModifiedBy" varchar (60),
+	"ModifiedOn" timestamptz
 );
 
-create index "Index_PrototypeVersionsHistory_Prototype" on "CheckLists"."PrototypeVersionsHistory"("Prototype", "Date");
+create index "Index_InstanceRelations_Child" on "CheckLists"."InstanceRelations"("Child");
+
+create table "CheckLists"."InstanceRelations"
+(
+	"Parent" bigint references "CheckLists"."Instances" on delete cascade,
+	"Item" int,
+	constraint "PK_InstanceRelations" primary key ("Parent", "Item"),
+
+	"Child" bigint references "CheckLists"."Instances" on delete cascade,
+	constraint "InstanceRelations_SelfReference" check ("Parent" <> "Child")
+);
+
+create index "Index_InstanceRelations_Child" on "CheckLists"."InstanceRelations"("Child");
 
 create table "CheckLists"."InstancesHistory"
 (

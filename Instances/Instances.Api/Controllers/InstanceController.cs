@@ -342,6 +342,21 @@ namespace CheckListManager.Instances.Api.Controllers
         }
 
         [HttpPost]
+        [Route("GetParentInstances")]
+        [Authorize(Roles = "Instances#View, Prototypes#Preview")]
+        public async Task<IHttpActionResult> GetParentInstances(InstanceRequest request)
+        {
+            try
+            {
+                return Ok(await _instanceManagerService.GetParentInstances(request.Code, Identity));
+            }
+            catch (Exception e)
+            {
+                return Error(e);
+            }
+        }
+
+        [HttpPost]
         [Route("GetInstanceEditors")]
         [Authorize(Roles = "Instances#Edit, Prototypes#Preview")]
         public async Task<IHttpActionResult> GetInstanceEditors(InstanceRequest request)

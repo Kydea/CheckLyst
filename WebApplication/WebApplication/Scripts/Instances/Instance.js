@@ -87,6 +87,86 @@
             ]);
         },
 
+        getParentInstances = function (handler) {
+            $.ajax({
+                url: matematici.urls.instances.api + "/GetParentInstances",
+                type: "post",
+                data: {
+                    code: code,
+                }
+            }).done(function (result) {
+                handler(result);
+            });
+        },
+
+        showRelations = function (showWarning) {
+            var handler = function (grid, row) {
+                instance.openInstance(row.code, showWarning);
+            };
+
+            getParentInstances(function (result) {
+                var relations = [];
+                if (result)
+                    for (var index in result) {
+                        var relation = result[index];
+                        relations.push({ code: relation.code, instanceCode: relation.instanceCode, relation: relation.relationType == 0 ? "parent" : "child", description: relation.description });
+                    }
+                if (model.childInstances)
+                    for (var index in model.childInstances) {
+                        var relation = model.childInstances[index];
+                        relations.push({ code: relation.code, instanceCode: relation.instanceCode, relation: relation.relationType == 0 ? "parent" : "child", description: relation.description });
+                    }
+
+                new matematici.CheckListGrid("Relations list", relations, handler, null, [
+                    { name: "instanceCode", label: "Code" },
+                    { name: "description", label: "Description" },
+                    { name: "relation", label: "Value" }
+                ]);
+            });
+        },
+
+        showExpressions = function () {
+            new matematici.CheckListGrid("Expressions list", expressions, null, function (tr, row, rowIndex, columnIndex, passedValue) {
+                var
+                    typeName = row.typeName,
+                    value = row.value;
+
+                if (columnIndex == 2) {
+                    var td = $("<td />").appendTo(tr);
+                    if (typeName == "DateTime" || typeName == "Date") {
+                        if (value) {
+                            var
+                                formattedDate = matematici.dateFormatter.format(moment.parseZone(value)),
+                                formattedValue = typeName == "DateTime" ? formattedDate.date + " " + formattedDate.time + ":" + formattedDate.seconds : formattedDate.date;
+
+                            td.append($("<span />").html(formattedValue).attr("title", formattedDate.offset));
+                        }
+                    } else if (typeName == "Array") {
+                        td.text("(click to open)");
+                        tr.addClass("Handler");
+                        tr.on("click", function () {
+                            showArray($(this));
+                            matematici.checkListGrid.close();
+                        }).data("array", value);
+                    } else if (typeName == "Boolean") {
+                        if (value != null) td.addClass("Centered").append($("<i />").addClass("fal").addClass("fa-" + (value ? "check" : "times")));
+                    } else
+                        td.html(value);
+                    return true;
+                } else if (columnIndex == 3) {
+                    var td = $("<td />").appendTo(tr);
+                    td.html(row.typeName);
+                    return true;
+                }
+                return false;
+            }, [
+                    { label: "Code" },
+                    { name: "description", label: "Description" },
+                    { label: "Value" },
+                    { label: "Type" }
+                ]);
+        },
+
         showExceptions = function () {
             var message = "";
 
@@ -406,28 +486,42 @@
     };
 
     instance.quit = function () {
-        var
-            hasParent = model.parentInstanceCode,
-            hasPermissionOnPrototype = hasPermission(null)
-                && (
-                    matematici.tokenManager.checkRole("Prototypes#View#" + department + "##")
-                    || matematici.tokenManager.checkRole("Prototypes#View#" + department + "#" + prototypeType + "#")
-                ) && (versionState == prototypes.Prototype.states.draft || versionState == prototypes.Prototype.states.simulation);
-
-        if (options.appMode)
+        if (options.appMode) {
             window.webkit.messageHandlers.instances.postMessage("quit");
-        else if (hasParent || hasPermissionOnPrototype) {
-            var buttons = [
-                { text: "Cancel", icon: "fa-times", cancelButton: true },
-                { text: "Open instances list", icon: "fa-layer-group", handler: function () { matematici.navigator.open(options.listUrl); } }
-            ];
-            if (hasPermissionOnPrototype)
-                buttons.push({ text: "Open parent prototype", icon: "fa-layer-group", handler: function () { matematici.navigator.open(matematici.urls.prototypes.detail + "/" + prototype + "/" + version); } })
-            if (hasParent)
-                buttons.push({ text: "Open parent instance", icon: "fa-layer-group", handler: function () { matematici.navigator.open(matematici.urls.instances.detail + "/" + model.parentInstanceCode); } })
-            matematici.dialog.popupMenu(buttons);
-        } else
-            matematici.navigator.open(options.listUrl);
+            return;
+        }
+        var handler = function (hasRelations) {
+            var
+                hasPermissionOnPrototype = hasPermission(null)
+                    && (
+                        matematici.tokenManager.checkRole("Prototypes#View#" + department + "##")
+                        || matematici.tokenManager.checkRole("Prototypes#View#" + department + "#" + prototypeType + "#")
+                    ) && (versionState == prototypes.Prototype.states.draft || versionState == prototypes.Prototype.states.simulation);
+
+            if (hasRelations || hasPermissionOnPrototype) {
+                var buttons = [
+                    { text: "Cancel", icon: "fa-times", cancelButton: true },
+                    { text: "Open instances list", icon: "fa-layer-group", handler: function () { matematici.navigator.open(options.listUrl); } }
+                ];
+                if (hasPermissionOnPrototype)
+                    buttons.push({ text: "Open parent prototype", icon: "fa-layer-group", handler: function () { matematici.navigator.open(matematici.urls.prototypes.detail + "/" + prototype + "/" + version); } })
+                if (hasRelations)
+                    buttons.push({
+                        text: "Open related instance", icon: "fa-layer-group", handler: function () {
+                            showRelations(false);
+                        }
+                    })
+                matematici.dialog.popupMenu(buttons);
+            } else
+                matematici.navigator.open(options.listUrl);
+        }
+
+        if (model.parentInstanceCode || model.childInstances && model.childInstances.length)
+            handler(true);
+        else
+            getParentInstances(function (result) {
+                handler(result && result.length);
+            });
     };
 
     instance.save = function () {
@@ -559,10 +653,6 @@
         return removedIterationsVisible;
     };
 
-    instance.showArray = function (value) {
-        showArray(value);
-    };
-
     instance.initialize = function () {
         instanceElementInformation = new instances.ElementInformation(element[0]);
         tab = new matematici.Tab($("div.TabContainer", element)).addHandler(function (item) {
@@ -642,7 +732,24 @@
         return result;
     };
 
+    instance.openInstance = function (code, showWarning) {
+        var action = function () {
+            matematici.navigator.open(matematici.urls.instances.detail + "/" + code);
+        };
+        if (showWarning && instances.instance.getState() == instances.Instance.states.draft) {
+            setTimeout(function () {
+                matematici.dialog.show("warning", "Instance is not saved, the back link will not be available in the relations list", [
+                    { text: "Confirm", icon: "check", handler: action },
+                    { icon: "times", hidden: true, cancelButton: true }
+                ]);
+            }, 0);
+        } else
+            action();
+    };
+
     instance.destroy = function () { };
+    instance.showRelations = showRelations;
+    instance.showExpressions = showExpressions;
     instance.showExceptions = showExceptions;
     instance.initialize();
 };

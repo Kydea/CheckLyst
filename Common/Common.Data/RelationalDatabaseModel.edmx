@@ -33,6 +33,15 @@
           <Property Name="Year" Type="int4" Nullable="false" />
           <Property Name="Number" Type="int4" Nullable="false" />
         </EntityType>
+        <EntityType Name="InstanceRelations">
+          <Key>
+            <PropertyRef Name="Parent" />
+            <PropertyRef Name="Item" />
+          </Key>
+          <Property Name="Parent" Type="int8" Nullable="false" />
+          <Property Name="Item" Type="int4" Nullable="false" />
+          <Property Name="Child" Type="int8" />
+        </EntityType>
         <EntityType Name="Instances">
           <Key>
             <PropertyRef Name="ID" />
@@ -585,6 +594,34 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="InstanceRelations_Child_fkey">
+          <End Role="Instances" Type="Self.Instances" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="InstanceRelations" Type="Self.InstanceRelations" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Instances">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="InstanceRelations">
+              <PropertyRef Name="Child" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="InstanceRelations_Parent_fkey">
+          <End Role="Instances" Type="Self.Instances" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="InstanceRelations" Type="Self.InstanceRelations" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Instances">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="InstanceRelations">
+              <PropertyRef Name="Parent" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="Instances_Company_fkey">
           <End Role="Companies" Type="Self.Companies" Multiplicity="1" />
           <End Role="Instances" Type="Self.Instances" Multiplicity="*" />
@@ -1132,6 +1169,7 @@
         <EntityContainer Name="RelationalDatabaseModelStoreContainer">
           <EntitySet Name="InstanceExpressionValues" EntityType="Self.InstanceExpressionValues" Schema="CheckLists" store:Type="Tables" />
           <EntitySet Name="InstanceNumerators" EntityType="Self.InstanceNumerators" Schema="CheckLists" store:Type="Tables" />
+          <EntitySet Name="InstanceRelations" EntityType="Self.InstanceRelations" Schema="CheckLists" store:Type="Tables" />
           <EntitySet Name="Instances" EntityType="Self.Instances" Schema="CheckLists" store:Type="Tables" />
           <EntitySet Name="InstancesHistory" EntityType="Self.InstancesHistory" Schema="CheckLists" store:Type="Tables" />
           <EntitySet Name="InstanceStates" EntityType="Self.InstanceStates" Schema="CheckLists" store:Type="Tables" />
@@ -1200,6 +1238,14 @@
           <AssociationSet Name="Functions_FunctionGroup_fkey" Association="Self.Functions_FunctionGroup_fkey">
             <End Role="FunctionGroups" EntitySet="FunctionGroups" />
             <End Role="Functions" EntitySet="Functions" />
+          </AssociationSet>
+          <AssociationSet Name="InstanceRelations_Child_fkey" Association="Self.InstanceRelations_Child_fkey">
+            <End Role="Instances" EntitySet="Instances" />
+            <End Role="InstanceRelations" EntitySet="InstanceRelations" />
+          </AssociationSet>
+          <AssociationSet Name="InstanceRelations_Parent_fkey" Association="Self.InstanceRelations_Parent_fkey">
+            <End Role="Instances" EntitySet="Instances" />
+            <End Role="InstanceRelations" EntitySet="InstanceRelations" />
           </AssociationSet>
           <AssociationSet Name="Instances_Company_fkey" Association="Self.Instances_Company_fkey">
             <End Role="Companies" EntitySet="Companies" />
@@ -1718,6 +1764,15 @@
           <AssociationSet Name="Records_Action_fkey" Association="RelationalDatabaseModel.Records_Action_fkey">
             <End Role="Actions" EntitySet="Actions" />
             <End Role="Records" EntitySet="Records" />
+          </AssociationSet>
+          <EntitySet Name="InstanceRelations" EntityType="RelationalDatabaseModel.InstanceRelations" />
+          <AssociationSet Name="InstanceRelations_Child_fkey" Association="RelationalDatabaseModel.InstanceRelations_Child_fkey">
+            <End Role="Instances" EntitySet="Instances" />
+            <End Role="InstanceRelations" EntitySet="InstanceRelations" />
+          </AssociationSet>
+          <AssociationSet Name="InstanceRelations_Parent_fkey" Association="RelationalDatabaseModel.InstanceRelations_Parent_fkey">
+            <End Role="Instances" EntitySet="Instances" />
+            <End Role="InstanceRelations" EntitySet="InstanceRelations" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="UserSessions">
@@ -2534,7 +2589,9 @@
           <NavigationProperty Name="WorkFlowApplications" Relationship="RelationalDatabaseModel.WorkFlowApplications_Instance" FromRole="Instances" ToRole="WorkFlowApplications" />
           <Property Name="FileName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="InstancesHistory" Relationship="RelationalDatabaseModel.InstancesHistory_Instance_fkey" FromRole="Instances" ToRole="InstancesHistory" />
-        </EntityType>
+          <NavigationProperty Name="InstanceRelations" Relationship="RelationalDatabaseModel.InstanceRelations_Child_fkey" FromRole="Instances" ToRole="InstanceRelations" />
+          <NavigationProperty Name="InstanceRelations1" Relationship="RelationalDatabaseModel.InstanceRelations_Parent_fkey" FromRole="Instances" ToRole="InstanceRelations" />
+          </EntityType>
         <Association Name="InstanceExpressionValues_Instance_fkey">
           <End Type="RelationalDatabaseModel.Instances" Role="Instances" Multiplicity="1" />
           <End Type="RelationalDatabaseModel.InstanceExpressionValues" Role="InstanceExpressionValues" Multiplicity="*" />
@@ -2828,6 +2885,45 @@
             </Principal>
             <Dependent Role="Records">
               <PropertyRef Name="Action" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="InstanceRelations">
+          <Key>
+            <PropertyRef Name="Parent" />
+            <PropertyRef Name="Item" />
+          </Key>
+          <Property Name="Parent" Type="Int64" Nullable="false" />
+          <Property Name="Item" Type="Int32" Nullable="false" />
+          <Property Name="Child" Type="Int64" />
+          <NavigationProperty Name="ChildInstance" Relationship="RelationalDatabaseModel.InstanceRelations_Child_fkey" FromRole="InstanceRelations" ToRole="Instances" />
+          <NavigationProperty Name="ParentInstance" Relationship="RelationalDatabaseModel.InstanceRelations_Parent_fkey" FromRole="InstanceRelations" ToRole="Instances" />
+        </EntityType>
+        <Association Name="InstanceRelations_Child_fkey">
+          <End Type="RelationalDatabaseModel.Instances" Role="Instances" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="RelationalDatabaseModel.InstanceRelations" Role="InstanceRelations" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Instances">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="InstanceRelations">
+              <PropertyRef Name="Child" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="InstanceRelations_Parent_fkey">
+          <End Type="RelationalDatabaseModel.Instances" Role="Instances" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="RelationalDatabaseModel.InstanceRelations" Role="InstanceRelations" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Instances">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="InstanceRelations">
+              <PropertyRef Name="Parent" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -3307,6 +3403,15 @@
                 <ScalarProperty Name="User" ColumnName="User" />
                 <ScalarProperty Name="Company" ColumnName="Company" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="InstanceRelations">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.InstanceRelations">
+              <MappingFragment StoreEntitySet="InstanceRelations">
+                <ScalarProperty Name="Child" ColumnName="Child" />
+                <ScalarProperty Name="Item" ColumnName="Item" />
+                <ScalarProperty Name="Parent" ColumnName="Parent" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

@@ -51,46 +51,11 @@
             }),
 
             actionBar = new matematici.ActionBar("div.ActionBar")
+                .add("<i class='Icon fa fa-sitemap'></i>", function () {
+                    instance.showRelations(true);
+                }, "Icon RelationsButton")
                 .add("<i class='Icon fa fa-calculator'></i>", function () {
-                    new matematici.CheckListGrid("Expressions list", instance.getExpressions(), null, function (tr, row, rowIndex, columnIndex, passedValue) {
-                        var
-                            typeName = row.typeName,
-                            value = row.value;
-
-                        if (columnIndex == 2) {
-                            var td = $("<td />").appendTo(tr);
-                            if (typeName == "DateTime" || typeName == "Date") {
-                                if (value) {
-                                    var
-                                        formattedDate = matematici.dateFormatter.format(moment.parseZone(value)),
-                                        formattedValue = typeName == "DateTime" ? formattedDate.date + " " + formattedDate.time + ":" + formattedDate.seconds : formattedDate.date;
-
-                                    td.append($("<span />").html(formattedValue).attr("title", formattedDate.offset));
-                                }
-                            } else if (typeName == "Array") {
-                                td.text("(click to open)");
-                                tr.addClass("Handler");
-                                tr.on("click", function () {
-                                    instance.showArray($(this));
-                                    matematici.checkListGrid.close();
-                                }).data("array", value);
-                            } else if (typeName == "Boolean") {
-                                if (value != null) td.addClass("Centered").append($("<i />").addClass("fal").addClass("fa-" + (value ? "check" : "times")));
-                            } else
-                                td.html(value);
-                            return true;
-                        } else if (columnIndex == 3) {
-                            var td = $("<td />").appendTo(tr);
-                            td.html(row.typeName);
-                            return true;
-                        }
-                        return false;
-                    }, [
-                        { label: "Code" },
-                        { name: "description", label: "Description" },
-                        { label: "Value" },
-                        { label: "Type" }
-                    ]);
+                    instance.showExpressions();
                 }, "Icon ExpressionsButton")
                 .add("<i class='Icon fa fa-exclamation'></i>", function () {
                     instance.showExceptions();

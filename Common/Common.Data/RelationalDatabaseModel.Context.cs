@@ -60,5 +60,6 @@ namespace CheckListManager.Common.Data
         public virtual DbSet<DataSources> DataSources { get; set; }
         public virtual DbSet<FTPServers> FTPServers { get; set; }
         public virtual DbSet<Records> Records { get; set; }
+        public virtual DbSet<InstanceRelations> InstanceRelations { get; set; }
     }
 }
