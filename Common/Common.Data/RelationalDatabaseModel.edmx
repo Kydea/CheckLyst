@@ -1829,8 +1829,8 @@
           <Property Name="Exception" Type="Boolean" Nullable="false" />
           <Property Name="Unique" Type="Int32" Nullable="false" />
           <Property Name="Notification" Type="Boolean" Nullable="false" />
-          <Property Name="NotificationNote" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="NotificationEmail" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="NotificationNote" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="NotificationEmail" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
           <Property Name="Notified" Type="Boolean" Nullable="false" />
           <Property Name="NotificationDate" Type="DateTimeOffset" Precision="7" />
         </EntityType>

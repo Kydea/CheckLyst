@@ -88,15 +88,18 @@
         },
 
         getParentInstances = function (handler) {
-            $.ajax({
-                url: matematici.urls.instances.api + "/GetParentInstances",
-                type: "post",
-                data: {
-                    code: code,
-                }
-            }).done(function (result) {
-                handler(result);
-            });
+            if (model.id == null)
+                handler([]);
+            else
+                $.ajax({
+                    url: matematici.urls.instances.api + "/GetParentInstances",
+                    type: "post",
+                    data: {
+                        code: code,
+                    }
+                }).done(function (result) {
+                    handler(result);
+                });
         },
 
         showRelations = function (showWarning) {

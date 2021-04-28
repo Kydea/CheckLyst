@@ -329,7 +329,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         }
 
         public static string GetYearCode(string VersionState, int? Year) =>
-            VersionState == Common.Data.VersionState.Draft ? "Test" : Year == 0 ? "SE" : (Year?.ToString() ?? "?");
+            VersionState == Common.Data.VersionState.Draft ? "Test" : !Year.HasValue || Year == 0 ? "SE" : (Year?.ToString() ?? "?");
 
         public static string GetCode(string PrototypeName, int Version, string VersionState, int? Year, int? Number) =>
             $"{PrototypeName}.{Version}.{GetYearCode(VersionState, Year)}.{Number?.ToString() ?? "?"}";

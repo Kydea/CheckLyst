@@ -45,7 +45,9 @@ namespace CheckListManager.Instances.Logic.PDF
         public override string GetItemDescription(ICheckListItem CheckListItem)
         {
             var Item = (Models.CheckLists.Item)CheckListItem;
-            return FormatFormula(Item.DescriptionFormula.Value);
+            return Item.IterationItem ? 
+                FormatFormula(Item.FindIteratorModelItem().DescriptionFormula.Value) :
+                FormatFormula(Item.DescriptionFormula.Value);
         }
 
         protected override FirstPage GenerateFirstPage()

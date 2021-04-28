@@ -226,7 +226,7 @@ namespace CheckListManager.Prototypes.Data
 
         public async Task<List<PrototypeVersions>> GetPrototypeVersionsAsync(Expression<Func<PrototypeVersions, bool>> filters)
         {
-            return await Entities.PrototypeVersions.Where(filters).ToListAsync();
+            return await Entities.PrototypeVersions.Where(filters).OrderBy(p => p.Prototype).ThenBy(p => p.Version).ToListAsync();
         }
 
     }

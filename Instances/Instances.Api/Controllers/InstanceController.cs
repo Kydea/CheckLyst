@@ -101,7 +101,7 @@ namespace CheckListManager.Instances.Api.Controllers
         {
             try
             {
-                var cacheObject = await _instanceManagerService.OpenInstanceAsync(request.Code, Identity);
+                var cacheObject = await _instanceManagerService.OpenInstanceAsync(null, request.Code, Identity);
                 await _instanceManagerService.SaveCacheObjectAsync(cacheObject);
 
                 var response = new InstanceResponse
@@ -110,6 +110,43 @@ namespace CheckListManager.Instances.Api.Controllers
                     State = cacheObject.InstanceState,
                     Year = cacheObject.Year,
                     Number = cacheObject.Number,
+
+                    CheckList = cacheObject.Instance.GetViewModel(Identity, cacheObject)
+                };
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                return Error(e);
+            }
+        }
+
+        [HttpPost]
+        [Route("Create")]
+        [Authorize(Roles = "Instances#Create, Prototypes#Preview")]
+        public async Task<IHttpActionResult> CreateAndOpen(CreateInstanceRequest request)
+        {
+            try
+            {
+                var cacheObject = await _instanceManagerService.CreateInstanceAsync(Identity, request.Prototype, request.Version, request.Parameters, request.ParentInstanceCode, request.ParentInstanceLinkID);
+                await _instanceManagerService.OpenInstanceAsync(cacheObject, null, Identity);
+                await _instanceManagerService.SaveCacheObjectAsync(cacheObject);
+                var response = new InstanceResponse
+                {
+                    Id = cacheObject.ID,
+                    Year = cacheObject.Year,
+                    Number = cacheObject.Number,
+                    Code = cacheObject.Code,
+                    State = cacheObject.InstanceState,
+                    Department = cacheObject.Department,
+                    DepartmentName = cacheObject.DepartmentName,
+                    PrototypeType = cacheObject.PrototypeType,
+                    PrototypeTypeName = cacheObject.PrototypeTypeName,
+                    Prototype = cacheObject.Prototype,
+                    PrototypeName = cacheObject.PrototypeName,
+                    PrototypeDescription = cacheObject.PrototypeDescription,
+                    Version = cacheObject.Version,
+                    VersionState = cacheObject.VersionState,
 
                     CheckList = cacheObject.Instance.GetViewModel(Identity, cacheObject)
                 };

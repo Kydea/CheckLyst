@@ -386,7 +386,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
 
         public async Task<PdfPTable> RenderTableHeader(ICheckListGroup Group)
         {
-            Size Size = await CreateTableHeader(new List<RenderingRow> { }, 0/*, null*/, Group.Items);
+            Size Size = await CreateTableHeader(new List<RenderingRow> { }, 0, Group.Items);
 
             PdfPTable Table = new PdfPTable(Size.ColumnsCount) { HorizontalAlignment = RowAlignment.Center, WidthPercentage = 100 };
 

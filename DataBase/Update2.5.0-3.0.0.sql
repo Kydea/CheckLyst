@@ -14,3 +14,6 @@ create table "CheckLists"."InstanceRelations"
 );
 
 create index "Index_InstanceRelations_Child" on "CheckLists"."InstanceRelations"("Child");
+
+alter table "CheckLists"."InstanceExpressionValues" alter column "NotificationNote" type varchar (200);
+alter table "CheckLists"."InstanceExpressionValues" alter column "NotificationEmail" type varchar (200);

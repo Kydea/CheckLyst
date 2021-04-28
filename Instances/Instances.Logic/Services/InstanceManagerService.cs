@@ -258,11 +258,13 @@ namespace CheckListManager.Instances.Logic.Services
                     CheckInvalidItems(Child, InvalidItems);
         }
 
-        public async Task<InstanceCacheObject> OpenInstanceAsync(string code, IDefaultIdentity identity)
+        public async Task<InstanceCacheObject> OpenInstanceAsync(InstanceCacheObject cacheObject, string code, IDefaultIdentity identity)
         {
             try
             {
-                var cacheObject = await GetCacheObjectForEditAsync(identity, code, true);
+                if (cacheObject == null)
+                    cacheObject = await GetCacheObjectForEditAsync(identity, code, true);
+
                 if (cacheObject.ID.HasValue)
                     throw new InstanceException("Instance already saved");
                 if (cacheObject.InstanceState != InstanceState.Draft)
@@ -1514,12 +1516,12 @@ namespace CheckListManager.Instances.Logic.Services
                 else
                 {
                     if (DateTimeOffset.TryParseExact(oldFormattedValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out var Date))
-                        oldFormattedValue = Date.Format(TimeZone);
+                        oldFormattedValue = Date.Format(null);
                     else
                         oldFormattedValue = string.Empty;
 
                     if (DateTimeOffset.TryParseExact(formattedValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out Date))
-                        loggedValue = Date.Format(TimeZone);
+                        loggedValue = Date.Format(null);
                     else
                         formattedValue = loggedValue = string.Empty;
                 }
