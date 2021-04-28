@@ -14,7 +14,10 @@
         attach = function (page) {
             var
                 handler = function (grid, row) {
-                    new instances.Event(instances.Events.attachInstance, model.id, { instance: row.id }).trigger();
+                    if (model.id == row.id)
+                        matematici.dialog.error("error", "Self link not allowed");
+                    else
+                        new instances.Event(instances.Events.attachInstance, model.id, { instance: row.id }).trigger();
                 };
 
             if (page == null) page = 1;
@@ -94,7 +97,7 @@
         },
 
         action = function () {
-            if (model.readOnly) return;
+            if (button.classList.contains("ReadOnly")) return;
 
             var
                 buttons = [
@@ -102,11 +105,11 @@
                 ];
 
             if (model.attachedInstanceID != null) {
-                buttons.push({ text: "Detach", icon: "unlink", handler: detach });
+                if (!model.readOnly) buttons.push({ text: "Detach", icon: "unlink", handler: detach });
                 buttons.push({ text: "Open", icon: "folder-open", handler: open });
-                if (model.state != instances.Instance.states.confirmed)
+                if (!model.readOnly && model.state != instances.Instance.states.confirmed)
                     buttons.push({ text: "Refresh values", icon: "sync", handler: refresh });
-            } else {
+            } else if (!model.readOnly) {
                 if (model.actions != 2)
                     buttons.push({ text: "Create", icon: "plus", handler: create });
                 if (model.actions != 1)
@@ -168,7 +171,7 @@
 
         span.innerHTML = model.descriptionValue || "(no description)";
 
-        button.classList.toggle("ReadOnly", model.readOnly);
+        button.classList.toggle("ReadOnly", model.readOnly && model.attachedInstanceID == null);
 
         code.value = model.record.code;
         code.setAttribute("title", model.record.code || "");
