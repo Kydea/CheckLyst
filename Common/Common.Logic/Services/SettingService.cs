@@ -174,7 +174,7 @@ namespace CheckListManager.Common.Logic.Services
 
         public Task<int> MaximumUserInactivityDaysAsync(long companyId)
         {
-            const string code = "MaximumUserInactivity";
+            const string code = "MaximumUserInactivityDays";
             return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<int>(companyId, code), RegionName);
         }
 
