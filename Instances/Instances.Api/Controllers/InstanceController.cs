@@ -122,7 +122,7 @@ namespace CheckListManager.Instances.Api.Controllers
         }
 
         [HttpPost]
-        [Route("Create")]
+        [Route("CreateAndOpen")]
         [Authorize(Roles = "Instances#Create, Prototypes#Preview")]
         public async Task<IHttpActionResult> CreateAndOpen(CreateInstanceRequest request)
         {
