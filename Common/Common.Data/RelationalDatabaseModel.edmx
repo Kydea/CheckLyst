@@ -17,8 +17,8 @@
           <Property Name="Exception" Type="bool" Nullable="false" />
           <Property Name="Unique" Type="int4" Nullable="false" />
           <Property Name="Notification" Type="bool" Nullable="false" />
-          <Property Name="NotificationNote" Type="varchar" MaxLength="100" />
-          <Property Name="NotificationEmail" Type="varchar" MaxLength="100" />
+          <Property Name="NotificationNote" Type="varchar" MaxLength="200" />
+          <Property Name="NotificationEmail" Type="varchar" MaxLength="200" />
           <Property Name="Notified" Type="bool" Nullable="false" />
           <Property Name="NotificationDate" Type="timestamptz" Precision="7" />
         </EntityType>
@@ -276,6 +276,12 @@
           <Property Name="Protocol" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Key" Type="text" />
         </EntityType>
+        <EntityType Name="TimeZones">
+          <Key>
+            <PropertyRef Name="Code" />
+          </Key>
+          <Property Name="Code" Type="varchar" MaxLength="100" Nullable="false" />
+        </EntityType>
         <EntityType Name="FunctionGroups">
           <Key>
             <PropertyRef Name="Code" />
@@ -462,6 +468,18 @@
           <Property Name="WorkFlowStep" Type="int8" Nullable="false" />
           <Property Name="Tag" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
+        <Association Name="Companies_TimeZone_fkey">
+          <End Role="TimeZones" Type="Self.TimeZones" Multiplicity="1" />
+          <End Role="Companies" Type="Self.Companies" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TimeZones">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="Companies">
+              <PropertyRef Name="TimeZone" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="Departments_Company_fkey">
           <End Role="Companies" Type="Self.Companies" Multiplicity="0..1">
             <OnDelete Action="Cascade" />
@@ -1187,6 +1205,7 @@
           <EntitySet Name="Companies" EntityType="Self.Companies" Schema="Infrastructure" store:Type="Tables" />
           <EntitySet Name="Departments" EntityType="Self.Departments" Schema="Infrastructure" store:Type="Tables" />
           <EntitySet Name="FTPServers" EntityType="Self.FTPServers" Schema="Infrastructure" store:Type="Tables" />
+          <EntitySet Name="TimeZones" EntityType="Self.TimeZones" Schema="Infrastructure" store:Type="Tables" />
           <EntitySet Name="FunctionGroups" EntityType="Self.FunctionGroups" Schema="Security" store:Type="Tables" />
           <EntitySet Name="Functions" EntityType="Self.Functions" Schema="Security" store:Type="Tables" />
           <EntitySet Name="PasswordHistory" EntityType="Self.PasswordHistory" Schema="Security" store:Type="Tables" />
@@ -1203,6 +1222,10 @@
           <EntitySet Name="WorkFlows" EntityType="Self.WorkFlows" Schema="WorkFlows" store:Type="Tables" />
           <EntitySet Name="WorkFlowSteps" EntityType="Self.WorkFlowSteps" Schema="WorkFlows" store:Type="Tables" />
           <EntitySet Name="WorkFlowStepTags" EntityType="Self.WorkFlowStepTags" Schema="WorkFlows" store:Type="Tables" />
+          <AssociationSet Name="Companies_TimeZone_fkey" Association="Self.Companies_TimeZone_fkey">
+            <End Role="TimeZones" EntitySet="TimeZones" />
+            <End Role="Companies" EntitySet="Companies" />
+          </AssociationSet>
           <AssociationSet Name="Departments_Company_fkey" Association="Self.Departments_Company_fkey">
             <End Role="Companies" EntitySet="Companies" />
             <End Role="Departments" EntitySet="Departments" />
@@ -1451,6 +1474,7 @@
           <NavigationProperty Name="Instances" Relationship="RelationalDatabaseModel.Instances_Company_fkey" FromRole="Companies" ToRole="Instances" />
           <Property Name="InactivityTimeoutSeconds" Type="Int32" Nullable="false" />
           <NavigationProperty Name="FTPServers" Relationship="RelationalDatabaseModel.FTPServers_Company_fkey" FromRole="Companies" ToRole="FTPServers" />
+          <NavigationProperty Name="TimeZones" Relationship="RelationalDatabaseModel.Companies_TimeZone_fkey" FromRole="Companies" ToRole="TimeZones" />
         </EntityType>
         <EntityType Name="Departments">
           <Key>
@@ -1773,6 +1797,11 @@
           <AssociationSet Name="InstanceRelations_Parent_fkey" Association="RelationalDatabaseModel.InstanceRelations_Parent_fkey">
             <End Role="Instances" EntitySet="Instances" />
             <End Role="InstanceRelations" EntitySet="InstanceRelations" />
+          </AssociationSet>
+          <EntitySet Name="TimeZones" EntityType="RelationalDatabaseModel.TimeZones" />
+          <AssociationSet Name="Companies_TimeZone_fkey" Association="RelationalDatabaseModel.Companies_TimeZone_fkey">
+            <End Role="TimeZones" EntitySet="TimeZones" />
+            <End Role="Companies" EntitySet="Companies" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="UserSessions">
@@ -2927,6 +2956,25 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="TimeZones">
+          <Key>
+            <PropertyRef Name="Code" />
+          </Key>
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Companies" Relationship="RelationalDatabaseModel.Companies_TimeZone_fkey" FromRole="TimeZones" ToRole="Companies" />
+        </EntityType>
+        <Association Name="Companies_TimeZone_fkey">
+          <End Type="RelationalDatabaseModel.TimeZones" Role="TimeZones" Multiplicity="1" />
+          <End Type="RelationalDatabaseModel.Companies" Role="Companies" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TimeZones">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="Companies">
+              <PropertyRef Name="TimeZone" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -3412,6 +3460,13 @@
                 <ScalarProperty Name="Child" ColumnName="Child" />
                 <ScalarProperty Name="Item" ColumnName="Item" />
                 <ScalarProperty Name="Parent" ColumnName="Parent" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TimeZones">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.TimeZones">
+              <MappingFragment StoreEntitySet="TimeZones">
+                <ScalarProperty Name="Code" ColumnName="Code" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

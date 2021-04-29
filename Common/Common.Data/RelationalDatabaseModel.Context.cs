@@ -61,5 +61,6 @@ namespace CheckListManager.Common.Data
         public virtual DbSet<FTPServers> FTPServers { get; set; }
         public virtual DbSet<Records> Records { get; set; }
         public virtual DbSet<InstanceRelations> InstanceRelations { get; set; }
+        public virtual DbSet<TimeZones> TimeZones { get; set; }
     }
 }

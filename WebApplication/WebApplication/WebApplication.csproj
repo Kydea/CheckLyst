@@ -71,6 +71,7 @@
     <Compile Include="Models\Help\Tab.cs" />
     <Compile Include="Models\Help\Field.cs" />
     <Compile Include="Models\Help\HelpPage.cs" />
+    <Compile Include="Models\Login.cs" />
     <Compile Include="Models\Instance.cs" />
     <Compile Include="Models\Prototype.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -530,6 +531,8 @@
     <Content Include="Views\Prototypes\ExpressionEditor.cshtml" />
     <Content Include="Views\Prototypes\ScriptEditor.cshtml" />
     <Content Include="Views\Prototypes\SourceEditor.cshtml" />
+    <Content Include="Views\Infrastructure\Companies\Detail.cshtml" />
+    <Content Include="Views\Infrastructure\Companies\List.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

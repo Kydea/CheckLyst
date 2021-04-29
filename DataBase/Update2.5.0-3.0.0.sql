@@ -17,3 +17,20 @@ create index "Index_InstanceRelations_Child" on "CheckLists"."InstanceRelations"
 
 alter table "CheckLists"."InstanceExpressionValues" alter column "NotificationNote" type varchar (200);
 alter table "CheckLists"."InstanceExpressionValues" alter column "NotificationEmail" type varchar (200);
+
+insert into "Security"."FunctionGroups" values
+	('Companies');
+
+insert into "Security"."Functions" values
+	('Companies', 'Edit'),
+	('Companies', 'View');
+
+insert into "Security"."UserFunctions"("Company", "User", "FunctionGroup", "Function") values 
+	(1, 'CheckListManager', 'Companies', 'Edit'),
+	(1, 'CheckListManager', 'Companies', 'View');
+
+insert into "Trail"."Actions"
+values 
+	('Company created'),
+	('Company updated'),
+	('Company deleted');

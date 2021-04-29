@@ -16,19 +16,19 @@ namespace CheckListManager.Common.Data
             _memoryCache = memoryCache;
         }
 
-        public Task<Companies> GetCompanyAsync(long id)
-            => Entities.Companies.SingleAsync(c => c.ID == id);
+        public Task<Companies> GetCompanyAsync(long id) => 
+            Entities.Companies.SingleAsync(c => c.ID == id);
 
-        public Task<List<ListItems.Company>> GetCompaniesAsync()
-            => _memoryCache.GetOrAddAsync("Companies", key =>
-            Entities.Companies.Where(c => c.ID > 1)
-            .OrderBy(c => c.Name).ThenBy(c => c.ID)
-            .Select(c => new ListItems.Company
-            {
-                ID = c.ID,
-                Name = c.Name,
-                InactivityTimeoutSeconds = c.InactivityTimeoutSeconds
-            }).ToListAsync(), "CommonRepository");
+        public Task<List<ListItems.Company>> GetCompaniesAsync() => 
+            _memoryCache.GetOrAddAsync("Companies", key =>
+                Entities.Companies
+                    .OrderBy(c => c.Name).ThenBy(c => c.ID)
+                    .Select(c => new ListItems.Company
+                    {
+                        ID = c.ID,
+                        Name = c.Name,
+                        InactivityTimeoutSeconds = c.InactivityTimeoutSeconds
+                    }).ToListAsync(), "CommonRepository");
 
         public Task<List<Departments>> GetDepartmentsAsync(IDefaultIdentity identity, string functionGroup, string function)
         {

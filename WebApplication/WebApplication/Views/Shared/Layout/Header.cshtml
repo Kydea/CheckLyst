@@ -37,26 +37,29 @@
 			<li class="MenuItem">
 				<span class="MenuItem"><i class="fal fa-cogs Extended"></i>Settings</span>
 
-				<ul class="SubMenu">
-					<li data-role="Users#View">
-						<a href="@Url.Action("List", "Users")">Users</a>
-					</li>
-					<li data-role="Departments#View">
-						<a href="@Url.Action("DepartmentsList", "Infrastructure")">Departments</a>
-					</li>
-					<li data-role="PrototypeTypes#View">
-						<a href="@Url.Action("PrototypeTypesList", "Infrastructure")">Prototype Types</a>
-					</li>
-					<li data-role="WorkFlows#View">
-						<a href="@Url.Action("List", "WorkFlows")">Workflows</a>
-					</li>
-					<li data-role="DataSources#View">
-						<a href="@Url.Action("List", "DataSources")">Data Sources</a>
-					</li>
-					<li data-role="FTPServers#View">
-						<a href="@Url.Action("List", "FTPServers")">FTP Servers</a>
-					</li>
-				</ul>
+                <ul class="SubMenu">
+                    <li data-role="Companies#View">
+                        <a href="@Url.Action("CompaniesList", "Infrastructure")">Companies</a>
+                    </li>
+                    <li data-role="Users#View">
+                        <a href="@Url.Action("List", "Users")">Users</a>
+                    </li>
+                    <li data-role="Departments#View">
+                        <a href="@Url.Action("DepartmentsList", "Infrastructure")">Departments</a>
+                    </li>
+                    <li data-role="PrototypeTypes#View">
+                        <a href="@Url.Action("PrototypeTypesList", "Infrastructure")">Prototype Types</a>
+                    </li>
+                    <li data-role="WorkFlows#View">
+                        <a href="@Url.Action("List", "WorkFlows")">Workflows</a>
+                    </li>
+                    <li data-role="DataSources#View">
+                        <a href="@Url.Action("List", "DataSources")">Data Sources</a>
+                    </li>
+                    <li data-role="FTPServers#View">
+                        <a href="@Url.Action("List", "FTPServers")">FTP Servers</a>
+                    </li>
+                </ul>
 			</li>
 
 			<li data-role="Prototypes#View" class="MenuItem">

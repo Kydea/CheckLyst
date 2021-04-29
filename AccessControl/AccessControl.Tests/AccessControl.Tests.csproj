@@ -154,7 +154,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="AccessControl.Tests.snk" />
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Features\Authentication\Login.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>Login.feature.cs</LastGenOutput>

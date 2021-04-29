@@ -4,15 +4,16 @@
 );
 
 insert into "Security"."FunctionGroups" values
+	('Companies'),
 	('DataSources'),
-	('PrototypeTypes'),
 	('Departments'),
+	('FTPServers'),
 	('Instances'),
 	('Prototypes'),
+	('PrototypeTypes'),
 	('Trail'),
 	('Users'),
-	('WorkFlows'),
-	('FTPServers');
+	('WorkFlows');
 
 create table "Security"."Functions"
 (
@@ -53,7 +54,10 @@ insert into "Security"."Functions" values
 	('WorkFlows', 'View'),
 
 	('FTPServers', 'Edit'),
-	('FTPServers', 'View');
+	('FTPServers', 'View'),
+
+	('Companies', 'Edit'),
+	('Companies', 'View');
 
 create table "Security"."UserFunctions"
 (

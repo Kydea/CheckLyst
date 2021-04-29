@@ -60,15 +60,19 @@ values
 	('DataSource updated'),
 	('DataSource deleted'),
 	
+	('Company created'),
+	('Company updated'),
+	('Company deleted'),
+
+	('Department created'),
+	('Department updated'),
+	('Department deleted'),
+
 	('PrototypeType created'),
 	('PrototypeType updated'),
 	('PrototypeType deleted'),
 	('Prototype downloaded'),
 	
-	('Department created'),
-	('Department updated'),
-	('Department deleted'),
-
 	('FTPServer created'),
 	('FTPServer updated'),
 	('FTPServer deleted');

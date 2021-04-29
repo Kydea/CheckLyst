@@ -98,7 +98,7 @@
 			});
 
 			if (!options.readOnly) {
-				if (data !== null) {
+				if (data !== null && !options.disableDelete) 
 					buttons.push({
 						text: "delete", icon: "trash-alt", handler: function () {
 							matematici.dialog.show("warning", "The record will be deleted.", [
@@ -114,7 +114,6 @@
 							return true;
 						}
 					});
-				}
 
 				buttons.push({
 					text: "save", defaultButton: true, icon: "save", id: "SaveButton", handler: function () {

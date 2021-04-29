@@ -94,6 +94,8 @@
         <EntityTypeShape EntityType="RelationalDatabaseModel.InstanceRelations" Width="1.5" PointX="18" PointY="7.875" />
         <AssociationConnector Association="RelationalDatabaseModel.InstanceRelations_Child_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.InstanceRelations_Parent_fkey" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.TimeZones" Width="1.5" PointX="0.75" PointY="5.5" />
+        <AssociationConnector Association="RelationalDatabaseModel.Companies_TimeZone_fkey" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

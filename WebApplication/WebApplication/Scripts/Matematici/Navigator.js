@@ -27,6 +27,7 @@
                 && value.toLowerCase() != "/"
                 && value.toLowerCase().indexOf("/?") != 0
                 && value.toLowerCase().indexOf("/security/login") == -1
+                && value.toLowerCase().indexOf("/security/administration") == -1
                 && value.toLowerCase().indexOf("/error") == -1
                 && value.toLowerCase().indexOf("/dashboard") == -1
             ) {

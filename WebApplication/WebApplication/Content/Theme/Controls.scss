@@ -335,6 +335,11 @@ form {
     }
 
     > a.FiltersLinkButton {
+        display: none;
+    }
+
+    &#Filters > a.FiltersLinkButton {
+        display: block;
         top: 10px;
         right: 10px;
         position: absolute;

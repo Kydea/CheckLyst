@@ -210,8 +210,8 @@ create table "CheckLists"."InstanceExpressionValues"
 	"Unique" int not null,
 	"Exception" boolean not null,
 	"Notification" boolean not null, 
-	"NotificationNote" varchar (100), 
-	"NotificationEmail" varchar (100), 
+	"NotificationNote" varchar (200), 
+	"NotificationEmail" varchar (200), 
 	"NotificationDate" timestamptz, 
 	"Notified" boolean not null,
 

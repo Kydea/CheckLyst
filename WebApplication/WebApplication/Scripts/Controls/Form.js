@@ -67,7 +67,7 @@
                 if (event)
                     options.applyButton.on("click", function (e) {
                         if (options.applyButton.hasClass("ReadOnly")) return;
-                        if (element.attr("id") == "Filters") saveForm(); //enhance for example with a class or data-persisten="true"
+                        if (element.attr("id") == "Filters") saveForm(); //enhance for example with a class or data-persistence="true"
                         bind(event, handler, prepareRequest({ data: { source: options.applyButton.attr("id") } }));
                     });
                 else if (handler)

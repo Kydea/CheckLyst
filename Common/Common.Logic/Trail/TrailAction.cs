@@ -57,15 +57,19 @@
         public const string DataSourceCreated = "DataSource created";
         public const string DataSourceUpdated = "DataSource updated";
         public const string DataSourceDeleted = "DataSource deleted";
-        
-        public const string PrototypeTypeCreated = "PrototypeType created";
-        public const string PrototypeTypeUpdated = "PrototypeType updated";
-        public const string PrototypeTypeDeleted = "PrototypeType deleted";
-        
+
+        public const string CompanyCreated = "Company created";
+        public const string CompanyUpdated = "Company updated";
+        public const string CompanyDeleted = "Company deleted";
+
         public const string DepartmentCreated = "Department created";
         public const string DepartmentUpdated = "Department updated";
         public const string DepartmentDeleted = "Department deleted";
-        
+
+        public const string PrototypeTypeCreated = "PrototypeType created";
+        public const string PrototypeTypeUpdated = "PrototypeType updated";
+        public const string PrototypeTypeDeleted = "PrototypeType deleted";
+
         public const string FtpServerCreated = "FTPServer created";
         public const string FtpServerUpdated = "FTPServer updated";
         public const string FtpServerDeleted = "FTPServer deleted";

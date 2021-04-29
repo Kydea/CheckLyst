@@ -68,6 +68,5 @@ namespace CheckListManager.Infrastructure.Api.Controllers
         {
             return Ok(await _prototypeTypesService.Delete(Identity, request.Data));
         }
-
     }
 }

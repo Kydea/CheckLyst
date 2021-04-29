@@ -224,10 +224,13 @@ form {
   form.AdvancedSearch {
     padding-bottom: 56px; }
   form > a.FiltersLinkButton {
+    display: none; }
+  form#Filters > a.FiltersLinkButton {
+    display: block;
     top: 10px;
     right: 10px;
     position: absolute; }
-    form > a.FiltersLinkButton i {
+    form#Filters > a.FiltersLinkButton i {
       font-size: 12px; }
   form div.AdvancedSearch {
     display: none;

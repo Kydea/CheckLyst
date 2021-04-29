@@ -65,5 +65,6 @@ namespace CheckListManager.Common.Data
         public virtual ICollection<Instances> Instances { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<FTPServers> FTPServers { get; set; }
+        public virtual TimeZones TimeZones { get; set; }
     }
 }

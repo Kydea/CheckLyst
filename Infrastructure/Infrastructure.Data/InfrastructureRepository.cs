@@ -17,6 +17,39 @@ namespace CheckListManager.Infrastructure.Data
 		{
 		}
 
+        private async Task<Companies> GetCompany(IDefaultIdentity identity, long id)
+        {
+            var Company = await Entities.Companies.SingleOrDefaultAsync(c => (identity.CompanyId == 1 || c.ID == identity.CompanyId) && c.ID == id);
+            if (Company == null) throw new DatabaseException($"Company {id} not found");
+            return Company;
+        }
+
+        public async Task<Companies> EditCompanyAsync(IDefaultIdentity identity, Companies company)
+        {
+            var ExistingCompany = await GetCompany(identity, company.ID);
+            ExistingCompany.ModifiedOn = DateTimeOffset.UtcNow;
+            ExistingCompany.ModifiedBy = identity.Code;
+            ExistingCompany.Name = company.Name;
+            await SaveChangesAsync();
+            return company;
+        }
+
+        public async Task<Companies> AddCompanyAsync(IDefaultIdentity identity, Companies company)
+        {
+            company.CreatedOn = DateTimeOffset.UtcNow;
+            company.CreatedBy = identity.Code;
+            Entities.Companies.Add(company);
+            await SaveChangesAsync();
+            return company;
+        }
+        public async Task DeleteCompanyAsync(IDefaultIdentity identity, long id)
+        {
+            Entities.Companies.Remove(await GetCompany(identity, id));
+            await SaveChangesAsync();
+        }
+
+
+
         private async Task<Departments> GetDepartment(IDefaultIdentity identity, long id)
         {
             var Department = await Entities.Departments.SingleOrDefaultAsync(d => d.Company == identity.CompanyId && d.ID == id);
@@ -132,6 +165,35 @@ namespace CheckListManager.Infrastructure.Data
             Entities.FTPServers.Remove(await GetFTPServerAsync(identity, id));
             await SaveChangesAsync();
         }
+        public async Task<PagingResponse<List<TResult>>> GetCompaniesAsync<TResult>(
+            IDefaultIdentity identity,
+            Expression<Func<Companies, TResult>> select,
+            string name, int currentPage, int itemsPerPage)
+        {
+            IQueryable<TResult> Query = Entities.Companies
+                .Where(c =>
+                    (identity.CompanyId == 1 || c.ID == identity.CompanyId)
+                    && (name == "" || c.Name != null && c.Name.ToUpper().Contains(name.ToUpper()))
+                )
+                .OrderBy(d => d.Name).ThenBy(d => d.ID)
+                .Select(select);
+
+            var Data = await Query
+                .Skip((currentPage - 1) * itemsPerPage)
+                .Take(itemsPerPage)
+                .ToListAsync();
+
+            int Count = await Query.CountAsync();
+
+            return new PagingResponse<List<TResult>>
+            {
+                Data = Data,
+                Count = Count,
+                ItemsPerPage = itemsPerPage,
+                CurrentPage = currentPage
+            };
+        }
+
         public async Task<PagingResponse<List<TResult>>> GetDepartmentsAsync<TResult>(
             IDefaultIdentity identity,
             Expression<Func<Departments, TResult>> select,
@@ -188,7 +250,6 @@ namespace CheckListManager.Infrastructure.Data
                     && uf.PrototypeType == null
                 ));
 
-
             IQueryable<TResult> Query = PrototypeTypes
                 .OrderBy(pt => pt.Department).ThenBy(pt => pt.Name).ThenBy(pt => pt.ID)
                 .Select(select);
@@ -241,13 +302,16 @@ namespace CheckListManager.Infrastructure.Data
             };
         }
 
-        public async Task<List<WorkFlows>> GetWorkFlows(long companyId)
-        {
-            return await Entities.WorkFlows
+        public async Task<List<WorkFlows>> GetWorkFlows(long companyId) =>
+            await Entities.WorkFlows
                 .Where(wf => wf.Company == companyId)
                 .OrderBy(wf => wf.Description).ThenBy(wf => wf.ID)
                 .ToListAsync();
-        }
 
+        public async Task<List<string>> GetTimeZonesAsync() =>
+            await Entities.TimeZones
+                .OrderBy(wf => wf.Code)
+                .Select(wf => wf.Code)
+                .ToListAsync();
     }
 }
