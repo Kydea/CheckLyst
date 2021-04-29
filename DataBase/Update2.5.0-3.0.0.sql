@@ -62,4 +62,3 @@ alter table "Infrastructure"."Companies" drop column "LoginFailedTimeout";
 alter table "Infrastructure"."Companies" drop column "MaximumNumberOfPasswordFailure";
 alter table "Infrastructure"."Companies" drop column "PasswordDaysLife";
 alter table "Infrastructure"."Companies" drop column "AuthenticationServer";
-

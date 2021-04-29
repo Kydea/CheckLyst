@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CheckListManager.Common.Core.Cache;
 using CheckListManager.Common.Core.Helpers;
 using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Data;
@@ -173,6 +174,7 @@ namespace CheckListManager.Infrastructure.Logic.Companies
                         TimeZone = record.TimeZone
                     });
                     await AuditAsync(identity, TrailAction.CompanyUpdated, record);
+                    _settingService.Clear(record.ID.Value);
                 }
                 catch (Exception Exception)
                 {
