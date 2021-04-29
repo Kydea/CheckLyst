@@ -114,9 +114,10 @@
 
             if (!model.valueFormulaString) {
                 if (!model.valuesList) {
-                    if (model.valueTypeName == "Date" || model.valueTypeName == "DateTime")
+                    if (model.valueTypeName == "Date" || model.valueTypeName == "DateTime") {
+                        element.classList.add(model.valueTypeName);
                         new matematici.DatePicker(input);
-                    else if (model.valueTypeName == "Boolean") {
+                    } else if (model.valueTypeName == "Boolean") {
                         element.classList.add("Boolean");
                         input.setAttribute("type", "checkbox");
                     } else
