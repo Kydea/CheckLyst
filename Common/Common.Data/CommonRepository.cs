@@ -27,7 +27,6 @@ namespace CheckListManager.Common.Data
                     {
                         ID = c.ID,
                         Name = c.Name,
-                        InactivityTimeoutSeconds = c.InactivityTimeoutSeconds
                     }).ToListAsync(), "CommonRepository");
 
         public Task<List<Departments>> GetDepartmentsAsync(IDefaultIdentity identity, string functionGroup, string function)

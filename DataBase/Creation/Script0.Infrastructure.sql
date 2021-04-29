@@ -18,20 +18,6 @@ create table "Infrastructure"."Companies"
     "Name" varchar (50) not null,
 	"TimeZone" varchar (100) not null references "Infrastructure"."TimeZones",
 
-	"SessionTimeout" int not null default 600 constraint "Invalid session timeout" check("SessionTimeout" > 60),
-	"ActivityTimeout" int not null default 600 constraint "Invalid activity timeout" check("ActivityTimeout" > 60),
-
-	"MaximumNumberOfPINFailure" int not null default 0,
-	"LoginFailedTimeout" int not null default 20,
-	"PINDaysLife" int not null default 0,
-	"MaximumNumberOfPasswordFailure" int not null default 0,
-	"PasswordDaysLife" int not null default 0,
-  	"WarningUserInactivityDays" int not null default 0,
-  	"MaximumUserInactivityDays" int not null default 0,
-  	"InactivityTimeoutSeconds" int not null default 900,
-
-	"AuthenticationServer" text,
-
 	"CreatedBy" varchar (60),
 	"CreatedOn" timestamptz not null default current_timestamp,
 	"ModifiedBy" varchar (60),
@@ -39,7 +25,7 @@ create table "Infrastructure"."Companies"
 );
 
 insert into "Infrastructure"."Companies"("ID", "Name", "TimeZone") values (1, '(CheckListManager)', 'W. Europe Standard Time');
-select setval ('"Security"."Companies_ID_seq"' , 1);
+select setval ('"Infrastructure"."Companies_ID_seq"' , 1);
 
 create table "Infrastructure"."Departments"
 (

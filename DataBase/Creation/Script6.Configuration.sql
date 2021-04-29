@@ -1,4 +1,4 @@
-create schema "Configuration";
+ocreate schema "Configuration";
 
 create table "Configuration"."Configurations"
 (
@@ -43,7 +43,13 @@ insert into "Configuration"."Settings" ("Code") values
 	('DecimalSeparator'),
 	('RequireUserReason'),
 	('PrototypesAttachmentMaxSizeBytes'),
-	('InstancesAttachmentMaxSizeBytes');
+	('InstancesAttachmentMaxSizeBytes'),
+	('InactivityTimeoutSeconds'),
+	('MaximumNumberOfPINFailure'),
+	('PINDaysLife'),
+	('WarningUserInactivityDays'),
+	('MaximumUserInactivityDays');
+
 
 create table "Configuration"."SettingValues"
 (

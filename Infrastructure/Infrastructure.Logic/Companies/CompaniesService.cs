@@ -41,6 +41,7 @@ namespace CheckListManager.Infrastructure.Logic.Companies
             var response = new CompanySettingsResponse
             {
                 RequireUserReason = await _settingService.RequireUserReasonAsync(companyId),
+                InactivityTimeoutSeconds = await _settingService.InactivityTimeoutSecondsAsync(companyId),
                 WebApplicationUrl = _configurationService.WebApplicationUrl
             };
 

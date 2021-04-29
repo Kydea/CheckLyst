@@ -49,7 +49,6 @@
 			companyList = $("select[name=companyId]", form),
 			userCode = $("input[name=username]", form),
 			password = $("input[name=password]", form),
-			companies = {},
 
 			showError = function (message) {
 				error.html(" " + message).prepend($("<i />").addClass("fas fa-exclamation-triangle")).show()
@@ -88,7 +87,6 @@
                 }).done(function (result) {
                     localStorage.companyName = companyList.next().val();
                     var company = companyList.val();
-                    localStorage.inactivityTimeoutSeconds = companies[company].inactivityTimeoutSeconds;
                     matematici.tokenManager.login(result);
 					matematici.clock.resume();
 
@@ -129,9 +127,8 @@
         }).done(function (result) {
             for (var index in result) {
                 var company = result[index];
-                companies[company.id] = company;
                 if (administration && company.id == 1 || !administration && company.id > 1)
-                    companyList.append($("<option />").attr("value", company.id).data("inactivityTimeoutSeconds", company.inactivityTimeoutSeconds).text(company.name));
+                    companyList.append($("<option />").attr("value", company.id).text(company.name));
             }
             callback.call();
             matematici.AutoComplete.get(companyList[0]).setValue(administration ? 1 : null);

@@ -34,3 +34,29 @@ values
 	('Company created'),
 	('Company updated'),
 	('Company deleted');
+
+insert into "Configuration"."Settings" ("Code") values
+	('InactivityTimeoutSeconds'),
+	('MaximumNumberOfPINFailure'),
+	('PINDaysLife'),
+	('WarningUserInactivityDays'),
+	('MaximumUserInactivityDays');
+
+insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") select "ID", 'InactivityTimeoutSeconds', "InactivityTimeoutSeconds" from "Infrastructure"."Companies" order by "ID";
+insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") select "ID", 'MaximumNumberOfPINFailure', "MaximumNumberOfPINFailure" from "Infrastructure"."Companies" order by "ID";
+insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") select "ID", 'PINDaysLife', "PINDaysLife" from "Infrastructure"."Companies" order by "ID";
+insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") select "ID", 'WarningUserInactivityDays', "WarningUserInactivityDays" from "Infrastructure"."Companies" order by "ID";
+insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") select "ID", 'MaximumUserInactivityDays', "MaximumUserInactivityDays" from "Infrastructure"."Companies" order by "ID";
+
+alter table "Infrastructure"."Companies" drop column "InactivityTimeoutSeconds";
+alter table "Infrastructure"."Companies" drop column "MaximumNumberOfPINFailure";
+alter table "Infrastructure"."Companies" drop column "PINDaysLife";
+alter table "Infrastructure"."Companies" drop column "WarningUserInactivityDays";
+alter table "Infrastructure"."Companies" drop column "MaximumUserInactivityDays";
+alter table "Infrastructure"."Companies" drop column "SessionTimeout";
+alter table "Infrastructure"."Companies" drop column "ActivityTimeout";
+alter table "Infrastructure"."Companies" drop column "LoginFailedTimeout";
+alter table "Infrastructure"."Companies" drop column "MaximumNumberOfPasswordFailure";
+alter table "Infrastructure"."Companies" drop column "PasswordDaysLife";
+alter table "Infrastructure"."Companies" drop column "AuthenticationServer";
+

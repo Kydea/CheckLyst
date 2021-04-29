@@ -121,7 +121,9 @@
     <Compile Include="Steps\WorkFlowsListSteps.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Features\WorkFlowsList.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>WorkFlowsList.feature.cs</LastGenOutput>

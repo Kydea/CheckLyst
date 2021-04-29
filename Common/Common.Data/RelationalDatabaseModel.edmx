@@ -225,21 +225,10 @@
           <Property Name="ID" Type="int8" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="TimeZone" Type="varchar" MaxLength="100" Nullable="false" />
-          <Property Name="SessionTimeout" Type="int4" Nullable="false" />
-          <Property Name="ActivityTimeout" Type="int4" Nullable="false" />
-          <Property Name="MaximumNumberOfPINFailure" Type="int4" Nullable="false" />
-          <Property Name="PINDaysLife" Type="int4" Nullable="false" />
-          <Property Name="MaximumNumberOfPasswordFailure" Type="int4" Nullable="false" />
-          <Property Name="PasswordDaysLife" Type="int4" Nullable="false" />
-          <Property Name="WarningUserInactivityDays" Type="int4" Nullable="false" />
-          <Property Name="MaximumUserInactivityDays" Type="int4" Nullable="false" />
-          <Property Name="AuthenticationServer" Type="text" />
           <Property Name="CreatedBy" Type="varchar" MaxLength="60" />
           <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
           <Property Name="ModifiedBy" Type="varchar" MaxLength="60" />
           <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
-          <Property Name="LoginFailedTimeout" Type="int4" Nullable="false" />
-          <Property Name="InactivityTimeoutSeconds" Type="int4" Nullable="false" />
         </EntityType>
         <EntityType Name="Departments">
           <Key>
@@ -1450,15 +1439,6 @@
           <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="TimeZone" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="SessionTimeout" Type="Int32" Nullable="false" />
-          <Property Name="ActivityTimeout" Type="Int32" Nullable="false" />
-          <Property Name="MaximumNumberOfPINFailure" Type="Int32" Nullable="false" />
-          <Property Name="PINDaysLife" Type="Int32" Nullable="false" />
-          <Property Name="MaximumNumberOfPasswordFailure" Type="Int32" Nullable="false" />
-          <Property Name="PasswordDaysLife" Type="Int32" Nullable="false" />
-          <Property Name="WarningUserInactivityDays" Type="Int32" Nullable="false" />
-          <Property Name="MaximumUserInactivityDays" Type="Int32" Nullable="false" />
-          <Property Name="AuthenticationServer" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="CreatedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
           <Property Name="CreatedOn" Type="DateTimeOffset" Precision="7" Nullable="false" />
           <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
@@ -1470,9 +1450,7 @@
           <NavigationProperty Name="Prototypes" Relationship="RelationalDatabaseModel.Prototypes_Company_fkey" FromRole="Companies" ToRole="Prototypes" />
           <NavigationProperty Name="PrototypeTypes" Relationship="RelationalDatabaseModel.PrototypeTypes_Company_fkey" FromRole="Companies" ToRole="PrototypeTypes" />
           <NavigationProperty Name="SettingValues" Relationship="RelationalDatabaseModel.SettingValues_Company_fkey" FromRole="Companies" ToRole="SettingValues" />
-          <Property Name="LoginFailedTimeout" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Instances" Relationship="RelationalDatabaseModel.Instances_Company_fkey" FromRole="Companies" ToRole="Instances" />
-          <Property Name="InactivityTimeoutSeconds" Type="Int32" Nullable="false" />
           <NavigationProperty Name="FTPServers" Relationship="RelationalDatabaseModel.FTPServers_Company_fkey" FromRole="Companies" ToRole="FTPServers" />
           <NavigationProperty Name="TimeZones" Relationship="RelationalDatabaseModel.Companies_TimeZone_fkey" FromRole="Companies" ToRole="TimeZones" />
         </EntityType>
@@ -2984,20 +2962,9 @@
           <EntitySetMapping Name="Companies">
             <EntityTypeMapping TypeName="RelationalDatabaseModel.Companies">
               <MappingFragment StoreEntitySet="Companies">
-                <ScalarProperty Name="InactivityTimeoutSeconds" ColumnName="InactivityTimeoutSeconds" />
-                <ScalarProperty Name="LoginFailedTimeout" ColumnName="LoginFailedTimeout" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="TimeZone" ColumnName="TimeZone" />
-                <ScalarProperty Name="SessionTimeout" ColumnName="SessionTimeout" />
-                <ScalarProperty Name="ActivityTimeout" ColumnName="ActivityTimeout" />
-                <ScalarProperty Name="MaximumNumberOfPINFailure" ColumnName="MaximumNumberOfPINFailure" />
-                <ScalarProperty Name="PINDaysLife" ColumnName="PINDaysLife" />
-                <ScalarProperty Name="MaximumNumberOfPasswordFailure" ColumnName="MaximumNumberOfPasswordFailure" />
-                <ScalarProperty Name="PasswordDaysLife" ColumnName="PasswordDaysLife" />
-                <ScalarProperty Name="WarningUserInactivityDays" ColumnName="WarningUserInactivityDays" />
-                <ScalarProperty Name="MaximumUserInactivityDays" ColumnName="MaximumUserInactivityDays" />
-                <ScalarProperty Name="AuthenticationServer" ColumnName="AuthenticationServer" />
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
                 <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />

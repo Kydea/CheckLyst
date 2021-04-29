@@ -115,6 +115,12 @@ namespace CheckListManager.Common.Logic.Services
 	        return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<bool>(companyId, code), RegionName);
         }
 
+        public Task<int> InactivityTimeoutSecondsAsync(long companyId)
+        {
+            const string code = "InactivityTimeoutSeconds";
+            return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<int>(companyId, code), RegionName);
+        }
+
         public Task<int> PrototypesAttachmentMaxSizeBytesAsync(long companyId)
         {
 	        const string code = "PrototypesAttachmentMaxSizeBytes";

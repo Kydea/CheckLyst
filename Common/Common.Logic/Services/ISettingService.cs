@@ -22,6 +22,7 @@ namespace CheckListManager.Common.Logic.Services
         Task<string> DecimalSeparatorAsync(long companyId);
         Task<string> TimeZoneAsync(long companyId);
         Task<bool> RequireUserReasonAsync(long companyId);
+        Task<int> InactivityTimeoutSecondsAsync(long companyId);
         Task<int> PrototypesAttachmentMaxSizeBytesAsync(long companyId);
         Task<int> InstancesAttachmentMaxSizeBytesAsync(long companyId);
     }

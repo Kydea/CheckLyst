@@ -3,6 +3,7 @@
         tokenManager = this,
         cautionTimeOffset = 120000, //ms
         warningTimeout,
+        companySettings,
 
         refreshAccessToken = function (user, accessToken, refreshToken, successHandler, failHandler, index) {
             console.info("refreshing access token for " + user, new Date());
@@ -25,7 +26,7 @@
             if (warningTimeout) clearTimeout(warningTimeout);
             if (localStorage.refreshToken) {
                 var
-                    milliseconds = parseInt(localStorage.inactivityTimeoutSeconds) * 1000 || 900000,
+                    milliseconds = parseInt(getCompanySettings().inactivityTimeoutSeconds) * 1000 || 900000,
                     countdownLength = Math.min(milliseconds, 60000);
 
                 warningTimeout = setTimeout(function () {
@@ -80,7 +81,6 @@
 			localStorage.userCode = result.code;
 			localStorage.userName = result.name;
 			localStorage.decimalSeparator = result.decimalSeparator;
-            //localStorage.inactivityTimeoutSeconds is set directly by the login form
 
 			matematici.menu.toggleItemsByRole();
 			matematici.userPanel.update();
@@ -134,7 +134,7 @@
 	};
 
 	tokenManager.getCompanySettings = function () {
-		return JSON.parse(localStorage.companySettings);
+        return companySettings || (companySettings = JSON.parse(localStorage.companySettings));
 	}
 
     //for the app

@@ -31,21 +31,10 @@ namespace CheckListManager.Common.Data
         public long ID { get; set; }
         public string Name { get; set; }
         public string TimeZone { get; set; }
-        public int SessionTimeout { get; set; }
-        public int ActivityTimeout { get; set; }
-        public int MaximumNumberOfPINFailure { get; set; }
-        public int PINDaysLife { get; set; }
-        public int MaximumNumberOfPasswordFailure { get; set; }
-        public int PasswordDaysLife { get; set; }
-        public int WarningUserInactivityDays { get; set; }
-        public int MaximumUserInactivityDays { get; set; }
-        public string AuthenticationServer { get; set; }
         public string CreatedBy { get; set; }
         public System.DateTimeOffset CreatedOn { get; set; }
         public string ModifiedBy { get; set; }
         public Nullable<System.DateTimeOffset> ModifiedOn { get; set; }
-        public int LoginFailedTimeout { get; set; }
-        public int InactivityTimeoutSeconds { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Departments> Departments { get; set; }
