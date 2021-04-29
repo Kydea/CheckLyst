@@ -633,11 +633,11 @@ namespace CheckListManager.AccessControl.Logic.Services
             return response;
         }
 
-        public async Task CheckInactiveUsers(CancellationToken cancellationToken = new CancellationToken())
+        public async Task CheckInactiveUsers(long company, CancellationToken cancellationToken = new CancellationToken())
         {
             try
             {
-                var users = await _userRepository.GetUsersToDisableAsync();
+                var users = await _userRepository.GetUsersToDisableAsync(company);
                 foreach (var user in users)
                 {
                     user.Enabled = false;
@@ -662,7 +662,7 @@ namespace CheckListManager.AccessControl.Logic.Services
 
             try
             {
-                var users = await _userRepository.GetUsersDisableWarningAsync();
+                var users = await _userRepository.GetUsersDisableWarningAsync(company);
                 foreach (var user in users)
                 {
                     if (!string.IsNullOrEmpty(user.Email))
@@ -682,11 +682,11 @@ namespace CheckListManager.AccessControl.Logic.Services
             }
         }
 
-        public async Task CheckUnchangedPins(CancellationToken cancellationToken = new CancellationToken())
+        public async Task CheckUnchangedPins(long company, CancellationToken cancellationToken = new CancellationToken())
         {
             try
             {
-                var users = await _userRepository.GetUsersWithExpiredPin();
+                var users = await _userRepository.GetUsersWithExpiredPin(company);
                 foreach (var user in users)
                     user.PIN = null;
 

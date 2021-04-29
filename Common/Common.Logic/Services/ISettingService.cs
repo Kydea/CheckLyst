@@ -23,6 +23,11 @@ namespace CheckListManager.Common.Logic.Services
         Task<string> TimeZoneAsync(long companyId);
         Task<bool> RequireUserReasonAsync(long companyId);
         Task<int> InactivityTimeoutSecondsAsync(long companyId);
+        Task<int> MaximumNumberOfPasswordFailureAsync(long companyId);
+        Task<int> MaximumNumberOfPINFailureAsync(long companyId);
+        Task<int> PINDaysLifeAsync(long companyId);
+        Task<int> WarningUserInactivityDaysAsync(long companyId);
+        Task<int> MaximumUserInactivityDaysAsync(long companyId);
         Task<int> PrototypesAttachmentMaxSizeBytesAsync(long companyId);
         Task<int> InstancesAttachmentMaxSizeBytesAsync(long companyId);
     }

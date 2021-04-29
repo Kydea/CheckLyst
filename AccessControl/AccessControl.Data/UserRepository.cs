@@ -6,14 +6,17 @@ using CheckListManager.Common.Data;
 using CheckListManager.Common.Core.Web.Security;
 using System;
 using CheckListManager.Common.Data.Exceptions;
+using CheckListManager.Common.Logic.Services;
 
 namespace CheckListManager.AccessControl.Data
 {
     public class UserRepository : Repository, IUserRepository
     {
-        // ReSharper disable once MemberCanBeProtected.Global
-        public UserRepository(RelationalDatabaseEntities entities) : base(entities)
+        private readonly ISettingService _settingsService;
+
+        public UserRepository(RelationalDatabaseEntities entities, ISettingService settingsService) : base(entities)
         {
+            _settingsService = settingsService;
         }
 
         public Task<Users> GetAsync(long companyId, string code)
@@ -115,10 +118,9 @@ namespace CheckListManager.AccessControl.Data
                 ++user.NumberOfPasswordAttempts;
                 user.LastLoginFailedOn = DateTimeOffset.UtcNow;
 
-                if (
-                    user.Companies.MaximumNumberOfPasswordFailure > 0
-                    && user.NumberOfPasswordAttempts >= user.Companies.MaximumNumberOfPasswordFailure
-                )
+                int MaximumNumberOfPasswordFailure = await _settingsService.MaximumNumberOfPasswordFailureAsync(user.Company);
+
+                if (MaximumNumberOfPasswordFailure > 0 && user.NumberOfPasswordAttempts >= MaximumNumberOfPasswordFailure)
                     user.Enabled = false;
 
                 await SaveChangesAsync();
@@ -131,47 +133,35 @@ namespace CheckListManager.AccessControl.Data
             {
                 ++user.NumberOfPINAttempts;
 
-                if (
-                    user.Companies.MaximumNumberOfPINFailure > 0
-                    && user.NumberOfPINAttempts >= user.Companies.MaximumNumberOfPINFailure
-                )
+                int MaximumNumberOfPINFailure = await _settingsService.MaximumNumberOfPINFailureAsync(user.Company);
+
+                if (MaximumNumberOfPINFailure > 0 && user.NumberOfPINAttempts >= MaximumNumberOfPINFailure)
                     user.PIN = null;
 
                 await SaveChangesAsync();
             }
         }
 
-        public Task<List<Users>> GetUsersToDisableAsync()
+        public async Task<List<Users>> GetUsersToDisableAsync(long company)
 		{
-			return Entities.Users
+            var Threshold = DateTime.UtcNow.AddDays(-await _settingsService.MaximumUserInactivityDaysAsync(company));
+            return await Entities.Users
 				.Include(u => u.Companies)
-				.Where(
-					x =>
-						x.Enabled
-						&& x.LastLoginOn < DbFunctions.AddDays(DateTime.UtcNow, -x.Companies.MaximumUserInactivityDays)
-				).ToListAsync();
+				.Where(x => x.Enabled && x.LastLoginOn < Threshold).ToListAsync();
 		}
 
-		public Task<List<Users>> GetUsersDisableWarningAsync()
+		public async Task<List<Users>> GetUsersDisableWarningAsync(long company)
 		{
-			return Entities.Users
+            var Threshold = DateTime.UtcNow.AddDays(-await _settingsService.WarningUserInactivityDaysAsync(company));
+            return await Entities.Users
 				.Include(u => u.Companies)
-				.Where(
-					x =>
-						x.Enabled
-						&& x.LastLoginOn < DbFunctions.AddDays(DateTime.UtcNow, -x.Companies.WarningUserInactivityDays)
-				).ToListAsync();
+				.Where(x => x.Enabled && x.LastLoginOn < Threshold).ToListAsync();
 		}
 
-		public Task<List<Users>> GetUsersWithExpiredPin()
+		public async Task<List<Users>> GetUsersWithExpiredPin(long company)
 		{
-			return Entities.Users
-				.Include(u => u.Companies)
-				.Where(
-					x =>
-						x.PIN != null
-						&& x.PINChangeDate < DbFunctions.AddDays(DateTime.UtcNow, -x.Companies.PINDaysLife)
-				).ToListAsync();
+            var Threshold = DateTime.UtcNow.AddDays(-await _settingsService.PINDaysLifeAsync(company));
+            return await Entities.Users.Where(x => x.PIN != null && x.PINChangeDate < Threshold).ToListAsync();
 		}
 	}
 }

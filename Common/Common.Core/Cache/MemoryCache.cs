@@ -16,7 +16,6 @@ namespace CheckListManager.Common.Core.Cache
         private T Get<T>(string key, string regionName = null)
         {
             var result = Get(ResolveKey(key, regionName));
-            // ReSharper disable once MergeConditionalExpression
             return result != null
                 ? (T)result
                 : default(T);

@@ -20,8 +20,8 @@ namespace CheckListManager.AccessControl.Data
 		Task UserLoginCompleteAsync(Users user);
 		Task UserPasswordFailedAsync(Users user);
 		Task UserPINFailedAsync(Users user);
-		Task<List<Users>> GetUsersToDisableAsync();
-		Task<List<Users>> GetUsersDisableWarningAsync();
-		Task<List<Users>> GetUsersWithExpiredPin();
+		Task<List<Users>> GetUsersToDisableAsync(long company);
+		Task<List<Users>> GetUsersDisableWarningAsync(long company);
+		Task<List<Users>> GetUsersWithExpiredPin(long company);
 	}
 }

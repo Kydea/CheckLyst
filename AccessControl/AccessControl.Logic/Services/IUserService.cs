@@ -30,7 +30,7 @@ namespace CheckListManager.AccessControl.Logic.Services
         Task<UserResponse> EditUserAsync(DefaultIdentity identity, UserRequest record);
         Task<UserResponse> DeleteUserAsync(DefaultIdentity identity, UserRequest record);
 
-		Task CheckInactiveUsers(CancellationToken cancellationToken = default(CancellationToken));
-		Task CheckUnchangedPins(CancellationToken cancellationToken = default(CancellationToken));
+		Task CheckInactiveUsers(long company, CancellationToken cancellationToken = default(CancellationToken));
+		Task CheckUnchangedPins(long company, CancellationToken cancellationToken = default(CancellationToken));
 	}
 }

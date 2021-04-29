@@ -121,6 +121,36 @@ namespace CheckListManager.Common.Logic.Services
             return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<int>(companyId, code), RegionName);
         }
 
+        public Task<int> MaximumNumberOfPasswordFailureAsync(long companyId)
+        {
+            const string code = "MaximumNumberOfPasswordFailure";
+            return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<int>(companyId, code), RegionName);
+        }
+
+        public Task<int> MaximumNumberOfPINFailureAsync(long companyId)
+        {
+            const string code = "MaximumNumberOfPasswordFailure";
+            return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<int>(companyId, code), RegionName);
+        }
+
+        public Task<int> PINDaysLifeAsync(long companyId)
+        {
+            const string code = "PINDaysLife";
+            return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<int>(companyId, code), RegionName);
+        }
+
+        public Task<int> WarningUserInactivityDaysAsync(long companyId)
+        {
+            const string code = "WarningUserInactivityDays";
+            return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<int>(companyId, code), RegionName);
+        }
+
+        public Task<int> MaximumUserInactivityDaysAsync(long companyId)
+        {
+            const string code = "MaximumUserInactivity";
+            return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<int>(companyId, code), RegionName);
+        }
+
         public Task<int> PrototypesAttachmentMaxSizeBytesAsync(long companyId)
         {
 	        const string code = "PrototypesAttachmentMaxSizeBytes";
