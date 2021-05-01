@@ -71,7 +71,7 @@ namespace CheckListManager.Infrastructure.Api.Controllers
         [Authorize(Roles = "Companies#Edit")]
         public async Task<IHttpActionResult> Add(Message<CompaniesRequest> request)
         {
-            return Ok(await _companiesService.Add(Identity, request.Data));
+            return Ok(await _companiesService.AddAsync(Identity, request.Data));
         }
 
         [HttpPost]
@@ -79,15 +79,15 @@ namespace CheckListManager.Infrastructure.Api.Controllers
         [Authorize(Roles = "Companies#Edit")]
         public async Task<IHttpActionResult> Edit(Message<CompaniesRequest> request)
         {
-            return Ok(await _companiesService.Edit(Identity, request.Data));
+            return Ok(await _companiesService.EditAsync(Identity, request.Data));
         }
 
         [HttpPost]
-        [Route("Delete")]
-        [Authorize(Roles = "Companies#Edit")]
-        public async Task<IHttpActionResult> Delete(Message<CompaniesRequest> request)
+        [Route("Load")]
+        [Authorize(Roles = "Companies#View")]
+        public async Task<IHttpActionResult> Load(Message<CompaniesRequest> request)
         {
-            return Ok(await _companiesService.Delete(Identity, request.Data));
+            return Ok(await _companiesService.LoadAsync(Identity, request.Data));
         }
     }
 }

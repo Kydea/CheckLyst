@@ -190,5 +190,9 @@
   {
     "outputFile": "Content/Theme/SourceEditor.css",
     "inputFile": "Content/Theme/SourceEditor.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Companies.css",
+    "inputFile": "Content/Theme/Companies.scss"
   }
 ]

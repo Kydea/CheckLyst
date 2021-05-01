@@ -27,8 +27,6 @@ create table "Configuration"."Settings"
 );
 
 insert into "Configuration"."Settings" ("Code") values
-	('InstancesFtpConnection'),
-	('PrototypesFtpConnection'),
 	('LDAPHost'),
 	('SmtpHost'),
 	('SmtpPort'),

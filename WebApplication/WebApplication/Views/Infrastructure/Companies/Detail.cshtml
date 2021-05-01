@@ -1,56 +1,335 @@
 ﻿<div id="CompaniesDetailPage">
     <h2>Company</h2>
 
-    <form id="Detail" action="@BaseUrl/Infrastructure/Departments">
+    <form id="Detail" action="@BaseUrl/Infrastructure/Companies">
         <input type="hidden" name="reason" />
-        <label>
-            <span>ID</span>
-            <i class="Icon fal fa-key" />
-            <input type="text" name="id" readonly="readonly" placeholder="(new record)" />
-        </label>
+        <div class="TabContainer">
+            <div class="TabLabels">
+                <a href="#">Details</a>
+                <a href="#">Environment settings</a>
+                <a href="#">Secutity settings</a>
+                <a href="#">Email configuration</a>
+                <a href="#">Messages</a>
+            </div>
+            <div class="Tab">
+                <label>
+                    <span>ID</span>
+                    <i class="Icon fal fa-key" />
+                    <input type="text" name="id" readonly="readonly" placeholder="(new record)" />
+                </label>
 
-        <label>
-            <span>Name</span>
-            <i class="Icon fal fa-id-card" />
-            <input type="text" name="name" />
-        </label>
+                <label>
+                    <span>Name</span>
+                    <i class="Icon fal fa-id-card" />
+                    <input type="text" name="name" />
+                </label>
 
-        <label>
-            <span>Time zone</span>
-            <input type="text" name="timeZone" />
-        </label>
+                <label class="FullWidth">
+                    <span>Time zone</span>
+                    <select name="timeZone" />
+                </label>
 
-        <label class="Clearing Controls2">
-            <span>Creation</span>
-            <i class="Icon fal fa-user" />
-            <input type="text" name="createdBy" readonly="readonly" />
-            <i class="Icon fal fa-calendar-alt" />
-            <input type="text" name="createdOn" readonly="readonly" data-type="DateTimeOffset" />
-        </label>
+                <label class="Clearing Configurator">
+                    <span>Configurator code</span>
+                    <i class="Icon fal fa-user" />
+                    <input type="text" name="username" />
+                </label>
 
-        <label class="Clearing Controls2">
-            <span>Last edit</span>
-            <i class="Icon fal fa-user" />
-            <input type="text" name="modifiedBy" readonly="readonly" />
-            <i class="Icon fal fa-calendar-alt" />
-            <input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
-        </label>
+                <label class="Configurator">
+                    <span>Configurator password</span>
+                    <i class="Icon fal fa-key" />
+                    <input type="password" name="password" />
+                </label>
 
-        <div class="Clearing"></div>
+                <label class="Clearing Controls2">
+                    <span>Creation</span>
+                    <i class="Icon fal fa-user" />
+                    <input type="text" name="createdBy" readonly="readonly" />
+                    <i class="Icon fal fa-calendar-alt" />
+                    <input type="text" name="createdOn" readonly="readonly" data-type="DateTimeOffset" />
+                </label>
 
+                <label class="Clearing Controls2">
+                    <span>Last edit</span>
+                    <i class="Icon fal fa-user" />
+                    <input type="text" name="modifiedBy" readonly="readonly" />
+                    <i class="Icon fal fa-calendar-alt" />
+                    <input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
+                </label>
+
+                <div class="Clearing"></div>
+            </div>
+            <div class="Tab">
+                <table class="Grid Environment">
+                    <thead>
+                        <tr>
+                            <th>parameter</th>
+                            <th>value</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+
+                <div class="Clearing"></div>
+            </div>
+            <div class="Tab">
+                <table class="Grid Security">
+                    <thead>
+                        <tr>
+                            <th>parameter</th>
+                            <th>value</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+
+                <div class="Clearing"></div>
+            </div>
+            <div class="Tab">
+                <table class="Grid Email">
+                    <thead>
+                        <tr>
+                            <th>parameter</th>
+                            <th>value</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+
+                <div class="Clearing"></div>
+            </div>
+            <div class="Tab">
+                <table class="Grid Messages">
+                    <thead>
+                        <tr>
+                            <th>parameter</th>
+                            <th>value</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+
+                <div class="Clearing"></div>
+            </div>
+        </div>
     </form>
+
+    <div class="Clearing"></div>
 </div>
 
 <script type="text/javascript">
     var
+        formSelector = "form#Detail",
+        formElement = $(formSelector),
         data = matematici.popup.getData(),
         id = data && data.id,
         currentCompany = matematici.tokenManager.getCompany(),
-        isNewCompany = data != null;
+        isNew = data == null,
+        tableBody = {
+            Environment: $("table.Environment tbody", formElement),
+            Security: $("table.Security tbody", formElement),
+            Email: $("table.Email tbody", formElement),
+            Messages: $("table.Messages tbody", formElement),
+        },
 
-    new matematici.DetailPage({
-        formSelector: "form#Detail",
-        disableDelete: currentCompany != id,
-        readOnly: currentCompany == 1 && isNewCompany,
-    });
+        initHandler = function (detailPage) {
+            var
+                sender = detailPage.getSender(),
+                form = detailPage.getForm();
+
+            form.handleResult(sender.getBindResult());
+        },
+
+        createRow = function (code, value) {
+            var detail = settingDetails[code];
+            if (detail == null)
+                console.log("Unexpected setting: " + code);
+            var tr = $("<tr />").data("code", code);
+            tr.addClass("Handler");
+            tr.append($("<td />").text(detail.label || code));
+            tr.append($("<td />").text(value));
+            return tr;
+        },
+
+        completeHandler = function () {
+            detailPage.getForm().trigger("Load", function (result) {
+                for (var index in result.settings) {
+                    var
+                        setting = result.settings[index],
+                        tr = createRow(setting.code, setting.value);
+                    tableBody[settingDetails[setting.code].group].append(tr);
+                }
+                tab.resize();
+                setTimeout(function () {
+                    matematici.popup.center();
+                }, 500);
+
+            });
+        },
+
+        createSettingField = function () {
+            var
+                editable = currentCompany == id,
+                input = $("<input />").attr("id", "SettingValue").attr("type", "text").attr("autocomplete", "off");
+            if (!editable) matematici.controls.setEditable(input, false);
+            return input;
+        },
+
+        showSetting = function () {
+            var code = $(this).data("code");
+
+            matematici.dialog.show({
+                title: "Setting",
+                content: $("<div />")
+                    .append($("<label />").attr("for", "SettingValue").text(settingDetails[code].label))
+                    .append(input = createSettingField())
+                    .append($("<div />").addClass("Note").text(settingDetails[code].note)),
+                buttons: [
+                    {
+                        text: "confirm", icon: "check", defaultButton: true, handler: function () {
+                            console.log(input && input.val());
+                        }
+                    },
+                    { text: "cancel", hidden: false, icon: "times", cancelButton: true }
+                ],
+            });
+
+            if (input) setTimeout(function () { input.focus(); }, 0);
+        },
+
+        tab = new matematici.Tab(formSelector + " div.TabContainer", {
+            fixedHeight: true
+        }),
+
+        detailPage = new matematici.DetailPage({
+            formSelector: formSelector,
+            disableDelete: true,
+            readOnly: currentCompany == 1 && !isNew,
+            initHandler: initHandler,
+            completeHandler: completeHandler,
+            width: "800px",
+        }),
+
+        settingDetails = {
+
+            //Environment
+            DecimalSeparator: {
+                label: "Decimal separator",
+                note: "The character used as decimal separator.",
+                values: [".", ","],
+                group: "Environment"
+            },
+            InstancesAttachmentMaxSizeBytes: {
+                label: "Instances attachment max sixe",
+                note: "The maximum number of bytes allowed for the instance attachment files.",
+                group: "Environment"
+            },
+            PrototypesAttachmentMaxSizeBytes: {
+                label: "Prototypes attachment max sixe",
+                note: "The maximum number of bytes allowed for the file uploaded in the images items.",
+                group: "Environment"
+            },
+            RequireUserReason: {
+                label: "Require user reason",
+                note: "This option set a mandatory reasong request for each search page action (insert, update, delete).",
+                group: "Environment"
+            },
+
+            //Security
+            InactivityTimeoutSeconds: {
+                label: "Inactivity timeout",
+                note: "Defines the number seconds of inactivity after which the user is logged out.",
+                group: "Security"
+            },
+            LDAPHost: {
+                label: "LDAP host",
+                note: "The host of the LDAP server (e.g. 192.168.1.50 or ldap.company.com).",
+                group: "Security"
+            },
+            MaximumNumberOfPasswordFailure: {
+                label: "Maximum password failures",
+                note: "The number of password failures after which a user is blocked (works only for users that are not authenticated with a LDAP server). The value 0 disable the feature.",
+                group: "Security"
+            },
+            MaximumNumberOfPINFailure: {
+                label: "Maximum PIN failures",
+                note: "The number of PIN failures after which the PIN is canceled and need to be set again. The value 0 disable the feature.",
+                group: "Security"
+            },
+            MaximumUserInactivityDays: {
+                label: "Maximum user inactivity",
+                note: "The number of days without a login after which a user is autmatically blocked. The value 0 disable the feature.",
+                group: "Security"
+            },
+            PINDaysLife: {
+                label: "PIN life",
+                note: "The number of days after which a PIN must be set again. The value 0 disable the feature.",
+                group: "Security"
+            },
+            WarningUserInactivityDays: {
+                label: "Warning user inactivity",
+                note: "The number of days without a login after which a user receives a warning message that alerts him of the possible block. The value 0 disable the feature.",
+                group: "Security"
+            },
+
+            //email
+            EmailSender: {
+                label: "Email sender",
+                note: "The email address the system uses as sender of the emails.",
+                group: "Email"
+            },
+            SmtpHost: {
+                label: "SMTP host",
+                note: "The host of the LDAP server (e.g. 192.168.1.50 or smpt.company.com).",
+                group: "Email"
+            },
+            SmtpPassword: {
+                label: "SMTP password",
+                note: "The password the system will use to authenticate to the SMTP server.",
+                group: "Email"
+            },
+            SmtpPort: {
+                label: "SMTP port",
+                note: "The port of the SMTP server.",
+                group: "Email"
+            },
+            SmtpUsername: {
+                label: "SMTP username",
+                note: "The username the system will use to authenticate to the SMTP server.",
+                group: "Email"
+            },
+
+            //MESSAGES
+            InstanceMessage: {
+                label: "Instance signature message",
+                note: "This message is sent when a signature marked to sed emails is issued in a check list. The parameters [User] (the code of the user) and [CheckListCode] (the code of the checklist) can be used.",
+                group: "Messages"
+            },
+            NotificationMessage: {
+                label: "Instance notification message",
+                note: "This message is sent when a notification expression becomes true or reaches the schedulet data and time. The parameters [Code] (the code of the expression), [Description] (the description of the expression), [Value] (the value of the expression), [Note] (the note of the notification) and [Link] (the link to the instance) can be used.",
+                group: "Messages"
+            },
+            SignatureMessage: {
+                label: "Workflow signature message",
+                note: "This message is sent when a user must sign a workflow. The parameters [User] (the code of the user), [CheckListType] (can be prototype or instance) and [CheckListCode] (the code of the checklist) can be used.",
+                group: "Messages"
+            },
+            UserBlockMessage: {
+                label: "User block message",
+                note: "This message is sent when a user is blocked by the system for inactivity. The parameter [User] (the code of the user) can be used.",
+                group: "Messages"
+            },
+            UserBlockWarningMessage: {
+                label: "User warning message",
+                note: "This message is sent when a user is warned about an possible block by the system for inactivity. The parameter [User] (the code of the user) can be used.",
+                group: "Messages"
+            }
+
+        };
+
+    $("label.Configurator", formElement).toggle(isNew);
+
+    formElement.on("click", "tr", showSetting);
+
 </script>

@@ -62,7 +62,6 @@ values
 	
 	('Company created'),
 	('Company updated'),
-	('Company deleted'),
 
 	('Department created'),
 	('Department updated'),

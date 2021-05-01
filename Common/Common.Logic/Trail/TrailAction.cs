@@ -60,7 +60,6 @@
 
         public const string CompanyCreated = "Company created";
         public const string CompanyUpdated = "Company updated";
-        public const string CompanyDeleted = "Company deleted";
 
         public const string DepartmentCreated = "Department created";
         public const string DepartmentUpdated = "Department updated";

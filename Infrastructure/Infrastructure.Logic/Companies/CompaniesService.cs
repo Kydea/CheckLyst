@@ -24,17 +24,19 @@ namespace CheckListManager.Infrastructure.Logic.Companies
         private readonly IConfigurationService _configurationService;
         private readonly IInfrastructureRepository _infrastructureRepository;
         private readonly IQueueService _queueService;
+        private readonly IHashService _hashService;
 
-        public CompaniesService(ICommonRepository commonRepository, ISettingService settingService, IConfigurationService configurationService, IInfrastructureRepository infrastructureRepository, IQueueService queueService)
+        public CompaniesService(ICommonRepository commonRepository, ISettingService settingService, IConfigurationService configurationService, IInfrastructureRepository infrastructureRepository, IQueueService queueService, IHashService hashService)
         {
             _commonRepository = commonRepository;
             _settingService = settingService;
             _configurationService = configurationService;
             _infrastructureRepository = infrastructureRepository;
             _queueService = queueService;
+            _hashService = hashService;
         }
 
-        public async Task<List<Company>> GetSyntheticDataAsync() => 
+        public async Task<List<Company>> GetSyntheticDataAsync() =>
             await _commonRepository.GetCompaniesAsync();
 
         public async Task<CompanySettingsResponse> GetSettingsAsync(long companyId)
@@ -80,7 +82,7 @@ namespace CheckListManager.Infrastructure.Logic.Companies
                         ModifiedBy = c.ModifiedBy,
                         ModifiedOn = c.ModifiedOn
                     },
-                    Form.Data.Name, 
+                    Form.Data.Name,
                     Form.CurrentPage, Form.ItemsPerPage
                 );
 
@@ -130,7 +132,7 @@ namespace CheckListManager.Infrastructure.Logic.Companies
             return response;
         }
 
-        public async Task<CompaniesResponse> Add(IDefaultIdentity identity, CompaniesRequest record)
+        public async Task<CompaniesResponse> AddAsync(IDefaultIdentity identity, CompaniesRequest record)
         {
             if (identity.CompanyId != 1) throw new UnauthorizedAccessException();
 
@@ -142,9 +144,25 @@ namespace CheckListManager.Infrastructure.Logic.Companies
                     {
                         Name = record.Name,
                         TimeZone = record.TimeZone,
+                        CreatedOn = DateTimeOffset.Now,
+                        CreatedBy = identity.Code
+                    }, new Users
+                    {
+                        Code = record.Username,
+                        Description = "(Configurator)",
+                        Password = _hashService.HashStringToBytes(record.Password),
+                        CreatedOn = DateTimeOffset.Now,
+                        Enabled = true
                     });
                     record.ID = company.ID;
-                    await AuditAsync(identity, TrailAction.CompanyCreated, record);
+                    await AuditAsync(identity, TrailAction.CompanyCreated, new
+                    {
+                        record.ID,
+                        record.Name,
+                        record.TimeZone,
+                        record.Username,
+                        ReasonForChange = record.Reason,
+                    });
                 }
                 catch (Exception Exception)
                 {
@@ -159,7 +177,7 @@ namespace CheckListManager.Infrastructure.Logic.Companies
             return response;
         }
 
-        public async Task<CompaniesResponse> Edit(IDefaultIdentity identity, CompaniesRequest record)
+        public async Task<CompaniesResponse> EditAsync(IDefaultIdentity identity, CompaniesRequest record)
         {
             if (identity.CompanyId != record.ID) throw new UnauthorizedAccessException();
 
@@ -173,7 +191,13 @@ namespace CheckListManager.Infrastructure.Logic.Companies
                         Name = record.Name,
                         TimeZone = record.TimeZone
                     });
-                    await AuditAsync(identity, TrailAction.CompanyUpdated, record);
+                    await AuditAsync(identity, TrailAction.CompanyUpdated, new
+                    {
+                        record.ID,
+                        record.Name,
+                        record.TimeZone,
+                        ReasonForChange = record.Reason,
+                    });
                     _settingService.Clear(record.ID.Value);
                 }
                 catch (Exception Exception)
@@ -189,49 +213,14 @@ namespace CheckListManager.Infrastructure.Logic.Companies
             return response;
         }
 
-        public async Task<CompaniesResponse> Delete(IDefaultIdentity identity, CompaniesRequest record)
+        public async Task<CompaniesResponse> LoadAsync(IDefaultIdentity identity, CompaniesRequest record)
         {
-            if (identity.CompanyId != 1) throw new UnauthorizedAccessException();
-
-            var response = new CompaniesResponse();
-            try
+            if (identity.CompanyId != 1 && identity.CompanyId != record.ID) throw new UnauthorizedAccessException();
+            var settings = await _infrastructureRepository.GetSettings(identity, record.ID);
+            return new CompaniesResponse
             {
-                await _infrastructureRepository.DeleteCompanyAsync(identity, record.ID.Value);
-                await AuditAsync(identity, TrailAction.CompanyDeleted, record.ID.Value, record.Reason);
-            }
-            catch (Exception Exception)
-            {
-                response.ValidationMessages.Add(new ValidationMessage
-                {
-                    Level = ValidationMessage.LevelError,
-                    Message = Exception.Message
-                });
-                response.Valid = false;
-            }
-
-            return response;
-        }
-
-        private Task AuditAsync(IDefaultIdentity identity, string action, CompaniesRequest record)
-        {
-            var information = new
-            {
-                record.ID,
-                record.Name,
-                record.TimeZone,
-                ReasonForChange = record.Reason,
+                Settings = settings
             };
-            return AuditAsync(identity, action, information);
-        }
-
-        private Task AuditAsync(IDefaultIdentity identity, string action, long id, string reason)
-        {
-            var information = new
-            {
-                ID = id,
-                ReasonForChange = reason
-            };
-            return AuditAsync(identity, action, information);
         }
 
         private Task AuditAsync(IDefaultIdentity identity, string action, object information)

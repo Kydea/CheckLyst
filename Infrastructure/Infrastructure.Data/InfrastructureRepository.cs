@@ -8,14 +8,15 @@ using System.Linq.Expressions;
 using System.Data.Entity;
 using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Data.Exceptions;
+using CheckListManager.Infrastructure.Data.ListItems;
 
 namespace CheckListManager.Infrastructure.Data
 {
-	public class InfrastructureRepository : Repository, IInfrastructureRepository
-	{
-		public InfrastructureRepository(RelationalDatabaseEntities entities) : base(entities)
-		{
-		}
+    public class InfrastructureRepository : Repository, IInfrastructureRepository
+    {
+        public InfrastructureRepository(RelationalDatabaseEntities entities) : base(entities)
+        {
+        }
 
         private async Task<Companies> GetCompany(IDefaultIdentity identity, long id)
         {
@@ -34,21 +35,30 @@ namespace CheckListManager.Infrastructure.Data
             return company;
         }
 
-        public async Task<Companies> AddCompanyAsync(IDefaultIdentity identity, Companies company)
+        public async Task<Companies> AddCompanyAsync(IDefaultIdentity identity, Companies company, Users configurator)
         {
             company.CreatedOn = DateTimeOffset.UtcNow;
             company.CreatedBy = identity.Code;
+            configurator.UserFunctions.Add(new UserFunctions
+            {
+                FunctionGroup = "Users",
+                Function = "View",
+                CreatedOn = DateTimeOffset.Now
+            });
+            configurator.UserFunctions.Add(new UserFunctions
+            {
+                FunctionGroup = "Users",
+                Function = "Edit",
+                CreatedOn = DateTimeOffset.Now
+            });
+            company.Users.Add(configurator);
             Entities.Companies.Add(company);
             await SaveChangesAsync();
             return company;
         }
-        public async Task DeleteCompanyAsync(IDefaultIdentity identity, long id)
-        {
-            Entities.Companies.Remove(await GetCompany(identity, id));
-            await SaveChangesAsync();
-        }
 
-
+        public async Task<List<SettingValue>> GetSettings(IDefaultIdentity identity, long? company) =>
+            await Entities.Settings.OrderBy(s => s.Code).Select(s => s.SettingValues.Where(sv => sv.Company == company).Select(sv => new SettingValue { Code = sv.Setting, Value = sv.Value }).FirstOrDefault() ?? new SettingValue { Code = s.Code, Value = null }).ToListAsync();
 
         private async Task<Departments> GetDepartment(IDefaultIdentity identity, long id)
         {
@@ -58,14 +68,14 @@ namespace CheckListManager.Infrastructure.Data
         }
 
         public async Task<Departments> EditDepartmentAsync(IDefaultIdentity identity, Departments department)
-		{
+        {
             var ExistingDepartment = await GetDepartment(identity, department.ID);
             ExistingDepartment.ModifiedOn = DateTimeOffset.UtcNow;
             ExistingDepartment.ModifiedBy = identity.Code;
             ExistingDepartment.Name = department.Name;
             await SaveChangesAsync();
             return department;
-		}
+        }
 
         public async Task<Departments> AddDepartmentAsync(IDefaultIdentity identity, Departments department)
         {
@@ -224,8 +234,8 @@ namespace CheckListManager.Infrastructure.Data
         }
 
         public async Task<PagingResponse<List<TResult>>> GetPrototypeTypesAsync<TResult>(
-            IDefaultIdentity identity, 
-            Expression<Func<PrototypeTypes, TResult>> select, 
+            IDefaultIdentity identity,
+            Expression<Func<PrototypeTypes, TResult>> select,
             long? department, string name, string functionGroup,
             int currentPage, int itemsPerPage, string function = "View")
         {

@@ -117,11 +117,6 @@ namespace CheckListManager.Prototypes.Terminal
 
         private async Task<FTPConnectionSettings> Send(PrototypesFTPMessage message)
         {
-            ////we are not using company settings from v2.0.0
-            //var SerializedSettings = await _settingService.PrototypesFtpConnectionAsync(message.Company);
-            //if (string.IsNullOrWhiteSpace(SerializedSettings)) return;
-            //Settings = JsonConvert.DeserializeObject<FTPConnectionSettings>(SerializedSettings);
-
             var PrototypeVersion = await _prototypesRepository.GetPrototypeVersionAsync(message.Company, message.Prototype, message.Version);
 
             FTPConnectionSettings Settings;

@@ -5,6 +5,7 @@ using CheckListManager.Common.Logic.Api.Messages;
 using System;
 using System.Linq.Expressions;
 using CheckListManager.Common.Core.Web.Security;
+using CheckListManager.Infrastructure.Data.ListItems;
 
 namespace CheckListManager.Infrastructure.Data
 {
@@ -12,8 +13,8 @@ namespace CheckListManager.Infrastructure.Data
 	{
 
         Task<Companies> EditCompanyAsync(IDefaultIdentity identity, Companies company);
-        Task<Companies> AddCompanyAsync(IDefaultIdentity identity, Companies company);
-        Task DeleteCompanyAsync(IDefaultIdentity identity, long id);
+        Task<Companies> AddCompanyAsync(IDefaultIdentity identity, Companies company, Users configurator);
+        Task<List<SettingValue>> GetSettings(IDefaultIdentity identity, long? id);
 
         Task<Departments> EditDepartmentAsync(IDefaultIdentity identity, Departments department);
         Task<Departments> AddDepartmentAsync(IDefaultIdentity identity, Departments department);

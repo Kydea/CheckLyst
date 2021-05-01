@@ -261,12 +261,12 @@ form {
   form > label.GridLabel {
     float: none;
     clear: both; }
-  form > table.Grid {
+  form table.Grid {
     margin-top: 3px;
     margin-left: 20px;
     width: calc(100% - 20px);
     border: solid 1px #999; }
-    form > table.Grid td {
+    form table.Grid td {
       position: relative; }
 
 form label, form p.Label, div.CheckList label, div.CheckList p.Label, div.PropertyPanel div.PropertyValue label, div.PropertyPanel div.PropertyValue p.Label, div.Module label, div.Module p.Label {

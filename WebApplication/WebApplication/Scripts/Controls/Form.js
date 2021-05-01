@@ -172,9 +172,11 @@
             //saved parameters
             var storageName = getStorageName();
             try {
-                value = localStorage.getItem(storageName);
-                var advancedSearch = localStorage.getItem(storageName + "/AdvancedSearch");
-                options.searchPage.setAdvancedSearchMode(advancedSearch == "true");
+                var value = localStorage.getItem(storageName);
+                if (options.searchPage) {
+                    var advancedSearch = localStorage.getItem(storageName + "/AdvancedSearch");
+                    options.searchPage.setAdvancedSearchMode(advancedSearch == "true");
+                }
                 return stringified ? value : JSON.parse(value);
             } catch (error) {
                 console.log(error);

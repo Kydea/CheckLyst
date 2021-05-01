@@ -114,11 +114,6 @@ namespace CheckListManager.Instances.Terminal
 
 		private async Task<FTPConnectionSettings> Send(InstancesFTPMessage message)
 		{
-            ////we are not using company settings from v2.0.0
-            //var SerializedSettings = await _settingService.InstancesFtpConnectionAsync(message.Company);
-            //if (string.IsNullOrWhiteSpace(SerializedSettings)) return;
-            //Settings = JsonConvert.DeserializeObject<FTPConnectionSettings>(SerializedSettings);
-
             string code = await _instancesRepository.GetCodeAsync(message.Company, message.ID);
             var cacheObject = await _instanceManagerService.GetCacheObjectForDownloadAsync(message.Company, code, true);
             FTPConnectionSettings Settings;

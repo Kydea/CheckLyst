@@ -26,9 +26,9 @@
             window.location = matematici.urls.accessControl.login;
         },
 
-        setInactivityTimeout = function () {
+        setInactivityTimeout = function (disabled) {
             if (warningTimeout) clearTimeout(warningTimeout);
-            if (localStorage.refreshToken) {
+            if (disabled && localStorage.refreshToken) {
                 var
                     milliseconds = parseInt(getCompanySettings().inactivityTimeoutSeconds) * 1000 || 900000,
                     countdownLength = Math.min(milliseconds, 60000);
@@ -105,6 +105,8 @@
         saveSigners = function (signers) {
             localStorage.signers = JSON.stringify(signers);
         };
+
+    tokenManager.setInactivityTimeout = setInactivityTimeout;
 
     tokenManager.login = function (result) {
         localStorage.refreshToken = result.refresh_token;

@@ -394,7 +394,7 @@ form {
         clear: both;
     }
 
-    > table.Grid {
+    table.Grid {
         margin-top: 3px;
         margin-left: $Metric-Control-Space;
         width: calc(100% - #{$Metric-Control-Space});

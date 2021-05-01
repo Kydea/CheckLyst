@@ -28,13 +28,13 @@ insert into "Security"."Functions" values
 update "Security"."Users" set "Enabled" = true where "Company" = 1 and "Code" = 'CheckListManager';
 insert into "Security"."UserFunctions"("Company", "User", "FunctionGroup", "Function") values 
 	(1, 'CheckListManager', 'Companies', 'Edit'),
-	(1, 'CheckListManager', 'Companies', 'View');
+	(1, 'CheckListManager', 'Companies', 'View'),
+	(1, 'CheckListManager', 'Trail', 'View');
 
 insert into "Trail"."Actions"
 values 
 	('Company created'),
-	('Company updated'),
-	('Company deleted');
+	('Company updated');
 
 insert into "Configuration"."Settings" ("Code") values
 	('InactivityTimeoutSeconds'),
@@ -62,3 +62,6 @@ alter table "Infrastructure"."Companies" drop column "LoginFailedTimeout";
 alter table "Infrastructure"."Companies" drop column "MaximumNumberOfPasswordFailure";
 alter table "Infrastructure"."Companies" drop column "PasswordDaysLife";
 alter table "Infrastructure"."Companies" drop column "AuthenticationServer";
+
+delete from "Configuration"."SettingValues" where "Setting" in ('InstancesFtpConnection', 'PrototypesFtpConnection');
+delete from "Configuration"."Settings" where "Code" in ('InstancesFtpConnection', 'PrototypesFtpConnection');
