@@ -25,17 +25,34 @@ namespace CheckListManager.Infrastructure.Data
             return Company;
         }
 
-        public async Task<Companies> EditCompanyAsync(IDefaultIdentity identity, Companies company)
+        private async Task<List<SettingValues>> GetSettingValues(long company) =>
+            await Entities.SettingValues.Where(sv => sv.Company == company).ToListAsync();
+
+        public async Task<Companies> EditCompanyAsync(IDefaultIdentity identity, Companies company, List<SettingValue> settings)
         {
             var ExistingCompany = await GetCompany(identity, company.ID);
+            ExistingCompany.Name = company.Name;
+            ExistingCompany.TimeZone = company.TimeZone;
             ExistingCompany.ModifiedOn = DateTimeOffset.UtcNow;
             ExistingCompany.ModifiedBy = identity.Code;
-            ExistingCompany.Name = company.Name;
+            var newSettingsDictionary = settings.ToDictionary(s => s.Code, s => s.Value);
+            var oldSettingsDictionary = (await GetSettingValues(company.ID)).ToDictionary(s => s.Setting, s => s);
+            foreach (var key in oldSettingsDictionary.Keys)
+                if (key != "SmtpPassword" || newSettingsDictionary[key] != null)
+                {
+                    oldSettingsDictionary[key].Value = newSettingsDictionary[key] ?? "";
+                    oldSettingsDictionary[key].ModifiedOn = DateTimeOffset.UtcNow;
+                }
+
+            foreach (var key in newSettingsDictionary.Keys)
+                if (!oldSettingsDictionary.ContainsKey(key))
+                    ExistingCompany.SettingValues.Add(new SettingValues { Company = company.ID, Setting = key, Value = newSettingsDictionary[key] ?? "", CreatedOn = DateTimeOffset.UtcNow });
+
             await SaveChangesAsync();
             return company;
         }
 
-        public async Task<Companies> AddCompanyAsync(IDefaultIdentity identity, Companies company, Users configurator)
+        public async Task<Companies> AddCompanyAsync(IDefaultIdentity identity, Companies company, Users configurator, List<SettingValue> settings)
         {
             company.CreatedOn = DateTimeOffset.UtcNow;
             company.CreatedBy = identity.Code;
@@ -43,22 +60,29 @@ namespace CheckListManager.Infrastructure.Data
             {
                 FunctionGroup = "Users",
                 Function = "View",
-                CreatedOn = DateTimeOffset.Now
+                CreatedOn = DateTimeOffset.UtcNow
             });
             configurator.UserFunctions.Add(new UserFunctions
             {
                 FunctionGroup = "Users",
                 Function = "Edit",
-                CreatedOn = DateTimeOffset.Now
+                CreatedOn = DateTimeOffset.UtcNow
             });
             company.Users.Add(configurator);
+            foreach (var setting in settings)
+                company.SettingValues.Add(new SettingValues { Setting = setting.Code, Value = setting.Value ?? "", CreatedOn = DateTimeOffset.UtcNow });
             Entities.Companies.Add(company);
             await SaveChangesAsync();
             return company;
         }
 
         public async Task<List<SettingValue>> GetSettings(IDefaultIdentity identity, long? company) =>
-            await Entities.Settings.OrderBy(s => s.Code).Select(s => s.SettingValues.Where(sv => sv.Company == company).Select(sv => new SettingValue { Code = sv.Setting, Value = sv.Value }).FirstOrDefault() ?? new SettingValue { Code = s.Code, Value = null }).ToListAsync();
+            await Entities
+                .Settings.OrderBy(s => s.Code)
+                .Select(s => 
+                    s.SettingValues.Where(sv => sv.Company == company)
+                    .Select(sv => new SettingValue { Code = sv.Setting, Value = sv.Setting == "SmtpPassword" ? null : sv.Value }).FirstOrDefault() ?? new SettingValue { Code = s.Code, Value = null })
+                .ToListAsync();
 
         private async Task<Departments> GetDepartment(IDefaultIdentity identity, long id)
         {

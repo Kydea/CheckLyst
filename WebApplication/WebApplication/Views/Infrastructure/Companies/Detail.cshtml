@@ -24,7 +24,7 @@
                     <input type="text" name="name" />
                 </label>
 
-                <label class="FullWidth">
+                <label>
                     <span>Time zone</span>
                     <select name="timeZone" />
                 </label>
@@ -125,6 +125,7 @@
         id = data && data.id,
         currentCompany = matematici.tokenManager.getCompany(),
         isNew = data == null,
+
         tableBody = {
             Environment: $("table.Environment tbody", formElement),
             Security: $("table.Security tbody", formElement),
@@ -140,14 +141,28 @@
             form.handleResult(sender.getBindResult());
         },
 
-        createRow = function (code, value) {
+        getFormattedValue = function (code, value) {
             var detail = settingDetails[code];
-            if (detail == null)
-                console.log("Unexpected setting: " + code);
-            var tr = $("<tr />").data("code", code);
-            tr.addClass("Handler");
+
+            var formattedValue = value;
+            if (detail.mask == "password")
+                formattedValue = "***";
+            else if (detail.values)
+                for (var index in detail.values)
+                    if (detail.values[index] && detail.values[index].value == value)
+                        formattedValue = detail.values[index].label;
+
+            return formattedValue;
+        },
+
+        createRow = function (code, value) {
+            var
+                detail = settingDetails[code],
+                tr = $("<tr />").data({ code: code, value: value });
+
+            if (!isNew) tr.addClass("Handler");
             tr.append($("<td />").text(detail.label || code));
-            tr.append($("<td />").text(value));
+            tr.append($("<td />").text(getFormattedValue(code, value)));
             return tr;
         },
 
@@ -156,7 +171,12 @@
                 for (var index in result.settings) {
                     var
                         setting = result.settings[index],
-                        tr = createRow(setting.code, setting.value);
+                        detail = settingDetails[setting.code],
+                        tr;
+
+                    if (detail == null) alert("Unexpected setting: " + setting.code);
+                    
+                    tr = createRow(setting.code, isNew ? detail.default : setting.value);
                     tableBody[settingDetails[setting.code].group].append(tr);
                 }
                 tab.resize();
@@ -167,34 +187,97 @@
             });
         },
 
-        createSettingField = function () {
+        createSettingField = function (content, code, value, detail) {
             var
                 editable = currentCompany == id,
-                input = $("<input />").attr("id", "SettingValue").attr("type", "text").attr("autocomplete", "off");
-            if (!editable) matematici.controls.setEditable(input, false);
+                input;
+
+            if (detail.textArea)
+                input = $("<textarea />").appendTo(content).val(value);
+            else if (detail.values) {
+                var
+                    select = $("<select />").appendTo(content),
+                    valueFound = false;
+
+                for (var index in detail.values) {
+                    var record = detail.values[index];
+                    select.append($("<option />").attr("value", record.value).text(record.label));
+                    if (value == record.value) valueFound = true;
+                }
+                if (!editable) matematici.controls.setEditable(select, false);
+                input = new matematici.AutoComplete(select[0]);
+                input.initialize();
+                input.setValue(valueFound ? value : detail.values[0].value);
+                setTimeout(function () { input.refresh(); }, 100);
+            } else {
+                input = $("<input />").attr("autocomplete", "off").appendTo(content).val(value);
+                if (detail.mask == "pint") {
+                    input.keyfilter(/[\d]/);
+                    input.attr({ type: "text", maxlength: 9 });
+                } else if (detail.mask == "password")
+                    input.attr("type", "password");
+                else 
+                    input.attr({ type: "text", maxlength: 1000 });
+
+                if (!editable) matematici.controls.setEditable(input, false);
+                setTimeout(function () { input.focus(); }, 100);
+            }
+
             return input;
         },
 
         showSetting = function () {
-            var code = $(this).data("code");
+            var
+                tr = $(this),
+                code = tr.data("code"),
+                value = tr.data("value"),
+                detail = settingDetails[code],
+                content = $("<div />"),
+                input,
+                buttons;
 
-            matematici.dialog.show({
-                title: "Setting",
-                content: $("<div />")
-                    .append($("<label />").attr("for", "SettingValue").text(settingDetails[code].label))
-                    .append(input = createSettingField())
-                    .append($("<div />").addClass("Note").text(settingDetails[code].note)),
-                buttons: [
+            content.append($("<label />").attr("for", "SettingValue").text(settingDetails[code].label));
+            input = createSettingField(content, code, value, detail);
+            content.append($("<div />").addClass("Note").text(settingDetails[code].note));
+
+            if (currentCompany > 1)
+                buttons = [
                     {
                         text: "confirm", icon: "check", defaultButton: true, handler: function () {
-                            console.log(input && input.val());
+                            var value = input.val && input.val() || input.getValue();
+                            tr.data("value", value);
+                            $("td", tr).eq(1).text(getFormattedValue(code, value));
+                            detailPage.getForm().onChange();
                         }
                     },
                     { text: "cancel", hidden: false, icon: "times", cancelButton: true }
-                ],
+                ];
+            else
+                buttons = [
+                    { text: "close", hidden: false, icon: "times", cancelButton: true }
+                ];
+
+            matematici.dialog.show({
+                title: "Setting",
+                content: content,
+                buttons: buttons,
+            });
+        },
+
+        parametersPrepareHandler = function () {
+            var settings = []
+
+            $("tbody tr", formElement).each(function () {
+                var
+                    tr = $(this),
+                    code = tr.data("code"),
+                    value = tr.data("value"),
+                    record = { code: code, value: value };
+
+                settings.push(record);
             });
 
-            if (input) setTimeout(function () { input.focus(); }, 0);
+            return { data: { settings: settings } };
         },
 
         tab = new matematici.Tab(formSelector + " div.TabContainer", {
@@ -207,6 +290,7 @@
             readOnly: currentCompany == 1 && !isNew,
             initHandler: initHandler,
             completeHandler: completeHandler,
+            parametersPrepareHandler: parametersPrepareHandler,
             width: "800px",
         }),
 
@@ -214,32 +298,40 @@
 
             //Environment
             DecimalSeparator: {
-                label: "Decimal separator",
-                note: "The character used as decimal separator.",
-                values: [".", ","],
-                group: "Environment"
+                label: "Number separators",
+                note: "The characters used as decimal and thousands groups separator.",
+                values: [{ value: ".", label: "decimal separator: . | thousands groups separator: ," }, { value: ",", label: "decimal separator: , | thousands groups separator: ." }],
+                group: "Environment",
+                default: '.'
             },
             InstancesAttachmentMaxSizeBytes: {
                 label: "Instances attachment max sixe",
                 note: "The maximum number of bytes allowed for the instance attachment files.",
-                group: "Environment"
+                mask: "pint",
+                group: "Environment",
+                default: '10485760'
             },
             PrototypesAttachmentMaxSizeBytes: {
                 label: "Prototypes attachment max sixe",
                 note: "The maximum number of bytes allowed for the file uploaded in the images items.",
-                group: "Environment"
+                group: "Environment",
+                default: '10485760'
             },
             RequireUserReason: {
                 label: "Require user reason",
                 note: "This option set a mandatory reasong request for each search page action (insert, update, delete).",
-                group: "Environment"
+                values: [{ value: "true", label: "Yes" }, { value: "false", label: "No" }],
+                group: "Environment",
+                default: false
             },
 
             //Security
             InactivityTimeoutSeconds: {
                 label: "Inactivity timeout",
                 note: "Defines the number seconds of inactivity after which the user is logged out.",
-                group: "Security"
+                mask: "pint",
+                group: "Security",
+                default: 0
             },
             LDAPHost: {
                 label: "LDAP host",
@@ -249,27 +341,37 @@
             MaximumNumberOfPasswordFailure: {
                 label: "Maximum password failures",
                 note: "The number of password failures after which a user is blocked (works only for users that are not authenticated with a LDAP server). The value 0 disable the feature.",
-                group: "Security"
+                mask: "pint",
+                group: "Security",
+                default: 0
             },
             MaximumNumberOfPINFailure: {
                 label: "Maximum PIN failures",
                 note: "The number of PIN failures after which the PIN is canceled and need to be set again. The value 0 disable the feature.",
-                group: "Security"
+                mask: "pint",
+                group: "Security",
+                default: 0
             },
             MaximumUserInactivityDays: {
                 label: "Maximum user inactivity",
                 note: "The number of days without a login after which a user is autmatically blocked. The value 0 disable the feature.",
-                group: "Security"
+                mask: "pint",
+                group: "Security",
+                default: 0
             },
             PINDaysLife: {
                 label: "PIN life",
                 note: "The number of days after which a PIN must be set again. The value 0 disable the feature.",
-                group: "Security"
+                mask: "pint",
+                group: "Security",
+                default: 0
             },
             WarningUserInactivityDays: {
                 label: "Warning user inactivity",
                 note: "The number of days without a login after which a user receives a warning message that alerts him of the possible block. The value 0 disable the feature.",
-                group: "Security"
+                mask: "pint",
+                group: "Security",
+                default: 0
             },
 
             //email
@@ -286,11 +388,13 @@
             SmtpPassword: {
                 label: "SMTP password",
                 note: "The password the system will use to authenticate to the SMTP server.",
+                mask: "password",
                 group: "Email"
             },
             SmtpPort: {
                 label: "SMTP port",
                 note: "The port of the SMTP server.",
+                mask: "pint",
                 group: "Email"
             },
             SmtpUsername: {
@@ -303,26 +407,31 @@
             InstanceMessage: {
                 label: "Instance signature message",
                 note: "This message is sent when a signature marked to sed emails is issued in a check list. The parameters [User] (the code of the user) and [CheckListCode] (the code of the checklist) can be used.",
+                textArea: true,
                 group: "Messages"
             },
             NotificationMessage: {
                 label: "Instance notification message",
                 note: "This message is sent when a notification expression becomes true or reaches the schedulet data and time. The parameters [Code] (the code of the expression), [Description] (the description of the expression), [Value] (the value of the expression), [Note] (the note of the notification) and [Link] (the link to the instance) can be used.",
+                textArea: true,
                 group: "Messages"
             },
             SignatureMessage: {
                 label: "Workflow signature message",
                 note: "This message is sent when a user must sign a workflow. The parameters [User] (the code of the user), [CheckListType] (can be prototype or instance) and [CheckListCode] (the code of the checklist) can be used.",
+                textArea: true,
                 group: "Messages"
             },
             UserBlockMessage: {
                 label: "User block message",
                 note: "This message is sent when a user is blocked by the system for inactivity. The parameter [User] (the code of the user) can be used.",
+                textArea: true,
                 group: "Messages"
             },
             UserBlockWarningMessage: {
                 label: "User warning message",
                 note: "This message is sent when a user is warned about an possible block by the system for inactivity. The parameter [User] (the code of the user) can be used.",
+                textArea: true,
                 group: "Messages"
             }
 
@@ -330,6 +439,6 @@
 
     $("label.Configurator", formElement).toggle(isNew);
 
-    formElement.on("click", "tr", showSetting);
+    formElement.on("click", "tr.Handler", showSetting);
 
 </script>

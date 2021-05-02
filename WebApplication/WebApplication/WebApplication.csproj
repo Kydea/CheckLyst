@@ -117,6 +117,9 @@
     <Content Include="Content\Theme\CheckListGrid.css">
       <DependentUpon>CheckListGrid.scss</DependentUpon>
     </Content>
+    <Content Include="Content\Theme\Companies.css">
+      <DependentUpon>Companies.scss</DependentUpon>
+    </Content>
     <Content Include="Content\Theme\Content.css">
       <DependentUpon>Content.scss</DependentUpon>
     </Content>
@@ -411,6 +414,7 @@
     <Content Include="Content\Theme\FontAwesome\WebFonts\fa-solid-900.ttf" />
     <Content Include="Content\Theme\FontAwesome\WebFonts\fa-solid-900.woff" />
     <Content Include="Content\Theme\FontAwesome\WebFonts\fa-solid-900.woff2" />
+    <Content Include="Content\Theme\Companies.scss" />
     <None Include="Scripts\Libraries\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\Libraries\jquery-2.1.4.js" />
     <Content Include="Scripts\Libraries\jquery-ui-1.11.4.js" />

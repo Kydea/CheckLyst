@@ -1,4 +1,6 @@
-﻿body.Companies {
+﻿@import "_Library.scss";
+
+body.Companies {
     div#CompaniesDetailPage {
         table.Grid {
             margin-top: 18px;
@@ -7,8 +9,13 @@
 
     div.Dialog {
         div.Content {
+            input, select {
+
+            }
+
             div.Note {
-                color: rebeccapurple;
+                margin-top: 20px;
+                color: $Color-Grey-Dark;
             }
         }
     }

@@ -12,8 +12,8 @@ namespace CheckListManager.Infrastructure.Data
 	public interface IInfrastructureRepository : IRepository
 	{
 
-        Task<Companies> EditCompanyAsync(IDefaultIdentity identity, Companies company);
-        Task<Companies> AddCompanyAsync(IDefaultIdentity identity, Companies company, Users configurator);
+        Task<Companies> EditCompanyAsync(IDefaultIdentity identity, Companies company, List<SettingValue> settings);
+        Task<Companies> AddCompanyAsync(IDefaultIdentity identity, Companies company, Users configurator, List<SettingValue> settings);
         Task<List<SettingValue>> GetSettings(IDefaultIdentity identity, long? id);
 
         Task<Departments> EditDepartmentAsync(IDefaultIdentity identity, Departments department);

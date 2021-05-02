@@ -153,7 +153,7 @@ namespace CheckListManager.Infrastructure.Logic.Companies
                         Password = _hashService.HashStringToBytes(record.Password),
                         CreatedOn = DateTimeOffset.Now,
                         Enabled = true
-                    });
+                    }, record.Settings);
                     record.ID = company.ID;
                     await AuditAsync(identity, TrailAction.CompanyCreated, new
                     {
@@ -161,6 +161,7 @@ namespace CheckListManager.Infrastructure.Logic.Companies
                         record.Name,
                         record.TimeZone,
                         record.Username,
+                        record.Settings,
                         ReasonForChange = record.Reason,
                     });
                 }
@@ -190,12 +191,13 @@ namespace CheckListManager.Infrastructure.Logic.Companies
                         ID = record.ID.Value,
                         Name = record.Name,
                         TimeZone = record.TimeZone
-                    });
+                    }, record.Settings);
                     await AuditAsync(identity, TrailAction.CompanyUpdated, new
                     {
                         record.ID,
                         record.Name,
                         record.TimeZone,
+                        record.Settings,
                         ReasonForChange = record.Reason,
                     });
                     _settingService.Clear(record.ID.Value);
