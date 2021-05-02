@@ -43,6 +43,7 @@ insert into "Configuration"."Settings" ("Code") values
 	('PrototypesAttachmentMaxSizeBytes'),
 	('InstancesAttachmentMaxSizeBytes'),
 	('InactivityTimeoutSeconds'),
+	('MaximumNumberOfPasswordFailure'),
 	('MaximumNumberOfPINFailure'),
 	('PINDaysLife'),
 	('WarningUserInactivityDays'),
