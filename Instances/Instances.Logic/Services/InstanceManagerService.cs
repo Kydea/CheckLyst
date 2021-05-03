@@ -619,7 +619,7 @@ namespace CheckListManager.Instances.Logic.Services
                             throw new InstanceException("There is not a confirmation workflow for this instance, the function Confirm is needed to complete.");
                         cacheObject.InstanceState = row.InstanceState = InstanceState.Confirmed;
 
-                        if (!string.IsNullOrEmpty(row.FileName))
+                        if (!row.PrototypeVersions.VersionState.In(VersionState.Draft, VersionState.InSimulation) && !string.IsNullOrEmpty(row.FileName))
                             await _queueService.SendObjectAsync(QueueName.InstancesFTP, new InstancesFTPMessage
                             {
                                 Company = identity.CompanyId,
@@ -1011,7 +1011,7 @@ namespace CheckListManager.Instances.Logic.Services
                         Description = parentCacheObject.Instance.Description,
                         ID = parentCacheObject.ID,
                         Item = cacheObject.Instance.ParentInstanceLinkID.Value,
-                        Code = cacheObject.Code,
+                        Code = cacheObject.Instance.ParentInstanceCode,
                         RelationType = InstanceRelation.RelationTypes.Parent
                     });
                 }

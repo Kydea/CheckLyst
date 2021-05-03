@@ -88,7 +88,7 @@
         },
 
         getParentInstances = function (handler) {
-            if (model.id == null)
+            if (id == null)
                 handler([]);
             else
                 $.ajax({

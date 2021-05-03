@@ -136,9 +136,12 @@
         initHandler = function (detailPage) {
             var
                 sender = detailPage.getSender(),
-                form = detailPage.getForm();
+                form = detailPage.getForm(),
+                data = sender.getBindResult();
 
-            form.handleResult(sender.getBindResult());
+            delete data.fields.name; //we need just the timezones
+
+            form.handleResult(data);
         },
 
         getFormattedValue = function (code, value) {

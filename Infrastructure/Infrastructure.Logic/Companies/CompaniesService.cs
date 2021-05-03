@@ -164,6 +164,7 @@ namespace CheckListManager.Infrastructure.Logic.Companies
                         record.Settings,
                         ReasonForChange = record.Reason,
                     });
+                    _settingService.Clear(record.ID.Value);
                 }
                 catch (Exception Exception)
                 {

@@ -20,7 +20,7 @@ namespace CheckListManager.Common.Logic.Services
 
         public void Clear(long companyId)
         {
-            _cache.Remove($"Companies", RegionName);
+            _cache.Remove($"Companies", "CommonRepository");
             _cache.Remove($"LDAPHost-{companyId}", RegionName);
             _cache.Remove($"SmtpHost-{companyId}", RegionName);
             _cache.Remove($"SmtpPort-{companyId}", RegionName);
