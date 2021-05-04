@@ -19,15 +19,3 @@ begin
 end
 
 $$
-
-
-/*
-
-soft company deletion (works only on new company with no user)
-
-delete from "Configuration"."SettingValues" where "Company" = (select "ID" from "Infrastructure"."Companies" where "Name" = 'test');
-delete from "Security"."UserSessions" where "Company" = (select "ID" from "Infrastructure"."Companies" where "Name" = 'test');
-delete from "Security"."Users" where "Company" = (select "ID" from "Infrastructure"."Companies" where "Name" = 'test');
-delete from "Infrastructure"."Companies" where "Name" = 'test';
-
-*/

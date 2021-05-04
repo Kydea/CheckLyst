@@ -204,8 +204,7 @@ namespace CheckListManager.AccessControl.Logic.Services
 
             return Task.WhenAll(
                 _userSessionRepository.CreateAsync(session),
-                _cache.SetAsync(identityToken.RefreshToken, identityToken, IdentityCacheRegion,
-                    expiresOn - DateTimeOffset.UtcNow)
+                _cache.SetAsync(identityToken.RefreshToken, identityToken, IdentityCacheRegion, expiresOn - DateTimeOffset.UtcNow)
             );
         }
 

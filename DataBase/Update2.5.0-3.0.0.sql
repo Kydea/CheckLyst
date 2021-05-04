@@ -65,3 +65,21 @@ alter table "Infrastructure"."Companies" drop column "AuthenticationServer";
 
 delete from "Configuration"."SettingValues" where "Setting" in ('InstancesFtpConnection', 'PrototypesFtpConnection');
 delete from "Configuration"."Settings" where "Code" in ('InstancesFtpConnection', 'PrototypesFtpConnection');
+
+
+
+
+
+TODO:
+
+drop index "Security"."Index_UserFunctions_Function" on "Security"."UserFunctions";
+drop index "Security"."Index_UserFunctions_AppointedUsers" on "Security"."UserFunctions";
+alter table "Infrastructure"."UserFunctions" drop column "Tag";
+create unique index "Index_UserFunctions_Function" on "Security"."UserFunctions" ("Company", "User", "FunctionGroup", "Function", "Department", "PrototypeType");
+create index "Index_UserFunctions_AppointedUsers" on "Security"."UserFunctions" ("Company", "FunctionGroup", "Function", "Department", "PrototypeType");
+
+drop index "Security"."Index_UserFunctions_AppointedUsers" on "Security"."UserFunctions";
+drop index "Security"."Index_UserFunctions_Function" on "Security"."UserFunctions";
+create unique index "Index_UserFunctions_Function" on "Security"."UserFunctions" ("Company", "User", "Department", "PrototypeType", "FunctionGroup", "Function");
+
+da roles in poi tranne user functions
