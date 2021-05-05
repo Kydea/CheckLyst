@@ -59,6 +59,29 @@ insert into "Security"."Functions" values
 	('Companies', 'Edit'),
 	('Companies', 'View');
 
+create table "Security"."UserLevels"
+(
+	"ID" bigserial primary key,
+
+    "Company" bigint not null,
+	"User" varchar (60) not null,
+    constraint "UserFunctions_User" foreign key ("Company", "User") references "Security"."Users" on update cascade on delete cascade,
+
+	"Department" bigint references "Infrastructure"."Departments",
+	"PrototypeType" bigint references "CheckLists"."PrototypeTypes",
+
+	"SignatureLevel" varchar (50),
+	"PrototypeWorkFlowLevel" varchar (50),
+	"InstanceWorkFlowLevel" varchar (50),
+
+	"CreatedBy" varchar (60),
+	"CreatedOn" timestamptz not null default current_timestamp,
+	"ModifiedBy" varchar (60),
+	"ModifiedOn" timestamptz
+);
+
+create unique index "Index_UserLevels_Level" on "Security"."UserLevels" ("Company", "User", "Department", "PrototypeType");
+
 create table "Security"."Roles"
 (
     "Company" bigint references "Infrastructure"."Companies",
@@ -199,7 +222,7 @@ create table "Security"."GroupFunctions"
 	"ModifiedOn" timestamptz
 );
 
-create unique index "Index_GroupFunctions_Function" on "Security"."GroupFunctions" ("Company", "Group", "FunctionGroup", "Function", "Department", "PrototypeType");	
+create unique index "Index_GroupFunctions_Function" on "Security"."GroupFunctions" ("Company", "Group", "Department", "PrototypeType", "FunctionGroup", "Function");
 
 create table "Security"."UserGroups"
 (
@@ -219,3 +242,4 @@ create table "Security"."UserGroups"
 );
 
 create unique index "Index_UserGroups_Group" on "Security"."UserGroups" ("Company", "Group", "User");
+

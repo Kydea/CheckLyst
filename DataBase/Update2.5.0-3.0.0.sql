@@ -70,6 +70,29 @@ drop index "Security"."Index_UserFunctions_Function";
 drop index "Security"."Index_UserFunctions_AppointedUsers";
 create unique index "Index_UserFunctions_Function" on "Security"."UserFunctions" ("Company", "User", "Department", "PrototypeType", "FunctionGroup", "Function");
 
+create table "Security"."UserLevels"
+(
+	"ID" bigserial primary key,
+
+    "Company" bigint not null,
+	"User" varchar (60) not null,
+    constraint "UserFunctions_User" foreign key ("Company", "User") references "Security"."Users" on update cascade on delete cascade,
+
+	"Department" bigint references "Infrastructure"."Departments",
+	"PrototypeType" bigint references "CheckLists"."PrototypeTypes",
+
+	"SignatureLevel" varchar (50),
+	"PrototypeWorkFlowLevel" varchar (50),
+	"InstanceWorkFlowLevel" varchar (50),
+
+	"CreatedBy" varchar (60),
+	"CreatedOn" timestamptz not null default current_timestamp,
+	"ModifiedBy" varchar (60),
+	"ModifiedOn" timestamptz
+);
+
+create unique index "Index_UserLevels_Level" on "Security"."UserLevels" ("Company", "User", "Department", "PrototypeType");
+
 create table "Security"."Roles"
 (
     "Company" bigint references "Infrastructure"."Companies",
@@ -187,7 +210,7 @@ create table "Security"."GroupFunctions"
 	"ModifiedOn" timestamptz
 );
 
-create unique index "Index_GroupFunctions_Function" on "Security"."GroupFunctions" ("Company", "Group", "FunctionGroup", "Function", "Department", "PrototypeType");	
+create unique index "Index_GroupFunctions_Function" on "Security"."GroupFunctions" ("Company", "Group", "Department", "PrototypeType", "FunctionGroup", "Function");
 
 create table "Security"."UserGroups"
 (
@@ -208,7 +231,17 @@ create table "Security"."UserGroups"
 
 create unique index "Index_UserGroups_Group" on "Security"."UserGroups" ("Company", "Group", "User");
 
-TODO:
---fare script creazione gruppi e porting di tag
-alter table "Security"."UserFunctions" drop column "Tag";
+insert into "Security"."UserLevels" ("Company", "User", "Department", "PrototypeType", "SignatureLevel", "PrototypeWorkFlowLevel", "InstanceWorkFlowLevel") 
+select 
+	uf."Company", uf."User", uf."Department", uf."PrototypeType", 
+	max (case when "FunctionGroup" = 'Instances' then uf."Tag" else null end), 
+	max (case when "FunctionGroup" = 'Prototypes' then uf."Tag" else null end),
+	max (case when "FunctionGroup" = 'Instances' then uf."Tag" else null end)
+from "Security"."UserFunctions" uf
+where 
+	"FunctionGroup" in ('Prototypes', 'Instances')
+	and not uf."Tag" is null
+group by uf."Company", uf."User", uf."Department", uf."PrototypeType"
+order by uf."Company", uf."User", uf."Department", uf."PrototypeType";
 
+alter table "Security"."UserFunctions" drop column "Tag";
