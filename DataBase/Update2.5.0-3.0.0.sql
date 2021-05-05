@@ -66,20 +66,131 @@ alter table "Infrastructure"."Companies" drop column "AuthenticationServer";
 delete from "Configuration"."SettingValues" where "Setting" in ('InstancesFtpConnection', 'PrototypesFtpConnection');
 delete from "Configuration"."Settings" where "Code" in ('InstancesFtpConnection', 'PrototypesFtpConnection');
 
-
-
-
-
-TODO:
-
-drop index "Security"."Index_UserFunctions_Function" on "Security"."UserFunctions";
-drop index "Security"."Index_UserFunctions_AppointedUsers" on "Security"."UserFunctions";
-alter table "Infrastructure"."UserFunctions" drop column "Tag";
-create unique index "Index_UserFunctions_Function" on "Security"."UserFunctions" ("Company", "User", "FunctionGroup", "Function", "Department", "PrototypeType");
+drop index "Security"."Index_UserFunctions_Function";
+drop index "Security"."Index_UserFunctions_AppointedUsers";
+drop index "Security"."Index_UserFunctions_AppointedUsers";
+create unique index "Index_UserFunctions_Function" on "Security"."UserFunctions" ("Company", "User", "Department", "PrototypeType", "FunctionGroup", "Function");
 create index "Index_UserFunctions_AppointedUsers" on "Security"."UserFunctions" ("Company", "FunctionGroup", "Function", "Department", "PrototypeType");
 
-drop index "Security"."Index_UserFunctions_AppointedUsers" on "Security"."UserFunctions";
-drop index "Security"."Index_UserFunctions_Function" on "Security"."UserFunctions";
-create unique index "Index_UserFunctions_Function" on "Security"."UserFunctions" ("Company", "User", "Department", "PrototypeType", "FunctionGroup", "Function");
+create table "Security"."Roles"
+(
+    "Company" bigint references "Infrastructure"."Companies",
+	"Code" varchar (60),
+    
+    constraint "Roles_PK" primary key ("Company", "Code"),
+    
+	"CreatedBy" varchar (60),
+	"CreatedOn" timestamptz not null default current_timestamp,
+	"ModifiedBy" varchar (60),
+	"ModifiedOn" timestamptz
+);
 
-da roles in poi tranne user functions
+create unique index "Roles_Code" on "Security"."Roles" ("Company", upper("Code"));
+
+create table "Security"."RoleFunctions"
+(
+	"ID" bigserial primary key,
+
+    "Company" bigint not null,
+	"Role" varchar (60) not null,
+    constraint "RoleFunctions_Role" foreign key ("Company", "Role") references "Security"."Roles" on update cascade on delete cascade,
+
+	"FunctionGroup" varchar (20) not null,
+	"Function" varchar (20) not null,
+	constraint "RoleFunctions_Function" foreign key ("FunctionGroup", "Function") references "Security"."Functions" on update cascade,
+
+	"CreatedBy" varchar (60),
+	"CreatedOn" timestamptz not null default current_timestamp,
+	"ModifiedBy" varchar (60),
+	"ModifiedOn" timestamptz
+);
+
+create unique index "Index_RoleFunctions_Function" on "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function");
+
+create table "Security"."UserRoles"
+(
+	"ID" bigserial primary key,
+
+    "Company" bigint not null,
+	"User" varchar (60) not null,
+    constraint "UserRoles_Group" foreign key ("Company", "User") references "Security"."Users" on update cascade on delete cascade,
+
+	"Department" bigint references "Infrastructure"."Departments",
+	"PrototypeType" bigint references "CheckLists"."PrototypeTypes",
+
+	"Role" varchar (60) not null,
+    constraint "UserRoles_Role" foreign key ("Company", "Role") references "Security"."Roles" on update cascade on delete cascade,
+
+	"CreatedBy" varchar (60),
+	"CreatedOn" timestamptz not null default current_timestamp,
+	"ModifiedBy" varchar (60),
+	"ModifiedOn" timestamptz
+)
+
+create unique index "Index_UserRoles_Role" on "Security"."UserRoles" ("Company", "User", "Department", "PrototypeType");
+
+create table "Security"."Groups"
+(
+    "Company" bigint references "Infrastructure"."Companies",
+	"Code" varchar (60),
+    
+    constraint "Groups_PK" primary key ("Company", "Code"),
+    
+	"Description" varchar (100) not null,
+
+	"CreatedBy" varchar (60),
+	"CreatedOn" timestamptz not null default current_timestamp,
+	"ModifiedBy" varchar (60),
+	"ModifiedOn" timestamptz
+);
+
+create unique index "Groups_Code" on "Security"."Groups" ("Company", upper("Code"));
+
+create table "Security"."GroupRoles"
+(
+	"ID" bigserial primary key,
+
+    "Company" bigint not null,
+	"Group" varchar (60) not null,
+    constraint "GroupRoles_Group" foreign key ("Company", "Group") references "Security"."Groups" on update cascade on delete cascade,
+
+	"Department" bigint references "Infrastructure"."Departments",
+	"PrototypeType" bigint references "CheckLists"."PrototypeTypes",
+
+	"Role" varchar (60) not null,
+	constraint "GroupRoles_Role" foreign key ("Company", "Role") references "Security"."Roles" on update cascade on delete cascade,
+
+	"CreatedBy" varchar (60),
+	"CreatedOn" timestamptz not null default current_timestamp,
+	"ModifiedBy" varchar (60),
+	"ModifiedOn" timestamptz
+);
+
+create unique index "Index_GroupRoles_Role" on "Security"."GroupRoles" ("Company", "Group", "Department", "PrototypeType");
+
+create table "Security"."GroupFunctions"
+(
+	"ID" bigserial primary key,
+
+    "Company" bigint not null,
+	"Group" varchar (60) not null,
+    constraint "GroupFunctions_Group" foreign key ("Company", "Group") references "Security"."Groups" on update cascade on delete cascade,
+
+	"FunctionGroup" varchar (20) not null,
+	"Function" varchar (20) not null,
+	constraint "GroupFunctions_Function" foreign key ("FunctionGroup", "Function") references "Security"."Functions" on update cascade,
+
+	"Department" bigint references "Infrastructure"."Departments",
+	"PrototypeType" bigint references "CheckLists"."PrototypeTypes",
+
+	"CreatedBy" varchar (60),
+	"CreatedOn" timestamptz not null default current_timestamp,
+	"ModifiedBy" varchar (60),
+	"ModifiedOn" timestamptz
+);
+
+create unique index "Index_GroupFunctions_Function" on "Security"."GroupFunctions" ("Company", "Group", "FunctionGroup", "Function", "Department", "PrototypeType");	
+
+TODO:
+--fare script creazione gruppi e porting di tag
+alter table "Security"."UserFunctions" drop column "Tag";

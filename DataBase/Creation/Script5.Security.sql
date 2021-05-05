@@ -1,4 +1,4 @@
-﻿create table "Security"."FunctionGroups"
+create table "Security"."FunctionGroups"
 (
 	"Code" varchar (20) primary key
 );
@@ -112,7 +112,7 @@ create table "Security"."UserRoles"
 	"CreatedOn" timestamptz not null default current_timestamp,
 	"ModifiedBy" varchar (60),
 	"ModifiedOn" timestamptz
-)
+);
 
 create unique index "Index_UserRoles_Role" on "Security"."UserRoles" ("Company", "User", "Department", "PrototypeType");
 
@@ -174,7 +174,7 @@ create table "Security"."GroupRoles"
 	"CreatedOn" timestamptz not null default current_timestamp,
 	"ModifiedBy" varchar (60),
 	"ModifiedOn" timestamptz
-)
+);
 
 create unique index "Index_GroupRoles_Role" on "Security"."GroupRoles" ("Company", "Group", "Department", "PrototypeType");
 
@@ -199,4 +199,23 @@ create table "Security"."GroupFunctions"
 	"ModifiedOn" timestamptz
 );
 
-create unique index "Index_GroupFunctions_Function" on "Security"."GroupFunctions" ("Company", "User", "FunctionGroup", "Function", "Department", "PrototypeType");	
+create unique index "Index_GroupFunctions_Function" on "Security"."GroupFunctions" ("Company", "Group", "FunctionGroup", "Function", "Department", "PrototypeType");	
+
+create table "Security"."UserGroups"
+(
+	"ID" bigserial primary key,
+
+    "Company" bigint not null,
+	"User" varchar (60) not null,
+    constraint "UserRoles_Group" foreign key ("Company", "User") references "Security"."Users" on update cascade on delete cascade,
+
+	"Group" varchar (60) not null,
+    constraint "UserGroups_Group" foreign key ("Company", "Group") references "Security"."Groups" on update cascade on delete cascade,
+
+	"CreatedBy" varchar (60),
+	"CreatedOn" timestamptz not null default current_timestamp,
+	"ModifiedBy" varchar (60),
+	"ModifiedOn" timestamptz
+);
+
+create unique index "Index_UserGroups_Group" on "Security"."UserGroups" ("Company", "Group", "User");
