@@ -496,8 +496,8 @@
     <Content Include="Views\Default\Loader.cshtml" />
     <Content Include="Views\Security\Login.cshtml" />
     <Content Include="Views\Prototypes\List.cshtml" />
-    <Content Include="Views\Users\List.cshtml" />
-    <Content Include="Views\Users\Detail.cshtml" />
+    <Content Include="Views\Users\UsersList.cshtml" />
+    <Content Include="Views\Users\UsersDetail.cshtml" />
     <Content Include="Views\Trail\Detail.cshtml" />
     <Content Include="Views\Trail\List.cshtml" />
     <Content Include="Views\Infrastructure\PrototypeTypes\List.cshtml" />

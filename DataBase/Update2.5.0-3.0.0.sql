@@ -244,4 +244,83 @@ where
 group by uf."Company", uf."User", uf."Department", uf."PrototypeType"
 order by uf."Company", uf."User", uf."Department", uf."PrototypeType";
 
+insert into "Security"."Roles" ("Company", "Code") select "ID", 'Local Security Administrator' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."Roles" ("Company", "Code") select "ID", 'Local System Administrator' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."Roles" ("Company", "Code") select "ID", 'Global System Administrator' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."Roles" ("Company", "Code") select "ID", 'System Support' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."Roles" ("Company", "Code") select "ID", 'Prototype Viewer' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."Roles" ("Company", "Code") select "ID", 'Prototype Configurator' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."Roles" ("Company", "Code") select "ID", 'Prototype Simulator' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."Roles" ("Company", "Code") select "ID", 'Prototype Approver' from "Infrastructure"."Companies" order by "ID"; 
+insert into "Security"."Roles" ("Company", "Code") select "ID", 'Instance Viewer' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."Roles" ("Company", "Code") select "ID", 'Instance Executor' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."Roles" ("Company", "Code") select "ID", 'Instance Supervisor' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."Roles" ("Company", "Code") select "ID", 'Instance Approver' from "Infrastructure"."Companies" order by "ID"; 
+
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Local Security Administrator', 'Trail', 'View' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Local Security Administrator', 'Users', 'View' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Local Security Administrator', 'Users', 'Edit' from "Infrastructure"."Companies" order by "ID";
+
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Global System Administrator', 'DataSources', 'View' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Global System Administrator', 'DataSources', 'Edit' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Global System Administrator', 'Departments', 'View' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Global System Administrator', 'Departments', 'Edit' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Global System Administrator', 'PrototypeTypes', 'View' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Global System Administrator', 'PrototypeTypes', 'Edit' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Global System Administrator', 'Trail', 'View' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Global System Administrator', 'Users', 'View' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Global System Administrator', 'Users', 'Edit' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Global System Administrator', 'WorkFlows', 'View' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Global System Administrator', 'WorkFlows', 'Edit' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Global System Administrator', 'FTPServers', 'View' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Global System Administrator', 'FTPServers', 'Edit' from "Infrastructure"."Companies" order by "ID";
+
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Local System Administrator', 'DataSources', 'View' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Local System Administrator', 'Departments', 'View' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Local System Administrator', 'Departments', 'Edit' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Local System Administrator', 'PrototypeTypes', 'View' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Local System Administrator', 'Trail', 'View' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Local System Administrator', 'Users', 'View' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Local System Administrator', 'WorkFlows', 'View' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Local System Administrator', 'WorkFlows', 'Edit' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Local System Administrator', 'FTPServers', 'View' from "Infrastructure"."Companies" order by "ID";
+
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'System Support', 'DataSources', 'View' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'System Support', 'Departments', 'View' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'System Support', 'PrototypeTypes', 'View' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'System Support', 'Trail', 'View' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'System Support', 'Users', 'View' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'System Support', 'WorkFlows', 'View' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'System Support', 'FTPServers', 'View' from "Infrastructure"."Companies" order by "ID";
+
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Prototype Viewer', 'Prototypes', 'View' from "Infrastructure"."Companies" order by "ID";
+
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Prototype Simulator', 'Prototypes', 'View' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Prototype Simulator', 'Prototypes', 'Preview' from "Infrastructure"."Companies" order by "ID";
+
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Prototype Configurator', 'Prototypes', 'View' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Prototype Configurator', 'Prototypes', 'Preview' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Prototype Configurator', 'Prototypes', 'Edit' from "Infrastructure"."Companies" order by "ID";
+
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Prototype Approver', 'Prototypes', 'View' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Prototype Approver', 'Prototypes', 'Preview' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Prototype Approver', 'Prototypes', 'Approve' from "Infrastructure"."Companies" order by "ID";
+
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Instance Viewer', 'Instances', 'View' from "Infrastructure"."Companies" order by "ID";
+
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Instance Executor', 'Instances', 'View' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Instance Executor', 'Instances', 'Edit' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Instance Executor', 'Instances', 'Create' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Instance Executor', 'Instances', 'Confirm' from "Infrastructure"."Companies" order by "ID";
+
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Instance Supervisor', 'Instances', 'View' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Instance Supervisor', 'Instances', 'Edit' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Instance Supervisor', 'Instances', 'Create' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Instance Supervisor', 'Instances', 'Confirm' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Instance Supervisor', 'Instances', 'Delete' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Instance Supervisor', 'Instances', 'Unsign' from "Infrastructure"."Companies" order by "ID";
+
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Instance Approver', 'Instances', 'View' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Instance Approver', 'Instances', 'Confirm' from "Infrastructure"."Companies" order by "ID";
+
 alter table "Security"."UserFunctions" drop column "Tag";
