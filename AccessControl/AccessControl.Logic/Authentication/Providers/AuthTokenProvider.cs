@@ -93,24 +93,57 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
 			identity.AddClaim(new Claim(ClaimTypes.Name, user.Description));
 			identity.AddClaim(new Claim("CompanyId", user.Company.ToString(), ClaimValueTypes.Integer));
 
-			foreach (var function in user.UserFunctions.Where(f => f.Department.HasValue || f.PrototypeType.HasValue))
-				identity.AddClaim(new Claim(ClaimTypes.Role, $"{function.FunctionGroup}#{function.Function}#{function.Department?.ToString() ?? string.Empty}#{function.PrototypeType?.ToString() ?? string.Empty}"));
+            var Claims = new HashSet<string>();
 
-			foreach (var function in user.UserFunctions.Select(f => $"{f.FunctionGroup}#{f.Function}").Distinct())
-				identity.AddClaim(new Claim(ClaimTypes.Role, function));
+            foreach (var function in user.UserFunctions) //user functions
+            {
+                if (function.Department != null)
+                    Claims.Add($"{function.FunctionGroup}#{function.Function}#{function.Department.ToString() ?? string.Empty}#{function.PrototypeType?.ToString() ?? string.Empty}");
+                Claims.Add($"{function.FunctionGroup}#{function.Function}");
+                Claims.Add($"FunctionGroup#{function.FunctionGroup}");
+            }
 
-			foreach (var function in user.UserFunctions.Select(x => x.FunctionGroup).Distinct())
-				identity.AddClaim(new Claim(ClaimTypes.Role, $"FunctionGroup#{function}"));
+            foreach (var role in user.UserRoles) //user roles
+                foreach (var function in role.Roles.RoleFunctions)
+                {
+                    if (role.Department != null)
+                        Claims.Add($"{function.FunctionGroup}#{function.Function}#{role.Department.ToString() ?? string.Empty}#{role.PrototypeType?.ToString() ?? string.Empty}");
+                    Claims.Add($"{function.FunctionGroup}#{function.Function}");
+                    Claims.Add($"FunctionGroup#{function.FunctionGroup}");
+                }
 
+            foreach (var function in user.UserGroups.SelectMany(ug => ug.Groups.GroupFunctions)) //group functions
+            {
+                if (function.Department != null)
+                    Claims.Add($"{function.FunctionGroup}#{function.Function}#{function.Department.ToString() ?? string.Empty}#{function.PrototypeType?.ToString() ?? string.Empty}");
+                Claims.Add($"{function.FunctionGroup}#{function.Function}");
+                Claims.Add($"FunctionGroup#{function.FunctionGroup}");
+            }
+
+            foreach (var role in user.UserGroups.SelectMany(ug => ug.Groups.GroupRoles)) //group roles
+                foreach (var function in role.Roles.RoleFunctions)
+                {
+                    if (role.Department != null)
+                        Claims.Add($"{function.FunctionGroup}#{function.Function}#{role.Department.ToString() ?? string.Empty}#{role.PrototypeType?.ToString() ?? string.Empty}");
+                    Claims.Add($"{function.FunctionGroup}#{function.Function}");
+                    Claims.Add($"FunctionGroup#{function.FunctionGroup}");
+                }
+
+            /*
             foreach (var level in user.UserLevels)
             {
                 if (level.InstanceWorkFlowLevel != null)
-                    identity.AddClaim(new Claim(ClaimTypes.Role, $"InstanceWorkFlowLevel#{level.Department?.ToString() ?? string.Empty}#{level.PrototypeType?.ToString() ?? string.Empty}#{level.InstanceWorkFlowLevel}"));
+                    Claims.Add($"InstanceWorkFlowLevel#{level.Department?.ToString() ?? string.Empty}#{level.PrototypeType?.ToString() ?? string.Empty}#{level.InstanceWorkFlowLevel}");
                 if (level.PrototypeWorkFlowLevel != null)
-                    identity.AddClaim(new Claim(ClaimTypes.Role, $"PrototypeWorkFlowLevel#{level.Department?.ToString() ?? string.Empty}#{level.PrototypeType?.ToString() ?? string.Empty}#{level.PrototypeWorkFlowLevel}"));
+                    Claims.Add($"PrototypeWorkFlowLevel#{level.Department?.ToString() ?? string.Empty}#{level.PrototypeType?.ToString() ?? string.Empty}#{level.PrototypeWorkFlowLevel}");
                 if (level.SignatureLevel != null)
-                    identity.AddClaim(new Claim(ClaimTypes.Role, $"SignatureLevel#{level.Department?.ToString() ?? string.Empty}#{level.PrototypeType?.ToString() ?? string.Empty}#{level.SignatureLevel}"));
+                    Claims.Add($"SignatureLevel#{level.Department?.ToString() ?? string.Empty}#{level.PrototypeType?.ToString() ?? string.Empty}#{level.SignatureLevel}");
             }
+            */
+
+            foreach (var Claim in Claims)
+                identity.AddClaim(new Claim(ClaimTypes.Role, Claim));
+
             return identity;
 		}
 

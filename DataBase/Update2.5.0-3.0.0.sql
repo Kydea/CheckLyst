@@ -326,3 +326,23 @@ insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Fun
 insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Instance Approver', 'Instances', 'Confirm' from "Infrastructure"."Companies" order by "ID";
 
 alter table "Security"."UserFunctions" drop column "Tag";
+
+create view "Security"."AllUserFunctions" as
+select uf."Company", uf."User", uf."Department", uf."PrototypeType", uf."FunctionGroup", uf."Function"
+from "Security"."UserFunctions" uf
+union
+select ug."Company", ug."User", gf."Department", gf."PrototypeType", gf."FunctionGroup", gf."Function"
+from 
+	"Security"."UserGroups" ug
+	inner join "Security"."GroupFunctions" gf on ug."Company" = gf."Company" and ug."Group" = gf."Group"
+union
+select ur."Company", ur."User", ur."Department", ur."PrototypeType", rf."FunctionGroup", rf."Function"
+from 
+	"Security"."UserRoles" ur
+	inner join "Security"."RoleFunctions" rf on ur."Company" = rf."Company" and ur."Role" = rf."Role"
+union
+select ug."Company", ug."User", gr."Department", gr."PrototypeType", rf."FunctionGroup", rf."Function"
+from 
+	"Security"."UserGroups" ug
+	inner join "Security"."GroupRoles" gr on ug."Company" = gr."Company" and ug."Group" = gr."Group"
+	inner join "Security"."RoleFunctions" rf on gr."Company" = rf."Company" and gr."Role" = rf."Role";
