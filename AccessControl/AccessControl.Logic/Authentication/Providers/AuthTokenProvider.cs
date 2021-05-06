@@ -93,8 +93,8 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
 			identity.AddClaim(new Claim(ClaimTypes.Name, user.Description));
 			identity.AddClaim(new Claim("CompanyId", user.Company.ToString(), ClaimValueTypes.Integer));
 
-			foreach (var function in user.UserFunctions.Where(f => f.Department.HasValue || f.PrototypeType.HasValue || !string.IsNullOrEmpty(f.Tag)))
-				identity.AddClaim(new Claim(ClaimTypes.Role, $"{function.FunctionGroup}#{function.Function}#{function.Department?.ToString() ?? string.Empty}#{function.PrototypeType?.ToString() ?? string.Empty}#{function.Tag ?? string.Empty}"));
+			foreach (var function in user.UserFunctions.Where(f => f.Department.HasValue || f.PrototypeType.HasValue))
+				identity.AddClaim(new Claim(ClaimTypes.Role, $"{function.FunctionGroup}#{function.Function}#{function.Department?.ToString() ?? string.Empty}#{function.PrototypeType?.ToString() ?? string.Empty}"));
 
 			foreach (var function in user.UserFunctions.Select(f => $"{f.FunctionGroup}#{f.Function}").Distinct())
 				identity.AddClaim(new Claim(ClaimTypes.Role, function));
@@ -102,7 +102,16 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
 			foreach (var function in user.UserFunctions.Select(x => x.FunctionGroup).Distinct())
 				identity.AddClaim(new Claim(ClaimTypes.Role, $"FunctionGroup#{function}"));
 
-			return identity;
+            foreach (var level in user.UserLevels)
+            {
+                if (level.InstanceWorkFlowLevel != null)
+                    identity.AddClaim(new Claim(ClaimTypes.Role, $"InstanceWorkFlowLevel#{level.Department?.ToString() ?? string.Empty}#{level.PrototypeType?.ToString() ?? string.Empty}#{level.InstanceWorkFlowLevel}"));
+                if (level.PrototypeWorkFlowLevel != null)
+                    identity.AddClaim(new Claim(ClaimTypes.Role, $"PrototypeWorkFlowLevel#{level.Department?.ToString() ?? string.Empty}#{level.PrototypeType?.ToString() ?? string.Empty}#{level.PrototypeWorkFlowLevel}"));
+                if (level.SignatureLevel != null)
+                    identity.AddClaim(new Claim(ClaimTypes.Role, $"SignatureLevel#{level.Department?.ToString() ?? string.Empty}#{level.PrototypeType?.ToString() ?? string.Empty}#{level.SignatureLevel}"));
+            }
+            return identity;
 		}
 
 		private static Dictionary<string, string> CreateProperties(Users user)
@@ -114,7 +123,7 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
                 { "code", user.Code },
 				{ "name", user.Description },
                 { "timeZone", user.Companies.TimeZone },
-                { "roles", string.Join(",", user.UserFunctions.Select(function => $"{function.FunctionGroup}#{function.Function}#{function.Department?.ToString() ?? string.Empty}#{function.PrototypeType?.ToString() ?? string.Empty}#{function.Tag ?? string.Empty}")) }
+                { "roles", string.Join(",", user.UserFunctions.Select(function => $"{function.FunctionGroup}#{function.Function}#{function.Department?.ToString() ?? string.Empty}#{function.PrototypeType?.ToString() ?? string.Empty}")) }
             };
 		}
 	}

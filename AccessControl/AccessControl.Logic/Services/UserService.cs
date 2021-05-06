@@ -414,7 +414,6 @@ namespace CheckListManager.AccessControl.Logic.Services
                             prototypeType = g.Key.PrototypeType,
                             functionGroup = "Prototypes",
                             functions = g.Select(pf => pf.Function).ToArray(),
-                            level = g.First().Tag
                         })
                         .ToArray();
 
@@ -426,7 +425,6 @@ namespace CheckListManager.AccessControl.Logic.Services
                             prototypeType = g.Key.PrototypeType,
                             functionGroup = "Instances",
                             functions = g.Select(pf => pf.Function).ToArray(),
-                            level = g.First().Tag
                         })
                         .ToArray();
                 }
@@ -467,7 +465,6 @@ namespace CheckListManager.AccessControl.Logic.Services
                             PrototypeType = row.prototypeType,
                             FunctionGroup = "Prototypes",
                             Function = function,
-                            Tag = row.level,
                             CreatedOn = DateTimeOffset.UtcNow,
                             CreatedBy = identity.Code
                         });
@@ -483,7 +480,6 @@ namespace CheckListManager.AccessControl.Logic.Services
                             PrototypeType = row.prototypeType,
                             FunctionGroup = "Instances",
                             Function = function,
-                            Tag = row.level,
                             CreatedOn = DateTimeOffset.UtcNow,
                             CreatedBy = identity.Code
                         });
@@ -505,7 +501,6 @@ namespace CheckListManager.AccessControl.Logic.Services
                     uf.Function,
                     Department = uf.Department.HasValue ? uf.Department + " " + uf.Departments?.Name : null,
                     PrototypeType = uf.PrototypeType.HasValue ? uf.PrototypeType + " " + uf.PrototypeTypes?.Name : null,
-                    Level = uf.Tag
                 }),
                 ReasonForChange = user.Reason
             });

@@ -143,26 +143,48 @@ namespace CheckListManager.Common.Data
             return Entities.Users.SingleOrDefault(u => u.Company == CompanyID && u.Code == Code);
         }
 
-        private IQueryable<Users> GetAppointedUsersQuery(long CompanyID, string FunctionGroup, string Function, long Department, long PrototypeType, IEnumerable<string> Tags)
+        public async Task<List<Users>> GetInstanceAppointedUsersAsync(long CompanyID, string FunctionGroup, string Function, long Department, long PrototypeType, IEnumerable<string> Levels)
         {
-            return Entities.UserFunctions.Where(uf =>
-                uf.Company == CompanyID
-                && uf.FunctionGroup == FunctionGroup
-                && uf.Function == Function
-                && uf.Department == Department
-                && (uf.PrototypeType == null || uf.PrototypeType == PrototypeType)
-                && (Tags.Count() == 0 || Tags.Contains(uf.Tag))
-            ).Select(uf => uf.Users);
+            return await Entities.Users.Where(u => 
+                u.UserFunctions.Any(uf =>
+                    uf.Company == CompanyID
+                    && uf.Department == Department
+                    && (uf.PrototypeType == null || uf.PrototypeType == PrototypeType)
+                    && uf.FunctionGroup == FunctionGroup
+                    && uf.Function == Function
+                ) && (
+                    !Levels.Any()
+                    || u.UserLevels.Any(ul =>
+                        ul.Company == CompanyID
+                        && (ul.Department == null || ul.Department == Department && (ul.PrototypeType == null || ul.PrototypeType == PrototypeType))
+                    ) && Levels.Contains(u.UserLevels.OrderBy(ul => ul.Department).ThenBy(ul => ul.PrototypeType).First(ul =>
+                        ul.Company == CompanyID
+                        && (ul.Department == null || ul.Department == Department && (ul.PrototypeType == null || ul.PrototypeType == PrototypeType))
+                    ).InstanceWorkFlowLevel) //takes the level with the prototype type if present otherwise that with only the department if present otherwise the generic one if present, because the order by considers null > any string
+                )
+            ).ToListAsync();
         }
 
-        public List<Users> GetAppointedUsers(long CompanyID, string FunctionGroup, string Function, long Department, long PrototypeType, IEnumerable<string> Tags)
+        public async Task<List<Users>> GetPrototypeAppointedUsersAsync(long CompanyID, string FunctionGroup, string Function, long Department, long PrototypeType, IEnumerable<string> Levels)
         {
-            return GetAppointedUsersQuery(CompanyID, FunctionGroup, Function, Department, PrototypeType, Tags).ToList();
-        }
-
-        public async Task<List<Users>> GetAppointedUsersAsync(long CompanyID, string FunctionGroup, string Function, long Department, long PrototypeType, IEnumerable<string> Tags)
-        {
-            return await GetAppointedUsersQuery(CompanyID, FunctionGroup, Function, Department, PrototypeType, Tags).ToListAsync();
+            return await Entities.Users.Where(u =>
+                u.UserFunctions.Any(uf =>
+                    uf.Company == CompanyID
+                    && uf.Department == Department
+                    && (uf.PrototypeType == null || uf.PrototypeType == PrototypeType)
+                    && uf.FunctionGroup == FunctionGroup
+                    && uf.Function == Function
+                ) && (
+                    !Levels.Any()
+                    || u.UserLevels.Any(ul =>
+                        ul.Company == CompanyID
+                        && (ul.Department == null || ul.Department == Department && (ul.PrototypeType == null || ul.PrototypeType == PrototypeType))
+                    ) && Levels.Contains(u.UserLevels.OrderBy(ul => ul.Department).ThenBy(ul => ul.PrototypeType).First(ul =>
+                        ul.Company == CompanyID
+                        && (ul.Department == null || ul.Department == Department && (ul.PrototypeType == null || ul.PrototypeType == PrototypeType))
+                    ).PrototypeWorkFlowLevel) //takes the level with the prototype type if present otherwise that with only the department if present otherwise the generic one if present, because the order by considers null > any string
+                )
+            ).ToListAsync();
         }
 
         public async Task<FTPServers> GetPrototypesFTPServerAsync(long CompanyID, long PrototypeType)

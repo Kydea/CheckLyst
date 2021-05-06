@@ -285,6 +285,50 @@
           <Property Name="FunctionGroup" Type="varchar" MaxLength="20" Nullable="false" />
           <Property Name="Code" Type="varchar" MaxLength="20" Nullable="false" />
         </EntityType>
+        <EntityType Name="GroupFunctions">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int8" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Company" Type="int8" Nullable="false" />
+          <Property Name="Group" Type="varchar" MaxLength="60" Nullable="false" />
+          <Property Name="FunctionGroup" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="Function" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="Department" Type="int8" />
+          <Property Name="PrototypeType" Type="int8" />
+          <Property Name="CreatedBy" Type="varchar" MaxLength="60" />
+          <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
+          <Property Name="ModifiedBy" Type="varchar" MaxLength="60" />
+          <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
+        </EntityType>
+        <EntityType Name="GroupRoles">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int8" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Company" Type="int8" Nullable="false" />
+          <Property Name="Group" Type="varchar" MaxLength="60" Nullable="false" />
+          <Property Name="Department" Type="int8" />
+          <Property Name="PrototypeType" Type="int8" />
+          <Property Name="Role" Type="varchar" MaxLength="60" Nullable="false" />
+          <Property Name="CreatedBy" Type="varchar" MaxLength="60" />
+          <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
+          <Property Name="ModifiedBy" Type="varchar" MaxLength="60" />
+          <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
+        </EntityType>
+        <EntityType Name="Groups">
+          <Key>
+            <PropertyRef Name="Company" />
+            <PropertyRef Name="Code" />
+          </Key>
+          <Property Name="Company" Type="int8" Nullable="false" />
+          <Property Name="Code" Type="varchar" MaxLength="60" Nullable="false" />
+          <Property Name="Description" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="CreatedBy" Type="varchar" MaxLength="60" />
+          <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
+          <Property Name="ModifiedBy" Type="varchar" MaxLength="60" />
+          <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
+        </EntityType>
         <EntityType Name="PasswordHistory">
           <Key>
             <PropertyRef Name="ID" />
@@ -305,6 +349,33 @@
           <Property Name="PIN" Type="bytea" />
           <Property Name="Date" Type="timestamptz" Precision="7" Nullable="false" />
         </EntityType>
+        <EntityType Name="RoleFunctions">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int8" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Company" Type="int8" Nullable="false" />
+          <Property Name="Role" Type="varchar" MaxLength="60" Nullable="false" />
+          <Property Name="FunctionGroup" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="Function" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="CreatedBy" Type="varchar" MaxLength="60" />
+          <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
+          <Property Name="ModifiedBy" Type="varchar" MaxLength="60" />
+          <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
+        </EntityType>
+        <EntityType Name="Roles">
+          <Key>
+            <PropertyRef Name="Company" />
+            <PropertyRef Name="Code" />
+          </Key>
+          <Property Name="Company" Type="int8" Nullable="false" />
+          <Property Name="Code" Type="varchar" MaxLength="60" Nullable="false" />
+          <Property Name="CreatedBy" Type="varchar" MaxLength="60" />
+          <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
+          <Property Name="ModifiedBy" Type="varchar" MaxLength="60" />
+          <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
+          <Property Name="FunctionGroup" Type="varchar" MaxLength="20" />
+        </EntityType>
         <EntityType Name="UserFunctions">
           <Key>
             <PropertyRef Name="ID" />
@@ -316,7 +387,51 @@
           <Property Name="Function" Type="varchar" MaxLength="20" Nullable="false" />
           <Property Name="Department" Type="int8" />
           <Property Name="PrototypeType" Type="int8" />
-          <Property Name="Tag" Type="varchar" MaxLength="50" />
+          <Property Name="CreatedBy" Type="varchar" MaxLength="60" />
+          <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
+          <Property Name="ModifiedBy" Type="varchar" MaxLength="60" />
+          <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
+        </EntityType>
+        <EntityType Name="UserGroups">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int8" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Company" Type="int8" Nullable="false" />
+          <Property Name="User" Type="varchar" MaxLength="60" Nullable="false" />
+          <Property Name="Group" Type="varchar" MaxLength="60" Nullable="false" />
+          <Property Name="CreatedBy" Type="varchar" MaxLength="60" />
+          <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
+          <Property Name="ModifiedBy" Type="varchar" MaxLength="60" />
+          <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
+        </EntityType>
+        <EntityType Name="UserLevels">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int8" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Company" Type="int8" Nullable="false" />
+          <Property Name="User" Type="varchar" MaxLength="60" Nullable="false" />
+          <Property Name="Department" Type="int8" />
+          <Property Name="PrototypeType" Type="int8" />
+          <Property Name="SignatureLevel" Type="varchar" MaxLength="50" />
+          <Property Name="PrototypeWorkFlowLevel" Type="varchar" MaxLength="50" />
+          <Property Name="InstanceWorkFlowLevel" Type="varchar" MaxLength="50" />
+          <Property Name="CreatedBy" Type="varchar" MaxLength="60" />
+          <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
+          <Property Name="ModifiedBy" Type="varchar" MaxLength="60" />
+          <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
+        </EntityType>
+        <EntityType Name="UserRoles">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int8" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Company" Type="int8" Nullable="false" />
+          <Property Name="User" Type="varchar" MaxLength="60" Nullable="false" />
+          <Property Name="Department" Type="int8" />
+          <Property Name="PrototypeType" Type="int8" />
+          <Property Name="Role" Type="varchar" MaxLength="60" Nullable="false" />
           <Property Name="CreatedBy" Type="varchar" MaxLength="60" />
           <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
           <Property Name="ModifiedBy" Type="varchar" MaxLength="60" />
@@ -598,6 +713,128 @@
             </Principal>
             <Dependent Role="Functions">
               <PropertyRef Name="FunctionGroup" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="GroupFunctions_Department_fkey">
+          <End Role="Departments" Type="Self.Departments" Multiplicity="0..1" />
+          <End Role="GroupFunctions" Type="Self.GroupFunctions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Departments">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="GroupFunctions">
+              <PropertyRef Name="Department" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="GroupFunctions_Function">
+          <End Role="Functions" Type="Self.Functions" Multiplicity="1" />
+          <End Role="GroupFunctions" Type="Self.GroupFunctions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Functions">
+              <PropertyRef Name="FunctionGroup" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="GroupFunctions">
+              <PropertyRef Name="FunctionGroup" />
+              <PropertyRef Name="Function" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="GroupFunctions_Group">
+          <End Role="Groups" Type="Self.Groups" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="GroupFunctions" Type="Self.GroupFunctions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Groups">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="GroupFunctions">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Group" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="GroupFunctions_PrototypeType_fkey">
+          <End Role="PrototypeTypes" Type="Self.PrototypeTypes" Multiplicity="0..1" />
+          <End Role="GroupFunctions" Type="Self.GroupFunctions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PrototypeTypes">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="GroupFunctions">
+              <PropertyRef Name="PrototypeType" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="GroupRoles_Department_fkey">
+          <End Role="Departments" Type="Self.Departments" Multiplicity="0..1" />
+          <End Role="GroupRoles" Type="Self.GroupRoles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Departments">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="GroupRoles">
+              <PropertyRef Name="Department" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="GroupRoles_Group">
+          <End Role="Groups" Type="Self.Groups" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="GroupRoles" Type="Self.GroupRoles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Groups">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="GroupRoles">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Group" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="GroupRoles_PrototypeType_fkey">
+          <End Role="PrototypeTypes" Type="Self.PrototypeTypes" Multiplicity="0..1" />
+          <End Role="GroupRoles" Type="Self.GroupRoles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PrototypeTypes">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="GroupRoles">
+              <PropertyRef Name="PrototypeType" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="GroupRoles_Role">
+          <End Role="Roles" Type="Self.Roles" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="GroupRoles" Type="Self.GroupRoles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Roles">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="GroupRoles">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Role" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Groups_Company_fkey">
+          <End Role="Companies" Type="Self.Companies" Multiplicity="1" />
+          <End Role="Groups" Type="Self.Groups" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Companies">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Groups">
+              <PropertyRef Name="Company" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -919,6 +1156,60 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="RoleFunctions_Function">
+          <End Role="Functions" Type="Self.Functions" Multiplicity="1" />
+          <End Role="RoleFunctions" Type="Self.RoleFunctions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Functions">
+              <PropertyRef Name="FunctionGroup" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="RoleFunctions">
+              <PropertyRef Name="FunctionGroup" />
+              <PropertyRef Name="Function" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="RoleFunctions_Role">
+          <End Role="Roles" Type="Self.Roles" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="RoleFunctions" Type="Self.RoleFunctions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Roles">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="RoleFunctions">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Role" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Roles_Company_fkey">
+          <End Role="Companies" Type="Self.Companies" Multiplicity="1" />
+          <End Role="Roles" Type="Self.Roles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Companies">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Roles">
+              <PropertyRef Name="Company" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Roles_FunctionGroup_fkey">
+          <End Role="FunctionGroups" Type="Self.FunctionGroups" Multiplicity="0..1" />
+          <End Role="Roles" Type="Self.Roles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FunctionGroups">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="Roles">
+              <PropertyRef Name="FunctionGroup" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="SettingValues_Company_fkey">
           <End Role="Companies" Type="Self.Companies" Multiplicity="1" />
           <End Role="SettingValues" Type="Self.SettingValues" Multiplicity="*" />
@@ -994,6 +1285,134 @@
             <Dependent Role="UserFunctions">
               <PropertyRef Name="Company" />
               <PropertyRef Name="User" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserFunctions_User1">
+          <End Role="Users" Type="Self.Users" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="UserLevels" Type="Self.UserLevels" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="UserLevels">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="User" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserGroups_Group">
+          <End Role="Groups" Type="Self.Groups" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="UserGroups" Type="Self.UserGroups" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Groups">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="UserGroups">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Group" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserLevels_Department_fkey">
+          <End Role="Departments" Type="Self.Departments" Multiplicity="0..1" />
+          <End Role="UserLevels" Type="Self.UserLevels" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Departments">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="UserLevels">
+              <PropertyRef Name="Department" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserLevels_PrototypeType_fkey">
+          <End Role="PrototypeTypes" Type="Self.PrototypeTypes" Multiplicity="0..1" />
+          <End Role="UserLevels" Type="Self.UserLevels" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PrototypeTypes">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="UserLevels">
+              <PropertyRef Name="PrototypeType" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserRoles_Department_fkey">
+          <End Role="Departments" Type="Self.Departments" Multiplicity="0..1" />
+          <End Role="UserRoles" Type="Self.UserRoles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Departments">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="UserRoles">
+              <PropertyRef Name="Department" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserRoles_Group">
+          <End Role="Users" Type="Self.Users" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="UserRoles" Type="Self.UserRoles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="UserRoles">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="User" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserRoles_Group1">
+          <End Role="Users" Type="Self.Users" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="UserGroups" Type="Self.UserGroups" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="UserGroups">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="User" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserRoles_PrototypeType_fkey">
+          <End Role="PrototypeTypes" Type="Self.PrototypeTypes" Multiplicity="0..1" />
+          <End Role="UserRoles" Type="Self.UserRoles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PrototypeTypes">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="UserRoles">
+              <PropertyRef Name="PrototypeType" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserRoles_Role">
+          <End Role="Roles" Type="Self.Roles" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="UserRoles" Type="Self.UserRoles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Roles">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="UserRoles">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Role" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1197,9 +1616,17 @@
           <EntitySet Name="TimeZones" EntityType="Self.TimeZones" Schema="Infrastructure" store:Type="Tables" />
           <EntitySet Name="FunctionGroups" EntityType="Self.FunctionGroups" Schema="Security" store:Type="Tables" />
           <EntitySet Name="Functions" EntityType="Self.Functions" Schema="Security" store:Type="Tables" />
+          <EntitySet Name="GroupFunctions" EntityType="Self.GroupFunctions" Schema="Security" store:Type="Tables" />
+          <EntitySet Name="GroupRoles" EntityType="Self.GroupRoles" Schema="Security" store:Type="Tables" />
+          <EntitySet Name="Groups" EntityType="Self.Groups" Schema="Security" store:Type="Tables" />
           <EntitySet Name="PasswordHistory" EntityType="Self.PasswordHistory" Schema="Security" store:Type="Tables" />
           <EntitySet Name="PINHistory" EntityType="Self.PINHistory" Schema="Security" store:Type="Tables" />
+          <EntitySet Name="RoleFunctions" EntityType="Self.RoleFunctions" Schema="Security" store:Type="Tables" />
+          <EntitySet Name="Roles" EntityType="Self.Roles" Schema="Security" store:Type="Tables" />
           <EntitySet Name="UserFunctions" EntityType="Self.UserFunctions" Schema="Security" store:Type="Tables" />
+          <EntitySet Name="UserGroups" EntityType="Self.UserGroups" Schema="Security" store:Type="Tables" />
+          <EntitySet Name="UserLevels" EntityType="Self.UserLevels" Schema="Security" store:Type="Tables" />
+          <EntitySet Name="UserRoles" EntityType="Self.UserRoles" Schema="Security" store:Type="Tables" />
           <EntitySet Name="Users" EntityType="Self.Users" Schema="Security" store:Type="Tables" />
           <EntitySet Name="UserSessions" EntityType="Self.UserSessions" Schema="Security" store:Type="Tables" />
           <EntitySet Name="Actions" EntityType="Self.Actions" Schema="Trail" store:Type="Tables" />
@@ -1250,6 +1677,42 @@
           <AssociationSet Name="Functions_FunctionGroup_fkey" Association="Self.Functions_FunctionGroup_fkey">
             <End Role="FunctionGroups" EntitySet="FunctionGroups" />
             <End Role="Functions" EntitySet="Functions" />
+          </AssociationSet>
+          <AssociationSet Name="GroupFunctions_Department_fkey" Association="Self.GroupFunctions_Department_fkey">
+            <End Role="Departments" EntitySet="Departments" />
+            <End Role="GroupFunctions" EntitySet="GroupFunctions" />
+          </AssociationSet>
+          <AssociationSet Name="GroupFunctions_Function" Association="Self.GroupFunctions_Function">
+            <End Role="Functions" EntitySet="Functions" />
+            <End Role="GroupFunctions" EntitySet="GroupFunctions" />
+          </AssociationSet>
+          <AssociationSet Name="GroupFunctions_Group" Association="Self.GroupFunctions_Group">
+            <End Role="Groups" EntitySet="Groups" />
+            <End Role="GroupFunctions" EntitySet="GroupFunctions" />
+          </AssociationSet>
+          <AssociationSet Name="GroupFunctions_PrototypeType_fkey" Association="Self.GroupFunctions_PrototypeType_fkey">
+            <End Role="PrototypeTypes" EntitySet="PrototypeTypes" />
+            <End Role="GroupFunctions" EntitySet="GroupFunctions" />
+          </AssociationSet>
+          <AssociationSet Name="GroupRoles_Department_fkey" Association="Self.GroupRoles_Department_fkey">
+            <End Role="Departments" EntitySet="Departments" />
+            <End Role="GroupRoles" EntitySet="GroupRoles" />
+          </AssociationSet>
+          <AssociationSet Name="GroupRoles_Group" Association="Self.GroupRoles_Group">
+            <End Role="Groups" EntitySet="Groups" />
+            <End Role="GroupRoles" EntitySet="GroupRoles" />
+          </AssociationSet>
+          <AssociationSet Name="GroupRoles_PrototypeType_fkey" Association="Self.GroupRoles_PrototypeType_fkey">
+            <End Role="PrototypeTypes" EntitySet="PrototypeTypes" />
+            <End Role="GroupRoles" EntitySet="GroupRoles" />
+          </AssociationSet>
+          <AssociationSet Name="GroupRoles_Role" Association="Self.GroupRoles_Role">
+            <End Role="Roles" EntitySet="Roles" />
+            <End Role="GroupRoles" EntitySet="GroupRoles" />
+          </AssociationSet>
+          <AssociationSet Name="Groups_Company_fkey" Association="Self.Groups_Company_fkey">
+            <End Role="Companies" EntitySet="Companies" />
+            <End Role="Groups" EntitySet="Groups" />
           </AssociationSet>
           <AssociationSet Name="InstanceRelations_Child_fkey" Association="Self.InstanceRelations_Child_fkey">
             <End Role="Instances" EntitySet="Instances" />
@@ -1351,6 +1814,22 @@
             <End Role="Actions" EntitySet="Actions" />
             <End Role="Records" EntitySet="Records" />
           </AssociationSet>
+          <AssociationSet Name="RoleFunctions_Function" Association="Self.RoleFunctions_Function">
+            <End Role="Functions" EntitySet="Functions" />
+            <End Role="RoleFunctions" EntitySet="RoleFunctions" />
+          </AssociationSet>
+          <AssociationSet Name="RoleFunctions_Role" Association="Self.RoleFunctions_Role">
+            <End Role="Roles" EntitySet="Roles" />
+            <End Role="RoleFunctions" EntitySet="RoleFunctions" />
+          </AssociationSet>
+          <AssociationSet Name="Roles_Company_fkey" Association="Self.Roles_Company_fkey">
+            <End Role="Companies" EntitySet="Companies" />
+            <End Role="Roles" EntitySet="Roles" />
+          </AssociationSet>
+          <AssociationSet Name="Roles_FunctionGroup_fkey" Association="Self.Roles_FunctionGroup_fkey">
+            <End Role="FunctionGroups" EntitySet="FunctionGroups" />
+            <End Role="Roles" EntitySet="Roles" />
+          </AssociationSet>
           <AssociationSet Name="SettingValues_Company_fkey" Association="Self.SettingValues_Company_fkey">
             <End Role="Companies" EntitySet="Companies" />
             <End Role="SettingValues" EntitySet="SettingValues" />
@@ -1374,6 +1853,42 @@
           <AssociationSet Name="UserFunctions_User" Association="Self.UserFunctions_User">
             <End Role="Users" EntitySet="Users" />
             <End Role="UserFunctions" EntitySet="UserFunctions" />
+          </AssociationSet>
+          <AssociationSet Name="UserFunctions_User1" Association="Self.UserFunctions_User1">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="UserLevels" EntitySet="UserLevels" />
+          </AssociationSet>
+          <AssociationSet Name="UserGroups_Group" Association="Self.UserGroups_Group">
+            <End Role="Groups" EntitySet="Groups" />
+            <End Role="UserGroups" EntitySet="UserGroups" />
+          </AssociationSet>
+          <AssociationSet Name="UserLevels_Department_fkey" Association="Self.UserLevels_Department_fkey">
+            <End Role="Departments" EntitySet="Departments" />
+            <End Role="UserLevels" EntitySet="UserLevels" />
+          </AssociationSet>
+          <AssociationSet Name="UserLevels_PrototypeType_fkey" Association="Self.UserLevels_PrototypeType_fkey">
+            <End Role="PrototypeTypes" EntitySet="PrototypeTypes" />
+            <End Role="UserLevels" EntitySet="UserLevels" />
+          </AssociationSet>
+          <AssociationSet Name="UserRoles_Department_fkey" Association="Self.UserRoles_Department_fkey">
+            <End Role="Departments" EntitySet="Departments" />
+            <End Role="UserRoles" EntitySet="UserRoles" />
+          </AssociationSet>
+          <AssociationSet Name="UserRoles_Group" Association="Self.UserRoles_Group">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="UserRoles" EntitySet="UserRoles" />
+          </AssociationSet>
+          <AssociationSet Name="UserRoles_Group1" Association="Self.UserRoles_Group1">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="UserGroups" EntitySet="UserGroups" />
+          </AssociationSet>
+          <AssociationSet Name="UserRoles_PrototypeType_fkey" Association="Self.UserRoles_PrototypeType_fkey">
+            <End Role="PrototypeTypes" EntitySet="PrototypeTypes" />
+            <End Role="UserRoles" EntitySet="UserRoles" />
+          </AssociationSet>
+          <AssociationSet Name="UserRoles_Role" Association="Self.UserRoles_Role">
+            <End Role="Roles" EntitySet="Roles" />
+            <End Role="UserRoles" EntitySet="UserRoles" />
           </AssociationSet>
           <AssociationSet Name="Users_Company_fkey" Association="Self.Users_Company_fkey">
             <End Role="Companies" EntitySet="Companies" />
@@ -1453,6 +1968,8 @@
           <NavigationProperty Name="Instances" Relationship="RelationalDatabaseModel.Instances_Company_fkey" FromRole="Companies" ToRole="Instances" />
           <NavigationProperty Name="FTPServers" Relationship="RelationalDatabaseModel.FTPServers_Company_fkey" FromRole="Companies" ToRole="FTPServers" />
           <NavigationProperty Name="TimeZones" Relationship="RelationalDatabaseModel.Companies_TimeZone_fkey" FromRole="Companies" ToRole="TimeZones" />
+          <NavigationProperty Name="Groups" Relationship="RelationalDatabaseModel.Groups_Company_fkey" FromRole="Companies" ToRole="Groups" />
+          <NavigationProperty Name="Roles" Relationship="RelationalDatabaseModel.Roles_Company_fkey" FromRole="Companies" ToRole="Roles" />
         </EntityType>
         <EntityType Name="Departments">
           <Key>
@@ -1468,7 +1985,11 @@
           <NavigationProperty Name="Companies" Relationship="Self.Departments_Company_fkey" FromRole="Departments" ToRole="Companies" />
           <NavigationProperty Name="Prototypes" Relationship="RelationalDatabaseModel.Prototypes_Department_fkey" FromRole="Departments" ToRole="Prototypes" />
           <NavigationProperty Name="PrototypeTypes" Relationship="RelationalDatabaseModel.PrototypeTypes_Department_fkey" FromRole="Departments" ToRole="PrototypeTypes" />
+          <NavigationProperty Name="GroupFunctions" Relationship="RelationalDatabaseModel.GroupFunctions_Department_fkey" FromRole="Departments" ToRole="GroupFunctions" />
+          <NavigationProperty Name="GroupRoles" Relationship="RelationalDatabaseModel.GroupRoles_Department_fkey" FromRole="Departments" ToRole="GroupRoles" />
           <NavigationProperty Name="UserFunctions" Relationship="RelationalDatabaseModel.UserFunctions_Department_fkey" FromRole="Departments" ToRole="UserFunctions" />
+          <NavigationProperty Name="UserLevels" Relationship="RelationalDatabaseModel.UserLevels_Department_fkey" FromRole="Departments" ToRole="UserLevels" />
+          <NavigationProperty Name="UserRoles" Relationship="RelationalDatabaseModel.UserRoles_Department_fkey" FromRole="Departments" ToRole="UserRoles" />
         </EntityType>
         <EntityType Name="Users">
           <Key>
@@ -1496,10 +2017,13 @@
           <NavigationProperty Name="PINHistory" Relationship="RelationalDatabaseModel.PINHistory_User" FromRole="Users" ToRole="PINHistory" />
           <NavigationProperty Name="WorkFlowApplicationSteps" Relationship="RelationalDatabaseModel.WorkFlowApplicationSteps_User" FromRole="Users" ToRole="WorkFlowApplicationSteps" />
           <Property Name="LastLoginFailedOn" Type="DateTimeOffset" Precision="7" />
-          <NavigationProperty Name="UserFunctions" Relationship="RelationalDatabaseModel.UserFunctions_User" FromRole="Users" ToRole="UserFunctions" />
           <Property Name="NumberOfPasswordAttempts" Type="Int32" Nullable="false" />
           <Property Name="NumberOfPINAttempts" Type="Int32" Nullable="false" />
           <Property Name="CorporateID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="UserFunctions" Relationship="RelationalDatabaseModel.UserFunctions_User" FromRole="Users" ToRole="UserFunctions" />
+          <NavigationProperty Name="UserGroups" Relationship="RelationalDatabaseModel.UserRoles_Group1" FromRole="Users" ToRole="UserGroups" />
+          <NavigationProperty Name="UserLevels" Relationship="RelationalDatabaseModel.UserFunctions_User1" FromRole="Users" ToRole="UserLevels" />
+          <NavigationProperty Name="UserRoles" Relationship="RelationalDatabaseModel.UserRoles_Group" FromRole="Users" ToRole="UserRoles" />
         </EntityType>
         <Association Name="Departments_Company_fkey">
           <End Role="Companies" Type="Self.Companies" Multiplicity="0..1">
@@ -1680,23 +2204,6 @@
             <End Role="Companies" EntitySet="Companies" />
             <End Role="SettingValues" EntitySet="SettingValues" />
           </AssociationSet>
-          <EntitySet Name="UserFunctions" EntityType="RelationalDatabaseModel.UserFunctions" />
-          <AssociationSet Name="UserFunctions_PrototypeType_fkey" Association="RelationalDatabaseModel.UserFunctions_PrototypeType_fkey">
-            <End Role="PrototypeTypes" EntitySet="PrototypeTypes" />
-            <End Role="UserFunctions" EntitySet="UserFunctions" />
-          </AssociationSet>
-          <AssociationSet Name="UserFunctions_Department_fkey" Association="RelationalDatabaseModel.UserFunctions_Department_fkey">
-            <End Role="Departments" EntitySet="Departments" />
-            <End Role="UserFunctions" EntitySet="UserFunctions" />
-          </AssociationSet>
-          <AssociationSet Name="UserFunctions_Function" Association="RelationalDatabaseModel.UserFunctions_Function">
-            <End Role="Functions" EntitySet="Functions" />
-            <End Role="UserFunctions" EntitySet="UserFunctions" />
-          </AssociationSet>
-          <AssociationSet Name="UserFunctions_User" Association="RelationalDatabaseModel.UserFunctions_User">
-            <End Role="Users" EntitySet="Users" />
-            <End Role="UserFunctions" EntitySet="UserFunctions" />
-          </AssociationSet>
           <EntitySet Name="Instances" EntityType="RelationalDatabaseModel.Instances" />
           <AssociationSet Name="InstanceExpressionValues_Instance_fkey" Association="RelationalDatabaseModel.InstanceExpressionValues_Instance_fkey">
             <End Role="Instances" EntitySet="Instances" />
@@ -1780,6 +2287,119 @@
           <AssociationSet Name="Companies_TimeZone_fkey" Association="RelationalDatabaseModel.Companies_TimeZone_fkey">
             <End Role="TimeZones" EntitySet="TimeZones" />
             <End Role="Companies" EntitySet="Companies" />
+          </AssociationSet>
+          <EntitySet Name="GroupFunctions" EntityType="RelationalDatabaseModel.GroupFunctions" />
+          <EntitySet Name="GroupRoles" EntityType="RelationalDatabaseModel.GroupRoles" />
+          <EntitySet Name="Groups" EntityType="RelationalDatabaseModel.Groups" />
+          <EntitySet Name="RoleFunctions" EntityType="RelationalDatabaseModel.RoleFunctions" />
+          <EntitySet Name="Roles" EntityType="RelationalDatabaseModel.Roles" />
+          <EntitySet Name="UserFunctions" EntityType="RelationalDatabaseModel.UserFunctions" />
+          <EntitySet Name="UserGroups" EntityType="RelationalDatabaseModel.UserGroups" />
+          <EntitySet Name="UserLevels" EntityType="RelationalDatabaseModel.UserLevels" />
+          <EntitySet Name="UserRoles" EntityType="RelationalDatabaseModel.UserRoles" />
+          <AssociationSet Name="GroupFunctions_PrototypeType_fkey" Association="RelationalDatabaseModel.GroupFunctions_PrototypeType_fkey">
+            <End Role="PrototypeTypes" EntitySet="PrototypeTypes" />
+            <End Role="GroupFunctions" EntitySet="GroupFunctions" />
+          </AssociationSet>
+          <AssociationSet Name="GroupRoles_PrototypeType_fkey" Association="RelationalDatabaseModel.GroupRoles_PrototypeType_fkey">
+            <End Role="PrototypeTypes" EntitySet="PrototypeTypes" />
+            <End Role="GroupRoles" EntitySet="GroupRoles" />
+          </AssociationSet>
+          <AssociationSet Name="UserFunctions_PrototypeType_fkey" Association="RelationalDatabaseModel.UserFunctions_PrototypeType_fkey">
+            <End Role="PrototypeTypes" EntitySet="PrototypeTypes" />
+            <End Role="UserFunctions" EntitySet="UserFunctions" />
+          </AssociationSet>
+          <AssociationSet Name="UserLevels_PrototypeType_fkey" Association="RelationalDatabaseModel.UserLevels_PrototypeType_fkey">
+            <End Role="PrototypeTypes" EntitySet="PrototypeTypes" />
+            <End Role="UserLevels" EntitySet="UserLevels" />
+          </AssociationSet>
+          <AssociationSet Name="UserRoles_PrototypeType_fkey" Association="RelationalDatabaseModel.UserRoles_PrototypeType_fkey">
+            <End Role="PrototypeTypes" EntitySet="PrototypeTypes" />
+            <End Role="UserRoles" EntitySet="UserRoles" />
+          </AssociationSet>
+          <AssociationSet Name="Groups_Company_fkey" Association="RelationalDatabaseModel.Groups_Company_fkey">
+            <End Role="Companies" EntitySet="Companies" />
+            <End Role="Groups" EntitySet="Groups" />
+          </AssociationSet>
+          <AssociationSet Name="Roles_Company_fkey" Association="RelationalDatabaseModel.Roles_Company_fkey">
+            <End Role="Companies" EntitySet="Companies" />
+            <End Role="Roles" EntitySet="Roles" />
+          </AssociationSet>
+          <AssociationSet Name="GroupFunctions_Department_fkey" Association="RelationalDatabaseModel.GroupFunctions_Department_fkey">
+            <End Role="Departments" EntitySet="Departments" />
+            <End Role="GroupFunctions" EntitySet="GroupFunctions" />
+          </AssociationSet>
+          <AssociationSet Name="GroupRoles_Department_fkey" Association="RelationalDatabaseModel.GroupRoles_Department_fkey">
+            <End Role="Departments" EntitySet="Departments" />
+            <End Role="GroupRoles" EntitySet="GroupRoles" />
+          </AssociationSet>
+          <AssociationSet Name="UserFunctions_Department_fkey" Association="RelationalDatabaseModel.UserFunctions_Department_fkey">
+            <End Role="Departments" EntitySet="Departments" />
+            <End Role="UserFunctions" EntitySet="UserFunctions" />
+          </AssociationSet>
+          <AssociationSet Name="UserLevels_Department_fkey" Association="RelationalDatabaseModel.UserLevels_Department_fkey">
+            <End Role="Departments" EntitySet="Departments" />
+            <End Role="UserLevels" EntitySet="UserLevels" />
+          </AssociationSet>
+          <AssociationSet Name="UserRoles_Department_fkey" Association="RelationalDatabaseModel.UserRoles_Department_fkey">
+            <End Role="Departments" EntitySet="Departments" />
+            <End Role="UserRoles" EntitySet="UserRoles" />
+          </AssociationSet>
+          <AssociationSet Name="Roles_FunctionGroup_fkey" Association="RelationalDatabaseModel.Roles_FunctionGroup_fkey">
+            <End Role="FunctionGroups" EntitySet="FunctionGroups" />
+            <End Role="Roles" EntitySet="Roles" />
+          </AssociationSet>
+          <AssociationSet Name="GroupFunctions_Function" Association="RelationalDatabaseModel.GroupFunctions_Function">
+            <End Role="Functions" EntitySet="Functions" />
+            <End Role="GroupFunctions" EntitySet="GroupFunctions" />
+          </AssociationSet>
+          <AssociationSet Name="RoleFunctions_Function" Association="RelationalDatabaseModel.RoleFunctions_Function">
+            <End Role="Functions" EntitySet="Functions" />
+            <End Role="RoleFunctions" EntitySet="RoleFunctions" />
+          </AssociationSet>
+          <AssociationSet Name="UserFunctions_Function" Association="RelationalDatabaseModel.UserFunctions_Function">
+            <End Role="Functions" EntitySet="Functions" />
+            <End Role="UserFunctions" EntitySet="UserFunctions" />
+          </AssociationSet>
+          <AssociationSet Name="GroupFunctions_Group" Association="RelationalDatabaseModel.GroupFunctions_Group">
+            <End Role="Groups" EntitySet="Groups" />
+            <End Role="GroupFunctions" EntitySet="GroupFunctions" />
+          </AssociationSet>
+          <AssociationSet Name="GroupRoles_Group" Association="RelationalDatabaseModel.GroupRoles_Group">
+            <End Role="Groups" EntitySet="Groups" />
+            <End Role="GroupRoles" EntitySet="GroupRoles" />
+          </AssociationSet>
+          <AssociationSet Name="GroupRoles_Role" Association="RelationalDatabaseModel.GroupRoles_Role">
+            <End Role="Roles" EntitySet="Roles" />
+            <End Role="GroupRoles" EntitySet="GroupRoles" />
+          </AssociationSet>
+          <AssociationSet Name="UserGroups_Group" Association="RelationalDatabaseModel.UserGroups_Group">
+            <End Role="Groups" EntitySet="Groups" />
+            <End Role="UserGroups" EntitySet="UserGroups" />
+          </AssociationSet>
+          <AssociationSet Name="RoleFunctions_Role" Association="RelationalDatabaseModel.RoleFunctions_Role">
+            <End Role="Roles" EntitySet="Roles" />
+            <End Role="RoleFunctions" EntitySet="RoleFunctions" />
+          </AssociationSet>
+          <AssociationSet Name="UserRoles_Role" Association="RelationalDatabaseModel.UserRoles_Role">
+            <End Role="Roles" EntitySet="Roles" />
+            <End Role="UserRoles" EntitySet="UserRoles" />
+          </AssociationSet>
+          <AssociationSet Name="UserFunctions_User" Association="RelationalDatabaseModel.UserFunctions_User">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="UserFunctions" EntitySet="UserFunctions" />
+          </AssociationSet>
+          <AssociationSet Name="UserRoles_Group1" Association="RelationalDatabaseModel.UserRoles_Group1">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="UserGroups" EntitySet="UserGroups" />
+          </AssociationSet>
+          <AssociationSet Name="UserFunctions_User1" Association="RelationalDatabaseModel.UserFunctions_User1">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="UserLevels" EntitySet="UserLevels" />
+          </AssociationSet>
+          <AssociationSet Name="UserRoles_Group" Association="RelationalDatabaseModel.UserRoles_Group">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="UserRoles" EntitySet="UserRoles" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="UserSessions">
@@ -2105,6 +2725,7 @@
           </Key>
           <Property Name="Code" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Functions" Relationship="RelationalDatabaseModel.Functions_FunctionGroup_fkey" FromRole="FunctionGroups" ToRole="Functions" />
+          <NavigationProperty Name="Roles" Relationship="RelationalDatabaseModel.Roles_FunctionGroup_fkey" FromRole="FunctionGroups" ToRole="Roles" />
         </EntityType>
         <EntityType Name="Functions">
           <Key>
@@ -2114,6 +2735,8 @@
           <Property Name="FunctionGroup" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
           <Property Name="Code" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="FunctionGroups" Relationship="RelationalDatabaseModel.Functions_FunctionGroup_fkey" FromRole="Functions" ToRole="FunctionGroups" />
+          <NavigationProperty Name="GroupFunctions" Relationship="RelationalDatabaseModel.GroupFunctions_Function" FromRole="Functions" ToRole="GroupFunctions" />
+          <NavigationProperty Name="RoleFunctions" Relationship="RelationalDatabaseModel.RoleFunctions_Function" FromRole="Functions" ToRole="RoleFunctions" />
           <NavigationProperty Name="UserFunctions" Relationship="RelationalDatabaseModel.UserFunctions_Function" FromRole="Functions" ToRole="UserFunctions" />
         </EntityType>
         <Association Name="Functions_FunctionGroup_fkey">
@@ -2167,13 +2790,17 @@
           <NavigationProperty Name="Companies" Relationship="RelationalDatabaseModel.PrototypeTypes_Company_fkey" FromRole="PrototypeTypes" ToRole="Companies" />
           <NavigationProperty Name="Departments" Relationship="RelationalDatabaseModel.PrototypeTypes_Department_fkey" FromRole="PrototypeTypes" ToRole="Departments" />
           <NavigationProperty Name="WorkFlows1" Relationship="RelationalDatabaseModel.PrototypeTypes_ObsolescenceWorkFlow_fkey" FromRole="PrototypeTypes" ToRole="WorkFlows" />
-          <NavigationProperty Name="UserFunctions" Relationship="RelationalDatabaseModel.UserFunctions_PrototypeType_fkey" FromRole="PrototypeTypes" ToRole="UserFunctions" />
           <Property Name="PrototypesFTPServerEnabled" Type="Boolean" Nullable="false" />
           <Property Name="InstancesFTPServerEnabled" Type="Boolean" Nullable="false" />
           <Property Name="PrototypesFTPServer" Type="Int64" />
           <Property Name="InstancesFTPServer" Type="Int64" />
           <NavigationProperty Name="FTPServers" Relationship="RelationalDatabaseModel.PrototypeTypes_InstancesFTPServer_fkey" FromRole="PrototypeTypes" ToRole="FTPServers" />
           <NavigationProperty Name="FTPServers1" Relationship="RelationalDatabaseModel.PrototypeTypes_PrototypesFTPServer_fkey" FromRole="PrototypeTypes" ToRole="FTPServers" />
+          <NavigationProperty Name="GroupFunctions" Relationship="RelationalDatabaseModel.GroupFunctions_PrototypeType_fkey" FromRole="PrototypeTypes" ToRole="GroupFunctions" />
+          <NavigationProperty Name="GroupRoles" Relationship="RelationalDatabaseModel.GroupRoles_PrototypeType_fkey" FromRole="PrototypeTypes" ToRole="GroupRoles" />
+          <NavigationProperty Name="UserFunctions" Relationship="RelationalDatabaseModel.UserFunctions_PrototypeType_fkey" FromRole="PrototypeTypes" ToRole="UserFunctions" />
+          <NavigationProperty Name="UserLevels" Relationship="RelationalDatabaseModel.UserLevels_PrototypeType_fkey" FromRole="PrototypeTypes" ToRole="UserLevels" />
+          <NavigationProperty Name="UserRoles" Relationship="RelationalDatabaseModel.UserRoles_PrototypeType_fkey" FromRole="PrototypeTypes" ToRole="UserRoles" />
         </EntityType>
         <Association Name="Prototypes_Company_fkey">
           <End Type="RelationalDatabaseModel.Companies" Role="Companies" Multiplicity="1" />
@@ -2489,81 +3116,6 @@
             </Principal>
             <Dependent Role="SettingValues">
               <PropertyRef Name="Company" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityType Name="UserFunctions">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Company" Type="Int64" Nullable="false" />
-          <Property Name="User" Type="String" Nullable="false" MaxLength="60" FixedLength="false" Unicode="true" />
-          <Property Name="FunctionGroup" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="Function" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="Department" Type="Int64" />
-          <Property Name="PrototypeType" Type="Int64" />
-          <Property Name="Tag" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="CreatedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
-          <Property Name="CreatedOn" Type="DateTimeOffset" Nullable="false" Precision="7" />
-          <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
-          <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
-          <NavigationProperty Name="PrototypeTypes" Relationship="RelationalDatabaseModel.UserFunctions_PrototypeType_fkey" FromRole="UserFunctions" ToRole="PrototypeTypes" />
-          <NavigationProperty Name="Departments" Relationship="RelationalDatabaseModel.UserFunctions_Department_fkey" FromRole="UserFunctions" ToRole="Departments" />
-          <NavigationProperty Name="Functions" Relationship="RelationalDatabaseModel.UserFunctions_Function" FromRole="UserFunctions" ToRole="Functions" />
-          <NavigationProperty Name="Users" Relationship="RelationalDatabaseModel.UserFunctions_User" FromRole="UserFunctions" ToRole="Users" />
-        </EntityType>
-        <Association Name="UserFunctions_PrototypeType_fkey">
-          <End Type="RelationalDatabaseModel.PrototypeTypes" Role="PrototypeTypes" Multiplicity="0..1" />
-          <End Type="RelationalDatabaseModel.UserFunctions" Role="UserFunctions" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="PrototypeTypes">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="UserFunctions">
-              <PropertyRef Name="PrototypeType" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="UserFunctions_Department_fkey">
-          <End Type="RelationalDatabaseModel.Departments" Role="Departments" Multiplicity="0..1" />
-          <End Type="RelationalDatabaseModel.UserFunctions" Role="UserFunctions" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Departments">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="UserFunctions">
-              <PropertyRef Name="Department" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="UserFunctions_Function">
-          <End Type="RelationalDatabaseModel.Functions" Role="Functions" Multiplicity="1" />
-          <End Type="RelationalDatabaseModel.UserFunctions" Role="UserFunctions" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Functions">
-              <PropertyRef Name="FunctionGroup" />
-              <PropertyRef Name="Code" />
-            </Principal>
-            <Dependent Role="UserFunctions">
-              <PropertyRef Name="FunctionGroup" />
-              <PropertyRef Name="Function" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="UserFunctions_User">
-          <End Type="RelationalDatabaseModel.Users" Role="Users" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Type="RelationalDatabaseModel.UserFunctions" Role="UserFunctions" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Users">
-              <PropertyRef Name="Company" />
-              <PropertyRef Name="Code" />
-            </Principal>
-            <Dependent Role="UserFunctions">
-              <PropertyRef Name="Company" />
-              <PropertyRef Name="User" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2953,6 +3505,528 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="GroupFunctions">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Company" Type="Int64" Nullable="false" />
+          <Property Name="Group" Type="String" Nullable="false" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="FunctionGroup" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Function" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Department" Type="Int64" />
+          <Property Name="PrototypeType" Type="Int64" />
+          <Property Name="CreatedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedOn" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
+          <NavigationProperty Name="PrototypeTypes" Relationship="RelationalDatabaseModel.GroupFunctions_PrototypeType_fkey" FromRole="GroupFunctions" ToRole="PrototypeTypes" />
+          <NavigationProperty Name="Departments" Relationship="RelationalDatabaseModel.GroupFunctions_Department_fkey" FromRole="GroupFunctions" ToRole="Departments" />
+          <NavigationProperty Name="Functions" Relationship="RelationalDatabaseModel.GroupFunctions_Function" FromRole="GroupFunctions" ToRole="Functions" />
+          <NavigationProperty Name="Groups" Relationship="RelationalDatabaseModel.GroupFunctions_Group" FromRole="GroupFunctions" ToRole="Groups" />
+        </EntityType>
+        <EntityType Name="GroupRoles">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Company" Type="Int64" Nullable="false" />
+          <Property Name="Group" Type="String" Nullable="false" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="Department" Type="Int64" />
+          <Property Name="PrototypeType" Type="Int64" />
+          <Property Name="Role" Type="String" Nullable="false" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedOn" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
+          <NavigationProperty Name="PrototypeTypes" Relationship="RelationalDatabaseModel.GroupRoles_PrototypeType_fkey" FromRole="GroupRoles" ToRole="PrototypeTypes" />
+          <NavigationProperty Name="Departments" Relationship="RelationalDatabaseModel.GroupRoles_Department_fkey" FromRole="GroupRoles" ToRole="Departments" />
+          <NavigationProperty Name="Groups" Relationship="RelationalDatabaseModel.GroupRoles_Group" FromRole="GroupRoles" ToRole="Groups" />
+          <NavigationProperty Name="Roles" Relationship="RelationalDatabaseModel.GroupRoles_Role" FromRole="GroupRoles" ToRole="Roles" />
+        </EntityType>
+        <EntityType Name="Groups">
+          <Key>
+            <PropertyRef Name="Company" />
+            <PropertyRef Name="Code" />
+          </Key>
+          <Property Name="Company" Type="Int64" Nullable="false" />
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedOn" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
+          <NavigationProperty Name="Companies" Relationship="RelationalDatabaseModel.Groups_Company_fkey" FromRole="Groups" ToRole="Companies" />
+          <NavigationProperty Name="GroupFunctions" Relationship="RelationalDatabaseModel.GroupFunctions_Group" FromRole="Groups" ToRole="GroupFunctions" />
+          <NavigationProperty Name="GroupRoles" Relationship="RelationalDatabaseModel.GroupRoles_Group" FromRole="Groups" ToRole="GroupRoles" />
+          <NavigationProperty Name="UserGroups" Relationship="RelationalDatabaseModel.UserGroups_Group" FromRole="Groups" ToRole="UserGroups" />
+        </EntityType>
+        <EntityType Name="RoleFunctions">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Company" Type="Int64" Nullable="false" />
+          <Property Name="Role" Type="String" Nullable="false" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="FunctionGroup" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Function" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedOn" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
+          <NavigationProperty Name="Functions" Relationship="RelationalDatabaseModel.RoleFunctions_Function" FromRole="RoleFunctions" ToRole="Functions" />
+          <NavigationProperty Name="Roles" Relationship="RelationalDatabaseModel.RoleFunctions_Role" FromRole="RoleFunctions" ToRole="Roles" />
+        </EntityType>
+        <EntityType Name="Roles">
+          <Key>
+            <PropertyRef Name="Company" />
+            <PropertyRef Name="Code" />
+          </Key>
+          <Property Name="Company" Type="Int64" Nullable="false" />
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedOn" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
+          <Property Name="FunctionGroup" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Companies" Relationship="RelationalDatabaseModel.Roles_Company_fkey" FromRole="Roles" ToRole="Companies" />
+          <NavigationProperty Name="FunctionGroups" Relationship="RelationalDatabaseModel.Roles_FunctionGroup_fkey" FromRole="Roles" ToRole="FunctionGroups" />
+          <NavigationProperty Name="GroupRoles" Relationship="RelationalDatabaseModel.GroupRoles_Role" FromRole="Roles" ToRole="GroupRoles" />
+          <NavigationProperty Name="RoleFunctions" Relationship="RelationalDatabaseModel.RoleFunctions_Role" FromRole="Roles" ToRole="RoleFunctions" />
+          <NavigationProperty Name="UserRoles" Relationship="RelationalDatabaseModel.UserRoles_Role" FromRole="Roles" ToRole="UserRoles" />
+        </EntityType>
+        <EntityType Name="UserFunctions">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Company" Type="Int64" Nullable="false" />
+          <Property Name="User" Type="String" Nullable="false" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="FunctionGroup" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Function" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Department" Type="Int64" />
+          <Property Name="PrototypeType" Type="Int64" />
+          <Property Name="CreatedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedOn" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
+          <NavigationProperty Name="PrototypeTypes" Relationship="RelationalDatabaseModel.UserFunctions_PrototypeType_fkey" FromRole="UserFunctions" ToRole="PrototypeTypes" />
+          <NavigationProperty Name="Departments" Relationship="RelationalDatabaseModel.UserFunctions_Department_fkey" FromRole="UserFunctions" ToRole="Departments" />
+          <NavigationProperty Name="Functions" Relationship="RelationalDatabaseModel.UserFunctions_Function" FromRole="UserFunctions" ToRole="Functions" />
+          <NavigationProperty Name="Users" Relationship="RelationalDatabaseModel.UserFunctions_User" FromRole="UserFunctions" ToRole="Users" />
+        </EntityType>
+        <EntityType Name="UserGroups">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Company" Type="Int64" Nullable="false" />
+          <Property Name="User" Type="String" Nullable="false" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="Group" Type="String" Nullable="false" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedOn" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
+          <NavigationProperty Name="Groups" Relationship="RelationalDatabaseModel.UserGroups_Group" FromRole="UserGroups" ToRole="Groups" />
+          <NavigationProperty Name="Users" Relationship="RelationalDatabaseModel.UserRoles_Group1" FromRole="UserGroups" ToRole="Users" />
+        </EntityType>
+        <EntityType Name="UserLevels">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Company" Type="Int64" Nullable="false" />
+          <Property Name="User" Type="String" Nullable="false" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="Department" Type="Int64" />
+          <Property Name="PrototypeType" Type="Int64" />
+          <Property Name="SignatureLevel" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PrototypeWorkFlowLevel" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="InstanceWorkFlowLevel" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedOn" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
+          <NavigationProperty Name="PrototypeTypes" Relationship="RelationalDatabaseModel.UserLevels_PrototypeType_fkey" FromRole="UserLevels" ToRole="PrototypeTypes" />
+          <NavigationProperty Name="Departments" Relationship="RelationalDatabaseModel.UserLevels_Department_fkey" FromRole="UserLevels" ToRole="Departments" />
+          <NavigationProperty Name="Users" Relationship="RelationalDatabaseModel.UserFunctions_User1" FromRole="UserLevels" ToRole="Users" />
+        </EntityType>
+        <EntityType Name="UserRoles">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Company" Type="Int64" Nullable="false" />
+          <Property Name="User" Type="String" Nullable="false" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="Department" Type="Int64" />
+          <Property Name="PrototypeType" Type="Int64" />
+          <Property Name="Role" Type="String" Nullable="false" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedOn" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
+          <NavigationProperty Name="PrototypeTypes" Relationship="RelationalDatabaseModel.UserRoles_PrototypeType_fkey" FromRole="UserRoles" ToRole="PrototypeTypes" />
+          <NavigationProperty Name="Departments" Relationship="RelationalDatabaseModel.UserRoles_Department_fkey" FromRole="UserRoles" ToRole="Departments" />
+          <NavigationProperty Name="Roles" Relationship="RelationalDatabaseModel.UserRoles_Role" FromRole="UserRoles" ToRole="Roles" />
+          <NavigationProperty Name="Users" Relationship="RelationalDatabaseModel.UserRoles_Group" FromRole="UserRoles" ToRole="Users" />
+        </EntityType>
+        <Association Name="GroupFunctions_PrototypeType_fkey">
+          <End Type="RelationalDatabaseModel.PrototypeTypes" Role="PrototypeTypes" Multiplicity="0..1" />
+          <End Type="RelationalDatabaseModel.GroupFunctions" Role="GroupFunctions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PrototypeTypes">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="GroupFunctions">
+              <PropertyRef Name="PrototypeType" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="GroupRoles_PrototypeType_fkey">
+          <End Type="RelationalDatabaseModel.PrototypeTypes" Role="PrototypeTypes" Multiplicity="0..1" />
+          <End Type="RelationalDatabaseModel.GroupRoles" Role="GroupRoles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PrototypeTypes">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="GroupRoles">
+              <PropertyRef Name="PrototypeType" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserFunctions_PrototypeType_fkey">
+          <End Type="RelationalDatabaseModel.PrototypeTypes" Role="PrototypeTypes" Multiplicity="0..1" />
+          <End Type="RelationalDatabaseModel.UserFunctions" Role="UserFunctions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PrototypeTypes">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="UserFunctions">
+              <PropertyRef Name="PrototypeType" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserLevels_PrototypeType_fkey">
+          <End Type="RelationalDatabaseModel.PrototypeTypes" Role="PrototypeTypes" Multiplicity="0..1" />
+          <End Type="RelationalDatabaseModel.UserLevels" Role="UserLevels" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PrototypeTypes">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="UserLevels">
+              <PropertyRef Name="PrototypeType" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserRoles_PrototypeType_fkey">
+          <End Type="RelationalDatabaseModel.PrototypeTypes" Role="PrototypeTypes" Multiplicity="0..1" />
+          <End Type="RelationalDatabaseModel.UserRoles" Role="UserRoles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PrototypeTypes">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="UserRoles">
+              <PropertyRef Name="PrototypeType" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Groups_Company_fkey">
+          <End Type="RelationalDatabaseModel.Companies" Role="Companies" Multiplicity="1" />
+          <End Type="RelationalDatabaseModel.Groups" Role="Groups" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Companies">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Groups">
+              <PropertyRef Name="Company" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Roles_Company_fkey">
+          <End Type="RelationalDatabaseModel.Companies" Role="Companies" Multiplicity="1" />
+          <End Type="RelationalDatabaseModel.Roles" Role="Roles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Companies">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Roles">
+              <PropertyRef Name="Company" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="GroupFunctions_Department_fkey">
+          <End Type="RelationalDatabaseModel.Departments" Role="Departments" Multiplicity="0..1" />
+          <End Type="RelationalDatabaseModel.GroupFunctions" Role="GroupFunctions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Departments">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="GroupFunctions">
+              <PropertyRef Name="Department" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="GroupRoles_Department_fkey">
+          <End Type="RelationalDatabaseModel.Departments" Role="Departments" Multiplicity="0..1" />
+          <End Type="RelationalDatabaseModel.GroupRoles" Role="GroupRoles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Departments">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="GroupRoles">
+              <PropertyRef Name="Department" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserFunctions_Department_fkey">
+          <End Type="RelationalDatabaseModel.Departments" Role="Departments" Multiplicity="0..1" />
+          <End Type="RelationalDatabaseModel.UserFunctions" Role="UserFunctions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Departments">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="UserFunctions">
+              <PropertyRef Name="Department" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserLevels_Department_fkey">
+          <End Type="RelationalDatabaseModel.Departments" Role="Departments" Multiplicity="0..1" />
+          <End Type="RelationalDatabaseModel.UserLevels" Role="UserLevels" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Departments">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="UserLevels">
+              <PropertyRef Name="Department" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserRoles_Department_fkey">
+          <End Type="RelationalDatabaseModel.Departments" Role="Departments" Multiplicity="0..1" />
+          <End Type="RelationalDatabaseModel.UserRoles" Role="UserRoles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Departments">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="UserRoles">
+              <PropertyRef Name="Department" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Roles_FunctionGroup_fkey">
+          <End Type="RelationalDatabaseModel.FunctionGroups" Role="FunctionGroups" Multiplicity="0..1" />
+          <End Type="RelationalDatabaseModel.Roles" Role="Roles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FunctionGroups">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="Roles">
+              <PropertyRef Name="FunctionGroup" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="GroupFunctions_Function">
+          <End Type="RelationalDatabaseModel.Functions" Role="Functions" Multiplicity="1" />
+          <End Type="RelationalDatabaseModel.GroupFunctions" Role="GroupFunctions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Functions">
+              <PropertyRef Name="FunctionGroup" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="GroupFunctions">
+              <PropertyRef Name="FunctionGroup" />
+              <PropertyRef Name="Function" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="RoleFunctions_Function">
+          <End Type="RelationalDatabaseModel.Functions" Role="Functions" Multiplicity="1" />
+          <End Type="RelationalDatabaseModel.RoleFunctions" Role="RoleFunctions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Functions">
+              <PropertyRef Name="FunctionGroup" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="RoleFunctions">
+              <PropertyRef Name="FunctionGroup" />
+              <PropertyRef Name="Function" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserFunctions_Function">
+          <End Type="RelationalDatabaseModel.Functions" Role="Functions" Multiplicity="1" />
+          <End Type="RelationalDatabaseModel.UserFunctions" Role="UserFunctions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Functions">
+              <PropertyRef Name="FunctionGroup" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="UserFunctions">
+              <PropertyRef Name="FunctionGroup" />
+              <PropertyRef Name="Function" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="GroupFunctions_Group">
+          <End Type="RelationalDatabaseModel.Groups" Role="Groups" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="RelationalDatabaseModel.GroupFunctions" Role="GroupFunctions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Groups">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="GroupFunctions">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Group" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="GroupRoles_Group">
+          <End Type="RelationalDatabaseModel.Groups" Role="Groups" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="RelationalDatabaseModel.GroupRoles" Role="GroupRoles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Groups">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="GroupRoles">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Group" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="GroupRoles_Role">
+          <End Type="RelationalDatabaseModel.Roles" Role="Roles" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="RelationalDatabaseModel.GroupRoles" Role="GroupRoles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Roles">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="GroupRoles">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Role" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserGroups_Group">
+          <End Type="RelationalDatabaseModel.Groups" Role="Groups" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="RelationalDatabaseModel.UserGroups" Role="UserGroups" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Groups">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="UserGroups">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Group" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="RoleFunctions_Role">
+          <End Type="RelationalDatabaseModel.Roles" Role="Roles" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="RelationalDatabaseModel.RoleFunctions" Role="RoleFunctions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Roles">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="RoleFunctions">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Role" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserRoles_Role">
+          <End Type="RelationalDatabaseModel.Roles" Role="Roles" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="RelationalDatabaseModel.UserRoles" Role="UserRoles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Roles">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="UserRoles">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Role" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserFunctions_User">
+          <End Type="RelationalDatabaseModel.Users" Role="Users" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="RelationalDatabaseModel.UserFunctions" Role="UserFunctions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="UserFunctions">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="User" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserRoles_Group1">
+          <End Type="RelationalDatabaseModel.Users" Role="Users" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="RelationalDatabaseModel.UserGroups" Role="UserGroups" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="UserGroups">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="User" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserFunctions_User1">
+          <End Type="RelationalDatabaseModel.Users" Role="Users" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="RelationalDatabaseModel.UserLevels" Role="UserLevels" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="UserLevels">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="User" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserRoles_Group">
+          <End Type="RelationalDatabaseModel.Users" Role="Users" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="RelationalDatabaseModel.UserRoles" Role="UserRoles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="UserRoles">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="User" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -3300,24 +4374,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="UserFunctions">
-            <EntityTypeMapping TypeName="RelationalDatabaseModel.UserFunctions">
-              <MappingFragment StoreEntitySet="UserFunctions">
-                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
-                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
-                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="Tag" ColumnName="Tag" />
-                <ScalarProperty Name="PrototypeType" ColumnName="PrototypeType" />
-                <ScalarProperty Name="Department" ColumnName="Department" />
-                <ScalarProperty Name="Function" ColumnName="Function" />
-                <ScalarProperty Name="FunctionGroup" ColumnName="FunctionGroup" />
-                <ScalarProperty Name="User" ColumnName="User" />
-                <ScalarProperty Name="Company" ColumnName="Company" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Instances">
             <EntityTypeMapping TypeName="RelationalDatabaseModel.Instances">
               <MappingFragment StoreEntitySet="Instances">
@@ -3434,6 +4490,145 @@
             <EntityTypeMapping TypeName="RelationalDatabaseModel.TimeZones">
               <MappingFragment StoreEntitySet="TimeZones">
                 <ScalarProperty Name="Code" ColumnName="Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="GroupFunctions">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.GroupFunctions">
+              <MappingFragment StoreEntitySet="GroupFunctions">
+                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="PrototypeType" ColumnName="PrototypeType" />
+                <ScalarProperty Name="Department" ColumnName="Department" />
+                <ScalarProperty Name="Function" ColumnName="Function" />
+                <ScalarProperty Name="FunctionGroup" ColumnName="FunctionGroup" />
+                <ScalarProperty Name="Group" ColumnName="Group" />
+                <ScalarProperty Name="Company" ColumnName="Company" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="GroupRoles">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.GroupRoles">
+              <MappingFragment StoreEntitySet="GroupRoles">
+                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="Role" ColumnName="Role" />
+                <ScalarProperty Name="PrototypeType" ColumnName="PrototypeType" />
+                <ScalarProperty Name="Department" ColumnName="Department" />
+                <ScalarProperty Name="Group" ColumnName="Group" />
+                <ScalarProperty Name="Company" ColumnName="Company" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Groups">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.Groups">
+              <MappingFragment StoreEntitySet="Groups">
+                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Company" ColumnName="Company" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RoleFunctions">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.RoleFunctions">
+              <MappingFragment StoreEntitySet="RoleFunctions">
+                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="Function" ColumnName="Function" />
+                <ScalarProperty Name="FunctionGroup" ColumnName="FunctionGroup" />
+                <ScalarProperty Name="Role" ColumnName="Role" />
+                <ScalarProperty Name="Company" ColumnName="Company" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Roles">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.Roles">
+              <MappingFragment StoreEntitySet="Roles">
+                <ScalarProperty Name="FunctionGroup" ColumnName="FunctionGroup" />
+                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Company" ColumnName="Company" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserFunctions">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.UserFunctions">
+              <MappingFragment StoreEntitySet="UserFunctions">
+                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="PrototypeType" ColumnName="PrototypeType" />
+                <ScalarProperty Name="Department" ColumnName="Department" />
+                <ScalarProperty Name="Function" ColumnName="Function" />
+                <ScalarProperty Name="FunctionGroup" ColumnName="FunctionGroup" />
+                <ScalarProperty Name="User" ColumnName="User" />
+                <ScalarProperty Name="Company" ColumnName="Company" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserGroups">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.UserGroups">
+              <MappingFragment StoreEntitySet="UserGroups">
+                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="Group" ColumnName="Group" />
+                <ScalarProperty Name="User" ColumnName="User" />
+                <ScalarProperty Name="Company" ColumnName="Company" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserLevels">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.UserLevels">
+              <MappingFragment StoreEntitySet="UserLevels">
+                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="InstanceWorkFlowLevel" ColumnName="InstanceWorkFlowLevel" />
+                <ScalarProperty Name="PrototypeWorkFlowLevel" ColumnName="PrototypeWorkFlowLevel" />
+                <ScalarProperty Name="SignatureLevel" ColumnName="SignatureLevel" />
+                <ScalarProperty Name="PrototypeType" ColumnName="PrototypeType" />
+                <ScalarProperty Name="Department" ColumnName="Department" />
+                <ScalarProperty Name="User" ColumnName="User" />
+                <ScalarProperty Name="Company" ColumnName="Company" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserRoles">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.UserRoles">
+              <MappingFragment StoreEntitySet="UserRoles">
+                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="Role" ColumnName="Role" />
+                <ScalarProperty Name="PrototypeType" ColumnName="PrototypeType" />
+                <ScalarProperty Name="Department" ColumnName="Department" />
+                <ScalarProperty Name="User" ColumnName="User" />
+                <ScalarProperty Name="Company" ColumnName="Company" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

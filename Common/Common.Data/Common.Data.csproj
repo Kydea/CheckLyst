@@ -124,6 +124,15 @@
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="GroupFunctions.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GroupRoles.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Groups.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="ICommonRepository.cs" />
     <Compile Include="CommonRepository.cs" />
     <Compile Include="InstanceExpressionValues.cs">
@@ -193,6 +202,12 @@
       <DependentUpon>RelationalDatabaseModel.edmx</DependentUpon>
     </Compile>
     <Compile Include="Repository.cs" />
+    <Compile Include="RoleFunctions.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Roles.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Settings.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>
@@ -203,6 +218,15 @@
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="UserFunctions.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UserGroups.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UserLevels.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UserRoles.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Users.cs">

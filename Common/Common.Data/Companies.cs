@@ -26,6 +26,8 @@ namespace CheckListManager.Common.Data
             this.SettingValues = new HashSet<SettingValues>();
             this.Instances = new HashSet<Instances>();
             this.FTPServers = new HashSet<FTPServers>();
+            this.Groups = new HashSet<Groups>();
+            this.Roles = new HashSet<Roles>();
         }
     
         public long ID { get; set; }
@@ -55,5 +57,9 @@ namespace CheckListManager.Common.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<FTPServers> FTPServers { get; set; }
         public virtual TimeZones TimeZones { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Groups> Groups { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Roles> Roles { get; set; }
     }
 }

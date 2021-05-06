@@ -1134,7 +1134,7 @@ namespace CheckListManager.Instances.Logic.Services
             if (!HasPermission(identity, "View", Instance.PrototypeVersions.VersionState, Instance.Prototypes.Department, Instance.Prototypes.PrototypeType))
                 throw new UnauthorizedAccessException();
 
-            return await Task.FromResult(Instance.InstancesHistory.OrderBy(h => h.ID).Select(h => new HistoryRow
+            return (await Task.WhenAll(Instance.InstancesHistory.OrderBy(h => h.ID).Select(async h => new HistoryRow
             {
                 ID = h.ID,
                 Date = h.Date,
@@ -1143,7 +1143,7 @@ namespace CheckListManager.Instances.Logic.Services
                 ProposedState = h.WorkFlowApplications == null ? null : InstanceState.Confirmed,
                 Approved = h.WorkFlowApplications?.Approved,
                 Note = h.Note,
-                Steps = h.WorkFlowApplications?.WorkFlowApplicationSteps.OrderBy(s => s.Step).ThenBy(s => s.ID).Select(s => new HistoryStep
+                Steps = (await Task.WhenAll(h.WorkFlowApplications?.WorkFlowApplicationSteps.OrderBy(s => s.Step).ThenBy(s => s.ID).Select(async s => new HistoryStep
                 {
                     ID = s.ID,
                     Step = s.Step + 1,
@@ -1153,9 +1153,9 @@ namespace CheckListManager.Instances.Logic.Services
                     Reason = s.Reason,
                     Comment = s.Comment,
                     Approved = s.Approved,
-                    AppointedUser = s.User == null ? string.Join(", ", _commonRepository.GetAppointedUsers(identity.CompanyId, "Instances", "Confirm", Instance.Prototypes.Department, Instance.Prototypes.PrototypeType, s.WorkFlowApplicationStepTags.Select(t => t.Tag)).Select(u => u.Code)) : null
-                }).ToList()
-            }).ToList());
+                    AppointedUser = s.User == null ? string.Join(", ", (await _commonRepository.GetInstanceAppointedUsersAsync(identity.CompanyId, "Instances", "Confirm", Instance.Prototypes.Department, Instance.Prototypes.PrototypeType, s.WorkFlowApplicationStepTags.Select(t => t.Tag))).Select(u => u.Code)) : null
+                }))).ToList()
+            }))).ToList();
         }
 
         public async Task InvalidateCacheAsync(DefaultIdentity identity, InvalidateCacheRequest request)

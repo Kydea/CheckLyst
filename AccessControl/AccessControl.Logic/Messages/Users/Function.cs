@@ -13,6 +13,5 @@ namespace CheckListManager.AccessControl.Logic.Messages.Users
         public string functionGroup { get; set; }
         public string function { get; set; }
         public string[] functions { get; set; }
-        public string level { get; set; }
     }
 }

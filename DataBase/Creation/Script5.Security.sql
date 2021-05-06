@@ -86,8 +86,10 @@ create table "Security"."Roles"
 (
     "Company" bigint references "Infrastructure"."Companies",
 	"Code" varchar (60),
-    
+
     constraint "Roles_PK" primary key ("Company", "Code"),
+    
+	"FunctionGroup" varchar (20) references "Security"."FunctionGroups", --Prototypes, Instances o null
     
 	"CreatedBy" varchar (60),
 	"CreatedOn" timestamptz not null default current_timestamp,

@@ -122,7 +122,7 @@ namespace CheckListManager.AccessControl.Api.Controllers
                 u.PrototypeTypes?.Name.ToString(),
                 u.FunctionGroup,
                 u.Function,
-                u.Tag
+                null
             }));
         }
     }

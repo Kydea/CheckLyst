@@ -99,6 +99,8 @@ create table "Security"."Roles"
 	"Code" varchar (60),
     
     constraint "Roles_PK" primary key ("Company", "Code"),
+
+	"FunctionGroup" varchar (20) references "Security"."FunctionGroups", --Prototypes, Instances o null
     
 	"CreatedBy" varchar (60),
 	"CreatedOn" timestamptz not null default current_timestamp,
@@ -248,14 +250,14 @@ insert into "Security"."Roles" ("Company", "Code") select "ID", 'Local Security 
 insert into "Security"."Roles" ("Company", "Code") select "ID", 'Local System Administrator' from "Infrastructure"."Companies" order by "ID";
 insert into "Security"."Roles" ("Company", "Code") select "ID", 'Global System Administrator' from "Infrastructure"."Companies" order by "ID";
 insert into "Security"."Roles" ("Company", "Code") select "ID", 'System Support' from "Infrastructure"."Companies" order by "ID";
-insert into "Security"."Roles" ("Company", "Code") select "ID", 'Prototype Viewer' from "Infrastructure"."Companies" order by "ID";
-insert into "Security"."Roles" ("Company", "Code") select "ID", 'Prototype Configurator' from "Infrastructure"."Companies" order by "ID";
-insert into "Security"."Roles" ("Company", "Code") select "ID", 'Prototype Simulator' from "Infrastructure"."Companies" order by "ID";
-insert into "Security"."Roles" ("Company", "Code") select "ID", 'Prototype Approver' from "Infrastructure"."Companies" order by "ID"; 
-insert into "Security"."Roles" ("Company", "Code") select "ID", 'Instance Viewer' from "Infrastructure"."Companies" order by "ID";
-insert into "Security"."Roles" ("Company", "Code") select "ID", 'Instance Executor' from "Infrastructure"."Companies" order by "ID";
-insert into "Security"."Roles" ("Company", "Code") select "ID", 'Instance Supervisor' from "Infrastructure"."Companies" order by "ID";
-insert into "Security"."Roles" ("Company", "Code") select "ID", 'Instance Approver' from "Infrastructure"."Companies" order by "ID"; 
+insert into "Security"."Roles" ("Company", "Code", "FunctionGroup") select "ID", 'Prototype Viewer', 'Prototypes' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."Roles" ("Company", "Code", "FunctionGroup") select "ID", 'Prototype Configurator', 'Prototypes' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."Roles" ("Company", "Code", "FunctionGroup") select "ID", 'Prototype Simulator', 'Prototypes' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."Roles" ("Company", "Code", "FunctionGroup") select "ID", 'Prototype Approver', 'Prototypes' from "Infrastructure"."Companies" order by "ID"; 
+insert into "Security"."Roles" ("Company", "Code", "FunctionGroup") select "ID", 'Instance Viewer', 'Instances' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."Roles" ("Company", "Code", "FunctionGroup") select "ID", 'Instance Executor', 'Instances' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."Roles" ("Company", "Code", "FunctionGroup") select "ID", 'Instance Supervisor', 'Instances' from "Infrastructure"."Companies" order by "ID";
+insert into "Security"."Roles" ("Company", "Code", "FunctionGroup") select "ID", 'Instance Approver', 'Instances' from "Infrastructure"."Companies" order by "ID"; 
 
 insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Local Security Administrator', 'Trail', 'View' from "Infrastructure"."Companies" order by "ID";
 insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Function") select "ID", 'Local Security Administrator', 'Users', 'View' from "Infrastructure"."Companies" order by "ID";

@@ -18,8 +18,8 @@ namespace CheckListManager.Common.Data
         Task<List<string>> GetVersionStatesAsync();
         Task<List<string>> GetInstanceStatesAsync();
         Users GetUser(long CompanyID, string Code);
-        List<Users> GetAppointedUsers(long CompanyID, string FunctionGroup, string Function, long Department, long PrototypeType, IEnumerable<string> Tags);
-        Task<List<Users>> GetAppointedUsersAsync(long CompanyID, string FunctionGroup, string Function, long Department, long PrototypeType, IEnumerable<string> Tags);
+        Task<List<Users>> GetInstanceAppointedUsersAsync(long CompanyID, string FunctionGroup, string Function, long Department, long PrototypeType, IEnumerable<string> Tags);
+        Task<List<Users>> GetPrototypeAppointedUsersAsync(long CompanyID, string FunctionGroup, string Function, long Department, long PrototypeType, IEnumerable<string> Tags);
         Task<FTPServers> GetPrototypesFTPServerAsync(long CompanyID, long PrototypeType);
         Task<FTPServers> GetInstancesFTPServerAsync(long CompanyID, long PrototypeType);
     }

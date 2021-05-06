@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="b7aaff1a649b4135b83e9d51a56f22d7" Name="Diagram1" ZoomLevel="64">
+      <Diagram DiagramId="b7aaff1a649b4135b83e9d51a56f22d7" Name="Diagram1" ZoomLevel="95">
         <EntityTypeShape EntityType="RelationalDatabaseModel.Companies" Width="1.5" PointX="3" PointY="3" IsExpanded="true" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.Departments" Width="1.5" PointX="5.25" PointY="1.25" IsExpanded="true" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.Users" Width="1.5" PointX="5.25" PointY="4.625" IsExpanded="true" />
@@ -64,11 +64,6 @@
         <EntityTypeShape EntityType="RelationalDatabaseModel.SettingValues" Width="1.5" PointX="9.75" PointY="0.5" />
         <AssociationConnector Association="RelationalDatabaseModel.SettingValues_Setting_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.SettingValues_Company_fkey" />
-        <EntityTypeShape EntityType="RelationalDatabaseModel.UserFunctions" Width="1.5" PointX="16.125" PointY="6.25" />
-        <AssociationConnector Association="RelationalDatabaseModel.UserFunctions_PrototypeType_fkey" />
-        <AssociationConnector Association="RelationalDatabaseModel.UserFunctions_Department_fkey" />
-        <AssociationConnector Association="RelationalDatabaseModel.UserFunctions_Function" />
-        <AssociationConnector Association="RelationalDatabaseModel.UserFunctions_User" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.Instances" Width="1.5" PointX="17.625" PointY="11.375" />
         <AssociationConnector Association="RelationalDatabaseModel.InstanceExpressionValues_Instance_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.FK_Instances_InstanceNumerator" />
@@ -96,6 +91,41 @@
         <AssociationConnector Association="RelationalDatabaseModel.InstanceRelations_Parent_fkey" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.TimeZones" Width="1.5" PointX="0.75" PointY="5.5" />
         <AssociationConnector Association="RelationalDatabaseModel.Companies_TimeZone_fkey" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.GroupFunctions" Width="1.5" PointX="22.125" PointY="14.625" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.GroupRoles" Width="1.5" PointX="20.125" PointY="4.875" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.Groups" Width="1.5" PointX="17.875" PointY="28.125" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.RoleFunctions" Width="1.5" PointX="22.125" PointY="19.625" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.Roles" Width="1.5" PointX="13.625" PointY="5.75" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.UserFunctions" Width="1.5" PointX="23.125" PointY="8.875" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.UserGroups" Width="1.5" PointX="25.125" PointY="18" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.UserLevels" Width="1.5" PointX="17.125" PointY="0.75" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.UserRoles" Width="1.5" PointX="16.125" PointY="5.875" />
+        <AssociationConnector Association="RelationalDatabaseModel.GroupFunctions_PrototypeType_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.GroupRoles_PrototypeType_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.UserFunctions_PrototypeType_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.UserLevels_PrototypeType_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.UserRoles_PrototypeType_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.Groups_Company_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.Roles_Company_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.GroupFunctions_Department_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.GroupRoles_Department_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.UserFunctions_Department_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.UserLevels_Department_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.UserRoles_Department_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.Roles_FunctionGroup_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.GroupFunctions_Function" />
+        <AssociationConnector Association="RelationalDatabaseModel.RoleFunctions_Function" />
+        <AssociationConnector Association="RelationalDatabaseModel.UserFunctions_Function" />
+        <AssociationConnector Association="RelationalDatabaseModel.GroupFunctions_Group" />
+        <AssociationConnector Association="RelationalDatabaseModel.GroupRoles_Group" />
+        <AssociationConnector Association="RelationalDatabaseModel.GroupRoles_Role" />
+        <AssociationConnector Association="RelationalDatabaseModel.UserGroups_Group" />
+        <AssociationConnector Association="RelationalDatabaseModel.RoleFunctions_Role" />
+        <AssociationConnector Association="RelationalDatabaseModel.UserRoles_Role" />
+        <AssociationConnector Association="RelationalDatabaseModel.UserFunctions_User" />
+        <AssociationConnector Association="RelationalDatabaseModel.UserRoles_Group1" />
+        <AssociationConnector Association="RelationalDatabaseModel.UserFunctions_User1" />
+        <AssociationConnector Association="RelationalDatabaseModel.UserRoles_Group" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
