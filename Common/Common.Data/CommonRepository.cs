@@ -29,38 +29,30 @@ namespace CheckListManager.Common.Data
                         Name = c.Name,
                     }).ToListAsync(), "CommonRepository");
 
-        public Task<List<Departments>> GetDepartmentsAsync(IDefaultIdentity identity, string functionGroup, string function)
+
+        private const string DEPARTMENTS_QUERY =
+            "select d.* from \"Infrastructure\".\"Departments\" d where d.\"ID\" in (select \"Department\" from \"Security\".\"GetUserGrants\"(:company, :user, :functionGroup, :function))";
+        public async Task<List<Departments>> GetDepartmentsAsync(IDefaultIdentity identity, string functionGroup, string function)
         {
-            IQueryable<Departments> Departments = Entities.Departments.Where(d => d.Company == identity.CompanyId);
-            if (functionGroup != null)
-                Departments = Entities.Departments.Where(d => 
-                    d.UserFunctions.Any(uf =>
-                        uf.Company == identity.CompanyId
-                        && uf.User == identity.Code
-                        && uf.FunctionGroup == functionGroup
-                        && uf.Function == function
-                    )
-               );
-            return Departments.ToListAsync();
+            var Departments = await Read<Departments>(DEPARTMENTS_QUERY, new { company = identity.CompanyId, user = identity.Code, functionGroup, function });
+            return Departments.ToList();
         }
 
-        public Task<List<PrototypeTypes>> GetPrototypeTypesAsync(IDefaultIdentity identity, long department, string functionGroup, string function)
+        private const string PROTOTYPETYPES_QUERY =
+            "select pt.*, d.\"Name\" \"DepartmentName\" " +
+            "from " +
+                "\"CheckLists\".\"PrototypeTypes\" pt " +
+                "inner join \"Infrastructure\".\"Departments\" d on pt.\"Department\" = d.\"ID\" " +
+            "where " +
+                "(:department = -1 or \"Department\" = :department) " +
+                "and exists (" +
+                    "select 1 from \"Security\".\"GetUserGrants\"(:company, :user, :functionGroup, :function) g " +
+                    "where g.\"Department\" = pt.\"Department\" and (g.\"PrototypeType\" is null or g.\"PrototypeType\" = pt.\"ID\")" +
+                ")";
+        public async Task<List<PrototypeTypes>> GetPrototypeTypesAsync(IDefaultIdentity identity, long department, string functionGroup, string function)
         {
-            IQueryable<PrototypeTypes> PrototypeTypes = Entities.PrototypeTypes.Where(pt => pt.Company == identity.CompanyId && (department < 0 || pt.Department == department));
-            if (functionGroup != null)
-                PrototypeTypes = PrototypeTypes.Where(pt => pt.UserFunctions.Any(uf =>
-                    uf.Company == identity.CompanyId
-                    && uf.User == identity.Code
-                    && uf.FunctionGroup == functionGroup
-                    && uf.Function == function
-                ) || pt.Departments.UserFunctions.Any(uf =>
-                    uf.Company == identity.CompanyId
-                    && uf.User == identity.Code
-                    && uf.FunctionGroup == functionGroup
-                    && uf.Function == function
-                    && uf.PrototypeType == null
-                ));
-            return PrototypeTypes.ToListAsync();
+            var PrototypeTypes = await Read<PrototypeTypes>(PROTOTYPETYPES_QUERY, new { company = identity.CompanyId, user = identity.Code, functionGroup, function, department});
+            return PrototypeTypes.ToList();
         }
 
         public async Task<List<Departments>> GetDepartmentsAsync(long companyId)

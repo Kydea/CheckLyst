@@ -22,7 +22,7 @@ create table "CheckLists"."PrototypeTypes"
 	"ModifiedOn" timestamptz
 );
 
-create unique index "PrototypeTypes_Name" on "CheckLists"."PrototypeTypes" ("Company", "Department", upper("Name"));
+create unique index "PrototypeTypes_Name" on "CheckLists"."PrototypeTypes" ("Department", upper("Name"));
 
 create table "CheckLists"."Prototypes"
 (

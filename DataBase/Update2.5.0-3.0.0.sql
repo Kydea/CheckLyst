@@ -327,22 +327,55 @@ insert into "Security"."RoleFunctions" ("Company", "Role", "FunctionGroup", "Fun
 
 alter table "Security"."UserFunctions" drop column "Tag";
 
-create view "Security"."AllUserFunctions" as
-select uf."Company", uf."User", uf."Department", uf."PrototypeType", uf."FunctionGroup", uf."Function"
-from "Security"."UserFunctions" uf
-union
-select ug."Company", ug."User", gf."Department", gf."PrototypeType", gf."FunctionGroup", gf."Function"
-from 
-	"Security"."UserGroups" ug
-	inner join "Security"."GroupFunctions" gf on ug."Company" = gf."Company" and ug."Group" = gf."Group"
-union
-select ur."Company", ur."User", ur."Department", ur."PrototypeType", rf."FunctionGroup", rf."Function"
-from 
-	"Security"."UserRoles" ur
-	inner join "Security"."RoleFunctions" rf on ur."Company" = rf."Company" and ur."Role" = rf."Role"
-union
-select ug."Company", ug."User", gr."Department", gr."PrototypeType", rf."FunctionGroup", rf."Function"
-from 
-	"Security"."UserGroups" ug
-	inner join "Security"."GroupRoles" gr on ug."Company" = gr."Company" and ug."Group" = gr."Group"
-	inner join "Security"."RoleFunctions" rf on gr."Company" = rf."Company" and gr."Role" = rf."Role";
+
+drop index "CheckLists"."PrototypeTypes_Name";
+create unique index "PrototypeTypes_Name" on "CheckLists"."PrototypeTypes" ("Department", upper("Name"));
+
+create function "Security"."GetUserGrants"(_Company bigint, _Code varchar(60), _FunctionGroup varchar(20), _Function varchar(20))
+returns table ("Department" bigint, "PrototypeType" bigint) as
+$func$
+																															 
+	select uf."Department", uf."PrototypeType"
+	from "Security"."UserFunctions" uf
+	where
+		uf."Company" = _Company
+		and uf."User" = _Code
+		and uf."FunctionGroup" = _FunctionGroup
+		and uf."Function" = _Function
+		and not uf."Department" is null
+	union
+	select gf."Department", gf."PrototypeType"
+	from 
+		"Security"."UserGroups" ug
+		inner join "Security"."GroupFunctions" gf on ug."Company" = gf."Company" and ug."Group" = gf."Group"
+	where
+		ug."Company" = _Company
+		and ug."User" = _Code
+		and gf."FunctionGroup" = _FunctionGroup
+		and gf."Function" = _Function
+		and not gf."Department" is null
+	union
+	select ur."Department", ur."PrototypeType"
+	from 
+		"Security"."UserRoles" ur
+		inner join "Security"."RoleFunctions" rf on ur."Company" = rf."Company" and ur."Role" = rf."Role"
+	where
+		ur."Company" = _Company
+		and ur."User" = _Code
+		and rf."FunctionGroup" = _FunctionGroup
+		and rf."Function" = _Function
+		and not ur."Department" is null
+	union
+	select gr."Department", gr."PrototypeType"
+	from 
+		"Security"."UserGroups" ug
+		inner join "Security"."GroupRoles" gr on ug."Company" = gr."Company" and ug."Group" = gr."Group"
+		inner join "Security"."RoleFunctions" rf on gr."Company" = rf."Company" and gr."Role" = rf."Role"
+	where
+		ug."Company" = _Company
+		and ug."User" = _Code
+		and rf."FunctionGroup" = _FunctionGroup
+		and rf."Function" = _Function
+		and not gr."Department" is null
+
+$func$ language sql;

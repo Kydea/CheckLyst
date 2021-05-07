@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace CheckListManager.Prototypes.Logic.List
+namespace CheckListManager.Prototypes.Data.Models
 {
-    public class SyntheticListRow
+    public class SyntheticRecord
     {
         public long ID { get; set; }
         public string Name { get; set; }

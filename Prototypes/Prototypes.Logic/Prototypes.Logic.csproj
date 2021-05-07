@@ -86,12 +86,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="List\ListRow.cs" />
     <Compile Include="List\ListService.cs" />
     <Compile Include="List\IListService.cs" />
     <Compile Include="List\ListResponse.cs" />
-    <Compile Include="List\ListRequest.cs" />
-    <Compile Include="List\SyntheticListRow.cs" />
     <Compile Include="Messages\AttachmentRequestBase.cs" />
     <Compile Include="Messages\ProcessAttachmentRequest.cs" />
     <Compile Include="Messages\HistoryStep.cs" />

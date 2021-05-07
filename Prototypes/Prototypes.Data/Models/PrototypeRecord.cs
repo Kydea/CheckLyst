@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace CheckListManager.Prototypes.Logic.List
+namespace CheckListManager.Prototypes.Data.Models
 {
-    public class ListRow
+    public class PrototypeRecord
     {
         public long Id { get; set; }
         public string Name { get; set; }
