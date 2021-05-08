@@ -1153,7 +1153,7 @@ namespace CheckListManager.Instances.Logic.Services
                     Reason = s.Reason,
                     Comment = s.Comment,
                     Approved = s.Approved,
-                    AppointedUser = s.User == null ? string.Join(", ", await _commonRepository.GetAppointedUsersAsync(identity.CompanyId, "Instances", "Confirm", Instance.Prototypes.Department, Instance.Prototypes.PrototypeType, "InstanceWorkFlowLevel", s.WorkFlowApplicationStepTags.Select(t => t.Tag))) : null
+                    AppointedUser = s.User == null ? string.Join(", ", (await _commonRepository.GetAppointedUsersAsync(identity.CompanyId, "Instances", "Confirm", Instance.Prototypes.Department, Instance.Prototypes.PrototypeType, "InstanceWorkFlowLevel", s.WorkFlowApplicationStepTags.Select(t => t.Tag))).Select(u => u.Code)) : null
                 }))).ToList()
             }))).ToList();
         }

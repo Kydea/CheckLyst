@@ -415,11 +415,11 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             var PrototypeVersion = workFlowApplicationStep.WorkFlowApplications.PrototypeVersions;
             var Users =
                 Instance == null
-                    ? await _commonRepository.GetPrototypeAppointedUsersAsync(PrototypeVersion.Prototypes.Company, "Prototypes",
-                        "Approve", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType,
+                    ? await _commonRepository.GetAppointedUsersAsync(PrototypeVersion.Prototypes.Company, "Prototypes", "Approve", 
+                        PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType, "PrototypeWorkFlowLevel",
                         workFlowApplicationStep.WorkFlowApplicationStepTags.Select(t => t.Tag))
-                    : await _commonRepository.GetInstanceAppointedUsersAsync(Instance.Company, "Instances", "Confirm",
-                        Instance.Prototypes.Department, Instance.Prototypes.PrototypeType,
+                    : await _commonRepository.GetAppointedUsersAsync(Instance.Company, "Instances", "Confirm",
+                        Instance.Prototypes.Department, Instance.Prototypes.PrototypeType, "InstanceWorkFlowLevel",
                         workFlowApplicationStep.WorkFlowApplicationStepTags.Select(t => t.Tag));
             var webApplicationUrl = _configurationService.WebApplicationUrl;
 

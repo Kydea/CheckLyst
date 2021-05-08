@@ -119,10 +119,10 @@ namespace CheckListManager.Common.Data
             return PrototypeVersions.ToList();
         }
 
-        public async Task<List<string>> GetAppointedUsersAsync(long companyID, string functionGroup, string function, long department, long prototypeType, string levelName, IEnumerable<string> levels)
+        public async Task<List<Users>> GetAppointedUsersAsync(long companyID, string functionGroup, string function, long department, long prototypeType, string levelName, IEnumerable<string> levels)
         {
             string query =
-                "select u.\"Code\" " +
+                "select u.* " +
                 "from " +
                     "\"Security\".\"GetGrantedUsers\"(:company, :department, :prototypetype, :functiongroup, :function) u " +
                     " and exists (" +
@@ -141,7 +141,7 @@ namespace CheckListManager.Common.Data
                     ") " +
                 "order by u.\"Code\"";
 
-            var users = await Read<string>(query, new { company = companyID, functionGroup, function });
+            var users = await Read<Users>(query, new { company = companyID, functionGroup, function });
             return users.ToList();
         }
 
