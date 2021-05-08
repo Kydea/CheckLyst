@@ -145,26 +145,20 @@ namespace CheckListManager.Common.Data
             return users.ToList();
         }
 
-        public async Task<List<Departments>> GetDepartmentsAsync(long companyId)
-        {
-            return await Entities.Departments.Where(d => d.Company == companyId).ToListAsync();
-        }
+        public async Task<List<Departments>> GetDepartmentsAsync(long companyId) =>
+            await Entities.Departments.Where(d => d.Company == companyId).ToListAsync();
 
-        public async Task<List<PrototypeTypes>> GetPrototypeTypesAsync(long companyId)
-        {
-            return await Entities.PrototypeTypes.Where(pt => pt.Company == companyId).ToListAsync();
-        }
+        public async Task<List<PrototypeTypes>> GetPrototypeTypesAsync(long companyId, long department) =>
+            await Entities.PrototypeTypes.Where(pt => pt.Company == companyId && pt.Department == department).ToListAsync();
 
-        public Task<List<string>> GetVersionStatesAsync()
-            => _memoryCache.GetOrAddAsync("VersionStates", key => Entities.VersionStates.Select(s => s.Code).ToListAsync(), "CommonRepository");
+        public Task<List<string>> GetVersionStatesAsync() => 
+            _memoryCache.GetOrAddAsync("VersionStates", key => Entities.VersionStates.Select(s => s.Code).ToListAsync(), "CommonRepository");
 
-        public Task<List<string>> GetInstanceStatesAsync()
-            => _memoryCache.GetOrAddAsync("InstanceStates", key => Entities.InstanceStates.Select(s => s.Code).ToListAsync(), "CommonRepository");
+        public Task<List<string>> GetInstanceStatesAsync() => 
+            _memoryCache.GetOrAddAsync("InstanceStates", key => Entities.InstanceStates.Select(s => s.Code).ToListAsync(), "CommonRepository");
         
-        public Users GetUser(long CompanyID, string Code)
-        {
-            return Entities.Users.SingleOrDefault(u => u.Company == CompanyID && u.Code == Code);
-        }
+        public Users GetUser(long CompanyID, string Code) =>
+            Entities.Users.SingleOrDefault(u => u.Company == CompanyID && u.Code == Code);
 
         public async Task<FTPServers> GetPrototypesFTPServerAsync(long CompanyID, long PrototypeType)
         {

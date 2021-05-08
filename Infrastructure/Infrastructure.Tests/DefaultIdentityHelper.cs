@@ -12,7 +12,7 @@ namespace CheckListManager.Infrastructure.Tests
     {
         public DefaultIdentityHelper(RelationalDatabaseEntities entities) : base(entities)
         {
-            Users user = Entities.Users.First();
+            Users user = Entities.Users.First(u => u.Company == 2); //some consisten data is needed by the test
 
             CompanyId = user.Company;
             Code = user.Code;

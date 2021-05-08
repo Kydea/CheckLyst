@@ -81,7 +81,7 @@ namespace CheckListManager.Infrastructure.Tests.Steps
         [Given(@"I click on a department that is used for creating a prototype type")]
         public async Task GivenIClickOnADepartmentThatIsUsedForAPrototypeType()
         {
-            List<Departments> data = (await _commonRepository.GetDepartmentsAsync(_defaultIdentity, null, null))
+            List<Departments> data = (await _commonRepository.GetDepartmentsAsync(_defaultIdentity.CompanyId))
                 .Where(d => d.PrototypeTypes.Any()).ToList();
 
             // If you click on a department: Count > 0 (it's a must)
@@ -93,7 +93,7 @@ namespace CheckListManager.Infrastructure.Tests.Steps
         [Given(@"I click on a department that is used for creating a prototype")]
         public async Task GivenIClickOnADepartmentThatIsUsedForAPrototype()
         {
-            List<Departments> data = (await _commonRepository.GetDepartmentsAsync(_defaultIdentity, null, null))
+            List<Departments> data = (await _commonRepository.GetDepartmentsAsync(_defaultIdentity.CompanyId))
                 .Where(d => d.Prototypes.Any()).ToList();
 
             // If you click on a department: Count > 0 (it's a must)
