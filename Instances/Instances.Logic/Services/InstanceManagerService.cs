@@ -1066,7 +1066,7 @@ namespace CheckListManager.Instances.Logic.Services
 
                 await _instanceCache.TouchAsync(code);
 
-                return (await _instancesRepository.GetInstanceEditors(cacheObject.Department, cacheObject.PrototypeType, cacheObject.VersionState)).Select(u => new InstanceEventRequest.Email
+                return (await _instancesRepository.GetInstanceEditors(identity.CompanyId, cacheObject.Department, cacheObject.PrototypeType, cacheObject.VersionState)).Select(u => new InstanceEventRequest.Email
                 {
                     Code = u.Code,
                     Description = u.Description,
@@ -1153,7 +1153,7 @@ namespace CheckListManager.Instances.Logic.Services
                     Reason = s.Reason,
                     Comment = s.Comment,
                     Approved = s.Approved,
-                    AppointedUser = s.User == null ? string.Join(", ", (await _commonRepository.GetInstanceAppointedUsersAsync(identity.CompanyId, "Instances", "Confirm", Instance.Prototypes.Department, Instance.Prototypes.PrototypeType, s.WorkFlowApplicationStepTags.Select(t => t.Tag))).Select(u => u.Code)) : null
+                    AppointedUser = s.User == null ? string.Join(", ", await _commonRepository.GetAppointedUsersAsync(identity.CompanyId, "Instances", "Confirm", Instance.Prototypes.Department, Instance.Prototypes.PrototypeType, "InstanceWorkFlowLevel", s.WorkFlowApplicationStepTags.Select(t => t.Tag))) : null
                 }))).ToList()
             }))).ToList();
         }

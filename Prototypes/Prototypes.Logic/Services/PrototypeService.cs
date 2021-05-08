@@ -467,7 +467,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                     Reason = s.Reason,
                     Comment = s.Comment,
                     Approved = s.Approved,
-                    AppointedUser = s.User == null ? string.Join(", ", (await _commonRepository.GetPrototypeAppointedUsersAsync(identity.CompanyId, "Prototypes", "Approve", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType, s.WorkFlowApplicationStepTags.Select(t => t.Tag))).Select(u => u.Code)) : null
+                    AppointedUser = s.User == null ? string.Join(", ", await _commonRepository.GetAppointedUsersAsync(identity.CompanyId, "Prototypes", "Approve", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType, "PrototypeWorkFlowLevel", s.WorkFlowApplicationStepTags.Select(t => t.Tag))) : null
                 }))).ToList()
             }))).ToList();
         }

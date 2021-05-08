@@ -166,24 +166,19 @@ namespace CheckListManager.Instances.Data
             return (await Entities.PrototypeVersions.SingleOrDefaultAsync(p => p.Prototype == prototype && p.VersionState == VersionState.Active))?.Version;
         }
 
-        public async Task<List<Users>> GetInstanceEditors(long department, long prototypeType, string versionState)
+        public async Task<List<Users>> GetInstanceEditors(long company, long department, long prototypeType, string versionState)
         {
-            var Users =
-                versionState == VersionState.Draft || versionState == VersionState.InSimulation ?
-                    Entities.UserFunctions.Where(uf =>
-                        uf.Department == department && (
-                            uf.PrototypeType == null
-                            || uf.PrototypeType == prototypeType
-                        )
-                        && uf.FunctionGroup == "Prototypes" && uf.Function == "Edit").Select(uf => uf.Users).Distinct().ToListAsync()
-                    : Entities.UserFunctions.Where(uf =>
-                        uf.Department == department && (
-                            uf.PrototypeType == null
-                            || uf.PrototypeType == prototypeType
-                        )
-                        && uf.FunctionGroup == "Instances" && uf.Function == "Edit").Select(uf => uf.Users).Distinct().ToListAsync();
+            var Filters = new
+            {
+                company,
+                department,
+                prototypetype = prototypeType, 
+                functiongroup = versionState == VersionState.Draft || versionState == VersionState.InSimulation ? "Prototypes" : "Instances",
+                function = "Edit"
+            };
 
-            return await Users;
+            var List = await Read<Users>("select * from \"Security\".\"GetGrantedUsers\"(:company, :department, :prototypetype, :functiongroup, :function) u order by u.\"Code\"", Filters);
+            return List.ToList();
         }
 
         public async Task<List<InstanceExpressionValues>> GetNotifications() =>

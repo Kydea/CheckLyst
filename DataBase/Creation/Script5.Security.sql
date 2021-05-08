@@ -293,3 +293,66 @@ $func$
 		and not gr."Department" is null
 
 $func$ language sql;
+
+create function "Security"."GetGrantedUsers"(_Company bigint, _Department bigint, _PrototypeType bigint, _FunctionGroup varchar(20), _Function varchar(20))
+returns setof "Security"."Users" as
+$func$
+																															 
+	select u.*
+	from "Security"."Users" u
+	where
+		u."Company" = _Company
+		and (
+			exists (
+				select 1 
+				from "Security"."UserFunctions" uf
+				where
+					uf."Company" = u."Company"
+					and uf."User" = u."Code"
+					and uf."FunctionGroup" = _FunctionGroup
+					and uf."Function" = _Function
+					and uf."Department" = _Department
+					and (uf."PrototypeType" is null or uf."PrototypeType" = _PrototypeType)
+			)
+			or exists (
+				select 1
+				from 
+					"Security"."UserGroups" ug
+					inner join "Security"."GroupFunctions" gf on ug."Company" = gf."Company" and ug."Group" = gf."Group"
+				where
+					ug."Company" = u."Company"
+					and ug."User" = u."Code"
+					and gf."FunctionGroup" = _FunctionGroup
+					and gf."Function" = _Function
+					and gf."Department" = _Department
+					and (gf."PrototypeType" is null or gf."PrototypeType" = _PrototypeType)
+			)
+			or exists (
+				select 1
+				from 
+					"Security"."UserRoles" ur
+					inner join "Security"."RoleFunctions" rf on ur."Company" = rf."Company" and ur."Role" = rf."Role"
+				where
+					ur."Company" = u."Company"
+					and ur."User" = u."Code"
+					and rf."FunctionGroup" = _FunctionGroup
+					and rf."Function" = _Function
+					and ur."Department" = _Department
+					and (ur."PrototypeType" is null or ur."PrototypeType" = _PrototypeType)
+			)
+			or exists (
+				select 1
+				from 
+					"Security"."UserGroups" ug
+					inner join "Security"."GroupRoles" gr on ug."Company" = gr."Company" and ug."Group" = gr."Group"
+					inner join "Security"."RoleFunctions" rf on gr."Company" = rf."Company" and gr."Role" = rf."Role"
+				where
+					ug."Company" = u."Company"
+					and ug."User" = u."Code"
+					and rf."FunctionGroup" = _FunctionGroup
+					and rf."Function" = _Function
+					and gr."Department" = _Department
+					and (gr."PrototypeType" is null or gr."PrototypeType" = _PrototypeType)
+			)
+		)
+$func$ language sql;
