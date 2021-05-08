@@ -28,7 +28,7 @@
 
         setInactivityTimeout = function (disabled) {
             if (warningTimeout) clearTimeout(warningTimeout);
-            if (disabled && localStorage.refreshToken) {
+            if (!disabled && localStorage.refreshToken) {
                 var
                     milliseconds = parseInt(getCompanySettings().inactivityTimeoutSeconds) * 1000 || 900000,
                     countdownLength = Math.min(milliseconds, 60000);
