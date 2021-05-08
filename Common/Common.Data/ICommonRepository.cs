@@ -11,7 +11,7 @@ namespace CheckListManager.Common.Data
         Task<List<Departments>> GetDepartmentsAsync(IDefaultIdentity identity, string functionGroup, string function);
         Task<List<PrototypeTypes>> GetPrototypeTypesAsync(IDefaultIdentity identity, long department, string functionGroup, string function);
         Task<List<Departments>> GetDepartmentsAsync(long companyId);
-        Task<List<PrototypeTypes>> GetPrototypeTypesAsync(long companyId, long department);
+        Task<List<PrototypeTypes>> GetPrototypeTypesAsync(long companyId, long? department = null);
         Task<List<Prototypes>> GetPrototypesAsync(IDefaultIdentity identity, long department, long prototypeType, string functionGroup, string function);
         Task<List<ListItems.PrototypeVersion>> GetPrototypeVersionsAsync(IDefaultIdentity identity, long prototype, string functionGroup, string function);
         Task<List<string>> GetPrototypeVersionTagsAsync(IDefaultIdentity identity, long prototype, int? version, string functionGroup, string function);

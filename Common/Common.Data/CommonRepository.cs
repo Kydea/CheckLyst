@@ -148,8 +148,8 @@ namespace CheckListManager.Common.Data
         public async Task<List<Departments>> GetDepartmentsAsync(long companyId) =>
             await Entities.Departments.Where(d => d.Company == companyId).ToListAsync();
 
-        public async Task<List<PrototypeTypes>> GetPrototypeTypesAsync(long companyId, long department) =>
-            await Entities.PrototypeTypes.Where(pt => pt.Company == companyId && pt.Department == department).ToListAsync();
+        public async Task<List<PrototypeTypes>> GetPrototypeTypesAsync(long companyId, long? department = null) =>
+            await Entities.PrototypeTypes.Where(pt => pt.Company == companyId && (department == null || pt.Department == department)).ToListAsync();
 
         public Task<List<string>> GetVersionStatesAsync() => 
             _memoryCache.GetOrAddAsync("VersionStates", key => Entities.VersionStates.Select(s => s.Code).ToListAsync(), "CommonRepository");
