@@ -142,7 +142,7 @@
             if (
                 prototypeKey.id >= 0
                 && !matematici.tokenManager.checkRole("Prototypes#Edit#" + model.department + "##")
-                && !matematici.tokenManager.checkRole("Prototypes#Edit#" + model.department + "#" + model.prototypeType)
+                && !matematici.tokenManager.checkRole("Prototypes#Edit#" + model.department + "#" + model.prototypeType + "#")
             ) {
                 if (model.state == prototypes.Prototype.states.draft)
                     model.state = prototypes.Prototype.states.draftReadOnly;
