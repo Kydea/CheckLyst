@@ -193,7 +193,9 @@ namespace CheckListManager.AccessControl.Data
 
         public async Task<List<Users>> GetUsersToDisableAsync(long company)
         {
-            var Threshold = DateTime.UtcNow.AddDays(-await _settingsService.MaximumUserInactivityDaysAsync(company));
+            var Days = await _settingsService.MaximumUserInactivityDaysAsync(company);
+            if (Days == 0) return new List<Users>(0);
+            var Threshold = DateTime.UtcNow.AddDays(-Days);
             return await Entities.Users
                 .Include(u => u.Companies)
                 .Where(x => x.Enabled && x.LastLoginOn < Threshold).ToListAsync();
@@ -201,7 +203,9 @@ namespace CheckListManager.AccessControl.Data
 
         public async Task<List<Users>> GetUsersDisableWarningAsync(long company)
         {
-            var Threshold = DateTime.UtcNow.AddDays(-await _settingsService.WarningUserInactivityDaysAsync(company));
+            var Days = await _settingsService.WarningUserInactivityDaysAsync(company);
+            if (Days == 0) return new List<Users>(0);
+            var Threshold = DateTime.UtcNow.AddDays(-Days);
             return await Entities.Users
                 .Include(u => u.Companies)
                 .Where(x => x.Enabled && x.LastLoginOn < Threshold).ToListAsync();
