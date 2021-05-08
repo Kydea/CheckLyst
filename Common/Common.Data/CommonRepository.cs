@@ -125,20 +125,22 @@ namespace CheckListManager.Common.Data
                 "select u.* " +
                 "from " +
                     "\"Security\".\"GetGrantedUsers\"(:company, :department, :prototypetype, :functiongroup, :function) u " +
-                    " and exists (" +
-                        "select 1 " +
-                        "from \"Security\".\"UserLevels\" ul " +
-                        "where " +
-                            "ul.\"Company\" = u.\"Company\" " +
-                            "and ul.\"Code\" = u.\"Code\" " +
-                            "and (ul.\"Department\" is null || ul.\"Department\" = :department) " +
-                            "and (ul.\"PrototypeType\" is null || ul.\"PrototypeType\" = :prototypeType) " +
-                            (
-                                levels.Any() ?
-                                    string.Empty : 
-                                    $"and ul.\"{levelName}\" in ({string.Join(", ", levels.Select(l => l.Replace("\'", "\'\'")))}) "
-                            ) +
-                    ") " +
+                    (
+                        levels.Any() ?
+                            string.Empty :
+                            " and (" +
+                                $"select \"{levelName}\" " +
+                                "from \"Security\".\"UserLevels\" ul " +
+                                "where " +
+                                    "ul.\"Company\" = u.\"Company\" " +
+                                    "and ul.\"Code\" = u.\"Code\" " +
+                                    "and (ul.\"Department\" is null || ul.\"Department\" = :department) " +
+                                    "and (ul.\"PrototypeType\" is null || ul.\"PrototypeType\" = :prototypeType) " +
+                                    $"and not \"{levelName}\" is null " +
+                                "order by ul.\"PrototypeType\" " + //prototype type = null is considered only if the specific prototype type is not found
+                                "limit 1" +
+                            $") in ({string.Join(", ", levels.Select(l => l.Replace("\'", "\'\'")))}) "
+                    ) +
                 "order by u.\"Code\"";
 
             var users = await Read<Users>(query, new { company = companyID, functionGroup, function });

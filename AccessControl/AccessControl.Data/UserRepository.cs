@@ -7,6 +7,7 @@ using CheckListManager.Common.Core.Web.Security;
 using System;
 using CheckListManager.Common.Data.Exceptions;
 using CheckListManager.Common.Logic.Services;
+using CheckListManager.AccessControl.Data.Models;
 
 namespace CheckListManager.AccessControl.Data
 {
@@ -59,9 +60,9 @@ namespace CheckListManager.AccessControl.Data
                 new Parameter("_pin", pin));
         }
 
-        public async Task DeleteAsync(long companyId, string code)
+        public async Task DeleteAsync(long company, string code)
         {
-            var user = await GetAsync(companyId, code);
+            var user = await GetAsync(company, code);
             if (user == null) throw new DatabaseException($"User {code} not found");
 
             Entities.Users.Remove(user);
@@ -69,28 +70,76 @@ namespace CheckListManager.AccessControl.Data
         }
 
 
-        private IQueryable<Users> Get(long companyId, string code, string description, string corporateID)
+        private IQueryable<Users> Get(long company, string code, string description, string corporateID)
         {
             return Entities.Users
                 .Where(
-                    u => u.Company == companyId &&
+                    u => u.Company == company &&
                         (code == string.Empty || u.Code != null && u.Code.ToUpper().Contains(code.ToUpper())) &&
                         (description == string.Empty || u.Description != null && u.Description.ToUpper().Contains(description.ToUpper())) &&
                         (corporateID == string.Empty || u.CorporateID != null && u.CorporateID.ToUpper().Contains(corporateID.ToUpper()))
                 );
         }
 
-        public async Task<List<UserFunctions>> GetFunctionsAsync(long companyId, string code, string description, string corporateID)
+        private const string EXPORT_QUERY =
+            "select " +
+                "u.\"Code\", u.\"Description\", u.\"Email\", u.\"CorporateID\", u.\"Enabled\", u.\"LastLoginOn\", " +
+                "g.\"Department\", d.\"Name\" \"DepartmentName\", g.\"PrototypeType\", pt.\"Name\" \"PrototypeTypeName\", " +
+                "g.\"Role\", g.\"FunctionGroup\", g.\"Function\", (" +
+                    "select \"SignatureLevel\" " +
+                    "from \"Security\".\"UserLevels\" ul " +
+                    "where " +
+                        "ul.\"Company\" = u.\"Company\" " +
+                        "and ul.\"User\" = u.\"Code\" " +
+                        "and (ul.\"Department\" is null or ul.\"Department\" = g.\"Department\") " +
+                        "and (ul.\"PrototypeType\" is null or ul.\"PrototypeType\" = g.\"PrototypeType\") " +
+                        "and not \"SignatureLevel\" is null " +
+                    "order by ul.\"PrototypeType\" " + //prototype type = null is considered only if the specific prototype type is not found
+                    "limit 1" +
+                ") \"SignatureLevel\", (" +
+                    "select \"PrototypeWorkFlowLevel\" " +
+                    "from \"Security\".\"UserLevels\" ul " +
+                    "where " +
+                        "ul.\"Company\" = u.\"Company\" " +
+                        "and ul.\"User\" = u.\"Code\" " +
+                        "and (ul.\"Department\" is null or ul.\"Department\" = g.\"Department\") " +
+                        "and (ul.\"PrototypeType\" is null or ul.\"PrototypeType\" = g.\"PrototypeType\") " +
+                        "and not \"PrototypeWorkFlowLevel\" is null " +
+                    "order by ul.\"PrototypeType\" " + //prototype type = null is considered only if the specific prototype type is not found
+                    "limit 1" +
+                ") \"PrototypeWorkFlowLevel\", (" +
+                    "select \"InstanceWorkFlowLevel\" " +
+                    "from \"Security\".\"UserLevels\" ul " +
+                    "where " +
+                        "ul.\"Company\" = u.\"Company\" " +
+                        "and ul.\"User\" = u.\"Code\" " +
+                        "and (ul.\"Department\" is null or ul.\"Department\" = g.\"Department\") " +
+                        "and (ul.\"PrototypeType\" is null or ul.\"PrototypeType\" = g.\"PrototypeType\") " +
+                        "and not \"InstanceWorkFlowLevel\" is null " +
+                    "order by ul.\"PrototypeType\" " + //prototype type = null is considered only if the specific prototype type is not found
+                    "limit 1" +
+                ") \"InstanceWorkFlowLevel\" " +
+            "from " +
+                "\"Security\".\"Users\" u " +
+                "inner join lateral \"Security\".\"GetAllUserGrants\"(u.\"Company\", u.\"Code\") g on true " +
+                "left join \"Infrastructure\".\"Departments\" d on g.\"Department\" = d.\"ID\" " +
+                "left join \"CheckLists\".\"PrototypeTypes\" pt on g.\"PrototypeType\" = pt.\"ID\" " +
+            "where " +
+                "u.\"Company\" = :company " +
+                "and (:code = '' or upper(u.\"Code\") like '%' || :code || '%') " +
+                "and (:description = '' or upper(u.\"Description\") like '%' || :description || '%') " +
+                "and (:corporateID = '' or upper(u.\"CorporateID\") like '%' || :corporateID || '%') " +
+            "order by u.\"Code\", g.\"Department\", g.\"PrototypeType\", g.\"Role\", g.\"FunctionGroup\", g.\"Function\"";
+        public async Task<List<ExportRow>> GetUsersForExportAsync(long company, string code, string description, string corporateID)
         {
-            return await Entities.UserFunctions
-                .Where(
-                    f => f.Company == companyId &&
-                        (code == string.Empty || f.User != null && f.User.ToUpper().Contains(code.ToUpper())) &&
-                        (description == string.Empty || f.Users.Description != null && f.Users.Description.ToUpper().Contains(description.ToUpper())) &&
-                        (corporateID == string.Empty || f.Users.CorporateID != null && f.Users.CorporateID.ToUpper().Contains(corporateID.ToUpper()))
-                )
-                .OrderBy(x => x.User).ThenBy(x => x.Department).ThenBy(x => x.PrototypeType).ThenBy(x => x.FunctionGroup).ThenBy(x => x.Function)
-                .ToListAsync();
+            var List = await Read<ExportRow>(EXPORT_QUERY, new
+            {
+                company,
+                code = code?.ToUpper() ?? string.Empty,
+                description = description?.ToUpper() ?? string.Empty,
+                corporateID = corporateID?.ToUpper() ?? string.Empty
+            });
+            return List.ToList();
         }
 
         public Task<List<Users>> GetUsersAsync(long companyId, string code, string description, string corporateID, int skip, int take)
@@ -100,8 +149,8 @@ namespace CheckListManager.AccessControl.Data
                 .Take(take)
                 .ToListAsync();
 
-        public Task<int> CountUsersAsync(long companyId, string code, string description, string corporateID)
-            => Get(companyId, code, description, corporateID).CountAsync();
+        public Task<int> CountUsersAsync(long company, string code, string description, string corporateID)
+            => Get(company, code, description, corporateID).CountAsync();
 
         public async Task UserLoginCompleteAsync(Users user)
         {
@@ -143,25 +192,25 @@ namespace CheckListManager.AccessControl.Data
         }
 
         public async Task<List<Users>> GetUsersToDisableAsync(long company)
-		{
+        {
             var Threshold = DateTime.UtcNow.AddDays(-await _settingsService.MaximumUserInactivityDaysAsync(company));
             return await Entities.Users
-				.Include(u => u.Companies)
-				.Where(x => x.Enabled && x.LastLoginOn < Threshold).ToListAsync();
-		}
+                .Include(u => u.Companies)
+                .Where(x => x.Enabled && x.LastLoginOn < Threshold).ToListAsync();
+        }
 
-		public async Task<List<Users>> GetUsersDisableWarningAsync(long company)
-		{
+        public async Task<List<Users>> GetUsersDisableWarningAsync(long company)
+        {
             var Threshold = DateTime.UtcNow.AddDays(-await _settingsService.WarningUserInactivityDaysAsync(company));
             return await Entities.Users
-				.Include(u => u.Companies)
-				.Where(x => x.Enabled && x.LastLoginOn < Threshold).ToListAsync();
-		}
+                .Include(u => u.Companies)
+                .Where(x => x.Enabled && x.LastLoginOn < Threshold).ToListAsync();
+        }
 
-		public async Task<List<Users>> GetUsersWithExpiredPin(long company)
-		{
+        public async Task<List<Users>> GetUsersWithExpiredPin(long company)
+        {
             var Threshold = DateTime.UtcNow.AddDays(-await _settingsService.PINDaysLifeAsync(company));
             return await Entities.Users.Where(x => x.PIN != null && x.PINChangeDate < Threshold).ToListAsync();
-		}
-	}
+        }
+    }
 }

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Core.Web.Security;
 using System.Linq;
+using CheckListManager.AccessControl.Data.Models;
 
 namespace CheckListManager.AccessControl.Data
 {
@@ -14,7 +15,7 @@ namespace CheckListManager.AccessControl.Data
         Task SetPINAsync(long companyId, string code, byte[] pin);
         Task DeleteAsync(long companyId, string code);
 
-		Task<List<UserFunctions>> GetFunctionsAsync(long companyId, string code, string description, string corporateID);
+		Task<List<ExportRow>> GetUsersForExportAsync(long companyId, string code, string description, string corporateID);
 		Task<List<Users>> GetUsersAsync(long companyId, string code, string description, string corporateID, int skip, int take);
 		Task<int> CountUsersAsync(long companyId, string code, string description, string corporateID);
 		Task UserLoginCompleteAsync(Users user);

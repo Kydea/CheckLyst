@@ -294,6 +294,41 @@ $func$
 
 $func$ language sql;
 
+create function "Security"."GetAllUserGrants"(_Company bigint, _Code varchar(60))
+returns table ("Department" bigint, "PrototypeType" bigint, "Role" varchar(60), "FunctionGroup" varchar(20), "Function" varchar(20)) as
+$func$
+																															 
+	select uf."Department", uf."PrototypeType", null, uf."FunctionGroup", uf."Function"
+	from "Security"."UserFunctions" uf
+	where
+		uf."Company" = _Company
+		and uf."User" = _Code
+	union
+	select gf."Department", gf."PrototypeType", null, gf."FunctionGroup", gf."Function"
+	from 
+		"Security"."UserGroups" ug
+		inner join "Security"."GroupFunctions" gf on ug."Company" = gf."Company" and ug."Group" = gf."Group"
+	where
+		ug."Company" = _Company
+		and ug."User" = _Code
+	union
+	select ur."Department", ur."PrototypeType", ur."Role", null, null
+	from 
+		"Security"."UserRoles" ur
+	where
+		ur."Company" = _Company
+		and ur."User" = _Code
+	union
+	select gr."Department", gr."PrototypeType", gr."Role", null, null
+	from 
+		"Security"."UserGroups" ug
+		inner join "Security"."GroupRoles" gr on ug."Company" = gr."Company" and ug."Group" = gr."Group"
+	where
+		ug."Company" = _Company
+		and ug."User" = _Code
+
+$func$ language sql;
+
 create function "Security"."GetGrantedUsers"(_Company bigint, _Department bigint, _PrototypeType bigint, _FunctionGroup varchar(20), _Function varchar(20))
 returns setof "Security"."Users" as
 $func$

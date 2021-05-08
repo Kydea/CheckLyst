@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using CheckListManager.AccessControl.Data;
+using CheckListManager.AccessControl.Data.Models;
 using CheckListManager.AccessControl.Logic.Authentication;
 using CheckListManager.AccessControl.Logic.Exceptions;
 using CheckListManager.AccessControl.Logic.Messages.Users;
@@ -260,10 +261,8 @@ namespace CheckListManager.AccessControl.Logic.Services
             }
         }
 
-        public async Task<List<UserFunctions>> GetFunctionsAsync(long companyId, UsersRequest request)
-        {
-            return await _userRepository.GetFunctionsAsync(companyId, request.Code, request.Description, request.CorporateID);
-        }
+        public async Task<List<ExportRow>> GetFunctionsAsync(long companyId, UsersRequest request) =>
+            await _userRepository.GetUsersForExportAsync(companyId, request.Code, request.Description, request.CorporateID);
 
         public async Task<PagingResponse<List<UsersResponse>>> GetUsersAsync(long companyId, PagingRequest<UsersRequest> request)
         {
