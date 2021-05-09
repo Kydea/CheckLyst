@@ -537,6 +537,9 @@
     <Content Include="Views\Prototypes\SourceEditor.cshtml" />
     <Content Include="Views\Infrastructure\Companies\Detail.cshtml" />
     <Content Include="Views\Infrastructure\Companies\List.cshtml" />
+    <Content Include="Views\Users\RolesDetail.cshtml" />
+    <Content Include="Views\Users\RolesList.cshtml" />
+    <Content Include="Views\Users\GeneralGrants.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

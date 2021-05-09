@@ -23,62 +23,12 @@ namespace CheckListManager.AccessControl.Data
         public Task<Users> GetAsync(long companyId, string code)
             => Entities.Users.Include(u => u.Companies).FirstOrDefaultAsync(u => u.Company == companyId && u.Code.ToUpper() == code.ToUpper());
 
-        public async Task<Users> AddAsync(DefaultIdentity identity, Users user)
-        {
-            user.Company = identity.CompanyId;
-            user.CreatedOn = DateTimeOffset.UtcNow;
-            user.CreatedBy = identity.Code;
-            Entities.Users.Add(user);
-            await SaveChangesAsync();
-            return user;
-        }
-
-        public async Task<Users> EditAsync(DefaultIdentity identity, Users user)
-        {
-            var existingUser = await GetAsync(identity.CompanyId, user.Code);
-            if (existingUser == null) throw new DatabaseException($"User {user.Code} not found");
-            existingUser.Description = user.Description;
-            existingUser.Email = user.Email;
-            existingUser.CorporateID = user.CorporateID;
-            if (user.Password != null) existingUser.Password = user.Password;
-            existingUser.Enabled = user.Enabled;
-            if (user.Enabled) existingUser.NumberOfPasswordAttempts = 0;
-            existingUser.AuthenticationCode = user.AuthenticationCode;
-            existingUser.ModifiedOn = DateTimeOffset.UtcNow;
-            existingUser.ModifiedBy = identity.Code;
-            Entities.UserFunctions.RemoveRange(existingUser.UserFunctions);
-            existingUser.UserFunctions = user.UserFunctions;
-            await SaveChangesAsync();
-            return existingUser;
-        }
-
         public async Task SetPINAsync(long companyId, string code, byte[] pin)
         {
             await Call<int>("\"Security\".\"SetUserPIN\"",
                 new Parameter("_company", companyId),
                 new Parameter("_user", code),
                 new Parameter("_pin", pin));
-        }
-
-        public async Task DeleteAsync(long company, string code)
-        {
-            var user = await GetAsync(company, code);
-            if (user == null) throw new DatabaseException($"User {code} not found");
-
-            Entities.Users.Remove(user);
-            await SaveChangesAsync();
-        }
-
-
-        private IQueryable<Users> Get(long company, string code, string description, string corporateID)
-        {
-            return Entities.Users
-                .Where(
-                    u => u.Company == company &&
-                        (code == string.Empty || u.Code != null && u.Code.ToUpper().Contains(code.ToUpper())) &&
-                        (description == string.Empty || u.Description != null && u.Description.ToUpper().Contains(description.ToUpper())) &&
-                        (corporateID == string.Empty || u.CorporateID != null && u.CorporateID.ToUpper().Contains(corporateID.ToUpper()))
-                );
         }
 
         private const string EXPORT_QUERY =
@@ -141,16 +91,6 @@ namespace CheckListManager.AccessControl.Data
             });
             return List.ToList();
         }
-
-        public Task<List<Users>> GetUsersAsync(long companyId, string code, string description, string corporateID, int skip, int take)
-            => Get(companyId, code, description, corporateID)
-                .OrderBy(u => u.Code)
-                .Skip(skip)
-                .Take(take)
-                .ToListAsync();
-
-        public Task<int> CountUsersAsync(long company, string code, string description, string corporateID)
-            => Get(company, code, description, corporateID).CountAsync();
 
         public async Task UserLoginCompleteAsync(Users user)
         {
@@ -216,5 +156,117 @@ namespace CheckListManager.AccessControl.Data
             var Threshold = DateTime.UtcNow.AddDays(-await _settingsService.PINDaysLifeAsync(company));
             return await Entities.Users.Where(x => x.PIN != null && x.PINChangeDate < Threshold).ToListAsync();
         }
+
+        private IQueryable<Users> GetAsync(long company, string code, string description, string corporateID)
+        {
+            return Entities.Users
+                .Where(
+                    u => u.Company == company &&
+                        (code == string.Empty || u.Code != null && u.Code.ToUpper().Contains(code.ToUpper())) &&
+                        (description == string.Empty || u.Description != null && u.Description.ToUpper().Contains(description.ToUpper())) &&
+                        (corporateID == string.Empty || u.CorporateID != null && u.CorporateID.ToUpper().Contains(corporateID.ToUpper()))
+                );
+        }
+
+        public Task<List<Users>> GetUsersAsync(long companyId, string code, string description, string corporateID, int skip, int take)
+            => GetAsync(companyId, code, description, corporateID)
+                .OrderBy(u => u.Code)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+
+        public Task<int> CountUsersAsync(long company, string code, string description, string corporateID)
+            => GetAsync(company, code, description, corporateID).CountAsync();
+
+        public async Task<Users> AddAsync(DefaultIdentity identity, Users user)
+        {
+            user.Company = identity.CompanyId;
+            user.CreatedOn = DateTimeOffset.UtcNow;
+            user.CreatedBy = identity.Code;
+            Entities.Users.Add(user);
+            await SaveChangesAsync();
+            return user;
+        }
+
+        public async Task<Users> EditAsync(DefaultIdentity identity, Users user)
+        {
+            var existingUser = await GetAsync(identity.CompanyId, user.Code);
+            if (existingUser == null) throw new DatabaseException($"User {user.Code} not found");
+            existingUser.Description = user.Description;
+            existingUser.Email = user.Email;
+            existingUser.CorporateID = user.CorporateID;
+            if (user.Password != null) existingUser.Password = user.Password;
+            existingUser.Enabled = user.Enabled;
+            if (user.Enabled) existingUser.NumberOfPasswordAttempts = 0;
+            existingUser.AuthenticationCode = user.AuthenticationCode;
+            existingUser.ModifiedOn = DateTimeOffset.UtcNow;
+            existingUser.ModifiedBy = identity.Code;
+            Entities.UserFunctions.RemoveRange(existingUser.UserFunctions);
+            existingUser.UserFunctions = user.UserFunctions;
+            await SaveChangesAsync();
+            return existingUser;
+        }
+
+        public async Task DeleteAsync(long company, string code)
+        {
+            var user = await GetAsync(company, code);
+            if (user == null) throw new DatabaseException($"User {code} not found");
+
+            Entities.Users.Remove(user);
+            await SaveChangesAsync();
+        }
+
+        public Task<Roles> GetRoleAsync(long companyId, string code)
+            => Entities.Roles.SingleOrDefaultAsync(u => u.Company == companyId && u.Code.ToUpper() == code.ToUpper());
+
+        private IQueryable<Roles> GetRolesAsync(long company, string code)
+        {
+            return Entities.Roles
+                .Where(
+                    u => u.Company == company &&
+                        (code == string.Empty || u.Code != null && u.Code.ToUpper().Contains(code.ToUpper()))
+                );
+        }
+
+        public Task<List<Roles>> GetRolesAsync(long companyId, string code, int skip, int take)
+            => GetRolesAsync(companyId, code)
+                .OrderBy(u => u.Code)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+
+        public Task<int> CountRolesAsync(long company, string code)
+            => GetRolesAsync(company, code).CountAsync();
+
+        public async Task<Roles> AddRoleAsync(DefaultIdentity identity, Roles role)
+        {
+            role.Company = identity.CompanyId;
+            role.CreatedOn = DateTimeOffset.UtcNow;
+            role.CreatedBy = identity.Code;
+            Entities.Roles.Add(role);
+            await SaveChangesAsync();
+            return role;
+        }
+
+        public async Task<Roles> EditRoleAsync(DefaultIdentity identity, Roles role)
+        {
+            var existingRole = await GetRoleAsync(identity.CompanyId, role.Code);
+            if (existingRole == null) throw new DatabaseException($"Role {role.Code} not found");
+            existingRole.ModifiedOn = DateTimeOffset.UtcNow;
+            existingRole.ModifiedBy = identity.Code;
+            Entities.RoleFunctions.RemoveRange(existingRole.RoleFunctions);
+            existingRole.RoleFunctions = role.RoleFunctions;
+            await SaveChangesAsync();
+            return existingRole;
+        }
+        public async Task DeleteRoleAsync(long company, string code)
+        {
+            var role = await GetRoleAsync(company, code);
+            if (role == null) throw new DatabaseException($"Role {code} not found");
+
+            Entities.Roles.Remove(role);
+            await SaveChangesAsync();
+        }
+
     }
 }

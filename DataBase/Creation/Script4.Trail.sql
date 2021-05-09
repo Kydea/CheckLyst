@@ -18,6 +18,14 @@ values
 	('User edited'),
 	('User deleted'),
 
+	('Group created'),
+	('Group edited'),
+	('Group deleted'),
+
+	('Role created'),
+	('Role edited'),
+	('Role deleted'),
+
 	('Prototype created'),
 	('Prototype deleted'),
 	('Prototype state auto-changed'),

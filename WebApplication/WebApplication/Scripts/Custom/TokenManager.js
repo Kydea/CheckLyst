@@ -4,6 +4,7 @@
         cautionTimeOffset = 120000, //ms
         warningTimeout,
         companySettings,
+        disableInactivityTimeout,
 
         getCompanySettings = function () {
             return companySettings || (companySettings = JSON.parse(localStorage.companySettings));
@@ -27,8 +28,9 @@
         },
 
         setInactivityTimeout = function (disabled) {
+            if (disabled) disableInactivityTimeout = true;
             if (warningTimeout) clearTimeout(warningTimeout);
-            if (!disabled && localStorage.refreshToken) {
+            if (!disableInactivityTimeout && localStorage.refreshToken) {
                 var
                     milliseconds = parseInt(getCompanySettings().inactivityTimeoutSeconds) * 1000 || 900000,
                     countdownLength = Math.min(milliseconds, 60000);
@@ -40,8 +42,8 @@
         },
 
         setup = function () {
-            matematici.elements.document.on("mousedown keydown	", setInactivityTimeout);
-            setInactivityTimeout();
+            matematici.elements.document.on("mousedown keydown	", function () { setInactivityTimeout(false); });
+            setInactivityTimeout(false);
 
             setInterval(function () {
                 //the access token is refreshed, when a refresh token is present, [cautionTimeOffset] milliseconds before the expiration 

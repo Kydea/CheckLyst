@@ -33,6 +33,12 @@ insert into "Security"."UserFunctions"("Company", "User", "FunctionGroup", "Func
 
 insert into "Trail"."Actions"
 values 
+	('Group created'),
+	('Group edited'),
+	('Group deleted'),
+	('Role created'),
+	('Role edited'),
+	('Role deleted'),
 	('Company created'),
 	('Company updated');
 

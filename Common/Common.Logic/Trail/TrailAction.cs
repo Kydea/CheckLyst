@@ -10,6 +10,14 @@
         public const string UserEdited = "User edited";
         public const string UserDeleted = "User deleted";
 
+        public const string GroupCreated = "Group created";
+        public const string GroupEdited = "Group edited";
+        public const string GroupDeleted = "Group deleted";
+
+        public const string RoleCreated = "Role created";
+        public const string RoleEdited = "Role edited";
+        public const string RoleDeleted = "Role deleted";
+
         public const string EmailFailed = "Email failed";
         public const string EmailSent = "Email sent";
 

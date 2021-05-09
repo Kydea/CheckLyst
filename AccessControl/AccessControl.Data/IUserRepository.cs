@@ -9,20 +9,28 @@ namespace CheckListManager.AccessControl.Data
 {
 	public interface IUserRepository : IRepository
 	{
-		Task<Users> GetAsync(long companyId, string code);
-        Task<Users> AddAsync(DefaultIdentity identity, Users user);
-        Task<Users> EditAsync(DefaultIdentity identity, Users user);
         Task SetPINAsync(long companyId, string code, byte[] pin);
-        Task DeleteAsync(long companyId, string code);
 
 		Task<List<ExportRow>> GetUsersForExportAsync(long companyId, string code, string description, string corporateID);
-		Task<List<Users>> GetUsersAsync(long companyId, string code, string description, string corporateID, int skip, int take);
-		Task<int> CountUsersAsync(long companyId, string code, string description, string corporateID);
 		Task UserLoginCompleteAsync(Users user);
 		Task UserPasswordFailedAsync(Users user);
 		Task UserPINFailedAsync(Users user);
 		Task<List<Users>> GetUsersToDisableAsync(long company);
 		Task<List<Users>> GetUsersDisableWarningAsync(long company);
 		Task<List<Users>> GetUsersWithExpiredPin(long company);
-	}
+
+        Task<Users> GetAsync(long companyId, string code);
+        Task<List<Users>> GetUsersAsync(long companyId, string code, string description, string corporateID, int skip, int take);
+        Task<int> CountUsersAsync(long companyId, string code, string description, string corporateID);
+        Task<Users> AddAsync(DefaultIdentity identity, Users user);
+        Task<Users> EditAsync(DefaultIdentity identity, Users user);
+        Task DeleteAsync(long companyId, string code);
+
+        Task<Roles> GetRoleAsync(long companyId, string code);
+        Task<List<Roles>> GetRolesAsync(long companyId, string code, int skip, int take);
+        Task<int> CountRolesAsync(long companyId, string code);
+        Task<Roles> AddRoleAsync(DefaultIdentity identity, Roles role);
+        Task<Roles> EditRoleAsync(DefaultIdentity identity, Roles role);
+        Task DeleteRoleAsync(long companyId, string code);
+    }
 }
