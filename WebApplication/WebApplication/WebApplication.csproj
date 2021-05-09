@@ -161,6 +161,9 @@
     <Content Include="Content\Theme\Fonts\MyriadPro\Light\MyriadPro-Light.svg" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Regular\MyriadPro-Regular.svg" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Semibold\MyriadPro-Semibold.svg" />
+    <Content Include="Content\Theme\GrantsDetailPage.css">
+      <DependentUpon>GrantsDetailPage.scss</DependentUpon>
+    </Content>
     <Content Include="Content\Theme\Grid.css">
       <DependentUpon>Grid.scss</DependentUpon>
     </Content>
@@ -243,9 +246,6 @@
     <Content Include="Content\Theme\Tab.css">
       <DependentUpon>Tab.scss</DependentUpon>
     </Content>
-    <Content Include="Content\Theme\Users.css">
-      <DependentUpon>Users.scss</DependentUpon>
-    </Content>
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Parameters.xml" />
@@ -291,6 +291,7 @@
     <Content Include="Scripts\Controls\DetailPage.js" />
     <Content Include="Scripts\Controls\SearchPage.js" />
     <Content Include="Scripts\Controls\ButtonGroup.js" />
+    <Content Include="Scripts\Custom\GrantsDetailPage.js" />
     <Content Include="Scripts\Custom\GridFixedHeader.js" />
     <Content Include="Scripts\Custom\ScriptEditor.js" />
     <Content Include="Scripts\Custom\AutoCenter.js" />
@@ -341,7 +342,7 @@
     <Content Include="Content\Theme\ShadowPanel.scss" />
     <Content Include="Content\Theme\Accordion.scss" />
     <Content Include="Content\Theme\Popup.scss" />
-    <Content Include="Content\Theme\Users.scss" />
+    <Content Include="Content\Theme\GrantsDetailPage.scss" />
     <Content Include="Content\Theme\ButtonGroup.scss" />
     <Content Include="Content\Theme\Blip.scss" />
     <Content Include="Content\Theme\Dashboard.scss" />

@@ -47,6 +47,7 @@
     matematici.events.onPageLoad = function (callback) {
         var searchPage = new matematici.SearchPage({
             pageName: "Roles",
+            functionGroup: "Users",
             detailUrl: "@Url.Action("RolesDetail")",
             filterFormSelector: formSelector,
             resultGridSelector: "div#Content table.Grid",

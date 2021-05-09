@@ -1,4 +1,4 @@
-﻿matematici.GrantsDetailPage = function (formSelector) {
+﻿matematici.GrantsDetailPage = function (formSelector, page, loadHandler) {
     var
         departments,
         loading = false,
@@ -41,25 +41,28 @@
                 div = $("<div />").addClass("Function").insertBefore(tabItem.tab.children("div.Clearing"));
 
             $("<hr />").appendTo(div)
-            var
-                select1 = $("<select />"),
-                select2;
-            if (detailPage.isReadOnly()) matematici.controls.setEditable(select1, false);
-            $("<label />").appendTo(div).append($("<span />").text("Department")).append($("<i />").addClass("Icon fal fa-industry")).append(select1).addClass("Clearing");
-            for (var index in departments)
-                select1.append($("<option />").text(departments[index].name).attr("value", departments[index].code));
-            var autoComplete1 = new matematici.AutoComplete(select1[0]);
-            autoComplete1.initialize();
-            select1.on("change", function () {
-                refreshPrototypeTypes(select1, select2);
-            });
 
-            select2 = $("<select />").attr("data-nullable", "(all)");
-            if (detailPage.isReadOnly()) matematici.controls.setEditable(select2, false);
-            $("<label />").appendTo(div).append($("<span />").text("Prototype type")).append($("<i />").addClass("Icon fal fa-folder")).append(select2);
-            var autoComplete2 = new matematici.AutoComplete(select2[0]);
-            autoComplete2.initialize();
-            refreshPrototypeTypes(select1, select2);
+            if (page != "Roles") {
+                var
+                    select1 = $("<select />"),
+                    select2;
+                if (detailPage.isReadOnly()) matematici.controls.setEditable(select1, false);
+                $("<label />").appendTo(div).append($("<span />").text("Department")).append($("<i />").addClass("Icon fal fa-industry")).append(select1).addClass("Clearing");
+                for (var index in departments)
+                    select1.append($("<option />").text(departments[index].name).attr("value", departments[index].code));
+                var autoComplete1 = new matematici.AutoComplete(select1[0]);
+                autoComplete1.initialize();
+                select1.on("change", function () {
+                    refreshPrototypeTypes(select1, select2);
+                });
+
+                select2 = $("<select />").attr("data-nullable", "(all)");
+                if (detailPage.isReadOnly()) matematici.controls.setEditable(select2, false);
+                $("<label />").appendTo(div).append($("<span />").text("Prototype type")).append($("<i />").addClass("Icon fal fa-folder")).append(select2);
+                var autoComplete2 = new matematici.AutoComplete(select2[0]);
+                autoComplete2.initialize();
+                refreshPrototypeTypes(select1, select2);
+            }
 
             var select3 = $("<select />").prop("multiple", true);
             if (detailPage.isReadOnly()) matematici.controls.setEditable(select3, false);
@@ -70,22 +73,24 @@
             var autoComplete3 = new matematici.AutoComplete(select3[0]);
             autoComplete3.initialize();
 
-            var select4 = $("<select />").attr("data-nullable", "");
-            if (detailPage.isReadOnly()) matematici.controls.setEditable(select4, false);
-            $("<label />").appendTo(div).append($("<span />").text("Level")).append($("<i />").addClass("Icon fal fa-users")).append(select4);
-            for (var index in matematici.profiles)
-                select4.append($("<option />").text(matematici.profiles[index]).attr("value", matematici.profiles[index]));
-            select4.val(null);
-            var autoComplete4 = new matematici.AutoComplete(select4[0]);
-            autoComplete4.initialize();
+            if (page != "Roles") {
+                var select4 = $("<select />").attr("data-nullable", "");
+                if (detailPage.isReadOnly()) matematici.controls.setEditable(select4, false);
+                $("<label />").appendTo(div).append($("<span />").text("Level")).append($("<i />").addClass("Icon fal fa-users")).append(select4);
+                for (var index in matematici.profiles)
+                    select4.append($("<option />").text(matematici.profiles[index]).attr("value", matematici.profiles[index]));
+                select4.val(null);
+                var autoComplete4 = new matematici.AutoComplete(select4[0]);
+                autoComplete4.initialize();
+            }
 
             setTimeout(function () {
-                autoComplete1.refresh();
+                if (page != "Roles") autoComplete1.refresh();
                 autoComplete3.refresh();
-                autoComplete4.refresh();
+                if (page != "Roles") autoComplete4.refresh();
             }, 0);
 
-            if (!detailPage.isReadOnly())
+            if (!detailPage.isReadOnly() && page != "Roles")
                 $("<a />").attr("href", "#").addClass("Button Icon").append($("<i />").addClass("Icon fa fa-minus")).on("click", function () {
                     div.remove();
                     fixQueryParameters(tabIndex);
@@ -95,10 +100,10 @@
                 fixQueryParameters(tabIndex);
 
             return {
-                department: select1,
-                prototypeType: select2,
+                department: page == "Roles" ? null : select1,
+                prototypeType: page == "Roles" ? null : select2,
                 "function": select3,
-                level: select4
+                level: page == "Roles" ? null : select4
             }
         },
 
@@ -124,10 +129,14 @@
                     record = {},
                     selects = $("select", this);
 
-                record.department = selects.eq(0).val();
-                record.prototypeType = selects.eq(1).val();
-                record.functions = selects.eq(2).val();
-                record.level = selects.eq(3).val();
+                if (page == "Roles") 
+                    record.functions = selects.eq(2).val();
+                else {
+                    record.department = selects.eq(0).val();
+                    record.prototypeType = selects.eq(1).val();
+                    record.functions = selects.eq(2).val();
+                    record.level = selects.eq(3).val();
+                }
                 data.prototypeFunctions.push(record);
             });
 
@@ -136,10 +145,14 @@
                     record = {},
                     selects = $("select", this);
 
-                record.department = selects.eq(0).val();
-                record.prototypeType = selects.eq(1).val();
-                record.functions = selects.eq(2).val();
-                record.level = selects.eq(3).val();
+                if (page == "Roles")
+                    record.functions = selects.eq(0).val();
+                else {
+                    record.department = selects.eq(0).val();
+                    record.prototypeType = selects.eq(1).val();
+                    record.functions = selects.eq(2).val();
+                    record.level = selects.eq(3).val();
+                }
                 data.instanceFunctions.push(record);
             });
 
@@ -247,8 +260,8 @@
         },
 
         completeHandler = function () {
-            preparePrototypeTypes(detailPage.getSender().getElement().data("prototypeTypes"));
-            //if (!detailPage.isNew())
+            if (page != "Roles") preparePrototypeTypes(detailPage.getSender().getElement().data("prototypeTypes"));
+
             detailPage.getForm().trigger("Load", function (result) {
                 loading = true;
                 detailPage.getForm().handleResult(result);
@@ -262,6 +275,7 @@
                 fixQueryParameters(2);
                 fixQueryParameters(3);
                 loading = false;
+                loadHandler && loadHandler();
             });
         },
 
@@ -283,11 +297,13 @@
                     record = functions[index],
                     row = addFunction(tabIndex);
 
-                row.department.val(record.department);
-                refreshPrototypeTypes(row.department, row.prototypeType);
-                row.prototypeType.val(record.prototypeType);
+                if (page != "Roles") {
+                    row.department.val(record.department);
+                    refreshPrototypeTypes(row.department, row.prototypeType);
+                    row.prototypeType.val(record.prototypeType);
+                    row.level.val(record.level);
+                }
                 row["function"].val(record.functions);
-                row.level.val(record.level);
             }
         },
 
@@ -328,7 +344,7 @@
                 $("input[type=checkbox]", detailPage.getElement()).prop("disabled", true);
             } else
                 tab.addHandler(function (item) {
-                    $("a#AddFunction", matematici.popup.getElement()).toggle(item.index > 1);
+                    $("a#AddFunction", matematici.popup.getElement()).toggle(item.index > 1 && page != "Roles");
                 });
         };
 

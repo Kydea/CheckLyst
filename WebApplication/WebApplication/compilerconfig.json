@@ -140,8 +140,8 @@
     "inputFile": "Content/Theme/Columns.scss"
   },
   {
-    "outputFile": "Content/Theme/Users.css",
-    "inputFile": "Content/Theme/Users.scss"
+    "outputFile": "Content/Theme/GrantsDetailPage.css",
+    "inputFile": "Content/Theme/GrantsDetailPage.scss"
   },
   {
     "outputFile": "Content/Theme/ButtonGroup.css",

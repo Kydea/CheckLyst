@@ -49,7 +49,7 @@
         },
 
 		setup = function () {
-			options.readOnly = options.readOnly != null ? options.readOnly : !matematici.tokenManager.checkRole(options.pageName + "#Edit#");
+            options.readOnly = options.readOnly != null ? options.readOnly : !matematici.tokenManager.checkRole((options.functionGroup || options.pageName) + "#Edit#");
 			if (!options.readOnly)
 				new matematici.ActionBar("div.ActionBar").add("Add", function () {
 					matematici.popup.show({

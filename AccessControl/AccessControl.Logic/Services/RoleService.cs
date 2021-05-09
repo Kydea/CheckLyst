@@ -48,13 +48,14 @@ namespace CheckListManager.AccessControl.Logic.Services
             var roles = await _userRepository.GetRolesAsync(companyId, request.Data.Code, request.Skip, take);
             var count = await _userRepository.CountRolesAsync(companyId, request.Data.Code);
 
-            var response = roles.Select(u => new RolesResponse
+            var response = roles.Select(r => new RolesResponse
             {
-                Code = u.Code,
-                CreatedBy = u.CreatedBy,
-                CreatedOn = u.CreatedOn,
-                ModifiedBy = u.ModifiedBy,
-                ModifiedOn = u.ModifiedOn
+                Code = r.Code,
+                FunctionGroup = r.FunctionGroup,
+                CreatedBy = r.CreatedBy,
+                CreatedOn = r.CreatedOn,
+                ModifiedBy = r.ModifiedBy,
+                ModifiedOn = r.ModifiedOn
             }).ToList();
 
             return new PagingResponse<List<RolesResponse>>
@@ -111,6 +112,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                 try
                 {
                     var role = await _userRepository.GetRoleAsync(identity.CompanyId, record.Code);
+                    response.FunctionGroup = role.FunctionGroup;
 
                     response.GeneralFunctions = role.RoleFunctions
                         .Where(f => f.FunctionGroup != "Prototypes" && f.FunctionGroup != "Instances")
@@ -191,6 +193,7 @@ namespace CheckListManager.AccessControl.Logic.Services
             return JsonConvert.SerializeObject(new
             {
                 role.Code,
+                role.FunctionGroup,
                 Functions = roleFunctions.Select(uf => new
                 {
                     uf.FunctionGroup,
@@ -209,6 +212,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                     var Role = new Roles
                     {
                         Code = record.Code,
+                        FunctionGroup = record.FunctionGroup
                     };
 
                     BuildFunctions(identity, record, Role);
@@ -246,6 +250,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                     var Role = new Roles
                     {
                         Code = record.Code,
+                        FunctionGroup = record.FunctionGroup
                     };
 
                     BuildFunctions(identity, record, Role);

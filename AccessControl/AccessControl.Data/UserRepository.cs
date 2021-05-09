@@ -252,6 +252,7 @@ namespace CheckListManager.AccessControl.Data
         {
             var existingRole = await GetRoleAsync(identity.CompanyId, role.Code);
             if (existingRole == null) throw new DatabaseException($"Role {role.Code} not found");
+            existingRole.FunctionGroup = role.FunctionGroup;
             existingRole.ModifiedOn = DateTimeOffset.UtcNow;
             existingRole.ModifiedBy = identity.Code;
             Entities.RoleFunctions.RemoveRange(existingRole.RoleFunctions);
