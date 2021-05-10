@@ -29,10 +29,10 @@
         expressionsButton,
         exceptionsButton,
         lastResult,
-        deleted,
+        deleted = false,
         removedIterationsVisible = false,
         model,
-        Button,
+        parentInstances,
 
         setupInstanceDescription = function () {
             $(header.getElement()).prepend(instanceDescription = $("<div />").addClass("InstanceDescription"));
@@ -59,9 +59,10 @@
                 completeButton = $("a.Complete", buttonGroup).toggleClass("Hidden", !editor || state != instances.Instance.states.progress),
                 deleteButton = $("a.Delete", buttonGroup).toggleClass("Hidden", !deleter || state != instances.Instance.states.draft && state != instances.Instance.states.progress),
                 saveButton = $("a.Save", buttonGroup).toggleClass("Hidden", !editor || state != instances.Instance.states.draft && state != instances.Instance.states.progress),
-                historyButton = $("a.History", buttonGroup).toggleClass("Hidden", state == instances.Instance.states.draft),
-                showRemovedIterationsButton = $("a.ShowRemovedIterations", buttonGroup).toggleClass("Hidden", !matematici.tokenManager.checkRole("Trail#View#") || removedIterationsVisible),
-                hideRemovedIterationsButton = $("a.HideRemovedIterations", buttonGroup).toggleClass("Hidden", !removedIterationsVisible);
+                historyButton = $("a.History", buttonGroup).toggleClass("Hidden", state == instances.Instance.states.draft || deleted),
+                downloadButton = $("a.Download", buttonGroup).toggleClass("Hidden", deleted),
+                showRemovedIterationsButton = $("a.ShowRemovedIterations", buttonGroup).toggleClass("Hidden", !matematici.tokenManager.checkRole("Trail#View#") || removedIterationsVisible || deleted),
+                hideRemovedIterationsButton = $("a.HideRemovedIterations", buttonGroup).toggleClass("Hidden", !removedIterationsVisible || deleted);
 
             expressionsButton = $("a.ExpressionsButton", actionBar);
             exceptionsButton = $("a.ExceptionsButton", actionBar);
@@ -88,8 +89,8 @@
         },
 
         getParentInstances = function (handler) {
-            if (id == null)
-                handler([]);
+            if (deleted)
+                handler(parentInstances || []);
             else
                 $.ajax({
                     url: matematici.urls.instances.api + "/GetParentInstances",
@@ -102,9 +103,9 @@
                 });
         },
 
-        showRelations = function (showWarning) {
+        showRelations = function () {
             var handler = function (grid, row) {
-                instance.openInstance(row.code, showWarning);
+                instance.openInstance(row.code);
             };
 
             getParentInstances(function (result) {
@@ -163,11 +164,11 @@
                 }
                 return false;
             }, [
-                    { label: "Code" },
-                    { name: "description", label: "Description" },
-                    { label: "Value" },
-                    { label: "Type" }
-                ]);
+                { label: "Code" },
+                { name: "description", label: "Description" },
+                { label: "Value" },
+                { label: "Type" }
+            ]);
         },
 
         showExceptions = function () {
@@ -396,7 +397,6 @@
         hasPermission = function (instanceFunction) {
             return versionState != prototypes.Prototype.states.draft && versionState != prototypes.Prototype.states.simulation
                 && (state == instances.Instance.states.draft || state == instances.Instance.states.progress)
-                && instanceFunction //when null, only prototype grants are checked
                 && (matematici.tokenManager.checkRole("Instances#" + instanceFunction + "#" + department + "##")
                     || matematici.tokenManager.checkRole("Instances#" + instanceFunction + "#" + department + "#" + prototypeType + "#"))
                 || (versionState == prototypes.Prototype.states.draft || versionState == prototypes.Prototype.states.simulation)
@@ -488,6 +488,10 @@
         });
     };
 
+    instance.save = function () {
+        send(state == instances.Instance.states.draft ? "Open" : "Save");
+    };
+
     instance.quit = function () {
         if (options.appMode) {
             window.webkit.messageHandlers.instances.postMessage("quit");
@@ -495,23 +499,21 @@
         }
         var handler = function (hasRelations) {
             var
-                hasPermissionOnPrototype = hasPermission(null)
-                    && (
-                        matematici.tokenManager.checkRole("Prototypes#View#" + department + "##")
-                        || matematici.tokenManager.checkRole("Prototypes#View#" + department + "#" + prototypeType + "#")
-                    ) && (versionState == prototypes.Prototype.states.draft || versionState == prototypes.Prototype.states.simulation);
+                hasPermissionOnPrototype = 
+                    (matematici.tokenManager.checkRole("Prototypes#View#" + department + "##") || matematici.tokenManager.checkRole("Prototypes#View#" + department + "#" + prototypeType + "#"))
+                    && (versionState == prototypes.Prototype.states.draft || versionState == prototypes.Prototype.states.simulation);
 
             if (hasRelations || hasPermissionOnPrototype) {
                 var buttons = [
-                    { text: "Cancel", icon: "fa-times", cancelButton: true },
-                    { text: "Open instances list", icon: "fa-layer-group", handler: function () { matematici.navigator.open(options.listUrl); } }
+                    { text: "Cancel", icon: "times", cancelButton: true },
+                    { text: "Open instances list", icon: "layer-group", handler: function () { matematici.navigator.open(options.listUrl); } }
                 ];
                 if (hasPermissionOnPrototype)
-                    buttons.push({ text: "Open parent prototype", icon: "fa-layer-group", handler: function () { matematici.navigator.open(matematici.urls.prototypes.detail + "/" + prototype + "/" + version); } })
+                    buttons.push({ text: "Open parent prototype", icon: "file-invoice", handler: function () { matematici.navigator.open(matematici.urls.prototypes.detail + "/" + prototype + "/" + version); } })
                 if (hasRelations)
                     buttons.push({
-                        text: "Open related instance", icon: "fa-layer-group", handler: function () {
-                            showRelations(false);
+                        text: "Open related instance", icon: "sitemap", handler: function () {
+                            showRelations();
                         }
                     })
                 matematici.dialog.popupMenu(buttons);
@@ -527,39 +529,60 @@
             });
     };
 
-    instance.save = function () {
-        send(state == instances.Instance.states.draft ? "Open" : "Save");
-    };
-
     instance.delete = function () {
-        if (!(versionState == prototypes.Prototype.states.draft || versionState == prototypes.Prototype.states.simulation) && state == instances.Instance.states.progress)
-            matematici.dialog.show("Instance deletion", "Instance will be set as deleted. Provide a note for the deletion.", [
-                {
-                    text: "Confirm", icon: "check", handler: function () {
-                        send("Delete", $("textarea.Textarea", $(this).closest("div.Dialog")).val(), function () {
-                            deleted = true;
-                            instance.quit();
-                        });
+        var
+            traverse = function (model) {
+                model.readOnly = true;
+                if (model.iterations)
+                    for (var index in model.iterations)
+                        traverse(model.iterations[index]);
+                if (model.items)
+                    for (var index in model.items)
+                        traverse(model.items[index]);
+                if (model.groups)
+                    for (var index in model.groups)
+                        traverse(model.groups[index]);
+            },
+            changeState = function () {
+                state = instances.Instance.states.deleted;
+                traverse(model.header);
+                for (var page in model.pages)
+                    traverse(model.pages[page]);
+                update({ checkList: model });
+                setupActionBar()
+            };
+        getParentInstances(function (result) {
+            parentInstances = result;
+            if (!(versionState == prototypes.Prototype.states.draft || versionState == prototypes.Prototype.states.simulation) && state == instances.Instance.states.progress)
+                matematici.dialog.show("Instance deletion", "Instance will be set as deleted. Provide a note for the deletion.", [
+                    {
+                        text: "Confirm", icon: "check", handler: function () {
+                            send("Delete", $("textarea.Textarea", $(this).closest("div.Dialog")).val(), function (result) {
+                                changeState();
+                                instance.quit();
+                            });
+                        }
+                    },
+                    { icon: "times", hidden: true, cancelButton: true },
+                    {
+                        textarea: true,
+                        marginTop: "10px"
                     }
-                },
-                { icon: "times", hidden: true, cancelButton: true },
-                {
-                    textarea: true,
-                    marginTop: "10px"
-                }
-            ]);
-        else
-            matematici.dialog.show("Instance deletion", "The instance will be deleted", [
-                {
-                    text: "Confirm", icon: "check", handler: function () {
-                        send("Delete", null, function () {
-                            deleted = true;
-                            instance.quit();
-                        });
-                    }
-                },
-                { icon: "times", hidden: true, cancelButton: true },
-            ]);
+                ]);
+            else
+                matematici.dialog.show("Instance deletion", "The instance will be deleted", [
+                    {
+                        text: "Confirm", icon: "check", handler: function () {
+                            send("Delete", null, function () {
+                                deleted = true;
+                                changeState();
+                                instance.quit();
+                            });
+                        }
+                    },
+                    { icon: "times", hidden: true, cancelButton: true },
+                ]);
+        });
     };
 
     instance.complete = function () {
@@ -677,7 +700,7 @@
     };
 
     instance.close = function (callback) {
-        if (id != null && !deleted && hasPermission("Edit")) {
+        if (id != null && hasPermission("Edit")) {
             new instances.Event(instances.Events.quit, null, null, null, true).done(function () {
                 callback();
             }).error(function () {
@@ -735,13 +758,13 @@
         return result;
     };
 
-    instance.openInstance = function (code, showWarning) {
+    instance.openInstance = function (code) {
         var action = function () {
             matematici.navigator.open(matematici.urls.instances.detail + "/" + code);
         };
-        if (showWarning && instances.instance.getState() == instances.Instance.states.draft) {
+        if (instances.instance.getState() == instances.Instance.states.draft) {
             setTimeout(function () {
-                matematici.dialog.show("warning", "Instance is not saved, the back link will not be available in the relations list", [
+                matematici.dialog.show("warning", "This instance is not saved, the back link will not be available in the relations list", [
                     { text: "Confirm", icon: "check", handler: action },
                     { icon: "times", hidden: true, cancelButton: true }
                 ]);

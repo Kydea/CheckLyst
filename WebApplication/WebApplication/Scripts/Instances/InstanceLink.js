@@ -65,7 +65,7 @@
         },
 
         open = function () {
-            instances.instance.openInstance(model.attachedInstanceCode, true);
+            instances.instance.openInstance(model.attachedInstanceCode);
         },
 
         create = function () {
