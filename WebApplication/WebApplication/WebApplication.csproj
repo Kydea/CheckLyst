@@ -541,6 +541,10 @@
     <Content Include="Views\Users\RolesDetail.cshtml" />
     <Content Include="Views\Users\RolesList.cshtml" />
     <Content Include="Views\Users\GeneralGrants.cshtml" />
+    <Content Include="Views\Help\Companies.cshtml" />
+    <Content Include="Views\Help\Roles.cshtml" />
+    <Content Include="Views\Help\Groups.cshtml" />
+    <Content Include="Views\Help\FTPServers.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
