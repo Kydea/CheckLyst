@@ -69,7 +69,7 @@ namespace CheckListManager.AccessControl.Logic.Services
 
         private async Task<RoleResponse> ValidateAsync(IDefaultIdentity identity, RoleRequest record)
         {
-            var requireRoleReason = await _settingService.RequireUserReasonAsync(identity.CompanyId);
+            var requireReason = await _settingService.RequireUserReasonAsync(identity.CompanyId);
 
             var response = new RoleResponse();
             if (string.IsNullOrWhiteSpace(record.Code))
@@ -85,7 +85,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                     }
                 };
 
-            if (requireRoleReason && string.IsNullOrEmpty(record.Reason))
+            if (requireReason && string.IsNullOrEmpty(record.Reason))
             {
                 response.Fields["Reason"] = new Field
                 {

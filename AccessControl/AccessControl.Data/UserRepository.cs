@@ -269,5 +269,60 @@ namespace CheckListManager.AccessControl.Data
             await SaveChangesAsync();
         }
 
+        public Task<Groups> GetGroupAsync(long companyId, string code)
+            => Entities.Groups.SingleOrDefaultAsync(u => u.Company == companyId && u.Code.ToUpper() == code.ToUpper());
+
+        private IQueryable<Groups> GetGroupsAsync(long company, string code, string description)
+        {
+            return Entities.Groups
+                .Where(
+                    u => u.Company == company &&
+                        (code == string.Empty || u.Code != null && u.Code.ToUpper().Contains(code.ToUpper())) &&
+                        (description == string.Empty || u.Description != null && u.Description.ToUpper().Contains(description.ToUpper()))
+                );
+        }
+
+        public Task<List<Groups>> GetGroupsAsync(long companyId, string code, string description, int skip, int take)
+            => GetGroupsAsync(companyId, code, description)
+                .OrderBy(u => u.Code)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+
+        public Task<int> CountGroupsAsync(long company, string code, string description)
+            => GetGroupsAsync(company, code, description).CountAsync();
+
+        public async Task<Groups> AddGroupAsync(DefaultIdentity identity, Groups group)
+        {
+            group.Company = identity.CompanyId;
+            group.CreatedOn = DateTimeOffset.UtcNow;
+            group.CreatedBy = identity.Code;
+            Entities.Groups.Add(group);
+            await SaveChangesAsync();
+            return group;
+        }
+
+        public async Task<Groups> EditGroupAsync(DefaultIdentity identity, Groups group)
+        {
+            var existingGroup = await GetGroupAsync(identity.CompanyId, group.Code);
+            if (existingGroup == null) throw new DatabaseException($"Group {group.Code} not found");
+            existingGroup.Description = group.Description;
+            existingGroup.ModifiedOn = DateTimeOffset.UtcNow;
+            existingGroup.ModifiedBy = identity.Code;
+            Entities.GroupFunctions.RemoveRange(existingGroup.GroupFunctions);
+            existingGroup.GroupFunctions = group.GroupFunctions;
+            await SaveChangesAsync();
+            return existingGroup;
+        }
+
+        public async Task DeleteGroupAsync(long company, string code)
+        {
+            var user = await GetGroupAsync(company, code);
+            if (user == null) throw new DatabaseException($"Group {code} not found");
+
+            Entities.Groups.Remove(user);
+            await SaveChangesAsync();
+        }
+
     }
 }

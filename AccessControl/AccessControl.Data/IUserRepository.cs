@@ -32,5 +32,12 @@ namespace CheckListManager.AccessControl.Data
         Task<Roles> AddRoleAsync(DefaultIdentity identity, Roles role);
         Task<Roles> EditRoleAsync(DefaultIdentity identity, Roles role);
         Task DeleteRoleAsync(long companyId, string code);
+
+        Task<Groups> GetGroupAsync(long companyId, string code);
+        Task<List<Groups>> GetGroupsAsync(long companyId, string code, string description, int skip, int take);
+        Task<int> CountGroupsAsync(long companyId, string code, string description);
+        Task<Groups> AddGroupAsync(DefaultIdentity identity, Groups group);
+        Task<Groups> EditGroupAsync(DefaultIdentity identity, Groups group);
+        Task DeleteGroupAsync(long companyId, string code);
     }
 }
