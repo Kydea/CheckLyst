@@ -174,6 +174,8 @@ namespace CheckListManager.AccessControl.Logic.Services
                         {
                             Company = identity.CompanyId,
                             Group = record.Code,
+                            Department = row.department,
+                            PrototypeType = row.prototypeType,
                             FunctionGroup = "Prototypes",
                             Function = function,
                             CreatedOn = DateTimeOffset.UtcNow,
@@ -187,6 +189,8 @@ namespace CheckListManager.AccessControl.Logic.Services
                         {
                             Company = identity.CompanyId,
                             Group = record.Code,
+                            Department = row.department,
+                            PrototypeType = row.prototypeType,
                             FunctionGroup = "Instances",
                             Function = function,
                             CreatedOn = DateTimeOffset.UtcNow,
