@@ -20,5 +20,6 @@ namespace CheckListManager.AccessControl.Logic.Services
         Task<RoleResponse> AddRoleAsync(DefaultIdentity identity, RoleRequest request);
         Task<RoleResponse> EditRoleAsync(DefaultIdentity identity, RoleRequest record);
         Task<RoleResponse> DeleteRoleAsync(DefaultIdentity identity, RoleRequest record);
-	}
+        Task<List<RolesResponse>> GetSyntheticDataAsync(long companyId);
+    }
 }

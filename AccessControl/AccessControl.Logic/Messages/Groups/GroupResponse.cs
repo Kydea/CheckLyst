@@ -7,8 +7,8 @@ namespace CheckListManager.AccessControl.Logic.Messages.Groups
 	{
 		public string Code { get; set; }
         public string Description { get; set; }
-        public Function[] GeneralFunctions { get; set; }
-        public Function[] PrototypeFunctions { get; set; }
-        public Function[] InstanceFunctions { get; set; }
+        public Grant[] GeneralFunctions { get; set; }
+        public Grant[] PrototypeFunctions { get; set; }
+        public Grant[] InstanceFunctions { get; set; }
     }
 }

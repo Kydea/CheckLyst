@@ -12,9 +12,9 @@ namespace CheckListManager.AccessControl.Logic.Messages.Users
 		public string Email { get; set; }
 		public string CorporateID { get; set; }
         public string AuthenticationCode { get; set; }
-        public Function[] GeneralFunctions { get; set; }
-        public Function[] PrototypeFunctions { get; set; }
-        public Function[] InstanceFunctions { get; set; }
+        public Grant[] GeneralFunctions { get; set; }
+        public Grant[] PrototypeFunctions { get; set; }
+        public Grant[] InstanceFunctions { get; set; }
 
         public string Reason { get; set; }
     }

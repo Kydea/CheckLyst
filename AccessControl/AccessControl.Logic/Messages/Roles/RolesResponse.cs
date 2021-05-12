@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CheckListManager.AccessControl.Logic.Messages.Users;
+using System;
+using System.Collections.Generic;
 
 namespace CheckListManager.AccessControl.Logic.Messages.Roles
 {
@@ -10,5 +12,7 @@ namespace CheckListManager.AccessControl.Logic.Messages.Roles
         public DateTimeOffset CreatedOn { get; set; }
         public string ModifiedBy { get; set; }
         public DateTimeOffset? ModifiedOn { get; set; }
+
+        public List<string> Functions { get; set; }
     }
 }

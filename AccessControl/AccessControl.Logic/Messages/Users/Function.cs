@@ -6,12 +6,15 @@ using System.Threading.Tasks;
 
 namespace CheckListManager.AccessControl.Logic.Messages.Users
 {
-    public class Function
+    public class Grant
     {
-        public long? department { get; set; }
-        public long? prototypeType { get; set; }
-        public string functionGroup { get; set; }
-        public string function { get; set; }
-        public string[] functions { get; set; }
+        public long? Department { get; set; }
+        public long? PrototypeType { get; set; }
+        public string FunctionGroup { get; set; }
+        public string Role { get; set; }
+        public string WorkFlowLevel { get; set; }
+        public string SignatureLevel { get; set; }
+        public string Function { get; set; }
+        public string[] Functions { get; set; }
     }
 }

@@ -201,8 +201,12 @@ namespace CheckListManager.AccessControl.Data
             existingUser.AuthenticationCode = user.AuthenticationCode;
             existingUser.ModifiedOn = DateTimeOffset.UtcNow;
             existingUser.ModifiedBy = identity.Code;
+            Entities.UserRoles.RemoveRange(existingUser.UserRoles);
             Entities.UserFunctions.RemoveRange(existingUser.UserFunctions);
+            Entities.UserLevels.RemoveRange(existingUser.UserLevels);
+            existingUser.UserRoles = user.UserRoles;
             existingUser.UserFunctions = user.UserFunctions;
+            existingUser.UserLevels = user.UserLevels;
             await SaveChangesAsync();
             return existingUser;
         }
@@ -260,6 +264,7 @@ namespace CheckListManager.AccessControl.Data
             await SaveChangesAsync();
             return existingRole;
         }
+
         public async Task DeleteRoleAsync(long company, string code)
         {
             var role = await GetRoleAsync(company, code);
@@ -268,6 +273,13 @@ namespace CheckListManager.AccessControl.Data
             Entities.Roles.Remove(role);
             await SaveChangesAsync();
         }
+
+        public Task<List<Roles>> GetRolesAsync(long companyId)
+            => GetRolesAsync(companyId, string.Empty)
+                .Include(r => r.RoleFunctions)
+                .OrderBy(r => r.Code)
+                .ToListAsync();
+
 
         public Task<Groups> GetGroupAsync(long companyId, string code)
             => Entities.Groups.SingleOrDefaultAsync(u => u.Company == companyId && u.Code.ToUpper() == code.ToUpper());
@@ -309,7 +321,9 @@ namespace CheckListManager.AccessControl.Data
             existingGroup.Description = group.Description;
             existingGroup.ModifiedOn = DateTimeOffset.UtcNow;
             existingGroup.ModifiedBy = identity.Code;
+            Entities.GroupRoles.RemoveRange(existingGroup.GroupRoles);
             Entities.GroupFunctions.RemoveRange(existingGroup.GroupFunctions);
+            existingGroup.GroupRoles = group.GroupRoles;
             existingGroup.GroupFunctions = group.GroupFunctions;
             await SaveChangesAsync();
             return existingGroup;

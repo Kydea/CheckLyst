@@ -45,8 +45,8 @@ namespace CheckListManager.AccessControl.Logic.Services
         public async Task<PagingResponse<List<RolesResponse>>> GetRolesAsync(long companyId, PagingRequest<RolesRequest> request)
         {
             var take = request.ItemsPerPage;
-            var roles = await _userRepository.GetRolesAsync(companyId, request.Data.Code, request.Skip, take);
-            var count = await _userRepository.CountRolesAsync(companyId, request.Data.Code);
+            var roles = await _userRepository.GetRolesAsync(companyId, request.Data.Code ?? string.Empty, request.Skip, take);
+            var count = await _userRepository.CountRolesAsync(companyId, request.Data.Code ?? string.Empty);
 
             var response = roles.Select(r => new RolesResponse
             {
@@ -116,22 +116,22 @@ namespace CheckListManager.AccessControl.Logic.Services
 
                     response.GeneralFunctions = role.RoleFunctions
                         .Where(f => f.FunctionGroup != "Prototypes" && f.FunctionGroup != "Instances")
-                        .Select(gf => new Function { functionGroup = gf.FunctionGroup, function = gf.Function })
+                        .Select(gf => new Grant { FunctionGroup = gf.FunctionGroup, Function = gf.Function })
                         .ToArray();
 
-                    response.PrototypeFunctions = new Function[] {
-                        new Function
+                    response.PrototypeFunctions = new Grant[] {
+                        new Grant
                         {
-                            functionGroup = "Prototypes",
-                            functions = role.RoleFunctions.Where(f => f.FunctionGroup == "Prototypes").Select(pf => pf.Function).ToArray(),
+                            FunctionGroup = "Prototypes",
+                            Functions = role.RoleFunctions.Where(f => f.FunctionGroup == "Prototypes").Select(pf => pf.Function).ToArray(),
                         }
                     };
 
-                    response.InstanceFunctions = new Function[] {
-                        new Function
+                    response.InstanceFunctions = new Grant[] {
+                        new Grant
                         {
-                            functionGroup = "Instances",
-                            functions = role.RoleFunctions.Where(f => f.FunctionGroup == "Instances").Select(pf => pf.Function).ToArray(),
+                            FunctionGroup = "Instances",
+                            Functions = role.RoleFunctions.Where(f => f.FunctionGroup == "Instances").Select(pf => pf.Function).ToArray(),
                         }
                     };
                 }
@@ -155,15 +155,15 @@ namespace CheckListManager.AccessControl.Logic.Services
                 {
                     Company = identity.CompanyId,
                     Role = record.Code,
-                    FunctionGroup = function.functionGroup,
-                    Function = function.function,
+                    FunctionGroup = function.FunctionGroup,
+                    Function = function.Function,
                     CreatedOn = DateTimeOffset.UtcNow,
                     CreatedBy = identity.Code
                 });
 
             foreach (var row in record.PrototypeFunctions)
-                if (row.functions != null)
-                    foreach (var function in row.functions)
+                if (row.Functions != null)
+                    foreach (var function in row.Functions)
                         Role.RoleFunctions.Add(new RoleFunctions
                         {
                             Company = identity.CompanyId,
@@ -175,8 +175,8 @@ namespace CheckListManager.AccessControl.Logic.Services
                         });
 
             foreach (var row in record.InstanceFunctions)
-                if (row.functions != null)
-                    foreach (var function in row.functions)
+                if (row.Functions != null)
+                    foreach (var function in row.Functions)
                         Role.RoleFunctions.Add(new RoleFunctions
                         {
                             Company = identity.CompanyId,
@@ -310,5 +310,20 @@ namespace CheckListManager.AccessControl.Logic.Services
 
             return response;
         }
+
+        public async Task<List<RolesResponse>> GetSyntheticDataAsync(long companyId)
+        {
+            var roles = await _userRepository.GetRolesAsync(companyId);
+
+            var response = roles.Select(r => new RolesResponse
+            {
+                Code = r.Code,
+                FunctionGroup = r.FunctionGroup,
+                Functions = r.RoleFunctions.Select(rf => rf.Function).ToList()
+            }).ToList();
+
+            return response;
+        }
+
     }
 }

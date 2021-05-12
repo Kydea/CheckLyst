@@ -65,16 +65,30 @@
         $.ajax({
             type: "post",
             url: "@BaseUrl/Infrastructure/PrototypeTypes/GetSyntheticData",
-            dataType: "json",
-            contentType: "application/json; charset=utf-8",
-            data: JSON.stringify({
+            data: {
                 data: {
                     name: ""
                 },
-                itemsPerPage: 1000
-            })
+                itemsPerPage: 5000
+            }
         }).done(function (result) {
             $(formSelector).data("prototypeTypes", result.data);
+        });
+
+        $.ajax({
+            type: "post",
+            url: "@BaseUrl/AccessControl/Roles/GetSyntheticData"
+        }).done(function (result) {
+            var roles = {
+                general: {},
+                prototypes: {},
+                instances: {}
+            }
+            for (var index in result) {
+                var role = result[index]; 
+                roles[!role.functionGroup ? "general" : role.functionGroup.toLowerCase()][role.code] = role;
+            }
+            $(formSelector).data("roles", roles);
         });
 
         callback.call();

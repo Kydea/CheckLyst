@@ -21,6 +21,7 @@
         multiple,
         open,
         readOnly,
+        locked = false,
         error = false,
 
         deferredInitialization = function () {
@@ -30,7 +31,7 @@
             icon = $(iconNode);
             label = $(labelNode);
             input = $("<input />").addClass("AutoComplete-Filter Scan").attr({ type: "text" }).hide().insertAfter(label);
-            list = $("<div />").addClass("AutoComplete-List").insertAfter(input);
+            list = $("<div />").addClass("AutoComplete-List").insertAfter(input).toggleClass("Locked", locked);
             if (options && options.noCheck) list.addClass("NoCheck");
             noRow = $("<i />").addClass("fa fa-minus");
 
@@ -61,11 +62,13 @@
                 .on("click", "a", function (e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    if (multiple)
-                        toggleItem($(this).prevAll().size());
-                    else {
-                        setCurrentItem($(this).prevAll().size());
-                        hideList();
+                    if (!list.hasClass("Locked")) {
+                        if (multiple)
+                            toggleItem($(this).prevAll().size());
+                        else {
+                            setCurrentItem($(this).prevAll().size());
+                            hideList();
+                        }
                     }
                 });
 
@@ -125,7 +128,7 @@
                 updateList();
             }
 
-            if (node.hasAttribute("data-error")) 
+            if (node.hasAttribute("data-error"))
                 setError(node.getAttribute("data-error"));
 
             matematici.elements.window.on("resize", setWidth);
@@ -336,33 +339,39 @@
             if (error) labelNode.value = value;
         },
 
-		updateList = function () {
+        lock = function (value) {
+            locked = value;
+            labelNode.classList.toggle("Locked", value);
+            if (list) list.toggleClass("Locked", value);
+        },
+
+        updateList = function () {
             list.empty();
             var nullValue = node.getAttribute("data-nullable");
-            if (nullValue != null) 
+            if (nullValue != null)
                 list.append($("<a />").addClass("None").attr("href", "#").append($("<i />").text(nullValue == "" ? "(none)" : nullValue)));
 
-			options
-				.each(function () {
-					var
-						option = $(this),
-						filter = input.val().toUpperCase();
-					if (filter == "" || option.text().toUpperCase().indexOf(filter) >= 0)
-						list.append(
-							$("<a />")
-								.attr("href", "#")
-								.data("value", option.attr("value"))
-								.text(option.text())
-								.attr("title", option.text())
-								.toggleClass("Selected", option.prop("selected"))
-						);
-				});
+            options
+                .each(function () {
+                    var
+                        option = $(this),
+                        filter = input.val().toUpperCase();
+                    if (filter == "" || option.text().toUpperCase().indexOf(filter) >= 0)
+                        list.append(
+                            $("<a />")
+                                .attr("href", "#")
+                                .data("value", option.attr("value"))
+                                .text(option.text())
+                                .attr("title", option.text())
+                                .toggleClass("Selected", option.prop("selected"))
+                        );
+                });
 
-			items = $("a", list);
-			if (items.size() == 0)
-				list.append(noRow);
-			setWidth();
-		};
+            items = $("a", list);
+            if (items.size() == 0)
+                list.append(noRow);
+            setWidth();
+        };
 
     autoComplete.refresh = function () {
         if (labelNode.offsetParent !== null) //is visible
@@ -383,7 +392,7 @@
     };
 
     autoComplete.getControl = function () {
-		return label;
+        return label;
     };
 
     autoComplete.getLabelNode = function () {
@@ -404,7 +413,7 @@
         } else
             node.value = values;
         setValue();
-	};
+    };
 
     autoComplete.isNullable = isNullable;
     autoComplete.hideList = hideList;
@@ -412,6 +421,7 @@
     autoComplete.destroy = destroy;
     autoComplete.checkReadOnly = checkReadOnly;
     autoComplete.setError = setError;
+    autoComplete.lock = lock;
 };
 
 matematici.AutoComplete.map = new WeakMap();

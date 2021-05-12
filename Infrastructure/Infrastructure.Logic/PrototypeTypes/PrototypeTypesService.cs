@@ -117,7 +117,7 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
                         ID = pt.ID,
                         Name = pt.Name
                     },
-                    Form.Data.Department, Form.Data.Name, Form.Data.FunctionGroup,
+                    Form.Data.Department, Form.Data.Name ?? string.Empty, Form.Data.FunctionGroup,
                     Form.CurrentPage, Form.ItemsPerPage,
                     Form.Data.Function
                 );

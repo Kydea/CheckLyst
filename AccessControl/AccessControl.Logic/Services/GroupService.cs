@@ -114,32 +114,47 @@ namespace CheckListManager.AccessControl.Logic.Services
                     var group = await _userRepository.GetGroupAsync(identity.CompanyId, record.Code);
                     response.Description = group.Description;
 
-                    response.GeneralFunctions = group.GroupFunctions.Where(f =>
-                            f.FunctionGroup != "Prototypes" && f.FunctionGroup != "Instances")
-                        .Select(gf => new Function { functionGroup = gf.FunctionGroup, function = gf.Function })
+                    response.GeneralFunctions = group.GroupFunctions.Where(f => f.FunctionGroup != "Prototypes" && f.FunctionGroup != "Instances")
+                        .Select(gf => new Grant { FunctionGroup = gf.FunctionGroup, Function = gf.Function })
                         .ToArray();
 
-                    response.PrototypeFunctions = group.GroupFunctions.Where(f => f.FunctionGroup == "Prototypes")
+                    var functions = new List<Grant>();
+                    functions = group.GroupFunctions.Where(f => f.FunctionGroup == "Prototypes")
                         .GroupBy(pf => new { pf.Department, pf.PrototypeType })
-                        .Select(g => new Function
+                        .Select(g => new Grant
                         {
-                            department = g.Key.Department,
-                            prototypeType = g.Key.PrototypeType,
-                            functionGroup = "Prototypes",
-                            functions = g.Select(pf => pf.Function).ToArray(),
+                            Department = g.Key.Department,
+                            PrototypeType = g.Key.PrototypeType,
+                            FunctionGroup = "Prototypes",
+                            Functions = g.Select(pf => pf.Function).ToArray()
                         })
-                        .ToArray();
+                        .ToList();
+                    functions.AddRange(group.GroupRoles.Where(r => r.Roles.FunctionGroup == "Prototypes").Select(r => new Grant
+                    {
+                        Department = r.Department,
+                        PrototypeType = r.PrototypeType,
+                        FunctionGroup = "Prototypes",
+                        Role = r.Role
+                    }));
+                    response.PrototypeFunctions = functions.ToArray();
 
-                    response.InstanceFunctions = group.GroupFunctions.Where(f => f.FunctionGroup == "Instances")
+                    functions = group.GroupFunctions.Where(f => f.FunctionGroup == "Instances")
                         .GroupBy(pf => new { pf.Department, pf.PrototypeType })
-                        .Select(g => new Function
+                        .Select(g => new Grant
                         {
-                            department = g.Key.Department,
-                            prototypeType = g.Key.PrototypeType,
-                            functionGroup = "Instances",
-                            functions = g.Select(pf => pf.Function).ToArray(),
-                        })
-                        .ToArray();
+                            Department = g.Key.Department,
+                            PrototypeType = g.Key.PrototypeType,
+                            FunctionGroup = "Instances",
+                            Functions = g.Select(pf => pf.Function).ToArray()
+                        }).ToList();
+                    functions.AddRange(group.GroupRoles.Where(r => r.Roles.FunctionGroup == "Instances").Select(r => new Grant
+                    {
+                        Department = r.Department,
+                        PrototypeType = r.PrototypeType,
+                        FunctionGroup = "Instances",
+                        Role = r.Role
+                    }));
+                    response.InstanceFunctions = functions.ToArray();
                 }
                 catch (Exception exception)
                 {
@@ -156,26 +171,45 @@ namespace CheckListManager.AccessControl.Logic.Services
 
         private void BuildFunctions(DefaultIdentity identity, GroupRequest record, Groups Group)
         {
-            foreach (var function in record.GeneralFunctions)
-                Group.GroupFunctions.Add(new GroupFunctions
+            if (record.GeneralFunctions.Length == 1 && record.GeneralFunctions[0].Role != null)
+                Group.GroupRoles.Add(new GroupRoles
                 {
                     Company = identity.CompanyId,
-                    Group = record.Code,
-                    FunctionGroup = function.functionGroup,
-                    Function = function.function,
+                    Role = record.GeneralFunctions[0].Role,
                     CreatedOn = DateTimeOffset.UtcNow,
                     CreatedBy = identity.Code
                 });
+            else
+                foreach (var function in record.GeneralFunctions)
+                    Group.GroupFunctions.Add(new GroupFunctions
+                    {
+                        Company = identity.CompanyId,
+                        Group = record.Code,
+                        FunctionGroup = function.FunctionGroup,
+                        Function = function.Function,
+                        CreatedOn = DateTimeOffset.UtcNow,
+                        CreatedBy = identity.Code
+                    });
 
             foreach (var row in record.PrototypeFunctions)
-                if (row.functions != null)
-                    foreach (var function in row.functions)
+                if (row.Role != null)
+                    Group.GroupRoles.Add(new GroupRoles
+                    {
+                        Company = identity.CompanyId,
+                        Role = row.Role,
+                        Department = row.Department,
+                        PrototypeType = row.PrototypeType,
+                        CreatedOn = DateTimeOffset.UtcNow,
+                        CreatedBy = identity.Code
+                    });
+                else if (row.Functions != null)
+                    foreach (var function in row.Functions)
                         Group.GroupFunctions.Add(new GroupFunctions
                         {
                             Company = identity.CompanyId,
                             Group = record.Code,
-                            Department = row.department,
-                            PrototypeType = row.prototypeType,
+                            Department = row.Department,
+                            PrototypeType = row.PrototypeType,
                             FunctionGroup = "Prototypes",
                             Function = function,
                             CreatedOn = DateTimeOffset.UtcNow,
@@ -183,14 +217,24 @@ namespace CheckListManager.AccessControl.Logic.Services
                         });
 
             foreach (var row in record.InstanceFunctions)
-                if (row.functions != null)
-                    foreach (var function in row.functions)
+                if (row.Role != null)
+                    Group.GroupRoles.Add(new GroupRoles
+                    {
+                        Company = identity.CompanyId,
+                        Role = row.Role,
+                        Department = row.Department,
+                        PrototypeType = row.PrototypeType,
+                        CreatedOn = DateTimeOffset.UtcNow,
+                        CreatedBy = identity.Code
+                    });
+                else if (row.Functions != null)
+                    foreach (var function in row.Functions)
                         Group.GroupFunctions.Add(new GroupFunctions
                         {
                             Company = identity.CompanyId,
                             Group = record.Code,
-                            Department = row.department,
-                            PrototypeType = row.prototypeType,
+                            Department = row.Department,
+                            PrototypeType = row.PrototypeType,
                             FunctionGroup = "Instances",
                             Function = function,
                             CreatedOn = DateTimeOffset.UtcNow,

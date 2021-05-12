@@ -19,6 +19,10 @@ input.AutoComplete {
     &.Red {
         color: $Color-Red-Regular;
     }
+
+    &.Locked {
+        background-color: $Color-Silver-Light;
+    }
 }
 
 input.AutoComplete-Filter {
@@ -76,17 +80,17 @@ div.AutoComplete-List {
             }
         }
 
-        &:hover {
-            background: $Color-Silver-Dark !important;
-            text-decoration: none !important;
-        }
-
         &.None {
             i {
                 font-style: normal;
                 color: $Color-Grey-Dark;
             }
         }
+    }
+
+    &:not(.Locked) a:hover {
+        background: $Color-Silver-Dark !important;
+        text-decoration: none !important;
     }
 
     &.NoCheck {
