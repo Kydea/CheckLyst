@@ -43,7 +43,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ArithmeticOperators
         {
             DataType =
                 LeftValue.Type == DataType.Number ? DataType.Number :
-                LeftValue.Type == DataType.Time && RightValue.Type == DataType.Text ? DataType.Number :
+                LeftValue.Type == DataType.Time && RightValue.Type == DataType.Time ? DataType.Number :
                 LeftValue.Type == DataType.Time ? DataType.Time :
                 RightValue.Type == DataType.Number ? DataType.DateTime :
                 DataType.Number;
