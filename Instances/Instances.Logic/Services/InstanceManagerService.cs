@@ -1143,7 +1143,7 @@ namespace CheckListManager.Instances.Logic.Services
                 ProposedState = h.WorkFlowApplications == null ? null : InstanceState.Confirmed,
                 Approved = h.WorkFlowApplications?.Approved,
                 Note = h.Note,
-                Steps = (await Task.WhenAll(h.WorkFlowApplications?.WorkFlowApplicationSteps.OrderBy(s => s.Step).ThenBy(s => s.ID).Select(async s => new HistoryStep
+                Steps = h.WorkFlowApplications == null ? null : (await Task.WhenAll(h.WorkFlowApplications?.WorkFlowApplicationSteps.OrderBy(s => s.Step).ThenBy(s => s.ID).Select(async s => new HistoryStep
                 {
                     ID = s.ID,
                     Step = s.Step + 1,

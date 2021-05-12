@@ -457,7 +457,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                 State = h.WorkFlowApplications == null ? h.State : h.WorkFlowApplications.FinalState,
                 ProposedState = h.WorkFlowApplications == null ? null : h.State,
                 Approved = h.WorkFlowApplications?.Approved,
-                Steps = (await Task.WhenAll(h.WorkFlowApplications?.WorkFlowApplicationSteps.OrderBy(s => s.Step).ThenBy(s => s.ID).Select(async s => new HistoryStep
+                Steps = h.WorkFlowApplications == null ? null : (await Task.WhenAll(h.WorkFlowApplications?.WorkFlowApplicationSteps.OrderBy(s => s.Step).ThenBy(s => s.ID).Select(async s => new HistoryStep
                 {
                     ID = s.ID,
                     Step = s.Step + 1,

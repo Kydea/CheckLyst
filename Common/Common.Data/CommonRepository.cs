@@ -143,7 +143,7 @@ namespace CheckListManager.Common.Data
                     ) +
                 "order by u.\"Code\"";
 
-            var users = await Read<Users>(query, new { company = companyID, functionGroup, function });
+            var users = await Read<Users>(query, new { company = companyID, department, prototypeType, functionGroup, function });
             return users.ToList();
         }
 
