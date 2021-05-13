@@ -489,14 +489,19 @@
                 allowed = false,
                 tags = row.tags.split(", ");
 
-            for (var role in tags)
-                if (
-                    matematici.tokenManager.checkRole("Prototypes#Approve#" + model.department + "##" + tags[role])
-                    || matematici.tokenManager.checkRole("Prototypes#Approve#" + model.department + "#" + model.prototypeType + "#" + tags[role])
-                ) {
-                    allowed = true;
-                    break;
-                }
+            if (
+                matematici.tokenManager.checkRole("Prototypes#Approve#" + model.department + "##")
+                || matematici.tokenManager.checkRole("Prototypes#Approve#" + model.department + "#" + model.prototypeType + "#")
+            )
+                for (var role in tags)
+                    if (
+                        matematici.tokenManager.checkRole("PrototypeWorkFlowLevel####" + tags[role])
+                        || matematici.tokenManager.checkRole("PrototypeWorkFlowLevel##" + model.department + "##" + tags[role])
+                        || matematici.tokenManager.checkRole("PrototypeWorkFlowLevel##" + model.department + "#" + model.prototypeType + "#" + tags[role])
+                    ) {
+                        allowed = true;
+                        break;
+                    }
 
             if (!allowed) {
                 matematici.dialog.error("error", "Permission denied");

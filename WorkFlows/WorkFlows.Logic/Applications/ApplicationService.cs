@@ -77,8 +77,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             };
         }
 
-        private async Task SetPrototypeVersionState(DefaultIdentity identity, PrototypeVersions PrototypeVersion,
-            string State, DateTimeOffset Now)
+        private async Task SetPrototypeVersionState(DefaultIdentity identity, PrototypeVersions PrototypeVersion, string State, DateTimeOffset Now)
         {
             PrototypeVersion.ProposedState = null;
             PrototypeVersion.ProposedDate = null;
@@ -109,10 +108,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 PrototypeVersion.ValidFrom = UtcNow;
 
             var State =
-                PrototypeVersion.VersionState == VersionState.InApproval ? PrototypeVersion.ValidFrom > UtcNow
-                    ?
-                    VersionState.Approved
-                    : VersionState.Active :
+                PrototypeVersion.VersionState == VersionState.InApproval ? PrototypeVersion.ValidFrom > UtcNow ? VersionState.Approved : VersionState.Active :
                 PrototypeVersion.ValidUntil > UtcNow ? PrototypeVersion.VersionState : VersionState.Obsolete;
 
             if (State == VersionState.Active)
@@ -121,11 +117,17 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 PrototypeVersion.Prototypes.ModifiedOn = PrototypeVersion.ModifiedOn;
                 PrototypeVersion.Prototypes.ModifiedBy = PrototypeVersion.ModifiedBy;
 
-                var OldVersion =
-                    PrototypeVersion.Prototypes.PrototypeVersions.SingleOrDefault(pv =>
-                        pv.VersionState == VersionState.Active);
+                var OldVersion = PrototypeVersion.Prototypes.PrototypeVersions.SingleOrDefault(pv => pv.VersionState == VersionState.Active);
                 if (OldVersion != null)
+                {
                     await SetPrototypeVersionState(identity, OldVersion, VersionState.Obsolete, UtcNow);
+                    OldVersion.PrototypeVersionsHistory.Add(new PrototypeVersionsHistory
+                    {
+                        Date = DateTimeOffset.UtcNow,
+                        State = VersionState.Obsolete,
+                        User = identity.Code
+                    });
+                }
             }
 
             if (State == VersionState.Active || State == VersionState.Obsolete)
@@ -136,8 +138,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     PrototypeName = PrototypeVersion.Prototypes.Name,
                     Version = PrototypeVersion.Version,
                     State = State,
-                    Path =
-                        $"{(PrototypeVersion.Prototypes.Companies.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.Departments.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.PrototypeTypes.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.Name?.Replace('#', '-') ?? "")}#{PrototypeVersion.Version}#{(PrototypeVersion.Description?.Replace('#', '-') ?? "")}"
+                    Path = $"{PrototypeVersion.Prototypes.Companies.Name?.Replace('#', '-') ?? ""}#{PrototypeVersion.Prototypes.Departments.Name?.Replace('#', '-') ?? ""}#{PrototypeVersion.Prototypes.PrototypeTypes.Name?.Replace('#', '-') ?? ""}#{(PrototypeVersion.Prototypes.Name?.Replace('#', '-') ?? "")}#{PrototypeVersion.Version}#{PrototypeVersion.Description?.Replace('#', '-') ?? ""}"
                 });
 
             await SetPrototypeVersionState(identity, PrototypeVersion, State, UtcNow);
@@ -216,7 +217,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     (request.ValidFrom >= request.ValidUntil || request.ValidUntil < DateTimeOffset.UtcNow) &&
                     request.Approved)
                     throw new Exception("The prototype has a past validity end date");
-                if (!request.Approved && String.IsNullOrWhiteSpace(request.Comment))
+                if (!request.Approved && string.IsNullOrWhiteSpace(request.Comment))
                     throw new Exception("The comment is mandatory for the rejections");
 
                 await _authenticationService.AuthenticateAsync(identity.Code, request.Password);
@@ -230,37 +231,42 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 if (PrototypeVersion != null)
                 {
                     var Granted = false;
-                    foreach (var Tag in Step.WorkFlowApplicationStepTags)
-                        if (
-                            identity.HasPermission("Prototypes", "Approve", PrototypeVersion.Prototypes.Department,
-                                PrototypeVersion.Prototypes.PrototypeType, Tag.Tag)
-                            || identity.HasPermission("Prototypes", "Approve", PrototypeVersion.Prototypes.Department, null,
-                                Tag.Tag)
-                        )
-                        {
-                            Granted = true;
-                            break;
-                        }
+                    if (
+                        identity.HasPermission("Prototypes", "Approve", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType)
+                        || identity.HasPermission("Prototypes", "Approve", PrototypeVersion.Prototypes.Department)
+                    )
+                        foreach (var Tag in Step.WorkFlowApplicationStepTags)
+                            if (
+                                identity.HasPermission("PrototypeWorkFlowLevel", null, PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType, Tag.Tag)
+                                || identity.HasPermission("PrototypeWorkFlowLevel", null, PrototypeVersion.Prototypes.Department, null, Tag.Tag)
+                                || identity.HasPermission("PrototypeWorkFlowLevel", null, null, null, Tag.Tag)
+                            )
+                            {
+                                Granted = true;
+                                break;
+                            }
 
-                    if (!Granted)
-                        throw new Exception("Permission denied");
+                    if (!Granted) throw new Exception("Permission denied");
                 }
                 else if (Instance != null)
                 {
                     var Granted = false;
-                    foreach (var Tag in Step.WorkFlowApplicationStepTags)
-                        if (
-                            identity.HasPermission("Instances", "Confirm", Instance.Prototypes.Department,
-                                Instance.Prototypes.PrototypeType, Tag.Tag)
-                            || identity.HasPermission("Instances", "Confirm", Instance.Prototypes.Department, null, Tag.Tag)
-                        )
-                        {
-                            Granted = true;
-                            break;
-                        }
+                    if (
+                        identity.HasPermission("Instances", "Confirm", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType)
+                        || identity.HasPermission("Instances", "Confirm", PrototypeVersion.Prototypes.Department)
+                    )
+                        foreach (var Tag in Step.WorkFlowApplicationStepTags)
+                            if (
+                                identity.HasPermission("InstanceWorkFlowLevel", null, PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType, Tag.Tag)
+                                || identity.HasPermission("InstanceWorkFlowLevel", null, PrototypeVersion.Prototypes.Department, null, Tag.Tag)
+                                || identity.HasPermission("InstanceWorkFlowLevel", null, null, null, Tag.Tag)
+                            )
+                            {
+                                Granted = true;
+                                break;
+                            }
 
-                    if (!Granted)
-                        throw new Exception("Permission denied");
+                    if (!Granted) throw new Exception("Permission denied");
                 }
                 else
                     throw new InvalidOperationException();

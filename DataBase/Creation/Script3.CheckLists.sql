@@ -294,6 +294,24 @@ create table "CheckLists"."InstanceRelations"
 
 create index "Index_InstanceRelations_Child" on "CheckLists"."InstanceRelations"("Child");
 
+create table "CheckLists"."PrototypeVersionsHistory"
+(
+	"ID" bigserial primary key,
+
+	"Prototype" bigint not null,
+    "Version" int not null,
+    constraint "PrototypeVersionsHistory_PrototypeVersion" foreign key ("Prototype", "Version") references "CheckLists"."PrototypeVersions" on delete cascade,
+
+	"Date" timestamptz not null default current_timestamp,
+
+	"State" varchar (100) not null,
+	"User" varchar (60) not null,
+
+	"WorkFlowApplication" bigint references "WorkFlows"."WorkFlowApplications"
+);
+
+create index "Index_PrototypeVersionsHistory_Prototype" on "CheckLists"."PrototypeVersionsHistory"("Prototype", "Date");
+
 create table "CheckLists"."InstancesHistory"
 (
 	"ID" bigserial primary key,

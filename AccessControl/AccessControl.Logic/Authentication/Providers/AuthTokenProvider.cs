@@ -42,6 +42,9 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
             foreach (var role in user.UserGroups.SelectMany(ug => ug.Groups.GroupRoles)) //group roles
                 foreach (var function in role.Roles.RoleFunctions)
                     yield return new UserFunction { FunctionGroup = function.FunctionGroup, Function = function.Function, Department = role.Department, PrototypeType = role.PrototypeType };
+
+            foreach (var level in user.UserLevels) //user levels
+                yield return new UserFunction { Level = true, Department = level.Department, PrototypeType = level.PrototypeType, SignatureLevel = level.SignatureLevel, PrototypeWorkFlowLevel = level.PrototypeWorkFlowLevel, InstanceWorkFlowLevel = level.InstanceWorkFlowLevel };
         }
 
 
@@ -113,12 +116,8 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
             identity.AddClaim(new Claim("CompanyId", user.Company.ToString(), ClaimValueTypes.Integer));
 
             foreach (var function in grants)
-            {
-                if (function.Department != null)
-                    identity.AddClaim(new Claim(ClaimTypes.Role, $"{function.FunctionGroup}#{function.Function}#{function.Department.ToString() ?? string.Empty}#{function.PrototypeType?.ToString() ?? string.Empty}#"));
-                identity.AddClaim(new Claim(ClaimTypes.Role, $"{function.FunctionGroup}#{function.Function}"));
-                identity.AddClaim(new Claim(ClaimTypes.Role, $"FunctionGroup#{function.FunctionGroup}"));
-            }
+                foreach(var claim in function.GetClaims())
+                    identity.AddClaim(new Claim(ClaimTypes.Role, claim, ClaimValueTypes.Integer));
 
             return identity;
         }
@@ -132,7 +131,7 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
                 { "code", user.Code },
                 { "name", user.Description },
                 { "timeZone", user.Companies.TimeZone },
-                { "roles", string.Join(",", grants.Select(function => $"{function.FunctionGroup}#{function.Function}#{function.Department?.ToString() ?? string.Empty}#{function.PrototypeType?.ToString() ?? string.Empty}#")) }
+                { "roles", string.Join(",", grants.SelectMany(function => function.GetClaims())) }
             };
         }
         private class UserFunction
@@ -141,6 +140,30 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
             public string Function { get; set; }
             public long? Department { get; set; }
             public long? PrototypeType { get; set; }
+            public bool Level { get; set; }
+            public string SignatureLevel { get; set; }
+            public string PrototypeWorkFlowLevel { get; set; }
+            public string InstanceWorkFlowLevel { get; set; }
+
+            public IEnumerable<string> GetClaims()
+            {
+                if (Level)
+                {
+                    if (SignatureLevel != null)
+                        yield return $"SignatureLevel##{Department?.ToString() ?? string.Empty}#{PrototypeType?.ToString() ?? string.Empty}#{SignatureLevel}";
+                    if (PrototypeWorkFlowLevel != null)
+                        yield return $"PrototypeWorkFlowLevel##{Department?.ToString() ?? string.Empty}#{PrototypeType?.ToString() ?? string.Empty}#{PrototypeWorkFlowLevel}";
+                    if (InstanceWorkFlowLevel != null)
+                        yield return $"InstanceWorkFlowLevel##{Department?.ToString() ?? string.Empty}#{PrototypeType?.ToString() ?? string.Empty}#{InstanceWorkFlowLevel}";
+                }
+                else
+                {
+                    if (Department != null)
+                        yield return $"{FunctionGroup}#{Function}#{Department?.ToString() ?? string.Empty}#{PrototypeType?.ToString() ?? string.Empty}#";
+                    yield return $"{FunctionGroup}#{Function}";
+                    yield return $"FunctionGroup#{FunctionGroup}";
+                }
+            }
         }
     }
 }
