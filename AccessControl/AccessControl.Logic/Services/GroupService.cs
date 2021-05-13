@@ -45,8 +45,8 @@ namespace CheckListManager.AccessControl.Logic.Services
         public async Task<PagingResponse<List<GroupsResponse>>> GetGroupsAsync(long companyId, PagingRequest<GroupsRequest> request)
         {
             var take = request.ItemsPerPage;
-            var groups = await _userRepository.GetGroupsAsync(companyId, request.Data.Code, request.Data.Description, request.Skip, take);
-            var count = await _userRepository.CountGroupsAsync(companyId, request.Data.Code, request.Data.Description);
+            var groups = await _userRepository.GetGroupsAsync(companyId, request.Data.Code, request.Data.Description, request.Data.User, request.Skip, take);
+            var count = await _userRepository.CountGroupsAsync(companyId, request.Data.Code, request.Data.Description, request.Data.User);
 
             var response = groups.Select(g => new GroupsResponse
             {
@@ -114,9 +114,14 @@ namespace CheckListManager.AccessControl.Logic.Services
                     var group = await _userRepository.GetGroupAsync(identity.CompanyId, record.Code);
                     response.Description = group.Description;
 
-                    response.GeneralFunctions = group.GroupFunctions.Where(f => f.FunctionGroup != "Prototypes" && f.FunctionGroup != "Instances")
-                        .Select(gf => new Grant { FunctionGroup = gf.FunctionGroup, Function = gf.Function })
-                        .ToArray();
+                    var role = group.GroupRoles.SingleOrDefault(r => r.Roles.FunctionGroup == null);
+                    if (role == null)
+                        response.GeneralFunctions =
+                            group.GroupFunctions.Where(f => f.FunctionGroup != "Prototypes" && f.FunctionGroup != "Instances")
+                                .Select(gf => new Grant { FunctionGroup = gf.FunctionGroup, Function = gf.Function })
+                                .ToArray();
+                    else
+                        response.GeneralFunctions = new Grant[] { new Grant { FunctionGroup = null, Role = role.Role } };
 
                     var functions = new List<Grant>();
                     functions = group.GroupFunctions.Where(f => f.FunctionGroup == "Prototypes")
@@ -364,5 +369,8 @@ namespace CheckListManager.AccessControl.Logic.Services
 
             return response;
         }
+
+        public async Task<List<string>> GetSyntheticDataAsync(long companyId) =>
+            (await _userRepository.GetGroupsAsync(companyId, string.Empty, string.Empty, string.Empty, 0, 10000)).Select(g => g.Code).ToList();
     }
 }

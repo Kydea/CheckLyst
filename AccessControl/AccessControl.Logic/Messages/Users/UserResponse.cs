@@ -1,4 +1,5 @@
-﻿using CheckListManager.Common.Logic.DataEngine;
+﻿using System.Collections.Generic;
+using CheckListManager.Common.Logic.DataEngine;
 
 namespace CheckListManager.AccessControl.Logic.Messages.Users
 {
@@ -10,5 +11,6 @@ namespace CheckListManager.AccessControl.Logic.Messages.Users
         public Grant[] GeneralFunctions { get; set; }
         public Grant[] PrototypeFunctions { get; set; }
         public Grant[] InstanceFunctions { get; set; }
+        public List<string> Groups { get; internal set; }
     }
 }

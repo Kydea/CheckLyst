@@ -71,5 +71,13 @@ namespace CheckListManager.AccessControl.Api.Controllers
         {
             return Ok(await _groupService.DeleteGroupAsync(Identity, request.Data));
         }
+
+        [HttpPost]
+        [Route("GetSyntheticData")]
+        [Authorize(Roles = "Users#View")]
+        public async Task<IHttpActionResult> GetSyntheticData()
+        {
+            return Ok(await _groupService.GetSyntheticDataAsync(Identity.CompanyId));
+        }
     }
 }

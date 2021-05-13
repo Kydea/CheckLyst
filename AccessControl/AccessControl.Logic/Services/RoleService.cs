@@ -15,6 +15,7 @@ using CheckListManager.AccessControl.Logic.Messages.Users;
 using CheckListManager.Common.Core.Helpers;
 using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Data;
+using CheckListManager.Common.Logic;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Logic.Cache;
 using CheckListManager.Common.Logic.DataEngine;
@@ -319,11 +320,11 @@ namespace CheckListManager.AccessControl.Logic.Services
             {
                 Code = r.Code,
                 FunctionGroup = r.FunctionGroup,
-                Functions = r.RoleFunctions.Select(rf => rf.Function).ToList()
+                Functions = r.FunctionGroup == null ? null : r.RoleFunctions.Select(rf => rf.Function).ToList(),
+                FunctionGroups = r.FunctionGroup == null ? new PascalCaseDictionary<string, List<string>>(r.RoleFunctions.GroupBy(k => k.FunctionGroup).ToDictionary(g => g.Key, g => g.Select(v => v.Function).ToList())) : null
             }).ToList();
 
             return response;
         }
-
     }
 }

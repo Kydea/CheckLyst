@@ -1,6 +1,4 @@
 ﻿matematici.AutoComplete = function (node, options) {
-    //this is a light version of autocomplete whitout jquery in initialization used only in instances to make the process faster
-
     var
         autoComplete = this,
         initialized = false,
@@ -75,7 +73,7 @@
             initialized = true;
         },
 
-        initialize = function (value) {
+        initialize = function () {
             matematici.AutoComplete.map.set(node, autoComplete);
             matematici.AutoComplete.list.push(autoComplete);
 

@@ -267,8 +267,8 @@ namespace CheckListManager.AccessControl.Logic.Services
         public async Task<PagingResponse<List<UsersResponse>>> GetUsersAsync(long companyId, PagingRequest<UsersRequest> request)
         {
             var take = request.ItemsPerPage;
-            var users = await _userRepository.GetUsersAsync(companyId, request.Data.Code, request.Data.Description, request.Data.CorporateID, request.Skip, take);
-            var count = await _userRepository.CountUsersAsync(companyId, request.Data.Code, request.Data.Description, request.Data.CorporateID);
+            var users = await _userRepository.GetUsersAsync(companyId, request.Data.Code, request.Data.Description, request.Data.CorporateID, request.Data.Group, request.Skip, take);
+            var count = await _userRepository.CountUsersAsync(companyId, request.Data.Code, request.Data.Description, request.Data.CorporateID, request.Data.Group);
 
             var response = users.Select(u => new UsersResponse
             {
@@ -400,6 +400,8 @@ namespace CheckListManager.AccessControl.Logic.Services
                 {
                     var user = await _userRepository.GetAsync(identity.CompanyId, record.Code);
 
+                    response.Groups = user.UserGroups.Select(ug => ug.Group).ToList();
+
                     var role = user.UserRoles.SingleOrDefault(r => r.Roles.FunctionGroup == null);
                     if (role == null)
                         response.GeneralFunctions =
@@ -481,6 +483,16 @@ namespace CheckListManager.AccessControl.Logic.Services
 
         private void BuildFunctions(DefaultIdentity identity, UserRequest record, Users User)
         {
+            if (record.Groups != null)
+                foreach (var group in record.Groups)
+                    User.UserGroups.Add(new UserGroups
+                    {
+                        Company = identity.CompanyId,
+                        Group = group,
+                        CreatedOn = DateTimeOffset.UtcNow,
+                        CreatedBy = identity.Code
+                    });
+
             if (record.GeneralFunctions.Length == 1 && record.GeneralFunctions[0].Role != null)
                 User.UserRoles.Add(new UserRoles
                 {
@@ -586,7 +598,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                 });
         }
 
-        private static string SerializeUserInformation(UserRequest user, IEnumerable<UserFunctions> userFunctions)
+        private static string SerializeUserInformation(UserRequest user, IEnumerable<UserFunctions> functions, IEnumerable<UserLevels> levels)
         {
             return JsonConvert.SerializeObject(new
             {
@@ -596,12 +608,21 @@ namespace CheckListManager.AccessControl.Logic.Services
                 user.CorporateID,
                 NameAndSurname = user.Description,
                 user.Enabled,
-                Functions = userFunctions.Select(uf => new
+                user.Groups,
+                Functions = functions.Select(uf => new
                 {
-                    uf.FunctionGroup,
-                    uf.Function,
                     Department = uf.Department.HasValue ? uf.Department + " " + uf.Departments?.Name : null,
-                    PrototypeType = uf.PrototypeType.HasValue ? uf.PrototypeType + " " + uf.PrototypeTypes?.Name : null
+                    PrototypeType = uf.PrototypeType.HasValue ? uf.PrototypeType + " " + uf.PrototypeTypes?.Name : null,
+                    uf.FunctionGroup,
+                    uf.Function
+                }),
+                Levels = levels.Select(ul => new
+                {
+                    ul.Department,
+                    ul.PrototypeType,
+                    ul.PrototypeWorkFlowLevel,
+                    ul.InstanceWorkFlowLevel,
+                    ul.SignatureLevel
                 }),
                 ReasonForChange = user.Reason
             });
@@ -634,7 +655,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                         User = identity.Code,
                         Action = TrailAction.UserCreated,
                         Date = DateTimeOffset.UtcNow,
-                        Information = SerializeUserInformation(record, User.UserFunctions)
+                        Information = SerializeUserInformation(record, User.UserFunctions, User.UserLevels)
                     });
                 }
                 catch (Exception exception)
@@ -677,7 +698,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                         User = identity.Code,
                         Action = TrailAction.UserEdited,
                         Date = DateTimeOffset.UtcNow,
-                        Information = SerializeUserInformation(record, User.UserFunctions)
+                        Information = SerializeUserInformation(record, User.UserFunctions, User.UserLevels)
                     });
                 }
                 catch (Exception exception)

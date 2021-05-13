@@ -5,11 +5,12 @@
         prototypeFunctions = ["Approve", "Edit", "Preview", "View"],
         instanceFunctions = ["Confirm", "Create", "Delete", "Edit", "Unsign", "View"],
         roles,
+        groups,
         formElement = $(formSelector),
         tab,
         detailPage,
         generalRoleSelect,
-
+        groupsSelect,
 
         fixQueryParameters = function (tabIndex) {
             steps = $("div.Function", tab.getItem(tabIndex).tab).each(function (index) {
@@ -64,14 +65,14 @@
             if (roleName != null)
                 role = roles.general[roleName];
 
-            $("input[type=checkbox]:checked", tab.getItem(1).tab).each(function () {
+            $("input[type=checkbox]", tab.getItem(1).tab).each(function () {
                 var
-                    record = {},
-                    check = $(this);
+                    check = $(this),
+                    functionGroup = role && role.functionGroups && role.functionGroups[check.data("group")],
+                    value = functionGroup && functionGroup.indexOf(check.data("function")) >= 0;
 
-                record.functionGroup = check.data("group");
-                record.function = check.data("function");
-                //check.prop("checked", role && role.indexOf())
+                check.prop("checked", value);
+                matematici.controls.setEditable(check, role == null);
             });
         },
 
@@ -188,15 +189,22 @@
                 instanceFunctions: []
             };
 
-            $("input[type=checkbox]:checked", tab.getItem(1).tab).each(function () {
-                var
-                    record = {},
-                    check = $(this);
+            var generalRole = page == "Roles" ? null : generalRoleSelect.val();
+            if (generalRole == null)
+                $("input[type=checkbox]:checked", tab.getItem(1).tab).each(function () {
+                    var
+                        record = {},
+                        check = $(this);
 
-                record.functionGroup = check.data("group");
-                record.function = check.data("function");
-                data.generalFunctions.push(record);
-            });
+                    record.functionGroup = check.data("group");
+                    record.function = check.data("function");
+                    data.generalFunctions.push(record);
+                });
+            else
+                data.generalFunctions.push({ role: generalRole });
+
+            if (page == "Users")
+                data.groups = groupsSelect.val();
 
             $("div.Function", tab.getItem(2).tab).each(function () {
                 var record = {};
@@ -338,10 +346,30 @@
         completeHandler = function () {
             if (page != "Roles") preparePrototypeTypes(detailPage.getSender().getElement().data("prototypeTypes"));
             roles = detailPage.getSender().getElement().data("roles");
+            groups = detailPage.getSender().getElement().data("groups");
 
             detailPage.getForm().trigger("Load", function (result) {
                 loading = true;
                 detailPage.getForm().handleResult(result);
+
+                if (page != "Roles") {
+                    generalRoleSelect = $("select.GeneralRole", detailPage.getElement());
+                    generalRoleSelect.on("change", refreshGeneralFunctions);
+                    for (var index in roles.general)
+                        generalRoleSelect.append($("<option />").text(index).attr("value", index));
+                    var generalAutoComplete = matematici.AutoComplete.get(generalRoleSelect[0]);
+                    generalAutoComplete.refreshValues();
+                    generalAutoComplete.setValue(null);
+                }
+
+                if (page == "Users") {
+                    groupsSelect = $("<select />").appendTo($("div.Tab.Groups div.Control", detailPage.getElement())).prop("multiple", true).addClass("FullHeight NoFilter");
+                    for (var index in groups)
+                        groupsSelect.append($("<option />").text(groups[index]).attr("value", groups[index]));
+                    groupsSelect.val(result.groups);
+                    var autoComplete = new matematici.AutoComplete(groupsSelect[0]);
+                    autoComplete.initialize();
+                }
 
                 $("input[name=authenticationCode]", detailPage.getElement()).parent().toggleClass("Hidden", !result.showAuthenticationCode);
                 $("input[name=password]", detailPage.getElement()).parent().toggleClass("Hidden", !result.showPassword);
@@ -349,14 +377,6 @@
                 if (result.generalFunctions) buildGeneralFunctions(result.generalFunctions);
                 if (result.prototypeFunctions) buildFunctions(result.prototypeFunctions, 2);
                 if (result.instanceFunctions) buildFunctions(result.instanceFunctions, 3);
-
-                generalRoleSelect = $("select.GeneralRole", detailPage.getElement());
-                generalRoleSelect.on("change", refreshGeneralFunctions);
-                for (var index in roles.general) 
-                    generalRoleSelect.append($("<option />").text(index).attr("value", index));
-                var generalAutoComplete = matematici.AutoComplete.get(generalRoleSelect[0]);
-                generalAutoComplete.refreshValues();
-                generalAutoComplete.setValue(null);
 
                 fixQueryParameters(2);
                 fixQueryParameters(3);
@@ -366,15 +386,20 @@
         },
 
         buildGeneralFunctions = function (functions) {
-            var functionsObject = {};
-            for (var index in functions) {
-                var record = functions[index];
-                (functionsObject[record.functionGroup] = functionsObject[record.functionGroup] || {})[record["function"]] = true;
+            if (functions.length == 1 && functions[0].role != null) {
+                generalRoleSelect.val(functions[0].role);
+                refreshGeneralFunctions();
+            } else {
+                var functionsObject = {};
+                for (var index in functions) {
+                    var record = functions[index];
+                    (functionsObject[record.functionGroup] = functionsObject[record.functionGroup] || {})[record["function"]] = true;
+                }
+                $("input[type=checkbox]", tab.getItem(1).tab).each(function () {
+                    var check = $(this);
+                    check.prop("checked", !!(functionsObject[check.data("group")] && functionsObject[check.data("group")][check.data("function")]));
+                });
             }
-            $("input[type=checkbox]", tab.getItem(1).tab).each(function () {
-                var check = $(this);
-                check.prop("checked", !!(functionsObject[check.data("group")] && functionsObject[check.data("group")][check.data("function")]));
-            });
         },
 
         buildFunctions = function (functions, tabIndex) {

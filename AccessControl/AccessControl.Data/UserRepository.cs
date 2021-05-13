@@ -157,26 +157,26 @@ namespace CheckListManager.AccessControl.Data
             return await Entities.Users.Where(x => x.PIN != null && x.PINChangeDate < Threshold).ToListAsync();
         }
 
-        private IQueryable<Users> GetAsync(long company, string code, string description, string corporateID)
-        {
-            return Entities.Users
+        private IQueryable<Users> GetAsync(long company, string code, string description, string corporateID, string group) 
+            =>
+            Entities.Users
                 .Where(
-                    u => u.Company == company &&
-                        (code == string.Empty || u.Code != null && u.Code.ToUpper().Contains(code.ToUpper())) &&
-                        (description == string.Empty || u.Description != null && u.Description.ToUpper().Contains(description.ToUpper())) &&
-                        (corporateID == string.Empty || u.CorporateID != null && u.CorporateID.ToUpper().Contains(corporateID.ToUpper()))
+                    u => u.Company == company 
+                        && (code == string.Empty || u.Code != null && u.Code.ToUpper().Contains(code.ToUpper())) 
+                        && (description == string.Empty || u.Description != null && u.Description.ToUpper().Contains(description.ToUpper())) 
+                        && (corporateID == string.Empty || u.CorporateID != null && u.CorporateID.ToUpper().Contains(corporateID.ToUpper()))
+                        && (group == string.Empty || u.UserGroups.Any(ug => ug.Group.ToUpper().Contains(group.ToUpper())))
                 );
-        }
 
-        public Task<List<Users>> GetUsersAsync(long companyId, string code, string description, string corporateID, int skip, int take)
-            => GetAsync(companyId, code, description, corporateID)
+        public Task<List<Users>> GetUsersAsync(long companyId, string code, string description, string corporateID, string group, int skip, int take)
+            => GetAsync(companyId, code, description, corporateID, group)
                 .OrderBy(u => u.Code)
                 .Skip(skip)
                 .Take(take)
                 .ToListAsync();
 
-        public Task<int> CountUsersAsync(long company, string code, string description, string corporateID)
-            => GetAsync(company, code, description, corporateID).CountAsync();
+        public Task<int> CountUsersAsync(long company, string code, string description, string corporateID, string group)
+            => GetAsync(company, code, description, corporateID, group).CountAsync();
 
         public async Task<Users> AddAsync(DefaultIdentity identity, Users user)
         {
@@ -201,9 +201,11 @@ namespace CheckListManager.AccessControl.Data
             existingUser.AuthenticationCode = user.AuthenticationCode;
             existingUser.ModifiedOn = DateTimeOffset.UtcNow;
             existingUser.ModifiedBy = identity.Code;
+            Entities.UserGroups.RemoveRange(existingUser.UserGroups);
             Entities.UserRoles.RemoveRange(existingUser.UserRoles);
             Entities.UserFunctions.RemoveRange(existingUser.UserFunctions);
             Entities.UserLevels.RemoveRange(existingUser.UserLevels);
+            existingUser.UserGroups = user.UserGroups;
             existingUser.UserRoles = user.UserRoles;
             existingUser.UserFunctions = user.UserFunctions;
             existingUser.UserLevels = user.UserLevels;
@@ -284,25 +286,26 @@ namespace CheckListManager.AccessControl.Data
         public Task<Groups> GetGroupAsync(long companyId, string code)
             => Entities.Groups.SingleOrDefaultAsync(u => u.Company == companyId && u.Code.ToUpper() == code.ToUpper());
 
-        private IQueryable<Groups> GetGroupsAsync(long company, string code, string description)
+        private IQueryable<Groups> GetGroupsAsync(long company, string code, string description, string user)
         {
             return Entities.Groups
                 .Where(
-                    u => u.Company == company &&
-                        (code == string.Empty || u.Code != null && u.Code.ToUpper().Contains(code.ToUpper())) &&
-                        (description == string.Empty || u.Description != null && u.Description.ToUpper().Contains(description.ToUpper()))
+                    u => u.Company == company 
+                        && (code == string.Empty || u.Code != null && u.Code.ToUpper().Contains(code.ToUpper())) 
+                        && (description == string.Empty || u.Description != null && u.Description.ToUpper().Contains(description.ToUpper()))
+                        && (user == string.Empty || u.UserGroups.Any(ug => ug.User.ToUpper().Contains(user.ToUpper())))
                 );
         }
 
-        public Task<List<Groups>> GetGroupsAsync(long companyId, string code, string description, int skip, int take)
-            => GetGroupsAsync(companyId, code, description)
+        public Task<List<Groups>> GetGroupsAsync(long companyId, string code, string description, string user, int skip, int take)
+            => GetGroupsAsync(companyId, code, description, user)
                 .OrderBy(u => u.Code)
                 .Skip(skip)
                 .Take(take)
                 .ToListAsync();
 
-        public Task<int> CountGroupsAsync(long company, string code, string description)
-            => GetGroupsAsync(company, code, description).CountAsync();
+        public Task<int> CountGroupsAsync(long company, string code, string description, string user)
+            => GetGroupsAsync(company, code, description, user).CountAsync();
 
         public async Task<Groups> AddGroupAsync(DefaultIdentity identity, Groups group)
         {

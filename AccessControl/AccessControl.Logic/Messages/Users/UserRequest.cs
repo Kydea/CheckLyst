@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace CheckListManager.AccessControl.Logic.Messages.Users
 {
@@ -15,6 +16,7 @@ namespace CheckListManager.AccessControl.Logic.Messages.Users
         public Grant[] GeneralFunctions { get; set; }
         public Grant[] PrototypeFunctions { get; set; }
         public Grant[] InstanceFunctions { get; set; }
+        public List<string> Groups { get; set; }
 
         public string Reason { get; set; }
     }

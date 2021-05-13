@@ -27,17 +27,22 @@ input.AutoComplete {
 
 input.AutoComplete-Filter {
     min-width: unset !important;
-    position: absolute;
     border-radius: 0 !important;
     margin-top: 0 !important;
     border-top: none !important;
     border-bottom: none !important;
     background-color: $Color-Grey-Light !important;
-    z-index: $Depth-AutoComplete;
     outline: none;
 
+    &:not(.FullHeight) {
+        position: absolute;
+        z-index: $Depth-AutoComplete;
+    }
+
     &.FullHeight {
-        display: none !important;
+        display: block !important;
+        position: static;
+        width: 100% !important;
     }
 }
 

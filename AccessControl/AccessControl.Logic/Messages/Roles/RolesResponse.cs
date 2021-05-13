@@ -1,4 +1,5 @@
 ﻿using CheckListManager.AccessControl.Logic.Messages.Users;
+using CheckListManager.Common.Logic;
 using System;
 using System.Collections.Generic;
 
@@ -14,5 +15,6 @@ namespace CheckListManager.AccessControl.Logic.Messages.Roles
         public DateTimeOffset? ModifiedOn { get; set; }
 
         public List<string> Functions { get; set; }
+        public PascalCaseDictionary<string, List<string>> FunctionGroups { get; set; }
     }
 }

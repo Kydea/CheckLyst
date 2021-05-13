@@ -25,6 +25,12 @@
                 <i class="Icon fal fa-key" />
                 <input type="text" name="corporateID" />
             </label>
+
+            <label>
+                <span>Group</span>
+                <i class="Icon fal fa-users" />
+                <input type="text" name="group" />
+            </label>
         </form>
 
         <table class="Grid">
@@ -104,6 +110,13 @@
                 roles[!role.functionGroup ? "general" : role.functionGroup.toLowerCase()][role.code] = role;
             }
             $(formSelector).data("roles", roles);
+        });
+
+        $.ajax({
+            type: "post",
+            url: "@BaseUrl/AccessControl/Groups/GetSyntheticData"
+        }).done(function (result) {
+            $(formSelector).data("groups", result);
         });
 
         $("a#ExportButton").on("click", function () {
