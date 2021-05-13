@@ -411,11 +411,6 @@ namespace CheckListManager.AccessControl.Logic.Services
                     else
                         response.GeneralFunctions = new Grant[] { new Grant { FunctionGroup = null, Role = role.Role } };
 
-                    var Levels = user.UserLevels.ToDictionary(
-                        k => new LevelKey { Department = k.Department.Value, PrototypeType = k.PrototypeType },
-                        v => new LevelRecord { PrototypeWorkFlowLevel = v.PrototypeWorkFlowLevel, InstanceWorkFlowLevel = v.InstanceWorkFlowLevel, SignatureLevel = v.SignatureLevel }
-                    );
-
                     var functions = new List<Grant>();
                     functions = user.UserFunctions.Where(f => f.FunctionGroup == "Prototypes")
                         .GroupBy(pf => new { pf.Department, pf.PrototypeType })
@@ -424,8 +419,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                             Department = g.Key.Department,
                             PrototypeType = g.Key.PrototypeType,
                             FunctionGroup = "Prototypes",
-                            Functions = g.Select(pf => pf.Function).ToArray(),
-                            WorkFlowLevel = Levels.TryGetValue(new LevelKey { Department = g.Key.Department.Value, PrototypeType = g.Key.PrototypeType }, out var Level) ? Level.PrototypeWorkFlowLevel : null
+                            Functions = g.Select(pf => pf.Function).ToArray()
                         })
                         .ToList();
                     functions.AddRange(user.UserRoles.Where(r => r.Roles.FunctionGroup == "Prototypes").Select(r => new Grant
@@ -433,40 +427,37 @@ namespace CheckListManager.AccessControl.Logic.Services
                         Department = r.Department,
                         PrototypeType = r.PrototypeType,
                         FunctionGroup = "Prototypes",
-                        Role = r.Role,
-                        WorkFlowLevel = Levels.TryGetValue(new LevelKey { Department = r.Department.Value, PrototypeType = r.PrototypeType }, out var Level) ? Level.PrototypeWorkFlowLevel : null
+                        Role = r.Role
                     }));
                     response.PrototypeFunctions = functions.ToArray();
 
                     functions = user.UserFunctions.Where(f => f.FunctionGroup == "Instances")
                         .GroupBy(pf => new { pf.Department, pf.PrototypeType })
-                        .Select(g =>
-                        {
-                            if (!Levels.TryGetValue(new LevelKey { Department = g.Key.Department.Value, PrototypeType = g.Key.PrototypeType }, out var Level)) Level = null;
-                            return new Grant
-                            {
-                                Department = g.Key.Department,
-                                PrototypeType = g.Key.PrototypeType,
-                                FunctionGroup = "Instances",
-                                Functions = g.Select(pf => pf.Function).ToArray(),
-                                WorkFlowLevel = Level?.InstanceWorkFlowLevel,
-                                SignatureLevel = Level?.SignatureLevel
-                            };
+                        .Select(g => new Grant
+                        { 
+                            Department = g.Key.Department,
+                            PrototypeType = g.Key.PrototypeType,
+                            FunctionGroup = "Instances",
+                            Functions = g.Select(pf => pf.Function).ToArray()
                         }).ToList();
                     functions.AddRange(user.UserRoles.Where(r => r.Roles.FunctionGroup == "Instances").Select(r =>
-                    {
-                        if (!Levels.TryGetValue(new LevelKey { Department = r.Department.Value, PrototypeType = r.PrototypeType }, out var Level)) Level = null;
-                        return new Grant
+                        new Grant
                         {
                             Department = r.Department,
                             PrototypeType = r.PrototypeType,
                             FunctionGroup = "Instances",
-                            Role = r.Role,
-                            WorkFlowLevel = Level?.InstanceWorkFlowLevel,
-                            SignatureLevel = Level?.SignatureLevel
-                        };
-                    }));
+                            Role = r.Role
+                        }
+                    ));
                     response.InstanceFunctions = functions.ToArray();
+
+                    response.Levels = user.UserLevels.Select(l => new Grant {
+                        Department = l.Department.Value,
+                        PrototypeType = l.PrototypeType,
+                        PrototypeWorkFlowLevel = l.PrototypeWorkFlowLevel,
+                        InstanceWorkFlowLevel = l.InstanceWorkFlowLevel,
+                        SignatureLevel = l.SignatureLevel
+                    }).ToArray();
                 }
                 catch (Exception exception)
                 {
@@ -513,10 +504,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                         CreatedBy = identity.Code
                     });
 
-            var Levels = new Dictionary<LevelKey, LevelRecord>();
-
             foreach (var row in record.PrototypeFunctions)
-            {
                 if (row.Role != null)
                     User.UserRoles.Add(new UserRoles
                     {
@@ -541,12 +529,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                             CreatedBy = identity.Code
                         });
 
-                if (row.WorkFlowLevel != null)
-                    Levels[new LevelKey { Department = row.Department.Value, PrototypeType = row.PrototypeType }] = new LevelRecord { PrototypeWorkFlowLevel = row.WorkFlowLevel };
-            }
-
             foreach (var row in record.InstanceFunctions)
-            {
                 if (row.Role != null)
                     User.UserRoles.Add(new UserRoles
                     {
@@ -571,28 +554,15 @@ namespace CheckListManager.AccessControl.Logic.Services
                             CreatedBy = identity.Code
                         });
 
-                if (row.WorkFlowLevel != null || row.SignatureLevel != null)
-                {
-                    var Key = new LevelKey { Department = row.Department.Value, PrototypeType = row.PrototypeType };
-                    if (!Levels.TryGetValue(Key, out var Level))
-                    {
-                        Level = new LevelRecord();
-                        Levels[Key] = Level;
-                    }
-                    Level.InstanceWorkFlowLevel = row.WorkFlowLevel;
-                    Level.SignatureLevel = row.SignatureLevel;
-                }
-            }
-
-            foreach (var Level in Levels)
+            foreach (var Level in record.Levels)
                 User.UserLevels.Add(new UserLevels
                 {
                     Company = identity.CompanyId,
-                    Department = Level.Key.Department,
-                    PrototypeType = Level.Key.PrototypeType,
-                    PrototypeWorkFlowLevel = Level.Value.PrototypeWorkFlowLevel,
-                    InstanceWorkFlowLevel = Level.Value.InstanceWorkFlowLevel,
-                    SignatureLevel = Level.Value.SignatureLevel,
+                    Department = Level.Department,
+                    PrototypeType = Level.PrototypeType,
+                    PrototypeWorkFlowLevel = Level.PrototypeWorkFlowLevel,
+                    InstanceWorkFlowLevel = Level.InstanceWorkFlowLevel,
+                    SignatureLevel = Level.SignatureLevel,
                     CreatedOn = DateTimeOffset.UtcNow,
                     CreatedBy = identity.Code
                 });
@@ -813,21 +783,6 @@ namespace CheckListManager.AccessControl.Logic.Services
                 await _emailService.LogErrorAsync(e, "Failed to clear users pin");
                 Logger.Error(e);
             }
-        }
-
-        private struct LevelKey
-        {
-            public long Department { get; set; }
-            public long? PrototypeType { get; set; }
-            public override int GetHashCode() => 13 * Department.GetHashCode() + 17 * (PrototypeType?.GetHashCode() ?? 0);
-            public override bool Equals(object Object) => Object is LevelKey LevelKey && (Department == LevelKey.Department && PrototypeType == LevelKey.PrototypeType);
-        }
-
-        private class LevelRecord
-        {
-            public string PrototypeWorkFlowLevel { get; set; }
-            public string InstanceWorkFlowLevel { get; set; }
-            public string SignatureLevel { get; set; }
         }
     }
 }

@@ -61,7 +61,7 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
 
                     var userService = scope.Resolve<IUserService>();
                     var user = await userService.AuthenticateAsync(companyId, context.UserName, context.Password);
-                    var grants = PrepareUserFunctions(user).ToList();
+                    var grants = PrepareUserFunctions(user).SelectMany(f => f.GetClaims()).Distinct().ToList();
 
                     var identity = CreateIdentity(context.Options.AuthenticationType, user, grants);
 
@@ -107,7 +107,7 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
             return Task.FromResult<object>(null);
         }
 
-        private static ClaimsIdentity CreateIdentity(string authenticationType, Users user, List<UserFunction> grants)
+        private static ClaimsIdentity CreateIdentity(string authenticationType, Users user, List<string> claims)
         {
             var identity = new ClaimsIdentity(authenticationType);
             identity.AddClaim(new Claim(ClaimTypes.Version, DefaultIdentity.Version));
@@ -115,14 +115,13 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
             identity.AddClaim(new Claim(ClaimTypes.Name, user.Description));
             identity.AddClaim(new Claim("CompanyId", user.Company.ToString(), ClaimValueTypes.Integer));
 
-            foreach (var function in grants)
-                foreach(var claim in function.GetClaims())
-                    identity.AddClaim(new Claim(ClaimTypes.Role, claim, ClaimValueTypes.Integer));
+            foreach (var claim in claims)
+                identity.AddClaim(new Claim(ClaimTypes.Role, claim, ClaimValueTypes.Integer));
 
             return identity;
         }
 
-        private static Dictionary<string, string> CreateProperties(Users user, List<UserFunction> grants)
+        private static Dictionary<string, string> CreateProperties(Users user, List<string> claims)
         {
             return new Dictionary<string, string>
             {
@@ -131,7 +130,7 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
                 { "code", user.Code },
                 { "name", user.Description },
                 { "timeZone", user.Companies.TimeZone },
-                { "roles", string.Join(",", grants.SelectMany(function => function.GetClaims())) }
+                { "roles", string.Join(",", claims.Select(c => c + '#')) }
             };
         }
         private class UserFunction
@@ -159,7 +158,7 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
                 else
                 {
                     if (Department != null)
-                        yield return $"{FunctionGroup}#{Function}#{Department?.ToString() ?? string.Empty}#{PrototypeType?.ToString() ?? string.Empty}#";
+                        yield return $"{FunctionGroup}#{Function}#{Department?.ToString() ?? string.Empty}#{PrototypeType?.ToString() ?? string.Empty}";
                     yield return $"{FunctionGroup}#{Function}";
                     yield return $"FunctionGroup#{FunctionGroup}";
                 }

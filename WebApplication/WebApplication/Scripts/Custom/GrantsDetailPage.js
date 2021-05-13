@@ -80,10 +80,10 @@
             var
                 tabItem = tabIndex && tab.getItem(tabIndex) || tab.getCurrentItem(),
                 div = $("<div />").addClass("Function").insertBefore(tabItem.tab.children("div.Clearing")),
-                departmentsSelect, prototypeTypesSelect, rolesSelect, functionsSelect, workFlowLevelSelect, signatureLevelSelect,
-                departmentsAutoComplete, prototypeTypesAutoComplete, rolesAutoComplete, functionsAutoComplete, workFlowLevelAutoComplete, signatureLevelAutoComplete;
+                departmentsSelect, prototypeTypesSelect, rolesSelect, functionsSelect,
+                departmentsAutoComplete, prototypeTypesAutoComplete, rolesAutoComplete, functionsAutoComplete;
 
-            $("<hr />").appendTo(div)
+                $("<hr />").appendTo(div)
 
             if (page != "Roles") {
                 departmentsSelect = $("<select />").addClass("Department");
@@ -129,38 +129,13 @@
             functionsAutoComplete = new matematici.AutoComplete(functionsSelect[0]);
             functionsAutoComplete.initialize();
 
-            if (page == "Users") {
-                workFlowLevelSelect = $("<select />").addClass("WorkFlowLevel").attr("data-nullable", "");
-                if (detailPage.isReadOnly()) matematici.controls.setEditable(workFlowLevelSelect, false);
-                $("<label />").appendTo(div).append($("<span />").text("Workflow level")).append($("<i />").addClass("Icon fal fa-users")).append(workFlowLevelSelect);
-                for (var index in matematici.profiles)
-                    workFlowLevelSelect.append($("<option />").text(matematici.profiles[index]).attr("value", matematici.profiles[index]));
-                workFlowLevelSelect.val(null);
-                workFlowLevelAutoComplete = new matematici.AutoComplete(workFlowLevelSelect[0]);
-                workFlowLevelAutoComplete.initialize();
-                if (tabItem.index == 3) {
-                    signatureLevelSelect = $("<select />").addClass("SignatureLevel").attr("data-nullable", "");
-                    if (detailPage.isReadOnly()) matematici.controls.setEditable(signatureLevelSelect, false);
-                    $("<label />").appendTo(div).append($("<span />").text("Signature level")).append($("<i />").addClass("Icon fal fa-users")).append(signatureLevelSelect);
-                    for (var index in matematici.profiles)
-                        signatureLevelSelect.append($("<option />").text(matematici.profiles[index]).attr("value", matematici.profiles[index]));
-                    signatureLevelSelect.val(null);
-                    signatureLevelAutoComplete = new matematici.AutoComplete(signatureLevelSelect[0]);
-                    signatureLevelAutoComplete.initialize();
-                }
-            }
-
             setTimeout(function () {
                 if (page != "Roles") {
                     departmentsAutoComplete.refresh();
+                    prototypeTypesAutoComplete.refresh();
                     rolesAutoComplete.refresh();
                 }
                 functionsAutoComplete.refresh();
-                if (page == "Users") {
-                    workFlowLevelAutoComplete.refresh();
-                    if (tabItem.index == 3)
-                        signatureLevelAutoComplete.refresh();
-                }
             }, 0);
 
             if (!detailPage.isReadOnly() && page != "Roles")
@@ -176,8 +151,85 @@
                 department: departmentsSelect,
                 prototypeType: prototypeTypesSelect,
                 role: rolesSelect,
-                "function": functionsSelect,
-                workFlowLevel: workFlowLevelSelect,
+                "function": functionsSelect
+            }
+        },
+
+        addLevel = function () {
+            var
+                tabItem = tab.getItem(4),
+                div = $("<div />").addClass("Function").insertBefore(tabItem.tab.children("div.Clearing")),
+                departmentsSelect, prototypeTypesSelect, prototypeWorkFlowLevelSelect, instanceWorkFlowLevelSelect, signatureLevelSelect,
+                departmentsAutoComplete, prototypeTypesAutoComplete, prototypeWorkFlowLevelAutoComplete, instanceWorkFlowLevelAutoComplete, signatureLevelAutoComplete;
+
+            $("<hr />").appendTo(div)
+
+            departmentsSelect = $("<select />").addClass("Department");
+            if (detailPage.isReadOnly()) matematici.controls.setEditable(departmentsSelect, false);
+            $("<label />").appendTo(div).append($("<span />").text("Department")).append($("<i />").addClass("Icon fal fa-industry")).append(departmentsSelect).addClass("Clearing");
+            for (var index in departments)
+                departmentsSelect.append($("<option />").text(departments[index].name).attr("value", departments[index].code));
+            departmentsAutoComplete = new matematici.AutoComplete(departmentsSelect[0]);
+            departmentsAutoComplete.initialize();
+            departmentsSelect.on("change", function () {
+                refreshPrototypeTypes(departmentsSelect, prototypeTypesSelect);
+            });
+
+            prototypeTypesSelect = $("<select />").addClass("PrototypeType").attr("data-nullable", "(all)");
+            if (detailPage.isReadOnly()) matematici.controls.setEditable(prototypeTypesSelect, false);
+            $("<label />").appendTo(div).append($("<span />").text("Prototype type")).append($("<i />").addClass("Icon fal fa-folder")).append(prototypeTypesSelect);
+            prototypeTypesAutoComplete = new matematici.AutoComplete(prototypeTypesSelect[0]);
+            prototypeTypesAutoComplete.initialize();
+            refreshPrototypeTypes(departmentsSelect, prototypeTypesSelect);
+
+            prototypeWorkFlowLevelSelect = $("<select />").addClass("PrototypeWorkFlowLevel").attr("data-nullable", "");
+            if (detailPage.isReadOnly()) matematici.controls.setEditable(prototypeWorkFlowLevelSelect, false);
+            $("<label />").appendTo(div).append($("<span />").text("Prototype workflow level")).append($("<i />").addClass("Icon fal fa-users")).append(prototypeWorkFlowLevelSelect);
+            for (var index in matematici.profiles)
+                prototypeWorkFlowLevelSelect.append($("<option />").text(matematici.profiles[index]).attr("value", matematici.profiles[index]));
+            prototypeWorkFlowLevelSelect.val(null);
+            prototypeWorkFlowLevelAutoComplete = new matematici.AutoComplete(prototypeWorkFlowLevelSelect[0]);
+            prototypeWorkFlowLevelAutoComplete.initialize();
+
+            instanceWorkFlowLevelSelect = $("<select />").addClass("InstanceWorkFlowLevel").attr("data-nullable", "");
+            if (detailPage.isReadOnly()) matematici.controls.setEditable(instanceWorkFlowLevelSelect, false);
+            $("<label />").appendTo(div).append($("<span />").text("Instance workflow level")).append($("<i />").addClass("Icon fal fa-users")).append(instanceWorkFlowLevelSelect);
+            for (var index in matematici.profiles)
+                instanceWorkFlowLevelSelect.append($("<option />").text(matematici.profiles[index]).attr("value", matematici.profiles[index]));
+            instanceWorkFlowLevelSelect.val(null);
+            instanceWorkFlowLevelAutoComplete = new matematici.AutoComplete(instanceWorkFlowLevelSelect[0]);
+            instanceWorkFlowLevelAutoComplete.initialize();
+
+            signatureLevelSelect = $("<select />").addClass("SignatureLevel").attr("data-nullable", "");
+            if (detailPage.isReadOnly()) matematici.controls.setEditable(signatureLevelSelect, false);
+            $("<label />").appendTo(div).append($("<span />").text("Signature level")).append($("<i />").addClass("Icon fal fa-users")).append(signatureLevelSelect);
+            for (var index in matematici.profiles)
+                signatureLevelSelect.append($("<option />").text(matematici.profiles[index]).attr("value", matematici.profiles[index]));
+            signatureLevelSelect.val(null);
+            signatureLevelAutoComplete = new matematici.AutoComplete(signatureLevelSelect[0]);
+            signatureLevelAutoComplete.initialize();
+
+            setTimeout(function () {
+                departmentsAutoComplete.refresh();
+                prototypeWorkFlowLevelAutoComplete.refresh();
+                instanceWorkFlowLevelAutoComplete.refresh();
+                signatureLevelAutoComplete.refresh();
+            }, 0);
+
+            if (!detailPage.isReadOnly() && page != "Roles")
+                $("<a />").attr("href", "#").addClass("Button Icon").append($("<i />").addClass("Icon fa fa-minus")).on("click", function () {
+                    div.remove();
+                    fixQueryParameters(tabItem.index);
+                }).appendTo(div);
+
+            if (!loading)
+                fixQueryParameters(tabItem.index);
+
+            return {
+                department: departmentsSelect,
+                prototypeType: prototypeTypesSelect,
+                prototypeWorkFlowLevelSelect: prototypeWorkFlowLevelSelect,
+                instanceWorkFlowLevelSelect: instanceWorkFlowLevelSelect,
                 signatureLevel: signatureLevelSelect
             }
         },
@@ -186,7 +238,8 @@
             var data = {
                 generalFunctions: [],
                 prototypeFunctions: [],
-                instanceFunctions: []
+                instanceFunctions: [],
+                levels: []
             };
 
             var generalRole = page == "Roles" ? null : generalRoleSelect.val();
@@ -208,16 +261,13 @@
 
             $("div.Function", tab.getItem(2).tab).each(function () {
                 var record = {};
-                if (page == "Roles") 
+                if (page == "Roles")
                     record.functions = $("select.Function", this).val();
                 else {
                     record.department = $("select.Department", this).val();
                     record.prototypeType = $("select.PrototypeType", this).val();
                     record.role = $("select.Role", this).val();
                     if (record.role == null) record.functions = $("select.Function", this).val();
-
-                    if (page == "Users") 
-                        record.workFlowLevel = $("select.WorkFlowLevel", this).val();
                 }
                 data.prototypeFunctions.push(record);
             });
@@ -231,14 +281,20 @@
                     record.prototypeType = $("select.PrototypeType", this).val();
                     record.role = $("select.Role", this).val();
                     if (record.role == null) record.functions = $("select.Function", this).val();
-
-                    if (page == "Users") {
-                        record.workFlowLevel = $("select.WorkFlowLevel", this).val();
-                        record.signatureLevel = $("select.SignatureLevel", this).val();
-                    }
                 }
                 data.instanceFunctions.push(record);
             });
+
+            if (page == "Users")
+                $("div.Function", tab.getItem(4).tab).each(function () {
+                    var record = {};
+                    record.department = $("select.Department", this).val();
+                    record.prototypeType = $("select.PrototypeType", this).val();
+                    record.prototypeWorkFlowLevel = $("select.PrototypeWorkFlowLevel", this).val();
+                    record.instanceWorkFlowLevel = $("select.InstanceWorkFlowLevel", this).val();
+                    record.signatureLevel = $("select.SignatureLevel", this).val();
+                    data.levels.push(record);
+                });
 
             return { data: data };
         },
@@ -354,21 +410,24 @@
 
                 if (page != "Roles") {
                     generalRoleSelect = $("select.GeneralRole", detailPage.getElement());
+                    if (detailPage.isReadOnly()) matematici.controls.setEditable(generalRoleSelect, false);
                     generalRoleSelect.on("change", refreshGeneralFunctions);
                     for (var index in roles.general)
                         generalRoleSelect.append($("<option />").text(index).attr("value", index));
                     var generalAutoComplete = matematici.AutoComplete.get(generalRoleSelect[0]);
+                    generalAutoComplete.checkReadOnly();
                     generalAutoComplete.refreshValues();
                     generalAutoComplete.setValue(null);
                 }
 
                 if (page == "Users") {
-                    groupsSelect = $("<select />").appendTo($("div.Tab.Groups div.Control", detailPage.getElement())).prop("multiple", true).addClass("FullHeight NoFilter");
+                    groupsSelect = $("<select />").appendTo($("div.Tab.Groups div.Control", detailPage.getElement())).prop("multiple", true).addClass("FullHeight");
                     for (var index in groups)
                         groupsSelect.append($("<option />").text(groups[index]).attr("value", groups[index]));
                     groupsSelect.val(result.groups);
                     var autoComplete = new matematici.AutoComplete(groupsSelect[0]);
                     autoComplete.initialize();
+                    if (detailPage.isReadOnly()) autoComplete.lock(true)
                 }
 
                 $("input[name=authenticationCode]", detailPage.getElement()).parent().toggleClass("Hidden", !result.showAuthenticationCode);
@@ -377,9 +436,11 @@
                 if (result.generalFunctions) buildGeneralFunctions(result.generalFunctions);
                 if (result.prototypeFunctions) buildFunctions(result.prototypeFunctions, 2);
                 if (result.instanceFunctions) buildFunctions(result.instanceFunctions, 3);
+                if (page == "Users" && result.levels) buildLevels(result.levels, 4);
 
                 fixQueryParameters(2);
                 fixQueryParameters(3);
+                fixQueryParameters(4);
                 loading = false;
                 loadHandler && loadHandler();
             });
@@ -411,18 +472,27 @@
                 if (page != "Roles") {
                     row.department.val(record.department);
                     refreshPrototypeTypes(row.department, row.prototypeType);
+                    row.prototypeType.val(record.prototypeType);
                     row.role.val(record.role);
                     refreshFunctions(row.role, row.function, tabIndex);
-                    row.prototypeType.val(record.prototypeType);
-                }
-
-                if (page == "Users") {
-                    row.workFlowLevel.val(record.workFlowLevel);
-                    if (tabIndex == 3)
-                        row.signatureLevel.val(record.signatureLevel);
                 }
 
                 if (record.role == null) row["function"].val(record.functions);
+            }
+        },
+
+        buildLevels = function (levels) {
+            for (var index in levels) {
+                var
+                    record = levels[index],
+                    row = addLevel();
+
+                row.department.val(record.department);
+                refreshPrototypeTypes(row.department, row.prototypeType);
+                row.prototypeType.val(record.prototypeType);
+                row.prototypeWorkFlowLevelSelect.val(record.prototypeWorkFlowLevel);
+                row.instanceWorkFlowLevelSelect.val(record.instanceWorkFlowLevel);
+                row.signatureLevel.val(record.signatureLevel);
             }
         },
 
@@ -439,12 +509,16 @@
                 width: "inherit",
                 buttons: [{
                     icon: "plus",
-                    text: "add function",
+                    text: "add",
                     hidden: true,
-                    id: "AddFunction",
+                    id: "Add",
                     handler: function () {
-                        addFunction();
-                        fixQueryParameters(tab.getCurrentItem().index);
+                        var tabIndex = tab.getCurrentItem().index;
+                        if (tabIndex == 4)
+                            addLevel();
+                        else
+                            addFunction(tabIndex);
+                        fixQueryParameters(tabIndex);
                         return true;
                     }
                 }]
@@ -463,7 +537,7 @@
                 $("input[type=checkbox]", detailPage.getElement()).prop("disabled", true);
             } else
                 tab.addHandler(function (item) {
-                    $("a#AddFunction", matematici.popup.getElement()).toggle(item.index > 1 && page != "Roles");
+                    $("a#Add", matematici.popup.getElement()).toggle(item.index > 1 && item.index < 5 && page != "Roles");
                 });
         };
 

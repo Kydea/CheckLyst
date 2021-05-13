@@ -65,9 +65,12 @@ div.AutoComplete-List {
     div.AutoComplete-List a.None i {
       font-style: normal;
       color: #666; }
+    div.AutoComplete-List a:hover {
+      text-decoration: none !important; }
   div.AutoComplete-List:not(.Locked) a:hover {
-    background: #ebebeb !important;
-    text-decoration: none !important; }
+    background: #ebebeb !important; }
+  div.AutoComplete-List.Locked a {
+    cursor: default !important; }
   div.AutoComplete-List.NoCheck a {
     padding: 0 5px !important;
     text-align: center; }

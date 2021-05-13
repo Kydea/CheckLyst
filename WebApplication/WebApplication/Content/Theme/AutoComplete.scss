@@ -91,11 +91,18 @@ div.AutoComplete-List {
                 color: $Color-Grey-Dark;
             }
         }
+
+        &:hover {
+            text-decoration: none !important;
+        }
     }
 
     &:not(.Locked) a:hover {
         background: $Color-Silver-Dark !important;
-        text-decoration: none !important;
+    }
+
+    &.Locked a {
+        cursor: default !important;
     }
 
     &.NoCheck {
