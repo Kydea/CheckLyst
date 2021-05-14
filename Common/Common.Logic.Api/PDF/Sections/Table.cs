@@ -295,8 +295,15 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                                 Cell = NewCell(Item.Hidden ? string.Empty :"(# no key)");
                             else if (Image.Key != null)
                             {
-                                var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.PrototypesStorageBucket, Image.Key, Image);
-                                Cell = NewCell($"(see attachment {Index})");
+                                try
+                                {
+                                    var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.PrototypesStorageBucket, Image.Key, Image);
+                                    Cell = NewCell($"(see attachment {Index})");
+                                }
+                                catch(Exception Exception)
+                                {
+                                    Cell = NewCell($"Image error: {Exception.Message})");
+                                }
                             }
                             break;
                         case "Attachment":
@@ -305,10 +312,16 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                                 Cell = NewCell(string.Empty);
                             else if (Attachment.Key != null)
                             {
-                                var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.InstancesStorageBucket, Attachment.Key, Attachment);
-                                Cell = NewCell($"(see attachment {Index})");
+                                try
+                                {
+                                    var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.InstancesStorageBucket, Attachment.Key, Attachment);
+                                    Cell = NewCell($"(see attachment {Index})");
+                                }
+                                catch (Exception Exception)
+                                {
+                                    Cell = NewCell($"Attachment error: {Exception.Message})");
+                                }
                             }
-
                             break;
                         default:
                             Cell = NewCell(Item.Hidden ? string.Empty : Item.TypeName);
