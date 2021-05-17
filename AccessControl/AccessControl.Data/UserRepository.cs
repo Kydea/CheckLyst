@@ -136,9 +136,16 @@ namespace CheckListManager.AccessControl.Data
             var Days = await _settingsService.MaximumUserInactivityDaysAsync(company);
             if (Days == 0) return new List<Users>(0);
             var Threshold = DateTime.UtcNow.AddDays(-Days);
-            return await Entities.Users
+            var Users = await Entities.Users
                 .Include(u => u.Companies)
-                .Where(x => x.Enabled && x.LastLoginOn < Threshold).ToListAsync();
+                .Where(x => x.Enabled && (x.LastLoginOn < Threshold || x.LastLoginOn == null && x.CreatedOn < Threshold)).ToListAsync();
+
+            foreach (var User in Users)
+            {
+                Logger.Error(e);
+                User.ModifiedBy = $"{company}|{Days}|{Threshold.ToString("dd/MM/yyyy")}";
+            }
+            return Users;
         }
 
         public async Task<List<Users>> GetUsersDisableWarningAsync(long company)
@@ -148,7 +155,7 @@ namespace CheckListManager.AccessControl.Data
             var Threshold = DateTime.UtcNow.AddDays(-Days);
             return await Entities.Users
                 .Include(u => u.Companies)
-                .Where(x => x.Enabled && x.LastLoginOn < Threshold).ToListAsync();
+                .Where(x => x.Enabled && (x.LastLoginOn < Threshold || x.LastLoginOn == null && x.CreatedOn < Threshold)).ToListAsync();
         }
 
         public async Task<List<Users>> GetUsersWithExpiredPin(long company)

@@ -726,7 +726,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                 var users = await _userRepository.GetUsersToDisableAsync(company);
                 foreach (var user in users)
                 {
-                    user.Enabled = false;
+                    //user.Enabled = false;
                     if (!string.IsNullOrEmpty(user.Email))
                         await _queueService.SendObjectAsync(QueueName.Email,
                             new EmailMessage(user.Company, "User disabled",
