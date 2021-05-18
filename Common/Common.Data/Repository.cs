@@ -65,11 +65,8 @@ namespace CheckListManager.Common.Data
         {
             try
             {
-                if (Entities.Database.Connection.State != ConnectionState.Open)
-                    await Entities.Database.Connection.OpenAsync();
-
-                using (var connection = new NpgsqlConnection(Entities.Database.Connection.ConnectionString))
-                    return connection.Query<T>(query, new DynamicParameters(parameters));
+                if (Entities.Database.Connection.State != ConnectionState.Open) await Entities.Database.Connection.OpenAsync();
+                return Entities.Database.Connection.Query<T>(query, new DynamicParameters(parameters));
             }
             catch (AggregateException AggregateException)
             {

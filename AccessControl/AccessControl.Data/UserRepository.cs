@@ -141,10 +141,7 @@ namespace CheckListManager.AccessControl.Data
                 .Where(x => x.Enabled && (x.LastLoginOn < Threshold || x.LastLoginOn == null && x.CreatedOn < Threshold)).ToListAsync();
 
             foreach (var User in Users)
-            {
-                Logger.Error(e);
                 User.ModifiedBy = $"{company}|{Days}|{Threshold.ToString("dd/MM/yyyy")}";
-            }
             return Users;
         }
 
