@@ -56,6 +56,13 @@
             ]
         });
 
+        $("a#ExportButton").on("click", function () {
+            var form = searchPage.getForm();
+            form.trigger("Export", function (result) {
+                location = form.getElement().attr("action") + "/Export?Token=" + result.token;
+            })
+        });
+
         callback.call();
     };
 </script>

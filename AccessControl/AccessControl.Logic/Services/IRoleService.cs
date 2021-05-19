@@ -15,6 +15,7 @@ namespace CheckListManager.AccessControl.Logic.Services
 	public interface IRoleService : IService
 	{
 		Task<PagingResponse<List<RolesResponse>>> GetRolesAsync(long companyId, PagingRequest<RolesRequest> request);
+        Task<List<ExportRow>> GetFunctionsAsync(long companyId, RolesRequest request);
 
         Task<RoleResponse> LoadRoleAsync(DefaultIdentity identity, RoleRequest record);
         Task<RoleResponse> AddRoleAsync(DefaultIdentity identity, RoleRequest request);

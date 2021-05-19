@@ -262,7 +262,7 @@ namespace CheckListManager.AccessControl.Logic.Services
         }
 
         public async Task<List<ExportRow>> GetFunctionsAsync(long companyId, UsersRequest request) =>
-            await _userRepository.GetUsersForExportAsync(companyId, request.Code, request.Description, request.CorporateID);
+            await _userRepository.GetUsersForExportAsync(companyId, request.Code, request.Description, request.CorporateID, request.Group);
 
         public async Task<PagingResponse<List<UsersResponse>>> GetUsersAsync(long companyId, PagingRequest<UsersRequest> request)
         {

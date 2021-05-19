@@ -14,6 +14,7 @@ namespace CheckListManager.AccessControl.Data.Models
         public string CorporateID { get; set; }
         public bool Enabled { get; set; }
         public DateTimeOffset? LastLoginOn { get; set; }
+        public string Group { get; set; }
         public long? Department { get; set; }
         public string DepartmentName { get; set; }
         public long? PrototypeType { get; set; }

@@ -16,8 +16,9 @@ namespace CheckListManager.AccessControl.Logic.Services
 	{
 		Task<PagingResponse<List<GroupsResponse>>> GetGroupsAsync(long companyId, PagingRequest<GroupsRequest> request);
         Task<List<string>> GetSyntheticDataAsync(long companyId);
+        Task<List<ExportRow>> GetFunctionsAsync(long companyId, GroupsRequest request);
 
-        Task < GroupResponse> LoadGroupAsync(DefaultIdentity identity, GroupRequest record);
+        Task< GroupResponse> LoadGroupAsync(DefaultIdentity identity, GroupRequest record);
         Task<GroupResponse> AddGroupAsync(DefaultIdentity identity, GroupRequest request);
         Task<GroupResponse> EditGroupAsync(DefaultIdentity identity, GroupRequest record);
         Task<GroupResponse> DeleteGroupAsync(DefaultIdentity identity, GroupRequest record);

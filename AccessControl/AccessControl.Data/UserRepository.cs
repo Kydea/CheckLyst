@@ -34,7 +34,7 @@ namespace CheckListManager.AccessControl.Data
         private const string EXPORT_QUERY =
             "select " +
                 "u.\"Code\", u.\"Description\", u.\"Email\", u.\"CorporateID\", u.\"Enabled\", u.\"LastLoginOn\", " +
-                "g.\"Department\", d.\"Name\" \"DepartmentName\", g.\"PrototypeType\", pt.\"Name\" \"PrototypeTypeName\", " +
+                "g.\"Group\", g.\"Department\", d.\"Name\" \"DepartmentName\", g.\"PrototypeType\", pt.\"Name\" \"PrototypeTypeName\", " +
                 "g.\"Role\", g.\"FunctionGroup\", g.\"Function\", (" +
                     "select \"SignatureLevel\" " +
                     "from \"Security\".\"UserLevels\" ul " +
@@ -76,20 +76,69 @@ namespace CheckListManager.AccessControl.Data
                 "left join \"CheckLists\".\"PrototypeTypes\" pt on g.\"PrototypeType\" = pt.\"ID\" " +
             "where " +
                 "u.\"Company\" = :company " +
-                "and (:code = '' or upper(u.\"Code\") like '%' || :code || '%') " +
-                "and (:description = '' or upper(u.\"Description\") like '%' || :description || '%') " +
-                "and (:corporateID = '' or upper(u.\"CorporateID\") like '%' || :corporateID || '%') " +
+                "and (:code = '' or u.\"Code\" ilike '%' || :code || '%') " +
+                "and (:description = '' or u.\"Description\" ilike '%' || :description || '%') " +
+                "and (:corporateID = '' or u.\"CorporateID\" ilike '%' || :corporateID || '%') " +
+                "and (:group == '' or exists (select 1 from \"Security\".\"UserGroups\" ug where ug.\"Company\" = u.\"Company\" and ug.\"User\" = u.\"Code\" and ug.\"Group\" ilike '%' || :group || '%')) " +
             "order by u.\"Code\", g.\"Department\", g.\"PrototypeType\", g.\"Role\", g.\"FunctionGroup\", g.\"Function\"";
-        public async Task<List<ExportRow>> GetUsersForExportAsync(long company, string code, string description, string corporateID)
+        public async Task<List<ExportRow>> GetUsersForExportAsync(long company, string code, string description, string corporateID, string group)
         {
             var List = await Read<ExportRow>(EXPORT_QUERY, new
             {
                 company,
-                code = code?.ToUpper() ?? string.Empty,
-                description = description?.ToUpper() ?? string.Empty,
-                corporateID = corporateID?.ToUpper() ?? string.Empty
+                code = code?.Replace("_", "\\_").Replace("%", "\\%") ?? string.Empty,
+                description = description?.Replace("_", "\\_").Replace("%", "\\%") ?? string.Empty,
+                corporateID = corporateID?.Replace("_", "\\_").Replace("%", "\\%") ?? string.Empty,
+                group = group?.Replace("_", "\\_").Replace("%", "\\%") ?? string.Empty
             });
             return List.ToList();
+        }
+
+        public async Task<List<ExportRow>> GetRolesForExportAsync(long company, string code)
+        {
+            var roles = GetRolesAsync(company, code);
+
+            var List = await roles.SelectMany(r => r.RoleFunctions.Select(rf => new ExportRow
+            {
+                Code = r.Code,
+                FunctionGroup = rf.FunctionGroup,
+                Function = rf.Function
+            })).OrderBy(er => er.Code).ThenBy(er => er.FunctionGroup).ThenBy(er => er.Function).ToListAsync();
+            return List;
+        }
+
+
+        public async Task<List<ExportRow>> GetGroupsForExportAsync(long company, string code, string description, string user)
+        {
+            var groups = GetGroupsAsync(company, code, description, user);
+
+            var List = groups.SelectMany(r => r.GroupFunctions.Select(gf => new ExportRow
+            {
+                Code = r.Code,
+                Description = r.Description,
+                Department = gf.Department,
+                DepartmentName = gf.Departments == null ? null : gf.Departments.Name,
+                PrototypeType = gf.PrototypeType,
+                PrototypeTypeName = gf.PrototypeTypes == null ? null : gf.PrototypeTypes.Name,
+                Role = null,
+                FunctionGroup = gf.FunctionGroup,
+                Function = gf.Function
+            }));
+            List = List.Union(
+                groups.SelectMany(r => r.GroupRoles.Select(gr => new ExportRow
+                {
+                    Code = r.Code,
+                    Description = r.Description,
+                    Department = gr.Department,
+                    DepartmentName = gr.Departments == null ? null : gr.Departments.Name,
+                    PrototypeType = gr.PrototypeType,
+                    PrototypeTypeName = gr.PrototypeTypes == null ? null : gr.PrototypeTypes.Name,
+                    Role = gr.Role,
+                    FunctionGroup = null,
+                    Function = null
+                })).OrderBy(er => er.Code).ThenBy(er => er.Department).ThenBy(er => er.PrototypeType).ThenBy(er => er.FunctionGroup).ThenBy(er => er.Function)
+            );
+            return await List.OrderBy(er => er.Code).ThenBy(er => er.Department).ThenBy(er => er.PrototypeType).ThenBy(er => er.FunctionGroup).ThenBy(er => er.Function).ToListAsync();
         }
 
         public async Task UserLoginCompleteAsync(Users user)
@@ -288,16 +337,14 @@ namespace CheckListManager.AccessControl.Data
         public Task<Groups> GetGroupAsync(long companyId, string code)
             => Entities.Groups.SingleOrDefaultAsync(u => u.Company == companyId && u.Code.ToUpper() == code.ToUpper());
 
-        private IQueryable<Groups> GetGroupsAsync(long company, string code, string description, string user)
-        {
-            return Entities.Groups
+        private IQueryable<Groups> GetGroupsAsync(long company, string code, string description, string user) =>
+            Entities.Groups
                 .Where(
                     u => u.Company == company 
                         && (code == string.Empty || u.Code != null && u.Code.ToUpper().Contains(code.ToUpper())) 
                         && (description == string.Empty || u.Description != null && u.Description.ToUpper().Contains(description.ToUpper()))
                         && (user == string.Empty || u.UserGroups.Any(ug => ug.User.ToUpper().Contains(user.ToUpper())))
                 );
-        }
 
         public Task<List<Groups>> GetGroupsAsync(long companyId, string code, string description, string user, int skip, int take)
             => GetGroupsAsync(companyId, code, description, user)

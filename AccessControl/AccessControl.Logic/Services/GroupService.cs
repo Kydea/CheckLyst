@@ -42,6 +42,9 @@ namespace CheckListManager.AccessControl.Logic.Services
             _settingService = settingService;
         }
 
+        public async Task<List<ExportRow>> GetFunctionsAsync(long companyId, GroupsRequest request) =>
+            await _userRepository.GetGroupsForExportAsync(companyId, request.Code, request.Description, request.User);
+
         public async Task<PagingResponse<List<GroupsResponse>>> GetGroupsAsync(long companyId, PagingRequest<GroupsRequest> request)
         {
             var take = request.ItemsPerPage;

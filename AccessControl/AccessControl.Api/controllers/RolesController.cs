@@ -80,5 +80,37 @@ namespace CheckListManager.AccessControl.Api.Controllers
             return Ok(await _roleService.GetSyntheticDataAsync(Identity.CompanyId));
         }
 
+        [HttpPost]
+        [Route("Export")]
+        [Authorize(Roles = "Users#View")]
+        public async Task<IHttpActionResult> Export(Message<RolesRequest> request)
+        {
+            var Token = Identity.Code + ":" + Guid.NewGuid();
+            request.Data.CompanyId = Identity.CompanyId;
+            await _redisCache.SetAsync($"Token:{Token}", request.Data, "Download", new TimeSpan(0, 1, 0));
+            return Ok(new { Token });
+        }
+
+        [HttpGet]
+        [Route("Export")]
+        [AllowAnonymous]
+        public async Task<IHttpActionResult> Export([FromUri]string Token)
+        {
+            var Data = await _redisCache.GetAsync<RolesRequest>($"Token:{Token}", "Download");
+            var Company = await _commonRepository.GetCompanyAsync(Data.CompanyId.Value);
+            await _redisCache.RemoveAsync($"Token:{Token}", "Download");
+            var Header = new string[] {
+                "Code",
+                "Function group",
+                "Function"
+            };
+            var Rows = await _roleService.GetFunctionsAsync(Data.CompanyId.Value, Data);
+            return Content(HttpStatusCode.OK, Rows, new CSVFormatter<ExportRow>(Header, "Roles", u => new string[] {
+                u.Code,
+                u.FunctionGroup,
+                u.Function
+            }));
+        }
+
     }
 }

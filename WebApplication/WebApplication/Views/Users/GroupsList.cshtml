@@ -1,7 +1,9 @@
 ﻿<div id="GroupsListPage">
     <h1>Groups List</h1>
 
-    <div class="ActionBar"></div>
+    <div class="ActionBar">
+        <a id="ExportButton" class="Button" href="#">Export<i class="Icon fa fa-caret-down"></i></a>
+    </div>
 
     <div class="ShadowPanel">
         <div class="Accordion"></div>
@@ -95,6 +97,13 @@
                 roles[!role.functionGroup ? "general" : role.functionGroup.toLowerCase()][role.code] = role;
             }
             $(formSelector).data("roles", roles);
+        });
+
+        $("a#ExportButton").on("click", function () {
+            var form = searchPage.getForm();
+            form.trigger("Export", function (result) {
+                location = form.getElement().attr("action") + "/Export?Token=" + result.token;
+            })
         });
 
         callback.call();

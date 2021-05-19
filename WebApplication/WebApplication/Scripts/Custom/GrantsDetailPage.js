@@ -11,6 +11,10 @@
         detailPage,
         generalRoleSelect,
         groupsSelect,
+        generalTab = page == "Users" ? 2 : 1,
+        prototypesTab = page == "Users" ? 3 : 2,
+        instancesTab = page == "Users" ? 4 : 3,
+        levelsTab = 5,
 
         fixQueryParameters = function (tabIndex) {
             steps = $("div.Function", tab.getItem(tabIndex).tab).each(function (index) {
@@ -47,7 +51,7 @@
                 role = null;
 
             if (roleName != null)
-                role = roles[tabIndex == 1 ? "general" : tabIndex == 2 ? "prototypes" : "instances"][roleName];
+                role = roles[tabIndex == generalTab ? "general" : tabIndex == prototypesTab ? "prototypes" : "instances"][roleName];
 
             functionsSelect.val(role && role.functions);
             setTimeout(function () {
@@ -65,7 +69,7 @@
             if (roleName != null)
                 role = roles.general[roleName];
 
-            $("input[type=checkbox]", tab.getItem(1).tab).each(function () {
+            $("input[type=checkbox]", tab.getItem(generalTab).tab).each(function () {
                 var
                     check = $(this),
                     functionGroup = role && role.functionGroups && role.functionGroups[check.data("group")],
@@ -109,7 +113,7 @@
                 rolesSelect = $("<select />").addClass("Role").attr("data-nullable", "(custom)");
                 if (detailPage.isReadOnly()) matematici.controls.setEditable(rolesSelect, false);
                 $("<label />").appendTo(div).append($("<span />").text("Role")).append($("<i />").addClass("Icon fal fa-cogs")).append(rolesSelect).addClass("Width150");
-                var list = tabItem.index == 2 ? roles.prototypes : roles.instances;
+                var list = tabItem.index == prototypesTab ? roles.prototypes : roles.instances;
                 for (var index in list)
                     rolesSelect.append($("<option />").text(index).attr("value", index));
                 rolesAutoComplete = new matematici.AutoComplete(rolesSelect[0]);
@@ -123,7 +127,7 @@
             functionsSelect = $("<select />").addClass("Function").prop("multiple", true);
             if (detailPage.isReadOnly()) matematici.controls.setEditable(functionsSelect, false);
             $("<label />").appendTo(div).append($("<span />").text("Function")).append($("<i />").addClass("Icon fal fa-cogs")).append(functionsSelect).addClass("Width150");
-            var list = tabItem.index == 2 ? prototypeFunctions : instanceFunctions;
+            var list = tabItem.index == prototypesTab ? prototypeFunctions : instanceFunctions;
             for (var index in list)
                 functionsSelect.append($("<option />").text(list[index]).attr("value", list[index]));
             functionsAutoComplete = new matematici.AutoComplete(functionsSelect[0]);
@@ -157,7 +161,7 @@
 
         addLevel = function () {
             var
-                tabItem = tab.getItem(4),
+                tabItem = tab.getItem(levelsTab),
                 div = $("<div />").addClass("Function").insertBefore(tabItem.tab.children("div.Clearing")),
                 departmentsSelect, prototypeTypesSelect, prototypeWorkFlowLevelSelect, instanceWorkFlowLevelSelect, signatureLevelSelect,
                 departmentsAutoComplete, prototypeTypesAutoComplete, prototypeWorkFlowLevelAutoComplete, instanceWorkFlowLevelAutoComplete, signatureLevelAutoComplete;
@@ -244,7 +248,7 @@
 
             var generalRole = page == "Roles" ? null : generalRoleSelect.val();
             if (generalRole == null)
-                $("input[type=checkbox]:checked", tab.getItem(1).tab).each(function () {
+                $("input[type=checkbox]:checked", tab.getItem(generalTab).tab).each(function () {
                     var
                         record = {},
                         check = $(this);
@@ -259,7 +263,7 @@
             if (page == "Users")
                 data.groups = groupsSelect.val();
 
-            $("div.Function", tab.getItem(2).tab).each(function () {
+            $("div.Function", tab.getItem(prototypesTab).tab).each(function () {
                 var record = {};
                 if (page == "Roles")
                     record.functions = $("select.Function", this).val();
@@ -272,7 +276,7 @@
                 data.prototypeFunctions.push(record);
             });
 
-            $("div.Function", tab.getItem(3).tab).each(function () {
+            $("div.Function", tab.getItem(instancesTab).tab).each(function () {
                 var record = {}
                 if (page == "Roles")
                     record.functions = $("select.Function", this).val();
@@ -286,7 +290,7 @@
             });
 
             if (page == "Users")
-                $("div.Function", tab.getItem(4).tab).each(function () {
+                $("div.Function", tab.getItem(levelsTab).tab).each(function () {
                     var record = {};
                     record.department = $("select.Department", this).val();
                     record.prototypeType = $("select.PrototypeType", this).val();
@@ -374,7 +378,7 @@
         initHandler = function () {
             matematici.controls.setEditable($("input[name=code]", detailPage.getElement()), detailPage.isNew());
 
-            tab.getItem(1).tab
+            tab.getItem(generalTab).tab
                 .on("click", "input[data-function=Edit]", function () {
                     var check = $(this);
                     setTimeout(function () {
@@ -390,11 +394,11 @@
                     }, 0);
                 });
 
-            tab.getItem(2).tab.on("toggle", "select.AutoComplete", function (e, value, on) {
+            tab.getItem(prototypesTab).tab.on("toggle", "select.AutoComplete", function (e, value, on) {
                 applyConstraintToPrototypeGrant(matematici.AutoComplete.get(this), value, on);
             });
 
-            tab.getItem(3).tab.on("toggle", "select.AutoComplete", function (e, value, on) {
+            tab.getItem(instancesTab).tab.on("toggle", "select.AutoComplete", function (e, value, on) {
                 applyConstraintToInstanceGrant(matematici.AutoComplete.get(this), value, on);
             });
         },
@@ -434,13 +438,15 @@
                 $("input[name=password]", detailPage.getElement()).parent().toggleClass("Hidden", !result.showPassword);
                 $("input[name=password2]", detailPage.getElement()).parent().toggleClass("Hidden", !result.showPassword);
                 if (result.generalFunctions) buildGeneralFunctions(result.generalFunctions);
-                if (result.prototypeFunctions) buildFunctions(result.prototypeFunctions, 2);
-                if (result.instanceFunctions) buildFunctions(result.instanceFunctions, 3);
-                if (page == "Users" && result.levels) buildLevels(result.levels, 4);
-
-                fixQueryParameters(2);
-                fixQueryParameters(3);
-                fixQueryParameters(4);
+                if (result.prototypeFunctions) buildFunctions(result.prototypeFunctions, prototypesTab);
+                if (result.instanceFunctions) buildFunctions(result.instanceFunctions, instancesTab);
+                fixQueryParameters(generalTab);
+                fixQueryParameters(prototypesTab);
+                fixQueryParameters(instancesTab);
+                if (page == "Users" && result.levels) {
+                    buildLevels(result.levels, levelsTab);
+                    fixQueryParameters(levelsTab);
+                }
                 loading = false;
                 loadHandler && loadHandler();
             });
@@ -456,7 +462,7 @@
                     var record = functions[index];
                     (functionsObject[record.functionGroup] = functionsObject[record.functionGroup] || {})[record["function"]] = true;
                 }
-                $("input[type=checkbox]", tab.getItem(1).tab).each(function () {
+                $("input[type=checkbox]", tab.getItem(generalTab).tab).each(function () {
                     var check = $(this);
                     check.prop("checked", !!(functionsObject[check.data("group")] && functionsObject[check.data("group")][check.data("function")]));
                 });
@@ -514,7 +520,7 @@
                     id: "Add",
                     handler: function () {
                         var tabIndex = tab.getCurrentItem().index;
-                        if (tabIndex == 4)
+                        if (tabIndex == levelsTab)
                             addLevel();
                         else
                             addFunction(tabIndex);
@@ -537,7 +543,7 @@
                 $("input[type=checkbox]", detailPage.getElement()).prop("disabled", true);
             } else
                 tab.addHandler(function (item) {
-                    $("a#Add", matematici.popup.getElement()).toggle(item.index > 1 && item.index < 5 && page != "Roles");
+                    $("a#Add", matematici.popup.getElement()).toggle(item.index > generalTab && page != "Roles");
                 });
         };
 

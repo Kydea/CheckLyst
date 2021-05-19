@@ -11,7 +11,10 @@ namespace CheckListManager.AccessControl.Data
 	{
         Task SetPINAsync(long companyId, string code, byte[] pin);
 
-		Task<List<ExportRow>> GetUsersForExportAsync(long companyId, string code, string description, string corporateID);
+		Task<List<ExportRow>> GetUsersForExportAsync(long companyId, string code, string description, string corporateID, string group);
+		Task<List<ExportRow>> GetRolesForExportAsync(long companyId, string code);
+        Task<List<ExportRow>> GetGroupsForExportAsync(long companyId, string code, string description, string user);
+
 		Task UserLoginCompleteAsync(Users user);
 		Task UserPasswordFailedAsync(Users user);
 		Task UserPINFailedAsync(Users user);

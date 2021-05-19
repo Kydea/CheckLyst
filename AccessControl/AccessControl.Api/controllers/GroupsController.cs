@@ -79,5 +79,48 @@ namespace CheckListManager.AccessControl.Api.Controllers
         {
             return Ok(await _groupService.GetSyntheticDataAsync(Identity.CompanyId));
         }
+
+        [Route("Export")]
+        [Authorize(Roles = "Users#View")]
+        public async Task<IHttpActionResult> Export(Message<GroupsRequest> request)
+        {
+            var Token = Identity.Code + ":" + Guid.NewGuid();
+            request.Data.CompanyId = Identity.CompanyId;
+            await _redisCache.SetAsync($"Token:{Token}", request.Data, "Download", new TimeSpan(0, 1, 0));
+            return Ok(new { Token });
+        }
+
+        [HttpGet]
+        [Route("Export")]
+        [AllowAnonymous]
+        public async Task<IHttpActionResult> Export([FromUri]string Token)
+        {
+            var Data = await _redisCache.GetAsync<GroupsRequest>($"Token:{Token}", "Download");
+            var Company = await _commonRepository.GetCompanyAsync(Data.CompanyId.Value);
+            await _redisCache.RemoveAsync($"Token:{Token}", "Download");
+            var Header = new string[] {
+                "Code",
+                "Description",
+                "Department ID",
+                "Department name",
+                "Prototype type ID",
+                "Prototype type name",
+                "Role",
+                "Function group",
+                "Function"
+            };
+            var Rows = await _groupService.GetFunctionsAsync(Data.CompanyId.Value, Data);
+            return Content(HttpStatusCode.OK, Rows, new CSVFormatter<ExportRow>(Header, "Groups", u => new string[] {
+                u.Code,
+                u.Description,
+                u.Department?.ToString(),
+                u.DepartmentName,
+                u.PrototypeType?.ToString(),
+                u.PrototypeTypeName,
+                u.Role,
+                u.FunctionGroup,
+                u.Function
+            }));
+        }
     }
 }
