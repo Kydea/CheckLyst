@@ -149,7 +149,7 @@ namespace CheckListManager.Infrastructure.Logic.Companies
                     }, new Users
                     {
                         Code = record.Username,
-                        Description = "(Configurator)",
+                        Description = "(Administrator)",
                         Password = _hashService.HashStringToBytes(record.Password),
                         CreatedOn = DateTimeOffset.Now,
                         Enabled = true

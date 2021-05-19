@@ -86,7 +86,6 @@
                     suppressErrors: true
                 }).done(function (result) {
                     localStorage.companyName = companyList.next().val();
-                    var company = companyList.val();
                     matematici.tokenManager.login(result);
 					matematici.clock.resume();
 

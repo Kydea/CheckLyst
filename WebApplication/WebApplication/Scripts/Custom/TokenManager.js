@@ -4,7 +4,7 @@
         cautionTimeOffset = 120000, //ms
         warningTimeout,
         companySettings,
-        disableInactivityTimeout,
+        lastActivity,
 
         getCompanySettings = function () {
             return companySettings || (companySettings = JSON.parse(localStorage.companySettings));
@@ -27,23 +27,45 @@
             window.location = matematici.urls.accessControl.login;
         },
 
-        setInactivityTimeout = function (disabled) {
-            if (disabled) disableInactivityTimeout = true;
-            if (warningTimeout) clearTimeout(warningTimeout);
-            if (!disableInactivityTimeout && localStorage.refreshToken) {
-                var
-                    milliseconds = parseInt(getCompanySettings().inactivityTimeoutSeconds) * 1000 || 900000,
-                    countdownLength = Math.min(milliseconds, 60000);
+        checkLastActivity = function (update) {
+            var unchanged = lastActivity == localStorage.lastActivity;
+            if (update) {
+                lastActivity = localStorage.lastActivity;
+                if (!unchanged) setInactivityTimeout();
+            }
+            return unchanged;
+        },
 
+        setInactivityTimeout = function () {
+            var
+                inactivityTimeoutMilliseconds = parseInt(getCompanySettings().inactivityTimeoutSeconds) * 1000,
+                countdownLength = Math.min(inactivityTimeoutMilliseconds, 60000),
+                time = inactivityTimeoutMilliseconds - countdownLength - (new Date().getTime() - new Date(parseInt(lastActivity)).getTime());
+
+            if (inactivityTimeoutMilliseconds > 0) 
                 warningTimeout = setTimeout(function () {
-                    if (localStorage.refreshToken) matematici.blip.countdown(countdownLength, logout);
-                }, milliseconds - countdownLength);
+                    if (localStorage.refreshToken && checkLastActivity(true))
+                        matematici.blip.countdown(countdownLength, function () {
+                            if (checkLastActivity(true)) logout();
+                        }, checkLastActivity);
+                }, time);
+        },
+
+        resetInactivityTimeout = function (disabled) {
+            if (disabled)
+                localStorage.disableInactivityTimeout = "true";
+            else if (disabled === false)
+                localStorage.removeItem("disableInactivityTimeout");
+            if (warningTimeout) clearTimeout(warningTimeout);
+            if (localStorage.disableInactivityTimeout == null && localStorage.refreshToken) {
+                lastActivity = localStorage.lastActivity = new Date().getTime();
+                setInactivityTimeout();
             }
         },
 
         setup = function () {
-            matematici.elements.document.on("mousedown keydown	", function () { setInactivityTimeout(false); });
-            setInactivityTimeout(false);
+            matematici.elements.document.on("mousedown keydown	", function () { resetInactivityTimeout(); });
+            resetInactivityTimeout();
 
             setInterval(function () {
                 //the access token is refreshed, when a refresh token is present, [cautionTimeOffset] milliseconds before the expiration 
@@ -108,11 +130,10 @@
             localStorage.signers = JSON.stringify(signers);
         };
 
-    tokenManager.setInactivityTimeout = setInactivityTimeout;
-
     tokenManager.login = function (result) {
         localStorage.refreshToken = result.refresh_token;
         setMainUser(result);
+        resetInactivityTimeout(false);
     };
 
     tokenManager.getAccessToken = function () {
@@ -228,6 +249,8 @@
             }, index);
         }
     };
+
+    tokenManager.resetInactivityTimeout = resetInactivityTimeout;
 
     if (!matematici.appMode) setup();
 }

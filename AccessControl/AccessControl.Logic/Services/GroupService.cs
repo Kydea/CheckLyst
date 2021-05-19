@@ -250,7 +250,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                         });
         }
 
-        private static string SerializeGroupInformation(GroupRequest group, IEnumerable<GroupFunctions> groupFunctions)
+        private static string SerializeGroupInformation(GroupRequest group, IEnumerable<GroupFunctions> groupFunctions, IEnumerable<GroupRoles> groupRoles)
         {
             return JsonConvert.SerializeObject(new
             {
@@ -258,8 +258,16 @@ namespace CheckListManager.AccessControl.Logic.Services
                 group.Description,
                 Functions = groupFunctions.Select(uf => new
                 {
+                    Department = uf.Department.HasValue ? uf.Department + " " + uf.Departments?.Name : null,
+                    PrototypeType = uf.PrototypeType.HasValue ? uf.PrototypeType + " " + uf.PrototypeTypes?.Name : null,
                     uf.FunctionGroup,
                     uf.Function
+                }),
+                Roles = groupRoles.Select(gr => new
+                {
+                    Department = gr.Department.HasValue ? gr.Department + " " + gr.Departments?.Name : null,
+                    PrototypeType = gr.PrototypeType.HasValue ? gr.PrototypeType + " " + gr.PrototypeTypes?.Name : null,
+                    gr.Role
                 }),
                 ReasonForChange = group.Reason
             });
@@ -287,7 +295,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                         User = identity.Code,
                         Action = TrailAction.GroupCreated,
                         Date = DateTimeOffset.UtcNow,
-                        Information = SerializeGroupInformation(record, Group.GroupFunctions)
+                        Information = SerializeGroupInformation(record, Group.GroupFunctions, Group.GroupRoles)
                     });
                 }
                 catch (Exception exception)
@@ -325,7 +333,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                         User = identity.Code,
                         Action = TrailAction.GroupEdited,
                         Date = DateTimeOffset.UtcNow,
-                        Information = SerializeGroupInformation(record, Group.GroupFunctions)
+                        Information = SerializeGroupInformation(record, Group.GroupFunctions, Group.GroupRoles)
                     });
                 }
                 catch (Exception exception)

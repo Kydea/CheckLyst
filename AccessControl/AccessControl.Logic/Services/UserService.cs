@@ -568,7 +568,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                 });
         }
 
-        private static string SerializeUserInformation(UserRequest user, IEnumerable<UserFunctions> functions, IEnumerable<UserLevels> levels)
+        private static string SerializeUserInformation(UserRequest user, IEnumerable<UserFunctions> functions, IEnumerable<UserLevels> levels, IEnumerable<UserRoles> roles)
         {
             return JsonConvert.SerializeObject(new
             {
@@ -585,6 +585,12 @@ namespace CheckListManager.AccessControl.Logic.Services
                     PrototypeType = uf.PrototypeType.HasValue ? uf.PrototypeType + " " + uf.PrototypeTypes?.Name : null,
                     uf.FunctionGroup,
                     uf.Function
+                }),
+                Roles = roles.Select(ur => new
+                {
+                    Department = ur.Department.HasValue ? ur.Department + " " + ur.Departments?.Name : null,
+                    PrototypeType = ur.PrototypeType.HasValue ? ur.PrototypeType + " " + ur.PrototypeTypes?.Name : null,
+                    ur.Role
                 }),
                 Levels = levels.Select(ul => new
                 {
@@ -625,7 +631,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                         User = identity.Code,
                         Action = TrailAction.UserCreated,
                         Date = DateTimeOffset.UtcNow,
-                        Information = SerializeUserInformation(record, User.UserFunctions, User.UserLevels)
+                        Information = SerializeUserInformation(record, User.UserFunctions, User.UserLevels, User.UserRoles)
                     });
                 }
                 catch (Exception exception)
@@ -668,7 +674,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                         User = identity.Code,
                         Action = TrailAction.UserEdited,
                         Date = DateTimeOffset.UtcNow,
-                        Information = SerializeUserInformation(record, User.UserFunctions, User.UserLevels)
+                        Information = SerializeUserInformation(record, User.UserFunctions, User.UserLevels, User.UserRoles)
                     });
                 }
                 catch (Exception exception)
