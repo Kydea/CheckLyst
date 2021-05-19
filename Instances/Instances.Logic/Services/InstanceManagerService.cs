@@ -2109,7 +2109,7 @@ namespace CheckListManager.Instances.Logic.Services
             //call audit trail only after the rest of the process has worked
             for (var rowIndex = 0; rowIndex < rows.Count; ++rowIndex)
             {
-                for (var columnIndex = 0; columnIndex < rows.Count; ++columnIndex)
+                for (var columnIndex = 0; columnIndex < columns.Count; ++columnIndex)
                     rowDictionary[columns[columnIndex]] = rows[rowIndex][columnIndex];
 
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
