@@ -411,6 +411,7 @@
             detailPage.getForm().trigger("Load", function (result) {
                 loading = true;
                 detailPage.getForm().handleResult(result);
+                console.log(result);
 
                 if (page != "Roles") {
                     generalRoleSelect = $("select.GeneralRole", detailPage.getElement());

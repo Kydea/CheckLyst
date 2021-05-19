@@ -112,7 +112,12 @@ namespace CheckListManager.AccessControl.Logic.Services
         {
             var response = new RoleResponse();
 
-            if (!string.IsNullOrEmpty(record.Code))
+            if (string.IsNullOrEmpty(record.Code))
+            {
+                response.PrototypeFunctions = new Grant[] { new Grant { FunctionGroup = "Prototypes" } };
+                response.InstanceFunctions = new Grant[] { new Grant { FunctionGroup = "Instances" } };
+            }
+            else
                 try
                 {
                     var role = await _userRepository.GetRoleAsync(identity.CompanyId, record.Code);
