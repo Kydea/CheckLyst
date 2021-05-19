@@ -55,13 +55,20 @@ namespace CheckListManager.Prototypes.Terminal
 
         public async Task ProcessFTPMessagesAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
-            var messages = await _queueService.ReceiveObjectsAsync<PrototypesFTPMessage>(QueueName.PrototypesFTP, cancellationToken: cancellationToken);
-
-            foreach (var message in messages)
+            bool idle;
+            do
             {
-                await ProcessMessageAsync(message, cancellationToken);
-                if (cancellationToken.IsCancellationRequested) break;
+                idle = true;
+                var messages = await _queueService.ReceiveObjectsAsync<PrototypesFTPMessage>(QueueName.PrototypesFTP, cancellationToken: cancellationToken);
+
+                foreach (var message in messages)
+                {
+                    idle = false;
+                    await ProcessMessageAsync(message, cancellationToken);
+                    if (cancellationToken.IsCancellationRequested) break;
+                }
             }
+            while (!idle);
         }
 
         private async Task ProcessMessageAsync(QueueMessage<PrototypesFTPMessage> message, CancellationToken cancellationToken = default(CancellationToken))
