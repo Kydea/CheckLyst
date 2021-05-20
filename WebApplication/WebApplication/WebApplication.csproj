@@ -84,6 +84,7 @@
     <Content Include="Content\Media\Dashboard\Logout.jpg" />
     <Content Include="Content\Media\Dashboard\Pin.jpg" />
     <Content Include="Content\Media\Dashboard\Prototypes.jpg" />
+    <Content Include="Content\Media\Dashboard\Reports.jpg" />
     <Content Include="Content\Media\Logo.Big.png" />
     <Content Include="Content\Media\Logo.png" />
     <Content Include="Content\Media\LogoMobile.png" />
