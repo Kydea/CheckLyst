@@ -7,7 +7,13 @@
         lastActivity,
 
         getCompanySettings = function () {
-            return companySettings || (companySettings = JSON.parse(localStorage.companySettings));
+            try {
+                return companySettings || localStorage.companySettings && (companySettings = JSON.parse(localStorage.companySettings));
+            }
+            catch
+            {
+                return null;
+            }
         },
 
         refreshAccessToken = function (user, accessToken, refreshToken, successHandler, failHandler, index) {
@@ -38,7 +44,7 @@
 
         setInactivityTimeout = function () {
             var
-                inactivityTimeoutMilliseconds = parseInt(getCompanySettings().inactivityTimeoutSeconds) * 1000,
+                inactivityTimeoutMilliseconds = parseInt(getCompanySettings() && companySettings.inactivityTimeoutSeconds || 0) * 1000,
                 countdownLength = Math.min(inactivityTimeoutMilliseconds, 60000),
                 time = inactivityTimeoutMilliseconds - countdownLength - (new Date().getTime() - new Date(parseInt(lastActivity)).getTime());
 
