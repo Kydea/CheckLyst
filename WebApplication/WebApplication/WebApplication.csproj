@@ -54,6 +54,7 @@
     <Compile Include="Code\DefaultViewPage.cs" />
     <Compile Include="Code\Version.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\ReportsController.cs" />
     <Compile Include="Controllers\FTPServersController.cs" />
     <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\InfrastructureController.cs" />
@@ -547,6 +548,8 @@
     <Content Include="Views\Help\FTPServers.cshtml" />
     <Content Include="Views\Users\GroupsDetail.cshtml" />
     <Content Include="Views\Users\GroupsList.cshtml" />
+    <Content Include="Views\Reports\Detail.cshtml" />
+    <Content Include="Views\Reports\List.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

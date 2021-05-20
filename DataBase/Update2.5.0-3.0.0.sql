@@ -19,11 +19,14 @@ alter table "CheckLists"."InstanceExpressionValues" alter column "NotificationNo
 alter table "CheckLists"."InstanceExpressionValues" alter column "NotificationEmail" type varchar (200);
 
 insert into "Security"."FunctionGroups" values
-	('Companies');
+	('Companies'),
+	('Reports');
 
 insert into "Security"."Functions" values
 	('Companies', 'Edit'),
-	('Companies', 'View');
+	('Companies', 'View'),
+	('Reports', 'Edit'),
+	('Reports', 'View');
 
 update "Security"."Users" set "Enabled" = true where "Company" = 1 and "Code" = 'CheckListManager';
 insert into "Security"."UserFunctions"("Company", "User", "FunctionGroup", "Function") values 

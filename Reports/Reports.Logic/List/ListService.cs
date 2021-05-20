@@ -2,6 +2,7 @@
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Reports.Data;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CheckListManager.Reports.Logic.List
@@ -9,36 +10,44 @@ namespace CheckListManager.Reports.Logic.List
     public class ListService : IListService
     {
         private readonly ICommonRepository _commonRepository;
-        private readonly IDataSourcesRepository _dataSourcesRepository;
+        private readonly IReportsRepository _reportsRepository;
 
-        public ListService(ICommonRepository commonRepository, IDataSourcesRepository dataSourcesRepository)
+        public ListService(ICommonRepository commonRepository, IReportsRepository reportsRepository)
         {
             _commonRepository = commonRepository;
-            _dataSourcesRepository = dataSourcesRepository;
+            _reportsRepository = reportsRepository;
         }
-        
+
         public async Task<PagingResponse<List<ListRow>>> GetDataAsync(long Company, PagingRequest<ListRequest> Form)
-            =>
-                await _dataSourcesRepository.GetDataSourcesAsync(
-                    Company,
-                    ds => new ListRow
-                    {
-                        Code = ds.Code,
-                        Description = ds.Description,
-                        Class = ds.Class,
-                        Parameters = ds.Data,
-                        CreatedBy = ds.CreatedBy,
-                        CreatedOn = ds.CreatedOn,
-                        ModifiedBy = ds.ModifiedBy,
-                        ModifiedOn = ds.ModifiedOn
-                    },
-                    wf =>
-                        wf.Company == Company
-                        && (Form.Data.Code == string.Empty || wf.Code != null && wf.Code.ToUpper().Contains(Form.Data.Code.ToUpper()))
-                        && (Form.Data.Description == string.Empty || wf.Description != null && wf.Description.ToUpper().Contains(Form.Data.Description.ToUpper())),
-                    p => p.Code,
-                    Form.CurrentPage,
-                    Form.ItemsPerPage
-                );
+        {
+            var Result = await _reportsRepository.GetReportsAsync(
+                Company,
+                Form.Data.Code,
+                Form.Data.Description,
+                Form.CurrentPage,
+                Form.ItemsPerPage
+            );
+
+            var Response = new PagingResponse<List<ListRow>>
+            {
+                Count = Result.Count,
+                CurrentPage = Result.CurrentPage,
+                ItemsPerPage = Result.ItemsPerPage,
+                Data = Result.Data.Select(r => new ListRow
+                {
+                    Code = r.Code,
+                    Description = r.Description,
+                    ReportSource = r.ReportSource,
+                    CreatedBy = r.CreatedBy,
+                    CreatedOn = r.CreatedOn,
+                    ModifiedBy = r.ModifiedBy,
+                    ModifiedOn = r.ModifiedOn
+                }).ToList()
+            };
+
+            Response.Messages.AddRange(Response.Messages);
+
+            return Response;
+        }
     }
 }

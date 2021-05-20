@@ -126,6 +126,13 @@
         <AssociationConnector Association="RelationalDatabaseModel.UserRoles_Group1" />
         <AssociationConnector Association="RelationalDatabaseModel.UserFunctions_User1" />
         <AssociationConnector Association="RelationalDatabaseModel.UserRoles_Group" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.ReportClauses" Width="1.5" PointX="26.875" PointY="1.125" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.ReportColumns" Width="1.5" PointX="26.875" PointY="4.25" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.Reports" Width="1.5" PointX="24.625" PointY="2.125" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.ReportSources" Width="1.5" PointX="22.375" PointY="3.5" />
+        <AssociationConnector Association="RelationalDatabaseModel.ReportClauses_Report_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.ReportColumns_Report_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.Reports_ReportSource_fkey" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

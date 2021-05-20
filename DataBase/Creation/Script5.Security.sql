@@ -13,7 +13,8 @@ insert into "Security"."FunctionGroups" values
 	('PrototypeTypes'),
 	('Trail'),
 	('Users'),
-	('WorkFlows');
+	('WorkFlows'),
+	('Reports');
 
 create table "Security"."Functions"
 (
@@ -57,7 +58,10 @@ insert into "Security"."Functions" values
 	('FTPServers', 'View'),
 
 	('Companies', 'Edit'),
-	('Companies', 'View');
+	('Companies', 'View'),
+
+	('Reports', 'Edit'),
+	('Reports', 'View');
 
 create table "Security"."UserLevels"
 (
@@ -391,3 +395,5 @@ $func$
 			)
 		)
 $func$ language sql;
+
+Script8.Report.sql

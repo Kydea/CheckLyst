@@ -70,5 +70,9 @@ namespace CheckListManager.Common.Data
         public virtual DbSet<UserGroups> UserGroups { get; set; }
         public virtual DbSet<UserLevels> UserLevels { get; set; }
         public virtual DbSet<UserRoles> UserRoles { get; set; }
+        public virtual DbSet<ReportClauses> ReportClauses { get; set; }
+        public virtual DbSet<ReportColumns> ReportColumns { get; set; }
+        public virtual DbSet<Reports> Reports { get; set; }
+        public virtual DbSet<ReportSources> ReportSources { get; set; }
     }
 }

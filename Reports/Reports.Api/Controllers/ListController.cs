@@ -1,13 +1,13 @@
 ﻿using CheckListManager.Common.Logic.Api;
 using CheckListManager.Common.Logic.Api.Messages;
-using CheckListManager.DataSources.Logic.Detail;
-using CheckListManager.DataSources.Logic.List;
+using CheckListManager.Reports.Logic.Detail;
+using CheckListManager.Reports.Logic.List;
 using System.Threading.Tasks;
 using System.Web.Http;
 
-namespace CheckListManager.DataSources.Api.Controllers
+namespace CheckListManager.Reports.Api.Controllers
 {
-    [Authorize(Roles = "FunctionGroup#DataSources")]
+    [Authorize(Roles = "FunctionGroup#Reports")]
     [RoutePrefix("List")]
 	public class ListController : BaseApiController
 	{
@@ -20,7 +20,7 @@ namespace CheckListManager.DataSources.Api.Controllers
 			_detailService = detailService;
 		}
 
-        [Authorize(Roles = "DataSources#View")]
+        [Authorize(Roles = "Reports#View")]
 		[HttpPost]
 		[Route("GetData")]
 		public async Task<IHttpActionResult> GetData(PagingRequest<ListRequest> request)
@@ -28,28 +28,28 @@ namespace CheckListManager.DataSources.Api.Controllers
             return Ok(await _listService.GetDataAsync(Identity.CompanyId, request));
 		}
 
-        [Authorize(Roles = "DataSources#Edit")]
+        [Authorize(Roles = "Reports#Edit")]
 		[HttpPost]
 		[Route("Add")]
 		public async Task<IHttpActionResult> Add(Message<DetailRequest> request)
 		{
-			return Ok(await _detailService.AddAsync(Identity, request.Data));
+			return Ok(await _detailService.AddReportAsync(Identity, request.Data));
 		}
 
-        [Authorize(Roles = "DataSources#Edit")]
+        [Authorize(Roles = "Reports#Edit")]
 		[HttpPost]
 		[Route("Edit")]
 		public async Task<IHttpActionResult> Edit(Message<DetailRequest> request)
 		{
-			return Ok(await _detailService.EditAsync(Identity, request.Data));
+			return Ok(await _detailService.EditReportAsync(Identity, request.Data));
 		}
 
-        [Authorize(Roles = "DataSources#Edit")]
+        [Authorize(Roles = "Reports#Edit")]
 		[HttpPost]
 		[Route("Delete")]
 		public async Task<IHttpActionResult> Delete(Message<DetailRequest> request)
 		{
-			return Ok(await _detailService.DeleteAsync(Identity, request.Data));
+			return Ok(await _detailService.DeleteReportAsync(Identity, request.Data));
 		}
     }
 }

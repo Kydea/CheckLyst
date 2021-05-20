@@ -15,17 +15,17 @@ namespace CheckListManager.Reports.Logic.Detail
 {
     public class DetailService : IDetailService
     {
-        private readonly IDataSourcesRepository _dataSourcesRepository;
+        private readonly IReportsRepository _reportsRepository;
         private readonly ISettingService _settingService;
         private readonly IQueueService _queueService;
 
         public DetailService(
-            IDataSourcesRepository dataSourcesRepository,
+            IReportsRepository reportsRepository,
             ISettingService settingService,
             IQueueService queueService
         )
         {
-            _dataSourcesRepository = dataSourcesRepository;
+            _reportsRepository = reportsRepository;
             _settingService = settingService;
             _queueService = queueService;
         }
@@ -42,17 +42,6 @@ namespace CheckListManager.Reports.Logic.Detail
                         new ValidationMessage {
                             Level = ValidationMessage.LevelError,
                             Message = "Invalid code"
-                        }
-                    }
-                };
-
-            if (string.IsNullOrWhiteSpace(record.Class))
-                response.Fields["Class"] = new Field
-                {
-                    ValidationMessages = new List<ValidationMessage> {
-                        new ValidationMessage {
-                            Level = ValidationMessage.LevelError,
-                            Message = "Invalid class"
                         }
                     }
                 };
@@ -76,21 +65,42 @@ namespace CheckListManager.Reports.Logic.Detail
             return response;
         }
 
-        public async Task<DetailResponse> AddAsync(IDefaultIdentity identity, DetailRequest record)
+        public async Task<DetailResponse> AddReportAsync(IDefaultIdentity identity, DetailRequest request)
         {
-            var response = await ValidateAsync(identity, record);
+            var response = await ValidateAsync(identity, request);
             if (response.Valid)
                 try
                 {
-                    await _dataSourcesRepository.AddDataSourceAsync(identity, new Common.Data.DataSources
+                    await _reportsRepository.AddReportAsync(identity, new Common.Data.Reports
                     {
-                        Code = record.Code,
-                        Description = record.Description,
-                        Class = record.Class,
-                        Data = record.Parameters,
-                        Password = record.Password
+                        Code = request.Code,
+                        Description = request.Description,
+                        ReportSource = request.ReportSource,
+                        Query = request.Query,
+                        InstancesRangeRestricted = request.InstancesRangeRestricted,
+                        InstancesIDAlias = request.InstancesIDAlias,
+                        PrototypesRangeRestricted = request.PrototypesRangeRestricted,
+                        PrototypesIDAlias = request.PrototypesIDAlias,
+                        ReportColumns = request.Columns.Select(c => new Common.Data.ReportColumns
+                        {
+                            Name = c.Name,
+                            Label = c.Label,
+                            Visible = c.Visible,
+                            Format = c.Format,
+                            GroupColumn = c.GroupColumn,
+                            OrderColumn = c.OrderColumn,
+                            ValueAggregation = c.ValueAggregation,
+                            GroupAggregation = c.GroupAggregation
+                        }).ToList(),
+                        ReportClauses = request.Clauses.Select(c => new Common.Data.ReportClauses
+                        {
+                            Label = c.Label,
+                            Clause = c.Clause,
+                            Visible = c.Visible,
+                            Editable = c.Editable
+                        }).ToList()
                     });
-                    await AuditAsync(identity, TrailAction.DataSourceCreated, record);
+                    await AuditAsync(identity, TrailAction.DataSourceCreated, request);
                 }
                 catch (Exception Exception)
                 {
@@ -105,21 +115,42 @@ namespace CheckListManager.Reports.Logic.Detail
             return response;
         }
 
-        public async Task<DetailResponse> EditAsync(IDefaultIdentity identity, DetailRequest record)
+        public async Task<DetailResponse> EditReportAsync(IDefaultIdentity identity, DetailRequest request)
         {
-            var response = await ValidateAsync(identity, record);
+            var response = await ValidateAsync(identity, request);
             if (response.Valid)
                 try
                 {
-                    await _dataSourcesRepository.EditDataSourceAsync(identity, new Common.Data.DataSources
+                    await _reportsRepository.EditReportAsync(identity, new Common.Data.Reports
                     {
-                        Code = record.Code,
-                        Description = record.Description,
-                        Class = record.Class,
-                        Data = record.Parameters,
-                        Password = record.Password
+                        Code = request.Code,
+                        Description = request.Description,
+                        ReportSource = request.ReportSource,
+                        Query = request.Query,
+                        InstancesRangeRestricted = request.InstancesRangeRestricted,
+                        InstancesIDAlias = request.InstancesIDAlias,
+                        PrototypesRangeRestricted = request.PrototypesRangeRestricted,
+                        PrototypesIDAlias = request.PrototypesIDAlias,
+                        ReportColumns = request.Columns.Select(c => new Common.Data.ReportColumns
+                        {
+                            Name = c.Name,
+                            Label = c.Label,
+                            Visible = c.Visible,
+                            Format = c.Format,
+                            GroupColumn = c.GroupColumn,
+                            OrderColumn = c.OrderColumn,
+                            ValueAggregation = c.ValueAggregation,
+                            GroupAggregation = c.GroupAggregation
+                        }).ToList(),
+                        ReportClauses = request.Clauses.Select(c => new Common.Data.ReportClauses
+                        {
+                            Label = c.Label,
+                            Clause = c.Clause,
+                            Visible = c.Visible,
+                            Editable = c.Editable
+                        }).ToList()
                     });
-                    await AuditAsync(identity, TrailAction.DataSourceUpdated, record);
+                    await AuditAsync(identity, TrailAction.DataSourceUpdated, request);
                 }
                 catch (Exception Exception)
                 {
@@ -134,13 +165,13 @@ namespace CheckListManager.Reports.Logic.Detail
             return response;
         }
 
-        public async Task<DetailResponse> DeleteAsync(IDefaultIdentity identity, DetailRequest record)
+        public async Task<DetailResponse> DeleteReportAsync(IDefaultIdentity identity, DetailRequest request)
         {
             var response = new DetailResponse();
             try
             {
-                await _dataSourcesRepository.DeleteDataSourceAsync(identity, record.Code);
-                await AuditAsync(identity, TrailAction.DataSourceDeleted, record.Code, record.Reason);
+                await _reportsRepository.DeleteReportAsync(identity, request.ID);
+                await AuditAsync(identity, TrailAction.DataSourceDeleted, request.ID, request.Reason);
             }
             catch (Exception Exception)
             {
@@ -161,19 +192,24 @@ namespace CheckListManager.Reports.Logic.Detail
             {
                 record.Code,
                 record.Description,
-                record.Class,
-                record.Parameters,
-                Password = new string('*', Math.Min(3, record.Password?.Length ?? 0)), // Avoid to log password from UI
+                record.ReportSource,
+                record.Query,
+                record.InstancesRangeRestricted,
+                record.InstancesIDAlias,
+                record.PrototypesRangeRestricted,
+                record.PrototypesIDAlias,
+                ReportColumns = record.Columns,
+                ReportClauses = record.Clauses,
                 ReasonForChange = record.Reason
             };
             return AuditAsync(identity, action, information);
         }
 
-        private Task AuditAsync(IDefaultIdentity identity, string action, string code, string reason)
+        private Task AuditAsync(IDefaultIdentity identity, string action, long id, string reason)
         {
             var information = new
             {
-                Code = code,
+                ID = id,
                 ReasonForChange = reason
             };
             return AuditAsync(identity, action, information);

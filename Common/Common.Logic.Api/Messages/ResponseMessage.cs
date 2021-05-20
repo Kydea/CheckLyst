@@ -14,7 +14,6 @@ namespace CheckListManager.Common.Logic.Api.Messages
 			Messages.AddRange(messages);
 		}
 
-		// ReSharper disable once MismatchedQueryAndUpdateOfCollection
 		public List<string> Messages { get; } = new List<string>();
 
 		public static ResponseMessage<T> Create<T>(T data)

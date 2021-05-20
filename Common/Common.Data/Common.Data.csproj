@@ -205,6 +205,18 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>RelationalDatabaseModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="ReportClauses.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ReportColumns.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Reports.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ReportSources.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Repository.cs" />
     <Compile Include="RoleFunctions.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>

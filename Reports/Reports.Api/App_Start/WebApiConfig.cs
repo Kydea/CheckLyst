@@ -1,7 +1,7 @@
 ﻿using CheckListManager.Common.Logic.Api.Configuration;
 using Owin;
 
-namespace CheckListManager.DataSources.Api
+namespace CheckListManager.Reports.Api
 {
     public class WebApiConfig : ApiConfig
     {

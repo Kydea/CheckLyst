@@ -6,8 +6,7 @@ namespace CheckListManager.Reports.Logic.List
     {
         public string Code { get; set; }
         public string Description { get; set; }
-        public string Class { get; set; }
-        public string Parameters { get; set; }
+        public string ReportSource { get; set; }
         public string CreatedBy { get; set; }
         public DateTimeOffset CreatedOn { get; set; }
         public string ModifiedBy { get; set; }

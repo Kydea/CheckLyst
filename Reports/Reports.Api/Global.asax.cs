@@ -1,6 +1,6 @@
 ﻿using System.Web;
 
-namespace CheckListManager.DataSources.Api
+namespace CheckListManager.Reports.Api
 {
     public class WebApiApplication : HttpApplication
     {

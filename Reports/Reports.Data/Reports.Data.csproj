@@ -73,9 +73,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IDataSourcesRepository.cs" />
+    <Compile Include="IReportsRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="DataSourcesRepository.cs" />
+    <Compile Include="ReportsRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

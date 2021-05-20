@@ -1,10 +1,10 @@
-﻿using CheckListManager.DataSources.Api;
+﻿using CheckListManager.Reports.Api;
 using Microsoft.Owin;
 using Owin;
 
 [assembly: OwinStartup(typeof(Startup))]
 
-namespace CheckListManager.DataSources.Api
+namespace CheckListManager.Reports.Api
 {
     public class Startup
     {
