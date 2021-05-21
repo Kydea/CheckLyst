@@ -79,7 +79,7 @@ namespace CheckListManager.AccessControl.Data
                 "and (:code = '' or u.\"Code\" ilike '%' || :code || '%') " +
                 "and (:description = '' or u.\"Description\" ilike '%' || :description || '%') " +
                 "and (:corporateID = '' or u.\"CorporateID\" ilike '%' || :corporateID || '%') " +
-                "and (:group == '' or exists (select 1 from \"Security\".\"UserGroups\" ug where ug.\"Company\" = u.\"Company\" and ug.\"User\" = u.\"Code\" and ug.\"Group\" ilike '%' || :group || '%')) " +
+                "and (:group = '' or exists (select 1 from \"Security\".\"UserGroups\" ug where ug.\"Company\" = u.\"Company\" and ug.\"User\" = u.\"Code\" and ug.\"Group\" ilike '%' || :group || '%')) " +
             "order by u.\"Code\", g.\"Department\", g.\"PrototypeType\", g.\"Role\", g.\"FunctionGroup\", g.\"Function\"";
         public async Task<List<ExportRow>> GetUsersForExportAsync(long company, string code, string description, string corporateID, string group)
         {
