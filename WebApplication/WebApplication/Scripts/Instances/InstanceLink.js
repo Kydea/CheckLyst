@@ -85,7 +85,7 @@
                     for (var parameterIndex in result.parameters) {
                         var parameter = result.parameters[parameterIndex];
                         if (query != "") query += "&";
-                        query += encodeURIComponent(parameter.name) + "=" + encodeURIComponent(parameter.value);
+                        query += "item." + encodeURIComponent(parameter.name) + "=" + encodeURIComponent(parameter.value);
                     }
                 if (query != "") query = "?" + query;
                 matematici.navigator.open(matematici.urls.instances.create + "/" + model.prototypeID + query);
