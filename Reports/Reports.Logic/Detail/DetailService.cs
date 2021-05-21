@@ -65,6 +65,52 @@ namespace CheckListManager.Reports.Logic.Detail
             return response;
         }
 
+        public async Task<DetailResponse> LoadReportAsync(long company, DetailRequest request)
+        {
+            var response = new DetailResponse();
+
+            try
+            {
+                var report = await _reportsRepository.GetReportAsync(company, request.Code);
+                response.Fields["instancesRangeRestricted"] = new Field { Value = report.InstancesRangeRestricted.ToString() };
+                response.Fields["instancesIDAlias"] = new Field { Value = report.InstancesIDAlias };
+                response.Fields["prototypesRangeRestricted"] = new Field { Value = report.PrototypesRangeRestricted.ToString() };
+                response.Fields["prototypesIDAlias"] = new Field { Value = report.PrototypesIDAlias };
+                response.Fields["query"] = new Field { Value = report.Query };
+
+                response.Columns = report.ReportColumns.Select(c => new ReportColumn
+                {
+                    Name = c.Name,
+                    Label = c.Label,
+                    Format = c.Format,
+                    Visible = c.Visible,
+                    GroupColumn = c.GroupColumn,
+                    OrderColumn = c.OrderColumn,
+                    GroupAggregation = c.GroupAggregation,
+                    ValueAggregation = c.ValueAggregation
+                }).ToList();
+
+                response.Clauses = report.ReportClauses.Select(c => new ReportClause
+                {
+                    Label = c.Label,
+                    Clause = c.Clause,
+                    Visible = c.Visible,
+                    Editable = c.Editable
+                }).ToList();
+            }
+            catch (Exception exception)
+            {
+                response.ValidationMessages.Add(new ValidationMessage
+                {
+                    Level = ValidationMessage.LevelError,
+                    Message = exception.Message
+                });
+                response.Valid = false;
+            }
+
+            return response;
+        }
+
         public async Task<DetailResponse> AddReportAsync(IDefaultIdentity identity, DetailRequest request)
         {
             var response = await ValidateAsync(identity, request);
@@ -81,7 +127,7 @@ namespace CheckListManager.Reports.Logic.Detail
                         InstancesIDAlias = request.InstancesIDAlias,
                         PrototypesRangeRestricted = request.PrototypesRangeRestricted,
                         PrototypesIDAlias = request.PrototypesIDAlias,
-                        ReportColumns = request.Columns.Select(c => new Common.Data.ReportColumns
+                        ReportColumns = request.Columns?.Select(c => new Common.Data.ReportColumns
                         {
                             Name = c.Name,
                             Label = c.Label,
@@ -92,7 +138,7 @@ namespace CheckListManager.Reports.Logic.Detail
                             ValueAggregation = c.ValueAggregation,
                             GroupAggregation = c.GroupAggregation
                         }).ToList(),
-                        ReportClauses = request.Clauses.Select(c => new Common.Data.ReportClauses
+                        ReportClauses = request.Clauses?.Select(c => new Common.Data.ReportClauses
                         {
                             Label = c.Label,
                             Clause = c.Clause,
@@ -131,7 +177,7 @@ namespace CheckListManager.Reports.Logic.Detail
                         InstancesIDAlias = request.InstancesIDAlias,
                         PrototypesRangeRestricted = request.PrototypesRangeRestricted,
                         PrototypesIDAlias = request.PrototypesIDAlias,
-                        ReportColumns = request.Columns.Select(c => new Common.Data.ReportColumns
+                        ReportColumns = request.Columns?.Select(c => new Common.Data.ReportColumns
                         {
                             Name = c.Name,
                             Label = c.Label,
@@ -142,7 +188,7 @@ namespace CheckListManager.Reports.Logic.Detail
                             ValueAggregation = c.ValueAggregation,
                             GroupAggregation = c.GroupAggregation
                         }).ToList(),
-                        ReportClauses = request.Clauses.Select(c => new Common.Data.ReportClauses
+                        ReportClauses = request.Clauses?.Select(c => new Common.Data.ReportClauses
                         {
                             Label = c.Label,
                             Clause = c.Clause,
@@ -170,7 +216,7 @@ namespace CheckListManager.Reports.Logic.Detail
             var response = new DetailResponse();
             try
             {
-                await _reportsRepository.DeleteReportAsync(identity, request.ID);
+                await _reportsRepository.DeleteReportAsync(identity, request.Code);
                 await AuditAsync(identity, TrailAction.DataSourceDeleted, request.ID, request.Reason);
             }
             catch (Exception Exception)

@@ -54,10 +54,10 @@ namespace CheckListManager.Reports.Data
             };
         }
 
-        private async Task<Common.Data.Reports> GetReportsAsync(IDefaultIdentity identity, long id)
+        public async Task<Common.Data.Reports> GetReportAsync(long company, string code)
         {
-            var Report = await Entities.Reports.SingleOrDefaultAsync(d => d.Company == identity.CompanyId && d.ID == id);
-            if (Report == null) throw new DatabaseException($"Reprot {id} not found");
+            var Report = await Entities.Reports.SingleOrDefaultAsync(d => d.Company == company && d.Code == code);
+            if (Report == null) throw new DatabaseException($"Report {code} not found");
             return Report;
         }
 
@@ -73,7 +73,7 @@ namespace CheckListManager.Reports.Data
 
         public async Task<Common.Data.Reports> EditReportAsync(IDefaultIdentity identity, Common.Data.Reports report)
         {
-            var existingReport = await GetReportsAsync(identity, report.ID);
+            var existingReport = await GetReportAsync(identity.CompanyId, report.Code);
             existingReport.Code = report.Code;
             existingReport.Description = report.Description;
             existingReport.ReportSource = report.ReportSource;
@@ -92,9 +92,9 @@ namespace CheckListManager.Reports.Data
             return existingReport;
         }
 
-        public async Task DeleteReportAsync(IDefaultIdentity identity, long id)
+        public async Task DeleteReportAsync(IDefaultIdentity identity, string code)
         {
-            Entities.Reports.Remove(await GetReportsAsync(identity, id));
+            Entities.Reports.Remove(await GetReportAsync(identity.CompanyId, code));
             await SaveChangesAsync();
         }
 

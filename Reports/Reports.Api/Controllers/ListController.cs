@@ -28,6 +28,14 @@ namespace CheckListManager.Reports.Api.Controllers
             return Ok(await _listService.GetDataAsync(Identity.CompanyId, request));
 		}
 
+        [Authorize(Roles = "Reports#View")]
+        [HttpPost]
+        [Route("Load")]
+        public async Task<IHttpActionResult> Load(Message<DetailRequest> request)
+        {
+            return Ok(await _detailService.LoadReportAsync(Identity.CompanyId, request.Data));
+        }
+
         [Authorize(Roles = "Reports#Edit")]
 		[HttpPost]
 		[Route("Add")]
