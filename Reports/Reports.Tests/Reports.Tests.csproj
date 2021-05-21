@@ -128,6 +128,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ReportsList.feature</DependentUpon>
     </Compile>
+    <Compile Include="Features\ReportsListSteps.cs" />
     <Compile Include="Hooks\DatabaseHooks.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Setup\DependencyInjection.cs" />
