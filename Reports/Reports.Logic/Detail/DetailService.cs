@@ -72,6 +72,7 @@ namespace CheckListManager.Reports.Logic.Detail
             try
             {
                 var report = await _reportsRepository.GetReportAsync(company, request.Code);
+                response.Fields["id"] = new Field { Value = report.ID.ToString(), Editable = false };
                 response.Fields["code"] = new Field { Value = report.Code, Editable = false };
                 response.Fields["description"] = new Field { Value = report.Description };
                 response.Fields["reportSource"] = new Field { Value = report.ReportSource };

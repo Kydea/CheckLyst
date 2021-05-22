@@ -1,15 +1,39 @@
-﻿reports.Report = function (element, options) {
+﻿reports.ReportEditor = function (element, options) {
     var
-        report = this,
+        reportEditor = this,
         justLoaded = true,
         reportSources,
         reportSourceSelect,
-        form,
+        detailPage,
         editor,
         model,
 
-        save = function () {
+        quit = function () {
+            matematici.navigator.open(options.listUrl);
+        },
 
+        parametersPrepare = function () {
+            return {
+                data: {
+                    query: reportSourceSelect.val() == null ? editor.getValue() : null
+                }
+            };
+        },
+
+        save = function (callback) {
+            if (!callback && options.code == "")
+                callback = function () {
+                    matematici.navigator.open(options.detailUrl + "/" + $("input[name=code]", detailPage.getElement()).val());
+                };
+
+            detailPage.clickHandler(null, "Save", callback);
+        },
+
+        deleteRecord = function () {
+            detailPage.deleteRecord(function () {
+                matematici.canClose = true;
+                quit();
+            });
         },
 
         setupReportSources = function (list) {
@@ -72,25 +96,47 @@
             document.$maxLength = 10000;
         },
 
+        resultHandler = function (data) {
+            if (data && data.valid == false)
+                setTimeout(function () {
+                    matematici.dialog.error("error", $("> div.Errors", detailPage.getForm().getElement()).text());
+                }, 0);
+        },
+
         completeHandler = function (reportSources) {
             if (reportSources != null && model != null) {
-                form = new matematici.Form("form#Detail");
-                form.initialize();
+                console.log(model);
+                $("div.ActionBar a.ButtonGroup a.Delete", element).toggleClass("Hidden", options.code == "");
+
+                detailPage = new matematici.DetailPage({
+                    readOnly: false,
+                    wholePage: true,
+                    takeOpenOnSave: true,
+                    formSelector: "form#Detail",
+                    parametersPrepareHandler: parametersPrepare,
+                    editEvent: "Save",
+                    resultHandler: resultHandler
+                });
+
+                matematici.save = function (callback) {
+                    setTimeout(function () {
+                        save(callback)
+                    }, 0);
+                };
+
+                var form = detailPage.getForm();
                 form.handleResult(model);
                 form.setValue("createdBy", model.createdBy);
                 form.setValue("createdOn", model.createdOn);
                 form.setValue("modifiedBy", model.modifiedBy);
                 form.setValue("modifiedOn", model.modifiedOn);
-                form.addChangeHandler(function () {
-                    matematici.canClose = false;
-                });
 
                 setupReportSources(reportSources);
-                editor.setValue(model.fields.query.value || "", -1);
                 var autoComplete = matematici.AutoComplete.get(reportSourceSelect[0]);
                 autoComplete.refreshValues();
                 autoComplete.setValue(model.fields.reportSource.value);
                 reportSourceChanged();
+                if (reportSourceSelect.val() == null) editor.setValue(model.fields.query.value || "", -1);
             }
         },
 
@@ -98,7 +144,7 @@
             var
                 reportSources = null;
 
-            matematici.report = report;
+            matematici.reportEditor = reportEditor;
             reportSourceSelect = $("select[name=reportSource]", element)
                 .on("change", reportSourceChanged);
             setupSQLEditor();
@@ -133,7 +179,9 @@
                 };
         };
 
-    report.save = save;
-  
+    reportEditor.quit = quit;
+    reportEditor.save = save;
+    reportEditor.deleteRecord = deleteRecord;
+
     setup();
 };

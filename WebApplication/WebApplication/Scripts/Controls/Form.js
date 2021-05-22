@@ -192,8 +192,8 @@
                     apply = options.searchPage && options.searchPage.isAdvancedSearchMode && options.searchPage.isAdvancedSearchMode() || field.closest("div.AdvancedSearch").length == 0,
                     value =
                         field.hasClass("DatePicker") || field.data("type") == "DateTimeOffset" ? (apply ? field.val() : null) :
-                        field.attr("type") == "checkbox" ? (apply ? field.prop("checked") : false) :
-                        (apply ? field.val() : "");
+                            field.attr("type") == "checkbox" ? (apply ? field.prop("checked") : false) :
+                                (apply ? field.val() : "");
                 if (includeNulls || value != null && value != "")
                     data[field.attr("name")] = value;
             });
@@ -268,11 +268,9 @@
                         );
                 else if (!fieldErrors) {
                     fieldErrors = true;
-                    errors.append(
-                        $("<div />").addClass("Error").text("Some fields are not valid. Click on the error icon of the fields for more details.").prepend(
-                            $("<i />").addClass("fas fa-exclamation-triangle")
-                        )
-                    );
+                    errors.append($("<div />").addClass("Error").text("Some fields are not valid. Click on the error icon of the fields for more details.").prepend(
+                        $("<i />").addClass("fas fa-exclamation-triangle")
+                    ));
                 }
             }
         },
@@ -319,6 +317,7 @@
             handleValidationMessages(null, data);
             valid = data.valid;
             if (options && options.applyButton) matematici.controls.setEditable(options.applyButton, valid);
+            if (options && options.resultHandler) options.resultHandler(data);
         },
 
         bind = function (event, handler, data) {
@@ -374,9 +373,7 @@
     };
 
     this.handleResult = handleResult;
-
     this.onChange = onChange;
-
     this.saveForm = saveForm;
 
     this.addChangeHandler = function (handler) {

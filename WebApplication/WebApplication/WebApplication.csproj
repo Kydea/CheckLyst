@@ -489,7 +489,7 @@
     <Content Include="Scripts\Prototypes\SourcesList.js" />
     <Content Include="Scripts\Prototypes\Text.js" />
     <Content Include="Scripts\Prototypes\ValueProperty.js" />
-    <Content Include="Scripts\Reports\Report.js" />
+    <Content Include="Scripts\Reports\ReportEditor.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -557,7 +557,6 @@
     <Content Include="Views\Users\GroupsList.cshtml" />
     <Content Include="Views\Reports\Editor.cshtml" />
     <Content Include="Views\Reports\List.cshtml" />
-    <Content Include="Views\Reports\Detail - Copia.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

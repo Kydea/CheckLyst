@@ -198,6 +198,8 @@ div.Errors {
   margin-top: 20px;
   display: none;
   line-height: 1.5; }
+  div.Errors:first-child {
+    margin-top: 0; }
 
 form {
   border: 1px solid #ccc;
