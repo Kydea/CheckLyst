@@ -18,6 +18,7 @@ namespace CheckListManager.Reports.Api.Controllers
 		{
 			_listService = listService;
 			_detailService = detailService;
+            ;
 		}
 
         [Authorize(Roles = "Reports#View")]
