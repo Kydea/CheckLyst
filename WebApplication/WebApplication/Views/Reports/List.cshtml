@@ -1,7 +1,9 @@
 ﻿<div id="ReportsListPage">
     <h1>Reports List</h1>
 
-    <div class="ActionBar"></div>
+    <div class="ActionBar">
+        <a id="AddButton" href="#" class="Button"><i class="Icon fa fa-plus"></i> New report</a>
+    </div>
 
     <div class="ShadowPanel">
         <div class="Accordion"></div>
@@ -51,16 +53,44 @@
 
 <script type="text/javascript">
     matematici.events.onPageLoad = function (callback) {
+        var
+            editor = matematici.tokenManager.checkRole("Reports#Edit#");
+
         new matematici.SearchPage({
             pageName: "Reports",
+            readOnly: true,
             detailUrl: "@Url.Action("Detail")",
             filterFormSelector: "form#Filters",
             resultGridSelector: "div#Content table.Grid",
-            breadCrumbs: [
-                { content: "reports" }
-            ]
+            breadCrumbs: [{ content: "reports" }],
+
+            rowClickHandler: function (row) {
+                var
+                    openEditor = function () {
+                        matematici.navigator.open("@Url.Action("Editor")/" + encodeURIComponent(row.data("values").code));
+                    },
+                    openViewer = function () {
+                        matematici.navigator.open("@Url.Action("Viewer")/" + encodeURIComponent(row.data("values").code));
+                    };
+
+                if (editor) {
+                    var buttons = [
+                        { text: "cancel", icon: "times", cancelButton: true },
+                        { text: "report editor", icon: "pencil", handler: openEditor},
+                        { text: "report viewer", icon: "file-chart-line", handler: openViewer }
+                    ];
+                    matematici.dialog.popupMenu(buttons);
+                } else
+                    openViewer();
+            }
         });
 
+        if (editor)
+            $("#AddButton").on("click", function () {
+                matematici.navigator.open("@Url.Action("Editor")");
+            });
+        else
+            $("#AddButton").remove();
         callback.call();
     };
 </script>

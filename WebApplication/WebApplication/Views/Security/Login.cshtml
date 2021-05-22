@@ -130,7 +130,7 @@
                     companyList.append($("<option />").attr("value", company.id).text(company.name));
             }
             callback.call();
-            matematici.AutoComplete.get(companyList[0]).setValue(administration ? 1 : null);
+            matematici.AutoComplete.get(companyList[0]).setValue(administration ? 1 : localStorage.company);
         }).fail(function (jqXhr, textStatus, errorThrown) {
             showError(jqXhr.responseJSON && jqXhr.responseJSON && jqXhr.responseJSON.messages && jqXhr.responseJSON.messages.join(' ') || errorThrown);
         });

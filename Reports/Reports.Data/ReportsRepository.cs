@@ -61,14 +61,13 @@ namespace CheckListManager.Reports.Data
             return Report;
         }
 
-        public async Task<Common.Data.Reports> AddReportAsync(IDefaultIdentity identity, Common.Data.Reports report)
+        public async Task AddReportAsync(IDefaultIdentity identity, Common.Data.Reports report)
         {
             report.Company = identity.CompanyId;
             report.CreatedOn = DateTimeOffset.UtcNow;
             report.CreatedBy = identity.Code;
             Entities.Reports.Add(report);
             await SaveChangesAsync();
-            return report;
         }
 
         public async Task<Common.Data.Reports> EditReportAsync(IDefaultIdentity identity, Common.Data.Reports report)

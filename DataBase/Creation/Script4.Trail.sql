@@ -82,7 +82,11 @@ values
 	
 	('FTPServer created'),
 	('FTPServer updated'),
-	('FTPServer deleted');
+	('FTPServer deleted'),
+
+	('Report created'),
+	('Report updated'),
+	('Report deleted');
 
 create table "Trail"."Records"
 (

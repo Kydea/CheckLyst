@@ -94,6 +94,7 @@
     <Compile Include="Detail\DetailService.cs" />
     <Compile Include="Data\IDataService.cs" />
     <Compile Include="Data\DataService.cs" />
+    <Compile Include="List\ReportSource.cs" />
     <Compile Include="List\ListRow.cs" />
     <Compile Include="List\ListService.cs" />
     <Compile Include="List\IListService.cs" />

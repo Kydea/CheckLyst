@@ -5,7 +5,7 @@ namespace CheckListManager.Reports.Logic.Detail
 {
     public class DetailRequest : Request
     {
-        public long ID { get; set; }
+        public long? ID { get; set; }
         public string Code { get; set; }
         public string Description { get; set; }
         public string ReportSource { get; set; }

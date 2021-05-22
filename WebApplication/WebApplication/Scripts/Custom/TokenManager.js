@@ -157,7 +157,9 @@
                 type: "post",
                 suppressErrors: true
             });
+        var company = localStorage.company;
         localStorage.clear();
+        localStorage.company = company;
     };
 
     tokenManager.getCompany = function () {

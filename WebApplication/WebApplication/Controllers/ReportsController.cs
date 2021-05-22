@@ -1,5 +1,7 @@
-﻿using System.Web.Mvc;
+﻿using System;
+using System.Web.Mvc;
 using CheckListManager.WebApplication.Code;
+using CheckListManager.WebApplication.Models;
 
 namespace CheckListManager.WebApplication.Controllers
 {
@@ -13,10 +15,17 @@ namespace CheckListManager.WebApplication.Controllers
             return ConditionalView();
         }
 
-        [Route("Detail")]
-        public ActionResult Detail()
+        [Route("Editor/{Code?}")]
+        public ActionResult Editor(string Code)
         {
-            return PartialView();
+            return PartialView(new Report { Code = Code });
+        }
+
+        [Route("Viewer/{Code?}")]
+        public ActionResult Viewer(string Code)
+        {
+            if (Code == null) throw new ArgumentException(); //we need to have it not mandatory for the base route in the view
+            return PartialView(new Report { Code = Code });
         }
     }
 }

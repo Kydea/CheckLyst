@@ -80,5 +80,9 @@
         public const string FtpServerCreated = "FTPServer created";
         public const string FtpServerUpdated = "FTPServer updated";
         public const string FtpServerDeleted = "FTPServer deleted";
+
+        public const string ReportCreated = "Report created";
+        public const string ReportUpdated = "Report updated";
+        public const string ReportDeleted = "Report deleted";
     }
 }

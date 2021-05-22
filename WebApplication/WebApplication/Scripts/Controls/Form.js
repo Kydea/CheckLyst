@@ -318,7 +318,7 @@
 
             handleValidationMessages(null, data);
             valid = data.valid;
-            matematici.controls.setEditable(options.applyButton, valid);
+            if (options && options.applyButton) matematici.controls.setEditable(options.applyButton, valid);
         },
 
         bind = function (event, handler, data) {

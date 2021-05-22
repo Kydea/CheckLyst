@@ -28,6 +28,14 @@ namespace CheckListManager.Reports.Api.Controllers
             return Ok(await _listService.GetDataAsync(Identity.CompanyId, request));
 		}
 
+        [Authorize(Roles = "Reports#Edit")]
+        [HttpPost]
+        [Route("GetReportSources")]
+        public async Task<IHttpActionResult> GetReportSources()
+        {
+            return Ok(await _listService.GetReportSourcesAsync());
+        }
+
         [Authorize(Roles = "Reports#View")]
         [HttpPost]
         [Route("Load")]
@@ -38,18 +46,10 @@ namespace CheckListManager.Reports.Api.Controllers
 
         [Authorize(Roles = "Reports#Edit")]
 		[HttpPost]
-		[Route("Add")]
-		public async Task<IHttpActionResult> Add(Message<DetailRequest> request)
+		[Route("Save")]
+		public async Task<IHttpActionResult> Save(Message<DetailRequest> request)
 		{
-			return Ok(await _detailService.AddReportAsync(Identity, request.Data));
-		}
-
-        [Authorize(Roles = "Reports#Edit")]
-		[HttpPost]
-		[Route("Edit")]
-		public async Task<IHttpActionResult> Edit(Message<DetailRequest> request)
-		{
-			return Ok(await _detailService.EditReportAsync(Identity, request.Data));
+			return Ok(await _detailService.SaveReportAsync(Identity, request.Data));
 		}
 
         [Authorize(Roles = "Reports#Edit")]

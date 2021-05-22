@@ -18,6 +18,13 @@ namespace CheckListManager.Reports.Logic.List
             _reportsRepository = reportsRepository;
         }
 
+        public async Task<List<ReportSource>> GetReportSourcesAsync() =>
+            (await _reportsRepository.GetReportSourcesAsync()).Select(rs => new ReportSource
+            {
+                Code = rs.Code,
+                Query = rs.Query
+            }).ToList();
+
         public async Task<PagingResponse<List<ListRow>>> GetDataAsync(long Company, PagingRequest<ListRequest> Form)
         {
             var Result = await _reportsRepository.GetReportsAsync(

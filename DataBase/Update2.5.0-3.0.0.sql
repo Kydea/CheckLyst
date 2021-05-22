@@ -43,7 +43,10 @@ values
 	('Role edited'),
 	('Role deleted'),
 	('Company created'),
-	('Company updated');
+	('Company updated'),
+	('Report created'),
+	('Report updated'),
+	('Report deleted');
 
 insert into "Configuration"."Settings" ("Code") values
 	('InactivityTimeoutSeconds'),
@@ -486,3 +489,5 @@ $func$
 			)
 		)
 $func$ language sql;
+
+--Script8.Reports.sql

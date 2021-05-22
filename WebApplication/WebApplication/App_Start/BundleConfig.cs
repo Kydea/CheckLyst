@@ -13,6 +13,7 @@ namespace CheckListManager.WebApplication
                 .Include("~/Scripts/Custom/*.js")
                 .Include("~/Scripts/Instances/*.js")
                 .Include("~/Scripts/Prototypes/*.js")
+                .Include("~/Scripts/Reports/*.js")
             );
             bundles.Add(new StyleBundle("~/Content/Theme/Styles").Include("~/Content/Theme/*.css"));
         }

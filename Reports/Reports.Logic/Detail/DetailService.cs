@@ -33,7 +33,7 @@ namespace CheckListManager.Reports.Logic.Detail
         private async Task<DetailResponse> ValidateAsync(IDefaultIdentity identity, DetailRequest record)
         {
             var requireUserReason = await _settingService.RequireUserReasonAsync(identity.CompanyId);
-            
+
             var response = new DetailResponse();
             if (string.IsNullOrWhiteSpace(record.Code))
                 response.Fields["Code"] = new Field
@@ -72,11 +72,21 @@ namespace CheckListManager.Reports.Logic.Detail
             try
             {
                 var report = await _reportsRepository.GetReportAsync(company, request.Code);
+                response.Fields["code"] = new Field { Value = report.Code, Editable = false };
+                response.Fields["description"] = new Field { Value = report.Description };
+                response.Fields["reportSource"] = new Field { Value = report.ReportSource };
+                response.Fields["query"] = new Field { Value = report.Query };
+                response.CreatedBy = report.CreatedBy;
+                response.CreatedOn = report.CreatedOn;
+                response.ModifiedBy = report.ModifiedBy;
+                response.ModifiedOn = report.ModifiedOn;
+
+                /*
                 response.Fields["instancesRangeRestricted"] = new Field { Value = report.InstancesRangeRestricted.ToString() };
                 response.Fields["instancesIDAlias"] = new Field { Value = report.InstancesIDAlias };
                 response.Fields["prototypesRangeRestricted"] = new Field { Value = report.PrototypesRangeRestricted.ToString() };
                 response.Fields["prototypesIDAlias"] = new Field { Value = report.PrototypesIDAlias };
-                response.Fields["query"] = new Field { Value = report.Query };
+                */
 
                 response.Columns = report.ReportColumns.Select(c => new ReportColumn
                 {
@@ -111,13 +121,13 @@ namespace CheckListManager.Reports.Logic.Detail
             return response;
         }
 
-        public async Task<DetailResponse> AddReportAsync(IDefaultIdentity identity, DetailRequest request)
+        public async Task<DetailResponse> SaveReportAsync(IDefaultIdentity identity, DetailRequest request)
         {
             var response = await ValidateAsync(identity, request);
             if (response.Valid)
                 try
                 {
-                    await _reportsRepository.AddReportAsync(identity, new Common.Data.Reports
+                    var report = new Common.Data.Reports
                     {
                         Code = request.Code,
                         Description = request.Description,
@@ -145,58 +155,18 @@ namespace CheckListManager.Reports.Logic.Detail
                             Visible = c.Visible,
                             Editable = c.Editable
                         }).ToList()
-                    });
-                    await AuditAsync(identity, TrailAction.DataSourceCreated, request);
-                }
-                catch (Exception Exception)
-                {
-                    response.ValidationMessages.Add(new ValidationMessage
+                    };
+                    if (request.ID.HasValue)
                     {
-                        Level = ValidationMessage.LevelError,
-                        Message = Exception.Message
-                    });
-                    response.Valid = false;
-                }
-
-            return response;
-        }
-
-        public async Task<DetailResponse> EditReportAsync(IDefaultIdentity identity, DetailRequest request)
-        {
-            var response = await ValidateAsync(identity, request);
-            if (response.Valid)
-                try
-                {
-                    await _reportsRepository.EditReportAsync(identity, new Common.Data.Reports
+                        await _reportsRepository.EditReportAsync(identity, report);
+                        await AuditAsync(identity, TrailAction.ReportUpdated, request);
+                    }
+                    else
                     {
-                        Code = request.Code,
-                        Description = request.Description,
-                        ReportSource = request.ReportSource,
-                        Query = request.Query,
-                        InstancesRangeRestricted = request.InstancesRangeRestricted,
-                        InstancesIDAlias = request.InstancesIDAlias,
-                        PrototypesRangeRestricted = request.PrototypesRangeRestricted,
-                        PrototypesIDAlias = request.PrototypesIDAlias,
-                        ReportColumns = request.Columns?.Select(c => new Common.Data.ReportColumns
-                        {
-                            Name = c.Name,
-                            Label = c.Label,
-                            Visible = c.Visible,
-                            Format = c.Format,
-                            GroupColumn = c.GroupColumn,
-                            OrderColumn = c.OrderColumn,
-                            ValueAggregation = c.ValueAggregation,
-                            GroupAggregation = c.GroupAggregation
-                        }).ToList(),
-                        ReportClauses = request.Clauses?.Select(c => new Common.Data.ReportClauses
-                        {
-                            Label = c.Label,
-                            Clause = c.Clause,
-                            Visible = c.Visible,
-                            Editable = c.Editable
-                        }).ToList()
-                    });
-                    await AuditAsync(identity, TrailAction.DataSourceUpdated, request);
+                        await _reportsRepository.AddReportAsync(identity, report);
+                        request.ID = request.ID;
+                        await AuditAsync(identity, TrailAction.ReportCreated, request);
+                    }
                 }
                 catch (Exception Exception)
                 {
@@ -217,7 +187,7 @@ namespace CheckListManager.Reports.Logic.Detail
             try
             {
                 await _reportsRepository.DeleteReportAsync(identity, request.Code);
-                await AuditAsync(identity, TrailAction.DataSourceDeleted, request.ID, request.Reason);
+                await AuditAsync(identity, TrailAction.ReportDeleted, request.ID.Value, request.Reason);
             }
             catch (Exception Exception)
             {
@@ -271,6 +241,6 @@ namespace CheckListManager.Reports.Logic.Detail
                 Date = DateTimeOffset.UtcNow,
                 Information = information.ToJson(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None })
             });
-        }        
+        }
     }
 }

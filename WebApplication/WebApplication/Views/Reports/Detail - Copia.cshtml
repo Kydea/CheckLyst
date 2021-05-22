@@ -1,87 +1,96 @@
-﻿<div id="ReportsDetailPage">
-    <h2>Report</h2>
+﻿@model CheckListManager.WebApplication.Models.Report
 
-    <form id="Detail" action="@BaseUrl/Reports/List">
-        <input type="hidden" name="reason" />
-        <div class="TabContainer">
-            <div class="TabLabels">
-                <a href="#">Details</a>
-                <a href="#">Query</a>
-                <a href="#">Columns</a>
-                <a href="#">Clauses</a>
-            </div>
-            <div class="Tab">
-                <label>
-                    <span>Code</span>
-                    <i class="Icon fal fa-key" />
-                    <input type="text" name="code" />
-                </label>
+<div id="ReportsDetailPage">
+    <h1>Report Editor</h1>
 
-                <label class="Width200">
-                    <span>Source</span>
-                    <i class="Icon fal fa-chart-network" />
-                    <select name="reportSuorce"></select>
-                </label>
+    <div class="ActionBar">
+        <span class="ButtonGroup" data-text="Actions"></span>
+    </div>
 
-                <label class="Width300">
-                    <span>Description</span>
-                    <i class="Icon fal fa-align-left" />
-                    <input type="text" name="description" />
-                </label>
+    <div class="ShadowPanel">
 
-                <label class="Clearing">
-                    <span>Instances range restricted</span>
-                    <input type="checkbox" name="instancesRangeRestricted" />
-                </label>
+        <form id="Detail" action="@BaseUrl/Reports/List">
+            <input type="hidden" name="reason" />
+            <div class="TabContainer">
+                <div class="TabLabels">
+                    <a href="#">Details</a>
+                    <a href="#">Query</a>
+                    <a href="#">Columns</a>
+                    <a href="#">Clauses</a>
+                </div>
+                <div class="Tab">
+                    <label>
+                        <span>Code</span>
+                        <i class="Icon fal fa-key" />
+                        <input type="text" name="code" />
+                    </label>
 
-                <label>
-                    <span>Instances ID alias</span>
-                    <i class="Icon fal fa-layer-group" />
-                    <input type="text" name="instancesIDAlias" />
-                </label>
+                    <label class="Width200">
+                        <span>Source</span>
+                        <i class="Icon fal fa-chart-network" />
+                        <select name="reportSuorce"></select>
+                    </label>
 
-                <label class="Clearing">
-                    <span>Prototypes range restricted</span>
-                    <input type="checkbox" name="prototypesRangeRestricted" />
-                </label>
+                    <label class="Width300">
+                        <span>Description</span>
+                        <i class="Icon fal fa-align-left" />
+                        <input type="text" name="description" />
+                    </label>
 
-                <label>
-                    <span>Prototypes ID alias</span>
-                    <i class="Icon fal fa-file-invoice" />
-                    <input type="text" name="prototypesIDAlias" />
-                </label>
+                    <label class="Clearing">
+                        <span>Instances range restricted</span>
+                        <input type="checkbox" name="instancesRangeRestricted" />
+                    </label>
 
-                <label class="Clearing Controls2">
-                    <span>Creation</span>
-                    <i class="Icon fal fa-user" />
-                    <input type="text" name="createdBy" readonly="readonly" />
-                    <i class="Icon fal fa-calendar-alt" />
-                    <input type="text" name="createdOn" readonly="readonly" data-type="DateTimeOffset" />
-                </label>
+                    <label>
+                        <span>Instances ID alias</span>
+                        <i class="Icon fal fa-layer-group" />
+                        <input type="text" name="instancesIDAlias" />
+                    </label>
 
-                <label class="Clearing Controls2">
-                    <span>Last edit</span>
-                    <i class="Icon fal fa-user" />
-                    <input type="text" name="modifiedBy" readonly="readonly" />
-                    <i class="Icon fal fa-calendar-alt" />
-                    <input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
-                </label>
-            </div>
-            <div class="Tab">
-                <label class="Width300">
-                    <span>Query</span>
-                    <pre id="AceExpressionEditor" style="height: 500px"></pre>
-                </label>
-            </div>
-            <div class="Tab">
+                    <label class="Clearing">
+                        <span>Prototypes range restricted</span>
+                        <input type="checkbox" name="prototypesRangeRestricted" />
+                    </label>
+
+                    <label>
+                        <span>Prototypes ID alias</span>
+                        <i class="Icon fal fa-file-invoice" />
+                        <input type="text" name="prototypesIDAlias" />
+                    </label>
+
+                    <label class="Clearing Controls2">
+                        <span>Creation</span>
+                        <i class="Icon fal fa-user" />
+                        <input type="text" name="createdBy" readonly="readonly" />
+                        <i class="Icon fal fa-calendar-alt" />
+                        <input type="text" name="createdOn" readonly="readonly" data-type="DateTimeOffset" />
+                    </label>
+
+                    <label class="Clearing Controls2">
+                        <span>Last edit</span>
+                        <i class="Icon fal fa-user" />
+                        <input type="text" name="modifiedBy" readonly="readonly" />
+                        <i class="Icon fal fa-calendar-alt" />
+                        <input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
+                    </label>
+                </div>
+                <div class="Tab">
+                    <label class="Width300">
+                        <span>Query</span>
+                        <pre id="AceExpressionEditor" style="height: 500px"></pre>
+                    </label>
+                </div>
+                <div class="Tab">
+                    <div class="Clearing"></div>
+                </div>
+                <div class="Tab">
+                    <div class="Clearing"></div>
+                </div>
                 <div class="Clearing"></div>
             </div>
-            <div class="Tab">
-                <div class="Clearing"></div>
-            </div>
-            <div class="Clearing"></div>
-        </div>
-    </form>
+        </form>
+    </div>
 </div>
 
 <script type="text/javascript">

@@ -14,7 +14,7 @@ namespace CheckListManager.Reports.Data
 
         Task<Common.Data.Reports> GetReportAsync(long company, string code);
         Task<PagingResponse<List<Common.Data.Reports>>> GetReportsAsync(long company, string code, string description, int currentPage, int itemsPerPage);
-        Task<Common.Data.Reports> AddReportAsync(IDefaultIdentity identity, Common.Data.Reports report);
+        Task AddReportAsync(IDefaultIdentity identity, Common.Data.Reports report);
         Task<Common.Data.Reports> EditReportAsync(IDefaultIdentity identity, Common.Data.Reports report);
         Task DeleteReportAsync(IDefaultIdentity identity, string code);
     }

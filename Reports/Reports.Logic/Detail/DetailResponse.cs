@@ -1,21 +1,16 @@
 ﻿using CheckListManager.Common.Logic.DataEngine;
+using System;
 using System.Collections.Generic;
 
 namespace CheckListManager.Reports.Logic.Detail
 {
     public class DetailResponse : Form
     {
-        public long ID { get; set; }
-        public string Code { get; set; }
-        public string Description { get; set; }
-        public string ReportSource { get; set; }
-        public string Query { get; set; }
-        public bool InstancesRangeRestricted { get; set; }
-        public string InstancesIDAlias { get; set; }
-        public bool PrototypesRangeRestricted { get; set; }
-        public string PrototypesIDAlias { get; set; }
-
         public List<ReportColumn> Columns { get; set; }
         public List<ReportClause> Clauses { get; set; }
+        public string CreatedBy { get; set; }
+        public DateTimeOffset? CreatedOn { get; set; }
+        public string ModifiedBy { get; set; }
+        public DateTimeOffset? ModifiedOn { get; set; }
     }
 }

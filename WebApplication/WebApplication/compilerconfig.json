@@ -194,5 +194,9 @@
   {
     "outputFile": "Content/Theme/Companies.css",
     "inputFile": "Content/Theme/Companies.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Report.css",
+    "inputFile": "Content/Theme/Report.scss"
   }
 ]

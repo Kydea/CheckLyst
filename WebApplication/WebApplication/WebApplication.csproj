@@ -72,6 +72,7 @@
     <Compile Include="Models\Help\Tab.cs" />
     <Compile Include="Models\Help\Field.cs" />
     <Compile Include="Models\Help\HelpPage.cs" />
+    <Compile Include="Models\Report.cs" />
     <Compile Include="Models\Login.cs" />
     <Compile Include="Models\Instance.cs" />
     <Compile Include="Models\Prototype.cs" />
@@ -232,6 +233,9 @@
     </Content>
     <Content Include="Content\Theme\Prototype.css">
       <DependentUpon>Prototype.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Report.css">
+      <DependentUpon>Report.scss</DependentUpon>
     </Content>
     <Content Include="Content\Theme\ShadowPanel.css">
       <DependentUpon>ShadowPanel.scss</DependentUpon>
@@ -418,6 +422,7 @@
     <Content Include="Content\Theme\FontAwesome\WebFonts\fa-solid-900.woff" />
     <Content Include="Content\Theme\FontAwesome\WebFonts\fa-solid-900.woff2" />
     <Content Include="Content\Theme\Companies.scss" />
+    <Content Include="Content\Theme\Report.scss" />
     <None Include="Scripts\Libraries\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\Libraries\jquery-2.1.4.js" />
     <Content Include="Scripts\Libraries\jquery-ui-1.11.4.js" />
@@ -484,6 +489,7 @@
     <Content Include="Scripts\Prototypes\SourcesList.js" />
     <Content Include="Scripts\Prototypes\Text.js" />
     <Content Include="Scripts\Prototypes\ValueProperty.js" />
+    <Content Include="Scripts\Reports\Report.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -549,8 +555,9 @@
     <Content Include="Views\Help\FTPServers.cshtml" />
     <Content Include="Views\Users\GroupsDetail.cshtml" />
     <Content Include="Views\Users\GroupsList.cshtml" />
-    <Content Include="Views\Reports\Detail.cshtml" />
+    <Content Include="Views\Reports\Editor.cshtml" />
     <Content Include="Views\Reports\List.cshtml" />
+    <Content Include="Views\Reports\Detail - Copia.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

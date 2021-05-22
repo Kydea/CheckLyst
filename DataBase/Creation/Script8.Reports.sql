@@ -62,30 +62,27 @@ create table "Reports"."ReportClauses"
 
 create  index "ReportClauses_Reports" on "Reports"."ReportClauses" ("Report");
 
+--delete from "Reports"."ReportSources";
 insert into "Reports"."ReportSources" values
 (
 	'Audit trail',
-	'
-	'
+	'select * from "Trail"."Records"'
 );
 
 insert into "Reports"."ReportSources" values
 (
 	'Prototypes',
-	'
-	'
+	'select * from "CheckLists"."Prototypes"'
 );
 
 insert into "Reports"."ReportSources" values
 (
 	'Instances',
-	'
-	'
+	'select * from "CheckLists"."Instances"'
 );
 
 insert into "Reports"."ReportSources" values
 (
 	'Users',
-	'
-	'
+	'select * from "Security"."Users"'
 );

@@ -1,12 +1,12 @@
 ﻿<script type="text/javascript">
-	var
+    var
         matematici = {
-        	cacheVersion: 1,
-        	canClose: true,
+            cacheVersion: 1,
+            canClose: true,
             appClientId: "@(ViewBag.AppClientId ?? string.Empty)",
-        	elements: {},
-        	events: {},
-        	actions: {},
+            elements: {},
+            events: {},
+            actions: {},
             pages: {},
             urls: {
                 webApplication: window.location.origin,
@@ -26,7 +26,7 @@
                 infrastructure: {
                     companies: {
                         getSyntheticData: "@BaseUrl/Infrastructure/Companies/GetSyntheticData",
-						getSettings: "@BaseUrl/Infrastructure/Companies/GetSettings"
+                        getSettings: "@BaseUrl/Infrastructure/Companies/GetSettings"
                     },
                     clock: "@BaseUrl/Infrastructure/Information/Clock"
                 },
@@ -45,11 +45,14 @@
                     sourceEditor: "@Url.Action("SourceEditor", "Prototypes")",
                     scriptEditor: "@Url.Action("ScriptEditor", "Prototypes")"
                 },
+                reports: {
+                    api: "@BaseUrl/Reports/List"
+                },
                 help: "@Url.Action("Index", "Help")",
-        	},
-        	signatureActions: {
-        		toApprove: "Prototype – state to Approved/Active",
-        		toObsolete: "Prototype – state to Obsolete"
+            },
+            signatureActions: {
+                toApprove: "Prototype – state to Approved/Active",
+                toObsolete: "Prototype – state to Obsolete"
             },
             profiles: [
                 "Revisor",
@@ -64,7 +67,8 @@
             isLoginPage: false
         },
         instances = {},
-        prototypes = {};
+        prototypes = {},
+        reports = {};
 
 	if (typeof console === "undefined") console = {};
 	if (typeof console.log === "undefined") console.log = function () { };
