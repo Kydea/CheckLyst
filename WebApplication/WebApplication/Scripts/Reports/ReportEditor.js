@@ -39,7 +39,8 @@
             return {
                 data: {
                     query: reportSourceSelect.val() == null ? editor.getValue() : null,
-                    columns: model.columns
+                    columns: model.columns,
+                    clauses: model.clauses
                 }
             };
         },

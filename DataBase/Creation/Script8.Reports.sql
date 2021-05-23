@@ -54,10 +54,13 @@ create table "Reports"."ReportClauses"
 	"ID" bigserial primary key,
 	"Report" bigint not null references "Reports"."Reports" on delete cascade,
 
-	"Label" varchar (50),
+	"Label" varchar (50) not null,
 	"Clause" text, --json clause: column + sign + value or clause + parameter 
 	"Visible" boolean not null default false,
 	"Editable" boolean not null default false
+	"ParameterName" varchar(50),
+	"ParameterType" varchar(30),
+	"ClauseType" varchar(30)
 );
 
 create  index "ReportClauses_Reports" on "Reports"."ReportClauses" ("Report");

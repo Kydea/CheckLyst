@@ -93,7 +93,7 @@ namespace CheckListManager.Reports.Logic.Detail
                 response.Fields["prototypesIDAlias"] = new Field { Value = report.PrototypesIDAlias };
                 */
 
-                response.Columns = report.ReportColumns.Select(c => new ReportColumn
+                response.Columns = report.ReportColumns.OrderBy(c => c.ID).Select(c => new ReportColumn
                 {
                     Label = c.Label,
                     Column = c.Column,
@@ -105,12 +105,15 @@ namespace CheckListManager.Reports.Logic.Detail
                     ValueAggregation = c.ValueAggregation
                 }).ToList();
 
-                response.Clauses = report.ReportClauses.Select(c => new ReportClause
+                response.Clauses = report.ReportClauses.OrderBy(c => c.ID).Select(c => new ReportClause
                 {
                     Label = c.Label,
                     Clause = c.Clause,
                     Visible = c.Visible,
-                    Editable = c.Editable
+                    Editable = c.Editable,
+                    ParameterName = c.ParameterName,
+                    ParameterType = c.ParameterType,
+                    ClauseType = c.ClauseType
                 }).ToList();
             }
             catch (Exception exception)
@@ -158,7 +161,10 @@ namespace CheckListManager.Reports.Logic.Detail
                             Label = c.Label,
                             Clause = c.Clause,
                             Visible = c.Visible,
-                            Editable = c.Editable
+                            Editable = c.Editable,
+                            ParameterName = c.ParameterName,
+                            ParameterType = c.ParameterType,
+                            ClauseType = c.ClauseType
                         }).ToList()
                     };
                     if (request.ID.HasValue)

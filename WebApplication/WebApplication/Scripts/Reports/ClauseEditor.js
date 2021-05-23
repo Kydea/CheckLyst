@@ -79,12 +79,12 @@
                 clause[this.name] = this.value;
             });
 
-            clause.clause = {
+            clause.clause = JSON.stringify({
                 column: columnSelect.val(),
                 sign: signSelect.val(),
                 value: valueTypeInput.getValue(),
                 content: editor.getValue()
-            };
+            });
 
             return clause;
         },
@@ -134,11 +134,12 @@
                     this.value = clause[this.name];
                 });
 
-                columnSelect.val(clause.clause.column);
-                signSelect.val(clause.clause.sign);
-                editor.setValue(clause.clause.content);
+                var json = JSON.parse(clause.clause);
+                columnSelect.val(json.column);
+                signSelect.val(json.sign);
+                editor.setValue(json.content);
                 toggleControls();
-                valueTypeInput.setValue(clause.clause.value);
+                valueTypeInput.setValue(json.value);
             } 
 
             $("input[name=parameterName]", form).keyfilter(/^[$A-Z_0-9]*$/i);

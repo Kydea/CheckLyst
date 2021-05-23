@@ -277,10 +277,13 @@
           </Key>
           <Property Name="ID" Type="int8" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Report" Type="int8" Nullable="false" />
-          <Property Name="Label" Type="varchar" MaxLength="50" />
+          <Property Name="Label" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Clause" Type="text" />
           <Property Name="Visible" Type="bool" Nullable="false" />
           <Property Name="Editable" Type="bool" Nullable="false" />
+          <Property Name="ParameterName" Type="varchar" MaxLength="50" />
+          <Property Name="ParameterType" Type="varchar" MaxLength="30" />
+          <Property Name="ClauseType" Type="varchar" MaxLength="30" />
         </EntityType>
         <EntityType Name="ReportColumns">
           <Key>
@@ -2509,13 +2512,8 @@
             <End Role="Users" EntitySet="Users" />
             <End Role="UserRoles" EntitySet="UserRoles" />
           </AssociationSet>
-          <EntitySet Name="ReportClauses" EntityType="RelationalDatabaseModel.ReportClauses" />
           <EntitySet Name="Reports" EntityType="RelationalDatabaseModel.Reports" />
           <EntitySet Name="ReportSources" EntityType="RelationalDatabaseModel.ReportSources" />
-          <AssociationSet Name="ReportClauses_Report_fkey" Association="RelationalDatabaseModel.ReportClauses_Report_fkey">
-            <End Role="Reports" EntitySet="Reports" />
-            <End Role="ReportClauses" EntitySet="ReportClauses" />
-          </AssociationSet>
           <AssociationSet Name="Reports_ReportSource_fkey" Association="RelationalDatabaseModel.Reports_ReportSource_fkey">
             <End Role="ReportSources" EntitySet="ReportSources" />
             <End Role="Reports" EntitySet="Reports" />
@@ -2524,6 +2522,11 @@
           <AssociationSet Name="ReportColumns_Report_fkey" Association="RelationalDatabaseModel.ReportColumns_Report_fkey">
             <End Role="Reports" EntitySet="Reports" />
             <End Role="ReportColumns" EntitySet="ReportColumns" />
+          </AssociationSet>
+          <EntitySet Name="ReportClauses" EntityType="RelationalDatabaseModel.ReportClauses" />
+          <AssociationSet Name="ReportClauses_Report_fkey" Association="RelationalDatabaseModel.ReportClauses_Report_fkey">
+            <End Role="Reports" EntitySet="Reports" />
+            <End Role="ReportClauses" EntitySet="ReportClauses" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="UserSessions">
@@ -4151,18 +4154,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="ReportClauses">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Report" Type="Int64" Nullable="false" />
-          <Property Name="Label" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Clause" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Visible" Type="Boolean" Nullable="false" />
-          <Property Name="Editable" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Reports" Relationship="RelationalDatabaseModel.ReportClauses_Report_fkey" FromRole="ReportClauses" ToRole="Reports" />
-        </EntityType>
         <EntityType Name="Reports">
           <Key>
             <PropertyRef Name="ID" />
@@ -4181,9 +4172,9 @@
           <Property Name="CreatedOn" Type="DateTimeOffset" Nullable="false" Precision="7" />
           <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
-          <NavigationProperty Name="ReportClauses" Relationship="RelationalDatabaseModel.ReportClauses_Report_fkey" FromRole="Reports" ToRole="ReportClauses" />
           <NavigationProperty Name="ReportSources" Relationship="RelationalDatabaseModel.Reports_ReportSource_fkey" FromRole="Reports" ToRole="ReportSources" />
           <NavigationProperty Name="ReportColumns" Relationship="RelationalDatabaseModel.ReportColumns_Report_fkey" FromRole="Reports" ToRole="ReportColumns" />
+          <NavigationProperty Name="ReportClauses" Relationship="RelationalDatabaseModel.ReportClauses_Report_fkey" FromRole="Reports" ToRole="ReportClauses" />
         </EntityType>
         <EntityType Name="ReportSources">
           <Key>
@@ -4193,20 +4184,6 @@
           <Property Name="Query" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Reports" Relationship="RelationalDatabaseModel.Reports_ReportSource_fkey" FromRole="ReportSources" ToRole="Reports" />
         </EntityType>
-        <Association Name="ReportClauses_Report_fkey">
-          <End Type="RelationalDatabaseModel.Reports" Role="Reports" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Type="RelationalDatabaseModel.ReportClauses" Role="ReportClauses" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Reports">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="ReportClauses">
-              <PropertyRef Name="Report" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="Reports_ReportSource_fkey">
           <End Type="RelationalDatabaseModel.ReportSources" Role="ReportSources" Multiplicity="0..1" />
           <End Type="RelationalDatabaseModel.Reports" Role="Reports" Multiplicity="*" />
@@ -4245,6 +4222,35 @@
               <PropertyRef Name="ID" />
             </Principal>
             <Dependent Role="ReportColumns">
+              <PropertyRef Name="Report" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="ReportClauses">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Report" Type="Int64" Nullable="false" />
+          <Property Name="Label" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Clause" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Visible" Type="Boolean" Nullable="false" />
+          <Property Name="Editable" Type="Boolean" Nullable="false" />
+          <Property Name="ParameterName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ParameterType" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="ClauseType" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Reports" Relationship="RelationalDatabaseModel.ReportClauses_Report_fkey" FromRole="ReportClauses" ToRole="Reports" />
+        </EntityType>
+        <Association Name="ReportClauses_Report_fkey">
+          <End Type="RelationalDatabaseModel.Reports" Role="Reports" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="RelationalDatabaseModel.ReportClauses" Role="ReportClauses" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Reports">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ReportClauses">
               <PropertyRef Name="Report" />
             </Dependent>
           </ReferentialConstraint>
@@ -4854,18 +4860,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="ReportClauses">
-            <EntityTypeMapping TypeName="RelationalDatabaseModel.ReportClauses">
-              <MappingFragment StoreEntitySet="ReportClauses">
-                <ScalarProperty Name="Editable" ColumnName="Editable" />
-                <ScalarProperty Name="Visible" ColumnName="Visible" />
-                <ScalarProperty Name="Clause" ColumnName="Clause" />
-                <ScalarProperty Name="Label" ColumnName="Label" />
-                <ScalarProperty Name="Report" ColumnName="Report" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Reports">
             <EntityTypeMapping TypeName="RelationalDatabaseModel.Reports">
               <MappingFragment StoreEntitySet="Reports">
@@ -4904,6 +4898,21 @@
                 <ScalarProperty Name="Format" ColumnName="Format" />
                 <ScalarProperty Name="Visible" ColumnName="Visible" />
                 <ScalarProperty Name="Column" ColumnName="Column" />
+                <ScalarProperty Name="Label" ColumnName="Label" />
+                <ScalarProperty Name="Report" ColumnName="Report" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ReportClauses">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.ReportClauses">
+              <MappingFragment StoreEntitySet="ReportClauses">
+                <ScalarProperty Name="ClauseType" ColumnName="ClauseType" />
+                <ScalarProperty Name="ParameterType" ColumnName="ParameterType" />
+                <ScalarProperty Name="ParameterName" ColumnName="ParameterName" />
+                <ScalarProperty Name="Editable" ColumnName="Editable" />
+                <ScalarProperty Name="Visible" ColumnName="Visible" />
+                <ScalarProperty Name="Clause" ColumnName="Clause" />
                 <ScalarProperty Name="Label" ColumnName="Label" />
                 <ScalarProperty Name="Report" ColumnName="Report" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
