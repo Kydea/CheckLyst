@@ -117,10 +117,10 @@
                     .addClass("Handler")
                     .append($("<td />").append($("<i />").addClass("fa fa-caret-right")).attr("title", row.serializedValue))
                     .append($("<td />").addClass("Label"))
-                    .append($("<td />").addClass("Clause"))
+                    .append($("<td />").addClass("ParameterName"))
                     .append($("<td />").addClass("Centered")
                         .append($("<i />").attr("title", "Visible").addClass("Visible fal fa-eye"))
-                        .append($("<i />").attr("title", "Editable").addClass("Order fal fa-pencil"))
+                        .append($("<i />").attr("title", "Editable").addClass("Editable fal fa-pencil"))
                     );
 
             noRecord.remove();
@@ -149,7 +149,7 @@
                 commands = cells.last();
 
             cells.filter(".Label").text(row.label).attr("title", row.label);
-            cells.filter(".Clause").text(row.clause).attr("title", row.clause);
+            cells.filter(".ParameterName").text(row.parameterName).attr("title", row.parameterName);
             commands.find(".Visible").toggleClass("Off", !row.visible);
             commands.find(".Editable").toggleClass("Off", !row.editable);
         },
@@ -189,7 +189,7 @@
                     clause = list[index],
                     visible = keyword == null;
                 if (!visible && flags[0]) visible = !!clause.label && clause.label.toLowerCase().indexOf(keyword.toLowerCase()) >= 0;
-                if (!visible && flags[1]) visible = !!clause.clause && clause.clause.toLowerCase().indexOf(keyword.toLowerCase()) >= 0;
+                if (!visible && flags[1]) visible = !!clause.parameterName && clause.parameterName.toLowerCase().indexOf(keyword.toLowerCase()) >= 0;
                 rows.eq(index).toggle(visible).toggleClass("Even", filtering && even).toggleClass("Odd", filtering && !even);
                 if (visible) even = !even;
             }
@@ -212,7 +212,7 @@
             container.append($("<h2 />").html("Clauses list"));
             filtersBar = new matematici.GridFiltersBar(container, filter);
             filtersBar.addFlag("label", true);
-            filtersBar.addFlag("clause", true);
+            filtersBar.addFlag("parameter name", true);
 
             container
                 .append($("<a />").attr("href", "#").addClass("CloseButton CancelButton")
@@ -244,7 +244,7 @@
                     .append($("<tr />")
                         .append($("<th />"))
                         .append($("<th />").text("label"))
-                        .append($("<th />").text("clause"))
+                        .append($("<th />").text("parameter name"))
                         .append($("<th />"))
                     )
                 ).append(tableBody = $("<tbody />")

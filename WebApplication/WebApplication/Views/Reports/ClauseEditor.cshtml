@@ -19,37 +19,37 @@
 
         <label class="Clearing Width300">
             <span>Parameter name</span>
-            <input type="text" id="ParameterName" autocomplete="off" maxlength="30" />
+            <input type="text" name="parameterName" autocomplete="off" maxlength="50" />
         </label>
 
         <label class="Clearing Width300">
             <span>Parameter type</span>
-            <select id="ParameterType">
-                <option value="parameter">Text</option>
-                <option value="filter">Number</option>
-                <option value="prototypes">Boolean</option>
-                <option value="prototypes">Date</option>
-                <option value="prototypes">DateTime</option>
-                <option value="prototypes">Time</option>
-                <option value="prototypes">Prototypes list</option>
+            <select name="parameterType">
+                <option value="Text">Text</option>
+                <option value="Number">Number</option>
+                <option value="Boolean">Boolean</option>
+                <option value="Date">Date</option>
+                <option value="DateTime">DateTime</option>
+                <option value="Time">Time</option>
+                <option value="Prototypes">Prototypes list</option>
             </select>
         </label>
 
         <label class="Clearing Width300">
             <span>Clause type</span>
-            <select id="ClauseType">
-                <option value="parameter">only parameter</option>
+            <select name="clauseType">
                 <option value="filter">generic filter</option>
+                <option value="parameter">only parameter</option>
                 <option value="custom">custom</option>
             </select>
         </label>
 
-        <div id="Filter">
-            <label class="Clearing">
+        <div id="FilterPanel">
+            <label id="ColumnLabel" class="Clearing">
                 <span>Column</span>
                 <select id="Column"></select>
             </label>
-            <label>
+            <label id="SignLabel">
                 <span>Sign</span>
                 <select id="Sign">
                     <option value="=">equals to parameter</option>
@@ -64,13 +64,12 @@
                     <option value="!0">not has value</option>
                 </select>
             </label>
-            <label>
+            <label id="ValueLabel">
                 <span>Value</span>
-                <input type="text" id="Value" autocomplete="off" maxlength="50" />
             </label>
         </div>
 
-        <label id="Custom" class="Clearing Width300">
+        <label id="ClauseLabel" class="Clearing Width300">
             <span>Clause</span>
             <pre id="ClauseAceEditor" style="height: 100px"></pre>
         </label>

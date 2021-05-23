@@ -7,6 +7,18 @@
         editor,
         form,
 
+        parameterType,
+        parameterTypeSelect,
+        clauseTypeSelect,
+        filterPanel,
+        columnLabel,
+        columnSelect,
+        signLabel,
+        signSelect,
+        valueLabel,
+        valueTypeInput,
+        clauseLabel,
+
         toggleNotification = function () {
             var
                 notificationCheck = $("input[name=notification]", form),
@@ -14,6 +26,24 @@
 
             matematici.controls.setEditable($("input[name=notificationEmail]", form), notifictatonOn);
             matematici.controls.setEditable($("input[name=notificationNote]", form), notifictatonOn);
+        },
+
+        toggleControls = function () {
+            if (parameterType != parameterTypeSelect.val()) {
+                parameterType = parameterTypeSelect.val();
+                valueTypeInput && valueTypeInput.getInput().remove();
+                valueTypeInput = new matematici.TypedInput(valueLabel[0], parameterType, { maxLength: 50 })
+            }
+
+            columnLabel.toggle(clauseTypeSelect.val() == "filter");
+            signLabel.toggle(clauseTypeSelect.val() == "filter");
+            valueLabel.toggle(clauseTypeSelect.val() != "custom" && signSelect.val() != "0" && signSelect.val() != "!0");
+            clauseLabel.toggle(clauseTypeSelect.val() == "custom");
+            matematici.popup.center();
+            var autoComplete = matematici.AutoComplete.get(columnSelect[0]);
+            autoComplete && autoComplete.refresh();
+            autoComplete = matematici.AutoComplete.get(signSelect[0]);
+            autoComplete && autoComplete.refresh();
         },
 
         cancel = function () {
@@ -49,7 +79,12 @@
                 clause[this.name] = this.value;
             });
 
-            clause.clause = editor.getValue();
+            clause.clause = {
+                column: columnSelect.val(),
+                sign: signSelect.val(),
+                value: valueTypeInput.getValue(),
+                content: editor.getValue()
+            };
 
             return clause;
         },
@@ -69,9 +104,24 @@
             form = f;
             editor = new matematici.SQLEditor("ClauseAceEditor");
 
-            if (!newRecord) {
-                editor.setValue(clause.clause);
+            parameterTypeSelect = $("select[name=parameterType]", form).on("change", toggleControls);
+            clauseTypeSelect = $("select[name=clauseType]", form).on("change", toggleControls);
+            filterPanel = $("div#FilterPanel", form);
+            columnLabel = $("label#ColumnLabel", form);
+            columnSelect = $("select#Column", form).on("change", toggleControls);
+            signLabel = $("label#SignLabel", form);
+            signSelect = $("select#Sign", form).on("change", toggleControls);
+            valueLabel = $("label#ValueLabel", form);
+            clauseLabel = $("label#ClauseLabel", form);
 
+            for (var index in columns) {
+                var column = columns[index];
+                columnSelect.append($("<option />").attr("value", column).text(column.split("\"").join("")));
+            }
+
+            if (newRecord)
+                toggleControls();
+            else {
                 $("input[type=text]", form).each(function () {
                     this.value = clause[this.name];
                 });
@@ -83,15 +133,17 @@
                 $("select", form).each(function () {
                     this.value = clause[this.name];
                 });
-            } else
-                $("select", form).each(function () {
-                    this.value = null;
-                });
 
-            $("input[name=code]", form).keyfilter(/^[$A-Z_0-9]*$/i);
+                columnSelect.val(clause.clause.column);
+                signSelect.val(clause.clause.sign);
+                editor.setValue(clause.clause.content);
+                toggleControls();
+                valueTypeInput.setValue(clause.clause.value);
+            } 
+
+            $("input[name=parameterName]", form).keyfilter(/^[$A-Z_0-9]*$/i);
             form
-                .on("change", "input, select", function () { edited = true; })
-                .on("change", "input[name=notification]", toggleNotification);
+                .on("change", "input, select", function () { edited = true; });
 
             editor.setChangeHandler(function () { edited = true; })
             editor.addCompleterItems(columns.map(function (column) {

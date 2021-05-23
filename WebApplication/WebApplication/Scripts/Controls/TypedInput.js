@@ -34,6 +34,7 @@
             if (type != "Time") {
                 input = document.createElement("input");
                 input.setAttribute("type", type == "Boolean" ? "checkbox" : "text");
+                input.setAttribute("autocomplete", "off");
                 input.addEventListener("keypress", function (e) {
                     matematici.TypedInput.keyPress(type, e);
                 });
@@ -41,6 +42,7 @@
                     matematici.TypedInput.validate(type, input, hoursSelect, minutesSelect);
                 });
                 if (readOnly) matematici.controls.setEditable($(input), false);
+                if (options.maxLength) input.setAttribute("maxlength", options.maxLength);
                 container.appendChild(input);
 
                 if (type == "Date" || type == "DateTime")
