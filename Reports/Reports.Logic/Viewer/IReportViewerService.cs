@@ -4,9 +4,9 @@ using CheckListManager.Common.Logic.DataEngine;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CheckListManager.Reports.Logic.Data
+namespace CheckListManager.Reports.Logic.Viewer
 {
-    public interface IDataService : IService
+    public interface IViewerEditorService : IService
     {
     }
 }

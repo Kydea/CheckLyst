@@ -120,6 +120,12 @@
     <Content Include="Content\Theme\CheckListGrid.css">
       <DependentUpon>CheckListGrid.scss</DependentUpon>
     </Content>
+    <Content Include="Content\Theme\ClausesList.css">
+      <DependentUpon>ClausesList.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\ColumnsList.css">
+      <DependentUpon>ColumnsList.scss</DependentUpon>
+    </Content>
     <Content Include="Content\Theme\Companies.css">
       <DependentUpon>Companies.scss</DependentUpon>
     </Content>
@@ -292,6 +298,7 @@
     <Content Include="Scripts\Controls\Controls.js" />
     <Content Include="Scripts\Controls\DatePicker.js" />
     <Content Include="Scripts\Controls\TypedInput.js" />
+    <Content Include="Scripts\Custom\SQLEditor.js" />
     <Content Include="Scripts\Custom\ExpressionEditor.js" />
     <Content Include="Scripts\Controls\Grid.js" />
     <Content Include="Scripts\Controls\DetailPage.js" />
@@ -423,6 +430,8 @@
     <Content Include="Content\Theme\FontAwesome\WebFonts\fa-solid-900.woff2" />
     <Content Include="Content\Theme\Companies.scss" />
     <Content Include="Content\Theme\Report.scss" />
+    <Content Include="Content\Theme\ColumnsList.scss" />
+    <Content Include="Content\Theme\ClausesList.scss" />
     <None Include="Scripts\Libraries\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\Libraries\jquery-2.1.4.js" />
     <Content Include="Scripts\Libraries\jquery-ui-1.11.4.js" />
@@ -489,6 +498,10 @@
     <Content Include="Scripts\Prototypes\SourcesList.js" />
     <Content Include="Scripts\Prototypes\Text.js" />
     <Content Include="Scripts\Prototypes\ValueProperty.js" />
+    <Content Include="Scripts\Reports\ClausesList.js" />
+    <Content Include="Scripts\Reports\ClauseEditor.js" />
+    <Content Include="Scripts\Reports\ColumnsList.js" />
+    <Content Include="Scripts\Reports\ColumnEditor.js" />
     <Content Include="Scripts\Reports\ReportEditor.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -557,6 +570,8 @@
     <Content Include="Views\Users\GroupsList.cshtml" />
     <Content Include="Views\Reports\Editor.cshtml" />
     <Content Include="Views\Reports\List.cshtml" />
+    <Content Include="Views\Reports\ColumnEditor.cshtml" />
+    <Content Include="Views\Reports\ClauseEditor.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

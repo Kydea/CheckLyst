@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CheckListManager.Reports.Logic.List
+namespace CheckListManager.Reports.Logic.Detail
 {
     public class ReportSource
     {

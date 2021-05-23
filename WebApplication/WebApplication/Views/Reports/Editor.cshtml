@@ -15,8 +15,8 @@
             <input type="hidden" name="id" />
             <label>
                 <span>Code</span>
-                <i class="Icon fal fa-key" />
-                <input type="text" name="code" />
+                <i class="Icon fal fa-key"  />
+                <input type="text" name="code" autocomplete="off" maxlength="50" />
             </label>
 
             <label class="Width200">
@@ -28,7 +28,7 @@
             <label class="FullWidth">
                 <span>Description</span>
                 <i class="Icon fal fa-align-left" />
-                <input type="text" name="description" />
+                <input type="text" name="description"autocomplete="off" maxlength="100" />
             </label>
 
             @*<label class="Clearing">
@@ -55,7 +55,7 @@
 
             <label class="FullWidth">
                 <span>Query</span>
-                <pre id="AceExpressionEditor" style="height: 500px"></pre>
+                <pre id="AceEditor" style="height: 500px"></pre>
             </label>
 
             <label class="Clearing Controls2">
@@ -88,12 +88,12 @@
             }),
 
             actionBar = new matematici.ActionBar("div.ActionBar")
+                .add("<i class='Icon fa fa-filter'></i>", function () {
+                    reportEditor.showClauses();
+                }, "Icon ClausesButton")
                 .add("<i class='Icon fa fa-line-columns'></i>", function () {
                     reportEditor.showColumns();
-                }, "Icon ColumnsButton")
-                .add("<i class='Icon fa fa-filter'></i>", function () {
-                    instance.showClauses();
-                }, "Icon ClausesButton"),
+                }, "Icon ColumnsButton"),
 
             buttonGroup = new matematici.ButtonGroup("span.ButtonGroup")
                 .add("Quit", function () {
@@ -120,6 +120,7 @@
         matematici.save = reportEditor.save;
 
         matematici.events.onPageUnload = function (callback) {
+            reports.reportEditor = null;
             matematici.canClose = true;
             matematici.save = undefined;
             callback();

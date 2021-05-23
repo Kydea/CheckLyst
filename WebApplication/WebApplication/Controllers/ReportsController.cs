@@ -15,6 +15,7 @@ namespace CheckListManager.WebApplication.Controllers
             return ConditionalView();
         }
 
+        [Authorize(Roles = "Reports#Edit")]
         [Route("Editor/{Code?}")]
         public ActionResult Editor(string Code)
         {
@@ -26,6 +27,20 @@ namespace CheckListManager.WebApplication.Controllers
         {
             if (Code == null) throw new ArgumentException(); //we need to have it not mandatory for the base route in the view
             return PartialView(new Report { Code = Code });
+        }
+
+        [Authorize(Roles = "Reports#Edit")]
+        [Route("ColumnEditor")]
+        public ActionResult ColumnEditor()
+        {
+            return ConditionalView("ColumnEditor");
+        }
+
+        [Authorize(Roles = "Reports#Edit")]
+        [Route("ClauseEditor")]
+        public ActionResult ClauseEditor()
+        {
+            return ConditionalView("ClauseEditor");
         }
     }
 }

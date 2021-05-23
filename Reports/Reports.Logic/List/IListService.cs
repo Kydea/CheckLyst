@@ -7,7 +7,6 @@ namespace CheckListManager.Reports.Logic.List
 {
     public interface IListService: IService
     {
-        Task<List<ReportSource>> GetReportSourcesAsync();
         Task<PagingResponse<List<ListRow>>> GetDataAsync(long Company, PagingRequest<ListRequest> form);
     }
 }

@@ -288,8 +288,8 @@
           </Key>
           <Property Name="ID" Type="int8" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Report" Type="int8" Nullable="false" />
-          <Property Name="Name" Type="varchar" MaxLength="200" Nullable="false" />
           <Property Name="Label" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Column" Type="text" />
           <Property Name="Visible" Type="bool" Nullable="false" />
           <Property Name="Format" Type="varchar" MaxLength="50" />
           <Property Name="GroupColumn" Type="bool" Nullable="false" />
@@ -2510,20 +2510,20 @@
             <End Role="UserRoles" EntitySet="UserRoles" />
           </AssociationSet>
           <EntitySet Name="ReportClauses" EntityType="RelationalDatabaseModel.ReportClauses" />
-          <EntitySet Name="ReportColumns" EntityType="RelationalDatabaseModel.ReportColumns" />
           <EntitySet Name="Reports" EntityType="RelationalDatabaseModel.Reports" />
           <EntitySet Name="ReportSources" EntityType="RelationalDatabaseModel.ReportSources" />
           <AssociationSet Name="ReportClauses_Report_fkey" Association="RelationalDatabaseModel.ReportClauses_Report_fkey">
             <End Role="Reports" EntitySet="Reports" />
             <End Role="ReportClauses" EntitySet="ReportClauses" />
           </AssociationSet>
-          <AssociationSet Name="ReportColumns_Report_fkey" Association="RelationalDatabaseModel.ReportColumns_Report_fkey">
-            <End Role="Reports" EntitySet="Reports" />
-            <End Role="ReportColumns" EntitySet="ReportColumns" />
-          </AssociationSet>
           <AssociationSet Name="Reports_ReportSource_fkey" Association="RelationalDatabaseModel.Reports_ReportSource_fkey">
             <End Role="ReportSources" EntitySet="ReportSources" />
             <End Role="Reports" EntitySet="Reports" />
+          </AssociationSet>
+          <EntitySet Name="ReportColumns" EntityType="RelationalDatabaseModel.ReportColumns" />
+          <AssociationSet Name="ReportColumns_Report_fkey" Association="RelationalDatabaseModel.ReportColumns_Report_fkey">
+            <End Role="Reports" EntitySet="Reports" />
+            <End Role="ReportColumns" EntitySet="ReportColumns" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="UserSessions">
@@ -4163,22 +4163,6 @@
           <Property Name="Editable" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Reports" Relationship="RelationalDatabaseModel.ReportClauses_Report_fkey" FromRole="ReportClauses" ToRole="Reports" />
         </EntityType>
-        <EntityType Name="ReportColumns">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Report" Type="Int64" Nullable="false" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="Label" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Visible" Type="Boolean" Nullable="false" />
-          <Property Name="Format" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="GroupColumn" Type="Boolean" Nullable="false" />
-          <Property Name="OrderColumn" Type="Boolean" Nullable="false" />
-          <Property Name="ValueAggregation" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="GroupAggregation" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Reports" Relationship="RelationalDatabaseModel.ReportColumns_Report_fkey" FromRole="ReportColumns" ToRole="Reports" />
-        </EntityType>
         <EntityType Name="Reports">
           <Key>
             <PropertyRef Name="ID" />
@@ -4198,8 +4182,8 @@
           <Property Name="ModifiedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
           <NavigationProperty Name="ReportClauses" Relationship="RelationalDatabaseModel.ReportClauses_Report_fkey" FromRole="Reports" ToRole="ReportClauses" />
-          <NavigationProperty Name="ReportColumns" Relationship="RelationalDatabaseModel.ReportColumns_Report_fkey" FromRole="Reports" ToRole="ReportColumns" />
           <NavigationProperty Name="ReportSources" Relationship="RelationalDatabaseModel.Reports_ReportSource_fkey" FromRole="Reports" ToRole="ReportSources" />
+          <NavigationProperty Name="ReportColumns" Relationship="RelationalDatabaseModel.ReportColumns_Report_fkey" FromRole="Reports" ToRole="ReportColumns" />
         </EntityType>
         <EntityType Name="ReportSources">
           <Key>
@@ -4223,6 +4207,34 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="Reports_ReportSource_fkey">
+          <End Type="RelationalDatabaseModel.ReportSources" Role="ReportSources" Multiplicity="0..1" />
+          <End Type="RelationalDatabaseModel.Reports" Role="Reports" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ReportSources">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="Reports">
+              <PropertyRef Name="ReportSource" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="ReportColumns">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Report" Type="Int64" Nullable="false" />
+          <Property Name="Label" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Column" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Visible" Type="Boolean" Nullable="false" />
+          <Property Name="Format" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="GroupColumn" Type="Boolean" Nullable="false" />
+          <Property Name="OrderColumn" Type="Boolean" Nullable="false" />
+          <Property Name="ValueAggregation" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="GroupAggregation" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Reports" Relationship="RelationalDatabaseModel.ReportColumns_Report_fkey" FromRole="ReportColumns" ToRole="Reports" />
+        </EntityType>
         <Association Name="ReportColumns_Report_fkey">
           <End Type="RelationalDatabaseModel.Reports" Role="Reports" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -4234,18 +4246,6 @@
             </Principal>
             <Dependent Role="ReportColumns">
               <PropertyRef Name="Report" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="Reports_ReportSource_fkey">
-          <End Type="RelationalDatabaseModel.ReportSources" Role="ReportSources" Multiplicity="0..1" />
-          <End Type="RelationalDatabaseModel.Reports" Role="Reports" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="ReportSources">
-              <PropertyRef Name="Code" />
-            </Principal>
-            <Dependent Role="Reports">
-              <PropertyRef Name="ReportSource" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -4866,22 +4866,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="ReportColumns">
-            <EntityTypeMapping TypeName="RelationalDatabaseModel.ReportColumns">
-              <MappingFragment StoreEntitySet="ReportColumns">
-                <ScalarProperty Name="GroupAggregation" ColumnName="GroupAggregation" />
-                <ScalarProperty Name="ValueAggregation" ColumnName="ValueAggregation" />
-                <ScalarProperty Name="OrderColumn" ColumnName="OrderColumn" />
-                <ScalarProperty Name="GroupColumn" ColumnName="GroupColumn" />
-                <ScalarProperty Name="Format" ColumnName="Format" />
-                <ScalarProperty Name="Visible" ColumnName="Visible" />
-                <ScalarProperty Name="Label" ColumnName="Label" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Report" ColumnName="Report" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Reports">
             <EntityTypeMapping TypeName="RelationalDatabaseModel.Reports">
               <MappingFragment StoreEntitySet="Reports">
@@ -4907,6 +4891,22 @@
               <MappingFragment StoreEntitySet="ReportSources">
                 <ScalarProperty Name="Query" ColumnName="Query" />
                 <ScalarProperty Name="Code" ColumnName="Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ReportColumns">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.ReportColumns">
+              <MappingFragment StoreEntitySet="ReportColumns">
+                <ScalarProperty Name="GroupAggregation" ColumnName="GroupAggregation" />
+                <ScalarProperty Name="ValueAggregation" ColumnName="ValueAggregation" />
+                <ScalarProperty Name="OrderColumn" ColumnName="OrderColumn" />
+                <ScalarProperty Name="GroupColumn" ColumnName="GroupColumn" />
+                <ScalarProperty Name="Format" ColumnName="Format" />
+                <ScalarProperty Name="Visible" ColumnName="Visible" />
+                <ScalarProperty Name="Column" ColumnName="Column" />
+                <ScalarProperty Name="Label" ColumnName="Label" />
+                <ScalarProperty Name="Report" ColumnName="Report" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

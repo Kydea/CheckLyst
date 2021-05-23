@@ -46,7 +46,9 @@
                     scriptEditor: "@Url.Action("ScriptEditor", "Prototypes")"
                 },
                 reports: {
-                    api: "@BaseUrl/Reports/List"
+                    api: "@BaseUrl/Reports",
+                    columnEditor: "@Url.Action("ColumnEditor", "Reports")",
+                    clauseEditor: "@Url.Action("ClauseEditor", "Reports")"
                 },
                 help: "@Url.Action("Index", "Help")",
             },

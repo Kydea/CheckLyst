@@ -198,5 +198,13 @@
   {
     "outputFile": "Content/Theme/Report.css",
     "inputFile": "Content/Theme/Report.scss"
+  },
+  {
+    "outputFile": "Content/Theme/ColumnsList.css",
+    "inputFile": "Content/Theme/ColumnsList.scss"
+  },
+  {
+    "outputFile": "Content/Theme/ClausesList.css",
+    "inputFile": "Content/Theme/ClausesList.scss"
   }
 ]

@@ -10,19 +10,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CheckListManager.Reports.Logic.Data
+namespace CheckListManager.Reports.Logic.Viewer
 {
-    public class DataService : IDataService
+    public class ReportViewerService : IViewerEditorService
     {
         private readonly IReportsRepository _reportsRepository;
-        private readonly IServiceClient _client;
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public DataService(IReportsRepository reportsRepository, IServiceClient client)
+        public ReportViewerService(IReportsRepository reportsRepository)
         {
             _reportsRepository = reportsRepository;
-            _client = client;
         }
     }
 }

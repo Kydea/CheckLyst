@@ -92,9 +92,9 @@
     <Compile Include="Detail\DetailRequest.cs" />
     <Compile Include="Detail\DetailResponse.cs" />
     <Compile Include="Detail\DetailService.cs" />
-    <Compile Include="Data\IDataService.cs" />
-    <Compile Include="Data\DataService.cs" />
-    <Compile Include="List\ReportSource.cs" />
+    <Compile Include="Viewer\IReportViewerService.cs" />
+    <Compile Include="Viewer\ReportViewerService.cs" />
+    <Compile Include="Detail\ReportSource.cs" />
     <Compile Include="List\ListRow.cs" />
     <Compile Include="List\ListService.cs" />
     <Compile Include="List\IListService.cs" />

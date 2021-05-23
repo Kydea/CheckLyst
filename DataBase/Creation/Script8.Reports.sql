@@ -37,8 +37,8 @@ create table "Reports"."ReportColumns"
 
 	"Report" bigint not null references "Reports"."Reports" on delete cascade,
 
-	"Name" varchar (200) not null,
 	"Label" varchar (50) not null,
+	"Column" text,
 	"Visible" boolean not null default false,
 	"Format" varchar (50),
 	"GroupColumn" boolean not null default false,

@@ -1,0 +1,86 @@
+﻿<div id="ClauseEditor">
+    <h2>Clause Editor</h2>
+
+    <form id="Detail">
+        <label class="Clearing Width300">
+            <span>Label</span>
+            <input type="text" name="label" autocomplete="off" maxlength="50" />
+        </label>
+
+        <label class="Clearing">
+            <span>Visible</span>
+            <input type="checkbox" name="visible" />
+        </label>
+
+        <label>
+            <span>Editable</span>
+            <input type="checkbox" name="editable" />
+        </label>
+
+        <label class="Clearing Width300">
+            <span>Parameter name</span>
+            <input type="text" id="ParameterName" autocomplete="off" maxlength="30" />
+        </label>
+
+        <label class="Clearing Width300">
+            <span>Parameter type</span>
+            <select id="ParameterType">
+                <option value="parameter">Text</option>
+                <option value="filter">Number</option>
+                <option value="prototypes">Boolean</option>
+                <option value="prototypes">Date</option>
+                <option value="prototypes">DateTime</option>
+                <option value="prototypes">Time</option>
+                <option value="prototypes">Prototypes list</option>
+            </select>
+        </label>
+
+        <label class="Clearing Width300">
+            <span>Clause type</span>
+            <select id="ClauseType">
+                <option value="parameter">only parameter</option>
+                <option value="filter">generic filter</option>
+                <option value="custom">custom</option>
+            </select>
+        </label>
+
+        <div id="Filter">
+            <label class="Clearing">
+                <span>Column</span>
+                <select id="Column"></select>
+            </label>
+            <label>
+                <span>Sign</span>
+                <select id="Sign">
+                    <option value="=">equals to parameter</option>
+                    <option value="!=">not equals to parameter</option>
+                    <option value=">">greater than parameter</option>
+                    <option value=">=">greater or equal than parameter</option>
+                    <option value="<">less than parameter</option>
+                    <option value="<=">less or equal than parameter</option>
+                    <option value="c">contains parameter</option>
+                    <option value="!c">not contains parameter</option>
+                    <option value="0">has value</option>
+                    <option value="!0">not has value</option>
+                </select>
+            </label>
+            <label>
+                <span>Value</span>
+                <input type="text" id="Value" autocomplete="off" maxlength="50" />
+            </label>
+        </div>
+
+        <label id="Custom" class="Clearing Width300">
+            <span>Clause</span>
+            <pre id="ClauseAceEditor" style="height: 100px"></pre>
+        </label>
+    </form>
+</div>
+
+<script type="text/javascript">
+    var
+        clauseEditor = matematici.popup.getData(),
+        form = $("div#ClauseEditor form#Detail");
+
+    clauseEditor.fill(form);
+</script>

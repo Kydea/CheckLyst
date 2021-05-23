@@ -16,8 +16,8 @@ namespace CheckListManager.Common.Data
     {
         public long ID { get; set; }
         public long Report { get; set; }
-        public string Name { get; set; }
         public string Label { get; set; }
+        public string Column { get; set; }
         public bool Visible { get; set; }
         public string Format { get; set; }
         public bool GroupColumn { get; set; }

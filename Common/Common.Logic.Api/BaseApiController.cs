@@ -6,6 +6,7 @@ using System;
 using CheckListManager.Common.Data.Exceptions;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Filters;
+using System.Collections.Generic;
 
 namespace CheckListManager.Common.Logic.Api
 {
@@ -22,25 +23,30 @@ namespace CheckListManager.Common.Logic.Api
 			return new ErrorResult(Request, message);
 		}
 
-        protected IHttpActionResult Error(Exception exception)
+        protected List<string> BuildErrorMessage(Exception exception)
         {
-            var message = new ResponseMessage<Exception>();
-
+            List<string> result = new List<string>();
             if (exception is DatabaseAggregateException databaseAggregateException)
-                message.Messages.AddRange(databaseAggregateException.InnerExceptions.Select(ie => ie.Message));
+                result.AddRange(databaseAggregateException.InnerExceptions.Select(ie => ie.Message));
             else if (exception is DatabaseException databaseException)
                 switch (databaseException.Error)
                 {
                     case DatabaseError.PrimaryKeyViolation:
-                        message.Messages.Add("A record with the same key already exists.");
+                        result.Add("A record with the same key already exists.");
                         break;
                     default:
-                        message.Messages.Add(databaseException.Message);
+                        result.Add(databaseException.Message);
                         break;
                 }
             else
-                message.Messages.Add(exception.Message);
+                result.Add(exception.Message);
+            return result;
+        }
 
+        protected IHttpActionResult Error(Exception exception)
+        {
+            var message = new ResponseMessage<Exception>();
+            message.Messages.AddRange(BuildErrorMessage(exception));
             message.Data = exception;
 
             return new ErrorResult(Request, message);

@@ -1,6 +1,6 @@
 ﻿using CheckListManager.Common.Logic.Api;
 using CheckListManager.Common.Logic.Api.Messages;
-using CheckListManager.Reports.Logic.Data;
+using CheckListManager.Reports.Logic.Viewer;
 using System.Threading.Tasks;
 using System.Web.Http;
 using CheckListManager.Common.Logic.DataEngine;
@@ -11,16 +11,14 @@ using System.Collections.Generic;
 
 namespace CheckListManager.Reports.Api.Controllers
 {
-	[RoutePrefix("Data")]
-	public class DataController : BaseApiController
+	[RoutePrefix("Viewer")]
+	public class ViewerController : BaseApiController
 	{
-		private readonly IDataService _dataService;
-        private readonly IRedisCache _redisCache;
+		private readonly IViewerEditorService _reportViewerService;
 
-        public DataController(IDataService dataService, IRedisCache redisCache)
+        public ViewerController(IViewerEditorService reportViewerService)
 		{
-            _dataService = dataService;
-            _redisCache = redisCache;
+            _reportViewerService = reportViewerService;
         }
     }
 }

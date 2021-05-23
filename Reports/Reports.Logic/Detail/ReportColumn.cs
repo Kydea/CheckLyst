@@ -5,8 +5,8 @@ namespace CheckListManager.Reports.Logic.Detail
 {
     public class ReportColumn
     {
-        public string Name { get; set; }
         public string Label { get; set; }
+        public string Column { get; set; }
         public bool Visible { get; set; }
         public string Format { get; set; }
         public bool GroupColumn { get; set; }

@@ -10,22 +10,26 @@ using CheckListManager.Common.Logic.Queue;
 using CheckListManager.Common.Logic.Services;
 using CheckListManager.Common.Logic.Trail;
 using Newtonsoft.Json;
+using System.Data;
 
 namespace CheckListManager.Reports.Logic.Detail
 {
     public class DetailService : IDetailService
     {
         private readonly IReportsRepository _reportsRepository;
+        private readonly IReportViewerRepository _reportViewerRepository;
         private readonly ISettingService _settingService;
         private readonly IQueueService _queueService;
 
         public DetailService(
             IReportsRepository reportsRepository,
+            IReportViewerRepository reportViewerRepository,
             ISettingService settingService,
             IQueueService queueService
         )
         {
             _reportsRepository = reportsRepository;
+            _reportViewerRepository = reportViewerRepository;
             _settingService = settingService;
             _queueService = queueService;
         }
@@ -91,8 +95,8 @@ namespace CheckListManager.Reports.Logic.Detail
 
                 response.Columns = report.ReportColumns.Select(c => new ReportColumn
                 {
-                    Name = c.Name,
                     Label = c.Label,
+                    Column = c.Column,
                     Format = c.Format,
                     Visible = c.Visible,
                     GroupColumn = c.GroupColumn,
@@ -140,8 +144,8 @@ namespace CheckListManager.Reports.Logic.Detail
                         PrototypesIDAlias = request.PrototypesIDAlias,
                         ReportColumns = request.Columns?.Select(c => new Common.Data.ReportColumns
                         {
-                            Name = c.Name,
                             Label = c.Label,
+                            Column = c.Column,
                             Visible = c.Visible,
                             Format = c.Format,
                             GroupColumn = c.GroupColumn,
@@ -201,6 +205,25 @@ namespace CheckListManager.Reports.Logic.Detail
             }
 
             return response;
+        }
+
+        public async Task<List<ReportSource>> GetReportSourcesAsync() =>
+            (await _reportsRepository.GetReportSourcesAsync()).Select(rs => new ReportSource
+            {
+                Code = rs.Code,
+                Query = rs.Query
+            }).ToList();
+
+        public async Task<List<string>> GetColumnsAsync(IDefaultIdentity identity, string query)
+        {
+            using (var dataTable = await _reportViewerRepository.GetDataTable(identity.CompanyId, query))
+            {
+                var reportColumns = new List<string>(dataTable.Columns.Count);
+                foreach (DataColumn column in dataTable.Columns)
+                    reportColumns.Add(column.ColumnName);
+
+                return reportColumns;
+            }
         }
 
         private Task AuditAsync(IDefaultIdentity identity, string action, DetailRequest record)

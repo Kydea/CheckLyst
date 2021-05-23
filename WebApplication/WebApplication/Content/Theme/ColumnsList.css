@@ -1,0 +1,31 @@
+﻿body.ReportEditor div.CheckListGrid div.Container.ColumnsList div.ScrollablePanel {
+  width: calc(100% - 25px); }
+
+body.ReportEditor div.CheckListGrid div.Container.ColumnsList table tr td {
+  width: 50%; }
+  body.ReportEditor div.CheckListGrid div.Container.ColumnsList table tr td:first-child {
+    padding: 0;
+    text-align: center;
+    width: 30px;
+    white-space: nowrap; }
+    body.ReportEditor div.CheckListGrid div.Container.ColumnsList table tr td:first-child i {
+      display: none;
+      font-size: 16px; }
+  body.ReportEditor div.CheckListGrid div.Container.ColumnsList table tr td:last-child {
+    width: 30px;
+    text-align: center;
+    white-space: nowrap; }
+    body.ReportEditor div.CheckListGrid div.Container.ColumnsList table tr td:last-child i {
+      font-size: 14px;
+      display: inline !important; }
+      body.ReportEditor div.CheckListGrid div.Container.ColumnsList table tr td:last-child i.Off {
+        opacity: .1;
+        color: black !important; }
+      body.ReportEditor div.CheckListGrid div.Container.ColumnsList table tr td:last-child i + i {
+        margin-left: 10px; }
+
+body.ReportEditor div.CheckListGrid div.Container.ColumnsList table tr.Selected td:first-child i {
+  display: inline; }
+
+body.ReportEditor div.CheckListGrid div.Container > div {
+  position: relative; }
