@@ -80,8 +80,9 @@ namespace CheckListManager.AccessControl.Data
                 "and (:description = '' or u.\"Description\" ilike '%' || :description || '%') " +
                 "and (:corporateID = '' or u.\"CorporateID\" ilike '%' || :corporateID || '%') " +
                 "and (:group = '' or exists (select 1 from \"Security\".\"UserGroups\" ug where ug.\"Company\" = u.\"Company\" and ug.\"User\" = u.\"Code\" and ug.\"Group\" ilike '%' || :group || '%')) " +
+                "and (:role = '' or exists (select 1 from \"Security\".\"UserRoles\" ur where ur.\"Company\" = u.\"Company\" and ur.\"User\" = u.\"Code\" and ur.\"Role\" ilike '%' || :role || '%')) " +
             "order by u.\"Code\", g.\"Department\", g.\"PrototypeType\", g.\"Role\", g.\"FunctionGroup\", g.\"Function\"";
-        public async Task<List<ExportRow>> GetUsersForExportAsync(long company, string code, string description, string corporateID, string group)
+        public async Task<List<ExportRow>> GetUsersForExportAsync(long company, string code, string description, string corporateID, string group, string role)
         {
             var List = await Read<ExportRow>(EXPORT_QUERY, new
             {
@@ -89,7 +90,8 @@ namespace CheckListManager.AccessControl.Data
                 code = code?.Replace("_", "\\_").Replace("%", "\\%") ?? string.Empty,
                 description = description?.Replace("_", "\\_").Replace("%", "\\%") ?? string.Empty,
                 corporateID = corporateID?.Replace("_", "\\_").Replace("%", "\\%") ?? string.Empty,
-                group = group?.Replace("_", "\\_").Replace("%", "\\%") ?? string.Empty
+                group = group?.Replace("_", "\\_").Replace("%", "\\%") ?? string.Empty,
+                role = role?.Replace("_", "\\_").Replace("%", "\\%") ?? string.Empty
             });
             return List.ToList();
         }
@@ -108,9 +110,9 @@ namespace CheckListManager.AccessControl.Data
         }
 
 
-        public async Task<List<ExportRow>> GetGroupsForExportAsync(long company, string code, string description, string user)
+        public async Task<List<ExportRow>> GetGroupsForExportAsync(long company, string code, string description, string user, string role)
         {
-            var groups = GetGroupsAsync(company, code, description, user);
+            var groups = GetGroupsAsync(company, code, description, user, role);
 
             var List = groups.SelectMany(r => r.GroupFunctions.Select(gf => new ExportRow
             {
@@ -208,7 +210,7 @@ namespace CheckListManager.AccessControl.Data
             return await Entities.Users.Where(x => x.PIN != null && x.PINChangeDate < Threshold).ToListAsync();
         }
 
-        private IQueryable<Users> GetAsync(long company, string code, string description, string corporateID, string group) 
+        private IQueryable<Users> GetAsync(long company, string code, string description, string corporateID, string group, string role) 
             =>
             Entities.Users
                 .Where(
@@ -217,17 +219,18 @@ namespace CheckListManager.AccessControl.Data
                         && (description == string.Empty || u.Description != null && u.Description.ToUpper().Contains(description.ToUpper())) 
                         && (corporateID == string.Empty || u.CorporateID != null && u.CorporateID.ToUpper().Contains(corporateID.ToUpper()))
                         && (group == string.Empty || u.UserGroups.Any(ug => ug.Group.ToUpper().Contains(group.ToUpper())))
+                        && (role == string.Empty || u.UserRoles.Any(ug => ug.Role.ToUpper().Contains(role.ToUpper())))
                 );
 
-        public Task<List<Users>> GetUsersAsync(long companyId, string code, string description, string corporateID, string group, int skip, int take)
-            => GetAsync(companyId, code, description, corporateID, group)
+        public Task<List<Users>> GetUsersAsync(long companyId, string code, string description, string corporateID, string group, string role, int skip, int take)
+            => GetAsync(companyId, code, description, corporateID, group, role)
                 .OrderBy(u => u.Code)
                 .Skip(skip)
                 .Take(take)
                 .ToListAsync();
 
-        public Task<int> CountUsersAsync(long company, string code, string description, string corporateID, string group)
-            => GetAsync(company, code, description, corporateID, group).CountAsync();
+        public Task<int> CountUsersAsync(long company, string code, string description, string corporateID, string group, string role)
+            => GetAsync(company, code, description, corporateID, group, role).CountAsync();
 
         public async Task<Users> AddAsync(DefaultIdentity identity, Users user)
         {
@@ -337,24 +340,25 @@ namespace CheckListManager.AccessControl.Data
         public Task<Groups> GetGroupAsync(long companyId, string code)
             => Entities.Groups.SingleOrDefaultAsync(u => u.Company == companyId && u.Code.ToUpper() == code.ToUpper());
 
-        private IQueryable<Groups> GetGroupsAsync(long company, string code, string description, string user) =>
+        private IQueryable<Groups> GetGroupsAsync(long company, string code, string description, string user, string role) =>
             Entities.Groups
                 .Where(
                     u => u.Company == company 
                         && (code == string.Empty || u.Code != null && u.Code.ToUpper().Contains(code.ToUpper())) 
                         && (description == string.Empty || u.Description != null && u.Description.ToUpper().Contains(description.ToUpper()))
                         && (user == string.Empty || u.UserGroups.Any(ug => ug.User.ToUpper().Contains(user.ToUpper())))
+                        && (role == string.Empty || u.GroupRoles.Any(gr => gr.Role.ToUpper().Contains(role.ToUpper())))
                 );
 
-        public Task<List<Groups>> GetGroupsAsync(long companyId, string code, string description, string user, int skip, int take)
-            => GetGroupsAsync(companyId, code, description, user)
+        public Task<List<Groups>> GetGroupsAsync(long companyId, string code, string description, string user, string role, int skip, int take)
+            => GetGroupsAsync(companyId, code, description, user, role)
                 .OrderBy(u => u.Code)
                 .Skip(skip)
                 .Take(take)
                 .ToListAsync();
 
-        public Task<int> CountGroupsAsync(long company, string code, string description, string user)
-            => GetGroupsAsync(company, code, description, user).CountAsync();
+        public Task<int> CountGroupsAsync(long company, string code, string description, string user, string role)
+            => GetGroupsAsync(company, code, description, user, role).CountAsync();
 
         public async Task<Groups> AddGroupAsync(DefaultIdentity identity, Groups group)
         {

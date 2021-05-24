@@ -262,13 +262,13 @@ namespace CheckListManager.AccessControl.Logic.Services
         }
 
         public async Task<List<ExportRow>> GetFunctionsAsync(long companyId, UsersRequest request) =>
-            await _userRepository.GetUsersForExportAsync(companyId, request.Code, request.Description, request.CorporateID, request.Group);
+            await _userRepository.GetUsersForExportAsync(companyId, request.Code, request.Description, request.CorporateID, request.Group, request.Role);
 
         public async Task<PagingResponse<List<UsersResponse>>> GetUsersAsync(long companyId, PagingRequest<UsersRequest> request)
         {
             var take = request.ItemsPerPage;
-            var users = await _userRepository.GetUsersAsync(companyId, request.Data.Code, request.Data.Description, request.Data.CorporateID, request.Data.Group, request.Skip, take);
-            var count = await _userRepository.CountUsersAsync(companyId, request.Data.Code, request.Data.Description, request.Data.CorporateID, request.Data.Group);
+            var users = await _userRepository.GetUsersAsync(companyId, request.Data.Code, request.Data.Description, request.Data.CorporateID, request.Data.Group, request.Data.Role, request.Skip, take);
+            var count = await _userRepository.CountUsersAsync(companyId, request.Data.Code, request.Data.Description, request.Data.CorporateID, request.Data.Group, request.Data.Role);
 
             var response = users.Select(u => new UsersResponse
             {

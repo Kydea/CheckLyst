@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using CheckListManager.Common.Core.Cache;
 using CheckListManager.Common.Core.Helpers;
@@ -88,7 +89,7 @@ namespace CheckListManager.Infrastructure.Logic.Companies
 
         private async Task<CompaniesResponse> ValidateAsync(IDefaultIdentity identity, CompaniesRequest record)
         {
-            var requireUserReason = await _settingService.RequireUserReasonAsync(identity.CompanyId);
+            var requireReason = await _settingService.RequireUserReasonAsync(identity.CompanyId);
 
             var response = new CompaniesResponse();
             if (string.IsNullOrWhiteSpace(record.Name))
@@ -113,7 +114,75 @@ namespace CheckListManager.Infrastructure.Logic.Companies
                     }
                 };
 
-            if (requireUserReason && string.IsNullOrEmpty(record.Reason))
+            if (!record.ID.HasValue)
+            {
+                if (string.IsNullOrWhiteSpace(record.Username))
+                    response.Fields["Username"] = new Field
+                    {
+                        ValidationMessages = new List<ValidationMessage>
+                        {
+                            new ValidationMessage {
+                                Level = ValidationMessage.LevelError,
+                                Message = "Invalid username"
+                            }
+                        }
+                    };
+
+                if (string.IsNullOrWhiteSpace(record.Password))
+                    response.Fields["Password"] = new Field
+                    {
+                        ValidationMessages = new List<ValidationMessage>
+                        {
+                            new ValidationMessage {
+                                Level = ValidationMessage.LevelError,
+                                Message = "Invalid password"
+                            }
+                        }
+                    };
+
+                if (!string.IsNullOrEmpty(record.Password) && record.Password.Length < 8)
+                    response.Fields["Password"] = new Field
+                    {
+                        ValidationMessages = new List<ValidationMessage>
+                        {
+                            new ValidationMessage
+                            {
+                                Level = ValidationMessage.LevelError,
+                                Message = "Password must be long at least 8 characters"
+                            }
+                        }
+                    };
+
+                else if (!string.IsNullOrEmpty(record.Password) && !Regex.IsMatch(record.Password, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,30}$"))
+                    response.Fields["Password"] = new Field
+                    {
+                        ValidationMessages = new List<ValidationMessage>
+                        {
+                            new ValidationMessage
+                            {
+                                Level = ValidationMessage.LevelError,
+                                Message =
+                                    "The password must be long no more than 30 characters and contain at least a digit, a lower and an upper case letter"
+                            }
+                        }
+                    };
+
+                if (!(string.IsNullOrEmpty(record.Password) && string.IsNullOrEmpty(record.Password2)) &&
+                    record.Password != record.Password2)
+                    response.Fields["Password2"] = new Field
+                    {
+                        ValidationMessages = new List<ValidationMessage>
+                        {
+                            new ValidationMessage
+                            {
+                                Level = ValidationMessage.LevelError,
+                                Message = "Password and confirm password must coincide"
+                            }
+                        }
+                    };
+            }
+
+            if (requireReason && string.IsNullOrEmpty(record.Reason))
             {
                 response.Fields["Reason"] = new Field
                 {

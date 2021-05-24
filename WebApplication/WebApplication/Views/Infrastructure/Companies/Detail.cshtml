@@ -7,7 +7,7 @@
             <div class="TabLabels">
                 <a href="#">Details</a>
                 <a href="#">Environment settings</a>
-                <a href="#">Secutity settings</a>
+                <a href="#">Security settings</a>
                 <a href="#">Email configuration</a>
                 <a href="#">Messages</a>
             </div>
@@ -37,8 +37,14 @@
 
                 <label class="Configurator">
                     <span>Configurator password</span>
-                    <i class="Icon fal fa-key" />
-                    <input type="password" name="password" />
+                    <i class="Icon fal fa-lock" />
+                    <input type="password" name="password" autocomplete="new-password" />
+                </label>
+
+                <label>
+                    <span>Password confirm</span>
+                    <i class="Icon fal fa-lock" />
+                    <input type="password" name="password2" autocomplete="new-password" />
                 </label>
 
                 <label class="Clearing Controls2">
@@ -151,9 +157,12 @@
             if (detail.mask == "password")
                 formattedValue = "***";
             else if (detail.values)
-                for (var index in detail.values)
+                for (var index in detail.values) {
                     if (detail.values[index] && detail.values[index].value == value)
                         formattedValue = detail.values[index].label;
+                }
+            else if (detail.default != null && (value == "" || value == null))
+                formattedValue = detail.default;
 
             return formattedValue;
         },
@@ -247,7 +256,7 @@
                 buttons = [
                     {
                         text: "confirm", icon: "check", defaultButton: true, handler: function () {
-                            var value = input.val && input.val() || input.getValue();
+                            var value = input.val && input.val() || input.getValue && input.getValue() || "";
                             tr.data("value", value);
                             $("td", tr).eq(1).text(getFormattedValue(code, value));
                             detailPage.getForm().onChange();
@@ -308,15 +317,16 @@
                 default: '.'
             },
             InstancesAttachmentMaxSizeBytes: {
-                label: "Instances attachment max sixe",
+                label: "Instances attachment max size",
                 note: "The maximum number of bytes allowed for the instance attachment files.",
                 mask: "pint",
                 group: "Environment",
                 default: '10485760'
             },
             PrototypesAttachmentMaxSizeBytes: {
-                label: "Prototypes attachment max sixe",
+                label: "Prototypes attachment max size",
                 note: "The maximum number of bytes allowed for the file uploaded in the images items.",
+                mask: "pint",
                 group: "Environment",
                 default: '10485760'
             },
@@ -357,7 +367,7 @@
             },
             MaximumUserInactivityDays: {
                 label: "Maximum user inactivity",
-                note: "The number of days without a login after which a user is autmatically blocked. The value 0 disable the feature.",
+                note: "The number of days without a login after which a user is automatically blocked. The value 0 disable the feature.",
                 mask: "pint",
                 group: "Security",
                 default: 0

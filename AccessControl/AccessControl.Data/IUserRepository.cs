@@ -11,9 +11,9 @@ namespace CheckListManager.AccessControl.Data
 	{
         Task SetPINAsync(long companyId, string code, byte[] pin);
 
-		Task<List<ExportRow>> GetUsersForExportAsync(long companyId, string code, string description, string corporateID, string group);
+		Task<List<ExportRow>> GetUsersForExportAsync(long companyId, string code, string description, string corporateID, string group, string role);
 		Task<List<ExportRow>> GetRolesForExportAsync(long companyId, string code);
-        Task<List<ExportRow>> GetGroupsForExportAsync(long companyId, string code, string description, string user);
+        Task<List<ExportRow>> GetGroupsForExportAsync(long companyId, string code, string description, string user, string role);
 
 		Task UserLoginCompleteAsync(Users user);
 		Task UserPasswordFailedAsync(Users user);
@@ -23,8 +23,8 @@ namespace CheckListManager.AccessControl.Data
 		Task<List<Users>> GetUsersWithExpiredPin(long company);
 
         Task<Users> GetAsync(long companyId, string code);
-        Task<List<Users>> GetUsersAsync(long companyId, string code, string description, string corporateID, string group, int skip, int take);
-        Task<int> CountUsersAsync(long companyId, string code, string description, string corporateID, string group);
+        Task<List<Users>> GetUsersAsync(long companyId, string code, string description, string corporateID, string group, string role, int skip, int take);
+        Task<int> CountUsersAsync(long companyId, string code, string description, string corporateID, string group, string role);
         Task<Users> AddAsync(DefaultIdentity identity, Users user);
         Task<Users> EditAsync(DefaultIdentity identity, Users user);
         Task DeleteAsync(long companyId, string code);
@@ -38,8 +38,8 @@ namespace CheckListManager.AccessControl.Data
         Task<List<Roles>> GetRolesAsync(long companyId);
 
         Task<Groups> GetGroupAsync(long companyId, string code);
-        Task<List<Groups>> GetGroupsAsync(long companyId, string code, string description, string user, int skip, int take);
-        Task<int> CountGroupsAsync(long companyId, string code, string description, string user);
+        Task<List<Groups>> GetGroupsAsync(long companyId, string code, string description, string user, string role, int skip, int take);
+        Task<int> CountGroupsAsync(long companyId, string code, string description, string user, string role);
         Task<Groups> AddGroupAsync(DefaultIdentity identity, Groups group);
         Task<Groups> EditGroupAsync(DefaultIdentity identity, Groups group);
         Task DeleteGroupAsync(long companyId, string code);

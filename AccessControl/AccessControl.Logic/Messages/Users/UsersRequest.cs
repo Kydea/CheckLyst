@@ -8,5 +8,6 @@
         public string User { get; set; }
         public string CorporateID { get; set; }
         public string Group { get; set; }
+        public string Role { get; set; }
     }
 }

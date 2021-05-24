@@ -448,7 +448,7 @@
                     fixQueryParameters(levelsTab);
                 }
                 loading = false;
-                loadHandler && loadHandler();
+                loadHandler && loadHandler(detailPage);
             });
         },
 

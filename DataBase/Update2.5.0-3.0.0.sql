@@ -154,7 +154,7 @@ create table "Security"."UserRoles"
 	"PrototypeType" bigint references "CheckLists"."PrototypeTypes",
 
 	"Role" varchar (60) not null,
-    constraint "UserRoles_Role" foreign key ("Company", "Role") references "Security"."Roles" on update cascade on delete cascade,
+    constraint "UserRoles_Role" foreign key ("Company", "Role") references "Security"."Roles" on update cascade,
 
 	"CreatedBy" varchar (60),
 	"CreatedOn" timestamptz not null default current_timestamp,
@@ -162,7 +162,7 @@ create table "Security"."UserRoles"
 	"ModifiedOn" timestamptz
 );
 
-create unique index "Index_UserRoles_Role" on "Security"."UserRoles" ("Company", "User", "Department", "PrototypeType");
+create index "Index_UserRoles_Role" on "Security"."UserRoles" ("Company", "User", "Department", "PrototypeType");
 
 create table "Security"."Groups"
 (
@@ -193,7 +193,7 @@ create table "Security"."GroupRoles"
 	"PrototypeType" bigint references "CheckLists"."PrototypeTypes",
 
 	"Role" varchar (60) not null,
-	constraint "GroupRoles_Role" foreign key ("Company", "Role") references "Security"."Roles" on update cascade on delete cascade,
+	constraint "GroupRoles_Role" foreign key ("Company", "Role") references "Security"."Roles" on update cascade,
 
 	"CreatedBy" varchar (60),
 	"CreatedOn" timestamptz not null default current_timestamp,
@@ -201,7 +201,7 @@ create table "Security"."GroupRoles"
 	"ModifiedOn" timestamptz
 );
 
-create unique index "Index_GroupRoles_Role" on "Security"."GroupRoles" ("Company", "Group", "Department", "PrototypeType");
+create index "Index_GroupRoles_Role" on "Security"."GroupRoles" ("Company", "Group", "Department", "PrototypeType");
 
 create table "Security"."GroupFunctions"
 (
@@ -235,7 +235,7 @@ create table "Security"."UserGroups"
     constraint "UserRoles_Group" foreign key ("Company", "User") references "Security"."Users" on update cascade on delete cascade,
 
 	"Group" varchar (60) not null,
-    constraint "UserGroups_Group" foreign key ("Company", "Group") references "Security"."Groups" on update cascade on delete cascade,
+    constraint "UserGroups_Group" foreign key ("Company", "Group") references "Security"."Groups" on update cascade,
 
 	"CreatedBy" varchar (60),
 	"CreatedOn" timestamptz not null default current_timestamp,

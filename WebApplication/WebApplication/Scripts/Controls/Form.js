@@ -223,7 +223,7 @@
                 for (var index in object)
                     if (object[index] !== undefined)
                         value += "\n" + Array(indentation + 1).join(" ") + ((parseInt(index) + 1) || index) + ": " + prettifyObject(object[index], indentation + 4);
-                return value;
+                return value == "" ? "(no value)" : value;
             } else
                 return object;
         },

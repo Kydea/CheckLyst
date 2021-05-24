@@ -14,7 +14,7 @@
                 <label>
                     <span>Code</span>
                     <i class="Icon fal fa-key" />
-                    <input type="text" name="code" />
+                    <input type="text" name="code" maxlength="60" autocomplete="off" />
                 </label>
 
                 <label>
@@ -76,7 +76,8 @@
             tabLabels.eq(3).toggle(functionGroup == "Instances");
         },
 
-        loadHandler = function () {
+        loadHandler = function (detailPage) {
+            if (detailPage.isNew()) matematici.AutoComplete.get(functionGroupSelect[0]).setValue(null);
             onFunctionGroupChanged.call(functionGroupSelect);
         };
 

@@ -63,7 +63,7 @@ create table "Reports"."ReportClauses"
 	"ClauseType" varchar(30)
 );
 
-create  index "ReportClauses_Reports" on "Reports"."ReportClauses" ("Report");
+create index "ReportClauses_Reports" on "Reports"."ReportClauses" ("Report");
 
 --delete from "Reports"."ReportSources";
 insert into "Reports"."ReportSources" values

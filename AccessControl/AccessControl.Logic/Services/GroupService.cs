@@ -43,13 +43,13 @@ namespace CheckListManager.AccessControl.Logic.Services
         }
 
         public async Task<List<ExportRow>> GetFunctionsAsync(long companyId, GroupsRequest request) =>
-            await _userRepository.GetGroupsForExportAsync(companyId, request.Code, request.Description, request.User);
+            await _userRepository.GetGroupsForExportAsync(companyId, request.Code, request.Description, request.User, request.Role);
 
         public async Task<PagingResponse<List<GroupsResponse>>> GetGroupsAsync(long companyId, PagingRequest<GroupsRequest> request)
         {
             var take = request.ItemsPerPage;
-            var groups = await _userRepository.GetGroupsAsync(companyId, request.Data.Code, request.Data.Description, request.Data.User, request.Skip, take);
-            var count = await _userRepository.CountGroupsAsync(companyId, request.Data.Code, request.Data.Description, request.Data.User);
+            var groups = await _userRepository.GetGroupsAsync(companyId, request.Data.Code, request.Data.Description, request.Data.User, request.Data.Role, request.Skip, take);
+            var count = await _userRepository.CountGroupsAsync(companyId, request.Data.Code, request.Data.Description, request.Data.User, request.Data.Role);
 
             var response = groups.Select(g => new GroupsResponse
             {
@@ -84,6 +84,19 @@ namespace CheckListManager.AccessControl.Logic.Services
                         {
                             Level = ValidationMessage.LevelError,
                             Message = "Invalid code"
+                        }
+                    }
+                };
+
+            if (string.IsNullOrWhiteSpace(record.Description))
+                response.Fields["Description"] = new Field
+                {
+                    ValidationMessages = new List<ValidationMessage>
+                    {
+                        new ValidationMessage
+                        {
+                            Level = ValidationMessage.LevelError,
+                            Message = "Invalid description"
                         }
                     }
                 };
@@ -382,6 +395,6 @@ namespace CheckListManager.AccessControl.Logic.Services
         }
 
         public async Task<List<string>> GetSyntheticDataAsync(long companyId) =>
-            (await _userRepository.GetGroupsAsync(companyId, string.Empty, string.Empty, string.Empty, 0, 10000)).Select(g => g.Code).ToList();
+            (await _userRepository.GetGroupsAsync(companyId, string.Empty, string.Empty, string.Empty, string.Empty, 0, 10000)).Select(g => g.Code).ToList();
     }
 }
