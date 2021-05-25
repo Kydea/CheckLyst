@@ -319,7 +319,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                         
                         self.setUserInformation(userInfo: json)
                         
-                        (UIApplication.shared as! MyApplication).refreshInactivityTimer(timeToExpireActivity: (UIApplication.shared as! MyApplication).inactivityInterval)
+                        (UIApplication.shared as! MyApplication).startInactivityTimer(timeToExpireActivity: (UIApplication.shared as! MyApplication).inactivityInterval)
                         
                         (UIApplication.shared as! MyApplication).startTokenTimer()
                         

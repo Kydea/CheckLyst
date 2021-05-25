@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="ypL-u9-hOc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="ypL-u9-hOc">
     <device id="ipad9_7" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
         <deployment version="4608" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17126"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -365,6 +365,7 @@
                     <tabBarItem key="tabBarItem" title="user" id="Cui-ue-8Eo"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="4hL-2e-PIA" customClass="NavigationBar" customModule="Checklyst" customModuleProvider="target">
+                        <rect key="frame" x="0.0" y="0.0" width="768" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -383,6 +384,7 @@
                     <tabBarItem key="tabBarItem" title="search" id="NgT-Oy-hDN"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="lOl-hg-lLk" customClass="NavigationBar" customModule="Checklyst" customModuleProvider="target">
+                        <rect key="frame" x="0.0" y="0.0" width="768" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -402,6 +404,7 @@
                     <toolbarItems/>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="pAS-8f-qmw" customClass="NavigationBar" customModule="Checklyst" customModuleProvider="target">
+                        <rect key="frame" x="0.0" y="0.0" width="768" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -419,6 +422,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" modalPresentationStyle="overFullScreen" id="8BG-4h-fqk" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="hWK-BO-5Sv" customClass="NavigationBar" customModule="Checklyst" customModuleProvider="target">
+                        <rect key="frame" x="0.0" y="0.0" width="768" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -897,7 +901,7 @@
                         <viewControllerLayoutGuide type="bottom" id="ai6-J6-EjE"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="BdW-QC-AFi">
-                        <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="1000"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aMy-cf-WfW">
@@ -1100,7 +1104,7 @@
                         <viewControllerLayoutGuide type="bottom" id="zfI-CO-lbh"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="sFi-nD-IM7">
-                        <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="66" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="QtL-cE-5PG">
@@ -1263,6 +1267,39 @@
             </objects>
             <point key="canvasLocation" x="1662" y="458"/>
         </scene>
+        <!--Count Down View Controller-->
+        <scene sceneID="g3M-lu-rOe">
+            <objects>
+                <viewController storyboardIdentifier="countdown_id" useStoryboardIdentifierAsRestorationIdentifier="YES" id="bIP-zx-CXW" customClass="CountDownViewController" customModule="Checklyst" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="CtW-ha-B9W"/>
+                        <viewControllerLayoutGuide type="bottom" id="f7p-QI-ksC"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="eBQ-m6-Kp5">
+                        <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="10" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DSk-Eb-Fho">
+                                <rect key="frame" x="361" y="488" width="46.5" height="48"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="40"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" red="0.83237906678082196" green="0.17125963184931506" blue="0.1405179794520548" alpha="0.5" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstItem="DSk-Eb-Fho" firstAttribute="centerX" secondItem="eBQ-m6-Kp5" secondAttribute="centerX" id="x55-wn-znv"/>
+                            <constraint firstItem="DSk-Eb-Fho" firstAttribute="centerY" secondItem="eBQ-m6-Kp5" secondAttribute="centerY" id="xpe-v1-G3l"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="countdownLabel" destination="DSk-Eb-Fho" id="yaI-Ny-YtS"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="S0K-4i-hlj" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2600" y="1327"/>
+        </scene>
         <!--User Manual View Controller-->
         <scene sceneID="qMl-3x-NGA">
             <objects>
@@ -1320,7 +1357,7 @@
                         <viewControllerLayoutGuide type="bottom" id="AKq-uW-Un2"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="TwD-n3-Sa2">
-                        <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="66" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="hWr-mu-bJy">
@@ -1487,7 +1524,7 @@
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="NKc-6S-8bD"/>
-        <segue reference="qFk-ul-dl4"/>
+        <segue reference="BVT-v2-to1"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="HistoryStack" width="30" height="29"/>

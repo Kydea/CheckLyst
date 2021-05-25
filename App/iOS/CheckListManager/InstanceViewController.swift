@@ -169,7 +169,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
                 activityIndicator.startAnimating()
                 let fileURL = String(messageBody.split(separator: " ")[1])
                 //print(fileURL)
-q                FileManager.default.downloadFile(fileURL) { (url, error, data) -> Void in
+                    FileManager.default.downloadFile(fileURL) { (url, error, data) -> Void in
                     self.activityIndicator.stopAnimating()
                     if url != nil {
                         if self.checkFile(file: data, url: fileURL) {

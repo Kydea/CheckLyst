@@ -22,12 +22,15 @@ import CoreData
     var isTokenExpired = false
     var requestToOpenInstance = false
     var needToUpdateTokens = false
+    var isInactivityAlertPresented = false
     
     var timer : Timer?
     var inactivityTimer : Timer?
-    var inactivityStartingTime : Date?
+    var inactivityStartingTime = Date()
+    var countdownController: CountDownViewController?
     
     let defaultInactivityTime = 900.0 /* 15 minutes */
+    let showCountdownThreshold = 10.0
     
     var requestedUrlInfo : Dictionary<String, String>?
     
@@ -57,7 +60,7 @@ import CoreData
         
         
         if restartTimer {
-            self.refreshInactivityTimer(timeToExpireActivity: inactivityInterval)
+            inactivityStartingTime = Date()
         }
         super.sendEvent(event)
     }
@@ -223,7 +226,7 @@ import CoreData
         }
     }
     
-    func searchPresentedController(controllerClass: AnyClass?) -> UIViewController? {
+    func searchPresentedController(controllerClass: AnyClass? = nil) -> UIViewController? {
         if var topController = UIApplication.shared.keyWindow?.rootViewController {
         
             while let presentedViewController = topController.presentedViewController {
@@ -234,8 +237,10 @@ import CoreData
                 if topController.isKind(of: searchClass) {
                     return topController
                 }
+                return nil
             }
-           
+            
+            return topController
         }
         
         return nil
@@ -325,44 +330,57 @@ import CoreData
         
     }
     
-    func refreshInactivityTimer(timeToExpireActivity: Double) {
+    func startInactivityTimer() {
         let logged = UserDefaults.standard.existKey("access_token")
         
         if(logged && !isInactivityCatched){
-            if let timer = inactivityTimer {
-                timer.invalidate()
-            }
-            inactivityTimer = Timer.scheduledTimer(timeInterval: timeToExpireActivity, target: UIApplication.shared, selector: #selector(MyApplication.inactivityHasDetected), userInfo: nil, repeats: true)
+            inactivityTimer?.invalidate()
+            
             inactivityStartingTime = Date()
+            
+            inactivityTimer = Timer.scheduledTimer(timeInterval: 1.0, target: UIApplication.shared, selector: #selector(MyApplication.inactivityDetection), userInfo: nil, repeats: true)
         }
     }
     
     func startTokenTimer() {
         let logged = UserDefaults.standard.existKey("access_token")
         
-        if(logged && !isTokenExpired){
-            if let timer = timer {
-                timer.invalidate()
-            }
+        if(logged && !isTokenExpired) {
+            
+            timer?.invalidate()
+            
             timer = Timer.scheduledTimer(timeInterval: 1.0, target: UIApplication.shared, selector: #selector(MyApplication.timerAction), userInfo: nil, repeats: true)
         }
     }
     
-    @objc func inactivityHasDetected() {
-        if let timer = inactivityTimer {
-            timer.invalidate()
+    @objc func inactivityDetection() {
+        if (inactivityStartingTime.addingTimeInterval(inactivityInterval - showCountdownThreshold) > Date()) {
+            return
         }
-        isInactivityCatched = true
-        #if DEBUG
-            let message = String(format: "No activity detected since %@", Formatter.instance.stringFromTestDate(inactivityStartingTime!, timeOnly: true))
+        
+        if (inactivityStartingTime.addingTimeInterval(inactivityInterval - showCountdownThreshold) < Date() && !isInactivityAlertPresented) {
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            countdownController = storyboard.instantiateViewController(withIdentifier: "countdown_id") as? CountDownViewController
+            searchPresentedController()?.present(countdownController!, animated: true)
+            return
+        }
+        
+        countdownController?.updateCountDown(time: inactivityStartingTime.timeIntervalSinceNow)
+        
+        if (inactivityStartingTime.addingTimeInterval(inactivityInterval) < Date()) {
+            inactivityTimer?.invalidate()
+            isInactivityCatched = true
+            #if DEBUG
+            let message = String(format: "No activity detected since %@", Formatter.instance.stringFromTestDate(inactivityStartingTime, timeOnly: true))
             self.displayMessage(Title: "Inactivity", Message: message) { [weak self] in
                 self?.logoutAndGoToLogin()
                 self?.isInactivityCatched = false
             }
-        #else
+            #else
             self.logoutAndGoToLogin()
             self.isInactivityCatched = false
-        #endif
+            #endif
+        }
     }
     
     func goBackGround(){
@@ -399,7 +417,7 @@ import CoreData
                         self.isInactivityCatched = false
                     #endif
                 } else {
-                    self.refreshInactivityTimer(timeToExpireActivity: lastActiveTime.addingTimeInterval(inactivityInterval).timeIntervalSince(Date()))
+                    self.startInactivityTimer()
                 }
             }
             
