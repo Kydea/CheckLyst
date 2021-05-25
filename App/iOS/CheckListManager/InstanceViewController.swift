@@ -10,7 +10,7 @@
 import UIKit
 import WebKit
 
-class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler, UIGestureRecognizerDelegate, UIDocumentInteractionControllerDelegate {
+class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler, UIGestureRecognizerDelegate, UIDocumentInteractionControllerDelegate, UIImagePickerControllerDelegate {
     
     let appDelegate = UIApplication.shared as! MyApplication
     var instance:Instance!
@@ -103,7 +103,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         
         self.contentView!.inputAssistantItem.trailingBarButtonGroups = [UIBarButtonItemGroup(barButtonItems: [scanButton!], representativeItem: nil)] as! [UIBarButtonItemGroup]
         
-        FileManager.default.clearTemporaryDirectory()
+        //FileManager.default.clearTemporaryDirectory()
     }
     
     override func didReceiveMemoryWarning()
@@ -169,7 +169,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
                 activityIndicator.startAnimating()
                 let fileURL = String(messageBody.split(separator: " ")[1])
                 //print(fileURL)
-                FileManager.default.downloadFile(fileURL) { (url, error, data) -> Void in
+q                FileManager.default.downloadFile(fileURL) { (url, error, data) -> Void in
                     self.activityIndicator.stopAnimating()
                     if url != nil {
                         if self.checkFile(file: data, url: fileURL) {
